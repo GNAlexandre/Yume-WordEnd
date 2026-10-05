@@ -1,0 +1,123 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_l3.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://src/visuals/character_visual.tscn" id="2_visual"]
+[ext_resource type="Resource" path="res://data/skins/chtholly.tres" id="3_chtholly"]
+[ext_resource type="Resource" path="res://data/enemies/visuals/timere.tres" id="4_timere"]
+[ext_resource type="Resource" path="res://data/skins/bibliothecaire.tres" id="5_librarian"]
+[ext_resource type="Texture2D" path="res://assets/textures/checker.png" id="6_checker"]
+
+[sub_resource type="Environment" id="Environment_demo"]
+background_mode = 1
+background_color = Color(0.62, 0.78, 0.93, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_texture = ExtResource("6_checker")
+uv1_scale = Vector3(20, 10, 1)
+texture_filter = 0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+material = SubResource("StandardMaterial3D_ground")
+size = Vector2(40, 20)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ruler"]
+albedo_color = Color(0.2, 0.2, 0.26, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_post"]
+material = SubResource("StandardMaterial3D_ruler")
+size = Vector3(0.05, 1.5, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mark"]
+albedo_color = Color(0.85, 0.2, 0.2, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mark"]
+material = SubResource("StandardMaterial3D_mark")
+size = Vector3(0.3, 0.03, 0.06)
+
+[node name="DemoL3" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_demo")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.9, 0.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 2.4, 6.6)
+current = true
+fov = 45.0
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="Ruler" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.75, 0, 0)
+
+[node name="Post" type="MeshInstance3D" parent="Ruler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+mesh = SubResource("BoxMesh_post")
+
+[node name="Mark50" type="MeshInstance3D" parent="Ruler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("BoxMesh_mark")
+
+[node name="Mark100" type="MeshInstance3D" parent="Ruler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("BoxMesh_mark")
+
+[node name="Mark150" type="MeshInstance3D" parent="Ruler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+mesh = SubResource("BoxMesh_mark")
+
+[node name="Characters" type="Node3D" parent="."]
+
+[node name="Bibliothecaire" parent="Characters" instance=ExtResource("2_visual")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, 0, -0.4)
+skin = ExtResource("5_librarian")
+
+[node name="Chtholly" parent="Characters" instance=ExtResource("2_visual")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0, 0)
+skin = ExtResource("3_chtholly")
+
+[node name="TimereSmall" parent="Characters" instance=ExtResource("2_visual")]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.2, 0, -0.4)
+skin = ExtResource("4_timere")
+
+[node name="Timere" parent="Characters" instance=ExtResource("2_visual")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0, 0)
+skin = ExtResource("4_timere")
+
+[node name="TimereBig" parent="Characters" instance=ExtResource("2_visual")]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 3.6, 0, -0.4)
+skin = ExtResource("4_timere")
+
+[node name="Labels" type="Node3D" parent="."]
+
+[node name="Bibliothecaire" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, 1.95, -0.4)
+text = "Bibliothécaire 1,6 m"
+font_size = 28
+
+[node name="Chtholly" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 1.95, 0)
+text = "Chtholly 1,5 m"
+font_size = 28
+
+[node name="TimereSmall" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 1.95, -0.4)
+text = "Timere × 0,8"
+font_size = 28
+
+[node name="Timere" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 1.95, 0)
+text = "Timere × 1 (1,03 m)"
+font_size = 28
+
+[node name="TimereBig" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 1.95, -0.4)
+text = "Timere × 1,3"
+font_size = 28
