@@ -20,6 +20,8 @@ Usage (Python 3.9+, pip install Pillow) :
     python3 tools/gen_placeholders.py skin <id> --name "Nom" --color "#8e6cc9" --height 1.6 --tres
     # les trois PNJ du village (bibliothecaire, forgeron, enfant), avec leurs .tres
     python3 tools/gen_placeholders.py npcs
+    # portrait d'une planche existante (tête de la 1re image de repos agrandie ×2)
+    python3 tools/gen_placeholders.py portrait chtholly --color "#5b7fd0" --side 80 --forward 6
     # un ennemi : assets/enemies/<id>/<id>.png + .json (son SkinData va dans data/enemies/visuals/)
     python3 tools/gen_placeholders.py enemy <id> --color "#6f8f4f" --height 1.0
     # damier (sol de la greybox)
@@ -402,10 +404,28 @@ def portrait(look):
     half = PORTRAIT_SIZE / 2
     bust = img.crop((int(cx - half), int(cy - half), int(cx - half) + PORTRAIT_SIZE,
                      int(cy - half) + PORTRAIT_SIZE))
-    result = Image.new("RGBA", (PORTRAIT_SIZE, PORTRAIT_SIZE), (0, 0, 0, 0))
-    ImageDraw.Draw(result).ellipse([2, 2, PORTRAIT_SIZE - 3, PORTRAIT_SIZE - 3],
-                                   fill=shade(look["color"], 1.7), outline=shade(look["color"], 0.6), width=3)
-    return Image.alpha_composite(result, bust)
+    return Image.alpha_composite(badge(look["color"], PORTRAIT_SIZE), bust)
+
+
+def badge(color, size):
+    result = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    ImageDraw.Draw(result).ellipse([2, 2, size - 3, size - 3], fill=shade(color, 1.7),
+                                   outline=shade(color, 0.6), width=3)
+    return result
+
+
+def sheet_portrait(skin_id, color, side, top, forward):
+    """Portrait d'une planche existante (ex. Chtholly) : carré de side px pris dans la 1re image
+    de repos (top px sous son bord haut, centré forward px devant l'ancre), agrandi ×2 sans
+    lissage, sur le même fond rond que les placeholders."""
+    base = os.path.join(ROOT, "assets", "characters", skin_id, skin_id)
+    with open(base + ".json", encoding="utf-8") as handle:
+        x, y, _, _, ax, _ = json.load(handle)["animations"]["repos"]["images"][0]
+    left = x + ax + forward - side // 2
+    head = Image.open(base + ".png").convert("RGBA").crop((left, y + top, left + side, y + top + side))
+    result = Image.alpha_composite(badge(color, 2 * side), head.resize((2 * side, 2 * side), Image.NEAREST))
+    result.save(base + "_portrait.png", optimize=True)
+    print("portrait %s_portrait.png" % os.path.relpath(base, ROOT))
 
 
 def write_sheet(out_dir, asset_id, sheet, meta):
@@ -490,6 +510,12 @@ def main():
     enemy.add_argument("--color", default="#6f8f4f")
     enemy.add_argument("--height", type=float, default=1.0, help="hauteur au repos en mètres")
     enemy.add_argument("--out", help="dossier de sortie (défaut : assets/enemies/<id>)")
+    shot = sub.add_parser("portrait", help="portrait tiré d'une planche existante (Chtholly)")
+    shot.add_argument("skin_id")
+    shot.add_argument("--color", default="#5b7fd0", help="fond")
+    shot.add_argument("--side", type=int, default=64, help="côté du carré pris dans la planche (px)")
+    shot.add_argument("--top", type=int, default=0, help="px sous le haut de l'image de repos")
+    shot.add_argument("--forward", type=int, default=4, help="px devant l'ancre")
     checker = sub.add_parser("checker", help="damier PNG")
     checker.add_argument("path")
     checker.add_argument("--size", type=int, default=64)
@@ -506,6 +532,8 @@ def main():
             make_skin(skin_id, name, look, height, True)
     elif args.command == "enemy":
         make_enemy(args.enemy_id, hex_color(args.color), args.height, args.out)
+    elif args.command == "portrait":
+        sheet_portrait(args.skin_id, hex_color(args.color), args.side, args.top, args.forward)
     else:
         make_checker(args.path, args.size, args.cells, args.colors)
 

@@ -1,8 +1,8 @@
 extends GutTest
 ## SkinRegistry (L3) et skins jouables de data/skins/ : ordre (Chtholly d'abord), recherche,
 ## skin par défaut, rechargement ; chaque skin est une planche de personnage jouable (les
-## 7 animations de Chtholly, même densité de pixels) ; les PNJ de remplacement ont des couleurs
-## distinctes et un portrait carré.
+## 7 animations de Chtholly, même densité de pixels, portrait carré) ; les PNJ de remplacement
+## ont des couleurs distinctes.
 
 const TEST_DIR := "user://l3_skins"
 const PLAYER_ANIMS := {
@@ -50,15 +50,15 @@ func test_every_skin_is_a_playable_sheet() -> void:
 		assert_eq(SheetLoader.wave_frame(sheet, &"charge"), 3, label)
 		var size := SheetLoader.pixel_size(skin, sheet)
 		assert_almost_eq(size, 1.5 / 144.0, 0.0002, label + " : densité de Chtholly")
+		assert_not_null(skin.portrait, label + " : portrait (menu, dialogue)")
+		if skin.portrait != null:
+			assert_eq(skin.portrait.get_width(), skin.portrait.get_height(), label + " : carré")
 
 
-func test_npc_placeholders_have_distinct_colors_and_a_square_portrait() -> void:
+func test_npc_placeholders_have_distinct_colors() -> void:
 	var colors: Array[Color] = []
 	for skin_id in NPC_SKINS:
 		var skin := SkinRegistry.get_skin(skin_id)
-		assert_not_null(skin.portrait, "%s : portrait" % skin_id)
-		if skin.portrait != null:
-			assert_eq(skin.portrait.get_width(), skin.portrait.get_height(), "portrait carré")
 		var idle: Array = SheetLoader.animations(SheetLoader.read_sheet(skin))["repos"]["images"][0]
 		var height: float = idle[3]
 		var tunic := Vector2i(int(idle[4] - 0.07 * height), int(idle[5] - 0.36 * height))
