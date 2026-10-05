@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/ui/main_menu.tscn" id="1_menu"]
+
+[node name="MainMenu" instance=ExtResource("1_menu")]
+require_gesture = false
