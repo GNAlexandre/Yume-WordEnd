@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/combat/hitbox.gd" id="1_hitbox"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hitbox"]
+resource_local_to_scene = true
+radius = 0.6
+
+[node name="Hitbox" type="Area3D"]
+collision_layer = 8
+collision_mask = 16
+monitorable = false
+script = ExtResource("1_hitbox")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_hitbox")

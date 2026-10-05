@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/items/pickup.gd" id="1_pickup"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_pickup"]
+radius = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pickup"]
+albedo_color = Color(1, 0.86, 0.35, 1)
+emission_enabled = true
+emission = Color(0.6, 0.45, 0.1, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_pickup"]
+material = SubResource("StandardMaterial3D_pickup")
+size = Vector3(0.35, 0.45, 0.12)
+
+[node name="Pickup" type="Area3D" groups=["interactable"]]
+collision_layer = 64
+collision_mask = 2
+script = ExtResource("1_pickup")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("SphereShape3D_pickup")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("PrismMesh_pickup")

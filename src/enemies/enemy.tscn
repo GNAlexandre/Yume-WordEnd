@@ -1,0 +1,33 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://src/visuals/character_visual.tscn" id="2_visual"]
+[ext_resource type="Script" path="res://src/combat/health.gd" id="3_health"]
+[ext_resource type="PackedScene" path="res://src/combat/hurtbox.tscn" id="4_hurtbox"]
+[ext_resource type="PackedScene" path="res://src/combat/hitbox.tscn" id="5_hitbox"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_enemy"]
+radius = 0.4
+height = 1.0
+
+[node name="Enemy" type="CharacterBody3D" groups=["enemies"]]
+collision_layer = 4
+collision_mask = 131
+script = ExtResource("1_enemy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("CapsuleShape3D_enemy")
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("3_health")
+
+[node name="Hurtbox" parent="." node_paths=PackedStringArray("health") instance=ExtResource("4_hurtbox")]
+health = NodePath("../Health")
+team = &"enemy"
+
+[node name="Hitbox" parent="." instance=ExtResource("5_hitbox")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.6)
+team = &"enemy"

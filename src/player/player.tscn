@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/player/player.gd" id="1_player"]
+[ext_resource type="PackedScene" path="res://src/visuals/character_visual.tscn" id="2_visual"]
+[ext_resource type="Script" path="res://src/combat/player_combat.gd" id="3_combat"]
+[ext_resource type="PackedScene" path="res://src/combat/hitbox.tscn" id="4_hitbox"]
+[ext_resource type="Resource" path="res://data/attacks/sword_1.tres" id="5_sword"]
+[ext_resource type="Script" path="res://src/combat/health.gd" id="6_health"]
+[ext_resource type="PackedScene" path="res://src/combat/hurtbox.tscn" id="7_hurtbox"]
+[ext_resource type="PackedScene" path="res://src/player/camera_rig.tscn" id="8_camera"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.35
+height = 1.5
+
+[node name="Player" type="CharacterBody3D" groups=["player"]]
+collision_layer = 2
+collision_mask = 5
+floor_max_angle = 0.785398
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+
+[node name="Combat" type="Node3D" parent="."]
+script = ExtResource("3_combat")
+
+[node name="SwordHitbox" parent="Combat" instance=ExtResource("4_hitbox")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.7)
+attack = ExtResource("5_sword")
+team = &"player"
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("6_health")
+max_hp = 5
+invincibility_time = 1.2
+
+[node name="Hurtbox" parent="." node_paths=PackedStringArray("health") instance=ExtResource("7_hurtbox")]
+health = NodePath("../Health")
+team = &"player"
+
+[node name="CameraRig" parent="." instance=ExtResource("8_camera")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
