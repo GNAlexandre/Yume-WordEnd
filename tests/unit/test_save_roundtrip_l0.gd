@@ -1,28 +1,7 @@
-extends GutTest
-## SaveManager (implémentation minimale du Lot 0) : nouvelle partie, aller-retour JSON,
-## erreurs. Utilise un fichier de test pour ne jamais écraser user://save_v1.json.
-
-const TEST_SAVE := "user://test_save_l0.json"
-
-var _previous_path: String
-
-
-func before_each() -> void:
-	_previous_path = SaveManager.save_path
-	SaveManager.save_path = TEST_SAVE
-	_delete_test_save()
-	GameState.reset()
-
-
-func after_each() -> void:
-	_delete_test_save()
-	SaveManager.save_path = _previous_path
-	GameState.reset()
-
-
-func _delete_test_save() -> void:
-	if FileAccess.file_exists(TEST_SAVE):
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_SAVE))
+extends "res://tests/stubs/l8_save_test.gd"
+## SaveManager (tests repris du Lot 0) : nouvelle partie, aller-retour JSON, erreurs. La base
+## (tests/stubs/l8_save_test.gd) utilise un fichier de test (user://test_l8_*.json) pour ne
+## jamais écraser user://save_v1.json et rétablit SaveManager après chaque test.
 
 
 func test_new_game_resets_and_emits_game_loaded() -> void:
