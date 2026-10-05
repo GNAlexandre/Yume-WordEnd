@@ -1,29 +1,38 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://src/combat/hitbox.gd" id="1_hitbox"]
-[ext_resource type="Resource" path="res://data/attacks/charge_wave.tres" id="2_attack"]
+[ext_resource type="Script" path="res://src/combat/charge_wave.gd" id="1_wave"]
+[ext_resource type="Script" path="res://src/combat/hitbox.gd" id="2_hitbox"]
+[ext_resource type="Resource" path="res://data/attacks/charge_wave.tres" id="3_attack"]
+[ext_resource type="Shader" path="res://src/combat/charge_wave.gdshader" id="4_shader"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wave"]
+resource_local_to_scene = true
 size = Vector3(2, 1.4, 0.8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wave"]
-transparency = 1
-shading_mode = 0
-albedo_color = Color(0.62, 0.86, 1, 0.7)
+[sub_resource type="QuadMesh" id="QuadMesh_wave"]
+size = Vector2(2, 1.2)
+subdivide_width = 16
 
-[sub_resource type="BoxMesh" id="BoxMesh_wave"]
-material = SubResource("StandardMaterial3D_wave")
-size = Vector3(2, 1.2, 0.15)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wave"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("4_shader")
+shader_parameter/core_color = Color(0.91, 0.97, 1, 1)
+shader_parameter/edge_color = Color(0.35, 0.66, 0.9, 1)
+shader_parameter/bend = 0.55
+shader_parameter/half_width = 1.0
+shader_parameter/fade = 1.0
 
 [node name="ChargeWave" type="Node3D"]
+script = ExtResource("1_wave")
 
 [node name="Hitbox" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
 collision_layer = 8
 collision_mask = 16
 monitorable = false
-script = ExtResource("1_hitbox")
-attack = ExtResource("2_attack")
+script = ExtResource("2_hitbox")
+attack = ExtResource("3_attack")
 team = &"player"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
@@ -31,4 +40,6 @@ shape = SubResource("BoxShape3D_wave")
 
 [node name="Mesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
-mesh = SubResource("BoxMesh_wave")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_wave")
+material_override = SubResource("ShaderMaterial_wave")
