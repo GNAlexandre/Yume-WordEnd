@@ -1,0 +1,81 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_l5.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://src/enemies/arena.tscn" id="2_arena"]
+[ext_resource type="PackedScene" path="res://tests/stubs/player_stub.tscn" id="3_player"]
+[ext_resource type="PackedScene" path="res://src/visuals/character_visual.tscn" id="4_visual"]
+[ext_resource type="Resource" path="res://data/skins/chtholly.tres" id="5_chtholly"]
+
+[sub_resource type="Environment" id="Environment_demo"]
+background_mode = 1
+background_color = Color(0.97, 0.66, 0.45, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 0.86, 0.72, 1)
+ambient_light_energy = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sand"]
+albedo_color = Color(0.914, 0.722, 0.447, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_arena"]
+albedo_color = Color(0.941, 0.788, 0.541, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+material = SubResource("StandardMaterial3D_sand")
+size = Vector3(40, 1, 40)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_arena"]
+material = SubResource("StandardMaterial3D_arena")
+top_radius = 12.0
+bottom_radius = 12.0
+height = 0.02
+radial_segments = 48
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(40, 1, 40)
+
+[node name="DemoL5" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_demo")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5736, 0.8192, 0, -0.8192, 0.5736, 0, 8, 0)
+light_color = Color(1, 0.9, 0.78, 1)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9334, 0.359, 0, -0.359, 0.9334, 0, 2.6, 5.2)
+current = true
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("BoxShape3D_ground")
+
+[node name="Mesh" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("BoxMesh_ground")
+
+[node name="ArenaFloor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+mesh = SubResource("CylinderMesh_arena")
+
+[node name="SpawnN" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -13)
+
+[node name="SpawnS" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 13)
+
+[node name="SpawnE" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.5, 0)
+
+[node name="SpawnW" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.5, 0)
+
+[node name="Arena" parent="." instance=ExtResource("2_arena")]
+arena_id = &"dunes"
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+
+[node name="Visual" parent="Player" instance=ExtResource("4_visual")]
+skin = ExtResource("5_chtholly")
