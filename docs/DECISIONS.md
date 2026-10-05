@@ -137,3 +137,49 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   vivent hors de `data/skins/`.
 - **L0 — vagues** : `data/waves/dunes.json` sans champ `music` tant qu'il n'y a pas d'audio
   (licence de l'enregistrement non tranchée, section 13).
+
+## L3 — visuel et skins
+
+- **L3 — horloge des animations** : CharacterVisual tient sa propre horloge, celle de jeu.js
+  (image = floor(t × ips), boucle ou blocage sur la dernière image, fin quand t ≥ images / ips) ;
+  l'AnimatedSprite3D `Sprite` ne fait qu'afficher (jamais `playing`). `frame_changed` est émis
+  pour chaque image affichée, image 0 et tours de boucle compris ; un grand delta émet toutes
+  les images sautées dans l'ordre (un tour au plus pour une boucle) : une image « coup » n'est
+  jamais manquée. `advance(delta)` est public (tests, temps exact). Raison : AnimatedSprite3D
+  n'émet pas l'image 0 quand l'index ne change pas, et une horloge unique sert aussi au mesh.
+- **L3 — play / show_frame** : `play(anim)` sur l'animation en cours ne la relance pas (figée par
+  `show_frame`, elle reprend à son image) ; une animation sans boucle finie est relancée, comme
+  le faisait le squelette (AnimatedSprite3D.play) ; `restart = true` relance toujours.
+  `show_frame` n'émet `frame_changed` que si l'image affichée change. Un changement de skin
+  n'émet rien si le nouveau skin a l'animation en cours (même instant), sinon `repos` démarre.
+- **L3 — ancres** : AtlasTexture sans marge, ancre en métadonnée (`SheetLoader.ANCHOR_META`) ;
+  le sprite est non centré et son `offset` est recalculé à chaque image et à chaque retournement
+  (`SheetLoader.frame_offset`). Raison : en 3D, `flip_h` retourne l'image mais pas les marges
+  d'un AtlasTexture (vérifié dans Godot 4.7.2), l'ancre sauterait. `anchor_extents` et
+  `anchor_offset` du squelette sont retirées (inutilisées ailleurs).
+- **L3 — rendu du sprite** : `texture_filter = 0` (nearest ; le squelette avait 1 = linéaire),
+  billboard axe Y, `alpha_cut` discard (alpha scissor, pas de tri), pas d'ombre portée
+  (`cast_shadow = 0`), non éclairé. Retournement par rapport à la caméra courante, réévalué à
+  chaque image ; |cos| < 0,1 (face ou dos à la caméra) garde le côté ; sans caméra, droite = +X.
+- **L3 — ombre** : nœud `Shadow` (PlaneMesh 1 × 1 m, GradientTexture2D radial, non éclairé,
+  mélange alpha, y = 2 cm), compatible WebGL 2 (pas de Decal en Compatibility). Rayon = 0,75 ×
+  demi-largeur du corps dans la 1re image de repos (côté sans arme) : Chtholly 0,38 m (18 px
+  logiques comme jeu.js), Timere 0,47 m ; mesh : 0,25 × height_m. Enfant du visuel : suit
+  `Visual.scale`. Ombres superposées : noir sur noir, l'ordre de mélange ne change rien.
+- **L3 — variante mesh** : une seule scène `character_visual.tscn` (pas de
+  `character_visual_sprite/mesh.tscn` de la section 5). SkinData avec `mesh_scene` et sans
+  planche : scène instanciée sous `Mesh`, premier AnimationPlayer passé en mode manuel, pose
+  calée sur l'horloge du visuel ; métadonnées des Animation : `ips` (défaut 10), `coup`,
+  `onde` ; images = round(length × ips) ; `set_facing` tourne le mesh (avant = +Z, glTF).
+  Exemple : `tests/stubs/l3_mesh_capsule.tscn` + `l3_capsule_skin.tres`.
+- **L3 — cache des planches** : `SheetLoader.frames_for(skin)` garde un SpriteFrames par planche
+  (chemins de la texture et du JSON) dans une variable statique, partagé par tous les visuels
+  (pas de fuite à la sortie, vérifié) ; `clear_cache()` pour les tests.
+- **L3 — placeholders** : `gen_placeholders.py` dessine en pixel art sans anticrénelage (alpha
+  0/255 pour l'alpha scissor) et règle l'échelle pour que la 1re image de repos mesure height_m
+  à 0,0104 m/px : même densité que Chtholly pour tous les skins. Portrait carré
+  `<id>_portrait.png` pour chaque skin jouable (PNJ dessinés en 128 px ; Chtholly : tête de sa
+  planche agrandie ×2, 160 px) ; mode `enemy` aux animations du Timere ; `--out` pour essayer.
+- **L3 — SkinRegistry** : propriété `skins_dir` (relue par `reload()`, les tests en changent) ;
+  fichiers non SkinData, sans id ou d'id déjà vu ignorés ; tri Chtholly d'abord, puis nom
+  affiché sans casse, puis id.

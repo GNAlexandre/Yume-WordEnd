@@ -75,14 +75,14 @@ func set_skin(new_skin: SkinData) -> void:
 	skin = new_skin
 
 
-## Joue anim depuis l'image 0. Si anim est déjà l'animation courante, elle n'est pas relancée
-## (figée par show_frame, elle reprend ; finie, elle reste sur sa dernière image), sauf
-## restart = true. Sans effet si le skin n'a pas cette animation.
+## Joue anim depuis l'image 0. Si anim est déjà en cours, elle continue sans relance (figée par
+## show_frame, elle reprend à son image), sauf restart = true ; finie (sans boucle), elle est
+## relancée. Sans effet si le skin n'a pas cette animation.
 func play(anim: StringName, restart: bool = false) -> void:
 	if not has_animation(anim):
 		return
-	if anim == _anim and not restart:
-		_playing = _playing or not _finished
+	if anim == _anim and not restart and not _finished:
+		_playing = true
 		return
 	_generation += 1
 	_time = 0.0
