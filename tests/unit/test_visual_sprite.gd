@@ -93,6 +93,24 @@ func test_loop_emits_every_frame_including_frame_zero() -> void:
 	assert_eq(visual.current_frame(), 140 % 5)
 
 
+func test_every_animation_runs_at_its_rate() -> void:
+	for skin: SkinData in [CHTHOLLY, TIMERE]:
+		var visual := _visual(skin)
+		var anims := SheetLoader.animations(SheetLoader.read_sheet(skin))
+		for anim: String in anims:
+			var count: int = anims[anim]["images"].size()
+			var frame_time := 1.0 / float(anims[anim]["ips"])
+			var expected: Array = []
+			for i in range(1, count):
+				expected.append([StringName(anim), i])
+			expected.append([StringName(anim), 0 if anims[anim]["boucle"] else FINISHED])
+			visual.play(StringName(anim), true)
+			_events.clear()
+			for i in count:
+				visual.advance(frame_time)
+			assert_eq(_events, expected, "%s / %s : une image toutes les 1 / ips" % [skin.id, anim])
+
+
 func test_long_delta_emits_skipped_frames_in_order() -> void:
 	var visual := _visual(TIMERE)
 	visual.play(&"fouet")
