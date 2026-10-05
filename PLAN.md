@@ -373,7 +373,7 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 
 **Repères de l'île** : sol à y = 0, île de 160 × 160 m centrée sur l'origine, nord = −Z, ouest = −X. Village au centre (`Bounds` ±22 m, `Spawn` local (0, 0,2, 9)) ; dunes à x = −51 (`Spawn` côté village (24, 0,2, 0), arène de 12 m de rayon au centre, `SpawnN/S/E/W` à 13 m) ; forêt à z = −51 ; plage à z = +51 ; colline à x = +51. Les cinq zones pavent l'île : chaque pas sur l'île est dans une zone.
 
-**Tests** : stubs dans `tests/stubs/` (`visual_stub.tscn` hérite de `character_visual.tscn` et émet `frame_changed` / `animation_finished` à la demande, `player_stub.tscn` du groupe `player` avec Health et Hurtbox, `dummy.tscn` mannequin du groupe `enemies`), sans `class_name`. `tests/unit/test_contracts.gd` vérifie tout ce qui précède : un lot qui le fait échouer a cassé un contrat.
+**Tests** : stubs dans `tests/stubs/` (`visual_stub.tscn` hérite de `character_visual.tscn` et émet `frame_changed` / `animation_finished` à la demande, `player_stub.tscn` du groupe `player` avec Health et Hurtbox, `dummy.tscn` mannequin du groupe `enemies`), sans `class_name`. `tests/unit/test_contracts.gd` vérifie tout ce qui précède : un lot qui le fait échouer a cassé un contrat. Propriété des tests du Lot 0 : `test_health.gd` passe à L4, `test_game_state.gd` à L7, `test_save_roundtrip_l0.gd` à L8 (ils peuvent les adapter à leur implémentation) ; `test_contracts.gd`, `test_stubs_l0.gd`, `tests/integration/test_game_flow_l0.gd` et les stubs existants ne changent que dans une PR « contrats ». Un lot qui a besoin d'un autre stub en crée un nouveau fichier (`tests/stubs/<lot>_<nom>.gd`/`.tscn`, sans `class_name`).
 
 ## 4. Tranche verticale : WordEnd en 3D
 
