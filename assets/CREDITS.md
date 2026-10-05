@@ -7,7 +7,7 @@ Les dessins des membres et les planches de personnages sont listés dans
 
 | Fichier(s) | Auteur / source | URL | Licence | Ajouté par |
 | --- | --- | --- | --- | --- |
-| `assets/textures/checker.png` | généré par `tools/gen_placeholders.py checker` | — | même licence que le code (MIT) | L0 |
+| `assets/textures/checker.png` | généré par `tools/gen_placeholders.py checker` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | L0 |
 
 Aucun fichier audio pour l'instant : l'enregistrement de *Scarborough Fair* utilisé par l'easter
 egg n'a pas de licence établie (PLAN.md section 13) et n'est pas copié.

@@ -32,9 +32,12 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   un fichier suivi (typiquement un `.uid` ou `.import` non commité) ; en local, il l'annonce.
 - **L0 — capture** : la capture de l'île reste facultative (code 2 sans Xvfb) mais, si elle a été
   rendue, son journal doit être propre. Le seul avertissement toléré est celui de V-Sync sous Xvfb.
-- **L0 — export Web** : `addons/gut/*, tests/*, tools/*, docs/*` exclus du paquet ;
+- **L0 — export Web** : `addons/gut/*, tests/*, tools/*, docs/*, build/*` exclus du paquet ;
   `rendering/textures/vram_compression/import_etc2_astc=true` est obligatoire pour exporter.
-  Build actuel : 13 Mo compressés (wasm 39,5 Mo brut, pck 4,6 Mo).
+  Build actuel : 10 Mo compressés (wasm 39,5 Mo brut, pck 1,1 Mo).
+- **L0 — build/ ignoré par Godot** : `tools/godot` crée `build/.gdignore` à chaque lancement.
+  Sans lui, Godot importait les captures et l'export embarquait `build/xdg` (réglages et cache de
+  l'éditeur, keystore de débogage). Un test de test_contracts.gd protège les exclusions.
 - **L0 — CI** : `tools/setup.sh` est réutilisé dans le conteneur godot-ci (Ubuntu 24.04, sans
   python3 ni curl) ; git et git-lfs sont installés avant le checkout si besoin.
 - **L0 — Jolt Physics** explicite (`physics/3d/physics_engine`), le réglage par défaut d'un projet

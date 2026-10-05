@@ -142,5 +142,8 @@ change pas sans PR « contrats ».
   shader sort en `SHADER ERROR` dans la fumée.
 - Plusieurs worktrees peuvent lancer Godot en même temps : `tools/godot` isole `user://` et les
   réglages de l'éditeur dans `build/xdg/`. Un `godot` lancé à la main partage `~/.local/share`.
+- `build/` est dans le dossier du projet : `tools/godot` y crée `.gdignore`, sans quoi Godot
+  importerait les captures et l'export embarquerait `build/xdg`. Tout dossier de travail placé
+  dans le projet doit contenir un `.gdignore` (les dossiers cachés, comme `.claude/`, sont ignorés).
 - Les fichiers où plusieurs lots ajoutent des lignes (docs/DECISIONS.md, docs/CONTRACT_REQUESTS.md,
   tools/warnings_allow.txt, les CREDITS) fusionnent par union : ajoute en bas, ne réordonne pas.
