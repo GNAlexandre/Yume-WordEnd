@@ -568,3 +568,10 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   village, PNJ, panneau et points de l'arène étaient déjà bons. Contrôle permanent :
   `tests/integration/test_m1_world.gd` (au sol, hors décor et hors de l'eau, chemin à pied depuis
   le Spawn du village sur une grille de 0,5 m, clairière dégagée sur 6 m, arène plate).
+- **M1 — portée du panneau de l'arène** (`src/enemies/arena.tscn`, L5) : sphère `InteractArea`
+  du panneau 1,3 → 0,9 m. Cause : avec la sphère d'interaction du joueur (1 m, 0,6 m devant
+  lui), l'invite s'affichait jusqu'à 2,9 m du poteau, soit 12,1 m du centre côté village, hors
+  des bornes de 12 m : la série démarrait puis s'arrêtait à l'image suivante (sortie du disque
+  pendant la pause d'avant la vague 1), avec un `arena_finished` à 0 point compté comme une
+  partie. L'invite s'arrête maintenant vers 2,5 m (11,7 m du centre au plus) ; testé sur un
+  cercle de positions autour du panneau.
