@@ -1,0 +1,66 @@
+{
+  "id": "child",
+  "start": "hello",
+  "entries": [
+    "champion",
+    "tried"
+  ],
+  "nodes": {
+    "hello": {
+      "speaker": "Enfant",
+      "text": "Tu as vu l’arène, à l’ouest, dans les dunes ? Les Timeres y arrivent par vagues, toujours plus nombreux !",
+      "next": "dare"
+    },
+    "dare": {
+      "speaker": "Enfant",
+      "text": "Mon frère dit que personne n’a jamais atteint 300 points. Tu essaies ?",
+      "choices": [
+        {
+          "text": "J’y vais !",
+          "next": "go"
+        },
+        {
+          "text": "Ça a l’air dangereux…",
+          "next": "scared"
+        }
+      ]
+    },
+    "go": {
+      "speaker": "Enfant",
+      "text": "Trop bien ! Le panneau au milieu de l’arène lance les vagues. Reviens me raconter !",
+      "next": null
+    },
+    "scared": {
+      "speaker": "Enfant",
+      "text": "T’inquiète : si tu tombes, tu te réveilles au village. Enfin… c’est ce que dit la bibliothécaire.",
+      "next": null
+    },
+    "tried": {
+      "if": {
+        "best_score": [
+          "dunes",
+          1
+        ]
+      },
+      "speaker": "Enfant",
+      "text": "{best:dunes} points dans l’arène ? Pas mal ! Mais le vrai défi, c’est 300.",
+      "next": null
+    },
+    "champion": {
+      "if": {
+        "best_score": [
+          "dunes",
+          300
+        ]
+      },
+      "speaker": "Enfant",
+      "text": "C’est toi qui as fait {best:dunes} points aux dunes ?! Tout le village en parle !",
+      "next": "champion_more"
+    },
+    "champion_more": {
+      "speaker": "Enfant",
+      "text": "Quand je serai grand, je serai aussi fort que toi. Tu me montreras la charge ?",
+      "next": null
+    }
+  }
+}

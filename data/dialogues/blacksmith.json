@@ -1,0 +1,81 @@
+{
+  "id": "blacksmith",
+  "start": "hello",
+  "entries": [
+    "again"
+  ],
+  "nodes": {
+    "hello": {
+      "speaker": "Forgeron",
+      "text": "Bienvenue à la forge ! Une lame bien tenue en vaut trois mal affûtées.",
+      "next": "offer"
+    },
+    "offer": {
+      "speaker": "Forgeron",
+      "text": "Quelques conseils pour tenir les Timeres en respect ?",
+      "choices": [
+        {
+          "text": "Avec plaisir.",
+          "next": "combo"
+        },
+        {
+          "text": "Une autre fois.",
+          "next": "bye"
+        }
+      ]
+    },
+    "combo": {
+      "speaker": "Forgeron",
+      "text": "D’abord, l’épée : frappe plusieurs fois d’affilée. Trois coups s’enchaînent, et le dernier repousse plus loin.",
+      "next": "charge"
+    },
+    "charge": {
+      "speaker": "Forgeron",
+      "text": "Ensuite, la charge : maintiens la touche un instant, puis relâche. L’onde traverse tous les Timeres sur son passage.",
+      "next": "lock"
+    },
+    "lock": {
+      "speaker": "Forgeron",
+      "text": "Enfin, quand ils sont plusieurs, verrouille ta cible : tu lui feras toujours face, sans la perdre de vue.",
+      "next": "seniolis"
+    },
+    "seniolis": {
+      "speaker": "Forgeron",
+      "text": "Et ta lame… elle me rappelle Seniolis. Prends-en soin : on n’en forge plus des comme ça.",
+      "set_flag": "blacksmith_tips_heard",
+      "next": null
+    },
+    "bye": {
+      "speaker": "Forgeron",
+      "text": "Comme tu veux. L’enclume ne bouge pas, et moi non plus.",
+      "next": null
+    },
+    "again": {
+      "if": {
+        "flag": "blacksmith_tips_heard"
+      },
+      "speaker": "Forgeron",
+      "text": "Te revoilà ! Un petit rappel ?",
+      "choices": [
+        {
+          "text": "Oui, rappelle-moi.",
+          "next": "recap"
+        },
+        {
+          "text": "Ça ira, merci.",
+          "next": "bye_again"
+        }
+      ]
+    },
+    "recap": {
+      "speaker": "Forgeron",
+      "text": "Trois coups d’affilée, la charge maintenue pour l’onde, et l’œil verrouillé sur ta cible. Simple, non ?",
+      "next": null
+    },
+    "bye_again": {
+      "speaker": "Forgeron",
+      "text": "Alors file ! Les Timeres ne vont pas se chasser tout seuls.",
+      "next": null
+    }
+  }
+}
