@@ -7,7 +7,7 @@ extends Node3D
 ## tout le vol et touche chaque Hurtbox une fois ; une attaque qui traverse (pierces) continue
 ## après chaque cible, sinon l'onde disparaît au premier coup. Elle se libère quand elle a
 ## parcouru attack.range_m ou vécu attack.duration (si > 0). Largeur de la zone et du
-## maillage : attack.width_m. Le maillage s'estompe sur la fin du vol (paramètre « fade »).
+## maillage : attack.width_m. Le maillage et la lumière Glow s'estompent sur la fin du vol.
 
 ## Part de la fin du vol pendant laquelle l'onde s'estompe (0..1).
 @export var fade_tail: float = 0.35
@@ -19,6 +19,8 @@ var _launched: bool = false
 
 @onready var hitbox: Hitbox = $Hitbox
 @onready var _mesh: MeshInstance3D = $Mesh
+@onready var _glow: OmniLight3D = $Glow
+@onready var _glow_energy: float = _glow.light_energy
 
 
 func _ready() -> void:
@@ -73,6 +75,7 @@ func _physics_process(delta: float) -> void:
 	var material := _mesh.material_override as ShaderMaterial
 	if material != null:
 		material.set_shader_parameter(&"fade", fade)
+	_glow.light_energy = _glow_energy * fade
 
 
 func _on_hit_landed(_hurtbox: Hurtbox) -> void:

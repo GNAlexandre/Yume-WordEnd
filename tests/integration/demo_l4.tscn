@@ -1,0 +1,92 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_l4.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://src/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://tests/stubs/dummy.tscn" id="3_dummy"]
+[ext_resource type="PackedScene" path="res://src/visuals/character_visual.tscn" id="4_visual"]
+[ext_resource type="Resource" path="res://data/enemies/visuals/timere.tres" id="5_timere"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_demo"]
+sky_top_color = Color(0.32, 0.42, 0.72, 1)
+sky_horizon_color = Color(0.96, 0.72, 0.52, 1)
+ground_bottom_color = Color(0.36, 0.28, 0.22, 1)
+ground_horizon_color = Color(0.9, 0.68, 0.5, 1)
+
+[sub_resource type="Sky" id="Sky_demo"]
+sky_material = SubResource("ProceduralSkyMaterial_demo")
+
+[sub_resource type="Environment" id="Environment_demo"]
+background_mode = 2
+sky = SubResource("Sky_demo")
+ambient_light_source = 3
+ambient_light_energy = 0.55
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(40, 1, 40)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sand"]
+albedo_color = Color(0.8, 0.64, 0.44, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+material = SubResource("StandardMaterial3D_sand")
+size = Vector2(160, 160)
+
+[node name="DemoL4" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_demo")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.743294, -0.498002, 0.446663, 0, 0.667692, 0.744438, -0.668965, -0.553336, 0.496292, 0, 6, 0)
+light_color = Color(1, 0.9, 0.78, 1)
+light_energy = 0.85
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_ground")
+
+[node name="Mesh" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+
+[node name="Dummy1" parent="." instance=ExtResource("3_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+
+[node name="Visual" parent="Dummy1" instance=ExtResource("4_visual")]
+skin = ExtResource("5_timere")
+
+[node name="Dummy2" parent="." instance=ExtResource("3_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+
+[node name="Visual" parent="Dummy2" instance=ExtResource("4_visual")]
+skin = ExtResource("5_timere")
+
+[node name="Dummy3" parent="." instance=ExtResource("3_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.5)
+
+[node name="Visual" parent="Dummy3" instance=ExtResource("4_visual")]
+skin = ExtResource("5_timere")
+
+[node name="ShotCamera" type="Camera3D" parent="."]
+transform = Transform3D(0.693109, -0.16534, 0.701614, 0, 0.973338, 0.229374, -0.720833, -0.158981, 0.674629, 5.2, 2.4, 1.6)
+fov = 55.0
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Help" type="Label" parent="UI"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 900.0
+offset_bottom = 40.0
+text = "Démo L4 — ZQSD/WASD : bouger · J : épée (3 coups enchaînés) · K maintenu puis relâché : onde"
+
+[node name="Status" type="Label" parent="UI"]
+offset_left = 16.0
+offset_top = 40.0
+offset_right = 900.0
+offset_bottom = 68.0
