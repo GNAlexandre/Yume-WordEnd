@@ -1,0 +1,11 @@
+#!/bin/bash
+# Exécute Godot : binaire natif s'il existe, sinon l'image docker godot-ci (sans captures d'écran).
+# --audio-driver Dummy évite les lignes ERROR: d'ALSA quand Godot tourne hors --headless.
+if command -v godot >/dev/null 2>&1; then
+  case " $* " in
+    *" --headless "* | *" --audio-driver "*) exec godot "$@" ;;
+    *) exec godot --audio-driver Dummy "$@" ;;
+  esac
+fi
+exec docker run --rm -v "$PWD":/project -w /project -e HOME=/root \
+  "barichello/godot-ci:${GODOT_VERSION:-4.7.2}" godot "$@"
