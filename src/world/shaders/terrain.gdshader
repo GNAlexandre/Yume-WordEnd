@@ -86,8 +86,10 @@ void fragment() {
 	c = mix(c, grass_light.rgb, smoothstep(3.0, hill_height, h) * 0.7);
 	// Dunes à l'ouest, arène claire bordée d'un anneau.
 	float arena = distance(p, arena_center);
-	float dunes = (1.0 - smoothstep(-30.0, -24.0, p.x)) * (1.0 - smoothstep(26.0, 33.0, abs(p.y)));
-	dunes = max(dunes, 1.0 - smoothstep(24.0, 30.0, arena));
+	vec2 q = (p - arena_center) / vec2(1.0, 1.2);
+	float lobe = atan(q.y, q.x);
+	float edge = length(q) + 2.5 * sin(lobe * 3.0 + 0.7) + 1.5 * sin(lobe * 5.0 + 2.0);
+	float dunes = 1.0 - smoothstep(25.0, 28.5, edge);
 	c = mix(c, dune_sand.rgb, dunes);
 	c = mix(c, arena_sand.rgb, 1.0 - smoothstep(arena_radius - 0.25, arena_radius, arena));
 	float ring = abs(arena - arena_radius - 0.35);

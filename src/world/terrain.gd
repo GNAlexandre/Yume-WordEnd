@@ -24,6 +24,8 @@ const SIZE := 160.0
 const HALF := SIZE / 2.0
 const RESOLUTION := 129
 const STEP := SIZE / (RESOLUTION - 1)
+## Taille (en cases) des blocs du mesh visible ; un bloc plat n'y fait que deux triangles.
+const BLOCK := 4
 
 ## Niveau de l'eau, fond du haut-fond, largeur de la plage et du talus sous l'eau (m).
 const WATER_LEVEL := -0.6
@@ -228,20 +230,21 @@ static func terrain_mesh() -> ArrayMesh:
 			var north := data[k - RESOLUTION] if j > 0 else h
 			var south := data[k + RESOLUTION] if j < last else h
 			normals[k] = Vector3(west - east, 2.0 * STEP, north - south).normalized()
+	# Blocs de BLOCK × BLOCK cases : un bloc parfaitement plat (village, sous-bois, fond marin)
+	# devient deux triangles ; ses sommets de bord restent alignés, donc pas de fissure avec
+	# les blocs voisins détaillés. La collision garde la grille complète.
 	var indices := PackedInt32Array()
-	indices.resize(last * last * 6)
-	var n := 0
-	for j in last:
-		for i in last:
-			var k := j * RESOLUTION + i
-			# Sens horaire vu du dessus : face avant vers le ciel.
-			indices[n] = k
-			indices[n + 1] = k + 1
-			indices[n + 2] = k + RESOLUTION
-			indices[n + 3] = k + 1
-			indices[n + 4] = k + RESOLUTION + 1
-			indices[n + 5] = k + RESOLUTION
-			n += 6
+	var blocks := floori(float(last) / BLOCK)
+	for bj in blocks:
+		for bi in blocks:
+			var i0 := bi * BLOCK
+			var j0 := bj * BLOCK
+			if _block_is_flat(data, i0, j0):
+				indices.append_array(_quad(j0 * RESOLUTION + i0, BLOCK, BLOCK * RESOLUTION))
+				continue
+			for j in range(j0, j0 + BLOCK):
+				for i in range(i0, i0 + BLOCK):
+					indices.append_array(_quad(j * RESOLUTION + i, 1, RESOLUTION))
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vertices
@@ -252,6 +255,22 @@ static func terrain_mesh() -> ArrayMesh:
 	mesh.surface_set_material(0, MATERIAL)
 	_mesh_cache = mesh
 	return mesh
+
+
+## True si les (BLOCK + 1)² hauteurs du bloc de coin (i0, j0) sont égales (bloc plat).
+static func _block_is_flat(data: PackedFloat32Array, i0: int, j0: int) -> bool:
+	var h := data[j0 * RESOLUTION + i0]
+	for j in range(j0, j0 + BLOCK + 1):
+		for i in range(i0, i0 + BLOCK + 1):
+			if absf(data[j * RESOLUTION + i] - h) > 0.0001:
+				return false
+	return true
+
+
+## Indices des deux triangles (sens horaire vu du dessus : face avant vers le ciel) du
+## quadrilatère de coin k, de `across` sommets de large et `down` d'indice de profondeur.
+static func _quad(k: int, across: int, down: int) -> PackedInt32Array:
+	return PackedInt32Array([k, k + across, k + down, k + across, k + down + across, k + down])
 
 
 ## Recopie les constantes de forme dans les uniformes d'un shader de l'île (sol, eau).

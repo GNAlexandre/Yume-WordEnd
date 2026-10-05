@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://src/world/props/flowers.tscn" id="10_flowers"]
 [ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="11_rock"]
 [ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="12_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_blossom.tscn" id="13_tree_blossom"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
 size = Vector3(58, 40, 44)
@@ -72,6 +73,26 @@ prop = ExtResource("12_bush")
 points = PackedVector3Array(-7.3, 0, -11.4, -11, 0, -13.4, -24.5, 0, -8.8, 2.1, 0, -2, -5.7, 0, 13, -23.8, 0, 2.6, 18.5, 0, 5.9, -24, 0, -17.1)
 scale_range = Vector2(0.7, 1)
 random_seed = 28
+
+[node name="GroveBlossoms" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("13_tree_blossom")
+points = PackedVector3Array(-26.6, 0, -14.1, -24.7, 0, 7.9)
+scale_range = Vector2(0.85, 1)
+random_seed = 29
+
+[node name="GroveTrees" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("9_tree_round")
+points = PackedVector3Array(-16.2, 0, 16.5, -21.5, 0, -5.4, -22.2, 0, 19.4, -21.9, 0, -19.7)
+scale_range = Vector2(0.85, 1.05)
+random_seed = 30
+
+[node name="GroveFlowers" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("10_flowers")
+points = PackedVector3Array(-26, 0, -6, -25.8, 0, -10.2, -20.2, 0, -13.8, -24.8, 0, 16.1, -25.7, 0, -18.7, -20.6, 0, 2, -26.2, 0, 19.3, -25.4, 0, 13)
+random_seed = 31
 
 [node name="NPCs" parent="." instance=ExtResource("2_npcs")]
 

@@ -23,16 +23,19 @@ material_override = SubResource("bush")
 transform = Transform3D(1.45, 0, 0, 0, 0.8, 0, 0, 0, 1.02, -1.35, 0.86, 0)
 mesh = ExtResource("2_sphere")
 material_override = SubResource("bush")
+cast_shadow = 0
 
 [node name="Puff2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.45, 0, 0, 0, 0.8, 0, 0, 0, 1.02, 0, 0.86, 0)
 mesh = ExtResource("2_sphere")
 material_override = SubResource("bush_light")
+cast_shadow = 0
 
 [node name="Puff3" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.45, 0, 0, 0, 0.8, 0, 0, 0, 1.02, 1.35, 0.86, 0)
 mesh = ExtResource("2_sphere")
 material_override = SubResource("bush")
+cast_shadow = 0
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

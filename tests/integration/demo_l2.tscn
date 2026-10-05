@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_l2.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://src/world/island.tscn" id="2_island"]
+[ext_resource type="PackedScene" path="res://tests/stubs/player_stub.tscn" id="3_player"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_player"]
+albedo_color = Color(0.98, 0.47, 0.42, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
+material = SubResource("StandardMaterial3D_player")
+radius = 0.35
+height = 1.5
+radial_segments = 12
+rings = 2
+
+[node name="DemoL2" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="Island" parent="." instance=ExtResource("2_island")]
+
+[node name="PlayerStub" parent="." instance=ExtResource("3_player")]
+
+[node name="Body" type="MeshInstance3D" parent="PlayerStub"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+mesh = SubResource("CapsuleMesh_player")
+
+[node name="FollowCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.83205, 0.5547, 0, -0.5547, 0.83205, 0, 7, 18)
+fov = 60.0
+far = 2500.0
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="HUD"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 520.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.12, 0.3, 1)
+theme_override_constants/outline_size = 6
+text = "Village"
