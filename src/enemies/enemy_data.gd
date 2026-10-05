@@ -27,3 +27,10 @@ extends Resource
 @export var aggro_range_m: float = 10.0
 ## Objets lâchés à la mort : item_id → probabilité (0..1).
 @export var drops: Dictionary[StringName, float] = {}
+
+@export_group("Compléments (Lot 5)")
+## Vitesse de poursuite hors rush, en m/s (coureur : 2,5, la marche plafonnée de jeu.js) ;
+## 0 = speed.
+@export var walk_speed: float = 0.0
+## Multiplie la recharge des attaques (Grand : 1,4, comme jeu.js).
+@export var cooldown_scale: float = 1.0
