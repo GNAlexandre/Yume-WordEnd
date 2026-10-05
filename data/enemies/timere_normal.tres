@@ -19,4 +19,6 @@ attacks = Array[ExtResource("3_attack")]([ExtResource("4_bite"), ExtResource("5_
 rush = false
 stoic = false
 aggro_range_m = 10.0
-drops = {}
+drops = Dictionary[StringName, float]({
+&"page_fragment": 1.0
+})

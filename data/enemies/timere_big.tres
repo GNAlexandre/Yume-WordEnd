@@ -19,3 +19,4 @@ rush = false
 stoic = true
 aggro_range_m = 10.0
 drops = {}
+cooldown_scale = 1.4
