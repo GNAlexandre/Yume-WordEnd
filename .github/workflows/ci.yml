@@ -1,86 +1,130 @@
+# CI du projet (PLAN.md section 9) : vérification complète (tools/check.sh) dans l'image
+# godot-ci, budget de taille du build Web, déploiement sur GitHub Pages à chaque push sur main.
+# Avant le premier push sur main : Settings → Pages → Source : « GitHub Actions » (docs/web.md).
 name: ci
+
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
-env:
-  GODOT_VERSION: "4.7.2"
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+env:
+  GODOT_VERSION: "4.7.2"
+
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     container:
       image: barichello/godot-ci:4.7.2
     steps:
-      # git et git-lfs avant le checkout : sinon actions/checkout télécharge une archive sans
-      # .git ni fichiers LFS.
+      # git et git-lfs (déjà dans l'image) avant le checkout : sans eux, actions/checkout
+      # télécharge une archive sans .git ni fichiers LFS.
       - name: git et git-lfs
         run: |
           if ! command -v git >/dev/null 2>&1 || ! command -v git-lfs >/dev/null 2>&1; then
             apt-get update -qq
-            DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends git git-lfs ca-certificates >/dev/null
+            DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+              git git-lfs ca-certificates >/dev/null
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           lfs: true
+      # Le dossier monté appartient à l'utilisateur du runner, pas à root : sans safe.directory,
+      # git refuse le dépôt (« dubious ownership ») et le contrôle des fichiers générés de
+      # tools/check.sh (git status) ne voit rien.
+      - name: Dépôt sûr pour git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       # Dans un job container:, HOME=/github/home : les templates de l'image (installés pour
-      # /root) doivent être déplacés là où Godot les cherche (cf. README de godot-ci).
+      # /root) sont liés là où Godot les cherche (un lien plutôt qu'une copie de 1 Go).
       - name: Templates d'export
         run: |
-          mkdir -p ~/.local/share/godot/export_templates
           src="/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
           dst="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
-          if [ -d "$src" ] && [ ! -d "$dst" ]; then mv "$src" "$dst"; fi
-          ls "$dst"
-      # Paquets X11/Mesa/Xvfb (noms adaptés à la version d'Ubuntu), gdtoolkit et Pillow :
-      # même script que les VM cloud ; il ne télécharge Godot que s'il manque.
+          mkdir -p "$(dirname "$dst")"
+          if [ "$src" != "$dst" ] && [ ! -e "$dst" ]; then ln -s "$src" "$dst"; fi
+          ls -l "$dst/web_nothreads_release.zip"
+      # Paquets X11/Mesa/Xvfb (noms adaptés à la version d'Ubuntu), python3 + pip, gdtoolkit et
+      # Pillow : même script que les VM cloud ; il ne télécharge Godot que s'il manque.
       - name: Outils
         run: |
           bash tools/setup.sh
           godot --headless --version
           gdlint --version
-      - name: Vérification
+          command -v xvfb-run
+      - name: Vérification (import, lint, tests, fumée, export, capture)
         run: tools/check.sh
-      - name: Taille du build
+      - name: Export mono-thread
         run: |
-          size=$(tar -czf - build/web | wc -c)
-          echo "build/web compressé : $((size / 1048576)) Mo (budget M2 : 25 Mo)" >> "$GITHUB_STEP_SUMMARY"
-          [ "$size" -lt 26214400 ] || { echo "build > 25 Mo"; exit 1; }
-      - uses: actions/upload-artifact@v4
-        with: { name: web, path: build/web }
-      - uses: actions/upload-artifact@v4
+          grep -q "const GODOT_THREADS_ENABLED = false;" build/web/index.html
+          if grep -q '"serviceWorker"' build/web/index.html; then
+            echo "service worker présent : la PWA ne doit pas être activée"
+            exit 1
+          fi
+      - name: "Taille du build (budget M2 : 25 Mo compressés)"
+        run: tools/build_size.sh --summary
+      - uses: actions/upload-artifact@v7
+        with:
+          name: web
+          path: build/web
+          retention-days: 7
+      - uses: actions/upload-artifact@v7
         if: always()
-        with: { name: shots, path: build/shots, if-no-files-found: ignore }
-      - uses: actions/upload-artifact@v4
+        with:
+          name: shots
+          path: build/shots
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v7
         if: always()
-        with: { name: junit, path: build/junit.xml, if-no-files-found: ignore }
-      - uses: actions/upload-artifact@v4
+        with:
+          name: junit
+          path: build/junit.xml
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v7
         if: failure()
-        with: { name: logs, path: build/*.log, if-no-files-found: ignore }
+        with:
+          name: logs
+          path: build/*.log
+          if-no-files-found: ignore
 
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
+      contents: read
       pages: write
       id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with: { name: web, path: build/web }
-      - name: Fichiers du site (CNAME, page de test)
-        run: cp -r web/. build/web/
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with: { path: build/web }
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: web
+      - uses: actions/download-artifact@v7
+        with:
+          name: web
+          path: build/web
+      # Le site = le build + la page de test de l'iframe + CNAME. Avec un déploiement par
+      # Actions, GitHub ignore le fichier CNAME : le domaine se règle dans Settings → Pages.
+      - name: Fichiers du site
+        run: cp web/CNAME web/embed-test.html build/web/
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build/web
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
