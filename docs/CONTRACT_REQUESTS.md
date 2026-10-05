@@ -16,3 +16,12 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 ```
 
 ## Demandes
+
+## L8 — fin du suivi de la partie au retour au menu
+- Besoin : quand main.gd revient au menu, la partie n'est plus suivie : l'écriture en attente
+  (au plus 0,5 s de changements) doit être faite tout de suite, puis l'auto-sauvegarde coupée
+  jusqu'au prochain `game_loaded`.
+- Proposition : dans `src/main.gd`, `show_menu()` appelle `SaveManager.close_game()` avant de
+  libérer la partie (fichier d'intégration du Lot 0, à faire à l'intégration).
+- En attendant : le minuteur de SaveManager tourne aussi sans partie et écrit l'attente au plus
+  0,5 s plus tard ; au menu, aucun signal de jeu n'arrive, donc rien d'autre n'est écrit.

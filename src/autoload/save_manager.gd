@@ -362,7 +362,7 @@ func _invalid_field(data: Dictionary) -> String:
 		"flags": _is_map.bind(_is_bool),
 		"quests": _is_map.bind(_is_text),
 		"collected_pickups": _is_text_list,
-		"best_scores": _is_map.bind(_is_map.bind(_is_count)),
+		"best_scores": _is_map.bind(_is_score),
 	}
 	for key: String in checks:
 		if data.has(key) and not checks[key].call(data[key]):
@@ -388,6 +388,16 @@ func _is_count(value: Variant) -> bool:
 
 func _is_hp(value: Variant) -> bool:
 	return _is_number(value) and value >= 1
+
+
+## Entrée de best_scores : score, wave et games entiers positifs (autres clés libres).
+func _is_score(value: Variant) -> bool:
+	if not value is Dictionary:
+		return false
+	for key: String in ["score", "wave", "games"]:
+		if (value as Dictionary).has(key) and not _is_count(value[key]):
+			return false
+	return true
 
 
 func _is_vector(value: Variant) -> bool:

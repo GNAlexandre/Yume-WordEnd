@@ -37,6 +37,8 @@ func test_no_file_means_no_save() -> void:
 
 func test_round_trip_is_identical_field_by_field() -> void:
 	_fill_state()
+	# Position quelconque (pas un décimal exact en float) : aucune précision perdue en JSON.
+	GameState.position = Vector3(-51.37, 0.23, 9.81)
 	var before := GameState.to_dict()
 	watch_signals(SaveManager)
 	assert_eq(SaveManager.save(), OK)
@@ -48,7 +50,7 @@ func test_round_trip_is_identical_field_by_field() -> void:
 	assert_eq(after.keys(), before.keys(), "mêmes champs")
 	for key: String in before:
 		assert_eq(after[key], before[key], "champ %s" % key)
-	assert_eq(GameState.position, Vector3(12.25, 1.5, -4.75))
+	assert_eq(GameState.position, Vector3(-51.37, 0.23, 9.81))
 	assert_eq(after["collected_pickups"], ["beach_shell_2", "forest_page_1"])
 	assert_eq(after["best_scores"], {"dunes": {"score": 640, "wave": 6, "games": 4}})
 	assert_eq(GameState.best_score(&"dunes"), 640)
@@ -175,6 +177,7 @@ func test_invalid_import_is_refused_without_touching_state() -> void:
 		'{"version": 1, "inventory": {"page_fragment": -2}}': ERR_INVALID_DATA,
 		'{"version": 1, "collected_pickups": "forest_page_1"}': ERR_INVALID_DATA,
 		'{"version": 1, "quests": {"pages": true}}': ERR_INVALID_DATA,
+		'{"version": 1, "best_scores": {"dunes": 640}}': ERR_INVALID_DATA,
 	}
 	watch_signals(EventBus)
 	for text: String in refused:
@@ -185,3 +188,12 @@ func test_invalid_import_is_refused_without_touching_state() -> void:
 	assert_signal_not_emitted(EventBus, "game_loaded")
 	assert_false(SaveManager.is_game_loaded())
 	assert_false(SaveManager.has_save())
+
+
+func test_unknown_fields_are_tolerated() -> void:
+	var text := '{"version": 1, "skin": "enfant", "day_phase": "night", "best_scores": '
+	text += '{"dunes": {"score": 50, "wave": 2, "games": 1, "date": "2026-10-05"}}}'
+	assert_eq(SaveManager.import_json(text), OK, "champs ajoutés plus tard : ignorés")
+	assert_eq(GameState.skin_id, &"enfant")
+	assert_eq(GameState.best_score(&"dunes"), 50)
+	assert_eq(GameState.max_hp, GameState.DEFAULT_MAX_HP, "champ absent : valeur par défaut")
