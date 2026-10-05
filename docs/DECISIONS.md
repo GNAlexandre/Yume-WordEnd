@@ -150,9 +150,10 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **L2 — relief** : `Ground` porte `IslandTerrain` (src/world/terrain.gd, @tool) : relief calculé
   (`height_at(x, z)` en coordonnées de l'île), HeightMapShape3D 129 × 129 (taille native de
   Jolt, 1,25 m), mesh visible tiré de la même grille où chaque bloc plat de 5 m ne fait que deux
-  triangles (~20 k triangles au lieu de 33 k). Couleurs du sol au pixel (`shaders/terrain.gdshader` : chemins,
-  place, arène, plage, sous-bois) ; la forme de la côte est la même dans terrain.gd,
-  terrain.gdshader et water.gdshader. Pentes ≤ 36° (test : < 40° sur chaque facette).
+  triangles (~20 k triangles au lieu de 33 k ; ~150 ms pour bâtir l'île en natif). Couleurs du
+  sol au pixel (`shaders/terrain.gdshader` : chemins, place, arène, plage, sous-bois) ; la
+  forme de la côte est la même dans terrain.gd, terrain.gdshader et water.gdshader. Pentes
+  ≤ 36° (test : < 40° sur chaque facette).
 - **L2 — mer et limites** : haut-fond (fond à −1,3 m, eau à −0,6 m) jusqu'aux murs du carré
   (±80,5 m) : on patauge sans jamais se noyer ; des bouées marquent la ligne des murs. La
   KillZone (sous y = −10) et `WorldManager.FALL_LIMIT` (−30 m) ne sont que des filets de

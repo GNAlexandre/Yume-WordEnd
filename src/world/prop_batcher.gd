@@ -13,6 +13,9 @@ extends Node3D
 const TOON := preload("res://src/world/materials/toon.tres")
 const GLOW := preload("res://src/world/materials/glow.tres")
 
+## Matériau blanc des meshes sans matériau.
+static var _default_material := StandardMaterial3D.new()
+
 ## Variation de luminosité par instance (0 = aucune), pour que les copies ne soient pas
 ## identiques ; tirée de la position, donc stable.
 @export_range(0.0, 0.3) var color_jitter: float = 0.06
@@ -78,7 +81,7 @@ static func _source_material(instance: MeshInstance3D) -> StandardMaterial3D:
 	if material == null:
 		material = instance.mesh.surface_get_material(0)
 	if material == null:
-		return StandardMaterial3D.new()
+		return _default_material
 	return material as StandardMaterial3D
 
 
@@ -98,7 +101,14 @@ func _multimesh_instance(lot: _Lot) -> MultiMeshInstance3D:
 		multimesh.set_instance_transform(i, lot.transforms[i])
 		multimesh.set_instance_color(i, lot.colors[i])
 	var node := MultiMeshInstance3D.new()
-	node.name = "Batch_%s" % lot.mesh.resource_path.get_file().get_basename()
+	node.name = (
+		"Batch_%s%s%s"
+		% [
+			lot.mesh.resource_path.get_file().get_basename(),
+			"_glow" if lot.unshaded else "",
+			"_no_shadow" if lot.shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF else "",
+		]
+	)
 	node.multimesh = multimesh
 	node.material_override = GLOW if lot.unshaded else TOON
 	node.cast_shadow = lot.shadow

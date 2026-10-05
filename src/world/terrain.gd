@@ -149,14 +149,6 @@ static func is_land(x: float, z: float) -> bool:
 	return coast_distance(x, z) > 0.0
 
 
-## Normale du sol (différences finies), pour mesurer les pentes.
-static func normal_at(x: float, z: float) -> Vector3:
-	var e := 0.25
-	var dx := height_at(x + e, z) - height_at(x - e, z)
-	var dz := height_at(x, z + e) - height_at(x, z - e)
-	return Vector3(-dx, 2.0 * e, -dz).normalized()
-
-
 static func _height(x: float, z: float, coast: float) -> float:
 	var h := 0.0
 	if coast >= 0.0:
