@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/stubs/player_stub.gd" id="1_stub"]
+[ext_resource type="Script" path="res://src/combat/health.gd" id="2_health"]
+[ext_resource type="PackedScene" path="res://src/combat/hurtbox.tscn" id="3_hurtbox"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_stub"]
+radius = 0.35
+height = 1.5
+
+[node name="PlayerStub" type="CharacterBody3D" groups=["player"]]
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("1_stub")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+shape = SubResource("CapsuleShape3D_stub")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+max_hp = 5
+invincibility_time = 1.2
+
+[node name="Hurtbox" parent="." node_paths=PackedStringArray("health") instance=ExtResource("3_hurtbox")]
+health = NodePath("../Health")
+team = &"player"

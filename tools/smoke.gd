@@ -1,5 +1,6 @@
 extends SceneTree
-## Test de fumée (PLAN.md section 9) : chaque script de res://src se compile, chaque scène de
+## Test de fumée (PLAN.md section 9) : chaque script de res://src, res://tests et res://tools
+## se compile (GUT ignore sans échouer un fichier de test qui ne compile pas), chaque scène de
 ## res://src et res://tests s'instancie, passe deux images dans l'arbre (process + physique)
 ## puis se libère sans erreur.
 ##
@@ -7,7 +8,7 @@ extends SceneTree
 ## Code de retour 1 si un script ne compile pas ou si une scène ne s'instancie pas ; les
 ## erreurs et avertissements imprimés par Godot sont relevés par tools/check.sh.
 
-const SCRIPT_ROOTS: Array[String] = ["res://src"]
+const SCRIPT_ROOTS: Array[String] = ["res://src", "res://tests", "res://tools"]
 const SCENE_ROOTS: Array[String] = ["res://src", "res://tests"]
 
 var _failures: Array[String] = []

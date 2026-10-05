@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/stubs/dummy.gd" id="1_dummy"]
+[ext_resource type="Script" path="res://src/combat/health.gd" id="2_health"]
+[ext_resource type="PackedScene" path="res://src/combat/hurtbox.tscn" id="3_hurtbox"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dummy"]
+radius = 0.4
+height = 1.0
+
+[node name="Dummy" type="CharacterBody3D" groups=["enemies"]]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_dummy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("CapsuleShape3D_dummy")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+max_hp = 3
+
+[node name="Hurtbox" parent="." node_paths=PackedStringArray("health") instance=ExtResource("3_hurtbox")]
+health = NodePath("../Health")
+team = &"enemy"
