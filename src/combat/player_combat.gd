@@ -302,15 +302,15 @@ func _launch_wave() -> void:
 	_wave_pending = false
 	if _wave_scene == null:
 		return
-	var wave := _wave_scene.instantiate() as Node3D
+	# Frère du joueur : l'onde ne suit pas ses déplacements.
 	var body := get_parent() as Node3D
 	var parent: Node = body.get_parent() if body != null else null
 	if parent == null:
-		parent = get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+		parent = get_tree().root
+	var wave := _wave_scene.instantiate() as ChargeWave
 	parent.add_child(wave)
 	wave.global_position = global_position
-	if wave.has_method(&"launch"):
-		wave.call(&"launch", _forward(), body)
+	wave.launch(_forward(), body)
 	wave_launched.emit(wave)
 
 

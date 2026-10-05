@@ -4,6 +4,7 @@ extends GutTest
 ## et animations jouées sur le Visual.
 
 const RIG := preload("res://tests/stubs/l4_player_rig.tscn")
+const PLAYER := preload("res://src/player/player.tscn")
 const HITBOX := preload("res://src/combat/hitbox.tscn")
 const BITE := preload("res://data/attacks/bite.tres")
 const WHIP := preload("res://data/attacks/whip.tres")
@@ -178,3 +179,16 @@ func test_plays_combat_animations_on_the_visual() -> void:
 	simulate(_rig, 14, 0.1)
 	_health.take_damage(5, _source)
 	assert_eq(_visual.current_animation(), &"mort")
+
+
+func test_wiring_in_the_real_player_scene() -> void:
+	var player: Node3D = add_child_autofree(PLAYER.instantiate())
+	var combat := player.get_node(^"Combat") as PlayerCombat
+	var sword := player.get_node(^"Combat/SwordHitbox") as Hitbox
+	var shape := (sword.get_node(^"CollisionShape3D") as CollisionShape3D).shape
+	assert_true(shape is ConvexPolygonShape3D, "SwordHitbox : secteur réglé depuis sword_1")
+	assert_eq(sword.source, player, "attaquant transmis : le joueur")
+	assert_eq((player.get_node(^"Health") as Health).max_hp, GameState.max_hp)
+	combat.attack()
+	assert_true(combat.is_busy())
+	assert_eq(sword.attack.id, &"sword_1")

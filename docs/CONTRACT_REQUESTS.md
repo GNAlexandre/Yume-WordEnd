@@ -16,3 +16,22 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 ```
 
 ## Demandes
+
+## L4 — Combat tourné vers « devant » par le joueur
+- Besoin : PlayerCombat vise avec le −Z de son nœud : secteur de l'épée (enfant SwordHitbox) et
+  direction de l'onde. La règle n'est écrite que dans les consignes des lots, pas dans PLAN.md.
+- Proposition : contrat de player.tscn : « player.gd (L1) tourne `Combat` (rotation y) pour que
+  son −Z local soit la direction de déplacement, ou la cible verrouillée ; Combat appelle
+  `Visual.set_facing(-Z de Combat)` au début d'un coup ou d'une charge ».
+- En attendant : sans rotation, le joueur frappe et lance l'onde vers −Z du monde (nord).
+
+## L4 — show_frame émet frame_changed
+- Besoin : PlayerCombat lance l'onde quand le Visual affiche l'image « onde » de la charge : il
+  appelle `show_frame(&"charge", wave_frame(&"charge"))` et attend `frame_changed(&"charge", 3)`.
+  Il s'appuie aussi sur `play(anim, true)` (relance une animation, même terminée) et sur
+  `animation_finished(&"attaque")` pour finir un coup. Le squelette L0 de CharacterVisual (L3) fait
+  tout cela (AnimatedSprite3D émet frame_changed quand `frame` change).
+- Proposition : préciser dans le contrat de CharacterVisual : « show_frame(anim, frame) émet
+  frame_changed(anim, frame) quand l'image affichée change ».
+- En attendant : si le signal ne vient pas, l'onde part aussitôt après show_frame (repli) ; un coup
+  sans animation_finished se termine après `PlayerCombat.animation_timeout` (2 s).
