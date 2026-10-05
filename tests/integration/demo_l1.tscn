@@ -1,0 +1,125 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_l1.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://src/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://tests/stubs/l1_interactable_stub.tscn" id="3_interactable"]
+[ext_resource type="PackedScene" path="res://tests/stubs/l1_target_dummy.tscn" id="4_dummy"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_demo"]
+sky_top_color = Color(0.227, 0.173, 0.388, 1)
+sky_horizon_color = Color(0.965, 0.627, 0.353, 1)
+ground_bottom_color = Color(0.29, 0.11, 0.165, 1)
+ground_horizon_color = Color(0.898, 0.541, 0.353, 1)
+sun_angle_max = 40.0
+
+[sub_resource type="Sky" id="Sky_demo"]
+sky_material = SubResource("ProceduralSkyMaterial_demo")
+
+[sub_resource type="Environment" id="Environment_demo"]
+background_mode = 2
+sky = SubResource("Sky_demo")
+ambient_light_source = 3
+ambient_light_energy = 1.0
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.45, 0.68, 0.4, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_obstacle"]
+albedo_color = Color(0.62, 0.6, 0.72, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_slope_ok"]
+albedo_color = Color(0.86, 0.76, 0.45, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_slope_steep"]
+albedo_color = Color(0.82, 0.45, 0.36, 1)
+
+[node name="DemoL1" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_demo")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0, 0.374607, -0.927184, 0, 0.927184, 0.374607, 1, 0, 0, 0, 30, 0)
+light_color = Color(1, 0.839, 0.627, 1)
+light_energy = 1.3
+shadow_enabled = true
+
+[node name="Geometry" type="CSGCombiner3D" parent="."]
+use_collision = true
+collision_mask = 0
+
+[node name="Ground" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+size = Vector3(80, 1, 80)
+material = SubResource("StandardMaterial3D_ground")
+
+[node name="Crate" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.4, 0)
+size = Vector3(2, 0.8, 2)
+material = SubResource("StandardMaterial3D_obstacle")
+
+[node name="Wall" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1, -6)
+size = Vector3(0.6, 2, 6)
+material = SubResource("StandardMaterial3D_obstacle")
+
+[node name="Pillar" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, -9)
+radius = 0.5
+height = 3.0
+sides = 12
+material = SubResource("StandardMaterial3D_obstacle")
+
+[node name="Slope40" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 0.766044, -0.642788, 0, 0.642788, 0.766044, -8, 1.7369, -6.4588)
+size = Vector3(3, 0.5, 6)
+material = SubResource("StandardMaterial3D_slope_ok")
+
+[node name="Slope40Top" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.93, -10.1)
+size = Vector3(3, 3.86, 3)
+material = SubResource("StandardMaterial3D_slope_ok")
+
+[node name="Slope50" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 0.642788, -0.766044, 0, 0.766044, 0.642788, -3, 2.1374, -6.1199)
+size = Vector3(3, 0.5, 6)
+material = SubResource("StandardMaterial3D_slope_steep")
+
+[node name="Label40" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.2, -3)
+billboard = 1
+text = "40°"
+font_size = 64
+
+[node name="Label50" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.2, -3)
+billboard = 1
+text = "50°"
+font_size = 64
+
+[node name="Sign" parent="." instance=ExtResource("3_interactable")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0.5)
+dialogue_seconds = 1.5
+
+[node name="TimereA" parent="." instance=ExtResource("4_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -5)
+
+[node name="TimereB" parent="." instance=ExtResource("4_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 2)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="HUD"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 1000.0
+offset_bottom = 120.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
