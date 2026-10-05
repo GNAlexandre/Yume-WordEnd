@@ -1,5 +1,8 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://src/ui/dialogue_box.gd" id="1_box"]
+[ext_resource type="Theme" path="res://src/ui/dialogue_box_theme.tres" id="2_theme"]
+
 [node name="DialogueBox" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -7,4 +10,116 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_box")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.08
+anchor_top = 1.0
+anchor_right = 0.92
+anchor_bottom = 1.0
+offset_top = -210.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="ChoicesRow" type="HBoxContainer" parent="Layout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+alignment = 2
+
+[node name="ChoicesPanel" type="PanelContainer" parent="Layout/ChoicesRow"]
+layout_mode = 2
+
+[node name="Choices" type="VBoxContainer" parent="Layout/ChoicesRow/ChoicesPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Choice0" type="Button" parent="Layout/ChoicesRow/ChoicesPanel/Choices"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+text = "Premier choix"
+alignment = 0
+
+[node name="Choice1" type="Button" parent="Layout/ChoicesRow/ChoicesPanel/Choices"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+text = "Second choix"
+alignment = 0
+
+[node name="Panel" type="PanelContainer" parent="Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 188)
+layout_mode = 2
+
+[node name="Row" type="HBoxContainer" parent="Layout/Panel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 20
+
+[node name="PortraitFrame" type="PanelContainer" parent="Layout/Panel/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 148)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"DialoguePortrait"
+
+[node name="Portrait" type="TextureRect" parent="Layout/Panel/Row/PortraitFrame"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Content" type="VBoxContainer" parent="Layout/Panel/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="NamePlate" type="PanelContainer" parent="Layout/Panel/Row/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_type_variation = &"DialogueNamePlate"
+
+[node name="NameLabel" type="Label" parent="Layout/Panel/Row/Content/NamePlate"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DialogueName"
+text = "Nom"
+
+[node name="TextRow" type="HBoxContainer" parent="Layout/Panel/Row/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Text" type="Label" parent="Layout/Panel/Row/Content/TextRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "Texte de la réplique."
+autowrap_mode = 3
+visible_characters_behavior = 1
+
+[node name="NextHint" type="Control" parent="Layout/Panel/Row/Content/TextRow"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(18, 12)
+layout_mode = 2
+size_flags_vertical = 8
 mouse_filter = 2

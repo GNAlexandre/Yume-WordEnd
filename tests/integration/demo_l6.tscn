@@ -1,0 +1,125 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_l6.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://src/npc/npc.tscn" id="2_npc"]
+[ext_resource type="Resource" path="res://data/npcs/librarian.tres" id="3_librarian"]
+[ext_resource type="PackedScene" path="res://tests/stubs/player_stub.tscn" id="4_player"]
+[ext_resource type="PackedScene" path="res://src/ui/dialogue_box.tscn" id="5_box"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_demo"]
+sky_top_color = Color(0.38, 0.6, 0.9, 1)
+sky_horizon_color = Color(0.86, 0.9, 0.96, 1)
+ground_bottom_color = Color(0.35, 0.45, 0.3, 1)
+ground_horizon_color = Color(0.86, 0.9, 0.96, 1)
+
+[sub_resource type="Sky" id="Sky_demo"]
+sky_material = SubResource("ProceduralSkyMaterial_demo")
+
+[sub_resource type="Environment" id="Environment_demo"]
+background_mode = 2
+sky = SubResource("Sky_demo")
+ambient_light_source = 2
+ambient_light_color = Color(0.78, 0.84, 0.95, 1)
+ambient_light_energy = 0.45
+reflected_light_source = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass"]
+albedo_color = Color(0.45, 0.68, 0.36, 1)
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_plaza"]
+albedo_color = Color(0.91, 0.851, 0.71, 1)
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
+albedo_color = Color(1, 0.945, 0.839, 1)
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_roof"]
+albedo_color = Color(0.91, 0.416, 0.353, 1)
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trunk"]
+albedo_color = Color(0.55, 0.38, 0.25, 1)
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leaves"]
+albedo_color = Color(0.36, 0.66, 0.36, 1)
+metallic_specular = 0.0
+
+[node name="DemoL6" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_demo")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.894427, -0.342682, 0.287348, 0, 0.642529, 0.766261, -0.447214, -0.685365, 0.574696, 3, 8, 6)
+light_color = Color(1, 0.96, 0.9, 1)
+light_energy = 0.45
+shadow_enabled = true
+
+[node name="Ground" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+use_collision = true
+size = Vector3(40, 0.2, 40)
+material = SubResource("StandardMaterial3D_grass")
+
+[node name="Plaza" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+radius = 4.0
+height = 0.02
+sides = 32
+material = SubResource("StandardMaterial3D_plaza")
+
+[node name="Library" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 1.5, -6)
+size = Vector3(6, 3, 4)
+material = SubResource("StandardMaterial3D_wall")
+
+[node name="LibraryRoof" type="CSGCylinder3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -2.5, 4.1, -6)
+radius = 4.6
+height = 2.2
+sides = 4
+cone = true
+material = SubResource("StandardMaterial3D_roof")
+
+[node name="TreeTrunk" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.9, -3.5)
+radius = 0.25
+height = 1.8
+material = SubResource("StandardMaterial3D_trunk")
+
+[node name="TreeLeaves" type="CSGSphere3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 2.6, -3.5)
+radius = 1.4
+radial_segments = 16
+rings = 8
+material = SubResource("StandardMaterial3D_leaves")
+
+[node name="Librarian" parent="." instance=ExtResource("2_npc")]
+data = ExtResource("3_librarian")
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 0, 2.2)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.974924, -0.0461396, 0.217701, 0, 0.97827, 0.207335, -0.222537, -0.202136, 0.953739, 1.4, 1.7, 4.6)
+current = true
+fov = 50.0
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Help" type="Label" parent="UI"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 640.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.15, 0.15, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
+text = "E, Entrée ou clic : continuer · flèches ou souris : choisir · E : reparler"
+
+[node name="DialogueBox" parent="UI" instance=ExtResource("5_box")]

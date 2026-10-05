@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="NpcData" format=3]
+
+[ext_resource type="Script" path="res://src/npc/npc_data.gd" id="1_npc"]
+[ext_resource type="Resource" path="res://data/skins/bibliothecaire.tres" id="2_skin"]
+
+[resource]
+script = ExtResource("1_npc")
+id = &"librarian"
+display_name = "Bibliothécaire"
+skin = ExtResource("2_skin")
+dialogue_path = "res://data/dialogues/librarian.json"
+quest_id = &"pages"
+home_zone = &"village"
