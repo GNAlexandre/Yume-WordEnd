@@ -1,0 +1,140 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_l8.gd" id="1_demo"]
+
+[node name="DemoL8" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_demo")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.11, 0.12, 0.16, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Layout" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Margin/Layout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Lot 8 — Sauvegarde (démo)"
+
+[node name="Info" type="Label" parent="Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.76, 0.85, 1)
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SaveButton" type="Button" parent="Margin/Layout/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Sauvegarder"
+
+[node name="LoadButton" type="Button" parent="Margin/Layout/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Charger"
+
+[node name="ExportButton" type="Button" parent="Margin/Layout/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Exporter"
+
+[node name="ImportButton" type="Button" parent="Margin/Layout/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Importer"
+
+[node name="NewGameButton" type="Button" parent="Margin/Layout/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Nouvelle partie"
+
+[node name="Actions" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ActionsLabel" type="Label" parent="Margin/Layout/Actions"]
+layout_mode = 2
+text = "Pendant la partie :"
+
+[node name="PickupButton" type="Button" parent="Margin/Layout/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ramasser un fragment"
+
+[node name="ScoreButton" type="Button" parent="Margin/Layout/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Finir une série des dunes"
+
+[node name="DamageButton" type="Button" parent="Margin/Layout/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Abîmer le fichier"
+
+[node name="Status" type="Label" parent="Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.55, 1)
+autowrap_mode = 3
+
+[node name="Panels" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="ExportPanel" type="VBoxContainer" parent="Margin/Layout/Panels"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ExportLabel" type="Label" parent="Margin/Layout/Panels/ExportPanel"]
+layout_mode = 2
+text = "Texte exporté (modifiable, lu par « Importer »)"
+
+[node name="JsonEdit" type="TextEdit" parent="Margin/Layout/Panels/ExportPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="FilePanel" type="VBoxContainer" parent="Margin/Layout/Panels"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FileLabel" type="Label" parent="Margin/Layout/Panels/FilePanel"]
+layout_mode = 2
+text = "Fichier sur disque (relu toutes les 0,2 s)"
+
+[node name="FileView" type="TextEdit" parent="Margin/Layout/Panels/FilePanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
+editable = false
