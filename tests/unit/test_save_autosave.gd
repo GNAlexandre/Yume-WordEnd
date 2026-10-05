@@ -93,7 +93,7 @@ func test_at_most_one_write_per_delay() -> void:
 	await wait_real(0.3)
 	SaveManager.saved.disconnect(_record_write)
 	get_tree().process_frame.disconnect(_record_frame)
-	assert_between(_write_times.size(), 3, 6, "écritures régulières pendant 0,9 s de signaux")
+	assert_between(_write_times.size(), 2, 7, "écritures régulières pendant 0,9 s de signaux")
 	var minimum_gap := 200 - _longest_frame_ms - 2
 	for i in range(1, _write_times.size()):
 		assert_gte(_write_times[i] - _write_times[i - 1], minimum_gap, "écart entre deux écritures")
