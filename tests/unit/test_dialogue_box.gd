@@ -91,6 +91,21 @@ func test_first_press_completes_second_continues() -> void:
 	assert_eq(_answers.size(), 1, "un seul envoi en attendant la ligne suivante")
 
 
+func test_zero_speed_shows_whole_line_at_once() -> void:
+	_box.characters_per_second = 0.0
+	_line("Tout d'un coup.")
+	assert_true(_box.is_waiting())
+	assert_eq(_label("Text").visible_characters, -1)
+
+
+func test_line_without_dialogue_started_has_no_empty_portrait_frame() -> void:
+	EventBus.dialogue_started.emit(&"librarian")
+	_line("Bonjour.")
+	EventBus.dialogue_ended.emit(&"librarian")
+	_line("Une voix sans visage…")
+	assert_false(_box.get_node("%PortraitFrame").visible)
+
+
 func test_empty_speaker_hides_name_plate() -> void:
 	_line("Une voix…", [], "")
 	assert_false(_box.get_node("%NamePlate").visible)

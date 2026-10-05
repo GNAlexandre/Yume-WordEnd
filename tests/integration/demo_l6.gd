@@ -4,7 +4,7 @@ extends Node3D
 ## puis l'affiche en entier avec ses deux choix ; elle compte les images (et non le temps) pour
 ## que la capture soit toujours la même :
 ##   tools/screenshot.sh res://tests/integration/demo_l6.tscn build/shots/l6.png 380
-## Ensuite : E, Entrée ou clic pour continuer, flèches / ZS / souris pour choisir ; une fois la
+## Ensuite : E, Entrée ou clic pour continuer, flèches (ou ZS) et souris pour choisir ; une fois la
 ## conversation finie, E la relance (ce qu'elle dit dépend de GameState : quête, pages).
 
 ## Images (process) où la présentation termine la 1re réplique, passe à la suivante, puis

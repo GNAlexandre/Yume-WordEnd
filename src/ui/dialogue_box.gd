@@ -18,7 +18,7 @@ const NPCS_DIR := "res://data/npcs"
 ## Durée du fondu d'ouverture (s).
 const FADE_TIME := 0.15
 
-## Vitesse d'affichage du texte (caractères par seconde).
+## Vitesse d'affichage du texte (caractères par seconde) ; 0 = texte affiché d'un coup.
 @export var characters_per_second: float = 40.0
 
 var _state: State = State.HIDDEN
@@ -251,7 +251,7 @@ func _on_dialogue_line(speaker: String, text: String, choices: Array) -> void:
 	_state = State.TYPING
 	set_process(true)
 	_open()
-	if text.strip_edges().is_empty():
+	if text.strip_edges().is_empty() or characters_per_second <= 0.0:
 		complete_line()
 
 
@@ -261,6 +261,7 @@ func _on_dialogue_ended(_npc_id: StringName) -> void:
 	hide()
 	set_process(false)
 	_portrait.texture = null
+	_portrait_frame.hide()
 
 
 func _on_choice_focused(index: int) -> void:

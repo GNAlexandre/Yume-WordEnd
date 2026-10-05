@@ -120,6 +120,6 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.2, 0.15, 0.15, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 18
-text = "E, Entrée ou clic : continuer · flèches, ZS ou souris : choisir · E : reparler"
+text = "E, Entrée ou clic : continuer · flèches ou souris : choisir · E : reparler"
 
 [node name="DialogueBox" parent="UI" instance=ExtResource("5_box")]
