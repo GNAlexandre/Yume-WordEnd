@@ -137,3 +137,37 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   vivent hors de `data/skins/`.
 - **L0 — vagues** : `data/waves/dunes.json` sans champ `music` tant qu'il n'y a pas d'audio
   (licence de l'enregistrement non tranchée, section 13).
+
+## L9 — Export Web et site
+
+- **L9 — shell HTML personnalisé** (`web/shell.html`, `html/custom_html_shell`) : celui de
+  Godot 4.7.2 en français, aux couleurs du site et du couchant, sans logo Godot : barre de
+  téléchargement en Mo, message clair si WebGL 2, HTTPS ou le moteur manquent (bouton
+  « Recharger »). Il garde les marqueurs `$GODOT_*` du shell d'origine, donc l'export headless
+  marche. Raison : le shell par défaut est en anglais et affiche le logo Godot.
+- **L9 — preset Web** au format qu'écrit l'éditeur 4.7.2 (section `[runnable_presets]`, plus de
+  `runnable` ni `advanced_options` dans `[preset.0]`) ; `web/*` exclu du pck ; PWA désactivée
+  (un service worker garderait en cache de vieilles versions du jeu).
+- **L9 — contrôles tactiles** : `InputEventAction` passés à `Input.parse_input_event` (état
+  d'Input et événements pour `_input` / `_unhandled_input`). Joystick : intensités brutes par
+  axe (la zone morte de `Input.get_vector` s'applique ensuite, comme pour un stick), zone morte
+  radiale de 8 %. Caméra : vitesse du doigt / `camera_full_speed` (1000 px/s) = intensité de
+  `camera_*`, d'où une rotation proportionnelle au glisser. Ordre : `_input` (doigts sur nos
+  contrôles) → interface (boutons d'un dialogue ou d'un menu) → `_unhandled_input` (caméra,
+  souris émulée consommée). Mode AUTO : affichés sur écran tactile ou au premier toucher, masqués
+  par une touche ou un bouton du jeu ou un clic de souris. Pause : Pause et Sac seulement ;
+  dialogue : Parler (« Suite ») et Pause. Tout est relâché quand ils disparaissent, quittent
+  l'arbre ou que la fenêtre perd le focus.
+- **L9 — chargement sans threads** : vérifié dans le code de 4.7.2, `load_threaded_request()`
+  charge tout dans l'appel (WorkerThreadPool sans fil) ; `Loading.load_scene()` découpe le
+  chargement (dépendances d'abord, 50 ms par image) pour une vraie progression.
+- **L9 — CI** : actions à leur dernière version majeure en Node 24 (checkout v7,
+  upload/download-artifact v7, configure-pages v6, upload-pages-artifact v5, deploy-pages v5) ;
+  `safe.directory` (sans lui, le contrôle des fichiers générés de check.sh ne voyait rien dans
+  le conteneur) ; templates liés plutôt que copiés ; `workflow_dispatch` ; budget par
+  `tools/build_size.sh` (gzip -6 de wasm + pck, 1 Mo = 1 048 576 octets, comme check.sh).
+- **L9 — snippet iframe** gardé tel quel (sans `allowfullscreen`, que Chrome signale comme
+  ignoré) ; le bouton plein écran de la page agit sur l'iframe depuis la page.
+- **L9 — vérification dans un navigateur** : le Chromium headless de Playwright (SwiftShader)
+  fournit un WebGL 2 logiciel dans la VM ; utilisé à la main (docs/web.md), pas dans check.sh
+  (lourd et absent de l'image godot-ci).
