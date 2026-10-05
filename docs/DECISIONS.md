@@ -137,3 +137,51 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   vivent hors de `data/skins/`.
 - **L0 — vagues** : `data/waves/dunes.json` sans champ `music` tant qu'il n'y a pas d'audio
   (licence de l'enregistrement non tranchée, section 13).
+
+## L1 — joueur et caméra
+
+- **L1 — commandes injectables** : `Player.read_commands()` lit les actions, `Player.tick(delta,
+  commandes)` les applique ; les tests fabriquent des `Player.Commands` et enchaînent les tick()
+  dans une même image physique (hors image physique, `move_and_slide()` prend le delta de l'image
+  idle, pas 1/60 s). Raison : tests de mouvement déterministes, sans attente.
+- **L1 — réglages du mouvement** (tous en @export) : marche 4 m/s, course 7 m/s, accélération
+  45 m/s², décélération 60 m/s² (aussi pour les demi-tours : pas de glisse), 18 m/s² en l'air ;
+  saut 5,4 m/s avec `gravity_scale` 1,5 (environ 1 m), délai de grâce 0,1 s, appui de saut retenu
+  0,12 s ; `floor_constant_speed`, `floor_snap_length` 0,3 m ; stick à moitié incliné = demi-vitesse.
+- **L1 — course** : Maj se maintient ; à la manette, L3 lance la course jusqu'à l'arrêt du joueur
+  (maintenir le clic du stick en l'inclinant est inconfortable). « course » n'est jouée qu'au-delà
+  de la vitesse de marche.
+- **L1 — relais de combat** : `attack()` et `charge_begin()` seulement si `Combat.is_busy()` est
+  faux et hors dialogue ; `charge_release()` toujours transmis (il termine l'état occupé de la
+  charge) ; une charge maintenue pendant une attaque démarre dès que Combat est libre (jeu.js).
+  Pour L4 : l'enchaînement sword_1 → 3 se fait sur des appuis reçus quand `is_busy()` est
+  redevenu faux (fenêtre d'enchaînement après chaque coup).
+- **L1 — visée** : cible verrouillée, sinon dernière direction de déplacement (−Z au départ) ;
+  `Combat.rotation.y` et `InteractionArea` la suivent ; `Visual.set_facing(visée)` à chaque image
+  où Combat est libre. Le corps du joueur ne tourne jamais.
+- **L1 — interaction** : `InteractionArea` (Area3D ajoutée à player.tscn, couche 0, masque 6 + 7,
+  sphère de 1 m à 0,6 m devant) ; cône de 120° autour de la visée (un objet à moins de 0,6 m
+  compte toujours) ; le plus proche gagne (distance horizontale à la racine de l'interactable) ;
+  une invite "" rend un interactable inactif. Invite masquée ("" émis) pendant un dialogue et à la
+  mort. Après `dialogue_ended`, interact et jump sont ignorés jusqu'à leur relâchement (la touche
+  qui ferme le dialogue ne le relance pas, A ne fait pas sauter). Le joueur se tourne vers
+  l'interactable en interagissant (sauf verrou).
+- **L1 — verrouillage** : recherche dans 12 m (`lock_radius`), verrou perdu au-delà de 16 m
+  (`lock_break_distance`, hystérésis), quand la cible quitte `enemies`, est libérée ou en cours de
+  libération, quand son `Health` enfant est mort, ou à la mort du joueur. Sans cible dans le
+  rayon, l'appui replace la caméra derrière le joueur (comme le Z-targeting de Zelda).
+- **L1 — caméra** : `camera_rig.gd` sans class_name (typé par preload dans player.gd) ; tangage
+  −70° à +20° (départ −22° de la scène), zoom 3 à 10 m par crans de 0,75 m lissés ; recentrage
+  après 1 s sans toucher la caméra, sauf si le joueur revient vers elle ; verrou : lacet vers la
+  cible, tangage −16°, point visé avancé de 35 % de l'écart (4 m au plus), orbite manuelle ignorée.
+- **L1 — pointeur** : capturé au clic gauche ou droit dans le jeu (pas un toucher émulé, pas
+  pendant un dialogue) ; libéré par l'action pause (lue dans `_input`, avant le menu),
+  `NOTIFICATION_PAUSED` (pause, inventaire, fin d'arène), `dialogue_started` (choix à la souris) et
+  la sortie de l'arbre (retour au menu). En headless `Input.mouse_mode` ne change pas : l'état
+  testé est `is_pointer_captured()`.
+- **L1 — réapparition** : `player_respawned` remet vitesse, élan, recul et appui de saut à zéro,
+  lève le verrou et place la caméra derrière la visée courante, au tangage par défaut (WorldManager
+  ne tourne pas le joueur, la visée est gardée).
+- **L1 — scènes de démo** : `tests/integration/demo_l1.tscn` (terrain CSG) et
+  `demo_l1.beach.tscn` (capture `l1.png` : île en lecture seule, joueur placé par
+  `WorldManager.teleport(&"beach")`, tourné vers la mer) partagent `demo_l1.gd`.
