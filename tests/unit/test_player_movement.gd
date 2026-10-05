@@ -16,6 +16,10 @@ func before_each() -> void:
 	GameState.reset()
 
 
+func after_each() -> void:
+	Input.action_release(&"move_forward")
+
+
 func after_all() -> void:
 	GameState.reset()
 
@@ -175,6 +179,20 @@ func test_jump_then_gravity_brings_player_back_to_floor() -> void:
 	assert_between(highest, 0.8, 1.2, "saut d'environ 1 m")
 	assert_true(player.is_on_floor(), "retombé au sol")
 	assert_almost_eq(player.position.y, 0.0, 0.05)
+
+
+func test_real_input_drives_player_through_physics_process() -> void:
+	_add_floor()
+	var player: Player = PLAYER.instantiate()
+	player.get_node(^"Combat").set_script(CombatStub)
+	add_child_autofree(player)
+	await wait_physics_frames(2)
+	var start := player.global_position
+	Input.action_press(&"move_forward")
+	await wait_physics_frames(30)
+	Input.action_release(&"move_forward")
+	assert_lt(player.global_position.z, start.z - 1.0, "l'action move_forward fait avancer")
+	assert_eq(player.visual.current_animation(), &"marche")
 
 
 func test_game_state_position_follows_player_on_floor() -> void:

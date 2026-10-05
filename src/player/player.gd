@@ -253,7 +253,7 @@ func tick(delta: float, commands: Commands) -> void:
 	var busy := combat.is_busy() or dead
 	var frozen := busy or _in_dialogue
 	_filter_after_dialogue(commands)
-	_update_lock(commands.lock and not _in_dialogue and not dead)
+	_update_lock(commands.lock and not _in_dialogue, dead)
 	var direction := Vector3.ZERO
 	if not frozen:
 		direction = move_direction(commands.move, _camera_basis())
@@ -340,10 +340,10 @@ func _filter_after_dialogue(commands: Commands) -> void:
 		_wait_release = false
 
 
-func _update_lock(toggle: bool) -> void:
-	if not _lock_still_valid():
+func _update_lock(toggle: bool, dead: bool) -> void:
+	if dead or not _lock_still_valid():
 		_lock_target = null
-	if not toggle:
+	if not toggle or dead:
 		return
 	if _lock_target != null:
 		_lock_target = null
@@ -430,7 +430,8 @@ func _animate() -> void:
 	var speed := Vector2(_move_velocity.x, _move_velocity.z).length()
 	if speed < IDLE_SPEED:
 		visual.play(&"repos")
-	elif _running:
+	elif _running and speed > walk_speed + IDLE_SPEED:
+		# Course au stick à moitié incliné : pas plus vite qu'une marche, donc « marche ».
 		visual.play(&"course")
 	else:
 		visual.play(&"marche")
