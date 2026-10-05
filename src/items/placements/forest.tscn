@@ -1,3 +1,17 @@
 [gd_scene format=3]
 
+[ext_resource type="PackedScene" path="res://src/items/pickup.tscn" id="1_pickup"]
+
 [node name="Pickups" type="Node3D"]
+
+[node name="forest_page_1" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 2)
+item_id = &"page_fragment"
+
+[node name="forest_page_2" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 5)
+item_id = &"page_fragment"
+
+[node name="forest_page_3" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -8)
+item_id = &"page_fragment"

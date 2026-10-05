@@ -1,3 +1,13 @@
 [gd_scene format=3]
 
+[ext_resource type="PackedScene" path="res://src/items/pickup.tscn" id="1_pickup"]
+
 [node name="Pickups" type="Node3D"]
+
+[node name="beach_shell_1" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 22)
+item_id = &"shell"
+
+[node name="beach_shell_2" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 18)
+item_id = &"shell"

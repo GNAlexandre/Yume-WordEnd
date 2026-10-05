@@ -329,3 +329,45 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   de dunes.json tant qu'il n'y a pas d'audio.
 - **L5 — démo** : `tests/integration/demo_l5.tscn` place aussi un Timere de chaque type autour du
   joueur factice (`showcase`) pour la capture ; ZQSD, J et K y pilotent un joueur minimal.
+## L7 — objets, inventaire, quête
+
+- **L7 — piles** : GameState garde le total par objet (champ `inventory` du schéma inchangé) et
+  `stacks()` en déduit les cases : une par tranche de `max_stack` si `stackable`, une par
+  exemplaire sinon ; un objet sans `data/items/<id>.tres` est accepté avec les valeurs par défaut
+  d'ItemData (empilable, 99). Pas de limite de cases ; plafond de sécurité de 999 par objet.
+  Raison : la sauvegarde reste celle du plan et `max_stack` garde le sens « par case » du Lot 0.
+- **L7 — record d'arène** : `record_score` compte toujours la partie ; `wave` est la vague de la
+  partie record (pas la meilleure vague jamais atteinte) ; égalité ou 0 point ne sont pas un
+  record ; arène sans id ignorée. Raison : schéma `{score, wave, games}` et test du Lot 0.
+- **L7 — relecture d'une sauvegarde** : `from_dict` remplace un champ absent ou mal typé par sa
+  valeur par défaut et ignore les entrées invalides (quantité non numérique ou ≤ 0, drapeau ni
+  booléen ni nombre, état de quête hors available/active/done) ; sans position valide (absente
+  ou au-delà de ±1 000 m), `zone` est vidée et game.gd replace le joueur au Spawn du village ;
+  PV max entre 1 et 20 ; jamais de `quest_updated`, pour qu'une quête finie ne redonne pas sa
+  récompense au chargement.
+- **L7 — QuestTracker** : vérification et récompense synchrones pendant l'émission de
+  `quest_updated(id, &"done")`. Refus (objets ou drapeaux manquants) : `set_quest_state(id,
+  &"active")` immédiat, signal local `completion_refused(quest_id, missing_items)` et
+  `push_warning`. Succès : objets requis retirés, `reward_items` donnés,
+  `max_hp = max(max_hp, reward_max_hp)`, signal local `quest_completed`. Seul le premier nœud du
+  groupe `quest_tracker` agit. Un écouteur de `quest_updated` branché après lui (HUD) relit
+  `GameState.quest_state()` : lors d'un refus, il reçoit `done` après le `active` de la remise.
+- **L7 — QuestData** : champs ajoutés `objective` (texte du HUD) et `reward_max_hp` (0 = sans
+  effet) ; `QuestData.find(id)` et `ItemData.find(id)` chargent `data/quests|items/<id>.tres`
+  (null si l'id est inconnu ou n'est pas un identifiant) ; `GameState.quests()` donne les états
+  pour afficher les objectifs au chargement.
+- **L7 — pickup** : `Mesh` est un halo face à la caméra (`src/items/pickup_halo.gdshader`, rayons
+  qui tournent, teinte `ItemData.color`), `Mesh/Icon` un Sprite3D billboard de l'icône,
+  `Shadow` un disque doux au sol ; la rotation demandée est celle des rayons du halo (une icône
+  billboard ne peut pas tourner). Objet lâché (`persistent = false`) : petit rebond
+  d'apparition. Ramassage une seule fois, invite « Ramasser ».
+- **L7 — inventaire** : l'action `inventory` l'ouvre dans `_unhandled_input` ; ouvert, il
+  consomme `inventory`, `ui_cancel` et `pause` dans `_input` (le menu pause de L10 ne s'ouvre
+  pas par-dessus) ; un clic hors du panneau le ferme ; il ne s'ouvre ni si `get_tree().paused`
+  est déjà vrai (pause, fin d'arène) ni entre `dialogue_started` et `dialogue_ended`, et rend la
+  pause s'il quitte l'arbre ouvert. Cases triées par item_id, 4 colonnes, 8 cases au moins.
+- **L7 — emplacements** : forêt `forest_page_1..3` en (-3, 0, 2), (4, 0, 5), (1, 0, -8) autour de
+  la clairière (0, 0) ; plage `beach_shell_1..2` près des rochers ; colline `hill_flower_1..2` au
+  pied du cône (sol plat) ; village `village_flower_1` à l'ouest de la place ; dunes : rien.
+- **L7 — icônes** : `tools/gen_item_icons.py` (Pillow, déterministe, 64 × 64 dessinées à 4×,
+  contour et ombre portée) ; `assets/items/unknown.png` pour un objet sans données.
