@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_l1.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://src/world/island.tscn" id="2_island"]
+[ext_resource type="PackedScene" path="res://src/player/player.tscn" id="3_player"]
+
+[node name="DemoL1Beach" type="Node3D"]
+script = ExtResource("1_demo")
+spawn_zone = &"beach"
+facing = Vector3(0, 0, 1)
+show_help = false
+
+[node name="Island" parent="." instance=ExtResource("2_island")]
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 27)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="HUD"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 1000.0
+offset_bottom = 120.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
