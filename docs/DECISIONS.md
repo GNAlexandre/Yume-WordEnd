@@ -552,3 +552,10 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `WorldManager.is_zone_safe(zone_id) -> bool` (`Zone.safe` de la zone, faux si inconnue),
   demandé par L5 ; `Enemy._player_in_safe_zone()` l'appelle directement (lecture défensive du
   groupe `zones` retirée) ; `tests/unit/test_contracts.gd` vérifie la signature.
+- **M1 — contournement des obstacles** (`src/enemies/enemy.gd`, L5) : un Timere qui heurte de
+  face un mur du décor statique (cosinus ≥ 0,8 entre sa direction et la normale, pente au-delà
+  de `floor_max_angle`) le longe pendant 0,5 s, toujours du même côté jusqu'au changement d'état ;
+  le joueur et les corps mobiles ne comptent pas. Cause : dans l'arène, un joueur près du
+  panneau (9, 0, −2) gardait derrière son poteau les Timeres venus de l'ouest (bloqués plus de
+  4 s : move_and_slide ne glisse pas sur un mur heurté de face) ; même risque contre les troncs
+  de la forêt.
