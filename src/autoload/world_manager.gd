@@ -8,7 +8,8 @@ extends Node
 ##   res://src/world/zones/<id>/<id>.tscn si la zone manque ;
 ## - teleport() place le joueur (groupe "player") sur un Marker3D de la zone ;
 ## - respawn() le ramène au Spawn du village et émet player_respawned (PlayerCombat remet
-##   les PV au maximum) ; déclenché respawn_delay secondes après EventBus.player_died ;
+##   les PV au maximum) ; déclenché respawn_delay secondes après EventBus.player_died, si le
+##   joueur mort est toujours dans l'arbre ;
 ## - zone_entered met à jour current_zone() et GameState.zone.
 
 const VILLAGE := &"village"
@@ -99,5 +100,9 @@ func _on_zone_entered(zone_id: StringName) -> void:
 
 
 func _on_player_died() -> void:
-	await get_tree().create_timer(respawn_delay).timeout
-	respawn()
+	# Seul le joueur mort réapparaît : s'il a quitté l'arbre entre-temps (retour au menu, fin
+	# d'un test), rien ne se passe. Le délai s'arrête pendant la pause.
+	var player := get_tree().get_first_node_in_group(PLAYER_GROUP)
+	await get_tree().create_timer(respawn_delay, false).timeout
+	if player != null and is_instance_valid(player) and player.is_inside_tree():
+		respawn()

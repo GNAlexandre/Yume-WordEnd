@@ -4,10 +4,18 @@ extends GutTest
 
 const MAIN_SCENE := preload("res://src/main.tscn")
 const GAME_SCENE := preload("res://src/game.tscn")
+const PLAYER_STUB := preload("res://tests/stubs/player_stub.tscn")
+
+var _respawn_delay: float
 
 
 func before_each() -> void:
 	GameState.reset()
+	_respawn_delay = WorldManager.respawn_delay
+
+
+func after_each() -> void:
+	WorldManager.respawn_delay = _respawn_delay
 
 
 func after_all() -> void:
@@ -57,3 +65,29 @@ func test_respawn_brings_player_back_to_village() -> void:
 	var spawn := game.get_node(^"Island/Zones/village/Spawn") as Node3D
 	assert_lt(player.global_position.distance_to(spawn.global_position), 1.0, "réapparu au village")
 	assert_signal_emitted(EventBus, "player_respawned")
+
+
+func test_player_died_triggers_respawn_after_delay() -> void:
+	WorldManager.respawn_delay = 0.1
+	var game: Node3D = add_child_autofree(GAME_SCENE.instantiate())
+	await wait_physics_frames(3)
+	watch_signals(EventBus)
+	EventBus.player_died.emit()
+	await wait_seconds(0.3)
+	assert_signal_emitted(EventBus, "player_respawned")
+	var spawn := game.get_node(^"Island/Zones/village/Spawn") as Node3D
+	var player := game.get_node(^"Player") as Node3D
+	assert_lt(player.global_position.distance_to(spawn.global_position), 1.0)
+
+
+func test_no_respawn_when_dead_player_is_gone() -> void:
+	WorldManager.respawn_delay = 0.1
+	var player := PLAYER_STUB.instantiate()
+	add_child(player)
+	watch_signals(EventBus)
+	EventBus.player_died.emit()
+	player.free()
+	await wait_seconds(0.3)
+	assert_signal_not_emitted(
+		EventBus, "player_respawned", "pas de réapparition d'un joueur disparu"
+	)

@@ -129,6 +129,9 @@ change pas sans PR « contrats ».
   tools/test.sh le rattrapent en cherchant `SCRIPT ERROR` dans le journal.
 - GUT 9.7.1 fait échouer un test sur tout `push_error` ou erreur moteur imprévus ; une erreur
   attendue se déclare avec `assert_push_error("texte")` ou `assert_engine_error("texte")`.
+- Les autoloads gardent leur état d'un test à l'autre : `GameState.reset()` dans `before_each`,
+  et rétablir ce qu'on change (`SaveManager.save_path`, `WorldManager.respawn_delay`…) dans
+  `after_each`. WorldManager ne fait réapparaître que le joueur mort encore dans l'arbre.
 - Dans un script `extends SceneTree` (outils), les autoloads n'existent qu'après la première
   image : `await process_frame` avant de s'en servir. Libère tout avant `quit()`, sinon
   `ERROR: resources still in use at exit` rend le check rouge.
