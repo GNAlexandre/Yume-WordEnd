@@ -175,3 +175,10 @@ func test_damage_cancels_the_charge() -> void:
 	assert_signal_emitted_with_parameters(EventBus, "charge_progress", [0.0])
 	_combat.charge_release()
 	assert_true(_waves.is_empty(), "pas d'onde après une charge interrompue")
+
+
+func test_charge_released_during_pause_is_released_on_resume() -> void:
+	_combat.charge_begin()
+	simulate(_combat, 1, 0.6)
+	_combat.notification(Node.NOTIFICATION_UNPAUSED)
+	assert_eq(_waves.size(), 1, "touche relâchée pendant la pause : l'onde part à la reprise")

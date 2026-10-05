@@ -156,6 +156,13 @@ func wave_cooldown_left() -> float:
 	return _wave_cooldown
 
 
+func _notification(what: int) -> void:
+	# Touche de charge relâchée pendant une pause (inventaire) : aucun « just_released » ne
+	# viendra du joueur, on relâche à la reprise.
+	if what == NOTIFICATION_UNPAUSED and _charge_held and not Input.is_action_pressed(&"charge"):
+		charge_release()
+
+
 func _physics_process(delta: float) -> void:
 	_state_time += delta
 	_attack_cooldown = maxf(0.0, _attack_cooldown - delta)

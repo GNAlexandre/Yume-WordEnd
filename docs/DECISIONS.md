@@ -162,6 +162,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `wave_frame(&"charge")` affichée par `show_frame` (tout de suite si le skin n'en a pas) ;
   `charge_progress` : 0 au début, le ratio à chaque changement, 0 au relâcher ou à l'interruption ;
   pas de jauge de recharge (`PlayerCombat.wave_cooldown_left()` pour un HUD qui en voudrait une).
+  Touche relâchée pendant une pause (aucun « just_released ») : relâchée à la reprise
+  (`NOTIFICATION_UNPAUSED` + `Input.is_action_pressed(&"charge")`), sinon le joueur resterait figé.
 - **L4 — états du joueur** : dégâts pendant `hurt_time` = 0,35 s (animation `degats`, coup et
   charge interrompus) ; mort (`mort`, occupé jusqu'à `player_respawned`) ; `Visual.visible`
   basculé `blink_rate` = 12 fois/s pendant l'invincibilité, sauf mort ; `animation_timeout` = 2 s

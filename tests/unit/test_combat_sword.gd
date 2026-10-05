@@ -58,19 +58,6 @@ func test_damage_only_on_coup_frames() -> void:
 	assert_false(_sword.is_active(), "fin de l'animation : épée inactive")
 
 
-func test_coup_frames_come_from_the_visual() -> void:
-	_visual.set(&"forced_hit_frames", {&"attaque": [2]})
-	var dummy := _dummy(Vector3(0, 0, -1))
-	await wait_physics_frames(3)
-	_combat.attack()
-	_visual.call(&"emit_frame", &"attaque", 1)
-	await wait_physics_frames(3)
-	assert_eq(_hp(dummy), 10, "image 1 hors de hit_frames : refusé")
-	_visual.call(&"emit_frame", &"attaque", 2)
-	await wait_physics_frames(3)
-	assert_eq(_hp(dummy), 9)
-
-
 func test_one_swing_hits_each_target_once() -> void:
 	var dummy := _dummy(Vector3(0, 0, -1))
 	await wait_physics_frames(3)
@@ -198,3 +185,15 @@ func test_damage_interrupts_the_swing() -> void:
 	assert_null(_combat.current_attack())
 	_visual.call(&"finish", &"attaque")
 	assert_eq(_combat.current_state(), &"hurt", "l'appui mis en file est oublié")
+
+
+func test_real_sheet_animation_drives_the_combo() -> void:
+	_visual.set(&"forced_hit_frames", {})
+	_visual.set_skin(SkinRegistry.default_skin())
+	var dummy := _dummy(Vector3(0, 0, -1))
+	await wait_physics_frames(3)
+	_combat.attack()
+	_combat.attack()
+	await wait_until(func() -> bool: return not _combat.is_busy(), 2.0)
+	assert_eq(_hp(dummy), 8, "sword_1 puis sword_2, images coup de chtholly.json à 14 ips")
+	assert_eq((dummy.get(&"hits") as Array).size(), 2)
