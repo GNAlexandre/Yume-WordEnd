@@ -559,3 +559,12 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   panneau (9, 0, −2) gardait derrière son poteau les Timeres venus de l'ouest (bloqués plus de
   4 s : move_and_slide ne glisse pas sur un mur heurté de face) ; même risque contre les troncs
   de la forêt.
+- **M1 — emplacements après le décor du L2** (`src/items/placements/beach.tscn` et `hill.tscn`,
+  L7 ; `src/enemies/placements/forest.tscn`, L5) : `beach_shell_1` (−13, 0, 22) était dans la
+  mer (fond à −1,2 m) → (−25, 0, 13), sable sec ; `beach_shell_2` (27, 0, 18) flottait 0,4 m
+  au-dessus de la pente de la plage → (27, 0, 14) ; `hill_flower_1` (−17, 0, 9) était dans le
+  tronc d'un arbre rond → (−19, 0, 7) ; `forest_timere_normal_1` (0, −2,5) partait dans un
+  champignon du cercle de fées → (3, −2), au centre du cercle. Pages de la forêt, fleur du
+  village, PNJ, panneau et points de l'arène étaient déjà bons. Contrôle permanent :
+  `tests/integration/test_m1_world.gd` (au sol, hors décor et hors de l'eau, chemin à pied depuis
+  le Spawn du village sur une grille de 0,5 m, clairière dégagée sur 6 m, arène plate).
