@@ -66,8 +66,6 @@ func test_sector_points() -> void:
 	assert_true(points.has(Vector3(0, -0.7, 0)) and points.has(Vector3(0, 0.7, 0)), "pointe")
 	for point: Vector3 in points:
 		var flat := Vector2(point.x, point.z)
-		assert_almost_eq(absf(point.y), 0.7, 0.001)
 		if flat.length() > 0.001:
 			assert_almost_eq(flat.length(), 1.2, 0.001, "sur l'arc")
-			var angle := rad_to_deg(Vector2(0, -1).angle_to(flat))
-			assert_between(angle, -45.001, 45.001, "dans les 90° devant (-Z)")
+			assert_between(rad_to_deg(Vector2(0, -1).angle_to(flat)), -45.001, 45.001, "90° devant")

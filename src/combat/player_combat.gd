@@ -2,19 +2,12 @@ class_name PlayerCombat
 extends Node3D
 ## Combat du joueur : nœud « Combat » de player.tscn (PLAN.md sections 3 et 4). Propriétaire : L4.
 ##
-## Le joueur (L1) tourne ce nœud pour que son -Z local soit « devant » et relaie les touches :
-## attack() à l'appui de l'épée, charge_begin() / charge_release() à l'appui / au relâcher de
-## la charge. Il ne bouge pas tant que is_busy() est vrai et joue lui-même repos / marche /
-## course ; ce nœud joue attaque, charge, degats et mort sur le Visual (frère « ../Visual »).
-##
-## États : idle → attack (sword_1 → sword_2 → sword_3 si la touche est répétée pendant le coup
-## ou moins de combo_window s après) ; idle → charge (touche maintenue, jauge
-## EventBus.charge_progress) → wave (relâchée après charge_time : onde lancée sur l'image
-## « onde », recharge cooldown) ; hurt (dégât accepté, hurt_time s) ; dead (jusqu'à
-## EventBus.player_respawned). L'épée (enfant SwordHitbox) n'est active que sur les images
-## « coup » de l'animation reçues par Visual.frame_changed ; sa forme est un secteur réglé par
-## l'AttackData du coup (arc_deg, range_m). Clignotement : Visual.visible basculé pendant
-## l'invincibilité de Health.
+## Le joueur (L1) tourne ce nœud (-Z local = devant), appelle attack(), charge_begin() /
+## charge_release() et ne bouge pas tant que is_busy() ; ce nœud joue attaque, charge, degats et
+## mort sur ../Visual. États : idle → attack (sword_1 → 2 → 3, combo_window) ; idle → charge
+## (jauge EventBus.charge_progress) → wave (onde sur l'image « onde ») ; hurt ; dead (jusqu'à
+## player_respawned). SwordHitbox : secteur arc_deg × range_m, actif sur les images « coup »
+## reçues par Visual.frame_changed. Visual.visible clignote pendant l'invincibilité.
 ##
 ## Relais Health ↔ EventBus (contrat du Lot 0) : au départ, Health.max_hp = GameState.max_hp,
 ## PV pleins, puis player_health_changed émis en différé (valeur initiale du HUD) ;

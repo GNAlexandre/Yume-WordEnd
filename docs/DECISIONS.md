@@ -140,44 +140,34 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 
 ## L4 — combat
 
-- **L4 — onde à 19,05 m/s** : `charge_wave.speed` passe de 14 à 19,05 m/s pour que l'onde
-  parcoure ses 8 m (`range_m`) en 0,42 s (`duration`), comme le veut la section 4 (« dure 0,42 s »,
-  « 8 m de portée ») ; elle se libère à la première des deux limites. Le joueur reste immobile
-  pendant `duration` (état « onde », DUREE_ONDE de jeu.js). Recharge comptée dès le relâcher.
-- **L4 — enchaînement** : un appui pendant un coup enchaîne le suivant à la fin de l'animation ;
-  un appui dans les `combo_window` = 0,4 s (export de PlayerCombat) qui suivent aussi ; après
-  sword_3, retour à sword_1 une fois `sword_3.cooldown` (0,3 s) écoulé. Charge, dégâts et mort
-  cassent l'enchaînement.
-- **L4 — épée** : la forme de `SwordHitbox` (sphère dans player.tscn) est remplacée à l'exécution
-  par un prisme convexe `arc_deg` × `range_m` de l'AttackData du coup, pointe sur l'axe du joueur
-  (origine de Combat), haut de `sword_height` = 1,4 m centré sur SwordHitbox. Activée à la 1re
-  image « coup » reçue par `Visual.frame_changed`, coupée sur une image sans coup et en fin
-  d'animation ; `Hitbox.resume()` (ajout) reprend la même activation (images « coup » non
-  contiguës). `Hitbox.set_sector_shape()` et `Hitbox.sector_points()` servent aussi aux ennemis.
+- **L4 — onde** : `charge_wave.speed` passe de 14 à 19,05 m/s pour parcourir les 8 m (`range_m`)
+  en 0,42 s (`duration`), section 4 ; l'onde se libère à la première des deux limites, le joueur
+  reste immobile pendant `duration`, la recharge part du relâcher. `class_name ChargeWave` ;
+  ajoutée au parent du joueur, vers le −Z horizontal de Combat ; `Hitbox.source` = le joueur (le
+  recul éloigne de lui) ; QuadMesh courbé, shader non éclairé (WebGL 2) et OmniLight3D estompés en
+  fin de vol.
+- **L4 — enchaînement** : un appui pendant un coup, ou dans les `combo_window` = 0,4 s qui
+  suivent, joue le coup suivant ; après sword_3, retour à sword_1 une fois `sword_3.cooldown`
+  écoulé ; charge, dégâts et mort cassent l'enchaînement.
+- **L4 — épée** : la sphère de `SwordHitbox` (player.tscn) est remplacée à l'exécution par un
+  prisme convexe `arc_deg` × `range_m` (pointe sur l'axe du joueur, haut de `sword_height` =
+  1,4 m) ; activée à la 1re image « coup » reçue par `Visual.frame_changed`, coupée hors coup et en
+  fin d'animation ; `Hitbox.resume()` (ajout) reprend la même activation (images « coup » non
+  contiguës) ; `Hitbox.set_sector_shape()` et `sector_points()` servent aussi aux ennemis.
 - **L4 — coup refusé** : une Hurtbox qui refuse le coup (joueur invincible) n'entre pas dans la
-  liste des touchés : le coup peut porter plus tard dans la même activation, comme dans jeu.js
-  (le Timere ne « touche » que si le joueur n'est plus invincible). Toujours un seul coup accepté
-  par cible et par activation.
-- **L4 — charge** : la touche tenue est mémorisée : pressée pendant un coup, l'onde ou la
-  recharge, la charge démarre dès que possible tant qu'elle n'est pas relâchée (jeu.js). Images :
-  0 à onde−2 pendant le remplissage, puis alternance des deux images avant l'onde
-  (`charged_flicker_rate` = 8 Hz) ; l'onde part sur l'image `wave_frame(&"charge")` affichée par
-  `show_frame`, ou tout de suite si le skin n'en a pas. `charge_progress` : 0 au début, ratio
-  pendant le remplissage (une émission par changement), 0 au relâcher ou à l'interruption ; pas
-  de jauge de recharge (`PlayerCombat.wave_cooldown_left()` si le HUD en veut une).
-- **L4 — dégâts et mort du joueur** : état « dégâts » de `hurt_time` = 0,35 s (DUREE_DEGATS),
-  animation `degats`, coup et charge interrompus ; mort : `mort`, `is_busy()` vrai jusqu'à
-  `player_respawned` ; clignotement : `Visual.visible` basculé `blink_rate` = 12 fois/s pendant
-  l'invincibilité (pas pendant la mort), rétabli à la fin. Ajouts à PlayerCombat :
-  `current_state()`, `current_attack()`, `wave_cooldown_left()`, signaux locaux
-  `attack_started(attack_data)` et `wave_launched(wave)` (audio, effets, tests).
-- **L4 — onde** : `class_name ChargeWave` sur la racine de charge_wave.tscn ; ajoutée au parent du
-  joueur, partie de l'origine de Combat vers son −Z horizontal ; `Hitbox.source` = le joueur (le
-  recul éloigne les ennemis de lui) ; QuadMesh courbé + shader non éclairé transparent (WebGL 2)
-  et OmniLight3D bleutée, estompés sur la fin du vol.
-- **L4 — sécurité** : `animation_timeout` = 2 s termine un coup dont le Visual ne signale jamais la
-  fin (skin sans « attaque »), pour ne jamais bloquer le joueur.
-- **L4 — tests et capture** : joueur de test `tests/stubs/l4_player_rig.tscn` (structure de
-  player.tscn sans player.gd, hors du groupe player : pas de réapparition par WorldManager). La
-  capture se fait sur la démo elle-même, qui passe en mode capture sous tools/screenshot.gd :
+  liste des touchés : le coup peut porter plus tard dans la même activation, comme dans jeu.js ;
+  toujours un seul coup accepté par cible et par activation.
+- **L4 — charge** : touche tenue mémorisée (la charge démarre dès que possible, jeu.js) ; images 0
+  à onde−2 puis alternance à 8 Hz des deux images avant l'onde ; l'onde part sur l'image
+  `wave_frame(&"charge")` affichée par `show_frame` (tout de suite si le skin n'en a pas) ;
+  `charge_progress` : 0 au début, le ratio à chaque changement, 0 au relâcher ou à l'interruption ;
+  pas de jauge de recharge (`PlayerCombat.wave_cooldown_left()` pour un HUD qui en voudrait une).
+- **L4 — états du joueur** : dégâts pendant `hurt_time` = 0,35 s (animation `degats`, coup et
+  charge interrompus) ; mort (`mort`, occupé jusqu'à `player_respawned`) ; `Visual.visible`
+  basculé `blink_rate` = 12 fois/s pendant l'invincibilité, sauf mort ; `animation_timeout` = 2 s
+  termine un coup dont le Visual ne signale jamais la fin. Ajouts : `current_state()`,
+  `current_attack()`, `wave_cooldown_left()`, signaux `attack_started` et `wave_launched`.
+- **L4 — tests et capture** : joueur de test `tests/stubs/l4_player_rig.tscn` (player.tscn sans
+  player.gd, hors du groupe player : pas de réapparition par WorldManager) ; la démo passe en mode
+  capture sous tools/screenshot.gd :
   `tools/screenshot.sh res://tests/integration/demo_l4.tscn build/shots/l4.png 400`.

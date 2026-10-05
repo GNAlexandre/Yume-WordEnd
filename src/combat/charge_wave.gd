@@ -2,12 +2,10 @@ class_name ChargeWave
 extends Node3D
 ## Onde de la charge magique (src/combat/charge_wave.tscn). Propriétaire : L4.
 ##
-## Lancée par PlayerCombat.launch() : avance tout droit à vitesse constante (attack.speed)
-## dans le plan du sol, sa Hitbox (attaque charge_wave, équipe &"player") reste active pendant
-## tout le vol et touche chaque Hurtbox une fois ; une attaque qui traverse (pierces) continue
-## après chaque cible, sinon l'onde disparaît au premier coup. Elle se libère quand elle a
-## parcouru attack.range_m ou vécu attack.duration (si > 0). Largeur de la zone et du
-## maillage : attack.width_m. Le maillage et la lumière Glow s'estompent sur la fin du vol.
+## Lancée par PlayerCombat (launch()) : avance à attack.speed dans le plan du sol ; sa Hitbox
+## (charge_wave, équipe &"player") reste active tout le vol et touche chaque Hurtbox une fois,
+## traverse si attack.pierces (sinon disparaît au premier coup) ; libérée après attack.range_m
+## ou attack.duration. Largeur : attack.width_m. Maillage et lumière s'estompent en fin de vol.
 
 ## Part de la fin du vol pendant laquelle l'onde s'estompe (0..1).
 @export var fade_tail: float = 0.35
