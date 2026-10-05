@@ -1,0 +1,37 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/sphere.tres" id="1_sphere"]
+
+[sub_resource type="StandardMaterial3D" id="bush"]
+albedo_color = Color(0.31, 0.6, 0.33, 1)
+
+[sub_resource type="StandardMaterial3D" id="bush_light"]
+albedo_color = Color(0.41, 0.69, 0.36, 1)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_bush"]
+height = 1
+radius = 0.75
+
+[node name="Bush" type="Node3D"]
+
+[node name="Ball1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.5, 0, 0, 0, 1.05, 0, 0, 0, 1.5, 0, 0.45, 0)
+mesh = ExtResource("1_sphere")
+material_override = SubResource("bush")
+
+[node name="Ball2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.05, 0, 0, 0, 0.85, 0, 0, 0, 1.05, 0.6, 0.38, 0.35)
+mesh = ExtResource("1_sphere")
+material_override = SubResource("bush_light")
+
+[node name="Ball3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.95, 0, 0, 0, 0.75, 0, 0, 0, 0.95, -0.55, 0.33, 0.3)
+mesh = ExtResource("1_sphere")
+material_override = SubResource("bush")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("CylinderShape3D_bush")

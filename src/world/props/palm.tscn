@@ -1,0 +1,82 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="1_cylinder"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/sphere.tres" id="2_sphere"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="3_bead"]
+
+[sub_resource type="StandardMaterial3D" id="palm_trunk"]
+albedo_color = Color(0.74, 0.57, 0.38, 1)
+
+[sub_resource type="StandardMaterial3D" id="palm_leaf"]
+albedo_color = Color(0.29, 0.68, 0.35, 1)
+
+[sub_resource type="StandardMaterial3D" id="coconut"]
+albedo_color = Color(0.47, 0.31, 0.19, 1)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_trunk"]
+height = 2.2
+radius = 0.25
+
+[node name="Palm" type="Node3D"]
+
+[node name="Trunk1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.357317, 0.225458, 0, -0.043873, 1.83621, 0, 0, 0, 0.36, 0.1, 0.9, 0)
+mesh = ExtResource("1_cylinder")
+material_override = SubResource("palm_trunk")
+
+[node name="Trunk2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.288379, 0.482365, 0, -0.082691, 1.682208, 0, 0, 0, 0.3, 0.42, 2.6, 0)
+mesh = ExtResource("1_cylinder")
+material_override = SubResource("palm_trunk")
+
+[node name="Leaf1" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.328536, 0.050658, -0.194114, -0.973977, 0.129806, 0, 0.623929, 0.013574, 0.724444, 1.770815, 3.17, 0.297642)
+mesh = ExtResource("2_sphere")
+material_override = SubResource("palm_leaf")
+
+[node name="Leaf2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.623929, 0.013574, -0.724444, -0.973977, 0.129806, 0, 2.328536, 0.050658, 0.194114, 0.957642, 3.17, 1.110815)
+mesh = ExtResource("2_sphere")
+material_override = SubResource("palm_leaf")
+
+[node name="Leaf3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1.704607, -0.037084, -0.53033, -0.973977, 0.129806, 0, 1.704607, 0.037084, -0.53033, -0.153173, 3.17, 0.813173)
+mesh = ExtResource("2_sphere")
+material_override = SubResource("palm_leaf")
+
+[node name="Leaf4" type="MeshInstance3D" parent="."]
+transform = Transform3D(-2.328536, -0.050658, 0.194114, -0.973977, 0.129806, 0, -0.623929, -0.013574, -0.724444, -0.450815, 3.17, -0.297642)
+mesh = ExtResource("2_sphere")
+material_override = SubResource("palm_leaf")
+
+[node name="Leaf5" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.623929, -0.013574, 0.724444, -0.973977, 0.129806, 0, -2.328536, -0.050658, -0.194114, 0.362358, 3.17, -1.110815)
+mesh = ExtResource("2_sphere")
+material_override = SubResource("palm_leaf")
+
+[node name="Leaf6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.704607, 0.037084, 0.53033, -0.973977, 0.129806, 0, -1.704607, -0.037084, 0.53033, 1.473173, 3.17, -0.813173)
+mesh = ExtResource("2_sphere")
+material_override = SubResource("palm_leaf")
+
+[node name="Coconut1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, 0.86, 3.1, 0.15)
+mesh = ExtResource("3_bead")
+material_override = SubResource("coconut")
+
+[node name="Coconut2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, 0.54, 3.1, 0.2)
+mesh = ExtResource("3_bead")
+material_override = SubResource("coconut")
+
+[node name="Coconut3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, 0.71, 3.1, -0.22)
+mesh = ExtResource("3_bead")
+material_override = SubResource("coconut")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 1.1, 0)
+shape = SubResource("CylinderShape3D_trunk")

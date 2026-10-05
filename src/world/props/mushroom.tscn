@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="1_cylinder"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/sphere.tres" id="2_sphere"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="3_bead"]
+
+[sub_resource type="StandardMaterial3D" id="stem"]
+albedo_color = Color(0.98, 0.94, 0.85, 1)
+
+[sub_resource type="StandardMaterial3D" id="cap"]
+albedo_color = Color(0.92, 0.27, 0.24, 1)
+
+[sub_resource type="StandardMaterial3D" id="white"]
+albedo_color = Color(0.97, 0.96, 0.92, 1)
+
+[node name="Mushroom" type="Node3D"]
+
+[node name="Stem" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.26, 0, 0, 0, 0.44, 0, 0, 0, 0.26, 0, 0.22, 0)
+mesh = ExtResource("1_cylinder")
+material_override = SubResource("stem")
+cast_shadow = 0
+
+[node name="Cap" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.75, 0, 0, 0, 0.42, 0, 0, 0, 0.75, 0, 0.5, 0)
+mesh = ExtResource("2_sphere")
+material_override = SubResource("cap")
+cast_shadow = 0
+
+[node name="Dot1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 0.18, 0.64, 0.1)
+mesh = ExtResource("3_bead")
+material_override = SubResource("white")
+cast_shadow = 0
+
+[node name="Dot2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.11, 0, 0, 0, 0.11, 0, 0, 0, 0.11, -0.15, 0.63, 0.17)
+mesh = ExtResource("3_bead")
+material_override = SubResource("white")
+cast_shadow = 0
+
+[node name="Dot3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, 0, 0.69, -0.19)
+mesh = ExtResource("3_bead")
+material_override = SubResource("white")
+cast_shadow = 0

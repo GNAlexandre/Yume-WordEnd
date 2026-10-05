@@ -4,19 +4,21 @@
 [ext_resource type="PackedScene" path="res://src/npc/placements/hill.tscn" id="2_npcs"]
 [ext_resource type="PackedScene" path="res://src/enemies/placements/hill.tscn" id="3_enemies"]
 [ext_resource type="PackedScene" path="res://src/items/placements/hill.tscn" id="4_pickups"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="5_batcher"]
+[ext_resource type="Script" path="res://src/world/prop_scatter.gd" id="6_scatter"]
+[ext_resource type="PackedScene" path="res://src/world/props/lookout.tscn" id="7_lookout"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_pine.tscn" id="8_tree_pine"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_round.tscn" id="9_tree_round"]
+[ext_resource type="PackedScene" path="res://src/world/props/flowers.tscn" id="10_flowers"]
+[ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="11_rock"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="12_bush"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
 size = Vector3(58, 40, 44)
 
-[sub_resource type="StandardMaterial3D" id="mat_hill"]
-albedo_color = Color(0.525, 0.788, 0.435, 1)
-
-[sub_resource type="StandardMaterial3D" id="mat_top"]
-albedo_color = Color(0.655, 0.851, 0.561, 1)
-
 [node name="hill" type="Node3D" groups=["zones"]]
 script = ExtResource("1_zone")
-display_name = "Colline"
+display_name = "Colline du belvédère"
 
 [node name="Spawn" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0.2, 0)
@@ -30,23 +32,46 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Bounds"]
 shape = SubResource("BoxShape3D_bounds")
 
-[node name="Geometry" type="CSGCombiner3D" parent="."]
-use_collision = true
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("5_batcher")
 
-[node name="Hill" type="CSGCylinder3D" parent="Geometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3.5, 0)
-radius = 18.0
-height = 7.0
-sides = 24
-cone = true
-material = SubResource("mat_hill")
+[node name="Lookout" parent="Geometry" instance=ExtResource("7_lookout")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 8, -3)
 
-[node name="Lookout" type="CSGCylinder3D" parent="Geometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 6.6, 0)
-radius = 1.6
-height = 0.25
-sides = 12
-material = SubResource("mat_top")
+[node name="Pines" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("8_tree_pine")
+points = PackedVector3Array(15.8, 0, -9, -9.9, 0, 10.9, -14.3, 0, 3.2, 2, 0, 12, -12.6, 0, -9.1)
+scale_range = Vector2(0.8, 1.05)
+random_seed = 24
+
+[node name="RoundTrees" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("9_tree_round")
+points = PackedVector3Array(-17, 0, 9.1, 3.6, 0, -13.8, -12.2, 0, -18.8, -0.9, 0, 6.2, 13.2, 0, 12, 1.8, 0, -20.4, -4.5, 0, 17.6, 10.8, 0, -18.2, -17, 0, -15.4)
+scale_range = Vector2(0.8, 1.1)
+random_seed = 25
+
+[node name="Flowers" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("10_flowers")
+points = PackedVector3Array(9.2, 0, 2.8, -1.5, 0, -9.8, 15.3, 0, -16.1, 4.8, 0, -8.8, 17.2, 0, -0.6, 7.6, 0, 9.6, -6.6, 0, -2.5, 11.9, 0, -12.6, 14.8, 0, -3.7, -13, 0, 12.8, 16.9, 0, 12.6, -9.5, 0, 14.7, 12.2, 0, 16.9, 12.5, 0, -0.1, 8.9, 0, -8.3, -21.2, 0, 5.7)
+scale_range = Vector2(0.9, 1.2)
+random_seed = 26
+
+[node name="Rocks" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("11_rock")
+points = PackedVector3Array(20.6, 0, 2.4, 11, 0, 2.3, 17.4, 0, -18.2, 9.8, 0, -12, 5.7, 0, 17.8, -8, 0, 4.5)
+scale_range = Vector2(0.7, 1.2)
+random_seed = 27
+
+[node name="Bushes" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("12_bush")
+points = PackedVector3Array(-7.3, 0, -11.4, -11, 0, -13.4, -24.5, 0, -8.8, 2.1, 0, -2, -5.7, 0, 13, -23.8, 0, 2.6, 18.5, 0, 5.9, -24, 0, -17.1)
+scale_range = Vector2(0.7, 1)
+random_seed = 28
 
 [node name="NPCs" parent="." instance=ExtResource("2_npcs")]
 
