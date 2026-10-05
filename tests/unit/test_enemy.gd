@@ -125,7 +125,8 @@ func test_runner_rushes_in_a_straight_line() -> void:
 	var rushing: bool = await wait_until(func() -> bool: return runner.state() == &"rush", 2.0)
 	assert_true(rushing, "le coureur charge dès 8 m")
 	assert_eq(runner.visual.current_animation(), &"course")
-	assert_almost_eq(runner.velocity.length(), runner.data.speed, 0.3, "à pleine vitesse")
+	var ground_speed := Vector2(runner.velocity.x, runner.velocity.z).length()
+	assert_almost_eq(ground_speed, runner.data.speed, 0.3, "à pleine vitesse")
 
 
 func test_big_recoils_only_under_the_wave() -> void:
