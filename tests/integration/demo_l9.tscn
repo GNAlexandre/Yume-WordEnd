@@ -1,0 +1,93 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_l9.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://src/ui/touch_controls.tscn" id="2_touch"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sunset"]
+sky_top_color = Color(0.161, 0.129, 0.31, 1)
+sky_horizon_color = Color(0.953, 0.533, 0.235, 1)
+ground_bottom_color = Color(0.29, 0.059, 0.071, 1)
+ground_horizon_color = Color(0.659, 0.239, 0.169, 1)
+
+[sub_resource type="Sky" id="Sky_sunset"]
+sky_material = SubResource("ProceduralSkyMaterial_sunset")
+
+[sub_resource type="Environment" id="Environment_sunset"]
+background_mode = 2
+sky = SubResource("Sky_sunset")
+ambient_light_source = 3
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sand"]
+albedo_color = Color(0.851, 0.522, 0.333, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+material = SubResource("StandardMaterial3D_sand")
+size = Vector2(60, 60)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hero"]
+albedo_color = Color(0.953, 0.651, 0.784, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_hero"]
+material = SubResource("StandardMaterial3D_hero")
+radius = 0.35
+height = 1.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stone"]
+albedo_color = Color(0.427, 0.18, 0.341, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pillar"]
+material = SubResource("StandardMaterial3D_stone")
+size = Vector3(1, 3, 1)
+
+[node name="DemoL9" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sunset")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, 0.354, -0.354, 0, 0.707, 0.707, 0.5, -0.612, 0.612, 0, 8, 0)
+light_color = Color(1, 0.82, 0.62, 1)
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="PillarNorth" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -8)
+mesh = SubResource("BoxMesh_pillar")
+
+[node name="PillarEast" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.5, -3)
+mesh = SubResource("BoxMesh_pillar")
+
+[node name="PillarWest" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.5, -5)
+mesh = SubResource("BoxMesh_pillar")
+
+[node name="Hero" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+mesh = SubResource("CapsuleMesh_hero")
+
+[node name="Pivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.94, 0.342, 0, -0.342, 0.94, 0, 0.75, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
+current = true
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="TouchControls" parent="UI" instance=ExtResource("2_touch")]
+display = 1
+
+[node name="Readout" type="Label" parent="UI"]
+offset_left = 18.0
+offset_top = 14.0
+offset_right = 420.0
+offset_bottom = 220.0
+theme_override_colors/font_color = Color(1, 0.973, 0.984, 1)
+theme_override_colors/font_outline_color = Color(0.106, 0.071, 0.192, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
+text = "Actions reçues :"

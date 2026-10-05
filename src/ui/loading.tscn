@@ -1,5 +1,26 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://src/ui/loading.gd" id="1_loading"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_track"]
+bg_color = Color(0.106, 0.071, 0.192, 0.82)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.498, 0.416, 0.659, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
+bg_color = Color(0.953, 0.651, 0.784, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
 [node name="Loading" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -7,29 +28,80 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_loading")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Backdrop" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.18, 0.15, 0.31, 1)
+mouse_filter = 2
 
-[node name="Label" type="Label" parent="."]
+[node name="Title" type="Label" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -20.0
-offset_right = 100.0
-offset_bottom = 20.0
+anchors_preset = 10
+anchor_top = 0.14
+anchor_right = 1.0
+anchor_bottom = 0.14
+offset_bottom = 92.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.973, 0.984, 1)
+theme_override_colors/font_outline_color = Color(0.165, 0.071, 0.251, 1)
+theme_override_constants/outline_size = 14
+theme_override_font_sizes/font_size = 76
+text = "WordEnd"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_top = 0.14
+anchor_right = 1.0
+anchor_bottom = 0.14
+offset_top = 96.0
+offset_bottom = 132.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.969, 0.773, 0.624, 1)
+theme_override_colors/font_outline_color = Color(0.165, 0.071, 0.251, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "Bats-toi contre ton destin"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Bar" type="ProgressBar" parent="."]
+layout_mode = 1
+anchor_left = 0.25
+anchor_top = 0.84
+anchor_right = 0.75
+anchor_bottom = 0.84
+offset_top = -9.0
+offset_bottom = 9.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Chargement…"
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_track")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fill")
+max_value = 1.0
+step = 0.0
+show_percentage = false
+
+[node name="Status" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_top = 0.84
+anchor_right = 1.0
+anchor_bottom = 0.84
+offset_top = 18.0
+offset_bottom = 52.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.922, 0.89, 0.949, 1)
+theme_override_colors/font_outline_color = Color(0.106, 0.071, 0.192, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 22
+text = "Chargement de l'île…"
 horizontal_alignment = 1
 vertical_alignment = 1

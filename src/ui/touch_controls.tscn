@@ -1,6 +1,11 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://src/ui/touch_controls.gd" id="1_touch"]
+[ext_resource type="Script" path="res://src/ui/touch_joystick.gd" id="2_joystick"]
+[ext_resource type="Script" path="res://src/ui/touch_button.gd" id="3_button"]
+
 [node name="TouchControls" type="Control"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -8,3 +13,140 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("1_touch")
+
+[node name="Joystick" type="Control" parent="."]
+layout_mode = 1
+anchor_top = 0.3
+anchor_right = 0.42
+anchor_bottom = 1.0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("2_joystick")
+
+[node name="Attack" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -214.0
+offset_top = -214.0
+offset_right = -86.0
+offset_bottom = -86.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("3_button")
+
+[node name="Jump" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -360.0
+offset_top = -142.0
+offset_right = -260.0
+offset_bottom = -42.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("3_button")
+action = &"jump"
+label = "Saut"
+tint = Color(0.969, 0.773, 0.624, 1)
+
+[node name="Charge" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -146.0
+offset_top = -356.0
+offset_right = -46.0
+offset_bottom = -256.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("3_button")
+action = &"charge"
+label = "Charge"
+tint = Color(0.561, 0.816, 1, 1)
+
+[node name="Interact" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -332.0
+offset_top = -304.0
+offset_right = -240.0
+offset_bottom = -212.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("3_button")
+action = &"interact"
+label = "Parler"
+context = 1
+tint = Color(0.922, 0.89, 0.949, 1)
+
+[node name="LockTarget" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -478.0
+offset_top = -158.0
+offset_right = -398.0
+offset_bottom = -78.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("3_button")
+action = &"lock_target"
+label = "Cible"
+tint = Color(1, 0.561, 0.494, 1)
+
+[node name="Inventory" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -186.0
+offset_top = 22.0
+offset_right = -114.0
+offset_bottom = 94.0
+grow_horizontal = 0
+mouse_filter = 2
+script = ExtResource("3_button")
+action = &"inventory"
+label = "Sac"
+context = 2
+tint = Color(0.718, 0.663, 0.8, 1)
+
+[node name="Pause" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -94.0
+offset_top = 22.0
+offset_right = -22.0
+offset_bottom = 94.0
+grow_horizontal = 0
+mouse_filter = 2
+script = ExtResource("3_button")
+action = &"pause"
+label = "Pause"
+context = 3
+tint = Color(0.718, 0.663, 0.8, 1)
