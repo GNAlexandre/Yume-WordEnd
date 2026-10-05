@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://tests/stubs/visual_stub.tscn" id="1_visual"]
+[ext_resource type="Script" path="res://src/combat/player_combat.gd" id="2_combat"]
+[ext_resource type="PackedScene" path="res://src/combat/hitbox.tscn" id="3_hitbox"]
+[ext_resource type="Resource" path="res://data/attacks/sword_1.tres" id="4_sword"]
+[ext_resource type="Script" path="res://src/combat/health.gd" id="5_health"]
+[ext_resource type="PackedScene" path="res://src/combat/hurtbox.tscn" id="6_hurtbox"]
+
+[node name="L4PlayerRig" type="Node3D"]
+
+[node name="Visual" parent="." instance=ExtResource("1_visual")]
+
+[node name="Combat" type="Node3D" parent="."]
+script = ExtResource("2_combat")
+
+[node name="SwordHitbox" parent="Combat" instance=ExtResource("3_hitbox")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.7)
+attack = ExtResource("4_sword")
+team = &"player"
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("5_health")
+max_hp = 5
+invincibility_time = 1.2
+
+[node name="Hurtbox" parent="." node_paths=PackedStringArray("health") instance=ExtResource("6_hurtbox")]
+health = NodePath("../Health")
+team = &"player"

@@ -192,3 +192,38 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   l'auto-sauvegarde pour la suite du processus : `test_game_flow_l0.gd` écrit ainsi
   `user://save_v1.json` dans `build/xdg` (sans effet) ; un test qui vérifie `has_save()` doit
   donc régler son propre `save_path`.
+## L4 — combat
+
+- **L4 — onde** : `charge_wave.speed` passe de 14 à 19,05 m/s pour parcourir les 8 m (`range_m`)
+  en 0,42 s (`duration`), section 4 ; l'onde se libère à la première des deux limites, le joueur
+  reste immobile pendant `duration`, la recharge part du relâcher. `class_name ChargeWave` ;
+  ajoutée au parent du joueur, vers le −Z horizontal de Combat ; `Hitbox.source` = le joueur (le
+  recul éloigne de lui) ; QuadMesh courbé, shader non éclairé (WebGL 2) et OmniLight3D estompés en
+  fin de vol.
+- **L4 — enchaînement** : un appui pendant un coup, ou dans les `combo_window` = 0,4 s qui
+  suivent, joue le coup suivant ; après sword_3, retour à sword_1 une fois `sword_3.cooldown`
+  écoulé ; charge, dégâts et mort cassent l'enchaînement.
+- **L4 — épée** : la sphère de `SwordHitbox` (player.tscn) est remplacée à l'exécution par un
+  prisme convexe `arc_deg` × `range_m` (pointe sur l'axe du joueur, haut de `sword_height` =
+  1,4 m) ; activée à la 1re image « coup » reçue par `Visual.frame_changed`, coupée hors coup et en
+  fin d'animation ; `Hitbox.resume()` (ajout) reprend la même activation (images « coup » non
+  contiguës) ; `Hitbox.set_sector_shape()` et `sector_points()` servent aussi aux ennemis.
+- **L4 — coup refusé** : une Hurtbox qui refuse le coup (joueur invincible) n'entre pas dans la
+  liste des touchés : le coup peut porter plus tard dans la même activation, comme dans jeu.js ;
+  toujours un seul coup accepté par cible et par activation.
+- **L4 — charge** : touche tenue mémorisée (la charge démarre dès que possible, jeu.js) ; images 0
+  à onde−2 puis alternance à 8 Hz des deux images avant l'onde ; l'onde part sur l'image
+  `wave_frame(&"charge")` affichée par `show_frame` (tout de suite si le skin n'en a pas) ;
+  `charge_progress` : 0 au début, le ratio à chaque changement, 0 au relâcher ou à l'interruption ;
+  pas de jauge de recharge (`PlayerCombat.wave_cooldown_left()` pour un HUD qui en voudrait une).
+  Touche relâchée pendant une pause (aucun « just_released ») : relâchée à la reprise
+  (`NOTIFICATION_UNPAUSED` + `Input.is_action_pressed(&"charge")`), sinon le joueur resterait figé.
+- **L4 — états du joueur** : dégâts pendant `hurt_time` = 0,35 s (animation `degats`, coup et
+  charge interrompus) ; mort (`mort`, occupé jusqu'à `player_respawned`) ; `Visual.visible`
+  basculé `blink_rate` = 12 fois/s pendant l'invincibilité, sauf mort ; `animation_timeout` = 2 s
+  termine un coup dont le Visual ne signale jamais la fin. Ajouts : `current_state()`,
+  `current_attack()`, `wave_cooldown_left()`, signaux `attack_started` et `wave_launched`.
+- **L4 — tests et capture** : joueur de test `tests/stubs/l4_player_rig.tscn` (player.tscn sans
+  player.gd, hors du groupe player : pas de réapparition par WorldManager) ; la démo passe en mode
+  capture sous tools/screenshot.gd :
+  `tools/screenshot.sh res://tests/integration/demo_l4.tscn build/shots/l4.png 400`.

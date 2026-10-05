@@ -91,3 +91,16 @@ func test_max_hp_changes() -> void:
 	assert_eq(health.current, 4, "après un dégât, augmenter max_hp ne soigne pas")
 	health.max_hp = 2
 	assert_eq(health.current, 2, "PV ramenés au nouveau maximum")
+
+
+func test_invincibility_left_counts_down_and_reset_clears_it() -> void:
+	var health := _health(5, 1.2)
+	health.take_damage(1, _source)
+	assert_almost_eq(health.invincibility_left(), 1.2, 0.001)
+	simulate(health, 5, 0.1)
+	assert_almost_eq(health.invincibility_left(), 0.7, 0.001)
+	watch_signals(health)
+	health.reset()
+	assert_false(health.is_invincible(), "reset : plus d'invincibilité")
+	assert_eq(health.current, 5)
+	assert_signal_emitted_with_parameters(health, "changed", [5, 5])
