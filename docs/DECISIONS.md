@@ -137,3 +137,61 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   vivent hors de `data/skins/`.
 - **L0 — vagues** : `data/waves/dunes.json` sans champ `music` tant qu'il n'y a pas d'audio
   (licence de l'enregistrement non tranchée, section 13).
+
+## L5 — ennemis et vagues
+
+- **L5 — portées** : la portée d'une attaque est `range_m × data.scale` devant le corps ; la
+  capsule du corps, la Hurtbox et la Hitbox sont mises à l'échelle du type (formes dupliquées).
+  Une attaque part quand le centre de la cible est à moins de rayon du corps + portée ; la Hitbox
+  est une sphère qui couvre [corps ; corps + portée] dans la direction de la cible. Raison : les
+  corps se touchent en 3D (pas en 2D) et le Petit doit pouvoir mordre.
+- **L5 — images « coup »** : la Hitbox s'active une seule fois par attaque, à la première image
+  `coup` reçue par `Visual.frame_changed`, et s'éteint à la première image suivante qui n'en est
+  pas une (pas de double touche si les images `coup` ne se suivent pas, comme `touche` de jeu.js).
+  L'état attack dure l'animation (images / ips du JSON) ou `AttackData.duration` si > 0.
+- **L5 — choix et recharges** : fouet si seul le fouet porte, sinon une attaque au hasard parmi
+  celles qui portent (jeu.js) ; recharge `cooldown × [0,7 ; 1,3] × EnemyData.cooldown_scale`
+  (0,8 à 1,5 s pour 1,15 ; Grand × 1,4), 0,2 à 0,8 s à l'apparition ; hurt dure l'animation
+  `degats` bornée à [0,35 ; 0,45] s. Champs ajoutés à EnemyData : `cooldown_scale`, `walk_speed`.
+- **L5 — coureur** : le rush est son attaque sans dégâts (`rush.tres`) ; il part quand la cible est
+  à moins de `rush.range_m` (8 m, non mis à l'échelle) et au-delà de sa portée + 1 m, file en
+  ligne droite vers la position visée au départ (+1,5 m), mord dès qu'il est à portée, puis
+  recharge `rush.cooldown`. Hors rush il marche à `walk_speed` = 2,5 m/s (marche plafonnée de
+  jeu.js, 46 px/s). Raison : une charge lisible, qu'on peut esquiver.
+- **L5 — abandon de la poursuite** : poursuite tant que le joueur est à moins de
+  `aggro_range_m × 1,5`, à moins de `leash_m` (20 m, export de l'Enemy) de l'origine, vivant
+  (`player_died` / `player_respawned`) et hors zone sûre (zone de `WorldManager.current_zone()`,
+  `Zone.safe` lu via le groupe `zones`) ; sinon l'ennemi rentre à son origine puis erre (3 m).
+- **L5 — séparation** : poussée calculée vers les autres membres du groupe `enemies` à moins de
+  1,1 m × échelle (pas de collision entre ennemis). Un ennemi tombé 30 m sous son origine est
+  retiré ; le cadavre rétrécit pendant ses 0,3 dernières secondes (alpha_cut empêche un fondu).
+- **L5 — drops et quête des pages** : `page_fragment` à 1,0 dans les données du Petit, du Normal
+  et du Coureur ; seuls les ennemis libres lâchent (`drops_enabled = false` pour ceux de l'arène).
+  Les 4 Timeres de la forêt donnent donc 4 fragments (en plus des 3 posés par L7) à chaque
+  chargement de la zone : la quête des 5 pages se termine toujours. Pickup ajouté en différé au
+  parent de l'ennemi, `quantity = 1`, `persistent = false`.
+- **L5 — forêt** : 4 Timeres dans la clairière au centre de la zone (local (−3, 1), (3, 2,5),
+  (0, −2,5), (1, 4)), nommés `forest_timere_<type>_<n>`.
+- **L5 — compose** : pure, graine `random_seed` (export ; 0 = nouvelle graine à chaque série),
+  tirage seedé par `hash([graine, n])`. Les vagues listées gardent leur composition mais sont
+  mélangées ; `count` est une expression en `n` évaluée par `Expression` ; nouvelle clé
+  `generator.min_wave` (`timere_runner` : 2, `timere_big` : 3) pour « Coureur dès la vague 2,
+  Grand dès la vague 3 » au-delà des vagues listées.
+- **L5 — apparition** : `max_simultaneous` fait attendre le type plafonné (le Grand suivant attend
+  que le premier meure) ; les autres types de la file passent devant. Délais dans la clé `timing`
+  du JSON (défauts de jeu.js : 1,2 s avant la vague 1, 1,8 s entre deux vagues, 0,8 s avant la
+  1re apparition, max(0,5 ; 2,2 − 0,15 n) × [0,7 ; 1,2]) ; `heal_amount` (1). Ennemis de vague :
+  enfants de `Arena/Spawned`, `always_chase = true` (ni laisse ni portée d'aggro), à ±1 m d'un
+  point d'apparition tiré au hasard.
+- **L5 — score et fin de série** : le WaveDirector compte ses propres ennemis par le signal local
+  `Enemy.defeated` (un ennemi libre tué ailleurs ne compte pas) ; vague nettoyée dès que le
+  dernier meurt. `arena_score_changed` au départ (0), à chaque mort et à chaque bonus. Fin :
+  `player_died`, `zone_entered` d'une autre zone que celle de l'arène (à tout moment, sinon une
+  fuite au village bloquerait la série), sortie du disque de 12 m pendant la pause entre deux
+  vagues (dont celle d'avant la vague 1). `stop()` est cette fin (record_score, arena_finished).
+- **L5 — panneau** : nœud `Panel` d'arena.tscn en (9, 0, −2), tourné vers l'est (arrivée du
+  village), invite « Affronter les Timeres » ; pendant une série, invite vide et `InteractArea`
+  non détectable. Musique : clé facultative `music` (AudioStreamPlayer du WaveDirector), absente
+  de dunes.json tant qu'il n'y a pas d'audio.
+- **L5 — démo** : `tests/integration/demo_l5.tscn` place aussi un Timere de chaque type autour du
+  joueur factice (`showcase`) pour la capture ; ZQSD, J et K y pilotent un joueur minimal.

@@ -16,3 +16,12 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 ```
 
 ## Demandes
+
+## L5 — savoir si une zone est sûre
+- Besoin : un Timere abandonne la poursuite quand le joueur est dans une zone `safe` (village).
+  Aucune API ne dit si une zone est sûre : Enemy (L5) lit `WorldManager.current_zone()` puis
+  `Zone.safe` de la racine du groupe `zones` qui porte ce nom.
+- Proposition : `func is_zone_safe(zone_id: StringName) -> bool` dans WorldManager (L2), vrai si la
+  Zone `zone_id` a `safe = true` ; Enemy l'appellerait avec `current_zone()`.
+- En attendant : lecture défensive de `Zone.safe` via le groupe `zones` (src/enemies/enemy.gd,
+  `_player_in_safe_zone`), mise en cache tant que la zone courante ne change pas.

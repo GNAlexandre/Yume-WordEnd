@@ -292,16 +292,19 @@ func _find_target() -> Node3D:
 	return get_tree().get_first_node_in_group(PLAYER_GROUP) as Node3D
 
 
-## Zone sûre : celle où se trouve le joueur selon WorldManager, si sa racine Zone est safe.
+## Zone sûre : celle où se trouve le joueur selon WorldManager, si sa racine Zone est safe
+## (WorldManager.is_zone_safe() si L2 l'ajoute, voir docs/CONTRACT_REQUESTS.md).
 func _player_in_safe_zone() -> bool:
 	var zone_id := WorldManager.current_zone()
 	if not _zone_checked or zone_id != _zone_seen:
 		_zone_checked = true
 		_zone_seen = zone_id
 		_zone_safe = false
+		if WorldManager.has_method(&"is_zone_safe"):
+			_zone_safe = WorldManager.call(&"is_zone_safe", zone_id)
 		for node: Node in get_tree().get_nodes_in_group(ZONES_GROUP):
 			if node.name == zone_id and node is Zone:
-				_zone_safe = (node as Zone).safe
+				_zone_safe = _zone_safe or (node as Zone).safe
 	return _zone_safe
 
 
@@ -520,6 +523,7 @@ func _on_health_died() -> void:
 	remove_from_group(ENEMIES_GROUP)
 	hurtbox.set_deferred(&"monitorable", false)
 	set_deferred(&"collision_layer", 0)
+	set_deferred(&"collision_mask", 1)
 	visual.play(&"mort", true)
 	var points := data.points if data != null else 0
 	EventBus.enemy_killed.emit(enemy_id(), points)
