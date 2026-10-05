@@ -1,12 +1,14 @@
 extends GutTest
 ## Enemy (src/enemies/enemy.gd) : les 4 Timeres poursuivent et attaquent un mannequin (dégâts
 ## seulement sur les images « coup »), recul (le Grand ne recule que sous l'onde), mort, drops,
-## abandon de la poursuite (zone sûre, laisse), données et Timeres libres de la forêt.
+## abandon de la poursuite (zone sûre, laisse, frontière réelle du village), données et Timeres
+## libres de la forêt.
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
 const PLAYER_STUB := preload("res://tests/stubs/player_stub.tscn")
 const VISUAL_STUB_SCRIPT := preload("res://tests/stubs/visual_stub.gd")
 const FOREST := preload("res://src/enemies/placements/forest.tscn")
+const ISLAND := preload("res://src/world/island.tscn")
 const SWORD := preload("res://data/attacks/sword_1.tres")
 const WAVE := preload("res://data/attacks/charge_wave.tres")
 const TYPES: Array[StringName] = [
@@ -211,6 +213,25 @@ func test_stops_chasing_when_player_is_in_a_safe_zone() -> void:
 	await wait_seconds(0.5)
 	assert_lt(enemy.position.x, given_up_at, "il rentre chez lui")
 	assert_lt(_flat_distance(enemy, player), 10.0)
+
+
+func test_gives_up_at_the_real_village_border() -> void:
+	var island: Node3D = add_child_autofree(ISLAND.instantiate())
+	var player := PLAYER_STUB.instantiate() as CharacterBody3D
+	player.position = Vector3(0.0, 0.2, -25.0)
+	island.add_child(player)
+	var enemy := ENEMY_SCENE.instantiate() as Enemy
+	enemy.data = load("res://data/enemies/timere_normal.tres") as EnemyData
+	enemy.position = Vector3(0.0, 0.2, -31.0)
+	island.add_child(enemy)
+	var chasing: bool = await wait_until(func() -> bool: return enemy.state() == &"chase", 2.0)
+	assert_true(chasing, "poursuite dans la forêt, près de la barrière (z = -22)")
+	player.position = Vector3(0.0, 0.2, -17.0)
+	var gave_up: bool = await wait_until(func() -> bool: return enemy.state() == &"idle", 2.0)
+	assert_true(gave_up, "le joueur entre au village : fin de la poursuite")
+	assert_eq(WorldManager.current_zone(), &"village")
+	await wait_seconds(0.5)
+	assert_lt(enemy.global_position.z, -22.0, "le Timere reste côté forêt")
 
 
 func test_leash_limits_the_chase() -> void:
