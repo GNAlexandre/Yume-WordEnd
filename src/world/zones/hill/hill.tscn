@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/zone.gd" id="1_zone"]
+[ext_resource type="PackedScene" path="res://src/npc/placements/hill.tscn" id="2_npcs"]
+[ext_resource type="PackedScene" path="res://src/enemies/placements/hill.tscn" id="3_enemies"]
+[ext_resource type="PackedScene" path="res://src/items/placements/hill.tscn" id="4_pickups"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
+size = Vector3(58, 40, 44)
+
+[sub_resource type="StandardMaterial3D" id="mat_hill"]
+albedo_color = Color(0.525, 0.788, 0.435, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_top"]
+albedo_color = Color(0.655, 0.851, 0.561, 1)
+
+[node name="hill" type="Node3D" groups=["zones"]]
+script = ExtResource("1_zone")
+display_name = "Colline"
+
+[node name="Spawn" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0.2, 0)
+
+[node name="Bounds" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Bounds"]
+shape = SubResource("BoxShape3D_bounds")
+
+[node name="Geometry" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="Hill" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3.5, 0)
+radius = 18.0
+height = 7.0
+sides = 24
+cone = true
+material = SubResource("mat_hill")
+
+[node name="Lookout" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 6.6, 0)
+radius = 1.6
+height = 0.25
+sides = 12
+material = SubResource("mat_top")
+
+[node name="NPCs" parent="." instance=ExtResource("2_npcs")]
+
+[node name="Enemies" parent="." instance=ExtResource("3_enemies")]
+
+[node name="Pickups" parent="." instance=ExtResource("4_pickups")]

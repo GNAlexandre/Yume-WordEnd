@@ -1,0 +1,129 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/zone.gd" id="1_zone"]
+[ext_resource type="PackedScene" path="res://src/npc/placements/dunes.tscn" id="2_npcs"]
+[ext_resource type="PackedScene" path="res://src/enemies/placements/dunes.tscn" id="3_enemies"]
+[ext_resource type="PackedScene" path="res://src/items/placements/dunes.tscn" id="4_pickups"]
+[ext_resource type="PackedScene" path="res://src/enemies/arena.tscn" id="5_arena"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
+size = Vector3(58, 30, 44)
+
+[sub_resource type="StandardMaterial3D" id="mat_sand"]
+albedo_color = Color(0.914, 0.722, 0.447, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_arena"]
+albedo_color = Color(0.941, 0.788, 0.541, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_dune"]
+albedo_color = Color(0.867, 0.635, 0.373, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_post"]
+albedo_color = Color(0.541, 0.353, 0.235, 1)
+
+[node name="dunes" type="Node3D" groups=["zones"]]
+script = ExtResource("1_zone")
+display_name = "Dunes au couchant"
+
+[node name="Spawn" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.2, 0)
+
+[node name="Bounds" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Bounds"]
+shape = SubResource("BoxShape3D_bounds")
+
+[node name="Geometry" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="Sand" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+size = Vector3(58, 0.1, 44)
+material = SubResource("mat_sand")
+
+[node name="ArenaFloor" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+radius = 12.0
+height = 0.14
+sides = 40
+material = SubResource("mat_arena")
+
+[node name="Dune1" type="CSGSphere3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 0.7, -19, 0, -14)
+radius = 6.0
+radial_segments = 16
+rings = 8
+material = SubResource("mat_dune")
+
+[node name="Dune2" type="CSGSphere3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 0.7, -20, 0, 13)
+radius = 6.0
+radial_segments = 16
+rings = 8
+material = SubResource("mat_dune")
+
+[node name="Dune3" type="CSGSphere3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 0.7, 11, 0, -17)
+radius = 6.0
+radial_segments = 16
+rings = 8
+material = SubResource("mat_dune")
+
+[node name="Dune4" type="CSGSphere3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 0.7, 9, 0, 17)
+radius = 6.0
+radial_segments = 16
+rings = 8
+material = SubResource("mat_dune")
+
+[node name="Dune5" type="CSGSphere3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 0.7, -25, 0, 0)
+radius = 6.0
+radial_segments = 16
+rings = 8
+material = SubResource("mat_dune")
+
+[node name="PostN" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -14.5)
+size = Vector3(0.6, 2, 0.6)
+material = SubResource("mat_post")
+
+[node name="PostS" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 14.5)
+size = Vector3(0.6, 2, 0.6)
+material = SubResource("mat_post")
+
+[node name="PostE" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 1, 0)
+size = Vector3(0.6, 2, 0.6)
+material = SubResource("mat_post")
+
+[node name="PostW" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 1, 0)
+size = Vector3(0.6, 2, 0.6)
+material = SubResource("mat_post")
+
+[node name="SpawnN" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -13)
+
+[node name="SpawnS" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 13)
+
+[node name="SpawnE" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.5, 0)
+
+[node name="SpawnW" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.5, 0)
+
+[node name="Arena" parent="." instance=ExtResource("5_arena")]
+arena_id = &"dunes"
+
+[node name="NPCs" parent="." instance=ExtResource("2_npcs")]
+
+[node name="Enemies" parent="." instance=ExtResource("3_enemies")]
+
+[node name="Pickups" parent="." instance=ExtResource("4_pickups")]

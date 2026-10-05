@@ -1,0 +1,306 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/zone.gd" id="1_zone"]
+[ext_resource type="PackedScene" path="res://src/npc/placements/forest.tscn" id="2_npcs"]
+[ext_resource type="PackedScene" path="res://src/enemies/placements/forest.tscn" id="3_enemies"]
+[ext_resource type="PackedScene" path="res://src/items/placements/forest.tscn" id="4_pickups"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
+size = Vector3(160, 30, 58)
+
+[sub_resource type="StandardMaterial3D" id="mat_floor"]
+albedo_color = Color(0.361, 0.604, 0.306, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_trunk"]
+albedo_color = Color(0.545, 0.353, 0.169, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_leaves_a"]
+albedo_color = Color(0.184, 0.561, 0.306, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_leaves_b"]
+albedo_color = Color(0.247, 0.643, 0.373, 1)
+
+[node name="forest" type="Node3D" groups=["zones"]]
+script = ExtResource("1_zone")
+display_name = "Forêt des Timeres"
+
+[node name="Spawn" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 24)
+
+[node name="Bounds" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Bounds"]
+shape = SubResource("BoxShape3D_bounds")
+
+[node name="Geometry" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="Floor" type="CSGBox3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+size = Vector3(160, 0.1, 58)
+material = SubResource("mat_floor")
+
+[node name="Trunk1" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 1.1, -18)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves1" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 4.2, -18)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_a")
+
+[node name="Trunk2" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55, 1.1, 6)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves2" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55, 4.2, 6)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_b")
+
+[node name="Trunk3" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 1.1, -10)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves3" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 4.2, -10)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_a")
+
+[node name="Trunk4" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 1.1, 14)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves4" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 4.2, 14)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_b")
+
+[node name="Trunk5" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 1.1, -20)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves5" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 4.2, -20)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_a")
+
+[node name="Trunk6" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 1.1, 4)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves6" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 4.2, 4)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_b")
+
+[node name="Trunk7" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.1, -16)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves7" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4.2, -16)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_a")
+
+[node name="Trunk8" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.1, -6)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves8" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4.2, -6)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_b")
+
+[node name="Trunk9" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 1.1, 12)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves9" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 4.2, 12)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_a")
+
+[node name="Trunk10" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 1.1, -18)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves10" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 4.2, -18)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_b")
+
+[node name="Trunk11" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1.1, 4)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves11" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 4.2, 4)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_a")
+
+[node name="Trunk12" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 1.1, -12)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves12" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 4.2, -12)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_b")
+
+[node name="Trunk13" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 1.1, 12)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves13" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 4.2, 12)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_a")
+
+[node name="Trunk14" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 1.1, -20)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves14" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 4.2, -20)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_b")
+
+[node name="Trunk15" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68, 1.1, 0)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves15" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68, 4.2, 0)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_a")
+
+[node name="Trunk16" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 1.1, 16)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves16" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 4.2, 16)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_b")
+
+[node name="Trunk17" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 1.1, 18)
+radius = 0.35
+height = 2.2
+sides = 8
+material = SubResource("mat_trunk")
+
+[node name="Leaves17" type="CSGCylinder3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 4.2, 18)
+radius = 2.0
+height = 4.0
+sides = 10
+cone = true
+material = SubResource("mat_leaves_a")
+
+[node name="NPCs" parent="." instance=ExtResource("2_npcs")]
+
+[node name="Enemies" parent="." instance=ExtResource("3_enemies")]
+
+[node name="Pickups" parent="." instance=ExtResource("4_pickups")]

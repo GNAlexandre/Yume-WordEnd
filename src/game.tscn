@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/game.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://src/world/island.tscn" id="2_island"]
+[ext_resource type="PackedScene" path="res://src/player/player.tscn" id="3_player"]
+[ext_resource type="Script" path="res://src/quests/quest_tracker.gd" id="4_quests"]
+[ext_resource type="PackedScene" path="res://src/ui/hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://src/ui/dialogue_box.tscn" id="6_dialogue"]
+[ext_resource type="PackedScene" path="res://src/ui/inventory.tscn" id="7_inventory"]
+[ext_resource type="PackedScene" path="res://src/ui/arena_end.tscn" id="8_arena_end"]
+[ext_resource type="PackedScene" path="res://src/ui/touch_controls.tscn" id="9_touch"]
+
+[node name="Game" type="Node3D"]
+script = ExtResource("1_game")
+
+[node name="Island" parent="." instance=ExtResource("2_island")]
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 9)
+
+[node name="QuestTracker" type="Node" parent="."]
+script = ExtResource("4_quests")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="UI" instance=ExtResource("5_hud")]
+
+[node name="DialogueBox" parent="UI" instance=ExtResource("6_dialogue")]
+
+[node name="Inventory" parent="UI" instance=ExtResource("7_inventory")]
+
+[node name="ArenaEnd" parent="UI" instance=ExtResource("8_arena_end")]
+
+[node name="TouchControls" parent="UI" instance=ExtResource("9_touch")]
