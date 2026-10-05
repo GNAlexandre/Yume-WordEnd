@@ -137,3 +137,58 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   vivent hors de `data/skins/`.
 - **L0 — vagues** : `data/waves/dunes.json` sans champ `music` tant qu'il n'y a pas d'audio
   (licence de l'enregistrement non tranchée, section 13).
+
+## L8 — Sauvegarde
+
+- **L8 — fichier** : `export_json()` écrit `version`, `saved_at` (UTC, `AAAA-MM-JJTHH:MM:SSZ`)
+  puis les champs de `GameState.to_dict()` dans leur ordre (indentation de 2 espaces, clés non
+  triées). `save()` écrit `<save_path>.tmp`, le ferme puis le renomme en `save_path` : une
+  écriture interrompue ou refusée laisse l'ancienne sauvegarde intacte (`push_error`). Chaque
+  écriture réussie émet le signal `SaveManager.saved(path)` (indicateur « sauvegardé » du HUD).
+- **L8 — Web et IndexedDB** : vérifié dans le source de Godot 4.7.2 (`platform/web/os_web.cpp`,
+  `drivers/unix/file_access_unix.cpp` et `dir_access_unix.cpp`, `js/libs/library_godot_os.js`) :
+  `user://` est `/userfs`, monté en IDBFS ; Godot copie tout ce dossier vers IndexedDB
+  (`FS.syncfs`, asynchrone) au début de l'image qui suit la **fermeture d'un fichier ouvert en
+  écriture** sous `user://` ou une suppression (`DirAccess.remove`). Un renommage seul ou un
+  fichier resté ouvert ne déclenchent rien. D'où `file.close()` explicite puis renommage dans la
+  même image (la copie suivante emporte les deux) ; il faut encore une image après l'écriture
+  (un onglet masqué n'en donne plus). IndexedDB indisponible (navigation privée) :
+  `OS.is_userfs_persistent()` faux et rien n'est conservé ; `SaveManager.is_persistent()` permet
+  au menu de prévenir le joueur et de lui proposer l'export.
+- **L8 — fichier corrompu** : vide, JSON invalide, autre chose qu'un objet, `version` ou champ
+  d'un mauvais type (un champ absent reste permis : défaut de `from_dict`) → `load_game()`
+  renomme le fichier en `<save_path>.bak` (remplace l'ancien), démarre une nouvelle partie avec
+  le `GameState.skin_id` courant (`game_loaded`) et renvoie `ERR_FILE_CORRUPT` ; `last_error`
+  (texte pour le menu) et `push_error` disent pourquoi et où est la copie.
+- **L8 — codes de retour** : `load_game()` : `OK`, `ERR_FILE_NOT_FOUND` (rien ne change),
+  `ERR_INVALID_DATA` (version plus récente que le jeu : refusée sans toucher GameState ni le
+  fichier, `push_warning`), `ERR_FILE_CORRUPT` (ci-dessus). `import_json()` : `ERR_PARSE_ERROR`
+  (pas un objet JSON), `ERR_INVALID_DATA` (version future ou champ invalide), GameState intact
+  et pas de `push_error` (erreur de saisie). `last_error` explique tout échec, `""` sinon.
+- **L8 — format v0 et migration** : v0 = sauvegarde sans `version` (ou `"version": 0`) ni
+  `best_scores`, où le score de l'unique arène de l'easter egg (les dunes) est à plat : `best`,
+  `wave`, `games`, ou `meilleur` et `parties` comme `localStorage['yn.wordend']` dans jeu.js
+  (nombres ou textes numériques) ; les autres champs comme en v1, tous facultatifs ; clés
+  inconnues ignorées (`maj`, `volume`, `muet`). Migration : `best_scores.dunes = {score, wave,
+  games}` si score ou parties > 0, puis la partie est réécrite en v1. Le texte de
+  `localStorage['yn.wordend']` s'importe donc tel quel (score de l'easter egg repris). Une
+  fonction par étape (`_migrate_v0`, puis `_migrate_v1` le jour où v2 existera).
+- **L8 — auto-sauvegarde** : `arena_finished`, `item_collected`, `quest_updated`, `zone_entered`
+  et `save_requested` (qui n'écrit donc plus immédiatement) demandent une écriture ; la première
+  lance un Timer de 0,5 s (`PROCESS_MODE_ALWAYS`, `ignore_time_scale`), les suivantes s'y
+  regroupent, une seule écriture à la fin. Au plus une écriture par 0,5 s, et un état complet :
+  sur `zone_entered`, SaveManager est servi avant WorldManager qui met `GameState.zone` à jour ;
+  QuestTracker donne la récompense après `quest_updated(…, done)`. Rien n'est écrit avant
+  `game_loaded` ni après `close_game()`. `new_game`, `load_game` et `import_json` abandonnent
+  l'écriture en attente de la partie remplacée (« Charger » n'écrase pas le fichier qu'il relit)
+  puis en demandent une pour la nouvelle partie (nouvelle partie, migration, import et reprise
+  ainsi écrits). `save()` appelé directement écrit tout de suite.
+- **L8 — perte du focus** : sur `NOTIFICATION_WM_CLOSE_REQUEST`, `WM_WINDOW_FOCUS_OUT`,
+  `APPLICATION_FOCUS_OUT` et `APPLICATION_PAUSED`, l'écriture en attente est faite aussitôt
+  (`flush()`) ; sans attente, rien n'est écrit (toujours pas de sauvegarde « à la fermeture »).
+- **L8 — tests** : base commune `tests/stubs/l8_save_test.gd` (fichier
+  `user://test_l8_<script>.json`, `close_game(false)` avant et après chaque test ; chemin,
+  délai, zone de WorldManager et pause rétablis). Tout test qui émet `game_loaded` arme
+  l'auto-sauvegarde pour la suite du processus : `test_game_flow_l0.gd` écrit ainsi
+  `user://save_v1.json` dans `build/xdg` (sans effet) ; un test qui vérifie `has_save()` doit
+  donc régler son propre `save_path`.
