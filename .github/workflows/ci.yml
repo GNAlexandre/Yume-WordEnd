@@ -1,0 +1,86 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  GODOT_VERSION: "4.7.2"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.7.2
+    steps:
+      # git et git-lfs avant le checkout : sinon actions/checkout télécharge une archive sans
+      # .git ni fichiers LFS.
+      - name: git et git-lfs
+        run: |
+          if ! command -v git >/dev/null 2>&1 || ! command -v git-lfs >/dev/null 2>&1; then
+            apt-get update -qq
+            DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends git git-lfs ca-certificates >/dev/null
+          fi
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      # Dans un job container:, HOME=/github/home : les templates de l'image (installés pour
+      # /root) doivent être déplacés là où Godot les cherche (cf. README de godot-ci).
+      - name: Templates d'export
+        run: |
+          mkdir -p ~/.local/share/godot/export_templates
+          src="/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          dst="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          if [ -d "$src" ] && [ ! -d "$dst" ]; then mv "$src" "$dst"; fi
+          ls "$dst"
+      # Paquets X11/Mesa/Xvfb (noms adaptés à la version d'Ubuntu), gdtoolkit et Pillow :
+      # même script que les VM cloud ; il ne télécharge Godot que s'il manque.
+      - name: Outils
+        run: |
+          bash tools/setup.sh
+          godot --headless --version
+          gdlint --version
+      - name: Vérification
+        run: tools/check.sh
+      - name: Taille du build
+        run: |
+          size=$(tar -czf - build/web | wc -c)
+          echo "build/web compressé : $((size / 1048576)) Mo (budget M2 : 25 Mo)" >> "$GITHUB_STEP_SUMMARY"
+          [ "$size" -lt 26214400 ] || { echo "build > 25 Mo"; exit 1; }
+      - uses: actions/upload-artifact@v4
+        with: { name: web, path: build/web }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: shots, path: build/shots, if-no-files-found: ignore }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: junit, path: build/junit.xml, if-no-files-found: ignore }
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: logs, path: build/*.log, if-no-files-found: ignore }
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: web, path: build/web }
+      - name: Fichiers du site (CNAME, page de test)
+        run: cp -r web/. build/web/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: build/web }
+      - id: deployment
+        uses: actions/deploy-pages@v4
