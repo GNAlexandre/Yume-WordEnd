@@ -205,10 +205,18 @@ func test_portrait_from_npc_data() -> void:
 	var portrait := (_box.get_node("%Portrait") as TextureRect).texture
 	assert_not_null(portrait, "portrait du PNJ retrouvé par data/npcs/librarian.tres")
 	assert_true(_box.get_node("%PortraitFrame").visible)
+	assert_eq(portrait, DialogueBox.portrait_of(LIBRARIAN.skin), "portrait de la skin du PNJ")
+
+
+func test_portrait_falls_back_to_first_idle_frame() -> void:
+	# Les skins ont un portrait depuis le Lot 3 : le repli se teste sur une copie sans portrait.
+	var skin := LIBRARIAN.skin.duplicate() as SkinData
+	skin.portrait = null
+	var portrait := DialogueBox.portrait_of(skin)
 	assert_true(portrait is AtlasTexture, "sans SkinData.portrait : image de la planche")
 	var atlas := portrait as AtlasTexture
-	assert_eq(atlas.atlas, LIBRARIAN.skin.sprite_sheet)
-	var first: Array = LIBRARIAN.skin.frames_json.data["animations"]["repos"]["images"][0]
+	assert_eq(atlas.atlas, skin.sprite_sheet)
+	var first: Array = skin.frames_json.data["animations"]["repos"]["images"][0]
 	assert_eq(atlas.region, Rect2(first[0], first[1], first[2], first[3]), "1re image de repos")
 
 
