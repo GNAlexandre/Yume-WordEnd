@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://src/combat/attack_data.gd" id="1_attack"]
+
+[resource]
+script = ExtResource("1_attack")
+id = &"sword_3"
+animation = &"attaque"
+damage = 1
+knockback = 8.0
+pierces = false
+range_m = 1.2
+cooldown = 0.3
+arc_deg = 90.0

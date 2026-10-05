@@ -1,0 +1,19 @@
+{
+  "arena": "dunes",
+  "heal_every_waves": 2,
+  "bonus_per_wave": 50,
+  "spawn_points": ["SpawnN", "SpawnS", "SpawnE", "SpawnW"],
+  "waves": [
+    { "enemies": { "timere_small": 3, "timere_normal": 2 } },
+    { "enemies": { "timere_small": 3, "timere_normal": 2, "timere_runner": 2 } },
+    { "enemies": { "timere_small": 4, "timere_normal": 3, "timere_runner": 1, "timere_big": 1 } }
+  ],
+  "generator": {
+    "count": "3 + 2 * n",
+    "weights": { "timere_small": 4, "timere_normal": 3, "timere_runner": 2, "timere_big": 1 },
+    "max_simultaneous": { "timere_big": 1 },
+    "speed_bonus_per_wave": 0.04,
+    "speed_bonus_max": 0.5,
+    "hp_bonus": { "timere_normal": { "from_wave": 6, "amount": 1 } }
+  }
+}

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://src/enemies/enemy_data.gd" id="1_enemy"]
+[ext_resource type="Resource" path="res://data/enemies/visuals/timere.tres" id="2_visual"]
+[ext_resource type="Script" path="res://src/combat/attack_data.gd" id="3_attack"]
+[ext_resource type="Resource" path="res://data/attacks/bite.tres" id="4_bite"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"timere_small"
+display_name = "Petit Timere"
+visual = ExtResource("2_visual")
+scale = 0.8
+max_hp = 1
+speed = 3.0
+points = 10
+attacks = Array[ExtResource("3_attack")]([ExtResource("4_bite")])
+rush = false
+stoic = false
+aggro_range_m = 10.0
+drops = {}

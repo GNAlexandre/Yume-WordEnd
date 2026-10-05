@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://src/combat/attack_data.gd" id="1_attack"]
+
+[resource]
+script = ExtResource("1_attack")
+id = &"charge_wave"
+animation = &"charge"
+damage = 3
+knockback = 9.0
+pierces = true
+range_m = 8.0
+cooldown = 1.2
+width_m = 2.0
+charge_time = 0.55
+duration = 0.42
+speed = 14.0
