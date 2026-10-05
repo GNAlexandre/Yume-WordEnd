@@ -248,5 +248,7 @@ headless de Playwright (141, `/opt/pw-browsers`) fournit un WebGL 2 logiciel (Sw
 moteur y démarre en 2 à 3 s sans erreur console, dans la page et dans l'iframe d'`embed-test.html`
 (1248 × 702) ; sans WebGL 2 (`--disable-webgl2`) le shell affiche son message ; sur un téléphone
 Android simulé (915 × 412, tactile), un toucher sur « Nouvelle partie » lance la partie, les
-contrôles tactiles s'affichent, joystick et Épée tenus à deux doigts déplacent Chtholly. Restent
-à juger sur de vrais appareils : fluidité, taille des boutons sous le pouce, Safari iOS.
+contrôles tactiles s'affichent, joystick et Épée tenus à deux doigts déplacent Chtholly ; sur
+ordinateur (sans tactile), la partie se lance à la souris, aucun contrôle tactile n'apparaît et
+le clavier déplace Chtholly. Restent à juger sur de vrais appareils : fluidité, taille des
+boutons sous le pouce, Safari iOS.

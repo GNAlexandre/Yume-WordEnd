@@ -124,6 +124,7 @@ func load_scene(path: String, frame_budget_ms: float = 50.0) -> PackedScene:
 	return scene
 
 
+## Typographie française : espace insécable avant « ! » et « % ».
 func _show_progress() -> void:
 	_bar.value = progress
 	if progress >= 1.0:
