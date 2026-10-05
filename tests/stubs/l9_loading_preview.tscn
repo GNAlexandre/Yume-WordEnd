@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/ui/loading.tscn" id="1_loading"]
+
+[node name="Loading" instance=ExtResource("1_loading")]
+progress = 0.62
