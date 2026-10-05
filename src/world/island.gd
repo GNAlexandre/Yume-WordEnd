@@ -22,9 +22,5 @@ func _ready() -> void:
 
 
 func _on_kill_zone_body_entered(body: Node3D) -> void:
-	if not body.is_in_group(&"player"):
-		return
-	var zone := WorldManager.current_zone()
-	if zone.is_empty():
-		zone = WorldManager.VILLAGE
-	WorldManager.teleport.call_deferred(zone, WorldManager.SPAWN_MARKER)
+	if body.is_in_group(WorldManager.PLAYER_GROUP):
+		WorldManager.rescue.call_deferred()
