@@ -10,10 +10,32 @@ radius = 0.5
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_halo"]
 render_priority = 0
 shader = ExtResource("2_halo")
+shader_parameter/strength = 0.85
 
 [sub_resource type="QuadMesh" id="QuadMesh_halo"]
 material = SubResource("ShaderMaterial_halo")
-size = Vector2(1.1, 1.1)
+size = Vector2(1.2, 1.2)
+
+[sub_resource type="Gradient" id="Gradient_shadow"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0.12, 0.06, 0.18, 0.3, 0.12, 0.06, 0.18, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_shadow"]
+gradient = SubResource("Gradient_shadow")
+width = 64
+height = 64
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shadow"]
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("GradientTexture2D_shadow")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_shadow"]
+material = SubResource("StandardMaterial3D_shadow")
+size = Vector2(0.6, 0.6)
 
 [node name="Pickup" type="Area3D" groups=["interactable"]]
 collision_layer = 64
@@ -25,14 +47,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("SphereShape3D_pickup")
 
 [node name="Mesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
 cast_shadow = 0
 mesh = SubResource("QuadMesh_halo")
 
 [node name="Icon" type="Sprite3D" parent="Mesh"]
 cast_shadow = 0
 render_priority = 1
-pixel_size = 0.0086
+pixel_size = 0.0094
 billboard = 1
 texture_filter = 1
 texture = ExtResource("3_icon")
+
+[node name="Shadow" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_shadow")

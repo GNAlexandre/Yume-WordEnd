@@ -5,7 +5,8 @@ extends Area3D
 ## Structure figée de pickup.tscn : racine Area3D (couche 7 pickup, masque 2 player) du groupe
 ## "interactable", enfants CollisionShape3D et Mesh. Mesh est le halo (quad face à la caméra,
 ## rayons qui tournent, teinte ItemData.color) ; son enfant Icon (Sprite3D billboard) montre
-## ItemData.icon ; les deux flottent doucement au-dessus de l'origine (posée au sol).
+## ItemData.icon ; les deux flottent doucement au-dessus de l'origine (posée au sol), où
+## Shadow (disque doux) respire avec le flottement.
 ## Ramassage au contact du joueur (nœud du groupe "player") ou par interact() (invite
 ## « Ramasser »). collect() : GameState.add_item(), puis GameState.mark_pickup_collected(
 ## pickup_id()) s'il est persistant, puis EventBus.item_collected, puis queue_free().
@@ -16,7 +17,7 @@ extends Area3D
 ## Icône d'un objet sans données (data/items/<id>.tres absent).
 const UNKNOWN_ICON := preload("res://assets/items/unknown.png")
 ## Largeur de l'icône dans le monde (m).
-const ICON_SIZE := 0.55
+const ICON_SIZE := 0.6
 
 ## Objet donné (ItemData.id).
 @export var item_id: StringName:
@@ -39,6 +40,7 @@ var _rest_height: float = 0.0
 
 @onready var _mesh: MeshInstance3D = $Mesh
 @onready var _icon: Sprite3D = $Mesh/Icon
+@onready var _shadow: Node3D = $Shadow
 
 
 func _ready() -> void:
@@ -59,7 +61,9 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_time += delta
-	_mesh.position.y = _rest_height + sin(_time * TAU / bob_period) * bob_height
+	var bob := sin(_time * TAU / bob_period)
+	_mesh.position.y = _rest_height + bob * bob_height
+	_shadow.scale = Vector3.ONE * (1.0 - 0.12 * bob)
 
 
 ## Identifiant de sauvegarde : le nom du nœud.
