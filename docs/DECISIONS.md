@@ -540,3 +540,15 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **L2 — captures** : `L2_VIEW=overview|village|dunes tools/screenshot.sh
   res://tests/integration/demo_l2.tscn build/shots/<nom>.png` cadre la vue et écrit draw calls
   et primitives dans le journal.
+## Intégration M1 — combat de bout en bout
+
+- **M1 — enchaînement d'épée** (`src/player/player.gd`, L1) : un appui sur `attack` pendant
+  l'état `attack` de Combat est transmis à `PlayerCombat.attack()`, qui le garde pour enchaîner
+  le coup suivant (L4 décide) ; pendant la charge, l'onde, les dégâts, la mort ou un dialogue,
+  rien ne passe. Cause : player.gd ne transmettait rien tant que `is_busy()`, donc seul un appui
+  dans les 0,4 s qui suivent le coup enchaînait ; un joueur qui martèle la touche pendant le coup
+  (0,29 s) perdait ses appuis.
+- **M1 — zone sûre** (`src/autoload/world_manager.gd`, L2 ; contrat PLAN.md section 3) :
+  `WorldManager.is_zone_safe(zone_id) -> bool` (`Zone.safe` de la zone, faux si inconnue),
+  demandé par L5 ; `Enemy._player_in_safe_zone()` l'appelle directement (lecture défensive du
+  groupe `zones` retirée) ; `tests/unit/test_contracts.gd` vérifie la signature.

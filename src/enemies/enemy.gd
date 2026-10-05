@@ -12,10 +12,10 @@ extends CharacterBody3D
 ## sortie du groupe, enemy_killed, drops, disparition après corpse_time). Coureur (data.rush) :
 ## rush en ligne droite dès la portée de son attaque sans dégâts (8 m), puis morsure. Stoic :
 ## ni recul ni hurt, sauf sous une attaque qui traverse (onde). La poursuite cesse si le joueur
-## est mort, dans une zone sûre (WorldManager.current_zone() → Zone.safe) ou à plus de leash_m
-## de origin : l'ennemi rentre chez lui. Portée d'une attaque : AttackData.range_m × data.scale
-## devant le corps (capsule, Hurtbox et Hitbox sont aussi mises à l'échelle) ; la distance de
-## déclenchement du rush ne l'est pas.
+## est mort, dans une zone sûre (WorldManager.is_zone_safe(current_zone())) ou à plus de
+## leash_m de origin : l'ennemi rentre chez lui. Portée d'une attaque : AttackData.range_m ×
+## data.scale devant le corps (capsule, Hurtbox et Hitbox sont aussi mises à l'échelle) ; la
+## distance de déclenchement du rush ne l'est pas.
 
 ## Émis à la mort, avec EventBus.enemy_killed : le WaveDirector compte ainsi ses ennemis.
 signal defeated(enemy: Enemy, points: int)
@@ -25,7 +25,6 @@ enum State { IDLE, CHASE, RUSH, ATTACK, HURT, DEAD }
 const PICKUP_SCENE := preload("res://src/items/pickup.tscn")
 const PLAYER_GROUP := &"player"
 const ENEMIES_GROUP := &"enemies"
-const ZONES_GROUP := &"zones"
 const STATE_NAMES: Array[StringName] = [&"idle", &"chase", &"rush", &"attack", &"hurt", &"dead"]
 ## Recharge après une attaque : AttackData.cooldown × [0,7 ; 1,3] (jeu.js : 0,8 à 1,5 s).
 const COOLDOWN_JITTER := Vector2(0.7, 1.3)
@@ -292,19 +291,14 @@ func _find_target() -> Node3D:
 	return get_tree().get_first_node_in_group(PLAYER_GROUP) as Node3D
 
 
-## Zone sûre : celle où se trouve le joueur selon WorldManager, si sa racine Zone est safe
-## (WorldManager.is_zone_safe() si L2 l'ajoute, voir docs/CONTRACT_REQUESTS.md).
+## Zone sûre : celle où se trouve le joueur selon WorldManager (WorldManager.is_zone_safe),
+## relue seulement quand la zone courante change.
 func _player_in_safe_zone() -> bool:
 	var zone_id := WorldManager.current_zone()
 	if not _zone_checked or zone_id != _zone_seen:
 		_zone_checked = true
 		_zone_seen = zone_id
-		_zone_safe = false
-		if WorldManager.has_method(&"is_zone_safe"):
-			_zone_safe = WorldManager.call(&"is_zone_safe", zone_id)
-		for node: Node in get_tree().get_nodes_in_group(ZONES_GROUP):
-			if node.name == zone_id and node is Zone:
-				_zone_safe = _zone_safe or (node as Zone).safe
+		_zone_safe = WorldManager.is_zone_safe(zone_id)
 	return _zone_safe
 
 

@@ -12,7 +12,8 @@ extends Node
 ##   joueur mort est toujours dans l'arbre ;
 ## - rescue() ramène le joueur au Spawn de la zone courante : appelé par la KillZone de l'île
 ##   et, en filet de sécurité, quand le joueur passe sous FALL_LIMIT ;
-## - zone_entered met à jour current_zone() et GameState.zone.
+## - zone_entered met à jour current_zone() et GameState.zone ;
+## - is_zone_safe() dit si une zone est sûre (Zone.safe), pour l'IA des Timeres.
 
 const VILLAGE := &"village"
 const SPAWN_MARKER := &"Spawn"
@@ -93,6 +94,13 @@ func rescue() -> void:
 
 func current_zone() -> StringName:
 	return _current_zone
+
+
+## Vrai si la zone zone_id est sûre (Zone.safe, le village : aucun ennemi n'y poursuit le
+## joueur) ; faux pour une zone inconnue ou &"". Les Timeres l'appellent avec current_zone().
+func is_zone_safe(zone_id: StringName) -> bool:
+	var zone := _find_zone(zone_id)
+	return zone is Zone and (zone as Zone).safe
 
 
 ## Nom affiché d'une zone (Zone.display_name), ou son identifiant à défaut.
