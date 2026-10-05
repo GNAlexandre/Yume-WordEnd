@@ -137,3 +137,48 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   vivent hors de `data/skins/`.
 - **L0 — vagues** : `data/waves/dunes.json` sans champ `music` tant qu'il n'y a pas d'audio
   (licence de l'enregistrement non tranchée, section 13).
+
+## L6 — PNJ et dialogues
+
+- **L6 — format de dialogue étendu** : `entries` (liste facultative de nœuds d'entrée, essayés
+  dans l'ordre après `done` et avant `start`) ; `if` possible sur un choix (choix non proposé
+  s'il est faux, l'index reçu désigne les choix proposés) ; `flag`, `not_flag` et `set_flag`
+  acceptent un nom ou une liste ; textes à trous `{count:objet}`, `{left:objet:total}`
+  (au moins 0) et `{best:arène}`. `done` reste un nom réservé, essayé en premier. Raison : la
+  bibliothécaire a quatre états (proposition, quête en cours avec les pages restantes, quête
+  terminable, remerciement) que `["done", start]` seul ne distingue pas.
+- **L6 — effets** : ceux d'un nœud s'appliquent quand il s'affiche (avant l'émission de sa
+  ligne), ceux d'un choix quand il est choisi ; `start_quest` → `set_quest_state(id, &"active")`,
+  `complete_quest` → `&"done"` (QuestTracker, L7, retire les pages et donne le marque-page).
+  Identifiants de la quête : `pages`, `page_fragment` (5), drapeau `quest_pages_accepted`
+  (ceux du schéma de sauvegarde, section 4) ; drapeau du forgeron `blacksmith_tips_heard`.
+- **L6 — lecture des dialogues** : `FileAccess` + `JSON.parse` (et non `load()`, qui imprime
+  une ERROR moteur sur un JSON invalide), puis validation complète (`start`, `entries`, `next`,
+  clés des `if`). Fichier invalide, introuvable ou sans entrée vraie → `push_warning` explicite
+  et aucun signal : le joueur n'est jamais bloqué. Une condition mal formée vaut faux (avec
+  avertissement).
+- **L6 — un seul dialogue à la fois** : `DialogueRunner.is_any_running()` (statique) ;
+  `start()` est ignoré pendant un autre dialogue ; un runner n'est branché sur
+  `dialogue_choice_made` que pendant son dialogue ; un index hors limites est ignoré (avec
+  avertissement) ; un runner qui quitte l'arbre termine son dialogue (`dialogue_ended`).
+- **L6 — DialogueBox** : `class_name DialogueBox`. Touches lues dans `_input` et consommées
+  tant que la boîte est ouverte : `interact` et `ui_accept` (termine la ligne, puis suite ou
+  choix), `ui_up` / `ui_down` et `move_forward` / `move_back` (sélection). Dans Godot 4.7,
+  `ui_accept` n'a aucun bouton de manette : c'est `interact` (A) qui sert. Souris : survol =
+  sélection, clic = validation, clic sur la boîte = `interact`. Les choix n'apparaissent
+  qu'une fois la ligne entière ; 40 caractères/s ; thème `src/ui/dialogue_box_theme.tres`.
+- **L6 — portrait** : `SkinData.portrait`, sinon une `AtlasTexture` de la 1re image de
+  `repos` de la planche (les skins des trois PNJ n'ont pas de portrait).
+- **L6 — Npc** : `interact()` est ignoré `talk_cooldown` = 0,3 s après la fin de son dialogue,
+  sinon l'appui qui ferme la dernière réplique la relance si le joueur lit `interact` par
+  sondage ; respiration de ±2 % sur `Visual.scale.y` autour de sa valeur de départ ; à
+  l'apparition, chute d'au plus 1 s jusqu'au sol (couche 1), puis plus de physique. Raison :
+  la place du village dépasse le sol de 0,1 m, les emplacements sont donc à y = 0,2 comme le
+  Spawn et chaque PNJ se pose sur ce qu'il y a dessous.
+- **L6 — PNJ du village** (`src/npc/placements/village.tscn`) : bibliothécaire (−3,5 ; 4),
+  forgeron (4 ; 3), enfant (−5,5 ; 6,5) : autour de la place, à 6–7 m du Spawn, l'allée x = 0
+  du Spawn vers le nord restant libre.
+- **L6 — démo** : la présentation de `tests/integration/demo_l6.tscn` (terminer la 1re
+  réplique, passer à la question, l'afficher en entier) compte les images et non le temps,
+  pour que la capture soit identique quelle que soit la vitesse du rendu :
+  `tools/screenshot.sh res://tests/integration/demo_l6.tscn build/shots/l6.png 380`.
