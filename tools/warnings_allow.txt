@@ -1,0 +1,9 @@
+# Avertissements Godot tolérés par tools/check.sh.
+#
+# Une ligne = une sous-chaîne fixe (sensible à la casse) : toute ligne WARNING du journal qui la
+# contient est tolérée. Lignes vides et lignes commençant par # ignorées. Chaque ajout est
+# précédé d'un commentaire : lot, raison. Ne jamais tolérer une erreur (ERROR, SCRIPT ERROR).
+# Fusion par union (.gitattributes) : plusieurs lots peuvent ajouter des lignes en parallèle.
+
+# L0 : capture sous Xvfb + llvmpipe, le pilote logiciel ne gère pas la synchronisation verticale.
+Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.

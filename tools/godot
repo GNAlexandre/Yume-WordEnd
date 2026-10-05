@@ -1,11 +1,27 @@
 #!/bin/bash
 # Exécute Godot : binaire natif s'il existe, sinon l'image docker godot-ci (sans captures d'écran).
+#
+# Chaque copie du dépôt (worktree) a ses propres dossiers utilisateur dans build/xdg/ (user://,
+# réglages et cache de l'éditeur) : plusieurs worktrees peuvent lancer Godot en même temps sans
+# se partager user:// ni editor_settings. Les templates d'export de l'installation y sont liés.
+# GODOT_SHARED_USER_DIR=1 désactive cette isolation (user:// habituel).
 # --audio-driver Dummy évite les lignes ERROR: d'ALSA quand Godot tourne hors --headless.
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
 if command -v godot >/dev/null 2>&1; then
+  base="$ROOT/build/xdg"
+  if [ "${GODOT_SHARED_USER_DIR:-0}" != "1" ] && [ "${XDG_DATA_HOME:-}" != "$base/data" ]; then
+    templates="${XDG_DATA_HOME:-$HOME/.local/share}/godot/export_templates"
+    mkdir -p "$base/data/godot" "$base/config" "$base/cache"
+    if [ -d "$templates" ]; then
+      ln -sfn "$templates" "$base/data/godot/export_templates"
+    fi
+    export XDG_DATA_HOME="$base/data" XDG_CONFIG_HOME="$base/config" XDG_CACHE_HOME="$base/cache"
+  fi
   case " $* " in
     *" --headless "* | *" --audio-driver "*) exec godot "$@" ;;
     *) exec godot --audio-driver Dummy "$@" ;;
   esac
 fi
-exec docker run --rm -v "$PWD":/project -w /project -e HOME=/root \
+exec docker run --rm -v "$ROOT":/project -w /project -e HOME=/root \
   "barichello/godot-ci:${GODOT_VERSION:-4.7.2}" godot "$@"
