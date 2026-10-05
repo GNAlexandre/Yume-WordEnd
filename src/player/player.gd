@@ -13,8 +13,9 @@ extends CharacterBody3D
 ## - déplacement relatif à la caméra (move_direction), marche ou course avec accélération et
 ##   décélération, saut (appui retenu, délai de grâce), gravité, pentes jusqu'à 45° ;
 ## - rien ne bouge pendant Combat.is_busy() ni entre dialogue_started et dialogue_ended ;
-##   attack() et charge_begin() seulement quand Combat est libre, charge_release() toujours
-##   (c'est lui qui termine la charge) ; pas d'interact pendant un dialogue ;
+##   attack() et charge_begin() quand Combat est libre, attack() aussi pendant un coup
+##   d'épée (Combat le garde pour enchaîner), charge_release() toujours (c'est lui qui termine
+##   la charge) ; rien pendant un dialogue ;
 ## - visée : cible verrouillée ou dernière direction de déplacement ; Combat tourne pour que
 ##   son −Z pointe vers elle (épée, onde) ; Visual.set_facing quand Combat est libre ;
 ## - interaction : interactable le plus proche dans le cône frontal ;
@@ -417,7 +418,13 @@ func _update_vertical(frozen: bool, delta: float) -> void:
 func _forward_combat(commands: Commands, busy: bool) -> void:
 	if commands.charge_released:
 		combat.charge_release()
-	if busy or _in_dialogue:
+	if _in_dialogue:
+		return
+	if busy:
+		# Un appui pendant un coup d'épée passe à Combat (L4), qui le garde pour enchaîner le
+		# coup suivant ; pendant la charge, l'onde, les dégâts ou la mort, rien ne passe.
+		if commands.attack and combat.current_state() == &"attack":
+			combat.attack()
 		return
 	if commands.attack:
 		combat.attack()
