@@ -132,6 +132,8 @@ func test_properties_emit_signals() -> void:
 	assert_signal_emit_count(EventBus, "max_hp_changed", 1)
 	GameState.max_hp = 0
 	assert_eq(GameState.max_hp, 1, "jamais moins de 1 PV max")
+	GameState.max_hp = 1000000
+	assert_eq(GameState.max_hp, GameState.MAX_HP_LIMIT, "PV max plafonnés")
 
 
 func test_to_dict_matches_save_schema() -> void:
@@ -220,6 +222,17 @@ func test_from_dict_ignores_badly_typed_fields() -> void:
 	assert_false(GameState.is_pickup_collected(&"forest_page_1"))
 	assert_eq(GameState.arena_record(&"dunes"), {"score": 0, "wave": 6, "games": 0})
 	assert_eq(GameState.arena_record(&"beach"), {"score": 0, "wave": 0, "games": 0})
+
+
+func test_from_dict_without_valid_position_restarts_at_the_village() -> void:
+	GameState.from_dict({"zone": "forest"})
+	assert_eq(GameState.zone, &"", "position absente : replacé au Spawn du village par game.gd")
+	GameState.from_dict({"zone": "forest", "position": [5.0, 0.0, 1e9]})
+	assert_eq(GameState.zone, &"", "position hors de l'île")
+	assert_eq(GameState.position, Vector3.ZERO)
+	GameState.from_dict({"zone": "forest", "position": [5.0, 0.5, -40.0]})
+	assert_eq(GameState.zone, &"forest")
+	assert_eq(GameState.position, Vector3(5.0, 0.5, -40.0))
 
 
 func test_from_dict_never_emits_quest_updated() -> void:

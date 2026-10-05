@@ -19,8 +19,11 @@ const QUEST_ACTIVE := &"active"
 const QUEST_DONE := &"done"
 ## États reconnus par from_dict (les autres valeurs d'une sauvegarde sont ignorées).
 const QUEST_STATES: Array[StringName] = [QUEST_AVAILABLE, QUEST_ACTIVE, QUEST_DONE]
-## Plafond de sécurité du total d'un objet (sauvegarde trafiquée, boucle de ramassage…).
+## Plafonds de sécurité (sauvegarde trafiquée, boucle de ramassage…) : total d'un objet, PV max,
+## coordonnée d'une position (m ; l'île fait 160 m de côté).
 const MAX_QUANTITY := 999
+const MAX_HP_LIMIT := 20
+const MAX_COORDINATE := 1000.0
 
 ## Skin actif (SkinData.id) ; &"" = skin par défaut de SkinRegistry.
 var skin_id: StringName = &"":
@@ -30,10 +33,10 @@ var skin_id: StringName = &"":
 		skin_id = value
 		EventBus.skin_changed.emit(value)
 
-## PV max du joueur (5, puis 6 avec le marque-page de la quête) ; jamais moins de 1.
+## PV max du joueur (5, puis 6 avec le marque-page de la quête), entre 1 et MAX_HP_LIMIT.
 var max_hp: int = DEFAULT_MAX_HP:
 	set(value):
-		value = maxi(value, 1)
+		value = clampi(value, 1, MAX_HP_LIMIT)
 		if value == max_hp:
 			return
 		max_hp = value
@@ -238,12 +241,14 @@ func to_dict() -> Dictionary:
 ## Relit un dictionnaire produit par to_dict() (ou un JSON de sauvegarde). Un champ absent ou
 ## mal typé prend sa valeur par défaut, une entrée invalide est ignorée (quantité nulle ou non
 ## numérique, état de quête inconnu…) ; les nombres JSON (float) redeviennent des int.
+## Sans position valide, zone est vidée : game.gd replace alors le joueur au Spawn du village.
 func from_dict(data: Dictionary) -> void:
 	skin_id = _read_name(data.get("skin"))
 	var hp: Variant = data.get("max_hp")
 	max_hp = int(hp) if _is_number(hp) and int(hp) >= 1 else DEFAULT_MAX_HP
-	zone = _read_name(data.get("zone"))
-	position = _read_vector3(data.get("position"))
+	var saved_position: Variant = _read_vector3(data.get("position"))
+	position = saved_position if saved_position is Vector3 else Vector3.ZERO
+	zone = _read_name(data.get("zone")) if saved_position is Vector3 else &""
 	_inventory.clear()
 	var inventory := _as_dict(data.get("inventory"))
 	for key: Variant in inventory:
@@ -303,11 +308,12 @@ static func _read_count(value: Variant) -> int:
 	return maxi(int(value), 0) if _is_number(value) else 0
 
 
-## [x, y, z] (trois nombres) → Vector3 ; Vector3.ZERO sinon.
-static func _read_vector3(value: Variant) -> Vector3:
+## [x, y, z] (trois nombres d'au plus MAX_COORDINATE en valeur absolue) → Vector3 ; null sinon.
+static func _read_vector3(value: Variant) -> Variant:
 	if not value is Array or (value as Array).size() != 3:
-		return Vector3.ZERO
+		return null
+	for component: Variant in value:
+		if not _is_number(component) or absf(float(component)) > MAX_COORDINATE:
+			return null
 	var p: Array = value
-	if not (_is_number(p[0]) and _is_number(p[1]) and _is_number(p[2])):
-		return Vector3.ZERO
 	return Vector3(float(p[0]), float(p[1]), float(p[2]))

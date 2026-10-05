@@ -23,13 +23,9 @@ const QUESTS_DIR := QuestData.DATA_DIR
 const GROUP := &"quest_tracker"
 
 
-func _enter_tree() -> void:
+func _ready() -> void:
 	add_to_group(GROUP)
 	EventBus.quest_updated.connect(_on_quest_updated)
-
-
-func _exit_tree() -> void:
-	EventBus.quest_updated.disconnect(_on_quest_updated)
 
 
 ## Objets qui manquent pour terminer quest : item_id → quantité manquante (vide si rien).
@@ -57,7 +53,9 @@ static func can_complete(quest: QuestData) -> bool:
 
 
 func _on_quest_updated(quest_id: StringName, state: StringName) -> void:
-	if state != GameState.QUEST_DONE or get_tree().get_first_node_in_group(GROUP) != self:
+	if state != GameState.QUEST_DONE or not is_inside_tree():
+		return
+	if get_tree().get_first_node_in_group(GROUP) != self:
 		return
 	var quest := QuestData.find(quest_id)
 	if quest == null:
