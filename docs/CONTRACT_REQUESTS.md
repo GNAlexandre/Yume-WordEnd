@@ -110,3 +110,15 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   événements `device == InputEvent.DEVICE_ID_EMULATION` ; TouchControls consomme déjà ces
   événements dans `_unhandled_input` (UI/TouchControls passe avant Player dans cet ordre).
 - En attendant : rien à faire tant que la caméra respecte `_unhandled_input`.
+
+## L10 — boutons de manette pour ui_accept et ui_cancel
+- Besoin : dans Godot 4.7, `ui_accept` et `ui_cancel` n'ont aucun bouton de manette : A ne presse pas
+  le bouton qui a le focus et B ne ferme rien. Chaque écran le contourne à sa façon : DialogueBox
+  lit `interact` (L6), les écrans du L10 lisent A et B au relâchement (`src/ui/main_menu_input.gd`),
+  l'inventaire (L7) n'a pas de B.
+- Proposition : PR « contrats » sur project.godot : JOY_BUTTON_A (0) dans `ui_accept`, JOY_BUTTON_B
+  (1) dans `ui_cancel`. Point d'attention : A est aussi jump et interact, B est charge, lus par
+  sondage par le joueur ; un écran qui se ferme sur l'**appui** ferait sauter ou charger le joueur
+  dans l'image où la pause est levée (BaseButton, lui, presse au relâchement, ce qui l'évite).
+  Ensuite, `main_menu_input.gd` pourra se réduire au retour par B.
+- En attendant : `src/ui/main_menu_input.gd` (menu principal, crédits, pause, fin d'arène).

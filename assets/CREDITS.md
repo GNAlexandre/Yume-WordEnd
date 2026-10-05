@@ -15,3 +15,4 @@ egg n'a pas de licence établie (PLAN.md section 13) et n'est pas copié.
 | Fichier(s) | Auteur / source | URL | Licence | Ajouté par |
 | --- | --- | --- | --- | --- |
 | `assets/items/*.png` | généré par `tools/gen_item_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | L7 |
+| `assets/ui/*.png` (cœurs, marqueur de cible, livre de sauvegarde, page de quête, étoile) | généré par `tools/gen_ui_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | L10 |

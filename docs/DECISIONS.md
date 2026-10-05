@@ -495,3 +495,85 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **L9 — vérification dans un navigateur** : le Chromium headless de Playwright (SwiftShader)
   fournit un WebGL 2 logiciel dans la VM ; utilisé à la main (docs/web.md), pas dans check.sh
   (lourd et absent de l'image godot-ci).
+## L10 — Menu et HUD
+
+- **L10 — thème** : `src/ui/wordend_theme.tres`, commun au menu, aux crédits, au HUD, à la pause
+  et à la fin d'arène : police par défaut (grasse synthétique par `FontVariation` pour les titres),
+  panneaux crème à coins arrondis et contour corail, boutons pêche (rose pour l'action principale),
+  variantes `HudLabel`, `HudTitle`, `HudAccent`, `HudPanel`, `PrimaryButton`, `SkinCard`,
+  `SkinCardSelected`, `KeyCap`, `PadA`, `ChargeBarFull`, `ClickPill`. Aucun glyphe hors de la
+  police par défaut (pas de police système de secours sur le Web) : le Ⓐ de l'invite est une
+  pastille verte dessinée. Icônes générées : `tools/gen_ui_icons.py` → `assets/ui/`.
+- **L10 — manette dans les écrans** : Godot 4.7 n'associe aucun bouton de manette à `ui_accept` ni à
+  `ui_cancel` (demande dans CONTRACT_REQUESTS). `src/ui/main_menu_input.gd` : A presse le bouton
+  qui a le focus, B revient comme Échap, **au relâchement** d'un appui reçu par l'écran (l'appui
+  qui ferme la pause n'arrive pas au joueur, qui sonde jump, interact et charge ; le relâchement
+  d'un appui commencé ailleurs est ignoré). Le survol de la souris donne le focus (un seul bouton
+  en surbrillance).
+- **L10 — « Cliquer pour jouer »** : écran de main_menu.tscn, fermé par un clic, un toucher, une
+  touche ou un bouton de manette (pas un geste pour le navigateur, mais le joueur ne doit pas rester
+  bloqué) ; l'événement est consommé et le clic ou le doigt qui l'a fermé ne presse pas le bouton
+  apparu dessous. Le bus Master reste muet jusqu'au geste (rien ne peut jouer avant ; rétabli si le
+  menu quitte l'arbre). Geste retenu par la métadonnée `wordend_user_gesture` de la racine : le
+  retour au menu (reload_current_scene) ne le redemande pas. `require_gesture` (export) le coupe
+  pour les aperçus de capture.
+- **L10 — Continuer** : un skin choisi par le joueur avant « Continuer » s'applique à la partie
+  reprise. ERR_FILE_CORRUPT : la nouvelle partie de secours prend le skin choisi ; main.gd libère
+  le menu dès game_loaded, donc `last_error` est aussi affiché par un avis
+  (`main_menu_notice.gd`, CanvasLayer ajouté à la racine, 9 s ou un clic) par-dessus le chargement
+  puis le jeu. ERR_INVALID_DATA et ERR_FILE_NOT_FOUND : message au menu.
+- **L10 — présélection du skin** : champ `skin` relu dans `SaveManager.save_path` (JSON lu en
+  lecture seule, sans charger la partie) ; skin inconnu ou fichier illisible → Chtholly.
+- **L10 — export** : au menu, avant tout chargement, GameState est vide : l'export montre le
+  fichier de sauvegarde (que SaveManager écrit avec `export_json()`) ; pendant une partie suivie
+  (`SaveManager.is_game_loaded()`), `SaveManager.export_json()`. Copie par
+  `DisplayServer.clipboard_set` si la fonction existe, texte sélectionné dans tous les cas. Import
+  sans confirmation (geste délibéré), erreurs « Import impossible : last_error ». Navigation
+  privée : avertissement sous les boutons et dans le panneau, bouton « Exporter ma sauvegarde »
+  mis en avant.
+- **L10 — HUD alimenté par l'EventBus** : lectures de GameState au départ seulement (PV max pleins
+  jusqu'à la 1re émission différée de player_health_changed, `GameState.quests()`), plus
+  l'objectif (`QuestData.find`) et sa progression (objets requis, sur inventory_changed).
+  quest_updated est relu dans GameState en fin d'image : le résultat ne dépend pas de l'ordre de
+  branchement avec le QuestTracker ; « Quête terminée ! » seulement sur un passage à done.
+- **L10 — disposition du HUD** (1280 × 720) : cœurs, jauge de charge et objectifs en haut à gauche ;
+  vague, score et record en haut au centre ; nom de zone puis bannières au centre-haut ; invite
+  « E / A : … » à droite du centre (le joueur, cadré au centre par la caméra L1, n'est pas caché ;
+  les boutons tactiles de droite commencent à y = 364) ; « Sauvegardé » et surcouche F3 à droite
+  sous le coin Sac / Pause. Rien dans le coin haut droit ni dans les 200 px du bas (test), tout en
+  mouse_filter IGNORE. Jauge de charge visible seulement pendant une charge (dorée, « Onde
+  prête ! » à 1).
+- **L10 — marqueur de cible** : flèche dorée au-dessus de `locked_target()` (nœud du groupe
+  player), à la hauteur du visuel d'un Enemy (`EnemyData.visual.height_m × scale + 0,3 m`), sinon
+  `lock_marker_height` (1,6 m) ; cachée si la cible est derrière la caméra.
+- **L10 — HUD et pause** : le HUD suit la pause (bannières figées) ; seul PauseMenu est en
+  PROCESS_MODE_ALWAYS. Le fondu de retour après la mort continue en pause (TWEEN_PAUSE_PROCESS)
+  pour ne pas laisser l'écran noir sous la fin d'arène.
+- **L10 — menu pause** : action pause dans `_unhandled_input` ; ne s'ouvre ni quand le jeu est déjà
+  en pause (inventaire, fin d'arène) ni entre dialogue_started et dialogue_ended ; Échap ou B
+  referment (depuis « Commandes » : retour au menu pause). Sauvegarder → save_requested, statut
+  sur SaveManager.saved (« Aucune partie… » hors partie suivie). Retour au menu :
+  `SaveManager.save()` si une partie est suivie (la position n'est écrite par aucun autre
+  événement), `close_game(false)`, pause levée, puis `reload_current_scene()` ; main.gd n'est pas
+  modifié (son `show_menu()` n'est pas appelé sur ce chemin : la demande L8 sur close_game y est
+  satisfaite par le menu pause). `reload_on_quit` est coupé par les tests (sous GUT, la scène
+  courante est celle de GUT).
+- **L10 — fin d'arène** : vague atteinte = dernier wave_started de l'arène (« – » si aucune) ;
+  meilleur score et nombre de séries par `GameState.arena_record` ; le panneau fige le jeu tant
+  qu'il est affiché, mais après une mort il attend player_respawned (décision en fin d'image :
+  arena_finished arrive pendant l'émission de player_died, avant que le panneau la reçoive) ; le
+  minuteur de réapparition de WorldManager n'est donc jamais arrêté, le panneau s'ouvre au village.
+- **L10 — crédits** : RichTextLabel BBCode dans la scène, puis un Label rempli par
+  `Engine.get_license_text()` ; défilement aux flèches, à la croix et au stick (`_input`), à la
+  molette et au doigt (ScrollContainer).
+- **L10 — démo et captures** : `tests/integration/demo_l10.tscn` émet les signaux en boucle (zones
+  nues `village` et `dunes` pour les noms affichés) ; aperçus figés
+  `tests/stubs/l10_{menu,hud,pause,arena_end,credits}_preview.tscn`, par exemple
+  `tools/screenshot.sh res://tests/stubs/l10_hud_preview.tscn build/shots/l10_hud.png 40`.
+- **L10 — vérification dans le navigateur** (Chromium headless de Playwright, build exporté servi en
+  local) : clic → menu → Nouvelle partie → HUD (cœurs, « Village », « Sauvegardé », invite
+  « Parler » près de la bibliothécaire) ; Échap → pause → Retour au menu : menu sans nouvel écran de
+  clic, Continuer visible ; page rechargée : écran de clic, puis Continuer (sauvegarde IndexedDB) ;
+  téléphone Android simulé : le toucher qui ferme l'écran de clic sur l'emplacement de « Nouvelle
+  partie » ne lance rien, le suivant lance la partie, contrôles tactiles et HUD sans chevauchement.
+  Aucune erreur dans la console.
