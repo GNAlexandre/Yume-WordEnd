@@ -233,6 +233,17 @@ func test_does_not_go_through_obstacles() -> void:
 	assert_lt(player.position.z, -2.3, "collé au mur")
 
 
+func test_steps_onto_low_slabs_of_the_zones() -> void:
+	_add_floor()
+	# Sable de la plage et des dunes, sol de la forêt : dalles CSG de 10 cm (src/world/zones).
+	_add_box(Vector3(6, 0.1, 6), Transform3D(Basis.IDENTITY, Vector3(0, 0.05, -5)))
+	var player := _spawn_player()
+	await _in_physics_frame()
+	_ticks(player, 90, FORWARD_INPUT)
+	assert_lt(player.position.z, -3.5, "monte sur la dalle")
+	assert_almost_eq(player.position.y, 0.1, 0.02, "et marche dessus")
+
+
 func test_climbs_a_40_degree_slope() -> void:
 	_add_floor()
 	_add_ramp(40.0)
