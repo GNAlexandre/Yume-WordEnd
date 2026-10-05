@@ -8,6 +8,10 @@
 # --audio-driver Dummy évite les lignes ERROR: d'ALSA quand Godot tourne hors --headless.
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
+# build/ (journaux, captures, export, build/xdg) est dans le dossier du projet : sans .gdignore,
+# Godot l'importerait et l'export Web l'embarquerait (réglages de l'éditeur, keystore…).
+mkdir -p "$ROOT/build" && touch "$ROOT/build/.gdignore"
+
 if command -v godot >/dev/null 2>&1; then
   base="$ROOT/build/xdg"
   if [ "${GODOT_SHARED_USER_DIR:-0}" != "1" ] && [ "${XDG_DATA_HOME:-}" != "$base/data" ]; then

@@ -630,3 +630,15 @@ func test_data_files() -> void:
 				"%s : coup" % skin_id
 			)
 			assert_eq(SheetLoader.wave_frame(sheet, &"charge"), 3, "%s : onde" % skin_id)
+
+
+func test_web_export_preset() -> void:
+	var presets := ConfigFile.new()
+	assert_eq(presets.load("res://export_presets.cfg"), OK)
+	assert_eq(presets.get_value("preset.0", "platform", ""), "Web")
+	assert_false(
+		presets.get_value("preset.0.options", "variant/thread_support", true), "mono-thread"
+	)
+	var excluded: String = presets.get_value("preset.0", "exclude_filter", "")
+	for pattern: String in ["addons/gut/*", "tests/*", "tools/*", "build/*"]:
+		assert_true(excluded.contains(pattern), "export : %s exclu du paquet" % pattern)
