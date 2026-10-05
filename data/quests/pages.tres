@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3]
+
+[ext_resource type="Script" path="res://src/quests/quest_data.gd" id="1_quest"]
+
+[resource]
+script = ExtResource("1_quest")
+id = &"pages"
+title = "Les pages envolées"
+objective = "Rapporter 5 fragments de page à la bibliothécaire"
+giver_npc = &"librarian"
+required_items = Dictionary[StringName, int]({ &"page_fragment": 5 })
+reward_items = Dictionary[StringName, int]({ &"bookmark": 1 })
+reward_max_hp = 6
