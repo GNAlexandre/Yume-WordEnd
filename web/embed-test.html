@@ -3,22 +3,128 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
 <title>WordEnd : test de l'iframe</title>
 <style>
-  :root { color-scheme: dark; }
-  body { margin: 0; padding: 24px 16px; font-family: system-ui, sans-serif; background: #1b1231; color: #fff8fb; }
-  h1 { font-size: 1.4rem; margin: 0 auto 8px; max-width: 1280px; }
-  p { margin: 0 auto 16px; max-width: 1280px; color: #d9cde8; }
+  :root { color-scheme: dark; --fond: #1b1231; --carte: #2d1f4f; --bordure: #7f6aa8; --texte: #ebe3f2;
+    --texte-faible: #b7a9cc; --accent: #f3a6c8; --accent-texte: #2a1240; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px 16px 48px; font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--fond); color: var(--texte); line-height: 1.5; }
+  main { max-width: 1280px; margin: 0 auto; }
+  h1 { font-size: 1.4rem; margin: 0 0 8px; color: #fff8fb; }
+  h2 { font-size: 1.05rem; margin: 28px 0 8px; color: #fff8fb; }
+  p { margin: 0 0 16px; color: var(--texte-faible); }
+  code, pre { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: 0.85rem; }
+  pre { overflow-x: auto; padding: 12px; border: 1px solid var(--bordure); border-radius: 8px; background: var(--carte); }
+  .barre { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  button { font: inherit; padding: 8px 16px; border: 1px solid var(--bordure); border-radius: 999px;
+    background: var(--carte); color: var(--texte); cursor: pointer; min-height: 44px; }
+  button[aria-pressed="true"], button.principal { background: var(--accent); color: var(--accent-texte); border-color: var(--accent); }
+  .note { font-size: 0.9rem; }
+  #message { min-height: 1.5em; color: var(--accent); }
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; }
+  dt { color: var(--texte-faible); }
+  dd { margin: 0; overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
+<main>
 <h1>WordEnd : test de l'intégration en iframe</h1>
-<p>Page de test (PLAN.md section 10) : le jeu, servi par la même origine, dans le snippet prévu pour yumenovel.fr. Le Lot 9 la complète (plein écran, mobile, WebGL 2).</p>
-<!-- Snippet de la section 10 ; sur le site, src="https://jeu.yumenovel.fr/". -->
+<p>Page de test du Lot 9 (PLAN.md section 10, docs/web.md) : le snippet prévu pour yumenovel.fr,
+  avec le jeu servi par ce même site (<code>./index.html</code>). Sur le site,
+  <code>src="https://jeu.yumenovel.fr/"</code>.</p>
+
+<!-- Snippet de la section 10 (+ allowfullscreen pour les anciens Safari). -->
 <div class="yume-game" style="aspect-ratio:16/9;max-width:1280px;margin:0 auto">
   <iframe src="./index.html" title="WordEnd"
-          allow="fullscreen; gamepad; autoplay" loading="lazy"
+          allow="fullscreen; gamepad; autoplay" allowfullscreen loading="lazy"
           style="width:100%;height:100%;border:0;border-radius:12px"></iframe>
 </div>
+
+<div class="barre">
+  <button type="button" class="principal" id="plein-ecran">Plein écran</button>
+  <button type="button" id="recharger">Recharger le jeu</button>
+  <button type="button" data-format="16 / 9" aria-pressed="true">16:9</button>
+  <button type="button" data-format="4 / 3" aria-pressed="false">4:3</button>
+  <button type="button" data-format="9 / 16" aria-pressed="false">Portrait 9:16</button>
+</div>
+<p id="message" role="status"></p>
+<p class="note">Nécessite un navigateur compatible WebGL 2 (Firefox, Chrome, Edge, Safari 15 et plus).
+  Cliquer dans le jeu lui donne le clavier ; Échap quitte le plein écran.</p>
+
+<h2>Ce navigateur</h2>
+<dl>
+  <dt>WebGL 2</dt><dd id="webgl2">…</dd>
+  <dt>Écran tactile</dt><dd id="tactile">…</dd>
+  <dt>Contexte sécurisé</dt><dd id="securise">…</dd>
+  <dt>Plein écran</dt><dd id="fullscreen">…</dd>
+  <dt>Taille de l'iframe</dt><dd id="taille">…</dd>
+  <dt>Navigateur</dt><dd id="navigateur">…</dd>
+</dl>
+
+<h2>Snippet à coller dans le site</h2>
+<pre id="snippet"></pre>
+</main>
+
+<script>
+(function () {
+  const boite = document.querySelector('.yume-game');
+  const iframe = boite.querySelector('iframe');
+  const message = document.getElementById('message');
+  const ouiNon = (valeur) => (valeur ? 'oui' : 'non');
+  const canvas = document.createElement('canvas');
+  const pleinEcranPossible = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+
+  document.getElementById('webgl2').textContent = canvas.getContext('webgl2')
+    ? 'oui' : 'NON : le jeu ne pourra pas démarrer';
+  document.getElementById('tactile').textContent =
+    ouiNon('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  document.getElementById('securise').textContent = window.isSecureContext
+    ? 'oui' : 'NON : servir en HTTPS ou depuis localhost';
+  document.getElementById('fullscreen').textContent = pleinEcranPossible
+    ? 'oui' : 'non (iPhone : tourner le téléphone à l’horizontale)';
+  document.getElementById('navigateur').textContent = navigator.userAgent;
+
+  function majTaille() {
+    const r = iframe.getBoundingClientRect();
+    document.getElementById('taille').textContent = Math.round(r.width) + ' × ' + Math.round(r.height) + ' px';
+  }
+  window.addEventListener('resize', majTaille);
+  majTaille();
+
+  document.getElementById('plein-ecran').addEventListener('click', function () {
+    const demande = iframe.requestFullscreen || iframe.webkitRequestFullscreen;
+    if (!pleinEcranPossible || !demande) {
+      message.textContent = 'Plein écran indisponible dans ce navigateur.';
+      return;
+    }
+    const promesse = demande.call(iframe);
+    if (promesse && promesse.then) {
+      promesse.then(() => iframe.focus(), (err) => { message.textContent = 'Plein écran refusé : ' + err.message; });
+    } else {
+      iframe.focus();
+    }
+  });
+
+  document.getElementById('recharger').addEventListener('click', function () {
+    iframe.src = iframe.src;
+    message.textContent = 'Jeu rechargé.';
+  });
+
+  document.querySelectorAll('[data-format]').forEach(function (bouton) {
+    bouton.addEventListener('click', function () {
+      boite.style.aspectRatio = bouton.dataset.format;
+      boite.style.maxWidth = bouton.dataset.format === '9 / 16' ? '420px' : '1280px';
+      document.querySelectorAll('[data-format]').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
+      majTaille();
+    });
+  });
+
+  document.getElementById('snippet').textContent = boite.outerHTML
+    .replace('src="./index.html"', 'src="https://jeu.yumenovel.fr/"')
+    .replace(/ style="aspect-ratio:[^"]*"/, ' style="aspect-ratio:16/9;max-width:1280px;margin:0 auto"');
+}());
+</script>
 </body>
 </html>

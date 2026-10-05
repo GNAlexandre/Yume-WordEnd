@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="WordEnd, l'action-aventure de Yume Novel : Chtholly contre les Timeres.">
+<title>$GODOT_PROJECT_NAME</title>
+<!--
+	Shell HTML de l'export Web (Lot 9, export_presets.cfg : html/custom_html_shell). Même rôle que
+	le shell par défaut de Godot 4.7.2 (misc/dist/html/full-size.html), en français et aux couleurs
+	du jeu : barre de téléchargement, message clair si WebGL 2 manque. Les $GODOT_… sont remplacés
+	à l'export (y compris en headless). Le jeu est mono-thread : aucun en-tête COOP/COEP requis.
+-->
+<style>
+:root {
+	--fond: #1b1231;
+	--bordure: #7f6aa8;
+	--texte: #ebe3f2;
+	--texte-fort: #fff8fb;
+	--accent: #f3a6c8;
+	--accent-2: #f7c59f;
+	--erreur: #ff8f7e;
+}
+
+html, body, #canvas {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+body {
+	background: var(--fond);
+	color: var(--texte);
+	font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+	overflow: hidden;
+	touch-action: none;
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+#canvas {
+	display: block;
+}
+
+#canvas:focus {
+	outline: none;
+}
+
+#status {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	padding: 1.5rem;
+	text-align: center;
+	background: linear-gradient(to bottom, #29214f 0%, #6e2f57 34%, #c4473f 52%, #f3883c 62%,
+		#fece55 69%, #a83d2b 70%, #841f1d 82%, #4a0f12 100%);
+}
+
+#status-title {
+	font-size: clamp(2.2rem, 8vw, 4.5rem);
+	font-weight: 700;
+	color: var(--texte-fort);
+	text-shadow: 0 0.15rem 0.8rem rgba(27, 18, 49, 0.7);
+}
+
+#status-bar {
+	width: min(80vw, 30rem);
+	height: 0.8rem;
+	border: 2px solid var(--bordure);
+	border-radius: 999px;
+	background: rgba(27, 18, 49, 0.82);
+	overflow: hidden;
+}
+
+#status-fill {
+	width: 0;
+	height: 100%;
+	background: linear-gradient(90deg, var(--accent), var(--accent-2));
+	transition: width 0.2s ease-out;
+}
+
+#status-fill.indetermine {
+	width: 35%;
+	animation: va-et-vient 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes va-et-vient {
+	from { transform: translateX(-10%); }
+	to { transform: translateX(195%); }
+}
+
+#status-text {
+	min-height: 1.5em;
+	font-size: 1rem;
+	text-shadow: 0 0.1rem 0.4rem rgba(27, 18, 49, 0.9);
+}
+
+#status-notice {
+	display: none;
+	max-width: 34rem;
+	padding: 1rem 1.25rem;
+	border: 1px solid var(--erreur);
+	border-radius: 0.75rem;
+	background: rgba(27, 18, 49, 0.94);
+	line-height: 1.5;
+	text-align: left;
+	-webkit-user-select: text;
+	user-select: text;
+}
+
+#status-notice p {
+	margin: 0 0 0.6rem;
+}
+
+#status-notice button {
+	font: inherit;
+	padding: 0.45rem 1rem;
+	border: 0;
+	border-radius: 999px;
+	background: var(--accent);
+	color: #2a1240;
+	cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#status-fill {
+		transition: none;
+	}
+
+	#status-fill.indetermine {
+		animation: none;
+	}
+}
+</style>
+$GODOT_HEAD_INCLUDE
+</head>
+<body>
+<canvas id="canvas">Ce navigateur ne sait pas afficher le jeu (élément canvas absent).</canvas>
+<noscript>WordEnd a besoin de JavaScript pour fonctionner.</noscript>
+
+<div id="status" role="status" aria-live="polite">
+	<div id="status-title">WordEnd</div>
+	<div id="status-bar" role="progressbar" aria-label="Téléchargement du jeu" aria-valuemin="0" aria-valuemax="100">
+		<div id="status-fill" class="indetermine"></div>
+	</div>
+	<div id="status-text">Préparation…</div>
+	<div id="status-notice"></div>
+</div>
+
+<script src="$GODOT_URL"></script>
+<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+
+(function () {
+	const overlay = document.getElementById('status');
+	const bar = document.getElementById('status-bar');
+	const fill = document.getElementById('status-fill');
+	const text = document.getElementById('status-text');
+	const notice = document.getElementById('status-notice');
+	const MO = 1024 * 1024;
+	const nombre = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+
+	function showNotice(lines) {
+		notice.replaceChildren();
+		lines.forEach((line) => {
+			const p = document.createElement('p');
+			p.textContent = line;
+			notice.appendChild(p);
+		});
+		const reload = document.createElement('button');
+		reload.type = 'button';
+		reload.textContent = 'Recharger la page';
+		reload.addEventListener('click', () => window.location.reload());
+		notice.appendChild(reload);
+		bar.style.display = 'none';
+		text.textContent = 'Le jeu ne peut pas démarrer.';
+		notice.style.display = 'block';
+	}
+
+	function showFailure(err) {
+		console.error(err);
+		const detail = err instanceof Error ? err.message : String(err || 'erreur inconnue');
+		showNotice(['Le jeu n’a pas pu démarrer : ' + detail,
+			'Vérifie ta connexion puis recharge la page ; si le problème continue, préviens-nous sur le site.']);
+	}
+
+	if (typeof Engine === 'undefined') {
+		showNotice(['Le moteur du jeu n’a pas pu être téléchargé (connexion interrompue ou bloqueur).']);
+		return;
+	}
+
+	// Ce qu'il faut au jeu, avec un message clair pour chaque manque (WebGL 2 surtout).
+	const missing = [];
+	if (!Engine.isWebGLAvailable(2)) {
+		missing.push('WordEnd a besoin de WebGL 2, qui n’est pas disponible ici. Essaie un navigateur '
+			+ 'à jour (Firefox, Chrome, Edge, ou Safari 15 et plus) et vérifie que l’accélération '
+			+ 'matérielle (graphique) est activée dans ses réglages.');
+	}
+	if (!Engine.isFetchAvailable()) {
+		missing.push('Ce navigateur est trop ancien pour télécharger le jeu : mets-le à jour.');
+	}
+	if (!Engine.isSecureContext()) {
+		missing.push('La page doit être servie en HTTPS (ou depuis localhost) pour lancer le jeu.');
+	}
+	Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED }).forEach((feature) => {
+		if (!/^(WebGL2|Fetch|Secure Context)/.test(feature)) {
+			missing.push('Fonction du navigateur manquante : ' + feature);
+		}
+	});
+	if (missing.length !== 0) {
+		showNotice(missing);
+		return;
+	}
+
+	const engine = new Engine(GODOT_CONFIG);
+	text.textContent = 'Téléchargement…';
+	engine.startGame({
+		onProgress: function (current, total) {
+			if (current > 0 && total > 0) {
+				const ratio = Math.min(1, current / total);
+				fill.classList.remove('indetermine');
+				fill.style.width = (ratio * 100).toFixed(1) + '%';
+				bar.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
+				text.textContent = ratio < 1
+					? 'Téléchargement… ' + nombre.format(current / MO) + ' Mo sur ' + nombre.format(total / MO) + ' Mo'
+					: 'Démarrage du jeu…';
+			} else {
+				fill.classList.add('indetermine');
+				bar.removeAttribute('aria-valuenow');
+			}
+		},
+	}).then(() => {
+		overlay.remove();
+	}, showFailure);
+}());
+</script>
+</body>
+</html>
