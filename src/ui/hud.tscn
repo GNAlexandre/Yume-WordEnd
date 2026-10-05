@@ -165,7 +165,7 @@ theme_override_constants/separation = 4
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"HudTitle"
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 44
 horizontal_alignment = 1
 
 [node name="ZoneLine" type="ColorRect" parent="ZoneBanner"]
@@ -206,17 +206,17 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = 8
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -120.0
-offset_top = -262.0
-offset_right = 120.0
-offset_bottom = -210.0
-grow_horizontal = 2
-grow_vertical = 0
+anchor_bottom = 0.5
+offset_left = 84.0
+offset_top = -48.0
+offset_right = 324.0
+offset_bottom = 4.0
+grow_horizontal = 1
+grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"HudPanel"
 
@@ -264,7 +264,7 @@ text = ":"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"HudLabel"
-theme_override_font_sizes/font_size = 27
+theme_override_font_sizes/font_size = 25
 
 [node name="SavedIndicator" type="PanelContainer" parent="."]
 unique_name_in_owner = true

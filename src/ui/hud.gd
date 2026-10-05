@@ -348,7 +348,7 @@ func _make_quest_entry(quest_id: StringName) -> Control:
 	box.add_child(title_row)
 	var objective := _hud_label("Objective", quest.objective if quest != null else "", &"", 19)
 	objective.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	objective.custom_minimum_size.x = 330.0
+	objective.custom_minimum_size.x = 300.0
 	box.add_child(objective)
 	var progress := _hud_label("Progress", "", &"", 18)
 	progress.modulate = Color(1.0, 0.9, 0.8)
@@ -460,7 +460,7 @@ func perf_text() -> String:
 					"Primitives : %d"
 					% roundi(Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME))
 				),
-				"Mémoire vidéo : %.1f Mo" % memory,
+				"Mémoire vidéo : %s Mo" % ("%.1f" % memory).replace(".", ","),
 				"Ennemis : %d" % get_tree().get_nodes_in_group(ENEMIES_GROUP).size(),
 			]
 		)

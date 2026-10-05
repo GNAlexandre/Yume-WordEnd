@@ -89,7 +89,7 @@ func open() -> void:
 	show()
 	get_tree().paused = true
 	_paused_by_me = true
-	_status.text = ""
+	_set_status("")
 	_pad.reset()
 	hide_controls()
 	opened.emit()
@@ -109,9 +109,9 @@ func close() -> void:
 ## Demande une sauvegarde (SaveManager l'écrit au plus 0,5 s plus tard, même en pause).
 func request_save() -> void:
 	if not SaveManager.is_game_loaded():
-		_status.text = "Aucune partie en cours à sauvegarder."
+		_set_status("Aucune partie en cours à sauvegarder.")
 		return
-	_status.text = "Sauvegarde en cours…"
+	_set_status("Sauvegarde en cours…")
 	EventBus.save_requested.emit()
 
 
@@ -173,6 +173,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+func _set_status(text: String) -> void:
+	_status.text = text
+	_status.visible = not text.is_empty()
+
+
 func _on_dialogue_started(_npc_id: StringName) -> void:
 	_in_dialogue = true
 
@@ -183,4 +188,4 @@ func _on_dialogue_ended(_npc_id: StringName) -> void:
 
 func _on_saved(_path: String) -> void:
 	if visible:
-		_status.text = "Partie sauvegardée."
+		_set_status("Partie sauvegardée.")
