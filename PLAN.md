@@ -73,6 +73,7 @@ Yume-WordEnd/
 ├── CLAUDE.md                  # règles pour les agents (section 11)
 ├── PLAN.md                    # ce document, exporté en Markdown
 ├── .gitignore / .gitattributes
+├── gdlintrc                   # (L0) réglages de gdlint (défauts sauf max-public-methods)
 ├── .claude/settings.json      # hook SessionStart → tools/session_start.sh
 ├── .github/workflows/ci.yml   # lint + tests + export web + déploiement Pages
 ├── addons/gut/                # GUT vendoré
@@ -81,10 +82,13 @@ Yume-WordEnd/
 │   └── CONTRACT_REQUESTS.md   # besoins de contrat hors périmètre d'un lot
 ├── tools/
 │   ├── setup.sh               # installe Godot + templates (cloud et CI)
+│   ├── fetch_templates.py     # (L0) extrait seulement les templates Web du .tpz (requêtes Range)
 │   ├── session_start.sh       # reprise de session cloud : LFS, import
-│   ├── godot                  # wrapper: binaire natif ou docker
+│   ├── godot                  # wrapper: binaire natif ou docker ; user:// isolé par worktree (build/xdg)
 │   ├── check.sh               # import + gdlint + tests + smoke + export (le "vert" du projet)
-│   ├── smoke.gd               # instancie chaque .tscn de src/ et le libère
+│   ├── test.sh                # (L0) tests GUT ciblés (fichier, dossier, test)
+│   ├── import.sh              # (L0) import + .uid/.import à commiter + orphelins
+│   ├── smoke.gd               # compile src/, tests/, tools/ ; instancie chaque .tscn de src/ et tests/
 │   ├── warnings_allow.txt     # avertissements Godot tolérés à l'import
 │   ├── screenshot.sh          # rend une scène en PNG sous Xvfb
 │   ├── screenshot.gd          # script Godot appelé par screenshot.sh
@@ -93,23 +97,24 @@ Yume-WordEnd/
 │   ├── CNAME                  # jeu.yumenovel.fr (copié dans build/web par la CI)
 │   └── embed-test.html        # page de test de l'iframe (section 10)
 ├── src/
-│   ├── main.tscn              # racine : menu puis île
+│   ├── main.tscn              # racine : menu, chargement, puis game.tscn
+│   ├── game.tscn              # (L0) Island + Player + QuestTracker + UI (HUD, dialogue, inventaire…)
 │   ├── autoload/              # EventBus, GameState, SaveManager, SkinRegistry, WorldManager
 │   ├── player/                # player.tscn, player.gd (déplacement), camera_rig.tscn
 │   ├── combat/                # health.gd, hitbox.tscn, hurtbox.tscn, attack_data.gd,
 │   │                          # player_combat.gd (épée, charge), charge_wave.tscn (onde)
 │   ├── enemies/               # enemy.tscn, enemy.gd (machine à états), enemy_data.gd,
-│   │                          # wave_director.gd, arena.tscn
-│   ├── visuals/               # character_visual.tscn (+ variantes sprite / mesh), planche_loader.gd
-│   ├── world/                 # island.tscn, zones/<zone>/<zone>.tscn, props/
-│   ├── npc/                   # npc.tscn, npc.gd, dialogue_runner.gd
-│   ├── items/                 # item_data.gd (Resource), pickup.tscn
+│   │                          # wave_director.gd, arena.tscn, arena.gd, placements/<zone>.tscn
+│   ├── visuals/               # character_visual.tscn (+ variantes sprite / mesh), sheet_loader.gd, skin_data.gd
+│   ├── world/                 # island.tscn, zone.gd, zones/<zone>/<zone>.tscn, props/
+│   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
+│   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_tracker.gd
 │   └── ui/                    # hud, dialogue_box, inventory, main_menu, loading, touch_controls,
 │                              # arena_end, credits
 ├── data/
 │   ├── attacks/*.tres         # sword_1..3, charge_wave, bite, whip, rush
-│   ├── enemies/*.tres         # timere_small, timere_normal, timere_runner, timere_big
+│   ├── enemies/*.tres         # timere_small, timere_normal, timere_runner, timere_big ; visuals/timere.tres
 │   ├── waves/*.json           # composition des vagues par arène
 │   ├── items/*.tres
 │   ├── npcs/*.tres
@@ -144,83 +149,118 @@ Yume-WordEnd/
 ### Contrats d'interface
 
 ```gdscript
-# src/autoload/event_bus.gd — signaux (émis par le système source, écoutés partout)
+# src/autoload/event_bus.gd — signaux (émis par le système source, écoutés partout).
+# (L0) = ajouté ou précisé au Lot 0 ; l'émetteur de chaque signal est aussi documenté dans le fichier.
 # Combat
-signal player_health_changed(current: int, max_value: int)
-signal player_damaged(amount: int, source: Node3D)
-signal player_died()
-signal player_respawned()
-signal enemy_spawned(enemy: Node3D, enemy_id: StringName)
-signal enemy_damaged(enemy: Node3D, amount: int)
-signal enemy_killed(enemy_id: StringName, points: int)
-signal wave_started(arena_id: StringName, wave: int, enemy_count: int)
-signal wave_cleared(arena_id: StringName, wave: int, bonus: int)
-signal arena_finished(arena_id: StringName, score: int, best: bool)
-signal charge_progress(ratio: float)        # 0..1, jauge de la charge magique
+signal player_health_changed(current: int, max_value: int)   # PlayerCombat ; 1re émission différée après _ready (valeur initiale du HUD)
+signal player_damaged(amount: int, source: Node3D)            # PlayerCombat
+signal player_died()                                          # PlayerCombat ; WorldManager appelle respawn() respawn_delay s plus tard
+signal player_respawned()                                     # WorldManager.respawn() ; PlayerCombat remet alors les PV au maximum
+signal player_heal_requested(amount: int)                     # (L0) WaveDirector → PlayerCombat (1 PV toutes les deux vagues)
+signal enemy_spawned(enemy: Node3D, enemy_id: StringName)     # Enemy, dans son _ready
+signal enemy_damaged(enemy: Node3D, amount: int)              # Enemy
+signal enemy_killed(enemy_id: StringName, points: int)        # Enemy ; le WaveDirector actif compte les points
+signal wave_started(arena_id: StringName, wave: int, enemy_count: int)   # WaveDirector
+signal wave_cleared(arena_id: StringName, wave: int, bonus: int)         # WaveDirector
+signal arena_score_changed(arena_id: StringName, score: int)  # (L0) WaveDirector → HUD (score courant)
+signal arena_finished(arena_id: StringName, score: int, best: bool)      # WaveDirector, après GameState.record_score
+signal charge_progress(ratio: float)        # 0..1, jauge de la charge magique (PlayerCombat)
 # Monde et interaction
-signal item_collected(item_id: StringName, quantity: int)
-signal inventory_changed()
-signal interaction_available(prompt: String)   # "" = aucune
-signal dialogue_started(npc_id: StringName)
-signal dialogue_line(speaker: String, text: String, choices: Array[String])
-signal dialogue_ended(npc_id: StringName)
-signal quest_updated(quest_id: StringName, state: StringName)  # available|active|done
-signal zone_entered(zone_id: StringName)
-signal day_phase_changed(phase: StringName)   # morning|day|evening|night
-signal skin_changed(skin_id: StringName)
-signal save_requested()
-signal game_loaded()
+signal item_collected(item_id: StringName, quantity: int)    # Pickup, après GameState.add_item
+signal inventory_changed()                                    # GameState (add_item, remove_item, from_dict, reset)
+signal interaction_available(prompt: String)   # "" = aucune ; émis par le joueur
+signal dialogue_started(npc_id: StringName)                   # DialogueRunner (le joueur s'arrête)
+signal dialogue_line(speaker: String, text: String, choices: Array[String])   # DialogueRunner
+signal dialogue_choice_made(index: int)       # (L0) DialogueBox → DialogueRunner actif ; -1 = « suite » sans choix
+signal dialogue_ended(npc_id: StringName)                     # DialogueRunner (le joueur repart)
+signal quest_updated(quest_id: StringName, state: StringName)  # available|active|done ; GameState.set_quest_state
+signal zone_entered(zone_id: StringName)                      # Zone (Area3D « Bounds »)
+signal day_phase_changed(phase: StringName)   # morning|day|evening|night (M3)
+signal skin_changed(skin_id: StringName)                      # GameState, quand skin_id change ; le joueur l'applique
+signal max_hp_changed(max_value: int)          # (L0) GameState, quand max_hp change → PlayerCombat
+signal save_requested()                                       # n'importe qui → SaveManager.save()
+signal game_loaded()                                          # SaveManager (new_game, load_game, import_json) → main.gd
 
-# src/combat/health.gd — composant commun joueur / ennemis (class_name Health)
+# src/combat/health.gd — composant commun joueur / ennemis (class_name Health, extends Node)
 @export var max_hp: int = 1
 @export var invincibility_time: float = 0.0   # 1,2 s sur le joueur seulement ; 0 sur les ennemis (comme jeu.js)
+var current: int                              # (L0) PV courants (pleins à la création)
 signal changed(current: int, max_value: int)
+signal damaged(amount: int, source: Node3D)   # (L0) émis avant changed
 signal died()
-func take_damage(amount: int, source: Node3D) -> bool   # false si invincible
-func heal(amount: int) -> void
+func take_damage(amount: int, source: Node3D) -> bool   # false si invincible, mort ou amount <= 0
+func heal(amount: int) -> void                          # sans effet sur un mort
+func reset() -> void                                    # (L0) PV pleins, plus d'invincibilité
+func is_dead() -> bool                                  # (L0)
+func is_invincible() -> bool                            # (L0) ; invincibility_left() -> float
 
-# src/combat/hitbox.tscn (Area3D, couche "hitbox") et hurtbox.tscn (Area3D, couche "hurtbox")
+# src/combat/hitbox.tscn (Area3D, couche "hitbox", masque "hurtbox") et hurtbox.tscn (Area3D, couche "hurtbox")
 # Une Hitbox porte un AttackData ; elle est activée par CharacterVisual.frame_changed sur les
 # images "coup" de l'animation de l'attaque (lues dans le JSON de la planche, qui fait foi).
 # Règle : une Hitbox ne touche chaque Hurtbox qu'une fois par activation (liste des touchés, comme jeu.js).
 # Le contact hitbox → hurtbox appelle Health.take_damage et applique le recul (knockback).
-class_name AttackData : id, animation: StringName, damage: int, knockback: float, pierces: bool, range_m: float, cooldown: float
+class_name Hitbox  : @export attack: AttackData, @export team: StringName, var source: Node3D   # (L0)
+                     func activate() -> void, deactivate() -> void, is_active() -> bool ; signal hit_landed(hurtbox: Hurtbox)
+class_name Hurtbox : @export health: Health, @export team: StringName                          # (L0)
+                     func receive_hit(attack: AttackData, source: Node3D) -> bool ; signal hit_taken(attack: AttackData, source: Node3D)
+# (L0) Équipes &"player" / &"enemy" : une Hitbox ne touche pas une Hurtbox de son équipe. Le recul est
+# appliqué par le script du corps (player.gd, enemy.gd) sur hit_taken : attack.knockback m/s dans la
+# direction source → corps ; un ennemi stoic l'ignore sauf si attack.pierces.
+class_name AttackData : id, animation: StringName, damage: int, knockback: float, pierces: bool, range_m: float, cooldown: float,
+                        arc_deg: float, width_m: float, charge_time: float, duration: float, speed: float   # (L0) 5 derniers champs
 
-# src/combat/player_combat.gd — enfant "Combat" de player.tscn
+# src/combat/player_combat.gd — enfant "Combat" de player.tscn (class_name PlayerCombat, extends Node3D)
 func attack() -> void                      # enchaînement sword_1 → sword_2 → sword_3 si la touche est répétée
 func charge_begin() -> void                # démarre la jauge (0,55 s minimum)
 func charge_release() -> void              # lance l'onde si la jauge est pleine, recharge 1,2 s
 func is_busy() -> bool                     # true pendant attaque/charge/dégâts (bloque le déplacement)
+# (L0) Relais à conserver : Health du joueur → player_health_changed / player_damaged / player_died ;
+# player_respawned → Health.reset() ; player_heal_requested → Health.heal() ; max_hp_changed → Health.max_hp ;
+# au départ Health.max_hp = GameState.max_hp. Voisins par nom (../Health, ../Visual, ../Hurtbox, SwordHitbox),
+# données par chemin (data/attacks/*.tres).
 
-# src/enemies/enemy.gd — machine à états commune (class_name Enemy)
+# src/enemies/enemy.gd — machine à états commune (class_name Enemy, extends CharacterBody3D, @export var data: EnemyData)
 # états : idle → chase → attack → hurt → dead ; rush pour le coureur ; stoic = pas de recul sauf onde
 class_name EnemyData : id, display_name, visual: SkinData, scale: float, max_hp: int, speed: float,
                        points: int, attacks: Array[AttackData], rush: bool, stoic: bool,
-                       aggro_range_m: float, drops: Dictionary   # item_id → probabilité
+                       aggro_range_m: float, drops: Dictionary[StringName, float]   # item_id → probabilité
 
-# src/enemies/wave_director.gd — un par arène, lit data/waves/<arena_id>.json
+# src/enemies/wave_director.gd — un par arène (enfant "WaveDirector" de arena.tscn), lit data/waves/<arena_id>.json
 func start() -> void
 func stop() -> void
 func current_wave() -> int
 func compose(wave: int) -> Array[StringName]   # ids d'ennemis de la vague (liste explicite ou generator)
+# (L0) class_name Arena (racine de arena.tscn) : @export var arena_id: StringName ;
+#      func spawn_point(marker_name: StringName) -> Marker3D   # Marker3D frère de l'Arena dans sa zone
 
 # src/autoload/game_state.gd — API publique
 func add_item(item_id: StringName, quantity: int = 1) -> void
 func remove_item(item_id: StringName, quantity: int = 1) -> bool
 func count(item_id: StringName) -> int
+func items() -> Dictionary                                       # (L0) copie item_id → quantité, pour l'UI
 func set_flag(flag: StringName, value: bool = true) -> void
 func has_flag(flag: StringName) -> bool
-func record_score(arena_id: StringName, score: int, wave: int) -> bool   # true si meilleur score
+func quest_state(quest_id: StringName) -> StringName             # (L0) &"" si inconnue
+func set_quest_state(quest_id: StringName, state: StringName) -> void   # (L0) émet quest_updated si l'état change
+func mark_pickup_collected(pickup_id: StringName) -> void        # (L0)
+func is_pickup_collected(pickup_id: StringName) -> bool          # (L0)
+func record_score(arena_id: StringName, score: int, wave: int) -> bool   # true si meilleur score (strictement)
 func best_score(arena_id: StringName) -> int
-func to_dict() -> Dictionary
+func reset() -> void                                             # (L0) nouvelle partie
+func to_dict() -> Dictionary                # (L0) exactement les champs du schéma de sauvegarde, sauf version et saved_at
 func from_dict(data: Dictionary) -> void
+var skin_id: StringName      # (L0) &"" = skin par défaut ; émet skin_changed
+var max_hp: int              # (L0) 5, puis 6 (marque-page) ; émet max_hp_changed
+var zone: StringName         # (L0) tenue par WorldManager (zone_entered) ; &"" = nouvelle partie pas encore placée
+var position: Vector3        # (L0) tenue par le joueur quand il est au sol
 
 # src/autoload/save_manager.gd
 func has_save() -> bool
 func save() -> Error
 func load_game() -> Error                 # remplit GameState, émet game_loaded
-func new_game(skin_id: StringName) -> void
-func export_json() -> String / func import_json(text: String) -> Error   # menu, section 13
+func new_game(skin_id: StringName) -> void   # (L0) GameState.reset() puis émet game_loaded
+func export_json() -> String / func import_json(text: String) -> Error   # menu, section 13 ; import émet game_loaded
+var save_path: String = "user://save_v1.json"   # (L0) les tests en utilisent un autre
 
 # src/autoload/skin_registry.gd
 func all() -> Array[SkinData]
@@ -232,24 +272,41 @@ func load_zone(zone_id: StringName) -> void
 func teleport(zone_id: StringName, marker: StringName = &"Spawn") -> void
 func respawn() -> void                    # village, PV pleins, émet player_respawned
 func current_zone() -> StringName
+func zone_display_name(zone_id: StringName) -> String   # (L0) Zone.display_name, pour le HUD
+var respawn_delay: float = 2.2            # (L0) délai entre player_died et respawn()
 
 # Interactable — tout nœud du groupe "interactable" implémente :
 func get_prompt() -> String            # "Parler", "Ramasser"
 func interact(player: Node3D) -> void
+# (L0) Détection : le joueur masque les couches 6 (interactable) et 7 (pickup) ; l'interactable est le
+# premier nœud du groupe "interactable" en remontant depuis l'objet détecté (lui compris).
 
-# src/visuals/character_visual.gd — même interface pour Sprite3D et mesh
+# src/visuals/character_visual.gd — même interface pour Sprite3D et mesh (class_name CharacterVisual, extends Node3D)
 func set_skin(skin: SkinData) -> void
-func play(anim: StringName) -> void    # repos|marche|course|attaque|charge|degats|mort (+ fouet|morsure pour les ennemis)
+func play(anim: StringName, restart: bool = false) -> void    # repos|marche|course|attaque|charge|degats|mort (+ fouet|morsure) ; (L0) restart
 func set_facing(direction: Vector3) -> void
 func hit_frames(anim: StringName) -> Array[int]   # le "coup" du JSON de la planche
+func wave_frame(anim: StringName) -> int          # (L0) l'"onde" du JSON, -1 si absente
+func show_frame(anim: StringName, frame: int) -> void   # (L0) fige une image (charge maintenue)
+func has_animation(anim: StringName) -> bool      # (L0) ; current_animation() -> StringName
 signal frame_changed(anim: StringName, frame: int)   # permet à la Hitbox de s'activer sur les images "coup"
 signal animation_finished(anim: StringName)
 
 # data/*.tres — ressources
 class_name ItemData   : id, display_name, icon, stackable, max_stack, description
-class_name SkinData   : id, display_name, sprite_sheet, frames_json, mesh_scene, portrait, height_m
+class_name SkinData   : id, display_name, sprite_sheet, frames_json: JSON, mesh_scene, portrait, height_m
 class_name NpcData    : id, display_name, skin, dialogue_path, quest_id, home_zone
-class_name QuestData  : id, title, giver_npc, required_items: Dictionary, required_flags: Array[StringName], reward_items: Dictionary
+class_name QuestData  : id, title, giver_npc, required_items: Dictionary[StringName, int], required_flags: Array[StringName],
+                        reward_items: Dictionary[StringName, int]
+
+# (L0) Autres classes partagées
+class_name Zone            # racine d'une zone : @export display_name: String, @export safe: bool ; func zone_id() -> StringName
+class_name Player          # player.gd (L1)
+class_name Pickup          # @export item_id: StringName, quantity: int, persistent: bool ; func collect(), pickup_id()
+class_name Npc             # @export data: NpcData
+class_name DialogueRunner  # start(npc: NpcData), stop(), is_running() ; un par PNJ
+class_name QuestTracker    # Node unique de game.tscn ; à &"done", retire required_items et donne reward_items
+class_name SheetLoader     # lecture des planches (read_sheet, build_frames, hit_frames, wave_frame, pixel_size)
 ```
 
 ### Conventions
@@ -261,6 +318,62 @@ class_name QuestData  : id, title, giver_npc, required_items: Dictionary, requir
 - Le joueur est toujours le nœud unique du groupe `player` ; les ennemis vivants sont dans le groupe `enemies`.
 - Les zones sont des scènes racine `Node3D` nommées comme leur `zone_id`, avec un `Marker3D` nommé `Spawn` ; une arène est une zone qui contient un `WaveDirector`.
 - Toute scène doit s'ouvrir et se fermer sans erreur en headless : c'est le test de fumée minimal (section 9).
+
+### Structure figée au Lot 0
+
+Les lots tournent en parallèle et référencent les scènes des autres par leur chemin définitif. Les fichiers ci-dessous existent depuis le Lot 0, à leur chemin final, avec leur `class_name`, leurs nœuds nommés et leurs groupes. **Chaque lot remplit les squelettes de ses dossiers ; personne ne déplace ni ne renomme un fichier ou un nœud nommé de cette liste** (le propriétaire peut ajouter des nœuds et des fichiers). Les scènes `main` et `game` sont des fichiers d'intégration : elles ne changent que dans une PR « contrats » ou d'intégration.
+
+| Fichier | Racine (type, `class_name`) | Nœuds nommés | Groupe, couches | Lot |
+| --- | --- | --- | --- | --- |
+| `src/main.tscn` + `main.gd` | `Main` (Node) | menu, chargement et partie ajoutés à l'exécution | — | L0 |
+| `src/game.tscn` + `game.gd` | `Game` (Node3D) | `Island`, `Player`, `QuestTracker`, `UI` (CanvasLayer) avec `UI/HUD`, `UI/DialogueBox`, `UI/Inventory`, `UI/ArenaEnd`, `UI/TouchControls` | — | L0 |
+| `src/player/player.tscn` + `player.gd` | `Player` (CharacterBody3D, `Player`) | `CollisionShape3D`, `Visual`, `Combat` (`PlayerCombat`) et `Combat/SwordHitbox` (`Hitbox`), `Health` (5 PV, 1,2 s), `Hurtbox`, `CameraRig` | `player` ; couche 2, masque 1+3 | L1 (L4 : valeurs du nœud `Health`) |
+| `src/player/camera_rig.tscn` | `CameraRig` (Node3D) | `SpringArm3D`, `SpringArm3D/Camera3D` (courante) | masque du bras : 1 | L1 |
+| `src/combat/hitbox.tscn` + `hitbox.gd` | `Hitbox` (Area3D) | `CollisionShape3D` (forme locale à la scène) | couche 4, masque 5 | L4 |
+| `src/combat/hurtbox.tscn` + `hurtbox.gd` | `Hurtbox` (Area3D) | `CollisionShape3D` (forme locale à la scène) | couche 5 | L4 |
+| `src/combat/charge_wave.tscn` | `ChargeWave` (Node3D) | `Hitbox` (attaque `charge_wave`, équipe `player`), `Mesh` | — | L4 |
+| `src/combat/health.gd`, `attack_data.gd`, `player_combat.gd` | `Health`, `AttackData`, `PlayerCombat` | — | — | L4 |
+| `src/visuals/character_visual.tscn` + `.gd` | `CharacterVisual` (Node3D) | `Sprite` (AnimatedSprite3D billboard) | — | L3 |
+| `src/visuals/skin_data.gd`, `sheet_loader.gd` | `SkinData`, `SheetLoader` | — | — | L3 |
+| `src/enemies/enemy.tscn` + `enemy.gd` | `Enemy` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `Health`, `Hurtbox`, `Hitbox` | `enemies` (vivants) ; couche 3, masque 1+2+8 | L5 |
+| `src/enemies/arena.tscn` + `arena.gd` | `Arena` (Node3D) | `WaveDirector` | — | L5 |
+| `src/enemies/enemy_data.gd`, `wave_director.gd` | `EnemyData`, `WaveDirector` | — | — | L5 |
+| `src/items/pickup.tscn` + `pickup.gd` | `Pickup` (Area3D) | `CollisionShape3D`, `Mesh` | `interactable` ; couche 7, masque 2 | L7 |
+| `src/items/item_data.gd`, `src/quests/quest_data.gd`, `quest_tracker.gd` | `ItemData`, `QuestData`, `QuestTracker` | — | — | L7 |
+| `src/npc/npc.tscn` + `npc.gd` | `Npc` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `InteractArea` (Area3D, couche 6), `DialogueRunner` | `interactable` ; couche 1 | L6 |
+| `src/npc/npc_data.gd`, `dialogue_runner.gd` | `NpcData`, `DialogueRunner` | — | — | L6 |
+| `src/world/island.tscn` + `island.gd` | `Island` (Node3D) | `WorldEnvironment`, `Sun`, `OverviewCamera`, `Ground`, `Water`, `Walls`, `KillZone`, `Zones` et `Zones/<zone_id>` pour les 5 zones | — | L2 |
+| `src/world/zones/<zone_id>/<zone_id>.tscn` + `src/world/zone.gd` (`village`, `dunes`, `forest`, `beach`, `hill`) | `<zone_id>` (Node3D, `Zone`) | `Spawn` (Marker3D), `Bounds` (Area3D, masque 2), `Geometry` (CSG), `NPCs`, `Enemies`, `Pickups` ; dunes : `SpawnN`, `SpawnS`, `SpawnE`, `SpawnW`, `Arena` (`arena_id = &"dunes"`) ; village : `EnemyBarrier` (couche 8), `safe = true` | `zones` | L2 |
+| `src/npc/placements/<zone_id>.tscn` | `NPCs` (Node3D), instancié dans chaque zone | PNJ de la zone (coordonnées locales à la zone) | — | L6 |
+| `src/enemies/placements/<zone_id>.tscn` | `Enemies` (Node3D) | ennemis libres de la zone (forêt : 4 Timeres) | — | L5 |
+| `src/items/placements/<zone_id>.tscn` | `Pickups` (Node3D) | objets uniques, nommés `<zone>_<objet>_<n>` (ex. `forest_page_1`) | — | L7 |
+| `src/ui/main_menu.tscn` + `.gd` | `MainMenu` (Control) | `%NewGameButton` | — | L10 |
+| `src/ui/hud.tscn`, `arena_end.tscn`, `credits.tscn` | `HUD`, `ArenaEnd`, `Credits` (Control) | — | — | L10 |
+| `src/ui/dialogue_box.tscn` | `DialogueBox` (Control) | — | — | L6 |
+| `src/ui/inventory.tscn` | `Inventory` (Control) | — | — | L7 |
+| `src/ui/loading.tscn`, `touch_controls.tscn` | `Loading`, `TouchControls` (Control) | `Loading` : `set_progress(ratio: float)` facultatif, appelé par main.gd | — | L9 |
+
+**Données présentes au Lot 0** : `data/attacks/{sword_1,sword_2,sword_3,charge_wave,bite,whip,rush}.tres` (L4) ; `data/enemies/timere_{small,normal,runner,big}.tres` et `data/enemies/visuals/timere.tres` (L5, visuel hors de `data/skins/` pour ne pas être jouable) ; `data/skins/{chtholly,bibliothecaire,forgeron,enfant}.tres` (L3 ; les trois PNJ sont des silhouettes de `tools/gen_placeholders.py`) ; `data/waves/dunes.json` (L5, sans `music` tant qu'il n'y a pas d'audio). `data/items/`, `data/quests/` (L7), `data/npcs/` et `data/dialogues/` (L6) sont à créer. Le nom de fichier d'une donnée est son `id`.
+
+**Couches et masques** (valeur = 2^(couche − 1)) :
+
+| Objet | Couche | Masque |
+| --- | --- | --- |
+| Décor, sol, murs, PNJ | 1 `world` (1) | — |
+| Joueur | 2 `player` (2) | 1 + 3 (5) |
+| Ennemis | 3 `enemy` (4) | 1 + 2 + 8 (131) ; ils ne se bloquent pas entre eux |
+| Hitbox | 4 `hitbox` (8) | 5 (16) |
+| Hurtbox | 5 `hurtbox` (16) | — |
+| Zone d'interaction (PNJ, panneau) | 6 `interactable` (32) | — |
+| Pickup | 7 `pickup` (64) | 2 (2) |
+| Barrière du village | 8 `enemy_barrier` (128) | — |
+| `Bounds` des zones, `KillZone` | — | 2 (2) |
+
+**Actions d'entrée** : `move_left`, `move_right`, `move_forward`, `move_back`, `run`, `jump`, `attack`, `charge`, `interact`, `lock_target`, `inventory`, `pause`, `camera_left`, `camera_right`, `camera_up`, `camera_down` (stick droit ; la souris se lit dans le code). Les contrôles tactiles (L9) émettent ces actions.
+
+**Repères de l'île** : sol à y = 0, île de 160 × 160 m centrée sur l'origine, nord = −Z, ouest = −X. Village au centre (`Bounds` ±22 m, `Spawn` local (0, 0,2, 9)) ; dunes à x = −51 (`Spawn` côté village (24, 0,2, 0), arène de 12 m de rayon au centre, `SpawnN/S/E/W` à 13 m) ; forêt à z = −51 ; plage à z = +51 ; colline à x = +51. Les cinq zones pavent l'île : chaque pas sur l'île est dans une zone.
+
+**Tests** : stubs dans `tests/stubs/` (`visual_stub.tscn` hérite de `character_visual.tscn` et émet `frame_changed` / `animation_finished` à la demande, `player_stub.tscn` du groupe `player` avec Health et Hurtbox, `dummy.tscn` mannequin du groupe `enemies`), sans `class_name`. `tests/unit/test_contracts.gd` vérifie tout ce qui précède : un lot qui le fait échouer a cassé un contrat.
 
 ## 4. Tranche verticale : WordEnd en 3D
 
@@ -458,6 +571,8 @@ Un skin de joueur doit fournir ces 7 animations ; un ennemi fournit `repos`, `ma
 | Git LFS | activé pour `.glb .vrm .blend .wav .ogg` ; les PNG de moins de 1 Mo restent dans Git |
 
 ## 6. Environnement Claude Code cloud
+
+> **Mise à jour du Lot 0** : dans l'environnement réel, les releases GitHub de godotengine/godot sont joignables et docker n'a pas de démon. `tools/setup.sh` télécharge donc le binaire et n'extrait du .tpz que les templates Web, par requêtes HTTP Range (`tools/fetch_templates.py`, une quinzaine de secondes en tout), puis se replie sur docker. Le script du dépôt fait foi ; celui ci-dessous est la version d'origine. `tools/check.sh` dure environ 25 s.
 
 **Une session cloud n'a ni écran ni accès aux releases GitHub de Godot** : Godot arrive par l'image Docker `barichello/godot-ci` (Docker Hub est dans la liste réseau « Trusted »), et les agents vérifient leur travail par import headless, tests, export et captures rendues sous Xvfb. Tout cela est installé une fois par le script de setup, puis mis en cache environ sept jours ([doc des environnements cloud](https://code.claude.com/docs/en/cloud-environments.md)).
 
@@ -677,6 +792,8 @@ Godot exporte le même projet en exécutable natif : meilleures performances, pa
 
 ## 11. Fichiers de démarrage
 
+> **Mise à jour du Lot 0** : ces fichiers ont servi de point de départ ; les versions du dépôt (CLAUDE.md, project.godot, tools/, ci.yml…) font foi et les complètent (voir docs/DECISIONS.md).
+
 **Ces fichiers vont tels quels dans le dépôt vide, avant la première session Claude Code** : ils fixent le moteur, les règles des agents, la CI et la boucle de vérification. Commite aussi `PLAN.md` (ce document exporté en Markdown) et les quatre fichiers de planches de l'easter egg (`chtholly.png`, `chtholly.json`, `timere.png`, `timere.json`, depuis `wp-content/plugins/yume-core/includes/wordend/assets/` de Yume-WordPress) dans `assets/characters/chtholly/` et `assets/enemies/timere/` : une session cloud n'a pas accès à un autre dépôt sans perdre ses hooks. Le Lot 0 crée tout le reste.
 
 ### `CLAUDE.md`
@@ -800,7 +917,7 @@ Actions de l'input map à déclarer au Lot 0 (une entrée `[input]` par action, 
 | `lock_target` | Clic molette | R3 (bouton 8) |
 | `inventory` | I | Y (bouton 3) |
 | `pause` | Échap | Start (bouton 6) |
-| `camera_x` / `camera_y` | Souris | Stick droit |
+| `camera_left` / `camera_right` / `camera_up` / `camera_down` (L0, au lieu de `camera_x` / `camera_y`) | Souris (lue dans le code) | Stick droit |
 
 ### `export_presets.cfg`
 

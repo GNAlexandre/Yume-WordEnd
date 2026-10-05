@@ -1,0 +1,146 @@
+# Yume-WordEnd — règles pour Claude Code
+
+## Le projet
+Jeu 3D action-aventure dans Godot 4.7.2 (GDScript typé, export Web) : Chtholly et son épée
+contre des vagues de Timeres, un village, des PNJ et des quêtes. Style chibi / low-poly coloré.
+Le plan complet est dans PLAN.md. Ses contrats d'interface (section 3 : signaux, API, ressources,
+couches de collision, « Structure figée au Lot 0 ») font foi : on code contre eux, on ne les
+change pas sans PR « contrats ».
+
+## Avant de commencer
+1. Lis PLAN.md section 3 (contrats et structure figée) et section 7 (ton lot : dossiers, critères).
+2. Lance `tools/check.sh` pour vérifier que l'environnement est sain (25 s environ).
+3. Travaille sur la branche de ton lot ; une PR par lot vers `main`.
+
+## Commandes
+- Vérification complète (= « vert ») : `tools/check.sh` ; itération rapide sans export ni
+  capture : `CHECK_FAST=1 tools/check.sh` (jamais pour valider une PR).
+- Tests ciblés : `tools/test.sh tests/unit/test_x.gd` (un fichier), `tools/test.sh tests/unit`
+  (un dossier), `tools/test.sh tests/unit/test_x.gd -gunit_test_name=morceau_du_nom` (un test).
+- Import après avoir créé, renommé ou supprimé un script, une scène ou un asset :
+  `tools/import.sh` (liste les .uid / .import à commiter et les orphelins).
+- Capture d'une scène : `tools/screenshot.sh res://src/world/island.tscn build/shots/island.png`,
+  puis ouvre le PNG avec l'outil de lecture d'images.
+- Export Web : `tools/godot --headless --export-release Web build/web/index.html`
+- Lint : `gdlint src tests tools && gdformat --check src tests tools` (`gdformat src tests tools`
+  pour corriger). gdtoolkit 4.5.0, réglages dans `gdlintrc`.
+- Environnement neuf : `bash tools/setup.sh` (Godot, templates Web, gdtoolkit, Pillow ; idempotent).
+- Planches de remplacement : `python3 tools/gen_placeholders.py skin <id> --name "Nom" --tres`.
+- Toujours passer par `tools/godot` (pas `godot`) : chaque worktree y a son propre `user://`.
+
+## Règles
+- GDScript typé partout (`var hp: int`, `-> void`), `class_name` pour les ressources et les classes
+  partagées, signaux au passé. Les avertissements GDScript sont des erreurs (project.godot) : une
+  variable non typée ou inutilisée empêche le script de compiler.
+- Code (identifiants) en anglais ; commentaires, docs et textes du jeu en français.
+- Scènes et ressources au format texte (.tscn, .tres), écrites à la main selon la recette
+  ci-dessous. Jamais d'édition manuelle des .uid et .import ; commite-les avec le fichier qui les
+  fait naître.
+- Les chiffres de combat vivent dans data/attacks et data/enemies, jamais en dur dans un script.
+- Un système ne lit jamais un autre système directement : EventBus ou API des autoloads.
+- **Chaque lot remplit les squelettes de ses dossiers ; on ne déplace ni ne renomme les nœuds
+  nommés ni les fichiers figés** (liste : PLAN.md section 3, « Structure figée au Lot 0 »). On
+  peut ajouter des nœuds et des fichiers dans ses propres dossiers.
+- Peupler une zone (PNJ, ennemis libres, objets) se fait dans son fichier d'emplacement
+  `src/npc|enemies|items/placements/<zone>.tscn`, jamais dans la scène de zone (L2).
+- Ne modifie que les dossiers de ton lot. Hors périmètre : note le besoin dans
+  docs/CONTRACT_REQUESTS.md et continue avec un stub local (dans tests/stubs/, sans class_name).
+- project.godot, export_presets.cfg, src/autoload/event_bus.gd, src/main.*, src/game.* et les
+  couches de collision ne changent qu'au Lot 0 ou dans une PR « contrats ».
+- Un choix que le plan ne tranche pas va dans docs/DECISIONS.md (une ligne par décision, en bas).
+- Toute scène doit passer tools/smoke.gd ; tout changement de rendu joint une capture à la PR.
+- Commits conventionnels préfixés par le lot : `feat(l4): onde de charge magique`.
+- Avant d'ouvrir la PR : `tools/check.sh` vert et `git status` propre (aucun .uid / .import oublié),
+  description = fait / testé / capture / contrats touchés.
+
+## Recette des fichiers écrits à la main (Godot 4.7.2)
+- En-tête de scène : `[gd_scene format=3]`, de ressource : `[gd_resource type="Resource"
+  script_class="AttackData" format=3]`. Pas de `load_steps` (Godot 4.7 ne l'écrit plus), pas de
+  `uid=` dans l'en-tête, pas de `unique_id=` sur les nœuds (l'éditeur les ajoute s'il réenregistre).
+- `ext_resource` par chemin seulement, sans `uid` : `[ext_resource type="Script"
+  path="res://src/combat/health.gd" id="1_health"]`. Un `uid` faux produit un WARNING (donc un
+  check rouge) ; un `uid` absent ne produit rien. Types : `Script`, `PackedScene`, `Resource`
+  (un .tres), `Texture2D` (un .png importé), `JSON` (un .json).
+- Ids libres et lisibles (`"1_health"`, `"BoxShape3D_sword"`), uniques dans le fichier.
+- Instance : `[node name="Visual" parent="." instance=ExtResource("2_visual")]`.
+- Référence à un nœud dans une propriété exportée (`@export var health: Health`) : déclarer la
+  propriété dans `node_paths` du nœud, sinon elle reçoit un NodePath au lieu du nœud :
+  `[node name="Hurtbox" parent="." node_paths=PackedStringArray("health") instance=ExtResource("4")]`
+  puis `health = NodePath("../Health")`.
+- Tableau typé d'une classe de script : le paramètre de type est l'ext_resource du **script** de
+  la classe : `attacks = Array[ExtResource("3_attack_script")]([ExtResource("4_bite")])`.
+  Tableau natif : `Array[StringName]([&"a", &"b"])`. Dictionnaire typé :
+  `Dictionary[StringName, int]({ &"page_fragment": 5 })` (un `{}` simple se charge aussi).
+- Valeurs : `&"id"` pour un StringName, `Vector3(1, 2, 3)`, `Color(1, 0.5, 0, 1)`,
+  `Transform3D(xx, xy, xz, yx, yy, yz, zx, zy, zz, ox, oy, oz)` (base par lignes).
+- Une forme partagée par toutes les instances (sous-ressource d'une scène instanciée) se modifie
+  pour toutes : `resource_local_to_scene = true` (déjà le cas dans hitbox.tscn / hurtbox.tscn)
+  ou `duplicate()` avant de la changer à l'exécution.
+- Exemple minimal de scène :
+
+  ```
+  [gd_scene format=3]
+
+  [ext_resource type="Script" path="res://src/items/pickup.gd" id="1_pickup"]
+
+  [sub_resource type="SphereShape3D" id="SphereShape3D_pickup"]
+  radius = 0.5
+
+  [node name="forest_page_1" type="Area3D" groups=["interactable"]]
+  collision_layer = 64
+  collision_mask = 2
+  script = ExtResource("1_pickup")
+  item_id = &"page_fragment"
+
+  [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+  shape = SubResource("SphereShape3D_pickup")
+  ```
+- Exemple minimal de ressource :
+
+  ```
+  [gd_resource type="Resource" script_class="ItemData" format=3]
+
+  [ext_resource type="Script" path="res://src/items/item_data.gd" id="1_item"]
+
+  [resource]
+  script = ExtResource("1_item")
+  id = &"page_fragment"
+  display_name = "Fragment de page"
+  ```
+- Après création : `tools/import.sh` génère le `.uid` de chaque nouveau script (`x.gd.uid`) et le
+  `.import` de chaque nouvel asset (`x.png.import`) ; rien d'autre n'est réécrit (ni .tscn, ni
+  .tres, ni project.godot). Commite-les : un worktree qui les régénère obtient d'autres UID et
+  entre en conflit avec les autres. Renommer ou supprimer : `git mv` / `git rm` du fichier ET de
+  son `.uid` / `.import` (Godot ne supprime pas les orphelins).
+
+## Pièges connus
+- Pas d'écran : valide par tests, smoke, export et captures Xvfb, jamais « ça devrait marcher ».
+- Export Web mono-thread : pas de `Thread`, pas de `OS.execute`, pas de `SharedArrayBuffer`.
+- Les planches de sprites utilisent le JSON de l'easter egg (ancres par image, `coup`, `onde`) : ne
+  les reformate pas. Elles sont dessinées tournées vers la droite.
+- Godot 4.7 n'affiche jamais les avertissements GDScript en ligne de commande : ils sont réglés en
+  erreurs dans project.godot et apparaissent comme `SCRIPT ERROR: Parse Error: … (Warning treated
+  as error.)`. Typer aussi les itérateurs (`for x: String in liste`), préfixer par `_` les
+  paramètres inutilisés, ne pas masquer une propriété héritée (`name`, `position`, `root` dans un
+  SceneTree, `reference` dans un RefCounted…). Signal jamais émis dans sa classe :
+  `@warning_ignore("unused_signal")`.
+- L'import ne compile pas les scripts : une erreur de script n'apparaît qu'au chargement (fumée,
+  tests). GUT **ignore sans échouer** un fichier de test qui ne compile pas : tools/check.sh et
+  tools/test.sh le rattrapent en cherchant `SCRIPT ERROR` dans le journal.
+- GUT 9.7.1 fait échouer un test sur tout `push_error` ou erreur moteur imprévus ; une erreur
+  attendue se déclare avec `assert_push_error("texte")` ou `assert_engine_error("texte")`.
+- Dans un script `extends SceneTree` (outils), les autoloads n'existent qu'après la première
+  image : `await process_frame` avant de s'en servir. Libère tout avant `quit()`, sinon
+  `ERROR: resources still in use at exit` rend le check rouge.
+- Une ressource qui contient un `Array[SaClasse]` de sa propre classe fuit à la sortie (ERROR à
+  l'import) : pas d'auto-référence typée.
+- Les nombres lus dans un JSON sont des float : `int(data["max_hp"])`. Les clés String et
+  StringName d'un Dictionary sont interchangeables (`d.has(&"a")` trouve `"a"`).
+- AnimatedSprite3D a déjà des signaux `frame_changed` / `animation_finished` sans argument :
+  CharacterVisual est donc un Node3D avec un enfant `Sprite`.
+- Le rendu headless est factice, mais Godot 4.7 compile quand même les shaders : une erreur de
+  shader sort en `SHADER ERROR` dans la fumée.
+- Plusieurs worktrees peuvent lancer Godot en même temps : `tools/godot` isole `user://` et les
+  réglages de l'éditeur dans `build/xdg/`. Un `godot` lancé à la main partage `~/.local/share`.
+- Les fichiers où plusieurs lots ajoutent des lignes (docs/DECISIONS.md, docs/CONTRACT_REQUESTS.md,
+  tools/warnings_allow.txt, les CREDITS) fusionnent par union : ajoute en bas, ne réordonne pas.
