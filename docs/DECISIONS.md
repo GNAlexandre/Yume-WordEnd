@@ -495,3 +495,48 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **L9 — vérification dans un navigateur** : le Chromium headless de Playwright (SwiftShader)
   fournit un WebGL 2 logiciel dans la VM ; utilisé à la main (docs/web.md), pas dans check.sh
   (lourd et absent de l'image godot-ci).
+## L2 — Monde
+
+- **L2 — `Geometry` sans CSG** : chaque zone garde son nœud `Geometry`, devenu un Node3D
+  (`PropBatcher`) qui contient des décors (scènes de `src/world/props/`, meshes unité partagés
+  de `props/meshes/` + collision StaticBody3D couche 1) posés un par un ou par `PropScatter`
+  (points, lacets, échelles : enfants internes recréés au chargement, visibles dans l'éditeur).
+  Au lancement, `PropBatcher` regroupe tous ces meshes en un MultiMeshInstance3D par
+  (mesh, éclairé/« glow », ombre), couleur par instance = albedo du matériau d'origine.
+  Raison : une quarantaine de draw calls pour toute l'île au lieu de centaines de CSG.
+- **L2 — relief** : `Ground` porte `IslandTerrain` (src/world/terrain.gd, @tool) : relief calculé
+  (`height_at(x, z)` en coordonnées de l'île), HeightMapShape3D 129 × 129 (taille native de
+  Jolt, 1,25 m), mesh visible tiré de la même grille où chaque bloc plat de 5 m ne fait que deux
+  triangles (~20 k triangles au lieu de 33 k ; ~150 ms pour bâtir l'île en natif). Couleurs du
+  sol au pixel (`shaders/terrain.gdshader` : chemins, place, arène, plage, sous-bois) ; la
+  forme de la côte est la même dans terrain.gd, terrain.gdshader et water.gdshader. Pentes
+  ≤ 36° (test : < 40° sur chaque facette).
+- **L2 — mer et limites** : haut-fond (fond à −1,3 m, eau à −0,6 m) jusqu'aux murs du carré
+  (±80,5 m) : on patauge sans jamais se noyer ; des bouées marquent la ligne des murs. La
+  KillZone (sous y = −10) et `WorldManager.FALL_LIMIT` (−30 m) ne sont que des filets de
+  sécurité, tous deux branchés sur `WorldManager.rescue()` (Spawn de la zone courante).
+- **L2 — éclairage (Compatibility 4.7.2)** : une DirectionalLight3D avec ombres est rendue
+  dans une passe additive mélangée en espace sRGB (zone éclairée = sRGB(ambiante) + sRGB(soleil),
+  mesuré : 0,3608 + 0,3608 = 0,7216). Réglages choisis en conséquence : soleil 0,22, lumière
+  ambiante constante lavande 0,32, tonemap linéaire. À revoir si Godot corrige ce mélange (la
+  scène deviendrait plus sombre).
+- **L2 — ombres** : mode orthogonal, 70 m ; fleurs, buissons, haies, champignons et bouées
+  n'en projettent pas (triangles). Vue village mesurée : ~52 draw calls, ~136 k primitives.
+- **L2 — noms des zones** : Village, Dunes au couchant, Forêt des Timeres, Plage aux
+  coquillages, Colline du belvédère.
+- **L2 — village** : les 4 maisons du Lot 0 restent à leur place (tournées vers la place) + 2
+  maisons, puits au centre de la place (remplace la fontaine), haies et 4 portes (arches
+  vermillon) sur les chemins. `EnemyBarrier` (couche 8) couvre tout le pourtour, portes
+  comprises, de y = −2 à 10 m (coins recouverts).
+- **L2 — dunes** : arène plate sur 15 m de rayon (anneau peint à 12 m), ruines et poteaux à
+  ~17 m, dunes au-delà de 18 m, cuvette ouverte vers le village (est) ; soleil couchant à
+  l'ouest-sud-ouest, 24° au-dessus de l'horizon, au-dessus de la mer derrière les dunes.
+- **L2 — téléportation** : `teleport()` pose le joueur au ras du décor statique sous le marqueur
+  (rayon couche world, corps non statiques comme les PNJ ignorés) ; `ground_position()` et
+  `rescue()` ajoutés à l'API (le contrat reste inchangé).
+- **L2 — tests** : `tests/stubs/l2_island_fixture.gd` instancie l'île sans le contenu des
+  emplacements des autres lots, pour tester le monde seul ; les tests de l'arène ignorent les
+  collisions internes à arena.tscn (L5).
+- **L2 — captures** : `L2_VIEW=overview|village|dunes tools/screenshot.sh
+  res://tests/integration/demo_l2.tscn build/shots/<nom>.png` cadre la vue et écrit draw calls
+  et primitives dans le journal.

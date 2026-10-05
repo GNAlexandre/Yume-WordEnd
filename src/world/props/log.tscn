@@ -1,0 +1,37 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="1_cylinder"]
+
+[sub_resource type="StandardMaterial3D" id="trunk"]
+albedo_color = Color(0.56, 0.38, 0.24, 1)
+
+[sub_resource type="StandardMaterial3D" id="wood_light"]
+albedo_color = Color(0.86, 0.72, 0.52, 1)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_log"]
+height = 3
+radius = 0.33
+
+[node name="Log" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -3, 0, 0.64, 0, 0, 0, 0, 0.64, 0, 0.32, 0)
+mesh = ExtResource("1_cylinder")
+material_override = SubResource("trunk")
+
+[node name="EndLeft" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -0.04, 0, 0.54, 0, 0, 0, 0, 0.54, -1.51, 0.32, 0)
+mesh = ExtResource("1_cylinder")
+material_override = SubResource("wood_light")
+
+[node name="EndRight" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -0.04, 0, 0.54, 0, 0, 0, 0, 0.54, 1.51, 0.32, 0)
+mesh = ExtResource("1_cylinder")
+material_override = SubResource("wood_light")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0.32, 0)
+shape = SubResource("CylinderShape3D_log")

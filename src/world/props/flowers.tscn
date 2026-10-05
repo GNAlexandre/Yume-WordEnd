@@ -1,0 +1,74 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="1_bead"]
+
+[sub_resource type="StandardMaterial3D" id="leaf"]
+albedo_color = Color(0.38, 0.7, 0.35, 1)
+
+[sub_resource type="StandardMaterial3D" id="bush_light"]
+albedo_color = Color(0.41, 0.69, 0.36, 1)
+
+[sub_resource type="StandardMaterial3D" id="red"]
+albedo_color = Color(0.95, 0.33, 0.33, 1)
+
+[sub_resource type="StandardMaterial3D" id="yellow"]
+albedo_color = Color(1, 0.85, 0.3, 1)
+
+[sub_resource type="StandardMaterial3D" id="white"]
+albedo_color = Color(0.97, 0.96, 0.92, 1)
+
+[sub_resource type="StandardMaterial3D" id="pink"]
+albedo_color = Color(0.98, 0.58, 0.74, 1)
+
+[sub_resource type="StandardMaterial3D" id="blue"]
+albedo_color = Color(0.46, 0.6, 0.96, 1)
+
+[node name="Flowers" type="Node3D"]
+
+[node name="Tuft1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.95, 0, 0, 0, 0.18, 0, 0, 0, 0.65, -0.15, 0.06, 0.05)
+mesh = ExtResource("1_bead")
+material_override = SubResource("leaf")
+cast_shadow = 0
+
+[node name="Tuft2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.65, 0, 0, 0, 0.15, 0, 0, 0, 0.5, 0.3, 0.05, -0.2)
+mesh = ExtResource("1_bead")
+material_override = SubResource("bush_light")
+cast_shadow = 0
+
+[node name="Bloom1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.19, 0, 0, 0, 0.19, 0, 0, 0, 0.19, -0.42, 0.22, 0.12)
+mesh = ExtResource("1_bead")
+material_override = SubResource("red")
+cast_shadow = 0
+
+[node name="Bloom2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.19, 0, 0, 0, 0.19, 0, 0, 0, 0.19, -0.1, 0.27, -0.16)
+mesh = ExtResource("1_bead")
+material_override = SubResource("yellow")
+cast_shadow = 0
+
+[node name="Bloom3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.19, 0, 0, 0, 0.19, 0, 0, 0, 0.19, 0.16, 0.24, 0.22)
+mesh = ExtResource("1_bead")
+material_override = SubResource("white")
+cast_shadow = 0
+
+[node name="Bloom4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.19, 0, 0, 0, 0.19, 0, 0, 0, 0.19, 0.42, 0.25, -0.12)
+mesh = ExtResource("1_bead")
+material_override = SubResource("pink")
+cast_shadow = 0
+
+[node name="Bloom5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.19, 0, 0, 0, 0.19, 0, 0, 0, 0.19, 0.06, 0.3, 0.44)
+mesh = ExtResource("1_bead")
+material_override = SubResource("blue")
+cast_shadow = 0
+
+[node name="Bloom6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.19, 0, 0, 0, 0.19, 0, 0, 0, 0.19, -0.36, 0.25, -0.38)
+mesh = ExtResource("1_bead")
+material_override = SubResource("yellow")
+cast_shadow = 0

@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="1_cylinder"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/sphere.tres" id="2_sphere"]
+
+[sub_resource type="StandardMaterial3D" id="trunk"]
+albedo_color = Color(0.56, 0.38, 0.24, 1)
+
+[sub_resource type="StandardMaterial3D" id="blossom"]
+albedo_color = Color(0.99, 0.7, 0.8, 1)
+
+[sub_resource type="StandardMaterial3D" id="blossom_light"]
+albedo_color = Color(1, 0.81, 0.87, 1)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_trunk"]
+height = 2
+radius = 0.4
+
+[node name="TreeBlossom" type="Node3D"]
+
+[node name="Trunk" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.42, 0, 0, 0, 2, 0, 0, 0, 0.42, 0, 1, 0)
+mesh = ExtResource("1_cylinder")
+material_override = SubResource("trunk")
+
+[node name="Crown" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.8, 0, 0, 0, 2.3, 0, 0, 0, 2.8, 0, 2.9, 0)
+mesh = ExtResource("2_sphere")
+material_override = SubResource("blossom")
+
+[node name="Crown2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.9, 0, 0, 0, 1.6, 0, 0, 0, 1.9, 0.75, 3.55, 0.35)
+mesh = ExtResource("2_sphere")
+material_override = SubResource("blossom_light")
+
+[node name="Crown3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.7, 0, 0, 0, 1.5, 0, 0, 0, 1.7, -0.65, 3.35, -0.45)
+mesh = ExtResource("2_sphere")
+material_override = SubResource("blossom")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CylinderShape3D_trunk")

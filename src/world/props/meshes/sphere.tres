@@ -1,0 +1,8 @@
+[gd_resource type="SphereMesh" format=3]
+
+[resource]
+resource_name = "sphere"
+radius = 0.5
+height = 1.0
+radial_segments = 8
+rings = 3
