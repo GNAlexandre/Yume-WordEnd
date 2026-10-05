@@ -58,14 +58,14 @@ yaw_degrees = PackedFloat32Array(90, 90, 0, 0)
 [node name="Palms" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
 prop = ExtResource("10_palm")
-points = PackedVector3Array(15.5, 0, -8, 14.5, 0, 8.5, -15, 0, 27.5, -17, 0, -26)
+points = PackedVector3Array(17, 0, -11.5, 15, 0, 12.5, -15, 0, 27.5, -17, 0, -26)
 scale_range = Vector2(0.9, 1.1)
 random_seed = 5
 
 [node name="Shrubs" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
 prop = ExtResource("11_bush")
-points = PackedVector3Array(11.2, 0, -19.9, 17.1, 0, -17, -18.7, 0, 10.2, 9.4, 0, 28.8, 2, 0, 22.8, 18.7, 0, 15.1, 17.4, 0, 27.7, 23.4, 0, -13.4, -8.7, 0, 25.5)
+points = PackedVector3Array(11.2, 0, -19.9, -18.7, 0, 10.2, 9.4, 0, 28.8, 2, 0, 22.8, 17.4, 0, 27.7, 23.4, 0, -13.4, -8.7, 0, 25.5, -14.3, 0, -20.1, 8.3, 0, -26.1)
 scale_range = Vector2(0.5, 0.8)
 random_seed = 6
 
