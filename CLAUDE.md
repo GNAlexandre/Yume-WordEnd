@@ -25,6 +25,10 @@ change pas sans PR « contrats ».
 - Lint : `gdlint src tests tools && gdformat --check src tests tools` (`gdformat src tests tools`
   pour corriger). gdtoolkit 4.5.0, réglages dans `gdlintrc`.
 - Environnement neuf : `bash tools/setup.sh` (Godot, templates Web, gdtoolkit, Pillow ; idempotent).
+- Navigateur (à la main, hors check.sh) : export, `python3 -m http.server 8347 --bind 127.0.0.1
+  --directory build/web`, puis `NODE_PATH=/opt/node-tools/node_modules node tools/web_m2.js
+  http://127.0.0.1:8347/index.html build/shots` (tranche verticale ; `tools/web_m1.js` : arène).
+  Mode d'emploi et raccourcis `?zone=`, `?timeres=`, `?trace=1` : docs/web.md.
 - Planches de remplacement : `python3 tools/gen_placeholders.py skin <id> --name "Nom" --tres`.
 - Toujours passer par `tools/godot` (pas `godot`) : chaque worktree y a son propre `user://`.
 
@@ -150,3 +154,11 @@ change pas sans PR « contrats ».
   dans le projet doit contenir un `.gdignore` (les dossiers cachés, comme `.claude/`, sont ignorés).
 - Les fichiers où plusieurs lots ajoutent des lignes (docs/DECISIONS.md, docs/CONTRACT_REQUESTS.md,
   tools/warnings_allow.txt, les CREDITS) fusionnent par union : ajoute en bas, ne réordonne pas.
+- Tests dans la vraie partie : `tests/stubs/m2_game_test.gd` (main.tscn, appuis réels par
+  `Input.parse_input_event`). Les attentes de GUT (`wait_*`) sont gelées quand l'arbre est en
+  pause (pause, inventaire, fin d'arène) : attendre `get_tree().physics_frame`. Un appui doit
+  durer au moins une image physique (sinon il est encore « just pressed » à la reprise). En
+  headless, la fenêtre fait 64 × 64 px : un clic porte `root.get_final_transform() * position`,
+  et la couche de GUT (`GutLayer`) prend les clics si elle n'est pas cachée.
+- `zone_entered` n'est émis qu'au changement de zone (M2) : un test qui replace le joueur dans
+  la zone où il est déjà ne le reçoit pas (`Zone.LAST_ZONE_META` sur le corps du joueur).

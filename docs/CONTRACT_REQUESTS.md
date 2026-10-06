@@ -122,3 +122,25 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   dans l'image où la pause est levée (BaseButton, lui, presse au relâchement, ce qui l'évite).
   Ensuite, `main_menu_input.gd` pourra se réduire au retour par B.
 - En attendant : `src/ui/main_menu_input.gd` (menu principal, crédits, pause, fin d'arène).
+
+## Intégration M2 — suite donnée aux demandes
+- L8, fin du suivi au retour au menu : faite. Le menu pause (L10) appelait déjà `save()` puis
+  `close_game(false)` avant `reload_current_scene()` (vérifié dans le vrai jeu,
+  `test_m2_world.gd`) ; `main.show_menu()` écrit la partie si elle a changé
+  (`SaveManager.save_on_leave()`) puis appelle `close_game(false)` (`test_m2_resume.gd`).
+- L4, Combat tourné vers « devant » : faite par L1 (`Combat.rotation.y` suit la visée).
+- L4, `show_frame` émet `frame_changed` : faite par L3.
+- L5, zone sûre : faite à l'intégration M1 (`WorldManager.is_zone_safe`).
+- L7, auto-sauvegarde après la récompense : satisfaite par le regroupement de 0,5 s du L8.
+- L7, pages lâchées par les Timeres de la forêt : faite par L5 (`EnemyData.drops`,
+  `drops_enabled`).
+- L6, fin de dialogue : faite par L1 et L6 ; vérifiée dans le vrai jeu (Espace, E, A :
+  `test_m2_quest.gd`).
+- L9, icône et démarrage du moteur : faite (`assets/ui/icon.png`, `boot_splash.png`,
+  `tools/gen_branding.py`, project.godot ; écran de démarrage affiché plutôt que masqué).
+- L9, main.gd et chargement qui progresse : faite (`Loading.load_scene`).
+- L9, caméra souris sur écran tactile : satisfaite (L1 n'oriente la caméra à la souris que
+  pointeur capturé, et ne le capture pas sur un toucher émulé).
+- L10, boutons de manette pour `ui_accept` / `ui_cancel` : refusée ; le contournement
+  (`src/ui/main_menu_input.gd`) est gardé et appliqué à l'inventaire (docs/DECISIONS.md,
+  section « Intégration M2 »).

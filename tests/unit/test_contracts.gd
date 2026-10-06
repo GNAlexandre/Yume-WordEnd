@@ -70,6 +70,8 @@ const SAVE_MANAGER_METHODS := {
 	"new_game": [[SN], VOID],
 	"export_json": [[], STR],
 	"import_json": [[STR], INT],
+	"save_on_leave": [[], INT],
+	"has_unsaved_changes": [[FLT], BOOL],
 }
 const SKIN_REGISTRY_METHODS := {
 	"all": [[], ARR],
@@ -282,6 +284,7 @@ func test_save_manager_api() -> void:
 	_assert_methods(SaveManager, "SaveManager", SAVE_MANAGER_METHODS)
 	assert_eq(_property_type(SaveManager, "save_path"), STR, "SaveManager.save_path")
 	assert_eq(SaveManager.DEFAULT_SAVE_PATH, "user://save_v1.json")
+	assert_eq(_property_type(SaveManager, "checkpoint_interval"), FLT, "(M2) checkpoint_interval")
 
 
 func test_skin_registry_api() -> void:
