@@ -587,3 +587,30 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   verrouillée sur un Timere) plaçait la caméra n'importe où autour du Spawn ; vu dans le
   navigateur, elle s'est retrouvée dans le feuillage d'un cerisier (écran rose). Le contrat L1
   (« caméra derrière le joueur, tangage par défaut ») reste vrai ; seule la visée change.
+- **M1 — raccourcis de test** (`src/test_shortcuts.gd`, nouveau ; `src/game.gd`) : `?zone=<id>`
+  et `?timeres=<n>` dans l'adresse (Web, `JavaScriptBridge.eval("window.location.search")`) ou
+  `--zone=` / `--timeres=` en arguments utilisateur ; game.gd ne crée le nœud que si l'un d'eux
+  est présent (sans paramètre, partie inchangée, testé). Journal `[m1] …` pour suivre la partie
+  sans écran ; mode d'emploi dans docs/web.md. Raison : vérifier l'arène dans le navigateur sans
+  traverser l'île à 1 ou 2 images/s.
+- **M1 — tests d'intégration** (`tests/stubs/m1_game_test.gd`) : vraie partie (`SaveManager.
+  new_game` puis `src/game.tscn`), sauvegarde `user://test_m1_<script>.json`, appuis réels sur
+  les actions (alignés sur l'image physique pour `is_action_just_pressed`). Horloge
+  déterministe : chaque CharacterVisual de la partie avance d'une image physique par image
+  physique (`advance`, `_process` coupé) ; en jeu, son horloge de temps réel s'écarte du temps
+  physique sur une machine chargée (un enchaînement mesuré à 12 images au lieu de 18). Hasard
+  semé à chaque test ; branchements sur EventBus défaits après chaque test (`listen`).
+- **M1 — barrière du village** : les Timeres de la forêt ont une laisse de 20 m autour de la
+  clairière (z = −51) ; ils abandonnent donc ~9 m avant la barrière (z = −22) et ne la touchent
+  jamais en poursuivant. La barrière reste le filet de sécurité : testée en y repoussant un Grand
+  avec l'onde (il s'arrête contre elle). Aucun changement.
+- **M1 — performance** : 12 Timeres à l'écran dans l'arène : 88 draw calls, 94 600 primitives
+  (capture native `M1_SHOT=perf`), 68 / 115 000 dans le navigateur ; vue du village : 75 /
+  112 000 : sous le budget (< 150 draw calls). Seule la vue du village depuis les dunes dépasse
+  l'objectif M2 de 150 000 triangles (156 000, dont 37 000 d'ombres ; 149 000 avec des ombres à
+  40 m au lieu de 70) : décor et éclairage du L2, laissés en l'état et signalés pour M2. Chaque
+  Timere coûte deux draw calls (sprite et ombre).
+- **M1 — démo et captures** : `tests/integration/demo_m1.tscn` (vraie partie, joueur devant le
+  panneau) ; `M1_SHOT=dunes|wave|forest|perf|village tools/screenshot.sh
+  res://tests/integration/demo_m1.tscn build/shots/m1_<vue>.png 300` fige la scène au bon moment
+  (image « coup » de l'épée, onde à 3 m…) et écrit draw calls et primitives au journal.
