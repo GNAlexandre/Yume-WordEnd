@@ -9,9 +9,12 @@ extends Node3D
 ##   wave   : l'onde en vol entre des Timeres alignés ;
 ##   forest : la clairière de la forêt et ses quatre Timeres ;
 ##   perf   : 12 Timeres devant le joueur dans l'arène (banc de src/test_shortcuts.gd) ;
-##   village: la vue de départ au village (budget de draw calls).
-## La scène se fige (get_tree().paused) au moment choisi ; draw calls, primitives et images/s
-## de l'image figée sont écrits dans le journal (« M1 vue … »).
+##   village: la vue de départ au village (budget de draw calls) ;
+##   village_dunes, village_forest, village_beach, village_hill : le village vu de l'entrée
+##            d'une zone voisine, tourné vers la place, les vues les plus chargées de l'île
+##            (intégration M2 : budget de primitives, PLAN.md section 9).
+## La scène se fige (get_tree().paused) au moment choisi ; draw calls, primitives (dont celles
+## de la passe d'ombre) et images/s de l'image figée sont écrits dans le journal (« M1 vue … »).
 
 const TestShortcuts := preload("res://src/test_shortcuts.gd")
 ## Devant le panneau « Affronter les Timeres » (local à la zone des dunes).
@@ -48,6 +51,11 @@ func _ready() -> void:
 			TestShortcuts.spawn_bench(_game, _player.global_position + Vector3(0, 0, -6.5), 12)
 		"village":
 			pass
+		"village_dunes", "village_forest", "village_beach", "village_hill":
+			# Spawn de la zone voisine (côté village), tourné vers la place : le village entier.
+			var zone_id := StringName(_shot.trim_prefix("village_"))
+			var spawn := _game.get_node(NodePath("Island/Zones/%s/Spawn" % zone_id)) as Node3D
+			_place(zone_id, spawn.position, -spawn.global_position)
 		_:
 			_place(&"dunes", PANEL_FRONT, Vector3.LEFT)
 	if not _shot.is_empty():
@@ -146,13 +154,17 @@ func _on_frame_post_draw() -> void:
 		return
 	_frozen_frames += 1
 	if _frozen_frames == MEASURE_DELAY:
+		var viewport := get_viewport()
 		print(
 			(
-				"M1 vue %s : %d draw calls, %d primitives, %d i/s, %d Timeres"
+				"M1 vue %s : %d draw calls, %d primitives (ombres %d), %d i/s, %d Timeres"
 				% [
 					_shot,
 					Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 					Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME),
+					viewport.get_render_info(
+						Viewport.RENDER_INFO_TYPE_SHADOW, Viewport.RENDER_INFO_PRIMITIVES_IN_FRAME
+					),
 					Performance.get_monitor(Performance.TIME_FPS),
 					get_tree().get_nodes_in_group(&"enemies").size(),
 				]

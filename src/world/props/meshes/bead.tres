@@ -5,4 +5,4 @@ resource_name = "bead"
 radius = 0.5
 height = 1.0
 radial_segments = 6
-rings = 3
+rings = 2
