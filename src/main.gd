@@ -15,6 +15,10 @@ const MENU_SCENE := "res://src/ui/main_menu.tscn"
 const LOADING_SCENE := "res://src/ui/loading.tscn"
 const GAME_SCENE := "res://src/game.tscn"
 
+## Travail de chargement par image (ms) confié à Loading.load_scene() ; 0 : une dépendance par
+## image (les tests voient ainsi la barre avancer même quand tout est déjà en cache).
+@export var loading_budget_ms: float = 50.0
+
 var _menu: Node
 var _game: Node
 var _loading: Node
@@ -62,7 +66,7 @@ func start_game() -> void:
 	await get_tree().process_frame
 	var game_scene: PackedScene
 	if loading.has_method(&"load_scene"):
-		var loaded: Variant = await loading.call(&"load_scene", GAME_SCENE)
+		var loaded: Variant = await loading.call(&"load_scene", GAME_SCENE, loading_budget_ms)
 		game_scene = loaded as PackedScene
 	else:
 		game_scene = load(GAME_SCENE) as PackedScene
