@@ -167,7 +167,7 @@ menu, chargement, jeu) avec des événements d'entrée réels (`InputEventKey`,
 
 ## 9. Tests GUT — vérifié automatiquement
 
-`tools/check.sh` : **504 tests verts** (61 scripts, 6 791 assertions), dont Health
+`tools/check.sh` : **504 tests verts** (61 scripts, 6 799 assertions), dont Health
 (`test_health.gd`), AttackData et hitbox (`test_combat_hitbox.gd`, `test_combat_sword.gd`,
 `test_combat_charge.gd`), WaveDirector (`test_wave_director.gd`, `test_arena.gd`), GameState
 (`test_game_state.gd`), SaveManager (`test_save_autosave.gd`, `test_save_file.gd`,
