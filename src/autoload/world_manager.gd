@@ -7,8 +7,9 @@ extends Node
 ##   sinon instancie res://src/world/zones/<id>/<id>.tscn ;
 ## - teleport() pose le joueur (groupe "player") sur un Marker3D de la zone, au ras du sol
 ##   (rayon vers le bas sur la couche world, décor statique seulement) et annule sa vitesse ;
-## - respawn() le ramène au Spawn du village et émet player_respawned (PlayerCombat remet les
-##   PV au maximum) ; déclenché respawn_delay secondes après EventBus.player_died, si le
+## - respawn() le ramène au Spawn du village, tourné comme le marqueur (vers la place, caméra
+##   derrière lui : la vue d'une nouvelle partie), et émet player_respawned (PlayerCombat remet
+##   les PV au maximum) ; déclenché respawn_delay secondes après EventBus.player_died, si le
 ##   joueur mort est toujours dans l'arbre ;
 ## - rescue() ramène le joueur au Spawn de la zone courante : appelé par la KillZone de l'île
 ##   et, en filet de sécurité, quand le joueur passe sous FALL_LIMIT ;
@@ -83,6 +84,7 @@ func teleport(zone_id: StringName, marker: StringName = SPAWN_MARKER) -> void:
 ## Réapparition au Spawn du village avec PV pleins (appliqués par PlayerCombat).
 func respawn() -> void:
 	teleport(VILLAGE, SPAWN_MARKER)
+	_face_marker(VILLAGE, SPAWN_MARKER)
 	EventBus.player_respawned.emit()
 
 
@@ -132,6 +134,19 @@ func ground_position(point: Vector3, body: Node3D = null) -> Vector3:
 			return (hit["position"] as Vector3) + Vector3.UP * GROUND_CLEARANCE
 		excluded.append(hit["rid"] as RID)
 	return point
+
+
+## Tourne le joueur (Player.set_aim_direction, caméra derrière lui) dans le sens du marqueur
+## (−Z). Sans cela, la visée gardée de l'arène plaçait la caméra n'importe où autour du Spawn,
+## parfois dans le feuillage d'un arbre.
+func _face_marker(zone_id: StringName, marker: StringName) -> void:
+	var zone := _find_zone(zone_id)
+	var player := _player()
+	if zone == null or player == null or not player.has_method(&"set_aim_direction"):
+		return
+	var target := zone.get_node_or_null(NodePath(String(marker))) as Node3D
+	if target != null:
+		player.call(&"set_aim_direction", -target.global_basis.z, true)
 
 
 func _player() -> Node3D:

@@ -137,6 +137,9 @@ func test_death_in_the_forest_respawns_at_the_village_without_arena() -> void:
 	var spawn := zone(&"village").get_node(^"Spawn") as Node3D
 	assert_lt(flat_distance(player.global_position, spawn.global_position), 0.5, "au village")
 	assert_eq(health.current, 5, "PV pleins")
+	assert_almost_eq(
+		player.camera_rig.forward(), -spawn.global_basis.z, Vector3.ONE * 0.01, "vue du départ"
+	)
 	assert_signal_not_emitted(EventBus, "arena_finished", "pas d'arène dans la forêt")
 	await wait_seconds(1.0)
 	assert_eq(_hunting(timeres), 0, "les Timeres ne le suivent pas au village")

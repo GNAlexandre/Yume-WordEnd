@@ -581,3 +581,9 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   hors de portée du deuxième (1,55 m pour lui) : l'enchaînement donnait coup, vide, coup, à
   chaque fois. À 2,5 m/s, recul de 0,28 m, le deuxième coup porte (marge 0,1 m) et sword_3
   garde le grand recul final (0,9 m). Valeur à juger par le propriétaire (docs/REGLAGES_COMBAT.md).
+- **M1 — vue de la réapparition** (`src/autoload/world_manager.gd`, L2) : `respawn()` tourne le
+  joueur comme le Marker3D `Spawn` du village (−Z : vers la place), caméra derrière lui, avant
+  `player_respawned` : la vue d'une nouvelle partie. Cause : la visée gardée de l'arène (souvent
+  verrouillée sur un Timere) plaçait la caméra n'importe où autour du Spawn ; vu dans le
+  navigateur, elle s'est retrouvée dans le feuillage d'un cerisier (écran rose). Le contrat L1
+  (« caméra derrière le joueur, tangage par défaut ») reste vrai ; seule la visée change.
