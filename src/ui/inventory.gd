@@ -4,8 +4,11 @@ extends Control
 ##
 ## Écran modal : open() met le jeu en pause (get_tree().paused = true), close() la lève ; la
 ## racine est en PROCESS_MODE_ALWAYS. L'action « inventory » (I / bouton Y) ouvre et ferme ;
-## ouvert, « ui_cancel » (Échap / B), « pause » ou un clic hors du panneau le ferment aussi
+## ouvert, « ui_cancel » (Échap), « pause » ou un clic hors du panneau le ferment aussi
 ## (événement consommé). Navigation : ui_* (flèches, croix, stick), survol de la souris, toucher.
+## Manette (intégration M2, comme les écrans du L10 : src/ui/main_menu_input.gd) : Godot 4.7
+## n'associe aucun bouton à ui_accept ni à ui_cancel ; B ferme et A presse le bouton qui a le
+## focus, au relâchement d'un appui reçu ici (B est aussi la charge du joueur).
 ## Ne s'ouvre ni pendant un dialogue (dialogue_started → dialogue_ended) ni si le jeu est déjà
 ## en pause (menu pause, fin d'arène).
 ## Contenu mis à jour uniquement sur EventBus.inventory_changed, en relisant GameState
@@ -17,6 +20,7 @@ signal closed
 
 const SLOT_SCENE := preload("res://src/ui/inventory_slot.tscn")
 const UNKNOWN_ICON := preload("res://assets/items/unknown.png")
+const MenuInput := preload("res://src/ui/main_menu_input.gd")
 ## Nombre minimal de cases affichées (cases vides comprises).
 const MIN_SLOTS := 8
 
@@ -25,6 +29,7 @@ var _totals: Dictionary = {}
 var _selected: int = -1
 var _paused_by_me: bool = false
 var _dialogue_running: bool = false
+var _pad := MenuInput.new()
 
 @onready var _dim: ColorRect = %Dim
 @onready var _grid: GridContainer = %Grid
@@ -61,6 +66,7 @@ func open() -> void:
 	visible = true
 	get_tree().paused = true
 	_paused_by_me = true
+	_pad.reset()
 	_focus_selection()
 	opened.emit()
 
@@ -70,6 +76,7 @@ func close() -> void:
 	if not visible:
 		return
 	visible = false
+	_pad.reset()
 	if _paused_by_me:
 		get_tree().paused = false
 		_paused_by_me = false
@@ -101,6 +108,14 @@ func _input(event: InputEvent) -> void:
 			close()
 			get_viewport().set_input_as_handled()
 			return
+	var command := _pad.read(event)
+	match command:
+		MenuInput.Command.ACCEPT:
+			MenuInput.press_focused(self)
+		MenuInput.Command.BACK:
+			close()
+	if command != MenuInput.Command.NONE:
+		get_viewport().set_input_as_handled()
 
 
 func _unhandled_input(event: InputEvent) -> void:

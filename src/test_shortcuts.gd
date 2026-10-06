@@ -7,15 +7,18 @@ extends Node
 ##                en a une (dunes : 15 m tout droit jusqu'au panneau), sinon vers son centre ;
 ##                une zone inconnue est ignorée ;
 ##   timeres=<n>  banc de performance : n Timeres (les quatre types, au plus MAX_BENCH) errent
-##                devant le joueur, dans le champ de la caméra, sans le poursuivre.
+##                devant le joueur, dans le champ de la caméra, sans le poursuivre ;
+##   trace        (intégration M2) le journal seul : la partie est celle du menu, telle quelle
+##                (nouvelle partie ou reprise, position et zone non touchées).
 ## Tant qu'il est actif, la console reçoit une ligne « [m1] … » par événement (zone, invite,
-## vague, Timere tué, fin de série, dégâts, mort, réapparition) et, toutes les REPORT_PERIOD s,
-## images/s, draw calls, primitives et distance du Timere le plus proche : un navigateur sans
-## écran (Playwright) suit ainsi la partie.
+## dialogue, quête, objet, vague, Timere tué, fin de série, dégâts, mort, réapparition), une
+## ligne au départ (zone et position du joueur) et, toutes les REPORT_PERIOD s, images/s, draw
+## calls, primitives, position et distance du Timere le plus proche : un navigateur sans écran
+## (Playwright) suit ainsi la partie.
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
 ## Paramètres reconnus (les autres sont ignorés).
-const KEYS: Array[String] = ["zone", "timeres"]
+const KEYS: Array[String] = ["zone", "timeres", "trace"]
 ## Types du banc de performance, en rotation.
 const BENCH_TYPES: Array[StringName] = [
 	&"timere_small", &"timere_normal", &"timere_runner", &"timere_big"
@@ -110,7 +113,17 @@ func _ready() -> void:
 	EventBus.player_damaged.connect(_on_player_damaged)
 	EventBus.player_died.connect(_on_player_died)
 	EventBus.player_respawned.connect(_on_player_respawned)
+	EventBus.dialogue_line.connect(_on_dialogue_line)
+	EventBus.dialogue_ended.connect(_on_dialogue_ended)
+	EventBus.quest_updated.connect(_on_quest_updated)
+	EventBus.item_collected.connect(_on_item_collected)
 	_log("raccourcis de test %s ; %d Timeres de banc" % [parameters, count])
+	_log(
+		(
+			"partie : zone « %s », %s, quêtes %s, objets %s"
+			% [GameState.zone, _position_text(player), GameState.quests(), GameState.items()]
+		)
+	)
 
 
 func _process(delta: float) -> void:
@@ -121,16 +134,33 @@ func _process(delta: float) -> void:
 	var enemies := get_tree().get_nodes_in_group(&"enemies")
 	_log(
 		(
-			"%d i/s, %d draw calls, %d primitives, %d Timeres, le plus proche à %.1f m"
+			"%d i/s, %d draw calls, %d primitives, %s (%s), %d Timeres, le plus proche à %.1f m"
 			% [
 				Performance.get_monitor(Performance.TIME_FPS),
 				Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 				Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME),
+				_position_text(get_tree().get_first_node_in_group(&"player") as Node3D),
+				"à écrire" if SaveManager.has_unsaved_changes() else "sauvegardée",
 				enemies.size(),
 				_nearest_enemy(enemies),
 			]
 		)
 	)
+
+
+func _notification(what: int) -> void:
+	# SaveManager (autoload, servi avant la partie) vient d'écrire la position s'il le fallait.
+	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
+		var player := get_tree().get_first_node_in_group(&"player") as Node3D
+		var state := "à écrire" if SaveManager.has_unsaved_changes() else "sauvegardée"
+		_log("fenêtre sans focus : %s (%s)" % [_position_text(player), state])
+
+
+## « position (x ; z) » du joueur, en mètres (« position inconnue » sans joueur).
+func _position_text(player: Node3D) -> String:
+	if player == null:
+		return "position inconnue"
+	return "position (%.1f ; %.1f)" % [player.global_position.x, player.global_position.z]
 
 
 ## Distance horizontale (m) du joueur au Timere vivant le plus proche (999 sans joueur ni Timere).
@@ -191,3 +221,22 @@ func _on_player_died() -> void:
 
 func _on_player_respawned() -> void:
 	_log("joueur réapparu")
+
+
+func _on_dialogue_line(speaker: String, text: String, choices: Array[String]) -> void:
+	var line := "dialogue %s : %s" % [speaker, text]
+	if not choices.is_empty():
+		line += " [%s]" % " | ".join(choices)
+	_log(line)
+
+
+func _on_dialogue_ended(npc_id: StringName) -> void:
+	_log("fin du dialogue (%s)" % npc_id)
+
+
+func _on_quest_updated(quest_id: StringName, state: StringName) -> void:
+	_log("quête %s : %s" % [quest_id, state])
+
+
+func _on_item_collected(item_id: StringName, quantity: int) -> void:
+	_log("objet %s ×%d (%d en tout)" % [item_id, quantity, GameState.count(item_id)])

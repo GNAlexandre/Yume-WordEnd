@@ -34,6 +34,7 @@ material_override = SubResource("coral")
 transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, 0, 2.55, 0)
 mesh = ExtResource("3_sphere")
 material_override = SubResource("white")
+cast_shadow = 0
 
 [node name="Towel" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.886327, 0, 0.312567, 0, 0.03, 0, -0.156283, 0, 1.772654, 1.1, 0.02, 0.4)

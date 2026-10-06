@@ -19,6 +19,13 @@ extends Node
 ##   WorldManager, récompense de quête donnée) et il y a au plus une écriture par délai.
 ## - Web : user:// vit dans IndexedDB, que Godot ne met à jour qu'après la fermeture d'un
 ##   fichier ouvert en écriture : le fichier temporaire est toujours fermé explicitement.
+## - Position (intégration M2) : aucun des signaux d'auto-sauvegarde ne suit le joueur qui se
+##   promène. Toutes les checkpoint_interval s de jeu (pas en pause), l'état est écrit s'il a
+##   changé depuis la dernière écriture, la position seulement au-delà de checkpoint_distance m :
+##   rien n'est écrit tant que le joueur ne bouge pas. À la perte du focus, à la fermeture, à la
+##   mise en arrière-plan et quand la page Web est masquée (save_on_leave), l'écriture en attente
+##   est faite et, sans attente, l'état est écrit s'il a changé (position comprise). Ces
+##   écritures-là sont discrètes (pas de signal saved : pas de « Sauvegardé » à chaque pas).
 
 ## Une sauvegarde vient d'être écrite (save, auto-sauvegarde, flush) : pour un indicateur du HUD.
 signal saved(path: String)
@@ -27,11 +34,17 @@ const SAVE_VERSION := 1
 const DEFAULT_SAVE_PATH := "user://save_v1.json"
 ## Regroupement des auto-sauvegardes : au plus une écriture par délai (secondes).
 const DEFAULT_AUTOSAVE_DELAY := 0.5
+## Sauvegarde de la position pendant le jeu : intervalle (s de jeu) et déplacement minimal (m).
+const DEFAULT_CHECKPOINT_INTERVAL := 5.0
+const DEFAULT_CHECKPOINT_DISTANCE := 1.0
+## Écart de position (m) en deçà duquel le joueur n'a pas bougé (départ du joueur).
+const POSITION_EPSILON := 0.05
 const TEMP_SUFFIX := ".tmp"
 const BACKUP_SUFFIX := ".bak"
 ## Arène de l'easter egg : les scores à plat du format v0 y sont rangés.
 const V0_ARENA := "dunes"
-## Fermeture, perte du focus, arrière-plan : l'écriture en attente est faite sans attendre.
+## Fermeture, perte du focus, arrière-plan : l'écriture en attente est faite sans attendre, sinon
+## l'état est écrit s'il a changé depuis la dernière écriture (save_on_leave).
 const FLUSH_NOTIFICATIONS: Array[int] = [
 	NOTIFICATION_WM_CLOSE_REQUEST,
 	NOTIFICATION_WM_WINDOW_FOCUS_OUT,
@@ -43,12 +56,21 @@ const FLUSH_NOTIFICATIONS: Array[int] = [
 var save_path: String = DEFAULT_SAVE_PATH
 ## Délai de regroupement des auto-sauvegardes ; les tests peuvent le raccourcir.
 var autosave_delay: float = DEFAULT_AUTOSAVE_DELAY
+## Sauvegarde de la position pendant le jeu : toutes les checkpoint_interval s de jeu (0 : jamais),
+## si l'état a changé, la position d'au moins checkpoint_distance m.
+var checkpoint_interval: float = DEFAULT_CHECKPOINT_INTERVAL
+var checkpoint_distance: float = DEFAULT_CHECKPOINT_DISTANCE
 ## Explication en français du dernier échec, ou de la sauvegarde mise de côté (pour le menu) ;
 ## "" après une opération réussie.
 var last_error: String = ""
 
 var _game_loaded: bool = false
 var _timer: Timer
+## GameState.to_dict() de la dernière écriture de la partie suivie ({} : rien d'écrit encore).
+var _written: Dictionary = {}
+var _checkpoint_left: float = DEFAULT_CHECKPOINT_INTERVAL
+## Rappel JavaScript de « visibilitychange » (Web), gardé tant que SaveManager vit.
+var _visibility_callback: JavaScriptObject
 
 
 func _ready() -> void:
@@ -66,13 +88,25 @@ func _ready() -> void:
 	EventBus.quest_updated.connect(_request_autosave.unbind(2))
 	EventBus.zone_entered.connect(_request_autosave.unbind(1))
 	EventBus.save_requested.connect(_request_autosave)
+	_watch_page_visibility()
 
 
 func _notification(what: int) -> void:
 	# Le navigateur ou le système ne donneront peut-être plus d'image pour finir le délai.
-	# Sans écriture en attente, rien n'est écrit (pas de sauvegarde « à la fermeture »).
 	if what in FLUSH_NOTIFICATIONS:
-		flush()
+		save_on_leave()
+
+
+func _process(delta: float) -> void:
+	# Pausable (autoload) : pas de sauvegarde de position pendant la pause, où rien ne bouge.
+	if not _game_loaded or checkpoint_interval <= 0.0:
+		return
+	_checkpoint_left -= delta
+	if _checkpoint_left > 0.0:
+		return
+	_checkpoint_left = checkpoint_interval
+	if not is_autosave_pending() and has_unsaved_changes(checkpoint_distance):
+		_write(false)
 
 
 func has_save() -> bool:
@@ -92,14 +126,7 @@ func is_persistent() -> bool:
 
 ## Écrit GameState dans save_path, puis émet saved.
 func save() -> Error:
-	var err := _write_atomically(save_path, export_json())
-	if err != OK:
-		last_error = "Sauvegarde impossible dans %s (%s)." % [save_path, error_string(err)]
-		push_error("SaveManager : " + last_error)
-		return err
-	last_error = ""
-	saved.emit(save_path)
-	return OK
+	return _write(true)
 
 
 ## Lit save_path, remplit GameState (from_dict) et émet game_loaded. Renvoie OK,
@@ -136,9 +163,7 @@ func new_game(skin_id: StringName) -> void:
 
 ## Sauvegarde courante en texte JSON (menu « Exporter », section 13).
 func export_json() -> String:
-	var data := {"version": SAVE_VERSION, "saved_at": _utc_now()}
-	data.merge(GameState.to_dict())
-	return JSON.stringify(data, "  ", false)
+	return _to_json(GameState.to_dict())
 
 
 ## Remplace GameState par une sauvegarde JSON de version gérée (menu « Importer ») et émet
@@ -173,6 +198,32 @@ func flush() -> Error:
 	return save()
 
 
+## Vrai pendant une partie suivie si GameState diffère de la dernière écriture : un champ autre
+## que la position, ou une position à plus de tolerance m de celle écrite.
+func has_unsaved_changes(tolerance: float = POSITION_EPSILON) -> bool:
+	if not _game_loaded:
+		return false
+	if _written.is_empty():
+		return true
+	var now := GameState.to_dict()
+	var before := _written.duplicate()
+	var moved := _vector(now["position"]).distance_to(_vector(before["position"]))
+	now.erase("position")
+	before.erase("position")
+	return now != before or moved > tolerance
+
+
+## Le joueur s'en va peut-être (focus perdu, fermeture, arrière-plan, page masquée) : l'écriture
+## en attente est faite, sinon l'état est écrit s'il a changé (position comprise), discrètement.
+## Rien n'est écrit si rien n'a changé : pas d'écriture en boucle.
+func save_on_leave() -> Error:
+	if is_autosave_pending():
+		return flush()
+	if has_unsaved_changes():
+		return _write(false)
+	return OK
+
+
 ## Fin du suivi de la partie (retour au menu, fin d'un test) : l'écriture en attente est faite
 ## (abandonnée si flush_pending est faux), puis plus rien n'est écrit automatiquement jusqu'au
 ## prochain game_loaded.
@@ -182,6 +233,7 @@ func close_game(flush_pending: bool = true) -> void:
 	if _timer != null:
 		_timer.stop()
 	_game_loaded = false
+	_written = {}
 
 
 # --- Partie -----------------------------------------------------------------------------------
@@ -204,6 +256,7 @@ func _apply(data: Dictionary) -> void:
 ## nouvelle partie est écrite (nouvelle partie, migration et import ainsi conservés).
 func _begin() -> void:
 	_timer.stop()
+	_written = {}
 	EventBus.game_loaded.emit()
 	_request_autosave()
 
@@ -224,6 +277,7 @@ func _recover(reason: String) -> Error:
 
 func _on_game_loaded() -> void:
 	_game_loaded = true
+	_checkpoint_left = checkpoint_interval
 
 
 # --- Auto-sauvegarde --------------------------------------------------------------------------
@@ -240,6 +294,55 @@ func _on_autosave_timeout() -> void:
 
 
 # --- Fichier ----------------------------------------------------------------------------------
+
+
+## Écrit GameState dans save_path ; announce : émet saved (indicateur du HUD).
+func _write(announce: bool) -> Error:
+	var state := GameState.to_dict()
+	var err := _write_atomically(save_path, _to_json(state))
+	if err != OK:
+		last_error = "Sauvegarde impossible dans %s (%s)." % [save_path, error_string(err)]
+		push_error("SaveManager : " + last_error)
+		return err
+	last_error = ""
+	if _game_loaded:
+		_written = state
+	if announce:
+		saved.emit(save_path)
+	return OK
+
+
+## Texte du fichier : version, saved_at, puis les champs de GameState.to_dict() (state).
+func _to_json(state: Dictionary) -> String:
+	var data := {"version": SAVE_VERSION, "saved_at": _utc_now()}
+	data.merge(state)
+	return JSON.stringify(data, "  ", false)
+
+
+## [x, y, z] (position de to_dict) → Vector3.
+static func _vector(value: Variant) -> Vector3:
+	if value is Array and (value as Array).size() == 3:
+		var p: Array = value
+		return Vector3(float(p[0]), float(p[1]), float(p[2]))
+	return Vector3.ZERO
+
+
+## Web : Godot 4.7 n'a pas de notification quand la page est masquée (onglet en arrière-plan,
+## téléphone qui change d'application) ; SaveManager écoute lui-même « visibilitychange ».
+func _watch_page_visibility() -> void:
+	if not OS.has_feature("web"):
+		return
+	var document := JavaScriptBridge.get_interface("document")
+	if document == null:
+		return
+	_visibility_callback = JavaScriptBridge.create_callback(_on_page_visibility_changed)
+	document.call("addEventListener", "visibilitychange", _visibility_callback)
+
+
+func _on_page_visibility_changed(_arguments: Array) -> void:
+	var document := JavaScriptBridge.get_interface("document")
+	if document != null and str(document.get("visibilityState")) == "hidden":
+		save_on_leave()
 
 
 ## Écrit text dans <path>.tmp, le ferme puis le renomme en path. Sur le Web, la fermeture

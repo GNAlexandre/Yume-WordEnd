@@ -46,6 +46,9 @@ func test_every_zone_emits_zone_entered() -> void:
 	# Hors de toutes les zones (au-dessus de leurs Bounds), puis dans chacune tour à tour.
 	_player.global_position = Vector3(0.0, 60.0, 0.0)
 	await wait_physics_frames(2)
+	# Intégration M2 : une zone n'est pas réannoncée au joueur qui y était déjà (frontières) ;
+	# le joueur factice, né au village, oublie la sienne pour que le village compte aussi.
+	_player.remove_meta(Zone.LAST_ZONE_META)
 	watch_signals(EventBus)
 	for zone_id in ZONES:
 		WorldManager.teleport(zone_id)

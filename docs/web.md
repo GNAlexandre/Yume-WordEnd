@@ -50,8 +50,13 @@ navigateur : `single-threaded, no GDExtension support`. La CI refait le premier 
    de même sans HTTPS ou si le moteur n'a pas pu être téléchargé, avec un bouton « Recharger ».
    Les marqueurs `$GODOT_URL`, `$GODOT_CONFIG`, `$GODOT_THREADS_ENABLED`, `$GODOT_HEAD_INCLUDE`
    sont remplacés par l'export, y compris en headless (tests/unit/test_export_web.gd).
-2. **Écran Loading** (`src/ui/loading.tscn`, dans le jeu) : main.gd l'affiche, appelle
-   `set_progress(0)`, charge `src/game.tscn` puis `set_progress(1)`.
+2. **Écran de démarrage du moteur** (intégration M2) : `assets/ui/boot_splash.png`, le même
+   couchant que le shell, étiré en « Cover » sur le fond #1b1231 du shell (plus de logo Godot
+   sur fond gris) ; l'icône du jeu (`assets/ui/icon.png`) sert de favicon et d'icône iPhone
+   (`index.icon.png`, `index.apple-touch-icon.png`). Les deux sont générés par
+   `tools/gen_branding.py` (Pillow).
+3. **Écran Loading** (`src/ui/loading.tscn`, dans le jeu) : main.gd l'affiche et lui confie le
+   chargement de `src/game.tscn` (`load_scene`, intégration M2), dont la barre avance.
 
 **`ResourceLoader.load_threaded_*` sans threads** (code de Godot 4.7.2 lu, `main.cpp`,
 `worker_thread_pool.cpp`, `resource_loader.cpp`) : le build mono-thread initialise le
@@ -61,8 +66,8 @@ pendant ce temps) et `load_threaded_get_status()` répond `THREAD_LOAD_LOADED` d
 appel : aucune progression intermédiaire. Ce n'est ni une erreur ni un gain.
 `Loading.load_scene(path)` donne une vraie progression sans thread : elle charge les dépendances
 de la scène (feuilles d'abord) en plusieurs images, au plus 50 ms de travail par image, puis la
-scène elle-même (`var scene: PackedScene = await loading.load_scene(GAME_SCENE)`) ; main.gd ne
-l'utilise pas encore (demande au L0 dans docs/CONTRACT_REQUESTS.md).
+scène elle-même (`var scene: PackedScene = await loading.load_scene(GAME_SCENE)`) ; main.gd
+l'utilise depuis l'intégration M2.
 
 ## Contrôles tactiles (`src/ui/touch_controls.tscn`, nœud `UI/TouchControls`)
 
@@ -264,6 +269,7 @@ change pas (testé) ; `src/game.gd` ne crée ce nœud que si l'un d'eux est pré
 | --- | --- |
 | `?zone=dunes` | Le joueur part du Spawn des dunes, tourné vers le panneau de l'arène : 15 m tout droit (Z/W), puis E lance les vagues. Toute zone de l'île (`village`, `forest`, `beach`, `hill`) ; un nom inconnu est ignoré. |
 | `&timeres=12` | Banc de performance : 12 Timeres (les quatre types, 24 au plus) errent devant le joueur sans le poursuivre. |
+| `?trace=1` | (intégration M2) Le journal seul : la partie (nouvelle ou reprise) n'est pas touchée. |
 
 Pendant ce temps, la console du navigateur reçoit `[m1] …` à chaque événement (zone, invite,
 vague, Timere tué, fin de série, dégâts, mort, réapparition) et, toutes les 2 s, images/s, draw
@@ -279,3 +285,35 @@ primitives ; pire vue mesurée : le village vu des dunes (96 draw calls, 156 000
 37 000 pour la passe d'ombre). Les mêmes chiffres sortent des captures natives
 (`M1_SHOT=perf|village tools/screenshot.sh res://tests/integration/demo_m1.tscn …`, voir
 docs/DECISIONS.md, section « Intégration M1 »).
+
+## Vérification M2 (tranche verticale)
+
+`tools/web_m2.js` (Playwright, mode d'emploi en tête du fichier) joue le début de la tranche
+verticale dans le Chromium sans écran, avec le paramètre `?trace=1` des raccourcis de test : le
+journal « [m1] … » seul (la partie est celle du menu, telle quelle), qui donne la zone, la
+position du joueur et l'état de la sauvegarde (« sauvegardée » ou « à écrire »), les dialogues,
+les quêtes, les objets et la perte du focus. Profil neuf : temps jusqu'au menu (repère
+`window.wordendMenuMs`, posé par `src/main.gd` quand le menu s'affiche), « Cliquer pour jouer »,
+Entrée sur « Nouvelle partie », marche jusqu'à la bibliothécaire, dialogue, quête acceptée,
+quelques pas, perte du focus du canevas ; puis la page est rechargée (même profil, donc même
+IndexedDB) et « Continuer » reprend la partie. Captures : `m2_web_menu.png`,
+`m2_web_village.png`, `m2_web_dialogue.png`, `m2_web_continue.png`.
+
+Mesures du 6 octobre 2026 (build de l'intégration M2, servi en local, Chromium 141 headless,
+SwiftShader, 1 à 2 images/s : indicatif) : menu en 1,9 à 2,2 s (1,6 à 3,6 s au rechargement),
+partie chargée 3 à 7,6 s après Entrée (la page affiche des images pendant le chargement : 12 en
+6,6 s, compteur `requestAnimationFrame`), aucune erreur dans la console (seuls avertissements,
+ceux du pilote logiciel : « GPU stall due to ReadPixels ») ; après rechargement, « Continuer »
+reprend à la position quittée (écart 0,00 m), zone et quête comprises. Build : 10,6 Mo
+compressés (wasm 9,7 Mo, pck 0,9 Mo), budget 25 Mo.
+
+**Sauvegarde et fermeture de l'onglet.** SaveManager écrit la position toutes les 5 s de jeu si
+le joueur a bougé (1 m), et au départ : perte du focus, page masquée (`visibilitychange`, que
+Godot 4.7 ne relaie pas : SaveManager l'écoute par `JavaScriptBridge`), fermeture. Godot copie
+`user://` vers IndexedDB au début de l'image qui suit l'écriture, en asynchrone : avec un vrai
+GPU, c'est immédiat ; dans le Chromium logiciel de la VM, le fil principal saturé retarde la
+copie de 25 à 70 s, et `tools/web_m2.js` l'attend (il lit IndexedDB) avant de recharger. Un
+onglet fermé dans la fraction de seconde qui suit une écriture peut donc perdre cette
+dernière écriture ; la sauvegarde périodique borne la perte aux 5 dernières secondes de marche.
+Godot range aussi son cache de shaders dans `user://shader_cache` (33 entrées dans IndexedDB,
+sans contenu dans le rendu WebGL).

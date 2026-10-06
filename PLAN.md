@@ -174,7 +174,7 @@ signal dialogue_line(speaker: String, text: String, choices: Array[String])   # 
 signal dialogue_choice_made(index: int)       # (L0) DialogueBox → DialogueRunner actif ; -1 = « suite » sans choix
 signal dialogue_ended(npc_id: StringName)                     # DialogueRunner (le joueur repart)
 signal quest_updated(quest_id: StringName, state: StringName)  # available|active|done ; GameState.set_quest_state
-signal zone_entered(zone_id: StringName)                      # Zone (Area3D « Bounds »)
+signal zone_entered(zone_id: StringName)                      # Zone (Area3D « Bounds ») ; (M2) au changement de zone seulement
 signal day_phase_changed(phase: StringName)   # morning|day|evening|night (M3)
 signal skin_changed(skin_id: StringName)                      # GameState, quand skin_id change ; le joueur l'applique
 signal max_hp_changed(max_value: int)          # (L0) GameState, quand max_hp change → PlayerCombat
@@ -261,6 +261,9 @@ func load_game() -> Error                 # remplit GameState, émet game_loaded
 func new_game(skin_id: StringName) -> void   # (L0) GameState.reset() puis émet game_loaded
 func export_json() -> String / func import_json(text: String) -> Error   # menu, section 13 ; import émet game_loaded
 var save_path: String = "user://save_v1.json"   # (L0) les tests en utilisent un autre
+func save_on_leave() -> Error             # (M2) focus perdu, fermeture, page masquée : écriture en attente, sinon état s'il a changé
+func has_unsaved_changes(tolerance: float = 0.05) -> bool   # (M2) GameState diffère de la dernière écriture (position : au-delà de tolerance m)
+var checkpoint_interval: float = 5.0      # (M2) position écrite toutes les 5 s de jeu si le joueur a bougé de checkpoint_distance (1 m)
 
 # src/autoload/skin_registry.gd
 func all() -> Array[SkinData]
@@ -352,7 +355,7 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/ui/hud.tscn`, `arena_end.tscn`, `credits.tscn` | `HUD`, `ArenaEnd`, `Credits` (Control) | — | — | L10 |
 | `src/ui/dialogue_box.tscn` | `DialogueBox` (Control) | — | — | L6 |
 | `src/ui/inventory.tscn` | `Inventory` (Control) | — | — | L7 |
-| `src/ui/loading.tscn`, `touch_controls.tscn` | `Loading`, `TouchControls` (Control) | `Loading` : `set_progress(ratio: float)` facultatif, appelé par main.gd | — | L9 |
+| `src/ui/loading.tscn`, `touch_controls.tscn` | `Loading`, `TouchControls` (Control) | `Loading` : `set_progress(ratio: float)` facultatif, appelé par main.gd ; (M2) `load_scene(path, budget_ms)` qui charge la partie en plusieurs images, utilisée par main.gd si présente | — | L9 |
 
 **Données présentes au Lot 0** : `data/attacks/{sword_1,sword_2,sword_3,charge_wave,bite,whip,rush}.tres` (L4) ; `data/enemies/timere_{small,normal,runner,big}.tres` et `data/enemies/visuals/timere.tres` (L5, visuel hors de `data/skins/` pour ne pas être jouable) ; `data/skins/{chtholly,bibliothecaire,forgeron,enfant}.tres` (L3 ; les trois PNJ sont des silhouettes de `tools/gen_placeholders.py`) ; `data/waves/dunes.json` (L5, sans `music` tant qu'il n'y a pas d'audio). `data/items/`, `data/quests/` (L7), `data/npcs/` et `data/dialogues/` (L6) sont à créer. Le nom de fichier d'une donnée est son `id`.
 
@@ -423,7 +426,7 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 | HUD | `src/ui/hud.tscn` | Cœurs, jauge de charge, numéro de vague et score dans l'arène, nom de la zone à l'entrée, invite d'interaction, objectif de quête |
 | Inventaire | `src/ui/inventory.tscn` | Grille d'icônes, touche I / bouton Y, quantité, description |
 | Menu | `src/ui/main_menu.tscn` | Choix du skin (vignettes), Nouvelle partie / Continuer, crédits ; écran « Cliquer pour jouer » avant tout son |
-| Sauvegarde | `SaveManager` | Auto-sauvegarde à `arena_finished`, `item_collected`, `quest_updated`, `zone_entered` ; chargement au menu (pas de sauvegarde « à la fermeture » : le navigateur ne la garantit pas) |
+| Sauvegarde | `SaveManager` | Auto-sauvegarde à `arena_finished`, `item_collected`, `quest_updated`, `zone_entered` ; chargement au menu (pas de sauvegarde « à la fermeture » : le navigateur ne la garantit pas) ; (M2) position écrite toutes les 5 s de jeu si le joueur a bougé, et au départ (focus perdu, page masquée) quand l'état a changé |
 
 ### Format des vagues (JSON, `data/waves/dunes.json`)
 
