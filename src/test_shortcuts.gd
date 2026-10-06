@@ -7,10 +7,11 @@ extends Node
 ##                en a une (dunes : 15 m tout droit jusqu'au panneau), sinon vers son centre ;
 ##                une zone inconnue est ignorée ;
 ##   timeres=<n>  banc de performance : n Timeres (les quatre types, au plus MAX_BENCH) errent
-##                autour du joueur sans le poursuivre.
-## Tant qu'il est actif, la console reçoit une ligne « [m1] … » par événement (zone, vague,
-## Timere tué, fin de série, dégâts, mort, réapparition) et, toutes les REPORT_PERIOD s,
-## images/s, draw calls et primitives : un navigateur sans écran (Playwright) suit la partie.
+##                devant le joueur, dans le champ de la caméra, sans le poursuivre.
+## Tant qu'il est actif, la console reçoit une ligne « [m1] … » par événement (zone, invite,
+## vague, Timere tué, fin de série, dégâts, mort, réapparition) et, toutes les REPORT_PERIOD s,
+## images/s, draw calls, primitives et distance du Timere le plus proche : un navigateur sans
+## écran (Playwright) suit ainsi la partie.
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
 ## Paramètres reconnus (les autres sont ignorés).
@@ -20,8 +21,9 @@ const BENCH_TYPES: Array[StringName] = [
 	&"timere_small", &"timere_normal", &"timere_runner", &"timere_big"
 ]
 const MAX_BENCH := 24
-## Anneau où errent les Timeres du banc, autour du joueur (m).
+## Anneau où errent les Timeres du banc (m), centré BENCH_AHEAD m devant le joueur.
 const BENCH_RING := Vector2(3.5, 7.0)
+const BENCH_AHEAD := 6.5
 const REPORT_PERIOD := 2.0
 
 ## Paramètres de cette exécution (clé → texte), posés par game.gd avant l'ajout à l'arbre.
@@ -98,8 +100,9 @@ func _ready() -> void:
 	var count := clampi(int(str(parameters.get("timeres", "0"))), 0, MAX_BENCH)
 	var parent := get_parent() as Node3D
 	if player != null and parent != null and count > 0:
-		spawn_bench(parent, player.global_position, count)
+		spawn_bench(parent, player.global_position + player.aim_direction() * BENCH_AHEAD, count)
 	EventBus.zone_entered.connect(_on_zone_entered)
+	EventBus.interaction_available.connect(_on_interaction_available)
 	EventBus.wave_started.connect(_on_wave_started)
 	EventBus.wave_cleared.connect(_on_wave_cleared)
 	EventBus.enemy_killed.connect(_on_enemy_killed)
@@ -115,17 +118,31 @@ func _process(delta: float) -> void:
 	if _report_left > 0.0:
 		return
 	_report_left = REPORT_PERIOD
+	var enemies := get_tree().get_nodes_in_group(&"enemies")
 	_log(
 		(
-			"%d i/s, %d draw calls, %d primitives, %d Timeres"
+			"%d i/s, %d draw calls, %d primitives, %d Timeres, le plus proche à %.1f m"
 			% [
 				Performance.get_monitor(Performance.TIME_FPS),
 				Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 				Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME),
-				get_tree().get_nodes_in_group(&"enemies").size(),
+				enemies.size(),
+				_nearest_enemy(enemies),
 			]
 		)
 	)
+
+
+## Distance horizontale (m) du joueur au Timere vivant le plus proche (999 sans joueur ni Timere).
+func _nearest_enemy(enemies: Array[Node]) -> float:
+	var player := get_tree().get_first_node_in_group(&"player") as Node3D
+	var nearest := 999.0
+	if player == null:
+		return nearest
+	for node: Node in enemies:
+		var offset := (node as Node3D).global_position - player.global_position
+		nearest = minf(nearest, Vector2(offset.x, offset.z).length())
+	return nearest
 
 
 func _zone(zone_id: StringName) -> Node3D:
@@ -141,6 +158,11 @@ func _log(text: String) -> void:
 
 func _on_zone_entered(zone_id: StringName) -> void:
 	_log("zone %s" % zone_id)
+
+
+func _on_interaction_available(prompt: String) -> void:
+	if not prompt.is_empty():
+		_log("invite « %s »" % prompt)
 
 
 func _on_wave_started(arena_id: StringName, wave: int, enemy_count: int) -> void:

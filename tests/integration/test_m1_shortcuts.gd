@@ -47,9 +47,10 @@ func test_zone_and_bench_shortcuts() -> void:
 		kinds[enemy.enemy_id()] = true
 	assert_eq(kinds.size(), 4, "les quatre types")
 	await wait_seconds(1.5)
+	var ahead_center := player.global_position + player.aim_direction() * TestShortcuts.BENCH_AHEAD
 	for enemy: Enemy in bench:
 		assert_eq(enemy.state(), &"idle", "%s erre sans poursuivre" % enemy.name)
-		assert_lt(flat_distance(enemy.global_position, player.global_position), 11.0)
+		assert_lt(flat_distance(enemy.global_position, ahead_center), 10.5, "devant le joueur")
 	assert_eq(health.current, 5, "le banc n'attaque pas")
 
 
