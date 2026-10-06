@@ -52,6 +52,31 @@ func test_mashing_attack_chains_the_three_swords() -> void:
 	assert_eq(started[-1], &"sword_1", "nouvel enchaînement")
 
 
+func test_combo_lands_its_second_blow_on_a_normal() -> void:
+	await start_game()
+	await place_player(&"dunes", DUEL_SPOT, Vector3.FORWARD)
+	health.max_hp = 99
+	health.reset()
+	# Un Normal (2 PV) vient au contact ; deux coups enchaînés doivent le tuer : le recul du
+	# premier (sword_1.knockback) ne doit pas le sortir de la portée du second.
+	var normal := spawn_enemy(&"timere_normal", ahead(3.0))
+	var close: bool = await wait_until(
+		func() -> bool: return flat_distance(normal.global_position, player.global_position) < 1.3,
+		3.0
+	)
+	assert_true(close, "le Normal approche")
+	var blows: Array[StringName] = []
+	normal.health.damaged.connect(
+		func(_amount: int, _source: Node3D) -> void: blows.append(combat.current_attack().id)
+	)
+	for _i in 3:
+		await press(&"attack")
+		await wait_physics_frames(6)
+	await wait_until(func() -> bool: return combat.current_state() == &"idle", 1.0)
+	assert_true(normal.is_dead(), "Normal tué")
+	assert_eq(blows, [&"sword_1", &"sword_2"] as Array[StringName], "par les deux premiers coups")
+
+
 func test_attack_presses_do_nothing_while_hurt_dead_or_talking() -> void:
 	await start_game()
 	await place_player(&"dunes", DUEL_SPOT, Vector3.FORWARD)

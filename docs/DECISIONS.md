@@ -575,3 +575,9 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   pendant la pause d'avant la vague 1), avec un `arena_finished` à 0 point compté comme une
   partie. L'invite s'arrête maintenant vers 2,5 m (11,7 m du centre au plus) ; testé sur un
   cercle de positions autour du panneau.
+- **M1 — recul des deux premiers coups d'épée** (`data/attacks/sword_1.tres`, `sword_2.tres`,
+  L4) : `knockback` 5 → 2,5 m/s (sword_3 reste à 8). Cause : le joueur ne bouge pas pendant
+  l'enchaînement et un Normal (2 PV) attaque à 1,2 m ; le premier coup le repoussait de 0,5 m,
+  hors de portée du deuxième (1,55 m pour lui) : l'enchaînement donnait coup, vide, coup, à
+  chaque fois. À 2,5 m/s, recul de 0,28 m, le deuxième coup porte (marge 0,1 m) et sword_3
+  garde le grand recul final (0,9 m). Valeur à juger par le propriétaire (docs/REGLAGES_COMBAT.md).
