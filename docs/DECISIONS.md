@@ -696,3 +696,115 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   panneau) ; `M1_SHOT=dunes|wave|forest|perf|village tools/screenshot.sh
   res://tests/integration/demo_m1.tscn build/shots/m1_<vue>.png 300` fige la scène au bon moment
   (image « coup » de l'épée, onde à 3 m…) et écrit draw calls et primitives au journal.
+## Intégration M2 — tranche verticale de bout en bout
+
+- **M2 — frontières de zone** (`src/world/zone.gd`, L2 ; contrat PLAN.md section 3) :
+  `zone_entered` n'est émis qu'au changement de zone. La dernière zone annoncée est retenue sur
+  le corps du joueur (métadonnée `Zone.LAST_ZONE_META`, oubliée avec lui : une nouvelle partie
+  repart de zéro) ; une entrée dans cette même zone est ignorée. Cause : les `Bounds` voisins se
+  touchent ; un joueur qui longe une frontière effleurait la zone voisine, revenait sans quitter
+  la sienne, l'effleurait encore : nom répété dans le HUD et une auto-sauvegarde par effleurement.
+  Filtre à la source (tous les écouteurs en profitent : HUD, SaveManager, WaveDirector, journal)
+  plutôt que dans WorldManager, dont la zone courante survit d'une partie à l'autre (après un
+  retour au menu, une nouvelle partie au village n'aurait rien annoncé et GameState.zone serait
+  resté vide). Limite connue, inchangée : après un effleurement, la zone courante reste la
+  voisine jusqu'à l'entrée dans une autre. `tests/unit/test_world_island.gd` (L2) fait oublier
+  sa zone au joueur factice avant de tester les cinq entrées.
+- **M2 — position sauvegardée** (`src/autoload/save_manager.gd`, L8 ; PLAN.md sections 3 et 4) :
+  toutes les `checkpoint_interval` = 5 s de jeu (pas en pause), l'état est écrit s'il a changé
+  depuis la dernière écriture, la position seulement au-delà de `checkpoint_distance` = 1 m :
+  rien tant que le joueur ne bouge pas ; à la perte du focus, à la fermeture, en arrière-plan
+  et quand la page Web est masquée (`visibilitychange`, que Godot 4.7 ne relaie pas : écouté par
+  `JavaScriptBridge`), `save_on_leave()` écrit l'attente ou, sans attente, l'état s'il a changé.
+  Ces écritures n'émettent pas `saved` (pas de « Sauvegardé » à chaque pas). Ajouts :
+  `has_unsaved_changes(tolerance)`, `save_on_leave()`, `checkpoint_interval`,
+  `checkpoint_distance`. Cause : seuls les cinq signaux d'auto-sauvegarde écrivaient la
+  position ; un joueur qui se promenait puis fermait l'onglet la perdait. Sur le Web, l'écriture
+  n'est conservée qu'après la copie vers IndexedDB, lancée à l'image suivante et asynchrone :
+  mesurée à 25–55 s dans le Chromium sans écran de la VM (rendu logiciel, fil principal saturé
+  à 1 image/s), immédiate avec un vrai GPU ; un onglet fermé avant la fin de cette copie perd la
+  dernière écriture, d'où la sauvegarde périodique (au pire les 5 dernières secondes de marche).
+  Écarté : une copie de secours dans `localStorage` (synchrone) relue au menu, deux stockages à
+  réconcilier pour un gain incertain.
+- **M2 — chargement** (`src/main.gd`, L0 ; demande L9) : `start_game()` confie le chargement de
+  `src/game.tscn` à `Loading.load_scene(path, loading_budget_ms)` (dépendances d'abord, 50 ms de
+  travail par image, sans fil) : la barre avance vraiment ; une demande pendant un chargement est
+  servie par lui ; un retour au menu pendant le chargement n'ajoute pas la partie.
+  `loading_budget_ms` = 0 dans les tests (une dépendance par image : tout est en cache sous GUT).
+  Sur le Web, `show_menu()` pose `window.wordendMenuMs` (ms depuis le début de la page), le
+  repère du temps jusqu'au menu lu par `tools/web_m2.js`.
+- **M2 — retour au menu** (`src/main.gd` ; demande L8) : le chemin de la pause (L10 : `save()`,
+  `close_game(false)`, `reload_current_scene()`) est vérifié dans le vrai jeu (partie écrite à la
+  position quittée, plus suivie, aucune écriture ensuite, menu sans écran de clic, Continuer) ;
+  `main.show_menu()`, que rien n'appelle en jeu, écrit maintenant la partie si elle a changé et
+  appelle `close_game(false)` avant de la libérer.
+- **M2 — icône et écran de démarrage** (`tools/gen_branding.py`, `assets/ui/icon.png`,
+  `assets/ui/boot_splash.png`, `project.godot` ; demande L9) : couchant du shell (ciel violet,
+  corail, or, soleil, trois dunes, pétales) et épée plantée dans la dune, générés par Pillow ;
+  `application/config/icon` (aussi favicon et apple-touch-icon de l'export Web) et
+  `boot_splash/image` étiré en « Cover » (4) sur `bg_color` #1b1231, le fond du shell : plus de
+  logo Godot sur fond gris entre le shell et le menu.
+- **M2 — manette dans les menus** (`src/ui/inventory.gd`, L7 ; demande L10) : contournement
+  gardé, `ui_accept` / `ui_cancel` sans bouton de manette dans project.godot. Raison : A (saut,
+  interaction) et B (charge) sont lus par sondage ; la pause et l'inventaire se ferment sur
+  l'**appui** de `ui_cancel`, qui arriverait au joueur dans l'image où la pause est levée. Le
+  contournement du L10 (`main_menu_input.gd` : A presse le bouton qui a le focus, B revient, au
+  relâchement d'un appui reçu par l'écran) est appliqué à l'inventaire, qui ne se fermait à la
+  manette que par Y ou Start ; la boîte de dialogue lisait déjà A par `interact`. Parcours
+  complet à la manette testé : `test_m2_menu` (geste, croix, stick, A), `test_m2_quest` (marche,
+  dialogue, choix, épée, inventaire Y / B), `test_m2_world` (pause Start / B), `test_m2_arena`
+  (fin d'arène A).
+- **M2 — fin de dialogue** (demande L6) : rien à changer (L1 ignore `interact` et `jump` jusqu'à
+  leur relâchement après `dialogue_ended`, L6 a `talk_cooldown`) ; vérifié dans le vrai jeu :
+  la dernière réplique fermée à l'Espace (aussi `ui_accept` et `jump`), à E et à A ne fait ni
+  sauter ni repartir la conversation (`test_m2_quest`).
+- **M2 — fin d'arène** (L10 + M1) : rien à changer ; parcours réels testés sans refermeture
+  automatique (`test_m2_arena`) : mort sous les morsures → panneau en attente, jeu non figé, le
+  minuteur de WorldManager fait réapparaître au village PV pleins → panneau (score, vague,
+  record) → Entrée ; sortie de l'arène avant la vague 1 → panneau tout de suite → A, sans saut.
+- **M2 — budget de primitives** (`src/world/island.tscn`, `props/meshes/bead.tres`,
+  `props/palm.tscn`, `props/umbrella.tscn`, L2) : ombre du soleil 70 → 50 m (même carte d'ombre
+  sur moins de terrain : ombres proches plus nettes) ; `bead.tres` 3 → 2 anneaux (48 → 36
+  triangles : fleurs, boutons, bouées, noix de coco, le mesh le plus nombreux de l'île, dessiné
+  deux fois par la passe additive du soleil à ombres du rendu Compatibility) ; noix de coco et
+  pointe des parasols sans ombre (cachée par celle des feuilles et de la toile). Mesuré par
+  `demo_m1` (nouvelles vues `M1_SHOT=village_<zone>` : le village depuis le Spawn de chaque zone
+  voisine ; le journal donne les primitives de la passe d'ombre) :
+
+  | Vue | Avant : draw calls, primitives (ombres) | Après |
+  | --- | --- | --- |
+  | village (départ) | 81, 112 460 (22 428) | 79, 104 708 (21 432) |
+  | village_dunes | 85, 154 562 (37 992) | 80, 141 326 (34 296) |
+  | village_forest | 87, 154 968 (36 424) | 84, 142 788 (33 928) |
+  | village_beach | 91, 150 832 (34 696) | 87, 132 620 (24 440) |
+  | village_hill | 78, 154 286 (36 624) | 75, 142 106 (34 128) |
+  | dunes / perf (16 Timeres) / forest | 61 / 94 / 45 ; 65 830 / 94 702 / 59 770 | 60 / 92 / 40 ; 63 634 / 89 254 / 54 022 |
+
+  Le reste de la passe d'ombre vient des lots du PropBatcher, un par mesh et par zone : leur
+  boîte couvre toute la zone, la distance d'ombre ne les écarte donc pas ; les découper par
+  cellules ferait gagner des triangles au prix de draw calls, plus chers sur le Web.
+- **M2 — tests d'intégration** (`tests/stubs/m2_game_test.gd`) : vraie racine `src/main.tscn`,
+  événements d'entrée réels passés à `Input.parse_input_event` (`InputEventKey`,
+  `InputEventJoypadButton`, `InputEventJoypadMotion`, clics). Pièges trouvés : la fenêtre
+  headless fait 64 × 64 px (le canevas de 1280 px y est mis à l'échelle : un clic porte
+  `root.get_final_transform() * position`) ; la couche de GUT (`GutLayer`, couche 128) prend les
+  clics (cachée pendant ces tests) ; les attentes de GUT sont gelées quand l'arbre est en pause
+  (fin d'arène, inventaire, pause : `frames()` et `until()` attendent les images du moteur) ;
+  un appui doit durer au moins une image physique, sinon, appuyé et relâché pendant une pause
+  sans image physique entre les deux, il est encore « just pressed » à la reprise et B lancerait
+  une charge qui ne se relâche plus (impossible pour un vrai joueur : un appui dure 50 ms et
+  plus, le moteur compte ses images physiques même en pause).
+- **M2 — cœur du marque-page** : inchangé. La quête porte les PV max à 6, mais le cœur gagné
+  reste vide jusqu'au prochain soin (toutes les deux vagues) ou à la réapparition : choix du L4
+  (« le maximum n'est pas un soin », `test_combat_player.gd`). À juger par le propriétaire.
+- **M2 — démo et captures** : `tests/integration/demo_m2.tscn` (F6) : la vraie partie au
+  village, Chtholly devant la bibliothécaire, la quête prête à jouer ; aucune sauvegarde écrite.
+  `M2_SHOT=menu|village|dialogue|forest|reward|arena_end tools/screenshot.sh
+  res://tests/integration/demo_m2.tscn build/shots/m2_<vue>.png 150` (`village` →
+  `m2_village_hud.png` dans docs/RECETTE_M2.md).
+- **M2 — navigateur** (`tools/web_m2.js`, paramètre `?trace=1` des raccourcis de test : le
+  journal seul) : profil neuf → menu en 1,9 à 2,2 s (repère `window.wordendMenuMs`, page servie
+  en local, rendu logiciel), partie chargée 3,2 s après Entrée, bibliothécaire, quête acceptée,
+  perte du focus (position écrite), page rechargée → Continuer à la même position (écart 0,00 m) ;
+  menu en 1,6 à 3,6 s au rechargement. Console : aucune erreur ; seuls avertissements, ceux du
+  pilote logiciel (« GPU stall due to ReadPixels », SwiftShader). Build : 10,6 Mo compressés.
