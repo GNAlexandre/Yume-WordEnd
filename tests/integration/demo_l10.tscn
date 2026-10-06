@@ -1,0 +1,122 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_l10.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://src/ui/hud.tscn" id="2_hud"]
+[ext_resource type="PackedScene" path="res://src/ui/arena_end.tscn" id="3_arena_end"]
+[ext_resource type="PackedScene" path="res://src/visuals/character_visual.tscn" id="4_visual"]
+[ext_resource type="Resource" path="res://data/skins/chtholly.tres" id="5_chtholly"]
+[ext_resource type="Resource" path="res://data/enemies/visuals/timere.tres" id="6_timere"]
+[ext_resource type="Script" path="res://tests/stubs/l10_lock_player.gd" id="7_player"]
+[ext_resource type="Script" path="res://src/world/zone.gd" id="8_zone"]
+[ext_resource type="Theme" path="res://src/ui/wordend_theme.tres" id="9_theme"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sunset"]
+sky_top_color = Color(0.227, 0.173, 0.388, 1)
+sky_horizon_color = Color(0.965, 0.627, 0.353, 1)
+ground_bottom_color = Color(0.29, 0.11, 0.165, 1)
+ground_horizon_color = Color(0.898, 0.541, 0.353, 1)
+
+[sub_resource type="Sky" id="Sky_sunset"]
+sky_material = SubResource("ProceduralSkyMaterial_sunset")
+
+[sub_resource type="Environment" id="Environment_demo"]
+background_mode = 2
+sky = SubResource("Sky_sunset")
+ambient_light_source = 3
+ambient_light_energy = 0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sand"]
+albedo_color = Color(0.914, 0.722, 0.447, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dune"]
+albedo_color = Color(0.85, 0.58, 0.38, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ring"]
+albedo_color = Color(0.96, 0.8, 0.56, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+material = SubResource("StandardMaterial3D_sand")
+size = Vector2(120, 120)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ring"]
+material = SubResource("StandardMaterial3D_ring")
+top_radius = 6.0
+bottom_radius = 6.0
+height = 0.02
+radial_segments = 48
+
+[node name="DemoL10" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_demo")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, 0.25, -0.433, 0, 0.866, 0.5, 0.5, -0.433, 0.75, 0, 8, 0)
+light_color = Color(1, 0.85, 0.7, 1)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+current = true
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.01, -1)
+mesh = SubResource("CylinderMesh_ring")
+
+[node name="DuneA" type="CSGSphere3D" parent="."]
+transform = Transform3D(9, 0, 0, 0, 2, 0, 0, 0, 5, -9, -0.6, -16)
+radial_segments = 24
+rings = 12
+material = SubResource("StandardMaterial3D_dune")
+
+[node name="DuneB" type="CSGSphere3D" parent="."]
+transform = Transform3D(11, 0, 0, 0, 2.6, 0, 0, 0, 6, 10, -0.8, -20)
+radial_segments = 24
+rings = 12
+material = SubResource("StandardMaterial3D_dune")
+
+[node name="Hero" type="Node3D" parent="."]
+script = ExtResource("7_player")
+
+[node name="Visual" parent="Hero" instance=ExtResource("4_visual")]
+skin = ExtResource("5_chtholly")
+
+[node name="Timere" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0, 0, -1.2)
+
+[node name="Visual" parent="Timere" instance=ExtResource("4_visual")]
+skin = ExtResource("6_timere")
+
+[node name="Zones" type="Node3D" parent="."]
+
+[node name="village" type="Node3D" parent="Zones" groups=["zones"]]
+script = ExtResource("8_zone")
+display_name = "Village"
+safe = true
+
+[node name="dunes" type="Node3D" parent="Zones" groups=["zones"]]
+script = ExtResource("8_zone")
+display_name = "Dunes au couchant"
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="UI" instance=ExtResource("2_hud")]
+
+[node name="ArenaEnd" parent="UI" instance=ExtResource("3_arena_end")]
+
+[node name="Help" type="Label" parent="UI"]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -44.0
+offset_right = 760.0
+offset_bottom = -16.0
+grow_vertical = 0
+theme = ExtResource("9_theme")
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 18
+text = "Démo L10 : ce script émet en boucle les signaux de l'EventBus. Échap : pause · F3 : performances"

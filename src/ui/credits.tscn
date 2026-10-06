@@ -1,5 +1,8 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://src/ui/credits.gd" id="1_credits"]
+[ext_resource type="Theme" path="res://src/ui/wordend_theme.tres" id="2_theme"]
+
 [node name="Credits" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -8,3 +11,89 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_credits")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.106, 0.071, 0.192, 0.55)
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.13
+anchor_top = 0.05
+anchor_right = 0.87
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Box" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="Panel/Box"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "Crédits"
+horizontal_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Sections" type="VBoxContainer" parent="Panel/Box/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 18
+
+[node name="Text" type="RichTextLabel" parent="Panel/Box/Scroll/Sections"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+bbcode_enabled = true
+text = "[center][font_size=34][b]WordEnd[/b][/font_size]
+Chtholly – Bats-toi contre ton destin[/center]
+
+[b]Un jeu de la communauté Yume Novel[/b]
+WordEnd 3D prolonge l'easter egg WordEnd du site yumenovel.fr : Chtholly et son épée Seniolis repoussent des vagues de Timeres, au bord d'un village à explorer.
+
+[b]Hommage à SukaSuka[/b]
+Chtholly, son épée Seniolis et les Timeres viennent de [i]SukaSuka[/i] ([i]Shūmatsu Nani Shitemasu ka ? Isogashii desu ka ? Sukutte moratte ii desu ka ?[/i]), le roman d'Akira Kareno illustré par ue. WordEnd est un hommage de fans, gratuit et non commercial : ces personnages et ces créatures restent la propriété de leurs auteurs et de leurs éditeurs.
+
+[b]Personnages et créatures[/b]
+• Chtholly : planche générée par Gemini, découpée par tools/wordend/decouper-planche.py (dépôt Yume-WordPress) et reprise telle quelle de l'easter egg WordEnd ; portrait tiré de la tête de la planche (tools/gen_placeholders.py).
+• Timeres : deux planches en pixel art générées par Gemini, assemblées et découpées de la même façon, reprises de l'easter egg.
+• Bibliothécaire, forgeron et enfant : silhouettes chibi et portraits de remplacement générés par tools/gen_placeholders.py (projet Yume-WordEnd).
+
+[b]Décor, objets et interface[/b]
+• Damier du sol : généré par tools/gen_placeholders.py.
+• Icônes des objets : générées par tools/gen_item_icons.py.
+• Icônes de l'interface (cœurs, marqueur de cible, livre de sauvegarde, étoile) : générées par tools/gen_ui_icons.py.
+Ces images sont produites par le projet, sous la licence de son code (MIT proposée).
+• Musique : aucune pour l'instant. L'enregistrement de [i]Scarborough Fair[/i] de l'easter egg n'a pas de licence établie ; il n'est pas utilisé.
+
+[b]Fait avec Godot Engine[/b]
+godotengine.org — licence du moteur :"
+fit_content = true
+scroll_active = false
+
+[node name="EngineLicense" type="Label" parent="Panel/Box/Scroll/Sections"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+theme_type_variation = &"MutedLabel"
+autowrap_mode = 3
+
+[node name="BackButton" type="Button" parent="Panel/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Retour"

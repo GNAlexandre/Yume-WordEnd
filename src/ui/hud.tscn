@@ -1,5 +1,23 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://src/ui/hud.gd" id="1_hud"]
+[ext_resource type="Theme" path="res://src/ui/wordend_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/lock_marker.png" id="3_lock"]
+[ext_resource type="Texture2D" path="res://assets/ui/saved.png" id="4_saved"]
+[ext_resource type="PackedScene" path="res://src/ui/pause_menu.tscn" id="5_pause"]
+
+[sub_resource type="Gradient" id="Gradient_flash"]
+offsets = PackedFloat32Array(0.5, 1)
+colors = PackedColorArray(0.95, 0.15, 0.25, 0, 0.95, 0.15, 0.25, 0.7)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_flash"]
+gradient = SubResource("Gradient_flash")
+width = 128
+height = 72
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
 [node name="HUD" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -8,3 +26,325 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_hud")
+
+[node name="DamageFlash" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_flash")
+expand_mode = 1
+
+[node name="LockMarker" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource("3_lock")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TopLeft" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = 424.0
+offset_bottom = 16.0
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="HeartsHolder" type="Control" parent="TopLeft"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Hearts" type="HBoxContainer" parent="TopLeft/HeartsHolder"]
+unique_name_in_owner = true
+layout_mode = 0
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="ChargeRow" type="HBoxContainer" parent="TopLeft"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ChargeBar" type="ProgressBar" parent="TopLeft/ChargeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 24)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+max_value = 1.0
+step = 0.0
+show_percentage = false
+
+[node name="ChargeLabel" type="Label" parent="TopLeft/ChargeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 20
+text = "Charge"
+
+[node name="Quests" type="VBoxContainer" parent="TopLeft"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="ArenaPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_top = 14.0
+offset_right = 160.0
+offset_bottom = 60.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_type_variation = &"HudPanel"
+
+[node name="Row" type="HBoxContainer" parent="ArenaPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 22
+alignment = 1
+
+[node name="WaveLabel" type="Label" parent="ArenaPanel/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudAccent"
+theme_override_font_sizes/font_size = 26
+text = "Vague 1"
+
+[node name="ScoreLabel" type="Label" parent="ArenaPanel/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 26
+text = "Score 0"
+
+[node name="RecordLabel" type="Label" parent="ArenaPanel/Row"]
+unique_name_in_owner = true
+modulate = Color(1, 0.88, 0.8, 0.85)
+layout_mode = 2
+size_flags_vertical = 8
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 19
+text = "Record 0"
+
+[node name="ZoneBanner" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 104.0
+offset_right = 300.0
+offset_bottom = 182.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="ZoneLabel" type="Label" parent="ZoneBanner"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudTitle"
+theme_override_font_sizes/font_size = 44
+horizontal_alignment = 1
+
+[node name="ZoneLine" type="ColorRect" parent="ZoneBanner"]
+custom_minimum_size = Vector2(240, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+color = Color(1, 0.84, 0.45, 0.9)
+
+[node name="Banner" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.27
+anchor_right = 1.0
+anchor_bottom = 0.27
+offset_bottom = 120.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="BannerLabel" type="Label" parent="Banner"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudTitle"
+theme_override_font_sizes/font_size = 62
+horizontal_alignment = 1
+
+[node name="BannerSub" type="Label" parent="Banner"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudAccent"
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+
+[node name="Prompt" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 84.0
+offset_top = -48.0
+offset_right = 324.0
+offset_bottom = 4.0
+grow_horizontal = 1
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"HudPanel"
+
+[node name="Row" type="HBoxContainer" parent="Prompt"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Key" type="PanelContainer" parent="Prompt/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"KeyCap"
+
+[node name="Label" type="Label" parent="Prompt/Row/Key"]
+layout_mode = 2
+theme_type_variation = &"KeyCapLabel"
+text = "E"
+horizontal_alignment = 1
+
+[node name="Slash" type="Label" parent="Prompt/Row"]
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+text = "/"
+
+[node name="Pad" type="PanelContainer" parent="Prompt/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"PadA"
+
+[node name="Label" type="Label" parent="Prompt/Row/Pad"]
+layout_mode = 2
+theme_type_variation = &"PadLabel"
+text = "A"
+horizontal_alignment = 1
+
+[node name="Colon" type="Label" parent="Prompt/Row"]
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+text = ":"
+
+[node name="PromptLabel" type="Label" parent="Prompt/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 25
+
+[node name="SavedIndicator" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_top = 110.0
+offset_right = -24.0
+offset_bottom = 150.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_type_variation = &"HudPanel"
+
+[node name="Row" type="HBoxContainer" parent="SavedIndicator"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Icon" type="TextureRect" parent="SavedIndicator/Row"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("4_saved")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="SavedIndicator/Row"]
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 20
+text = "Sauvegardé"
+
+[node name="PerfOverlay" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -290.0
+offset_top = 166.0
+offset_right = -24.0
+offset_bottom = 300.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_type_variation = &"HudPanel"
+
+[node name="PerfLabel" type="Label" parent="PerfOverlay"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 17
+
+[node name="DeathFade" type="ColorRect" parent="."]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.07, 0.04, 0.1, 1)
+
+[node name="DeathLabel" type="Label" parent="DeathFade"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 30
+text = "Retour au village…"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PauseMenu" parent="." instance=ExtResource("5_pause")]
+unique_name_in_owner = true
+layout_mode = 1

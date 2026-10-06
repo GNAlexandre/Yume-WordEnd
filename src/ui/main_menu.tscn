@@ -1,6 +1,8 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://src/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="Theme" path="res://src/ui/wordend_theme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://src/ui/main_menu_backdrop.gd" id="3_backdrop"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -9,36 +11,383 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_theme")
 script = ExtResource("1_menu")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Backdrop" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.18, 0.15, 0.31, 1)
+mouse_filter = 2
+script = ExtResource("3_backdrop")
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Content" type="MarginContainer" parent="."]
+unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 32
 
-[node name="Box" type="VBoxContainer" parent="Center"]
+[node name="Columns" type="HBoxContainer" parent="Content"]
 layout_mode = 2
-theme_override_constants/separation = 24
+mouse_filter = 2
+theme_override_constants/separation = 48
+alignment = 1
 
-[node name="Title" type="Label" parent="Center/Box"]
+[node name="Left" type="VBoxContainer" parent="Content/Columns"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="Title" type="Label" parent="Content/Columns/Left"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
 text = "WordEnd"
 horizontal_alignment = 1
 
-[node name="NewGameButton" type="Button" parent="Center/Box"]
+[node name="Subtitle" type="Label" parent="Content/Columns/Left"]
+layout_mode = 2
+theme_type_variation = &"SubtitleLabel"
+text = "Chtholly – Bats-toi contre ton destin"
+horizontal_alignment = 1
+
+[node name="Gap" type="Control" parent="Content/Columns/Left"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Buttons" type="VBoxContainer" parent="Content/Columns/Left"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 14
+
+[node name="ContinueButton" type="Button" parent="Content/Columns/Left/Buttons"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "Continuer"
+
+[node name="NewGameButton" type="Button" parent="Content/Columns/Left/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Nouvelle partie"
+
+[node name="SaveButton" type="Button" parent="Content/Columns/Left/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Sauvegarde"
+
+[node name="CreditsButton" type="Button" parent="Content/Columns/Left/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Crédits"
+
+[node name="MessagePanel" type="PanelContainer" parent="Content/Columns/Left"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"HudPanel"
+
+[node name="Message" type="Label" parent="Content/Columns/Left/MessagePanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 19
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="SkinPanel" type="PanelContainer" parent="Content/Columns"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="SkinBox" type="VBoxContainer" parent="Content/Columns/SkinPanel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="SkinTitle" type="Label" parent="Content/Columns/SkinPanel/SkinBox"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 32
+text = "Choisis ton personnage"
+horizontal_alignment = 1
+
+[node name="SkinGrid" type="GridContainer" parent="Content/Columns/SkinPanel/SkinBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 16
+columns = 2
+
+[node name="SkinHint" type="Label" parent="Content/Columns/SkinPanel/SkinBox"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Il te suit dans la nouvelle partie."
+horizontal_alignment = 1
+
+[node name="ConfirmOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="ConfirmOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.106, 0.071, 0.192, 0.6)
+
+[node name="Panel" type="PanelContainer" parent="ConfirmOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -130.0
+offset_right = 340.0
+offset_bottom = 130.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Box" type="VBoxContainer" parent="ConfirmOverlay/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Header" type="Label" parent="ConfirmOverlay/Panel/Box"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 34
+text = "Remplacer la sauvegarde ?"
+horizontal_alignment = 1
+
+[node name="Text" type="Label" parent="ConfirmOverlay/Panel/Box"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+text = "Une partie est déjà sauvegardée sur cet appareil. Une nouvelle partie l'effacera (inventaire, quêtes et records)."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="ConfirmOverlay/Panel/Box"]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="ConfirmCancel" type="Button" parent="ConfirmOverlay/Panel/Box/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Annuler"
+
+[node name="ConfirmOk" type="Button" parent="ConfirmOverlay/Panel/Box/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "Nouvelle partie"
+
+[node name="SaveOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="SaveOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.106, 0.071, 0.192, 0.6)
+
+[node name="Panel" type="PanelContainer" parent="SaveOverlay"]
+layout_mode = 1
+anchor_left = 0.07
+anchor_top = 0.05
+anchor_right = 0.93
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Box" type="VBoxContainer" parent="SaveOverlay/Panel"]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="SaveOverlay/Panel/Box"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "Sauvegarde"
+horizontal_alignment = 1
+
+[node name="StorageWarning" type="Label" parent="SaveOverlay/Panel/Box"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"ErrorLabel"
+text = "Navigation privée : ce navigateur ne garde rien après la fermeture de l'onglet. Exporte ta sauvegarde et garde le texte précieusement."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Columns" type="HBoxContainer" parent="SaveOverlay/Panel/Box"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 28
+
+[node name="ExportBox" type="VBoxContainer" parent="SaveOverlay/Panel/Box/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ExportTitle" type="Label" parent="SaveOverlay/Panel/Box/Columns/ExportBox"]
+layout_mode = 2
+text = "Exporter"
+
+[node name="ExportHint" type="Label" parent="SaveOverlay/Panel/Box/Columns/ExportBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Copie ce texte pour garder ta partie ou la reprendre ailleurs."
+autowrap_mode = 3
+
+[node name="ExportText" type="TextEdit" parent="SaveOverlay/Panel/Box/Columns/ExportBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+editable = false
+wrap_mode = 1
+
+[node name="CopyButton" type="Button" parent="SaveOverlay/Panel/Box/Columns/ExportBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Copier"
+
+[node name="ImportBox" type="VBoxContainer" parent="SaveOverlay/Panel/Box/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ImportTitle" type="Label" parent="SaveOverlay/Panel/Box/Columns/ImportBox"]
+layout_mode = 2
+text = "Importer"
+
+[node name="ImportHint" type="Label" parent="SaveOverlay/Panel/Box/Columns/ImportBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Colle une sauvegarde exportée : elle remplace celle de cet appareil."
+autowrap_mode = 3
+
+[node name="ImportText" type="TextEdit" parent="SaveOverlay/Panel/Box/Columns/ImportBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Colle ta sauvegarde ici…"
+wrap_mode = 1
+
+[node name="ImportButton" type="Button" parent="SaveOverlay/Panel/Box/Columns/ImportBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"PrimaryButton"
+text = "Importer et jouer"
+
+[node name="SaveStatus" type="Label" parent="SaveOverlay/Panel/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="SaveBackButton" type="Button" parent="SaveOverlay/Panel/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Retour"
+
+[node name="ClickScreen" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Box" type="VBoxContainer" parent="ClickScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Title" type="Label" parent="ClickScreen/Box"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_font_sizes/font_size = 120
+text = "WordEnd"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="ClickScreen/Box"]
+layout_mode = 2
+theme_type_variation = &"SubtitleLabel"
+text = "Chtholly – Bats-toi contre ton destin"
+horizontal_alignment = 1
+
+[node name="Gap" type="Control" parent="ClickScreen/Box"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ClickPill" type="PanelContainer" parent="ClickScreen/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_type_variation = &"ClickPill"
+
+[node name="ClickLabel" type="Label" parent="ClickScreen/Box/ClickPill"]
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 40
+text = "Cliquer pour jouer"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="ClickScreen/Box"]
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 20
+text = "Un clic, un toucher ou une touche du clavier : le navigateur attend ce geste avant tout son."
+horizontal_alignment = 1
