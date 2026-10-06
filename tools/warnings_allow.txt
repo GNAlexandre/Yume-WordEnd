@@ -7,3 +7,7 @@
 
 # L0 : capture sous Xvfb + llvmpipe, le pilote logiciel ne gère pas la synchronisation verticale.
 Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+
+# Intégration : cache de shaders de build/xdg périmé après un changement de shader (relief L2,
+# halo L7, onde L4…) ; Godot recompile tout seul. N'arrive pas sur un environnement neuf (CI).
+Failed to load cached shader, recompiling.
