@@ -721,7 +721,7 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `checkpoint_distance`. Cause : seuls les cinq signaux d'auto-sauvegarde écrivaient la
   position ; un joueur qui se promenait puis fermait l'onglet la perdait. Sur le Web, l'écriture
   n'est conservée qu'après la copie vers IndexedDB, lancée à l'image suivante et asynchrone :
-  mesurée à 25–55 s dans le Chromium sans écran de la VM (rendu logiciel, fil principal saturé
+  mesurée à 25–70 s dans le Chromium sans écran de la VM (rendu logiciel, fil principal saturé
   à 1 image/s), immédiate avec un vrai GPU ; un onglet fermé avant la fin de cette copie perd la
   dernière écriture, d'où la sauvegarde périodique (au pire les 5 dernières secondes de marche).
   Écarté : une copie de secours dans `localStorage` (synchrone) relue au menu, deux stockages à
@@ -804,7 +804,9 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `m2_village_hud.png` dans docs/RECETTE_M2.md).
 - **M2 — navigateur** (`tools/web_m2.js`, paramètre `?trace=1` des raccourcis de test : le
   journal seul) : profil neuf → menu en 1,9 à 2,2 s (repère `window.wordendMenuMs`, page servie
-  en local, rendu logiciel), partie chargée 3,2 s après Entrée, bibliothécaire, quête acceptée,
-  perte du focus (position écrite), page rechargée → Continuer à la même position (écart 0,00 m) ;
-  menu en 1,6 à 3,6 s au rechargement. Console : aucune erreur ; seuls avertissements, ceux du
-  pilote logiciel (« GPU stall due to ReadPixels », SwiftShader). Build : 10,6 Mo compressés.
+  en local, rendu logiciel), partie chargée 3 à 7,6 s après Entrée (la page affiche des images
+  pendant ce temps : 12 en 6,6 s, compteur `requestAnimationFrame`), bibliothécaire, quête
+  acceptée, perte du focus (position écrite), page rechargée → Continuer à la même position
+  (écart 0,00 m) ; menu en 1,6 à 3,6 s au rechargement. Console : aucune erreur ; seuls
+  avertissements, ceux du pilote logiciel (« GPU stall due to ReadPixels », SwiftShader).
+  Build : 10,6 Mo compressés.

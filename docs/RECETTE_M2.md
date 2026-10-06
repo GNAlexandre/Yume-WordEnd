@@ -40,10 +40,12 @@ menu, chargement, jeu) avec des événements d'entrée réels (`InputEventKey`,
   `tools/build_size.sh` : **10,6 Mo compressés** (wasm 9,7 Mo, pck 0,9 Mo) pour un budget de
   25 Mo. `tools/web_m2.js` (Chromium sans écran de Playwright, build servi en local, rendu
   logiciel SwiftShader) : menu affiché **1,9 à 2,2 s** après le début de la page (repère
-  `window.wordendMenuMs`), 1,6 à 3,6 s au rechargement ; partie chargée 3,2 s après « Nouvelle
-  partie » ; **aucune erreur dans la console** (seuls avertissements : « GPU stall due to
-  ReadPixels » du pilote logiciel de Chromium). Icône et écran de démarrage du jeu (plus de logo
-  Godot). Captures `m2_web_menu.png`, `m2_web_village.png`, `m2_web_dialogue.png`.
+  `window.wordendMenuMs`), 1,6 à 3,6 s au rechargement ; partie chargée 3 à 7,6 s après
+  « Nouvelle partie », la page continuant d'afficher des images pendant le chargement (12 en
+  6,6 s, compteur `requestAnimationFrame` : elle ne se fige pas) ; **aucune erreur dans la
+  console** (seuls avertissements : « GPU stall due to ReadPixels » du pilote logiciel de
+  Chromium). Icône et écran de démarrage du jeu (plus de logo Godot). Captures
+  `m2_web_menu.png`, `m2_web_village.png`, `m2_web_dialogue.png`.
 - **Pas prouvé** : le réseau. La page était servie en local (aucun temps de téléchargement) ; sur
   fibre (100 Mb/s), les 10,6 Mo ajoutent environ 1 s, plus la compilation du wasm.
 - **À valider** : ouvrir https://jeu.yumenovel.fr/ (ou la page GitHub Pages) dans Chrome et

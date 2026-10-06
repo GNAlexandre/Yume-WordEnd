@@ -301,17 +301,18 @@ IndexedDB) et « Continuer » reprend la partie. Captures : `m2_web_menu.png`,
 
 Mesures du 6 octobre 2026 (build de l'intégration M2, servi en local, Chromium 141 headless,
 SwiftShader, 1 à 2 images/s : indicatif) : menu en 1,9 à 2,2 s (1,6 à 3,6 s au rechargement),
-partie chargée 3,2 s après Entrée, aucune erreur dans la console (seuls avertissements, ceux du
-pilote logiciel : « GPU stall due to ReadPixels ») ; après rechargement, « Continuer » reprend à
-la position quittée (écart 0,00 m), zone et quête comprises. Build : 10,6 Mo compressés (wasm
-9,7 Mo, pck 0,9 Mo), budget 25 Mo.
+partie chargée 3 à 7,6 s après Entrée (la page affiche des images pendant le chargement : 12 en
+6,6 s, compteur `requestAnimationFrame`), aucune erreur dans la console (seuls avertissements,
+ceux du pilote logiciel : « GPU stall due to ReadPixels ») ; après rechargement, « Continuer »
+reprend à la position quittée (écart 0,00 m), zone et quête comprises. Build : 10,6 Mo
+compressés (wasm 9,7 Mo, pck 0,9 Mo), budget 25 Mo.
 
 **Sauvegarde et fermeture de l'onglet.** SaveManager écrit la position toutes les 5 s de jeu si
 le joueur a bougé (1 m), et au départ : perte du focus, page masquée (`visibilitychange`, que
 Godot 4.7 ne relaie pas : SaveManager l'écoute par `JavaScriptBridge`), fermeture. Godot copie
 `user://` vers IndexedDB au début de l'image qui suit l'écriture, en asynchrone : avec un vrai
 GPU, c'est immédiat ; dans le Chromium logiciel de la VM, le fil principal saturé retarde la
-copie de 25 à 55 s, et `tools/web_m2.js` l'attend (il lit IndexedDB) avant de recharger. Un
+copie de 25 à 70 s, et `tools/web_m2.js` l'attend (il lit IndexedDB) avant de recharger. Un
 onglet fermé dans la fraction de seconde qui suit une écriture peut donc perdre cette
 dernière écriture ; la sauvegarde périodique borne la perte aux 5 dernières secondes de marche.
 Godot range aussi son cache de shaders dans `user://shader_cache` (33 entrées dans IndexedDB,

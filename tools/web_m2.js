@@ -7,12 +7,14 @@
 //
 // 1. index.html?trace=1 dans un profil neuf : temps jusqu'au menu (repère window.wordendMenuMs
 //    posé par src/main.gd), clic « Cliquer pour jouer » (m2_web_menu.png), Entrée sur « Nouvelle
-//    partie », temps de chargement de la partie (m2_web_village.png) ; Z/W et Q/A tenues jusqu'à
-//    l'invite « Parler » de la bibliothécaire, E (m2_web_dialogue.png quand elle pose sa question),
-//    lecture à E et quête acceptée ; quelques pas en arrière, puis le canevas perd le focus
-//    (SaveManager écrit la position aussitôt) ; dernière position relevée dans le journal.
-// 2. Page rechargée, même profil (IndexedDB) : clic, Entrée sur « Continuer » ; la partie reprend
-//    à la position quittée (journal « [m1] partie : zone …, position (x ; z) »).
+//    partie », temps de chargement de la partie et images affichées pendant ce temps
+//    (m2_web_village.png) ; Z/W puis Q/A tenues jusqu'à l'invite « Parler » de la
+//    bibliothécaire, E (m2_web_dialogue.png quand elle pose sa question), lecture à E et quête
+//    acceptée ; quelques pas en arrière, puis le canevas perd le focus (SaveManager écrit la
+//    position aussitôt) ; attente de la copie de la sauvegarde dans IndexedDB.
+// 2. Page rechargée, même profil (IndexedDB) : clic (m2_web_continue.png), Entrée sur
+//    « Continuer » ; la partie reprend à la position quittée (journal « [m1] partie : zone …,
+//    position (x ; z), quêtes …, objets … »).
 // Le paramètre trace des raccourcis de test (src/test_shortcuts.gd) ne change rien à la partie :
 // il écrit le journal « [m1] … » qui permet de la suivre. Le rendu logiciel (SwiftShader) tourne à
 // 1 ou 2 images/s : les appuis sont tenus plus d'une image. Toutes les erreurs et tous les
@@ -173,10 +175,31 @@ function dump(title, logs) {
 	await page.mouse.click(VIEW.width / 2, VIEW.height / 2);
 	await sleep(3000);
 	await page.screenshot({ path: `${SHOTS}/m2_web_menu.png` });
+	// Images affichées pendant le chargement (requestAnimationFrame) : Loading.load_scene rend la
+	// main au navigateur entre deux paquets de dépendances, la page ne se fige pas.
+	await page.evaluate(() => {
+		window.m2Frames = 0;
+		window.m2Counting = true;
+		const tick = () => {
+			window.m2Frames++;
+			if (window.m2Counting) {
+				requestAnimationFrame(tick);
+			}
+		};
+		requestAnimationFrame(tick);
+	});
 	const askedAt = Date.now();
-	await tap(page, 'Enter');
+	await tap(page, 'Enter', 300);
 	const loaded = await waitLog(logs, /\[m1\] partie : zone/, 180000);
-	console.log('partie chargée :', loaded, `(${((Date.now() - askedAt) / 1000).toFixed(1)} s après Entrée)`);
+	const loadingFrames = await page.evaluate(() => {
+		window.m2Counting = false;
+		return window.m2Frames;
+	});
+	console.log(
+		'partie chargée :',
+		loaded,
+		`(${((Date.now() - askedAt) / 1000).toFixed(1)} s après Entrée, ${loadingFrames} images affichées)`
+	);
 	console.log(lastMatch(logs, /\[m1\] partie : .*/)?.[0]);
 	await waitLog(logs, /\[m1\] zone village/, 60000);
 	await sleep(4000);
