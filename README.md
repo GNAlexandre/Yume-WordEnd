@@ -39,6 +39,8 @@ au clavier, à la souris, à la manette et au toucher, dans l'éditeur comme dan
 - [docs/web.md](docs/web.md) : export Web, site, raccourcis de test du navigateur.
 - [docs/REGLAGES_COMBAT.md](docs/REGLAGES_COMBAT.md) : tous les chiffres de la sensation de combat.
 - [docs/RECETTE_M2.md](docs/RECETTE_M2.md) : recette des critères d'acceptation du jalon M2.
+- [docs/ASSETS_3D.md](docs/ASSETS_3D.md) : cahier des charges des assets 3D (personnages,
+  Timeres, décors, île) à donner à qui les produit (IA ou artiste).
 - [docs/DECISIONS.md](docs/DECISIONS.md) et [docs/CONTRACT_REQUESTS.md](docs/CONTRACT_REQUESTS.md) :
   choix faits par lot et demandes de contrat.
 
