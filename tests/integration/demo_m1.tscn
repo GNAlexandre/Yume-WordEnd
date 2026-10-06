@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/integration/demo_m1.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://src/game.tscn" id="2_game"]
+
+[node name="DemoM1" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="Game" parent="." instance=ExtResource("2_game")]

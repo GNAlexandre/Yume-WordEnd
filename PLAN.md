@@ -273,6 +273,7 @@ func teleport(zone_id: StringName, marker: StringName = &"Spawn") -> void
 func respawn() -> void                    # village, PV pleins, émet player_respawned
 func current_zone() -> StringName
 func zone_display_name(zone_id: StringName) -> String   # (L0) Zone.display_name, pour le HUD
+func is_zone_safe(zone_id: StringName) -> bool   # (M1) Zone.safe de la zone (faux si inconnue) ; IA des Timeres
 var respawn_delay: float = 2.2            # (L0) délai entre player_died et respawn()
 
 # Interactable — tout nœud du groupe "interactable" implémente :

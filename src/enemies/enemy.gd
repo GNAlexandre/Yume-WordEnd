@@ -12,10 +12,11 @@ extends CharacterBody3D
 ## sortie du groupe, enemy_killed, drops, disparition après corpse_time). Coureur (data.rush) :
 ## rush en ligne droite dès la portée de son attaque sans dégâts (8 m), puis morsure. Stoic :
 ## ni recul ni hurt, sauf sous une attaque qui traverse (onde). La poursuite cesse si le joueur
-## est mort, dans une zone sûre (WorldManager.current_zone() → Zone.safe) ou à plus de leash_m
-## de origin : l'ennemi rentre chez lui. Portée d'une attaque : AttackData.range_m × data.scale
-## devant le corps (capsule, Hurtbox et Hitbox sont aussi mises à l'échelle) ; la distance de
-## déclenchement du rush ne l'est pas.
+## est mort, dans une zone sûre (WorldManager.is_zone_safe(current_zone())) ou à plus de
+## leash_m de origin : l'ennemi rentre chez lui. Portée d'une attaque : AttackData.range_m ×
+## data.scale devant le corps (capsule, Hurtbox et Hitbox sont aussi mises à l'échelle) ; la
+## distance de déclenchement du rush ne l'est pas. Un obstacle du décor heurté de face
+## (poteau, tronc) est longé au lieu de bloquer la poursuite.
 
 ## Émis à la mort, avec EventBus.enemy_killed : le WaveDirector compte ainsi ses ennemis.
 signal defeated(enemy: Enemy, points: int)
@@ -25,7 +26,6 @@ enum State { IDLE, CHASE, RUSH, ATTACK, HURT, DEAD }
 const PICKUP_SCENE := preload("res://src/items/pickup.tscn")
 const PLAYER_GROUP := &"player"
 const ENEMIES_GROUP := &"enemies"
-const ZONES_GROUP := &"zones"
 const STATE_NAMES: Array[StringName] = [&"idle", &"chase", &"rush", &"attack", &"hurt", &"dead"]
 ## Recharge après une attaque : AttackData.cooldown × [0,7 ; 1,3] (jeu.js : 0,8 à 1,5 s).
 const COOLDOWN_JITTER := Vector2(0.7, 1.3)
@@ -52,6 +52,11 @@ const RUSH_MIN_GAP := 1.0
 const RUSH_OVERSHOOT := 1.5
 ## L'ennemi s'approche jusqu'à cette fraction de sa plus longue portée.
 const APPROACH_RATIO := 0.85
+## Contournement : un mur du décor est « de face » quand le cosinus entre la direction voulue
+## et l'opposé de sa normale dépasse ce seuil (en deçà, move_and_slide glisse déjà le long) ;
+## l'ennemi le longe alors pendant DETOUR_TIME s avant de reprendre sa direction.
+const DETOUR_HEAD_ON := 0.8
+const DETOUR_TIME := 0.5
 ## Hauteur du centre de la Hitbox à l'échelle 1 (m) et rayon minimal de sa sphère.
 const HITBOX_HEIGHT := 0.5
 const HITBOX_MIN_RADIUS := 0.2
@@ -101,6 +106,9 @@ var _knockback: Vector3 = Vector3.ZERO
 var _wander_target: Vector3 = Vector3.ZERO
 var _wander_pause: float = 0.0
 var _wander_clock: float = 0.0
+var _detour_side: float = 0.0
+var _detour_left: float = 0.0
+var _detour_direction: Vector3 = Vector3.ZERO
 var _body_radius: float = 0.4
 var _hurt_time: float = 0.4
 var _shrinking: bool = false
@@ -227,7 +235,7 @@ func _idle(delta: float) -> Vector3:
 	_face(direction)
 	visual.play(&"marche")
 	var returning := _flat(global_position - origin).length() > wander_radius_m + 1.0
-	return direction * _walk_speed() * (1.0 if returning else WANDER_SPEED_RATIO)
+	return _detour(direction) * _walk_speed() * (1.0 if returning else WANDER_SPEED_RATIO)
 
 
 func _chase() -> Vector3:
@@ -249,7 +257,7 @@ func _chase() -> Vector3:
 	if distance > _reach_distance() * APPROACH_RATIO:
 		visual.play(&"marche")
 		var steer := (direction + _separation() * SEPARATION_WEIGHT).limit_length(1.0)
-		return steer * _walk_speed()
+		return _detour(steer) * _walk_speed()
 	visual.play(&"repos")
 	return _separation().limit_length(1.0) * _walk_speed() * WANDER_SPEED_RATIO
 
@@ -292,19 +300,14 @@ func _find_target() -> Node3D:
 	return get_tree().get_first_node_in_group(PLAYER_GROUP) as Node3D
 
 
-## Zone sûre : celle où se trouve le joueur selon WorldManager, si sa racine Zone est safe
-## (WorldManager.is_zone_safe() si L2 l'ajoute, voir docs/CONTRACT_REQUESTS.md).
+## Zone sûre : celle où se trouve le joueur selon WorldManager (WorldManager.is_zone_safe),
+## relue seulement quand la zone courante change.
 func _player_in_safe_zone() -> bool:
 	var zone_id := WorldManager.current_zone()
 	if not _zone_checked or zone_id != _zone_seen:
 		_zone_checked = true
 		_zone_seen = zone_id
-		_zone_safe = false
-		if WorldManager.has_method(&"is_zone_safe"):
-			_zone_safe = WorldManager.call(&"is_zone_safe", zone_id)
-		for node: Node in get_tree().get_nodes_in_group(ZONES_GROUP):
-			if node.name == zone_id and node is Zone:
-				_zone_safe = _zone_safe or (node as Zone).safe
+		_zone_safe = WorldManager.is_zone_safe(zone_id)
 	return _zone_safe
 
 
@@ -407,6 +410,8 @@ func _spawn_drops() -> void:
 func _enter(new_state: State) -> void:
 	_state = new_state
 	_state_time = 0.0
+	_detour_left = 0.0
+	_detour_side = 0.0
 	if new_state == State.IDLE:
 		_wander_target = origin
 		_wander_pause = 0.0
@@ -494,6 +499,38 @@ func _separation() -> Vector3:
 			offset = Vector3.RIGHT.rotated(Vector3.UP, float(get_instance_id() % 628) * 0.01)
 		push += offset.normalized() * (1.0 - distance / spacing)
 	return push
+
+
+## Contourne un obstacle du décor heurté de face (poteau du panneau, tronc, rocher) au lieu de
+## rester bloqué derrière : longe le mur pendant DETOUR_TIME s, toujours du même côté jusqu'au
+## prochain changement d'état. Le joueur et les corps mobiles ne sont pas des obstacles.
+func _detour(direction: Vector3) -> Vector3:
+	var length := direction.length()
+	if length < 0.001:
+		return direction
+	var normal := _blocking_normal()
+	if normal != Vector3.ZERO and direction.dot(-normal) >= DETOUR_HEAD_ON * length:
+		var tangent := normal.cross(Vector3.UP)
+		if _detour_side == 0.0:
+			_detour_side = 1.0 if tangent.dot(direction) >= 0.0 else -1.0
+		_detour_direction = tangent * _detour_side
+		_detour_left = DETOUR_TIME
+	if _detour_left <= 0.0:
+		return direction
+	_detour_left -= get_physics_process_delta_time()
+	return _detour_direction * length
+
+
+## Normale horizontale du mur du décor statique heurté au dernier move_and_slide (ZERO sinon) ;
+## le sol et les pentes praticables (jusqu'à floor_max_angle) n'en sont pas.
+func _blocking_normal() -> Vector3:
+	for i in get_slide_collision_count():
+		var collision := get_slide_collision(i)
+		if collision.get_collider() is StaticBody3D and collision.get_angle() > floor_max_angle:
+			var normal := _flat(collision.get_normal())
+			if normal.length_squared() > 0.0001:
+				return normal.normalized()
+	return Vector3.ZERO
 
 
 func _face(direction: Vector3) -> void:

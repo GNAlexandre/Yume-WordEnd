@@ -82,6 +82,7 @@ const WORLD_MANAGER_METHODS := {
 	"respawn": [[], VOID],
 	"current_zone": [[], SN],
 	"zone_display_name": [[SN], STR],
+	"is_zone_safe": [[SN], BOOL],
 }
 
 ## Champs des ressources : classe → {propriété: type}.

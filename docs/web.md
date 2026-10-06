@@ -252,3 +252,30 @@ contrôles tactiles s'affichent, joystick et Épée tenus à deux doigts déplac
 ordinateur (sans tactile), la partie se lance à la souris, aucun contrôle tactile n'apparaît et
 le clavier déplace Chtholly. Restent à juger sur de vrais appareils : fluidité, taille des
 boutons sous le pouce, Safari iOS.
+
+## Raccourcis de test et vérification M1 (intégration)
+
+Pour atteindre l'arène sans parcourir l'île, `src/test_shortcuts.gd` lit des paramètres dans
+l'adresse de la page (Web, par `JavaScriptBridge`) ou dans les arguments utilisateur
+(`tools/godot -- --zone=dunes`, ou « Main Run Args » de l'éditeur). Sans paramètre, le jeu ne
+change pas (testé) ; `src/game.gd` ne crée ce nœud que si l'un d'eux est présent.
+
+| Paramètre | Effet |
+| --- | --- |
+| `?zone=dunes` | Le joueur part du Spawn des dunes, tourné vers le panneau de l'arène : 15 m tout droit (Z/W), puis E lance les vagues. Toute zone de l'île (`village`, `forest`, `beach`, `hill`) ; un nom inconnu est ignoré. |
+| `&timeres=12` | Banc de performance : 12 Timeres (les quatre types, 24 au plus) errent devant le joueur sans le poursuivre. |
+
+Pendant ce temps, la console du navigateur reçoit `[m1] …` à chaque événement (zone, invite,
+vague, Timere tué, fin de série, dégâts, mort, réapparition) et, toutes les 2 s, images/s, draw
+calls, primitives et distance du Timere le plus proche. `tools/web_m1.js` (Playwright, mode
+d'emploi en tête du fichier) s'en sert pour jouer une partie dans le Chromium sans écran :
+nouvelle partie → dunes → panneau → vague 1 → combat → mort → réapparition, puis le banc.
+
+Mesures du 6 octobre 2026 (build de l'intégration M1, Chromium 141 headless, SwiftShader, VM
+partagée) : aucun message d'erreur dans la console ; 1,7 à 2,4 images/s seulement (rendu
+logiciel : indicatif, sans valeur pour un vrai GPU) ; dans l'arène, 64 à 68 draw calls et 94 000
+à 115 000 primitives (5 puis 12 Timeres) ; vue du village au départ : 75 draw calls, 112 000
+primitives ; pire vue mesurée : le village vu des dunes (96 draw calls, 156 000 primitives dont
+37 000 pour la passe d'ombre). Les mêmes chiffres sortent des captures natives
+(`M1_SHOT=perf|village tools/screenshot.sh res://tests/integration/demo_m1.tscn …`, voir
+docs/DECISIONS.md, section « Intégration M1 »).

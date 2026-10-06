@@ -16,7 +16,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.2, 2.5)
 data = ExtResource("2_small")
 
 [node name="forest_timere_normal_1" parent="." instance=ExtResource("1_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -2.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.2, -2)
 data = ExtResource("3_normal")
 
 [node name="forest_timere_runner_1" parent="." instance=ExtResource("1_enemy")]

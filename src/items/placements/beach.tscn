@@ -5,9 +5,9 @@
 [node name="Pickups" type="Node3D"]
 
 [node name="beach_shell_1" parent="." instance=ExtResource("1_pickup")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 22)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, 13)
 item_id = &"shell"
 
 [node name="beach_shell_2" parent="." instance=ExtResource("1_pickup")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 14)
 item_id = &"shell"

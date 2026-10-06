@@ -622,3 +622,77 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   téléphone Android simulé : le toucher qui ferme l'écran de clic sur l'emplacement de « Nouvelle
   partie » ne lance rien, le suivant lance la partie, contrôles tactiles et HUD sans chevauchement.
   Aucune erreur dans la console.
+## Intégration M1 — combat de bout en bout
+
+- **M1 — enchaînement d'épée** (`src/player/player.gd`, L1) : un appui sur `attack` pendant
+  l'état `attack` de Combat est transmis à `PlayerCombat.attack()`, qui le garde pour enchaîner
+  le coup suivant (L4 décide) ; pendant la charge, l'onde, les dégâts, la mort ou un dialogue,
+  rien ne passe. Cause : player.gd ne transmettait rien tant que `is_busy()`, donc seul un appui
+  dans les 0,4 s qui suivent le coup enchaînait ; un joueur qui martèle la touche pendant le coup
+  (0,29 s) perdait ses appuis.
+- **M1 — zone sûre** (`src/autoload/world_manager.gd`, L2 ; contrat PLAN.md section 3) :
+  `WorldManager.is_zone_safe(zone_id) -> bool` (`Zone.safe` de la zone, faux si inconnue),
+  demandé par L5 ; `Enemy._player_in_safe_zone()` l'appelle directement (lecture défensive du
+  groupe `zones` retirée) ; `tests/unit/test_contracts.gd` vérifie la signature.
+- **M1 — contournement des obstacles** (`src/enemies/enemy.gd`, L5) : un Timere qui heurte de
+  face un mur du décor statique (cosinus ≥ 0,8 entre sa direction et la normale, pente au-delà
+  de `floor_max_angle`) le longe pendant 0,5 s, toujours du même côté jusqu'au changement d'état ;
+  le joueur et les corps mobiles ne comptent pas. Cause : dans l'arène, un joueur près du
+  panneau (9, 0, −2) gardait derrière son poteau les Timeres venus de l'ouest (bloqués plus de
+  4 s : move_and_slide ne glisse pas sur un mur heurté de face) ; même risque contre les troncs
+  de la forêt.
+- **M1 — emplacements après le décor du L2** (`src/items/placements/beach.tscn` et `hill.tscn`,
+  L7 ; `src/enemies/placements/forest.tscn`, L5) : `beach_shell_1` (−13, 0, 22) était dans la
+  mer (fond à −1,2 m) → (−25, 0, 13), sable sec ; `beach_shell_2` (27, 0, 18) flottait 0,4 m
+  au-dessus de la pente de la plage → (27, 0, 14) ; `hill_flower_1` (−17, 0, 9) était dans le
+  tronc d'un arbre rond → (−19, 0, 7) ; `forest_timere_normal_1` (0, −2,5) partait dans un
+  champignon du cercle de fées → (3, −2), au centre du cercle. Pages de la forêt, fleur du
+  village, PNJ, panneau et points de l'arène étaient déjà bons. Contrôle permanent :
+  `tests/integration/test_m1_world.gd` (au sol, hors décor et hors de l'eau, chemin à pied depuis
+  le Spawn du village sur une grille de 0,5 m, clairière dégagée sur 6 m, arène plate).
+- **M1 — portée du panneau de l'arène** (`src/enemies/arena.tscn`, L5) : sphère `InteractArea`
+  du panneau 1,3 → 0,9 m. Cause : avec la sphère d'interaction du joueur (1 m, 0,6 m devant
+  lui), l'invite s'affichait jusqu'à 2,9 m du poteau, soit 12,1 m du centre côté village, hors
+  des bornes de 12 m : la série démarrait puis s'arrêtait à l'image suivante (sortie du disque
+  pendant la pause d'avant la vague 1), avec un `arena_finished` à 0 point compté comme une
+  partie. L'invite s'arrête maintenant vers 2,5 m (11,7 m du centre au plus) ; testé sur un
+  cercle de positions autour du panneau.
+- **M1 — recul des deux premiers coups d'épée** (`data/attacks/sword_1.tres`, `sword_2.tres`,
+  L4) : `knockback` 5 → 2,5 m/s (sword_3 reste à 8). Cause : le joueur ne bouge pas pendant
+  l'enchaînement et un Normal (2 PV) attaque à 1,2 m ; le premier coup le repoussait de 0,5 m,
+  hors de portée du deuxième (1,55 m pour lui) : l'enchaînement donnait coup, vide, coup, à
+  chaque fois. À 2,5 m/s, recul de 0,28 m, le deuxième coup porte (marge 0,1 m) et sword_3
+  garde le grand recul final (0,9 m). Valeur à juger par le propriétaire (docs/REGLAGES_COMBAT.md).
+- **M1 — vue de la réapparition** (`src/autoload/world_manager.gd`, L2) : `respawn()` tourne le
+  joueur comme le Marker3D `Spawn` du village (−Z : vers la place), caméra derrière lui, avant
+  `player_respawned` : la vue d'une nouvelle partie. Cause : la visée gardée de l'arène (souvent
+  verrouillée sur un Timere) plaçait la caméra n'importe où autour du Spawn ; vu dans le
+  navigateur, elle s'est retrouvée dans le feuillage d'un cerisier (écran rose). Le contrat L1
+  (« caméra derrière le joueur, tangage par défaut ») reste vrai ; seule la visée change.
+- **M1 — raccourcis de test** (`src/test_shortcuts.gd`, nouveau ; `src/game.gd`) : `?zone=<id>`
+  et `?timeres=<n>` dans l'adresse (Web, `JavaScriptBridge.eval("window.location.search")`) ou
+  `--zone=` / `--timeres=` en arguments utilisateur ; game.gd ne crée le nœud que si l'un d'eux
+  est présent (sans paramètre, partie inchangée, testé). Journal `[m1] …` pour suivre la partie
+  sans écran ; mode d'emploi dans docs/web.md. Raison : vérifier l'arène dans le navigateur sans
+  traverser l'île à 1 ou 2 images/s.
+- **M1 — tests d'intégration** (`tests/stubs/m1_game_test.gd`) : vraie partie (`SaveManager.
+  new_game` puis `src/game.tscn`), sauvegarde `user://test_m1_<script>.json`, appuis réels sur
+  les actions (alignés sur l'image physique pour `is_action_just_pressed`). Horloge
+  déterministe : chaque CharacterVisual de la partie avance d'une image physique par image
+  physique (`advance`, `_process` coupé) ; en jeu, son horloge de temps réel s'écarte du temps
+  physique sur une machine chargée (un enchaînement mesuré à 12 images au lieu de 18). Hasard
+  semé à chaque test ; branchements sur EventBus défaits après chaque test (`listen`).
+- **M1 — barrière du village** : les Timeres de la forêt ont une laisse de 20 m autour de la
+  clairière (z = −51) ; ils abandonnent donc ~9 m avant la barrière (z = −22) et ne la touchent
+  jamais en poursuivant. La barrière reste le filet de sécurité : testée en y repoussant un Grand
+  avec l'onde (il s'arrête contre elle). Aucun changement.
+- **M1 — performance** : 12 Timeres à l'écran dans l'arène : 88 draw calls, 94 600 primitives
+  (capture native `M1_SHOT=perf`), 68 / 115 000 dans le navigateur ; vue du village : 75 /
+  112 000 : sous le budget (< 150 draw calls). Seule la vue du village depuis les dunes dépasse
+  l'objectif M2 de 150 000 triangles (156 000, dont 37 000 d'ombres ; 149 000 avec des ombres à
+  40 m au lieu de 70) : décor et éclairage du L2, laissés en l'état et signalés pour M2. Chaque
+  Timere coûte deux draw calls (sprite et ombre).
+- **M1 — démo et captures** : `tests/integration/demo_m1.tscn` (vraie partie, joueur devant le
+  panneau) ; `M1_SHOT=dunes|wave|forest|perf|village tools/screenshot.sh
+  res://tests/integration/demo_m1.tscn build/shots/m1_<vue>.png 300` fige la scène au bon moment
+  (image « coup » de l'épée, onde à 3 m…) et écrit draw calls et primitives au journal.
