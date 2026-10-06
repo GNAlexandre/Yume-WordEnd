@@ -101,6 +101,13 @@ func test_arena_wave_score_banners_and_end() -> void:
 	assert_false(_node(hud, "Banner").visible)
 
 
+func test_wave_cleared_alone_sets_wave_number() -> void:
+	var hud := _hud()
+	EventBus.wave_cleared.emit(&"dunes", 4, 200)
+	assert_true(_node(hud, "ArenaPanel").visible, "HUD créé en pleine série")
+	assert_eq((_node(hud, "WaveLabel") as Label).text, "Vague 4")
+
+
 func test_banner_fades_out() -> void:
 	var hud := _hud()
 	EventBus.wave_started.emit(&"dunes", 1, 5)

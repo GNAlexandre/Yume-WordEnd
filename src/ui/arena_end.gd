@@ -38,6 +38,7 @@ func _ready() -> void:
 	EventBus.player_died.connect(_on_player_died)
 	EventBus.player_respawned.connect(_on_player_respawned)
 	_continue.pressed.connect(close)
+	_record_badge.resized.connect(_center_record_pivot)
 	MenuInput.focus_on_hover(self)
 
 
@@ -72,7 +73,6 @@ func show_result(arena_id: StringName, score: int, best: bool, wave: int) -> voi
 	_pad.reset()
 	_continue.grab_focus()
 	if best:
-		_record_badge.pivot_offset = _record_badge.size * 0.5
 		_record_badge.scale = Vector2.ONE * 0.6
 		var tween := create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		tween.tween_property(_record_badge, ^"scale", Vector2.ONE, 0.45)
@@ -102,6 +102,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			close()
 	if command != MenuInput.Command.NONE:
 		get_viewport().set_input_as_handled()
+
+
+## « Nouveau record ! » grossit depuis son centre, quelle que soit la mise en page du panneau.
+func _center_record_pivot() -> void:
+	_record_badge.pivot_offset = _record_badge.size * 0.5
 
 
 func _on_wave_started(arena_id: StringName, wave: int, _enemy_count: int) -> void:

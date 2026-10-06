@@ -146,9 +146,11 @@ func test_continue_missing_file_hides_continue() -> void:
 	write_valid_save(&"chtholly")
 	var menu := _menu()
 	delete_save_files()
+	assert_eq(focus_owner(), _button(menu, "ContinueButton"))
 	assert_eq(menu.continue_game(), ERR_FILE_NOT_FOUND)
 	assert_false(_button(menu, "ContinueButton").visible)
 	assert_eq(menu.message(), SaveManager.last_error)
+	assert_eq(focus_owner(), _button(menu, "NewGameButton"), "le focus ne se perd pas")
 
 
 # --- Nouvelle partie et skins ---------------------------------------------------------------

@@ -160,9 +160,13 @@ func skin_card(skin_id: StringName) -> Button:
 	return _cards.get(skin_id)
 
 
-## « Continuer » n'est visible que s'il existe une sauvegarde.
+## « Continuer » n'est visible que s'il existe une sauvegarde (son focus passe alors à
+## « Nouvelle partie », sinon le clavier et la manette n'auraient plus rien à parcourir).
 func refresh_continue() -> void:
+	var had_focus := _continue_button.has_focus()
 	_continue_button.visible = SaveManager.has_save()
+	if had_focus and not _continue_button.visible:
+		_new_game_button.grab_focus()
 
 
 ## « Continuer » : SaveManager.load_game() ; renvoie son code.

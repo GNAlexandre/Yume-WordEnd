@@ -34,8 +34,12 @@ func test_shows_score_wave_best_and_record() -> void:
 	assert_eq(_text(panel, "BestValue"), "450")
 	assert_eq(_text(panel, "GamesValue"), "1")
 	assert_eq(_text(panel, "ArenaName"), WorldManager.zone_display_name(&"dunes"))
-	assert_true(panel.get_node("%RecordBadge").visible, "« Nouveau record ! »")
+	var badge := panel.get_node("%RecordBadge") as Control
+	assert_true(badge.visible, "« Nouveau record ! »")
 	assert_eq(focus_owner(), panel.get_node("%ContinueButton"))
+	await wait_process_frames(2)
+	assert_gt(badge.size.x, 0.0, "panneau mis en page")
+	assert_eq(badge.pivot_offset, badge.size * 0.5, "grossit depuis son centre")
 
 
 func test_without_record_shows_previous_best() -> void:

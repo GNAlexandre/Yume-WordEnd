@@ -207,6 +207,7 @@ func _on_wave_started(arena_id: StringName, wave: int, enemy_count: int) -> void
 
 func _on_wave_cleared(arena_id: StringName, wave: int, bonus: int) -> void:
 	_arena = arena_id
+	_wave = wave
 	_refresh_arena()
 	show_banner("Vague %d terminée" % wave, "+%d" % bonus)
 
