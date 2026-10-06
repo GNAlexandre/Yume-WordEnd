@@ -96,6 +96,21 @@ func test_new_game_from_the_menu_with_a_gamepad_only() -> void:
 	)
 
 
+func test_trace_shortcut_only_logs() -> void:
+	const TestShortcuts := preload("res://src/test_shortcuts.gd")
+	assert_eq_deep(TestShortcuts.parse_query("?trace=1"), {"trace": "1"})
+	assert_eq_deep(TestShortcuts.parse_query("?trace"), {"trace": ""})
+	assert_true(await new_game_from_menu(), "nouvelle partie")
+	var spawn := zone(&"village").get_node(^"Spawn") as Node3D
+	var shortcuts := TestShortcuts.new()
+	shortcuts.parameters = {"trace": "1"}
+	game.add_child(shortcuts)
+	await wait_physics_frames(3)
+	assert_lt(distance_to(spawn), 1.0, "trace : le joueur reste où la partie l'a mis")
+	assert_eq(WorldManager.current_zone(), &"village")
+	assert_eq(get_tree().get_nodes_in_group(&"enemies").size(), 4, "pas de banc de Timeres")
+
+
 func test_continue_appears_once_a_game_is_saved() -> void:
 	assert_true(await new_game_from_menu(), "première partie")
 	assert_true(
