@@ -100,6 +100,11 @@ func start_game() -> void:
 	SaveManager.new_game(&"chtholly")
 	game = GAME_SCENE.instantiate() as Node3D
 	add_child(game)
+	# Fin d'arène (L10) : le panneau fige le jeu jusqu'à « Continuer ». Ces tests enchaînent des
+	# séries sans interface : on le referme dès qu'il s'ouvre (ses propres tests le couvrent).
+	var arena_end := game.get_node_or_null(^"UI/ArenaEnd")
+	if arena_end != null and arena_end.has_signal(&"shown"):
+		arena_end.connect(&"shown", Callable(arena_end, &"close"))
 	player = game.get_node(^"Player") as Player
 	combat = player.combat
 	health = player.health
