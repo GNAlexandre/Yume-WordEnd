@@ -939,8 +939,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   vide, au sol à la hauteur prévue, hors de toute collision et de tout décor visible tout près
   (les baies restent sur leur buisson), reliées à pied au village. Le belvédère du sommet passe à
   un plancher de Ø 5,2 m pour que Willem soit « à côté du belvédère » et le drap à son entrée.
-- **Monde — direction artistique** (demande de l'utilisateur : plus de style « chibi /
-  low-poly », cible Zelda: Breath of the Wild dans les limites du rendu Compatibility) : palette
+- **Monde — direction artistique** (demande de l'utilisateur : se rapprocher de Zelda: Breath
+  of the Wild dans les limites du rendu Compatibility, à la place du style précédent) : palette
   naturelle un peu désaturée et chaude (herbe vert-jaune, terre ocre, roche gris-bleu, bois
   brun) ; éclairage cel discret partagé (`shaders/cel.gdshaderinc` : deux paliers doux, liseré à
   contre-jour sur les décors, terminateur large sur la roche) ; normales lissées (roche, arbres) ;
