@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/items/clock_comb.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"clock_comb"
+display_name = "Peigne de carillon"
+icon = ExtResource("2_icon")
+stackable = true
+max_stack = 99
+description = "Le peigne d’acier d’une boîte à musique repêchée dans le marais."
+color = Color(0.8, 0.88, 0.96, 1)

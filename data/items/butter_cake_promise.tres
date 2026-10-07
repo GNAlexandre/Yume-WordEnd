@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/items/butter_cake_promise.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"butter_cake_promise"
+display_name = "La promesse du gâteau au beurre"
+icon = ExtResource("2_icon")
+stackable = false
+max_stack = 1
+description = "Willem t’en a promis une montagne, à condition que tu rentres. Avoir une raison de rentrer rend le cœur plus solide."
+color = Color(1, 0.82, 0.42, 1)
