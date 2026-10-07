@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmxism0sw1vpu"
-path="res://.godot/imported/bookmark.png-2207292623bf1c1d005c7ae922fc4616.ctex"
+uid="uid://cobe5ekrqrvmi"
+path="res://.godot/imported/almita.png-81f6af48d2b1f7c2213ae8f7866a1ee0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/items/bookmark.png"
-dest_files=["res://.godot/imported/bookmark.png-2207292623bf1c1d005c7ae922fc4616.ctex"]
+source_file="res://assets/characters/almita/almita.png"
+dest_files=["res://.godot/imported/almita.png-81f6af48d2b1f7c2213ae8f7866a1ee0.ctex"]
 
 [params]
 

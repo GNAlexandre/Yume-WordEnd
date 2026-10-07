@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dc20dr3r4n0lj"
-path="res://.godot/imported/shell.png-9a34b4cccef54735b78b56b43cf0b163.ctex"
+uid="uid://bhgiglkh7x5eo"
+path="res://.godot/imported/ferryman.png-1ad360f076bb5235044e5290da1a508b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/items/shell.png"
-dest_files=["res://.godot/imported/shell.png-9a34b4cccef54735b78b56b43cf0b163.ctex"]
+source_file="res://assets/characters/ferryman/ferryman.png"
+dest_files=["res://.godot/imported/ferryman.png-1ad360f076bb5235044e5290da1a508b.ctex"]
 
 [params]
 
