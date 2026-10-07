@@ -10,3 +10,6 @@ display_name = "Limeskin"
 skin = ExtResource("2_visual")
 dialogue_path = "res://data/dialogues/limeskin.json"
 home_zone = &"beach"
+visible_if = {
+"flag": "duel_lost"
+}

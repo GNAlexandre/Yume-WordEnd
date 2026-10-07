@@ -11,3 +11,6 @@ skin = ExtResource("2_visual")
 dialogue_path = "res://data/dialogues/willem.json"
 quest_id = &"special_dessert"
 home_zone = &"village"
+visible_if = {
+"not_quest_step": ["act1_main", ["training", "promise"]]
+}

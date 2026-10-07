@@ -1,5 +1,5 @@
 {
-  "_comment": "Acte 1 : scène 9 de act1_main (repli au terrain d'entraînement, HISTOIRE.md 3.3).",
+  "_comment": "Acte 1 : scène 9 de act1_main. Willem au terrain d’entraînement (HISTOIRE.md 3.3), présent pendant l’étape training seulement (visible_if).",
   "id": "willem_training",
   "start": "hello",
   "entries": [

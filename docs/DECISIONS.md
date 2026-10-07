@@ -1058,3 +1058,19 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   (14 m), le banc et le râtelier en bordure (le banc est la place de `WillemTraining`,
   HISTOIRE.md 3.3) ; `test_m1_world.gd` vérifie plat et sans collision sur 12 m, et la clairière
   des Timeres sur 6 m.
+
+## Acte 1 — intégration (phase D)
+
+- **Intégration acte 1 — présence de Willem et de Limeskin** (`data/npcs/*.tres`, `visible_if`) :
+  Willem à l'entrepôt sauf pendant `training` et `promise` (`not_quest_step`), au terrain
+  pendant `training` (`quest_step`), au sommet à partir de `promise` et pour toujours (drapeau
+  `starry_night`, nouvelle récompense de l'étape `starry_hill` : la grammaire n'a pas de « ou »,
+  et `quest_step` est faux une fois la quête terminée) ; Limeskin au port à partir de `the_edge`
+  (drapeau `duel_lost`, récompense de `training` : le Barocupot vient la chercher, HISTOIRE.md
+  3.3). Après l'acte, Willem est donc à l'entrepôt **et** sur la colline (« Les étoiles… » de
+  `test_m2_quest.gd`, demandé pour les derniers soirs avant le départ) : écart assumé à
+  HISTOIRE.md 3.3 (« un seul willem ») jusqu'au cycle jour/nuit du M3, qui le mettra au sommet
+  la nuit seulement. Pendant l'acte, un seul Willem à la fois (`test_act1_presence.gd`). Les
+  répliques d'ambiance de `willem_training` hors de son étape ne s'entendent plus (gardées comme
+  repli) ; Willem apparaît au sommet quand le joueur entre dans `hill_summit` (pas de cinématique
+  d'arrivée en M2).

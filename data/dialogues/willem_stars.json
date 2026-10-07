@@ -1,5 +1,5 @@
 {
-  "_comment": "Acte 1 : scène 13 de act1_main, la promesse (repli au sommet, HISTOIRE.md 3.3).",
+  "_comment": "Acte 1 : scène 13 de act1_main, la promesse. Willem au sommet (HISTOIRE.md 3.3), présent à partir de l’étape promise (visible_if : drapeau starry_night).",
   "id": "willem_stars",
   "start": "hello",
   "entries": [

@@ -299,11 +299,11 @@ dialogue et sans marqueur « ! » / « ? ». La présence est réévaluée en fi
 quête, une étape, un drapeau, l'inventaire, le skin ou un record changent, et au chargement d'une
 partie ; un PNJ en pleine conversation ne part qu'à la fin de celle-ci.
 
-Exemple : Willem au terrain d'entraînement **seulement pendant l'étape `training`** de
+Exemple, l'acte 1 : Willem au terrain d'entraînement **seulement pendant l'étape `training`** de
 `act1_main`, au village le reste du temps sauf pendant `training` et `promise` (où il attend au
-sommet de la colline). Un même personnage à plusieurs endroits = une `NpcData` par emplacement,
-chacune avec sa condition (les instances `willem_training` et `willem_stars` de HISTOIRE.md,
-section 3.3) :
+sommet de la colline), et encore au sommet après l'acte (les derniers soirs avant le départ). Un
+même personnage à plusieurs endroits = une `NpcData` par emplacement, chacune avec sa condition
+(les instances `willem_training` et `willem_stars` de HISTOIRE.md, section 3.3) :
 
 ```
 # data/npcs/willem_training.tres (posé au terrain d'entraînement, src/npc/placements/forest.tscn)
@@ -316,23 +316,34 @@ visible_if = {
 "not_quest_step": ["act1_main", ["training", "promise"]]
 }
 
-# data/npcs/willem_stars.tres (posé au sommet, src/npc/placements/hill.tscn)
+# data/npcs/willem_stars.tres (posé au sommet, src/npc/placements/hill.tscn) : drapeau posé par la
+# récompense de l'étape starry_hill, donc vrai pendant promise et pour toujours ensuite
 visible_if = {
-"quest_step": ["act1_main", "promise"]
+"flag": "starry_night"
+}
+
+# data/npcs/limeskin.tres (posée au port) : à partir de the_edge (récompense de training)
+visible_if = {
+"flag": "duel_lost"
 }
 ```
 
 Dans un `.tres`, les identifiants s'écrivent comme dans le JSON, entre guillemets
-(`"act1_main"` ; `&"act1_main"` est aussi accepté). Pour « à partir de telle étape et pour toujours »,
-préférer un drapeau posé par la récompense de l'étape précédente : Limeskin au port à partir de
-l'étape `the_edge`, `visible_if = { "flag": "duel_lost" }`.
+(`"act1_main"` ; `&"act1_main"` est aussi accepté). La grammaire n'a pas de « ou » : toutes les
+clés doivent être vraies. Pour « à partir de telle étape et pour toujours » (même après la fin de
+la quête, quand `quest_step` est faux), poser un drapeau par la récompense de l'étape précédente
+et le tester (`"flag"`), comme `starry_night` et `duel_lost` ci-dessus ; pour « pendant ces
+étapes seulement », `quest_step` avec une liste ; pour « sauf pendant ces étapes »,
+`not_quest_step`. Chaque étape « parler » doit trouver son PNJ présent, dans la zone de l'étape :
+`tests/unit/test_act1_presence.gd` le vérifie pour `act1_main`, étape par étape.
 
 Le skin du joueur prime : **le PNJ dont le skin est celui que le joueur a choisi n'est jamais
 là** (la fée de la communauté choisie comme héroïne n'est pas aussi un PNJ ; Chtholly n'est
 jamais un PNJ). Les dialogues de cette fée l'appellent alors par `{player}`.
 
 Vérifier : `tools/test.sh tests/unit/test_sys_story_content.gd` (chaque `visible_if` est une
-condition valide) ; scénarios : `tests/unit/test_npc_presence.gd`.
+condition valide) ; scénarios : `tests/unit/test_npc_presence.gd` (le mécanisme) et
+`tests/unit/test_act1_presence.gd` (l'acte 1).
 
 ## Les textes de l'histoire : `data/texts/story.json`
 
