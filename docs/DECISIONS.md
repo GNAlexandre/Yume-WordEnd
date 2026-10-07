@@ -1098,3 +1098,9 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   reste mort jusqu'au rechargement de la partie (comportement d'avant). Pas de script sur les
   scènes de zone (L2) ; aucun nœud ajouté sous `Enemies` (les tests comptent ses enfants).
   `tests/unit/test_free_enemies.gd`.
+- **Intégration acte 1 — places sur l'île n° 68** : le guetteur reprend sa place de HISTOIRE.md
+  3.3, (−14 ; 0,2 ; −10), que le décor du monde garantit (l'écart (−13 ; −12) n'avait plus de
+  raison) ; `couchant_edge` est posé au sol (y = 0, mesuré sous le cylindre) ;
+  `test_m1_world.gd` ne fait plus d'exception pour `village_flower_1` (à sa place (17 ; 0 ; 5)
+  depuis le contenu de l'acte 1). Les objets, PNJ et déclencheurs suivent maintenant HISTOIRE.md
+  3.3 sans écart (`test_npc.gd`, `test_world_story_spots.gd`).

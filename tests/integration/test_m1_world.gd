@@ -21,13 +21,6 @@ const GRID_STEP := 0.5
 ## rayon plat et dégagé du terrain d'entraînement (buts, banc et râtelier au-delà).
 const CLEARING_RADIUS := 6.0
 const TRAINING_GROUND_RADIUS := 12.0
-## Positions d'avant docs/lore/HISTOIRE.md (section 3.3) que le décor de l'acte 1 recouvre :
-## l'objet est déplacé par le lot du contenu de l'acte 1 (« Contenu de l'acte 1 »). Tant qu'il
-## est encore à l'ancienne position, il n'est pas vérifié ; à sa nouvelle position, si.
-## (Zone/nœud → position globale d'avant.)
-const RELOCATED := {
-	"village/village_flower_1": Vector3(-17.0, 0.0, -3.0),
-}
 
 var _island: Node3D
 var _space: PhysicsDirectSpaceState3D
@@ -46,11 +39,7 @@ func before_all() -> void:
 	for zone: Node in _island.get_node(^"Zones").get_children():
 		for placement: String in PLACEMENTS:
 			for child: Node in zone.get_node(placement).get_children():
-				var at := (child as Node3D).global_position
-				var old: Variant = RELOCATED.get("%s/%s" % [zone.name, child.name])
-				if old is Vector3 and at.distance_to(old as Vector3) < 0.01:
-					continue
-				_start_positions[child] = at
+				_start_positions[child] = (child as Node3D).global_position
 	await wait_physics_frames(2)
 	for npc: Node in get_tree().get_nodes_in_group(&"interactable"):
 		if npc is Npc:

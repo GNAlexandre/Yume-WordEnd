@@ -49,9 +49,8 @@ const HEIGHTS := {
 	&"egg_vendor": 1.55,
 	&"garde_lookout": 1.9,
 }
-## Emplacements (nœud, PNJ, position locale à la zone) de HISTOIRE.md 3.3. Deux écarts notés dans
-## docs/DECISIONS.md pour le décor actuel : le guetteur s'écarte de la ruine (prévu en (−14 ; −10))
-## et Willem se tient sur le plateau du belvédère, entre sa rambarde et le banc (prévu en (3 ; 0)).
+## Emplacements (nœud, PNJ, position locale à la zone) de HISTOIRE.md 3.3, que le décor de l'île
+## n° 68 garantit (tests/unit/test_world_story_spots.gd).
 const PLACEMENTS := {
 	"village":
 	[
@@ -69,7 +68,7 @@ const PLACEMENTS := {
 		["Pannibal", &"pannibal", Vector3(-20, 0.2, -3)],
 		["WillemTraining", &"willem_training", Vector3(-9, 0.2, 10)],
 	],
-	"dunes": [["GardeLookout", &"garde_lookout", Vector3(-13, 0.2, -12)]],
+	"dunes": [["GardeLookout", &"garde_lookout", Vector3(-14, 0.2, -10)]],
 	"beach":
 	[
 		["Limeskin", &"limeskin", Vector3(-20, 0.2, 12)],
@@ -83,9 +82,9 @@ const PLACEMENTS := {
 	"hill": [["WillemStars", &"willem_stars", Vector3(3, 8.2, 0)]],
 }
 ## Déclencheurs de la quête principale (HISTOIRE.md 3.3) : zone, id, position, rayon, hauteur.
-## couchant_edge est posé sur le sol actuel (0,1 m ; 0 dans HISTOIRE.md).
+## Les deux cylindres sont posés au sol (y = 0 m au bord du Couchant, 8 m au sommet).
 const TRIGGERS: Array[Array] = [
-	["dunes", &"couchant_edge", Vector3(-21, 0.1, -12), 3.0, 3.0],
+	["dunes", &"couchant_edge", Vector3(-21, 0, -12), 3.0, 3.0],
 	["hill", &"hill_summit", Vector3(1, 8, -3), 4.0, 3.0],
 ]
 ## Spawn du village (PLAN.md section 3, repères de l'île).
