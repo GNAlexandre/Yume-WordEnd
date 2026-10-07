@@ -12,7 +12,7 @@ render_mode cull_disabled, world_vertex_coords;
 // Direction du vent (x, z), amplitude du balancement à la pointe (m), fondu (m).
 uniform vec2 wind = vec2(1.0, 0.25);
 uniform float sway = 0.07;
-uniform vec2 fade = vec2(22.0, 32.0);
+uniform vec2 fade = vec2(18.0, 27.0);
 // Teinte du pied et de la pointe (multiplient la couleur de la touffe).
 uniform vec3 root_shade = vec3(0.78, 0.8, 0.7);
 uniform vec3 tip_shade = vec3(1.15, 1.12, 0.98);

@@ -39,6 +39,7 @@ shape = SubResource("BoxShape3D_bounds")
 
 [node name="Geometry" type="Node3D" parent="."]
 script = ExtResource("5_batcher")
+cell_size = 32
 
 [node name="Lookout" parent="Geometry" instance=ExtResource("p1_lookout")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 8, -3)

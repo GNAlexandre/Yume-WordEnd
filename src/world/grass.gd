@@ -19,9 +19,9 @@ extends Node3D
 const CHUNK := 16.0
 const GRID := 160
 ## Touffes par m² à pleine densité.
-const DENSITY := 2.6
+const DENSITY := 2.2
 ## Les touffes s'aplatissent entre ces deux distances à la caméra (m), puis la case disparaît.
-const FADE := Vector2(22.0, 32.0)
+const FADE := Vector2(18.0, 27.0)
 
 ## Densités relatives : sous-bois, terrain d'entraînement, pierre du Couchant.
 const FOREST_DENSITY := 0.12

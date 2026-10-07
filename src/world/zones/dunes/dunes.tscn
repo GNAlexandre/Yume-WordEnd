@@ -40,6 +40,7 @@ shape = SubResource("BoxShape3D_bounds")
 
 [node name="Geometry" type="Node3D" parent="."]
 script = ExtResource("5_batcher")
+cell_size = 32
 
 [node name="WatchPostRuin" parent="Geometry" instance=ExtResource("p1_watch_post_ruin")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 0.5)

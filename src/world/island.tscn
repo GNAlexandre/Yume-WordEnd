@@ -94,7 +94,7 @@ light_color = Color(1, 0.84, 0.64, 1)
 light_energy = 0.2
 shadow_enabled = true
 directional_shadow_mode = 0
-directional_shadow_max_distance = 50.0
+directional_shadow_max_distance = 40.0
 
 [node name="OverviewCamera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.731354, 0.681998, 0, -0.681998, 0.731354, 0, 112, 132)
