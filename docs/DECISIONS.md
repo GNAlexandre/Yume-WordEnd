@@ -901,3 +901,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   chaque quête ; `tests/stubs/q_quest_test.gd` donne les raccourcis des tests de scénario.
 - **Lot Q — captures** : `tests/integration/demo_q.tscn`, `Q_SHOT=hud|journal tools/screenshot.sh
   res://tests/integration/demo_q.tscn build/shots/q_<vue>.png 150`.
+- **Lot Q — navigateur** : build Web exporté rejoué avec `tools/web_m2.js` (Chromium sans écran) :
+  « ! » au-dessus de la bibliothécaire (`QuestData.all()` lit `data/quests` dans le paquet
+  exporté, par `ResourceLoader.list_directory`), marqueur caché pendant son dialogue, quête
+  acceptée, page rechargée puis « Continuer » : quête en cours et position reprises (sauvegarde v2
+  dans IndexedDB) ; console sans erreur (seuls avertissements, ceux du pilote logiciel).
