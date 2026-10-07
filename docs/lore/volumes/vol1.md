@@ -1,8 +1,8 @@
 # Volume 1 — fiche de lecture (traduction Yume Novel)
 
-Fiche paraphrasée d'après une lecture intégrale du texte et des 29 illustrations (Akira Kareno,
-illustrations ue, postface de l'été 2014 ; traduction Yume Novel avec J-Garden). Noms et termes de
-la traduction en *italique* ; les guillemets ne servent qu'aux titres et à trois courtes citations.
+Lecture intégrale du texte et des 29 illustrations (Akira Kareno, illustrations ue ; traduction
+Yume Novel avec J-Garden). Termes de la traduction en *italique* ; guillemets réservés aux titres
+et à trois courtes citations.
 
 ## 1. Fiche
 
@@ -13,8 +13,7 @@ la traduction en *italique* ; les guillemets ne servent qu'aux titres et à troi
   épilogue à la surface.
 - **Points de vue** : troisième personne, surtout Willem ; aussi Chtholly, Nygglatho et un narrateur
   omniscient (histoire ancienne, épilogue).
-- **Structure** : titres de parties absents du texte, rétablis d'après le sommaire (image9.jpg,
-  image10.jpg) ; les sections repartent à 1 dans chaque chapitre.
+- **Structure** : titres de parties rétablis d'après le sommaire (image9.jpg), absents du texte.
   1. Prologue « Avant la fin de ce monde — A — promesse/résultat ».
   2. Chapitre 1 « Dans ce monde crépusculaire — chronographe brisé » : « Le chat qui filait et la
      jeune fille », « L'Homme sans Marque ».
@@ -99,8 +98,6 @@ de l'orphelinat de Willem (V1, épilogue).
     ; un *golem des services publics* renseigne (V1, chap. « Le chat qui filait et la jeune fille »).
   - **Rue des Échoppes d'Étain, n°7, à l'ouest** : rue pavée étroite d'échoppes de pots et de
     couteaux ; chapellerie voisine (même réf.).
-- **Île n°53** : communauté reptilienne, arrêt de dirigeable le plus proche de l'île 68, passeurs
-  (V1, chap. « L'Homme sans Marque »).
 - **Île n°68** : isolée, sans escale publique, couverte d'une immense forêt, fragment de la nature
   d'autrefois ; vents violents la nuit (même réf.).
   - **Port** : au bord du vide, vue sur les nuages et la surface ; panneau usé à flèches rouges
@@ -122,8 +119,9 @@ de l'orphelinat de Willem (V1, épilogue).
     (V1, chap. « Entrepôt de fées »).
   - **Colline de la périphérie** : herbe, vent calme, air limpide, lumière d'étoiles (V1, chap. « Le
     ciel étoilé sous le ciel étoilé »).
-- **Autres îles** : *n°15*, cible du grand fragment ; *n°47*, sombrée cet été ; *n°66*, où un
-  dirigeable récupère Chtholly.
+- **Autres îles** : *n°53*, communauté reptilienne, escale de dirigeable la plus proche de l'île 68
+  (passeurs) ; *n°15*, cible du grand fragment ; *n°47*, sombrée cet été ; *n°66*, où un dirigeable
+  récupère Chtholly (V1, chap. « L'Homme sans Marque »).
 - **Le Barocupot** : dirigeable de la Garde Ailée ; salle du conseil de guerre exiguë au deuxième
   pont (V1, chap. « La fille errante et le lézard volant »).
 - **La surface** : d'en haut, une poussière grise et boueuse a effacé le vert, le bleu et le jaune ;
@@ -233,18 +231,15 @@ longtemps »).
   Six* (V1, chap. « L'Homme sans Marque »).
 - **La Première Bête**, aussi *le Chanteur* : seule dans un désert gris, elle hurle sans fin vers la
   Lune un chant que l'air ne porte pas et que personne ne peut entendre (V1, épilogue).
-- **Combattre** : fées et armes antiques ; en dernier recours, l'autodestruction creuse un cratère et
-  ne laisse que le Carillon. Selon Willem, un Carillon bien employé gagne en force face à un ennemi
-  plus fort.
-- **Autres** : Visiteurs, dragons (dragon violet du sud, dragons d'or et de bronze), démons, ogres
-  (imps, trolls), elfes noirs ; chat noir voleur, crapaud, taureau, poules ; Willem craint loups et
-  ours dans la forêt de l'île 68.
+- **Combattre** : en dernier recours, l'autodestruction creuse un cratère et ne laisse que le
+  Carillon ; selon Willem, un Carillon bien employé gagne en force face à un ennemi plus fort.
+- **Autres** : Visiteurs, dragons, démons, ogres, elfes noirs ; chat noir voleur, crapaud, taureau,
+  poules ; Willem craint loups et ours dans la forêt de l'île 68.
 
 ## 6. Système du monde
 
 - **Peuples** : les *sans traits*, sans cornes, crocs ni écailles, sont des parias car ils ressemblent
-  aux emnetwiht ; *reptiliens*/*lézards* (de la taille d'un enfant à celle d'un colosse, très forts,
-  prononciation sifflante) ; *boggarts* (nains du folklore, commerçants) ; *ailuranthropes*
+  aux emnetwiht ; *reptiliens*/*lézards* (tailles très variables, très forts, parler sifflant) ; *boggarts* (nains du folklore, commerçants) ; *ailuranthropes*
   (félins) ; *lycanthropes* (canins) ; *orcs* ; *golems* ; *trolls* et *imps*, des ogres. Loi
   commune : tuer un être intelligent est un crime (V1, chap. « Le chat qui filait et la jeune
   fille », « Directeur en carton »).
@@ -288,15 +283,13 @@ longtemps »).
   enchantée*, bras d'ancrage) ; *cristaux lumineux*, *fourneau de cristal*, *cristal de
   communication* (image et voix) ; horloges à cloches.
 - **Vie courante** : monnaie, le *bradal* ; distance, le *marmer* ; petits boulots mal payés pour les
-  sans traits ; à l'entrepôt, corvées affichées, cuisine tournante, ballon, livres d'images et
-  romans d'amour. L'Église de la Lumière Exaltée appartient au passé.
+  sans traits ; à l'entrepôt, corvées affichées, cuisine tournante, ballon, lectures.
 
 ## 7. Objets et éléments concrets
 
-- **Tenues** : broche d'argent transmise de fée en fée ; chapeau et manteau gris souris ; manteau à
-  capuche de Willem ; uniforme noir ; armure légère des fées ; tablier ; blouse de laboratoire.
-- **Armes et outils** : épée de bois ; Seniorious (lame blanc argenté) et les autres Carillons ;
-  étoffes blanches d'emballage ; clé de la salle des armes ; trousse de secours ; ballon.
+- **Tenues et outils** : broche d'argent transmise de fée en fée ; chapeau et manteau gris souris ;
+  manteau à capuche de Willem ; épée de bois ; Seniorious (lame blanc argenté) enveloppée d'étoffe
+  blanche ; clé de la salle des armes ; trousse de secours ; ballon.
 - **Talismans dérisoires de Seniorious** : ne pas se brûler la langue, trouver le nord, éviter les
   cauchemars de malade, imiter un miaulement, ne pas se couper les ongles trop court, faire pile six
   fois sur dix (V1, chap. « Le ciel étoilé sous le ciel étoilé »).
@@ -333,14 +326,14 @@ longtemps »).
    de Nygglatho, qui rejoint ensuite l'île 68 ; Willem passe dix-huit mois sur l'île 28.
 5. Il y a six mois : le grand fragment visant l'île n°15 est prédit ; Chtholly est désignée. Cet
    été : chute de l'île n°47.
-6. Jour 0, en automne : rencontre au Market Medley ; le soir, Glick propose le poste. Plus tard :
-   arrivée de nuit sur l'île 68.
-7. Environ trois jours après : dessert spécial ; il reste un peu plus de dix jours à Chtholly ; une
-   semaine plus tard : livre d'images.
-8. Les aînées partent quelques jours combattre ; jour de pluie : blessure, salle des armes ; le soir,
-   retour ; la nuit (J−5), archives.
-9. J−4 : duel, effondrement de Willem ; la Garde fixe le départ à trois jours plus tard, à la
-   huitième cloche ; fugue de Chtholly ; la nuit, réglage de Seniorious.
+6. Jour 0, en automne : rencontre au Market Medley, offre de Glick ; plus tard, arrivée de nuit sur
+   l'île 68.
+7. Trois jours après : dessert spécial ; il reste un peu plus de dix jours à Chtholly ; une semaine
+   plus tard : livre d'images.
+8. Les aînées partent combattre quelques jours ; jour de pluie : blessure, salle des armes, retour ;
+   la nuit (J−5), archives.
+9. J−4 : duel, effondrement de Willem ; départ fixé dans trois jours, à la huitième cloche ; fugue de
+   Chtholly ; la nuit, réglage de Seniorious.
 10. J−1, au couchant : départ des trois fées ; premier gâteau au beurre. Le lendemain commence la
     bataille de l'île n°15, prévue sur plusieurs jours.
 
@@ -361,8 +354,8 @@ longtemps »).
   ciel étoilé sous le ciel étoilé »).
 - Défense d'île : un fragment de Timere annoncé par la précognition grandit tant qu'il vit ; compte à
   rebours avant l'absorption de l'île.
-- Voyage en dirigeable vers l'île 53, passeur vers l'île 68 ; thé chez Limeskin sur le Barocupot.
-- Collection des talismans dérisoires comme bonus passifs comiques.
+- Voyages en dirigeable et passeur ; thé chez Limeskin sur le Barocupot ; talismans dérisoires à
+  collectionner comme bonus passifs comiques.
 - PNJ : Nygglatho (soins, repas, quêtes), Nephren (salle de lecture), Ithea (rumeurs), Pannibal,
   Collon, Lakhesh (courses), Limeskin (missions), Glick (récits), cuisinier lycanthrope, golem
   (orientation).
@@ -412,9 +405,8 @@ Références de palette et de silhouette ; les sprites du jeu restent des dessin
   bottes ; Nephren endormie sur ses genoux, canapé beige.
 - **image24.jpg, image25.jpg** (chapitre 3) : colline de nuit, talismans flottants comme des éclats de
   cristal blanc ; Willem de dos, épée sur l'épaule ; Chtholly assise dos à lui.
-- **Sans dessin utile** : image7 (titre), image8 (crédits), image26 (titre de l'épilogue), image13,
-  16, 21 (ornements) ; image27 (avertissement) montre des fées aux ailes translucides de papillon,
-  art d'un autre tome.
+- **Sans dessin utile** : image7, image8, image26 (pages de titre et crédits), image13, 16, 21
+  (ornements) ; image27 montre des fées aux ailes translucides de papillon (art d'un autre tome).
 
 ## 12. Incertitudes
 
@@ -428,7 +420,7 @@ Références de palette et de silhouette ; les sprites du jeu restent des dessin
 - Prix minimal d'une arme antique (deux cents bradal) incohérent avec le record de 8 millions ; dette
   remboursée : 32 000 ou 30 000 bradal selon la phrase.
 - Couleurs flottantes : yeux de Chtholly (bleu glacial, puis couleur d'océan), cheveux d'Ithea
-  (dorés et décolorés, puis blé mûr) et de Nephren (gris, lilas sur les images) ; uniforme de Willem
+  (dorés et décolorés, puis blé mûr), de Nephren (gris, lilas sur les images) ; uniforme de Willem
   noir dans le texte, bleu nuit sur l'image ; mèches en oreilles d'Ithea absentes du texte.
 - Près de trente fées, mais près de vingt au réfectoire ; deux des cinq guerrières ne sont pas
   nommées ; Nephren ne descend pas du dirigeable avec les autres.
