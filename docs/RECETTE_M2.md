@@ -51,7 +51,15 @@ fin du document.
   budget de 25 Mo. Le pck a grossi avec l'île n° 68 et les 45 modèles 3D de la PR n° 1 (en
   attente de refonte).
 - **Navigateur** : `tools/web_m2.js acte1` (Chromium 141 sans écran, build servi en local, rendu
-  logiciel SwiftShader) : RESULTATS_NAVIGATEUR
+  logiciel SwiftShader, VM partagée), deux passages le 7 octobre 2026, le second sur le build
+  final : « Cliquer pour jouer » affiché 1,8 à 1,9 s après l'ouverture de la page (2,9 à 3,8 s
+  au rechargement) ; partie chargée 9,0 à 9,2 s après Entrée sur « Nouvelle partie » (6,8 à
+  8,4 s pour « Continuer »), la page continuant d'afficher des images pendant le chargement (15
+  à 16) ; **aucune erreur dans la console**, seuls avertissements ceux du pilote logiciel
+  (« GPU stall due to ReadPixels »). Le chargement est plus long qu'au jalon M2 (3 à 7,6 s) : le
+  pck est passé de 0,9 à 8,8 Mo (l'île n° 68, les modèles 3D) et tout le rendu tourne ici sur le
+  processeur ; reste à le chronométrer sur un vrai appareil. Détail et captures
+  `acte1_web_*.png` : docs/web.md, « Vérification de l'acte 1 ».
 - **Pas prouvé** : le réseau (page servie en local) ; sur fibre, les 18,4 Mo ajoutent 1 à 2 s.
 - **À valider** : ouvrir le build publié dans Chrome et Firefox, outils de développement ouverts,
   cache vidé : chronométrer jusqu'au « Cliquer pour jouer » (objectif < 10 s), console sans
@@ -89,13 +97,29 @@ t'ont ramenée à l'entrepôt. » (`test_story_texts.gd`).
 
 ## 5. Images par seconde — à valider par un humain
 
-- **Mesures logicielles** (indicatives : SwiftShader, sans GPU) : `tools/web_m2.js zones` charge
-  `index.html?zone=<id>` pour chaque zone et relève les mesures « [m1] … i/s, draw calls,
-  primitives » des raccourcis de test pendant 16 s : RESULTATS_ZONES
-- Budgets natifs (draw calls et primitives, `demo_monde` et `demo_m1`) : sous 150 draw calls et
-  150 000 primitives partout (docs/DECISIONS.md, « Monde — budget Web »).
+- **Mesures logicielles** (indicatives : sans GPU) : `tools/web_m2.js zones` charge
+  `index.html?zone=<id>` pour chaque zone (nouvelle partie, vue du Spawn, joueur au repos),
+  compte les images affichées par la page et relève les mesures « [m1] … i/s, draw calls,
+  primitives » des raccourcis de test pendant 20 s ; à côté, le même jeu en natif sous Xvfb
+  (Mesa llvmpipe, 1280 × 720, `src/game.tscn -- --zone=<id>`, 40 s), le 7 octobre 2026 :
+
+  | Zone | Chromium SwiftShader | Natif llvmpipe | Draw calls (Web / natif) | Primitives |
+  | --- | --- | --- | --- | --- |
+  | L'entrepôt des fées | 0,33 image/s | 5,7 images/s | 135 / 126 | 92 000 |
+  | Les bois du marais | 0,40 | 9,1 | 100 / 91 | 68 000 |
+  | Le bord du Couchant | 0,41 | 4,9 | 70 / 61 | 54 000 |
+  | Le port et le bourg | 0,34 | 5,8 | 76 / 67 | 59 000 |
+  | La colline des étoiles | 0,54 | 4,6 | 72 / 63 | 83 000 |
+
+  Les images/s des deux rendus logiciels ne disent rien d'un vrai GPU (le Chromium logiciel
+  faisait 1,7 à 2,4 images/s sur l'île du jalon M1, plus simple) ; draw calls et primitives ne
+  dépendent pas de la machine.
+- Budgets (draw calls et primitives, `demo_monde`, `demo_m1` et la mesure ci-dessus) : sous
+  150 draw calls et 150 000 primitives partout (docs/DECISIONS.md, « Monde — budget Web ») ;
+  l'entrepôt, avec ses PNJ et le HUD, en est le plus près (135 draw calls).
 - **À valider** : sur un portable de bureau courant puis un téléphone récent, `?zone=dunes&timeres=12`
-  et F3 ; objectifs 60 et 30 images/s ; regarder aussi le port (la vue la plus chargée).
+  et F3 ; objectifs 60 et 30 images/s ; regarder aussi l'entrepôt (la vue la plus chargée) et le
+  port.
 
 ## 6. La quête principale au clavier et à la manette — vérifiée automatiquement
 
@@ -109,7 +133,11 @@ t'ont ramenée à l'entrepôt. » (`test_story_texts.gd`).
   L'objectif du HUD suit chaque étape ; l'appui qui ferme une conversation ne la relance pas.
 - Le même parcours par le moteur seul, étape par étape : `test_act1_main.gd`.
 - Dans le navigateur : `tools/web_m2.js acte1` joue les trois premières étapes à pied (Nygglatho,
-  Willem, les bois).
+  Willem, les bois), au clavier, caméra tournée par `window.wordendFace` ; le 7 octobre 2026 :
+  les deux scènes lues jusqu'au bout (« Le vent a hurlé… », « verrouille ta cible »), étapes
+  `new_officer`, `to_the_woods` puis `rejetons` au fil de la marche, « Les bois du marais »
+  atteints par le portail nord (captures `acte1_web_nygglatho.png`, `acte1_web_willem.png`,
+  `acte1_web_bois.png`).
 - Captures : `acte1_nygglatho.png`, `acte1_willem.png`, `acte1_deux_voix.png` (la fièvre : Nephren
   parle dans le dialogue de Willem, avec son portrait), `acte1_journal.png`, `acte1_colline.png`.
 - **À valider** : une vraie manette (Xbox, PlayStation ; Chrome et Firefox) et le toucher.
@@ -119,7 +147,11 @@ t'ont ramenée à l'entrepôt. » (`test_story_texts.gd`).
 - `test_m2_resume.gd` : position, zone, skin, inventaire, quêtes et étape d'`act1_main`, objets
   déjà pris, PV max et record restaurés par « Continuer ».
 - Navigateur (`tools/web_m2.js acte1`) : la partie quittée dans les bois, à l'étape rejetons, est
-  copiée dans IndexedDB puis reprise après rechargement (RESULTATS_REPRISE).
+  copiée dans IndexedDB puis reprise après rechargement ; le 7 octobre 2026, deux passages :
+  copie 12 à 60 s après la perte du focus (rendu logiciel : le fil principal saturé la retarde ;
+  le script l'attend avant de recharger), « Continuer » reprend dans les bois du marais, à la
+  position quittée (écart 0,00 m), à l'étape `rejetons` d'`act1_main` (capture
+  `acte1_web_continue.png`).
 - **Limite connue** : sur le Web, une écriture n'est conservée qu'une fois copiée dans IndexedDB ;
   un onglet fermé juste après peut perdre au plus les 5 dernières secondes de marche.
 
@@ -133,7 +165,13 @@ ailes se sont ouvertes : te revoilà au bord. » (`test_sys_story.gd`, `test_m2_
 
 ## 9. Tests GUT — vérifiés automatiquement
 
-`tools/check.sh` : RESULTATS_CHECK
+`tools/check.sh` complet, **vert** le 7 octobre 2026 (fin de l'intégration narrative) : import et
+lint propres ; **686 tests GUT** dans 94 scripts (28 410 assertions), tous verts, dont ceux que
+cite cette recette ; fumée de 151 scènes sans échec ; export Web (18,4 Mo compressés) ; capture
+de l'île sans erreur. Les tests du critère 9 : `test_health.gd`, `test_combat_hitbox.gd` et
+`test_combat_sword.gd` (AttackData, hitbox), `test_wave_director.gd`, `test_game_state.gd`,
+`test_save_file.gd`, `test_save_autosave.gd`, `test_save_migration.gd` (SaveManager),
+`test_dialogue_runner.gd`, `test_quest_tracker.gd`.
 
 ## 10. Présence des PNJ selon l'histoire — vérifiée automatiquement
 
@@ -143,10 +181,15 @@ pendant l'acte (à l'entrepôt, au terrain d'entraînement pendant `training`, a
 `promise`) ; Limeskin au port à partir du bord du Couchant ; les PNJ des quêtes secondaires restent
 là (Willem s'absente pendant `training` et `promise`) ; une partie reprise à l'étape `promise`
 trouve Willem au sommet. Après l'acte, Willem est à l'entrepôt et sur la colline (écart assumé,
-docs/DECISIONS.md, jusqu'au cycle jour/nuit). Captures : `acte1_village.png` (l'entrepôt et ses
-PNJ), `acte1_bois.png` (Willem au banc du terrain, les rejetons, Pannibal), `acte1_couchant.png`
-(la cloche, le guetteur), `acte1_port.png` (Limeskin au bras d'ancrage du Barocupot, le marché,
-le café), `acte1_colline.png` (Willem à côté du belvédère).
+docs/DECISIONS.md, jusqu'au cycle jour/nuit). Captures, chacune à l'étape où la zone compte
+dans l'histoire : `acte1_village.png` (`morning` : l'entrepôt et ses PNJ, Nygglatho sous le
+porche avec son « ? », Willem devant la salle des armes, Nephren sur son banc, Lakhesh, Tiat,
+Ithea au puits, Collon au grand arbre), `acte1_bois.png` (`training` : Willem au banc du terrain
+avec son « ? », les quatre rejetons, Pannibal au loin au bord du marais), `acte1_couchant.png`
+(`first_vigil` : le guetteur de la Garde au premier plan, le cercle de veille, sa cloche au
+fond), `acte1_port.png` (`barocupot` : le Barocupot amarré, Limeskin sur le quai avec son « ? »,
+le café et son serveur, la marchande d'œufs, les maisons du bourg), `acte1_colline.png`
+(`promise` : Willem à côté du belvédère avec son « ? », la mer de nuages).
 
 ## 11. Les six quêtes secondaires — vérifiées automatiquement
 
@@ -168,9 +211,10 @@ d'une étape qui les vise, un mort reste mort : `test_free_enemies.gd`.
 
 ## 13. Anciennes sauvegardes — vérifiées automatiquement
 
-Une sauvegarde du jalon M2 (v1 : pages rendues ou pages en cours, objets et skin retirés) et une du moteur de quêtes (v2) se chargent dans la vraie partie : Chtholly, objets
-retirés inconnus mais sans erreur, `act1_main` commence et prend le suivi, la quête des pages
-n'est ni au journal ni dans le « +n quêtes » du HUD : `test_act1_saves.gd`.
+Une sauvegarde du jalon M2 (v1 : pages rendues ou pages en cours, objets et skin retirés) et une
+du moteur de quêtes (v2) se chargent dans la vraie partie : Chtholly, objets retirés inconnus
+mais sans erreur, `act1_main` commence et prend le suivi, la quête des pages n'est ni au journal
+ni dans le « +n quêtes » du HUD : `test_act1_saves.gd`.
 
 ## 14. Textes — vérifiés automatiquement ; le ton reste à lire
 
@@ -208,13 +252,19 @@ relevé sur les captures :
 - **Les personnages** sont des planches 2D en pixel art, à grosse tête (Chtholly) ou des
   silhouettes de remplacement (les PNJ), posées en billboards dans un décor 3D : rien de plus
   éloigné des proportions réalistes stylisées voulues ; les modèles 3D de la PR n° 1 sont en
-  refonte (docs/ASSETS_3D.md).
+  refonte (docs/ASSETS_3D.md). Dans le menu, leurs vignettes (sept skins « · 3D ») montrent
+  encore ces modèles refusés, chibi. La planche de Chtholly est celle du volume 3 (pointes
+  rouges) ; MONDE.md 1.2 demande pour l'acte 1 une variante aux cheveux bleu ciel.
 - **L'interface** (cœurs roses, panneaux crème à bords arrondis, boutons roses) reste celle de
-  l'easter egg : plus « mignonne » que la sobriété de *Breath of the Wild*.
+  l'easter egg : plus « mignonne » que la sobriété de *Breath of the Wild*. Le menu, lui, tient
+  de nouveau dans l'écran (`acte1_menu.png`) : avec les huit vignettes, sa grille débordait de
+  1280 × 720 (titre et phrase « Ta fée prend la place de Chtholly dans l'histoire. » hors
+  champ) ; elle défile depuis l'intégration (docs/DECISIONS.md).
 - **Le décor** : volumes en facettes franches à couleurs de sommets (pas de textures peintes,
   que MONDE.md 5.4 demande) ; bâtiments et navires en boîtes (le Barocupot, la grue, les maisons
   du bourg) ; ciel de jour bleu, quand MONDE.md 5.4 décrit un couchant orange et un ciel du violet
-  au pêche (choix du « Monde », docs/DECISIONS.md) ; mer de nuages plate vue de près.
+  au pêche (choix du « Monde », docs/DECISIONS.md) : la promesse « la nuit, sur la colline » se
+  joue en plein jour ; mer de nuages plate vue de près.
 - **Le Barocupot** est toujours amarré, alors que Limeskin n'arrive qu'à l'étape 10 (placements
   conditionnels : développement n° 7, M3).
 
@@ -226,7 +276,11 @@ relevé sur les captures :
 - **Cœur de la promesse** (L4) : les PV max passent à 6 (puis 7), mais le cœur gagné reste vide
   jusqu'au prochain soin ou à la réapparition (« le maximum n'est pas un soin ») ; à trancher.
 - **Skins 3D de Willem, Ithea, Nephren** : les choisir ne cache pas leur PNJ (ids différents) ;
-  les cacher rendrait leurs quêtes impossibles ; à trancher avec la refonte des modèles.
+  les cacher rendrait leurs quêtes impossibles ; à trancher avec la refonte des modèles. Le menu
+  propose aussi Willem et Lillia (qui ne sont pas des fées ; Lillia est un spoiler du volume 2),
+  Nopht et Rhantolk (fées du volume 3) comme skins jouables, contre MONDE.md 1.2 (« les skins
+  jouables sont des fées ») et la règle des spoilers (bible : S2, S3) ; `data/skins/` est hors du
+  périmètre de l'intégration.
 - **Journal au toucher** : pas de bouton tactile (demande au L9, docs/CONTRACT_REQUESTS.md).
 - **Sprites non éclairés**, **caméra verrouillée**, **pas d'interpolation physique**, **invite
   « E / A » fixe** : inchangés depuis le jalon M2.
@@ -256,6 +310,7 @@ musique et sons, contrôles tactiles complets (bouton du journal).
 for v in village bois couchant port colline nygglatho willem deux_voix journal fin_veille; do
   ACT1_SHOT=$v tools/screenshot.sh res://tests/integration/demo_act1.tscn build/shots/acte1_$v.png 100
 done
+M2_SHOT=menu tools/screenshot.sh res://tests/integration/demo_m2.tscn build/shots/acte1_menu.png 150
 tools/godot --headless --export-release Web build/web/index.html
 python3 -m http.server 8347 --bind 127.0.0.1 --directory build/web &
 NODE_PATH=/opt/node-tools/node_modules node tools/web_m2.js http://127.0.0.1:8347/index.html build/shots
