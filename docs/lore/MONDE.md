@@ -1,4 +1,4 @@
-# Le monde et la carte de WordEnd 3D
+# Le monde et la carte de WordEnd
 
 Document de direction narrative (phase B de `docs/lore/PLAN.md`) : cadre du jeu, carte de l'île
 principale, décors à produire, destinations des jalons suivants et commande de carte pour ChatGPT.
@@ -169,7 +169,7 @@ centre-ville, le port venteux et l'aire-port du V3, chap. « Je suis à la maiso
 ### 2.1 Vue d'ensemble
 
 Les identifiants techniques, les centres, les `Bounds` et les `Spawn` des cinq zones ne changent
-pas (PLAN.md, section 3, « Repères de l'île » ; `docs/ASSETS_3D.md`, section 7) : seuls le nom
+pas (PLAN.md, section 3, « Repères de l'île ») : seuls le nom
 affiché (`display_name`), le décor et le contenu des fichiers d'emplacement changent. Nord = −Z,
 ouest = −X ; coordonnées monde en mètres.
 
@@ -508,18 +508,20 @@ Une île flottante n'est pas entourée d'eau mais de ciel.
 | « Plage aux coquillages », palmiers, parasols, ponton | Le port et le bourg : quai plaqué de métal, étals sous bâches, passerelle d'embarquement, dirigeables, rue du Port | V1 ; V3 ; VEX |
 | « Colline du belvédère » | La colline des étoiles ; belvédère gardé | V1 ; VEX |
 | Cerisiers en fleurs | Feuillus d'automne or et rouille (le printemps reviendra à l'acte 4) | Le V1 se passe à l'automne |
-| Épée « Seniolis » | **Seniorious** dans tous les textes (`README.md`, `PLAN.md`, `ASSETS_3D.md`, crédits, dialogues, `tools/gen_branding.py`) | Graphie de la traduction ; aucun code de jeu ne dépend du nom (seuls ces textes et deux tests le citent) |
+| Épée « Seniolis » | **Seniorious** dans tous les textes (`README.md`, `PLAN.md`, cahiers d'assets, crédits, dialogues, `tools/gen_branding.py`) | Graphie de la traduction ; aucun code de jeu ne dépend du nom (seuls ces textes et deux tests le citent) |
 | « les Timeres » comme espèce à quatre types | Timere est une Bête ; ses corps sont « des Timeres », « des fragments », « des rejetons », sans « types » | V1 à V5 ; BIBLE.md, section 6.3 |
 
 ## 3. Bâtiments et décors à créer
 
-En complément de `docs/ASSETS_3D.md`, section 6 (mêmes conventions : `.glb`, mètres, Y vers le
-haut, avant vers +Z, origine au centre de la base, collision `-colonly` sauf feuillage, matériaux
-partagés sur les atlas peints de la section 5.6, 3 000 triangles au plus, 4 000 pour un arbre ;
-exceptions dans `docs/ASSETS_3D.md`, section 6.3). Taille indicative
-L × H × P en mètres. Les grands bâtiments se livrent en modules pour tenir le budget par prop.
+(HD-2D) Le décor est fait d'images : les bâtiments sont des volumes simples recouverts de
+matières sans raccord, avec leur façade sud en image debout ; le reste est en panneaux debout
+(arbres, rochers, clôtures, objets). Formats, tailles en pixels (96 px par mètre), ancrage et
+consignes : `docs/ASSETS_HD2D.md`, sections 6 et 7 ; le jeu les lit dans `assets/hd2d/` et
+`src/world/props/<nom>.tscn` (même nom). La taille L × H × P ci-dessous est celle de l'objet en
+mètres (la largeur et la hauteur donnent celles de son image) ; la collision reste une forme simple
+dans la scène du décor.
 
-| Nom (`<nom>.glb`) | Description | Taille | Zone | Remplace |
+| Nom (`<nom>`) | Description | Taille | Zone | Remplace |
 | --- | --- | --- | --- | --- |
 | `warehouse_main` | Corps principal de l'entrepôt : deux étages et combles, bardage brun foncé rapiécé, soubassement de pierre, fenêtres à croisillons éclairées, toit d'ardoise bleu-gris, cheminée de briques | 16 × 9 × 8 | village | `house` (×6) |
 | `warehouse_porch` | Porche à auvent, marches, banc, plaque de bronze sans texte | 6 × 3,2 × 2,5 | village | — |
@@ -577,10 +579,11 @@ L × H × P en mètres. Les grands bâtiments se livrent en modules pour tenir l
 | `distant_island` | Île lointaine en silhouette (3 variantes) | 20 à 60 | horizon | — |
 | `floating_rock` | Petit rocher flottant | 1 à 4 | sous les bords | — |
 
-Retirés : `palm`, `umbrella`, `buoy`, `arch`, `hedge` et `tree_blossom` (sauf recoloration). Objets de
-quête au sol (pickups) : la page, le drap, l'engrenage, les baies et le myosotis ont chacun un petit
-modèle de moins de 300 triangles ; textures : `cloud_sea.png` (1024 × 1024, tuilable, nuages au
-couchant) pour le shader du nœud `Water`.
+Retirés : `palm`, `umbrella`, `buoy`, `arch`, `hedge` et `tree_blossom`. Objets de quête au sol
+(pickups) : leur icône (64 × 64) suffit pour l'instant ; la mer de nuages du nœud `Water` est la
+texture `assets/hd2d/sky/cloud_sea.png` (1024 × 1024, sans raccord). Le dessous de l'île et les
+falaises sont des textures (`assets/hd2d/cliff/`), les îles lointaines et les rochers flottants
+des panneaux (`assets/hd2d/sky/`).
 
 ## 4. Destinations suivantes (M3 et après)
 
@@ -611,7 +614,8 @@ officier, puis un chargement.
 
 ### 5.1 Ta mission
 
-Tu dessines et tu modélises l'île principale d'un jeu d'action-aventure 3D jouable dans le
+Tu dessines l'île principale d'un jeu d'action-aventure en HD-2D (pixel art posé dans un
+décor en relief vu par une caméra fixe inclinée, comme *Octopath Traveler*), jouable dans le
 navigateur (Godot 4.7, WebGL 2), inspiré du roman *SukaSuka* d'Akira Kareno. L'île n° 68 est une
 dalle de pierre qui flotte au-dessus d'une mer de nuages ; une grande forêt d'automne la couvre ; au
 milieu, dans une clairière, un vieil entrepôt de bois où vivent une trentaine de fées, des fillettes
@@ -624,20 +628,15 @@ Livrables, du plus utile au plus lourd :
 1. **Carte illustrée** `assets/textures/map_island68.png` : 2048 × 2048 px, vue strictement de
    dessus (orthographique), nord en haut, l'île entière et un peu de mer de nuages autour, peinte
    dans le style de 5.4, **sans aucun texte ni chiffre** (le jeu ajoute les noms). Elle sert de
-   référence aux modélisateurs et de carte dans le jeu.
-2. **Décors** `assets/models/props/<nom>.glb` (liste en 5.6), avec les atlas peints partagés
-   `assets/models/props/atlas_<matière>.png` (5.6).
-3. **Terrain** : soit l'option B (images), soit l'option C (modèle), section 5.7.
-4. **Dessous de l'île et horizon** : `island_underside.glb`, `distant_island_a|b|c.glb`,
-   `assets/textures/cloud_sea.png` (1024 × 1024, tuilable).
+   référence aux dessinateurs du décor et de carte dans le jeu.
+2. **Images du jeu** : tuiles du sol, falaises, façades et matières des bâtiments, décors en
+   panneaux, ciel et horizon, aux formats exacts de `docs/ASSETS_HD2D.md` (une consigne prête à
+   copier par image, ordre de commande de l'acte 1 en section 11).
 
-Le niveau attendu est celui de 5.4 : des décors modélisés et peints à la main, ou générés puis
-retravaillés à la main, jamais assemblés par script à partir de primitives (un script Blender,
-`bpy`, peut servir à exporter avec les réglages de 5.7 et à vérifier, pas à modéliser). Si tu ne
-peux pas atteindre ce niveau, dis-le, et livre plutôt la carte illustrée, des planches de concept
-des décors et tes fichiers intermédiaires (barre de qualité et filières : `docs/ASSETS_3D.md`,
-section 2 bis). Pour chaque fichier, donne une ligne de crédit : chemin, outil ou auteur et date
-(« généré avec ChatGPT, le … »), licence accordée au projet.
+Le niveau attendu est celui de 5.4 : du pixel art propre et lisible, dessiné ou généré puis
+retouché, cohérent d'une image à l'autre (même échelle, même lumière, même palette). Pour chaque
+fichier, donne une ligne de crédit : chemin, outil ou auteur et date (« généré avec ChatGPT,
+le … »), licence accordée au projet.
 
 ### 5.2 Repères et coordonnées
 
@@ -705,24 +704,24 @@ lointaines et, par quelques trouées, la surface grise très loin en bas.
 
 ### 5.4 Style
 
-- **Direction artistique : au minimum celle de *The Legend of Zelda: Breath of the Wild*** : un
-  monde peint aux couleurs naturelles, des volumes nets à l'échelle réelle, un ombrage cel doux que
-  le jeu applique lui-même, de grands paysages lisibles de loin. Détail et barre de qualité :
-  `docs/ASSETS_3D.md`, sections 2 et 2 bis.
+- **Direction artistique : HD-2D à la manière d'*Octopath Traveler*** : des personnages et des
+  décors en pixel art net (96 px par mètre, comme les planches de l'easter egg) posés dans un petit
+  monde en relief, vu de face par une caméra fixe inclinée ; le jeu ajoute la profondeur de champ,
+  la lueur des lumières, les ombres douces et l'étalonnage chaud du couchant. Les images portent un
+  éclairage plat, venu de la gauche (l'ouest). Formats et consignes : `docs/ASSETS_HD2D.md`.
 - **Formes** : échelle réelle (portes ≈ 2,2 m de haut, marches de 15 à 18 cm, garde-corps à 1 m) ;
   roches massives aux plans francs, avec strates et cassures ; arbres à tronc élancé, feuillage en
   grandes masses découpées ; herbe haute en touffes ; bâtiments de bois et de pierre un peu de
-  travers, qui ont vécu. Assez de segments sur les formes courbes pour qu'aucun polygone ne se lise
-  à 5 m.
+  travers, qui ont vécu ; contours de 1 px d'une teinte sombre, jamais de noir pur.
 - **Univers d'inspiration européenne, rustique et un peu usé** : bois patiné, pierre, ardoise,
   tuiles rouges, cuivre et fer riveté ; usure visible (arêtes éclaircies, mousse, coulures, rouille,
   planches rapiécées) ; **rien d'asiatique** (pas de torii, de lanternes de papier ni de
   cerisiers), rien de moderne.
 - **Lumière** : soleil couchant orange, bas à l'ouest-sud-ouest ; ombres longues vers l'est ;
   fenêtres et cristaux qui brillent d'un jaune chaud.
-- **Matériaux** : textures peintes à la main (dégradés subtils, usure), sans lumière ni ombre
-  cuites, partagées entre les décors (atlas de 5.6) ; `metallic` 0 sauf pour le métal réel,
-  rugosité élevée (0,7 à 0,9) ; transparence seulement découpée (alpha clip), jamais mélangée.
+- **Matières** : pixel art aux aplats et dégradés en paliers (tramage léger permis), usure
+  visible, sans ombre portée cuite ; transparence seulement découpée (alpha 0 ou 255), jamais
+  mélangée ; tuiles et matières sans raccord.
 - **Couleurs** : naturelles, harmonieuses, un peu désaturées, réchauffées par le couchant ; peu de
   couleurs vives (le fanion de la Garde, les cristaux, les cheveux des fées) ; des contrastes de
   valeur nets (chemin clair sur herbe moyenne, toit sombre sur mur clair) ; ni blanc pur ni noir
@@ -753,97 +752,25 @@ dorés, brume sur le marais. Le Couchant : le plus orange, sable qui file au ven
 port : animé, métal qui reflète le soleil, ballons de dirigeables. La colline : calme, fleurs bleues,
 premières étoiles à l'est.
 
-### 5.6 Décors à modéliser
+### 5.6 Décors à dessiner
 
-Conventions : un `.glb` par décor, origine au centre de la base au sol, avant vers +Z, mètres,
-échelle réelle (5.4) ; **3 000 triangles au plus** (arbre : 4 000 ; exceptions indiquées
-ci-dessous) ; un ou deux matériaux partagés, nommés exactement `prop_wood`, `prop_stone`,
-`prop_metal`, `prop_plants` ou `prop_cloth` (plus `prop_glow`, d'une couleur claire unie, pour ce
-qui éclaire), qui pointent dans cinq atlas peints de 1024 × 1024 communs à tous les décors
-(`assets/models/props/atlas_wood.png`, `atlas_stone.png`, `atlas_metal.png`, `atlas_plants.png`,
-`atlas_cloth.png` : bandes tuilables et motifs peints) que chaque `.glb` embarque ; une texture
-propre de 1024 × 1024 au plus pour les seuls décors à budget particulier ; collision invisible
-nommée `<nom>-colonly` (boîte ou forme grossière) pour ce qui bloque (murs, troncs, rochers,
-clôtures), aucune pour le feuillage, les fleurs, l'herbe ; pas de face cachée sous le sol. Taille
-L × H × P en mètres.
+La liste des décors, leurs tailles en pixels et une consigne par image sont dans
+`docs/ASSETS_HD2D.md` : bâtiments (façades et matières, section 6), décors en panneaux (section 7),
+ciel, mer de nuages et horizon (section 8). Les noms sont ceux de la section 3 ci-dessus.
 
-- **Entrepôt** : `warehouse_main` (16 × 9 × 8, 6 000 triangles admis), `warehouse_porch`
-  (6 × 3,2 × 2,5), `warehouse_roof_deck` (6 × 1,6 × 4, rambarde de 0,9 m), `warehouse_wing`
-  (6 × 6,5 × 9), `armory_door` (2,5 × 2,4 × 2,5), `climbing_tree` (Ø 8 × 10, 6 000 triangles
-  admis), `tool_shed` (3 × 2,6 × 2,5),
-  `vegetable_patch` (5 × 0,6 × 3), `laundry_line` (6 × 2,2 × 0,3), `palisade` (module 2 × 1,6 × 0,3),
-  `palisade_gate` (4 × 3 × 0,6), `crystal_lamp` (0,4 × 2,6), `bench` (1,6 × 0,9 × 0,5), `play_goal`
-  (3 × 2 × 1), `ball` (Ø 0,3), `well` (Ø 1,4 × 2,5).
-- **Bois** : `tree_old_pine` (Ø 4 × 11), `tree_autumn` (Ø 5 × 7, trois teintes), `reeds`
-  (Ø 1,5 × 1,4), `marsh_pool` (5 × 0,05 × 4, sans collision), `log_bridge` (4 × 0,6 × 0,8),
-  `berry_bush` (Ø 1,3 × 1), `bear_rock` (6 × 4 × 5), `edge_waterfall` (3 × 6 × 2), `stick_rack`
-  (1,2 × 1,2 × 0,4), `mushroom` (0,4 à 0,8).
-- **Couchant** : `watch_post_ruin` (6 × 3,5 × 5), `ruined_wall` (4 × 2 × 0,8), `signal_pillar`
-  (Ø 0,7 × 3,5), `vigil_bell` (1,4 × 2,4 × 0,8), `garde_pennant` (0,8 × 3,5), `wind_rock` (1 à 3,
-  trois variantes), `edge_parapet` (2 × 0,6 × 0,5).
-- **Port** : `metal_quay` (4 × 0,4 × 4), `gangway` (2 × 1,2 × 4), `mooring_arm` (1 × 4 × 5),
-  `cargo_crane` (3 × 6 × 4), `crates_barrels` (2 × 1,5 × 2), `scrap_pile` (2 × 1 × 2), `signpost`
-  (1,2 × 2,4 × 0,3, deux flèches rouges, sans texte), `market_stall` (2,5 × 2,4 × 2), `snack_stall`
-  (2 × 2,4 × 1,5), `cafe` (7 × 7 × 6), `shop_front` (5 × 6 × 5, deux couleurs), `projection_hall`
-  (7 × 7 × 7), `stone_house` (5 × 5 × 4,5), `limashenka_house` (6 × 6 × 5), `wind_sock` (0,4 × 4),
-  `edge_railing` (2 × 1,1 × 0,1), `airship_ferry` (12 × 7 × 5, 6 000 triangles admis : coque de
-  bois et de cuivre, ballon allongé, deux rotors), `airship_barocupot` (22 × 10 × 8, 8 000 triangles
-  admis ou deux modules : petit transport militaire à coque sombre, deux pales de rotor, trappe).
-- **Colline** : `lone_tree` (Ø 4 × 5), `lookout` (4 × 4 × 4, belvédère de bois patiné), `flowers`
-  (massif de fleurs bleues, Ø 1).
-- **Île et horizon** : `island_underside` (160 × 70 × 160, 12 000 triangles admis, cône de roche
-  inversé, strates claires et sombres, racines), `distant_island_a|b|c` (20 à 60 m, 1 000
-  triangles), `floating_rock` (1 à 4 m).
-- **Objets au sol** (500 triangles au plus chacun) : page de livre volante, drap blanc froissé,
-  engrenage de laiton, grappe de baies rouges, petite fleur bleue.
+### 5.7 Sol et relief
 
-### 5.7 Terrain : formats
-
-**Option B, terrain en images** (recommandée pour une IA d'images) :
-
-- `assets/models/island/island_height.png` : 257 × 257 px, niveaux de gris **16 bits**, 1 pixel =
-  0,625 m, haut = nord. Hauteur linéaire : noir (0) = −1,3 m, blanc (65535) = +12 m ; le sol courant
-  (0 m) vaut 6 406, le sommet de la colline (8 m) vaut 45 825, le marais (−0,3 m) vaut 4 927. **Hors
-  de l'île, peins du noir** : le jeu y mettra le vide et les falaises. Le bord doit être net : le
-  dernier mètre est au niveau du sol voisin, puis noir.
-- `assets/models/island/island_albedo.png` : 1024 × 1024 px, couleur du sol vue de dessus (herbe,
-  herbe sèche, chemins de terre et de dalles de 3 m au moins, cour de l'entrepôt, pavés de la rue,
-  tôle du quai, sable et pierre du Couchant, cercle de veille et son anneau, sous-bois, marais), sans
-  ombres portées ni texte.
-- `assets/models/island/island_layout.json` :
-
-```json
-{
-  "version": 1,
-  "taille_m": 160,
-  "nord": "-Z",
-  "hauteur": { "noir_m": -1.3, "blanc_m": 12.0, "sol_m": 0.0 },
-  "zones": {
-    "village": { "centre": [0, 0], "cour_rayon_m": 9 },
-    "dunes": { "centre": [-51, 0], "arene_rayon_m": 15 },
-    "forest": { "centre": [0, -51], "clairiere_rayon_m": 15 },
-    "beach": { "centre": [0, 51], "passerelle": [12, 62] },
-    "hill": { "centre": [52, -3], "rayon_m": 21, "sommet_rayon_m": 4, "sommet_m": 8 }
-  }
-}
-```
-
-**Option C, île complète** `assets/models/island/island.glb` : sol visible de 60 000 triangles au
-plus, avec une forme de collision séparée `ground-colonly` simplifiée (20 000 triangles au plus) ;
-mêmes repères exactement ; falaises et dessous de l'île peuvent être inclus.
-
-Réglages d'export Blender → glTF : glTF Binary (`.glb`), Apply Modifiers, +Y Up, UV et normales,
-pas de compression Draco, pas de caméra ni de lumière, textures PNG embarquées en puissance de deux
-(1024 au plus). Budget de la scène affichée : 300 000 triangles et 200 appels de dessin.
+Le relief de l'île est calculé par le jeu (`src/world/terrain.gd`) : il garde les repères de 5.2 et
+5.3 (places plates, pentes de 40° au plus, bord net). Le sol est couvert de tuiles de pixel art sans
+raccord (herbe, terre battue, dalles, pavés, sable, pierre, sous-bois, tourbe, eau, boue, tôle),
+mélangées par zone et par masque : formats et consignes dans `docs/ASSETS_HD2D.md`, section 4 ;
+falaises et dessous de l'île : section 5.
 
 ### 5.8 Vérifications avant de livrer
 
-- [ ] Le cercle du Couchant (15 m) et la clairière des bois (15 m) sont plats et vides ; la cour de
-      l'entrepôt (9 m) est plate ; le sommet de la colline est plat sur 4 m à 8 m de haut.
-- [ ] Quatre portails à la palissade, chemins de 3 m au moins vers chaque zone, aucune pente de plus
-      de 40°, aucun trou, aucune marche de plus de 10 cm.
-- [ ] Le bord de l'île est net et reste dans le carré de ±78 m ; rien d'utile à moins de 3 m du vide.
-- [ ] Aucun texte dans les images ; style de 5.4 (formes nettes à l'échelle réelle, textures
-      peintes et usées, univers européen rustique d'automne) ; palette respectée.
-- [ ] Chaque `.glb` : mètres, Y vers le haut, avant vers +Z, origine au sol, budget respecté,
-      matériaux `prop_*` partagés, collisions `-colonly` pour ce qui bloque, une ligne de crédit.
+- [ ] La carte illustrée respecte les places de 5.2 (cercle du Couchant et clairière de 15 m vides,
+      cour de 9 m, sommet plat de 4 m), le bord net dans le carré de ±78 m et les quatre portails.
+- [ ] Aucun texte dans les images ; style de 5.4 (pixel art net, univers européen rustique
+      d'automne) ; palette respectée.
+- [ ] Chaque image : chemin, taille exacte et cadrage de `docs/ASSETS_HD2D.md` ;
+      `python3 tools/hd2d_assets.py check` sans erreur ; une ligne de crédit.

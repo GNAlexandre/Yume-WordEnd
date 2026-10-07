@@ -1,18 +1,20 @@
-# WordEnd 3D — Plan complet (Godot 4 + Claude Code cloud)
+# WordEnd — Plan complet (Godot 4, HD-2D, Claude Code cloud)
 
 Oct 5, 2026 · @Alexandre
 
 ## 1. Vision et périmètre
 
-WordEnd passe d'un easter egg 2D (Chtholly et son épée Seniorious contre des vagues de Timeres) à un **action-aventure 3D en monde ouvert, centré sur le combat, dont la direction artistique se rapproche au minimum de *The Legend of Zelda: Breath of the Wild*** (proportions réalistes stylisées, ombrage cel doux, couleurs naturelles, grands paysages ; cahier des charges des assets : `docs/ASSETS_3D.md`), jouable dans une page de yumenovel.fr et développé dans Godot 4 par des sessions Claude Code cloud en parallèle. Le combat à l'épée et la charge magique de l'easter egg restent le cœur du jeu ; le village, les PNJ et la collecte sont la respiration entre deux zones hostiles.
+WordEnd passe d'un easter egg 2D (Chtholly et son épée Seniorious contre des vagues de Timeres) à un **action-aventure en « HD-2D » à la manière d'*Octopath Traveler*, centré sur le combat** : des personnages en sprites de pixel art (les planches de l'easter egg) dans un petit monde en relief construit **uniquement avec des images** (sol en tuiles, falaises texturées, façades de bâtiments et décors en panneaux debout, ciel peint), vu par une **caméra fixe inclinée** au champ étroit, avec flou de profondeur, lueur et lumière chaude du couchant ; cahier des charges des images : `docs/ASSETS_HD2D.md`. Il est jouable dans une page de yumenovel.fr et développé dans Godot 4 par des sessions Claude Code cloud en parallèle. Le combat à l'épée et la charge magique de l'easter egg restent le cœur du jeu ; le village, les PNJ et la collecte sont la respiration entre deux zones hostiles.
 
-**Nom de travail** : WordEnd 3D. Dépôt conseillé : `Yume-WordEnd` (séparé de Yume-WordPress et Yume-Trad), licence MIT pour le code, assets sous licence propre (voir section 5).
+> **Changement de cap HD-2D (7 octobre 2026).** Les outils d'images de l'utilisateur (ChatGPT) ne produisent que des images et le monde en 3D calculée était trop ambitieux : les modèles 3D (PR n° 1), les décors en formes calculées, l'herbe en MultiMesh et la caméra en orbite libre sont retirés (ils restent dans l'historique, commit `f6ccce9`). L'architecture (monde 3D, personnages en billboards 2D) était déjà celle du HD-2D : le code de jeu, les données, les quêtes, l'interface et les tests sont gardés ; le décor et la caméra sont remplacés. Choix détaillés : `docs/DECISIONS.md`, « HD-2D ».
+
+**Nom de travail** : WordEnd. Dépôt conseillé : `Yume-WordEnd` (séparé de Yume-WordPress et Yume-Trad), licence MIT pour le code, assets sous licence propre (voir section 5).
 
 ### Ce que le joueur fait dans la tranche verticale (M2)
 
-1. Il choisit un **skin** : Chtholly par défaut, puis les personnages dessinés par la communauté, affichés en 3D.
-2. Il explore une **île** en vue 3e personne : village sûr au centre, **dunes au couchant** à l'ouest (l'arène de l'easter egg), forêt infestée au nord.
-3. Il **combat des Timeres** à l'épée (enchaînement de 3 coups) et à la **charge magique** (onde qui traverse les ennemis), avec 5 PV, recul et invincibilité : les règles de l'easter egg, transposées en 3D.
+1. Il choisit un **skin** : Chtholly par défaut, puis les fées dessinées par la communauté, en planches de sprites.
+2. Il explore une **île** vue par une caméra fixe inclinée (HD-2D, le haut de l'écran est le nord) : village sûr au centre, **dunes au couchant** à l'ouest (l'arène de l'easter egg), forêt infestée au nord.
+3. Il **combat des Timeres** à l'épée (enchaînement de 3 coups) et à la **charge magique** (onde qui traverse les ennemis), avec 5 PV, recul et invincibilité : les règles de l'easter egg, transposées dans le monde en relief.
 4. Il **survit à des vagues** dans l'arène des dunes, avec score et meilleur score, comme aujourd'hui.
 5. Il **parle à des PNJ** qui donnent une quête (nettoyer la forêt, rapporter des fragments) et **ramasse des objets**.
 6. Sa progression est **sauvegardée** et reprise à la prochaine visite.
@@ -36,12 +38,12 @@ Multijoueur, génération procédurale, application mobile native, monétisation
 | --- | --- | --- |
 | Moteur | Godot 4.7.2-stable (figé dans `project.godot` et `tools/setup.sh`) | Dernière maintenance de la branche 4.7 ([annonce 4.7.2](https://gamedev.net/news/5172-godot-engine-472-stable-released/)) ; gratuit, MIT, binaire Linux headless de \~60 Mo utilisable dans les VM Claude Code |
 | Langage | GDScript avec annotations de type (`var hp: int`, `-> void`) | L'export Web des projets C# reste expérimental en 2026 ([état 2026](https://gtstu.com/?p=4758)) ; GDScript s'exporte proprement et `gdlint`/`gdformat` (PyPI `gdtoolkit`) tournent sans éditeur |
-| Rendu | Compatibility (OpenGL 3 / WebGL 2) | Seul renderer disponible à l'export Web ; suffisant pour un ombrage toon / cel doux |
+| Rendu | Compatibility (OpenGL 3 / WebGL 2) | Seul renderer disponible à l'export Web ; le flou de profondeur, la lueur et l'étalonnage HD-2D tiennent dans un shader d'écran (`src/player/post_fx.gdshader`) |
 | Export Web | Thread Support **désactivé** | Évite les en-têtes COOP/COEP (SharedArrayBuffer) : le build se sert depuis GitHub Pages ou WordPress sans configuration serveur |
 | Scènes et ressources | Format texte (`.tscn`, `.tres`), jamais binaire | Diff lisibles, fusion Git possible, agents capables de créer une scène sans éditeur |
 | Tests | GUT (Godot Unit Test), vendoré dans `addons/gut/` | S'exécute en ligne de commande : `godot --headless -s addons/gut/gut_cmdln.gd` |
 | Build et CI | Image Docker `barichello/godot-ci` (Godot + templates d'export) | Même binaire en CI GitHub Actions et dans la VM Claude Code ([godot-ci](https://hub.docker.com/r/barichello/godot-ci)) |
-| Assets 3D | glTF 2.0 (`.glb`) ; personnages d'abord en Sprite3D, puis VRM | glTF est le format d'import natif de Godot ; VRM via l'addon godot-vrm quand les modèles existeront |
+| Images | PNG de pixel art à 96 px par mètre (`docs/ASSETS_HD2D.md`, `tools/hd2d_manifest.json`) ; personnages en planches au format JSON de l'easter egg | (HD-2D) Les outils de l'utilisateur ne produisent que des images ; un PNG livré remplace le remplaçant du même nom sans toucher au code |
 
 ### Pourquoi pas les autres options
 
@@ -92,6 +94,10 @@ Yume-WordEnd/
 │   ├── warnings_allow.txt     # avertissements Godot tolérés à l'import
 │   ├── screenshot.sh          # rend une scène en PNG sous Xvfb
 │   ├── screenshot.gd          # script Godot appelé par screenshot.sh
+│   ├── hd2d_shots.sh          # (HD-2D) captures de la vraie partie : menu, cinq zones, conversation, veille
+│   ├── hd2d_assets.py         # (HD-2D) images de remplacement : gen, check, fit, atlas (Pillow)
+│   ├── hd2d_manifest.json     # (HD-2D) liste exacte des images du décor (chemin, taille, genre)
+│   ├── hd2d_art.py, hd2d_ground.py, hd2d_props.py, hd2d_sky.py   # recettes de pixel art
 │   └── gen_placeholders.py    # planches de remplacement au format de l'easter egg (Pillow)
 ├── web/
 │   ├── CNAME                  # jeu.yumenovel.fr (copié dans build/web par la CI)
@@ -100,13 +106,16 @@ Yume-WordEnd/
 │   ├── main.tscn              # racine : menu, chargement, puis game.tscn
 │   ├── game.tscn              # (L0) Island + Player + QuestTracker + UI (HUD, dialogue, inventaire…)
 │   ├── autoload/              # EventBus, GameState, SaveManager, SkinRegistry, WorldManager
-│   ├── player/                # player.tscn, player.gd (déplacement), camera_rig.tscn
+│   ├── player/                # player.tscn, player.gd (déplacement), camera_rig.tscn (caméra fixe HD-2D),
+│   │                          # post_fx.gdshader (flou de profondeur, lueur, étalonnage)
 │   ├── combat/                # health.gd, hitbox.tscn, hurtbox.tscn, attack_data.gd,
 │   │                          # player_combat.gd (épée, charge), charge_wave.tscn (onde)
 │   ├── enemies/               # enemy.tscn, enemy.gd (machine à états), enemy_data.gd,
 │   │                          # wave_director.gd, arena.tscn, arena.gd, placements/<zone>.tscn
-│   ├── visuals/               # character_visual.tscn (+ variantes sprite / mesh), sheet_loader.gd, skin_data.gd
-│   ├── world/                 # island.tscn, zone.gd, zones/<zone>/<zone>.tscn, props/
+│   ├── visuals/               # character_visual.tscn (billboard de la planche), sheet_loader.gd, skin_data.gd
+│   ├── world/                 # island.tscn, zone.gd, zones/<zone>/<zone>.tscn, terrain.gd (relief), island_rock.gd,
+│   │                          # (HD-2D) decor_panel.gd, building.gd, prop_batcher.gd, prop_scatter.gd,
+│   │                          # props/<nom>.tscn (un décor = un panneau ou un bâtiment), shaders/, materials/
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
@@ -128,13 +137,13 @@ Yume-WordEnd/
 │   ├── characters/CREDITS.md  # dessins des membres (auteur, accord)
 │   ├── characters/<skin_id>/  # planche PNG + .json (format de l'easter egg)
 │   ├── enemies/<enemy_id>/    # idem pour les Timeres
-│   ├── models/                # .glb
-│   ├── textures/
+│   ├── hd2d/                  # (HD-2D) ground/ (+ atlas/), cliff/, buildings/ (+ materials/), props/, sky/, fx/
+│   ├── items/, ui/            # icônes 64 × 64, interface
 │   └── audio/
 ├── tests/
 │   ├── stubs/                 # joueur factice, visuel factice, mannequins pour les tests
 │   ├── unit/                  # test_*.gd (GUT)
-│   └── integration/           # scènes de fumée et démos par lot (demo_l<N>.tscn)
+│   └── integration/           # scènes de fumée et démos par lot (demo_l<N>.tscn), (HD-2D) demo_hd2d.tscn
 └── build/                     # ignoré par git
 ```
 
@@ -303,7 +312,8 @@ func interact(player: Node3D) -> void
 # (L0) Détection : le joueur masque les couches 6 (interactable) et 7 (pickup) ; l'interactable est le
 # premier nœud du groupe "interactable" en remontant depuis l'objet détecté (lui compris).
 
-# src/visuals/character_visual.gd — même interface pour Sprite3D et mesh (class_name CharacterVisual, extends Node3D)
+# src/visuals/character_visual.gd — planche en billboard axe Y (class_name CharacterVisual, extends Node3D) ;
+# (HD-2D) la variante « mesh » est retirée : un personnage est toujours une planche
 func set_skin(skin: SkinData) -> void
 func play(anim: StringName, restart: bool = false) -> void    # repos|marche|course|attaque|charge|degats|mort (+ fouet|morsure) ; (L0) restart
 func set_facing(direction: Vector3) -> void
@@ -316,7 +326,7 @@ signal animation_finished(anim: StringName)
 
 # data/*.tres — ressources
 class_name ItemData   : id, display_name, icon, stackable, max_stack, description
-class_name SkinData   : id, display_name, sprite_sheet, frames_json: JSON, mesh_scene, portrait, height_m
+class_name SkinData   : id, display_name, sprite_sheet, frames_json: JSON, portrait, height_m   # (HD-2D) sans mesh_scene
 class_name NpcData    : id, display_name, skin, dialogue_path, quest_id, home_zone
                         # (Systèmes et textes) visible_if: Dictionary (présence, même grammaire que les « if »
                         # de dialogue) ; is_present() (faux aussi si skin = celui du joueur), is_player_skin(),
@@ -352,6 +362,22 @@ class_name QuestTracker    # Node unique de game.tscn (seul le 1er du groupe que
 class_name QuestTrigger    # (Lot Q) src/quests/quest_trigger.tscn, Area3D couche 0 / masque 2 : trigger_id (défaut : nom du
                            # nœud), radius, height, set_flag ; émet trigger_entered ; à poser dans src/npc/placements/<zone>.tscn
 class_name SheetLoader     # lecture des planches (read_sheet, build_frames, hit_frames, wave_frame, pixel_size)
+# (HD-2D) Décor et caméra
+class_name DecorPanel      # src/world/decor_panel.gd : racine d'un décor en panneau ; @export texture, pixels_per_meter (96),
+                           # shadow_width, shadow_depth, keep_orientation, image_offset, tint, glow ; size_m() ; statiques
+                           # quad_mesh(size), material_for(image, tint, glow), PIXELS_PER_METER, PANEL_SHADER ; l'image se
+                           # tourne vers le sud, la collision (enfant « Collision », couche 1) garde la rotation du nœud
+class_name Building        # src/world/building.gd : volume (murs, toit long ou pignon) en matières sans raccord + façade sud
+                           # en image ; @export facade, wall_texture, roof_texture, footprint, wall_height, ridge_height,
+                           # gable_front, overhang, window_glow ; surface_material(texture, relief)
+class_name PropBatcher     # src/world/prop_batcher.gd, nœud « Geometry » des zones : fond les MeshInstance3D à
+                           # material_override en un mesh par image et par case (« Batch… ») ; @export cell_size
+# src/player/camera_rig.gd (racine CameraRig de camera_rig.tscn, sans class_name) : caméra fixe vers le nord
+@export pitch_deg (32), fov_deg (30), focus_height, distance (21), min_distance, max_distance, follow_speed, lead_time,
+        limits: Rect2 (bornes du point visé), lock_focus, lock_focus_max
+var lock_target: Node3D, follow_velocity: Vector3   # posés par le joueur à chaque image physique
+func update_camera(delta, zoom_axis := 0.0), focus_goal(with_lead := true) -> Vector3, snap(), snap_behind(_dir) (= snap),
+     recenter_behind(_dir) (sans effet), zoom(amount), zoom_distance(), focus(), yaw() (0), pitch(), forward() (le nord)
 ```
 
 ### Conventions
@@ -363,6 +389,7 @@ class_name SheetLoader     # lecture des planches (read_sheet, build_frames, hit
 - Le joueur est toujours le nœud unique du groupe `player` ; les ennemis vivants sont dans le groupe `enemies`.
 - Les zones sont des scènes racine `Node3D` nommées comme leur `zone_id`, avec un `Marker3D` nommé `Spawn` ; une arène est une zone qui contient un `WaveDirector`.
 - Toute scène doit s'ouvrir et se fermer sans erreur en headless : c'est le test de fumée minimal (section 9).
+- (HD-2D) Le décor est fait d'images à 96 px par mètre : un décor de `src/world/props/` a pour racine un `DecorPanel` ou un `Building` (ou un nœud qui en contient, comme la passerelle), sa collision dans un enfant `Collision` (StaticBody3D, couche 1). Aucun maillage modélisé ni forme calculée pour l'apparence. La caméra regarde toujours le nord : le haut de l'écran est le nord.
 
 ### Structure figée au Lot 0
 
@@ -372,8 +399,8 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | --- | --- | --- | --- | --- |
 | `src/main.tscn` + `main.gd` | `Main` (Node) | menu, chargement et partie ajoutés à l'exécution | — | L0 |
 | `src/game.tscn` + `game.gd` | `Game` (Node3D) | `Island`, `Player`, `QuestTracker`, `UI` (CanvasLayer) avec `UI/HUD`, `UI/DialogueBox`, `UI/Inventory`, `UI/ArenaEnd`, `UI/TouchControls` | — | L0 |
-| `src/player/player.tscn` + `player.gd` | `Player` (CharacterBody3D, `Player`) | `CollisionShape3D`, `Visual`, `Combat` (`PlayerCombat`) et `Combat/SwordHitbox` (`Hitbox`), `Health` (5 PV, 1,2 s), `Hurtbox`, `CameraRig` | `player` ; couche 2, masque 1+3 | L1 (L4 : valeurs du nœud `Health`) |
-| `src/player/camera_rig.tscn` | `CameraRig` (Node3D) | `SpringArm3D`, `SpringArm3D/Camera3D` (courante) | masque du bras : 1 | L1 |
+| `src/player/player.tscn` + `player.gd` | `Player` (CharacterBody3D, `Player`) | `CollisionShape3D`, `Visual`, `Combat` (`PlayerCombat`) et `Combat/SwordHitbox` (`Hitbox`), `Health` (5 PV, 1,2 s), `Hurtbox`, `CameraRig` ((HD-2D) aux pieds du joueur) | `player` ; couche 2, masque 1+3 | L1 (L4 : valeurs du nœud `Health`) |
+| `src/player/camera_rig.tscn` | `CameraRig` (Node3D) | (HD-2D) `Camera3D` (courante, `top_level`), `PostFX` (CanvasLayer, couche −1) et `PostFX/Screen` (ColorRect, `post_fx.gdshader`) ; plus de `SpringArm3D` | — | L1 |
 | `src/combat/hitbox.tscn` + `hitbox.gd` | `Hitbox` (Area3D) | `CollisionShape3D` (forme locale à la scène) | couche 4, masque 5 | L4 |
 | `src/combat/hurtbox.tscn` + `hurtbox.gd` | `Hurtbox` (Area3D) | `CollisionShape3D` (forme locale à la scène) | couche 5 | L4 |
 | `src/combat/charge_wave.tscn` | `ChargeWave` (Node3D) | `Hitbox` (attaque `charge_wave`, équipe `player`), `Mesh` | — | L4 |
@@ -388,8 +415,8 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | (Lot Q) `src/quests/quest_step.gd`, `quest_trigger.tscn` + `quest_trigger.gd` | `QuestStep` (Resource), `QuestTrigger` (Area3D) | `CollisionShape3D` (cylindre propre à chaque déclencheur) | couche 0, masque 2 | Lot Q |
 | `src/npc/npc.tscn` + `npc.gd` | `Npc` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `InteractArea` (Area3D, couche 6), `DialogueRunner`, (Lot Q) `QuestMarker` (Label3D « ! » / « ? ») | `interactable` ; couche 1 | L6 |
 | `src/npc/npc_data.gd`, `dialogue_runner.gd` | `NpcData`, `DialogueRunner` | — | — | L6 |
-| `src/world/island.tscn` + `island.gd` | `Island` (Node3D) | `WorldEnvironment`, `Sun`, `OverviewCamera`, `Ground`, `Water`, `Walls`, `KillZone`, `Zones` et `Zones/<zone_id>` pour les 5 zones | — | L2 |
-| `src/world/zones/<zone_id>/<zone_id>.tscn` + `src/world/zone.gd` (`village`, `dunes`, `forest`, `beach`, `hill`) | `<zone_id>` (Node3D, `Zone`) | `Spawn` (Marker3D), `Bounds` (Area3D, masque 2), `Geometry` (CSG), `NPCs`, `Enemies`, `Pickups` ; dunes : `SpawnN`, `SpawnS`, `SpawnE`, `SpawnW`, `Arena` (`arena_id = &"dunes"`) ; village : `EnemyBarrier` (couche 8), `safe = true` | `zones` | L2 |
+| `src/world/island.tscn` + `island.gd` | `Island` (Node3D) | `WorldEnvironment` ((HD-2D) ciel panoramique `assets/hd2d/sky/sky.png`), `Sun`, `OverviewCamera`, `Ground` (relief, tuiles de l'atlas du sol), `Water` (mer de nuages texturée), `Walls`, `KillZone`, `Zones` et `Zones/<zone_id>` pour les 5 zones | — | L2 |
+| `src/world/zones/<zone_id>/<zone_id>.tscn` + `src/world/zone.gd` (`village`, `dunes`, `forest`, `beach`, `hill`) | `<zone_id>` (Node3D, `Zone`) | `Spawn` (Marker3D), `Bounds` (Area3D, masque 2), `Geometry` ((HD-2D) `PropBatcher` : décors `src/world/props/` en images), `NPCs`, `Enemies`, `Pickups` ; dunes : `SpawnN`, `SpawnS`, `SpawnE`, `SpawnW`, `Arena` (`arena_id = &"dunes"`) ; village : `EnemyBarrier` (couche 8), `safe = true` | `zones` | L2 |
 | `src/npc/placements/<zone_id>.tscn` | `NPCs` (Node3D), instancié dans chaque zone | PNJ de la zone et (Lot Q) déclencheurs de quête `QuestTrigger` (coordonnées locales à la zone) | — | L6 |
 | `src/enemies/placements/<zone_id>.tscn` | `Enemies` (Node3D ; (acte 1) script `src/enemies/free_enemies.gd`) | ennemis libres de la zone (forêt : 4 Timeres), qui reviennent pendant une étape « vaincre » qui les vise | — | L5 |
 | `src/items/placements/<zone_id>.tscn` | `Pickups` (Node3D) | objets uniques, nommés `<zone>_<objet>_<n>` (ex. `forest_page_1`) | — | L7 |
@@ -421,9 +448,9 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 
 **Tests** : (Lot Q) base des tests de quêtes `tests/stubs/q_quest_test.gd`, contenu des quêtes vérifié par `tests/unit/test_quest_content.gd` ; stubs dans `tests/stubs/` (`visual_stub.tscn` hérite de `character_visual.tscn` et émet `frame_changed` / `animation_finished` à la demande, `player_stub.tscn` du groupe `player` avec Health et Hurtbox, `dummy.tscn` mannequin du groupe `enemies`), sans `class_name`. `tests/unit/test_contracts.gd` vérifie tout ce qui précède : un lot qui le fait échouer a cassé un contrat. Propriété des tests du Lot 0 : `test_health.gd` passe à L4, `test_game_state.gd` à L7, `test_save_roundtrip_l0.gd` à L8 (ils peuvent les adapter à leur implémentation) ; `test_contracts.gd`, `test_stubs_l0.gd`, `tests/integration/test_game_flow_l0.gd` et les stubs existants ne changent que dans une PR « contrats ». Un lot qui a besoin d'un autre stub en crée un nouveau fichier (`tests/stubs/<lot>_<nom>.gd`/`.tscn`, sans `class_name`).
 
-## 4. Tranche verticale : WordEnd en 3D
+## 4. Tranche verticale : WordEnd en HD-2D
 
-La tranche verticale **recrée l'easter egg en 3D** (Chtholly contre des vagues de Timeres sur les dunes au couchant, mêmes règles, même score) **et l'entoure d'un début de monde** : un village sûr avec trois PNJ, une quête, des objets, et une forêt où quelques Timeres rôdent librement. Elle est jouable dans le navigateur à la fin du jalon M2 et fixe la sensation de combat pour tout ce qui suit.
+La tranche verticale **recrée l'easter egg dans un monde en relief** ((HD-2D) personnages en sprites, décor en images, caméra fixe) (Chtholly contre des vagues de Timeres sur les dunes au couchant, mêmes règles, même score) **et l'entoure d'un début de monde** : un village sûr avec trois PNJ, une quête, des objets, et une forêt où quelques Timeres rôdent librement. Elle est jouable dans le navigateur à la fin du jalon M2 et fixe la sensation de combat pour tout ce qui suit.
 
 ### Règles de combat reprises de l'easter egg
 
@@ -452,14 +479,14 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 
 | Élément | Scène | Comportement M2 |
 | --- | --- | --- |
-| Joueur | `src/player/player.tscn` (`CharacterBody3D`) | Déplacement relatif à la caméra, course (Maj), saut, gravité, pente jusqu'à 45°, marche 4 m/s, course 7 m/s ; ZQSD/WASD + flèches + manette ; déplacement bloqué pendant `Combat.is_busy()` ; détection d'`Interactable` devant le joueur, touche E / bouton A |
+| Joueur | `src/player/player.tscn` (`CharacterBody3D`) | Déplacement relatif à l'écran ((HD-2D) haut = nord : la caméra fixe ne tourne pas), course (Maj), saut, gravité, pente jusqu'à 45°, marche 4 m/s, course 7 m/s ; ZQSD/WASD + flèches + manette ; déplacement bloqué pendant `Combat.is_busy()` ; détection d'`Interactable` devant le joueur, touche E / bouton A |
 | Combat joueur | `src/combat/player_combat.gd` (enfant `Combat` du joueur) | Épée J/X ou bouton X ; charge K/C ou bouton B maintenu ; `Hitbox` de l'épée activée par `frame_changed` sur les images `coup` ; `Health` 5 PV ; recul ; mort et réapparition |
-| Caméra | `src/player/camera_rig.tscn` (`SpringArm3D` + `Camera3D`) | 3e personne, orbite souris / stick droit, zoom 3 à 10 m, collision avec le décor, recentrage doux ; **verrouillage de cible** (clic molette / R3) sur l'ennemi le plus proche, façon Zelda : la caméra cadre joueur et cible, le joueur fait face à la cible |
-| Visuel | `src/visuals/character_visual.tscn` | `AnimatedSprite3D` billboard, 7 animations de la planche (`repos`, `marche`, `course`, `attaque`, `charge`, `degats`, `mort`), retournement gauche/droite selon la direction, ombre disque ; `frame_changed` et `animation_finished` |
+| Caméra | `src/player/camera_rig.tscn` (`Camera3D` + `PostFX`) | (HD-2D) Fixe, à la manière d'*Octopath Traveler* : regarde le nord, inclinée de 32°, champ vertical de 30°, à 21 m du point visé ; suit le joueur avec un léger retard (et un peu en avant de sa marche), bornée à l'île ; molette ou stick droit : léger zoom (14 à 25 m) ; **verrouillage de cible** (clic molette / R3) : le point visé avance vers la cible, le joueur lui fait face ; post-traitement sous l'interface : flou de profondeur, lueur, étalonnage chaud |
+| Visuel | `src/visuals/character_visual.tscn` | `AnimatedSprite3D` billboard axe Y (face à la caméra fixe), 7 animations de la planche (`repos`, `marche`, `course`, `attaque`, `charge`, `degats`, `mort`), (HD-2D) `parle` pour les PNJ en conversation, retournement gauche/droite selon la direction, ombre disque ; `frame_changed` et `animation_finished` |
 | Timeres | `src/enemies/enemy.tscn` + `data/enemies/timere_*.tres` | Machine à états : `idle` (errance) → `chase` (droit vers le joueur, séparation entre ennemis) → `attack` à portée (morsure/fouet, dégâts sur images `coup`) → `hurt` (recul 0,35 s, sauf Grand) → `dead` (animation 6 images, disparaît après 2,2 s, points). Coureur : `rush` en ligne droite dès 8 m |
 | Arène des dunes | `src/world/zones/dunes/dunes.tscn` + `src/enemies/arena.tscn` | Zone ouest, coucher de soleil (ciel inspiré de `decor.webp`), 4 points d'apparition, `WaveDirector` lisant `data/waves/dunes.json` ; un panneau `Interactable` lance les vagues et la musique (invite « Sonner la cloche de veille », titre de fin « Fin de la veille » : `data/texts/story.json`) ; sortir de l'arène entre deux vagues met fin à la série et enregistre le score |
 | Forêt | `src/world/zones/forest/` | 4 Timeres (2 petits, 1 normal, 1 coureur) en libre, sans vagues ; tués, ils restent morts jusqu'au rechargement de la partie, sauf pendant une étape « vaincre » qui les vise (rejetons de l'acte 1) : ils reviennent quand elle commence et quand le joueur rentre dans les bois ; (Systèmes et textes) noms de l'acte 1 (rejeton, fragment, Timere bondissant, grand fragment) et aucun drop : Timere ignore les objets (V3) |
-| Île | `src/world/island.tscn` | Greybox 160 × 160 m en CSG puis mesh : village (centre), dunes (ouest), forêt (nord), plage (sud), colline (est) ; `WorldEnvironment`, `DirectionalLight3D`, eau = plan avec shader simple ; murs invisibles et zone de rattrapage sous l'eau |
+| Île | `src/world/island.tscn` | Île flottante de 160 × 160 m (relief calculé, places de HISTOIRE.md 3.3 garanties) : village (centre), dunes (ouest), forêt (nord), port (sud), colline (est). (HD-2D) Sol en tuiles de pixel art mélangées par zone et par masque (atlas `assets/hd2d/ground/atlas/ground_atlas.png`, `terrain.gdshader`), falaises et dessous texturés (`rock.gdshader`), bâtiments en volumes avec façades en images (`Building`), décors en panneaux avec ombre douce (`DecorPanel`), fondus par image (`PropBatcher`), ciel panoramique, mer de nuages texturée, lanternes éclairées ; murs invisibles et rattrapage sous l'île |
 | Zones | `src/world/zones/*` | Chaque zone = scène fille avec `Area3D` qui émet `zone_entered` ; `WorldManager` charge toutes les zones au départ en M2 (streaming en M3) ; le village est une zone `safe` où aucun ennemi n'entre |
 | PNJ | `src/npc/npc.tscn` | (acte 1) les PNJ de docs/lore/HISTOIRE.md 3.3 dans les cinq zones (Nygglatho, Willem et les fées à l'entrepôt, Pannibal aux bois, le guetteur au Couchant, Limeskin et les gens du bourg au port), visuels non jouables `data/npcs/visuals/` ; présents selon l'histoire (`NpcData.visible_if`) ; regardent le joueur à moins de 4 m ; `interact()` lance `DialogueRunner` |
 | Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | Boîte en bas d'écran, portrait (celui de l'orateur du nœud, `speaker_id`), texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête ; `{player}` : prénom de la protagoniste (skin choisi) |
@@ -577,13 +604,13 @@ ne change pas.
 
 | Niveau | Personnages et ennemis | Décor | Quand |
 | --- | --- | --- | --- |
-| **P0 – planches existantes + généré** | `chtholly.png/.json` (7 animations : repos 2, marche 6, course 5, attaque 4, charge 4, dégâts 1, mort 1) et `timere.png/.json` (repos 5, marche 4, course 6, fouet 4, morsure 4, dégâts 5, mort 6), copiés depuis `wp-content/plugins/yume-core/includes/wordend/assets/` de Yume-WordPress ; les autres skins = silhouettes colorées produites par `tools/gen_placeholders.py` avec les mêmes 7 animations | CSG (`CSGBox3D`, `CSGCylinder3D`, `CSGPolygon3D`) avec matériaux unis ; sol = `PlaneMesh` texturé par un damier généré ; ciel = `ProceduralSkyMaterial` aux couleurs de `decor.webp` (coucher de soleil) | Lot 0, jour 1 |
-| **P1 – dessins de la communauté** | Nouvelles planches dessinées ou générées puis découpées par `tools/wordend/decouper-planche.py` (Yume-WordPress), même JSON ; nouveaux types de Timeres ou autres créatures | Packs CC0 de Kenney (Nature Kit, Castle Kit) en `.glb`, ajoutés par toi dans `assets/models/` ; musique `Scarborough Fair` convertie en OGG | M1 à M2 |
-| **P2 – 3D** | Avatars VRoid Studio exportés en `.vrm`, importés avec l'addon godot-vrm, animations de combat via `AnimationTree` ; même interface `CharacterVisual` que les sprites | Modèles Blender stylisés (ombrage toon doux, direction *Breath of the Wild*) pour le village, les donjons et les props signatures | M3 et après |
+| **P0 – planches existantes + généré** | `chtholly.png/.json` (7 animations : repos 2, marche 6, course 5, attaque 4, charge 4, dégâts 1, mort 1) et `timere.png/.json` (repos 5, marche 4, course 6, fouet 4, morsure 4, dégâts 5, mort 6), copiés depuis `wp-content/plugins/yume-core/includes/wordend/assets/` de Yume-WordPress ; les autres skins et les PNJ = silhouettes produites par `tools/gen_placeholders.py` avec les mêmes animations (et `parle` pour les PNJ) | (HD-2D) Images de remplacement en pixel art générées par `tools/hd2d_assets.py` (tuiles de sol, falaises, matières et façades des bâtiments, décors en panneaux, ciel, horizon), aux chemins et tailles exacts de `tools/hd2d_manifest.json` | En place (HD-2D) |
+| **P1 – images commandées** | Planches dessinées ou générées (ChatGPT) puis découpées par `tools/wordend/decouper-planche.py` (Yume-WordPress), même JSON : d'abord Chtholly de l'acte 1, les PNJ, le corps de Timere (`docs/ASSETS_HD2D.md`, section 3) | (HD-2D) Les images de `docs/ASSETS_HD2D.md` (sections 4 à 9), déposées au chemin de leur remplaçant, vérifiées par `python3 tools/hd2d_assets.py check` ; musique `Scarborough Fair` convertie en OGG | Lots H1 et H6 (section 7) |
+| **P2 – retouche** | Planches retouchées à la main ou dessinées par la communauté (fées jouables) | Images retouchées par un artiste ; variantes de lumière (nuit, M3), animations de décor (linge, fanion, cascade) en petites planches | M3 et après |
 
-### Comment les sprites 2D vivent en 3D
+### Comment les sprites 2D vivent dans le monde HD-2D
 
-`CharacterVisual` n'expose que `set_skin`, `play`, `set_facing` et les signaux `frame_changed` / `animation_finished`. Sa variante `character_visual_sprite.tscn` lit la planche PNG et le JSON du skin et construit un `SpriteFrames` à l'exécution (un `AtlasTexture` par image, décalé selon son ancre) ; la variante `character_visual_mesh.tscn` charge `SkinData.mesh_scene`. Le joueur, les PNJ et les Timeres instancient la variante selon ce que la ressource fournit : un skin peut avoir une planche en M2 et un mesh en M3 sans changer une ligne de gameplay. Échelle : Chtholly debout fait 144 px de planche pour 1,5 m, soit un `pixel_size` de 0,0104 m par pixel de planche, le même pour tous les sprites ; l'échelle d'un Timere (0,8 à 1,3) s'applique par-dessus.
+`CharacterVisual` n'expose que `set_skin`, `play`, `set_facing` et les signaux `frame_changed` / `animation_finished`. Il lit la planche PNG et le JSON du skin et construit un `SpriteFrames` à l'exécution (un `AtlasTexture` par image, décalé selon son ancre), affiché par un `AnimatedSprite3D` en billboard axe Y, face à la caméra fixe. (HD-2D) La variante « mesh » (modèles 3D) est retirée. Échelle : Chtholly debout fait 144 px de planche pour 1,5 m, soit un `pixel_size` de 0,0104 m par pixel de planche, le même pour tous les sprites **et pour tout le décor** (96 px par mètre) ; l'échelle d'un Timere (0,8 à 1,3) s'applique par-dessus.
 
 Le JSON des planches est **celui de l'easter egg, repris tel quel** (`version`, `echelle`, `planche`, puis par animation `ips`, `boucle`, `images` en `[x, y, largeur, hauteur, ancreX, ancreY]`, `coup` = images qui touchent, `onde` = image qui lance l'onde) : les planches déjà découpées pour le site se copient sans conversion, et `tools/wordend/decouper-planche.py` reste l'outil pour en produire de nouvelles.
 
@@ -604,7 +631,7 @@ Un skin de joueur doit fournir ces 7 animations ; un ennemi fournit `repos`, `ma
 
 ### Ce que Claude Code peut et ne peut pas produire
 
-- **Peut** : placeholders P0, damiers, icônes d'objets simples (formes + couleur), shaders d'eau et de toon basiques, projectile de l'onde (mesh + shader), découpe et assemblage de planches à partir d'images fournies (comme `decouper-planche.py`), meshes procéduraux simples (arbres en cônes, maisons en boîtes, dunes par bruit) en `.tscn`.
+- **Peut** : placeholders P0 (planches, images HD-2D en pixel art par `tools/hd2d_assets.py`), icônes d'objets simples, shaders (sol en tuiles, post-traitement), projectile de l'onde (mesh + shader), découpe et assemblage de planches à partir d'images fournies (comme `decouper-planche.py`), ajustement d'une image livrée à son format (`tools/hd2d_assets.py fit`).
 - **Ne peut pas** : dessiner une nouvelle pose dans le style des planches, modéliser un personnage, télécharger un pack Kenney ou une musique (hors de la liste réseau autorisée des sessions cloud : tu les ajoutes toi-même au dépôt).
 
 ### Licences et crédits
@@ -617,11 +644,10 @@ Un skin de joueur doit fournir ces 7 animations ; un ennemi fournit `repos`, `ma
 
 | Type | Limite |
 | --- | --- |
-| Sprite sheet personnage | 2048 × 2048 max, PNG, moins de 1 Mo |
-| Modèle `.glb` personnage | Chtholly 20 000 triangles (autre jouable 18 000, PNJ 12 000, corps de Timere 6 000), 2 à 3 matériaux, textures 1024 (2048 tolérée pour Chtholly) ; détail : `docs/ASSETS_3D.md`, section 3.3 |
-| Prop de décor | 3 000 triangles (arbre 4 000), atlas peints de 1024 partagés (`docs/ASSETS_3D.md`, section 6) |
+| Sprite sheet personnage | 2048 × 2048 max, PNG, moins de 1 Mo ; 96 px par mètre (Chtholly : 144 px debout) |
+| (HD-2D) Image de décor | taille exacte de `tools/hd2d_manifest.json` (96 px par mètre ; 48 pour le lointain), PNG, moins de 1 Mo ; toutes les images HD-2D : moins de 8 Mo (`tests/unit/test_hd2d_assets.gd`) |
 | Audio | OGG Vorbis, musique 96 kb/s, effets mono |
-| Git LFS | activé pour `.glb .vrm .blend .wav .ogg` ; les PNG de moins de 1 Mo restent dans Git |
+| Git LFS | activé pour `.glb .vrm .blend .wav .ogg` (plus de modèles depuis le HD-2D) ; les PNG restent dans Git |
 
 ## 6. Environnement Claude Code cloud
 
@@ -705,12 +731,16 @@ Si `docker cp` échoue parce que les chemins de l'image ont changé, `docker run
 
 ## 7. Lots de travail parallélisables
 
+> **(HD-2D)** Les lots L0 à L10 et Q ci-dessous ont construit M0 à M2 dans la première direction
+> (3D) ; ils sont fusionnés et leurs dossiers restent la carte des propriétaires du code. La suite
+> se fait en HD-2D par les lots H1 à H8 décrits en fin de section (« Lots HD-2D, la suite »).
+
 **Onze lots : L0 seul d'abord, puis six à huit sessions en parallèle.** Chaque lot a un propriétaire de dossiers exclusif, des dépendances explicites et des critères d'acceptation vérifiables par `tools/check.sh`. Un lot ne dépend que des contrats de la section 3, jamais du code d'un autre lot en cours ; le combat (L4) et les ennemis (L5) sont dans la première vague parce qu'ils fixent la sensation du jeu.
 
 | Lot | Objet | Dossiers possédés | Dépend de | Critères d'acceptation |
 | --- | --- | --- | --- | --- |
 | **L0 Socle** | Squelette du projet, autoloads vides mais conformes aux contrats, couches de collision, `Health`/`Hitbox`/`Hurtbox` vides, `tools/`, CI, GUT, planches Chtholly et Timere copiées, placeholders P0, scène `main.tscn` qui charge le menu puis l'île greybox | tout, une seule fois | — | `tools/check.sh` vert ; export Web produit ; capture `island.png` montre le sol et le ciel ; CI GitHub verte |
-| **L1 Joueur et caméra** | `CharacterBody3D`, input map, `SpringArm3D`, verrouillage de cible, détection d'`Interactable` ; appelle `Combat.is_busy()` sur un stub | `src/player/`, `tests/unit/test_player*.gd` | L0 | Se déplace, saute, ne traverse pas les CSG ; verrouillage sur l'ennemi le plus proche ; test du vecteur relatif caméra ; capture avec le joueur sur la plage |
+| **L1 Joueur et caméra** | `CharacterBody3D`, input map, caméra (`SpringArm3D` à l'origine, caméra fixe HD-2D depuis), verrouillage de cible, détection d'`Interactable` ; appelle `Combat.is_busy()` sur un stub | `src/player/`, `tests/unit/test_player*.gd` | L0 | Se déplace, saute, ne traverse pas les CSG ; verrouillage sur l'ennemi le plus proche ; test du vecteur relatif caméra ; capture avec le joueur sur la plage |
 | **L2 Monde** | Île greybox, 5 zones dont l'arène des dunes (points d'apparition) et la forêt, `WorldEnvironment`, eau, murs invisibles, rattrapage sous l'eau, `WorldManager` avec réapparition | `src/world/`, `src/autoload/world_manager.gd`, `assets/textures/` | L0 | Chaque zone émet `zone_entered` ; chute hors île → retour au `Spawn` ; `respawn()` ramène au village ; moins de 150 draw calls en capture |
 | **L3 Visuel et skins** | `CharacterVisual` sprite et mesh, chargeur de planche JSON → `SpriteFrames`, `frame_changed`, `SkinRegistry`, `SkinData`, `gen_placeholders.py` | `src/visuals/`, `src/autoload/skin_registry.gd`, `data/skins/`, `assets/characters/`, `assets/enemies/` | L0 | Les 7 animations de Chtholly et les 7 du Timere jouent à la bonne cadence ; `frame_changed` émis par image ; billboard face caméra ; changement de skin à chaud ; test de parsing du JSON |
 | **L4 Combat** | `Health`, `Hitbox`/`Hurtbox`, `AttackData`, `player_combat.gd` (enchaînement épée, charge, onde projectile), recul, invincibilité, mort du joueur, `data/attacks/` | `src/combat/`, `data/attacks/`, `tests/unit/test_combat*.gd` | L0 (visuel stub qui émet `frame_changed`) | Tests : dégâts seulement sur images `coup`, invincibilité 1,2 s, charge refusée sous 0,55 s, recharge 1,2 s, onde traverse N hurtbox ; scène de test avec mannequins |
@@ -737,6 +767,39 @@ Si `docker cp` échoue parce que les chemins de l'image ont changé, `docker run
 - Un agent bloqué par un contrat manquant écrit le besoin dans `docs/CONTRACT_REQUESTS.md` et continue avec un stub local plutôt que de modifier le contrat.
 - Les données (`data/*.tres`, JSON) sont ajoutées, jamais réécrites en masse, pour que deux lots puissent en créer en même temps.
 
+### Lots HD-2D, la suite
+
+**Huit lots après le socle HD-2D : sept en parallèle dès sa fusion, le huitième pour fermer la
+vague.** Le socle (PR « contrats ») a posé la caméra fixe, le décor en images (`DecorPanel`,
+`Building`, `PropBatcher`, sol en atlas, falaises, ciel), le post-traitement, les 99 images de
+remplacement en pixel art et leur outil, et le cahier des charges `docs/ASSETS_HD2D.md`. Chaque lot
+possède des fichiers disjoints ; un lot de décor ne touche que ses zones et les décors qui ne
+servent qu'à elles.
+
+| Lot | Objet | Fichiers possédés | Dépend de | Critères d'acceptation |
+| --- | --- | --- | --- | --- |
+| **H1 Images livrées** | Intégrer les images commandées à ChatGPT (ou à un artiste) selon `docs/ASSETS_HD2D.md`, dans l'ordre de sa section 11 : vérifier, recadrer, reconstruire l'atlas du sol, créditer ; corriger le cahier des charges quand une consigne donne de mauvais résultats | `assets/hd2d/**`, `tools/hd2d_assets.py`, `tools/hd2d_manifest.json`, `tools/hd2d_art.py`, `tools/hd2d_ground.py`, `tools/hd2d_props.py`, `tools/hd2d_sky.py`, `docs/ASSETS_HD2D.md`, `tests/unit/test_hd2d_assets.gd`, `assets/CREDITS.md` (ajouts en bas) | socle | `python3 tools/hd2d_assets.py check` sans écart ; atlas à jour ; images à leur taille exacte (96 px/m) ; export Web < 25 Mo ; planche avant/après par livraison (`tools/hd2d_shots.sh`) |
+| **H2 Décor de l'entrepôt** | Village de l'entrepôt : composition des volumes et des façades, cour, potager, linge, palissade, lampes ; occlusion de l'entrepôt quand on passe derrière | `src/world/zones/village/` et les décors qui ne servent qu'au village (`warehouse_main`, `warehouse_wing`, `warehouse_porch`, `armory_door`, `tool_shed`, `palisade`, `palisade_gate`, `laundry_line`, `vegetable_patch`, `well`, `flower_bed`, `climbing_tree`), `src/items/placements/village.tscn` | socle (images de H1 quand elles arrivent) | Lieux de MONDE.md section 2 reconnaissables sur `hd2d_village.png` et `hd2d_dialogue.png` ; aucun panneau ne cache le joueur ou un PNJ plus d'une seconde ; collisions testées ; ≤ 200 draw calls |
+| **H3 Décor du port** | La ville du port : rue des boutiques, café, salle de projection, maison de Limeskin, quais, grue, passerelle et aéronefs ; plans successifs de la rue | `src/world/zones/beach/` et ses décors propres (`cafe`, `shop_bakery`, `shop_bookshop`, `projection_hall`, `stone_house`, `limashenka_house`, `market_stall`, `market_stall_veg`, `snack_stall`, `scrap_pile`, `signpost`, `wind_sock`, `gangway`, `cargo_crane`, `mooring_arm`, `bollard`, `crates_barrels`, `edge_railing`, `airship_barocupot`, `airship_ferry`), `src/items/placements/beach.tscn` | socle | `hd2d_beach.png` lisible (rue, quais, navires vus d'en haut) ; scène du thé de Limeskin cadrée ; collisions testées ; ≤ 200 draw calls |
+| **H4 Décor des bois, du Couchant et de la colline** | Bois du marais (sous-bois, lisière, ruisseau), bord du Couchant (cercle de veille, cloche, rochers du vent, ruines) et colline des étoiles (pente, sommet, belvédère) | `src/world/zones/forest/`, `src/world/zones/dunes/`, `src/world/zones/hill/` et leurs décors propres (`tree_old_pine`, `tree_old_pine_clawed`, `mushroom`, `reeds`, `log_bridge`, `berry_bush`, `mossy_rock`, `bear_rock`, `stick_rack`, `play_goal`, `play_goal_red`, `ring_stone`, `vigil_bell`, `wind_rock_a`, `wind_rock_b`, `wind_rock_c`, `watch_post_ruin`, `ruined_wall`, `garde_pennant`, `signal_pillar`, `fallen_lantern`, `grass_tuft`, `lone_tree`, `lookout`, `tall_grass`), `src/items/placements/forest.tscn`, `dunes.tscn`, `hill.tscn` | socle | Sentiers lisibles en vue fixe ; rejetons visibles entre les troncs ; arène lisible pendant trois vagues (`hd2d_vigil.png`) ; rien de plus haut que 0,3 m dans le cercle de veille ; ≤ 200 draw calls par zone |
+| **H5 Caméra, image et post-traitement** | Réglages de la caméra fixe (cadrages, verrouillage, zoom), flou de profondeur, lueur, étalonnage, lumières chaudes, ombres, ciel et mer de nuages, sol et falaises (masques du sol, tramage) ; éclairage de nuit pour M3 | `src/player/camera_rig.gd`, `src/player/camera_rig.tscn`, `src/player/post_fx.gdshader`, `src/world/shaders/`, `src/world/materials/`, `src/world/island.tscn` (hors `Zones`), `src/world/island_rock.gd`, `src/world/terrain.gd`, `src/world/decor_panel.gd`, `src/world/building.gd`, `src/world/prop_batcher.gd`, `tests/unit/test_camera_rig.gd`, `tests/unit/test_hd2d_decor.gd` | socle | Shaders compilés (fumée, tests) ; 50 images/s par zone dans `tools/web_m2.js` ; ≤ 200 draw calls ; captures avant/après ; API de `DecorPanel`, `Building` et `CameraRig` inchangée (sinon PR « contrats ») |
+| **H6 Personnages et planches** | Planches HD-2D de Chtholly (tenue de l'acte 1), des PNJ, des fées jouables et portraits 256 px selon `docs/ASSETS_HD2D.md` section 3 ; échelles du tableau des hauteurs ; ombre et retournement du billboard | `assets/characters/**`, `data/skins/`, `src/visuals/`, `src/autoload/skin_registry.gd`, `tools/gen_placeholders.py`, `assets/characters/CREDITS.md`, `tests/unit/test_skin_registry.gd`, `tests/unit/test_visual_sprite.gd` | socle | Planches lues par `SheetLoader` sans changement du format JSON ; hauteurs à ± 5 % du tableau ; `parle` joué en conversation ; portraits 256 px ; capture de chaque skin |
+| **H7 Combat et Timeres en HD-2D** | Lisibilité du combat en vue fixe : planches de Timere, onde de charge et éclats en sprites, signes avant l'attaque, ombres, indicateur de cible, secousse et arrêt sur image réglés pour la caméra fixe | `src/combat/`, `src/enemies/` (hors `placements/`), `data/attacks/`, `data/enemies/`, `data/waves/`, `assets/enemies/**`, `tests/unit/test_combat*.gd`, `tests/unit/test_enemy.gd`, `tests/unit/test_wave_director.gd`, `docs/REGLAGES_COMBAT.md` | socle | Règles de la section 4 inchangées (tests) ; un coup, une onde et une morsure lisibles sur capture ; vague 5 atteignable ; sensation jugée à la manette |
+| **H8 Acte 1 de bout en bout et navigateur** (après les autres) | Rejouer l'acte 1 entier dans la vraie partie et dans le navigateur, corriger les frottements entre lots, mettre à jour la recette, les mesures et les captures | `tests/integration/test_m2_*.gd`, `tests/integration/test_act1*.gd`, `tests/integration/demo_hd2d.*`, `tests/stubs/m1_game_test.gd`, `tests/stubs/m2_game_test.gd`, `src/test_shortcuts.gd`, `tools/web_m2.js`, `tools/web_m1.js`, `tools/hd2d_shots.sh`, `docs/web.md`, `docs/RECETTE_M2.md` | H1 à H7 | `tools/check.sh` vert ; `node tools/web_m2.js … tout` vert ; recette de l'acte 1 cochée en HD-2D ; captures `hd2d_*` |
+
+Règles propres à cette phase :
+
+- Un décor partagé par plusieurs zones (`ball`, `bench`, `bush`, `crate`, `crystal_lamp`,
+  `edge_parapet`, `myosotis`, `rock`, `tree_autumn*`, `tree_pine`, `distant_island_*`,
+  `floating_rock`) ne change que par H1 (son image) ou H5 (son matériau) ; un lot de zone qui en
+  veut une variante crée `src/world/props/<id>_<zone>.tscn` au lieu de modifier l'original.
+- Les masques du sol (chemins, cour, marais…) sont dans `src/world/shaders/terrain.gdshader`
+  (H5) : un lot de zone qui veut un chemin déplacé le demande dans `docs/CONTRACT_REQUESTS.md`.
+- Les PNJ, ennemis libres et déclencheurs restent dans `src/npc|enemies/placements/<zone>.tscn`,
+  hors de ces lots : leurs positions sont tenues par les quêtes et `test_world_story_spots.gd`.
+- Toute PR de rendu joint la vue `tools/hd2d_shots.sh` de ses zones avant et après, et le nombre
+  de draw calls lu dans le journal de la capture.
+
 ## 8. Feuille de route
 
 **Six jalons, dont trois avant la première mise en ligne (M2, vers la semaine 5).** Les durées sont des estimations pour un rythme soirées et week-ends avec plusieurs sessions Claude Code en parallèle ; elles glissent sans casser le plan, car chaque jalon n'ouvre le suivant que sur sa porte de passage.
@@ -750,9 +813,10 @@ Chaque losange est une porte que tu valides toi-même avant d'ouvrir le jalon su
 | **M0 Socle** (semaine 1) | Dépôt, L0 fusionné, CI verte, export Web déployé sur GitHub Pages avec l'île greybox vide | Tu ouvres le build dans un navigateur et vois l'île ; `tools/check.sh` vert sur une session cloud neuve |
 | **M1 Combat** (semaines 2–3) | L1 à L5 et L8 fusionnés : Chtholly se déplace sur l'île et affronte des vagues de Timeres dans l'arène des dunes avec les règles de l'easter egg | Sensation de combat (coups, recul, onde, verrouillage) jugée agréable à la manette et au clavier ; la vague 5 est atteignable |
 | **M2 Tranche verticale** (semaines 4–5) | L6, L7, L9, L10 fusionnés : village, quête des pages dans la forêt, sauvegarde, menu, HUD, page d'intégration | Critères de la section 4 cochés ; test par 3 membres de la communauté |
+| **M2.5 HD-2D** (après M2) | Socle HD-2D fusionné (caméra fixe, décor en images, post-traitement), puis lots H1 à H8 : l'acte 1 entier dans les images commandées d'après `docs/ASSETS_HD2D.md` | Tu joues l'acte 1 dans le navigateur et juges le rendu proche d'*Octopath Traveler* ; 50 images/s par zone ; export < 25 Mo |
 | **M3 Monde vivant et premier donjon** (semaines 6–10) | Cycle jour/nuit, 2 zones de plus, **grotte-donjon** avec clés et boss (Grand Timere renforcé), 2 nouveaux types d'ennemis, équipement (épée améliorée, cœurs supplémentaires), 10 PNJ, 3 quêtes, musique et sons, contrôles tactiles complets | Session de 20 min sans bug bloquant ; le donjon se termine en 10 à 15 min ; 30 images/s sur mobile |
 | **M4 Yume** (semaines 11–14) | Lien avec yumenovel.fr : sauvegarde liée au compte WordPress, classement des meilleurs scores de l'arène, déblocages liés aux parutions, page officielle du jeu, mise en ligne | Deux semaines de « bêta ouverte » sur le site sans incident de sauvegarde ; décision prise sur les personnages (section 13) |
-| **M5 Bureau et 3D** (après) | Export Windows/macOS/Linux, catégorie Jeu dans l'application Yume, premiers skins VRM, zones streamées, deuxième donjon | Décidé après M4 selon l'usage réel |
+| **M5 Bureau** (après) | Export Windows/macOS/Linux, catégorie Jeu dans l'application Yume, zones streamées, deuxième donjon | Décidé après M4 selon l'usage réel |
 
 Après M4, le rythme devient **une « saison » par trimestre** : une zone, des PNJ, des objets et un événement lié à la communauté, produits majoritairement en données.
 
@@ -796,11 +860,12 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 | Temps jusqu'au menu (fibre) | < 10 s | < 15 s |
 | Images/s portable | 60 | 60 |
 | Images/s téléphone récent | 30 | 30 |
-| Draw calls en vue village | < 150 | < 300 |
-| Triangles affichés | < 150 000 | < 400 000 |
+| Draw calls en vue village | < 150 ((HD-2D) mesuré : 50) | < 200 |
+| Triangles affichés | < 150 000 ((HD-2D) mesuré : 17 000) | < 400 000 |
 
-Avec les modèles 3D du cahier des charges (`docs/ASSETS_3D.md`, section 3.3), la vue village vise
-moins de 200 draw calls et 300 000 triangles, dans la limite de la cible M4.
+(HD-2D) Mesures du 7 octobre 2026 (`tools/hd2d_shots.sh`, rendu natif) : 27 à 53 draw calls selon
+la zone, une conversation ou une veille ; export 12,4 Mo compressés (18,4 avant la purge des
+modèles 3D). `tools/check.sh` échoue au-delà de 25 Mo compressés.
 
 ### Hygiène du dépôt
 
@@ -859,10 +924,10 @@ Godot exporte le même projet en exécutable natif : meilleures performances, pa
 # Yume-WordEnd — règles pour Claude Code
 
 ## Le projet
-Jeu 3D action-aventure dans Godot 4.7.2 (GDScript typé, export Web) : Chtholly et son épée
-contre des vagues de Timeres, un village, des PNJ et des quêtes. Direction artistique : au minimum
-proche de *Zelda: Breath of the Wild* (proportions réalistes stylisées, ombrage cel doux, couleurs
-naturelles, grands paysages) ; détail dans docs/ASSETS_3D.md.
+Jeu d'action-aventure en HD-2D dans Godot 4.7.2 (GDScript typé, export Web) : Chtholly et son
+épée contre des vagues de Timeres, un village, des PNJ et des quêtes. Direction artistique : HD-2D
+à la manière d'*Octopath Traveler* (sprites dans un décor en relief fait d'images, caméra fixe
+inclinée, flou de profondeur, lumière chaude) ; détail dans docs/ASSETS_HD2D.md.
 Le plan complet est dans PLAN.md. Ses contrats d'interface (section 3 : signaux, API, ressources,
 couches de collision) font foi : on code contre eux, on ne les change pas sans PR « contrats ».
 
@@ -1199,6 +1264,10 @@ Activer GitHub Pages (Settings → Pages → Source : GitHub Actions) avant le p
 
 ## 12. Prompts de lancement
 
+> **(HD-2D)** Le prompt du Lot 0 est celui de la phase 3D, gardé pour l'histoire. Pour un lot H,
+> le modèle « lot N » ci-dessous s'applique avec la section 7, « Lots HD-2D, la suite » (exemple
+> rempli : Lot H2).
+
 **Deux prompts suffisent : un pour la session Lot 0, un modèle pour chaque lot suivant.** Avant la première session : dépôt `Yume-WordEnd` créé avec les fichiers de la section 11 et `PLAN.md`, Git LFS activé, GitHub Pages sur « GitHub Actions », environnement cloud `wordend-godot` configuré (section 6).
 
 ### Session 1 — Lot 0 (socle)
@@ -1271,6 +1340,18 @@ charge relâchée à 0,4 s = rien ; onde touche 3 mannequins alignés ; stoic = 
 Démo : tests/integration/demo_l4.tscn avec un joueur stub et 3 mannequins (Health + Hurtbox).
 ```
 
+### Exemple rempli — Lot H2 (décor de l'entrepôt)
+
+```text
+… tu es le Lot H2 — Décor de l'entrepôt. Branche feat/h2-entrepot.
+Lis docs/ASSETS_HD2D.md (règles d'échelle, façades) et docs/lore/MONDE.md section 2 (le village).
+Tu ne modifies que src/world/zones/village/, les décors du village listés en section 7 et
+src/items/placements/village.tscn. Un décor = DecorPanel ou Building (section 3), sa collision
+dans l'enfant Collision ; jamais de maillage modélisé. Les PNJ ne bougent pas.
+À chaque étape : tools/hd2d_shots.sh village dialogue, ouvre les PNG, compare à l'avant.
+Tests : test_hd2d_decor.gd, test_world_story_spots.gd, test_m2_quest.gd verts ; draw calls ≤ 200.
+```
+
 ### Conseils d'orchestration
 
 - Lance les sessions de la vague 1 le même jour depuis `main` fraîchement fusionné avec L0, pour que toutes partent du même socle.
@@ -1288,7 +1369,8 @@ Démo : tests/integration/demo_l4.tscn avec un joueur stub et 3 mannequins (Heal
 | Godot indisponible dans la VM cloud (chemins de l'image docker changés, `docker cp` refusé) | Les sessions ne peuvent rien vérifier | Wrapper `tools/godot` qui bascule sur `docker run` ; repli : publier le binaire Linux et les templates comme asset d'une release du dépôt `Yume-WordEnd` (le proxy GitHub les sert pour un dépôt attaché) |
 | Performances Web avec 12 Timeres et des billboards animés | Saccades sur mobile | `AnimatedSprite3D` est peu coûteux ; limiter les lumières à une directionnelle, pas d'ombres temps réel sur mobile, budget draw calls dans la CI |
 | Export Web mono-thread et physique | Pics de temps de frame sur les gros groupes | Jolt est le moteur physique par défaut depuis 4.6 ; capsules simples, pas de `SoftBody`, séparation des ennemis par calcul léger |
-| Mélange sprites 2D / décor 3D jugé incohérent | Direction artistique floue | Direction fixée : au minimum proche de *Breath of the Wild* ; personnages en modèles 3D selon `docs/ASSETS_3D.md` (même interface `CharacterVisual`) ; les planches 2D de l'easter egg restent un skin et un format de secours |
+| Mélange sprites 2D / décor 3D jugé incohérent | Direction artistique floue | (HD-2D) Tout est image à 96 px par mètre, comme les planches : personnages et décor partagent l'échelle, le pixel art et la lumière ; cahier des charges unique `docs/ASSETS_HD2D.md` |
+| Images livrées incohérentes entre elles (échelle, lumière, style) | Décor disparate | Bloc de style commun à coller avant chaque consigne, tailles exactes vérifiées par `tools/hd2d_assets.py check` et `test_hd2d_assets.gd`, ordre de commande par priorité ; les remplaçants restent tant qu'une image ne convient pas |
 | Propriété intellectuelle (Chtholly, Seniorious, Timere) | Retrait demandé, image de la communauté | Décision avant M4 (ci-dessous) ; architecture qui permet de changer les héros par des données |
 | Musique `Scarborough Fair` : enregistrement sans licence claire | Idem | Vérifier l'origine du MP3 ; sinon version libre (Musopen, ccMixter) ou composition originale |
 | Compatibilité GUT / gdtoolkit avec 4.7.2 | CI bloquée | Lot 0 fige les versions qui marchent ; repli sur 4.6.3 si une dépendance manque |
@@ -1301,7 +1383,8 @@ Démo : tests/integration/demo_l4.tscn avec un joueur stub et 3 mannequins (Heal
 - [ ] **Licence du code** : MIT proposé ; les assets sous licence séparée.
 - [ ] **Héros** : rester sur Chtholly en hommage non commercial crédité, ou créer des personnages originaux de la communauté pour le jeu public (Timere peut rester le clin d'œil). À trancher avant M4.
 - [ ] **Musique** : conserver l'enregistrement actuel ou le remplacer.
-- [x] **Caméra** : orbite libre + verrouillage de cible, à la manière de *Breath of the Wild* (retenue au Lot 1).
+- [x] **Caméra** : (HD-2D, 7 octobre 2026) fixe et inclinée à la manière d'*Octopath Traveler*, léger zoom, verrouillage de cible sans rotation ; l'orbite libre du Lot 1 est retirée.
+- [x] **Direction artistique** : (HD-2D, 7 octobre 2026) HD-2D à la manière d'*Octopath Traveler*, uniquement des images ; les modèles 3D sont abandonnés.
 - [ ] **Tactile** : contrôles de base à M2 (L9) ou report complet à M3.
 - [ ] **Sous-domaine** : `jeu.yumenovel.fr` ou page du site uniquement.
 

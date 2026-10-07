@@ -1,4 +1,4 @@
-# L'histoire et les quêtes de WordEnd 3D
+# L'histoire et les quêtes de WordEnd
 
 Document de direction narrative (phase B de `docs/lore/PLAN.md`) : arc principal, quêtes,
 personnages, objets, ennemis, guide de ton et développements nécessaires. Le cadre, la carte et les
@@ -440,7 +440,7 @@ Seuls changent les noms affichés (section 7.2).
 - Chute : « Tes ailes se sont ouvertes : te revoilà au bord. » ; défaite : « Les autres t'ont ramenée
   à l'entrepôt. »
 - Menu : sous les vignettes, « Ta fée prend la place de Chtholly dans l'histoire. »
-- Crédits, `README.md`, `PLAN.md`, `docs/ASSETS_3D.md`, `tools/gen_branding.py` : Seniorious et
+- Crédits, `README.md`, `PLAN.md`, cahiers d'assets, `tools/gen_branding.py` : Seniorious et
   Timere ; dans les crédits, le titre de la traduction française (*Que faites-vous à la fin du
   monde ? Êtes-vous occupés ? Voulez-vous bien nous sauver ?*, Yume Novel). Tests à adapter : la
   chaîne « Seniolis » de `tests/unit/test_dialogue_data.gd` et `tests/unit/test_credits.gd`, et les
@@ -538,9 +538,10 @@ Partie A, jouée en Nephren (SPOILER V4) ; partie B, jouée par la relève : le 
 
 ### 5.1 PNJ du canon
 
-Apparences : modèles 3D réalisés selon `docs/ASSETS_3D.md` (proportions réalistes stylisées,
-direction artistique au minimum proche de *Breath of the Wild* ; section 4 pour chaque
-personnage) ; en attendant, des planches de remplacement au format de l'easter egg. Références dans
+Apparences : planches 2D au format de l'easter egg (JSON des ancres, `coup`, `onde`), en pixel
+art HD-2D à la manière d'*Octopath Traveler*, à 96 px par mètre (`docs/ASSETS_HD2D.md`, section 3 :
+animations, tailles et consigne de chaque personnage, portraits 256 × 256) ; en attendant, des
+planches de remplacement au même format. Références dans
 les fiches (`vol<N>.md`, section 4 « Personnages » et section 11 « Illustrations de référence »), à
 interpréter, jamais à décalquer. Visuels dans `data/npcs/visuals/<id>.tres` (non jouables).
 
@@ -557,7 +558,7 @@ interpréter, jamais à décalquer. Visuels dans `data/npcs/visuals/<id>.tres` (
 | `collon` | Collon | petite fée intenable | village | longs cheveux roses, bandeau rouge, une canine qui dépasse, tunique lacée (vol2.md) | franche, bruyante, jeux de mots |
 | `lakhesh` | Lakhesh | petite fée polie ; aide à la cuisine | village | cheveux pêche à petite couette sur le côté, gilet brun clouté (vol2.md, image4 ; volEX.md, image8) | polie, s'excuse sans cesse |
 | `almita` | Almita | toute petite fée | village | minuscule (≈ 0,95 m), cheveux crépus jaune citron (vol3.md) | trois mots |
-| `limeskin` | Limeskin | commandant de la Garde ailée ; vient sur le Barocupot | port | lézard géant aux écailles blanc laiteux (≈ 2,8 m, exception aux tailles d'`ASSETS_3D.md`), tête draconique cornue, tresse à plumes, collier tribal, uniforme d'officier (vol1.md ; vol2.md) | vouvoie, sifflantes, images de guerrier |
+| `limeskin` | Limeskin | commandant de la Garde ailée ; vient sur le Barocupot | port | lézard géant aux écailles blanc laiteux (≈ 2,8 m : 269 px de haut sur sa planche), tête draconique cornue, tresse à plumes, collier tribal, uniforme d'officier (vol1.md ; vol2.md) | vouvoie, sifflantes, images de guerrier |
 | `cat_waiter` | le serveur du café | café La Clochette ; la crème | port | homme-chat en tablier, canines visibles (volEX.md) | aimable, « mesdemoiselles » |
 | `ramikeldi` | M. Rami (Ramikeldi Limashenka) | revenu au pays ; l'horloge | port | homme-chat d'âge mûr, chemise blanche, gilet rouge foncé, chapeau, yeux ambrés (volEX.md) | courtois, vouvoie |
 | `snack_vendor` | le jeune lycanthrope du snack | frites, lard épais, petit pain, soupe | port | jeune lycanthrope à tête de chien, tablier taché (vol1.md) | jovial, bavard, un peu inquiet de l'entrepôt |
@@ -681,7 +682,7 @@ débloque en réglant l'épée, pas des objets : ils font partie de Seniorious.
 - **Apparence** : une masse vert sombre, amorphe, dont les tentacules deviennent des pattes de
   crustacé épineuses, avec griffes et crocs (V3) ; des formes de plante, masse de lianes, géant de
   lierre noir (V2). La silhouette de la planche de l'easter egg (vert sombre, long cou terminé par
-  une gueule dentée, six pattes) reste la base du modèle 3D (`docs/ASSETS_3D.md`, section 5), traité
+  une gueule dentée, six pattes) reste la base de sa planche (`docs/ASSETS_HD2D.md`, section 3.3), traitée
   dans la même direction artistique que le reste du jeu ; éviter qu'elle ressemble à un animal réel.
   Le volume 1 ne la décrit jamais : à l'acte 1, les dialogues disent « rejeton » et « fragment »,
   sans décrire.
@@ -699,8 +700,8 @@ les volumes 2 et 3 n'arrivent qu'avec leurs actes :
 | `timere_runner` | Timere bondissant | nom descriptif (le même que dans la bible) | une moitié devient ressort et l'autre bondit (V3, « L'horloge en lambeaux et désuète ») | charge en ligne droite |
 | `timere_big` | Grand fragment de Timere | plus un fragment est gros, plus il est dangereux (V1) | masse à lianes, carapace (V2, « Chasseur d'âmes — A ») | fouet long, ne recule que sous l'onde |
 
-Variantes visuelles pour les actes 2 et 3 : pattes en ressort, lianes, carapace (matériau ou
-maillage à part dans le même modèle, même squelette). La veille garde ses vagues et ses points ;
+Variantes visuelles pour les actes 2 et 3 : pattes en ressort, lianes, carapace (une planche de
+plus au même format, mêmes animations). La veille garde ses vagues et ses points ;
 dans les bois, les rejetons ne lâchent plus d'objets.
 
 ### 7.3 Ennemis des actes suivants
