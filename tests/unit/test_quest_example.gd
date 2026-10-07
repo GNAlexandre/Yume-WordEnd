@@ -10,11 +10,11 @@ const QUEST := &"example_patrol"
 
 
 func test_patrol_from_offer_to_reward() -> void:
-	# Verrouillée tant que la quête des pages n'est pas terminée (requires.quests).
+	# Verrouillée tant que le livre d’images n’est pas terminé (requires.quests).
 	assert_eq(QuestData.state_of(QUEST), &"", "verrouillée")
 	assert_eq(QuestData.npc_marker(&"blacksmith"), &"", "pas de « ! » au-dessus du forgeron")
-	complete_quest(&"pages")
-	assert_eq(QuestData.state_of(QUEST), &"available", "disponible après les pages")
+	complete_quest(&"picture_book")
+	assert_eq(QuestData.state_of(QUEST), &"available", "disponible après le livre d’images")
 	assert_eq(QuestData.npc_marker(&"blacksmith"), QuestData.MARKER_AVAILABLE, "« ! »")
 
 	# Le forgeron la propose (nœud « offer ») ; on accepte (choix 0), puis « go ».
@@ -47,7 +47,7 @@ func test_patrol_from_offer_to_reward() -> void:
 	said = talk(BLACKSMITH, [-1, -1])
 	assert_string_contains(said[0], "Deux de moins")
 	assert_eq(GameState.quest_state(QUEST), &"done", "quête terminée")
-	assert_eq(GameState.count(&"shell"), 2, "récompense : deux coquillages")
+	assert_eq(GameState.count(&"flower_blue"), 2, "récompense : deux myosotis")
 	assert_true(GameState.has_flag(&"forest_patrol_done"), "récompense : drapeau")
 	assert_eq(QuestData.npc_marker(&"blacksmith"), &"")
 
@@ -57,7 +57,7 @@ func test_patrol_from_offer_to_reward() -> void:
 
 
 func test_patrol_can_be_refused_then_accepted() -> void:
-	complete_quest(&"pages")
+	complete_quest(&"picture_book")
 	talk(BLACKSMITH, [1])
 	assert_eq(GameState.quest_state(QUEST), &"", "« Pas maintenant » : rien ne change")
 	assert_eq(QuestData.state_of(QUEST), &"available", "toujours proposée")
@@ -67,7 +67,7 @@ func test_patrol_can_be_refused_then_accepted() -> void:
 
 func test_report_at_the_end_of_any_conversation() -> void:
 	# Une étape talk se valide aussi à la fin d'un dialogue sans advance_quest.
-	complete_quest(&"pages")
+	complete_quest(&"picture_book")
 	start_quest(QUEST)
 	enter_trigger(&"forest_clearing")
 	enter_zone(&"forest")

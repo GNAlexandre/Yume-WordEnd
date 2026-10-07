@@ -6,7 +6,7 @@
   "giver": "blacksmith",
   "requires": {
     "quests": [
-      "pages"
+      "picture_book"
     ]
   },
   "steps": [
@@ -34,7 +34,7 @@
   ],
   "rewards": {
     "items": {
-      "shell": 2
+      "flower_blue": 2
     },
     "flags": [
       "forest_patrol_done"
