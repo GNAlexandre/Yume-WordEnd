@@ -1186,8 +1186,9 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   par couleur (proche de `glow_color`) dans `panel.gdshader`, pas par une seconde image.
 - **Socle HD-2D — fusion des draw calls** : `PropBatcher` (déjà dans `Geometry`) fond au
   lancement les MeshInstance3D qui portent un `material_override` en un mesh par image et par
-  case (« Batch… ») ; mesure : 27 à 50 draw calls selon la vue (menu 38, entrepôt 43 à 50, bois
-  45, Couchant 27, port 36, colline 49, conversation 46, veille 40), budget 200.
+  case (« Batch… ») ; mesure (`tools/hd2d_shots.sh`) : 32 à 70 draw calls selon la vue (menu
+  38, cour de l'entrepôt 50, entrepôt de face au zoom le plus large 70, bois 51, Couchant 32,
+  port 39, colline 50, conversation 53, veille 44), budget 200 ; 43 à 67 dans le navigateur.
 - **Socle HD-2D — sol** : les douze tuiles (384 × 384, 4 m) sont réunies dans un atlas
   (`ground_atlas.png`, 4 × 3) plutôt qu'un Texture2DArray (`sampler2DArray` est fragile en
   Compatibility / WebGL 2 et son import n'a pas d'équivalent texte simple) ; le shader tire une

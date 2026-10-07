@@ -863,9 +863,9 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 | Draw calls en vue village | < 150 ((HD-2D) mesuré : 50) | < 200 |
 | Triangles affichés | < 150 000 ((HD-2D) mesuré : 17 000) | < 400 000 |
 
-(HD-2D) Mesures du 7 octobre 2026 (`tools/hd2d_shots.sh`, rendu natif) : 27 à 53 draw calls selon
-la zone, une conversation ou une veille ; export 12,4 Mo compressés (18,4 avant la purge des
-modèles 3D). `tools/check.sh` échoue au-delà de 25 Mo compressés.
+(HD-2D) Mesures du 7 octobre 2026 (`tools/hd2d_shots.sh`, rendu natif) : 32 à 70 draw calls selon
+la zone, une conversation ou une veille (43 à 67 dans le navigateur, au Spawn de chaque zone) ;
+export 12,4 Mo compressés (18,4 avant la purge des modèles 3D). `tools/check.sh` échoue au-delà de 25 Mo compressés.
 
 ### Hygiène du dépôt
 
