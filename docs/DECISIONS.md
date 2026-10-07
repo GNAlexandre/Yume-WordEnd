@@ -1111,3 +1111,11 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   Tiat. La cloche de veille (`arena.tscn`, `Panel/Bell`) est la seule chose visible au départ
   des veilles depuis la fusion du monde ; la planche facultative (`Label`) reste lue par
   `arena_panel.gd` pour les arènes qui en auraient une.
+- **Intégration acte 1 — quêtes secondaires dans la vraie partie**
+  (`tests/integration/test_act1_side_quests.gd`) : les six quêtes jouées l'une après l'autre
+  dans `main.tscn`, avec les vrais PNJ (présents, abordés de face, E) et les vrais objets de
+  l'île (ramassés en marchant dessus) ; les répliques passent par `dialogue_choice_made` (les
+  appuis qui les lisent sont prouvés par `test_m2_quest.gd`) ; le drapeau `first_vigil_done` est
+  posé par le test (la première veille est jouée par `test_m2_quest.gd`). Garantie de plus,
+  sans scène : `test_act1_items_in_world.gd` (chaque étape collect trouve assez d'objets dans
+  l'île ou chez un PNJ, et les quêtes n'en prennent jamais plus qu'il n'y en a).
