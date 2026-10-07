@@ -906,3 +906,41 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   exporté, par `ResourceLoader.list_directory`), marqueur caché pendant son dialogue, quête
   acceptée, page rechargée puis « Continuer » : quête en cours et position reprises (sauvegarde v2
   dans IndexedDB) ; console sans erreur (seuls avertissements, ceux du pilote logiciel).
+- **Systèmes et textes — présence des PNJ** : `visible_if` vit dans `NpcData` (pas sur le nœud
+  `Npc`) ; un même personnage à plusieurs endroits = une `NpcData` par emplacement (`willem`,
+  `willem_training`, `willem_stars`), chacune avec sa condition. Pour l'exprimer, la grammaire des
+  dialogues gagne `quest_step` à liste d'étapes et `not_quest_step` (même évaluateur pour les
+  deux usages). Absent : caché et `process_mode` DISABLED (corps et `InteractArea` retirés de la
+  physique) plutôt que des couches à zéro ; réévaluation en fin d'image, jamais pendant la
+  conversation du PNJ. Skin du joueur : comparaison des `SkinData.id`, skin effectif comme le
+  joueur (`GameState.skin_id`, sinon le skin par défaut).
+- **Systèmes et textes — orateur** : `event_bus.gd` est figé, `dialogue_line` ne porte pas
+  l'orateur ; la boîte de dialogue lit `DialogueRunner.current_speaker_id()` (fixé avant chaque
+  ligne). `speaker_id` inconnu : avertissement et repli sur le PNJ du dialogue ; parler par la
+  voix d'un autre ne valide pas d'étape `talk` vers lui. `DialogueRunner.find_npc` cherche
+  `data/npcs` puis les dossiers ajoutés par `add_npc_dir` (tests).
+- **Systèmes et textes — `{player}`** : remplacé en dernier par `format_text` (après `{count:…}`,
+  `{left:…}`, `{best:…}`), aussi dans `speaker` ; « Chtholly » si aucun skin n'est chargé.
+  Le HUD et le journal passent titres, résumés, objectifs et aides par `format_text`.
+- **Systèmes et textes — journal** : `src/ui/journal.gd` est hors du périmètre du lot ; le
+  journal du HUD reçoit le script `src/ui/hud_journal.gd` (sous-classe, posé sur `HUD/Journal`
+  dans `hud.tscn`) qui remplace les variables après chaque `_show_details`. À replier dans
+  `journal.gd` quand ce fichier sera repris.
+- **Systèmes et textes — textes de l'histoire** : un seul fichier, `data/texts/story.json`, lu
+  par `DialogueRunner.story_text` (le moteur de textes) : clés imbriquées, commentaires `_…`,
+  arènes par `arena_id` avec repli sur `default` ; seule l'invite du panneau garde un texte de
+  secours dans le code (sans invite, la série ne pourrait plus commencer). Typographie des
+  dialogues (apostrophe ’, espace insécable) ; le menu garde l'apostrophe droite de ses textes.
+- **Systèmes et textes — chute et défaite** : `WorldManager.rescued(zone_id)` (signal de
+  l'autoload, comme `SaveManager.saved` ; l'EventBus est figé) ; le HUD fait le fondu au blanc
+  (`FallFlash`) et le message (`StoryMessage`, bas de l'écran, en fondu). Défaite : « Retour à
+  l'entrepôt… » pendant le fondu au noir, « Les autres t'ont ramenée à l'entrepôt. » à
+  `player_respawned` ; le message reste figé derrière l'écran de fin d'arène (pause).
+- **Systèmes et textes — corps de Timere** : `drops = {}` dans les quatre `.tres` ; le mécanisme
+  (`EnemyData.drops`, `Enemy.drops_enabled`) reste et se teste sur une copie des données.
+- **Systèmes et textes — tests hors liste** : changer une invite, un nom ou les drops casse des
+  tests qui les figeaient ; mis à jour d'une ligne (aucun n'appartient aux deux autres agents) :
+  `test_arena.gd`, `test_m1_arena.gd`, `test_m1_shortcuts.gd` (invite), `test_quest_example.gd`,
+  `test_quest_data.gd` (noms), `test_enemy.gd`, `tests/integration/test_q_quest.gd` (drops : la
+  démo ramasse deux pages posées), et le script du navigateur `tools/web_m1.js` (invite). `tests/integration/test_m2_quest.gd` (contenu de l'acte 1) n'est
+  pas touché : il joue encore les pages lâchées.

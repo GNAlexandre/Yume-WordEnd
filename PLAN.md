@@ -4,7 +4,7 @@ Oct 5, 2026 · @Alexandre
 
 ## 1. Vision et périmètre
 
-WordEnd passe d'un easter egg 2D (Chtholly et son épée Seniolis contre des vagues de Timeres) à un **action-aventure 3D en monde ouvert, centré sur le combat comme un Zelda, dans un style graphique chibi et coloré proche d'Animal Crossing**, jouable dans une page de yumenovel.fr et développé dans Godot 4 par des sessions Claude Code cloud en parallèle. Le combat à l'épée et la charge magique de l'easter egg restent le cœur du jeu ; le village, les PNJ et la collecte sont la respiration entre deux zones hostiles.
+WordEnd passe d'un easter egg 2D (Chtholly et son épée Seniorious contre des vagues de Timeres) à un **action-aventure 3D en monde ouvert, centré sur le combat comme un Zelda, dans un style graphique chibi et coloré proche d'Animal Crossing**, jouable dans une page de yumenovel.fr et développé dans Godot 4 par des sessions Claude Code cloud en parallèle. Le combat à l'épée et la charge magique de l'easter egg restent le cœur du jeu ; le village, les PNJ et la collecte sont la respiration entre deux zones hostiles.
 
 **Nom de travail** : WordEnd 3D. Dépôt conseillé : `Yume-WordEnd` (séparé de Yume-WordPress et Yume-Trad), licence MIT pour le code, assets sous licence propre (voir section 5).
 
@@ -20,7 +20,7 @@ WordEnd passe d'un easter egg 2D (Chtholly et son épée Seniolis contre des vag
 ### Ce qui rend le jeu évolutif
 
 - Le monde est découpé en **zones** chargées depuis des scènes séparées : ajouter une zone, une arène ou un donjon = ajouter un dossier, sans toucher au reste.
-- Ennemis, attaques, vagues, PNJ, objets, dialogues et quêtes sont des **données** (`.tres` et JSON), pas du code : un agent ou un contributeur ajoute un type de Timere ou une vague sans modifier les systèmes.
+- Ennemis, attaques, vagues, PNJ, objets, dialogues et quêtes sont des **données** (`.tres` et JSON), pas du code : un agent ou un contributeur ajoute un corps de Timere, un ennemi ou une vague sans modifier les systèmes.
 - Les skins sont une **liste de ressources** : un nouveau dessin = une entrée de plus, avec les mêmes animations que la planche de Chtholly (repos, marche, course, attaque, charge, dégâts, mort).
 - À partir de M4, des contenus se débloquent selon l'actualité de la communauté (parution d'un tome, événement), via l'API REST de WordPress.
 
@@ -120,7 +120,9 @@ Yume-WordEnd/
 │   ├── npcs/*.tres
 │   ├── quests/*.json          # (Lot Q) quêtes en étapes, format : docs/QUETES.md
 │   ├── skins/*.tres
-│   └── dialogues/*.json
+│   ├── dialogues/*.json
+│   └── texts/story.json       # (Systèmes et textes) textes de l'histoire hors dialogues :
+│                              # arène, chute, défaite (DialogueRunner.story_text)
 ├── assets/
 │   ├── CREDITS.md             # assets tiers (URL, licence)
 │   ├── characters/CREDITS.md  # dessins des membres (auteur, accord)
@@ -292,6 +294,8 @@ func current_zone() -> StringName
 func zone_display_name(zone_id: StringName) -> String   # (L0) Zone.display_name, pour le HUD
 func is_zone_safe(zone_id: StringName) -> bool   # (M1) Zone.safe de la zone (faux si inconnue) ; IA des Timeres
 var respawn_delay: float = 2.2            # (L0) délai entre player_died et respawn()
+signal rescued(zone_id: StringName)       # (Systèmes et textes) rescue() a rattrapé le joueur au Spawn de
+                                          # zone_id → HUD : fondu au blanc et « Tes ailes se sont ouvertes… »
 
 # Interactable — tout nœud du groupe "interactable" implémente :
 func get_prompt() -> String            # "Parler", "Ramasser"
@@ -314,6 +318,9 @@ signal animation_finished(anim: StringName)
 class_name ItemData   : id, display_name, icon, stackable, max_stack, description
 class_name SkinData   : id, display_name, sprite_sheet, frames_json: JSON, mesh_scene, portrait, height_m
 class_name NpcData    : id, display_name, skin, dialogue_path, quest_id, home_zone
+                        # (Systèmes et textes) visible_if: Dictionary (présence, même grammaire que les « if »
+                        # de dialogue) ; is_present() (faux aussi si skin = celui du joueur), is_player_skin(),
+                        # visible_if_problem()
 class_name QuestData  : id, title, giver_npc, required_items: Dictionary[StringName, int], required_flags: Array[StringName],
                         reward_items: Dictionary[StringName, int]
                         # (L7) objective, reward_max_hp ; (Lot Q) lue dans data/quests/<id>.json : summary, main, auto_start,
@@ -328,8 +335,16 @@ class_name QuestStep  : (Lot Q) id, type (talk|reach|kill|collect|arena|flag), o
 class_name Zone            # racine d'une zone : @export display_name: String, @export safe: bool ; func zone_id() -> StringName
 class_name Player          # player.gd (L1)
 class_name Pickup          # @export item_id: StringName, quantity: int, persistent: bool ; func collect(), pickup_id()
-class_name Npc             # @export data: NpcData
+class_name Npc             # @export data: NpcData ; (Systèmes et textes) is_present(), refresh_presence() :
+                           # absent = caché, process_mode DISABLED (ni collision ni InteractArea), sans invite,
+                           # dialogue ni marqueur ; réévalué en fin d'image sur les signaux de quête, drapeaux,
+                           # inventaire, game_loaded, skin_changed, arena_finished (après le dialogue en cours)
 class_name DialogueRunner  # start(npc: NpcData), stop(), is_running() ; un par PNJ
+                           # (Systèmes et textes) statiques : current_speaker_id() (speaker_id du nœud ou PNJ
+                           # du dialogue, fixé avant dialogue_line), find_npc(id), add_npc_dir / remove_npc_dir,
+                           # format_text() ({player}, {count:…}, {left:…}, {best:…}), player_name(), player_skin(),
+                           # evaluate(), condition_problem(), story_text(chemin), arena_text(arène, clé),
+                           # load_story_texts(), story_problem(), clear_story_cache()
 class_name QuestTracker    # Node unique de game.tscn (seul le 1er du groupe quest_tracker agit) ; (Lot Q) fait avancer les étapes
                            # par l'EventBus, récompenses, enchaînement (prérequis, auto_start), quête suivie ; à &"done" posé
                            # par un autre système (complete_quest) : étapes restantes validées si les objets des étapes collect
@@ -379,7 +394,7 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/enemies/placements/<zone_id>.tscn` | `Enemies` (Node3D) | ennemis libres de la zone (forêt : 4 Timeres) | — | L5 |
 | `src/items/placements/<zone_id>.tscn` | `Pickups` (Node3D) | objets uniques, nommés `<zone>_<objet>_<n>` (ex. `forest_page_1`) | — | L7 |
 | `src/ui/main_menu.tscn` + `.gd` | `MainMenu` (Control) | `%NewGameButton` | — | L10 |
-| `src/ui/hud.tscn`, `arena_end.tscn`, `credits.tscn` | `HUD`, `ArenaEnd`, `Credits` (Control) | `HUD/PauseMenu` (L10), (Lot Q) `HUD/Journal` (`src/ui/journal.tscn`, PROCESS_MODE_ALWAYS) | — | L10 |
+| `src/ui/hud.tscn`, `arena_end.tscn`, `credits.tscn` | `HUD`, `ArenaEnd`, `Credits` (Control) | `HUD/PauseMenu` (L10), (Lot Q) `HUD/Journal` (`src/ui/journal.tscn`, PROCESS_MODE_ALWAYS ; (Systèmes et textes) script `src/ui/hud_journal.gd`, qui étend journal.gd : textes de quête avec `{player}`) | — | L10 |
 | `src/ui/dialogue_box.tscn` | `DialogueBox` (Control) | — | — | L6 |
 | `src/ui/inventory.tscn` | `Inventory` (Control) | — | — | L7 |
 | `src/ui/loading.tscn`, `touch_controls.tscn` | `Loading`, `TouchControls` (Control) | `Loading` : `set_progress(ratio: float)` facultatif, appelé par main.gd ; (M2) `load_scene(path, budget_ms)` qui charge la partie en plusieurs images, utilisée par main.gd si présente | — | L9 |
@@ -442,17 +457,17 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 | Caméra | `src/player/camera_rig.tscn` (`SpringArm3D` + `Camera3D`) | 3e personne, orbite souris / stick droit, zoom 3 à 10 m, collision avec le décor, recentrage doux ; **verrouillage de cible** (clic molette / R3) sur l'ennemi le plus proche, façon Zelda : la caméra cadre joueur et cible, le joueur fait face à la cible |
 | Visuel | `src/visuals/character_visual.tscn` | `AnimatedSprite3D` billboard, 7 animations de la planche (`repos`, `marche`, `course`, `attaque`, `charge`, `degats`, `mort`), retournement gauche/droite selon la direction, ombre disque ; `frame_changed` et `animation_finished` |
 | Timeres | `src/enemies/enemy.tscn` + `data/enemies/timere_*.tres` | Machine à états : `idle` (errance) → `chase` (droit vers le joueur, séparation entre ennemis) → `attack` à portée (morsure/fouet, dégâts sur images `coup`) → `hurt` (recul 0,35 s, sauf Grand) → `dead` (animation 6 images, disparaît après 2,2 s, points). Coureur : `rush` en ligne droite dès 8 m |
-| Arène des dunes | `src/world/zones/dunes/dunes.tscn` + `src/enemies/arena.tscn` | Zone ouest, coucher de soleil (ciel inspiré de `decor.webp`), 4 points d'apparition, `WaveDirector` lisant `data/waves/dunes.json` ; un panneau `Interactable` « Affronter les Timeres » lance les vagues et la musique ; sortir de l'arène entre deux vagues met fin à la série et enregistre le score |
-| Forêt | `src/world/zones/forest/` | 4 Timeres (2 petits, 1 normal, 1 coureur) en libre, sans vagues ; réapparaissent au rechargement de la zone ; fragments de page gardés par eux |
+| Arène des dunes | `src/world/zones/dunes/dunes.tscn` + `src/enemies/arena.tscn` | Zone ouest, coucher de soleil (ciel inspiré de `decor.webp`), 4 points d'apparition, `WaveDirector` lisant `data/waves/dunes.json` ; un panneau `Interactable` lance les vagues et la musique (invite « Sonner la cloche de veille », titre de fin « Fin de la veille » : `data/texts/story.json`) ; sortir de l'arène entre deux vagues met fin à la série et enregistre le score |
+| Forêt | `src/world/zones/forest/` | 4 Timeres (2 petits, 1 normal, 1 coureur) en libre, sans vagues ; réapparaissent au rechargement de la zone ; (Systèmes et textes) noms de l'acte 1 (rejeton, fragment, Timere bondissant, grand fragment) et aucun drop : Timere ignore les objets (V3) |
 | Île | `src/world/island.tscn` | Greybox 160 × 160 m en CSG puis mesh : village (centre), dunes (ouest), forêt (nord), plage (sud), colline (est) ; `WorldEnvironment`, `DirectionalLight3D`, eau = plan avec shader simple ; murs invisibles et zone de rattrapage sous l'eau |
 | Zones | `src/world/zones/*` | Chaque zone = scène fille avec `Area3D` qui émet `zone_entered` ; `WorldManager` charge toutes les zones au départ en M2 (streaming en M3) ; le village est une zone `safe` où aucun ennemi n'entre |
 | PNJ | `src/npc/npc.tscn` | 3 PNJ dans le village (bibliothécaire, forgeron, enfant), visuels partagés avec les skins ; regardent le joueur à moins de 4 m ; `interact()` lance `DialogueRunner` |
-| Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | Boîte en bas d'écran, portrait, texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête |
-| Objets | `src/items/pickup.tscn` | Objet flottant, ramassage par `interact()` ou contact ; émet `item_collected` ; les Timeres de la forêt lâchent un fragment à leur mort |
+| Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | Boîte en bas d'écran, portrait (celui de l'orateur du nœud, `speaker_id`), texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête ; `{player}` : nom du skin choisi |
+| Objets | `src/items/pickup.tscn` | Objet flottant, ramassage par `interact()` ou contact ; émet `item_collected` ; les drops des ennemis restent possibles (`EnemyData.drops`), mais les corps de Timere n'en ont aucun |
 | Quête | `src/quests/quest_tracker.gd` | « Les Timeres ont emporté cinq pages du dernier tome dans la forêt : rapporte-les à la bibliothécaire » ; récompense : marque-page qui augmente les PV max à 6. (Lot Q) Quêtes en étapes écrites en JSON (`data/quests/`), journal de quêtes, marqueurs « ! » / « ? » : docs/QUETES.md |
 | HUD | `src/ui/hud.tscn` | Cœurs, jauge de charge, numéro de vague et score dans l'arène, nom de la zone à l'entrée, invite d'interaction, objectif de quête |
 | Inventaire | `src/ui/inventory.tscn` | Grille d'icônes, touche I / bouton Y, quantité, description |
-| Menu | `src/ui/main_menu.tscn` | Choix du skin (vignettes), Nouvelle partie / Continuer, crédits ; écran « Cliquer pour jouer » avant tout son |
+| Menu | `src/ui/main_menu.tscn` | Choix du skin (vignettes, « Ta fée prend la place de Chtholly dans l'histoire. »), Nouvelle partie / Continuer, crédits ; écran « Cliquer pour jouer » avant tout son |
 | Sauvegarde | `SaveManager` | Auto-sauvegarde à `arena_finished`, `item_collected`, `quest_updated`, `zone_entered` ; chargement au menu (pas de sauvegarde « à la fermeture » : le navigateur ne la garantit pas) ; (M2) position écrite toutes les 5 s de jeu si le joueur a bougé, et au départ (focus perdu, page masquée) quand l'état a changé |
 
 ### Format des vagues (JSON, `data/waves/dunes.json`)
@@ -513,7 +528,7 @@ Les vagues listées sont jouées telles quelles ; au-delà, `generator` produit 
 }
 ```
 
-`DialogueRunner` choisit le premier nœud dont la condition `if` est vraie parmi `["done", start]`. Les conditions acceptées : `flag`, `not_flag`, `count` (objet, minimum), `quest` (id, état), `best_score` (arène, minimum). (Lot Q) En plus : condition `quest_step` (quête, étape), état `available` calculé par les prérequis, effets `advance_quest`, `give_item`, `take_item`, `clear_flag`, clés vérifiées à la lecture ; liste complète et ordre d'évaluation : docs/QUETES.md.
+`DialogueRunner` choisit le premier nœud dont la condition `if` est vraie parmi `["done", start]`. Les conditions acceptées : `flag`, `not_flag`, `count` (objet, minimum), `quest` (id, état), `best_score` (arène, minimum). (Lot Q) En plus : condition `quest_step` (quête, étape), état `available` calculé par les prérequis, effets `advance_quest`, `give_item`, `take_item`, `clear_flag`, clés vérifiées à la lecture ; liste complète et ordre d'évaluation : docs/QUETES.md. (Systèmes et textes) Clé de nœud `speaker_id` (portrait et nom par défaut d'un autre PNJ : scènes à plusieurs voix), jeton `{player}` (nom affiché du skin choisi) dans les répliques, les choix et `speaker`, conditions `quest_step` / `not_quest_step` avec une liste d'étapes ; la même grammaire décide de la présence des PNJ (`NpcData.visible_if`).
 
 ### Sauvegarde (JSON, `user://save_v1.json`)
 
@@ -596,7 +611,7 @@ Un skin de joueur doit fournir ces 7 animations ; un ennemi fournit `repos`, `ma
 
 - Dessins des membres : accord écrit de chaque auteur conservé dans `assets/characters/CREDITS.md` (nom, œuvre, licence accordée au projet, par exemple CC BY-NC 4.0). Les planches générées (Gemini) sont notées comme telles.
 - Tiers : uniquement CC0 (Kenney, Poly Haven, Quaternius) listés dans `assets/CREDITS.md` avec URL et licence ; `Scarborough Fair` est un air traditionnel, mais l'enregistrement utilisé doit avoir sa licence notée.
-- **Point juridique** : Chtholly, Seniolis et les Timeres sont des éléments de SukaSuka. Un easter egg discret et un jeu mis en avant sur le site ne portent pas le même risque ; décision à prendre avant M4 (section 13) : rester un hommage non commercial clairement crédité, ou basculer les héros vers des personnages originaux des membres en gardant les Timeres comme clin d'œil.
+- **Point juridique** : Chtholly, Seniorious et Timere sont des éléments de SukaSuka. Un easter egg discret et un jeu mis en avant sur le site ne portent pas le même risque ; décision à prendre avant M4 (section 13) : rester un hommage non commercial clairement crédité, ou basculer les héros vers des personnages originaux des membres en gardant Timere comme clin d'œil.
 
 ### Budgets par asset
 
@@ -1269,7 +1284,7 @@ Démo : tests/integration/demo_l4.tscn avec un joueur stub et 3 mannequins (Heal
 | Performances Web avec 12 Timeres et des billboards animés | Saccades sur mobile | `AnimatedSprite3D` est peu coûteux ; limiter les lumières à une directionnelle, pas d'ombres temps réel sur mobile, budget draw calls dans la CI |
 | Export Web mono-thread et physique | Pics de temps de frame sur les gros groupes | Jolt est le moteur physique par défaut depuis 4.6 ; capsules simples, pas de `SoftBody`, séparation des ennemis par calcul léger |
 | Mélange sprites 2D / décor 3D jugé incohérent | Direction artistique floue | Assumer le style « billboards sur décor low-poly » (lisible, économique, cohérent avec l'easter egg) ; passage VRM à M5 seulement si l'usage le justifie |
-| Propriété intellectuelle (Chtholly, Seniolis, Timeres) | Retrait demandé, image de la communauté | Décision avant M4 (ci-dessous) ; architecture qui permet de changer les héros par des données |
+| Propriété intellectuelle (Chtholly, Seniorious, Timere) | Retrait demandé, image de la communauté | Décision avant M4 (ci-dessous) ; architecture qui permet de changer les héros par des données |
 | Musique `Scarborough Fair` : enregistrement sans licence claire | Idem | Vérifier l'origine du MP3 ; sinon version libre (Musopen, ccMixter) ou composition originale |
 | Compatibilité GUT / gdtoolkit avec 4.7.2 | CI bloquée | Lot 0 fige les versions qui marchent ; repli sur 4.6.3 si une dépendance manque |
 | Conflits Git entre lots | Temps perdu en rebases | Propriété exclusive des dossiers, fichiers de contrat gelés, PR courtes, fusion au fil de l'eau |
@@ -1279,7 +1294,7 @@ Démo : tests/integration/demo_l4.tscn avec un joueur stub et 3 mannequins (Heal
 
 - [ ] **Nom et visibilité du dépôt** : `Yume-WordEnd`, public (GitHub Pages gratuit, CI illimitée) ou privé (Pages et minutes CI sous conditions du plan GitHub).
 - [ ] **Licence du code** : MIT proposé ; les assets sous licence séparée.
-- [ ] **Héros** : rester sur Chtholly en hommage non commercial crédité, ou créer des personnages originaux de la communauté pour le jeu public (les Timeres peuvent rester le clin d'œil). À trancher avant M4.
+- [ ] **Héros** : rester sur Chtholly en hommage non commercial crédité, ou créer des personnages originaux de la communauté pour le jeu public (Timere peut rester le clin d'œil). À trancher avant M4.
 - [ ] **Musique** : conserver l'enregistrement actuel ou le remplacer.
 - [ ] **Caméra** : orbite libre + verrouillage (proposé) ou caméra semi-fixe plus proche d'Animal Crossing. À juger à M1.
 - [ ] **Tactile** : contrôles de base à M2 (L9) ou report complet à M3.

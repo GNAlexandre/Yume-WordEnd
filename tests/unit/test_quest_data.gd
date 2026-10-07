@@ -252,7 +252,7 @@ func test_current_step_and_progress_texts() -> void:
 	assert_eq(quest.current_progress(), "Fragment de page : 2/3")
 	var expected := {
 		&"kill": "Ennemis vaincus : 1/2",
-		&"big": "Grand Timere : 1/1",
+		&"big": "Grand fragment de Timere : 1/1",
 		&"wave": "Vague atteinte : 1/4",
 		&"score": "Score : 1/300",
 		&"end": "",

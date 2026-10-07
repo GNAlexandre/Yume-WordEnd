@@ -63,7 +63,7 @@ func test_dunes_shortcut_leads_straight_to_the_arena_panel() -> void:
 	# Le parcours du navigateur (docs/web.md) : tout droit, puis E devant le panneau.
 	Input.action_press(&"move_forward")
 	var shown: bool = await wait_until(
-		func() -> bool: return player.current_prompt() == "Affronter les Timeres", 6.0
+		func() -> bool: return player.current_prompt() == "Sonner la cloche de veille", 6.0
 	)
 	Input.action_release(&"move_forward")
 	assert_true(shown, "tout droit jusqu'au panneau de l'arène")

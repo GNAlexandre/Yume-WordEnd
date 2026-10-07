@@ -8,7 +8,7 @@
 [resource]
 script = ExtResource("1_enemy")
 id = &"timere_small"
-display_name = "Petit Timere"
+display_name = "Rejeton de Timere"
 visual = ExtResource("2_visual")
 scale = 0.8
 max_hp = 1
@@ -18,6 +18,4 @@ attacks = Array[ExtResource("3_attack")]([ExtResource("4_bite")])
 rush = false
 stoic = false
 aggro_range_m = 10.0
-drops = Dictionary[StringName, float]({
-&"page_fragment": 1.0
-})
+drops = {}

@@ -1,9 +1,12 @@
 extends "res://tests/stubs/l10_ui_test.gd"
 ## Crédits (L10) : texte de la scène (assets/CREDITS.md, assets/characters/CREDITS.md, hommage à
-## SukaSuka), licence du moteur, défilement, retour (bouton, Échap, B).
+## SukaSuka), licence du moteur, défilement, retour (bouton, Échap, B). (Systèmes et textes)
+## Seniorious et Timere (graphies de la traduction), titre de la traduction française de Yume
+## Novel, hommage non commercial, fiches de lecture et bible faites à partir de la traduction.
 
 const CREDITS := preload("res://src/ui/credits.tscn")
 const CreditsScript := preload("res://src/ui/credits.gd")
+const NBSP := " "
 
 
 func _credits() -> CreditsScript:
@@ -16,8 +19,8 @@ func test_text_has_credits_homage_and_engine_license() -> void:
 	for expected: String in [
 		"SukaSuka",
 		"Chtholly",
-		"Seniolis",
-		"Timeres",
+		"Seniorious",
+		"Timere",
 		"Akira Kareno",
 		"Gemini",
 		"decouper-planche.py",
@@ -29,6 +32,29 @@ func test_text_has_credits_homage_and_engine_license() -> void:
 	]:
 		assert_string_contains(text, expected)
 	assert_string_contains(text, Engine.get_license_text(), "licence du moteur")
+
+
+func test_homage_names_the_french_translation() -> void:
+	var text := _credits().full_text()
+	var title := (
+		"Que faites-vous à la fin du monde%s? Êtes-vous occupés%s? Voulez-vous bien nous sauver%s?"
+		% [NBSP, NBSP, NBSP]
+	)
+	assert_string_contains(text, title, "titre de la traduction française")
+	for expected: String in [
+		"traduction française de Yume Novel",
+		"hommage de fans, gratuit et non commercial",
+		"fiches de lecture et la bible",
+		"à partir de la traduction de Yume Novel",
+	]:
+		assert_string_contains(text, expected)
+
+
+func test_sword_and_beast_use_the_translation_spelling() -> void:
+	var text := _credits().full_text()
+	assert_false(text.contains("Seniolis"), "Seniorious, jamais Seniolis")
+	assert_string_contains(text, "son épée Seniorious")
+	assert_false(text.contains("les Timeres viennent"), "Timere, la Bête, au singulier")
 
 
 func test_scrolls_with_arrows() -> void:

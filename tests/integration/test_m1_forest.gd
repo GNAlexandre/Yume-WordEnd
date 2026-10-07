@@ -1,9 +1,9 @@
 extends "res://tests/stubs/m1_game_test.gd"
 ## Intégration M1, la forêt dans le vrai jeu (src/game.tscn) : ses 4 Timeres poursuivent le
 ## joueur qui approche de la clairière, abandonnent quand il fuit au village (laisse, zone sûre)
-## sans jamais y entrer ; la barrière du village arrête un Timere repoussé vers elle ; un Timere
-## tué lâche une page que le joueur ramasse ; la mort dans la forêt ramène au village sans
-## fin de série d'arène.
+## sans jamais y entrer ; la barrière du village arrête un Timere repoussé vers elle ; un rejeton
+## tué ne lâche rien (Timere ignore les objets, V3 : les pages sont au sol) ; la mort dans la
+## forêt ramène au village sans fin de série d'arène.
 
 ## Bord nord du village : la barrière (couche 8) va de z = −22,5 à −21,5 (coordonnées de l'île).
 const BARRIER_NORTH_FACE := -22.5
@@ -82,43 +82,41 @@ func test_village_barrier_stops_a_timere_pushed_toward_it() -> void:
 	assert_gt(deepest[0], -23.3 + 0.1, "il a bien été poussé contre elle")
 
 
-func test_forest_timere_drops_a_page_that_the_player_picks_up() -> void:
+## Objets (Pickup) de la zone hors de son nœud Pickups (objets uniques) : ceux qu'on lâche.
+func _loose_pickups(zone_id: StringName) -> Array[Pickup]:
+	var result: Array[Pickup] = []
+	var unique := zone(zone_id).get_node(^"Pickups")
+	for node: Node in zone(zone_id).find_children("*", "Area3D", true, false):
+		if node is Pickup and not unique.is_ancestor_of(node) and not node.is_queued_for_deletion():
+			result.append(node as Pickup)
+	return result
+
+
+func test_forest_timeres_drop_nothing_when_killed() -> void:
 	await start_game()
 	watch_signals(EventBus)
 	# À l'écart des pages posées (forest_page_1 est en (−3, 0, 2)).
 	await place_player(&"forest", Vector3(-6.0, 0.0, 5.0), Vector3.FORWARD)
-	var small: Enemy = null
-	for timere: Enemy in _forest_timeres():
-		if timere.enemy_id() == &"timere_small":
-			small = timere
-	small.set_physics_process(false)
-	small.global_position = ahead(1.0)
-	await wait_physics_frames(2)
-	await press(&"attack")
-	var killed: bool = await wait_until(func() -> bool: return small.is_dead(), 1.0)
-	assert_true(killed, "Petit de la forêt tué à l'épée")
-	var drops: Array[Pickup] = []
-	var dropped: bool = await wait_until(
-		func() -> bool:
-			for child: Node in zone(&"forest").get_node(^"Enemies").get_children():
-				if child is Pickup and not drops.has(child):
-					drops.append(child as Pickup)
-			return not drops.is_empty(),
-		1.0
-	)
-	assert_true(dropped, "une page lâchée")
-	if not dropped:
-		return
-	var page := drops[0]
-	assert_eq(page.item_id, &"page_fragment")
-	assert_false(page.persistent, "objet lâché : pas retenu par la sauvegarde")
-	assert_lt(flat_distance(page.global_position, small.global_position), 0.3, "à sa place")
-	await hold(&"move_forward", 0.5)
-	var collected: bool = await wait_until(
-		func() -> bool: return GameState.count(&"page_fragment") == 1, 1.0
-	)
-	assert_true(collected, "le joueur ramasse la page en passant dessus")
-	assert_signal_emitted_with_parameters(EventBus, "item_collected", [&"page_fragment", 1])
+	var timeres := _forest_timeres()
+	for timere: Enemy in timeres:
+		assert_true(timere.data.drops.is_empty(), "%s ne porte rien" % timere.data.display_name)
+		timere.set_physics_process(false)
+	# Les quatre corps tués à l'épée, l'un après l'autre devant le joueur.
+	for timere: Enemy in timeres:
+		timere.global_position = ahead(1.0)
+		await wait_physics_frames(2)
+		for _swing in 4:
+			if timere.is_dead():
+				break
+			await press(&"attack")
+			await wait_until(func() -> bool: return timere.is_dead(), 0.6)
+		assert_true(timere.is_dead(), "%s tué à l'épée" % timere.data.display_name)
+	assert_signal_emit_count(EventBus, "enemy_killed", 4, "quatre corps de Timere abattus")
+	# Le temps qu'un drop apparaîtrait (appel différé à la mort) : rien n'est lâché.
+	await wait_physics_frames(10)
+	assert_eq(_loose_pickups(&"forest").size(), 0, "aucun objet lâché")
+	assert_true(GameState.items().is_empty(), "rien dans l'inventaire")
+	assert_signal_not_emitted(EventBus, "item_collected", "rien à ramasser")
 
 
 func test_death_in_the_forest_respawns_at_the_village_without_arena() -> void:

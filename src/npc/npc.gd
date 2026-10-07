@@ -14,6 +14,12 @@ extends CharacterBody3D
 ## qui flotte doucement) : « ! » s'il propose une quête disponible, « ? » si l'étape courante
 ## d'une quête active se valide en lui parlant (QuestData.npc_marker) ; caché pendant son
 ## dialogue. Recalculé en fin d'image sur les signaux de quête, d'inventaire et de drapeaux.
+## (Systèmes et textes) Présence selon l'histoire : data.is_present() (NpcData.visible_if, et
+## jamais le PNJ dont le skin est celui du joueur). Absent, le PNJ est caché, retiré de la
+## physique (process_mode DISABLED : ni collision ni InteractArea), sans invite, sans dialogue
+## ni marqueur. Réévaluée en fin d'image avec le marqueur (quête, étape, drapeaux, inventaire,
+## partie chargée, skin, fin de série d'arène pour best_score) ; un PNJ qui parle ne disparaît
+## qu'à la fin de son dialogue.
 
 const PLAYER_GROUP := &"player"
 ## Durée maximale de la chute d'apparition (s).
@@ -47,6 +53,9 @@ var _marker_kind: StringName = &""
 var _marker_height: float = DEFAULT_HEIGHT + MARKER_GAP
 var _marker_pending: bool = false
 var _talking: bool = false
+var _present: bool = true
+## process_mode d'origine, rendu quand le PNJ redevient présent.
+var _present_process_mode: ProcessMode = PROCESS_MODE_INHERIT
 
 @onready var visual: CharacterVisual = $Visual
 @onready var runner: DialogueRunner = $DialogueRunner
@@ -56,6 +65,7 @@ var _talking: bool = false
 func _ready() -> void:
 	_breath_time = randf() * breath_period
 	_base_scale = visual.scale
+	_present_process_mode = process_mode
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	EventBus.quest_updated.connect(_schedule_marker.unbind(2))
@@ -63,6 +73,8 @@ func _ready() -> void:
 	EventBus.inventory_changed.connect(_schedule_marker)
 	EventBus.flag_changed.connect(_schedule_marker.unbind(2))
 	EventBus.game_loaded.connect(_schedule_marker)
+	EventBus.skin_changed.connect(_schedule_marker.unbind(1))
+	EventBus.arena_finished.connect(_schedule_marker.unbind(3))
 	_apply_data()
 
 
@@ -88,13 +100,27 @@ func _physics_process(delta: float) -> void:
 
 
 func get_prompt() -> String:
-	return "Parler"
+	return "Parler" if _present else ""
 
 
 func interact(_player: Node3D) -> void:
-	if data == null or runner.is_running() or _cooling_down():
+	if data == null or not _present or runner.is_running() or _cooling_down():
 		return
 	runner.start(data)
+
+
+## Vrai si le PNJ est là (data.is_present() à la dernière évaluation ; un PNJ sans data l'est).
+func is_present() -> bool:
+	return _present
+
+
+## Réévalue tout de suite la présence (data.is_present()), puis le marqueur. Un PNJ qui parle ne
+## disparaît pas : son absence attend la fin de la conversation (dialogue_ended).
+func refresh_presence() -> void:
+	var present := data == null or data.is_present()
+	if present != _present and (present or not _talking):
+		_set_present(present)
+	refresh_quest_marker()
 
 
 ## Tourne le visuel vers target s'il est à moins de look_distance ; true s'il s'est tourné.
@@ -116,24 +142,32 @@ func quest_marker_kind() -> StringName:
 func refresh_quest_marker() -> void:
 	_marker_pending = false
 	_marker_kind = &""
-	if data != null and not _talking:
+	if data != null and _present and not _talking:
 		_marker_kind = QuestData.npc_marker(data.id)
 	quest_marker.visible = not _marker_kind.is_empty()
 	quest_marker.text = "?" if _marker_kind == QuestData.MARKER_TURN_IN else "!"
 	quest_marker.position.y = _marker_height
 
 
+## Présence et marqueur recalculés en fin d'image (plusieurs signaux de la même image regroupés).
 func _schedule_marker() -> void:
 	if not _marker_pending:
 		_marker_pending = true
-		refresh_quest_marker.call_deferred()
+		refresh_presence.call_deferred()
+
+
+## Absent : caché et retiré de la physique (corps et InteractArea, disable_mode REMOVE).
+func _set_present(present: bool) -> void:
+	_present = present
+	visible = present
+	process_mode = _present_process_mode if present else PROCESS_MODE_DISABLED
 
 
 func _apply_data() -> void:
 	set_process(data != null)
 	if data != null and data.skin != null:
 		_marker_height = data.skin.height_m + MARKER_GAP
-	refresh_quest_marker()
+	refresh_presence()
 	if data == null:
 		return
 	if data.skin != null:
