@@ -3,11 +3,20 @@ extends "res://tests/stubs/m2_game_test.gd"
 ## → Nouvelle partie → écran de chargement dont la barre avance vraiment (plusieurs images, sans
 ## fil d'exécution) → joueur au Spawn du village, cinq cœurs et le nom de la zone dans le HUD.
 ## À la souris, puis à la manette seule (geste, croix, A) ; Continuer n'apparaît qu'avec une
-## sauvegarde.
+## sauvegarde. (Systèmes et textes) Sous les vignettes, « Ta fée prend la place de Chtholly dans
+## l'histoire. » ; un PNJ qui a le skin choisi n'est pas au village (la fée choisie est le
+## joueur). Noms des zones et skins lus dans le jeu, pas figés ici (le monde et le contenu de
+## l'acte 1 les changent).
 
 
 func _focus_owner() -> Control:
 	return get_viewport().gui_get_focus_owner()
+
+
+## Vignette choisie à la souris : le dernier skin du menu (Chtholly s'il est seul).
+func _last_skin() -> StringName:
+	var skins := SkinRegistry.all()
+	return skins.back().id if not skins.is_empty() else &"chtholly"
 
 
 func _assert_started_at_the_village(skin_id: StringName) -> void:
@@ -16,12 +25,22 @@ func _assert_started_at_the_village(skin_id: StringName) -> void:
 	var spawn := zone(&"village").get_node(^"Spawn") as Node3D
 	assert_lt(distance_to(spawn), 1.0, "joueur au Spawn du village")
 	assert_eq(WorldManager.current_zone(), &"village")
-	assert_eq(zone_banner(), "Village", "nom de la zone dans le HUD")
+	assert_eq(
+		zone_banner(), WorldManager.zone_display_name(&"village"), "nom de la zone dans le HUD"
+	)
 	assert_eq(hearts_shown(), 5, "cinq cœurs")
 	assert_eq(hud.call(&"health"), Vector2i(5, 5), "cœurs pleins")
 	assert_eq(GameState.skin_id, skin_id, "skin choisi")
 	assert_eq(player.visual.skin.id, skin_id, "le personnage a le skin choisi")
 	assert_true(SaveManager.is_game_loaded(), "partie suivie par SaveManager")
+	for npc: Node in zone(&"village").get_node(^"NPCs").get_children():
+		if npc is Npc and (npc as Npc).data != null and (npc as Npc).data.skin != null:
+			var same_skin := (npc as Npc).data.skin.id == skin_id
+			assert_eq(
+				(npc as Npc).is_visible_in_tree(),
+				not same_skin,
+				"%s : présent sauf s'il a le skin choisi" % npc.name
+			)
 
 
 func test_new_game_from_the_menu_with_the_mouse() -> void:
@@ -32,8 +51,12 @@ func test_new_game_from_the_menu_with_the_mouse() -> void:
 	assert_false(title.call(&"is_waiting_for_gesture"), "le clic ouvre le menu")
 	assert_false(menu_button("ContinueButton").visible, "pas de sauvegarde : pas de Continuer")
 	assert_true(menu_button("NewGameButton").is_visible_in_tree())
-	await click(title.call(&"skin_card", &"bibliothecaire") as Control)
-	assert_eq(title.call(&"selected_skin"), &"bibliothecaire", "vignette choisie au clic")
+	var hint := title.get_node("%SkinHint") as Label
+	assert_true(hint.is_visible_in_tree(), "la phrase sous les vignettes")
+	assert_eq(hint.text, "Ta fée prend la place de Chtholly dans l'histoire.")
+	var chosen := _last_skin()
+	await click(title.call(&"skin_card", chosen) as Control)
+	assert_eq(title.call(&"selected_skin"), chosen, "vignette choisie au clic")
 	# Barre du chargement : une dépendance par image (tout est déjà en cache sous GUT).
 	main.set(&"loading_budget_ms", 0.0)
 	var progress: Array[float] = []
@@ -53,7 +76,7 @@ func test_new_game_from_the_menu_with_the_mouse() -> void:
 	var sorted := progress.duplicate()
 	sorted.sort()
 	assert_eq(progress, sorted, "sans jamais reculer")
-	_assert_started_at_the_village(&"bibliothecaire")
+	_assert_started_at_the_village(chosen)
 
 
 func test_new_game_from_the_menu_with_a_gamepad_only() -> void:
