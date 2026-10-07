@@ -8,7 +8,7 @@ extends Resource
 ## Npc : ni visuel, ni collision, ni dialogue, ni marqueur. Le PNJ dont le skin est celui du
 ## joueur est toujours absent : la fée choisie comme héroïne n'est pas aussi un PNJ.
 
-## Identifiant, ex. &"librarian" (transmis par EventBus.dialogue_started / dialogue_ended).
+## Identifiant, ex. &"nygglatho" (transmis par EventBus.dialogue_started / dialogue_ended).
 @export var id: StringName
 ## Nom affiché (locuteur par défaut).
 @export var display_name: String = ""

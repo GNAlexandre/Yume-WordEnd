@@ -5,11 +5,11 @@ extends Resource
 ## et effets de dialogue, déclencheurs et tests : docs/QUETES.md.
 ##
 ## {
-##   "id": "pages", "title": "…", "summary": "… (journal)", "giver": "librarian",
+##   "id": "picture_book", "title": "…", "summary": "… (journal)", "giver": "nephren",
 ##   "main": false, "auto_start": false,
 ##   "requires": {"quests": ["…"], "flags": ["…"], "not_flags": ["…"]},
 ##   "steps": [{"id": "…", "type": "collect", "objective": "…", …}, …],
-##   "rewards": {"items": {"bookmark": 1}, "flags": ["…"], "max_hp": 6}
+##   "rewards": {"items": {"picture_book": 1}, "flags": ["…"], "max_hp": 6}
 ## }
 ## Seuls id, title et steps (au moins une étape, voir QuestStep) sont obligatoires ; une clé qui
 ## commence par « _ » est un commentaire. Un fichier invalide donne un push_warning qui dit
