@@ -108,21 +108,20 @@ func _tap_accept() -> void:
 		await tap_key(KEY_ENTER)
 
 
-## Tout droit (W, ou stick en avant) jusqu'à predicate ; run : Maj tenue ou L3.
+## Tout droit dans la visée (touches, ou stick incliné vers elle : la caméra fixe regarde le
+## nord) jusqu'à predicate ; run : Maj tenue ou L3.
 func _forward_until(predicate: Callable, max_seconds: float, run: bool = false) -> bool:
 	if _pad:
+		var aim := player.aim_direction()
 		await wait_physics_frames(1)
-		stick(0.0, -1.0)
+		stick(aim.x, aim.z)
 		if run:
 			await tap_joy(JOY_BUTTON_LEFT_STICK)
 		var reached: bool = await until(predicate, max_seconds)
 		stick(0.0, 0.0)
 		await wait_physics_frames(2)
 		return reached
-	var keys: Array[Key] = [KEY_W]
-	if run:
-		keys.append(KEY_SHIFT)
-	return await walk_keys_until(keys, predicate, max_seconds)
+	return await walk_aim_until(predicate, max_seconds, run)
 
 
 ## Tourne la caméra (et le joueur) vers target, puis avance jusqu'à predicate.

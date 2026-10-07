@@ -275,7 +275,7 @@ bas et centré, pixel art à 96 px/m : » puis :
 | 2 | `edge_parapet` | 192 × 58 | Couchant, colline | parapet bas de pierre ébréché |
 | 3 | `fallen_lantern` | 96 × 48 | Couchant | vieille lanterne de signal tombée, mécanisme apparent |
 | 3 | `grass_tuft` | 58 × 38 | Couchant | touffe d'herbe dure couchée vers la droite |
-| 3 | `ring_stone` | 58 × 29 | Couchant | pierre sombre de l'anneau du cercle de veille |
+| 3 | `ring_stone` | 58 × 20 | Couchant | pierre sombre et plate de l'anneau du cercle de veille (20 cm de haut : rien ne dépasse 0,3 m dans le cercle) |
 | 2 | `signpost` | 115 × 230 | port | panneau usé par le vent, deux flèches rouges, sans texte |
 | 2 | `market_stall` | 240 × 230 | port | étal sous bâche beige, paniers d'œufs et d'épices |
 | 2 | `market_stall_veg` | 240 × 230 | port | étal sous bâche beige, légumes |

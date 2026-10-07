@@ -1,72 +1,15 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="1_cylinder"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="2_box"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/prism.tres" id="3_prism"]
-
-[sub_resource type="StandardMaterial3D" id="stone"]
-albedo_color = Color(0.62, 0.62, 0.6, 1)
-
-[sub_resource type="StandardMaterial3D" id="water"]
-albedo_color = Color(0.22, 0.32, 0.36, 1)
-
-[sub_resource type="StandardMaterial3D" id="wood"]
-albedo_color = Color(0.55, 0.4, 0.27, 1)
-
-[sub_resource type="StandardMaterial3D" id="wood_dark"]
-albedo_color = Color(0.35, 0.26, 0.19, 1)
-
-[sub_resource type="StandardMaterial3D" id="roof"]
-albedo_color = Color(0.4, 0.3, 0.23, 1)
-
-[sub_resource type="StandardMaterial3D" id="wood_light"]
-albedo_color = Color(0.68, 0.57, 0.42, 1)
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/well.png" id="2_image"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_well"]
 height = 1.2
 radius = 1.15
 
 [node name="Well" type="Node3D"]
-
-[node name="Base" type="MeshInstance3D" parent="."]
-transform = Transform3D(2.2, 0, 0, 0, 0.85, 0, 0, 0, 2.2, 0, 0.425, 0)
-mesh = ExtResource("1_cylinder")
-material_override = SubResource("stone")
-
-[node name="Water" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.7, 0, 0, 0, 0.04, 0, 0, 0, 1.7, 0, 0.86, 0)
-mesh = ExtResource("1_cylinder")
-material_override = SubResource("water")
-
-[node name="PostLeft" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.18, 0, 0, 0, 1.9, 0, 0, 0, 0.18, -1, 1.65, 0)
-mesh = ExtResource("2_box")
-material_override = SubResource("wood")
-
-[node name="PostRight" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.18, 0, 0, 0, 1.9, 0, 0, 0, 0.18, 1, 1.65, 0)
-mesh = ExtResource("2_box")
-material_override = SubResource("wood")
-
-[node name="Beam" type="MeshInstance3D" parent="."]
-transform = Transform3D(0, -2.2, 0, 0.14, 0, 0, 0, 0, 0.14, 0, 2.25, 0)
-mesh = ExtResource("1_cylinder")
-material_override = SubResource("wood_dark")
-
-[node name="Roof" type="MeshInstance3D" parent="."]
-transform = Transform3D(0, 0, 2.7, 0, 0.8, 0, -1.8, 0, 0, 0, 2.95, 0)
-mesh = ExtResource("3_prism")
-material_override = SubResource("roof")
-
-[node name="Rope" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.04, 0, 0, 0, 0.5, 0, 0, 0, 0.04, 0, 1.95, 0)
-mesh = ExtResource("1_cylinder")
-material_override = SubResource("wood_light")
-
-[node name="Bucket" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.38, 0, 0, 0, 0.4, 0, 0, 0, 0.38, 0, 1.55, 0)
-mesh = ExtResource("1_cylinder")
-material_override = SubResource("wood_dark")
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

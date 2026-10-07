@@ -10,61 +10,38 @@
 [ext_resource type="PackedScene" path="res://src/world/zones/hill/hill.tscn" id="8_hill"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="9_batcher"]
 [ext_resource type="Shader" path="res://src/world/shaders/waterfall.gdshader" id="10_waterfall"]
-[ext_resource type="Shader" path="res://src/world/shaders/sky.gdshader" id="11_sky"]
-[ext_resource type="Script" path="res://src/world/grass.gd" id="12_grass"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/sky/sky.png" id="11_sky"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/sky/cloud_sea.png" id="12_clouds"]
 [ext_resource type="PackedScene" path="res://src/world/props/floating_rock.tscn" id="16_floating_rock"]
 [ext_resource type="PackedScene" path="res://src/world/props/distant_island_c.tscn" id="15_island_c"]
 [ext_resource type="PackedScene" path="res://src/world/props/distant_island_b.tscn" id="14_island_b"]
 [ext_resource type="PackedScene" path="res://src/world/props/distant_island_a.tscn" id="13_island_a"]
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_sky"]
-seed = 168
-frequency = 0.012
-fractal_octaves = 4
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_sky"]
-width = 256
-height = 256
-seamless = true
-noise = SubResource("FastNoiseLite_sky")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
-shader = ExtResource("11_sky")
-shader_parameter/clouds = SubResource("NoiseTexture2D_sky")
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
+panorama = ExtResource("11_sky")
+filter = false
 
 [sub_resource type="Sky" id="Sky_island"]
-sky_material = SubResource("ShaderMaterial_sky")
+sky_material = SubResource("PanoramaSkyMaterial_sky")
 
 [sub_resource type="Environment" id="Environment_island"]
 background_mode = 2
 sky = SubResource("Sky_island")
 ambient_light_source = 2
-ambient_light_color = Color(0.64, 0.72, 0.9, 1)
-ambient_light_energy = 0.55
+ambient_light_color = Color(0.78, 0.72, 0.86, 1)
+ambient_light_energy = 0.62
+tonemap_mode = 0
 fog_enabled = true
-fog_light_color = Color(0.7, 0.78, 0.88, 1)
-fog_sun_scatter = 0.3
-fog_density = 0.002
+fog_light_color = Color(0.86, 0.72, 0.74, 1)
+fog_sun_scatter = 0.2
+fog_density = 0.0016
 fog_sky_affect = 0.0
-fog_height = -4.0
-fog_height_density = 0.05
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_clouds"]
-seed = 68
-frequency = 0.009
-fractal_type = 2
-fractal_octaves = 4
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_clouds"]
-width = 512
-height = 512
-invert = true
-seamless = true
-noise = SubResource("FastNoiseLite_clouds")
+fog_height = -6.0
+fog_height_density = 0.04
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_clouds"]
 shader = ExtResource("3_clouds")
-shader_parameter/clouds = SubResource("NoiseTexture2D_clouds")
+shader_parameter/clouds = ExtResource("12_clouds")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_clouds"]
 material = SubResource("ShaderMaterial_clouds")
@@ -90,11 +67,9 @@ environment = SubResource("Environment_island")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.287311, 0.3276, -0.900073, 0, 0.939693, 0.34202, 0.957837, -0.098266, 0.269984, 0, 40, 0)
-light_color = Color(1, 0.84, 0.64, 1)
-light_energy = 0.2
-shadow_enabled = true
-directional_shadow_mode = 0
-directional_shadow_max_distance = 40.0
+light_color = Color(1, 0.86, 0.68, 1)
+light_energy = 0.75
+shadow_enabled = false
 
 [node name="OverviewCamera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.731354, 0.681998, 0, -0.681998, 0.731354, 0, 112, 132)
@@ -185,9 +160,6 @@ transform = Transform3D(1.159111, 0, -0.310583, 0, 1.2, 0, 0.310583, 0, 1.159111
 
 [node name="FloatingRock8" parent="Decor" instance=ExtResource("16_floating_rock")]
 transform = Transform3D(1.348184, 0, 1.338805, 0, 1.9, 0, -1.338805, 0, 1.348184, -92.855688, -33, 6.493102)
-
-[node name="Grass" type="Node3D" parent="."]
-script = ExtResource("12_grass")
 
 [node name="Zones" type="Node3D" parent="."]
 

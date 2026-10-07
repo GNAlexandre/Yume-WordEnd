@@ -45,9 +45,7 @@ func test_game_places_player_and_emits_initial_state() -> void:
 	assert_signal_emitted_with_parameters(EventBus, "zone_entered", [&"village"])
 	assert_eq(WorldManager.current_zone(), &"village")
 	assert_eq(GameState.zone, &"village")
-	assert_eq(
-		get_viewport().get_camera_3d(), game.get_node(^"Player/CameraRig/SpringArm3D/Camera3D")
-	)
+	assert_eq(get_viewport().get_camera_3d(), game.get_node(^"Player/CameraRig/Camera3D"))
 
 
 func test_respawn_brings_player_back_to_village() -> void:

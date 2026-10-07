@@ -13,6 +13,7 @@ Usage (Python 3.9+, pip install Pillow) :
     python3 tools/hd2d_assets.py gen well grass # seulement ces images (noms ou chemins), refaites
     python3 tools/hd2d_assets.py check          # tailles, transparence, raccords, ancrage
     python3 tools/hd2d_assets.py fit <fichier>  # ramène une image livrée trop grande à sa taille
+    python3 tools/hd2d_assets.py atlas          # refait l'atlas du sol après une tuile livrée
     python3 tools/hd2d_assets.py sheet <png>    # planche de contrôle de toutes les images
 
 Le résultat est déterministe (graine tirée du nom de chaque image).
@@ -32,6 +33,14 @@ from hd2d_art import seed_for  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST = os.path.join(ROOT, "tools", "hd2d_manifest.json")
+# Atlas des tuiles de sol (lu par le shader du sol, src/world/shaders/terrain.gdshader) : les
+# tuiles de assets/hd2d/ground/ dans l'ordre de GROUND_LAYERS, ATLAS_COLUMNS par rangée. Refait
+# par gen, fit et atlas ; check vérifie qu'il est à jour.
+GROUND_LAYERS = ["grass", "grass_dry", "forest_floor", "path_dirt", "flagstone", "cobble", "sand",
+                 "rock", "peat", "water", "mud", "metal"]
+ATLAS_COLUMNS = 4
+TILE = 384
+ATLAS = os.path.join(ROOT, "assets", "hd2d", "ground", "atlas", "ground_atlas.png")
 # Genres d'images (tools/hd2d_manifest.json).
 OPAQUE_KINDS = ("tile", "tile_h", "panorama")
 ALPHA_KINDS = ("facade", "panel")
@@ -76,6 +85,40 @@ def generate(entry, table):
     return path
 
 
+def build_atlas():
+    """Assemble les tuiles de sol en un atlas (rien n'est réécrit s'il est déjà à jour)."""
+    rows = (len(GROUND_LAYERS) + ATLAS_COLUMNS - 1) // ATLAS_COLUMNS
+    atlas = Image.new("RGBA", (ATLAS_COLUMNS * TILE, rows * TILE), (0, 0, 0, 255))
+    for i, name in enumerate(GROUND_LAYERS):
+        tile = Image.open(os.path.join(ROOT, "assets", "hd2d", "ground", name + ".png")).convert("RGBA")
+        if tile.size != (TILE, TILE):
+            tile = tile.resize((TILE, TILE), Image.NEAREST)
+        atlas.paste(tile, ((i % ATLAS_COLUMNS) * TILE, (i // ATLAS_COLUMNS) * TILE))
+    if os.path.exists(ATLAS):
+        current = Image.open(ATLAS).convert("RGBA")
+        if current.size == atlas.size and ImageChops.difference(current, atlas).getbbox() is None:
+            return False
+    os.makedirs(os.path.dirname(ATLAS), exist_ok=True)
+    atlas.save(ATLAS, optimize=True)
+    print("atlas %s" % os.path.relpath(ATLAS, ROOT))
+    return True
+
+
+def atlas_is_current():
+    if not os.path.exists(ATLAS):
+        return False
+    rows = (len(GROUND_LAYERS) + ATLAS_COLUMNS - 1) // ATLAS_COLUMNS
+    current = Image.open(ATLAS).convert("RGBA")
+    if current.size != (ATLAS_COLUMNS * TILE, rows * TILE):
+        return False
+    for i, name in enumerate(GROUND_LAYERS):
+        tile = Image.open(os.path.join(ROOT, "assets", "hd2d", "ground", name + ".png")).convert("RGBA")
+        x, y = (i % ATLAS_COLUMNS) * TILE, (i // ATLAS_COLUMNS) * TILE
+        if tile.size != (TILE, TILE) or ImageChops.difference(current.crop((x, y, x + TILE, y + TILE)), tile).getbbox():
+            return False
+    return True
+
+
 def cmd_gen(names, force):
     manifest = load_manifest()
     table = recipes()
@@ -95,6 +138,7 @@ def cmd_gen(names, force):
         done += 1
         print("%-48s %d x %d" % (entry["path"], entry["size"][0], entry["size"][1]))
     print("%d image(s) générée(s)" % done)
+    build_atlas()
     return 0
 
 
@@ -164,6 +208,9 @@ def cmd_check():
         if problems:
             bad += 1
             print("%s : %s" % (entry["path"], " ; ".join(problems)))
+    if not atlas_is_current():
+        bad += 1
+        print("%s : pas à jour (lance : python3 tools/hd2d_assets.py atlas)" % os.path.relpath(ATLAS, ROOT))
     print("%d image(s), %d à reprendre" % (len(manifest["images"]), bad))
     return 1 if bad else 0
 
@@ -198,6 +245,7 @@ def cmd_fit(files):
             img = img.resize(want, Image.NEAREST)
         img.save(os.path.join(ROOT, entry["path"]), optimize=True)
         print("%s -> %s (%d x %d)" % (file_name, entry["path"], want[0], want[1]))
+    build_atlas()
     return 0
 
 
@@ -240,6 +288,7 @@ def main():
     sub.add_parser("check", help="vérifie les images du manifeste")
     fit = sub.add_parser("fit", help="ramène une image livrée à sa taille")
     fit.add_argument("files", nargs="+")
+    sub.add_parser("atlas", help="refait l'atlas des tuiles de sol")
     sheet = sub.add_parser("sheet", help="planche de contrôle")
     sheet.add_argument("out")
     sheet.add_argument("--dir", default="", help="seulement ground, cliff, buildings, props, sky ou fx")
@@ -250,6 +299,9 @@ def main():
         return cmd_check()
     if args.command == "fit":
         return cmd_fit(args.files)
+    if args.command == "atlas":
+        build_atlas()
+        return 0
     return cmd_sheet(args.out, args.dir)
 
 

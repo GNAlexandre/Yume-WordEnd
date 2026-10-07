@@ -5,9 +5,10 @@ extends RefCounted
 ##
 ## - la lèvre de pierre, accrochée au bord exact du sol (IslandTerrain.rim_segments) : pas de
 ##   jour entre le sol et la roche ;
-## - la falaise (une quinzaine de mètres), puis le dessous de l'île, cône de roche inversé dont
-##   les strates claires et sombres sont peintes par shaders/rock.gdshader ;
-## - des racines qui pendent sous la lèvre.
+## - la falaise (une quinzaine de mètres), puis le dessous de l'île, cône de roche inversé.
+## (HD-2D) Les strates, les racines et la lèvre sont des images de pixel art (assets/hd2d/cliff/,
+## shaders/rock.gdshader) plaquées le long du tour : UV.x en mètres le long du bord (couture au
+## nord, face cachée à la caméra fixe), UV.y en mètres sous le sol.
 ## Un seul mesh aux normales lissées (un draw call, face avant vers l'extérieur), sans collision :
 ## un corps qui saute du bord tombe le long de la falaise jusqu'à la KillZone de island.tscn.
 ##
@@ -37,10 +38,9 @@ const CREASE_ANGLE := 80.0
 ## Échantillons sur le tour, pointe du cône.
 const SEGMENTS := 128
 const TIP := Vector3(4.0, -47.0, -6.0)
-## Racines : nombre, longueur (min, écart), rayon à la base.
-const ROOTS := 56
-const ROOT_LENGTH := Vector2(1.4, 2.6)
-const ROOT_RADIUS := 0.2
+## Tour de l'île plaqué de texture : un nombre entier de textures de 4 m (couture invisible).
+const TEXTURE_METERS := 4.0
+const UV_TURN := 468.0
 
 ## Barrière du bord : retrait sous le bord (m), bas et haut (m), nombre de segments.
 const BARRIER_INSET := 0.8
@@ -60,7 +60,7 @@ const MATERIAL := preload("res://src/world/materials/rock.tres")
 static var _mesh_cache: ArrayMesh = null
 
 
-## Trois sommets par triangle, couleur (rouge : racine) ; normales lissées par smooth().
+## Trois sommets par triangle ; normales lissées par smooth() ; UV calculés par mesh().
 class Builder:
 	var vertices := PackedVector3Array()
 	var normals := PackedVector3Array()
@@ -106,6 +106,24 @@ class Builder:
 				normals[v] = sum.normalized()
 
 	## Quadrilatère a b c d (dans l'ordre du tour), face avant vers l'extérieur de l'axe vertical.
+	## UV de chaque sommet : (mètres le long du tour depuis le nord, mètres sous le sol) ; un
+	## triangle à cheval sur la couture du nord est ramené d'un seul côté.
+	func uvs() -> PackedVector2Array:
+		var result := PackedVector2Array()
+		result.resize(vertices.size())
+		for t in range(0, vertices.size(), 3):
+			var us: Array[float] = []
+			for k in 3:
+				var p := vertices[t + k]
+				us.append((atan2(-p.x, p.z) + PI) / TAU * UV_TURN)
+			var top := maxf(us[0], maxf(us[1], us[2]))
+			for k in 3:
+				var u := us[k]
+				if top - u > UV_TURN / 2.0:
+					u += UV_TURN
+				result[t + k] = Vector2(u, -vertices[t + k].y)
+		return result
+
 	func quad(a: Vector3, b: Vector3, c: Vector3, d: Vector3, color: Color) -> void:
 		var center := (a + b + c + d) * 0.25
 		var front := Vector3(center.x, 0.0, center.z)
@@ -117,7 +135,7 @@ class Builder:
 		arrays.resize(Mesh.ARRAY_MAX)
 		arrays[Mesh.ARRAY_VERTEX] = vertices
 		arrays[Mesh.ARRAY_NORMAL] = normals
-		arrays[Mesh.ARRAY_COLOR] = colors
+		arrays[Mesh.ARRAY_TEX_UV] = uvs()
 		var result := ArrayMesh.new()
 		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		result.surface_set_material(0, material)
@@ -131,7 +149,6 @@ static func rock_mesh() -> ArrayMesh:
 	var builder := Builder.new()
 	_add_lip(builder)
 	_add_underside(builder)
-	_add_roots(builder)
 	builder.smooth()
 	_mesh_cache = builder.mesh(MATERIAL)
 	return _mesh_cache
@@ -182,26 +199,6 @@ static func _add_underside(builder: Builder) -> void:
 		var b := last[(i + 1) % SEGMENTS]
 		var front := (a + b) * 0.5 - TIP
 		builder.triangle(a, b, TIP, Vector3(front.x, -1.0, front.z), Color.BLACK)
-
-
-## Racines : petites pyramides à trois faces qui pendent sous la lèvre.
-static func _add_roots(builder: Builder) -> void:
-	for n in ROOTS:
-		var angle := TAU * (n + 0.8 * _hash(n, 41.0)) / ROOTS
-		var edge := IslandTerrain.edge_point(angle)
-		var center := Vector3(edge.x, -0.6, edge.y) * 0.997
-		var outward := Vector3(edge.x, 0.0, edge.y).normalized()
-		var length := ROOT_LENGTH.x + ROOT_LENGTH.y * _hash(n, 7.0)
-		var tip := center + outward * 0.35 + Vector3.DOWN * length
-		var base: Array[Vector3] = []
-		for k in 3:
-			var around := TAU * k / 3.0 + angle
-			base.append(center + Vector3(cos(around), 0.0, sin(around)) * ROOT_RADIUS)
-		for k in 3:
-			var a := base[k]
-			var b := base[(k + 1) % 3]
-			var front := (a + b) * 0.5 - center
-			builder.triangle(a, b, tip, front, Color.RED)
 
 
 ## Barrière du bord : ruban vertical BARRIER_INSET m en deçà du bord, sur la couche 8 (voir

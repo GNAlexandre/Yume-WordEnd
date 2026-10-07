@@ -79,7 +79,7 @@ func test_walking_is_saved_and_continue_restores_everything() -> void:
 	await _make_progress()
 	# Promenade vers le sud-est de la forêt, sans aucun signal d'auto-sauvegarde.
 	player.set_aim_direction(Vector3(1.0, 0.0, 1.0), true)
-	await hold_key(KEY_W, 1.2)
+	await hold_aim(1.2)
 	var walked_to := player.global_position
 	var checkpointed: bool = await until(
 		func() -> bool: return _saved_position().distance_to(walked_to) < 0.2, 2.5
@@ -91,7 +91,7 @@ func test_walking_is_saved_and_continue_restores_everything() -> void:
 	assert_eq(_file_text(), text, "joueur immobile : aucune écriture")
 	# Quelques pas, puis la fenêtre perd le focus (onglet quitté) : écrit tout de suite.
 	SaveManager.checkpoint_interval = 60.0
-	await hold_key(KEY_W, 0.4)
+	await hold_aim(0.4)
 	var left_at := player.global_position
 	assert_gt(_saved_position().distance_to(left_at), 0.5, "pas encore écrit")
 	get_tree().root.propagate_notification(Node.NOTIFICATION_WM_WINDOW_FOCUS_OUT)

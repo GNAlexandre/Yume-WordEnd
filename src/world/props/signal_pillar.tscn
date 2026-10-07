@@ -1,65 +1,14 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/pyramid.tres" id="2_pyramid"]
-
-[sub_resource type="StandardMaterial3D" id="dark"]
-albedo_color = Color(0.421, 0.43, 0.448, 1)
-
-[sub_resource type="StandardMaterial3D" id="stone"]
-albedo_color = Color(0.64, 0.64, 0.622, 1)
-
-[sub_resource type="StandardMaterial3D" id="iron"]
-albedo_color = Color(0.241, 0.25, 0.268, 1)
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/signal_pillar.png" id="2_image"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(0.75, 3, 0.75)
 
 [node name="SignalPillar" type="Node3D"]
-
-[node name="Plinth" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.95, 0, 0, 0, 0.4, 0, 0, 0, 0.95, 0, 0.2, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("dark")
-
-[node name="Shaft" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.7, 0, 0, 0, 2.6, 0, 0, 0, 0.7, 0, 1.6, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("stone")
-
-[node name="Slab" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.92, 0, 0, 0, 0.18, 0, 0, 0, 0.92, 0, 2.98, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("dark")
-
-[node name="Bar1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.04, 0, 0, 0, 0.5, 0, 0, 0, 0.04, -0.26, 3.3, -0.26)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
-cast_shadow = 0
-
-[node name="Bar2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.04, 0, 0, 0, 0.5, 0, 0, 0, 0.04, 0.26, 3.3, -0.26)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
-cast_shadow = 0
-
-[node name="Bar3" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.04, 0, 0, 0, 0.5, 0, 0, 0, 0.04, -0.26, 3.3, 0.26)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
-cast_shadow = 0
-
-[node name="Bar4" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.04, 0, 0, 0, 0.5, 0, 0, 0, 0.04, 0.26, 3.3, 0.26)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
-cast_shadow = 0
-
-[node name="CageTop" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.62, 0, 0, 0, 0.22, 0, 0, 0, 0.62, 0, 3.62, 0)
-mesh = ExtResource("2_pyramid")
-material_override = SubResource("iron")
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

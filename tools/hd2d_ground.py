@@ -96,7 +96,7 @@ def _voronoi(size, rnd, count, min_dist=0.0):
 # --- Sol ----------------------------------------------------------------------------------------
 
 
-def grass(size, rnd, base="grass", blades=2600, dry=True):
+def grass(size, rnd, base="grass", blades=2600, dry=False):
     tones = ramp(base, 5, spread=0.45)
     img = posterize(fractal(size, (12, 12), rnd, 4, gain=0.7), tones[1:4], dither=90)
     if dry:
@@ -110,8 +110,8 @@ def grass(size, rnd, base="grass", blades=2600, dry=True):
 
 
 def grass_dry(size, rnd):
-    tones = ramp("grass_gold", 5, spread=0.5)
-    img = posterize(fractal(size, (6, 6), rnd, 3), tones[1:4], dither=70)
+    tones = ramp("grass_gold", 5, spread=0.4)
+    img = posterize(fractal(size, (12, 12), rnd, 3, gain=0.7), tones[2:5], dither=90)
     _blades(img, rnd, 1600, tones[1:], (6, 11), slant=0.35)
     _blades(img, rnd, 500, [tones[0], tones[1], tones[2]], (4, 8), slant=0.3)
     _dots(img, rnd, 60, [mix("grass_gold", "#F2E3A4", 0.6)], (2, 2))
@@ -122,8 +122,8 @@ def path_dirt(size, rnd):
     base = mix("wood", "sand", 0.5)
     tones = ramp(base, 5, spread=0.4)
     img = posterize(fractal(size, (10, 10), rnd, 4, gain=0.7), tones[1:4], dither=90)
-    ruts = threshold(fractal(size, (2, 8), rnd, 2), 185)
-    img.paste(Image.new("RGBA", size, rgba(tones[1])), (0, 0), ruts)
+    ruts = threshold(fractal(size, (4, 12), rnd, 2), 205)
+    img.paste(Image.new("RGBA", size, rgba(tones[2])), (0, 0), ruts)
     _pebbles(img, rnd, 70, "stone", (3, 7))
     _dots(img, rnd, 400, [tones[0], tones[4]], (1, 2))
     _blades(img, rnd, 60, ramp("grass", 4)[1:], (2, 4))

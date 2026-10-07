@@ -77,7 +77,7 @@ func _talk(zone_id: StringName, node_name: String, answers: Array[int]) -> Array
 	return _lines.duplicate()
 
 
-## L'objet unique node_name de la zone, ramassé en marchant dessus (Z/W, depuis 1,5 m côté
+## L'objet unique node_name de la zone, ramassé en marchant dessus (vers lui, depuis 1,5 m côté
 ## centre de la zone, ou depuis le décalage local `from` s'il est donné).
 func _pick(zone_id: StringName, node_name: String, from := Vector3.ZERO) -> void:
 	var pickup := zone(zone_id).get_node(NodePath("Pickups/" + node_name)) as Pickup
@@ -90,8 +90,8 @@ func _pick(zone_id: StringName, node_name: String, from := Vector3.ZERO) -> void
 	var away := Vector3(-local.x, 0.0, -local.z).normalized()
 	var start := local + (from if from != Vector3.ZERO else away * 1.5)
 	await place_player(zone_id, start, local - start)
-	var taken: bool = await walk_keys_until(
-		[KEY_W], func() -> bool: return GameState.count(item_id) > before, 3.0
+	var taken: bool = await walk_aim_until(
+		func() -> bool: return GameState.count(item_id) > before, 3.0
 	)
 	assert_true(taken, "%s ramassé en marchant dessus" % node_name)
 
@@ -126,8 +126,7 @@ func _vigil(done: Callable) -> void:
 	assert_true(held, "veille tenue")
 	player.set_aim_direction(Vector3.RIGHT, true)
 	await wait_physics_frames(2)
-	var left: bool = await walk_keys_until(
-		[KEY_W],
+	var left: bool = await walk_aim_until(
 		func() -> bool:
 			_strike_the_wave()
 			return arena_end.call(&"is_open"),

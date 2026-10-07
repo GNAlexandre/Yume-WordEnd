@@ -82,10 +82,7 @@ func _stage() -> void:
 				&"village", NYGGLATHO_FRONT, _nygglatho().global_position - _player.global_position
 			)
 			_face_nygglatho()
-			if _shot == "village":
-				_player.camera_rig.rotate_view(deg_to_rad(25.0), 0.0)
-			elif _shot == "dialogue":
-				_player.camera_rig.rotate_view(deg_to_rad(-30.0), 0.0)
+			if _shot == "dialogue":
 				_open_dialogue.call_deferred()
 
 
@@ -130,7 +127,6 @@ func _stage_forest() -> void:
 	GameState.set_flag(&"met_willem")
 	GameState.set_quest_step(&"act1_main", &"rejetons", 2)
 	_place(&"forest", Vector3(1.0, 0.0, 8.0), Vector3(-0.05, 0.0, -1.0))
-	_player.camera_rig.rotate_view(0.0, deg_to_rad(-6.0))
 	_player.camera_rig.zoom(-1.0)
 	var poses: Array[StringName] = [&"marche", &"repos", &"fouet", &"course"]
 	var index := 0

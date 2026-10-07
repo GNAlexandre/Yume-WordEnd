@@ -37,12 +37,10 @@ func _marker(npc: Npc) -> String:
 	return npc.quest_marker.text if npc.quest_marker.visible else ""
 
 
-## Tout droit (W) jusqu'à predicate ; run : Maj tenue.
+## Tout droit dans la visée (la caméra fixe regarde le nord) jusqu'à predicate ; run : Maj
+## tenue.
 func _forward_until(predicate: Callable, max_seconds: float, run: bool = false) -> bool:
-	var keys: Array[Key] = [KEY_W]
-	if run:
-		keys.append(KEY_SHIFT)
-	return await walk_keys_until(keys, predicate, max_seconds)
+	return await walk_aim_until(predicate, max_seconds, run)
 
 
 func _walk_toward(target: Vector3, predicate: Callable, max_seconds: float) -> bool:

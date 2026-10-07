@@ -1,38 +1,36 @@
-// Couleurs du sol de l'île flottante (mesh de IslandTerrain, src/world/terrain.gd), au pixel :
-// herbe d'automne, sous-bois et feuilles mortes, marais et ruisseau, terrain d'entraînement,
-// cour de l'entrepôt, aire de jeux boueuse, chemins (terre battue, vieilles dalles dans les
-// bois), pierre à nu et sable pâle du Couchant, cercle de veille et son anneau de pierres
-// sombres, pavés de la rue du Port, place du marché, quai de tôle rivetée, herbe dorée et
-// myosotis de la colline, lèvre de pierre au bord (docs/lore/MONDE.md, section 2). Palette
-// naturelle un peu désaturée (herbe vert-jaune, terre ocre, roche gris-bleu), éclairage cel
-// discret sans liseré (cel.gdshaderinc).
-// Compatible Compatibility / WebGL 2. Les uniformes de forme sont recopiés de terrain.gd au
-// lancement ; edge_distance() est la même que dans terrain.gd.
+// Sol HD-2D de l'île flottante (mesh de IslandTerrain, src/world/terrain.gd) : tuiles de pixel
+// art (assets/hd2d/ground/, réunies dans ground_atlas.png par tools/hd2d_assets.py) répétées à
+// 96 px par mètre et choisies par zone et par masque (chemins, cour, rue, marais, cercle de
+// veille… : docs/lore/MONDE.md, section 2). Chaque pixel d'art prend UNE tuile : les bords des
+// masques sont calculés au centre du pixel d'art et tramés (ordre de Bayer), comme du pixel art
+// dessiné, sans mélange flou. Filtrage au plus proche voisin. Compatible Compatibility / WebGL 2.
+// Les uniformes de forme sont recopiés de terrain.gd au lancement ; edge_distance() est la même.
 shader_type spatial;
+render_mode specular_disabled;
 
-#define CEL_NO_RIM
-#include "res://src/world/shaders/cel.gdshaderinc"
+#include "res://src/world/shaders/hd2d_light.gdshaderinc"
 
-uniform vec4 grass : source_color = vec4(0.47, 0.58, 0.27, 1.0);
-uniform vec4 grass_dry : source_color = vec4(0.64, 0.6, 0.33, 1.0);
-uniform vec4 forest_floor : source_color = vec4(0.3, 0.34, 0.2, 1.0);
-uniform vec4 leaf_rust : source_color = vec4(0.55, 0.3, 0.16, 1.0);
-uniform vec4 leaf_gold : source_color = vec4(0.66, 0.5, 0.22, 1.0);
-uniform vec4 trampled : source_color = vec4(0.55, 0.57, 0.33, 1.0);
-uniform vec4 peat : source_color = vec4(0.25, 0.25, 0.17, 1.0);
-uniform vec4 marsh_water : source_color = vec4(0.22, 0.3, 0.31, 1.0);
-uniform vec4 stream_water : source_color = vec4(0.4, 0.53, 0.58, 1.0);
-uniform vec4 stone : source_color = vec4(0.6, 0.61, 0.6, 1.0);
-uniform vec4 stone_dark : source_color = vec4(0.41, 0.43, 0.45, 1.0);
-uniform vec4 sand : source_color = vec4(0.76, 0.69, 0.53, 1.0);
-uniform vec4 path_dirt : source_color = vec4(0.58, 0.48, 0.33, 1.0);
-uniform vec4 flagstone : source_color = vec4(0.58, 0.58, 0.56, 1.0);
-uniform vec4 yard_earth : source_color = vec4(0.6, 0.5, 0.36, 1.0);
-uniform vec4 mud : source_color = vec4(0.4, 0.32, 0.23, 1.0);
-uniform vec4 soil : source_color = vec4(0.32, 0.24, 0.17, 1.0);
-uniform vec4 cobble : source_color = vec4(0.52, 0.52, 0.51, 1.0);
-uniform vec4 metal : source_color = vec4(0.42, 0.45, 0.49, 1.0);
-uniform vec4 myosotis : source_color = vec4(0.44, 0.56, 0.84, 1.0);
+// Ordre des tuiles dans l'atlas (GROUND_LAYERS de tools/hd2d_assets.py), 4 par rangée.
+const int GRASS = 0;
+const int GRASS_DRY = 1;
+const int FOREST_FLOOR = 2;
+const int PATH_DIRT = 3;
+const int FLAGSTONE = 4;
+const int COBBLE = 5;
+const int SAND = 6;
+const int ROCK = 7;
+const int PEAT = 8;
+const int WATER = 9;
+const int MUD = 10;
+const int METAL = 11;
+const float ATLAS_COLUMNS = 4.0;
+const float ATLAS_ROWS = 3.0;
+
+uniform sampler2D ground_atlas : source_color, filter_nearest, repeat_disable;
+// Taille d'une tuile (m) : 384 px à 96 px par mètre.
+uniform float tile_meters = 4.0;
+// Pixels d'art par mètre du tramage des bords (deux pixels d'image par pixel d'art).
+uniform float art_pixels = 48.0;
 
 uniform float edge_radius = 74.5;
 uniform float bay_depth = 6.0;
@@ -123,37 +121,12 @@ float stream_distance(vec2 p) {
 	return best;
 }
 
-// Dallage en quinconce : (distance au joint la plus proche, teinte de la dalle dans [0, 1[).
-vec2 tiles(vec2 p, float size, float offset) {
-	vec2 q = p / size;
-	q.x += floor(q.y) * offset;
-	vec2 f = fract(q);
-	float joint = min(min(f.x, 1.0 - f.x), min(f.y, 1.0 - f.y)) * size;
-	return vec2(joint, hash(floor(q)));
-}
-
-// Plaques de pierre irrégulières (cellules de Voronoï) : (distance au joint, teinte de la plaque).
-vec2 cells(vec2 p) {
-	vec2 i = floor(p);
-	vec2 f = fract(p);
-	float d1 = 8.0;
-	float d2 = 8.0;
-	float tint = 0.0;
-	for (int y = -1; y <= 1; y++) {
-		for (int x = -1; x <= 1; x++) {
-			vec2 g = vec2(float(x), float(y));
-			vec2 o = vec2(hash(i + g), hash(i + g + vec2(3.7, 9.2)));
-			float d = length(g + 0.1 + 0.8 * o - f);
-			if (d < d1) {
-				d2 = d1;
-				d1 = d;
-				tint = hash(i + g + vec2(1.3, 6.1));
-			} else if (d < d2) {
-				d2 = d;
-			}
-		}
-	}
-	return vec2((d2 - d1) * 0.5, tint);
+// Seuil de tramage ordonné 4 × 4 du pixel d'art (0..1).
+float bayer(vec2 cell) {
+	vec2 c = mod(cell, 4.0);
+	int i = int(c.x) + int(c.y) * 4;
+	int m[16] = int[16](0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5);
+	return (float(m[i]) + 0.5) / 16.0;
 }
 
 void vertex() {
@@ -161,116 +134,93 @@ void vertex() {
 }
 
 void fragment() {
-	vec2 p = world_pos.xz;
+	vec2 cell = floor(world_pos.xz * art_pixels);
+	vec2 p = (cell + 0.5) / art_pixels;
 	float h = world_pos.y;
-	float edge = edge_distance(p);
+	float t = bayer(cell);
 	float n1 = noise(p * 0.11);
 	float n2 = noise(p * 0.47 + vec2(7.3, 1.1));
-	// Herbe d'automne, plus sèche par grandes taches.
-	vec3 c = mix(grass.rgb, grass_dry.rgb, smoothstep(0.45, 0.85, n1) * 0.55);
-	c *= 0.94 + 0.12 * n2;
-	// Les bois du marais : sous-bois et feuilles mortes rousses et dorées.
-	float forest = 1.0 - smoothstep(-31.0, -25.0, p.y);
-	vec3 litter = mix(forest_floor.rgb, leaf_rust.rgb, smoothstep(0.55, 0.8, n1) * 0.5);
-	litter = mix(litter, leaf_gold.rgb, smoothstep(0.62, 0.85, n2) * 0.4);
-	c = mix(c, litter, forest);
-	// Terrain d'entraînement et champ de ballon : herbe rase piétinée.
-	float field = distance(p, vec2(0.0, -51.0));
-	c = mix(c, trampled.rgb * (0.93 + 0.1 * n2), 1.0 - smoothstep(13.5, 15.5, field + 1.5 * n1));
+	float n3 = noise(p * 1.7 + vec2(2.4, 9.3));
+	// Couche de base et assombrissement doux (tint) par masque.
+	int layer = GRASS;
+	vec3 tint = vec3(1.0);
+	// Herbe sèche par grandes taches.
+	if (smoothstep(0.55, 0.85, n1) * 0.7 > t) { layer = GRASS_DRY; }
+	// Les bois du marais : sous-bois et feuilles mortes.
+	float forest = 1.0 - smoothstep(-33.0, -25.0, p.y + 3.0 * (n2 - 0.5));
+	if (forest > t) { layer = FOREST_FLOOR; }
+	// Terrain d'entraînement : herbe rase piétinée.
+	float field = 1.0 - smoothstep(13.5, 15.5, distance(p, vec2(0.0, -51.0)) + 1.5 * n1);
+	if (field > t) { layer = GRASS; tint = vec3(0.95, 0.94, 0.86); }
 	// Le marais : tourbe et mares d'eau sombre au ras du sol.
 	vec2 m = (p - vec2(-32.0, -56.0)) / vec2(10.0, 8.0);
 	float marsh = 1.0 - smoothstep(0.8, 1.15, length(m) + 0.3 * (n1 - 0.5));
-	c = mix(c, peat.rgb * (0.9 + 0.2 * n2), marsh);
-	float pools = smoothstep(0.6, 0.66, noise(p * 0.3 + vec2(3.1, 8.7)));
-	c = mix(c, marsh_water.rgb, pools * smoothstep(0.3, 0.7, marsh));
-	// Le ruisseau, ses berges de terre ; reflets qui coulent.
+	if (marsh > t) { layer = PEAT; }
+	float pools = smoothstep(0.58, 0.68, noise(p * 0.3 + vec2(3.1, 8.7))) * smoothstep(0.3, 0.7, marsh);
+	if (pools > t) { layer = WATER; }
+	// Le ruisseau et ses berges.
 	float stream = stream_distance(p) + 0.25 * (n2 - 0.5);
-	float shimmer = 0.5 + 0.5 * sin(dot(p, vec2(0.7, 0.45)) * 2.2 - TIME * 2.4);
-	c = mix(c, soil.rgb, 1.0 - smoothstep(1.15, 1.6, stream));
-	c = mix(c, stream_water.rgb * (0.92 + 0.14 * shimmer), 1.0 - smoothstep(0.75, 0.95, stream));
-	// La colline des étoiles : herbe haute dorée, semée par taches de petites fleurs de myosotis
-	// (points d'une dizaine de centimètres, fondus en teinte moyenne au loin : pas de scintillement).
+	if (1.0 - smoothstep(1.15, 1.6, stream) > t) { layer = MUD; }
+	if (1.0 - smoothstep(0.75, 0.95, stream) > t) { layer = WATER; }
+	// La colline des étoiles : herbe haute dorée.
 	float hill = 1.0 - smoothstep(19.0, 23.0, distance(p, hill_center) + 2.0 * n1);
-	c = mix(c, grass_dry.rgb * (0.95 + 0.1 * n2), hill * 0.7);
-	float bloom_patch = smoothstep(0.55, 0.8, noise(p * 0.2 + vec2(11.0, 2.0)));
-	vec2 bloom_cell = floor(p * 3.0);
-	vec2 bloom_jitter = vec2(hash(bloom_cell), hash(bloom_cell + vec2(5.2, 1.3)));
-	float bloom_dist = length(fract(p * 3.0) - 0.25 - 0.5 * bloom_jitter);
-	float blur = max(fwidth(p.x * 3.0), 0.001);
-	float bloom = 1.0 - smoothstep(0.17 - blur, 0.17 + blur, bloom_dist);
-	bloom *= step(0.4, hash(bloom_cell + vec2(9.1, 4.7)));
-	bloom = mix(bloom, 0.08, clamp(blur * 2.0 - 0.5, 0.0, 1.0));
-	c = mix(c, myosotis.rgb, bloom * bloom_patch * hill * smoothstep(0.3, 2.0, h));
-	// Le bord du Couchant : pierre claire à nu en plaques, sable pâle sur les dunes.
+	if (hill * 0.9 > t) { layer = GRASS_DRY; }
+	// Le bord du Couchant : pierre claire à nu, sable sur les dunes.
 	vec2 q = (p - arena_center) / vec2(1.0, 1.2);
 	float lobe = atan(q.y, q.x);
 	float shape = length(q) + 2.5 * sin(lobe * 3.0 + 0.7) + 1.5 * sin(lobe * 5.0 + 2.0);
 	float couchant = 1.0 - smoothstep(25.0, 28.5, shape);
-	if (couchant > 0.0) {
-		// Grandes dalles de roche aux bords irréguliers, joints fins à demi comblés de sable.
-		vec2 warp = vec2(n2, noise(p * 0.21 + vec2(4.0, 9.0))) - 0.5;
-		vec2 plates = cells(p / 3.4 + warp * 0.6);
-		vec3 bare = mix(stone.rgb, stone_dark.rgb, 0.1 + 0.35 * plates.y);
-		bare *= 0.92 + 0.16 * noise(p * 1.3 + vec2(2.0, 7.0));
-		float joint = 1.0 - smoothstep(0.008, 0.03, plates.x);
-		bare = mix(bare, mix(stone_dark.rgb, sand.rgb, 0.4) * 0.9, joint * 0.7);
+	if (couchant > t) {
 		float drift = max(smoothstep(0.25, 0.9, h), smoothstep(0.45, 0.7, n1 + 0.2 * n2));
-		c = mix(c, mix(bare, sand.rgb * (0.95 + 0.08 * n2), drift), couchant);
+		layer = drift > t ? SAND : ROCK;
 	}
 	// Le cercle de veille : vieilles dalles à demi ensablées, anneau de pierres sombres à 12 m.
 	float arena = distance(p, arena_center);
-	vec2 slabs = tiles(p, 1.6, 0.5);
-	vec3 floor_c = mix(flagstone.rgb, stone.rgb, slabs.y * 0.5);
-	floor_c = mix(stone_dark.rgb, floor_c, smoothstep(0.03, 0.08, slabs.x));
-	floor_c = mix(floor_c, sand.rgb, smoothstep(0.45, 0.8, noise(p * 0.35 + vec2(2.0, 5.0))));
-	c = mix(c, floor_c, 1.0 - smoothstep(arena_radius - 0.6, arena_radius - 0.3, arena));
+	if (1.0 - smoothstep(arena_radius - 0.6, arena_radius - 0.3, arena) > t) {
+		layer = smoothstep(0.5, 0.8, noise(p * 0.35 + vec2(2.0, 5.0))) > t ? SAND : FLAGSTONE;
+	}
 	float ring_angle = atan(p.y - arena_center.y, p.x - arena_center.x) * 18.0 / PI;
 	float ring_stone = smoothstep(0.08, 0.16, abs(fract(ring_angle) - 0.5));
 	float ring = (1.0 - smoothstep(0.28, 0.38, abs(arena - arena_radius))) * ring_stone;
-	c = mix(c, stone_dark.rgb * (0.85 + 0.2 * n2), ring);
-	// Chemins de terre battue ; dans les bois, vieilles dalles envahies d'herbe.
-	float path = 1.0 - smoothstep(path_half_width - 0.2, path_half_width + 0.2, path_distance(p));
-	vec2 old = tiles(p, 0.9, 0.5);
-	vec3 woods_path = mix(flagstone.rgb * (0.85 + 0.2 * old.y), litter, 1.0 - smoothstep(0.02, 0.06, old.x));
-	woods_path = mix(woods_path, forest_floor.rgb, smoothstep(0.6, 0.8, n2) * 0.6);
-	vec3 path_c = mix(path_dirt.rgb * (0.92 + 0.12 * n2), woods_path, forest);
-	c = mix(c, path_c, path * (1.0 - 0.75 * couchant));
+	if (ring > t) { layer = ROCK; tint = vec3(0.62, 0.6, 0.66); }
+	// Chemins de terre battue ; dans les bois, vieilles dalles envahies de sous-bois.
+	float path = 1.0 - smoothstep(path_half_width - 0.25, path_half_width + 0.25, path_distance(p) + 0.3 * (n3 - 0.5));
+	if (path * (1.0 - 0.75 * couchant) > t) {
+		layer = forest > 0.5 ? (n2 > 0.62 ? FOREST_FLOOR : FLAGSTONE) : PATH_DIRT;
+	}
 	// La cour de l'entrepôt : terre battue et vieilles dalles, bordure de pierres.
 	float yard = length(p);
-	vec2 yard_tiles = tiles(p, 1.1, 0.5);
-	vec3 yard_c = yard_earth.rgb * (0.9 + 0.15 * n2);
-	float flags = smoothstep(0.42, 0.6, noise(p * 0.3 + vec2(9.0, 4.0)));
-	vec3 old_flags = mix(flagstone.rgb * (0.88 + 0.2 * yard_tiles.y), yard_c, 1.0 - smoothstep(0.02, 0.06, yard_tiles.x));
-	yard_c = mix(yard_c, old_flags, flags);
-	c = mix(c, yard_c, 1.0 - smoothstep(plaza_radius - 0.2, plaza_radius, yard));
-	c = mix(c, stone_dark.rgb, 1.0 - smoothstep(0.22, 0.36, abs(yard - plaza_radius + 0.3)));
-	// L'aire de jeux boueuse (sud-ouest de la cour) et le potager (terre en sillons).
-	float play = 1.0 - smoothstep(3.0, 3.8, distance(p, vec2(-12.0, 11.0)) + 0.8 * n2);
-	c = mix(c, mud.rgb * (0.9 + 0.2 * n1), play);
+	if (1.0 - smoothstep(plaza_radius - 0.3, plaza_radius + 0.1, yard + 0.4 * (n3 - 0.5)) > t) {
+		layer = smoothstep(0.42, 0.6, noise(p * 0.3 + vec2(9.0, 4.0))) > t ? FLAGSTONE : PATH_DIRT;
+	}
+	if (1.0 - smoothstep(0.2, 0.34, abs(yard - plaza_radius + 0.3)) > t) {
+		layer = ROCK;
+		tint = vec3(0.7, 0.68, 0.72);
+	}
+	// L'aire de jeux boueuse et le potager.
+	if (1.0 - smoothstep(3.0, 3.8, distance(p, vec2(-12.0, 11.0)) + 0.8 * n2) > t) { layer = MUD; }
 	vec2 garden = abs(p - vec2(13.0, -4.0)) - vec2(2.6, 1.6);
-	float furrows = 0.85 + 0.15 * sin(p.y * 9.0);
-	c = mix(c, soil.rgb * furrows, 1.0 - smoothstep(0.0, 0.2, max(garden.x, garden.y)));
+	if (max(garden.x, garden.y) < 0.0) { layer = MUD; tint = vec3(0.8, 0.74, 0.7); }
 	// La rue du Port : pavés ; la place du marché : dalles.
 	vec2 street = abs(p - vec2(0.0, 45.0)) - vec2(34.0, 2.0);
-	float street_mask = 1.0 - smoothstep(0.0, 0.25, max(street.x, street.y));
-	vec2 cobbles = tiles(p, 0.42, 0.5);
-	vec3 cobble_c = mix(cobble.rgb * (0.85 + 0.25 * cobbles.y), stone_dark.rgb * 0.8, 1.0 - smoothstep(0.02, 0.05, cobbles.x));
-	c = mix(c, cobble_c, street_mask);
-	float market = 1.0 - smoothstep(6.0, 6.6, distance(p, vec2(-23.0, 50.0)) + 0.6 * n2);
-	vec2 market_tiles = tiles(p, 1.2, 0.5);
-	vec3 market_c = mix(flagstone.rgb * (0.88 + 0.18 * market_tiles.y), stone_dark.rgb, 1.0 - smoothstep(0.02, 0.06, market_tiles.x));
-	c = mix(c, market_c, market);
-	// Le quai : bord de l'île plaqué de tôle rivetée, du port jusqu'au vide.
-	float quay = (1.0 - smoothstep(32.0, 33.0, abs(p.x))) * smoothstep(58.6, 59.2, p.y + 0.4 * sin(p.x * 0.31));
-	vec2 sheets = tiles(p + vec2(0.5, 0.0), 2.0, 0.0);
-	vec3 quay_c = metal.rgb * (0.88 + 0.16 * sheets.y);
-	quay_c = mix(quay_c * 0.7, quay_c, smoothstep(0.03, 0.07, sheets.x));
-	float rivets = 1.0 - smoothstep(0.04, 0.07, length(fract(p * 2.5) - 0.5));
-	quay_c = mix(quay_c, quay_c * 0.65, rivets * (1.0 - smoothstep(0.12, 0.2, sheets.x)));
-	c = mix(c, quay_c, quay);
-	// La lèvre de pierre, nette et un peu ébréchée, sur le dernier mètre avant le vide.
-	float lip = 1.0 - smoothstep(0.7, 1.1, edge - 0.45 * n2);
-	c = mix(c, mix(stone.rgb * (0.92 + 0.12 * n1), metal.rgb * 0.7, quay), lip);
+	if (max(street.x, street.y) < 0.0) { layer = COBBLE; }
+	if (1.0 - smoothstep(6.0, 6.6, distance(p, vec2(-23.0, 50.0)) + 0.6 * n2) > t) { layer = FLAGSTONE; }
+	// Le quai : bord de l'île plaqué de tôle rivetée.
+	float quay = (1.0 - step(32.5, abs(p.x))) * step(58.9, p.y + 0.4 * sin(p.x * 0.31));
+	if (quay > 0.5) { layer = METAL; }
+	// La lèvre de pierre, nette et ébréchée, sur le dernier mètre avant le vide.
+	float edge = edge_distance(p);
+	if (edge - 0.45 * n2 < 0.9 && quay < 0.5) { layer = ROCK; tint = vec3(0.92); }
+	// Échantillon : la tuile répétée tous les tile_meters, au plus proche voisin.
+	vec2 tile_uv = clamp(fract(world_pos.xz / tile_meters), vec2(0.5 / 384.0), vec2(1.0 - 0.5 / 384.0));
+	vec2 cell_origin = vec2(mod(float(layer), ATLAS_COLUMNS), floor(float(layer) / ATLAS_COLUMNS));
+	vec2 uv = (cell_origin + tile_uv) / vec2(ATLAS_COLUMNS, ATLAS_ROWS);
+	vec3 c = texture(ground_atlas, uv).rgb * tint;
+	// Petites fleurs de myosotis sur la colline (pixels d'art bleus semés par touffes).
+	float bloom_patch = smoothstep(0.55, 0.8, noise(p * 0.2 + vec2(11.0, 2.0)));
+	if (hill > 0.5 && h > 0.3 && hash(cell) > 0.985 - 0.04 * bloom_patch && bloom_patch > 0.2) {
+		c = vec3(0.5, 0.61, 0.81);
+	}
 	ALBEDO = c;
-	ROUGHNESS = 0.6;
+	ROUGHNESS = 1.0;
 }

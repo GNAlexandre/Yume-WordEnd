@@ -138,9 +138,9 @@ func test_walks_at_4_and_runs_at_7_relative_to_camera() -> void:
 	_ticks(player, 60, FORWARD_INPUT, true)
 	assert_almost_eq(_horizontal_speed(player), 7.0, 0.01, "course à 7 m/s")
 	assert_true(player.is_running())
-	player.camera_rig.rotate_view(PI / 2.0, 0.0)
-	_ticks(player, 30, FORWARD_INPUT)
-	assert_almost_eq(player.velocity.normalized(), Vector3(-1, 0, 0), EPS * 10, "caméra tournée")
+	# (HD-2D) Commandes relatives à l'écran : la caméra fixe regarde le nord, la droite est l'est.
+	_ticks(player, 30, Vector2(1, 0))
+	assert_almost_eq(player.velocity.normalized(), Vector3(1, 0, 0), EPS * 10, "droite : l'est")
 
 
 func test_acceleration_is_smooth_but_reactive() -> void:
@@ -413,11 +413,15 @@ func test_respawn_resets_velocity_knockback_lock_and_camera() -> void:
 	var source: Node3D = add_child_autofree(Node3D.new())
 	source.global_position = Vector3(-1, 0, 0)
 	player.hurtbox.hit_taken.emit(load("res://data/attacks/sword_3.tres") as AttackData, source)
-	player.camera_rig.rotate_view(1.0, -0.4)
 	EventBus.player_respawned.emit()
 	assert_eq(player.velocity, Vector3.ZERO, "vitesse à zéro")
 	player.tick(DT, _commands())
 	assert_almost_eq(_horizontal_speed(player), 0.0, 0.001, "plus de recul ni d'élan")
 	var rig := player.camera_rig
-	assert_almost_eq(rig.forward(), player.aim_direction(), EPS, "caméra derrière le joueur")
-	assert_almost_eq(rig.pitch(), rig.default_pitch(), 0.001, "tangage par défaut")
+	assert_eq(rig.forward(), Vector3.FORWARD, "(HD-2D) caméra fixe : toujours le nord")
+	assert_almost_eq(
+		rig.focus(),
+		player.global_position + Vector3.UP * rig.focus_height,
+		Vector3.ONE * 0.05,
+		"recalée sur le joueur"
+	)

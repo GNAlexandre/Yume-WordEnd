@@ -1,73 +1,21 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
-
-[sub_resource type="StandardMaterial3D" id="plank"]
-albedo_color = Color(0.496, 0.461, 0.417, 1)
-
-[sub_resource type="StandardMaterial3D" id="tin"]
-albedo_color = Color(0.452, 0.47, 0.496, 1)
-
-[sub_resource type="StandardMaterial3D" id="dark"]
-albedo_color = Color(0.341, 0.262, 0.201, 1)
-
-[sub_resource type="StandardMaterial3D" id="wood"]
-albedo_color = Color(0.536, 0.404, 0.289, 1)
-
-[sub_resource type="StandardMaterial3D" id="iron"]
-albedo_color = Color(0.241, 0.25, 0.268, 1)
+[ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/tool_shed.png" id="2_facade"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_planks.png" id="3_wall"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/roof_tin.png" id="4_roof"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(3, 2.4, 2.5)
 
 [node name="ToolShed" type="Node3D"]
-
-[node name="Walls" type="MeshInstance3D" parent="."]
-transform = Transform3D(3, 0, 0, 0, 2.1, 0, 0, 0, 2.5, 0, 1.05, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("plank")
-
-[node name="Roof" type="MeshInstance3D" parent="."]
-transform = Transform3D(3.4, 0, 0, 0, 0.078785, 0.512262, 0, -0.013892, 2.905183, 0, 2.33, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("tin")
-
-[node name="Door" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1.84, 0, 0, 0, 0.05, 0.5, 0.92, 1.26)
-mesh = ExtResource("1_box")
-material_override = SubResource("dark")
-
-[node name="Plank1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.05, 0, 0, 0, 2.1, 0, 0, 0, 0.03, -1, 1.05, 1.26)
-mesh = ExtResource("1_box")
-material_override = SubResource("dark")
-cast_shadow = 0
-
-[node name="Window" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.5, 0, 0, 0, 0.4, 0, 0, 0, 0.04, -0.75, 1.5, 1.26)
-mesh = ExtResource("1_box")
-material_override = SubResource("dark")
-cast_shadow = 0
-
-[node name="Rake" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.04924, -0.277837, 0, 0.008682, 1.575692, 0, 0, 0, 0.05, -1.25, 0.8, 1.42)
-mesh = ExtResource("1_box")
-material_override = SubResource("wood")
-
-[node name="RakeHead" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.334835, -0.010419, 0, 0.05904, 0.059088, 0, 0, 0, 0.06, -1.4, 1.57, 1.42)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
-
-[node name="Spade" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.049513, 0.194842, 0, -0.006959, 1.386375, 0, 0, 0, 0.05, 1.4, 0.75, 1.42)
-mesh = ExtResource("1_box")
-material_override = SubResource("wood")
-
-[node name="SpadeHead" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.217859, 0.038968, 0, -0.030618, 0.277275, 0, 0, 0, 0.03, 1.47, 0.12, 1.42)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
+script = ExtResource("1_building")
+facade = ExtResource("2_facade")
+wall_texture = ExtResource("3_wall")
+roof_texture = ExtResource("4_roof")
+footprint = Vector2(3.0, 2.5)
+wall_height = 2.25
+ridge_height = 2.6
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

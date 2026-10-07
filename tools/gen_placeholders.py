@@ -27,8 +27,8 @@ Usage (Python 3.9+, pip install Pillow) :
     python3 tools/gen_placeholders.py portrait chtholly --color "#5b7fd0" --side 80 --forward 6
     # un ennemi : assets/enemies/<id>/<id>.png + .json (son SkinData va dans data/enemies/visuals/)
     python3 tools/gen_placeholders.py enemy <id> --color "#6f8f4f" --height 1.0
-    # damier (sol de la greybox)
-    python3 tools/gen_placeholders.py checker assets/textures/checker.png
+    # damier (essais ; le sol du jeu est en tuiles HD-2D : tools/hd2d_assets.py)
+    python3 tools/gen_placeholders.py checker build/checker.png
 
 --out <dossier> écrit la planche ailleurs (essais). Le résultat est déterministe (aucun
 hasard) ; les fichiers générés sont versionnés.

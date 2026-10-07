@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://mfdecxajto6g"
-path="res://.godot/imported/checker.png-5e2b6ff6c0c0f48b47257da03e3aea4a.ctex"
+uid="uid://8mjcxy8wbyxa"
+path="res://.godot/imported/ground_atlas.png-bf094467467f5958782093c8d2e61997.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/checker.png"
-dest_files=["res://.godot/imported/checker.png-5e2b6ff6c0c0f48b47257da03e3aea4a.ctex"]
+source_file="res://assets/hd2d/ground/atlas/ground_atlas.png"
+dest_files=["res://.godot/imported/ground_atlas.png-bf094467467f5958782093c8d2e61997.ctex"]
 
 [params]
 

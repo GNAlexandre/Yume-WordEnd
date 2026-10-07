@@ -1,184 +1,22 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/prism.tres" id="2_prism"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/post.tres" id="3_post"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="4_bead"]
-
-[sub_resource type="StandardMaterial3D" id="stone"]
-albedo_color = Color(0.735, 0.691, 0.629, 1)
-
-[sub_resource type="StandardMaterial3D" id="upper"]
-albedo_color = Color(0.754, 0.71, 0.622, 1)
-
-[sub_resource type="StandardMaterial3D" id="tile"]
-albedo_color = Color(0.603, 0.436, 0.365, 1)
-
-[sub_resource type="StandardMaterial3D" id="ridge"]
-albedo_color = Color(0.529, 0.309, 0.282, 1)
-
-[sub_resource type="StandardMaterial3D" id="brick"]
-albedo_color = Color(0.531, 0.347, 0.285, 1)
-
-[sub_resource type="StandardMaterial3D" id="frame"]
-albedo_color = Color(0.341, 0.262, 0.201, 1)
-
-[sub_resource type="StandardMaterial3D" id="step"]
-albedo_color = Color(0.421, 0.43, 0.448, 1)
-
-[sub_resource type="StandardMaterial3D" id="glow"]
-shading_mode = 0
-albedo_color = Color(1, 0.85, 0.58, 1)
-
-[sub_resource type="StandardMaterial3D" id="shutter"]
-albedo_color = Color(0.391, 0.303, 0.268, 1)
-
-[sub_resource type="StandardMaterial3D" id="pot"]
-albedo_color = Color(0.673, 0.409, 0.321, 1)
-
-[sub_resource type="StandardMaterial3D" id="plant"]
-albedo_color = Color(0.405, 0.493, 0.291, 1)
+[ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/limashenka_house.png" id="2_facade"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_plaster.png" id="3_wall"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/roof_tiles.png" id="4_roof"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(6, 5.2, 5)
 
 [node name="LimashenkaHouse" type="Node3D"]
-
-[node name="Ground" type="MeshInstance3D" parent="."]
-transform = Transform3D(6, 0, 0, 0, 2.9, 0, 0, 0, 5, 0, 1.45, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("stone")
-
-[node name="Upper" type="MeshInstance3D" parent="."]
-transform = Transform3D(6.1, 0, 0, 0, 2.3, 0, 0, 0, 5.1, 0, 4.05, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("upper")
-
-[node name="RoofGable" type="MeshInstance3D" parent="."]
-transform = Transform3D(0, 0, 6.1, 0, 1.9, 0, -5.1, 0, 0, 0, 6.15, 0)
-mesh = ExtResource("2_prism")
-material_override = SubResource("upper")
-
-[node name="RoofSouth" type="MeshInstance3D" parent="."]
-transform = Transform3D(6.8, 0, 0, 0, 0.160377, -2.160784, 0, 0.119496, 2.9, 0, 6.119608, 1.45)
-mesh = ExtResource("1_box")
-material_override = SubResource("tile")
-
-[node name="RoofNorth" type="MeshInstance3D" parent="."]
-transform = Transform3D(6.8, 0, 0, 0, 0.160377, 2.160784, 0, -0.119496, 2.9, 0, 6.119608, -1.45)
-mesh = ExtResource("1_box")
-material_override = SubResource("tile")
-
-[node name="RoofRidge" type="MeshInstance3D" parent="."]
-transform = Transform3D(6.8, 0, 0, 0, 0.18, 0, 0, 0, 0.36, 0, 7.24, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("ridge")
-
-[node name="Chimney" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.7, 0, 0, 0, 2, 0, 0, 0, 0.7, 2.1, 6.6, -1)
-mesh = ExtResource("1_box")
-material_override = SubResource("brick")
-
-[node name="Door" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.1, 0, 0, 0, 2.1, 0, 0, 0, 0.08, 0.9, 1.05, 2.54)
-mesh = ExtResource("1_box")
-material_override = SubResource("frame")
-
-[node name="Step" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0.9, 0.1, 2.8)
-mesh = ExtResource("1_box")
-material_override = SubResource("step")
-cast_shadow = 0
-
-[node name="WinGround" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1.1, 0, 0, 0, 0.06, -1.6, 1.6, 2.52)
-mesh = ExtResource("1_box")
-material_override = SubResource("glow")
-cast_shadow = 0
-
-[node name="WinGroundBarV1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.07, 0, 0, 0, 1.1, 0, 0, 0, 0.04, -1.6, 1.6, 2.56)
-mesh = ExtResource("1_box")
-material_override = SubResource("frame")
-cast_shadow = 0
-
-[node name="WinGroundBarH1" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -1.6, 1.6, 2.56)
-mesh = ExtResource("1_box")
-material_override = SubResource("frame")
-cast_shadow = 0
-
-[node name="OpenShutter1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.45, 0, 0, 0, 1.15, 0, 0, 0, 0.05, -2.45, 1.6, 2.56)
-mesh = ExtResource("1_box")
-material_override = SubResource("shutter")
-cast_shadow = 0
-
-[node name="OpenShutter2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.45, 0, 0, 0, 1.15, 0, 0, 0, 0.05, -0.75, 1.6, 2.56)
-mesh = ExtResource("1_box")
-material_override = SubResource("shutter")
-cast_shadow = 0
-
-[node name="WinUpWest" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, -1.5, 4.1, 2.57)
-mesh = ExtResource("1_box")
-material_override = SubResource("glow")
-cast_shadow = 0
-
-[node name="WinUpWestBarV1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, -1.5, 4.1, 2.61)
-mesh = ExtResource("1_box")
-material_override = SubResource("frame")
-cast_shadow = 0
-
-[node name="WinUpWestBarH1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -1.5, 4.1, 2.61)
-mesh = ExtResource("1_box")
-material_override = SubResource("frame")
-cast_shadow = 0
-
-[node name="ClosedShutters" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.95, 0, 0, 0, 1.05, 0, 0, 0, 0.06, 1.5, 4.1, 2.6)
-mesh = ExtResource("1_box")
-material_override = SubResource("shutter")
-cast_shadow = 0
-
-[node name="UpShutter1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.42, 0, 0, 0, 1.05, 0, 0, 0, 0.05, -2.25, 4.1, 2.59)
-mesh = ExtResource("1_box")
-material_override = SubResource("shutter")
-cast_shadow = 0
-
-[node name="UpShutter2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.42, 0, 0, 0, 1.05, 0, 0, 0, 0.05, -0.75, 4.1, 2.59)
-mesh = ExtResource("1_box")
-material_override = SubResource("shutter")
-cast_shadow = 0
-
-[node name="Pot1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.2, 2.85)
-mesh = ExtResource("3_post")
-material_override = SubResource("pot")
-cast_shadow = 0
-
-[node name="Plant1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.45, 0, 0, 0, 0.4, 0, 0, 0, 0.45, 0, 0.5, 2.85)
-mesh = ExtResource("4_bead")
-material_override = SubResource("plant")
-cast_shadow = 0
-
-[node name="Pot2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 1.8, 0.2, 2.85)
-mesh = ExtResource("3_post")
-material_override = SubResource("pot")
-cast_shadow = 0
-
-[node name="Plant2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.45, 0, 0, 0, 0.4, 0, 0, 0, 0.45, 1.8, 0.5, 2.85)
-mesh = ExtResource("4_bead")
-material_override = SubResource("plant")
-cast_shadow = 0
+script = ExtResource("1_building")
+facade = ExtResource("2_facade")
+wall_texture = ExtResource("3_wall")
+roof_texture = ExtResource("4_roof")
+footprint = Vector2(6.0, 5.0)
+wall_height = 3.75
+ridge_height = 6.0
+gable_front = true
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

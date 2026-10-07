@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" path="res://src/visuals/character_visual.tscn" id="3_visual"]
 [ext_resource type="PackedScene" path="res://src/items/pickup.tscn" id="4_pickup"]
 [ext_resource type="PackedScene" path="res://src/ui/inventory.tscn" id="5_inventory"]
-[ext_resource type="Texture2D" path="res://assets/textures/checker.png" id="6_checker"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/ground/grass.png" id="6_checker"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_demo"]
 sky_top_color = Color(0.227, 0.173, 0.388, 1)

@@ -10,7 +10,8 @@ extends CharacterBody3D
 ##
 ## À chaque image physique, read_commands() lit les actions du Lot 0 et tick() les applique
 ## (les tests appellent tick() avec des commandes fabriquées) :
-## - déplacement relatif à la caméra (move_direction), marche ou course avec accélération et
+## - déplacement relatif à la caméra (move_direction ; (HD-2D) la caméra fixe regarde le nord :
+##   haut de l'écran = nord, commandes relatives à l'écran), marche ou course avec accélération et
 ##   décélération, saut (appui retenu, délai de grâce), gravité, pentes jusqu'à 45° ;
 ## - rien ne bouge pendant Combat.is_busy() ni entre dialogue_started et dialogue_ended ;
 ##   attack() et charge_begin() quand Combat est libre, attack() aussi pendant un coup
@@ -26,7 +27,7 @@ extends CharacterBody3D
 ## Comportements du Lot 0 conservés : skin de GameState (et skin_changed), recul sur
 ## Hurtbox.hit_taken, GameState.position tenue à jour au sol, animations repos / marche /
 ## course seulement quand Combat.is_busy() est faux. Réapparition (player_respawned) :
-## vitesse et recul à zéro, verrou levé, caméra derrière le joueur.
+## vitesse et recul à zéro, verrou levé, caméra recalée sur le joueur.
 
 ## Script de la caméra, pour typer camera_rig sans ajouter de classe globale.
 const CameraRigScript := preload("res://src/player/camera_rig.gd")
@@ -352,7 +353,7 @@ func _update_lock(toggle: bool, dead: bool) -> void:
 	var enemies := get_tree().get_nodes_in_group(&"enemies")
 	_lock_target = pick_lock_target(global_position, enemies, lock_radius)
 	if _lock_target == null:
-		# Façon Zelda : sans cible, l'appui replace la caméra derrière le joueur.
+		# Sans cible : la caméra fixe ne tourne pas (recenter_behind est sans effet en HD-2D).
 		camera_rig.recenter_behind(_aim)
 
 
@@ -531,4 +532,5 @@ func _on_player_respawned() -> void:
 	_jump_buffer_left = 0.0
 	_lock_target = null
 	camera_rig.lock_target = null
+	camera_rig.follow_velocity = Vector3.ZERO
 	camera_rig.snap_behind(_aim)

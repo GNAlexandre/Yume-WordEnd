@@ -117,9 +117,3 @@ func test_vigil_circle_keeps_15_m_of_open_ground() -> void:
 		var collider := hit["collider"] as Node
 		if collider != ground and not _arena.is_ancestor_of(collider):
 			fail_test("collision dans le cercle : %s" % collider.get_path())
-	var tufts := 0
-	for data: PackedFloat32Array in IslandGrass.chunk_buffers().values():
-		for k in range(0, data.size(), 16):
-			if Vector2(data[k + 3], data[k + 11]).distance_to(_flat(center)) < 15.0:
-				tufts += 1
-	assert_eq(tufts, 0, "aucune touffe d'herbe dans le cercle")
