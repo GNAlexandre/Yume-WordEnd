@@ -1,10 +1,11 @@
 extends "res://tests/stubs/m2_game_test.gd"
 ## Lot Q, intégration : la quête de démonstration demo_tour (tests/data/quests, cinq étapes) jouée
 ## de bout en bout dans le vrai jeu (main.tscn), par des appuis réels, puis sa suite
-## demo_followup. Le guide et le déclencheur du puits viennent de tests/data/placements/
-## village.tscn, posé dans le village comme un fichier d'emplacement. Marqueurs « ! » et « ? »,
-## objectif et progression du HUD, journal (Tab, L, Select ; pause), sauvegarde de l'étape en
-## cours. La quête des pages reste jouable : tests/integration/test_m2_quest.gd.
+## demo_followup. Le guide, le forgeron et le déclencheur du puits viennent de
+## tests/data/placements/village.tscn, posé dans le village comme un fichier d'emplacement.
+## Marqueurs « ! » et « ? », objectif et progression du HUD, journal (Tab, L, Select ; pause),
+## sauvegarde de l'étape en cours. La quête principale de l'acte 1, commencée seule, n'en bouge
+## pas : elle se joue dans tests/integration/test_m2_quest.gd.
 ## Comme dans test_m2_quest.gd, les Timeres de la forêt sont immobilisés (cibles de l'épée).
 
 const FIXTURES_DIR := "res://tests/data/quests"
@@ -112,12 +113,12 @@ func test_demo_quest_from_offer_to_followup() -> void:
 	zone(&"village").add_child(VILLAGE_DEMO.instantiate())
 	await wait_physics_frames(30)
 	var guide := _npc(&"village", "QuestDemo/DemoGuide")
-	var blacksmith := _npc(&"village", "NPCs/Blacksmith")
-	var librarian := _npc(&"village", "NPCs/Librarian")
+	var blacksmith := _npc(&"village", "QuestDemo/Blacksmith")
+	var nygglatho := _npc(&"village", "NPCs/Nygglatho")
 
-	# 0. Marqueurs : le guide et la bibliothécaire ont une quête à donner.
+	# 0. Marqueurs : le guide a une quête à donner ; Nygglatho attend l'aînée (act1_main).
 	assert_eq(_marker(guide), "!", "« ! » au-dessus du guide")
-	assert_eq(_marker(librarian), "!", "« ! » au-dessus de la bibliothécaire (pages)")
+	assert_eq(_marker(nygglatho), "?", "« ? » au-dessus de Nygglatho (quête principale)")
 	assert_eq(_marker(blacksmith), "")
 
 	# 1. Le guide propose la visite : on accepte.
@@ -156,7 +157,8 @@ func test_demo_quest_from_offer_to_followup() -> void:
 	await tap_key(KEY_TAB)
 	assert_true(journal.call(&"is_open"), "journal ouvert (Tab)")
 	assert_true(get_tree().paused, "jeu en pause")
-	assert_eq(journal.call(&"listed_quests"), [&"demo_tour"] as Array[StringName])
+	assert_eq(journal.call(&"listed_quests"), [&"act1_main", &"demo_tour"] as Array[StringName])
+	assert_eq(journal.call(&"selected_quest"), &"demo_tour", "la quête suivie")
 	var steps := _journal_steps()
 	assert_eq(steps.size(), 3)
 	assert_eq(
@@ -186,7 +188,7 @@ func test_demo_quest_from_offer_to_followup() -> void:
 	assert_eq(_step(), &"pages", "deux Timeres : étape suivante")
 	assert_true(GameState.has_flag(&"demo_tour_brave"), "récompense de l'étape")
 	await wait_process_frames(2)
-	assert_eq(hud.call(&"quest_progress", &"demo_tour"), "Fragment de page : 2/2")
+	assert_eq(hud.call(&"quest_progress", &"demo_tour"), "Page du livre d’images : 2/2")
 
 	# 7. Étape collect « rapporter à » : retour au village, le guide prend les pages.
 	await place_player(&"forest", Vector3(0.0, 0.0, 26.0), Vector3.BACK)
@@ -214,13 +216,13 @@ func test_demo_quest_from_offer_to_followup() -> void:
 	# 9. Journal à la manette : Select, les deux quêtes terminées ; B ferme sans charger.
 	await tap_joy(JOY_BUTTON_BACK)
 	assert_true(journal.call(&"is_open"), "journal ouvert (Select)")
-	var expected: Array[StringName] = [&"demo_tour", &"demo_followup"]
-	assert_eq(journal.call(&"listed_quests"), expected, "quêtes terminées")
+	var expected: Array[StringName] = [&"act1_main", &"demo_tour", &"demo_followup"]
+	assert_eq(journal.call(&"listed_quests"), expected, "la principale, puis les terminées")
 	await tap_joy(JOY_BUTTON_B)
 	assert_false(journal.call(&"is_open"), "fermé (B)")
 	assert_false(get_tree().paused)
 	assert_eq(combat.current_state(), &"idle", "B qui ferme le journal ne lance pas de charge")
 
-	# 10. La quête des pages n'a pas bougé.
-	assert_eq(GameState.quest_state(&"pages"), &"", "pages toujours à prendre")
-	assert_eq(_marker(librarian), "!")
+	# 10. La quête principale n'a pas bougé.
+	assert_eq(GameState.quest_step(&"act1_main"), &"morning", "act1_main à sa première étape")
+	assert_eq(_marker(nygglatho), "?")
