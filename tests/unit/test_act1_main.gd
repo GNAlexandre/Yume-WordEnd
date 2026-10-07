@@ -2,8 +2,10 @@ extends "res://tests/stubs/q_quest_test.gd"
 ## Acte 1, quête principale act1_main « Dans la forêt céleste » (HISTOIRE.md 3.1), jouée de bout
 ## en bout avec le vrai moteur et les vrais dialogues (modèle : test_quest_example.gd). Elle
 ## démarre seule (auto_start : la base des tests la met de côté, release_auto_start() la rend) ;
-## les PNJ donnent leurs aides selon l'étape ; Willem a deux instances de repli (willem_training
-## au terrain, willem_stars au sommet) en attendant la présence selon l'histoire (visible_if).
+## les PNJ donnent leurs aides selon l'étape ; Willem a trois emplacements (l'entrepôt,
+## willem_training au terrain, willem_stars au sommet), présents selon l'étape (visible_if :
+## tests/unit/test_act1_presence.gd). Ici, les dialogues sont joués par leurs données, présence
+## ou non.
 
 const QUEST := &"act1_main"
 
@@ -78,7 +80,8 @@ func test_main_quest_from_the_morning_to_the_promise() -> void:
 	assert_string_contains(said[2], "Dors.")
 	assert_eq(step_of(QUEST), &"training")
 	assert_true(GameState.has_flag(&"departure_told"))
-	# 9. L'assaut : au terrain d'entraînement (instance de repli), pas à l'entrepôt.
+	# 9. L'assaut : au terrain d'entraînement (willem_training), pas à l'entrepôt (où Willem est
+	# absent pendant l'étape ; même son dialogue ne la validerait pas).
 	said = _say(&"willem", [-1, 1, -1])
 	assert_string_contains(said[0], "Les petites me fuient", "à l'entrepôt : le dessert d'abord")
 	assert_eq(step_of(QUEST), &"training", "le Willem de l'entrepôt ne valide pas l'étape")

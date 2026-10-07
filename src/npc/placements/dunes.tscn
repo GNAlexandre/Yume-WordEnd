@@ -7,11 +7,11 @@
 [node name="NPCs" type="Node3D"]
 
 [node name="GardeLookout" parent="." instance=ExtResource("1_npc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.2, -12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.2, -10)
 data = ExtResource("2_lookout")
 
 [node name="couchant_edge" parent="." instance=ExtResource("3_trigger")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 0.1, -12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 0, -12)
 trigger_id = &"couchant_edge"
 radius = 3.0
 height = 3.0

@@ -6,9 +6,11 @@ lieu posés dans les fichiers d'emplacement des zones. Aucun script à toucher. 
 pour écrire une quête principale en plusieurs actes ou des quêtes secondaires, et pour les tester.
 
 Les exemples cités existent et sont testés : la quête `example_patrol`
-(`tests/data/quests/example_patrol.json`), le dialogue du forgeron qui va avec
-(`tests/data/dialogues/example_blacksmith.json`) et leur test (`tests/unit/test_quest_example.gd`).
-Les quêtes d'exemple vivent sous `tests/` : elles ne sont pas dans le jeu exporté.
+(`tests/data/quests/example_patrol.json`), le dialogue du soldat de la Garde qui va avec
+(`tests/data/dialogues/example_guard.json`, PNJ `tests/data/npcs/example_guard.tres`) et leur
+test (`tests/unit/test_quest_example.gd`). Les quêtes d'exemple vivent sous `tests/` : elles ne
+sont pas dans le jeu exporté. Le vrai contenu (l'acte 1 : `act1_main` et six quêtes
+secondaires) est dans `data/quests/` et ses scénarios dans `tests/unit/test_act1_*.gd`.
 
 ## En bref
 
@@ -44,17 +46,17 @@ Les quêtes d'exemple vivent sous `tests/` : elles ne sont pas dans le jeu expor
 {
   "_comment": "Exemple commenté de docs/QUETES.md.",
   "id": "example_patrol",
-  "title": "La ronde de la forêt",
-  "summary": "Le forgeron s’inquiète : des Timeres rôdent dans la clairière de la forêt…",
-  "giver": "blacksmith",
-  "requires": { "quests": ["pages"] },
+  "title": "La ronde des bois",
+  "summary": "Le soldat de la Garde s’inquiète : des rejetons de Timere rôdent dans la clairière…",
+  "giver": "example_guard",
+  "requires": { "quests": ["picture_book"] },
   "steps": [
     {
       "id": "clearing",
       "type": "reach",
       "trigger": "forest_clearing",
-      "objective": "Rejoindre la clairière de la forêt",
-      "hint": "La forêt est au nord du village, par la porte en bois."
+      "objective": "Rejoindre la clairière des bois",
+      "hint": "Les bois du marais sont au nord de l’entrepôt, par le portail nord."
     },
     {
       "id": "timeres",
@@ -62,16 +64,16 @@ Les quêtes d'exemple vivent sous `tests/` : elles ne sont pas dans le jeu expor
       "enemy": "timere_small",
       "count": 2,
       "zone": "forest",
-      "objective": "Chasser 2 petits Timeres de la forêt"
+      "objective": "Abattre 2 rejetons de Timere dans les bois"
     },
     {
       "id": "report",
       "type": "talk",
-      "npc": "blacksmith",
-      "objective": "Faire ton rapport au forgeron"
+      "npc": "example_guard",
+      "objective": "Faire ton rapport au soldat de la Garde"
     }
   ],
-  "rewards": { "items": { "shell": 2 }, "flags": ["forest_patrol_done"] }
+  "rewards": { "items": { "flower_blue": 2 }, "flags": ["forest_patrol_done"] }
 }
 ```
 
@@ -85,13 +87,13 @@ Ligne par ligne :
 - `title` : titre du HUD et du journal (40 caractères au plus) ; `summary` : résumé du journal.
 - `giver` : le PNJ (`NpcData.id`) qui propose la quête ; il porte le « ! » tant qu'elle est
   disponible. Son dialogue doit la proposer (`start_quest`).
-- `requires` : la quête n'est disponible qu'une fois la quête des pages terminée.
+- `requires` : la quête n'est disponible qu'une fois le livre d'images (`picture_book`) terminé.
 - `steps` : les étapes, **dans l'ordre**. Une seule est en cours à la fois : la ronde commence par
-  la clairière (étape `reach` sur un déclencheur), puis deux petits Timeres à chasser dans la forêt
-  (`kill`), puis le rapport au forgeron (`talk`).
+  la clairière (étape `reach` sur un déclencheur), puis deux rejetons à abattre dans les bois
+  (`kill`), puis le rapport au soldat de la Garde (`talk`).
 - `objective` : le texte du HUD pour cette étape (70 caractères au plus) ; `hint` : une aide
   facultative, affichée par le journal sous l'objectif.
-- `rewards` : donnée quand la dernière étape est validée : deux coquillages et un drapeau qu'une
+- `rewards` : donnée quand la dernière étape est validée : deux myosotis et un drapeau qu'une
   autre quête ou un dialogue peut tester.
 
 ### Champs d'une quête
@@ -147,24 +149,24 @@ attendre un événement du monde sans être proposée par un PNJ utilise un drap
 ## Le dialogue qui va avec
 
 Les dialogues gardent le format de PLAN.md (section 4, « Format de dialogue ») ; le Lot Q ajoute
-une condition et quatre effets. Le dialogue du forgeron de l'exemple, en abrégé :
+une condition et quatre effets. Le dialogue du soldat de la Garde de l'exemple, en abrégé :
 
 ```json
 {
-  "id": "example_blacksmith",
+  "id": "example_guard",
   "start": "hello",
   "entries": ["after", "report", "patrol", "offer"],
   "nodes": {
-    "hello": { "text": "Bienvenue à la forge !", "next": null },
+    "hello": { "text": "Garde ailée, poste de l’entrepôt. Rien à sssignaler.", "next": null },
     "offer": {
       "if": { "quest": ["example_patrol", "available"] },
-      "text": "Des Timeres rôdent dans la clairière de la forêt. Tu irais voir ?",
+      "text": "Des rejetons de Timere rôdent dans la clairière des bois. Tu irais voir ?",
       "choices": [
         { "text": "J’y vais.", "start_quest": "example_patrol", "next": "go" },
         { "text": "Pas maintenant.", "next": null }
       ]
     },
-    "go": { "text": "Chasse les plus petits, puis reviens me raconter.", "next": null },
+    "go": { "text": "Abats les plus petits, puis reviens me raconter.", "next": null },
     "patrol": {
       "if": { "quest": ["example_patrol", "active"] },
       "text": "Alors, cette clairière ?",
@@ -172,11 +174,11 @@ une condition et quatre effets. Le dialogue du forgeron de l'exemple, en abrég�
     },
     "report": {
       "if": { "quest_step": ["example_patrol", "report"] },
-      "text": "Deux de moins ! Tiens, ces coquillages porte-bonheur.",
+      "text": "Deux de moins ! Tiens, deux myosotis de la colline.",
       "advance_quest": ["example_patrol", "report"],
       "next": "thanks"
     },
-    "thanks": { "text": "La forêt respire mieux grâce à toi.", "next": null },
+    "thanks": { "text": "Les bois respirent mieux grâce à toi.", "next": null },
     "after": {
       "if": { "quest": ["example_patrol", "done"] },
       "text": "La clairière est calme depuis ta ronde.",
@@ -192,8 +194,9 @@ une condition et quatre effets. Le dialogue du forgeron de l'exemple, en abrég�
   (quête à prendre). Sinon, `hello`.
 - `report` valide l'étape tout de suite avec `advance_quest` : la récompense arrive avec la
   réplique. Sans lui, l'étape `talk` se validerait de toute façon à la fin de la conversation.
-- Le forgeron réel garderait ses nœuds actuels : on ajoute ceux de la quête, et leurs noms dans
-  `entries`.
+- Un PNJ du jeu garde ses nœuds : on ajoute ceux de la quête, et leurs noms dans `entries`, dans
+  l'ordre de HISTOIRE.md 3.6 (scène de l'étape d'abord, puis les quêtes secondaires, l'après-acte
+  et les répliques par défaut).
 
 ### Conditions (`"if"`, toutes doivent être vraies)
 
@@ -251,15 +254,22 @@ Les mêmes conditions décident de la présence des PNJ (`visible_if`, plus bas)
 
 ### Le nom du joueur : `{player}`
 
-`{player}` est remplacé par le nom affiché du skin choisi (`SkinData.display_name` de
-`GameState.skin_id`, sinon le skin par défaut : « Chtholly »). Il marche partout où le joueur lit
-du texte de quête ou de dialogue : répliques, choix, `speaker` d'un nœud (`"speaker":
-"{player}"` quand la protagoniste parle), titre, résumé, objectifs et aides des quêtes (HUD et
-journal), textes de l'histoire (`data/texts/story.json`). Il se combine avec `{count:…}`,
-`{left:…}` et `{best:…}`. Un nom de skin peut être plus long que « Chtholly » : un titre ou un
-objectif qui cite `{player}` doit encore tenir dans le HUD avec le plus long nom de skin
-(`tools/test.sh tests/unit/test_sys_story_content.gd` le vérifie). Avec parcimonie : les autres
-personnages appellent souvent la protagoniste autrement (« mademoiselle », « guerrière »).
+`{player}` est remplacé par le **prénom** de la protagoniste : le nom affiché du skin choisi
+(`SkinData.display_name` de `GameState.skin_id`, sinon le skin par défaut), sans sa variante
+(ce qui suit « · » : « Ithea Myse Valgulious · 3D ») et réduit à son premier mot (une fée adulte
+ajoute à son prénom une particule et le nom de son Carillon) : « Chtholly » pour « Chtholly Nota
+Seniorious · 3D », « Ithea » pour « Ithea Myse Valgulious · 3D », « Chtholly » si le nom est vide
+(`DialogueRunner.player_name()`, `first_name()`). Les répliques appellent la protagoniste comme
+on l'appelle dans l'œuvre, par son prénom (« Alors reviens, {player} », « Mlle {player} ») ; ne
+pas écrire un nom de skin sans prénom en tête. Il marche partout où le joueur lit du texte de
+quête ou de dialogue : répliques, choix, `speaker` d'un nœud (`"speaker": "{player}"` quand la
+protagoniste parle), titre, résumé, objectifs et aides des quêtes (HUD et journal), textes de
+l'histoire (`data/texts/story.json`). Il se combine avec `{count:…}`, `{left:…}` et `{best:…}`.
+Un prénom de skin peut être plus long que « Chtholly » : un titre ou un objectif qui cite
+`{player}` doit encore tenir dans le HUD avec le plus long prénom de skin (`tools/test.sh
+tests/unit/test_sys_story_content.gd` le vérifie ; `tests/unit/test_player_name.gd` vérifie la
+règle du prénom). Avec parcimonie : les autres personnages appellent souvent la protagoniste
+autrement (« mademoiselle », « guerrière »).
 
 ### Plusieurs voix : `speaker_id`
 
@@ -299,11 +309,11 @@ dialogue et sans marqueur « ! » / « ? ». La présence est réévaluée en fi
 quête, une étape, un drapeau, l'inventaire, le skin ou un record changent, et au chargement d'une
 partie ; un PNJ en pleine conversation ne part qu'à la fin de celle-ci.
 
-Exemple : Willem au terrain d'entraînement **seulement pendant l'étape `training`** de
+Exemple, l'acte 1 : Willem au terrain d'entraînement **seulement pendant l'étape `training`** de
 `act1_main`, au village le reste du temps sauf pendant `training` et `promise` (où il attend au
-sommet de la colline). Un même personnage à plusieurs endroits = une `NpcData` par emplacement,
-chacune avec sa condition (les instances `willem_training` et `willem_stars` de HISTOIRE.md,
-section 3.3) :
+sommet de la colline), et encore au sommet après l'acte (les derniers soirs avant le départ). Un
+même personnage à plusieurs endroits = une `NpcData` par emplacement, chacune avec sa condition
+(les instances `willem_training` et `willem_stars` de HISTOIRE.md, section 3.3) :
 
 ```
 # data/npcs/willem_training.tres (posé au terrain d'entraînement, src/npc/placements/forest.tscn)
@@ -316,23 +326,34 @@ visible_if = {
 "not_quest_step": ["act1_main", ["training", "promise"]]
 }
 
-# data/npcs/willem_stars.tres (posé au sommet, src/npc/placements/hill.tscn)
+# data/npcs/willem_stars.tres (posé au sommet, src/npc/placements/hill.tscn) : drapeau posé par la
+# récompense de l'étape starry_hill, donc vrai pendant promise et pour toujours ensuite
 visible_if = {
-"quest_step": ["act1_main", "promise"]
+"flag": "starry_night"
+}
+
+# data/npcs/limeskin.tres (posée au port) : à partir de the_edge (récompense de training)
+visible_if = {
+"flag": "duel_lost"
 }
 ```
 
 Dans un `.tres`, les identifiants s'écrivent comme dans le JSON, entre guillemets
-(`"act1_main"` ; `&"act1_main"` est aussi accepté). Pour « à partir de telle étape et pour toujours »,
-préférer un drapeau posé par la récompense de l'étape précédente : Limeskin au port à partir de
-l'étape `the_edge`, `visible_if = { "flag": "duel_lost" }`.
+(`"act1_main"` ; `&"act1_main"` est aussi accepté). La grammaire n'a pas de « ou » : toutes les
+clés doivent être vraies. Pour « à partir de telle étape et pour toujours » (même après la fin de
+la quête, quand `quest_step` est faux), poser un drapeau par la récompense de l'étape précédente
+et le tester (`"flag"`), comme `starry_night` et `duel_lost` ci-dessus ; pour « pendant ces
+étapes seulement », `quest_step` avec une liste ; pour « sauf pendant ces étapes »,
+`not_quest_step`. Chaque étape « parler » doit trouver son PNJ présent, dans la zone de l'étape :
+`tests/unit/test_act1_presence.gd` le vérifie pour `act1_main`, étape par étape.
 
 Le skin du joueur prime : **le PNJ dont le skin est celui que le joueur a choisi n'est jamais
 là** (la fée de la communauté choisie comme héroïne n'est pas aussi un PNJ ; Chtholly n'est
 jamais un PNJ). Les dialogues de cette fée l'appellent alors par `{player}`.
 
 Vérifier : `tools/test.sh tests/unit/test_sys_story_content.gd` (chaque `visible_if` est une
-condition valide) ; scénarios : `tests/unit/test_npc_presence.gd`.
+condition valide) ; scénarios : `tests/unit/test_npc_presence.gd` (le mécanisme) et
+`tests/unit/test_act1_presence.gd` (l'acte 1).
 
 ## Les textes de l'histoire : `data/texts/story.json`
 
@@ -343,9 +364,10 @@ remplacés) :
 | Clé | Texte (acte 1) | Où |
 | --- | --- | --- |
 | `arenas/<arène>/prompt` | « Sonner la cloche de veille » | invite du panneau de l'arène |
-| `arenas/<arène>/sign` | « Cloche de veille » | texte écrit sur le panneau |
+| `arenas/<arène>/sign` | « Cloche de veille » | texte écrit sur la planche du panneau, s'il en a une (Label3D « Label » de `arena.tscn`) ; la cloche de veille du Couchant n'en a pas |
 | `arenas/<arène>/end_title` | « Fin de la veille » | titre de l'écran de fin de série |
 | `arenas/<arène>/new_record` | « Nouveau record de veille ! » | bandeau du nouveau record |
+| `arenas/<arène>/games` | « Veilles tenues » | légende du nombre de séries de l'écran de fin (sous son titre : le nom de la zone de l'arène, « Le bord du Couchant ») |
 | `fall/message` | « Tes ailes se sont ouvertes : te revoilà au bord. » | après un rattrapage de chute, sur un fondu au blanc |
 | `defeat/fade` | « Retour à l'entrepôt… » | fondu au noir de la mort |
 | `defeat/message` | « Les autres t'ont ramenée à l'entrepôt. » | à la réapparition |
@@ -394,12 +416,12 @@ set_flag = &"forest_clearing_seen"
 
    | Raccourci | Effet |
    | --- | --- |
-   | `talk(find_npc(&"blacksmith"), [0, -1])` | conversation avec le vrai dialogue du PNJ ; réponses dans l'ordre (rang du choix, -1 = suite) ; renvoie les répliques |
-   | `chat(&"blacksmith")` | conversation sans dialogue (début, fin) |
+   | `talk(find_npc(&"example_guard"), [0, -1])` | conversation avec le vrai dialogue du PNJ ; réponses dans l'ordre (rang du choix, -1 = suite) ; renvoie les répliques |
+   | `chat(&"example_guard")` | conversation sans dialogue (début, fin) |
    | `enter_zone(&"forest")`, `enter_trigger(&"forest_clearing")` | le joueur entre dans une zone, un déclencheur |
    | `kill(&"timere_small", 2)` | ennemis vaincus (dans la zone courante) |
    | `reach_wave(&"dunes", 3)`, `reach_score(&"dunes", 300)` | arène |
-   | `GameState.add_item(&"shell", 2)`, `GameState.set_flag(&"x")` | objets, drapeaux |
+   | `GameState.add_item(&"flower_blue", 2)`, `GameState.set_flag(&"x")` | objets, drapeaux |
    | `start_quest(&"id")`, `complete_quest(&"id")` | démarrer, terminer d'office (objets manquants donnés) |
    | `step_of(&"id")`, `count_of(&"id")`, `QuestData.state_of(&"id")`, `QuestData.npc_marker(&"pnj")` | étape courante, compteur, état, marqueur |
    | `write_quest({…})` | quête écrite par le test lui-même |

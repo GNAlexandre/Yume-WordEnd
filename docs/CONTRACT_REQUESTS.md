@@ -177,3 +177,14 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   réécrit ce test ; l'aide de `tests/data/quests/demo_tour.json` (« Les Timeres de la forêt en
   lâchent… ») peut devenir « Des pages traînent dans la clairière. ».
 - En attendant : ce test seul échoue dans la branche « Systèmes et textes ».
+
+## Intégration acte 1 — suite donnée aux demandes
+- Lot Q, rappel des commandes du menu pause : faite (`src/ui/pause_menu.gd`, ligne « Journal de
+  quêtes » : Tab ou L, Select ; le panneau « Commandes » tient toujours dans 1280 × 720).
+- Systèmes et textes, la quête des pages et les drops : satisfaite par le contenu de l'acte 1
+  (`picture_book`, cinq pages posées ; `test_m2_quest.gd` joue `act1_main`) ; l'aide de
+  `tests/data/quests/demo_tour.json` dit « Des pages traînent dans la clairière. ».
+- Lot Q, bouton tactile du journal : toujours ouverte (L9) ; au toucher, le HUD montre la quête
+  suivie et son objectif, mais le journal ne s'ouvre pas.
+- Systèmes et textes, `{player}` dans `src/ui/journal.gd` : toujours ouverte ;
+  `src/ui/hud_journal.gd` reste la solution (testée par `test_player_name.gd`).

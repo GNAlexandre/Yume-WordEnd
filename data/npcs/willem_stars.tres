@@ -10,3 +10,6 @@ display_name = "Willem"
 skin = ExtResource("2_visual")
 dialogue_path = "res://data/dialogues/willem_stars.json"
 home_zone = &"hill"
+visible_if = {
+"flag": "starry_night"
+}

@@ -1,227 +1,317 @@
-# Recette du jalon M2 — tranche verticale
+# Recette de l'acte 1 — jalon M2
 
-Chaque critère d'acceptation de PLAN.md (section 4, « Critères d'acceptation de la tranche
-verticale ») avec son statut au 6 octobre 2026 (intégration M2). Trois statuts, sans complaisance :
+L'acte 1, « Dans la forêt céleste » (docs/lore/HISTOIRE.md, sections 2 et 3), remplace la tranche
+verticale du jalon M2 sur l'île n° 68 (docs/lore/MONDE.md, section 2). Cette recette reprend les
+critères d'acceptation de PLAN.md (section 4) pour l'acte 1, ajoute ceux de l'histoire, et dit
+pour chacun **comment le vérifier** et **le résultat** au 7 octobre 2026 (intégration narrative,
+phase D). Trois statuts, sans complaisance :
 
 - **Vérifié automatiquement** : un test GUT de `tools/check.sh` ou une mesure reproductible le
   prouve ; le test ou la commande est cité.
 - **Vérifié en partie** : prouvé sur ce qu'une machine sans écran ni GPU peut voir ; le reste est
   dit.
 - **À valider par un humain** : ce qui ne se mesure pas ici (fluidité, sensation, vrai réseau,
-  vraie manette) ; quoi regarder et comment.
+  vraie manette, direction artistique) ; quoi regarder et comment.
 
 Rien ici n'a été joué par un humain : la porte du jalon (PLAN.md section 8 : « critères cochés ;
 test par 3 membres de la communauté ») reste à franchir par le propriétaire.
 
-Les tests d'intégration M2 jouent la vraie partie (`src/main.tscn` : « Cliquer pour jouer »,
-menu, chargement, jeu) avec des événements d'entrée réels (`InputEventKey`,
-`InputEventJoypadButton`, `InputEventJoypadMotion`, clics), sur une sauvegarde de test :
-`tests/integration/test_m2_{menu,quest,arena,resume,world}.gd` (base
-`tests/stubs/m2_game_test.gd`). Captures : `build/shots/` (rendues par
-`tools/screenshot.sh` sous Xvfb, rendu logiciel), à régénérer par les commandes données.
+Les tests d'intégration jouent la vraie partie (`src/main.tscn` : « Cliquer pour jouer », menu,
+chargement, jeu) avec des événements d'entrée réels (`InputEventKey`, `InputEventJoypadButton`,
+`InputEventJoypadMotion`, clics), sur une sauvegarde de test (base `tests/stubs/m2_game_test.gd`).
+Captures : `build/shots/acte1_*.png`, rendues sous Xvfb (rendu logiciel) par les commandes de la
+fin du document.
 
 ## Tableau de bord
 
-| # | Critère (PLAN.md section 4) | Statut |
-| --- | --- | --- |
-| 1 | Build Web chargé en moins de 10 s sur fibre, sans erreur console | Vérifié en partie |
-| 2 | Combat : coup sur les images `coup`, onde qui traverse, Grand qui ne recule que sous l'onde, pas deux dégâts en moins de 1,2 s | Vérifié automatiquement (la sensation : humain) |
-| 3 | Arène : vague 5 atteignable, Grand dès la vague 3 jamais deux, score et bonus de l'easter egg | Vérifié en partie (« joueur moyen » : humain) |
-| 4 | Mort dans l'arène ou la forêt : village, PV pleins, inventaire et quêtes gardés, meilleur score gardé | Vérifié automatiquement |
-| 5 | 60 images/s sur un portable (12 Timeres), 30 sur un téléphone récent | À valider par un humain |
-| 6 | Quête des pages de bout en bout au clavier et à la manette | Vérifié automatiquement (vraie manette : humain) |
-| 7 | Fermer l'onglet puis revenir restaure position, inventaire, quête, meilleur score | Vérifié automatiquement (navigateur réel : humain) |
-| 8 | Les 5 zones affichent leur nom ; aucun ennemi au village ; pas de chute hors de l'île | Vérifié automatiquement |
-| 9 | Tests GUT verts sur Health, AttackData/hitbox, WaveDirector, GameState, SaveManager, DialogueRunner, QuestTracker | Vérifié automatiquement |
+| # | Critère | Comment le vérifier | Statut |
+| --- | --- | --- | --- |
+| 1 | Build Web chargé en moins de 10 s sur fibre, sans erreur console ; 25 Mo compressés au plus | `tools/build_size.sh` ; `tools/web_m2.js` (Chromium sans écran) | Vérifié en partie |
+| 2 | Combat : coup sur les images `coup`, onde qui traverse, grand fragment qui ne recule que sous l'onde, pas deux dégâts en moins de 1,2 s | tests du combat | Vérifié automatiquement (sensation : humain) |
+| 3 | La veille du Couchant : vague 5 atteignable, grand fragment dès la vague 3 jamais deux, score et bonus de l'easter egg ; fin de la veille au nom de la zone | tests de l'arène ; capture `acte1_fin_veille.png` | Vérifié en partie (« joueur moyen » : humain) |
+| 4 | Défaite : retour à l'entrepôt, PV pleins, inventaire, quêtes et record gardés | tests de mort et de réapparition | Vérifié automatiquement |
+| 5 | 60 images/s sur un portable (12 Timeres), 30 sur un téléphone récent | F3 ou `?trace=1` sur un vrai appareil | À valider par un humain (mesures logicielles ci-dessous) |
+| 6 | La quête principale `act1_main` (13 étapes) de bout en bout, au clavier et à la manette | `test_m2_quest.gd` ; `tools/web_m2.js` (début, dans le navigateur) | Vérifié automatiquement (vraie manette : humain) |
+| 7 | Fermer l'onglet puis revenir restaure position, inventaire, quête et étape, record | `test_m2_resume.gd` ; `tools/web_m2.js` | Vérifié automatiquement (navigateurs réels : humain) |
+| 8 | Les 5 zones affichent leur nom (MONDE.md 2.1) ; aucun Timere à l'entrepôt ; pas de chute hors de l'île | `test_m2_world.gd`, `test_world_island.gd`, `test_sys_story.gd` | Vérifié automatiquement |
+| 9 | Tests GUT verts (Health, AttackData/hitbox, WaveDirector, GameState, SaveManager, DialogueRunner, QuestTracker…) | `tools/check.sh` | Vérifié automatiquement |
+| 10 | Les PNJ sont là selon l'histoire ; aucune étape « parler » ne devient impossible | `test_act1_presence.gd`, `test_npc_presence.gd` | Vérifié automatiquement |
+| 11 | Les six quêtes secondaires se jouent dans la vraie partie, avec les objets de l'île | `test_act1_side_quests.gd`, `test_act1_items_in_world.gd`, `test_act1_*.gd` | Vérifié automatiquement |
+| 12 | Les rejetons des bois ne bloquent jamais l'étape qui les vise | `test_free_enemies.gd` | Vérifié automatiquement |
+| 13 | Les sauvegardes du jalon M2 se chargent dans l'acte 1, sans quête fantôme | `test_act1_saves.gd`, `test_save_migration.gd` | Vérifié automatiquement |
+| 14 | Les textes : prénom de la protagoniste (`{player}`), voix des personnages, textes de l'histoire (cloche, fin de veille, chute, défaite), typographie | `test_player_name.gd`, `test_act1_dialogues.gd`, `test_story_texts.gd`, `test_sys_story_content.gd`, `test_quest_content.gd` | Vérifié automatiquement (ton : humain) |
+| 15 | Les places de HISTOIRE.md 3.3 sur l'île n° 68 : au sol, hors du décor, atteignables à pied | `test_world_story_spots.gd`, `test_npc.gd`, `test_m1_world.gd` | Vérifié automatiquement |
+| 16 | Plus de reste du jalon M2 (ses trois PNJ, ses objets retirés, l'ancienne graphie de l'épée) hors des traces historiques | `git grep` (section 16) | Vérifié automatiquement |
+| 17 | Direction artistique au minimum proche de *Breath of the Wild* | captures `acte1_*.png` | À valider par un humain (écarts relevés plus bas) |
 
-## 1. Chargement du build Web — vérifié en partie
+## 1. Build Web — vérifié en partie
 
-- **Prouvé** : `tools/check.sh` exporte le build sans erreur ni avertissement ; taille mesurée par
-  `tools/build_size.sh` : **10,6 Mo compressés** (wasm 9,7 Mo, pck 0,9 Mo) pour un budget de
-  25 Mo. `tools/web_m2.js` (Chromium sans écran de Playwright, build servi en local, rendu
-  logiciel SwiftShader) : menu affiché **1,9 à 2,2 s** après le début de la page (repère
-  `window.wordendMenuMs`), 1,6 à 3,6 s au rechargement ; partie chargée 3 à 7,6 s après
-  « Nouvelle partie », la page continuant d'afficher des images pendant le chargement (12 en
-  6,6 s, compteur `requestAnimationFrame` : elle ne se fige pas) ; **aucune erreur dans la
-  console** (seuls avertissements : « GPU stall due to ReadPixels » du pilote logiciel de
-  Chromium). Icône et écran de démarrage du jeu (plus de logo Godot). Captures
-  `m2_web_menu.png`, `m2_web_village.png`, `m2_web_dialogue.png`.
-- **Pas prouvé** : le réseau. La page était servie en local (aucun temps de téléchargement) ; sur
-  fibre (100 Mb/s), les 10,6 Mo ajoutent environ 1 s, plus la compilation du wasm.
-- **À valider** : ouvrir https://jeu.yumenovel.fr/ (ou la page GitHub Pages) dans Chrome et
-  Firefox, outils de développement ouverts, cache vidé : chronométrer jusqu'au « Cliquer pour
-  jouer » (objectif < 10 s), vérifier la console (rouge interdit). La CI GitHub et le
-  déploiement Pages n'ont encore jamais tourné (voir « Points connus »).
+- **Taille** : `tools/build_size.sh` après `tools/godot --headless --export-release Web
+  build/web/index.html` : **18,4 Mo compressés** (wasm 9,7 Mo, pck 8,8 Mo ; 47,3 Mo bruts) pour un
+  budget de 25 Mo. Le pck a grossi avec l'île n° 68 et les 45 modèles 3D de la PR n° 1 (en
+  attente de refonte).
+- **Navigateur** : `tools/web_m2.js acte1` (Chromium 141 sans écran, build servi en local, rendu
+  logiciel SwiftShader, VM partagée), deux passages le 7 octobre 2026, le second sur le build
+  final : « Cliquer pour jouer » affiché 1,8 à 1,9 s après l'ouverture de la page (2,9 à 3,8 s
+  au rechargement) ; partie chargée 9,0 à 9,2 s après Entrée sur « Nouvelle partie » (6,8 à
+  8,4 s pour « Continuer »), la page continuant d'afficher des images pendant le chargement (15
+  à 16) ; **aucune erreur dans la console**, seuls avertissements ceux du pilote logiciel
+  (« GPU stall due to ReadPixels »). Le chargement est plus long qu'au jalon M2 (3 à 7,6 s) : le
+  pck est passé de 0,9 à 8,8 Mo (l'île n° 68, les modèles 3D) et tout le rendu tourne ici sur le
+  processeur ; reste à le chronométrer sur un vrai appareil. Détail et captures
+  `acte1_web_*.png` : docs/web.md, « Vérification de l'acte 1 ».
+- **Pas prouvé** : le réseau (page servie en local) ; sur fibre, les 18,4 Mo ajoutent 1 à 2 s.
+- **À valider** : ouvrir le build publié dans Chrome et Firefox, outils de développement ouverts,
+  cache vidé : chronométrer jusqu'au « Cliquer pour jouer » (objectif < 10 s), console sans
+  rouge.
 
 ## 2. Combat — vérifié automatiquement ; sensation à juger
 
-- Coup d'épée seulement sur les images `coup` : `tests/unit/test_combat_sword.gd`
-  (`test_damage_only_on_coup_frames`, `test_split_coup_frames_keep_one_activation`) ; dans le
-  vrai jeu, image « coup » relevée au moment du dégât : `tests/integration/test_m1_arena.gd`
-  (`test_sword_kill_in_the_arena_scores`), `test_m1_combat.gd`.
-- L'onde traverse plusieurs Timeres : `test_combat_charge.gd`
-  (`test_wave_pierces_three_aligned_dummies`), `test_m1_combat.gd`
-  (`test_charge_wave_pierces_aligned_timeres`, vrais Timeres).
-- Le Grand ne recule que sous l'onde : `test_enemy.gd` (`test_big_recoils_only_under_the_wave`).
-- Jamais deux dégâts en moins de 1,2 s : `test_health.gd`
-  (`test_invincibility_refuses_second_hit`), `test_combat_player.gd`
-  (`test_player_refuses_two_hits_within_1_2_s`), `test_m1_arena.gd` (mort sous quatre Timeres :
-  cinq morsures espacées d'au moins 72 images physiques).
-- **À valider** : la sensation (recul, enchaînement, onde, caméra verrouillée), manette et
-  clavier en main, avec `tests/integration/demo_m1.tscn` ; tous les chiffres et les points à
-  juger sont dans [REGLAGES_COMBAT.md](REGLAGES_COMBAT.md).
+Inchangé depuis le jalon M2 : `test_combat_sword.gd` (`test_damage_only_on_coup_frames`),
+`test_combat_charge.gd` (`test_wave_pierces_three_aligned_dummies`), `test_enemy.gd`
+(`test_big_recoils_only_under_the_wave`), `test_health.gd`, `test_combat_player.gd`,
+`test_m1_arena.gd`, `test_m1_combat.gd`. Les quatre corps de Timere portent les noms de l'acte 1
+(rejeton, fragment, Timere bondissant, grand fragment ; `test_sys_timere_bodies.gd`) et ne
+lâchent plus rien. **À valider** : la sensation, manette et clavier en main
+([REGLAGES_COMBAT.md](REGLAGES_COMBAT.md)).
 
-## 3. Arène — vérifié en partie
+## 3. La veille du Couchant — vérifiée en partie
 
-- Vague *n* = 3 + 2*n*, bonus 50 × *n*, soin toutes les deux vagues, Coureur dès la vague 2,
-  Grand dès la vague 3 : `tests/unit/test_wave_director.gd` (`test_compose_counts_three_plus_two_n`,
-  `test_generator_holds_back_runner_and_big`, `test_series_scores_points_bonus_and_heals`,
-  `test_big_never_has_a_living_twin`) ; points 10/15/20/40 : `test_enemy.gd`
-  (`test_data_matches_the_plan_table`).
-- Dans le vrai jeu, vagues 1 à 6 jouées (joueur endurci, délais raccourcis) : un Grand dès la
-  vague 3, jamais deux vivants : `test_m1_arena.gd` (`test_big_from_wave_three_never_two_at_once`).
-  Score, record et écran de fin : `test_m2_arena.gd` ; capture `m2_arena_end.png`.
-- **À valider** : « la vague 5 est atteignable par un joueur moyen » ne se teste pas sans
-  joueur : faire jouer trois membres (porte du jalon M2), noter la vague atteinte.
+- Vagues, bonus, soins, grand fragment dès la vague 3 et jamais deux : `test_wave_director.gd`,
+  `test_m1_arena.gd` (`test_big_from_wave_three_never_two_at_once`).
+- La cloche de veille (`arena.tscn`, seule chose visible au départ, invite « Sonner la cloche de
+  veille ») lance la veille : `test_m2_quest.gd`, `test_m1_shortcuts.gd`, `test_story_texts.gd`.
+- Écran de fin : « Fin de la veille », sous-titre « Le bord du Couchant » (nom de la zone, MONDE.md
+  2.1), « Nouveau record de veille ! », « Veilles tenues » : `test_story_texts.gd`,
+  `test_arena_end.gd`, `test_m2_arena.gd` ; capture `acte1_fin_veille.png`.
+- Le registre de Tiat : 4e vague puis 1 000 points en une veille, joués au Couchant dans la vraie
+  partie (`test_act1_side_quests.gd`).
+- **À valider** : « la vague 5 est atteignable par un joueur moyen » (trois membres, porte M2).
 
-## 4. Mort et réapparition — vérifié automatiquement
+## 4. Défaite — vérifiée automatiquement
 
-- Arène : `tests/integration/test_m2_arena.gd`
-  (`test_death_in_the_arena_then_end_screen_at_the_village`) : mordu à mort pendant une série,
-  l'écran de fin attend la réapparition sans figer le jeu, Chtholly revient au Spawn du village
-  avec ses PV pleins, l'écran montre score, vague et « Nouveau record ! », Entrée continue ;
-  inventaire (pages), quête en cours et meilleur score gardés, cinq cœurs pleins dans le HUD.
-- Forêt : `test_m1_forest.gd` (`test_death_in_the_forest_respawns_at_the_village_without_arena`).
-- Record écrit dans la sauvegarde : `test_m1_arena.gd`
-  (`test_death_in_the_arena_records_the_score_and_respawns_at_the_village`).
+`test_m2_arena.gd` (`test_death_in_the_arena_then_end_screen_at_the_village`), `test_m1_forest.gd`
+(mort dans les bois), `test_m1_arena.gd` (record écrit) : retour au Spawn de l'entrepôt, PV
+pleins, inventaire, quêtes et record gardés. Textes : « Retour à l'entrepôt… » puis « Les autres
+t'ont ramenée à l'entrepôt. » (`test_story_texts.gd`).
 
 ## 5. Images par seconde — à valider par un humain
 
-- **Rien de mesurable ici** : la VM n'a pas de GPU (Mesa llvmpipe et SwiftShader : 1 à
-  6 images/s, sans valeur). Seuls indicateurs, les budgets de PLAN.md section 9, mesurés par
-  `demo_m1` (`M1_SHOT=<vue> tools/screenshot.sh res://tests/integration/demo_m1.tscn
-  build/shots/m2_after_<vue>.png 300`) : vue du village 79 draw calls et 104 700 primitives ; le
-  village vu des quatre zones voisines (pire cas) 75 à 87 draw calls, 132 600 à 142 800
-  primitives (151 000 à 155 000 avant l'intégration M2) ; 16 Timeres dans l'arène 92 draw calls,
-  89 300 primitives. Budgets M2 : < 150 draw calls, < 150 000 primitives.
-- **À valider** : sur un portable de bureau courant puis un téléphone récent, ouvrir le build
-  avec `?zone=dunes&timeres=12` (douze Timeres devant le joueur), appuyer sur F3 (images/s,
-  draw calls, primitives) ; objectifs 60 et 30 images/s. Regarder aussi la vue du village depuis
-  l'entrée des dunes (le pire cas de triangles).
+- **Mesures logicielles** (indicatives : sans GPU) : `tools/web_m2.js zones` charge
+  `index.html?zone=<id>` pour chaque zone (nouvelle partie, vue du Spawn, joueur au repos),
+  compte les images affichées par la page et relève les mesures « [m1] … i/s, draw calls,
+  primitives » des raccourcis de test pendant 20 s ; à côté, le même jeu en natif sous Xvfb
+  (Mesa llvmpipe, 1280 × 720, `src/game.tscn -- --zone=<id>`, 40 s), le 7 octobre 2026 :
 
-## 6. Quête des pages au clavier et à la manette — vérifié automatiquement
+  | Zone | Chromium SwiftShader | Natif llvmpipe | Draw calls (Web / natif) | Primitives |
+  | --- | --- | --- | --- | --- |
+  | L'entrepôt des fées | 0,33 image/s | 5,7 images/s | 135 / 126 | 92 000 |
+  | Les bois du marais | 0,40 | 9,1 | 100 / 91 | 68 000 |
+  | Le bord du Couchant | 0,41 | 4,9 | 70 / 61 | 54 000 |
+  | Le port et le bourg | 0,34 | 5,8 | 76 / 67 | 59 000 |
+  | La colline des étoiles | 0,54 | 4,6 | 72 / 63 | 83 000 |
 
-- `tests/integration/test_m2_quest.gd`, deux fois le même parcours, dans le vrai jeu, par des
-  appuis réels : `test_pages_quest_with_keyboard_and_mouse` (menu à la souris, Z/Q/S/D, E,
-  flèches, Espace, J, I, Échap) et `test_pages_quest_with_a_gamepad_only` (A pour le geste et
-  « Nouvelle partie », stick, A, croix, X, Y, B). Bibliothécaire : on accepte ; objectif et
-  progression dans le HUD ; la forêt à pied par la porte nord (« Forêt des Timeres » affiché) ;
-  ses quatre Timeres tués à l'épée lâchent quatre pages, les trois pages uniques sont ramassées
-  en marchant dessus ; retour au village ; la bibliothécaire termine la quête : cinq pages
-  retirées, marque-page dans l'inventaire, 6 PV max, six cœurs dans le HUD ; elle remercie
-  ensuite ; l'inventaire s'ouvre et se ferme. L'appui qui ferme une conversation (Espace, E, A)
-  ne fait ni sauter ni repartir la conversation.
-- Limite assumée : les Timeres de la forêt sont immobilisés pendant ce test (cibles de l'épée) ;
-  leur combat est prouvé à part (`test_m1_forest.gd`). Menu à la manette seule :
-  `test_m2_menu.gd` ; pause à la manette : `test_m2_world.gd`.
-- Captures : `m2_dialogue.png` (la bibliothécaire et ses deux choix), `m2_forest.png` (la
-  clairière, ses Timeres et ses pages, « Forêt des Timeres »), `m2_reward.png` (marque-page dans
-  l'inventaire, six cœurs).
-- **À valider** : jouer la quête avec une vraie manette (Xbox ou PlayStation, dans Chrome et
-  Firefox : l'ordre des boutons vient du navigateur), et au toucher sur un téléphone.
+  Les images/s des deux rendus logiciels ne disent rien d'un vrai GPU (le Chromium logiciel
+  faisait 1,7 à 2,4 images/s sur l'île du jalon M1, plus simple) ; draw calls et primitives ne
+  dépendent pas de la machine.
+- Budgets (draw calls et primitives, `demo_monde`, `demo_m1` et la mesure ci-dessus) : sous
+  150 draw calls et 150 000 primitives partout (docs/DECISIONS.md, « Monde — budget Web ») ;
+  l'entrepôt, avec ses PNJ et le HUD, en est le plus près (135 draw calls).
+- **À valider** : sur un portable de bureau courant puis un téléphone récent, `?zone=dunes&timeres=12`
+  et F3 ; objectifs 60 et 30 images/s ; regarder aussi l'entrepôt (la vue la plus chargée) et le
+  port.
 
-## 7. Reprise après fermeture de l'onglet — vérifié automatiquement ; navigateur réel à valider
+## 6. La quête principale au clavier et à la manette — vérifiée automatiquement
 
-- `tests/integration/test_m2_resume.gd` (`test_walking_is_saved_and_continue_restores_everything`) :
-  une partie avance (quête acceptée, page ramassée, record), le joueur se promène : sa position
-  est écrite toutes les 5 s de jeu s'il a bougé, rien s'il reste immobile, et tout de suite quand
-  la fenêtre perd le focus ; « fermeture de l'onglet » simulée (partie libérée, GameState à
-  zéro), nouveau menu, « Continuer » : position, zone, skin, inventaire, quête, page déjà prise
-  absente, meilleur score et objectif du HUD restaurés. `test_show_menu_closes_the_tracked_game`
-  et `test_m2_world.gd` (`test_return_to_menu_from_pause`) : retour au menu, partie écrite, plus
-  aucune auto-sauvegarde.
-- Dans un vrai navigateur (Chromium sans écran, `tools/web_m2.js`) : nouvelle partie, quête
-  acceptée, quelques pas, perte du focus, page rechargée (même IndexedDB), « Continuer » :
-  même position (écart 0,00 m), zone « village », quête en cours.
-- **Limite connue** : sur le Web, une écriture n'est conservée qu'une fois copiée dans IndexedDB
-  (Godot la lance à l'image suivante) ; un onglet fermé dans la fraction de seconde qui suit
-  peut la perdre : on perd alors au plus les 5 dernières secondes de marche.
-- **À valider** : dans Chrome et Firefox (et Safari sur iPhone), se promener, attendre quelques
-  secondes, fermer l'onglet, rouvrir le jeu : Continuer doit reprendre au même endroit, avec la
-  quête et les objets. En navigation privée, le menu prévient que rien n'est conservé.
+- `tests/integration/test_m2_quest.gd`, deux fois le même parcours, par des appuis réels :
+  `test_first_act_with_keyboard_and_mouse` et `test_first_act_with_a_gamepad_only`. Nygglatho sous
+  le porche, Willem et ses conseils, les bois à pied (« Les bois du marais »), quatre rejetons à
+  l'épée, Pannibal, le rapport, la première veille (cloche, trois vagues, écran de fin), la fièvre
+  (Nephren apporte les cafés), l'assaut au terrain d'entraînement, le bord du Couchant, le thé du
+  Barocupot, la colline des étoiles et la promesse : quête terminée, la promesse du gâteau au
+  beurre dans l'inventaire, 6 PV max, six cœurs ; après l'acte, Willem regarde les étoiles.
+  L'objectif du HUD suit chaque étape ; l'appui qui ferme une conversation ne la relance pas.
+- Le même parcours par le moteur seul, étape par étape : `test_act1_main.gd`.
+- Dans le navigateur : `tools/web_m2.js acte1` joue les trois premières étapes à pied (Nygglatho,
+  Willem, les bois), au clavier, caméra tournée par `window.wordendFace` ; le 7 octobre 2026 :
+  les deux scènes lues jusqu'au bout (« Le vent a hurlé… », « verrouille ta cible »), étapes
+  `new_officer`, `to_the_woods` puis `rejetons` au fil de la marche, « Les bois du marais »
+  atteints par le portail nord (captures `acte1_web_nygglatho.png`, `acte1_web_willem.png`,
+  `acte1_web_bois.png`).
+- Captures : `acte1_nygglatho.png`, `acte1_willem.png`, `acte1_deux_voix.png` (la fièvre : Nephren
+  parle dans le dialogue de Willem, avec son portrait), `acte1_journal.png`, `acte1_colline.png`.
+- **À valider** : une vraie manette (Xbox, PlayStation ; Chrome et Firefox) et le toucher.
 
-## 8. Zones, barrière, bords de l'île — vérifié automatiquement
+## 7. Reprise après fermeture de l'onglet — vérifiée automatiquement ; navigateurs réels à valider
 
-- Les cinq zones affichent leur nom dans le HUD, une seule fois, même en longeant une frontière
-  (allers-retours sur la frontière nord du village : une annonce, une auto-sauvegarde au plus) :
-  `test_m2_world.gd` (`test_each_zone_shows_its_name_once_even_along_a_border`) ;
-  `test_world_island.gd` (`test_every_zone_emits_zone_entered`). Capture `m2_village_hud.png`.
-- Aucun ennemi n'entre au village : `test_m2_world.gd` (`test_no_timere_enters_the_village` :
-  Grand et Petit au pied de la barrière, joueur juste derrière) ; `test_m1_forest.gd` (poursuite
-  abandonnée, Grand repoussé contre la barrière) ; `test_enemy.gd`
-  (`test_gives_up_at_the_real_village_border`).
-- Aucune chute hors de l'île : `test_m2_world.gd` (`test_nothing_lets_the_player_fall_off_the_island` :
-  KillZone sous la plage → Spawn de la plage ; mur du bord dans l'eau peu profonde) ;
-  `test_world_island.gd` (sol partout dans les murs, murs fermés, KillZone, filet sous −30 m) ;
-  `test_m1_world.gd` (tout objet, PNJ et Timere est au sol et atteignable à pied).
+- `test_m2_resume.gd` : position, zone, skin, inventaire, quêtes et étape d'`act1_main`, objets
+  déjà pris, PV max et record restaurés par « Continuer ».
+- Navigateur (`tools/web_m2.js acte1`) : la partie quittée dans les bois, à l'étape rejetons, est
+  copiée dans IndexedDB puis reprise après rechargement ; le 7 octobre 2026, deux passages :
+  copie 12 à 60 s après la perte du focus (rendu logiciel : le fil principal saturé la retarde ;
+  le script l'attend avant de recharger), « Continuer » reprend dans les bois du marais, à la
+  position quittée (écart 0,00 m), à l'étape `rejetons` d'`act1_main` (capture
+  `acte1_web_continue.png`).
+- **Limite connue** : sur le Web, une écriture n'est conservée qu'une fois copiée dans IndexedDB ;
+  un onglet fermé juste après peut perdre au plus les 5 dernières secondes de marche.
 
-## 9. Tests GUT — vérifié automatiquement
+## 8. Zones, barrière, bords de l'île — vérifiés automatiquement
 
-`tools/check.sh` : **504 tests verts** (61 scripts, 6 799 assertions), dont Health
-(`test_health.gd`), AttackData et hitbox (`test_combat_hitbox.gd`, `test_combat_sword.gd`,
-`test_combat_charge.gd`), WaveDirector (`test_wave_director.gd`, `test_arena.gd`), GameState
-(`test_game_state.gd`), SaveManager (`test_save_autosave.gd`, `test_save_file.gd`,
-`test_save_migration.gd`, `test_save_roundtrip_l0.gd`), DialogueRunner (`test_dialogue_runner.gd`,
-`test_dialogue_data.gd`, `test_dialogue_flow.gd`) et QuestTracker (`test_quest_tracker.gd`,
-`test_quest_in_game.gd`), plus les 15 tests d'intégration M2.
+Noms de MONDE.md 2.1 (« L'entrepôt des fées », « Les bois du marais », « Le bord du Couchant »,
+« Le port et le bourg », « La colline des étoiles ») affichés une fois à l'entrée :
+`test_m2_world.gd`, `test_world_island.gd`, `test_world_manager.gd`. Aucun Timere n'entre à
+l'entrepôt : `test_m2_world.gd`, `test_enemy.gd`. Chute dans le vide : les ailes de lumière, « Tes
+ailes se sont ouvertes : te revoilà au bord. » (`test_sys_story.gd`, `test_m2_world.gd`).
+
+## 9. Tests GUT — vérifiés automatiquement
+
+`tools/check.sh` complet, **vert** le 7 octobre 2026 (fin de l'intégration narrative) : import et
+lint propres ; **686 tests GUT** dans 94 scripts (28 410 assertions), tous verts, dont ceux que
+cite cette recette ; fumée de 151 scènes sans échec ; export Web (18,4 Mo compressés) ; capture
+de l'île sans erreur. Les tests du critère 9 : `test_health.gd`, `test_combat_hitbox.gd` et
+`test_combat_sword.gd` (AttackData, hitbox), `test_wave_director.gd`, `test_game_state.gd`,
+`test_save_file.gd`, `test_save_autosave.gd`, `test_save_migration.gd` (SaveManager),
+`test_dialogue_runner.gd`, `test_quest_tracker.gd`.
+
+## 10. Présence des PNJ selon l'histoire — vérifiée automatiquement
+
+`test_act1_presence.gd` joue `act1_main` étape par étape : à chaque étape « parler », le PNJ visé
+est présent (`NpcData.visible_if`) et posé dans la zone de l'étape ; un seul Willem à la fois
+pendant l'acte (à l'entrepôt, au terrain d'entraînement pendant `training`, au sommet à partir de
+`promise`) ; Limeskin au port à partir du bord du Couchant ; les PNJ des quêtes secondaires restent
+là (Willem s'absente pendant `training` et `promise`) ; une partie reprise à l'étape `promise`
+trouve Willem au sommet. Après l'acte, Willem est à l'entrepôt et sur la colline (écart assumé,
+docs/DECISIONS.md, jusqu'au cycle jour/nuit). Captures, chacune à l'étape où la zone compte
+dans l'histoire : `acte1_village.png` (`morning` : l'entrepôt et ses PNJ, Nygglatho sous le
+porche avec son « ? », Willem devant la salle des armes, Nephren sur son banc, Lakhesh, Tiat,
+Ithea au puits, Collon au grand arbre), `acte1_bois.png` (`training` : Willem au banc du terrain
+avec son « ? », les quatre rejetons, Pannibal au loin au bord du marais), `acte1_couchant.png`
+(`first_vigil` : le guetteur de la Garde au premier plan, le cercle de veille, sa cloche au
+fond), `acte1_port.png` (`barocupot` : le Barocupot amarré, Limeskin sur le quai avec son « ? »,
+le café et son serveur, la marchande d'œufs, les maisons du bourg), `acte1_colline.png`
+(`promise` : Willem à côté du belvédère avec son « ? », la mer de nuages).
+
+## 11. Les six quêtes secondaires — vérifiées automatiquement
+
+`test_act1_side_quests.gd` les joue l'une après l'autre dans `main.tscn` : le livre d'images (cinq
+pages des bois, la lecture), le dessert spécial (marché, baies, café, le grand arbre, le
+réfectoire), le linge envolé (cinq draps du port à la colline, le thé), les myosotis (le vase),
+l'homme-chat (café, M. Rami, engrenages, peigne du marais, Willem répare), le registre des veilles
+(deux veilles) : six souvenirs, 7 PV max, sept cœurs. `test_act1_items_in_world.gd` : chaque étape
+« réunir » trouve assez d'objets dans l'île ou chez un PNJ. Scénarios détaillés (dialogues,
+refus, attentes) : `test_act1_picture_book.gd`, `test_act1_special_dessert.gd`,
+`test_act1_flying_laundry.gd`, `test_act1_forget_me_nots.gd`, `test_act1_old_clock.gd`,
+`test_act1_vigil_register.gd`.
+
+## 12. Les rejetons des bois — vérifiés automatiquement
+
+Tués avant l'étape `rejetons` (ou hors des bois, où ils ne comptent pas), ils reviennent quand
+l'étape commence et quand le joueur rentre dans les bois (`src/enemies/free_enemies.gd`) ; hors
+d'une étape qui les vise, un mort reste mort : `test_free_enemies.gd`.
+
+## 13. Anciennes sauvegardes — vérifiées automatiquement
+
+Une sauvegarde du jalon M2 (v1 : pages rendues ou pages en cours, objets et skin retirés) et une
+du moteur de quêtes (v2) se chargent dans la vraie partie : Chtholly, objets retirés inconnus
+mais sans erreur, `act1_main` commence et prend le suivi, la quête des pages n'est ni au journal
+ni dans le « +n quêtes » du HUD : `test_act1_saves.gd`.
+
+## 14. Textes — vérifiés automatiquement ; le ton reste à lire
+
+- `{player}` est le prénom de la protagoniste : « Chtholly » pour « Chtholly Nota Seniorious · 3D »
+  (`test_player_name.gd`, règle dans docs/QUETES.md).
+- Dialogues de l'acte 1 : typographie, longueurs, nœuds atteignables, scènes d'étape avant le
+  reste, orateurs des scènes à plusieurs voix (`test_act1_dialogues.gd`) ; quêtes, objets et
+  renvois (`test_quest_content.gd`, `test_sys_story_content.gd`).
+- **À valider** : relire les scènes en jouant (voix des personnages, HISTOIRE.md section 8).
+
+## 15. Places de l'histoire — vérifiées automatiquement
+
+Les PNJ, objets et déclencheurs de HISTOIRE.md 3.3 sont à leur place, sans écart (le guetteur en
+(−14 ; 0,2 ; −10), `couchant_edge` au sol, le myosotis de l'entrepôt en (17 ; 0 ; 5)) :
+`test_npc.gd`, `test_item_data.gd` ; l'île les garantit au sol, hors du décor, à 3 m du vide et
+reliés à pied à l'entrepôt : `test_world_story_spots.gd`, `test_m1_world.gd`.
+
+## 16. Restes du jalon M2 — vérifiés automatiquement
+
+La recherche des cinq mots de l'ancien contenu (deux PNJ du jalon M2, ses deux objets retirés,
+l'ancienne graphie de Seniorious ; commande exacte dans docs/DECISIONS.md, section « Acte 1 —
+intégration ») ne renvoie plus que des traces assumées : docs/DECISIONS.md et
+docs/CONTRACT_REQUESTS.md (l'historique), docs/lore/ (bible et fiches de lecture), les dossiers
+3D hors périmètre, les fixtures d'anciennes sauvegardes (`test_save_migration.gd`,
+`test_act1_saves.gd`), les listes d'éléments retirés (`test_skin_registry.gd`,
+`test_item_data.gd`) et les gardes contre l'ancienne graphie (`test_credits.gd`,
+`test_sys_story_content.gd`, `test_act1_dialogues.gd`).
+
+## 17. Direction artistique — à valider par un humain
+
+Le décor (île n° 68, travail du « Monde ») vise *Breath of the Wild* dans les limites du rendu
+Compatibility : palette naturelle, cel discret, grands paysages, herbe. Ce qui la dessert encore,
+relevé sur les captures :
+
+- **Les personnages** sont des planches 2D en pixel art, à grosse tête (Chtholly) ou des
+  silhouettes de remplacement (les PNJ), posées en billboards dans un décor 3D : rien de plus
+  éloigné des proportions réalistes stylisées voulues ; les modèles 3D de la PR n° 1 sont en
+  refonte (docs/ASSETS_3D.md). Dans le menu, leurs vignettes (sept skins « · 3D ») montrent
+  encore ces modèles refusés, chibi. La planche de Chtholly est celle du volume 3 (pointes
+  rouges) ; MONDE.md 1.2 demande pour l'acte 1 une variante aux cheveux bleu ciel.
+- **L'interface** (cœurs roses, panneaux crème à bords arrondis, boutons roses) reste celle de
+  l'easter egg : plus « mignonne » que la sobriété de *Breath of the Wild*. Le menu, lui, tient
+  de nouveau dans l'écran (`acte1_menu.png`) : avec les huit vignettes, sa grille débordait de
+  1280 × 720 (titre et phrase « Ta fée prend la place de Chtholly dans l'histoire. » hors
+  champ) ; elle défile depuis l'intégration (docs/DECISIONS.md).
+- **Le décor** : volumes en facettes franches à couleurs de sommets (pas de textures peintes,
+  que MONDE.md 5.4 demande) ; bâtiments et navires en boîtes (le Barocupot, la grue, les maisons
+  du bourg) ; ciel de jour bleu, quand MONDE.md 5.4 décrit un couchant orange et un ciel du violet
+  au pêche (choix du « Monde », docs/DECISIONS.md) : la promesse « la nuit, sur la colline » se
+  joue en plein jour ; mer de nuages plate vue de près.
+- **Le Barocupot** est toujours amarré, alors que Limeskin n'arrive qu'à l'étape 10 (placements
+  conditionnels : développement n° 7, M3).
 
 ## Points connus (documentés, non corrigés)
 
-- **Sprites non éclairés par le couchant** (L3) : les planches sont non éclairées (alpha
-  scissor, pas d'ombre propre) ; Chtholly et les Timeres gardent leurs couleurs au soleil comme à
-  l'ombre. À juger sur les captures (`m2_village_hud.png`).
-- **Caméra verrouillée** (M1) : une cible collée derrière Chtholly peut être cachée par elle (la
-  caméra est dans l'axe joueur → cible) ; la caméra traverse le feuillage (seuls les troncs
-  arrêtent le bras du ressort). Réglages possibles dans REGLAGES_COMBAT.md.
-- **Verrouillage sans ligne de vue** (L1) : la cible la plus proche est verrouillée même derrière
-  un mur ou un tronc.
-- **Pas d'interpolation physique** (L1) : le joueur bouge à 60 Hz ; sur un écran à 120 ou
-  144 Hz, des saccades sont possibles.
-- **Invite « E / A » fixe** (L10) : la même invite au clavier, à la manette et au toucher.
-- **CI GitHub et GitHub Pages jamais exécutées** (L9) : le workflow existe mais n'a jamais tourné
-  sur GitHub ; à lancer une première fois (docs/web.md, « Déployer sur GitHub Pages »).
-- **Cœur du marque-page** (L4) : les PV max passent à 6 mais le cœur gagné est vide jusqu'au
-  prochain soin ou à la réapparition (« le maximum n'est pas un soin ») ; visible sur
-  `m2_reward.png`. À trancher.
-- **Zone courante après un effleurement** (L2) : après avoir effleuré la zone voisine sans y
-  entrer, la zone courante reste la voisine jusqu'à l'entrée dans une autre (le nom n'est plus
-  répété, intégration M2).
+- **Deux Willem après l'acte** (entrepôt et colline) : voir section 10.
+- **Willem apparaît au sommet** quand le joueur entre dans `hill_summit` (pas d'arrivée mise en
+  scène en M2).
+- **Cœur de la promesse** (L4) : les PV max passent à 6 (puis 7), mais le cœur gagné reste vide
+  jusqu'au prochain soin ou à la réapparition (« le maximum n'est pas un soin ») ; à trancher.
+- **Skins 3D de Willem, Ithea, Nephren** : les choisir ne cache pas leur PNJ (ids différents) ;
+  les cacher rendrait leurs quêtes impossibles ; à trancher avec la refonte des modèles. Le menu
+  propose aussi Willem et Lillia (qui ne sont pas des fées ; Lillia est un spoiler du volume 2),
+  Nopht et Rhantolk (fées du volume 3) comme skins jouables, contre MONDE.md 1.2 (« les skins
+  jouables sont des fées ») et la règle des spoilers (bible : S2, S3) ; `data/skins/` est hors du
+  périmètre de l'intégration.
+- **Journal au toucher** : pas de bouton tactile (demande au L9, docs/CONTRACT_REQUESTS.md).
+- **Sprites non éclairés**, **caméra verrouillée**, **pas d'interpolation physique**, **invite
+  « E / A » fixe** : inchangés depuis le jalon M2.
+- **CI GitHub et GitHub Pages jamais exécutées** (L9) : à lancer une première fois
+  (docs/web.md).
 
 ## Ce qui reste à valider par un humain
 
-1. Charger le build publié (Pages ou jeu.yumenovel.fr) : temps jusqu'au menu, console (critère 1).
-2. Jouer le combat et l'arène manette et clavier en main ; noter la vague atteinte par trois
-   membres (critères 2 et 3, porte de M2).
-3. Mesurer les images/s avec F3 sur un portable et un téléphone, `?zone=dunes&timeres=12`
-   (critère 5).
-4. Jouer la quête avec une vraie manette et au toucher (critère 6).
-5. Fermer l'onglet en pleine promenade dans trois navigateurs, revenir, Continuer (critère 7).
-6. Regarder les captures `build/shots/m2_*.png` et juger les points connus ci-dessus.
+1. Charger le build publié : temps jusqu'au menu, console (critère 1).
+2. Jouer l'acte 1 en entier, manette et clavier en main, puis au toucher (critères 2, 3, 6) ;
+   noter la vague atteinte par trois membres.
+3. Mesurer les images/s avec F3 sur un portable et un téléphone (critère 5).
+4. Fermer l'onglet en pleine promenade dans trois navigateurs, revenir, Continuer (critère 7).
+5. Relire les scènes en jouant : voix, humour, ce qui n'est pas dit (critère 14).
+6. Regarder les captures `build/shots/acte1_*.png` et juger la direction artistique (critère 17).
 
 ## Ce qui reste pour M3
 
-Cycle jour/nuit (`day_phase_changed`), streaming des zones, donjon, musique et sons (licence de
-*Scarborough Fair*), contrôles tactiles complets, éclairage des sprites, caméra qui évite le
-feuillage et décale la cible verrouillée, interpolation physique, invite selon l'appareil,
-découpe des lots de décor par cellules si les triangles redeviennent un problème.
+Acte 2 (îles n° 15 et n° 11, Collina di Luce), cycle jour/nuit (Willem au sommet la nuit
+seulement), voyages entre îles, placements conditionnels (le Barocupot, les bois nettoyés après
+l'acte 1), narration sans PNJ (cartons), talismans en orbite, modèles 3D des personnages,
+musique et sons, contrôles tactiles complets (bouton du journal).
 
 ## Refaire les captures
 
 ```bash
-for v in menu dialogue forest reward arena_end; do
-  M2_SHOT=$v tools/screenshot.sh res://tests/integration/demo_m2.tscn build/shots/m2_$v.png 150
+for v in village bois couchant port colline nygglatho willem deux_voix journal fin_veille; do
+  ACT1_SHOT=$v tools/screenshot.sh res://tests/integration/demo_act1.tscn build/shots/acte1_$v.png 100
 done
-M2_SHOT=village tools/screenshot.sh res://tests/integration/demo_m2.tscn build/shots/m2_village_hud.png 150
-M1_SHOT=village_dunes tools/screenshot.sh res://tests/integration/demo_m1.tscn build/shots/m2_after_village_dunes.png 300
-node tools/web_m2.js http://127.0.0.1:8347/index.html build/shots   # voir docs/web.md
+M2_SHOT=menu tools/screenshot.sh res://tests/integration/demo_m2.tscn build/shots/acte1_menu.png 150
+tools/godot --headless --export-release Web build/web/index.html
+python3 -m http.server 8347 --bind 127.0.0.1 --directory build/web &
+NODE_PATH=/opt/node-tools/node_modules node tools/web_m2.js http://127.0.0.1:8347/index.html build/shots
 ```

@@ -2,7 +2,7 @@ extends GutTest
 ## (Systèmes et textes) Le contenu du jeu emploie bien les développements de ce lot : chaque
 ## "speaker_id" des dialogues nomme un PNJ de data/npcs, chaque NpcData.visible_if est une
 ## condition valide, les textes de quête qui citent {player} tiennent encore dans le HUD une fois
-## le plus long nom de skin mis à sa place, et aucun texte ne cite plus « Seniolis ».
+## le plus long prénom de skin mis à sa place, et aucun texte ne cite plus « Seniolis ».
 ## À relancer après avoir écrit des dialogues, des PNJ ou des quêtes :
 ##   tools/test.sh tests/unit/test_sys_story_content.gd
 
@@ -72,10 +72,12 @@ func test_every_npc_presence_condition_is_valid() -> void:
 
 
 func test_player_name_fits_in_quest_texts() -> void:
+	# {player} est le prénom du skin (DialogueRunner.first_name : sans la variante « · 3D »).
 	var longest := DialogueRunner.DEFAULT_PLAYER_NAME
 	for skin: SkinData in SkinRegistry.all():
-		if skin.display_name.length() > longest.length():
-			longest = skin.display_name
+		var first := DialogueRunner.first_name(skin.display_name)
+		if first.length() > longest.length():
+			longest = first
 	var quests := 0
 	for path: String in _json_files(QUESTS_DIR):
 		var quest: Variant = _read_json(path)

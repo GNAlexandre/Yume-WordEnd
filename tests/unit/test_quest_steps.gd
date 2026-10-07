@@ -135,7 +135,7 @@ func test_collect_step_on_possession_with_consume() -> void:
 	GameState.add_item(&"shell", 2)
 	assert_eq(step_of(Q), &"shells")
 	GameState.add_item(&"shell", 2)
-	assert_eq(step_of(Q), &"end", "trois coquillages")
+	assert_eq(step_of(Q), &"end", "trois exemplaires")
 	assert_eq(GameState.count(&"shell"), 1, "trois retirés (consume)")
 
 
@@ -157,7 +157,7 @@ func test_collect_step_for_an_npc_needs_the_conversation_and_the_items() -> void
 	)
 	GameState.add_item(&"shell", 1)
 	chat(&"child")
-	assert_eq(step_of(Q), &"give", "pas assez de coquillages")
+	assert_eq(step_of(Q), &"give", "pas assez d'exemplaires")
 	GameState.add_item(&"shell", 1)
 	assert_eq(step_of(Q), &"give", "il faut les rapporter")
 	chat(&"blacksmith")
@@ -267,7 +267,7 @@ func test_forced_completion_validates_the_remaining_steps() -> void:
 		{"rewards": {"items": {"bookmark": 1}}}
 	)
 	GameState.add_item(&"shell", 2)
-	assert_eq(step_of(Q), &"talk", "les coquillages sont pour l'étape suivante")
+	assert_eq(step_of(Q), &"talk", "les exemplaires sont pour l'étape suivante")
 	GameState.set_quest_state(Q, &"done")
 	assert_eq(GameState.quest_state(Q), &"done")
 	assert_eq(GameState.count(&"shell"), 0, "objets des étapes collect restantes retirés")

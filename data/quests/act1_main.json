@@ -103,7 +103,12 @@
       "id": "starry_hill",
       "type": "reach",
       "trigger": "hill_summit",
-      "objective": "Gravir la colline des étoiles"
+      "objective": "Gravir la colline des étoiles",
+      "rewards": {
+        "flags": [
+          "starry_night"
+        ]
+      }
     },
     {
       "id": "promise",

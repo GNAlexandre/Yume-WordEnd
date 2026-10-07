@@ -247,7 +247,7 @@ func _show_details() -> void:
 	if quest == null:
 		_quest_title.text = "Journal vide"
 		_kind.text = ""
-		_summary.text = "Parle aux habitants du village : certains ont besoin d’aide."
+		_summary.text = "Parle aux fées de l’entrepôt et aux gens du bourg : certains ont besoin d’aide."
 		_rewards.text = ""
 		_track_hint.text = ""
 		return

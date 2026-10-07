@@ -100,6 +100,56 @@ func test_player_name_is_the_chosen_skin_display_name() -> void:
 	assert_eq(DialogueRunner.player_name(), "Chtholly", "skin inconnu : celui par défaut")
 
 
+## Les skins 3D s'appellent « Chtholly Nota Seniorious · 3D », « Ithea Myse Valgulious · 3D » :
+## {player} n'en garde que le prénom, sans la variante (docs/QUETES.md, « Le nom du joueur »).
+func test_player_name_is_the_first_name_without_the_skin_variant() -> void:
+	assert_eq(DialogueRunner.first_name("Chtholly Nota Seniorious · 3D"), "Chtholly")
+	assert_eq(DialogueRunner.first_name("Ithea Myse Valgulious · 3D"), "Ithea")
+	assert_eq(DialogueRunner.first_name("Willem Kmetsch · 3D"), "Willem")
+	assert_eq(DialogueRunner.first_name("Lyra"), "Lyra")
+	assert_eq(DialogueRunner.first_name("  Lyra  Ko  Aurea  "), "Lyra")
+	assert_eq(DialogueRunner.first_name(" · 3D"), "", "pas de nom avant la variante")
+	assert_eq(DialogueRunner.first_name(""), "")
+	for entry: Array in [
+		[&"chtholly", "Chtholly"],
+		[&"sys_chtholly_3d", "Chtholly Nota Seniorious · 3D"],
+		[&"sys_lyra_3d", "Lyra Ko Aurea · 3D"],
+		[&"sys_nameless", " · 3D"],
+	]:
+		var skin := SkinData.new()
+		skin.id = entry[0]
+		skin.display_name = entry[1]
+		assert_eq(ResourceSaver.save(skin, SKINS_DIR.path_join("%s.tres" % entry[0])), OK)
+	SkinRegistry.skins_dir = SKINS_DIR
+	SkinRegistry.reload()
+	GameState.skin_id = &"sys_chtholly_3d"
+	assert_eq(DialogueRunner.player_name(), "Chtholly", "Chtholly en 3D : son prénom")
+	var line := "Alors reviens, {player}, et je t’en ferai manger une montagne."
+	assert_eq(
+		DialogueRunner.format_text(line),
+		"Alors reviens, Chtholly, et je t’en ferai manger une montagne.",
+		"une réplique de l'acte 1"
+	)
+	GameState.skin_id = &"sys_lyra_3d"
+	assert_eq(DialogueRunner.format_text("Mlle {player}"), "Mlle Lyra", "fée adulte : le prénom")
+	GameState.skin_id = &"sys_nameless"
+	assert_eq(DialogueRunner.player_name(), "Chtholly", "nom vide : Chtholly")
+
+
+## Aucun skin du jeu ne donne à {player} sa variante ni plus d'un mot.
+func test_every_game_skin_gives_a_first_name() -> void:
+	var skins := SkinRegistry.all()
+	assert_gt(skins.size(), 0, "des skins dans data/skins")
+	for skin: SkinData in skins:
+		GameState.skin_id = skin.id
+		var name_text := DialogueRunner.player_name()
+		assert_false(name_text.is_empty(), "%s : un prénom" % skin.id)
+		assert_false(
+			name_text.contains("·") or name_text.contains(" "), "%s : %s" % [skin.id, name_text]
+		)
+		assert_true(skin.display_name.begins_with(name_text), "%s : le début de son nom" % skin.id)
+
+
 func test_format_keeps_the_other_variables() -> void:
 	_with_lyra()
 	GameState.skin_id = &"sys_lyra"

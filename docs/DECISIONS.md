@@ -1070,3 +1070,86 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   section 4.9) : orthographe de la traduction (`glick`, `kaya`, `suowong`, `suowong_young`,
   `ebon_candle`, `ebon_candle_ancient`, `doctor`, `baroni_makish`) ; les dossiers de la première
   livraison seront remplacés sous ces noms.
+
+## Acte 1 — intégration (phase D)
+
+- **Intégration acte 1 — présence de Willem et de Limeskin** (`data/npcs/*.tres`, `visible_if`) :
+  Willem à l'entrepôt sauf pendant `training` et `promise` (`not_quest_step`), au terrain
+  pendant `training` (`quest_step`), au sommet à partir de `promise` et pour toujours (drapeau
+  `starry_night`, nouvelle récompense de l'étape `starry_hill` : la grammaire n'a pas de « ou »,
+  et `quest_step` est faux une fois la quête terminée) ; Limeskin au port à partir de `the_edge`
+  (drapeau `duel_lost`, récompense de `training` : le Barocupot vient la chercher, HISTOIRE.md
+  3.3). Après l'acte, Willem est donc à l'entrepôt **et** sur la colline (« Les étoiles… » de
+  `test_m2_quest.gd`, demandé pour les derniers soirs avant le départ) : écart assumé à
+  HISTOIRE.md 3.3 (« un seul willem ») jusqu'au cycle jour/nuit du M3, qui le mettra au sommet
+  la nuit seulement. Pendant l'acte, un seul Willem à la fois (`test_act1_presence.gd`). Les
+  répliques d'ambiance de `willem_training` hors de son étape ne s'entendent plus (gardées comme
+  repli) ; Willem apparaît au sommet quand le joueur entre dans `hill_summit` (pas de cinématique
+  d'arrivée en M2).
+- **Intégration acte 1 — quêtes sans données** (`QuestData.active_ids()` / `done_ids()`) : une
+  quête de la sauvegarde qui n'a plus de fichier (`pages` restée active dans une partie du jalon
+  M2) est ignorée à la source : ni au journal, ni dans le « +n quêtes » du HUD, ni dans les
+  boucles du QuestTracker. Son état reste dans GameState (aucune migration ne l'efface : une
+  quête rendue au jeu plus tard retrouverait son état). `test_act1_saves.gd`.
+- **Intégration acte 1 — `{player}`** (`DialogueRunner.player_name()`, `first_name()`) : le
+  prénom de la protagoniste, c'est-à-dire le nom affiché du skin sans sa variante (ce qui suit
+  « · », comme « · 3D » des skins de la PR n° 1, qui ne sont pas renommés) réduit à son premier
+  mot : « Chtholly » pour « Chtholly Nota Seniorious · 3D ». Les deux répliques qui l'emploient
+  sont des apostrophes (« Alors reviens, {player} », « Mlle {player} ») ; le nom complet y
+  sonnerait faux. Limite connue : choisir le skin 3D de Willem, d'Ithea ou de Nephren ne cache
+  pas leur PNJ (les ids de skins diffèrent : `sukasuka_ithea` contre `ithea`), et les cacher
+  rendrait leurs quêtes impossibles ; à trancher avec la reprise des modèles 3D.
+- **Intégration acte 1 — rejetons des bois** (`src/enemies/free_enemies.gd`, racine `Enemies`
+  des cinq fichiers d'emplacement d'ennemis) : réapparition plutôt que mort comptée pour l'étape
+  suivante (le joueur voit qui il doit abattre, et un rejeton tué hors des bois, qui ne compte
+  pas, ne bloque plus non plus). Pendant une étape `kill` d'une quête active qui vise la zone
+  (`zone` égale ou absente) et ses ennemis (`any` ou leur id), les ennemis libres tués
+  réapparaissent à leur place, sous leur nom, avec leurs données : au début de l'étape et à
+  chaque retour du joueur dans la zone ; jamais au-delà de la population de départ ; en fin
+  d'image (aucun changement d'arbre pendant un signal de mort). Hors de ces étapes, un mort
+  reste mort jusqu'au rechargement de la partie (comportement d'avant). Pas de script sur les
+  scènes de zone (L2) ; aucun nœud ajouté sous `Enemies` (les tests comptent ses enfants).
+  `tests/unit/test_free_enemies.gd`.
+- **Intégration acte 1 — places sur l'île n° 68** : le guetteur reprend sa place de HISTOIRE.md
+  3.3, (−14 ; 0,2 ; −10), que le décor du monde garantit (l'écart (−13 ; −12) n'avait plus de
+  raison) ; `couchant_edge` est posé au sol (y = 0, mesuré sous le cylindre) ;
+  `test_m1_world.gd` ne fait plus d'exception pour `village_flower_1` (à sa place (17 ; 0 ; 5)
+  depuis le contenu de l'acte 1). Les objets, PNJ et déclencheurs suivent maintenant HISTOIRE.md
+  3.3 sans écart (`test_npc.gd`, `test_world_story_spots.gd`).
+- **Intégration acte 1 — fin de la veille** : l'écran de fin d'arène montre le nom de la zone de
+  MONDE.md 2.1 (« Le bord du Couchant », `Zone.display_name`) et, au Couchant, « Veilles
+  tenues » au lieu de « Séries jouées » (nouvelle clé `arenas/<arène>/games` de
+  `data/texts/story.json`, comme `end_title`) : le vocabulaire de la veille et du registre de
+  Tiat. La cloche de veille (`arena.tscn`, `Panel/Bell`) est la seule chose visible au départ
+  des veilles depuis la fusion du monde ; la planche facultative (`Label`) reste lue par
+  `arena_panel.gd` pour les arènes qui en auraient une.
+- **Intégration acte 1 — quêtes secondaires dans la vraie partie**
+  (`tests/integration/test_act1_side_quests.gd`) : les six quêtes jouées l'une après l'autre
+  dans `main.tscn`, avec les vrais PNJ (présents, abordés de face, E) et les vrais objets de
+  l'île (ramassés en marchant dessus) ; les répliques passent par `dialogue_choice_made` (les
+  appuis qui les lisent sont prouvés par `test_m2_quest.gd`) ; le drapeau `first_vigil_done` est
+  posé par le test (la première veille est jouée par `test_m2_quest.gd`). Garantie de plus,
+  sans scène : `test_act1_items_in_world.gd` (chaque étape collect trouve assez d'objets dans
+  l'île ou chez un PNJ, et les quêtes n'en prennent jamais plus qu'il n'y en a).
+- **Intégration acte 1 — restes du jalon M2** : la quête d'exemple des tests (`example_patrol`,
+  docs/QUETES.md) passe du forgeron au soldat de la Garde (`example_guard`, PNJ de test au
+  visuel du guetteur ; fichier nommé comme son id, `find_npc` le trouve) et vise les rejetons
+  des bois ; la démo du moteur (`demo_tour`) le salue ; les tests du moteur gardent des ids
+  d'objets arbitraires (`shell`), mais plus de textes de l'ancien contenu ; l'exemple de format
+  de PLAN.md section 4 et `test_dialogue_runner.gd` font parler Nephren. Restent, assumés comme
+  historiques : docs/DECISIONS.md, docs/CONTRACT_REQUESTS.md, docs/lore/ (bible, fiches), les
+  dossiers 3D hors périmètre, les fixtures d'anciennes sauvegardes (`test_save_migration.gd`,
+  `test_act1_saves.gd`), les listes d'éléments retirés (`test_skin_registry.gd`,
+  `test_item_data.gd`) et les gardes contre « Seniolis » (`test_credits.gd`,
+  `test_sys_story_content.gd`, `test_act1_dialogues.gd`).
+- **Intégration acte 1 — recherche des restes du jalon M2** (critère 16 de docs/RECETTE_M2.md) :
+  `git grep -n -i "bibliothécaire\|forgeron\|coquillage\|marque-page\|Seniolis"` ; les
+  résultats assumés sont listés à la ligne « restes du jalon M2 » ci-dessus.
+- **Intégration acte 1 — menu des fées** (`src/ui/main_menu.*`) : les vignettes défilent dans un
+  cadre (`%SkinScroll`, deux rangées et demie au plus : `MAX_SKIN_GRID_HEIGHT`, signe qu'il y en a
+  d'autres) et un nom trop long finit par « … » (entier dans l'infobulle). Avec les sept skins
+  « · 3D » de la PR n° 1 (huit vignettes, quatre rangées), le panneau sortait de l'écran de
+  1280 × 720 : titre « Choisis ta fée » et phrase « Ta fée prend la place de Chtholly dans
+  l'histoire. » hors champ, noms débordant des vignettes. La vignette choisie (celle de la
+  sauvegarde) est amenée en vue à l'ouverture ; le clavier et la manette font défiler
+  (`follow_focus`). Les skins eux-mêmes ne changent pas. `test_menu_story.gd`.

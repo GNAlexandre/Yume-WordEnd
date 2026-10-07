@@ -2,15 +2,15 @@
   "_comment": "Quête de démonstration du moteur (Lot Q) : test d'intégration et captures, absente du jeu.",
   "id": "demo_tour",
   "title": "Le tour du village",
-  "summary": "Le guide du village fait visiter les environs aux nouveaux venus : saluer le forgeron, voir le puits de la place, puis faire ses preuves dans la forêt.",
+  "summary": "Le guide du village fait visiter les environs aux nouveaux venus : saluer le soldat de la Garde, voir le puits de la place, puis faire ses preuves dans la forêt.",
   "giver": "demo_guide",
   "steps": [
     {
-      "id": "blacksmith",
+      "id": "guard",
       "type": "talk",
-      "npc": "blacksmith",
-      "objective": "Saluer le forgeron",
-      "hint": "Sa forge est à l’est de la place."
+      "npc": "example_guard",
+      "objective": "Saluer le soldat de la Garde",
+      "hint": "Il fait sa ronde à l’est de la place."
     },
     {
       "id": "well",
@@ -44,7 +44,7 @@
       "npc": "demo_guide",
       "consume": true,
       "objective": "Rapporter 2 fragments de page au guide",
-      "hint": "Les Timeres de la forêt en lâchent quand on les bat."
+      "hint": "Des pages traînent dans la clairière."
     }
   ],
   "rewards": {

@@ -37,7 +37,7 @@ func test_hearts_start_from_game_state_then_follow_signal() -> void:
 	var expected: Array[Texture2D] = [full, full, full, empty, empty]
 	assert_eq(_hearts(hud), expected)
 	EventBus.player_health_changed.emit(4, 6)
-	assert_eq(_hearts(hud).size(), 6, "6 cœurs avec le marque-page")
+	assert_eq(_hearts(hud).size(), 6, "6 cœurs avec la promesse du gâteau au beurre")
 	assert_eq(hud.health(), Vector2i(4, 6))
 
 

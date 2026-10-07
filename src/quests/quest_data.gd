@@ -5,11 +5,11 @@ extends Resource
 ## et effets de dialogue, déclencheurs et tests : docs/QUETES.md.
 ##
 ## {
-##   "id": "pages", "title": "…", "summary": "… (journal)", "giver": "librarian",
+##   "id": "picture_book", "title": "…", "summary": "… (journal)", "giver": "nephren",
 ##   "main": false, "auto_start": false,
 ##   "requires": {"quests": ["…"], "flags": ["…"], "not_flags": ["…"]},
 ##   "steps": [{"id": "…", "type": "collect", "objective": "…", …}, …],
-##   "rewards": {"items": {"bookmark": 1}, "flags": ["…"], "max_hp": 6}
+##   "rewards": {"items": {"picture_book": 1}, "flags": ["…"], "max_hp": 6}
 ## }
 ## Seuls id, title et steps (au moins une étape, voir QuestStep) sont obligatoires ; une clé qui
 ## commence par « _ » est un commentaire. Un fichier invalide donne un push_warning qui dit
@@ -355,12 +355,13 @@ static func npc_marker(npc_id: StringName) -> StringName:
 
 
 ## Quêtes actives dans l'ordre du journal : principales d'abord, puis dans l'ordre où elles ont
-## commencé (GameState.quests()).
+## commencé (GameState.quests()). Une quête sans données (retirée du jeu, comme « pages » dans
+## une sauvegarde d'avant l'acte 1) n'y est pas : ni au journal, ni dans le « +n quêtes » du HUD.
 static func active_ids() -> Array[StringName]:
 	return _ids_in_state(GameState.QUEST_ACTIVE)
 
 
-## Quêtes terminées, même ordre (principales d'abord).
+## Quêtes terminées, même ordre (principales d'abord), sans les quêtes sans données.
 static func done_ids() -> Array[StringName]:
 	return _ids_in_state(GameState.QUEST_DONE)
 
@@ -382,7 +383,9 @@ static func _ids_in_state(state: StringName) -> Array[StringName]:
 		if states[quest_id] != state:
 			continue
 		var quest := find(quest_id)
-		if quest != null and quest.main:
+		if quest == null:
+			continue
+		if quest.main:
 			main_ids.append(quest_id)
 		else:
 			other_ids.append(quest_id)

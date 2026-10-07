@@ -3,9 +3,11 @@ extends Control
 ## best) : panneau « Fin de la série » avec le score, la vague atteinte (dernier wave_started de
 ## l'arène), le meilleur score et le nombre de séries (GameState.arena_record, déjà mis à jour par
 ## le WaveDirector via record_score), et « Nouveau record ! » si best. « Continuer », Échap ou B
-## le ferment. (Systèmes et textes) Titre et bandeau du record lus pour chaque arène dans
-## data/texts/story.json (DialogueRunner.arena_text : end_title, new_record) ; aux dunes, « Fin
-## de la veille » et « Nouveau record de veille ! ».
+## le ferment. (Systèmes et textes) Titre, bandeau du record et (acte 1) légende du nombre de
+## séries lus pour chaque arène dans data/texts/story.json (DialogueRunner.arena_text :
+## end_title, new_record, games) ; aux dunes, « Fin de la veille », « Nouveau record de veille ! »
+## et « Veilles tenues » ; sous le titre, le nom de la zone de l'arène (Zone.display_name : « Le
+## bord du Couchant »).
 ##
 ## Pause : affiché, le panneau fige le jeu (get_tree().paused, s'il ne l'était pas déjà ; ce nœud
 ## est en PROCESS_MODE_ALWAYS), mais seulement le joueur vivant. Mort dans l'arène :
@@ -31,8 +33,11 @@ var _pad := MenuInput.new()
 @onready var _wave_value: Label = %WaveValue
 @onready var _best_value: Label = %BestValue
 @onready var _games_value: Label = %GamesValue
+@onready var _games_caption: Label = $Panel/Box/Stats/GamesCaption
 @onready var _record_badge: Control = %RecordBadge
 @onready var _continue: Button = %ContinueButton
+## Légende par défaut du nombre de séries (« Séries jouées »), avant tout texte d'arène.
+@onready var _default_games_caption: String = _games_caption.text
 
 
 func _ready() -> void:
@@ -66,6 +71,7 @@ func show_result(arena_id: StringName, score: int, best: bool, wave: int) -> voi
 	var record := GameState.arena_record(arena_id)
 	_header.text = DialogueRunner.arena_text(arena_id, "end_title", _header.text)
 	_record_label.text = DialogueRunner.arena_text(arena_id, "new_record", _record_label.text)
+	_games_caption.text = DialogueRunner.arena_text(arena_id, "games", _default_games_caption)
 	_arena_name.text = WorldManager.zone_display_name(arena_id)
 	_score_value.text = str(score)
 	_wave_value.text = str(wave) if wave > 0 else "–"

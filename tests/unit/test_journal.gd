@@ -221,7 +221,7 @@ func test_empty_journal() -> void:
 	_journal.call(&"open")
 	assert_eq(_journal.call(&"listed_quests"), [] as Array[StringName])
 	assert_string_contains(_texts(), "Aucune quête")
-	assert_string_contains(_texts(), "habitants du village")
+	assert_string_contains(_texts(), "fées de l’entrepôt")
 	assert_eq(get_viewport().gui_get_focus_owner(), _journal.get_node("%CloseButton"))
 
 

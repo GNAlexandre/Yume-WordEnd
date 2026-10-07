@@ -41,7 +41,7 @@ premier coup sortait un Normal de la portée du deuxième) et **rayon d'activati
 
 | Fichier → propriété | Valeur | Effet | Easter egg |
 | --- | --- | --- | --- |
-| `src/player/player.tscn` → `Health.max_hp` (et `GameState.max_hp`) | 5 PV (6 avec le marque-page) | Vie | `PV_MAX` 5 |
+| `src/player/player.tscn` → `Health.max_hp` (et `GameState.max_hp`) | 5 PV (6 avec la promesse du gâteau au beurre, 7 avec le registre des veilles : acte 1) | Vie | `PV_MAX` 5 |
 | `player.tscn` → `Health.invincibility_time` | 1,2 s | Pas de second dégât pendant ce temps | `INVINCIBILITE` 1,2 s |
 | `src/combat/player_combat.gd` → `hurt_time` | 0,35 s | Joueur figé après un dégât (coup ou charge interrompus) | `DUREE_DEGATS` 0,35 s |
 | `player_combat.gd` → `blink_rate` | 12 bascules/s | Clignotement pendant l'invincibilité (visible / invisible) | 12 Hz, opacité 35 % / 100 % |

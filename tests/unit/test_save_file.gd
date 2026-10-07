@@ -8,7 +8,7 @@ const ISO_UTC := "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
 
 ## Partie bien remplie : chaque champ du schéma a une valeur différente du défaut.
 func _fill_state() -> void:
-	GameState.skin_id = &"forgeron"
+	GameState.skin_id = &"ithea"
 	GameState.max_hp = 6
 	GameState.position = Vector3(12.25, 1.5, -4.75)
 	GameState.zone = &"forest"
@@ -58,7 +58,7 @@ func test_round_trip_is_identical_field_by_field() -> void:
 	assert_eq(after["best_scores"], {"dunes": {"score": 640, "wave": 6, "games": 4}})
 	assert_eq(GameState.best_score(&"dunes"), 640)
 	assert_true(GameState.is_pickup_collected(&"forest_page_1"))
-	assert_eq(GameState.skin_id, &"forgeron")
+	assert_eq(GameState.skin_id, &"ithea")
 	assert_eq(GameState.max_hp, 6)
 
 
@@ -96,7 +96,7 @@ func test_failed_write_keeps_previous_save() -> void:
 	GameState.skin_id = &"enfant"
 	assert_eq(SaveManager.save(), OK)
 	var previous := FileAccess.get_file_as_string(SaveManager.save_path)
-	GameState.skin_id = &"forgeron"
+	GameState.skin_id = &"ithea"
 	# Le fichier temporaire ne peut pas être créé : un dossier occupe son nom.
 	DirAccess.make_dir_absolute(SaveManager.save_path + ".tmp")
 	watch_signals(SaveManager)

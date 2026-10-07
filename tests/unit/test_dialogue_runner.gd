@@ -84,22 +84,17 @@ func _example() -> Dictionary:
 		"start": "hello",
 		"nodes":
 		{
-			"hello":
-			{
-				"speaker": "Bibliothécaire",
-				"text": "Les Timeres ont emporté des pages…",
-				"next": "ask"
-			},
+			"hello": {"speaker": "Nephren", "text": "Livre. Vent. Pages.", "next": "ask"},
 			"ask":
 			{
-				"speaker": "Bibliothécaire",
-				"text": "Peux-tu m'en rapporter cinq ?",
+				"speaker": "Nephren",
+				"text": "Cinq pages, dans les bois. Pour la lecture du soir.",
 				"choices":
 				[
 					{
-						"text": "Je m'en occupe.",
-						"set_flag": "quest_pages_accepted",
-						"start_quest": "pages",
+						"text": "Je les trouve.",
+						"set_flag": "picture_book_asked",
+						"start_quest": "picture_book",
 						"next": null
 					},
 					{"text": "Plus tard.", "next": null},
@@ -108,9 +103,9 @@ func _example() -> Dictionary:
 			"done":
 			{
 				"if": {"count": ["page_fragment", 5]},
-				"speaker": "Bibliothécaire",
-				"text": "Merci ! Tiens, un marque-page.",
-				"complete_quest": "pages",
+				"speaker": "Nephren",
+				"text": "Cinq. Merci. Maintenant, un lecteur.",
+				"complete_quest": "picture_book",
 				"next": null,
 			},
 		},
@@ -257,8 +252,8 @@ func test_start_emits_started_then_first_line() -> void:
 	_start(_example())
 	assert_true(_runner.is_running())
 	assert_true(DialogueRunner.is_any_running())
-	assert_eq(_log, ["started:tester", "line:Les Timeres ont emporté des pages…"])
-	assert_eq(_lines[0]["speaker"], "Bibliothécaire")
+	assert_eq(_log, ["started:tester", "line:Livre. Vent. Pages."])
+	assert_eq(_lines[0]["speaker"], "Nephren")
 	assert_eq(_lines[0]["choices"], [], "pas de choix : « suite »")
 
 
@@ -300,11 +295,11 @@ func test_choice_effects_and_next() -> void:
 	dialogue["nodes"]["after"] = {"text": "Merci de ton aide."}
 	_start(dialogue)
 	EventBus.dialogue_choice_made.emit(-1)
-	assert_eq(_lines[1]["choices"], ["Je m'en occupe.", "Plus tard."])
-	assert_false(GameState.has_flag(&"quest_pages_accepted"), "rien avant le choix")
+	assert_eq(_lines[1]["choices"], ["Je les trouve.", "Plus tard."])
+	assert_false(GameState.has_flag(&"picture_book_asked"), "rien avant le choix")
 	EventBus.dialogue_choice_made.emit(0)
-	assert_true(GameState.has_flag(&"quest_pages_accepted"), "set_flag")
-	assert_eq(GameState.quest_state(&"pages"), &"active", "start_quest")
+	assert_true(GameState.has_flag(&"picture_book_asked"), "set_flag")
+	assert_eq(GameState.quest_state(&"picture_book"), &"active", "start_quest")
 	assert_eq(_log.back(), "line:Merci de ton aide.", "next du choix")
 	EventBus.dialogue_choice_made.emit(-1)
 	assert_eq(_log.back(), "ended:tester")
@@ -314,19 +309,19 @@ func test_other_choice_has_no_effect() -> void:
 	_start(_example())
 	EventBus.dialogue_choice_made.emit(-1)
 	EventBus.dialogue_choice_made.emit(1)
-	assert_false(GameState.has_flag(&"quest_pages_accepted"))
-	assert_eq(GameState.quest_state(&"pages"), &"")
+	assert_false(GameState.has_flag(&"picture_book_asked"))
+	assert_eq(GameState.quest_state(&"picture_book"), &"")
 	assert_eq(_log.back(), "ended:tester", "next null : fin")
 
 
 func test_node_effects_apply_when_shown() -> void:
 	watch_signals(EventBus)
-	GameState.set_quest_state(&"pages", &"active")
+	GameState.set_quest_state(&"picture_book", &"active")
 	GameState.add_item(&"page_fragment", 5)
 	_start(_example())
-	assert_eq(_lines[0]["text"], "Merci ! Tiens, un marque-page.")
-	assert_eq(GameState.quest_state(&"pages"), &"done", "complete_quest")
-	assert_signal_emitted_with_parameters(EventBus, "quest_updated", [&"pages", &"done"])
+	assert_eq(_lines[0]["text"], "Cinq. Merci. Maintenant, un lecteur.")
+	assert_eq(GameState.quest_state(&"picture_book"), &"done", "complete_quest")
+	assert_signal_emitted_with_parameters(EventBus, "quest_updated", [&"picture_book", &"done"])
 
 
 func test_set_flag_accepts_a_list() -> void:
@@ -379,7 +374,7 @@ func test_stop_ends_once() -> void:
 	_start(_example())
 	_runner.stop()
 	_runner.stop()
-	assert_eq(_log, ["started:tester", "line:Les Timeres ont emporté des pages…", "ended:tester"])
+	assert_eq(_log, ["started:tester", "line:Livre. Vent. Pages.", "ended:tester"])
 	EventBus.dialogue_choice_made.emit(-1)
 	assert_eq(_lines.size(), 1, "un runner arrêté ne réagit plus")
 
@@ -391,7 +386,11 @@ func test_only_one_dialogue_at_a_time() -> void:
 	assert_false(other.is_running(), "refusé pendant un autre dialogue")
 	assert_eq(_log.count("started:b"), 0)
 	EventBus.dialogue_choice_made.emit(-1)
-	assert_eq(_lines[1]["text"], "Peux-tu m'en rapporter cinq ?", "seul le runner actif réagit")
+	assert_eq(
+		_lines[1]["text"],
+		"Cinq pages, dans les bois. Pour la lecture du soir.",
+		"seul le runner actif réagit"
+	)
 
 
 func test_dialogue_stopped_by_an_effect_listener_ends_cleanly() -> void:

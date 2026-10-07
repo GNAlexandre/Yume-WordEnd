@@ -1,7 +1,7 @@
 extends "res://tests/stubs/m2_game_test.gd"
 ## Lot Q, intégration : la quête de démonstration demo_tour (tests/data/quests, cinq étapes) jouée
 ## de bout en bout dans le vrai jeu (main.tscn), par des appuis réels, puis sa suite
-## demo_followup. Le guide, le forgeron et le déclencheur du puits viennent de
+## demo_followup. Le guide, le soldat de la Garde et le déclencheur du puits viennent de
 ## tests/data/placements/village.tscn, posé dans le village comme un fichier d'emplacement.
 ## Marqueurs « ! » et « ? », objectif et progression du HUD, journal (Tab, L, Select ; pause),
 ## sauvegarde de l'étape en cours. La quête principale de l'acte 1, commencée seule, n'en bouge
@@ -117,31 +117,35 @@ func test_demo_quest_from_offer_to_followup() -> void:
 	zone(&"village").add_child(VILLAGE_DEMO.instantiate())
 	await wait_physics_frames(30)
 	var guide := _npc(&"village", "QuestDemo/DemoGuide")
-	var blacksmith := _npc(&"village", "QuestDemo/Blacksmith")
+	var guard := _npc(&"village", "QuestDemo/Guard")
 	var nygglatho := _npc(&"village", "NPCs/Nygglatho")
 
 	# 0. Marqueurs : le guide a une quête à donner ; Nygglatho attend l'aînée (act1_main).
 	assert_eq(_marker(guide), "!", "« ! » au-dessus du guide")
 	assert_eq(_marker(nygglatho), "?", "« ? » au-dessus de Nygglatho (quête principale)")
-	assert_eq(_marker(blacksmith), "")
+	assert_eq(_marker(guard), "")
 
 	# 1. Le guide propose la visite : on accepte.
 	await _talk_to(guide)
 	await _read_dialogue(0)
 	assert_eq(GameState.quest_state(&"demo_tour"), &"active", "quête acceptée")
-	assert_eq(_step(), &"blacksmith")
+	assert_eq(_step(), &"guard")
 	await wait_process_frames(2)
-	assert_eq(hud.call(&"quest_objective", &"demo_tour"), "Saluer le forgeron", "objectif du HUD")
-	assert_eq(_marker(blacksmith), "?", "« ? » au-dessus du forgeron")
+	assert_eq(
+		hud.call(&"quest_objective", &"demo_tour"),
+		"Saluer le soldat de la Garde",
+		"objectif du HUD"
+	)
+	assert_eq(_marker(guard), "?", "« ? » au-dessus du soldat de la Garde")
 	assert_eq(_marker(guide), "", "plus de « ! » au-dessus du guide")
 
-	# 2. Étape talk : la conversation avec le forgeron (« Une autre fois. »).
-	await _talk_to(blacksmith)
+	# 2. Étape talk : la conversation avec le soldat de la Garde (« Une autre fois. »).
+	await _talk_to(guard)
 	await _read_dialogue(1)
-	assert_eq(_step(), &"well", "fin du dialogue du forgeron : étape suivante")
+	assert_eq(_step(), &"well", "fin du dialogue du soldat : étape suivante")
 	await wait_process_frames(2)
 	assert_eq(hud.call(&"quest_objective", &"demo_tour"), "Aller voir le puits de la place")
-	assert_eq(_marker(blacksmith), "")
+	assert_eq(_marker(guard), "")
 
 	# 3. Étape reach (déclencheur) : vers le puits, depuis le Spawn.
 	await place_player(&"village", Vector3(0.0, 0.0, 8.5), Vector3.FORWARD)

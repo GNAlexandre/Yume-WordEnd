@@ -38,7 +38,8 @@ var skin_id: StringName = &"":
 		skin_id = value
 		EventBus.skin_changed.emit(value)
 
-## PV max du joueur (5, puis 6 avec le marque-page de la quête), entre 1 et MAX_HP_LIMIT.
+## PV max du joueur (5, puis 6 avec la promesse de l'acte 1, 7 avec le registre des veilles),
+## entre 1 et MAX_HP_LIMIT.
 var max_hp: int = DEFAULT_MAX_HP:
 	set(value):
 		value = clampi(value, 1, MAX_HP_LIMIT)

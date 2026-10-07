@@ -136,7 +136,7 @@ func test_every_problem_is_explained() -> void:
 		"doit être le nom du fichier": _quest([talk_step], {"id": "autre"}),
 		"« title » est obligatoire": {"id": "q", "steps": [talk_step]},
 		"« summary » doit être un texte": _quest([talk_step], {"summary": 3}),
-		"« giver » doit être un id de PNJ": _quest([talk_step], {"giver": "La bibliothécaire"}),
+		"« giver » doit être un id de PNJ": _quest([talk_step], {"giver": "La gardienne"}),
 		"« main » doit valoir true ou false": _quest([talk_step], {"main": "oui"}),
 		"clé inconnue « quest » dans « requires »":
 		_quest([talk_step], {"requires": {"quest": ["a"]}}),

@@ -10,11 +10,16 @@ extends Node
 ##                devant le joueur, dans le champ de la caméra, sans le poursuivre ;
 ##   trace        (intégration M2) le journal seul : la partie est celle du menu, telle quelle
 ##                (nouvelle partie ou reprise, position et zone non touchées).
+## (Acte 1) Sur le Web, la page reçoit aussi window.wordendFace(cible) : le joueur se tourne,
+## caméra derrière lui, vers un PNJ (son NpcData.id, « nygglatho ») ou un point de l'île (x, z),
+## comme un joueur qui oriente la caméra à la souris (impossible dans un navigateur sans écran) ;
+## la marche reste aux touches ; window.wordendPos donne la position du joueur à chaque image
+## ([x, z]). tools/web_m2.js s'en sert pour aller d'un PNJ à l'autre.
 ## Tant qu'il est actif, la console reçoit une ligne « [m1] … » par événement (zone, invite,
-## dialogue, quête, objet, vague, Timere tué, fin de série, dégâts, mort, réapparition), une
-## ligne au départ (zone et position du joueur) et, toutes les REPORT_PERIOD s, images/s, draw
-## calls, primitives, position et distance du Timere le plus proche : un navigateur sans écran
-## (Playwright) suit ainsi la partie.
+## dialogue, quête, (acte 1) étape de quête, objet, vague, Timere tué, fin de série, dégâts,
+## mort, réapparition), une ligne au départ (zone, position du joueur, quêtes et étapes) et,
+## toutes les REPORT_PERIOD s, images/s, draw calls, primitives, position et distance du Timere
+## le plus proche : un navigateur sans écran (Playwright) suit ainsi la partie.
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
 ## Paramètres reconnus (les autres sont ignorés).
@@ -33,6 +38,8 @@ const REPORT_PERIOD := 2.0
 var parameters: Dictionary = {}
 
 var _report_left: float = REPORT_PERIOD
+## Rappel JavaScript de window.wordendFace (gardé : sinon libéré par le moteur).
+var _face_callback: JavaScriptObject
 
 
 ## Paramètres de test de cette exécution ({} en partie normale).
@@ -116,17 +123,35 @@ func _ready() -> void:
 	EventBus.dialogue_line.connect(_on_dialogue_line)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	EventBus.quest_updated.connect(_on_quest_updated)
+	EventBus.quest_step_updated.connect(_on_quest_step_updated)
 	EventBus.item_collected.connect(_on_item_collected)
+	if OS.has_feature("web"):
+		_face_callback = JavaScriptBridge.create_callback(_on_js_face)
+		var window := JavaScriptBridge.get_interface("window")
+		window.set("wordendFace", _face_callback)
 	_log("raccourcis de test %s ; %d Timeres de banc" % [parameters, count])
 	_log(
 		(
-			"partie : zone « %s », %s, quêtes %s, objets %s"
-			% [GameState.zone, _position_text(player), GameState.quests(), GameState.items()]
+			"partie : zone « %s », %s, quêtes %s, étapes %s, objets %s"
+			% [
+				GameState.zone,
+				_position_text(player),
+				GameState.quests(),
+				GameState.quest_progress(),
+				GameState.items()
+			]
 		)
 	)
 
 
 func _process(delta: float) -> void:
+	if _face_callback != null:
+		# Position du joueur à chaque image pour la page (window.wordendPos = [x, z]) : le script
+		# du navigateur s'arrête au bon endroit sans attendre la mesure suivante.
+		var player := get_tree().get_first_node_in_group(&"player") as Node3D
+		if player != null:
+			var at := player.global_position
+			JavaScriptBridge.eval("window.wordendPos = [%.2f, %.2f];" % [at.x, at.z])
 	_report_left -= delta
 	if _report_left > 0.0:
 		return
@@ -238,5 +263,41 @@ func _on_quest_updated(quest_id: StringName, state: StringName) -> void:
 	_log("quête %s : %s" % [quest_id, state])
 
 
+func _on_quest_step_updated(quest_id: StringName, step_id: StringName, count: int) -> void:
+	_log("étape %s : %s (%d)" % [quest_id, step_id if not step_id.is_empty() else &"-", count])
+
+
 func _on_item_collected(item_id: StringName, quantity: int) -> void:
 	_log("objet %s ×%d (%d en tout)" % [item_id, quantity, GameState.count(item_id)])
+
+
+## Tourne le joueur (caméra derrière lui) vers une cible : face(&"nygglatho") vers ce PNJ, ou
+## face_point(x, z) vers un point de l'île. Renvoie false si la cible est introuvable.
+func face(npc_id: StringName) -> bool:
+	for node: Node in get_tree().get_nodes_in_group(&"interactable"):
+		var npc := node as Npc
+		if npc != null and npc.data != null and npc.data.id == npc_id and npc.is_present():
+			return face_point(npc.global_position.x, npc.global_position.z)
+	_log("visée : PNJ %s introuvable" % npc_id)
+	return false
+
+
+func face_point(x: float, z: float) -> bool:
+	var player := get_tree().get_first_node_in_group(&"player") as Player
+	if player == null:
+		return false
+	var direction := Vector3(x, player.global_position.y, z) - player.global_position
+	direction.y = 0.0
+	if direction.is_zero_approx():
+		return false
+	player.set_aim_direction(direction, true)
+	_log("visée (%.1f ; %.1f) depuis %s" % [x, z, _position_text(player)])
+	return true
+
+
+## window.wordendFace("nygglatho") ou window.wordendFace(x, z).
+func _on_js_face(arguments: Array) -> void:
+	if arguments.size() >= 2:
+		face_point(float(arguments[0]), float(arguments[1]))
+	elif arguments.size() == 1:
+		face(StringName(str(arguments[0])))
