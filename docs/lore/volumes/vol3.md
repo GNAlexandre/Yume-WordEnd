@@ -321,11 +321,10 @@ Nephren endormie sur lui, et son talisman de traduction brille (V3, chap. « Rê
 
 ## 9. Chronologie
 
-1. Il y a plus de 500 ans : veille de la bataille contre Elq Hrqstn ; Willem retourne à Gomag
-   (V3, chap. « Prologue »).
+1. Plus de 500 ans avant : veille de l'assaut contre Elq Hrqstn (V3, chap. « Prologue »).
 2. Deux ans avant : empiétement d'Ithea (V3, chap. « La Fille sans visage »).
-3. Plus d'un mois avant : Nopht et Rhantolk escortent l'équipe de surface (V3, chap. « Encore plus loin
-   sous le ciel étoilé »).
+3. Plus d'un mois avant : Nopht et Rhantolk partent escorter l'équipe de surface (V3, chap. « Encore
+   plus loin sous le ciel étoilé »).
 4. Bataille de l'île n° 15 ; dix jours plus tard, réveil de Chtholly, gâteau (V3, chap. « Je suis à la
    maison »).
 5. Cinq jours après : oublis, comètes, chute d'Almita ; nuit avec Ithea (V3, chap. « Des journées
@@ -396,9 +395,9 @@ Nephren endormie sur lui, et son talisman de traduction brille (V3, chap. « Rê
   de décor pour la surface.
 - **image7.jpg** : Glick ; peau gris-vert, petites cornes, oreilles pointues, yeux ambrés, crocs,
   lunettes d'aviateur sur le front, gilet de cuir matelassé, mitaines.
-- **image8.jpg** (page de titre), **image2.jpg** et **image19.jpg** (pages Yume Novel) : l'image19
-  montre Nopht, Rhantolk (fichu), une fée blonde (Ithea ?) et Nephren en uniformes sombres, avec des
-  ailes translucides d'insecte et des papillons bleus : modèle pour les ailes de fée.
+- **image19.jpg** (page Yume Novel ; image2.jpg et image8.jpg sont des pages de crédits et de titre) :
+  Nopht, Rhantolk, une fée blonde (Ithea ?) et Nephren en uniformes sombres, ailes translucides
+  d'insecte, papillons bleus : modèle pour les ailes de fée.
 - **image9.jpg** : sommaire, source des titres de chapitres.
 - **image10.jpg** : en-tête du prologue ; Lillia (cheveux en bataille, petite queue de côté, chemise,
   ceinture à sacoche) à une table de bois avec bouteilles et bûches.
