@@ -200,17 +200,16 @@ métaphores détournées, culte du guerrier, ne ment jamais ; sert un thé brûl
 « La fille errante et le lézard volant »).
 
 **Glick** — boggart, vieil ami de Willem, *récupérateur* ; rationnel, chaleureux, langage cru ; leur
-réplique fétiche : « Le café ici est un peu salé » (V1, chap. « L'Homme sans Marque »). Autre PNJ :
-le cuisinier du snack-bar, jeune lycanthrope à tête de chien et fourrure châtaine.
+réplique fétiche : « Le café ici est un peu salé » (V1, chap. « L'Homme sans Marque »). Le cuisinier
+du snack-bar est un jeune lycanthrope à tête de chien, fourrure châtaine.
 
 **Figures du passé** — **Almaria**, la *fille* de Willem sans lien de sang, aînée de l'orphelinat,
 cuisinière (ragoût, gâteau au beurre) ; **le maître**, directeur de l'orphelinat, épéiste génial et
 ivrogne, qui prétendait avoir été Legal Brave ; **Lillia**, **Suowong**, **Emi**, compagnons
 auxquels Willem pense en se pétrifiant ; **Ted**, qui aidait à l'orphelinat ; **la 20e Legal
 Brave**, porteuse de Seniorious, que Willem détestait ; **Elq Hrqstn**, *Visiteur*, ennemie de
-l'*Église de la Lumière Exaltée*. Mentions : Anala (dévoré par Trois), Gurgula (mort dans la chute de
-l'île n°47), l'ancien maire de l'île 28, un *imp* (V1, prologue ; chap. « Ce jour, il y a fort, fort
-longtemps »).
+l'*Église de la Lumière Exaltée*. Mentions : Anala et Gurgula, récupérateurs morts ; l'ancien maire
+de l'île 28, un *imp* (V1, prologue ; chap. « Ce jour, il y a fort, fort longtemps »).
 
 ## 5. Bêtes et créatures
 
