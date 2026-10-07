@@ -92,7 +92,7 @@ Format de l'easter egg, repris tel quel : une planche PNG et son JSON, comme
 | `attaque` | 4 | 14 | non | coup d'épée horizontal ; `coup` : [1, 2, 3] |
 | `charge` | 4 | 10 | non | l'épée s'illumine (lumière bleutée dans les fissures de la lame), puis l'onde part ; `onde` : 3 |
 | `degats` | 1 | 1 | non | touchée, recule |
-| `mort` | 1 | 1 | non | à terre, se dissipe en grains de lumière (pas de sang, pas de pétales) |
+| `mort` | 1 | 1 | non | à terre, épuisée : une défaite, pas une mort (ni sang, ni disparition) |
 
 Portrait : `assets/characters/<id>/<id>_portrait.png`, **256 × 256**, buste de la tête aux
 épaules, visage de trois quarts tourné vers la droite, fond transparent.
@@ -118,7 +118,7 @@ animation. » puis la description.
 
 | Prio | Fichier (`assets/characters/…`) | Taille (repos) | Description à coller |
 | --- | --- | --- | --- |
-| 1 | `chtholly/chtholly` (remplace l'actuelle, qui sert à l'acte 3) | 1,5 m = 144 px | Chtholly à l'acte 1, fée soldate de 15 ans, style chibi (tête grosse, deux têtes et demie de haut) comme la planche actuelle : longs cheveux céruléen clair (#6C89BB à #92B6DB) **sans aucune mèche rouge**, deux petites couettes hautes, yeux bleu océan ; uniforme de la Garde ailée (veste bleu marine à col droit et boutons argentés, jupe plissée sombre, bottines), broche d'argent à pierre bleue en goutte sur la poitrine ; Seniorious : grande épée presque aussi haute qu'elle, lame blanc argenté faite de plaques fissurées, garde sombre hérissée |
+| 1 | `chtholly/chtholly` (remplace l'actuelle, qui sert à l'acte 3) | 1,5 m = 144 px | Chtholly à l'acte 1, fée soldate de 15 ans, proportions des sprites d'*Octopath Traveler* (environ deux têtes et demie à trois têtes de haut), dans la continuité de la planche actuelle : longs cheveux céruléen clair (#6C89BB à #92B6DB) **sans aucune mèche rouge**, deux petites couettes hautes, yeux bleu océan ; uniforme de la Garde ailée (veste bleu marine à col droit et boutons argentés, jupe plissée sombre, bottines), broche d'argent à pierre bleue en goutte sur la poitrine ; Seniorious : grande épée presque aussi haute qu'elle, lame blanc argenté faite de plaques fissurées, garde sombre hérissée |
 | 2 | `willem/willem` | 1,75 m = 168 px | Willem Kmetsch, jeune homme maigre, cheveux noirs en bataille, yeux sombres, sourire fatigué ; uniforme militaire bleu nuit croisé à boutons dorés un peu trop étroit, ceinturon, bottes |
 | 2 | `nygglatho/nygglatho` | 1,85 m = 178 px | Nygglatho, troll à l'air de jeune femme, une tête de plus que tous ; longs cheveux rose saumon, yeux vert printanier, chemisier vert vif à volants, tablier blanc, coiffe blanche à volants ; sourire doux |
 | 2 | `ithea/ithea` (7 animations + `parle`) | 1,45 m = 139 px | Ithea, fée soldate de 14 ans : cheveux blond paille, longue tresse à perle bleue, yeux ambre au regard félin, écharpe rouge, veste vert pâle sur robe brun-rouge, bas vert olive ; Carillon Valgulious dans le dos |
