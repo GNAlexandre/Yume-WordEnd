@@ -44,6 +44,8 @@ l'éditeur comme dans le navigateur.
 - [docs/RECETTE_M2.md](docs/RECETTE_M2.md) : recette des critères d'acceptation du jalon M2.
 - [docs/ASSETS_3D.md](docs/ASSETS_3D.md) : cahier des charges des assets 3D (personnages,
   corps de Timere, décors, île) à donner à qui les produit (IA ou artiste).
+- [docs/TEXTURES_PEINTES.md](docs/TEXTURES_PEINTES.md) : textures peintes à commander à un
+  générateur d'images (sols, roche, ciel, bâtiments, feuillages), consigne prête pour chacune.
 - [docs/QUETES.md](docs/QUETES.md) : écrire des quêtes, des dialogues (plusieurs voix,
   `{player}`), la présence des PNJ et les textes de l'histoire.
 - [docs/lore/](docs/lore/PLAN.md) : la direction narrative ([MONDE.md](docs/lore/MONDE.md),
