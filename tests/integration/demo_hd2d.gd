@@ -6,12 +6,13 @@ extends Node
 ## build/shots/hd2d_<vue>.png 60
 ##   menu        : le menu principal ;
 ##   village     : l'entrepôt des fées, sa cour, son puits (défaut) ;
+##   entrepot    : l'entrepôt entier, de face, zoom au plus loin (planche avant/après) ;
 ##   forest      : les bois du marais, le terrain d'entraînement et ses rejetons ;
 ##   dunes       : le bord du Couchant, le cercle de veille et sa cloche ;
 ##   beach       : la rue du Port, ses façades et le marché ;
 ##   hill        : la colline des étoiles, son belvédère ;
 ##   dialogue    : Nygglatho parle, sous le porche ;
-##   vigil       : une veille en cours au Couchant (vague 2).
+##   vigil       : une veille en cours au Couchant (vague 1, deux rejetons).
 ## Draw calls et primitives de l'image mesurée sont écrits dans le journal (« HD-2D vue … »).
 
 const GAME_SCENE := preload("res://src/game.tscn")
@@ -20,6 +21,7 @@ const MenuScript := preload("res://src/ui/main_menu.gd")
 ## Où se tient le joueur (zone, position locale, direction regardée) pour chaque vue.
 const SPOTS := {
 	"village": [&"village", Vector3(-5.0, 0.0, -2.5), Vector3(1.0, 0.0, 0.0)],
+	"entrepot": [&"village", Vector3(-10.5, 0.0, -6.5), Vector3(-1.0, 0.0, 0.0)],
 	"dialogue": [&"village", Vector3(-7.2, 0.0, -6.2), Vector3(-1.0, 0.0, -1.0)],
 	"forest": [&"forest", Vector3(1.0, 0.0, 9.0), Vector3(0.0, 0.0, -1.0)],
 	"dunes": [&"dunes", Vector3(10.0, 0.0, 3.0), Vector3(-1.0, 0.0, 0.0)],
@@ -87,6 +89,9 @@ func _stage() -> void:
 	_player.velocity = Vector3.ZERO
 	_player.set_aim_direction(spot[2] as Vector3, true)
 	match _view:
+		"entrepot":
+			_player.camera_rig.zoom(_player.camera_rig.max_distance)
+			_player.camera_rig.snap()
 		"dialogue":
 			_open_dialogue.call_deferred()
 		"forest":

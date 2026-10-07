@@ -8,7 +8,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 views=("$@")
 if [ ${#views[@]} -eq 0 ]; then
-  views=(menu village forest dunes beach hill dialogue vigil)
+  views=(menu village entrepot forest dunes beach hill dialogue vigil)
 fi
 mkdir -p build/shots
 status=0

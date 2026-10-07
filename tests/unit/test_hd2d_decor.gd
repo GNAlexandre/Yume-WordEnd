@@ -33,7 +33,7 @@ const NON_BLOCKING: Array[String] = [
 	"vigil_bell",
 ]
 ## Images (matériaux) au plus par zone : un draw call par image et par case visible ; les vues
-## mesurées restent sous 60 draw calls (tests/integration/demo_hd2d.gd, budget : 200).
+## mesurées restent sous 75 draw calls (tests/integration/demo_hd2d.gd, budget : 200).
 const MAX_IMAGES_PER_ZONE := 40
 const SHADERS: Array[String] = [
 	"res://src/world/shaders/panel.gdshader",

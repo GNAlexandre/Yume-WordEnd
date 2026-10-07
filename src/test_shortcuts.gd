@@ -11,6 +11,8 @@ extends Node
 ##   trace        (intégration M2) le journal seul : la partie est celle du menu, telle quelle
 ##                (nouvelle partie ou reprise, position et zone non touchées).
 ## (Acte 1) Sur le Web, la page reçoit aussi window.wordendFace(cible) : le joueur se tourne,
+## ((HD-2D) la caméra fixe ne tourne plus : la cible est aussi posée dans window.wordendAim, et
+## la page choisit les touches qui y mènent)
 ## caméra derrière lui, vers un PNJ (son NpcData.id, « nygglatho ») ou un point de l'île (x, z),
 ## comme un joueur qui oriente la caméra à la souris (impossible dans un navigateur sans écran) ;
 ## la marche reste aux touches ; window.wordendPos donne la position du joueur à chaque image
@@ -271,7 +273,7 @@ func _on_item_collected(item_id: StringName, quantity: int) -> void:
 	_log("objet %s ×%d (%d en tout)" % [item_id, quantity, GameState.count(item_id)])
 
 
-## Tourne le joueur (caméra derrière lui) vers une cible : face(&"nygglatho") vers ce PNJ, ou
+## Tourne le joueur vers une cible (la caméra fixe se recale sur lui) : face(&"nygglatho"), ou
 ## face_point(x, z) vers un point de l'île. Renvoie false si la cible est introuvable.
 func face(npc_id: StringName) -> bool:
 	for node: Node in get_tree().get_nodes_in_group(&"interactable"):
@@ -291,6 +293,10 @@ func face_point(x: float, z: float) -> bool:
 	if direction.is_zero_approx():
 		return false
 	player.set_aim_direction(direction, true)
+	if OS.has_feature("web"):
+		# (HD-2D) La caméra fixe ne tourne pas : la page oriente la marche vers ce point
+		# (window.wordendAim, touches choisies par tools/web_m2.js).
+		JavaScriptBridge.eval("window.wordendAim = [%.2f, %.2f];" % [x, z])
 	_log("visée (%.1f ; %.1f) depuis %s" % [x, z, _position_text(player)])
 	return true
 
