@@ -19,12 +19,12 @@ const MAIN_SCENE := preload("res://src/main.tscn")
 const MenuScript := preload("res://src/ui/main_menu.gd")
 ## Où se tient le joueur (zone, position locale, direction regardée) pour chaque vue.
 const SPOTS := {
-	"village": [&"village", Vector3(-2.0, 0.0, 3.0), Vector3(-1.0, 0.0, -1.0)],
+	"village": [&"village", Vector3(-5.0, 0.0, -2.5), Vector3(1.0, 0.0, 0.0)],
 	"dialogue": [&"village", Vector3(-7.2, 0.0, -6.2), Vector3(-1.0, 0.0, -1.0)],
 	"forest": [&"forest", Vector3(1.0, 0.0, 9.0), Vector3(0.0, 0.0, -1.0)],
 	"dunes": [&"dunes", Vector3(10.0, 0.0, 3.0), Vector3(-1.0, 0.0, 0.0)],
 	"vigil": [&"dunes", Vector3(2.0, 0.0, 3.0), Vector3(-1.0, 0.0, 0.0)],
-	"beach": [&"beach", Vector3(-8.0, 0.0, -2.0), Vector3(1.0, 0.0, 0.0)],
+	"beach": [&"beach", Vector3(-9.0, 0.0, -3.0), Vector3(1.0, 0.0, 0.0)],
 	"hill": [&"hill", Vector3(1.0, 8.0, 3.0), Vector3(1.0, 0.0, -1.0)],
 }
 const STAGE_FRAME := 6

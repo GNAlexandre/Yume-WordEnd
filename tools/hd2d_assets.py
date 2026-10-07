@@ -85,6 +85,12 @@ def generate(entry, table):
     return path
 
 
+def _differs(a, b):
+    """Vrai si deux images RGBA de même taille diffèrent (couleurs ou alpha)."""
+    diff = ImageChops.difference(a.convert("RGBA"), b.convert("RGBA"))
+    return any(band.getbbox() is not None for band in diff.split())
+
+
 def build_atlas():
     """Assemble les tuiles de sol en un atlas (rien n'est réécrit s'il est déjà à jour)."""
     rows = (len(GROUND_LAYERS) + ATLAS_COLUMNS - 1) // ATLAS_COLUMNS
@@ -96,7 +102,7 @@ def build_atlas():
         atlas.paste(tile, ((i % ATLAS_COLUMNS) * TILE, (i // ATLAS_COLUMNS) * TILE))
     if os.path.exists(ATLAS):
         current = Image.open(ATLAS).convert("RGBA")
-        if current.size == atlas.size and ImageChops.difference(current, atlas).getbbox() is None:
+        if current.size == atlas.size and not _differs(current, atlas):
             return False
     os.makedirs(os.path.dirname(ATLAS), exist_ok=True)
     atlas.save(ATLAS, optimize=True)
@@ -114,7 +120,7 @@ def atlas_is_current():
     for i, name in enumerate(GROUND_LAYERS):
         tile = Image.open(os.path.join(ROOT, "assets", "hd2d", "ground", name + ".png")).convert("RGBA")
         x, y = (i % ATLAS_COLUMNS) * TILE, (i // ATLAS_COLUMNS) * TILE
-        if tile.size != (TILE, TILE) or ImageChops.difference(current.crop((x, y, x + TILE, y + TILE)), tile).getbbox():
+        if tile.size != (TILE, TILE) or _differs(current.crop((x, y, x + TILE, y + TILE)), tile):
             return False
     return True
 

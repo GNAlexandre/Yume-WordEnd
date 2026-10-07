@@ -11,6 +11,11 @@ from hd2d_art import (Canvas, darker, fractal, mix, noise, paste_wrap, posterize
                       shade_texture, stretch, threshold)
 
 
+def _soft(gray, amount=0.6):
+    """Resserre le bruit autour du milieu : moins de grandes plages uniformes aux extrêmes."""
+    return gray.point(lambda v: round(128 + (v - 128) * amount))
+
+
 def _blades(img, rnd, count, colors, length=(3, 6), slant=0.0, width=1):
     """Brins d'herbe : traits verticaux de 1 px, pointe plus claire, posés sans raccord."""
     for _ in range(count):
@@ -98,7 +103,7 @@ def _voronoi(size, rnd, count, min_dist=0.0):
 
 def grass(size, rnd, base="grass", blades=2600, dry=False):
     tones = ramp(base, 5, spread=0.45)
-    img = posterize(fractal(size, (12, 12), rnd, 4, gain=0.7), tones[1:4], dither=90)
+    img = posterize(_soft(fractal(size, (12, 12), rnd, 4, gain=0.7)), tones[1:5], dither=110)
     if dry:
         patch = threshold(fractal(size, (4, 4), rnd, 3, gain=0.7), 178)
         dry_img = posterize(fractal(size, (16, 16), rnd, 2), ramp("grass_dry", 5)[1:4], dither=80)
@@ -121,9 +126,7 @@ def grass_dry(size, rnd):
 def path_dirt(size, rnd):
     base = mix("wood", "sand", 0.5)
     tones = ramp(base, 5, spread=0.4)
-    img = posterize(fractal(size, (10, 10), rnd, 4, gain=0.7), tones[1:4], dither=90)
-    ruts = threshold(fractal(size, (4, 12), rnd, 2), 205)
-    img.paste(Image.new("RGBA", size, rgba(tones[2])), (0, 0), ruts)
+    img = posterize(_soft(fractal(size, (10, 10), rnd, 4, gain=0.7)), tones[1:5], dither=110)
     _pebbles(img, rnd, 70, "stone", (3, 7))
     _dots(img, rnd, 400, [tones[0], tones[4]], (1, 2))
     _blades(img, rnd, 60, ramp("grass", 4)[1:], (2, 4))
@@ -276,7 +279,7 @@ def water(size, rnd):
 
 def mud(size, rnd):
     tones = ramp("#6E5A40", 5, spread=0.4)
-    img = posterize(fractal(size, (10, 10), rnd, 4, gain=0.7), tones[0:4], dither=90)
+    img = posterize(_soft(fractal(size, (10, 10), rnd, 4, gain=0.7)), tones[0:4], dither=110)
     puddles = threshold(fractal(size, (3, 3), rnd, 3), 185)
     img.paste(posterize(fractal(size, (16, 16), rnd, 2), ramp("#4E4A52", 3), dither=50), (0, 0), puddles)
     for _ in range(18):

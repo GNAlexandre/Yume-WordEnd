@@ -16,14 +16,14 @@ extends Node3D
 ## rotation). Le joueur (player.gd) pose lock_target et follow_velocity à chaque image physique.
 
 ## Inclinaison de la caméra vers le bas (degrés) et champ vertical (degrés).
-@export_range(20.0, 60.0) var pitch_deg: float = 35.0
+@export_range(20.0, 60.0) var pitch_deg: float = 32.0
 @export_range(15.0, 60.0) var fov_deg: float = 30.0
 ## Hauteur du point visé au-dessus des pieds du joueur (m).
 @export var focus_height: float = 0.8
 
 @export_group("Zoom")
 ## Distance de la caméra au point visé (m) : défaut, minimum, maximum.
-@export var distance: float = 19.0
+@export var distance: float = 21.0
 @export var min_distance: float = 14.0
 @export var max_distance: float = 25.0
 ## Distance gagnée ou perdue par cran de molette (m) ; vitesse au stick (m/s).
