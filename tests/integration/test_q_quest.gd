@@ -78,9 +78,9 @@ func _step() -> StringName:
 	return GameState.quest_step(&"demo_tour")
 
 
-## Timere de la forêt, immobilisé, posé devant le joueur ; épée (J) jusqu'à sa mort ; la page
-## qu'il lâche est ramassée en avançant dessus.
-func _kill_and_collect(timere: Enemy) -> void:
+## Timere de la forêt, immobilisé, posé devant le joueur ; épée (J) jusqu'à sa mort. Il ne lâche
+## rien (Timere ignore les objets, V3) : les pages sont posées dans la clairière.
+func _kill(timere: Enemy) -> void:
 	await place_player(&"forest", Vector3(0.0, 0.0, 9.0), Vector3.FORWARD)
 	timere.global_position = ahead(1.0)
 	await wait_physics_frames(2)
@@ -90,12 +90,16 @@ func _kill_and_collect(timere: Enemy) -> void:
 		await tap_key(KEY_J)
 		await wait_until(func() -> bool: return timere.is_dead(), 0.5)
 	assert_true(timere.is_dead(), "%s vaincu à l'épée" % timere.name)
-	var before := GameState.count(PAGE)
-	await wait_physics_frames(10)
-	var picked: bool = await _forward_until(
-		func() -> bool: return GameState.count(PAGE) > before, 2.0
+
+
+## Depuis le centre de la clairière, marche jusqu'à la page posée page_id et la ramasse.
+func _collect_page(page_id: StringName) -> void:
+	var page := zone(&"forest").get_node(NodePath("Pickups/%s" % page_id)) as Node3D
+	await place_player(&"forest", Vector3.ZERO, Vector3.FORWARD)
+	var picked: bool = await _walk_toward(
+		page.global_position, func() -> bool: return GameState.is_pickup_collected(page_id), 4.0
 	)
-	assert_true(picked, "page de %s ramassée" % timere.name)
+	assert_true(picked, "%s ramassée" % page_id)
 
 
 func _journal_steps() -> Array[Dictionary]:
@@ -174,17 +178,21 @@ func test_demo_quest_from_offer_to_followup() -> void:
 	await wait_process_frames(2)
 	assert_eq(hud.call(&"quest_progress", &"demo_tour"), "Ennemis vaincus : 0/2")
 
-	# 6. Étape kill : deux Timeres ; leurs pages sont ramassées.
+	# 6. Étape kill : deux Timeres ; puis deux pages posées dans la clairière.
 	var timeres: Array[Enemy] = []
 	for child: Node in zone(&"forest").get_node(^"Enemies").get_children():
 		if child is Enemy:
 			(child as Enemy).set_physics_process(false)
 			timeres.append(child as Enemy)
-	await _kill_and_collect(timeres[0])
+	await _kill(timeres[0])
 	assert_eq(hud.call(&"quest_progress", &"demo_tour"), "Ennemis vaincus : 1/2")
-	await _kill_and_collect(timeres[1])
+	await _kill(timeres[1])
 	assert_eq(_step(), &"pages", "deux Timeres : étape suivante")
 	assert_true(GameState.has_flag(&"demo_tour_brave"), "récompense de l'étape")
+	await wait_process_frames(2)
+	assert_eq(hud.call(&"quest_progress", &"demo_tour"), "Fragment de page : 0/2")
+	await _collect_page(&"forest_page_1")
+	await _collect_page(&"forest_page_2")
 	await wait_process_frames(2)
 	assert_eq(hud.call(&"quest_progress", &"demo_tour"), "Fragment de page : 2/2")
 

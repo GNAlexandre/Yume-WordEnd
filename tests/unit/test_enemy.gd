@@ -177,8 +177,15 @@ func test_death_gives_points_and_leaves_group(enemy_id: StringName = use_paramet
 
 
 func test_drops_only_when_enabled() -> void:
+	# Les corps de Timere ne lâchent rien (data/enemies, V3) : le mécanisme des drops se teste
+	# sur une copie de leurs données qui porte une page.
+	var carrying := (load("res://data/enemies/timere_small.tres") as EnemyData).duplicate()
+	var drops: Dictionary[StringName, float] = {&"page_fragment": 1.0}
+	(carrying as EnemyData).drops = drops
 	var dropper := _enemy(&"timere_small", Vector3(2.0, 0.0, 0.0))
 	var keeper := _enemy(&"timere_small", Vector3(-2.0, 0.0, 0.0))
+	dropper.data = carrying as EnemyData
+	keeper.data = carrying as EnemyData
 	keeper.drops_enabled = false
 	dropper.health.take_damage(99, null)
 	keeper.health.take_damage(99, null)
@@ -246,7 +253,7 @@ func test_leash_limits_the_chase() -> void:
 	assert_ne(enemy.state(), &"idle", "joueur dans la laisse : poursuite")
 
 
-func test_forest_has_four_free_timeres_carrying_pages() -> void:
+func test_forest_has_four_free_timeres_that_drop_nothing() -> void:
 	var placement: Node3D = autofree(FOREST.instantiate())
 	var counts := {}
 	for child: Node in placement.get_children():
@@ -255,8 +262,9 @@ func test_forest_has_four_free_timeres_carrying_pages() -> void:
 		if enemy == null:
 			continue
 		counts[enemy.enemy_id()] = int(counts.get(enemy.enemy_id(), 0)) + 1
-		assert_true(enemy.drops_enabled, "%s lâche ses objets" % child.name)
 		assert_false(enemy.always_chase, "%s est un ennemi libre" % child.name)
-		assert_almost_eq(float(enemy.data.drops.get(&"page_fragment", 0.0)), 1.0, 0.001)
+		assert_true(
+			enemy.data.drops.is_empty(), "%s ne lâche rien (Timere ignore les objets)" % child.name
+		)
 		assert_lt(Vector2(enemy.position.x, enemy.position.z).length(), 6.0, "dans la clairière")
 	assert_eq_deep(counts, {&"timere_small": 2, &"timere_normal": 1, &"timere_runner": 1})

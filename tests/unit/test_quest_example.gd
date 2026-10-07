@@ -38,7 +38,7 @@ func test_patrol_from_offer_to_reward() -> void:
 	assert_eq(count_of(QUEST), 0, "un Timere normal ne compte pas")
 	kill(&"timere_small")
 	assert_eq(count_of(QUEST), 1)
-	assert_eq(QuestData.find(QUEST).current_progress(), "Petit Timere : 1/2")
+	assert_eq(QuestData.find(QUEST).current_progress(), "Rejeton de Timere : 1/2")
 	kill(&"timere_small")
 	assert_eq(step_of(QUEST), &"report", "deux petits Timeres : étape suivante")
 	assert_eq(QuestData.npc_marker(&"blacksmith"), QuestData.MARKER_TURN_IN, "« ? »")
