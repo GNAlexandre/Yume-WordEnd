@@ -70,7 +70,7 @@ func _three_quests() -> void:
 				},
 				{"id": "d", "type": "flag", "flag": "secret", "objective": "Étape cachée"},
 			],
-			"rewards": {"items": {"shell": 2}, "max_hp": 7},
+			"rewards": {"items": {"flower_blue": 2}, "max_hp": 7},
 		}
 	)
 	write_quest(
@@ -184,7 +184,7 @@ func test_lists_active_then_done_quests_with_their_steps() -> void:
 	assert_eq(steps[2]["progress"], "Ennemis vaincus : 1/3")
 	var text := _texts()
 	for expected_text: String in [
-		"Secondaire", "Un résumé.", "Dans la forêt.", "Coquillage × 2", "7 PV max", "Enfant"
+		"Secondaire", "Un résumé.", "Dans la forêt.", "Myosotis × 2", "7 PV max", "Enfant"
 	]:
 		assert_string_contains(text, expected_text, false)
 	_journal.call(&"select", &"old")

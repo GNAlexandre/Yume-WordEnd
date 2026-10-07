@@ -689,7 +689,7 @@ func test_data_files() -> void:
 			assert_eq(enemy.id, StringName(enemy_id))
 			assert_not_null(enemy.visual, "%s : visuel" % enemy_id)
 			assert_false(enemy.attacks.is_empty(), "%s : attaques" % enemy_id)
-	for skin_id: String in ["chtholly", "bibliothecaire", "forgeron", "enfant"]:
+	for skin_id: String in ["chtholly"]:
 		var skin := SkinRegistry.get_skin(StringName(skin_id))
 		assert_not_null(skin, "skin %s" % skin_id)
 		if skin != null:

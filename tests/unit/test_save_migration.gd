@@ -11,7 +11,7 @@ const V0_SAVE := """{
 	"zone": "beach",
 	"inventory": {"page_fragment": 2},
 	"flags": {"quest_pages_accepted": true},
-	"quests": {"pages": "active"},
+	"quests": {"picture_book": "active"},
 	"collected_pickups": ["beach_shell_2"],
 	"best": 640,
 	"wave": 6,
@@ -22,8 +22,8 @@ const EASTER_EGG := (
 	'{"meilleur": 410, "parties": 12, "maj": "2026-09-30", ' + '"volume": 0.5, "muet": false}'
 )
 const FUTURE_SAVE := '{"version": 99, "saved_at": "2027-01-01T00:00:00Z", "skin": "enfant"}'
-## Sauvegarde v1 (jalon M2) : la quête des pages en cours, trois pages en poche, une quête
-## active sans données et une quête terminée.
+## Sauvegarde v1 (jalon M2) : une quête du jeu en cours (le livre d'images, qui a remplacé celle
+## des pages à l'acte 1), trois pages en poche, une quête active sans données et une terminée.
 const V1_SAVE := """{
 	"version": 1,
 	"saved_at": "2026-10-06T10:00:00Z",
@@ -33,7 +33,7 @@ const V1_SAVE := """{
 	"zone": "village",
 	"inventory": {"page_fragment": 3},
 	"flags": {"quest_pages_accepted": true},
-	"quests": {"pages": "active", "lost_quest": "active", "old": "done"},
+	"quests": {"picture_book": "active", "lost_quest": "active", "old": "done"},
 	"collected_pickups": ["forest_page_1"],
 	"best_scores": {"dunes": {"score": 120, "wave": 2, "games": 1}}
 }"""
@@ -52,7 +52,7 @@ func test_v0_file_is_migrated_to_v1() -> void:
 	assert_eq(GameState.zone, &"beach")
 	assert_eq(GameState.count(&"page_fragment"), 2)
 	assert_true(GameState.has_flag(&"quest_pages_accepted"))
-	assert_eq(GameState.quest_state(&"pages"), &"active")
+	assert_eq(GameState.quest_state(&"picture_book"), &"active")
 	assert_true(GameState.is_pickup_collected(&"beach_shell_2"))
 	assert_false(data.has("best") or data.has("games"), "plus de champ à plat")
 
@@ -129,29 +129,29 @@ func test_v1_file_is_migrated_to_v2() -> void:
 	watch_signals(EventBus)
 	assert_eq(SaveManager.load_game(), OK)
 	assert_signal_emitted(EventBus, "game_loaded")
-	assert_eq(GameState.quest_state(&"pages"), &"active", "états v1 gardés")
+	assert_eq(GameState.quest_state(&"picture_book"), &"active", "états v1 gardés")
 	assert_eq(GameState.quest_state(&"old"), &"done")
-	assert_eq(GameState.quest_step(&"pages"), &"deliver", "quête active : sa première étape")
-	assert_eq(GameState.quest_step_count(&"pages"), 0)
+	assert_eq(GameState.quest_step(&"picture_book"), &"pages", "quête active : sa 1re étape")
+	assert_eq(GameState.quest_step_count(&"picture_book"), 0)
 	assert_eq(GameState.quest_step(&"lost_quest"), &"", "quête sans données : pas d'étape")
 	assert_eq(GameState.quest_step(&"old"), &"", "quête terminée : pas d'étape")
-	assert_eq(GameState.tracked_quest, &"pages", "première quête active suivie")
+	assert_eq(GameState.tracked_quest, &"picture_book", "première quête active suivie")
 	assert_eq(GameState.count(&"page_fragment"), 3, "le reste est inchangé")
 	assert_eq(GameState.best_score(&"dunes"), 120)
 	assert_true(SaveManager.is_autosave_pending(), "réécriture demandée")
 	assert_eq(SaveManager.flush(), OK)
 	var data := read_save()
 	assert_eq(data["version"], 2.0, "réécrite en v2")
-	assert_eq(data["quest_progress"], {"pages": {"step": "deliver", "count": 0.0}})
-	assert_eq(data["tracked_quest"], "pages")
-	assert_eq(data["quests"], {"pages": "active", "lost_quest": "active", "old": "done"})
+	assert_eq(data["quest_progress"], {"picture_book": {"step": "pages", "count": 0.0}})
+	assert_eq(data["tracked_quest"], "picture_book")
+	assert_eq(data["quests"], {"picture_book": "active", "lost_quest": "active", "old": "done"})
 
 
 func test_v0_is_migrated_through_v1_to_v2() -> void:
 	write_save_text(V0_SAVE)
 	assert_eq(SaveManager.load_game(), OK)
-	assert_eq(GameState.quest_step(&"pages"), &"deliver", "v0 → v1 → v2 : étape des pages")
-	assert_eq(GameState.tracked_quest, &"pages")
+	assert_eq(GameState.quest_step(&"picture_book"), &"pages", "v0 → v1 → v2 : 1re étape")
+	assert_eq(GameState.tracked_quest, &"picture_book")
 	assert_eq(GameState.best_score(&"dunes"), 640, "migration v0 toujours faite")
 
 
