@@ -618,8 +618,8 @@ Un skin de joueur doit fournir ces 7 animations ; un ennemi fournit `repos`, `ma
 | Type | Limite |
 | --- | --- |
 | Sprite sheet personnage | 2048 × 2048 max, PNG, moins de 1 Mo |
-| Modèle `.glb` personnage | 15 000 triangles, 2 matériaux, textures 1024 |
-| Prop de décor | 2 000 triangles, atlas 512 partagé |
+| Modèle `.glb` personnage | Chtholly 20 000 triangles (autre jouable 18 000, PNJ 12 000, corps de Timere 6 000), 2 à 3 matériaux, textures 1024 (2048 tolérée pour Chtholly) ; détail : `docs/ASSETS_3D.md`, section 3.3 |
+| Prop de décor | 3 000 triangles (arbre 4 000), atlas peints de 1024 partagés (`docs/ASSETS_3D.md`, section 6) |
 | Audio | OGG Vorbis, musique 96 kb/s, effets mono |
 | Git LFS | activé pour `.glb .vrm .blend .wav .ogg` ; les PNG de moins de 1 Mo restent dans Git |
 
@@ -798,6 +798,9 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 | Images/s téléphone récent | 30 | 30 |
 | Draw calls en vue village | < 150 | < 300 |
 | Triangles affichés | < 150 000 | < 400 000 |
+
+Avec les modèles 3D du cahier des charges (`docs/ASSETS_3D.md`, section 3.3), la vue village vise
+moins de 200 draw calls et 300 000 triangles, dans la limite de la cible M4.
 
 ### Hygiène du dépôt
 

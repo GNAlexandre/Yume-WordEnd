@@ -538,14 +538,15 @@ Partie A, jouée en Nephren (SPOILER V4) ; partie B, jouée par la relève : le 
 
 ### 5.1 PNJ du canon
 
-Apparences : planches au format de l'easter egg, style chibi (tête d'environ un tiers de la
-hauteur) ; références dans les fiches (`vol<N>.md`, section 4 « Personnages » et section 11
-« Illustrations de référence »), à interpréter, jamais à décalquer. Visuels dans
-`data/npcs/visuals/<id>.tres` (non jouables).
+Apparences : modèles 3D réalisés selon `docs/ASSETS_3D.md` (proportions réalistes stylisées,
+direction artistique au minimum proche de *Breath of the Wild* ; section 4 pour chaque
+personnage) ; en attendant, des planches de remplacement au format de l'easter egg. Références dans
+les fiches (`vol<N>.md`, section 4 « Personnages » et section 11 « Illustrations de référence »), à
+interpréter, jamais à décalquer. Visuels dans `data/npcs/visuals/<id>.tres` (non jouables).
 
 **Acte 1**
 
-| `id` | Nom | Rôle dans le jeu | Zone | Apparence pour le sprite | Parole |
+| `id` | Nom | Rôle dans le jeu | Zone | Apparence | Parole |
 | --- | --- | --- | --- | --- | --- |
 | `nygglatho` | Nygglatho | gardienne de l'entrepôt pour l'Alliance, infirmière et cuisinière ; quête principale, linge, myosotis ; réapparition | village | troll à l'air de jeune femme, une tête de plus que tout le monde (≈ 1,85 m), longs cheveux rose saumon, yeux vert printanier, chemisier vert vif à volants, tablier blanc, coiffe blanche à volants ; blouse blanche pour soigner (vol1.md, image6 ; vol5.md) | douce, polie, gaie, tutoie ; menace en souriant de manger les gens |
 | `willem` | Willem Kmetsch | officier responsable de l'entrepôt ; règle Seniorious, enseigne le combat, cuisine | village ; bois et colline pendant ses étapes | grand (≈ 1,75 m), cheveux noirs en bataille, yeux sombres, sourire vague et fatigué ; uniforme militaire noir-bleu nuit croisé à boutons dorés, un peu trop étroit, ceinturon, bottes ; tablier et mouchoir noué pour cuisiner (vol1.md, images 22-23 ; vol3.md, image6) | familier, ironique, tutoie ; plaisante pour esquiver |
@@ -679,9 +680,11 @@ débloque en réglant l'épée, pas des objets : ils font partie de Seniorious.
   le vent (V1).
 - **Apparence** : une masse vert sombre, amorphe, dont les tentacules deviennent des pattes de
   crustacé épineuses, avec griffes et crocs (V3) ; des formes de plante, masse de lianes, géant de
-  lierre noir (V2). La planche actuelle (vert sombre, long cou terminé par une gueule dentée, six
-  pattes fines) convient ; éviter qu'elle ressemble à un animal réel. Le volume 1 ne la décrit
-  jamais : à l'acte 1, les dialogues disent « rejeton » et « fragment », sans décrire.
+  lierre noir (V2). La silhouette de la planche de l'easter egg (vert sombre, long cou terminé par
+  une gueule dentée, six pattes) reste la base du modèle 3D (`docs/ASSETS_3D.md`, section 5), traité
+  dans la même direction artistique que le reste du jeu ; éviter qu'elle ressemble à un animal réel.
+  Le volume 1 ne la décrit jamais : à l'acte 1, les dialogues disent « rejeton » et « fragment »,
+  sans décrire.
 
 ### 7.2 Les quatre corps de l'acte 1
 
@@ -696,9 +699,9 @@ les volumes 2 et 3 n'arrivent qu'avec leurs actes :
 | `timere_runner` | Timere bondissant | nom descriptif (le même que dans la bible) | une moitié devient ressort et l'autre bondit (V3, « L'horloge en lambeaux et désuète ») | charge en ligne droite |
 | `timere_big` | Grand fragment de Timere | plus un fragment est gros, plus il est dangereux (V1) | masse à lianes, carapace (V2, « Chasseur d'âmes — A ») | fouet long, ne recule que sous l'onde |
 
-Variantes visuelles pour les actes 2 et 3 : pattes en ressort, lianes, carapace (matériau ou planche
-à part, même squelette). La veille garde ses vagues et ses points ; dans les bois, les rejetons ne
-lâchent plus d'objets.
+Variantes visuelles pour les actes 2 et 3 : pattes en ressort, lianes, carapace (matériau ou
+maillage à part dans le même modèle, même squelette). La veille garde ses vagues et ses points ;
+dans les bois, les rejetons ne lâchent plus d'objets.
 
 ### 7.3 Ennemis des actes suivants
 
