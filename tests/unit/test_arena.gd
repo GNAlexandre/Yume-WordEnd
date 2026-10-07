@@ -1,11 +1,11 @@
 extends GutTest
-## Arena (src/enemies/arena.tscn) : panneau « Affronter les Timeres » (interactable, couche 6)
+## Arena (src/enemies/arena.tscn) : panneau « Sonner la cloche de veille » (interactable, couche 6)
 ## qui lance la série et reste inactif pendant celle-ci, bornes, points d'apparition, zone.
 
 const ARENA_SCENE := preload("res://src/enemies/arena.tscn")
 const DUNES_SCENE := preload("res://src/world/zones/dunes/dunes.tscn")
 const PLAYER_STUB := preload("res://tests/stubs/player_stub.tscn")
-const PROMPT := "Affronter les Timeres"
+const PROMPT := "Sonner la cloche de veille"
 
 
 func before_each() -> void:

@@ -20,6 +20,13 @@ extends Control
 ##   inventory_changed ; le panneau s'illumine à chaque nouvelle étape ; « Quête terminée ! ».
 ## - Mort : fondu au noir (player_died), retour (player_respawned) ; « Sauvegardé »
 ##   (SaveManager.saved) ; F3 : surcouche de performance (touche lue directement).
+## - (Systèmes et textes) Textes de l'histoire, data/texts/story.json (DialogueRunner.story_text) :
+##   le fondu de la mort dit « Retour à l'entrepôt… » (defeat/fade) ; à la réapparition, message
+##   « Les autres t'ont ramenée à l'entrepôt. » (defeat/message) ; à un rattrapage de chute
+##   (WorldManager.rescued), fondu au blanc puis « Tes ailes se sont ouvertes… » (fall/message).
+##   Messages en bas de l'écran (StoryMessage), en fondu. Titre, objectif et progression de la
+##   quête passent par DialogueRunner.format_text ({player} : nom du skin choisi), relus sur
+##   skin_changed.
 ## - Invite et jauge masquées entre dialogue_started et dialogue_ended. Coin haut droit (Sac,
 ##   Pause tactiles) et bas de l'écran (joystick, boutons) laissés libres ; tout le HUD laisse
 ##   passer la souris (mouse_filter IGNORE). Le menu pause (PauseMenu) et le journal de quêtes
@@ -46,6 +53,10 @@ const PERF_PERIOD := 0.25
 ## Fondu au noir à la mort (commence après death_delay).
 @export var death_fade_time: float = 1.0
 @export var death_delay: float = 0.5
+## Message de l'histoire (chute, défaite), sans les fondus.
+@export var story_time: float = 3.2
+## Fondu au blanc d'un rattrapage de chute (les ailes de lumière).
+@export var fall_flash_time: float = 0.9
 @export_group("")
 ## Hauteur du marqueur au-dessus d'une cible sans EnemyData (m).
 @export var lock_marker_height: float = 1.6
@@ -92,6 +103,10 @@ var _time: float = 0.0
 @onready var _lock_marker: Control = %LockMarker
 @onready var _damage_flash: Control = %DamageFlash
 @onready var _death_fade: Control = %DeathFade
+@onready var _death_label: Label = %DeathLabel
+@onready var _fall_flash: Control = %FallFlash
+@onready var _story_message: Control = %StoryMessage
+@onready var _story_label: Label = %StoryLabel
 
 
 func _ready() -> void:
@@ -112,7 +127,10 @@ func _ready() -> void:
 	EventBus.quest_step_updated.connect(_on_quest_step_updated)
 	EventBus.tracked_quest_changed.connect(_schedule_quest_panel.unbind(1))
 	EventBus.inventory_changed.connect(_refresh_quest_progress)
+	EventBus.skin_changed.connect(_on_skin_changed)
 	SaveManager.saved.connect(_on_saved)
+	WorldManager.rescued.connect(_on_rescued)
+	_death_label.text = DialogueRunner.story_text("defeat/fade", _death_label.text)
 	set_health(GameState.max_hp, GameState.max_hp)
 	var states := GameState.quests()
 	for quest_id: StringName in states:
@@ -290,6 +308,34 @@ func _on_saved(_path: String) -> void:
 	_flash(&"saved", _saved_indicator, saved_time)
 
 
+## Message de l'histoire en bas de l'écran (chute, défaite), en fondu ; "" n'affiche rien.
+func show_story_message(text: String) -> void:
+	if text.is_empty():
+		return
+	_story_label.text = text
+	_flash(&"story", _story_message, story_time)
+
+
+## Message de l'histoire affiché ("" : aucun).
+func story_message() -> String:
+	return _story_label.text if _story_message.visible else ""
+
+
+## Opacité du fondu au blanc d'un rattrapage de chute (0 : invisible).
+func fall_flash_alpha() -> float:
+	return _fall_flash.modulate.a if _fall_flash.visible else 0.0
+
+
+## Rattrapage de chute : les ailes de lumière (fondu au blanc), puis le message.
+func _on_rescued(_zone_id: StringName) -> void:
+	_fall_flash.show()
+	_fall_flash.modulate.a = 1.0
+	var flash := _restart_tween(&"fall")
+	flash.tween_property(_fall_flash, ^"modulate:a", 0.0, fall_flash_time)
+	flash.tween_callback(_fall_flash.hide)
+	show_story_message(DialogueRunner.story_text("fall/message"))
+
+
 # --- Quêtes -----------------------------------------------------------------------------------
 
 
@@ -324,6 +370,12 @@ func _schedule_quest_panel() -> void:
 	if not _panel_pending:
 		_panel_pending = true
 		_refresh_quest_panel.call_deferred()
+
+
+## Titre affiché pour quest_id ("" s'il n'est pas affiché).
+func quest_title(quest_id: StringName) -> String:
+	var entry: Control = _quest_entries.get(quest_id)
+	return (entry.get_node(^"Box/TitleRow/Title") as Label).text if entry != null else ""
 
 
 ## Objectif affiché pour quest_id ("" s'il n'est pas affiché).
@@ -370,6 +422,7 @@ func _make_quest_entry(quest_id: StringName) -> Control:
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_theme_constant_override(&"separation", 2)
 	var title_row := HBoxContainer.new()
+	title_row.name = "TitleRow"
 	title_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	title_row.add_theme_constant_override(&"separation", 8)
 	var icon := TextureRect.new()
@@ -402,10 +455,10 @@ func _refresh_quest_progress() -> void:
 	var quest := QuestData.find(_shown_quest)
 	var step := quest.current_step() if quest != null else null
 	(entry.get_node(^"Box/Objective") as Label).text = (
-		quest.current_objective() if quest != null else ""
+		DialogueRunner.format_text(quest.current_objective()) if quest != null else ""
 	)
 	var progress := entry.get_node(^"Box/Progress") as Label
-	progress.text = quest.current_progress() if quest != null else ""
+	progress.text = DialogueRunner.format_text(quest.current_progress()) if quest != null else ""
 	progress.visible = not progress.text.is_empty()
 	var others := entry.get_node(^"Box/Others") as Label
 	var other_count := QuestData.active_ids().size() - 1
@@ -429,9 +482,20 @@ func _glow(entry: Control) -> void:
 	tween.tween_property(entry, ^"modulate", Color.WHITE, 0.8)
 
 
+## Titre affiché de la quête (variables remplacées : {player}…), son id à défaut.
 func _quest_title(quest_id: StringName) -> String:
 	var quest := QuestData.find(quest_id)
-	return quest.title if quest != null and not quest.title.is_empty() else String(quest_id)
+	if quest == null or quest.title.is_empty():
+		return String(quest_id)
+	return DialogueRunner.format_text(quest.title)
+
+
+## Nouveau skin : {player} change dans les textes de la quête affichée.
+func _on_skin_changed(_skin_id: StringName) -> void:
+	var entry: Control = _quest_entries.get(_shown_quest)
+	if entry != null:
+		(entry.get_node(^"Box/TitleRow/Title") as Label).text = _quest_title(_shown_quest)
+	_refresh_quest_progress()
 
 
 # --- Mort ------------------------------------------------------------------------------------
@@ -450,6 +514,7 @@ func _on_player_respawned() -> void:
 	fade.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	fade.tween_property(_death_fade, ^"modulate:a", 0.0, 0.6)
 	fade.tween_callback(_death_fade.hide)
+	show_story_message(DialogueRunner.story_text("defeat/message"))
 
 
 ## Opacité du fondu au noir (0 : invisible).

@@ -6,9 +6,18 @@ extends "res://tests/stubs/m2_game_test.gd"
 ## revient au village avec ses PV pleins, l'écran montre le score et le record, « Continuer »
 ## (Entrée) rend la main ; inventaire, quête et meilleur score sont gardés. Sortie de l'arène
 ## entre deux vagues : écran tout de suite, « Continuer » à la manette (A) sans saut.
+## (Systèmes et textes) Les textes de la veille viennent de data/texts/story.json : invite
+## « Sonner la cloche de veille », « Fin de la veille », « Nouveau record de veille ! », fondu
+## « Retour à l'entrepôt… » puis « Les autres t'ont ramenée à l'entrepôt. » au retour.
 
 ## Devant le panneau, côté village (local à la zone des dunes) : départ des séries.
 const PANEL_FRONT := Vector3(10.6, 0.0, -2.0)
+## Textes de la veille du Couchant (data/texts/story.json).
+const PROMPT := "Sonner la cloche de veille"
+const END_TITLE := "Fin de la veille"
+const NEW_RECORD := "Nouveau record de veille !"
+const DEFEAT_FADE := "Retour à l’entrepôt…"
+const DEFEAT_MESSAGE := "Les autres t’ont ramenée à l’entrepôt."
 
 
 func _text(unique_name: String) -> String:
@@ -21,7 +30,8 @@ func _start_series(fast: bool = true) -> void:
 	if fast:
 		director.set_config(fast_waves())
 	await place_player(&"dunes", PANEL_FRONT, Vector3.LEFT)
-	assert_eq(player.current_prompt(), "Affronter les Timeres", "invite du panneau")
+	assert_eq(player.current_prompt(), PROMPT, "invite du panneau")
+	assert_eq(hud.get_node("%PromptLabel").get(&"text"), PROMPT, "invite dans le HUD")
 	await tap_key(KEY_E)
 	assert_true(director.is_running(), "E lance la série")
 
@@ -59,6 +69,7 @@ func test_death_in_the_arena_then_end_screen_at_the_village() -> void:
 	assert_true(died, "mordu à mort dans l'arène")
 	assert_signal_emitted_with_parameters(EventBus, "arena_finished", [&"dunes", points, true])
 	await wait_physics_frames(2)
+	assert_eq(hud.get_node("%DeathLabel").get(&"text"), DEFEAT_FADE, "fondu de la mort")
 	assert_false(arena_end.call(&"is_open"), "pas d'écran pendant la mort")
 	assert_true(arena_end.call(&"is_waiting"), "l'écran attend la réapparition")
 	assert_false(get_tree().paused, "le minuteur de réapparition n'est pas figé")
@@ -73,6 +84,9 @@ func test_death_in_the_arena_then_end_screen_at_the_village() -> void:
 	assert_eq(_text("BestValue"), str(points), "meilleur score")
 	assert_eq(_text("WaveValue"), "1", "vague atteinte")
 	assert_true(arena_end.get_node("%RecordBadge").visible, "« Nouveau record ! »")
+	assert_eq(_text("Header"), END_TITLE, "titre de l'écran")
+	assert_eq(_text("RecordLabel"), NEW_RECORD, "bandeau du record")
+	assert_eq(hud.call(&"story_message"), DEFEAT_MESSAGE, "les autres l'ont ramenée")
 	assert_eq(get_viewport().gui_get_focus_owner(), arena_end.get_node("%ContinueButton"))
 	# « Continuer » à l'Entrée.
 	await tap_key(KEY_ENTER)
@@ -102,6 +116,8 @@ func test_leaving_the_arena_between_waves_then_continue_with_a_gamepad() -> void
 	assert_eq(_text("ScoreValue"), "0")
 	assert_eq(_text("BestValue"), "120", "le record d'avant reste")
 	assert_false(arena_end.get_node("%RecordBadge").visible, "pas de record")
+	assert_eq(_text("Header"), END_TITLE, "fin de la veille, même sans combat")
+	assert_eq(hud.call(&"story_message"), "", "pas de message de défaite sans mort")
 	# A presse « Continuer » au relâchement ; l'appui n'arrive pas au joueur (saut).
 	var y_before := player.global_position.y
 	await tap_joy(JOY_BUTTON_A)

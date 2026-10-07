@@ -3,8 +3,10 @@ extends Control
 ## Boîte de dialogue en bas d'écran (PLAN.md section 4). Propriétaire : L6.
 ## Instanciée dans game.tscn sous UI/DialogueBox ; masquée hors dialogue. N'écoute que l'EventBus :
 ## - dialogue_started(npc_id) : portrait du PNJ, retrouvé par data/npcs/<npc_id>.tres
-##   (SkinData.portrait, sinon la 1re image de « repos » de sa planche) ;
+##   (DialogueRunner.find_npc ; SkinData.portrait, sinon la 1re image de « repos » de sa planche) ;
 ## - dialogue_line(speaker, text, choices) : nom, texte lettre par lettre, puis 2 choix au plus ;
+##   (Systèmes et textes) portrait de l'orateur de la réplique, DialogueRunner.current_speaker_id()
+##   (le "speaker_id" du nœud : scènes à plusieurs voix), sinon celui du PNJ du dialogue ;
 ## - dialogue_ended : la boîte se ferme.
 ## Commandes : interact ou ui_accept termine la ligne, un second appui passe à la suite ou valide
 ## le choix sélectionné ; ui_up / ui_down (ou move_forward / move_back) changent de choix ; la
@@ -14,7 +16,8 @@ extends Control
 
 enum State { HIDDEN, TYPING, WAITING, CHOOSING, ANSWERED }
 
-const NPCS_DIR := "res://data/npcs"
+## Dossier des PNJ (portraits) : celui de DialogueRunner.find_npc.
+const NPCS_DIR := DialogueRunner.NPCS_DIR
 ## Durée du fondu d'ouverture (s).
 const FADE_TIME := 0.15
 
@@ -22,6 +25,9 @@ const FADE_TIME := 0.15
 @export var characters_per_second: float = 40.0
 
 var _state: State = State.HIDDEN
+## PNJ du dialogue (dialogue_started) et PNJ dont le portrait est affiché.
+var _dialogue_npc: StringName = &""
+var _portrait_npc: StringName = &""
 var _choice_count: int = 0
 var _selected: int = 0
 var _revealed: float = 0.0
@@ -106,6 +112,11 @@ func selected_choice() -> int:
 	return _selected
 
 
+## PNJ dont le portrait est affiché (orateur de la réplique), &"" sans portrait.
+func portrait_npc() -> StringName:
+	return _portrait_npc if _portrait_frame.visible else &""
+
+
 ## Même effet qu'un appui sur interact : termine la ligne, puis passe à la suite ou valide le
 ## choix sélectionné.
 func advance() -> void:
@@ -149,12 +160,10 @@ func choose(index: int) -> void:
 	_answer(index)
 
 
-## Portrait du PNJ npc_id (data/npcs/<npc_id>.tres), null s'il est inconnu.
+## Portrait du PNJ npc_id (data/npcs/<npc_id>.tres, DialogueRunner.find_npc), null s'il est
+## inconnu.
 static func portrait_for(npc_id: StringName) -> Texture2D:
-	var path := "%s/%s.tres" % [NPCS_DIR, npc_id]
-	if npc_id.is_empty() or not ResourceLoader.exists(path):
-		return null
-	var npc := load(path) as NpcData
+	var npc := DialogueRunner.find_npc(npc_id)
 	if npc == null or npc.skin == null:
 		return null
 	return portrait_of(npc.skin)
@@ -229,13 +238,24 @@ func _draw_hint() -> void:
 	_hint.draw_colored_polygon(points, get_theme_color(&"accent", &"DialogueBox"))
 
 
-func _on_dialogue_started(npc_id: StringName) -> void:
+## Portrait du PNJ npc_id (cadre caché s'il n'en a pas) ; rien à relire s'il est déjà affiché.
+func _show_portrait(npc_id: StringName) -> void:
+	if npc_id == _portrait_npc and _portrait.texture != null:
+		return
+	_portrait_npc = npc_id
 	var portrait := portrait_for(npc_id)
 	_portrait.texture = portrait
 	_portrait_frame.visible = portrait != null
 
 
+func _on_dialogue_started(npc_id: StringName) -> void:
+	_dialogue_npc = npc_id
+	_show_portrait(npc_id)
+
+
 func _on_dialogue_line(speaker: String, text: String, choices: Array) -> void:
+	var speaker_id := DialogueRunner.current_speaker_id()
+	_show_portrait(speaker_id if not speaker_id.is_empty() else _dialogue_npc)
 	_name_label.text = speaker
 	_name_plate.visible = not speaker.is_empty()
 	_text.text = text
@@ -260,6 +280,8 @@ func _on_dialogue_ended(_npc_id: StringName) -> void:
 	_release_choice_focus()
 	hide()
 	set_process(false)
+	_dialogue_npc = &""
+	_portrait_npc = &""
 	_portrait.texture = null
 	_portrait_frame.hide()
 

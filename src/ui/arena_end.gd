@@ -3,7 +3,9 @@ extends Control
 ## best) : panneau « Fin de la série » avec le score, la vague atteinte (dernier wave_started de
 ## l'arène), le meilleur score et le nombre de séries (GameState.arena_record, déjà mis à jour par
 ## le WaveDirector via record_score), et « Nouveau record ! » si best. « Continuer », Échap ou B
-## le ferment.
+## le ferment. (Systèmes et textes) Titre et bandeau du record lus pour chaque arène dans
+## data/texts/story.json (DialogueRunner.arena_text : end_title, new_record) ; aux dunes, « Fin
+## de la veille » et « Nouveau record de veille ! ».
 ##
 ## Pause : affiché, le panneau fige le jeu (get_tree().paused, s'il ne l'était pas déjà ; ce nœud
 ## est en PROCESS_MODE_ALWAYS), mais seulement le joueur vivant. Mort dans l'arène :
@@ -22,6 +24,8 @@ var _player_dead: bool = false
 var _paused_by_me: bool = false
 var _pad := MenuInput.new()
 
+@onready var _header: Label = %Header
+@onready var _record_label: Label = %RecordLabel
 @onready var _arena_name: Label = %ArenaName
 @onready var _score_value: Label = %ScoreValue
 @onready var _wave_value: Label = %WaveValue
@@ -60,6 +64,8 @@ func is_waiting() -> bool:
 ## Affiche le panneau de fin de série et fige le jeu (public pour la démo et les tests).
 func show_result(arena_id: StringName, score: int, best: bool, wave: int) -> void:
 	var record := GameState.arena_record(arena_id)
+	_header.text = DialogueRunner.arena_text(arena_id, "end_title", _header.text)
+	_record_label.text = DialogueRunner.arena_text(arena_id, "new_record", _record_label.text)
 	_arena_name.text = WorldManager.zone_display_name(arena_id)
 	_score_value.text = str(score)
 	_wave_value.text = str(wave) if wave > 0 else "–"

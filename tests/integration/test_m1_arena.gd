@@ -1,11 +1,11 @@
 extends "res://tests/stubs/m1_game_test.gd"
 ## Intégration M1, l'arène des dunes dans le vrai jeu (src/game.tscn) : téléportation, panneau
-## « Affronter les Timeres » (appui réel sur interact), vague 1 de 5 Timeres sortis des 4 points,
-## Timeres qui atteignent le joueur (même derrière le poteau du panneau), score à l'épée, fin
-## de série en sortant de l'arène entre deux vagues, Grand dès la vague 3 et jamais deux à la
-## fois, mort du joueur : arena_finished, record, sauvegarde, réapparition au village.
+## « Sonner la cloche de veille » (appui réel sur interact), vague 1 de 5 Timeres sortis des 4
+## points, Timeres qui atteignent le joueur (même derrière le poteau du panneau), score à
+## l'épée, fin de série en sortant de l'arène entre deux vagues, Grand dès la vague 3 et jamais
+## deux à la fois, mort du joueur : arena_finished, record, sauvegarde, réapparition au village.
 
-const PROMPT := "Affronter les Timeres"
+const PROMPT := "Sonner la cloche de veille"
 ## Devant le panneau, côté village (local à la zone des dunes) : départ des séries.
 const PANEL_FRONT := Vector3(10.6, 0.0, -2.0)
 ## Rayon (m) autour d'un point d'apparition où sort un Timere (WaveDirector.SPAWN_SPREAD ±1 m).
