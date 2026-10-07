@@ -33,6 +33,9 @@ change pas sans PR « contrats ».
 - Quêtes : format, dialogues, déclencheurs et tests dans docs/QUETES.md ; vérifier le contenu par
   `tools/test.sh tests/unit/test_quest_content.gd` ; tester un scénario sur le modèle de
   `tests/unit/test_quest_example.gd` (base `tests/stubs/q_quest_test.gd`).
+- Textes : `{player}`, scènes à plusieurs voix (`speaker_id`), présence des PNJ
+  (`NpcData.visible_if`) et textes de l'histoire (`data/texts/story.json`) dans docs/QUETES.md ;
+  vérifier par `tools/test.sh tests/unit/test_sys_story_content.gd`.
 - Toujours passer par `tools/godot` (pas `godot`) : chaque worktree y a son propre `user://`.
 
 ## Règles
@@ -53,6 +56,9 @@ change pas sans PR « contrats ».
   déclencheurs de quête (`src/quests/quest_trigger.tscn`) vont dans `src/npc/placements/<zone>.tscn`.
 - Les quêtes sont des données : `data/quests/<id>.json` (étapes, prérequis, récompenses) et les
   répliques qui les font avancer dans `data/dialogues/*.json` ; aucun script par quête.
+- Les textes que les systèmes affichent hors dialogues et quêtes (arène, chute, défaite) vivent
+  dans `data/texts/story.json` (`DialogueRunner.story_text`), jamais en dur ; jamais le nom du
+  joueur en dur non plus : `{player}`.
 - Ne modifie que les dossiers de ton lot. Hors périmètre : note le besoin dans
   docs/CONTRACT_REQUESTS.md et continue avec un stub local (dans tests/stubs/, sans class_name).
 - project.godot, export_presets.cfg, src/autoload/event_bus.gd, src/main.*, src/game.* et les
@@ -175,3 +181,8 @@ change pas sans PR « contrats ».
   QuestTracker n'a pas d'étape enregistrée : `QuestData.current_step()` donne alors la première.
 - Un QuestTracker dans l'arbre réagit à `GameState.set_quest_state(id, &"done")` (fin forcée) :
   sans les objets de ses étapes collect restantes, la quête revient à `&"active"`.
+- Un PNJ absent (`NpcData.visible_if` fausse, ou skin du joueur) est caché, `process_mode`
+  DISABLED : ni collision ni `InteractArea`. Sa présence est réévaluée en fin d'image (un test
+  attend une image ou appelle `Npc.refresh_presence()`), jamais pendant sa conversation.
+  `DialogueRunner.find_npc` (portraits, `speaker_id`) cherche `data/npcs` puis les dossiers
+  d'`add_npc_dir` : un test qui en ajoute un le retire dans `after_each`.

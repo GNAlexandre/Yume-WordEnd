@@ -159,3 +159,21 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 - Proposition : une ligne `["Journal de quêtes", "Tab ou L", "Select"]` dans `CONTROLS`, après
   « Sac ».
 - En attendant : docs/QUETES.md et le pied du journal citent ses touches.
+
+## Systèmes et textes — `{player}` dans `src/ui/journal.gd`
+- Besoin : le journal affiche les textes de quête tels quels ; `journal.gd` est hors du périmètre
+  du lot.
+- Proposition : dans `journal.gd`, passer `quest.title`, `quest.summary`, `step.objective` et
+  `step.hint` par `DialogueRunner.format_text`, puis retirer `src/ui/hud_journal.gd` et sa ligne
+  `script = …` de `hud.tscn`.
+- En attendant : `src/ui/hud_journal.gd` (sous-classe posée sur `HUD/Journal`) le fait après
+  chaque mise à jour du détail ; testé par `tests/unit/test_player_name.gd`.
+
+## Systèmes et textes — la quête des pages et les drops
+- Besoin : les corps de Timere ne lâchent plus rien (HISTOIRE.md, sections 3.2 et 7.2), mais
+  `tests/integration/test_m2_quest.gd` (contenu) joue encore `pages` avec quatre pages lâchées, et
+  `data/quests/pages.json` en demande cinq quand trois seulement sont posées.
+- Proposition : le contenu de l'acte 1 remplace `pages` par `picture_book` (cinq pages posées) et
+  réécrit ce test ; l'aide de `tests/data/quests/demo_tour.json` (« Les Timeres de la forêt en
+  lâchent… ») peut devenir « Des pages traînent dans la clairière. ».
+- En attendant : ce test seul échoue dans la branche « Systèmes et textes ».
