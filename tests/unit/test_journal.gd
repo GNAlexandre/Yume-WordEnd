@@ -112,6 +112,29 @@ func test_journal_action_opens_and_closes_with_pause() -> void:
 	assert_false(_journal.call(&"is_open"))
 
 
+func test_journal_bindings_are_free() -> void:
+	# Tab, L et Select / Back ne servent à aucune autre action du jeu. Les actions ui_* de Godot
+	# gardent Tab pour passer d'un bouton à l'autre dans les menus : ouvert, le journal le lit
+	# avant elles (_input) ; fermé, rien n'a le focus de l'interface pendant le jeu.
+	var events := InputMap.action_get_events(&"journal")
+	var bindings := PackedStringArray()
+	for event: InputEvent in events:
+		var key := event as InputEventKey
+		var joy := event as InputEventJoypadButton
+		if key != null:
+			bindings.append(OS.get_keycode_string(key.physical_keycode))
+		elif joy != null:
+			bindings.append("bouton %d" % joy.button_index)
+	assert_eq(bindings, PackedStringArray(["Tab", "L", "bouton 4"]), "Tab, L, Select / Back")
+	for action: StringName in InputMap.get_actions():
+		if action == &"journal" or String(action).begins_with("ui_"):
+			continue
+		for event: InputEvent in events:
+			assert_false(
+				InputMap.action_has_event(action, event), "%s n'utilise pas %s" % [action, event]
+			)
+
+
 func test_other_ways_to_close() -> void:
 	for action: StringName in [&"ui_cancel", &"pause", &"inventory"]:
 		_journal.call(&"open")
