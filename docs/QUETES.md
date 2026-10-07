@@ -361,9 +361,10 @@ remplacés) :
 | Clé | Texte (acte 1) | Où |
 | --- | --- | --- |
 | `arenas/<arène>/prompt` | « Sonner la cloche de veille » | invite du panneau de l'arène |
-| `arenas/<arène>/sign` | « Cloche de veille » | texte écrit sur le panneau |
+| `arenas/<arène>/sign` | « Cloche de veille » | texte écrit sur la planche du panneau, s'il en a une (Label3D « Label » de `arena.tscn`) ; la cloche de veille du Couchant n'en a pas |
 | `arenas/<arène>/end_title` | « Fin de la veille » | titre de l'écran de fin de série |
 | `arenas/<arène>/new_record` | « Nouveau record de veille ! » | bandeau du nouveau record |
+| `arenas/<arène>/games` | « Veilles tenues » | légende du nombre de séries de l'écran de fin (sous son titre : le nom de la zone de l'arène, « Le bord du Couchant ») |
 | `fall/message` | « Tes ailes se sont ouvertes : te revoilà au bord. » | après un rattrapage de chute, sur un fondu au blanc |
 | `defeat/fade` | « Retour à l'entrepôt… » | fondu au noir de la mort |
 | `defeat/message` | « Les autres t'ont ramenée à l'entrepôt. » | à la réapparition |

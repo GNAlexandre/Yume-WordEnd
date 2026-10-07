@@ -1104,3 +1104,10 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `test_m1_world.gd` ne fait plus d'exception pour `village_flower_1` (à sa place (17 ; 0 ; 5)
   depuis le contenu de l'acte 1). Les objets, PNJ et déclencheurs suivent maintenant HISTOIRE.md
   3.3 sans écart (`test_npc.gd`, `test_world_story_spots.gd`).
+- **Intégration acte 1 — fin de la veille** : l'écran de fin d'arène montre le nom de la zone de
+  MONDE.md 2.1 (« Le bord du Couchant », `Zone.display_name`) et, au Couchant, « Veilles
+  tenues » au lieu de « Séries jouées » (nouvelle clé `arenas/<arène>/games` de
+  `data/texts/story.json`, comme `end_title`) : le vocabulaire de la veille et du registre de
+  Tiat. La cloche de veille (`arena.tscn`, `Panel/Bell`) est la seule chose visible au départ
+  des veilles depuis la fusion du monde ; la planche facultative (`Label`) reste lue par
+  `arena_panel.gd` pour les arènes qui en auraient une.

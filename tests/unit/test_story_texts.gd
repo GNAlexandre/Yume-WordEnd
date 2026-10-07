@@ -56,9 +56,11 @@ func test_story_file_is_valid_and_has_every_text() -> void:
 		"arenas/dunes/sign": "Cloche\nde veille",
 		"arenas/dunes/end_title": "Fin de la veille",
 		"arenas/dunes/new_record": "Nouveau record de veille%s!" % NBSP,
+		"arenas/dunes/games": "Veilles tenues",
 		"arenas/default/prompt": "Affronter les Timeres",
 		"arenas/default/end_title": "Fin de la série",
 		"arenas/default/new_record": "Nouveau record%s!" % NBSP,
+		"arenas/default/games": "Séries jouées",
 		"fall/message": "Tes ailes se sont ouvertes%s: te revoilà au bord." % NBSP,
 		"defeat/fade": "Retour à l%sentrepôt…" % APOSTROPHE,
 		"defeat/message": "Les autres t%sont ramenée à l%sentrepôt." % [APOSTROPHE, APOSTROPHE],
@@ -135,10 +137,13 @@ func test_arena_end_title_and_record_come_from_the_story_texts() -> void:
 	assert_eq((panel.get_node(^"%Header") as Label).text, "Fin de la veille")
 	assert_eq((panel.get_node(^"%RecordLabel") as Label).text, "Nouveau record de veille%s!" % NBSP)
 	assert_true(panel.get_node(^"%RecordBadge").visible)
+	var games := panel.get_node(^"Panel/Box/Stats/GamesCaption") as Label
+	assert_eq(games.text, "Veilles tenues", "le registre des veilles")
 	panel.call(&"close")
 	panel.call(&"show_result", &"sys_ailleurs", 10, false, 1)
 	assert_eq((panel.get_node(^"%Header") as Label).text, "Fin de la série", "default")
 	assert_eq((panel.get_node(^"%RecordLabel") as Label).text, "Nouveau record%s!" % NBSP)
+	assert_eq(games.text, "Séries jouées", "default")
 	panel.call(&"close")
 
 
