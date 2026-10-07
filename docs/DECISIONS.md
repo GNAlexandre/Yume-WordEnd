@@ -942,5 +942,5 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   tests qui les figeaient ; mis à jour d'une ligne (aucun n'appartient aux deux autres agents) :
   `test_arena.gd`, `test_m1_arena.gd`, `test_m1_shortcuts.gd` (invite), `test_quest_example.gd`,
   `test_quest_data.gd` (noms), `test_enemy.gd`, `tests/integration/test_q_quest.gd` (drops : la
-  démo ramasse deux pages posées). `tests/integration/test_m2_quest.gd` (contenu de l'acte 1) n'est
+  démo ramasse deux pages posées), et le script du navigateur `tools/web_m1.js` (invite). `tests/integration/test_m2_quest.gd` (contenu de l'acte 1) n'est
   pas touché : il joue encore les pages lâchées.
