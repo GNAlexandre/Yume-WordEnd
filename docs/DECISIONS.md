@@ -1130,3 +1130,6 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `test_act1_saves.gd`), les listes d'éléments retirés (`test_skin_registry.gd`,
   `test_item_data.gd`) et les gardes contre « Seniolis » (`test_credits.gd`,
   `test_sys_story_content.gd`, `test_act1_dialogues.gd`).
+- **Intégration acte 1 — recherche des restes du jalon M2** (critère 16 de docs/RECETTE_M2.md) :
+  `git grep -n -i "bibliothécaire\|forgeron\|coquillage\|marque-page\|Seniolis"` ; les
+  résultats assumés sont listés à la ligne « restes du jalon M2 » ci-dessus.

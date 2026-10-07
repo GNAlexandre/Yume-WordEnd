@@ -564,7 +564,7 @@ ne change pas.
 - [ ] **Arène** : la vague 5 est atteignable par un joueur moyen ; la vague 3 fait apparaître un Grand, jamais deux à la fois ; le score et le bonus 50 × *n* correspondent à l'easter egg.
 - [ ] Mourir dans l'arène ou la forêt ramène au village avec PV pleins et conserve inventaire et quêtes ; le meilleur score est gardé.
 - [ ] 60 images/s sur un portable de bureau courant avec 12 Timeres à l'écran, 30 sur un téléphone récent.
-- [ ] On peut jouer la quête des pages de bout en bout (dialogue, forêt, 5 fragments, récompense) au clavier et à la manette.
+- [ ] On peut jouer la quête principale de l'acte 1 de bout en bout (dialogues, bois, veille, promesse et sa récompense) au clavier et à la manette (au jalon M2 d'origine : la quête des pages) ; recette : docs/RECETTE_M2.md.
 - [ ] Fermer l'onglet puis revenir restaure position, inventaire, quête et meilleur score.
 - [ ] Les 5 zones déclenchent leur nom dans le HUD ; aucun ennemi n'entre dans le village ; aucun endroit ne laisse tomber le joueur hors de l'île.
 - [ ] Tests GUT verts sur `Health`, `AttackData`/hitbox, `WaveDirector`, `GameState`, `SaveManager`, `DialogueRunner` et `QuestTracker`.

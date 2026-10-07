@@ -29,8 +29,9 @@ change pas sans PR « contrats ».
 - Environnement neuf : `bash tools/setup.sh` (Godot, templates Web, gdtoolkit, Pillow ; idempotent).
 - Navigateur (à la main, hors check.sh) : export, `python3 -m http.server 8347 --bind 127.0.0.1
   --directory build/web`, puis `NODE_PATH=/opt/node-tools/node_modules node tools/web_m2.js
-  http://127.0.0.1:8347/index.html build/shots` (tranche verticale ; `tools/web_m1.js` : arène).
-  Mode d'emploi et raccourcis `?zone=`, `?timeres=`, `?trace=1` : docs/web.md.
+  http://127.0.0.1:8347/index.html build/shots` (début de l'acte 1, reprise, images/s par zone ;
+  `tools/web_m1.js` : arène). Mode d'emploi et raccourcis `?zone=`, `?timeres=`, `?trace=1` :
+  docs/web.md.
 - Planches de remplacement : `python3 tools/gen_placeholders.py skin <id> --name "Nom" --tres`.
 - Quêtes : format, dialogues, déclencheurs et tests dans docs/QUETES.md ; vérifier le contenu par
   `tools/test.sh tests/unit/test_quest_content.gd` ; tester un scénario sur le modèle de
