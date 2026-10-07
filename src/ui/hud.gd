@@ -1,8 +1,9 @@
 extends Control
 ## HUD (L10), nœud UI/HUD de game.tscn. Alimenté uniquement par l'EventBus ; lectures permises en
-## plus : WorldManager.zone_display_name(), GameState (valeurs de départ, états de quête,
-## inventaire pour la progression, records), QuestData.find(), SaveManager.saved. Le marqueur de
-## cible lit locked_target() du joueur (groupe player), la surcouche F3 Performance.get_monitor().
+## plus : WorldManager.zone_display_name(), GameState (valeurs de départ, états et étapes de
+## quête, inventaire pour la progression, records), QuestData (find, shown_quest, étape courante),
+## SaveManager.saved. Le marqueur de cible lit locked_target() du joueur (groupe player), la
+## surcouche F3 Performance.get_monitor().
 ##
 ## - Cœurs : player_health_changed (avant la 1re émission, différée, GameState.max_hp pleins) ;
 ##   player_damaged les fait trembler et rougit les bords de l'écran.
@@ -10,13 +11,19 @@ extends Control
 ## - Arène : vague, score et record (wave_started, arena_score_changed), bannières « Vague n » et
 ##   « Vague n terminée +bonus » (wave_cleared) ; tout disparaît sur arena_finished.
 ## - Nom de la zone en fondu (zone_entered) ; invite « E / A : Parler » (interaction_available).
-## - Objectifs des quêtes actives (quest_updated, relu dans GameState en fin d'image : le
-##   QuestTracker peut refuser « done » et remettre « active ») ; « Quête terminée ! ».
+## - (Lot Q) Quête suivie : une seule quête affichée, la quête suivie (GameState.tracked_quest) si
+##   elle est active, sinon la première quête active (QuestData.shown_quest()) ; son titre,
+##   l'objectif de son étape courante et sa progression (« Fragment de page : 3/5 »,
+##   « Ennemis vaincus : 1/2 »), et « +n quêtes · Tab / Select » s'il y en a d'autres. Mise à
+##   jour sur quest_updated (relu dans GameState en fin d'image : le QuestTracker peut refuser
+##   « done » et remettre « active »), quest_step_updated, tracked_quest_changed et
+##   inventory_changed ; le panneau s'illumine à chaque nouvelle étape ; « Quête terminée ! ».
 ## - Mort : fondu au noir (player_died), retour (player_respawned) ; « Sauvegardé »
 ##   (SaveManager.saved) ; F3 : surcouche de performance (touche lue directement).
 ## - Invite et jauge masquées entre dialogue_started et dialogue_ended. Coin haut droit (Sac,
 ##   Pause tactiles) et bas de l'écran (joystick, boutons) laissés libres ; tout le HUD laisse
-##   passer la souris (mouse_filter IGNORE). Le menu pause (PauseMenu) est un enfant du HUD.
+##   passer la souris (mouse_filter IGNORE). Le menu pause (PauseMenu) et le journal de quêtes
+##   (Journal, Lot Q) sont des enfants du HUD (game.tscn est figé).
 
 const HEART_FULL := preload("res://assets/ui/heart_full.png")
 const HEART_EMPTY := preload("res://assets/ui/heart_empty.png")
@@ -53,7 +60,11 @@ var _wave: int = 0
 var _score: int = 0
 var _quest_states: Dictionary[StringName, StringName] = {}
 var _pending_quests: Dictionary[StringName, bool] = {}
+## Panneau de la quête affichée (au plus une entrée : _shown_quest).
 var _quest_entries: Dictionary[StringName, Control] = {}
+var _shown_quest: StringName = &""
+var _shown_step: StringName = &""
+var _panel_pending: bool = false
 var _tweens: Dictionary[StringName, Tween] = {}
 var _perf_left: float = 0.0
 var _time: float = 0.0
@@ -98,13 +109,15 @@ func _ready() -> void:
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	EventBus.quest_updated.connect(_on_quest_updated)
+	EventBus.quest_step_updated.connect(_on_quest_step_updated)
+	EventBus.tracked_quest_changed.connect(_schedule_quest_panel.unbind(1))
 	EventBus.inventory_changed.connect(_refresh_quest_progress)
 	SaveManager.saved.connect(_on_saved)
 	set_health(GameState.max_hp, GameState.max_hp)
 	var states := GameState.quests()
 	for quest_id: StringName in states:
 		_quest_states[quest_id] = states[quest_id]
-		_set_quest_entry(quest_id, states[quest_id] == GameState.QUEST_ACTIVE)
+	_refresh_quest_panel()
 
 
 func _process(delta: float) -> void:
@@ -297,8 +310,20 @@ func _flush_quests() -> void:
 		var previous: StringName = _quest_states.get(quest_id, &"")
 		_quest_states[quest_id] = state
 		if state == GameState.QUEST_DONE and previous != GameState.QUEST_DONE:
-			show_banner("Quête terminée !", _quest_title(quest_id))
-		_set_quest_entry(quest_id, state == GameState.QUEST_ACTIVE)
+			show_banner("Quête terminée\u00a0!", _quest_title(quest_id))
+	_refresh_quest_panel()
+
+
+func _on_quest_step_updated(_quest_id: StringName, _step_id: StringName, _count: int) -> void:
+	_refresh_quest_progress()
+	_schedule_quest_panel()
+
+
+## Quête affichée en fin d'image (plusieurs signaux de la même image regroupés).
+func _schedule_quest_panel() -> void:
+	if not _panel_pending:
+		_panel_pending = true
+		_refresh_quest_panel.call_deferred()
 
 
 ## Objectif affiché pour quest_id ("" s'il n'est pas affiché).
@@ -313,22 +338,29 @@ func quest_progress(quest_id: StringName) -> String:
 	return (entry.get_node(^"Box/Progress") as Label).text if entry != null else ""
 
 
-func _set_quest_entry(quest_id: StringName, shown: bool) -> void:
-	var entry: Control = _quest_entries.get(quest_id)
-	if not shown:
-		if entry != null:
-			_quest_entries.erase(quest_id)
-			entry.queue_free()
-		return
-	if entry == null:
-		entry = _make_quest_entry(quest_id)
-		_quests.add_child(entry)
-		_quest_entries[quest_id] = entry
+## Quête affichée (la quête suivie si elle est active, sinon la première active ; &"" : aucune).
+func shown_quest() -> StringName:
+	return _shown_quest
+
+
+## Met le panneau sur la quête à afficher (QuestData.shown_quest()) et ses textes à jour.
+func _refresh_quest_panel() -> void:
+	_panel_pending = false
+	var shown := QuestData.shown_quest()
+	if shown != _shown_quest:
+		for quest_id: StringName in _quest_entries:
+			_quest_entries[quest_id].queue_free()
+		_quest_entries.clear()
+		_shown_quest = shown
+		_shown_step = &""
+		if not shown.is_empty():
+			var entry := _make_quest_entry(shown)
+			_quests.add_child(entry)
+			_quest_entries[shown] = entry
 	_refresh_quest_progress()
 
 
 func _make_quest_entry(quest_id: StringName) -> Control:
-	var quest := QuestData.find(quest_id)
 	var panel := PanelContainer.new()
 	panel.name = "Quest_" + String(quest_id)
 	panel.theme_type_variation = &"HudPanel"
@@ -347,29 +379,54 @@ func _make_quest_entry(quest_id: StringName) -> Control:
 	title_row.add_child(icon)
 	title_row.add_child(_hud_label("Title", _quest_title(quest_id), &"HudAccent", 22))
 	box.add_child(title_row)
-	var objective := _hud_label("Objective", quest.objective if quest != null else "", &"", 19)
+	var objective := _hud_label("Objective", "", &"", 19)
 	objective.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	objective.custom_minimum_size.x = 300.0
 	box.add_child(objective)
 	var progress := _hud_label("Progress", "", &"", 18)
 	progress.modulate = Color(1.0, 0.9, 0.8)
 	box.add_child(progress)
+	var others := _hud_label("Others", "", &"", 15)
+	others.modulate = Color(1.0, 0.95, 0.9, 0.75)
+	box.add_child(others)
 	panel.add_child(box)
 	return panel
 
 
+## Objectif de l'étape courante, progression et nombre d'autres quêtes actives de la quête
+## affichée ; le panneau s'illumine quand l'étape change.
 func _refresh_quest_progress() -> void:
-	for quest_id: StringName in _quest_entries:
-		var quest := QuestData.find(quest_id)
-		var parts := PackedStringArray()
-		if quest != null:
-			for item_id: StringName in quest.required_items:
-				var needed: int = quest.required_items[item_id]
-				var have := mini(GameState.count(item_id), needed)
-				parts.append("%s : %d/%d" % [ItemData.display_name_of(item_id), have, needed])
-		var label := _quest_entries[quest_id].get_node(^"Box/Progress") as Label
-		label.text = " · ".join(parts)
-		label.visible = not parts.is_empty()
+	var entry: Control = _quest_entries.get(_shown_quest)
+	if entry == null:
+		return
+	var quest := QuestData.find(_shown_quest)
+	var step := quest.current_step() if quest != null else null
+	(entry.get_node(^"Box/Objective") as Label).text = (
+		quest.current_objective() if quest != null else ""
+	)
+	var progress := entry.get_node(^"Box/Progress") as Label
+	progress.text = quest.current_progress() if quest != null else ""
+	progress.visible = not progress.text.is_empty()
+	var others := entry.get_node(^"Box/Others") as Label
+	var other_count := QuestData.active_ids().size() - 1
+	others.text = (
+		"+%d quête%s · Tab / Select" % [other_count, "s" if other_count > 1 else ""]
+		if other_count > 0
+		else ""
+	)
+	others.visible = other_count > 0
+	var step_id := step.id if step != null else &""
+	if step_id != _shown_step:
+		if not _shown_step.is_empty():
+			_glow(entry)
+		_shown_step = step_id
+
+
+## Le panneau de quête s'illumine puis revient (nouvelle étape).
+func _glow(entry: Control) -> void:
+	var tween := _restart_tween(&"quest_glow")
+	entry.modulate = Color(1.5, 1.3, 0.75)
+	tween.tween_property(entry, ^"modulate", Color.WHITE, 0.8)
 
 
 func _quest_title(quest_id: StringName) -> String:

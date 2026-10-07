@@ -43,6 +43,13 @@ const EVENT_BUS_SIGNALS := {
 	"max_hp_changed": [INT],
 	"save_requested": [],
 	"game_loaded": [],
+	# Lot Q (quêtes en étapes)
+	"flag_changed": [SN, BOOL],
+	"quest_step_updated": [SN, SN, INT],
+	"quest_step_completed": [SN, SN],
+	"quest_advance_requested": [SN, SN],
+	"trigger_entered": [SN],
+	"tracked_quest_changed": [SN],
 }
 
 ## Méthodes des autoloads : nom → [types des arguments, type de retour].
@@ -62,6 +69,12 @@ const GAME_STATE_METHODS := {
 	"to_dict": [[], DICT],
 	"from_dict": [[DICT], VOID],
 	"reset": [[], VOID],
+	# Lot Q
+	"quests": [[], DICT],
+	"quest_step": [[SN], SN],
+	"quest_step_count": [[SN], INT],
+	"set_quest_step": [[SN, SN, INT], VOID],
+	"quest_progress": [[], DICT],
 }
 const SAVE_MANAGER_METHODS := {
 	"has_save": [[], BOOL],
@@ -155,6 +168,38 @@ const RESOURCE_FIELDS := {
 		"required_items": DICT,
 		"required_flags": ARR,
 		"reward_items": DICT,
+		# L7 puis Lot Q
+		"objective": STR,
+		"reward_max_hp": INT,
+		"summary": STR,
+		"main": BOOL,
+		"auto_start": BOOL,
+		"prereq_quests": ARR,
+		"prereq_flags": ARR,
+		"prereq_not_flags": ARR,
+		"steps": ARR,
+		"reward_flags": ARR,
+	},
+	"QuestStep":
+	{
+		"id": SN,
+		"type": SN,
+		"objective": STR,
+		"hint": STR,
+		"npc": SN,
+		"zone": SN,
+		"trigger": SN,
+		"enemy": SN,
+		"item": SN,
+		"count": INT,
+		"consume": BOOL,
+		"arena": SN,
+		"wave": INT,
+		"score": INT,
+		"flag": SN,
+		"reward_items": DICT,
+		"reward_flags": ARR,
+		"reward_max_hp": INT,
 	},
 }
 
@@ -278,12 +323,14 @@ func test_game_state_api() -> void:
 	assert_eq(_property_type(GameState, "max_hp"), INT, "GameState.max_hp")
 	assert_eq(_property_type(GameState, "zone"), SN, "GameState.zone")
 	assert_eq(_property_type(GameState, "position"), V3, "GameState.position")
+	assert_eq(_property_type(GameState, "tracked_quest"), SN, "(Lot Q) GameState.tracked_quest")
 
 
 func test_save_manager_api() -> void:
 	_assert_methods(SaveManager, "SaveManager", SAVE_MANAGER_METHODS)
 	assert_eq(_property_type(SaveManager, "save_path"), STR, "SaveManager.save_path")
 	assert_eq(SaveManager.DEFAULT_SAVE_PATH, "user://save_v1.json")
+	assert_eq(SaveManager.SAVE_VERSION, 2, "(Lot Q) schéma v2, même fichier")
 	assert_eq(_property_type(SaveManager, "checkpoint_interval"), FLT, "(M2) checkpoint_interval")
 
 
@@ -488,6 +535,29 @@ func test_npc_pickup_arena_structure() -> void:
 	_assert_nodes(arena, "arena.tscn", {"WaveDirector": "WaveDirector"})
 
 
+## (Lot Q) Déclencheur de lieu, marqueur des PNJ, journal enfant du HUD, QuestTracker.
+func test_quest_engine_structure() -> void:
+	var trigger := _instance("res://src/quests/quest_trigger.tscn")
+	assert_true(trigger is QuestTrigger and trigger is Area3D, "QuestTrigger (Area3D)")
+	_assert_nodes(trigger, "quest_trigger.tscn", {"CollisionShape3D": "CollisionShape3D"})
+	assert_eq((trigger as Area3D).collision_layer, 0, "déclencheur : aucune couche")
+	assert_eq((trigger as Area3D).collision_mask, 2, "déclencheur : masque player")
+	assert_eq(_property_type(trigger, "trigger_id"), SN)
+	assert_eq(_property_type(trigger, "set_flag"), SN)
+	var npc := _instance("res://src/npc/npc.tscn")
+	_assert_nodes(npc, "npc.tscn", {"QuestMarker": "Label3D"})
+	var hud := _instance("res://src/ui/hud.tscn")
+	_assert_nodes(hud, "hud.tscn", {"PauseMenu": "Control", "Journal": "Control"})
+	assert_eq(hud.get_node(^"Journal").process_mode, Node.PROCESS_MODE_ALWAYS, "journal modal")
+	var tracker: QuestTracker = autofree(QuestTracker.new())
+	_assert_signal(tracker, "QuestTracker", "quest_completed", [SN])
+	_assert_signal(tracker, "QuestTracker", "completion_refused", [SN, DICT])
+	assert_eq(QuestTracker.GROUP, &"quest_tracker")
+	assert_eq(QuestData.DATA_DIR, "res://data/quests")
+	var types: Array[StringName] = [&"talk", &"reach", &"kill", &"collect", &"arena", &"flag"]
+	assert_eq(QuestStep.TYPES, types, "types d'étapes")
+
+
 func test_zone_structure() -> void:
 	for zone_id in ZONES:
 		var path := "res://src/world/zones/%s/%s.tscn" % [zone_id, zone_id]
@@ -593,6 +663,7 @@ func test_input_actions() -> void:
 		"interact",
 		"lock_target",
 		"inventory",
+		"journal",
 		"pause",
 		"camera_left",
 		"camera_right",

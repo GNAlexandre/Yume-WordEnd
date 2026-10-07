@@ -233,8 +233,13 @@ func test_layout_leaves_touch_corners_free_and_lets_mouse_through() -> void:
 	var area := hud.get_global_rect()
 	var top_right := Rect2(area.end.x - 200.0, area.position.y, 200.0, 100.0)
 	var bottom := Rect2(area.position.x, area.end.y - 200.0, area.size.x, 200.0)
+	# Écrans modaux enfants du HUD (menu pause, journal de quêtes du Lot Q) : ils prennent la
+	# souris quand ils sont ouverts.
 	var overlays: Array[Node] = [
-		_node(hud, "DamageFlash"), _node(hud, "DeathFade"), _node(hud, "PauseMenu")
+		_node(hud, "DamageFlash"),
+		_node(hud, "DeathFade"),
+		_node(hud, "PauseMenu"),
+		_node(hud, "Journal"),
 	]
 	for node: Node in hud.find_children("*", "Control", true, false):
 		var control := node as Control

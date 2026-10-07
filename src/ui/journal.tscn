@@ -1,0 +1,150 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/ui/journal.gd" id="1_journal"]
+[ext_resource type="Theme" path="res://src/ui/wordend_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/quest.png" id="3_quest"]
+
+[node name="Journal" type="Control"]
+process_mode = 3
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_journal")
+
+[node name="Dim" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.106, 0.071, 0.192, 0.55)
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -305.0
+offset_right = 480.0
+offset_bottom = 305.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Panel/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Icon" type="TextureRect" parent="Panel/Layout/Header"]
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("3_quest")
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Panel/Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 38
+text = "Journal de quêtes"
+
+[node name="CloseButton" type="Button" parent="Panel/Layout/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 22
+text = "Fermer"
+
+[node name="Body" type="HBoxContainer" parent="Panel/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 26
+
+[node name="ListScroll" type="ScrollContainer" parent="Panel/Layout/Body"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="List" type="VBoxContainer" parent="Panel/Layout/Body/ListScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Separator" type="ColorRect" parent="Panel/Layout/Body"]
+custom_minimum_size = Vector2(3, 0)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.91, 0.604, 0.518, 0.45)
+
+[node name="DetailScroll" type="ScrollContainer" parent="Panel/Layout/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_scroll_mode = 0
+
+[node name="Details" type="VBoxContainer" parent="Panel/Layout/Body/DetailScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="QuestTitle" type="Label" parent="Panel/Layout/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.33, 0.22, 0.4, 1)
+theme_override_font_sizes/font_size = 30
+autowrap_mode = 3
+
+[node name="Kind" type="Label" parent="Panel/Layout/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 18
+autowrap_mode = 3
+
+[node name="Summary" type="Label" parent="Panel/Layout/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(440, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+autowrap_mode = 3
+
+[node name="Steps" type="VBoxContainer" parent="Panel/Layout/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Rewards" type="Label" parent="Panel/Layout/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.4, 0.85, 1)
+theme_override_font_sizes/font_size = 18
+autowrap_mode = 3
+
+[node name="TrackHint" type="Label" parent="Panel/Layout/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 17
+autowrap_mode = 3
+
+[node name="Hint" type="Label" parent="Panel/Layout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.49, 0.58, 1)
+theme_override_font_sizes/font_size = 15
+text = "Flèches ou survol : choisir    Entrée / A : suivre    Tab, L / Select, Échap / B : fermer"
+horizontal_alignment = 1
