@@ -123,7 +123,6 @@ const RESOURCE_FIELDS := {
 		"display_name": STR,
 		"sprite_sheet": OBJ,
 		"frames_json": OBJ,
-		"mesh_scene": OBJ,
 		"portrait": OBJ,
 		"height_m": FLT,
 	},

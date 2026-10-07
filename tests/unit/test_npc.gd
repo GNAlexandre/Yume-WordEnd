@@ -247,7 +247,9 @@ func test_npc_visuals_are_not_playable_skins() -> void:
 	var sheet_skins := SkinRegistry.all().filter(
 		func(playable: SkinData) -> bool: return playable.sprite_sheet != null
 	)
-	assert_eq(sheet_skins.size(), 1, "seule Chtholly reste jouable en planche (et les modèles 3D)")
+	assert_eq(
+		sheet_skins.size(), SkinRegistry.all().size(), "(HD-2D) tous les skins sont des planches"
+	)
 
 
 func test_placements_follow_the_story() -> void:

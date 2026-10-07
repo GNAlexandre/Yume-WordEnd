@@ -7,6 +7,36 @@ extends "res://tests/stubs/l10_ui_test.gd"
 
 const MENU := preload("res://src/ui/main_menu.tscn")
 const HINT := "Ta fée prend la place de Chtholly dans l'histoire."
+## (HD-2D) Les skins de la grille pleine : Chtholly et sept fées de test au nom long, depuis que
+## les sept modèles 3D de la PR n° 1 sont retirés (le jeu n'a plus assez de skins pour remplir
+## deux rangées et demie).
+const MANY_SKINS_DIR := "user://menu_story_skins"
+const MANY_SKINS := 8
+
+
+func after_each() -> void:
+	super.after_each()
+	if SkinRegistry.skins_dir != SkinRegistry.SKINS_DIR:
+		SkinRegistry.skins_dir = SkinRegistry.SKINS_DIR
+		SkinRegistry.reload()
+	for file_name: String in DirAccess.get_files_at(MANY_SKINS_DIR):
+		DirAccess.remove_absolute(MANY_SKINS_DIR.path_join(file_name))
+	DirAccess.remove_absolute(MANY_SKINS_DIR)
+
+
+## Remplit le registre de MANY_SKINS skins (Chtholly d'abord, puis des fées au nom long, avec la
+## planche de Chtholly), le temps d'un test.
+func _fill_registry() -> void:
+	DirAccess.make_dir_recursive_absolute(MANY_SKINS_DIR)
+	var chtholly := load("res://data/skins/chtholly.tres") as SkinData
+	for i in MANY_SKINS:
+		var skin := chtholly.duplicate() as SkinData
+		if i > 0:
+			skin.id = StringName("fairy_test_%d" % i)
+			skin.display_name = "Fée de la communauté n° %d Nota Aurea Longissima" % i
+		assert_eq(ResourceSaver.save(skin, MANY_SKINS_DIR.path_join("%s.tres" % skin.id)), OK)
+	SkinRegistry.skins_dir = MANY_SKINS_DIR
+	SkinRegistry.reload()
 
 
 func _menu() -> MenuScript:
@@ -38,9 +68,10 @@ func test_skin_panel_fits_the_screen_whatever_the_number_of_skins() -> void:
 	# (Acte 1, intégration) Avec les sept skins « · 3D » de la PR n° 1 (huit vignettes, quatre
 	# rangées), le panneau débordait de l'écran de 1280 × 720 : titre et phrase hors champ, noms
 	# plus larges que leur vignette. La grille défile au-delà de deux rangées et demie.
+	_fill_registry()
 	var menu := _menu()
 	await wait_process_frames(3)
-	assert_gt(SkinRegistry.all().size(), 4, "plus de vignettes que deux rangées (données du jeu)")
+	assert_gt(SkinRegistry.all().size(), 4, "plus de vignettes que deux rangées")
 	var cards := menu.get_node(^"%SkinScroll") as ScrollContainer
 	var panel := cards.get_parent().get_parent() as Control
 	var content := menu.get_node(^"%Content") as MarginContainer
@@ -66,6 +97,7 @@ func test_skin_panel_fits_the_screen_whatever_the_number_of_skins() -> void:
 
 
 func test_selected_skin_down_the_grid_is_scrolled_into_view() -> void:
+	_fill_registry()
 	var last := SkinRegistry.all().back() as SkinData
 	write_valid_save(last.id)
 	var menu := _menu()
@@ -80,6 +112,7 @@ func test_selected_skin_down_the_grid_is_scrolled_into_view() -> void:
 
 
 func test_focus_scrolls_the_grid_for_keyboard_and_gamepad() -> void:
+	_fill_registry()
 	var menu := _menu()
 	await wait_process_frames(3)
 	var cards := menu.get_node(^"%SkinScroll") as ScrollContainer

@@ -1,15 +1,14 @@
 class_name CharacterVisual
 extends Node3D
-## Visuel d'un personnage, même interface pour une planche de sprites et un mesh 3D (PLAN.md
-## sections 3 et 5). Propriétaire : L3. Point d'entrée unique, instancié sous le nom « Visual »
-## dans player.tscn, enemy.tscn, npc.tscn (et le menu).
+## Visuel d'un personnage en billboard HD-2D (PLAN.md sections 3 et 5). Propriétaire : L3.
+## Point d'entrée unique, instancié sous le nom « Visual » dans player.tscn, enemy.tscn, npc.tscn
+## (et le menu).
 ##
 ## Planche (SkinData.sprite_sheet + frames_json) : l'enfant « Sprite » (AnimatedSprite3D,
-## billboard axe Y, filtrage nearest, alpha scissor) affiche les images de SheetLoader ; l'ancre
-## de chaque image est remise à l'origine du nœud à chaque image (pieds au sol, pas de saut,
-## retournement compris). Mesh (SkinData.mesh_scene sans planche) : la scène est instanciée
-## sous le nom « Mesh », son AnimationPlayer joue des animations nommées comme la planche dont
-## les métadonnées « ips », « coup », « onde » remplacent le JSON.
+## billboard axe Y : toujours face à la caméra fixe, filtrage nearest, alpha scissor) affiche les
+## images de SheetLoader ; l'ancre de chaque image est remise à l'origine du nœud à chaque image
+## (pieds au sol, pas de saut, retournement compris). (HD-2D) La variante « mesh » des modèles 3D
+## est retirée : un personnage est toujours une planche.
 ## Horloge commune, celle de jeu.js : image = floor(t × ips), en boucle ou bloquée sur la
 ## dernière. frame_changed est émis pour chaque image affichée, image 0 comprise (et à chaque
 ## tour d'une boucle) ; animation_finished une fois quand t ≥ images / ips (sans boucle).
@@ -23,12 +22,8 @@ signal animation_finished(anim: StringName)
 
 ## Animation jouée au départ, et au changement de skin si le nouveau n'a pas l'animation en cours.
 const IDLE := &"repos"
-## Cadence d'une animation de mesh sans métadonnée « ips ».
-const DEFAULT_MESH_FPS := 10.0
 ## Rayon de l'ombre / demi-largeur du corps au repos (Chtholly : 0,38 m, comme jeu.js).
 const SHADOW_RATIO := 0.75
-## Rayon de l'ombre / hauteur, pour un mesh.
-const MESH_SHADOW_RATIO := 0.25
 ## En deçà (|cos|), la direction est face ou dos à la caméra : le sprite garde son côté.
 const FACING_DEAD_ZONE := 0.1
 ## Tolérance de floor(t × ips) (temps avancé par pas exacts de 1 / ips).
@@ -53,8 +48,6 @@ var _playing: bool = false
 var _finished: bool = false
 var _generation: int = 0
 var _facing: Vector3 = Vector3.ZERO
-var _mesh: Node3D
-var _player: AnimationPlayer
 
 @onready var _sprite: AnimatedSprite3D = $Sprite
 @onready var _shadow: MeshInstance3D = $Shadow
@@ -111,9 +104,8 @@ func show_frame(anim: StringName, frame: int) -> void:
 		frame_changed.emit(anim, index)
 
 
-## Oriente le personnage vers direction (plan du sol). Sprite : les planches regardent vers la
-## droite, il est retourné quand direction pointe vers la gauche de la caméra courante (réévalué
-## à chaque image quand la caméra tourne). Mesh : il tourne vers direction (avant = +Z).
+## Oriente le personnage vers direction (plan du sol) : les planches regardent vers la droite,
+## le sprite est retourné quand direction pointe vers la gauche de la caméra courante.
 func set_facing(direction: Vector3) -> void:
 	var flat := Vector3(direction.x, 0.0, direction.z)
 	if flat.length_squared() < 0.0001:
@@ -163,7 +155,6 @@ func advance(delta: float) -> void:
 	if clip.loops:
 		_step = maxi(_step, last_step - clip.count)
 	var generation := _generation
-	_sync_mesh_pose()
 	while _step < last_step:
 		_step += 1
 		_show(_anim, _step % clip.count)
@@ -178,13 +169,10 @@ func advance(delta: float) -> void:
 
 func _apply_skin() -> void:
 	var previous := _anim
-	_clear_mesh()
 	_clips.clear()
 	_sheet = {}
 	_sprite.sprite_frames = null
-	if skin != null and skin.sprite_sheet == null and skin.mesh_scene != null:
-		_load_mesh()
-	elif skin != null:
+	if skin != null:
 		_load_sheet()
 	_sprite.visible = _sprite.sprite_frames != null
 	_shadow.visible = not _clips.is_empty()
@@ -219,48 +207,11 @@ func _load_sheet() -> void:
 	_set_shadow_radius(SHADOW_RATIO * half_width)
 
 
-func _load_mesh() -> void:
-	var instance := skin.mesh_scene.instantiate()
-	if not instance is Node3D:
-		instance.free()
-		return
-	_mesh = instance
-	_mesh.name = "Mesh"
-	add_child(_mesh)
-	var players := _mesh.find_children("*", "AnimationPlayer", true, false)
-	if not players.is_empty():
-		_player = players[0]
-		_player.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
-		var anims := {}
-		for anim_name: String in _player.get_animation_list():
-			if anim_name == "RESET":
-				continue
-			var animation := _player.get_animation(anim_name)
-			var fps := float(animation.get_meta(&"ips", DEFAULT_MESH_FPS))
-			var looped := animation.loop_mode != Animation.LOOP_NONE
-			_clips[StringName(anim_name)] = Clip.new(fps, roundi(animation.length * fps), looped)
-			anims[anim_name] = {
-				"coup": animation.get_meta(&"coup", []), "onde": animation.get_meta(&"onde", -1)
-			}
-		_sheet = {"animations": anims}
-	_set_shadow_radius(MESH_SHADOW_RATIO * skin.height_m)
-
-
-func _clear_mesh() -> void:
-	if _mesh != null:
-		remove_child(_mesh)
-		_mesh.queue_free()
-	_mesh = null
-	_player = null
-
-
-## Affiche l'image frame de anim (sans signal) : sprite et ancre, ou pose du mesh.
+## Affiche l'image frame de anim (sans signal) : sprite et ancre.
 func _show(anim: StringName, frame: int) -> void:
 	_anim = anim
 	_frame = frame
-	if _player != null:
-		_sync_mesh_pose()
-	elif _sprite.sprite_frames != null:
+	if _sprite.sprite_frames != null:
 		if _sprite.animation != anim:
 			_sprite.animation = anim
 		_sprite.frame = frame
@@ -275,23 +226,8 @@ func _sync_offset() -> void:
 		_sprite.offset = SheetLoader.frame_offset(texture, _sprite.flip_h)
 
 
-## Pose du mesh à l'instant de l'horloge (continue, pas image par image).
-func _sync_mesh_pose() -> void:
-	if _player == null or not _player.has_animation(_anim):
-		return
-	if _player.assigned_animation != _anim:
-		_player.play(_anim)
-	var length := _player.get_animation(_anim).length
-	var clip: Clip = _clips[_anim]
-	_player.seek(fmod(_time, length) if clip.loops and length > 0.0 else minf(_time, length), true)
-
-
 func _update_facing() -> void:
 	if _facing == Vector3.ZERO or not is_node_ready():
-		return
-	if _mesh != null:
-		if _mesh.is_inside_tree():
-			_mesh.global_rotation = Vector3(0.0, atan2(_facing.x, _facing.z), 0.0)
 		return
 	var right := Vector3.RIGHT
 	var camera := get_viewport().get_camera_3d() if is_inside_tree() else null
@@ -308,7 +244,7 @@ func _set_shadow_radius(radius: float) -> void:
 	_shadow.scale = Vector3(diameter, 1.0, diameter)
 
 
-## Cadence d'une animation (planche ou mesh).
+## Cadence d'une animation de la planche.
 class Clip:
 	var fps: float
 	var count: int

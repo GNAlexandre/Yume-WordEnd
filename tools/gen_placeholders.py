@@ -9,7 +9,7 @@ d'images, cadences, boucles, "coup" et "onde") :
   degats 5, mort 6.
 Images [x, y, largeur, hauteur, ancre x, ancre y] ; l'ancre est au milieu des pieds, au sol.
 Échelle : 0,0104 m par pixel de planche (Chtholly : 144 px pour 1,5 m), donc un personnage de
-1,6 m mesure 154 px debout. Silhouettes chibi en pixel art (bords nets pour l'alpha scissor,
+1,6 m mesure 154 px debout. Silhouettes en pixel art (bords nets pour l'alpha scissor,
 contours sombres) : le bras frappe à l'attaque, un halo grandit pendant la charge et l'onde
 part à l'image 3, le personnage tombe à la mort ; l'ennemi mord, fouette et s'effondre.
 Chaque skin reçoit aussi un portrait carré (<id>_portrait.png) pour la boîte de dialogue.
@@ -65,6 +65,9 @@ CHARACTER_ANIMATIONS = [
     ("degats", {"ips": 1, "boucle": False}, 1),
     ("mort", {"ips": 1, "boucle": False}, 1),
 ]
+# (HD-2D) Animation des PNJ en conversation (docs/ASSETS_HD2D.md, section 3.2) : bouche et
+# petit geste ; ajoutée aux planches des PNJ (et sans effet sur un skin jouable).
+TALK_ANIMATION = ("parle", {"ips": 6, "boucle": True}, 2)
 ENEMY_ANIMATIONS = [
     ("repos", {"ips": 6, "boucle": True}, 5),
     ("marche", {"ips": 7, "boucle": True}, 4),
@@ -205,7 +208,7 @@ class Pen:
                   fill, outline=False)
 
 
-# --- Personnage chibi --------------------------------------------------------------------------
+# --- Personnage -------------------------------------------------------------------------------
 
 
 def character_poses(anim, count):
@@ -227,6 +230,9 @@ def character_poses(anim, count):
         elif anim == "charge":  # le halo grandit, l'onde part à l'image 3
             result.append(Pose(prop=1.45 if i == 3 else 1.1, back_arm=1.0, glow=[0.3, 0.6, 0.9, 0][i],
                                burst=i == 3, lean=0.1 if i == 3 else 0.0, front_leg=0.2 * (i == 3)))
+        elif anim == "parle":  # bouche ouverte puis fermée, la main accompagne
+            result.append(Pose(bob=-0.008 * i, mouth=1.0 if i == 0 else 0.0,
+                               front_arm=0.75 if i == 0 else 0.35))
         elif anim == "degats":
             result.append(Pose(lean=-0.28, eyes="hurt", front_arm=2.4, back_arm=2.9, front_leg=0.35,
                                mouth=1.0))
@@ -724,9 +730,11 @@ def write_tres(skin_id, display_name, height_m, folder=os.path.join("data", "ski
     print("skin %s" % os.path.relpath(path, ROOT))
 
 
-def make_skin(skin_id, display_name, look, height_m, with_tres, out_dir=None, tres_dir=None):
+def make_skin(skin_id, display_name, look, height_m, with_tres, out_dir=None, tres_dir=None,
+              talk=False):
     out_dir = out_dir or os.path.join(ROOT, "assets", "characters", skin_id)
-    sheet, meta = build_sheet(draw_character, character_poses, CHARACTER_ANIMATIONS, look, height_m)
+    animations = CHARACTER_ANIMATIONS + ([TALK_ANIMATION] if talk else [])
+    sheet, meta = build_sheet(draw_character, character_poses, animations, look, height_m)
     write_sheet(out_dir, skin_id, sheet, meta)
     portrait(look).save(os.path.join(out_dir, skin_id + "_portrait.png"), optimize=True)
     if with_tres:
@@ -760,7 +768,8 @@ def make_npcs():
         options = {key: npc[key] for key in ("style", "species", "skin", "eyes", "accent", "wear")
                    if key in npc}
         look = make_look(npc["color"], npc["hair"], **options)
-        make_skin(npc["id"], npc["name"], look, npc["height"], True, tres_dir=NPC_VISUALS_DIR)
+        make_skin(npc["id"], npc["name"], look, npc["height"], True, tres_dir=NPC_VISUALS_DIR,
+                  talk=True)
 
 
 def make_enemy(enemy_id, color, height_m, out_dir=None):

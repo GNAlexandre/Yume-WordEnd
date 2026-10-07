@@ -1,8 +1,9 @@
 extends GutTest
 ## SkinRegistry (L3) et skins jouables de data/skins/ : ordre (Chtholly d'abord), recherche,
-## skin par défaut, rechargement ; Chtholly (planche 2D, skin par défaut) et les sept modèles 3D
-## de la PR n° 1 sont jouables ; les anciens skins de PNJ sont retirés à l'acte 1 et les PNJ ont
-## des visuels non jouables (data/npcs/visuals, même densité que Chtholly).
+## skin par défaut, rechargement ; Chtholly (skin par défaut), Nopht et Rhantolk (planches de
+## remplacement, HD-2D) sont jouables ; les
+## anciens skins de PNJ sont retirés à l'acte 1, les sept modèles 3D de la PR n° 1 au passage au
+## HD-2D, et les PNJ ont des visuels non jouables (data/npcs/visuals, même densité que Chtholly).
 
 const TEST_DIR := "user://l3_skins"
 const PLAYER_ANIMS := {
@@ -10,16 +11,19 @@ const PLAYER_ANIMS := {
 }
 ## Skins de remplacement retirés à l'acte 1 (données et planches).
 const REMOVED_SKINS: Array[String] = ["bibliothecaire", "forgeron", "enfant"]
-const NPC_VISUALS_DIR := "res://data/npcs/visuals"
-const MESH_SKINS: Array[StringName] = [
-	&"sukasuka_chtholly",
-	&"sukasuka_ithea",
-	&"sukasuka_lillia",
-	&"sukasuka_nephren",
-	&"sukasuka_nopht",
-	&"sukasuka_rhantolk",
-	&"sukasuka_willem"
+## Modèles 3D de la PR n° 1, retirés au passage au HD-2D (planches 2D seulement).
+const REMOVED_MESH_SKINS: Array[String] = [
+	"sukasuka_chtholly",
+	"sukasuka_ithea",
+	"sukasuka_lillia",
+	"sukasuka_nephren",
+	"sukasuka_nopht",
+	"sukasuka_rhantolk",
+	"sukasuka_willem"
 ]
+const NPC_VISUALS_DIR := "res://data/npcs/visuals"
+## (HD-2D) Skins jouables du jeu, dans l'ordre du registre (Chtholly d'abord, puis le nom).
+const PLAYABLE: Array[StringName] = [&"chtholly", &"nopht", &"rhantolk"]
 
 
 func after_each() -> void:
@@ -35,7 +39,7 @@ func _ids(skins: Array[SkinData]) -> Array:
 
 
 func test_all_is_sorted_with_chtholly_first() -> void:
-	assert_eq(_ids(SkinRegistry.all()), [&"chtholly"] + Array(MESH_SKINS))
+	assert_eq(_ids(SkinRegistry.all()), Array(PLAYABLE))
 	assert_eq(SkinRegistry.default_skin().id, &"chtholly")
 	assert_eq(SkinRegistry.get_skin(&"chtholly").display_name, "Chtholly")
 	assert_null(SkinRegistry.get_skin(&"timere"), "un visuel d'ennemi n'est pas jouable")
@@ -43,7 +47,7 @@ func test_all_is_sorted_with_chtholly_first() -> void:
 	assert_null(SkinRegistry.get_skin(&"forgeron"), "ancien skin retiré")
 	assert_null(SkinRegistry.get_skin(&""))
 	SkinRegistry.all().clear()
-	assert_eq(SkinRegistry.all().size(), 1 + MESH_SKINS.size(), "all() renvoie une copie")
+	assert_eq(SkinRegistry.all().size(), PLAYABLE.size(), "all() renvoie une copie")
 
 
 func test_removed_skins_and_sheets_are_gone() -> void:
@@ -53,13 +57,14 @@ func test_removed_skins_and_sheets_are_gone() -> void:
 			DirAccess.dir_exists_absolute("res://assets/characters/" + skin_id),
 			"planche %s retirée" % skin_id
 		)
+	for skin_id: String in REMOVED_MESH_SKINS:
+		assert_false(ResourceLoader.exists("res://data/skins/%s.tres" % skin_id), skin_id)
+	assert_false(DirAccess.dir_exists_absolute("res://assets/models"), "modèles 3D retirés")
 
 
-func test_chtholly_keeps_its_playable_sheet() -> void:
+func test_playable_skins_have_a_full_sheet_at_chtholly_density() -> void:
 	var checked := 0
 	for skin: SkinData in SkinRegistry.all():
-		if skin.mesh_scene != null:
-			continue
 		checked += 1
 		var label := String(skin.id)
 		assert_true(
@@ -80,22 +85,7 @@ func test_chtholly_keeps_its_playable_sheet() -> void:
 		if skin.portrait != null:
 			assert_eq(skin.portrait.get_width(), skin.portrait.get_height(), label + " : carré")
 
-	assert_eq(checked, 1, "la planche de Chtholly reste le seul skin 2D")
-
-
-func test_seven_mesh_skins_have_a_scene_and_square_portrait() -> void:
-	var found: Array[StringName] = []
-	for skin: SkinData in SkinRegistry.all():
-		if skin.mesh_scene == null:
-			continue
-		found.append(skin.id)
-		assert_null(skin.sprite_sheet, String(skin.id) + " : modèle 3D")
-		assert_not_null(skin.portrait, String(skin.id) + " : portrait")
-		assert_true(ResourceLoader.exists(skin.mesh_scene.resource_path), "scène importée")
-		assert_true(ResourceLoader.exists("res://data/skins/%s.tres" % skin.id), "id = fichier")
-		if skin.portrait != null:
-			assert_eq(skin.portrait.get_size(), Vector2(256, 256), "portrait 256 × 256")
-	assert_eq(found, MESH_SKINS, "sept personnages 3D dans l'ordre du registre")
+	assert_eq(checked, PLAYABLE.size(), "chaque skin jouable est une planche")
 
 
 func test_npc_visuals_keep_the_player_density() -> void:

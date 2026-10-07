@@ -1,6 +1,6 @@
 class_name SkinData
 extends Resource
-## Apparence d'un personnage : planche de sprites (format de l'easter egg) ou mesh 3D.
+## Apparence d'un personnage : planche de sprites au format de l'easter egg (HD-2D, 96 px/m).
 ## Skins jouables : data/skins/<id>.tres (chargés par SkinRegistry). Visuels d'ennemis :
 ## data/enemies/visuals/<id>.tres (hors de data/skins, donc non jouables). Propriétaire : L3.
 
@@ -12,8 +12,6 @@ extends Resource
 @export var sprite_sheet: Texture2D
 ## JSON de la planche, repris tel quel de l'easter egg (animations, images, ancres, coup, onde).
 @export var frames_json: JSON
-## Variante 3D (M3+) : scène instanciée par CharacterVisual à la place du sprite.
-@export var mesh_scene: PackedScene
 ## Portrait (boîte de dialogue, menu). Facultatif.
 @export var portrait: Texture2D
 ## Taille du personnage debout, en mètres. pixel_size = height_m / hauteur (px) de la
