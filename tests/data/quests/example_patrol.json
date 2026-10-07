@@ -1,9 +1,9 @@
 {
   "_comment": "Exemple commenté de docs/QUETES.md (quête d'exemple des tests, absente du jeu).",
   "id": "example_patrol",
-  "title": "La ronde de la forêt",
-  "summary": "Le forgeron s’inquiète : des Timeres rôdent dans la clairière de la forêt. Il aimerait qu’on aille voir, qu’on chasse les plus petits, puis qu’on lui raconte.",
-  "giver": "blacksmith",
+  "title": "La ronde des bois",
+  "summary": "Le soldat de la Garde s’inquiète : des rejetons de Timere rôdent dans la clairière des bois. Il aimerait qu’on aille voir, qu’on abatte les plus petits, puis qu’on lui raconte.",
+  "giver": "example_guard",
   "requires": {
     "quests": [
       "picture_book"
@@ -14,8 +14,8 @@
       "id": "clearing",
       "type": "reach",
       "trigger": "forest_clearing",
-      "objective": "Rejoindre la clairière de la forêt",
-      "hint": "La forêt est au nord du village, par la porte en bois."
+      "objective": "Rejoindre la clairière des bois",
+      "hint": "Les bois du marais sont au nord de l’entrepôt, par le portail nord."
     },
     {
       "id": "timeres",
@@ -23,13 +23,13 @@
       "enemy": "timere_small",
       "count": 2,
       "zone": "forest",
-      "objective": "Chasser 2 petits Timeres de la forêt"
+      "objective": "Abattre 2 rejetons de Timere dans les bois"
     },
     {
       "id": "report",
       "type": "talk",
-      "npc": "blacksmith",
-      "objective": "Faire ton rapport au forgeron"
+      "npc": "example_guard",
+      "objective": "Faire ton rapport au soldat de la Garde"
     }
   ],
   "rewards": {

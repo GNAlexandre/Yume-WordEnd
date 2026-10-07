@@ -98,7 +98,7 @@ func test_gamepad_b_resumes_on_release() -> void:
 
 
 func test_quit_to_menu_saves_closes_game_and_unpauses() -> void:
-	SaveManager.new_game(&"forgeron")
+	SaveManager.new_game(&"ithea")
 	GameState.add_item(&"shell", 1)
 	var menu := _pause()
 	menu.open()
@@ -110,7 +110,7 @@ func test_quit_to_menu_saves_closes_game_and_unpauses() -> void:
 	assert_false(SaveManager.is_game_loaded(), "close_game : plus d'auto-sauvegarde")
 	assert_false(SaveManager.is_autosave_pending())
 	var saved: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(SaveManager.save_path))
-	assert_eq(saved["skin"], "forgeron", "partie écrite avant de partir")
+	assert_eq(saved["skin"], "ithea", "partie écrite avant de partir")
 	assert_eq(saved["inventory"], {"shell": 1.0})
 
 

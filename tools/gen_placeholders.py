@@ -260,7 +260,7 @@ def draw_prop(pen, kind, hand, angle):
 
 
 def _style(look):
-    """Coiffure : celle demandée, sinon longue avec les lunettes (bibliothécaire d'origine)."""
+    """Coiffure : celle demandée, sinon longue avec les lunettes (premier PNJ du jalon M2)."""
     return look.get("style") or ("long" if look.get("extra") == "glasses" else "short")
 
 

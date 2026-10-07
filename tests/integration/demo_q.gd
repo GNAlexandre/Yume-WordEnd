@@ -6,9 +6,9 @@ extends Node
 ##
 ## Captures : Q_SHOT=<vue> tools/screenshot.sh res://tests/integration/demo_q.tscn <png> 150
 ##   hud     : le HUD suit « Le tour du village » (rapporter les pages : 2/2) ; « ? » au-dessus du
-##             guide, « ! » au-dessus de la bibliothécaire (quête des pages à prendre) ;
+##             guide (et de Nygglatho, sous le porche : l'acte 1 commence) ;
 ##   journal : journal ouvert sur « Le tour du village » (trois étapes validées, la courante 1/2),
-##             avec la quête des pages en cours et une quête terminée.
+##             avec le livre d'images de l'acte 1 en cours et une quête terminée.
 ## La mise en scène compte les images (et non le temps) ; la scène se fige avant la capture.
 
 const GAME_SCENE := preload("res://src/game.tscn")
@@ -68,14 +68,17 @@ func _stage() -> void:
 			_player.camera_rig.rotate_view(deg_to_rad(4.0), deg_to_rad(4.0))
 
 
-## La partie de la capture du journal : le tour du village à l'étape des Timeres (1/2), la
-## quête des pages en cours (3 pages), la ronde de la forêt terminée.
+## La partie de la capture du journal : le tour du village à l'étape des Timeres (1/2), le livre
+## d'images en cours (3 pages), la ronde de la forêt terminée.
 func _journal_state() -> Dictionary:
 	return {
 		"inventory": {"page_fragment": 3},
-		"quests": {"example_patrol": "done", "pages": "active", "demo_tour": "active"},
+		"quests": {"example_patrol": "done", "picture_book": "active", "demo_tour": "active"},
 		"quest_progress":
-		{"demo_tour": {"step": "timeres", "count": 1}, "pages": {"step": "deliver", "count": 0}},
+		{
+			"demo_tour": {"step": "timeres", "count": 1},
+			"picture_book": {"step": "pages", "count": 0},
+		},
 		"tracked_quest": "demo_tour",
 	}
 

@@ -265,7 +265,7 @@ func set_quest_step(quest_id: StringName, step_id: StringName, step_count: int =
 func quest_progress() -> Dictionary          # (Lot Q) copie quest_id → {"step", "count"}
 var tracked_quest: StringName                # (Lot Q) quête suivie par le HUD ; émet tracked_quest_changed ; &"" = la première quête active
 var skin_id: StringName      # (L0) &"" = skin par défaut ; émet skin_changed
-var max_hp: int              # (L0) 5, puis 6 (marque-page) ; émet max_hp_changed
+var max_hp: int              # (L0) 5, puis 6 (acte 1 : la promesse du gâteau au beurre), 7 (registre des veilles) ; émet max_hp_changed
 var zone: StringName         # (L0) tenue par WorldManager (zone_entered) ; &"" = nouvelle partie pas encore placée
 var position: Vector3        # (L0) tenue par le joueur quand il est au sol
 
@@ -399,7 +399,7 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/ui/inventory.tscn` | `Inventory` (Control) | — | — | L7 |
 | `src/ui/loading.tscn`, `touch_controls.tscn` | `Loading`, `TouchControls` (Control) | `Loading` : `set_progress(ratio: float)` facultatif, appelé par main.gd ; (M2) `load_scene(path, budget_ms)` qui charge la partie en plusieurs images, utilisée par main.gd si présente | — | L9 |
 
-**Données présentes au Lot 0** : `data/attacks/{sword_1,sword_2,sword_3,charge_wave,bite,whip,rush}.tres` (L4) ; `data/enemies/timere_{small,normal,runner,big}.tres` et `data/enemies/visuals/timere.tres` (L5, visuel hors de `data/skins/` pour ne pas être jouable) ; `data/skins/{chtholly,bibliothecaire,forgeron,enfant}.tres` (L3 ; les trois PNJ sont des silhouettes de `tools/gen_placeholders.py`) ; `data/waves/dunes.json` (L5, sans `music` tant qu'il n'y a pas d'audio). `data/items/`, `data/quests/` (L7), `data/npcs/` et `data/dialogues/` (L6) sont à créer. Le nom de fichier d'une donnée est son `id`. (Lot Q) Les quêtes sont des JSON (`data/quests/<id>.json`, `pages.json` remplace `pages.tres`) ; les quêtes, PNJ, dialogues et emplacements d'exemple des tests vivent dans `tests/data/`.
+**Données présentes au Lot 0** : `data/attacks/{sword_1,sword_2,sword_3,charge_wave,bite,whip,rush}.tres` (L4) ; `data/enemies/timere_{small,normal,runner,big}.tres` et `data/enemies/visuals/timere.tres` (L5, visuel hors de `data/skins/` pour ne pas être jouable) ; `data/skins/chtholly.tres` et trois skins de PNJ de remplacement (L3 ; silhouettes de `tools/gen_placeholders.py`, retirés à l'acte 1 : les PNJ ont leurs visuels non jouables dans `data/npcs/visuals/`) ; `data/waves/dunes.json` (L5, sans `music` tant qu'il n'y a pas d'audio). `data/items/`, `data/quests/` (L7), `data/npcs/` et `data/dialogues/` (L6) sont à créer. Le nom de fichier d'une donnée est son `id`. (Lot Q) Les quêtes sont des JSON (`data/quests/<id>.json`, `pages.json` remplace `pages.tres`) ; les quêtes, PNJ, dialogues et emplacements d'exemple des tests vivent dans `tests/data/`.
 
 **Couches et masques** (valeur = 2^(couche − 1)) :
 
@@ -461,10 +461,10 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 | Forêt | `src/world/zones/forest/` | 4 Timeres (2 petits, 1 normal, 1 coureur) en libre, sans vagues ; tués, ils restent morts jusqu'au rechargement de la partie, sauf pendant une étape « vaincre » qui les vise (rejetons de l'acte 1) : ils reviennent quand elle commence et quand le joueur rentre dans les bois ; (Systèmes et textes) noms de l'acte 1 (rejeton, fragment, Timere bondissant, grand fragment) et aucun drop : Timere ignore les objets (V3) |
 | Île | `src/world/island.tscn` | Greybox 160 × 160 m en CSG puis mesh : village (centre), dunes (ouest), forêt (nord), plage (sud), colline (est) ; `WorldEnvironment`, `DirectionalLight3D`, eau = plan avec shader simple ; murs invisibles et zone de rattrapage sous l'eau |
 | Zones | `src/world/zones/*` | Chaque zone = scène fille avec `Area3D` qui émet `zone_entered` ; `WorldManager` charge toutes les zones au départ en M2 (streaming en M3) ; le village est une zone `safe` où aucun ennemi n'entre |
-| PNJ | `src/npc/npc.tscn` | 3 PNJ dans le village (bibliothécaire, forgeron, enfant), visuels partagés avec les skins ; regardent le joueur à moins de 4 m ; `interact()` lance `DialogueRunner` |
-| Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | Boîte en bas d'écran, portrait (celui de l'orateur du nœud, `speaker_id`), texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête ; `{player}` : nom du skin choisi |
+| PNJ | `src/npc/npc.tscn` | (acte 1) les PNJ de docs/lore/HISTOIRE.md 3.3 dans les cinq zones (Nygglatho, Willem et les fées à l'entrepôt, Pannibal aux bois, le guetteur au Couchant, Limeskin et les gens du bourg au port), visuels non jouables `data/npcs/visuals/` ; présents selon l'histoire (`NpcData.visible_if`) ; regardent le joueur à moins de 4 m ; `interact()` lance `DialogueRunner` |
+| Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | Boîte en bas d'écran, portrait (celui de l'orateur du nœud, `speaker_id`), texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête ; `{player}` : prénom de la protagoniste (skin choisi) |
 | Objets | `src/items/pickup.tscn` | Objet flottant, ramassage par `interact()` ou contact ; émet `item_collected` ; les drops des ennemis restent possibles (`EnemyData.drops`), mais les corps de Timere n'en ont aucun |
-| Quête | `src/quests/quest_tracker.gd` | « Les Timeres ont emporté cinq pages du dernier tome dans la forêt : rapporte-les à la bibliothécaire » ; récompense : marque-page qui augmente les PV max à 6. (Lot Q) Quêtes en étapes écrites en JSON (`data/quests/`), journal de quêtes, marqueurs « ! » / « ? » : docs/QUETES.md |
+| Quête | `src/quests/quest_tracker.gd` | (acte 1, docs/lore/HISTOIRE.md 3.1 et 3.2) la quête principale `act1_main`, « Dans la forêt céleste » (13 étapes, de Nygglatho sous le porche à la promesse sur la colline ; récompense : la promesse du gâteau au beurre, PV max portés à 6) et six quêtes secondaires. (Lot Q) Quêtes en étapes écrites en JSON (`data/quests/`), journal de quêtes, marqueurs « ! » / « ? » : docs/QUETES.md |
 | HUD | `src/ui/hud.tscn` | Cœurs, jauge de charge, numéro de vague et score dans l'arène, nom de la zone à l'entrée, invite d'interaction, objectif de quête |
 | Inventaire | `src/ui/inventory.tscn` | Grille d'icônes, touche I / bouton Y, quantité, description |
 | Menu | `src/ui/main_menu.tscn` | Choix du skin (vignettes, « Ta fée prend la place de Chtholly dans l'histoire. »), Nouvelle partie / Continuer, crédits ; écran « Cliquer pour jouer » avant tout son |
@@ -501,34 +501,34 @@ Les vagues listées sont jouées telles quelles ; au-delà, `generator` produit 
 
 ```json
 {
-  "id": "librarian_intro",
+  "id": "nephren_book",
   "start": "hello",
   "nodes": {
     "hello": {
-      "speaker": "Bibliothécaire",
-      "text": "Les Timeres ont emporté des pages du dernier tome dans la forêt…",
+      "speaker": "Nephren",
+      "text": "Livre. Vent. Pages.",
       "next": "ask"
     },
     "ask": {
-      "speaker": "Bibliothécaire",
-      "text": "Peux-tu m'en rapporter cinq ? Fais attention à toi.",
+      "speaker": "Nephren",
+      "text": "Cinq pages, dans les bois. Pour la lecture du soir.",
       "choices": [
-        { "text": "Je m'en occupe.", "set_flag": "quest_pages_accepted", "start_quest": "pages", "next": null },
+        { "text": "Je les trouve.", "set_flag": "picture_book_asked", "start_quest": "picture_book", "next": null },
         { "text": "Plus tard.", "next": null }
       ]
     },
     "done": {
       "if": { "count": ["page_fragment", 5] },
-      "speaker": "Bibliothécaire",
-      "text": "Merci ! Tiens, un marque-page porte-bonheur.",
-      "complete_quest": "pages",
+      "speaker": "Nephren",
+      "text": "Cinq. Merci. Maintenant, un lecteur.",
+      "complete_quest": "picture_book",
       "next": null
     }
   }
 }
 ```
 
-`DialogueRunner` choisit le premier nœud dont la condition `if` est vraie parmi `["done", start]`. Les conditions acceptées : `flag`, `not_flag`, `count` (objet, minimum), `quest` (id, état), `best_score` (arène, minimum). (Lot Q) En plus : condition `quest_step` (quête, étape), état `available` calculé par les prérequis, effets `advance_quest`, `give_item`, `take_item`, `clear_flag`, clés vérifiées à la lecture ; liste complète et ordre d'évaluation : docs/QUETES.md. (Systèmes et textes) Clé de nœud `speaker_id` (portrait et nom par défaut d'un autre PNJ : scènes à plusieurs voix), jeton `{player}` (nom affiché du skin choisi) dans les répliques, les choix et `speaker`, conditions `quest_step` / `not_quest_step` avec une liste d'étapes ; la même grammaire décide de la présence des PNJ (`NpcData.visible_if`).
+`DialogueRunner` choisit le premier nœud dont la condition `if` est vraie parmi `["done", start]`. Les conditions acceptées : `flag`, `not_flag`, `count` (objet, minimum), `quest` (id, état), `best_score` (arène, minimum). (Lot Q) En plus : condition `quest_step` (quête, étape), état `available` calculé par les prérequis, effets `advance_quest`, `give_item`, `take_item`, `clear_flag`, clés vérifiées à la lecture ; liste complète et ordre d'évaluation : docs/QUETES.md. (Systèmes et textes) Clé de nœud `speaker_id` (portrait et nom par défaut d'un autre PNJ : scènes à plusieurs voix), jeton `{player}` (prénom de la protagoniste : nom affiché du skin choisi sans sa variante « · 3D », premier mot) dans les répliques, les choix et `speaker`, conditions `quest_step` / `not_quest_step` avec une liste d'étapes ; la même grammaire décide de la présence des PNJ (`NpcData.visible_if`).
 
 ### Sauvegarde (JSON, `user://save_v1.json`)
 

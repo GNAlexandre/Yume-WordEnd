@@ -183,7 +183,7 @@ func test_node_text_and_choices_follow_its_own_effects() -> void:
 			{
 				"a":
 				{
-					"text": "Tu as {count:shell} coquillage.",
+					"text": "Tu as {count:shell} exemplaire.",
 					"give_item": "shell",
 					"choices":
 					[
@@ -195,7 +195,7 @@ func test_node_text_and_choices_follow_its_own_effects() -> void:
 		}
 	)
 	dialogue_runner.start(npc_data)
-	assert_eq(dialogue_lines, ["Tu as 1 coquillage."] as Array[String], "texte après give_item")
+	assert_eq(dialogue_lines, ["Tu as 1 exemplaire."] as Array[String], "texte après give_item")
 	EventBus.dialogue_choice_made.emit(0)
 	assert_false(dialogue_runner.is_running(), "un seul choix proposé (index 0)")
 
@@ -218,7 +218,7 @@ func test_dialogue_quest_flow_with_conditions_and_effects() -> void:
 				"step_b":
 				{
 					"if": {"quest_step": ["q", "b"]},
-					"text": "Merci d'avoir vu le forgeron.",
+					"text": "Merci d'avoir vu le guetteur.",
 					"set_flag": "b_done",
 					"give_item": ["shell", 2],
 					"next": null,
@@ -231,7 +231,7 @@ func test_dialogue_quest_flow_with_conditions_and_effects() -> void:
 	assert_eq(step_of(&"q"), &"a")
 	assert_eq(talk(npc_data)[0], "Bonjour.", "étape a : rien de spécial")
 	chat(&"blacksmith")
-	assert_eq(talk(npc_data, [-1])[0], "Merci d'avoir vu le forgeron.")
+	assert_eq(talk(npc_data, [-1])[0], "Merci d'avoir vu le guetteur.")
 	assert_eq(GameState.quest_state(&"q"), &"done", "set_flag valide l'étape flag")
 	assert_eq(GameState.count(&"shell"), 2)
 	assert_eq(talk(npc_data)[0], "Encore merci.")

@@ -1119,3 +1119,14 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   posé par le test (la première veille est jouée par `test_m2_quest.gd`). Garantie de plus,
   sans scène : `test_act1_items_in_world.gd` (chaque étape collect trouve assez d'objets dans
   l'île ou chez un PNJ, et les quêtes n'en prennent jamais plus qu'il n'y en a).
+- **Intégration acte 1 — restes du jalon M2** : la quête d'exemple des tests (`example_patrol`,
+  docs/QUETES.md) passe du forgeron au soldat de la Garde (`example_guard`, PNJ de test au
+  visuel du guetteur ; fichier nommé comme son id, `find_npc` le trouve) et vise les rejetons
+  des bois ; la démo du moteur (`demo_tour`) le salue ; les tests du moteur gardent des ids
+  d'objets arbitraires (`shell`), mais plus de textes de l'ancien contenu ; l'exemple de format
+  de PLAN.md section 4 et `test_dialogue_runner.gd` font parler Nephren. Restent, assumés comme
+  historiques : docs/DECISIONS.md, docs/CONTRACT_REQUESTS.md, docs/lore/ (bible, fiches), les
+  dossiers 3D hors périmètre, les fixtures d'anciennes sauvegardes (`test_save_migration.gd`,
+  `test_act1_saves.gd`), les listes d'éléments retirés (`test_skin_registry.gd`,
+  `test_item_data.gd`) et les gardes contre « Seniolis » (`test_credits.gd`,
+  `test_sys_story_content.gd`, `test_act1_dialogues.gd`).

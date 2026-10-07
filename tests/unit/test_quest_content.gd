@@ -254,7 +254,7 @@ func _check_npc(label: String, npc_id: Variant, where: Dictionary) -> void:
 
 
 ## PNJ d'identifiant npc_id : <dossier>/<id>.tres d'abord, sinon une fiche du dossier qui porte
-## cet id (fiche d'exemple des tests : example_blacksmith.tres est le PNJ « blacksmith »).
+## cet id (une fiche dont le nom de fichier diffère de son id).
 func _find_npc(npc_id: StringName, dirs: Array) -> NpcData:
 	for dir: String in dirs:
 		var path := dir.path_join("%s.tres" % npc_id)

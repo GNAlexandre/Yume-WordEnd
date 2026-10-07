@@ -26,6 +26,8 @@ const GAME_SCENE := preload("res://src/game.tscn")
 ## Image de la mise en scène, puis image du gel.
 const STAGE_FRAME := 8
 const FREEZE_FRAME := 90
+## Image de l'écran de fin de veille (après l'entrée au Couchant : il met le jeu en pause).
+const RESULT_FRAME := 60
 ## Willem : réponses jusqu'à ses conseils (-1 : suite), une par image à partir de STAGE_FRAME + 4.
 const WILLEM_ANSWERS: Array[int] = [-1, 0, -1, 0]
 ## La fièvre : jusqu'à la première réplique de Nephren (« Deux cafés. Très sucrés. »).
@@ -92,6 +94,8 @@ func _process(_delta: float) -> void:
 	elif _frame > STAGE_FRAME and not _answers.is_empty() and _frame % 4 == 0:
 		_box.complete_line()
 		EventBus.dialogue_choice_made.emit(_answers.pop_front())
+	elif _frame == RESULT_FRAME and _shot == "fin_veille":
+		_game.get_node(^"UI/ArenaEnd").call(&"show_result", &"dunes", 465, true, 4)
 	elif _frame == FREEZE_FRAME - 10 and _box.is_open():
 		_box.complete_line()
 	elif _frame == FREEZE_FRAME:
@@ -117,7 +121,6 @@ func _stage() -> void:
 			_view(VIEWS[_shot])
 		"fin_veille":
 			_place(&"dunes", Vector3(14.0, 0.0, -2.0), Vector3(-1.0, 0.0, 0.0))
-			_game.get_node(^"UI/ArenaEnd").call(&"show_result", &"dunes", 465, true, 4)
 		_:
 			_overview()
 

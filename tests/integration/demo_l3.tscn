@@ -97,9 +97,9 @@ skin = ExtResource("4_timere")
 
 [node name="Labels" type="Node3D" parent="."]
 
-[node name="Bibliothecaire" type="Label3D" parent="Labels"]
+[node name="Nephren" type="Label3D" parent="Labels"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, 1.95, -0.4)
-text = "Bibliothécaire 1,6 m"
+text = "Nephren 1,3 m"
 font_size = 28
 
 [node name="Chtholly" type="Label3D" parent="Labels"]

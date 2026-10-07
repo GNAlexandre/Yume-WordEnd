@@ -30,7 +30,7 @@ func test_invalid_changes_do_nothing() -> void:
 	GameState.add_item(&"shell", -3)
 	GameState.add_item(&"", 2)
 	assert_false(GameState.remove_item(&"shell", 0))
-	assert_false(GameState.remove_item(&"shell"), "retrait impossible : aucun coquillage")
+	assert_false(GameState.remove_item(&"shell"), "retrait impossible : aucun exemplaire")
 	assert_eq(GameState.items(), {})
 	assert_signal_not_emitted(EventBus, "inventory_changed")
 
@@ -245,7 +245,7 @@ func test_from_dict_never_emits_quest_updated() -> void:
 
 
 func test_round_trip_is_identical() -> void:
-	GameState.skin_id = &"forgeron"
+	GameState.skin_id = &"ithea"
 	GameState.max_hp = 6
 	GameState.position = Vector3(-3.25, 0.5, 8.0)
 	GameState.zone = &"beach"
