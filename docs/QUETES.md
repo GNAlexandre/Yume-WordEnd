@@ -202,8 +202,11 @@ une condition et quatre effets. Le dialogue du forgeron de l'exemple, en abrég�
 | `flag` / `not_flag` | un nom ou une liste | tous les drapeaux sont posés / aucun ne l'est |
 | `count` | `[objet, minimum]` | le joueur a au moins `minimum` objets |
 | `quest` | `[quête, état]` | l'état de la quête est `""`, `"available"`, `"active"` ou `"done"` (voir plus haut) |
-| `quest_step` | `[quête, étape]` | la quête est en cours, à cette étape |
+| `quest_step` | `[quête, étape]` ou `[quête, [étape, …]]` | la quête est en cours, à cette étape (ou à l'une de ces étapes) |
+| `not_quest_step` | mêmes formes | la quête n'est à aucune de ces étapes (vraie aussi si elle n'est pas en cours) |
 | `best_score` | `[arène, minimum]` | le meilleur score de l'arène atteint `minimum` |
+
+Les mêmes conditions décident de la présence des PNJ (`visible_if`, plus bas).
 
 ### Effets (sur un nœud ou un choix)
 
@@ -244,6 +247,113 @@ une condition et quatre effets. Le dialogue du forgeron de l'exemple, en abrég�
   typographique `’`, points de suspension `…`.
 - Identifiants en anglais (`snake_case`), textes en français. Le canon et les spoilers suivent
   `docs/lore/PLAN.md` (à lire avant d'écrire l'histoire).
+- Jamais le nom du joueur en dur : `{player}` (ci-dessous), sinon « tu ».
+
+### Le nom du joueur : `{player}`
+
+`{player}` est remplacé par le nom affiché du skin choisi (`SkinData.display_name` de
+`GameState.skin_id`, sinon le skin par défaut : « Chtholly »). Il marche partout où le joueur lit
+du texte de quête ou de dialogue : répliques, choix, `speaker` d'un nœud (`"speaker":
+"{player}"` quand la protagoniste parle), titre, résumé, objectifs et aides des quêtes (HUD et
+journal), textes de l'histoire (`data/texts/story.json`). Il se combine avec `{count:…}`,
+`{left:…}` et `{best:…}`. Un nom de skin peut être plus long que « Chtholly » : un titre ou un
+objectif qui cite `{player}` doit encore tenir dans le HUD avec le plus long nom de skin
+(`tools/test.sh tests/unit/test_sys_story_content.gd` le vérifie). Avec parcimonie : les autres
+personnages appellent souvent la protagoniste autrement (« mademoiselle », « guerrière »).
+
+### Plusieurs voix : `speaker_id`
+
+Un nœud peut être dit par un autre PNJ que celui du dialogue : `"speaker_id"` nomme ce PNJ
+(`data/npcs/<id>.tres`). La boîte de dialogue montre alors **son portrait** (celui de son skin)
+et, sans `"speaker"`, **son nom** ; le nœud suivant sans `speaker_id` revient au PNJ du dialogue.
+Exemple, dans le dialogue de Willem (étape `fever` de `act1_main`) :
+
+```json
+"fever_night": {
+  "if": { "quest_step": ["act1_main", "fever"] },
+  "text": "Dors. Pas un mot de plus.",
+  "next": "fever_coffee"
+},
+"fever_coffee": {
+  "speaker_id": "nephren",
+  "text": "Archives. Toute la nuit.",
+  "next": null
+}
+```
+
+- `"speaker"` garde la main sur le nom affiché (`"speaker": "Ren"` avec `"speaker_id":
+  "nephren"` : le nom « Ren », le portrait de Nephren).
+- Un `speaker_id` qui ne nomme aucun PNJ donne un avertissement et le portrait du PNJ du dialogue ;
+  `tests/unit/test_sys_story_content.gd` vérifie que chaque `speaker_id` des dialogues existe et a
+  un portrait.
+- Parler avec ce PNJ n'est pas « lui parler » : seule la conversation avec le PNJ du dialogue
+  valide une étape `talk`.
+
+## La présence des PNJ : `visible_if`
+
+Un PNJ n'est là que si la condition `visible_if` de ses données (`NpcData`, `data/npcs/<id>.tres`)
+est vraie : **même grammaire et même évaluateur** que le `"if"` d'un nœud de dialogue (drapeaux,
+objets, état et étape de quête, meilleur score). Sans `visible_if` (`{}`), il est toujours là.
+Absent, il est caché, sans collision (on traverse sa place), sans invite « Parler », sans
+dialogue et sans marqueur « ! » / « ? ». La présence est réévaluée en fin d'image quand une
+quête, une étape, un drapeau, l'inventaire, le skin ou un record changent, et au chargement d'une
+partie ; un PNJ en pleine conversation ne part qu'à la fin de celle-ci.
+
+Exemple : Willem au terrain d'entraînement **seulement pendant l'étape `training`** de
+`act1_main`, au village le reste du temps sauf pendant `training` et `promise` (où il attend au
+sommet de la colline). Un même personnage à plusieurs endroits = une `NpcData` par emplacement,
+chacune avec sa condition (les instances `willem_training` et `willem_stars` de HISTOIRE.md,
+section 3.3) :
+
+```
+# data/npcs/willem_training.tres (posé au terrain d'entraînement, src/npc/placements/forest.tscn)
+visible_if = {
+"quest_step": ["act1_main", "training"]
+}
+
+# data/npcs/willem.tres (posé au village)
+visible_if = {
+"not_quest_step": ["act1_main", ["training", "promise"]]
+}
+
+# data/npcs/willem_stars.tres (posé au sommet, src/npc/placements/hill.tscn)
+visible_if = {
+"quest_step": ["act1_main", "promise"]
+}
+```
+
+Dans un `.tres`, les identifiants s'écrivent comme dans le JSON, entre guillemets
+(`"act1_main"` ; `&"act1_main"` est aussi accepté). Pour « à partir de telle étape et pour toujours »,
+préférer un drapeau posé par la récompense de l'étape précédente : Limeskin au port à partir de
+l'étape `the_edge`, `visible_if = { "flag": "duel_lost" }`.
+
+Le skin du joueur prime : **le PNJ dont le skin est celui que le joueur a choisi n'est jamais
+là** (la fée de la communauté choisie comme héroïne n'est pas aussi un PNJ ; Chtholly n'est
+jamais un PNJ). Les dialogues de cette fée l'appellent alors par `{player}`.
+
+Vérifier : `tools/test.sh tests/unit/test_sys_story_content.gd` (chaque `visible_if` est une
+condition valide) ; scénarios : `tests/unit/test_npc_presence.gd`.
+
+## Les textes de l'histoire : `data/texts/story.json`
+
+Les textes que les systèmes affichent hors dialogues et quêtes vivent dans un seul fichier de
+données, lu par `DialogueRunner.story_text("chemin/de/la/clé")` (variables et `{player}`
+remplacés) :
+
+| Clé | Texte (acte 1) | Où |
+| --- | --- | --- |
+| `arenas/<arène>/prompt` | « Sonner la cloche de veille » | invite du panneau de l'arène |
+| `arenas/<arène>/sign` | « Cloche de veille » | texte écrit sur le panneau |
+| `arenas/<arène>/end_title` | « Fin de la veille » | titre de l'écran de fin de série |
+| `arenas/<arène>/new_record` | « Nouveau record de veille ! » | bandeau du nouveau record |
+| `fall/message` | « Tes ailes se sont ouvertes : te revoilà au bord. » | après un rattrapage de chute, sur un fondu au blanc |
+| `defeat/fade` | « Retour à l'entrepôt… » | fondu au noir de la mort |
+| `defeat/message` | « Les autres t'ont ramenée à l'entrepôt. » | à la réapparition |
+
+Une arène sans entrée prend celles de `arenas/default` (`DialogueRunner.arena_text`). Une
+nouvelle arène (île n° 15, M3) ajoute son objet `arenas/<arena_id>` ; un nouveau texte de
+système, une clé de plus (et le code qui la lit). Toute clé qui commence par `_` est un
+commentaire. Test : `tests/unit/test_story_texts.gd`.
 
 ## Poser un déclencheur
 
@@ -326,3 +436,12 @@ set_flag = &"forest_clearing_seen"
   `quest_advance_requested`, `trigger_entered`, `tracked_quest_changed` ; GameState :
   `quest_step`, `quest_step_count`, `set_quest_step`, `quest_progress`, `tracked_quest`.
   Contrats : PLAN.md section 3 ; choix : docs/DECISIONS.md, section « Lot Q ».
+- (Systèmes et textes) `DialogueRunner` : `format_text` (`{player}` et les autres variables),
+  `player_name`, `player_skin`, `current_speaker_id` (orateur de la réplique en cours, lu par
+  `DialogueBox`), `find_npc` / `add_npc_dir` / `remove_npc_dir`, `evaluate` et
+  `condition_problem` (conditions des dialogues et de `visible_if`), `story_text`, `arena_text`,
+  `load_story_texts`, `story_problem`, `clear_story_cache`. `NpcData.visible_if`,
+  `is_present()`, `is_player_skin()`, `visible_if_problem()` ; `Npc.is_present()`,
+  `refresh_presence()`. `WorldManager.rescued(zone_id)` (rattrapage de chute) ; HUD :
+  `show_story_message`, `story_message`, `quest_title` ; le journal du HUD est
+  `src/ui/hud_journal.gd` (journal.gd + `{player}`).

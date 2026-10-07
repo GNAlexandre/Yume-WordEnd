@@ -1,11 +1,14 @@
 # WordEnd 3D (Yume-WordEnd)
 
 Action-aventure 3D de Yume Novel, fait avec Godot 4.7.2 (GDScript typé, rendu Compatibility,
-export Web mono-thread) : Chtholly et son épée Seniolis contre les Timeres, dans un monde chibi
-et coloré. L'easter egg 2D du site devient une île : un village sûr et ses trois habitants, les
-dunes au couchant et leur arène à vagues, une forêt infestée où la bibliothécaire a perdu cinq
-pages du dernier tome. La tranche verticale (jalon M2) se joue du menu à la récompense de quête,
-au clavier, à la souris, à la manette et au toucher, dans l'éditeur comme dans le navigateur.
+export Web mono-thread) : Chtholly et son épée Seniorious contre Timere, dans un monde chibi
+et coloré. L'easter egg 2D du site devient l'île n° 68 de *SukaSuka* : l'entrepôt des fées et
+ceux qui y vivent, les bois du marais où le vent a semé des rejetons de Timere, le bord du
+Couchant où l'on tient la veille contre leurs vagues, le port et la colline des étoiles. Le joueur
+incarne la fée qui porte Seniorious (Chtholly, ou une fée de la communauté qui prend sa place) ;
+l'acte 1 (jalon M2) suit le volume 1 de la traduction de Yume Novel et se joue du menu à la
+promesse, au clavier, à la souris, à la manette et au toucher, dans l'éditeur comme dans le
+navigateur.
 
 ## Jouer
 
@@ -40,11 +43,17 @@ au clavier, à la souris, à la manette et au toucher, dans l'éditeur comme dan
 - [docs/REGLAGES_COMBAT.md](docs/REGLAGES_COMBAT.md) : tous les chiffres de la sensation de combat.
 - [docs/RECETTE_M2.md](docs/RECETTE_M2.md) : recette des critères d'acceptation du jalon M2.
 - [docs/ASSETS_3D.md](docs/ASSETS_3D.md) : cahier des charges des assets 3D (personnages,
-  Timeres, décors, île) à donner à qui les produit (IA ou artiste).
+  corps de Timere, décors, île) à donner à qui les produit (IA ou artiste).
+- [docs/QUETES.md](docs/QUETES.md) : écrire des quêtes, des dialogues (plusieurs voix,
+  `{player}`), la présence des PNJ et les textes de l'histoire.
+- [docs/lore/](docs/lore/PLAN.md) : la direction narrative ([MONDE.md](docs/lore/MONDE.md),
+  [HISTOIRE.md](docs/lore/HISTOIRE.md)), la bible du canon et les fiches de lecture, faites à
+  partir de la traduction de Yume Novel.
 - [docs/DECISIONS.md](docs/DECISIONS.md) et [docs/CONTRACT_REQUESTS.md](docs/CONTRACT_REQUESTS.md) :
   choix faits par lot et demandes de contrat.
 
 Code sous licence MIT proposée ; crédits des dessins et des assets dans
 [assets/CREDITS.md](assets/CREDITS.md) et [assets/characters/CREDITS.md](assets/characters/CREDITS.md).
-Chtholly, Seniolis et les Timeres viennent de SukaSuka : hommage non commercial (PLAN.md,
-section 5).
+Chtholly, Seniorious, Timere et l'entrepôt des fées viennent de *Que faites-vous à la fin du
+monde ? Êtes-vous occupés ? Voulez-vous bien nous sauver ?* (*SukaSuka*), le roman d'Akira Kareno,
+lu dans la traduction française de Yume Novel : hommage non commercial (PLAN.md, section 5).
