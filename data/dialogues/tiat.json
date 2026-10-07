@@ -1,0 +1,146 @@
+{
+  "_comment": "Acte 1 : le registre des veilles (donneuse).",
+  "id": "tiat",
+  "start": "hello",
+  "entries": [
+    "record_1",
+    "tell_1",
+    "score_progress",
+    "wave4_progress",
+    "vigil_offer_1",
+    "after_act",
+    "react_record",
+    "departure",
+    "met"
+  ],
+  "nodes": {
+    "vigil_offer_1": {
+      "if": {
+        "quest": [
+          "vigil_register",
+          "available"
+        ]
+      },
+      "text": "Mademoiselle ! Je vous ai vue tenir la veille ! Enfin, de loin. De très loin. Du toit.",
+      "next": "vigil_offer_2"
+    },
+    "vigil_offer_2": {
+      "text": "J’ai un carnet : le registre des veilles. Il me faut un record digne de mademoiselle !",
+      "choices": [
+        {
+          "text": "Inscris-moi.",
+          "start_quest": "vigil_register",
+          "next": "vigil_go"
+        },
+        {
+          "text": "Plus tard, Tiat.",
+          "next": "vigil_later"
+        }
+      ]
+    },
+    "vigil_go": {
+      "text": "D’abord, la quatrième vague ! Après, on parlera des grands nombres. J’adore les grands nombres.",
+      "next": null
+    },
+    "vigil_later": {
+      "text": "D’accord… Je garde la page blanche. Elle est très blanche.",
+      "next": null
+    },
+    "wave4_progress": {
+      "if": {
+        "quest_step": [
+          "vigil_register",
+          "wave4"
+        ]
+      },
+      "text": "La quatrième vague, mademoiselle ! En attendant, je bois mon lait d’un trait. Pour grandir. Plus vite.",
+      "next": null
+    },
+    "tell_1": {
+      "if": {
+        "quest_step": [
+          "vigil_register",
+          "tell_tiat"
+        ]
+      },
+      "text": "La quatrième vague ! Racontez ! Non, attendez, je note. … Voilà. Racontez !",
+      "next": "tell_2"
+    },
+    "tell_2": {
+      "text": "Un jour, j’aurai une épée aussi grande que la vôtre. Plus grande, même. Bon. Aussi grande.",
+      "next": "tell_3"
+    },
+    "tell_3": {
+      "text": "Prochaine étape : 1 000 points en une seule veille. C’est rond, mille. Les records, ça doit être rond.",
+      "advance_quest": [
+        "vigil_register",
+        "tell_tiat"
+      ],
+      "next": null
+    },
+    "score_progress": {
+      "if": {
+        "quest_step": [
+          "vigil_register",
+          "score"
+        ]
+      },
+      "text": "Votre meilleure veille : {best:dunes} points. C’est déjà beaucoup ! Mais mille, c’est plus rond.",
+      "next": null
+    },
+    "record_1": {
+      "if": {
+        "quest_step": [
+          "vigil_register",
+          "record"
+        ]
+      },
+      "text": "Mille points ?! Je l’écris en grand. Votre record : {best:dunes}. Je le souligne deux fois.",
+      "next": "record_2"
+    },
+    "record_2": {
+      "text": "J’ai essayé le thé à la moutarde, comme vous. … Je ne recommencerai pas.",
+      "next": "record_3"
+    },
+    "record_3": {
+      "text": "Tenez, un dessin pour vous. C’est vous, avec votre épée. Elle dépasse de la feuille, mais c’est fait exprès.",
+      "advance_quest": [
+        "vigil_register",
+        "record"
+      ],
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Revenez, mademoiselle. Le registre a encore plein de pages blanches.",
+      "next": null
+    },
+    "react_record": {
+      "if": {
+        "flag": "vigil_record"
+      },
+      "text": "Votre record est souligné deux fois dans le registre. Personne ne l’effacera : j’ai caché la gomme.",
+      "next": null
+    },
+    "departure": {
+      "if": {
+        "flag": "departure_told"
+      },
+      "text": "On dit que vous partez. Moi, je dis que vous revenez. C’est plus court à dire.",
+      "next": null
+    },
+    "met": {
+      "if": {
+        "flag": "met_willem"
+      },
+      "text": "Le nouveau responsable m’a dit bonjour. Je l’ai vouvoyé. Il a eu l’air surpris. Il est très grand.",
+      "next": null
+    },
+    "hello": {
+      "text": "Mademoiselle ! Un jour, je serai une fée soldat, comme vous. J’ai déjà le regard. Regardez.",
+      "next": null
+    }
+  }
+}

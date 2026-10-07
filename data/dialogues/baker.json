@@ -1,0 +1,29 @@
+{
+  "_comment": "Acte 1 : la boulangerie du port (bourru, cœur tendre).",
+  "id": "baker",
+  "start": "hello",
+  "entries": [
+    "after_act",
+    "departure"
+  ],
+  "nodes": {
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Hm. Ton officier m’a acheté du beurre et de la farine. Beaucoup. Il ouvre une boulangerie ? Je mords, moi.",
+      "next": null
+    },
+    "departure": {
+      "if": {
+        "flag": "departure_told"
+      },
+      "text": "Hm. Il paraît que tu pars. … Tiens. Un petit pain raté. Pour la route. Il est très bien raté.",
+      "next": null
+    },
+    "hello": {
+      "text": "Hm. L’entrepôt. … Tiens, un petit pain. Il est raté. Prends-le, je ne vais pas le jeter.",
+      "next": null
+    }
+  }
+}

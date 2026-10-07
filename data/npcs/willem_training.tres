@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="NpcData" format=3]
+
+[ext_resource type="Script" path="res://src/npc/npc_data.gd" id="1_npc"]
+[ext_resource type="Resource" path="res://data/npcs/visuals/willem.tres" id="2_visual"]
+
+[resource]
+script = ExtResource("1_npc")
+id = &"willem_training"
+display_name = "Willem"
+skin = ExtResource("2_visual")
+dialogue_path = "res://data/dialogues/willem_training.json"
+home_zone = &"forest"

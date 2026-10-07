@@ -1,0 +1,29 @@
+{
+  "_comment": "Acte 1 : le passeur de l'île n° 53 (voyages au jalon M3).",
+  "id": "ferryman",
+  "start": "hello",
+  "entries": [
+    "after_act",
+    "met"
+  ],
+  "nodes": {
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Les voyages, ce sera pour plus tard. Revenez avec un officier et un billet, mademoiselle la fée.",
+      "next": null
+    },
+    "met": {
+      "if": {
+        "flag": "met_willem"
+      },
+      "text": "Votre nouvel officier est arrivé par ma ligne. Malade tout le trajet. Ssssympathique garçon.",
+      "next": null
+    },
+    "hello": {
+      "text": "Ssse rendre à l’île n° 53 ? Pas sssans officier, mademoiselle la fée. C’est le règlement.",
+      "next": null
+    }
+  }
+}

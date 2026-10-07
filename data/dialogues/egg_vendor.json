@@ -1,0 +1,73 @@
+{
+  "_comment": "Acte 1 : les œufs du dessert spécial (méfiante, puis gentille).",
+  "id": "egg_vendor",
+  "start": "hello",
+  "entries": [
+    "eggs_1",
+    "after_act",
+    "trust",
+    "eggs_given"
+  ],
+  "nodes": {
+    "eggs_1": {
+      "if": {
+        "quest": [
+          "special_dessert",
+          "active"
+        ],
+        "not_flag": "eggs_given"
+      },
+      "text": "Des œufs ? … C’est pour l’entrepôt ?",
+      "choices": [
+        {
+          "text": "C’est pour des enfants.",
+          "next": "eggs_2"
+        },
+        {
+          "text": "Oui, pour l’entrepôt.",
+          "next": "eggs_3"
+        }
+      ]
+    },
+    "eggs_3": {
+      "text": "Hm. Et c’est pour qui, à l’entrepôt ?",
+      "choices": [
+        {
+          "text": "Pour les petites.",
+          "next": "eggs_2"
+        }
+      ]
+    },
+    "eggs_2": {
+      "text": "Pour des enfants… Bon. Une douzaine, bien calés dans la paille. Et ne courez pas avec.",
+      "give_item": "eggs",
+      "set_flag": "eggs_given",
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "On dit que vous partez. … Revenez acheter des œufs. Pour les enfants.",
+      "next": null
+    },
+    "trust": {
+      "if": {
+        "flag": "little_ones_trust_willem"
+      },
+      "text": "On m’a dit que le dessert avait plu. La prochaine fois, je vous garde les plus gros.",
+      "next": null
+    },
+    "eggs_given": {
+      "if": {
+        "flag": "eggs_given"
+      },
+      "text": "Elles ont aimé, les petites ? … Je demandais comme ça. Pour les œufs.",
+      "next": null
+    },
+    "hello": {
+      "text": "Œufs frais ! … Ah. L’entrepôt.",
+      "next": null
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "_comment": "Acte 1 : café La Clochette ; l'homme-chat (étape cafe) et la crème du dessert spécial.",
+  "id": "cat_waiter",
+  "start": "hello",
+  "entries": [
+    "cafe_1",
+    "cream_1",
+    "after_act",
+    "react_clock",
+    "cream_given"
+  ],
+  "nodes": {
+    "cafe_1": {
+      "if": {
+        "quest_step": [
+          "old_clock",
+          "cafe"
+        ]
+      },
+      "text": "Bienvenue à La Clochette, mesdemoiselles. … Pardon, mademoiselle. L’habitude.",
+      "next": "cafe_2"
+    },
+    "cafe_2": {
+      "text": "L’homme-chat élégant ? M. Rami. Revenu au pays le mois dernier. Il habite la maison Limashenka, au bout de la rue.",
+      "next": "cafe_3"
+    },
+    "cafe_3": {
+      "text": "Il cherchait quelqu’un d’habile de ses mains. Votre officier, je crois. Je n’en sais pas plus. Enfin, presque.",
+      "advance_quest": [
+        "old_clock",
+        "cafe"
+      ],
+      "choices": [
+        {
+          "text": "Et un pot de crème ?",
+          "if": {
+            "quest": [
+              "special_dessert",
+              "active"
+            ],
+            "not_flag": "cream_given"
+          },
+          "next": "cream_1"
+        }
+      ]
+    },
+    "cream_1": {
+      "if": {
+        "quest": [
+          "special_dessert",
+          "active"
+        ],
+        "not_flag": "cream_given"
+      },
+      "text": "De la crème fraîche ? Pour un dessert ? Bien sûr, mademoiselle. Un pot, avec les compliments de La Clochette.",
+      "give_item": "fresh_cream",
+      "set_flag": "cream_given",
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "On dit que des fées partent bientôt. La Clochette vous gardera une table. Pour le retour, mesdemoiselles.",
+      "next": null
+    },
+    "react_clock": {
+      "if": {
+        "flag": "rami_clock_fixed"
+      },
+      "text": "M. Rami a l’air rajeuni. Il paraît que son horloge sonne à nouveau. Un peu faux, mais elle sonne.",
+      "next": null
+    },
+    "cream_given": {
+      "if": {
+        "flag": "cream_given"
+      },
+      "text": "La crème vous a plu ? Revenez quand vous voulez, mesdemoiselles. Pardon. Mademoiselle.",
+      "next": null
+    },
+    "hello": {
+      "text": "Une table pour combien, mesdemoiselles ? … Ah, vous êtes seule. Pardon. L’habitude.",
+      "next": null
+    }
+  }
+}

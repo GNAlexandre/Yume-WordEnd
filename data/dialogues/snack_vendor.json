@@ -1,0 +1,37 @@
+{
+  "_comment": "Acte 1 : le snack du port (répliques qui changent avec les drapeaux).",
+  "id": "snack_vendor",
+  "start": "hello",
+  "entries": [
+    "after_act",
+    "worried",
+    "met"
+  ],
+  "nodes": {
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "On dit que des fées partent bientôt. Tenez, des frites pour la route. Elles seront froides, mais c’est l’intention.",
+      "next": null
+    },
+    "worried": {
+      "if": {
+        "flag": "first_vigil_done"
+      },
+      "text": "Il paraît que des rejetons tombent sur le bord ouest. Vous… vous vous en occupez, hein ? Tenez, une frite. Courage.",
+      "next": null
+    },
+    "met": {
+      "if": {
+        "flag": "met_willem"
+      },
+      "text": "Le nouveau de l’entrepôt est passé. Pas une corne, pas un croc… mais quel appétit ! Lard épais, deux fois.",
+      "next": null
+    },
+    "hello": {
+      "text": "Frites, lard épais, petit pain, soupe ! … Vous êtes de l’entrepôt ? Je ne pose pas de questions. Frites ?",
+      "next": null
+    }
+  }
+}

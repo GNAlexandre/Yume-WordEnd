@@ -1,0 +1,96 @@
+{
+  "_comment": "Acte 1 : scène 5 de act1_main, l'embuscade au marais.",
+  "id": "pannibal",
+  "start": "hello",
+  "entries": [
+    "ambush_1",
+    "after_act",
+    "react_trust",
+    "react_duel",
+    "home"
+  ],
+  "nodes": {
+    "ambush_1": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "pannibal"
+        ]
+      },
+      "text": "Chut. Embuscade. Hier soir, j’ai eu le nouveau. Ce soir, j’ai les rejetons.",
+      "next": "ambush_2"
+    },
+    "ambush_2": {
+      "text": "Ah, ils sont déjà tous morts ? Dommage. Conseil : vise toujours les genoux. Même ceux qui n’en ont pas.",
+      "choices": [
+        {
+          "text": "Rentre. Tout de suite.",
+          "next": "ambush_3a"
+        },
+        {
+          "text": "Montre-moi ton embuscade.",
+          "next": "ambush_3b"
+        }
+      ]
+    },
+    "ambush_3a": {
+      "text": "D’accord. Mais je reviendrai. Le nouveau a encore deux genoux.",
+      "set_flag": "pannibal_found",
+      "advance_quest": [
+        "act1_main",
+        "pannibal"
+      ],
+      "next": null
+    },
+    "ambush_3b": {
+      "speaker": "",
+      "text": "Elle jaillit des fougères, épée de bois levée. Tu l’esquives sans même y penser.",
+      "next": "ambush_4"
+    },
+    "ambush_4": {
+      "text": "… Pas mal. Je rentre. Mais demain, j’embusque le nouveau. Encore.",
+      "set_flag": "pannibal_found",
+      "advance_quest": [
+        "act1_main",
+        "pannibal"
+      ],
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Je garde le marais pendant que tu n’es pas là. Les rejetons n’ont qu’à bien se tenir. Aux genoux.",
+      "next": null
+    },
+    "react_trust": {
+      "if": {
+        "flag": "little_ones_trust_willem",
+        "not_flag": "pannibal_trust_said"
+      },
+      "text": "Les autres l’appellent « Willie ». Moi, je l’appelle « cible ».",
+      "set_flag": "pannibal_trust_said",
+      "next": null
+    },
+    "react_duel": {
+      "if": {
+        "flag": "duel_lost",
+        "not_flag": "pannibal_duel_said"
+      },
+      "text": "Il t’a désarmée ? Il fallait viser les genoux. Je te l’avais dit.",
+      "set_flag": "pannibal_duel_said",
+      "next": null
+    },
+    "home": {
+      "if": {
+        "flag": "pannibal_found"
+      },
+      "text": "Je suis rentrée. Puis je suis revenue. Le marais, c’est chez moi.",
+      "next": null
+    },
+    "hello": {
+      "text": "Chut. Tu fais fuir mon gibier.",
+      "next": null
+    }
+  }
+}

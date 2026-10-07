@@ -1,0 +1,45 @@
+{
+  "_comment": "Acte 1 : trois mots à la fois.",
+  "id": "almita",
+  "start": "hello",
+  "entries": [
+    "after_act",
+    "trust",
+    "departure",
+    "met"
+  ],
+  "nodes": {
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Revenir. Promis. Hein ?",
+      "next": null
+    },
+    "trust": {
+      "if": {
+        "flag": "little_ones_trust_willem"
+      },
+      "text": "Willie. Dessert. Encore !",
+      "next": null
+    },
+    "departure": {
+      "if": {
+        "flag": "departure_told"
+      },
+      "text": "Partir ? Pas bien.",
+      "next": null
+    },
+    "met": {
+      "if": {
+        "flag": "met_willem"
+      },
+      "text": "Nouveau. Pas cornes.",
+      "next": null
+    },
+    "hello": {
+      "text": "Linge. Vent. Envolé.",
+      "next": null
+    }
+  }
+}

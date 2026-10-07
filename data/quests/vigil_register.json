@@ -1,0 +1,48 @@
+{
+  "id": "vigil_register",
+  "title": "Le registre des veilles",
+  "summary": "Tiat note toutes tes veilles dans un carnet. Elle veut y inscrire un record digne de mademoiselle.",
+  "giver": "tiat",
+  "requires": {
+    "flags": [
+      "first_vigil_done"
+    ]
+  },
+  "steps": [
+    {
+      "id": "wave4",
+      "type": "arena",
+      "arena": "dunes",
+      "wave": 4,
+      "objective": "Atteindre la 4e vague d’une veille"
+    },
+    {
+      "id": "tell_tiat",
+      "type": "talk",
+      "npc": "tiat",
+      "objective": "Raconter ta veille à Tiat"
+    },
+    {
+      "id": "score",
+      "type": "arena",
+      "arena": "dunes",
+      "score": 1000,
+      "objective": "Faire 1 000 points en une seule veille"
+    },
+    {
+      "id": "record",
+      "type": "talk",
+      "npc": "tiat",
+      "objective": "Faire inscrire ton record au registre"
+    }
+  ],
+  "rewards": {
+    "items": {
+      "tiat_drawing": 1
+    },
+    "flags": [
+      "vigil_record"
+    ],
+    "max_hp": 7
+  }
+}

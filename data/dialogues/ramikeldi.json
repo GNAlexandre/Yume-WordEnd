@@ -1,0 +1,117 @@
+{
+  "_comment": "Acte 1 : l'homme-chat (M. Rami et sa vieille horloge).",
+  "id": "ramikeldi",
+  "start": "hello",
+  "entries": [
+    "rami_1",
+    "chime_1",
+    "gears_progress",
+    "comb_progress",
+    "repair_wait",
+    "after_act",
+    "after_clock"
+  ],
+  "nodes": {
+    "rami_1": {
+      "if": {
+        "quest_step": [
+          "old_clock",
+          "rami"
+        ]
+      },
+      "text": "Bonsoir, mademoiselle. Ramikeldi Limashenka. Appelez-moi M. Rami : tout le monde le fait, même mes créanciers.",
+      "next": "rami_2"
+    },
+    "rami_2": {
+      "text": "Je suis né ici. Je suis parti il y a vingt ans faire commerce de tabac, sur l’île n° 13. Je suis rentré le mois dernier.",
+      "next": "rami_3"
+    },
+    "rami_3": {
+      "text": "Ma mère s’est éteinte, et la vieille horloge de la maison s’est arrêtée avec elle. Toute mécanique, sans le moindre cristal.",
+      "next": "rami_4"
+    },
+    "rami_4": {
+      "text": "J’aimerais l’entendre sonner une fois encore. Votre officier dit qu’il le pourrait, avec les bonnes pièces.",
+      "next": "rami_5"
+    },
+    "rami_5": {
+      "text": "Il manque trois engrenages de laiton et un peigne de carillon. Le vent emporte tout, ici. Même mes chapeaux.",
+      "advance_quest": [
+        "old_clock",
+        "rami"
+      ],
+      "next": null
+    },
+    "gears_progress": {
+      "if": {
+        "quest_step": [
+          "old_clock",
+          "gears"
+        ]
+      },
+      "text": "Trois engrenages de laiton, mademoiselle. Je ne suis pas pressé. L’horloge non plus, hélas.",
+      "next": null
+    },
+    "comb_progress": {
+      "if": {
+        "quest_step": [
+          "old_clock",
+          "comb"
+        ]
+      },
+      "text": "Un peigne de carillon, maintenant. Une boîte à musique est tombée dans le marais, dit-on. Le vent, toujours.",
+      "next": null
+    },
+    "repair_wait": {
+      "if": {
+        "quest_step": [
+          "old_clock",
+          "repair"
+        ]
+      },
+      "text": "Portez les pièces à votre officier. Moi, j’attends. J’ai vingt ans d’entraînement.",
+      "next": null
+    },
+    "chime_1": {
+      "if": {
+        "quest_step": [
+          "old_clock",
+          "chime"
+        ]
+      },
+      "speaker": "",
+      "text": "Un déclic. Un ronronnement de rouages. Puis l’horloge joue une comptine, un peu fausse, très douce.",
+      "next": "chime_2"
+    },
+    "chime_2": {
+      "text": "… Elle jouait ça quand j’étais petit. Ma mère disait qu’elle sonnait faux. Elle avait raison.",
+      "next": "chime_3"
+    },
+    "chime_3": {
+      "text": "Merci, mademoiselle. Remerciez aussi votre officier. Ma carte : si vous passez un jour par l’île n° 13…",
+      "advance_quest": [
+        "old_clock",
+        "chime"
+      ],
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "On dit que vous partez. Revenez écouter l’horloge, mademoiselle. Elle sonnera. Faux, mais elle sonnera.",
+      "next": null
+    },
+    "after_clock": {
+      "if": {
+        "flag": "rami_clock_fixed"
+      },
+      "text": "L’horloge sonne toutes les heures. Les voisins se plaignent. C’est merveilleux.",
+      "next": null
+    },
+    "hello": {
+      "text": "Bonsoir, mademoiselle. Belle soirée pour une île qui dérive, n’est-ce pas ?",
+      "next": null
+    }
+  }
+}
