@@ -974,3 +974,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   triangles à la passe d'ombre ; tout reste sous 150 draw calls et 150 000 primitives.
 - **Monde — captures** : `MONDE_VIEW=ile|entrepot|bois|couchant|port|colline|bord|dessous
   tools/screenshot.sh res://tests/integration/demo_monde.tscn build/shots/monde_<vue>.png 40`.
+- **Monde — terrain d'entraînement** (bois du marais) : herbe rase sans arbre ni rocher sur
+  15 m de rayon autour du local (0, 0) de la zone ; les buts de fortune sont à ses deux bouts
+  (14 m), le banc et le râtelier en bordure (le banc est la place de `WillemTraining`,
+  HISTOIRE.md 3.3) ; `test_m1_world.gd` vérifie plat et sans collision sur 12 m, et la clairière
+  des Timeres sur 6 m.
