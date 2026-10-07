@@ -1,17 +1,19 @@
 extends "res://tests/stubs/m2_game_test.gd"
 ## Intégration M2, parcours 5 : le monde dans la vraie partie. Les cinq zones affichent leur nom
-## dans le HUD ; des allers-retours sur une frontière ne le répètent pas (ni l'auto-sauvegarde) ;
-## un Timere au pied de la barrière n'entre pas au village ; sous l'île, la KillZone ramène au
-## Spawn de la zone, et le mur du bord retient le joueur dans l'eau peu profonde ; pause et
-## reprise (clavier, manette), inventaire ; retour au menu depuis la pause : partie écrite, plus
-## suivie, aucune auto-sauvegarde ensuite, menu sans nouvel écran de clic et avec Continuer.
+## dans le HUD (docs/lore/MONDE.md, section 2.1) ; des allers-retours sur une frontière ne le
+## répètent pas (ni l'auto-sauvegarde) ; un Timere au pied de la barrière n'entre pas au
+## village ; sous l'île, la KillZone ramène au Spawn de la zone ; le joueur qui court dans le vide
+## depuis le bord de l'île flottante tombe, sans jamais passer les murs, et revient au Spawn de
+## la zone ; pause et reprise (clavier, manette), inventaire ; retour au menu depuis la pause :
+## partie écrite, plus suivie, aucune auto-sauvegarde ensuite, menu sans nouvel écran de clic et
+## avec Continuer.
 
 const NAMES := {
-	&"village": "Village",
-	&"dunes": "Dunes au couchant",
-	&"forest": "Forêt des Timeres",
-	&"beach": "Plage aux coquillages",
-	&"hill": "Colline du belvédère",
+	&"village": "L'entrepôt des fées",
+	&"dunes": "Le bord du Couchant",
+	&"forest": "Les bois du marais",
+	&"beach": "Le port et le bourg",
+	&"hill": "La colline des étoiles",
 }
 ## Face nord de la barrière du village (coordonnées de l'île) ; les Bounds se touchent à z = −22.
 const BARRIER_NORTH_FACE := -22.5
@@ -57,7 +59,7 @@ func test_each_zone_shows_its_name_once_even_along_a_border() -> void:
 		[KEY_S], func() -> bool: return WorldManager.current_zone() == &"village", 3.0
 	)
 	assert_eq(entered, [&"forest", &"village"], "retour au village annoncé")
-	assert_eq(zone_banner(), "Village")
+	assert_eq(zone_banner(), NAMES[&"village"])
 
 
 func test_no_timere_enters_the_village() -> void:
@@ -78,7 +80,7 @@ func test_no_timere_enters_the_village() -> void:
 	assert_false(health.current < health.max_hp, "le joueur au village n'a pas été touché")
 
 
-func test_nothing_lets_the_player_fall_off_the_island() -> void:
+func test_a_fall_into_the_void_brings_the_player_back() -> void:
 	assert_true(await new_game_from_menu(), "nouvelle partie")
 	# Sous l'île (dans la KillZone) : retour au Spawn de la zone courante.
 	WorldManager.teleport(&"beach")
@@ -87,15 +89,28 @@ func test_nothing_lets_the_player_fall_off_the_island() -> void:
 	var rescued: bool = await until(func() -> bool: return player.global_position.y > -2.0, 2.0)
 	assert_true(rescued, "KillZone : rattrapé")
 	var spawn := zone(&"beach").get_node(^"Spawn") as Node3D
-	assert_lt(distance_to(spawn), 1.0, "au Spawn de la plage")
-	# Au bord sud, dans l'eau peu profonde : le mur retient le joueur, qui ne coule pas.
-	player.global_position = WorldManager.ground_position(Vector3(10.0, 2.0, 74.0), player)
-	player.set_aim_direction(Vector3.BACK, true)
-	await wait_physics_frames(3)
-	await walk_keys_until([KEY_W, KEY_SHIFT], func() -> bool: return false, 2.5)
-	assert_lt(player.global_position.z, 80.5, "arrêté par le mur du bord")
-	assert_gt(player.global_position.z, 78.0, "il a bien marché jusqu'au mur")
-	assert_gt(player.global_position.y, -1.5, "les pieds sur le haut-fond")
+	assert_lt(distance_to(spawn), 1.0, "au Spawn du port")
+	# Au bord nord des bois, le joueur court droit dans le vide : il tombe le long de la falaise,
+	# le mur du carré le retient, et il revient au Spawn des bois.
+	await place_player(&"forest", Vector3(0.0, 0.0, -20.0), Vector3.FORWARD)
+	assert_eq(WorldManager.current_zone(), &"forest")
+	var lowest: Array[float] = [INF]
+	var farthest: Array[float] = [INF]
+	var watch := func() -> void:
+		lowest[0] = minf(lowest[0], player.global_position.y)
+		farthest[0] = minf(farthest[0], player.global_position.z)
+	get_tree().physics_frame.connect(watch)
+	var fell: bool = await walk_keys_until(
+		[KEY_W, KEY_SHIFT], func() -> bool: return lowest[0] < -5.0, 4.0
+	)
+	var back: bool = await until(func() -> bool: return player.global_position.y > -2.0, 2.0)
+	get_tree().physics_frame.disconnect(watch)
+	assert_true(fell, "tombé du bord dans le vide")
+	assert_true(back, "rattrapé")
+	assert_gt(farthest[0], -80.5, "retenu par le mur du carré")
+	assert_lt(farthest[0], IslandTerrain.edge_point(-PI / 2.0).y, "parti au-delà du bord")
+	var forest_spawn := zone(&"forest").get_node(^"Spawn") as Node3D
+	assert_lt(distance_to(forest_spawn), 1.0, "au Spawn des bois")
 
 
 func test_pause_and_inventory_with_keyboard_and_gamepad() -> void:

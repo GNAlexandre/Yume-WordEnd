@@ -16,7 +16,7 @@ func _assert_started_at_the_village(skin_id: StringName) -> void:
 	var spawn := zone(&"village").get_node(^"Spawn") as Node3D
 	assert_lt(distance_to(spawn), 1.0, "joueur au Spawn du village")
 	assert_eq(WorldManager.current_zone(), &"village")
-	assert_eq(zone_banner(), "Village", "nom de la zone dans le HUD")
+	assert_eq(zone_banner(), "L'entrepôt des fées", "nom de la zone dans le HUD")
 	assert_eq(hearts_shown(), 5, "cinq cœurs")
 	assert_eq(hud.call(&"health"), Vector2i(5, 5), "cœurs pleins")
 	assert_eq(GameState.skin_id, skin_id, "skin choisi")

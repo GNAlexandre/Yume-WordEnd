@@ -80,7 +80,7 @@ func test_walking_is_saved_and_continue_restores_everything() -> void:
 	assert_true(await wait_for_game(), "partie reprise")
 	assert_lt(flat_distance(player.global_position, left_at), 0.3, "position restaurée")
 	assert_eq(WorldManager.current_zone(), &"forest", "zone restaurée")
-	assert_eq(zone_banner(), "Forêt des Timeres", "nom de la zone à la reprise")
+	assert_eq(zone_banner(), "Les bois du marais", "nom de la zone à la reprise")
 	assert_eq(GameState.skin_id, &"enfant", "skin gardé")
 	assert_eq(player.visual.skin.id, &"enfant")
 	assert_eq(GameState.count(&"page_fragment"), 1, "inventaire restauré")

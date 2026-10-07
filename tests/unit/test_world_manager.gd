@@ -118,5 +118,5 @@ func test_player_died_respawns_at_village_after_delay() -> void:
 
 
 func test_zone_display_name_falls_back_to_the_id() -> void:
-	assert_eq(WorldManager.zone_display_name(&"dunes"), "Dunes au couchant")
+	assert_eq(WorldManager.zone_display_name(&"dunes"), "Le bord du Couchant")
 	assert_eq(WorldManager.zone_display_name(&"nowhere"), "nowhere")

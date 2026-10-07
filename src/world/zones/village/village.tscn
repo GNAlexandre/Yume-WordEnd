@@ -64,7 +64,7 @@ albedo_color = Color(0.25, 0.66, 0.66, 1)
 
 [node name="village" type="Node3D" groups=["zones"]]
 script = ExtResource("1_zone")
-display_name = "Village"
+display_name = "L'entrepôt des fées"
 safe = true
 
 [node name="Spawn" type="Marker3D" parent="."]

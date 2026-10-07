@@ -2,9 +2,11 @@ extends GutTest
 ## Intégration M1, monde : ce que les autres lots posent sur l'île de L2 est praticable.
 ## Objets (L7), PNJ du village (L6), Timeres de la forêt (L5), panneau et points d'apparition
 ## de l'arène (L5) : au sol (ni dessous, ni en l'air), hors de tout décor (capsule du joueur),
-## sur la terre ferme et reliés au Spawn du village par un chemin à pied (grille de 0,5 m,
-## décor de la couche world, sans eau). Clairière de la forêt dégagée sur 6 m pour ses Timeres ;
-## arène plate autour du panneau et des points d'apparition ; WorldManager.is_zone_safe().
+## sur l'île (en deçà du bord, pas dans le vide) et reliés au Spawn du village par un chemin à
+## pied (grille de 0,5 m, décor de la couche world). Clairière de la forêt dégagée sur 6 m pour
+## ses Timeres, et le terrain d'entraînement (acte 1) plat et dégagé sur 12 m ; arène plate
+## autour du panneau (la cloche de veille) et des points d'apparition ;
+## WorldManager.is_zone_safe().
 
 const ISLAND := preload("res://src/world/island.tscn")
 const PLACEMENTS: Array[String] = ["Pickups", "NPCs", "Enemies"]
@@ -13,11 +15,19 @@ const PLAYER_RADIUS := 0.35
 const PLAYER_HEIGHT := 1.5
 ## Marche franchie par le joueur (dalles du village, plateau du belvédère).
 const STEP_UP := 0.2
-## Grille du chemin à pied (m) et limite de la terre ferme (niveau de l'eau : −0,6 m).
+## Grille du chemin à pied (m).
 const GRID_STEP := 0.5
-const DRY_LAND := -0.45
-## Rayon dégagé de la clairière de la forêt (m, autour du local (0, 0)).
+## Rayon dégagé de la clairière de la forêt pour ses Timeres (m, autour du local (0, 0)), et
+## rayon plat et dégagé du terrain d'entraînement (buts, banc et râtelier au-delà).
 const CLEARING_RADIUS := 6.0
+const TRAINING_GROUND_RADIUS := 12.0
+## Positions d'avant docs/lore/HISTOIRE.md (section 3.3) que le décor de l'acte 1 recouvre :
+## l'objet est déplacé par le lot du contenu de l'acte 1 (« Contenu de l'acte 1 »). Tant qu'il
+## est encore à l'ancienne position, il n'est pas vérifié ; à sa nouvelle position, si.
+## (Zone/nœud → position globale d'avant.)
+const RELOCATED := {
+	"village/village_flower_1": Vector3(-17.0, 0.0, -3.0),
+}
 
 var _island: Node3D
 var _space: PhysicsDirectSpaceState3D
@@ -36,7 +46,11 @@ func before_all() -> void:
 	for zone: Node in _island.get_node(^"Zones").get_children():
 		for placement: String in PLACEMENTS:
 			for child: Node in zone.get_node(placement).get_children():
-				_start_positions[child] = (child as Node3D).global_position
+				var at := (child as Node3D).global_position
+				var old: Variant = RELOCATED.get("%s/%s" % [zone.name, child.name])
+				if old is Vector3 and at.distance_to(old as Vector3) < 0.01:
+					continue
+				_start_positions[child] = at
 	await wait_physics_frames(2)
 	for npc: Node in get_tree().get_nodes_in_group(&"interactable"):
 		if npc is Npc:
@@ -50,18 +64,18 @@ func after_all() -> void:
 	_island.free()
 
 
-func test_placements_rest_on_dry_ground_clear_of_decor() -> void:
+func test_placements_rest_on_the_island_clear_of_decor() -> void:
 	var problems: Array[String] = []
 	for node: Node in _start_positions:
 		var at: Vector3 = _start_positions[node]
 		var label := "%s/%s" % [node.get_parent().get_parent().name, node.name]
 		var floor_y := _floor_height(at)
-		if node is Pickup and absf(at.y - floor_y) > 0.1:
+		if not IslandTerrain.is_land(at.x, at.z) or floor_y == -INF:
+			problems.append("%s : dans le vide, au-delà du bord" % label)
+		elif node is Pickup and absf(at.y - floor_y) > 0.1:
 			problems.append("%s : posé à y = %.2f, sol à %.2f" % [label, at.y, floor_y])
 		elif at.y < floor_y - 0.05:
 			problems.append("%s : sous le sol (y = %.2f, sol à %.2f)" % [label, at.y, floor_y])
-		if floor_y < DRY_LAND:
-			problems.append("%s : dans l'eau (fond à %.2f)" % [label, floor_y])
 		var blocking := _decor_at(at, node as CollisionObject3D)
 		if not blocking.is_empty():
 			problems.append("%s : dans le décor (%s)" % [label, blocking])
@@ -81,19 +95,13 @@ func test_placements_are_reachable_on_foot_from_the_village() -> void:
 
 func test_forest_clearing_is_clear_for_its_timeres() -> void:
 	var forest := _island.get_node(^"Zones/forest") as Node3D
-	var blocked: Array[String] = []
-	var r := -CLEARING_RADIUS
-	while r <= CLEARING_RADIUS:
-		var c := -CLEARING_RADIUS
-		while c <= CLEARING_RADIUS:
-			var local := Vector3(r, 0.0, c)
-			if local.length() <= CLEARING_RADIUS:
-				var at := forest.to_global(local)
-				if not _decor_at(at).is_empty() or absf(_floor_height(at)) > 0.05:
-					blocked.append(str(local))
-			c += GRID_STEP
-		r += GRID_STEP
+	var blocked := _blocked_in_disc(forest, CLEARING_RADIUS)
 	assert_true(blocked.is_empty(), "clairière plate et dégagée sur 6 m : %s" % ", ".join(blocked))
+	blocked = _blocked_in_disc(forest, TRAINING_GROUND_RADIUS)
+	assert_true(
+		blocked.is_empty(),
+		"terrain d'entraînement plat et dégagé sur 12 m : %s" % ", ".join(blocked)
+	)
 	var timeres := 0
 	for child: Node in forest.get_node(^"Enemies").get_children():
 		var local := forest.to_local(_start_positions[child] as Vector3)
@@ -148,6 +156,24 @@ func test_world_manager_tells_safe_zones() -> void:
 # --- Outils ------------------------------------------------------------------------------------
 
 
+## Points (grille de GRID_STEP m, coordonnées locales à la zone) du disque de rayon `radius`
+## autour du local (0, 0) de la zone qui touchent un décor ou ne sont pas au ras de y = 0.
+func _blocked_in_disc(zone: Node3D, radius: float) -> Array[String]:
+	var blocked: Array[String] = []
+	var r := -radius
+	while r <= radius:
+		var c := -radius
+		while c <= radius:
+			var local := Vector3(r, 0.0, c)
+			if local.length() <= radius:
+				var at := zone.to_global(local)
+				if not _decor_at(at).is_empty() or absf(_floor_height(at)) > 0.05:
+					blocked.append(str(local))
+			c += GRID_STEP
+		r += GRID_STEP
+	return blocked
+
+
 ## Hauteur du sol (décor statique de la couche world) sous le point.
 func _floor_height(at: Vector3) -> float:
 	var query := PhysicsRayQueryParameters3D.create(
@@ -187,7 +213,7 @@ func _decor_at(at: Vector3, own: CollisionObject3D = null) -> String:
 	return ", ".join(names)
 
 
-## Grille praticable (terre ferme, sans décor) et cases atteintes depuis le Spawn du village.
+## Grille praticable (sur l'île, sans décor) et cases atteintes depuis le Spawn du village.
 func _build_walk_map() -> void:
 	_cells = int(IslandTerrain.SIZE / GRID_STEP)
 	_walkable.resize(_cells * _cells)
@@ -195,8 +221,8 @@ func _build_walk_map() -> void:
 	for j in _cells:
 		for i in _cells:
 			var at := _cell_center(i, j)
-			var dry := IslandTerrain.height_at(at.x, at.z) >= DRY_LAND
-			_walkable[j * _cells + i] = 1 if dry and _decor_at(at).is_empty() else 0
+			var on_island := IslandTerrain.is_land(at.x, at.z)
+			_walkable[j * _cells + i] = 1 if on_island and _decor_at(at).is_empty() else 0
 	var spawn := (_island.get_node(^"Zones/village/Spawn") as Node3D).global_position
 	var start := _cell_index(spawn)
 	_reached[start] = 1

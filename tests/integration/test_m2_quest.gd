@@ -11,7 +11,7 @@ extends "res://tests/stubs/m2_game_test.gd"
 ## combat est couvert par tests/integration/test_m1_forest.gd ; ici, c'est la quête qui compte.
 
 const OBJECTIVE := "Rapporter 5 fragments de page à la bibliothécaire"
-const FOREST_NAME := "Forêt des Timeres"
+const FOREST_NAME := "Les bois du marais"
 const PAGE := &"page_fragment"
 ## Pages uniques de la forêt (local à la zone) : forest_page_1..3 (src/items/placements).
 const PAGES: Array[StringName] = [&"forest_page_1", &"forest_page_2", &"forest_page_3"]
@@ -246,7 +246,7 @@ func _play_the_pages_quest() -> void:
 		func() -> bool: return WorldManager.current_zone() == &"village", 4.0
 	)
 	assert_true(home, "retour au village")
-	assert_eq(zone_banner(), "Village", "nom du village dans le HUD")
+	assert_eq(zone_banner(), "L'entrepôt des fées", "nom du village dans le HUD")
 	# 5. La bibliothécaire termine la quête (fermeture à E ou A).
 	assert_eq(hearts_shown(), 5)
 	await _talk_to_librarian(librarian)

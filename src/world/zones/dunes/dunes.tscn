@@ -19,7 +19,7 @@ size = Vector3(58, 30, 44)
 
 [node name="dunes" type="Node3D" groups=["zones"]]
 script = ExtResource("1_zone")
-display_name = "Dunes au couchant"
+display_name = "Le bord du Couchant"
 
 [node name="Spawn" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.2, 0)

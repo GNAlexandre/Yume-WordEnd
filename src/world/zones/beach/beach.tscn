@@ -20,7 +20,7 @@ size = Vector3(160, 30, 58)
 
 [node name="beach" type="Node3D" groups=["zones"]]
 script = ExtResource("1_zone")
-display_name = "Plage aux coquillages"
+display_name = "Le port et le bourg"
 
 [node name="Spawn" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -24)
