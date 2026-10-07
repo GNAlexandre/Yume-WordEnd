@@ -155,7 +155,7 @@ mesh = ExtResource("1_box")
 material_override = SubResource("stone2")
 
 [node name="Rubble1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.9, 0, 0, 0, 0.54, 0, 0, 0, 0.72, 3.4, 0.25, 0.8)
+transform = Transform3D(0.9, 0, 0, 0, 0.54, 0, 0, 0, 0.72, 3.3, 0.25, -1.3)
 mesh = ExtResource("2_bead")
 material_override = SubResource("dark")
 

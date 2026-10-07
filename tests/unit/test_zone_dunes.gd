@@ -1,7 +1,8 @@
 extends GutTest
 ## Arène des dunes : l'Arena (arena_id dunes) au centre de la cuvette, les 4 points
 ## d'apparition frères de l'Arena à ~13 m du centre et posés sur le sol, sol de l'arène plat
-## et dégagé sur 12 m de rayon.
+## et dégagé sur 12 m de rayon ; cercle de veille ouvert sur 15 m (décor bas, ni collision
+## ni herbe).
 
 const FIXTURE := preload("res://tests/stubs/l2_island_fixture.gd")
 const MARKERS: Array[StringName] = [&"SpawnN", &"SpawnS", &"SpawnE", &"SpawnW"]
@@ -82,3 +83,43 @@ func test_arena_floor_is_flat_and_clear() -> void:
 		var direction := Vector3.FORWARD.rotated(Vector3.UP, deg_to_rad(angle))
 		var from := center + Vector3.UP * 0.8 - direction * 12.0
 		assert_true(_hit(from, from + direction * 24.0).is_empty(), "arène dégagée (%d°)" % angle)
+
+
+func test_vigil_circle_keeps_15_m_of_open_ground() -> void:
+	# Cercle de veille (MONDE.md, 2.4) : sur 15 m de rayon, aucun décor de la zone plus haut que
+	# 0,3 m (sommets des décors fondus : seules les pierres plates de l'anneau), aucune collision
+	# hors arena.tscn (la cloche de veille), aucune touffe d'herbe : le combat reste lisible.
+	var center := _arena.global_position
+	var too_high: Array[String] = []
+	for child: Node in _dunes.get_node(^"Geometry").get_children():
+		var batch := child as MeshInstance3D
+		if batch == null or batch.mesh == null:
+			continue
+		var xform := batch.global_transform
+		var vertices: PackedVector3Array = batch.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+		for vertex: Vector3 in vertices:
+			var p := xform * vertex
+			if _flat(p).distance_to(_flat(center)) < 15.0:
+				var above := p.y - IslandTerrain.height_at(p.x, p.z)
+				if above > 0.3 and too_high.size() < 5:
+					too_high.append("%s à %.2f m" % [p.snapped(Vector3.ONE * 0.1), above])
+	assert_true(too_high.is_empty(), "décor bas dans le cercle : %s" % ", ".join(too_high))
+	var cylinder := CylinderShape3D.new()
+	cylinder.radius = 15.0
+	cylinder.height = 2.6
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = cylinder
+	query.collision_mask = 1
+	query.transform = Transform3D(Basis.IDENTITY, center + Vector3.UP * 1.5)
+	var space := _island.get_world_3d().direct_space_state
+	var ground := _island.get_node(^"Ground")
+	for hit: Dictionary in space.intersect_shape(query, 16):
+		var collider := hit["collider"] as Node
+		if collider != ground and not _arena.is_ancestor_of(collider):
+			fail_test("collision dans le cercle : %s" % collider.get_path())
+	var tufts := 0
+	for data: PackedFloat32Array in IslandGrass.chunk_buffers().values():
+		for k in range(0, data.size(), 16):
+			if Vector2(data[k + 3], data[k + 11]).distance_to(_flat(center)) < 15.0:
+				tufts += 1
+	assert_eq(tufts, 0, "aucune touffe d'herbe dans le cercle")
