@@ -109,16 +109,16 @@ Yume-WordEnd/
 │   ├── world/                 # island.tscn, zone.gd, zones/<zone>/<zone>.tscn, props/
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
-│   ├── quests/                # quest_data.gd, quest_tracker.gd
+│   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
 │   └── ui/                    # hud, dialogue_box, inventory, main_menu, loading, touch_controls,
-│                              # arena_end, credits
+│                              # arena_end, credits, journal (Lot Q, enfant du HUD)
 ├── data/
 │   ├── attacks/*.tres         # sword_1..3, charge_wave, bite, whip, rush
 │   ├── enemies/*.tres         # timere_small, timere_normal, timere_runner, timere_big ; visuals/timere.tres
 │   ├── waves/*.json           # composition des vagues par arène
 │   ├── items/*.tres
 │   ├── npcs/*.tres
-│   ├── quests/*.tres
+│   ├── quests/*.json          # (Lot Q) quêtes en étapes, format : docs/QUETES.md
 │   ├── skins/*.tres
 │   └── dialogues/*.json
 ├── assets/
@@ -141,8 +141,8 @@ Yume-WordEnd/
 | Autoload | Rôle | Propriétaire (lot) |
 | --- | --- | --- |
 | `EventBus` | Tous les signaux transverses ; aucune logique | L0 |
-| `GameState` | PV max, inventaire, drapeaux (`flags`), état des quêtes, skin actif, meilleurs scores par arène ; sérialisable en Dictionary | L7 |
-| `SaveManager` | Écrit/lit `user://save_v1.json`, versionne le schéma, migre | L8 |
+| `GameState` | PV max, inventaire, drapeaux (`flags`), état des quêtes, (Lot Q) étape courante et compteur de chaque quête active, quête suivie, skin actif, meilleurs scores par arène ; sérialisable en Dictionary | L7 |
+| `SaveManager` | Écrit/lit `user://save_v1.json` (nom historique ; schéma v2 depuis le Lot Q), versionne le schéma, migre | L8 |
 | `SkinRegistry` | Charge `data/skins/*.tres`, expose la liste et le skin par défaut (Chtholly) | L3 |
 | `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort | L2 |
 
@@ -180,6 +180,13 @@ signal skin_changed(skin_id: StringName)                      # GameState, quand
 signal max_hp_changed(max_value: int)          # (L0) GameState, quand max_hp change → PlayerCombat
 signal save_requested()                                       # n'importe qui → SaveManager.save()
 signal game_loaded()                                          # SaveManager (new_game, load_game, import_json) → main.gd
+# (Lot Q) Quêtes en étapes — format et règles : docs/QUETES.md
+signal flag_changed(flag: StringName, value: bool)            # GameState.set_flag, si la valeur change
+signal quest_step_updated(quest_id: StringName, step_id: StringName, count: int)   # GameState.set_quest_step (QuestTracker) ; step_id &"" : plus d'étape
+signal quest_step_completed(quest_id: StringName, step_id: StringName)   # QuestTracker, étape validée (auto-sauvegarde)
+signal quest_advance_requested(quest_id: StringName, step_id: StringName)   # DialogueRunner (advance_quest) ou autre → QuestTracker ; &"" : l'étape courante
+signal trigger_entered(trigger_id: StringName)                # QuestTrigger, le joueur y entre → QuestTracker (étapes reach)
+signal tracked_quest_changed(quest_id: StringName)            # GameState, quand tracked_quest change → HUD
 
 # src/combat/health.gd — composant commun joueur / ennemis (class_name Health, extends Node)
 @export var max_hp: int = 1
@@ -248,7 +255,13 @@ func record_score(arena_id: StringName, score: int, wave: int) -> bool   # true 
 func best_score(arena_id: StringName) -> int
 func reset() -> void                                             # (L0) nouvelle partie
 func to_dict() -> Dictionary                # (L0) exactement les champs du schéma de sauvegarde, sauf version et saved_at
-func from_dict(data: Dictionary) -> void
+func from_dict(data: Dictionary) -> void     # (Lot Q) n'émet ni quest_updated ni quest_step_updated : QuestTracker relit tout sur game_loaded
+func quests() -> Dictionary                  # (L7) copie quest_id → état, dans l'ordre où chaque quête a reçu son premier état
+func quest_step(quest_id: StringName) -> StringName        # (Lot Q) étape courante enregistrée (QuestStep.id), &"" sinon
+func quest_step_count(quest_id: StringName) -> int         # (Lot Q) compteur de l'étape (ennemis vaincus, vague ou score atteints)
+func set_quest_step(quest_id: StringName, step_id: StringName, step_count: int = 0) -> void   # (Lot Q) émet quest_step_updated si quelque chose change ; &"" efface
+func quest_progress() -> Dictionary          # (Lot Q) copie quest_id → {"step", "count"}
+var tracked_quest: StringName                # (Lot Q) quête suivie par le HUD ; émet tracked_quest_changed ; &"" = la première quête active
 var skin_id: StringName      # (L0) &"" = skin par défaut ; émet skin_changed
 var max_hp: int              # (L0) 5, puis 6 (marque-page) ; émet max_hp_changed
 var zone: StringName         # (L0) tenue par WorldManager (zone_entered) ; &"" = nouvelle partie pas encore placée
@@ -260,7 +273,8 @@ func save() -> Error
 func load_game() -> Error                 # remplit GameState, émet game_loaded
 func new_game(skin_id: StringName) -> void   # (L0) GameState.reset() puis émet game_loaded
 func export_json() -> String / func import_json(text: String) -> Error   # menu, section 13 ; import émet game_loaded
-var save_path: String = "user://save_v1.json"   # (L0) les tests en utilisent un autre
+var save_path: String = "user://save_v1.json"   # (L0) les tests en utilisent un autre ; (Lot Q) le nom ne suit pas la version
+const SAVE_VERSION := 2                   # (Lot Q) v2 : quest_progress et tracked_quest ; v1 → v2 migrée (quête active : 1re étape)
 func save_on_leave() -> Error             # (M2) focus perdu, fermeture, page masquée : écriture en attente, sinon état s'il a changé
 func has_unsaved_changes(tolerance: float = 0.05) -> bool   # (M2) GameState diffère de la dernière écriture (position : au-delà de tolerance m)
 var checkpoint_interval: float = 5.0      # (M2) position écrite toutes les 5 s de jeu si le joueur a bougé de checkpoint_distance (1 m)
@@ -302,6 +316,13 @@ class_name SkinData   : id, display_name, sprite_sheet, frames_json: JSON, mesh_
 class_name NpcData    : id, display_name, skin, dialogue_path, quest_id, home_zone
 class_name QuestData  : id, title, giver_npc, required_items: Dictionary[StringName, int], required_flags: Array[StringName],
                         reward_items: Dictionary[StringName, int]
+                        # (L7) objective, reward_max_hp ; (Lot Q) lue dans data/quests/<id>.json : summary, main, auto_start,
+                        # prereq_quests, prereq_flags, prereq_not_flags, steps: Array[QuestStep], reward_flags ;
+                        # static find(id), all(), problem(data, file_id), state_of(id), npc_marker(npc_id), active_ids(),
+                        # done_ids(), shown_quest() ; status() (&"available" calculé, jamais écrit), current_step(),
+                        # current_objective(), current_progress() ; required_* : héritage L7 (quêtes construites en code)
+class_name QuestStep  : (Lot Q) id, type (talk|reach|kill|collect|arena|flag), objective, hint, npc, zone, trigger, enemy
+                        (&"any"), item, count, consume, arena, wave, score, flag, reward_items, reward_flags, reward_max_hp
 
 # (L0) Autres classes partagées
 class_name Zone            # racine d'une zone : @export display_name: String, @export safe: bool ; func zone_id() -> StringName
@@ -309,7 +330,12 @@ class_name Player          # player.gd (L1)
 class_name Pickup          # @export item_id: StringName, quantity: int, persistent: bool ; func collect(), pickup_id()
 class_name Npc             # @export data: NpcData
 class_name DialogueRunner  # start(npc: NpcData), stop(), is_running() ; un par PNJ
-class_name QuestTracker    # Node unique de game.tscn ; à &"done", retire required_items et donne reward_items
+class_name QuestTracker    # Node unique de game.tscn (seul le 1er du groupe quest_tracker agit) ; (Lot Q) fait avancer les étapes
+                           # par l'EventBus, récompenses, enchaînement (prérequis, auto_start), quête suivie ; à &"done" posé
+                           # par un autre système (complete_quest) : étapes restantes validées si les objets des étapes collect
+                           # restantes sont là, sinon remise à &"active" (completion_refused) ; signal quest_completed(quest_id)
+class_name QuestTrigger    # (Lot Q) src/quests/quest_trigger.tscn, Area3D couche 0 / masque 2 : trigger_id (défaut : nom du
+                           # nœud), radius, height, set_flag ; émet trigger_entered ; à poser dans src/npc/placements/<zone>.tscn
 class_name SheetLoader     # lecture des planches (read_sheet, build_frames, hit_frames, wave_frame, pixel_size)
 ```
 
@@ -344,20 +370,21 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/enemies/enemy_data.gd`, `wave_director.gd` | `EnemyData`, `WaveDirector` | — | — | L5 |
 | `src/items/pickup.tscn` + `pickup.gd` | `Pickup` (Area3D) | `CollisionShape3D`, `Mesh` | `interactable` ; couche 7, masque 2 | L7 |
 | `src/items/item_data.gd`, `src/quests/quest_data.gd`, `quest_tracker.gd` | `ItemData`, `QuestData`, `QuestTracker` | — | — | L7 |
-| `src/npc/npc.tscn` + `npc.gd` | `Npc` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `InteractArea` (Area3D, couche 6), `DialogueRunner` | `interactable` ; couche 1 | L6 |
+| (Lot Q) `src/quests/quest_step.gd`, `quest_trigger.tscn` + `quest_trigger.gd` | `QuestStep` (Resource), `QuestTrigger` (Area3D) | `CollisionShape3D` (cylindre propre à chaque déclencheur) | couche 0, masque 2 | Lot Q |
+| `src/npc/npc.tscn` + `npc.gd` | `Npc` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `InteractArea` (Area3D, couche 6), `DialogueRunner`, (Lot Q) `QuestMarker` (Label3D « ! » / « ? ») | `interactable` ; couche 1 | L6 |
 | `src/npc/npc_data.gd`, `dialogue_runner.gd` | `NpcData`, `DialogueRunner` | — | — | L6 |
 | `src/world/island.tscn` + `island.gd` | `Island` (Node3D) | `WorldEnvironment`, `Sun`, `OverviewCamera`, `Ground`, `Water`, `Walls`, `KillZone`, `Zones` et `Zones/<zone_id>` pour les 5 zones | — | L2 |
 | `src/world/zones/<zone_id>/<zone_id>.tscn` + `src/world/zone.gd` (`village`, `dunes`, `forest`, `beach`, `hill`) | `<zone_id>` (Node3D, `Zone`) | `Spawn` (Marker3D), `Bounds` (Area3D, masque 2), `Geometry` (CSG), `NPCs`, `Enemies`, `Pickups` ; dunes : `SpawnN`, `SpawnS`, `SpawnE`, `SpawnW`, `Arena` (`arena_id = &"dunes"`) ; village : `EnemyBarrier` (couche 8), `safe = true` | `zones` | L2 |
-| `src/npc/placements/<zone_id>.tscn` | `NPCs` (Node3D), instancié dans chaque zone | PNJ de la zone (coordonnées locales à la zone) | — | L6 |
+| `src/npc/placements/<zone_id>.tscn` | `NPCs` (Node3D), instancié dans chaque zone | PNJ de la zone et (Lot Q) déclencheurs de quête `QuestTrigger` (coordonnées locales à la zone) | — | L6 |
 | `src/enemies/placements/<zone_id>.tscn` | `Enemies` (Node3D) | ennemis libres de la zone (forêt : 4 Timeres) | — | L5 |
 | `src/items/placements/<zone_id>.tscn` | `Pickups` (Node3D) | objets uniques, nommés `<zone>_<objet>_<n>` (ex. `forest_page_1`) | — | L7 |
 | `src/ui/main_menu.tscn` + `.gd` | `MainMenu` (Control) | `%NewGameButton` | — | L10 |
-| `src/ui/hud.tscn`, `arena_end.tscn`, `credits.tscn` | `HUD`, `ArenaEnd`, `Credits` (Control) | — | — | L10 |
+| `src/ui/hud.tscn`, `arena_end.tscn`, `credits.tscn` | `HUD`, `ArenaEnd`, `Credits` (Control) | `HUD/PauseMenu` (L10), (Lot Q) `HUD/Journal` (`src/ui/journal.tscn`, PROCESS_MODE_ALWAYS) | — | L10 |
 | `src/ui/dialogue_box.tscn` | `DialogueBox` (Control) | — | — | L6 |
 | `src/ui/inventory.tscn` | `Inventory` (Control) | — | — | L7 |
 | `src/ui/loading.tscn`, `touch_controls.tscn` | `Loading`, `TouchControls` (Control) | `Loading` : `set_progress(ratio: float)` facultatif, appelé par main.gd ; (M2) `load_scene(path, budget_ms)` qui charge la partie en plusieurs images, utilisée par main.gd si présente | — | L9 |
 
-**Données présentes au Lot 0** : `data/attacks/{sword_1,sword_2,sword_3,charge_wave,bite,whip,rush}.tres` (L4) ; `data/enemies/timere_{small,normal,runner,big}.tres` et `data/enemies/visuals/timere.tres` (L5, visuel hors de `data/skins/` pour ne pas être jouable) ; `data/skins/{chtholly,bibliothecaire,forgeron,enfant}.tres` (L3 ; les trois PNJ sont des silhouettes de `tools/gen_placeholders.py`) ; `data/waves/dunes.json` (L5, sans `music` tant qu'il n'y a pas d'audio). `data/items/`, `data/quests/` (L7), `data/npcs/` et `data/dialogues/` (L6) sont à créer. Le nom de fichier d'une donnée est son `id`.
+**Données présentes au Lot 0** : `data/attacks/{sword_1,sword_2,sword_3,charge_wave,bite,whip,rush}.tres` (L4) ; `data/enemies/timere_{small,normal,runner,big}.tres` et `data/enemies/visuals/timere.tres` (L5, visuel hors de `data/skins/` pour ne pas être jouable) ; `data/skins/{chtholly,bibliothecaire,forgeron,enfant}.tres` (L3 ; les trois PNJ sont des silhouettes de `tools/gen_placeholders.py`) ; `data/waves/dunes.json` (L5, sans `music` tant qu'il n'y a pas d'audio). `data/items/`, `data/quests/` (L7), `data/npcs/` et `data/dialogues/` (L6) sont à créer. Le nom de fichier d'une donnée est son `id`. (Lot Q) Les quêtes sont des JSON (`data/quests/<id>.json`, `pages.json` remplace `pages.tres`) ; les quêtes, PNJ, dialogues et emplacements d'exemple des tests vivent dans `tests/data/`.
 
 **Couches et masques** (valeur = 2^(couche − 1)) :
 
@@ -373,11 +400,11 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | Barrière du village | 8 `enemy_barrier` (128) | — |
 | `Bounds` des zones, `KillZone` | — | 2 (2) |
 
-**Actions d'entrée** : `move_left`, `move_right`, `move_forward`, `move_back`, `run`, `jump`, `attack`, `charge`, `interact`, `lock_target`, `inventory`, `pause`, `camera_left`, `camera_right`, `camera_up`, `camera_down` (stick droit ; la souris se lit dans le code). Les contrôles tactiles (L9) émettent ces actions.
+**Actions d'entrée** : `move_left`, `move_right`, `move_forward`, `move_back`, `run`, `jump`, `attack`, `charge`, `interact`, `lock_target`, `inventory`, `journal` (Lot Q : Tab, L, bouton Select / Back), `pause`, `camera_left`, `camera_right`, `camera_up`, `camera_down` (stick droit ; la souris se lit dans le code). Les contrôles tactiles (L9) émettent ces actions.
 
 **Repères de l'île** : sol à y = 0, île de 160 × 160 m centrée sur l'origine, nord = −Z, ouest = −X. Village au centre (`Bounds` ±22 m, `Spawn` local (0, 0,2, 9)) ; dunes à x = −51 (`Spawn` côté village (24, 0,2, 0), arène de 12 m de rayon au centre, `SpawnN/S/E/W` à 13 m) ; forêt à z = −51 ; plage à z = +51 ; colline à x = +51. Les cinq zones pavent l'île : chaque pas sur l'île est dans une zone.
 
-**Tests** : stubs dans `tests/stubs/` (`visual_stub.tscn` hérite de `character_visual.tscn` et émet `frame_changed` / `animation_finished` à la demande, `player_stub.tscn` du groupe `player` avec Health et Hurtbox, `dummy.tscn` mannequin du groupe `enemies`), sans `class_name`. `tests/unit/test_contracts.gd` vérifie tout ce qui précède : un lot qui le fait échouer a cassé un contrat. Propriété des tests du Lot 0 : `test_health.gd` passe à L4, `test_game_state.gd` à L7, `test_save_roundtrip_l0.gd` à L8 (ils peuvent les adapter à leur implémentation) ; `test_contracts.gd`, `test_stubs_l0.gd`, `tests/integration/test_game_flow_l0.gd` et les stubs existants ne changent que dans une PR « contrats ». Un lot qui a besoin d'un autre stub en crée un nouveau fichier (`tests/stubs/<lot>_<nom>.gd`/`.tscn`, sans `class_name`).
+**Tests** : (Lot Q) base des tests de quêtes `tests/stubs/q_quest_test.gd`, contenu des quêtes vérifié par `tests/unit/test_quest_content.gd` ; stubs dans `tests/stubs/` (`visual_stub.tscn` hérite de `character_visual.tscn` et émet `frame_changed` / `animation_finished` à la demande, `player_stub.tscn` du groupe `player` avec Health et Hurtbox, `dummy.tscn` mannequin du groupe `enemies`), sans `class_name`. `tests/unit/test_contracts.gd` vérifie tout ce qui précède : un lot qui le fait échouer a cassé un contrat. Propriété des tests du Lot 0 : `test_health.gd` passe à L4, `test_game_state.gd` à L7, `test_save_roundtrip_l0.gd` à L8 (ils peuvent les adapter à leur implémentation) ; `test_contracts.gd`, `test_stubs_l0.gd`, `tests/integration/test_game_flow_l0.gd` et les stubs existants ne changent que dans une PR « contrats ». Un lot qui a besoin d'un autre stub en crée un nouveau fichier (`tests/stubs/<lot>_<nom>.gd`/`.tscn`, sans `class_name`).
 
 ## 4. Tranche verticale : WordEnd en 3D
 
@@ -422,7 +449,7 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 | PNJ | `src/npc/npc.tscn` | 3 PNJ dans le village (bibliothécaire, forgeron, enfant), visuels partagés avec les skins ; regardent le joueur à moins de 4 m ; `interact()` lance `DialogueRunner` |
 | Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | Boîte en bas d'écran, portrait, texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête |
 | Objets | `src/items/pickup.tscn` | Objet flottant, ramassage par `interact()` ou contact ; émet `item_collected` ; les Timeres de la forêt lâchent un fragment à leur mort |
-| Quête | `src/quests/quest_tracker.gd` | « Les Timeres ont emporté cinq pages du dernier tome dans la forêt : rapporte-les à la bibliothécaire » ; récompense : marque-page qui augmente les PV max à 6 |
+| Quête | `src/quests/quest_tracker.gd` | « Les Timeres ont emporté cinq pages du dernier tome dans la forêt : rapporte-les à la bibliothécaire » ; récompense : marque-page qui augmente les PV max à 6. (Lot Q) Quêtes en étapes écrites en JSON (`data/quests/`), journal de quêtes, marqueurs « ! » / « ? » : docs/QUETES.md |
 | HUD | `src/ui/hud.tscn` | Cœurs, jauge de charge, numéro de vague et score dans l'arène, nom de la zone à l'entrée, invite d'interaction, objectif de quête |
 | Inventaire | `src/ui/inventory.tscn` | Grille d'icônes, touche I / bouton Y, quantité, description |
 | Menu | `src/ui/main_menu.tscn` | Choix du skin (vignettes), Nouvelle partie / Continuer, crédits ; écran « Cliquer pour jouer » avant tout son |
@@ -486,13 +513,13 @@ Les vagues listées sont jouées telles quelles ; au-delà, `generator` produit 
 }
 ```
 
-`DialogueRunner` choisit le premier nœud dont la condition `if` est vraie parmi `["done", start]`. Les conditions acceptées : `flag`, `not_flag`, `count` (objet, minimum), `quest` (id, état), `best_score` (arène, minimum).
+`DialogueRunner` choisit le premier nœud dont la condition `if` est vraie parmi `["done", start]`. Les conditions acceptées : `flag`, `not_flag`, `count` (objet, minimum), `quest` (id, état), `best_score` (arène, minimum). (Lot Q) En plus : condition `quest_step` (quête, étape), état `available` calculé par les prérequis, effets `advance_quest`, `give_item`, `take_item`, `clear_flag`, clés vérifiées à la lecture ; liste complète et ordre d'évaluation : docs/QUETES.md.
 
 ### Sauvegarde (JSON, `user://save_v1.json`)
 
 ```json
 {
-  "version": 1,
+  "version": 2,
   "saved_at": "2026-10-05T10:00:00Z",
   "skin": "chtholly",
   "max_hp": 5,
@@ -502,9 +529,16 @@ Les vagues listées sont jouées telles quelles ; au-delà, `generator` produit 
   "flags": { "quest_pages_accepted": true },
   "quests": { "pages": "active" },
   "collected_pickups": ["forest_page_1", "beach_shell_2"],
-  "best_scores": { "dunes": { "score": 640, "wave": 6, "games": 4 } }
+  "best_scores": { "dunes": { "score": 640, "wave": 6, "games": 4 } },
+  "quest_progress": { "pages": { "step": "deliver", "count": 0 } },
+  "tracked_quest": "pages"
 }
 ```
+
+(Lot Q) Schéma v2 : `quest_progress` (étape courante et compteur de chaque quête active) et
+`tracked_quest` (quête suivie par le HUD). Une sauvegarde v1 est migrée au chargement : chaque
+quête active reprend à sa première étape, la première quête active est suivie. Le nom du fichier
+ne change pas.
 
 `collected_pickups` liste les `name` uniques des `pickup` déjà pris ; `best_scores` reprend ce que l'easter egg garde dans `localStorage['yn.wordend']` (meilleur score, nombre de parties), par arène.
 
@@ -671,6 +705,7 @@ Si `docker cp` échoue parce que les chemins de l'image ont changé, `docker run
 | **L8 Sauvegarde** | `SaveManager`, schéma v1 (dont `best_scores`, `max_hp`), migration, auto-save, `collected_pickups` | `src/autoload/save_manager.gd`, `tests/unit/test_save*.gd` | L0 (travaille sur `to_dict/from_dict` du stub) | Aller-retour sauvegarde/chargement identique ; fichier corrompu → nouvelle partie sans crash ; test de migration v0→v1 |
 | **L9 Export Web et site** | `export_presets.cfg` final, écran de chargement, page `web/`embed-test.html pour tester l'iframe, web/CNAME, déploiement GitHub Pages, snippet iframe WordPress, détection mobile et contrôles tactiles de base | `.github/workflows/`, `export_presets.cfg`, `web/`, `src/ui/loading*`, `src/ui/touch*` | L0 | Pages déployées à chaque fusion sur `main` ; build < 25 Mo ; iframe fonctionne sur une page de test du site |
 | **L10 Menu et HUD** | Menu principal, sélection de skin, « Cliquer pour jouer », Continuer/Nouvelle partie, crédits ; HUD (cœurs, jauge de charge, vague, score, zone, invite, objectif) ; écran de fin d'arène | `src/ui/main_menu*`, `src/ui/hud*`, `src/ui/arena_end*`, `src/ui/credits*` | L3, L8 | Choix de skin persistant ; Continuer absent sans sauvegarde ; HUD alimenté uniquement par `EventBus` |
+| **Lot Q Moteur de quêtes** (après M2, PR « contrats ») | Quêtes en étapes écrites en JSON (talk, reach, kill, collect, arena, flag), `QuestTracker` par l'EventBus, prérequis et enchaînement, déclencheurs de lieu, conditions et effets de dialogue, sauvegarde v2 migrée, quête suivie dans le HUD, journal de quêtes, marqueurs « ! » / « ? » des PNJ, `docs/QUETES.md` | `src/quests/`, `src/ui/journal*`, `data/quests/`, `tests/data/`, `docs/QUETES.md` (et, pour ce lot : `game_state.gd`, `save_manager.gd`, `dialogue_runner.gd`, `npc.gd`/`npc.tscn`, `hud*`) | M2 | Chaque type d'étape, enchaînement, récompenses, prérequis, migration v1 → v2 testés ; quête de démonstration jouée dans la vraie partie ; quête des pages inchangée ; contenu vérifié par `test_quest_content.gd` |
 
 ### Ordre et parallélisme
 

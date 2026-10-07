@@ -144,3 +144,18 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 - L10, boutons de manette pour `ui_accept` / `ui_cancel` : refusée ; le contournement
   (`src/ui/main_menu_input.gd`) est gardé et appliqué à l'inventaire (docs/DECISIONS.md,
   section « Intégration M2 »).
+
+## Lot Q — bouton tactile du journal de quêtes
+- Besoin : le journal de quêtes (action `journal` : Tab, L, bouton Select / Back) n'a pas de bouton
+  tactile ; sur téléphone, il ne s'ouvre pas.
+- Proposition : dans `src/ui/touch_controls.tscn` (L9), un bouton « Journal » à côté de « Sac »
+  (même contexte : visible aussi en pause pour le refermer), qui émet l'action `journal`.
+- En attendant : le journal s'ouvre au clavier et à la manette ; le HUD rappelle « Tab / Select »
+  quand plusieurs quêtes sont actives.
+
+## Lot Q — rappel des commandes du menu pause
+- Besoin : l'écran « Commandes » du menu pause (`src/ui/pause_menu.gd`, L10) ne cite pas le
+  journal de quêtes.
+- Proposition : une ligne `["Journal de quêtes", "Tab ou L", "Select"]` dans `CONTROLS`, après
+  « Sac ».
+- En attendant : docs/QUETES.md et le pied du journal citent ses touches.

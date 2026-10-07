@@ -810,3 +810,94 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   (écart 0,00 m) ; menu en 1,6 à 3,6 s au rechargement. Console : aucune erreur ; seuls
   avertissements, ceux du pilote logiciel (« GPU stall due to ReadPixels », SwiftShader).
   Build : 10,6 Mo compressés.
+
+## Lot Q — moteur de quêtes
+
+- **Lot Q — format JSON** : une quête est `data/quests/<id>.json` (id, title, summary, giver, main,
+  auto_start, requires, steps, rewards ; format complet : docs/QUETES.md), lue par
+  `FileAccess` + `JSON.parse` (comme les dialogues, sans erreur moteur sur un fichier invalide),
+  vérifiée entièrement (clé inconnue = erreur, clé `_…` = commentaire) puis gardée en cache
+  (`QuestData`, statique). Raison : des agents de contenu écrivent les quêtes à la main ; un
+  `.tres` avec des sous-ressources d'étapes typées est trop fragile à écrire. `QuestData` garde
+  ses champs du L7 (`required_items`, `required_flags` : héritage, quêtes construites en code).
+- **Lot Q — quête des pages** : `pages.tres` devient `pages.json`, une seule étape `collect`
+  « rapporter à » (`npc: librarian`, `consume: true`) : même objectif et même progression dans le
+  HUD (« Fragment de page : 3/5 »), même fin par `complete_quest` dans le dialogue, mêmes tests de
+  bout en bout (`test_m2_quest.gd`, `test_quest_tracker.gd`, `test_hud_quest.gd` inchangés).
+- **Lot Q — disponibilité calculée** : `&"available"` n'est jamais écrit dans GameState :
+  `QuestData.status()` le déduit des prérequis (quêtes terminées, drapeaux posés ou absents) ;
+  la condition de dialogue `quest [id, "available"]` l'utilise, `[id, ""]` garde son sens (jamais
+  commencée). Raison : `test_m2_quest` attend un état vide avant la proposition, et des
+  prérequis modifiés après publication restent cohérents (rien de périmé dans les sauvegardes).
+- **Lot Q — étapes linéaires** : une étape courante par quête active, retenue par son id et un
+  compteur (`GameState.quest_step`, `quest_step_count`) ; une étape inconnue au chargement (données
+  changées) ramène à la première. Pas de branches ni d'étapes facultatives : deux quêtes et un
+  drapeau à la place (docs/QUETES.md, « Limites »).
+- **Lot Q — validation des étapes** : talk et collect « rapporter à » à la fin d'un dialogue avec
+  le PNJ, seulement si l'étape était déjà l'étape courante au `dialogue_started` (le dialogue qui
+  démarre une quête ne valide pas sa première étape ; pas de double validation avec
+  `advance_quest`) ; reach zone aussi quand le joueur y est déjà, déclencheur redéclenché si son
+  étape commence joueur dedans ; kill compté dans la zone du joueur (`GameState.zone` : le signal
+  `enemy_killed` du L0 ne porte pas la zone de l'ennemi) ; arena : meilleure vague commencée ou
+  meilleur score de série pendant l'étape (les records d'avant ne comptent pas) ; collect sans
+  PNJ et flag par l'état de la partie, dès que l'étape commence.
+- **Lot Q — fin forcée** (`complete_quest`, ou `set_quest_state(id, &"done")` par un autre
+  système) : compatibilité L7, synchrone pendant `quest_updated` ; les étapes restantes sont
+  validées d'office (récompenses d'étape comprises) si les objets des étapes collect restantes
+  sont là (comptés dans l'ordre, ceux qu'une étape consomme ne servent plus aux suivantes), sinon
+  refus : quête remise à `&"active"` à la même étape, `completion_refused`, `push_warning`.
+- **Lot Q — file de traitement** : les signaux que le QuestTracker reçoit pendant un traitement
+  (ceux de ses propres changements : `inventory_changed` d'un objet consommé…) attendent leur
+  tour ; après chaque traitement, vérifications d'état jusqu'à stabilité (étapes validées par
+  l'état, quêtes `auto_start`), 200 tours au plus. Raison : une étape collect qui consomme ne se
+  valide jamais deux fois, et deux étapes collect de suite prennent chacune leur part.
+- **Lot Q — quête suivie** : `GameState.tracked_quest` (sauvegardé) ; une quête qui démarre devient
+  la quête suivie ; à sa fin, la première quête active (principales d'abord, puis ordre de
+  démarrage) ; le journal la change (Entrée, A, clic). Le HUD n'affiche plus que cette quête,
+  avec « +n quêtes · Tab / Select » s'il y en a d'autres (avant : toutes les quêtes actives ; une
+  seule existait).
+- **Lot Q — sauvegarde v2** : champs `quest_progress` (quest_id → {step, count}) et
+  `tracked_quest` ; `SAVE_VERSION` = 2, fichier inchangé (`user://save_v1.json`, nom historique :
+  les parties y sont) ; migration v1 → v2 (`_migrate_v1`) : chaque quête active avec données
+  reprend à sa première étape, la première quête active est suivie ; v0 passe par v1. Les
+  anciennes versions du jeu refusent une sauvegarde v2 (version future) au lieu de perdre
+  l'avancement en silence. Auto-sauvegarde sur `quest_step_completed` ; un compteur qui avance
+  (ennemi vaincu) est écrit par le point de contrôle de 5 s (pas une écriture par Timere).
+- **Lot Q — signaux** : `flag_changed` (GameState.set_flag, si la valeur change),
+  `quest_step_updated` (GameState.set_quest_step), `quest_step_completed` (QuestTracker),
+  `quest_advance_requested` (DialogueRunner → QuestTracker : le dialogue ne lit pas le tracker),
+  `trigger_entered` (QuestTrigger), `tracked_quest_changed` (GameState). Raison : chaque système
+  passe par l'EventBus ; le QuestTracker est un nœud de game.tscn, pas un autoload.
+- **Lot Q — dialogues** : condition `quest_step` [quête, étape] ; effets `take_item` (tout ou
+  rien), `give_item` (un nom, [objet, n] ou {objet: n}), `clear_flag`, `advance_quest` (id ou
+  [quête, étape] : garde) ; ordre fixe d'application `take_item`, `give_item`, `set_flag`,
+  `clear_flag`, `start_quest`, `advance_quest`, `complete_quest`, avant le texte et les choix du
+  nœud ; clés des nœuds et des choix vérifiées à la lecture (une faute de frappe rend le dialogue
+  invalide, comme une condition inconnue au L6). Les dialogues du jeu n'utilisaient que des clés
+  connues : aucun ne change.
+- **Lot Q — journal** : `src/ui/journal.tscn`, enfant `Journal` du HUD (game.tscn est figé, comme
+  `PauseMenu`) ; action `journal` : Tab, L (touches physiques libres ; Tab n'est lu qu'hors focus
+  de l'interface, le jeu n'en a pas) et bouton 4 Select / Back (libre) ; modal comme l'inventaire
+  (pause, PROCESS_MODE_ALWAYS, fermé par journal, Échap, pause, inventaire, B, clic dehors ;
+  jamais pendant un dialogue ni par-dessus une pause) ; étapes suivantes cachées (pas de
+  spoiler) ; pastilles des étapes dessinées (le ✓ n'est pas dans la police par défaut).
+- **Lot Q — marqueurs des PNJ** : `QuestMarker`, Label3D face à la caméra, doré à contour prune
+  (couleurs de `HudAccent`), police par défaut grassie, 0,45 m au-dessus de `SkinData.height_m`,
+  flotte de ±6 cm ; « ? » (étape talk, ou collect « rapporter à » objets en poche) prioritaire
+  sur « ! » (quête disponible, hors `auto_start`) ; caché pendant le dialogue du PNJ ; recalculé
+  en fin d'image sur les signaux de quête, d'inventaire et de drapeaux.
+- **Lot Q — déclencheurs** : `QuestTrigger` posé dans `src/npc/placements/<zone>.tscn` (aucun
+  nœud ajouté aux zones figées du L2) ; cylindre réglable (`radius`, `height`) propre à chaque
+  déclencheur, `trigger_id` (défaut : nom du nœud), `set_flag` facultatif ;
+  `test_npc.gd` (`test_village_placement`) ignore les déclencheurs parmi les PNJ du village.
+- **Lot Q — quêtes d'exemple** : `example_patrol` (exemple de docs/QUETES.md), `demo_tour` et
+  `demo_followup` (test d'intégration, captures), leurs PNJ, dialogues et emplacements vivent dans
+  `tests/data/` (exclus de l'export) : le moteur n'ajoute aucun contenu narratif au jeu ; la
+  direction narrative écrit l'histoire (docs/lore/PLAN.md).
+- **Lot Q — tests de contenu** : `tests/unit/test_quest_content.gd` vérifie chaque quête et ses
+  renvois (PNJ avec dialogue, objets, ennemis, zones, arènes, déclencheurs posés, prérequis sans
+  cycle, quête proposée par un dialogue ou `auto_start`, quêtes, étapes et objets nommés par les
+  dialogues, titres ≤ 40 et objectifs ≤ 70 caractères) : un agent de contenu le lance après
+  chaque quête ; `tests/stubs/q_quest_test.gd` donne les raccourcis des tests de scénario.
+- **Lot Q — captures** : `tests/integration/demo_q.tscn`, `Q_SHOT=hud|journal tools/screenshot.sh
+  res://tests/integration/demo_q.tscn build/shots/q_<vue>.png 150`.
