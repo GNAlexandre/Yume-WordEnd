@@ -1,16 +1,14 @@
 # Volume 1 — fiche de lecture (traduction Yume Novel)
 
-Lecture intégrale du texte et des 29 illustrations (Akira Kareno, illustrations ue ; traduction
-Yume Novel avec J-Garden). Termes de la traduction en *italique* ; guillemets réservés aux titres
-et à trois courtes citations.
+Lecture intégrale du texte et des 29 illustrations (traduction Yume Novel). Termes de la traduction
+en *italique* ; guillemets réservés aux titres et à trois courtes citations.
 
 ## 1. Fiche
 
 - **Période couverte** : prologue la veille de la bataille finale des *emnetwiht*, il y a environ
   527 ans. Récit principal plus de 526 ans après leur extinction, en automne, sur deux à trois
   semaines : de la rencontre de Willem et Chtholly sur l'*Île n°28* au départ des fées pour défendre
-  l'*île n°15* contre *Timere* (issue non racontée). Flash-back de la pétrification de Willem ;
-  épilogue à la surface.
+  l'*île n°15* contre *Timere* (issue non racontée).
 - **Points de vue** : troisième personne, surtout Willem ; aussi Chtholly, Nygglatho et un narrateur
   omniscient (histoire ancienne, épilogue).
 - **Structure** : titres de parties rétablis d'après le sommaire (image9.jpg), absents du texte.
@@ -54,9 +52,9 @@ lisent avec Willem un livre d'images où les *emnetwiht* sont les méchants et s
 des *Braves* (V1, chap. « Les filles de l'entrepôt »). Chtholly se souvient de la broche héritée
 d'une aînée morte. En l'absence des aînées, une petite se blesse gravement en riant ; Nygglatho
 révèle que les fées ne sont pas vraiment vivantes et ouvre la salle des armes : des *Carillons*,
-que Willem reconnaît et que seules les fées peuvent activer (V1, chap. « Entrepôt de fées »). Au
-port, sous la pluie, reviennent Chtholly épuisée et Ithea ; le lézard Limeskin confie leurs épées à
-Willem. Fiévreuse, Chtholly avoue que dans cinq jours elle devra se faire exploser contre un fragment
+que Willem reconnaît et que seules les fées peuvent activer. Au port, sous la pluie, reviennent
+Chtholly épuisée et Ithea ; un lézard géant, Limeskin, confie leurs épées à Willem (V1, chap.
+« Entrepôt de fées »). Fiévreuse, Chtholly avoue que dans cinq jours elle devra se faire exploser contre un fragment
 de *Timere* qui menace l'*île n°15*. Willem la fait taire d'un baiser sur le front, dénoue son
 *venenum* par un massage, fouille les archives toute la nuit avec Nephren et apprend ce que sont les
 fées. Au matin, un Carillon de série en main, il bat Chtholly sans effort, lui dit qu'elle peut
@@ -74,12 +72,12 @@ Limeskin parler de résolution et de résignation (V1, chap. « La fille errante
 volant »). La nuit, sur une colline, Willem règle Seniorious, dont les quarante et un talismans
 flottent autour de lui comme des étoiles ; il refuse d'épouser Chtholly mais promet un gâteau au
 beurre si elle revient (V1, chap. « Le ciel étoilé sous le ciel étoilé »). Les trois fées s'envolent
-au couchant ; Willem dit à Glick qu'elles ont un peu plus d'une chance sur deux, achète beurre et
-farine et se met à cuisiner, décidé à rester pour être accueilli (V1, chap. « Même après la fin de
-cette guerre »).
+au couchant ; Willem dit à Glick qu'elles ont un peu plus d'une chance sur deux de revenir
+indemnes, achète beurre et farine et se met à cuisiner, décidé à rester pour être accueilli (V1,
+chap. « Même après la fin de cette guerre »).
 
-**Épilogue.** Sur la surface grise, la Première Bête hurle en silence à l'emplacement de la ville et
-de l'orphelinat de Willem (V1, épilogue).
+**Épilogue.** Sur la surface grise, la Première Bête hurle en silence là où se trouvaient, devine-t-on,
+la ville et l'orphelinat de Willem (V1, épilogue).
 
 ## 3. Lieux
 
@@ -87,25 +85,28 @@ de l'orphelinat de Willem (V1, épilogue).
   géantes qui dérivent au vent dans un ciel bleu profond. Numérotation en spirale depuis l'*Île n°1*
   (centre) ; jusqu'au n°40, îles proches reliées par chaînes et ponts, commerçantes ; au-delà du
   n°70, petites, isolées, hors des lignes publiques. Dessous, une mer de nuages, puis la surface. Les
-  ports occupent un bord d'île plaqué de métal (V1, chap. « L'Homme sans Marque »).
-- **Île n°28** : coin sud-ouest, la plus rude ; quartier de *sang-mêlés*, décadent, hostile aux sans
-  traits. Avenues éclairées jour et nuit par des *cristaux lumineux*, brume lavande, boggarts
-  bonimenteurs ; ruelles muettes juste derrière ; cloches au quartier du port ; cafétéria bon marché
-  (V1, chap. « L'Homme sans Marque »).
+  ports occupent un bord d'île plaqué de métal (V1, chap. « Le chat qui filait et la jeune fille »,
+  « L'Homme sans Marque »).
+- **Île n°28** : la plus rude du coin sud-ouest ; quartier de *sang-mêlés*, décadent, hostile aux
+  sans traits. Avenues éclairées jour et nuit par des *cristaux lumineux*, brume lavande, boggarts
+  bonimenteurs ; cloches au quartier du port ; cafétéria bon marché
+  (V1, chap. « Le chat qui filait et la jeune fille », « L'Homme sans Marque »).
   - **Market Medley** (variante : *Marché Paumé*) : bazar mensuel devenu labyrinthe à force
     d'extensions ; auvents, clôtures, rideaux, routes qui débouchent sur des toits, sol de plaques
-    de métal, poulailler ; une tour de débris aux rambardes bricolées offre la vue sur toute la ville
-    ; un *golem des services publics* renseigne (V1, chap. « Le chat qui filait et la jeune fille »).
+    de métal, poulailler ; une tour de débris aux rambardes bricolées offre la vue sur toute la
+    ville ; un *golem des services publics* renseigne (V1, chap. « Le chat qui filait et la jeune
+    fille »).
   - **Rue des Échoppes d'Étain, n°7, à l'ouest** : rue pavée étroite d'échoppes de pots et de
     couteaux ; chapellerie voisine (même réf.).
 - **Île n°68** : isolée, sans escale publique, couverte d'une immense forêt, fragment de la nature
-  d'autrefois ; vents violents la nuit (même réf.).
+  d'autrefois ; vents violents la nuit (V1, chap. « L'Homme sans Marque »).
   - **Port** : au bord du vide, vue sur les nuages et la surface ; panneau usé à flèches rouges
-    (centre-ville à 2 000 *marmer*, *Entrepôt n°4* à 500).
+    (centre-ville à 2 000 *marmer*, *Entrepôt n°4* à 500) (même réf. et chap. « Entrepôt de
+    fées »).
   - **Sentier et marais** : sentier étroit dans une forêt noire sans lampadaire, éclairé par les
     étoiles ; marécage qui sent l'eau, la terre et le vent.
   - **La ville** : des centaines de maisons de pierre sur une pente douce, paisible ; snack-bar tenu
-    par un lycanthrope ; on y redoute l'entrepôt (V1, chap. « Directeur en carton »).
+    par un jeune lycanthrope à tête de chien (V1, chap. « Directeur en carton »).
   - **Entrepôt n°4 de l'Alliance d'Orlandry** (aussi *entrepôt des fées*, *maison des fées*) : un
     dortoir dans la forêt. Parquet usé, murs plâtrés, petites chambres alignées, plannings de
     corvées et écriteaux. Pièces : salon de Nygglatho ; chambre nue du responsable (lit, armoire,
@@ -120,8 +121,8 @@ de l'orphelinat de Willem (V1, épilogue).
   - **Colline de la périphérie** : herbe, vent calme, air limpide, lumière d'étoiles (V1, chap. « Le
     ciel étoilé sous le ciel étoilé »).
 - **Autres îles** : *n°53*, communauté reptilienne, escale de dirigeable la plus proche de l'île 68
-  (passeurs) ; *n°15*, cible du grand fragment ; *n°47*, sombrée cet été ; *n°66*, où un dirigeable
-  récupère Chtholly (V1, chap. « L'Homme sans Marque »).
+  (passeurs) ; *n°15*, cible du grand fragment ; *n°47*, sombrée cet été (V1, chap. « L'Homme sans
+  Marque », « Les valeureux et leurs successeurs »).
 - **Le Barocupot** : dirigeable de la Garde Ailée ; salle du conseil de guerre exiguë au deuxième
   pont (V1, chap. « La fille errante et le lézard volant »).
 - **La surface** : d'en haut, une poussière grise et boueuse a effacé le vert, le bleu et le jaune ;
@@ -199,52 +200,55 @@ métaphores détournées, culte du guerrier, ne ment jamais ; sert un thé brûl
 « La fille errante et le lézard volant »).
 
 **Glick** — boggart, vieil ami de Willem, *récupérateur* ; rationnel, chaleureux, langage cru ; leur
-réplique fétiche : « Le café ici est un peu salé » (V1, chap. « L'Homme sans Marque »). Le cuisinier
-du snack-bar est un jeune lycanthrope à tête de chien, fourrure châtaine.
+réplique fétiche : « Le café ici est un peu salé » (V1, chap. « L'Homme sans Marque »).
 
 **Figures du passé** — **Almaria**, la *fille* de Willem sans lien de sang, aînée de l'orphelinat,
 cuisinière (ragoût, gâteau au beurre) ; **le maître**, directeur de l'orphelinat, épéiste génial et
-ivrogne, qui prétendait avoir été Legal Brave ; **Lillia**, **Suowong**, **Emi**, compagnons
-auxquels Willem pense en se pétrifiant ; **Ted**, qui aidait à l'orphelinat ; **la 20e Legal
-Brave**, porteuse de Seniorious, que Willem détestait ; **Elq Hrqstn**, *Visiteur*, ennemie de
-l'*Église de la Lumière Exaltée*. Mentions : Anala et Gurgula, récupérateurs morts ; l'ancien maire
-de l'île 28, un *imp* (V1, prologue ; chap. « Ce jour, il y a fort, fort longtemps »).
+ivrogne, qui prétendait avoir été Legal Brave ; **Lillia**, **Suowong**, **Emi**, proches auxquels
+Willem pense en se pétrifiant ; **Ted**, qui aidait à l'orphelinat ; **la 20e Legal Brave**,
+porteuse de Seniorious, que Willem détestait ; **Elq Hrqstn**, *Visiteur*, ennemie de l'*Église de
+la Lumière Exaltée*. Mentions : Anala et Gurgula, récupérateurs morts ; l'ancien maire de l'île 28,
+un *imp* (V1, prologue ; chap. « Directeur en carton », « Entrepôt de fées », « Ce jour, il y a fort,
+fort longtemps »).
 
 ## 5. Bêtes et créatures
 
 - **Les Dix-Sept Bêtes** (aussi *les Bêtes*) : dix-sept formes d'irrationalité surgies il y a 527 ans
-  d'un château de l'Empire Sacré, d'origine inconnue. Deux pays disparaissent en quelques jours,
-  cinq pays, quatre îles et deux océans en une semaine ; en moins d'un an, les emnetwiht, puis
-  elfes, *morians* et dragons ont péri. Aucune ne vole : d'où le refuge dans le ciel. Chacune est
-  unique en son espèce et ne communique, par télépathie, qu'avec ses semblables (V1, chap. « Le chat
-  qui filait et la jeune fille » ; épilogue).
+  d'un château de l'Empire Sacré, d'origine inconnue. Deux pays disparaissent en quelques jours ;
+  en moins d'un an, les emnetwiht, puis elfes, *morians* et dragons ont péri. Aucune ne vole : d'où le refuge dans le ciel. Chacune est
+  d'une espèce différente et leur télépathie n'atteint que leurs semblables (V1, chap. « Le chat qui
+  filait et la jeune fille », « Les valeureux et leurs successeurs » ; épilogue).
 - **Timere, la Bête numéro Six** (aussi *Six*) : seule menace pour les îles. Son corps principal
   reste à la surface ; elle se déchire en millions de fragments que le vent emporte. Un fragment
   hissé par hasard sur une île grandit très vite et absorbe l'île en six à huit heures. La
-  *précognition tactique* le détecte d'autant plus tôt qu'il est gros ; l'artillerie suffit souvent,
-  sinon on envoie les fées. Une fée armée d'Insania a affronté trois morceaux de Six à la fois. Le
-  fragment visant l'île n°15, repéré six mois plus tôt, exige une autodestruction. **Son apparence
+  *précognition tactique* le détecte d'autant plus tôt qu'il est gros, ce qui laisse le temps de se
+  préparer ; contre les plus gros, la puissance de feu ordinaire ne suffit pas et l'on envoie les
+  fées. Une fée armée d'Insania a combattu trois morceaux de Six. Le fragment visant l'île n°15,
+  repéré six mois plus tôt, exige une autodestruction. **Son apparence
   n'est jamais décrite** (V1, chap. « Les valeureux et leurs successeurs »).
 - **Trois** : a dévoré à la surface l'équipe de récupérateurs d'Anala ; il existe aussi un *nid de
   Six* (V1, chap. « L'Homme sans Marque »).
 - **La Première Bête**, aussi *le Chanteur* : seule dans un désert gris, elle hurle sans fin vers la
   Lune un chant que l'air ne porte pas et que personne ne peut entendre (V1, épilogue).
 - **Combattre** : en dernier recours, l'autodestruction creuse un cratère et ne laisse que le
-  Carillon ; selon Willem, un Carillon bien employé gagne en force face à un ennemi plus fort.
+  Carillon ; selon Willem, un Carillon bien employé gagne en force face à un ennemi plus fort (V1,
+  chap. « Entrepôt de fées », « Les valeureux et leurs successeurs »).
 - **Autres** : Visiteurs, dragons, démons, ogres, elfes noirs ; chat noir voleur, crapaud, taureau,
   poules ; Willem craint loups et ours dans la forêt de l'île 68.
 
 ## 6. Système du monde
 
 - **Peuples** : les *sans traits*, sans cornes, crocs ni écailles, sont des parias car ils ressemblent
-  aux emnetwiht ; *reptiliens*/*lézards* (tailles très variables, très forts, parler sifflant) ; *boggarts* (nains du folklore, commerçants) ; *ailuranthropes*
-  (félins) ; *lycanthropes* (canins) ; *orcs* ; *golems* ; *trolls* et *imps*, des ogres. Loi
-  commune : tuer un être intelligent est un crime (V1, chap. « Le chat qui filait et la jeune
-  fille », « Directeur en carton »).
+  aux emnetwiht ; *reptiliens*/*lézards* (tailles très variables, très forts, parler sifflant) ;
+  *boggarts* (nains du folklore, commerçants) ; *ailuranthropes* (félins) ; *lycanthropes*
+  (canins) ; *orcs* ; *golems* ; *trolls* et *imps*, des ogres. Loi commune : tuer un être
+  intelligent est un crime (V1, chap. « Le chat qui filait et la jeune fille », « Directeur en
+  carton »).
 - **Emnetwiht** : race sans don particulier face aux géants, elfes, nains, orcs et dragons, mais
   maîtresse du monde grâce aux *Aventuriers*, à l'*Alliance*, aux talismans produits en masse, aux
-  *Braves* et aux Carillons. Les livres d'images
-  en font des tyrans qui auraient invoqué les Bêtes ; eux se disaient simplement des gens.
+  *Braves* et aux Carillons. Les livres d'images en font des tyrans qui auraient invoqué les Bêtes ;
+  eux se disaient simplement des gens (V1, chap. « Entrepôt de fées », « Celui qui ne devrait pas
+  être en vie »).
 - **Fées** (variantes : *leprechauns*, *lutins*, *farfadets*) : âmes d'enfants morts trop jeunes pour
   comprendre leur mort ; toutes de sexe féminin, pas vraiment vivantes, nées dans une forêt.
   Cheveux de couleurs vives, sinon semblables aux emnetwiht, ce qui leur permet d'activer leurs
@@ -252,7 +256,7 @@ de l'île 28, un *imp* (V1, prologue ; chap. « Ce jour, il y a fort, fort longt
   Mûre et compatible vers 13-15 ans, une fée ajoute à son nom celui de son épée. Elles ne comptent
   pas comme soldats. L'autodestruction volontaire par surcharge de venenum se dit « ouvrir les
   portes du village des fées ». Cinq guerrières compatibles en service (V1, chap. « Entrepôt de
-  fées », « Les valeureux et leurs successeurs »).
+  fées », « Les valeureux et leurs successeurs », « La femme forte et robotique »).
 - **Armes antiques** ou **Carillons** : épées hautes comme un homme, à deux mains, faites de
   talismans de la taille d'un poing assemblés comme un puzzle par des *veines d'enchantement* autour
   d'un cristal ; lame d'aspect fissuré. Le venenum versé par la poignée les éveille, la lumière filtre
@@ -265,29 +269,32 @@ de l'île 28, un *imp* (V1, prologue ; chap. « Ce jour, il y a fort, fort longt
   ciel étoilé »).
 - **Talismans** : sorts gravés sur papier, céramique ou métal, rapportés de la surface, collectionnés
   par les riches ; anciens grands talismans : *Dispersion*, *Apaisement des maladies*, *Protection
-  du destin*, *Compréhension du Langage*, grâce auquel Willem parle la langue actuelle.
+  du destin*, *Compréhension du Langage*, grâce auquel Willem parle la langue actuelle (V1, chap.
+  « Le ciel étoilé sous le ciel étoilé »).
 - **Magie** : le *venenum* (variante : *venin*) s'allume comme un feu dans le cœur, lentement, et
   brûle le corps ; la force vitale en fixe la limite, selon la race. Il aiguise les sens (couleurs
   effacées, temps ralenti). L'abus cause une intoxication avec forte fièvre. La *Vue* permet de voir
-  la magie. Principe magique : ressembler, c'est partager une nature (V1, chap. « Le chat qui filait
-  et la jeune fille », « Les valeureux et leurs successeurs »).
+  la magie. Principe magique : ressembler, c'est partager une nature (V1, chap. « Entrepôt de
+  fées », « Les valeureux et leurs successeurs »).
 - **Braves** (époque emnetwiht) : élite convertissant karma et destin en puissance ; le *Legal Brave*
-  (variante : *Brave légal*) choisi par l'Église de la Lumière Exaltée, puis les *Quasi Braves*.
+  (variante : *Brave légal*) choisi par l'Église de la Lumière Exaltée, puis les *Quasi Braves* (V1,
+  prologue ; chap. « Entrepôt de fées »).
 - **Institutions** : la *Garde Ailée* (variante : *Garde ailée*), armée publique contre les Bêtes ;
   l'*Alliance d'Orlandry*, soutien de la Garde, propriétaire réelle des armes et de l'entrepôt ; le
   *parlement central* ; la compagnie d'orcs *Blackfur* ; les *récupérateurs*, chasseurs de trésors
   de la surface, qui meurent souvent le premier jour (V1, chap. « L'Homme sans Marque »).
 - **Technologie** : *dirigeables* publics, de passeurs ou militaires (deux pales de rotor, *chaudière
   enchantée*, bras d'ancrage) ; *cristaux lumineux*, *fourneau de cristal*, *cristal de
-  communication* (image et voix) ; horloges à cloches.
-- **Vie courante** : monnaie, le *bradal* ; distance, le *marmer* ; petits boulots mal payés pour les
-  sans traits ; à l'entrepôt, corvées affichées, cuisine tournante, ballon, lectures.
+  communication* (image et voix) ; horloges à cloches (V1, chap. « Entrepôt de fées », « La femme
+  forte et robotique »).
+- **Vie courante** : monnaie, le *bradal* ; distance, le *marmer* ; à l'entrepôt, corvées affichées,
+  cuisine tournante, ballon, lectures.
 
 ## 7. Objets et éléments concrets
 
 - **Tenues et outils** : broche d'argent transmise de fée en fée ; chapeau et manteau gris souris ;
   manteau à capuche de Willem ; épée de bois ; Seniorious (lame blanc argenté) enveloppée d'étoffe
-  blanche ; clé de la salle des armes ; trousse de secours ; ballon.
+  blanche ; clé de la salle des armes.
 - **Talismans dérisoires de Seniorious** : ne pas se brûler la langue, trouver le nord, éviter les
   cauchemars de malade, imiter un miaulement, ne pas se couper les ongles trop court, faire pile six
   fois sur dix (V1, chap. « Le ciel étoilé sous le ciel étoilé »).
@@ -296,8 +303,8 @@ de l'île 28, un *imp* (V1, prologue ; chap. « Ce jour, il y a fort, fort longt
 - **Nourriture** : ragoût épicé aux pommes de terre ; gâteau au beurre ; caramel et *dessert spécial*
   (œufs, sucre, lait, crème, baies, gélatine d'os de poulet) ; plateau du snack-bar (frites, lard
   épais, petit pain, soupe) ; café salé ; café sirupeux de Nephren ; sandwich de pigeonneau à la
-  moutarde ; thé curatif des lézards (V1, chap. « Directeur en carton », « Les valeureux et leurs
-  successeurs »).
+  moutarde ; thé curatif des lézards (V1, prologue ; chap. « Directeur en carton », « Les valeureux
+  et leurs successeurs »).
 
 ## 8. Ton et thèmes
 
@@ -306,8 +313,8 @@ de l'île 28, un *imp* (V1, prologue ; chap. « Ce jour, il y a fort, fort longt
 - Humour constant : avalanches de fillettes, menaces cannibales de Nygglatho, taquineries d'Ithea,
   rappels à l'ordre de Nephren, jargon de Limeskin, malentendus amoureux.
 - Motifs : la promesse du gâteau au beurre, du prologue à la dernière page ; rentrer à la maison ;
-  la broche transmise ; le chapeau qui cache ; le ciel ; résolution et résignation ; être une arme ou
-  une fille ; rester dans la mémoire de quelqu'un.
+  la broche transmise ; résolution et résignation ; être une arme ou une fille ; rester dans la
+  mémoire de quelqu'un.
 - **Dialogues** : Willem plaisante pour esquiver et ne fait jamais de discours héroïque ; Chtholly,
   fière, sèche puis rougissante, ne dit jamais franchement ce qu'elle ressent ; Ithea joue
   l'entremetteuse ; Nephren répond en deux mots ; Nygglatho menace gentiment de manger ; Limeskin
@@ -319,21 +326,20 @@ de l'île 28, un *imp* (V1, prologue ; chap. « Ce jour, il y a fort, fort longt
 1. Il y a environ 527 ans : apparition des Bêtes ; veille de la bataille finale ; Willem pétrifié.
 2. Il y a 526 ans : extinction des emnetwiht, exode vers le ciel ; puis des siècles d'assauts de
    Timere repoussés.
-3. Il y a 15 ans : naissance de Chtholly (Ithea un an après, Nephren deux).
-4. Printemps de l'an dernier : des récupérateurs trouvent Willem ; un mois d'hospice ; réveil, soins
+3. Printemps de l'an dernier : des récupérateurs trouvent Willem ; un mois d'hospice ; réveil, soins
    de Nygglatho, qui rejoint ensuite l'île 68 ; Willem passe dix-huit mois sur l'île 28.
-5. Il y a six mois : le grand fragment visant l'île n°15 est prédit ; Chtholly est désignée. Cet
+4. Il y a six mois : le grand fragment visant l'île n°15 est prédit ; Chtholly est désignée. Cet
    été : chute de l'île n°47.
-6. Jour 0, en automne : rencontre au Market Medley, offre de Glick ; plus tard, arrivée de nuit sur
+5. Jour 0, en automne : rencontre au Market Medley, offre de Glick ; plus tard, arrivée de nuit sur
    l'île 68.
-7. Trois jours après : dessert spécial ; il reste un peu plus de dix jours à Chtholly ; une semaine
+6. Trois jours après : dessert spécial ; il reste un peu plus de dix jours à Chtholly ; une semaine
    plus tard : livre d'images.
-8. Les aînées partent combattre quelques jours ; jour de pluie : blessure, salle des armes, retour ;
+7. Les aînées partent combattre quelques jours ; jour de pluie : blessure, salle des armes, retour ;
    la nuit (J−5), archives.
-9. J−4 : duel, effondrement de Willem ; départ fixé dans trois jours, à la huitième cloche ; fugue de
+8. J−4 : duel, effondrement de Willem ; départ fixé dans trois jours, à la huitième cloche ; fugue de
    Chtholly ; la nuit, réglage de Seniorious.
-10. J−1, au couchant : départ des trois fées ; premier gâteau au beurre. Le lendemain commence la
-    bataille de l'île n°15, prévue sur plusieurs jours.
+9. J−1, au couchant : départ des trois fées ; premier gâteau au beurre. Le lendemain commence la
+   bataille de l'île n°15, prévue sur plusieurs jours.
 
 ## 10. Matière à jeu
 
@@ -351,12 +357,11 @@ de l'île 28, un *imp* (V1, prologue ; chap. « Ce jour, il y a fort, fort longt
 - Réglage de Seniorious : jeu de lumières et de notes avec 41 talismans flottants (V1, chap. « Le
   ciel étoilé sous le ciel étoilé »).
 - Défense d'île : un fragment de Timere annoncé par la précognition grandit tant qu'il vit ; compte à
-  rebours avant l'absorption de l'île.
+  rebours avant l'absorption de l'île (V1, chap. « Les valeureux et leurs successeurs »).
 - Voyages en dirigeable et passeur ; thé chez Limeskin sur le Barocupot ; talismans dérisoires à
   collectionner comme bonus passifs comiques.
-- PNJ : Nygglatho (soins, repas, quêtes), Nephren (salle de lecture), Ithea (rumeurs), Pannibal,
-  Collon, Lakhesh (courses), Limeskin (missions), Glick (récits), cuisinier lycanthrope, golem
-  (orientation).
+- PNJ : Nygglatho (soins, repas, quêtes), Nephren (salle de lecture), Ithea (rumeurs), les petites
+  (courses), Limeskin (missions), Glick (récits), cuisinier lycanthrope, golem (orientation).
 
 **Idées originales**
 - Village actuel → ville de pierre de l'île 68, entrepôt en forêt et port (original).
@@ -424,7 +429,9 @@ Références de palette et de silhouette ; les sprites du jeu restent des dessin
   nommées ; Nephren ne descend pas du dirigeable avec les autres.
 - L'adversaire vaincu par Willem n'est pas nommé ; rien ne dit que c'est Elq Hrqstn. Lillia n'est
   pas explicitement la 20e Legal Brave. *Le Chanteur* : surnom ou nom de la Première Bête ?
+- Le reptilien du marché, le lézard du port et le commandant Limeskin sont presque sûrement le même
+  personnage, mais le texte ne le dit qu'implicitement.
 - SPOILER interprétatif : un même séparateur, les lettres P-A-P-A, précède la voix que Willem prend
-  pour celle d'Almaria et suit le hurlement de la Première Bête, postée sur son ancien orphelinat ;
-  le tome suggère un lien sans le confirmer.
+  pour celle d'Almaria et suit le hurlement de la Première Bête, postée semble-t-il sur son ancien
+  orphelinat ; le tome suggère un lien sans le confirmer.
 - Les ailes des fées sont citées mais jamais décrites.
