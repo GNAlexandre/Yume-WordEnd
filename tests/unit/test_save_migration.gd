@@ -1,6 +1,7 @@
 extends "res://tests/stubs/l8_save_test.gd"
-## SaveManager, versions (L8) : migration du format v0 (sans version, scores à plat, dont le
-## localStorage['yn.wordend'] de l'easter egg) vers v1, refus propre d'une version future.
+## SaveManager, versions (L8, puis Lot Q) : migration du format v0 (sans version, scores à plat,
+## dont le localStorage['yn.wordend'] de l'easter egg) vers v1 puis v2, migration v1 → v2
+## (avancement des quêtes en étapes), refus propre d'une version future.
 
 ## Sauvegarde v0 : pas de version ni de best_scores, le score des dunes à plat.
 const V0_SAVE := """{
@@ -20,7 +21,22 @@ const V0_SAVE := """{
 const EASTER_EGG := (
 	'{"meilleur": 410, "parties": 12, "maj": "2026-09-30", ' + '"volume": 0.5, "muet": false}'
 )
-const FUTURE_SAVE := '{"version": 2, "saved_at": "2027-01-01T00:00:00Z", "skin": "enfant"}'
+const FUTURE_SAVE := '{"version": 99, "saved_at": "2027-01-01T00:00:00Z", "skin": "enfant"}'
+## Sauvegarde v1 (jalon M2) : la quête des pages en cours, trois pages en poche, une quête
+## active sans données et une quête terminée.
+const V1_SAVE := """{
+	"version": 1,
+	"saved_at": "2026-10-06T10:00:00Z",
+	"skin": "chtholly",
+	"max_hp": 5,
+	"position": [-3.0, 0.2, 6.0],
+	"zone": "village",
+	"inventory": {"page_fragment": 3},
+	"flags": {"quest_pages_accepted": true},
+	"quests": {"pages": "active", "lost_quest": "active", "old": "done"},
+	"collected_pickups": ["forest_page_1"],
+	"best_scores": {"dunes": {"score": 120, "wave": 2, "games": 1}}
+}"""
 
 
 func test_v0_file_is_migrated_to_v1() -> void:
@@ -41,17 +57,17 @@ func test_v0_file_is_migrated_to_v1() -> void:
 	assert_false(data.has("best") or data.has("games"), "plus de champ à plat")
 
 
-func test_migrated_save_is_rewritten_as_v1() -> void:
+func test_migrated_save_is_rewritten_at_the_current_version() -> void:
 	write_save_text(V0_SAVE)
 	assert_eq(SaveManager.load_game(), OK)
 	assert_true(SaveManager.is_autosave_pending(), "réécriture demandée")
 	assert_eq(SaveManager.flush(), OK)
 	var data := read_save()
-	assert_eq(data["version"], 1.0)
+	assert_eq(data["version"], float(SaveManager.SAVE_VERSION), "v0 → v1 → v2")
 	assert_true(data.has("saved_at"))
 	assert_eq(data["best_scores"], {"dunes": {"score": 640.0, "wave": 6.0, "games": 4.0}})
 	assert_false(data.has("best") or data.has("wave") or data.has("games"))
-	assert_eq(SaveManager.load_game(), OK, "relue en v1")
+	assert_eq(SaveManager.load_game(), OK, "relue en v2")
 	assert_eq(GameState.best_score(&"dunes"), 640)
 
 
@@ -86,7 +102,7 @@ func test_future_version_is_refused_by_load() -> void:
 	GameState.add_item(&"page_fragment")
 	watch_signals(EventBus)
 	assert_eq(SaveManager.load_game(), ERR_INVALID_DATA)
-	assert_push_warning("version 2")
+	assert_push_warning("version 99")
 	assert_string_contains(SaveManager.last_error, "plus récente")
 	assert_signal_not_emitted(EventBus, "game_loaded")
 	assert_eq(GameState.count(&"page_fragment"), 1, "GameState inchangé")
@@ -103,3 +119,62 @@ func test_future_version_is_refused_by_import() -> void:
 	assert_signal_not_emitted(EventBus, "game_loaded")
 	assert_eq(GameState.count(&"page_fragment"), 1)
 	assert_eq(GameState.skin_id, &"")
+
+
+# --- v1 → v2 (Lot Q : quêtes en étapes) --------------------------------------------------------
+
+
+func test_v1_file_is_migrated_to_v2() -> void:
+	write_save_text(V1_SAVE)
+	watch_signals(EventBus)
+	assert_eq(SaveManager.load_game(), OK)
+	assert_signal_emitted(EventBus, "game_loaded")
+	assert_eq(GameState.quest_state(&"pages"), &"active", "états v1 gardés")
+	assert_eq(GameState.quest_state(&"old"), &"done")
+	assert_eq(GameState.quest_step(&"pages"), &"deliver", "quête active : sa première étape")
+	assert_eq(GameState.quest_step_count(&"pages"), 0)
+	assert_eq(GameState.quest_step(&"lost_quest"), &"", "quête sans données : pas d'étape")
+	assert_eq(GameState.quest_step(&"old"), &"", "quête terminée : pas d'étape")
+	assert_eq(GameState.tracked_quest, &"pages", "première quête active suivie")
+	assert_eq(GameState.count(&"page_fragment"), 3, "le reste est inchangé")
+	assert_eq(GameState.best_score(&"dunes"), 120)
+	assert_true(SaveManager.is_autosave_pending(), "réécriture demandée")
+	assert_eq(SaveManager.flush(), OK)
+	var data := read_save()
+	assert_eq(data["version"], 2.0, "réécrite en v2")
+	assert_eq(data["quest_progress"], {"pages": {"step": "deliver", "count": 0.0}})
+	assert_eq(data["tracked_quest"], "pages")
+	assert_eq(data["quests"], {"pages": "active", "lost_quest": "active", "old": "done"})
+
+
+func test_v0_is_migrated_through_v1_to_v2() -> void:
+	write_save_text(V0_SAVE)
+	assert_eq(SaveManager.load_game(), OK)
+	assert_eq(GameState.quest_step(&"pages"), &"deliver", "v0 → v1 → v2 : étape des pages")
+	assert_eq(GameState.tracked_quest, &"pages")
+	assert_eq(GameState.best_score(&"dunes"), 640, "migration v0 toujours faite")
+
+
+func test_v2_progress_round_trip() -> void:
+	GameState.set_quest_state(&"pages", &"active")
+	GameState.set_quest_step(&"pages", &"deliver", 4)
+	GameState.tracked_quest = &"pages"
+	assert_eq(SaveManager.save(), OK)
+	GameState.reset()
+	assert_eq(SaveManager.load_game(), OK)
+	assert_eq(GameState.quest_step(&"pages"), &"deliver")
+	assert_eq(GameState.quest_step_count(&"pages"), 4, "compteur gardé")
+	assert_eq(GameState.tracked_quest, &"pages")
+
+
+func test_invalid_v2_fields_are_refused() -> void:
+	GameState.add_item(&"page_fragment")
+	for text: String in [
+		'{"version": 2, "quest_progress": {"pages": "deliver"}}',
+		'{"version": 2, "quest_progress": {"pages": {"step": 3}}}',
+		'{"version": 2, "quest_progress": {"pages": {"step": "deliver", "count": -1}}}',
+		'{"version": 2, "tracked_quest": 3}',
+		'{"version": 1, "quests": {"pages": 1}}',
+	]:
+		assert_eq(SaveManager.import_json(text), ERR_INVALID_DATA, text)
+	assert_eq(GameState.count(&"page_fragment"), 1, "GameState inchangé")
