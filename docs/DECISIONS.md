@@ -1153,3 +1153,87 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   l'histoire. » hors champ, noms débordant des vignettes. La vignette choisie (celle de la
   sauvegarde) est amenée en vue à l'ouverture ; le clavier et la manette font défiler
   (`follow_focus`). Les skins eux-mêmes ne changent pas. `test_menu_story.gd`.
+- **Socle HD-2D — changement de direction** (demande de l'utilisateur, PR « contrats ») : la
+  direction artistique passe de « au minimum proche de *Breath of the Wild* » (lignes « Monde —
+  direction artistique » et suivantes, désormais historiques) à un HD-2D à la manière
+  d'*Octopath Traveler* : personnages en sprites, décor en relief fait uniquement d'images, caméra
+  fixe inclinée, flou de profondeur, lueur, lumière chaude. Cahier des charges des images :
+  docs/ASSETS_HD2D.md (remplace docs/ASSETS_3D.md et docs/TEXTURES_PEINTES.md). Tout le code de
+  jeu, les données, les quêtes, l'interface, les ids et le tracé de l'île sont gardés.
+- **Socle HD-2D — purge de la 3D** : retirés (avec leurs .uid, .import et lignes de crédits) les
+  modèles et leur outil (`assets/models/`, `docs/sprites/`, `tools/sukasuka3d/`, les sept skins
+  `sukasuka_*`, `test_sukasuka_models.gd`), la variante mesh de `CharacterVisual` et
+  `SkinData.mesh_scene`, le décor calculé (maillages des décors, herbe en MultiMesh et
+  `grass.gd`, shaders cel / herbe / décors / ciel, matériaux toon et glow, `assets/textures/`),
+  la caméra en orbite (`SpringArm3D`), les démos et tests du seul décor calculé. Ithea et Nephren
+  restent des PNJ donneurs de quête ; leur skin jouable revient avec leur planche HD-2D (H6).
+  Nopht et Rhantolk, jouables, ont une planche de remplacement générée (`gen_placeholders.py`).
+- **Socle HD-2D — échelle** : 96 px d'image par mètre partout (Chtholly 1,5 m = 144 px, la
+  planche de l'easter egg), 48 px/m pour le très lointain (îles lointaines à 12 px/m, aéronefs et
+  rochers flottants à 48 px/m : vus de loin, moitié moins de mémoire). Filtrage au plus proche
+  voisin, sans mipmaps sur les panneaux.
+- **Socle HD-2D — décor en panneaux** : `DecorPanel` (racine d'un décor debout) se tourne
+  toujours vers le sud (la caméra regarde le nord), sa collision garde la rotation du nœud ;
+  ombre au sol = quad d'une image de tache (`assets/hd2d/fx/shadow.png`), pas d'ombre du soleil
+  (ombres du DirectionalLight3D coupées : coûteuses en WebGL 2 et fausses sur un panneau).
+  Les décors bas qui se traversent (liste `NON_BLOCKING` de `test_hd2d_decor.gd` : herbes,
+  fleurs, buissons, champignons, roseaux, potager, pierres de l'anneau, cloche, banc, ballon,
+  lanterne tombée, aéronefs et îles du fond) n'ont pas de collision ; les autres ont leur
+  `Collision` sur la couche 1.
+- **Socle HD-2D — bâtiments** : `Building` = volume simple (murs, toit à deux pans) couvert de
+  matières en tuiles de 2 m (`assets/hd2d/buildings/materials/`) et une façade peinte posée sur
+  la face sud ; l'image de façade porte fenêtres et portes, la lueur des fenêtres est détectée
+  par couleur (proche de `glow_color`) dans `panel.gdshader`, pas par une seconde image.
+- **Socle HD-2D — fusion des draw calls** : `PropBatcher` (déjà dans `Geometry`) fond au
+  lancement les MeshInstance3D qui portent un `material_override` en un mesh par image et par
+  case (« Batch… ») ; mesure (`tools/hd2d_shots.sh`) : 32 à 70 draw calls selon la vue (menu
+  38, cour de l'entrepôt 50, entrepôt de face au zoom le plus large 70, bois 51, Couchant 32,
+  port 39, colline 50, conversation 53, veille 44), budget 200 ; 43 à 67 dans le navigateur.
+- **Socle HD-2D — sol** : les douze tuiles (384 × 384, 4 m) sont réunies dans un atlas
+  (`ground_atlas.png`, 4 × 3) plutôt qu'un Texture2DArray (`sampler2DArray` est fragile en
+  Compatibility / WebGL 2 et son import n'a pas d'équivalent texte simple) ; le shader tire une
+  tuile par pixel d'art (48 par mètre) et trame les bords des masques (Bayer 4 × 4), sans
+  mélange flou. Les masques (chemins, cour, rue, marais, cercle de veille) restent calculés dans
+  le shader, recopiés de MONDE.md section 2.
+- **Socle HD-2D — falaises** : la roche sous l'île garde son maillage calculé (`island_rock.gd`,
+  forme, pas apparence) mais prend trois images (lèvre herbeuse, falaise, dessous) en UV de
+  mètres (périmètre, couture au nord) ; brouillard tramé en quatre paliers vers le bas.
+- **Socle HD-2D — caméra fixe** : tangage 32°, champ 30°, distance 21 m (zoom 14 à 25 m,
+  molette ou stick droit), retard de suivi (5 par seconde) et avance de 0,25 s sur la vitesse,
+  limites Rect2(-64, -66, 128, 128), visée du verrouillage entre joueur et cible (40 %, 5 m au
+  plus) sans tourner ; `yaw()` vaut 0 et `forward()` le nord : les commandes sont relatives à
+  l'écran. `recenter_behind` ne fait plus rien ; `snap_behind` recale sans avance (respawn).
+- **Socle HD-2D — post-traitement** : un `CanvasLayer` `PostFX` (couche −1, sous l'interface en
+  couche 1) dans `camera_rig.tscn`, un ColorRect et un shader canvas_item (`post_fx.gdshader`) :
+  flou de profondeur par bandes de l'écran (tilt-shift, 12 échantillons de Poisson : net au
+  centre, 5 px en haut, 2,5 px en bas), lueur au-dessus de 0,86, étalonnage chaud, contraste,
+  saturation, vignette. Pas de profondeur lue : les bandes suffisent avec une caméra fixe et
+  restent bon marché en WebGL 2. Le menu et les captures sans joueur ne l'ont pas.
+- **Socle HD-2D — lumières** : les lampes de cristal et le portail de la palissade portent une
+  OmniLight3D chaude (portée 5 à 6 m, sans ombre) ; pas de draw call de plus en Compatibility
+  tant qu'elles restent peu nombreuses par vue. Soleil 0,75, ambiance lavande chaude, brouillard
+  orangé.
+- **Socle HD-2D — pierres de l'anneau** : 58 × 20 px (0,6 × 0,2 m), pour que le cercle de veille
+  ne bloque ni la vue ni les tests de veille (rien de plus haut que 0,3 m dans le cercle).
+  Passerelle du port : un `Building` plat (pont) et la rambarde en panneau ; belvédère de la
+  colline : image décalée (`image_offset`) derrière sa collision.
+- **Socle HD-2D — fond du menu** : `main_menu_backdrop.gd` découpe le ciel peint, les îles
+  lointaines, les dunes et des feuilles qui volent dans les mêmes images que le jeu, au plus
+  proche voisin.
+- **Socle HD-2D — tests de marche** : avec la caméra fixe, « W après set_aim_direction » ne
+  marche plus vers la cible ; les tests passent par `hold_toward()` / `release_move()`
+  (`m1_game_test.gd`) et `walk_aim_until()` / `hold_aim()` (`m2_game_test.gd`), et le navigateur
+  par `window.wordendAim` (posé par `src/test_shortcuts.gd`) d'où `tools/web_m2.js` tire les
+  touches à tenir.
+- **Socle HD-2D — budget de l'export** : `tools/check.sh` appelle `tools/build_size.sh` après
+  l'export et passe au rouge au-delà de 25 Mo compressés (`test_export_web.gd` le vérifie) ;
+  mesure : 12,4 Mo compressés (40,8 Mo bruts) contre 18,4 Mo avant le socle.
+- **Socle HD-2D — portraits** : les portraits de remplacement restent à 128 px (tête agrandie
+  ×2) ; le cahier des charges demande 256 px pour les vrais (H6), la boîte de dialogue les met à
+  l'échelle.
+- **Socle HD-2D — contrats changés** (PLAN.md section 3) : structure de `camera_rig.tscn`
+  (`CameraRig` > `Camera3D` + `PostFX/Screen`, plus de `SpringArm3D`) et API de `CameraRig`
+  (mêmes noms, sens « fixe ») ; `SkinData.mesh_scene` et la variante mesh de `CharacterVisual`
+  retirés ; nouvelles classes `DecorPanel` et `Building` ; règle du décor en images (CLAUDE.md) ;
+  `tools/check.sh` fait respecter le budget de taille. Ni `project.godot`, ni `event_bus.gd`, ni
+  les couches de collision ne changent.

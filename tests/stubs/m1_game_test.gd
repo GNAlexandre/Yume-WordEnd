@@ -173,6 +173,30 @@ func hold(action: StringName, seconds: float) -> void:
 	Input.action_release(action)
 
 
+## (HD-2D) Avance vers direction (plan du sol) : la caméra fixe regarde le nord, les quatre
+## actions de déplacement sont donc tenues avec la force qui mène exactement dans cette direction
+## (est = move_right, sud = move_back). Les relâcher avec release_move().
+func hold_toward(direction: Vector3) -> void:
+	var flat := Vector3(direction.x, 0.0, direction.z).normalized()
+	_hold_axis(&"move_right", flat.x)
+	_hold_axis(&"move_left", -flat.x)
+	_hold_axis(&"move_back", flat.z)
+	_hold_axis(&"move_forward", -flat.z)
+
+
+## Relâche les quatre actions de déplacement.
+func release_move() -> void:
+	for action: StringName in [&"move_left", &"move_right", &"move_forward", &"move_back"]:
+		Input.action_release(action)
+
+
+func _hold_axis(action: StringName, strength: float) -> void:
+	if strength > 0.001:
+		Input.action_press(action, strength)
+	else:
+		Input.action_release(action)
+
+
 ## Distance horizontale entre deux points.
 func flat_distance(a: Vector3, b: Vector3) -> float:
 	return Vector2(a.x - b.x, a.z - b.z).length()

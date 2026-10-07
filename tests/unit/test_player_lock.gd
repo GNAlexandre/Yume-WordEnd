@@ -156,18 +156,23 @@ func test_lock_lost_when_target_moves_too_far() -> void:
 	assert_null(player.locked_target(), "trop loin")
 
 
-func test_lock_without_enemy_recenters_camera_behind_player() -> void:
+func test_lock_without_enemy_keeps_the_fixed_camera() -> void:
+	# (HD-2D) La caméra fixe regarde toujours le nord : un verrouillage sans ennemi à portée ne
+	# la fait pas tourner, elle reste centrée sur le joueur.
 	var player := _spawn_player()
 	_add_dummy(Vector3(0, 0, -30))
 	await _in_physics_frame()
 	player.set_aim_direction(Vector3(1, 0, 0))
-	player.camera_rig.rotate_view(2.0, 0.0)
 	player.tick(DT, _press_lock())
 	assert_null(player.locked_target(), "aucun ennemi dans le rayon")
 	for _i in 60:
-		player.camera_rig.update_camera(DT, Vector2.ZERO)
+		player.camera_rig.update_camera(DT)
+	assert_eq(player.camera_rig.forward(), Vector3.FORWARD, "la caméra regarde le nord")
 	assert_almost_eq(
-		player.camera_rig.forward(), Vector3(1, 0, 0), Vector3.ONE * 0.02, "caméra derrière"
+		player.camera_rig.focus(),
+		player.global_position + Vector3.UP * player.camera_rig.focus_height,
+		Vector3.ONE * 0.05,
+		"centrée sur le joueur"
 	)
 
 

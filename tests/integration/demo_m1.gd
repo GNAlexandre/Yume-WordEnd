@@ -43,7 +43,6 @@ func _ready() -> void:
 			_stage_wave()
 		"forest":
 			_place(&"forest", Vector3(0.0, 0.0, 10.5), Vector3.FORWARD)
-			_player.camera_rig.rotate_view(0.0, deg_to_rad(-10.0))
 		"perf":
 			# Les 12 Timeres du banc devant le joueur, tous dans le champ de la caméra.
 			_place(&"dunes", Vector3(0.0, 0.0, 6.0), Vector3.FORWARD)
@@ -132,7 +131,6 @@ func _stage_duel() -> void:
 ## L'onde : trois Timeres alignés vers le couchant (ouest), le joueur charge puis relâche.
 func _stage_wave() -> void:
 	_place(&"dunes", Vector3(6.0, 0.0, 1.5), Vector3.LEFT)
-	_player.camera_rig.rotate_view(deg_to_rad(-35.0), 0.0)
 	_player.camera_rig.zoom(-1.0)
 	_actor(&"timere_small", Vector3(-2.4, 0.0, 0.55))
 	_actor(&"timere_normal", Vector3(-4.4, 0.0, -0.65)).visual.play(&"marche")

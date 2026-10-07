@@ -1,12 +1,7 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
-
-[sub_resource type="StandardMaterial3D" id="post"]
-albedo_color = Color(0.536, 0.404, 0.289, 1)
-
-[sub_resource type="StandardMaterial3D" id="rag"]
-albedo_color = Color(0.568, 0.233, 0.207, 1)
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/play_goal_red.png" id="2_image"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_1"]
 height = 1.9
@@ -17,39 +12,8 @@ height = 1.9
 radius = 0.09
 
 [node name="PlayGoal" type="Node3D"]
-
-[node name="Post1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.12, 0, 0, 0, 1.9, 0, 0, 0, 0.12, -1.45, 0.95, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("post")
-
-[node name="Post2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.12, 0, 0, 0, 1.9, 0, 0, 0, 0.12, 1.45, 0.95, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("post")
-
-[node name="Bar" type="MeshInstance3D" parent="."]
-transform = Transform3D(3, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 1.9, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("post")
-
-[node name="Rag1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.298357, -0.039721, 0, 0.031359, 0.377918, 0, 0, 0, 0.03, -0.9, 1.68, 0.02)
-mesh = ExtResource("1_box")
-material_override = SubResource("rag")
-cast_shadow = 0
-
-[node name="Rag2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.299269, 0.026507, 0, -0.020927, 0.379074, 0, 0, 0, 0.03, 0.1, 1.68, 0.02)
-mesh = ExtResource("1_box")
-material_override = SubResource("rag")
-cast_shadow = 0
-
-[node name="Rag3" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.29708, -0.052886, 0, 0.041752, 0.376302, 0, 0, 0, 0.03, 1, 1.68, 0.02)
-mesh = ExtResource("1_box")
-material_override = SubResource("rag")
-cast_shadow = 0
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

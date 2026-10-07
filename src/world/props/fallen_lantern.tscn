@@ -1,47 +1,8 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/pyramid.tres" id="1_pyramid"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="2_box"]
-
-[sub_resource type="StandardMaterial3D" id="iron"]
-albedo_color = Color(0.241, 0.25, 0.268, 1)
-
-[sub_resource type="StandardMaterial3D" id="rust"]
-albedo_color = Color(0.445, 0.305, 0.234, 1)
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/fallen_lantern.png" id="2_image"]
 
 [node name="FallenLantern" type="Node3D"]
-
-[node name="Cap" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.086824, -0.177265, 0, 0.492404, 0.031257, 0, 0, 0, 0.5, -0.25, 0.18, 0)
-mesh = ExtResource("1_pyramid")
-material_override = SubResource("iron")
-
-[node name="Bar1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.48, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0.05, 0.06, -0.2)
-mesh = ExtResource("2_box")
-material_override = SubResource("rust")
-cast_shadow = 0
-
-[node name="Bar2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.48, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0.05, 0.06, 0.2)
-mesh = ExtResource("2_box")
-material_override = SubResource("rust")
-cast_shadow = 0
-
-[node name="Bar3" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.48, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0.05, 0.36, -0.2)
-mesh = ExtResource("2_box")
-material_override = SubResource("rust")
-cast_shadow = 0
-
-[node name="Bar4" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.48, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0.05, 0.36, 0.2)
-mesh = ExtResource("2_box")
-material_override = SubResource("rust")
-cast_shadow = 0
-
-[node name="Base" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.06, 0, 0, 0, 0.42, 0, 0, 0, 0.44, 0.32, 0.2, 0)
-mesh = ExtResource("2_box")
-material_override = SubResource("iron")
-cast_shadow = 0
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")

@@ -43,11 +43,11 @@ func test_forest_timeres_chase_then_give_up_before_the_village() -> void:
 	# Fuite vers le village (au sud), en courant.
 	player.set_aim_direction(Vector3.BACK, true)
 	Input.action_press(&"run")
-	Input.action_press(&"move_forward")
+	hold_toward(player.aim_direction())
 	var home: bool = await wait_until(
 		func() -> bool: return WorldManager.current_zone() == &"village", 8.0
 	)
-	Input.action_release(&"move_forward")
+	release_move()
 	Input.action_release(&"run")
 	assert_true(home, "le joueur rentre au village")
 	await wait_seconds(1.5)
@@ -136,7 +136,7 @@ func test_death_in_the_forest_respawns_at_the_village_without_arena() -> void:
 	assert_lt(flat_distance(player.global_position, spawn.global_position), 0.5, "au village")
 	assert_eq(health.current, 5, "PV pleins")
 	assert_almost_eq(
-		player.camera_rig.forward(), -spawn.global_basis.z, Vector3.ONE * 0.01, "vue du départ"
+		player.camera_rig.forward(), Vector3.FORWARD, Vector3.ONE * 0.01, "caméra fixe : le nord"
 	)
 	assert_signal_not_emitted(EventBus, "arena_finished", "pas d'arène dans la forêt")
 	await wait_seconds(1.0)

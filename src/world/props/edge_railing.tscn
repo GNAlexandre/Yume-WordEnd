@@ -1,41 +1,14 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
-
-[sub_resource type="StandardMaterial3D" id="dark"]
-albedo_color = Color(0.241, 0.25, 0.268, 1)
-
-[sub_resource type="StandardMaterial3D" id="iron"]
-albedo_color = Color(0.452, 0.47, 0.496, 1)
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/edge_railing.png" id="2_image"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(2, 1.15, 0.14)
 
 [node name="EdgeRailing" type="Node3D"]
-
-[node name="Post1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.07, 0, 0, 0, 1.1, 0, 0, 0, 0.07, -0.97, 0.55, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("dark")
-cast_shadow = 0
-
-[node name="Post2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.07, 0, 0, 0, 1.1, 0, 0, 0, 0.07, 0.97, 0.55, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("dark")
-cast_shadow = 0
-
-[node name="Top" type="MeshInstance3D" parent="."]
-transform = Transform3D(2, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 0, 1.08, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
-cast_shadow = 0
-
-[node name="Mid" type="MeshInstance3D" parent="."]
-transform = Transform3D(2, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0.55, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
-cast_shadow = 0
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

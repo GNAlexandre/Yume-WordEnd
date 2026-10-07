@@ -21,8 +21,9 @@
 //    village, forest, dunes, beach et hill : nouvelle partie au Spawn de la zone, puis les
 //    images affichées par la page (requestAnimationFrame) et les mesures « [m1] n i/s, draw
 //    calls, primitives » des raccourcis de test pendant 20 s (acte1_web_zone_<id>.png).
-// Le joueur oriente la caméra comme à la souris par window.wordendFace(cible) (raccourcis de
-// test, src/test_shortcuts.gd : un PNJ ou un point de l'île) ; il marche aux touches. Le rendu
+// Le joueur se tourne vers sa cible par window.wordendFace(cible) (raccourcis de test,
+// src/test_shortcuts.gd : un PNJ ou un point de l'île), qui la pose dans window.wordendAim ; il y
+// marche aux touches, choisies d'après la caméra fixe HD-2D (le haut de l'écran est le nord). Le rendu
 // logiciel (SwiftShader) tourne à 1 ou 2 images/s : les appuis sont tenus plus d'une image, et
 // les images/s n'ont qu'une valeur indicative. Toutes les erreurs et tous les avertissements de
 // la console sont relevés et imprimés à la fin.
@@ -117,13 +118,59 @@ async function face(page, logs, x, z) {
 	await sleep(800);
 }
 
-// Marche (Z/W) vers le point (x ; z) jusqu'à y arriver à tolerance m près (le long du trajet).
+// (HD-2D) Touches (W/A/S/D, une ou deux pour les diagonales) qui mènent du joueur vers la cible
+// posée par wordendFace (window.wordendAim) : la caméra fixe regarde le nord, le haut de l'écran.
+async function aimKeys(page, logs) {
+	const aim = await page.evaluate(() => window.wordendAim || null);
+	const p = await position(page, logs);
+	if (!aim || !p) {
+		return ['KeyW'];
+	}
+	const dx = aim[0] - p.x;
+	const dz = aim[1] - p.z;
+	const length = Math.hypot(dx, dz) || 1;
+	const keys = [];
+	if (dz < -0.38 * length) keys.push('KeyW');
+	if (dz > 0.38 * length) keys.push('KeyS');
+	if (dx > 0.38 * length) keys.push('KeyD');
+	if (dx < -0.38 * length) keys.push('KeyA');
+	return keys.length ? keys : ['KeyW'];
+}
+
+// Marche vers la cible de wordendFace jusqu'à predicate (true) ou timeoutMs (false) : les touches
+// sont choisies de nouveau toutes les 300 ms, comme un joueur qui corrige sa route.
+async function steerUntil(page, logs, predicate, timeoutMs) {
+	let held = [];
+	const start = Date.now();
+	let reached = false;
+	while (Date.now() - start < timeoutMs) {
+		if (await predicate()) {
+			reached = true;
+			break;
+		}
+		const keys = await aimKeys(page, logs);
+		for (const code of held.filter((k) => !keys.includes(k))) {
+			await page.keyboard.up(code);
+		}
+		for (const code of keys.filter((k) => !held.includes(k))) {
+			await page.keyboard.down(code);
+		}
+		held = keys;
+		await sleep(300);
+	}
+	for (const code of held) {
+		await page.keyboard.up(code);
+	}
+	return reached;
+}
+
+// Marche vers le point (x ; z) jusqu'à y arriver à tolerance m près (le long du trajet).
 async function walkTo(page, logs, x, z, tolerance = 0.8, timeoutMs = 120000) {
 	await face(page, logs, x, z);
 	const from = await position(page, logs);
-	const ok = await holdUntil(
+	const ok = await steerUntil(
 		page,
-		['KeyW'],
+		logs,
 		async () => {
 			const p = await position(page, logs);
 			if (!p || !from) {
@@ -146,10 +193,10 @@ async function walkTo(page, logs, x, z, tolerance = 0.8, timeoutMs = 120000) {
 async function talkTo(page, logs, npcId, speaker, shot) {
 	await face(page, logs, npcId);
 	const mark = logs.length;
-	const prompt = await holdUntil(
+	const prompt = await steerUntil(
 		page,
-		['KeyW'],
-		() => logs.slice(mark).some((l) => /\[m1\] invite « Parler »/.test(l)),
+		logs,
+		async () => logs.slice(mark).some((l) => /\[m1\] invite « Parler »/.test(l)),
 		120000
 	);
 	console.log(`invite « Parler » devant ${npcId} :`, prompt, await position(page, logs));

@@ -138,11 +138,10 @@ func _stage() -> void:
 
 ## Joueur au point local du village, tourné vers le PNJ (caméra derrière lui, décalée de yaw),
 ## puis la conversation commence.
-func _talk_to(node_name: String, local_position: Vector3, yaw: float) -> void:
+func _talk_to(node_name: String, local_position: Vector3, _yaw: float) -> void:
 	var npc := _zone(&"village").get_node(NodePath("NPCs/" + node_name)) as Npc
 	var aim := npc.global_position - _zone(&"village").to_global(local_position)
 	_place(&"village", local_position, aim)
-	_player.camera_rig.rotate_view(yaw, deg_to_rad(4.0))
 	npc.interact(_player)
 
 

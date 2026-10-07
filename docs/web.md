@@ -73,12 +73,14 @@ l'utilise depuis l'intégration M2.
 
 Joystick à gauche (`move_*` avec intensité, la zone morte de l'input map s'applique ensuite),
 Épée, Charge (maintenue), Saut, Parler (affiche l'invite d'`interaction_available`, « Suite »
-pendant un dialogue), Cible, Sac, Pause ; glisser ailleurs sur la moitié droite = `camera_*`.
+pendant un dialogue), Cible, Sac, Pause ; glisser ailleurs sur la moitié droite = `camera_*`
+(en HD-2D, la caméra est fixe : seuls `camera_up` / `camera_down` servent, au zoom).
 Visibles seulement sur écran tactile (`'ontouchstart' in window`, Android, iOS) et dès le
 premier toucher ; une touche du jeu, un clic de souris ou un bouton de manette les masquent ;
 masqués, ils ne consomment aucun événement. Pause : seuls Pause et Sac restent ; dialogue :
 Parler et Pause. Tout passe par des `InputEventAction` : aucun autre lot ne les connaît.
-À savoir pour l'intégration : la caméra souris (L1) doit lire `_unhandled_input` (les contrôles
+À savoir pour l'intégration : la molette de la caméra (zoom ; la caméra fixe du HD-2D ne
+tourne plus à la souris) doit lire `_unhandled_input` (les contrôles
 y consomment la souris émulée par le tactile) ; les écrans en pause gardent leur racine en
 `mouse_filter = IGNORE` (déjà le cas des squelettes) ; le HUD laisse libre le coin haut droit
 (Sac, Pause) et le bas de l'écran.
@@ -147,7 +149,7 @@ contenu de la page s'affiche sous le jeu.
 /**
  * Template Name: Jeu WordEnd
  *
- * Page du jeu WordEnd 3D : le jeu est servi par GitHub Pages (https://jeu.yumenovel.fr/) et
+ * Page du jeu WordEnd : le jeu est servi par GitHub Pages (https://jeu.yumenovel.fr/) et
  * affiché dans une iframe ; WordPress n'exécute rien du jeu (Yume-WordEnd, docs/web.md).
  *
  * @package Yume
@@ -272,10 +274,12 @@ change pas (testé) ; `src/game.gd` ne crée ce nœud que si l'un d'eux est pré
 | `?trace=1` | (intégration M2) Le journal seul : la partie (nouvelle ou reprise) n'est pas touchée. |
 
 Avec l'un d'eux, la page reçoit aussi deux aides (acte 1) : `window.wordendFace("nygglatho")`
-ou `window.wordendFace(x, z)` tourne le joueur, caméra derrière lui, vers un PNJ présent (son
-`NpcData.id`) ou un point de l'île, comme la souris le ferait (la souris d'un navigateur sans
-écran ne tourne pas la caméra) ; `window.wordendPos` donne la position du joueur (`[x, z]`) à
-chaque image. La marche reste aux touches.
+ou `window.wordendFace(x, z)` tourne le joueur vers un PNJ présent (son `NpcData.id`) ou un
+point de l'île ; `window.wordendPos` donne la position du joueur (`[x, z]`) à chaque image. La
+marche reste aux touches. (HD-2D) La caméra fixe ne tourne pas, les touches sont relatives à
+l'écran (le haut est le nord) : `wordendFace` pose aussi la cible dans `window.wordendAim`
+(`[x, z]`), et `tools/web_m2.js` en tire les touches à tenir (W, A, S, D physiques, soit Z, Q,
+S, D en AZERTY, seules ou deux à deux), choisies de nouveau toutes les 300 ms en marchant.
 
 Pendant ce temps, la console du navigateur reçoit `[m1] …` à chaque événement (zone, invite,
 dialogue, quête et étape de quête, objet, vague, Timere tué, fin de série, dégâts, mort,
@@ -303,7 +307,7 @@ le Chromium sans écran, puis mesure chaque zone ; dernier argument : `acte1`, `
 - **`acte1`**, avec `?trace=1` (le journal « [m1] … » seul : la partie est celle du menu, telle
   quelle). Profil neuf : temps jusqu'au menu (repère `window.wordendMenuMs`, posé par
   `src/main.gd` quand le menu s'affiche), « Cliquer pour jouer », Entrée sur « Nouvelle partie » ;
-  puis, à pied (Z/W tenue, caméra tournée par `window.wordendFace`), les trois premières étapes
+  puis, à pied (touches tirées de `window.wordendAim`), les trois premières étapes
   d'`act1_main` : Nygglatho sous le porche et sa scène (étape `new_officer`), Willem devant la
   salle des armes et ses conseils (`to_the_woods`, drapeau `met_willem`), le portail nord et les
   bois du marais (`rejetons`). Le canevas perd le focus (SaveManager écrit la partie) ; le
@@ -348,6 +352,40 @@ headless, SwiftShader, VM partagée : images/s indicatives, sans valeur pour un 
 
 Build : 18,4 Mo compressés (wasm 9,7 Mo, pck 8,8 Mo ; 47,3 Mo bruts), budget 25 Mo ; le pck
 porte l'île n° 68 et les 45 modèles 3D de la PR n° 1 (en refonte).
+
+### Socle HD-2D (7 octobre 2026)
+
+Même méthode (`tools/web_m2.js … tout`, Chromium 141 headless, SwiftShader, VM partagée), sur
+le build du socle HD-2D : décor en images, caméra fixe, post-traitement plein écran.
+
+- `acte1` : menu en 2,6 s (3,1 s au rechargement) ; partie chargée 8,2 s après Entrée (6,6 s
+  au rechargement) ; les trois étapes jouées à pied, touches choisies d'après la caméra fixe
+  (Nygglatho, Willem, le portail nord, `new_officer`, `to_the_woods`, `rejetons`) ; partie
+  copiée dans IndexedDB 27 s après la perte du focus ; « Continuer » reprend dans les bois à
+  l'étape `rejetons`, écart 0,00 m. Aucune erreur dans la console (seuls avertissements : « GPU
+  stall due to ReadPixels » du pilote logiciel).
+- `zones` (Spawn de chaque zone, joueur au repos ; entre parenthèses, la mesure d'avant le
+  socle) :
+
+  | Zone | Images/s (page) | Draw calls | Primitives |
+  | --- | --- | --- | --- |
+  | L'entrepôt des fées (`village`) | 0,55 (0,33) | 67 (135) | 17 000 (92 000) |
+  | Les bois du marais (`forest`) | 0,56 (0,40) | 55 (100) | 17 000 (68 000) |
+  | Le bord du Couchant (`dunes`) | 0,57 (0,41) | 43 (70) | 17 000 (54 000) |
+  | Le port et le bourg (`beach`) | 0,53 (0,34) | 50 (76) | 17 000 (59 000) |
+  | La colline des étoiles (`hill`) | 0,45 (0,54) | 48 (72) | 17 000 (83 000) |
+
+  Les images/s du rendu logiciel restent sans valeur pour un vrai GPU (le flou de profondeur et
+  la lueur, plein écran, pèsent ici sur le processeur) ; draw calls et primitives, eux, baissent
+  de 30 à 50 % et de 70 à 80 %. Ces vues (Spawn de chaque zone) ne sont pas celles de la
+  mesure native ci-dessous.
+
+Build : **12,4 Mo compressés** (40,8 Mo bruts), budget 25 Mo, désormais tenu par
+`tools/check.sh` (rouge au-delà) ; les 45 modèles 3D sont partis, les 99 images de remplacement
+du décor pèsent moins de 8 Mo. Mesure native (Xvfb, Mesa llvmpipe, `tools/hd2d_shots.sh`, draw
+calls du moteur à l'image 50) : menu 38, cour de l'entrepôt 50, entrepôt de face au zoom le
+plus large 70, bois 51, Couchant 32, port 39, colline 50, conversation 53, veille 44 (budget du
+HD-2D : 200).
 
 **Sauvegarde et fermeture de l'onglet.** SaveManager écrit la position toutes les 5 s de jeu si
 le joueur a bougé (1 m), et au départ : perte du focus, page masquée (`visibilitychange`, que

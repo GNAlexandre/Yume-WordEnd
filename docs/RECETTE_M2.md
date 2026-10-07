@@ -22,6 +22,13 @@ chargement, jeu) avec des événements d'entrée réels (`InputEventKey`, `Input
 Captures : `build/shots/acte1_*.png`, rendues sous Xvfb (rendu logiciel) par les commandes de la
 fin du document.
 
+> **(HD-2D, 7 octobre 2026)** Le socle HD-2D (PLAN.md, section 1 « Changement de cap ») a
+> remplacé le décor calculé et la caméra en orbite par un décor en images, une caméra fixe et un
+> post-traitement. Le jeu, les quêtes et les places de l'histoire n'ont pas changé : les critères
+> 2 à 16 gardent leurs tests, rejoués verts sur le socle (`test_m2_quest.gd` compris). Mis à jour :
+> critère 1 (taille et navigateur), critère 17 (direction artistique, captures `hd2d_*.png`) et
+> les points connus.
+
 ## Tableau de bord
 
 | # | Critère | Comment le vérifier | Statut |
@@ -42,14 +49,20 @@ fin du document.
 | 14 | Les textes : prénom de la protagoniste (`{player}`), voix des personnages, textes de l'histoire (cloche, fin de veille, chute, défaite), typographie | `test_player_name.gd`, `test_act1_dialogues.gd`, `test_story_texts.gd`, `test_sys_story_content.gd`, `test_quest_content.gd` | Vérifié automatiquement (ton : humain) |
 | 15 | Les places de HISTOIRE.md 3.3 sur l'île n° 68 : au sol, hors du décor, atteignables à pied | `test_world_story_spots.gd`, `test_npc.gd`, `test_m1_world.gd` | Vérifié automatiquement |
 | 16 | Plus de reste du jalon M2 (ses trois PNJ, ses objets retirés, l'ancienne graphie de l'épée) hors des traces historiques | `git grep` (section 16) | Vérifié automatiquement |
-| 17 | Direction artistique au minimum proche de *Breath of the Wild* | captures `acte1_*.png` | À valider par un humain (écarts relevés plus bas) |
+| 17 | Direction artistique HD-2D à la manière d'*Octopath Traveler* (docs/ASSETS_HD2D.md) | `tools/hd2d_shots.sh` : captures `hd2d_*.png` | À valider par un humain (écarts relevés plus bas) |
 
 ## 1. Build Web — vérifié en partie
 
 - **Taille** : `tools/build_size.sh` après `tools/godot --headless --export-release Web
-  build/web/index.html` : **18,4 Mo compressés** (wasm 9,7 Mo, pck 8,8 Mo ; 47,3 Mo bruts) pour un
-  budget de 25 Mo. Le pck a grossi avec l'île n° 68 et les 45 modèles 3D de la PR n° 1 (en
-  attente de refonte).
+  build/web/index.html` : **12,4 Mo compressés** (40,8 Mo bruts) pour un budget de 25 Mo, que
+  `tools/check.sh` fait désormais respecter (rouge au-delà) ; 18,4 Mo avant le socle HD-2D (les
+  45 modèles 3D de la PR n° 1, retirés). Les 99 images de remplacement du décor pèsent moins de
+  8 Mo (`test_hd2d_assets.gd`).
+- **Navigateur, socle HD-2D** (même méthode, 7 octobre 2026, `tools/web_m2.js tout`) :
+  « Cliquer pour jouer » en 2,6 s (3,1 s au rechargement), partie chargée 8,2 s après Entrée
+  (6,6 s pour « Continuer ») ; les trois premières étapes jouées à pied et la reprise dans les
+  bois à 0,00 m près ; aucune erreur dans la console ; 43 à 67 draw calls et 17 000 primitives
+  par zone (70 à 135 et 54 000 à 92 000 avant). Détail : docs/web.md, « Socle HD-2D ».
 - **Navigateur** : `tools/web_m2.js acte1` (Chromium 141 sans écran, build servi en local, rendu
   logiciel SwiftShader, VM partagée), deux passages le 7 octobre 2026, le second sur le build
   final : « Cliquer pour jouer » affiché 1,8 à 1,9 s après l'ouverture de la page (2,9 à 3,8 s
@@ -60,7 +73,7 @@ fin du document.
   pck est passé de 0,9 à 8,8 Mo (l'île n° 68, les modèles 3D) et tout le rendu tourne ici sur le
   processeur ; reste à le chronométrer sur un vrai appareil. Détail et captures
   `acte1_web_*.png` : docs/web.md, « Vérification de l'acte 1 ».
-- **Pas prouvé** : le réseau (page servie en local) ; sur fibre, les 18,4 Mo ajoutent 1 à 2 s.
+- **Pas prouvé** : le réseau (page servie en local) ; sur fibre, les 12,4 Mo ajoutent 1 à 2 s.
 - **À valider** : ouvrir le build publié dans Chrome et Firefox, outils de développement ouverts,
   cache vidé : chronométrer jusqu'au « Cliquer pour jouer » (objectif < 10 s), console sans
   rouge.
@@ -133,7 +146,8 @@ t'ont ramenée à l'entrepôt. » (`test_story_texts.gd`).
   L'objectif du HUD suit chaque étape ; l'appui qui ferme une conversation ne la relance pas.
 - Le même parcours par le moteur seul, étape par étape : `test_act1_main.gd`.
 - Dans le navigateur : `tools/web_m2.js acte1` joue les trois premières étapes à pied (Nygglatho,
-  Willem, les bois), au clavier, caméra tournée par `window.wordendFace` ; le 7 octobre 2026 :
+  Willem, les bois), au clavier, visée posée par `window.wordendFace` (en HD-2D, la caméra fixe ne
+  tourne pas : `window.wordendAim` dit à la page quelles touches tenir) ; le 7 octobre 2026 :
   les deux scènes lues jusqu'au bout (« Le vent a hurlé… », « verrouille ta cible »), étapes
   `new_officer`, `to_the_woods` puis `rejetons` au fil de la marche, « Les bois du marais »
   atteints par le portail nord (captures `acte1_web_nygglatho.png`, `acte1_web_willem.png`,
@@ -245,26 +259,25 @@ docs/CONTRACT_REQUESTS.md (l'historique), docs/lore/ (bible et fiches de lecture
 
 ## 17. Direction artistique — à valider par un humain
 
-Le décor (île n° 68, travail du « Monde ») vise *Breath of the Wild* dans les limites du rendu
-Compatibility : palette naturelle, cel discret, grands paysages, herbe. Ce qui la dessert encore,
-relevé sur les captures :
+Depuis le socle HD-2D, la cible est *Octopath Traveler* (MONDE.md 5.4, docs/ASSETS_HD2D.md) :
+sprites de pixel art dans un décor en relief fait d'images, caméra fixe inclinée (32°, champ
+30°), flou de profondeur en haut et en bas de l'écran, lueur, lumière chaude du couchant. Les
+images du décor sont encore des **remplaçants générés** (`tools/hd2d_assets.py gen`) en attendant
+celles commandées d'après le cahier des charges. Vues : `tools/hd2d_shots.sh` (menu, cinq zones,
+conversation, veille : `build/shots/hd2d_<vue>.png`). Ce qui la dessert encore :
 
-- **Les personnages** sont des planches 2D en pixel art, à grosse tête (Chtholly) ou des
-  silhouettes de remplacement (les PNJ), posées en billboards dans un décor 3D : rien de plus
-  éloigné des proportions réalistes stylisées voulues ; les modèles 3D de la PR n° 1 sont en
-  refonte (docs/ASSETS_3D.md). Dans le menu, leurs vignettes (sept skins « · 3D ») montrent
-  encore ces modèles refusés, chibi. La planche de Chtholly est celle du volume 3 (pointes
-  rouges) ; MONDE.md 1.2 demande pour l'acte 1 une variante aux cheveux bleu ciel.
+- **Les images de remplacement** : sol, falaises, façades et décors en pixel art simple (motifs
+  de bruit, formes en taches, contours), justes en échelle (96 px par mètre) et en palette mais
+  sans le dessin d'un artiste ; les façades sont des panneaux plats sur des volumes simples. Tout
+  se remplace image par image, sans code (docs/ASSETS_HD2D.md, section 10).
+- **Les personnages** : la planche de Chtholly est celle du volume 3 (pointes rouges) ; MONDE.md
+  1.2 demande pour l'acte 1 une variante aux cheveux bleu ciel (cahier des charges, section 3).
+  Les PNJ sont des silhouettes de remplacement, avec une animation `parle`.
 - **L'interface** (cœurs roses, panneaux crème à bords arrondis, boutons roses) reste celle de
-  l'easter egg : plus « mignonne » que la sobriété de *Breath of the Wild*. Le menu, lui, tient
-  de nouveau dans l'écran (`acte1_menu.png`) : avec les huit vignettes, sa grille débordait de
-  1280 × 720 (titre et phrase « Ta fée prend la place de Chtholly dans l'histoire. » hors
-  champ) ; elle défile depuis l'intégration (docs/DECISIONS.md).
-- **Le décor** : volumes en facettes franches à couleurs de sommets (pas de textures peintes,
-  que MONDE.md 5.4 demande) ; bâtiments et navires en boîtes (le Barocupot, la grue, les maisons
-  du bourg) ; ciel de jour bleu, quand MONDE.md 5.4 décrit un couchant orange et un ciel du violet
-  au pêche (choix du « Monde », docs/DECISIONS.md) : la promesse « la nuit, sur la colline » se
-  joue en plein jour ; mer de nuages plate vue de près.
+  l'easter egg ; elle va plutôt bien avec le pixel art, mais n'a pas les cadres ornés
+  d'*Octopath Traveler*.
+- **Le ciel** est un couchant peint (du violet au pêche) toute la journée : la promesse « la
+  nuit, sur la colline » se joue encore au couchant (cycle jour/nuit : M3).
 - **Le Barocupot** est toujours amarré, alors que Limeskin n'arrive qu'à l'étape 10 (placements
   conditionnels : développement n° 7, M3).
 
@@ -275,15 +288,14 @@ relevé sur les captures :
   scène en M2).
 - **Cœur de la promesse** (L4) : les PV max passent à 6 (puis 7), mais le cœur gagné reste vide
   jusqu'au prochain soin ou à la réapparition (« le maximum n'est pas un soin ») ; à trancher.
-- **Skins 3D de Willem, Ithea, Nephren** : les choisir ne cache pas leur PNJ (ids différents) ;
-  les cacher rendrait leurs quêtes impossibles ; à trancher avec la refonte des modèles. Le menu
-  propose aussi Willem et Lillia (qui ne sont pas des fées ; Lillia est un spoiler du volume 2),
-  Nopht et Rhantolk (fées du volume 3) comme skins jouables, contre MONDE.md 1.2 (« les skins
-  jouables sont des fées ») et la règle des spoilers (bible : S2, S3) ; `data/skins/` est hors du
-  périmètre de l'intégration.
+- **Skins jouables** : depuis le socle HD-2D, le menu propose Chtholly, Nopht et Rhantolk ; les
+  skins 3D (Willem, Lillia, Ithea, Nephren…) sont partis avec leurs modèles. Nopht et Rhantolk
+  sont des fées du volume 3 : à confronter à la règle des spoilers (bible : S3). Ithea et
+  Nephren reviendront avec leur planche HD-2D (lot H6) ; les choisir ne cachera pas leur PNJ
+  (ids différents) : à trancher.
 - **Journal au toucher** : pas de bouton tactile (demande au L9, docs/CONTRACT_REQUESTS.md).
-- **Sprites non éclairés**, **caméra verrouillée**, **pas d'interpolation physique**, **invite
-  « E / A » fixe** : inchangés depuis le jalon M2.
+- **Pas d'interpolation physique**, **invite « E / A » fixe** : inchangés depuis le jalon M2. La
+  caméra est fixe par choix (HD-2D) : le haut de l'écran est le nord, seul le zoom se règle.
 - **CI GitHub et GitHub Pages jamais exécutées** (L9) : à lancer une première fois
   (docs/web.md).
 
@@ -295,18 +307,20 @@ relevé sur les captures :
 3. Mesurer les images/s avec F3 sur un portable et un téléphone (critère 5).
 4. Fermer l'onglet en pleine promenade dans trois navigateurs, revenir, Continuer (critère 7).
 5. Relire les scènes en jouant : voix, humour, ce qui n'est pas dit (critère 14).
-6. Regarder les captures `build/shots/acte1_*.png` et juger la direction artistique (critère 17).
+6. Regarder les captures `build/shots/hd2d_*.png` et juger la direction artistique (critère 17),
+   puis de nouveau quand les images commandées remplacent les remplaçants.
 
 ## Ce qui reste pour M3
 
 Acte 2 (îles n° 15 et n° 11, Collina di Luce), cycle jour/nuit (Willem au sommet la nuit
 seulement), voyages entre îles, placements conditionnels (le Barocupot, les bois nettoyés après
-l'acte 1), narration sans PNJ (cartons), talismans en orbite, modèles 3D des personnages,
+l'acte 1), narration sans PNJ (cartons), talismans en orbite, planches HD-2D des personnages (lot H6),
 musique et sons, contrôles tactiles complets (bouton du journal).
 
 ## Refaire les captures
 
 ```bash
+tools/hd2d_shots.sh        # (HD-2D) menu, cinq zones, conversation, veille : build/shots/hd2d_*.png
 for v in village bois couchant port colline nygglatho willem deux_voix journal fin_veille; do
   ACT1_SHOT=$v tools/screenshot.sh res://tests/integration/demo_act1.tscn build/shots/acte1_$v.png 100
 done

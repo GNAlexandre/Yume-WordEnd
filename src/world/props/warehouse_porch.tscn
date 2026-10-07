@@ -1,23 +1,7 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/pyramid.tres" id="2_pyramid"]
-
-[sub_resource type="StandardMaterial3D" id="deck"]
-albedo_color = Color(0.536, 0.404, 0.289, 1)
-
-[sub_resource type="StandardMaterial3D" id="beam"]
-albedo_color = Color(0.341, 0.262, 0.201, 1)
-
-[sub_resource type="StandardMaterial3D" id="slate"]
-albedo_color = Color(0.364, 0.399, 0.452, 1)
-
-[sub_resource type="StandardMaterial3D" id="iron"]
-albedo_color = Color(0.241, 0.25, 0.268, 1)
-
-[sub_resource type="StandardMaterial3D" id="crystal"]
-shading_mode = 0
-albedo_color = Color(1, 0.92, 0.7, 1)
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/warehouse_porch.png" id="2_image"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(0.2, 3, 0.2)
@@ -26,74 +10,9 @@ size = Vector3(0.2, 3, 0.2)
 size = Vector3(0.2, 3, 0.2)
 
 [node name="WarehousePorch" type="Node3D"]
-
-[node name="Deck" type="MeshInstance3D" parent="."]
-transform = Transform3D(6, 0, 0, 0, 0.15, 0, 0, 0, 2.5, 0, 0.075, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("deck")
-cast_shadow = 0
-
-[node name="Post1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.18, 0, 0, 0, 3, 0, 0, 0, 0.18, -2.85, 1.5, 1.1)
-mesh = ExtResource("1_box")
-material_override = SubResource("beam")
-
-[node name="Post2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.18, 0, 0, 0, 3, 0, 0, 0, 0.18, 2.85, 1.5, 1.1)
-mesh = ExtResource("1_box")
-material_override = SubResource("beam")
-
-[node name="Beam" type="MeshInstance3D" parent="."]
-transform = Transform3D(6, 0, 0, 0, 0.2, 0, 0, 0, 0.22, 0, 2.95, 1.1)
-mesh = ExtResource("1_box")
-material_override = SubResource("beam")
-
-[node name="Roof" type="MeshInstance3D" parent="."]
-transform = Transform3D(6.7, 0, 0, 0, 0.118523, -0.50059, 0, 0.018772, 3.160603, 0, 3.12, 0.25)
-mesh = ExtResource("1_box")
-material_override = SubResource("slate")
-
-[node name="BenchSeat" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.5, 0, 0, 0, 0.08, 0, 0, 0, 0.42, -1.7, 0.46, -0.85)
-mesh = ExtResource("1_box")
-material_override = SubResource("deck")
-cast_shadow = 0
-
-[node name="BenchBack" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.5, 0, 0, 0, 0.45, 0, 0, 0, 0.06, -1.7, 0.78, -1.06)
-mesh = ExtResource("1_box")
-material_override = SubResource("deck")
-cast_shadow = 0
-
-[node name="BenchLeg1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.08, 0, 0, 0, 0.42, 0, 0, 0, 0.38, -2.35, 0.21, -0.85)
-mesh = ExtResource("1_box")
-material_override = SubResource("beam")
-cast_shadow = 0
-
-[node name="BenchLeg2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.08, 0, 0, 0, 0.42, 0, 0, 0, 0.38, -1.05, 0.21, -0.85)
-mesh = ExtResource("1_box")
-material_override = SubResource("beam")
-cast_shadow = 0
-
-[node name="LanternCap" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.3, 0, 0, 0, 0.14, 0, 0, 0, 0.3, 1, 2.62, -0.95)
-mesh = ExtResource("2_pyramid")
-material_override = SubResource("iron")
-cast_shadow = 0
-
-[node name="LanternTop" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.141421, 0, 0.141421, 0, 0.18, 0, -0.141421, 0, 0.141421, 1, 2.47, -0.95)
-mesh = ExtResource("2_pyramid")
-material_override = SubResource("crystal")
-cast_shadow = 0
-
-[node name="LanternBottom" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.141421, 0, -0.141421, 0, -0.18, 0, -0.141421, 0, -0.141421, 1, 2.29, -0.95)
-mesh = ExtResource("2_pyramid")
-material_override = SubResource("crystal")
-cast_shadow = 0
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
+shadow_width = 0.0
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

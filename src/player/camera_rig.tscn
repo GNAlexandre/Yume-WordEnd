@@ -1,17 +1,29 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://src/player/camera_rig.gd" id="1_rig"]
+[ext_resource type="Shader" path="res://src/player/post_fx.gdshader" id="2_post"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_post"]
+shader = ExtResource("2_post")
 
 [node name="CameraRig" type="Node3D"]
 script = ExtResource("1_rig")
 
-[node name="SpringArm3D" type="SpringArm3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.927184, 0.374607, 0, -0.374607, 0.927184, 0, 0, 0)
-collision_mask = 1
-spring_length = 6.0
-margin = 0.2
-
-[node name="Camera3D" type="Camera3D" parent="SpringArm3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
+[node name="Camera3D" type="Camera3D" parent="."]
+top_level = true
+transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 0, 10.9, 15.6)
 current = true
-fov = 60.0
+fov = 30.0
+far = 1500.0
+
+[node name="PostFX" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Screen" type="ColorRect" parent="PostFX"]
+material = SubResource("ShaderMaterial_post")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

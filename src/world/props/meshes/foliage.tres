@@ -1,8 +1,0 @@
-[gd_resource type="SphereMesh" format=3]
-
-[resource]
-resource_name = "foliage"
-radius = 0.5
-height = 1.0
-radial_segments = 10
-rings = 4

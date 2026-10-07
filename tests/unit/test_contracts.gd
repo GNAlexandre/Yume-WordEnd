@@ -123,7 +123,6 @@ const RESOURCE_FIELDS := {
 		"display_name": STR,
 		"sprite_sheet": OBJ,
 		"frames_json": OBJ,
-		"mesh_scene": OBJ,
 		"portrait": OBJ,
 		"height_m": FLT,
 	},
@@ -463,8 +462,8 @@ func test_player_structure() -> void:
 			"Health": "Health",
 			"Hurtbox": "Hurtbox",
 			"CameraRig": "Node3D",
-			"CameraRig/SpringArm3D": "SpringArm3D",
-			"CameraRig/SpringArm3D/Camera3D": "Camera3D",
+			"CameraRig/Camera3D": "Camera3D",
+			"CameraRig/PostFX": "CanvasLayer",
 		}
 	)
 	assert_eq((player as CollisionObject3D).collision_layer, 2, "couche player")

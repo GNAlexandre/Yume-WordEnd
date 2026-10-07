@@ -329,6 +329,56 @@ func walk_keys_until(keys: Array[Key], predicate: Callable, max_seconds: float) 
 	return reached
 
 
+## (HD-2D) Touches qui mènent dans la visée du joueur vue de la caméra fixe (le haut de l'écran
+## est le nord) : W, S, A, D, ou une diagonale ; vide si la visée n'est ni droite ni diagonale
+## (à 3° près).
+func keys_toward_aim() -> Array[Key]:
+	var aim := player.aim_direction()
+	var keys: Array[Key] = []
+	var angle := rad_to_deg(atan2(aim.x, -aim.z))
+	var octant := roundf(angle / 45.0)
+	if absf(angle - octant * 45.0) > 3.0:
+		return keys
+	var step := Vector2(
+		roundf(sin(deg_to_rad(octant * 45.0))), roundf(cos(deg_to_rad(octant * 45.0)))
+	)
+	if step.y > 0.5:
+		keys.append(KEY_W)
+	elif step.y < -0.5:
+		keys.append(KEY_S)
+	if step.x > 0.5:
+		keys.append(KEY_D)
+	elif step.x < -0.5:
+		keys.append(KEY_A)
+	return keys
+
+
+## (HD-2D) Marche dans la visée du joueur jusqu'à predicate (la caméra fixe ne se place plus
+## derrière lui) : au clavier si la visée suit une touche ou une diagonale, sinon au stick gauche
+## incliné exactement vers elle ; run : Maj tenue (clavier) ou course lancée (L3).
+func walk_aim_until(predicate: Callable, max_seconds: float, run: bool = false) -> bool:
+	var keys := keys_toward_aim()
+	if not keys.is_empty():
+		if run:
+			keys.append(KEY_SHIFT)
+		return await walk_keys_until(keys, predicate, max_seconds)
+	var aim := player.aim_direction()
+	await frames(1)
+	stick(aim.x, aim.z)
+	if run:
+		await tap_joy(JOY_BUTTON_LEFT_STICK)
+	var reached: bool = await until(predicate, max_seconds)
+	stick(0.0, 0.0)
+	await frames(2)
+	return reached
+
+
+## (HD-2D) Marche seconds secondes dans la visée du joueur (touches ou stick, comme
+## walk_aim_until).
+func hold_aim(seconds: float) -> void:
+	await walk_aim_until(func() -> bool: return false, seconds)
+
+
 ## Marche au stick gauche (x, y) jusqu'à ce que predicate soit vrai ; stick relâché à la fin.
 func walk_stick_until(x: float, y: float, predicate: Callable, max_seconds: float) -> bool:
 	await frames(1)

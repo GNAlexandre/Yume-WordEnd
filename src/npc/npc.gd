@@ -20,6 +20,8 @@ extends CharacterBody3D
 ## ni marqueur. Réévaluée en fin d'image avec le marqueur (quête, étape, drapeaux, inventaire,
 ## partie chargée, skin, fin de série d'arène pour best_score) ; un PNJ qui parle ne disparaît
 ## qu'à la fin de son dialogue.
+## (HD-2D) Pendant son dialogue, le PNJ joue l'animation TALK de sa planche (« parle » :
+## docs/ASSETS_HD2D.md, section 3.2) si elle existe, puis revient à « repos ».
 
 const PLAYER_GROUP := &"player"
 ## Durée maximale de la chute d'apparition (s).
@@ -27,6 +29,9 @@ const SETTLE_TIME := 1.0
 ## Hauteur du marqueur au-dessus de la tête (m) et du visuel sans skin.
 const MARKER_GAP := 0.5
 const DEFAULT_HEIGHT := 1.6
+## Animations de la planche : au repos, et en conversation (facultative).
+const IDLE := &"repos"
+const TALK := &"parle"
 
 ## Données du PNJ (data/npcs/*.tres).
 @export var data: NpcData:
@@ -172,7 +177,7 @@ func _apply_data() -> void:
 		return
 	if data.skin != null:
 		visual.set_skin(data.skin)
-	visual.play(&"repos")
+	visual.play(TALK if _talking and visual.has_animation(TALK) else IDLE)
 
 
 func _cooling_down() -> bool:
@@ -182,6 +187,8 @@ func _cooling_down() -> bool:
 func _on_dialogue_started(npc_id: StringName) -> void:
 	if data != null and npc_id == data.id:
 		_talking = true
+		if visual.has_animation(TALK):
+			visual.play(TALK)
 		refresh_quest_marker()
 
 
@@ -189,4 +196,5 @@ func _on_dialogue_ended(npc_id: StringName) -> void:
 	if data != null and npc_id == data.id:
 		_ended_at_msec = Time.get_ticks_msec()
 		_talking = false
+		visual.play(IDLE)
 		_schedule_marker()

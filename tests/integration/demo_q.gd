@@ -65,7 +65,6 @@ func _stage() -> void:
 			GameState.set_quest_step(&"demo_tour", &"pages")
 			GameState.add_item(&"page_fragment", 2)
 			_place(Vector3(0.5, 0.0, 12.5), Vector3(0.05, 0.0, -1.0))
-			_player.camera_rig.rotate_view(deg_to_rad(4.0), deg_to_rad(4.0))
 
 
 ## La partie de la capture du journal : le tour du village à l'étape des Timeres (1/2), le livre

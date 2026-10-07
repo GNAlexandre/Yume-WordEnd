@@ -10,7 +10,8 @@
 #   - un test GUT échoue, ou un script / fichier de test ne compile pas (GUT l'ignorerait
 #     sans échouer) ;
 #   - une scène ne s'instancie pas (tools/smoke.gd) ;
-#   - l'export Web échoue ou ne produit pas index.html / .js / .wasm / .pck ;
+#   - l'export Web échoue ou ne produit pas index.html / .js / .wasm / .pck, ou dépasse le budget
+#     de taille (tools/build_size.sh : 25 Mo compressés) ;
 #   - la capture a été rendue mais son journal contient une erreur ou un WARNING non toléré ;
 #   - en CI (CI=true), des fichiers ont été générés ou modifiés (.uid, .import non commités).
 # CHECK_FAST=1 saute l'export et la capture (itérations rapides ; jamais avant une PR).
@@ -114,6 +115,11 @@ else
   done
   packed=$(cat build/web/index.wasm build/web/index.pck | gzip -c | wc -c)
   echo "build/web : $(du -sh build/web | cut -f1) ; wasm + pck compressés : $((packed / 1048576)) Mo (budget M2 : 25 Mo)"
+  # (HD-2D) Le budget est vérifié, plus seulement affiché : au-delà de 25 Mo, rouge.
+  if ! tools/build_size.sh build/web > build/size.log 2>&1; then
+    cat build/size.log
+    red "export Web au-delà du budget de taille (tools/build_size.sh, build/size.log)"
+  fi
 
   step "capture"
   tools/screenshot.sh res://src/world/island.tscn build/shots/island.png > build/capture.log 2>&1

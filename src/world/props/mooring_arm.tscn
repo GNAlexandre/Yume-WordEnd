@@ -1,20 +1,7 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/post.tres" id="2_post"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="3_bead"]
-
-[sub_resource type="StandardMaterial3D" id="dark"]
-albedo_color = Color(0.241, 0.25, 0.268, 1)
-
-[sub_resource type="StandardMaterial3D" id="iron"]
-albedo_color = Color(0.452, 0.47, 0.496, 1)
-
-[sub_resource type="StandardMaterial3D" id="copper"]
-albedo_color = Color(0.581, 0.405, 0.291, 1)
-
-[sub_resource type="StandardMaterial3D" id="brass"]
-albedo_color = Color(0.647, 0.541, 0.348, 1)
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/mooring_arm.png" id="2_image"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(2.4, 0.4, 2)
@@ -24,61 +11,8 @@ height = 4.2
 radius = 0.35
 
 [node name="MooringArm" type="Node3D"]
-
-[node name="Base" type="MeshInstance3D" parent="."]
-transform = Transform3D(2.4, 0, 0, 0, 0.4, 0, 0, 0, 2, 0, 0.2, 0)
-mesh = ExtResource("1_box")
-material_override = SubResource("dark")
-
-[node name="Column" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.6, 0, 0, 0, 4.2, 0, 0, 0, 0.6, 0, 2.4, 0)
-mesh = ExtResource("2_post")
-material_override = SubResource("iron")
-
-[node name="Joint1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 3.9, 0)
-mesh = ExtResource("3_bead")
-material_override = SubResource("copper")
-
-[node name="Arm1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.20398, -0.005749, -2.615858, 0, 0.219464, -0.488295, 0.082413, 0.014229, 6.474477, -1.311123, 3.7, 3.245143)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
-
-[node name="Clamp1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.463592, 0, -0.112382, 0, 0.45, 0, 0.187303, 0, 0.278155, -2.622246, 3.35, 6.490287)
-mesh = ExtResource("1_box")
-material_override = SubResource("brass")
-
-[node name="Joint2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 3.1, 0)
-mesh = ExtResource("3_bead")
-material_override = SubResource("copper")
-
-[node name="Arm2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.22, 0, 0, 0, 0.219464, -0.488295, 0, 0.015346, 6.982948, 0, 2.9, 3.5)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
-
-[node name="Clamp2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.5, 0, 0, 0, 0.45, 0, 0, 0, 0.3, 0, 2.55, 7)
-mesh = ExtResource("1_box")
-material_override = SubResource("brass")
-
-[node name="Joint3" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 2.3, 0)
-mesh = ExtResource("3_bead")
-material_override = SubResource("copper")
-
-[node name="Arm3" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.20398, 0.005749, 2.615858, 0, 0.219464, -0.488295, -0.082413, 0.014229, 6.474477, 1.311123, 2.1, 3.245143)
-mesh = ExtResource("1_box")
-material_override = SubResource("iron")
-
-[node name="Clamp3" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.463592, 0, 0.112382, 0, 0.45, 0, -0.187303, 0, 0.278155, 2.622246, 1.75, 6.490287)
-mesh = ExtResource("1_box")
-material_override = SubResource("brass")
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

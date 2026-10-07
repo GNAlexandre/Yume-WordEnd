@@ -1,51 +1,9 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/post.tres" id="1_post"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="2_bead"]
-
-[sub_resource type="StandardMaterial3D" id="stem"]
-albedo_color = Color(0.815, 0.78, 0.692, 1)
-
-[sub_resource type="StandardMaterial3D" id="cap"]
-albedo_color = Color(0.535, 0.394, 0.271, 1)
-
-[sub_resource type="StandardMaterial3D" id="cap2"]
-albedo_color = Color(0.644, 0.503, 0.345, 1)
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/mushroom.png" id="2_image"]
 
 [node name="Mushroom" type="Node3D"]
-
-[node name="Stem1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.033, 0, 0, 0, 0.13, 0, 0, 0, 0.033, 0, 0.065, 0)
-mesh = ExtResource("1_post")
-material_override = SubResource("stem")
-cast_shadow = 0
-
-[node name="Cap1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.15, 0, 0, 0, 0.0675, 0, 0, 0, 0.15, 0, 0.13, 0)
-mesh = ExtResource("2_bead")
-material_override = SubResource("cap")
-cast_shadow = 0
-
-[node name="Stem2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.0242, 0, 0, 0, 0.09, 0, 0, 0, 0.0242, 0.11, 0.045, 0.06)
-mesh = ExtResource("1_post")
-material_override = SubResource("stem")
-cast_shadow = 0
-
-[node name="Cap2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.11, 0, 0, 0, 0.0495, 0, 0, 0, 0.11, 0.11, 0.09, 0.06)
-mesh = ExtResource("2_bead")
-material_override = SubResource("cap2")
-cast_shadow = 0
-
-[node name="Stem3" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.0198, 0, 0, 0, 0.07, 0, 0, 0, 0.0198, -0.07, 0.035, 0.09)
-mesh = ExtResource("1_post")
-material_override = SubResource("stem")
-cast_shadow = 0
-
-[node name="Cap3" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.09, 0, 0, 0, 0.0405, 0, 0, 0, 0.09, -0.07, 0.07, 0.09)
-mesh = ExtResource("2_bead")
-material_override = SubResource("cap")
-cast_shadow = 0
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
+shadow_width = 0.0

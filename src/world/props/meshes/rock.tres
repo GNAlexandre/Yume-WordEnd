@@ -1,8 +1,0 @@
-[gd_resource type="SphereMesh" format=3]
-
-[resource]
-resource_name = "rock"
-radius = 0.5
-height = 1.0
-radial_segments = 7
-rings = 4

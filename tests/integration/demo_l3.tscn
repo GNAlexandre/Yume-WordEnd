@@ -5,7 +5,7 @@
 [ext_resource type="Resource" path="res://data/skins/chtholly.tres" id="3_chtholly"]
 [ext_resource type="Resource" path="res://data/enemies/visuals/timere.tres" id="4_timere"]
 [ext_resource type="Resource" path="res://data/npcs/visuals/nephren.tres" id="5_nephren"]
-[ext_resource type="Texture2D" path="res://assets/textures/checker.png" id="6_checker"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/ground/grass.png" id="6_checker"]
 
 [sub_resource type="Environment" id="Environment_demo"]
 background_mode = 1
