@@ -1,0 +1,1095 @@
+{
+  "date": "2026-10-07",
+  "tools": {
+    "blender": "4.3.2",
+    "godot": "4.7.2",
+    "three_js": "0.180.0"
+  },
+  "models": 45,
+  "combat_models": 7,
+  "npc_and_variant_models": 38,
+  "animation_clips": 163,
+  "gltf_validator": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "godot": {
+    "models_instantiated": 45,
+    "exported_playable_meshes_checked": 7,
+    "errors": 0
+  },
+  "game_tests": {
+    "passed": 506,
+    "failed": 0,
+    "assertions": 8146
+  },
+  "scene_smoke": {
+    "passed": 92,
+    "failed": 0
+  },
+  "gallery": {
+    "models_loaded": 45,
+    "browser_errors": 0
+  },
+  "web_compressed_megabytes": 17,
+  "web_budget_megabytes": 25,
+  "assets": [
+    {
+      "id": "almaria",
+      "triangles": 7554,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 332436,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "almita",
+      "triangles": 6302,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 291300,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "ballman",
+      "triangles": 1277,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 122748,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "baroni",
+      "triangles": 7760,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 339716,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "bird_soldier",
+      "triangles": 6128,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 285996,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "bitora",
+      "triangles": 6020,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 281768,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "cat_soldier",
+      "triangles": 7620,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 334388,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "chtholly",
+      "triangles": 7721,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 406268,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "course": {
+          "duration": 0.357143,
+          "animated": true
+        },
+        "attaque": {
+          "duration": 0.285714,
+          "animated": true
+        },
+        "charge": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "degats": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "mort": {
+          "duration": 1.2,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "collon",
+      "triangles": 5788,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 275144,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "cyclops_doctor",
+      "triangles": 5936,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 277212,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "eboncandle_ancient",
+      "triangles": 3610,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 201888,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "eboncandle_skull",
+      "triangles": 7760,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 338044,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "ecluecla",
+      "triangles": 6010,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 281848,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "elq",
+      "triangles": 6378,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 293752,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "frog_soldier",
+      "triangles": 6604,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 298556,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "godrey",
+      "triangles": 7040,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 315184,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "golem",
+      "triangles": 2244,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 154164,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "grick",
+      "triangles": 5888,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 276900,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "hawk_soldier",
+      "triangles": 7010,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 316576,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "illustote",
+      "triangles": 5672,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 270588,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "ithea",
+      "triangles": 8566,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 433380,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "course": {
+          "duration": 0.357143,
+          "animated": true
+        },
+        "attaque": {
+          "duration": 0.285714,
+          "animated": true
+        },
+        "charge": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "degats": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "mort": {
+          "duration": 1.2,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "jorget",
+      "triangles": 7062,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 316192,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "kaiya",
+      "triangles": 7258,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 323432,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "knight_canine",
+      "triangles": 5246,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 255400,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "knight_feline",
+      "triangles": 6122,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 286280,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "lakhesh",
+      "triangles": 6440,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 295936,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "lillia",
+      "triangles": 6876,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 375884,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "course": {
+          "duration": 0.357143,
+          "animated": true
+        },
+        "attaque": {
+          "duration": 0.285714,
+          "animated": true
+        },
+        "charge": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "degats": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "mort": {
+          "duration": 1.2,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "limeskin",
+      "triangles": 7760,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 340784,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "nephren",
+      "triangles": 7998,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 415060,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "course": {
+          "duration": 0.357143,
+          "animated": true
+        },
+        "attaque": {
+          "duration": 0.285714,
+          "animated": true
+        },
+        "charge": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "degats": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "mort": {
+          "duration": 1.2,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "nopht",
+      "triangles": 6476,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 364500,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "course": {
+          "duration": 0.357143,
+          "animated": true
+        },
+        "attaque": {
+          "duration": 0.285714,
+          "animated": true
+        },
+        "charge": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "degats": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "mort": {
+          "duration": 1.2,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "nygglatho",
+      "triangles": 7194,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 320548,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "pannibal",
+      "triangles": 6448,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 295688,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "phyr",
+      "triangles": 7834,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 341584,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "police_golem",
+      "triangles": 2816,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 173176,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "rabbit_soldier",
+      "triangles": 7760,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 338680,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "rhantolk",
+      "triangles": 7328,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 392596,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "course": {
+          "duration": 0.357143,
+          "animated": true
+        },
+        "attaque": {
+          "duration": 0.285714,
+          "animated": true
+        },
+        "charge": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "degats": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "mort": {
+          "duration": 1.2,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "rinsha",
+      "triangles": 6022,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 282128,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "sarya",
+      "triangles": 6734,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 306956,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "souwong_sage",
+      "triangles": 6650,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 303144,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "souwong_young",
+      "triangles": 6556,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 300064,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "tiat",
+      "triangles": 6222,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 288752,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "tilfey",
+      "triangles": 5650,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 269912,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "willem",
+      "triangles": 7834,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 406880,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "course": {
+          "duration": 0.357143,
+          "animated": true
+        },
+        "attaque": {
+          "duration": 0.285714,
+          "animated": true
+        },
+        "charge": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "degats": {
+          "duration": 0.4,
+          "animated": true
+        },
+        "mort": {
+          "duration": 1.2,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "willemia",
+      "triangles": 6080,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 283576,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    },
+    {
+      "id": "wolf_soldier",
+      "triangles": 7098,
+      "bones": 20,
+      "materials": 1,
+      "bytes": 316888,
+      "animations": {
+        "repos": {
+          "duration": 2.0,
+          "animated": true
+        },
+        "marche": {
+          "duration": 0.6,
+          "animated": true
+        },
+        "parle": {
+          "duration": 2.0,
+          "animated": true
+        }
+      }
+    }
+  ]
+}

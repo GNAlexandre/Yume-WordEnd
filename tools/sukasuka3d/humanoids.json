@@ -1,0 +1,780 @@
+[
+  {
+    "id": "tiat",
+    "name": "Tiat",
+    "kind": "npc",
+    "height": 1.3,
+    "hair_color": "#92AE69",
+    "eye_color": "#345C39",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#BBC59A",
+    "accent_color": "#415333",
+    "white_color": "#F5F3E9",
+    "hair_style": "bob",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "vest",
+      "puff_sleeves"
+    ],
+    "details": {
+      "skirt_length": 0.26,
+      "side_locks": true,
+      "leg_color": "#33364B",
+      "shoe_color": "#454C3C",
+      "sleeve_color": "#F7F5EF",
+      "vest_color": "#415333",
+      "reference_note": "P41 : enfant de dix ans, carré vert ébouriffé, deux mèches fines jusqu’au col ; boléro vert sombre, robe sauge, manches blanches, collants sombres. Espèce source : leprechaun, apparence humaine.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        41,
+        42,
+        43,
+        44
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      41,
+      42,
+      43,
+      44
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "pannibal",
+    "name": "Pannibal",
+    "kind": "npc",
+    "height": 1.24,
+    "hair_color": "#B6A2D7",
+    "eye_color": "#65508E",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#71628F",
+    "accent_color": "#C1ACDC",
+    "white_color": "#F5F3E9",
+    "hair_style": "bob",
+    "outfit": "hoodie",
+    "species": "human",
+    "features": [
+      "hood",
+      "asymmetric_bangs",
+      "hem_stripes"
+    ],
+    "details": {
+      "skirt_length": 0.24,
+      "hair_length": 0.22,
+      "asymmetric_bangs": "left_eye",
+      "trouser_color": "#51536B",
+      "shoe_color": "#292A41",
+      "reference_note": "P45 : neuf ans ; mèche couvrant l’œil gauche, manteau à capuche violet à deux liserés clairs, pantalon court gris, bottines. Espèce source : leprechaun, apparence humaine.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        45,
+        46
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      45,
+      46
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "collon",
+    "name": "Collon",
+    "kind": "npc",
+    "height": 1.23,
+    "hair_color": "#EAA4B7",
+    "eye_color": "#AC5B49",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#F8F4EF",
+    "accent_color": "#C27187",
+    "white_color": "#F5F3E9",
+    "hair_style": "long",
+    "outfit": "shorts",
+    "species": "human",
+    "features": [
+      "topknot",
+      "lace_up"
+    ],
+    "details": {
+      "hair_length": 0.53,
+      "topknot": true,
+      "trouser_color": "#C27187",
+      "trim_color": "#88719E",
+      "shoe_color": "#9F6F54",
+      "reference_note": "P47 : neuf ans, chevelure rose presque jusqu’aux genoux avec petite attache au sommet ; longue tunique blanche, col/manche mauve bordé or, short rose bouffant. Espèce source : leprechaun.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        47,
+        48
+      ],
+      "skirt_length": 0.29,
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      47,
+      48
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "lakhesh",
+    "name": "Lakhesh",
+    "kind": "npc",
+    "height": 1.21,
+    "hair_color": "#EEC668",
+    "eye_color": "#A2713D",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#7F614C",
+    "accent_color": "#F1ECE0",
+    "white_color": "#F5F3E9",
+    "hair_style": "side_ponytail",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "bow",
+      "puff_sleeves"
+    ],
+    "details": {
+      "skirt_length": 0.2,
+      "hair_length": 0.19,
+      "ponytail_side": "left",
+      "sleeve_color": "#F4F1E8",
+      "sleeve_cap_color": "#AD8C64",
+      "shoe_color": "#42382E",
+      "reference_note": "P49 : neuf ans, carré blond et petite queue latérale ; robe brune sur manches blanches, ceinture nouée blanche et ourlet blanc. Espèce source : leprechaun.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        49,
+        50
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      49,
+      50
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "nygglatho",
+    "name": "Nygglatho",
+    "kind": "npc",
+    "height": 1.72,
+    "hair_color": "#EF8B8F",
+    "eye_color": "#638157",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#24222B",
+    "accent_color": "#F8F5ED",
+    "white_color": "#F5F3E9",
+    "hair_style": "long",
+    "outfit": "maid",
+    "species": "human",
+    "features": [
+      "apron",
+      "headband",
+      "bow",
+      "puff_sleeves"
+    ],
+    "details": {
+      "skirt_length": 0.035,
+      "hair_length": 0.43,
+      "hair_curls": true,
+      "collar_color": "#536648",
+      "sleeve_color": "#24222B",
+      "shoe_color": "#2D2539",
+      "reference_note": "P51 : adulte de 21 ans, troll d’apparence humaine ; longs cheveux saumon bouclés, robe noire couvrante, grand tablier blanc, coiffe et volants blancs, col vert et ruban noir.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        51,
+        52,
+        53
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      51,
+      52,
+      53
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "almaria",
+    "name": "Almaria",
+    "kind": "npc",
+    "height": 1.56,
+    "hair_color": "#493A29",
+    "eye_color": "#5E4431",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#3F4534",
+    "accent_color": "#99543D",
+    "white_color": "#F5F3E9",
+    "hair_style": "long",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "apron",
+      "bow",
+      "braid",
+      "puff_sleeves"
+    ],
+    "details": {
+      "skirt_length": 0.08,
+      "hair_length": 0.44,
+      "apron_color": "#99543D",
+      "sleeve_color": "#F5F1EB",
+      "shoulder_color": "#C78976",
+      "collar_color": "#F5F1EB",
+      "shoe_color": "#8C7658",
+      "reference_note": "P57 : cheveux bruns, grande tresse dorsale et nœud ; robe brun-rouge avec tablier brun-rouge par-dessus jupe vert sombre, col marin blanc, bottines brunes.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        57
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      57
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "souwong_young",
+    "name": "Souwong Kandel — jeune",
+    "kind": "npc",
+    "height": 1.62,
+    "hair_color": "#D8C888",
+    "eye_color": "#5C8377",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#EEEDE8",
+    "accent_color": "#4E77BC",
+    "white_color": "#F5F3E9",
+    "hair_style": "bob",
+    "outfit": "robe",
+    "species": "human",
+    "features": [
+      "reference_cape",
+      "tabard",
+      "gold_clasp"
+    ],
+    "details": {
+      "skirt_length": 0.05,
+      "cape_color": "#F1F0E9",
+      "under_color": "#313847",
+      "hair_length": 0.18,
+      "shoe_color": "#272923",
+      "reference_note": "P59 : même Souwong que le Grand Sage ; carré blond, yeux vert bleu, longue cape blanche, robe blanche et tabard bleu, fermoir or, sous-vêtement sombre.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        59
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi.",
+      "cape_bottom": 0.035
+    },
+    "reference_pages": [
+      59
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "souwong_sage",
+    "name": "Souwong Kandel — Grand Sage",
+    "kind": "npc",
+    "height": 1.82,
+    "hair_color": "#D6CBA7",
+    "eye_color": "#72836F",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#EFEEE9",
+    "accent_color": "#BD9C5E",
+    "white_color": "#F5F3E9",
+    "hair_style": "long",
+    "outfit": "robe",
+    "species": "human",
+    "features": [
+      "reference_cape",
+      "beard",
+      "tabard",
+      "gold_clasp"
+    ],
+    "details": {
+      "skirt_length": 0.04,
+      "cape_color": "#EFEDE6",
+      "hair_length": 0.24,
+      "beard_length": 0.2,
+      "body_width": 1.07,
+      "reference_note": "P60 : variante temporelle du même personnage ; chevelure et barbe blond cendré, longue cape et robe claires, pendentifs. Palette secondaire inférée de P59 car la vue de corps est au trait.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        60
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi.",
+      "cape_bottom": 0.03
+    },
+    "reference_pages": [
+      60
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "elq",
+    "name": "Elq Hrqstn",
+    "kind": "npc",
+    "height": 1.12,
+    "hair_color": "#C73532",
+    "eye_color": "#AF3543",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#FFF9EE",
+    "accent_color": "#C74445",
+    "white_color": "#F5F3E9",
+    "hair_style": "long",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "barefoot",
+      "bow",
+      "hem_crosses",
+      "puff_sleeves"
+    ],
+    "details": {
+      "skirt_length": 0.21,
+      "hair_length": 0.72,
+      "hair_width": 1.48,
+      "hair_waves": true,
+      "trim_color": "#E59BA8",
+      "sleeve_color": "#FFF9EE",
+      "reference_note": "P63 : très jeune silhouette, cheveux rouge vif ondulés jusqu’au sol, robe blanche couvrante à ourlet géométrique rose, ruban rouge au col, pieds nus ; longueur et volume de chevelure essentiels.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        63
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      63
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "almita",
+    "name": "Almita",
+    "kind": "npc",
+    "height": 0.96,
+    "hair_color": "#EBC760",
+    "eye_color": "#AD772B",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#4E5240",
+    "accent_color": "#77816A",
+    "white_color": "#F5F3E9",
+    "hair_style": "bob",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "apron",
+      "vest",
+      "apron_pockets",
+      "bow"
+    ],
+    "details": {
+      "skirt_length": 0.22,
+      "vest_color": "#77816A",
+      "apron_color": "#F4F3E8",
+      "sleeve_color": "#F4F3E8",
+      "pocket_color": "#B4A397",
+      "shoe_color": "#3C3E34",
+      "reference_note": "P64 haut : petit carré blond arrondi et mèche latérale, boléro gris vert, tablier blanc à deux poches brunes sur jupe gris sombre. Espèce source : petite fée.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        64
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      64
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "sarya",
+    "name": "Sarya / サリャ",
+    "kind": "npc",
+    "height": 0.99,
+    "hair_color": "#DCAB63",
+    "eye_color": "#86723D",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#C78B7F",
+    "accent_color": "#A9695E",
+    "white_color": "#F5F3E9",
+    "hair_style": "twintails",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "apron",
+      "bow",
+      "apron_stitch"
+    ],
+    "details": {
+      "skirt_length": 0.19,
+      "hair_length": 0.19,
+      "apron_color": "#A9695E",
+      "sleeve_color": "#C78B7F",
+      "leg_color": "#D6CBAC",
+      "shoe_color": "#685936",
+      "reference_note": "P64 bas, rangée supérieure 1 : couettes blondes courtes, robe rose brique, tablier rose brun cousu au pourtour, lavallière crème. Romanisation indicative.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        64
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      64
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "willemia",
+    "name": "Willemia / ウィレミア",
+    "kind": "npc",
+    "height": 1.03,
+    "hair_color": "#849EAF",
+    "eye_color": "#607D99",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#8D9777",
+    "accent_color": "#DADCCD",
+    "white_color": "#F5F3E9",
+    "hair_style": "long",
+    "outfit": "hoodie",
+    "species": "human",
+    "features": [
+      "hood",
+      "hoodie_pockets",
+      "hem_scallops"
+    ],
+    "details": {
+      "skirt_length": 0.18,
+      "hair_length": 0.32,
+      "shoe_color": "#655239",
+      "reference_note": "P64 bas, rangée supérieure 2 : cheveux longs bleu gris, robe à capuche vert sauge, cordons blancs, poches et bordure crème à festons. Romanisation indicative.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        64
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      64
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "ecluecla",
+    "name": "Ecluecla / エクルエクラ",
+    "kind": "npc",
+    "height": 1.01,
+    "hair_color": "#DD9187",
+    "eye_color": "#A1626B",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#C4813F",
+    "accent_color": "#80503A",
+    "white_color": "#F5F3E9",
+    "hair_style": "bob",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "vest",
+      "bow"
+    ],
+    "details": {
+      "skirt_length": 0.14,
+      "vest_color": "#80503A",
+      "sleeve_color": "#F5F1E9",
+      "shoe_color": "#393133",
+      "reference_note": "P64 bas, rangée supérieure 3 : carré saumon avec pointes bouclées, gilet brun à bord beige sur chemise blanche, longue jupe orange. Romanisation indicative.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        64
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      64
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "jorget",
+    "name": "Jorget / ジョルゼット",
+    "kind": "npc",
+    "height": 1.02,
+    "hair_color": "#A2AE62",
+    "eye_color": "#6A8543",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#8998CB",
+    "accent_color": "#F7F4E8",
+    "white_color": "#F5F3E9",
+    "hair_style": "bob",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "apron",
+      "bow",
+      "lace_up",
+      "hem_stripes"
+    ],
+    "details": {
+      "skirt_length": 0.21,
+      "apron_color": "#F7F4E8",
+      "trim_color": "#8E9BCB",
+      "sleeve_color": "#8998CB",
+      "belt_color": "#2E303E",
+      "shoe_color": "#3E392B",
+      "reference_note": "P64 bas, rangée supérieure 4 : carré vert, corsage bleu avec lacets noirs, tablier blanc à deux bandes bleues, ruban noir au col. Romanisation indicative.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        64
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      64
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "tilfey",
+    "name": "Tilfey / ティルフェイ",
+    "kind": "npc",
+    "height": 0.97,
+    "hair_color": "#DE8E30",
+    "eye_color": "#A76125",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#DCAF4E",
+    "accent_color": "#F6EEE1",
+    "white_color": "#F5F3E9",
+    "hair_style": "bob",
+    "outfit": "overalls",
+    "species": "human",
+    "features": [
+      "bib_pocket",
+      "topknot"
+    ],
+    "details": {
+      "skirt_length": 0,
+      "trouser_color": "#DCAF4E",
+      "sleeve_color": "#F6EEE1",
+      "shoe_color": "#54463E",
+      "reference_note": "P64 bas, rangée inférieure 1 : carré orange avec petite attache haute, salopette jaune à poche centrale, chemise blanche à bord saumon. Romanisation indicative.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        64
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      64
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "bitora",
+    "name": "Bitora / ビトゥラ",
+    "kind": "npc",
+    "height": 1.03,
+    "hair_color": "#C9816B",
+    "eye_color": "#66433E",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#A591C2",
+    "accent_color": "#F5EFD9",
+    "white_color": "#F5F3E9",
+    "hair_style": "crop",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "hem_crosses",
+      "puff_sleeves"
+    ],
+    "details": {
+      "skirt_length": 0.24,
+      "leg_color": "#9B8E81",
+      "sleeve_color": "#A591C2",
+      "shoe_color": "#584B3D",
+      "reference_note": "P64 bas, rangée inférieure 2 : cheveux corail courts pointus, tunique violette bordée crème avec quatre croix, pantalon gris brun, sandales. Romanisation indicative.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        64
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      64
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "illustote",
+    "name": "Illustote / イルストート",
+    "kind": "npc",
+    "height": 0.98,
+    "hair_color": "#919EA6",
+    "eye_color": "#526143",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#C5BE85",
+    "accent_color": "#C59473",
+    "white_color": "#F5F3E9",
+    "hair_style": "crop",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "reference_cape",
+      "lace_up"
+    ],
+    "details": {
+      "skirt_length": 0.18,
+      "cape_color": "#C59473",
+      "cape_length": 0.3,
+      "shoe_color": "#5E593D",
+      "reference_note": "P64 bas, rangée inférieure 3 : cheveux courts bleu gris, veste/cape pêche ouverte à lacets sombres, robe jaune pâle. Romanisation indicative.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        64
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi.",
+      "cape_bottom": 0.2
+    },
+    "reference_pages": [
+      64
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "rinsha",
+    "name": "Rinsha / リンシャ",
+    "kind": "npc",
+    "height": 1.0,
+    "hair_color": "#E4B656",
+    "eye_color": "#786C53",
+    "skin_color": "#F6DDBF",
+    "outfit_color": "#984D3D",
+    "accent_color": "#795340",
+    "white_color": "#F5F3E9",
+    "hair_style": "long",
+    "outfit": "dress",
+    "species": "human",
+    "features": [
+      "reference_cape",
+      "bow"
+    ],
+    "details": {
+      "skirt_length": 0.16,
+      "hair_length": 0.3,
+      "cape_color": "#795340",
+      "cape_length": 0.15,
+      "trim_color": "#D0B380",
+      "sleeve_color": "#D4C2AA",
+      "shoe_color": "#704B36",
+      "reference_note": "P64 bas, rangée inférieure 4 : longs cheveux blonds, cape courte brune bordée beige, robe bordeaux, manches crème et nœud roux. Romanisation indicative.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        64
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi.",
+      "cape_bottom": 0.49
+    },
+    "reference_pages": [
+      64
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "phyr",
+    "name": "Phyracorlybia Dorio",
+    "kind": "npc",
+    "height": 1.6,
+    "hair_color": "#C6AC63",
+    "eye_color": "#4D4734",
+    "skin_color": "#E7E2CF",
+    "outfit_color": "#719F9A",
+    "accent_color": "#E1ECE7",
+    "white_color": "#F5F3E9",
+    "hair_style": "bob",
+    "outfit": "maid",
+    "species": "dog",
+    "features": [
+      "apron",
+      "reference_mini_hat",
+      "animal_ears",
+      "bow",
+      "puff_sleeves",
+      "tail"
+    ],
+    "details": {
+      "skirt_length": 0.035,
+      "hair_length": 0.23,
+      "skin_color": "#E7E2CF",
+      "ear_color": "#BDA965",
+      "apron_color": "#DDE9E4",
+      "apron_panel_color": "#263A36",
+      "hat_color": "#1C3027",
+      "hat_scale": 0.53,
+      "muzzle": true,
+      "tail_length": 0.28,
+      "tail_color": "#C6AC63",
+      "reference_note": "P67 : canidé anthropomorphe à oreilles larges latérales, museau clair et truffe sombre, queue blonde ; carré blond ondulé, mini chapeau noir, robe vert canard et dentelle blanche.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        67
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      67
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  },
+  {
+    "id": "kaiya",
+    "name": "Kaiya",
+    "kind": "npc",
+    "height": 1.57,
+    "hair_color": "#212536",
+    "eye_color": "#587CAE",
+    "skin_color": "#E5DBCC",
+    "outfit_color": "#202A23",
+    "accent_color": "#F5F2E7",
+    "white_color": "#F5F3E9",
+    "hair_style": "bob",
+    "outfit": "maid",
+    "species": "cat",
+    "features": [
+      "apron",
+      "headband",
+      "animal_ears",
+      "bow",
+      "tail",
+      "whiskers"
+    ],
+    "details": {
+      "skirt_length": 0.07,
+      "hair_length": 0.17,
+      "ear_color": "#242637",
+      "inner_ear_color": "#C9BDBB",
+      "tail_color": "#232636",
+      "tail_length": 0.41,
+      "shoe_color": "#20251F",
+      "reference_note": "P68 haut : servante féline, oreilles noires à intérieur clair et moustaches, carré noir, yeux bleus en amande, robe noire, tablier et coiffe blancs, queue noire.",
+      "height_note": "Taille de travail stylisée déduite des proportions, aucune taille canonique chiffrée dans ces planches.",
+      "reference_pages": [
+        68
+      ],
+      "hem_coordinate_note": "skirt_length = altitude de l’ourlet / hauteur, repère Blender Z ; pas une longueur de jupe. Ourlet ajusté à la silhouette source chibi."
+    },
+    "reference_pages": [
+      68
+    ],
+    "geometry_hook": "humanoid_details.decorate"
+  }
+]

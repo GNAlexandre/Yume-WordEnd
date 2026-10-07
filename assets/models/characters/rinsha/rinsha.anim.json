@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "modele": "rinsha.glb",
+  "hauteur_m": 1.0,
+  "usage": "npc",
+  "animations": {
+    "repos": {
+      "ips": 10,
+      "images": 20,
+      "boucle": true
+    },
+    "marche": {
+      "ips": 10,
+      "images": 6,
+      "boucle": true
+    },
+    "parle": {
+      "ips": 10,
+      "images": 20,
+      "boucle": true
+    }
+  }
+}
