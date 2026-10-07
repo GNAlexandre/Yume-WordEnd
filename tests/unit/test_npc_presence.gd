@@ -182,6 +182,45 @@ func test_quest_step_lists_and_negation() -> void:
 	assert_eq(GameState.quest_state(&"sys_story"), &"done")
 
 
+## La syntaxe .tres de docs/QUETES.md (« La présence des PNJ ») se charge telle quelle.
+func test_visible_if_written_in_a_tres_file() -> void:
+	var text := (
+		"\n"
+		. join(
+			[
+				'[gd_resource type="Resource" script_class="NpcData" format=3]',
+				"",
+				'[ext_resource type="Script" path="res://src/npc/npc_data.gd" id="1_npc"]',
+				"",
+				"[resource]",
+				'script = ExtResource("1_npc")',
+				'id = &"sys_willem_training"',
+				'display_name = "Willem"',
+				"visible_if = {",
+				'"quest_step": ["sys_act", "training"]',
+				"}",
+				"",
+			]
+		)
+	)
+	var path := DIR.path_join("sys_willem_training.tres")
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	file.store_string(text)
+	file.close()
+	var npc := ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE) as NpcData
+	assert_not_null(npc, "NpcData lue")
+	if npc == null:
+		return
+	assert_eq_deep(npc.visible_if, {"quest_step": ["sys_act", "training"]})
+	assert_eq(npc.visible_if_problem(), "", "condition valide")
+	assert_false(npc.is_present(), "quête pas commencée")
+	GameState.set_quest_state(&"sys_act", &"active")
+	GameState.set_quest_step(&"sys_act", &"training")
+	assert_true(npc.is_present(), "pendant l'étape training")
+	GameState.set_quest_step(&"sys_act", &"evening")
+	assert_false(npc.is_present(), "après")
+
+
 func test_visible_if_is_validated_like_a_dialogue_condition() -> void:
 	for valid: Dictionary in [
 		{},
