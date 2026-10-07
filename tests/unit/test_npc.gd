@@ -51,7 +51,7 @@ const HEIGHTS := {
 }
 ## Emplacements (nœud, PNJ, position locale à la zone) de HISTOIRE.md 3.3. Deux écarts notés dans
 ## docs/DECISIONS.md pour le décor actuel : le guetteur s'écarte de la ruine (prévu en (−14 ; −10))
-## et Willem se tient sur le belvédère, hors de sa rambarde (prévu en (3 ; 0)).
+## et Willem se tient sur le plateau du belvédère, entre sa rambarde et le banc (prévu en (3 ; 0)).
 const PLACEMENTS := {
 	"village":
 	[
@@ -80,7 +80,7 @@ const PLACEMENTS := {
 		["Ferryman", &"ferryman", Vector3(12, 0.2, 13)],
 		["Baker", &"baker", Vector3(-4, 0.2, -7)],
 	],
-	"hill": [["WillemStars", &"willem_stars", Vector3(2, 8.2, -1)]],
+	"hill": [["WillemStars", &"willem_stars", Vector3(1, 8.2, -0.8)]],
 }
 ## Déclencheurs de la quête principale (HISTOIRE.md 3.3) : zone, id, position, rayon, hauteur.
 ## couchant_edge est posé sur le sol actuel (0,1 m ; 0 dans HISTOIRE.md).
@@ -214,7 +214,9 @@ func test_npc_data_files() -> void:
 		if data.skin != null:
 			assert_eq(data.skin.id, fields[1], "%s : visuel" % npc_id)
 			assert_eq(
-				data.skin.resource_path, "%s/%s.tres" % [VISUALS_DIR, fields[1]], "visuel non jouable"
+				data.skin.resource_path,
+				"%s/%s.tres" % [VISUALS_DIR, fields[1]],
+				"visuel non jouable"
 			)
 		assert_eq(data.quest_id, fields[2], "%s : quête" % npc_id)
 		assert_eq(data.home_zone, fields[3], "%s : zone" % npc_id)

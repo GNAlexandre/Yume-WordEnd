@@ -18,6 +18,8 @@ extends "res://tests/stubs/m2_game_test.gd"
 const QUEST := &"act1_main"
 ## Devant la cloche du cercle de veille (local à la zone du Couchant) : départ des veilles.
 const BELL_FRONT := Vector3(10.6, 0.0, -2.0)
+## Sur le plateau du belvédère (local à la colline), d'où l'on rejoint Willem sans la rambarde.
+const SUMMIT_FRONT := Vector3(-1.0, 8.0, -2.5)
 
 ## Manette (true) ou clavier (false) pour le test en cours.
 var _pad: bool = false
@@ -149,12 +151,14 @@ func _npc(zone_id: StringName, node_name: String) -> Npc:
 	return zone(zone_id).get_node(NodePath("NPCs/" + node_name)) as Npc
 
 
-## Joueur posé à 3 m du PNJ (côté centre de la zone), qui marche vers lui jusqu'à l'invite
-## « Parler » ; E ou A : la conversation commence.
-func _talk_to(zone_id: StringName, npc: Npc) -> void:
+## Joueur posé à 3 m du PNJ (côté centre de la zone, ou au point local start s'il est donné),
+## qui marche vers lui jusqu'à l'invite « Parler » ; E ou A : la conversation commence.
+func _talk_to(zone_id: StringName, npc: Npc, start := Vector3.INF) -> void:
 	var local := zone(zone_id).to_local(npc.global_position)
 	var away := Vector3(-local.x, 0.0, -local.z).normalized()
-	await place_player(zone_id, local + away * 3.0, -away)
+	if start == Vector3.INF:
+		start = local + away * 3.0
+	await place_player(zone_id, start, local - start)
 	var near: bool = await _walk_toward(
 		npc.global_position, func() -> bool: return player.current_interactable() == npc, 4.0
 	)
@@ -331,7 +335,7 @@ func _play_the_first_act() -> void:
 	# 13. La promesse : quête terminée, récompenses.
 	_lines.clear()
 	var stars := _npc(&"hill", "WillemStars")
-	await _talk_to(&"hill", stars)
+	await _talk_to(&"hill", stars, SUMMIT_FRONT)
 	await _read_dialogue([1, 0])
 	assert_eq(GameState.quest_state(QUEST), &"done", "acte 1 terminé")
 	assert_true(_lines.any(func(t: String) -> bool: return t.contains("C’est promis.")))
@@ -346,7 +350,7 @@ func _play_the_first_act() -> void:
 	# Ensuite, Willem regarde les étoiles : une seule réplique.
 	_lines.clear()
 	await wait_seconds(0.4)
-	await _talk_to(&"hill", stars)
+	await _talk_to(&"hill", stars, SUMMIT_FRONT)
 	await _read_dialogue()
 	assert_eq(_lines.size(), 1, "une seule réplique")
 	assert_true(
