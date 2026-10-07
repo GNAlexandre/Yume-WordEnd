@@ -1,14 +1,14 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/rock.tres" id="1_rock"]
 
 [sub_resource type="StandardMaterial3D" id="dark"]
-albedo_color = Color(0.474, 0.422, 0.386, 1)
+albedo_color = Color(0.362, 0.38, 0.406, 1)
 
 [node name="RingStone" type="Node3D"]
 
 [node name="Stone" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.751754, 0, 0.188111, 0, 0.16, 0, -0.273616, 0, 0.516831, 0, 0.08, 0)
-mesh = ExtResource("1_box")
+transform = Transform3D(0.798739, 0, 0.205212, 0, 0.24, 0, -0.290717, 0, 0.563816, 0, 0.06, 0)
+mesh = ExtResource("1_rock")
 material_override = SubResource("dark")
 cast_shadow = 0

@@ -78,9 +78,10 @@ const STREAM: Array[Vector2] = [
 	Vector2(-52.0, -60.0),
 	Vector2(-62.5, -62.5),
 ]
-## Disques sans herbe (x, z, rayon) : cour, aire de jeux, place du marché, échoppe, plateau du
-## belvédère, descente de la salle des armes.
+## Disques sans herbe (x, z, rayon) : cercle de veille (combat lisible), cour, aire de jeux,
+## place du marché, échoppe, plateau du belvédère, descente de la salle des armes.
 const BARE_DISCS: Array[Vector3] = [
+	Vector3(-51.0, 0.0, 13.5),
 	Vector3(0.0, 0.0, 9.6),
 	Vector3(-12.0, 11.0, 4.2),
 	Vector3(-23.0, 50.0, 7.0),

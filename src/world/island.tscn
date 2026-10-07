@@ -12,6 +12,10 @@
 [ext_resource type="Shader" path="res://src/world/shaders/waterfall.gdshader" id="10_waterfall"]
 [ext_resource type="Shader" path="res://src/world/shaders/sky.gdshader" id="11_sky"]
 [ext_resource type="Script" path="res://src/world/grass.gd" id="12_grass"]
+[ext_resource type="PackedScene" path="res://src/world/props/floating_rock.tscn" id="16_floating_rock"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_c.tscn" id="15_island_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_b.tscn" id="14_island_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_a.tscn" id="13_island_a"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_sky"]
 seed = 168
@@ -145,6 +149,42 @@ material_override = SubResource("ShaderMaterial_waterfall")
 
 [node name="Decor" type="Node3D" parent="."]
 script = ExtResource("9_batcher")
+
+[node name="Island53" parent="Decor" instance=ExtResource("14_island_b")]
+transform = Transform3D(2.067324, 0, 0.752444, 0, 2.2, 0, -0.752444, 0, 2.067324, 60, -30, 560)
+
+[node name="Island15" parent="Decor" instance=ExtResource("13_island_a")]
+transform = Transform3D(1.02606, 0, 2.819078, 0, 3, 0, -2.819078, 0, 1.02606, -620, -25, 170)
+
+[node name="IslandNorthEast" parent="Decor" instance=ExtResource("15_island_c")]
+transform = Transform3D(-1.732051, 0, 1, 0, 2, 0, -1, 0, -1.732051, 430, -45, -520)
+
+[node name="IslandNorthWest" parent="Decor" instance=ExtResource("13_island_a")]
+transform = Transform3D(-1.385641, 0, -0.8, 0, 1.6, 0, 0.8, 0, -1.385641, -360, -5, -640)
+
+[node name="FloatingRock1" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(2.376643, 0, -0.334015, 0, 2.4, 0, 0.334015, 0, 2.376643, -85.463336, -14, -31.106111)
+
+[node name="FloatingRock2" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(0.660967, 0, 1.457094, 0, 1.6, 0, -1.457094, 0, 0.660967, -62.671372, -26, -80.215698)
+
+[node name="FloatingRock3" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(-1.032739, 0, -0.789589, 0, 1.3, 0, 0.789589, 0, -1.032739, 43.362345, -9, -81.552711)
+
+[node name="FloatingRock4" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(1.141427, 0, -1.642298, 0, 2, 0, 1.642298, 0, 1.141427, 84.73968, -22, -37.728536)
+
+[node name="FloatingRock5" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(0.077117, 0, 1.69825, 0, 1.7, 0, -1.69825, 0, 0.077117, 78.616017, -16, 61.421564)
+
+[node name="FloatingRock6" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(0.063524, 0, -2.599224, 0, 2.6, 0, 2.599224, 0, 0.063524, -45.321451, -28, 85.237252)
+
+[node name="FloatingRock7" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(1.159111, 0, -0.310583, 0, 1.2, 0, 0.310583, 0, 1.159111, -82.15057, -11, 47.429654)
+
+[node name="FloatingRock8" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(1.348184, 0, 1.338805, 0, 1.9, 0, -1.338805, 0, 1.348184, -92.855688, -33, 6.493102)
 
 [node name="Grass" type="Node3D" parent="."]
 script = ExtResource("12_grass")

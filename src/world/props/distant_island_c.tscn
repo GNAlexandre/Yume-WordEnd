@@ -11,10 +11,10 @@ albedo_color = Color(0.444, 0.514, 0.321, 1)
 albedo_color = Color(0.562, 0.58, 0.597, 1)
 
 [sub_resource type="StandardMaterial3D" id="rock2"]
-albedo_color = Color(0.595, 0.533, 0.559, 1)
+albedo_color = Color(0.502, 0.52, 0.546, 1)
 
 [sub_resource type="StandardMaterial3D" id="gold"]
-albedo_color = Color(0.827, 0.624, 0.36, 1)
+albedo_color = Color(0.702, 0.552, 0.315, 0.5)
 
 [node name="DistantIsland" type="Node3D"]
 

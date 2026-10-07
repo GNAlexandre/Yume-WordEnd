@@ -207,11 +207,14 @@ void fragment() {
 	float shape = length(q) + 2.5 * sin(lobe * 3.0 + 0.7) + 1.5 * sin(lobe * 5.0 + 2.0);
 	float couchant = 1.0 - smoothstep(25.0, 28.5, shape);
 	if (couchant > 0.0) {
-		vec2 plates = cells(p / 2.6 + vec2(0.3 * n2));
-		vec3 bare = mix(stone.rgb, stone_dark.rgb, 0.15 + 0.4 * plates.y);
-		bare *= 0.94 + 0.12 * n2;
-		bare = mix(stone_dark.rgb * 0.8, bare, smoothstep(0.015, 0.05, plates.x));
-		float drift = max(smoothstep(0.25, 0.9, h), smoothstep(0.55, 0.75, n1 + 0.2 * n2));
+		// Grandes dalles de roche aux bords irréguliers, joints fins à demi comblés de sable.
+		vec2 warp = vec2(n2, noise(p * 0.21 + vec2(4.0, 9.0))) - 0.5;
+		vec2 plates = cells(p / 3.4 + warp * 0.6);
+		vec3 bare = mix(stone.rgb, stone_dark.rgb, 0.1 + 0.35 * plates.y);
+		bare *= 0.92 + 0.16 * noise(p * 1.3 + vec2(2.0, 7.0));
+		float joint = 1.0 - smoothstep(0.008, 0.03, plates.x);
+		bare = mix(bare, mix(stone_dark.rgb, sand.rgb, 0.4) * 0.9, joint * 0.7);
+		float drift = max(smoothstep(0.25, 0.9, h), smoothstep(0.45, 0.7, n1 + 0.2 * n2));
 		c = mix(c, mix(bare, sand.rgb * (0.95 + 0.08 * n2), drift), couchant);
 	}
 	// Le cercle de veille : vieilles dalles à demi ensablées, anneau de pierres sombres à 12 m.

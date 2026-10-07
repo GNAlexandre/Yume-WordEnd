@@ -15,12 +15,12 @@ extends Node3D
 
 ## Vues fixes : position de l'œil, point visé, champ (degrés).
 const VIEWS := {
-	"ile": [Vector3(-118.0, 74.0, 150.0), Vector3(-4.0, -14.0, 0.0), 50.0],
+	"ile": [Vector3(-125.0, 48.0, 135.0), Vector3(0.0, -14.0, -5.0), 50.0],
 	"entrepot": [Vector3(13.0, 7.5, 17.0), Vector3(-8.0, 2.0, -8.0), 60.0],
 	"bois": [Vector3(6.0, 6.0, -30.0), Vector3(-6.0, 1.0, -56.0), 62.0],
 	"couchant": [Vector3(-27.0, 5.5, 9.0), Vector3(-55.0, 1.0, -3.0), 60.0],
-	"port": [Vector3(26.0, 9.0, 32.0), Vector3(-2.0, 0.0, 58.0), 62.0],
-	"colline": [Vector3(30.0, 6.0, 14.0), Vector3(52.0, 6.0, -4.0), 60.0],
+	"port": [Vector3(30.0, 10.0, 84.0), Vector3(-6.0, 2.0, 50.0), 60.0],
+	"colline": [Vector3(36.0, 8.0, 10.0), Vector3(53.0, 9.5, -5.0), 60.0],
 	"bord": [Vector3(-70.0, 3.0, -2.0), Vector3(-110.0, -25.0, 10.0), 62.0],
 	"dessous": [Vector3(30.0, -40.0, 150.0), Vector3(0.0, -12.0, 0.0), 55.0],
 }
