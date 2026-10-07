@@ -1,0 +1,626 @@
+{
+  "source": "设定集（图）, 162 pages fournies par utilisateur",
+  "pagination": "Numéro dans le nom du fichier ; le folio imprimé est généralement inférieur de 1.",
+  "maps": "Différées à la demande utilisateur ; attendre les volumes.",
+  "entries": [
+    {
+      "id": "willem",
+      "name": "Willem Kmetsch",
+      "pages": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "kind": "combat",
+      "notes": "Uniforme noir et or ; cheveux noirs. Arme p7.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p005.jpg",
+        "/workspace/sukasuka-references/pages/p006.jpg",
+        "/workspace/sukasuka-references/pages/p007.jpg",
+        "/workspace/sukasuka-references/pages/p008.jpg",
+        "/workspace/sukasuka-references/pages/p009.jpg",
+        "/workspace/sukasuka-references/pages/p010.jpg"
+      ]
+    },
+    {
+      "id": "chtholly",
+      "name": "Chtholly Nota Seniorious",
+      "pages": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "kind": "combat",
+      "notes": "Robe blanche/noire bordée bleu, longs cheveux bleus. Seniolis p14–15 ; changements de couleur p13 = variantes, pas de nouveaux personnages.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p011.jpg",
+        "/workspace/sukasuka-references/pages/p012.jpg",
+        "/workspace/sukasuka-references/pages/p013.jpg",
+        "/workspace/sukasuka-references/pages/p014.jpg",
+        "/workspace/sukasuka-references/pages/p015.jpg",
+        "/workspace/sukasuka-references/pages/p016.jpg",
+        "/workspace/sukasuka-references/pages/p017.jpg",
+        "/workspace/sukasuka-references/pages/p018.jpg",
+        "/workspace/sukasuka-references/pages/p019.jpg",
+        "/workspace/sukasuka-references/pages/p020.jpg"
+      ]
+    },
+    {
+      "id": "ithea",
+      "name": "Ithea Myse Valgulious",
+      "pages": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "kind": "combat",
+      "notes": "Cheveux orange à mèches pointues, écharpe orange, tenue crème/orange. Arme p23. Pas des oreilles animales.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p021.jpg",
+        "/workspace/sukasuka-references/pages/p022.jpg",
+        "/workspace/sukasuka-references/pages/p023.jpg",
+        "/workspace/sukasuka-references/pages/p024.jpg",
+        "/workspace/sukasuka-references/pages/p025.jpg",
+        "/workspace/sukasuka-references/pages/p026.jpg"
+      ]
+    },
+    {
+      "id": "nephren",
+      "name": "Nephren Ruq Insania",
+      "pages": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "kind": "combat",
+      "notes": "Cheveux gris-lilas en couettes, manteau violet. Insania p29.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p027.jpg",
+        "/workspace/sukasuka-references/pages/p028.jpg",
+        "/workspace/sukasuka-references/pages/p029.jpg",
+        "/workspace/sukasuka-references/pages/p030.jpg",
+        "/workspace/sukasuka-references/pages/p031.jpg",
+        "/workspace/sukasuka-references/pages/p032.jpg"
+      ]
+    },
+    {
+      "id": "nopht",
+      "name": "Nopht Keh Desperatio",
+      "pages": [
+        33,
+        34,
+        35,
+        36
+      ],
+      "kind": "combat",
+      "notes": "Cheveux courts corail, tenue brun-rouge, pantacourt. Desperatio p35.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p033.jpg",
+        "/workspace/sukasuka-references/pages/p034.jpg",
+        "/workspace/sukasuka-references/pages/p035.jpg",
+        "/workspace/sukasuka-references/pages/p036.jpg"
+      ]
+    },
+    {
+      "id": "rhantolk",
+      "name": "Rhantolk Ytri Historia",
+      "pages": [
+        37,
+        38,
+        39,
+        40
+      ],
+      "kind": "combat",
+      "notes": "Longs cheveux bleu-violet, bandeau blanc, robe bleue. Historia p39.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p037.jpg",
+        "/workspace/sukasuka-references/pages/p038.jpg",
+        "/workspace/sukasuka-references/pages/p039.jpg",
+        "/workspace/sukasuka-references/pages/p040.jpg"
+      ]
+    },
+    {
+      "id": "tiat",
+      "name": "Tiat",
+      "pages": [
+        41,
+        42,
+        43,
+        44
+      ],
+      "kind": "npc",
+      "notes": "Cheveux courts verts, robe vert olive sur chemise blanche.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p041.jpg",
+        "/workspace/sukasuka-references/pages/p042.jpg",
+        "/workspace/sukasuka-references/pages/p043.jpg",
+        "/workspace/sukasuka-references/pages/p044.jpg"
+      ]
+    },
+    {
+      "id": "pannibal",
+      "name": "Pannibal",
+      "pages": [
+        45,
+        46
+      ],
+      "kind": "npc",
+      "notes": "Cheveux lilas masquant un œil, manteau à capuche violet.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p045.jpg",
+        "/workspace/sukasuka-references/pages/p046.jpg"
+      ]
+    },
+    {
+      "id": "collon",
+      "name": "Collon",
+      "pages": [
+        47,
+        48
+      ],
+      "kind": "npc",
+      "notes": "Très longs cheveux roses avec petite attache haute, tunique blanche et rose, short rose.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p047.jpg",
+        "/workspace/sukasuka-references/pages/p048.jpg"
+      ]
+    },
+    {
+      "id": "lakhesh",
+      "name": "Lakhesh",
+      "pages": [
+        49,
+        50
+      ],
+      "kind": "npc",
+      "notes": "Cheveux blond doré, petite queue latérale, robe brune sur manches blanches.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p049.jpg",
+        "/workspace/sukasuka-references/pages/p050.jpg"
+      ]
+    },
+    {
+      "id": "nygglatho",
+      "name": "Nygglatho",
+      "pages": [
+        51,
+        52,
+        53
+      ],
+      "kind": "npc",
+      "notes": "Cheveux rose saumon, yeux verts, longue robe noire et tablier blanc.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p051.jpg",
+        "/workspace/sukasuka-references/pages/p052.jpg",
+        "/workspace/sukasuka-references/pages/p053.jpg"
+      ]
+    },
+    {
+      "id": "grick",
+      "name": "Grick",
+      "pages": [
+        54
+      ],
+      "kind": "npc",
+      "notes": "Gobelin vert, lunettes sur casquette, gilet brun et pantalon blanc.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p054.jpg"
+      ]
+    },
+    {
+      "id": "limeskin",
+      "name": "Limeskin",
+      "pages": [
+        55,
+        56
+      ],
+      "kind": "npc",
+      "notes": "Grand reptilien gris, uniforme noir/or. P56 tenue civile du même personnage.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p055.jpg",
+        "/workspace/sukasuka-references/pages/p056.jpg"
+      ]
+    },
+    {
+      "id": "almaria",
+      "name": "Almaria",
+      "pages": [
+        57
+      ],
+      "kind": "npc",
+      "notes": "Cheveux bruns longs, robe rouge-brun, tablier brun et jupe sombre.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p057.jpg"
+      ]
+    },
+    {
+      "id": "lillia",
+      "name": "Lillia Asplay",
+      "pages": [
+        58
+      ],
+      "kind": "combat",
+      "notes": "Cheveux rouges en queue haute, tenue blanche/bordeaux/or, cape bordeaux.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p058.jpg"
+      ]
+    },
+    {
+      "id": "souwong_young",
+      "name": "Souwong Kandel — jeune",
+      "pages": [
+        59
+      ],
+      "kind": "npc",
+      "notes": "Cheveux blonds courts, cape blanche et robe bleue/blanche.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p059.jpg"
+      ]
+    },
+    {
+      "id": "souwong_sage",
+      "name": "Souwong Kandel — Grand Sage",
+      "pages": [
+        60
+      ],
+      "kind": "npc",
+      "notes": "Même personnage à un autre âge : longs cheveux et barbe blonds, cape blanche.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p060.jpg"
+      ]
+    },
+    {
+      "id": "eboncandle_ancient",
+      "name": "Eboncandle — ancien corps",
+      "pages": [
+        61
+      ],
+      "kind": "npc",
+      "notes": "Armure bordeaux et turquoise, tête aplatie et large ; variante temporelle.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p061.jpg"
+      ]
+    },
+    {
+      "id": "eboncandle_skull",
+      "name": "Eboncandle — crâne",
+      "pages": [
+        62
+      ],
+      "kind": "npc",
+      "notes": "Même personnage : crâne dans mécanisme doré ; référence au trait, couleurs partielles seulement.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p062.jpg"
+      ]
+    },
+    {
+      "id": "elq",
+      "name": "Elq Hrqstn",
+      "pages": [
+        63
+      ],
+      "kind": "npc",
+      "notes": "Très longs cheveux rouges ondulés, robe blanche, pieds nus.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p063.jpg"
+      ]
+    },
+    {
+      "id": "almita",
+      "name": "Almita",
+      "pages": [
+        64
+      ],
+      "kind": "npc",
+      "notes": "Haut de p64 : carré blond, boléro gris-vert, tablier blanc à poches, jupe sombre.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p064.jpg"
+      ]
+    },
+    {
+      "id": "sarya",
+      "name": "Sarya / サリャ",
+      "pages": [
+        64
+      ],
+      "kind": "npc",
+      "notes": "Bas p64, rangée supérieure 1 : deux petites couettes blondes, robe rose brique. Romanisation indicative.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p064.jpg"
+      ]
+    },
+    {
+      "id": "willemia",
+      "name": "Willemia / ウィレミア",
+      "pages": [
+        64
+      ],
+      "kind": "npc",
+      "notes": "Bas p64, rangée supérieure 2 : cheveux longs bleu-gris, robe à capuche verte. Romanisation indicative.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p064.jpg"
+      ]
+    },
+    {
+      "id": "ecluecla",
+      "name": "Ecluecla / エクルエクラ",
+      "pages": [
+        64
+      ],
+      "kind": "npc",
+      "notes": "Bas p64, rangée supérieure 3 : carré saumon, jupe orange, gilet brun. Romanisation indicative.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p064.jpg"
+      ]
+    },
+    {
+      "id": "jorget",
+      "name": "Jorget / ジョルゼット",
+      "pages": [
+        64
+      ],
+      "kind": "npc",
+      "notes": "Bas p64, rangée supérieure 4 : carré vert, corsage bleu, tablier blanc. Romanisation indicative.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p064.jpg"
+      ]
+    },
+    {
+      "id": "tilfey",
+      "name": "Tilfey / ティルフェイ",
+      "pages": [
+        64
+      ],
+      "kind": "npc",
+      "notes": "Bas p64, rangée inférieure 1 : carré orange et salopette jaune. Romanisation indicative.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p064.jpg"
+      ]
+    },
+    {
+      "id": "bitora",
+      "name": "Bitora / ビトゥラ",
+      "pages": [
+        64
+      ],
+      "kind": "npc",
+      "notes": "Bas p64, rangée inférieure 2 : cheveux courts corail, tunique violette avec croix blanches. Romanisation indicative.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p064.jpg"
+      ]
+    },
+    {
+      "id": "illustote",
+      "name": "Illustote / イルストート",
+      "pages": [
+        64
+      ],
+      "kind": "npc",
+      "notes": "Bas p64, rangée inférieure 3 : cheveux courts bleu-gris, cape pêche, jupe jaune. Romanisation indicative.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p064.jpg"
+      ]
+    },
+    {
+      "id": "rinsha",
+      "name": "Rinsha / リンシャ",
+      "pages": [
+        64
+      ],
+      "kind": "npc",
+      "notes": "Bas p64, rangée inférieure 4 : longs cheveux blonds, cape brune, robe bordeaux. Romanisation indicative.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p064.jpg"
+      ]
+    },
+    {
+      "id": "ballman",
+      "name": "Ballman / ボールマン",
+      "pages": [
+        65
+      ],
+      "kind": "npc",
+      "notes": "Haut de p65 : petit être sphérique, membres filiformes ; dessin au trait. Nom transcrit, palette à adapter.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p065.jpg"
+      ]
+    },
+    {
+      "id": "golem",
+      "name": "Golem domestique",
+      "pages": [
+        65
+      ],
+      "kind": "npc",
+      "notes": "Bas de p65 : grand corps rond avec plaques, palette non fournie.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p065.jpg"
+      ]
+    },
+    {
+      "id": "cyclops_doctor",
+      "name": "Médecin cyclope",
+      "pages": [
+        66
+      ],
+      "kind": "npc",
+      "notes": "Peau grise, un œil, blouse blanche, pantalon brun, bottes noires ; sans nom propre indiqué.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p066.jpg"
+      ]
+    },
+    {
+      "id": "phyr",
+      "name": "Phyracorlybia Dorio",
+      "pages": [
+        67
+      ],
+      "kind": "npc",
+      "notes": "Oreilles animales, cheveux blond doré, petite coiffe noire, robe vert canard et dentelle blanche.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p067.jpg"
+      ]
+    },
+    {
+      "id": "kaiya",
+      "name": "Kaiya",
+      "pages": [
+        68
+      ],
+      "kind": "npc",
+      "notes": "Haut de p68 : servante féline, carré noir, yeux bleus, robe noire et tablier blanc.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p068.jpg"
+      ]
+    },
+    {
+      "id": "knight_canine",
+      "name": "Chevalier canin anonyme",
+      "pages": [
+        68
+      ],
+      "kind": "npc",
+      "notes": "Bas gauche p68 : massif, pelage brun, chemise blanche, brassard rouge.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p068.jpg"
+      ]
+    },
+    {
+      "id": "knight_feline",
+      "name": "Chevalier félin anonyme",
+      "pages": [
+        68
+      ],
+      "kind": "npc",
+      "notes": "Bas droite p68 : chat gris, costume sombre, haut-de-forme et canne, brassard rouge.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p068.jpg"
+      ]
+    },
+    {
+      "id": "police_golem",
+      "name": "Golem policier",
+      "pages": [
+        69
+      ],
+      "kind": "npc",
+      "notes": "Haut p69 : corps rond gris-vert, képi et écharpe bleus bordés or.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p069.jpg"
+      ]
+    },
+    {
+      "id": "godrey",
+      "name": "Godrey Mogutaman",
+      "pages": [
+        69
+      ],
+      "kind": "npc",
+      "notes": "Bas p69 : officier violet, grandes oreilles, barbiche blanche et pipe, uniforme noir/or.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p069.jpg"
+      ]
+    },
+    {
+      "id": "baroni",
+      "name": "Baroni Makish",
+      "pages": [
+        70
+      ],
+      "kind": "npc",
+      "notes": "Haut p70 : militaire lapin, longs cheveux blonds, lunettes rondes, uniforme noir/or.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p070.jpg"
+      ]
+    },
+    {
+      "id": "frog_soldier",
+      "name": "Soldat grenouille",
+      "pages": [
+        70
+      ],
+      "kind": "npc",
+      "notes": "Bas p70 : grenouille verte, uniforme noir/or ; nom propre non indiqué.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p070.jpg"
+      ]
+    },
+    {
+      "id": "bird_soldier",
+      "name": "Soldat aviaire",
+      "pages": [
+        71
+      ],
+      "kind": "npc",
+      "notes": "Haut p71 : tête et ailes blanches, uniforme noir/or, pattes orange.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p071.jpg"
+      ]
+    },
+    {
+      "id": "wolf_soldier",
+      "name": "Soldat loup",
+      "pages": [
+        71
+      ],
+      "kind": "npc",
+      "notes": "Bas p71, 1 : grand loup gris, uniforme noir/or.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p071.jpg"
+      ]
+    },
+    {
+      "id": "hawk_soldier",
+      "name": "Soldat rapace",
+      "pages": [
+        71
+      ],
+      "kind": "npc",
+      "notes": "Bas p71, 2 : visage humanoïde blond, ailes ocre et serres, uniforme noir/or.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p071.jpg"
+      ]
+    },
+    {
+      "id": "cat_soldier",
+      "name": "Soldat félin",
+      "pages": [
+        71
+      ],
+      "kind": "npc",
+      "notes": "Bas p71, 3 : chat gris aux oreilles noires, uniforme noir/or.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p071.jpg"
+      ]
+    },
+    {
+      "id": "rabbit_soldier",
+      "name": "Soldat lapin",
+      "pages": [
+        71
+      ],
+      "kind": "npc",
+      "notes": "Bas p71, 4 : petit lapin brun, sans lunettes, uniforme noir/or ; distinct de Baroni.",
+      "reference_paths": [
+        "/workspace/sukasuka-references/pages/p071.jpg"
+      ]
+    }
+  ],
+  "delivery": "Véritables modèles 3D animés GLB + .anim.json + portraits rendus ; aucune planche 2D."
+}

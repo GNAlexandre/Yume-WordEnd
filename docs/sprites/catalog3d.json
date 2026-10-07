@@ -1,0 +1,879 @@
+[
+  {
+    "id": "willem",
+    "name": "Willem Kmetsch",
+    "kind": "combat",
+    "reference_pages": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "model": "assets/models/characters/willem/willem.glb",
+    "scene": "assets/models/characters/willem/willem.tscn",
+    "portrait": "assets/models/characters/willem/willem_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "course",
+      "attaque",
+      "charge",
+      "degats",
+      "mort"
+    ],
+    "height_m": 1.75,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "chtholly",
+    "name": "Chtholly Nota Seniorious",
+    "kind": "combat",
+    "reference_pages": [
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "model": "assets/models/characters/chtholly/chtholly.glb",
+    "scene": "assets/models/characters/chtholly/chtholly.tscn",
+    "portrait": "assets/models/characters/chtholly/chtholly_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "course",
+      "attaque",
+      "charge",
+      "degats",
+      "mort"
+    ],
+    "height_m": 1.5,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "ithea",
+    "name": "Ithea Myse Valgulious",
+    "kind": "combat",
+    "reference_pages": [
+      21,
+      22,
+      23,
+      24,
+      25,
+      26
+    ],
+    "model": "assets/models/characters/ithea/ithea.glb",
+    "scene": "assets/models/characters/ithea/ithea.tscn",
+    "portrait": "assets/models/characters/ithea/ithea_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "course",
+      "attaque",
+      "charge",
+      "degats",
+      "mort"
+    ],
+    "height_m": 1.45,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "nephren",
+    "name": "Nephren Ruq Insania",
+    "kind": "combat",
+    "reference_pages": [
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "model": "assets/models/characters/nephren/nephren.glb",
+    "scene": "assets/models/characters/nephren/nephren.tscn",
+    "portrait": "assets/models/characters/nephren/nephren_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "course",
+      "attaque",
+      "charge",
+      "degats",
+      "mort"
+    ],
+    "height_m": 1.35,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "nopht",
+    "name": "Nopht Keh Desperatio",
+    "kind": "combat",
+    "reference_pages": [
+      33,
+      34,
+      35,
+      36
+    ],
+    "model": "assets/models/characters/nopht/nopht.glb",
+    "scene": "assets/models/characters/nopht/nopht.tscn",
+    "portrait": "assets/models/characters/nopht/nopht_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "course",
+      "attaque",
+      "charge",
+      "degats",
+      "mort"
+    ],
+    "height_m": 1.4,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "rhantolk",
+    "name": "Rhantolk Ytri Historia",
+    "kind": "combat",
+    "reference_pages": [
+      37,
+      38,
+      39,
+      40
+    ],
+    "model": "assets/models/characters/rhantolk/rhantolk.glb",
+    "scene": "assets/models/characters/rhantolk/rhantolk.tscn",
+    "portrait": "assets/models/characters/rhantolk/rhantolk_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "course",
+      "attaque",
+      "charge",
+      "degats",
+      "mort"
+    ],
+    "height_m": 1.48,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "tiat",
+    "name": "Tiat",
+    "kind": "npc",
+    "reference_pages": [
+      41,
+      42,
+      43,
+      44
+    ],
+    "model": "assets/models/characters/tiat/tiat.glb",
+    "scene": "assets/models/characters/tiat/tiat.tscn",
+    "portrait": "assets/models/characters/tiat/tiat_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.3,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "pannibal",
+    "name": "Pannibal",
+    "kind": "npc",
+    "reference_pages": [
+      45,
+      46
+    ],
+    "model": "assets/models/characters/pannibal/pannibal.glb",
+    "scene": "assets/models/characters/pannibal/pannibal.tscn",
+    "portrait": "assets/models/characters/pannibal/pannibal_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.24,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "collon",
+    "name": "Collon",
+    "kind": "npc",
+    "reference_pages": [
+      47,
+      48
+    ],
+    "model": "assets/models/characters/collon/collon.glb",
+    "scene": "assets/models/characters/collon/collon.tscn",
+    "portrait": "assets/models/characters/collon/collon_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.23,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "lakhesh",
+    "name": "Lakhesh",
+    "kind": "npc",
+    "reference_pages": [
+      49,
+      50
+    ],
+    "model": "assets/models/characters/lakhesh/lakhesh.glb",
+    "scene": "assets/models/characters/lakhesh/lakhesh.tscn",
+    "portrait": "assets/models/characters/lakhesh/lakhesh_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.21,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "nygglatho",
+    "name": "Nygglatho",
+    "kind": "npc",
+    "reference_pages": [
+      51,
+      52,
+      53
+    ],
+    "model": "assets/models/characters/nygglatho/nygglatho.glb",
+    "scene": "assets/models/characters/nygglatho/nygglatho.tscn",
+    "portrait": "assets/models/characters/nygglatho/nygglatho_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.72,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "grick",
+    "name": "Grick",
+    "kind": "npc",
+    "reference_pages": [
+      54
+    ],
+    "model": "assets/models/characters/grick/grick.glb",
+    "scene": "assets/models/characters/grick/grick.tscn",
+    "portrait": "assets/models/characters/grick/grick_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.35,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "limeskin",
+    "name": "Limeskin",
+    "kind": "npc",
+    "reference_pages": [
+      55,
+      56
+    ],
+    "model": "assets/models/characters/limeskin/limeskin.glb",
+    "scene": "assets/models/characters/limeskin/limeskin.tscn",
+    "portrait": "assets/models/characters/limeskin/limeskin_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.8,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "almaria",
+    "name": "Almaria",
+    "kind": "npc",
+    "reference_pages": [
+      57
+    ],
+    "model": "assets/models/characters/almaria/almaria.glb",
+    "scene": "assets/models/characters/almaria/almaria.tscn",
+    "portrait": "assets/models/characters/almaria/almaria_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.56,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "lillia",
+    "name": "Lillia Asplay",
+    "kind": "combat",
+    "reference_pages": [
+      58
+    ],
+    "model": "assets/models/characters/lillia/lillia.glb",
+    "scene": "assets/models/characters/lillia/lillia.tscn",
+    "portrait": "assets/models/characters/lillia/lillia_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "course",
+      "attaque",
+      "charge",
+      "degats",
+      "mort"
+    ],
+    "height_m": 1.55,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "souwong_young",
+    "name": "Souwong Kandel — jeune",
+    "kind": "npc",
+    "reference_pages": [
+      59
+    ],
+    "model": "assets/models/characters/souwong_young/souwong_young.glb",
+    "scene": "assets/models/characters/souwong_young/souwong_young.tscn",
+    "portrait": "assets/models/characters/souwong_young/souwong_young_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.62,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "souwong_sage",
+    "name": "Souwong Kandel — Grand Sage",
+    "kind": "npc",
+    "reference_pages": [
+      60
+    ],
+    "model": "assets/models/characters/souwong_sage/souwong_sage.glb",
+    "scene": "assets/models/characters/souwong_sage/souwong_sage.tscn",
+    "portrait": "assets/models/characters/souwong_sage/souwong_sage_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.82,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "eboncandle_ancient",
+    "name": "Eboncandle — ancien corps",
+    "kind": "npc",
+    "reference_pages": [
+      61
+    ],
+    "model": "assets/models/characters/eboncandle_ancient/eboncandle_ancient.glb",
+    "scene": "assets/models/characters/eboncandle_ancient/eboncandle_ancient.tscn",
+    "portrait": "assets/models/characters/eboncandle_ancient/eboncandle_ancient_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.8,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "eboncandle_skull",
+    "name": "Eboncandle — crâne",
+    "kind": "npc",
+    "reference_pages": [
+      62
+    ],
+    "model": "assets/models/characters/eboncandle_skull/eboncandle_skull.glb",
+    "scene": "assets/models/characters/eboncandle_skull/eboncandle_skull.tscn",
+    "portrait": "assets/models/characters/eboncandle_skull/eboncandle_skull_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.25,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "elq",
+    "name": "Elq Hrqstn",
+    "kind": "npc",
+    "reference_pages": [
+      63
+    ],
+    "model": "assets/models/characters/elq/elq.glb",
+    "scene": "assets/models/characters/elq/elq.tscn",
+    "portrait": "assets/models/characters/elq/elq_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.12,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "almita",
+    "name": "Almita",
+    "kind": "npc",
+    "reference_pages": [
+      64
+    ],
+    "model": "assets/models/characters/almita/almita.glb",
+    "scene": "assets/models/characters/almita/almita.tscn",
+    "portrait": "assets/models/characters/almita/almita_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 0.96,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "sarya",
+    "name": "Sarya / サリャ",
+    "kind": "npc",
+    "reference_pages": [
+      64
+    ],
+    "model": "assets/models/characters/sarya/sarya.glb",
+    "scene": "assets/models/characters/sarya/sarya.tscn",
+    "portrait": "assets/models/characters/sarya/sarya_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 0.99,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "willemia",
+    "name": "Willemia / ウィレミア",
+    "kind": "npc",
+    "reference_pages": [
+      64
+    ],
+    "model": "assets/models/characters/willemia/willemia.glb",
+    "scene": "assets/models/characters/willemia/willemia.tscn",
+    "portrait": "assets/models/characters/willemia/willemia_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.03,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "ecluecla",
+    "name": "Ecluecla / エクルエクラ",
+    "kind": "npc",
+    "reference_pages": [
+      64
+    ],
+    "model": "assets/models/characters/ecluecla/ecluecla.glb",
+    "scene": "assets/models/characters/ecluecla/ecluecla.tscn",
+    "portrait": "assets/models/characters/ecluecla/ecluecla_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.01,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "jorget",
+    "name": "Jorget / ジョルゼット",
+    "kind": "npc",
+    "reference_pages": [
+      64
+    ],
+    "model": "assets/models/characters/jorget/jorget.glb",
+    "scene": "assets/models/characters/jorget/jorget.tscn",
+    "portrait": "assets/models/characters/jorget/jorget_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.02,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "tilfey",
+    "name": "Tilfey / ティルフェイ",
+    "kind": "npc",
+    "reference_pages": [
+      64
+    ],
+    "model": "assets/models/characters/tilfey/tilfey.glb",
+    "scene": "assets/models/characters/tilfey/tilfey.tscn",
+    "portrait": "assets/models/characters/tilfey/tilfey_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 0.97,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "bitora",
+    "name": "Bitora / ビトゥラ",
+    "kind": "npc",
+    "reference_pages": [
+      64
+    ],
+    "model": "assets/models/characters/bitora/bitora.glb",
+    "scene": "assets/models/characters/bitora/bitora.tscn",
+    "portrait": "assets/models/characters/bitora/bitora_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.03,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "illustote",
+    "name": "Illustote / イルストート",
+    "kind": "npc",
+    "reference_pages": [
+      64
+    ],
+    "model": "assets/models/characters/illustote/illustote.glb",
+    "scene": "assets/models/characters/illustote/illustote.tscn",
+    "portrait": "assets/models/characters/illustote/illustote_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 0.98,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "rinsha",
+    "name": "Rinsha / リンシャ",
+    "kind": "npc",
+    "reference_pages": [
+      64
+    ],
+    "model": "assets/models/characters/rinsha/rinsha.glb",
+    "scene": "assets/models/characters/rinsha/rinsha.tscn",
+    "portrait": "assets/models/characters/rinsha/rinsha_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.0,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "ballman",
+    "name": "Ballman / ボールマン",
+    "kind": "npc",
+    "reference_pages": [
+      65
+    ],
+    "model": "assets/models/characters/ballman/ballman.glb",
+    "scene": "assets/models/characters/ballman/ballman.tscn",
+    "portrait": "assets/models/characters/ballman/ballman_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 0.65,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "golem",
+    "name": "Golem domestique",
+    "kind": "npc",
+    "reference_pages": [
+      65
+    ],
+    "model": "assets/models/characters/golem/golem.glb",
+    "scene": "assets/models/characters/golem/golem.tscn",
+    "portrait": "assets/models/characters/golem/golem_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.45,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "cyclops_doctor",
+    "name": "Médecin cyclope",
+    "kind": "npc",
+    "reference_pages": [
+      66
+    ],
+    "model": "assets/models/characters/cyclops_doctor/cyclops_doctor.glb",
+    "scene": "assets/models/characters/cyclops_doctor/cyclops_doctor.tscn",
+    "portrait": "assets/models/characters/cyclops_doctor/cyclops_doctor_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.7,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "phyr",
+    "name": "Phyracorlybia Dorio",
+    "kind": "npc",
+    "reference_pages": [
+      67
+    ],
+    "model": "assets/models/characters/phyr/phyr.glb",
+    "scene": "assets/models/characters/phyr/phyr.tscn",
+    "portrait": "assets/models/characters/phyr/phyr_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.6,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "kaiya",
+    "name": "Kaiya",
+    "kind": "npc",
+    "reference_pages": [
+      68
+    ],
+    "model": "assets/models/characters/kaiya/kaiya.glb",
+    "scene": "assets/models/characters/kaiya/kaiya.tscn",
+    "portrait": "assets/models/characters/kaiya/kaiya_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.57,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "knight_canine",
+    "name": "Chevalier canin anonyme",
+    "kind": "npc",
+    "reference_pages": [
+      68
+    ],
+    "model": "assets/models/characters/knight_canine/knight_canine.glb",
+    "scene": "assets/models/characters/knight_canine/knight_canine.tscn",
+    "portrait": "assets/models/characters/knight_canine/knight_canine_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.75,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "knight_feline",
+    "name": "Chevalier félin anonyme",
+    "kind": "npc",
+    "reference_pages": [
+      68
+    ],
+    "model": "assets/models/characters/knight_feline/knight_feline.glb",
+    "scene": "assets/models/characters/knight_feline/knight_feline.tscn",
+    "portrait": "assets/models/characters/knight_feline/knight_feline_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.45,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "police_golem",
+    "name": "Golem policier",
+    "kind": "npc",
+    "reference_pages": [
+      69
+    ],
+    "model": "assets/models/characters/police_golem/police_golem.glb",
+    "scene": "assets/models/characters/police_golem/police_golem.tscn",
+    "portrait": "assets/models/characters/police_golem/police_golem_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.45,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "godrey",
+    "name": "Godrey Mogutaman",
+    "kind": "npc",
+    "reference_pages": [
+      69
+    ],
+    "model": "assets/models/characters/godrey/godrey.glb",
+    "scene": "assets/models/characters/godrey/godrey.tscn",
+    "portrait": "assets/models/characters/godrey/godrey_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.45,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "baroni",
+    "name": "Baroni Makish",
+    "kind": "npc",
+    "reference_pages": [
+      70
+    ],
+    "model": "assets/models/characters/baroni/baroni.glb",
+    "scene": "assets/models/characters/baroni/baroni.tscn",
+    "portrait": "assets/models/characters/baroni/baroni_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.65,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "frog_soldier",
+    "name": "Soldat grenouille",
+    "kind": "npc",
+    "reference_pages": [
+      70
+    ],
+    "model": "assets/models/characters/frog_soldier/frog_soldier.glb",
+    "scene": "assets/models/characters/frog_soldier/frog_soldier.tscn",
+    "portrait": "assets/models/characters/frog_soldier/frog_soldier_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.35,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "bird_soldier",
+    "name": "Soldat aviaire",
+    "kind": "npc",
+    "reference_pages": [
+      71
+    ],
+    "model": "assets/models/characters/bird_soldier/bird_soldier.glb",
+    "scene": "assets/models/characters/bird_soldier/bird_soldier.tscn",
+    "portrait": "assets/models/characters/bird_soldier/bird_soldier_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.7,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "wolf_soldier",
+    "name": "Soldat loup",
+    "kind": "npc",
+    "reference_pages": [
+      71
+    ],
+    "model": "assets/models/characters/wolf_soldier/wolf_soldier.glb",
+    "scene": "assets/models/characters/wolf_soldier/wolf_soldier.tscn",
+    "portrait": "assets/models/characters/wolf_soldier/wolf_soldier_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.8,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "hawk_soldier",
+    "name": "Soldat rapace",
+    "kind": "npc",
+    "reference_pages": [
+      71
+    ],
+    "model": "assets/models/characters/hawk_soldier/hawk_soldier.glb",
+    "scene": "assets/models/characters/hawk_soldier/hawk_soldier.tscn",
+    "portrait": "assets/models/characters/hawk_soldier/hawk_soldier_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.7,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "cat_soldier",
+    "name": "Soldat félin",
+    "kind": "npc",
+    "reference_pages": [
+      71
+    ],
+    "model": "assets/models/characters/cat_soldier/cat_soldier.glb",
+    "scene": "assets/models/characters/cat_soldier/cat_soldier.tscn",
+    "portrait": "assets/models/characters/cat_soldier/cat_soldier_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.55,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  },
+  {
+    "id": "rabbit_soldier",
+    "name": "Soldat lapin",
+    "kind": "npc",
+    "reference_pages": [
+      71
+    ],
+    "model": "assets/models/characters/rabbit_soldier/rabbit_soldier.glb",
+    "scene": "assets/models/characters/rabbit_soldier/rabbit_soldier.tscn",
+    "portrait": "assets/models/characters/rabbit_soldier/rabbit_soldier_portrait.png",
+    "animations": [
+      "repos",
+      "marche",
+      "parle"
+    ],
+    "height_m": 1.2,
+    "fidelity": "Adaptation chibi low-poly construite dans Blender à partir des scans ; revue visuelle requise."
+  }
+]

@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "modele": "rhantolk.glb",
+  "hauteur_m": 1.48,
+  "usage": "combat",
+  "animations": {
+    "repos": {
+      "ips": 10,
+      "images": 20,
+      "boucle": true
+    },
+    "marche": {
+      "ips": 10,
+      "images": 6,
+      "boucle": true
+    },
+    "course": {
+      "ips": 14,
+      "images": 5,
+      "boucle": true
+    },
+    "attaque": {
+      "ips": 14,
+      "images": 4,
+      "boucle": false,
+      "coup": [
+        1,
+        2,
+        3
+      ]
+    },
+    "charge": {
+      "ips": 10,
+      "images": 4,
+      "boucle": false,
+      "onde": 3
+    },
+    "degats": {
+      "ips": 10,
+      "images": 4,
+      "boucle": false
+    },
+    "mort": {
+      "ips": 10,
+      "images": 12,
+      "boucle": false
+    }
+  }
+}
