@@ -147,7 +147,7 @@ func refresh() -> void:
 	_add_section("En cours", QuestData.active_ids(), true)
 	_add_section("Terminées", QuestData.done_ids(), false)
 	if _order.is_empty():
-		_list.add_child(_muted_label("Aucune quête pour l'instant.", 20))
+		_list.add_child(_muted_label("Aucune quête pour l’instant.", 20))
 	MenuInput.focus_on_hover(self)
 	_update_entries()
 	if _entries.has(previous):
@@ -247,7 +247,7 @@ func _show_details() -> void:
 	if quest == null:
 		_quest_title.text = "Journal vide"
 		_kind.text = ""
-		_summary.text = "Parle aux habitants du village : certains ont besoin d'aide."
+		_summary.text = "Parle aux habitants du village : certains ont besoin d’aide."
 		_rewards.text = ""
 		_track_hint.text = ""
 		return
@@ -256,7 +256,7 @@ func _show_details() -> void:
 	var kind := "Quête principale" if quest.main else "Quête secondaire"
 	var giver := _npc_name(quest.giver_npc)
 	if not giver.is_empty():
-		kind += " · confiée par %s" % giver
+		kind += " · " + giver
 	if state == GameState.QUEST_DONE:
 		kind += " · terminée"
 	_kind.text = kind
@@ -273,9 +273,9 @@ func _show_details() -> void:
 	if state != GameState.QUEST_ACTIVE:
 		_track_hint.text = ""
 	elif quest.id == GameState.tracked_quest:
-		_track_hint.text = "Quête suivie : son objectif est affiché en jeu."
+		_track_hint.text = "Quête suivie : son objectif est affiché en jeu."
 	else:
-		_track_hint.text = "Entrée / A : suivre cette quête."
+		_track_hint.text = "Entrée / A : suivre cette quête."
 
 
 func _step_row(step: QuestStep, done: bool, progress: String) -> Control:
@@ -360,7 +360,7 @@ func _npc_name(npc_id: StringName) -> String:
 	if npc_id.is_empty() or not ResourceLoader.exists(path):
 		return ""
 	var npc := load(path) as NpcData
-	return npc.display_name.to_lower() if npc != null else ""
+	return npc.display_name if npc != null else ""
 
 
 func _muted_label(text: String, font_size: int) -> Label:

@@ -180,8 +180,7 @@ func _settle_once() -> bool:
 	for quest_id: StringName in QuestData.active_ids():
 		var quest := QuestData.find(quest_id)
 		var step := quest.current_step() if quest != null else null
-		if step != null and step.is_met_by_state():
-			_complete_step(quest, step)
+		if step != null and step.is_met_by_state() and _complete_step(quest, step):
 			return true
 	return false
 
@@ -356,14 +355,16 @@ func _arena_progress(arena_id: StringName, value: int, is_wave: bool) -> void:
 
 
 ## Valide l'étape courante step de quest, puis passe à la suivante ou termine la quête.
-func _complete_step(quest: QuestData, step: QuestStep) -> void:
+## true si l'étape a été validée (false : il manquait des objets à retirer, rien n'a changé).
+func _complete_step(quest: QuestData, step: QuestStep) -> bool:
 	if not _validate(quest, step):
-		return
+		return false
 	var next := quest.step_index(step.id) + 1
 	if next >= quest.steps.size():
 		_finish(quest, true)
 	else:
 		GameState.set_quest_step(quest.id, quest.steps[next].id, 0)
+	return true
 
 
 ## Objets retirés (collect avec consume), récompense de l'étape, quest_step_completed ; false

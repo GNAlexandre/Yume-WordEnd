@@ -38,12 +38,12 @@ script = ExtResource("3_runner")
 
 [node name="QuestMarker" type="Label3D" parent="."]
 visible = false
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.05, 0)
-pixel_size = 0.004
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
+pixel_size = 0.0075
 billboard = 1
 modulate = Color(1, 0.84, 0.32, 1)
 outline_modulate = Color(0.2, 0.09, 0.24, 1)
 text = "!"
 font = SubResource("FontVariation_marker")
 font_size = 96
-outline_size = 22
+outline_size = 26

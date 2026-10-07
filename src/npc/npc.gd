@@ -19,7 +19,7 @@ const PLAYER_GROUP := &"player"
 ## Durée maximale de la chute d'apparition (s).
 const SETTLE_TIME := 1.0
 ## Hauteur du marqueur au-dessus de la tête (m) et du visuel sans skin.
-const MARKER_GAP := 0.45
+const MARKER_GAP := 0.5
 const DEFAULT_HEIGHT := 1.6
 
 ## Données du PNJ (data/npcs/*.tres).
