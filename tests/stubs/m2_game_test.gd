@@ -25,6 +25,8 @@ const KEYS: Array[Key] = [
 	KEY_I,
 	KEY_J,
 	KEY_K,
+	KEY_L,
+	KEY_TAB,
 	KEY_SPACE,
 	KEY_ENTER,
 	KEY_ESCAPE,
@@ -40,6 +42,7 @@ const BUTTONS: Array[JoyButton] = [
 	JOY_BUTTON_B,
 	JOY_BUTTON_X,
 	JOY_BUTTON_Y,
+	JOY_BUTTON_BACK,
 	JOY_BUTTON_START,
 	JOY_BUTTON_DPAD_UP,
 	JOY_BUTTON_DPAD_DOWN,
@@ -50,6 +53,7 @@ const BUTTONS: Array[JoyButton] = [
 ## Actions relâchées après chaque test, en plus de celles de la base M1.
 const MORE_ACTIONS: Array[StringName] = [
 	&"inventory",
+	&"journal",
 	&"pause",
 	&"ui_accept",
 	&"ui_cancel",

@@ -147,6 +147,9 @@ func test_village_placement() -> void:
 	var found: Array[String] = []
 	var positions: Array[Vector3] = []
 	for child: Node in root.get_children():
+		# (Lot Q) Les déclencheurs de quête se posent aussi dans ce fichier.
+		if child is QuestTrigger:
+			continue
 		var npc := child as Npc
 		assert_not_null(npc, "%s est un Npc" % child.name)
 		if npc == null or npc.data == null:
