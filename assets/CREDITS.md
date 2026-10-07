@@ -17,3 +17,4 @@ egg n'a pas de licence établie (PLAN.md section 13) et n'est pas copié.
 | `assets/items/*.png` | généré par `tools/gen_item_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | L7 |
 | `assets/ui/*.png` (cœurs, marqueur de cible, livre de sauvegarde, page de quête, étoile) | généré par `tools/gen_ui_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | L10 |
 | `assets/ui/icon.png`, `assets/ui/boot_splash.png` (icône du jeu, écran de démarrage) | généré par `tools/gen_branding.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | M2 |
+| `assets/items/*.png` de l'acte 1 (13 nouvelles icônes, `page_fragment` redessinée ; `shell` et `bookmark` retirées) | généré par `tools/gen_item_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | Acte 1 |

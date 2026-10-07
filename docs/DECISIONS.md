@@ -906,3 +906,44 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   exporté, par `ResourceLoader.list_directory`), marqueur caché pendant son dialogue, quête
   acceptée, page rechargée puis « Continuer » : quête en cours et position reprises (sauvegarde v2
   dans IndexedDB) ; console sans erreur (seuls avertissements, ceux du pilote logiciel).
+- **Acte 1 — démarrage** : `act1_main` est `auto_start` : tout QuestTracker la démarre et la suit
+  (nouvelle partie, anciennes sauvegardes) ; `tests/stubs/q_quest_test.gd` met de côté les quêtes
+  `auto_start` du jeu (état `held`) pour les tests du moteur, `release_auto_start()` les rend
+  (scénarios `tests/unit/test_act1_*.gd`).
+- **Acte 1 — plusieurs scènes chez un PNJ** : une étape `talk` se valide à la fin de toute
+  conversation avec son PNJ ; les `entries` mettent donc les scènes d'étape avant les répliques
+  d'avancement, les propositions, l'après-acte et les répliques par défaut (HISTOIRE.md 3.6 ;
+  vérifié par `test_act1_dialogues.gd`), et la dernière réplique d'une scène propose par des
+  choix conditionnels les autres scènes en attente chez le même PNJ (« routeur » : sans choix
+  visible, le nœud suit son `next`).
+- **Acte 1 — portrait d'un second orateur** : les nœuds à plusieurs voix portent `speaker` et la
+  clé provisoire `_speaker_id` (ignorée par le DialogueRunner actuel) ; quand `speaker_id`
+  existera (« Systèmes et textes »), l'intégration la renomme (`test_act1_dialogues.gd` échoue
+  pour le rappeler).
+- **Acte 1 — instances de Willem** : `willem_training` (bois) et `willem_stars` (colline) sont des
+  PNJ à part (visuel `willem`, dialogues propres), toujours présents en attendant `visible_if` ;
+  les étapes `training` et `promise` les visent, le Willem de l'entrepôt donne les aides.
+- **Acte 1 — aides** : des `hint` en plus de HISTOIRE.md sur les étapes de collecte des quêtes
+  secondaires (où chercher draps, myosotis, engrenages, baies, pages).
+- **Acte 1 — hauteurs** : les objets sont posés au sol actuel (y local ≠ 0 en relief :
+  `dunes_gear_2` 0,81, `dunes_flower_1` 0,92, `forest_page_4` 0,17, `forest_berries_3` 0,38,
+  `hill_sheet_1` 8) et `couchant_edge` à y = 0,1 ; à revoir avec le terrain du « Monde »
+  (`test_m1_world.gd`).
+- **Acte 1 — écarts de position (décor actuel)** : le guetteur en (−13 ; 0,2 ; −12) au lieu de
+  (−14 ; 0,2 ; −10) (hors de la ruine) et Willem au sommet en (1 ; 8,2 ; −0,8) au lieu de
+  (3 ; 8,2 ; 0) (entre la rambarde et le banc du belvédère) ; avec le décor du « Monde », qui
+  respecte HISTOIRE.md 3.3, reprendre ces positions (et `tests/unit/test_npc.gd`).
+- **Acte 1 — visuels des PNJ** : `data/npcs/visuals/<id>.tres` (SkinData hors de `data/skins`,
+  donc non jouables), planches de remplacement de `tools/gen_placeholders.py npcs` (options
+  `--style`, `--species`, `--wear`, `--eyes`, `--accent` ; sortie par défaut inchangée) ; seule
+  Chtholly reste jouable, les tests qui choisissent un skin prennent un dossier de skins
+  temporaire.
+- **Acte 1 — objets** : icônes de `tools/gen_item_icons.py` ; souvenirs non empilables (livre,
+  dessin, carte, myosotis séché, promesse), dessert et cheese-cake empilables (soins du M3).
+- **Acte 1 — anciennes sauvegardes** : coquillages et marque-page restent des objets inconnus
+  (nom = id, sans icône) ; la quête `pages`, sans données, n'est plus au journal, mais
+  `QuestData.active_ids()` la compte encore (« +1 quête » du HUD) : à filtrer à l'intégration
+  (QuestData ou migration de SaveManager).
+- **Acte 1 — quête d'exemple des tests** : `example_patrol` requiert le livre d'images et donne
+  deux myosotis ; le forgeron d'exemple est posé par `tests/data/placements/village.tscn` ;
+  l'exemple commenté de docs/QUETES.md est à aligner.
