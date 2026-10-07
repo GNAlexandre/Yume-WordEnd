@@ -1087,3 +1087,14 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   sonnerait faux. Limite connue : choisir le skin 3D de Willem, d'Ithea ou de Nephren ne cache
   pas leur PNJ (les ids de skins diffèrent : `sukasuka_ithea` contre `ithea`), et les cacher
   rendrait leurs quêtes impossibles ; à trancher avec la reprise des modèles 3D.
+- **Intégration acte 1 — rejetons des bois** (`src/enemies/free_enemies.gd`, racine `Enemies`
+  des cinq fichiers d'emplacement d'ennemis) : réapparition plutôt que mort comptée pour l'étape
+  suivante (le joueur voit qui il doit abattre, et un rejeton tué hors des bois, qui ne compte
+  pas, ne bloque plus non plus). Pendant une étape `kill` d'une quête active qui vise la zone
+  (`zone` égale ou absente) et ses ennemis (`any` ou leur id), les ennemis libres tués
+  réapparaissent à leur place, sous leur nom, avec leurs données : au début de l'étape et à
+  chaque retour du joueur dans la zone ; jamais au-delà de la population de départ ; en fin
+  d'image (aucun changement d'arbre pendant un signal de mort). Hors de ces étapes, un mort
+  reste mort jusqu'au rechargement de la partie (comportement d'avant). Pas de script sur les
+  scènes de zone (L2) ; aucun nœud ajouté sous `Enemies` (les tests comptent ses enfants).
+  `tests/unit/test_free_enemies.gd`.

@@ -4,8 +4,10 @@
 [ext_resource type="Resource" path="res://data/enemies/timere_small.tres" id="2_small"]
 [ext_resource type="Resource" path="res://data/enemies/timere_normal.tres" id="3_normal"]
 [ext_resource type="Resource" path="res://data/enemies/timere_runner.tres" id="4_runner"]
+[ext_resource type="Script" path="res://src/enemies/free_enemies.gd" id="5_free_enemies"]
 
 [node name="Enemies" type="Node3D"]
+script = ExtResource("5_free_enemies")
 
 [node name="forest_timere_small_1" parent="." instance=ExtResource("1_enemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.2, 1)
