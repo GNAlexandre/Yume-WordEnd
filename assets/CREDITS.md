@@ -7,6 +7,7 @@ Les dessins des membres et les planches de personnages sont listés dans
 
 | Fichier(s) | Auteur / source | URL | Licence | Ajouté par |
 | --- | --- | --- | --- | --- |
+| `assets/hd2d/**/*.png` (tuiles de sol, falaises, matières, façades, décors en panneaux, ciel, horizon, effets : images de remplacement HD-2D) | généré par `tools/hd2d_assets.py gen` (recettes `tools/hd2d_ground.py`, `hd2d_props.py`, `hd2d_sky.py`) | — | licence du code du projet (MIT proposée, PLAN.md section 13) | HD-2D |
 
 Aucun fichier audio pour l'instant : l'enregistrement de *Scarborough Fair* utilisé par l'easter
 egg n'a pas de licence établie (PLAN.md section 13) et n'est pas copié.
