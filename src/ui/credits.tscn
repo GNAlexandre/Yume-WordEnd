@@ -71,10 +71,10 @@ Les fiches de lecture et la bible du jeu (le canon, ses lieux, ses personnages) 
 [b]Personnages et créatures[/b]
 • Chtholly : planche générée par Gemini, découpée par tools/wordend/decouper-planche.py (dépôt Yume-WordPress) et reprise telle quelle de l'easter egg WordEnd ; portrait tiré de la tête de la planche (tools/gen_placeholders.py).
 • Timere : deux planches en pixel art générées par Gemini, assemblées et découpées de la même façon, reprises de l'easter egg.
-• Personnages non joueurs : silhouettes chibi et portraits de remplacement générés par tools/gen_placeholders.py (projet Yume-WordEnd), en attendant les dessins de la communauté.
+• Personnages non joueurs, Nopht et Rhantolk : silhouettes et portraits de remplacement générés par tools/gen_placeholders.py (projet Yume-WordEnd), en attendant les dessins de la communauté.
 
 [b]Décor, objets et interface[/b]
-• Damier du sol : généré par tools/gen_placeholders.py.
+• Décor de l'île en HD-2D (tuiles du sol, falaises, façades et matières des bâtiments, décors en panneaux, ciel, horizon) : images de remplacement en pixel art générées par tools/hd2d_assets.py, en attendant les images définitives.
 • Icônes des objets : générées par tools/gen_item_icons.py.
 • Icônes de l'interface (cœurs, marqueur de cible, livre de sauvegarde, étoile) : générées par tools/gen_ui_icons.py.
 Ces images sont produites par le projet, sous la licence de son code (MIT proposée).
