@@ -1133,3 +1133,11 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **Intégration acte 1 — recherche des restes du jalon M2** (critère 16 de docs/RECETTE_M2.md) :
   `git grep -n -i "bibliothécaire\|forgeron\|coquillage\|marque-page\|Seniolis"` ; les
   résultats assumés sont listés à la ligne « restes du jalon M2 » ci-dessus.
+- **Intégration acte 1 — menu des fées** (`src/ui/main_menu.*`) : les vignettes défilent dans un
+  cadre (`%SkinScroll`, deux rangées et demie au plus : `MAX_SKIN_GRID_HEIGHT`, signe qu'il y en a
+  d'autres) et un nom trop long finit par « … » (entier dans l'infobulle). Avec les sept skins
+  « · 3D » de la PR n° 1 (huit vignettes, quatre rangées), le panneau sortait de l'écran de
+  1280 × 720 : titre « Choisis ta fée » et phrase « Ta fée prend la place de Chtholly dans
+  l'histoire. » hors champ, noms débordant des vignettes. La vignette choisie (celle de la
+  sauvegarde) est amenée en vue à l'ouverture ; le clavier et la manette font défiler
+  (`follow_focus`). Les skins eux-mêmes ne changent pas. `test_menu_story.gd`.

@@ -129,7 +129,13 @@ theme_override_font_sizes/font_size = 32
 text = "Choisis ta fée"
 horizontal_alignment = 1
 
-[node name="SkinGrid" type="GridContainer" parent="Content/Columns/SkinPanel/SkinBox"]
+[node name="SkinScroll" type="ScrollContainer" parent="Content/Columns/SkinPanel/SkinBox"]
+unique_name_in_owner = true
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="SkinGrid" type="GridContainer" parent="Content/Columns/SkinPanel/SkinBox/SkinScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
