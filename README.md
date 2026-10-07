@@ -1,14 +1,14 @@
 # WordEnd 3D (Yume-WordEnd)
 
-Action-aventure 3D de Yume Novel, fait avec Godot 4.7.2 (GDScript typé, rendu Compatibility,
-export Web mono-thread) : Chtholly et son épée Seniorious contre Timere, dans un monde chibi
-et coloré. L'easter egg 2D du site devient l'île n° 68 de *SukaSuka* : l'entrepôt des fées et
-ceux qui y vivent, les bois du marais où le vent a semé des rejetons de Timere, le bord du
-Couchant où l'on tient la veille contre leurs vagues, le port et la colline des étoiles. Le joueur
-incarne la fée qui porte Seniorious (Chtholly, ou une fée de la communauté qui prend sa place) ;
-l'acte 1 (jalon M2) suit le volume 1 de la traduction de Yume Novel et se joue du menu à la
-promesse, au clavier, à la souris, à la manette et au toucher, dans l'éditeur comme dans le
-navigateur.
+Action-aventure 3D de Yume Novel, fait avec Godot 4.7.2 (GDScript typé, rendu Compatibility, export
+Web mono-thread) : Chtholly et son épée Seniorious contre Timere, dans une direction artistique qui
+vise au minimum celle de *Zelda: Breath of the Wild*. L'easter egg 2D du site devient l'île n° 68 de
+*SukaSuka* : l'entrepôt des fées et ceux qui y vivent, les bois du marais où le vent a semé des
+rejetons de Timere, le bord du Couchant où l'on tient la veille contre leurs vagues, le port et la
+colline des étoiles. Le joueur incarne la fée qui porte Seniorious (Chtholly, ou une fée de la
+communauté qui prend sa place) ; l'acte 1 (jalon M2) suit le volume 1 de la traduction de Yume Novel
+et se joue du menu à la promesse, au clavier, à la souris, à la manette et au toucher, dans
+l'éditeur comme dans le navigateur.
 
 ## Jouer
 

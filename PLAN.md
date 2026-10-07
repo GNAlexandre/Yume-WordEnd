@@ -4,7 +4,7 @@ Oct 5, 2026 · @Alexandre
 
 ## 1. Vision et périmètre
 
-WordEnd passe d'un easter egg 2D (Chtholly et son épée Seniorious contre des vagues de Timeres) à un **action-aventure 3D en monde ouvert, centré sur le combat comme un Zelda, dans un style graphique chibi et coloré proche d'Animal Crossing**, jouable dans une page de yumenovel.fr et développé dans Godot 4 par des sessions Claude Code cloud en parallèle. Le combat à l'épée et la charge magique de l'easter egg restent le cœur du jeu ; le village, les PNJ et la collecte sont la respiration entre deux zones hostiles.
+WordEnd passe d'un easter egg 2D (Chtholly et son épée Seniorious contre des vagues de Timeres) à un **action-aventure 3D en monde ouvert, centré sur le combat, dont la direction artistique se rapproche au minimum de *The Legend of Zelda: Breath of the Wild*** (proportions réalistes stylisées, ombrage cel doux, couleurs naturelles, grands paysages ; cahier des charges des assets : `docs/ASSETS_3D.md`), jouable dans une page de yumenovel.fr et développé dans Godot 4 par des sessions Claude Code cloud en parallèle. Le combat à l'épée et la charge magique de l'easter egg restent le cœur du jeu ; le village, les PNJ et la collecte sont la respiration entre deux zones hostiles.
 
 **Nom de travail** : WordEnd 3D. Dépôt conseillé : `Yume-WordEnd` (séparé de Yume-WordPress et Yume-Trad), licence MIT pour le code, assets sous licence propre (voir section 5).
 
@@ -36,7 +36,7 @@ Multijoueur, génération procédurale, application mobile native, monétisation
 | --- | --- | --- |
 | Moteur | Godot 4.7.2-stable (figé dans `project.godot` et `tools/setup.sh`) | Dernière maintenance de la branche 4.7 ([annonce 4.7.2](https://gamedev.net/news/5172-godot-engine-472-stable-released/)) ; gratuit, MIT, binaire Linux headless de \~60 Mo utilisable dans les VM Claude Code |
 | Langage | GDScript avec annotations de type (`var hp: int`, `-> void`) | L'export Web des projets C# reste expérimental en 2026 ([état 2026](https://gtstu.com/?p=4758)) ; GDScript s'exporte proprement et `gdlint`/`gdformat` (PyPI `gdtoolkit`) tournent sans éditeur |
-| Rendu | Compatibility (OpenGL 3 / WebGL 2) | Seul renderer disponible à l'export Web ; suffisant pour un style low-poly / toon |
+| Rendu | Compatibility (OpenGL 3 / WebGL 2) | Seul renderer disponible à l'export Web ; suffisant pour un ombrage toon / cel doux |
 | Export Web | Thread Support **désactivé** | Évite les en-têtes COOP/COEP (SharedArrayBuffer) : le build se sert depuis GitHub Pages ou WordPress sans configuration serveur |
 | Scènes et ressources | Format texte (`.tscn`, `.tres`), jamais binaire | Diff lisibles, fusion Git possible, agents capables de créer une scène sans éditeur |
 | Tests | GUT (Godot Unit Test), vendoré dans `addons/gut/` | S'exécute en ligne de commande : `godot --headless -s addons/gut/gut_cmdln.gd` |
@@ -579,7 +579,7 @@ ne change pas.
 | --- | --- | --- | --- |
 | **P0 – planches existantes + généré** | `chtholly.png/.json` (7 animations : repos 2, marche 6, course 5, attaque 4, charge 4, dégâts 1, mort 1) et `timere.png/.json` (repos 5, marche 4, course 6, fouet 4, morsure 4, dégâts 5, mort 6), copiés depuis `wp-content/plugins/yume-core/includes/wordend/assets/` de Yume-WordPress ; les autres skins = silhouettes colorées produites par `tools/gen_placeholders.py` avec les mêmes 7 animations | CSG (`CSGBox3D`, `CSGCylinder3D`, `CSGPolygon3D`) avec matériaux unis ; sol = `PlaneMesh` texturé par un damier généré ; ciel = `ProceduralSkyMaterial` aux couleurs de `decor.webp` (coucher de soleil) | Lot 0, jour 1 |
 | **P1 – dessins de la communauté** | Nouvelles planches dessinées ou générées puis découpées par `tools/wordend/decouper-planche.py` (Yume-WordPress), même JSON ; nouveaux types de Timeres ou autres créatures | Packs CC0 de Kenney (Nature Kit, Castle Kit) en `.glb`, ajoutés par toi dans `assets/models/` ; musique `Scarborough Fair` convertie en OGG | M1 à M2 |
-| **P2 – 3D** | Avatars VRoid Studio exportés en `.vrm`, importés avec l'addon godot-vrm, animations de combat via `AnimationTree` ; même interface `CharacterVisual` que les sprites | Modèles Blender low-poly / toon pour le village, les donjons et les props signatures | M3 et après |
+| **P2 – 3D** | Avatars VRoid Studio exportés en `.vrm`, importés avec l'addon godot-vrm, animations de combat via `AnimationTree` ; même interface `CharacterVisual` que les sprites | Modèles Blender stylisés (ombrage toon doux, direction *Breath of the Wild*) pour le village, les donjons et les props signatures | M3 et après |
 
 ### Comment les sprites 2D vivent en 3D
 
@@ -857,7 +857,9 @@ Godot exporte le même projet en exécutable natif : meilleures performances, pa
 
 ## Le projet
 Jeu 3D action-aventure dans Godot 4.7.2 (GDScript typé, export Web) : Chtholly et son épée
-contre des vagues de Timeres, un village, des PNJ et des quêtes. Style chibi / low-poly coloré.
+contre des vagues de Timeres, un village, des PNJ et des quêtes. Direction artistique : au minimum
+proche de *Zelda: Breath of the Wild* (proportions réalistes stylisées, ombrage cel doux, couleurs
+naturelles, grands paysages) ; détail dans docs/ASSETS_3D.md.
 Le plan complet est dans PLAN.md. Ses contrats d'interface (section 3 : signaux, API, ressources,
 couches de collision) font foi : on code contre eux, on ne les change pas sans PR « contrats ».
 
@@ -1283,7 +1285,7 @@ Démo : tests/integration/demo_l4.tscn avec un joueur stub et 3 mannequins (Heal
 | Godot indisponible dans la VM cloud (chemins de l'image docker changés, `docker cp` refusé) | Les sessions ne peuvent rien vérifier | Wrapper `tools/godot` qui bascule sur `docker run` ; repli : publier le binaire Linux et les templates comme asset d'une release du dépôt `Yume-WordEnd` (le proxy GitHub les sert pour un dépôt attaché) |
 | Performances Web avec 12 Timeres et des billboards animés | Saccades sur mobile | `AnimatedSprite3D` est peu coûteux ; limiter les lumières à une directionnelle, pas d'ombres temps réel sur mobile, budget draw calls dans la CI |
 | Export Web mono-thread et physique | Pics de temps de frame sur les gros groupes | Jolt est le moteur physique par défaut depuis 4.6 ; capsules simples, pas de `SoftBody`, séparation des ennemis par calcul léger |
-| Mélange sprites 2D / décor 3D jugé incohérent | Direction artistique floue | Assumer le style « billboards sur décor low-poly » (lisible, économique, cohérent avec l'easter egg) ; passage VRM à M5 seulement si l'usage le justifie |
+| Mélange sprites 2D / décor 3D jugé incohérent | Direction artistique floue | Direction fixée : au minimum proche de *Breath of the Wild* ; personnages en modèles 3D selon `docs/ASSETS_3D.md` (même interface `CharacterVisual`) ; les planches 2D de l'easter egg restent un skin et un format de secours |
 | Propriété intellectuelle (Chtholly, Seniorious, Timere) | Retrait demandé, image de la communauté | Décision avant M4 (ci-dessous) ; architecture qui permet de changer les héros par des données |
 | Musique `Scarborough Fair` : enregistrement sans licence claire | Idem | Vérifier l'origine du MP3 ; sinon version libre (Musopen, ccMixter) ou composition originale |
 | Compatibilité GUT / gdtoolkit avec 4.7.2 | CI bloquée | Lot 0 fige les versions qui marchent ; repli sur 4.6.3 si une dépendance manque |
@@ -1296,7 +1298,7 @@ Démo : tests/integration/demo_l4.tscn avec un joueur stub et 3 mannequins (Heal
 - [ ] **Licence du code** : MIT proposé ; les assets sous licence séparée.
 - [ ] **Héros** : rester sur Chtholly en hommage non commercial crédité, ou créer des personnages originaux de la communauté pour le jeu public (Timere peut rester le clin d'œil). À trancher avant M4.
 - [ ] **Musique** : conserver l'enregistrement actuel ou le remplacer.
-- [ ] **Caméra** : orbite libre + verrouillage (proposé) ou caméra semi-fixe plus proche d'Animal Crossing. À juger à M1.
+- [x] **Caméra** : orbite libre + verrouillage de cible, à la manière de *Breath of the Wild* (retenue au Lot 1).
 - [ ] **Tactile** : contrôles de base à M2 (L9) ou report complet à M3.
 - [ ] **Sous-domaine** : `jeu.yumenovel.fr` ou page du site uniquement.
 

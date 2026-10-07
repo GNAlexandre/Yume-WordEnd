@@ -2,7 +2,9 @@
 
 ## Le projet
 Jeu 3D action-aventure dans Godot 4.7.2 (GDScript typé, export Web) : Chtholly et son épée
-contre des vagues de Timeres, un village, des PNJ et des quêtes. Style chibi / low-poly coloré.
+contre des vagues de Timeres, un village, des PNJ et des quêtes. Direction artistique : au minimum
+proche de *Zelda: Breath of the Wild* (proportions réalistes stylisées, ombrage cel doux, couleurs
+naturelles, grands paysages) ; détail dans docs/ASSETS_3D.md.
 Le plan complet est dans PLAN.md. Ses contrats d'interface (section 3 : signaux, API, ressources,
 couches de collision, « Structure figée au Lot 0 ») font foi : on code contre eux, on ne les
 change pas sans PR « contrats ».
