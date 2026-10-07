@@ -3,13 +3,13 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
 
 [sub_resource type="StandardMaterial3D" id="reed"]
-albedo_color = Color(0.66, 0.63, 0.38, 1)
+albedo_color = Color(0.595, 0.568, 0.383, 1)
 
 [sub_resource type="StandardMaterial3D" id="reed2"]
-albedo_color = Color(0.58, 0.6, 0.34, 1)
+albedo_color = Color(0.578, 0.596, 0.367, 1)
 
 [sub_resource type="StandardMaterial3D" id="cattail"]
-albedo_color = Color(0.42, 0.28, 0.18, 1)
+albedo_color = Color(0.35, 0.253, 0.182, 1)
 
 [node name="Reeds" type="Node3D"]
 

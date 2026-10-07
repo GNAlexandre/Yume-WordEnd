@@ -8,25 +8,25 @@
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="0_batcher"]
 
 [sub_resource type="StandardMaterial3D" id="post"]
-albedo_color = Color(0.45, 0.31, 0.23, 1)
+albedo_color = Color(0.341, 0.262, 0.201, 1)
 
 [sub_resource type="StandardMaterial3D" id="wood"]
-albedo_color = Color(0.71, 0.5, 0.32, 1)
+albedo_color = Color(0.536, 0.404, 0.289, 1)
 
 [sub_resource type="StandardMaterial3D" id="roof"]
-albedo_color = Color(0.5, 0.35, 0.26, 1)
+albedo_color = Color(0.486, 0.354, 0.275, 1)
 
 [sub_resource type="StandardMaterial3D" id="bronze_dark"]
-albedo_color = Color(0.55, 0.37, 0.22, 1)
+albedo_color = Color(0.533, 0.374, 0.242, 1)
 
 [sub_resource type="StandardMaterial3D" id="bronze"]
-albedo_color = Color(0.72, 0.5, 0.28, 1)
+albedo_color = Color(0.698, 0.505, 0.311, 1)
 
 [sub_resource type="StandardMaterial3D" id="rope"]
-albedo_color = Color(0.76, 0.66, 0.5, 1)
+albedo_color = Color(0.622, 0.561, 0.455, 1)
 
 [sub_resource type="StandardMaterial3D" id="stone"]
-albedo_color = Color(0.55, 0.48, 0.42, 1)
+albedo_color = Color(0.421, 0.43, 0.448, 1)
 
 [node name="VigilBell" type="Node3D"]
 script = ExtResource("0_batcher")

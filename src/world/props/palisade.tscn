@@ -4,13 +4,13 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/prism.tres" id="2_prism"]
 
 [sub_resource type="StandardMaterial3D" id="log"]
-albedo_color = Color(0.6, 0.43, 0.29, 1)
+albedo_color = Color(0.584, 0.434, 0.311, 1)
 
 [sub_resource type="StandardMaterial3D" id="log2"]
-albedo_color = Color(0.52, 0.37, 0.26, 1)
+albedo_color = Color(0.506, 0.374, 0.277, 1)
 
 [sub_resource type="StandardMaterial3D" id="rail"]
-albedo_color = Color(0.45, 0.31, 0.23, 1)
+albedo_color = Color(0.341, 0.262, 0.201, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(1.9, 1.75, 0.36)

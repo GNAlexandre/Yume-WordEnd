@@ -3,16 +3,16 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
 
 [sub_resource type="StandardMaterial3D" id="post"]
-albedo_color = Color(0.71, 0.5, 0.32, 1)
+albedo_color = Color(0.536, 0.404, 0.289, 1)
 
 [sub_resource type="StandardMaterial3D" id="rope"]
-albedo_color = Color(0.88, 0.8, 0.64, 1)
+albedo_color = Color(0.753, 0.7, 0.586, 1)
 
 [sub_resource type="StandardMaterial3D" id="sheet"]
-albedo_color = Color(0.97, 0.96, 0.92, 1)
+albedo_color = Color(0.879, 0.87, 0.835, 1)
 
 [sub_resource type="StandardMaterial3D" id="sheet2"]
-albedo_color = Color(0.93, 0.92, 0.88, 1)
+albedo_color = Color(0.9, 0.891, 0.857, 1)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_1"]
 height = 2.2

@@ -4,19 +4,19 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="2_bead"]
 
 [sub_resource type="StandardMaterial3D" id="border"]
-albedo_color = Color(0.45, 0.31, 0.23, 1)
+albedo_color = Color(0.341, 0.262, 0.201, 1)
 
 [sub_resource type="StandardMaterial3D" id="cabbage"]
-albedo_color = Color(0.46, 0.66, 0.38, 1)
+albedo_color = Color(0.427, 0.533, 0.33, 1)
 
 [sub_resource type="StandardMaterial3D" id="cabbage_dark"]
-albedo_color = Color(0.4, 0.56, 0.3, 1)
+albedo_color = Color(0.346, 0.434, 0.249, 1)
 
 [sub_resource type="StandardMaterial3D" id="pumpkin"]
-albedo_color = Color(0.93, 0.55, 0.2, 1)
+albedo_color = Color(0.771, 0.507, 0.243, 1)
 
 [sub_resource type="StandardMaterial3D" id="stake"]
-albedo_color = Color(0.71, 0.5, 0.32, 1)
+albedo_color = Color(0.536, 0.404, 0.289, 1)
 
 [node name="VegetablePatch" type="Node3D"]
 
@@ -45,55 +45,55 @@ material_override = SubResource("border")
 cast_shadow = 0
 
 [node name="Cabbage0_0" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.55, 0, 0, 0, 0.4, 0, 0, 0, 0.55, -1.8, 0.2, -0.8)
+transform = Transform3D(0.42, 0, 0, 0, 0.3, 0, 0, 0, 0.42, -1.8, 0.15, -0.8)
 mesh = ExtResource("2_bead")
 material_override = SubResource("cabbage")
 cast_shadow = 0
 
 [node name="Cabbage0_1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.55, 0, 0, 0, 0.4, 0, 0, 0, 0.55, -0.6, 0.2, -0.8)
+transform = Transform3D(0.42, 0, 0, 0, 0.3, 0, 0, 0, 0.42, -0.6, 0.15, -0.8)
 mesh = ExtResource("2_bead")
 material_override = SubResource("cabbage_dark")
 cast_shadow = 0
 
 [node name="Cabbage0_2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.55, 0, 0, 0, 0.4, 0, 0, 0, 0.55, 0.6, 0.2, -0.8)
+transform = Transform3D(0.42, 0, 0, 0, 0.3, 0, 0, 0, 0.42, 0.6, 0.15, -0.8)
 mesh = ExtResource("2_bead")
 material_override = SubResource("cabbage")
 cast_shadow = 0
 
 [node name="Cabbage1_0" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.55, 0, 0, 0, 0.4, 0, 0, 0, 0.55, -1.8, 0.2, 0)
+transform = Transform3D(0.42, 0, 0, 0, 0.3, 0, 0, 0, 0.42, -1.8, 0.15, 0)
 mesh = ExtResource("2_bead")
 material_override = SubResource("cabbage_dark")
 cast_shadow = 0
 
 [node name="Cabbage1_1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.55, 0, 0, 0, 0.4, 0, 0, 0, 0.55, -0.6, 0.2, 0)
+transform = Transform3D(0.42, 0, 0, 0, 0.3, 0, 0, 0, 0.42, -0.6, 0.15, 0)
 mesh = ExtResource("2_bead")
 material_override = SubResource("cabbage")
 cast_shadow = 0
 
 [node name="Cabbage1_2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.55, 0, 0, 0, 0.4, 0, 0, 0, 0.55, 0.6, 0.2, 0)
+transform = Transform3D(0.42, 0, 0, 0, 0.3, 0, 0, 0, 0.42, 0.6, 0.15, 0)
 mesh = ExtResource("2_bead")
 material_override = SubResource("cabbage_dark")
 cast_shadow = 0
 
 [node name="Pumpkin1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.62, 0, 0, 0, 0.44, 0, 0, 0, 0.62, -1.6, 0.22, 0.95)
+transform = Transform3D(0.42, 0, 0, 0, 0.3, 0, 0, 0, 0.42, -1.6, 0.15, 0.95)
 mesh = ExtResource("2_bead")
 material_override = SubResource("pumpkin")
 cast_shadow = 0
 
 [node name="Pumpkin2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.62, 0, 0, 0, 0.44, 0, 0, 0, 0.62, -0.3, 0.22, 0.95)
+transform = Transform3D(0.42, 0, 0, 0, 0.3, 0, 0, 0, 0.42, -0.3, 0.15, 0.95)
 mesh = ExtResource("2_bead")
 material_override = SubResource("pumpkin")
 cast_shadow = 0
 
 [node name="Pumpkin3" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.62, 0, 0, 0, 0.44, 0, 0, 0, 0.62, 1.2, 0.22, 0.95)
+transform = Transform3D(0.42, 0, 0, 0, 0.3, 0, 0, 0, 0.42, 1.2, 0.15, 0.95)
 mesh = ExtResource("2_bead")
 material_override = SubResource("pumpkin")
 cast_shadow = 0

@@ -4,13 +4,13 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="2_bead"]
 
 [sub_resource type="StandardMaterial3D" id="stone"]
-albedo_color = Color(0.58, 0.58, 0.52, 1)
+albedo_color = Color(0.579, 0.579, 0.526, 1)
 
 [sub_resource type="StandardMaterial3D" id="stone2"]
-albedo_color = Color(0.55, 0.48, 0.42, 1)
+albedo_color = Color(0.421, 0.43, 0.448, 1)
 
 [sub_resource type="StandardMaterial3D" id="moss"]
-albedo_color = Color(0.42, 0.55, 0.3, 1)
+albedo_color = Color(0.365, 0.444, 0.259, 0.5)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_1"]
 height = 3.9

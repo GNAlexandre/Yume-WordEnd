@@ -1,6 +1,7 @@
 // Mer de nuages sous l'île flottante (nœud « Water » de island.tscn, très bas sous l'île) :
-// moutonnements qui dérivent avec le vent d'ouest, crêtes pêche et or, creux lavande, quelques
-// trouées sur la surface grise très loin en bas ; vers l'horizon, la couleur du ciel. Pas d'eau.
+// moutonnements blancs qui dérivent avec le vent d'ouest, creux gris-bleu, crêtes dorées du côté
+// du soleil, quelques trouées sur la surface grise très loin en bas ; vers l'horizon, la couleur
+// de la brume et du bas du ciel (shaders/sky.gdshader). Pas d'eau.
 // Non éclairé (le relief des moutons est ombré par le shader d'après la pente du bruit et la
 // direction du soleil), compatible Compatibility / WebGL 2 : un bruit en texture
 // (NoiseTexture2D sans couture) lu à trois échelles, aucune texture d'écran.
@@ -9,12 +10,12 @@ shader_type spatial;
 render_mode unshaded, cull_back, fog_disabled, shadows_disabled;
 
 uniform sampler2D clouds : hint_default_white, filter_linear_mipmap, repeat_enable;
-uniform vec4 crest_color : source_color = vec4(1.0, 0.88, 0.78, 1.0);
-uniform vec4 trough_color : source_color = vec4(0.84, 0.69, 0.82, 1.0);
-uniform vec4 shade_color : source_color = vec4(0.66, 0.57, 0.74, 1.0);
-uniform vec4 sun_color : source_color = vec4(1.0, 0.8, 0.5, 1.0);
-uniform vec4 ground_color : source_color = vec4(0.5, 0.48, 0.55, 1.0);
-uniform vec4 horizon_color : source_color = vec4(1.0, 0.6, 0.47, 1.0);
+uniform vec4 crest_color : source_color = vec4(0.97, 0.96, 0.93, 1.0);
+uniform vec4 trough_color : source_color = vec4(0.76, 0.81, 0.88, 1.0);
+uniform vec4 shade_color : source_color = vec4(0.6, 0.67, 0.77, 1.0);
+uniform vec4 sun_color : source_color = vec4(1.0, 0.86, 0.64, 1.0);
+uniform vec4 ground_color : source_color = vec4(0.42, 0.47, 0.53, 1.0);
+uniform vec4 horizon_color : source_color = vec4(0.76, 0.82, 0.88, 1.0);
 // Vent (m/s), vers le soleil (x, z), taille d'une tuile du bruit (m), fondu vers l'horizon (m).
 uniform vec2 wind = vec2(1.4, 0.3);
 uniform vec2 sun_direction = vec2(-0.96, 0.29);

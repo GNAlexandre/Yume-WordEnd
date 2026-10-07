@@ -6,38 +6,38 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="4_bead"]
 
 [sub_resource type="StandardMaterial3D" id="stone"]
-albedo_color = Color(0.74, 0.69, 0.62, 1)
+albedo_color = Color(0.735, 0.691, 0.629, 1)
 
 [sub_resource type="StandardMaterial3D" id="upper"]
-albedo_color = Color(0.9, 0.84, 0.72, 1)
+albedo_color = Color(0.754, 0.71, 0.622, 1)
 
 [sub_resource type="StandardMaterial3D" id="tile"]
-albedo_color = Color(0.82, 0.45, 0.4, 1)
+albedo_color = Color(0.603, 0.436, 0.365, 1)
 
 [sub_resource type="StandardMaterial3D" id="ridge"]
-albedo_color = Color(0.55, 0.3, 0.27, 1)
+albedo_color = Color(0.529, 0.309, 0.282, 1)
 
 [sub_resource type="StandardMaterial3D" id="brick"]
-albedo_color = Color(0.66, 0.36, 0.28, 1)
+albedo_color = Color(0.531, 0.347, 0.285, 1)
 
 [sub_resource type="StandardMaterial3D" id="frame"]
-albedo_color = Color(0.45, 0.31, 0.23, 1)
+albedo_color = Color(0.341, 0.262, 0.201, 1)
 
 [sub_resource type="StandardMaterial3D" id="step"]
-albedo_color = Color(0.55, 0.48, 0.42, 1)
+albedo_color = Color(0.421, 0.43, 0.448, 1)
 
 [sub_resource type="StandardMaterial3D" id="glow"]
 shading_mode = 0
-albedo_color = Color(1, 0.86, 0.56, 1)
+albedo_color = Color(1, 0.85, 0.58, 1)
 
 [sub_resource type="StandardMaterial3D" id="shutter"]
-albedo_color = Color(0.45, 0.32, 0.3, 1)
+albedo_color = Color(0.391, 0.303, 0.268, 1)
 
 [sub_resource type="StandardMaterial3D" id="pot"]
-albedo_color = Color(0.7, 0.4, 0.3, 1)
+albedo_color = Color(0.673, 0.409, 0.321, 1)
 
 [sub_resource type="StandardMaterial3D" id="plant"]
-albedo_color = Color(0.46, 0.62, 0.34, 1)
+albedo_color = Color(0.405, 0.493, 0.291, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(6, 5.2, 5)

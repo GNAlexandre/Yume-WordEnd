@@ -4,31 +4,31 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="2_bead"]
 
 [sub_resource type="StandardMaterial3D" id="wood"]
-albedo_color = Color(0.71, 0.5, 0.32, 1)
+albedo_color = Color(0.536, 0.404, 0.289, 1)
 
 [sub_resource type="StandardMaterial3D" id="post"]
-albedo_color = Color(0.45, 0.31, 0.23, 1)
+albedo_color = Color(0.341, 0.262, 0.201, 1)
 
 [sub_resource type="StandardMaterial3D" id="canvas"]
-albedo_color = Color(0.88, 0.8, 0.64, 1)
+albedo_color = Color(0.753, 0.7, 0.586, 1)
 
 [sub_resource type="StandardMaterial3D" id="valance"]
-albedo_color = Color(0.76, 0.66, 0.5, 1)
+albedo_color = Color(0.622, 0.561, 0.455, 1)
 
 [sub_resource type="StandardMaterial3D" id="green"]
-albedo_color = Color(0.46, 0.66, 0.38, 1)
+albedo_color = Color(0.427, 0.533, 0.33, 1)
 
 [sub_resource type="StandardMaterial3D" id="orange"]
-albedo_color = Color(0.93, 0.55, 0.2, 1)
+albedo_color = Color(0.771, 0.507, 0.243, 1)
 
 [sub_resource type="StandardMaterial3D" id="spice"]
-albedo_color = Color(0.85, 0.42, 0.2, 1)
+albedo_color = Color(0.811, 0.432, 0.239, 1)
 
 [sub_resource type="StandardMaterial3D" id="mustard"]
-albedo_color = Color(0.9, 0.75, 0.25, 1)
+albedo_color = Color(0.881, 0.749, 0.309, 1)
 
 [sub_resource type="StandardMaterial3D" id="bread"]
-albedo_color = Color(0.85, 0.6, 0.33, 1)
+albedo_color = Color(0.681, 0.514, 0.329, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(2.4, 0.9, 0.8)

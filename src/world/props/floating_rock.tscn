@@ -5,13 +5,13 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="3_bead"]
 
 [sub_resource type="StandardMaterial3D" id="rock"]
-albedo_color = Color(0.8, 0.73, 0.63, 1)
+albedo_color = Color(0.64, 0.64, 0.622, 1)
 
 [sub_resource type="StandardMaterial3D" id="dark"]
-albedo_color = Color(0.55, 0.48, 0.42, 1)
+albedo_color = Color(0.421, 0.43, 0.448, 1)
 
 [sub_resource type="StandardMaterial3D" id="grass"]
-albedo_color = Color(0.46, 0.62, 0.34, 1)
+albedo_color = Color(0.405, 0.493, 0.291, 1)
 
 [node name="FloatingRock" type="Node3D"]
 

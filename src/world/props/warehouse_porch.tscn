@@ -4,20 +4,20 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/pyramid.tres" id="2_pyramid"]
 
 [sub_resource type="StandardMaterial3D" id="deck"]
-albedo_color = Color(0.71, 0.5, 0.32, 1)
+albedo_color = Color(0.536, 0.404, 0.289, 1)
 
 [sub_resource type="StandardMaterial3D" id="beam"]
-albedo_color = Color(0.45, 0.31, 0.23, 1)
+albedo_color = Color(0.341, 0.262, 0.201, 1)
 
 [sub_resource type="StandardMaterial3D" id="slate"]
-albedo_color = Color(0.42, 0.5, 0.65, 1)
+albedo_color = Color(0.364, 0.399, 0.452, 1)
 
 [sub_resource type="StandardMaterial3D" id="iron"]
-albedo_color = Color(0.27, 0.29, 0.33, 1)
+albedo_color = Color(0.241, 0.25, 0.268, 1)
 
 [sub_resource type="StandardMaterial3D" id="crystal"]
 shading_mode = 0
-albedo_color = Color(1, 0.91, 0.64, 1)
+albedo_color = Color(1, 0.92, 0.7, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(0.2, 3, 0.2)
@@ -28,7 +28,7 @@ size = Vector3(0.2, 3, 0.2)
 [node name="WarehousePorch" type="Node3D"]
 
 [node name="Deck" type="MeshInstance3D" parent="."]
-transform = Transform3D(6, 0, 0, 0, 0.12, 0, 0, 0, 2.5, 0, 0.06, 0)
+transform = Transform3D(6, 0, 0, 0, 0.15, 0, 0, 0, 2.5, 0, 0.075, 0)
 mesh = ExtResource("1_box")
 material_override = SubResource("deck")
 cast_shadow = 0

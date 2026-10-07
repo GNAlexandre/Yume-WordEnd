@@ -16,8 +16,8 @@ extends Node3D
 ## Avant l'acte 1, un MultiMeshInstance3D par mesh unité et par zone : une dizaine de draw calls
 ## par zone (trois passes chacun) ; fondu, trois par zone et par case.
 
-const TOON := preload("res://src/world/materials/toon.tres")
-const GLOW := preload("res://src/world/materials/glow.tres")
+const TOON: Material = preload("res://src/world/materials/toon.tres")
+const GLOW: Material = preload("res://src/world/materials/glow.tres")
 
 ## Matériau blanc des meshes sans matériau.
 static var _default_material := StandardMaterial3D.new()

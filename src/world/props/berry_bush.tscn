@@ -4,13 +4,13 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="2_box"]
 
 [sub_resource type="StandardMaterial3D" id="leaf"]
-albedo_color = Color(0.4, 0.56, 0.3, 1)
+albedo_color = Color(0.346, 0.434, 0.249, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="leaf2"]
-albedo_color = Color(0.46, 0.62, 0.34, 1)
+albedo_color = Color(0.405, 0.493, 0.291, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="berry"]
-albedo_color = Color(0.86, 0.15, 0.2, 1)
+albedo_color = Color(0.542, 0.137, 0.154, 1)
 
 [node name="BerryBush" type="Node3D"]
 

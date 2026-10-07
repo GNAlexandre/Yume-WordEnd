@@ -4,40 +4,45 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/cone.tres" id="2_cone"]
 
 [sub_resource type="StandardMaterial3D" id="bark"]
-albedo_color = Color(0.45, 0.33, 0.24, 1)
+albedo_color = Color(0.362, 0.292, 0.23, 1)
 
 [sub_resource type="StandardMaterial3D" id="dark"]
-albedo_color = Color(0.19, 0.34, 0.24, 1)
+albedo_color = Color(0.166, 0.246, 0.175, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="pine"]
-albedo_color = Color(0.25, 0.42, 0.29, 1)
+albedo_color = Color(0.217, 0.305, 0.208, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="light"]
-albedo_color = Color(0.31, 0.5, 0.33, 1)
+albedo_color = Color(0.286, 0.374, 0.251, 0.5)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_1"]
 height = 2.4
-radius = 0.4
+radius = 0.25
 
 [node name="TreePine" type="Node3D"]
 
 [node name="Trunk" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.5, 0, 0, 0, 1.6, 0, 0, 0, 0.5, 0, 0.8, 0)
+transform = Transform3D(0.42, 0, 0, 0, 5.2, 0, 0, 0, 0.42, 0, 2.6, 0)
 mesh = ExtResource("1_trunk")
 material_override = SubResource("bark")
 
 [node name="Tier1" type="MeshInstance3D" parent="."]
-transform = Transform3D(3.2, 0, 0, 0, 2.1, 0, 0, 0, 3.2, 0, 2.15, 0)
+transform = Transform3D(2.761515, 0, 1.172193, 0, 2.4, 0, -1.172193, 0, 2.761515, 0, 2.8, 0)
 mesh = ExtResource("2_cone")
 material_override = SubResource("dark")
 
 [node name="Tier2" type="MeshInstance3D" parent="."]
-transform = Transform3D(2.5, 0, 0, 0, 1.9, 0, 0, 0, 2.5, 0, 2.95, 0)
+transform = Transform3D(1.736646, 0, 1.79835, 0, 2.2, 0, -1.79835, 0, 1.736646, 0, 4, 0)
 mesh = ExtResource("2_cone")
 material_override = SubResource("pine")
 
 [node name="Tier3" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.7, 0, 0, 0, 1.6, 0, 0, 0, 1.7, 0, 3.7, 0)
+transform = Transform3D(0.680899, 0, 1.773803, 0, 2, 0, -1.773803, 0, 0.680899, 0, 5.2, 0)
+mesh = ExtResource("2_cone")
+material_override = SubResource("dark")
+
+[node name="Tier4" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.041879, 0, 1.199269, 0, 2, 0, -1.199269, 0, -0.041879, 0, 6.4, 0)
 mesh = ExtResource("2_cone")
 material_override = SubResource("light")
 

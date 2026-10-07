@@ -8,7 +8,7 @@ extends RefCounted
 ## - la falaise (une quinzaine de mètres), puis le dessous de l'île, cône de roche inversé dont
 ##   les strates claires et sombres sont peintes par shaders/rock.gdshader ;
 ## - des racines qui pendent sous la lèvre.
-## Un seul mesh à facettes plates (un draw call, face avant vers l'extérieur), sans collision :
+## Un seul mesh aux normales lissées (un draw call, face avant vers l'extérieur), sans collision :
 ## un corps qui saute du bord tombe le long de la falaise jusqu'à la KillZone de island.tscn.
 ##
 ## Aussi : la barrière du bord (couche 8 enemy_barrier, comme celle du village) qui retient les
@@ -32,6 +32,8 @@ const RINGS: Array[Vector4] = [
 const RING_INSET := 0.05
 const LIP_OVERHANG := Vector2(0.12, 0.3)
 const LIP_DEPTH := Vector2(0.9, 0.7)
+## Angle (degrés) au-delà duquel une arête reste vive quand on lisse les normales.
+const CREASE_ANGLE := 55.0
 ## Échantillons sur le tour, pointe du cône.
 const SEGMENTS := 128
 const TIP := Vector3(4.0, -47.0, -6.0)
@@ -58,12 +60,13 @@ const MATERIAL := preload("res://src/world/materials/rock.tres")
 static var _mesh_cache: ArrayMesh = null
 
 
-## Sommets à facettes plates : trois sommets par triangle, normale de la face, couleur (rouge :
-## racine).
+## Trois sommets par triangle, couleur (rouge : racine) ; normales lissées par smooth().
 class Builder:
 	var vertices := PackedVector3Array()
 	var normals := PackedVector3Array()
 	var colors := PackedColorArray()
+	## Normale de chaque triangle, non normée (pondération par l'aire).
+	var faces := PackedVector3Array()
 
 	## Triangle (a, b, c) tourné pour que sa face avant regarde vers `front`.
 	func triangle(a: Vector3, b: Vector3, c: Vector3, front: Vector3, color: Color) -> void:
@@ -73,10 +76,34 @@ class Builder:
 			b = c
 			c = swap
 			normal = -normal
-		normal = normal.normalized()
+		faces.append(normal)
+		var unit := normal.normalized()
 		vertices.append_array(PackedVector3Array([a, b, c]))
-		normals.append_array(PackedVector3Array([normal, normal, normal]))
+		normals.append_array(PackedVector3Array([unit, unit, unit]))
 		colors.append_array(PackedColorArray([color, color, color]))
+
+	## Normales lissées : chaque sommet prend la moyenne (pondérée par l'aire) des normales des
+	## triangles qui partagent sa position et s'écartent de moins de CREASE_ANGLE du sien ; les
+	## arêtes plus vives (racines) restent nettes.
+	func smooth() -> void:
+		var groups: Dictionary[Vector3i, Array] = {}
+		var keys: Array[Vector3i] = []
+		keys.resize(vertices.size())
+		for v in vertices.size():
+			var key := Vector3i((vertices[v] * 64.0).round())
+			keys[v] = key
+			if not groups.has(key):
+				groups[key] = []
+			groups[key].append(faces[floori(v / 3.0)])
+		var crease := cos(deg_to_rad(CREASE_ANGLE))
+		for v in vertices.size():
+			var own := normals[v]
+			var sum := Vector3.ZERO
+			for face: Vector3 in groups[keys[v]]:
+				if face.normalized().dot(own) > crease:
+					sum += face
+			if sum.length_squared() > 0.0:
+				normals[v] = sum.normalized()
 
 	## Quadrilatère a b c d (dans l'ordre du tour), face avant vers l'extérieur de l'axe vertical.
 	func quad(a: Vector3, b: Vector3, c: Vector3, d: Vector3, color: Color) -> void:
@@ -105,6 +132,7 @@ static func rock_mesh() -> ArrayMesh:
 	_add_lip(builder)
 	_add_underside(builder)
 	_add_roots(builder)
+	builder.smooth()
 	_mesh_cache = builder.mesh(MATERIAL)
 	return _mesh_cache
 

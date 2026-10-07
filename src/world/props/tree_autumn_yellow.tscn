@@ -1,50 +1,66 @@
 [gd_scene format=3]
 
 [ext_resource type="Mesh" path="res://src/world/props/meshes/trunk.tres" id="1_trunk"]
-[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="2_bead"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/foliage.tres" id="2_foliage"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/sphere.tres" id="3_sphere"]
 
 [sub_resource type="StandardMaterial3D" id="bark"]
-albedo_color = Color(0.45, 0.33, 0.24, 1)
+albedo_color = Color(0.362, 0.292, 0.23, 1)
 
 [sub_resource type="StandardMaterial3D" id="main"]
-albedo_color = Color(0.91, 0.76, 0.31, 1)
+albedo_color = Color(0.765, 0.659, 0.343, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="second"]
-albedo_color = Color(0.89, 0.61, 0.23, 1)
+albedo_color = Color(0.72, 0.552, 0.262, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="third"]
-albedo_color = Color(0.86, 0.82, 0.42, 1)
+albedo_color = Color(0.594, 0.577, 0.33, 0.5)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_1"]
 height = 3
-radius = 0.35
+radius = 0.25
 
 [node name="TreeAutumn" type="Node3D"]
 
 [node name="Trunk" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.55, 0, 0, 0, 3.2, 0, 0, 0, 0.55, 0, 1.6, 0)
+transform = Transform3D(0.42, 0, 0, 0, 5.8, 0, 0, 0, 0.42, 0, 2.9, 0)
 mesh = ExtResource("1_trunk")
 material_override = SubResource("bark")
 
-[node name="Branch" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.16853, 1.02846, 0, -0.141413, 1.225671, 0, 0, 0, 0.22, 0.5, 3, 0.2)
+[node name="Branch1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.16961, 1.271806, 0, -0.105984, 2.035315, 0, 0, 0, 0.2, 0.55, 5, 0.2)
+mesh = ExtResource("1_trunk")
+material_override = SubResource("bark")
+
+[node name="Branch2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.155885, -1.1, 0, 0.085595, 1.812006, -0.055623, 0.027812, 0.588756, 0.17119, -0.5, 5.3, -0.25)
 mesh = ExtResource("1_trunk")
 material_override = SubResource("bark")
 
 [node name="Crown" type="MeshInstance3D" parent="."]
-transform = Transform3D(4.2, 0, 0, 0, 3.4, 0, 0, 0, 4.2, 0, 4.4, 0)
-mesh = ExtResource("2_bead")
+transform = Transform3D(4.2, 0, 0, 0, 2.9, 0, 0, 0, 4, 0, 6.9, 0)
+mesh = ExtResource("2_foliage")
 material_override = SubResource("main")
 
 [node name="Crown2" type="MeshInstance3D" parent="."]
-transform = Transform3D(2.8, 0, 0, 0, 2.4, 0, 0, 0, 2.8, 1.1, 5.4, 0.6)
-mesh = ExtResource("2_bead")
+transform = Transform3D(3, 0, 0, 0, 2.3, 0, 0, 0, 2.8, 0.3, 8.4, -0.2)
+mesh = ExtResource("3_sphere")
 material_override = SubResource("second")
 
 [node name="Crown3" type="MeshInstance3D" parent="."]
-transform = Transform3D(2.6, 0, 0, 0, 2.2, 0, 0, 0, 2.6, -0.9, 5.2, -0.7)
-mesh = ExtResource("2_bead")
+transform = Transform3D(2.6, 0, 0, 0, 2, 0, 0, 0, 2.4, 1.7, 6.2, 0.8)
+mesh = ExtResource("3_sphere")
+material_override = SubResource("main")
+
+[node name="Crown4" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.6, 0, 0, 0, 2.1, 0, 0, 0, 2.5, -1.6, 6.4, -0.6)
+mesh = ExtResource("3_sphere")
 material_override = SubResource("third")
+
+[node name="Crown5" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.2, 0, 0, 0, 1.6, 0, 0, 0, 2, 0.4, 5.6, -1.4)
+mesh = ExtResource("3_sphere")
+material_override = SubResource("second")
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

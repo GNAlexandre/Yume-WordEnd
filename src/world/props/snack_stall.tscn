@@ -4,26 +4,26 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="2_cylinder"]
 
 [sub_resource type="StandardMaterial3D" id="counter"]
-albedo_color = Color(0.45, 0.31, 0.23, 1)
+albedo_color = Color(0.341, 0.262, 0.201, 1)
 
 [sub_resource type="StandardMaterial3D" id="post"]
-albedo_color = Color(0.71, 0.5, 0.32, 1)
+albedo_color = Color(0.536, 0.404, 0.289, 1)
 
 [sub_resource type="StandardMaterial3D" id="roof"]
-albedo_color = Color(0.7, 0.3, 0.25, 1)
+albedo_color = Color(0.666, 0.314, 0.27, 1)
 
 [sub_resource type="StandardMaterial3D" id="iron"]
-albedo_color = Color(0.27, 0.29, 0.33, 1)
+albedo_color = Color(0.241, 0.25, 0.268, 1)
 
 [sub_resource type="StandardMaterial3D" id="ember"]
 shading_mode = 0
-albedo_color = Color(1, 0.55, 0.25, 1)
+albedo_color = Color(1, 0.58, 0.3, 1)
 
 [sub_resource type="StandardMaterial3D" id="fries"]
-albedo_color = Color(0.95, 0.8, 0.4, 1)
+albedo_color = Color(0.9, 0.773, 0.433, 1)
 
 [sub_resource type="StandardMaterial3D" id="bacon"]
-albedo_color = Color(0.8, 0.42, 0.36, 1)
+albedo_color = Color(0.767, 0.433, 0.38, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(1.9, 1, 0.8)

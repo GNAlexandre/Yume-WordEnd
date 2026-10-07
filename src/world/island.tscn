@@ -10,29 +10,37 @@
 [ext_resource type="PackedScene" path="res://src/world/zones/hill/hill.tscn" id="8_hill"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="9_batcher"]
 [ext_resource type="Shader" path="res://src/world/shaders/waterfall.gdshader" id="10_waterfall"]
+[ext_resource type="Shader" path="res://src/world/shaders/sky.gdshader" id="11_sky"]
+[ext_resource type="Script" path="res://src/world/grass.gd" id="12_grass"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sunset"]
-sky_top_color = Color(0.3, 0.21, 0.5, 1)
-sky_horizon_color = Color(1, 0.6, 0.47, 1)
-sky_curve = 0.25
-ground_bottom_color = Color(1, 0.6, 0.47, 1)
-ground_horizon_color = Color(1, 0.6, 0.47, 1)
-sun_angle_max = 25.0
-sun_curve = 0.08
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sky"]
+seed = 168
+frequency = 0.012
+fractal_octaves = 4
 
-[sub_resource type="Sky" id="Sky_sunset"]
-sky_material = SubResource("ProceduralSkyMaterial_sunset")
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_sky"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("FastNoiseLite_sky")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
+shader = ExtResource("11_sky")
+shader_parameter/clouds = SubResource("NoiseTexture2D_sky")
+
+[sub_resource type="Sky" id="Sky_island"]
+sky_material = SubResource("ShaderMaterial_sky")
 
 [sub_resource type="Environment" id="Environment_island"]
 background_mode = 2
-sky = SubResource("Sky_sunset")
+sky = SubResource("Sky_island")
 ambient_light_source = 2
-ambient_light_color = Color(0.82, 0.77, 0.95, 1)
-ambient_light_energy = 0.32
+ambient_light_color = Color(0.64, 0.72, 0.9, 1)
+ambient_light_energy = 0.55
 fog_enabled = true
-fog_light_color = Color(0.96, 0.66, 0.6, 1)
-fog_sun_scatter = 0.25
-fog_density = 0.0008
+fog_light_color = Color(0.7, 0.78, 0.88, 1)
+fog_sun_scatter = 0.3
+fog_density = 0.002
 fog_sky_affect = 0.0
 fog_height = -4.0
 fog_height_density = 0.05
@@ -77,9 +85,9 @@ script = ExtResource("1_island")
 environment = SubResource("Environment_island")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.287348, 0.389583, -0.875018, 0, 0.913545, 0.406737, 0.957826, -0.116875, 0.262505, 0, 40, 0)
-light_color = Color(1, 0.86, 0.7, 1)
-light_energy = 0.22
+transform = Transform3D(0.287311, 0.3276, -0.900073, 0, 0.939693, 0.34202, 0.957837, -0.098266, 0.269984, 0, 40, 0)
+light_color = Color(1, 0.84, 0.64, 1)
+light_energy = 0.2
 shadow_enabled = true
 directional_shadow_mode = 0
 directional_shadow_max_distance = 50.0
@@ -137,6 +145,9 @@ material_override = SubResource("ShaderMaterial_waterfall")
 
 [node name="Decor" type="Node3D" parent="."]
 script = ExtResource("9_batcher")
+
+[node name="Grass" type="Node3D" parent="."]
+script = ExtResource("12_grass")
 
 [node name="Zones" type="Node3D" parent="."]
 

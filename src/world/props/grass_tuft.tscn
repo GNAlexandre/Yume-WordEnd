@@ -3,10 +3,10 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/prism.tres" id="1_prism"]
 
 [sub_resource type="StandardMaterial3D" id="grass"]
-albedo_color = Color(0.78, 0.72, 0.4, 1)
+albedo_color = Color(0.672, 0.628, 0.408, 1)
 
 [sub_resource type="StandardMaterial3D" id="grass2"]
-albedo_color = Color(0.66, 0.62, 0.36, 1)
+albedo_color = Color(0.653, 0.618, 0.389, 1)
 
 [node name="GrassTuft" type="Node3D"]
 

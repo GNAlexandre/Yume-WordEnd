@@ -4,10 +4,10 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="2_box"]
 
 [sub_resource type="StandardMaterial3D" id="leather"]
-albedo_color = Color(0.6, 0.38, 0.24, 1)
+albedo_color = Color(0.484, 0.334, 0.229, 1)
 
 [sub_resource type="StandardMaterial3D" id="seam"]
-albedo_color = Color(0.45, 0.31, 0.23, 1)
+albedo_color = Color(0.341, 0.262, 0.201, 1)
 
 [node name="Ball" type="Node3D"]
 

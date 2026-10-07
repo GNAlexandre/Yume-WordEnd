@@ -5,31 +5,31 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/prism.tres" id="3_prism"]
 
 [sub_resource type="StandardMaterial3D" id="stone"]
-albedo_color = Color(0.79, 0.77, 0.73, 1)
+albedo_color = Color(0.64, 0.64, 0.62, 1)
 
 [sub_resource type="StandardMaterial3D" id="wood"]
-albedo_color = Color(0.6, 0.51, 0.42, 1)
+albedo_color = Color(0.5, 0.43, 0.36, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rail"]
 size = Vector3(0.2, 1.3, 2.2)
 
 [sub_resource type="StandardMaterial3D" id="wood_light"]
-albedo_color = Color(0.72, 0.65, 0.55, 1)
+albedo_color = Color(0.62, 0.56, 0.47, 1)
 
 [sub_resource type="StandardMaterial3D" id="wood_dark"]
-albedo_color = Color(0.41, 0.34, 0.28, 1)
+albedo_color = Color(0.35, 0.29, 0.24, 1)
 
 [sub_resource type="StandardMaterial3D" id="metal"]
-albedo_color = Color(0.32, 0.32, 0.38, 1)
+albedo_color = Color(0.3, 0.31, 0.34, 1)
 
 [sub_resource type="StandardMaterial3D" id="gold"]
-albedo_color = Color(0.79, 0.63, 0.35, 1)
+albedo_color = Color(0.66, 0.54, 0.32, 1)
 
 [sub_resource type="StandardMaterial3D" id="white"]
-albedo_color = Color(0.97, 0.96, 0.92, 1)
+albedo_color = Color(0.86, 0.85, 0.81, 1)
 
 [sub_resource type="StandardMaterial3D" id="coral"]
-albedo_color = Color(0.45, 0.6, 0.95, 1)
+albedo_color = Color(0.4, 0.5, 0.7, 1)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_floor"]
 height = 0.4

@@ -8,19 +8,19 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="6_bead"]
 
 [sub_resource type="StandardMaterial3D" id="green"]
-albedo_color = Color(0.55, 0.62, 0.42, 1)
+albedo_color = Color(0.444, 0.514, 0.321, 1)
 
 [sub_resource type="StandardMaterial3D" id="rock"]
-albedo_color = Color(0.7, 0.62, 0.62, 1)
+albedo_color = Color(0.562, 0.58, 0.597, 1)
 
 [sub_resource type="StandardMaterial3D" id="wall"]
-albedo_color = Color(0.86, 0.8, 0.72, 1)
+albedo_color = Color(0.854, 0.801, 0.731, 1)
 
 [sub_resource type="StandardMaterial3D" id="roof"]
-albedo_color = Color(0.75, 0.42, 0.38, 1)
+albedo_color = Color(0.722, 0.431, 0.396, 1)
 
 [sub_resource type="StandardMaterial3D" id="pine"]
-albedo_color = Color(0.33, 0.45, 0.36, 1)
+albedo_color = Color(0.339, 0.444, 0.365, 1)
 
 [node name="DistantIsland" type="Node3D"]
 

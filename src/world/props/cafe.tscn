@@ -6,47 +6,47 @@
 [ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="4_cylinder"]
 
 [sub_resource type="StandardMaterial3D" id="stone"]
-albedo_color = Color(0.85, 0.79, 0.7, 1)
+albedo_color = Color(0.696, 0.66, 0.59, 1)
 
 [sub_resource type="StandardMaterial3D" id="cream"]
-albedo_color = Color(1, 0.95, 0.84, 1)
+albedo_color = Color(0.845, 0.81, 0.722, 1)
 
 [sub_resource type="StandardMaterial3D" id="timber"]
-albedo_color = Color(0.45, 0.31, 0.23, 1)
+albedo_color = Color(0.341, 0.262, 0.201, 1)
 
 [sub_resource type="StandardMaterial3D" id="tile"]
-albedo_color = Color(0.9, 0.38, 0.35, 1)
+albedo_color = Color(0.615, 0.369, 0.299, 1)
 
 [sub_resource type="StandardMaterial3D" id="ridge"]
-albedo_color = Color(0.62, 0.28, 0.25, 1)
+albedo_color = Color(0.591, 0.292, 0.265, 1)
 
 [sub_resource type="StandardMaterial3D" id="glow"]
 shading_mode = 0
-albedo_color = Color(1, 0.86, 0.56, 1)
+albedo_color = Color(1, 0.85, 0.58, 1)
 
 [sub_resource type="StandardMaterial3D" id="frame"]
-albedo_color = Color(0.45, 0.31, 0.23, 1)
+albedo_color = Color(0.341, 0.262, 0.201, 1)
 
 [sub_resource type="StandardMaterial3D" id="door"]
-albedo_color = Color(0.32, 0.47, 0.4, 1)
+albedo_color = Color(0.308, 0.396, 0.343, 1)
 
 [sub_resource type="StandardMaterial3D" id="iron"]
-albedo_color = Color(0.27, 0.29, 0.33, 1)
+albedo_color = Color(0.241, 0.25, 0.268, 1)
 
 [sub_resource type="StandardMaterial3D" id="brass"]
-albedo_color = Color(0.79, 0.63, 0.35, 1)
+albedo_color = Color(0.647, 0.541, 0.348, 1)
 
 [sub_resource type="StandardMaterial3D" id="table"]
-albedo_color = Color(0.71, 0.5, 0.32, 1)
+albedo_color = Color(0.536, 0.404, 0.289, 1)
 
 [sub_resource type="StandardMaterial3D" id="flower"]
-albedo_color = Color(0.95, 0.4, 0.4, 1)
+albedo_color = Color(0.9, 0.418, 0.418, 1)
 
 [sub_resource type="StandardMaterial3D" id="awning"]
-albedo_color = Color(0.86, 0.36, 0.32, 1)
+albedo_color = Color(0.817, 0.377, 0.342, 1)
 
 [sub_resource type="StandardMaterial3D" id="stripe"]
-albedo_color = Color(1, 0.95, 0.84, 1)
+albedo_color = Color(0.845, 0.81, 0.722, 1)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_1"]
 height = 0.8
