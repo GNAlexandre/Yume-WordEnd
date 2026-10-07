@@ -33,7 +33,7 @@ const RING_INSET := 0.05
 const LIP_OVERHANG := Vector2(0.12, 0.3)
 const LIP_DEPTH := Vector2(0.9, 0.7)
 ## Angle (degrés) au-delà duquel une arête reste vive quand on lisse les normales.
-const CREASE_ANGLE := 55.0
+const CREASE_ANGLE := 80.0
 ## Échantillons sur le tour, pointe du cône.
 const SEGMENTS := 128
 const TIP := Vector3(4.0, -47.0, -6.0)

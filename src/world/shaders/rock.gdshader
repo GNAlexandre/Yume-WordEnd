@@ -7,6 +7,7 @@ shader_type spatial;
 render_mode cull_disabled;
 
 #define CEL_NO_RIM
+#define CEL_SOFTNESS 0.35
 #include "res://src/world/shaders/cel.gdshaderinc"
 
 uniform vec4 lip_stone : source_color = vec4(0.6, 0.61, 0.6, 1.0);

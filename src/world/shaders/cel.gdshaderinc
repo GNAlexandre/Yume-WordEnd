@@ -5,13 +5,19 @@
 // reçoivent que la lumière ambiante (bleutée, island.tscn).
 // Compatible Compatibility / WebGL 2 : fonction light() appelée dans la passe du soleil.
 
+// Largeur du terminateur (CEL_SOFTNESS, à définir avant l'inclusion pour l'adoucir : roche).
+#ifndef CEL_SOFTNESS
+#define CEL_SOFTNESS 0.06
+#endif
+
 #ifndef CEL_NO_RIM
 uniform float cel_rim = 0.4;
 #endif
 
 void light() {
 	float ndl = dot(NORMAL, LIGHT);
-	float lit = smoothstep(-0.04, 0.08, ndl) * 0.55 + smoothstep(0.14, 0.28, ndl) * 0.45;
+	float lit = smoothstep(-CEL_SOFTNESS, CEL_SOFTNESS * 1.4, ndl) * 0.55;
+	lit += smoothstep(0.14, 0.28 + CEL_SOFTNESS, ndl) * 0.45;
 	vec3 sun = LIGHT_COLOR * ATTENUATION / PI;
 	DIFFUSE_LIGHT += sun * lit;
 #ifndef CEL_NO_RIM
