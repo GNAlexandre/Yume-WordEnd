@@ -251,15 +251,22 @@ Les mêmes conditions décident de la présence des PNJ (`visible_if`, plus bas)
 
 ### Le nom du joueur : `{player}`
 
-`{player}` est remplacé par le nom affiché du skin choisi (`SkinData.display_name` de
-`GameState.skin_id`, sinon le skin par défaut : « Chtholly »). Il marche partout où le joueur lit
-du texte de quête ou de dialogue : répliques, choix, `speaker` d'un nœud (`"speaker":
-"{player}"` quand la protagoniste parle), titre, résumé, objectifs et aides des quêtes (HUD et
-journal), textes de l'histoire (`data/texts/story.json`). Il se combine avec `{count:…}`,
-`{left:…}` et `{best:…}`. Un nom de skin peut être plus long que « Chtholly » : un titre ou un
-objectif qui cite `{player}` doit encore tenir dans le HUD avec le plus long nom de skin
-(`tools/test.sh tests/unit/test_sys_story_content.gd` le vérifie). Avec parcimonie : les autres
-personnages appellent souvent la protagoniste autrement (« mademoiselle », « guerrière »).
+`{player}` est remplacé par le **prénom** de la protagoniste : le nom affiché du skin choisi
+(`SkinData.display_name` de `GameState.skin_id`, sinon le skin par défaut), sans sa variante
+(ce qui suit « · » : « Ithea Myse Valgulious · 3D ») et réduit à son premier mot (une fée adulte
+ajoute à son prénom une particule et le nom de son Carillon) : « Chtholly » pour « Chtholly Nota
+Seniorious · 3D », « Ithea » pour « Ithea Myse Valgulious · 3D », « Chtholly » si le nom est vide
+(`DialogueRunner.player_name()`, `first_name()`). Les répliques appellent la protagoniste comme
+on l'appelle dans l'œuvre, par son prénom (« Alors reviens, {player} », « Mlle {player} ») ; ne
+pas écrire un nom de skin sans prénom en tête. Il marche partout où le joueur lit du texte de
+quête ou de dialogue : répliques, choix, `speaker` d'un nœud (`"speaker": "{player}"` quand la
+protagoniste parle), titre, résumé, objectifs et aides des quêtes (HUD et journal), textes de
+l'histoire (`data/texts/story.json`). Il se combine avec `{count:…}`, `{left:…}` et `{best:…}`.
+Un prénom de skin peut être plus long que « Chtholly » : un titre ou un objectif qui cite
+`{player}` doit encore tenir dans le HUD avec le plus long prénom de skin (`tools/test.sh
+tests/unit/test_sys_story_content.gd` le vérifie ; `tests/unit/test_player_name.gd` vérifie la
+règle du prénom). Avec parcimonie : les autres personnages appellent souvent la protagoniste
+autrement (« mademoiselle », « guerrière »).
 
 ### Plusieurs voix : `speaker_id`
 

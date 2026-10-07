@@ -32,7 +32,7 @@ extends Node
 ##     choix), ceux d'un choix quand il est choisi (avant de suivre son "next").
 ##   textes (réplique, choix, "speaker") : {count:objet}, {left:objet:total} (total moins
 ##     possédés, au moins 0) et {best:arène} sont remplacés par les valeurs de GameState,
-##     {player} par le nom affiché du skin choisi (player_name(), « Chtholly » par défaut).
+##     {player} par le prénom du skin choisi (player_name(), « Chtholly » par défaut).
 ##   commentaires : toute clé qui commence par « _ » est ignorée.
 ## Un fichier invalide (JSON, structure, "next", clé, condition ou effet inconnus ou mal formés)
 ## donne un push_warning qui dit pourquoi, et aucun dialogue. Ordre complet d'évaluation et
@@ -68,9 +68,13 @@ const CHOICE_KEYS: Array[String] = ["text", "if", "next"]
 const NPCS_DIR := "res://data/npcs"
 ## Textes de l'histoire hors dialogues (story_text, arena_text).
 const STORY_PATH := "res://data/texts/story.json"
-## Jeton remplacé par le nom affiché du skin choisi, et ce nom quand aucun skin n'est connu.
+## Jeton remplacé par le prénom du skin choisi (player_name), et ce prénom quand aucun skin
+## n'est connu.
 const PLAYER_TOKEN := "{player}"
 const DEFAULT_PLAYER_NAME := "Chtholly"
+## Sépare le nom d'un skin de sa variante (« Chtholly Nota Seniorious · 3D ») : {player} n'en
+## garde que le prénom (first_name).
+const SKIN_VARIANT_SEPARATOR := "·"
 
 ## Runner dont le dialogue est en cours (un seul à la fois dans le jeu).
 static var _active: DialogueRunner = null
@@ -412,7 +416,7 @@ static func visible_choices(node: Dictionary) -> Array[Dictionary]:
 
 
 ## Remplace {count:objet}, {left:objet:total} et {best:arène} par les valeurs de GameState, et
-## {player} par le nom affiché du skin choisi (player_name()). Répliques, choix, orateurs, et
+## {player} par le prénom du skin choisi (player_name()). Répliques, choix, orateurs, et
 ## (Systèmes et textes) textes de quête du HUD et du journal, textes de l'histoire.
 static func format_text(text: String) -> String:
 	if not text.contains("{"):
@@ -429,12 +433,22 @@ static func format_text(text: String) -> String:
 	return result.replace(PLAYER_TOKEN, player_name()) if result.contains(PLAYER_TOKEN) else result
 
 
-## Nom affiché du skin choisi ({player}) : celui de player_skin(), « Chtholly » à défaut.
+## Nom de la protagoniste ({player}) : le prénom du skin choisi (first_name() du nom affiché de
+## player_skin()), « Chtholly » à défaut. Les répliques l'appellent par son prénom (« Alors
+## reviens, Chtholly », « Mlle Ithea »), pas par son nom complet ni par la variante du skin.
 static func player_name() -> String:
 	var skin := player_skin()
-	if skin != null and not skin.display_name.is_empty():
-		return skin.display_name
-	return DEFAULT_PLAYER_NAME
+	var first := first_name(skin.display_name) if skin != null else ""
+	return first if not first.is_empty() else DEFAULT_PLAYER_NAME
+
+
+## Prénom d'un nom affiché de skin : la partie avant « · » (variante : « Ithea Myse Valgulious
+## · 3D »), puis son premier mot (le prénom ; une fée adulte y ajoute une particule et le nom de
+## son Carillon, HISTOIRE.md 5.3) : « Ithea ». "" si le nom est vide.
+static func first_name(display_name: String) -> String:
+	var full := display_name.get_slice(SKIN_VARIANT_SEPARATOR, 0).strip_edges()
+	var words := full.split(" ", false)
+	return words[0] if not words.is_empty() else ""
 
 
 ## Skin du joueur, comme le joueur l'applique : GameState.skin_id, sinon (vide ou inconnu) le

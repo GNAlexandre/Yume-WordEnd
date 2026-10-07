@@ -1079,3 +1079,11 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   M2) est ignorée à la source : ni au journal, ni dans le « +n quêtes » du HUD, ni dans les
   boucles du QuestTracker. Son état reste dans GameState (aucune migration ne l'efface : une
   quête rendue au jeu plus tard retrouverait son état). `test_act1_saves.gd`.
+- **Intégration acte 1 — `{player}`** (`DialogueRunner.player_name()`, `first_name()`) : le
+  prénom de la protagoniste, c'est-à-dire le nom affiché du skin sans sa variante (ce qui suit
+  « · », comme « · 3D » des skins de la PR n° 1, qui ne sont pas renommés) réduit à son premier
+  mot : « Chtholly » pour « Chtholly Nota Seniorious · 3D ». Les deux répliques qui l'emploient
+  sont des apostrophes (« Alors reviens, {player} », « Mlle {player} ») ; le nom complet y
+  sonnerait faux. Limite connue : choisir le skin 3D de Willem, d'Ithea ou de Nephren ne cache
+  pas leur PNJ (les ids de skins diffèrent : `sukasuka_ithea` contre `ithea`), et les cacher
+  rendrait leurs quêtes impossibles ; à trancher avec la reprise des modèles 3D.

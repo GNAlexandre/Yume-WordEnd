@@ -2,7 +2,7 @@ extends "res://src/ui/journal.gd"
 ## Journal de quêtes du HUD (nœud HUD/Journal de hud.tscn, Systèmes et textes) : le journal du
 ## Lot Q (journal.gd) dont les textes de quête affichés (titres de la liste, titre, résumé,
 ## étapes, aides) passent par DialogueRunner.format_text, comme le HUD et les dialogues :
-## {player} devient le nom affiché du skin choisi. Après chaque mise à jour du détail
+## {player} devient le prénom du skin choisi. Après chaque mise à jour du détail
 ## (_show_details, appelée par refresh, select et track), les textes qui contiennent une
 ## variable sont remplacés, et l'objectif de shown_steps() avec eux.
 ## Sous-classe plutôt que modification de journal.gd : périmètre du lot ; à replier dans
