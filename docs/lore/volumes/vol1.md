@@ -128,10 +128,9 @@ de l'orphelinat de Willem (V1, épilogue).
   de près, dunes à la place des collines, pics gris, ruines de pierre fouillées par les
   récupérateurs ; nids des Bêtes ; lac souterrain gelé où dormait Willem (V1, chap. « Celui qui ne
   devrait pas être en vie » ; épilogue).
-- **Il y a 526 ans** : l'orphelinat, ancienne école maternelle délabrée (vingt pensionnaires),
-  au bord d'une petite ville de 3 000 habitants (rues pavées bordées d'arbres, théâtre) ; le champ
-  de la bataille finale (baie nouvelle, cimes en feu, débris de talismans) ; le château de
-  l'*Empire Sacré* d'où surgirent les Bêtes (V1, prologue ; épilogue).
+- **Il y a 526 ans** : l'orphelinat, ancienne école maternelle délabrée (vingt pensionnaires), au
+  bord d'une petite ville de 3 000 habitants aux rues pavées bordées d'arbres ; le champ de la
+  bataille finale (baie nouvelle, cimes en feu, débris de talismans) (V1, prologue ; épilogue).
 
 ## 4. Personnages
 
@@ -242,9 +241,9 @@ de l'île 28, un *imp* (V1, prologue ; chap. « Ce jour, il y a fort, fort longt
   (félins) ; *lycanthropes* (canins) ; *orcs* ; *golems* ; *trolls* et *imps*, des ogres. Loi
   commune : tuer un être intelligent est un crime (V1, chap. « Le chat qui filait et la jeune
   fille », « Directeur en carton »).
-- **Emnetwiht** : race faible (ni corps de géant, ni sorcellerie d'elfe, ni ingénierie de nain, ni
-  fertilité d'orc, ni puissance de dragon) mais maîtresse du monde grâce aux *Aventuriers*, à
-  l'*Alliance*, aux talismans produits en masse, aux *Braves* et aux Carillons. Les livres d'images
+- **Emnetwiht** : race sans don particulier face aux géants, elfes, nains, orcs et dragons, mais
+  maîtresse du monde grâce aux *Aventuriers*, à l'*Alliance*, aux talismans produits en masse, aux
+  *Braves* et aux Carillons. Les livres d'images
   en font des tyrans qui auraient invoqué les Bêtes ; eux se disaient simplement des gens.
 - **Fées** (variantes : *leprechauns*, *lutins*, *farfadets*) : âmes d'enfants morts trop jeunes pour
   comprendre leur mort ; toutes de sexe féminin, pas vraiment vivantes, nées dans une forêt.
