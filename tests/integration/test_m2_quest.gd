@@ -7,19 +7,28 @@ extends "res://tests/stubs/m2_game_test.gd"
 ## terrain d'entraînement, le bord du Couchant, le thé du Barocupot, la colline des étoiles et la
 ## promesse : quête terminée, promesse du gâteau au beurre dans l'inventaire, 6 PV max et six
 ## cœurs. L'objectif du HUD suit chaque étape. L'appui qui ferme une conversation (Espace, E, A)
-## ne la relance pas et ne fait pas sauter Chtholly.
+## ne la relance pas et ne fait pas sauter Chtholly. Les PNJ sont là selon l'histoire
+## (visible_if) : Willem à l'entrepôt, puis au terrain d'entraînement, puis au sommet ; Limeskin
+## au port à partir du bord du Couchant.
 ##
 ## Raccourcis : entre deux scènes, le joueur est posé près du lieu suivant (seul le trajet vers
 ## les bois se fait à pied, de zone à zone ; les autres sont couverts par test_m2_world.gd) ; les
 ## rejetons des bois sont immobilisés (cibles de l'épée) et les Timeres des vagues de la veille
 ## abattus d'office (leur combat est couvert par test_m1_forest.gd et test_m2_arena.gd) : ici,
-## c'est la quête qui compte.
+## c'est la quête qui compte. Les points de départ sont ceux du décor de l'île n° 68 (locaux à
+## leur zone, sol mesuré) ; devant un PNJ, à 3 m de lui, côté centre de sa zone.
 
 const QUEST := &"act1_main"
-## Devant la cloche du cercle de veille (local à la zone du Couchant) : départ des veilles.
+## Sous la cloche du cercle de veille, côté village (local au Couchant : la cloche est en
+## (9 ; 0 ; −2), son battant pend à l'est) : départ des veilles.
 const BELL_FRONT := Vector3(10.6, 0.0, -2.0)
-## Sur le plateau du belvédère (local à la colline), d'où l'on rejoint Willem sans la rambarde.
-const SUMMIT_FRONT := Vector3(-1.0, 8.0, -2.5)
+## À l'est du cercle, à 5,5 m du déclencheur couchant_edge (−21 ; 0 ; −12), face au vide.
+const EDGE_START := Vector3(-15.5, 0.0, -12.0)
+## Au sud du sommet de la colline, sur le chemin qui monte au déclencheur hill_summit (1 ; 8 ; −3).
+const HILL_START := Vector3(1.0, 8.0, 3.0)
+## Sur l'herbe du sommet, au sud du belvédère (fermé de rambardes sauf à l'ouest) : à 3 m de
+## Willem, qui se tient à côté du belvédère en (3 ; 8,2 ; 0).
+const SUMMIT_FRONT := Vector3(1.0, 8.0, 2.0)
 
 ## Manette (true) ou clavier (false) pour le test en cours.
 var _pad: bool = false
@@ -320,7 +329,7 @@ func _play_the_first_act() -> void:
 	await _scene(&"forest", "WillemTraining", [1], &"the_edge")
 	assert_true(GameState.has_flag(&"duel_lost"))
 	# 10. Seule au bord de l'île, face au couchant.
-	await place_player(&"dunes", Vector3(-15.5, 0.0, -12.0), Vector3.LEFT)
+	await place_player(&"dunes", EDGE_START, Vector3.LEFT)
 	var at_edge: bool = await _forward_until(func() -> bool: return _step() != &"the_edge", 4.0)
 	assert_true(at_edge, "le bord du Couchant")
 	await _expect_step(&"barocupot")
@@ -328,7 +337,7 @@ func _play_the_first_act() -> void:
 	await _scene(&"beach", "Limeskin", [0], &"starry_hill")
 	assert_true(GameState.has_flag(&"limeskin_tea"))
 	# 12. Le sommet de la colline des étoiles.
-	await place_player(&"hill", Vector3(1.0, 8.0, 3.0), Vector3.FORWARD)
+	await place_player(&"hill", HILL_START, Vector3.FORWARD)
 	var at_top: bool = await _forward_until(func() -> bool: return _step() != &"starry_hill", 4.0)
 	assert_true(at_top, "au sommet de la colline")
 	await _expect_step(&"promise")
