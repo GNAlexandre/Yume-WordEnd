@@ -6,9 +6,9 @@ lieux sont dans [MONDE.md](MONDE.md) ; le joueur y est défini (section 1.2) : *
 Seniorious, aînée de l'entrepôt de l'île n° 68, par défaut Chtholly**.
 
 Conventions : `(V1, chap. « … »)` renvoie aux fiches `docs/lore/volumes/vol<N>.md` (traduction Yume
-Novel, `VEX` pour le volume EX) ; **(original)** marque une invention ; **SPOILER V<n>** signale ce
-que révèle le volume n. Les quêtes sont écrites avec les briques du moteur de quêtes (format complet :
-`docs/QUETES.md`, livré par le lot du moteur) :
+Novel, `VEX` pour le volume EX) et à [BIBLE.md](BIBLE.md) ; **(original)** marque une invention ;
+**SPOILER V<n>** signale ce que révèle le volume n (niveau S<n> de la bible). Les quêtes sont écrites
+avec les briques du moteur de quêtes (format complet : `docs/QUETES.md`) :
 
 - quête : `id`, `title`, `summary` (journal), `giver`, `main`, `auto_start`, `requires`
   (`quests`, `flags`, `not_flags`), `steps`, `rewards` ;
@@ -213,8 +213,9 @@ suite est à l'acte 2, au prochain jalon.
 | `pages` | `collect` | `item: page_fragment`, `count: 5`, `npc: nephren`, `consume: true` | Rapporter 5 pages du livre d'images à Nephren |
 | `reading` | `talk` | `npc: willem` | Demander à Willem de lire le livre aux petites |
 
-- **Lieux** : bois du marais (trois pages au sol, les autres lâchées par les rejetons, comme
-  aujourd'hui).
+- **Lieux** : bois du marais, cinq pages au sol (les trois actuelles et deux nouvelles), dont deux au
+  milieu des rejetons. Les rejetons ne les lâchent plus : Timere ignore les objets (V3) ; supprimer
+  les `drops` de `data/enemies/timere_*.tres`.
 - **Récompenses** : objet `picture_book`, drapeau `book_read`.
 - **Dialogues clés** : Nephren en trois mots (« Livre. Vent. Pages. ») et la règle du silence de la
   salle de lecture. La lecture est une scène à plusieurs voix dans le dialogue de Willem : les
@@ -243,7 +244,8 @@ suite est à l'acte 2, au prochain jalon.
 
 - **Mécanique** : la marchande d'œufs et le serveur du café donnent leur objet une seule fois, dès
   que la quête est active (`give_item`, puis drapeaux `eggs_given`, `cream_given`) ; le dialogue de
-  l'étape `cook` retire les cinq objets (`take_item`).
+  l'étape `cook` retire les cinq objets (`take_item`, protégé par des conditions `count`, comme le
+  demande `docs/QUETES.md`).
 - **Récompenses** : objet `dessert_cup`, drapeau `little_ones_trust_willem`.
 - **Dialogues clés** : Willem a les recettes de son maître et, détail comique, les os de poulet pour
   la gelée sont déjà prêts. La marchande se méfie (« c'est pour l'entrepôt ? ») puis s'adoucit quand
@@ -386,7 +388,8 @@ chercher) ; sans le développement, Limeskin reste au port et parle d'une escale
 | Zone | Nœud | `item_id` | Position | Note |
 | --- | --- | --- | --- | --- |
 | village | `village_flower_1` | `flower_blue` | (17, 0, 5) | déplacé : l'ancienne position (−17, 0, −3) tombe dans l'aile ouest |
-| forest | `forest_page_1` à `_3` | `page_fragment` | inchangées | + pages lâchées par les rejetons |
+| forest | `forest_page_1` à `_3` | `page_fragment` | inchangées | dans la clairière |
+| forest | `forest_page_4`, `forest_page_5` | `page_fragment` | (−12, 0, −13), (11, 0, −7) | au pied des grands sapins ; côté est de la clairière |
 | forest | `forest_berries_1` à `_3` | `wild_berries` | (14, 0, −12), (−16, 0, 12), (20, 0, 6) | sur des buissons à baies |
 | forest | `forest_sheet_1` | `laundry_sheet` | (3, 0, 24) | dans un arbre près du portail nord |
 | forest | `forest_comb_1` | `clock_comb` | (−32, 0, −8) | dans le marais |
@@ -402,12 +405,13 @@ chercher) ; sans le développement, Limeskin reste au port et parle d'une escale
 | hill | `hill_flower_3` | `flower_blue` | (−22, 0, −10) | au pied ouest de la colline |
 | hill | `hill_sheet_1` | `laundry_sheet` | (−2, 8, −3) | accroché au belvédère |
 
-**Déclencheurs** (`src/quests/quest_trigger.tscn`, posés dans les fichiers d'emplacement) :
+**Déclencheurs** (instances de `src/quests/quest_trigger.tscn`, cylindres posés sur le sol, dans le
+fichier d'emplacement des PNJ de la zone, `src/npc/placements/<zone>.tscn`) :
 
-| Zone | `trigger_id` | Position | Forme | Rôle |
+| Zone | `trigger_id` | Position | `radius`, `height` | Rôle |
 | --- | --- | --- | --- | --- |
-| dunes | `couchant_edge` | (−21, 1, −12) | boîte 3 × 3 × 8 m | étape `the_edge` (à 3 m du vide, au nord des ruines) |
-| hill | `hill_summit` | (1, 8, −3) | cylindre de 4 m de rayon, 3 m de haut | étape `starry_hill` |
+| dunes | `couchant_edge` | (−21, 0, −12) | 3 m, 3 m | étape `the_edge` (à 3 m du vide, au nord des ruines) |
+| hill | `hill_summit` | (1, 8, −3) | 4 m, 3 m | étape `starry_hill` (le sol du sommet est à 8 m) |
 
 **Ennemis** : inchangés (quatre Timere libres dans les bois, vagues de `data/waves/dunes.json`).
 Seuls changent les noms affichés (section 7.2).
@@ -426,15 +430,21 @@ Seuls changent les noms affichés (section 7.2).
 
 ### 3.5 Textes du jeu à changer pour l'acte 1
 
-- Noms des zones (MONDE.md, section 2.1) et des quatre formes de Timere (section 7.2).
+- Noms des zones (MONDE.md, section 2.1) et des quatre corps de Timere (section 7.2) ; HUD
+  « Retour au village… » devient « Retour à l'entrepôt… ».
+- Animation `mort` des skins : des grains de lumière plutôt que des pétales (une fée qui meurt se
+  dissipe en lumière, SPOILER V4, prologue), sans l'expliquer : à l'écran, c'est une défaite, pas
+  une mort.
 - Arène : invite « Sonner la cloche de veille » (constante de `src/enemies/arena_panel.gd` :
   développement n° 4), titre de fin « Fin de la veille », « Nouveau record de veille ! ».
 - Chute : « Tes ailes se sont ouvertes : te revoilà au bord. » ; défaite : « Les autres t'ont ramenée
   à l'entrepôt. »
 - Menu : sous les vignettes, « Ta fée prend la place de Chtholly dans l'histoire. »
-- Crédits, `README.md`, `docs/ASSETS_3D.md` : Seniorious, Timere. Tests à adapter : la chaîne
-  « Seniolis » de `tests/unit/test_dialogue_data.gd` et `tests/unit/test_credits.gd`, et les tests M2
-  qui jouent `pages` et la bibliothécaire (`test_m2_quest.gd` et voisins).
+- Crédits, `README.md`, `PLAN.md`, `docs/ASSETS_3D.md`, `tools/gen_branding.py` : Seniorious et
+  Timere ; dans les crédits, le titre de la traduction française (*Que faites-vous à la fin du
+  monde ? Êtes-vous occupés ? Voulez-vous bien nous sauver ?*, Yume Novel). Tests à adapter : la
+  chaîne « Seniolis » de `tests/unit/test_dialogue_data.gd` et `tests/unit/test_credits.gd`, et les
+  tests M2 qui jouent `pages` et la bibliothécaire (`test_m2_quest.gd` et voisins).
 - Carton d'ouverture (avec le développement n° 6 ; sinon, la première réplique de Nygglatho) :
   « Île n° 68, fin de l'automne. Cette nuit, le vent a hurlé sur la forêt. À l'entrepôt des fées, le
   nouveau responsable est arrivé dans le noir. »
@@ -465,7 +475,7 @@ rêve) ; intérieurs de l'entrepôt.
 | `act2_departure` | Au couchant | principale, `auto_start` | V1, « Même après la fin de cette guerre » | `nygglatho` ; quête `act1_main` | `talk` nygglatho (armure informelle, épée sur le dos) → `talk` tiat (les adieux des petites) → `reach` trigger `couchant_edge` (Ithea et Nephren ; l'envol dans le soleil couchant) | drapeau `act2_departed` ; on ne se retourne pas, la broche brille |
 | `act2_front` | Les deux cent dix-sept morts | principale | V2, « Chasseur d'âmes — A » (SPOILER V2) | `limeskin` ; `act2_departure` | `talk` limeskin (tente à 1 200 *marmer* du front) → `arena` island15 `wave: 5` (Timere renaît ; les batteries lézards figent sa régénération, dév. n° 9) → `reach` trigger `rift_entrance` → `collect` `constraint_key` ×3 (donjon **(original)**) → `kill` `timere_reborn` ×1 (boss : masse de lianes, puis géant de lierre noir) → `flag` `unknown_beast_hatched` (scène) → `reach` trigger `island15_heart` (planter Seniorious ; l'île tombe ; Ithea t'emporte) | PV max → 8 ; l'empiètement (souvenirs d'une autre, yeux qui rougissent) est montré, jamais expliqué |
 | `act2_reunion` | Un résultat | principale | V2, « Un Résultat » | `willem` ; `act2_front` | `reach` zone collina_di_luce → `talk` willem (il te serre à t'étouffer, tu le gifles) → `talk` limeskin (Phyr et la lettre de menace) | — |
-| `act2_phyr` | Le bon usage de l'amour et de la justice | principale | V2, chap. 2 | `phyr` ; `act2_reunion` | `talk` phyr → `collect` `wrapped_lamb` (chez le boucher, pas à l'échoppe sans certificat) → `reach` triggers `perjurer_tomb`, `lovers_stairs`, `wishing_well` (tu refuses de faire un vœu) → `kill` `thug` ×5 (assommer, dév. n° 10) → `talk` willem (il s'est servi de Phyr comme appât) → `talk` phyr (elle pardonne en disant le détester) | choix canon : « les fées porteront tes combats » |
+| `act2_phyr` | Le bon usage de l'amour et de la justice | principale | V2, « Le bon usage de l'amour et de la justice », « Le mauvais usage de l'amour et de la justice » | `phyr` ; `act2_reunion` | `talk` phyr → `collect` `wrapped_lamb` (chez le boucher, pas à l'échoppe sans certificat) → `reach` triggers `perjurer_tomb`, `lovers_stairs`, `wishing_well` (tu refuses de faire un vœu) → `kill` `thug` ×5 (assommer, dév. n° 10) → `talk` willem (il s'est servi de Phyr comme appât) → `talk` phyr (elle pardonne en disant le détester) | choix canon : « les fées porteront tes combats » |
 | `act2_way_home` | Le chemin du retour, toujours si loin | principale | V2, « Le chemin du retour, toujours si loin », « L'écoulement du temps depuis lors » (SPOILER V2) | `willem` ; `act2_phyr` | `talk` willem (renvoyées sous escorte ; Nephren lui fait promettre de rentrer directement) → `reach` zone village → `talk` nygglatho (cacher ton état : choix) → `reach` trigger `warehouse_mirror` (l'inconnue aux yeux rouges ; tu t'effondres) | drapeau `coma` |
 | `act2_dream` | Un rêve lointain | principale | V2, épilogue (SPOILER V2) | `elq_child` ; drapeau `coma` | `reach` zone dream_ruins → `collect` `dream_keepsake` ×4 (peluche, livre illisible, cristal, broche) → `talk` elq_child (elle te laisse rentrer) → `talk` willem (« Bienvenue à la maison » ; aucun choix : tu ne peux pas répondre) | drapeau `act2_done` |
 | `wrapped_lamb_hunt` | Le vrai agneau enveloppé | secondaire | V2, « Le bon usage de l'amour et de la justice » | `phyr` | `talk` → `collect` `wrapped_lamb` → `talk` | Phyr, fière de sa ville |
@@ -497,7 +507,7 @@ skin aux cheveux qui rougissent (planche actuelle de Chtholly).
 | `act3_island49` | L'île n° 49 | principale | « L'île N°49 » | `reach` zone island49 → `collect` `waffle` ×3 → `collect` `book` ×1 (la librairie en dernier) → `talk` le commandant gremian → course contre le couchant (minuteur, dév. n° 10) | tu t'imposes comme « secrétaire » |
 | `act3_gomag` | Réunion | principale | « Réunion », « L'Emnetwith suspect » | `reach` zone gomag_ruins → `talk` nopht (elle te prend pour un fantôme) → `talk` rhantolk → `talk` willem (Desperatio ; sa demande) | — |
 | `act3_ice_coffin` | La princesse souriante dans le cercueil de glace | principale, donjon M4 | même titre | `reach` zone gomag_underground (groupe de trois avec Glick et Willem ; nid endormi à contourner, discrétion) → `reach` trigger `ice_hall` (la fillette dans la glace ; ton venenum s'emballe) | — |
-| `act3_last_stand` | La fille la plus heureuse du monde | principale | « L'horloge en lambeaux et désuète », « La fille la plus heureuse du monde » | `arena` plantaginesta (18 h 26 → 18 h 51 : barils d'huile, navire qu'on incline ; Timere-ressort, -arbre, -échelle ; la Septième Bête poussée dans le vide) → scène : Nephren saute, Willem la suit → `talk` elq (un dernier retour) → `arena` gomag_ruins avec Desperatio | fin de l'histoire de Chtholly |
+| `act3_last_stand` | La fille la plus heureuse du monde | principale | « L'horloge en lambeaux et désuète », « La fille la plus heureuse du monde » | `arena` plantaginesta (18 h 26 → 18 h 51 : barils d'huile, navire qu'on incline ; Timeres en ressort, en arbre, en échelle ; la Septième Bête poussée dans le vide) → scène : Nephren saute, Willem la suit → `talk` elq (un dernier retour) → `arena` gomag_ruins avec Desperatio | fin de l'histoire de Chtholly |
 | `act3_epilogue` | La fin d'un rêve | principale (joué en Tiat) | « La Fin d'un rêve » | `talk` nygglatho (au port, elle coupe ses cheveux et les donne au vent) → `talk` lakhesh → `reach` zone forest (Tiat s'entraîne avec la broche) | objet `silver_brooch` ; drapeau `act3_done` |
 | `rhantolk_glossary` | Le glossaire de Rhantolk | secondaire | idée du V3 **(original)** | `collect` `emnetwiht_page` ×6 dans les ruines | une entrée de codex par page, sans révéler la nature des Bêtes |
 | `lakhesh_bakery` | Le pain du matin | secondaire | Lakhesh aide à la boulangerie (V3) ; **(original)** | `collect` livraisons → `talk` | tartines qui soignent (dév. n° 10) |
@@ -621,7 +631,7 @@ et or, volEX.md image1).
 
 | `id` | Nom | Description (inventaire) | Où | Usage |
 | --- | --- | --- | --- | --- |
-| `page_fragment` (id gardé) | Page du livre d'images | Une page du livre d'images des petites, arrachée par le grand vent. Des Braves y terrassent de terribles emnetwiht. | bois : 3 au sol, les autres lâchées par les rejetons | `picture_book` |
+| `page_fragment` (id gardé) | Page du livre d'images | Une page du livre d'images des petites, arrachée par le grand vent. Des Braves y terrassent de terribles emnetwiht. | bois : 5 au sol | `picture_book` |
 | `flower_blue` (id gardé) | Myosotis | Petite fleur bleue des pentes de la colline. On l'appelle aussi « ne m'oubliez pas ». | colline 3, entrepôt 1, Couchant 1, bois 1 | `forget_me_nots` |
 | `laundry_sheet` | Drap envolé | Un drap de l'entrepôt arraché du toit par le vent du soir. Il sent le savon et le grand air. | port 2, Couchant 1, colline 1, bois 1 | `flying_laundry` |
 | `eggs` | Œufs frais | Une douzaine d'œufs du marché, calés dans de la paille. | la marchande d'œufs | `special_dessert` |
@@ -659,8 +669,9 @@ débloque en réglant l'épée, pas des objets : ils font partie de Seniorious.
 ### 7.1 Timere dans le jeu
 
 - **Une seule Bête**, la Sixième (« les Six »), qui se déchire en fragments (V1) : on écrit
-  « Timere » (invariable) pour la Bête, « fragments » ou « rejetons » pour les ennemis ; plus jamais
-  « les Timeres ».
+  « Timere » pour la Bête (sans article : « Timere attaque »), « un Timere », « des Timeres »,
+  « fragments » ou « rejetons » pour ses corps (pluriel attesté aux V4 et V5, BIBLE.md, section
+  11) ; jamais « une espèce » ni des « types ».
 - **Règles du canon à respecter** : elle grandit et se divise vite, se scinde en mourant jusqu'à sa
   limite de division (V3) ; elle renaît plus forte sous une autre forme (V2) ; seuls un Carillon ou
   une arme enchantée la tuent, l'artillerie ne fait que figer sa régénération (V2) ; elle trouve tout ce
@@ -672,20 +683,22 @@ débloque en réglant l'épée, pas des objets : ils font partie de Seniorious.
   pattes fines) convient ; éviter qu'elle ressemble à un animal réel. Le volume 1 ne la décrit
   jamais : à l'acte 1, les dialogues disent « rejeton » et « fragment », sans décrire.
 
-### 7.2 Les quatre formes de l'acte 1
+### 7.2 Les quatre corps de l'acte 1
 
-Mêmes données (`data/enemies/timere_*.tres`), mêmes chiffres, nouveaux noms affichés :
+Mêmes données (`data/enemies/timere_*.tres`), mêmes chiffres, nouveaux noms affichés. À l'acte 1,
+les noms restent au niveau du volume 1 (des fragments plus ou moins gros) ; les formes décrites par
+les volumes 2 et 3 n'arrivent qu'avec leurs actes :
 
-| `id` | Nom affiché | Forme dans le canon | Comportement (inchangé) |
-| --- | --- | --- | --- |
-| `timere_small` | Rejeton de Timere | la moitié détachée d'un fragment qui se scinde (V3) ; nom **(original)** | rapide, morsure |
-| `timere_normal` | Fragment de Timere | un fragment ordinaire (V1) | morsure et fouet |
-| `timere_runner` | Timere-ressort | une moitié devient un ressort et l'autre fait un énorme bond (V3, « L'horloge en lambeaux et désuète ») | charge en ligne droite |
-| `timere_big` | Timere-lianes | forme de plante, masse verte d'où sortent d'innombrables lianes (V2, « Chasseur d'âmes — A ») | fouet long, ne recule que sous l'onde |
+| `id` | Nom affiché (acte 1) | Appui dans le canon | Forme qu'il pourra prendre ensuite | Comportement (inchangé) |
+| --- | --- | --- | --- | --- |
+| `timere_small` | Rejeton de Timere | petit fragment (V1) ; nom **(original)** | moitié détachée d'un corps qui se scinde (V3) | rapide, morsure |
+| `timere_normal` | Fragment de Timere | fragment (V1) | masse vert sombre à pattes de crustacé (V3) | morsure et fouet |
+| `timere_runner` | Timere bondissant | nom descriptif (le même que dans la bible) | une moitié devient ressort et l'autre bondit (V3, « L'horloge en lambeaux et désuète ») | charge en ligne droite |
+| `timere_big` | Grand fragment de Timere | plus un fragment est gros, plus il est dangereux (V1) | masse à lianes, carapace (V2, « Chasseur d'âmes — A ») | fouet long, ne recule que sous l'onde |
 
-Variantes visuelles souhaitées : pattes en ressort pour le Timere-ressort, lianes pour le
-Timere-lianes (matériau ou planche à part, même squelette). La veille garde ses vagues et ses points ;
-dans la forêt, les rejetons lâchent les pages comme aujourd'hui.
+Variantes visuelles pour les actes 2 et 3 : pattes en ressort, lianes, carapace (matériau ou planche
+à part, même squelette). La veille garde ses vagues et ses points ; dans les bois, les rejetons ne
+lâchent plus d'objets.
 
 ### 7.3 Ennemis des actes suivants
 
@@ -740,7 +753,8 @@ Règles communes :
 - **Le monde a ses mots** : *bradal*, *marmer*, cristal lumineux, dirigeable, Garde ailée ; ni
   argot moderne ni anglicisme.
 - **Jamais de phrase recopiée** des volumes ; une citation très courte reste exceptionnelle.
-- **Variables** : `{player}`, `{best:dunes}`, `{left:<objet>:<n>}`.
+- **Variables** : `{best:dunes}`, `{left:<objet>:<n>}`, `{count:<objet>}` (existent) ; `{player}`
+  (à développer, section 9).
 
 ## 9. Ce qui demande un nouveau développement
 

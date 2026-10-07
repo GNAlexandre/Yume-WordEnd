@@ -6,11 +6,13 @@ Son pendant, [HISTOIRE.md](HISTOIRE.md), fixe l'arc principal, les quêtes, les 
 objets, les ennemis et le ton.
 
 Conventions : `(V1, chap. « … »)` renvoie aux fiches de lecture `docs/lore/volumes/vol<N>.md`
-(traduction Yume Novel, `VEX` pour le volume EX) ; **(original)** marque une invention du jeu, qui ne
-contredit aucun fait établi ; **SPOILER V<n>** signale ce que révèle le volume n. Vocabulaire de la
-traduction : *Regule Aire*, *Timere* (la Bête n° 6, invariable), *Seniorious*, *Carillon*,
-*venenum*, *emnetwiht*, *sans traits*, *Garde ailée*, *Alliance d'Orlandry*, *dirigeable*,
-*aire-port*, *bradal*, *marmer*.
+(traduction Yume Novel, `VEX` pour le volume EX) et à la bible du canon, [BIBLE.md](BIBLE.md) ;
+**(original)** marque une invention du jeu, qui ne contredit aucun fait établi ; **SPOILER V<n>**
+signale ce que révèle le volume n (niveau S<n> de la bible). Vocabulaire de la traduction :
+*Regule Aire*, *Timere* (la Bête n° 6 ; « un Timere », « des Timeres » pour ses corps),
+*Seniorious*, *Carillon*, *venenum*, *emnetwiht*, *sans traits*, *Garde ailée*, *Alliance des
+marchands d'Orlandry* (« Entrepôt n° 4 de l'Alliance d'Orlandry » sur le panneau du V1),
+*dirigeable*, *aire-port*, *bradal*, *marmer*.
 
 ## 1. Cadre
 
@@ -23,10 +25,12 @@ filait et la jeune fille »). Une seule Bête atteint le ciel : *Timere*, la Six
 fragments que le vent emporte. Un fragment posé sur une île y grandit et l'absorbe en six à huit
 heures ; la précognition de la Garde voit venir les gros de loin, les petits tard ; seuls les
 *Carillons*, des épées faites de talismans, le tuent pour de bon (V1, chap. « Les valeureux et leurs
-successeurs » ; V2, chap. « Chasseur d'âmes — A »). Or seules les fées éveillent les Carillons : des
-fillettes aux cheveux vifs, nées seules dans les forêts, que la Garde ailée range comme des armes
-dans l'Entrepôt n° 4 de l'Alliance d'Orlandry, au cœur de la grande forêt de l'île n° 68, une île
-périphérique sans escale publique (V1, chap. « L'Homme sans Marque », « Entrepôt de fées »).
+successeurs » ; V2, chap. « Chasseur d'âmes — A »). Or, aujourd'hui, seules les fées éveillent les
+Carillons, parce qu'elles ressemblent assez aux emnetwiht disparus pour tromper ces armes faites
+pour eux : des fillettes aux cheveux vifs, nées seules dans les forêts, que la Garde ailée range
+comme des armes dans l'Entrepôt n° 4 de l'Alliance d'Orlandry, au cœur de la grande forêt de l'île
+n° 68, une île périphérique sans escale publique (V1, chap. « L'Homme sans Marque », « Entrepôt de
+fées »).
 
 Le jeu s'ouvre à l'automne, au lendemain de la nuit du grand vent : le nouvel officier responsable
 de l'entrepôt, Willem, est arrivé dans le noir et Pannibal l'a fait tomber dans le marais d'un coup
@@ -91,7 +95,10 @@ Conséquences pour la production :
 - **Variante canon du skin.** La planche actuelle de Chtholly a des cheveux bleus qui virent au
   rouge vers les pointes : c'est la Chtholly de la fin du volume 3 (SPOILER V3). Pour l'acte 1,
   une variante aux longs cheveux bleu ciel, sans rouge (V1, chap. « Le chat qui filait et la jeune
-  fille » ; VEX, illustrations) ; la planche actuelle sert à l'acte 3.
+  fille » ; VEX, illustrations) ; la planche actuelle sert à l'acte 3. Seniorious, de son côté, a
+  une lame blanc argenté faite de plaques fissurées, presque aussi haute que sa porteuse, et une garde
+  sombre hérissée ; quand on charge, une lumière filtre par les fissures (V1 ; V2 ; VEX,
+  illustrations ; la teinte bleutée de cette lumière est **(original)**).
 - **Pourquoi elle est là** : c'est chez elle. Les fées sont légalement des armes de la Garde, elles
   ne quittent pas l'île n° 68 sans un officier, mais toute l'île leur est ouverte (V2, chap. « De ce
   côté-ci de l'écran » ; V5, chap. « La fin imminente » ; VEX, chap. « Cinq cents ans »). Elle
@@ -207,7 +214,9 @@ trentaine de fées de 7 à 15 ans, de Nygglatho et désormais de Willem (V1, cha
 Marque », « Directeur en carton »). Un vieux bâtiment de bois à deux étages fait pour une
 cinquantaine de personnes, dans une clairière défrichée entre la forêt dense et les marécages (V2,
 chap. « De ce côté-ci de l'écran » ; VEX, chap. « Cinq cents ans ») ; un orc le compare à une étable
-de ferme en ruine (V5, chap. « La fin imminente »).
+de ferme en ruine (V5, chap. « La fin imminente »). Les sources le placent au cœur de la forêt (V2 ;
+V3) ou au bord de l'île, à deux pas d'un village d'hommes-bêtes (VEX) : la miniature garde le cœur
+de la forêt, et le village voisin devient le bourg du port, à deux pas lui aussi.
 
 **Ce qui reste du jeu actuel.** Zone sûre (`safe = true`, `EnemyBarrier` sur tout le pourtour),
 place plate de 9 m de rayon avec le puits au centre, `Spawn` en (0, 0,2, 9), quatre portes au bout
@@ -298,8 +307,9 @@ Seniorious ») ; les mares cachées et la montagne où Nygglatho chasse l'ours (
 
 **PNJ.** Pannibal (au bord du marais) ; Willem au terrain d'entraînement pendant son étape.
 
-**Ennemis.** Les rejetons : quatre Timere libres autour du terrain (deux Rejetons, un Fragment, un
-Timere-ressort), qui réapparaissent au rechargement de la zone : la saison des rejetons.
+**Ennemis.** Les rejetons : quatre Timeres libres autour du terrain (deux rejetons, un fragment, un
+Timere bondissant), qui réapparaissent au rechargement de la zone : la saison des rejetons. Ils ne
+gardent ni ne lâchent aucun objet : Timere cherche les vivants et ignore les choses (V3).
 
 **Ambiance et lumière.** Pénombre verte et or, brume sur le marais, craquements, silence soudain
 quand des rejetons sont proches.
@@ -498,8 +508,8 @@ Une île flottante n'est pas entourée d'eau mais de ciel.
 | « Plage aux coquillages », palmiers, parasols, ponton | Le port et le bourg : quai plaqué de métal, étals sous bâches, passerelle d'embarquement, dirigeables, rue du Port | V1 ; V3 ; VEX |
 | « Colline du belvédère » | La colline des étoiles ; belvédère gardé | V1 ; VEX |
 | Cerisiers en fleurs | Feuillus d'automne or et rouille (le printemps reviendra à l'acte 4) | Le V1 se passe à l'automne |
-| Épée « Seniolis » | **Seniorious** dans tous les textes (crédits, dialogues, `ASSETS_3D.md`) | Graphie de la traduction ; aucun code ne dépend du nom (seuls les crédits, deux tests et le dialogue du forgeron le citent) |
-| « les Timeres » | Timere (la Bête, invariable) ; ennemis : « fragments de Timere », « rejetons » | V1 à V5 |
+| Épée « Seniolis » | **Seniorious** dans tous les textes (`README.md`, `PLAN.md`, `ASSETS_3D.md`, crédits, dialogues, `tools/gen_branding.py`) | Graphie de la traduction ; aucun code de jeu ne dépend du nom (seuls ces textes et deux tests le citent) |
+| « les Timeres » comme espèce à quatre types | Timere est une Bête ; ses corps sont « des Timeres », « des fragments », « des rejetons », sans « types » | V1 à V5 ; BIBLE.md, section 6.3 |
 
 ## 3. Bâtiments et décors à créer
 
