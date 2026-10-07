@@ -37,12 +37,17 @@ rejetons dans les bois et la veille au bord du Couchant, il vit les derniers jou
 pour l'île n° 15, que menace le grand fragment repéré six mois plus tôt (V1).
 
 **La saison des rejetons (original, à garder cohérente partout).** Timere se déchire en millions de
-fragments portés par le vent ; un fragment mourant se scinde et rejette sa mort sur une moitié,
-jusqu'à sa limite de division (V1 ; V3, chap. « L'horloge en lambeaux et désuète »). Cet automne,
-le grand fragment qui monte vers l'île n° 15 perd au vent ses plus petits éclats ; les vents
-d'ouest, violents la nuit sur l'île n° 68 (V1), en jettent quelques-uns sur son bord ouest. Ils ne
-menacent pas encore l'île, mais ils grandissent : chaque soir, les fées tiennent la veille au bord
-du Couchant et nettoient les bois. La saison finit avec la bataille de l'île n° 15 (acte 2).
+fragments que le vent emporte, et la précognition voit les gros de loin, les petits tard (V1) ; pour
+monter au ciel, il lui faut d'abord, à la surface, un corps assez grand pour se diviser, dont le vent
+emporte les morceaux au hasard (SPOILER V5, chap. « Les anciennes villes et les fées » : à ne pas
+expliquer dans le jeu avant l'acte 4) ; un corps mourant se scinde et rejette sa mort sur une
+moitié, jusqu'à sa limite de division (V3, chap. « L'horloge en lambeaux et désuète »). Cet
+automne, la masse qui a lâché le grand fragment de l'île n° 15 se divise encore : ses plus petits
+morceaux montent avec les vents d'ouest, violents la nuit sur l'île n° 68 (V1), et quelques-uns
+retombent sur son bord ouest. Ils ne menacent pas encore l'île, mais ils grandissent : chaque soir,
+les fées tiennent la veille au bord du Couchant et nettoient les bois. La saison finit avec la
+bataille de l'île n° 15 (acte 2). Dans le jeu, on n'en dit pas plus que le volume 1 : le vent a
+apporté des rejetons, trop petits pour la précognition.
 
 ### 1.2 Qui incarne le joueur (décision)
 
@@ -59,8 +64,9 @@ Pourquoi :
    façon la plus fidèle de les jouer.
 3. **L'épée.** Seniorious n'obéit qu'à une porteuse compatible, dont le nom s'ajoute au sien (V1,
    chap. « Entrepôt de fées ») ; l'épée du gameplay est Seniorious, le joueur est donc sa porteuse.
-   Le canon fait passer l'épée de Chtholly à Lakhesh (V5, chap. « Les qualités d'un Brave » ; VEX,
-   prologue) : le rôle survit au destin de Chtholly et devient « la relève » de l'acte 4.
+   Le canon fait passer l'épée de Chtholly à Lakhesh (SPOILER V5, chap. « Les qualités d'un
+   Brave » ; VEX, prologue) : le rôle survit au destin de Chtholly et devient « la relève » de
+   l'acte 4.
 4. **La communauté.** L'entrepôt abrite une trentaine de fées dont une douzaine seulement ont un nom
    (V1 ; V3 ; V5 ; VEX) : les fées dessinées par les membres y trouvent leur place comme PNJ,
    comme visage possible de l'héroïne et comme héritières à l'acte 4 (HISTOIRE.md, section 5.3).
@@ -111,7 +117,7 @@ HISTOIRE.md, section 2.
 
 - **La douceur du quotidien sur fond de fin annoncée.** Repas, ballon, linge, lectures, chahut des
   petites ; la mort et la guerre restent le plus souvent hors champ, comme dans le volume 1 où aucun
-  combat contre une Bête n'est montré (V1, section « Ton et thèmes » de la fiche).
+  combat contre une Bête n'est montré (fiche du V1, « Ton et thèmes »).
 - **L'humour constant** : avalanches de fillettes, menaces gourmandes de Nygglatho, taquineries
   d'Ithea, laconisme de Nephren, sifflantes de Limeskin.
 - **La pudeur.** Les sentiments vrais se disent rarement en face ; la tendresse passe par des actes
@@ -128,10 +134,12 @@ HISTOIRE.md, section 2.
   ces documents et ne contredit rien. Le dépôt est public : on paraphrase, on ne recopie pas.
 - **Loi du monde à respecter** : tuer un être intelligent est un crime (V1, chap. « Le chat qui
   filait et la jeune fille ») ; les adversaires humanoïdes ne sont jamais tués (assommés, chassés,
-  livrés). Seuls Timere et les autres Bêtes sont des ennemis à abattre.
+  livrés). Dans le présent du jeu, seuls Timere et les autres Bêtes sont des ennemis à abattre ;
+  les souvenirs du passé (bonus du VEX) suivent leurs propres règles.
 - **Dosage.** L'acte 1 ne contient que le volume 1 (et les scènes du VEX qui se passent pendant
   lui). Y sont interdits : les cheveux ou les yeux qui rougissent, l'empiètement, l'origine des fées,
-  le Grand Sage, la chute de l'île n° 15, Elq, Willem changé en Bête, la mort de quiconque du canon.
+  le Grand Sage, la chute de l'île n° 15, Elq, Willem changé en Bête, la mort à venir d'un
+  personnage du canon.
 - **Clins d'œil permis à l'acte 1** (ils ne révèlent rien à qui n'a lu que le volume 1 et font
   sourire les autres) : Tiat rêve d'une épée aussi grande que Seniorious (V2, V3) ; Lakhesh remercie
   poliment l'épée quand elle l'astique (VEX ; V5) ; Ithea glisse que tout le monde joue un rôle
@@ -270,7 +278,8 @@ Seniorious ») ; les mares cachées et la montagne où Nygglatho chasse l'ours (
 
 - **Le sous-bois** : immenses sapins, chênes et hêtres d'automne, troncs moussus, fougères rousses,
   lumière en rais dorés ; le sentier du portail nord de l'entrepôt au terrain (x = 0) est fait de
-  vieilles dalles envahies d'herbe (V3, chap. « Je suis à la maison »).
+  vieilles dalles envahies d'herbe, comme le sentier forestier qui mène au bourg (V3, chap. « Je
+  suis à la maison »).
 - **Le terrain d'entraînement et champ de ballon** (clairière de 15 m de rayon en (0, −51), aucun
   arbre, dégagée pour le combat) : herbe rase piétinée ; deux buts de fortune au bord nord (chiffons
   blancs) et sud (chiffons rouges), à 14 m du centre ; un banc et un râtelier de bâtons au
@@ -411,8 +420,8 @@ ordinaire des habitants, qui regardent les fées de travers puis s'adoucissent.
 **Lieu du canon.** Une petite colline à la périphérie de l'île n° 68, au vent calme et à l'air
 clair, où Willem règle Seniorious sous les étoiles, ses quarante et un talismans flottant autour de
 lui comme des étoiles (V1, chap. « Le ciel étoilé sous le ciel étoilé ») ; la colline près de
-l'entrepôt, lieu de la promesse, au milieu d'une mer de talismans lumineux (VEX, chap. « Des
-émotions sans nom »).
+l'entrepôt, lieu de la promesse, au milieu d'une mer de talismans lumineux (VEX, chap.
+« Chtholly Nota Seniorious »).
 
 **Description visuelle.** Colline ronde (centre (52, −3), rayon 21 m, sommet plat de 4 m de rayon à
 8 m), herbe haute dorée, massifs de myosotis bleus **(original)**, quelques rochers ronds, un arbre
@@ -489,7 +498,7 @@ Une île flottante n'est pas entourée d'eau mais de ciel.
 | « Plage aux coquillages », palmiers, parasols, ponton | Le port et le bourg : quai plaqué de métal, étals sous bâches, passerelle d'embarquement, dirigeables, rue du Port | V1 ; V3 ; VEX |
 | « Colline du belvédère » | La colline des étoiles ; belvédère gardé | V1 ; VEX |
 | Cerisiers en fleurs | Feuillus d'automne or et rouille (le printemps reviendra à l'acte 4) | Le V1 se passe à l'automne |
-| Épée « Seniolis » | **Seniorious** dans tous les textes (crédits, dialogues, `ASSETS_3D.md`) | Graphie de la traduction ; aucun code ne dépend du nom (seuls deux tests et le dialogue du forgeron le citent) |
+| Épée « Seniolis » | **Seniorious** dans tous les textes (crédits, dialogues, `ASSETS_3D.md`) | Graphie de la traduction ; aucun code ne dépend du nom (seuls les crédits, deux tests et le dialogue du forgeron le citent) |
 | « les Timeres » | Timere (la Bête, invariable) ; ennemis : « fragments de Timere », « rejetons » | V1 à V5 |
 
 ## 3. Bâtiments et décors à créer
