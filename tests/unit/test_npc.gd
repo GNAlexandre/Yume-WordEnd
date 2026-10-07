@@ -80,7 +80,7 @@ const PLACEMENTS := {
 		["Ferryman", &"ferryman", Vector3(12, 0.2, 13)],
 		["Baker", &"baker", Vector3(-4, 0.2, -7)],
 	],
-	"hill": [["WillemStars", &"willem_stars", Vector3(1, 8.2, -0.8)]],
+	"hill": [["WillemStars", &"willem_stars", Vector3(3, 8.2, 0)]],
 }
 ## Déclencheurs de la quête principale (HISTOIRE.md 3.3) : zone, id, position, rayon, hauteur.
 ## couchant_edge est posé sur le sol actuel (0,1 m ; 0 dans HISTOIRE.md).

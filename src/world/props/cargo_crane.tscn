@@ -1,0 +1,85 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="2_cylinder"]
+
+[sub_resource type="StandardMaterial3D" id="dark"]
+albedo_color = Color(0.241, 0.25, 0.268, 1)
+
+[sub_resource type="StandardMaterial3D" id="copper"]
+albedo_color = Color(0.581, 0.405, 0.291, 1)
+
+[sub_resource type="StandardMaterial3D" id="iron"]
+albedo_color = Color(0.452, 0.47, 0.496, 1)
+
+[sub_resource type="StandardMaterial3D" id="cable"]
+albedo_color = Color(0.274, 0.222, 0.186, 1)
+
+[sub_resource type="StandardMaterial3D" id="wood"]
+albedo_color = Color(0.536, 0.404, 0.289, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(2.4, 0.5, 2.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(0.5, 5.2, 0.5)
+
+[node name="CargoCrane" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.4, 0, 0, 0, 0.5, 0, 0, 0, 2.4, 0, 0.25, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="Drum" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -1, 0, 0.6, 0, 0, 0, 0, 0.6, 0, 0.85, -0.6)
+mesh = ExtResource("2_cylinder")
+material_override = SubResource("copper")
+
+[node name="Mast" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 5.2, 0, 0, 0, 0.5, 0, 3.1, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+
+[node name="Jib" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.36, 0, 0, 0, 0.354531, 0.902971, 0, -0.062513, 5.121, 0, 5.45, 2)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+
+[node name="Brace" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.12, 0, 0, 0, 0.098298, -1.491299, 0, 0.068829, 2.129795, 0, 4.4, 1.1)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="Counterweight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 0.9, 0, 5.4, -1)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="Cable" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.03, 0, 0, 0, 2.6, 0, 0, 0, 0.03, 0, 4.6, 4.45)
+mesh = ExtResource("1_box")
+material_override = SubResource("cable")
+cast_shadow = 0
+
+[node name="Hook" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.3, 0, 0, 0, 0.06, 0, 3.25, 4.45)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Load" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 2.7, 4.45)
+mesh = ExtResource("1_box")
+material_override = SubResource("wood")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="Shape2" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0)
+shape = SubResource("BoxShape3D_2")

@@ -1,0 +1,127 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="2_bead"]
+
+[sub_resource type="StandardMaterial3D" id="wood"]
+albedo_color = Color(0.536, 0.404, 0.289, 1)
+
+[sub_resource type="StandardMaterial3D" id="post"]
+albedo_color = Color(0.341, 0.262, 0.201, 1)
+
+[sub_resource type="StandardMaterial3D" id="canvas"]
+albedo_color = Color(0.753, 0.7, 0.586, 1)
+
+[sub_resource type="StandardMaterial3D" id="valance"]
+albedo_color = Color(0.622, 0.561, 0.455, 1)
+
+[sub_resource type="StandardMaterial3D" id="green"]
+albedo_color = Color(0.427, 0.533, 0.33, 1)
+
+[sub_resource type="StandardMaterial3D" id="orange"]
+albedo_color = Color(0.771, 0.507, 0.243, 1)
+
+[sub_resource type="StandardMaterial3D" id="spice"]
+albedo_color = Color(0.811, 0.432, 0.239, 1)
+
+[sub_resource type="StandardMaterial3D" id="mustard"]
+albedo_color = Color(0.881, 0.749, 0.309, 1)
+
+[sub_resource type="StandardMaterial3D" id="bread"]
+albedo_color = Color(0.681, 0.514, 0.329, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(2.4, 0.9, 0.8)
+
+[node name="MarketStall" type="Node3D"]
+
+[node name="Counter" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.4, 0, 0, 0, 0.9, 0, 0, 0, 0.8, 0, 0.45, 0.45)
+mesh = ExtResource("1_box")
+material_override = SubResource("wood")
+
+[node name="Post1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 2.3, 0, 0, 0, 0.08, -1.15, 1.15, -0.9)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Post2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 2.3, 0, 0, 0, 0.08, 1.15, 1.15, -0.9)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Post3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 2.3, 0, 0, 0, 0.08, -1.15, 1.15, 0.9)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Post4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 2.3, 0, 0, 0, 0.08, 1.15, 1.15, 0.9)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Canvas" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.7, 0, 0, 0, 0.059416, 0.306181, 0, -0.00835, 2.17859, 0, 2.35, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("canvas")
+
+[node name="Valance" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.7, 0, 0, 0, 0.28, 0, 0, 0, 0.04, 0, 2.18, 1.1)
+mesh = ExtResource("1_box")
+material_override = SubResource("valance")
+cast_shadow = 0
+
+[node name="Veg1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.3, 0, 0, 0, 0.4, -0.85, 1.05, 0.5)
+mesh = ExtResource("2_bead")
+material_override = SubResource("green")
+cast_shadow = 0
+
+[node name="Veg2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.3, 0, 0, 0, 0.4, -0.35, 1.05, 0.5)
+mesh = ExtResource("2_bead")
+material_override = SubResource("orange")
+cast_shadow = 0
+
+[node name="Veg3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.3, 0, 0, 0, 0.4, 0.15, 1.05, 0.5)
+mesh = ExtResource("2_bead")
+material_override = SubResource("green")
+cast_shadow = 0
+
+[node name="Spice1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.32, 0, 0, 0, 0.3, 0, 0, 0, 0.32, 0.6, 1.05, 0.45)
+mesh = ExtResource("2_bead")
+material_override = SubResource("spice")
+cast_shadow = 0
+
+[node name="Spice2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.32, 0, 0, 0, 0.3, 0, 0, 0, 0.32, 0.95, 1.05, 0.45)
+mesh = ExtResource("2_bead")
+material_override = SubResource("mustard")
+cast_shadow = 0
+
+[node name="Roll1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.12, 0, 0, 0, 0.16, -0.6, 0.98, 0.78)
+mesh = ExtResource("2_bead")
+material_override = SubResource("bread")
+cast_shadow = 0
+
+[node name="Roll2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.12, 0, 0, 0, 0.16, -0.3, 0.98, 0.78)
+mesh = ExtResource("2_bead")
+material_override = SubResource("bread")
+cast_shadow = 0
+
+[node name="Roll3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.12, 0, 0, 0, 0.16, 0, 0.98, 0.78)
+mesh = ExtResource("2_bead")
+material_override = SubResource("bread")
+cast_shadow = 0
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0.45)
+shape = SubResource("BoxShape3D_1")

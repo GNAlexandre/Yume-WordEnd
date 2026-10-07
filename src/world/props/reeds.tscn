@@ -1,0 +1,74 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+
+[sub_resource type="StandardMaterial3D" id="reed"]
+albedo_color = Color(0.595, 0.568, 0.383, 1)
+
+[sub_resource type="StandardMaterial3D" id="reed2"]
+albedo_color = Color(0.578, 0.596, 0.367, 1)
+
+[sub_resource type="StandardMaterial3D" id="cattail"]
+albedo_color = Color(0.35, 0.253, 0.182, 1)
+
+[node name="Reeds" type="Node3D"]
+
+[node name="Blade1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.05, 0, 0, 0, 1.287348, -0.006959, 0, 0.180925, 0.049513, -0.4, 0.65, -0.2)
+mesh = ExtResource("1_box")
+material_override = SubResource("reed")
+cast_shadow = 0
+
+[node name="Blade2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.049878, -0.104635, 0, 0.003469, 1.488149, 0.005226, -0.000365, -0.156411, 0.049726, -0.15, 0.75, 0.3)
+mesh = ExtResource("1_box")
+material_override = SubResource("reed2")
+cast_shadow = 0
+
+[node name="Blade3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.049384, 0.187721, 0, -0.007803, 1.182339, -0.003488, -0.000546, 0.082677, 0.049878, 0.2, 0.6, -0.35)
+mesh = ExtResource("1_box")
+material_override = SubResource("reed")
+cast_shadow = 0
+
+[node name="Blade4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.049726, -0.14634, 0, 0.005147, 1.371178, 0.008682, -0.000908, -0.241776, 0.04924, 0.45, 0.7, 0.15)
+mesh = ExtResource("1_box")
+material_override = SubResource("reed2")
+cast_shadow = 0
+
+[node name="Blade5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04997, -0.055839, 0, 0.001744, 1.598051, -0.001745, 0.000061, 0.055805, 0.04997, 0, 0.8, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("reed")
+cast_shadow = 0
+
+[node name="Blade6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.049878, 0.076732, 0, -0.003412, 1.073341, -0.010396, -0.000725, 0.228146, 0.048907, -0.5, 0.55, 0.4)
+mesh = ExtResource("1_box")
+material_override = SubResource("reed2")
+cast_shadow = 0
+
+[node name="Blade7" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.049513, 0.173966, 0, -0.006942, 1.23482, 0.003488, 0.000485, -0.086347, 0.049878, 0.35, 0.625, 0.5)
+mesh = ExtResource("1_box")
+material_override = SubResource("reed")
+cast_shadow = 0
+
+[node name="Cattail1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.09, 0, 0, 0, 0.26, 0, 0, 0, 0.09, -0.15, 1.45, 0.3)
+mesh = ExtResource("1_box")
+material_override = SubResource("cattail")
+cast_shadow = 0
+
+[node name="Cattail2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.09, 0, 0, 0, 0.26, 0, 0, 0, 0.09, 0, 1.55, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("cattail")
+cast_shadow = 0
+
+[node name="Cattail3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.09, 0, 0, 0, 0.26, 0, 0, 0, 0.09, 0.45, 1.35, 0.15)
+mesh = ExtResource("1_box")
+material_override = SubResource("cattail")
+cast_shadow = 0

@@ -13,9 +13,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -7)
 item_id = &"clock_gear"
 
 [node name="dunes_gear_2" parent="." instance=ExtResource("1_pickup")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.81, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -18)
 item_id = &"clock_gear"
 
 [node name="dunes_flower_1" parent="." instance=ExtResource("1_pickup")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.92, 19)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 19)
 item_id = &"flower_blue"

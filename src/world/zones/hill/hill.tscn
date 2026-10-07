@@ -6,20 +6,24 @@
 [ext_resource type="PackedScene" path="res://src/items/placements/hill.tscn" id="4_pickups"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="5_batcher"]
 [ext_resource type="Script" path="res://src/world/prop_scatter.gd" id="6_scatter"]
-[ext_resource type="PackedScene" path="res://src/world/props/lookout.tscn" id="7_lookout"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_pine.tscn" id="8_tree_pine"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_round.tscn" id="9_tree_round"]
-[ext_resource type="PackedScene" path="res://src/world/props/flowers.tscn" id="10_flowers"]
-[ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="11_rock"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="12_bush"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_blossom.tscn" id="13_tree_blossom"]
+[ext_resource type="PackedScene" path="res://src/world/props/lookout.tscn" id="p1_lookout"]
+[ext_resource type="PackedScene" path="res://src/world/props/bench.tscn" id="p2_bench"]
+[ext_resource type="PackedScene" path="res://src/world/props/lone_tree.tscn" id="p3_lone_tree"]
+[ext_resource type="PackedScene" path="res://src/world/props/edge_parapet.tscn" id="p4_edge_parapet"]
+[ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="p5_rock"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn.tscn" id="p6_tree_autumn"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust.tscn" id="p7_tree_autumn_rust"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_yellow.tscn" id="p8_tree_autumn_yellow"]
+[ext_resource type="PackedScene" path="res://src/world/props/myosotis.tscn" id="p9_myosotis"]
+[ext_resource type="PackedScene" path="res://src/world/props/tall_grass.tscn" id="p10_tall_grass"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="p11_bush"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
 size = Vector3(58, 40, 44)
 
 [node name="hill" type="Node3D" groups=["zones"]]
 script = ExtResource("1_zone")
-display_name = "Colline du belvédère"
+display_name = "La colline des étoiles"
 
 [node name="Spawn" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0.2, 0)
@@ -35,64 +39,75 @@ shape = SubResource("BoxShape3D_bounds")
 
 [node name="Geometry" type="Node3D" parent="."]
 script = ExtResource("5_batcher")
+cell_size = 32
 
-[node name="Lookout" parent="Geometry" instance=ExtResource("7_lookout")]
+[node name="Lookout" parent="Geometry" instance=ExtResource("p1_lookout")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 8, -3)
 
-[node name="Pines" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("8_tree_pine")
-points = PackedVector3Array(15.8, 0, -9, -9.9, 0, 10.9, -14.3, 0, 3.2, 2, 0, 12, -12.6, 0, -9.1)
-scale_range = Vector2(0.8, 1.05)
-random_seed = 24
+[node name="SummitBench" parent="Geometry" instance=ExtResource("p2_bench")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2.6, 8, -6.4)
 
-[node name="RoundTrees" type="Node3D" parent="Geometry"]
+[node name="LoneTree" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("9_tree_round")
-points = PackedVector3Array(-17, 0, 9.1, 3.6, 0, -13.8, -12.2, 0, -18.8, -0.9, 0, 6.2, 13.2, 0, 12, 1.8, 0, -20.4, -4.5, 0, 17.6, 10.8, 0, -18.2, -17, 0, -15.4)
-scale_range = Vector2(0.8, 1.1)
-random_seed = 25
+prop = ExtResource("p3_lone_tree")
+points = PackedVector3Array(-2, 0, -16)
+yaw_degrees = PackedFloat32Array(30)
 
-[node name="Flowers" type="Node3D" parent="Geometry"]
+[node name="Parapets" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("10_flowers")
-points = PackedVector3Array(9.2, 0, 2.8, -1.5, 0, -9.8, 15.3, 0, -16.1, 4.8, 0, -8.8, 17.2, 0, -0.6, 7.6, 0, 9.6, -6.6, 0, -2.5, 11.9, 0, -12.6, 14.8, 0, -3.7, -13, 0, 12.8, 16.9, 0, 12.6, -9.5, 0, 14.7, 12.2, 0, 16.9, 12.5, 0, -0.1, 8.9, 0, -8.3, -21.2, 0, 5.7)
-scale_range = Vector2(0.9, 1.2)
-random_seed = 26
+prop = ExtResource("p4_edge_parapet")
+points = PackedVector3Array(22.96, 0, -14.38, 23.42, 0, -9.8, 24.1, 0, -1.97, 24.33, 0, 2.63, 24.32, 0, 10.58)
+yaw_degrees = PackedFloat32Array(-79, -82.5, -88.5, -92, -98)
 
 [node name="Rocks" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("11_rock")
-points = PackedVector3Array(20.6, 0, 2.4, 11, 0, 2.3, 17.4, 0, -18.2, 9.8, 0, -12, 5.7, 0, 17.8, -8, 0, 4.5)
-scale_range = Vector2(0.7, 1.2)
+prop = ExtResource("p5_rock")
+points = PackedVector3Array(9.5, 0, -12, 12.5, 0, 5.5, 6.5, 0, 10.5, -10.5, 0, -14.5, -6, 0, 12.5)
+scale_range = Vector2(0.8, 1.3)
 random_seed = 27
+
+[node name="GroveGold" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p6_tree_autumn")
+points = PackedVector3Array(-24, 0, -14, -20, 0, -19, -13, 0, 16.5)
+scale_range = Vector2(0.9, 1.1)
+random_seed = 28
+
+[node name="GroveRust" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p7_tree_autumn_rust")
+points = PackedVector3Array(-21.5, 0, 9, 17, 0, 14)
+scale_range = Vector2(0.9, 1.1)
+random_seed = 29
+
+[node name="GroveYellow" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p8_tree_autumn_yellow")
+points = PackedVector3Array(-26, 0, 17.5, 15, 0, -18)
+scale_range = Vector2(0.9, 1.05)
+random_seed = 30
+
+[node name="Myosotis" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p9_myosotis")
+points = PackedVector3Array(10.73, 0, -0.69, 21.97, 0, -4.01, 5.8, 0, -20.03, -6.87, 0, -21.02, 13.46, 0, -3.61, 2.95, 0, 7.36, 18.84, 0, 1.88, 0.57, 0, -13.78, 9.26, 0, 13.43, 7.14, 0, -3.15, 7.05, 0, 1.27, -4.68, 0, 2.06, 11.7, 0, 12.06, 15.25, 0, -11.22, 11.43, 0, 4.72, -0.99, 0, 7.36, 14.26, 0, -14.87, -10.17, 0, -12.54, -13.4, 0, 11, -17.01, 0, 2.06, -5.89, 0, -17.79, -15.42, 0, 8.73, 14.37, 0, 7.92, 3.21, 0, 14.68, 9.08, 0, -9.97, 19.79, 0, 4.69, -13.31, 0, 0.79, 15.48, 0, -8.03, -14.31, 0, -16.48, -9.17, 0, -17.11, 3.1, 0, -10.08, -5.03, 0, -14.88, -5.89, 0, 6.3, 12.81, 0, -17.98)
+scale_range = Vector2(0.8, 1.3)
+random_seed = 31
+
+[node name="TallGrass" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p10_tall_grass")
+points = PackedVector3Array(-2.48, 0, 17.29, 19.81, 0, 13.08, 6.85, 0, -16.76, 0.82, 0, 11.64, 1.06, 0, 18.12, -12.71, 0, 5.87, 10.08, 0, -13.81, 21.79, 0, -0.64, -6.88, 0, 12.94, -20.64, 0, 16.72, -11.12, 0, 18.52, -26.47, 0, -17.67, 2.53, 0, 20.88, 17.81, 0, 20.44, 3.49, 0, -16.91, 22.44, 0, 9, -20.62, 0, 12.16, 6.7, 0, -7.56, -4.51, 0, 15.17, -24.46, 0, -12.06, 5.63, 0, 12.48, -26.47, 0, 3.04, 16.49, 0, -20.96, -22.51, 0, 5.85, -9.27, 0, 10.53, 20.37, 0, -18.7, -25.11, 0, -2.69, -18.43, 0, -19.64, -2.78, 0, -10.2, -26.98, 0, 10.81, -25.31, 0, -20.86, -21.07, 0, 9.03, 14.5, 0, 20.6, 19.18, 0, -14.24)
+yaw_degrees = PackedFloat32Array(5.2, 26.8, -14.8, 4.5, 7.8, 27.6, 19.6, -1.9, 5.5, -17.7, 19.3, -15.4, 9.8, -21.5, 13.5, 18.4, -23.4, -5.6, -20.4, 1.5, -15.9, 26, 20, -26.2, -15.3, -14.1, -21.7, 3.2, 13.3, -0.5, 0.6, -19.8, -2.6, 20.6)
+scale_range = Vector2(0.8, 1.2)
+random_seed = 32
 
 [node name="Bushes" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("12_bush")
-points = PackedVector3Array(-7.3, 0, -11.4, -11, 0, -13.4, -24.5, 0, -8.8, 2.1, 0, -2, -5.7, 0, 13, -23.8, 0, 2.6, 18.5, 0, 5.9, -24, 0, -17.1)
-scale_range = Vector2(0.7, 1)
-random_seed = 28
-
-[node name="GroveBlossoms" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("13_tree_blossom")
-points = PackedVector3Array(-26.6, 0, -14.1, -24.7, 0, 7.9)
-scale_range = Vector2(0.85, 1)
-random_seed = 29
-
-[node name="GroveTrees" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("9_tree_round")
-points = PackedVector3Array(-16.2, 0, 16.5, -21.5, 0, -5.4, -22.2, 0, 19.4, -21.9, 0, -19.7)
-scale_range = Vector2(0.85, 1.05)
-random_seed = 30
-
-[node name="GroveFlowers" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("10_flowers")
-points = PackedVector3Array(-26, 0, -6, -25.8, 0, -10.2, -20.2, 0, -13.8, -24.8, 0, 16.1, -25.7, 0, -18.7, -20.6, 0, 2, -26.2, 0, 19.3, -25.4, 0, 13)
-random_seed = 31
+prop = ExtResource("p11_bush")
+points = PackedVector3Array(-21.15, 0, -7.4, -24.51, 0, 18.49, 20.77, 0, -8.05, -18.91, 0, -13.33, -4.15, 0, 21.14, 6.92, 0, 17.5, -18.42, 0, 20.91, 20.97, 0, 17.86)
+scale_range = Vector2(0.8, 1.1)
+random_seed = 33
 
 [node name="NPCs" parent="." instance=ExtResource("2_npcs")]
 

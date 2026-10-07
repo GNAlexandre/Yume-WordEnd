@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="1_cylinder"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/cone.tres" id="2_cone"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="3_bead"]
+
+[sub_resource type="StandardMaterial3D" id="green"]
+albedo_color = Color(0.444, 0.514, 0.321, 1)
+
+[sub_resource type="StandardMaterial3D" id="rock"]
+albedo_color = Color(0.562, 0.58, 0.597, 1)
+
+[sub_resource type="StandardMaterial3D" id="rock2"]
+albedo_color = Color(0.502, 0.52, 0.546, 1)
+
+[sub_resource type="StandardMaterial3D" id="gold"]
+albedo_color = Color(0.702, 0.552, 0.315, 0.5)
+
+[node name="DistantIsland" type="Node3D"]
+
+[node name="Top" type="MeshInstance3D" parent="."]
+transform = Transform3D(56, 0, 0, 0, 2.4, 0, 0, 0, 40, 0, -1.2, 0)
+mesh = ExtResource("1_cylinder")
+material_override = SubResource("green")
+cast_shadow = 0
+
+[node name="Cone" type="MeshInstance3D" parent="."]
+transform = Transform3D(54, 0, 0, 0, -22, 0, 0, 0, -38, 0, -13, 0)
+mesh = ExtResource("2_cone")
+material_override = SubResource("rock")
+cast_shadow = 0
+
+[node name="Cone2" type="MeshInstance3D" parent="."]
+transform = Transform3D(24, 0, 0, 0, -14, 0, 0, 0, -20, -12, -10, -4)
+mesh = ExtResource("2_cone")
+material_override = SubResource("rock2")
+cast_shadow = 0
+
+[node name="Tree1" type="MeshInstance3D" parent="."]
+transform = Transform3D(8, 0, 0, 0, 7.2, 0, 0, 0, 8, -14, 3.6, 3)
+mesh = ExtResource("3_bead")
+material_override = SubResource("gold")
+cast_shadow = 0
+
+[node name="Tree2" type="MeshInstance3D" parent="."]
+transform = Transform3D(9, 0, 0, 0, 8.1, 0, 0, 0, 9, 12, 4.05, -5)
+mesh = ExtResource("3_bead")
+material_override = SubResource("gold")
+cast_shadow = 0
+
+[node name="Tree3" type="MeshInstance3D" parent="."]
+transform = Transform3D(6, 0, 0, 0, 5.4, 0, 0, 0, 6, 18, 2.7, 8)
+mesh = ExtResource("3_bead")
+material_override = SubResource("gold")
+cast_shadow = 0

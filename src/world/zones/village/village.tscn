@@ -6,16 +6,27 @@
 [ext_resource type="PackedScene" path="res://src/items/placements/village.tscn" id="4_pickups"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="5_batcher"]
 [ext_resource type="Script" path="res://src/world/prop_scatter.gd" id="6_scatter"]
-[ext_resource type="PackedScene" path="res://src/world/props/well.tscn" id="7_well"]
-[ext_resource type="PackedScene" path="res://src/world/props/house.tscn" id="8_house"]
-[ext_resource type="PackedScene" path="res://src/world/props/arch.tscn" id="9_arch"]
-[ext_resource type="PackedScene" path="res://src/world/props/hedge.tscn" id="10_hedge"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="11_bush"]
-[ext_resource type="PackedScene" path="res://src/world/props/lamp.tscn" id="12_lamp"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_round.tscn" id="13_tree_round"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_blossom.tscn" id="14_tree_blossom"]
-[ext_resource type="PackedScene" path="res://src/world/props/flowers.tscn" id="15_flowers"]
-[ext_resource type="PackedScene" path="res://src/world/props/fence.tscn" id="16_fence"]
+[ext_resource type="PackedScene" path="res://src/world/props/warehouse_main.tscn" id="p1_warehouse_main"]
+[ext_resource type="PackedScene" path="res://src/world/props/warehouse_wing.tscn" id="p2_warehouse_wing"]
+[ext_resource type="PackedScene" path="res://src/world/props/warehouse_porch.tscn" id="p3_warehouse_porch"]
+[ext_resource type="PackedScene" path="res://src/world/props/armory_door.tscn" id="p4_armory_door"]
+[ext_resource type="PackedScene" path="res://src/world/props/bench.tscn" id="p5_bench"]
+[ext_resource type="PackedScene" path="res://src/world/props/flower_bed.tscn" id="p6_flower_bed"]
+[ext_resource type="PackedScene" path="res://src/world/props/well.tscn" id="p7_well"]
+[ext_resource type="PackedScene" path="res://src/world/props/ball.tscn" id="p8_ball"]
+[ext_resource type="PackedScene" path="res://src/world/props/crystal_lamp.tscn" id="p9_crystal_lamp"]
+[ext_resource type="PackedScene" path="res://src/world/props/climbing_tree.tscn" id="p10_climbing_tree"]
+[ext_resource type="PackedScene" path="res://src/world/props/tool_shed.tscn" id="p11_tool_shed"]
+[ext_resource type="PackedScene" path="res://src/world/props/vegetable_patch.tscn" id="p12_vegetable_patch"]
+[ext_resource type="PackedScene" path="res://src/world/props/laundry_line.tscn" id="p13_laundry_line"]
+[ext_resource type="PackedScene" path="res://src/world/props/crate.tscn" id="p14_crate"]
+[ext_resource type="PackedScene" path="res://src/world/props/myosotis.tscn" id="p15_myosotis"]
+[ext_resource type="PackedScene" path="res://src/world/props/palisade.tscn" id="p16_palisade"]
+[ext_resource type="PackedScene" path="res://src/world/props/palisade_gate.tscn" id="p17_palisade_gate"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn.tscn" id="p18_tree_autumn"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust.tscn" id="p19_tree_autumn_rust"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_yellow.tscn" id="p20_tree_autumn_yellow"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="p21_bush"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
 size = Vector3(44, 30, 44)
@@ -26,45 +37,9 @@ size = Vector3(46, 12, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_barrier_we"]
 size = Vector3(1, 12, 46)
 
-[sub_resource type="StandardMaterial3D" id="wall_cream"]
-albedo_color = Color(1, 0.95, 0.84, 1)
-
-[sub_resource type="StandardMaterial3D" id="roof_red"]
-albedo_color = Color(0.9, 0.38, 0.33, 1)
-
-[sub_resource type="StandardMaterial3D" id="wall_pink"]
-albedo_color = Color(1, 0.83, 0.86, 1)
-
-[sub_resource type="StandardMaterial3D" id="roof_blue"]
-albedo_color = Color(0.35, 0.5, 0.88, 1)
-
-[sub_resource type="StandardMaterial3D" id="wall_sky"]
-albedo_color = Color(0.8, 0.9, 1, 1)
-
-[sub_resource type="StandardMaterial3D" id="roof_orange"]
-albedo_color = Color(0.96, 0.6, 0.25, 1)
-
-[sub_resource type="StandardMaterial3D" id="wall_lemon"]
-albedo_color = Color(1, 0.94, 0.7, 1)
-
-[sub_resource type="StandardMaterial3D" id="roof_green"]
-albedo_color = Color(0.42, 0.7, 0.4, 1)
-
-[sub_resource type="StandardMaterial3D" id="wall_mint"]
-albedo_color = Color(0.8, 0.95, 0.84, 1)
-
-[sub_resource type="StandardMaterial3D" id="roof_purple"]
-albedo_color = Color(0.62, 0.46, 0.82, 1)
-
-[sub_resource type="StandardMaterial3D" id="wall_white"]
-albedo_color = Color(0.98, 0.97, 0.94, 1)
-
-[sub_resource type="StandardMaterial3D" id="roof_teal"]
-albedo_color = Color(0.25, 0.66, 0.66, 1)
-
 [node name="village" type="Node3D" groups=["zones"]]
 script = ExtResource("1_zone")
-display_name = "Village"
+display_name = "L'entrepôt des fées"
 safe = true
 
 [node name="Spawn" type="Marker3D" parent="."]
@@ -81,139 +56,116 @@ shape = SubResource("BoxShape3D_bounds")
 
 [node name="Geometry" type="Node3D" parent="."]
 script = ExtResource("5_batcher")
+cell_size = 32
 
-[node name="Well" parent="Geometry" instance=ExtResource("7_well")]
+[node name="WarehouseMain" parent="Geometry" instance=ExtResource("p1_warehouse_main")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -15)
 
-[node name="House1" parent="Geometry" instance=ExtResource("8_house")]
-transform = Transform3D(0.645942, 0, 0.763386, 0, 1, 0, -0.763386, 0, 0.645942, -13, 0, -11)
+[node name="WarehouseWing" parent="Geometry" instance=ExtResource("p2_warehouse_wing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -6.5)
 
-[node name="Walls" parent="Geometry/House1"]
-material_override = SubResource("wall_cream")
+[node name="WarehousePorch" parent="Geometry" instance=ExtResource("p3_warehouse_porch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0, -9.75)
 
-[node name="Roof" parent="Geometry/House1"]
-material_override = SubResource("roof_red")
+[node name="ArmoryDoor" parent="Geometry" instance=ExtResource("p4_armory_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -1.35)
 
-[node name="House2" parent="Geometry" instance=ExtResource("8_house")]
-transform = Transform3D(0.645942, 0, -0.763386, 0, 1, 0, 0.763386, 0, 0.645942, 13, 0, -11)
+[node name="ReadingBench" parent="Geometry" instance=ExtResource("p5_bench")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -10.45)
 
-[node name="Walls" parent="Geometry/House2"]
-material_override = SubResource("wall_pink")
-
-[node name="Roof" parent="Geometry/House2"]
-material_override = SubResource("roof_blue")
-
-[node name="House3" parent="Geometry" instance=ExtResource("8_house")]
-transform = Transform3D(-0.581238, 0, 0.813733, 0, 1, 0, -0.813733, 0, -0.581238, -14, 0, 10)
-
-[node name="Walls" parent="Geometry/House3"]
-material_override = SubResource("wall_sky")
-
-[node name="Roof" parent="Geometry/House3"]
-material_override = SubResource("roof_orange")
-
-[node name="House4" parent="Geometry" instance=ExtResource("8_house")]
-transform = Transform3D(-0.581238, 0, -0.813733, 0, 1, 0, 0.813733, 0, -0.581238, 14, 0, 10)
-
-[node name="Walls" parent="Geometry/House4"]
-material_override = SubResource("wall_lemon")
-
-[node name="Roof" parent="Geometry/House4"]
-material_override = SubResource("roof_green")
-
-[node name="House5" parent="Geometry" instance=ExtResource("8_house")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -7.5, 0, -17.5)
-
-[node name="Walls" parent="Geometry/House5"]
-material_override = SubResource("wall_mint")
-
-[node name="Roof" parent="Geometry/House5"]
-material_override = SubResource("roof_purple")
-
-[node name="House6" parent="Geometry" instance=ExtResource("8_house")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.5, 0, 17.5)
-
-[node name="Walls" parent="Geometry/House6"]
-material_override = SubResource("wall_white")
-
-[node name="Roof" parent="Geometry/House6"]
-material_override = SubResource("roof_teal")
-
-[node name="GateNorth" parent="Geometry" instance=ExtResource("9_arch")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -21.2)
-
-[node name="GateSouth" parent="Geometry" instance=ExtResource("9_arch")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 21.2)
-
-[node name="GateWest" parent="Geometry" instance=ExtResource("9_arch")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -21.2, 0, 0)
-
-[node name="GateEast" parent="Geometry" instance=ExtResource("9_arch")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 21.2, 0, 0)
-
-[node name="HedgesNorthSouth" type="Node3D" parent="Geometry"]
+[node name="FacadeFlowers" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("10_hedge")
-points = PackedVector3Array(-17.9, 0, -21.2, -13.7, 0, -21.2, -9.5, 0, -21.2, -5.3, 0, -21.2, 5.3, 0, -21.2, 9.5, 0, -21.2, 13.7, 0, -21.2, 17.9, 0, -21.2, -17.9, 0, 21.2, -13.7, 0, 21.2, -9.5, 0, 21.2, -5.3, 0, 21.2, 5.3, 0, 21.2, 9.5, 0, 21.2, 13.7, 0, 21.2, 17.9, 0, 21.2)
-yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+prop = ExtResource("p6_flower_bed")
+points = PackedVector3Array(-16.4, 0, -10.55, -13.9, 0, -10.55)
+yaw_degrees = PackedFloat32Array(0, 0)
 
-[node name="HedgesWestEast" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("10_hedge")
-points = PackedVector3Array(-21.2, 0, -17.9, -21.2, 0, -13.7, -21.2, 0, -9.5, -21.2, 0, -5.3, -21.2, 0, 5.3, -21.2, 0, 9.5, -21.2, 0, 13.7, -21.2, 0, 17.9, 21.2, 0, -17.9, 21.2, 0, -13.7, 21.2, 0, -9.5, 21.2, 0, -5.3, 21.2, 0, 5.3, 21.2, 0, 9.5, 21.2, 0, 13.7, 21.2, 0, 17.9)
-yaw_degrees = PackedFloat32Array(90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90)
+[node name="Well" parent="Geometry" instance=ExtResource("p7_well")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
-[node name="CornerBushes" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("11_bush")
-points = PackedVector3Array(-21.2, 0, -21.2, 21.2, 0, -21.2, -21.2, 0, 21.2, 21.2, 0, 21.2)
-random_seed = 4
+[node name="Ball" parent="Geometry" instance=ExtResource("p8_ball")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 0, -3.6)
 
 [node name="Lamps" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("12_lamp")
-points = PackedVector3Array(7, 0, 7, -7, 0, 7, -7, 0, -7, 7, 0, -7, 2.4, 0, -18.5, -2.4, 0, 18.5, -18.5, 0, -2.4, 18.5, 0, 2.4)
-yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0)
+prop = ExtResource("p9_crystal_lamp")
+points = PackedVector3Array(6.65, 0, 6.65, -6.65, 0, 6.65, -6.65, 0, -6.65, 6.65, 0, -6.65)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0)
 
-[node name="RoundTrees" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("13_tree_round")
-points = PackedVector3Array(18, 0, -17.5, -18, 0, 17, -19, 0, -7.5, 17.5, 0, -4.5)
-scale_range = Vector2(0.9, 1.1)
-random_seed = 11
+[node name="ClimbingTree" parent="Geometry" instance=ExtResource("p10_climbing_tree")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, -13)
 
-[node name="BlossomTrees" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("14_tree_blossom")
-points = PackedVector3Array(-17.5, 0, -17.5, 17.5, 0, 17.5, 3.6, 0, 12.2, -3.8, 0, -12.4)
-scale_range = Vector2(0.85, 1.05)
-random_seed = 12
+[node name="ToolShed" parent="Geometry" instance=ExtResource("p11_tool_shed")]
+transform = Transform3D(0.731354, 0, -0.681998, 0, 1, 0, 0.681998, 0, 0.731354, 16, 0, -17)
 
-[node name="Flowers" type="Node3D" parent="Geometry"]
+[node name="VegetablePatch" parent="Geometry" instance=ExtResource("p12_vegetable_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, -4)
+
+[node name="LaundryLineA" parent="Geometry" instance=ExtResource("p13_laundry_line")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, 5.4)
+
+[node name="LaundryLineB" parent="Geometry" instance=ExtResource("p13_laundry_line")]
+transform = Transform3D(0.997564, 0, 0.069756, 0, 1, 0, -0.069756, 0, 0.997564, 11, 0, 8.8)
+
+[node name="PlayGoals" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("15_flowers")
-points = PackedVector3Array(9.83, 0, 3.97, 3.97, 0, 9.83, -3.97, 0, 9.83, -9.83, 0, 3.97, -9.83, 0, -3.97, -3.97, 0, -9.83, 3.97, 0, -9.83, 9.83, 0, -3.97, -16.5, 0, -6.5, -9.5, 0, -14.5, 16.5, 0, -6.5, 9.5, 0, -15.5, -17, 0, 5.5, -10, 0, 14.5, 17, 0, 5.5, 10.5, 0, 14, -4.5, 0, 19, 4, 0, -19, -19, 0, -12, 19, 0, 12, -12.5, 0, 19, 12.5, 0, -19)
-scale_range = Vector2(0.85, 1.15)
-random_seed = 21
+prop = ExtResource("p14_crate")
+points = PackedVector3Array(-15.3, 0, 11, -8.7, 0, 11)
+yaw_degrees = PackedFloat32Array(12, -8)
+
+[node name="FlowerHint" parent="Geometry" instance=ExtResource("p15_myosotis")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 6)
+
+[node name="PalisadeNorthSouth" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p16_palisade")
+points = PackedVector3Array(3.15, 0, -21.2, -3.15, 0, -21.2, 5.05, 0, -21.2, -5.05, 0, -21.2, 6.95, 0, -21.2, -6.95, 0, -21.2, 8.85, 0, -21.2, -8.85, 0, -21.2, 10.75, 0, -21.2, -10.75, 0, -21.2, 12.65, 0, -21.2, -12.65, 0, -21.2, 14.55, 0, -21.2, -14.55, 0, -21.2, 16.45, 0, -21.2, -16.45, 0, -21.2, 18.35, 0, -21.2, -18.35, 0, -21.2, 20.25, 0, -21.2, -20.25, 0, -21.2, 3.15, 0, 21.2, -3.15, 0, 21.2, 5.05, 0, 21.2, -5.05, 0, 21.2, 6.95, 0, 21.2, -6.95, 0, 21.2, 8.85, 0, 21.2, -8.85, 0, 21.2, 10.75, 0, 21.2, -10.75, 0, 21.2, 12.65, 0, 21.2, -12.65, 0, 21.2, 14.55, 0, 21.2, -14.55, 0, 21.2, 16.45, 0, 21.2, -16.45, 0, 21.2, 18.35, 0, 21.2, -18.35, 0, 21.2, 20.25, 0, 21.2, -20.25, 0, 21.2)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+[node name="PalisadeWestEast" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p16_palisade")
+points = PackedVector3Array(-21.2, 0, 3.15, -21.2, 0, -3.15, -21.2, 0, 5.05, -21.2, 0, -5.05, -21.2, 0, 6.95, -21.2, 0, -6.95, -21.2, 0, 8.85, -21.2, 0, -8.85, -21.2, 0, 10.75, -21.2, 0, -10.75, -21.2, 0, 12.65, -21.2, 0, -12.65, -21.2, 0, 14.55, -21.2, 0, -14.55, -21.2, 0, 16.45, -21.2, 0, -16.45, -21.2, 0, 18.35, -21.2, 0, -18.35, -21.2, 0, 20.25, -21.2, 0, -20.25, 21.2, 0, 3.15, 21.2, 0, -3.15, 21.2, 0, 5.05, 21.2, 0, -5.05, 21.2, 0, 6.95, 21.2, 0, -6.95, 21.2, 0, 8.85, 21.2, 0, -8.85, 21.2, 0, 10.75, 21.2, 0, -10.75, 21.2, 0, 12.65, 21.2, 0, -12.65, 21.2, 0, 14.55, 21.2, 0, -14.55, 21.2, 0, 16.45, 21.2, 0, -16.45, 21.2, 0, 18.35, 21.2, 0, -18.35, 21.2, 0, 20.25, 21.2, 0, -20.25)
+yaw_degrees = PackedFloat32Array(90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90)
+
+[node name="GateNorth" parent="Geometry" instance=ExtResource("p17_palisade_gate")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, -21.2)
+
+[node name="GateSouth" parent="Geometry" instance=ExtResource("p17_palisade_gate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 21.2)
+
+[node name="GateWest" parent="Geometry" instance=ExtResource("p17_palisade_gate")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -21.2, 0, 0)
+
+[node name="GateEast" parent="Geometry" instance=ExtResource("p17_palisade_gate")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 21.2, 0, 0)
+
+[node name="TreesGold" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p18_tree_autumn")
+points = PackedVector3Array(17.6, 0, 17.4, -18.6, 0, 6.2)
+scale_range = Vector2(0.95, 1.1)
+random_seed = 3
+
+[node name="TreesRust" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p19_tree_autumn_rust")
+points = PackedVector3Array(-17.4, 0, 17.6, 18.4, 0, 10)
+scale_range = Vector2(0.9, 1.05)
+random_seed = 4
+
+[node name="TreesYellow" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p20_tree_autumn_yellow")
+points = PackedVector3Array(4.5, 0, 18)
+scale_range = Vector2(0.9, 1)
+random_seed = 5
 
 [node name="Bushes" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("11_bush")
-points = PackedVector3Array(-17.5, 0, -13, -10, 0, -16, 17.5, 0, -13.5, 9, 0, -7.5, -18.5, 0, 12.5, -8, 0, 7.5, 18.5, 0, 12.5, 11, 0, 18.5)
-scale_range = Vector2(0.7, 1)
-random_seed = 5
-
-[node name="Fences" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("16_fence")
-points = PackedVector3Array(-18.2, 0, 6, -16.2, 0, 6, -14.2, 0, 6, -19.2, 0, 3, -19.2, 0, 5)
-yaw_degrees = PackedFloat32Array(0, 0, 0, 90, 90)
-
-[node name="GardenFlowers" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("15_flowers")
-points = PackedVector3Array(-17.5, 0, 3.5, -15.5, 0, 4.2, -13.5, 0, 3.6)
-scale_range = Vector2(1, 1.25)
-random_seed = 31
+prop = ExtResource("p21_bush")
+points = PackedVector3Array(-6, 0, 19.4, 9, 0, 19.4, 19.4, 0, -6.5, -19.5, 0, 16, 19.6, 0, 15, 7, 0, -19.4)
+scale_range = Vector2(0.8, 1.1)
+random_seed = 6
 
 [node name="EnemyBarrier" type="StaticBody3D" parent="."]
 collision_layer = 128

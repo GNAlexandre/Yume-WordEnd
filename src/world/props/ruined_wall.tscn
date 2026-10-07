@@ -1,0 +1,57 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="2_bead"]
+
+[sub_resource type="StandardMaterial3D" id="stone"]
+albedo_color = Color(0.64, 0.64, 0.622, 1)
+
+[sub_resource type="StandardMaterial3D" id="stone2"]
+albedo_color = Color(0.713, 0.651, 0.572, 1)
+
+[sub_resource type="StandardMaterial3D" id="dark"]
+albedo_color = Color(0.421, 0.43, 0.448, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(4, 1.2, 0.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(2.4, 1.2, 0.8)
+
+[node name="RuinedWall" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(4, 0, 0, 0, 1.2, 0, 0, 0, 0.8, 0, 0.6, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("stone")
+
+[node name="Upper" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.4, 0, 0, 0, 0.7, 0, 0, 0, 0.8, -0.8, 1.55, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("stone2")
+
+[node name="Top" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 0.8, -1.4, 2.05, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="Fallen1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.628241, -0.045408, 0.211309, 0.097421, 0.356497, 0, -0.292954, 0.021174, 0.453154, 1.6, 0.18, 0.75)
+mesh = ExtResource("1_box")
+material_override = SubResource("stone2")
+
+[node name="Fallen2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.4, 0, 0, 0, 0.5, 2.3, 0.2, -0.6)
+mesh = ExtResource("2_bead")
+material_override = SubResource("dark")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="Shape2" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 1.6, 0)
+shape = SubResource("BoxShape3D_2")

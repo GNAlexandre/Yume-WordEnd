@@ -109,11 +109,24 @@ func test_arena_panel_prompt_and_sign_come_from_the_story_texts() -> void:
 	var dunes := _arena(&"dunes")
 	var panel := dunes.get_node(^"Panel")
 	assert_eq(panel.call(&"get_prompt"), "Sonner la cloche de veille", "invite de la veille")
-	assert_eq((panel.get_node(^"Label") as Label3D).text, "Cloche\nde veille", "panneau")
 	assert_eq(panel.call(&"prompt"), "Sonner la cloche de veille", "prompt() hors série")
+	assert_null(panel.get_node_or_null(^"Label"), "la cloche du monde remplace la planche")
 	var other := _arena(&"sys_ailleurs")
 	assert_eq(other.get_node(^"Panel").call(&"get_prompt"), "Affronter les Timeres", "default")
-	assert_eq((other.get_node(^"Panel/Label") as Label3D).text, "Affronter\nles Timeres", "default")
+	# Une planche facultative (Label3D « Label ») reçoit le texte « sign » de son arène.
+	assert_eq(_signed_arena(&"dunes").text, "Cloche\nde veille", "planche de la veille")
+	assert_eq(_signed_arena(&"sys_ailleurs").text, "Affronter\nles Timeres", "planche par défaut")
+
+
+func _signed_arena(arena_id: StringName) -> Label3D:
+	var arena := ARENA_SCENE.instantiate() as Arena
+	arena.arena_id = arena_id
+	var label := Label3D.new()
+	label.name = "Label"
+	arena.get_node(^"Panel").add_child(label)
+	var root: Node3D = add_child_autofree(Node3D.new())
+	root.add_child(arena)
+	return label
 
 
 func test_arena_end_title_and_record_come_from_the_story_texts() -> void:

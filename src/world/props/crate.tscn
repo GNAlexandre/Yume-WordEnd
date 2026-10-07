@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+
+[sub_resource type="StandardMaterial3D" id="wood"]
+albedo_color = Color(0.536, 0.404, 0.289, 1)
+
+[sub_resource type="StandardMaterial3D" id="dark"]
+albedo_color = Color(0.341, 0.262, 0.201, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(0.8, 0.8, 0.8)
+
+[node name="Crate" type="Node3D"]
+
+[node name="Box" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0.4, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("wood")
+
+[node name="Band1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.82, 0, 0, 0, 0.12, 0, 0, 0, 0.82, 0, 0.4, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Band2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.12, 0, 0, 0, 0.82, 0, 0, 0, 0.82, 0, 0.4, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("BoxShape3D_1")

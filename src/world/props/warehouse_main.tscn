@@ -1,0 +1,792 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/prism.tres" id="2_prism"]
+
+[sub_resource type="StandardMaterial3D" id="stone"]
+albedo_color = Color(0.551, 0.56, 0.56, 1)
+
+[sub_resource type="StandardMaterial3D" id="wall"]
+albedo_color = Color(0.411, 0.332, 0.262, 1)
+
+[sub_resource type="StandardMaterial3D" id="beam"]
+albedo_color = Color(0.341, 0.262, 0.201, 1)
+
+[sub_resource type="StandardMaterial3D" id="patch"]
+albedo_color = Color(0.479, 0.383, 0.295, 1)
+
+[sub_resource type="StandardMaterial3D" id="patch_dark"]
+albedo_color = Color(0.333, 0.272, 0.219, 1)
+
+[sub_resource type="StandardMaterial3D" id="glow"]
+shading_mode = 0
+albedo_color = Color(1, 0.85, 0.58, 1)
+
+[sub_resource type="StandardMaterial3D" id="frame"]
+albedo_color = Color(0.341, 0.262, 0.201, 1)
+
+[sub_resource type="StandardMaterial3D" id="brass"]
+albedo_color = Color(0.647, 0.541, 0.348, 1)
+
+[sub_resource type="StandardMaterial3D" id="paper"]
+albedo_color = Color(0.869, 0.86, 0.825, 1)
+
+[sub_resource type="StandardMaterial3D" id="slate"]
+albedo_color = Color(0.364, 0.399, 0.452, 1)
+
+[sub_resource type="StandardMaterial3D" id="slate_dark"]
+albedo_color = Color(0.283, 0.31, 0.354, 1)
+
+[sub_resource type="StandardMaterial3D" id="brick"]
+albedo_color = Color(0.531, 0.347, 0.285, 1)
+
+[sub_resource type="StandardMaterial3D" id="deck"]
+albedo_color = Color(0.536, 0.404, 0.289, 1)
+
+[sub_resource type="StandardMaterial3D" id="iron"]
+albedo_color = Color(0.241, 0.25, 0.268, 1)
+
+[sub_resource type="StandardMaterial3D" id="sheet"]
+albedo_color = Color(0.879, 0.87, 0.835, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(16, 5.7, 8)
+
+[node name="WarehouseMain" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(16.3, 0, 0, 0, 0.45, 0, 0, 0, 8.3, 0, 0.225, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("stone")
+
+[node name="Walls" type="MeshInstance3D" parent="."]
+transform = Transform3D(16, 0, 0, 0, 5.15, 0, 0, 0, 8, 0, 3.025, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("wall")
+
+[node name="FloorBand" type="MeshInstance3D" parent="."]
+transform = Transform3D(16.12, 0, 0, 0, 0.22, 0, 0, 0, 8.12, 0, 3.15, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="TopBand" type="MeshInstance3D" parent="."]
+transform = Transform3D(16.12, 0, 0, 0, 0.14, 0, 0, 0, 8.12, 0, 5.55, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="Corner1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.32, 0, 0, 0, 5.2, 0, 0, 0, 0.32, -8, 3, -4)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="Corner2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.32, 0, 0, 0, 5.2, 0, 0, 0, 0.32, 8, 3, -4)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="Corner3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.32, 0, 0, 0, 5.2, 0, 0, 0, 0.32, -8, 3, 4)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="Corner4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.32, 0, 0, 0, 5.2, 0, 0, 0, 0.32, 8, 3, 4)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="Patch1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.6, 0, 0, 0, 1.2, 0, 0, 0, 0.05, -7, 4.4, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("patch")
+cast_shadow = 0
+
+[node name="Patch2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.4, 0, 0, 0, 1, 0, 0, 0, 0.05, -1.2, 1.6, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("patch_dark")
+cast_shadow = 0
+
+[node name="Patch3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.2, 0, 0, 0, 1.4, 0, 0, 0, 0.05, 5.6, 4.3, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("patch")
+cast_shadow = 0
+
+[node name="Patch4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.8, 0, 0, 0, 1.1, 0, 0, 0, 0.05, -4.6, 2, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("patch_dark")
+cast_shadow = 0
+
+[node name="Patch5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.4, 0, 0, 0, 1.2, 0, 0, 0, 0.05, 1.5, 4.5, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("patch")
+cast_shadow = 0
+
+[node name="Patch6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.2, 0, 0, 0, 1, 0, 0, 0, 0.05, 6.6, 1.7, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("patch")
+cast_shadow = 0
+
+[node name="PatchEast" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.05, 0, 0, 0, 1.2, 0, 0, 0, 1.6, 8.02, 4.2, 1)
+mesh = ExtResource("1_box")
+material_override = SubResource("patch_dark")
+cast_shadow = 0
+
+[node name="WinS1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.15, 0, 0, 0, 0.06, -6, 1.75, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinS1BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1.15, 0, 0, 0, 0.04, -6, 1.75, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -6, 1.75, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.15, 0, 0, 0, 0.06, -3.5, 1.75, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinS2BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1.15, 0, 0, 0, 0.04, -3.5, 1.75, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS2BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -3.5, 1.75, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinReading" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.7, 0, 0, 0, 1.2, 0, 0, 0, 0.06, 7, 1.7, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinReadingBarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1.2, 0, 0, 0, 0.04, 6.716667, 1.7, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinReadingBarV2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1.2, 0, 0, 0, 0.04, 7.283333, 1.7, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinReadingBarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.7, 0, 0, 0, 0.07, 0, 0, 0, 0.04, 7, 1.7, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, -6.5, 4.35, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinS1F1BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, -6.5, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F1BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -6.5, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, -4, 4.35, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinS1F2BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, -4, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F2BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -4, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, -1.5, 4.35, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinS1F3BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, -1.5, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F3BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -1.5, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, 1, 4.35, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinS1F4BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, 1, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F4BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, 1, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, 3.5, 4.35, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinS1F5BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, 3.5, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F5BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, 3.5, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, 6.2, 4.35, 4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinS1F6BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, 6.2, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinS1F6BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, 6.2, 4.35, 4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.1, 0, 0, 0, 0.06, -5.5, 1.75, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinN1BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1.1, 0, 0, 0, 0.04, -5.5, 1.75, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN1BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -5.5, 1.75, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN1F1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, -5.5, 4.35, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinN1F1BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, -5.5, 4.35, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN1F1BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -5.5, 4.35, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.1, 0, 0, 0, 0.06, -1.5, 1.75, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinN2BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1.1, 0, 0, 0, 0.04, -1.5, 1.75, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN2BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -1.5, 1.75, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN1F2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, -1.5, 4.35, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinN1F2BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, -1.5, 4.35, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN1F2BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, -1.5, 4.35, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.1, 0, 0, 0, 0.06, 2.5, 1.75, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinN3BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1.1, 0, 0, 0, 0.04, 2.5, 1.75, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN3BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.07, 0, 0, 0, 0.04, 2.5, 1.75, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN1F3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, 2.5, 4.35, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinN1F3BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, 2.5, 4.35, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN1F3BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, 2.5, 4.35, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.1, 0, 0, 0, 0.06, 6, 1.75, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinN4BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1.1, 0, 0, 0, 0.04, 6, 1.75, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN4BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.07, 0, 0, 0, 0.04, 6, 1.75, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN1F4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.06, 6, 4.35, -4.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinN1F4BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 1, 0, 0, 0, 0.04, 6, 4.35, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinN1F4BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.07, 0, 0, 0, 0.04, 6, 4.35, -4.06)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinE1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 1, 8.02, 1.75, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinE1BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 1.1, 0, 0, 0, 0.07, 8.06, 1.75, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinE1BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.07, 0, 0, 0, 1, 8.06, 1.75, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinE1F1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1, 0, 0, 0, 0.9, 8.02, 4.35, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinE1F1BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 1, 0, 0, 0, 0.07, 8.06, 4.35, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinE1F1BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.07, 0, 0, 0, 0.9, 8.06, 4.35, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinW1F1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1, 0, 0, 0, 0.9, -8.02, 4.35, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinW1F1BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 1, 0, 0, 0, 0.07, -8.06, 4.35, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinW1F1BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.07, 0, 0, 0, 0.9, -8.06, 4.35, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinE2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 1, 8.02, 1.75, 1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinE2BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 1.1, 0, 0, 0, 0.07, 8.06, 1.75, 1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinE2BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.07, 0, 0, 0, 1, 8.06, 1.75, 1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinE1F2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1, 0, 0, 0, 0.9, 8.02, 4.35, 1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinE1F2BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 1, 0, 0, 0, 0.07, 8.06, 4.35, 1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinE1F2BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.07, 0, 0, 0, 0.9, 8.06, 4.35, 1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinW1F2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1, 0, 0, 0, 0.9, -8.02, 4.35, 1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinW1F2BarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 1, 0, 0, 0, 0.07, -8.06, 4.35, 1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinW1F2BarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.07, 0, 0, 0, 0.9, -8.06, 4.35, 1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinW" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 1, -8.02, 1.75, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinWBarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 1.1, 0, 0, 0, 0.07, -8.06, 1.75, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinWBarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.07, 0, 0, 0, 1, -8.06, 1.75, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="Door" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.3, 0, 0, 0, 2.15, 0, 0, 0, 0.08, 2, 1.52, 4.04)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="DoorStep" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.7, 0, 0, 0, 0.3, 0, 0, 0, 0.5, 2, 0.15, 4.33)
+mesh = ExtResource("1_box")
+material_override = SubResource("stone")
+cast_shadow = 0
+
+[node name="Plaque" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.42, 0, 0, 0, 0.3, 0, 0, 0, 0.04, 0.85, 1.75, 4.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("brass")
+cast_shadow = 0
+
+[node name="Chores1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.32, 0, 0, 0, 0.42, 0, 0, 0, 0.02, 3.25, 1.85, 4.04)
+mesh = ExtResource("1_box")
+material_override = SubResource("paper")
+cast_shadow = 0
+
+[node name="Chores2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.32, 0, 0, 0, 0.42, 0, 0, 0, 0.02, 3.65, 1.6, 4.04)
+mesh = ExtResource("1_box")
+material_override = SubResource("paper")
+cast_shadow = 0
+
+[node name="Chores3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.32, 0, 0, 0, 0.42, 0, 0, 0, 0.02, 3.3, 1.3, 4.04)
+mesh = ExtResource("1_box")
+material_override = SubResource("paper")
+cast_shadow = 0
+
+[node name="RoofGable" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 0, 10, 0, 3.4, 0, -8, 0, 0, -3, 7.3, 0)
+mesh = ExtResource("2_prism")
+material_override = SubResource("wall")
+
+[node name="RoofSouth" type="MeshInstance3D" parent="."]
+transform = Transform3D(10.9, 0, 0, 0, 0.152388, -3.7825, 0, 0.12953, 4.45, -3, 7.20875, 2.225)
+mesh = ExtResource("1_box")
+material_override = SubResource("slate")
+
+[node name="RoofNorth" type="MeshInstance3D" parent="."]
+transform = Transform3D(10.9, 0, 0, 0, 0.152388, 3.7825, 0, -0.12953, 4.45, -3, 7.20875, -2.225)
+mesh = ExtResource("1_box")
+material_override = SubResource("slate")
+
+[node name="RoofRidge" type="MeshInstance3D" parent="."]
+transform = Transform3D(10.9, 0, 0, 0, 0.18, 0, 0, 0, 0.36, -3, 9.14, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("slate_dark")
+
+[node name="WinAttic" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 0.7, 0, 0, 0, 0.8, -8.02, 6.6, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="WinAtticBarV1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.7, 0, 0, 0, 0.07, -8.06, 6.6, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="WinAtticBarH1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.07, 0, 0, 0, 0.8, -8.06, 6.6, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("frame")
+cast_shadow = 0
+
+[node name="Chimney" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 3.2, 0, 0, 0, 0.9, -6.3, 8.4, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("brick")
+
+[node name="ChimneyCap" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.1, 0, 0, 0, 0.18, 0, 0, 0, 1.1, -6.3, 10.05, -1.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("stone")
+
+[node name="Terrace" type="MeshInstance3D" parent="."]
+transform = Transform3D(6.2, 0, 0, 0, 0.25, 0, 0, 0, 8.2, 5, 5.72, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("deck")
+
+[node name="RailS" type="MeshInstance3D" parent="."]
+transform = Transform3D(6.1, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 5, 6.72, 4.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="RailN" type="MeshInstance3D" parent="."]
+transform = Transform3D(6.1, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 5, 6.72, -4.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="RailE" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 8.1, 8.05, 6.72, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="RailPost1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 0.9, 0, 0, 0, 0.07, 2.2, 6.27, 4.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="RailPost2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 0.9, 0, 0, 0, 0.07, 5, 6.27, 4.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="RailPost3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 0.9, 0, 0, 0, 0.07, 8.05, 6.27, 4.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="RailPost4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 0.9, 0, 0, 0, 0.07, 2.2, 6.27, -4.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="RailPost5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 0.9, 0, 0, 0, 0.07, 5, 6.27, -4.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="RailPost6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 0.9, 0, 0, 0, 0.07, 8.05, 6.27, -4.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="RailPost7" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 0.9, 0, 0, 0, 0.07, 8.05, 6.27, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="LinePoleS1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 1.8, 0, 0, 0, 0.08, 3.6, 6.75, 2.8)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="LinePoleN1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 1.8, 0, 0, 0, 0.08, 3.6, 6.75, -2.8)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="Line1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.03, 0, 0, 0, 0.03, 0, 0, 0, 5.6, 3.6, 7.6, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+cast_shadow = 0
+
+[node name="Sheet1_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.039702, -0.134056, 0, 0.004863, 1.089141, -0.090683, 0.00034, 0.07616, 1.296833, 3.6, 7.04, -1.7)
+mesh = ExtResource("1_box")
+material_override = SubResource("sheet")
+
+[node name="Sheet1_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.039702, -0.134056, 0, 0.004827, 1.081175, -0.180925, 0.000678, 0.151949, 1.287348, 3.6, 7.08, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("sheet")
+
+[node name="Sheet1_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.039702, -0.134056, 0, 0.004768, 1.067942, -0.270285, 0.001014, 0.226998, 1.271592, 3.6, 7.12, 1.7)
+mesh = ExtResource("1_box")
+material_override = SubResource("sheet")
+
+[node name="LinePoleS2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 1.8, 0, 0, 0, 0.08, 6.4, 6.75, 2.8)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="LinePoleN2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 1.8, 0, 0, 0, 0.08, 6.4, 6.75, -2.8)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+
+[node name="Line2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.03, 0, 0, 0, 0.03, 0, 0, 0, 5.6, 6.4, 7.6, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("beam")
+cast_shadow = 0
+
+[node name="Sheet2_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.039702, -0.134056, 0, 0.004863, 1.089141, -0.090683, 0.00034, 0.07616, 1.296833, 6.4, 7.04, -1.7)
+mesh = ExtResource("1_box")
+material_override = SubResource("sheet")
+
+[node name="Sheet2_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.039702, -0.134056, 0, 0.004827, 1.081175, -0.180925, 0.000678, 0.151949, 1.287348, 6.4, 7.08, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("sheet")
+
+[node name="Sheet2_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.039702, -0.134056, 0, 0.004768, 1.067942, -0.270285, 0.001014, 0.226998, 1.271592, 6.4, 7.12, 1.7)
+mesh = ExtResource("1_box")
+material_override = SubResource("sheet")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.85, 0)
+shape = SubResource("BoxShape3D_1")

@@ -1,0 +1,109 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="2_cylinder"]
+
+[sub_resource type="StandardMaterial3D" id="counter"]
+albedo_color = Color(0.341, 0.262, 0.201, 1)
+
+[sub_resource type="StandardMaterial3D" id="post"]
+albedo_color = Color(0.536, 0.404, 0.289, 1)
+
+[sub_resource type="StandardMaterial3D" id="roof"]
+albedo_color = Color(0.666, 0.314, 0.27, 1)
+
+[sub_resource type="StandardMaterial3D" id="iron"]
+albedo_color = Color(0.241, 0.25, 0.268, 1)
+
+[sub_resource type="StandardMaterial3D" id="ember"]
+shading_mode = 0
+albedo_color = Color(1, 0.58, 0.3, 1)
+
+[sub_resource type="StandardMaterial3D" id="fries"]
+albedo_color = Color(0.9, 0.773, 0.433, 1)
+
+[sub_resource type="StandardMaterial3D" id="bacon"]
+albedo_color = Color(0.767, 0.433, 0.38, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.9, 1, 0.8)
+
+[node name="SnackStall" type="Node3D"]
+
+[node name="Counter" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.9, 0, 0, 0, 1, 0, 0, 0, 0.8, 0, 0.5, 0.2)
+mesh = ExtResource("1_box")
+material_override = SubResource("counter")
+
+[node name="Post1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 2.4, 0, 0, 0, 0.07, -0.92, 1.2, -0.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Post2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 2.4, 0, 0, 0, 0.07, 0.92, 1.2, -0.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Post3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 2.4, 0, 0, 0, 0.07, -0.92, 1.2, 0.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Post4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.07, 0, 0, 0, 2.4, 0, 0, 0, 0.07, 0.92, 1.2, 0.6)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Roof" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.2, 0, 0, 0, 0.059088, 0.295202, 0, -0.010419, 1.674173, 0, 2.42, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("roof")
+
+[node name="Brazier" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.3, 0, 0, 0, 0.5, -0.5, 1.15, 0.2)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+
+[node name="Embers" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.04, 0, 0, 0, 0.4, -0.5, 1.31, 0.2)
+mesh = ExtResource("1_box")
+material_override = SubResource("ember")
+cast_shadow = 0
+
+[node name="Pan" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.08, 0, 0, 0, 0.5, 0.35, 1.06, 0.25)
+mesh = ExtResource("2_cylinder")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="Fries" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.04, 0, 0, 0, 0.3, 0.35, 1.12, 0.25)
+mesh = ExtResource("1_box")
+material_override = SubResource("fries")
+cast_shadow = 0
+
+[node name="Bacon1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.04, 0, 0, 0, 0.09, -0.5, 1.36, 0.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("bacon")
+cast_shadow = 0
+
+[node name="Bacon2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.04, 0, 0, 0, 0.09, -0.5, 1.36, 0.2)
+mesh = ExtResource("1_box")
+material_override = SubResource("bacon")
+cast_shadow = 0
+
+[node name="Bacon3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.04, 0, 0, 0, 0.09, -0.5, 1.36, 0.35)
+mesh = ExtResource("1_box")
+material_override = SubResource("bacon")
+cast_shadow = 0
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.2)
+shape = SubResource("BoxShape3D_1")

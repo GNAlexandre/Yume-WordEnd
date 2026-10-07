@@ -985,3 +985,76 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **Acte 1 — quête d'exemple des tests** : `example_patrol` requiert le livre d'images et donne
   deux myosotis ; le forgeron d'exemple est posé par `tests/data/placements/village.tscn` ;
   l'exemple commenté de docs/QUETES.md est à aligner.
+
+## Acte 1 — Monde (île n° 68)
+
+- **Monde — île flottante** (`src/world/terrain.gd`, `island_rock.gd`, `island.tscn`) : le bord
+  garde le tracé de l'ancienne côte (superellipse, encoche du quai au sud, avancée du Couchant à
+  l'ouest) et devient une lèvre de pierre au niveau du sol ; au-delà, le vide. Sous la lèvre :
+  falaise, dessous en cône de roche, racines, cascade du ruisseau (un mesh, sans collision). La
+  mer de nuages remplace l'eau (nœud `Water` gardé, plan à y = −60 m, shader non éclairé) ; la
+  KillZone (y = −15 m) et `WorldManager.FALL_LIMIT` ramènent au Spawn de la zone (`rescue()`).
+- **Monde — collision du sol** : ConcavePolygonShape3D tirée des mêmes triangles que le mesh
+  visible, coupés sur la ligne exacte du bord (au lieu de la HeightMapShape3D 129 × 129 de L2) :
+  on marche sur ce qu'on voit et rien ne porte au-delà du bord. Pentes < 40° sur chaque facette.
+- **Monde — barrière du bord** : ruban vertical à 0,8 m en deçà du bord, couche 8
+  (`enemy_barrier`), deux faces : les Timeres ne tombent pas, le joueur passe.
+- **Monde — décor fondu** (`prop_batcher.gd`) : une zone fond tous ses meshes en ArrayMesh à
+  couleurs de sommet, par famille (ombre, sans ombre, lumineux) et par case de 32 m (la caméra
+  et la carte d'ombre écartent les cases hors champ) ; matériau `materials/toon.tres`
+  (ShaderMaterial `shaders/props.gdshader`) ; un albedo d'alpha 0,5 marque un feuillage.
+- **Monde — cloche de veille** (`src/enemies/arena.tscn`, visuel seulement) : le panneau de
+  l'arène devient une cloche de bronze à potence sur un poteau (le cahier des charges dit
+  « cloche sur un poteau », MONDE.md un portique) ; `arena_panel.gd`, son invite et
+  `WaveDirector` sont inchangés (le texte de l'invite revient à l'agent Systèmes et textes).
+- **Monde — noms des zones** : ceux de MONDE.md (section 2.1), apostrophe droite comme dans
+  MONDE.md (« L'entrepôt des fées ») ; chaînes mises à jour aussi dans `test_m2_quest.gd`,
+  `test_m2_resume.gd` et `test_m2_menu.gd` (seulement les noms).
+- **Monde — fleur du village** : l'ancienne place de `village_flower_1` (−17, 0, −3) tombe dans
+  l'aile ouest de l'entrepôt ; `test_m1_world.gd` l'exempte tant qu'elle y est (`RELOCATED`) et
+  la vérifie à sa nouvelle place (17, 0, 5).
+- **Monde — places de l'acte 1** (`tests/unit/test_world_story_spots.gd`) : les positions de
+  HISTOIRE.md (section 3.3) sont vérifiées sans dépendre des fichiers d'emplacement : à 3 m du
+  vide, au sol à la hauteur prévue, hors de toute collision et de tout décor visible tout près
+  (les baies restent sur leur buisson), reliées à pied au village. Le belvédère du sommet passe à
+  un plancher de Ø 5,2 m pour que Willem soit « à côté du belvédère » et le drap à son entrée.
+- **Monde — direction artistique** (demande de l'utilisateur : se rapprocher de Zelda: Breath
+  of the Wild dans les limites du rendu Compatibility, à la place du style précédent) : palette
+  naturelle un peu désaturée et chaude (herbe vert-jaune, terre ocre, roche gris-bleu, bois
+  brun) ; éclairage cel discret partagé (`shaders/cel.gdshaderinc` : deux paliers doux, liseré à
+  contre-jour sur les décors, terminateur large sur la roche) ; normales lissées (roche, arbres) ;
+  ciel en dégradé bleu doux, halo chaud du soleil et nuages doux (`shaders/sky.gdshader`, sans
+  TIME : calculé une fois) ; brume bleutée (densité 0,002, diffusion du soleil 0,3, brume basse
+  sous y = −4 m) ; ombres bleutées (ambiante 0,55) ; soleil chaud à 20° à l'ouest-sud-ouest
+  (énergie 0,2, ombre sur 40 m) ; mer de nuages blanche, creux gris-bleu, crêtes dorées côté
+  soleil ; arbres hauts à tronc élancé et feuillage en masses, marches de 0,15 à 0,2 m, portes de
+  2,1 à 2,2 m, champignons à taille réelle.
+- **Monde — herbe** (`src/world/grass.gd`, `shaders/grass.gdshader`) : ~20 000 touffes de sept
+  brins tirées une fois (graine 68, ~0,15 s en natif au chargement), une MultiMeshInstance3D par
+  case de 16 m, sans ombre portée ; balancement au vent ; les touffes s'aplatissent de 18 à 27 m
+  de la caméra puis la case disparaît ; jamais sur les chemins, la cour, le cercle de veille
+  (15 m), la rue, la place, le quai, le marais, le ruisseau ; tracés recopiés de
+  `shaders/terrain.gdshader`.
+- **Monde — horizon** : îles en silhouette (n° 53 au sud, sur la route du passeur ; n° 15 à
+  l'ouest, au-delà du Couchant ; deux au nord) et huit rochers flottants sous le bord, dans
+  `Decor` (sans collision).
+- **Monde — budget Web** (`demo_m1`, draw calls et primitives dont la passe d'ombre) :
+
+  | Vue | Avant l'acte 1 (8263efe) | Acte 1, direction naturelle |
+  | --- | --- | --- |
+  | village (départ) | 79, 104 708 (21 432) | 94, 91 300 (17 328) |
+  | village_dunes | 80, 141 326 (34 296) | 102, 107 155 (18 812) |
+  | village_forest | 84, 142 788 (33 928) | 103, 93 942 (13 440) |
+  | village_beach | 87, 132 620 (24 440) | 111, 111 683 (12 422) |
+  | village_hill | 75, 142 106 (34 128) | 108, 118 924 (20 246) |
+  | dunes / perf (16 Timeres) / forest | 60 / 92 / 40 ; 63 634 / 89 254 / 54 022 | 74 / 95 / 53 ; 57 223 / 61 144 / 46 940 |
+
+  Les cases de 32 m et l'herbe coûtent des draw calls (une trentaine) mais retirent des
+  triangles à la passe d'ombre ; tout reste sous 150 draw calls et 150 000 primitives.
+- **Monde — captures** : `MONDE_VIEW=ile|entrepot|bois|couchant|port|colline|bord|dessous
+  tools/screenshot.sh res://tests/integration/demo_monde.tscn build/shots/monde_<vue>.png 40`.
+- **Monde — terrain d'entraînement** (bois du marais) : herbe rase sans arbre ni rocher sur
+  15 m de rayon autour du local (0, 0) de la zone ; les buts de fortune sont à ses deux bouts
+  (14 m), le banc et le râtelier en bordure (le banc est la place de `WillemTraining`,
+  HISTOIRE.md 3.3) ; `test_m1_world.gd` vérifie plat et sans collision sur 12 m, et la clairière
+  des Timeres sur 6 m.

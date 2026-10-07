@@ -1,0 +1,35 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/prism.tres" id="1_prism"]
+
+[sub_resource type="StandardMaterial3D" id="grass"]
+albedo_color = Color(0.672, 0.628, 0.408, 1)
+
+[sub_resource type="StandardMaterial3D" id="grass2"]
+albedo_color = Color(0.653, 0.618, 0.389, 1)
+
+[node name="GrassTuft" type="Node3D"]
+
+[node name="Blade1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.098298, 0.255931, 0.012941, -0.06359, 0.424024, 0, -0.026339, -0.068577, 0.048296, -0.025, 0.25, 0)
+mesh = ExtResource("1_prism")
+material_override = SubResource("grass")
+cast_shadow = 0
+
+[node name="Blade2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.088132, 0.275354, 0.025, -0.06359, 0.508829, 0, -0.050883, -0.158976, 0.043301, 0.15, 0.3, 0.15)
+mesh = ExtResource("1_prism")
+material_override = SubResource("grass2")
+cast_shadow = 0
+
+[node name="Blade3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.071959, 0.168619, 0.035355, -0.06359, 0.381622, 0, -0.071959, -0.168619, 0.035355, 0.2125, 0.225, -0.12)
+mesh = ExtResource("1_prism")
+material_override = SubResource("grass")
+cast_shadow = 0
+
+[node name="Blade4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.050883, 0.105984, 0.043301, -0.06359, 0.339219, 0, -0.088132, -0.183569, 0.025, 0.05, 0.2, -0.2)
+mesh = ExtResource("1_prism")
+material_override = SubResource("grass2")
+cast_shadow = 0

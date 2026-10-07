@@ -2,48 +2,76 @@
 
 [ext_resource type="Script" path="res://src/world/island.gd" id="1_island"]
 [ext_resource type="Script" path="res://src/world/terrain.gd" id="2_terrain"]
-[ext_resource type="Shader" path="res://src/world/shaders/water.gdshader" id="3_water"]
+[ext_resource type="Shader" path="res://src/world/shaders/cloud_sea.gdshader" id="3_clouds"]
 [ext_resource type="PackedScene" path="res://src/world/zones/village/village.tscn" id="4_village"]
 [ext_resource type="PackedScene" path="res://src/world/zones/dunes/dunes.tscn" id="5_dunes"]
 [ext_resource type="PackedScene" path="res://src/world/zones/forest/forest.tscn" id="6_forest"]
 [ext_resource type="PackedScene" path="res://src/world/zones/beach/beach.tscn" id="7_beach"]
 [ext_resource type="PackedScene" path="res://src/world/zones/hill/hill.tscn" id="8_hill"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="9_batcher"]
-[ext_resource type="Script" path="res://src/world/prop_scatter.gd" id="10_scatter"]
-[ext_resource type="PackedScene" path="res://src/world/props/buoy.tscn" id="11_buoy"]
+[ext_resource type="Shader" path="res://src/world/shaders/waterfall.gdshader" id="10_waterfall"]
+[ext_resource type="Shader" path="res://src/world/shaders/sky.gdshader" id="11_sky"]
+[ext_resource type="Script" path="res://src/world/grass.gd" id="12_grass"]
+[ext_resource type="PackedScene" path="res://src/world/props/floating_rock.tscn" id="16_floating_rock"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_c.tscn" id="15_island_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_b.tscn" id="14_island_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_a.tscn" id="13_island_a"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sunset"]
-sky_top_color = Color(0.3, 0.21, 0.5, 1)
-sky_horizon_color = Color(1, 0.55, 0.4, 1)
-sky_curve = 0.25
-ground_bottom_color = Color(0.2, 0.17, 0.38, 1)
-ground_horizon_color = Color(1, 0.55, 0.4, 1)
-sun_angle_max = 25.0
-sun_curve = 0.08
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sky"]
+seed = 168
+frequency = 0.012
+fractal_octaves = 4
 
-[sub_resource type="Sky" id="Sky_sunset"]
-sky_material = SubResource("ProceduralSkyMaterial_sunset")
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_sky"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("FastNoiseLite_sky")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
+shader = ExtResource("11_sky")
+shader_parameter/clouds = SubResource("NoiseTexture2D_sky")
+
+[sub_resource type="Sky" id="Sky_island"]
+sky_material = SubResource("ShaderMaterial_sky")
 
 [sub_resource type="Environment" id="Environment_island"]
 background_mode = 2
-sky = SubResource("Sky_sunset")
+sky = SubResource("Sky_island")
 ambient_light_source = 2
-ambient_light_color = Color(0.82, 0.77, 0.95, 1)
-ambient_light_energy = 0.32
+ambient_light_color = Color(0.64, 0.72, 0.9, 1)
+ambient_light_energy = 0.55
 fog_enabled = true
-fog_light_color = Color(0.96, 0.62, 0.52, 1)
-fog_sun_scatter = 0.25
-fog_density = 0.0008
-fog_sky_affect = 0.1
+fog_light_color = Color(0.7, 0.78, 0.88, 1)
+fog_sun_scatter = 0.3
+fog_density = 0.002
+fog_sky_affect = 0.0
+fog_height = -4.0
+fog_height_density = 0.05
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_water"]
-shader = ExtResource("3_water")
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_clouds"]
+seed = 68
+frequency = 0.009
+fractal_type = 2
+fractal_octaves = 4
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_water"]
-material = SubResource("ShaderMaterial_water")
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_clouds"]
+width = 512
+height = 512
+invert = true
+seamless = true
+noise = SubResource("FastNoiseLite_clouds")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_clouds"]
+shader = ExtResource("3_clouds")
+shader_parameter/clouds = SubResource("NoiseTexture2D_clouds")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_clouds"]
+material = SubResource("ShaderMaterial_clouds")
 size = Vector2(3000, 3000)
-subdivide_width = 24
-subdivide_depth = 24
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_waterfall"]
+shader = ExtResource("10_waterfall")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall_ns"]
 size = Vector3(162, 40, 1)
@@ -61,15 +89,15 @@ script = ExtResource("1_island")
 environment = SubResource("Environment_island")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.287348, 0.389583, -0.875018, 0, 0.913545, 0.406737, 0.957826, -0.116875, 0.262505, 0, 40, 0)
-light_color = Color(1, 0.86, 0.7, 1)
-light_energy = 0.22
+transform = Transform3D(0.287311, 0.3276, -0.900073, 0, 0.939693, 0.34202, 0.957837, -0.098266, 0.269984, 0, 40, 0)
+light_color = Color(1, 0.84, 0.64, 1)
+light_energy = 0.2
 shadow_enabled = true
 directional_shadow_mode = 0
-directional_shadow_max_distance = 50.0
+directional_shadow_max_distance = 40.0
 
 [node name="OverviewCamera" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.662574, 0.748997, 0, -0.748997, 0.662574, 0, 104, 112)
+transform = Transform3D(1, 0, 0, 0, 0.731354, 0.681998, 0, -0.681998, 0.731354, 0, 112, 132)
 current = true
 fov = 55.0
 far = 2500.0
@@ -78,9 +106,9 @@ far = 2500.0
 script = ExtResource("2_terrain")
 
 [node name="Water" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -60, 0)
 cast_shadow = 0
-mesh = SubResource("PlaneMesh_water")
+mesh = SubResource("PlaneMesh_clouds")
 
 [node name="Walls" type="StaticBody3D" parent="."]
 
@@ -109,14 +137,57 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="KillZone"]
 shape = SubResource("BoxShape3D_kill")
 
+[node name="EdgeBarrier" type="StaticBody3D" parent="."]
+collision_layer = 128
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EdgeBarrier"]
+
+[node name="Waterfall" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+material_override = SubResource("ShaderMaterial_waterfall")
+
 [node name="Decor" type="Node3D" parent="."]
 script = ExtResource("9_batcher")
 
-[node name="Buoys" type="Node3D" parent="Decor"]
-script = ExtResource("10_scatter")
-prop = ExtResource("11_buoy")
-points = PackedVector3Array(-72, -0.6, -78.3, -78.3, -0.6, -72, 78.3, -0.6, -72, -72, -0.6, 78.3, -60, -0.6, -78.3, -78.3, -0.6, -60, 78.3, -0.6, -60, -60, -0.6, 78.3, -48, -0.6, -78.3, -78.3, -0.6, -48, 78.3, -0.6, -48, -48, -0.6, 78.3, -36, -0.6, -78.3, -78.3, -0.6, -36, 78.3, -0.6, -36, -36, -0.6, 78.3, -24, -0.6, -78.3, -78.3, -0.6, -24, 78.3, -0.6, -24, -24, -0.6, 78.3, -12, -0.6, -78.3, -78.3, -0.6, -12, 78.3, -0.6, -12, -12, -0.6, 78.3, 0, -0.6, -78.3, -78.3, -0.6, 0, 78.3, -0.6, 0, 0, -0.6, 78.3, 12, -0.6, -78.3, -78.3, -0.6, 12, 78.3, -0.6, 12, 24, -0.6, -78.3, -78.3, -0.6, 24, 78.3, -0.6, 24, 24, -0.6, 78.3, 36, -0.6, -78.3, -78.3, -0.6, 36, 78.3, -0.6, 36, 36, -0.6, 78.3, 48, -0.6, -78.3, -78.3, -0.6, 48, 78.3, -0.6, 48, 48, -0.6, 78.3, 60, -0.6, -78.3, -78.3, -0.6, 60, 78.3, -0.6, 60, 60, -0.6, 78.3, 72, -0.6, -78.3, -78.3, -0.6, 72, 78.3, -0.6, 72, 72, -0.6, 78.3)
-follow_ground = false
+[node name="Island53" parent="Decor" instance=ExtResource("14_island_b")]
+transform = Transform3D(2.067324, 0, 0.752444, 0, 2.2, 0, -0.752444, 0, 2.067324, 60, -30, 560)
+
+[node name="Island15" parent="Decor" instance=ExtResource("13_island_a")]
+transform = Transform3D(1.02606, 0, 2.819078, 0, 3, 0, -2.819078, 0, 1.02606, -620, -25, 170)
+
+[node name="IslandNorthEast" parent="Decor" instance=ExtResource("15_island_c")]
+transform = Transform3D(-1.732051, 0, 1, 0, 2, 0, -1, 0, -1.732051, 430, -45, -520)
+
+[node name="IslandNorthWest" parent="Decor" instance=ExtResource("13_island_a")]
+transform = Transform3D(-1.385641, 0, -0.8, 0, 1.6, 0, 0.8, 0, -1.385641, -360, -5, -640)
+
+[node name="FloatingRock1" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(2.376643, 0, -0.334015, 0, 2.4, 0, 0.334015, 0, 2.376643, -85.463336, -14, -31.106111)
+
+[node name="FloatingRock2" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(0.660967, 0, 1.457094, 0, 1.6, 0, -1.457094, 0, 0.660967, -62.671372, -26, -80.215698)
+
+[node name="FloatingRock3" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(-1.032739, 0, -0.789589, 0, 1.3, 0, 0.789589, 0, -1.032739, 43.362345, -9, -81.552711)
+
+[node name="FloatingRock4" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(1.141427, 0, -1.642298, 0, 2, 0, 1.642298, 0, 1.141427, 84.73968, -22, -37.728536)
+
+[node name="FloatingRock5" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(0.077117, 0, 1.69825, 0, 1.7, 0, -1.69825, 0, 0.077117, 78.616017, -16, 61.421564)
+
+[node name="FloatingRock6" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(0.063524, 0, -2.599224, 0, 2.6, 0, 2.599224, 0, 0.063524, -45.321451, -28, 85.237252)
+
+[node name="FloatingRock7" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(1.159111, 0, -0.310583, 0, 1.2, 0, 0.310583, 0, 1.159111, -82.15057, -11, 47.429654)
+
+[node name="FloatingRock8" parent="Decor" instance=ExtResource("16_floating_rock")]
+transform = Transform3D(1.348184, 0, 1.338805, 0, 1.9, 0, -1.338805, 0, 1.348184, -92.855688, -33, 6.493102)
+
+[node name="Grass" type="Node3D" parent="."]
+script = ExtResource("12_grass")
 
 [node name="Zones" type="Node3D" parent="."]
 
