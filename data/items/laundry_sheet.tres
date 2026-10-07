@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/items/laundry_sheet.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"laundry_sheet"
+display_name = "Drap envolé"
+icon = ExtResource("2_icon")
+stackable = true
+max_stack = 99
+description = "Un drap de l’entrepôt arraché du toit par le vent du soir. Il sent le savon et le grand air."
+color = Color(0.86, 0.92, 1, 1)

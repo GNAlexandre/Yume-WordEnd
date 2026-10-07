@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://tests/integration/demo_l6.gd" id="1_demo"]
 [ext_resource type="PackedScene" path="res://src/npc/npc.tscn" id="2_npc"]
-[ext_resource type="Resource" path="res://data/npcs/librarian.tres" id="3_librarian"]
+[ext_resource type="Resource" path="res://data/npcs/nephren.tres" id="3_nephren"]
 [ext_resource type="PackedScene" path="res://tests/stubs/player_stub.tscn" id="4_player"]
 [ext_resource type="PackedScene" path="res://src/ui/dialogue_box.tscn" id="5_box"]
 
@@ -98,8 +98,8 @@ radial_segments = 16
 rings = 8
 material = SubResource("StandardMaterial3D_leaves")
 
-[node name="Librarian" parent="." instance=ExtResource("2_npc")]
-data = ExtResource("3_librarian")
+[node name="Nephren" parent="." instance=ExtResource("2_npc")]
+data = ExtResource("3_nephren")
 
 [node name="Player" parent="." instance=ExtResource("4_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 0, 2.2)

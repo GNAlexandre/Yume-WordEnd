@@ -11,3 +11,11 @@ item_id = &"flower_blue"
 [node name="hill_flower_2" parent="." instance=ExtResource("1_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 19.5)
 item_id = &"flower_blue"
+
+[node name="hill_flower_3" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -10)
+item_id = &"flower_blue"
+
+[node name="hill_sheet_1" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 8, -3)
+item_id = &"laundry_sheet"

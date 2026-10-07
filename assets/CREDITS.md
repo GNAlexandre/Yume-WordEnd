@@ -306,3 +306,4 @@ Les fichiers `.import` et `.uid` sont des métadonnées techniques créées par 
 | `assets/models/characters/rabbit_soldier/rabbit_soldier.tscn` | Scripts Python du projet / Codex | Soldat lapin, pages 71 | Métadonnées du projet ; design référencé, droits non transférés |
 | `assets/models/characters/rabbit_soldier/rabbit_soldier_portrait.png` | Blender 4.3.2 / Codex | Soldat lapin, pages 71 | Design SukaSuka : droits non transférés |
 | `assets/models/characters/rabbit_soldier/rabbit_soldier_rabbit_soldier_palette.png` | Blender 4.3.2 / Codex | Soldat lapin, pages 71 | Design SukaSuka : droits non transférés |
+| `assets/items/*.png` de l'acte 1 (13 nouvelles icônes, `page_fragment` redessinée ; `shell` et `bookmark` retirées) | généré par `tools/gen_item_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | Acte 1 |

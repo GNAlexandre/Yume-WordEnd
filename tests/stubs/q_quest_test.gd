@@ -7,8 +7,11 @@ extends GutTest
 ## vaincre des ennemis, atteindre une vague ou un score. Mode d'emploi : docs/QUETES.md,
 ## « Tester une quête » ; exemple : tests/unit/test_quest_example.gd.
 ##
-## Avant chaque test : GameState remis à zéro, dossiers de quêtes ajoutés ; après : dossiers
-## retirés, quêtes écrites effacées, zone de WorldManager et GameState rétablis.
+## Avant chaque test : GameState remis à zéro, dossiers de quêtes ajoutés, quêtes du jeu qui
+## démarrent seules (auto_start, comme act1_main) mises de côté (état HELD) pour qu'un test du
+## moteur ne voie démarrer que ses propres quêtes ; release_auto_start() les rend au jeu (scénario
+## de l'acte 1 : tests/unit/test_act1_main.gd). Après : dossiers retirés, quêtes écrites effacées,
+## zone de WorldManager et GameState rétablis.
 
 ## Quêtes d'exemple des tests (absentes du jeu exporté).
 const FIXTURES_DIR := "res://tests/data/quests"
@@ -16,6 +19,8 @@ const FIXTURES_DIR := "res://tests/data/quests"
 const TEMP_DIR := "user://test_quests"
 ## PNJ : ceux des tests d'abord (tests/data/npcs), puis ceux du jeu (data/npcs).
 const NPC_DIRS: Array[String] = ["res://tests/data/npcs", "res://data/npcs"]
+## État d'attente d'une quête auto_start mise de côté : ni à prendre, ni en cours, ni terminée.
+const HELD := &"held"
 
 var tracker: QuestTracker
 var dialogue_runner: DialogueRunner
@@ -32,6 +37,7 @@ func before_each() -> void:
 	_clear_temp_quests()
 	QuestData.add_search_dir(FIXTURES_DIR)
 	QuestData.add_search_dir(TEMP_DIR)
+	hold_auto_start()
 	dialogue_lines.clear()
 	EventBus.dialogue_line.connect(_on_dialogue_line)
 	tracker = add_child_autofree(QuestTracker.new())
@@ -60,6 +66,21 @@ func write_quest(data: Dictionary) -> void:
 	file.store_string(JSON.stringify(data, "  ", false))
 	file.close()
 	QuestData.clear_cache()
+
+
+## Met de côté (HELD) les quêtes auto_start pas encore commencées : le QuestTracker ne les démarre
+## pas. Fait avant chaque test, avant d'ajouter le QuestTracker.
+func hold_auto_start() -> void:
+	for quest: QuestData in QuestData.all():
+		if quest.auto_start and GameState.quest_state(quest.id).is_empty():
+			GameState.set_quest_state(quest.id, HELD)
+
+
+## Rend les quêtes mises de côté : le QuestTracker démarre aussitôt celles qui démarrent seules.
+func release_auto_start() -> void:
+	for quest: QuestData in QuestData.all():
+		if GameState.quest_state(quest.id) == HELD:
+			GameState.set_quest_state(quest.id, &"")
 
 
 ## Démarre une quête comme l'effet de dialogue start_quest.

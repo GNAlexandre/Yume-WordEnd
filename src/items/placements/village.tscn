@@ -5,5 +5,5 @@
 [node name="Pickups" type="Node3D"]
 
 [node name="village_flower_1" parent="." instance=ExtResource("1_pickup")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 5)
 item_id = &"flower_blue"

@@ -371,8 +371,9 @@ func test_loaded_game_resumes_at_the_saved_step() -> void:
 		GameState
 		. from_dict(
 			{
-				"quests": {"q": "active", "pages": "active"},
-				"quest_progress": {"q": {"step": "b", "count": 2}, "pages": {"step": "fantome"}},
+				"quests": {"q": "active", "picture_book": "active"},
+				"quest_progress":
+				{"q": {"step": "b", "count": 2}, "picture_book": {"step": "fantome"}},
 				"tracked_quest": "q",
 			}
 		)
@@ -380,7 +381,7 @@ func test_loaded_game_resumes_at_the_saved_step() -> void:
 	EventBus.game_loaded.emit()
 	assert_eq(step_of(Q), &"b", "étape sauvegardée")
 	assert_eq(count_of(Q), 2, "compteur sauvegardé")
-	assert_eq(step_of(&"pages"), &"deliver", "étape disparue des données : la première")
+	assert_eq(step_of(&"picture_book"), &"pages", "étape disparue des données : la première")
 	kill(&"timere_small")
 	assert_eq(step_of(Q), &"end", "troisième ennemi")
 

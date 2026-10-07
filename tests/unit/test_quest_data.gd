@@ -1,6 +1,6 @@
 extends "res://tests/stubs/q_quest_test.gd"
 ## Lot Q, format des quêtes (QuestData, QuestStep) : lecture du JSON, vérification (chaque erreur
-## expliquée), quête des pages convertie, dossiers de recherche, état vu par le joueur,
+## expliquée), quête du livre d'images, dossiers de recherche, état vu par le joueur,
 ## prérequis, étape courante, textes de progression, marqueurs des PNJ, ordre des quêtes.
 
 
@@ -15,24 +15,26 @@ func _talk_step(step_id: String = "a", npc_id: String = "child") -> Dictionary:
 	return {"id": step_id, "type": "talk", "npc": npc_id, "objective": "Parler"}
 
 
-func test_pages_quest_is_written_in_json() -> void:
-	var quest := QuestData.find(&"pages")
-	assert_not_null(quest, "data/quests/pages.json")
+func test_picture_book_quest_is_written_in_json() -> void:
+	# Acte 1 : le livre d'images remplace la quête des pages (data/quests/pages.json retirée).
+	assert_false(FileAccess.file_exists("res://data/quests/pages.json"), "pages.json retirée")
+	var quest := QuestData.find(&"picture_book")
+	assert_not_null(quest, "data/quests/picture_book.json")
 	if quest == null:
 		return
-	assert_eq(quest.title, "Les pages envolées")
-	assert_eq(quest.giver_npc, &"librarian")
-	assert_eq(quest.steps.size(), 1, "une étape : rapporter les pages")
+	assert_eq(quest.title, "Le livre d’images")
+	assert_eq(quest.giver_npc, &"nephren")
+	assert_eq(quest.prereq_flags, [&"met_willem"] as Array[StringName])
+	assert_eq(quest.steps.size(), 2, "rapporter les pages, puis la lecture")
 	var step := quest.steps[0]
 	assert_eq(step.type, QuestStep.COLLECT)
 	assert_eq(
-		[step.item, step.count, step.npc, step.consume], [&"page_fragment", 5, &"librarian", true]
+		[step.item, step.count, step.npc, step.consume], [&"page_fragment", 5, &"nephren", true]
 	)
-	assert_eq(
-		quest.objective, "Rapporter 5 fragments de page à la bibliothécaire", "objectif du L7"
-	)
-	assert_eq(quest.reward_items, {&"bookmark": 1} as Dictionary[StringName, int])
-	assert_eq(quest.reward_max_hp, 6)
+	assert_eq([quest.steps[1].type, quest.steps[1].npc], [QuestStep.TALK, &"willem"])
+	assert_eq(quest.reward_items, {&"picture_book": 1} as Dictionary[StringName, int])
+	assert_eq(quest.reward_flags, [&"book_read"] as Array[StringName])
+	assert_eq(quest.reward_max_hp, 0)
 	assert_false(ResourceLoader.exists("res://data/quests/pages.tres"), "plus de .tres")
 
 
@@ -45,7 +47,7 @@ func test_all_lists_valid_quests_sorted_by_id() -> void:
 	var ids: Array[String] = []
 	for quest: QuestData in QuestData.all():
 		ids.append(String(quest.id))
-	for expected: String in ["demo_followup", "demo_tour", "example_patrol", "pages"]:
+	for expected: String in ["act1_main", "demo_followup", "demo_tour", "picture_book"]:
 		assert_has(ids, expected)
 	var sorted := ids.duplicate()
 	sorted.sort()
@@ -58,7 +60,7 @@ func test_search_dirs_can_be_added_and_removed() -> void:
 	QuestData.remove_search_dir(TEMP_DIR)
 	assert_null(QuestData.find(&"tmp_quest"), "dossier retiré")
 	QuestData.remove_search_dir(QuestData.DATA_DIR)
-	assert_not_null(QuestData.find(&"pages"), "le dossier du jeu ne se retire pas")
+	assert_not_null(QuestData.find(&"picture_book"), "le dossier du jeu ne se retire pas")
 	QuestData.add_search_dir(TEMP_DIR)
 	assert_not_null(QuestData.find(&"tmp_quest"))
 
@@ -247,9 +249,9 @@ func test_current_step_and_progress_texts() -> void:
 	start_quest(&"q")
 	assert_eq(quest.current_step().id, &"pages")
 	assert_eq(quest.current_objective(), "P")
-	assert_eq(quest.current_progress(), "Fragment de page : 0/3")
+	assert_eq(quest.current_progress(), "Page du livre d’images : 0/3")
 	GameState.add_item(&"page_fragment", 2)
-	assert_eq(quest.current_progress(), "Fragment de page : 2/3")
+	assert_eq(quest.current_progress(), "Page du livre d’images : 2/3")
 	var expected := {
 		&"kill": "Ennemis vaincus : 1/2",
 		&"big": "Grand fragment de Timere : 1/1",
@@ -278,14 +280,16 @@ func test_npc_markers() -> void:
 	)
 	assert_eq(QuestData.npc_marker(&"child"), QuestData.MARKER_AVAILABLE, "« ! » : quête à prendre")
 	assert_eq(QuestData.npc_marker(&"blacksmith"), &"", "quête verrouillée : rien")
-	assert_eq(QuestData.npc_marker(&"librarian"), QuestData.MARKER_AVAILABLE, "pages")
+	assert_eq(QuestData.npc_marker(&"nephren"), &"", "livre d'images : Willem pas salué")
+	GameState.set_flag(&"met_willem")
+	assert_eq(QuestData.npc_marker(&"nephren"), QuestData.MARKER_AVAILABLE, "livre d'images")
 	assert_eq(QuestData.npc_marker(&""), &"")
 	start_quest(&"q")
 	assert_eq(QuestData.npc_marker(&"blacksmith"), QuestData.MARKER_TURN_IN, "« ? » : à qui parler")
-	start_quest(&"pages")
-	assert_eq(QuestData.npc_marker(&"librarian"), &"", "pages en cours, pas assez de pages")
+	start_quest(&"picture_book")
+	assert_eq(QuestData.npc_marker(&"nephren"), &"", "livre en cours, pas assez de pages")
 	GameState.add_item(&"page_fragment", 5)
-	assert_eq(QuestData.npc_marker(&"librarian"), QuestData.MARKER_TURN_IN, "« ? » : à rendre")
+	assert_eq(QuestData.npc_marker(&"nephren"), QuestData.MARKER_TURN_IN, "« ? » : à rendre")
 
 
 func test_active_quests_main_first_then_start_order() -> void:

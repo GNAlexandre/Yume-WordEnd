@@ -1,0 +1,87 @@
+{
+  "_comment": "Acte 1 : scène 9 de act1_main (repli au terrain d'entraînement, HISTOIRE.md 3.3).",
+  "id": "willem_training",
+  "start": "hello",
+  "entries": [
+    "training_1",
+    "after_act",
+    "after_duel",
+    "met"
+  ],
+  "nodes": {
+    "training_1": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "training"
+        ]
+      },
+      "text": "Te voilà. Un Carillon de série, ça pèse. Un assaut, pour voir ? … Garde trop haute. Tu regardes ma lame, pas mes pieds.",
+      "next": "training_2"
+    },
+    "training_2": {
+      "speaker": "",
+      "text": "Ton épée t’échappe des mains et se plante dans l’herbe. Il n’est même pas essoufflé.",
+      "next": "training_3"
+    },
+    "training_3": {
+      "text": "Tu peux devenir beaucoup plus forte. Alors tu dois revenir. Pour ça, au moins.",
+      "next": "training_4"
+    },
+    "training_4": {
+      "speaker": "",
+      "text": "Il chancelle, et s’assied lourdement sur le banc. Des pas pressés dans l’herbe : Nygglatho arrive en courant.",
+      "next": "training_5"
+    },
+    "training_5": {
+      "speaker": "Nygglatho",
+      "speaker_id": "nygglatho",
+      "text": "Il est juste fatigué. Et le cristal a confirmé : départ dans trois jours, au couchant.",
+      "advance_quest": [
+        "act1_main",
+        "training"
+      ],
+      "choices": [
+        {
+          "text": "Encore une fois !",
+          "next": "training_6"
+        },
+        {
+          "text": "… D’accord.",
+          "next": "training_6"
+        }
+      ]
+    },
+    "training_6": {
+      "speaker": "Nygglatho",
+      "speaker_id": "nygglatho",
+      "text": "Pas aujourd’hui. Aujourd’hui, il mange. Et toi aussi. Sinon, je mange quelqu’un.",
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "J’ai encore des courbatures. Ne le dis pas à Nygglatho : elle voudrait me masser. Avec ses poings.",
+      "next": null
+    },
+    "after_duel": {
+      "if": {
+        "flag": "duel_lost"
+      },
+      "text": "Mes genoux me détestent. Ça valait le coup. Reviens quand tu veux pour un autre assaut. Pas tout de suite.",
+      "next": null
+    },
+    "met": {
+      "if": {
+        "flag": "met_willem"
+      },
+      "text": "Je m’échauffe un peu. Ne t’occupe pas de moi. Je fais semblant de savoir ce que je fais.",
+      "next": null
+    },
+    "hello": {
+      "text": "Oh. Bonjour. Je… m’entraîne. On se présentera plus tard, à l’entrepôt. Là, je transpire.",
+      "next": null
+    }
+  }
+}

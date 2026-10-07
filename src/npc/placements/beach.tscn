@@ -1,3 +1,40 @@
 [gd_scene format=3]
 
+[ext_resource type="PackedScene" path="res://src/npc/npc.tscn" id="1_npc"]
+[ext_resource type="Resource" path="res://data/npcs/limeskin.tres" id="2_limeskin"]
+[ext_resource type="Resource" path="res://data/npcs/cat_waiter.tres" id="3_cat_waiter"]
+[ext_resource type="Resource" path="res://data/npcs/egg_vendor.tres" id="4_egg_vendor"]
+[ext_resource type="Resource" path="res://data/npcs/snack_vendor.tres" id="5_snack_vendor"]
+[ext_resource type="Resource" path="res://data/npcs/ramikeldi.tres" id="6_ramikeldi"]
+[ext_resource type="Resource" path="res://data/npcs/ferryman.tres" id="7_ferryman"]
+[ext_resource type="Resource" path="res://data/npcs/baker.tres" id="8_baker"]
+
 [node name="NPCs" type="Node3D"]
+
+[node name="Limeskin" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.2, 12)
+data = ExtResource("2_limeskin")
+
+[node name="CatWaiter" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.2, -6.5)
+data = ExtResource("3_cat_waiter")
+
+[node name="EggVendor" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0.2, 2)
+data = ExtResource("4_egg_vendor")
+
+[node name="SnackVendor" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.2, 1)
+data = ExtResource("5_snack_vendor")
+
+[node name="Ramikeldi" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0.2, -6.5)
+data = ExtResource("6_ramikeldi")
+
+[node name="Ferryman" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.2, 13)
+data = ExtResource("7_ferryman")
+
+[node name="Baker" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.2, -7)
+data = ExtResource("8_baker")

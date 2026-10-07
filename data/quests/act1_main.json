@@ -1,0 +1,129 @@
+{
+  "id": "act1_main",
+  "title": "Dans la forêt céleste",
+  "summary": "La nuit du grand vent, le nouveau responsable est arrivé à l’entrepôt, et le vent a semé des rejetons de Timere dans les bois. Tu es l’aînée : veille sur l’île, et prépare ton départ pour l’île n° 15.",
+  "giver": "nygglatho",
+  "main": true,
+  "auto_start": true,
+  "steps": [
+    {
+      "id": "morning",
+      "type": "talk",
+      "npc": "nygglatho",
+      "objective": "Rejoindre Nygglatho sous le porche"
+    },
+    {
+      "id": "new_officer",
+      "type": "talk",
+      "npc": "willem",
+      "objective": "Saluer le nouveau responsable",
+      "hint": "Il attend près de la porte rivetée de la salle des armes.",
+      "rewards": {
+        "flags": [
+          "met_willem"
+        ]
+      }
+    },
+    {
+      "id": "to_the_woods",
+      "type": "reach",
+      "zone": "forest",
+      "objective": "Gagner les bois du marais, au nord"
+    },
+    {
+      "id": "rejetons",
+      "type": "kill",
+      "enemy": "any",
+      "count": 4,
+      "zone": "forest",
+      "objective": "Abattre les rejetons de Timere dans les bois",
+      "hint": "Ils rôdent autour du terrain d’entraînement."
+    },
+    {
+      "id": "pannibal",
+      "type": "talk",
+      "npc": "pannibal",
+      "objective": "Ramener Pannibal, partie en chasse au marais"
+    },
+    {
+      "id": "report",
+      "type": "talk",
+      "npc": "nygglatho",
+      "objective": "Faire ton rapport à Nygglatho"
+    },
+    {
+      "id": "first_vigil",
+      "type": "arena",
+      "arena": "dunes",
+      "wave": 3,
+      "objective": "Tenir la veille du Couchant jusqu’à la 3e vague",
+      "hint": "Sonne la cloche du vieux poste de guet pour commencer la veille.",
+      "rewards": {
+        "flags": [
+          "first_vigil_done"
+        ]
+      }
+    },
+    {
+      "id": "fever",
+      "type": "talk",
+      "npc": "willem",
+      "objective": "Laisser Willem soigner ta fièvre",
+      "rewards": {
+        "flags": [
+          "departure_told"
+        ]
+      }
+    },
+    {
+      "id": "training",
+      "type": "talk",
+      "npc": "willem_training",
+      "objective": "Retrouver Willem au terrain d’entraînement",
+      "rewards": {
+        "flags": [
+          "duel_lost"
+        ]
+      }
+    },
+    {
+      "id": "the_edge",
+      "type": "reach",
+      "trigger": "couchant_edge",
+      "objective": "Aller seule au bord de l’île, face au couchant",
+      "hint": "Si tu sautes, tes ailes te ramèneront."
+    },
+    {
+      "id": "barocupot",
+      "type": "talk",
+      "npc": "limeskin",
+      "objective": "Monter à bord du Barocupot, au port"
+    },
+    {
+      "id": "starry_hill",
+      "type": "reach",
+      "trigger": "hill_summit",
+      "objective": "Gravir la colline des étoiles"
+    },
+    {
+      "id": "promise",
+      "type": "talk",
+      "npc": "willem_stars",
+      "objective": "Écouter Willem, au sommet",
+      "rewards": {
+        "items": {
+          "butter_cake_promise": 1
+        },
+        "max_hp": 6,
+        "flags": [
+          "act1_promise"
+        ]
+      }
+    }
+  ],
+  "rewards": {
+    "flags": [
+      "act1_done"
+    ]
+  }
+}

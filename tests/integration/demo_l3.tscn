@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://src/visuals/character_visual.tscn" id="2_visual"]
 [ext_resource type="Resource" path="res://data/skins/chtholly.tres" id="3_chtholly"]
 [ext_resource type="Resource" path="res://data/enemies/visuals/timere.tres" id="4_timere"]
-[ext_resource type="Resource" path="res://data/skins/bibliothecaire.tres" id="5_librarian"]
+[ext_resource type="Resource" path="res://data/npcs/visuals/nephren.tres" id="5_nephren"]
 [ext_resource type="Texture2D" path="res://assets/textures/checker.png" id="6_checker"]
 
 [sub_resource type="Environment" id="Environment_demo"]
@@ -75,9 +75,9 @@ mesh = SubResource("BoxMesh_mark")
 
 [node name="Characters" type="Node3D" parent="."]
 
-[node name="Bibliothecaire" parent="Characters" instance=ExtResource("2_visual")]
+[node name="Nephren" parent="Characters" instance=ExtResource("2_visual")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, 0, -0.4)
-skin = ExtResource("5_librarian")
+skin = ExtResource("5_nephren")
 
 [node name="Chtholly" parent="Characters" instance=ExtResource("2_visual")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0, 0)

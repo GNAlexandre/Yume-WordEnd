@@ -1,3 +1,21 @@
 [gd_scene format=3]
 
+[ext_resource type="PackedScene" path="res://src/items/pickup.tscn" id="1_pickup"]
+
 [node name="Pickups" type="Node3D"]
+
+[node name="dunes_sheet_1" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 1)
+item_id = &"laundry_sheet"
+
+[node name="dunes_gear_1" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -7)
+item_id = &"clock_gear"
+
+[node name="dunes_gear_2" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.81, -18)
+item_id = &"clock_gear"
+
+[node name="dunes_flower_1" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.92, 19)
+item_id = &"flower_blue"

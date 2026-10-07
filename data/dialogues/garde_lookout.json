@@ -1,0 +1,63 @@
+{
+  "_comment": "Acte 1 : le guetteur du Couchant (facultatif) ; il commente le vent et les veilles.",
+  "id": "garde_lookout",
+  "start": "hello",
+  "entries": [
+    "vigil_1",
+    "edge",
+    "after_act",
+    "record",
+    "vigil_done"
+  ],
+  "nodes": {
+    "vigil_1": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "first_vigil"
+        ]
+      },
+      "text": "Le vent tourne à l’ouest, guerrière. Ça sssent le rejeton. Sssonnez la cloche quand vous serez prête.",
+      "next": "vigil_2"
+    },
+    "vigil_2": {
+      "text": "Moi, je regarde. C’est tout ce que je peux faire : seules les fées viennent à bout d’un fragment.",
+      "next": null
+    },
+    "edge": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "the_edge"
+        ]
+      },
+      "text": "Le bord est tout près, au nord des ruines. N’allez pas trop loin… Enfin. Vous avez des ailes, vous.",
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Le vent du couchant ssse lève tôt, ces jours-ci. Bon vent, guerrière. C’est une formule. Et un ssssouhait.",
+      "next": null
+    },
+    "record": {
+      "if": {
+        "flag": "vigil_record"
+      },
+      "text": "Mille points ? Je vais devoir écrire un rapport plus long. Beaucoup plus long.",
+      "next": null
+    },
+    "vigil_done": {
+      "if": {
+        "flag": "first_vigil_done"
+      },
+      "text": "Belle veille. Je l’ai notée dans mon rapport. La petite aux cheveux verts aussi, dans son carnet.",
+      "next": null
+    },
+    "hello": {
+      "text": "Rien à signaler. À part le vent. Le vent, c’est toujours à ssssignaler.",
+      "next": null
+    }
+  }
+}

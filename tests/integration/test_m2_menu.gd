@@ -6,7 +6,31 @@ extends "res://tests/stubs/m2_game_test.gd"
 ## sauvegarde. (Systèmes et textes) Sous les vignettes, « Ta fée prend la place de Chtholly dans
 ## l'histoire. » ; un PNJ qui a le skin choisi n'est pas au village (la fée choisie est le
 ## joueur). Noms des zones et skins lus dans le jeu, pas figés ici (le monde et le contenu de
-## l'acte 1 les changent).
+## l'acte 1 les changent). Le choix se fait dans un dossier de skins de test (Chtholly et une
+## fée faite du visuel de Nephren).
+
+const TEST_SKINS_DIR := "user://test_m2_menu_skins"
+const TEST_SKINS: Array[String] = [
+	"res://data/skins/chtholly.tres", "res://data/npcs/visuals/nephren.tres"
+]
+
+
+func before_each() -> void:
+	super()
+	DirAccess.make_dir_recursive_absolute(TEST_SKINS_DIR)
+	for path: String in TEST_SKINS:
+		assert_eq(ResourceSaver.save(load(path), TEST_SKINS_DIR.path_join(path.get_file())), OK)
+	SkinRegistry.skins_dir = TEST_SKINS_DIR
+	SkinRegistry.reload()
+
+
+func after_each() -> void:
+	super()
+	SkinRegistry.skins_dir = SkinRegistry.SKINS_DIR
+	SkinRegistry.reload()
+	for path: String in TEST_SKINS:
+		DirAccess.remove_absolute(TEST_SKINS_DIR.path_join(path.get_file()))
+	DirAccess.remove_absolute(TEST_SKINS_DIR)
 
 
 func _focus_owner() -> Control:

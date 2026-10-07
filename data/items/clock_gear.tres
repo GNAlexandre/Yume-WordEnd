@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/items/clock_gear.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"clock_gear"
+display_name = "Engrenage de laiton"
+icon = ExtResource("2_icon")
+stackable = true
+max_stack = 99
+description = "Un vieil engrenage, encore bon pour le service."
+color = Color(1, 0.8, 0.4, 1)

@@ -27,13 +27,25 @@ const FIXTURES := {
 ## Longueurs maximales (caractères) : titre et objectif tiennent dans le panneau du HUD.
 const MAX_TITLE := 40
 const MAX_OBJECTIVE := 70
+## Quêtes de l'acte 1 (docs/lore/HISTOIRE.md, sections 3.1 et 3.2).
+const ACT1_QUESTS: Array[String] = [
+	"act1_main",
+	"picture_book",
+	"special_dessert",
+	"flying_laundry",
+	"vigil_register",
+	"old_clock",
+	"forget_me_nots",
+]
 
 var _problems: Array[String] = []
 
 
 func test_game_quests_are_valid_and_their_references_exist() -> void:
 	var quests := _check_quests(GAME)
-	assert_has(quests.keys(), "pages", "la quête des pages est dans data/quests")
+	for quest_id: String in ACT1_QUESTS:
+		assert_has(quests.keys(), quest_id, "acte 1 : %s est dans data/quests" % quest_id)
+	assert_does_not_have(quests.keys(), "pages", "le livre d'images remplace les pages")
 	assert_eq(_problems, [] as Array[String], "\n".join(_problems))
 
 
@@ -60,7 +72,7 @@ func test_problems_are_reported_with_their_file() -> void:
 			{"id": "c", "type": "reach", "zone": "moon", "objective": "Aller sur la lune"},
 			{"id": "d", "type": "reach", "trigger": "nowhere", "objective": "Aller nulle part"},
 			{"id": "e", "type": "arena", "arena": "colosseum", "wave": 2, "objective": "Arène"},
-			{"id": "f", "type": "talk", "npc": "librarian", "objective": "x".repeat(80)},
+			{"id": "f", "type": "talk", "npc": "nephren", "objective": "x".repeat(80)},
 		],
 		"rewards": {"items": {"diamond": 1}},
 	}
@@ -234,14 +246,27 @@ func _check_rewards(label: String, rewards: Dictionary) -> void:
 
 
 func _check_npc(label: String, npc_id: Variant, where: Dictionary) -> void:
-	for dir: String in where["npcs"]:
+	var npc := _find_npc(StringName(str(npc_id)), where["npcs"])
+	if npc == null:
+		_problems.append("%s : PNJ inconnu « %s » (data/npcs)" % [label, npc_id])
+	elif npc.dialogue_path.is_empty():
+		_problems.append("%s : le PNJ « %s » n'a pas de dialogue" % [label, npc_id])
+
+
+## PNJ d'identifiant npc_id : <dossier>/<id>.tres d'abord, sinon une fiche du dossier qui porte
+## cet id (fiche d'exemple des tests : example_blacksmith.tres est le PNJ « blacksmith »).
+func _find_npc(npc_id: StringName, dirs: Array) -> NpcData:
+	for dir: String in dirs:
 		var path := dir.path_join("%s.tres" % npc_id)
 		if ResourceLoader.exists(path):
-			var npc := load(path) as NpcData
-			if npc == null or npc.dialogue_path.is_empty():
-				_problems.append("%s : le PNJ « %s » n'a pas de dialogue" % [label, npc_id])
-			return
-	_problems.append("%s : PNJ inconnu « %s » (data/npcs)" % [label, npc_id])
+			return load(path) as NpcData
+	for dir: String in dirs:
+		for file_name: String in DirAccess.get_files_at(dir):
+			if file_name.ends_with(".tres"):
+				var npc := load(dir.path_join(file_name)) as NpcData
+				if npc != null and npc.id == npc_id:
+					return npc
+	return null
 
 
 func _check_item(label: String, item_id: Variant) -> void:
@@ -296,7 +321,7 @@ func _check_dialogue_step(
 	for ref: Array in quest_refs:
 		var quest_id := str(ref[0])
 		if not known.has(quest_id) and not quests.has(quest_id):
-			# Une quête du jeu nommée par un dialogue d'exemple est permise (ex. pages).
+			# Une quête du jeu nommée par un dialogue d’exemple est permise (ex. picture_book).
 			_problems.append("%s : quête inconnue « %s »" % [label, quest_id])
 			continue
 		var step_id := str(ref[1])

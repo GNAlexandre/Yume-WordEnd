@@ -1,0 +1,37 @@
+{
+  "id": "flying_laundry",
+  "title": "Le linge envolé",
+  "summary": "Le vent du soir a arraché les draps du toit et les a semés jusqu’aux bords de l’île. Un drap qui tombe dans les nuages ne revient jamais.",
+  "giver": "nygglatho",
+  "requires": {
+    "flags": [
+      "met_willem"
+    ]
+  },
+  "steps": [
+    {
+      "id": "sheets",
+      "type": "collect",
+      "item": "laundry_sheet",
+      "count": 5,
+      "npc": "nygglatho",
+      "consume": true,
+      "objective": "Rapporter 5 draps envolés à Nygglatho",
+      "hint": "Port, Couchant, colline, bois : le vent n’a rien épargné."
+    },
+    {
+      "id": "tea",
+      "type": "talk",
+      "npc": "nygglatho",
+      "objective": "Prendre le thé avec Nygglatho"
+    }
+  ],
+  "rewards": {
+    "items": {
+      "cheesecake_slice": 1
+    },
+    "flags": [
+      "laundry_done"
+    ]
+  }
+}

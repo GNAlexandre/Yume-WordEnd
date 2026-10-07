@@ -139,10 +139,10 @@ func test_game_loaded_removes_collected_pickups() -> void:
 
 
 func test_visual_uses_item_icon_and_floats() -> void:
-	var pickup := _pickup("beach_shell_9", &"shell")
+	var pickup := _pickup("beach_gear_9", &"clock_gear")
 	var icon := pickup.get_node(^"Mesh/Icon") as Sprite3D
 	var mesh := pickup.get_node(^"Mesh") as MeshInstance3D
-	assert_eq(icon.texture, ItemData.find(&"shell").icon)
+	assert_eq(icon.texture, ItemData.find(&"clock_gear").icon)
 	assert_eq(icon.billboard, BaseMaterial3D.BILLBOARD_ENABLED)
 	var heights: Array[float] = []
 	for i in 4:

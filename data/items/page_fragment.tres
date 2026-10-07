@@ -6,9 +6,9 @@
 [resource]
 script = ExtResource("1_item")
 id = &"page_fragment"
-display_name = "Fragment de page"
+display_name = "Page du livre d’images"
 icon = ExtResource("2_icon")
 stackable = true
 max_stack = 99
-description = "Une page arrachée au dernier tome de la bibliothèque. Les Timeres les ont emportées dans la forêt : la bibliothécaire en attend cinq."
+description = "Une page du livre d’images des petites, arrachée par le grand vent. Des Braves y terrassent de terribles emnetwiht."
 color = Color(1, 0.86, 0.52, 1)

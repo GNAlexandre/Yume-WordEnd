@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/items/pressed_forget_me_not.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"pressed_forget_me_not"
+display_name = "Myosotis séché"
+icon = ExtResource("2_icon")
+stackable = false
+max_stack = 1
+description = "Une fleur du vase de Nygglatho, glissée entre deux pages."
+color = Color(0.64, 0.76, 0.98, 1)

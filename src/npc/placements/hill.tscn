@@ -1,3 +1,17 @@
 [gd_scene format=3]
 
+[ext_resource type="PackedScene" path="res://src/npc/npc.tscn" id="1_npc"]
+[ext_resource type="Resource" path="res://data/npcs/willem_stars.tres" id="2_willem_stars"]
+[ext_resource type="PackedScene" path="res://src/quests/quest_trigger.tscn" id="3_trigger"]
+
 [node name="NPCs" type="Node3D"]
+
+[node name="WillemStars" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 8.2, -0.8)
+data = ExtResource("2_willem_stars")
+
+[node name="hill_summit" parent="." instance=ExtResource("3_trigger")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 8, -3)
+trigger_id = &"hill_summit"
+radius = 4.0
+height = 3.0

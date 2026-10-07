@@ -7,12 +7,14 @@ const VISUAL := preload("res://src/visuals/character_visual.tscn")
 const PLAYER := preload("res://src/player/player.tscn")
 const CHTHOLLY := preload("res://data/skins/chtholly.tres")
 const TIMERE := preload("res://data/enemies/visuals/timere.tres")
-const LIBRARIAN := preload("res://data/skins/bibliothecaire.tres")
+const NEPHREN := preload("res://data/npcs/visuals/nephren.tres")
 const PLAYER_ANIMS: Array[StringName] = [
 	&"repos", &"marche", &"course", &"attaque", &"charge", &"degats", &"mort"
 ]
 ## Marque de animation_finished dans _events.
 const FINISHED := -1
+## Dossier de skins temporaire (Chtholly est le seul skin jouable de data/skins).
+const SKINS_TEST_DIR := "user://act1_skins"
 
 ## Signaux reçus, dans l'ordre : [anim, image] ou [anim, FINISHED].
 var _events: Array = []
@@ -244,13 +246,13 @@ func test_skin_change_keeps_the_running_animation() -> void:
 	visual.play(&"marche")
 	visual.advance(0.35)
 	_events.clear()
-	visual.set_skin(LIBRARIAN)
+	visual.set_skin(NEPHREN)
 	assert_eq([visual.current_animation(), visual.current_frame()], [&"marche", 3], "même instant")
 	assert_eq(_events, [], "pas de signal au changement de skin")
-	assert_same(sprite.sprite_frames, SheetLoader.frames_for(LIBRARIAN))
+	assert_same(sprite.sprite_frames, SheetLoader.frames_for(NEPHREN))
 	assert_eq([sprite.animation, sprite.frame], [&"marche", 3])
 	assert_almost_eq(
-		sprite.pixel_size, SheetLoader.pixel_size(LIBRARIAN, LIBRARIAN.frames_json.data), 1e-6
+		sprite.pixel_size, SheetLoader.pixel_size(NEPHREN, NEPHREN.frames_json.data), 1e-6
 	)
 	visual.advance(0.1)
 	assert_eq(_events, [[&"marche", 4]], "l'animation continue")
@@ -268,14 +270,29 @@ func test_skin_change_keeps_the_running_animation() -> void:
 
 
 func test_player_visual_follows_the_active_skin() -> void:
+	# Acte 1 : Chtholly est le seul skin jouable de data/skins ; un second skin le temps du test.
+	DirAccess.make_dir_recursive_absolute(SKINS_TEST_DIR)
+	var second := NEPHREN.duplicate() as SkinData
+	second.id = &"second"
+	assert_eq(ResourceSaver.save(CHTHOLLY, SKINS_TEST_DIR + "/chtholly.tres"), OK)
+	assert_eq(ResourceSaver.save(second, SKINS_TEST_DIR + "/second.tres"), OK)
+	SkinRegistry.skins_dir = SKINS_TEST_DIR
+	SkinRegistry.reload()
 	var player: Node3D = add_child_autofree(PLAYER.instantiate())
 	var visual := player.get_node(^"Visual") as CharacterVisual
-	assert_eq(visual.skin, CHTHOLLY, "skin par défaut")
-	GameState.skin_id = &"enfant"
-	assert_eq(visual.skin.id, &"enfant", "skin_changed appliqué à chaud")
+	assert_eq(visual.skin.id, &"chtholly", "skin par défaut")
+	GameState.skin_id = &"second"
+	assert_eq(visual.skin.id, &"second", "skin_changed appliqué à chaud")
 	assert_eq(visual.current_animation(), &"repos")
 	GameState.skin_id = &""
-	assert_eq(visual.skin, CHTHOLLY)
+	assert_eq(visual.skin.id, &"chtholly")
+	GameState.skin_id = &"enfant"
+	assert_eq(visual.skin.id, &"chtholly", "skin retiré (ancienne sauvegarde) : Chtholly")
+	SkinRegistry.skins_dir = SkinRegistry.SKINS_DIR
+	SkinRegistry.reload()
+	for file_name: String in ["chtholly.tres", "second.tres"]:
+		DirAccess.remove_absolute(SKINS_TEST_DIR.path_join(file_name))
+	DirAccess.remove_absolute(SKINS_TEST_DIR)
 
 
 func test_clock_runs_in_process() -> void:

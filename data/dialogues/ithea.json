@@ -1,0 +1,99 @@
+{
+  "_comment": "Acte 1 : l'homme-chat (donneuse), ragots et répliques de veille de départ.",
+  "id": "ithea",
+  "start": "hello",
+  "entries": [
+    "clock_offer_1",
+    "clock_progress",
+    "react_clock",
+    "after_act",
+    "duel",
+    "departure",
+    "met"
+  ],
+  "nodes": {
+    "clock_offer_1": {
+      "if": {
+        "quest": [
+          "old_clock",
+          "available"
+        ]
+      },
+      "text": "Nya-ha-ha ! Devine qui j’ai vu au café ? Monsieur l’Officier, en train de serrer la main d’un homme-chat très élégant.",
+      "next": "clock_offer_2"
+    },
+    "clock_offer_2": {
+      "text": "Chapeau, gilet, belles manières… Et si on venait nous le recruter, notre Officier ? On enquête ?",
+      "choices": [
+        {
+          "text": "On enquête.",
+          "start_quest": "old_clock",
+          "next": "clock_go"
+        },
+        {
+          "text": "Ce n’est pas mon affaire.",
+          "next": "clock_later"
+        }
+      ]
+    },
+    "clock_go": {
+      "text": "Commence par le serveur du café La Clochette. Les serveurs savent tout. Moi aussi, mais je ne dis rien.",
+      "next": null
+    },
+    "clock_later": {
+      "text": "Nya-ha-ha. Si tu le dis. Tu as rougi, quand même.",
+      "next": null
+    },
+    "clock_progress": {
+      "if": {
+        "quest": [
+          "old_clock",
+          "active"
+        ]
+      },
+      "text": "Alors, cet homme-chat ? Moi, je dis qu’on va nous le prendre, notre Officier. Nya-ha-ha.",
+      "next": null
+    },
+    "react_clock": {
+      "if": {
+        "flag": "rami_clock_fixed",
+        "not_flag": "ithea_clock_said"
+      },
+      "text": "Une horloge ? Juste un voisin et son horloge ? Nephren et moi, on le savait depuis le début. Nya-ha-ha !",
+      "set_flag": "ithea_clock_said",
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "On revient, hein ? Toutes les trois. … Nya-ha-ha. Évidemment qu’on revient.",
+      "next": null
+    },
+    "duel": {
+      "if": {
+        "flag": "duel_lost"
+      },
+      "text": "Il t’a battue sans transpirer ? Nephren dit qu’il est fissuré. Moi, je dis qu’il est… intéressant. Nya-ha-ha.",
+      "next": null
+    },
+    "departure": {
+      "if": {
+        "flag": "departure_told"
+      },
+      "text": "Tout le monde joue un rôle, ici. Moi, je joue la rigolote. C’est le meilleur rôle, crois-moi.",
+      "next": null
+    },
+    "met": {
+      "if": {
+        "flag": "met_willem"
+      },
+      "text": "Notre Officier a les yeux qui te suivent. Je dis ça, je ne dis rien. Nya-ha-ha.",
+      "next": null
+    },
+    "hello": {
+      "text": "Nya-ha-ha. L’aînée en personne. Tu viens écouter les ragots ? J’en ai des tout frais.",
+      "next": null
+    }
+  }
+}

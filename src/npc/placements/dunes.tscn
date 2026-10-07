@@ -1,3 +1,17 @@
 [gd_scene format=3]
 
+[ext_resource type="PackedScene" path="res://src/npc/npc.tscn" id="1_npc"]
+[ext_resource type="Resource" path="res://data/npcs/garde_lookout.tres" id="2_lookout"]
+[ext_resource type="PackedScene" path="res://src/quests/quest_trigger.tscn" id="3_trigger"]
+
 [node name="NPCs" type="Node3D"]
+
+[node name="GardeLookout" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.2, -12)
+data = ExtResource("2_lookout")
+
+[node name="couchant_edge" parent="." instance=ExtResource("3_trigger")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 0.1, -12)
+trigger_id = &"couchant_edge"
+radius = 3.0
+height = 3.0

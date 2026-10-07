@@ -1,20 +1,45 @@
 [gd_scene format=3]
 
 [ext_resource type="PackedScene" path="res://src/npc/npc.tscn" id="1_npc"]
-[ext_resource type="Resource" path="res://data/npcs/librarian.tres" id="2_librarian"]
-[ext_resource type="Resource" path="res://data/npcs/blacksmith.tres" id="3_blacksmith"]
-[ext_resource type="Resource" path="res://data/npcs/child.tres" id="4_child"]
+[ext_resource type="Resource" path="res://data/npcs/nygglatho.tres" id="2_nygglatho"]
+[ext_resource type="Resource" path="res://data/npcs/willem.tres" id="3_willem"]
+[ext_resource type="Resource" path="res://data/npcs/nephren.tres" id="4_nephren"]
+[ext_resource type="Resource" path="res://data/npcs/ithea.tres" id="5_ithea"]
+[ext_resource type="Resource" path="res://data/npcs/tiat.tres" id="6_tiat"]
+[ext_resource type="Resource" path="res://data/npcs/collon.tres" id="7_collon"]
+[ext_resource type="Resource" path="res://data/npcs/lakhesh.tres" id="8_lakhesh"]
+[ext_resource type="Resource" path="res://data/npcs/almita.tres" id="9_almita"]
 
 [node name="NPCs" type="Node3D"]
 
-[node name="Librarian" parent="." instance=ExtResource("1_npc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.2, 4)
-data = ExtResource("2_librarian")
+[node name="Nygglatho" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0.2, -8.5)
+data = ExtResource("2_nygglatho")
 
-[node name="Blacksmith" parent="." instance=ExtResource("1_npc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.2, 3)
-data = ExtResource("3_blacksmith")
+[node name="Willem" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.5, 0.2, 0)
+data = ExtResource("3_willem")
 
-[node name="Child" parent="." instance=ExtResource("1_npc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.2, 6.5)
-data = ExtResource("4_child")
+[node name="Nephren" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.2, -9.5)
+data = ExtResource("4_nephren")
+
+[node name="Ithea" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.2, 2.5)
+data = ExtResource("5_ithea")
+
+[node name="Tiat" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.2, 5)
+data = ExtResource("6_tiat")
+
+[node name="Collon" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.2, -10)
+data = ExtResource("7_collon")
+
+[node name="Lakhesh" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0.2, -6)
+data = ExtResource("8_lakhesh")
+
+[node name="Almita" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.2, 7)
+data = ExtResource("9_almita")

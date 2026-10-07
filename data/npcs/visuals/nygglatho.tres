@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SkinData" format=3]
+
+[ext_resource type="Script" path="res://src/visuals/skin_data.gd" id="1_skin"]
+[ext_resource type="Texture2D" path="res://assets/characters/nygglatho/nygglatho.png" id="2_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/nygglatho/nygglatho.json" id="3_frames"]
+[ext_resource type="Texture2D" path="res://assets/characters/nygglatho/nygglatho_portrait.png" id="4_portrait"]
+
+[resource]
+script = ExtResource("1_skin")
+id = &"nygglatho"
+display_name = "Nygglatho"
+sprite_sheet = ExtResource("2_sheet")
+frames_json = ExtResource("3_frames")
+portrait = ExtResource("4_portrait")
+height_m = 1.85
