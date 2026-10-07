@@ -5,7 +5,8 @@ extends "res://tests/stubs/l8_save_test.gd"
 ## reprend Chtholly, les objets retirés restent des objets inconnus (l'inventaire s'ouvre sans
 ## erreur), la quête des pages, sans données, n'est plus listée au journal, et la quête principale
 ## de l'acte 1 démarre et prend le suivi du HUD (même si les pages étaient suivies). Une quête des
-## pages restée « active » compte encore dans le « +1 quête » du HUD (docs/DECISIONS.md).
+## pages restée « active » ne compte plus parmi les quêtes en cours (QuestData.active_ids) : pas
+## de « +1 quête » fantôme dans le HUD.
 
 const GAME_SCENE := preload("res://src/game.tscn")
 ## Jalon M2 : pages rendues, marque-page et coquillages, skin de l'enfant, 6 PV max.
@@ -36,6 +37,20 @@ const PAGES_SAVE := """{
 	"quest_progress": {"pages": {"step": "deliver", "count": 0}},
 	"tracked_quest": "pages",
 	"collected_pickups": [],
+	"best_scores": {}
+}"""
+## Jalon M2 publié (v1) : la quête des pages acceptée, pas encore rendue (trois pages en poche).
+const M2_PAGES_ACTIVE_SAVE := """{
+	"version": 1,
+	"saved_at": "2026-10-05T20:00:00Z",
+	"skin": "chtholly",
+	"max_hp": 5,
+	"position": [2.0, 0.2, 6.0],
+	"zone": "village",
+	"inventory": {"page_fragment": 3},
+	"flags": {"quest_pages_accepted": true},
+	"quests": {"pages": "active"},
+	"collected_pickups": ["forest_page_1", "forest_page_2", "forest_page_3"],
 	"best_scores": {}
 }"""
 
@@ -91,3 +106,29 @@ func test_save_with_the_pages_quest_in_progress() -> void:
 	assert_eq(GameState.tracked_quest, &"act1_main", "l'acte 1 prend le suivi des pages")
 	assert_eq(hud.call(&"shown_quest"), &"act1_main", "et le HUD l'affiche")
 	assert_eq(hud.call(&"quest_objective", &"act1_main"), "Rejoindre Nygglatho sous le porche")
+
+
+func test_m2_save_with_the_pages_quest_active_shows_no_ghost_quest() -> void:
+	var game := await _load_into_the_game(M2_PAGES_ACTIVE_SAVE)
+	assert_eq(GameState.quest_state(&"pages"), &"active", "l'état de la sauvegarde est gardé")
+	assert_eq(GameState.quest_state(&"act1_main"), &"active", "l'acte 1 commence")
+	assert_eq(QuestData.active_ids(), [&"act1_main"] as Array[StringName], "pages : plus en cours")
+	assert_eq(_listed(game), [&"act1_main"] as Array[StringName], "ni au journal")
+	await wait_process_frames(2)
+	var hud := game.get_node(^"UI/HUD") as Control
+	assert_eq(hud.call(&"shown_quest"), &"act1_main")
+	assert_eq(_other_quests(hud), "", "pas de « +1 quête » fantôme dans le HUD")
+	# Une vraie quête secondaire compte, elle (suivie dès qu'elle commence).
+	GameState.set_flag(&"met_willem")
+	GameState.set_quest_state(&"picture_book", &"active")
+	await wait_process_frames(2)
+	assert_eq(QuestData.active_ids().size(), 2, "act1_main et le livre d'images")
+	assert_eq(hud.call(&"shown_quest"), &"picture_book")
+	assert_eq(_other_quests(hud), "+1 quête · Tab / Select", "l'acte 1, et pas les pages")
+
+
+## Texte « +n quêtes » du panneau de quête du HUD ("" s'il est caché).
+func _other_quests(hud: Control) -> String:
+	var entry := hud.get_node(^"%Quests").get_child(0)
+	var label := entry.find_child("Others", true, false) as Label
+	return label.text if label.visible else ""

@@ -1074,3 +1074,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   répliques d'ambiance de `willem_training` hors de son étape ne s'entendent plus (gardées comme
   repli) ; Willem apparaît au sommet quand le joueur entre dans `hill_summit` (pas de cinématique
   d'arrivée en M2).
+- **Intégration acte 1 — quêtes sans données** (`QuestData.active_ids()` / `done_ids()`) : une
+  quête de la sauvegarde qui n'a plus de fichier (`pages` restée active dans une partie du jalon
+  M2) est ignorée à la source : ni au journal, ni dans le « +n quêtes » du HUD, ni dans les
+  boucles du QuestTracker. Son état reste dans GameState (aucune migration ne l'efface : une
+  quête rendue au jeu plus tard retrouverait son état). `test_act1_saves.gd`.
