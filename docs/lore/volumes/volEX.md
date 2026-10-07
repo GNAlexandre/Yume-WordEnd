@@ -172,23 +172,23 @@ Les références donnent le titre de la section ; pour le cadre (prologue, inter
 
 **Idées originales**
 - *Original* : les *rêves de Seniorious*, des donjons-souvenirs qui ramènent à la surface (elfes-arbres, orcs, fang-hares, zone illusoire à briser, dragon de rouille), dans le prolongement du rêve de Lakhesh.
-- *Original* : chasser l'ours avec Nygglatho, apporter une écharpe à Nephren sur le toit, collectionner des coupures du *Journal*, défendre l'entrepôt pendant l'absence des fées.
+- *Original* : chasser l'ours avec Nygglatho, apporter une écharpe à Nephren sur le toit, collectionner des coupures du *Journal*, défendre l'entrepôt pendant l'absence des fées, retrouver le déjeuner du réfectoire (purée, porc, orange) comme soin, une nuit de talismans lumineux sur la colline.
 
 ## Illustrations de référence
 
-- **image1.jpg / image17.jpg** (couverture) : Lillia en manteau rouge brodé d'or, broche dorée, cheveux cramoisis ; Chtholly coiffée d'un grand chapeau marine à nœud bleu clair, blouse marine à grand col blanc, corsage blanc lacé, jupe à étages. Ce sont les tenues de référence.
+- **image1.jpg / image17.jpg** (couverture) : Lillia, cheveux cramoisis et yeux rouge-brun, en manteau rouge à liserés et motifs dorés en feuilles, intérieur crème, broche dorée à gemme orange ; Chtholly, longs cheveux bleu ciel et yeux bleus, coiffée d'un grand chapeau marine à nœud bleu clair, blouse marine à grand col blanc, corsage blanc lacé de marine, jupe blanche à étages. Ce sont les tenues de référence.
 - **image4.jpg** (chibi) : une probable Almaria (natte châtaine, robe bordeaux), Lillia (queue haute rousse, pantalon, bottes) et Chtholly (deux couettes, bottes bleues). C'est le modèle direct pour le style chibi.
 - **image5.jpg** : Lillia en robe d'apparat rouge et or, avec diadème et voile.
 - **image6.jpg** : Chtholly qui joue au chat avec des fées enfants (cheveux roses, vert clair, bleu-gris), un panier d'osier, sous un ciel bleu.
 - **image8.jpg / image14.jpg** : Lakhesh (cheveux courts, couette sur le côté, robe-chasuble) à côté de Seniorious, dont la lame est large et craquelée et la garde sombre et hérissée ; Pannibal en veste à capuche.
 - **image9.jpg** : Willem et Lillia enfants (bâton, cape blanche) dans une clairière.
-- **image11.jpg** : le réfectoire, son vaisselier, et Nygglatho portant un plateau.
+- **image11.jpg** : le réfectoire et son grand vaisselier vitré ; Nygglatho (longs cheveux, col montant en dentelle) porte un plateau ; à table, probablement Pannibal (frange sur un œil), Lakhesh et Nopht (sweat à capuche).
 - **image12.jpg / image13.jpg** : Chtholly boudeuse devant une part de cheese-cake.
 - **image3.jpg** (frontispice) ; **image7.jpg** (sommaire) ; **image16.jpg** (fées en uniforme marine avec des ailes, art promotionnel qui ne vient pas du volume) ; **image2.jpg, image10.jpg, image15.jpg** (crédits et ornements).
 
 ## Incertitudes
 
 - **Âge de Lillia** : on lui prête « une vingtaine d'années ou un peu moins » alors qu'elle va avoir 14 ans ; c'est probablement une erreur de traduction (chap. « Le Soleil Couchant »).
-- **Variantes** : *Dione* et *Dioné* ; *salon* et *Parloir de la Lumière* ; *Quasi Brave* et *Quasi-Brave* ; *fang-hare* et *fanghares* ; *Carillon* et *arme enchantée* pour le même objet.
+- **Variantes** : *Narvant*, cité ou ville *des seuils* et ville *des/de Weirs* ; *Dione* et *Dioné* ; *salon* et *Parloir de la Lumière* ; *Quasi Brave* et *Quasi-Brave* ; *Venenum* et *venenum* ; *fang-hare* et *fanghares* ; *North Garmando* non traduit ; Seniorious tantôt masculin, tantôt féminin ; *Carillon* et *arme enchantée* pour le même objet.
 - **Écarts avec le jeu** : le jeu écrit *Seniolis* et parle de *Timeres* au pluriel, alors que la traduction dit *Seniorious* et *Timere*, *le Six*, sans préciser s'il s'agit d'une espèce.
-- **Points flous** : les couleurs des cheveux viennent des illustrations ; l'identité de Glick et du garçon à la cape blanche n'est pas précisée ; le destin tragique de Lillia et du maître reste allusif.
+- **Points flous** : les couleurs des cheveux viennent des illustrations ; l'identité de Glick et du garçon à la cape blanche n'est pas précisée ; le destin tragique de Lillia et du maître reste allusif ; *ouvrir la porte* n'est défini que par le contexte.
