@@ -4,7 +4,8 @@ extends Node
 ## sauvegarde n'est écrite (pas de game_loaded) ; GameState est rétabli quand la démo quitte
 ## l'arbre.
 ##
-## Captures : ACT1_SHOT=<vue> tools/screenshot.sh res://tests/integration/demo_act1.tscn <png> 150
+## Captures : ACT1_SHOT=<vue> tools/screenshot.sh res://tests/integration/demo_act1.tscn <png> 100
+## (toutes les vues : docs/RECETTE_M2.md, « Refaire les captures »)
 ##   nygglatho : la première scène de act1_main, sous le porche (Nygglatho, le grand vent) ;
 ##   willem    : Willem et ses conseils (étape new_officer, après « N'y touche pas. ») ;
 ##   deux_voix : une scène à deux voix, la fièvre (étape fever) : Nephren parle dans le
@@ -13,9 +14,11 @@ extends Node
 ##               une terminée ;
 ##   village   : (par défaut) l'entrepôt des fées et ses PNJ, vue d'ensemble ;
 ##   bois      : les bois du marais pendant l'assaut (étape training) : Willem au banc du
-##               terrain d'entraînement, les rejetons, Pannibal au bord du marais ;
-##   couchant  : le bord du Couchant à l'heure de la première veille : le cercle, la cloche, le
-##               guetteur près du vieux poste de guet ;
+##               terrain d'entraînement, les rejetons (figés : ils ne mordent pas avant la
+##               capture), Pannibal au bord du marais ;
+##   couchant  : le bord du Couchant à l'heure de la première veille : le guetteur de la Garde
+##               au premier plan, entre le vieux poste de guet et le cercle de veille, la cloche
+##               au fond ;
 ##   port      : le port et le bourg quand le Barocupot est là (étape barocupot) : Limeskin au
 ##               bras d'ancrage, la marchande d'œufs, le serveur du café, le snack ;
 ##   colline   : la colline des étoiles à l'étape promise : Willem à côté du belvédère ;
@@ -49,7 +52,13 @@ const VIEWS := {
 	"bois":
 	[&"forest", Vector3(6.0, 5.5, 22.0), Vector3(-9.0, 0.8, 4.0), 60.0, Vector3(-2.0, 0.0, 16.0)],
 	"couchant":
-	[&"dunes", Vector3(17.0, 4.5, 7.0), Vector3(-6.0, 0.5, -6.0), 62.0, Vector3(12.0, 0.0, 1.0)],
+	[
+		&"dunes",
+		Vector3(-21.0, 3.2, -15.0),
+		Vector3(9.0, 1.0, -2.0),
+		45.0,
+		Vector3(-10.5, 0.0, -12.5)
+	],
 	"port":
 	[&"beach", Vector3(9.0, 9.0, 20.0), Vector3(-17.0, 0.5, 6.0), 62.0, Vector3(-15.0, 0.0, 9.5)],
 	"colline":
@@ -119,6 +128,8 @@ func _stage() -> void:
 			journal.call(&"select", &"act1_main")
 		"bois", "couchant", "port", "colline":
 			_view(VIEWS[_shot])
+			if _shot == "bois":
+				_freeze_rejetons()
 		"fin_veille":
 			_place(&"dunes", Vector3(14.0, 0.0, -2.0), Vector3(-1.0, 0.0, 0.0))
 		_:
@@ -150,6 +161,21 @@ func _view(view: Array) -> void:
 	var zone := _zone(zone_id)
 	camera.look_at_from_position(zone.to_global(view[1]), zone.to_global(view[2]))
 	camera.make_current()
+
+
+## Les rejetons des bois figés sur place, tournés vers le joueur, chacun dans une pose : aucun ne
+## le poursuit ni ne le mord avant la capture (cœurs pleins).
+func _freeze_rejetons() -> void:
+	var poses: Array[StringName] = [&"marche", &"repos", &"fouet", &"course"]
+	var index := 0
+	for child: Node in _zone(&"forest").get_node(^"Enemies").get_children():
+		var timere := child as Enemy
+		if timere == null:
+			continue
+		timere.set_physics_process(false)
+		timere.visual.set_facing(_player.global_position - timere.global_position)
+		timere.visual.play(poses[index % poses.size()])
+		index += 1
 
 
 ## Joueur au point local `local_position` de la zone, visée `aim`, caméra derrière lui.
