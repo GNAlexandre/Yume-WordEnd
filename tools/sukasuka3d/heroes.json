@@ -1,0 +1,387 @@
+[
+  {
+    "id": "chtholly",
+    "name": "Chtholly Nota Seniorious",
+    "height": 1.5,
+    "hair_color": "#4F80DB",
+    "eye_color": "#62658E",
+    "outfit_color": "#262535",
+    "accent_color": "#719CE5",
+    "hair_style": "long",
+    "outfit": "dress",
+    "features": [
+      "long_blue_hair",
+      "side_hair_pin",
+      "white_socks",
+      "mary_jane_shoes",
+      "corset_lacing",
+      "scalloped_underskirt"
+    ],
+    "weapon": {
+      "name": "Seniolis",
+      "length": 1.2,
+      "color": "#AEB8E3",
+      "guard_color": "#343447",
+      "profile": "segmented_broad",
+      "reference_pages": [
+        14,
+        15
+      ]
+    },
+    "details": {
+      "front_bib": "white pointed shoulder yoke and white front apron with narrow blue seam",
+      "sleeves": "fitted black long sleeves and small white puff shoulders",
+      "skirt": "white pleated flared skirt with blue doubled stripe and black pointed underskirt",
+      "hair": "long layered blue hair to upper thighs, side loop and cream hairpin",
+      "boots": "black rounded Mary Jane shoes, white calf socks",
+      "source_pages": [
+        11,
+        12,
+        14,
+        15
+      ],
+      "variants": "Hair recoloring p13 intentionally not mixed into default character",
+      "skirt_color": "#F4F0E8",
+      "skirt_length": 0.26,
+      "sleeve_color": "#262535",
+      "forearm_color": "#262535",
+      "leg_color": "#F6D8C0",
+      "hair_length": 0.66,
+      "shoe_color": "#25272A",
+      "sock_color": "#F4F0E8",
+      "sock_height": 0.14,
+      "boot_height": 0.063,
+      "cuff_color": "#F4F0E8"
+    },
+    "kind": "combat",
+    "skin_color": "#F6D8C0",
+    "white_color": "#F4F0E8",
+    "species": "human",
+    "geometry_hook": "heroes_geometry.decorate",
+    "reference_status": "scan_confirmed",
+    "shoe_color": "#25272A"
+  },
+  {
+    "id": "willem",
+    "name": "Willem Kmetsch",
+    "height": 1.75,
+    "hair_color": "#222625",
+    "eye_color": "#343D36",
+    "outfit_color": "#242934",
+    "accent_color": "#BAA561",
+    "hair_style": "crop",
+    "outfit": "uniform",
+    "features": [
+      "standing_collar",
+      "gold_epaulettes",
+      "double_buttons",
+      "belt",
+      "knee_boots",
+      "messy_hair"
+    ],
+    "weapon": {
+      "name": "WillemSword",
+      "length": 1.1,
+      "color": "#9BA0B1",
+      "guard_color": "#383D3B",
+      "profile": "angular_split_guard",
+      "reference_pages": [
+        7
+      ]
+    },
+    "details": {
+      "coat": "hip-length double-breasted black/navy officer tunic, gold piping collar cuffs hem and shoulder boards",
+      "trousers": "black straight trousers tucked into tall boots",
+      "hair": "black messy jagged crop with long uneven bangs",
+      "source_pages": [
+        5,
+        6,
+        7
+      ],
+      "skirt_color": "#242934",
+      "sleeve_color": "#242934",
+      "trouser_color": "#242934",
+      "leg_color": "#242934",
+      "shoe_color": "#1E2423",
+      "boot_height": 0.21,
+      "cuff_color": "#242934"
+    },
+    "kind": "combat",
+    "skin_color": "#F6D8C0",
+    "white_color": "#F4F0E8",
+    "species": "human",
+    "geometry_hook": "heroes_geometry.decorate",
+    "reference_status": "scan_confirmed",
+    "shoe_color": "#1E2423"
+  },
+  {
+    "id": "ithea",
+    "name": "Ithea Myse Valgulious",
+    "height": 1.45,
+    "hair_color": "#D58850",
+    "eye_color": "#BD5A42",
+    "outfit_color": "#EEE5CE",
+    "accent_color": "#C87435",
+    "hair_style": "twintails",
+    "outfit": "shorts",
+    "features": [
+      "pointed_hair_tufts",
+      "braided_twintails",
+      "orange_scarf",
+      "diamond_buttons",
+      "olive_thigh_socks",
+      "ankle_boots",
+      "puff_cuffs"
+    ],
+    "weapon": {
+      "name": "Valgulious",
+      "length": 1.05,
+      "color": "#B1AB90",
+      "guard_color": "#594A36",
+      "profile": "cleaver",
+      "reference_pages": [
+        23
+      ]
+    },
+    "details": {
+      "hair": "two long narrow orange braids, tied ends; pointed tufts made from hair not animal ears",
+      "top": "cream wide sleeved cropped cardigan, brown/red diamond buttons, orange long scarf with diamond tips",
+      "bottom": "orange high-waist shorts, deep olive thigh-high stockings, dark brown low boots",
+      "source_pages": [
+        21,
+        22,
+        23
+      ],
+      "skirt_color": "#BC723C",
+      "sleeve_color": "#EEE5CE",
+      "forearm_color": "#F6D8C0",
+      "trouser_color": "#BC723C",
+      "leg_color": "#858B72",
+      "shoe_color": "#49343E",
+      "hair_length": 0.25,
+      "boot_height": 0.13,
+      "cuff_color": "#EEE5CE"
+    },
+    "kind": "combat",
+    "skin_color": "#F6D8C0",
+    "white_color": "#F4F0E8",
+    "species": "human",
+    "geometry_hook": "heroes_geometry.decorate",
+    "reference_status": "scan_confirmed",
+    "shoe_color": "#49343E"
+  },
+  {
+    "id": "nephren",
+    "name": "Nephren Ruq Insania",
+    "height": 1.35,
+    "hair_color": "#BEBADB",
+    "eye_color": "#6E715D",
+    "outfit_color": "#705092",
+    "accent_color": "#E4C485",
+    "hair_style": "twintails",
+    "outfit": "robe",
+    "features": [
+      "curled_twintails",
+      "gold_bow",
+      "triangle_cuffs",
+      "triangle_hem",
+      "white_skirt",
+      "ankle_boots"
+    ],
+    "weapon": {
+      "name": "Insania",
+      "length": 1.07,
+      "color": "#3C364B",
+      "guard_color": "#AA9ABD",
+      "profile": "wide_pointed",
+      "reference_pages": [
+        29
+      ]
+    },
+    "details": {
+      "coat": "purple A-line knee-length open coat, large bell sleeves, cream small front bow, white triangular cuffs",
+      "skirt": "white underskirt with dark zigzag triangle border and two hem stripes",
+      "hair": "gray lilac short curly twin ponytails with gold/black ties",
+      "source_pages": [
+        27,
+        28,
+        29
+      ],
+      "skirt_color": "#F4F0E8",
+      "skirt_length": 0.245,
+      "sleeve_color": "#705092",
+      "forearm_color": "#F4F0E8",
+      "leg_color": "#F6D8C0",
+      "shoe_color": "#403A2C",
+      "hair_length": 0.23,
+      "boot_height": 0.1,
+      "cuff_color": "#F4F0E8"
+    },
+    "kind": "combat",
+    "skin_color": "#F6D8C0",
+    "white_color": "#F4F0E8",
+    "species": "human",
+    "geometry_hook": "heroes_geometry.decorate",
+    "reference_status": "scan_confirmed",
+    "shoe_color": "#403A2C"
+  },
+  {
+    "id": "nopht",
+    "name": "Nopht Keh Desperatio",
+    "height": 1.4,
+    "hair_color": "#D98585",
+    "eye_color": "#A14D50",
+    "outfit_color": "#632E32",
+    "accent_color": "#AA6560",
+    "hair_style": "crop",
+    "outfit": "shorts",
+    "features": [
+      "short_bangs",
+      "hood",
+      "cross_stitch_sleeves",
+      "suspenders",
+      "burgundy_culottes",
+      "cropped_dark_leggings",
+      "soft_cuffed_boots"
+    ],
+    "weapon": {
+      "name": "Desperatio",
+      "length": 1.13,
+      "color": "#674234",
+      "guard_color": "#202C29",
+      "profile": "jagged_broad",
+      "reference_pages": [
+        35
+      ]
+    },
+    "details": {
+      "top": "dark brown sleeveless hood over brown elbow sleeves with pale X lacing",
+      "bottom": "brick red suspender culottes with pleated ends, dark cropped leggings ending beneath knee, taupe cuffed ankle boots",
+      "hair": "short coral crop with jagged fringe",
+      "source_pages": [
+        33,
+        34,
+        35
+      ],
+      "skirt_color": "#AA6560",
+      "sleeve_color": "#785148",
+      "forearm_color": "#F6D8C0",
+      "trouser_color": "#AA6560",
+      "leg_color": "#F6D8C0",
+      "shoe_color": "#927E75",
+      "boot_height": 0.12,
+      "leggings_color": "#49362F",
+      "leggings_height": 0.25,
+      "cuff_color": "#785148"
+    },
+    "kind": "combat",
+    "skin_color": "#F6D8C0",
+    "white_color": "#F4F0E8",
+    "species": "human",
+    "geometry_hook": "heroes_geometry.decorate",
+    "reference_status": "scan_confirmed",
+    "shoe_color": "#927E75"
+  },
+  {
+    "id": "rhantolk",
+    "name": "Rhantolk Ytri Historia",
+    "height": 1.48,
+    "hair_color": "#6774D3",
+    "eye_color": "#75949E",
+    "outfit_color": "#5E94C7",
+    "accent_color": "#DFE6EF",
+    "hair_style": "long",
+    "outfit": "robe",
+    "features": [
+      "white_headband",
+      "shoulder_capelet",
+      "front_lacing",
+      "wide_white_sleeves",
+      "long_open_blue_coat",
+      "black_sash",
+      "black_tights",
+      "black_boots"
+    ],
+    "weapon": {
+      "name": "Historia",
+      "length": 1.2,
+      "color": "#9CAEDD",
+      "guard_color": "#2F395C",
+      "profile": "narrow_filigrée",
+      "reference_pages": [
+        39
+      ]
+    },
+    "details": {
+      "coat": "long open blue coat to mid calf, small blue shoulder capelet over white balloon-sleeve underdress, white lace-up front center",
+      "bottom": "white inner long skirt, black waist sash and tights, black boots",
+      "hair": "straight violet blue shoulderblade-length hair, blunt bangs, white headband",
+      "source_pages": [
+        37,
+        38,
+        39
+      ],
+      "skirt_color": "#DFE6EF",
+      "skirt_length": 0.18,
+      "sleeve_color": "#DFE6EF",
+      "forearm_color": "#DFE6EF",
+      "leg_color": "#242733",
+      "shoe_color": "#242733",
+      "hair_length": 0.37,
+      "boot_height": 0.16,
+      "cuff_color": "#DFE6EF"
+    },
+    "kind": "combat",
+    "skin_color": "#F6D8C0",
+    "white_color": "#F4F0E8",
+    "species": "human",
+    "geometry_hook": "heroes_geometry.decorate",
+    "reference_status": "scan_confirmed",
+    "shoe_color": "#242733"
+  },
+  {
+    "id": "lillia",
+    "name": "Lillia Asplay",
+    "height": 1.55,
+    "hair_color": "#B74A4F",
+    "eye_color": "#934848",
+    "outfit_color": "#792D3D",
+    "accent_color": "#D5B260",
+    "hair_style": "ponytail",
+    "outfit": "robe",
+    "features": [
+      "red_high_ponytail",
+      "long_cape",
+      "white_front_panel",
+      "gold_belt",
+      "white_gauntlets",
+      "white_leg_armor",
+      "dark_joint_armor"
+    ],
+    "details": {
+      "armor": "white angular articulated shin/knee armor, white wrist gauntlets, burgundy shoulders and tunic, pale breast panel",
+      "cape": "Long white outer cape seen in back view, burgundy lining seen in front; gold-edge white front hanging panels, gold buckle and narrow sash",
+      "hair": "red high tied ponytail with asymmetrical spiked fringe",
+      "source_pages": [
+        58
+      ],
+      "weapon_note": "No weapon shown on p58; no canonical sword attributed. Combat clips are unarmed previews until a verified reference is supplied.",
+      "skirt_color": "#792D3D",
+      "skirt_length": 0.27,
+      "sleeve_color": "#792D3D",
+      "forearm_color": "#792D3D",
+      "leg_color": "#792D3D",
+      "shoe_color": "#F4F0E8",
+      "hair_length": 0.39,
+      "boot_height": 0.08,
+      "cuff_color": "#F4F0E8"
+    },
+    "kind": "combat",
+    "skin_color": "#F6D8C0",
+    "white_color": "#F4F0E8",
+    "species": "human",
+    "geometry_hook": "heroes_geometry.decorate",
+    "reference_status": "scan_confirmed",
+    "shoe_color": "#F4F0E8"
+  }
+]
