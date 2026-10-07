@@ -327,7 +327,9 @@ Décor lointain (48 px/m) :
 1. Dépose l'image au chemin exact de ce document : elle écrase le remplaçant du même nom (les
    fichiers `.import` ne changent pas).
 2. `python3 tools/hd2d_assets.py check` : taille, alpha, raccord des tuiles ;
-   `python3 tools/hd2d_assets.py fit <fichier>` ramène une image trop grande à sa taille.
+   `python3 tools/hd2d_assets.py fit <fichier>` ramène une image trop grande à sa taille ; après
+   une tuile de sol, `python3 tools/hd2d_assets.py atlas` (le jeu lit les douze tuiles réunies
+   dans `assets/hd2d/ground/atlas/ground_atlas.png` ; `fit` et `gen` le refont d'eux-mêmes).
 3. `tools/screenshot.sh res://src/world/island.tscn build/shots/hd2d.png` pour voir le résultat,
    puis `tools/check.sh`.
 4. Note la provenance dans `assets/CREDITS.md` (« généré avec ChatGPT le … », licence accordée).
