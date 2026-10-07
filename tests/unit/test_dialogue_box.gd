@@ -4,7 +4,7 @@ extends GutTest
 ## EventBus.dialogue_choice_made. Pilotée uniquement par l'EventBus.
 
 const BOX_SCENE := preload("res://src/ui/dialogue_box.tscn")
-const LIBRARIAN := preload("res://data/npcs/librarian.tres")
+const NEPHREN := preload("res://data/npcs/nephren.tres")
 
 var _box: DialogueBox
 var _answers: Array[int] = []
@@ -24,7 +24,7 @@ func _on_choice_made(index: int) -> void:
 	_answers.append(index)
 
 
-func _line(text: String, choices: Array[String] = [], speaker: String = "Bibliothécaire") -> void:
+func _line(text: String, choices: Array[String] = [], speaker: String = "Nephren") -> void:
 	EventBus.dialogue_line.emit(speaker, text, choices)
 
 
@@ -47,20 +47,20 @@ func test_hidden_outside_dialogue() -> void:
 	assert_false(_box.visible, "masquée au départ")
 	assert_false(_box.is_open())
 	assert_eq(_box.mouse_filter, Control.MOUSE_FILTER_IGNORE, "ne bloque pas la souris du jeu")
-	EventBus.dialogue_started.emit(&"librarian")
+	EventBus.dialogue_started.emit(&"nephren")
 	_line("Bonjour.")
 	assert_true(_box.visible, "visible pendant le dialogue")
-	EventBus.dialogue_ended.emit(&"librarian")
+	EventBus.dialogue_ended.emit(&"nephren")
 	assert_false(_box.visible, "masquée à la fin")
 	assert_false(_box.is_open())
 
 
 func test_line_shows_name_and_types_letter_by_letter() -> void:
 	_box.characters_per_second = 20.0
-	_line("Les Timeres ont emporté des pages du dernier tome.")
-	assert_eq(_label("NameLabel").text, "Bibliothécaire")
+	_line("Le livre d’images des petites. Cinq pages, dans les bois.")
+	assert_eq(_label("NameLabel").text, "Nephren")
 	assert_true(_box.get_node("%NamePlate").visible)
-	assert_eq(_label("Text").text, "Les Timeres ont emporté des pages du dernier tome.")
+	assert_eq(_label("Text").text, "Le livre d’images des petites. Cinq pages, dans les bois.")
 	assert_true(_box.is_typing())
 	assert_eq(_label("Text").visible_characters, 0, "rien d'affiché au départ")
 	await wait_seconds(0.3)
@@ -99,9 +99,9 @@ func test_zero_speed_shows_whole_line_at_once() -> void:
 
 
 func test_line_without_dialogue_started_has_no_empty_portrait_frame() -> void:
-	EventBus.dialogue_started.emit(&"librarian")
+	EventBus.dialogue_started.emit(&"nephren")
 	_line("Bonjour.")
-	EventBus.dialogue_ended.emit(&"librarian")
+	EventBus.dialogue_ended.emit(&"nephren")
 	_line("Une voix sans visage…")
 	assert_false(_box.get_node("%PortraitFrame").visible)
 
@@ -200,17 +200,17 @@ func test_click_on_box_advances_line() -> void:
 
 
 func test_portrait_from_npc_data() -> void:
-	EventBus.dialogue_started.emit(&"librarian")
+	EventBus.dialogue_started.emit(&"nephren")
 	_line("Bonjour.")
 	var portrait := (_box.get_node("%Portrait") as TextureRect).texture
-	assert_not_null(portrait, "portrait du PNJ retrouvé par data/npcs/librarian.tres")
+	assert_not_null(portrait, "portrait du PNJ retrouvé par data/npcs/nephren.tres")
 	assert_true(_box.get_node("%PortraitFrame").visible)
-	assert_eq(portrait, DialogueBox.portrait_of(LIBRARIAN.skin), "portrait de la skin du PNJ")
+	assert_eq(portrait, DialogueBox.portrait_of(NEPHREN.skin), "portrait de la skin du PNJ")
 
 
 func test_portrait_falls_back_to_first_idle_frame() -> void:
 	# Les skins ont un portrait depuis le Lot 3 : le repli se teste sur une copie sans portrait.
-	var skin := LIBRARIAN.skin.duplicate() as SkinData
+	var skin := NEPHREN.skin.duplicate() as SkinData
 	skin.portrait = null
 	var portrait := DialogueBox.portrait_of(skin)
 	assert_true(portrait is AtlasTexture, "sans SkinData.portrait : image de la planche")

@@ -1,5 +1,5 @@
 extends Node3D
-## Démo du Lot 3 (visuel et skins) : la bibliothécaire (placeholder), Chtholly et le Timere aux
+## Démo du Lot 3 (visuel et skins) : Nephren (planche de remplacement), Chtholly et le Timere aux
 ## échelles 0,8 / 1 / 1,3, côte à côte sur un damier d'un mètre, chacun enchaînant ses
 ## animations en boucle ; caméra fixe, toise de 1,5 m (marques tous les 50 cm) à gauche.
 ## Entrée ou Espace (ui_accept) : Chtholly passe au skin suivant, à chaud.

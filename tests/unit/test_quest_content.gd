@@ -27,13 +27,25 @@ const FIXTURES := {
 ## Longueurs maximales (caractères) : titre et objectif tiennent dans le panneau du HUD.
 const MAX_TITLE := 40
 const MAX_OBJECTIVE := 70
+## Quêtes de l'acte 1 (docs/lore/HISTOIRE.md, sections 3.1 et 3.2).
+const ACT1_QUESTS: Array[String] = [
+	"act1_main",
+	"picture_book",
+	"special_dessert",
+	"flying_laundry",
+	"vigil_register",
+	"old_clock",
+	"forget_me_nots",
+]
 
 var _problems: Array[String] = []
 
 
 func test_game_quests_are_valid_and_their_references_exist() -> void:
 	var quests := _check_quests(GAME)
-	assert_has(quests.keys(), "pages", "la quête des pages est dans data/quests")
+	for quest_id: String in ACT1_QUESTS:
+		assert_has(quests.keys(), quest_id, "acte 1 : %s est dans data/quests" % quest_id)
+	assert_does_not_have(quests.keys(), "pages", "le livre d'images remplace les pages")
 	assert_eq(_problems, [] as Array[String], "\n".join(_problems))
 
 
@@ -60,7 +72,7 @@ func test_problems_are_reported_with_their_file() -> void:
 			{"id": "c", "type": "reach", "zone": "moon", "objective": "Aller sur la lune"},
 			{"id": "d", "type": "reach", "trigger": "nowhere", "objective": "Aller nulle part"},
 			{"id": "e", "type": "arena", "arena": "colosseum", "wave": 2, "objective": "Arène"},
-			{"id": "f", "type": "talk", "npc": "librarian", "objective": "x".repeat(80)},
+			{"id": "f", "type": "talk", "npc": "nephren", "objective": "x".repeat(80)},
 		],
 		"rewards": {"items": {"diamond": 1}},
 	}
