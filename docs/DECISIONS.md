@@ -1058,3 +1058,15 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   (14 m), le banc et le râtelier en bordure (le banc est la place de `WillemTraining`,
   HISTOIRE.md 3.3) ; `test_m1_world.gd` vérifie plat et sans collision sur 12 m, et la clairière
   des Timeres sur 6 m.
+- **Assets 3D — skins jouables** (choix validé par l'utilisateur le 7 octobre 2026,
+  `docs/ASSETS_3D.md` section 4.7) : Chtholly, Ithea, Nephren, Nopht, Rhantolk et les fées de la
+  communauté sont jouables, toutes avec Seniorious en main ; Willem reste un PNJ ; Lillia sera
+  un bonus plus tard.
+- **Assets 3D — tenue de Chtholly à l'acte 1** (choix validé par l'utilisateur le 7 octobre 2026,
+  section 4.6) : uniforme de fée soldat de la Garde ailée (veste bleu nuit à boutons argentés,
+  broche d'argent), d'après la bible, au lieu de la tenue noire et dorée de la planche 2D ; la
+  tenue de ville viendra en variante.
+- **Assets 3D — identifiants des modèles** (choix validé par l'utilisateur le 7 octobre 2026,
+  section 4.9) : orthographe de la traduction (`glick`, `kaya`, `suowong`, `suowong_young`,
+  `ebon_candle`, `ebon_candle_ancient`, `doctor`, `baroni_makish`) ; les dossiers de la première
+  livraison seront remplacés sous ces noms.
