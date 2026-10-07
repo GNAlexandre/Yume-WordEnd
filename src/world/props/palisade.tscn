@@ -1,0 +1,67 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/prism.tres" id="2_prism"]
+
+[sub_resource type="StandardMaterial3D" id="log"]
+albedo_color = Color(0.6, 0.43, 0.29, 1)
+
+[sub_resource type="StandardMaterial3D" id="log2"]
+albedo_color = Color(0.52, 0.37, 0.26, 1)
+
+[sub_resource type="StandardMaterial3D" id="rail"]
+albedo_color = Color(0.45, 0.31, 0.23, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.9, 1.75, 0.36)
+
+[node name="Palisade" type="Node3D"]
+
+[node name="Log1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 1.48, 0, 0, 0, 0.3, -0.63, 0.74, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("log")
+cast_shadow = 0
+
+[node name="Tip1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.32, 0, 0, 0, 0.3, -0.63, 1.64, 0)
+mesh = ExtResource("2_prism")
+material_override = SubResource("log")
+cast_shadow = 0
+
+[node name="Log2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 1.62, 0, 0, 0, 0.3, 0, 0.81, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("log2")
+cast_shadow = 0
+
+[node name="Tip2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.32, 0, 0, 0, 0.3, 0, 1.78, 0)
+mesh = ExtResource("2_prism")
+material_override = SubResource("log2")
+cast_shadow = 0
+
+[node name="Log3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 1.52, 0, 0, 0, 0.3, 0.63, 0.76, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("log")
+cast_shadow = 0
+
+[node name="Tip3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.32, 0, 0, 0, 0.3, 0.63, 1.68, 0)
+mesh = ExtResource("2_prism")
+material_override = SubResource("log")
+cast_shadow = 0
+
+[node name="Rail" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.9, 0, 0, 0, 0.12, 0, 0, 0, 0.08, 0, 1, -0.19)
+mesh = ExtResource("1_box")
+material_override = SubResource("rail")
+cast_shadow = 0
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, 0)
+shape = SubResource("BoxShape3D_1")

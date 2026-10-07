@@ -1,0 +1,181 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/prism.tres" id="2_prism"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/post.tres" id="3_post"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="4_bead"]
+
+[sub_resource type="StandardMaterial3D" id="hull"]
+albedo_color = Color(0.71, 0.5, 0.32, 1)
+
+[sub_resource type="StandardMaterial3D" id="dark"]
+albedo_color = Color(0.45, 0.31, 0.23, 1)
+
+[sub_resource type="StandardMaterial3D" id="copper"]
+albedo_color = Color(0.78, 0.47, 0.3, 1)
+
+[sub_resource type="StandardMaterial3D" id="brass"]
+albedo_color = Color(0.79, 0.63, 0.35, 1)
+
+[sub_resource type="StandardMaterial3D" id="glow"]
+shading_mode = 0
+albedo_color = Color(1, 0.86, 0.56, 1)
+
+[sub_resource type="StandardMaterial3D" id="iron"]
+albedo_color = Color(0.27, 0.29, 0.33, 1)
+
+[sub_resource type="StandardMaterial3D" id="ember"]
+shading_mode = 0
+albedo_color = Color(1, 0.55, 0.25, 1)
+
+[sub_resource type="StandardMaterial3D" id="balloon"]
+albedo_color = Color(0.93, 0.86, 0.72, 1)
+
+[sub_resource type="StandardMaterial3D" id="rope"]
+albedo_color = Color(0.76, 0.66, 0.5, 1)
+
+[node name="AirshipFerry" type="Node3D"]
+
+[node name="Hull" type="MeshInstance3D" parent="."]
+transform = Transform3D(9, 0, 0, 0, 1.7, 0, 0, 0, 3, 0, 0, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("hull")
+
+[node name="Bow" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 2.2, 0, -1.7, 0, 0, 0, 0, 3, 5.6, 0, 0)
+mesh = ExtResource("2_prism")
+material_override = SubResource("hull")
+
+[node name="Stern" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.9, 0, 0, 0, 3, -5, 0.1, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="Keel" type="MeshInstance3D" parent="."]
+transform = Transform3D(8, 0, 0, 0, 0.3, 0, 0, 0, 0.5, 0, -0.95, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="BandHigh" type="MeshInstance3D" parent="."]
+transform = Transform3D(9.05, 0, 0, 0, 0.16, 0, 0, 0, 3.05, 0, 0.55, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("copper")
+
+[node name="BandLow" type="MeshInstance3D" parent="."]
+transform = Transform3D(9.05, 0, 0, 0, 0.12, 0, 0, 0, 3.05, 0, -0.5, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("copper")
+
+[node name="DeckRail1" type="MeshInstance3D" parent="."]
+transform = Transform3D(8.5, 0, 0, 0, 0.08, 0, 0, 0, 0.06, 0, 1.25, -1.45)
+mesh = ExtResource("1_box")
+material_override = SubResource("brass")
+cast_shadow = 0
+
+[node name="DeckRail2" type="MeshInstance3D" parent="."]
+transform = Transform3D(8.5, 0, 0, 0, 0.08, 0, 0, 0, 0.06, 0, 1.25, 1.45)
+mesh = ExtResource("1_box")
+material_override = SubResource("brass")
+cast_shadow = 0
+
+[node name="Cabin" type="MeshInstance3D" parent="."]
+transform = Transform3D(3, 0, 0, 0, 1.6, 0, 0, 0, 2.2, -1.8, 1.65, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="CabinRoof" type="MeshInstance3D" parent="."]
+transform = Transform3D(3.3, 0, 0, 0, 0.14, 0, 0, 0, 2.5, -1.8, 2.52, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("copper")
+
+[node name="Window1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.5, 0, 0, 0, 0.05, -2.6, 1.85, -1.12)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="Window2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.5, 0, 0, 0, 0.05, -1, 1.85, -1.12)
+mesh = ExtResource("1_box")
+material_override = SubResource("glow")
+cast_shadow = 0
+
+[node name="Boiler" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 1.3, 0, 0, 0, 0.6, 1.6, 1.5, 0.3)
+mesh = ExtResource("3_post")
+material_override = SubResource("iron")
+
+[node name="BoilerGlow" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.05, 1.6, 1.3, -0.02)
+mesh = ExtResource("1_box")
+material_override = SubResource("ember")
+cast_shadow = 0
+
+[node name="Chimney" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 1.4, 0, 0, 0, 0.25, 1.6, 2.8, 0.3)
+mesh = ExtResource("3_post")
+material_override = SubResource("iron")
+
+[node name="Balloon" type="MeshInstance3D" parent="."]
+transform = Transform3D(11, 0, 0, 0, 3.8, 0, 0, 0, 3.8, 0, 5.9, 0)
+mesh = ExtResource("4_bead")
+material_override = SubResource("balloon")
+
+[node name="BalloonRidge" type="MeshInstance3D" parent="."]
+transform = Transform3D(9, 0, 0, 0, 0.14, 0, 0, 0, 0.14, 0, 7.75, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="Rope1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 3.4, 0, 0, 0, 0.04, -3.5, 2.9, -1.2)
+mesh = ExtResource("1_box")
+material_override = SubResource("rope")
+cast_shadow = 0
+
+[node name="Rope2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 3.4, 0, 0, 0, 0.04, 3.5, 2.9, -1.2)
+mesh = ExtResource("1_box")
+material_override = SubResource("rope")
+cast_shadow = 0
+
+[node name="Rope3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 3.4, 0, 0, 0, 0.04, -3.5, 2.9, 1.2)
+mesh = ExtResource("1_box")
+material_override = SubResource("rope")
+cast_shadow = 0
+
+[node name="Rope4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 3.4, 0, 0, 0, 0.04, 3.5, 2.9, 1.2)
+mesh = ExtResource("1_box")
+material_override = SubResource("rope")
+cast_shadow = 0
+
+[node name="Hub1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -5.6, 0.6, -1.75)
+mesh = ExtResource("4_bead")
+material_override = SubResource("brass")
+
+[node name="BladeA1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.631354, -0.118333, 0, 0.760713, 0.253766, -5.6, 0.6, -1.75)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="BladeB1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, -0.760713, -0.253766, 0, 1.631354, -0.118333, -5.6, 0.6, -1.75)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="Hub2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -5.6, 0.6, 1.75)
+mesh = ExtResource("4_bead")
+material_override = SubResource("brass")
+
+[node name="BladeA2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.631354, -0.118333, 0, 0.760713, 0.253766, -5.6, 0.6, 1.75)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="BladeB2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, -0.760713, -0.253766, 0, 1.631354, -0.118333, -5.6, 0.6, 1.75)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")

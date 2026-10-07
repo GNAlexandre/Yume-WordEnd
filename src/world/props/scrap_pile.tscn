@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/post.tres" id="2_post"]
+
+[sub_resource type="StandardMaterial3D" id="rust"]
+albedo_color = Color(0.55, 0.33, 0.24, 1)
+
+[sub_resource type="StandardMaterial3D" id="iron"]
+albedo_color = Color(0.27, 0.29, 0.33, 1)
+
+[sub_resource type="StandardMaterial3D" id="brass"]
+albedo_color = Color(0.66, 0.52, 0.3, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.8, 0.8, 1.6)
+
+[node name="ScrapPile" type="Node3D"]
+
+[node name="Plate1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.059077, 0.001442, 0.422862, 0.195811, 0.074033, -0.307818, -0.529164, 0.030282, 0.732418, 0, 0.35, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("rust")
+
+[node name="Plate2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.869333, -0.020706, 0, 0.190811, 0.063299, 0.401504, -0.133607, -0.044323, 0.573406, -0.4, 0.25, 0.3)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+
+[node name="Pipe1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.022845, -1.295583, 0.047883, 0.137873, 0.243107, 0, -0.008315, 0.471554, 0.131557, 0.2, 0.2, -0.45)
+mesh = ExtResource("2_post")
+material_override = SubResource("rust")
+
+[node name="Pipe2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.34202, -0.093969, 0, 0.939693, 0.034202, -0.3, 0.55, -0.1)
+mesh = ExtResource("2_post")
+material_override = SubResource("iron")
+
+[node name="Gear" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.606218, 0.06, 0, 0, 0, -0.7, -0.35, 0.103923, 0, 0.5, 0.42, 0.35)
+mesh = ExtResource("2_post")
+material_override = SubResource("brass")
+
+[node name="Barrel" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -0.6, 0, 0.6, 0, 0, 0, 0, 0.6, -0.55, 0.3, -0.5)
+mesh = ExtResource("2_post")
+material_override = SubResource("rust")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("BoxShape3D_1")

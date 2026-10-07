@@ -6,12 +6,24 @@
 [ext_resource type="PackedScene" path="res://src/items/placements/forest.tscn" id="4_pickups"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="5_batcher"]
 [ext_resource type="Script" path="res://src/world/prop_scatter.gd" id="6_scatter"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_pine.tscn" id="7_tree_pine"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_round.tscn" id="8_tree_round"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="9_bush"]
-[ext_resource type="PackedScene" path="res://src/world/props/mushroom.tscn" id="10_mushroom"]
-[ext_resource type="PackedScene" path="res://src/world/props/log.tscn" id="11_log"]
-[ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="12_rock"]
+[ext_resource type="PackedScene" path="res://src/world/props/play_goal.tscn" id="p1_play_goal"]
+[ext_resource type="PackedScene" path="res://src/world/props/play_goal_red.tscn" id="p2_play_goal_red"]
+[ext_resource type="PackedScene" path="res://src/world/props/bench.tscn" id="p3_bench"]
+[ext_resource type="PackedScene" path="res://src/world/props/stick_rack.tscn" id="p4_stick_rack"]
+[ext_resource type="PackedScene" path="res://src/world/props/ball.tscn" id="p5_ball"]
+[ext_resource type="PackedScene" path="res://src/world/props/mushroom.tscn" id="p6_mushroom"]
+[ext_resource type="PackedScene" path="res://src/world/props/bear_rock.tscn" id="p7_bear_rock"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_old_pine_clawed.tscn" id="p8_tree_old_pine_clawed"]
+[ext_resource type="PackedScene" path="res://src/world/props/log_bridge.tscn" id="p9_log_bridge"]
+[ext_resource type="PackedScene" path="res://src/world/props/reeds.tscn" id="p10_reeds"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_old_pine.tscn" id="p11_tree_old_pine"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_pine.tscn" id="p12_tree_pine"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn.tscn" id="p13_tree_autumn"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust.tscn" id="p14_tree_autumn_rust"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_yellow.tscn" id="p15_tree_autumn_yellow"]
+[ext_resource type="PackedScene" path="res://src/world/props/berry_bush.tscn" id="p16_berry_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="p17_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/mossy_rock.tscn" id="p18_mossy_rock"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
 size = Vector3(160, 30, 58)
@@ -35,53 +47,117 @@ shape = SubResource("BoxShape3D_bounds")
 [node name="Geometry" type="Node3D" parent="."]
 script = ExtResource("5_batcher")
 
-[node name="Pines" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("7_tree_pine")
-points = PackedVector3Array(37.2, 0, 21, -59.9, 0, 3, 16.2, 0, -16.2, -47.4, 0, 0.4, 61.3, 0, 22.5, 14.2, 0, -8.7, 38.7, 0, 8.7, -17.9, 0, -19.9, 37.1, 0, -5.1, 51.5, 0, 12.2, -63, 0, 11.5, 32.5, 0, 14.2, 43.2, 0, -13, 13.9, 0, 22.4, -39.7, 0, -7.2, 20.9, 0, 16.4, 11.2, 0, -13.5, -23.2, 0, 17.7, 26.8, 0, 13.2, 45.3, 0, 21.9, -23.5, 0, -11.5, -25.8, 0, 8.1, 28.8, 0, 22, -37.3, 0, 11.7, -52.6, 0, 11.7, -9.5, 0, 20.4, -19.3, 0, 22, -31.6, 0, 15.3, -65.4, 0, 0.4, -44.2, 0, -14.2, -49.7, 0, 6.1, 60.7, 0, -0.1, 14.8, 0, 17.2, 20.1, 0, -7.2, -17.7, 0, -14.6, 45.3, 0, 15.6, 36.9, 0, -15.5, -55.5, 0, -3.9, 7.4, 0, 22.9, -7.2, 0, -17.2, 8.7, 0, 14.8, 43.1, 0, -6.8, -27.1, 0, -19.7, 1.5, 0, -17.8, -48.1, 0, -8.5, 50.1, 0, -2.6, 7.2, 0, -17.7, 23.7, 0, -15.5, 34.9, 0, 3.5, 20.2, 0, -1.9, -34.8, 0, 21.3, 54.7, 0, 0, -19.2, 0, 13.4, -28.9, 0, -11.6, -13, 0, -17.4, 66.1, 0, 8.7, -43, 0, 4.5, -14.6, 0, 9.5, -23.8, 0, -3.8, 27.3, 0, -8.5, 53.5, 0, 21, -15, 0, 18.7, 55.7, 0, -7.8, 49, 0, 3.4, -18.4, 0, 3.8, -32.5, 0, -0.5, 43.3, 0, 4.5, -33.3, 0, 7.7, -32.1, 0, -16.4, -68.8, 0, 7.5)
-scale_range = Vector2(0.8, 1.25)
-random_seed = 7
+[node name="GoalNorth" parent="Geometry" instance=ExtResource("p1_play_goal")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14)
 
-[node name="RoundTrees" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("8_tree_round")
-points = PackedVector3Array(24.3, 0, 26.3, -16.8, 0, 27, 38.9, 0, 26.6, -27.8, 0, 25.7, -33.7, 0, 26.8, 18.5, 0, 26.4, -8.5, 0, 25.7, 55.3, 0, 15.8, 40, 0, 15.6)
-scale_range = Vector2(0.85, 1.1)
-random_seed = 8
+[node name="GoalSouth" parent="Geometry" instance=ExtResource("p2_play_goal_red")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 14)
 
-[node name="Bushes" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("9_bush")
-points = PackedVector3Array(-44.4, 0, -7.3, 16, 0, -4.2, 29.2, 0, 3.4, 46.8, 0, -11.6, -33.3, 0, 11.4, -63.4, 0, -2.8, -25.3, 0, -6.7, -40.1, 0, 10.6, 63.6, 0, 2.4, 57.4, 0, 5.5, 64.5, 0, 18.4, 34.2, 0, 18.5, 38.5, 0, 1.7, -29.6, 0, 12.1, -39.3, 0, -16, 59.6, 0, -4.1, 27.1, 0, 8.1, 42.4, 0, 17.9, -33.6, 0, -3.5, -35.8, 0, -13.5, -2, 0, -16.4, 28.5, 0, 18.8, 45.7, 0, 7.7, 24.8, 0, 22.1, 44.7, 0, 12.1, -17.6, 0, -1.4)
-scale_range = Vector2(0.7, 1.1)
-random_seed = 6
+[node name="TrainingBench" parent="Geometry" instance=ExtResource("p3_bench")]
+transform = Transform3D(-0.731354, 0, 0.681998, 0, 1, 0, -0.681998, 0, -0.731354, -7.8, 0, 8.4)
+
+[node name="StickRack" parent="Geometry" instance=ExtResource("p4_stick_rack")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -14, 0, 3)
+
+[node name="Ball" parent="Geometry" instance=ExtResource("p5_ball")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -6)
 
 [node name="FairyRing" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("10_mushroom")
-points = PackedVector3Array(6.2, 0, -2, 5.59, 0, -0.12, 3.99, 0, 1.04, 2.01, 0, 1.04, 0.41, 0, -0.12, -0.2, 0, -2, 0.41, 0, -3.88, 2.01, 0, -5.04, 3.99, 0, -5.04, 5.59, 0, -3.88)
+prop = ExtResource("p6_mushroom")
+points = PackedVector3Array(22.6, 0, -1, 22.1, 0, 0.53, 20.8, 0, 1.47, 19.2, 0, 1.47, 17.9, 0, 0.53, 17.4, 0, -1, 17.9, 0, -2.53, 19.2, 0, -3.47, 20.8, 0, -3.47, 22.1, 0, -2.53)
 scale_range = Vector2(0.8, 1.2)
 random_seed = 13
 
+[node name="BearRock" parent="Geometry" instance=ExtResource("p7_bear_rock")]
+transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, 48, 0, -7)
+
+[node name="ClawedPines" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p8_tree_old_pine_clawed")
+points = PackedVector3Array(43.8, 0, -11, 52.8, 0, -2.8)
+yaw_degrees = PackedFloat32Array(200, 250)
+scale_range = Vector2(0.95, 1.05)
+random_seed = 19
+
+[node name="LogBridge" parent="Geometry" instance=ExtResource("p9_log_bridge")]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -36.5, 0, -2)
+
+[node name="Reeds" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p10_reeds")
+points = PackedVector3Array(-32.51, 0, -12.76, -26.06, 0, -1.02, -28.15, 0, -8.71, -25.82, 0, -5.83, -40.36, 0, -7.34, -34.04, 0, -2.51, -35.83, 0, -7.39, -29.35, 0, 0.55, -24.1, 0, -9.71, -32.39, 0, -10.33, -33.6, 0, -7.03, -27.54, 0, -11.07, -31.69, 0, 0.1, -39.34, 0, -3.42, -38.09, 0, -10.57, -24.71, 0, -3.98, -30.3, 0, -8.76, -37.49, 0, 1.09)
+scale_range = Vector2(0.8, 1.2)
+random_seed = 21
+
+[node name="Trees1" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p11_tree_old_pine")
+points = PackedVector3Array(25.8, 0, 13.35, -63.19, 0, 11.33, -24.84, 0, 8.13, -35.83, 0, 11.87, -46.51, 0, 4.73, -9.17, 0, 20.84, 19.26, 0, 18.91, -42.5, 0, -14.85, 58.36, 0, -0.33, -69.19, 0, 13.81, 43.56, 0, 15.87, -53.18, 0, 4.9, -56.59, 0, 20.11, -49.64, 0, 23.22, 8.31, 0, 14.98, 41.39, 0, -7.25, -23.76, 0, 14.26, 22.8, 0, -16.19, -33.44, 0, 21.74, -70.06, 0, 19.81, 63.56, 0, 8.78, -30.22, 0, -15.24, -21.19, 0, -17.5, 59.04, 0, -5.84, 53.48, 0, -8.22, -31.97, 0, 7.69, -64.48, 0, 5.39, 36.76, 0, 17.33, -42.42, 0, 9.08, 30.15, 0, 17.88, 18.99, 0, 12.39, -61.83, 0, -5.81)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 31
+
+[node name="Trees2" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p12_tree_pine")
+points = PackedVector3Array(16.45, 0, -5.44, -59.27, 0, 5.05, -30.37, 0, 15.51, 31.13, 0, -6.84, 35.43, 0, -16.17, 7.08, 0, 23.39, 47.64, 0, 12.6, 70.23, 0, 23.65, 52.52, 0, -0.18, 53.79, 0, 10.43, -17.78, 0, 7.58, -14.38, 0, 19.07, 41.91, 0, -13.98, 30.83, 0, 1.29, 59.99, 0, 16.33)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 32
+
+[node name="Trees3" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p13_tree_autumn")
+points = PackedVector3Array(43.55, 0, 22.38, -69.04, 0, 8.2, -50.58, 0, 11.86, 30.31, 0, -20.87, 14.23, 0, 17.52, -64.51, 0, 18.41, 33.16, 0, 6.16, -26.06, 0, -20.54, -47.63, 0, -13.58, -50.4, 0, 17.92, 64, 0, -2.64, 51.39, 0, 21.36, 47.11, 0, 3.24, 35.68, 0, 11.34, 40.67, 0, -0.48)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 33
+
+[node name="Trees4" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p14_tree_autumn_rust")
+points = PackedVector3Array(-43.6, 0, 14.42, -18.59, 0, 22.46, -43.22, 0, 21.25, -45.73, 0, -0.87, -15.65, 0, -18.31, 26.22, 0, -9, 64.91, 0, 20.88, -34.48, 0, -18.39)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 34
+
+[node name="Trees5" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p15_tree_autumn_yellow")
+points = PackedVector3Array(27.68, 0, 22.47, -62.85, 0, 0.24, -53.3, 0, -4.22, 39.8, 0, 4.71, -18.43, 0, 13.54, 14.64, 0, -18.01, 48.42, 0, -12.55, 68.5, 0, 14.86)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 35
+
+[node name="BerryBushes" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p16_berry_bush")
+points = PackedVector3Array(14.9, 0, -12.6, -16.9, 0, 12.6, 20.6, 0, 5.1)
+scale_range = Vector2(0.95, 1.1)
+random_seed = 41
+
+[node name="Bushes" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p17_bush")
+points = PackedVector3Array(-13.03, 0, -22.45, -49.63, 0, 7.55, 6.8, 0, 18.32, -25.93, 0, 17.91, 18.3, 0, 24.22, -37.03, 0, 15.65, -31.16, 0, 3.64, -29.63, 0, -19.39, -44.69, 0, -9.14, 34.71, 0, 2.3, 26.96, 0, 18.35, -57.69, 0, 8.22, -25.25, 0, 11.13, -37.79, 0, -1.21, -39.79, 0, -8.15, -19.91, 0, 16.72, -22.35, 0, -13.1, -22.46, 0, -4.07, -54.67, 0, 12.65, -18.28, 0, -7.81, -56.86, 0, -7.6, 27.54, 0, -5.78, 60.1, 0, 21.36, -60.39, 0, 17.47, -40.78, 0, 18.32, 10.7, 0, -19.98, 6.25, 0, -23.43, 42.86, 0, -17.18, 23.06, 0, 20.28, 9.45, 0, 21.2)
+scale_range = Vector2(0.75, 1.25)
+random_seed = 42
+
+[node name="MossyRocks" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p18_mossy_rock")
+points = PackedVector3Array(-16.25, 0, -7.24, -7.78, 0, -21.12, 16.72, 0, 4.45, 34.6, 0, 24.41, 6.15, 0, -21.54, -21.78, 0, -1.9, -39.07, 0, 2.84, -26.2, 0, 23.29)
+scale_range = Vector2(0.8, 1.4)
+random_seed = 43
+
+[node name="FallenLogs" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p9_log_bridge")
+points = PackedVector3Array(30.5, 0, -19.5, -52, 0, 6.5)
+yaw_degrees = PackedFloat32Array(75, 20)
+
 [node name="Mushrooms" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("10_mushroom")
-points = PackedVector3Array(-48.8, 0, 9.9, -22.2, 0, 14.3, -46.4, 0, -11.6, 5.8, 0, 17, 57.2, 0, -1.8, -25.7, 0, 0.4, 17.6, 0, 12.5, 10.7, 0, -17.6, 33.7, 0, -12.7, 22.6, 0, -20.9, -18.8, 0, -11.9, 31.7, 0, 9.5, 50.1, 0, 22.7, 57.1, 0, 11.7)
+prop = ExtResource("p6_mushroom")
+points = PackedVector3Array(-28.32, 0, 4.01, -37.12, 0, -13.32, -56.78, 0, 11.9, -17.08, 0, -9.39, -32.93, 0, -2.98, -66.36, 0, -2.75, 25.74, 0, -22.9, -23.41, 0, -4.45, 24.91, 0, 1.95, 15.11, 0, -23.49, 60.11, 0, 5.63, -25.33, 0, -14.84)
 scale_range = Vector2(0.7, 1.3)
-random_seed = 14
-
-[node name="Logs" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("11_log")
-points = PackedVector3Array(-12.97, 0, -4.72, 12.51, 0, -5.83)
-yaw_degrees = PackedFloat32Array(110, 65)
-
-[node name="Rocks" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("12_rock")
-points = PackedVector3Array(13.14, 0, 6.13, -13.63, 0, 4.96, -4.96, 0, -13.63)
-scale_range = Vector2(0.8, 1.2)
-random_seed = 15
+random_seed = 44
 
 [node name="NPCs" parent="." instance=ExtResource("2_npcs")]
 

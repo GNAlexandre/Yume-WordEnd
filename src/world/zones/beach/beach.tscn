@@ -6,14 +6,35 @@
 [ext_resource type="PackedScene" path="res://src/items/placements/beach.tscn" id="4_pickups"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="5_batcher"]
 [ext_resource type="Script" path="res://src/world/prop_scatter.gd" id="6_scatter"]
-[ext_resource type="PackedScene" path="res://src/world/props/palm.tscn" id="7_palm"]
-[ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="8_rock"]
-[ext_resource type="PackedScene" path="res://src/world/props/umbrella.tscn" id="9_umbrella"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_round.tscn" id="10_tree_round"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_blossom.tscn" id="11_tree_blossom"]
-[ext_resource type="PackedScene" path="res://src/world/props/flowers.tscn" id="12_flowers"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="13_bush"]
-[ext_resource type="PackedScene" path="res://src/world/props/pier.tscn" id="14_pier"]
+[ext_resource type="PackedScene" path="res://src/world/props/cafe.tscn" id="p1_cafe"]
+[ext_resource type="PackedScene" path="res://src/world/props/shop_bakery.tscn" id="p2_shop_bakery"]
+[ext_resource type="PackedScene" path="res://src/world/props/shop_bookshop.tscn" id="p3_shop_bookshop"]
+[ext_resource type="PackedScene" path="res://src/world/props/projection_hall.tscn" id="p4_projection_hall"]
+[ext_resource type="PackedScene" path="res://src/world/props/limashenka_house.tscn" id="p5_limashenka_house"]
+[ext_resource type="PackedScene" path="res://src/world/props/stone_house.tscn" id="p6_stone_house"]
+[ext_resource type="PackedScene" path="res://src/world/props/signpost.tscn" id="p7_signpost"]
+[ext_resource type="PackedScene" path="res://src/world/props/crystal_lamp.tscn" id="p8_crystal_lamp"]
+[ext_resource type="PackedScene" path="res://src/world/props/market_stall.tscn" id="p9_market_stall"]
+[ext_resource type="PackedScene" path="res://src/world/props/market_stall_veg.tscn" id="p10_market_stall_veg"]
+[ext_resource type="PackedScene" path="res://src/world/props/snack_stall.tscn" id="p11_snack_stall"]
+[ext_resource type="PackedScene" path="res://src/world/props/crate.tscn" id="p12_crate"]
+[ext_resource type="PackedScene" path="res://src/world/props/edge_railing.tscn" id="p13_edge_railing"]
+[ext_resource type="PackedScene" path="res://src/world/props/bollard.tscn" id="p14_bollard"]
+[ext_resource type="PackedScene" path="res://src/world/props/cargo_crane.tscn" id="p15_cargo_crane"]
+[ext_resource type="PackedScene" path="res://src/world/props/crates_barrels.tscn" id="p16_crates_barrels"]
+[ext_resource type="PackedScene" path="res://src/world/props/scrap_pile.tscn" id="p17_scrap_pile"]
+[ext_resource type="PackedScene" path="res://src/world/props/gangway.tscn" id="p18_gangway"]
+[ext_resource type="PackedScene" path="res://src/world/props/airship_ferry.tscn" id="p19_airship_ferry"]
+[ext_resource type="PackedScene" path="res://src/world/props/mooring_arm.tscn" id="p20_mooring_arm"]
+[ext_resource type="PackedScene" path="res://src/world/props/airship_barocupot.tscn" id="p21_airship_barocupot"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_sock.tscn" id="p22_wind_sock"]
+[ext_resource type="PackedScene" path="res://src/world/props/bench.tscn" id="p23_bench"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn.tscn" id="p24_tree_autumn"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust.tscn" id="p25_tree_autumn_rust"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_yellow.tscn" id="p26_tree_autumn_yellow"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_pine.tscn" id="p27_tree_pine"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="p28_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="p29_rock"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
 size = Vector3(160, 30, 58)
@@ -37,56 +58,141 @@ shape = SubResource("BoxShape3D_bounds")
 [node name="Geometry" type="Node3D" parent="."]
 script = ExtResource("5_batcher")
 
-[node name="Palms" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("7_palm")
-points = PackedVector3Array(-44.6, 0, 18.6, 6.4, 0, 11.6, 57, 0, 12.2, 23.4, 0, 15.1, -29.1, 0, 17.2, -11.7, 0, 13.4, -63.5, 0, 6.5, 33.3, 0, 16.3, -19.4, 0, 15.3, -3.9, 0, 8.8, -53.9, 0, 15.3, 46.1, 0, 17)
-scale_range = Vector2(0.9, 1.15)
-random_seed = 17
+[node name="Cafe" parent="Geometry" instance=ExtResource("p1_cafe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -12)
 
-[node name="Rocks" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("8_rock")
-points = PackedVector3Array(-58, 0, 16.25, -40, 0, 20.5, -24, 0, 18.75, 24, 0, 19.25, 34, 0, 20, 48, 0, 18.5, 60, 0, 12.75)
-scale_range = Vector2(0.8, 1.5)
-random_seed = 18
+[node name="Bakery" parent="Geometry" instance=ExtResource("p2_shop_bakery")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -12)
 
-[node name="Umbrellas" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("9_umbrella")
-points = PackedVector3Array(-8, 0, 9.5, 25, 0, 10, -20, 0, 9.5)
-yaw_degrees = PackedFloat32Array(20, -35, 160)
+[node name="Bookshop" parent="Geometry" instance=ExtResource("p3_shop_bookshop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -12)
 
-[node name="MeadowTrees" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("10_tree_round")
-points = PackedVector3Array(63.1, 0, -24.3, 29.8, 0, -11, 58.3, 0, -13.4, 55.3, 0, -21.1, -41.8, 0, -15.3, 17.3, 0, -24.9, -14.9, 0, -25.7, 47.2, 0, 1.9, 10, 0, -5.2, 50.4, 0, -9.1, -47.2, 0, -9.9, 4, 0, -20.4, 26.1, 0, -0.8, 20.7, 0, -12.8, -5.7, 0, -20.7, -25.5, 0, -8.8, -9.3, 0, -9, -46.2, 0, 3.8)
-scale_range = Vector2(0.8, 1.15)
-random_seed = 19
+[node name="ProjectionHall" parent="Geometry" instance=ExtResource("p4_projection_hall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, -13)
 
-[node name="MeadowBlossoms" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("11_tree_blossom")
-points = PackedVector3Array(35.3, 0, -5.5, -4.7, 0, -2.2, 31.2, 0, -20, 18.7, 0, -4.8, 2.9, 0, -9.2, -35.4, 0, -7.9)
-scale_range = Vector2(0.8, 1)
-random_seed = 20
+[node name="LimashenkaHouse" parent="Geometry" instance=ExtResource("p5_limashenka_house")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, -12)
 
-[node name="Flowers" type="Node3D" parent="Geometry"]
+[node name="HouseWest" parent="Geometry" instance=ExtResource("p6_stone_house")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5, 0, -12.5)
+
+[node name="HouseNorth" parent="Geometry" instance=ExtResource("p6_stone_house")]
+transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, -12, 0, -22)
+
+[node name="Signpost" parent="Geometry" instance=ExtResource("p7_signpost")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 0, -15.8)
+
+[node name="StreetLamps" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("12_flowers")
-points = PackedVector3Array(15, 0, -0.2, 29.9, 0, -4.9, 45.8, 0, -24.9, -42.3, 0, 2.9, -17.9, 0, -13.2, -28.4, 0, -23.4, -34.4, 0, -16, 58.6, 0, -19.4, 22.1, 0, -2.2, -57.4, 0, -12.1, -13.3, 0, -16.5, -38.5, 0, -10.5, -39.5, 0, 0.3, 15.9, 0, -11.9, -34.7, 0, -1.7, 7.9, 0, -22.1, -22.8, 0, -14.1, -51.7, 0, -0.7, 24.8, 0, -18.5, 54.1, 0, -6.5, 12.3, 0, -21.4, 40.1, 0, 0.4, -19.7, 0, -24.2, 4.1, 0, -13.5, 44.8, 0, -4.2, 13.1, 0, -16.7)
-scale_range = Vector2(0.85, 1.15)
-random_seed = 22
+prop = ExtResource("p8_crystal_lamp")
+points = PackedVector3Array(-30, 0, -3.4, -17.5, 0, -3.4, -9, 0, -3.4, 9, 0, -3.4, 21, 0, -3.4, 31, 0, -3.4)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0)
+
+[node name="EggStall" parent="Geometry" instance=ExtResource("p9_market_stall")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -24, 0, 4)
+
+[node name="VegStall" parent="Geometry" instance=ExtResource("p10_market_stall_veg")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -28.6, 0, -1)
+
+[node name="SpiceStall" parent="Geometry" instance=ExtResource("p10_market_stall_veg")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18.4, 0, -1.6)
+
+[node name="SnackStall" parent="Geometry" instance=ExtResource("p11_snack_stall")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -6, 0, 3)
+
+[node name="MarketCrates" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p12_crate")
+points = PackedVector3Array(-21, 0, 4.2, -26.6, 0, 3)
+yaw_degrees = PackedFloat32Array(15, -10)
+
+[node name="QuayRailing" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p13_edge_railing")
+points = PackedVector3Array(-33, 0, 20.88, -31, 0, 20.62, -29, 0, 20.31, -27, 0, 19.95, -17, 0, 17.78, -15, 0, 17.33, -13, 0, 16.9, -11, 0, 16.51, -9, 0, 16.18, -7, 0, 15.92, -5, 0, 15.74, -3, 0, 15.67, -1, 0, 15.69, 1, 0, 15.82, 3, 0, 16.05, 5, 0, 16.35, 7, 0, 16.71, 9, 0, 17.12, 15, 0, 18.41, 17, 0, 18.82, 19, 0, 19.21, 21, 0, 19.57, 23, 0, 19.88, 25, 0, 20.16, 27, 0, 20.39, 29, 0, 20.58, 31, 0, 20.72, 33, 0, 20.81)
+yaw_degrees = PackedFloat32Array(6.8, 8.2, 9.5, 10.6, 12.9, 12.5, 11.6, 10.3, 8.5, 6.3, 3.6, 0.7, -2.3, -5.1, -7.5, -9.5, -10.9, -11.8, -11.9, -11.3, -10.5, -9.5, -8.5, -7.3, -6, -4.7, -3.4, -1.9)
+
+[node name="Bollards" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p14_bollard")
+points = PackedVector3Array(-14, 0, 15.86, -1, 0, 14.44, 7, 0, 15.46, 17, 0, 17.57, 25, 0, 18.91)
+
+[node name="Crane" parent="Geometry" instance=ExtResource("p15_cargo_crane")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 12)
+
+[node name="CratesBarrels" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p16_crates_barrels")
+points = PackedVector3Array(-11.5, 0, 10.5, 4.2, 0, 10, 19, 0, 9.6, -30, 0, 9)
+yaw_degrees = PackedFloat32Array(10, -25, 40, 5)
+
+[node name="ScrapPile" parent="Geometry" instance=ExtResource("p17_scrap_pile")]
+transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, 31.8, 0, 11.6)
+
+[node name="Gangway" parent="Geometry" instance=ExtResource("p18_gangway")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 14)
+
+[node name="Ferry" parent="Geometry" instance=ExtResource("p19_airship_ferry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.9, 28.2)
+
+[node name="MooringArm" parent="Geometry" instance=ExtResource("p20_mooring_arm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 16.5)
+
+[node name="Barocupot" parent="Geometry" instance=ExtResource("p21_airship_barocupot")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 2.5, 28)
+
+[node name="WindSock" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p22_wind_sock")
+points = PackedVector3Array(-31, 0, 5)
+
+[node name="MoundBench" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p23_bench")
+points = PackedVector3Array(-29.8, 0, 6.6)
+yaw_degrees = PackedFloat32Array(160)
+
+[node name="Trees1" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p24_tree_autumn")
+points = PackedVector3Array(64.67, 0, -9.52, 71.33, 0, -26.04, -52.69, 0, -26.86, -16.3, 0, -25.25)
+scale_range = Vector2(0.85, 1.1)
+random_seed = 61
+
+[node name="Trees2" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p25_tree_autumn_rust")
+points = PackedVector3Array(53.01, 0, -26.69, -32.81, 0, -24.79, -66.34, 0, -11.02, -55.32, 0, -4.87)
+scale_range = Vector2(0.85, 1.1)
+random_seed = 62
+
+[node name="Trees3" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p26_tree_autumn_yellow")
+points = PackedVector3Array(-48.94, 0, 7.39, 41, 0, -1.06, -44.52, 0, -9, -40.12, 0, 1.7)
+scale_range = Vector2(0.85, 1.1)
+random_seed = 63
+
+[node name="Trees4" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p27_tree_pine")
+points = PackedVector3Array(36.53, 0, -18.73, 67.75, 0, -19.9, -44.31, 0, -17.27, 9.09, 0, -23.25)
+scale_range = Vector2(0.85, 1.1)
+random_seed = 64
 
 [node name="Bushes" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("13_bush")
-points = PackedVector3Array(-15.1, 0, 0.4, -56.8, 0, 2.7, -30.6, 0, -17.9, -61.4, 0, -0.1, -32.9, 0, 2.4, 25.7, 0, -13, 10.1, 0, 2.5, -61.9, 0, -11.9, 50.5, 0, -15.4, 54.1, 0, -1.6, 34.1, 0, -23.6, -25, 0, -18.1, -10.1, 0, -22.1, -51.5, 0, -10.4, -20.5, 0, -2.6, 43.2, 0, -8.7)
-scale_range = Vector2(0.7, 1)
-random_seed = 23
+prop = ExtResource("p28_bush")
+points = PackedVector3Array(-59.74, 0, 3.01, -18.37, 0, -18.76, 28.66, 0, -18.87, 17.19, 0, 5.98, 62.59, 0, -4.17, 14.18, 0, -22.38, 46.35, 0, 4.31, -22.75, 0, -25.79, 51.74, 0, -1.25, -66.11, 0, -18.67, -66.81, 0, 1.68, 7.69, 0, 1.06, 61.94, 0, -20.31, 19.6, 0, 0.41, -13.91, 0, -17.7, -53.89, 0, -8.66, 17.13, 0, -19.68, 24.16, 0, -2.01)
+scale_range = Vector2(0.8, 1.2)
+random_seed = 65
 
-[node name="Pier" parent="Geometry" instance=ExtResource("14_pier")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, -0.038, 11.45)
+[node name="Rocks" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p29_rock")
+points = PackedVector3Array(46.88, 0, 13.99, 54.88, 0, 7.06, -67.77, 0, 1.76, -41.24, 0, 16.84, -59.22, 0, 12.41, 49.89, 0, 0.21)
+scale_range = Vector2(0.8, 1.3)
+random_seed = 66
 
 [node name="NPCs" parent="." instance=ExtResource("2_npcs")]
 

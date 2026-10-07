@@ -1,0 +1,67 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/cylinder.tres" id="1_cylinder"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/cone.tres" id="2_cone"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="3_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/pyramid.tres" id="4_pyramid"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/prism.tres" id="5_prism"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="6_bead"]
+
+[sub_resource type="StandardMaterial3D" id="green"]
+albedo_color = Color(0.55, 0.62, 0.42, 1)
+
+[sub_resource type="StandardMaterial3D" id="rock"]
+albedo_color = Color(0.7, 0.62, 0.62, 1)
+
+[sub_resource type="StandardMaterial3D" id="wall"]
+albedo_color = Color(0.86, 0.8, 0.72, 1)
+
+[sub_resource type="StandardMaterial3D" id="roof"]
+albedo_color = Color(0.75, 0.42, 0.38, 1)
+
+[sub_resource type="StandardMaterial3D" id="pine"]
+albedo_color = Color(0.33, 0.45, 0.36, 1)
+
+[node name="DistantIsland" type="Node3D"]
+
+[node name="Top" type="MeshInstance3D" parent="."]
+transform = Transform3D(30, 0, 0, 0, 3, 0, 0, 0, 28, 0, -1.5, 0)
+mesh = ExtResource("1_cylinder")
+material_override = SubResource("green")
+cast_shadow = 0
+
+[node name="Cone" type="MeshInstance3D" parent="."]
+transform = Transform3D(28, 0, 0, 0, -42, 0, 0, 0, -26, 0, -24, 0)
+mesh = ExtResource("2_cone")
+material_override = SubResource("rock")
+cast_shadow = 0
+
+[node name="Tower" type="MeshInstance3D" parent="."]
+transform = Transform3D(5, 0, 0, 0, 12, 0, 0, 0, 5, 3, 6, -2)
+mesh = ExtResource("3_box")
+material_override = SubResource("wall")
+cast_shadow = 0
+
+[node name="TowerRoof" type="MeshInstance3D" parent="."]
+transform = Transform3D(4.596194, 0, 4.596194, 0, 3, 0, -4.596194, 0, 4.596194, 3, 13.5, -2)
+mesh = ExtResource("4_pyramid")
+material_override = SubResource("roof")
+cast_shadow = 0
+
+[node name="House" type="MeshInstance3D" parent="."]
+transform = Transform3D(8, 0, 0, 0, 5, 0, 0, 0, 6, -6, 2.5, 4)
+mesh = ExtResource("3_box")
+material_override = SubResource("wall")
+cast_shadow = 0
+
+[node name="HouseRoof" type="MeshInstance3D" parent="."]
+transform = Transform3D(8.6, 0, 0, 0, 2.6, 0, 0, 0, 6.4, -6, 6.2, 4)
+mesh = ExtResource("5_prism")
+material_override = SubResource("roof")
+cast_shadow = 0
+
+[node name="Tree" type="MeshInstance3D" parent="."]
+transform = Transform3D(8, 0, 0, 0, 7, 0, 0, 0, 8, -8, 3.5, -7)
+mesh = ExtResource("6_bead")
+material_override = SubResource("pine")
+cast_shadow = 0

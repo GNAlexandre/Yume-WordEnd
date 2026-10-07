@@ -1,0 +1,206 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/post.tres" id="2_post"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/pyramid.tres" id="3_pyramid"]
+
+[sub_resource type="StandardMaterial3D" id="deck"]
+albedo_color = Color(0.56, 0.49, 0.42, 1)
+
+[sub_resource type="StandardMaterial3D" id="strip"]
+albedo_color = Color(0.45, 0.31, 0.23, 1)
+
+[sub_resource type="StandardMaterial3D" id="dark"]
+albedo_color = Color(0.27, 0.29, 0.33, 1)
+
+[sub_resource type="StandardMaterial3D" id="iron"]
+albedo_color = Color(0.49, 0.54, 0.59, 1)
+
+[sub_resource type="StandardMaterial3D" id="crystal"]
+shading_mode = 0
+albedo_color = Color(1, 0.91, 0.64, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(2, 0.24, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(0.1, 1.2, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3"]
+size = Vector3(0.1, 1.2, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4"]
+size = Vector3(2.1, 1.2, 0.12)
+
+[node name="Gangway" type="Node3D"]
+
+[node name="Deck" type="MeshInstance3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 0.24, 0, 0, 0, 12, 0, -0.04, 6)
+mesh = ExtResource("1_box")
+material_override = SubResource("deck")
+
+[node name="Strip1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.05, 0, 0, 0, 0.02, 0, 0, 0, 12, -0.5, 0.085, 6)
+mesh = ExtResource("1_box")
+material_override = SubResource("strip")
+cast_shadow = 0
+
+[node name="Strip2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.05, 0, 0, 0, 0.02, 0, 0, 0, 12, 0.5, 0.085, 6)
+mesh = ExtResource("1_box")
+material_override = SubResource("strip")
+cast_shadow = 0
+
+[node name="Beam1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.15, 0, 0, 0, 0.32, 0, 0, 0, 12, -0.8, -0.32, 6)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="Beam2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.15, 0, 0, 0, 0.32, 0, 0, 0, 12, 0.8, -0.32, 6)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="Rail1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 12, -1, 1.15, 6)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="Post1_0" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, -1, 0.6, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post1_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, -1, 0.6, 2)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post1_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, -1, 0.6, 4)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post1_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, -1, 0.6, 6)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post1_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, -1, 0.6, 8)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post1_5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, -1, 0.6, 10)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post1_6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, -1, 0.6, 12)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Rail2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 12, 1, 1.15, 6)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="Post2_0" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, 1, 0.6, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post2_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, 1, 0.6, 2)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post2_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, 1, 0.6, 4)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post2_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, 1, 0.6, 6)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post2_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, 1, 0.6, 8)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post2_5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, 1, 0.6, 10)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Post2_6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.06, 0, 0, 0, 1.1, 0, 0, 0, 0.06, 1, 0.6, 12)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="Gate" type="MeshInstance3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0.6, 12)
+mesh = ExtResource("1_box")
+material_override = SubResource("dark")
+
+[node name="GateBar" type="MeshInstance3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 0.06, 0, 0, 0, 0.04, 0, 0.6, 12.05)
+mesh = ExtResource("1_box")
+material_override = SubResource("iron")
+cast_shadow = 0
+
+[node name="LampPost" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 1, 0, 0, 0, 0.1, -1, 1.6, 0)
+mesh = ExtResource("2_post")
+material_override = SubResource("dark")
+cast_shadow = 0
+
+[node name="LampTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.141421, 0, 0.141421, 0, 0.18, 0, -0.141421, 0, 0.141421, -1, 2.34, 0)
+mesh = ExtResource("3_pyramid")
+material_override = SubResource("crystal")
+cast_shadow = 0
+
+[node name="LampBottom" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.141421, 0, -0.141421, 0, -0.18, 0, -0.141421, 0, -0.141421, -1, 2.16, 0)
+mesh = ExtResource("3_pyramid")
+material_override = SubResource("crystal")
+cast_shadow = 0
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, 6)
+shape = SubResource("BoxShape3D_1")
+
+[node name="Shape2" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.03, 0.6, 6)
+shape = SubResource("BoxShape3D_2")
+
+[node name="Shape3" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.03, 0.6, 6)
+shape = SubResource("BoxShape3D_3")
+
+[node name="Shape4" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 12)
+shape = SubResource("BoxShape3D_4")

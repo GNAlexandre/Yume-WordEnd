@@ -6,13 +6,18 @@
 [ext_resource type="PackedScene" path="res://src/items/placements/dunes.tscn" id="4_pickups"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="5_batcher"]
 [ext_resource type="Script" path="res://src/world/prop_scatter.gd" id="6_scatter"]
-[ext_resource type="PackedScene" path="res://src/world/props/pillar.tscn" id="7_pillar"]
-[ext_resource type="PackedScene" path="res://src/world/props/ruin.tscn" id="8_ruin"]
-[ext_resource type="PackedScene" path="res://src/world/props/banner.tscn" id="9_banner"]
-[ext_resource type="PackedScene" path="res://src/world/props/palm.tscn" id="10_palm"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="11_bush"]
-[ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="12_rock"]
-[ext_resource type="PackedScene" path="res://src/enemies/arena.tscn" id="13_arena"]
+[ext_resource type="PackedScene" path="res://src/enemies/arena.tscn" id="7_arena"]
+[ext_resource type="PackedScene" path="res://src/world/props/watch_post_ruin.tscn" id="p1_watch_post_ruin"]
+[ext_resource type="PackedScene" path="res://src/world/props/ruined_wall.tscn" id="p2_ruined_wall"]
+[ext_resource type="PackedScene" path="res://src/world/props/signal_pillar.tscn" id="p3_signal_pillar"]
+[ext_resource type="PackedScene" path="res://src/world/props/fallen_lantern.tscn" id="p4_fallen_lantern"]
+[ext_resource type="PackedScene" path="res://src/world/props/garde_pennant.tscn" id="p5_garde_pennant"]
+[ext_resource type="PackedScene" path="res://src/world/props/ring_stone.tscn" id="p6_ring_stone"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_rock_a.tscn" id="p7_wind_rock_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_rock_b.tscn" id="p8_wind_rock_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_rock_c.tscn" id="p9_wind_rock_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/edge_parapet.tscn" id="p10_edge_parapet"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_tuft.tscn" id="p11_grass_tuft"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
 size = Vector3(58, 30, 44)
@@ -36,44 +41,65 @@ shape = SubResource("BoxShape3D_bounds")
 [node name="Geometry" type="Node3D" parent="."]
 script = ExtResource("5_batcher")
 
-[node name="Pillars" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("7_pillar")
-points = PackedVector3Array(13.41, 0, 11.25, -5.99, 0, 16.44, -17.5, 0, 0, -5.99, 0, -16.44, 13.41, 0, -11.25)
-scale_range = Vector2(0.9, 1.1)
-random_seed = 2
+[node name="WatchPostRuin" parent="Geometry" instance=ExtResource("p1_watch_post_ruin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 0.5)
 
-[node name="Ruins" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("8_ruin")
-points = PackedVector3Array(4.61, 0, 17.19, -14.58, 0, 10.21, -14.58, 0, -10.21, 4.61, 0, -17.19)
-random_seed = 3
+[node name="WallNorth" parent="Geometry" instance=ExtResource("p2_ruined_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -19.6)
 
-[node name="Banners" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("9_banner")
-points = PackedVector3Array(15.8, 0, -3.6, 15.8, 0, 3.6, -6, 0, -15.2, -6, 0, 15.2)
-yaw_degrees = PackedFloat32Array(90, 90, 0, 0)
+[node name="WallSouth" parent="Geometry" instance=ExtResource("p2_ruined_wall")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -4, 0, 19.6)
 
-[node name="Palms" type="Node3D" parent="Geometry"]
+[node name="SignalPillars" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("10_palm")
-points = PackedVector3Array(17, 0, -11.5, 15, 0, 12.5, -15, 0, 27.5, -17, 0, -26)
-scale_range = Vector2(0.9, 1.1)
-random_seed = 5
+prop = ExtResource("p3_signal_pillar")
+points = PackedVector3Array(-17.8, 0, -6.2, -17.8, 0, 7)
+yaw_degrees = PackedFloat32Array(8, -5)
 
-[node name="Shrubs" type="Node3D" parent="Geometry"]
-script = ExtResource("6_scatter")
-prop = ExtResource("11_bush")
-points = PackedVector3Array(11.2, 0, -19.9, -18.7, 0, 10.2, 9.4, 0, 28.8, 2, 0, 22.8, 17.4, 0, 27.7, 23.4, 0, -13.4, -8.7, 0, 25.5, -14.3, 0, -20.1, 8.3, 0, -26.1)
-scale_range = Vector2(0.5, 0.8)
-random_seed = 6
+[node name="FallenLantern" parent="Geometry" instance=ExtResource("p4_fallen_lantern")]
+transform = Transform3D(0.819152, 0, 0.573576, 0, 1, 0, -0.573576, 0, 0.819152, -15.9, 0, -8.1)
 
-[node name="Rocks" type="Node3D" parent="Geometry"]
+[node name="Pennant" parent="Geometry" instance=ExtResource("p5_garde_pennant")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.6, 0, 4.4)
+
+[node name="RingStones" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("12_rock")
-points = PackedVector3Array(-17, 0, -20, 15, 0, -24, -15, 0, 18, 17, 0, 21, 7, 0, -30, -7, 0, 30)
-scale_range = Vector2(0.8, 1.4)
+prop = ExtResource("p6_ring_stone")
+points = PackedVector3Array(11.46, 0, 4.75, 9.84, 0, 7.55, 7.55, 0, 9.84, 4.75, 0, 11.46, -4.75, 0, 11.46, -7.55, 0, 9.84, -9.84, 0, 7.55, -11.46, 0, 4.75, -11.46, 0, -4.75, -9.84, 0, -7.55, -7.55, 0, -9.84, -4.75, 0, -11.46, 4.75, 0, -11.46, 7.55, 0, -9.84, 9.84, 0, -7.55, 11.46, 0, -4.75)
+yaw_degrees = PackedFloat32Array(43.8, 90.4, 29.1, 147.8, 41.7, 99.4, 166.7, 71.5, 174.2, 131.7, 98.7, 113.2, 105.5, 64.8, 179.4, 72.7)
+scale_range = Vector2(0.8, 1.2)
+random_seed = 7
+
+[node name="WindRocksA" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p7_wind_rock_a")
+points = PackedVector3Array(14, 0, -17, -16, 0, 17)
+yaw_degrees = PackedFloat32Array(10, -20)
+
+[node name="WindRocksB" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p8_wind_rock_b")
+points = PackedVector3Array(-11, 0, -19.5, 13, 0, 18.5, 17, 0, -6)
+yaw_degrees = PackedFloat32Array(0, 40, -15)
+
+[node name="WindRocksC" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p9_wind_rock_c")
+points = PackedVector3Array(-20, 0, -19, 6, 0, -21)
+yaw_degrees = PackedFloat32Array(0, 25)
+
+[node name="Parapets" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p10_edge_parapet")
+points = PackedVector3Array(-24.79, 0, 19.6, -24.74, 0, 16.1, -24.32, 0, 7.25, -23.56, 0, -17.21, -23.57, 0, -20.68)
+yaw_degrees = PackedFloat32Array(104.5, 102, 95.5, 77, 74.5)
+
+[node name="GrassTufts" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p11_grass_tuft")
+points = PackedVector3Array(26.13, 0, 15.16, -17.41, 0, 4.98, 23.03, 0, 11.27, -16.56, 0, 11.19, -1.61, 0, 17.49, 17.61, 0, 13.72, 24.86, 0, -16.68, -17.35, 0, -6.09, -2.68, 0, -16.44, 15.44, 0, 21.37, 23.32, 0, 6.19, 16.95, 0, 18.29, 19.33, 0, -11.83, -15.49, 0, 20.57, 26.03, 0, 2.21, 20.88, 0, -8.84, 15.38, 0, -16.67, 24.81, 0, -9.32, -11.92, 0, 12.14, 26.3, 0, 11.89, -19.36, 0, 13.97, 19.2, 0, 6.71, -22.42, 0, -18.61, 25.24, 0, -12.56, 16.42, 0, -13.19, -14.89, 0, -14.6, 1.46, 0, -21.1, -10.79, 0, -17.92, -16.73, 0, 18.09, 13.63, 0, 11.16, 12.1, 0, -11.63, 14.34, 0, 18.57, -18.11, 0, -19.92, -8.14, 0, 18.94, 26.51, 0, 7.56, -16.32, 0, -2.86, -19.19, 0, 8.27, 20.08, 0, 18.24, -12.26, 0, -21.04, 18.92, 0, -4.79, -10.42, 0, 17.12, 25.23, 0, -19.81, 12.52, 0, 20.87, 26.98, 0, -2.03, 22.58, 0, 16.21, -13.66, 0, -11.73)
+yaw_degrees = PackedFloat32Array(-12.9, -13.9, 12.7, 0.9, 18.9, 5, 10.3, 17.3, 1.9, -10.8, -3.7, -2.3, -13.5, 2.1, 10.9, -6.9, -19, -16, -5.4, -12.1, -1.3, 18.7, -10.7, -5.9, 4.1, -13.5, 14.8, 19.3, -19.5, -4.3, 12.3, -19.2, 2.2, 12.3, 18.1, -12.3, 17.1, 3.9, 9.5, -10.9, -18, -0.8, 19.3, -9.9, 19.3, 19.3)
+scale_range = Vector2(0.8, 1.3)
 random_seed = 9
 
 [node name="SpawnN" type="Marker3D" parent="."]
@@ -88,7 +114,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.5, 0)
 [node name="SpawnW" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.5, 0)
 
-[node name="Arena" parent="." instance=ExtResource("13_arena")]
+[node name="Arena" parent="." instance=ExtResource("7_arena")]
 arena_id = &"dunes"
 
 [node name="NPCs" parent="." instance=ExtResource("2_npcs")]

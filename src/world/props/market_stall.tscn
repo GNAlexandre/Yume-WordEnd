@@ -1,0 +1,159 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/box.tres" id="1_box"]
+
+[sub_resource type="StandardMaterial3D" id="wood"]
+albedo_color = Color(0.71, 0.5, 0.32, 1)
+
+[sub_resource type="StandardMaterial3D" id="post"]
+albedo_color = Color(0.45, 0.31, 0.23, 1)
+
+[sub_resource type="StandardMaterial3D" id="canvas"]
+albedo_color = Color(0.88, 0.8, 0.64, 1)
+
+[sub_resource type="StandardMaterial3D" id="valance"]
+albedo_color = Color(0.76, 0.66, 0.5, 1)
+
+[sub_resource type="StandardMaterial3D" id="basket"]
+albedo_color = Color(0.72, 0.56, 0.32, 1)
+
+[sub_resource type="StandardMaterial3D" id="egg"]
+albedo_color = Color(0.98, 0.94, 0.86, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(2.4, 0.9, 0.8)
+
+[node name="MarketStall" type="Node3D"]
+
+[node name="Counter" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.4, 0, 0, 0, 0.9, 0, 0, 0, 0.8, 0, 0.45, 0.45)
+mesh = ExtResource("1_box")
+material_override = SubResource("wood")
+
+[node name="Post1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 2.3, 0, 0, 0, 0.08, -1.15, 1.15, -0.9)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Post2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 2.3, 0, 0, 0, 0.08, 1.15, 1.15, -0.9)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Post3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 2.3, 0, 0, 0, 0.08, -1.15, 1.15, 0.9)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Post4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.08, 0, 0, 0, 2.3, 0, 0, 0, 0.08, 1.15, 1.15, 0.9)
+mesh = ExtResource("1_box")
+material_override = SubResource("post")
+
+[node name="Canvas" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.7, 0, 0, 0, 0.059416, 0.306181, 0, -0.00835, 2.17859, 0, 2.35, 0)
+mesh = ExtResource("1_box")
+material_override = SubResource("canvas")
+
+[node name="Valance" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.7, 0, 0, 0, 0.28, 0, 0, 0, 0.04, 0, 2.18, 1.1)
+mesh = ExtResource("1_box")
+material_override = SubResource("valance")
+cast_shadow = 0
+
+[node name="Basket1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.55, 0, 0, 0, 0.16, 0, 0, 0, 0.45, -0.7, 0.98, 0.45)
+mesh = ExtResource("1_box")
+material_override = SubResource("basket")
+cast_shadow = 0
+
+[node name="Egg1_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, -0.82, 1.1, 0.37)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Egg1_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, -0.6, 1.1, 0.51)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Egg1_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, -0.7, 1.1, 0.57)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Egg1_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, -0.56, 1.1, 0.35)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Basket2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.55, 0, 0, 0, 0.16, 0, 0, 0, 0.45, 0.1, 0.98, 0.45)
+mesh = ExtResource("1_box")
+material_override = SubResource("basket")
+cast_shadow = 0
+
+[node name="Egg2_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, -0.02, 1.1, 0.37)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Egg2_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, 0.2, 1.1, 0.51)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Egg2_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, 0.1, 1.1, 0.57)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Egg2_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, 0.24, 1.1, 0.35)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Basket3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.55, 0, 0, 0, 0.16, 0, 0, 0, 0.45, 0.8, 0.98, 0.45)
+mesh = ExtResource("1_box")
+material_override = SubResource("basket")
+cast_shadow = 0
+
+[node name="Egg3_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, 0.68, 1.1, 0.37)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Egg3_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, 0.9, 1.1, 0.51)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Egg3_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, 0.8, 1.1, 0.57)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Egg3_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.13, 0, 0, 0, 0.1, 0.94, 1.1, 0.35)
+mesh = ExtResource("1_box")
+material_override = SubResource("egg")
+cast_shadow = 0
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0.45)
+shape = SubResource("BoxShape3D_1")

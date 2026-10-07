@@ -1,0 +1,32 @@
+[gd_scene format=3]
+
+[ext_resource type="Mesh" path="res://src/world/props/meshes/rock.tres" id="1_rock"]
+[ext_resource type="Mesh" path="res://src/world/props/meshes/bead.tres" id="2_bead"]
+
+[sub_resource type="StandardMaterial3D" id="stone"]
+albedo_color = Color(0.8, 0.73, 0.63, 1)
+
+[sub_resource type="StandardMaterial3D" id="dark"]
+albedo_color = Color(0.55, 0.48, 0.42, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(2.2, 1.9, 1.4)
+
+[node name="WindRock" type="Node3D"]
+
+[node name="Rock" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.543184, 0.374241, 0, -0.54057, 1.760666, 0, 0, 0, 1.6, 0, 0.9, 0)
+mesh = ExtResource("1_rock")
+material_override = SubResource("stone")
+
+[node name="Cap" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.236231, 0.224976, 0.34202, -0.478828, 0.657785, 0, -0.449951, -0.081884, 0.939693, 0.5, 1.75, 0.1)
+mesh = ExtResource("2_bead")
+material_override = SubResource("dark")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.95, 0)
+shape = SubResource("BoxShape3D_1")
