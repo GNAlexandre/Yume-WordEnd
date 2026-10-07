@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/npc/npc.tscn" id="1_npc"]
+[ext_resource type="Resource" path="res://tests/data/npcs/demo_guide.tres" id="2_guide"]
+[ext_resource type="PackedScene" path="res://src/quests/quest_trigger.tscn" id="3_trigger"]
+
+[node name="QuestDemo" type="Node3D"]
+
+[node name="DemoGuide" parent="." instance=ExtResource("1_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.2, 6)
+data = ExtResource("2_guide")
+
+[node name="demo_well" parent="." instance=ExtResource("3_trigger")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.5)
+trigger_id = &"demo_well"
+radius = 1.5

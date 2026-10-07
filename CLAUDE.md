@@ -30,6 +30,9 @@ change pas sans PR « contrats ».
   http://127.0.0.1:8347/index.html build/shots` (tranche verticale ; `tools/web_m1.js` : arène).
   Mode d'emploi et raccourcis `?zone=`, `?timeres=`, `?trace=1` : docs/web.md.
 - Planches de remplacement : `python3 tools/gen_placeholders.py skin <id> --name "Nom" --tres`.
+- Quêtes : format, dialogues, déclencheurs et tests dans docs/QUETES.md ; vérifier le contenu par
+  `tools/test.sh tests/unit/test_quest_content.gd` ; tester un scénario sur le modèle de
+  `tests/unit/test_quest_example.gd` (base `tests/stubs/q_quest_test.gd`).
 - Toujours passer par `tools/godot` (pas `godot`) : chaque worktree y a son propre `user://`.
 
 ## Règles
@@ -46,7 +49,10 @@ change pas sans PR « contrats ».
   nommés ni les fichiers figés** (liste : PLAN.md section 3, « Structure figée au Lot 0 »). On
   peut ajouter des nœuds et des fichiers dans ses propres dossiers.
 - Peupler une zone (PNJ, ennemis libres, objets) se fait dans son fichier d'emplacement
-  `src/npc|enemies|items/placements/<zone>.tscn`, jamais dans la scène de zone (L2).
+  `src/npc|enemies|items/placements/<zone>.tscn`, jamais dans la scène de zone (L2). Les
+  déclencheurs de quête (`src/quests/quest_trigger.tscn`) vont dans `src/npc/placements/<zone>.tscn`.
+- Les quêtes sont des données : `data/quests/<id>.json` (étapes, prérequis, récompenses) et les
+  répliques qui les font avancer dans `data/dialogues/*.json` ; aucun script par quête.
 - Ne modifie que les dossiers de ton lot. Hors périmètre : note le besoin dans
   docs/CONTRACT_REQUESTS.md et continue avec un stub local (dans tests/stubs/, sans class_name).
 - project.godot, export_presets.cfg, src/autoload/event_bus.gd, src/main.*, src/game.* et les
@@ -162,3 +168,10 @@ change pas sans PR « contrats ».
   et la couche de GUT (`GutLayer`) prend les clics si elle n'est pas cachée.
 - `zone_entered` n'est émis qu'au changement de zone (M2) : un test qui replace le joueur dans
   la zone où il est déjà ne le reçoit pas (`Zone.LAST_ZONE_META` sur le corps du joueur).
+- Quêtes et dialogues JSON : une clé inconnue (faute de frappe) les rend invalides, sauf une clé
+  qui commence par `_` (commentaire). `QuestData` garde les fichiers lus en cache : un test qui
+  écrit ou retire des quêtes appelle `QuestData.clear_cache()` (ou `add_search_dir` /
+  `remove_search_dir`, comme `tests/stubs/q_quest_test.gd`). Un test qui démarre une quête sans
+  QuestTracker n'a pas d'étape enregistrée : `QuestData.current_step()` donne alors la première.
+- Un QuestTracker dans l'arbre réagit à `GameState.set_quest_state(id, &"done")` (fin forcée) :
+  sans les objets de ses étapes collect restantes, la quête revient à `&"active"`.

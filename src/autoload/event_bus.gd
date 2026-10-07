@@ -4,7 +4,7 @@ extends Node
 ## Un système émet ses signaux ici ; les autres les écoutent. Personne ne lit directement les
 ## nœuds d'un autre système. L'émetteur attendu est indiqué au-dessus de chaque signal.
 ## Les signaux ne sont jamais émis dans cette classe, d'où l'annotation unused_signal.
-## Fichier gelé : ne change qu'au Lot 0 ou dans une PR « contrats ».
+## Fichier gelé : ne change qu'au Lot 0 ou dans une PR « contrats » (dernière : Lot Q, quêtes).
 
 @warning_ignore_start("unused_signal")
 
@@ -76,5 +76,28 @@ signal save_requested
 ## Une partie est prête (nouvelle partie, Continuer, import). Émis par SaveManager (L8) ;
 ## main.gd quitte alors le menu et charge src/game.tscn.
 signal game_loaded
+
+# --- Quêtes en étapes (Lot Q, moteur de quêtes : docs/QUETES.md) --------------------------------
+
+## Un drapeau de GameState change de valeur. Émis par GameState.set_flag (pas par from_dict ni
+## reset) ; le QuestTracker valide les étapes « flag », les PNJ revoient leur marqueur.
+signal flag_changed(flag: StringName, value: bool)
+## Étape courante d'une quête active et son compteur (ennemis vaincus, vague ou score atteints) ;
+## step_id &"" : plus d'étape (quête terminée ou oubliée). Émis par GameState.set_quest_step,
+## que le QuestTracker appelle ; HUD, journal et marqueurs des PNJ se mettent à jour.
+signal quest_step_updated(quest_id: StringName, step_id: StringName, count: int)
+## Une étape vient d'être validée (récompense d'étape donnée, avant le passage à la suivante ou la
+## fin de la quête). Émis par QuestTracker ; SaveManager demande une auto-sauvegarde.
+signal quest_step_completed(quest_id: StringName, step_id: StringName)
+## Demande de validation de l'étape courante de quest_id (step_id &"" : quelle qu'elle soit,
+## sinon seulement si c'est elle). Émis par DialogueRunner (effet advance_quest) ou tout autre
+## système ; le QuestTracker l'applique.
+signal quest_advance_requested(quest_id: StringName, step_id: StringName)
+## Le joueur entre dans un déclencheur de quête (src/quests/quest_trigger.tscn). Émis par
+## QuestTrigger ; le QuestTracker valide les étapes « reach » qui le nomment.
+signal trigger_entered(trigger_id: StringName)
+## Quête suivie (affichée par le HUD) ; &"" : aucune. Émis par GameState quand tracked_quest
+## change (QuestTracker au démarrage d'une quête, journal à la demande du joueur).
+signal tracked_quest_changed(quest_id: StringName)
 
 @warning_ignore_restore("unused_signal")

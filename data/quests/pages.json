@@ -1,0 +1,24 @@
+{
+  "id": "pages",
+  "title": "Les pages envolées",
+  "summary": "Les Timeres ont emporté des pages du dernier tome de la bibliothèque dans la forêt, au nord du village. La bibliothécaire en attend cinq.",
+  "giver": "librarian",
+  "steps": [
+    {
+      "id": "deliver",
+      "type": "collect",
+      "item": "page_fragment",
+      "count": 5,
+      "npc": "librarian",
+      "consume": true,
+      "objective": "Rapporter 5 fragments de page à la bibliothécaire",
+      "hint": "Les Timeres de la forêt gardent les pages : cherche dans la clairière, et bats-les."
+    }
+  ],
+  "rewards": {
+    "items": {
+      "bookmark": 1
+    },
+    "max_hp": 6
+  }
+}

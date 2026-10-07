@@ -63,15 +63,18 @@ func test_stack_sizes() -> void:
 
 
 func test_pages_quest_data() -> void:
+	# Lot Q : pages.json, les 5 fragments à rapporter sont son étape collect « rapporter à ».
 	var quest := QuestData.find(&"pages")
-	assert_not_null(quest, "data/quests/pages.tres")
+	assert_not_null(quest, "data/quests/pages.json")
 	if quest == null:
 		return
 	assert_eq(quest.id, &"pages")
 	assert_eq(quest.title, "Les pages envolées")
 	assert_eq(quest.objective, "Rapporter 5 fragments de page à la bibliothécaire")
 	assert_eq(quest.giver_npc, &"librarian")
-	assert_eq(quest.required_items, {&"page_fragment": 5})
+	assert_eq(QuestTracker.missing_items(quest), {&"page_fragment": 5}, "5 fragments requis")
+	assert_eq(quest.steps[0].npc, &"librarian", "à rapporter à la bibliothécaire")
+	assert_true(quest.steps[0].consume, "retirés à la fin")
 	assert_eq(quest.required_flags, [] as Array[StringName])
 	assert_eq(quest.reward_items, {&"bookmark": 1})
 	assert_eq(quest.reward_max_hp, 6, "PV max de la récompense : une donnée")

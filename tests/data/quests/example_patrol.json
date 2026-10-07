@@ -1,0 +1,43 @@
+{
+  "_comment": "Exemple commenté de docs/QUETES.md (quête d'exemple des tests, absente du jeu).",
+  "id": "example_patrol",
+  "title": "La ronde de la forêt",
+  "summary": "Le forgeron s’inquiète : des Timeres rôdent dans la clairière de la forêt. Il aimerait qu’on aille voir, qu’on chasse les plus petits, puis qu’on lui raconte.",
+  "giver": "blacksmith",
+  "requires": {
+    "quests": [
+      "pages"
+    ]
+  },
+  "steps": [
+    {
+      "id": "clearing",
+      "type": "reach",
+      "trigger": "forest_clearing",
+      "objective": "Rejoindre la clairière de la forêt",
+      "hint": "La forêt est au nord du village, par la porte en bois."
+    },
+    {
+      "id": "timeres",
+      "type": "kill",
+      "enemy": "timere_small",
+      "count": 2,
+      "zone": "forest",
+      "objective": "Chasser 2 petits Timeres de la forêt"
+    },
+    {
+      "id": "report",
+      "type": "talk",
+      "npc": "blacksmith",
+      "objective": "Faire ton rapport au forgeron"
+    }
+  ],
+  "rewards": {
+    "items": {
+      "shell": 2
+    },
+    "flags": [
+      "forest_patrol_done"
+    ]
+  }
+}

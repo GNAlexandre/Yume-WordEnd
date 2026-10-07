@@ -1,0 +1,86 @@
+{
+  "_comment": "Dialogue de l'exemple de docs/QUETES.md : le forgeron donne la quête example_patrol.",
+  "id": "example_blacksmith",
+  "start": "hello",
+  "entries": [
+    "after",
+    "report",
+    "patrol",
+    "offer"
+  ],
+  "nodes": {
+    "hello": {
+      "speaker": "Forgeron",
+      "text": "Bienvenue à la forge ! Une lame bien tenue en vaut trois mal affûtées.",
+      "next": null
+    },
+    "offer": {
+      "if": {
+        "quest": [
+          "example_patrol",
+          "available"
+        ]
+      },
+      "speaker": "Forgeron",
+      "text": "Des Timeres rôdent dans la clairière de la forêt. Tu irais voir de quoi il retourne ?",
+      "choices": [
+        {
+          "text": "J’y vais.",
+          "start_quest": "example_patrol",
+          "next": "go"
+        },
+        {
+          "text": "Pas maintenant.",
+          "next": null
+        }
+      ]
+    },
+    "go": {
+      "speaker": "Forgeron",
+      "text": "Chasse les plus petits, puis reviens me raconter. Et garde ta lame au clair !",
+      "next": null
+    },
+    "patrol": {
+      "if": {
+        "quest": [
+          "example_patrol",
+          "active"
+        ]
+      },
+      "speaker": "Forgeron",
+      "text": "Alors, cette clairière ? Les petits Timeres ne vont pas se chasser tout seuls.",
+      "next": null
+    },
+    "report": {
+      "if": {
+        "quest_step": [
+          "example_patrol",
+          "report"
+        ]
+      },
+      "speaker": "Forgeron",
+      "text": "Deux de moins ! Tiens, ces coquillages porte-bonheur traînaient sur mon établi.",
+      "advance_quest": [
+        "example_patrol",
+        "report"
+      ],
+      "next": "thanks"
+    },
+    "thanks": {
+      "speaker": "Forgeron",
+      "text": "La forêt respire mieux grâce à toi. Repasse quand tu veux.",
+      "next": null
+    },
+    "after": {
+      "if": {
+        "quest": [
+          "example_patrol",
+          "done"
+        ]
+      },
+      "speaker": "Forgeron",
+      "text": "La clairière est calme depuis ta ronde. Tu as l’étoffe d’une vraie gardienne.",
+      "next": null
+    }
+  }
+}

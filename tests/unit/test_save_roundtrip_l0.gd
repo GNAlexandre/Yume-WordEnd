@@ -33,7 +33,7 @@ func test_save_then_load_restores_state() -> void:
 
 func test_export_contains_version_and_date() -> void:
 	var data: Dictionary = JSON.parse_string(SaveManager.export_json())
-	assert_eq(int(data["version"]), 1)
+	assert_eq(int(data["version"]), SaveManager.SAVE_VERSION)
 	assert_true(str(data["saved_at"]).ends_with("Z"))
 	for key: String in GameState.to_dict():
 		assert_true(data.has(key), "champ %s exporté" % key)
