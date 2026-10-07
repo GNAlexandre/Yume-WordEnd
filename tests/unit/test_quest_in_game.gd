@@ -1,6 +1,7 @@
 extends GutTest
-## Quête des pages dans src/game.tscn : fragments de la forêt, QuestTracker et UI/Inventory du
-## jeu, récompense jusqu'au Health du joueur (relais max_hp_changed de PlayerCombat).
+## Quêtes de l'acte 1 dans src/game.tscn : les cinq pages du livre d'images dans les bois,
+## QuestTracker et UI/Inventory du jeu, récompense ; PV max d'une récompense (registre des
+## veilles) jusqu'au Health du joueur (relais max_hp_changed de PlayerCombat).
 
 const GAME_SCENE := preload("res://src/game.tscn")
 
@@ -18,26 +19,29 @@ func after_all() -> void:
 	GameState.reset()
 
 
-func test_pages_quest_end_to_end() -> void:
+func test_picture_book_quest_end_to_end() -> void:
 	var game: Node3D = add_child_autofree(GAME_SCENE.instantiate())
 	await wait_physics_frames(3)
 	var player := game.get_node(^"Player") as Node3D
-	var forest_pickups := game.get_node(^"Island/Zones/forest/Pickups")
-	assert_eq(forest_pickups.get_child_count(), 3, "trois fragments dans la forêt")
-	GameState.set_quest_state(&"pages", &"active")
-	for pickup: Node in forest_pickups.get_children():
-		(pickup as Pickup).interact(player)
-	GameState.add_item(&"page_fragment", 2)
-	assert_eq(GameState.count(&"page_fragment"), 5, "3 ramassés + 2 lâchés par les Timeres")
+	var pages: Array[Pickup] = []
+	for child: Node in game.get_node(^"Island/Zones/forest/Pickups").get_children():
+		if child is Pickup and (child as Pickup).item_id == &"page_fragment":
+			pages.append(child as Pickup)
+	assert_eq(pages.size(), 5, "cinq pages dans les bois")
+	GameState.set_quest_state(&"picture_book", &"active")
+	for pickup: Pickup in pages:
+		pickup.interact(player)
+	assert_eq(GameState.count(&"page_fragment"), 5, "cinq pages ramassées")
 	var inventory := game.get_node(^"UI/Inventory") as Control
 	assert_eq(inventory.call(&"displayed_stacks"), [{"item_id": &"page_fragment", "quantity": 5}])
-	GameState.set_quest_state(&"pages", &"done")
-	assert_eq(GameState.items(), {&"bookmark": 1}, "pages rendues, marque-page reçu")
-	assert_eq(GameState.max_hp, 6)
-	assert_eq((game.get_node(^"Player/Health") as Health).max_hp, 6, "6 PV max pour le joueur")
-	assert_eq(inventory.call(&"displayed_stacks"), [{"item_id": &"bookmark", "quantity": 1}])
-	for n in 3:
+	GameState.set_quest_state(&"picture_book", &"done")
+	assert_eq(GameState.items(), {&"picture_book": 1}, "pages rendues, livre d'images reçu")
+	assert_eq(inventory.call(&"displayed_stacks"), [{"item_id": &"picture_book", "quantity": 1}])
+	for n in 5:
 		assert_true(GameState.is_pickup_collected(StringName("forest_page_%d" % (n + 1))))
+	GameState.set_quest_state(&"vigil_register", &"done")
+	assert_eq(GameState.max_hp, 7)
+	assert_eq((game.get_node(^"Player/Health") as Health).max_hp, 7, "7 PV max pour le joueur")
 	inventory.call(&"open")
 	assert_true(get_tree().paused, "inventaire du jeu modal")
 	inventory.call(&"close")
