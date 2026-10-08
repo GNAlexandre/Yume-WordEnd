@@ -1685,3 +1685,60 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `height_m` / hauteur du haut de l'image aux pieds (l'ancre), ce que dit `SkinData.height_m`
   (« taille debout ») ; seul le Timere change aussi (cadre de 99 px, ancre à 97 : +2 %, à sa
   taille déclarée). Tests du chargeur et du sprite mesurés à l'ancre.
+- **Bureau (D1, PR « contrats ») — préréglages** : « Windows Desktop » (préréglage 1 : x86_64,
+  pck intégré à l'exe, S3TC/BPTC, sans console ni signature) et « Linux » (préréglage 2, même
+  filtre : pour lancer le même jeu ici, sans écran) à côté du « Web », qui reste le préréglage 0,
+  le seul de sa plateforme, celui de `tools/check.sh` et du déploiement. Même rendu
+  (Compatibility) : ANGLE, son repli Direct3D 11 sous Windows, est dans le template officiel
+  (aucune DLL exportée à côté de l'exe).
+- **Bureau — pas de rcedit** : Godot 4.7 écrit lui-même l'icône et les métadonnées dans l'exe
+  (`application/modify_resources=true`, sans rcedit ni wine, aucun avertissement à l'export) ;
+  vérifié par `7z l` : `.rsrc/version.txt` (0.3.0.0, WordEnd, Yume Novel) et six icônes. L'icône
+  `tools/installer/wordend.ico` (16 à 256 px, celles qu'exige l'export) sert aussi aux raccourcis
+  de l'installateur.
+- **Bureau — version** : `application/config/version` de project.godot (0.3.0 : l'acte 1 en
+  HD-2D) est la seule source : Godot la met dans l'exe (`file_version` et `product_version`
+  vides), `tools/build_desktop.sh` dans l'installateur et les noms de fichiers. Un tag `vX.Y.Z`
+  fait foi pour sa Release : la tâche `bureau` l'écrit dans sa copie de project.godot s'il
+  diffère (avertissement), pour que publier se résume à créer le tag depuis GitHub.
+- **Bureau — dossier utilisateur** : `use_custom_user_dir=true`, `custom_user_dir_name="WordEnd"`
+  (`%APPDATA%\WordEnd`, `~/.local/share/WordEnd`) et `use_custom_user_dir.web=false` : le Web
+  garde `/userfs/godot/app_userdata/WordEnd` et ses parties (vérifié dans Chromium). Effet de
+  bord sans conséquence : sous `tools/godot`, user:// passe de
+  `build/xdg/data/godot/app_userdata/WordEnd` à `build/xdg/data/WordEnd`.
+- **Bureau — autoload `DesktopApp`** (dernier des autoloads, sans class_name) plutôt que du code
+  dans main.gd ou les menus : fenêtre de départ à 80 % de l'écran en 16:9 (640 × 360 au moins,
+  seulement dans le jeu exporté avec un écran), plein écran « fenêtre sans bordure »
+  (`WINDOW_MODE_FULLSCREEN`, pas l'exclusif) par F11, Alt+Entrée (signal `window_input` de la
+  fenêtre, avant toute scène) ou le bouton des menus, mémorisé dans `user://settings.cfg`, hors de
+  la sauvegarde. « Quitter » (menu principal) et « Quitter le jeu » (menu pause) écrivent la
+  partie suivie (`SaveManager.save()`, `close_game(false)`) puis ferment ; textes dans la section
+  `desktop` de `data/texts/story.json`. Sur le Web : boutons cachés, raccourcis ignorés, aucun
+  fichier. Limite acceptée : Alt+Entrée pendant une conversation fait aussi avancer la réplique
+  (`dialogue_box.gd` lit `ui_accept` dans `_input`, avant les autoloads).
+- **Bureau — contrôles tactiles** : hors Web, `TouchControls.is_touch_device()` ne suppose plus
+  d'écran tactile au démarrage (un portable tactile les verrait sinon par-dessus le jeu au
+  clavier) ; le mode AUTO les montre au premier toucher, comme avant.
+- **Bureau — vérification du jeu exporté** : un jeu exporté ignore `--script` ; la vérification
+  voyage donc dans le pck (`src/desktop_check.gd`), créée par DesktopApp seulement avec
+  l'argument utilisateur `--desktop-check=<phase>`, comme les raccourcis de test
+  (`src/test_shortcuts.gd`). `tools/desktop_boot.sh` lance le build Linux sans écran (ou sous
+  Xvfb avec openbox, sans quoi X11 n'a pas de vrai plein écran) : menu, F11, Alt+Entrée,
+  nouvelle partie, pause, « Quitter le jeu », puis reprise.
+- **Bureau — installateur** : NSIS 3 (`makensis` existe sous Linux, l'image de la CI est une
+  Ubuntu 24.04), installateur 64 bits (le jeu est x86_64) en LZMA solide, par utilisateur
+  (`RequestExecutionLevel user`, `%LOCALAPPDATA%\Programs\WordEnd`, clés sous HKCU), en
+  français ; le désinstalleur garde les sauvegardes par défaut (« Oui », et en mode silencieux).
+  Avertissements de makensis = erreurs (`-WX`). Bandeau des pages d'accueil et de fin découpé
+  dans l'écran de démarrage (`make_installer_art.py`) ; `tools/installer/.gdignore` évite que
+  Godot importe le BMP.
+- **Bureau — CI** : tâche `bureau` (PR, `main`, tags `v*`) dans le même conteneur
+  `barichello/godot-ci:4.7.2`, qui contient déjà tous les templates (Windows et Linux compris,
+  Dockerfile lu) ; NSIS installé par apt ; artefact `bureau` gardé 7 jours, sans recompression.
+  Tâche `release` (tag `v*`, ou « Run workflow » avec `release` coché) après `check` et
+  `bureau`, seule à avoir `contents: write`, par `softprops/action-gh-release@v2` (texte ajouté
+  à celui d'une Release écrite depuis GitHub). Le check et le déploiement Pages ne changent pas.
+- **Bureau — wine** : l'installateur a été vérifié sous wine 9.0 (installation et
+  désinstallation silencieuses, raccourcis, clé d'« Applications et fonctionnalités », page
+  d'accueil) ; le jeu, lui, plante sous ce wine dès le lancement (`kernelbase`, après
+  `dinput8`), template officiel nu compris : il n'a pas été lancé sur un vrai Windows.

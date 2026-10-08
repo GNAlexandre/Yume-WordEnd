@@ -15,6 +15,14 @@ l'éditeur comme dans le navigateur.
 
 ## Jouer
 
+- **Sur Windows** (10 ou 11, 64 bits) : télécharger `WordEnd-Setup-X.Y.Z.exe` sur la page des
+  [Releases](https://github.com/GNAlexandre/Yume-WordEnd/releases/latest) et le lancer
+  (installation pour toi seul, sans droits d'administrateur ; raccourcis dans le menu Démarrer et
+  sur le Bureau), ou le zip portable (`WordEnd.exe` seul). Le jeu n'est pas signé : si Windows
+  affiche « Windows a protégé votre ordinateur », cliquer sur « Informations complémentaires »
+  puis « Exécuter quand même ». Plein écran : F11 ou Alt+Entrée ; sauvegardes dans
+  `%APPDATA%\WordEnd`. Détails, mise à jour et désinstallation : [docs/bureau.md](docs/bureau.md).
+- **En ligne** : https://jeu.yumenovel.fr/ (navigateur avec WebGL 2), sans rien installer.
 - **L'acte 1, « Dans la forêt céleste »** : le matin qui suit la nuit du grand vent, Nygglatho,
   sous le porche de l'entrepôt, annonce l'arrivée du nouveau responsable et des rejetons de
   Timere tombés dans les bois. On salue Willem (et ses conseils de combat), on abat les rejetons
@@ -44,7 +52,8 @@ l'éditeur comme dans le navigateur.
 
 ## Développer et vérifier
 
-- Environnement : `bash tools/setup.sh` (Godot, templates Web, gdtoolkit, Pillow).
+- Environnement : `bash tools/setup.sh` (Godot, templates Web, Windows et Linux, gdtoolkit,
+  Pillow, NSIS).
 - Vérification complète (« vert ») : `tools/check.sh` (import, lint, tests GUT, fumée, export
   Web, capture) ; tests ciblés : `tools/test.sh tests/integration/test_m2_quest.gd`.
 - Captures : `tools/hd2d_shots.sh` (menu, cinq zones, conversation, veille :
@@ -52,6 +61,9 @@ l'éditeur comme dans le navigateur.
   `tools/screenshot.sh res://src/world/island.tscn build/shots/island.png`.
 - Images du décor : `python3 tools/hd2d_assets.py gen | check | fit | atlas` (remplaçants en
   pixel art, vérification des images livrées ; liste dans `tools/hd2d_manifest.json`).
+- Application Windows : `tools/build_desktop.sh` (installateur et zip dans `build/dist`) ;
+  `--linux` vérifie en plus que le même jeu démarre (build Linux sans écran). Une Release GitHub
+  avec l'installateur se publie en créant un tag `vX.Y.Z` sur GitHub ([docs/bureau.md](docs/bureau.md)).
 - Navigateur sans écran (Playwright) : `node tools/web_m2.js` (le début de l'acte 1, la reprise
   et les images par seconde de chaque zone ; mode d'emploi en tête du fichier et dans
   docs/web.md).
@@ -62,6 +74,8 @@ l'éditeur comme dans le navigateur.
   d'acceptation de la tranche verticale (section 4).
 - [CLAUDE.md](CLAUDE.md) : règles et pièges pour les sessions Claude Code qui développent le jeu.
 - [docs/web.md](docs/web.md) : export Web, site, raccourcis de test du navigateur.
+- [docs/bureau.md](docs/bureau.md) : application Windows, installateur, publier une version,
+  SmartScreen, sauvegardes.
 - [docs/REGLAGES_COMBAT.md](docs/REGLAGES_COMBAT.md) : tous les chiffres de la sensation de combat.
 - [docs/RECETTE_M2.md](docs/RECETTE_M2.md) : recette de l'acte 1 (jalon M2) : critères, comment
   les vérifier, résultats.
