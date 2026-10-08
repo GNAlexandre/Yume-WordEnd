@@ -1,6 +1,6 @@
 extends Node
 ## Découpe du décor du village autour du joueur (Lot H2) : aucun panneau ni bâtiment ne le cache,
-## même derrière l'entrepôt, un arbre ou les draps. Nœud « SeeThrough » de village.tscn, placé
+## même derrière un arbre, le porche ou les draps. Nœud « SeeThrough » de village.tscn, placé
 ## après « Geometry » : à son _ready, le PropBatcher a déjà fondu le décor en meshes « Batch… ».
 ## Chaque matériau de panneau de ces meshes (src/world/shaders/panel.gdshader, H5) est remplacé
 ## par une copie dont le shader est panel.gdshader augmenté de la découpe

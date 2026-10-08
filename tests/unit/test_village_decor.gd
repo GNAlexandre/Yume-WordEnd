@@ -52,6 +52,8 @@ const WALK_ROWS: Array[float] = [-17.0, -13.0, -8.0, -4.0, 0.0, 4.0, 8.0, 12.0, 
 const WALK_COLUMNS: Array[float] = [-17.0, -12.0, -8.0, -4.0, 0.0, 4.0, 8.0, 12.0, 16.0, 20.0]
 const WALK_FROM := -20.5
 const WALK_TO := 20.5
+## Derrière le tronc du grand arbre (local au village) : le décor y cache le joueur.
+const BEHIND_THE_TREE := Vector3(11.0, 0.0, -14.6)
 ## Couloirs fermés derrière le L de l'entrepôt (local au village) : un point dans chacun.
 const BEHIND_WAREHOUSE: Array[Vector3] = [Vector3(-11.0, 0.0, -20.1), Vector3(-20.1, 0.0, -6.0)]
 ## Obstacles du décor : point (local au village) → nœud attendu dans le chemin du collisionneur.
@@ -242,7 +244,7 @@ func test_no_npc_stays_hidden_while_walking_the_yard() -> void:
 	assert_true(failures.is_empty(), "PNJ cachés en marchant : %s" % ", ".join(failures))
 
 
-func test_decor_fades_around_the_player_behind_the_warehouse() -> void:
+func test_decor_fades_around_the_player_behind_the_climbing_tree() -> void:
 	var see_through := _village.get_node(^"SeeThrough")
 	var materials: Array[ShaderMaterial] = see_through.call(&"materials")
 	assert_gt(materials.size(), 15, "un matériau à découpe par image du village")
@@ -260,12 +262,13 @@ func test_decor_fades_around_the_player_behind_the_warehouse() -> void:
 		if batch == null or not (batch.material_override is ShaderMaterial):
 			continue
 		assert_has(materials, batch.material_override, "%s : découpe" % batch.name)
-	# Derrière l'entrepôt, le joueur est caché par lui ; la découpe le suit.
+	# Derrière le grand arbre (au nord de son tronc), le joueur est caché par lui ; la découpe
+	# le suit.
 	var player := add_child_autofree(PLAYER_STUB.instantiate()) as Node3D
-	player.global_position = _village.to_global(Vector3(-10.0, 0.0, -20.0))
+	player.global_position = _village.to_global(BEHIND_THE_TREE)
 	await wait_process_frames(2)
 	var body := player.global_position + Vector3.UP * 0.75
-	assert_true(_opaque_between(_camera_for(player.global_position), body), "entrepôt devant")
+	assert_true(_opaque_between(_camera_for(player.global_position), body), "arbre devant")
 	for material: ShaderMaterial in materials:
 		assert_eq(material.get_shader_parameter(&"see_through_strength"), 1.0)
 		var center: Vector3 = material.get_shader_parameter(&"see_through_center")
