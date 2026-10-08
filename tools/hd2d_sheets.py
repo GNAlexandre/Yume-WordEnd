@@ -11,20 +11,33 @@ Usage (Python 3.9+, Pillow) :
 
     python3 tools/hd2d_sheets.py check                  # planches du manifeste
     python3 tools/hd2d_sheets.py anchors <json>…        # ancres recalculées (aperçu des écarts)
-    python3 tools/hd2d_sheets.py anchors <json>… --write [--feet dark|alpha]
-    python3 tools/hd2d_sheets.py strip <out.png> <json>…  # contrôle : images alignées sur l'ancre
+    python3 tools/hd2d_sheets.py anchors <json>… --write [--feet dark|alpha] [--no-axis] [--torso]
+    python3 tools/hd2d_sheets.py alias parle repos <json>…   # parle joue les images de repos
+    python3 tools/hd2d_sheets.py strip <out.png> <json>… [--anims repos,parle] [--scale 1]
 
-Règles vérifiées (check) : PNG RGBA à alpha net, taille = « planche », animations et cadences
-du tableau du cahier (3.1 fée, 3.2 PNJ, 3.3 Timere), images dans la planche et non vides, ancre
-dans l'image, hauteur debout de la 1re image de « repos » (de l'ancre au haut de la silhouette)
-= taille × 96 px à 6 % près dans chaque vue, même échelle d'une image debout à l'autre (12 %),
-et mêmes animations, nombres d'images, cadences, « coup » et « onde » dans toutes les vues.
+Manifeste (« sheets ») : id, dir, table (fairy : fée jouable ou soldate, 3.1 ; npc : PNJ, 3.2 ;
+timere, 3.3), height_m, views ; facultatifs : talks (PNJ qui parle), feet (alpha), axis (false :
+pieds cherchés sur toute la largeur), torso (vues recalées sur le buste), aliases (vue →
+{animation : animation dont elle joue les images}, à faire redessiner).
+
+Règles vérifiées (check). Problèmes (code 1) : PNG RGBA à alpha net, taille = « planche »,
+animations et cadences du tableau du cahier, images dans la planche et non vides, ancre dans
+l'image (± 2 px), hauteur debout de la 1re image de « repos » du profil (de l'ancre au haut de la
+silhouette) = taille × 96 px à 6 % près, même échelle que « repos » (12 %) pour les animations
+debout que le jeu joue (USED), mêmes animations, nombres d'images, cadences, « coup » et « onde »
+dans toutes les vues. Remarques (images à faire refaire, sans bloquer) : face ou dos dessinés plus
+petits ou plus grands que le profil (le jeu garde la hauteur debout du profil), échelle des
+animations que le jeu ne joue pas, « parle » absente ou remplacée.
 
 Ancres (anchors) : le point au sol entre les deux pieds. « dark » (personnages chaussés de
 sombre) : les pixels sombres épais du bas de la silhouette (l'ouverture morphologique écarte les
-contours fins de l'épée) ; « alpha » (Timere, pattes) : les pixels les plus bas de la silhouette.
-x = milieu des pieds dans la bande basse, y = sous le pied le plus bas. « mort » (allongé) :
-milieu de la masse sombre. Le résultat se juge sur la planche de contrôle (strip).
+contours fins de l'épée) ; « alpha » (Timere, pattes, chaussures claires) : les pixels les plus
+bas de la silhouette. x = milieu des pieds dans la bande basse, y = sous le pied le plus bas ;
+pour les images debout, les pieds sont cherchés près de l'axe du corps (une épée posée au sol, une
+queue ou un plateau à côté ne comptent pas). Images immobiles (repos, parle) : x recalé sur la 1re
+image de « repos » par superposition des jambes (ou du buste avec --torso), y sous leurs pieds.
+« mort » (allongé) : milieu de la masse sombre. Le résultat se juge sur la planche de contrôle
+(strip : ligne de sol, axe de l'ancre, hauteur debout du repos en orange, images superposées).
 """
 
 import argparse
@@ -67,6 +80,11 @@ TABLES = {
 }
 # Animations debout (même échelle que « repos ») ; « course » peut être plus basse, pas plus haute.
 UPRIGHT = ("repos", "marche", "parle")
+# Animations debout que le jeu joue, par tableau : une échelle fausse y bloque (ailleurs : une
+# remarque). Les PNJ ne marchent pas ; le Timere, sans pieds ni tête fixes, n'est pas mesuré.
+USED = {"fairy": ("repos", "marche", "parle"), "npc": ("repos", "parle"), "timere": ()}
+# Une ancre peut dépasser du cadre de l'image de quelques px (pied coupé au ras du cadre).
+ANCHOR_MARGIN = 2
 STANDING_TOLERANCE = 0.06
 SCALE_TOLERANCE = 0.12
 # Ancres : bande basse où l'on cherche les deux pieds (px au-dessus du pied le plus bas).
@@ -76,6 +94,20 @@ FEET_BAND = {"dark": 18, "alpha": 8}
 OPENING = {"dark": 5, "alpha": 3}
 DARK_LUMA = 70
 LYING = ("mort",)
+# Animations où les pieds ne bougent pas : leurs images sont recalées sur la 1re de « repos ».
+STILL = ("repos", "parle")
+# Axe du corps : rangées de la silhouette (part de sa hauteur, depuis le haut) dont on prend la
+# médiane ; pieds cherchés à FEET_WINDOW × hauteur de part et d'autre.
+AXIS_BAND = (0.15, 0.5)
+FEET_WINDOW = 0.22
+# Recalage des images immobiles : bas de la silhouette comparé (part de la hauteur debout) et
+# décalage cherché (px, en x et en y).
+ALIGN_BAND = 0.3
+ALIGN_SEARCH = (20, 8)
+# Recalage sur le buste (--torso) : rangées comparées (part de la hauteur debout depuis le haut)
+# et décalage cherché en x (px).
+TORSO_BAND = (0.3, 0.62)
+TORSO_SEARCH = 30
 
 
 def load_manifest():
@@ -162,9 +194,40 @@ def _rows(mask):
     return rows
 
 
-def compute_anchor(frame_image, feet="dark", lying=False):
-    """Ancre (x, y) d'une image : entre les pieds, au sol (voir l'en-tête)."""
+def _alpha(frame_image):
+    return frame_image.getchannel("A").point(lambda v: 255 if v >= 128 else 0)
+
+
+def body_axis(frame_image):
+    """Axe du corps (x) : médiane des pixels opaques des épaules à la taille (AXIS_BAND de la
+    hauteur de la silhouette), où ni l'épée qui pend ni la queue ne pèsent."""
+    alpha = _alpha(frame_image)
+    box = alpha.getbbox()
+    if box is None:
+        return frame_image.width / 2.0
+    height = box[3] - box[1]
+    first = box[1] + int(AXIS_BAND[0] * height)
+    last = max(first + 1, box[1] + int(AXIS_BAND[1] * height))
+    rows = _rows(alpha.crop((0, first, alpha.width, last)))
+    xs = sorted(x for row in rows.values() for x in row)
+    return float(xs[len(xs) // 2]) if xs else frame_image.width / 2.0
+
+
+def compute_anchor(frame_image, feet="dark", lying=False, axis=False):
+    """Ancre (x, y) d'une image : entre les pieds, au sol (voir l'en-tête). Avec axis (images
+    debout), les pieds sont cherchés à moins de FEET_WINDOW × hauteur de l'axe du corps : une
+    épée qui touche le sol à côté, une queue ou un plateau ne les déplacent pas."""
     mask = _mask(frame_image, feet)
+    if axis and not lying:
+        box = _alpha(frame_image).getbbox()
+        if box is not None:
+            half = FEET_WINDOW * (box[3] - box[1])
+            axis = body_axis(frame_image)
+            window = Image.new("L", mask.size, 0)
+            window.paste(255, (max(0, int(axis - half)), 0, min(mask.width, int(axis + half) + 1), mask.height))
+            inside = ImageChops.multiply(mask, window)
+            if inside.getbbox():
+                mask = inside
     rows = _rows(mask)
     if not rows:
         w, h = frame_image.size
@@ -177,14 +240,115 @@ def compute_anchor(frame_image, feet="dark", lying=False):
     return [round((min(band) + max(band) + 1) / 2), lowest + 1]
 
 
-def cmd_anchors(paths, write, feet):
+def align_anchor(ref_image, ref_anchor, frame_image, feet="dark", guess=None):
+    """Ancre d'une image immobile (repos, parle) recalée sur l'image de référence : décalage qui
+    superpose le mieux le bas de la silhouette (masque des pieds : sombre ou alpha ; ALIGN_BAND
+    de la hauteur debout au-dessus de l'ancre, FEET_WINDOW de part et d'autre : jambes, pieds,
+    bas de la robe), cherché à ± ALIGN_SEARCH px. Les pieds ne glissent plus d'une image à
+    l'autre, même quand le bras, la tête ou l'arme bougent (anchor_sheet ne garde que son x : le
+    y est pris sous les pieds de l'image). guess : ancre estimée par les pieds ; la recherche
+    reste alors à ± ALIGN_SEARCH[1] px d'elle (sinon un pied se superpose à l'autre)."""
+    box = _alpha(ref_image).getbbox()
+    if box is None:
+        return None
+    ref = _mask(ref_image, feet)
+    ax, ay = int(round(ref_anchor[0])), int(round(ref_anchor[1]))
+    top = max(0, int(ay - ALIGN_BAND * (ay - box[1])))
+    # Autour des pieds seulement : une épée ou une queue qui bouge à côté ne compte pas.
+    half = int(FEET_WINDOW * (ay - box[1]))
+    region = (max(0, ax - half), top, min(ref.width, ax + half + 1), min(ref.height, ay + 2))
+    target = ref.crop(region)
+    frame = _mask(frame_image, feet)
+    best = None
+    dx_range = range(-ALIGN_SEARCH[0], ALIGN_SEARCH[0] + 1)
+    dy_range = range(-ALIGN_SEARCH[1], ALIGN_SEARCH[1] + 1)
+    if guess is not None:
+        gx, gy = int(round(guess[0])) - ax, int(round(guess[1])) - ay
+        dx_range = range(gx - ALIGN_SEARCH[1], gx + ALIGN_SEARCH[1] + 1)
+        dy_range = range(gy - ALIGN_SEARCH[1], gy + ALIGN_SEARCH[1] + 1)
+    for dy in dy_range:
+        for dx in dx_range:
+            # canvas(x, y) = frame(x + dx, y + dy) : l'image décalée dans le repère de la référence.
+            canvas = Image.new("L", ref.size, 0)
+            canvas.paste(frame, (-dx, -dy))
+            score = ImageChops.difference(canvas.crop(region), target).histogram()[255]
+            if best is None or score < best[0] or (score == best[0] and abs(dx) + abs(dy) < best[1]):
+                best = (score, abs(dx) + abs(dy), dx, dy)
+    return [ax + best[2], ay + best[3]]
+
+
+def anchor_sheet(data, image, feet, axis=True):
+    """Ancres de toutes les images d'une planche : la 1re image de « repos » et les images en
+    mouvement par compute_anchor (axe du corps pour les images debout, UPRIGHT, si axis), les
+    autres images immobiles (STILL) recalées sur elle."""
+    anims = data["animations"]
+    ref = None
+    idle = anims.get("repos", {}).get("images", [])
+    if idle:
+        ref_image = crop(image, idle[0])
+        ref = (ref_image, compute_anchor(ref_image, feet, axis=axis))
+    result = {}
+    for name, anim in anims.items():
+        anchors = []
+        for index, frame in enumerate(anim["images"]):
+            part = crop(image, frame)
+            anchor = None
+            if ref is not None and name == "repos" and index == 0:
+                anchor = ref[1]
+            elif ref is not None and name in STILL:
+                # x recalé sur la référence ; y sous les pieds de l'image (ils ne se lèvent pas).
+                guess = compute_anchor(part, feet, False, axis)
+                aligned = align_anchor(ref[0], ref[1], part, feet, guess)
+                if aligned is not None:
+                    anchor = [aligned[0], guess[1]]
+            upright = axis and name in UPRIGHT
+            anchors.append(anchor or compute_anchor(part, feet, name in LYING, upright))
+        result[name] = anchors
+    return result
+
+
+def torso_anchors(data, image, anchors):
+    """Variante pour une vue où une queue, un bras ou un pan de vêtement cache un pied (dos d'un
+    homme-chat, d'un ours) : x des images immobiles recalé sur le buste de la 1re image de
+    « repos » (rangées TORSO_BAND de sa hauteur debout, alpha), x de référence = axe du corps ; les
+    y restent sous les pieds."""
+    idle = data["animations"].get("repos", {}).get("images", [])
+    if not idle:
+        return anchors
+    ref_image = crop(image, idle[0])
+    ref = _alpha(ref_image)
+    box = ref.getbbox()
+    if box is None:
+        return anchors
+    height = anchors["repos"][0][1] - box[1]
+    region = (0, box[1] + int(TORSO_BAND[0] * height), ref.width, box[1] + int(TORSO_BAND[1] * height))
+    target = ref.crop(region)
+    axis = round(body_axis(ref_image))
+    for name in STILL:
+        for index, frame in enumerate(data["animations"].get(name, {}).get("images", [])):
+            part = _alpha(crop(image, frame))
+            best = None
+            for dy in range(-ALIGN_SEARCH[1], ALIGN_SEARCH[1] + 1):
+                for dx in range(-TORSO_SEARCH, TORSO_SEARCH + 1):
+                    canvas = Image.new("L", ref.size, 0)
+                    canvas.paste(part, (-dx, -dy))
+                    score = ImageChops.difference(canvas.crop(region), target).histogram()[255]
+                    if best is None or score < best[0]:
+                        best = (score, dx)
+            anchors[name][index] = [axis + best[1], anchors[name][index][1]]
+    return anchors
+
+
+def cmd_anchors(paths, write, feet, axis=True, torso=False):
     for path in paths:
         data = read_json(path)
         image = Image.open(sheet_png(path)).convert("RGBA")
+        anchors = anchor_sheet(data, image, feet, axis)
+        if torso:
+            anchors = torso_anchors(data, image, anchors)
         moved = 0
         for name, anim in data["animations"].items():
-            for frame in anim["images"]:
-                anchor = compute_anchor(crop(image, frame), feet, name in LYING)
+            for frame, anchor in zip(anim["images"], anchors[name]):
                 if [round(float(frame[4])), round(float(frame[5]))] != anchor:
                     moved += 1
                     if not write:
@@ -203,12 +367,16 @@ def _expected_count_ok(want, count):
     return count in want if isinstance(want, list) else count == want
 
 
-def check_view(json_path, table, height_px):
-    """Problèmes d'une vue (liste vide si elle est conforme)."""
-    problems = []
+def check_view(json_path, table, height_px, profile_height=0.0):
+    """(problèmes, remarques) d'une vue. Les problèmes bloquent (format, animations du tableau,
+    images, ancres, hauteur du profil, échelle des animations jouées : USED) ; les remarques
+    (échelle des autres animations, vue dessinée plus petite ou plus grande que le profil, que
+    le jeu compense) vont dans la liste des images à refaire. profile_height : hauteur debout du
+    profil (0 pour le profil lui-même, comparé à height_px)."""
+    problems, notes = [], []
     png = sheet_png(json_path)
     if not os.path.exists(png) or not os.path.exists(json_path):
-        return ["absente"]
+        return ["absente"], notes
     image = Image.open(png)
     if image.mode != "RGBA":
         problems.append("PNG %s au lieu de RGBA" % image.mode)
@@ -219,7 +387,7 @@ def check_view(json_path, table, height_px):
     try:
         data = read_json(json_path)
     except ValueError as error:
-        return problems + ["JSON illisible : %s" % error]
+        return problems + ["JSON illisible : %s" % error], notes
     if data.get("planche") != list(image.size):
         problems.append("planche %s au lieu de %s" % (data.get("planche"), list(image.size)))
     anims = data.get("animations", {})
@@ -241,7 +409,8 @@ def check_view(json_path, table, height_px):
             if w <= 0 or h <= 0 or x < 0 or y < 0 or x + w > image.width or y + h > image.height:
                 problems.append("%s/%d hors de la planche" % (name, index))
                 continue
-            if not (0 <= ax <= w and 0 <= ay <= h):
+            margin = ANCHOR_MARGIN
+            if not (-margin <= ax <= w + margin and -margin <= ay <= h + margin):
                 problems.append("%s/%d : ancre hors de l'image" % (name, index))
             part = crop(image, frame)
             if part.getchannel("A").getbbox() is None:
@@ -249,16 +418,23 @@ def check_view(json_path, table, height_px):
                 continue
             standing.setdefault(name, []).append(standing_height(part, frame))
     idle = standing.get("repos", [0.0])[0]
-    if idle and abs(idle - height_px) > STANDING_TOLERANCE * height_px:
+    if idle and not profile_height and abs(idle - height_px) > STANDING_TOLERANCE * height_px:
         problems.append("hauteur debout %.0f px au lieu de %.0f (repos, 1re image)" % (idle, height_px))
-    if idle:
+    if idle and profile_height and abs(idle - profile_height) > STANDING_TOLERANCE * profile_height:
+        notes.append(
+            "dessinée à %d %% du profil (%.0f px debout au lieu de %.0f ; le jeu compense)"
+            % (round(100 * idle / profile_height), idle, profile_height)
+        )
+    if idle and table != "timere":
         for name, heights in standing.items():
-            if name in UPRIGHT or name == "course":
-                low = 0.0 if name == "course" else idle * (1 - SCALE_TOLERANCE)
-                bad = [i for i, v in enumerate(heights) if v > idle * (1 + SCALE_TOLERANCE) or v < low]
-                if bad:
-                    problems.append("%s : échelle différente de repos (images %s)" % (name, bad))
-    return problems
+            if name not in UPRIGHT and name != "course":
+                continue
+            low = 0.0 if name == "course" else idle * (1 - SCALE_TOLERANCE)
+            bad = [i for i, v in enumerate(heights) if v > idle * (1 + SCALE_TOLERANCE) or v < low]
+            if bad:
+                text = "%s : échelle différente de repos (images %s)" % (name, bad)
+                (problems if name in USED[table] else notes).append(text)
+    return problems, notes
 
 
 def _signature(json_path):
@@ -269,31 +445,50 @@ def _signature(json_path):
     }
 
 
+def _idle_height(json_path):
+    data = read_json(json_path)
+    idle = data.get("animations", {}).get("repos", {}).get("images", [])
+    if not idle:
+        return 0.0
+    image = Image.open(sheet_png(json_path)).convert("RGBA")
+    return standing_height(crop(image, idle[0]), idle[0])
+
+
 def check_sheet(entry):
-    """Problèmes d'une planche du manifeste, toutes vues confondues : {vue: [problèmes]}."""
+    """Problèmes et remarques d'une planche du manifeste, par vue : {vue: ([problèmes],
+    [remarques])} (seulement les vues qui en ont)."""
     base = os.path.join(ROOT, entry["dir"], entry["id"])
     height_px = entry["height_m"] * PX_PER_M
     report = {}
     side = base + ".json"
+    profile = _idle_height(side) if os.path.exists(side) and os.path.exists(sheet_png(side)) else 0.0
     for view in entry.get("views", [""]):
         path = base + view + ".json"
-        problems = check_view(path, entry["table"], height_px)
+        problems, notes = check_view(path, entry["table"], height_px, profile if view else 0.0)
         if view and not problems and os.path.exists(side) and _signature(path) != _signature(side):
             problems.append("animations, cadences, coup ou onde différents du profil")
-        if problems:
-            report[view or "profil"] = problems
+        if not view and entry.get("talks") and "parle" not in read_json(path).get("animations", {}):
+            notes.append("parle absente (le PNJ garde repos en conversation)")
+        for anim, source in entry.get("aliases", {}).get(view or "side", {}).items():
+            notes.append("%s remplacée par les images de %s (dessins à refaire)" % (anim, source))
+        if problems or notes:
+            report[view or "profil"] = (problems, notes)
     return report
 
 
 def check_all(manifest=None):
-    """Nombre de planches en écart (et le détail imprimé)."""
+    """Nombre de planches à reprendre (problèmes) ; le détail et les remarques sont imprimés."""
     manifest = manifest or load_manifest()
     bad = 0
     for entry in manifest.get("sheets", []):
         report = check_sheet(entry)
-        for view, problems in report.items():
-            print("%s (%s) : %s" % (os.path.join(entry["dir"], entry["id"]), view, " ; ".join(problems)))
-        bad += 1 if report else 0
+        label = os.path.join(entry["dir"], entry["id"])
+        for view, (problems, notes) in report.items():
+            if problems:
+                print("%s (%s) : %s" % (label, view, " ; ".join(problems)))
+            for note in notes:
+                print("  remarque %s (%s) : %s" % (label, view, note))
+        bad += 1 if any(problems for problems, _ in report.values()) else 0
     return bad
 
 
@@ -304,47 +499,74 @@ def cmd_check():
     return 1 if bad else 0
 
 
+def cmd_alias(paths, anim, source):
+    """Remplace les images de anim par celles de source (cadence et boucle de anim gardées) :
+    une animation dessinée à une autre échelle cède la place à une animation juste."""
+    for path in paths:
+        data = read_json(path)
+        anims = data["animations"]
+        anims[anim]["images"] = [list(frame) for frame in anims[source]["images"]]
+        write_json(path, data)
+        print("%s : %s ← images de %s" % (os.path.relpath(path, ROOT), anim, source))
+    return 0
+
+
 # --- Planche de contrôle --------------------------------------------------------------------
 
 
-def cmd_strip(out_path, paths, scale=2):
-    """Chaque animation sur une rangée, images posées sur la même ancre (ligne de sol, axe
-    vertical), et en dernière colonne toutes les images superposées : un pied qui glisse ou une
-    échelle qui saute se voient tout de suite."""
-    rows = []
+def cmd_strip(out_path, paths, scale=2, only=None):
+    """Chaque animation sur une rangée, images posées sur la même ancre (ligne de sol grise, axe
+    vertical bleu), et en dernière colonne toutes les images superposées : un pied qui glisse ou
+    une échelle qui saute se voient tout de suite. Ligne orange : hauteur debout de la 1re image
+    de « repos » de la planche (même échelle attendue pour repos, marche et parle). Cases à la
+    taille de chaque planche (plusieurs vues côte à côte restent lisibles)."""
+    blocks = []
     for path in paths:
         data = read_json(path)
         image = Image.open(sheet_png(path)).convert("RGBA")
+        rows = []
+        idle = 0.0
         for name, anim in data["animations"].items():
             frames = [(crop(image, f), (float(f[4]), float(f[5]))) for f in anim["images"]]
-            rows.append(("%s %s" % (os.path.basename(path), name), frames))
-    above = max(max(a[1] for _, a in fr) for _, fr in rows)
-    below = max(max(im.height - a[1] for im, a in fr) for _, fr in rows)
-    left = max(max(a[0] for _, a in fr) for _, fr in rows)
-    right = max(max(im.width - a[0] for im, a in fr) for _, fr in rows)
-    cell_w, cell_h = int(left + right) + 8, int(above + below) + 16
-    cols = max(len(fr) for _, fr in rows) + 1
-    sheet = Image.new("RGBA", (cols * cell_w, len(rows) * cell_h), (86, 92, 104, 255))
-    draw = ImageDraw.Draw(sheet)
-    for r, (label, frames) in enumerate(rows):
-        y0 = r * cell_h
-        ground = y0 + 12 + int(above)
-        draw.text((2, y0 + 1), label, fill=(255, 255, 255, 255))
-        onion = Image.new("RGBA", (cell_w, cell_h), (0, 0, 0, 0))
-        for c, (part, (ax, ay)) in enumerate(frames + [(None, (0, 0))]):
-            x0 = c * cell_w
-            origin = x0 + 4 + int(left)
-            draw.line((x0, ground, x0 + cell_w - 2, ground), fill=(170, 170, 170, 255))
-            draw.line((origin, y0 + 12, origin, y0 + cell_h - 2), fill=(120, 200, 255, 255))
-            if part is None:
-                sheet.alpha_composite(onion, (x0, y0))
+            if name == "repos" and frames:
+                idle = standing_height(frames[0][0], anim["images"][0])
+            if only and name not in only:
                 continue
-            pos = (origin - int(round(ax)), ground - int(round(ay)))
-            sheet.alpha_composite(part, pos)
-            ghost = part.copy()
-            ghost.putalpha(part.getchannel("A").point(lambda v: v * 90 // 255))
-            onion.alpha_composite(ghost, (pos[0] - x0, pos[1] - y0))
-            draw.line((origin - 3, ground, origin + 3, ground), fill=(255, 40, 40, 255), width=1)
+            rows.append(("%s %s" % (os.path.basename(path), name), frames))
+        above = max(max(a[1] for _, a in fr) for _, fr in rows)
+        below = max(max(im.height - a[1] for im, a in fr) for _, fr in rows)
+        left = max(max(a[0] for _, a in fr) for _, fr in rows)
+        right = max(max(im.width - a[0] for im, a in fr) for _, fr in rows)
+        cell = (int(left + right) + 8, int(above + below) + 16)
+        blocks.append((rows, idle, above, left, cell))
+    width = max(cell[0] * (max(len(fr) for _, fr in rows) + 1) for rows, _, _, _, cell in blocks)
+    height = sum(cell[1] * len(rows) for rows, _, _, _, cell in blocks)
+    sheet = Image.new("RGBA", (width, height), (86, 92, 104, 255))
+    draw = ImageDraw.Draw(sheet)
+    y0 = 0
+    for rows, idle, above, left, (cell_w, cell_h) in blocks:
+        for label, frames in rows:
+            ground = y0 + 12 + int(above)
+            draw.text((2, y0 + 1), label, fill=(255, 255, 255, 255))
+            onion = Image.new("RGBA", (cell_w, cell_h), (0, 0, 0, 0))
+            for c, (part, (ax, ay)) in enumerate(frames + [(None, (0, 0))]):
+                x0 = c * cell_w
+                origin = x0 + 4 + int(left)
+                draw.line((x0, ground, x0 + cell_w - 2, ground), fill=(170, 170, 170, 255))
+                draw.line((origin, y0 + 12, origin, y0 + cell_h - 2), fill=(120, 200, 255, 255))
+                if idle:
+                    top = ground - int(round(idle))
+                    draw.line((x0, top, x0 + cell_w - 2, top), fill=(240, 150, 60, 255))
+                if part is None:
+                    sheet.alpha_composite(onion, (x0, y0))
+                    continue
+                pos = (origin - int(round(ax)), ground - int(round(ay)))
+                sheet.alpha_composite(part, pos)
+                ghost = part.copy()
+                ghost.putalpha(part.getchannel("A").point(lambda v: v * 90 // 255))
+                onion.alpha_composite(ghost, (pos[0] - x0, pos[1] - y0))
+                draw.line((origin - 3, ground, origin + 3, ground), fill=(255, 40, 40, 255), width=1)
+            y0 += cell_h
     if scale != 1:
         sheet = sheet.resize((sheet.width * scale, sheet.height * scale), Image.NEAREST)
     sheet.save(out_path)
@@ -360,16 +582,26 @@ def main():
     anchors.add_argument("files", nargs="+")
     anchors.add_argument("--write", action="store_true")
     anchors.add_argument("--feet", choices=("dark", "alpha"), default="dark")
+    anchors.add_argument("--no-axis", action="store_true", help="pieds cherchés sur toute la largeur")
+    anchors.add_argument("--torso", action="store_true", help="images immobiles recalées sur le buste")
+    alias = sub.add_parser("alias", help="remplace les images d'une animation par celles d'une autre")
+    alias.add_argument("anim")
+    alias.add_argument("source")
+    alias.add_argument("files", nargs="+")
     strip = sub.add_parser("strip", help="planche de contrôle alignée sur les ancres")
     strip.add_argument("out")
     strip.add_argument("files", nargs="+")
     strip.add_argument("--scale", type=int, default=2)
+    strip.add_argument("--anims", default="", help="animations à montrer (repos,parle…), toutes par défaut")
     args = parser.parse_args()
     if args.command == "check":
         return cmd_check()
     if args.command == "anchors":
-        return cmd_anchors(args.files, args.write, args.feet)
-    return cmd_strip(args.out, args.files, args.scale)
+        return cmd_anchors(args.files, args.write, args.feet, not args.no_axis, args.torso)
+    if args.command == "alias":
+        return cmd_alias(args.files, args.anim, args.source)
+    only = [name for name in args.anims.split(",") if name]
+    return cmd_strip(args.out, args.files, args.scale, only)
 
 
 if __name__ == "__main__":

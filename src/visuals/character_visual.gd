@@ -1,6 +1,6 @@
 class_name CharacterVisual
 extends Node3D
-## Visuel d'un personnage en billboard HD-2D (PLAN.md sections 3 et 5). Propriétaire : L3.
+## Visuel d'un personnage en billboard HD-2D (PLAN.md sections 3 et 5). Propriétaire : L3, H6.
 ## Point d'entrée unique, instancié sous le nom « Visual » dans player.tscn, enemy.tscn, npc.tscn
 ## (et le menu).
 ##

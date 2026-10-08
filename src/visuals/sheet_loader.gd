@@ -85,7 +85,9 @@ static func view_problem(skin: SkinData, view: StringName) -> String:
 		if not side.has(anim_name):
 			return "%s : animation %s en trop" % [view, anim_name]
 		if _signature(other[anim_name]) != _signature(side[anim_name]):
-			return "%s : %s diffère du profil (images, ips, boucle, coup ou onde)" % [view, anim_name]
+			return (
+				"%s : %s diffère du profil (images, ips, boucle, coup ou onde)" % [view, anim_name]
+			)
 	return ""
 
 
