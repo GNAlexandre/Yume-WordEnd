@@ -25,6 +25,8 @@ const FILL_START := 0.2
 var _mode: StringName = &""
 var _progress: float = 0.0
 var _diameter: float = 1.0
+var _lane_direction: Vector3 = Vector3.ZERO
+var _lane_size: Vector2 = Vector2.ZERO
 var _ring: MeshInstance3D
 var _fill: MeshInstance3D
 var _lane: MeshInstance3D
@@ -70,6 +72,8 @@ func rush(direction: Vector3, length: float, width: float, glint_at: Vector3) ->
 		return
 	flat = flat.normalized()
 	_mode = &"rush"
+	_lane_direction = flat
+	_lane_size = Vector2(width, length)
 	var size := Vector3(width / LANE_IMAGE.x, 1.0, length / LANE_IMAGE.y)
 	_lane.transform = Transform3D(
 		Basis.looking_at(flat, Vector3.UP) * Basis.from_scale(size),
@@ -135,3 +139,12 @@ func zone_radius() -> float:
 ## Centre de la zone affichée (local, au sol).
 func zone_center() -> Vector3:
 	return Vector3(_fill.position.x, 0.0, _fill.position.z)
+
+
+## Couloir de charge affiché : direction (sol, unitaire), largeur et longueur (m).
+func lane_direction() -> Vector3:
+	return _lane_direction
+
+
+func lane_size() -> Vector2:
+	return _lane_size
