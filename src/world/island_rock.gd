@@ -321,7 +321,8 @@ static func waterfall_mesh() -> ArrayMesh:
 	var normal := IslandEdge.normal(WATERFALL_ANGLE, true)
 	var outward := Vector3(normal.x, 0.0, normal.y)
 	var across := Vector3(-outward.z, 0.0, outward.x) * WATERFALL_SIZE.x * 0.5
-	var top := Vector3(edge.x, 0.02, edge.y) - outward * 0.6
+	# Le haut du ruban affleure sous la lèvre : vu de la caméra, pas de trait clair sur le lit.
+	var top := Vector3(edge.x, -0.05, edge.y) + outward * 0.05
 	var vertices := PackedVector3Array()
 	var normals := PackedVector3Array()
 	var uvs := PackedVector2Array()
