@@ -301,12 +301,12 @@ func _building_framing() -> Vector2:
 		return none
 	var bounds := _tilt_bounds(demands, feet, feet_angle, _target_distance, top)
 	if bounds.x >= bounds.y or _talking:
-		return Vector2(rad_to_deg(maxf(bounds.x, bounds.y)), 0.0)
+		return Vector2(minf(rad_to_deg(maxf(bounds.x, bounds.y)), pitch_deg), 0.0)
 	var near := _target_distance
 	var far := FRAME_MAX_DISTANCE
 	bounds = _tilt_bounds(demands, feet, feet_angle, far, top)
 	if bounds.x < bounds.y:
-		return Vector2(rad_to_deg(bounds.y), far)
+		return Vector2(minf(rad_to_deg(bounds.y), pitch_deg), far)
 	for _i in 12:
 		var middle := (near + far) / 2.0
 		var tried := _tilt_bounds(demands, feet, feet_angle, middle, top)
@@ -315,7 +315,7 @@ func _building_framing() -> Vector2:
 		else:
 			near = middle
 	bounds = _tilt_bounds(demands, feet, feet_angle, far, top)
-	return Vector2(rad_to_deg(maxf(bounds.x, bounds.y)), far)
+	return Vector2(minf(rad_to_deg(maxf(bounds.x, bounds.y)), pitch_deg), far)
 
 
 ## Tangages permis (radians) avec la caméra à reach m du point visé sans cadrage, au tangage
