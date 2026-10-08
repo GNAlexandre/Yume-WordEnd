@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [790, 495],
+  "direction": "front",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "status": "measured_crops_animation_review",
+  "anchors_validated": true,
+  "anchor_method": "tools/hd2d_sheets.py anchors (H1) : pieds près de l'axe du corps, images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
+  "combat_timing_validated": false,
+  "density_px_m": 96,
+  "palette_colors": 64,
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [0, 1, 106, 158, 48, 158],
+        [110, 0, 116, 159, 48, 159]
+      ]
+    },
+    "marche": {
+      "ips": 10,
+      "boucle": true,
+      "images": [
+        [0, 170, 134, 165, 66, 165],
+        [138, 167, 119, 168, 48, 168],
+        [261, 166, 137, 169, 64, 169],
+        [402, 163, 136, 172, 64, 171],
+        [542, 166, 113, 169, 42, 168],
+        [659, 166, 131, 169, 62, 169]
+      ]
+    },
+    "parle": {
+      "ips": 6,
+      "boucle": true,
+      "images": [
+        [0, 339, 121, 156, 51, 156],
+        [125, 341, 126, 154, 57, 154]
+      ]
+    }
+  }
+}

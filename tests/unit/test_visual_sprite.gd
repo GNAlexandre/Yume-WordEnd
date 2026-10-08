@@ -178,7 +178,12 @@ func test_hit_and_wave_frames_come_from_the_sheet() -> void:
 
 
 func test_set_facing_flips_relative_to_the_camera() -> void:
-	var visual := _visual(CHTHOLLY)
+	# Planche d'une seule vue (easter egg, remplaçants) : le profil, retourné ou non ; les trois
+	# vues (H6) sont dans test_visual_views.gd.
+	var side_only := CHTHOLLY.duplicate() as SkinData
+	side_only.front_sheet = null
+	side_only.back_sheet = null
+	var visual := _visual(side_only)
 	var sprite := _sprite(visual)
 	visual.set_facing(Vector3.LEFT)
 	assert_true(sprite.flip_h, "sans caméra : la gauche est -X")
@@ -232,12 +237,12 @@ func test_sprite_and_shadow_follow_the_node_scale() -> void:
 	assert_true(shadow.visible)
 	assert_almost_eq(shadow.position.y, 0.02, 0.001, "au ras du sol")
 	assert_almost_eq(_sprite(visual).global_transform.basis.get_scale().y, 1.3, 1e-4)
-	var timere_radius := 0.75 * 60.0 * TIMERE.height_m / 99.0
+	var timere_radius := 0.75 * 44.0 * TIMERE.height_m / 99.0
 	var radius := shadow.global_transform.basis.get_scale().x / 2.0
 	assert_almost_eq(radius, 1.3 * timere_radius, 1e-3, "ombre à l'échelle du Timere")
 	visual.set_skin(CHTHOLLY)
 	radius = shadow.global_transform.basis.get_scale().x / 2.0
-	assert_almost_eq(radius, 1.3 * 0.75 * 49.0 * 1.5 / 144.0, 1e-3, "rayon de jeu.js : 18 px")
+	assert_almost_eq(radius, 1.3 * 0.75 * 46.0 * 1.5 / 144.0, 1e-3, "demi-largeur du corps, 46 px")
 
 
 func test_skin_change_keeps_the_running_animation() -> void:

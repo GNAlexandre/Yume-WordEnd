@@ -4,6 +4,10 @@
 [ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh.png" id="2_sheet"]
 [ext_resource type="JSON" path="res://assets/characters/lakhesh/lakhesh.json" id="3_frames"]
 [ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh_portrait.png" id="4_portrait"]
+[ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh_front.png" id="5_front"]
+[ext_resource type="JSON" path="res://assets/characters/lakhesh/lakhesh_front.json" id="6_front_frames"]
+[ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh_back.png" id="7_back"]
+[ext_resource type="JSON" path="res://assets/characters/lakhesh/lakhesh_back.json" id="8_back_frames"]
 
 [resource]
 script = ExtResource("1_skin")
@@ -11,5 +15,9 @@ id = &"lakhesh"
 display_name = "Lakhesh"
 sprite_sheet = ExtResource("2_sheet")
 frames_json = ExtResource("3_frames")
+front_sheet = ExtResource("5_front")
+front_json = ExtResource("6_front_frames")
+back_sheet = ExtResource("7_back")
+back_json = ExtResource("8_back_frames")
 portrait = ExtResource("4_portrait")
 height_m = 1.2

@@ -79,6 +79,20 @@ Format de l'easter egg, repris tel quel : une planche PNG et son JSON, comme
 - **Hauteur** : la 1re image de `repos` mesure exactement la taille du personnage × 96 (tableau
   3.4) ; les autres images peuvent dépasser (épée, bras levés, chute).
 - `coup` : images où l'épée ou la gueule touche ; `onde` : image qui lance l'onde.
+- **Trois vues par personnage** (depuis la livraison de priorité 1) : `<id>.png` + `.json` est le
+  profil tourné vers la droite (le jeu en fait le profil gauche en miroir), `<id>_front` la face
+  (vers la caméra) et `<id>_back` le dos, chacune avec son JSON. Les trois vues ont exactement
+  les mêmes animations, nombres d'images, `ips`, `boucle`, `coup` et `onde` (le jeu passe d'une
+  vue à l'autre sans changer d'image), et **la même hauteur debout** : de face comme de dos, le
+  personnage mesure sa taille × 96 px (la livraison de priorité 1 a dessiné Chtholly de face à
+  130 px au lieu de 144).
+- **Même échelle dans toute la planche** : chaque image de `repos`, `marche` et `parle` a la
+  même taille de personnage que la 1re image de `repos` (les livraisons ont dessiné des `parle`
+  et des `marche` 10 à 36 % plus petites ou plus grandes : le personnage rapetisse en parlant) ;
+  **une seule silhouette par case** (pas de figure en double empilée au-dessus de l'autre).
+- Vérification : `python3 tools/hd2d_sheets.py check` (planches listées dans
+  `tools/hd2d_manifest.json`, clé `sheets`), ancres recalculées par `python3 tools/hd2d_sheets.py
+  anchors <json>… --write`, planche de contrôle par `python3 tools/hd2d_sheets.py strip`.
 - Outil de découpe d'une planche dessinée : `tools/wordend/decouper-planche.py` (dépôt
   Yume-WordPress) ; planches de remplacement : `python3 tools/gen_placeholders.py`.
 
@@ -112,9 +126,11 @@ autres corps.
 
 ### 3.4 Liste et consignes
 
-Chaque ligne se colle après le bloc de style : « Planche de sprites `<chemin>`, personnage tourné
-vers la droite, fond transparent, animations et nombres d'images : <3.1 ou 3.2>, une rangée par
-animation. » puis la description.
+Chaque ligne se colle après le bloc de style : « Planches de sprites `<chemin>` (profil tourné
+vers la droite), `<chemin>_front` (de face) et `<chemin>_back` (de dos), fond transparent, mêmes
+animations et nombres d'images dans les trois : <3.1 ou 3.2>, une rangée par animation, une seule
+silhouette par case, le personnage à la même taille dans toutes les images debout et dans les
+trois vues. » puis la description.
 
 | Prio | Fichier (`assets/characters/…`) | Taille (repos) | Description à coller |
 | --- | --- | --- | --- |
@@ -311,12 +327,18 @@ Décor lointain (48 px/m) :
 | 3 | `distant_island_a.png` | 768 × 384 | île flottante lointaine en silhouette violacée : dalle boisée, dessous en cône de roche ; fond transparent |
 | 3 | `distant_island_b.png` | 768 × 384 | autre île lointaine, plus plate, avec un village ; fond transparent |
 | 3 | `distant_island_c.png` | 768 × 384 | petite île lointaine rocheuse ; fond transparent |
+
+Les îles lointaines sont **seules dans l'image** : ni îlot fantôme pâle ni nuage détaché autour
+(la livraison les a ajoutés en silhouettes lavande, effacées depuis) ; les petits rochers qui
+flottent juste sous l'île sont permis.
 | 3 | `floating_rock.png` | 192 × 192 | petit rocher flottant détaché, racines ; fond transparent |
 
 ## 9. Petites images
 
 - **Icônes d'objets** : `assets/items/<id>.png`, **64 × 64**, fond transparent, objet centré,
-  contour de 1 px (liste des objets : HISTOIRE.md, section 6).
+  contour de 1 px (liste des objets : HISTOIRE.md, section 6) ; le nom du fichier est l'id de
+  l'objet dans `data/items/` (`wild_berries`, `clock_gear`, `laundry_sheet`… : les livraisons
+  ont repris les noms d'une ancienne liste, `berries`, `gear`, `cloth`).
 - **Portraits** : 256 × 256 (3.1).
 - **Effets** (`assets/hd2d/fx/`, générés par le jeu, facultatifs) : `shadow.png` (ombre douce,
   128 × 64), `glow.png` (halo de lumière chaude, 128 × 128), `light_pool.png` (flaque de lumière au
@@ -326,7 +348,8 @@ Décor lointain (48 px/m) :
 
 1. Dépose l'image au chemin exact de ce document : elle écrase le remplaçant du même nom (les
    fichiers `.import` ne changent pas).
-2. `python3 tools/hd2d_assets.py check` : taille, alpha, raccord des tuiles ;
+2. `python3 tools/hd2d_assets.py check` : taille, alpha, raccord des tuiles (planches de
+   personnages : `python3 tools/hd2d_sheets.py check`, section 3) ;
    `python3 tools/hd2d_assets.py fit <fichier>` ramène une image trop grande à sa taille ; après
    une tuile de sol, `python3 tools/hd2d_assets.py atlas` (le jeu lit les douze tuiles réunies
    dans `assets/hd2d/ground/atlas/ground_atlas.png` ; `fit` et `gen` le refont d'eux-mêmes).

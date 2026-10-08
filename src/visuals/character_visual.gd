@@ -1,6 +1,6 @@
 class_name CharacterVisual
 extends Node3D
-## Visuel d'un personnage en billboard HD-2D (PLAN.md sections 3 et 5). Propriétaire : L3.
+## Visuel d'un personnage en billboard HD-2D (PLAN.md sections 3 et 5). Propriétaire : L3, H6.
 ## Point d'entrée unique, instancié sous le nom « Visual » dans player.tscn, enemy.tscn, npc.tscn
 ## (et le menu).
 ##
@@ -14,6 +14,12 @@ extends Node3D
 ## tour d'une boucle) ; animation_finished une fois quand t ≥ images / ips (sans boucle).
 ## L'ombre (« Shadow », disque transparent au sol) et le sprite suivent l'échelle du nœud
 ## (Visual.scale = EnemyData.scale pour les Timeres).
+## (H6) Trois vues : selon la direction de set_facing par rapport à la caméra (fixe, vers le
+## nord), le sprite montre le dos (le personnage va vers le haut de l'écran), la face (vers le bas)
+## ou le profil (sur le côté, retourné vers la gauche), si le skin a ces vues
+## (SheetLoader.has_view) ; sinon toujours le profil, comme une planche de l'easter egg. Une zone
+## morte de VIEW_DEAD_ZONE_DEG autour des diagonales évite le clignotement. Changer de vue garde
+## l'animation, l'image et l'horloge, sans émettre de signal : le combat ne voit rien.
 
 ## Émis à chaque image affichée (y compris l'image 0 au lancement d'une animation).
 signal frame_changed(anim: StringName, frame: int)
@@ -26,6 +32,12 @@ const IDLE := &"repos"
 const SHADOW_RATIO := 0.75
 ## En deçà (|cos|), la direction est face ou dos à la caméra : le sprite garde son côté.
 const FACING_DEAD_ZONE := 0.1
+## (H6) Au-delà de cet angle (degrés) entre la direction et l'axe gauche-droite de l'écran, le
+## personnage montre sa face ou son dos plutôt que son profil.
+const VIEW_ANGLE_DEG := 45.0
+## (H6) Demi-largeur (degrés) de la zone morte autour de VIEW_ANGLE_DEG : la vue ne change qu'une
+## fois la direction franchement passée de l'autre côté.
+const VIEW_DEAD_ZONE_DEG := 10.0
 ## Tolérance de floor(t × ips) (temps avancé par pas exacts de 1 / ips).
 const TIME_EPSILON := 0.0001
 
@@ -48,6 +60,10 @@ var _playing: bool = false
 var _finished: bool = false
 var _generation: int = 0
 var _facing: Vector3 = Vector3.ZERO
+## (H6) Vue affichée et vues disponibles : vue → [SpriteFrames, pixel_size].
+var _view: StringName = SheetLoader.SIDE
+var _views: Dictionary = {}
+var _side_flip: bool = false
 
 @onready var _sprite: AnimatedSprite3D = $Sprite
 @onready var _shadow: MeshInstance3D = $Shadow
@@ -105,7 +121,8 @@ func show_frame(anim: StringName, frame: int) -> void:
 
 
 ## Oriente le personnage vers direction (plan du sol) : les planches regardent vers la droite,
-## le sprite est retourné quand direction pointe vers la gauche de la caméra courante.
+## le sprite est retourné quand direction pointe vers la gauche de la caméra courante ; (H6) vers
+## le haut ou le bas de l'écran, il montre son dos ou sa face si le skin a ces vues.
 func set_facing(direction: Vector3) -> void:
 	var flat := Vector3(direction.x, 0.0, direction.z)
 	if flat.length_squared() < 0.0001:
@@ -135,6 +152,11 @@ func current_animation() -> StringName:
 ## Image affichée de l'animation courante.
 func current_frame() -> int:
 	return _frame
+
+
+## (H6) Vue affichée : SheetLoader.SIDE (profil), FRONT (face) ou BACK (dos).
+func current_view() -> StringName:
+	return _view
 
 
 ## true tant que l'animation courante avance (ni finie, ni figée par show_frame).
@@ -171,6 +193,8 @@ func _apply_skin() -> void:
 	var previous := _anim
 	_clips.clear()
 	_sheet = {}
+	_views.clear()
+	_view = SheetLoader.SIDE
 	_sprite.sprite_frames = null
 	if skin != null:
 		_load_sheet()
@@ -205,6 +229,14 @@ func _load_sheet() -> void:
 		)
 	var half_width := SheetLoader.body_half_width(_sheet) * _sprite.pixel_size
 	_set_shadow_radius(SHADOW_RATIO * half_width)
+	_views[SheetLoader.SIDE] = [frames, _sprite.pixel_size]
+	for view: StringName in [SheetLoader.FRONT, SheetLoader.BACK]:
+		if SheetLoader.has_view(skin, view):
+			var view_sheet := SheetLoader.read_sheet(skin, view)
+			_views[view] = [
+				SheetLoader.frames_for(skin, view),
+				SheetLoader.pixel_size(skin, _sheet, view_sheet),
+			]
 
 
 ## Affiche l'image frame de anim (sans signal) : sprite et ancre.
@@ -233,10 +265,41 @@ func _update_facing() -> void:
 	var camera := get_viewport().get_camera_3d() if is_inside_tree() else null
 	if camera != null:
 		right = camera.global_basis.x
+	right = Vector3(right.x, 0.0, right.z)
+	right = right.normalized() if right.length_squared() > 0.0001 else Vector3.RIGHT
 	var side := _facing.dot(right)
-	if absf(side) >= FACING_DEAD_ZONE and (side < 0.0) != _sprite.flip_h:
-		_sprite.flip_h = side < 0.0
+	if absf(side) >= FACING_DEAD_ZONE:
+		_side_flip = side < 0.0
+	# Vers la caméra (le bas de l'écran) : droite × haut, quelle que soit l'inclinaison.
+	var view := _choose_view(_facing.dot(right.cross(Vector3.UP)))
+	if view != _view:
+		_set_view(view)
+	var flip := _side_flip if _view == SheetLoader.SIDE else false
+	if flip != _sprite.flip_h:
+		_sprite.flip_h = flip
 		_sync_offset()
+
+
+## (H6) Vue voulue pour une direction dont la composante vers la caméra vaut toward (−1 : dos,
+## 1 : face), avec la zone morte autour de VIEW_ANGLE_DEG ; le profil si la vue manque.
+func _choose_view(toward: float) -> StringName:
+	var margin := VIEW_DEAD_ZONE_DEG if _view == SheetLoader.SIDE else -VIEW_DEAD_ZONE_DEG
+	if absf(toward) <= sin(deg_to_rad(VIEW_ANGLE_DEG + margin)):
+		return SheetLoader.SIDE
+	var wanted := SheetLoader.FRONT if toward > 0.0 else SheetLoader.BACK
+	return wanted if _views.has(wanted) else SheetLoader.SIDE
+
+
+## (H6) Affiche la vue view (SpriteFrames et taille de pixel) à l'image courante, sans signal.
+func _set_view(view: StringName) -> void:
+	var entry: Array = _views.get(view, [])
+	if entry.is_empty():
+		return
+	_view = view
+	_sprite.sprite_frames = entry[0]
+	_sprite.pixel_size = entry[1]
+	if _sprite.sprite_frames.has_animation(_anim):
+		_show(_anim, _frame)
 
 
 func _set_shadow_radius(radius: float) -> void:

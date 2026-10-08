@@ -1,1 +1,43 @@
-{"version":1,"echelle":2,"planche":[625,1266],"format":"images : [x, y, largeur, hauteur, ancre x, ancre y] en px de la planche","animations":{"repos":{"ips":2,"boucle":true,"images":[[0,0,95,163,42,163],[97,0,95,161,42,161]]},"marche":{"ips":10,"boucle":true,"images":[[0,165,95,163,42,163],[97,165,95,164,42,164],[194,165,95,164,42,164],[291,165,95,163,42,163],[388,165,95,164,42,164],[485,165,95,164,42,164]]},"course":{"ips":14,"boucle":true,"images":[[0,331,91,165,21,165],[93,331,104,168,33,168],[199,331,96,167,26,167],[297,331,95,167,25,167],[394,331,97,168,26,168]]},"attaque":{"ips":14,"boucle":false,"coup":[1,2,3],"images":[[0,501,98,162,51,162],[100,501,132,164,36,164],[234,501,123,164,23,164],[359,501,88,182,20,165]]},"charge":{"ips":10,"boucle":false,"onde":3,"images":[[0,685,137,163,47,163],[139,685,147,163,57,163],[288,685,161,163,71,163],[451,685,172,164,27,164]]},"degats":{"ips":1,"boucle":false,"images":[[0,851,111,151,83,150]]},"mort":{"ips":1,"boucle":false,"images":[[0,1004,161,95,93,84]]},"parle":{"ips":6,"boucle":true,"images":[[0,1101,95,163,42,163],[97,1101,95,161,42,161]]}}}
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [802, 338],
+  "direction": "right",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "status": "measured_crops_animation_review",
+  "anchors_validated": true,
+  "anchor_method": "tools/hd2d_sheets.py anchors (H1) : pieds près de l'axe du corps, images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
+  "combat_timing_validated": false,
+  "density_px_m": 96,
+  "palette_colors": 64,
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [0, 1, 119, 163, 71, 163],
+        [123, 0, 121, 164, 74, 164]
+      ]
+    },
+    "marche": {
+      "ips": 10,
+      "boucle": true,
+      "images": [
+        [0, 173, 134, 165, 87, 165],
+        [138, 174, 128, 164, 78, 164],
+        [270, 170, 128, 168, 80, 168],
+        [402, 169, 128, 169, 78, 169],
+        [534, 168, 138, 170, 81, 170],
+        [676, 168, 126, 170, 76, 170]
+      ]
+    },
+    "parle": {
+      "ips": 6,
+      "boucle": true,
+      "images": [
+        [0, 1, 119, 163, 71, 163],
+        [123, 0, 121, 164, 74, 164]
+      ]
+    }
+  }
+}

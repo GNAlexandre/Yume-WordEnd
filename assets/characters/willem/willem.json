@@ -1,1 +1,35 @@
-{"version":1,"echelle":2,"planche":[687,1299],"format":"images : [x, y, largeur, hauteur, ancre x, ancre y] en px de la planche","animations":{"repos":{"ips":2,"boucle":true,"images":[[0,0,84,168,43,168],[86,0,84,166,43,166]]},"marche":{"ips":10,"boucle":true,"images":[[0,170,84,168,43,168],[86,170,84,170,43,170],[172,170,84,170,43,170],[258,170,84,168,43,168],[344,170,84,170,43,170],[430,170,84,170,43,170]]},"course":{"ips":14,"boucle":true,"images":[[0,342,85,166,23,166],[87,342,99,170,36,170],[188,342,90,169,28,169],[280,342,89,169,27,169],[371,342,91,170,28,170]]},"attaque":{"ips":14,"boucle":false,"coup":[1,2,3],"images":[[0,514,93,177,50,177],[95,514,143,168,38,168],[240,514,138,167,28,167],[380,514,87,185,25,167]]},"charge":{"ips":10,"boucle":false,"onde":3,"images":[[0,701,151,168,52,168],[153,701,162,171,63,171],[317,701,177,175,78,175],[496,701,189,167,30,167]]},"degats":{"ips":1,"boucle":false,"images":[[0,878,107,163,77,162]]},"mort":{"ips":1,"boucle":false,"images":[[0,1043,167,84,92,75]]},"parle":{"ips":6,"boucle":true,"images":[[0,1129,84,168,43,168],[86,1129,84,166,43,166]]}}}
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [642, 337],
+  "direction": "right",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "status": "measured_crops_animation_review",
+  "anchors_validated": true,
+  "anchor_method": "tools/hd2d_sheets.py anchors (H1) : pieds près de l'axe du corps, images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
+  "combat_timing_validated": false,
+  "density_px_m": 96,
+  "palette_colors": 64,
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [0, 0, 101, 168, 38, 168],
+        [105, 2, 103, 166, 36, 166]
+      ]
+    },
+    "marche": {
+      "ips": 10,
+      "boucle": true,
+      "images": [
+        [0, 172, 105, 165, 47, 165],
+        [109, 173, 104, 164, 44, 164],
+        [217, 173, 105, 164, 36, 164],
+        [326, 172, 101, 165, 40, 165],
+        [431, 173, 107, 164, 43, 164],
+        [542, 175, 100, 162, 47, 162]
+      ]
+    }
+  }
+}

@@ -1,1 +1,82 @@
-{"version":1,"echelle":2,"planche":[583,917],"format":"images : [x, y, largeur, hauteur, ancre x, ancre y] en px de la planche","animations":{"repos":{"ips":2,"boucle":true,"images":[[0,0,67,134,34,134],[69,0,67,133,34,133]]},"marche":{"ips":10,"boucle":true,"images":[[0,136,67,134,34,134],[69,136,67,136,34,136],[138,136,67,136,34,136],[207,136,67,134,34,134],[276,136,67,136,34,136],[345,136,67,136,34,136]]},"course":{"ips":14,"boucle":true,"images":[[0,274,69,133,19,133],[71,274,79,136,29,136],[152,274,73,135,23,135],[227,274,72,135,22,135],[301,274,73,136,23,136]]},"attaque":{"ips":14,"boucle":false,"coup":[1,2,3],"images":[[0,412,79,153,40,153],[81,412,126,134,30,134],[209,412,121,134,22,134],[332,412,74,159,20,133]]},"charge":{"ips":10,"boucle":false,"onde":3,"images":[[0,573,132,134,42,134],[134,573,140,136,50,136],[276,573,152,140,62,140],[430,573,151,134,24,134]]},"degats":{"ips":1,"boucle":false,"images":[[0,715,86,131,62,130]]},"mort":{"ips":1,"boucle":false,"images":[[0,848,133,67,73,60]]}}}
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [849, 921],
+  "direction": "right",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "status": "measured_crops_animation_review",
+  "anchors_validated": true,
+  "anchor_method": "tools/hd2d_sheets.py anchors (H1) : pieds près de l'axe du corps, images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
+  "combat_timing_validated": false,
+  "density_px_m": 96,
+  "palette_colors": 64,
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [0, 1, 136, 134, 38, 134],
+        [140, 0, 136, 135, 38, 135]
+      ]
+    },
+    "marche": {
+      "ips": 10,
+      "boucle": true,
+      "images": [
+        [0, 139, 143, 136, 41, 136],
+        [147, 139, 136, 136, 40, 136],
+        [287, 139, 139, 136, 40, 136],
+        [430, 139, 143, 136, 45, 136],
+        [577, 140, 138, 135, 44, 135],
+        [719, 139, 130, 136, 34, 136]
+      ]
+    },
+    "course": {
+      "ips": 14,
+      "boucle": true,
+      "images": [
+        [0, 283, 143, 125, 71, 124],
+        [147, 279, 147, 129, 104, 129],
+        [298, 282, 150, 126, 104, 126],
+        [452, 283, 147, 125, 105, 125],
+        [603, 286, 142, 122, 71, 122]
+      ]
+    },
+    "attaque": {
+      "ips": 14,
+      "boucle": false,
+      "coup": [1, 2, 3],
+      "images": [
+        [0, 412, 130, 158, 62, 158],
+        [134, 453, 191, 117, 47, 117],
+        [329, 414, 210, 156, 48, 156],
+        [543, 437, 233, 133, 108, 112]
+      ]
+    },
+    "charge": {
+      "ips": 10,
+      "boucle": false,
+      "onde": 3,
+      "images": [
+        [0, 590, 141, 122, 74, 122],
+        [145, 594, 170, 118, 46, 118],
+        [319, 591, 174, 121, 44, 121],
+        [497, 574, 234, 138, 84, 138]
+      ]
+    },
+    "degats": {
+      "ips": 1,
+      "boucle": false,
+      "images": [
+        [0, 716, 154, 124, 84, 124]
+      ]
+    },
+    "mort": {
+      "ips": 1,
+      "boucle": false,
+      "images": [
+        [0, 844, 200, 77, 99, 77]
+      ]
+    }
+  }
+}

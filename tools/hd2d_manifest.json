@@ -894,5 +894,304 @@
    "kind": "fx",
    "prio": 3
   }
+ ],
+ "sheets": [
+  {
+   "id": "chtholly",
+   "dir": "assets/characters/chtholly",
+   "table": "fairy",
+   "height_m": 1.5,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  },
+  {
+   "id": "timere",
+   "dir": "assets/enemies/timere",
+   "table": "timere",
+   "height_m": 1.03,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "feet": "alpha",
+   "axis": false
+  },
+  {
+   "id": "ithea",
+   "dir": "assets/characters/ithea",
+   "table": "fairy",
+   "height_m": 1.45,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  },
+  {
+   "id": "nephren",
+   "dir": "assets/characters/nephren",
+   "table": "fairy",
+   "height_m": 1.3,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "aliases": {
+    "side": {
+     "parle": "repos"
+    },
+    "_front": {
+     "parle": "repos"
+    }
+   }
+  },
+  {
+   "id": "nopht",
+   "dir": "assets/characters/nopht",
+   "table": "fairy",
+   "height_m": 1.4,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "feet": "alpha"
+  },
+  {
+   "id": "rhantolk",
+   "dir": "assets/characters/rhantolk",
+   "table": "fairy",
+   "height_m": 1.48,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  },
+  {
+   "id": "willem",
+   "dir": "assets/characters/willem",
+   "table": "npc",
+   "height_m": 1.75,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  },
+  {
+   "id": "nygglatho",
+   "dir": "assets/characters/nygglatho",
+   "table": "npc",
+   "height_m": 1.85,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "aliases": {
+    "_back": {
+     "parle": "repos"
+    }
+   }
+  },
+  {
+   "id": "tiat",
+   "dir": "assets/characters/tiat",
+   "table": "npc",
+   "height_m": 1.1,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "aliases": {
+    "side": {
+     "parle": "repos"
+    },
+    "_front": {
+     "parle": "repos"
+    },
+    "_back": {
+     "parle": "repos"
+    }
+   }
+  },
+  {
+   "id": "pannibal",
+   "dir": "assets/characters/pannibal",
+   "table": "npc",
+   "height_m": 1.25,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  },
+  {
+   "id": "collon",
+   "dir": "assets/characters/collon",
+   "table": "npc",
+   "height_m": 1.2,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  },
+  {
+   "id": "lakhesh",
+   "dir": "assets/characters/lakhesh",
+   "table": "npc",
+   "height_m": 1.2,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  },
+  {
+   "id": "almita",
+   "dir": "assets/characters/almita",
+   "table": "npc",
+   "height_m": 0.95,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  },
+  {
+   "id": "limeskin",
+   "dir": "assets/characters/limeskin",
+   "table": "npc",
+   "height_m": 2.8,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "aliases": {
+    "side": {
+     "parle": "repos"
+    },
+    "_back": {
+     "parle": "repos"
+    }
+   }
+  },
+  {
+   "id": "cat_waiter",
+   "dir": "assets/characters/cat_waiter",
+   "table": "npc",
+   "height_m": 1.65,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "aliases": {
+    "side": {
+     "parle": "repos"
+    }
+   }
+  },
+  {
+   "id": "ramikeldi",
+   "dir": "assets/characters/ramikeldi",
+   "table": "npc",
+   "height_m": 1.7,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "torso": [
+    "_back"
+   ]
+  },
+  {
+   "id": "snack_vendor",
+   "dir": "assets/characters/snack_vendor",
+   "table": "npc",
+   "height_m": 1.6,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "aliases": {
+    "side": {
+     "parle": "repos"
+    }
+   }
+  },
+  {
+   "id": "baker",
+   "dir": "assets/characters/baker",
+   "table": "npc",
+   "height_m": 2.0,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "torso": [
+    "_back"
+   ],
+   "aliases": {
+    "side": {
+     "parle": "repos"
+    }
+   }
+  },
+  {
+   "id": "ferryman",
+   "dir": "assets/characters/ferryman",
+   "table": "npc",
+   "height_m": 1.7,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "aliases": {
+    "side": {
+     "parle": "repos"
+    }
+   }
+  },
+  {
+   "id": "egg_vendor",
+   "dir": "assets/characters/egg_vendor",
+   "table": "npc",
+   "height_m": 1.55,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "aliases": {
+    "_back": {
+     "parle": "repos"
+    }
+   }
+  },
+  {
+   "id": "garde_lookout",
+   "dir": "assets/characters/garde_lookout",
+   "table": "npc",
+   "height_m": 1.9,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  }
  ]
 }

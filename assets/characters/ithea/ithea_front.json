@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [698, 1103],
+  "direction": "front",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "status": "measured_crops_animation_review",
+  "anchors_validated": true,
+  "anchor_method": "tools/hd2d_sheets.py anchors (H1) : pieds près de l'axe du corps, images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
+  "combat_timing_validated": false,
+  "density_px_m": 96,
+  "palette_colors": 64,
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [0, 1, 131, 139, 82, 139],
+        [135, 0, 118, 140, 74, 140]
+      ]
+    },
+    "marche": {
+      "ips": 10,
+      "boucle": true,
+      "images": [
+        [0, 144, 111, 143, 62, 143],
+        [115, 144, 105, 143, 61, 143],
+        [224, 144, 106, 143, 59, 143],
+        [334, 144, 108, 143, 55, 143],
+        [446, 144, 110, 143, 60, 143],
+        [560, 144, 102, 143, 54, 143]
+      ]
+    },
+    "course": {
+      "ips": 14,
+      "boucle": true,
+      "images": [
+        [0, 292, 122, 137, 72, 137],
+        [126, 291, 122, 138, 76, 138],
+        [252, 295, 123, 134, 75, 134],
+        [379, 293, 117, 136, 76, 136],
+        [500, 294, 120, 135, 74, 135]
+      ]
+    },
+    "attaque": {
+      "ips": 14,
+      "boucle": false,
+      "coup": [1, 2, 3],
+      "images": [
+        [0, 433, 130, 174, 69, 174],
+        [134, 440, 133, 167, 68, 167],
+        [271, 477, 114, 130, 70, 128],
+        [389, 473, 188, 134, 70, 134]
+      ]
+    },
+    "charge": {
+      "ips": 10,
+      "boucle": false,
+      "onde": 3,
+      "images": [
+        [0, 619, 134, 130, 66, 130],
+        [138, 614, 150, 135, 60, 135],
+        [292, 611, 120, 138, 60, 134],
+        [416, 618, 282, 131, 77, 131]
+      ]
+    },
+    "degats": {
+      "ips": 1,
+      "boucle": false,
+      "images": [
+        [0, 753, 131, 139, 78, 134]
+      ]
+    },
+    "mort": {
+      "ips": 1,
+      "boucle": false,
+      "images": [
+        [0, 896, 281, 64, 104, 55]
+      ]
+    },
+    "parle": {
+      "ips": 6,
+      "boucle": true,
+      "images": [
+        [0, 964, 111, 139, 64, 139],
+        [115, 965, 111, 138, 68, 138]
+      ]
+    }
+  }
+}

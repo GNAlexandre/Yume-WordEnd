@@ -1,6 +1,6 @@
 class_name SheetLoader
 extends RefCounted
-## Lecture des planches au format de l'easter egg (PLAN.md section 5). Propriétaire : L3.
+## Lecture des planches au format de l'easter egg (PLAN.md section 5). Propriétaire : L3, H6.
 ##
 ## JSON repris tel quel : { "version", "echelle", "planche": [l, h], "animations": { nom: {
 ## "ips", "boucle", "images": [[x, y, l, h, ancreX, ancreY], …], "coup": [i, …], "onde": i } } }.
@@ -8,23 +8,87 @@ extends RefCounted
 ## métadonnée ANCHOR_META ; CharacterVisual remet l'ancre à l'origine du nœud à chaque image
 ## avec frame_offset(). Des marges d'AtlasTexture ne suffiraient pas : en 3D, flip_h retourne
 ## l'image mais pas ses marges, et l'ancre sauterait à chaque image d'un sprite retourné.
+##
+## (H6) Vues : SIDE (profil, la planche de SkinData.sprite_sheet / frames_json), FRONT (face) et
+## BACK (dos), facultatives. Une vue n'est utilisée que si elle a les mêmes animations, nombres
+## d'images, cadences, « coup » et « onde » que le profil (view_problem() vide) : l'horloge et
+## les fenêtres de combat ne dépendent jamais de la vue affichée.
 
 ## Taille d'un pixel de planche si le skin ne permet pas de la calculer (Chtholly : 1,5 m / 144 px).
 const DEFAULT_PIXEL_SIZE := 0.0104
 ## Métadonnée de chaque AtlasTexture : ancre (Vector2, px depuis le coin haut gauche de l'image).
 const ANCHOR_META := &"anchor"
+## (H6) Vues d'une planche : profil (tourné vers la droite), face, dos.
+const SIDE := &"side"
+const FRONT := &"front"
+const BACK := &"back"
+const VIEWS: Array[StringName] = [SIDE, FRONT, BACK]
 
 ## SpriteFrames déjà construits, par planche (texture + JSON) : un seul jeu d'images partagé
 ## par tous les visuels qui l'affichent.
 static var _cache: Dictionary = {}
 
 
-## Le JSON de la planche du skin (Dictionary vide si absent ou invalide).
-static func read_sheet(skin: SkinData) -> Dictionary:
-	if skin == null or skin.frames_json == null:
+## Le JSON de la planche du skin (Dictionary vide si absent ou invalide) ; (H6) view : SIDE
+## (profil, par défaut), FRONT ou BACK.
+static func read_sheet(skin: SkinData, view: StringName = SIDE) -> Dictionary:
+	var json := view_json(skin, view)
+	if json == null:
 		return {}
-	var data: Variant = skin.frames_json.data
+	var data: Variant = json.data
 	return data if data is Dictionary else {}
+
+
+## (H6) Planche PNG d'une vue (null si le skin ne l'a pas).
+static func view_texture(skin: SkinData, view: StringName = SIDE) -> Texture2D:
+	if skin == null:
+		return null
+	match view:
+		FRONT:
+			return skin.front_sheet
+		BACK:
+			return skin.back_sheet
+	return skin.sprite_sheet
+
+
+## (H6) JSON d'une vue (null si le skin ne l'a pas).
+static func view_json(skin: SkinData, view: StringName = SIDE) -> JSON:
+	if skin == null:
+		return null
+	match view:
+		FRONT:
+			return skin.front_json
+		BACK:
+			return skin.back_json
+	return skin.frames_json
+
+
+## (H6) Vrai si la vue est affichable : planche et JSON présents et, pour la face et le dos,
+## compatibles avec le profil (view_problem).
+static func has_view(skin: SkinData, view: StringName) -> bool:
+	if view_texture(skin, view) == null or view_json(skin, view) == null:
+		return false
+	return view == SIDE or view_problem(skin, view).is_empty()
+
+
+## (H6) Ce qui empêche une vue de remplacer le profil sans toucher à l'horloge ni au combat ("" si
+## rien) : animation absente ou en trop, nombre d'images, ips, boucle, coup ou onde différents.
+static func view_problem(skin: SkinData, view: StringName) -> String:
+	var side := animations(read_sheet(skin, SIDE))
+	var other := animations(read_sheet(skin, view))
+	if other.is_empty():
+		return "vue %s absente" % view
+	for anim_name: String in side:
+		if not other.has(anim_name):
+			return "%s : animation %s absente" % [view, anim_name]
+	for anim_name: String in other:
+		if not side.has(anim_name):
+			return "%s : animation %s en trop" % [view, anim_name]
+		if _signature(other[anim_name]) != _signature(side[anim_name]):
+			return (
+				"%s : %s diffère du profil (images, ips, boucle, coup ou onde)" % [view, anim_name]
+			)
+	return ""
 
 
 ## Animations de la planche : nom → { ips, boucle, images, coup?, onde? }.
@@ -33,14 +97,16 @@ static func animations(sheet: Dictionary) -> Dictionary:
 	return anims if anims is Dictionary else {}
 
 
-## SpriteFrames de la planche du skin, construit à la première demande puis partagé (null si le
-## skin n'a pas de planche).
-static func frames_for(skin: SkinData) -> SpriteFrames:
-	if skin == null or skin.sprite_sheet == null or skin.frames_json == null:
+## SpriteFrames d'une vue de la planche du skin (profil par défaut), construit à la première
+## demande puis partagé (null si le skin n'a pas cette planche).
+static func frames_for(skin: SkinData, view: StringName = SIDE) -> SpriteFrames:
+	var texture := view_texture(skin, view)
+	var json := view_json(skin, view)
+	if texture == null or json == null:
 		return null
-	var key := _cache_key(skin.sprite_sheet, skin.frames_json)
+	var key := _cache_key(texture, json)
 	if not _cache.has(key):
-		_cache[key] = build_frames(skin.sprite_sheet, read_sheet(skin))
+		_cache[key] = build_frames(texture, read_sheet(skin, view))
 	return _cache[key]
 
 
@@ -83,12 +149,19 @@ static func frame_offset(texture: Texture2D, flipped: bool) -> Vector2:
 	return Vector2(anchor.x - size.x if flipped else -anchor.x, anchor.y - size.y)
 
 
-## Taille d'un pixel de planche en mètres : height_m / hauteur de la 1re image de « repos ».
-static func pixel_size(skin: SkinData, sheet: Dictionary) -> float:
+## Taille d'un pixel de planche en mètres : height_m / hauteur de la 1re image de « repos » du
+## profil (sheet). (H6) Pour une autre vue (view_sheet) : la même hauteur debout que le profil (de
+## l'ancre au haut de la 1re image de « repos »), pour que le personnage garde sa taille en se
+## tournant même si la vue est dessinée un peu plus petite ou plus grande.
+static func pixel_size(skin: SkinData, sheet: Dictionary, view_sheet: Dictionary = {}) -> float:
 	var first := _first_idle_image(sheet)
 	if first.is_empty() or skin == null or skin.height_m <= 0.0:
 		return DEFAULT_PIXEL_SIZE
-	return skin.height_m / float(first[3])
+	var size := skin.height_m / float(first[3])
+	var other := _first_idle_image(view_sheet)
+	if other.is_empty() or float(other[5]) <= 0.0 or float(first[5]) <= 0.0:
+		return size
+	return size * float(first[5]) / float(other[5])
 
 
 ## Demi-largeur du corps (px) dans la 1re image de « repos » : distance de l'ancre au bord le
@@ -137,6 +210,25 @@ static func _images(anim: Variant) -> Array[Array]:
 static func _first_idle_image(sheet: Dictionary) -> Array:
 	var images := _images(animations(sheet).get("repos"))
 	return images[0] if not images.is_empty() else []
+
+
+## Ce qui doit être identique d'une vue à l'autre : nombre d'images, ips, boucle, coup, onde.
+static func _signature(anim: Variant) -> Array:
+	if not anim is Dictionary:
+		return []
+	var data: Dictionary = anim
+	var hits: Array[int] = []
+	var raw_hits: Variant = data.get("coup", [])
+	if raw_hits is Array:
+		for index: Variant in raw_hits:
+			hits.append(int(index))
+	return [
+		_images(data).size(),
+		float(data.get("ips", 10)),
+		bool(data.get("boucle", false)),
+		hits,
+		int(data.get("onde", -1)),
+	]
 
 
 static func _cache_key(texture: Texture2D, json: JSON) -> String:
