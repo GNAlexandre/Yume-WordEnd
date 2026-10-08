@@ -117,7 +117,7 @@ func test_build_size_script_budget() -> void:
 
 
 func test_check_enforces_the_size_budget() -> void:
-	# (HD-2D) tools/check.sh échoue si l'export dépasse le budget (60 Mo compressés).
+	# (HD-2D) tools/check.sh échoue si l'export dépasse le budget (100 Mo compressés).
 	var check := FileAccess.get_file_as_string("res://tools/check.sh")
 	assert_string_contains(check, "tools/build_size.sh build/web")
 	assert_string_contains(check, "au-delà du budget")

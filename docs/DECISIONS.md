@@ -1805,3 +1805,11 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   de `main` font foi, y compris les cadrages du lot D que Codex a corrigés lui-même). Guirlande
   de fanions et clochette du café : objets suspendus, accrochés par le haut, sans ancre au sol
   (`anchor: free`). 399 images, 21 planches, 249 scènes : rien à reprendre.
+- **Budget Web relevé de 60 à 100 Mo compressés** (même choix de l'utilisateur : la qualité avant
+  le poids ; l'application de bureau devient la version principale). Toutes les images du cahier
+  n° 2 livrées (lots A à G) : 74,8 Mo de PNG, export Web de 73,5 Mo compressés (wasm 9,7 Mo,
+  pck 63,8 Mo), 250 Mo de textures décompressées. `tools/build_size.sh`, `tools/check.sh`, l'étape
+  de la CI, `PLAN.md`, `docs/web.md` passent à 100 Mo, le budget des images du manifeste
+  (`test_hd2d_assets.gd`) à 100 Mo de PNG. Si le premier chargement Web devient trop long, une
+  version Web allégée (images importées en WebP avec perte pour le seul préréglage Web) reste
+  possible sans toucher au bureau.
