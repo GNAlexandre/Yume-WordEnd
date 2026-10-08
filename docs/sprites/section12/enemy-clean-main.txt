@@ -1,0 +1,40 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+---  GUT  ---
+[1m[INFO]:  [0musing [/tmp/yume-section12-baseline/build/xdg/data/godot/app_userdata/WordEnd] for temporary output.
+Godot version:  4.7.2
+GUT version:  9.7.1
+[4m
+
+res://tests/unit/test_enemy.gd
+[0m* test_timeres_in_a_column_spread_across_the_screen
+[33m    --- Awaiting 1.6 seconds  ---
+[0m[31m    [Failed]:  [0m[0.24894392490387] expected to be > than [0.6]:  ils s'écartent de côté (-0.25 m), pas en file
+      at line 407
+[1m0/1 passed.
+[0m
+
+
+
+[33m==============================================
+[0m[33m= Run Summary
+[0m[33m==============================================
+[0m[4m
+res://tests/unit/test_enemy.gd
+[0m- test_timeres_in_a_column_spread_across_the_screen
+[31m    [Failed]:  [0m[0.24894392490387] expected to be > than [0.6]:  ils s'écartent de côté (-0.25 m), pas en file
+          at line 407
+
+Totals
+------
+Scripts               1
+Tests                 1
+Passing Tests      none
+Failing Tests         1
+Asserts             0/1
+Time              1.992s
+
+
+Ran Tests matching "test_timeres_in_a_column_spread_across_the_screen"
+[31m---- 1 failing tests ----
+[0m

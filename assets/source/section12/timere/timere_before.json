@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [758, 710],
+  "direction": "right",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "status": "measured_crops_animation_review",
+  "anchors_validated": true,
+  "anchor_method": "tools/hd2d_sheets.py anchors (H1) : pieds près de l'axe du corps, images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
+  "combat_timing_validated": false,
+  "density_px_m": 96,
+  "palette_colors": 64,
+  "animations": {
+    "repos": {
+      "ips": 6,
+      "boucle": true,
+      "images": [
+        [0, 0, 118, 99, 44, 97],
+        [122, 2, 119, 97, 44, 97],
+        [245, 0, 118, 99, 44, 98],
+        [367, 9, 128, 90, 44, 89],
+        [499, 19, 127, 80, 46, 79]
+      ]
+    },
+    "marche": {
+      "ips": 7,
+      "boucle": true,
+      "images": [
+        [0, 105, 135, 90, 46, 88],
+        [139, 105, 130, 90, 48, 89],
+        [273, 103, 124, 92, 47, 92],
+        [401, 115, 141, 80, 47, 80]
+      ]
+    },
+    "course": {
+      "ips": 12,
+      "boucle": true,
+      "images": [
+        [0, 199, 128, 97, 50, 96],
+        [132, 208, 131, 88, 50, 87],
+        [267, 213, 119, 83, 45, 82],
+        [390, 208, 129, 88, 52, 87],
+        [523, 207, 123, 89, 41, 88],
+        [650, 205, 108, 91, 47, 90]
+      ]
+    },
+    "fouet": {
+      "ips": 8,
+      "boucle": false,
+      "coup": [1, 2],
+      "images": [
+        [0, 303, 104, 90, 52, 90],
+        [108, 300, 103, 93, 52, 93],
+        [215, 313, 172, 80, 52, 80],
+        [391, 303, 98, 90, 49, 90]
+      ]
+    },
+    "morsure": {
+      "ips": 8,
+      "boucle": false,
+      "coup": [1, 2],
+      "images": [
+        [0, 397, 143, 104, 49, 104],
+        [147, 406, 143, 95, 50, 95],
+        [294, 408, 121, 93, 52, 93],
+        [419, 417, 132, 84, 38, 84]
+      ]
+    },
+    "degats": {
+      "ips": 12,
+      "boucle": false,
+      "images": [
+        [0, 505, 119, 103, 46, 101],
+        [123, 518, 122, 90, 48, 90],
+        [249, 510, 106, 98, 27, 97],
+        [359, 516, 124, 92, 48, 92],
+        [487, 523, 102, 85, 35, 85]
+      ]
+    },
+    "mort": {
+      "ips": 8,
+      "boucle": false,
+      "images": [
+        [0, 612, 94, 98, 46, 97],
+        [98, 623, 107, 87, 53, 87],
+        [209, 638, 116, 72, 58, 71],
+        [329, 660, 124, 50, 62, 50],
+        [457, 667, 128, 43, 64, 43],
+        [589, 673, 129, 37, 64, 36]
+      ]
+    }
+  }
+}

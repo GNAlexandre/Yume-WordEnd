@@ -1,7 +1,7 @@
 {
   "version": 1,
   "echelle": 1,
-  "planche": [642, 943],
+  "planche": [642, 1072],
   "direction": "front",
   "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
   "status": "measured_crops_animation_review",
@@ -82,8 +82,8 @@
       "ips": 6,
       "boucle": true,
       "images": [
-        [0, 0, 64, 125, 32, 125],
-        [68, 0, 64, 125, 30, 125]
+        [0, 947, 79, 125, 39, 125],
+        [83, 947, 79, 125, 36, 125]
       ]
     }
   }

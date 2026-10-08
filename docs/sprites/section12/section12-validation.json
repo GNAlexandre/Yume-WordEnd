@@ -1,0 +1,959 @@
+{
+  "base_commit": "1ff21b9",
+  "sheets": [
+    {
+      "path": "assets/characters/nygglatho/nygglatho",
+      "unchanged_frames": 8,
+      "standing_heights": {
+        "repos": [
+          178.0,
+          180.0
+        ],
+        "marche": [
+          178.0,
+          186.0,
+          192.0,
+          187.0,
+          195.0,
+          197.0
+        ],
+        "parle": [
+          178.0,
+          178.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/limeskin/limeskin",
+      "unchanged_frames": 8,
+      "standing_heights": {
+        "repos": [
+          269.0,
+          275.0
+        ],
+        "marche": [
+          283.0,
+          285.0,
+          282.0,
+          288.0,
+          290.0,
+          290.0
+        ],
+        "parle": [
+          269.0,
+          269.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/limeskin/limeskin_front",
+      "unchanged_frames": 8,
+      "standing_heights": {
+        "repos": [
+          269.0,
+          269.0
+        ],
+        "marche": [
+          293.0,
+          291.0,
+          291.0,
+          292.0,
+          296.0,
+          295.0
+        ],
+        "parle": [
+          269.0,
+          269.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/limeskin/limeskin_back",
+      "unchanged_frames": 6,
+      "standing_heights": {
+        "repos": [
+          268.0,
+          266.0
+        ],
+        "marche": [
+          279.0,
+          275.0,
+          278.0,
+          277.0,
+          277.0,
+          274.0
+        ],
+        "parle": [
+          262.0,
+          258.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/lakhesh/lakhesh",
+      "unchanged_frames": 8,
+      "standing_heights": {
+        "repos": [
+          115.0,
+          115.0
+        ],
+        "marche": [
+          114.0,
+          115.0,
+          115.0,
+          117.0,
+          118.0,
+          119.0
+        ],
+        "parle": [
+          119.0,
+          119.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/lakhesh/lakhesh_front",
+      "unchanged_frames": 8,
+      "standing_heights": {
+        "repos": [
+          114.0,
+          113.0
+        ],
+        "marche": [
+          119.0,
+          118.0,
+          120.0,
+          121.0,
+          120.0,
+          120.0
+        ],
+        "parle": [
+          114.0,
+          114.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/lakhesh/lakhesh_back",
+      "unchanged_frames": 0,
+      "standing_heights": {
+        "repos": [
+          115.0,
+          115.0
+        ],
+        "marche": [
+          123.0,
+          120.0,
+          121.0,
+          118.0,
+          121.0,
+          120.0
+        ],
+        "parle": [
+          112.0,
+          112.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/pannibal/pannibal",
+      "unchanged_frames": 0,
+      "standing_heights": {
+        "repos": [
+          120.0,
+          120.0
+        ],
+        "marche": [
+          120.0,
+          120.0,
+          120.0,
+          120.0,
+          120.0,
+          120.0
+        ],
+        "parle": [
+          120.0,
+          120.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/chtholly/chtholly_front",
+      "unchanged_frames": 0,
+      "standing_heights": {
+        "repos": [
+          144.0,
+          143.0
+        ],
+        "marche": [
+          144.0,
+          144.0,
+          144.0,
+          143.0,
+          144.0,
+          146.0
+        ],
+        "course": [
+          131.0,
+          131.0,
+          132.0,
+          131.0,
+          132.0
+        ],
+        "attaque": [
+          188.0,
+          169.0,
+          132.0,
+          132.0
+        ],
+        "charge": [
+          133.0,
+          155.0,
+          140.0,
+          133.0
+        ],
+        "degats": [
+          120.0
+        ],
+        "mort": [
+          60.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/willem/willem",
+      "unchanged_frames": 8,
+      "standing_heights": {
+        "repos": [
+          168.0,
+          166.0
+        ],
+        "marche": [
+          165.0,
+          164.0,
+          164.0,
+          165.0,
+          164.0,
+          162.0
+        ],
+        "parle": [
+          168.0,
+          168.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/willem/willem_front",
+      "unchanged_frames": 8,
+      "standing_heights": {
+        "repos": [
+          164.0,
+          164.0
+        ],
+        "marche": [
+          163.0,
+          167.0,
+          169.0,
+          166.0,
+          168.0,
+          168.0
+        ],
+        "parle": [
+          168.0,
+          168.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/willem/willem_back",
+      "unchanged_frames": 8,
+      "standing_heights": {
+        "repos": [
+          168.0,
+          168.0
+        ],
+        "marche": [
+          168.0,
+          169.0,
+          169.0,
+          168.0,
+          169.0,
+          169.0
+        ],
+        "parle": [
+          168.0,
+          168.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/nephren/nephren",
+      "unchanged_frames": 23,
+      "standing_heights": {
+        "repos": [
+          125.0,
+          125.0
+        ],
+        "marche": [
+          126.0,
+          126.0,
+          127.0,
+          127.0,
+          127.0,
+          127.0
+        ],
+        "course": [
+          113.0,
+          108.0,
+          108.0,
+          108.0,
+          112.0
+        ],
+        "attaque": [
+          135.0,
+          145.0,
+          129.0,
+          134.0
+        ],
+        "charge": [
+          125.0,
+          133.0,
+          133.0,
+          116.0
+        ],
+        "degats": [
+          96.0
+        ],
+        "mort": [
+          40.0
+        ],
+        "parle": [
+          125.0,
+          125.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/nephren/nephren_front",
+      "unchanged_frames": 23,
+      "standing_heights": {
+        "repos": [
+          125.0,
+          125.0
+        ],
+        "marche": [
+          124.0,
+          124.0,
+          125.0,
+          125.0,
+          125.0,
+          126.0
+        ],
+        "course": [
+          119.0,
+          116.0,
+          111.0,
+          118.0,
+          119.0
+        ],
+        "attaque": [
+          131.0,
+          143.0,
+          126.0,
+          130.0
+        ],
+        "charge": [
+          133.0,
+          132.0,
+          133.0,
+          134.0
+        ],
+        "degats": [
+          102.0
+        ],
+        "mort": [
+          46.0
+        ],
+        "parle": [
+          125.0,
+          125.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/cat_waiter/cat_waiter",
+      "unchanged_frames": 2,
+      "standing_heights": {
+        "repos": [
+          158.0,
+          159.0
+        ],
+        "marche": [
+          158.0,
+          158.0,
+          158.0,
+          158.0,
+          158.0,
+          158.0
+        ],
+        "parle": [
+          158.0,
+          158.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/cat_waiter/cat_waiter_back",
+      "unchanged_frames": 4,
+      "standing_heights": {
+        "repos": [
+          158.0,
+          159.0
+        ],
+        "marche": [
+          158.0,
+          158.0,
+          158.0,
+          158.0,
+          158.0,
+          158.0
+        ],
+        "parle": [
+          165.0,
+          165.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/snack_vendor/snack_vendor",
+      "unchanged_frames": 2,
+      "standing_heights": {
+        "repos": [
+          154.0,
+          154.0
+        ],
+        "marche": [
+          154.0,
+          154.0,
+          154.0,
+          154.0,
+          154.0,
+          154.0
+        ],
+        "parle": [
+          154.0,
+          154.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/snack_vendor/snack_vendor_back",
+      "unchanged_frames": 4,
+      "standing_heights": {
+        "repos": [
+          154.0,
+          154.0
+        ],
+        "marche": [
+          154.0,
+          154.0,
+          154.0,
+          154.0,
+          154.0,
+          154.0
+        ],
+        "parle": [
+          158.0,
+          162.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/ferryman/ferryman",
+      "unchanged_frames": 8,
+      "standing_heights": {
+        "repos": [
+          163.0,
+          164.0
+        ],
+        "marche": [
+          165.0,
+          164.0,
+          168.0,
+          169.0,
+          170.0,
+          170.0
+        ],
+        "parle": [
+          163.0,
+          163.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/tiat/tiat",
+      "unchanged_frames": 2,
+      "standing_heights": {
+        "repos": [
+          106.0,
+          106.0
+        ],
+        "marche": [
+          106.0,
+          106.0,
+          106.0,
+          106.0,
+          106.0,
+          106.0
+        ],
+        "parle": [
+          106.0,
+          106.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/tiat/tiat_front",
+      "unchanged_frames": 2,
+      "standing_heights": {
+        "repos": [
+          106.0,
+          104.0
+        ],
+        "marche": [
+          106.0,
+          106.0,
+          106.0,
+          106.0,
+          106.0,
+          106.0
+        ],
+        "parle": [
+          106.0,
+          106.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/tiat/tiat_back",
+      "unchanged_frames": 2,
+      "standing_heights": {
+        "repos": [
+          106.0,
+          106.0
+        ],
+        "marche": [
+          106.0,
+          106.0,
+          106.0,
+          106.0,
+          106.0,
+          106.0
+        ],
+        "parle": [
+          106.0,
+          106.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/egg_vendor/egg_vendor",
+      "unchanged_frames": 4,
+      "standing_heights": {
+        "repos": [
+          149.0,
+          149.0
+        ],
+        "marche": [
+          149.0,
+          149.0,
+          149.0,
+          149.0,
+          149.0,
+          149.0
+        ],
+        "parle": [
+          153.0,
+          155.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/egg_vendor/egg_vendor_back",
+      "unchanged_frames": 2,
+      "standing_heights": {
+        "repos": [
+          149.0,
+          149.0
+        ],
+        "marche": [
+          149.0,
+          149.0,
+          149.0,
+          149.0,
+          149.0,
+          149.0
+        ],
+        "parle": [
+          149.0,
+          149.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/collon/collon_front",
+      "unchanged_frames": 4,
+      "standing_heights": {
+        "repos": [
+          115.0,
+          115.0
+        ],
+        "marche": [
+          115.0,
+          115.0,
+          115.0,
+          115.0,
+          115.0,
+          115.0
+        ],
+        "parle": [
+          120.0,
+          121.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/collon/collon_back",
+      "unchanged_frames": 4,
+      "standing_heights": {
+        "repos": [
+          115.0,
+          115.0
+        ],
+        "marche": [
+          115.0,
+          115.0,
+          115.0,
+          115.0,
+          115.0,
+          115.0
+        ],
+        "parle": [
+          113.0,
+          113.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/almita/almita",
+      "unchanged_frames": 4,
+      "standing_heights": {
+        "repos": [
+          91.0,
+          91.0
+        ],
+        "marche": [
+          91.0,
+          91.0,
+          91.0,
+          91.0,
+          91.0,
+          91.0
+        ],
+        "parle": [
+          92.0,
+          92.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/almita/almita_back",
+      "unchanged_frames": 4,
+      "standing_heights": {
+        "repos": [
+          90.0,
+          91.0
+        ],
+        "marche": [
+          90.0,
+          90.0,
+          90.0,
+          90.0,
+          90.0,
+          90.0
+        ],
+        "parle": [
+          93.0,
+          93.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/ramikeldi/ramikeldi_front",
+      "unchanged_frames": 4,
+      "standing_heights": {
+        "repos": [
+          163.0,
+          163.0
+        ],
+        "marche": [
+          163.0,
+          163.0,
+          163.0,
+          163.0,
+          163.0,
+          163.0
+        ],
+        "parle": [
+          163.0,
+          163.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/ramikeldi/ramikeldi_back",
+      "unchanged_frames": 4,
+      "standing_heights": {
+        "repos": [
+          163.0,
+          162.0
+        ],
+        "marche": [
+          163.0,
+          163.0,
+          163.0,
+          163.0,
+          163.0,
+          163.0
+        ],
+        "parle": [
+          155.0,
+          155.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/garde_lookout/garde_lookout_back",
+      "unchanged_frames": 4,
+      "standing_heights": {
+        "repos": [
+          182.0,
+          183.0
+        ],
+        "marche": [
+          182.0,
+          182.0,
+          182.0,
+          182.0,
+          182.0,
+          182.0
+        ],
+        "parle": [
+          185.0,
+          184.0
+        ]
+      }
+    },
+    {
+      "path": "assets/enemies/timere/timere",
+      "unchanged_frames": 30,
+      "standing_heights": {
+        "repos": [
+          97.0,
+          97.0,
+          98.0,
+          89.0,
+          79.0
+        ],
+        "marche": [
+          88.0,
+          89.0,
+          92.0,
+          80.0
+        ],
+        "course": [
+          96.0,
+          87.0,
+          82.0,
+          87.0,
+          88.0,
+          90.0
+        ],
+        "fouet": [
+          90.0,
+          78.0,
+          58.0,
+          89.0
+        ],
+        "morsure": [
+          104.0,
+          95.0,
+          93.0,
+          84.0
+        ],
+        "degats": [
+          101.0,
+          90.0,
+          97.0,
+          92.0,
+          85.0
+        ],
+        "mort": [
+          97.0,
+          87.0,
+          71.0,
+          50.0,
+          43.0,
+          36.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/ithea/ithea",
+      "unchanged_frames": 0,
+      "standing_heights": {
+        "repos": [
+          139.0,
+          138.0
+        ],
+        "marche": [
+          139.0,
+          139.0,
+          139.0,
+          138.0,
+          139.0,
+          139.0
+        ],
+        "course": [
+          120.0,
+          119.0,
+          117.0,
+          119.0,
+          120.0
+        ],
+        "attaque": [
+          162.0,
+          146.0,
+          107.0,
+          107.0
+        ],
+        "charge": [
+          115.0,
+          117.0,
+          121.0,
+          111.0
+        ],
+        "degats": [
+          91.0
+        ],
+        "mort": [
+          45.0
+        ],
+        "parle": [
+          139.0,
+          139.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/ithea/ithea_front",
+      "unchanged_frames": 0,
+      "standing_heights": {
+        "repos": [
+          139.0,
+          139.0
+        ],
+        "marche": [
+          139.0,
+          139.0,
+          139.0,
+          139.0,
+          139.0,
+          139.0
+        ],
+        "course": [
+          133.0,
+          133.0,
+          133.0,
+          134.0,
+          134.0
+        ],
+        "attaque": [
+          179.0,
+          174.0,
+          137.0,
+          133.0
+        ],
+        "charge": [
+          137.0,
+          138.0,
+          135.0,
+          134.0
+        ],
+        "degats": [
+          116.0
+        ],
+        "mort": [
+          50.0
+        ],
+        "parle": [
+          139.0,
+          139.0
+        ]
+      }
+    },
+    {
+      "path": "assets/characters/ithea/ithea_back",
+      "unchanged_frames": 0,
+      "standing_heights": {
+        "repos": [
+          139.0,
+          139.0
+        ],
+        "marche": [
+          139.0,
+          139.0,
+          139.0,
+          139.0,
+          139.0,
+          139.0
+        ],
+        "course": [
+          141.0,
+          142.0,
+          143.0,
+          144.0,
+          141.0
+        ],
+        "attaque": [
+          206.0,
+          140.0,
+          144.0,
+          144.0
+        ],
+        "charge": [
+          134.0,
+          131.0,
+          131.0,
+          121.0
+        ],
+        "degats": [
+          143.0
+        ],
+        "mort": [
+          70.0
+        ],
+        "parle": [
+          139.0,
+          139.0
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "gate_opening_min_px": 292,
+  "gate_opening_min_m": 3.0416666666666665,
+  "unchanged_frames": 206,
+  "artistic_review": "Manuel : identité, côté de la couette et de la queue, sens de l'arme, fluidité.",
+  "technical_fitting": "Reductions NN de format/échelle (§2) ; nouveaux dessins via image_gen."
+}

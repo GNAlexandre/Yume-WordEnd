@@ -149,7 +149,7 @@ trois vues. » puis la description.
 | 1 | `chtholly/chtholly` (remplace l'actuelle, qui sert à l'acte 3) | 1,5 m = 144 px | Chtholly à l'acte 1, fée soldate de 15 ans, proportions des sprites d'*Octopath Traveler* (environ deux têtes et demie à trois têtes de haut), dans la continuité de la planche actuelle : longs cheveux céruléen clair (#6C89BB à #92B6DB) **sans aucune mèche rouge**, deux petites couettes hautes, yeux bleu océan ; uniforme de la Garde ailée (veste bleu marine à col droit et boutons argentés, jupe plissée sombre, bottines), broche d'argent à pierre bleue en goutte sur la poitrine ; Seniorious : grande épée presque aussi haute qu'elle, lame blanc argenté faite de plaques fissurées, garde sombre hérissée |
 | 2 | `willem/willem` | 1,75 m = 168 px | Willem Kmetsch, jeune homme maigre, cheveux noirs en bataille, yeux sombres, sourire fatigué ; uniforme militaire bleu nuit croisé à boutons dorés un peu trop étroit, ceinturon, bottes |
 | 2 | `nygglatho/nygglatho` | 1,85 m = 178 px | Nygglatho, troll à l'air de jeune femme, une tête de plus que tous ; longs cheveux rose saumon, yeux vert printanier, chemisier vert vif à volants, tablier blanc, coiffe blanche à volants ; sourire doux |
-| 2 | `ithea/ithea` (7 animations + `parle`) | 1,45 m = 139 px | Ithea, fée soldate de 14 ans : cheveux blond paille, longue tresse à perle bleue, yeux ambre au regard félin, écharpe rouge, veste vert pâle sur robe brun-rouge, bas vert olive ; Carillon Valgulious dans le dos |
+| 2 | `ithea/ithea` (7 animations + `parle`) | 1,45 m = 139 px | Ithea, fée soldate de 14 ans : **apparence des planches officielles de l'anime, choisie par l'utilisateur le 8 octobre 2026**, en remplacement du portrait blond précédent ; cheveux orange ébouriffés, deux mèches pointues et petites nattes à perles bleues, regard félin ambré, écharpe orange, veste crème aux garnitures vertes sur robe brun-rouge ; Carillon Valgulious en plaques ivoire fissurées, lame droite élargie à l'extrémité arrondie ; au repos et en marche de profil, la lame pointe vers l'arrière |
 | 2 | `nephren/nephren` (7 animations + `parle`) | 1,3 m = 125 px | Nephren, fée soldate de 13 ans, toute petite : cheveux gris cendré à reflets lavande en deux couettes ondulées à rubans noirs, yeux gris anthracite, visage impassible, tunique violette à capuche et frise de triangles blancs, livre rouge |
 | 2 | `tiat/tiat` | 1,1 m = 106 px | Tiat, petite fée de moins de dix ans : cheveux et yeux vert feuille (#78B89E), blouse blanche, gilet vert sombre, air enthousiaste |
 | 2 | `pannibal/pannibal` | 1,25 m = 120 px | Pannibal, petite fée d'une dizaine d'années : cheveux violet vif sur un œil, petite cape, épée de bois, brindille à la bouche, air pince-sans-rire |
@@ -390,6 +390,24 @@ dans `tools/hd2d_manifest.json`, que les tests confrontent à ce document.
 4. **Priorité 4** : les skins de Nopht et de Rhantolk ; les fées de la communauté.
 
 ## 12. Images à refaire (après la PR n° 4)
+
+**Livraison du 8 octobre 2026 : les corrections de la liste ci-dessous sont intégrées.**
+La liste conserve les défauts et consignes de départ pour la traçabilité. Les anciens PNG/JSON,
+les nouveaux dessins, les prompts et les ajustements de format sont conservés dans
+`assets/source/section12/` (hors import et export Godot). Les ajustements d'échelle seuls sont
+réalisés au plus proche voisin, selon la section 2 ; les nouvelles poses et modifications de
+dessin sont produites avec `image_gen`.
+
+Contrôle ciblé : `python3 tools/hd2d_correction_review.py`. Il compare les poses non concernées
+au commit `1ff21b9`, contrôle les hauteurs **de l'ancre au haut de la silhouette**, et vérifie
+les nombres de poses, cadences, `coup` et `onde`. Les aperçus avant/après animés et les PNG/JSON
+complets sont inclus dans [la page autonome](sprites/CORRECTIONS_SECTION12.html).
+La fluidité des cycles demande toujours une validation visuelle en jeu.
+
+Le contrôle général signale encore la dernière pose de marche **de face** du vendeur de
+casse-croûte (`snack_vendor_front`, image 5), une vue non citée dans les corrections de marche
+ci-dessous ; elle reste conservée. Ithea suit désormais les références officielles de l'anime
+(pages 21 à 23), selon le choix explicite de l'utilisateur, plutôt que le portrait blond rejeté.
 
 Défauts mesurés dans les livraisons des PR n° 2 à 4 (`python3 tools/hd2d_sheets.py check`,
 remarques ; hauteurs debout de l'ancre au haut de la silhouette). Le jeu les contourne en
