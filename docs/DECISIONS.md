@@ -1795,3 +1795,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   devicePixelRatio × la fenêtre (4 × les pixels à DPR 2), sans gain pour du pixel art à 96 px/m.
   Seulement pour le Web : sur le bureau, une application qui n'est pas « DPI-aware » est agrandie
   floue par Windows.
+- **Livraison du lot D (Codex, PR n° 15 : 53 images de bâtiments et de matières)** intégrée
+  par-dessus les remplaçants. `check` : quatre flancs en pignon (entrepôt, café, salle de
+  projection, remise) dessinent l'avancée du toit plus bas que le haut du mur aux angles (21 à
+  22 % de sa hauteur) ; le mur du volume, derrière, complète ce coin : l'outil tolère 25 %.
+  L'enseigne en hélice, à 1 px du bas, y est collée (décalage sans perte).
