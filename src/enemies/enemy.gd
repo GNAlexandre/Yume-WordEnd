@@ -134,6 +134,9 @@ var _state: State = State.IDLE
 var _state_time: float = 0.0
 var _target: Node3D
 var _player_down: bool = false
+## Le joueur est en conversation (EventBus.dialogue_started → dialogue_ended) : on ne le chasse
+## pas. Sinon une mort en pleine réplique le faisait réapparaître figé, la boîte encore ouverte.
+var _player_talking: bool = false
 var _zone_checked: bool = false
 var _zone_seen: StringName = &""
 var _zone_safe: bool = false
@@ -208,6 +211,8 @@ func _ready() -> void:
 	hitbox.hit_landed.connect(_on_hitbox_hit_landed)
 	EventBus.player_died.connect(_on_player_died)
 	EventBus.player_respawned.connect(_on_player_respawned)
+	EventBus.dialogue_started.connect(_on_dialogue_started)
+	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	_enter(State.IDLE)
 	EventBus.enemy_spawned.emit(self, enemy_id())
 
@@ -380,7 +385,7 @@ func _rush(delta: float) -> Vector3:
 ## Le joueur peut-il être (encore, si keep) poursuivi ? Met _target à jour.
 func _can_hunt(keep: bool) -> bool:
 	_target = _find_target()
-	if _target == null or _player_down or _player_in_safe_zone():
+	if _target == null or _player_down or _player_talking or _player_in_safe_zone():
 		return false
 	if always_chase:
 		return true
@@ -918,3 +923,11 @@ func _on_player_died() -> void:
 
 func _on_player_respawned() -> void:
 	_player_down = false
+
+
+func _on_dialogue_started(_npc_id: StringName) -> void:
+	_player_talking = true
+
+
+func _on_dialogue_ended(_npc_id: StringName) -> void:
+	_player_talking = false

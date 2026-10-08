@@ -1782,3 +1782,16 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   Mélange alpha, sans écriture de profondeur, matériau partagé par image (le batcher les fond
   toujours) ; le premier plan garde sa trame. `tools/hd2d_scenes.py` écrit `soft_alpha` d'après
   le manifeste et le vérifie : 11 scènes régénérées.
+- **Intégration de l'audit** : `docs/sprites/` n'est plus dans l'arbre (retiré à l'intégration
+  de la PR n° 8) : son `.gdignore` part aussi. Pannibal : la proposition de l'audit (redessiner le
+  profil à 120 px) n'est pas retenue, la taille se mesure désormais à l'ancre (« Taille des
+  sprites », plus haut) et le profil, 120 px debout, est à l'échelle.
+- **Audit, proposition retenue : les Timeres ne chassent pas un joueur en conversation**
+  (`Enemy._player_talking`, par `EventBus.dialogue_started` → `dialogue_ended`) : une mort en
+  pleine réplique le faisait réapparaître au village figé, la boîte encore ouverte. Plutôt que de
+  couper le dialogue à la mort (une étape « parler » interrompue serait validée).
+- **Audit, proposition retenue : Web sans haute densité** (`display/window/dpi/allow_hidpi.web =
+  false`, PR « contrats ») : sur un écran Retina ou à 150 %, le canevas était rendu à
+  devicePixelRatio × la fenêtre (4 × les pixels à DPR 2), sans gain pour du pixel art à 96 px/m.
+  Seulement pour le Web : sur le bureau, une application qui n'est pas « DPI-aware » est agrandie
+  floue par Windows.
