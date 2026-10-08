@@ -4,12 +4,20 @@ Les quatre lots fournissent 316 PNG et 159 JSON d'animation : 52 personnages
 avec portrait et trois vues, Timere dans les trois vues, 96 textures de décor
 et 9 icônes d'objets. Les trois effets facultatifs restent produits par le jeu.
 
-| Lot | PNG | JSON | Galerie |
+| Lot | PNG | JSON | Galerie autonome |
 | --- | ---: | ---: | --- |
-| Priorité 1 | 29 | 6 | [Ouvrir](PRIORITE_1.html) |
-| Priorité 2 | 82 | 21 | [Ouvrir](PRIORITE_2.html) |
-| Priorité 3 | 69 | 30 | [Ouvrir](PRIORITE_3.html) |
-| Priorité 4 | 136 | 102 | [Ouvrir](PRIORITE_4.html) |
+| Priorité 1 | 29 | 6 | [Ouvrir](PRIORITE_1_AUTONOME.html) |
+| Priorité 2 | 82 | 21 | [Ouvrir](PRIORITE_2_AUTONOME.html) |
+| Priorité 3 | 69 | 30 | [Ouvrir](PRIORITE_3_AUTONOME.html) |
+| Priorité 4 | 136 | 102 | [Ouvrir](PRIORITE_4_AUTONOME.html) |
+
+Ces HTML contiennent les images : ils s’affichent sans les dossiers du dépôt.
+Les 316 PNG incorporés et téléchargés ont été vérifiés par SHA-256 dans un
+navigateur, avec seulement le fichier HTML disponible. Les galeries relatives
+restent incluses dans les ZIP entièrement extraits.
+
+Voir [l’aperçu des corrections](CORRECTIONS_ASSETS.html) pour les poses reprises,
+les détails de la bible, les deux îles nettoyées et l’enduit répété.
 
 Les sept combattants sont Chtholly, Willem, Ithea, Nephren, Nopht, Rhantolk et
 Lillia. Ils ont repos, marche, course, attaque, charge, dégâts et chute ; Ithea

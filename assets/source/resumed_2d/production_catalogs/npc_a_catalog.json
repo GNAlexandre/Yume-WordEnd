@@ -4,7 +4,7 @@
       "id": "pixel_lakhesh_directions",
       "name": "Lakhesh",
       "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.png",
       "path": "assets/characters/lakhesh/lakhesh.png",
       "dimensions": [
         887,
@@ -14,7 +14,7 @@
       "reference_pages": [
         49
       ],
-      "reference_status": "scan_confirmed",
+      "reference_status": "novel_description_overrides_old_scan_costume",
       "character_ids": [
         "lakhesh"
       ],
@@ -28,10 +28,10 @@
         ]
       },
       "style": "pixel",
-      "status": "pendingfit",
-      "generated_source": "/workspace/generated_images/exec-5d7624d1-5500-4794-a2bb-4a4862516a3d.png",
-      "sha256": "ee0bb492e970ecc9b343222582caac1ead212e5459b695506d63387142a036ab",
-      "description": "P49 : neuf ans, carré blond et petite queue latérale ; robe brune sur manches blanches, ceinture nouée blanche et ourlet blanc. Espèce source : leprechaun.",
+      "status": "isolated_source_validated_pending_runtime_fit",
+      "generated_source": "/workspace/generated_images/exec-24712cef-ed11-4226-b001-ed63a2e64c93.png",
+      "sha256": "735b8d670162455190e6a85e8803f891f9444d7969db4d0bacf0dd54b137d3b8",
+      "description": "Lakhesh : petite fée polie, cheveux PÊCHE et UNE petite couette latérale, yeux bruns ; GILET BRUN CLOUTÉ sur robe claire et manches crème. Distincte d’Almita ; 42 poses en trois vues et portrait.",
       "animations": [
         "repos",
         "marche",
@@ -39,8 +39,33 @@
         "parle"
       ],
       "limitations": [
-        "Échelle et découpe à valider après normalisation du moteur."
-      ]
+        "Les 42 silhouettes et le portrait sont isolés après seuil alpha 128 ; exports runtime et galerie à refaire.",
+        "Variations de hauteur naturelle des poses mesurées ; ancrage et cycles à contrôler après intégration."
+      ],
+      "prompt": "Fix spacing ONLY in this supplied corrected sprite atlas; preserve character design, clothing, hair color and pixel style. CRITICAL: current figures touch vertically and cannot be extracted. REDRAW AND RELAYOUT all 43 figures with much smaller sprites: reduce each full-body sprite height to 60% of its current height relative to the SAME portrait 1:2 canvas. This deliberate generous empty padding is essential. Canvas has exactly6 equal columns and12 equal rows. Every full-body figure occupies at most60% of its cell height, at most70% cell width, with at least25% cell height transparent between consecutive rows. Completely blank alpha gutters across full canvas width separate ALL12rows, no hair/clothes crossing gutters, no figures touching or stacked. All body heights equal (except slight leaning run); no miniatures in talk rows. Exactly42full-body figures plus ONE bust portrait, using this precise grid: FRONT rows1–4; BACK rows5–8; RIGHT PROFILE rows9–12. Each group row1=TWOidle figures cols1,2; row2=SIXwalking cols1–6; row3=FOURrunning cols1–4; row4=TWOtalking cols1,2. Lastrow12col6 ONEportrait only. All unassigned cells transparent; no extra sprites. Clear clean binary-alpha transparent background, no grid, no shadow, no text. There must be43 visibly separate silhouettes, completely separated, even with nearest neighbor alpha threshold. Keep Lakhesh PEACH hair, distinct separate BROWN METAL STUDDED VEST over CREAM blouse/dress. ONE SMALL short side ponytail only, no bun on the other side. Make this ponytail HALF its current size (no wider than25% ofhead width), recognizably a short tied tuft. Brown eyes/boots. Allfront/back/profilesandportrait consistent.",
+      "source_description_document": "docs/ASSETS_HD2D.md §3.4",
+      "provenance_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.provenance.json",
+      "native_dimensions": [
+        887,
+        1774
+      ],
+      "source_validation": {
+        "pose_count": 42,
+        "portrait_count": 1,
+        "counts_per_direction": [
+          2,
+          6,
+          4,
+          2
+        ],
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "cut_rows": "passed",
+        "alpha_threshold": 128
+      }
     },
     {
       "id": "pixel_tiat_directions",
@@ -88,7 +113,7 @@
       "id": "pixel_pannibal_directions",
       "name": "Pannibal",
       "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/pannibal_directions.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/pannibal_directions_novel_corrected.png",
       "path": "assets/characters/pannibal/pannibal.png",
       "dimensions": [
         887,
@@ -98,7 +123,7 @@
       "reference_pages": [
         45
       ],
-      "reference_status": "scan_confirmed",
+      "reference_status": "scan_costume_plus_user_story_bible_accessories",
       "character_ids": [
         "pannibal"
       ],
@@ -113,9 +138,9 @@
       },
       "style": "pixel",
       "status": "pendingfit",
-      "generated_source": "/workspace/generated_images/exec-3a7db8d2-072d-4579-bf2c-0c106a9a293d.png",
-      "sha256": "8ab51c21ceca0c0d5ab2b0c9494314b46a34361a81e6dcef8dd153d791a0457b",
-      "description": "P45 : neuf ans ; mèche couvrant l’œil gauche, manteau à capuche violet à deux liserés clairs, pantalon court gris, bottines. Espèce source : leprechaun, apparence humaine.",
+      "generated_source": "/workspace/generated_images/exec-33d661ce-a858-4b14-ade1-cb9603c20ea0.png",
+      "sha256": "4433da01938c1ee2130844e08f1d210d0653dd0e711f6d59fce5e3ebf9c3142c",
+      "description": "P45 : neuf ans ; mèche couvrant l’œil gauche, manteau à capuche violet à deux liserés clairs, pantalon court gris, bottines. Espèce source : leprechaun, apparence humaine. Épée d’entraînement entièrement en bois portée basse, brindille à la bouche, visibles dans les poses de face/côté et le portrait ; costume et identité p45 conservés.",
       "animations": [
         "repos",
         "marche",
@@ -124,7 +149,48 @@
       ],
       "limitations": [
         "Échelle et découpe à valider après normalisation du moteur."
-      ]
+      ],
+      "provenance": {
+        "tool": "image_gen",
+        "date": "2026-10-08",
+        "original_source_path": "assets/source/resumed_2d/pixel/characters/pannibal_directions.png",
+        "original_source_sha256": "8ab51c21ceca0c0d5ab2b0c9494314b46a34361a81e6dcef8dd153d791a0457b",
+        "original_preserved": true,
+        "correction_authority": "user_story_bible",
+        "change": "Épée d’entraînement entièrement en bois portée basse, brindille à la bouche, visibles dans les poses de face/côté et le portrait ; costume et identité p45 conservés.",
+        "backend_version": "not_exposed"
+      },
+      "validation": {
+        "cut_rows": "passed",
+        "directions": 3,
+        "body_frames": 42,
+        "portraits": 1,
+        "frame_counts_by_direction": {
+          "front": [
+            2,
+            6,
+            4,
+            2
+          ],
+          "back": [
+            2,
+            6,
+            4,
+            2
+          ],
+          "right": [
+            2,
+            6,
+            4,
+            2
+          ]
+        },
+        "alpha_preparation": "threshold128 in-memory for cut_rows check; raw PNG unchanged",
+        "visual_details_reviewed": true,
+        "limitations": [
+          "Animation cycles and feet contact require final Godot review."
+        ]
+      }
     },
     {
       "id": "pixel_souwong_young_directions",
@@ -214,7 +280,7 @@
       "id": "pixel_nygglatho_directions",
       "name": "Nygglatho",
       "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/nygglatho_directions.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/nygglatho_directions_novel.png",
       "path": "assets/characters/nygglatho/nygglatho.png",
       "dimensions": [
         887,
@@ -224,7 +290,7 @@
       "reference_pages": [
         51
       ],
-      "reference_status": "scan_confirmed",
+      "reference_status": "novel_description_overrides_old_scan_costume",
       "character_ids": [
         "nygglatho"
       ],
@@ -238,10 +304,10 @@
         ]
       },
       "style": "pixel",
-      "status": "pendingfit",
-      "generated_source": "/workspace/generated_images/exec-84d91469-9e67-430e-9137-7487d98dea80.png",
-      "sha256": "5bfaef8945eaa551a51ca4f78a79f94e934217fd4a5179b689c28da4bcf126d4",
-      "description": "Nygglatho adult tall gentle woman no animal traits, long salmon-pink curled hair, green eyes, white frilled maid headdress, long charcoal-black maid dress with green collar, full white ruffled apron, black ribbon and practical dark shoes as p51. ",
+      "status": "isolated_source_validated_pending_runtime_fit",
+      "generated_source": "/workspace/generated_images/exec-27c5aab8-abdc-46e0-a92a-2f09c34e25a3.png",
+      "sha256": "a284869a874d1f318cdd57481dde055cf231f074304ba2a518bd3452100567f1",
+      "description": "Nygglatho : troll adulte douce, cheveux rose saumon, yeux verts ; chemisier VERT VIF à VOLANTS, manches et épaules vertes, tablier BLANC et coiffe BLANCHE ; jupe sombre sous le tablier. 42 poses en trois vues et portrait ; première marche profil contient une seule silhouette.",
       "animations": [
         "repos",
         "marche",
@@ -249,17 +315,47 @@
         "parle"
       ],
       "limitations": [
-        "Échelle et découpe à valider après normalisation du moteur."
+        "Les 42 silhouettes et le portrait sont isolés après seuil alpha 128 ; exports runtime et galerie à refaire.",
+        "Variations de hauteur naturelle des poses mesurées ; ancrage et cycles à contrôler après intégration."
       ],
+      "prompt": "Fix spacing ONLY in this supplied corrected sprite atlas; preserve character design, clothing, hair color and pixel style. CRITICAL: current figures touch vertically and cannot be extracted. REDRAW AND RELAYOUT all 43 figures with much smaller sprites: reduce each full-body sprite height to 60% of its current height relative to the SAME portrait 1:2 canvas. This deliberate generous empty padding is essential. Canvas has exactly6 equal columns and12 equal rows. Every full-body figure occupies at most60% of its cell height, at most70% cell width, with at least25% cell height transparent between consecutive rows. Completely blank alpha gutters across full canvas width separate ALL12rows, no hair/clothes crossing gutters, no figures touching or stacked. All body heights equal (except slight leaning run); no miniatures in talk rows. Exactly42full-body figures plus ONE bust portrait, using this precise grid: FRONT rows1–4; BACK rows5–8; RIGHT PROFILE rows9–12. Each group row1=TWOidle figures cols1,2; row2=SIXwalking cols1–6; row3=FOURrunning cols1–4; row4=TWOtalking cols1,2. Lastrow12col6 ONEportrait only. All unassigned cells transparent; no extra sprites. Clear clean binary-alpha transparent background, no grid, no shadow, no text. There must be43 visibly separate silhouettes, completely separated, even with nearest neighbor alpha threshold. Keep Nygglatho's GREEN BRIGHT RUFFLED BLOUSE at shoulders, chest AND sleeves; WHITE COIF and WHITE APRON, dark lower skirt. Long salmon hair, greeneyes. Front and back and profile clothingcorrect. FOURprofile runningfigures mandatory. The first right-profile walk, row10col1, is only ONE normal sprite, no second sprite above/below.",
+      "source_description_document": "docs/ASSETS_HD2D.md §3.4",
+      "provenance_path": "assets/source/resumed_2d/pixel/characters/nygglatho_directions_novel.provenance.json",
+      "native_dimensions": [
+        887,
+        1774
+      ],
+      "source_validation": {
+        "pose_count": 42,
+        "portrait_count": 1,
+        "counts_per_direction": [
+          2,
+          6,
+          4,
+          2
+        ],
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "cut_rows": "passed",
+        "alpha_threshold": 128
+      },
       "animation_sources": {
-        "right:course": {
-          "source_path": "assets/source/resumed_2d/pixel/characters/nygglatho_right_course.png",
+        "right:marche": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/nygglatho_right_marche_frame0_novel.png",
           "row": 0,
           "rows": 1,
-          "count": 4,
-          "original_count": 3
+          "count": 1,
+          "original_count": 6,
+          "indices": [
+            0
+          ],
+          "scale_reference": "idle"
         }
-      }
+      },
+      "pose_correction_note": "First right-walk pose cropped from the newly drawn novel sheet and fitted to idle height 178px; no duplicate or invented frame."
     },
     {
       "id": "pixel_souwong_sage_directions",
@@ -649,48 +745,6 @@
       ]
     },
     {
-      "id": "pixel_limeskin_directions",
-      "name": "Limeskin",
-      "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/limeskin_directions.png",
-      "path": "assets/characters/limeskin/limeskin.png",
-      "dimensions": [
-        1024,
-        1536
-      ],
-      "height_m": 2.8,
-      "reference_pages": [
-        55
-      ],
-      "reference_status": "scan_confirmed",
-      "character_ids": [
-        "limeskin"
-      ],
-      "layout": {
-        "columns": 6,
-        "rows": 12,
-        "kind": "directional_rows_npc",
-        "portrait_cell": [
-          5,
-          11
-        ]
-      },
-      "style": "pixel",
-      "status": "pendingfit",
-      "generated_source": "/workspace/generated_images/exec-7da52877-1121-4a15-8bb4-2e34903bb7a9.png",
-      "sha256": "d39a074c6e85b92fef7bd039f2bdbb424762b40d4e462819debc747429951141",
-      "description": "Limeskin very tall imposing dragon/lizard commander, pale gray milky scaled skin, draconic horned angular head, gold eyes, white feather-decorated side braid, dark navy double-breasted military tunic with gold trim and epaulettes, black trousers, segmented dark forearm and shin guards, pale scaled tail; visually larger than others but fully inside cell. ",
-      "animations": [
-        "repos",
-        "marche",
-        "course",
-        "parle"
-      ],
-      "limitations": [
-        "Échelle et découpe à valider après normalisation du moteur."
-      ]
-    },
-    {
       "id": "pixel_eboncandle_ancient_directions",
       "name": "Eboncandle — ancien corps",
       "category": "characters",
@@ -955,7 +1009,7 @@
       "id": "pixel_collon_directions",
       "name": "Collon",
       "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/collon_directions.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/collon_directions_novel_corrected.png",
       "path": "assets/characters/collon/collon.png",
       "dimensions": [
         887,
@@ -965,7 +1019,7 @@
       "reference_pages": [
         47
       ],
-      "reference_status": "scan_confirmed",
+      "reference_status": "scan_costume_plus_user_story_bible_accessories",
       "character_ids": [
         "collon"
       ],
@@ -980,9 +1034,9 @@
       },
       "style": "pixel",
       "status": "pendingfit",
-      "generated_source": "/workspace/generated_images/exec-0f59c3bc-c3cb-4511-bff7-20662dd2ff9c.png",
-      "sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
-      "description": "P47 : neuf ans, chevelure rose presque jusqu’aux genoux avec petite attache au sommet ; longue tunique blanche, col/manche mauve bordé or, short rose bouffant. Espèce source : leprechaun.",
+      "generated_source": "/workspace/generated_images/exec-e693b51e-6301-4eba-80e9-a2894e9c83c1.png",
+      "sha256": "251783a303b55fb519623872d707fa244d8714b2c52f58786df563dcf157939e",
+      "description": "P47 : neuf ans, chevelure rose presque jusqu’aux genoux avec petite attache au sommet ; longue tunique blanche, col/manche mauve bordé or, short rose bouffant. Espèce source : leprechaun. Bandeau rouge complet autour du front et de la tête, canine visible dans les expressions et le portrait ; identité et costume p47 conservés.",
       "animations": [
         "repos",
         "marche",
@@ -991,6 +1045,311 @@
       ],
       "limitations": [
         "Échelle et découpe à valider après normalisation du moteur."
+      ],
+      "provenance": {
+        "tool": "image_gen",
+        "date": "2026-10-08",
+        "original_source_path": "assets/source/resumed_2d/pixel/characters/collon_directions.png",
+        "original_source_sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
+        "original_preserved": true,
+        "correction_authority": "user_story_bible",
+        "change": "Bandeau rouge complet autour du front et de la tête, canine visible dans les expressions et le portrait ; identité et costume p47 conservés.",
+        "backend_version": "not_exposed"
+      },
+      "validation": {
+        "cut_rows": "passed",
+        "directions": 3,
+        "body_frames": 42,
+        "portraits": 1,
+        "frame_counts_by_direction": {
+          "front": [
+            2,
+            6,
+            4,
+            2
+          ],
+          "back": [
+            2,
+            6,
+            4,
+            2
+          ],
+          "right": [
+            2,
+            6,
+            4,
+            2
+          ]
+        },
+        "alpha_preparation": "threshold128 in-memory for cut_rows check; raw PNG unchanged",
+        "visual_details_reviewed": true,
+        "limitations": [
+          "Animation cycles and feet contact require final Godot review."
+        ]
+      }
+    },
+    {
+      "id": "pixel_limeskin_front",
+      "name": "Limeskin",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/limeskin_front_novel_corrected.png",
+      "path": "assets/characters/limeskin/limeskin_front.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "height_m": 2.8,
+      "reference_pages": [
+        55
+      ],
+      "reference_status": "scan_costume_plus_user_story_bible_accessories",
+      "character_ids": [
+        "limeskin"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 4,
+        "kind": "directional_rows_npc",
+        "direction": "front",
+        "portrait_cell": [
+          5,
+          3
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-a0dbe523-f165-40a9-ba4a-9f4554d7148d.png",
+      "sha256": "2fa6d86cf448f5ee5e783a95fb65dcc5c4c98c02f56d395bb11add5575e496be",
+      "description": "Limeskin : cornes crâniennes solides distinctes, tresse blanche latérale décorée de plumes, collier tribal de perles ivoire et médaillon circulaire bronze au col ; uniforme militaire bleu nuit à galons or, queue et identité conservés. Vue front.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Cycles et contact des pieds à revoir dans Godot après découpe et normalisation."
+      ],
+      "provenance": {
+        "tool": "image_gen",
+        "date": "2026-10-08",
+        "backend_version": "not_exposed",
+        "original_source_path": "assets/source/resumed_2d/pixel/characters/limeskin_directions.png",
+        "original_source_sha256": "d39a074c6e85b92fef7bd039f2bdbb424762b40d4e462819debc747429951141",
+        "original_preserved": true,
+        "correction_authority": "user_story_bible",
+        "change": "cornes + tresse à plumes + collier tribal; séparation de trois planches directionnelles",
+        "original_portrait_archive": {
+          "path": "assets/source/resumed_2d/pixel/portraits/history/limeskin_original_before_novel_05b477dea3eb.png",
+          "sha256": "05b477dea3ebcc16db5e996da264b32e16af830539119a0df2af5910231d117e",
+          "restored_byte_identically_from_git_head": true
+        }
+      },
+      "validation": {
+        "cut_rows": "passed",
+        "directions": 1,
+        "body_frames": 14,
+        "portraits": 1,
+        "frame_counts": [
+          2,
+          6,
+          4,
+          2
+        ],
+        "alpha_preparation": "threshold128 in-memory; raw unchanged",
+        "visual_details_reviewed": true
+      }
+    },
+    {
+      "id": "pixel_limeskin_back",
+      "name": "Limeskin",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/limeskin_back_novel_corrected.png",
+      "path": "assets/characters/limeskin/limeskin_back.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "height_m": 2.8,
+      "reference_pages": [
+        55
+      ],
+      "reference_status": "scan_costume_plus_user_story_bible_accessories",
+      "character_ids": [
+        "limeskin"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 4,
+        "kind": "directional_rows_npc",
+        "direction": "back"
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-0743b88b-a3d7-4c16-9bf7-32bb3802713f.png",
+      "sha256": "7707b0490757d006fe953498b00f52845ce78355fcab6241a15c4e746943ba8f",
+      "description": "Limeskin : cornes crâniennes solides distinctes, tresse blanche latérale décorée de plumes, collier tribal de perles ivoire et médaillon circulaire bronze au col ; uniforme militaire bleu nuit à galons or, queue et identité conservés. Vue back.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Cycles et contact des pieds à revoir dans Godot après découpe et normalisation."
+      ],
+      "provenance": {
+        "tool": "image_gen",
+        "date": "2026-10-08",
+        "backend_version": "not_exposed",
+        "original_source_path": "assets/source/resumed_2d/pixel/characters/limeskin_directions.png",
+        "original_source_sha256": "d39a074c6e85b92fef7bd039f2bdbb424762b40d4e462819debc747429951141",
+        "original_preserved": true,
+        "correction_authority": "user_story_bible",
+        "change": "cornes + tresse à plumes + collier tribal; séparation de trois planches directionnelles",
+        "original_portrait_archive": {
+          "path": "assets/source/resumed_2d/pixel/portraits/history/limeskin_original_before_novel_05b477dea3eb.png",
+          "sha256": "05b477dea3ebcc16db5e996da264b32e16af830539119a0df2af5910231d117e",
+          "restored_byte_identically_from_git_head": true
+        }
+      },
+      "validation": {
+        "cut_rows": "passed",
+        "directions": 1,
+        "body_frames": 14,
+        "portraits": 0,
+        "frame_counts": [
+          2,
+          6,
+          4,
+          2
+        ],
+        "alpha_preparation": "threshold128 in-memory; raw unchanged",
+        "visual_details_reviewed": true
+      }
+    },
+    {
+      "id": "pixel_limeskin_right",
+      "name": "Limeskin",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/limeskin_right_novel_corrected.png",
+      "path": "assets/characters/limeskin/limeskin.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "height_m": 2.8,
+      "reference_pages": [
+        55
+      ],
+      "reference_status": "scan_costume_plus_user_story_bible_accessories",
+      "character_ids": [
+        "limeskin"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 4,
+        "kind": "directional_rows_npc",
+        "direction": "right"
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-f530a18c-5dc7-492b-8870-d7333e69514e.png",
+      "sha256": "42b080833aab12c43d940388679431a75403e894ad587b220d621e2c7ee8aae6",
+      "description": "Limeskin : cornes crâniennes solides distinctes, tresse blanche latérale décorée de plumes, collier tribal de perles ivoire et médaillon circulaire bronze au col ; uniforme militaire bleu nuit à galons or, queue et identité conservés. Vue right.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Cycles et contact des pieds à revoir dans Godot après découpe et normalisation."
+      ],
+      "provenance": {
+        "tool": "image_gen",
+        "date": "2026-10-08",
+        "backend_version": "not_exposed",
+        "original_source_path": "assets/source/resumed_2d/pixel/characters/limeskin_directions.png",
+        "original_source_sha256": "d39a074c6e85b92fef7bd039f2bdbb424762b40d4e462819debc747429951141",
+        "original_preserved": true,
+        "correction_authority": "user_story_bible",
+        "change": "cornes + tresse à plumes + collier tribal; séparation de trois planches directionnelles",
+        "original_portrait_archive": {
+          "path": "assets/source/resumed_2d/pixel/portraits/history/limeskin_original_before_novel_05b477dea3eb.png",
+          "sha256": "05b477dea3ebcc16db5e996da264b32e16af830539119a0df2af5910231d117e",
+          "restored_byte_identically_from_git_head": true
+        }
+      },
+      "validation": {
+        "cut_rows": "passed",
+        "directions": 1,
+        "body_frames": 14,
+        "portraits": 0,
+        "frame_counts": [
+          2,
+          6,
+          4,
+          2
+        ],
+        "alpha_preparation": "threshold128 in-memory; raw unchanged",
+        "visual_details_reviewed": true
+      }
+    },
+    {
+      "id": "pixel_limeskin_portrait_novel_corrected",
+      "name": "Limeskin — portrait corrigé",
+      "category": "characters",
+      "character_ids": [
+        "limeskin"
+      ],
+      "source_path": "assets/source/resumed_2d/pixel/characters/limeskin_front_novel_corrected.png",
+      "path": "assets/characters/limeskin/limeskin_portrait.png",
+      "native_dimensions": [
+        1536,
+        1024
+      ],
+      "source_box": [
+        1294,
+        761,
+        1514,
+        1003
+      ],
+      "layout": null,
+      "style": "pixel",
+      "reference_pages": [
+        55
+      ],
+      "reference_status": "scan_costume_plus_user_story_bible_accessories",
+      "status": "pendingfit",
+      "source_sha256": "2fa6d86cf448f5ee5e783a95fb65dcc5c4c98c02f56d395bb11add5575e496be",
+      "description": "Portrait : deux cornes, tresse blanche décorée de plumes et collier tribal à médaillon visibles.",
+      "provenance": {
+        "tool": "image_gen",
+        "date": "2026-10-08",
+        "backend_version": "not_exposed",
+        "original_source_path": "assets/source/resumed_2d/pixel/characters/limeskin_directions.png",
+        "original_source_sha256": "d39a074c6e85b92fef7bd039f2bdbb424762b40d4e462819debc747429951141",
+        "original_preserved": true,
+        "correction_authority": "user_story_bible",
+        "change": "cornes + tresse à plumes + collier tribal; séparation de trois planches directionnelles",
+        "original_portrait_archive": {
+          "path": "assets/source/resumed_2d/pixel/portraits/history/limeskin_original_before_novel_05b477dea3eb.png",
+          "sha256": "05b477dea3ebcc16db5e996da264b32e16af830539119a0df2af5910231d117e",
+          "restored_byte_identically_from_git_head": true
+        }
+      },
+      "validation": {
+        "portrait_silhouette_separate": true,
+        "source_box_measured_after_alpha128": true,
+        "accessories_visually_reviewed": [
+          "horns",
+          "white_feather_braid",
+          "tribal_necklace"
+        ]
+      },
+      "limitations": [
+        "Cadrage frontal du buste conservant les accessoires ; dimensions256×256 obtenues par fit sans repeindre."
       ]
     }
   ]

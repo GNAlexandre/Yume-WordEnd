@@ -3,7 +3,7 @@
   "echelle": 1,
   "planche": [
     552,
-    545
+    577
   ],
   "direction": "right",
   "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
@@ -133,19 +133,19 @@
       "images": [
         [
           0,
-          442,
-          83,
-          103,
-          29,
-          103
+          438,
+          99,
+          139,
+          62,
+          139
         ],
         [
-          87,
+          103,
           438,
-          88,
-          107,
-          31,
-          107
+          102,
+          139,
+          62,
+          139
         ]
       ]
     }

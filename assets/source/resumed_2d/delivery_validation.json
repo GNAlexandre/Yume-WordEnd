@@ -30,21 +30,21 @@
       "priority": 2,
       "png_count": 82,
       "json_count": 21,
-      "image_bytes": 14023741,
+      "image_bytes": 14886854,
       "required_files_present": true
     },
     {
       "priority": 3,
       "png_count": 69,
       "json_count": 30,
-      "image_bytes": 9542842,
+      "image_bytes": 9525508,
       "required_files_present": true
     },
     {
       "priority": 4,
       "png_count": 136,
       "json_count": 102,
-      "image_bytes": 20693223,
+      "image_bytes": 20693368,
       "required_files_present": true
     }
   ],
@@ -56,7 +56,7 @@
   "optional_fx": "procedural in game, no PNG claimed",
   "foot_anchors_artistically_validated": false,
   "cycles_artistically_validated": false,
-  "library_total_image_bytes": 51389811,
+  "library_total_image_bytes": 52235735,
   "library_missing_required": 0,
   "library_nonconforming_images": 0,
   "library_budget_errors": [
@@ -69,5 +69,96 @@
     "smoke_scenes": 92,
     "result": "passed",
     "web_budget": "under25MiB compressed wasm+pck"
+  },
+  "asset_corrections": {
+    "characters": [
+      "nephren",
+      "ithea",
+      "nygglatho",
+      "lakhesh",
+      "collon",
+      "pannibal",
+      "limeskin",
+      "cat_waiter",
+      "baker",
+      "knight_feline"
+    ],
+    "decor": [
+      "distant_island_b",
+      "distant_island_c",
+      "wall_plaster"
+    ],
+    "review": "docs/sprites/CORRECTIONS_ASSETS.html",
+    "source_art_preserved": true
+  },
+  "standalone_gallery_checks": [
+    {
+      "gallery": "docs/sprites/PRIORITE_1_AUTONOME.html",
+      "isolated_html_only": true,
+      "images": 29,
+      "download_sha256_checked": 29,
+      "all_images_loaded": true,
+      "all_downloads_available": true,
+      "external_requests": [],
+      "browser_errors": [],
+      "mobile_width": {
+        "document": 390,
+        "viewport": 390
+      }
+    },
+    {
+      "gallery": "docs/sprites/PRIORITE_2_AUTONOME.html",
+      "isolated_html_only": true,
+      "images": 82,
+      "download_sha256_checked": 82,
+      "all_images_loaded": true,
+      "all_downloads_available": true,
+      "external_requests": [],
+      "browser_errors": [],
+      "mobile_width": {
+        "document": 390,
+        "viewport": 390
+      }
+    },
+    {
+      "gallery": "docs/sprites/PRIORITE_3_AUTONOME.html",
+      "isolated_html_only": true,
+      "images": 69,
+      "download_sha256_checked": 69,
+      "all_images_loaded": true,
+      "all_downloads_available": true,
+      "external_requests": [],
+      "browser_errors": [],
+      "mobile_width": {
+        "document": 390,
+        "viewport": 390
+      }
+    },
+    {
+      "gallery": "docs/sprites/PRIORITE_4_AUTONOME.html",
+      "isolated_html_only": true,
+      "images": 136,
+      "download_sha256_checked": 136,
+      "all_images_loaded": true,
+      "all_downloads_available": true,
+      "external_requests": [],
+      "browser_errors": [],
+      "mobile_width": {
+        "document": 390,
+        "viewport": 390
+      }
+    }
+  ],
+  "correction_preview_check": {
+    "html_only": true,
+    "images": 68,
+    "images_decoded": true,
+    "native_download_sha256_checked": 15,
+    "external_requests": [],
+    "browser_errors": [],
+    "mobile": {
+      "width": 390,
+      "viewport": 390
+    }
   }
 }

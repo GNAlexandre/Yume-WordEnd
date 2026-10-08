@@ -36,7 +36,7 @@ def main():
         # Dedicated portrait entries take precedence over bonus crops.
         entries.append(matches[-1])
     catalog_path = ROOT / "assets/source/resumed_2d/priority1_catalog.json"
-    catalog = {"status": "Priorité 1 livrée — contrôle technique réussi ; cycles et ancres à revoir visuellement",
+    catalog = {"priority": 1, "status": "Priorité 1 livrée — contrôle technique réussi ; cycles et ancres à revoir visuellement",
                "entries": entries, "technical_check": report}
     catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n")
     old_catalog, old_archives = gallery.CATALOG, gallery.read_archives

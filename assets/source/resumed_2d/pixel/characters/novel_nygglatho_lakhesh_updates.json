@@ -1,0 +1,148 @@
+{
+  "merge_mode": "replace_entries_by_id",
+  "scope": [
+    "nygglatho",
+    "lakhesh"
+  ],
+  "entries": [
+    {
+      "id": "pixel_nygglatho_directions",
+      "name": "Nygglatho",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/nygglatho_directions_novel.png",
+      "path": "assets/characters/nygglatho/nygglatho.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.85,
+      "reference_pages": [
+        51
+      ],
+      "reference_status": "novel_description_overrides_old_scan_costume",
+      "character_ids": [
+        "nygglatho"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "isolated_source_validated_pending_runtime_fit",
+      "generated_source": "/workspace/generated_images/exec-27c5aab8-abdc-46e0-a92a-2f09c34e25a3.png",
+      "sha256": "a284869a874d1f318cdd57481dde055cf231f074304ba2a518bd3452100567f1",
+      "description": "Nygglatho : troll adulte douce, cheveux rose saumon, yeux verts ; chemisier VERT VIF à VOLANTS, manches et épaules vertes, tablier BLANC et coiffe BLANCHE ; jupe sombre sous le tablier. 42 poses en trois vues et portrait ; première marche profil contient une seule silhouette.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Les 42 silhouettes et le portrait sont isolés après seuil alpha 128 ; exports runtime et galerie à refaire.",
+        "Variations de hauteur naturelle des poses mesurées ; ancrage et cycles à contrôler après intégration."
+      ],
+      "prompt": "Fix spacing ONLY in this supplied corrected sprite atlas; preserve character design, clothing, hair color and pixel style. CRITICAL: current figures touch vertically and cannot be extracted. REDRAW AND RELAYOUT all 43 figures with much smaller sprites: reduce each full-body sprite height to 60% of its current height relative to the SAME portrait 1:2 canvas. This deliberate generous empty padding is essential. Canvas has exactly6 equal columns and12 equal rows. Every full-body figure occupies at most60% of its cell height, at most70% cell width, with at least25% cell height transparent between consecutive rows. Completely blank alpha gutters across full canvas width separate ALL12rows, no hair/clothes crossing gutters, no figures touching or stacked. All body heights equal (except slight leaning run); no miniatures in talk rows. Exactly42full-body figures plus ONE bust portrait, using this precise grid: FRONT rows1–4; BACK rows5–8; RIGHT PROFILE rows9–12. Each group row1=TWOidle figures cols1,2; row2=SIXwalking cols1–6; row3=FOURrunning cols1–4; row4=TWOtalking cols1,2. Lastrow12col6 ONEportrait only. All unassigned cells transparent; no extra sprites. Clear clean binary-alpha transparent background, no grid, no shadow, no text. There must be43 visibly separate silhouettes, completely separated, even with nearest neighbor alpha threshold. Keep Nygglatho's GREEN BRIGHT RUFFLED BLOUSE at shoulders, chest AND sleeves; WHITE COIF and WHITE APRON, dark lower skirt. Long salmon hair, greeneyes. Front and back and profile clothingcorrect. FOURprofile runningfigures mandatory. The first right-profile walk, row10col1, is only ONE normal sprite, no second sprite above/below.",
+      "source_description_document": "docs/ASSETS_HD2D.md §3.4",
+      "provenance_path": "assets/source/resumed_2d/pixel/characters/nygglatho_directions_novel.provenance.json",
+      "native_dimensions": [
+        887,
+        1774
+      ],
+      "source_validation": {
+        "pose_count": 42,
+        "portrait_count": 1,
+        "counts_per_direction": [
+          2,
+          6,
+          4,
+          2
+        ],
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "cut_rows": "passed",
+        "alpha_threshold": 128
+      }
+    },
+    {
+      "id": "pixel_lakhesh_directions",
+      "name": "Lakhesh",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.png",
+      "path": "assets/characters/lakhesh/lakhesh.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.2,
+      "reference_pages": [
+        49
+      ],
+      "reference_status": "novel_description_overrides_old_scan_costume",
+      "character_ids": [
+        "lakhesh"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "isolated_source_validated_pending_runtime_fit",
+      "generated_source": "/workspace/generated_images/exec-24712cef-ed11-4226-b001-ed63a2e64c93.png",
+      "sha256": "735b8d670162455190e6a85e8803f891f9444d7969db4d0bacf0dd54b137d3b8",
+      "description": "Lakhesh : petite fée polie, cheveux PÊCHE et UNE petite couette latérale, yeux bruns ; GILET BRUN CLOUTÉ sur robe claire et manches crème. Distincte d’Almita ; 42 poses en trois vues et portrait.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Les 42 silhouettes et le portrait sont isolés après seuil alpha 128 ; exports runtime et galerie à refaire.",
+        "Variations de hauteur naturelle des poses mesurées ; ancrage et cycles à contrôler après intégration."
+      ],
+      "prompt": "Fix spacing ONLY in this supplied corrected sprite atlas; preserve character design, clothing, hair color and pixel style. CRITICAL: current figures touch vertically and cannot be extracted. REDRAW AND RELAYOUT all 43 figures with much smaller sprites: reduce each full-body sprite height to 60% of its current height relative to the SAME portrait 1:2 canvas. This deliberate generous empty padding is essential. Canvas has exactly6 equal columns and12 equal rows. Every full-body figure occupies at most60% of its cell height, at most70% cell width, with at least25% cell height transparent between consecutive rows. Completely blank alpha gutters across full canvas width separate ALL12rows, no hair/clothes crossing gutters, no figures touching or stacked. All body heights equal (except slight leaning run); no miniatures in talk rows. Exactly42full-body figures plus ONE bust portrait, using this precise grid: FRONT rows1–4; BACK rows5–8; RIGHT PROFILE rows9–12. Each group row1=TWOidle figures cols1,2; row2=SIXwalking cols1–6; row3=FOURrunning cols1–4; row4=TWOtalking cols1,2. Lastrow12col6 ONEportrait only. All unassigned cells transparent; no extra sprites. Clear clean binary-alpha transparent background, no grid, no shadow, no text. There must be43 visibly separate silhouettes, completely separated, even with nearest neighbor alpha threshold. Keep Lakhesh PEACH hair, distinct separate BROWN METAL STUDDED VEST over CREAM blouse/dress. ONE SMALL short side ponytail only, no bun on the other side. Make this ponytail HALF its current size (no wider than25% ofhead width), recognizably a short tied tuft. Brown eyes/boots. Allfront/back/profilesandportrait consistent.",
+      "source_description_document": "docs/ASSETS_HD2D.md §3.4",
+      "provenance_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.provenance.json",
+      "native_dimensions": [
+        887,
+        1774
+      ],
+      "source_validation": {
+        "pose_count": 42,
+        "portrait_count": 1,
+        "counts_per_direction": [
+          2,
+          6,
+          4,
+          2
+        ],
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "cut_rows": "passed",
+        "alpha_threshold": 128
+      }
+    }
+  ],
+  "originals_preserved": true,
+  "obsolete_replacement_notice": "Nouvelle planche Nygglatho complète : ne plus utiliser animation_sources right:course de la version précédente.",
+  "status": "isolated_source_validated_ready_to_merge",
+  "source_cut_validation": "42poses+1portrait each, all four courses per direction",
+  "validation_report": "/workspace/sukasuka-production/novel_nygg_lakh_cut_validation.json"
+}

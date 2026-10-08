@@ -306,6 +306,15 @@
           "count": 2,
           "original_count": 0,
           "columns": 2
+        },
+        "right:parle": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 2,
+          "columns": 2,
+          "scale_reference": "idle"
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 2 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT BACK facing entirely away, hiddenface NO EYES. TWO talking frames, hand small gesture, cane held. Facing away entirely NOface, NOeye. Bodycamera slightelevated10degrees. Source identity: {\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}",
@@ -327,10 +336,18 @@
         "portraits": 1,
         "verified_source_sha256": {
           "assets/source/resumed_2d/pixel/characters/knight_feline_correction.png": "1cdf942ff41bbd489b48f9de889b9829a28eb4f1fdd94bca4da574b0955b31a3",
-          "assets/source/resumed_2d/pixel/characters/knight_feline_directions.png": "df25541f168ed90e96e4d4898b064c26ad9e3ed2d54e12dc41468307168ee759"
+          "assets/source/resumed_2d/pixel/characters/knight_feline_directions.png": "df25541f168ed90e96e4d4898b064c26ad9e3ed2d54e12dc41468307168ee759",
+          "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png": "5a6b2de0a48ac93fc077e65511c451096d3db83c11e054784842e39984c0254d"
         },
         "animation_review_required": true
-      }
+      },
+      "correction_prompts": {
+        "right:parle": "Produce a targeted replacement PIXEL-ART game TWO-frame animationstrip for WordEnd HD-2D. Use reference ONLY to match identity,costume,palette and usual standingidlebody proportions; NOframefromreferencecopied. Crisp discretepixelclusters, steppedlimitedmutedcolors, darkcoloredoutlines(no pureblack), NOsmoothpainting/AA/3D. Transparent PNG background nofloor/shadows/labels/text/grid/portraits. Canvas1536x1024 landscape. Exactly TWO separate fullbodyfigures of SAME adultcharacter, positionedleft/right with at least150px transparent gap. Each figure straightRIGHTPROFILE facingright; veryslightoverhead10degreecamera, same3heads-tallbody as standingidle, adulthead/torso/legs proportions NOTminiature/chibi shrunken. Whole ears,hat,tail,arms,feet,props includedwith60pxtransparentpadding. Figure natural standingheight about650px, feet on samebaseline. Action: TALK frame1 mouthclosed,cane inonehand,otherhand openpalmnearwaist; TALK frame2 mouthopen, samecane heldsteadily, otherhandgestures nearwaist. Same standingheight, NOliftingcane above head, bothfeetgrounded; tallhatstillwhole. Character:{\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}"
+      },
+      "correction_sha256s": {
+        "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png": "5a6b2de0a48ac93fc077e65511c451096d3db83c11e054784842e39984c0254d"
+      },
+      "targeted_correction_reason": "Native right dialogue was drawn too small; redraw two full adult poses matching idle proportions."
     },
     {
       "id": "pixel_godrey_directions",
@@ -1099,13 +1116,27 @@
           "count": 2,
           "original_count": 1,
           "columns": 2
+        },
+        "right:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png",
+          "row": 0,
+          "rows": 1,
+          "count": 1,
+          "original_count": 4,
+          "columns": 1,
+          "scale_reference": "idle",
+          "indices": [
+            0
+          ]
         }
       },
       "correction_prompts": {
-        "right:parle": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 2 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth300px andmaximumheight420px, placeatcenters384,1152; allsamebaseline&scale. Body turned STRICTRIGHTSIDE PROFILE lookingright. TWO talkinggestures cupheldontray, entireboots visible. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Warmgraymale adultcat,white shirt,mutedbrownwaistcoat,darktrousers,longbeigeapron,tea cup heldsafelyontray. Smileandtinyvisiblecanines."
+        "right:parle": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 2 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth300px andmaximumheight420px, placeatcenters384,1152; allsamebaseline&scale. Body turned STRICTRIGHTSIDE PROFILE lookingright. TWO talkinggestures cupheldontray, entireboots visible. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Warmgraymale adultcat,white shirt,mutedbrownwaistcoat,darktrousers,longbeigeapron,tea cup heldsafelyontray. Smileandtinyvisiblecanines.",
+        "right:course": "Produce a targeted replacement PIXEL-ART game SINGLE animation frame for WordEnd HD-2D. Use reference ONLY to match identity,costume,palette and usual standingidlebody proportions; NOframefromreferencecopied. Crisp discretepixelclusters, steppedlimitedmutedcolors, darkcoloredoutlines(no pureblack), NOsmoothpainting/AA/3D. Transparent PNG background nofloor/shadows/labels/text/grid/portraits. Canvas1024x1024 square. Exactly ONE SOLO fullbody character ONLY, centrallyplaced, no extra limbs or secondperson ANYWHERE. Each figure straightRIGHTPROFILE facingright; veryslightoverhead10degreecamera, same3heads-tallbody as standingidle, adulthead/torso/legs proportions NOTminiature/chibi shrunken. Whole ears,hat,tail,arms,feet,props includedwith60pxtransparentpadding. Figure natural standingheight about650px, feet on samebaseline. Action: FIRST RUNNING phase, rightfoot forward andotherlegrear, mildtorsolean, holds tray withONEteacup, nofoodtrail. Single head torso andtwoarms twolegs. Character:café cat waiter (game visual interpretation of described canon character): slim pleasant warm gray male cat with amber eyes and visible tiny canines, white shirt, muted brown waistcoat, dark trousers, long beige service apron, tray with teacup, friendly slight bow. "
       },
       "correction_sha256s": {
-        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851"
+        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851",
+        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png": "b92b6302e2e4301f9182573ba76b5e99c42bca5ba9b92f52930b288fe068eb6c"
       },
       "source_validation": {
         "status": "passed_component_cut_and_frame_counts",
@@ -1124,10 +1155,12 @@
         "portraits": 1,
         "verified_source_sha256": {
           "assets/source/resumed_2d/pixel/characters/cat_waiter_directions.png": "c91c0b5760e9a4f504d5af8a802b6d651008b9cdc22fa5f0d837345f538d4ecc",
-          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851"
+          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851",
+          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png": "b92b6302e2e4301f9182573ba76b5e99c42bca5ba9b92f52930b288fe068eb6c"
         },
         "animation_review_required": true
-      }
+      },
+      "targeted_correction_reason": "Native running/dialgoue silhouettes touched; replace only running frame0."
     },
     {
       "id": "pixel_snack_vendor_directions",
@@ -1352,7 +1385,8 @@
           "rows": 1,
           "count": 2,
           "original_count": 2,
-          "columns": 2
+          "columns": 2,
+          "scale_reference": "idle"
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 2 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT RIGHT PROFILE lookingright. TWO talking gesture frames ONLY. Whole boots MUST be included with padding, no cropping. Camera slightelevated10degrees. Sourceidentity:baker: enormous round bear-headed male with chestnut fur, small round bear ears, pale rolled sleeves, flour-dusted ivory apron, brown trousers, oversized boots, loaf held in cloth at elbow. Natural professions, not armed enemies. Show correct obvious animal traits; all fully clad.",
@@ -1377,7 +1411,8 @@
           "assets/source/resumed_2d/pixel/characters/baker_directions.png": "a92d2d617aa0fd5f3928f2817eb392d40b05d1ee220d66809e0bf2089063a4d2"
         },
         "animation_review_required": true
-      }
+      },
+      "targeted_correction_reason": "Existing two replacement drawings are complete adult bodies; legacy scale-reference shrank them to122px. Fit to idle scale192px."
     },
     {
       "id": "pixel_egg_vendor_directions",

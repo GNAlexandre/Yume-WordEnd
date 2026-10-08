@@ -1,6 +1,6 @@
 # Livraison HD-2D — priorité 2
 
-82 PNG, 21 JSON d'animation, 14.0 Mo de textures.
+82 PNG, 21 JSON d'animation, 14.9 Mo de textures.
 Personnages : ithea, limeskin, nephren, nygglatho, pannibal, tiat, willem.
 Types : {'sprite': 21, 'portrait': 7, 'ground': 5, 'cliff': 2, 'facade': 5, 'material': 3, 'prop': 37, 'sky_opaque': 2}.
 

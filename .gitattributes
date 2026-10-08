@@ -1,22 +1,2 @@
-*.glb   filter=lfs diff=lfs merge=lfs -text
-*.vrm   filter=lfs diff=lfs merge=lfs -text
-*.blend filter=lfs diff=lfs merge=lfs -text
-*.wav   filter=lfs diff=lfs merge=lfs -text
-*.ogg   filter=lfs diff=lfs merge=lfs -text
-*.mp3   filter=lfs diff=lfs merge=lfs -text
-*.tscn  text eol=lf
-*.tres  text eol=lf
-*.gd    text eol=lf
-*.cfg   text eol=lf
-*.uid   text eol=lf
-*.import text eol=lf
-*.json  text eol=lf
-*.sh    text eol=lf
-*.py    text eol=lf
-*.md    text eol=lf
-# Fichiers où plusieurs lots ajoutent des lignes en parallèle : fusion par union.
-docs/DECISIONS.md            merge=union
-docs/CONTRACT_REQUESTS.md    merge=union
-tools/warnings_allow.txt     merge=union
-assets/CREDITS.md            merge=union
-assets/characters/CREDITS.md merge=union
+# Generated review pages embed PNG bytes; review the generator and source art.
+docs/sprites/*.html linguist-generated=true

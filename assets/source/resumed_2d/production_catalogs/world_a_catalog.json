@@ -1492,10 +1492,10 @@
       "alpha": "opaque",
       "seamless_axes": "xy",
       "source_section": "6.2",
-      "prompt": "ONE game-ready sprite/material for SukaSuka WordEnd HD-2D. Crisp real pixel art, hand-designed square pixel clusters and stepped shading, small muted natural autumn sunset palette: gold #CC9446, rust #A95A3A, moss #87A35E, stone #C2B49F/#837667, timber #654D3C/#A57C58, cream #EAE0CB, slate #5E6C86, clay #B65E4B, iron #717B84, brass #B4955E. Western European worn rustic island68, late autumn afternoon. Soft flat light from left. No smooth painting, brushwork, antialiasing, blur, gradients, photorealism, pure white or black. No cast shadows, ground shadows, written text, letters, numerals, logo, signature. ONE requested asset only, no mockup, no sheet, no border.\nCanvas intended EXACT 192 by 192 pixels at 96px/m, aspect 192:192. Generate exact target if supported, otherwise larger native clean pixel rendition with this same aspect. FULLBLEED OPAQUE seamless material swatch, fills every pixel, repeats ALL FOUR SIDES, matching opposite edges. No building or perspective, just texture. Wall elevation straight front, roof tiles viewed top-down in slope direction with rows parallel to bottom.\nSUBJECT assets/hd2d/buildings/materials/wall_plaster.png: enduit crème (#EAE0CB) un peu sali, colombages de bois brun. No character or extra decorative objects outside requested subject.",
+      "prompt": "Replace this wall material with a corrected game-ready HD-2D SEAMLESS plaster material. Remove all the regular brown diagonal crosses, square wooden grid and repeating frame beams. The requested material is the creamy plaster infill of rustic European half-timbered houses; the wood framing is already supplied in the building facades separately. Therefore this swatch should show ONLY aged cream plaster (#EAE0CB), slightly uneven and gently worn, muted warm beige and soft gray-beige flecks, extremely sparse tiny hairline cracks, broad very gentle subtle variations with no obvious motif. OPAQUE FULL-BLEED texture, front elevation without perspective, no visible border, no raised plaster wall object, no cast shadows, no lighting gradient. Seamlessly tile on all FOUR edges; opposite edges match with unobtrusive irregular grain. Soft fine square pixel clusters and modest stepped shading, no smooth photoreal painting, no blur, no diagonal wooden crosses, no grid, no dominant patches, no regularly spaced dots, no stones or brickwork. Intended exact square 192x192px at 96px/metre, native larger allowed but suitable for nearest-neighbor reduction. No labels, letters, numbers, watermark or signature.",
       "index": 29,
       "id": "hd2d_building_materials_wall_plaster",
-      "source_path": "assets/source/resumed_2d/pixel/hd2d/buildings/materials/wall_plaster.png",
+      "source_path": "assets/source/resumed_2d/pixel/decor_corrections/wall_plaster_native.png",
       "native_dimensions": [
         1254,
         1254
@@ -1508,8 +1508,8 @@
       "style": "pixel_art",
       "generated_with": "image_gen",
       "native_preserved": true,
-      "generation_path": "/workspace/generated_images/exec-8e400b60-6bc8-4bd4-a3ca-afe941b7dadf.png",
-      "sha256": "d28b12bea0ed76cce33f1da943e7dd2477a4960baaa6622943a814b4b1aa5619",
+      "generation_path": "/workspace/generated_images/exec-ce391418-0c74-4c18-8543-070687202263.png",
+      "sha256": "6c37e220fa343df1d4bb555890fcfbe10baac7b837b1409e7912dd2164a4823f",
       "native_alpha_extrema": [
         255,
         255
@@ -1524,7 +1524,20 @@
         1254
       ],
       "prompt_reference": "docs/ASSETS_HD2D.md section 6.2",
-      "native_file_verified": true
+      "native_file_verified": true,
+      "native_path": "assets/source/resumed_2d/pixel/decor_corrections/wall_plaster_native.png",
+      "dimensions_native": [
+        1254,
+        1254
+      ],
+      "generation_date": "2026-10-08",
+      "native_sha256": "6c37e220fa343df1d4bb555890fcfbe10baac7b837b1409e7912dd2164a4823f",
+      "replaces_source_path": "assets/source/resumed_2d/pixel/hd2d/buildings/materials/wall_plaster.png",
+      "correction_reference_paths": [
+        "assets/hd2d/buildings/materials/wall_plaster.png"
+      ],
+      "correction_reason": "remove regular timber grid; cream plaster infill, timber structure remains on facade artwork",
+      "material_adaptation": "plaster infill only; visible brown half-timbering supplied by building facades"
     },
     {
       "path": "assets/hd2d/buildings/materials/roof_tiles.png",

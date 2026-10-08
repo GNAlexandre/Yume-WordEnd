@@ -1,4 +1,5 @@
 {
+  "priority": 1,
   "status": "Priorité 1 livrée — contrôle technique réussi ; cycles et ancres à revoir visuellement",
   "entries": [
     {
@@ -236,7 +237,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/portraits/pixel_chtholly_portrait.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/characters/chtholly/chtholly_portrait/32f2745002c588a70d388dc98f13ddb2f443bf4e9ff5d393ae05b9a1ea27988b.png",
-          "previous_png": "assets/source/hd2d_raw/assets/characters/chtholly/chtholly_portrait/038e170eef96ea8e4d111ee34405563439eb9b5164bd8f067915e7d55a3cb20a.png"
+          "previous_png": "assets/source/hd2d_raw/assets/characters/chtholly/chtholly_portrait/166ff6813c81aeb9ec28830be46dd7e6520ac6cc732dae837431da659a1632cd.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -461,7 +462,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/buildings/armory_door.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/buildings/armory_door/c2b8e377b16ad0d82bb5d45fbfb4ff9d335da95745dc1467eb87f071b3459ce4.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/buildings/armory_door/01f42a928dc2cf9684b8fb7959ce40a26fa5d8a917e6c20eac15d83247b3ba27.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/buildings/armory_door/052b9e990b5dae9f6e2e14d21667fe6b2abc2662ce24732f1d7dd3bff49fa9b6.png"
         },
         "resample": "nearest",
         "mode": "stretch",
@@ -545,7 +546,8 @@
         "path": "assets/hd2d/buildings/materials/roof_slate.png",
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/buildings/materials/roof_slate.png",
         "archives": {
-          "source_png": "assets/source/hd2d_raw/assets/hd2d/buildings/materials/roof_slate/87a8e58c0af5e06640c5af8ccd8c3eae84fe419d636c552cf6a16b4dddedff33.png"
+          "source_png": "assets/source/hd2d_raw/assets/hd2d/buildings/materials/roof_slate/87a8e58c0af5e06640c5af8ccd8c3eae84fe419d636c552cf6a16b4dddedff33.png",
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/buildings/materials/roof_slate/9a6bd1bd14c19f3535ddd01c83bd3366934c7b31a7e3bb8d6976e8964bd96fba.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -632,7 +634,8 @@
         "path": "assets/hd2d/buildings/materials/wall_planks.png",
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/buildings/materials/wall_planks.png",
         "archives": {
-          "source_png": "assets/source/hd2d_raw/assets/hd2d/buildings/materials/wall_planks/ba242660c5e2ecb4a7db5ba9681a955471ead332d5529fc54517d746f61f0eba.png"
+          "source_png": "assets/source/hd2d_raw/assets/hd2d/buildings/materials/wall_planks/ba242660c5e2ecb4a7db5ba9681a955471ead332d5529fc54517d746f61f0eba.png",
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/buildings/materials/wall_planks/5ea663234151c292f2435a9a45572abf1080a655d02382cd4f3985fb32db67bf.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -722,7 +725,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/buildings/warehouse_main.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/buildings/warehouse_main/8d4f0901a8651bd23366f82c09845a17a2e9b15e2d7087156013402367d2bfe9.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/buildings/warehouse_main/a236933b35e951707e9c60b9ace171ee7343fa8bdb570cc3a9cfbd9fc8543773.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/buildings/warehouse_main/d50fe22eb554fdf32dfc397d3f526d356a2c487df3c5d4f4f31d35de630556dc.png"
         },
         "resample": "nearest",
         "mode": "stretch",
@@ -809,7 +812,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/buildings/warehouse_porch.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/buildings/warehouse_porch/84f60ed4192d50429368797f1464eb48295fd45684b3f170eae700f6e9bacb68.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/buildings/warehouse_porch/beaee721e291aff05cd4a5bfba36ec504228eb00f0c7970b3023bc29b508bb56.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/buildings/warehouse_porch/13aa9d1d587c60d654acbf774728d97a1c3188a09a084aeab1525fe19d248c1c.png"
         },
         "resample": "nearest",
         "mode": "stretch",
@@ -896,7 +899,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/buildings/warehouse_wing.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/buildings/warehouse_wing/05f2b82070894c67aed826179da45a7d62360b681344a66d8a27987ff22412ce.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/buildings/warehouse_wing/83c66c4cd10691a6c4a1d9f29ea1d25f626ac44b146e12b71c7c627dcbaf24f4.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/buildings/warehouse_wing/3e5716941f842cbdf93602938cfa391921d5019518b68dccdd9e40272b976ef0.png"
         },
         "resample": "nearest",
         "mode": "stretch",
@@ -981,7 +984,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/ground/flagstone.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/ground/flagstone/6e1ba4f035e4799315bedfb749f5f856c587243c3c5ec680ae8a361f4d94cf52.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/ground/flagstone/632442d1062b629da307488f67e084266551bdb7c094fdf433a740b3d7c7c29a.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/ground/flagstone/87234f971d0a18612d38a7731b05aeb806e2c017b146c8897d8310682fce1cc3.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1069,7 +1072,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/ground/forest_floor.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/ground/forest_floor/310b7c70976f74cdba9ff48ec613266db971c9ad3ce85b91ad1e8f4a08650638.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/ground/forest_floor/a7b5dbadd0980a4e1f08b086025d1bda6454759634572ef73917cef498930866.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/ground/forest_floor/2d4020af9ca971b9df819769bb0e67a338f417b656b333efaa6c770805eec985.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1157,7 +1160,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/ground/grass.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/ground/grass/8e21d30bad884a081dd05eba9df53aab8f3afde1470d27027a1ae8f5e5849a7c.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/ground/grass/ec506a8004f30ec0af1664d36ff258391a36bf9dbd6e79488df49653bb423962.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/ground/grass/a28e1457d8343c1ee71d251d4289cc9a353aab6e7e3073bd532135eecbc1c04f.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1245,7 +1248,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/ground/path_dirt.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/ground/path_dirt/df5bf8c72538c4932f150170ba21cdd7b91a70435755abdca27015aa01d4d8e4.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/ground/path_dirt/6fba10a1961d095dcb2ece69b3621163b3b0c8bc93ebce6d1b1f8e1d99fb1973.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/ground/path_dirt/71aff14d2010065e7b04dfab4c40cc06339d52e855b52e5819d8556aadf2c9ea.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1334,7 +1337,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/bush.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/bush/8d7fa5dc45ad5a235169abd0e997921ae8856146ee7e3900ac1971d0877617d2.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/bush/d581f3d381479aedf92437250ebaa65ee0bae9ccef858e12912f2bdb9d19d074.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/bush/6abe437e666023d7a41be8e6b95e2cd661fc4934560ee793874387060af02ee7.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1420,7 +1423,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/climbing_tree.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/climbing_tree/ec72ad4f533f835b61e7f5800bb2b83aaaa48586fb37646939f2ded00038b5d7.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/climbing_tree/f37549cdb6ca7c12d209d5424f6e971166f9305178e5d0f5ab3c86d5cdf3da81.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/climbing_tree/41c6a81aeb7d9a86b01104e4b3c7384c6a09e43545ee53e78da44885bda8f44e.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1506,7 +1509,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/crystal_lamp.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/crystal_lamp/827e291f26dabc1bde92db3273e49d1000743b5ecf07d64d2d97448c6c4d1596.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/crystal_lamp/b61b5b7bba293bd8f674566a030ea5d772c0d50642308953b89c4de767c0628a.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/crystal_lamp/d434ef015061005b4fc912cf345148d159b719ce3eddf8788b04131581e5e870.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1574,7 +1577,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/lookout.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/lookout/baafc2168548c26019dd004e02c84c8f19b5e696607636ef4a73188affd3bf4b.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/lookout/86a5cd86a53528f611ba8ea1dd6acf283135dccb4eecbe87ea090dac48ee2906.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/lookout/8d3c47f425217199c85c2967ee4ba4d04852ebc64a60cea978d10ac0bfe558f1.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1660,7 +1663,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/palisade.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/palisade/3f87a0ea187040cea1cef22032b835069a87ec0cfa3bccbcd205865ff4094770.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/palisade/bf3b9d45a34ae2855af560fca9aa16fb9c4de64fda0f0b30483bb6751e068f2b.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/palisade/35762528414db4c2525f26602cb96b85e930ef3edbe2929d6719887a4a16027f.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1746,7 +1749,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/palisade_gate.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/palisade_gate/62ec2930b7a6cd598dc2c338308f07efb90a67132c2f1dc8fa773dfc5768a27f.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/palisade_gate/2d832e80972441a07ca36cf67cae2c28bf6017fe2e122221bb9c6e6fbac98e54.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/palisade_gate/2a61ce6eefef2817584bb9dba90ec2823ad14e624af90305436eab428ae87d6e.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1832,7 +1835,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/tree_autumn.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_autumn/8e4b92521dd74d6527401ae1815e8f3f15589ba0729717fe3fd17f78549ea9e3.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_autumn/1a3f6a3d963ae17f0d3412a8e28612a4a64005eb9228688405267d2e8699ac2b.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_autumn/fe1cf966fd342dc1a7f3d68a6064c9bd638116584e27f2d2563bd6ab1eb27720.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -1918,7 +1921,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/tree_autumn_rust.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_autumn_rust/1e5d393501b3ecbd837f18bc3271e26a1b45d16c159849edf015f5c8b57fcd38.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_autumn_rust/2714d027ab016fbcc75b1bf6268821a840630c9336e1aa7630d2eb8cad1d6584.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_autumn_rust/5a0ed02360d71dfffdba8f9df8ca8bc0a40ca644f171b774c20cddf3cdc4a98b.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -2004,7 +2007,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/tree_autumn_yellow.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_autumn_yellow/64eb2035f8bcac1443817572009c206bc1997a1eb1b3a309b5a081968d4e31f7.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_autumn_yellow/234d037d0b5565689d627c2dc5873a7212e689d23741afde8eb1724d74b9b0b5.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_autumn_yellow/5a85862350947aeca928f803a13fc3d6bb4781923d603bec4224593ef242ab56.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -2073,7 +2076,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/tree_old_pine.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_old_pine/fe855b83dcb0206f56a8f38c4d210dc197be4df6e57c89ed6a92fa0200194396.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_old_pine/31d31ce0eb6bbb33d5417c455816017ab624bed714c33622f26cd296cfe75266.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/tree_old_pine/6ff88d66861cbfc91f3cf60eba1d9c7feb2358a6c714ce977d337b076a36d98a.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -2141,7 +2144,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/vigil_bell.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/vigil_bell/abb9c7507440ad4e513243eff81476a6ae5529a7d5fd4d86cf1ac8af12895850.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/vigil_bell/90da3c90b152294bfc4ce6be6470feb528d8959fc8389ed19a31bbab7daf792d.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/vigil_bell/a96478f8c8bcde83424aae1329d7ddb96a30d6d792cb163ddd36dea6ee373bd6.png"
         },
         "resample": "nearest",
         "mode": "contain",
@@ -2227,7 +2230,7 @@
         "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/props/well.png",
         "archives": {
           "source_png": "assets/source/hd2d_raw/assets/hd2d/props/well/3f35adbcb5c885f26a27c3b3a45bd6125e1b7c3d37ae12aaa9cf46e783a8a39d.png",
-          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/well/779ac2139a61c676c6ec31a0addb314df73ab6c259e59695a3b56e136208e743.png"
+          "previous_png": "assets/source/hd2d_raw/assets/hd2d/props/well/9d740909968f5348f8755816523c30b58f3319c10b889d1684e5cac1273efa6f.png"
         },
         "resample": "nearest",
         "mode": "contain",

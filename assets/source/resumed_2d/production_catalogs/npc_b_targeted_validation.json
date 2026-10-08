@@ -1,0 +1,74 @@
+{
+  "status": "source_cuts_passed",
+  "all22_npc_contracts_pass": true,
+  "targeted_corrections": [
+    {
+      "id": "knight_feline",
+      "clip": "right:parle",
+      "source": "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png",
+      "source_frame_dimensions": [
+        [
+          570,
+          805
+        ],
+        [
+          588,
+          805
+        ]
+      ],
+      "source_pose_count": 2,
+      "source_has_single_figure_per_frame": true,
+      "target_height_px": 139,
+      "scale_reference": "idle",
+      "replaced_indices": null,
+      "status": "source_cuts_passed_runtime_integration_pending",
+      "source_sha256": "5a6b2de0a48ac93fc077e65511c451096d3db83c11e054784842e39984c0254d"
+    },
+    {
+      "id": "cat_waiter",
+      "clip": "right:course",
+      "source": "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png",
+      "source_frame_dimensions": [
+        [
+          933,
+          988
+        ]
+      ],
+      "source_pose_count": 1,
+      "source_has_single_figure_per_frame": true,
+      "target_height_px": 158,
+      "scale_reference": "idle",
+      "replaced_indices": [
+        0
+      ],
+      "status": "source_cuts_passed_runtime_integration_pending",
+      "source_sha256": "b92b6302e2e4301f9182573ba76b5e99c42bca5ba9b92f52930b288fe068eb6c"
+    },
+    {
+      "id": "baker",
+      "clip": "right:parle",
+      "source": "assets/source/resumed_2d/pixel/characters/baker_correction.png",
+      "source_frame_dimensions": [
+        [
+          707,
+          794
+        ],
+        [
+          666,
+          794
+        ]
+      ],
+      "source_pose_count": 2,
+      "source_has_single_figure_per_frame": true,
+      "target_height_px": 192,
+      "scale_reference": "idle",
+      "replaced_indices": null,
+      "status": "source_cuts_passed_runtime_integration_pending",
+      "source_sha256": "4cfc8a818ba2a8628c1aa876724861dc5fa11fa0a4c42feccb31cbb936be901b"
+    }
+  ],
+  "unchanged_artwork": "Other frames/directions/portraits retained.",
+  "limitations": [
+    "Root owns fitting/runtime updates; pixel heights below are requested density targets, not yet measured runtime output."
+  ]
+}

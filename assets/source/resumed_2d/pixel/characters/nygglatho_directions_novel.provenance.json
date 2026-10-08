@@ -1,0 +1,50 @@
+{
+  "tool": "image_gen",
+  "operation": "edit_and_relayout",
+  "generated_source": "/workspace/generated_images/exec-27c5aab8-abdc-46e0-a92a-2f09c34e25a3.png",
+  "source_path": "assets/source/resumed_2d/pixel/characters/nygglatho_directions_novel.png",
+  "sha256": "a284869a874d1f318cdd57481dde055cf231f074304ba2a518bd3452100567f1",
+  "native_dimensions": [
+    887,
+    1774
+  ],
+  "referenced_image_paths": [
+    "/workspace/generated_images/exec-9fc754b6-6bc5-4336-ae97-4ac2b95d31a3.png"
+  ],
+  "reference_chain": [
+    "assets/source/resumed_2d/pixel/characters/nygglatho_directions.png",
+    "assets/source/resumed_2d/pixel/characters/history/nygglatho_directions_novel_touching.png",
+    "/workspace/generated_images/exec-9fc754b6-6bc5-4336-ae97-4ac2b95d31a3.png"
+  ],
+  "prompt": "Fix spacing ONLY in this supplied corrected sprite atlas; preserve character design, clothing, hair color and pixel style. CRITICAL: current figures touch vertically and cannot be extracted. REDRAW AND RELAYOUT all 43 figures with much smaller sprites: reduce each full-body sprite height to 60% of its current height relative to the SAME portrait 1:2 canvas. This deliberate generous empty padding is essential. Canvas has exactly6 equal columns and12 equal rows. Every full-body figure occupies at most60% of its cell height, at most70% cell width, with at least25% cell height transparent between consecutive rows. Completely blank alpha gutters across full canvas width separate ALL12rows, no hair/clothes crossing gutters, no figures touching or stacked. All body heights equal (except slight leaning run); no miniatures in talk rows. Exactly42full-body figures plus ONE bust portrait, using this precise grid: FRONT rows1–4; BACK rows5–8; RIGHT PROFILE rows9–12. Each group row1=TWOidle figures cols1,2; row2=SIXwalking cols1–6; row3=FOURrunning cols1–4; row4=TWOtalking cols1,2. Lastrow12col6 ONEportrait only. All unassigned cells transparent; no extra sprites. Clear clean binary-alpha transparent background, no grid, no shadow, no text. There must be43 visibly separate silhouettes, completely separated, even with nearest neighbor alpha threshold. Keep Nygglatho's GREEN BRIGHT RUFFLED BLOUSE at shoulders, chest AND sleeves; WHITE COIF and WHITE APRON, dark lower skirt. Long salmon hair, greeneyes. Front and back and profile clothingcorrect. FOURprofile runningfigures mandatory. The first right-profile walk, row10col1, is only ONE normal sprite, no second sprite above/below.",
+  "changes": "Nygglatho : troll adulte douce, cheveux rose saumon, yeux verts ; chemisier VERT VIF à VOLANTS, manches et épaules vertes, tablier BLANC et coiffe BLANCHE ; jupe sombre sous le tablier. 42 poses en trois vues et portrait ; première marche profil contient une seule silhouette.",
+  "supersedes_source_path": "assets/source/resumed_2d/pixel/characters/nygglatho_directions.png",
+  "supersedes_sha256": "5bfaef8945eaa551a51ca4f78a79f94e934217fd4a5179b689c28da4bcf126d4",
+  "original_preserved": true,
+  "source_validation": {
+    "pose_count": 42,
+    "portrait_count": 1,
+    "counts_per_direction": [
+      2,
+      6,
+      4,
+      2
+    ],
+    "directions": [
+      "front",
+      "back",
+      "right"
+    ],
+    "cut_rows": "passed",
+    "alpha_threshold": 128
+  },
+  "obsolete_animation_sources": {
+    "right:course": {
+      "source_path": "assets/source/resumed_2d/pixel/characters/nygglatho_right_course.png",
+      "row": 0,
+      "rows": 1,
+      "count": 4,
+      "original_count": 3
+    }
+  }
+}
