@@ -9,9 +9,11 @@
 // par textureLod au niveau tiré des dérivées continues de la position (le saut de fract() et
 // d'une case de l'atlas à l'autre ne trace pas de couture), deux échantillons le long de l'axe
 // étiré par la perspective (anisotrope fait main : le filtrage anisotrope du pilote, avec ces
-// sauts, débordait sur les cases voisines). Le tramage des masques passe au pixel d'écran et
-// les fleurs d'un pixel s'effacent là où un pixel d'art devient plus petit qu'un pixel d'écran
-// (sinon : grain qui scintille).
+// sauts, débordait sur les cases voisines). Tramage des masques : de près, un seuil par pixel
+// d'art tiré d'un bruit (pas de grille de points comme l'ordre de Bayer) ; de loin, quand un pixel
+// d'art devient plus petit qu'un pixel d'écran, plus de tramage : la moyenne de quatre seuils
+// (masques lus à la position continue), soit un mélange en paliers fins, sans grain ni
+// scintillement ; entre les deux, un fondu. Les fleurs d'un pixel s'effacent au loin.
 // Les uniformes de forme sont recopiés de terrain.gd au lancement ; edge_distance() est la même.
 shader_type spatial;
 render_mode specular_disabled;
@@ -132,12 +134,134 @@ float stream_distance(vec2 p) {
 	return best;
 }
 
-// Seuil de tramage ordonné 4 × 4 du pixel d'art (0..1).
-float bayer(vec2 cell) {
-	vec2 c = mod(cell, 4.0);
-	int i = int(c.x) + int(c.y) * 4;
-	int m[16] = int[16](0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5);
-	return (float(m[i]) + 0.5) / 16.0;
+// Seuil de tramage d'un pixel d'art (0..1) : bruit blanc entier, stable (pas de sin()).
+float cell_threshold(vec2 cell) {
+	uvec2 q = uvec2(ivec2(cell) + ivec2(65536));
+	uint h = (q.x * 1597334677u) ^ (q.y * 3812015801u);
+	h = (h ^ (h >> 16u)) * 2246822519u;
+	h = h ^ (h >> 13u);
+	return float(h >> 8u) / 16777216.0;
+}
+
+// Bruit du pixel d'écran (interleaved gradient noise, 0..1) : décale les seuils du mélange.
+float screen_noise(vec2 pixel) {
+	return fract(52.9829189 * fract(dot(pixel, vec2(0.06711056, 0.00583715))));
+}
+
+// Masques du sol en un point (0..1, sauf les drapeaux), calculés une fois par pixel ; la tuile
+// et sa teinte se choisissent ensuite pour un seuil (pick_layer).
+struct Masks {
+	float dry;
+	float forest;
+	float field;
+	float marsh;
+	float pools;
+	float bank;
+	float water;
+	float hill;
+	float couchant;
+	float drift;
+	float arena;
+	float arena_sand;
+	float ring;
+	float path;
+	int path_layer;
+	float yard;
+	float yard_flag;
+	float rim;
+	float playground;
+	bool garden;
+	bool street;
+	float market;
+	bool quay;
+	bool edge;
+};
+
+// Tuile choisie pour le seuil t (les masques se recouvrent dans cet ordre) ; tint : son
+// assombrissement doux.
+int pick_layer(Masks m, float t, out vec3 tint) {
+	int layer = GRASS;
+	tint = vec3(1.0);
+	if (m.dry > t) { layer = GRASS_DRY; }
+	if (m.forest > t) { layer = FOREST_FLOOR; }
+	if (m.field > t) { layer = GRASS; tint = vec3(0.95, 0.94, 0.86); }
+	if (m.marsh > t) { layer = PEAT; }
+	if (m.pools > t) { layer = WATER; }
+	if (m.bank > t) { layer = MUD; }
+	if (m.water > t) { layer = WATER; }
+	if (m.hill > t) { layer = GRASS_DRY; }
+	if (m.couchant > t) { layer = m.drift > t ? SAND : ROCK; }
+	if (m.arena > t) { layer = m.arena_sand > t ? SAND : FLAGSTONE; }
+	if (m.ring > t) { layer = ROCK; tint = vec3(0.62, 0.6, 0.66); }
+	if (m.path > t) { layer = m.path_layer; }
+	if (m.yard > t) { layer = m.yard_flag > t ? FLAGSTONE : PATH_DIRT; }
+	if (m.rim > t) { layer = ROCK; tint = vec3(0.7, 0.68, 0.72); }
+	if (m.playground > t) { layer = MUD; }
+	if (m.garden) { layer = MUD; tint = vec3(0.8, 0.74, 0.7); }
+	if (m.street) { layer = COBBLE; }
+	if (m.market > t) { layer = FLAGSTONE; }
+	if (m.quay) { layer = METAL; }
+	if (m.edge) { layer = ROCK; tint = vec3(0.92); }
+	return layer;
+}
+
+// Masques du sol au point p (m, plan du sol), à la hauteur h.
+Masks ground_masks(vec2 p, float h) {
+	Masks m;
+	float n1 = noise(p * 0.11);
+	float n2 = noise(p * 0.47 + vec2(7.3, 1.1));
+	float n3 = noise(p * 1.7 + vec2(2.4, 9.3));
+	// Herbe sèche par grandes taches.
+	m.dry = smoothstep(0.55, 0.85, n1) * 0.7;
+	// Les bois du marais : sous-bois et feuilles mortes.
+	m.forest = 1.0 - smoothstep(-33.0, -25.0, p.y + 3.0 * (n2 - 0.5));
+	// Terrain d'entraînement : herbe rase piétinée.
+	m.field = 1.0 - smoothstep(13.5, 15.5, distance(p, vec2(0.0, -51.0)) + 1.5 * n1);
+	// Le marais : tourbe et mares d'eau sombre au ras du sol.
+	vec2 marsh_p = (p - vec2(-32.0, -56.0)) / vec2(10.0, 8.0);
+	m.marsh = 1.0 - smoothstep(0.8, 1.15, length(marsh_p) + 0.3 * (n1 - 0.5));
+	m.pools = smoothstep(0.58, 0.68, noise(p * 0.3 + vec2(3.1, 8.7))) * smoothstep(0.3, 0.7, m.marsh);
+	// Le ruisseau et ses berges.
+	float stream = stream_distance(p) + 0.25 * (n2 - 0.5);
+	m.bank = 1.0 - smoothstep(1.15, 1.6, stream);
+	m.water = 1.0 - smoothstep(0.75, 0.95, stream);
+	// La colline des étoiles : herbe haute dorée.
+	m.hill = (1.0 - smoothstep(19.0, 23.0, distance(p, hill_center) + 2.0 * n1)) * 0.9;
+	// Le bord du Couchant : pierre claire à nu, sable sur les dunes.
+	vec2 q = (p - arena_center) / vec2(1.0, 1.2);
+	float lobe = atan(q.y, q.x);
+	float shape = length(q) + 2.5 * sin(lobe * 3.0 + 0.7) + 1.5 * sin(lobe * 5.0 + 2.0);
+	m.couchant = 1.0 - smoothstep(25.0, 28.5, shape);
+	m.drift = max(smoothstep(0.25, 0.9, h), smoothstep(0.45, 0.7, n1 + 0.2 * n2));
+	// Le cercle de veille : vieilles dalles à demi ensablées, anneau de pierres sombres à 12 m.
+	float arena = distance(p, arena_center);
+	m.arena = 1.0 - smoothstep(arena_radius - 0.6, arena_radius - 0.3, arena);
+	m.arena_sand = smoothstep(0.5, 0.8, noise(p * 0.35 + vec2(2.0, 5.0)));
+	float ring_angle = atan(p.y - arena_center.y, p.x - arena_center.x) * 18.0 / PI;
+	float ring_stone = smoothstep(0.08, 0.16, abs(fract(ring_angle) - 0.5));
+	m.ring = (1.0 - smoothstep(0.28, 0.38, abs(arena - arena_radius))) * ring_stone;
+	// Chemins de terre battue ; dans les bois, vieilles dalles envahies de sous-bois.
+	float path = 1.0 - smoothstep(path_half_width - 0.25, path_half_width + 0.25, path_distance(p) + 0.3 * (n3 - 0.5));
+	m.path = path * (1.0 - 0.75 * m.couchant);
+	m.path_layer = m.forest > 0.5 ? (n2 > 0.62 ? FOREST_FLOOR : FLAGSTONE) : PATH_DIRT;
+	// La cour de l'entrepôt : terre battue et vieilles dalles, bordure de pierres.
+	float yard = length(p);
+	m.yard = 1.0 - smoothstep(plaza_radius - 0.3, plaza_radius + 0.1, yard + 0.4 * (n3 - 0.5));
+	m.yard_flag = smoothstep(0.42, 0.6, noise(p * 0.3 + vec2(9.0, 4.0)));
+	m.rim = 1.0 - smoothstep(0.2, 0.34, abs(yard - plaza_radius + 0.3));
+	// L'aire de jeux boueuse et le potager.
+	m.playground = 1.0 - smoothstep(3.0, 3.8, distance(p, vec2(-12.0, 11.0)) + 0.8 * n2);
+	vec2 garden = abs(p - vec2(13.0, -4.0)) - vec2(2.6, 1.6);
+	m.garden = max(garden.x, garden.y) < 0.0;
+	// La rue du Port : pavés ; la place du marché : dalles.
+	vec2 street = abs(p - vec2(0.0, 45.0)) - vec2(34.0, 2.0);
+	m.street = max(street.x, street.y) < 0.0;
+	m.market = 1.0 - smoothstep(6.0, 6.6, distance(p, vec2(-23.0, 50.0)) + 0.6 * n2);
+	// Le quai : bord de l'île plaqué de tôle rivetée.
+	m.quay = (1.0 - step(32.5, abs(p.x))) * step(58.9, p.y + 0.4 * sin(p.x * 0.31)) > 0.5;
+	// La lèvre de pierre, nette et ébréchée, sur le dernier mètre avant le vide.
+	m.edge = edge_distance(p) - 0.45 * n2 < 0.9 && !m.quay;
+	return m;
 }
 
 // Un échantillon de la tuile de l'atlas qui commence à cell_origin, au pixel d'image texel
@@ -155,6 +279,26 @@ void vertex() {
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
 
+// Couleur de la tuile layer au pixel d'image texel : de près, pixel net à la frontière lissée ;
+// de loin, deux échantillons le long de l'axe étiré, dans la mipmap de la moitié de l'empreinte.
+vec3 ground_color(int layer, vec2 texel, vec2 texel_dx, vec2 texel_dy) {
+	vec2 cell_origin = vec2(mod(float(layer), ATLAS_COLUMNS), floor(float(layer) / ATLAS_COLUMNS));
+	float along_x = length(texel_dx);
+	float along_y = length(texel_dy);
+	float major = max(along_x, along_y);
+	float minor = min(along_x, along_y);
+	if (major <= 1.0) {
+		vec2 width = clamp(abs(texel_dx) + abs(texel_dy), vec2(0.001), vec2(1.0));
+		vec2 sharp = floor(texel) + 0.5 + clamp((fract(texel) - 0.5) / width, -0.5, 0.5);
+		return ground_tap(sharp, cell_origin, 0.0);
+	}
+	float lod = min(log2(max(max(minor, major * 0.5), 1.0)), max_lod);
+	vec2 half_step = (along_x > along_y ? texel_dx : texel_dy) * 0.25;
+	return 0.5
+			* (ground_tap(texel - half_step, cell_origin, lod)
+					+ ground_tap(texel + half_step, cell_origin, lod));
+}
+
 void fragment() {
 	// Empreinte d'un pixel d'écran sur le sol (m), calculée avant tout branchement.
 	vec2 ground_dx = dFdx(world_pos.xz);
@@ -162,115 +306,48 @@ void fragment() {
 	// Pixels d'art par pixel d'écran, sur l'axe le plus étiré.
 	float art_per_pixel = max(length(ground_dx), length(ground_dy)) * art_pixels;
 	vec2 cell = floor(world_pos.xz * art_pixels);
-	vec2 p = (cell + 0.5) / art_pixels;
 	float h = world_pos.y;
-	// Tramage des bords des masques au pixel d'art de près ; quand le pixel d'art devient plus
-	// petit que l'écran, tramage au pixel d'écran (stable, même densité) au lieu d'un grain.
-	float t = art_per_pixel < 1.25 ? bayer(cell) : bayer(floor(FRAGCOORD.xy));
-	float n1 = noise(p * 0.11);
-	float n2 = noise(p * 0.47 + vec2(7.3, 1.1));
-	float n3 = noise(p * 1.7 + vec2(2.4, 9.3));
-	// Couche de base et assombrissement doux (tint) par masque.
-	int layer = GRASS;
-	vec3 tint = vec3(1.0);
-	// Herbe sèche par grandes taches.
-	if (smoothstep(0.55, 0.85, n1) * 0.7 > t) { layer = GRASS_DRY; }
-	// Les bois du marais : sous-bois et feuilles mortes.
-	float forest = 1.0 - smoothstep(-33.0, -25.0, p.y + 3.0 * (n2 - 0.5));
-	if (forest > t) { layer = FOREST_FLOOR; }
-	// Terrain d'entraînement : herbe rase piétinée.
-	float field = 1.0 - smoothstep(13.5, 15.5, distance(p, vec2(0.0, -51.0)) + 1.5 * n1);
-	if (field > t) { layer = GRASS; tint = vec3(0.95, 0.94, 0.86); }
-	// Le marais : tourbe et mares d'eau sombre au ras du sol.
-	vec2 m = (p - vec2(-32.0, -56.0)) / vec2(10.0, 8.0);
-	float marsh = 1.0 - smoothstep(0.8, 1.15, length(m) + 0.3 * (n1 - 0.5));
-	if (marsh > t) { layer = PEAT; }
-	float pools = smoothstep(0.58, 0.68, noise(p * 0.3 + vec2(3.1, 8.7))) * smoothstep(0.3, 0.7, marsh);
-	if (pools > t) { layer = WATER; }
-	// Le ruisseau et ses berges.
-	float stream = stream_distance(p) + 0.25 * (n2 - 0.5);
-	if (1.0 - smoothstep(1.15, 1.6, stream) > t) { layer = MUD; }
-	if (1.0 - smoothstep(0.75, 0.95, stream) > t) { layer = WATER; }
-	// La colline des étoiles : herbe haute dorée.
-	float hill = 1.0 - smoothstep(19.0, 23.0, distance(p, hill_center) + 2.0 * n1);
-	if (hill * 0.9 > t) { layer = GRASS_DRY; }
-	// Le bord du Couchant : pierre claire à nu, sable sur les dunes.
-	vec2 q = (p - arena_center) / vec2(1.0, 1.2);
-	float lobe = atan(q.y, q.x);
-	float shape = length(q) + 2.5 * sin(lobe * 3.0 + 0.7) + 1.5 * sin(lobe * 5.0 + 2.0);
-	float couchant = 1.0 - smoothstep(25.0, 28.5, shape);
-	if (couchant > t) {
-		float drift = max(smoothstep(0.25, 0.9, h), smoothstep(0.45, 0.7, n1 + 0.2 * n2));
-		layer = drift > t ? SAND : ROCK;
-	}
-	// Le cercle de veille : vieilles dalles à demi ensablées, anneau de pierres sombres à 12 m.
-	float arena = distance(p, arena_center);
-	if (1.0 - smoothstep(arena_radius - 0.6, arena_radius - 0.3, arena) > t) {
-		layer = smoothstep(0.5, 0.8, noise(p * 0.35 + vec2(2.0, 5.0))) > t ? SAND : FLAGSTONE;
-	}
-	float ring_angle = atan(p.y - arena_center.y, p.x - arena_center.x) * 18.0 / PI;
-	float ring_stone = smoothstep(0.08, 0.16, abs(fract(ring_angle) - 0.5));
-	float ring = (1.0 - smoothstep(0.28, 0.38, abs(arena - arena_radius))) * ring_stone;
-	if (ring > t) { layer = ROCK; tint = vec3(0.62, 0.6, 0.66); }
-	// Chemins de terre battue ; dans les bois, vieilles dalles envahies de sous-bois.
-	float path = 1.0 - smoothstep(path_half_width - 0.25, path_half_width + 0.25, path_distance(p) + 0.3 * (n3 - 0.5));
-	if (path * (1.0 - 0.75 * couchant) > t) {
-		layer = forest > 0.5 ? (n2 > 0.62 ? FOREST_FLOOR : FLAGSTONE) : PATH_DIRT;
-	}
-	// La cour de l'entrepôt : terre battue et vieilles dalles, bordure de pierres.
-	float yard = length(p);
-	if (1.0 - smoothstep(plaza_radius - 0.3, plaza_radius + 0.1, yard + 0.4 * (n3 - 0.5)) > t) {
-		layer = smoothstep(0.42, 0.6, noise(p * 0.3 + vec2(9.0, 4.0))) > t ? FLAGSTONE : PATH_DIRT;
-	}
-	if (1.0 - smoothstep(0.2, 0.34, abs(yard - plaza_radius + 0.3)) > t) {
-		layer = ROCK;
-		tint = vec3(0.7, 0.68, 0.72);
-	}
-	// L'aire de jeux boueuse et le potager.
-	if (1.0 - smoothstep(3.0, 3.8, distance(p, vec2(-12.0, 11.0)) + 0.8 * n2) > t) { layer = MUD; }
-	vec2 garden = abs(p - vec2(13.0, -4.0)) - vec2(2.6, 1.6);
-	if (max(garden.x, garden.y) < 0.0) { layer = MUD; tint = vec3(0.8, 0.74, 0.7); }
-	// La rue du Port : pavés ; la place du marché : dalles.
-	vec2 street = abs(p - vec2(0.0, 45.0)) - vec2(34.0, 2.0);
-	if (max(street.x, street.y) < 0.0) { layer = COBBLE; }
-	if (1.0 - smoothstep(6.0, 6.6, distance(p, vec2(-23.0, 50.0)) + 0.6 * n2) > t) { layer = FLAGSTONE; }
-	// Le quai : bord de l'île plaqué de tôle rivetée.
-	float quay = (1.0 - step(32.5, abs(p.x))) * step(58.9, p.y + 0.4 * sin(p.x * 0.31));
-	if (quay > 0.5) { layer = METAL; }
-	// La lèvre de pierre, nette et ébréchée, sur le dernier mètre avant le vide.
-	float edge = edge_distance(p);
-	if (edge - 0.45 * n2 < 0.9 && quay < 0.5) { layer = ROCK; tint = vec3(0.92); }
-	// Échantillon : la tuile répétée tous les tile_meters ; empreinte du pixel d'écran en pixels
-	// d'image, d'après les dérivées continues de la position (pas celles de fract()).
+	// Tuile répétée tous les tile_meters ; empreinte du pixel d'écran en pixels d'image, d'après
+	// les dérivées continues de la position (pas celles de fract()).
 	vec2 texel = fract(world_pos.xz / tile_meters) * tile_pixels;
 	vec2 texel_dx = ground_dx / tile_meters * tile_pixels;
 	vec2 texel_dy = ground_dy / tile_meters * tile_pixels;
-	float along_x = length(texel_dx);
-	float along_y = length(texel_dy);
-	float major = max(along_x, along_y);
-	float minor = min(along_x, along_y);
-	vec2 cell_origin = vec2(mod(float(layer), ATLAS_COLUMNS), floor(float(layer) / ATLAS_COLUMNS));
-	vec3 c;
-	if (major <= 1.0) {
-		// De près : pixel net, frontière lissée sur la largeur d'un pixel d'écran.
-		vec2 width = clamp(abs(texel_dx) + abs(texel_dy), vec2(0.001), vec2(1.0));
-		vec2 sharp = floor(texel) + 0.5 + clamp((fract(texel) - 0.5) / width, -0.5, 0.5);
-		c = ground_tap(sharp, cell_origin, 0.0);
-	} else {
-		// De loin : deux échantillons le long de l'axe étiré par la perspective (filtrage
-		// anisotrope fait main), chacun dans la mipmap de la moitié de l'empreinte.
-		float lod = min(log2(max(max(minor, major * 0.5), 1.0)), max_lod);
-		vec2 half_step = (along_x > along_y ? texel_dx : texel_dy) * 0.25;
-		c = 0.5
-				* (ground_tap(texel - half_step, cell_origin, lod)
-						+ ground_tap(texel + half_step, cell_origin, lod));
+	// Part du mélange lointain : 0 tant qu'un pixel d'art couvre presque un pixel d'écran, 1 au-delà
+	// de deux pixels d'art par pixel d'écran.
+	float far = smoothstep(0.75, 2.0, art_per_pixel);
+	// De près, masques au centre du pixel d'art (bords nets en pixels d'art) ; de loin, à la
+	// position continue (bords sans escalier qui scintille).
+	vec2 p = far > 0.0 ? world_pos.xz : (cell + 0.5) / art_pixels;
+	Masks m = ground_masks(p, h);
+	vec3 tint;
+	vec3 c = vec3(0.0);
+	if (far < 1.0) {
+		int layer = pick_layer(m, cell_threshold(cell), tint);
+		c = ground_color(layer, texel, texel_dx, texel_dy) * tint * (1.0 - far);
 	}
-	c *= tint;
+	if (far > 0.0) {
+		// Moyenne de quatre seuils décalés par le bruit du pixel d'écran : un mélange en paliers
+		// fins ; une tuile déjà lue n'est pas relue.
+		float jitter = screen_noise(FRAGCOORD.xy);
+		vec3 blend = vec3(0.0);
+		int last = -1;
+		vec3 last_color = vec3(0.0);
+		for (int i = 0; i < 4; i++) {
+			int layer = pick_layer(m, (float(i) + jitter) * 0.25, tint);
+			if (layer != last) {
+				last_color = ground_color(layer, texel, texel_dx, texel_dy);
+				last = layer;
+			}
+			blend += last_color * tint;
+		}
+		c += blend * 0.25 * far;
+	}
 	// Petites fleurs de myosotis sur la colline (pixels d'art bleus semés par touffes), tant
 	// qu'un pixel d'art reste visible (sinon, des points qui clignotent).
-	float bloom_patch = smoothstep(0.55, 0.8, noise(p * 0.2 + vec2(11.0, 2.0)));
+	vec2 cell_center = (cell + 0.5) / art_pixels;
+	float bloom_patch = smoothstep(0.55, 0.8, noise(cell_center * 0.2 + vec2(11.0, 2.0)));
 	bool flower = hash(cell) > 0.985 - 0.04 * bloom_patch && bloom_patch > 0.2;
-	if (hill > 0.5 && h > 0.3 && flower && art_per_pixel < 1.6) {
+	if (m.hill > 0.45 && h > 0.3 && flower && art_per_pixel < 1.6) {
 		c = vec3(0.5, 0.61, 0.81);
 	}
 	ALBEDO = c;
