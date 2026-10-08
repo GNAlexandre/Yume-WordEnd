@@ -116,6 +116,7 @@ Yume-WordEnd/
 │   ├── world/                 # island.tscn, zone.gd, zones/<zone>/<zone>.tscn, terrain.gd (relief), island_rock.gd,
 │   │                          # (HD-2D) decor_panel.gd, building.gd, prop_batcher.gd, prop_scatter.gd,
 │   │                          # props/<nom>.tscn (un décor = un panneau ou un bâtiment), shaders/, materials/
+│   │                          # (H9) ground_decal.gd, sky_drift.gd, ambient_sprites.gd (formats du cahier n° 2)
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
@@ -144,6 +145,7 @@ Yume-WordEnd/
 │   ├── stubs/                 # joueur factice, visuel factice, mannequins pour les tests
 │   ├── unit/                  # test_*.gd (GUT)
 │   └── integration/           # scènes de fumée et démos par lot (demo_l<N>.tscn), (HD-2D) demo_hd2d.tscn
+│                              # (H9) demo_formats.tscn : chaque format du cahier n° 2, images faites à l'exécution
 └── build/                     # ignoré par git
 ```
 
@@ -372,6 +374,37 @@ class_name Building        # src/world/building.gd : volume (murs, toit long ou 
                            # gable_front, overhang, window_glow ; surface_material(texture, relief)
 class_name PropBatcher     # src/world/prop_batcher.gd, nœud « Geometry » des zones : fond les MeshInstance3D à
                            # material_override en un mesh par image et par case (« Batch… ») ; @export cell_size
+# (H9) Formats du cahier n° 2 (docs/ASSETS_HD2D_MONDE.md, sections 3 et 17) : ajouts, l'existant ne change pas.
+# Données propres à chaque exemplaire dans UV2 des sommets (le PropBatcher les garde) : un draw call par image.
+class_name DecorPanel      # (H9) @export frames, fps (bande animée : size_m() = une image ; phase strip_phase(),
+                           # phase_at(position), dans UV2.x ; l'image change dans le shader, TIME), flip_h,
+                           # depth_offset (m vers la caméra, UV2.y : panneau contre un mur ou sur un toit),
+                           # foreground (panel_foreground.gdshader : s'efface en trame autour du joueur) ;
+                           # material_for(image, tint, glow, frame_count, frame_rate, in_foreground),
+                           # panel_mesh(size, flip, phase, offset), update_foreground(tree), displayed_transform(node)
+                           # (place affichée, lissage physique) ; FOREGROUND_SHADER, PHASE_STEPS, PLAYER_GROUP
+class_name GroundDecal     # (H9) src/world/ground_decal.gd, racine possible d'un décor, sans collision : image vue
+                           # de dessus, ancre au centre, couchée sur les triangles du sol ; @export texture,
+                           # pixels_per_meter (96), soft_alpha, tint, flip_h, layer (0..7, UV2.y), follow_ground ;
+                           # size_m(), draped_mesh(), material_for(image, tint, soft, layer) ; HARD_SHADER,
+                           # SOFT_SHADER (ground_decal*.gdshader), SOFT_PRIORITY (−9 + couche)
+class_name Building        # (H9) @export side_facade (flanc est, retourné à l'ouest ; enfant interne « Sides ») ;
+                           # side_size_m(), side_contract_size() (pignon : profondeur × faîtage ; gouttereau :
+                           # profondeur × mur), side_material(texture, glow)
+class_name PropScatter     # (H9) @export variants: Array[PackedScene], random_flip ; pool(), variant_indices(),
+                           # pick_variants(points, count, seed) (jamais la variante du plus proche voisin),
+                           # nearest_neighbor(points, i)
+class_name IslandTerrain   # (H9) GROUND_LAYERS (27 tuiles, ordre du contrat), GROUND_FALLBACK, ATLAS_COLUMNS,
+                           # atlas_tile_count(size), ground_layer(layer, tile_count), triangles_in(rect),
+                           # surface_height(x, z) ; terrain.gdshader : rangées lues dans la taille de l'atlas
+class_name SkyDrift        # (H9) src/world/sky_drift.gd (Island/Decor/SkyDrift) : panneaux lointains qui dérivent
+                           # d'ouest en est en boucle (shader, TIME) ; @export textures, pixels_per_meter (48),
+                           # count, span, fade, distance_range, height_range, speed_range, scale_range, tint,
+                           # random_seed ; meshes(), drift_x(start, speed, time, length) ; matériau dans le mesh
+class_name AmbientSprites  # (H9) src/world/ambient_sprites.gd : enum Motion { FALL, CROSS, FLUTTER, HOVER } ;
+                           # @export texture, frames, fps, pixels_per_meter, motion, count, density, area, lift,
+                           # region_size, speed, sway, tint, glow, random_seed ; sprite_count(), sprite_size(),
+                           # focus_point(), update_box(focus), sprites_mesh(total, seed) ; un draw call
 # src/player/camera_rig.gd (racine CameraRig de camera_rig.tscn, sans class_name) : caméra fixe vers le nord
 @export pitch_deg (32), fov_deg (30), focus_height, distance (21), min_distance, max_distance, follow_speed, lead_time,
         limits: Rect2 (bornes du point visé), lock_focus, lock_focus_max

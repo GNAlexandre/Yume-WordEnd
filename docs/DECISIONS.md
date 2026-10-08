@@ -1539,3 +1539,51 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   images du manifeste (`test_hd2d_assets.gd`) de 16 à 64 Mo de PNG. Les images restent importées
   sans perte (WebP sans perte) ; le cahier n° 2 ne demande plus de réduire les couleurs. Les
   mesures et critères déjà passés (recette M2, lot L9) gardent leurs 25 Mo d'alors.
+- **H9 — données de chaque exemplaire dans UV2** : la phase d'une bande animée (UV2.x) et le
+  décalage vers la caméra (UV2.y, m) d'un panneau, la part de l'exemplaire (x) et la couche (y)
+  d'un décalque passent par les sommets ; le PropBatcher garde les UV2 : tous les panneaux d'une
+  image restent un draw call par case, animés compris. Phase : hachage de la position au centimètre,
+  32 pas (peu de meshes) ; l'image change dans le shader avec TIME, qui continue pendant la pause.
+- **H9 — panel.gdshader en deux** : son cœur (uniformes, bande, décalage, couleur) passe dans
+  `panel_core.gdshaderinc`, partagé avec `panel_foreground.gdshader` ; panel.gdshader garde sa
+  fonction fragment écrite en clair (la découpe du village l'augmente) et écrit POSITION (décalage
+  vers la caméra) ; rien ne change à l'œil.
+- **H9 — premier plan** : shader à part (la découpe du village ne convertit que panel.gdshader),
+  ellipse de 1,4 × 1,9 m autour du corps du joueur où il s'efface en trame 4 × 4 en gardant 20 %
+  de ses pixels au cœur (le tronc flou devient translucide) ; le centre est posé une fois par image
+  par les panneaux de premier plan eux-mêmes, sur la place affichée du joueur (lissage physique).
+- **H9 — décalques couchés sur le sol** : le mesh reprend les triangles mêmes du sol sous le
+  décalque, découpés à son bord (pas de projection ni de quad flottant) : aucun jour ni scintillement
+  sur les pentes ; tiré vers la caméra de 0,1 % de sa distance, plus 0,04 % par couche et 0,02 % ×
+  la part de l'exemplaire (ordre stable entre deux décalques superposés). Décalques doux : priorité
+  de rendu −9 + couche (sous les ombres des panneaux, −1, et sous les personnages) ; décalques durs :
+  un matériau par image quelle que soit la couche. Un décalque déplacé se recouche (notification).
+- **H9 — flancs** : quad de la taille de l'image (pas étiré à l'emprise) à FACADE_GAP devant le
+  mur, côté gauche au sud des deux côtés (retourné vu de l'ouest), éclairé comme les murs (relief
+  0,6 : le flanc ouest, au couchant, plus clair) ; `side_contract_size()` donne la taille attendue
+  pour les vérifications de la pose.
+- **H9 — petits panneaux de mur et de toit** : cheminées, lucarnes, lierre, enseignes se posent
+  sur la surface (contre la façade, à FACADE_GAP devant le mur, ou au pied de la cheminée sur le pan
+  sud) avec `depth_offset` 0,05 à 0,1 m et `shadow_width` 0 : dessinés devant le mur ou le toit sans
+  bouger à l'écran ; contre un flanc : `keep_orientation` en plus.
+- **H9 — variantes** : graphe des plus proches voisins (une forêt) parcouru en largeur, chaque
+  point évite la variante du point qui l'atteint (toujours possible dès deux variantes) ; tirages
+  des variantes et du retournement sur des suites à part : les lacets et échelles des PropScatter
+  existants ne changent pas ; retournement seulement si la racine de la scène est un DecorPanel.
+- **H9 — sol à 27 tuiles** : alternance des `_b` par plaques de bruit (deux octaves, environ 8 m)
+  au bord tramé comme les autres masques ; masques des nouvelles matières calculés seulement si
+  l'atlas a plus de 12 tuiles (le sol coûte ce qu'il coûtait) ; prairie fleurie sur la colline
+  seulement si sa tuile existe (son repli, l'herbe verte, trouerait l'herbe dorée) ; potager : teinte
+  d'avant tant que `garden_soil` manque ; gravier : chemins entre z = 28 et 58 (le bourg) ; mousse
+  et feuilles plus denses à plus de 2 à 9 m d'un chemin.
+- **H9 — ciel qui dérive** : mouvement dans le shader, matériau porté par le mesh (le PropBatcher
+  de Decor ne le fond pas), boîte du trajet entier (écarté hors champ) ; dans island.tscn, cinq
+  voyageurs (floating_rock deux fois, distant_island_c) à 24 px/m, z de −135 à −205, y de −40 à −20 :
+  la caméra regarde vers le bas (17° au haut de l'écran), le ciel ne se voit qu'au bord nord de
+  l'île, au-dessus de la mer de nuages.
+- **H9 — petites vies** : chaque sprite a sa place dans un pavage du monde de période la boîte,
+  ramenée dans la boîte qui suit le point visé par la caméra (rien ne glisse avec elle) ; temps
+  propre (figé en pause) ; caméra et joueur lus à leur place affichée ; caché hors de sa région.
+- **H9 — démo des formats** : l'île sans ses zones et un atlas de 27 tuiles fabriqué à l'exécution
+  (les `_b` sont la tuile retournée et éclaircie, les matières des teintes) ; aucune image du
+  cahier n° 2 lue (le lot H10 les crée).
