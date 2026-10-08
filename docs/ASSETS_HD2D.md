@@ -325,8 +325,8 @@ Décor lointain (48 px/m) :
 
 | Prio | Nom | Taille (px) | Description à coller |
 | --- | --- | --- | --- |
-| 3 | `airship_ferry` | 576 × 336 | petit dirigeable du passeur : coque de bois et de cuivre, ballon allongé beige, deux rotors |
-| 3 | `airship_barocupot` | 1056 × 480 | Barocupot, transport militaire de la Garde ailée : coque sombre, deux pales de rotor, trappe |
+| 3 | `airship_ferry` | 1344 × 672 | refait : navire volant du passeur, de profil, à 96 px/m (cahier n° 2, section 11) |
+| 3 | `airship_barocupot` | 2304 × 1056 | refait : le Barocupot de profil, à 96 px/m (cahier n° 2, section 11) |
 
 Ces deux dirigeables sont **refaits** d'après le cahier n° 2 (`docs/ASSETS_HD2D_MONDE.md`,
 section 11) : navires sans ballon, de profil, à 96 px/m, hélices animées à part.
@@ -363,11 +363,13 @@ flottent juste sous l'île sont permis.
 
 1. Dépose l'image au chemin exact de ce document : elle écrase le remplaçant du même nom (les
    fichiers `.import` ne changent pas).
-2. `python3 tools/hd2d_assets.py check` : taille, alpha, raccord des tuiles (planches de
-   personnages : `python3 tools/hd2d_sheets.py check`, section 3) ;
+2. `python3 tools/hd2d_assets.py check` : taille, alpha, raccord des tuiles, ancrage (planches de
+   personnages : `python3 tools/hd2d_sheets.py check`, section 3) ; il connaît aussi les images
+   du cahier n° 2 (décalques, bandes animées, flancs : `check --lot A` à `G`) ;
    `python3 tools/hd2d_assets.py fit <fichier>` ramène une image trop grande à sa taille ; après
-   une tuile de sol, `python3 tools/hd2d_assets.py atlas` (le jeu lit les douze tuiles réunies
-   dans `assets/hd2d/ground/atlas/ground_atlas.png` ; `fit` et `gen` le refont d'eux-mêmes).
+   une tuile de sol, `python3 tools/hd2d_assets.py atlas` (le jeu lit les 27 tuiles des deux
+   cahiers réunies dans `assets/hd2d/ground/atlas/ground_atlas.png` ; `fit` et `gen` le refont
+   d'eux-mêmes).
 3. `tools/screenshot.sh res://src/world/island.tscn build/shots/hd2d.png` pour voir le résultat,
    puis `tools/check.sh`.
 4. Note la provenance dans `assets/CREDITS.md` (« généré avec ChatGPT le … », licence accordée).

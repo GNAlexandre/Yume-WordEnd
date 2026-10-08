@@ -83,7 +83,7 @@ Couleurs de référence : celles du cahier n° 1, section 1 (herbe `#87A35E`, fe
 | Densité | **96 px par mètre** ; lointain (nuages, îles, dirigeables en vol) : 48 ou 24 px/m, précisé à chaque ligne |
 | Format | PNG RGBA 8 bits ; tuiles : opaques et sans raccord |
 | Taille | exacte au pixel près ; si l'outil ne sait pas la produire, livre plus grand et plus net, puis `python3 tools/hd2d_assets.py fit <fichier>` (réduction au plus proche voisin) |
-| Ancre | panneaux, flancs, lisières, bandes animées : milieu du bord bas = point posé au sol (image collée au bord bas, centrée) ; décalques : centre de l'image |
+| Ancre | panneaux, flancs, lisières, bandes animées : milieu du bord bas = point posé au sol (image collée au bord bas, centrée) ; décalques : centre de l'image ; ce qui vole (nuages, navires en vol, feuilles qui tombent, oiseaux, papillon, lucioles, hélices) : centre de l'image, marge transparente tout autour |
 | Angle de vue | panneaux : vue de face très légèrement plongeante (10 à 15°, on devine le dessus des objets) ; tuiles et décalques : **strictement de dessus** ; flancs et façades : élévation sans perspective |
 | Orientation | animaux et navires dessinés **tournés vers la droite** (le jeu les retourne) ; le reste vu de face |
 | Qualité avant poids | ni compression avec perte, ni réduction du nombre de couleurs : le jeu garde les images sans perte. Une image de plus de 1,5 Mo (3 Mo pour les lisières, les grands bâtiments, le ciel et les dirigeables à quai) n'est souvent pas du pixel art net (flou, bruit, anticrénelage) : vérifie-la |
@@ -124,7 +124,9 @@ fond dans n'importe quelle tuile ; pas de fond, pas de tuile sous l'objet. Ancre
 toutes de la même taille (la taille d'**une** image est donnée ; la bande fait `n ×` sa largeur),
 sans marge entre elles. Chaque image est cadrée comme un panneau (collée au bas, même ancre) : seul
 ce qui bouge change, le reste reste identique au pixel près. La dernière image s'enchaîne sur la
-première (boucle sans saut).
+première (boucle sans saut). Exception : ce qui vole (feuilles qui tombent, oiseaux, papillon,
+lucioles, hélices) est centré dans chaque image, avec une marge transparente tout autour. Le jeu
+joue chaque bande à la cadence donnée (colonne « Images/s » de la section 12).
 
 ### 3.5 Flanc de bâtiment (nouveau)
 
@@ -207,7 +209,7 @@ puis :
 | 1 | `grass_edge_a` | 384 × 96 (4 × 1 m) | bordure d'herbe qui déborde sur un chemin de terre : touffes et brins qui avancent vers le bas de l'image, bord haut plein ; **sans raccord à gauche et à droite** |
 | 1 | `grass_edge_b` | 384 × 96 | même bordure, autre dessin, se raccorde à `grass_edge_a` |
 | 1 | `canopy_shadow_a` | 576 × 576 (6 × 6 m) | **alpha doux** : ombre de feuillage vue de dessus, taches sombres brun violacé (opacité 30 à 60 %) avec des trouées rondes de lumière |
-| 1 | `canopy_shadow_b` | 576 × 576 | même chose, autre forme, plus clairsemée |
+| 1 | `canopy_shadow_b` | 576 × 576 | **alpha doux** : même chose, autre forme, plus clairsemée |
 | 1 | `sun_dapple` | 384 × 384 | **alpha doux** : taches de soleil dorées (#FFE6A6, opacité 30 à 50 %), rondes et ovales, de 10 à 60 cm |
 | 1 | `roots_a` | 288 × 192 | grosses racines qui sortent du sol et s'y renfoncent, écorce brune, mousse |
 | 1 | `roots_b` | 192 × 192 | racines plus fines en étoile |
@@ -230,7 +232,7 @@ puis :
 | 2 | `stepping_stones` | 288 × 192 | quatre pierres plates qui traversent un ruisseau, eau claire autour (bord transparent) |
 | 2 | `lily_pads` | 192 × 144 | lentilles d'eau et petites feuilles de nénuphar sur eau sombre, bord transparent |
 | 2 | `sand_drift_a` | 288 × 192 | **alpha doux** sur les bords : congère de sable pâle (#D6C19E) poussée par le vent sur la pierre, rides allongées vers la droite |
-| 2 | `sand_drift_b` | 192 × 115 | plus petite |
+| 2 | `sand_drift_b` | 192 × 115 | **alpha doux** sur les bords : même congère, plus petite |
 | 2 | `ring_stone_flat_a` | 96 × 77 | pierre sombre plate enfoncée au ras du sol (l'anneau du cercle de veille), usée, lichen clair |
 | 2 | `ring_stone_flat_b` | 115 × 67 | même chose, autre forme |
 | 2 | `ring_stone_flat_c` | 77 × 77 | même chose, presque ronde |
@@ -344,7 +346,7 @@ transparent, collé au bord bas et centré, pixel art à 96 px/m : » puis :
 | 2 | `boulder_d` | 384 × 288 | gros rocher moussu couvert de fougères et de lierre (sous-bois) |
 | 2 | `rock_small_d` | 67 × 48 | caillou anguleux sombre |
 | 2 | `rock_pile` | 192 × 96 | tas de pierres ramassées au bord d'un champ |
-| 2 | `edge_roots` | 288 × 192 | racines d'un arbre qui débordent de la lèvre et pendent dans le vide, terre et cailloux |
+| 2 | `edge_roots` | 288 × 192 | racines d'un arbre qui débordent de la lèvre et pendent dans le vide, terre et cailloux ; le haut de l'image est la lèvre, les racines descendent jusqu'au bas de l'image (le jeu la pose sous le bord) |
 | 2 | `edge_grass` | 384 × 96 | herbe haute couchée qui déborde de la lèvre, **sans raccord à gauche et à droite** |
 | 2 | `wind_rock_d` | 240 × 154 | rocher clair sculpté par le vent, creusé de trous ronds, plus trapu que `wind_rock_a` |
 | 3 | `floating_rock_b` | 144 × 144 | (dossier `sky/`) petit rocher flottant sous le bord, racines qui pendent, brin d'herbe dessus |
@@ -379,18 +381,18 @@ section 3.5) ; les matières du volume sont celles de la colonne (existantes ou 
 gouttereau. Le bourg est celui d'hommes-bêtes ordinaires : portes un peu plus larges, rien de
 luxueux. Les noms de commerces restent sans texte (enseignes en forme d'objet).
 
-| Prio | Nom | Façade (px) | Flanc (px) | Type, mur / faîte (m), profondeur | Matières | Description à coller |
+| Prio | Nom | Façade (px) | Flanc `<nom>_side` (px) | Type, mur / faîte (m), profondeur | Matières | Description à coller |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | `house_timber_a` | 480 × 576 | 432 × 336 | pignon, 3,5 / 6 ; prof. 4,5 | `wall_plaster`, `roof_tiles` | maison à colombages bruns sur enduit crème, rez-de-chaussée de pierre, porte bleu passé, deux fenêtres à volets, encorbellement de l'étage |
-| 1 | `house_timber_b` | 672 × 528 | 480 × 720 | long, 5,5 / 7,5 ; prof. 5 | `wall_plaster_b`, `roof_tiles_b` | longue maison à étage, enduit ocre et colombages, trois fenêtres à l'étage, porte et fenêtre de boutique fermée en bas, linge à une fenêtre |
-| 1 | `clockmaker` | 480 × 624 | 480 × 384 | pignon, 4 / 6,5 ; prof. 5 | `wall_stone`, `roof_slate` | boutique de l'horloger : pierre grise, vitrine pleine d'horloges et d'engrenages de laiton, enseigne en forme d'horloge **sans chiffres ni aiguilles lisibles comme une heure**, porte vitrée |
-| 1 | `house_narrow` | 384 × 768 | 480 × 576 | pignon, 6 / 8 ; prof. 5 | `wall_stone_b`, `roof_slate` | haute maison étroite de pierre à trois niveaux, une fenêtre par niveau, balconnet de fer, fleurs en pots |
-| 2 | `butcher` | 576 × 336 | 480 × 528 | long, 3,5 / 5,5 ; prof. 5 | `wall_brick`, `roof_tiles` | boucherie de briques à un niveau, auvent de toile rayée rouge et crème, étal fermé, enseigne en forme de jambon |
-| 2 | `inn` | 864 × 576 | 672 × 816 | long, 6 / 8,5 ; prof. 7 | `wall_plaster`, `roof_shingles` | auberge du port à deux étages, colombages, balcon de bois à l'étage, grande porte à deux battants, enseigne en forme de chope, lanternes de cristal de part et d'autre |
-| 2 | `harbor_office` | 480 × 576 | 480 × 384 | pignon, 4 / 6 ; prof. 5 | `wall_stone`, `roof_tin` | bureau du port : pierre et tôle, guichet à grille, horloge murale sans chiffres, girouette en forme d'hélice sur le faîtage |
-| 2 | `port_hangar` | 960 × 480 | 768 × 672 | long, 5 / 7 ; prof. 8 | `wall_tin`, `roof_tin_b` | hangar du port en tôle ondulée et charpente de fer, grande porte coulissante entrouverte sur la pénombre, caisses dedans, traces de rouille |
-| 3 | `boiler_workshop` | 576 × 624 | 576 × 384 | pignon, 4 / 6,5 ; prof. 6 | `wall_brick`, `roof_tin` | atelier de chaudronnerie : briques noircies, grande porte de fer, un four enchanté démonté devant la porte (cuivre et rivets), tuyaux, lueur orange par une fenêtre |
-| 3 | `house_stone_b` | 480 × 480 | 432 × 312 | pignon, 3,25 / 5 ; prof. 4,5 | `wall_stone_b`, `roof_shingles` | petite maison de pierre claire au toit de bardeaux, porte rouge passé, banc |
+| 1 | `house_timber_a` | 480 × 576 | `house_timber_a_side` 432 × 336 | pignon, 3,5 / 6 ; prof. 4,5 | `wall_plaster`, `roof_tiles` | maison à colombages bruns sur enduit crème, rez-de-chaussée de pierre, porte bleu passé, deux fenêtres à volets, encorbellement de l'étage |
+| 1 | `house_timber_b` | 672 × 528 | `house_timber_b_side` 480 × 720 | long, 5,5 / 7,5 ; prof. 5 | `wall_plaster_b`, `roof_tiles_b` | longue maison à étage, enduit ocre et colombages, trois fenêtres à l'étage, porte et fenêtre de boutique fermée en bas, linge à une fenêtre |
+| 1 | `clockmaker` | 480 × 624 | `clockmaker_side` 480 × 384 | pignon, 4 / 6,5 ; prof. 5 | `wall_stone`, `roof_slate` | boutique de l'horloger : pierre grise, vitrine pleine d'horloges et d'engrenages de laiton, enseigne en forme d'horloge **sans chiffres ni aiguilles lisibles comme une heure**, porte vitrée |
+| 1 | `house_narrow` | 384 × 768 | `house_narrow_side` 480 × 576 | pignon, 6 / 8 ; prof. 5 | `wall_stone_b`, `roof_slate` | haute maison étroite de pierre à trois niveaux, une fenêtre par niveau, balconnet de fer, fleurs en pots |
+| 2 | `butcher` | 576 × 336 | `butcher_side` 480 × 528 | long, 3,5 / 5,5 ; prof. 5 | `wall_brick`, `roof_tiles` | boucherie de briques à un niveau, auvent de toile rayée rouge et crème, étal fermé, enseigne en forme de jambon |
+| 2 | `inn` | 864 × 576 | `inn_side` 672 × 816 | long, 6 / 8,5 ; prof. 7 | `wall_plaster`, `roof_shingles` | auberge du port à deux étages, colombages, balcon de bois à l'étage, grande porte à deux battants, enseigne en forme de chope, lanternes de cristal de part et d'autre |
+| 2 | `harbor_office` | 480 × 576 | `harbor_office_side` 480 × 384 | pignon, 4 / 6 ; prof. 5 | `wall_stone`, `roof_tin` | bureau du port : pierre et tôle, guichet à grille, horloge murale sans chiffres, girouette en forme d'hélice sur le faîtage |
+| 2 | `port_hangar` | 960 × 480 | `port_hangar_side` 768 × 672 | long, 5 / 7 ; prof. 8 | `wall_tin`, `roof_tin_b` | hangar du port en tôle ondulée et charpente de fer, grande porte coulissante entrouverte sur la pénombre, caisses dedans, traces de rouille |
+| 3 | `boiler_workshop` | 576 × 624 | `boiler_workshop_side` 576 × 384 | pignon, 4 / 6,5 ; prof. 6 | `wall_brick`, `roof_tin` | atelier de chaudronnerie : briques noircies, grande porte de fer, un four enchanté démonté devant la porte (cuivre et rivets), tuyaux, lueur orange par une fenêtre |
+| 3 | `house_stone_b` | 480 × 480 | `house_stone_b_side` 432 × 312 | pignon, 3,25 / 5 ; prof. 4,5 | `wall_stone_b`, `roof_shingles` | petite maison de pierre claire au toit de bardeaux, porte rouge passé, banc |
 
 ### 9.3 Nouvelles matières
 
@@ -545,14 +547,17 @@ deux images actuelles sont remplacées.
 légèrement d'en haut (on voit un peu le pont), à **96 px/m** comme le quai. Leurs **hélices
 latérales** (axe tourné vers la caméra, un disque de pales vu de face, comme une roue à aubes de
 bateau à vapeur) sont des bandes animées à part : la coque est dessinée **avec le moyeu mais
-sans les pales**. Le jeu place les pales sur le moyeu.
+sans les pales**. Le jeu place les pales sur le moyeu. Fichiers : `props/airship_ferry.png` et
+`props/airship_barocupot.png` (ils remplacent les anciens), `anim/airship_ferry_propeller.png`
+et `anim/airship_barocupot_propeller.png` (bandes animées, section 3.4, jouées à 12 images/s),
+`sky/airship_far_*.png`.
 
 | Prio | Nom | Taille (px) | Description à coller |
 | --- | --- | --- | --- |
 | 1 | `airship_ferry` | 1344 × 672 (14 × 7 m) | petit navire volant du passeur de l'île n° 53, de profil, proue à droite : coque de bateau de 12 m en bois verni sombre cerclée de cuivre, pont avec rambarde, petite cabine à hublots éclairés à l'arrière, four enchanté de cuivre derrière la cabine qui rougeoie par des grilles, courte cheminée, deux ailerons stabilisateurs à la poupe, quille de fer, rampe d'embarquement relevée ; **un moyeu de cuivre** sur le flanc au milieu de la coque, **sans pales** ; usé, rapiécé, sympathique |
-| 1 | `airship_ferry_propeller` | 192 × 192 (2 m), 4 images | **bande animée** : hélice latérale à quatre pales de bois et de cuivre vue de face, qui tourne d'un huitième de tour d'une image à l'autre ; moyeu au centre exact de chaque image ; fond transparent |
+| 1 | `airship_ferry_propeller` | 192 × 192 (2 m), 4 images | **bande animée** : hélice latérale à quatre pales de bois et de cuivre vue de face, qui tourne d'un seizième de tour (22,5°) d'une image à l'autre : en 4 images, chaque pale prend la place de la suivante et la boucle tourne sans à-coup ; moyeu au centre exact de chaque image ; fond transparent |
 | 1 | `airship_barocupot` | 2304 × 1056 (24 × 11 m) | le Barocupot, transport militaire de la Garde ailée, de profil, proue à droite : coque de tôle d'acier rivetée gris-bleu sombre, bande rouge de la Garde (#AE4A3E) le long du bordage, aile stylisée peinte sur la proue (sans texte), deux ponts de hublots ronds éclairés, passerelle de commandement vitrée à l'avant, grande trappe de soute à l'arrière (fermée), deux fours enchantés en nacelles sous la coque avec des grilles rougeoyantes, ailerons de queue, canon court sous bâche, **deux moyeux** sur le flanc (à un tiers et aux deux tiers de la longueur), **sans pales** ; massif, sérieux, entretenu |
-| 1 | `airship_barocupot_propeller` | 288 × 288 (3 m), 4 images | **bande animée** : hélice latérale à cinq pales de fer sombre, bout des pales rouge, vue de face, qui tourne d'une image à l'autre ; moyeu au centre exact |
+| 1 | `airship_barocupot_propeller` | 288 × 288 (3 m), 4 images | **bande animée** : hélice latérale à cinq pales de fer sombre, bout des pales rouge, vue de face, qui tourne d'un vingtième de tour (18°) d'une image à l'autre : en 4 images, chaque pale prend la place de la suivante ; moyeu au centre exact ; fond transparent |
 | 2 | `airship_far_a` | 480 × 192 (20 × 8 m à **24 px/m**) | dossier `sky/` : navire de ligne publique en vol, de profil vers la droite, coque claire et longue, rangée de hublots éclairés, deux hélices floues, fumée légère ; silhouette adoucie et violacée par la distance |
 | 2 | `airship_far_b` | 288 × 144 (12 × 6 m à 24 px/m) | dossier `sky/` : patrouilleur de la Garde en vol, coque sombre à bande rouge, vers la droite ; violacé par la distance |
 | 2 | `airship_far_c` | 768 × 288 (32 × 12 m à 24 px/m) | dossier `sky/` : gros transport « de classe semi-grande baleine » en vol, coque ventrue de tôles d'acier, de cuivre et d'étain, quatre hélices, vers la droite ; violacé par la distance |
@@ -560,36 +565,41 @@ sans les pales**. Le jeu place les pales sur le moyeu.
 
 ## 12. Animations
 
-Bandes animées (section 3.4), dossier `assets/hd2d/anim/`. La taille est celle d'**une** image.
+Bandes animées (section 3.4), dossier `assets/hd2d/anim/`. La taille est celle d'**une** image ;
+la colonne « Images/s » donne la cadence à laquelle le jeu la joue (pour régler l'ampleur du
+mouvement d'une image à l'autre).
 Consigne : « Bande animée `<nom>.png` de <n> images de <taille> chacune, côte à côte sur une ligne,
 sans marge, qui bouclent sans saut ; seul ce qui bouge change ; fond transparent, pixel art à
 96 px/m : » puis :
 
-| Prio | Nom | Une image (px) | Images | Description à coller |
-| --- | --- | --- | --- | --- |
-| 1 | `laundry_wave` | 576 × 211 | 4 | `laundry_line.png` (jointe) : les trois draps ondulent au vent vers la droite, poteaux et corde immobiles |
-| 1 | `pennant_wave` | 96 × 336 | 6 | `garde_pennant.png` (joint) : le fanion rouge claque au vent vers la droite, mât immobile |
-| 1 | `chimney_smoke` | 96 × 288 | 8 | **alpha doux** : volutes de fumée grise et chaude qui montent et s'étirent vers la droite, sans cheminée (le bas de l'image est la sortie du conduit) |
-| 1 | `brazier_fire` | 48 × 58 | 6 | flammes et braises d'un brasero (sans le brasero), orange et jaune, étincelles |
-| 1 | `edge_waterfall` | 288 × 576 (3 × 6 m) | 6 | **alpha doux** sur les bords : le ruisseau qui tombe du bord de l'île dans le vide, eau claire et écume blanche, brume en bas ; le haut de l'image est la lèvre de pierre |
-| 1 | `birds_flock` | 192 × 96 | 6 | cinq petits oiseaux sombres en vol, battements d'ailes décalés, vus de côté vers la droite |
-| 1 | `falling_leaf_gold` | 16 × 16 | 8 | une feuille d'automne or qui tournoie en tombant (rotation et retournement, la feuille reste au centre) |
-| 1 | `falling_leaf_rust` | 16 × 16 | 8 | même chose, feuille rouille |
-| 2 | `reeds_sway` | 144 × 134 | 4 | `reeds.png` (jointe) : les roseaux se balancent doucement vers la droite, pied immobile |
-| 2 | `grass_sway` | 96 × 77 | 4 | `tall_grass.png` (jointe) : l'herbe haute ondule vers la droite, pied immobile |
-| 2 | `windsock_wave` | 115 × 384 | 4 | `wind_sock.png` (jointe) : la manche à air se gonfle et ondule vers la droite, mât immobile |
-| 2 | `bunting_wave` | 576 × 96 | 4 | `bunting.png` (section 10.2) : les fanions de la guirlande flottent |
-| 2 | `vigil_bell_ring` | 134 × 230 | 6 | `vigil_bell.png` (jointe) : la cloche se balance (gauche, centre, droite, centre…), portique immobile |
-| 2 | `fountain_water` | 288 × 240 | 4 | `fountain.png` (section 10.2) : l'eau tombe du bec et ride le bassin |
-| 2 | `pigeons` | 38 × 29 | 4 | pigeon gris au sol qui picore, tourné vers la droite |
-| 2 | `butterfly` | 24 × 24 | 4 | papillon orangé qui bat des ailes, vu de dessus |
-| 3 | `fireflies` | 12 × 12 | 4 | **alpha doux** : petite lueur jaune-vert qui pulse (marais, colline au crépuscule) |
-| 3 | `furnace_steam` | 96 × 192 | 6 | **alpha doux** : jets de vapeur blanche d'un four enchanté, vers le haut |
-| 3 | `cafe_door_bell` | 48 × 48 | 4 | clochette de laiton au-dessus d'une porte qui oscille |
+| Prio | Nom | Une image (px) | Images | Images/s | Description à coller |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `laundry_wave` | 576 × 211 | 4 | 4 | `laundry_line.png` (jointe) : les trois draps ondulent au vent vers la droite, poteaux et corde immobiles |
+| 1 | `pennant_wave` | 96 × 336 | 6 | 10 | `garde_pennant.png` (joint) : le fanion rouge claque au vent vers la droite, mât immobile |
+| 1 | `chimney_smoke` | 96 × 288 | 8 | 6 | **alpha doux** : volutes de fumée grise et chaude qui montent et s'étirent vers la droite, sans cheminée (le bas de l'image est la sortie du conduit) |
+| 1 | `brazier_fire` | 48 × 58 | 6 | 10 | flammes et braises d'un brasero (sans le brasero), orange et jaune, étincelles |
+| 1 | `edge_waterfall` | 288 × 576 (3 × 6 m) | 6 | 10 | **alpha doux** sur les bords : le ruisseau qui tombe du bord de l'île dans le vide, eau claire et écume blanche, brume en bas ; le haut de l'image est la lèvre de pierre |
+| 1 | `birds_flock` | 192 × 96 | 6 | 10 | cinq petits oiseaux sombres en vol, battements d'ailes décalés, vus de côté vers la droite |
+| 1 | `falling_leaf_gold` | 16 × 16 | 8 | 10 | une feuille d'automne or qui tournoie en tombant (rotation et retournement, la feuille reste au centre) |
+| 1 | `falling_leaf_rust` | 16 × 16 | 8 | 10 | même chose, feuille rouille |
+| 2 | `reeds_sway` | 144 × 134 | 4 | 3 | `reeds.png` (jointe) : les roseaux se balancent doucement vers la droite, pied immobile |
+| 2 | `grass_sway` | 96 × 77 | 4 | 4 | `tall_grass.png` (jointe) : l'herbe haute ondule vers la droite, pied immobile |
+| 2 | `windsock_wave` | 115 × 384 | 4 | 6 | `wind_sock.png` (jointe) : la manche à air se gonfle et ondule vers la droite, mât immobile |
+| 2 | `bunting_wave` | 576 × 96 | 4 | 5 | `bunting.png` (section 10.2) : les fanions de la guirlande flottent |
+| 2 | `vigil_bell_ring` | 134 × 230 | 6 | 6 | `vigil_bell.png` (jointe) : la cloche se balance régulièrement d'un côté à l'autre sur les 6 images (la 6e s'enchaîne sur la 1re), portique immobile |
+| 2 | `fountain_water` | 288 × 240 | 4 | 8 | `fountain.png` (section 10.2) : l'eau tombe du bec et ride le bassin |
+| 2 | `pigeons` | 38 × 29 | 4 | 4 | pigeon gris au sol qui picore, tourné vers la droite |
+| 2 | `butterfly` | 24 × 24 | 4 | 12 | papillon orangé qui bat des ailes, vu de dessus |
+| 3 | `fireflies` | 12 × 12 | 4 | 4 | **alpha doux** : petite lueur jaune-vert qui pulse (marais, colline au crépuscule) |
+| 3 | `furnace_steam` | 96 × 192 | 6 | 8 | **alpha doux** : jets de vapeur blanche d'un four enchanté, vers le haut (le bas de l'image est la grille du four) |
+| 3 | `cafe_door_bell` | 48 × 48 | 4 | 6 | clochette de laiton qui oscille, pendue à une petite potence de fer fixée au mur au-dessus d'une porte : la potence part du bas de l'image (l'ancre) et reste immobile |
 
 ## 13. Ciel, nuages et lointain
 
-`assets/hd2d/sky/`. Consigne de la section 8 du cahier n° 1, puis :
+`assets/hd2d/sky/`. Consigne de la section 8 du cahier n° 1, puis : densité de **48 px/m** pour les
+nuages, les îles lointaines, l'île n° 53 et `horizon_islands` ; **96 px/m** pour la brume
+(`mist_band`) et les rais de lumière (posés dans les bois) ; les deux ciels au cadrage de `sky.png`.
+Nuages : centrés, marge transparente tout autour (ils dérivent dans le ciel).
 
 | Prio | Nom | Taille (px) | Description à coller |
 | --- | --- | --- | --- |
@@ -667,8 +677,19 @@ Une PR par lot. Dans chaque lot, la priorité 1 d'abord.
 5. Dans la description de la PR : la liste des fichiers livrés, ceux qui manquent, et les écarts
    connus (taille, cadrage).
 
-L'intégration (placement dans les zones, nouveaux formats dans le moteur, vérifications
-`tools/hd2d_assets.py`) se fait ensuite de notre côté.
+L'intégration (placement dans les zones, nouveaux formats dans le moteur) se fait ensuite de
+notre côté. Vérification d'une livraison : `python3 tools/hd2d_assets.py check` connaît toutes
+les images de ce cahier (`tools/hd2d_manifest.json`, clé `lot`) ; `check --lot B` ne vérifie
+qu'un lot : taille exacte (bande animée : images × largeur), fond transparent, alpha 0 ou 255
+hors « alpha doux », image collée au bord bas (panneaux, flancs, chaque image d'une bande) ou
+centrée (ce qui vole), décalques jamais coupés par un bord ni en rectangle plein, flancs en
+pignon ou en mur plein selon le toit, raccords des tuiles, des tuiles `_b` avec leur tuile
+d'origine bord à bord, des bordures et des lisières, boucle des bandes sans saut. `fit` ramène une
+image trop grande à sa taille (une bande : toutes ses images à la même échelle) ;
+`sheet <png> --lot B` (ou `--kind anim`) fait la planche de contrôle d'un lot ; après une tuile
+de sol, `atlas` refait l'atlas (27 tuiles). Toute image du cahier a déjà un remplaçant en pixel
+art au même chemin et au même format (`gen`) : l'image livrée prend sa place sans rien changer
+d'autre.
 
 ## 17. Pour l'intégration (le jeu, pas l'image)
 

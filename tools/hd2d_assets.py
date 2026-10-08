@@ -450,7 +450,7 @@ def _load(entry):
     return Image.open(path)
 
 
-def check_image(entry, by_name=None):
+def check_image(entry, by_path=None):
     """Problèmes d'une image du manifeste (liste vide si elle est conforme)."""
     problems = []
     img = _load(entry)
@@ -495,9 +495,13 @@ def check_image(entry, by_name=None):
         if score > SEAM_LIMIT:
             problems.append("raccord %s visible (écart %.1f)" % ("gauche-droite" if wrap == "x" else "haut-bas", score))
     other_name = entry.get("variant_of") or entry.get("pairs_with")
-    if other_name and by_name is not None and other_name in by_name:
-        other = _load(by_name[other_name])
-        if other is not None and other.size == img.size:
+    # L'image d'origine est dans le même dossier (ground/rock, pas props/rock).
+    other_path = os.path.dirname(entry["path"]) + "/" + str(other_name) + ".png"
+    if other_name and by_path is not None:
+        other = _load(by_path[other_path]) if other_path in by_path else None
+        if other is None or other.size != img.size:
+            problems.append("%s absente ou d'une autre taille" % other_name)
+        else:
             other = other.convert("RGBA")
             axes = ("x", "y") if kind == "tile" else (wrap or "x",)
             for axis in axes:
@@ -509,12 +513,12 @@ def check_image(entry, by_name=None):
 
 def cmd_check(lot=""):
     manifest = load_manifest()
-    by_name = {entry_name(e): e for e in manifest["images"]}
+    by_path = {e["path"]: e for e in manifest["images"]}
     bad = 0
     count = 0
     for entry in _select(manifest, (), lot):
         count += 1
-        problems = check_image(entry, by_name)
+        problems = check_image(entry, by_path)
         if problems:
             bad += 1
             print("%s : %s" % (entry["path"], " ; ".join(problems)))
