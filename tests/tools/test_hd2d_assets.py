@@ -65,6 +65,57 @@ class ManifestContractTests(unittest.TestCase):
         self.assertEqual(self.manifest["density_px_m"], 96)
         self.assertEqual(self.entries["assets/characters/ithea/ithea.png"]["animations"]["parle"], {"frames": 2, "fps": 6, "loop": True})
 
+    def test_priority_tables_and_directional_families_remain_in_same_delivery(self):
+        document = (ROOT / self.manifest["source_document"]).read_text(encoding="utf-8")
+        section, subsection = "", ""
+        table_entries = {}
+        for line in document.splitlines():
+            if line.startswith("## "):
+                section, subsection = line.split()[1].rstrip("."), ""
+            elif line.startswith("### "):
+                subsection = line.split()[1]
+            if not re.match(r"\| [1-4] \|", line):
+                continue
+            columns = [column.strip() for column in line.strip("|").split("|")]
+            filename = re.search(r"`([^`]+)`", columns[1]).group(1)
+            path = None
+            if section == "3" and subsection == "3.4":
+                path = (ROOT / "assets/characters" / (filename + ".png")).resolve().relative_to(ROOT).as_posix()
+            elif section == "4":
+                path = "assets/hd2d/ground/" + filename + ".png"
+            elif section == "5":
+                path = "assets/hd2d/cliff/" + filename
+            elif section == "6" and subsection == "6.1":
+                path = "assets/hd2d/buildings/" + filename + ".png"
+            elif section == "6" and subsection == "6.2":
+                path = "assets/hd2d/buildings/materials/" + filename + ".png"
+            elif section == "7":
+                path = "assets/hd2d/props/" + filename + ".png"
+            elif section == "8":
+                path = "assets/hd2d/sky/" + filename
+            if path:
+                table_entries[path] = int(columns[0])
+        self.assertEqual(len(table_entries), 117)
+        for path, priority in table_entries.items():
+            with self.subTest(path=path):
+                self.assertEqual(self.entries[path]["priority"], priority)
+
+        for path, entry in self.entries.items():
+            with self.subTest(path=path):
+                self.assertIn(entry.get("priority"), (1, 2, 3, 4))
+                if path.startswith(("assets/characters/", "assets/enemies/")):
+                    directory = Path(path).parent
+                    base = (directory / (directory.name + ".png")).as_posix()
+                    self.assertEqual(entry["priority"], self.entries[base]["priority"])
+
+        # Generic pickups belong with the existing small-image delivery. Their
+        # IDs are an adaptation; the supplied HISTOIRE.md list is unavailable.
+        for entry in self.entries.values():
+            if entry["kind"] == "item":
+                self.assertEqual(entry["priority"], 3)
+            if entry["kind"] == "fx":
+                self.assertFalse(entry["required"])
+
 
 class AssetDeliveryTests(unittest.TestCase):
     def setUp(self):

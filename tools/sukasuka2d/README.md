@@ -104,3 +104,22 @@ téléchargement, teste les filtres et le débordement horizontal sur mobile. Il
 produit une capture de bureau, une capture mobile et un résultat JSON. Il
 nécessite Chromium et `playwright-core` ; `PLAYWRIGHT_MODULE` et `CHROMIUM_PATH`
 permettent d’en préciser les chemins.
+
+## Livraison par priorité
+
+Les lots 2, 3 et 4 héritent des priorités documentaires ; les vues et portraits
+restent dans le même lot que le personnage. Les effets facultatifs restent
+procéduraux. Chaque lot est contrôlé avant création de la galerie et du ZIP :
+
+```sh
+python tools/sukasuka2d/make_priority_package.py --priority 2
+python tools/sukasuka2d/make_priority_package.py --priority 3
+python tools/sukasuka2d/make_priority_package.py --priority 4
+```
+
+`--include-native` ajoute les sources conservées ; `--output` choisit le ZIP.
+Une image requise absente ou non conforme interrompt la livraison. Les checks
+séparés utilisent `tools/hd2d_priorityN_manifest.json`. La bibliothèque de tous
+les lots dépasse 25 Mo ; cette taille ne correspond pas à celle du jeu Web, qui
+exporte les personnages réellement utilisés. Le contrôle global de bibliothèque
+signale toujours le dépassement de son budget de 25 Mo, sans le masquer.

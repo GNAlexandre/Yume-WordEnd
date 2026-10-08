@@ -1,0 +1,73 @@
+{
+  "status": "all_priority_batches_delivered_technical_checks_pass",
+  "characters": 52,
+  "enemy_id": "timere",
+  "directions": [
+    "front",
+    "back",
+    "right"
+  ],
+  "left": "mirror_right",
+  "npc_combat": false,
+  "combatants": [
+    "chtholly",
+    "willem",
+    "ithea",
+    "nephren",
+    "nopht",
+    "rhantolk",
+    "lillia"
+  ],
+  "batches": [
+    {
+      "priority": 1,
+      "png_count": 29,
+      "json_count": 6,
+      "image_bytes": 7130005,
+      "required_files_present": true
+    },
+    {
+      "priority": 2,
+      "png_count": 82,
+      "json_count": 21,
+      "image_bytes": 14023741,
+      "required_files_present": true
+    },
+    {
+      "priority": 3,
+      "png_count": 69,
+      "json_count": 30,
+      "image_bytes": 9542842,
+      "required_files_present": true
+    },
+    {
+      "priority": 4,
+      "png_count": 136,
+      "json_count": 102,
+      "image_bytes": 20693223,
+      "required_files_present": true
+    }
+  ],
+  "png_count": 316,
+  "atlas_json_count": 159,
+  "godot_asset_checks": 20308,
+  "godot_asset_failures": 0,
+  "old_anime_sha256_unchanged": true,
+  "optional_fx": "procedural in game, no PNG claimed",
+  "foot_anchors_artistically_validated": false,
+  "cycles_artistically_validated": false,
+  "library_total_image_bytes": 51389811,
+  "library_missing_required": 0,
+  "library_nonconforming_images": 0,
+  "library_budget_errors": [
+    "Les images du manifeste atteignent ou dépassent 25 Mo."
+  ],
+  "archive_checks": "CRC+SHA-256 verified; each extracted batch gallery verified in Chromium at desktop and390px",
+  "project_check": {
+    "tests_passed": 515,
+    "assertions": 8638,
+    "smoke_scenes": 92,
+    "result": "passed",
+    "web_budget": "under25MiB compressed wasm+pck"
+  }
+}

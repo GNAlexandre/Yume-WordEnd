@@ -36,6 +36,26 @@
         "zero": 981943,
         "opaque": 0,
         "partial": 590921
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/golem_directions.png": "8e37123404cbe49cbd35974b6642787d901c0ef3ce3244af24c7edff22195927"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -74,6 +94,26 @@
         "zero": 1119224,
         "opaque": 0,
         "partial": 453640
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/ballman_directions.png": "ae844ae881566d00c9adc0d13aa1cc509762348d3fe1542d15a3b32351ecab40"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -140,7 +180,28 @@
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 4 EQUALLY SPACED COLUMNS and 3 EQUALLY SPACED ROWS. ONLY THREE ROWS, four sprites each row, body260pxhigh. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT FRONT facingviewer; row2 STRICT BACK facing entirely away, hiddenface NO EYES; row3 STRICT RIGHT PROFILE lookingright. Four phases of FAST ROLLING carriage wheel rotation and small skull bounce; wheels visibly spokes different angles in each frame. Bodycamera slightelevated10degrees. Source identity: Eboncandle present form, a large ivory skull with delicate red sigil seam traces mounted on small elaborate brass gold four-wheeled carriage with lantern posts as p62; no humanoid body, the whole cart fits frame, expression via jaw slightly opened right. These are two different times of SAME Souwong and SAME Eboncandle not extra invented names.",
-      "correction_sha256": "b9e3a08863242b47c80ab1c092900e0834b0753dff899c337346eba5036ec6b1"
+      "correction_sha256": "b9e3a08863242b47c80ab1c092900e0834b0753dff899c337346eba5036ec6b1",
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/eboncandle_skull_correction.png": "b9e3a08863242b47c80ab1c092900e0834b0753dff899c337346eba5036ec6b1",
+          "assets/source/resumed_2d/pixel/characters/eboncandle_skull_directions.png": "a9dabd1edd1a98926b3f618afe54dbfc866494d74c4e68d5236a61a3e8ceaca6"
+        },
+        "animation_review_required": true
+      }
     },
     {
       "id": "pixel_cyclops_doctor_directions",
@@ -178,6 +239,26 @@
         "zero": 1103320,
         "opaque": 0,
         "partial": 469544
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/cyclops_doctor_directions.png": "e90b2fa5073c329da0c76a8c60fde251038af43c4a825f28087837affaedf6dd"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -228,7 +309,28 @@
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 2 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT BACK facing entirely away, hiddenface NO EYES. TWO talking frames, hand small gesture, cane held. Facing away entirely NOface, NOeye. Bodycamera slightelevated10degrees. Source identity: {\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}",
-      "correction_sha256": "1cdf942ff41bbd489b48f9de889b9829a28eb4f1fdd94bca4da574b0955b31a3"
+      "correction_sha256": "1cdf942ff41bbd489b48f9de889b9829a28eb4f1fdd94bca4da574b0955b31a3",
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/knight_feline_correction.png": "1cdf942ff41bbd489b48f9de889b9829a28eb4f1fdd94bca4da574b0955b31a3",
+          "assets/source/resumed_2d/pixel/characters/knight_feline_directions.png": "df25541f168ed90e96e4d4898b064c26ad9e3ed2d54e12dc41468307168ee759"
+        },
+        "animation_review_required": true
+      }
     },
     {
       "id": "pixel_godrey_directions",
@@ -266,6 +368,26 @@
         "zero": 1100705,
         "opaque": 0,
         "partial": 472159
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/godrey_directions.png": "e7b529667f618af8318181b37fc724a70ecc82ef5a9e6d88980a2d7c3e2dee36"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -304,6 +426,26 @@
         "zero": 1201645,
         "opaque": 0,
         "partial": 371219
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/frog_soldier_directions.png": "aa3e937412692b706c990b317917fccdb063fd896c702769a88a9329f8c04941"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -342,6 +484,26 @@
         "zero": 1179081,
         "opaque": 0,
         "partial": 393783
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/knight_canine_directions.png": "453f10904ab73175f09517f11cbc28248b5e0b0eb2ee7d64281cca3474c825bf"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -392,7 +554,28 @@
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 4 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 4 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT RIGHT PROFILE lookingright. FOUR distinct running phases ONLY; feet alternating extended, push-off, lifted, crossing. Camera slightelevated10degrees. Sourceidentity:{\"source_pages\": [69], \"body\": \"Stocky rounded stone automaton with pale worn surface patches\", \"uniform\": \"Blue cylindrical police kepi with golden emblem, diagonal blue-and-gold sash and blue waist covering\", \"identity_status\": \"Police role, no individual name supplied\"}",
-      "correction_sha256": "52cb4ceae76d57035bf07274c07854762ebe787c83e4a6418f753dfb33ad6200"
+      "correction_sha256": "52cb4ceae76d57035bf07274c07854762ebe787c83e4a6418f753dfb33ad6200",
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/police_golem_correction.png": "52cb4ceae76d57035bf07274c07854762ebe787c83e4a6418f753dfb33ad6200",
+          "assets/source/resumed_2d/pixel/characters/police_golem_directions.png": "974c9997657ea2cb3ca458693cb80467abcaca4fbe693782a7a5700d1e125161"
+        },
+        "animation_review_required": true
+      }
     },
     {
       "id": "pixel_baroni_directions",
@@ -450,7 +633,29 @@
         }
       },
       "correction_prompt": "REPLACEMENT TRUE PIXEL ART gameanimation strip matching the referenced character EXACT costume,palette,identity, simple crisp square pixelclusters and steppedshading, NO smoothpainting or3D. Transparent background,no groundshadows/text/grid/labels/portraits. Landscape1536x1024, ONLY 6 EQUALLY-SPACED columns, ONE ROW acrossmiddle containing 6 fullbody poses total. EVERY FIGURE ENTIRE including tall ears,wings,tail,birdtalons/boots; large transparentmargin, maxheight550px and maxwidth220px. Nooverlaps! Same scale/feetbaseline. Every pose STRICT RIGHTPROFILE lookingright; camera slightelevated10degrees. SIX distinct walking phases, all boots fullycontained. Arms alternate; leftleg/rightleg forward alternate. Identity:{\"source_pages\": [70], \"head\": \"Humanlike pale face, extremely tall white rabbit ears with pink inner surface, blond bangs and long ponytail, dark round spectacles\", \"uniform\": \"Black-and-gold standing collar officer uniform with shoulder rank bars\", \"reference_role\": \"Named rabbit officer; not anonymous shorter rabbit at p71\", \"ear_color\": \"#E4DACE\"}",
-      "correction_sha256": "ab1a8205de78396984a9b6feb40778580dafef18895559bf43f5462ae9c93e75"
+      "correction_sha256": "ab1a8205de78396984a9b6feb40778580dafef18895559bf43f5462ae9c93e75",
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/baroni_directions.png": "90098e3d9e12d5c219be91a65560fd4b49f486ce40acb78cc06812bbce93084f",
+          "assets/source/resumed_2d/pixel/characters/baroni_right_marche.png": "ab1a8205de78396984a9b6feb40778580dafef18895559bf43f5462ae9c93e75",
+          "assets/source/resumed_2d/pixel/characters/baroni_right_repos.png": "71c23aa97c058ea0baa700592b6d5a2b2e33b5a2216f13f8a77e1fbf98a57534"
+        },
+        "animation_review_required": true
+      }
     },
     {
       "id": "pixel_wolf_soldier_directions",
@@ -500,7 +705,28 @@
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 2 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT BACK facing entirely away, hiddenface NO EYES. TWO talking frames, subtle hand gesture. Facing away, nofacevisible. Bodycamera slightelevated10degrees. Source identity: {\"source_pages\": [71], \"head\": \"Gray wolf face, black brow tuft, cream muzzle, red scar over left eye\", \"body\": \"Broad-shouldered black officer coat, bare fur forearms and large gray tail\", \"identity_status\": \"Anonymous wolf crew, bottom left p71\", \"ear_color\": \"#938D7C\"}",
-      "correction_sha256": "0f13fe1b16841a0fa8920543174a202433c1cf913203b02ffbb9a27f663d35b3"
+      "correction_sha256": "0f13fe1b16841a0fa8920543174a202433c1cf913203b02ffbb9a27f663d35b3",
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/wolf_soldier_correction.png": "0f13fe1b16841a0fa8920543174a202433c1cf913203b02ffbb9a27f663d35b3",
+          "assets/source/resumed_2d/pixel/characters/wolf_soldier_directions.png": "e386042ff2cf3a743550d557aa11c3317533e158775420cde4e55749af839388"
+        },
+        "animation_review_required": true
+      }
     },
     {
       "id": "pixel_cat_soldier_directions",
@@ -538,6 +764,26 @@
         "zero": 1242162,
         "opaque": 0,
         "partial": 330702
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/cat_soldier_directions.png": "c09378b5fd4c814a209a94f67c6495b9f0efb0d7eeaaf4bc3e72f34771ce8f85"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -585,10 +831,57 @@
           "count": 4,
           "original_count": 0,
           "columns": 4
+        },
+        "back:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/rabbit_soldier_back_course.png",
+          "row": 0,
+          "rows": 1,
+          "count": 4,
+          "original_count": 4,
+          "columns": 4
+        },
+        "back:marche": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/rabbit_soldier_back_marche.png",
+          "row": 0,
+          "rows": 1,
+          "count": 6,
+          "original_count": 5,
+          "columns": 6
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 4 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 4 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT RIGHT PROFILE lookingright. FOUR distinct running phases ONLY; feet alternating extended, push-off, lifted, crossing. Bodycamera slightelevated10degrees. Source identity: RABBIT SOLDIER from lower far right p71, small brown/orange rabbit man, long straight rabbit ears pink inner, short black front hair tuft, stern narrow gold eyes, same navy/gold military uniform and boots, NO spectacles, NO long blond hair: distinct from Baroni. ",
-      "correction_sha256": "b6da03e7ae982dfa1bfec1dfd21f326702b7510edc5ce53127d8173951feaa13"
+      "correction_sha256": "b6da03e7ae982dfa1bfec1dfd21f326702b7510edc5ce53127d8173951feaa13",
+      "correction_prompts": {
+        "back:course": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 4 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth300px andmaximumheight420px, placeatcenters192,576,960,1344; allsamebaseline&scale. Body turned STRICTBACK directlyaway NO FACEorEYESEVENpartially. FOUR runningphases feetextended/pushoff/lifted/crossing. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Small orangebrownmale rabbit soldier stern, darknavygoldofficercoat+boots, tallpinkinnerrabbitears, shortdarkbangs NOglassesorponytail.",
+        "back:marche": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 6 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth180px andmaximumheight420px, placeatcenters128,384,640,896,1152,1408; allsamebaseline&scale. Body turned STRICTBACK directlyaway NO FACEorEYESEVENpartially. SIX walkingphases alternatingleft/rightleg, arms swing. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Small orangebrownmale rabbit soldier stern, darknavygoldofficercoat+boots, tallpinkinnerrabbitears, shortdarkbangs NOglassesorponytail."
+      },
+      "correction_sha256s": {
+        "assets/source/resumed_2d/pixel/characters/rabbit_soldier_back_course.png": "9560506e7b9e2cefa046b1db8da50476b7fb2443497f3469f2eeb3e6ab2c217b",
+        "assets/source/resumed_2d/pixel/characters/rabbit_soldier_back_marche.png": "9ff72fe54970e3e78a68aa0f496293f40741a847a7c4511a74306174fb6a17a3"
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/rabbit_soldier_back_course.png": "9560506e7b9e2cefa046b1db8da50476b7fb2443497f3469f2eeb3e6ab2c217b",
+          "assets/source/resumed_2d/pixel/characters/rabbit_soldier_back_marche.png": "9ff72fe54970e3e78a68aa0f496293f40741a847a7c4511a74306174fb6a17a3",
+          "assets/source/resumed_2d/pixel/characters/rabbit_soldier_correction.png": "b6da03e7ae982dfa1bfec1dfd21f326702b7510edc5ce53127d8173951feaa13",
+          "assets/source/resumed_2d/pixel/characters/rabbit_soldier_directions.png": "4f27683d6ab3219b9fbb96b5da31b9b6a22b0624907324dddf10d892553c80dd"
+        },
+        "animation_review_required": true
+      }
     },
     {
       "id": "pixel_hawk_soldier_directions",
@@ -626,6 +919,70 @@
         "zero": 1042914,
         "opaque": 0,
         "partial": 529950
+      },
+      "animation_sources": {
+        "front:repos": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/hawk_soldier_front_repos.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 1,
+          "columns": 2
+        },
+        "right:repos": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/hawk_soldier_right_repos.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 1,
+          "columns": 2
+        },
+        "front:marche": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/hawk_soldier_front_marche.png",
+          "row": 0,
+          "rows": 1,
+          "count": 6,
+          "original_count": 6,
+          "columns": 6
+        },
+        "right:marche": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/hawk_soldier_right_marche.png",
+          "row": 0,
+          "rows": 1,
+          "count": 6,
+          "original_count": 6,
+          "columns": 6
+        }
+      },
+      "correction_prompts": {
+        "right:marche": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 6 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth180px andmaximumheight420px, placeatcenters128,384,640,896,1152,1408; allsamebaseline&scale. Body turned STRICTRIGHTSIDE PROFILE lookingright. SIX walkingphases alternating birdlegs, wingsfoldedtight. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Adult humanlike blonde officer with one eye hidden by longbangs, brownsmallfeathercrown, largeochre foldedbirdwings, blackgoldmilitaryuniform,birdtalons NOshoes."
+      },
+      "correction_sha256s": {
+        "assets/source/resumed_2d/pixel/characters/hawk_soldier_right_marche.png": "793de938ffd775ae8b01dddfcff05872b82c1a4631e13a59641a457cdd8e2434"
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/hawk_soldier_directions.png": "b3b58350038ece511bac9951da5cfccb7d3b70b536a2b8975a5b7382ca91dcdc",
+          "assets/source/resumed_2d/pixel/characters/hawk_soldier_front_marche.png": "71cfbc501c9fba4a1e98f7ff2cc5a5c744d9ea17875095941b6667c4989056d3",
+          "assets/source/resumed_2d/pixel/characters/hawk_soldier_front_repos.png": "074a697cd35b5dd4fc5654b0639d9e36dde68ede4c44a518df4606dbaf3c56e1",
+          "assets/source/resumed_2d/pixel/characters/hawk_soldier_right_marche.png": "793de938ffd775ae8b01dddfcff05872b82c1a4631e13a59641a457cdd8e2434",
+          "assets/source/resumed_2d/pixel/characters/hawk_soldier_right_repos.png": "d2ec969e107976b2b2ea879f1297d084590c118c51cfbf5239abb5f02cb7eb3f"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -676,7 +1033,28 @@
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 2 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT BACK facing entirely away, hiddenface NO EYES. TWO standing idle breathing frames ONLY. Bodycamera slightelevated10degrees. Source identity: {\"source_pages\": [71], \"head\": \"White pigeonlike head with short coral-pink beak and orange eyes\", \"wings\": \"Long white feathered wings folded from upper back to knee\", \"feet\": \"Exposed orange bird legs with three forward toes\", \"identity_status\": \"Anonymous bird ship crew, upper p71\"}",
-      "correction_sha256": "55a58822dd1d720cb80624c96df40f594321be54783697d2df22521dc75e2f97"
+      "correction_sha256": "55a58822dd1d720cb80624c96df40f594321be54783697d2df22521dc75e2f97",
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/bird_soldier_correction.png": "55a58822dd1d720cb80624c96df40f594321be54783697d2df22521dc75e2f97",
+          "assets/source/resumed_2d/pixel/characters/bird_soldier_directions.png": "666d5e3f115a7f8d4b62ed6e655b14e4deead7b41dd41e9f769d6428692e5a14"
+        },
+        "animation_review_required": true
+      }
     },
     {
       "id": "pixel_cat_waiter_directions",
@@ -712,6 +1090,43 @@
         "zero": 1163263,
         "opaque": 0,
         "partial": 409601
+      },
+      "animation_sources": {
+        "right:parle": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 1,
+          "columns": 2
+        }
+      },
+      "correction_prompts": {
+        "right:parle": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 2 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth300px andmaximumheight420px, placeatcenters384,1152; allsamebaseline&scale. Body turned STRICTRIGHTSIDE PROFILE lookingright. TWO talkinggestures cupheldontray, entireboots visible. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Warmgraymale adultcat,white shirt,mutedbrownwaistcoat,darktrousers,longbeigeapron,tea cup heldsafelyontray. Smileandtinyvisiblecanines."
+      },
+      "correction_sha256s": {
+        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851"
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/cat_waiter_directions.png": "c91c0b5760e9a4f504d5af8a802b6d651008b9cdc22fa5f0d837345f538d4ecc",
+          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -748,6 +1163,26 @@
         "zero": 1172879,
         "opaque": 0,
         "partial": 399985
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/snack_vendor_directions.png": "3d5a52cf55a13b531e86adb5f4b0e342f85c771b439ea2d5ee9022b4e6f9c48e"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -784,6 +1219,26 @@
         "zero": 1189647,
         "opaque": 0,
         "partial": 383217
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/ramikeldi_directions.png": "e7b0bd20d5a7e99a693117b4b9d70eba04fbb5ac0691db92b43d0bda2c2d1f12"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -832,7 +1287,28 @@
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 4 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 4 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT BACK facing ENTIRELYaway with NOface/eyes. FOUR distinct running phases ONLY, entire back to camera, noface; coat flaps, alternatingsteps. Camera slightelevated10degrees. Sourceidentity:ferryman of island53: adult reptilian male slate olive scales, small reptile muzzle, practical long ochre waterproof coat, brown pilot cap and flight goggles on brow, dark trousers and boots, hand at hip, no fantasy armour. ",
-      "correction_sha256": "b6635338c3423e48e9a56f19fee659eb1666f4138d43312f586f865f8bf29b64"
+      "correction_sha256": "b6635338c3423e48e9a56f19fee659eb1666f4138d43312f586f865f8bf29b64",
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/ferryman_correction.png": "b6635338c3423e48e9a56f19fee659eb1666f4138d43312f586f865f8bf29b64",
+          "assets/source/resumed_2d/pixel/characters/ferryman_directions.png": "a939b1f6be28fb8406f7c0d203c47c32476c1d8056b8b9f765b96844bee862ed"
+        },
+        "animation_review_required": true
+      }
     },
     {
       "id": "pixel_baker_directions",
@@ -880,7 +1356,28 @@
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 2 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT RIGHT PROFILE lookingright. TWO talking gesture frames ONLY. Whole boots MUST be included with padding, no cropping. Camera slightelevated10degrees. Sourceidentity:baker: enormous round bear-headed male with chestnut fur, small round bear ears, pale rolled sleeves, flour-dusted ivory apron, brown trousers, oversized boots, loaf held in cloth at elbow. Natural professions, not armed enemies. Show correct obvious animal traits; all fully clad.",
-      "correction_sha256": "4cfc8a818ba2a8628c1aa876724861dc5fa11fa0a4c42feccb31cbb936be901b"
+      "correction_sha256": "4cfc8a818ba2a8628c1aa876724861dc5fa11fa0a4c42feccb31cbb936be901b",
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/baker_correction.png": "4cfc8a818ba2a8628c1aa876724861dc5fa11fa0a4c42feccb31cbb936be901b",
+          "assets/source/resumed_2d/pixel/characters/baker_directions.png": "a92d2d617aa0fd5f3928f2817eb392d40b05d1ee220d66809e0bf2089063a4d2"
+        },
+        "animation_review_required": true
+      }
     },
     {
       "id": "pixel_egg_vendor_directions",
@@ -916,6 +1413,26 @@
         "zero": 1126225,
         "opaque": 0,
         "partial": 446639
+      },
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/egg_vendor_directions.png": "80a5f5c0c89255458e8757075d6ea15ed9933b6eb31d62bf3e1503cdd385fdc7"
+        },
+        "animation_review_required": true
       }
     },
     {
@@ -964,7 +1481,28 @@
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 2 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT RIGHT PROFILE lookingright. TWO talking gesture frames ONLY, brass telescope lowered beside body then gesturing. Camera slightelevated10degrees. Sourceidentity:Reptilian Garde lookout, navy goldmilitaryuniform, brass spyglass, height1.9m, originalNPCvisual adaptation",
-      "correction_sha256": "8dd2ca58536998f72ca7fe01525bd922dd92010967ef4693223b261f9a3b1136"
+      "correction_sha256": "8dd2ca58536998f72ca7fe01525bd922dd92010967ef4693223b261f9a3b1136",
+      "source_validation": {
+        "status": "passed_component_cut_and_frame_counts",
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "frame_counts": {
+          "repos": 2,
+          "marche": 6,
+          "course": 4,
+          "parle": 2
+        },
+        "total_body_frames": 42,
+        "portraits": 1,
+        "verified_source_sha256": {
+          "assets/source/resumed_2d/pixel/characters/garde_lookout_correction.png": "8dd2ca58536998f72ca7fe01525bd922dd92010967ef4693223b261f9a3b1136",
+          "assets/source/resumed_2d/pixel/characters/garde_lookout_directions.png": "28d7e35c3a630b9b7b2791aba18f3b729a6518921c8b8d8ea5bf64eb23122793"
+        },
+        "animation_review_required": true
+      }
     }
   ]
 }
