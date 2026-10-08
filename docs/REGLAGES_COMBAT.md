@@ -1,4 +1,4 @@
-# Réglages de la sensation de combat (jalon M1)
+# Réglages de la sensation de combat (jalon M1, lisibilité HD-2D du lot H7)
 
 Tous les chiffres qui font la sensation du combat, pour les ajuster sans lire le code. Chaque
 ligne donne le fichier, la propriété, la valeur actuelle, son effet et la valeur de l'easter egg
@@ -21,6 +21,12 @@ Comment régler :
 Valeurs changées à l'intégration M1 : **recul des deux premiers coups d'épée** 5 → 2,5 m/s (le
 premier coup sortait un Normal de la portée du deuxième) et **rayon d'activation du panneau**
 1,3 → 0,9 m (docs/DECISIONS.md, section « Intégration M1 »).
+
+Ajouts du lot H7 (combat lisible en vue fixe) : **préparation** des coups et des charges des
+Timeres (`windup`), **arrêt sur image** (`hitstop`) et **secousse** (`shake`) dans
+`data/attacks`, préparation plus lente du Grand, teinte de chaque corps et tremblement du sol
+dans `data/enemies` ; aucune règle de l'easter egg ne change (section « Lisibilité en vue
+fixe » plus bas ; tests `test_combat_fx.gd`, `test_enemy.gd`, `test_combat_vigil.gd`).
 
 ## Joueur : déplacement
 
@@ -49,6 +55,8 @@ premier coup sortait un Normal de la portée du deuxième) et **rayon d'activati
 | `player_combat.gd` → `combo_window` | 0,4 s | Délai après un coup pendant lequel un appui enchaîne le suivant (un appui *pendant* le coup enchaîne aussi) | pas d'enchaînement |
 | `data/attacks/sword_1.tres`, `sword_2.tres` → `damage` / `knockback` | 1 / **2,5 m/s** (0,28 m) | Coups 1 et 2 | 1 dégât ; recul du Timere 170 px/s, 0,42 m |
 | `data/attacks/sword_3.tres` → `damage` / `knockback` | 1 / 8 m/s (0,89 m) | 3e coup : grand recul final | — |
+| `sword_1.tres`, `sword_2.tres` → `hitstop` / `shake` | 0,05 s / 0,025 m | (H7) Coup porté : planche du joueur et Timere touché figés, l'image tressaille | — |
+| `sword_3.tres` → `hitstop` / `shake` | 0,08 s / 0,05 m | (H7) Le 3e coup pèse plus | — |
 | `sword_3.tres` → `cooldown` | 0,3 s | Pause forcée après le 3e coup (un appui pendant ce temps est perdu) | — |
 | `sword_*.tres` → `range_m` / `arc_deg` | 1,2 m / 90° | Secteur de l'épée devant le joueur (−Z de `Combat`) | boîte de 60 × 58 px devant (1,25 m) |
 | `player_combat.gd` → `sword_height` | 1,4 m | Hauteur du secteur (de 0,1 à 1,5 m au-dessus des pieds) | 58 px |
@@ -59,6 +67,7 @@ premier coup sortait un Normal de la portée du deuxième) et **rayon d'activati
 | `charge_wave.tres` → `range_m` / `speed` / `duration` | 8 m / 19,05 m/s / 0,42 s | Portée, vitesse et vie du projectile ; le joueur reste figé `duration` | 250 px/s pendant 1,1 s (5,7 m) ; joueur figé `DUREE_ONDE` 0,42 s |
 | `charge_wave.tres` → `width_m` | 2 m | Largeur de l'onde | 28 × 52 px |
 | `charge_wave.tres` → `knockback` | 9 m/s (1 m) | Recul des Timeres touchés, Grand compris | 170 px/s |
+| `charge_wave.tres` → `hitstop` / `shake` | 0,06 s / 0,04 m | (H7) Chaque Timere traversé se fige ; l'image tressaille dans le sens de l'onde | — |
 | `player_combat.gd` → `charged_flicker_rate` | 8 bascules/s | Alternance des deux images de charge pleine | 8 Hz |
 | `src/autoload/world_manager.gd` → `respawn_delay` | 2,2 s | Délai entre la mort et la réapparition au village | `DUREE_MORT` 2,2 s |
 
@@ -75,12 +84,17 @@ premier coup sortait un Normal de la portée du deuxième) et **rayon d'activati
 | → `aggro_range_m` (Timeres libres) | 10 m | 10 m | 12 m | 10 m | — (arène seulement) |
 | → `cooldown_scale` | 1 | 1 | 1 | 1,4 | Grand × 1,4 |
 | → `stoic` | non | non | non | oui (ne recule que sous l'onde) | `stoique` |
+| → `windup_scale` (H7) | 1 | 1 | 1 | 1,5 | — |
+| → `tint` (H7, multiplie la planche) | (1 ; 1 ; 0,88) | blanc | (1 ; 0,8 ; 0,62) | (0,66 ; 0,74 ; 0,86) | — |
+| → `strike_shake` (H7) | 0 | 0 | 0 | 0,04 m | — |
 
 | Fichier → propriété | Valeur | Effet | Easter egg |
 | --- | --- | --- | --- |
 | `data/attacks/bite.tres` → `range_m` | 0,8 m × échelle | Portée de la morsure devant le corps | 40 px × taille (0,83 m) |
 | `data/attacks/whip.tres` → `range_m` | 1,0 m × échelle | Portée du fouet | 48 px × taille (1,0 m) |
 | `bite.tres`, `whip.tres` → `cooldown` | 1,15 s | Recharge moyenne entre deux attaques | — |
+| `bite.tres` / `whip.tres` / `rush.tres` → `windup` (H7) | 0,3 / 0,35 / 0,4 s | Préparation avant le coup ou la charge (Grand : × 1,5, fouet 0,53 s) ; au contact, elle se loge dans la recharge | — |
+| `bite.tres`, `whip.tres` → `hitstop` / `shake` (H7) | 0,06 s / 0,08 m | Joueur mordu : crocs du Timere figés, secousse dans le sens du coup | — |
 | `src/enemies/enemy.gd` → `COOLDOWN_JITTER` | × [0,7 ; 1,3] | Recharge tirée entre 0,8 et 1,5 s (Grand 1,1 à 2,1 s) | hasard(0,8 ; 1,5) |
 | `enemy.gd` → `FIRST_COOLDOWN` | 0,2 à 0,8 s | Première attaque après l'apparition | hasard(0,2 ; 0,8) |
 | Planche `assets/enemies/timere/timere.json` → `morsure`, `fouet` | 4 images à 8 ips, `coup` [1, 2] | Attaque de 0,5 s ; elle ne blesse qu'entre 0,125 et 0,375 s | identique |
@@ -114,17 +128,40 @@ premier coup sortait un Normal de la portée du deuxième) et **rayon d'activati
 | `src/enemies/arena.gd` → `bounds_radius_m` | 12 m | En sortir entre deux vagues termine la série | bords de l'écran |
 | `src/enemies/arena.tscn` → `SphereShape3D_interact.radius` | **0,9 m** | Activation du panneau (jusqu'à ~2,5 m, toujours dans l'arène) | — |
 
-## Caméra (`src/player/camera_rig.gd`, `camera_rig.tscn`)
+## Caméra (`src/player/camera_rig.gd`, `camera_rig.tscn`, lot H5)
 
-| Propriété | Valeur | Effet |
+La caméra fixe HD-2D du socle (docs/DECISIONS.md, « Socle HD-2D — caméra fixe ») appartient au
+lot H5 ; ses réglages vivent dans `camera_rig.gd` et ne sont pas recopiés ici. Ce qui compte pour
+le combat : elle regarde toujours le nord (le haut de l'écran), inclinée de 32° (une distance
+nord-sud paraît 0,53 fois plus courte qu'une distance est-ouest), à 21 m du point visé (zoom de
+14 à 25 m) ; le verrouillage avance le point visé vers la cible (40 %, 5 m au plus) sans tourner.
+La secousse du combat (`ScreenShake`, ci-dessous) décale l'image par `Camera3D.h_offset` /
+`v_offset`, que `CameraRig` ne règle pas (docs/CONTRACT_REQUESTS.md, « H7 Combat »).
+
+## Lisibilité en vue fixe (lot H7)
+
+D'où vient un coup, quand frapper, quand s'écarter : ce qui doit se lire « où » est posé au sol à
+la place exacte de ce qu'il montre, ce qui doit se lire « quand » se voit au-dessus du corps. Les
+images sont dans `src/combat/fx/` (pixel art à 96 px/m, remplaçants de `make_fx.py`, qu'une image
+dessinée remplace sans toucher au code) ; aucun signe ne dépend du dessin des planches.
+
+| Fichier → propriété | Valeur | Effet |
 | --- | --- | --- |
-| `SpringArm3D.spring_length`, tangage de départ, `fov` | 6 m, −22°, 60° | Cadrage de départ |
-| `min_distance` / `max_distance` / `zoom_step` / `zoom_smoothing` | 3 m / 10 m / 0,75 m / 10 /s | Zoom à la molette |
-| `min_pitch_deg` / `max_pitch_deg` | −70° / +20° | Tangage permis |
-| `mouse_sensitivity` / `stick_speed` / `invert_y` | 0,0025 rad/px / (2,6 ; 1,6) rad/s / non | Orbite souris et stick droit |
-| `recenter_delay` / `recenter_speed` / `snap_speed` | 1 s / 2 /s / 8 /s | Recentrage derrière le joueur en marche, et à l'appui de verrouillage sans cible |
-| `lock_pitch_deg` / `lock_turn_speed` | −16° / 8 /s | Cadrage verrouillé |
-| `lock_focus` / `lock_focus_max` | 35 % / 4 m | Point visé avancé vers la cible verrouillée |
+| `data/attacks/*.tres` → `windup` | morsure 0,3 s, fouet 0,35 s, charge 0,4 s | État `windup` du Timere : il se ramasse (`enemy.gd` → `WINDUP_SQUASH` : + 10 % de large, − 14 % de haut), un éclat brille à sa tête (`GLINT_HEIGHT` 85 % de sa hauteur) et la zone exacte de sa Hitbox se dessine au sol (`Telegraph` : cercle net, remplissage qui atteint le bord au moment du coup) ; pour la charge du bondissant, le couloir (largeur du corps, distance + 1,5 m) |
+| `enemy.gd` → `_melee_lead()` | plus longue préparation de ses coups | La préparation commence quand la recharge n'en est plus qu'à cette durée : au contact, un coup toutes les 1,3 à 2 s comme avant ; seul le premier coup après l'approche attend sa préparation |
+| `data/attacks/*.tres` → `hitstop` | 0,05 à 0,08 s | Arrêt sur image : la planche figée (`CombatFx.freeze`, temps physique), le corps touché attend puis recule de la même distance |
+| `data/attacks/*.tres` → `shake` ; `data/enemies/timere_big.tres` → `strike_shake` | 0,025 à 0,08 m ; 0,04 m | Secousse de l'image, dans le sens du coup vu à l'écran, jamais de rotation |
+| `src/combat/screen_shake.gd` → `frequency` / `decay` / `max_amplitude` / `cross_ratio` | 24 Hz / 9 /s / 0,18 m / 0,3 | Oscillation, amortissement (10 % en 0,26 s), plafond, part de travers |
+| `src/combat/hit_flash.gd` → `flash_color` / `max_strength` | crème / 0,85 (joueur : rose, 0,75) | Éclair d'un combattant touché : sa silhouette exacte, 0,09 s (joueur 0,1 s : `player_combat.gd` → `FLASH_TIME`) |
+| `src/combat/combat_fx.gd` → `COLOR_*` | or (épée), or plus chaud (3e coup), bleu (onde), corail (crocs), sable (poussière) | Teinte des éclats d'impact, des crocs, du fouet et de la poussière |
+| `enemy.gd` → `IMPACT_SIZE` / `DUST_SIZE` / `DUST_KNOCKBACK` | × 1 / × 1,2 / 2 m/s | Éclats côté attaquant ; poussière soulevée par un recul d'au moins 2 m/s |
+| `enemy.gd` → `RUSH_DUST_EVERY` / `RUSH_GHOST_EVERY` | 0,1 s / 0,06 s | Traînée du bondissant pendant sa charge (poussière, images rémanentes) |
+| `player_combat.gd` → `SLASH_SIZE` | 2,5 × 1,25 m | Coup d'épée dessiné au sol sur les images « coup », mis à l'échelle de `range_m` (1,2 m ; l'image est dessinée pour l'arc de 90°), retourné au 2e coup, doré au 3e |
+| `player_combat.gd` → `LOCK_RING_RADIUS` / `LOCK_RING_SPIN` ; `AIM_SIZE` / `AIM_AHEAD` | 0,62 m × échelle / 1,5 rad/s ; 0,34 m / 0,9 m | Réticule au sol sous la cible verrouillée ; chevron de visée devant les pieds (verrouillage et charge) |
+| `player_combat.gd` → `SHADOW_RADIUS` ; `enemy.gd` → `SHADOW_MARGIN` | 0,4 m ; rayon du corps + 0,08 m | Ombre nette au sol (`GroundShadow`) ; celle du joueur reste au sol pendant un saut et rapetisse |
+| `enemy.gd` → `FLANK_RANGE` / `FLANK_MIN_DEG` | 4 m / 30° | De près, un Timere vient par les côtés de l'écran plutôt que pile au nord ou au sud du joueur, où les sprites se cachent l'un l'autre (l'épée, 90°, l'atteint encore) |
+| `enemy.gd` → `SEPARATION_DEPTH` | 0,7 | Dans l'écart entre Timeres, une distance nord-sud compte pour 0,7 fois sa longueur : deux Timeres l'un derrière l'autre (qui se chevauchent à l'écran) s'écartent de côté |
+| `src/enemies/telegraph.gd` → `glint_size` | 1,3 (× l'échelle du Grand) | Taille de l'éclat de préparation |
 
 ## Durées : cohérence vérifiée
 
@@ -147,7 +184,16 @@ Mesuré dans le vrai jeu (`tests/integration/test_m1_*.gd`, horloge à 60 images
 - **Dégâts subis** : 1 PV, 0,35 s figé, recul de 0,38 m, 1,2 s d'invincibilité ; quatre Timeres
   au contact ne retirent jamais deux PV en moins de 1,2 s (mort en 5 morsures, ~6 s).
 - **Rythme des Timeres** : une attaque toutes les 1,3 à 2 s chacun (recharge + 0,5 s
-  d'animation) ; on a 0,125 s pour reculer quand une morsure part.
+  d'animation), préparation comprise (`test_windup_does_not_slow_the_attack_cadence`) ; la
+  préparation se voit 0,3 s (morsure), 0,35 s (fouet), 0,53 s (fouet du Grand) avant
+  l'animation, puis on a encore 0,125 s pour reculer quand la morsure part. Un coup porté
+  pendant la préparation l'annule (la recharge court), sauf sur le Grand, qui ne bronche que
+  sous l'onde.
+- **Arrêt sur image** : un coup d'épée porté allonge le coup de 0,05 s (0,08 s pour le 3e) ;
+  trois coups qui touchent tous durent 1,04 s au lieu de 0,86 s.
+- **Veille jouée** (`test_combat_vigil.gd`, vraie partie, rythme réel, 5 PV) : un joueur qui lit
+  les signes atteint la vague 5 en 76 à 81 s avec 1 à 3 morsures reçues ; le même joueur sans
+  lire les signes en reçoit 3 à 6 et peut tomber à la vague 4.
 - **Vitesses par vague** : vague 1 × 1,04 (Petit 3,1 m/s), vague 5 × 1,2 (Petit 3,6 m/s, Coureur
   en charge 7,4 m/s), vague 13 et plus × 1,5 (Petit 4,5 m/s : plus rapide que la marche du joueur,
   qui doit courir ; Coureur en charge 9,3 m/s, plus rapide que la course). Mêmes rapports que
@@ -163,9 +209,12 @@ Mesuré dans le vrai jeu (`tests/integration/test_m1_*.gd`, horloge à 60 images
    plus longtemps (1,1 s). Allonger `duration` (et `range_m`) si elle paraît trop brève.
 4. **Recul subi** (3 m/s) et **clignotement** (invisible à 12 Hz ; l'easter egg passait à 35 %
    d'opacité, impossible avec l'alpha scissor des planches sans tri de transparence).
-5. **Caméra verrouillée** : une cible au contact est cachée derrière Chtholly (la caméra est dans
-   l'axe joueur → cible) ; un décalage latéral ou un tangage plus plongeant aiderait.
-6. **Feuillage** : la caméra traverse le feuillage des arbres (seuls les troncs ont une collision
-   pour le `SpringArm3D`) ; gênant en forêt.
-7. **Vitesse des Timeres** aux vagues hautes et **laisse des Timeres libres** (20 m : ceux de la
+5. **Vitesse des Timeres** aux vagues hautes et **laisse des Timeres libres** (20 m : ceux de la
    forêt abandonnent ~9 m avant le village).
+6. (H7) **Préparations** (0,3 / 0,35 / 0,4 s, Grand × 1,5) : assez longues pour s'écarter sans
+   rendre les Timeres mous ? Plus courtes, la vue fixe redevient punitive ; plus longues, la
+   veille devient facile.
+7. (H7) **Arrêt sur image** (0,05 à 0,08 s) et **secousse** (2,5 à 8 cm, à 21 m de la caméra) :
+   sensibles sans fatiguer l'œil pendant une vague de 13 Timeres ?
+8. (H7) **Teintes des corps** : utiles tant que les quatre corps partagent une planche ; à
+   retirer si chaque corps reçoit son dessin.
