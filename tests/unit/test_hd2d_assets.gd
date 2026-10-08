@@ -271,7 +271,10 @@ func test_building_sides_have_the_shape_of_their_roof() -> void:
 			var wall := roundi(float(entry["wall_m"]) * 96.0)
 			if image.get_pixel(0, 0).a > 0.5 or image.get_pixel(w - 1, 0).a > 0.5:
 				problems.append("%s : pignon aux coins du haut pleins" % path)
-			if image.get_pixel(floori(w / 2.0), 1).a < 0.5:
+			# Le faîtage touche le haut de l'image quelque part dans son tiers central (un épi de
+			# faîtage ou une pointe un peu décentrée suffit, comme tools/hd2d_assets.py).
+			var apex := image.get_region(Rect2i(floori(w / 3.0), 0, w - 2 * floori(w / 3.0), 2))
+			if apex.get_used_rect().size == Vector2i.ZERO:
 				problems.append("%s : pignon qui n'atteint pas le faîtage" % path)
 			var y := h - floori(wall / 2.0)
 			if image.get_pixel(0, y).a < 0.5 or image.get_pixel(w - 1, y).a < 0.5:
