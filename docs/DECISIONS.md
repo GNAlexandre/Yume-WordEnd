@@ -1800,3 +1800,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   projection, remise) dessinent l'avancée du toit plus bas que le haut du mur aux angles (21 à
   22 % de sa hauteur) ; le mur du volume, derrière, complète ce coin : l'outil tolère 25 %.
   L'enseigne en hélice, à 1 px du bas, y est collée (décalage sans perte).
+- **Livraisons A, D, F et corrections du ciel (G) fusionnées à la main sur `main`** (PR n° 15 à
+  18) ; l'intégration de la pose (scènes de P0, alpha doux) les reprend telles quelles (les images
+  de `main` font foi, y compris les cadrages du lot D que Codex a corrigés lui-même). Guirlande
+  de fanions et clochette du café : objets suspendus, accrochés par le haut, sans ancre au sol
+  (`anchor: free`). 399 images, 21 planches, 249 scènes : rien à reprendre.
