@@ -400,8 +400,8 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   caméra (ils sont encore au sud du quai, hors champ, dans `beach.tscn`).
 
 ## P0 — tests/unit/test_hd2d_decor.gd (H5, H9)
-- Touché par P0 (quelques lignes) : les scènes du cahier n° 2 (métadonnée `hd2d_category`) ne sont
-  plus vérifiées par sa liste `NON_BLOCKING` ni par sa règle de densité (noms en `island`,
+- Touché par P0 (quelques lignes) : les scènes du cahier n° 2 (métadonnée `hd2d_category`) ne
+  sont plus vérifiées par sa liste `NON_BLOCKING` ni par sa règle de densité (noms en `island`,
   `airship`, `floating`) : `test_hd2d_scenes.gd` le fait d'après la table de
   `tools/hd2d_scenes.py` et le manifeste ; `MAX_IMAGES_PER_ZONE` passe de 40 à 48 (44 au port avec
   les flancs et les hélices). La pose le dépassera : à régler par H5 sur les draw calls mesurés.
