@@ -1237,3 +1237,71 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   retirés ; nouvelles classes `DecorPanel` et `Building` ; règle du décor en images (CLAUDE.md) ;
   `tools/check.sh` fait respecter le budget de taille. Ni `project.godot`, ni `event_bus.gd`, ni
   les couches de collision ne changent.
+- **H1 — fusion des livraisons d'images (PR n° 2 et 3 de ChatGPT/Codex)** : `main` (7227cf1 puis
+  f7933e6) est fusionnée dans la branche HD-2D, qui fait foi pour le code, les outils, les docs,
+  les données et `export_presets.cfg` ; seules entrent dans l'arbre les images aux chemins du
+  cahier des charges et les planches des personnages de l'acte 1. Restent dans l'historique de
+  `main` (`git show f7933e6:<chemin>`, ou `git checkout f7933e6 -- <chemin>` pour les reprendre) :
+  `assets/source/**` (natifs, 380 Mo), `docs/sprites/**` (galeries, `LIVRAISON_*.md`, aperçus),
+  `assets/sprites2d/**` (trois grandes images d'aperçu : directions de Nygglatho et de Tiat, cour
+  du village), `data/visuals2d/**`, `scenes/dev/**`, `scenes/hd2d/**` (promenade de l'ancienne
+  version), `tools/sukasuka2d/**` (galeries et paquets ZIP, sans usage dans le jeu),
+  `tools/sukasuka3d/**`, `tools/hd2d_priority*_manifest.json`, `tools/hd2d_library_check.gd`, les
+  skins `sukasuka_*`, `docs/ASSETS_3D.md`, les changements de code faits pour la version 3D, et les
+  35 personnages des actes suivants (`almaria`, `ballman`, `baroni`, `bibliothecaire`,
+  `bird_soldier`, `bitora`, `cat_soldier`, `doctor`, `ebon_candle`, `ebon_candle_ancient`,
+  `ecluecla`, `elq`, `enfant`, `forgeron`, `frog_soldier`, `glick`, `godrey`, `golem`,
+  `hawk_soldier`, `illustote`, `jorget`, `kaya`, `knight_canine`, `knight_feline`, `lillia`,
+  `phyr`, `police_golem`, `rabbit_soldier`, `rinsha`, `sarya`, `suowong`, `suowong_young`,
+  `tilfey`, `willemia`, `wolf_soldier`) : l'export Web doit rester sous 25 Mo.
+- **H1 — images de décor livrées** : 95 des 96 images du manifeste prises telles quelles ;
+  `ring_stone` garde son remplaçant (pierre plate de 20 cm : rien ne dépasse 0,3 m dans le cercle
+  de veille) ; `distant_island_b` recadrée sur le bord bas (`fit`) ; `distant_island_b` et `_c`
+  débarrassées des îles « fantômes » lavande détachées autour de l'île (composantes bleutées
+  effacées, le reste intact) ; atlas du sol refait. Icônes d'objets : `flower_blue`,
+  `page_fragment`, `unknown` livrées à leur nom ; `berries`, `gear` et `cloth`, livrées sous les
+  noms de l'ancienne liste d'objets, deviennent `wild_berries`, `clock_gear` et `laundry_sheet`.
+- **H6 — trois vues par planche** (`SkinData.front_sheet`/`front_json`, `back_sheet`/`back_json`,
+  facultatives ; `SheetLoader.SIDE`/`FRONT`/`BACK`, `has_view`, `view_problem`, `view_texture`,
+  `view_json`, `frames_for(skin, view)` ; `CharacterVisual.current_view()`) : le profil
+  (`sprite_sheet` + `frames_json`, tourné vers la droite, en miroir pour la gauche) reste la
+  planche de référence et la seule vue des planches de l'easter egg et des remplaçants. La vue
+  suit la direction par rapport à la caméra fixe : à plus de 45° de l'axe gauche-droite de
+  l'écran, la face (vers le bas de l'écran) ou le dos (vers le haut), sinon le profil, avec une
+  zone morte de ± 10° (on ne quitte une vue qu'une fois la diagonale franchement passée). Une vue
+  n'est prise que si elle a exactement les animations, nombres d'images, cadences, boucles,
+  « coup » et « onde » du profil : l'horloge, les signaux et le combat ignorent la vue affichée,
+  et changer de vue n'émet rien. Taille d'un pixel par vue : la hauteur debout du profil est
+  gardée (Chtholly de face, dessinée à 130 px au lieu de 144, est agrandie de 11 %). Ombre :
+  celle du profil.
+- **H6 — ancres des planches livrées** (`tools/hd2d_sheets.py anchors`) : les ancres calculées
+  par Codex (« à revoir ») faisaient glisser les pieds (jusqu'à 50 px d'une image à l'autre de
+  face) ; elles sont recalculées : pieds sombres (ou alpha pour Nopht et le Timere) cherchés près
+  de l'axe du corps pour les images debout, images immobiles (repos, parle) recalées sur la 1re
+  image de repos par superposition des jambes, y sous les pieds. Chtholly et le Timere gardent les
+  ancres revues à l'œil avant ce recalage ; le dos de Ramikeldi et du boulanger (une queue ou un
+  bras cache un pied) est recalé sur le buste (`anchors --torso`, clé `torso` du manifeste).
+  Planches de contrôle : `python3 tools/hd2d_sheets.py strip`.
+- **H6 — « parle » à une autre échelle** : dans 13 vues (boulanger, serveur, passeur, Nephren,
+  vendeur du snack et Tiat de profil ; Nephren et Tiat de face ; marchande d'œufs, Limeskin,
+  Nygglatho et Tiat de dos ; Limeskin de profil), « parle » est dessinée 6 à 36 % plus petite ou
+  plus grande que « repos » : le personnage rapetissait en se mettant à parler. Ces vues jouent
+  les images de « repos » à la cadence de « parle » (`hd2d_sheets.py alias parle repos`) jusqu'à
+  ce que les dessins soient refaits (liste dans le manifeste, clé `aliases`). Willem n'a pas de
+  « parle » : il garde « repos » en conversation.
+- **H6 — PNJ et skins branchés** : les 17 PNJ de l'acte 1 (`data/npcs/visuals/`) et les skins
+  Nopht et Rhantolk prennent les planches livrées en trois vues ; Ithea et Nephren deviennent
+  jouables (`data/skins/ithea_soldier.tres`, `nephren_soldier.tres`, mêmes planches que leur PNJ,
+  sept animations de combat) sous un autre id que leur PNJ : la limite connue demeure (leur PNJ
+  reste présent quand on les joue, les cacher rendrait leurs quêtes impossibles ; à trancher avec
+  l'histoire). Les planches des PNJ non jouables sont réduites aux animations du cahier (3.2 :
+  repos, marche, parle ; `hd2d_sheets.py trim`) : la `course` livrée en plus et le combat de Willem
+  (qui n'est pas jouable) sortent de l'arbre (planches complètes dans `main`, f7933e6), 1,3 Mo de
+  moins dans l'export ; la marche, que les PNJ ne jouent pas encore, reste (ses défauts d'échelle
+  ne sont que signalés). `tests/unit/test_npc.gd` (L6) demandait aux visuels de PNJ les sept
+  animations de combat des anciennes silhouettes ; il suit désormais le cahier.
+- **H1 — mesures** : export Web 23,5 Mo compressés (12,4 au commit de départ 3fe0c66 ; 24,8 avec
+  les planches complètes des PNJ), budget 25 Mo ; arbre du dépôt 40 Mo (8,7 au départ, 465 dans
+  `main` avec les natifs et les galeries). Réserves possibles : les douze tuiles de sol, inutiles
+  à l'exécution (1,1 Mo, docs/CONTRACT_REQUESTS.md), la marche des PNJ (1,4 Mo), l'atlas du sol
+  réduit à 256 couleurs (1,1 Mo).

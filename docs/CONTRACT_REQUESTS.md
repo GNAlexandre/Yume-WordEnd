@@ -188,3 +188,24 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   suivie et son objectif, mais le journal ne s'ouvre pas.
 - Systèmes et textes, `{player}` dans `src/ui/journal.gd` : toujours ouverte ;
   `src/ui/hud_journal.gd` reste la solution (testée par `test_player_name.gd`).
+
+## H1 / H6 — trois vues dans les contrats (PLAN.md sections 3 et 5)
+- Besoin : `SkinData` a quatre propriétés facultatives de plus (`front_sheet`, `front_json`,
+  `back_sheet`, `back_json`), `SheetLoader` les constantes `SIDE` / `FRONT` / `BACK` et
+  `view_texture`, `view_json`, `has_view`, `view_problem`, `frames_for(skin, view)`,
+  `read_sheet(skin, view)`, `pixel_size(skin, sheet, view_sheet)`, et `CharacterVisual`
+  `current_view()` ; l'interface existante est inchangée (`test_contracts.gd` vert).
+- Proposition : à la prochaine PR « contrats », ajouter ces noms aux lignes `SkinData`,
+  `SheetLoader` et `CharacterVisual` de PLAN.md section 3, et à la section 5 (« Comment les
+  sprites 2D vivent… ») : trois vues par personnage, vue choisie selon la direction à l'écran.
+- En attendant : documentés dans `src/visuals/*.gd` et docs/DECISIONS.md (H6).
+
+## H1 — marge du budget de l'export Web
+- Besoin : avec les images livrées, l'export pèse environ 23,5 Mo compressés sur 25 ; les douze
+  tuiles de sol (`assets/hd2d/ground/*.png`, 1,1 Mo une fois importées) partent dans l'export alors
+  que le jeu ne lit que l'atlas (`ground/atlas/ground_atlas.png`).
+- Proposition (PR « contrats », `export_presets.cfg`) : ajouter `assets/hd2d/ground/*.png` à
+  `exclude_filter` (l'atlas est dans un sous-dossier ; les démos et les tests lisent les tuiles
+  depuis les sources) ; autre réserve : l'atlas (2,4 Mo importé) ne profite pas de la palette de
+  chaque tuile (768 couleurs en tout) et gagnerait 1,1 Mo réduit à 256 couleurs.
+- En attendant : rien ; `tools/check.sh` mesure l'export à chaque passage.
