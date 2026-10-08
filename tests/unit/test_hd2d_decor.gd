@@ -39,8 +39,11 @@ const NON_BLOCKING: Array[String] = [
 ]
 ## Images (matériaux) au plus par zone : un draw call par image et par case visible ; les vues
 ## mesurées restent sous 75 draw calls (tests/integration/demo_hd2d.gd, budget : 200). (P0) 44 au
-## port avec les flancs des bâtiments et les hélices des navires.
-const MAX_IMAGES_PER_ZONE := 48
+## port avec les flancs des bâtiments et les hélices des navires. (Pose du cahier n° 2) Relevé :
+## la variété demandée (3 à 6 variantes par famille) dépasse 48 images par zone, mais une vue n'en
+## montre qu'une partie ; la vraie limite, ≤ 200 draw calls par vue, est mesurée par le test de
+## chaque zone sous plusieurs angles.
+const MAX_IMAGES_PER_ZONE := 140
 ## (P0) Métadonnée des scènes du cahier n° 2 (tools/hd2d_scenes.py) : leur collision et leur
 ## densité suivent leur catégorie et le manifeste, vérifiées par test_hd2d_scenes.gd.
 const SCENES_META := &"hd2d_category"
