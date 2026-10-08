@@ -7,6 +7,10 @@ une caméra fixe inclinée, comme dans *Octopath Traveler*. Chaque image a déj�
 généré (`tools/hd2d_assets.py`) au même chemin et au même format : une image livrée prend sa
 place sans toucher au code.
 
+Suite : le **cahier n° 2** (`docs/ASSETS_HD2D_MONDE.md`) commande les images qui enrichissent le
+décor (variantes, sous-bois, sols, flancs de bâtiments, objets, animations, ciel) et refait les
+dirigeables.
+
 ## 1. Bloc de style (à coller au début de chaque conversation)
 
 ```text
@@ -323,6 +327,9 @@ Décor lointain (48 px/m) :
 | --- | --- | --- | --- |
 | 3 | `airship_ferry` | 576 × 336 | petit dirigeable du passeur : coque de bois et de cuivre, ballon allongé beige, deux rotors |
 | 3 | `airship_barocupot` | 1056 × 480 | Barocupot, transport militaire de la Garde ailée : coque sombre, deux pales de rotor, trappe |
+
+Ces deux dirigeables sont **refaits** d'après le cahier n° 2 (`docs/ASSETS_HD2D_MONDE.md`,
+section 11) : navires sans ballon, de profil, à 96 px/m, hélices animées à part.
 
 ## 8. Ciel, mer de nuages et horizon
 
