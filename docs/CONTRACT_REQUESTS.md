@@ -188,3 +188,46 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   suivie et son objectif, mais le journal ne s'ouvre pas.
 - Systèmes et textes, `{player}` dans `src/ui/journal.gd` : toujours ouverte ;
   `src/ui/hud_journal.gd` reste la solution (testée par `test_player_name.gd`).
+
+## H2 — chemin du porche (H5, masques du sol)
+- Besoin : rien au sol ne mène de la cour au porche de Nygglatho (premier objectif de l'acte 1,
+  « Rejoindre Nygglatho sous le porche ») : on y va par l'herbe ; un chemin de terre guiderait
+  l'œil vers elle.
+- Proposition : un segment de plus dans `PATHS` de `src/world/shaders/terrain.gdshader`, du bord
+  de la cour aux marches du porche : (−6,4, −6,4) → (−9, −8,6), même demi-largeur que les autres
+  chemins. Le décor du village laisse ce couloir libre (`test_village_decor.gd` : abord de
+  Nygglatho).
+- En attendant : la lampe à cristal du porche (entre Nygglatho et Nephren) et les parterres
+  encadrent l'abord.
+
+## H2 — découpe autour du joueur pour toutes les zones (H5)
+- Besoin : la découpe du village (`src/world/zones/village/see_through.gd`) fabrique au
+  lancement une copie de `panel.gdshader` augmentée de `see_through.gdshaderinc` ; le port et
+  les bois en auraient besoin aussi (rue, grands sapins), et une seule source serait plus sûre.
+- Proposition : H5 inclut la découpe dans `panel.gdshader` (uniformes `see_through_*`, ligne
+  d'effacement à la fin de `fragment()`) et un nœud commun (ou `PropBatcher`) pose le centre sur
+  le joueur à chaque image ; `see_through.gd` ne ferait plus que poser les uniformes, ou
+  disparaîtrait.
+- En attendant : la copie suit le code de `panel.gdshader` (fonction `fragment()` augmentée au
+  lancement) ; `test_village_decor.gd` vérifie que l'ajout se fait, compile et garde tous les
+  uniformes du panneau.
+
+## H2 — cheminée et terrasse à linge de l'entrepôt (H1, images)
+- Besoin : MONDE.md (sections 2.2 et 3) cite la cheminée de briques qui fume et la terrasse à
+  linge du toit (`warehouse_roof_deck`), absentes de `docs/ASSETS_HD2D.md` et de
+  `tools/hd2d_manifest.json`.
+- Proposition (section 7, priorité 3) : `assets/hd2d/props/warehouse_chimney.png`, 96 × 192 px
+  (1 × 2 m) : souche de cheminée de briques rouge sombre, chapeau de pierre, sans fumée ;
+  `assets/hd2d/props/warehouse_roof_deck.png`, 576 × 154 px (6 × 1,6 m) : terrasse plate vue de
+  face, plancher, rambarde de fer basse (0,9 m, à hauteur de fée), cordes et deux draps blancs.
+  H2 les pose sur le toit de `warehouse_main` (panneaux sans collision).
+- En attendant : le toit reste nu (avec la caméra actuelle, il sort du cadre dès qu'on est dans
+  la cour).
+
+## H2 — une vue de la cour dans `tools/hd2d_shots.sh` (H8)
+- Besoin : les vues `village` (−5, −2,5) et `dialogue` cadrent le quart nord-ouest ; le grand
+  arbre, le linge, le potager et l'aire de jeux n'y entrent pas.
+- Proposition : une vue `cour` depuis le Spawn du village (0, 9), qui montre le puits, les deux
+  cordes à linge, le potager, les bancs et l'entrée des chemins ; éventuellement une vue
+  `arbre` (9, −8) pour le grand arbre, la balançoire et la remise.
+- En attendant : captures faites à part par H2 (planches `build/shots/h2_avant_apres_*.png`).

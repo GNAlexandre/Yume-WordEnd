@@ -1237,3 +1237,25 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   retirés ; nouvelles classes `DecorPanel` et `Building` ; règle du décor en images (CLAUDE.md) ;
   `tools/check.sh` fait respecter le budget de taille. Ni `project.godot`, ni `event_bus.gd`, ni
   les couches de collision ne changent.
+- **H2 — découpe du décor autour du joueur** : plutôt qu'un fondu par décor (il faudrait un
+  matériau par bâtiment, donc des draw calls et des images de plus), une découpe tramée (Bayer
+  4 × 4 en pixels d'écran) dans une ellipse autour du corps du joueur (0,8 × 1,1 m) efface tout
+  décor plus proche de la caméra que lui : entrepôt, arbres, draps, palissade. Le nœud
+  `SeeThrough` du village (`see_through.gd`, après `Geometry`) remplace chaque matériau de panneau
+  des meshes fondus par une copie dont le shader est le code de `panel.gdshader` (H5) augmenté au
+  lancement de `see_through.gdshaderinc` : même nombre de matériaux, aucun draw call de plus, et
+  les changements de H5 au panneau sont suivis. Les PNJ ne bougent pas : aucun décor n'est posé
+  devant eux (`test_village_decor.gd` le vérifie pixel par pixel depuis la caméra de leur
+  conversation), la découpe ne suit que le joueur.
+- **H2 — hauteur de l'entrepôt** : murs gardés à 6,5 m et façades à leur taille (les images
+  dessinées livrées dans `main` le sont à cette taille ; consigne de l'orchestrateur) ; le
+  cadrage de l'entrepôt passe par la caméra (H5).
+- **H2 — composition de la cour** : la descente de la salle des armes passe à l'angle sud-est de
+  l'aile (−13,9, −1,35), près de Willem, et laisse voir la porte de l'infirmerie au milieu du
+  pignon ; la seconde corde à linge passe à l'est d'Almita (15,8, 8,6) : elle la cachait, Almita
+  se détache maintenant sur les draps de la première ; la lampe nord-ouest de la place passe au
+  porche (−5,5, −8,7), entre Nygglatho et Nephren ; les parterres de façade, posés dans l'aile,
+  vont le long des murs libres ; les arbres du premier plan restent contre la palissade sud
+  (z ≈ 18 à 19,6) pour encadrer le bas de l'image sans couvrir la cour ; potager en trois rangs,
+  deux buts de deux caisses à l'aire de jeux. Le décor n'utilise que des images partagées ou du
+  village (pas de décor propre aux bois ou au port).
