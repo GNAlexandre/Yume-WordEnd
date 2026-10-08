@@ -295,11 +295,26 @@ def birch_b(size, rnd):
     return tree(size, rnd, build, LEAF_YELLOW)
 
 
+def needles(c, base, density=0.12):
+    """Texture d'aiguilles sur les étages d'un sapin : petits traits clairs (à gauche) et sombres."""
+    tones = ramp(base, 5, spread=0.55)
+    alpha = c.img.getchannel("A")
+    for _ in range(int(c.w * c.h * density / 6)):
+        x, y = c.rnd.randrange(c.w), c.rnd.randrange(c.h)
+        if alpha.getpixel((x, y)) > 128:
+            r, g, b, _a = c.img.getpixel((x, y))
+            if abs(r - tones[1][0]) + abs(g - tones[1][1]) + abs(b - tones[1][2]) > 120:
+                continue
+            col = tones[4] if x < c.w * 0.45 and c.rnd.random() < 0.6 else tones[0]
+            c.line([(x, y), (x + c.rnd.choice([-2, -1, 1, 2]), y + 1)], col)
+
+
 def pine_small_a(size, rnd):
     w, h = size
     c = Canvas(w, h, rnd)
     trunk(c, w / 2.0, h, h * 0.6, w * 0.1, w * 0.06, base="#5A4436")
     pine_tiers(c, w / 2.0, h * 0.01, h * 0.9, w * 0.47, 7)
+    needles(c, "pine")
     return c.finish(darker("pine", 0.4))
 
 
@@ -318,6 +333,7 @@ def pine_small_b(size, rnd):
         c.poly([(cx, yt), (cx + right, yb), (cx + right * 0.4, yb - 6), (cx, yb), (cx - left * 0.5, yb - 5), (cx - left, yb)], tones[1])
         c.poly([(cx, yt), (cx - left, yb), (cx - left * 0.5, yb - 5), (cx, yb)], tones[3])
         c.poly([(cx, yt + 4), (cx - left * 0.5, yb - 8), (cx - left * 0.15, yb - 8)], tones[4])
+    needles(c, "pine")
     return c.finish(darker("pine", 0.4))
 
 
@@ -338,6 +354,7 @@ def pine_tall_b(size, rnd):
         c.poly([(cx, y + 3), (cx - half * 0.5, y + th - 7), (cx - half * 0.15, y + th - 8)], tones[4])
         y += th * 0.72
         k += 1
+    needles(c, mix("pine", "#2E3E3A", 0.3))
     return c.finish(darker("pine", 0.4))
 
 
@@ -411,7 +428,7 @@ def willow(size, rnd):
     pts = [(w * 0.46, h), (w * 0.42, h * 0.82), (w * 0.48, h * 0.66), (w * 0.44, h * 0.5)]
     for k in range(3):
         limb(c, pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1], w * (0.12 - 0.02 * k), w * (0.1 - 0.02 * k), "#6A5440")
-    crown(c, w * 0.5, h * 0.3, w * 0.34, h * 0.16, "#A8B048", 22, size=(0.12, 0.2))
+    leaf_mass(c, w * 0.5, h * 0.3, w * 0.36, h * 0.17, "#A8B048", density=1.1, grain=0.8)
     tones = ramp("#A8B048", 5)
     for k in range(60):
         x = w * (0.12 + 0.76 * k / 59.0) + rnd.uniform(-4, 4)
@@ -567,7 +584,7 @@ def treeline_autumn_b(size, rnd):
 # --- Arbustes, herbes, fleurs (section 7) -------------------------------------------------------
 
 
-def shrub(size, rnd, colors, shape="dome", stems=0, berries=None, bare=0, outline_base=GREEN):
+def shrub(size, rnd, colors, shape="dome", stems=0, berries=None, bare=0, outline_base=GREEN, dark=0.0):
     """Buisson : silhouette (dome, upright, low, cone, arch), tiges, baies, branches nues."""
     w, h = size
     c = Canvas(w, h, rnd)
@@ -588,7 +605,7 @@ def shrub(size, rnd, colors, shape="dome", stems=0, berries=None, bare=0, outlin
             "arch": [(0.28, 0.5, 0.24, 0.36), (0.6, 0.42, 0.3, 0.38), (0.82, 0.62, 0.16, 0.3)],
         }[shape]
         for k, (x, y, rx, ry) in enumerate(clusters):
-            crown(c, w * x, h * y, w * rx, h * ry, colors[k % len(colors)], 7, size=(0.2, 0.32))
+            leaf_mass(c, w * x, h * y, w * rx, h * ry, colors[k % len(colors)], density=1.2, grain=0.55, dark=dark)
     for _ in range(bare):
         x = rnd.uniform(w * 0.2, w * 0.8)
         y = rnd.uniform(h * 0.2, h * 0.5)
@@ -683,7 +700,7 @@ def flowers_tuft(size, rnd, petal, center, count, stem="grass", plume=False):
 def heather(size, rnd):
     w, h = size
     c = Canvas(w, h, rnd)
-    crown(c, w * 0.5, h * 0.62, w * 0.46, h * 0.44, "#8A5A6E", 9, size=(0.2, 0.3))
+    leaf_mass(c, w * 0.5, h * 0.62, w * 0.46, h * 0.4, "#8A5A6E", density=1.3, grain=0.4)
     for _ in range(int(w * h / 10)):
         x, y = rnd.uniform(4, w - 4), rnd.uniform(4, h - 2)
         if c.img.getpixel((int(x), int(y)))[3]:
@@ -822,8 +839,8 @@ def fg_grass(size, rnd):
 
 
 def fg_bush(size, rnd):
-    return shrub(size, rnd, [mix("leaf_rust", "#1E1418", 0.5), mix("leaf_rust", "#2A1A18", 0.4)], shape="low",
-                 outline_base="#1E1418")
+    return shrub(size, rnd, [mix("leaf_rust", "#1E1418", 0.35), mix("leaf_rust", "#2A1A18", 0.3)], shape="low",
+                 outline_base="#1E1418", dark=0.45)
 
 
 # --- Rochers et bords (section 8) ---------------------------------------------------------------
@@ -1061,7 +1078,7 @@ def floating_rock_c(size, rnd):
     c.poly([(w * 0.08, h * 0.46), (w * 0.56, h * 0.46), (w * 0.44, h * 0.84)], tones[3])
     c.rect(w * 0.06, h * 0.4, w * 0.94, h * 0.46, ramp(GREEN, 4)[2])
     limb(c, w * 0.56, h * 0.42, w * 0.56, h * 0.22, 6, 3)
-    crown(c, w * 0.56, h * 0.18, w * 0.16, h * 0.12, "leaf_gold", 8)
+    leaf_mass(c, w * 0.56, h * 0.18, w * 0.17, h * 0.13, "leaf_gold", density=1.1, grain=0.6)
     root = ramp("#5C4030", 3)
     for k in range(4):
         x = w * (0.32 + 0.1 * k)

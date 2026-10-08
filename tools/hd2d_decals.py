@@ -10,7 +10,7 @@ import random
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
-from hd2d_art import Canvas, darker, fractal, mix, posterize, ramp, rgba, seed_for, threshold, wrap_x, wrap_y
+from hd2d_art import Canvas, asset, darker, fractal, mix, posterize, ramp, rgba, seed_for, threshold, wrap_y
 from hd2d_ground import AUTUMN, leaf_sprite
 
 SOIL = "#5A4632"
@@ -277,8 +277,8 @@ def pebbles(size, rnd, count, streak=False):
             x, y = w * 0.5 + rnd.gauss(0, w * 0.2), h * 0.5 + rnd.gauss(0, h * 0.2)
         r = rnd.uniform(1.5, 4.0) if streak else rnd.uniform(2, 4)
         c = Canvas(int(2 * r) + 4, int(2 * r) + 4, rnd)
-        base = rnd.choice(["stone", mix("stone", "stone_dark", 0.3), mix("stone", "#E8DCC8", 0.3)])
-        c.blob(c.w / 2.0, c.h / 2.0, r, r * rnd.uniform(0.7, 0.95), ramp(base, 4))
+        base = rnd.choice([mix("stone", "stone_dark", 0.35), mix("stone", "stone_dark", 0.6), "stone_dark"])
+        c.blob(c.w / 2.0, c.h / 2.0, r, r * rnd.uniform(0.7, 0.95), ramp(base, 5, spread=0.35)[0:4])
         place(img, c.finish(darker(base, 0.55)), x, y)
     return img
 
@@ -668,37 +668,32 @@ def _edge_pair(name):
 
 
 def grass_edge(size, rnd):
+    """Bordure d'herbe : le haut reprend la tuile d'herbe livrée (même couleur que le sol voisin,
+    sans raccord à gauche et à droite comme elle), touffes et brins qui avancent sur le chemin."""
     w, h = size
-    tones = ramp("grass", 5, spread=0.45)
-    base = posterize(fractal(size, (16, 4), rnd, 3), tones[1:4], dither=90)
+    grass_tile = asset("ground/grass")
+    if grass_tile is None or grass_tile.width != w:
+        base = posterize(fractal(size, (16, 4), rnd, 3), ramp("grass", 5, spread=0.45)[1:4], dither=90)
+    else:
+        base = grass_tile.crop((0, 0, w, h))
+    mean = base.convert("RGB").resize((1, 1), Image.BOX).getpixel((0, 0))
+    tones = ramp(mean, 5, spread=0.5)
     depth = fractal((w, 1), (12, 1), rnd, 2)
     mask = Image.new("L", size, 0)
     md = ImageDraw.Draw(mask)
     for x in range(w):
-        y = 24 + depth.getpixel((x, 0)) * 26 // 255
-        md.line((x, 0, x, y), fill=255)
-    mask = wrap_x(mask, lambda im: im)
+        md.line((x, 0, x, 24 + depth.getpixel((x, 0)) * 26 // 255), fill=255)
     img = Image.new("RGBA", size, (0, 0, 0, 0))
     img.paste(base, (0, 0), mask)
-    c = Canvas(w, h, rnd)
-    c.img = img
-    c.draw = ImageDraw.Draw(img)
+    d = ImageDraw.Draw(img)
     for _ in range(int(w * 1.4)):
         x = rnd.uniform(0, w)
         y0 = 20 + depth.getpixel((int(x) % w, 0)) * 26 // 255
-        length = rnd.uniform(6, 34)
-        if y0 + length > h - 4:
-            length = h - 4 - y0
+        length = min(rnd.uniform(6, 34), h - 4 - y0)
         lean = rnd.uniform(-6, 6)
-        col = tones[rnd.randint(1, 4)]
+        col = rgba(tones[rnd.randint(1, 4)])
         for dx in (-w, 0, w):
-            c.draw.line((x + dx, y0, x + dx + lean, y0 + length), fill=rgba(col), width=1)
-    for _ in range(30):
-        x = rnd.uniform(0, w)
-        y = rnd.uniform(4, 40)
-        for dx in (-w, 0, w):
-            c.draw.rectangle((x + dx, y, x + dx + 2, y + 1), fill=rgba(rnd.choice(["leaf_rust", "leaf_gold", tones[4]])))
-    img = c.img
+            d.line((x + dx, y0, x + dx + lean, y0 + length), fill=col, width=1)
     img.putalpha(img.getchannel("A").point(lambda v: 255 if v >= 128 else 0))
     return img
 
