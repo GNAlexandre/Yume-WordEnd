@@ -3,13 +3,17 @@
 # et en CI. Se lance depuis n'importe où, dans n'importe quel worktree (tout est relatif à la
 # racine du dépôt qui contient ce script).
 #
-# Étapes : import, lint, tests GUT, fumée, export Web, capture de l'île. ROUGE (code 1) si :
+# Étapes : import, lint, tests GUT, fumée, (bureau) préréglages de bureau, export Web, capture
+# de l'île. ROUGE (code 1) si :
 #   - l'import, la fumée ou l'export impriment une erreur (ERROR:, SCRIPT ERROR, SHADER ERROR,
 #     Parse Error…) ou un WARNING absent de tools/warnings_allow.txt ;
 #   - gdlint ou gdformat --check échouent ;
 #   - un test GUT échoue, ou un script / fichier de test ne compile pas (GUT l'ignorerait
 #     sans échouer) ;
 #   - une scène ne s'instancie pas (tools/smoke.gd) ;
+#   - (bureau) les préréglages d'export « Windows Desktop » et « Linux » ou le script de
+#     l'installateur manquent (l'installateur lui-même, trop long ici, se construit par
+#     tools/build_desktop.sh et dans la tâche bureau de la CI : docs/bureau.md) ;
 #   - l'export Web échoue ou ne produit pas index.html / .js / .wasm / .pck, ou dépasse le budget
 #     de taille (tools/build_size.sh : 60 Mo compressés) ;
 #   - la capture a été rendue mais son journal contient une erreur ou un WARNING non toléré ;
@@ -98,6 +102,19 @@ if [ "$code" -ne 0 ]; then
   red "scène ou script en échec (build/smoke.log)"
 fi
 grep "^smoke" build/smoke.log
+
+step "bureau"
+# (bureau) Préréglages de l'application de bureau, à côté du Web (resté le préréglage par défaut).
+for preset in "Windows Desktop" "Linux"; do
+  grep -q "^name=\"$preset\"$" export_presets.cfg \
+    || red "préréglage d'export « $preset » absent d'export_presets.cfg (docs/bureau.md)"
+done
+[ -s tools/installer/wordend.nsi ] || red "tools/installer/wordend.nsi absent (docs/bureau.md)"
+templates="$HOME/.local/share/godot/export_templates/4.7.2.stable"
+if [ ! -f "$templates/windows_release_x86_64.exe" ]; then
+  echo "ATTENTION : template Windows absent de $templates (bash tools/setup.sh)"
+fi
+echo "ok : Windows Desktop, Linux (installateur : tools/build_desktop.sh)"
 
 if [ "${CHECK_FAST:-0}" = "1" ]; then
   echo
