@@ -105,6 +105,11 @@ const SHADOW_MARGIN := 0.08
 ## marqueur de cible du HUD qui se pose plus haut.
 const GLINT_HEIGHT := 0.85
 
+## Côté préféré du prochain Timere créé : il alterne, pour que deux Timeres arrivés en file
+## partent l'un à gauche, l'autre à droite (la parité des identifiants d'objets ne le garantit
+## pas : elle dépend de tout ce qui a été créé avant).
+static var _next_flank_side: float = 1.0
+
 ## Type d'ennemi (data/enemies/*.tres).
 @export var data: EnemyData
 ## Lâche data.drops à sa mort (faux pour les ennemis d'une arène).
@@ -192,7 +197,8 @@ func _ready() -> void:
 	_shadow = CombatFx.make_shadow(_body_radius + SHADOW_MARGIN * _base_scale)
 	add_child(_shadow)
 	hit_flash.bind(_sprite)
-	_flank_side = 1.0 if get_instance_id() % 2 == 0 else -1.0
+	_flank_side = _next_flank_side
+	_next_flank_side = -_next_flank_side
 	_hurt_time = clampf(_animation_time(&"degats"), HURT_TIME.x, HURT_TIME.y)
 	_cooldown = randf_range(FIRST_COOLDOWN.x, FIRST_COOLDOWN.y)
 	health.damaged.connect(_on_health_damaged)
