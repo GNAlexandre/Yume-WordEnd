@@ -1,0 +1,4 @@
+index.wasm                   brut     37,7 Mo   gzip      9,7 Mo
+index.pck                    brut     15,0 Mo   gzip     14,5 Mo
+wasm + pck : brut 52,7 Mo, compressé 24,2 Mo ; budget 25 Mo compressés : sous le budget
+dossier build/web complet (brut) : 53,1 Mo

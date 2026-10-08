@@ -1,0 +1,40 @@
+
+== import
+ok
+
+== lint
+ok
+
+== tests
+Scripts              98
+Tests               743
+Passing Tests       742
+Failing Tests         1
+Asserts           30119/30120
+* test_removed_skins_and_sheets_are_gone
+* test_playable_skins_have_a_full_sheet_at_chtholly_density
+* test_npc_visuals_keep_the_player_density
+    [Failed]:  [0.00961538461538461592] expected to equal [0.01041666666667] +/- [0.0003]:  pannibal : densité de Chtholly
+      at line 107
+* test_reload_reads_skins_dir
+4/5 passed.
+
+
+res://tests/unit/test_story_texts.gd
+* test_story_file_is_valid_and_has_every_text
+* test_lookups_fall_back
+--
+
+res://tests/unit/test_skin_registry.gd
+- test_npc_visuals_keep_the_player_density
+    [Failed]:  [0.00961538461538461592] expected to equal [0.01041666666667] +/- [0.0003]:  pannibal : densité de Chtholly
+          at line 107
+
+Totals
+------
+Warnings              3
+
+Scripts              98
+Tests               743
+
+ROUGE : tests GUT (code 1, build/tests.log)

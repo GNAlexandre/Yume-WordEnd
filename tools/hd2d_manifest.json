@@ -940,15 +940,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    },
-    "_front": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "nopht",
@@ -993,12 +985,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "tiat",
@@ -1009,18 +996,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    },
-    "_front": {
-     "parle": "repos"
-    },
-    "_back": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "pannibal",
@@ -1031,12 +1007,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "accepted": {
-    "side": [
-     "height"
-    ]
-   }
+   ]
   },
   {
    "id": "collon",
@@ -1059,12 +1030,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "_front": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "almita",
@@ -1086,15 +1052,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    },
-    "_front": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "cat_waiter",
@@ -1105,12 +1063,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "ramikeldi",
@@ -1135,12 +1088,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "baker",
@@ -1165,12 +1113,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "egg_vendor",
@@ -1181,12 +1124,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "_back": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "garde_lookout",

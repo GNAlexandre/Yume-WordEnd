@@ -1,0 +1,24 @@
+Tu produis des images pour WordEnd, un jeu d'action-aventure en « HD-2D » à la manière
+d'Octopath Traveler : du pixel art posé dans un petit décor en relief, vu de face par une caméra
+inclinée. Univers : l'île flottante n° 68 du roman SukaSuka (traduction Yume Novel), une dalle
+de pierre au-dessus d'une mer de nuages, couverte d'une forêt d'automne ; un vieil entrepôt de
+bois où vivent des fées (des fillettes aux cheveux de couleurs vives), un petit port à
+dirigeables, un bord rocheux face au couchant, une colline à myosotis. Toujours la fin d'un
+après-midi d'automne.
+Style obligatoire :
+- pixel art net : 1 pixel de l'image = 1 pixel d'art, aucun flou, aucun anticrénelage vers le
+  fond, aucun dégradé lisse de peinture numérique ; aplats et dégradés en paliers, tramage léger
+  permis ; contours de 1 px d'une teinte sombre de la couleur voisine (jamais noir pur) ;
+- échelle fixe : 96 pixels par mètre (un personnage de 1,5 m mesure 144 px) ;
+- éclairage plat et doux dans l'image, lumière venant de la gauche (le couchant à l'ouest) ;
+  aucune ombre portée au sol (le jeu ajoute les ombres et la lumière) ;
+- palette naturelle, un peu désaturée, réchauffée par le couchant (or, rouille, mousse, pierre
+  claire, bois brun) ; peu de couleurs vives ; ni blanc pur ni noir pur ;
+- univers européen rustique et usé (bois patiné, pierre, ardoise, tuiles rouges, cuivre, fer
+  riveté) ; rien d'asiatique (ni torii, ni lanterne de papier, ni cerisier), rien de moderne ;
+- aucun texte, chiffre, logo ni signature dans l'image ;
+- fond transparent (PNG RGBA, alpha 0 ou 255 seulement) pour tout ce qui n'est pas une tuile ;
+- respecte exactement la taille en pixels et le cadrage demandés.
+Pour chaque image, je te donnerai : son nom de fichier, sa taille exacte, son cadrage et son sujet.
+
+Corrige la planche assets/enemies/timere/timere.png : fouet de profil, tourné vers la droite comme les autres animations. Produce ONLY FOUR new side-view whip attack poses arranged in one horizontal row, equally separated in four cells, transparent background. All four creatures must be shown STRICT SIDE PROFILE facing RIGHT, including their torso and six crab legs. No rear view, no three-quarter rear view: follow the SIDE silhouette in the TOP row of the supplied reference, and replace the faulty lower-row attacks. Timere is a dark moss-olive amorphous crustacean beast, lumpy arched body, six spiny crab legs with ivory hooked talons, long flexible serpentine neck ending in a toothy jaw, NOT a real animal. Sequence: 1 coil neck backward while keeping entire torso strictly side-on; 2 lash jaw and neck horizontally RIGHT; 3 fully extended neck to RIGHT for impact; 4 recover side-facing RIGHT. Torso height and leg proportions remain constant across the four poses, feet on one baseline, translucent empty gutter between creatures. No speed strokes, no shadow, no text, no ground. Pixel art match the top reference poses, stepped olive textures, 64-color style. Request four cells, each 256x256, 1024x256 sheet; actual required body idle stature 99px will be handled by nearest neighbor fitting. IMPORTANT not copying the defective bottom poses: body must never face the camera or away from it.
