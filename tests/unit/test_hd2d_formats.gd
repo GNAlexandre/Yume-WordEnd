@@ -181,6 +181,37 @@ func test_foreground_panel_fades_around_the_player() -> void:
 	panel.free()
 
 
+func test_one_foreground_panel_drives_the_fade_for_all() -> void:
+	var texture := _strip(64, 256)
+	var panels: Array[DecorPanel] = []
+	for k in 3:
+		var panel := _panel(texture, Vector3(2.0 * k, 0.0, 4.0))
+		panel.foreground = true
+		panel.rebuild()
+		panels.append(panel)
+	var plain := _panel(texture, Vector3(0.0, 0.0, 8.0))
+	var processing := panels.filter(func(panel: DecorPanel) -> bool: return panel.is_processing())
+	assert_eq(processing.size(), 1, "un seul _process pour tous les panneaux de premier plan")
+	assert_false(plain.is_processing(), "un panneau ordinaire n'a pas de _process")
+	# Le meneur part : le suivant prend le relais, et l'effacement suit toujours le joueur.
+	var leader := processing[0] as DecorPanel
+	panels.erase(leader)
+	leader.free()
+	var next := panels.filter(func(panel: DecorPanel) -> bool: return panel.is_processing())
+	assert_eq(next.size(), 1, "relais pris par un autre panneau")
+	var player := add_child_autofree(PLAYER_STUB.instantiate()) as Node3D
+	player.global_position = Vector3(1.0, 0.0, -2.0)
+	player.reset_physics_interpolation()
+	await wait_physics_frames(2)
+	await wait_process_frames(2)
+	var material := _quad(panels[0]).material_override as ShaderMaterial
+	var center: Vector3 = material.get_shader_parameter(&"foreground_center")
+	assert_almost_eq(center, Vector3(1.0, 0.8, -2.0), Vector3.ONE * 0.01, "centre posé")
+	for panel: DecorPanel in panels:
+		panel.free()
+	plain.free()
+
+
 # --- Décalques au sol -------------------------------------------------------------------------
 
 

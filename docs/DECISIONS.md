@@ -1971,3 +1971,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   dans un nœud `Ambient` de la zone, hors de `Geometry` (le PropBatcher ne fond pas leur mesh, et
   `test_hd2d_decor.gd` refuse un mesh non fondu dans `Geometry`) ; régions bornées pour que la cour
   ne les dessine pas.
+- **Premier plan : un seul `_process` pour tous les panneaux** (remarque du lot P1 : 175 panneaux
+  de premier plan dans les bois, plusieurs centaines dans l'île posée, chacun appelé à chaque
+  image pour un travail fait une seule fois). Les panneaux de premier plan s'inscrivent dans
+  une liste statique de `DecorPanel` ; seul le premier a un `_process` et pose le centre de
+  l'effacement pour tous ; quand il quitte l'arbre, le suivant prend le relais. Même rendu.

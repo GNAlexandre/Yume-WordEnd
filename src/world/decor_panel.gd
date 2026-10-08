@@ -55,6 +55,10 @@ static var _panel_meshes: Dictionary = {}
 ## (H9) Matériaux de premier plan, et image où leur centre a été posé pour la dernière fois.
 static var _foreground_materials: Array[ShaderMaterial] = []
 static var _foreground_frame: int = -1
+## Panneaux de premier plan dans l'arbre : seul le premier a un _process (un appel par image au
+## lieu d'un par panneau, plusieurs centaines dans l'île posée) ; s'il quitte l'arbre, le
+## suivant prend le relais.
+static var _foreground_panels: Array[Node] = []
 static var _shadow_material: StandardMaterial3D
 static var _shadow_mesh: QuadMesh
 
@@ -173,7 +177,7 @@ func rebuild() -> void:
 	var size := size_m()
 	_quad.visible = texture != null
 	_shadow.visible = texture != null and shadow_width > 0.0
-	set_process(foreground and texture != null and not Engine.is_editor_hint())
+	_set_foreground_active(foreground and texture != null and not Engine.is_editor_hint())
 	if texture == null:
 		return
 	var phase := strip_phase() if frames > 1 else 0.0
@@ -290,7 +294,7 @@ static func material_for(
 
 ## (H9) Pose le centre de l'effacement des panneaux de premier plan sur le corps du joueur (groupe
 ## « player »), une fois par image quel que soit le nombre de panneaux ; sans joueur, rien ne
-## s'efface. Appelé par chaque panneau de premier plan à chaque image.
+## s'efface. Appelé à chaque image par le premier panneau de premier plan de l'arbre.
 static func update_foreground(tree: SceneTree) -> void:
 	var frame := Engine.get_process_frames()
 	if frame == _foreground_frame:
@@ -352,6 +356,24 @@ func _internal_mesh(node_name: StringName) -> MeshInstance3D:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSFORM_CHANGED and Engine.is_editor_hint():
 		_queue_rebuild()
+	elif what == NOTIFICATION_EXIT_TREE:
+		_set_foreground_active(false)
+	elif what == NOTIFICATION_ENTER_TREE and _quad != null:
+		_set_foreground_active(foreground and texture != null and not Engine.is_editor_hint())
+
+
+## Inscrit (ou retire) ce panneau parmi ceux de premier plan ; seul le premier inscrit traite
+## l'image (_process), le suivant prend le relais quand il part.
+func _set_foreground_active(active: bool) -> void:
+	var index := _foreground_panels.find(self)
+	if active and is_inside_tree():
+		if index < 0:
+			_foreground_panels.append(self)
+	elif index >= 0:
+		_foreground_panels.remove_at(index)
+		if index == 0 and not _foreground_panels.is_empty():
+			_foreground_panels[0].set_process(true)
+	set_process(not _foreground_panels.is_empty() and _foreground_panels[0] == self)
 
 
 func _queue_rebuild() -> void:
