@@ -259,6 +259,12 @@ def prepare_sprite(entry):
         hd.pixel_palette(fitted, 64).save(target, optimize=True)
         for new in output:
             new["portrait_path"] = target.relative_to(ROOT).as_posix()
+        output.append({"id": "pixel_" + identifier + "_portrait", "name": entry["name"] + " — portrait",
+                       "category": "characters", "style": "pixel_art", "character_ids": [identifier],
+                       "path": target.relative_to(ROOT).as_posix(), "source_path": raw_path.relative_to(ROOT).as_posix(),
+                       "source_parent_path": entry["source_path"], "dimensions": [256, 256], "layout": None,
+                       "source_sha256": hashlib.sha256(raw_path.read_bytes()).hexdigest(),
+                       "reference_pages": entry.get("reference_pages", []), "status": "fitted_portrait"})
     return output
 
 
@@ -319,7 +325,11 @@ def main():
                 failures.append({"id": source["id"], "error": str(error)})
                 entries.append({**source, "path": source["source_path"], "dimensions": source.get("native_dimensions", source.get("dimensions")),
                                 "layout": None, "status": "native_needs_correction", "limitations": [str(error)]})
-    json_write(catalog_path, {"status": "delivery_in_progress", "style": "pixel_art", "entries": archived + entries,
+    # A hero can have a bonus portrait in several directional sheets. The
+    # dedicated portrait processed later is the single authoritative delivery.
+    entries = list({entry["path"]: entry for entry in entries}.values())
+    json_write(catalog_path, {"status": "delivery_in_progress" if failures else "all_batches_fitted_animation_review",
+                              "style": "pixel_art", "entries": archived + entries,
                               "processing_failures": failures, "package_files": ["tools/hd2d_assets.py", "tools/hd2d_manifest.json", "tools/sukasuka2d/prepare_delivery.py", "scenes/hd2d/island68.tscn", "scenes/hd2d/island68.gd", "scenes/hd2d/README.md"]})
     json_write(ROOT / "build/hd2d-preparation.json", {"prepared_entries": len(entries), "failures": failures})
     print(json.dumps({"prepared_entries": len(entries), "failures": failures}, ensure_ascii=False, indent=2))

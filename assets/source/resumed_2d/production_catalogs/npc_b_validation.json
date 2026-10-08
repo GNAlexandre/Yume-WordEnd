@@ -1,0 +1,226 @@
+{
+  "status": "passed",
+  "npc_count": 22,
+  "direction_count": 66,
+  "body_frame_count": 924,
+  "portrait_count": 22,
+  "checks": [
+    "threshold alpha at128",
+    "current prepare_delivery.cut_rows on everyoriginal and replacement strip",
+    "exact2/6/4/2 real frames perorientation",
+    "all referenced source files exist and SHA256 recorded"
+  ],
+  "limits": [
+    "Cycles and foot contact still require review in Godot; this does not validate animation quality."
+  ],
+  "entries": [
+    {
+      "id": "golem",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [],
+      "status": "passed"
+    },
+    {
+      "id": "ballman",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [],
+      "status": "passed"
+    },
+    {
+      "id": "eboncandle_skull",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "front:course",
+        "back:course",
+        "right:course"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "cyclops_doctor",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [],
+      "status": "passed"
+    },
+    {
+      "id": "knight_feline",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "back:parle"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "godrey",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [],
+      "status": "passed"
+    },
+    {
+      "id": "frog_soldier",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [],
+      "status": "passed"
+    },
+    {
+      "id": "knight_canine",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [],
+      "status": "passed"
+    },
+    {
+      "id": "police_golem",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "right:course"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "baroni",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "right:repos",
+        "right:marche"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "wolf_soldier",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "back:parle"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "cat_soldier",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [],
+      "status": "passed"
+    },
+    {
+      "id": "rabbit_soldier",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "back:marche",
+        "back:course",
+        "right:course"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "hawk_soldier",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "front:repos",
+        "front:marche",
+        "right:repos",
+        "right:marche"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "bird_soldier",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "back:repos"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "cat_waiter",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "right:parle"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "snack_vendor",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [],
+      "status": "passed"
+    },
+    {
+      "id": "ramikeldi",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [],
+      "status": "passed"
+    },
+    {
+      "id": "ferryman",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "back:course"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "baker",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "right:parle"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "egg_vendor",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [],
+      "status": "passed"
+    },
+    {
+      "id": "garde_lookout",
+      "directions": 3,
+      "full_body_frames": 42,
+      "portrait_count": 1,
+      "replacement_clips": [
+        "right:parle"
+      ],
+      "status": "passed"
+    }
+  ]
+}

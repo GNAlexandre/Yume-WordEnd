@@ -1,0 +1,4739 @@
+{
+  "version": 1,
+  "source_document": "docs/ASSETS_HD2D.md",
+  "source_sha256": "abd97e1dfd9128b29e7b5ae1caad6c8aee5b870efaf3a67baf18dad0ece8fd8b",
+  "density_px_m": 96,
+  "distant_density_px_m": 48,
+  "style": "pixel_art",
+  "default_resampling": "nearest",
+  "max_image_bytes": 1000000,
+  "max_total_image_bytes": 25000000,
+  "inventory_date": "2026-10-07",
+  "user_overrides": [
+    "FRONT/BACK/RIGHT for every movement; left mirrors right.",
+    "NPC course:4 frames,12fps; parler:2 frames,6fps.",
+    "Willem is one of the seven requested combatants.",
+    "All original anime images are preserved; fixed-grid drafts remain compatible."
+  ],
+  "directional_runtime_contract": {
+    "directions": [
+      "front",
+      "back",
+      "right"
+    ],
+    "left": "mirror_right",
+    "combat_layout": {
+      "columns": 6,
+      "rows": 7,
+      "kind": "directional_rows_combat"
+    },
+    "combat_with_talk_layout": {
+      "columns": 6,
+      "rows": 8,
+      "ids": [
+        "ithea",
+        "nephren"
+      ]
+    },
+    "npc_layout": {
+      "columns": 6,
+      "rows": 12,
+      "kind": "directional_rows_npc",
+      "orientation_row_offsets": {
+        "front": 0,
+        "back": 4,
+        "right": 8
+      }
+    },
+    "legacy_layouts": [
+      "directional_combat",
+      "directional_npc"
+    ],
+    "npc_separate_layout": {
+      "columns": 6,
+      "rows": 4,
+      "kind": "directional_rows_npc"
+    }
+  },
+  "unresolved_lists": [
+    "HISTOIRE.md section6 item IDs unavailable: only existing data/items IDs are enumerated.",
+    "Community fairy names are unspecified in the supplied document.",
+    "Additional user-requested characters are inventoried separately in resumed_2d/catalog.json."
+  ],
+  "wildcard_contracts": [
+    {
+      "pattern": "assets/characters/fairy_*/fairy_*.png",
+      "kind": "sprite",
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 5,
+          "fps": 14,
+          "loop": true
+        },
+        "attaque": {
+          "frames": 4,
+          "fps": 14,
+          "loop": false,
+          "hit_frames": [
+            1,
+            2,
+            3
+          ]
+        },
+        "charge": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "wave_frame": 3
+        },
+        "degats": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "mort": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "density_px_m": 96
+    },
+    {
+      "pattern": "assets/characters/fairy_*/fairy_*_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "alpha": "binary"
+    }
+  ],
+  "entries": [
+    {
+      "path": "assets/characters/nopht/nopht.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/nopht/nopht.json",
+      "idle_height_px": 134,
+      "height_m": 1.4,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 5,
+          "fps": 14,
+          "loop": true
+        },
+        "attaque": {
+          "frames": 4,
+          "fps": 14,
+          "loop": false,
+          "hit_frames": [
+            1,
+            2,
+            3
+          ]
+        },
+        "charge": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "wave_frame": 3
+        },
+        "degats": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "mort": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "3.4"
+    },
+    {
+      "path": "assets/characters/nopht/nopht_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "3.1"
+    },
+    {
+      "path": "assets/characters/rhantolk/rhantolk.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/rhantolk/rhantolk.json",
+      "idle_height_px": 142,
+      "height_m": 1.48,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 5,
+          "fps": 14,
+          "loop": true
+        },
+        "attaque": {
+          "frames": 4,
+          "fps": 14,
+          "loop": false,
+          "hit_frames": [
+            1,
+            2,
+            3
+          ]
+        },
+        "charge": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "wave_frame": 3
+        },
+        "degats": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "mort": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "3.4"
+    },
+    {
+      "path": "assets/characters/rhantolk/rhantolk_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "3.1"
+    },
+    {
+      "path": "assets/characters/almaria/almaria.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/almaria/almaria.json",
+      "idle_height_px": 150,
+      "height_m": 1.56,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/almaria/almaria_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/almaria/almaria_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/almaria/almaria_front.json",
+      "idle_height_px": 150,
+      "height_m": 1.56,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/almaria/almaria_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/almaria/almaria_back.json",
+      "idle_height_px": 150,
+      "height_m": 1.56,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/suowong_young/suowong_young.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/suowong_young/suowong_young.json",
+      "idle_height_px": 156,
+      "height_m": 1.62,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/suowong_young/suowong_young_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/suowong_young/suowong_young_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/suowong_young/suowong_young_front.json",
+      "idle_height_px": 156,
+      "height_m": 1.62,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/suowong_young/suowong_young_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/suowong_young/suowong_young_back.json",
+      "idle_height_px": 156,
+      "height_m": 1.62,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/suowong/suowong.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/suowong/suowong.json",
+      "idle_height_px": 175,
+      "height_m": 1.82,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/suowong/suowong_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/suowong/suowong_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/suowong/suowong_front.json",
+      "idle_height_px": 175,
+      "height_m": 1.82,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/suowong/suowong_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/suowong/suowong_back.json",
+      "idle_height_px": 175,
+      "height_m": 1.82,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/elq/elq.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/elq/elq.json",
+      "idle_height_px": 108,
+      "height_m": 1.12,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/elq/elq_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/elq/elq_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/elq/elq_front.json",
+      "idle_height_px": 108,
+      "height_m": 1.12,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/elq/elq_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/elq/elq_back.json",
+      "idle_height_px": 108,
+      "height_m": 1.12,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/sarya/sarya.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/sarya/sarya.json",
+      "idle_height_px": 95,
+      "height_m": 0.99,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/sarya/sarya_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/sarya/sarya_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/sarya/sarya_front.json",
+      "idle_height_px": 95,
+      "height_m": 0.99,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/sarya/sarya_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/sarya/sarya_back.json",
+      "idle_height_px": 95,
+      "height_m": 0.99,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/willemia/willemia.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/willemia/willemia.json",
+      "idle_height_px": 99,
+      "height_m": 1.03,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/willemia/willemia_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/willemia/willemia_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/willemia/willemia_front.json",
+      "idle_height_px": 99,
+      "height_m": 1.03,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/willemia/willemia_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/willemia/willemia_back.json",
+      "idle_height_px": 99,
+      "height_m": 1.03,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/ecluecla/ecluecla.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ecluecla/ecluecla.json",
+      "idle_height_px": 97,
+      "height_m": 1.01,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/ecluecla/ecluecla_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/ecluecla/ecluecla_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ecluecla/ecluecla_front.json",
+      "idle_height_px": 97,
+      "height_m": 1.01,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/ecluecla/ecluecla_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ecluecla/ecluecla_back.json",
+      "idle_height_px": 97,
+      "height_m": 1.01,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/jorget/jorget.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/jorget/jorget.json",
+      "idle_height_px": 98,
+      "height_m": 1.02,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/jorget/jorget_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/jorget/jorget_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/jorget/jorget_front.json",
+      "idle_height_px": 98,
+      "height_m": 1.02,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/jorget/jorget_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/jorget/jorget_back.json",
+      "idle_height_px": 98,
+      "height_m": 1.02,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/tilfey/tilfey.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/tilfey/tilfey.json",
+      "idle_height_px": 93,
+      "height_m": 0.97,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/tilfey/tilfey_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/tilfey/tilfey_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/tilfey/tilfey_front.json",
+      "idle_height_px": 93,
+      "height_m": 0.97,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/tilfey/tilfey_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/tilfey/tilfey_back.json",
+      "idle_height_px": 93,
+      "height_m": 0.97,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/bitora/bitora.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/bitora/bitora.json",
+      "idle_height_px": 99,
+      "height_m": 1.03,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/bitora/bitora_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/bitora/bitora_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/bitora/bitora_front.json",
+      "idle_height_px": 99,
+      "height_m": 1.03,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/bitora/bitora_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/bitora/bitora_back.json",
+      "idle_height_px": 99,
+      "height_m": 1.03,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/illustote/illustote.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/illustote/illustote.json",
+      "idle_height_px": 94,
+      "height_m": 0.98,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/illustote/illustote_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/illustote/illustote_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/illustote/illustote_front.json",
+      "idle_height_px": 94,
+      "height_m": 0.98,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/illustote/illustote_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/illustote/illustote_back.json",
+      "idle_height_px": 94,
+      "height_m": 0.98,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/rinsha/rinsha.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/rinsha/rinsha.json",
+      "idle_height_px": 96,
+      "height_m": 1.0,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/rinsha/rinsha_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/rinsha/rinsha_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/rinsha/rinsha_front.json",
+      "idle_height_px": 96,
+      "height_m": 1.0,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/rinsha/rinsha_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/rinsha/rinsha_back.json",
+      "idle_height_px": 96,
+      "height_m": 1.0,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/phyr/phyr.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/phyr/phyr.json",
+      "idle_height_px": 154,
+      "height_m": 1.6,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/phyr/phyr_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/phyr/phyr_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/phyr/phyr_front.json",
+      "idle_height_px": 154,
+      "height_m": 1.6,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/phyr/phyr_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/phyr/phyr_back.json",
+      "idle_height_px": 154,
+      "height_m": 1.6,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/kaya/kaya.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/kaya/kaya.json",
+      "idle_height_px": 151,
+      "height_m": 1.57,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/kaya/kaya_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/kaya/kaya_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/kaya/kaya_front.json",
+      "idle_height_px": 151,
+      "height_m": 1.57,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/kaya/kaya_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/kaya/kaya_back.json",
+      "idle_height_px": 151,
+      "height_m": 1.57,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/glick/glick.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/glick/glick.json",
+      "idle_height_px": 130,
+      "height_m": 1.35,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/glick/glick_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/glick/glick_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/glick/glick_front.json",
+      "idle_height_px": 130,
+      "height_m": 1.35,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/glick/glick_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/glick/glick_back.json",
+      "idle_height_px": 130,
+      "height_m": 1.35,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/ebon_candle_ancient/ebon_candle_ancient.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ebon_candle_ancient/ebon_candle_ancient.json",
+      "idle_height_px": 173,
+      "height_m": 1.8,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/ebon_candle_ancient/ebon_candle_ancient_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/ebon_candle_ancient/ebon_candle_ancient_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ebon_candle_ancient/ebon_candle_ancient_front.json",
+      "idle_height_px": 173,
+      "height_m": 1.8,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/ebon_candle_ancient/ebon_candle_ancient_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ebon_candle_ancient/ebon_candle_ancient_back.json",
+      "idle_height_px": 173,
+      "height_m": 1.8,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/ebon_candle/ebon_candle.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ebon_candle/ebon_candle.json",
+      "idle_height_px": 120,
+      "height_m": 1.25,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/ebon_candle/ebon_candle_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/ebon_candle/ebon_candle_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ebon_candle/ebon_candle_front.json",
+      "idle_height_px": 120,
+      "height_m": 1.25,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/ebon_candle/ebon_candle_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ebon_candle/ebon_candle_back.json",
+      "idle_height_px": 120,
+      "height_m": 1.25,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/ballman/ballman.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ballman/ballman.json",
+      "idle_height_px": 62,
+      "height_m": 0.65,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/ballman/ballman_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/ballman/ballman_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ballman/ballman_front.json",
+      "idle_height_px": 62,
+      "height_m": 0.65,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/ballman/ballman_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/ballman/ballman_back.json",
+      "idle_height_px": 62,
+      "height_m": 0.65,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/golem/golem.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/golem/golem.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/golem/golem_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/golem/golem_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/golem/golem_front.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/golem/golem_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/golem/golem_back.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/doctor/doctor.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/doctor/doctor.json",
+      "idle_height_px": 163,
+      "height_m": 1.7,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/doctor/doctor_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/doctor/doctor_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/doctor/doctor_front.json",
+      "idle_height_px": 163,
+      "height_m": 1.7,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/doctor/doctor_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/doctor/doctor_back.json",
+      "idle_height_px": 163,
+      "height_m": 1.7,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/knight_canine/knight_canine.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/knight_canine/knight_canine.json",
+      "idle_height_px": 168,
+      "height_m": 1.75,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/knight_canine/knight_canine_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/knight_canine/knight_canine_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/knight_canine/knight_canine_front.json",
+      "idle_height_px": 168,
+      "height_m": 1.75,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/knight_canine/knight_canine_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/knight_canine/knight_canine_back.json",
+      "idle_height_px": 168,
+      "height_m": 1.75,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/knight_feline/knight_feline.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/knight_feline/knight_feline.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/knight_feline/knight_feline_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/knight_feline/knight_feline_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/knight_feline/knight_feline_front.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/knight_feline/knight_feline_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/knight_feline/knight_feline_back.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/police_golem/police_golem.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/police_golem/police_golem.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/police_golem/police_golem_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/police_golem/police_golem_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/police_golem/police_golem_front.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/police_golem/police_golem_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/police_golem/police_golem_back.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/godrey/godrey.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/godrey/godrey.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/godrey/godrey_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/godrey/godrey_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/godrey/godrey_front.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/godrey/godrey_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/godrey/godrey_back.json",
+      "idle_height_px": 139,
+      "height_m": 1.45,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/baroni/baroni.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/baroni/baroni.json",
+      "idle_height_px": 158,
+      "height_m": 1.65,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/baroni/baroni_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/baroni/baroni_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/baroni/baroni_front.json",
+      "idle_height_px": 158,
+      "height_m": 1.65,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/baroni/baroni_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/baroni/baroni_back.json",
+      "idle_height_px": 158,
+      "height_m": 1.65,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/frog_soldier/frog_soldier.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/frog_soldier/frog_soldier.json",
+      "idle_height_px": 130,
+      "height_m": 1.35,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/frog_soldier/frog_soldier_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/frog_soldier/frog_soldier_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/frog_soldier/frog_soldier_front.json",
+      "idle_height_px": 130,
+      "height_m": 1.35,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/frog_soldier/frog_soldier_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/frog_soldier/frog_soldier_back.json",
+      "idle_height_px": 130,
+      "height_m": 1.35,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/bird_soldier/bird_soldier.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/bird_soldier/bird_soldier.json",
+      "idle_height_px": 163,
+      "height_m": 1.7,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/bird_soldier/bird_soldier_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/bird_soldier/bird_soldier_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/bird_soldier/bird_soldier_front.json",
+      "idle_height_px": 163,
+      "height_m": 1.7,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/bird_soldier/bird_soldier_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/bird_soldier/bird_soldier_back.json",
+      "idle_height_px": 163,
+      "height_m": 1.7,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/wolf_soldier/wolf_soldier.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/wolf_soldier/wolf_soldier.json",
+      "idle_height_px": 173,
+      "height_m": 1.8,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/wolf_soldier/wolf_soldier_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/wolf_soldier/wolf_soldier_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/wolf_soldier/wolf_soldier_front.json",
+      "idle_height_px": 173,
+      "height_m": 1.8,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/wolf_soldier/wolf_soldier_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/wolf_soldier/wolf_soldier_back.json",
+      "idle_height_px": 173,
+      "height_m": 1.8,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/hawk_soldier/hawk_soldier.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/hawk_soldier/hawk_soldier.json",
+      "idle_height_px": 163,
+      "height_m": 1.7,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/hawk_soldier/hawk_soldier_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/hawk_soldier/hawk_soldier_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/hawk_soldier/hawk_soldier_front.json",
+      "idle_height_px": 163,
+      "height_m": 1.7,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/hawk_soldier/hawk_soldier_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/hawk_soldier/hawk_soldier_back.json",
+      "idle_height_px": 163,
+      "height_m": 1.7,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/cat_soldier/cat_soldier.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/cat_soldier/cat_soldier.json",
+      "idle_height_px": 149,
+      "height_m": 1.55,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/cat_soldier/cat_soldier_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/cat_soldier/cat_soldier_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/cat_soldier/cat_soldier_front.json",
+      "idle_height_px": 149,
+      "height_m": 1.55,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/cat_soldier/cat_soldier_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/cat_soldier/cat_soldier_back.json",
+      "idle_height_px": 149,
+      "height_m": 1.55,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/rabbit_soldier/rabbit_soldier.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/rabbit_soldier/rabbit_soldier.json",
+      "idle_height_px": 115,
+      "height_m": 1.2,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/rabbit_soldier/rabbit_soldier_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/rabbit_soldier/rabbit_soldier_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/rabbit_soldier/rabbit_soldier_front.json",
+      "idle_height_px": 115,
+      "height_m": 1.2,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/rabbit_soldier/rabbit_soldier_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/rabbit_soldier/rabbit_soldier_back.json",
+      "idle_height_px": 115,
+      "height_m": 1.2,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 4,
+          "fps": 12,
+          "loop": true
+        },
+        "parle": {
+          "frames": 2,
+          "fps": 6,
+          "loop": true
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/nopht/nopht_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/nopht/nopht_front.json",
+      "idle_height_px": 134,
+      "height_m": 1.4,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 5,
+          "fps": 14,
+          "loop": true
+        },
+        "attaque": {
+          "frames": 4,
+          "fps": 14,
+          "loop": false,
+          "hit_frames": [
+            1,
+            2,
+            3
+          ]
+        },
+        "charge": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "wave_frame": 3
+        },
+        "degats": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "mort": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/nopht/nopht_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/nopht/nopht_back.json",
+      "idle_height_px": 134,
+      "height_m": 1.4,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 5,
+          "fps": 14,
+          "loop": true
+        },
+        "attaque": {
+          "frames": 4,
+          "fps": 14,
+          "loop": false,
+          "hit_frames": [
+            1,
+            2,
+            3
+          ]
+        },
+        "charge": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "wave_frame": 3
+        },
+        "degats": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "mort": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/rhantolk/rhantolk_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/rhantolk/rhantolk_front.json",
+      "idle_height_px": 142,
+      "height_m": 1.48,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 5,
+          "fps": 14,
+          "loop": true
+        },
+        "attaque": {
+          "frames": 4,
+          "fps": 14,
+          "loop": false,
+          "hit_frames": [
+            1,
+            2,
+            3
+          ]
+        },
+        "charge": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "wave_frame": 3
+        },
+        "degats": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "mort": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/rhantolk/rhantolk_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/rhantolk/rhantolk_back.json",
+      "idle_height_px": 142,
+      "height_m": 1.48,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 5,
+          "fps": 14,
+          "loop": true
+        },
+        "attaque": {
+          "frames": 4,
+          "fps": 14,
+          "loop": false,
+          "hit_frames": [
+            1,
+            2,
+            3
+          ]
+        },
+        "charge": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "wave_frame": 3
+        },
+        "degats": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "mort": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    },
+    {
+      "path": "assets/characters/lillia/lillia.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/lillia/lillia.json",
+      "idle_height_px": 149,
+      "height_m": 1.55,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 5,
+          "fps": 14,
+          "loop": true
+        },
+        "attaque": {
+          "frames": 4,
+          "fps": 14,
+          "loop": false,
+          "hit_frames": [
+            1,
+            2,
+            3
+          ]
+        },
+        "charge": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "wave_frame": 3
+        },
+        "degats": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "mort": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/lillia/lillia_portrait.png",
+      "size": [
+        256,
+        256
+      ],
+      "kind": "portrait",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "source_section": "user_extended_inventory"
+    },
+    {
+      "path": "assets/characters/lillia/lillia_front.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/lillia/lillia_front.json",
+      "idle_height_px": 149,
+      "height_m": 1.55,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 5,
+          "fps": 14,
+          "loop": true
+        },
+        "attaque": {
+          "frames": 4,
+          "fps": 14,
+          "loop": false,
+          "hit_frames": [
+            1,
+            2,
+            3
+          ]
+        },
+        "charge": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "wave_frame": 3
+        },
+        "degats": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "mort": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "front"
+    },
+    {
+      "path": "assets/characters/lillia/lillia_back.png",
+      "size": null,
+      "kind": "sprite",
+      "priority": 4,
+      "required": true,
+      "format": "RGBA8",
+      "alpha": "binary",
+      "inventory_status": "missing",
+      "json_path": "assets/characters/lillia/lillia_back.json",
+      "idle_height_px": 149,
+      "height_m": 1.55,
+      "animations": {
+        "repos": {
+          "frames": 2,
+          "fps": 2,
+          "loop": true
+        },
+        "marche": {
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "course": {
+          "frames": 5,
+          "fps": 14,
+          "loop": true
+        },
+        "attaque": {
+          "frames": 4,
+          "fps": 14,
+          "loop": false,
+          "hit_frames": [
+            1,
+            2,
+            3
+          ]
+        },
+        "charge": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "wave_frame": 3
+        },
+        "degats": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        },
+        "mort": {
+          "frames": 1,
+          "fps": 1,
+          "loop": false
+        }
+      },
+      "row_format": "one_animation_per_row",
+      "frame_gap_px": 2,
+      "source_section": "user_three_directions",
+      "direction": "back"
+    }
+  ],
+  "scope": "HD-2D priority 4 batch"
+}

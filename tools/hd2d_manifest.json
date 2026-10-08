@@ -9229,7 +9229,8 @@
       "required": true,
       "alpha": "binary",
       "format": "RGBA8",
-      "source_section": "MONDE supplementary pickups"
+      "source_section": "MONDE supplementary pickups",
+      "priority": 3
     },
     {
       "path": "assets/items/gear.png",
@@ -9241,7 +9242,8 @@
       "required": true,
       "alpha": "binary",
       "format": "RGBA8",
-      "source_section": "MONDE supplementary pickups"
+      "source_section": "MONDE supplementary pickups",
+      "priority": 3
     },
     {
       "path": "assets/items/berries.png",
@@ -9253,7 +9255,8 @@
       "required": true,
       "alpha": "binary",
       "format": "RGBA8",
-      "source_section": "MONDE supplementary pickups"
+      "source_section": "MONDE supplementary pickups",
+      "priority": 3
     },
     {
       "path": "assets/items/leather_ball.png",
@@ -9265,7 +9268,8 @@
       "required": true,
       "alpha": "binary",
       "format": "RGBA8",
-      "source_section": "MONDE supplementary pickups"
+      "source_section": "MONDE supplementary pickups",
+      "priority": 3
     }
   ],
   "scope": "HD-2D document plus user-requested 52 appearances and three directions"

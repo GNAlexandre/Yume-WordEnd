@@ -346,3 +346,7 @@ Les fichiers `.import` et `.uid` sont des métadonnées techniques créées par 
 ## Assets HD-2D — livraison de priorité 1, 8 octobre 2026
 
 `assets/characters/chtholly`, `assets/enemies/timere` et les 22 textures de décor listées dans `tools/hd2d_priority1_manifest.json` : génération image_gen d’après le cahier et les références fournies. Version du modèle non exposée. Natifs conservés dans `assets/source/resumed_2d/pixel`, préparations par découpe des silhouettes, plus proche voisin, alpha binaire et palette sans tramage. Les droits sur les designs SukaSuka restent ceux des ayants droit. Les premières planches anime restent intactes dans leurs archives.
+
+## Livraisons HD-2D des priorités 2 à 4 — 8 octobre 2026
+
+Les PNG des lots 2, 3 et 4 sont générés avec image_gen selon les références fournies et le cahier HD-2D. Les corrections de poses de PNJ sont conservées avec leurs prompts et SHA-256 dans `assets/source/resumed_2d/production_catalogs/npc_b_catalog.json`. La version du modèle n’est pas exposée. Les sources originales, portraits découpés et premières planches anime sont conservés. Le jeu génère les trois effets facultatifs ; aucun PNG manquant n’est présenté comme fourni. Les designs SukaSuka restent ceux de leurs ayants droit.
