@@ -170,7 +170,11 @@ func test_lock_without_enemy_keeps_the_fixed_camera() -> void:
 	assert_eq(player.camera_rig.forward(), Vector3.FORWARD, "la caméra regarde le nord")
 	assert_almost_eq(
 		player.camera_rig.focus(),
-		player.global_position + Vector3.UP * player.camera_rig.focus_height,
+		(
+			player.global_position
+			+ Vector3.UP * player.camera_rig.focus_height
+			+ Vector3.FORWARD * player.camera_rig.focus_ahead
+		),
 		Vector3.ONE * 0.05,
 		"centrée sur le joueur"
 	)

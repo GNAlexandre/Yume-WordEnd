@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://src/ui/touch_controls.tscn" id="9_touch"]
 
 [node name="Game" type="Node3D"]
+physics_interpolation_mode = 1
 script = ExtResource("1_game")
 
 [node name="Island" parent="." instance=ExtResource("2_island")]
@@ -22,6 +23,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 9)
 script = ExtResource("4_quests")
 
 [node name="UI" type="CanvasLayer" parent="."]
+physics_interpolation_mode = 2
 
 [node name="HUD" parent="UI" instance=ExtResource("5_hud")]
 

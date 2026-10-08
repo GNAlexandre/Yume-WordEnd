@@ -50,13 +50,13 @@ pierre claire `#C2B49F`, ombre `#837667` ; sable `#D6C19E` ; bois clair `#A57C58
 
 | Règle | Valeur |
 | --- | --- |
-| Densité | **96 px par mètre** partout dans le monde (sol, falaises, façades, décors, personnages) ; décor lointain (dirigeables, îles au loin) : 48 px/m |
+| Densité | **96 px par mètre** partout dans le monde (sol, falaises, façades, décors, personnages, dirigeables à quai du cahier n° 2) ; décor lointain (îles au loin) : 48 px/m ; navires en vol (cahier n° 2) : 24 px/m |
 | Format | PNG RGBA 8 bits ; tuiles et textures sans raccord : opaques |
 | Taille | exacte au pixel près (tableaux ci-dessous) ; si l'outil ne sait pas la produire, livre l'image la plus nette possible en plus grand et lance `python3 tools/hd2d_assets.py fit <fichier>` (réduction au plus proche voisin, alpha seuillé) |
 | Cadrage des panneaux | objet entier, collé au bord bas (aucune ligne vide sous le pied), centré horizontalement ; **ancre = milieu du bord bas = point posé au sol** (pied du tronc, base du mur) |
 | Angle de vue | tuiles : vue strictement de dessus ; façades : élévation de face, sans perspective ; décors et personnages : vue de face, très légèrement plongeante (on devine le dessus des objets, 10 à 15°) |
 | Orientation | personnages et animaux dessinés **tournés vers la droite** (le jeu les retourne) ; tout le reste vu de face |
-| Poids | moins de 1 Mo par image ; le jeu entier vise moins de 25 Mo |
+| Poids | aucune compression avec perte ni réduction de couleurs : la qualité passe avant le poids (le jeu entier vise moins de 60 Mo) ; une image de plus de 1,5 Mo n'est souvent pas du pixel art net (flou, bruit) : vérifie-la |
 
 Le jeu filtre les images au plus proche voisin (pixels nets) et les éclaire lui-même (lanternes,
 fenêtres, couchant). Une image livrée remplace le fichier du même nom ; vérification :
@@ -149,7 +149,7 @@ trois vues. » puis la description.
 | 1 | `chtholly/chtholly` (remplace l'actuelle, qui sert à l'acte 3) | 1,5 m = 144 px | Chtholly à l'acte 1, fée soldate de 15 ans, proportions des sprites d'*Octopath Traveler* (environ deux têtes et demie à trois têtes de haut), dans la continuité de la planche actuelle : longs cheveux céruléen clair (#6C89BB à #92B6DB) **sans aucune mèche rouge**, deux petites couettes hautes, yeux bleu océan ; uniforme de la Garde ailée (veste bleu marine à col droit et boutons argentés, jupe plissée sombre, bottines), broche d'argent à pierre bleue en goutte sur la poitrine ; Seniorious : grande épée presque aussi haute qu'elle, lame blanc argenté faite de plaques fissurées, garde sombre hérissée |
 | 2 | `willem/willem` | 1,75 m = 168 px | Willem Kmetsch, jeune homme maigre, cheveux noirs en bataille, yeux sombres, sourire fatigué ; uniforme militaire bleu nuit croisé à boutons dorés un peu trop étroit, ceinturon, bottes |
 | 2 | `nygglatho/nygglatho` | 1,85 m = 178 px | Nygglatho, troll à l'air de jeune femme, une tête de plus que tous ; longs cheveux rose saumon, yeux vert printanier, chemisier vert vif à volants, tablier blanc, coiffe blanche à volants ; sourire doux |
-| 2 | `ithea/ithea` (7 animations + `parle`) | 1,45 m = 139 px | Ithea, fée soldate de 14 ans : cheveux blond paille, longue tresse à perle bleue, yeux ambre au regard félin, écharpe rouge, veste vert pâle sur robe brun-rouge, bas vert olive ; Carillon Valgulious dans le dos |
+| 2 | `ithea/ithea` (7 animations + `parle`) | 1,45 m = 139 px | Ithea, fée soldate de 14 ans : **apparence des planches officielles de l'anime, choisie par l'utilisateur le 8 octobre 2026**, en remplacement du portrait blond précédent ; cheveux orange ébouriffés, deux mèches pointues et petites nattes à perles bleues, regard félin ambré, écharpe orange, veste crème aux garnitures vertes sur robe brun-rouge ; Carillon Valgulious en plaques ivoire fissurées, lame droite élargie à l'extrémité arrondie ; au repos et en marche de profil, la lame pointe vers l'arrière |
 | 2 | `nephren/nephren` (7 animations + `parle`) | 1,3 m = 125 px | Nephren, fée soldate de 13 ans, toute petite : cheveux gris cendré à reflets lavande en deux couettes ondulées à rubans noirs, yeux gris anthracite, visage impassible, tunique violette à capuche et frise de triangles blancs, livre rouge |
 | 2 | `tiat/tiat` | 1,1 m = 106 px | Tiat, petite fée de moins de dix ans : cheveux et yeux vert feuille (#78B89E), blouse blanche, gilet vert sombre, air enthousiaste |
 | 2 | `pannibal/pannibal` | 1,25 m = 120 px | Pannibal, petite fée d'une dizaine d'années : cheveux violet vif sur un œil, petite cape, épée de bois, brindille à la bouche, air pince-sans-rire |
@@ -325,8 +325,8 @@ Décor lointain (48 px/m) :
 
 | Prio | Nom | Taille (px) | Description à coller |
 | --- | --- | --- | --- |
-| 3 | `airship_ferry` | 576 × 336 | petit dirigeable du passeur : coque de bois et de cuivre, ballon allongé beige, deux rotors |
-| 3 | `airship_barocupot` | 1056 × 480 | Barocupot, transport militaire de la Garde ailée : coque sombre, deux pales de rotor, trappe |
+| 3 | `airship_ferry` | 1344 × 672 | refait : navire volant du passeur, de profil, à 96 px/m (cahier n° 2, section 11) |
+| 3 | `airship_barocupot` | 2304 × 1056 | refait : le Barocupot de profil, à 96 px/m (cahier n° 2, section 11) |
 
 Ces deux dirigeables sont **refaits** d'après le cahier n° 2 (`docs/ASSETS_HD2D_MONDE.md`,
 section 11) : navires sans ballon, de profil, à 96 px/m, hélices animées à part.
@@ -363,11 +363,13 @@ flottent juste sous l'île sont permis.
 
 1. Dépose l'image au chemin exact de ce document : elle écrase le remplaçant du même nom (les
    fichiers `.import` ne changent pas).
-2. `python3 tools/hd2d_assets.py check` : taille, alpha, raccord des tuiles (planches de
-   personnages : `python3 tools/hd2d_sheets.py check`, section 3) ;
+2. `python3 tools/hd2d_assets.py check` : taille, alpha, raccord des tuiles, ancrage (planches de
+   personnages : `python3 tools/hd2d_sheets.py check`, section 3) ; il connaît aussi les images
+   du cahier n° 2 (décalques, bandes animées, flancs : `check --lot A` à `G`) ;
    `python3 tools/hd2d_assets.py fit <fichier>` ramène une image trop grande à sa taille ; après
-   une tuile de sol, `python3 tools/hd2d_assets.py atlas` (le jeu lit les douze tuiles réunies
-   dans `assets/hd2d/ground/atlas/ground_atlas.png` ; `fit` et `gen` le refont d'eux-mêmes).
+   une tuile de sol, `python3 tools/hd2d_assets.py atlas` (le jeu lit les 27 tuiles des deux
+   cahiers réunies dans `assets/hd2d/ground/atlas/ground_atlas.png` ; `fit` et `gen` le refont
+   d'eux-mêmes).
 3. `tools/screenshot.sh res://src/world/island.tscn build/shots/hd2d.png` pour voir le résultat,
    puis `tools/check.sh`.
 4. Note la provenance dans `assets/CREDITS.md` (« généré avec ChatGPT le … », licence accordée).
@@ -390,6 +392,21 @@ dans `tools/hd2d_manifest.json`, que les tests confrontent à ce document.
 4. **Priorité 4** : les skins de Nopht et de Rhantolk ; les fées de la communauté.
 
 ## 12. Images à refaire (après la PR n° 4)
+
+**Livraison du 8 octobre 2026 : les corrections de la liste ci-dessous sont intégrées.**
+La liste conserve les défauts et consignes de départ pour la traçabilité. Les anciens PNG/JSON,
+les nouveaux dessins, les prompts, l'outil de contrôle `tools/hd2d_correction_review.py` et la
+page d'aperçus avant/après (`docs/sprites/CORRECTIONS_SECTION12.html`) restent dans l'historique
+de `main` (fusion de la PR n° 8, commit `28d49f3`) : hors de l'arbre, comme les sources des
+livraisons précédentes (ici 40 Mo de sources et 30 Mo de galerie). Les ajustements d'échelle seuls
+sont réalisés au plus proche voisin, selon la section 2 ; les nouvelles poses et modifications
+de dessin sont produites avec `image_gen`.
+La fluidité des cycles demande toujours une validation visuelle en jeu.
+
+Le contrôle général signale encore la dernière pose de marche **de face** du vendeur de
+casse-croûte (`snack_vendor_front`, image 5), une vue non citée dans les corrections de marche
+ci-dessous ; elle reste conservée. Ithea suit désormais les références officielles de l'anime
+(pages 21 à 23), selon le choix explicite de l'utilisateur, plutôt que le portrait blond rejeté.
 
 Défauts mesurés dans les livraisons des PR n° 2 à 4 (`python3 tools/hd2d_sheets.py check`,
 remarques ; hauteurs debout de l'ancre au haut de la silhouette). Le jeu les contourne en

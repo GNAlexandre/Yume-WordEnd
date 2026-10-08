@@ -5,7 +5,9 @@ extends GutTest
 ## qui couvre leur emprise ; dans l'île, les décors sont fondus par image ; les shaders du monde et
 ## du post-traitement compilent ; (H5) les images du monde sont filtrées (pixel art net de près,
 ## sans moiré au loin) et le sol lit un atlas à mipmaps qui ne mélangent pas ses tuiles. Les places
-## de HISTOIRE.md 3.3 restent vérifiées par test_world_story_spots.gd.
+## de HISTOIRE.md 3.3 restent vérifiées par test_world_story_spots.gd. (H9) Un décor peut aussi être
+## un décalque au sol (GroundDecal, sans collision) ou un panneau animé (une image de la bande) ;
+## les formats eux-mêmes sont vérifiés par test_hd2d_formats.gd.
 
 const PROPS_DIR := "res://src/world/props"
 const FIXTURE := preload("res://tests/stubs/l2_island_fixture.gd")
@@ -45,6 +47,11 @@ const SHADERS: Array[String] = [
 	"res://src/world/shaders/cloud_sea.gdshader",
 	"res://src/world/shaders/waterfall.gdshader",
 	"res://src/player/post_fx.gdshader",
+	"res://src/world/shaders/panel_foreground.gdshader",
+	"res://src/world/shaders/ground_decal.gdshader",
+	"res://src/world/shaders/ground_decal_soft.gdshader",
+	"res://src/world/shaders/sky_drift.gdshader",
+	"res://src/world/shaders/ambient_sprites.gdshader",
 ]
 
 
@@ -62,15 +69,20 @@ func _instance(prop: String) -> Node3D:
 	return node
 
 
-## Panneaux et bâtiments d'un décor (la racine, ou ses enfants pour un décor composé).
+## Panneaux, bâtiments et (H9) décalques d'un décor (la racine, ou ses enfants pour un décor
+## composé).
 func _parts(node: Node) -> Array[Node]:
 	var parts: Array[Node] = []
-	if node is DecorPanel or node is Building:
+	if _is_part(node):
 		parts.append(node)
 	for child: Node in node.get_children():
-		if child is DecorPanel or child is Building:
+		if _is_part(child):
 			parts.append(child)
 	return parts
+
+
+func _is_part(node: Node) -> bool:
+	return node is DecorPanel or node is Building or node is GroundDecal
 
 
 func test_every_prop_is_a_panel_or_a_building() -> void:
@@ -83,6 +95,8 @@ func test_every_prop_is_a_panel_or_a_building() -> void:
 		for part in parts:
 			if part is DecorPanel:
 				assert_not_null((part as DecorPanel).texture, "%s : image" % prop)
+			elif part is GroundDecal:
+				assert_not_null((part as GroundDecal).texture, "%s : image" % prop)
 			else:
 				var building := part as Building
 				assert_true(
@@ -92,7 +106,7 @@ func test_every_prop_is_a_panel_or_a_building() -> void:
 		var meshes := node.find_children("*", "MeshInstance3D", true, false)
 		for mesh: Node in meshes:
 			assert_true(
-				mesh.get_parent() is DecorPanel or mesh.get_parent() is Building,
+				_is_part(mesh.get_parent()),
 				"%s : aucun maillage 3D hors des panneaux (%s)" % [prop, mesh.name]
 			)
 		node.free()
@@ -102,7 +116,7 @@ func test_blocking_decor_keeps_its_collision() -> void:
 	for prop in _props():
 		var node := _instance(prop)
 		var body := node.get_node_or_null(^"Collision") as StaticBody3D
-		if prop in NON_BLOCKING:
+		if prop in NON_BLOCKING or node is GroundDecal:
 			assert_null(body, "%s : se traverse" % prop)
 		else:
 			assert_not_null(body, "%s : collision" % prop)
@@ -122,10 +136,12 @@ func test_panels_are_sized_from_their_image() -> void:
 			var panel := part as DecorPanel
 			if panel == null or panel.texture == null:
 				continue
-			var want := Vector2(panel.texture.get_size()) / panel.pixels_per_meter
+			var image := Vector2(panel.texture.get_size()) / Vector2(panel.frames, 1.0)
+			var want := image / panel.pixels_per_meter
 			assert_almost_eq(panel.size_m(), want, Vector2.ONE * 0.001, prop)
 			var quad := panel.get_child(0, true) as MeshInstance3D
-			assert_almost_eq((quad.mesh as QuadMesh).size, want, Vector2.ONE * 0.001, prop)
+			var aabb := quad.mesh.get_aabb()
+			assert_almost_eq(Vector2(aabb.size.x, aabb.size.y), want, Vector2.ONE * 0.001, prop)
 			assert_true(
 				(
 					panel.pixels_per_meter == DecorPanel.PIXELS_PER_METER
@@ -253,7 +269,9 @@ func test_island_ground_reads_a_mipmapped_atlas() -> void:
 	if atlas != null:
 		var image := atlas.get_image()
 		assert_true(image != null and image.has_mipmaps(), "atlas avec mipmaps en jeu")
-		assert_eq(atlas.get_size(), Vector2(1536, 1152), "même atlas, mêmes cases")
+		# (H9) 12 tuiles (cahier n° 1) ou 27 (cahier n° 2) : 4 colonnes de 384 px, 3 ou 7 rangées.
+		assert_eq(atlas.get_width(), 1536, "quatre colonnes")
+		assert_true(atlas.get_height() in [1152, 2688], "3 ou 7 rangées : %d" % atlas.get_height())
 	island.free()
 
 
