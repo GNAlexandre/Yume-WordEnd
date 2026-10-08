@@ -13,7 +13,8 @@
 // d'art tiré d'un bruit (pas de grille de points comme l'ordre de Bayer) ; de loin, quand un pixel
 // d'art devient plus petit qu'un pixel d'écran, plus de tramage : la moyenne de quatre seuils
 // (masques lus à la position continue), soit un mélange en paliers fins, sans grain ni
-// scintillement ; entre les deux, un fondu. Les fleurs d'un pixel s'effacent au loin.
+// scintillement ; entre les deux, l'un ou l'autre selon un bruit d'écran. Les fleurs d'un pixel
+// s'effacent au loin.
 // Les uniformes de forme sont recopiés de terrain.gd au lancement ; edge_distance() est la même.
 shader_type spatial;
 render_mode specular_disabled;
@@ -313,23 +314,20 @@ void fragment() {
 	vec2 texel_dx = ground_dx / tile_meters * tile_pixels;
 	vec2 texel_dy = ground_dy / tile_meters * tile_pixels;
 	// Part du mélange lointain : 0 tant qu'un pixel d'art couvre presque un pixel d'écran, 1 au-delà
-	// de deux pixels d'art par pixel d'écran.
+	// de deux pixels d'art par pixel d'écran ; entre les deux, chaque pixel prend l'un ou l'autre
+	// selon un bruit d'écran (un seul calcul par pixel ; les deux ne diffèrent qu'aux mélanges).
 	float far = smoothstep(0.75, 2.0, art_per_pixel);
+	bool blended = screen_noise(FRAGCOORD.xy + vec2(29.0, 13.0)) < far;
 	// De près, masques au centre du pixel d'art (bords nets en pixels d'art) ; de loin, à la
 	// position continue (bords sans escalier qui scintille).
-	vec2 p = far > 0.0 ? world_pos.xz : (cell + 0.5) / art_pixels;
+	vec2 p = blended ? world_pos.xz : (cell + 0.5) / art_pixels;
 	Masks m = ground_masks(p, h);
 	vec3 tint;
 	vec3 c = vec3(0.0);
-	if (far < 1.0) {
-		int layer = pick_layer(m, cell_threshold(cell), tint);
-		c = ground_color(layer, texel, texel_dx, texel_dy) * tint * (1.0 - far);
-	}
-	if (far > 0.0) {
+	if (blended) {
 		// Moyenne de quatre seuils décalés par le bruit du pixel d'écran : un mélange en paliers
 		// fins ; une tuile déjà lue n'est pas relue.
 		float jitter = screen_noise(FRAGCOORD.xy);
-		vec3 blend = vec3(0.0);
 		int last = -1;
 		vec3 last_color = vec3(0.0);
 		for (int i = 0; i < 4; i++) {
@@ -338,17 +336,20 @@ void fragment() {
 				last_color = ground_color(layer, texel, texel_dx, texel_dy);
 				last = layer;
 			}
-			blend += last_color * tint;
+			c += last_color * tint * 0.25;
 		}
-		c += blend * 0.25 * far;
+	} else {
+		int layer = pick_layer(m, cell_threshold(cell), tint);
+		c = ground_color(layer, texel, texel_dx, texel_dy) * tint;
 	}
 	// Petites fleurs de myosotis sur la colline (pixels d'art bleus semés par touffes), tant
 	// qu'un pixel d'art reste visible (sinon, des points qui clignotent).
-	vec2 cell_center = (cell + 0.5) / art_pixels;
-	float bloom_patch = smoothstep(0.55, 0.8, noise(cell_center * 0.2 + vec2(11.0, 2.0)));
-	bool flower = hash(cell) > 0.985 - 0.04 * bloom_patch && bloom_patch > 0.2;
-	if (m.hill > 0.45 && h > 0.3 && flower && art_per_pixel < 1.6) {
-		c = vec3(0.5, 0.61, 0.81);
+	if (m.hill > 0.45 && h > 0.3 && art_per_pixel < 1.6) {
+		vec2 cell_center = (cell + 0.5) / art_pixels;
+		float bloom_patch = smoothstep(0.55, 0.8, noise(cell_center * 0.2 + vec2(11.0, 2.0)));
+		if (hash(cell) > 0.985 - 0.04 * bloom_patch && bloom_patch > 0.2) {
+			c = vec3(0.5, 0.61, 0.81);
+		}
 	}
 	ALBEDO = c;
 	ROUGHNESS = 1.0;
