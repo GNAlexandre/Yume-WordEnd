@@ -274,3 +274,33 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   cause et la place du joueur, à corriger dans `village.tscn` (H2). La cheminée
   (`WarehouseChimney`, faîtage à 10,1 m) n'apparaît que si le cadrage montre le toit.
 - En attendant : vérifié avec la caméra du socle (32°, 30°, 21 m) et les images livrées.
+## H7 Combat — secousse de l'écran dans `CameraRig` (H5)
+- Besoin : la secousse et l'arrêt sur image sont réglés pour la caméra fixe, mais
+  `src/player/camera_rig.*` est à H5 : `CameraRig` n'a pas d'API de secousse.
+- Proposition : `CameraRig.shake(strength_m: float, direction: Vector3)` (décalage amorti, sans
+  rotation, borné), que `ScreenShake` appellerait ; ou la règle « `Camera3D.h_offset` et
+  `v_offset` appartiennent au combat » écrite dans PLAN.md section 3.
+- En attendant : `src/combat/screen_shake.gd` (nœud `Combat/ScreenShake` du joueur) décale
+  `Camera3D.h_offset` / `v_offset` de la caméra courante, que `CameraRig` ne règle pas (il ne pose
+  que `global_transform`) ; il ne rend à zéro qu'un décalage qui est encore le sien. Si H5 se
+  sert de ces décalages (cadrage, verrouillage), passer la secousse par son API.
+
+## H7 Combat — ombre des personnages (`src/visuals/`, H6 et l'intégration des planches)
+- Besoin : des ombres au sol nettes sous les combattants ; l'ombre du `CharacterVisual`
+  (« Shadow », dégradé doux) ne se voit presque pas sur le sable et l'herbe, mais `src/visuals/`
+  n'est pas à H7.
+- Proposition : quand `CharacterVisual` sera repris, garder une seule ombre par personnage : soit
+  l'ombre du Visual prend l'image nette `src/combat/fx/shadow.png` (cœur sombre, bord net, rien
+  qui dépende du dessin), soit elle s'efface sous un combattant qui a la sienne.
+- En attendant : les combattants ont leur `GroundShadow` (`CombatFx.make_shadow`), à la taille de
+  leur corps (capsule × `EnemyData.scale`), posée juste au-dessus de l'ombre douce, qui reste là ;
+  celle du joueur reste au sol pendant un saut.
+
+## H7 Combat — marqueur de cible du HUD
+- Besoin : le verrouillage se lit maintenant au sol (réticule `Combat/LockRing` sous la cible,
+  chevron `Combat/AimMarker` devant le joueur) ; le triangle du HUD (`hud.gd`,
+  `_update_lock_marker`, L10) se pose à la hauteur de la tête et peut cacher l'éclat de
+  préparation du Timere verrouillé.
+- Proposition : relever le triangle de 0,2 m (`_marker_height` : `height_m × scale + 0.5`), ou le
+  retirer au profit du réticule au sol.
+- En attendant : l'éclat de préparation se pose à 85 % de la hauteur du corps, sous le triangle.

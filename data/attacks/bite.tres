@@ -11,3 +11,6 @@ knockback = 3.0
 pierces = false
 range_m = 0.8
 cooldown = 1.15
+windup = 0.3
+hitstop = 0.06
+shake = 0.08

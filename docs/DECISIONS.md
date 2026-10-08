@@ -1357,3 +1357,45 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **H2 — cheminée** : faite en matières (`warehouse_chimney.tscn`, `Building` 1 × 1 m en
   `wall_stone` / `roof_slate`, au faîtage, x −7,5) plutôt qu'en image : MONDE.md la veut et le
   cahier des charges n'en a pas ; elle n'entre dans le cadre que si la caméra montre le toit (H5).
+- **H7 — signes avant l'attaque** : chaque coup et chaque charge d'un Timere passe par un état
+  `windup` (`AttackData.windup` : morsure 0,3 s, fouet 0,35 s, charge 0,4 s ; Grand × 1,5 par
+  `EnemyData.windup_scale`) : posture tassée, éclat au-dessus de la tête, zone exacte de la
+  Hitbox (ou couloir de la charge) au sol (`src/enemies/telegraph.gd`). Pour garder la cadence
+  de l'easter egg, la préparation commence quand la recharge n'en est plus qu'à sa durée : au
+  contact, rien ne ralentit ; seul le premier coup après l'approche attend. La zone suit le
+  joueur pendant la préparation (on s'en sort en reculant, pas d'un pas de côté), puis le coup
+  part dans la direction figée. Pas de son : le jeu n'a pas encore de système audio d'effets.
+- **H7 — effets en sprites** : onde, éclats, crocs, fouet, poussière, coup d'épée au sol,
+  réticule, chevron, ombre nette et signes de préparation sont des images de pixel art à 96 px/m
+  dans `src/combat/fx/` (remplaçants de `make_fx.py`, hors de `assets/hd2d/`, qui est à H1), lues
+  par `CombatFx` ; ce qui dit « où » est une décalcomanie au sol (portée et zone exactes), ce qui
+  dit « quand » un sprite debout. Les éclats et le bord des zones passent devant les corps (sans
+  test de profondeur), la poussière et le remplissage restent derrière. L'onde est un croissant
+  debout tourné vers la caméra (bosse vers où elle file, aussi large à l'écran que sa trace) plus
+  sa trace au sol ; `charge_wave.gdshader` est retiré. Les effets se posent dans la zone, jamais
+  dans `Enemies` ni `Spawned`, dont d'autres systèmes comptent les enfants.
+- **H7 — arrêt sur image et secousse** : chiffres dans `data/attacks` (`hitstop` 0,05 à 0,08 s,
+  `shake` 2,5 à 8 cm) et `EnemyData.strike_shake` (Grand). L'arrêt fige la planche
+  (`process_mode` désactivé, minuteur en temps physique) et retarde le recul du corps touché sans
+  le raccourcir. La secousse décale `Camera3D.h_offset` / `v_offset` (jamais de rotation, le
+  haut de l'écran reste le nord), sans toucher à `camera_rig.*` (H5) : demande d'API dans
+  docs/CONTRACT_REQUESTS.md. Pas de chiffres de dégâts : un éclair de la silhouette exacte du
+  combattant (`HitFlash`, une copie peinte de l'image affichée), crème pour un Timere, rose
+  pour la joueuse.
+- **H7 — corps reconnaissables** : tant que les quatre corps partagent la planche du Timere,
+  `EnemyData.tint` (multiplie la planche) les distingue avec l'échelle ; le bondissant laisse
+  une traînée (poussière, images rémanentes) pendant sa charge, le Grand se prépare plus
+  lentement et fait trembler l'image quand il frappe.
+- **H7 — déplacements en vue fixe** : à moins de 4 m, un Timere vise un point à au moins 30° de
+  l'axe nord-sud du joueur (il arrive par les côtés de l'écran, où l'épée l'atteint encore, au
+  lieu de se cacher derrière ou devant le sprite) ; dans la séparation, un écart nord-sud compte
+  pour 0,7 fois sa longueur, et deux Timeres alignés nord-sud s'écartent de côté.
+- **H7 — ombres nettes** : chaque combattant a sa `GroundShadow` (disque net à la taille du
+  corps, pas du dessin), au-dessus de l'ombre douce du `CharacterVisual`, gardée faute de
+  pouvoir toucher `src/visuals/` (demande dans docs/CONTRACT_REQUESTS.md) ; celle de la joueuse
+  reste au sol pendant un saut. Coût : un draw call par combattant (banc de 12 Timeres au cercle
+  de veille : 97 draw calls contre 66, budget 200).
+- **H7 — vague 5 atteignable** : vérifiée par un joueur automatique qui ne lit que les signes
+  de l'écran (`tests/unit/test_combat_vigil.gd`, vraie partie, rythme réel, 5 PV) : vague 5 en
+  76 à 81 s avec 1 à 3 morsures sur quatre graines ; sans lire les signes, 3 à 6 morsures et
+  parfois la défaite à la vague 4. Le test dure environ 80 s.
