@@ -1813,3 +1813,46 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   (`test_hd2d_assets.gd`) à 100 Mo de PNG. Si le premier chargement Web devient trop long, une
   version Web allégée (images importées en WebP avec perte pour le seul préréglage Web) reste
   possible sans toucher au bureau.
+- **P2 — pose de la cour de l'entrepôt** (cahier n° 2, section 14) : 386 décors et 105 images au
+  lieu de 181 et 24 (82 modules de palissade inchangés). Entrepôt : cheminée de briques
+  (`warehouse_chimney.tscn` passe en `wall_brick`, au bout est du faîtage) et sa fumée, terrasse
+  à linge, deux lucarnes, lierre, gouttière, deux appliques, trois jardinières, provisions et pots
+  au porche. Cour : 31 bordures d'herbe (chemins et place), marelle et craie près de l'aire de
+  jeux, fissures, gravier, mousse, feuilles, flaques et boue à l'aire de jeux, pas de petites
+  bottes (dont une trace de la place au porche de Nygglatho, faute de chemin au sol) ; potager vu
+  de dessus (`garden_bed` sur la terre du potager, un rang de tuteurs derrière), clôture basse
+  devant et derrière, épouvantail, outils, brouette, tonneau, arrosoir ; linge animé
+  (`laundry_wave`) et flaque sous les draps, panier, bûcher et billot, jouets, table d'enfants,
+  seau ; ombre et feuilles sous le grand arbre ; feuillus en variantes (chêne, hêtre, bouleau,
+  érable, jeunes arbres), buissons, herbes et fleurs tirés par `PropScatter.variants` et
+  `random_flip` ; feuilles qui tombent, oiseaux, papillons au potager (`Ambience`, quatre
+  `AmbientSprites`, un draw call chacun).
+- **P2 — le toit hors champ** : la caméra fixe (tangage 32°, 17° sous l'horizon en haut de
+  l'écran) ne montre ce qui dépasse 6 m que s'il est au sud du joueur : cheminée, fumée, terrasse
+  et lucarnes ne se voient qu'en sortant par le portail nord (vue d'ensemble aussi). Posées quand
+  même (MONDE.md 2.2), elles ne coûtent un draw call que dans le champ.
+- **P2 — lisière nord, toile de fond** : `treeline_autumn_*` derrière la palissade nord (z −22,7,
+  quatre pans de 16 m, ouverts au portail), en variantes sans collision
+  (`treeline_autumn_*_village.tscn` : la palissade ferme déjà la cour, et 64 m de mur couperaient
+  le passage entre les bois et les zones voisines). Un panneau regarde toujours le sud : au sud
+  du village une lisière serait entre la caméra et le joueur, à l'est et à l'ouest elle entrerait
+  dans les zones voisines ; là, des arbres en variantes le long de la palissade. Quand le joueur
+  sort par le nord, la lisière et les arbres du bord nord passent entre la caméra et lui et
+  cacheraient 15 m de bois : la découpe du village (`see_through.gd`, `backdrop_textures`)
+  efface en trame ces toiles de fond au-delà de la palissade, sur 1,2 m, dès qu'elles sont au sud
+  du joueur (images réservées au bord nord, vérifié par `test_village_decor.gd`).
+- **P2 — découpe et formats** : seuls les matériaux de `panel.gdshader` reçoivent la découpe ;
+  décalques, premier plan et alpha doux gardent leur shader (demande H9 réglée). Dans
+  `test_village_decor.gd`, l'occlusion des PNJ ignore décalques et alpha doux, compte le premier
+  plan, prend la plus forte opacité des images d'une bande animée, et range les triangles par
+  cases de 4 m (le test reste à 4 s).
+- **P2 — sud dégagé** : les trois grands arbres du sud de la cour (sapin, rouille, jaune autour
+  du portail sud) cachaient la moitié de l'écran quand on longe la palissade sud ; buissons et
+  premier plan (`fg_bush`, `fg_grass`, qui s'effacent autour du joueur) les remplacent, les coins
+  gardent un arbre.
+- **P2 — mesures** (`tools/hd2d_shots.sh`, draw calls avant → après) : cour (vue `village`)
+  59 → 110, entrepôt 78 → 120, conversation 64 → 111 ; vues de la pose (`build/shots/p2_*`) :
+  sous 135 partout. `test_village_pose.gd` compte les meshes fondus du village dans le champ de
+  dix places (sous 140) : densité 29 à 55 décors à moins de 12 m du joueur, aucun voisin à moins
+  de 2 m de la même image, aucun trou de 4 m sans décor, couloir de 3 m sur les quatre chemins,
+  rien de bloquant à moins de 1 m des PNJ et du myosotis.

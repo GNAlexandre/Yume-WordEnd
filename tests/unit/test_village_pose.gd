@@ -20,6 +20,13 @@ extends GutTest
 
 const FIXTURE := preload("res://tests/stubs/l2_island_fixture.gd")
 const CAMERA_RIG := preload("res://src/player/camera_rig.tscn")
+const NPC_PLACEMENTS := preload("res://src/npc/placements/village.tscn")
+const ITEM_PLACEMENTS := preload("res://src/items/placements/village.tscn")
+## Dégagement autour des PNJ et des objets de quête (m), et les lieux qui font leur place.
+const CLEAR_AROUND := 1.0
+const PLACES: Array[String] = [
+	"WarehouseMain", "WarehouseWing", "WarehousePorch", "ArmoryDoor", "Geometry/Well"
+]
 ## Places du joueur (local au village) : Spawn, porche, potager, aire de jeux, sud, grand arbre,
 ## ouest, est, chemin nord, linge.
 const SPOTS: Array[Vector3] = [
@@ -183,6 +190,37 @@ func test_paths_keep_a_three_metre_corridor_to_the_gates() -> void:
 				"chemin %s à %.1f m : couloir de %.2f m" % [outward, t, corridor]
 			)
 			t += PATH_STEP
+
+
+func test_no_blocking_decor_next_to_npcs_and_items() -> void:
+	# Rien qui bloque à moins de CLEAR_AROUND m d'un PNJ ou d'un objet de quête, sauf les lieux
+	# que leur place désigne (HISTOIRE.md 3.3 : Ithea adossée au puits, Lakhesh devant la fenêtre
+	# de l'aile, Willem près de la salle des armes, Nygglatho sous le porche).
+	var spots := {}
+	for placements: PackedScene in [NPC_PLACEMENTS, ITEM_PLACEMENTS]:
+		var root := placements.instantiate() as Node3D
+		for child: Node in root.get_children():
+			spots[String(child.name)] = (child as Node3D).position
+		root.free()
+	assert_eq(spots.size(), 9, "les huit PNJ et le myosotis")
+	var capsule := CapsuleShape3D.new()
+	capsule.radius = CLEAR_AROUND
+	capsule.height = PLAYER_HEIGHT + 2.0 * CLEAR_AROUND
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = capsule
+	query.collision_mask = 1
+	for label: String in spots:
+		var at := _village.to_global(spots[label] as Vector3)
+		query.transform = Transform3D(
+			Basis.IDENTITY, Vector3(at.x, at.y + STEP_UP + PLAYER_HEIGHT / 2.0, at.z)
+		)
+		for hit: Dictionary in _space.intersect_shape(query, 16):
+			if hit["collider"] == _ground:
+				continue
+			var path := String((hit["collider"] as Node).get_path())
+			if PLACES.any(func(place: String) -> bool: return path.contains(place)):
+				continue
+			fail_test("%s : décor bloquant à moins de %.1f m (%s)" % [label, CLEAR_AROUND, path])
 
 
 func test_something_moves_in_the_yard() -> void:
