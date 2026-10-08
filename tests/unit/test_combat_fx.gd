@@ -132,7 +132,9 @@ func test_burst_plays_once_and_frees_itself() -> void:
 	assert_true(burst.is_playing(), "joué")
 	assert_true(burst.no_depth_test, "devant sa cible")
 	assert_almost_eq(burst.global_position, Vector3(1.0, 0.7, 0.0), Vector3.ONE * 0.001)
-	var freed: bool = await wait_until(func() -> bool: return not is_instance_valid(burst), 1.0)
+	# Un objet libéré capturé tel quel par la lambda ferait une erreur moteur : référence faible.
+	var ref: WeakRef = weakref(burst)
+	var freed: bool = await wait_until(func() -> bool: return ref.get_ref() == null, 1.0)
 	assert_true(freed, "libéré à la fin de son animation")
 
 
