@@ -995,7 +995,7 @@
     "_back"
    ],
    "aliases": {
-    "_back": {
+    "side": {
      "parle": "repos"
     }
    }
@@ -1031,7 +1031,12 @@
     "",
     "_front",
     "_back"
-   ]
+   ],
+   "accepted": {
+    "side": [
+     "height"
+    ]
+   }
   },
   {
    "id": "collon",
@@ -1042,7 +1047,8 @@
     "",
     "_front",
     "_back"
-   ]
+   ],
+   "feet": "alpha"
   },
   {
    "id": "lakhesh",
@@ -1053,7 +1059,12 @@
     "",
     "_front",
     "_back"
-   ]
+   ],
+   "aliases": {
+    "_front": {
+     "parle": "repos"
+    }
+   }
   },
   {
    "id": "almita",
@@ -1080,7 +1091,7 @@
     "side": {
      "parle": "repos"
     },
-    "_back": {
+    "_front": {
      "parle": "repos"
     }
    }
@@ -1143,12 +1154,7 @@
    ],
    "torso": [
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "ferryman",
