@@ -10,6 +10,16 @@ extends Node3D
 ## Toit « long » (gable_front faux) : faîtage est-ouest, pignons à l'est et à l'ouest, la façade
 ## s'arrête à l'égout. Toit « pignon » (gable_front vrai) : faîtage nord-sud, la façade comprend le
 ## triangle du pignon. Enfants internes « Walls », « Roof » et « Facade », recréés au chargement.
+##
+## (H9) Flancs (docs/ASSETS_HD2D_MONDE.md, section 3.5) : side_facade, élévation du mur est (côté
+## gauche de l'image = angle sud), plaquée telle quelle devant le flanc est et retournée devant le
+## flanc ouest (enfant interne « Sides », un draw call pour les deux, éclairé comme les murs) :
+## pignon jusqu'au faîtage pour un toit long, mur gouttereau jusqu'à l'égout pour un pignon en
+## façade (side_contract_size). Sans image, les flancs gardent la matière des murs.
+## Petits panneaux de mur et de toit (cheminées, lucarnes, lierre, enseignes : DecorPanel) : les
+## poser sur la surface (contre la façade ou le flanc, ou au pied de la cheminée sur le pan de
+## toit sud) avec depth_offset 0,05 à 0,1 m et shadow_width 0 ; ils passent alors devant le mur
+## ou le toit sans scintiller ni passer derrière (docs/DECISIONS.md, H9).
 
 ## Taille d'une matière répétée (m) : 192 px à 96 px par mètre.
 const MATERIAL_SPAN := 2.0
@@ -69,10 +79,16 @@ static var _materials: Dictionary = {}
 	set(value):
 		window_glow = value
 		_queue_rebuild()
+## (H9) Image du flanc est (élévation, fond transparent), retournée à l'ouest ; null : matière.
+@export var side_facade: Texture2D:
+	set(value):
+		side_facade = value
+		_queue_rebuild()
 
 var _walls: MeshInstance3D
 var _roof: MeshInstance3D
 var _facade: MeshInstance3D
+var _sides: MeshInstance3D
 var _queued: bool = false
 
 
@@ -89,6 +105,7 @@ func rebuild() -> void:
 		_walls = _internal_mesh(&"Walls")
 		_roof = _internal_mesh(&"Roof")
 		_facade = _internal_mesh(&"Facade")
+		_sides = _internal_mesh(&"Sides")
 	_walls.mesh = _walls_mesh()
 	_walls.material_override = surface_material(wall_texture, WALL_RELIEF)
 	_roof.mesh = _roof_mesh()
@@ -99,6 +116,36 @@ func rebuild() -> void:
 		_facade.mesh = DecorPanel.quad_mesh(size)
 		_facade.material_override = DecorPanel.material_for(facade, Color.WHITE, window_glow)
 		_facade.position = Vector3(0.0, 0.0, footprint.y / 2.0 + FACADE_GAP)
+	_sides.visible = side_facade != null
+	if side_facade != null:
+		_sides.mesh = _sides_mesh()
+		_sides.material_override = side_material(side_facade, window_glow)
+
+
+## (H9) Taille du flanc (m) : celle de l'image side_facade à 96 px par mètre.
+func side_size_m() -> Vector2:
+	if side_facade == null:
+		return Vector2.ZERO
+	return Vector2(side_facade.get_size()) / DecorPanel.PIXELS_PER_METER
+
+
+## (H9) Taille que le cahier n° 2 demande à l'image du flanc (m) : profondeur × faîtage (pignon
+## d'un toit long) ou profondeur × hauteur du mur (gouttereau d'un pignon en façade).
+func side_contract_size() -> Vector2:
+	return Vector2(footprint.y, wall_height if gable_front else ridge_height)
+
+
+## (H9) Matériau partagé des flancs : l'image, éclairée comme les murs (relief), lueur des fenêtres.
+static func side_material(texture: Texture2D, glow: float) -> Material:
+	var key := "side|%s|%.2f" % [texture.get_rid(), glow]
+	if not _materials.has(key):
+		var material := ShaderMaterial.new()
+		material.shader = DecorPanel.PANEL_SHADER
+		material.set_shader_parameter(&"albedo_texture", texture)
+		material.set_shader_parameter(&"hd2d_relief", WALL_RELIEF)
+		material.set_shader_parameter(&"glow_strength", glow)
+		_materials[key] = material
+	return _materials[key]
 
 
 ## Matériau partagé d'une matière de mur ou de toit (panel.gdshader, relief lisible).
@@ -132,6 +179,33 @@ func _walls_mesh() -> ArrayMesh:
 	else:
 		_triangle(st, Vector3(hx, h, -hz), Vector3(hx, h, hz), Vector3(hx, ridge_height, 0))
 		_triangle(st, Vector3(-hx, h, hz), Vector3(-hx, h, -hz), Vector3(-hx, ridge_height, 0))
+	return st.commit()
+
+
+## (H9) Flancs : l'image du flanc est, posée sur son ancre (milieu du bord bas) au milieu du mur
+## est, FACADE_GAP devant lui, et la même retournée devant le mur ouest (le côté gauche de l'image
+## reste au sud des deux côtés : vue de l'ouest, elle est en miroir).
+func _sides_mesh() -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var size := side_size_m()
+	var half := size.x / 2.0
+	var x := footprint.x / 2.0 + FACADE_GAP
+	for side: float in [1.0, -1.0]:
+		var south_bottom := Vector3(x * side, 0.0, half)
+		var north_bottom := Vector3(x * side, 0.0, -half)
+		var north_top := Vector3(x * side, size.y, -half)
+		var south_top := Vector3(x * side, size.y, half)
+		var points: Array[Vector3] = [south_bottom, north_bottom, north_top, south_top]
+		var uvs: Array[Vector2] = [Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)]
+		# Vu de l'extérieur, en bas à gauche : l'angle sud à l'est, l'angle nord à l'ouest.
+		var order := PackedInt32Array([0, 2, 1, 0, 3, 2])
+		if side < 0.0:
+			order = PackedInt32Array([1, 3, 0, 1, 2, 3])
+		for k in order:
+			st.set_normal(Vector3(side, 0.0, 0.0))
+			st.set_uv(uvs[k])
+			st.add_vertex(points[k])
 	return st.commit()
 
 
