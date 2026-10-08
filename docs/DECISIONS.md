@@ -1879,3 +1879,53 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   tactiles. Un bouton relâché pendant la pause relâche son action à la reprise. Le rappel des
   commandes de la pause n'annonce plus de « caméra à la souris » (vestige de la caméra 3D :
   la caméra HD-2D est fixe) ; le stick droit y est donné pour le zoom.
+- **P3 — navires à quai** : la caméra se tient 15 m au sud du joueur et regarde le nord ; un
+  navire au-delà du bord sud du quai n'entre dans le champ que par le bas de l'écran, et un navire
+  plus au nord serait sur l'île. Les deux navires flottent donc juste au-delà du bord (0,3 à 0,9 m),
+  le pont à hauteur du quai (comme un bateau à quai) : on les voit en entier en longeant le
+  garde-corps, leur superstructure depuis le milieu du quai. Le Barocupot, proue à l'ouest
+  (`airship_barocupot_beach.tscn` : `flip_h` sur la coque et les hélices, abscisses opposées),
+  à l'ouest du quai contre son pylône (`mooring_tower`, près de Limeskin), pont 1,6 m au-dessus du
+  quai ; le navire du passeur, proue à l'est (`airship_ferry_beach.tscn`), au bout d'une passerelle
+  raccourcie à 6,3 m (`gangway_beach.tscn`, tête à 1 m du passeur, inchangé). Les deux scènes sont
+  en premier plan (`foreground`) : la coque s'efface autour du joueur quand elle passe devant lui.
+- **P3 — rue d'un seul tenant « de chaque côté »** : rang nord jointif (joints ≤ 0,1 m, façades à
+  z = −9,5, le café à −9) d'ouest en est : auberge, horloger, café, maison étroite, boulangerie,
+  le chemin de l'entrepôt, librairie, salle de projection, maisons à colombages b, Limashenka,
+  colombages a ; café et boulangerie glissés de 0,9 m vers l'ouest (le serveur et le boulanger
+  restent devant leur porte), la maison de pierre et celle du deuxième rang retirées. Une maison
+  bâtie au sud de la rue cacherait le joueur qui y marche : le côté sud est fait des maisons du
+  port (bureau du port, chaudronnerie, boucherie, maison de pierre b, hangar), façades sur le bord
+  nord du quai, assez loin pour que leurs toits restent sous le joueur à l'écran (le haut d'un
+  toit doit être à plus de 1,29 × sa hauteur au sud du joueur) : depuis la rue, leurs toits et
+  leurs jardins bordent le bas de l'écran ; depuis le quai, leurs façades ferment la vue.
+- **P3 — jardins et arrière-cours clos** : derrière un bâtiment (au nord de lui), le joueur est
+  caché par son toit. Les jardins des maisons du port (clôture basse au bord de la rue, z = −3,6,
+  clôtures de profil aux bouts, barils entre les maisons) et les arrière-cours du rang nord
+  (clôture à z = −25 ; le chemin de l'entrepôt passe entre deux clôtures de profil,
+  `keep_orientation`) sont clos ; `test_zone_beach.gd` vérifie qu'aucun mur ni toit ne passe
+  devant le joueur où qu'il marche dans le bourg et sur le quai.
+- **P3 — détails accordés aux façades livrées** : les façades du cahier n° 2 dessinent déjà
+  enseignes, jardinières, lierre, appliques et certaines cheminées ; la pose ajoute la fumée sur
+  ces cheminées dessinées (maison étroite, colombages a, maison de pierre b, chaudronnerie), la
+  vapeur sur le four dessiné, la clochette du café, des gouttières, des cheminées et lucarnes sur
+  les toits (briques sur les tuiles, pierre sur l'ardoise et les bardeaux), du lierre sur un flanc.
+- **P3 — étals et lampadaires** : chaque marchand se tient devant (au sud de) son étal : l'étal des
+  œufs et le snack passent au nord de leur vendeur, qu'ils cachaient ; les étals restent à plus de
+  3 m au sud de la rue. Les lampadaires de la rue sont côté nord (au sud, ils passaient devant le
+  joueur) ; guirlandes tendues entre deux maisons, devant les façades. La terrasse du café met une
+  table sur chacun des trois pieds de la collision du café (le pied du milieu était invisible).
+- **P3 — budget d'images** : 140 matériaux par zone (`test_hd2d_decor.gd`) : 132 au port. Les
+  variantes s'en tiennent aux images les plus utiles (feuillus et sapin du cahier n° 1, buissons b
+  et c, une lucarne, un lierre) ; une pose plus riche demandera de relever ce plafond (le vrai
+  budget, ≤ 200 draw calls par vue, laisse de la marge : 70 à 110 mesurés).
+- **P3 — premier plan sur les grands décors de passage** : fontaine, étals, snack, panneaux
+  d'affichage, grue, pylône d'ancrage, guichet, tuyaux de vapeur, hélice de rechange et manche à
+  air ont `foreground = true` sur leur instance dans `beach.tscn` (scènes partagées inchangées) :
+  ils s'effacent en trame autour du joueur qui passe derrière eux ; chaque image reste un seul
+  matériau (toutes ses instances au port sont au premier plan).
+- **P3 — loin du bord qui va changer** (le bord de l'île deviendra irrégulier, le quai restera
+  droit) : hors du quai, aucun décor bloquant à moins de 3 m du bord actuel ni aucun autre à moins
+  de 1 m (vérifié par `test_zone_beach.gd`), et rien dans les 4 derniers mètres : l'habillage de la
+  lèvre au-delà des bouts du quai est retiré, quelques rochers, touffes et un arbre reculent ; les
+  deux navires restent devant le quai (le Barocupot recentré sur sa moitié ouest, x de −32 à −8).

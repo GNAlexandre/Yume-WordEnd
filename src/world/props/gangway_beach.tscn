@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="2_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_planks.png" id="3_planks"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/gangway.png" id="4_rail"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_deck"]
+size = Vector3(2, 0.24, 6.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_west"]
+size = Vector3(0.1, 1.2, 6.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_east"]
+size = Vector3(0.1, 1.2, 6.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_end"]
+size = Vector3(2.1, 1.2, 0.12)
+
+[node name="GangwayBeach" type="Node3D"]
+
+[node name="Deck" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.16, 3.15)
+script = ExtResource("1_building")
+wall_texture = ExtResource("3_planks")
+roof_texture = ExtResource("3_planks")
+footprint = Vector2(2.0, 6.3)
+wall_height = 0.24
+ridge_height = 0.24
+overhang = 0.0
+
+[node name="Railing" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.3)
+script = ExtResource("2_panel")
+texture = ExtResource("4_rail")
+shadow_width = 0.0
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Deck" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, 3.15)
+shape = SubResource("BoxShape3D_deck")
+
+[node name="West" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.03, 0.6, 3.15)
+shape = SubResource("BoxShape3D_west")
+
+[node name="East" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.03, 0.6, 3.15)
+shape = SubResource("BoxShape3D_east")
+
+[node name="End" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 6.3)
+shape = SubResource("BoxShape3D_end")

@@ -407,3 +407,19 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   les flancs et les hélices). La pose le dépassera : à régler par H5 sur les draw calls mesurés.
 ## P0 — alpha doux des panneaux debout : réglé
 - `DecorPanel.soft_alpha` (docs/DECISIONS.md, « Alpha doux des panneaux debout »).
+## P3 — dirigeables à quai : réglé
+- Amarrés de flanc au-delà du bord, de part et d'autre du quai (docs/DECISIONS.md, « P3 — navires
+  à quai ») ; les scènes partagées `airship_*.tscn` ne changent pas.
+
+## P3 — pavés de la rue du Port jusqu'aux façades (moteur, H5 ou H9)
+- Besoin : le masque `m.street` de `terrain.gdshader` pave z = 43 à 47 (monde) ; les façades du
+  rang nord sont à z = 41,5 : il reste 1,5 m d'herbe devant les boutiques (trottoir en herbe).
+- Proposition : étendre la rue au nord jusqu'à z = 41,3 de x = −34 à 34 (hors du chemin de
+  l'entrepôt), ou un masque « trottoir » de dalles.
+- En attendant : bordures d'herbe (`grass_edge_*`) le long de la rue, terrasses et étals sur
+  l'herbe.
+
+## P3 — plafond d'images par zone (H5, `test_hd2d_decor.gd`)
+- 132 matériaux au port pour un plafond de 140 : la variété demandée (3 à 6 variantes par
+  famille, flancs, détails) le touche. Proposition : compter les matériaux par vue (le budget
+  réel, ≤ 200 draw calls, est loin : 70 à 110 au port).
