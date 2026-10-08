@@ -12,7 +12,9 @@ extends GutTest
 ##   caillebotis, faits d'une même image par nature) ;
 ## - chemins : les chemins des bois (portail nord → terrain, branche du marais) sont libres sur
 ##   toute leur largeur (3 m), et le gué du ruisseau aussi ;
-## - lisières : d'un seul tenant le long du bord nord, et personne ne passe derrière ;
+## - lisières : d'un seul tenant le long du bord nord, elles s'effacent autour du joueur qui
+##   passe derrière ; aucun décor à moins de 1 m du bord, aucune collision à moins de 3 m (lot
+##   B1 : bord irrégulier) ;
 ## - draw calls : depuis la caméra du joueur (camera_rig.tscn), les décors fondus vus dans chaque
 ##   vue des bois restent sous DECOR_BUDGET (200 au total avec le sol, le ciel, les personnages
 ##   et l'interface) ; ceux des bois vus depuis la cour et la colline restent peu nombreux
@@ -97,8 +99,10 @@ const PATH_HALF_WIDTH := 1.1
 const DECOR_BUDGET := 165
 const PLAYER_RADIUS := 0.35
 const PLAYER_HEIGHT := 1.5
-## Demi-profondeur de la collision des lisières (P0 : 1,6 m).
-const WALL_BACK := 0.8
+## Bord de l'île (lot B1 : il deviendra irrégulier, criques de 4 m au plus là où rien n'est posé) :
+## distance minimale de tout décor, et de toute collision de décor (m).
+const EDGE_DECOR := 1.0
+const EDGE_BLOCKING := 3.0
 ## Recouvrement de deux lisières voisines, au plus (m).
 const WALL_OVERLAP := 1.5
 
@@ -238,17 +242,29 @@ func test_forest_walls_close_the_north_rim_in_one_piece() -> void:
 			assert_lt(
 				gap, WALL_OVERLAP, "%s : jointif avec %s (%.2f m)" % [wall.name, previous.name, gap]
 			)
-		# Derrière la lisière : entre l'arrière de sa collision et le bord, à ses deux bouts (les
-		# seules entrées), un passage plus étroit que le joueur.
-		var back := -wall.global_basis.z.normalized() * WALL_BACK
-		for side: float in [-1.0, 1.0]:
-			var corner := _wall_end(wall, side * 0.98) + back
-			var gap := IslandTerrain.edge_distance(corner.x, corner.z)
-			assert_lt(
-				gap,
-				PLAYER_RADIUS * 2.0,
-				"%s : on ne passe pas derrière (%.2f m)" % [wall.name, gap]
-			)
+		# Loin du bord (lot B1), on peut passer derrière : la lisière s'efface autour du joueur.
+		assert_true(wall.foreground, "%s s'efface devant le joueur" % wall.name)
+
+
+func test_decor_keeps_away_from_the_edge() -> void:
+	# Bord irrégulier du lot B1 : criques de 4 m au plus là où rien n'est posé.
+	var near: Array[String] = []
+	for item: Array in _decor:
+		var at := _forest.to_global(item[0] as Vector3)
+		var edge := IslandTerrain.edge_distance(at.x, at.z)
+		if edge < EDGE_DECOR:
+			near.append("%s à %.1f m" % [(item[1] as String).get_file(), edge])
+	assert_eq(near, [] as Array[String], "décors à %.0f m au moins du bord" % EDGE_DECOR)
+	var blocking: Array[String] = []
+	var geometry := _forest.get_node(^"Geometry")
+	for node: Node in geometry.find_children("*", "CollisionShape3D", true, false):
+		var shape := node as CollisionShape3D
+		for point: Vector3 in _footprint(shape):
+			var edge := IslandTerrain.edge_distance(point.x, point.z)
+			if edge < EDGE_BLOCKING:
+				blocking.append("%s à %.1f m" % [shape.get_parent().get_parent().name, edge])
+				break
+	assert_eq(blocking, [] as Array[String], "collisions à %.0f m au moins du bord" % EDGE_BLOCKING)
 
 
 # --- Draw calls -----------------------------------------------------------------------------------
@@ -347,6 +363,24 @@ func _decor_at(at: Vector3) -> Array[String]:
 			var collider := hit["collider"] as Node
 			names.append(String(collider.get_parent().get_path()))
 	return names
+
+
+## Points (monde) du pourtour d'une forme de collision au sol : coins d'une boîte, huit points
+## du cercle d'un cylindre ; son centre sinon.
+func _footprint(shape: CollisionShape3D) -> Array[Vector3]:
+	var xform := shape.global_transform
+	var points: Array[Vector3] = [xform.origin]
+	if shape.shape is BoxShape3D:
+		var half := (shape.shape as BoxShape3D).size / 2.0
+		for sx: float in [-1.0, 1.0]:
+			for sz: float in [-1.0, 1.0]:
+				points.append(xform * Vector3(half.x * sx, 0.0, half.z * sz))
+	elif shape.shape is CylinderShape3D:
+		var radius := (shape.shape as CylinderShape3D).radius
+		for k in 8:
+			var angle := TAU * k / 8.0
+			points.append(xform * Vector3(cos(angle) * radius, 0.0, sin(angle) * radius))
+	return points
 
 
 ## Bout gauche (side -1) ou droit (+1) du pied d'une lisière (monde).
