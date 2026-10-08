@@ -1870,3 +1870,12 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   désinstallation silencieuses, raccourcis, clé d'« Applications et fonctionnalités », page
   d'accueil) ; le jeu, lui, plante sous ce wine dès le lancement (`kernelbase`, après
   `dinput8`), template officiel nu compris : il n'a pas été lancé sur un vrai Windows.
+- **Souris en jeu** (recette du 8 octobre 2026 : « les clics droit et gauche ne font rien »).
+  Clic gauche : coup d'épée ; clic droit maintenu : charge magique. Le joueur se tourne d'abord
+  vers le point du sol sous le pointeur, même en marchant, sauf avec une cible verrouillée.
+  Les clics ne passent pas par l'input map : `Player._unhandled_input` ne reçoit que ceux que
+  l'interface n'a pas pris (un clic sur « Reprendre » ne frappe pas à la reprise) et ignore la
+  souris émulée par le tactile ; il les envoie en `InputEventAction`, comme les boutons
+  tactiles. Un bouton relâché pendant la pause relâche son action à la reprise. Le rappel des
+  commandes de la pause n'annonce plus de « caméra à la souris » (vestige de la caméra 3D :
+  la caméra HD-2D est fixe) ; le stick droit y est donné pour le zoom.
