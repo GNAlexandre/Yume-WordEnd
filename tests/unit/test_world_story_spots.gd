@@ -133,7 +133,7 @@ func test_trigger_discs_have_open_ground_reachable_on_foot() -> void:
 		var center := _global(spec[0] as StringName, spec[1] as Vector3)
 		var radius: float = spec[2]
 		assert_true(
-			IslandTerrain.edge_distance(center.x, center.z) >= EDGE_MARGIN,
+			IslandTerrain.distance_to_edge(center.x, center.z) >= EDGE_MARGIN,
 			"%s : centre à %.1f m au moins du vide" % [trigger, EDGE_MARGIN]
 		)
 		assert_almost_eq(_floor_height(center), center.y, 0.25, "%s : sol au centre" % trigger)
@@ -167,7 +167,7 @@ func _check_spot(
 	label: String, at: Vector3, floor_expected: float, tolerance: float, clearance: float
 ) -> Array[String]:
 	var problems: Array[String] = []
-	var edge := IslandTerrain.edge_distance(at.x, at.z)
+	var edge := IslandTerrain.distance_to_edge(at.x, at.z)
 	if edge < EDGE_MARGIN:
 		problems.append("%s : à %.1f m du vide" % [label, edge])
 	var floor_y := _floor_height(at)

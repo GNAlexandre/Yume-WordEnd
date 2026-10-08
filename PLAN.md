@@ -414,6 +414,14 @@ class_name PropScatter     # (H9) @export variants: Array[PackedScene], random_f
 class_name IslandTerrain   # (H9) GROUND_LAYERS (27 tuiles, ordre du contrat), GROUND_FALLBACK, ATLAS_COLUMNS,
                            # atlas_tile_count(size), ground_layer(layer, tile_count), triangles_in(rect),
                            # surface_height(x, z) ; terrain.gdshader : rangées lues dans la taille de l'atlas
+                           # (B1) bord : edge_radius(angle) (rayon euclidien, plus en norme 4), edge_point(angle),
+                           # edge_distance(x, z) (approchée), is_land(x, z), distance_to_edge(x, z) (exacte :
+                           # marges des décors), rim_loop() (bord du sol en une boucle, depuis le nord)
+class_name IslandEdge      # (B1) src/world/island_edge.gd : la forme du bord, une table de EDGE_SAMPLES rayons
+                           # (radius, smooth_radius, point, normal(angle, smooth), distance, exact_distance,
+                           # table, texture (shader du sol : edge_table), arc, length, base_radius : tracé
+                           # d'origine, fade_distance) ; EDGE_LIMIT (±79,2 m), PORT_SECTOR, WATERFALL_ANGLE,
+                           # CAPES, LEDGES, COVES ; IslandRock.uv_turn() (périmètre en textures de 4 m)
 class_name SkyDrift        # (H9) src/world/sky_drift.gd (Island/Decor/SkyDrift) : panneaux lointains qui dérivent
                            # d'ouest en est en boucle (shader, TIME) ; @export textures, pixels_per_meter (48),
                            # count, span, fade, distance_range, height_range, speed_range, scale_range, tint,

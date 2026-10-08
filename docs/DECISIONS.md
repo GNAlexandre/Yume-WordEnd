@@ -2019,3 +2019,54 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   dix places (sous 140) : densité 29 à 55 décors à moins de 12 m du joueur, aucun voisin à moins
   de 2 m de la même image, aucun trou de 4 m sans décor, couloir de 3 m sur les quatre chemins,
   rien de bloquant à moins de 1 m des PNJ et du myosotis.
+- **B1 — un bord d'île irrégulier** (demande de l'utilisateur : « une map carrée ne fait pas très
+  réaliste », des irrégularités sauf au port) : la forme du bord quitte terrain.gd pour
+  `IslandEdge` (`src/world/island_edge.gd`, terrain.gd dépassait les 1 000 lignes) : un rayon par
+  angle (forme étoilée), cuit une fois dans une table de 2 048 rayons et pentes ; le shader du sol
+  lit la même table en texture RGF (texelFetch, interpolation refaite à la main, aucune formule
+  propre au shader). Le tracé d'origine (superellipse, quai, Couchant) reste la base : la côte
+  n'avance qu'au-dehors (minimum adouci), sauf dans deux anses où rien n'était posé à 6 m (sud-est,
+  sud du Couchant ; 2,2 m au plus). Grandes avancées décidées à la main (`CAPES` : éperon de 10 m
+  au nord-est tourné vers le nord-nord-est, caps de 5 à 7 m autour de la cascade, au sud-ouest, au
+  sud-est et au sortir du port), pas sur les diagonales : des caps sur les diagonales remplissaient
+  les coins du carré des murs, l'île en devenait plus carrée. Ondulations moyennes (1 à 3 m sur 6
+  à 14 m) menées par un bruit de Fourier et une onde à fréquence modulée (le bruit seul laissait des
+  tronçons calmes de 20 m), ramenées entre un fond (0,6 m) et la place laissée par les murs (bord à
+  ±79,2 m au plus, 0,9 m de marge avant d'adoucir) pour ne jamais aplatir un cap contre un mur ;
+  ébréchures anguleuses (ligne brisée de 1,5 à 3,5 m, ±0,45 m) et bruit fin. Mesuré : tronçon de
+  20 m le plus droit hors du quai à 0,65 m de sa corde ; périmètre 525 → 584 m.
+- **B1 — distance au bord** : `edge_distance()` divise l'écart radial par la pente de la côte
+  (première approximation de la distance vraie, juste sur les flancs des caps) ; la distance
+  exacte au tracé (`IslandTerrain.distance_to_edge`) sert aux marges. `edge_radius()` est
+  désormais un rayon euclidien (il était en norme 4).
+- **B1 — relief** : il s'efface toujours vers le tracé d'origine (mêmes hauteurs qu'avant dans
+  toutes les zones ; les avancées de la côte sont plates, à y = 0) et vers la côte lissée (les
+  anses). Le refaire vers le nouveau bord gonflait les dunes du Couchant (pente de 45°).
+- **B1 — cascade** : `Island/Waterfall` tombait 5 m à l'est de la sortie du ruisseau (angle −2,3) :
+  elle tombe désormais au point où le lit coupe le tracé d'origine (−2,3532 rad, (−62,0 ; −62,4)),
+  au fond d'une ravine (caps de part et d'autre, pas d'ébréchure sur le mètre où l'eau passe) ; le
+  lit du ruisseau (`STREAM`) ne change pas et traverse la lèvre de pierre. Le haut du ruban
+  affleure sous la lèvre, à 5 cm au-delà du bord (à 0,6 m en deçà et 2 cm au-dessus du sol, il
+  traçait un trait clair en travers du lit dans la vue du jeu).
+- **B1 — roche** : la lèvre et le premier anneau suivent le bord exact du sol (`rim_loop()`, une
+  boucle ordonnée depuis le nord) ; les anneaux plus bas suivent la côte de moins en moins
+  ébréchée (384, 256, 192, 192 puis 128 points), raccordés d'un anneau à l'autre par angle
+  croissant ; leurs variations viennent d'un bruit lisse le long du tour (128 cases), le même quel
+  que soit le nombre de points. UV.x = longueur de bord depuis le nord, `IslandRock.uv_turn()` =
+  périmètre arrondi à un nombre entier de textures de 4 m (584 m) ; étirement le long de la lèvre
+  ≤ 4 %. Triangles : sol 11 576 → 12 258, roche 3 964 → 6 048 (un draw call chacun) ; vues de
+  `tools/hd2d_shots.sh` : mêmes draw calls (village 59, entrepôt 78, bois 65, Couchant 34, port 44,
+  colline 52, dialogue 64, veille 50 → 51 ; menu 43 → 46 à cause du bouton Continuer, une partie
+  étant enregistrée dans le `user://` du worktree), 2 800 primitives de plus par vue (≈ 16 400 →
+  19 200).
+- **B1 — lèvre de pierre du sol** : bande de 0,2 à 1,4 m (dalles qui affleurent par plaques,
+  herbe ou sous-bois jusqu'au bord ailleurs) au lieu d'un ruban régulier de 0,9 m qui faisait
+  bordure pavée ; le ruisseau la traverse.
+- **B1 — marges au vide** (`tests/unit/test_world_edge_margins.gd`, island.tscn complète) : ancre
+  d'un décor à 1 m, collision d'un décor, PNJ, objet, Timere, point d'apparition et centre d'un
+  déclencheur à 3 m, disque d'un déclencheur à 1 m. Mobilier du bord exempté par préfixe de scène
+  (`edge_`, `airship_`, `gangway`, `mooring_`, `bollard`, `floating_rock`, `distant_island`). La
+  ruine du poste de guet du Couchant (collision à 1,5 m du vide avant B1) a un replat devant elle
+  (`LEDGES`, +1,6 m) ; `couchant_edge` reste près du bord (disque à 1,9 m, centre à 4,9 m).
+  `EDGE_MARGIN` des places de l'acte 1 reste 3 m (HISTOIRE.md ; 6 m exclurait le passeur, au bout
+  de sa passerelle, et `couchant_edge`, « au bord ») ; il se mesure à la distance exacte.
