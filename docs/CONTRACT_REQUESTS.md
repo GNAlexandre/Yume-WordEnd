@@ -194,9 +194,9 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   « Rejoindre Nygglatho sous le porche ») : on y va par l'herbe ; un chemin de terre guiderait
   l'œil vers elle.
 - Proposition : un segment de plus dans `PATHS` de `src/world/shaders/terrain.gdshader`, du bord
-  de la cour aux marches du porche : (−6,4, −6,4) → (−9, −8,6), même demi-largeur que les autres
-  chemins. Le décor du village laisse ce couloir libre (`test_village_decor.gd` : abord de
-  Nygglatho).
+  de la cour aux marches du porche (centré sur la porte depuis la reprise : x −10,35) :
+  (−6,4, −6,4) → (−10, −8,8), même demi-largeur que les autres chemins. Le décor du village
+  laisse ce couloir libre (`test_village_decor.gd` : abord de Nygglatho).
 - En attendant : la lampe à cristal du porche (entre Nygglatho et Nephren) et les parterres
   encadrent l'abord.
 
@@ -216,13 +216,14 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 - Besoin : MONDE.md (sections 2.2 et 3) cite la cheminée de briques qui fume et la terrasse à
   linge du toit (`warehouse_roof_deck`), absentes de `docs/ASSETS_HD2D.md` et de
   `tools/hd2d_manifest.json`.
-- Proposition (section 7, priorité 3) : `assets/hd2d/props/warehouse_chimney.png`, 96 × 192 px
-  (1 × 2 m) : souche de cheminée de briques rouge sombre, chapeau de pierre, sans fumée ;
-  `assets/hd2d/props/warehouse_roof_deck.png`, 576 × 154 px (6 × 1,6 m) : terrasse plate vue de
-  face, plancher, rambarde de fer basse (0,9 m, à hauteur de fée), cordes et deux draps blancs.
-  H2 les pose sur le toit de `warehouse_main` (panneaux sans collision).
-- En attendant : le toit reste nu (avec la caméra actuelle, il sort du cadre dès qu'on est dans
-  la cour).
+- Proposition (section 7, priorité 3) : `assets/hd2d/props/warehouse_roof_deck.png`, 576 × 154 px
+  (6 × 1,6 m) : terrasse plate vue de face, plancher, rambarde de fer basse (0,9 m, à hauteur de
+  fée), cordes et deux draps blancs ; H2 la pose sur le toit de `warehouse_main` (panneau sans
+  collision). Facultatif : `assets/hd2d/fx/chimney_smoke.png`, 96 × 192 px, panache de fumée
+  pâle en pixel art.
+- En attendant : la cheminée est faite en matières (`src/world/props/warehouse_chimney.tscn`,
+  `Building` en `wall_stone` et `roof_slate`, au faîtage) ; pas de terrasse. Avec la caméra
+  actuelle le toit sort du cadre dès qu'on est dans la cour.
 
 ## H2 — une vue de la cour dans `tools/hd2d_shots.sh` (H8)
 - Besoin : les vues `village` (−5, −2,5) et `dialogue` cadrent le quart nord-ouest ; le grand
@@ -231,3 +232,25 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   cordes à linge, le potager, les bancs et l'entrée des chemins ; éventuellement une vue
   `arbre` (9, −8) pour le grand arbre, la balançoire et la remise.
 - En attendant : captures faites à part par H2 (planches `build/shots/h2_avant_apres_*.png`).
+
+## H2 — battants du portail de la palissade (H1, image livrée)
+- Besoin : dans `assets/hd2d/props/palisade_gate.png` livrée (PR n° 3), les deux battants sont
+  dessinés entrouverts au milieu du portail : le passage dessiné ne fait qu'un mètre (x −0,52 à
+  +0,54 m de l'ancre) alors que le chemin fait 3 m et que la collision laisse 2,5 m entre les
+  poteaux (±1,49 m, au droit des poteaux dessinés). On traverse les battants en passant.
+- Proposition : redemander l'image, 384 × 288 px, « portail de bois à deux montants et linteau,
+  lanterne de cristal suspendue, battants grands ouverts rabattus contre les montants (passage
+  libre de 2,5 m au moins entre eux) ».
+- En attendant : collision aux seuls poteaux ; `test_village_decor.gd` garde 1,2 m libres de part
+  et d'autre de l'axe de chaque portail.
+
+## H2 — cour de l'entrepôt et caméra (H5)
+- Besoin : `test_village_decor.gd` lit `pitch_deg`, `fov_deg`, `distance` et `focus_height` dans
+  `camera_rig.tscn` pour vérifier qu'aucun PNJ ne reste caché en marchant
+  (`test_no_npc_stays_hidden_while_walking_the_yard`) ; un autre cadrage déplace ce que cachent
+  les arbres du premier plan.
+- Proposition : après un changement de cadrage, relancer
+  `tools/test.sh tests/unit/test_village_decor.gd` ; le message nomme le PNJ, l'image du décor en
+  cause et la place du joueur, à corriger dans `village.tscn` (H2). La cheminée
+  (`WarehouseChimney`, faîtage à 10,1 m) n'apparaît que si le cadrage montre le toit.
+- En attendant : vérifié avec la caméra du socle (32°, 30°, 21 m) et les images livrées.

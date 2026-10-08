@@ -1259,3 +1259,33 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   (z ≈ 18 à 19,6) pour encadrer le bas de l'image sans couvrir la cour ; potager en trois rangs,
   deux buts de deux caisses à l'aire de jeux. Le décor n'utilise que des images partagées ou du
   village (pas de décor propre aux bois ou au port).
+- **H2 — reprise : composition calée sur les images livrées** (main, PR n° 2 et n° 3, intégrées
+  par H1 aux mêmes chemins et tailles) : porche centré sur la double porte de la façade
+  (x −10,35, il ne peut aller plus à l'ouest sans entrer dans l'aile), poteaux de collision au
+  droit de ceux de l'image et dans son plan ; banc de Nephren sous la fenêtre en saillie
+  (x −4,35) ; descente de la salle des armes à x −13,6, juste à l'est de la porte de
+  l'infirmerie ; poteaux du portail (±1,49 m), du linge (±2,66 m) et margelle du puits (rayon
+  0,8 m) au droit de leur dessin. Les remplaçants encore dans la branche sont décalés de quelques
+  décimètres jusqu'à la fusion de H1. Ces réglages remplacent ceux de la ligne « composition de
+  la cour » pour la descente, les arbres du sud et le banc de l'aire de jeux.
+- **H2 — palissade de profil** : les côtés est et ouest prennent `palisade_side.tscn` (même
+  image, `keep_orientation`, ombre allongée le long de la clôture) : vue de biais, la clôture
+  fuit vers le fond au lieu de s'empiler en escalier de panneaux tournés vers le sud. Le nord et
+  le sud gardent `palisade.tscn` de face.
+- **H2 — arrière de l'entrepôt fermé** : deux modules de palissade (`BackFence`) ferment les
+  couloirs de 2 m entre le L et la palissade (au nord-est du corps principal, au sud-ouest de
+  l'aile). Rien n'y est à voir et la caméra fixe n'y montrait que le toit ; la découpe autour du
+  joueur reste pour les arbres, le porche et les draps.
+- **H2 — premier plan** : un arbre de 7 m contre la palissade sud cache, quand on longe celle-ci,
+  ce qui est 10 à 15 m plus au nord sur la même ligne de visée. Les grands arbres du sud vont donc
+  de part et d'autre du portail sud (sapin x −3,9, rouille x −7,8, jaune x 4,4) et aux coins
+  (x ±19) ; aucun entre x 7 et 17 (il cachait Almita) ni devant l'aire de jeux.
+- **H2 — « pas plus d'une seconde » mesuré** : `test_village_decor.gd` fait marcher la caméra du
+  joueur le long de vingt allées (pas de 1 m) qui balaient la cour ; un PNJ dans la part centrale
+  de l'écran (80 % du champ : au bord, sous le panneau de quête, il revient au centre dès qu'on va
+  vers lui) dont l'axe du corps est caché à 0,25, 0,55 et 0,85 m ne doit pas le rester 4 m d'affilée
+  (une seconde à `walk_speed`). Le message nomme l'image en cause ; le test passe avec les
+  remplaçants et avec les images livrées.
+- **H2 — cheminée** : faite en matières (`warehouse_chimney.tscn`, `Building` 1 × 1 m en
+  `wall_stone` / `roof_slate`, au faîtage, x −7,5) plutôt qu'en image : MONDE.md la veut et le
+  cahier des charges n'en a pas ; elle n'entre dans le cadre que si la caméra montre le toit (H5).
