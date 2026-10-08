@@ -1668,3 +1668,13 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   page d'aperçus) et `tools/hd2d_correction_review.py` (outil ponctuel qui l'alimente) retirés de
   l'arbre, comme les sources des livraisons précédentes : ils restent dans l'historique de `main`
   (commit `28d49f3`). La ligne de `.gitattributes` qui visait la page est retirée aussi.
+- **Livraisons du cahier n° 2 par Codex (PR n° 9 à 12 : lots G, E, C, B, 140 images)** intégrées
+  par-dessus les remplaçants de H10 (les images livrées prennent leur place, chemins et `.import`
+  inchangés) ; atlas du sol refait (27 tuiles, dont 15 livrées). `check` signalait 41 images :
+  presque toutes cadrées au plus juste, qui touchent leur bord sur 1 à 5 % de sa longueur (rien
+  ne se voit en jeu). L'outil ne parle plus de coupure qu'au-delà de 12 % du bord (`CUT_COVER`),
+  l'ancrage au sol reste vérifié au moindre pixel ; les lointains qui flottent (îles, rais de
+  lumière) n'ont plus d'ancre au sol (`anchor: free`) ; nuages, brume et dirigeables lointains
+  sont centrés par leur cadre (les hélices et les feuilles, qui tournent, par leur masse).
+  Retouches sans perte : quatre dirigeables lointains et un nuage recentrés par décalage de
+  pixels ; la tache d'huile, coupée au bord droit sur 14 %, effilochée sur 6 px de chaque côté.

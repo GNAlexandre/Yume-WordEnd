@@ -291,13 +291,23 @@ def _mask(img, soft):
     return img.getchannel("A").point(lambda v: 255 if v >= (SOFT_LEVEL if soft else HARD_LEVEL) else 0)
 
 
-def _border_hits(mask):
-    """Bords touchés par la silhouette : ensemble de « left », « right », « top », « bottom »."""
+# Part d'un bord (ligne de pixels extérieure) au-delà de laquelle la silhouette y est coupée net :
+# une image livrée cadrée au plus juste touche souvent son bord sur quelques pixels (1 à 5 %), ce
+# qui ne se voit pas en jeu ; une coupure franche en couvre bien plus.
+CUT_COVER = 0.12
+
+
+def _border_hits(mask, min_cover=0.0):
+    """Bords touchés par la silhouette (plus de min_cover de la ligne extérieure couverte) :
+    ensemble de « left », « right », « top », « bottom »."""
     w, h = mask.size
     hits = set()
     for side, box in (("left", (0, 0, 1, h)), ("right", (w - 1, 0, w, h)), ("top", (0, 0, w, 1)),
                       ("bottom", (0, h - 1, w, h))):
-        if mask.crop(box).getbbox() is not None:
+        if min_cover <= 0.0:
+            if mask.crop(box).getbbox() is not None:
+                hits.add(side)
+        elif _coverage(mask, box) > min_cover:
             hits.add(side)
     return hits
 
@@ -332,13 +342,22 @@ def _check_standing(img, entry, label=""):
     kind = entry["kind"]
     wrap = entry.get("wrap", "")
     hits = _border_hits(mask)
+    if entry.get("anchor") == "free":
+        # Lointain qui flotte (île, rai de lumière) : le jeu le place, pas d'ancre à vérifier.
+        return problems
     if entry.get("anchor") == "center":
-        cut = [SIDE_NAMES[s] for s in ("left", "right", "top", "bottom") if s in hits
+        cuts = _border_hits(mask, CUT_COVER)
+        cut = [SIDE_NAMES[s] for s in ("left", "right", "top", "bottom") if s in cuts
                and not (wrap == "x" and s in ("left", "right")) and not (wrap == "y" and s in ("top", "bottom"))]
         if cut:
             problems.append(label + "coupé par le bord %s (sprite centré : marge tout autour)" % ", ".join(cut))
-        cx, cy = _centroid(mask)
         w, h = img.size
+        if kind == "panel":
+            # Nuage, brume, dirigeable lointain : centré par son cadre (un cumulus est plus lourd
+            # en bas). Ce qui tourne sur son centre (hélice, feuille : bandes) l'est par sa masse.
+            cx, cy = (box[0] + box[2]) / 2.0, (box[1] + box[3]) / 2.0
+        else:
+            cx, cy = _centroid(mask)
         if (wrap != "x" and abs(cx - w / 2.0) > 0.1 * w) or (wrap != "y" and abs(cy - h / 2.0) > 0.1 * h):
             problems.append(label + "pas centré (masse en %d, %d au lieu de %d, %d)" % (cx, cy, w / 2, h / 2))
         return problems
@@ -384,6 +403,7 @@ def _check_decal(img, entry):
     wrap = entry.get("wrap", "")
     solid = entry.get("solid_edge", "")
     hits = _border_hits(mask)
+    cuts = _border_hits(mask, CUT_COVER)
     allowed = set()
     if wrap == "x":
         allowed |= {"left", "right"}
@@ -391,7 +411,7 @@ def _check_decal(img, entry):
         allowed |= {"top", "bottom"}
     if solid:
         allowed.add(solid)
-    cut = [SIDE_NAMES[s] for s in ("left", "right", "top", "bottom") if s in hits and s not in allowed]
+    cut = [SIDE_NAMES[s] for s in ("left", "right", "top", "bottom") if s in cuts and s not in allowed]
     if cut:
         problems.append("coupé par le bord %s (décalque : bord effiloché qui se fond dans le sol)" % ", ".join(cut))
     if solid and solid not in hits:
