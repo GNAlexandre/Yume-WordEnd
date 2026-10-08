@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [611, 955],
+  "direction": "front",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "status": "measured_crops_animation_review",
+  "anchors_validated": false,
+  "anchor_method": "bottom of alpha silhouette; horizontal foot centroid",
+  "combat_timing_validated": false,
+  "density_px_m": 96,
+  "palette_colors": 64,
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [0, 0, 114, 134, 90, 133],
+        [118, 0, 96, 134, 71, 133]
+      ]
+    },
+    "marche": {
+      "ips": 10,
+      "boucle": true,
+      "images": [
+        [0, 141, 91, 136, 61, 135],
+        [95, 142, 100, 135, 69, 135],
+        [199, 141, 91, 136, 57, 136],
+        [294, 139, 104, 138, 78, 138],
+        [402, 140, 101, 137, 76, 137],
+        [507, 138, 104, 139, 72, 139]
+      ]
+    },
+    "course": {
+      "ips": 14,
+      "boucle": true,
+      "images": [
+        [0, 282, 94, 132, 56, 132],
+        [98, 281, 110, 133, 71, 133],
+        [212, 286, 108, 128, 72, 128],
+        [324, 281, 111, 133, 81, 133],
+        [439, 282, 107, 132, 76, 132]
+      ]
+    },
+    "attaque": {
+      "ips": 14,
+      "boucle": false,
+      "coup": [1, 2, 3],
+      "images": [
+        [0, 418, 90, 184, 54, 184],
+        [94, 453, 99, 149, 60, 149],
+        [197, 472, 149, 130, 35, 130],
+        [350, 469, 179, 133, 39, 133]
+      ]
+    },
+    "charge": {
+      "ips": 10,
+      "boucle": false,
+      "onde": 3,
+      "images": [
+        [0, 616, 99, 141, 50, 141],
+        [103, 616, 109, 141, 52, 141],
+        [216, 606, 103, 151, 46, 151],
+        [323, 630, 204, 127, 44, 127]
+      ]
+    },
+    "degats": {
+      "ips": 1,
+      "boucle": false,
+      "images": [
+        [0, 761, 94, 106, 48, 106]
+      ]
+    },
+    "mort": {
+      "ips": 1,
+      "boucle": false,
+      "images": [
+        [0, 871, 166, 84, 82, 83]
+      ]
+    }
+  }
+}

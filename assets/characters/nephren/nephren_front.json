@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [547, 945],
+  "direction": "front",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "status": "measured_crops_animation_review",
+  "anchors_validated": false,
+  "anchor_method": "bottom of alpha silhouette; horizontal foot centroid",
+  "combat_timing_validated": false,
+  "density_px_m": 96,
+  "palette_colors": 64,
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [0, 0, 64, 125, 32, 125],
+        [68, 0, 64, 125, 30, 125]
+      ]
+    },
+    "marche": {
+      "ips": 10,
+      "boucle": true,
+      "images": [
+        [0, 131, 66, 124, 34, 124],
+        [70, 131, 69, 124, 34, 124],
+        [143, 130, 71, 125, 34, 125],
+        [218, 130, 70, 125, 36, 125],
+        [292, 130, 70, 125, 32, 125],
+        [366, 129, 69, 126, 36, 126]
+      ]
+    },
+    "course": {
+      "ips": 14,
+      "boucle": true,
+      "images": [
+        [0, 260, 77, 119, 38, 119],
+        [81, 263, 79, 116, 38, 116],
+        [164, 268, 80, 111, 38, 111],
+        [248, 261, 80, 118, 38, 118],
+        [332, 259, 77, 120, 40, 119]
+      ]
+    },
+    "attaque": {
+      "ips": 14,
+      "boucle": false,
+      "coup": [1, 2, 3],
+      "images": [
+        [0, 393, 115, 135, 74, 135],
+        [119, 383, 144, 145, 96, 144],
+        [267, 395, 109, 133, 46, 133],
+        [380, 392, 124, 136, 58, 136]
+      ]
+    },
+    "charge": {
+      "ips": 10,
+      "boucle": false,
+      "onde": 3,
+      "images": [
+        [0, 537, 82, 134, 41, 133],
+        [86, 537, 107, 134, 53, 132],
+        [197, 532, 124, 139, 56, 133],
+        [325, 532, 222, 139, 61, 134]
+      ]
+    },
+    "degats": {
+      "ips": 1,
+      "boucle": false,
+      "images": [
+        [0, 675, 71, 102, 40, 102]
+      ]
+    },
+    "mort": {
+      "ips": 1,
+      "boucle": false,
+      "images": [
+        [0, 781, 171, 46, 108, 46]
+      ]
+    },
+    "parle": {
+      "ips": 6,
+      "boucle": true,
+      "images": [
+        [0, 0, 64, 125, 32, 125],
+        [68, 0, 64, 125, 30, 125]
+      ]
+    }
+  }
+}

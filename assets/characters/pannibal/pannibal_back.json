@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [390, 505],
+  "direction": "back",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "status": "measured_crops_animation_review",
+  "anchors_validated": false,
+  "anchor_method": "bottom of alpha silhouette; horizontal foot centroid",
+  "combat_timing_validated": false,
+  "density_px_m": 96,
+  "palette_colors": 64,
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [0, 0, 60, 120, 30, 120],
+        [64, 0, 60, 120, 29, 120]
+      ]
+    },
+    "marche": {
+      "ips": 10,
+      "boucle": true,
+      "images": [
+        [0, 128, 63, 131, 32, 131],
+        [67, 127, 60, 132, 30, 132],
+        [131, 127, 64, 132, 30, 132],
+        [199, 125, 60, 134, 30, 134],
+        [263, 124, 63, 135, 34, 135],
+        [330, 124, 60, 135, 30, 135]
+      ]
+    },
+    "course": {
+      "ips": 12,
+      "boucle": true,
+      "images": [
+        [0, 263, 75, 118, 34, 118],
+        [79, 265, 62, 116, 30, 116],
+        [145, 263, 69, 118, 28, 118],
+        [218, 265, 70, 116, 28, 116]
+      ]
+    },
+    "parle": {
+      "ips": 6,
+      "boucle": true,
+      "images": [
+        [0, 385, 72, 120, 31, 120],
+        [76, 385, 57, 120, 28, 120]
+      ]
+    }
+  }
+}

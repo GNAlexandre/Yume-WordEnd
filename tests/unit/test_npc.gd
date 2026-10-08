@@ -240,10 +240,16 @@ func test_npc_visuals_are_not_playable_skins() -> void:
 		assert_not_null(skin.portrait, "%s : portrait" % visual_id)
 		var sheet := SheetLoader.read_sheet(skin)
 		var animations := SheetLoader.animations(sheet)
-		for anim: String in ["repos", "marche", "course", "attaque", "charge", "degats", "mort"]:
+		# (H1) Planches livrées : un PNJ a repos, marche et parle (docs/ASSETS_HD2D.md 3.2) ; une
+		# fée soldate (Willem, Ithea, Nephren) a aussi les animations de combat de la fée jouable.
+		for anim: String in ["repos", "marche"]:
 			assert_true(animations.has(anim), "%s : animation %s" % [visual_id, anim])
-		assert_eq(SheetLoader.hit_frames(sheet, &"attaque"), [1, 2, 3] as Array[int])
-		assert_eq(SheetLoader.wave_frame(sheet, &"charge"), 3)
+		assert_true(
+			animations.has("parle") or animations.has("attaque"), "%s : parle ou combat" % visual_id
+		)
+		if animations.has("attaque"):
+			assert_eq(SheetLoader.hit_frames(sheet, &"attaque"), [1, 2, 3] as Array[int])
+			assert_eq(SheetLoader.wave_frame(sheet, &"charge"), 3)
 	var sheet_skins := SkinRegistry.all().filter(
 		func(playable: SkinData) -> bool: return playable.sprite_sheet != null
 	)

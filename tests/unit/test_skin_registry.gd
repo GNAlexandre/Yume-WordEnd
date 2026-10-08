@@ -1,7 +1,7 @@
 extends GutTest
 ## SkinRegistry (L3) et skins jouables de data/skins/ : ordre (Chtholly d'abord), recherche,
-## skin par défaut, rechargement ; Chtholly (skin par défaut), Nopht et Rhantolk (planches de
-## remplacement, HD-2D) sont jouables ; les
+## skin par défaut, rechargement ; Chtholly (skin par défaut), Ithea, Nephren, Nopht et Rhantolk
+## (planches livrées, H1 ; Ithea et Nephren sous un autre id que leur PNJ) sont jouables ; les
 ## anciens skins de PNJ sont retirés à l'acte 1, les sept modèles 3D de la PR n° 1 au passage au
 ## HD-2D, et les PNJ ont des visuels non jouables (data/npcs/visuals, même densité que Chtholly).
 
@@ -23,7 +23,9 @@ const REMOVED_MESH_SKINS: Array[String] = [
 ]
 const NPC_VISUALS_DIR := "res://data/npcs/visuals"
 ## (HD-2D) Skins jouables du jeu, dans l'ordre du registre (Chtholly d'abord, puis le nom).
-const PLAYABLE: Array[StringName] = [&"chtholly", &"nopht", &"rhantolk"]
+const PLAYABLE: Array[StringName] = [
+	&"chtholly", &"ithea_soldier", &"nephren_soldier", &"nopht", &"rhantolk"
+]
 
 
 func after_each() -> void:
