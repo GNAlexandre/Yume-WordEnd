@@ -1678,3 +1678,10 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   sont centrés par leur cadre (les hélices et les feuilles, qui tournent, par leur masse).
   Retouches sans perte : quatre dirigeables lointains et un nuage recentrés par décalage de
   pixels ; la tache d'huile, coupée au bord droit sur 14 %, effilochée sur 6 px de chaque côté.
+- **Taille des sprites : hauteur debout mesurée à l'ancre** (`SheetLoader.pixel_size`). La PR
+  n° 8 a redessiné Pannibal de profil avec la pointe de son épée de bois 10 px sous ses pieds :
+  sa 1re image de « repos » fait 130 px pour 120 px debout, et `main` est rouge
+  (`test_skin_registry` : densité 1/104 au lieu de 1/96). La taille d'un pixel est désormais
+  `height_m` / hauteur du haut de l'image aux pieds (l'ancre), ce que dit `SkinData.height_m`
+  (« taille debout ») ; seul le Timere change aussi (cadre de 99 px, ancre à 97 : +2 %, à sa
+  taille déclarée). Tests du chargeur et du sprite mesurés à l'ancre.

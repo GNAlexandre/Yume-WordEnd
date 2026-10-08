@@ -227,7 +227,8 @@ func test_anchor_stays_at_the_origin_on_every_frame() -> void:
 					assert_almost_eq(aabb.end.y - float(image[5]) * size, 0.0, 1e-4, label)
 		visual.show_frame(&"repos", 0)
 		await wait_process_frames(1)
-		assert_almost_eq(sprite.get_aabb().size.y, skin.height_m, 1e-3, "%s debout" % skin.id)
+		# Debout : du sol (l'ancre) au haut de la tête ; ce qui dépasse sous les pieds n'y compte pas.
+		assert_almost_eq(sprite.get_aabb().end.y, skin.height_m, 1e-3, "%s debout" % skin.id)
 
 
 func test_sprite_and_shadow_follow_the_node_scale() -> void:
@@ -237,7 +238,7 @@ func test_sprite_and_shadow_follow_the_node_scale() -> void:
 	assert_true(shadow.visible)
 	assert_almost_eq(shadow.position.y, 0.02, 0.001, "au ras du sol")
 	assert_almost_eq(_sprite(visual).global_transform.basis.get_scale().y, 1.3, 1e-4)
-	var timere_radius := 0.75 * 44.0 * TIMERE.height_m / 99.0
+	var timere_radius := 0.75 * 44.0 * TIMERE.height_m / 97.0
 	var radius := shadow.global_transform.basis.get_scale().x / 2.0
 	assert_almost_eq(radius, 1.3 * timere_radius, 1e-3, "ombre à l'échelle du Timere")
 	visual.set_skin(CHTHOLLY)

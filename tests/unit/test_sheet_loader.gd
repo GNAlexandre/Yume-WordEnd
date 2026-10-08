@@ -95,7 +95,8 @@ func test_pixel_size_and_shadow_footprint() -> void:
 	var sheet := SheetLoader.read_sheet(CHTHOLLY)
 	assert_almost_eq(SheetLoader.pixel_size(CHTHOLLY, sheet), 1.5 / 144.0, 1e-6, "144 px = 1,5 m")
 	var timere_sheet := SheetLoader.read_sheet(TIMERE)
-	assert_almost_eq(SheetLoader.pixel_size(TIMERE, timere_sheet), TIMERE.height_m / 99.0, 1e-6)
+	# Hauteur debout : du haut de l'image aux pieds (ancre à 97 px ; le cadre en fait 99).
+	assert_almost_eq(SheetLoader.pixel_size(TIMERE, timere_sheet), TIMERE.height_m / 97.0, 1e-6)
 	assert_almost_eq(SheetLoader.pixel_size(null, {}), SheetLoader.DEFAULT_PIXEL_SIZE, 1e-6)
 	# (H1) Planches livrées (PR n° 2), ancres entre les pieds (tools/hd2d_sheets.py anchors).
 	assert_eq(SheetLoader.body_half_width(sheet), 46.0, "côté sans épée de la 1re image de repos")
