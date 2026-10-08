@@ -15,6 +15,15 @@ extends Node3D
 ## Health.died → player_died ; player_respawned → Health.reset() ; player_heal_requested →
 ## Health.heal() ; max_hp_changed → Health.max_hp. Le recul du joueur est appliqué par
 ## player.gd (L1) sur Hurtbox.hit_taken. Aucun chiffre ici : data/attacks/*.tres et exports.
+##
+## (H7) Lisibilité en vue fixe, nœuds ajoutés sous Combat au démarrage : « Slash », le coup
+## d'épée dessiné au sol à sa portée exacte (secteur de range_m × arc_deg, tourné avec Combat,
+## sur les images « coup ») ; « AimMarker », chevron de visée au sol pendant le verrouillage et la
+## charge ; « LockRing », réticule au sol sous la cible verrouillée (locked_target() du joueur) ;
+## « GroundShadow », ombre nette qui reste au sol pendant un saut ; « HitFlash », éclair du
+## joueur touché ; « ScreenShake », secousse de l'écran (AttackData.shake). Coup porté : la
+## planche du joueur se fige AttackData.hitstop s (arrêt sur image). Rien ne dépend du dessin
+## de la planche.
 
 ## Un coup d'épée ou l'onde commence (sword_1, sword_2, sword_3, charge_wave).
 signal attack_started(attack_data: AttackData)
@@ -37,6 +46,24 @@ const CHARGE_WAVE_SCENE := "res://src/combat/charge_wave.tscn"
 const ANIM_HURT := &"degats"
 const ANIM_DEATH := &"mort"
 const STATE_NAMES: Array[StringName] = [&"idle", &"attack", &"charge", &"wave", &"hurt", &"dead"]
+## (H7) Coup d'épée au sol : image de 2,5 × 1,25 m (240 × 120 px), pointe au milieu du bord bas.
+const SLASH_SIZE := Vector2(2.5, 1.25)
+## (H7) Réticule de verrouillage (rayon à l'échelle 1 du Timere, m), vitesse de rotation (rad/s).
+const LOCK_RING_RADIUS := 0.62
+const LOCK_RING_SPIN := 1.5
+## (H7) Chevron de visée : taille (m) et distance devant les pieds (m).
+const AIM_SIZE := 0.34
+const AIM_AHEAD := 0.9
+## (H7) Éclair du joueur touché : rougeâtre, plus sobre que celui des Timeres.
+const FLASH_COLOR := Color(1.0, 0.6, 0.55)
+const FLASH_STRENGTH := 0.75
+## (H7) Ombre nette : rayon (m) ; au-delà de SHADOW_RAY m de chute, plus d'ombre.
+const SHADOW_RADIUS := 0.4
+const SHADOW_RAY := 6.0
+## (H7) Éclair du joueur touché (s), centre de sa Hurtbox (m), poussière du recul.
+const FLASH_TIME := 0.1
+const HURT_CENTER := 0.75
+const DUST_KNOCKBACK := 2.0
 
 ## Fenêtre d'enchaînement (s) après la fin d'un coup : un nouvel appui joue le coup suivant.
 @export var combo_window: float = 0.4
@@ -71,6 +98,12 @@ var _wave_cooldown: float = 0.0
 var _wave_pending: bool = false
 var _progress: float = 0.0
 var _blinking: bool = false
+var _shake: ScreenShake
+var _flash: HitFlash
+var _slash: MeshInstance3D
+var _lock_ring: MeshInstance3D
+var _aim_marker: MeshInstance3D
+var _shadow: MeshInstance3D
 
 @onready var _health: Health = get_node_or_null(^"../Health") as Health
 @onready var _visual: CharacterVisual = get_node_or_null(^"../Visual") as CharacterVisual
@@ -92,6 +125,12 @@ func _ready() -> void:
 	if _visual != null:
 		_visual.frame_changed.connect(_on_visual_frame_changed)
 		_visual.animation_finished.connect(_on_visual_animation_finished)
+	_build_fx()
+	if _sword != null:
+		_sword.hit_landed.connect(_on_sword_hit_landed)
+	var hurtbox := get_node_or_null(^"../Hurtbox") as Hurtbox
+	if hurtbox != null:
+		hurtbox.hit_taken.connect(_on_hurtbox_hit_taken)
 	if _health == null:
 		return
 	_health.max_hp = GameState.max_hp
@@ -156,6 +195,17 @@ func wave_cooldown_left() -> float:
 	return _wave_cooldown
 
 
+## (H7) Secousse de l'écran de ce joueur.
+func screen_shake() -> ScreenShake:
+	return _shake
+
+
+## (H7) Nœuds d'effets (sous Combat) : &"Slash", &"AimMarker", &"LockRing", &"GroundShadow",
+## &"HitFlash" ; null s'il n'existe pas.
+func fx_node(fx_name: StringName) -> Node3D:
+	return get_node_or_null(NodePath(String(fx_name))) as Node3D
+
+
 func _notification(what: int) -> void:
 	# Touche de charge relâchée pendant une pause (inventaire) : aucun « just_released » ne
 	# viendra du joueur, on relâche à la reprise.
@@ -188,6 +238,12 @@ func _physics_process(delta: float) -> void:
 	_update_blink()
 
 
+func _process(delta: float) -> void:
+	_update_lock_ring(delta)
+	_update_aim_marker()
+	_update_shadow()
+
+
 # --- Épée -------------------------------------------------------------------------------------
 
 
@@ -208,6 +264,7 @@ func _start_swing(index: int) -> void:
 func _end_swing() -> void:
 	if _sword != null:
 		_sword.deactivate()
+	_hide_slash()
 	_attack_cooldown = _swing.cooldown
 	var last := _combo_index + 1 >= _swords.size()
 	if _attack_queued and not last and _attack_cooldown <= 0.0:
@@ -225,14 +282,18 @@ func _end_swing() -> void:
 func _update_sword(frame: int) -> void:
 	if _sword == null:
 		return
-	if _visual.hit_frames(_swing.animation).has(frame):
+	var hits := _visual.hit_frames(_swing.animation)
+	if hits.has(frame):
 		if not _swing_struck:
 			_swing_struck = true
 			_sword.activate()
 		else:
 			_sword.resume()
+		_show_slash(hits.find(frame))
 	else:
 		_sword.deactivate()
+		if _swing_struck:
+			_hide_slash()
 
 
 func _set_sword_attack(data: AttackData) -> void:
@@ -311,6 +372,7 @@ func _launch_wave() -> void:
 	parent.add_child(wave)
 	wave.global_position = global_position
 	wave.launch(_forward(), body)
+	wave.hitbox.hit_landed.connect(_on_wave_hit_landed.bind(wave))
 	wave_launched.emit(wave)
 
 
@@ -332,6 +394,7 @@ func _set_state(state: State) -> void:
 func _interrupt() -> void:
 	if _sword != null:
 		_sword.deactivate()
+	_hide_slash()
 	if _state == State.CHARGE:
 		_emit_progress(0.0)
 	_attack_queued = false
@@ -414,6 +477,157 @@ func _on_player_respawned() -> void:
 	_set_state(State.IDLE)
 	_health.reset()
 	_update_blink()
+
+
+# --- (H7) Lisibilité : effets ---------------------------------------------------------------
+
+
+func _build_fx() -> void:
+	_shake = ScreenShake.new()
+	_shake.name = "ScreenShake"
+	add_child(_shake)
+	_flash = HitFlash.new()
+	_flash.name = "HitFlash"
+	_flash.flash_color = FLASH_COLOR
+	_flash.max_strength = FLASH_STRENGTH
+	add_child(_flash)
+	if _visual != null:
+		_flash.bind(_visual.get_node_or_null(^"Sprite") as AnimatedSprite3D)
+	_slash = CombatFx.make_decal("slash", SLASH_SIZE, Color.WHITE, "Slash")
+	_slash.position = Vector3(0.0, CombatFx.GROUND_LIFT, -SLASH_SIZE.y * 0.5)
+	_slash.visible = false
+	add_child(_slash)
+	_aim_marker = CombatFx.make_decal("aim", Vector2(AIM_SIZE, AIM_SIZE), Color.WHITE, "AimMarker")
+	_aim_marker.position = Vector3(0.0, CombatFx.GROUND_LIFT, -AIM_AHEAD)
+	_aim_marker.visible = false
+	add_child(_aim_marker)
+	_lock_ring = CombatFx.make_decal("lock_ring", Vector2.ONE, Color.WHITE, "LockRing")
+	_lock_ring.top_level = true
+	_lock_ring.visible = false
+	add_child(_lock_ring)
+	_shadow = CombatFx.make_shadow(SHADOW_RADIUS)
+	_shadow.top_level = true
+	add_child(_shadow)
+
+
+## Coup d'épée au sol : image index de la bande (0 : balayé à moitié, 1 : plein, 2 : effacé),
+## retournée pour le 2e coup (il balaie dans l'autre sens), dorée pour le 3e.
+func _show_slash(index: int) -> void:
+	if _slash == null or index < 0:
+		return
+	var frame := mini(index, CombatFx.frame_count("slash") - 1)
+	var final := _combo_index + 1 >= _swords.size() and _swords.size() > 1
+	var color := CombatFx.COLOR_SWORD_FINAL if final else Color.WHITE
+	_slash.material_override = CombatFx.ground_material("slash", color, frame, true)
+	var reach := _swing.range_m if _swing != null and _swing.range_m > 0.0 else 1.2
+	var size := reach / (SLASH_SIZE.y - 0.05)
+	_slash.scale = Vector3(-size if _combo_index == 1 else size, 1.0, size)
+	_slash.position = Vector3(0.0, CombatFx.GROUND_LIFT, -SLASH_SIZE.y * 0.5 * size)
+	_slash.visible = true
+
+
+func _hide_slash() -> void:
+	if _slash != null:
+		_slash.visible = false
+
+
+## Coup d'épée porté : la planche du joueur se fige (arrêt sur image), l'écran tressaille.
+func _on_sword_hit_landed(_hurtbox: Hurtbox) -> void:
+	if _swing == null:
+		return
+	if _swing.hitstop > 0.0 and _visual != null:
+		CombatFx.freeze(_visual, _swing.hitstop)
+	if _shake != null:
+		_shake.kick(_swing.shake, _forward())
+
+
+func _on_wave_hit_landed(_hurtbox: Hurtbox, wave: ChargeWave) -> void:
+	if _shake != null and is_instance_valid(wave) and wave.hitbox.attack != null:
+		_shake.kick(wave.hitbox.attack.shake, wave.travel_direction())
+
+
+## Joueur touché : éclair, éclats côté Timere, secousse dans le sens du coup, poussière du recul.
+func _on_hurtbox_hit_taken(hit_attack: AttackData, source: Node3D) -> void:
+	if hit_attack == null:
+		return
+	if _flash != null:
+		_flash.flash(FLASH_TIME)
+	var body := get_parent() as Node3D
+	var feet := body.global_position if body != null else global_position
+	var push := Vector3.ZERO
+	if is_instance_valid(source):
+		push = feet - source.global_position
+		push.y = 0.0
+		push = push.normalized() if push.length_squared() > 0.0001 else Vector3.ZERO
+	var center := feet + Vector3.UP * HURT_CENTER - push * 0.25
+	CombatFx.spawn_burst(body if body != null else self, "impact", center, CombatFx.COLOR_BITE)
+	if _shake != null:
+		_shake.kick(hit_attack.shake, push)
+	if hit_attack.knockback >= DUST_KNOCKBACK:
+		CombatFx.spawn_burst(body if body != null else self, "dust", feet, CombatFx.COLOR_DUST)
+
+
+## Cible verrouillée par le joueur (son locked_target(), API de player.gd), ou null.
+func _locked_target() -> Node3D:
+	var body := get_parent()
+	if body == null or not body.has_method(&"locked_target"):
+		return null
+	var target: Object = body.call(&"locked_target")
+	return target as Node3D if is_instance_valid(target) else null
+
+
+func _update_lock_ring(delta: float) -> void:
+	if _lock_ring == null:
+		return
+	var target := _locked_target()
+	if target == null or not target.is_inside_tree():
+		_lock_ring.visible = false
+		return
+	var size := 1.0
+	var data: Variant = target.get(&"data")
+	if data is EnemyData:
+		size = (data as EnemyData).scale
+	var diameter := 2.0 * LOCK_RING_RADIUS * size
+	var spin := _lock_ring.rotation.y + LOCK_RING_SPIN * delta
+	_lock_ring.global_transform = Transform3D(
+		Basis(Vector3.UP, wrapf(spin, -PI, PI)).scaled(Vector3(diameter, 1.0, diameter)),
+		target.global_position + Vector3.UP * CombatFx.GROUND_LIFT
+	)
+	_lock_ring.visible = true
+
+
+func _update_aim_marker() -> void:
+	if _aim_marker == null:
+		return
+	var aiming := _state == State.CHARGE or _locked_target() != null
+	_aim_marker.visible = aiming and _state != State.DEAD
+
+
+## Ombre nette : sous les pieds au sol ; pendant un saut, posée sur le sol sous le joueur (rayon
+## vers le bas, couche 1), plus petite à mesure qu'il monte.
+func _update_shadow() -> void:
+	if _shadow == null or not is_inside_tree():
+		return
+	var body := get_parent() as Node3D
+	var feet := body.global_position if body != null else global_position
+	var ground := feet
+	var height := 0.0
+	var character := body as CharacterBody3D
+	if character != null and not character.is_on_floor():
+		var query := PhysicsRayQueryParameters3D.create(
+			feet + Vector3.UP * 0.1, feet + Vector3.DOWN * SHADOW_RAY, 1
+		)
+		var hit := get_world_3d().direct_space_state.intersect_ray(query)
+		if hit.is_empty():
+			_shadow.visible = false
+			return
+		ground = hit["position"]
+		height = maxf(0.0, feet.y - ground.y)
+	var shrink := clampf(1.0 - height / 3.0, 0.4, 1.0)
+	_shadow.global_transform = Transform3D(
+		Basis.from_scale(Vector3(shrink, 1.0, shrink)), ground + Vector3.UP * CombatFx.SHADOW_LIFT
+	)
+	_shadow.visible = _state != State.DEAD or height <= 0.0
 
 
 func _on_player_heal_requested(amount: int) -> void:

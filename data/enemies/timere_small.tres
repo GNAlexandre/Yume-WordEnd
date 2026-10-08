@@ -19,3 +19,4 @@ rush = false
 stoic = false
 aggro_range_m = 10.0
 drops = {}
+tint = Color(1, 1, 0.88, 1)

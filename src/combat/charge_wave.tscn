@@ -3,25 +3,23 @@
 [ext_resource type="Script" path="res://src/combat/charge_wave.gd" id="1_wave"]
 [ext_resource type="Script" path="res://src/combat/hitbox.gd" id="2_hitbox"]
 [ext_resource type="Resource" path="res://data/attacks/charge_wave.tres" id="3_attack"]
-[ext_resource type="Shader" path="res://src/combat/charge_wave.gdshader" id="4_shader"]
+[ext_resource type="Texture2D" path="res://src/combat/fx/wave_trace.png" id="4_trace"]
+[ext_resource type="Texture2D" path="res://src/combat/fx/wave.png" id="5_wave"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wave"]
 resource_local_to_scene = true
 size = Vector3(2, 1.4, 0.8)
 
-[sub_resource type="QuadMesh" id="QuadMesh_wave"]
-size = Vector2(2, 1.2)
-subdivide_width = 16
+[sub_resource type="PlaneMesh" id="PlaneMesh_trace"]
+size = Vector2(2, 0.833)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_wave"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trace"]
 resource_local_to_scene = true
-render_priority = 0
-shader = ExtResource("4_shader")
-shader_parameter/core_color = Color(0.91, 0.97, 1, 1)
-shader_parameter/edge_color = Color(0.35, 0.66, 0.9, 1)
-shader_parameter/bend = 0.55
-shader_parameter/half_width = 1.0
-shader_parameter/fade = 1.0
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_texture = ExtResource("4_trace")
+texture_filter = 0
 
 [node name="ChargeWave" type="Node3D"]
 script = ExtResource("1_wave")
@@ -39,10 +37,19 @@ team = &"player"
 shape = SubResource("BoxShape3D_wave")
 
 [node name="Mesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.035, 0)
 cast_shadow = 0
-mesh = SubResource("QuadMesh_wave")
-material_override = SubResource("ShaderMaterial_wave")
+mesh = SubResource("PlaneMesh_trace")
+material_override = SubResource("StandardMaterial3D_trace")
+
+[node name="Sprite" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+cast_shadow = 0
+render_priority = 1
+pixel_size = 0.0104167
+texture_filter = 0
+texture = ExtResource("5_wave")
+hframes = 2
 
 [node name="Glow" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)

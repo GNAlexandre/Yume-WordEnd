@@ -11,6 +11,8 @@ const FOREST := preload("res://src/enemies/placements/forest.tscn")
 const ISLAND := preload("res://src/world/island.tscn")
 const SWORD := preload("res://data/attacks/sword_1.tres")
 const WAVE := preload("res://data/attacks/charge_wave.tres")
+const BITE := preload("res://data/attacks/bite.tres")
+const RUSH := preload("res://data/attacks/rush.tres")
 const TYPES: Array[StringName] = [
 	&"timere_small", &"timere_normal", &"timere_runner", &"timere_big"
 ]
@@ -151,7 +153,11 @@ func test_normal_recoils_away_from_the_sword() -> void:
 	assert_true(timere.hurtbox.receive_hit(SWORD, source))
 	assert_almost_eq(timere.knockback().z, -SWORD.knockback, 0.01, "recul source → corps")
 	assert_eq(timere.state(), &"hurt")
-	await wait_physics_frames(10)
+	# (H7) Arrêt sur image : le corps attend sword_1.hitstop, puis recule de la même distance.
+	assert_almost_eq(timere.hitstop_left(), SWORD.hitstop, 0.001, "arrêt sur image")
+	await wait_physics_frames(2)
+	assert_almost_eq(timere.global_position.z, 0.0, 0.01, "figé pendant l'arrêt sur image")
+	await wait_physics_frames(ceili(SWORD.hitstop * Engine.physics_ticks_per_second) + 8)
 	assert_lt(timere.global_position.z, -0.2, "il a reculé")
 	await wait_seconds(0.5)
 	assert_ne(timere.state(), &"hurt", "hurt dure moins de 0,45 s")
@@ -268,3 +274,170 @@ func test_forest_has_four_free_timeres_that_drop_nothing() -> void:
 		)
 		assert_lt(Vector2(enemy.position.x, enemy.position.z).length(), 6.0, "dans la clairière")
 	assert_eq_deep(counts, {&"timere_small": 2, &"timere_normal": 1, &"timere_runner": 1})
+
+
+# --- (H7) Lisibilité en vue fixe ---------------------------------------------------------------
+
+
+func test_windup_shows_the_exact_strike_zone_then_strikes(
+	enemy_id: StringName = use_parameters([&"timere_small", &"timere_normal", &"timere_big"])
+) -> void:
+	var player := _player()
+	var enemy := _enemy(enemy_id, Vector3(3.0, 0.0, 0.0))
+	var winding: bool = await wait_until(func() -> bool: return enemy.state() == &"windup", 6.0)
+	assert_true(winding, "%s se prépare avant de frapper" % enemy_id)
+	if not winding:
+		return
+	var started := Engine.get_physics_frames()
+	var attack := enemy.prepared_attack()
+	assert_not_null(attack, "%s : attaque préparée" % enemy_id)
+	assert_eq(enemy.telegraph.mode(), &"strike", "%s : zone au sol" % enemy_id)
+	var reach := enemy.attack_reach(attack)
+	var radius := maxf(reach * 0.5, Enemy.HITBOX_MIN_RADIUS)
+	assert_almost_eq(enemy.telegraph.zone_radius(), radius, 0.001, "zone = sphère de la Hitbox")
+	var center := enemy.telegraph.zone_center()
+	assert_almost_eq(
+		center.length(), enemy.engage_distance(attack) - radius, 0.01, "%s : à portée" % enemy_id
+	)
+	assert_gt(
+		center.normalized().dot(_flat_to(enemy, player)),
+		0.95,
+		"%s : tournée vers le joueur" % enemy_id
+	)
+	assert_false(enemy.hitbox.is_active(), "%s : rien ne touche pendant la préparation" % enemy_id)
+	await wait_physics_frames(roundi(enemy.windup_duration(attack) * 30.0))
+	assert_lt(enemy.visual.scale.y, enemy.data.scale, "%s : il se ramasse" % enemy_id)
+	var striking: bool = await wait_until(func() -> bool: return enemy.state() == &"attack", 2.0)
+	assert_true(striking, "%s : puis le coup part" % enemy_id)
+	var frames := Engine.get_physics_frames() - started
+	assert_gte(
+		frames + 1,
+		floori(enemy.windup_duration(attack) * Engine.physics_ticks_per_second),
+		"%s : préparation entière (%d images)" % [enemy_id, frames]
+	)
+	assert_eq(enemy.telegraph.mode(), &"", "%s : signes effacés au coup" % enemy_id)
+	assert_almost_eq(enemy.visual.scale.y, enemy.data.scale, 0.001, "posture rendue")
+
+
+func test_windup_does_not_slow_the_attack_cadence() -> void:
+	# Au contact, la préparation se loge dans la recharge : un coup toutes les
+	# anim + cooldown × [0,7 ; 1,3] s, comme avant (jeu.js : 1,3 à 2 s).
+	var player := _player()
+	(player.get_node(^"Health") as Health).max_hp = 99
+	var enemy := _enemy(&"timere_small", Vector3(1.0, 0.0, 0.0))
+	var starts: Array[int] = []
+	var previous: Array[StringName] = [&""]
+	var track := func() -> void:
+		if enemy.state() == &"attack" and previous[0] != &"attack":
+			starts.append(Engine.get_physics_frames())
+		previous[0] = enemy.state()
+	get_tree().physics_frame.connect(track)
+	await wait_until(func() -> bool: return starts.size() >= 4, 8.0)
+	get_tree().physics_frame.disconnect(track)
+	assert_gte(starts.size(), 4, "quatre morsures")
+	var anim := 0.5
+	var low := anim + BITE.cooldown * Enemy.COOLDOWN_JITTER.x
+	var high := anim + BITE.cooldown * Enemy.COOLDOWN_JITTER.y
+	for i in range(1, starts.size()):
+		var gap := float(starts[i] - starts[i - 1]) / Engine.physics_ticks_per_second
+		assert_between(gap, low - 0.05, high + 0.05, "intervalle %d : %.2f s" % [i, gap])
+
+
+func test_a_blow_during_the_windup_cancels_the_attack() -> void:
+	_player()
+	var enemy := _enemy(&"timere_normal", Vector3(2.5, 0.0, 0.0))
+	var winding: bool = await wait_until(func() -> bool: return enemy.state() == &"windup", 6.0)
+	assert_true(winding)
+	var source := Node3D.new()
+	_world.add_child(source)
+	source.position = Vector3(-1.0, 0.0, 0.0)
+	assert_true(enemy.hurtbox.receive_hit(SWORD, source))
+	assert_eq(enemy.state(), &"hurt", "interrompu")
+	assert_eq(enemy.telegraph.mode(), &"", "signes effacés")
+	await wait_seconds(0.5)
+	assert_ne(enemy.state(), &"attack", "pas de coup juste après : la recharge court")
+
+
+func test_runner_shows_its_lane_and_rushes_along_it() -> void:
+	var player := _player()
+	var runner := _enemy(&"timere_runner", Vector3(6.0, 0.0, 0.0))
+	var winding: bool = await wait_until(func() -> bool: return runner.state() == &"windup", 2.0)
+	assert_true(winding, "le bondissant se ramasse avant de charger")
+	if not winding:
+		return
+	assert_eq(runner.prepared_attack(), RUSH, "c'est la charge qui se prépare")
+	assert_eq(runner.telegraph.mode(), &"rush", "couloir au sol")
+	assert_eq(runner.velocity.x, 0.0, "immobile pendant la préparation")
+	var lane := _flat_to(runner, player)
+	# Le joueur s'écarte : la charge garde le couloir montré.
+	player.position = Vector3(0.0, 0.0, 3.0)
+	var rushing: bool = await wait_until(func() -> bool: return runner.state() == &"rush", 1.0)
+	assert_true(rushing, "puis il charge")
+	var heading := Vector3(runner.velocity.x, 0.0, runner.velocity.z).normalized()
+	assert_gt(heading.dot(lane), 0.99, "dans le couloir annoncé")
+
+
+func test_big_prepares_longer_than_a_normal() -> void:
+	var big := _enemy(&"timere_big", Vector3(-5.0, 0.0, 0.0))
+	var normal := _enemy(&"timere_normal", Vector3(5.0, 0.0, 0.0))
+	var whip := load("res://data/attacks/whip.tres") as AttackData
+	assert_almost_eq(normal.windup_duration(whip), whip.windup, 0.001)
+	assert_almost_eq(big.windup_duration(whip), whip.windup * 1.5, 0.001, "le Grand : × 1,5")
+
+
+func test_approach_from_the_north_ends_on_a_side_of_the_screen() -> void:
+	var player := _player()
+	var enemy := _enemy(&"timere_normal", Vector3(0.02, 0.0, -4.5))
+	var engaged: bool = await wait_until(
+		func() -> bool: return enemy.state() in [&"windup", &"attack"], 6.0
+	)
+	assert_true(engaged, "le Normal arrive au contact")
+	var offset := enemy.global_position - player.global_position
+	var angle := rad_to_deg(atan2(absf(offset.x), absf(offset.z)))
+	assert_gt(angle, 15.0, "pas pile au nord du joueur, où son sprite le cacherait (%.0f°)" % angle)
+	assert_lt(angle, 50.0, "encore dans l'arc de l'épée tournée vers lui (%.0f°)" % angle)
+
+
+func test_timeres_in_a_column_spread_across_the_screen() -> void:
+	_player()
+	var front := _enemy(&"timere_small", Vector3(0.0, 0.0, -4.0))
+	var back := _enemy(&"timere_small", Vector3(0.0, 0.0, -5.0))
+	await wait_seconds(1.6)
+	var gap := front.global_position - back.global_position
+	assert_gt(absf(gap.x), 0.6, "ils s'écartent de côté (%.2f m), pas en file" % gap.x)
+
+
+func test_bodies_are_tinted_and_have_a_crisp_shadow() -> void:
+	for enemy_id: StringName in TYPES:
+		var enemy := _enemy(enemy_id, Vector3(0.0, 0.0, 0.0))
+		var sprite := enemy.visual.get_node(^"Sprite") as AnimatedSprite3D
+		assert_eq(sprite.modulate, enemy.data.tint, "%s : teinte de ses données" % enemy_id)
+		var shadow := enemy.get_node_or_null(^"GroundShadow") as MeshInstance3D
+		assert_not_null(shadow, "%s : ombre nette" % enemy_id)
+		if shadow != null:
+			var size := (shadow.mesh as PlaneMesh).size.x
+			assert_almost_eq(
+				size,
+				2.0 * (0.4 + Enemy.SHADOW_MARGIN) * enemy.data.scale,
+				0.01,
+				"%s : à la taille de son corps, pas de son dessin" % enemy_id
+			)
+		enemy.queue_free()
+
+
+func test_a_blow_flashes_and_freezes_even_the_stoic_big() -> void:
+	var big := _enemy(&"timere_big", Vector3.ZERO)
+	var source := Node3D.new()
+	_world.add_child(source)
+	source.position = Vector3(-1.0, 0.0, 0.0)
+	await wait_physics_frames(2)
+	assert_true(big.hurtbox.receive_hit(SWORD, source))
+	assert_true(big.hit_flash.is_flashing() or big.hit_flash.visible, "éclair")
+	assert_true(CombatFx.is_frozen(big.visual), "arrêt sur image de la planche")
+	assert_almost_eq(big.hitstop_left(), SWORD.hitstop, 0.001)
+	assert_eq(big.knockback(), Vector3.ZERO, "mais toujours aucun recul sous l'épée")
+
+
+func _flat_to(from: Node3D, to: Node3D) -> Vector3:
+	var offset := to.global_position - from.global_position
+	return Vector3(offset.x, 0.0, offset.z).normalized()

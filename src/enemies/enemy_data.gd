@@ -34,3 +34,11 @@ extends Resource
 @export var walk_speed: float = 0.0
 ## Multiplie la recharge des attaques (Grand : 1,4, comme jeu.js).
 @export var cooldown_scale: float = 1.0
+
+@export_group("Lisibilité HD-2D (H7)")
+## Multiplie AttackData.windup (le Grand se prépare plus lentement : 1,5).
+@export var windup_scale: float = 1.0
+## Teinte de la planche commune (multiplie ses couleurs) : chaque corps se reconnaît.
+@export var tint: Color = Color.WHITE
+## Secousse de l'écran à chaque coup porté ou manqué (m ; le Grand fait trembler le sol).
+@export var strike_shake: float = 0.0
