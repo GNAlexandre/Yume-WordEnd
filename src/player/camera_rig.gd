@@ -112,6 +112,10 @@ func _ready() -> void:
 		_post = screen.material.duplicate() as ShaderMaterial
 		screen.material = _post
 	snap()
+	# Le joueur peut encore être déplacé avant la première image (game.gd : position de la
+	# sauvegarde ou téléportation au Spawn, après ce _ready) : la première update_camera() se
+	# recale sur lui au lieu de glisser pendant une seconde depuis la place de player.tscn.
+	_started = false
 
 
 func _process(delta: float) -> void:

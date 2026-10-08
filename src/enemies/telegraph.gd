@@ -54,6 +54,7 @@ func _ready() -> void:
 func strike(center: Vector3, radius: float, glint_at: Vector3) -> void:
 	_mode = &"strike"
 	_diameter = 2.0 * maxf(radius, 0.05)
+	var appearing := not _ring.visible
 	var ground := Vector3(center.x, CombatFx.GROUND_LIFT, center.z)
 	_ring.position = ground + Vector3.UP * 0.004
 	_ring.scale = Vector3(_diameter, 1.0, _diameter)
@@ -63,6 +64,8 @@ func strike(center: Vector3, radius: float, glint_at: Vector3) -> void:
 	_lane.visible = false
 	_show_glint(glint_at)
 	set_progress(_progress)
+	if appearing:
+		_settle([_ring, _fill, _glint])
 
 
 ## Couloir d'une charge : direction (sol), longueur et largeur (m) depuis le Timere.
@@ -72,6 +75,7 @@ func rush(direction: Vector3, length: float, width: float, glint_at: Vector3) ->
 		return
 	flat = flat.normalized()
 	_mode = &"rush"
+	var appearing := not _lane.visible
 	_lane_direction = flat
 	_lane_size = Vector2(width, length)
 	var size := Vector3(width / LANE_IMAGE.x, 1.0, length / LANE_IMAGE.y)
@@ -84,6 +88,8 @@ func rush(direction: Vector3, length: float, width: float, glint_at: Vector3) ->
 	_fill.visible = false
 	_show_glint(glint_at)
 	set_progress(_progress)
+	if appearing:
+		_settle([_lane, _glint])
 
 
 ## Avancement de la préparation (0..1) : remplissage de la zone, image de l'éclat.
@@ -124,6 +130,17 @@ func _show_glint(at: Vector3) -> void:
 	_glint.pixel_size = CombatFx.PIXEL_SIZE * glint_size
 	_glint.position = at
 	_glint.visible = true
+
+
+## Signes déplacés puis montrés dans la même image physique : sans remise à zéro du lissage
+## physique (project.godot), ils seraient dessinés en train de glisser depuis leur ancienne place
+## (la zone du coup d'avant, ou les pieds du Timere) pendant un pas de physique. Seulement quand
+## ils apparaissent : pendant la préparation, strike() est rappelé à chaque pas de physique pour
+## suivre la cible, et le cercle doit alors rester lissé entre deux pas.
+static func _settle(nodes: Array[Node3D]) -> void:
+	for node: Node3D in nodes:
+		if node.is_inside_tree():
+			node.reset_physics_interpolation()
 
 
 ## Avancement courant (0..1).

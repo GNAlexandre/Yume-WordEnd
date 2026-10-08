@@ -12,6 +12,7 @@ const DUMMY := preload("res://tests/stubs/dummy.tscn")
 const HITBOX := preload("res://src/combat/hitbox.tscn")
 const WAVE_SCENE := preload("res://src/combat/charge_wave.tscn")
 const VISUAL := preload("res://src/visuals/character_visual.tscn")
+const TelegraphScript := preload("res://src/enemies/telegraph.gd")
 const SWORD_1 := preload("res://data/attacks/sword_1.tres")
 const SWORD_3 := preload("res://data/attacks/sword_3.tres")
 const WAVE := preload("res://data/attacks/charge_wave.tres")
@@ -309,6 +310,44 @@ func test_slash_is_drawn_on_coup_frames_at_the_sword_reach() -> void:
 	assert_false(slash.visible, "effacé à la fin du coup")
 	visual.call(&"emit_frame", &"attaque", 1)
 	assert_lt(slash.scale.x, 0.0, "2e coup : dans l'autre sens")
+	# Lissage physique : retourné puis montré dans la même image, le trait est dessiné tout de
+	# suite dans son nouveau sens, pas en train de s'écraser entre +x et −x.
+	assert_almost_eq(
+		slash.get_global_transform_interpolated().basis.x.x,
+		slash.scale.x,
+		0.01,
+		"dessiné d'emblée retourné (lissage remis à zéro)"
+	)
+
+
+func test_telegraph_marks_appear_in_place_without_sliding() -> void:
+	# Lissage physique (project.godot) : un décalque déplacé puis montré dans la même image
+	# physique serait dessiné en train de glisser depuis son ancienne place (les pieds du Timere,
+	# la zone du coup d'avant) pendant un pas de physique ; les signes du Telegraph remettent
+	# leur lissage à zéro et apparaissent à leur place dès la première image.
+	assert_true(get_tree().root.is_physics_interpolated_and_enabled(), "lissage physique actif")
+	var timere := Node3D.new()
+	_root.add_child(timere)
+	var telegraph: Node3D = TelegraphScript.new()
+	timere.add_child(telegraph)
+	var ring := telegraph.get_node(^"Ring") as Node3D
+	var lane := telegraph.get_node(^"Lane") as Node3D
+	await wait_physics_frames(2)
+	await get_tree().physics_frame
+	# Dans l'image physique : comme _prepare() d'enemy.gd.
+	telegraph.strike(Vector3(2.0, 0.0, 0.0), 0.5, Vector3.UP)
+	var worst := absf(ring.get_global_transform_interpolated().origin.x - 2.0)
+	for _i in 2:
+		await wait_process_frames(1)
+		worst = maxf(worst, absf(ring.get_global_transform_interpolated().origin.x - 2.0))
+	assert_lt(worst, 0.001, "le cercle est dessiné à sa place dès la première image")
+	await get_tree().physics_frame
+	telegraph.rush(Vector3.RIGHT, 4.0, 0.8, Vector3.UP)
+	worst = absf(lane.get_global_transform_interpolated().origin.x - 2.0)
+	for _i in 2:
+		await wait_process_frames(1)
+		worst = maxf(worst, absf(lane.get_global_transform_interpolated().origin.x - 2.0))
+	assert_lt(worst, 0.001, "le couloir aussi (milieu de la charge à 2 m)")
 
 
 func test_sword_hit_freezes_the_swing_and_shakes() -> void:
