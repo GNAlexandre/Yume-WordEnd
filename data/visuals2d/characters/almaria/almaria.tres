@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="SkinData" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://src/visuals/skin_data.gd" id="1_skin"]
+[ext_resource type="Texture2D" path="res://assets/characters/almaria/almaria_front.png" id="texture_front"]
+[ext_resource type="JSON" path="res://assets/characters/almaria/almaria_front.json" id="json_front"]
+[ext_resource type="Texture2D" path="res://assets/characters/almaria/almaria_back.png" id="texture_back"]
+[ext_resource type="JSON" path="res://assets/characters/almaria/almaria_back.json" id="json_back"]
+[ext_resource type="Texture2D" path="res://assets/characters/almaria/almaria.png" id="texture_right"]
+[ext_resource type="JSON" path="res://assets/characters/almaria/almaria.json" id="json_right"]
+[ext_resource type="Texture2D" path="res://assets/characters/almaria/almaria_portrait.png" id="portrait"]
+
+[resource]
+script = ExtResource("1_skin")
+id = &"almaria"
+display_name = "Almaria"
+sprite_sheet = ExtResource("texture_right")
+frames_json = ExtResource("json_right")
+directional_sheets = {
+"front": ExtResource("texture_front"),
+"back": ExtResource("texture_back"),
+"right": ExtResource("texture_right")
+}
+directional_frames_json = {
+"front": ExtResource("json_front"),
+"back": ExtResource("json_back"),
+"right": ExtResource("json_right")
+}
+texture_filter = 0
+portrait = ExtResource("portrait")
+height_m = 1.56
+metadata/status = "measured_crops_animation_review"
+metadata/validated_for_animation = false

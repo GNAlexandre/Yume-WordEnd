@@ -18,6 +18,42 @@ egg n'a pas de licence établie (PLAN.md section 13) et n'est pas copié.
 | `assets/ui/*.png` (cœurs, marqueur de cible, livre de sauvegarde, page de quête, étoile) | généré par `tools/gen_ui_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | L10 |
 | `assets/ui/icon.png`, `assets/ui/boot_splash.png` (icône du jeu, écran de démarrage) | généré par `tools/gen_branding.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | M2 |
 
+<!-- sukasuka 2D studies -->
+
+## Concepts Chtholly et planches 2D préservées — 7 octobre 2026
+
+Les PNG originaux sont conservés sans modification ; les nouveaux concepts sont des images 2D, pas des rendus d’un modèle 3D. Génération `image_gen`, version du modèle non exposée, à partir des références SukaSuka fournies. Les designs restent ceux de leurs ayants droit ; aucun transfert de droits n’est établi par les sources fournies.
+
+| Fichier | Outil / origine | Statut |
+| --- | --- | --- |
+| `assets/source/legacy_2d/exec-091e00a1-b867-4bba-b09f-4c10cbdcfdb7.png` | image_gen, ancienne génération : Willem | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/legacy_2d/exec-0d346a8c-1107-4c4d-90f8-6a25135f4238.png` | image_gen, ancienne génération : Chevaliers canin et félin, golem policier, Godrey | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/legacy_2d/exec-10fe5105-30e6-4e13-9120-58a3f3d612be.png` | image_gen, ancienne génération : Ithea — essai 1 | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/legacy_2d/exec-860978ee-9d58-412a-9c8b-dc5f411347ed.png` | image_gen, ancienne génération : Rhantolk — essai 1 | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/legacy_2d/exec-a257f49a-96d1-479a-985f-06f74400a698.png` | image_gen, ancienne génération : Baroni, soldats grenouille, aviaire et loup | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/legacy_2d/exec-d018c554-3cdc-4d51-8fd6-10b13df1f84d.png` | image_gen, ancienne génération : Rhantolk — essai 2 | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/legacy_2d/exec-defc4c62-799c-4436-a707-ed5fea9ffa6e.png` | image_gen, ancienne génération : Almita, Sarya, Willemia, Ecluecla | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/legacy_2d/exec-dfea400e-7d98-43b9-a35d-01e9b40fdf10.png` | image_gen, ancienne génération : Chtholly | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/legacy_2d/exec-e553703f-4da9-4a57-85cb-328c24ceccfa.png` | image_gen, ancienne génération : Tiat, Pannibal, Collon, Lakhesh | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/legacy_2d/exec-f088e71d-7719-46a2-b82f-5bc70e6a2d08.png` | image_gen, ancienne génération : Ithea — essai 2 | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/legacy_2d/exec-fca440d1-5450-4194-aa88-24c5fbc047b2.png` | image_gen, ancienne génération : Jorget, Tilfey, Bitora, Illustote | Original conservé, atlas non validé ; design SukaSuka |
+| `assets/source/chtholly/concept/chtholly_turnaround.png` | image_gen, concepts d’après pages 11–12 et 14 et nouveau cahier | Concept 2D généré ; design SukaSuka ; modèle 3D non produit |
+| `assets/source/chtholly/concept/chtholly_details.png` | image_gen, concepts d’après pages 11–12 et 14 et nouveau cahier | Concept 2D généré ; design SukaSuka ; modèle 3D non produit |
+
+
+<!-- sukasuka military concepts -->
+
+## Concepts militaires révisés — 7 octobre 2026
+
+Planches 2D de préparation ; aucun nouveau modèle 3D. Les deux concepts initiaux de Chtholly et les onze PNG 2D précédents restent intacts.
+
+| Fichier | Outil | Références | Droits |
+|---|---|---|---|
+| `assets/source/chtholly/concept/chtholly_turnaround.png` | image_gen / Codex ; version non exposée | Chtholly, scans p011–p012, p014 et p017 | Designs SukaSuka : droits non transférés |
+| `assets/source/chtholly/concept/chtholly_with_plastron.png` | image_gen / Codex ; version non exposée | Chtholly, scans p011–p012, p014 et p017 | Designs SukaSuka : droits non transférés |
+| `assets/source/willem/concept/willem_turnaround.png` | image_gen / Codex ; version non exposée | Willem et Percival, scans p005–p007 | Designs SukaSuka : droits non transférés |
+| `assets/source/chtholly/concept/history/chtholly_turnaround_initial.png` | Premier concept image_gen conservé à l’identique | Chtholly, première proposition | Designs SukaSuka : droits non transférés |
+
 <!-- sukasuka 3D provenance -->
 
 ## Personnages SukaSuka en 3D
@@ -306,3 +342,7 @@ Les fichiers `.import` et `.uid` sont des métadonnées techniques créées par 
 | `assets/models/characters/rabbit_soldier/rabbit_soldier.tscn` | Scripts Python du projet / Codex | Soldat lapin, pages 71 | Métadonnées du projet ; design référencé, droits non transférés |
 | `assets/models/characters/rabbit_soldier/rabbit_soldier_portrait.png` | Blender 4.3.2 / Codex | Soldat lapin, pages 71 | Design SukaSuka : droits non transférés |
 | `assets/models/characters/rabbit_soldier/rabbit_soldier_rabbit_soldier_palette.png` | Blender 4.3.2 / Codex | Soldat lapin, pages 71 | Design SukaSuka : droits non transférés |
+
+## Assets HD-2D — livraison de priorité 1, 8 octobre 2026
+
+`assets/characters/chtholly`, `assets/enemies/timere` et les 22 textures de décor listées dans `tools/hd2d_priority1_manifest.json` : génération image_gen d’après le cahier et les références fournies. Version du modèle non exposée. Natifs conservés dans `assets/source/resumed_2d/pixel`, préparations par découpe des silhouettes, plus proche voisin, alpha binaire et palette sans tramage. Les droits sur les designs SukaSuka restent ceux des ayants droit. Les premières planches anime restent intactes dans leurs archives.

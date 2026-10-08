@@ -1,0 +1,997 @@
+{
+  "entries": [
+    {
+      "id": "pixel_lakhesh_directions",
+      "name": "Lakhesh",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions.png",
+      "path": "assets/characters/lakhesh/lakhesh.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.2,
+      "reference_pages": [
+        49
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "lakhesh"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-5d7624d1-5500-4794-a2bb-4a4862516a3d.png",
+      "sha256": "ee0bb492e970ecc9b343222582caac1ead212e5459b695506d63387142a036ab",
+      "description": "P49 : neuf ans, carré blond et petite queue latérale ; robe brune sur manches blanches, ceinture nouée blanche et ourlet blanc. Espèce source : leprechaun.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_tiat_directions",
+      "name": "Tiat",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/tiat_directions.png",
+      "path": "assets/characters/tiat/tiat.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.1,
+      "reference_pages": [
+        41
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "tiat"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-7525d88e-e714-422b-b5e8-5650f5db6fa0.png",
+      "sha256": "999ff07cedc93d74caf5a049b8a0f95e01817098e5df02c5b003ee27eaee6127",
+      "description": "P41 : enfant de dix ans, carré vert ébouriffé, deux mèches fines jusqu’au col ; boléro vert sombre, robe sauge, manches blanches, collants sombres. Espèce source : leprechaun, apparence humaine.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_pannibal_directions",
+      "name": "Pannibal",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/pannibal_directions.png",
+      "path": "assets/characters/pannibal/pannibal.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.25,
+      "reference_pages": [
+        45
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "pannibal"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-3a7db8d2-072d-4579-bf2c-0c106a9a293d.png",
+      "sha256": "8ab51c21ceca0c0d5ab2b0c9494314b46a34361a81e6dcef8dd153d791a0457b",
+      "description": "P45 : neuf ans ; mèche couvrant l’œil gauche, manteau à capuche violet à deux liserés clairs, pantalon court gris, bottines. Espèce source : leprechaun, apparence humaine.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_souwong_young_directions",
+      "name": "Souwong Kandel — jeune",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/souwong_young_directions.png",
+      "path": "assets/characters/souwong_young/souwong_young.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.62,
+      "reference_pages": [
+        59
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "souwong_young"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-2a8d8ab4-c4cc-4823-b6b7-48b0fbedfa7b.png",
+      "sha256": "8a279a89450132d0da77973a0d5b2ca224b7adbcd42c1aa8746b2fca89376e2c",
+      "description": "Young Souwong Kandel, a male youth with short golden blond bob hair, teal eyes and serious expression; large white cloak gold edging, white long ceremonial robe with blue lower panel, charcoal underclothes, gold clasp and belt medallion, dark boots. ",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_almaria_directions",
+      "name": "Almaria",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/almaria_directions.png",
+      "path": "assets/characters/almaria/almaria.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.56,
+      "reference_pages": [
+        57
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "almaria"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-d3862171-a69a-4eba-aa6c-d3387d762f4a.png",
+      "sha256": "5a8962e81e899db1f3d0466e033f4ea272220345300c0a47f00fabd1cde01228",
+      "description": "Almaria ordinary humanlike young woman, long brown hair loosely tied/plaited, brown eyes, salmon short sleeve dress with white neck scarf and white long undersleeves, brown apron, long dark gray skirt and brown ankle boots, kind expression. Do not cross identity traits.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_nygglatho_directions",
+      "name": "Nygglatho",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/nygglatho_directions.png",
+      "path": "assets/characters/nygglatho/nygglatho.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.85,
+      "reference_pages": [
+        51
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "nygglatho"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-84d91469-9e67-430e-9137-7487d98dea80.png",
+      "sha256": "5bfaef8945eaa551a51ca4f78a79f94e934217fd4a5179b689c28da4bcf126d4",
+      "description": "Nygglatho adult tall gentle woman no animal traits, long salmon-pink curled hair, green eyes, white frilled maid headdress, long charcoal-black maid dress with green collar, full white ruffled apron, black ribbon and practical dark shoes as p51. ",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ],
+      "animation_sources": {
+        "right:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/nygglatho_right_course.png",
+          "row": 0,
+          "rows": 1,
+          "count": 4,
+          "original_count": 3
+        }
+      }
+    },
+    {
+      "id": "pixel_souwong_sage_directions",
+      "name": "Souwong Kandel — Grand Sage",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/souwong_sage_directions.png",
+      "path": "assets/characters/souwong_sage/souwong_sage.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "height_m": 1.82,
+      "reference_pages": [
+        60
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "souwong_sage"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-c9ca20f2-5dd6-4ba1-a833-a0ad27f6fddb.png",
+      "sha256": "9a93fddf7675d495ec79637f0bb8a2a855c579a6d1d733af2998e6bcbcfe3a42",
+      "description": "Souwong old Grand Sage, old human man long straw-blond hair and long beard, tired furrowed stern face, long ivory cloak and white robe, muted gold round clasp and pendant, no wizard hat. ",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_sarya_directions",
+      "name": "Sarya / サリャ",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/sarya_directions.png",
+      "path": "assets/characters/sarya/sarya.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "height_m": 0.99,
+      "reference_pages": [
+        64
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "sarya"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-26fb55c6-a6e0-4c53-a7b2-985a1dfeeff9.png",
+      "sha256": "5cc5917d94d4c0b4627bcd2fcb6c5d254bf00dce197d484413066bd3b7e48b03",
+      "description": "P64 bas, rangée supérieure 1 : couettes blondes courtes, robe rose brique, tablier rose brun cousu au pourtour, lavallière crème. Romanisation indicative.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_willemia_directions",
+      "name": "Willemia / ウィレミア",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/willemia_directions.png",
+      "path": "assets/characters/willemia/willemia.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.03,
+      "reference_pages": [
+        64
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "willemia"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-f3a6c08e-249e-4cb7-8935-7d82ba50c1fe.png",
+      "sha256": "5659c9fe3e74ef738a98134e6356548968af123918db1d897bbdba4d0fbcf2a3",
+      "description": "P64 bas, rangée supérieure 2 : cheveux longs bleu gris, robe à capuche vert sauge, cordons blancs, poches et bordure crème à festons. Romanisation indicative.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_elq_directions",
+      "name": "Elq Hrqstn",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/elq_directions.png",
+      "path": "assets/characters/elq/elq.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.12,
+      "reference_pages": [
+        63
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "elq"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-3a6e088d-9031-4aba-97c4-63dd33ef6a62.png",
+      "sha256": "6d3852a7f89b2018abeae2207246825af93c0825785f58d98350802ec3b256b3",
+      "description": "Elq Hrqstn, small childlike supernatural red-haired girl, extremely long flowing crimson waves to feet, red eyes, modest full-length opaque white sleeveless dress with red tied collar ribbon and jagged pale red angular hem, bare feet, calm kind expression. ",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_bitora_directions",
+      "name": "Bitora / ビトゥラ",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/bitora_directions.png",
+      "path": "assets/characters/bitora/bitora.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.03,
+      "reference_pages": [
+        64
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "bitora"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-37252a53-0abc-4622-b532-7f7c4df1e37f.png",
+      "sha256": "ad91284492f55646cb908b0af37de8600ce0d35b52155b116a8b6573d5aa8fb5",
+      "description": "P64 bas, rangée inférieure 2 : cheveux corail courts pointus, tunique violette bordée crème avec quatre croix, pantalon gris brun, sandales. Romanisation indicative.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_illustote_directions",
+      "name": "Illustote / イルストート",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/illustote_directions.png",
+      "path": "assets/characters/illustote/illustote.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 0.98,
+      "reference_pages": [
+        64
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "illustote"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-359d9c06-0ea3-42d8-9053-a36571efa377.png",
+      "sha256": "5be28b96ec6e6aa615d8e39c459be4b208b8b1052de467474e17cfb110e6d3ca",
+      "description": "P64 bas, rangée inférieure 3 : cheveux courts bleu gris, veste/cape pêche ouverte à lacets sombres, robe jaune pâle. Romanisation indicative.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_tilfey_directions",
+      "name": "Tilfey / ティルフェイ",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/tilfey_directions.png",
+      "path": "assets/characters/tilfey/tilfey.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 0.97,
+      "reference_pages": [
+        64
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "tilfey"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-4021ded9-5f35-41e4-8bfb-a859315cad22.png",
+      "sha256": "0e3953105c369de32a6d11e5d802e7bce95f1a6ef2f8baeb4fb4ab01084b7865",
+      "description": "P64 bas, rangée inférieure 1 : carré orange avec petite attache haute, salopette jaune à poche centrale, chemise blanche à bord saumon. Romanisation indicative.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_jorget_directions",
+      "name": "Jorget / ジョルゼット",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/jorget_directions.png",
+      "path": "assets/characters/jorget/jorget.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "height_m": 1.02,
+      "reference_pages": [
+        64
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "jorget"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-ec024453-7ae0-4691-81de-f7e49b55ce3f.png",
+      "sha256": "71db1898163f7b77739c01e912d1cb6fc26d958754a9da1eb48cb89d8baaf89c",
+      "description": "P64 bas, rangée supérieure 4 : carré vert, corsage bleu avec lacets noirs, tablier blanc à deux bandes bleues, ruban noir au col. Romanisation indicative.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ],
+      "animation_sources": {
+        "right:parle": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/jorget_right_parle.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 0
+        }
+      }
+    },
+    {
+      "id": "pixel_grick_directions",
+      "name": "Grick",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/grick_directions.png",
+      "path": "assets/characters/grick/grick.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.35,
+      "reference_pages": [
+        54
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "grick"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-c7a69b91-25a2-4b46-92bc-aea0c8f5d38e.png",
+      "sha256": "7fbb625dadda51623209288d08b4bb0d80373336d2d5e741c0770ef3edfc6936",
+      "description": "Grick stocky green-gray boggart man, bald short horn nubs, pointed ears, goggles perched on forehead, amber eyes and tusks, brown pocketed sleeveless vest over offwhite rolled-sleeve shirt, dark undershirt, loose pale trousers, black boots, belt pouch. ",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_limeskin_directions",
+      "name": "Limeskin",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/limeskin_directions.png",
+      "path": "assets/characters/limeskin/limeskin.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "height_m": 2.8,
+      "reference_pages": [
+        55
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "limeskin"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-7da52877-1121-4a15-8bb4-2e34903bb7a9.png",
+      "sha256": "d39a074c6e85b92fef7bd039f2bdbb424762b40d4e462819debc747429951141",
+      "description": "Limeskin very tall imposing dragon/lizard commander, pale gray milky scaled skin, draconic horned angular head, gold eyes, white feather-decorated side braid, dark navy double-breasted military tunic with gold trim and epaulettes, black trousers, segmented dark forearm and shin guards, pale scaled tail; visually larger than others but fully inside cell. ",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_eboncandle_ancient_directions",
+      "name": "Eboncandle — ancien corps",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/eboncandle_ancient_directions.png",
+      "path": "assets/characters/eboncandle_ancient/eboncandle_ancient.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "height_m": 1.8,
+      "reference_pages": [
+        61
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "eboncandle_ancient"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-a4460470-47b5-41fa-bd9c-6ce787ca5262.png",
+      "sha256": "3fa892245cef1bcd6936f169358ae2d2bfdc0908869331cdd7cb2fcaf0f7ce97",
+      "description": "Eboncandle ancient humanoid warrior body, very tall layered angular burgundy/charcoal armour with turquoise inlay, broad flattened swept headhelmet horizontal like a mantaray, large dark gray shoulder armour, gray worn long cloak and mechanical feet; no human face. ",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_phyr_directions",
+      "name": "Phyracorlybia Dorio",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/phyr_directions.png",
+      "path": "assets/characters/phyr/phyr.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "height_m": 1.6,
+      "reference_pages": [
+        67
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "phyr"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-25c87708-a104-4d61-a266-245e68464cf0.png",
+      "sha256": "e075acaf45c4a64c1327479ff6aa0c04052ff3a68f5b0e9387ceb73377aeae5e",
+      "description": "Phyracorlybia Dorio, adult canine woman, WHITE facial fur with small black canine nose, animal side ears with gold-blond hair in curled bob, small black maid cap, long modest teal-green dress with layered white ruffles and collar, tiny pale apron panel, dark flat shoes, golden tail as reference. ",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_almita_directions",
+      "name": "Almita",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/almita_directions.png",
+      "path": "assets/characters/almita/almita.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "height_m": 0.95,
+      "reference_pages": [
+        64
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "almita"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-6d6e6f14-91fc-48d9-81ce-572dd67e2687.png",
+      "sha256": "c558f6e7e90e8225539c385e1ffadf7e4eecd6ef36d4afbaa314c374f4d52a80",
+      "description": "P64 haut : petit carré blond arrondi et mèche latérale, boléro gris vert, tablier blanc à deux poches brunes sur jupe gris sombre. Espèce source : petite fée.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_rinsha_directions",
+      "name": "Rinsha / リンシャ",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/rinsha_directions.png",
+      "path": "assets/characters/rinsha/rinsha.png",
+      "dimensions": [
+        985,
+        1596
+      ],
+      "height_m": 1.0,
+      "reference_pages": [
+        64
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "rinsha"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-30476d22-2694-42e9-94e9-bb9d4765ec24.png",
+      "sha256": "e31cffddbf06af4d91b9f2f0530a061ed16e3f9acee89a782c6043199eccdbd8",
+      "description": "Rinsha from BOTTOM RIGHT of fourth scan p64, little humanlike blonde girl with long golden hair, brown short cape with beige edge tied red ribbon at neck, modest brick-red long dress, pale ruffled hem, brown boots, shy hands together. ",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ],
+      "animation_sources": {
+        "back:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/rinsha_back_course.png",
+          "row": 0,
+          "rows": 1,
+          "count": 4,
+          "original_count": 0
+        }
+      }
+    },
+    {
+      "id": "pixel_ecluecla_directions",
+      "name": "Ecluecla / エクルエクラ",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/ecluecla_directions.png",
+      "path": "assets/characters/ecluecla/ecluecla.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.01,
+      "reference_pages": [
+        64
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "ecluecla"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-3a41250a-5b32-4ac1-854c-e1e92b527fa3.png",
+      "sha256": "6e9090704dccea8150d5f97b48af317305834eb5bf3f6c75b7072760c97ca358",
+      "description": "P64 bas, rangée supérieure 3 : carré saumon avec pointes bouclées, gilet brun à bord beige sur chemise blanche, longue jupe orange. Romanisation indicative.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_kaiya_directions",
+      "name": "Kaiya",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/kaiya_directions.png",
+      "path": "assets/characters/kaiya/kaiya.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.57,
+      "reference_pages": [
+        68
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "kaiya"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-600442ec-c8f2-4706-a1ec-a915cf02a4d2.png",
+      "sha256": "26a8267453c0ad8372603245eaa39debcf5520e97d79729d5f561024808d8d59",
+      "description": "Kaiya cat maid, gray/white cat face and black cheek-length bob, pointed black cat ears, blue eyes, dark maid dress and large white apron plus white headband, black stockings and plain shoes, black thin tail. ",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    },
+    {
+      "id": "pixel_collon_directions",
+      "name": "Collon",
+      "category": "characters",
+      "source_path": "assets/source/resumed_2d/pixel/characters/collon_directions.png",
+      "path": "assets/characters/collon/collon.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "height_m": 1.2,
+      "reference_pages": [
+        47
+      ],
+      "reference_status": "scan_confirmed",
+      "character_ids": [
+        "collon"
+      ],
+      "layout": {
+        "columns": 6,
+        "rows": 12,
+        "kind": "directional_rows_npc",
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "style": "pixel",
+      "status": "pendingfit",
+      "generated_source": "/workspace/generated_images/exec-0f59c3bc-c3cb-4511-bff7-20662dd2ff9c.png",
+      "sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
+      "description": "P47 : neuf ans, chevelure rose presque jusqu’aux genoux avec petite attache au sommet ; longue tunique blanche, col/manche mauve bordé or, short rose bouffant. Espèce source : leprechaun.",
+      "animations": [
+        "repos",
+        "marche",
+        "course",
+        "parle"
+      ],
+      "limitations": [
+        "Échelle et découpe à valider après normalisation du moteur."
+      ]
+    }
+  ]
+}

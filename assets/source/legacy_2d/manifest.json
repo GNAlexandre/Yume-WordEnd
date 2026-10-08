@@ -1,0 +1,178 @@
+[
+  {
+    "file": "exec-091e00a1-b867-4bba-b09f-4c10cbdcfdb7.png",
+    "sha256": "095fba4866f6d3bfb7ccb6e2fadc2b000c4ceee48ed21211698669f02f329e21",
+    "bytes": 2194505,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-091e00a1-b867-4bba-b09f-4c10cbdcfdb7.png",
+    "name": "Willem",
+    "description": "23 poses et portrait",
+    "limitations": "Attaques et charges dépassent les cellules ; cycles à contrôler.",
+    "atlas_validated": false
+  },
+  {
+    "file": "exec-0d346a8c-1107-4c4d-90f8-6a25135f4238.png",
+    "sha256": "84d6c78d821457cbd8a900649cc296baed56be969fac053778bbd22c22b3c32b",
+    "bytes": 1762211,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-0d346a8c-1107-4c4d-90f8-6a25135f4238.png",
+    "name": "Chevaliers canin et félin, golem policier, Godrey",
+    "description": "Deux expressions par personnage",
+    "limitations": "Dernière rangée proche du bord.",
+    "atlas_validated": false
+  },
+  {
+    "file": "exec-10fe5105-30e6-4e13-9120-58a3f3d612be.png",
+    "sha256": "772252114098640e9422560081286f3a84f7fd89e1b3168847092105e2c6018e",
+    "bytes": 2653078,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-10fe5105-30e6-4e13-9120-58a3f3d612be.png",
+    "name": "Ithea — essai 1",
+    "description": "23 poses et portrait",
+    "limitations": "Pointes de cheveux ressemblant à des oreilles animales ; effets débordants.",
+    "atlas_validated": false
+  },
+  {
+    "file": "exec-860978ee-9d58-412a-9c8b-dc5f411347ed.png",
+    "sha256": "c80c8d66768c722fc367f80b72b52178010a2948074544a2be01f522dd495f4c",
+    "bytes": 2506317,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-860978ee-9d58-412a-9c8b-dc5f411347ed.png",
+    "name": "Rhantolk — essai 1",
+    "description": "23 poses et portrait",
+    "limitations": "Épées et quelques poses dépassent les cellules.",
+    "atlas_validated": false
+  },
+  {
+    "file": "exec-a257f49a-96d1-479a-985f-06f74400a698.png",
+    "sha256": "50ff344fa028af730842111467fe00430e9c7c5eed07c9fbf2cd12e832371e81",
+    "bytes": 1706219,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-a257f49a-96d1-479a-985f-06f74400a698.png",
+    "name": "Baroni, soldats grenouille, aviaire et loup",
+    "description": "Deux expressions par personnage",
+    "limitations": "Petites marges en haut et en bas.",
+    "atlas_validated": false
+  },
+  {
+    "file": "exec-d018c554-3cdc-4d51-8fd6-10b13df1f84d.png",
+    "sha256": "2f9d5b63d619ea4d28c83667a932d32805cb8a42d8dbf960ecdecc677596b05f",
+    "bytes": 2775771,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-d018c554-3cdc-4d51-8fd6-10b13df1f84d.png",
+    "name": "Rhantolk — essai 2",
+    "description": "Variante aux effets bleus accentués",
+    "limitations": "Arme flottante à la libération ; effets traversant les cellules.",
+    "atlas_validated": false
+  },
+  {
+    "file": "exec-defc4c62-799c-4436-a707-ed5fea9ffa6e.png",
+    "sha256": "3d1d3dc367b2ae1dcea852cd12a42d6aaf635ad9df47ecc2491923c180e4f645",
+    "bytes": 987423,
+    "dimensions": [
+      887,
+      1774
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-defc4c62-799c-4436-a707-ed5fea9ffa6e.png",
+    "name": "Almita, Sarya, Willemia, Ecluecla",
+    "description": "Deux poses par personnage",
+    "limitations": "Quelques pixels parasites en bordure ; romanisations indicatives.",
+    "atlas_validated": false
+  },
+  {
+    "file": "exec-dfea400e-7d98-43b9-a35d-01e9b40fdf10.png",
+    "sha256": "d37d29aa8ae2e28742484980726ce0ee562b2eaa4512f8cc27b1f1ead8310e6f",
+    "bytes": 2719753,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-dfea400e-7d98-43b9-a35d-01e9b40fdf10.png",
+    "name": "Chtholly",
+    "description": "23 poses et portrait ; robe des références",
+    "limitations": "Deux charges ont les jambes coupées ; effets et armes débordent des cellules.",
+    "atlas_validated": false
+  },
+  {
+    "file": "exec-e553703f-4da9-4a57-85cb-328c24ceccfa.png",
+    "sha256": "a6d0969bb0fc9dac6a92eed368041e8139dd6af0563be61e4786370174c755b5",
+    "bytes": 2409277,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-e553703f-4da9-4a57-85cb-328c24ceccfa.png",
+    "name": "Tiat, Pannibal, Collon, Lakhesh",
+    "description": "Huit poses par personnage, grille 8 × 4",
+    "limitations": "Corps complets ; portraits indépendants absents.",
+    "atlas_validated": false
+  },
+  {
+    "file": "exec-f088e71d-7719-46a2-b82f-5bc70e6a2d08.png",
+    "sha256": "3bf3de36b56d83d8ff7f69468e75fa2907ef1765a91d56a78068ba9ec44a1f74",
+    "bytes": 2644517,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-f088e71d-7719-46a2-b82f-5bc70e6a2d08.png",
+    "name": "Ithea — essai 2",
+    "description": "Variante avec effets plus lumineux",
+    "limitations": "Mêmes réserves de coiffure et de découpage.",
+    "atlas_validated": false
+  },
+  {
+    "file": "exec-fca440d1-5450-4194-aa88-24c5fbc047b2.png",
+    "sha256": "c23bbe0f463fc840f32a8cc601abce71ecf14f612db505bb79266ea0d3c1ab98",
+    "bytes": 1567546,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "mode": "RGBA",
+    "type": "planche 2D générée, essai archivé",
+    "original_path": "/workspace/generated_images/exec-fca440d1-5450-4194-aa88-24c5fbc047b2.png",
+    "name": "Jorget, Tilfey, Bitora, Illustote",
+    "description": "Deux expressions par personnage",
+    "limitations": "Dernière rangée proche du bord ; romanisations indicatives.",
+    "atlas_validated": false
+  }
+]

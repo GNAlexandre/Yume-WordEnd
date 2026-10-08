@@ -1,15 +1,14 @@
 extends GutTest
 ## SkinRegistry (L3) et skins jouables de data/skins/ : ordre (Chtholly d'abord), recherche,
-## skin par défaut, rechargement ; quatre planches 2D et sept modèles 3D jouables. Les
-## planches conservent leurs animations, leur densité et leurs couleurs ; les modèles ont
-## une scène et un portrait adaptés au même registre.
+## skin par défaut, rechargement ; onze planches 2D dont sept personnages SukaSuka
+## directionnels. Les fenêtres de combat restent communes aux trois orientations.
 
 const TEST_DIR := "user://l3_skins"
 const PLAYER_ANIMS := {
 	"repos": 2, "marche": 6, "course": 5, "attaque": 4, "charge": 4, "degats": 1, "mort": 1
 }
 const NPC_SKINS: Array[StringName] = [&"bibliothecaire", &"forgeron", &"enfant"]
-const MESH_SKINS: Array[StringName] = [
+const PIXEL_SKINS: Array[StringName] = [
 	&"sukasuka_chtholly",
 	&"sukasuka_ithea",
 	&"sukasuka_lillia",
@@ -60,7 +59,7 @@ func test_all_is_sorted_with_chtholly_first() -> void:
 func test_four_legacy_skins_keep_their_playable_sheets() -> void:
 	var checked := 0
 	for skin: SkinData in SkinRegistry.all():
-		if skin.mesh_scene != null:
+		if skin.id in PIXEL_SKINS:
 			continue
 		checked += 1
 		var label := String(skin.id)
@@ -85,19 +84,50 @@ func test_four_legacy_skins_keep_their_playable_sheets() -> void:
 	assert_eq(checked, 4, "les quatre planches historiques restent disponibles")
 
 
-func test_seven_mesh_skins_have_a_scene_and_square_portrait() -> void:
+func test_seven_pixel_skins_have_measured_directions_and_square_portrait() -> void:
 	var found: Array[StringName] = []
 	for skin: SkinData in SkinRegistry.all():
-		if skin.mesh_scene == null:
+		if skin.id not in PIXEL_SKINS:
 			continue
 		found.append(skin.id)
-		assert_null(skin.sprite_sheet, String(skin.id) + " : modèle 3D")
+		assert_null(skin.mesh_scene, String(skin.id) + " : planche HD-2D")
+		assert_not_null(skin.sprite_sheet, String(skin.id) + " : planche importée")
 		assert_not_null(skin.portrait, String(skin.id) + " : portrait")
-		assert_true(ResourceLoader.exists(skin.mesh_scene.resource_path), "scène importée")
 		assert_true(ResourceLoader.exists("res://data/skins/%s.tres" % skin.id), "id = fichier")
+		assert_eq(skin.texture_filter, BaseMaterial3D.TEXTURE_FILTER_NEAREST)
+		for direction: String in ["front", "back", "right"]:
+			assert_true(skin.directional_sheets.has(direction), direction + " : texture")
+			assert_true(skin.directional_frames_json.has(direction), direction + " : JSON")
+			var sheet := SheetLoader.read_sheet(skin, direction)
+			var frames := SheetLoader.frames_for(skin, direction)
+			assert_not_null(frames, direction + " : animations chargées")
+			for anim: String in PLAYER_ANIMS:
+				assert_eq(frames.get_frame_count(anim), PLAYER_ANIMS[anim])
+			assert_eq(SheetLoader.hit_frames(sheet, &"attaque"), [1, 2, 3] as Array[int])
+			assert_eq(SheetLoader.wave_frame(sheet, &"charge"), 3)
+			assert_almost_eq(SheetLoader.pixel_size(skin, sheet), 1.0 / 96.0, 0.00006)
 		if skin.portrait != null:
 			assert_eq(skin.portrait.get_size(), Vector2(256, 256), "portrait 256 × 256")
-	assert_eq(found, MESH_SKINS, "sept personnages 3D dans l'ordre du registre")
+	assert_eq(found, PIXEL_SKINS, "sept personnages HD-2D dans l'ordre du registre")
+
+
+func test_registered_pixel_skins_keep_attack_timing_when_turning() -> void:
+	for skin_id: StringName in PIXEL_SKINS:
+		var visual: CharacterVisual = add_child_autofree(
+			preload("res://src/visuals/character_visual.tscn").instantiate()
+		)
+		visual.set_process(false)
+		visual.set_skin(SkinRegistry.get_skin(skin_id))
+		visual.play(&"attaque")
+		visual.advance(1.5 / 14.0)
+		for facing: Vector3 in [Vector3.BACK, Vector3.FORWARD, Vector3.LEFT]:
+			visual.set_facing(facing)
+			assert_eq(visual.current_frame(), 1, String(skin_id) + " : temps conservé")
+			assert_true(visual.is_playing())
+			assert_eq(visual.hit_frames(&"attaque"), [1, 2, 3] as Array[int])
+		visual.advance(0.5 / 14.0)
+		assert_eq(visual.current_frame(), 2, "fraction d'intervalle conservée")
+		assert_true((visual.get_node("Sprite") as AnimatedSprite3D).flip_h)
 
 
 func test_npc_placeholders_have_distinct_colors() -> void:

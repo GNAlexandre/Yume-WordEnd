@@ -83,6 +83,34 @@ func test_data_matches_the_plan_table() -> void:
 	assert_almost_eq(big.cooldown_scale, 1.4, 0.001, "recharge du Grand × 1,4")
 
 
+func test_four_sizes_share_the_directional_timere_and_attack_windows() -> void:
+	var skin := load("res://data/enemies/visuals/timere.tres") as SkinData
+	assert_null(skin.mesh_scene)
+	assert_null(SkinRegistry.get_skin(&"timere"), "le Timere reste un ennemi")
+	for enemy_id: StringName in TYPES:
+		var data := load("res://data/enemies/%s.tres" % enemy_id) as EnemyData
+		assert_same(data.visual, skin, "les tailles utilisent le même visuel directionnel")
+	var expected := {
+		"repos": [5, 6],
+		"marche": [4, 7],
+		"course": [6, 12],
+		"fouet": [4, 8],
+		"morsure": [4, 8],
+		"degats": [5, 12],
+		"mort": [6, 8],
+	}
+	for direction: String in ["front", "back", "right"]:
+		assert_true(skin.directional_sheets.has(direction))
+		assert_true(skin.directional_frames_json.has(direction))
+		var frames := SheetLoader.frames_for(skin, direction)
+		var sheet := SheetLoader.read_sheet(skin, direction)
+		for animation: String in expected:
+			assert_eq(frames.get_frame_count(animation), expected[animation][0])
+			assert_eq(frames.get_animation_speed(animation), float(expected[animation][1]))
+		for attack: StringName in [&"fouet", &"morsure"]:
+			assert_eq(SheetLoader.hit_frames(sheet, attack), [1, 2] as Array[int])
+
+
 func test_chases_and_hits_only_on_hit_frames(enemy_id: StringName = use_parameters(TYPES)) -> void:
 	var player := _player()
 	var player_health := player.get_node(^"Health") as Health

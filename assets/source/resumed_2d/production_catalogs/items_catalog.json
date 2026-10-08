@@ -1,0 +1,204 @@
+{
+  "entries": [
+    {
+      "id": "pixel_item_page_fragment",
+      "name": "page fragment",
+      "category": "props",
+      "style": "pixel_art",
+      "path": "assets/items/page_fragment.png",
+      "source_path": "assets/source/resumed_2d/pixel/items/page_fragment.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/items/icons.png",
+      "source_box": [
+        0,
+        0,
+        385,
+        385
+      ],
+      "dimensions": [
+        385,
+        385
+      ],
+      "status": "pixel_native_pending_fit",
+      "description": "Icône inventaire64×64.",
+      "limitations": []
+    },
+    {
+      "id": "pixel_item_flower_blue",
+      "name": "flower blue",
+      "category": "props",
+      "style": "pixel_art",
+      "path": "assets/items/flower_blue.png",
+      "source_path": "assets/source/resumed_2d/pixel/items/flower_blue.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/items/icons.png",
+      "source_box": [
+        0,
+        0,
+        257,
+        347
+      ],
+      "dimensions": [
+        257,
+        347
+      ],
+      "status": "pixel_native_pending_fit",
+      "description": "Icône inventaire64×64.",
+      "limitations": []
+    },
+    {
+      "id": "pixel_item_bookmark",
+      "name": "bookmark",
+      "category": "props",
+      "style": "pixel_art",
+      "path": "assets/items/bookmark.png",
+      "source_path": "assets/source/resumed_2d/pixel/items/bookmark.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/items/icons.png",
+      "source_box": [
+        0,
+        0,
+        275,
+        378
+      ],
+      "dimensions": [
+        275,
+        378
+      ],
+      "status": "pixel_native_pending_fit",
+      "description": "Icône inventaire64×64.",
+      "limitations": []
+    },
+    {
+      "id": "pixel_item_cloth",
+      "name": "cloth",
+      "category": "props",
+      "style": "pixel_art",
+      "path": "assets/items/cloth.png",
+      "source_path": "assets/source/resumed_2d/pixel/items/cloth.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/items/icons.png",
+      "source_box": [
+        0,
+        0,
+        403,
+        324
+      ],
+      "dimensions": [
+        403,
+        324
+      ],
+      "status": "pixel_native_pending_fit",
+      "description": "Icône inventaire64×64.",
+      "limitations": []
+    },
+    {
+      "id": "pixel_item_gear",
+      "name": "gear",
+      "category": "props",
+      "style": "pixel_art",
+      "path": "assets/items/gear.png",
+      "source_path": "assets/source/resumed_2d/pixel/items/gear.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/items/icons.png",
+      "source_box": [
+        0,
+        0,
+        321,
+        314
+      ],
+      "dimensions": [
+        321,
+        314
+      ],
+      "status": "pixel_native_pending_fit",
+      "description": "Icône inventaire64×64.",
+      "limitations": []
+    },
+    {
+      "id": "pixel_item_berries",
+      "name": "berries",
+      "category": "props",
+      "style": "pixel_art",
+      "path": "assets/items/berries.png",
+      "source_path": "assets/source/resumed_2d/pixel/items/berries.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/items/icons.png",
+      "source_box": [
+        0,
+        0,
+        367,
+        358
+      ],
+      "dimensions": [
+        367,
+        358
+      ],
+      "status": "pixel_native_pending_fit",
+      "description": "Icône inventaire64×64.",
+      "limitations": []
+    },
+    {
+      "id": "pixel_item_leather_ball",
+      "name": "leather ball",
+      "category": "props",
+      "style": "pixel_art",
+      "path": "assets/items/leather_ball.png",
+      "source_path": "assets/source/resumed_2d/pixel/items/leather_ball.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/items/icons.png",
+      "source_box": [
+        0,
+        0,
+        320,
+        310
+      ],
+      "dimensions": [
+        320,
+        310
+      ],
+      "status": "pixel_native_pending_fit",
+      "description": "Icône inventaire64×64.",
+      "limitations": []
+    },
+    {
+      "id": "pixel_item_shell",
+      "name": "shell",
+      "category": "props",
+      "style": "pixel_art",
+      "path": "assets/items/shell.png",
+      "source_path": "assets/source/resumed_2d/pixel/items/shell.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/items/icons.png",
+      "source_box": [
+        0,
+        0,
+        316,
+        281
+      ],
+      "dimensions": [
+        316,
+        281
+      ],
+      "status": "pixel_native_pending_fit",
+      "description": "Icône inventaire64×64.",
+      "limitations": [
+        "Compatibilité ancien prototype uniquement."
+      ]
+    },
+    {
+      "id": "pixel_item_unknown",
+      "name": "unknown",
+      "category": "props",
+      "style": "pixel_art",
+      "path": "assets/items/unknown.png",
+      "source_path": "assets/source/resumed_2d/pixel/items/unknown.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/items/icons.png",
+      "source_box": [
+        0,
+        0,
+        348,
+        329
+      ],
+      "dimensions": [
+        348,
+        329
+      ],
+      "status": "pixel_native_pending_fit",
+      "description": "Icône inventaire64×64.",
+      "limitations": []
+    }
+  ]
+}

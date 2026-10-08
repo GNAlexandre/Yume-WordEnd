@@ -1,5 +1,8 @@
 # Personnages SukaSuka en 3D
 
+> **Ancienne livraison chibi refusée visuellement.** Les résultats techniques ci-dessous concernent cet ancien pack. La nouvelle direction et les concepts de Chtholly sont dans `assets/source/chtholly/` et `docs/sprites/ATELIER_CHTHOLLY.html`. Ce pipeline de modélisation procédurale ne respecte pas les consignes mises à jour.
+
+
 Adaptations chibi low-poly construites dans Blender 4.3.2 à partir des 162 pages fournies par l’utilisateur. Ce pack contient des volumes, des squelettes et des animations ; les portraits sont des rendus des modèles. Les cartes restent différées jusqu’aux volumes du récit.
 
 L’inventaire visuel et les correspondances personnage → pages se trouvent dans `docs/sprites/REFERENCES.md` et `reference_inventory.json`. Les scans originaux restent hors du dépôt, dans `/workspace/sukasuka-references/pages/`. Les tailles non indiquées par le cahier des charges sont des dimensions de travail déduites du style, pas des tailles canoniques.

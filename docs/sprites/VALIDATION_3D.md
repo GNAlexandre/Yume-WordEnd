@@ -1,5 +1,8 @@
 # Vérification des personnages 3D
 
+> **Ancienne livraison chibi refusée visuellement.** Les résultats techniques ci-dessous concernent cet ancien pack. La nouvelle direction et les concepts de Chtholly sont dans `assets/source/chtholly/` et `docs/sprites/ATELIER_CHTHOLLY.html`. Ce pipeline de modélisation procédurale ne respecte pas les consignes mises à jour.
+
+
 Livraison du 7 octobre 2026 : **45 modèles**, dont 7 personnages de combat et 38 PNJ/formes distinctes, avec **163 clips**. Les correspondances avec les pages des références sont dans [REFERENCES.md](REFERENCES.md) ; les résultats par GLB sont dans [validation3d.json](validation3d.json).
 
 | Contrôle | Résultat |

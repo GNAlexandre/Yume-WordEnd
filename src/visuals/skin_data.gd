@@ -12,6 +12,13 @@ extends Resource
 @export var sprite_sheet: Texture2D
 ## JSON de la planche, repris tel quel de l'easter egg (animations, images, ancres, coup, onde).
 @export var frames_json: JSON
+## Variantes directionnelles HD-2D : front, back, right. Gauche = right retourné.
+## La planche et le JSON principaux restent le fallback pour les anciens skins.
+@export var directional_sheets: Dictionary[String, Texture2D] = {}
+## Même cadence, nombre d'images et marqueurs de combat dans toutes les directions.
+@export var directional_frames_json: Dictionary[String, JSON] = {}
+## Les anciennes planches restent nettes ; les dessins HD peuvent choisir LINEAR.
+@export var texture_filter: BaseMaterial3D.TextureFilter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 ## Variante 3D (M3+) : scène instanciée par CharacterVisual à la place du sprite.
 @export var mesh_scene: PackedScene
 ## Portrait (boîte de dialogue, menu). Facultatif.

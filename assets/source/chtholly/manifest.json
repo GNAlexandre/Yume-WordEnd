@@ -1,0 +1,71 @@
+{
+  "status": "concept seulement, modèle 3D conforme non produit",
+  "scope": "Chtholly : deux variantes militaires ; Willem également autorisé par l’utilisateur. Autres personnages en attente.",
+  "reference_pages": [
+    11,
+    12,
+    14,
+    17
+  ],
+  "source_documents": {
+    "ASSETS_3D.md": "0a5c3304dc84c7ff8572d7beb3dc9a4602e80c9b4e9516b43b86f98c464ff700",
+    "MONDE.md": "03e34677fae88cded534a119d3104250cafcc4e33aaf45835096dafbb3976302"
+  },
+  "files": [
+    {
+      "file": "concept/chtholly_details.png",
+      "bytes": 2485312,
+      "sha256": "70ab417a547d9f9666908ecc8a44b0c6eadb0d611e6381dc4a1c97016955f0e0",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "kind": "historique initial",
+      "tool": "image_gen ; version du modèle non exposée",
+      "date": "2026-10-07"
+    },
+    {
+      "file": "concept/chtholly_turnaround.png",
+      "bytes": 1868759,
+      "sha256": "55531f618a7430c6def902fc96b18066f050cfb533b317e87f0291fd04ed830a",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "kind": "concept militaire révisé",
+      "tool": "image_gen ; version du modèle non exposée",
+      "date": "2026-10-07"
+    },
+    {
+      "file": "concept/chtholly_with_plastron.png",
+      "bytes": 2024325,
+      "sha256": "6a2503f8aa8bf26676761ba7e278f04c3e10fec067a9be3f368976b3bbda4edf",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "kind": "concept militaire révisé",
+      "tool": "image_gen ; version du modèle non exposée",
+      "date": "2026-10-07"
+    },
+    {
+      "file": "concept/history/chtholly_turnaround_initial.png",
+      "bytes": 2040251,
+      "sha256": "45c59e68bdf233c17a4ece133825de27cd8a4b78083526b45d5dd456878d2d5b",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "kind": "historique initial",
+      "tool": "image_gen ; version du modèle non exposée",
+      "date": "2026-10-07"
+    }
+  ],
+  "limitations": [
+    "Planches natives 1536 × 1024 ; la cible de 2048 px de haut du cahier des charges n’est pas encore atteinte.",
+    "Concepts générés, pas rendus d’un modèle 3D ni textures UV.",
+    "Armure, coiffure, broche et talismans demandent une revue de fidélité avant modélisation.",
+    "Les fichiers Blender/VRM et le GLB de la nouvelle direction restent à réaliser via une filière conforme."
+  ],
+  "revision": "Uniforme militaire fermé à galons dorés ; avec et sans plastron ; base de Seniorious élargie."
+}
