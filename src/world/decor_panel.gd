@@ -18,6 +18,11 @@ const PANEL_SHADER := preload("res://src/world/shaders/panel.gdshader")
 const SHADOW_TEXTURE := preload("res://assets/hd2d/fx/shadow.png")
 ## Hauteur de l'ombre au-dessus du sol (m) : pas de scintillement avec le sol.
 const SHADOW_LIFT := 0.04
+## (H5) Ombre douce : opacité au cœur de la tache (fx/shadow.png y est presque opaque : des trous
+## noirs sous les garde-corps), et la tache poussée vers l'est d'une part de sa largeur, plus
+## large d'autant (le soleil couchant est à l'ouest : MONDE.md 5.4, ombres longues vers l'est).
+const SHADOW_OPACITY := 0.55
+const SHADOW_EAST := 0.12
 
 ## Matériaux partagés : clé (image, teinte, lueur) → ShaderMaterial.
 static var _materials: Dictionary = {}
@@ -101,15 +106,17 @@ func rebuild() -> void:
 	_shadow.mesh = shadow_mesh()
 	_shadow.material_override = shadow_material()
 	var shadow_size := Vector2(size.x * shadow_width, size.x * shadow_width * shadow_depth)
+	shadow_size.x *= 1.0 + SHADOW_EAST
 	if not is_inside_tree():
 		return
 	var scale_world := global_basis.get_scale()
 	_quad.global_basis = global_basis if keep_orientation else Basis.from_scale(scale_world)
 	_quad.global_position = global_position + image_offset * scale_world
 	var flat := Vector3(shadow_size.x * scale_world.x, 1.0, shadow_size.y * scale_world.z)
+	var east := Vector3.RIGHT * flat.x * SHADOW_EAST / 2.0
 	_shadow.global_transform = Transform3D(
 		Basis.from_scale(flat) * Basis(Vector3.RIGHT, -PI / 2.0),
-		global_position + Vector3.UP * SHADOW_LIFT
+		global_position + east + Vector3.UP * SHADOW_LIFT
 	)
 
 
@@ -147,6 +154,7 @@ static func shadow_material() -> StandardMaterial3D:
 		_shadow_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		_shadow_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		_shadow_material.albedo_texture = SHADOW_TEXTURE
+		_shadow_material.albedo_color = Color(1.0, 1.0, 1.0, SHADOW_OPACITY)
 		_shadow_material.cull_mode = BaseMaterial3D.CULL_DISABLED
 		_shadow_material.render_priority = -1
 	return _shadow_material

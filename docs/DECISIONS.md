@@ -1399,3 +1399,90 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   de l'écran (`tests/unit/test_combat_vigil.gd`, vraie partie, rythme réel, 5 PV) : vague 5 en
   76 à 81 s avec 1 à 3 morsures sur quatre graines ; sans lire les signes, 3 à 6 morsures et
   parfois la défaite à la vague 4. Le test dure environ 80 s.
+- **H5 — pixel art filtré** : les images du monde (96 px/m) sont plus denses que l'écran
+  (≈ 65 px/m au point visé en 1280 × 720) ; au plus proche voisin et sans mipmaps, elles faisaient
+  du moiré et scintillaient dès que la caméra glissait. Panneaux, murs, toits et roche passent par
+  `src/world/shaders/pixel_art.gdshaderinc` (sampler linéaire) : de près, pixels nets dont seule la
+  frontière est lissée sur un pixel d'écran ; de loin, 2 × 2 échantillons bilinéaires sur
+  l'empreinte du pixel (sans mipmaps : les images importées n'en ont pas, et en créer une copie
+  doublerait leur mémoire). Écart moyen entre deux images à un demi-pixel de caméra (sur 255) :
+  7,7 → 2,4 (bois), 9,1 → 2,9 (colline), 7,9 → 2,3 (cour).
+- **H5 — sol à mipmaps** : `IslandTerrain.mipmapped_atlas()` refait en jeu l'atlas du sol avec ses
+  mipmaps (moyenne 2 × 2 : jamais deux tuiles de 384 px mélangées jusqu'au niveau 7 ; 11 ms, une
+  fois ; l'atlas importé est relâché). Le shader lit `textureLod` au niveau tiré des dérivées
+  continues de la position et prend deux échantillons le long de l'axe étiré par la perspective
+  (anisotrope fait main) : le filtrage anisotrope du pilote, avec le saut de `fract()` d'une
+  tuile à l'autre, débordait sur les cases voisines de l'atlas (lignes à chaque tuile). Les fleurs
+  d'un pixel s'effacent quand un pixel d'art devient plus petit que l'écran.
+- **H5 — tramage du sol** : le tramage au pixel d'écran du travail repris dessinait au loin une
+  grille de points et une couture nette au changement de mode ; de près, l'ordre de Bayer 4 × 4
+  semait une grille régulière (10 % de touffes vertes sur toute la colline, 30 % dans les taches
+  d'herbe sèche). Les masques se calculent une fois (`ground_masks`), la tuile se choisit pour un
+  seuil (`pick_layer`) : de près, un seuil par pixel d'art tiré d'un bruit entier (brins épars,
+  plus de grille ; le style « une tuile par pixel d'art » du socle reste) ; au loin (plus de deux
+  pixels d'art par pixel d'écran), la moyenne des tuiles de quatre seuils décalés par un bruit
+  d'écran, masques lus à la position continue : un mélange sans grain ni escalier ; entre les
+  deux, un fondu. Une tuile n'est lue qu'une fois par pixel (la même tuile pour deux seuils n'est
+  pas relue).
+- **H5 — cadrage des façades** (demande de l'orchestrateur : l'entrepôt garde ses murs de 6,5 m et
+  son faîtage de 9 m) : avec 32° de tangage et 30° de champ, le haut de l'écran passe à 6,5 m
+  au-dessus du joueur et plus bas derrière lui. Devant la façade sud d'un `Building` (groupe
+  `Building.GROUP`, ajouté) à moins de 18 m au nord du joueur et dans le champ, la caméra garde sa
+  place et lève les yeux (tangage jusqu'à 24°) juste assez pour que le haut du mur + 0,4 m (le
+  bas du toit) tienne dans le cadre, les pieds du joueur au-dessus de 85 % de l'écran ; si cela ne
+  suffit pas, elle recule du moins possible (jusqu'à 29 m) ; lissage 2,5/s. Calcul exact par les
+  angles (quelques arcs tangentes par image, dichotomie pour le recul) au lieu d'une double
+  boucle de recherche. La demande d'une façade naît sur son premier mètre et s'éteint sur les 4
+  derniers mètres de la portée et les 3 derniers du champ : aucun saut de plus de 1,5° par quart
+  de mètre (testé). Lever les yeux garde la taille des personnages (un recul de 29 m les
+  réduisait à 72 %) : cour de l'entrepôt 24,6°, vue du village 25,5°, porche 27°, rue du Port
+  27,5°, toujours à 21 m ; au Spawn (20 m de la façade) et là où l'on se bat (veille, bois),
+  32°. Le faîtage entier (9 m, 4 m derrière la façade) demanderait un recul de 25 à 29 m depuis
+  la cour : il n'est pas visé, seul le bas du toit l'est.
+- **H5 — cadrage en conversation** : le cadrage d'une façade met les pieds du joueur vers 80 % de
+  la hauteur de l'écran, sous la boîte de dialogue (bas 30 %) ; entre `EventBus.dialogue_started`
+  et `dialogue_ended`, la caméra garde les pieds au-dessus de 65 % de l'écran et ne recule pas
+  (la façade peut être coupée) : le joueur et son interlocuteur restent au-dessus de la boîte.
+- **H5 — distance de la caméra** : à 21 m et 30° de champ, l'écran montre 11,25 m de haut au point
+  visé : en 1920 × 1080, 96 px par mètre, la densité des images ; les planches s'affichent au
+  pixel près en plein écran HD (en 1280 × 720, aux deux tiers). On garde 21 m.
+- **H5 — bornes de la caméra** : `limits` = Rect2(−71, −70, 142, 136) (au lieu de −64…64) : au bord
+  du Couchant (x = −77) le joueur restait à 13 m du centre, au bord de l'écran ; il en est
+  désormais à 6 m au plus et l'on voit la lèvre, la falaise et la mer de nuages.
+- **H5 — flou de profondeur** : la bande nette va de 4,5 m devant le joueur à 9 m derrière lui,
+  projetés par la caméra à chaque image (`focus_center`, `focus_half` de post_fx.gdshader) : le
+  joueur et ceux qui l'entourent ne sont jamais flous, même décentrés (retard, avance,
+  verrouillage, bornes, cadrage d'une façade). Le flou lit les mipmaps de l'image
+  (`hint_screen_texture, filter_linear_mipmap`, que le rendu Compatibility floute lui-même) :
+  quatre lectures en croix au lieu de douze, rayon continu (5,5 px en haut, 2,5 px en bas) ; la
+  lueur lit deux niveaux (3 et 5) au-dessus d'un seuil de 0,7. Le matériau est copié par chaque
+  caméra.
+- **H5 — étalonnage** : en plus de la teinte chaude, du contraste, de la saturation et de la
+  vignette : virage des ombres vers le lavande et des hautes lumières vers l'or (12 %), voile de
+  brume pêche en haut de l'écran (le lointain) et lumière du couchant au bord gauche (l'ouest).
+- **H5 — réglages de lumière** : `HD2DLighting` (`src/world/materials/hd2d_lighting.gd`) réunit
+  soleil, ambiance, brouillard, ciel, mer de nuages, lanternes et étalonnage ;
+  `lighting_sunset.tres` (valeurs d'island.tscn et de post_fx.gdshader, testé),
+  `lighting_dusk.tres`, `lighting_night.tres` (lune froide à l'est-sud-est, lanternes × 2,2) ;
+  `apply(island)` les pose sur des copies (environnement, mer de nuages, matériau de la caméra).
+  Le nœud `Lighting` d'island.tscn (`day_phase_lighting.gd`) les pose sur
+  `EventBus.day_phase_changed` (contrat existant : evening → crépuscule, night → nuit, morning et
+  day → couchant) ; rien ne l'émet encore : l'acte 1 reste au couchant, la promesse de nuit sur
+  la colline (M3) n'aura qu'à l'émettre. Les planches des personnages ne sont pas éclairées : chaque
+  réglage porte leur teinte (`sprite_tint`, nuit 0,6 / 0,66 / 0,86), rendue par
+  `HD2DLighting.active_sprite_tint()` pour H6 (CONTRACT_REQUESTS).
+- **H5 — ombres et brume** : l'ombre des panneaux (fx/shadow.png, presque opaque) est ramenée à
+  55 % au cœur, poussée et allongée de 12 % vers l'est (le couchant à l'ouest) ; le brouillard de
+  hauteur passe à 0,015 par mètre sous −8 m (0,04 sous −6 m) : la mer de nuages se voit sous la
+  brume au bord de l'île au lieu d'un aplat rose.
+- **H5 — mesures** (VM partagée entre plusieurs agents, rendu logiciel : chiffres relatifs) :
+  écart moyen entre deux images à un demi-pixel de caméra (sur 255, `build/h5/shimmer.gd`) :
+  village 7,9 → 2,0, entrepôt 7,4 → 2,0, bois 7,7 → 2,1, Couchant 6,2 → 2,1, port 8,0 → 2,6,
+  colline 9,1 → 2,4. Draw calls (`tools/hd2d_shots.sh`) : menu 38, cour 93 (50 au départ : la
+  caméra qui lève les yeux montre la façade et les arbres derrière), entrepôt 79, bois 51,
+  Couchant 32, port 52, colline 50, conversation 66, veille 45 ; budget 200. Chromium headless
+  (`tools/web_m2.js … zones`, Spawn de chaque zone, deux paires départ / H5) : 0,27 à 0,52
+  image/s des deux côtés, sans écart au-delà du bruit. Banc A/B dans un seul processus (Xvfb,
+  llvmpipe, shaders du départ et de H5 échangés à chaud) : le post-traitement de H5 coûte moins
+  (quatre lectures dans les mipmaps contre douze), le sol et les panneaux filtrés coûtent plus ;
+  au total, de −1 % à +9 % selon la vue. Sur un vrai GPU, ces lectures de texture ne pèsent rien.

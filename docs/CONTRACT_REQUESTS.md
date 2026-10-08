@@ -304,3 +304,39 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 - Proposition : relever le triangle de 0,2 m (`_marker_height` : `height_m × scale + 0.5`), ou le
   retirer au profit du réticule au sol.
 - En attendant : l'éclat de préparation se pose à 85 % de la hauteur du corps, sous le triangle.
+## H5 — les planches des personnages scintillent encore
+- Besoin : les `AnimatedSprite3D` des personnages et des Timeres (`src/visuals/`, H6 ; Timeres :
+  H7) restent au plus proche voisin ; une planche de 144 px s'affiche sur ~97 px en 1280 × 720 :
+  leurs pixels sautent quand ils marchent ou que la caméra glisse, comme le décor avant H5.
+- Proposition : un `material_override` (ShaderMaterial, `render_mode unshaded` ou éclairé, alpha
+  découpé, billboard Y) qui échantillonne la planche par `pixel_art()` de
+  `src/world/shaders/pixel_art.gdshaderinc` (sampler `filter_linear`), et pour l'ombre,
+  `DecorPanel.shadow_material()` / `shadow_mesh()` (même tache douce que le décor, 55 %).
+- En attendant : rien dans `src/visuals/` ; le décor et le sol sont traités.
+
+## H5 — contrats à mettre à jour dans PLAN.md section 3 (ajouts, rien de retiré)
+- `Building.GROUP` (`&"hd2d_buildings"`) : chaque Building en jeu y est ; la caméra cadre leur
+  façade sud.
+- `CameraRig` : `limits` vaut Rect2(−71, −70, 142, 136) ; même API, cadrage des façades (le
+  tangage descend jusqu'à 24° devant un bâtiment : `pitch()` rend le tangage courant,
+  `pitch_deg` reste le réglage) et bande nette du flou posée à chaque image (constantes `FRAME_*`
+  et `BAND_*`, pas d'export ajouté).
+- Nouvelle classe `HD2DLighting` (`src/world/materials/hd2d_lighting.gd`) : `apply(island)`,
+  `apply_post(material)`, `for_phase(phase)`, `active_sprite_tint()`, réglages
+  `lighting_sunset|dusk|night.tres` ; nœud `Lighting` d'island.tscn (`day_phase_lighting.gd`),
+  qui les pose sur `EventBus.day_phase_changed`.
+- `CameraRig` écoute `EventBus.dialogue_started` / `dialogue_ended` (cadrage en conversation).
+- `post_fx.gdshader` : `focus_center` et `focus_half` sont posés par la caméra ; `focus_soft` est
+  retiré ; nouveaux uniformes d'étalonnage (`shadow_tint`, `highlight_tint`, `split_strength`,
+  `haze_*`, `sun_*`, `glow_tint`).
+
+## H5 — les personnages restent en plein jour la nuit
+- Besoin : les planches (`AnimatedSprite3D` de `src/visuals/`, H6 ; Timeres : H7) ne sont pas
+  éclairées ; sous le réglage de nuit (`lighting_night.tres`, posé quand l'histoire émet
+  `EventBus.day_phase_changed(&"night")`), le décor s'assombrit et bleuit mais les personnages
+  restent aussi clairs qu'au couchant.
+- Proposition : `CharacterVisual` multiplie `Sprite.modulate` par
+  `HD2DLighting.active_sprite_tint()` à `_ready` et sur `EventBus.day_phase_changed` (appelé
+  après le nœud `Lighting` de l'île : `call_deferred`) ; blanc au couchant, rien ne change dans
+  l'acte 1.
+- En attendant : rien ne change de jour ; la nuit n'est pas encore jouée.
