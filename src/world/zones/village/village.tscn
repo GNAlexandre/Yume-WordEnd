@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://src/items/placements/village.tscn" id="4_pickups"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="5_batcher"]
 [ext_resource type="Script" path="res://src/world/prop_scatter.gd" id="6_scatter"]
+[ext_resource type="Script" path="res://src/world/zones/village/see_through.gd" id="7_see_through"]
 [ext_resource type="PackedScene" path="res://src/world/props/warehouse_main.tscn" id="p1_warehouse_main"]
 [ext_resource type="PackedScene" path="res://src/world/props/warehouse_wing.tscn" id="p2_warehouse_wing"]
 [ext_resource type="PackedScene" path="res://src/world/props/warehouse_porch.tscn" id="p3_warehouse_porch"]
@@ -27,6 +28,10 @@
 [ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust.tscn" id="p19_tree_autumn_rust"]
 [ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_yellow.tscn" id="p20_tree_autumn_yellow"]
 [ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="p21_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_pine.tscn" id="p22_tree_pine"]
+[ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="p23_rock"]
+[ext_resource type="PackedScene" path="res://src/world/props/palisade_side.tscn" id="p24_palisade_side"]
+[ext_resource type="PackedScene" path="res://src/world/props/warehouse_chimney.tscn" id="p25_warehouse_chimney"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
 size = Vector3(44, 30, 44)
@@ -64,56 +69,98 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -15)
 [node name="WarehouseWing" parent="Geometry" instance=ExtResource("p2_warehouse_wing")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -6.5)
 
+[node name="WarehouseChimney" parent="Geometry" instance=ExtResource("p25_warehouse_chimney")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 8.4, -15)
+
 [node name="WarehousePorch" parent="Geometry" instance=ExtResource("p3_warehouse_porch")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0, -9.75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.35, 0, -9.75)
 
 [node name="ArmoryDoor" parent="Geometry" instance=ExtResource("p4_armory_door")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -1.35)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.6, 0, -1.35)
 
 [node name="ReadingBench" parent="Geometry" instance=ExtResource("p5_bench")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -10.45)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 0, -10.45)
 
 [node name="FacadeFlowers" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
 prop = ExtResource("p6_flower_bed")
-points = PackedVector3Array(-16.4, 0, -10.55, -13.9, 0, -10.55)
-yaw_degrees = PackedFloat32Array(0, 0)
+points = PackedVector3Array(-6.3, 0, -10.7, -2.35, 0, -12.2, -2.35, 0, -14.6, -12.35, 0, -3.4, -12.35, 0, -8.6)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0)
 
 [node name="Well" parent="Geometry" instance=ExtResource("p7_well")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
-[node name="Ball" parent="Geometry" instance=ExtResource("p8_ball")]
+[node name="YardBall" parent="Geometry" instance=ExtResource("p8_ball")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 0, -3.6)
 
 [node name="Lamps" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
 prop = ExtResource("p9_crystal_lamp")
-points = PackedVector3Array(6.65, 0, 6.65, -6.65, 0, 6.65, -6.65, 0, -6.65, 6.65, 0, -6.65)
-yaw_degrees = PackedFloat32Array(0, 0, 0, 0)
+points = PackedVector3Array(6.65, 0, 6.65, -6.65, 0, 6.65, -5.5, 0, -8.7, 6.65, 0, -6.65, -8.2, 0, 14.8)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0)
+
+[node name="Benches" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p5_bench")
+points = PackedVector3Array(-5.6, 0, 10.4, 5.8, 0, 10.6, -16.2, 0, 9.6, -2.6, 0, 1.3, 4.4, 0, -11.6)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0)
+
+[node name="Myosotis" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p15_myosotis")
+points = PackedVector3Array(16, 0, 6, -7.6, 0, 7.4, 7.5, 0, 7.8, -2.6, 0, -9.1, 9.2, 0, -11.9, -15.6, 0, 13.9, 3.4, 0, -10.3, -1.4, 0, -3.1, -3.2, 0, 12.6, 3.6, 0, 13.2, 10.6, 0, 15.6, 14.6, 0, 17.4, -14.6, 0, 17.2)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+[node name="PathFlowers" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p6_flower_bed")
+points = PackedVector3Array(-3, 0, 9.9, 3, 0, 9.9, -9.9, 0, -2.9, -9.9, 0, 2.9, 9.7, 0, -2.5, 9.9, 0, 2.9)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0)
 
 [node name="ClimbingTree" parent="Geometry" instance=ExtResource("p10_climbing_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, -13)
 
 [node name="ToolShed" parent="Geometry" instance=ExtResource("p11_tool_shed")]
-transform = Transform3D(0.731354, 0, -0.681998, 0, 1, 0, 0.681998, 0, 0.731354, 16, 0, -17)
+transform = Transform3D(0.882948, 0, -0.469472, 0, 1, 0, 0.469472, 0, 0.882948, 17, 0, -17.3)
 
-[node name="VegetablePatch" parent="Geometry" instance=ExtResource("p12_vegetable_patch")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, -4)
+[node name="ShedCrates" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p14_crate")
+points = PackedVector3Array(19.4, 0, -15.4, 18.9, 0, -14.6, 8.6, 0, -14.4)
+yaw_degrees = PackedFloat32Array(10, -14, 6)
 
-[node name="LaundryLineA" parent="Geometry" instance=ExtResource("p13_laundry_line")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, 5.4)
+[node name="VegetablePatch" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p12_vegetable_patch")
+points = PackedVector3Array(13, 0, -5, 13, 0, -3.95, 13, 0, -2.9)
+yaw_degrees = PackedFloat32Array(0, 0, 0)
 
-[node name="LaundryLineB" parent="Geometry" instance=ExtResource("p13_laundry_line")]
-transform = Transform3D(0.997564, 0, 0.069756, 0, 1, 0, -0.069756, 0, 0.997564, 11, 0, 8.8)
+[node name="LaundryLines" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p13_laundry_line")
+points = PackedVector3Array(10.5, 0, 5.4, 15.8, 0, 8.6)
+yaw_degrees = PackedFloat32Array(0, 3)
+
+[node name="LaundryCrates" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p14_crate")
+points = PackedVector3Array(13.3, 0, 10.5, 14.1, 0, 10.8, 13.7, 0, 11.5)
+yaw_degrees = PackedFloat32Array(-8, 12, 3)
+
+[node name="SouthFlowers" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p6_flower_bed")
+points = PackedVector3Array(8.4, 0, 20.3, 12.6, 0, 20.3, -12.4, 0, 20.3)
+yaw_degrees = PackedFloat32Array(0, 0, 0)
 
 [node name="PlayGoals" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
 prop = ExtResource("p14_crate")
-points = PackedVector3Array(-15.3, 0, 11, -8.7, 0, 11)
-yaw_degrees = PackedFloat32Array(12, -8)
+points = PackedVector3Array(-12.75, 0, 8.3, -11.25, 0, 8.3, -12.75, 0, 13.9, -11.25, 0, 13.9)
+yaw_degrees = PackedFloat32Array(8, -6, 4, -10)
 
-[node name="FlowerHint" parent="Geometry" instance=ExtResource("p15_myosotis")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 6)
+[node name="PlayBall" parent="Geometry" instance=ExtResource("p8_ball")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.6, 0, 11.3)
 
 [node name="PalisadeNorthSouth" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
@@ -123,7 +170,7 @@ yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
 [node name="PalisadeWestEast" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
-prop = ExtResource("p16_palisade")
+prop = ExtResource("p24_palisade_side")
 points = PackedVector3Array(-21.2, 0, 3.15, -21.2, 0, -3.15, -21.2, 0, 5.05, -21.2, 0, -5.05, -21.2, 0, 6.95, -21.2, 0, -6.95, -21.2, 0, 8.85, -21.2, 0, -8.85, -21.2, 0, 10.75, -21.2, 0, -10.75, -21.2, 0, 12.65, -21.2, 0, -12.65, -21.2, 0, 14.55, -21.2, 0, -14.55, -21.2, 0, 16.45, -21.2, 0, -16.45, -21.2, 0, 18.35, -21.2, 0, -18.35, -21.2, 0, 20.25, -21.2, 0, -20.25, 21.2, 0, 3.15, 21.2, 0, -3.15, 21.2, 0, 5.05, 21.2, 0, -5.05, 21.2, 0, 6.95, 21.2, 0, -6.95, 21.2, 0, 8.85, 21.2, 0, -8.85, 21.2, 0, 10.75, 21.2, 0, -10.75, 21.2, 0, 12.65, 21.2, 0, -12.65, 21.2, 0, 14.55, 21.2, 0, -14.55, 21.2, 0, 16.45, 21.2, 0, -16.45, 21.2, 0, 18.35, 21.2, 0, -18.35, 21.2, 0, 20.25, 21.2, 0, -20.25)
 yaw_degrees = PackedFloat32Array(90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90)
 
@@ -139,33 +186,55 @@ transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -21.2, 0, 0)
 [node name="GateEast" parent="Geometry" instance=ExtResource("p17_palisade_gate")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 21.2, 0, 0)
 
+[node name="BackFence" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p16_palisade")
+points = PackedVector3Array(-3.2, 0, -20.1, -20.1, 0, -2.3)
+yaw_degrees = PackedFloat32Array(90, 0)
+
 [node name="TreesGold" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
 prop = ExtResource("p18_tree_autumn")
-points = PackedVector3Array(17.6, 0, 17.4, -18.6, 0, 6.2)
+points = PackedVector3Array(17.6, 0, 17.4, -18.6, 0, 6.2, 19.8, 0, 19.6, 5.6, 0, -19.4, 19.6, 0, 4.2)
 scale_range = Vector2(0.95, 1.1)
 random_seed = 3
 
 [node name="TreesRust" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
 prop = ExtResource("p19_tree_autumn_rust")
-points = PackedVector3Array(-17.4, 0, 17.6, 18.4, 0, 10)
+points = PackedVector3Array(-19, 0, 18.8, 18.4, 0, 10, -7.8, 0, 20.4, 19.7, 0, -11.4)
 scale_range = Vector2(0.9, 1.05)
 random_seed = 4
 
 [node name="TreesYellow" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
 prop = ExtResource("p20_tree_autumn_yellow")
-points = PackedVector3Array(4.5, 0, 18)
+points = PackedVector3Array(4.4, 0, 20.4, -19.6, 0, -17.6)
 scale_range = Vector2(0.9, 1)
 random_seed = 5
+
+[node name="TreesPine" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p22_tree_pine")
+points = PackedVector3Array(14.4, 0, -20.2, 20, 0, -19.4, -20.2, 0, -9.5, -3.9, 0, 20.6)
+scale_range = Vector2(0.95, 1.1)
+random_seed = 7
 
 [node name="Bushes" type="Node3D" parent="Geometry"]
 script = ExtResource("6_scatter")
 prop = ExtResource("p21_bush")
-points = PackedVector3Array(-6, 0, 19.4, 9, 0, 19.4, 19.4, 0, -6.5, -19.5, 0, 16, 19.6, 0, 15, 7, 0, -19.4)
+points = PackedVector3Array(-6, 0, 19.4, 9, 0, 19.4, 19.4, 0, -6.5, -19.5, 0, 16, 19.6, 0, 15, 7, 0, -19.4, -2.6, 0, 17.8, 2.9, 0, -19.6, -19.6, 0, 3.4, 16.2, 0, 12.8, -5.2, 0, 14.6, 6.4, 0, 14.2, 11.4, 0, 19.6, 15.4, 0, 19.8)
 scale_range = Vector2(0.8, 1.1)
 random_seed = 6
+
+[node name="Rocks" type="Node3D" parent="Geometry"]
+script = ExtResource("6_scatter")
+prop = ExtResource("p23_rock")
+points = PackedVector3Array(-19.3, 0, 13.2, 13.6, 0, -19.6, 17.4, 0, 19.2)
+yaw_degrees = PackedFloat32Array(20, -35, 10)
+
+[node name="SeeThrough" type="Node" parent="."]
+script = ExtResource("7_see_through")
 
 [node name="EnemyBarrier" type="StaticBody3D" parent="."]
 collision_layer = 128

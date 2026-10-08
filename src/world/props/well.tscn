@@ -5,7 +5,7 @@
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_well"]
 height = 1.2
-radius = 1.15
+radius = 0.8
 
 [node name="Well" type="Node3D"]
 script = ExtResource("1_panel")
