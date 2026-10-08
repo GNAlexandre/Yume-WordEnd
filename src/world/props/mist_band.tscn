@@ -8,4 +8,5 @@ script = ExtResource("1_panel")
 texture = ExtResource("2_image")
 shadow_width = 0.0
 image_offset = Vector3(0, -0.667, 0)
+soft_alpha = true
 metadata/hd2d_category = "sky"

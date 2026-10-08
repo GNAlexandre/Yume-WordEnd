@@ -405,3 +405,5 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   `airship`, `floating`) : `test_hd2d_scenes.gd` le fait d'après la table de
   `tools/hd2d_scenes.py` et le manifeste ; `MAX_IMAGES_PER_ZONE` passe de 40 à 48 (44 au port avec
   les flancs et les hélices). La pose le dépassera : à régler par H5 sur les draw calls mesurés.
+## P0 — alpha doux des panneaux debout : réglé
+- `DecorPanel.soft_alpha` (docs/DECISIONS.md, « Alpha doux des panneaux debout »).

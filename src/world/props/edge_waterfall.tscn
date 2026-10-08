@@ -10,4 +10,5 @@ shadow_width = 0.0
 image_offset = Vector3(0, -6, 0)
 frames = 6
 fps = 10.0
+soft_alpha = true
 metadata/hd2d_category = "hanging"

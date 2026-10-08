@@ -10,4 +10,5 @@ shadow_width = 0.0
 frames = 8
 fps = 6.0
 depth_offset = 0.1
+soft_alpha = true
 metadata/hd2d_category = "roof_detail"

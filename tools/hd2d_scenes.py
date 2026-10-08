@@ -179,6 +179,9 @@ def panel_properties(entry, category):
         props.append(("depth_offset", flt(values["depth_offset"])))
     if values["foreground"]:
         props.append(("foreground", "true"))
+    elif entry.get("soft_alpha"):
+        # Alpha doux du manifeste (fumée, brume, nuages, rais de lumière) : mélangé, pas découpé.
+        props.append(("soft_alpha", "true"))
     return props
 
 
@@ -533,6 +536,9 @@ def _check_panel(entry, category, root):
         problems.append("sans ombre (shadow_width = 0.0)")
     if values["depth_offset"] > 0.0 and _float(root, "depth_offset", 0.0) <= 0.0:
         problems.append("depth_offset attendu (posé contre un mur ou sur un toit)")
+    soft = bool(entry.get("soft_alpha")) and not values["foreground"]
+    if (root.get("soft_alpha") == "true") != soft:
+        problems.append("soft_alpha : %s attendu (alpha doux du manifeste)" % soft)
     return problems
 
 

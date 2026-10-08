@@ -9,4 +9,5 @@ texture = ExtResource("2_image")
 pixels_per_meter = 48.0
 shadow_width = 0.0
 image_offset = Vector3(0, -2.667, 0)
+soft_alpha = true
 metadata/hd2d_category = "sky"

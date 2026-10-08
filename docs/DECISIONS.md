@@ -1776,3 +1776,9 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **P0 — budget d'images par zone** (`test_hd2d_decor.gd`, `MAX_IMAGES_PER_ZONE`) : 40 → 48, le
   port en a 44 avec les flancs de ses six bâtiments et les hélices des deux navires ; la pose du
   cahier n° 2 le dépassera (le vrai budget est le nombre de draw calls des vues).
+- **Alpha doux des panneaux debout** (`DecorPanel.soft_alpha`, `panel_soft.gdshader`, demande
+  de P0) : les panneaux découpaient leur transparence à 0,5 ; fumée, vapeur, cascade et nuages
+  perdaient leur dégradé, rais de lumière (15 à 35 % d'opacité) et bande de brume disparaissaient.
+  Mélange alpha, sans écriture de profondeur, matériau partagé par image (le batcher les fond
+  toujours) ; le premier plan garde sa trame. `tools/hd2d_scenes.py` écrit `soft_alpha` d'après
+  le manifeste et le vérifie : 11 scènes régénérées.

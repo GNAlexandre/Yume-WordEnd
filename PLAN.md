@@ -380,7 +380,8 @@ class_name DecorPanel      # (H9) @export frames, fps (bande animée : size_m() 
                            # phase_at(position), dans UV2.x ; l'image change dans le shader, TIME), flip_h,
                            # depth_offset (m vers la caméra, UV2.y : panneau contre un mur ou sur un toit),
                            # foreground (panel_foreground.gdshader : s'efface en trame autour du joueur) ;
-                           # material_for(image, tint, glow, frame_count, frame_rate, in_foreground),
+                           # soft_alpha (panel_soft.gdshader : transparence mélangée, fumée, brume, nuages) ;
+                           # material_for(image, tint, glow, frame_count, frame_rate, in_foreground, soft),
                            # panel_mesh(size, flip, phase, offset), update_foreground(tree), displayed_transform(node)
                            # (place affichée, lissage physique) ; FOREGROUND_SHADER, PHASE_STEPS, PLAYER_GROUP
 class_name GroundDecal     # (H9) src/world/ground_decal.gd, racine possible d'un décor, sans collision : image vue

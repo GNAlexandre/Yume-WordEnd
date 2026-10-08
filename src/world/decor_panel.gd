@@ -29,6 +29,8 @@ const PIXELS_PER_METER := 96.0
 const PANEL_SHADER := preload("res://src/world/shaders/panel.gdshader")
 ## (H9) Variante de premier plan, qui s'efface devant le joueur.
 const FOREGROUND_SHADER := preload("res://src/world/shaders/panel_foreground.gdshader")
+## Variante à alpha doux (soft_alpha : fumée, vapeur, cascade, nuages, brume, rais de lumière).
+const SOFT_SHADER := preload("res://src/world/shaders/panel_soft.gdshader")
 const SHADOW_TEXTURE := preload("res://assets/hd2d/fx/shadow.png")
 ## Hauteur de l'ombre au-dessus du sol (m) : pas de scintillement avec le sol.
 const SHADOW_LIFT := 0.04
@@ -124,6 +126,13 @@ static var _shadow_mesh: QuadMesh
 	set(value):
 		foreground = value
 		_queue_rebuild()
+## Alpha doux : la transparence de l'image est mélangée (dégradés de la fumée, de la brume, des
+## nuages, des rais de lumière) au lieu d'être découpée à 0,5 (panel_soft.gdshader). Sans effet
+## sur un panneau de premier plan, qui garde sa trame.
+@export var soft_alpha: bool = false:
+	set(value):
+		soft_alpha = value
+		_queue_rebuild()
 
 var _quad: MeshInstance3D
 var _shadow: MeshInstance3D
@@ -169,7 +178,7 @@ func rebuild() -> void:
 		return
 	var phase := strip_phase() if frames > 1 else 0.0
 	_quad.mesh = panel_mesh(size, flip_h, phase, depth_offset)
-	_quad.material_override = material_for(texture, tint, glow, frames, fps, foreground)
+	_quad.material_override = material_for(texture, tint, glow, frames, fps, foreground, soft_alpha)
 	_shadow.mesh = shadow_mesh()
 	_shadow.material_override = shadow_material()
 	var shadow_size := Vector2(size.x * shadow_width, size.x * shadow_width * shadow_depth)
@@ -247,21 +256,25 @@ static func panel_mesh(
 
 ## Matériau partagé d'une image (panel.gdshader : nearest, alpha découpé, éclairage plat) ;
 ## (H9) bande animée de frame_count images à frame_rate images par seconde, premier plan
-## (panel_foreground.gdshader).
+## (panel_foreground.gdshader) ; alpha doux (panel_soft.gdshader), sauf au premier plan.
 static func material_for(
 	image: Texture2D,
 	color: Color = Color.WHITE,
 	glow_amount: float = 0.0,
 	frame_count: int = 1,
 	frame_rate: float = 0.0,
-	in_foreground: bool = false
+	in_foreground: bool = false,
+	soft: bool = false
 ) -> Material:
+	var blended := soft and not in_foreground
 	var key := "%s|%s|%.2f" % [image.get_rid(), color.to_html(), glow_amount]
-	if frame_count > 1 or in_foreground:
-		key += "|%d|%.3f|%d" % [frame_count, frame_rate, int(in_foreground)]
+	if frame_count > 1 or in_foreground or blended:
+		key += "|%d|%.3f|%d|%d" % [frame_count, frame_rate, int(in_foreground), int(blended)]
 	if not _materials.has(key):
 		var material := ShaderMaterial.new()
-		material.shader = FOREGROUND_SHADER if in_foreground else PANEL_SHADER
+		material.shader = (
+			FOREGROUND_SHADER if in_foreground else (SOFT_SHADER if blended else PANEL_SHADER)
+		)
 		material.set_shader_parameter(&"albedo_texture", image)
 		material.set_shader_parameter(&"tint", color)
 		material.set_shader_parameter(&"hd2d_relief", 0.0)

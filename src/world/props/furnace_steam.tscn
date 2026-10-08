@@ -10,4 +10,5 @@ shadow_width = 0.0
 frames = 6
 fps = 8.0
 depth_offset = 0.05
+soft_alpha = true
 metadata/hd2d_category = "fire"
