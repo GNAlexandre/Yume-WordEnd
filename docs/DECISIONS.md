@@ -1253,15 +1253,28 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   tuile à l'autre, débordait sur les cases voisines de l'atlas (lignes à chaque tuile). Le
   tramage des masques passe au pixel d'écran quand un pixel d'art devient plus petit que l'écran,
   et les fleurs d'un pixel s'y effacent.
-- **H5 — cadrage des façades** (demande de l'orchestrateur : l'entrepôt garde ses murs de 6,5 m) :
-  avec 32° de tangage et 30° de champ, le haut de l'écran passe à 6,5 m au-dessus du joueur et
-  plus bas derrière lui. Devant la façade sud d'un `Building` (groupe `Building.GROUP`, ajouté) à
-  moins de 16 m au nord du joueur et dans le champ, la caméra garde sa place et lève les yeux
-  (tangage jusqu'à 24°) juste assez pour que le haut du mur + 0,4 m (le bas du toit) tienne dans
-  le cadre, les pieds du joueur au-dessus de 85 % de l'écran ; si cela ne suffit pas, elle recule
-  (jusqu'à 29 m) ; lissage 2,5/s. Lever les yeux garde la taille des personnages (un recul de
-  29 m les réduisait à 72 %) : cour de l'entrepôt 24,5°, porche 27°, rue du Port 27°, toujours à
-  21 m. Pas de bâtiment là où l'on se bat : la veille et les bois gardent 32°.
+- **H5 — cadrage des façades** (demande de l'orchestrateur : l'entrepôt garde ses murs de 6,5 m et
+  son faîtage de 9 m) : avec 32° de tangage et 30° de champ, le haut de l'écran passe à 6,5 m
+  au-dessus du joueur et plus bas derrière lui. Devant la façade sud d'un `Building` (groupe
+  `Building.GROUP`, ajouté) à moins de 18 m au nord du joueur et dans le champ, la caméra garde sa
+  place et lève les yeux (tangage jusqu'à 24°) juste assez pour que le haut du mur + 0,4 m (le
+  bas du toit) tienne dans le cadre, les pieds du joueur au-dessus de 85 % de l'écran ; si cela ne
+  suffit pas, elle recule du moins possible (jusqu'à 29 m) ; lissage 2,5/s. Calcul exact par les
+  angles (quelques arcs tangentes par image, dichotomie pour le recul) au lieu d'une double
+  boucle de recherche. La demande d'une façade naît sur son premier mètre et s'éteint sur les 4
+  derniers mètres de la portée et les 3 derniers du champ : aucun saut de plus de 1,5° par quart
+  de mètre (testé). Lever les yeux garde la taille des personnages (un recul de 29 m les
+  réduisait à 72 %) : cour de l'entrepôt 24,6°, vue du village 25,5°, porche 27°, rue du Port
+  27,5°, toujours à 21 m ; au Spawn (20 m de la façade) et là où l'on se bat (veille, bois),
+  32°. Le faîtage entier (9 m, 4 m derrière la façade) demanderait un recul de 25 à 29 m depuis
+  la cour : il n'est pas visé, seul le bas du toit l'est.
+- **H5 — cadrage en conversation** : le cadrage d'une façade met les pieds du joueur vers 80 % de
+  la hauteur de l'écran, sous la boîte de dialogue (bas 30 %) ; entre `EventBus.dialogue_started`
+  et `dialogue_ended`, la caméra garde les pieds au-dessus de 65 % de l'écran et ne recule pas
+  (la façade peut être coupée) : le joueur et son interlocuteur restent au-dessus de la boîte.
+- **H5 — distance de la caméra** : à 21 m et 30° de champ, l'écran montre 11,25 m de haut au point
+  visé : en 1920 × 1080, 96 px par mètre, la densité des images ; les planches s'affichent au
+  pixel près en plein écran HD (en 1280 × 720, aux deux tiers). On garde 21 m.
 - **H5 — bornes de la caméra** : `limits` = Rect2(−71, −70, 142, 136) (au lieu de −64…64) : au bord
   du Couchant (x = −77) le joueur restait à 13 m du centre, au bord de l'écran ; il en est
   désormais à 6 m au plus et l'on voit la lèvre, la falaise et la mer de nuages.

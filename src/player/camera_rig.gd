@@ -16,8 +16,11 @@ extends Node3D
 ## au nord du joueur et dans le champ, la caméra lève les yeux sans bouger (tangage jusqu'à
 ## FRAME_MIN_PITCH) et, si cela ne suffit pas, recule (jusqu'à FRAME_MAX_DISTANCE), juste assez
 ## pour que la façade et le bas du toit tiennent dans le cadre, le joueur restant dans le bas de
-## l'écran (FRAME_FEET) ; elle revient en douceur ailleurs. Il n'y a pas de bâtiment là où l'on
-## se bat : le combat garde le cadrage habituel.
+## l'écran (FRAME_FEET) ; la demande d'une façade naît et s'éteint en douceur (FRAME_FADE,
+## FRAME_SIDE_FADE) : pas de saut quand on s'en approche ou qu'on la longe. En conversation
+## (EventBus.dialogue_started → dialogue_ended), le joueur reste au-dessus de la boîte de dialogue
+## (FRAME_FEET_TALKING) et la caméra ne recule pas : la façade peut être coupée. Il n'y a pas de
+## bâtiment là où l'on se bat : le combat garde le cadrage habituel.
 ##
 ## Structure : Camera3D (caméra courante, top_level : elle ne suit pas les rotations du joueur) et
 ## PostFX (CanvasLayer derrière l'interface : flou de profondeur, lueur, étalonnage chaud,
@@ -25,18 +28,20 @@ extends Node3D
 ## Verrouillage : lock_target est cadrée avec le joueur (le point visé avance vers elle, sans
 ## rotation). Le joueur (player.gd) pose lock_target et follow_velocity à chaque image physique.
 
-## (H5) Cadrage des bâtiments : portée au nord du joueur (m), marge au-dessus du mur (m : le bas
-## du toit), place de la façade et des pieds du joueur à l'écran (coordonnées normalisées, 1 en
-## haut, −1 en bas), tangage minimal (degrés), recul maximal (m), pas de la recherche (degrés,
-## m) et lissage (1/s).
-const FRAME_REACH := 16.0
+## (H5) Cadrage des bâtiments : portée au nord du joueur (m) et largeur du fondu de la demande
+## d'une façade (m, vers le sud et sur les côtés), marge au-dessus du mur (m : le bas du toit),
+## place de la façade et des pieds du joueur à l'écran (coordonnées normalisées, 1 en haut, −1 en
+## bas ; en conversation, au-dessus de la boîte de dialogue), tangage minimal (degrés), recul
+## maximal (m) et lissage (1/s).
+const FRAME_REACH := 18.0
+const FRAME_FADE := 4.0
+const FRAME_SIDE_FADE := 3.0
 const FRAME_MARGIN := 0.4
 const FRAME_TOP := 0.97
 const FRAME_FEET := -0.7
+const FRAME_FEET_TALKING := -0.3
 const FRAME_MIN_PITCH := 24.0
 const FRAME_MAX_DISTANCE := 29.0
-const FRAME_PITCH_STEP := 0.5
-const FRAME_STEP := 0.5
 const FRAME_SMOOTHING := 2.5
 ## (H5) Profondeur nette du flou de profondeur autour du joueur (m) : derrière lui (vers le
 ## nord) et devant lui (vers la caméra).
@@ -88,6 +93,8 @@ var _post: ShaderMaterial
 ## Cadrage des bâtiments lissé : tangage (degrés) et recul (m, 0 : aucun).
 var _frame_pitch: float = 32.0
 var _frame_distance: float = 0.0
+## (H5) Conversation en cours (EventBus.dialogue_started → dialogue_ended).
+var _talking: bool = false
 
 @onready var camera: Camera3D = $Camera3D
 
@@ -96,6 +103,8 @@ func _ready() -> void:
 	_target_distance = clampf(distance, min_distance, max_distance)
 	_distance = _target_distance
 	_frame_pitch = pitch_deg
+	EventBus.dialogue_started.connect(_on_dialogue_started)
+	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	camera.top_level = true
 	camera.fov = fov_deg
 	var screen := get_node_or_null(^"PostFX/Screen") as CanvasItem
@@ -265,8 +274,10 @@ func _valid_target() -> Node3D:
 ## (H5) Cadrage des bâtiments voulu : Vector2(tangage en degrés, recul), (pitch_deg, 0) sans
 ## façade à cadrer. La caméra garde sa place (au recul du zoom du joueur, au tangage pitch_deg) et
 ## lève les yeux juste assez pour que le haut de chaque façade proche passe sous FRAME_TOP, les
-## pieds du joueur restant au-dessus de FRAME_FEET ; sinon elle recule par pas de FRAME_STEP. Au
-## recul maximal, le joueur passe avant la façade.
+## pieds du joueur restant au-dessus de FRAME_FEET et le tangage au-dessus de FRAME_MIN_PITCH ;
+## sinon elle recule du moins possible (recherche par dichotomie : le cadre ne fait que gagner à
+## reculer). Au recul maximal, le joueur passe avant la façade. En conversation, ni recul ni
+## pieds sous FRAME_FEET_TALKING. Calcul exact (angles), quelques arcs tangentes par image.
 func _building_framing() -> Vector2:
 	var none := Vector2(pitch_deg, 0.0)
 	if not is_inside_tree():
@@ -275,46 +286,74 @@ func _building_framing() -> Vector2:
 	var walls := _walls_in_front(origin)
 	if walls.is_empty():
 		return none
-	# Pieds du joueur : écart au nord du point visé et hauteur au-dessus de lui.
+	var half_fov := tan(deg_to_rad(camera.fov) / 2.0)
+	var top := atan(FRAME_TOP * half_fov)
+	var feet_angle := atan((FRAME_FEET_TALKING if _talking else FRAME_FEET) * half_fov)
 	var feet := Vector2(origin.z - global_position.z, global_position.y - origin.y)
-	var t := tan(deg_to_rad(camera.fov) / 2.0)
-	var reach := _target_distance
-	var best := none
-	while true:
-		var tilt := pitch_deg
-		while tilt >= FRAME_MIN_PITCH:
-			if _frame_ndc(feet, reach, tilt, t) < FRAME_FEET:
-				break
-			best = Vector2(tilt, reach)
-			var fits := true
-			for wall: Vector2 in walls:
-				fits = fits and _frame_ndc(wall, reach, tilt, t) <= FRAME_TOP
-			if fits:
-				return best if tilt < pitch_deg or reach > _target_distance else none
-			tilt -= FRAME_PITCH_STEP
-		if reach >= FRAME_MAX_DISTANCE:
-			return best
-		reach = minf(reach + FRAME_STEP, FRAME_MAX_DISTANCE)
-	return best
+	# Hauteur demandée de chaque façade : de ce que le cadrage habituel montre déjà à son mur
+	# entier, selon le fondu (poids z) ; une façade déjà dans le cadre ne demande rien.
+	var demands: Array[Vector2] = []
+	for wall: Vector3 in walls:
+		var shown := _shown_height(wall.x, _target_distance, top)
+		if wall.y > shown:
+			demands.append(Vector2(wall.x, lerpf(shown, wall.y, wall.z)))
+	if demands.is_empty():
+		return none
+	var bounds := _tilt_bounds(demands, feet, feet_angle, _target_distance, top)
+	if bounds.x >= bounds.y or _talking:
+		return Vector2(rad_to_deg(maxf(bounds.x, bounds.y)), 0.0)
+	var near := _target_distance
+	var far := FRAME_MAX_DISTANCE
+	bounds = _tilt_bounds(demands, feet, feet_angle, far, top)
+	if bounds.x < bounds.y:
+		return Vector2(rad_to_deg(bounds.y), far)
+	for _i in 12:
+		var middle := (near + far) / 2.0
+		var tried := _tilt_bounds(demands, feet, feet_angle, middle, top)
+		if tried.x >= tried.y:
+			far = middle
+		else:
+			near = middle
+	bounds = _tilt_bounds(demands, feet, feet_angle, far, top)
+	return Vector2(rad_to_deg(maxf(bounds.x, bounds.y)), far)
 
 
-## Hauteur à l'écran (coordonnées normalisées, 1 en haut) d'un point à point.x m au nord du point
-## visé sans cadrage et point.y m au-dessus, vu par la caméra placée à reach m de ce point au
-## tangage pitch_deg et qui regarde avec le tangage tilt (degrés) ; t : tangente du demi-champ.
-func _frame_ndc(point: Vector2, reach: float, tilt: float, t: float) -> float:
+## Tangages permis (radians) avec la caméra à reach m du point visé sans cadrage, au tangage
+## pitch_deg : Vector2(le plus fort qui met chaque façade demandée sous l'angle top au-dessus de
+## l'axe, borné à pitch_deg ; le plus faible qui garde les pieds au-dessus de feet_angle, borné à
+## FRAME_MIN_PITCH). Un point vu à l'élévation φ depuis l'œil paraît à φ + tangage de l'axe.
+func _tilt_bounds(
+	demands: Array[Vector2], feet: Vector2, feet_angle: float, reach: float, top: float
+) -> Vector2:
+	var high := deg_to_rad(pitch_deg)
+	for wall: Vector2 in demands:
+		high = minf(high, top - _elevation(wall, reach))
+	var low := maxf(deg_to_rad(FRAME_MIN_PITCH), feet_angle - _elevation(feet, reach))
+	return Vector2(high, low)
+
+
+## Élévation (radians, > 0 au-dessus de l'horizon) d'un point à point.x m au nord du point visé
+## sans cadrage et point.y m au-dessus, vu de la caméra placée à reach m de ce point au tangage
+## pitch_deg.
+func _elevation(point: Vector2, reach: float) -> float:
 	var eye := _back(pitch_deg) * reach
-	var to_point := Vector2(-point.x - eye.z, point.y - eye.y)
-	var angle := deg_to_rad(tilt)
-	var ahead := -to_point.y * sin(angle) - to_point.x * cos(angle)
-	var up := to_point.y * cos(angle) - to_point.x * sin(angle)
-	return up / maxf(ahead, 0.001) / t
+	return atan2(point.y - eye.y, point.x + eye.z)
 
 
-## Façades sud à cadrer : Vector2(écart au nord du point visé, hauteur à montrer au-dessus de lui)
-## de chaque Building dont la façade est à moins de FRAME_REACH m au nord du joueur et dont la
-## largeur croise le milieu du champ.
-func _walls_in_front(origin: Vector3) -> Array[Vector2]:
-	var walls: Array[Vector2] = []
+## Hauteur au-dessus du point visé que le cadrage habituel (tangage pitch_deg) montre, sous l'angle
+## top au-dessus de l'axe, à north m au nord du point visé.
+func _shown_height(north: float, reach: float, top: float) -> float:
+	var eye := _back(pitch_deg) * reach
+	return eye.y + (north + eye.z) * tan(top - deg_to_rad(pitch_deg))
+
+
+## Façades sud à cadrer : Vector3(écart au nord du point visé, hauteur à montrer au-dessus de lui,
+## poids du fondu 0..1) de chaque Building dont la façade est à moins de FRAME_REACH m au nord du
+## joueur et dont la largeur croise le milieu du champ. Le poids naît sur le premier mètre devant
+## la façade et s'éteint sur les FRAME_FADE derniers mètres de la portée et les FRAME_SIDE_FADE
+## derniers mètres du champ.
+func _walls_in_front(origin: Vector3) -> Array[Vector3]:
+	var walls: Array[Vector3] = []
 	var size := get_viewport().get_visible_rect().size
 	var aspect := size.x / size.y if size.y > 0.0 else 16.0 / 9.0
 	var half_width := 0.8 * _target_distance * tan(deg_to_rad(camera.fov) / 2.0) * aspect
@@ -333,11 +372,23 @@ func _walls_in_front(origin: Vector3) -> Array[Vector2]:
 			left = minf(left, at.x)
 			right = maxf(right, at.x)
 		var ahead := global_position.z - front
-		if ahead <= 0.0 or ahead > FRAME_REACH:
+		var aside := maxf(left - global_position.x, global_position.x - right)
+		if ahead <= 0.0 or ahead >= FRAME_REACH or aside >= half_width:
 			continue
-		if right < global_position.x - half_width or left > global_position.x + half_width:
-			continue
+		var weight := (
+			smoothstep(0.0, 1.0, ahead)
+			* (1.0 - smoothstep(FRAME_REACH - FRAME_FADE, FRAME_REACH, ahead))
+			* (1.0 - smoothstep(half_width - FRAME_SIDE_FADE, half_width, aside))
+		)
 		var tall := building.ridge_height if building.gable_front else building.wall_height
 		var top := xform.origin.y + tall * xform.basis.get_scale().y + FRAME_MARGIN
-		walls.append(Vector2(origin.z - front, top - origin.y))
+		walls.append(Vector3(origin.z - front, top - origin.y, weight))
 	return walls
+
+
+func _on_dialogue_started(_npc_id: StringName) -> void:
+	_talking = true
+
+
+func _on_dialogue_ended(_npc_id: StringName) -> void:
+	_talking = false

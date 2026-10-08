@@ -3,8 +3,9 @@ extends GutTest
 ## étroit, regard vers le nord), suivi du joueur avec un léger retard, bornes de l'île, zoom borné
 ## (molette et stick droit), cadrage de la cible verrouillée sans rotation, post-traitement sous
 ## l'interface et son shader qui compile ; (H5) bande nette du flou qui suit le joueur à l'écran,
-## façade d'un bâtiment de 6,5 m cadrée quand le joueur est devant (et rien ailleurs), bornes qui
-## gardent le joueur près du centre au bord de l'île. La caméra est pilotée par update_camera()
+## façade d'un bâtiment de 6,5 m cadrée quand le joueur est devant (et rien ailleurs), sans saut
+## en chemin, joueur au-dessus de la boîte de dialogue en conversation, bornes qui gardent le
+## joueur près du centre au bord de l'île. La caméra est pilotée par update_camera()
 ## (son _process est coupé).
 
 const RIG := preload("res://src/player/camera_rig.tscn")
@@ -220,6 +221,59 @@ func test_building_framing_lets_go_elsewhere() -> void:
 			rig.camera.global_position.distance_to(rig.focus()), rig.distance, 0.05, "à sa distance"
 		)
 		assert_almost_eq(-rig.pitch(), deg_to_rad(rig.pitch_deg), 0.002, "tangage habituel")
+	building.free()
+
+
+func test_building_framing_has_no_jump_along_the_way() -> void:
+	# En s'approchant de la façade (de 22 m à 1 m) ou en la longeant, le cadrage voulu change en
+	# douceur : la demande d'une façade naît et s'éteint par fondu, pas d'un coup à la portée.
+	var rig := _spawn_rig(Vector3(0, 0, 26))
+	var holder := rig.get_parent() as Node3D
+	var building := _warehouse(Vector3(0, 0, 0))
+	var paths: Array[Array] = [
+		[Vector3(0, 0, 26), Vector3(0, 0, 5)], [Vector3(-30, 0, 12), Vector3(30, 0, 12)]
+	]
+	for path: Array in paths:
+		var from: Vector3 = path[0]
+		var to: Vector3 = path[1]
+		var steps := roundi(from.distance_to(to) / 0.25)
+		holder.position = from
+		var last := rig._building_framing()
+		var tilted := false
+		for i in range(1, steps + 1):
+			holder.position = from.lerp(to, float(i) / steps)
+			var framing := rig._building_framing()
+			var jump := absf(framing.x - last.x)
+			var recoil := absf(maxf(framing.y, rig.distance) - maxf(last.y, rig.distance))
+			if jump > 1.5 or recoil > 1.0:
+				fail_test("saut du cadrage en %s : %.2f°, %.2f m" % [holder.position, jump, recoil])
+				break
+			tilted = tilted or framing.x < rig.pitch_deg - 4.0
+			last = framing
+		assert_true(tilted, "la façade est cadrée en chemin (%s → %s)" % [from, to])
+	building.free()
+
+
+func test_conversation_keeps_the_player_above_the_dialogue_box() -> void:
+	# Devant l'entrepôt, le cadrage de la façade met le joueur dans le bas de l'écran ; en
+	# conversation, il remonte au-dessus de la boîte de dialogue (bas 30 % de l'écran), sans recul.
+	var rig := _spawn_rig(Vector3(0, 0, 10))
+	var building := _warehouse(Vector3(0, 0, 0))
+	_update(rig, 3.0)
+	var framed := _screen_y(rig, rig.global_position)
+	assert_gt(framed, 0.72, "cadrage de la façade : pieds dans le bas de l'écran")
+	EventBus.dialogue_started.emit(&"nygglatho")
+	_update(rig, 3.0)
+	assert_lt(_screen_y(rig, rig.global_position), 0.67, "en conversation : au-dessus de la boîte")
+	assert_almost_eq(
+		rig.camera.global_position.distance_to(rig.global_position + Vector3.UP * rig.focus_height),
+		rig.distance,
+		0.05,
+		"sans recul"
+	)
+	EventBus.dialogue_ended.emit(&"nygglatho")
+	_update(rig, 3.0)
+	assert_almost_eq(_screen_y(rig, rig.global_position), framed, 0.01, "puis le cadrage revient")
 	building.free()
 
 
