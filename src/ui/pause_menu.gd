@@ -9,6 +9,8 @@ extends Control
 ## - Retour au menu : la partie suivie est écrite (SaveManager.save(), puis close_game() coupe
 ##   l'auto-sauvegarde), la pause est levée, puis get_tree().reload_current_scene() recharge
 ##   main.tscn, qui rouvre le menu (rien n'est ajouté à main.gd).
+## - (bureau) « Plein écran » et « Quitter le jeu » (partie écrite, puis fermeture), hors Web
+##   seulement : DesktopApp.setup_menu_buttons.
 
 signal opened
 signal closed
@@ -57,6 +59,9 @@ func _ready() -> void:
 	(%ControlsButton as Button).pressed.connect(show_controls)
 	(%QuitButton as Button).pressed.connect(quit_to_menu)
 	(%ControlsBack as Button).pressed.connect(hide_controls)
+	DesktopApp.setup_menu_buttons(
+		%FullscreenButton as Button, %ExitGameButton as Button, "quit_game"
+	)
 	var grid := %ControlsGrid as GridContainer
 	for row: Array in CONTROLS:
 		for column in row.size():

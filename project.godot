@@ -11,8 +11,12 @@ config_version=5
 [application]
 
 config/name="WordEnd"
-config/description="WordEnd 3D : Chtholly contre les Timeres, action-aventure de Yume Novel."
+config/description="WordEnd : Chtholly contre les Timeres, action-aventure en HD-2D de Yume Novel."
+config/version="0.3.0"
 run/main_scene="res://src/main.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="WordEnd"
+config/use_custom_user_dir.web=false
 config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0.106, 0.071, 0.192, 1)
 boot_splash/stretch_mode=4
@@ -26,6 +30,7 @@ GameState="*res://src/autoload/game_state.gd"
 SaveManager="*res://src/autoload/save_manager.gd"
 SkinRegistry="*res://src/autoload/skin_registry.gd"
 WorldManager="*res://src/autoload/world_manager.gd"
+DesktopApp="*res://src/autoload/desktop_app.gd"
 
 [debug]
 

@@ -97,6 +97,16 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Crédits"
 
+[node name="FullscreenButton" type="Button" parent="Content/Columns/Left/Buttons"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="ExitGameButton" type="Button" parent="Content/Columns/Left/Buttons"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
 [node name="MessagePanel" type="PanelContainer" parent="Content/Columns/Left"]
 unique_name_in_owner = true
 visible = false

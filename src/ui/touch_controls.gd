@@ -5,10 +5,10 @@ extends Control
 ## la fois : chaque doigt appartient au contrôle sur lequel il s'est posé. N'émet que des actions
 ## de l'input map (InputEventAction) : aucun autre système ne connaît ce nœud.
 ##
-## Affichage (`display`) : AUTO = visible sur écran tactile (DisplayServer.is_touchscreen_available
-## ou navigateur Android / iOS) et dès qu'un doigt touche l'écran, masqué dès qu'on joue au clavier,
-## à la souris ou à la manette. Masqué, il ne consomme aucun événement : la souris d'un ordinateur
-## n'est jamais interceptée.
+## Affichage (`display`) : AUTO = visible sur écran tactile (is_touch_device : navigateur tactile,
+## Android, iOS ; jamais d'emblée dans l'application de bureau) et dès qu'un doigt touche l'écran,
+## masqué dès qu'on joue au clavier, à la souris ou à la manette. Masqué, il ne consomme aucun
+## événement : la souris d'un ordinateur n'est jamais interceptée.
 ##
 ## Ordre de Godot : _input (un doigt qui tombe sur nos contrôles est à nous) → interface (les
 ## boutons d'un dialogue ou d'un menu passent avant la caméra) → _unhandled_input (doigt posé
@@ -46,13 +46,17 @@ var _eating_mouse: bool = false
 @onready var _joystick: TouchJoystick = $Joystick
 
 
-## Écran tactile probable : API du navigateur ('ontouchstart') ou du système, Android / iOS.
+## Écran tactile probable : sur le Web, API du navigateur ('ontouchstart'), Android ou iOS ;
+## export mobile. (bureau) Sur un ordinateur (Windows, Linux), jamais au démarrage, même avec un
+## écran tactile : le mode AUTO attend le premier toucher.
 static func is_touch_device() -> bool:
-	return (
-		DisplayServer.is_touchscreen_available()
-		or OS.has_feature("web_android")
-		or OS.has_feature("web_ios")
-	)
+	if OS.has_feature("web"):
+		return (
+			DisplayServer.is_touchscreen_available()
+			or OS.has_feature("web_android")
+			or OS.has_feature("web_ios")
+		)
+	return OS.has_feature("mobile")
 
 
 func _ready() -> void:
