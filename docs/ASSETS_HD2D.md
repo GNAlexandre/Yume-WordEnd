@@ -395,15 +395,12 @@ dans `tools/hd2d_manifest.json`, que les tests confrontent à ce document.
 
 **Livraison du 8 octobre 2026 : les corrections de la liste ci-dessous sont intégrées.**
 La liste conserve les défauts et consignes de départ pour la traçabilité. Les anciens PNG/JSON,
-les nouveaux dessins, les prompts et les ajustements de format sont conservés dans
-`assets/source/section12/` (hors import et export Godot). Les ajustements d'échelle seuls sont
-réalisés au plus proche voisin, selon la section 2 ; les nouvelles poses et modifications de
-dessin sont produites avec `image_gen`.
-
-Contrôle ciblé : `python3 tools/hd2d_correction_review.py`. Il compare les poses non concernées
-au commit `1ff21b9`, contrôle les hauteurs **de l'ancre au haut de la silhouette**, et vérifie
-les nombres de poses, cadences, `coup` et `onde`. Les aperçus avant/après animés et les PNG/JSON
-complets sont inclus dans [la page autonome](sprites/CORRECTIONS_SECTION12.html).
+les nouveaux dessins, les prompts, l'outil de contrôle `tools/hd2d_correction_review.py` et la
+page d'aperçus avant/après (`docs/sprites/CORRECTIONS_SECTION12.html`) restent dans l'historique
+de `main` (fusion de la PR n° 8, commit `28d49f3`) : hors de l'arbre, comme les sources des
+livraisons précédentes (ici 40 Mo de sources et 30 Mo de galerie). Les ajustements d'échelle seuls
+sont réalisés au plus proche voisin, selon la section 2 ; les nouvelles poses et modifications
+de dessin sont produites avec `image_gen`.
 La fluidité des cycles demande toujours une validation visuelle en jeu.
 
 Le contrôle général signale encore la dernière pose de marche **de face** du vendeur de

@@ -1663,3 +1663,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   à 45 Mo de PNG prévus au lieu de 15), elles porteraient l'export vers 40 Mo compressés. Draw calls
   inchangés (`tools/hd2d_shots.sh` : cour 172, port 63, bois 56, Couchant 33, colline 51, avant
   comme après) : les nouvelles images ne sont pas encore posées.
+- **Intégration de la PR n° 8 (corrections de la section 12, Codex)** : planches et JSON corrigés
+  gardés ; `assets/source/section12/` (40 Mo de sources et de prompts), `docs/sprites/` (30 Mo,
+  page d'aperçus) et `tools/hd2d_correction_review.py` (outil ponctuel qui l'alimente) retirés de
+  l'arbre, comme les sources des livraisons précédentes : ils restent dans l'historique de `main`
+  (commit `28d49f3`). La ligne de `.gitattributes` qui visait la page est retirée aussi.
