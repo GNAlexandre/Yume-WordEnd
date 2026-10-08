@@ -11,13 +11,22 @@ extends Node
 ## Le shader est construit au lancement à partir du code de panel.gdshader : il en suit les
 ## changements (lumière, lueur). Si ce code n'a plus de fonction fragment, push_error et pas de
 ## découpe (les tests le voient).
+##
+## (P2) Les autres formats du cahier n° 2 gardent leur shader et ne sont pas convertis : les
+## décalques au sol (ground_decal*.gdshader, au sol ils ne cachent rien), le premier plan
+## (panel_foreground.gdshader, qui s'efface déjà autour du joueur) et les panneaux à alpha doux
+## (panel_soft.gdshader : la fumée de la cheminée). Les images de backdrop_textures (la lisière
+## derrière la palissade nord, les arbres du bord nord) sont des toiles de fond : quand le joueur
+## sort du village par le nord (au-delà de backdrop_line), elles s'effacent tout entières là où
+## elles sont au sud de lui, entre la caméra et lui (see_through_backdrop).
 
 const PANEL_SHADER := preload("res://src/world/shaders/panel.gdshader")
 ## Référencé ici pour qu'il parte dans l'export avec le script (le shader l'inclut par son chemin).
 const INCLUDE := preload("res://src/world/zones/village/see_through.gdshaderinc")
 ## Ligne ajoutée à la fin de la fonction fragment du panneau.
 const CUT_CODE := (
-	"\tif (see_through_amount(VERTEX, VIEW_MATRIX) > see_through_dither(FRAGCOORD.xy)) {\n"
+	"\tif (see_through_amount(VERTEX, VIEW_MATRIX, INV_VIEW_MATRIX)"
+	+ " > see_through_dither(FRAGCOORD.xy)) {\n"
 	+ "\t\tALPHA = 0.0;\n\t}\n"
 )
 
@@ -31,6 +40,12 @@ static var _shader: Shader
 @export var cut_size: Vector2 = Vector2(0.8, 1.1)
 ## Profondeur (m) devant le joueur sur laquelle la découpe s'installe.
 @export var cut_depth: float = 0.35
+## (P2) Toiles de fond : images qui s'effacent tout entières quand le joueur est au nord d'elles,
+## hors du village.
+@export var backdrop_textures: Array[Texture2D] = []
+## (P2) Limite nord du village (m, z local au parent : la palissade nord) au-delà de laquelle les
+## toiles de fond s'effacent.
+@export var backdrop_line: float = -21.2
 
 var _materials: Array[ShaderMaterial] = []
 var _player: Node3D
@@ -57,6 +72,10 @@ func _process(_delta: float) -> void:
 ## renvoie le nombre de matériaux copiés.
 func convert_materials(geometry: Node) -> int:
 	var copies := {}
+	var line := backdrop_line
+	var parent := get_parent() as Node3D
+	if parent != null and parent.is_inside_tree():
+		line = parent.to_global(Vector3(0.0, 0.0, backdrop_line)).z
 	for child: Node in geometry.get_children():
 		var mesh := child as MeshInstance3D
 		if mesh == null:
@@ -66,6 +85,10 @@ func convert_materials(geometry: Node) -> int:
 			continue
 		if not copies.has(source):
 			var copy := see_through_material(source)
+			var image := source.get_shader_parameter(&"albedo_texture") as Texture2D
+			if image != null and image in backdrop_textures:
+				copy.set_shader_parameter(&"see_through_backdrop", 1.0)
+			copy.set_shader_parameter(&"see_through_backdrop_line", line)
 			copies[source] = copy
 			_materials.append(copy)
 		mesh.material_override = copies[source]

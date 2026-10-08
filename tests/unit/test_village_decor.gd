@@ -10,7 +10,11 @@ extends GutTest
 ##   PNJ ; en marchant dans la cour, aucun PNJ à l'écran ne reste caché plus d'une seconde de
 ##   marche ; on ne passe plus derrière le L de l'entrepôt ; le décor qui passe devant le joueur
 ##   (un arbre, le porche, les draps) s'efface autour de lui (see_through.gd), sans matériau ni
-##   draw call de plus.
+##   draw call de plus ;
+## - (P2) formats du cahier n° 2 : les décalques au sol, le premier plan et la fumée (alpha doux)
+##   gardent leur shader ; la lisière derrière la palissade nord est une toile de fond qui
+##   s'efface tout entière quand on sort au nord ; les bandes animées (le linge) comptent dans
+##   l'occlusion par toutes leurs images.
 ##
 ## Les places elles-mêmes (sol, dégagement, accès) restent vérifiées par
 ## test_world_story_spots.gd.
@@ -21,6 +25,22 @@ const NPC_PLACEMENTS := preload("res://src/npc/placements/village.tscn")
 const CAMERA_RIG := preload("res://src/player/camera_rig.tscn")
 const SeeThrough := preload("res://src/world/zones/village/see_through.gd")
 const PANEL_SHADER := preload("res://src/world/shaders/panel.gdshader")
+## (P2) Shaders des formats qui gardent le leur (décalques, premier plan, alpha doux).
+const OWN_SHADERS: Array[Shader] = [
+	GroundDecal.HARD_SHADER,
+	GroundDecal.SOFT_SHADER,
+	DecorPanel.FOREGROUND_SHADER,
+	DecorPanel.SOFT_SHADER,
+]
+## (P2) Ce qui ne cache rien : les décalques (au sol) et l'alpha doux (mélangé, sur le toit).
+const HIDES_NOTHING: Array[Shader] = [
+	GroundDecal.HARD_SHADER, GroundDecal.SOFT_SHADER, DecorPanel.SOFT_SHADER
+]
+## (P2) Images de la lisière nord (toile de fond) ; les toiles de fond sont au nord de -z.
+const BACKDROP_IMAGE := "treeline_autumn"
+const BACKDROP_SOUTH := 12.0
+## (P2) Case (m) du rangement des triangles du décor pour les rayons d'occlusion.
+const BUCKET := 4.0
 ## Capsule du joueur (player.tscn) et marche franchie.
 const PLAYER_RADIUS := 0.35
 const PLAYER_HEIGHT := 1.5
@@ -87,6 +107,14 @@ var _vertices := PackedVector3Array()
 var _uvs := PackedVector2Array()
 var _triangle_images: Array[Image] = []
 var _triangle_names: Array[String] = []
+## (P2) Images de la bande de chaque triangle (1 : image fixe), boîte de chaque triangle,
+## triangles rangés par case du plan (x, z), dernier rayon qui a vu chaque triangle.
+var _triangle_frames := PackedInt32Array()
+var _low := PackedVector3Array()
+var _high := PackedVector3Array()
+var _buckets: Dictionary[Vector2i, PackedInt32Array] = {}
+var _stamp := PackedInt32Array()
+var _ray := 0
 
 
 func before_all() -> void:
@@ -256,12 +284,21 @@ func test_decor_fades_around_the_player_behind_the_climbing_tree() -> void:
 	assert_has(uniforms, "see_through_center", "le shader à découpe compile")
 	for uniform: Dictionary in PANEL_SHADER.get_shader_uniform_list():
 		assert_has(uniforms, String(uniform["name"]), "uniforme du panneau gardé")
-	# Tout le décor en panneaux du village a sa découpe ; pas un matériau de plus.
+	# Tout le décor en panneaux du village a sa découpe ; pas un matériau de plus. (P2) Les
+	# décalques, le premier plan et l'alpha doux gardent leur shader (et sont bien là).
+	var kept := {}
 	for child: Node in _village.get_node(^"Geometry").get_children():
 		var batch := child as MeshInstance3D
 		if batch == null or not (batch.material_override is ShaderMaterial):
 			continue
+		var own := (batch.material_override as ShaderMaterial).shader
+		if own in OWN_SHADERS:
+			kept[own] = true
+			assert_does_not_have(materials, batch.material_override, "%s : son shader" % batch.name)
+			continue
 		assert_has(materials, batch.material_override, "%s : découpe" % batch.name)
+	for own: Shader in OWN_SHADERS:
+		assert_true(kept.has(own), "%s gardé tel quel" % own.resource_path.get_file())
 	# Derrière le grand arbre (au nord de son tronc), le joueur est caché par lui ; la découpe
 	# le suit.
 	var player := add_child_autofree(PLAYER_STUB.instantiate()) as Node3D
@@ -286,6 +323,56 @@ func test_see_through_code_is_added_to_the_panel_shader() -> void:
 	assert_string_contains(injected, "if (true) { ALPHA = 1.0; }\n\tif (see_through_amount")
 	assert_eq(SeeThrough.inject("shader_type spatial;\nvoid vertex() {}\n"), "", "sans fragment")
 	assert_ne(SeeThrough.inject(PANEL_SHADER.code), "", "panel.gdshader se prête à l'ajout")
+
+
+func test_treeline_is_a_backdrop_that_fades_when_leaving_north() -> void:
+	# La lisière derrière la palissade nord et les arbres du bord nord cacheraient les bois sur
+	# 15 m quand on sort par le portail nord (ils sont alors entre la caméra et le joueur) :
+	# toiles de fond, ils s'effacent tout entiers au-delà de la palissade. Les autres images
+	# gardent la seule découpe autour du joueur.
+	var see_through := _village.get_node(^"SeeThrough")
+	var materials: Array[ShaderMaterial] = see_through.call(&"materials")
+	var backdrop_images: Array[Texture2D] = see_through.get(&"backdrop_textures")
+	var line := _village.to_global(Vector3(0.0, 0.0, -FENCE)).z
+	var backdrops: Array[String] = []
+	for material: ShaderMaterial in materials:
+		var image := material.get_shader_parameter(&"albedo_texture") as Texture2D
+		var flag: Variant = material.get_shader_parameter(&"see_through_backdrop")
+		var backdrop := flag != null and float(flag) > 0.0
+		assert_almost_eq(
+			float(material.get_shader_parameter(&"see_through_backdrop_line")), line, 0.01
+		)
+		if image != null and image in backdrop_images:
+			backdrops.append(image.resource_path.get_file().get_basename())
+			assert_true(backdrop, "%s : toile de fond" % image.resource_path.get_file())
+		else:
+			assert_false(backdrop, "%s : découpe seule" % material)
+	assert_has(backdrops, BACKDROP_IMAGE + "_a", "lisière d'automne")
+	assert_has(backdrops, BACKDROP_IMAGE + "_b", "lisière d'automne, autre dessin")
+	var uniforms: Array[String] = []
+	for uniform: Dictionary in materials[0].shader.get_shader_uniform_list():
+		uniforms.append(String(uniform["name"]))
+	assert_has(uniforms, "see_through_backdrop", "le shader à toile de fond compile")
+	# Les toiles de fond ne servent qu'au bord nord, au-delà de la cour.
+	var stack: Array[Node] = [_village.get_node(^"Geometry")]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		stack.append_array(node.get_children(true))
+		if node is DecorPanel and (node as DecorPanel).texture in backdrop_images:
+			var at := _village.to_local((node as Node3D).global_position)
+			assert_lt(at.z, -BACKDROP_SOUTH, "%s : au bord nord (%s)" % [node.name, at])
+	# La lisière est au nord de la palissade, sans collision, et laisse le chemin nord ouvert.
+	var panels := 0
+	for child: Node in _village.get_node(^"Geometry/Treeline").get_children(true):
+		var panel := child as DecorPanel
+		if panel == null:
+			continue
+		panels += 1
+		var local := _village.to_local(panel.global_position)
+		assert_lt(local.z, -FENCE, "lisière derrière la palissade nord")
+		assert_null(panel.get_node_or_null(^"Collision"), "lisière sans collision")
+		assert_gt(absf(local.x) - panel.size_m().x / 2.0, 2.0, "chemin nord entre les lisières")
+	assert_gt(panels, 2, "lisière continue de part et d'autre du portail")
 
 
 # --- Outils -------------------------------------------------------------------------------------
@@ -365,7 +452,8 @@ func _camera_for(player: Vector3) -> Vector3:
 	return player + Vector3.UP * _focus_height + back * _distance
 
 
-## Relève les triangles des panneaux fondus du village (pas les ombres au sol) et leur image.
+## Relève les triangles des panneaux fondus du village (pas les ombres au sol, ni les décalques
+## et l'alpha doux) et leur image.
 func _collect_panels() -> void:
 	var images := {}
 	for child: Node in _village.get_node(^"Geometry").get_children():
@@ -375,12 +463,16 @@ func _collect_panels() -> void:
 		if not (batch.material_override is ShaderMaterial):
 			continue
 		var material := batch.material_override as ShaderMaterial
+		if material.shader in HIDES_NOTHING:
+			continue
 		var texture := material.get_shader_parameter(&"albedo_texture") as Texture2D
 		if texture == null:
 			continue
 		if not images.has(texture):
 			images[texture] = texture.get_image()
 		var image: Image = images[texture]
+		var frames_value: Variant = material.get_shader_parameter(&"frames")
+		var frames := maxi(roundi(float(frames_value)), 1) if frames_value != null else 1
 		var arrays := batch.mesh.surface_get_arrays(0)
 		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 		var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
@@ -391,6 +483,24 @@ func _collect_panels() -> void:
 		for _t in range(0, vertices.size(), 3):
 			_triangle_images.append(image)
 			_triangle_names.append(texture.resource_path.get_file().get_basename())
+			_triangle_frames.append(frames)
+	# Boîte de chaque triangle et rangement par case du plan.
+	_stamp.resize(_triangle_images.size())
+	_stamp.fill(-1)
+	for t in _triangle_images.size():
+		var a := _vertices[t * 3]
+		var b := _vertices[t * 3 + 1]
+		var c := _vertices[t * 3 + 2]
+		var low := a.min(b).min(c)
+		var high := a.max(b).max(c)
+		_low.append(low)
+		_high.append(high)
+		for i in range(floori(low.x / BUCKET), floori(high.x / BUCKET) + 1):
+			for k in range(floori(low.z / BUCKET), floori(high.z / BUCKET) + 1):
+				var key := Vector2i(i, k)
+				if not _buckets.has(key):
+					_buckets[key] = PackedInt32Array()
+				_buckets[key].append(t)
 
 
 ## Vrai si un pixel opaque du décor est sur le segment caméra → point, à plus de 0,3 m du point.
@@ -405,26 +515,31 @@ func _occluder(from: Vector3, to: Vector3) -> int:
 	var limit := from.distance_to(to) - 0.3
 	var low := from.min(to)
 	var high := from.max(to)
-	for t in _triangle_images.size():
-		var a := _vertices[t * 3]
-		var b := _vertices[t * 3 + 1]
-		var c := _vertices[t * 3 + 2]
-		var box_low := a.min(b).min(c)
-		var box_high := a.max(b).max(c)
-		if (
-			box_high.x < low.x
-			or box_low.x > high.x
-			or box_high.y < low.y
-			or box_low.y > high.y
-			or box_high.z < low.z
-			or box_low.z > high.z
-		):
-			continue
-		var hit: Variant = Geometry3D.ray_intersects_triangle(from, direction, a, b, c)
-		if hit == null or from.distance_to(hit as Vector3) > limit:
-			continue
-		if _alpha_at(t, hit as Vector3) >= 0.5:
-			return t
+	_ray += 1
+	for i in range(floori(low.x / BUCKET), floori(high.x / BUCKET) + 1):
+		for k in range(floori(low.z / BUCKET), floori(high.z / BUCKET) + 1):
+			for t: int in _buckets.get(Vector2i(i, k), PackedInt32Array()):
+				if _stamp[t] == _ray:
+					continue
+				_stamp[t] = _ray
+				var box_low := _low[t]
+				var box_high := _high[t]
+				if (
+					box_high.x < low.x
+					or box_low.x > high.x
+					or box_high.y < low.y
+					or box_low.y > high.y
+					or box_high.z < low.z
+					or box_low.z > high.z
+				):
+					continue
+				var hit: Variant = Geometry3D.ray_intersects_triangle(
+					from, direction, _vertices[t * 3], _vertices[t * 3 + 1], _vertices[t * 3 + 2]
+				)
+				if hit == null or from.distance_to(hit as Vector3) > limit:
+					continue
+				if _alpha_at(t, hit as Vector3) >= 0.5:
+					return t
 	return -1
 
 
@@ -446,6 +561,12 @@ func _alpha_at(t: int, p: Vector3) -> float:
 	var w := (d00 * d21 - d01 * d20) / denom
 	var uv := _uvs[t * 3] * (1.0 - v - w) + _uvs[t * 3 + 1] * v + _uvs[t * 3 + 2] * w
 	var image := _triangle_images[t]
-	var x := clampi(floori(fposmod(uv.x, 1.0) * image.get_width()), 0, image.get_width() - 1)
 	var y := clampi(floori(fposmod(uv.y, 1.0) * image.get_height()), 0, image.get_height() - 1)
-	return image.get_pixel(x, y).a
+	# (P2) Bande animée : l'opacité la plus forte de ses images à cette place.
+	var frames := _triangle_frames[t]
+	var alpha := 0.0
+	for frame in frames:
+		var u := (float(frame) + fposmod(uv.x, 1.0)) / frames
+		var x := clampi(floori(u * image.get_width()), 0, image.get_width() - 1)
+		alpha = maxf(alpha, image.get_pixel(x, y).a)
+	return alpha

@@ -446,3 +446,19 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   l'herbe de la lèvre (`edge_rocks_*`, `edge_grass`, de face sur le bord : `keep_orientation` au
   lacet du bord) et les racines (`edge_roots`, 2,5 m au-delà) dans les deux fenêtres sur le vide
   (nord-ouest x −66 à −52 ; nord-est x 62 à 70, local aux bois), sur les nouveaux caps.
+## P2 — la découpe du village et les nouveaux formats : réglé
+- `see_through.gd` ne convertit que `panel.gdshader` ; `test_village_decor.gd` ne compte que ces
+  meshes et vérifie que décalques, premier plan et alpha doux gardent leur shader
+  (docs/DECISIONS.md, « P2 — découpe et formats »).
+## P2 — images de la cour (H1, ChatGPT)
+- Besoin : (1) les pans de `treeline_autumn_*` sont coupés droit pour se raccorder : au portail
+  nord, où la lisière s'ouvre sur le chemin des bois, le bord coupé se voit au-dessus de la
+  palissade (deux jeunes sapins le masquent en partie) ; (2) `chimney_brick` est dessinée sur un
+  pan de tuiles rouges, qui jure sur l'ardoise de l'entrepôt ; (3) la clôture basse du potager
+  n'existe que de face.
+- Proposition : (1) `treeline_autumn_end_l.png` et `_r.png` (768 × 768 px, lisière qui se
+  termine par un arbre entier du côté du passage, raccordable de l'autre côté) ; (2)
+  `chimney_brick_slate.png` (96 × 192 px, même cheminée, base sur ardoise bleu-gris) ; (3)
+  `fence_low_side.png` (77 px de haut, la clôture vue de profil, comme `palisade_side`).
+- En attendant : pans coupés au portail, cheminée en matières (`warehouse_chimney.tscn`,
+  `wall_brick`), potager fermé devant et derrière seulement.
