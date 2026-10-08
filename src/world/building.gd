@@ -18,6 +18,8 @@ const FACADE_GAP := 0.03
 ## Part du relief dans l'éclairage des murs et des toits (hd2d_light.gdshaderinc).
 const WALL_RELIEF := 0.6
 const ROOF_RELIEF := 1.0
+## (H5) Groupe des bâtiments en jeu : la caméra du joueur (camera_rig.gd) cadre leur façade sud.
+const GROUP := &"hd2d_buildings"
 
 ## Matériaux partagés : clé (matière, relief) → ShaderMaterial.
 static var _materials: Dictionary = {}
@@ -75,6 +77,8 @@ var _queued: bool = false
 
 
 func _ready() -> void:
+	if not Engine.is_editor_hint():
+		add_to_group(GROUP)
 	rebuild()
 
 

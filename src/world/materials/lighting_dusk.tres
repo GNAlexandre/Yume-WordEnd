@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="HD2DLighting" format=3]
+
+[ext_resource type="Script" path="res://src/world/materials/hd2d_lighting.gd" id="1_lighting"]
+
+[resource]
+resource_name = "dusk"
+script = ExtResource("1_lighting")
+sun_color = Color(1, 0.52, 0.36, 1)
+sun_energy = 0.38
+sun_elevation_deg = 3.0
+sun_azimuth_deg = 262.0
+ambient_color = Color(0.55, 0.47, 0.72, 1)
+ambient_energy = 0.56
+fog_color = Color(0.55, 0.42, 0.6, 1)
+fog_density = 0.0022
+sky_energy = 0.6
+clouds_tint = Color(0.62, 0.52, 0.72, 1)
+lamp_energy = 1.5
+grade = Color(0.98, 0.9, 0.98, 1)
+shadow_tint = Color(0.36, 0.3, 0.58, 1)
+highlight_tint = Color(1, 0.68, 0.5, 1)
+split_strength = 0.18
+contrast = 1.05
+saturation = 0.95
+vignette = 0.38
+haze_color = Color(0.62, 0.48, 0.7, 1)
+haze_strength = 0.2
+sky_light_color = Color(1, 0.5, 0.35, 1)
+sky_light_strength = 0.12
+glow_threshold = 0.62
+glow_strength = 0.75

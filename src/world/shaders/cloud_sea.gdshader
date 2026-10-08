@@ -2,7 +2,8 @@
 // texture de pixel art assets/hd2d/sky/cloud_sea.png qui défilent lentement à des vitesses
 // différentes ; la plus proche n'apparaît que par pixels d'art tramés (pas de mélange flou), et
 // le côté du couchant (sun_direction) se réchauffe. Non éclairée. Compatible Compatibility /
-// WebGL 2.
+// WebGL 2. (H5) tint assombrit ou refroidit le tout (réglages de crépuscule et de nuit,
+// src/world/materials/hd2d_lighting.gd).
 shader_type spatial;
 render_mode unshaded, cull_disabled, shadows_disabled;
 
@@ -13,6 +14,7 @@ uniform vec2 drift = vec2(0.6, 0.25);
 // Direction (plan du sol) d'où vient la lumière du couchant, posée par island.gd.
 uniform vec2 sun_direction = vec2(-1.0, 0.0);
 uniform vec4 warm : source_color = vec4(0.99, 0.78, 0.55, 1.0);
+uniform vec4 tint : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 
 varying vec3 world_pos;
 
@@ -36,5 +38,5 @@ void fragment() {
 	vec3 c = near_amount > t ? near_layer : far_layer;
 	float toward_sun = clamp(dot(normalize(p + vec2(0.0001)), normalize(sun_direction)), 0.0, 1.0);
 	c = mix(c, c * warm.rgb * 1.15, toward_sun * 0.5);
-	ALBEDO = c;
+	ALBEDO = c * tint.rgb;
 }

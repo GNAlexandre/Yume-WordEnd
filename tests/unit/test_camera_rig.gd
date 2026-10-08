@@ -2,8 +2,10 @@ extends GutTest
 ## (HD-2D) Caméra fixe du joueur (camera_rig.tscn) : réglages de la scène (inclinaison, champ
 ## étroit, regard vers le nord), suivi du joueur avec un léger retard, bornes de l'île, zoom borné
 ## (molette et stick droit), cadrage de la cible verrouillée sans rotation, post-traitement sous
-## l'interface et son shader qui compile. La caméra est pilotée par update_camera() (son _process
-## est coupé).
+## l'interface et son shader qui compile ; (H5) bande nette du flou qui suit le joueur à l'écran,
+## façade d'un bâtiment de 6,5 m cadrée quand le joueur est devant (et rien ailleurs), bornes qui
+## gardent le joueur près du centre au bord de l'île. La caméra est pilotée par update_camera()
+## (son _process est coupé).
 
 const RIG := preload("res://src/player/camera_rig.tscn")
 const CameraRigScript := preload("res://src/player/camera_rig.gd")
@@ -139,3 +141,94 @@ func test_post_fx_shader_compiles() -> void:
 	assert_string_contains(code, "glow_threshold", "lueur")
 	# Un shader qui ne compile pas n'a aucun uniforme exposé.
 	assert_gt(POST_SHADER.get_shader_uniform_list().size(), 8, "le shader compile")
+
+
+# --- (H5) Bande nette du flou, cadrage des bâtiments -----------------------------------------
+
+
+func _screen_y(rig: CameraRigScript, point: Vector3) -> float:
+	return rig.camera.unproject_position(point).y / rig.get_viewport().get_visible_rect().size.y
+
+
+func _warehouse(at: Vector3) -> Building:
+	var building := Building.new()
+	building.footprint = Vector2(16.0, 8.0)
+	building.wall_height = 6.5
+	building.ridge_height = 9.0
+	building.position = at
+	add_child_autofree(building)
+	return building
+
+
+func test_focus_band_follows_the_player_on_screen() -> void:
+	var rig := _spawn_rig(Vector3(3, 0, -4))
+	var holder := rig.get_parent() as Node3D
+	_update(rig, 0.5)
+	var post := (rig.get_node(^"PostFX/Screen") as ColorRect).material as ShaderMaterial
+	var scene_post := RIG.instantiate()
+	var shared := (scene_post.get_node(^"PostFX/Screen") as ColorRect).material
+	assert_ne(post, shared, "matériau propre à la caméra : la scène n'est pas touchée")
+	scene_post.free()
+	for offset: Vector3 in [Vector3.ZERO, Vector3(0, 0, -3), Vector3(0, 0, 3)]:
+		# Retard du suivi : le joueur se décale à l'écran, la bande le suit dans la même image.
+		holder.position = Vector3(3, 0, -4) + offset
+		_update(rig, DT)
+		var center: float = post.get_shader_parameter(&"focus_center")
+		var half: float = post.get_shader_parameter(&"focus_half")
+		var player := holder.global_position + Vector3.UP * rig.focus_height
+		var y := _screen_y(rig, player)
+		assert_between(y, center - half, center + half, "joueur dans la bande nette (%s)" % offset)
+		var behind := _screen_y(rig, player + Vector3.FORWARD * 6.0)
+		assert_gt(behind, center - half, "6 m derrière le joueur : encore net")
+		var far := _screen_y(rig, player + Vector3.FORWARD * 14.0)
+		assert_lt(far, center - half, "14 m derrière : dans le flou du lointain")
+
+
+func test_building_facade_fits_in_the_frame() -> void:
+	# Le joueur dans la cour, devant le mur de 6,5 m de l'entrepôt : la façade et le bas du toit
+	# tiennent dans le cadre, le joueur reste à l'écran.
+	for ahead: float in [3.0, 6.0, 10.0]:
+		var rig := _spawn_rig(Vector3(0, 0, 4.0 + ahead))
+		var building := _warehouse(Vector3(-2, 0, 0))
+		_update(rig, 3.0)
+		var wall_top := Vector3(-2, building.wall_height + 0.3, 4.0)
+		assert_gt(_screen_y(rig, wall_top), 0.0, "%.0f m : haut du mur dans le cadre" % ahead)
+		var feet := _screen_y(rig, rig.global_position)
+		assert_between(feet, 0.5, 0.86, "%.0f m : joueur à l'écran, dans le bas" % ahead)
+		assert_lte(rig.camera.global_position.distance_to(rig.focus()), 30.01, "recul borné")
+		building.free()
+		(rig.get_parent() as Node3D).free()
+
+
+func test_building_framing_lets_go_elsewhere() -> void:
+	var rig := _spawn_rig(Vector3(0, 0, 9))
+	var building := _warehouse(Vector3(0, 0, 0))
+	_update(rig, 3.0)
+	assert_gt(
+		rig.camera.global_position.distance_to(rig.focus()), rig.distance + 1.0, "recul devant"
+	)
+	# Derrière le bâtiment, loin devant ou sur le côté : cadrage habituel, centré sur le joueur.
+	for spot: Vector3 in [Vector3(0, 0, -9), Vector3(0, 0, 30), Vector3(30, 0, 9)]:
+		(rig.get_parent() as Node3D).position = spot
+		_update(rig, 4.0)
+		assert_almost_eq(
+			rig.focus(),
+			spot + Vector3.UP * rig.focus_height,
+			Vector3.ONE * 0.05,
+			"centré %s" % spot
+		)
+		assert_almost_eq(
+			rig.camera.global_position.distance_to(rig.focus()), rig.distance, 0.05, "à sa distance"
+		)
+	building.free()
+
+
+func test_wide_limits_keep_the_player_on_screen_at_the_edge() -> void:
+	# Au bord du Couchant (x = −76), le point visé reste à moins de 6 m du joueur (l'écran en
+	# montre 10 de part et d'autre en 16:9) : on voit le vide à côté, jamais le joueur au bord.
+	for spot: Vector3 in [Vector3(-76, 0, 0), Vector3(0, 0, -73), Vector3(0, 0, 70)]:
+		var rig := _spawn_rig(spot)
+		_update(rig, 3.0)
+		var gap := rig.focus() - (spot + Vector3.UP * rig.focus_height)
+		assert_lte(Vector2(gap.x, gap.z).length(), 6.0, "point visé près du joueur en %s" % spot)
+		(rig.get_parent() as Node3D).free()
