@@ -20,8 +20,8 @@ uniform float see_through_strength = 0.0;
 // longueur (m) sur laquelle il se fait.
 uniform float see_through_backdrop = 0.0;
 uniform float see_through_backdrop_line = 0.0;
-uniform float see_through_backdrop_from = 0.4;
-uniform float see_through_backdrop_ramp = 2.6;
+uniform float see_through_backdrop_from = 0.2;
+uniform float see_through_backdrop_ramp = 1.2;
 
 // Part (0..1) du fragment à effacer ; vertex : position du fragment dans le repère de la vue.
 float see_through_amount(vec3 vertex, mat4 view_matrix, mat4 inv_view_matrix) {
