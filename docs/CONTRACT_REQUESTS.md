@@ -407,3 +407,31 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   les flancs et les hélices). La pose le dépassera : à régler par H5 sur les draw calls mesurés.
 ## P0 — alpha doux des panneaux debout : réglé
 - `DecorPanel.soft_alpha` (docs/DECISIONS.md, « Alpha doux des panneaux debout »).
+
+## B1 — bornes de la caméra (H5, `src/player/camera_rig.gd`)
+- Besoin : le bord avance jusqu'à ±79,2 m (côte nord jusqu'à z ≈ −78,6, Couchant x ≈ −78, colline
+  x ≈ 78, éperon nord-est (58,7 ; −75,1)) ; `limits` = Rect2(−71, −70, 142, 136) arrête le point
+  visé à 7 à 9 m du joueur qui se tient sur la lèvre : il descend vers le bas de l'écran.
+- Proposition : `limits` = Rect2(−75, −75, 150, 141) (le point visé suit le joueur jusqu'à 4 m de
+  la lèvre ; au sud, le quai ne bouge pas).
+- En attendant : le joueur reste à l'écran partout (captures `b1_apres_*`).
+
+## B1 — habillage du nouveau bord (lots de pose : bois, Couchant, colline, port)
+- Le bord a bougé (docs/lore/MONDE.md 2.8, docs/DECISIONS.md « B1 ») ; pour poser au bord, lire
+  `IslandTerrain.edge_point(angle)`, `IslandEdge.normal(angle)` (vers le vide) et
+  `IslandTerrain.distance_to_edge(x, z)` ; tests/unit/test_world_edge_margins.gd vérifie les
+  marges (1 m pour un décor, 3 m pour ce qui bloque), mobilier du bord (`edge_*`…) exempté.
+- Avancées nouvelles, à habiller (pierres, racines, herbe de la lèvre) : éperon du nord-est
+  (pointe en (58,7 ; −75,1), +10 m) ; caps de part et d'autre de la cascade ((−51,6 ; −76,5) et
+  (−78,3 ; −48,9), +7 m) ; cap du sud-ouest ((−74,3 ; 62,4), +7 m) et cap au sortir ouest du port
+  ((−55,5 ; 76,4), +6 m) ; caps du sud-est ((77,2 ; 41,0) et (52,2 ; 74,5), +5 m) ; cap de la côte
+  est sous l'éperon ((75,5 ; −43,6), +5 m) ; replat devant la ruine du Couchant ((−77,1 ; −0,7),
+  +1,6 m). Partout ailleurs, la côte ondule de 0 à 3 m au-delà de l'ancien bord.
+- Le bord recule (anses) : au sud du Couchant, autour de (−73,9 ; 30,6), jusqu'à 2,2 m en deçà de
+  l'ancien bord (secteur 150° à 165°) ; ailleurs, jamais plus de 0,3 m (ébréchures, sud-est).
+- Mobilier resté à l'intérieur : les parapets du Couchant (dunes, `Parapets` : 1,6 à 1,8 m de la
+  lèvre pour les trois du milieu et du nord, 0,6 et 0,9 m pour les deux du sud, près de l'anse) et
+  du pied de la colline (hill, `Parapets` : 1,6 à 2,4 m) étaient à 0,7 m de l'ancienne lèvre : à
+  reposer sur la nouvelle. Le garde-corps et les bittes du quai ne bougent pas.
+- La cascade (`Island/Waterfall`) tombe désormais au bout du lit du ruisseau, en (−62,1 ; −62,4)
+  (`IslandEdge.WATERFALL_ANGLE`) : l'image `edge_waterfall` se pose là, sous la lèvre.

@@ -473,18 +473,34 @@ promesse s'y joue avec les quarante et un talismans en orbite (effet visuel).
 
 Une île flottante n'est pas entourée d'eau mais de ciel.
 
-- **Le contour** : la côte actuelle (rayon d'environ 74,5 m, baie au sud) devient une lèvre de
-  pierre nette, rocheuse et irrégulière, sans plage ; on garde le même tracé pour ne pas déplacer les
-  zones. Sous la lèvre, une falaise visible de 15 à 20 m, puis le dessous de l'île : un cône de roche
-  inversé, des strates claires et sombres, des racines qui pendent, la cascade du ruisseau au
-  nord-ouest, quelques rochers flottants détachés (V5 : pierres flottantes dans les nuages).
+- **Le contour** (B1) : une côte de roche naturelle, sans plage, qui part de l'ancien tracé
+  (rayon d'environ 74,5 m, baie au sud) et n'avance qu'au-dehors, pour ne déplacer aucune zone. Elle
+  est irrégulière à trois échelles : de grandes avancées (un éperon de 8 m au nord-est, tourné vers
+  le nord-nord-est ; des caps de 3 à 5 m de part et d'autre de la cascade, au sud-ouest, au sud-est
+  et au sortir du port), des ondulations de 1 à 3 m sur 6 à 14 m de côte (aucun tronçon de 20 m
+  n'est droit), et des ébréchures de 0,5 à 1 m sur 2 à 4 m : la lèvre n'est jamais une règle. Deux
+  anses de 2 à 3 m, au sud-est et au sud du Couchant, entrent un peu en deçà de l'ancien tracé, là
+  où rien n'était posé. La côte nord, celle qui se découpe sur le ciel, ondule jusqu'à 3 m au-delà
+  de l'ancien bord ; un replat avance devant la ruine du poste de guet. Le quai du port garde son
+  tracé, net et droit (c'est un ouvrage) ; la côte naturelle reprend de part et d'autre. Le
+  ruisseau tombe au fond d'une petite ravine, au bout de son lit. Sur le sol, la lèvre de pierre
+  fait de 0,2 à 1,4 m de large (dalles qui affleurent par endroits ; ailleurs, l'herbe ou le
+  sous-bois vont jusqu'au bord). Le bord reste à 79,2 m au plus du centre sur chaque axe (murs à
+  80 m). Ce qui bloque (décor à collision, PNJ), les objets, les Timeres et les points
+  d'apparition restent à 3 m du vide, les autres décors à 1 m
+  (`tests/unit/test_world_edge_margins.gd`). Sous la lèvre, une falaise visible de 15 à 20 m,
+  puis le dessous de l'île : un cône de roche inversé, des strates claires et sombres, des racines
+  qui pendent, la cascade du ruisseau au nord-ouest, quelques rochers flottants détachés (V5 :
+  pierres flottantes dans les nuages).
 - **La mer de nuages** remplace l'eau (le nœud `Water` garde son nom, structure figée) : un plan
   très bas (vers y = −60 m), un shader de nuages au couchant (crêtes pêche et or, creux lavande)
   qui défile lentement, quelques trouées par où l'on aperçoit, très loin, la surface grise ; une
   couche de brume plus proche (vers y = −15 m) au pied des falaises donne la profondeur. Au loin,
   des îles en silhouette sur l'horizon.
 - **Les garde-fous** : garde-corps de fer au port, parapets bas en ruine au Couchant et au pied est
-  de la colline, là où sa pente touche presque le bord ; ailleurs, le bord est libre. Les murs
+  de la colline, là où sa pente touche presque le bord ; ailleurs, le bord est libre. (B1) La côte
+  du Couchant et celle de la colline ont avancé de 1 à 3 m : les parapets se reposent sur la
+  nouvelle lèvre (`IslandTerrain.edge_point`, `distance_to_edge`). Les murs
   invisibles restent au carré de ±80,5 m.
 - **Le rattrapage de chute** (existe déjà : `KillZone` sous y = −10 et filet à −30 m,
   `WorldManager.rescue()` vers le `Spawn` de la zone courante) reçoit un habillage canon : les fées
