@@ -51,7 +51,7 @@ const CAMERA_VIEWS := {
 }
 ## Vues des zones voisines (tests/integration/demo_hd2d.gd) : zone, position, recul de la caméra.
 ## Images des bois vues au plus (bande sud des bois vue de la cour, sud-est vu de la colline ;
-## mesuré par hd2d_shots.sh : cour +21 draw calls, colline +27 par rapport au départ du lot P1).
+## mesuré par hd2d_shots.sh : cour +20 draw calls, colline +26 par rapport au départ du lot P1).
 const NEIGHBOR_VIEWS := {
 	"village": [&"village", Vector3(-5.0, 0.0, -2.5), 21.0, 25],
 	"entrepot": [&"village", Vector3(-10.5, 0.0, -6.5), 25.0, 25],

@@ -407,3 +407,26 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   les flancs et les hélices). La pose le dépassera : à régler par H5 sur les draw calls mesurés.
 ## P0 — alpha doux des panneaux debout : réglé
 - `DecorPanel.soft_alpha` (docs/DECISIONS.md, « Alpha doux des panneaux debout »).
+
+## P1 — premier plan : une mise à jour par image, pas un `_process` par panneau (H9, moteur)
+- Constat : chaque `DecorPanel` de premier plan garde son `_process` (qui appelle
+  `update_foreground`, une fois utile par image) ; les bois en ont environ 170 (arbres en variante
+  `<arbre>_forest`, premier plan) : 170 appels de script par image pour rien, sensibles sur le Web.
+- Proposition : que le PropBatcher (ou un seul nœud) appelle `DecorPanel.update_foreground` une
+  fois par image, et que les panneaux fondus coupent leur `_process`.
+
+## P1 — cascade de l'île (`Island/Waterfall`, H5)
+- Constat : `IslandRock.WATERFALL_ANGLE` (−2,3) pose le ruban à (−58,4 ; −65,4) (monde), 5 m à
+  l'est de la sortie du ruisseau (−62,5 ; −62,5, angle −3π/4 ≈ −2,356) ; depuis la caméra du jeu, on
+  ne le voit pas (voir ci-dessous : la cascade des bois est à poser sur le nouveau bord).
+- Proposition : aligner l'angle sur la sortie du ruisseau (−2,356), ou retirer le ruban.
+
+## P1 — habiller le nouveau bord des bois (lot B1 ou suite de la pose)
+- Fait par P1 : rien dans les 4 derniers mètres avant le bord actuel des bois (lisières à 4,8 m de
+  la lèvre), à la demande de l'orchestrateur, pour que B1 rende le bord irrégulier.
+- Reste : la cascade du ruisseau (`edge_waterfall`, au droit de la sortie du ruisseau, vers
+  (−62,5 ; −62,5) monde ; la caméra, qui regarde le nord, n'en voit que le haut : 3 à 4 m au-delà
+  de la lèvre, ancre à y = 0, elle montre sa lèvre de pierre et le départ de l'eau), les pierres et
+  l'herbe de la lèvre (`edge_rocks_*`, `edge_grass`, de face sur le bord : `keep_orientation` au
+  lacet du bord) et les racines (`edge_roots`, 2,5 m au-delà) dans les deux fenêtres sur le vide
+  (nord-ouest x −66 à −52 ; nord-est x 62 à 70, local aux bois), sur les nouveaux caps.
