@@ -24,6 +24,11 @@ extends StaticBody3D
 ##
 ## La forme du bord est reprise telle quelle par shaders/terrain.gdshader (edge_distance) :
 ## garder edge_radius() identique dans les deux.
+##
+## (H9) Atlas du sol à 27 tuiles (GROUND_LAYERS, contrat du cahier n° 2) : le shader du sol déduit
+## ses rangées de sa taille et replie une tuile absente sur sa tuile d'origine (GROUND_FALLBACK,
+## ground_layer) ; les décalques au sol (GroundDecal) suivent exactement les triangles du mesh
+## (triangles_in, surface_height).
 
 ## Côté du carré de l'île (m) et nombre d'échantillons par côté ; un échantillon tous les STEP m.
 const SIZE := 160.0
@@ -93,6 +98,58 @@ const MATERIAL := preload("res://src/world/materials/terrain.tres")
 ## (H5) Côté d'une tuile de l'atlas du sol (px) : ses mipmaps ne mélangent pas deux tuiles tant
 ## que le côté reste divisible (384 = 3 × 2^7 : niveaux 0 à 7).
 const ATLAS_TILE := 384
+## (H9) Tuiles de l'atlas du sol dans l'ordre du contrat, ATLAS_COLUMNS par rangée : les 12 du
+## cahier n° 1 puis les 15 du cahier n° 2 (docs/ASSETS_HD2D_MONDE.md, section 4) ; mêmes indices
+## que les constantes de terrain.gdshader.
+const ATLAS_COLUMNS := 4
+const GROUND_LAYERS: Array[StringName] = [
+	&"grass",
+	&"grass_dry",
+	&"forest_floor",
+	&"path_dirt",
+	&"flagstone",
+	&"cobble",
+	&"sand",
+	&"rock",
+	&"peat",
+	&"water",
+	&"mud",
+	&"metal",
+	&"grass_b",
+	&"forest_floor_b",
+	&"path_dirt_b",
+	&"leaf_litter",
+	&"moss",
+	&"grass_dry_b",
+	&"flagstone_b",
+	&"cobble_b",
+	&"meadow_flowers",
+	&"gravel",
+	&"garden_soil",
+	&"sand_b",
+	&"rock_b",
+	&"planks",
+	&"stream_bed",
+]
+## (H9) Tuile d'origine de chaque tuile du cahier n° 2, lue à sa place tant que l'atlas ne l'a pas
+## (table FALLBACK de terrain.gdshader).
+const GROUND_FALLBACK := {
+	&"grass_b": &"grass",
+	&"forest_floor_b": &"forest_floor",
+	&"path_dirt_b": &"path_dirt",
+	&"leaf_litter": &"forest_floor",
+	&"moss": &"forest_floor",
+	&"grass_dry_b": &"grass_dry",
+	&"flagstone_b": &"flagstone",
+	&"cobble_b": &"cobble",
+	&"meadow_flowers": &"grass",
+	&"gravel": &"path_dirt",
+	&"garden_soil": &"mud",
+	&"sand_b": &"sand",
+	&"rock_b": &"rock",
+	&"planks": &"path_dirt",
+	&"stream_bed": &"water",
+}
 
 ## Surface (sommets, normales, triangles, bord), mesh et collision, calculés une fois : le relief
 ## ne dépend que des constantes.
@@ -101,6 +158,8 @@ static var _mesh_cache: ArrayMesh = null
 static var _shape_cache: ConcavePolygonShape3D = null
 ## (H5) Atlas du sol avec ses mipmaps, calculé une fois en jeu.
 static var _atlas_cache: Texture2D = null
+## (H9) Blocs plats de la surface (1 : plat), calculés une fois.
+static var _flat_blocks := PackedByteArray()
 
 var _mesh_instance: MeshInstance3D
 var _rock_instance: MeshInstance3D
@@ -446,6 +505,93 @@ static func mipmapped_image(source: Image) -> Image:
 	image.convert(Image.FORMAT_RGBA8)
 	image.generate_mipmaps()
 	return image
+
+
+## (H9) Nombre de tuiles d'un atlas du sol de cette taille (px) : ATLAS_COLUMNS par rangée de
+## ATLAS_TILE px (12 pour 1536 × 1152, 27 pour 1536 × 2688).
+static func atlas_tile_count(atlas_size: Vector2i) -> int:
+	var rows := maxi(roundi(float(atlas_size.y) / ATLAS_TILE), 1)
+	return mini(ATLAS_COLUMNS * rows, GROUND_LAYERS.size())
+
+
+## (H9) Tuile lue à la place de layer dans un atlas de tile_count tuiles : elle-même si l'atlas
+## l'a, sinon sa tuile d'origine (GROUND_FALLBACK).
+static func ground_layer(layer: StringName, tile_count: int) -> StringName:
+	var index := GROUND_LAYERS.find(layer)
+	if index < tile_count or not GROUND_FALLBACK.has(layer):
+		return layer
+	return GROUND_FALLBACK[layer]
+
+
+## (H9) Triangles du mesh du sol qui touchent le rectangle rect (plan x, z) : [sommets par
+## triplets, dans le sens du mesh (face avant vers le ciel), normales des sommets]. Un bloc plat
+## donne ses deux grands triangles, un autre bloc les deux triangles de chacune de ses cases ; les
+## cases qui passent le bord de l'île y sont entières (relief prolongé, y = 0 au bord).
+static func triangles_in(rect: Rect2) -> Array[PackedVector3Array]:
+	var s := surface()
+	var points := PackedVector3Array()
+	var normals := PackedVector3Array()
+	var last := RESOLUTION - 1
+	var i0 := clampi(floori((rect.position.x + HALF) / STEP), 0, last - 1)
+	var i1 := clampi(floori((rect.end.x + HALF) / STEP), 0, last - 1)
+	var j0 := clampi(floori((rect.position.y + HALF) / STEP), 0, last - 1)
+	var j1 := clampi(floori((rect.end.y + HALF) / STEP), 0, last - 1)
+	var blocks := floori(float(last) / BLOCK)
+	var done := {}
+	for j in range(j0, j1 + 1):
+		for i in range(i0, i1 + 1):
+			var block := Vector2i(floori(float(i) / BLOCK), floori(float(j) / BLOCK))
+			var corners := PackedInt32Array()
+			if block.x < blocks and block.y < blocks and _is_flat_block(block):
+				if done.has(block):
+					continue
+				done[block] = true
+				var k0 := block.y * BLOCK * RESOLUTION + block.x * BLOCK
+				corners = _quad(k0, BLOCK, BLOCK * RESOLUTION)
+			else:
+				corners = _quad(j * RESOLUTION + i, 1, RESOLUTION)
+			for k: int in corners:
+				points.append(s.vertices[k])
+				normals.append(s.normals[k])
+	return [points, normals]
+
+
+## (H9) Hauteur du mesh du sol en (x, z) (le relief interpolé sur ses triangles, comme on le voit ;
+## prolongé au-delà du bord) : height_at() à quelques millimètres près.
+static func surface_height(x: float, z: float) -> float:
+	var s := surface()
+	var last := RESOLUTION - 1
+	var gx := clampf((x + HALF) / STEP, 0.0, last - 0.0001)
+	var gz := clampf((z + HALF) / STEP, 0.0, last - 0.0001)
+	var i := floori(gx)
+	var j := floori(gz)
+	var block := Vector2i(floori(float(i) / BLOCK), floori(float(j) / BLOCK))
+	var blocks := floori(float(last) / BLOCK)
+	var k := j * RESOLUTION + i
+	if block.x < blocks and block.y < blocks and _is_flat_block(block):
+		return s.vertices[block.y * BLOCK * RESOLUTION + block.x * BLOCK].y
+	var fx := gx - i
+	var fz := gz - j
+	var h00 := s.vertices[k].y
+	var h10 := s.vertices[k + 1].y
+	var h01 := s.vertices[k + RESOLUTION].y
+	var h11 := s.vertices[k + RESOLUTION + 1].y
+	# Diagonale de la case du coin (i + 1, j) au coin (i, j + 1), comme Surface.triangle().
+	if fx + fz <= 1.0:
+		return h00 + fx * (h10 - h00) + fz * (h01 - h00)
+	return h11 + (1.0 - fx) * (h01 - h11) + (1.0 - fz) * (h10 - h11)
+
+
+## (H9) Vrai si le bloc (indices de bloc) de la surface est plat et entièrement sur l'île.
+static func _is_flat_block(block: Vector2i) -> bool:
+	var blocks := floori(float(RESOLUTION - 1) / BLOCK)
+	if _flat_blocks.is_empty():
+		var s := surface()
+		_flat_blocks.resize(blocks * blocks)
+		for bj in blocks:
+			for bi in blocks:
+				_flat_blocks[bj * blocks + bi] = int(_block_is_flat(s, bi * BLOCK, bj * BLOCK))
+	return _flat_blocks[block.y * blocks + block.x] == 1
 
 
 ## Recopie les constantes de forme dans les uniformes d'un shader de l'île.
