@@ -3,11 +3,13 @@ extends GutTest
 ## (DecorPanel) ou un bâtiment (Building) dont l'image est à 96 px par mètre ; ce qui bloque garde
 ## sa collision (couche 1) ; les bâtiments ont une façade à la taille de leur mur et une collision
 ## qui couvre leur emprise ; dans l'île, les décors sont fondus par image ; les shaders du monde et
-## du post-traitement compilent. Les places de HISTOIRE.md 3.3 restent vérifiées par
-## test_world_story_spots.gd.
+## du post-traitement compilent ; (H5) les images du monde sont filtrées (pixel art net de près,
+## sans moiré au loin) et le sol lit un atlas à mipmaps qui ne mélangent pas ses tuiles. Les places
+## de HISTOIRE.md 3.3 restent vérifiées par test_world_story_spots.gd.
 
 const PROPS_DIR := "res://src/world/props"
 const FIXTURE := preload("res://tests/stubs/l2_island_fixture.gd")
+const TERRAIN_MATERIAL := "res://src/world/materials/terrain.tres"
 ## Décors qu'on traverse (fleurs, herbes, objets au sol, décor lointain, la cloche gérée par
 ## arena.tscn) : sans collision, comme avant le passage au HD-2D.
 const NON_BLOCKING: Array[String] = [
@@ -191,8 +193,64 @@ func test_world_and_post_shaders_compile() -> void:
 		if shader != null:
 			# Un shader qui ne compile pas n'expose aucun uniforme (et écrit SHADER ERROR).
 			assert_gt(shader.get_shader_uniform_list().size(), 0, "%s compile" % path)
-	var terrain := load("res://src/world/materials/terrain.tres") as ShaderMaterial
+	var terrain := load(TERRAIN_MATERIAL) as ShaderMaterial
 	assert_not_null(terrain.get_shader_parameter(&"ground_atlas"), "atlas du sol branché")
 	var rock := load("res://src/world/materials/rock.tres") as ShaderMaterial
 	for texture: StringName in [&"lip_texture", &"cliff_texture", &"underside_texture"]:
 		assert_not_null(rock.get_shader_parameter(texture), "roche : %s" % texture)
+
+
+# --- (H5) Filtrage du pixel art : ni moiré ni scintillement -----------------------------------
+
+
+func test_world_images_are_filtered_not_point_sampled() -> void:
+	# Au plus proche voisin et sans mipmaps, des images plus denses que l'écran (96 px par mètre)
+	# font du moiré au loin et scintillent quand la caméra glisse.
+	for path: String in [
+		"res://src/world/shaders/panel.gdshader",
+		"res://src/world/shaders/rock.gdshader",
+	]:
+		var code := (load(path) as Shader).code
+		assert_string_contains(code, "pixel_art.gdshaderinc", path)
+		assert_false(code.contains("filter_nearest"), "%s : images filtrées" % path)
+	var terrain := (load("res://src/world/shaders/terrain.gdshader") as Shader).code
+	assert_string_contains(terrain, "filter_linear_mipmap", "sol : mipmaps")
+	assert_string_contains(terrain, "textureLod", "sol : niveau tiré des dérivées continues")
+
+
+func test_ground_atlas_mipmaps_keep_tiles_apart() -> void:
+	# Deux tuiles de 384 px (rouge, bleue) : aucune mipmap utile ne les mélange.
+	var tile := IslandTerrain.ATLAS_TILE
+	var source := Image.create(tile * 2, tile, false, Image.FORMAT_RGBA8)
+	source.fill_rect(Rect2i(0, 0, tile, tile), Color.RED)
+	source.fill_rect(Rect2i(tile, 0, tile, tile), Color.BLUE)
+	var image := IslandTerrain.mipmapped_image(source)
+	assert_true(image.has_mipmaps(), "mipmaps")
+	assert_false(source.has_mipmaps(), "l'image source n'est pas touchée")
+	var data := image.get_data()
+	for level in range(1, 8):
+		var width := (tile * 2) >> level
+		var height := tile >> level
+		var offset := image.get_mipmap_offset(level)
+		var mixed := 0
+		for y in height:
+			for x in width:
+				var at := offset + (y * width + x) * 4
+				var want := Color.RED if x < width / 2.0 else Color.BLUE
+				var got := Color8(data[at], data[at + 1], data[at + 2], data[at + 3])
+				if not got.is_equal_approx(want):
+					mixed += 1
+		assert_eq(mixed, 0, "niveau %d : tuiles séparées" % level)
+
+
+func test_island_ground_reads_a_mipmapped_atlas() -> void:
+	var island := FIXTURE.island()
+	add_child(island)
+	var terrain := load(TERRAIN_MATERIAL) as ShaderMaterial
+	var atlas := terrain.get_shader_parameter(&"ground_atlas") as Texture2D
+	assert_not_null(atlas, "atlas du sol")
+	if atlas != null:
+		var image := atlas.get_image()
+		assert_true(image != null and image.has_mipmaps(), "atlas avec mipmaps en jeu")
+		assert_eq(atlas.get_size(), Vector2(1536, 1152), "même atlas, mêmes cases")
+	island.free()

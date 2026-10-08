@@ -90,12 +90,17 @@ const MOUNDS: Array[Vector4] = [
 
 ## Matériau du sol : couleurs au pixel (src/world/shaders/terrain.gdshader).
 const MATERIAL := preload("res://src/world/materials/terrain.tres")
+## (H5) Côté d'une tuile de l'atlas du sol (px) : ses mipmaps ne mélangent pas deux tuiles tant
+## que le côté reste divisible (384 = 3 × 2^7 : niveaux 0 à 7).
+const ATLAS_TILE := 384
 
 ## Surface (sommets, normales, triangles, bord), mesh et collision, calculés une fois : le relief
 ## ne dépend que des constantes.
 static var _surface_cache: Surface = null
 static var _mesh_cache: ArrayMesh = null
 static var _shape_cache: ConcavePolygonShape3D = null
+## (H5) Atlas du sol avec ses mipmaps, calculé une fois en jeu.
+static var _atlas_cache: Texture2D = null
 
 var _mesh_instance: MeshInstance3D
 var _rock_instance: MeshInstance3D
@@ -198,6 +203,11 @@ func build() -> void:
 		_mesh_instance = _internal_mesh(&"Mesh")
 		_rock_instance = _internal_mesh(&"Rock")
 	apply_shape_uniforms(MATERIAL)
+	if not Engine.is_editor_hint():
+		# En jeu seulement : dans l'éditeur, le matériau enregistré garderait la copie.
+		MATERIAL.set_shader_parameter(
+			&"ground_atlas", mipmapped_atlas(MATERIAL.get_shader_parameter(&"ground_atlas"))
+		)
 	_mesh_instance.mesh = terrain_mesh()
 	_rock_instance.mesh = IslandRock.rock_mesh()
 	if Engine.is_editor_hint() or _collision != null:
@@ -411,6 +421,31 @@ static func _block_is_flat(s: Surface, i0: int, j0: int) -> bool:
 ## quadrilatère de coin k, de `across` sommets de large et `down` d'indice de profondeur.
 static func _quad(k: int, across: int, down: int) -> PackedInt32Array:
 	return PackedInt32Array([k, k + across, k + down, k + across, k + down + across, k + down])
+
+
+## (H5) Atlas du sol avec ses mipmaps, pour que le sol se filtre au loin au lieu de scintiller
+## (moiré) : les images importées n'en ont pas. Calculé une fois ; rend l'atlas tel quel si son
+## image est illisible ou s'il a déjà des mipmaps.
+static func mipmapped_atlas(atlas: Texture2D) -> Texture2D:
+	if atlas == null or atlas == _atlas_cache:
+		return atlas
+	if _atlas_cache == null:
+		var image := atlas.get_image()
+		if image == null or image.is_empty() or image.has_mipmaps():
+			return atlas
+		_atlas_cache = ImageTexture.create_from_image(mipmapped_image(image))
+	return _atlas_cache
+
+
+## (H5) Copie de l'image (RGBA8) avec ses mipmaps : moyenne 2 × 2 par niveau, qui ne mélange
+## jamais deux tuiles de ATLAS_TILE px jusqu'au niveau 7 (le shader du sol s'arrête avant).
+static func mipmapped_image(source: Image) -> Image:
+	var image := source.duplicate() as Image
+	if image.is_compressed():
+		image.decompress()
+	image.convert(Image.FORMAT_RGBA8)
+	image.generate_mipmaps()
+	return image
 
 
 ## Recopie les constantes de forme dans les uniformes d'un shader de l'île.

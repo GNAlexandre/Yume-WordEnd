@@ -3,7 +3,15 @@
 // 96 px par mètre et choisies par zone et par masque (chemins, cour, rue, marais, cercle de
 // veille… : docs/lore/MONDE.md, section 2). Chaque pixel d'art prend UNE tuile : les bords des
 // masques sont calculés au centre du pixel d'art et tramés (ordre de Bayer), comme du pixel art
-// dessiné, sans mélange flou. Filtrage au plus proche voisin. Compatible Compatibility / WebGL 2.
+// dessiné, sans mélange flou. Compatible Compatibility / WebGL 2.
+// (H5) Filtrage sans moiré : de près, pixels nets dont seule la frontière est lissée sur un pixel
+// d'écran ; de loin, mipmaps (atlas recalculé par terrain.gd, sans mélange entre tuiles) lues
+// par textureLod au niveau tiré des dérivées continues de la position (le saut de fract() et
+// d'une case de l'atlas à l'autre ne trace pas de couture), deux échantillons le long de l'axe
+// étiré par la perspective (anisotrope fait main : le filtrage anisotrope du pilote, avec ces
+// sauts, débordait sur les cases voisines). Le tramage des masques passe au pixel d'écran et
+// les fleurs d'un pixel s'effacent là où un pixel d'art devient plus petit qu'un pixel d'écran
+// (sinon : grain qui scintille).
 // Les uniformes de forme sont recopiés de terrain.gd au lancement ; edge_distance() est la même.
 shader_type spatial;
 render_mode specular_disabled;
@@ -26,9 +34,12 @@ const int METAL = 11;
 const float ATLAS_COLUMNS = 4.0;
 const float ATLAS_ROWS = 3.0;
 
-uniform sampler2D ground_atlas : source_color, filter_nearest, repeat_disable;
+uniform sampler2D ground_atlas : source_color, filter_linear_mipmap, repeat_disable;
 // Taille d'une tuile (m) : 384 px à 96 px par mètre.
 uniform float tile_meters = 4.0;
+uniform float tile_pixels = 384.0;
+// Niveau de mipmap le plus flou (les tuiles de 384 px ne se mélangent pas jusqu'au niveau 7).
+uniform float max_lod = 6.0;
 // Pixels d'art par mètre du tramage des bords (deux pixels d'image par pixel d'art).
 uniform float art_pixels = 48.0;
 
@@ -129,15 +140,33 @@ float bayer(vec2 cell) {
 	return (float(m[i]) + 0.5) / 16.0;
 }
 
+// Un échantillon de la tuile de l'atlas qui commence à cell_origin, au pixel d'image texel
+// (replié sur la tuile), dans la mipmap lod. Marge au bord de la case d'un peu plus d'un
+// demi-pixel du niveau supérieur (le filtre trilinéaire le lit aussi) : le filtre ne déborde
+// jamais sur la tuile voisine de l'atlas.
+vec3 ground_tap(vec2 texel, vec2 cell_origin, float lod) {
+	float margin = 0.75 * exp2(ceil(lod));
+	vec2 wrapped = clamp(mod(texel, tile_pixels), vec2(margin), vec2(tile_pixels - margin));
+	vec2 uv = (cell_origin + wrapped / tile_pixels) / vec2(ATLAS_COLUMNS, ATLAS_ROWS);
+	return textureLod(ground_atlas, uv, lod).rgb;
+}
+
 void vertex() {
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
 
 void fragment() {
+	// Empreinte d'un pixel d'écran sur le sol (m), calculée avant tout branchement.
+	vec2 ground_dx = dFdx(world_pos.xz);
+	vec2 ground_dy = dFdy(world_pos.xz);
+	// Pixels d'art par pixel d'écran, sur l'axe le plus étiré.
+	float art_per_pixel = max(length(ground_dx), length(ground_dy)) * art_pixels;
 	vec2 cell = floor(world_pos.xz * art_pixels);
 	vec2 p = (cell + 0.5) / art_pixels;
 	float h = world_pos.y;
-	float t = bayer(cell);
+	// Tramage des bords des masques au pixel d'art de près ; quand le pixel d'art devient plus
+	// petit que l'écran, tramage au pixel d'écran (stable, même densité) au lieu d'un grain.
+	float t = art_per_pixel < 1.25 ? bayer(cell) : bayer(floor(FRAGCOORD.xy));
 	float n1 = noise(p * 0.11);
 	float n2 = noise(p * 0.47 + vec2(7.3, 1.1));
 	float n3 = noise(p * 1.7 + vec2(2.4, 9.3));
@@ -211,14 +240,37 @@ void fragment() {
 	// La lèvre de pierre, nette et ébréchée, sur le dernier mètre avant le vide.
 	float edge = edge_distance(p);
 	if (edge - 0.45 * n2 < 0.9 && quay < 0.5) { layer = ROCK; tint = vec3(0.92); }
-	// Échantillon : la tuile répétée tous les tile_meters, au plus proche voisin.
-	vec2 tile_uv = clamp(fract(world_pos.xz / tile_meters), vec2(0.5 / 384.0), vec2(1.0 - 0.5 / 384.0));
+	// Échantillon : la tuile répétée tous les tile_meters ; empreinte du pixel d'écran en pixels
+	// d'image, d'après les dérivées continues de la position (pas celles de fract()).
+	vec2 texel = fract(world_pos.xz / tile_meters) * tile_pixels;
+	vec2 texel_dx = ground_dx / tile_meters * tile_pixels;
+	vec2 texel_dy = ground_dy / tile_meters * tile_pixels;
+	float along_x = length(texel_dx);
+	float along_y = length(texel_dy);
+	float major = max(along_x, along_y);
+	float minor = min(along_x, along_y);
 	vec2 cell_origin = vec2(mod(float(layer), ATLAS_COLUMNS), floor(float(layer) / ATLAS_COLUMNS));
-	vec2 uv = (cell_origin + tile_uv) / vec2(ATLAS_COLUMNS, ATLAS_ROWS);
-	vec3 c = texture(ground_atlas, uv).rgb * tint;
-	// Petites fleurs de myosotis sur la colline (pixels d'art bleus semés par touffes).
+	vec3 c;
+	if (major <= 1.0) {
+		// De près : pixel net, frontière lissée sur la largeur d'un pixel d'écran.
+		vec2 width = clamp(abs(texel_dx) + abs(texel_dy), vec2(0.001), vec2(1.0));
+		vec2 sharp = floor(texel) + 0.5 + clamp((fract(texel) - 0.5) / width, -0.5, 0.5);
+		c = ground_tap(sharp, cell_origin, 0.0);
+	} else {
+		// De loin : deux échantillons le long de l'axe étiré par la perspective (filtrage
+		// anisotrope fait main), chacun dans la mipmap de la moitié de l'empreinte.
+		float lod = min(log2(max(max(minor, major * 0.5), 1.0)), max_lod);
+		vec2 half_step = (along_x > along_y ? texel_dx : texel_dy) * 0.25;
+		c = 0.5
+				* (ground_tap(texel - half_step, cell_origin, lod)
+						+ ground_tap(texel + half_step, cell_origin, lod));
+	}
+	c *= tint;
+	// Petites fleurs de myosotis sur la colline (pixels d'art bleus semés par touffes), tant
+	// qu'un pixel d'art reste visible (sinon, des points qui clignotent).
 	float bloom_patch = smoothstep(0.55, 0.8, noise(p * 0.2 + vec2(11.0, 2.0)));
-	if (hill > 0.5 && h > 0.3 && hash(cell) > 0.985 - 0.04 * bloom_patch && bloom_patch > 0.2) {
+	bool flower = hash(cell) > 0.985 - 0.04 * bloom_patch && bloom_patch > 0.2;
+	if (hill > 0.5 && h > 0.3 && flower && art_per_pixel < 1.6) {
 		c = vec3(0.5, 0.61, 0.81);
 	}
 	ALBEDO = c;

@@ -3,14 +3,17 @@
 // UV.y : mètres sous le sol. La lèvre (lip.png, le premier mètre), la falaise (cliff.png), puis le
 // dessous de l'île (underside.png) qui se fond, en profondeur, dans la couleur de la brume. Les
 // passages se font par pixel d'art tramé, sans mélange flou. Compatible Compatibility / WebGL 2.
+// (H5) Images « nettes mais lissées » (pixel_art.gdshaderinc) : la falaise vue de biais ne
+// scintille plus.
 shader_type spatial;
 render_mode cull_disabled, specular_disabled;
 
 #include "res://src/world/shaders/hd2d_light.gdshaderinc"
+#include "res://src/world/shaders/pixel_art.gdshaderinc"
 
-uniform sampler2D lip_texture : source_color, filter_nearest, repeat_enable;
-uniform sampler2D cliff_texture : source_color, filter_nearest, repeat_enable;
-uniform sampler2D underside_texture : source_color, filter_nearest, repeat_enable;
+uniform sampler2D lip_texture : source_color, filter_linear, repeat_enable;
+uniform sampler2D cliff_texture : source_color, filter_linear, repeat_enable;
+uniform sampler2D underside_texture : source_color, filter_linear, repeat_enable;
 // Taille d'une texture (m) : 384 px à 96 px par mètre ; hauteur de la lèvre (m).
 uniform float tile_meters = 4.0;
 uniform float lip_meters = 1.0;
@@ -29,15 +32,22 @@ float bayer(vec2 cell) {
 
 void fragment() {
 	vec2 meters = UV;
+	// Dérivées hors des branches (pixel_art_grad).
+	vec2 meters_dx = dFdx(meters);
+	vec2 meters_dy = dFdy(meters);
+	vec2 tile_dx = meters_dx / tile_meters;
+	vec2 tile_dy = meters_dy / tile_meters;
+	vec2 lip_scale = vec2(1.0 / tile_meters, 1.0 / lip_meters);
 	vec2 cell = floor(meters * 48.0);
 	float t = bayer(cell);
 	vec3 c;
 	if (meters.y < lip_meters) {
-		c = texture(lip_texture, vec2(meters.x / tile_meters, meters.y / lip_meters)).rgb;
+		vec2 lip_uv = meters * lip_scale;
+		c = pixel_art_grad(lip_texture, lip_uv, meters_dx * lip_scale, meters_dy * lip_scale).rgb;
 	} else if (smoothstep(underside_depth - 3.0, underside_depth + 3.0, meters.y) > t) {
-		c = texture(underside_texture, meters / tile_meters).rgb;
+		c = pixel_art_grad(underside_texture, meters / tile_meters, tile_dx, tile_dy).rgb;
 	} else {
-		c = texture(cliff_texture, meters / tile_meters).rgb;
+		c = pixel_art_grad(cliff_texture, meters / tile_meters, tile_dx, tile_dy).rgb;
 	}
 	// Brume en paliers tramés (quatre niveaux) : perspective aérienne sans dégradé flou.
 	float fog = floor(smoothstep(4.0, depth_fade, meters.y) * 4.0 + t) / 4.0;
