@@ -90,6 +90,14 @@ Format de l'easter egg, repris tel quel : une planche PNG et son JSON, comme
   même taille de personnage que la 1re image de `repos` (les livraisons ont dessiné des `parle`
   et des `marche` 10 à 36 % plus petites ou plus grandes : le personnage rapetisse en parlant) ;
   **une seule silhouette par case** (pas de figure en double empilée au-dessus de l'autre).
+- **Une correction repasse toute la vérification** : une vue redessinée pour un détail (arme,
+  coiffure, tenue) peut changer d'échelle ailleurs. La PR n° 4 a corrigé Ithea, Nephren et cinq
+  PNJ, mais dessiné le `parle` de Nygglatho de profil 15 % plus grand que son `repos`, celui de
+  Limeskin 8 à 13 % plus grand, et le `repos` de Pannibal de profil à 111 px au lieu de 120 :
+  chaque consigne de correction redonne la hauteur en px de la 1re image de `repos`.
+- **Accessoires d'un seul côté** (couette, tresse, arme, queue) : du même côté du corps dans
+  toutes les images et les trois vues ; de dos, ils passent de l'autre côté de l'image (la
+  couette de Lakhesh change de côté entre deux images de repos et entre la face et le dos).
 - Vérification : `python3 tools/hd2d_sheets.py check` (planches listées dans
   `tools/hd2d_manifest.json`, clé `sheets`), ancres recalculées par `python3 tools/hd2d_sheets.py
   anchors <json>… --write`, planche de contrôle par `python3 tools/hd2d_sheets.py strip`.
@@ -237,7 +245,7 @@ parallèles au bas de l'image).
 | 1 | `wall_planks` | bardage de planches verticales brun foncé (#654D3C) délavé, planches rapiécées de teintes différentes, clous |
 | 1 | `roof_slate` | toit d'ardoise bleu-gris (#5E6C86) en rangées d'écailles, quelques ardoises plus claires, mousse |
 | 2 | `wall_stone` | mur de moellons gris-beige (#C2B49F) jointoyés |
-| 2 | `wall_plaster` | enduit crème (#EAE0CB) un peu sali, colombages de bois brun |
+| 2 | `wall_plaster` | enduit crème (#EAE0CB) un peu sali, sans colombages (la matière se répète sur tout le mur : des poutres y dessinent un quadrillage ; les colombages vont dans les façades) |
 | 2 | `roof_tiles` | toit de tuiles rouges (#B65E4B) en rangées, tuiles plus claires et plus sombres |
 | 3 | `roof_tin` | toit de tôle ondulée grise et rouillée |
 
@@ -254,7 +262,7 @@ bas et centré, pixel art à 96 px/m : » puis :
 | --- | --- | --- | --- | --- |
 | 1 | `well` | 168 × 240 | entrepôt | puits de pierre grise au toit de bardeaux sur deux poteaux, seau |
 | 1 | `palisade` | 192 × 154 | entrepôt | module de palissade de rondins pointus de 2 m, liens de corde |
-| 1 | `palisade_gate` | 384 × 288 | entrepôt | portail de bois à deux montants et linteau, lanterne de cristal suspendue, battants ouverts |
+| 1 | `palisade_gate` | 384 × 288 | entrepôt | portail de bois à deux montants et linteau, lanterne de cristal suspendue, battants grands ouverts rabattus contre les montants (passage libre de 2,5 m au moins entre eux : la livraison les a dessinés entrouverts, 1 m de passage) |
 | 1 | `crystal_lamp` | 64 × 250 | partout | lampadaire de fer forgé, cristal lumineux jaune pâle (#FFE6A6) dans une cage |
 | 1 | `tree_autumn` | 480 × 672 | partout | feuillu d'automne, feuillage or (#CC9446) en grandes masses, tronc brun |
 | 1 | `tree_autumn_rust` | 480 × 672 | partout | même feuillu, feuillage rouille (#A95A3A) |
@@ -373,3 +381,38 @@ dans `tools/hd2d_manifest.json`, que les tests confrontent à ce document.
    Couchant et du port ; le ciel et la mer de nuages.
 3. **Priorité 3** : les gens du bourg et les petites fées ; les petits décors ; l'horizon.
 4. **Priorité 4** : les skins de Nopht et de Rhantolk ; les fées de la communauté.
+
+## 12. Images à refaire (après la PR n° 4)
+
+Défauts mesurés dans les livraisons des PR n° 2 à 4 (`python3 tools/hd2d_sheets.py check`,
+remarques ; hauteurs debout de l'ancre au haut de la silhouette). Le jeu les contourne en
+attendant (`parle` qui joue les images de `repos`, clé `aliases` du manifeste ; hauteur du
+profil tolérée, clé `accepted`). Pour chaque ligne : coller le bloc de style (section 1), puis
+« Corrige la planche `<fichier>` (format de la section 3, JSON compris) : » et la consigne ;
+seules les images citées changent, les autres restent identiques au pixel près.
+
+| Prio | Fichier (`assets/…`) | Défaut | Consigne à coller |
+| --- | --- | --- | --- |
+| 1 | `characters/nygglatho/nygglatho.png` | `parle` de profil à 205 px au lieu de 178 (115 %), depuis la PR n° 4 | redessine les 2 images de `parle` à 178 px, comme la 1re image de `repos`, pieds sur la même ligne de sol |
+| 1 | `characters/limeskin/limeskin.png`, `limeskin_front.png` | `parle` à 300 px (profil) et 289 px (face) au lieu de 269 (108 à 113 %) | redessine les 2 images de `parle` de ces deux vues à 269 px, comme la 1re image de `repos` |
+| 1 | `characters/lakhesh/lakhesh_front.png`, `lakhesh.png`, `lakhesh_back.png`, `lakhesh_portrait.png` | face : `parle` à 121 px au lieu de 114 ; la couette change de côté : à gauche de sa tête sur la face, à droite sur le portrait et le dos, devant la tête dans la 2e image de `repos` du profil | face : `parle` à 114 px ; couette du côté gauche de sa tête partout : à droite de l'image de face et sur le portrait, à gauche de l'image de dos, derrière la tête de profil (comme en marche) |
+| 1 | `characters/pannibal/pannibal.png` | profil dessiné plus petit que la face et le dos : `repos` à 111 px au lieu de 120 (89 px par mètre) | redessine tout le profil à l'échelle de la face : 1re image de `repos` à 120 px, `parle` et `marche` à la même taille |
+| 2 | `characters/cat_waiter/cat_waiter.png` | `parle` à 141 px au lieu de 158 (89 %) | `parle` à 158 px, comme la 1re image de `repos` |
+| 2 | `characters/nephren/nephren.png`, `nephren_front.png` | `parle` à 131-135 px (profil) et 82 / 114 px (face) au lieu de 125 | `parle` à 125 px dans les deux vues, livre rouge en main ; ne touche pas aux 12 poses d'attaque corrigées |
+| 2 | `characters/tiat/tiat.png`, `_front`, `_back` | `parle` à 114-121 px au lieu de 106 (108 à 114 %), `marche` 103 à 118 % | `parle` et `marche` à 106 px dans les trois vues |
+| 2 | `characters/snack_vendor/snack_vendor.png` | `parle` à 170 px au lieu de 154 (110 %) | `parle` à 154 px |
+| 2 | `characters/ferryman/ferryman.png` | `parle` à 147 px au lieu de 163 (90 %) | `parle` à 163 px |
+| 2 | `characters/egg_vendor/egg_vendor_back.png` | `parle` à 158 px au lieu de 149 (106 %), `marche` jusqu'à 119 % | `parle` et `marche` à 149 px |
+| 2 | `characters/willem/willem.png`, `_front`, `_back` | pas de `parle` (Willem garde `repos` en conversation) | ajoute `parle` (2 images, 6 ips, boucle : bouche et petit geste de la main) dans les trois vues, à 168 px comme `repos` |
+| 2 | `characters/chtholly/chtholly_front.png` | face à 130 px au lieu de 144 (le jeu l'agrandit de 11 %) | redessine toute la face à 144 px debout (1re image de `repos`), mêmes animations, `coup` et `onde` |
+| 3 | `characters/limeskin/limeskin_back.png` | la queue passe d'un côté à l'autre entre les deux images de `repos` (et de `parle`) | queue du même côté (à gauche de l'image) dans les images de `repos` et de `parle` |
+| 3 | `characters/ithea/ithea.png` | Valgulious pointe vers l'arrière au `repos` et vers l'avant en `marche` : l'arme saute quand Ithea se met à marcher | même prise de l'arme au `repos` et en `marche` (lame vers l'arrière, comme au `repos`) |
+| 3 | `marche` des PNJ (le jeu ne la joue pas encore) : `collon_front` et `_back` (117 à 121 %), `cat_waiter` et `_back` (111 à 120 %), `snack_vendor` et `_back` (110 à 125 %), `egg_vendor` (107 à 114 %), `almita` et `_back`, `ramikeldi_front` et `_back`, `garde_lookout_back` (jusqu'à 113 %) | personnage plus grand en marchant | les 6 images de `marche` à la hauteur de la 1re image de `repos` de la même vue |
+| 3 | `enemies/timere/timere.png` | `fouet` dessiné de trois quarts dos | `fouet` de profil, tourné vers la droite comme les autres animations |
+| 3 | `hd2d/props/palisade_gate.png` | battants entrouverts : 1 m de passage au lieu de 2,5 m (H2) | consigne de la section 7, battants rabattus contre les montants |
+| 3 | `hd2d/props/ring_stone.png` | l'image livrée dépasse 0,3 m ; le remplaçant de 58 × 20 px reste | 58 × 20 px exactement, consigne de la section 7 |
+
+Corrigés par la PR n° 4 (retirés de cette liste) : îles lointaines B et C, enduit crème, `marche`
+de Nygglatho (profil et face), `parle` de Nygglatho et de Limeskin de dos et du boulanger de
+profil, détails de la bible d'Ithea, Lakhesh, Nygglatho, Collon, Pannibal et Limeskin, prise
+d'Insania de Nephren.

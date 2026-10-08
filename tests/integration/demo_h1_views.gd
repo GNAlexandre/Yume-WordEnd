@@ -7,7 +7,12 @@ extends Node
 ## build/shots/h1_<vue>.png 60
 ##   vues   : Chtholly (repos, puis l'image « coup » de l'attaque) et le Timere (repos), défaut ;
 ##   pnj    : les PNJ de l'acte 1 et les skins jouables, de face puis de dos (repos) ;
-##   parle  : les mêmes PNJ, de face puis de profil, en conversation (parle).
+##   parle  : les mêmes PNJ, de face puis de profil, en conversation (parle) ;
+##   ithea, nephren : la fée jouable (repos, 2e et 4e images d'attaque, image « onde » de la
+##            charge) ;
+##   parler : (H1 bis) une vraie conversation avec le PNJ H1_NPC (nom de son nœud, Nygglatho par
+##            défaut), le joueur à H1_SIDE (est par défaut, le PNJ de profil ; sud : au sud-est,
+##            à 60° de l'axe de l'écran, le PNJ de face sans que le joueur le cache).
 
 const GAME_SCENE := preload("res://src/game.tscn")
 const VISUAL := preload("res://src/visuals/character_visual.tscn")
@@ -15,6 +20,13 @@ const CHTHOLLY := preload("res://data/skins/chtholly.tres")
 const TIMERE := preload("res://data/enemies/visuals/timere.tres")
 const NPC_VISUALS := "res://data/npcs/visuals/%s.tres"
 const SKINS := "res://data/skins/%s.tres"
+## Fées jouables (vue → skin) et leurs rangées (animation, image).
+const FAIRIES := {"ithea": "ithea_soldier", "nephren": "nephren_soldier"}
+const FAIRY_ROWS := [[&"repos", 0], [&"attaque", 1], [&"attaque", 3], [&"charge", 3]]
+## Conversation (parler) : le joueur à cette distance du PNJ ; la capture montre la 1re réplique.
+const TALK_OFFSETS := {"est": Vector3(1.4, 0.0, 0.0), "sud": Vector3(1.0, 0.0, 1.75)}
+## Drapeaux qui font venir les PNJ absents au début de l'acte (Limeskin après le duel).
+const TALK_FLAGS: Array[StringName] = [&"duel_lost"]
 ## Où se tient la rangée (zone, position locale du joueur).
 const SPOT := [&"dunes", Vector3(6.0, 0.0, 3.0)]
 ## Directions : face (vers la caméra), profil droit, dos, profil gauche.
@@ -69,6 +81,9 @@ func _process(_delta: float) -> void:
 
 
 func _stage() -> void:
+	if _view == "parler":
+		_talk()
+		return
 	var zone := _game.get_node(NodePath("Island/Zones/%s" % SPOT[0])) as Node3D
 	WorldManager.load_zone(SPOT[0] as StringName)
 	_player.global_position = WorldManager.ground_position(
@@ -87,10 +102,50 @@ func _stage() -> void:
 			_npc_rows(zone, base, [Vector3.BACK, Vector3.FORWARD], &"repos")
 		"parle":
 			_npc_rows(zone, base, [Vector3.BACK, Vector3.RIGHT], &"parle")
+		"ithea", "nephren":
+			var skin := load(SKINS % FAIRIES[_view]) as SkinData
+			for r in FAIRY_ROWS.size():
+				var row: Array = FAIRY_ROWS[r]
+				var start := base + Vector3(-3.0, 0.0, -4.4 + 2.2 * r)
+				_row(zone, start, skin, row[0] as StringName, row[1] as int)
 		_:
 			_row(zone, base + Vector3(-3.0, 0.0, -2.2), CHTHOLLY, &"repos", 0)
 			_row(zone, base + Vector3(-3.0, 0.0, 0.0), CHTHOLLY, &"attaque", 2)
 			_row(zone, base + Vector3(-3.0, 0.0, 2.2), TIMERE, &"repos", 0)
+
+
+## (H1 bis) Le joueur va parler au PNJ H1_NPC dans sa zone (comme E).
+func _talk() -> void:
+	var npc_name := OS.get_environment("H1_NPC")
+	if npc_name.is_empty():
+		npc_name = "Nygglatho"
+	var side := OS.get_environment("H1_SIDE")
+	if not TALK_OFFSETS.has(side):
+		side = "est"
+	for flag: StringName in TALK_FLAGS:
+		GameState.set_flag(flag)
+	for zone: Node in _game.get_node(^"Island/Zones").get_children():
+		var npc := zone.get_node_or_null(NodePath("NPCs/" + npc_name)) as Npc
+		if npc == null:
+			continue
+		WorldManager.load_zone(StringName(zone.name))
+		npc.refresh_presence()
+		var offset: Vector3 = TALK_OFFSETS[side]
+		_player.global_position = WorldManager.ground_position(
+			npc.global_position + offset, _player
+		)
+		_player.velocity = Vector3.ZERO
+		_player.set_aim_direction(-offset, true)
+		_player.camera_rig.zoom(-100.0)
+		_player.camera_rig.snap()
+		_open_talk.call_deferred(npc)
+		return
+	push_error("PNJ introuvable : %s" % npc_name)
+
+
+func _open_talk(npc: Npc) -> void:
+	npc.interact(_player)
+	(_game.get_node(^"UI/DialogueBox") as DialogueBox).complete_line()
 
 
 ## Un personnage par direction de FACINGS, figé sur l'image frame de anim, de gauche à droite.

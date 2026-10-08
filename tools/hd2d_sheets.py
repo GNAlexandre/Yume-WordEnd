@@ -19,7 +19,9 @@ Usage (Python 3.9+, Pillow) :
 Manifeste (« sheets ») : id, dir, table (fairy : fée jouable ou soldate, 3.1 ; npc : PNJ, 3.2 ;
 timere, 3.3), height_m, views ; facultatifs : feet (alpha), axis (false :
 pieds cherchés sur toute la largeur), torso (vues recalées sur le buste), aliases (vue →
-{animation : animation dont elle joue les images}, à faire redessiner).
+{animation : animation dont elle joue les images}, à faire redessiner), accepted (vue → règles
+tolérées jusqu'à ce que l'image soit refaite : « height », hauteur debout du profil à
+SCALE_TOLERANCE au lieu de STANDING_TOLERANCE ; le défaut reste listé en remarque).
 
 Règles vérifiées (check). Problèmes (code 1) : PNG RGBA à alpha net, taille = « planche »,
 animations et cadences du tableau du cahier, images dans la planche et non vides, ancre dans
@@ -370,12 +372,15 @@ def _expected_count_ok(want, count):
     return count in want if isinstance(want, list) else count == want
 
 
-def check_view(json_path, table, height_px, profile_height=0.0):
+def check_view(json_path, table, height_px, profile_height=0.0, accepted=()):
     """(problèmes, remarques) d'une vue. Les problèmes bloquent (format, animations du tableau,
     images, ancres, hauteur du profil, échelle des animations jouées : USED) ; les remarques
     (échelle des autres animations, vue dessinée plus petite ou plus grande que le profil, que
     le jeu compense) vont dans la liste des images à refaire. profile_height : hauteur debout du
-    profil (0 pour le profil lui-même, comparé à height_px)."""
+    profil (0 pour le profil lui-même, comparé à height_px). accepted : règles tolérées (clé
+    « accepted » du manifeste) ; « height » : la hauteur du profil peut s'écarter jusqu'à
+    SCALE_TOLERANCE (remarque au lieu d'un problème : le jeu garde height_m, seuls les pixels
+    du personnage sont un peu plus gros ou plus petits que 96 px/m)."""
     problems, notes = [], []
     png = sheet_png(json_path)
     if not os.path.exists(png) or not os.path.exists(json_path):
@@ -425,7 +430,12 @@ def check_view(json_path, table, height_px, profile_height=0.0):
             standing.setdefault(name, []).append(standing_height(part, frame))
     idle = standing.get("repos", [0.0])[0]
     if idle and not profile_height and abs(idle - height_px) > STANDING_TOLERANCE * height_px:
-        problems.append("hauteur debout %.0f px au lieu de %.0f (repos, 1re image)" % (idle, height_px))
+        text = "hauteur debout %.0f px au lieu de %.0f (repos, 1re image)" % (idle, height_px)
+        if "height" in accepted and abs(idle - height_px) <= SCALE_TOLERANCE * height_px:
+            density = round(idle / height_px * PX_PER_M)
+            notes.append(text + ", tolérée (accepted) : %d px par mètre au lieu de %d" % (density, PX_PER_M))
+        else:
+            problems.append(text)
     if idle and profile_height and abs(idle - profile_height) > STANDING_TOLERANCE * profile_height:
         notes.append(
             "dessinée à %d %% du profil (%.0f px debout au lieu de %.0f ; le jeu compense)"
@@ -470,7 +480,8 @@ def check_sheet(entry):
     profile = _idle_height(side) if os.path.exists(side) and os.path.exists(sheet_png(side)) else 0.0
     for view in entry.get("views", [""]):
         path = base + view + ".json"
-        problems, notes = check_view(path, entry["table"], height_px, profile if view else 0.0)
+        accepted = entry.get("accepted", {}).get(view or "side", [])
+        problems, notes = check_view(path, entry["table"], height_px, profile if view else 0.0, accepted)
         if view and not problems and os.path.exists(side) and _signature(path) != _signature(side):
             problems.append("animations, cadences, coup ou onde différents du profil")
         for anim, source in entry.get("aliases", {}).get(view or "side", {}).items():

@@ -1,12 +1,12 @@
 {
   "version": 1,
   "echelle": 1,
-  "planche": [479, 371],
+  "planche": [535, 366],
   "direction": "right",
   "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
   "status": "measured_crops_animation_review",
   "anchors_validated": true,
-  "anchor_method": "tools/hd2d_sheets.py anchors (H1) : pieds près de l'axe du corps, images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
+  "anchor_method": "tools/hd2d_sheets.py anchors --feet alpha (H1) : bas de la silhouette près de l'axe du corps (le bandeau rouge trompait les pieds sombres), images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
   "combat_timing_validated": false,
   "density_px_m": 96,
   "palette_colors": 64,
@@ -15,28 +15,28 @@
       "ips": 2,
       "boucle": true,
       "images": [
-        [0, 0, 68, 115, 38, 115],
-        [72, 0, 68, 115, 38, 115]
+        [0, 0, 76, 115, 47, 115],
+        [80, 1, 78, 114, 50, 114]
       ]
     },
     "marche": {
       "ips": 10,
       "boucle": true,
       "images": [
-        [0, 121, 72, 128, 46, 128],
-        [76, 122, 78, 127, 49, 127],
-        [158, 121, 76, 128, 43, 128],
-        [238, 124, 80, 125, 46, 125],
-        [322, 120, 77, 129, 47, 129],
-        [403, 119, 76, 130, 46, 130]
+        [0, 121, 83, 125, 52, 125],
+        [87, 123, 84, 123, 54, 123],
+        [175, 120, 86, 126, 67, 126],
+        [265, 122, 87, 124, 52, 124],
+        [356, 119, 86, 127, 54, 127],
+        [446, 119, 89, 127, 56, 127]
       ]
     },
     "parle": {
       "ips": 6,
       "boucle": true,
       "images": [
-        [0, 253, 66, 118, 35, 118],
-        [70, 254, 80, 117, 36, 117]
+        [0, 251, 73, 115, 45, 115],
+        [77, 250, 86, 116, 48, 116]
       ]
     }
   }
