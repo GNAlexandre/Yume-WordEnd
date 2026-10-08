@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/dead_tree_b.png" id="2_image"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1"]
+height = 3
+radius = 0.16
+
+[node name="DeadTreeB" type="Node3D"]
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
+metadata/hd2d_category = "tree_thin"
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("CylinderShape3D_1")

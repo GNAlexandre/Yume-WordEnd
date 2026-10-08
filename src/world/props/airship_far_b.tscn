@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/sky/airship_far_b.png" id="2_image"]
+
+[node name="AirshipFarB" type="Node3D"]
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
+pixels_per_meter = 24.0
+shadow_width = 0.0
+image_offset = Vector3(0, -3, 0)
+metadata/hd2d_category = "sky"

@@ -2,9 +2,28 @@
 
 [ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
 [ext_resource type="Texture2D" path="res://assets/hd2d/props/airship_barocupot.png" id="2_image"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/airship_barocupot_propeller.png" id="3_propeller"]
 
 [node name="AirshipBarocupot" type="Node3D"]
 script = ExtResource("1_panel")
 texture = ExtResource("2_image")
-pixels_per_meter = 48.0
 shadow_width = 0.0
+metadata/hd2d_category = "ship"
+
+[node name="PropellerAft" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2.521, 0)
+script = ExtResource("1_panel")
+texture = ExtResource("3_propeller")
+shadow_width = 0.0
+frames = 4
+fps = 12.0
+depth_offset = 0.1
+
+[node name="PropellerFore" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.948, 2.438, 0)
+script = ExtResource("1_panel")
+texture = ExtResource("3_propeller")
+shadow_width = 0.0
+frames = 4
+fps = 12.0
+depth_offset = 0.1

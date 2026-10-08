@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/ground_decal.gd" id="1_decal"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/decals/leaves_rust_b.png" id="2_image"]
+
+[node name="LeavesRustB" type="Node3D"]
+script = ExtResource("1_decal")
+texture = ExtResource("2_image")
+layer = 1
+metadata/hd2d_category = "decal_litter"

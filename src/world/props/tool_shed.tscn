@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/hd2d/buildings/tool_shed.png" id="2_facade"]
 [ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_planks.png" id="3_wall"]
 [ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/roof_tin.png" id="4_roof"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/tool_shed_side.png" id="5_side"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(3, 2.4, 2.5)
@@ -16,6 +17,7 @@ roof_texture = ExtResource("4_roof")
 footprint = Vector2(3.0, 2.5)
 wall_height = 2.25
 ridge_height = 2.6
+side_facade = ExtResource("5_side")
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0

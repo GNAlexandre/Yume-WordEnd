@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/hd2d/buildings/warehouse_main.png" id="2_facade"]
 [ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_planks.png" id="3_wall"]
 [ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/roof_slate.png" id="4_roof"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/warehouse_main_side.png" id="5_side"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(16, 5.7, 8)
@@ -16,6 +17,7 @@ roof_texture = ExtResource("4_roof")
 footprint = Vector2(16.0, 8.0)
 wall_height = 6.5
 ridge_height = 9.0
+side_facade = ExtResource("5_side")
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0
