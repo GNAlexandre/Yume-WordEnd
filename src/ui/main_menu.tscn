@@ -97,6 +97,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Crédits"
 
+[node name="Island68Button" type="Button" parent="Content/Columns/Left/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Découvrir l’île n° 68"
+
 [node name="MessagePanel" type="PanelContainer" parent="Content/Columns/Left"]
 unique_name_in_owner = true
 visible = false

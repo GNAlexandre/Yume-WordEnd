@@ -5,3 +5,8 @@ build/
 .DS_Store
 __pycache__/
 .claude/worktrees/
+
+# Local byte-preserving fit history; canonical native art is tracked separately.
+assets/source/hd2d_raw/
+# Rebuildable atlas review resources; runtime NPC and skin resources are tracked.
+data/visuals2d/generated/

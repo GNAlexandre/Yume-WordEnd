@@ -1,0 +1,506 @@
+{
+  "entries": [
+    {
+      "id": "pixel_nephren_back",
+      "name": "Nephren — back",
+      "category": "characters",
+      "character_ids": [
+        "nephren"
+      ],
+      "character_name": "Nephren",
+      "height_m": 1.3,
+      "path": "assets/characters/nephren/nephren_back.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/nephren_back.png",
+      "native_dimensions": [
+        1024,
+        1536
+      ],
+      "reference_pages": [
+        27,
+        29
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 8,
+        "direction": "back"
+      },
+      "status": "pendingfit",
+      "prompt": "Original generation prompt unavailable; recovered original PNG and visually identified character/orientation.",
+      "source_sha256": "b185545178d5a959fb5c2333ba9ea405c9a8ea47b34857b0dd836f8d86d756d5",
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use."
+      ],
+      "alpha_source": {
+        "transparent": 1180757,
+        "opaque": 0,
+        "intermediate": 392107
+      }
+    },
+    {
+      "id": "pixel_nopht_front",
+      "name": "Nopht — front",
+      "category": "characters",
+      "character_ids": [
+        "nopht"
+      ],
+      "character_name": "Nopht",
+      "height_m": 1.4,
+      "path": "assets/characters/nopht/nopht_front.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/nopht_front.png",
+      "native_dimensions": [
+        1024,
+        1536
+      ],
+      "reference_pages": [
+        33,
+        35
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 7,
+        "direction": "front"
+      },
+      "status": "pendingfit",
+      "prompt": "Original generation prompt unavailable; recovered original PNG and visually identified character/orientation.",
+      "source_sha256": "1a84cbb940da766fa4135df83065c0cb1c5884d98ecfbd0ecfda565c4c05afeb",
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use."
+      ],
+      "alpha_source": {
+        "transparent": 1101179,
+        "opaque": 0,
+        "intermediate": 471685
+      }
+    },
+    {
+      "id": "pixel_nopht_back",
+      "name": "Nopht — back",
+      "category": "characters",
+      "character_ids": [
+        "nopht"
+      ],
+      "character_name": "Nopht",
+      "height_m": 1.4,
+      "path": "assets/characters/nopht/nopht_back.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/nopht_back.png",
+      "native_dimensions": [
+        1024,
+        1536
+      ],
+      "reference_pages": [
+        33,
+        35
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 7,
+        "direction": "back"
+      },
+      "status": "pendingfit",
+      "prompt": "Original generation prompt unavailable; recovered original PNG and visually identified character/orientation.",
+      "source_sha256": "f8ce1d4a41e4609a985ac79ee0b0d219d36bf13a2a7e9f6cead39eb5e5cb91e2",
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use."
+      ],
+      "alpha_source": {
+        "transparent": 1139402,
+        "opaque": 0,
+        "intermediate": 433462
+      }
+    },
+    {
+      "id": "pixel_nopht_right",
+      "name": "Nopht — right",
+      "category": "characters",
+      "character_ids": [
+        "nopht"
+      ],
+      "character_name": "Nopht",
+      "height_m": 1.4,
+      "path": "assets/characters/nopht/nopht.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/nopht_right.png",
+      "native_dimensions": [
+        1161,
+        1355
+      ],
+      "reference_pages": [
+        33,
+        35
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 7,
+        "direction": "right"
+      },
+      "status": "pendingfit",
+      "prompt": "Original generation prompt unavailable; recovered original PNG and visually identified character/orientation.",
+      "source_sha256": "93a1a7219a89744efd658905adc56f33d3d2b2fdee280fedee2c50aed8008e9d",
+      "limitations": [
+        "Recovered original has variable frame widths: attack and charge frames must be extracted from actual gaps, rather than equal columns.",
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use."
+      ],
+      "alpha_source": {
+        "transparent": 1156840,
+        "opaque": 671,
+        "intermediate": 415644
+      }
+    },
+    {
+      "id": "pixel_nephren_front",
+      "name": "nephren — front",
+      "category": "characters",
+      "character_ids": [
+        "nephren"
+      ],
+      "character_name": "nephren",
+      "height_m": 1.3,
+      "path": "assets/characters/nephren/nephren_front.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/nephren_front.png",
+      "reference_pages": [
+        27,
+        29
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 8,
+        "direction": "front"
+      },
+      "status": "pendingfit",
+      "prompt": "Produce an animation atlas for WordEnd HD-2D in crisp PIXEL ART: visibly hand-placed square pixel clusters, limited 24-color earthy desaturated sunset palette, stepped flat shading, no smoothing or soft glow, no antialiasing, no pure white/black outline. Character about 2.8 heads high. Transparent PNG background alpha 0 or 255, NO backdrop, ground shadow, text, grid or numbers. CAMERA only 10-15 degrees downward. Exactly SIX equal columns and SEVEN equal rows across a portrait canvas, plenty transparent gutters, full body and sword including swordtip fully contained inside each allocated cell, identical body scale and feet baseline across frames. One row per animation. Row1 idle TWO full-body sprites in columns1-2, columns3-6 empty. Row2 walking SIX distinct complete gait phases in all six columns. Row3 running FIVE distinct gait phases in columns1-5, column6 empty. Row4 sword attack FOUR phases anticipation/sweep/extension/recovery in columns1-4. Row5 sword charge FOUR phases preparation/cracks lighting/gathering/release in columns1-4; BLUE effect must be small stepped pixels only within cell. Row6 hurt ONE sprite in column1. Row7 exhausted defeated on ground ONE sprite in column1; no blood. Every unused cell entirely transparent. No duplicate or extra poses.\nALL seven/eight rows FRONT VIEW looking straight TOWARD VIEWER. Walking and running toward the camera, both eyes visible. Sword attack is frontal foreshortened coherent front view, NEVER side view.\nNephren: tiny quiet fairy soldier, ash-gray hair with pale lavender highlights in TWO curled pigtails tied by dark ribbons, charcoal gray eyes impassive face, violet hooded knee-length coat over cream skirt with dark brown triangular frieze, dark brown ankle boots, not blue hair. Holds Carillon Insania: charcoal broad tapered cracked dark blade with irregular jagged edges, elaborate pale metal sunburst guard, dark hilt; consistent official attached sword shape. Red book strapped securely by her hip. For Nephren only EIGHT rows: same first seven rows plus row8 TWO talking subtle gestures in columns1-2. On right atlas only put a standalone large head-and-shoulders portrait of Nephren turned 3/4 right in row8 column6, leave column3-5 clear.",
+      "native_dimensions": [
+        1053,
+        1494
+      ],
+      "source_sha256": "4a2182b0c1fe852686fbc4952d1e9fc5586e85842b9afeb1772390b4bb668261",
+      "alpha_source": {
+        "transparent": 1018778,
+        "opaque": 1189,
+        "intermediate": 553215
+      },
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use.",
+        "Front idle/walk holds her book; sword appears for combat, whereas right/back idle holds Insania.",
+        "Native image is a larger generated source; runtime frame extraction, exact 96 px/m scale and binary alpha remain required.",
+        "Generated rows have variable pose widths despite requested equal columns; use actual transparent gaps when extracting attack/charge.",
+        "Native rendering has more colors and detail than the strict pixel-art target; final fitted rendering requires visual review."
+      ],
+      "portrait_cell": [
+        5,
+        7
+      ]
+    },
+    {
+      "id": "pixel_nephren_right",
+      "name": "nephren — right",
+      "category": "characters",
+      "character_ids": [
+        "nephren"
+      ],
+      "character_name": "nephren",
+      "height_m": 1.3,
+      "path": "assets/characters/nephren/nephren.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/nephren_right.png",
+      "reference_pages": [
+        27,
+        29
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 8,
+        "direction": "right"
+      },
+      "portrait_cell": [
+        5,
+        7
+      ],
+      "status": "pendingfit",
+      "prompt": "Produce an animation atlas for WordEnd HD-2D in crisp PIXEL ART: visibly hand-placed square pixel clusters, limited 24-color earthy desaturated sunset palette, stepped flat shading, no smoothing or soft glow, no antialiasing, no pure white/black outline. Character about 2.8 heads high. Transparent PNG background alpha 0 or 255, NO backdrop, ground shadow, text, grid or numbers. CAMERA only 10-15 degrees downward. Exactly SIX equal columns and SEVEN equal rows across a portrait canvas, plenty transparent gutters, full body and sword including swordtip fully contained inside each allocated cell, identical body scale and feet baseline across frames. One row per animation. Row1 idle TWO full-body sprites in columns1-2, columns3-6 empty. Row2 walking SIX distinct complete gait phases in all six columns. Row3 running FIVE distinct gait phases in columns1-5, column6 empty. Row4 sword attack FOUR phases anticipation/sweep/extension/recovery in columns1-4. Row5 sword charge FOUR phases preparation/cracks lighting/gathering/release in columns1-4; BLUE effect must be small stepped pixels only within cell. Row6 hurt ONE sprite in column1. Row7 exhausted defeated on ground ONE sprite in column1; no blood. Every unused cell entirely transparent. No duplicate or extra poses.\nALL seven/eight rows STRICT RIGHT SIDE PROFILE, nose pointing to the RIGHT in every frame, walk and run right.\nNephren: tiny quiet fairy soldier, ash-gray hair with pale lavender highlights in TWO curled pigtails tied by dark ribbons, charcoal gray eyes impassive face, violet hooded knee-length coat over cream skirt with dark brown triangular frieze, dark brown ankle boots, not blue hair. Holds Carillon Insania: charcoal broad tapered cracked dark blade with irregular jagged edges, elaborate pale metal sunburst guard, dark hilt; consistent official attached sword shape. Red book strapped securely by her hip. For Nephren only EIGHT rows: same first seven rows plus row8 TWO talking subtle gestures in columns1-2. On right atlas only put a standalone large head-and-shoulders portrait of Nephren turned 3/4 right in row8 column6, leave column3-5 clear.",
+      "native_dimensions": [
+        1052,
+        1494
+      ],
+      "source_sha256": "ca1c439e3a58142e5844b598a67b51a28efedc933e785ab229f649642ff1d4aa",
+      "alpha_source": {
+        "transparent": 942540,
+        "opaque": 264,
+        "intermediate": 628884
+      },
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use.",
+        "Native image is a larger generated source; runtime frame extraction, exact 96 px/m scale and binary alpha remain required.",
+        "Generated rows have variable pose widths despite requested equal columns; use actual transparent gaps when extracting attack/charge.",
+        "Native rendering has more colors and detail than the strict pixel-art target; final fitted rendering requires visual review."
+      ]
+    },
+    {
+      "id": "pixel_rhantolk_right",
+      "name": "rhantolk — right",
+      "category": "characters",
+      "character_ids": [
+        "rhantolk"
+      ],
+      "character_name": "rhantolk",
+      "height_m": 1.48,
+      "path": "assets/characters/rhantolk/rhantolk.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/rhantolk_right.png",
+      "reference_pages": [
+        37,
+        39
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 7,
+        "direction": "right"
+      },
+      "portrait_cell": [
+        5,
+        6
+      ],
+      "status": "pendingfit",
+      "prompt": "Produce an animation atlas for WordEnd HD-2D in crisp PIXEL ART: visibly hand-placed square pixel clusters, limited 24-color earthy desaturated sunset palette, stepped flat shading, no smoothing or soft glow, no antialiasing, no pure white/black outline. Character about 2.8 heads high. Transparent PNG background alpha 0 or 255, NO backdrop, ground shadow, text, grid or numbers. CAMERA only 10-15 degrees downward. Exactly SIX equal columns and SEVEN equal rows across a portrait canvas, plenty transparent gutters, full body and sword including swordtip fully contained inside each allocated cell, identical body scale and feet baseline across frames. One row per animation. Row1 idle TWO full-body sprites in columns1-2, columns3-6 empty. Row2 walking SIX distinct complete gait phases in all six columns. Row3 running FIVE distinct gait phases in columns1-5, column6 empty. Row4 sword attack FOUR phases anticipation/sweep/extension/recovery in columns1-4. Row5 sword charge FOUR phases preparation/cracks lighting/gathering/release in columns1-4; BLUE effect must be small stepped pixels only within cell. Row6 hurt ONE sprite in column1. Row7 exhausted defeated on ground ONE sprite in column1; no blood. Every unused cell entirely transparent. No duplicate or extra poses.\nALL seven/eight rows STRICT RIGHT SIDE PROFILE, nose pointing to the RIGHT in every frame, walk and run right.\nRhantolk: fairy soldier, long desaturated indigo straight hair with blunt fringe #868BBF, cream white kerchief band, thoughtful blue gray eyes, SKY BLUE knee length dress with WHITE laced center panel and long white sleeves, blue shoulder capelet, dark sash, opaque dark stockings and dark boots. Carillon Historia must match official: slender LONG straight light metal cracked blade, elaborately OPENWORK INDIGO wheel-shaped guard with curled pointed ornaments and dark grip. For right atlas only add standalone large head-and-shoulders portrait facing 3/4 right in row7 column6; all other unused cells stay transparent.",
+      "native_dimensions": [
+        1161,
+        1355
+      ],
+      "source_sha256": "9e11a8495aef7de5f41bccdecaf9db39c279fc88629418297880037e522d228b",
+      "alpha_source": {
+        "transparent": 1044626,
+        "opaque": 614,
+        "intermediate": 527915
+      },
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use.",
+        "Native image is a larger generated source; runtime frame extraction, exact 96 px/m scale and binary alpha remain required.",
+        "Generated rows have variable pose widths despite requested equal columns; use actual transparent gaps when extracting attack/charge.",
+        "Native rendering has more colors and detail than the strict pixel-art target; final fitted rendering requires visual review."
+      ]
+    },
+    {
+      "id": "pixel_rhantolk_front",
+      "name": "rhantolk — front",
+      "category": "characters",
+      "character_ids": [
+        "rhantolk"
+      ],
+      "character_name": "rhantolk",
+      "height_m": 1.48,
+      "path": "assets/characters/rhantolk/rhantolk_front.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/rhantolk_front.png",
+      "reference_pages": [
+        37,
+        39
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 7,
+        "direction": "front"
+      },
+      "status": "pendingfit",
+      "prompt": "Produce an animation atlas for WordEnd HD-2D in crisp PIXEL ART: visibly hand-placed square pixel clusters, limited 24-color earthy desaturated sunset palette, stepped flat shading, no smoothing or soft glow, no antialiasing, no pure white/black outline. Character about 2.8 heads high. Transparent PNG background alpha 0 or 255, NO backdrop, ground shadow, text, grid or numbers. CAMERA only 10-15 degrees downward. Exactly SIX equal columns and SEVEN equal rows across a portrait canvas, plenty transparent gutters, full body and sword including swordtip fully contained inside each allocated cell, identical body scale and feet baseline across frames. One row per animation. Row1 idle TWO full-body sprites in columns1-2, columns3-6 empty. Row2 walking SIX distinct complete gait phases in all six columns. Row3 running FIVE distinct gait phases in columns1-5, column6 empty. Row4 sword attack FOUR phases anticipation/sweep/extension/recovery in columns1-4. Row5 sword charge FOUR phases preparation/cracks lighting/gathering/release in columns1-4; BLUE effect must be small stepped pixels only within cell. Row6 hurt ONE sprite in column1. Row7 exhausted defeated on ground ONE sprite in column1; no blood. Every unused cell entirely transparent. No duplicate or extra poses.\nALL seven/eight rows FRONT VIEW looking straight TOWARD VIEWER. Walking and running toward the camera, both eyes visible. Sword attack is frontal foreshortened coherent front view, NEVER side view.\nRhantolk: fairy soldier, long desaturated indigo straight hair with blunt fringe #868BBF, cream white kerchief band, thoughtful blue gray eyes, SKY BLUE knee length dress with WHITE laced center panel and long white sleeves, blue shoulder capelet, dark sash, opaque dark stockings and dark boots. Carillon Historia must match official: slender LONG straight light metal cracked blade, elaborately OPENWORK INDIGO wheel-shaped guard with curled pointed ornaments and dark grip. For right atlas only add standalone large head-and-shoulders portrait facing 3/4 right in row7 column6; all other unused cells stay transparent.",
+      "native_dimensions": [
+        1064,
+        1479
+      ],
+      "source_sha256": "3740ddf3fa7e2d0ea98ae46f0e5325bf77343b731dc15c2b3b028023f1ed78cc",
+      "alpha_source": {
+        "transparent": 1013246,
+        "opaque": 1121,
+        "intermediate": 559289
+      },
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use.",
+        "Native image is a larger generated source; runtime frame extraction, exact 96 px/m scale and binary alpha remain required.",
+        "Generated rows have variable pose widths despite requested equal columns; use actual transparent gaps when extracting attack/charge.",
+        "Native rendering has more colors and detail than the strict pixel-art target; final fitted rendering requires visual review."
+      ],
+      "portrait_cell": [
+        5,
+        6
+      ]
+    },
+    {
+      "id": "pixel_rhantolk_back",
+      "name": "rhantolk — back",
+      "category": "characters",
+      "character_ids": [
+        "rhantolk"
+      ],
+      "character_name": "rhantolk",
+      "height_m": 1.48,
+      "path": "assets/characters/rhantolk/rhantolk_back.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/rhantolk_back.png",
+      "reference_pages": [
+        37,
+        39
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 7,
+        "direction": "back"
+      },
+      "status": "pendingfit",
+      "prompt": "Produce an animation atlas for WordEnd HD-2D in crisp PIXEL ART: visibly hand-placed square pixel clusters, limited 24-color earthy desaturated sunset palette, stepped flat shading, no smoothing or soft glow, no antialiasing, no pure white/black outline. Character about 2.8 heads high. Transparent PNG background alpha 0 or 255, NO backdrop, ground shadow, text, grid or numbers. CAMERA only 10-15 degrees downward. Exactly SIX equal columns and SEVEN equal rows across a portrait canvas, plenty transparent gutters, full body and sword including swordtip fully contained inside each allocated cell, identical body scale and feet baseline across frames. One row per animation. Row1 idle TWO full-body sprites in columns1-2, columns3-6 empty. Row2 walking SIX distinct complete gait phases in all six columns. Row3 running FIVE distinct gait phases in columns1-5, column6 empty. Row4 sword attack FOUR phases anticipation/sweep/extension/recovery in columns1-4. Row5 sword charge FOUR phases preparation/cracks lighting/gathering/release in columns1-4; BLUE effect must be small stepped pixels only within cell. Row6 hurt ONE sprite in column1. Row7 exhausted defeated on ground ONE sprite in column1; no blood. Every unused cell entirely transparent. No duplicate or extra poses.\nALL seven rows STRICT BACK VIEW looking and moving AWAY FROM VIEWER, BACK of head visible and FACE COMPLETELY HIDDEN in every single frame including sword attacks and charge.\nRhantolk: fairy soldier, long desaturated indigo straight hair with blunt fringe #868BBF, cream white kerchief band, thoughtful blue gray eyes, SKY BLUE knee length dress with WHITE laced center panel and long white sleeves, blue shoulder capelet, dark sash, opaque dark stockings and dark boots. Carillon Historia must match official: slender LONG straight light metal cracked blade, elaborately OPENWORK INDIGO wheel-shaped guard with curled pointed ornaments and dark grip. For right atlas only add standalone large head-and-shoulders portrait facing 3/4 right in row7 column6; all other unused cells stay transparent.",
+      "native_dimensions": [
+        1053,
+        1494
+      ],
+      "source_sha256": "a62709033b9109b079c6d5cb43176ed37c5e70f67e75cad216a63018dda43153",
+      "alpha_source": {
+        "transparent": 909795,
+        "opaque": 358,
+        "intermediate": 663029
+      },
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use.",
+        "Native image is a larger generated source; runtime frame extraction, exact 96 px/m scale and binary alpha remain required.",
+        "Generated rows have variable pose widths despite requested equal columns; use actual transparent gaps when extracting attack/charge.",
+        "Native rendering has more colors and detail than the strict pixel-art target; final fitted rendering requires visual review."
+      ],
+      "portrait_cell": [
+        5,
+        6
+      ]
+    },
+    {
+      "id": "pixel_lillia_front",
+      "name": "lillia — front",
+      "category": "characters",
+      "character_ids": [
+        "lillia"
+      ],
+      "character_name": "lillia",
+      "height_m": 1.55,
+      "path": "assets/characters/lillia/lillia_front.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/lillia_front.png",
+      "reference_pages": [
+        58
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 7,
+        "direction": "front"
+      },
+      "status": "pendingfit",
+      "prompt": "Produce an animation atlas for WordEnd HD-2D in crisp PIXEL ART: visibly hand-placed square pixel clusters, limited 24-color earthy desaturated sunset palette, stepped flat shading, no smoothing or soft glow, no antialiasing, no pure white/black outline. Character about 2.8 heads high. Transparent PNG background alpha 0 or 255, NO backdrop, ground shadow, text, grid or numbers. CAMERA only 10-15 degrees downward. Exactly SIX equal columns and SEVEN equal rows across a portrait canvas, plenty transparent gutters, full body and sword including swordtip fully contained inside each allocated cell, identical body scale and feet baseline across frames. One row per animation. Row1 idle TWO full-body sprites in columns1-2, columns3-6 empty. Row2 walking SIX distinct complete gait phases in all six columns. Row3 running FIVE distinct gait phases in columns1-5, column6 empty. Row4 sword attack FOUR phases anticipation/sweep/extension/recovery in columns1-4. Row5 sword charge FOUR phases preparation/cracks lighting/gathering/release in columns1-4; BLUE effect must be small stepped pixels only within cell. Row6 hurt ONE sprite in column1. Row7 exhausted defeated on ground ONE sprite in column1; no blood. Every unused cell entirely transparent. No duplicate or extra poses.\nALL seven/eight rows FRONT VIEW looking straight TOWARD VIEWER. Walking and running toward the camera, both eyes visible. Sword attack is frontal foreshortened coherent front view, NEVER side view.\nLillia Asplay: red layered shoulder-length hair with small HIGH ponytail tied gold, deep rose eyes, stern warm expression. Ivory fitted armor chest with maroon high collar and capelet with GOLD edges and HEART shaped gold clasps, burgundy divided tunic under dark fitted sleeves, ivory gauntlets, white tall plated greaves, long cape with MAROON exterior and IVORY lining. CLOTHING faithful attached sheet. Carries plain steel TRAINING longsword with simple crossguard, artistic adaptation because source page gives no weapon. No invented ornate canonical blade. For right atlas only add standalone large head-and-shoulders portrait facing 3/4 right in row7 column6; all other unused cells stay transparent.",
+      "native_dimensions": [
+        1053,
+        1493
+      ],
+      "source_sha256": "dcef4ce4bebd64d94b556c73f39cb10fa960460c50873570d545929f824baf4a",
+      "alpha_source": {
+        "transparent": 933145,
+        "opaque": 375,
+        "intermediate": 638609
+      },
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use.",
+        "Native image is a larger generated source; runtime frame extraction, exact 96 px/m scale and binary alpha remain required.",
+        "Generated rows have variable pose widths despite requested equal columns; use actual transparent gaps when extracting attack/charge.",
+        "Native rendering has more colors and detail than the strict pixel-art target; final fitted rendering requires visual review."
+      ],
+      "portrait_cell": [
+        5,
+        6
+      ],
+      "description": "Costume adapted from official p058; plain training longsword is an artistic adaptation, not a verified canonical Carillon."
+    },
+    {
+      "id": "pixel_lillia_right",
+      "name": "lillia — right",
+      "category": "characters",
+      "character_ids": [
+        "lillia"
+      ],
+      "character_name": "lillia",
+      "height_m": 1.55,
+      "path": "assets/characters/lillia/lillia.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/lillia_right.png",
+      "reference_pages": [
+        58
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 7,
+        "direction": "right"
+      },
+      "portrait_cell": [
+        5,
+        6
+      ],
+      "status": "pendingfit",
+      "prompt": "Produce an animation atlas for WordEnd HD-2D in crisp PIXEL ART: visibly hand-placed square pixel clusters, limited 24-color earthy desaturated sunset palette, stepped flat shading, no smoothing or soft glow, no antialiasing, no pure white/black outline. Character about 2.8 heads high. Transparent PNG background alpha 0 or 255, NO backdrop, ground shadow, text, grid or numbers. CAMERA only 10-15 degrees downward. Exactly SIX equal columns and SEVEN equal rows across a portrait canvas, plenty transparent gutters, full body and sword including swordtip fully contained inside each allocated cell, identical body scale and feet baseline across frames. One row per animation. Row1 idle TWO full-body sprites in columns1-2, columns3-6 empty. Row2 walking SIX distinct complete gait phases in all six columns. Row3 running FIVE distinct gait phases in columns1-5, column6 empty. Row4 sword attack FOUR phases anticipation/sweep/extension/recovery in columns1-4. Row5 sword charge FOUR phases preparation/cracks lighting/gathering/release in columns1-4; BLUE effect must be small stepped pixels only within cell. Row6 hurt ONE sprite in column1. Row7 exhausted defeated on ground ONE sprite in column1; no blood. Every unused cell entirely transparent. No duplicate or extra poses.\nALL seven/eight rows STRICT RIGHT SIDE PROFILE, nose pointing to the RIGHT in every frame, walk and run right.\nLillia Asplay: red layered shoulder-length hair with small HIGH ponytail tied gold, deep rose eyes, stern warm expression. Ivory fitted armor chest with maroon high collar and capelet with GOLD edges and HEART shaped gold clasps, burgundy divided tunic under dark fitted sleeves, ivory gauntlets, white tall plated greaves, long cape with MAROON exterior and IVORY lining. CLOTHING faithful attached sheet. Carries plain steel TRAINING longsword with simple crossguard, artistic adaptation because source page gives no weapon. No invented ornate canonical blade. For right atlas only add standalone large head-and-shoulders portrait facing 3/4 right in row7 column6; all other unused cells stay transparent.",
+      "native_dimensions": [
+        1161,
+        1355
+      ],
+      "source_sha256": "5b2bdf18ac263e21e586d3687d8783e84ed83778f0f51dde39afcdb487189d26",
+      "alpha_source": {
+        "transparent": 901517,
+        "opaque": 267,
+        "intermediate": 671371
+      },
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use.",
+        "Native image is a larger generated source; runtime frame extraction, exact 96 px/m scale and binary alpha remain required.",
+        "Generated rows have variable pose widths despite requested equal columns; use actual transparent gaps when extracting attack/charge.",
+        "Native rendering has more colors and detail than the strict pixel-art target; final fitted rendering requires visual review."
+      ],
+      "description": "Costume adapted from official p058; plain training longsword is an artistic adaptation, not a verified canonical Carillon."
+    },
+    {
+      "id": "pixel_lillia_back",
+      "name": "lillia — back",
+      "category": "characters",
+      "character_ids": [
+        "lillia"
+      ],
+      "character_name": "lillia",
+      "height_m": 1.55,
+      "path": "assets/characters/lillia/lillia_back.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/lillia_back.png",
+      "reference_pages": [
+        58
+      ],
+      "layout": {
+        "kind": "directional_rows_combat",
+        "columns": 6,
+        "rows": 7,
+        "direction": "back"
+      },
+      "status": "pendingfit",
+      "prompt": "Produce an animation atlas for WordEnd HD-2D in crisp PIXEL ART: visibly hand-placed square pixel clusters, limited 24-color earthy desaturated sunset palette, stepped flat shading, no smoothing or soft glow, no antialiasing, no pure white/black outline. Character about 2.8 heads high. Transparent PNG background alpha 0 or 255, NO backdrop, ground shadow, text, grid or numbers. CAMERA only 10-15 degrees downward. Exactly SIX equal columns and SEVEN equal rows across a portrait canvas, plenty transparent gutters, full body and sword including swordtip fully contained inside each allocated cell, identical body scale and feet baseline across frames. One row per animation. Row1 idle TWO full-body sprites in columns1-2, columns3-6 empty. Row2 walking SIX distinct complete gait phases in all six columns. Row3 running FIVE distinct gait phases in columns1-5, column6 empty. Row4 sword attack FOUR phases anticipation/sweep/extension/recovery in columns1-4. Row5 sword charge FOUR phases preparation/cracks lighting/gathering/release in columns1-4; BLUE effect must be small stepped pixels only within cell. Row6 hurt ONE sprite in column1. Row7 exhausted defeated on ground ONE sprite in column1; no blood. Every unused cell entirely transparent. No duplicate or extra poses.\nALL seven rows STRICT BACK VIEW looking and moving AWAY FROM VIEWER, BACK of head visible and FACE COMPLETELY HIDDEN in every single frame including sword attacks and charge.\nLillia Asplay: red layered shoulder-length hair with small HIGH ponytail tied gold, deep rose eyes, stern warm expression. Ivory fitted armor chest with maroon high collar and capelet with GOLD edges and HEART shaped gold clasps, burgundy divided tunic under dark fitted sleeves, ivory gauntlets, white tall plated greaves, long cape with MAROON exterior and IVORY lining. CLOTHING faithful attached sheet. Carries plain steel TRAINING longsword with simple crossguard, artistic adaptation because source page gives no weapon. No invented ornate canonical blade. For right atlas only add standalone large head-and-shoulders portrait facing 3/4 right in row7 column6; all other unused cells stay transparent.",
+      "native_dimensions": [
+        1052,
+        1494
+      ],
+      "source_sha256": "fab06df3c713e79e99769089e7ed6ce4d29da68a59d6224d83a8953e65cb20e5",
+      "alpha_source": {
+        "transparent": 974375,
+        "opaque": 343,
+        "intermediate": 596970
+      },
+      "limitations": [
+        "Native generation has intermediate alpha; thresholding is mandatory before runtime use.",
+        "Native image is a larger generated source; runtime frame extraction, exact 96 px/m scale and binary alpha remain required.",
+        "Generated rows have variable pose widths despite requested equal columns; use actual transparent gaps when extracting attack/charge.",
+        "Native rendering has more colors and detail than the strict pixel-art target; final fitted rendering requires visual review."
+      ],
+      "portrait_cell": [
+        5,
+        6
+      ],
+      "description": "Costume adapted from official p058; plain training longsword is an artistic adaptation, not a verified canonical Carillon."
+    }
+  ]
+}

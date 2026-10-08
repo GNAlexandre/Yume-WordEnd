@@ -20,11 +20,35 @@ static var _cache: Dictionary = {}
 
 
 ## Le JSON de la planche du skin (Dictionary vide si absent ou invalide).
-static func read_sheet(skin: SkinData) -> Dictionary:
-	if skin == null or skin.frames_json == null:
+static func read_sheet(skin: SkinData, direction: String = "right") -> Dictionary:
+	var json := json_for(skin, direction)
+	if json == null:
 		return {}
-	var data: Variant = skin.frames_json.data
+	var data: Variant = json.data
 	return data if data is Dictionary else {}
+
+
+## Texture d'une orientation ; une planche unique peut porter les trois directions.
+static func texture_for(skin: SkinData, direction: String = "right") -> Texture2D:
+	if skin == null:
+		return null
+	return skin.directional_sheets.get(direction, skin.sprite_sheet)
+
+
+static func json_for(skin: SkinData, direction: String = "right") -> JSON:
+	if skin == null:
+		return null
+	return skin.directional_frames_json.get(direction, skin.frames_json)
+
+
+## Une orientation n'est annoncée que si ses images sont explicitement décrites.
+static func has_direction(skin: SkinData, direction: String) -> bool:
+	return (
+		skin != null
+		and skin.directional_frames_json.has(direction)
+		and json_for(skin, direction) != null
+		and texture_for(skin, direction) != null
+	)
 
 
 ## Animations de la planche : nom → { ips, boucle, images, coup?, onde? }.
@@ -35,12 +59,14 @@ static func animations(sheet: Dictionary) -> Dictionary:
 
 ## SpriteFrames de la planche du skin, construit à la première demande puis partagé (null si le
 ## skin n'a pas de planche).
-static func frames_for(skin: SkinData) -> SpriteFrames:
-	if skin == null or skin.sprite_sheet == null or skin.frames_json == null:
+static func frames_for(skin: SkinData, direction: String = "right") -> SpriteFrames:
+	var texture := texture_for(skin, direction)
+	var json := json_for(skin, direction)
+	if texture == null or json == null:
 		return null
-	var key := _cache_key(skin.sprite_sheet, skin.frames_json)
+	var key := _cache_key(texture, json)
 	if not _cache.has(key):
-		_cache[key] = build_frames(skin.sprite_sheet, read_sheet(skin))
+		_cache[key] = build_frames(texture, read_sheet(skin, direction))
 	return _cache[key]
 
 
@@ -70,6 +96,7 @@ static func build_frames(texture: Texture2D, sheet: Dictionary) -> SpriteFrames:
 			var atlas := AtlasTexture.new()
 			atlas.atlas = texture
 			atlas.region = Rect2(float(image[0]), float(image[1]), float(image[2]), float(image[3]))
+			atlas.filter_clip = true
 			atlas.set_meta(ANCHOR_META, Vector2(float(image[4]), float(image[5])))
 			frames.add_frame(anim_id, atlas)
 	return frames

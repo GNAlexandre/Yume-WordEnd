@@ -1,0 +1,970 @@
+{
+  "entries": [
+    {
+      "id": "pixel_golem_directions",
+      "name": "Golem domestique",
+      "category": "characters",
+      "character_ids": [
+        "golem"
+      ],
+      "height_m": 1.45,
+      "source_path": "assets/source/resumed_2d/pixel/characters/golem_directions.png",
+      "path": "assets/characters/golem/golem.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        65
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "domestic golem, large round chunky gray-green patchwork stone/metal humanoid with small simple head, two tiny dot eyes, broad torso, huge rounded arms and mitten hands, beige strapped work apron, short block feet, gentle expression; no police cap. BALLMAN/goLEM palette is a game adaptation because source p65 is uncolored line art. Keep Elq fully clothed and innocent.",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nSINGLE IDENTITY: Golem domestique. domestic golem, large round chunky gray-green patchwork stone/metal humanoid with small simple head, two tiny dot eyes, broad torso, huge rounded arms and mitten hands, beige strapped work apron, short block feet, gentle expression; no police cap. BALLMAN/goLEM palette is a game adaptation because source p65 is uncolored line art. Keep Elq fully clothed and innocent.",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "8e37123404cbe49cbd35974b6642787d901c0ef3ce3244af24c7edff22195927",
+      "native_alpha": {
+        "zero": 981943,
+        "opaque": 0,
+        "partial": 590921
+      }
+    },
+    {
+      "id": "pixel_ballman_directions",
+      "name": "Ballman / ボールマン",
+      "category": "characters",
+      "character_ids": [
+        "ballman"
+      ],
+      "height_m": 0.65,
+      "source_path": "assets/source/resumed_2d/pixel/characters/ballman_directions.png",
+      "path": "assets/characters/ballman/ballman.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        65
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "Ballman, small cream-beige spherical creature, two dot eyes, broad smiling wedge mouth, thin wire-like arms and legs, mitten hands, little plain shoes, no helmet/cook hat needed; second talking mouth. ",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nSINGLE IDENTITY: Ballman / ボールマン. Ballman, small cream-beige spherical creature, two dot eyes, broad smiling wedge mouth, thin wire-like arms and legs, mitten hands, little plain shoes, no helmet/cook hat needed; second talking mouth. ",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "ae844ae881566d00c9adc0d13aa1cc509762348d3fe1542d15a3b32351ecab40",
+      "native_alpha": {
+        "zero": 1119224,
+        "opaque": 0,
+        "partial": 453640
+      }
+    },
+    {
+      "id": "pixel_eboncandle_skull_directions",
+      "name": "Eboncandle — crâne",
+      "category": "characters",
+      "character_ids": [
+        "eboncandle_skull"
+      ],
+      "height_m": 1.25,
+      "source_path": "assets/source/resumed_2d/pixel/characters/eboncandle_skull_directions.png",
+      "path": "assets/characters/eboncandle_skull/eboncandle_skull.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        62
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "Eboncandle present form, a large ivory skull with delicate red sigil seam traces mounted on small elaborate brass gold four-wheeled carriage with lantern posts as p62; no humanoid body, the whole cart fits frame, expression via jaw slightly opened right. These are two different times of SAME Souwong and SAME Eboncandle not extra invented names.",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nSINGLE IDENTITY: Eboncandle — crâne. Eboncandle present form, a large ivory skull with delicate red sigil seam traces mounted on small elaborate brass gold four-wheeled carriage with lantern posts as p62; no humanoid body, the whole cart fits frame, expression via jaw slightly opened right. These are two different times of SAME Souwong and SAME Eboncandle not extra invented names.",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "a9dabd1edd1a98926b3f618afe54dbfc866494d74c4e68d5236a61a3e8ceaca6",
+      "native_alpha": {
+        "zero": 999001,
+        "opaque": 0,
+        "partial": 573863
+      },
+      "animation_sources": {
+        "front:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/eboncandle_skull_correction.png",
+          "row": 0,
+          "rows": 3,
+          "count": 4,
+          "original_count": 3,
+          "columns": 4
+        },
+        "back:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/eboncandle_skull_correction.png",
+          "row": 1,
+          "rows": 3,
+          "count": 4,
+          "original_count": 3,
+          "columns": 4
+        },
+        "right:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/eboncandle_skull_correction.png",
+          "row": 2,
+          "rows": 3,
+          "count": 4,
+          "original_count": 3,
+          "columns": 4
+        }
+      },
+      "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 4 EQUALLY SPACED COLUMNS and 3 EQUALLY SPACED ROWS. ONLY THREE ROWS, four sprites each row, body260pxhigh. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT FRONT facingviewer; row2 STRICT BACK facing entirely away, hiddenface NO EYES; row3 STRICT RIGHT PROFILE lookingright. Four phases of FAST ROLLING carriage wheel rotation and small skull bounce; wheels visibly spokes different angles in each frame. Bodycamera slightelevated10degrees. Source identity: Eboncandle present form, a large ivory skull with delicate red sigil seam traces mounted on small elaborate brass gold four-wheeled carriage with lantern posts as p62; no humanoid body, the whole cart fits frame, expression via jaw slightly opened right. These are two different times of SAME Souwong and SAME Eboncandle not extra invented names.",
+      "correction_sha256": "b9e3a08863242b47c80ab1c092900e0834b0753dff899c337346eba5036ec6b1"
+    },
+    {
+      "id": "pixel_cyclops_doctor_directions",
+      "name": "Médecin cyclope",
+      "category": "characters",
+      "character_ids": [
+        "cyclops_doctor"
+      ],
+      "height_m": 1.7,
+      "source_path": "assets/source/resumed_2d/pixel/characters/cyclops_doctor_directions.png",
+      "path": "assets/characters/cyclops_doctor/cyclops_doctor.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        66
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "cyclops doctor, stocky gray-skinned male cyclops with ONE orange-brown central eye behind single round monocle held X strap, tiny forehead horn, pointed ears, lower small tusks, long white medical coat over olive brown trousers and black boots, friendly professional. ",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nSINGLE IDENTITY: Médecin cyclope. cyclops doctor, stocky gray-skinned male cyclops with ONE orange-brown central eye behind single round monocle held X strap, tiny forehead horn, pointed ears, lower small tusks, long white medical coat over olive brown trousers and black boots, friendly professional. ",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "e90b2fa5073c329da0c76a8c60fde251038af43c4a825f28087837affaedf6dd",
+      "native_alpha": {
+        "zero": 1103320,
+        "opaque": 0,
+        "partial": 469544
+      }
+    },
+    {
+      "id": "pixel_knight_feline_directions",
+      "name": "Chevalier félin anonyme",
+      "category": "characters",
+      "character_ids": [
+        "knight_feline"
+      ],
+      "height_m": 1.45,
+      "source_path": "assets/source/resumed_2d/pixel/characters/knight_feline_directions.png",
+      "path": "assets/characters/knight_feline/knight_feline.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        68
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "{\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nSINGLE IDENTITY: Chevalier félin anonyme. {\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "df25541f168ed90e96e4d4898b064c26ad9e3ed2d54e12dc41468307168ee759",
+      "native_alpha": {
+        "zero": 1136715,
+        "opaque": 0,
+        "partial": 436149
+      },
+      "animation_sources": {
+        "back:parle": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/knight_feline_correction.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 0,
+          "columns": 2
+        }
+      },
+      "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 2 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT BACK facing entirely away, hiddenface NO EYES. TWO talking frames, hand small gesture, cane held. Facing away entirely NOface, NOeye. Bodycamera slightelevated10degrees. Source identity: {\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}",
+      "correction_sha256": "1cdf942ff41bbd489b48f9de889b9829a28eb4f1fdd94bca4da574b0955b31a3"
+    },
+    {
+      "id": "pixel_godrey_directions",
+      "name": "Godrey Mogutaman",
+      "category": "characters",
+      "character_ids": [
+        "godrey"
+      ],
+      "height_m": 1.45,
+      "source_path": "assets/source/resumed_2d/pixel/characters/godrey_directions.png",
+      "path": "assets/characters/godrey/godrey.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        69
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "{\"source_pages\": [69], \"head\": \"Purple bald forehead with small horn, very broad drooping pointed ears, black side/back hair and white chin beard\", \"body\": \"Black officer uniform with gold piping and purple pointed tail\", \"prop\": \"Brown tobacco pipe\", \"reference_role\": \"Named officer\"}",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nSINGLE IDENTITY: Godrey Mogutaman. {\"source_pages\": [69], \"head\": \"Purple bald forehead with small horn, very broad drooping pointed ears, black side/back hair and white chin beard\", \"body\": \"Black officer uniform with gold piping and purple pointed tail\", \"prop\": \"Brown tobacco pipe\", \"reference_role\": \"Named officer\"}",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "e7b529667f618af8318181b37fc724a70ecc82ef5a9e6d88980a2d7c3e2dee36",
+      "native_alpha": {
+        "zero": 1100705,
+        "opaque": 0,
+        "partial": 472159
+      }
+    },
+    {
+      "id": "pixel_frog_soldier_directions",
+      "name": "Soldat grenouille",
+      "category": "characters",
+      "character_ids": [
+        "frog_soldier"
+      ],
+      "height_m": 1.35,
+      "source_path": "assets/source/resumed_2d/pixel/characters/frog_soldier_directions.png",
+      "path": "assets/characters/frog_soldier/frog_soldier.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        70
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "{\"source_pages\": [70], \"head\": \"Large broad green frog head, protruding eyes on top corners, horizontal wide pale lower jaw\", \"uniform\": \"Black-and-gold military coat, trousers and boots\", \"identity_status\": \"Anonymous soldier role\"}",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nSINGLE IDENTITY: Soldat grenouille. {\"source_pages\": [70], \"head\": \"Large broad green frog head, protruding eyes on top corners, horizontal wide pale lower jaw\", \"uniform\": \"Black-and-gold military coat, trousers and boots\", \"identity_status\": \"Anonymous soldier role\"}",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "aa3e937412692b706c990b317917fccdb063fd896c702769a88a9329f8c04941",
+      "native_alpha": {
+        "zero": 1201645,
+        "opaque": 0,
+        "partial": 371219
+      }
+    },
+    {
+      "id": "pixel_knight_canine_directions",
+      "name": "Chevalier canin anonyme",
+      "category": "characters",
+      "character_ids": [
+        "knight_canine"
+      ],
+      "height_m": 1.75,
+      "source_path": "assets/source/resumed_2d/pixel/characters/knight_canine_directions.png",
+      "path": "assets/characters/knight_canine/knight_canine.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        68
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "{\"source_pages\": [68], \"clothes\": \"Loose white open-neck shirt, black trousers, black ankle boots and red armband bow on left upper arm\", \"face\": \"Broad brown canine face, dark rounded nose and yellow eyes\", \"identity_status\": \"Anonymous knight role, bottom left p68\", \"trouser_color\": \"#272D25\", \"forearm_color\": \"#8F8968\", \"body_width\": 1.13, \"ear_color\": \"#8F8968\"}",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nSINGLE IDENTITY: Chevalier canin anonyme. {\"source_pages\": [68], \"clothes\": \"Loose white open-neck shirt, black trousers, black ankle boots and red armband bow on left upper arm\", \"face\": \"Broad brown canine face, dark rounded nose and yellow eyes\", \"identity_status\": \"Anonymous knight role, bottom left p68\", \"trouser_color\": \"#272D25\", \"forearm_color\": \"#8F8968\", \"body_width\": 1.13, \"ear_color\": \"#8F8968\"}",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "453f10904ab73175f09517f11cbc28248b5e0b0eb2ee7d64281cca3474c825bf",
+      "native_alpha": {
+        "zero": 1179081,
+        "opaque": 0,
+        "partial": 393783
+      }
+    },
+    {
+      "id": "pixel_police_golem_directions",
+      "name": "Golem policier",
+      "category": "characters",
+      "character_ids": [
+        "police_golem"
+      ],
+      "height_m": 1.45,
+      "source_path": "assets/source/resumed_2d/pixel/characters/police_golem_directions.png",
+      "path": "assets/characters/police_golem/police_golem.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        69
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "{\"source_pages\": [69], \"body\": \"Stocky rounded stone automaton with pale worn surface patches\", \"uniform\": \"Blue cylindrical police kepi with golden emblem, diagonal blue-and-gold sash and blue waist covering\", \"identity_status\": \"Police role, no individual name supplied\"}",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nSINGLE IDENTITY: Golem policier. {\"source_pages\": [69], \"body\": \"Stocky rounded stone automaton with pale worn surface patches\", \"uniform\": \"Blue cylindrical police kepi with golden emblem, diagonal blue-and-gold sash and blue waist covering\", \"identity_status\": \"Police role, no individual name supplied\"}",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "974c9997657ea2cb3ca458693cb80467abcaca4fbe693782a7a5700d1e125161",
+      "native_alpha": {
+        "zero": 1033840,
+        "opaque": 0,
+        "partial": 539024
+      },
+      "animation_sources": {
+        "right:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/police_golem_correction.png",
+          "row": 0,
+          "rows": 1,
+          "count": 4,
+          "original_count": 4,
+          "columns": 4
+        }
+      },
+      "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 4 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 4 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT RIGHT PROFILE lookingright. FOUR distinct running phases ONLY; feet alternating extended, push-off, lifted, crossing. Camera slightelevated10degrees. Sourceidentity:{\"source_pages\": [69], \"body\": \"Stocky rounded stone automaton with pale worn surface patches\", \"uniform\": \"Blue cylindrical police kepi with golden emblem, diagonal blue-and-gold sash and blue waist covering\", \"identity_status\": \"Police role, no individual name supplied\"}",
+      "correction_sha256": "52cb4ceae76d57035bf07274c07854762ebe787c83e4a6418f753dfb33ad6200"
+    },
+    {
+      "id": "pixel_baroni_directions",
+      "name": "Baroni Makish",
+      "category": "characters",
+      "character_ids": [
+        "baroni"
+      ],
+      "height_m": 1.65,
+      "source_path": "assets/source/resumed_2d/pixel/characters/baroni_directions.png",
+      "path": "assets/characters/baroni/baroni.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        70
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "{\"source_pages\": [70], \"head\": \"Humanlike pale face, extremely tall white rabbit ears with pink inner surface, blond bangs and long ponytail, dark round spectacles\", \"uniform\": \"Black-and-gold standing collar officer uniform with shoulder rank bars\", \"reference_role\": \"Named rabbit officer; not anonymous shorter rabbit at p71\", \"ear_color\": \"#E4DACE\"}",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nSINGLE IDENTITY: Baroni Makish. {\"source_pages\": [70], \"head\": \"Humanlike pale face, extremely tall white rabbit ears with pink inner surface, blond bangs and long ponytail, dark round spectacles\", \"uniform\": \"Black-and-gold standing collar officer uniform with shoulder rank bars\", \"reference_role\": \"Named rabbit officer; not anonymous shorter rabbit at p71\", \"ear_color\": \"#E4DACE\"}",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "90098e3d9e12d5c219be91a65560fd4b49f486ce40acb78cc06812bbce93084f",
+      "native_alpha": {
+        "zero": 1189006,
+        "opaque": 0,
+        "partial": 383858
+      },
+      "animation_sources": {
+        "right:repos": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/baroni_right_repos.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 0,
+          "columns": 2
+        },
+        "right:marche": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/baroni_right_marche.png",
+          "row": 0,
+          "rows": 1,
+          "count": 6,
+          "original_count": 6,
+          "columns": 6
+        }
+      },
+      "correction_prompt": "REPLACEMENT TRUE PIXEL ART gameanimation strip matching the referenced character EXACT costume,palette,identity, simple crisp square pixelclusters and steppedshading, NO smoothpainting or3D. Transparent background,no groundshadows/text/grid/labels/portraits. Landscape1536x1024, ONLY 6 EQUALLY-SPACED columns, ONE ROW acrossmiddle containing 6 fullbody poses total. EVERY FIGURE ENTIRE including tall ears,wings,tail,birdtalons/boots; large transparentmargin, maxheight550px and maxwidth220px. Nooverlaps! Same scale/feetbaseline. Every pose STRICT RIGHTPROFILE lookingright; camera slightelevated10degrees. SIX distinct walking phases, all boots fullycontained. Arms alternate; leftleg/rightleg forward alternate. Identity:{\"source_pages\": [70], \"head\": \"Humanlike pale face, extremely tall white rabbit ears with pink inner surface, blond bangs and long ponytail, dark round spectacles\", \"uniform\": \"Black-and-gold standing collar officer uniform with shoulder rank bars\", \"reference_role\": \"Named rabbit officer; not anonymous shorter rabbit at p71\", \"ear_color\": \"#E4DACE\"}",
+      "correction_sha256": "ab1a8205de78396984a9b6feb40778580dafef18895559bf43f5462ae9c93e75"
+    },
+    {
+      "id": "pixel_wolf_soldier_directions",
+      "name": "Soldat loup",
+      "category": "characters",
+      "character_ids": [
+        "wolf_soldier"
+      ],
+      "height_m": 1.8,
+      "source_path": "assets/source/resumed_2d/pixel/characters/wolf_soldier_directions.png",
+      "path": "assets/characters/wolf_soldier/wolf_soldier.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        71
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "{\"source_pages\": [71], \"head\": \"Gray wolf face, black brow tuft, cream muzzle, red scar over left eye\", \"body\": \"Broad-shouldered black officer coat, bare fur forearms and large gray tail\", \"identity_status\": \"Anonymous wolf crew, bottom left p71\", \"ear_color\": \"#938D7C\"}",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nSINGLE IDENTITY: Soldat loup. {\"source_pages\": [71], \"head\": \"Gray wolf face, black brow tuft, cream muzzle, red scar over left eye\", \"body\": \"Broad-shouldered black officer coat, bare fur forearms and large gray tail\", \"identity_status\": \"Anonymous wolf crew, bottom left p71\", \"ear_color\": \"#938D7C\"}",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "e386042ff2cf3a743550d557aa11c3317533e158775420cde4e55749af839388",
+      "native_alpha": {
+        "zero": 1072344,
+        "opaque": 0,
+        "partial": 500520
+      },
+      "animation_sources": {
+        "back:parle": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/wolf_soldier_correction.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 0,
+          "columns": 2
+        }
+      },
+      "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 2 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT BACK facing entirely away, hiddenface NO EYES. TWO talking frames, subtle hand gesture. Facing away, nofacevisible. Bodycamera slightelevated10degrees. Source identity: {\"source_pages\": [71], \"head\": \"Gray wolf face, black brow tuft, cream muzzle, red scar over left eye\", \"body\": \"Broad-shouldered black officer coat, bare fur forearms and large gray tail\", \"identity_status\": \"Anonymous wolf crew, bottom left p71\", \"ear_color\": \"#938D7C\"}",
+      "correction_sha256": "0f13fe1b16841a0fa8920543174a202433c1cf913203b02ffbb9a27f663d35b3"
+    },
+    {
+      "id": "pixel_cat_soldier_directions",
+      "name": "Soldat félin",
+      "category": "characters",
+      "character_ids": [
+        "cat_soldier"
+      ],
+      "height_m": 1.55,
+      "source_path": "assets/source/resumed_2d/pixel/characters/cat_soldier_directions.png",
+      "path": "assets/characters/cat_soldier/cat_soldier.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        71
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "CAT SOLDIER from lower p71, gray cat man yellow eyes pointed dark cat ears, short black hair, narrow face, black/navy gold-trim double breasted military tunic, black belt gold rectangular buckle, dark trousers and boots, thin gray tail. ",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nSINGLE IDENTITY: Soldat félin. CAT SOLDIER from lower p71, gray cat man yellow eyes pointed dark cat ears, short black hair, narrow face, black/navy gold-trim double breasted military tunic, black belt gold rectangular buckle, dark trousers and boots, thin gray tail. ",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "c09378b5fd4c814a209a94f67c6495b9f0efb0d7eeaaf4bc3e72f34771ce8f85",
+      "native_alpha": {
+        "zero": 1242162,
+        "opaque": 0,
+        "partial": 330702
+      }
+    },
+    {
+      "id": "pixel_rabbit_soldier_directions",
+      "name": "Soldat lapin",
+      "category": "characters",
+      "character_ids": [
+        "rabbit_soldier"
+      ],
+      "height_m": 1.2,
+      "source_path": "assets/source/resumed_2d/pixel/characters/rabbit_soldier_directions.png",
+      "path": "assets/characters/rabbit_soldier/rabbit_soldier.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        71
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "RABBIT SOLDIER from lower far right p71, small brown/orange rabbit man, long straight rabbit ears pink inner, short black front hair tuft, stern narrow gold eyes, same navy/gold military uniform and boots, NO spectacles, NO long blond hair: distinct from Baroni. ",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nSINGLE IDENTITY: Soldat lapin. RABBIT SOLDIER from lower far right p71, small brown/orange rabbit man, long straight rabbit ears pink inner, short black front hair tuft, stern narrow gold eyes, same navy/gold military uniform and boots, NO spectacles, NO long blond hair: distinct from Baroni. ",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "4f27683d6ab3219b9fbb96b5da31b9b6a22b0624907324dddf10d892553c80dd",
+      "native_alpha": {
+        "zero": 1237823,
+        "opaque": 0,
+        "partial": 335041
+      },
+      "animation_sources": {
+        "right:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/rabbit_soldier_correction.png",
+          "row": 0,
+          "rows": 1,
+          "count": 4,
+          "original_count": 0,
+          "columns": 4
+        }
+      },
+      "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 4 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 4 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT RIGHT PROFILE lookingright. FOUR distinct running phases ONLY; feet alternating extended, push-off, lifted, crossing. Bodycamera slightelevated10degrees. Source identity: RABBIT SOLDIER from lower far right p71, small brown/orange rabbit man, long straight rabbit ears pink inner, short black front hair tuft, stern narrow gold eyes, same navy/gold military uniform and boots, NO spectacles, NO long blond hair: distinct from Baroni. ",
+      "correction_sha256": "b6da03e7ae982dfa1bfec1dfd21f326702b7510edc5ce53127d8173951feaa13"
+    },
+    {
+      "id": "pixel_hawk_soldier_directions",
+      "name": "Soldat ailé",
+      "category": "characters",
+      "character_ids": [
+        "hawk_soldier"
+      ],
+      "height_m": 1.7,
+      "source_path": "assets/source/resumed_2d/pixel/characters/hawk_soldier_directions.png",
+      "path": "assets/characters/hawk_soldier/hawk_soldier.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        71
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "hawk soldier from lower row p71, humanlike adult male face with long blond bangs covering one eye, gold bird eyes, small brown feather crown, large ochre brown feather wings held folded, black/gold military tunic and trousers, bird orange-brown TALONS instead of shoes. No confusing hawk with white pigeon soldier. Human fairy ears not copied to animal people.",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nSINGLE IDENTITY: Soldat ailé. hawk soldier from lower row p71, humanlike adult male face with long blond bangs covering one eye, gold bird eyes, small brown feather crown, large ochre brown feather wings held folded, black/gold military tunic and trousers, bird orange-brown TALONS instead of shoes. No confusing hawk with white pigeon soldier. Human fairy ears not copied to animal people.",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "b3b58350038ece511bac9951da5cfccb7d3b70b536a2b8975a5b7382ca91dcdc",
+      "native_alpha": {
+        "zero": 1042914,
+        "opaque": 0,
+        "partial": 529950
+      }
+    },
+    {
+      "id": "pixel_bird_soldier_directions",
+      "name": "Soldat aviaire",
+      "category": "characters",
+      "character_ids": [
+        "bird_soldier"
+      ],
+      "height_m": 1.7,
+      "source_path": "assets/source/resumed_2d/pixel/characters/bird_soldier_directions.png",
+      "path": "assets/characters/bird_soldier/bird_soldier.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [
+        71
+      ],
+      "reference_status": "scan_confirmed",
+      "description": "{\"source_pages\": [71], \"head\": \"White pigeonlike head with short coral-pink beak and orange eyes\", \"wings\": \"Long white feathered wings folded from upper back to knee\", \"feet\": \"Exposed orange bird legs with three forward toes\", \"identity_status\": \"Anonymous bird ship crew, upper p71\"}",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nSINGLE IDENTITY: Soldat aviaire. {\"source_pages\": [71], \"head\": \"White pigeonlike head with short coral-pink beak and orange eyes\", \"wings\": \"Long white feathered wings folded from upper back to knee\", \"feet\": \"Exposed orange bird legs with three forward toes\", \"identity_status\": \"Anonymous bird ship crew, upper p71\"}",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "666d5e3f115a7f8d4b62ed6e655b14e4deead7b41dd41e9f769d6428692e5a14",
+      "native_alpha": {
+        "zero": 1095586,
+        "opaque": 0,
+        "partial": 477278
+      },
+      "animation_sources": {
+        "back:repos": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/bird_soldier_correction.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 0,
+          "columns": 2
+        }
+      },
+      "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 2 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT BACK facing entirely away, hiddenface NO EYES. TWO standing idle breathing frames ONLY. Bodycamera slightelevated10degrees. Source identity: {\"source_pages\": [71], \"head\": \"White pigeonlike head with short coral-pink beak and orange eyes\", \"wings\": \"Long white feathered wings folded from upper back to knee\", \"feet\": \"Exposed orange bird legs with three forward toes\", \"identity_status\": \"Anonymous bird ship crew, upper p71\"}",
+      "correction_sha256": "55a58822dd1d720cb80624c96df40f594321be54783697d2df22521dc75e2f97"
+    },
+    {
+      "id": "pixel_cat_waiter_directions",
+      "name": "Cat Waiter",
+      "category": "characters",
+      "character_ids": [
+        "cat_waiter"
+      ],
+      "height_m": 1.65,
+      "source_path": "assets/source/resumed_2d/pixel/characters/cat_waiter_directions.png",
+      "path": "assets/characters/cat_waiter/cat_waiter.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [],
+      "reference_status": "game_adaptation",
+      "description": "café cat waiter (game visual interpretation of described canon character): slim pleasant warm gray male cat with amber eyes and visible tiny canines, white shirt, muted brown waistcoat, dark trousers, long beige service apron, tray with teacup, friendly slight bow. ",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nSINGLE IDENTITY: Cat Waiter. café cat waiter (game visual interpretation of described canon character): slim pleasant warm gray male cat with amber eyes and visible tiny canines, white shirt, muted brown waistcoat, dark trousers, long beige service apron, tray with teacup, friendly slight bow. ",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "c91c0b5760e9a4f504d5af8a802b6d651008b9cdc22fa5f0d837345f538d4ecc",
+      "native_alpha": {
+        "zero": 1163263,
+        "opaque": 0,
+        "partial": 409601
+      }
+    },
+    {
+      "id": "pixel_snack_vendor_directions",
+      "name": "Snack Vendor",
+      "category": "characters",
+      "character_ids": [
+        "snack_vendor"
+      ],
+      "height_m": 1.6,
+      "source_path": "assets/source/resumed_2d/pixel/characters/snack_vendor_directions.png",
+      "path": "assets/characters/snack_vendor/snack_vendor.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [],
+      "reference_status": "game_adaptation",
+      "description": "snack vendor: young male dog-headed lycanthrope with warm brown fur, long canine muzzle, kind lively eyes, rust vest over rolled pale shirt, grease-stained dark apron, pan held safely handle down, brown trousers and boots. ",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nEXPLICIT TWELVE ROWS, no deletion or merging: ROW1 FRONT IDLE2 at y64; ROW2 FRONT WALK6 y192; ROW3 FRONT RUN4 y320; ROW4 FRONT TALK2 y448; ROW5 BACK IDLE2 y576; ROW6 BACK WALK6 y704; ROW7 BACK RUN4 y832; ROW8 BACK TALK2 y960; ROW9 RIGHT IDLE2 y1088; ROW10 RIGHT WALK6 y1216; ROW11 RIGHT RUN4 y1344; ROW12 RIGHT TALK2 y1472 and portrait col6. DO NOT OMIT BACKIDLE or BACKTALK or RIGHTRUN.\nSINGLE IDENTITY: Snack Vendor. snack vendor: young male dog-headed lycanthrope with warm brown fur, long canine muzzle, kind lively eyes, rust vest over rolled pale shirt, grease-stained dark apron, pan held safely handle down, brown trousers and boots. ",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "3d5a52cf55a13b531e86adb5f4b0e342f85c771b439ea2d5ee9022b4e6f9c48e",
+      "native_alpha": {
+        "zero": 1172879,
+        "opaque": 0,
+        "partial": 399985
+      }
+    },
+    {
+      "id": "pixel_ramikeldi_directions",
+      "name": "Ramikeldi",
+      "category": "characters",
+      "character_ids": [
+        "ramikeldi"
+      ],
+      "height_m": 1.7,
+      "source_path": "assets/source/resumed_2d/pixel/characters/ramikeldi_directions.png",
+      "path": "assets/characters/ramikeldi/ramikeldi.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [],
+      "reference_status": "game_adaptation",
+      "description": "Mr Rami / Ramikeldi Limashenka (game visual interpretation): mature gentleman cat with tawny gray fur and amber eyes, subtle smile, white shirt, deep burgundy waistcoat, dark tie, old charcoal brim hat, gray trousers and polished dark shoes, relaxed courteous hand gesture. Cafe and Rami have no official dedicated illustration supplied, don't claim invented exact canon costume.",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nEXPLICIT TWELVE ROWS, no deletion or merging: ROW1 FRONT IDLE2 at y64; ROW2 FRONT WALK6 y192; ROW3 FRONT RUN4 y320; ROW4 FRONT TALK2 y448; ROW5 BACK IDLE2 y576; ROW6 BACK WALK6 y704; ROW7 BACK RUN4 y832; ROW8 BACK TALK2 y960; ROW9 RIGHT IDLE2 y1088; ROW10 RIGHT WALK6 y1216; ROW11 RIGHT RUN4 y1344; ROW12 RIGHT TALK2 y1472 and portrait col6. DO NOT OMIT BACKIDLE or BACKTALK or RIGHTRUN.\nSINGLE IDENTITY: Ramikeldi. Mr Rami / Ramikeldi Limashenka (game visual interpretation): mature gentleman cat with tawny gray fur and amber eyes, subtle smile, white shirt, deep burgundy waistcoat, dark tie, old charcoal brim hat, gray trousers and polished dark shoes, relaxed courteous hand gesture. Cafe and Rami have no official dedicated illustration supplied, don't claim invented exact canon costume.",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "e7b0bd20d5a7e99a693117b4b9d70eba04fbb5ac0691db92b43d0bda2c2d1f12",
+      "native_alpha": {
+        "zero": 1189647,
+        "opaque": 0,
+        "partial": 383217
+      }
+    },
+    {
+      "id": "pixel_ferryman_directions",
+      "name": "Ferryman",
+      "category": "characters",
+      "character_ids": [
+        "ferryman"
+      ],
+      "height_m": 1.7,
+      "source_path": "assets/source/resumed_2d/pixel/characters/ferryman_directions.png",
+      "path": "assets/characters/ferryman/ferryman.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [],
+      "reference_status": "game_adaptation",
+      "description": "ferryman of island53: adult reptilian male slate olive scales, small reptile muzzle, practical long ochre waterproof coat, brown pilot cap and flight goggles on brow, dark trousers and boots, hand at hip, no fantasy armour. ",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nEXPLICIT TWELVE ROWS, no deletion or merging: ROW1 FRONT IDLE2 at y64; ROW2 FRONT WALK6 y192; ROW3 FRONT RUN4 y320; ROW4 FRONT TALK2 y448; ROW5 BACK IDLE2 y576; ROW6 BACK WALK6 y704; ROW7 BACK RUN4 y832; ROW8 BACK TALK2 y960; ROW9 RIGHT IDLE2 y1088; ROW10 RIGHT WALK6 y1216; ROW11 RIGHT RUN4 y1344; ROW12 RIGHT TALK2 y1472 and portrait col6. DO NOT OMIT BACKIDLE or BACKTALK or RIGHTRUN.\nSINGLE IDENTITY: Ferryman. ferryman of island53: adult reptilian male slate olive scales, small reptile muzzle, practical long ochre waterproof coat, brown pilot cap and flight goggles on brow, dark trousers and boots, hand at hip, no fantasy armour. ",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "a939b1f6be28fb8406f7c0d203c47c32476c1d8056b8b9f765b96844bee862ed",
+      "native_alpha": {
+        "zero": 1131769,
+        "opaque": 0,
+        "partial": 441095
+      },
+      "animation_sources": {
+        "back:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/ferryman_correction.png",
+          "row": 0,
+          "rows": 1,
+          "count": 4,
+          "original_count": 0,
+          "columns": 4
+        }
+      },
+      "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 4 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 4 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT BACK facing ENTIRELYaway with NOface/eyes. FOUR distinct running phases ONLY, entire back to camera, noface; coat flaps, alternatingsteps. Camera slightelevated10degrees. Sourceidentity:ferryman of island53: adult reptilian male slate olive scales, small reptile muzzle, practical long ochre waterproof coat, brown pilot cap and flight goggles on brow, dark trousers and boots, hand at hip, no fantasy armour. ",
+      "correction_sha256": "b6635338c3423e48e9a56f19fee659eb1666f4138d43312f586f865f8bf29b64"
+    },
+    {
+      "id": "pixel_baker_directions",
+      "name": "Baker",
+      "category": "characters",
+      "character_ids": [
+        "baker"
+      ],
+      "height_m": 2,
+      "source_path": "assets/source/resumed_2d/pixel/characters/baker_directions.png",
+      "path": "assets/characters/baker/baker.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [],
+      "reference_status": "game_adaptation",
+      "description": "baker: enormous round bear-headed male with chestnut fur, small round bear ears, pale rolled sleeves, flour-dusted ivory apron, brown trousers, oversized boots, loaf held in cloth at elbow. Natural professions, not armed enemies. Show correct obvious animal traits; all fully clad.",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nEXPLICIT TWELVE ROWS, no deletion or merging: ROW1 FRONT IDLE2 at y64; ROW2 FRONT WALK6 y192; ROW3 FRONT RUN4 y320; ROW4 FRONT TALK2 y448; ROW5 BACK IDLE2 y576; ROW6 BACK WALK6 y704; ROW7 BACK RUN4 y832; ROW8 BACK TALK2 y960; ROW9 RIGHT IDLE2 y1088; ROW10 RIGHT WALK6 y1216; ROW11 RIGHT RUN4 y1344; ROW12 RIGHT TALK2 y1472 and portrait col6. DO NOT OMIT BACKIDLE or BACKTALK or RIGHTRUN.\nSINGLE IDENTITY: Baker. baker: enormous round bear-headed male with chestnut fur, small round bear ears, pale rolled sleeves, flour-dusted ivory apron, brown trousers, oversized boots, loaf held in cloth at elbow. Natural professions, not armed enemies. Show correct obvious animal traits; all fully clad.",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "a92d2d617aa0fd5f3928f2817eb392d40b05d1ee220d66809e0bf2089063a4d2",
+      "native_alpha": {
+        "zero": 1045331,
+        "opaque": 0,
+        "partial": 527533
+      },
+      "animation_sources": {
+        "right:parle": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/baker_correction.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 2,
+          "columns": 2
+        }
+      },
+      "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 2 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT RIGHT PROFILE lookingright. TWO talking gesture frames ONLY. Whole boots MUST be included with padding, no cropping. Camera slightelevated10degrees. Sourceidentity:baker: enormous round bear-headed male with chestnut fur, small round bear ears, pale rolled sleeves, flour-dusted ivory apron, brown trousers, oversized boots, loaf held in cloth at elbow. Natural professions, not armed enemies. Show correct obvious animal traits; all fully clad.",
+      "correction_sha256": "4cfc8a818ba2a8628c1aa876724861dc5fa11fa0a4c42feccb31cbb936be901b"
+    },
+    {
+      "id": "pixel_egg_vendor_directions",
+      "name": "Egg Vendor",
+      "category": "characters",
+      "character_ids": [
+        "egg_vendor"
+      ],
+      "height_m": 1.55,
+      "source_path": "assets/source/resumed_2d/pixel/characters/egg_vendor_directions.png",
+      "path": "assets/characters/egg_vendor/egg_vendor.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [],
+      "reference_status": "game_adaptation",
+      "description": "egg vendor ORIGINAL NPC: adult woman sheep-human mix, clearly woolly cream hair and two sheep side ears, sage and ivory modest market dress, ochre scarf head kerchief, wicker basket full of eggs held at waist, brown practical boots. ",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nEXPLICIT TWELVE ROWS, no deletion or merging: ROW1 FRONT IDLE2 at y64; ROW2 FRONT WALK6 y192; ROW3 FRONT RUN4 y320; ROW4 FRONT TALK2 y448; ROW5 BACK IDLE2 y576; ROW6 BACK WALK6 y704; ROW7 BACK RUN4 y832; ROW8 BACK TALK2 y960; ROW9 RIGHT IDLE2 y1088; ROW10 RIGHT WALK6 y1216; ROW11 RIGHT RUN4 y1344; ROW12 RIGHT TALK2 y1472 and portrait col6. DO NOT OMIT BACKIDLE or BACKTALK or RIGHTRUN.\nSINGLE IDENTITY: Egg Vendor. egg vendor ORIGINAL NPC: adult woman sheep-human mix, clearly woolly cream hair and two sheep side ears, sage and ivory modest market dress, ochre scarf head kerchief, wicker basket full of eggs held at waist, brown practical boots. ",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "80a5f5c0c89255458e8757075d6ea15ed9933b6eb31d62bf3e1503cdd385fdc7",
+      "native_alpha": {
+        "zero": 1126225,
+        "opaque": 0,
+        "partial": 446639
+      }
+    },
+    {
+      "id": "pixel_garde_lookout_directions",
+      "name": "Garde Lookout",
+      "category": "characters",
+      "character_ids": [
+        "garde_lookout"
+      ],
+      "height_m": 1.9,
+      "source_path": "assets/source/resumed_2d/pixel/characters/garde_lookout_directions.png",
+      "path": "assets/characters/garde_lookout/garde_lookout.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "style": "pixel",
+      "reference_pages": [],
+      "reference_status": "game_adaptation",
+      "description": "Reptilian Garde lookout, navy goldmilitaryuniform, brass spyglass, height1.9m, originalNPCvisual adaptation",
+      "prompt": "Production PIXEL ART for WordEnd HD-2D, not illustration. Crisp hand-placed square pixel clusters, stepped shading, limited desaturated autumn palette, hard dark-colored 1px contour (not pure black), absolutely NO smooth painting, NO anti-alias fringe, NO 3D rendering. Soft flat left lighting. Transparent PNG alpha. Exact PORTRAIT canvas 1024 x 1536; atlas SIX equal columns by TWELVE equal rows. Cell size about 170x128. One character with identical costume and scale across all 42 full-body frames. Small legible RPG figure 2.5-3 heads tall. Full figure incl feet/ears/horns and carried props fits inside every cell with transparent padding, max 105px high; never overlapping other cells. No visible grid, no labels/numbers/text, no background or floor or shadows. NO combat for this NPC. Camera straight-on slightly elevated 10degrees, not isometric. ROWS 1-4 STRICT FRONT facing viewer, rows5-8 STRICT BACK with NO face/eyes visible, rows9-12 STRICT RIGHT profile. Animation placement EACH FOUR-ROW GROUP: first row TWO idle frames in columns1-2 only; other4cells EMPTY transparent. Second row SIX alternating walk cycle frames in cols1-6. Third row FOUR running frames in cols1-4, other2 EMPTY. Fourth row TWO talking frames cols1-2 with small gesture and open/closed mouth, cells3-5 EMPTY, cell6 EMPTY except FINAL ROW12 col6 contains ONE close-up head-and-shoulders portrait turned three-quarter RIGHT. Entire atlas thus42 full-body frames +1portrait. Hands/feet alternate phases genuinely, standing feet same baseline; no duplicated columns substituting movement. Read reference image ONLY for identity, redesign as pixel art.\nFINAL PRIORITY: EXACTLY FOUR RUNNING POSES in every third row of each direction group, columns1,2,3,4. They must fit all four. Keep EVERYBACK frame facing directly away, including dialogue, NO turning face toward camera. Keep all RIGHT frames true side profile NO front face.\nEXPLICIT TWELVE ROWS, no deletion or merging: ROW1 FRONT IDLE2 at y64; ROW2 FRONT WALK6 y192; ROW3 FRONT RUN4 y320; ROW4 FRONT TALK2 y448; ROW5 BACK IDLE2 y576; ROW6 BACK WALK6 y704; ROW7 BACK RUN4 y832; ROW8 BACK TALK2 y960; ROW9 RIGHT IDLE2 y1088; ROW10 RIGHT WALK6 y1216; ROW11 RIGHT RUN4 y1344; ROW12 RIGHT TALK2 y1472 and portrait col6. DO NOT OMIT BACKIDLE or BACKTALK or RIGHTRUN.\nSINGLE IDENTITY: Garde Lookout. Reptilian Garde lookout, navy goldmilitaryuniform, brass spyglass, height1.9m, originalNPCvisual adaptation",
+      "status": "pending_fit",
+      "layout": {
+        "kind": "directional_rows_npc",
+        "columns": 6,
+        "rows": 12,
+        "portrait_cell": [
+          5,
+          11
+        ]
+      },
+      "sha256": "28d7e35c3a630b9b7b2791aba18f3b729a6518921c8b8d8ea5bf64eb23122793",
+      "native_alpha": {
+        "zero": 1114753,
+        "opaque": 0,
+        "partial": 458111
+      },
+      "animation_sources": {
+        "right:parle": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/garde_lookout_correction.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 2,
+          "columns": 2
+        }
+      },
+      "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 2 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT RIGHT PROFILE lookingright. TWO talking gesture frames ONLY, brass telescope lowered beside body then gesturing. Camera slightelevated10degrees. Sourceidentity:Reptilian Garde lookout, navy goldmilitaryuniform, brass spyglass, height1.9m, originalNPCvisual adaptation",
+      "correction_sha256": "8dd2ca58536998f72ca7fe01525bd922dd92010967ef4693223b261f9a3b1136"
+    }
+  ]
+}

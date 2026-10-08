@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [
+    705,
+    596
+  ],
+  "direction": "back",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "status": "measured_crops_animation_review",
+  "anchors_validated": false,
+  "anchor_method": "bottom of alpha silhouette; horizontal foot centroid",
+  "combat_timing_validated": false,
+  "density_px_m": 96,
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [
+          0,
+          0,
+          111,
+          139,
+          56,
+          139
+        ],
+        [
+          115,
+          1,
+          114,
+          138,
+          57,
+          138
+        ]
+      ]
+    },
+    "marche": {
+      "ips": 10,
+      "boucle": true,
+      "images": [
+        [
+          0,
+          151,
+          108,
+          147,
+          46,
+          147
+        ],
+        [
+          112,
+          148,
+          118,
+          150,
+          69,
+          150
+        ],
+        [
+          234,
+          148,
+          113,
+          150,
+          57,
+          150
+        ],
+        [
+          351,
+          148,
+          116,
+          150,
+          59,
+          150
+        ],
+        [
+          471,
+          143,
+          116,
+          155,
+          62,
+          155
+        ],
+        [
+          591,
+          144,
+          114,
+          154,
+          48,
+          154
+        ]
+      ]
+    },
+    "course": {
+      "ips": 12,
+      "boucle": true,
+      "images": [
+        [
+          0,
+          309,
+          134,
+          142,
+          66,
+          142
+        ],
+        [
+          138,
+          314,
+          172,
+          137,
+          55,
+          137
+        ],
+        [
+          314,
+          304,
+          138,
+          147,
+          56,
+          147
+        ],
+        [
+          456,
+          302,
+          150,
+          149,
+          72,
+          149
+        ]
+      ]
+    },
+    "parle": {
+      "ips": 6,
+      "boucle": true,
+      "images": [
+        [
+          0,
+          455,
+          118,
+          141,
+          54,
+          141
+        ],
+        [
+          122,
+          455,
+          141,
+          141,
+          79,
+          141
+        ]
+      ]
+    }
+  },
+  "palette_colors": 64
+}

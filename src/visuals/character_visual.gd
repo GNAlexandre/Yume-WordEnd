@@ -55,6 +55,8 @@ var _generation: int = 0
 var _facing: Vector3 = Vector3.ZERO
 var _mesh: Node3D
 var _player: AnimationPlayer
+var _direction: String = "right"
+var _unavailable_directions: Dictionary[String, bool] = {}
 
 @onready var _sprite: AnimatedSprite3D = $Sprite
 @onready var _shadow: MeshInstance3D = $Shadow
@@ -145,6 +147,11 @@ func current_frame() -> int:
 	return _frame
 
 
+## Direction de la planche courante ; left partage right avec flip_h.
+func current_direction() -> String:
+	return _direction
+
+
 ## true tant que l'animation courante avance (ni finie, ni figée par show_frame).
 func is_playing() -> bool:
 	return _playing
@@ -181,6 +188,8 @@ func _apply_skin() -> void:
 	_clear_mesh()
 	_clips.clear()
 	_sheet = {}
+	_direction = "right"
+	_unavailable_directions.clear()
 	_sprite.sprite_frames = null
 	if skin != null and skin.sprite_sheet == null and skin.mesh_scene != null:
 		_load_mesh()
@@ -208,6 +217,7 @@ func _load_sheet() -> void:
 		return
 	_sheet = SheetLoader.read_sheet(skin)
 	_sprite.sprite_frames = frames
+	_sprite.texture_filter = skin.texture_filter
 	_sprite.pixel_size = SheetLoader.pixel_size(skin, _sheet)
 	for anim_name: String in frames.get_animation_names():
 		_clips[StringName(anim_name)] = Clip.new(
@@ -298,9 +308,58 @@ func _update_facing() -> void:
 	if camera != null:
 		right = camera.global_basis.x
 	var side := _facing.dot(right)
+	if skin != null and not skin.directional_frames_json.is_empty():
+		var toward_camera := Vector3.BACK if camera == null else camera.global_basis.z
+		toward_camera.y = 0.0
+		toward_camera = toward_camera.normalized()
+		var depth := _facing.dot(toward_camera)
+		var direction := "right" if absf(side) >= absf(depth) else "front" if depth > 0 else "back"
+		if _switch_direction(direction):
+			_sprite.flip_h = direction == "right" and side < 0.0
+			_sync_offset()
+			return
+		_switch_direction("right")
 	if absf(side) >= FACING_DEAD_ZONE and (side < 0.0) != _sprite.flip_h:
 		_sprite.flip_h = side < 0.0
 		_sync_offset()
+
+
+## Le changement d'angle garde l'horloge, la pose et les signaux du gameplay.
+func _switch_direction(direction: String) -> bool:
+	if direction == _direction:
+		return true
+	if _unavailable_directions.has(direction):
+		return false
+	if direction != "right" and not SheetLoader.has_direction(skin, direction):
+		return false
+	var frames := SheetLoader.frames_for(skin, direction)
+	var sheet := SheetLoader.read_sheet(skin, direction)
+	if not _direction_is_compatible(frames, sheet):
+		_unavailable_directions[direction] = true
+		return false
+	_direction = direction
+	_sheet = sheet
+	_sprite.sprite_frames = frames
+	_show(_anim, _frame)
+	return true
+
+
+## Un JSON incompatible ne peut déplacer une fenêtre de coup ou relancer une animation.
+func _direction_is_compatible(frames: SpriteFrames, sheet: Dictionary) -> bool:
+	if frames == null or frames.get_animation_names().size() != _clips.size():
+		return false
+	for anim: StringName in _clips:
+		var clip: Clip = _clips[anim]
+		if (
+			not frames.has_animation(anim)
+			or frames.get_frame_count(anim) != clip.count
+			or not is_equal_approx(frames.get_animation_speed(anim), clip.fps)
+			or frames.get_animation_loop(anim) != clip.loops
+			or SheetLoader.hit_frames(sheet, anim) != SheetLoader.hit_frames(_sheet, anim)
+			or SheetLoader.wave_frame(sheet, anim) != SheetLoader.wave_frame(_sheet, anim)
+		):
+			return false
+	return true
 
 
 func _set_shadow_radius(radius: float) -> void:

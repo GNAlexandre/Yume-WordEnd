@@ -70,6 +70,7 @@ func _ready() -> void:
 	_new_game_button.pressed.connect(request_new_game)
 	_save_button.pressed.connect(open_save_panel)
 	_credits_button.pressed.connect(open_credits)
+	(%Island68Button as Button).pressed.connect(_open_island68)
 	_confirm_cancel.pressed.connect(close_overlay)
 	(%ConfirmOk as Button).pressed.connect(start_new_game)
 	_copy_button.pressed.connect(copy_export)
@@ -88,6 +89,10 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	_set_muted(false)
+
+
+func _open_island68() -> void:
+	get_tree().change_scene_to_file("res://scenes/hd2d/island68.tscn")
 
 
 func _process(delta: float) -> void:
