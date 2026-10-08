@@ -72,6 +72,45 @@ création. L’empreinte du ZIP est aussi écrite dans un fichier `.zip.sha256`.
 L’option `--output` du générateur de galerie permet une destination alternative ;
 le générateur de paquet utilise toujours la galerie canonique du dépôt.
 
+## Afficher un HTML seul dans l’aperçu
+
+La galerie classique utilise les fichiers du dépôt par chemins relatifs. Un
+aperçu qui ne reçoit que le HTML ne peut pas charger ces PNG. Pour ce cas,
+générer une galerie autonome par lot :
+
+```sh
+python3 tools/sukasuka2d/make_gallery.py --catalog assets/source/resumed_2d/priority2_catalog.json --no-archives --embed-images --output docs/sprites/PRIORITE_2_AUTONOME.html
+node tools/sukasuka2d/check_gallery.cjs --file docs/sprites/PRIORITE_2_AUTONOME.html --isolated --output /workspace/sukasuka-production/priorite2-autonome.png
+```
+
+Pour produire les quatre lots puis leurs contrôles autonomes :
+
+```sh
+for priority in 1 2 3 4; do
+  python3 tools/sukasuka2d/make_gallery.py --catalog "assets/source/resumed_2d/priority${priority}_catalog.json" --no-archives --embed-images --output "docs/sprites/PRIORITE_${priority}_AUTONOME.html"
+  node tools/sukasuka2d/check_gallery.cjs --file "docs/sprites/PRIORITE_${priority}_AUTONOME.html" --isolated --output "/workspace/sukasuka-production/priorite${priority}-autonome.png"
+done
+python3 tools/sukasuka2d/make_gallery.py
+```
+
+Après génération des pages autonomes, la galerie classique affiche les liens des
+priorités 1 à 4 présentes dans le dépôt. Chaque lot garde ses images natives et
+son catalogue ; les anciens dessins anime restent conservés dans la galerie
+complète et ses archives.
+
+Le HTML contient chaque PNG une seule fois, sans conversion ni redimensionnement.
+Les liens d’ouverture et de téléchargement utilisent des URL Blob créées à partir
+de ces mêmes octets ; les téléchargements conservent le SHA-256 des PNG du projet.
+Le catalogue JSON et le manifeste des archives, si celles-ci sont incluses, sont
+aussi incorporés. La page ne demande aucun fichier extérieur.
+
+`--catalog` choisit le catalogue affiché. `--no-archives` retire les anciens
+dessins anime de cette page, sans toucher à leurs fichiers. `--embed-images`
+fonctionne également via `build(destination, embed_images=True)` ; le mode relatif
+reste le mode par défaut pour les galeries distribuées avec les assets dans les
+ZIP. Les pages par lot limitent la taille du HTML ; la bibliothèque complète
+embarquée peut dépasser 100 Mo et doit rester hors des fichiers Git ordinaires.
+
 ## Ressources directionnelles Godot
 
 `python3 tools/sukasuka2d/make_resources.py` expose les images actives et leurs
@@ -93,6 +132,26 @@ conservés. Les autres PNJ ne sont pas ajoutés aux skins jouables.
 
 Tests des métadonnées : `python3 tools/sukasuka2d/test_make_resources.py`.
 
+Pour corriger quelques personnages sans recalculer le reste de la bibliothèque :
+
+```sh
+python tools/sukasuka2d/prepare_delivery.py --only-characters ithea cat_waiter baker knight_feline
+```
+
+Les sources et portraits dédiés des personnages sélectionnés sont traités dans
+l’ordre habituel ; les autres entrées du catalogue sont conservées. Une erreur
+de découpe interrompt la publication du catalogue ciblé.
+Dans `animation_sources`, `indices: [0]` remplace seulement une pose du clip ;
+`original_count` décrit toujours les silhouettes présentes dans la planche de
+base. `scale_reference: "idle"` ajuste chaque correction à la hauteur de la
+première pose de repos. Ce réglage évite de transmettre la hauteur défectueuse
+d’un ancien dialogue miniature ou d’un personnage empilé à la nouvelle pose.
+
+`python tools/sukasuka2d/make_asset_review.py` produit un aperçu autonome des
+corrections, à partir des rectangles des atlas réellement utilisés. Cette
+commande utilise Pillow ; la préparation utilise aussi NumPy et SciPy,
+contrairement au simple assemblage HTML de la galerie.
+
 ## Contrôle de la galerie
 
 ```sh
@@ -104,6 +163,18 @@ téléchargement, teste les filtres et le débordement horizontal sur mobile. Il
 produit une capture de bureau, une capture mobile et un résultat JSON. Il
 nécessite Chromium et `playwright-core` ; `PLAYWRIGHT_MODULE` et `CHROMIUM_PATH`
 permettent d’en préciser les chemins.
+L’option `--page /docs/sprites/PRIORITE_2.html` sélectionne une autre page du dépôt.
+`--file <chemin>` accepte aussi un fichier précis. Avec `--isolated`, seul le HTML
+est copié dans un répertoire temporaire, sans les dossiers d’assets : toutes les
+images doivent se décoder, les téléchargements PNG réels doivent conserver leur
+SHA-256, les JSON doivent rester conformes et aucune requête extérieure ne doit
+être émise. `--verify-downloads` peut aussi forcer les téléchargements réels dans
+le mode classique.
+`--verbose` affiche les étapes et une progression par groupes de dix images,
+sans afficher les données base64. Le contrôle utilise `image.decode()` avec un
+diagnostic borné pour chaque PNG. Les clics de téléchargement sont espacés de
+200 ms pour respecter le limiteur Chromium ; chaque événement attendu est borné
+à dix secondes. Le débit ne change ni les images ni les empreintes vérifiées.
 
 ## Livraison par priorité
 

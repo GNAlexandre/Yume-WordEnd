@@ -4197,7 +4197,7 @@
       "path": "assets/characters/knight_feline/knight_feline.png",
       "dimensions": [
         552,
-        545
+        577
       ],
       "style": "pixel_art",
       "reference_pages": [
@@ -4231,6 +4231,15 @@
           "count": 2,
           "original_count": 0,
           "columns": 2
+        },
+        "right:parle": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 2,
+          "columns": 2,
+          "scale_reference": "idle"
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 2 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT BACK facing entirely away, hiddenface NO EYES. TWO talking frames, hand small gesture, cane held. Facing away entirely NOface, NOeye. Bodycamera slightelevated10degrees. Source identity: {\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}",
@@ -4252,10 +4261,18 @@
         "portraits": 1,
         "verified_source_sha256": {
           "assets/source/resumed_2d/pixel/characters/knight_feline_correction.png": "1cdf942ff41bbd489b48f9de889b9829a28eb4f1fdd94bca4da574b0955b31a3",
-          "assets/source/resumed_2d/pixel/characters/knight_feline_directions.png": "df25541f168ed90e96e4d4898b064c26ad9e3ed2d54e12dc41468307168ee759"
+          "assets/source/resumed_2d/pixel/characters/knight_feline_directions.png": "df25541f168ed90e96e4d4898b064c26ad9e3ed2d54e12dc41468307168ee759",
+          "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png": "5a6b2de0a48ac93fc077e65511c451096d3db83c11e054784842e39984c0254d"
         },
         "animation_review_required": true
       },
+      "correction_prompts": {
+        "right:parle": "Produce a targeted replacement PIXEL-ART game TWO-frame animationstrip for WordEnd HD-2D. Use reference ONLY to match identity,costume,palette and usual standingidlebody proportions; NOframefromreferencecopied. Crisp discretepixelclusters, steppedlimitedmutedcolors, darkcoloredoutlines(no pureblack), NOsmoothpainting/AA/3D. Transparent PNG background nofloor/shadows/labels/text/grid/portraits. Canvas1536x1024 landscape. Exactly TWO separate fullbodyfigures of SAME adultcharacter, positionedleft/right with at least150px transparent gap. Each figure straightRIGHTPROFILE facingright; veryslightoverhead10degreecamera, same3heads-tallbody as standingidle, adulthead/torso/legs proportions NOTminiature/chibi shrunken. Whole ears,hat,tail,arms,feet,props includedwith60pxtransparentpadding. Figure natural standingheight about650px, feet on samebaseline. Action: TALK frame1 mouthclosed,cane inonehand,otherhand openpalmnearwaist; TALK frame2 mouthopen, samecane heldsteadily, otherhandgestures nearwaist. Same standingheight, NOliftingcane above head, bothfeetgrounded; tallhatstillwhole. Character:{\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}"
+      },
+      "correction_sha256s": {
+        "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png": "5a6b2de0a48ac93fc077e65511c451096d3db83c11e054784842e39984c0254d"
+      },
+      "targeted_correction_reason": "Native right dialogue was drawn too small; redraw two full adult poses matching idle proportions.",
       "aliases": [],
       "frames_json_path": "assets/characters/knight_feline/knight_feline.json",
       "density_px_m": 96,
@@ -4333,6 +4350,15 @@
           "count": 2,
           "original_count": 0,
           "columns": 2
+        },
+        "right:parle": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 2,
+          "columns": 2,
+          "scale_reference": "idle"
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 2 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT BACK facing entirely away, hiddenface NO EYES. TWO talking frames, hand small gesture, cane held. Facing away entirely NOface, NOeye. Bodycamera slightelevated10degrees. Source identity: {\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}",
@@ -4354,10 +4380,18 @@
         "portraits": 1,
         "verified_source_sha256": {
           "assets/source/resumed_2d/pixel/characters/knight_feline_correction.png": "1cdf942ff41bbd489b48f9de889b9829a28eb4f1fdd94bca4da574b0955b31a3",
-          "assets/source/resumed_2d/pixel/characters/knight_feline_directions.png": "df25541f168ed90e96e4d4898b064c26ad9e3ed2d54e12dc41468307168ee759"
+          "assets/source/resumed_2d/pixel/characters/knight_feline_directions.png": "df25541f168ed90e96e4d4898b064c26ad9e3ed2d54e12dc41468307168ee759",
+          "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png": "5a6b2de0a48ac93fc077e65511c451096d3db83c11e054784842e39984c0254d"
         },
         "animation_review_required": true
       },
+      "correction_prompts": {
+        "right:parle": "Produce a targeted replacement PIXEL-ART game TWO-frame animationstrip for WordEnd HD-2D. Use reference ONLY to match identity,costume,palette and usual standingidlebody proportions; NOframefromreferencecopied. Crisp discretepixelclusters, steppedlimitedmutedcolors, darkcoloredoutlines(no pureblack), NOsmoothpainting/AA/3D. Transparent PNG background nofloor/shadows/labels/text/grid/portraits. Canvas1536x1024 landscape. Exactly TWO separate fullbodyfigures of SAME adultcharacter, positionedleft/right with at least150px transparent gap. Each figure straightRIGHTPROFILE facingright; veryslightoverhead10degreecamera, same3heads-tallbody as standingidle, adulthead/torso/legs proportions NOTminiature/chibi shrunken. Whole ears,hat,tail,arms,feet,props includedwith60pxtransparentpadding. Figure natural standingheight about650px, feet on samebaseline. Action: TALK frame1 mouthclosed,cane inonehand,otherhand openpalmnearwaist; TALK frame2 mouthopen, samecane heldsteadily, otherhandgestures nearwaist. Same standingheight, NOliftingcane above head, bothfeetgrounded; tallhatstillwhole. Character:{\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}"
+      },
+      "correction_sha256s": {
+        "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png": "5a6b2de0a48ac93fc077e65511c451096d3db83c11e054784842e39984c0254d"
+      },
+      "targeted_correction_reason": "Native right dialogue was drawn too small; redraw two full adult poses matching idle proportions.",
       "aliases": [],
       "frames_json_path": "assets/characters/knight_feline/knight_feline_front.json",
       "density_px_m": 96,
@@ -4413,6 +4447,15 @@
           "count": 2,
           "original_count": 0,
           "columns": 2
+        },
+        "right:parle": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png",
+          "row": 0,
+          "rows": 1,
+          "count": 2,
+          "original_count": 2,
+          "columns": 2,
+          "scale_reference": "idle"
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, no painterly smooth gradients, no 3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 EQUALLY SPACED COLUMNS and 1 EQUALLY SPACED ROWS. ONLY ONE ROW across the middle; no extra rows/portraits. All 2 fullbody sprites sameheight600px fitcanvas with large padding. FULL FIGURE including entire feet/ears/chariot wheels, nevercutofforoverlap. Eachrow is one animation in fixeddirection: row1 STRICT BACK facing entirely away, hiddenface NO EYES. TWO talking frames, hand small gesture, cane held. Facing away entirely NOface, NOeye. Bodycamera slightelevated10degrees. Source identity: {\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}",
@@ -4434,10 +4477,18 @@
         "portraits": 1,
         "verified_source_sha256": {
           "assets/source/resumed_2d/pixel/characters/knight_feline_correction.png": "1cdf942ff41bbd489b48f9de889b9829a28eb4f1fdd94bca4da574b0955b31a3",
-          "assets/source/resumed_2d/pixel/characters/knight_feline_directions.png": "df25541f168ed90e96e4d4898b064c26ad9e3ed2d54e12dc41468307168ee759"
+          "assets/source/resumed_2d/pixel/characters/knight_feline_directions.png": "df25541f168ed90e96e4d4898b064c26ad9e3ed2d54e12dc41468307168ee759",
+          "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png": "5a6b2de0a48ac93fc077e65511c451096d3db83c11e054784842e39984c0254d"
         },
         "animation_review_required": true
       },
+      "correction_prompts": {
+        "right:parle": "Produce a targeted replacement PIXEL-ART game TWO-frame animationstrip for WordEnd HD-2D. Use reference ONLY to match identity,costume,palette and usual standingidlebody proportions; NOframefromreferencecopied. Crisp discretepixelclusters, steppedlimitedmutedcolors, darkcoloredoutlines(no pureblack), NOsmoothpainting/AA/3D. Transparent PNG background nofloor/shadows/labels/text/grid/portraits. Canvas1536x1024 landscape. Exactly TWO separate fullbodyfigures of SAME adultcharacter, positionedleft/right with at least150px transparent gap. Each figure straightRIGHTPROFILE facingright; veryslightoverhead10degreecamera, same3heads-tallbody as standingidle, adulthead/torso/legs proportions NOTminiature/chibi shrunken. Whole ears,hat,tail,arms,feet,props includedwith60pxtransparentpadding. Figure natural standingheight about650px, feet on samebaseline. Action: TALK frame1 mouthclosed,cane inonehand,otherhand openpalmnearwaist; TALK frame2 mouthopen, samecane heldsteadily, otherhandgestures nearwaist. Same standingheight, NOliftingcane above head, bothfeetgrounded; tallhatstillwhole. Character:{\"source_pages\": [68], \"clothes\": \"Dark tailored coat and vest, white shirt, gray trousers, tall black top hat, cane and red armband\", \"face\": \"Gray feline head with amber eyes, left side dark forelock, whiskers\", \"identity_status\": \"Anonymous knight role, bottom right p68\", \"trouser_color\": \"#A1A2A7\", \"ear_color\": \"#89929F\"}"
+      },
+      "correction_sha256s": {
+        "assets/source/resumed_2d/pixel/characters/knight_feline_right_parle_adult.png": "5a6b2de0a48ac93fc077e65511c451096d3db83c11e054784842e39984c0254d"
+      },
+      "targeted_correction_reason": "Native right dialogue was drawn too small; redraw two full adult poses matching idle proportions.",
       "aliases": [],
       "frames_json_path": "assets/characters/knight_feline/knight_feline_back.json",
       "density_px_m": 96,
@@ -7301,7 +7352,7 @@
     "provided": 136,
     "missing_required": 0,
     "failed_provided": 0,
-    "total_image_bytes": 20693223,
+    "total_image_bytes": 20693368,
     "errors": [],
     "files": [
       {
@@ -8409,10 +8460,10 @@
         "warnings": [
           "Le contrôle technique ne valide pas le dessin, les cycles ni le contact des pieds."
         ],
-        "bytes": 160019,
+        "bytes": 160164,
         "dimensions": [
           552,
-          545
+          577
         ]
       },
       {

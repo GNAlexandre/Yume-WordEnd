@@ -219,9 +219,25 @@ def prepare_sprite(entry):
             supplemental, _ = cut_rows(extra, {"layout": {"kind": "directional_rows_strip", "direction": direction,
                                                          "rows": replacement["rows"]}, "clip_contract": contract})
             new_frames = supplemental[direction][replacement["row"]][3]
-            reference_frames = frames or rows[0][3] or next(nonempty for _, _, _, nonempty in rows if nonempty)
-            ratio = float(np.median([im.height for im in reference_frames])) / float(np.median([im.height for im in new_frames]))
-            new_frames = [im.resize((max(1, round(im.width * ratio)), max(1, round(im.height * ratio))), Image.Resampling.NEAREST) for im in new_frames]
+            if replacement.get("scale_reference") == "idle":
+                # A replacement must not inherit a malformed original pose's
+                # height (e.g. a miniature dialogue or two stacked actors).
+                target_height = rows[0][3][0].height
+                new_frames = [im.resize((max(1, round(im.width * target_height / im.height)),
+                                         target_height), Image.Resampling.NEAREST) for im in new_frames]
+            else:
+                reference_frames = frames or rows[0][3] or next(nonempty for _, _, _, nonempty in rows if nonempty)
+                ratio = float(np.median([im.height for im in reference_frames])) / float(np.median([im.height for im in new_frames]))
+                new_frames = [im.resize((max(1, round(im.width * ratio)), max(1, round(im.height * ratio))), Image.Resampling.NEAREST) for im in new_frames]
+            if "indices" in replacement:
+                indices = replacement["indices"]
+                if (len(indices) != len(new_frames) or len(set(indices)) != len(indices)
+                        or any(not isinstance(i, int) or i < 0 or i >= len(frames) for i in indices)):
+                    raise ValueError(f"{direction}/{name}: invalid replacement frame indices.")
+                merged = list(frames)
+                for frame_index, new_frame in zip(indices, new_frames):
+                    merged[frame_index] = new_frame
+                new_frames = merged
             rows[index] = (name, fps, loop, new_frames)
     output = []
     base = "assets/enemies" if entry["category"] == "enemies" else "assets/characters"
@@ -280,6 +296,8 @@ def prepare_portrait(entry, manifest):
 
 
 def prepare_world(entry, manifest):
+    if entry.get("category") == "building_materials":
+        entry = {**entry, "category": "materials"}
     mode = "stretch" if entry["category"] == "buildings" else "contain"
     palette = 32 if entry["path"].endswith("/warehouse_main.png") else 64
     result = hd.fit_asset(ROOT, manifest, entry["path"], ROOT / entry["source_path"],
@@ -292,6 +310,7 @@ def prepare_world(entry, manifest):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--fragments", type=Path, default=ROOT / "assets/source/resumed_2d/production_catalogs")
+    parser.add_argument("--only-characters", nargs="+", help="Mettre à jour ces personnages et leurs portraits en conservant les autres livraisons.")
     args = parser.parse_args()
     catalog_path = ROOT / "assets/source/resumed_2d/catalog.json"
     prior = json.loads(catalog_path.read_text())
@@ -300,12 +319,18 @@ def main():
     manifest = hd.load_manifest()
     entries, failures = [], []
     candidates = sorted(args.fragments.glob("*_catalog.json")) + [ROOT / "assets/source/resumed_2d/timere_catalog.json"]
+    fragments = [json.loads(path.read_text()) for path in candidates if path.exists()]
+    requested = set(args.only_characters or [])
+    available = {ALIASES.get(identifier, identifier) for fragment in fragments
+                 for source in fragment.get("entries", fragment.get("assets", []))
+                 for identifier in source.get("character_ids", [])}
+    if requested - available:
+        parser.error("Personnages sans sources : " + ", ".join(sorted(requested - available)))
     seen = set()
-    for path in candidates:
-        if not path.exists():
-            continue
-        fragment = json.loads(path.read_text())
+    for fragment in fragments:
         for source in fragment.get("entries", fragment.get("assets", [])):
+            if requested and not requested.intersection(ALIASES.get(i, i) for i in source.get("character_ids", [])):
+                continue
             source = {**source, "style": "pixel_art"}
             if source.get("category") == "building_materials":
                 source["category"] = "materials"
@@ -328,6 +353,16 @@ def main():
     # A hero can have a bonus portrait in several directional sheets. The
     # dedicated portrait processed later is the single authoritative delivery.
     entries = list({entry["path"]: entry for entry in entries}.values())
+    if requested:
+        json_write(ROOT / "build/hd2d-preparation.json", {"prepared_entries": len(entries), "failures": failures})
+        if failures:
+            print(json.dumps({"prepared_entries": len(entries), "failures": failures}, ensure_ascii=False, indent=2))
+            return 1
+        merged = {entry["path"]: entry for entry in prior["entries"]}
+        merged.update({entry["path"]: entry for entry in entries})
+        json_write(catalog_path, {**prior, "entries": list(merged.values())})
+        print(json.dumps({"prepared_entries": len(entries), "characters": sorted(requested), "failures": []}, ensure_ascii=False))
+        return 0
     json_write(catalog_path, {"status": "delivery_in_progress" if failures else "all_batches_fitted_animation_review",
                               "style": "pixel_art", "entries": archived + entries,
                               "processing_failures": failures, "package_files": ["tools/hd2d_assets.py", "tools/hd2d_manifest.json", "tools/sukasuka2d/prepare_delivery.py", "scenes/hd2d/island68.tscn", "scenes/hd2d/island68.gd", "scenes/hd2d/README.md"]})

@@ -35,6 +35,31 @@
         "transparent": 1180757,
         "opaque": 0,
         "intermediate": 392107
+      },
+      "animation_sources": {
+        "attaque": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/nephren_attack_corrections_v2.png",
+          "row": 1,
+          "rows": 3,
+          "count": 4,
+          "original_count": 4,
+          "provenance": {
+            "tool": "image_gen",
+            "native_path": "/workspace/generated_images/exec-a4f44895-ef22-41c3-86fe-347be3e156fa.png",
+            "source_sha256": "26dd44ba73f710ca3bb633e1129310c689a75ce8240b974b9978533b990cd90e",
+            "purpose": "Correct two-handed grip behind Insania guard; official reference p029 inspected."
+          },
+          "qa": {
+            "cut_rows_counts": [
+              4,
+              4,
+              4
+            ],
+            "separation_validated": true,
+            "independent_grip_review_pending": false,
+            "two_hand_grip_reviewed": true
+          }
+        }
       }
     },
     {
@@ -192,7 +217,32 @@
       "portrait_cell": [
         5,
         7
-      ]
+      ],
+      "animation_sources": {
+        "attaque": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/nephren_attack_corrections_v2.png",
+          "row": 0,
+          "rows": 3,
+          "count": 4,
+          "original_count": 4,
+          "provenance": {
+            "tool": "image_gen",
+            "native_path": "/workspace/generated_images/exec-a4f44895-ef22-41c3-86fe-347be3e156fa.png",
+            "source_sha256": "26dd44ba73f710ca3bb633e1129310c689a75ce8240b974b9978533b990cd90e",
+            "purpose": "Correct two-handed grip behind Insania guard; official reference p029 inspected."
+          },
+          "qa": {
+            "cut_rows_counts": [
+              4,
+              4,
+              4
+            ],
+            "separation_validated": true,
+            "independent_grip_review_pending": false,
+            "two_hand_grip_reviewed": true
+          }
+        }
+      }
     },
     {
       "id": "pixel_nephren_right",
@@ -236,7 +286,32 @@
         "Native image is a larger generated source; runtime frame extraction, exact 96 px/m scale and binary alpha remain required.",
         "Generated rows have variable pose widths despite requested equal columns; use actual transparent gaps when extracting attack/charge.",
         "Native rendering has more colors and detail than the strict pixel-art target; final fitted rendering requires visual review."
-      ]
+      ],
+      "animation_sources": {
+        "attaque": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/nephren_attack_corrections_v2.png",
+          "row": 2,
+          "rows": 3,
+          "count": 4,
+          "original_count": 4,
+          "provenance": {
+            "tool": "image_gen",
+            "native_path": "/workspace/generated_images/exec-a4f44895-ef22-41c3-86fe-347be3e156fa.png",
+            "source_sha256": "26dd44ba73f710ca3bb633e1129310c689a75ce8240b974b9978533b990cd90e",
+            "purpose": "Correct two-handed grip behind Insania guard; official reference p029 inspected."
+          },
+          "qa": {
+            "cut_rows_counts": [
+              4,
+              4,
+              4
+            ],
+            "separation_validated": true,
+            "independent_grip_review_pending": false,
+            "two_hand_grip_reviewed": true
+          }
+        }
+      }
     },
     {
       "id": "pixel_rhantolk_right",

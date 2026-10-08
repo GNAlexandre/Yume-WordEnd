@@ -20,3 +20,6 @@ docs/CONTRACT_REQUESTS.md    merge=union
 tools/warnings_allow.txt     merge=union
 assets/CREDITS.md            merge=union
 assets/characters/CREDITS.md merge=union
+
+# Generated review pages embed PNG bytes; review the generator and source art.
+docs/sprites/*.html linguist-generated=true

@@ -1,0 +1,15 @@
+{
+  "source_path": "assets/source/resumed_2d/pixel/characters/nephren_attack_corrections_v2.png",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "counts": [
+    4,
+    4,
+    4
+  ],
+  "portraits": 0,
+  "alpha_threshold": 128,
+  "hand_review": "Independent visual review passed: dark handle and hands separated from guard; supporting hand partly occluded in rear ready/recovery."
+}

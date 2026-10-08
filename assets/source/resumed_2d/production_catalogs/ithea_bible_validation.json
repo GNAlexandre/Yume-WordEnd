@@ -1,0 +1,198 @@
+{
+  "date": "2026-10-08",
+  "checks": [
+    {
+      "id": "pixel_ithea_front",
+      "source_path": "assets/source/resumed_2d/pixel/characters/ithea_front_bible.png",
+      "counts": [
+        2,
+        6,
+        5,
+        4,
+        4,
+        1,
+        1,
+        2
+      ],
+      "total_poses": 25,
+      "pose_bounds_heights": {
+        "repos": [
+          186,
+          187
+        ],
+        "marche": [
+          191,
+          192,
+          192,
+          193,
+          194,
+          194
+        ],
+        "course": [
+          184,
+          185,
+          183,
+          183,
+          183
+        ],
+        "attaque": [
+          238,
+          230,
+          187,
+          184
+        ],
+        "charge": [
+          184,
+          185,
+          191,
+          181
+        ],
+        "degats": [
+          188
+        ],
+        "mort": [
+          98
+        ],
+        "parle": [
+          192,
+          192
+        ]
+      },
+      "status": "pass"
+    },
+    {
+      "id": "pixel_ithea_back",
+      "source_path": "assets/source/resumed_2d/pixel/characters/ithea_back_bible.png",
+      "counts": [
+        2,
+        6,
+        5,
+        4,
+        4,
+        1,
+        1,
+        2
+      ],
+      "total_poses": 25,
+      "pose_bounds_heights": {
+        "repos": [
+          178,
+          177
+        ],
+        "marche": [
+          180,
+          182,
+          182,
+          181,
+          183,
+          182
+        ],
+        "course": [
+          173,
+          173,
+          173,
+          169,
+          169
+        ],
+        "attaque": [
+          234,
+          168,
+          170,
+          173
+        ],
+        "charge": [
+          154,
+          152,
+          150,
+          142
+        ],
+        "degats": [
+          185
+        ],
+        "mort": [
+          110
+        ],
+        "parle": [
+          188,
+          187
+        ]
+      },
+      "status": "pass"
+    },
+    {
+      "id": "pixel_ithea_right",
+      "source_path": "assets/source/resumed_2d/pixel/characters/ithea_right_bible_separated.png",
+      "counts": [
+        2,
+        6,
+        5,
+        4,
+        4,
+        1,
+        1,
+        2
+      ],
+      "total_poses": 25,
+      "pose_bounds_heights": {
+        "repos": [
+          202,
+          202
+        ],
+        "marche": [
+          187,
+          187,
+          203,
+          188,
+          188,
+          188
+        ],
+        "course": [
+          157,
+          161,
+          166,
+          166,
+          163
+        ],
+        "attaque": [
+          234,
+          207,
+          159,
+          159
+        ],
+        "charge": [
+          168,
+          168,
+          179,
+          157
+        ],
+        "degats": [
+          188
+        ],
+        "mort": [
+          80
+        ],
+        "parle": [
+          195,
+          192
+        ]
+      },
+      "status": "pass"
+    },
+    {
+      "id": "pixel_ithea_portrait",
+      "source_path": "assets/source/resumed_2d/pixel/characters/ithea_portrait_bible.png",
+      "native_dimensions": [
+        1254,
+        1254
+      ],
+      "target_dimensions": [
+        256,
+        256
+      ],
+      "status": "pass"
+    }
+  ],
+  "visual_review": "All three directions and portrait match straw blond + blue braid beads, red scarf, pale sage jacket, brick brown-red dress. Straight flared Valgulious preserved. Back charge spacing preserved; right walk sword angle lowered to separate silhouettes without shortening bodies.",
+  "preservation": "All orange and weapon-corrected sources and exact edit prompts retained; runtime/global/gallery untouched.",
+  "portrait_size_note": "Image tool returned 1254x1254 despite prompt requesting 256x256. Native archived unchanged; explicit nearest-neighbour 256x256 source also supplied."
+}

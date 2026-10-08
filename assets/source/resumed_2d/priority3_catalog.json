@@ -6,17 +6,17 @@
       "id": "pixel_collon_right",
       "name": "Collon",
       "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/collon_directions.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/collon_directions_novel_corrected.png",
       "path": "assets/characters/collon/collon.png",
       "dimensions": [
-        479,
-        498
+        535,
+        491
       ],
       "height_m": 1.2,
       "reference_pages": [
         47
       ],
-      "reference_status": "scan_confirmed",
+      "reference_status": "scan_costume_plus_user_story_bible_accessories",
       "character_ids": [
         "collon"
       ],
@@ -32,9 +32,9 @@
       },
       "style": "pixel_art",
       "status": "measured_crops_animation_review",
-      "generated_source": "/workspace/generated_images/exec-0f59c3bc-c3cb-4511-bff7-20662dd2ff9c.png",
-      "sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
-      "description": "P47 : neuf ans, chevelure rose presque jusqu’aux genoux avec petite attache au sommet ; longue tunique blanche, col/manche mauve bordé or, short rose bouffant. Espèce source : leprechaun.",
+      "generated_source": "/workspace/generated_images/exec-e693b51e-6301-4eba-80e9-a2894e9c83c1.png",
+      "sha256": "251783a303b55fb519623872d707fa244d8714b2c52f58786df563dcf157939e",
+      "description": "P47 : neuf ans, chevelure rose presque jusqu’aux genoux avec petite attache au sommet ; longue tunique blanche, col/manche mauve bordé or, short rose bouffant. Espèce source : leprechaun. Bandeau rouge complet autour du front et de la tête, canine visible dans les expressions et le portrait ; identité et costume p47 conservés.",
       "animations": [
         "repos",
         "marche",
@@ -44,10 +44,51 @@
       "limitations": [
         "Découpe mesurée ; cycles, contact des pieds et fenêtres de combat à revoir dans Godot."
       ],
+      "provenance": {
+        "tool": "image_gen",
+        "date": "2026-10-08",
+        "original_source_path": "assets/source/resumed_2d/pixel/characters/collon_directions.png",
+        "original_source_sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
+        "original_preserved": true,
+        "correction_authority": "user_story_bible",
+        "change": "Bandeau rouge complet autour du front et de la tête, canine visible dans les expressions et le portrait ; identité et costume p47 conservés.",
+        "backend_version": "not_exposed"
+      },
+      "validation": {
+        "cut_rows": "passed",
+        "directions": 3,
+        "body_frames": 42,
+        "portraits": 1,
+        "frame_counts_by_direction": {
+          "front": [
+            2,
+            6,
+            4,
+            2
+          ],
+          "back": [
+            2,
+            6,
+            4,
+            2
+          ],
+          "right": [
+            2,
+            6,
+            4,
+            2
+          ]
+        },
+        "alpha_preparation": "threshold128 in-memory for cut_rows check; raw PNG unchanged",
+        "visual_details_reviewed": true,
+        "limitations": [
+          "Animation cycles and feet contact require final Godot review."
+        ]
+      },
       "aliases": [],
       "frames_json_path": "assets/characters/collon/collon.json",
       "density_px_m": 96,
-      "source_sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
+      "source_sha256": "251783a303b55fb519623872d707fa244d8714b2c52f58786df563dcf157939e",
       "portrait_path": "assets/characters/collon/collon_portrait.png"
     },
     {
@@ -60,13 +101,13 @@
       ],
       "path": "assets/characters/collon/collon_portrait.png",
       "source_path": "assets/source/resumed_2d/pixel/portraits/collon.png",
-      "source_parent_path": "assets/source/resumed_2d/pixel/characters/collon_directions.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/characters/collon_directions_novel_corrected.png",
       "dimensions": [
         256,
         256
       ],
       "layout": null,
-      "source_sha256": "54ba5e5560cbd82c94be1074fb364eced1b116fc513854fa2eeb493dd802b86b",
+      "source_sha256": "01bcd3d4a2ba1c327062c414a38313510d9caecf91ef8576dcfde226f68066d9",
       "reference_pages": [
         47
       ],
@@ -76,17 +117,17 @@
       "id": "pixel_lakhesh_right",
       "name": "Lakhesh",
       "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.png",
       "path": "assets/characters/lakhesh/lakhesh.png",
       "dimensions": [
-        409,
-        480
+        514,
+        481
       ],
       "height_m": 1.2,
       "reference_pages": [
         49
       ],
-      "reference_status": "scan_confirmed",
+      "reference_status": "novel_description_overrides_old_scan_costume",
       "character_ids": [
         "lakhesh"
       ],
@@ -102,9 +143,9 @@
       },
       "style": "pixel_art",
       "status": "measured_crops_animation_review",
-      "generated_source": "/workspace/generated_images/exec-5d7624d1-5500-4794-a2bb-4a4862516a3d.png",
-      "sha256": "ee0bb492e970ecc9b343222582caac1ead212e5459b695506d63387142a036ab",
-      "description": "P49 : neuf ans, carré blond et petite queue latérale ; robe brune sur manches blanches, ceinture nouée blanche et ourlet blanc. Espèce source : leprechaun.",
+      "generated_source": "/workspace/generated_images/exec-24712cef-ed11-4226-b001-ed63a2e64c93.png",
+      "sha256": "735b8d670162455190e6a85e8803f891f9444d7969db4d0bacf0dd54b137d3b8",
+      "description": "Lakhesh : petite fée polie, cheveux PÊCHE et UNE petite couette latérale, yeux bruns ; GILET BRUN CLOUTÉ sur robe claire et manches crème. Distincte d’Almita ; 42 poses en trois vues et portrait.",
       "animations": [
         "repos",
         "marche",
@@ -114,10 +155,34 @@
       "limitations": [
         "Découpe mesurée ; cycles, contact des pieds et fenêtres de combat à revoir dans Godot."
       ],
+      "prompt": "Fix spacing ONLY in this supplied corrected sprite atlas; preserve character design, clothing, hair color and pixel style. CRITICAL: current figures touch vertically and cannot be extracted. REDRAW AND RELAYOUT all 43 figures with much smaller sprites: reduce each full-body sprite height to 60% of its current height relative to the SAME portrait 1:2 canvas. This deliberate generous empty padding is essential. Canvas has exactly6 equal columns and12 equal rows. Every full-body figure occupies at most60% of its cell height, at most70% cell width, with at least25% cell height transparent between consecutive rows. Completely blank alpha gutters across full canvas width separate ALL12rows, no hair/clothes crossing gutters, no figures touching or stacked. All body heights equal (except slight leaning run); no miniatures in talk rows. Exactly42full-body figures plus ONE bust portrait, using this precise grid: FRONT rows1–4; BACK rows5–8; RIGHT PROFILE rows9–12. Each group row1=TWOidle figures cols1,2; row2=SIXwalking cols1–6; row3=FOURrunning cols1–4; row4=TWOtalking cols1,2. Lastrow12col6 ONEportrait only. All unassigned cells transparent; no extra sprites. Clear clean binary-alpha transparent background, no grid, no shadow, no text. There must be43 visibly separate silhouettes, completely separated, even with nearest neighbor alpha threshold. Keep Lakhesh PEACH hair, distinct separate BROWN METAL STUDDED VEST over CREAM blouse/dress. ONE SMALL short side ponytail only, no bun on the other side. Make this ponytail HALF its current size (no wider than25% ofhead width), recognizably a short tied tuft. Brown eyes/boots. Allfront/back/profilesandportrait consistent.",
+      "source_description_document": "docs/ASSETS_HD2D.md §3.4",
+      "provenance_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.provenance.json",
+      "native_dimensions": [
+        887,
+        1774
+      ],
+      "source_validation": {
+        "pose_count": 42,
+        "portrait_count": 1,
+        "counts_per_direction": [
+          2,
+          6,
+          4,
+          2
+        ],
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "cut_rows": "passed",
+        "alpha_threshold": 128
+      },
       "aliases": [],
       "frames_json_path": "assets/characters/lakhesh/lakhesh.json",
       "density_px_m": 96,
-      "source_sha256": "ee0bb492e970ecc9b343222582caac1ead212e5459b695506d63387142a036ab",
+      "source_sha256": "735b8d670162455190e6a85e8803f891f9444d7969db4d0bacf0dd54b137d3b8",
       "portrait_path": "assets/characters/lakhesh/lakhesh_portrait.png"
     },
     {
@@ -130,13 +195,13 @@
       ],
       "path": "assets/characters/lakhesh/lakhesh_portrait.png",
       "source_path": "assets/source/resumed_2d/pixel/portraits/lakhesh.png",
-      "source_parent_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions.png",
+      "source_parent_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.png",
       "dimensions": [
         256,
         256
       ],
       "layout": null,
-      "source_sha256": "85af4487988aa314ac8407be32efd3eaa15a0ba3648de1c57816c48d88716eb2",
+      "source_sha256": "ee0dd1840ba5021d05130739d0b6cefec5607285ef71877172ddf2322638bd70",
       "reference_pages": [
         49
       ],
@@ -224,7 +289,7 @@
       "path": "assets/characters/cat_waiter/cat_waiter.png",
       "dimensions": [
         941,
-        791
+        675
       ],
       "style": "pixel_art",
       "reference_pages": [],
@@ -256,13 +321,27 @@
           "count": 2,
           "original_count": 1,
           "columns": 2
+        },
+        "right:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png",
+          "row": 0,
+          "rows": 1,
+          "count": 1,
+          "original_count": 4,
+          "columns": 1,
+          "scale_reference": "idle",
+          "indices": [
+            0
+          ]
         }
       },
       "correction_prompts": {
-        "right:parle": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 2 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth300px andmaximumheight420px, placeatcenters384,1152; allsamebaseline&scale. Body turned STRICTRIGHTSIDE PROFILE lookingright. TWO talkinggestures cupheldontray, entireboots visible. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Warmgraymale adultcat,white shirt,mutedbrownwaistcoat,darktrousers,longbeigeapron,tea cup heldsafelyontray. Smileandtinyvisiblecanines."
+        "right:parle": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 2 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth300px andmaximumheight420px, placeatcenters384,1152; allsamebaseline&scale. Body turned STRICTRIGHTSIDE PROFILE lookingright. TWO talkinggestures cupheldontray, entireboots visible. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Warmgraymale adultcat,white shirt,mutedbrownwaistcoat,darktrousers,longbeigeapron,tea cup heldsafelyontray. Smileandtinyvisiblecanines.",
+        "right:course": "Produce a targeted replacement PIXEL-ART game SINGLE animation frame for WordEnd HD-2D. Use reference ONLY to match identity,costume,palette and usual standingidlebody proportions; NOframefromreferencecopied. Crisp discretepixelclusters, steppedlimitedmutedcolors, darkcoloredoutlines(no pureblack), NOsmoothpainting/AA/3D. Transparent PNG background nofloor/shadows/labels/text/grid/portraits. Canvas1024x1024 square. Exactly ONE SOLO fullbody character ONLY, centrallyplaced, no extra limbs or secondperson ANYWHERE. Each figure straightRIGHTPROFILE facingright; veryslightoverhead10degreecamera, same3heads-tallbody as standingidle, adulthead/torso/legs proportions NOTminiature/chibi shrunken. Whole ears,hat,tail,arms,feet,props includedwith60pxtransparentpadding. Figure natural standingheight about650px, feet on samebaseline. Action: FIRST RUNNING phase, rightfoot forward andotherlegrear, mildtorsolean, holds tray withONEteacup, nofoodtrail. Single head torso andtwoarms twolegs. Character:café cat waiter (game visual interpretation of described canon character): slim pleasant warm gray male cat with amber eyes and visible tiny canines, white shirt, muted brown waistcoat, dark trousers, long beige service apron, tray with teacup, friendly slight bow. "
       },
       "correction_sha256s": {
-        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851"
+        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851",
+        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png": "b92b6302e2e4301f9182573ba76b5e99c42bca5ba9b92f52930b288fe068eb6c"
       },
       "source_validation": {
         "status": "passed_component_cut_and_frame_counts",
@@ -281,10 +360,12 @@
         "portraits": 1,
         "verified_source_sha256": {
           "assets/source/resumed_2d/pixel/characters/cat_waiter_directions.png": "c91c0b5760e9a4f504d5af8a802b6d651008b9cdc22fa5f0d837345f538d4ecc",
-          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851"
+          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851",
+          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png": "b92b6302e2e4301f9182573ba76b5e99c42bca5ba9b92f52930b288fe068eb6c"
         },
         "animation_review_required": true
       },
+      "targeted_correction_reason": "Native running/dialgoue silhouettes touched; replace only running frame0.",
       "aliases": [],
       "frames_json_path": "assets/characters/cat_waiter/cat_waiter.json",
       "density_px_m": 96,
@@ -496,7 +577,7 @@
       "path": "assets/characters/baker/baker.png",
       "dimensions": [
         1060,
-        737
+        807
       ],
       "style": "pixel_art",
       "reference_pages": [],
@@ -527,7 +608,8 @@
           "rows": 1,
           "count": 2,
           "original_count": 2,
-          "columns": 2
+          "columns": 2,
+          "scale_reference": "idle"
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 2 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT RIGHT PROFILE lookingright. TWO talking gesture frames ONLY. Whole boots MUST be included with padding, no cropping. Camera slightelevated10degrees. Sourceidentity:baker: enormous round bear-headed male with chestnut fur, small round bear ears, pale rolled sleeves, flour-dusted ivory apron, brown trousers, oversized boots, loaf held in cloth at elbow. Natural professions, not armed enemies. Show correct obvious animal traits; all fully clad.",
@@ -553,6 +635,7 @@
         },
         "animation_review_required": true
       },
+      "targeted_correction_reason": "Existing two replacement drawings are complete adult bodies; legacy scale-reference shrank them to122px. Fit to idle scale192px.",
       "aliases": [],
       "frames_json_path": "assets/characters/baker/baker.json",
       "density_px_m": 96,
@@ -2168,25 +2251,65 @@
       "source_section": "8",
       "index": 93,
       "id": "hd2d_sky_distant_island_b",
-      "source_path": "assets/source/resumed_2d/pixel/hd2d/sky/distant_island_b.png",
+      "source_path": "assets/source/resumed_2d/pixel/decor_corrections/distant_island_b_clean_768x384.png",
       "desired_dimensions": [
         768,
         384
       ],
       "status": "fitted_review",
-      "prompt": "Create a single game asset for WordEnd, HD-2D SukaSuka floating island 68. CRISP PIXEL ART, deliberate square pixel clusters, hard stepped shading, limited natural muted palette, no smooth painting, no blur, no antialiasing into background, no pure black or pure white. Rustic worn European wood, cream stone, slate, iron, copper, autumn gold/rust/moss. Flat soft light from LEFT, no cast shadow or floor. No labels, numbers, logo, UI, signature, people or characters. Pixel density target 96 pixels per meter. SINGLE isolated object, front view only with barely visible top (10-15 degree downward angle), no isometric view. Entire object complete, horizontally centered, foot at exact bottom edge, no empty rows below the ground contact. True transparent PNG background. Maintain subject's requested proportions; request exact target canvas size. Native larger image acceptable if necessary but make pixels especially crisp so nearest-neighbor reduction works. DISTANT SCENERY 48px/m, muted violet silhouettes with minimal detail, no ground plane. Asset assets/hd2d/sky/distant_island_b.png target 768 x 384 px. Subject: autre île lointaine, plus plate, avec un village ; fond transparent.",
+      "prompt": "Edit this HD-2D background game sprite: ONE single fairly flat floating island with a small rustic European village across the top. Preserve the attractive hand-crafted square-pixel style and approximate architectural design of the CENTRAL main island, but make the whole single island a muted violet/lavender DISTANT silhouette with limited subdued colors, lower contrast and minimal detail. Remove EVERY detached fragment, every separate miniature island, every piece of floating rubble, every speck and all pale/white/blue background objects. Keep only the central island including village, connected cliff underside and roots that attach to the main body. No clouds or background scenery. Use a TRUE TRANSPARENT background alpha zero everywhere beyond ONE CONNECTED island silhouette. No gray matte, no white/black background, no halo, no outline fragments. Crisp deliberate pixel clusters, stepped shading, zero blur or antialiasing into transparent background. Center the full island with modest transparent margins on a 2:1 horizontal canvas intended for 768x384 pixels; preserve every village roof and cliff tip inside the canvas. No words, labels, people, UI, signature. Native larger size acceptable. Only the single isolated island.",
       "dimensions_native": [
         1774,
         887
       ],
-      "sha256": "8ffebc70c559ea1659770521827a3f55cf468ff7beb66f7a976fc40d9c9406a9",
+      "sha256": "9e06cee719bcef2266c9aad27b1830be1db3c75cdafc659c0792dd07c6b82744",
+      "native_path": "assets/source/resumed_2d/pixel/decor_corrections/distant_island_b_native.png",
+      "native_dimensions": [
+        1774,
+        887
+      ],
+      "generated_with": "image_gen",
+      "generation_date": "2026-10-08",
+      "generation_path": "/workspace/generated_images/exec-fab0a482-71dd-4c57-bf62-037d48f90079.png",
+      "native_preserved": true,
+      "native_sha256": "dbbc91eba77ba9c527e3b04228b9a60c61af352ce715909833b7a0639044fecb",
+      "replaces_source_path": "assets/source/resumed_2d/pixel/hd2d/sky/distant_island_b.png",
+      "correction_reference_paths": [
+        "assets/hd2d/sky/distant_island_b.png"
+      ],
+      "correction_reason": "remove detached alpha fragments; respect muted violet distant island subject",
+      "technical_cleanup": {
+        "operation": "alpha threshold at 128; retain largest connected alpha component; clear RGB outside silhouette",
+        "threshold": 128,
+        "connectivity": 4,
+        "components_before": 7,
+        "components_after": 1,
+        "detached_opaque_pixels_removed": 21,
+        "no_rgb_redraw": true,
+        "generator_native_preserved": "assets/source/resumed_2d/pixel/decor_corrections/distant_island_b_native.png",
+        "normalized_source_path": "assets/source/resumed_2d/pixel/decor_corrections/distant_island_b_clean.png",
+        "post_fit_cleanup": {
+          "nearest_resize_to": [
+            768,
+            384
+          ],
+          "palette_colors": 64,
+          "operation": "remove disconnected components after nearest-neighbor fitting; no RGB redrawing",
+          "disconnected_pixels_removed": 1,
+          "components_after": 1
+        }
+      },
+      "prepared_dimensions": [
+        768,
+        384
+      ],
       "style": "pixel_art",
       "name": "distant island b",
       "fit_report": {
         "path": "assets/hd2d/sky/distant_island_b.png",
-        "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/sky/distant_island_b.png",
+        "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/decor_corrections/distant_island_b_clean_768x384.png",
         "archives": {
-          "source_png": "assets/source/hd2d_raw/assets/hd2d/sky/distant_island_b/8ffebc70c559ea1659770521827a3f55cf468ff7beb66f7a976fc40d9c9406a9.png",
+          "source_png": "assets/source/hd2d_raw/assets/hd2d/sky/distant_island_b/9e06cee719bcef2266c9aad27b1830be1db3c75cdafc659c0792dd07c6b82744.png",
           "previous_png": "assets/source/hd2d_raw/assets/hd2d/sky/distant_island_b/3499313f28b95099c496505cb073fea621aef8c3c69a8ecef98e9a557d7a407a.png"
         },
         "resample": "nearest",
@@ -2205,7 +2328,7 @@
           "status": "provided",
           "errors": [],
           "warnings": [],
-          "bytes": 334676,
+          "bytes": 291832,
           "dimensions": [
             768,
             384
@@ -2235,25 +2358,65 @@
       "source_section": "8",
       "index": 94,
       "id": "hd2d_sky_distant_island_c",
-      "source_path": "assets/source/resumed_2d/pixel/hd2d/sky/distant_island_c.png",
+      "source_path": "assets/source/resumed_2d/pixel/decor_corrections/distant_island_c_clean_768x384.png",
       "desired_dimensions": [
         768,
         384
       ],
       "status": "fitted_review",
-      "prompt": "Create a single game asset for WordEnd, HD-2D SukaSuka floating island 68. CRISP PIXEL ART, deliberate square pixel clusters, hard stepped shading, limited natural muted palette, no smooth painting, no blur, no antialiasing into background, no pure black or pure white. Rustic worn European wood, cream stone, slate, iron, copper, autumn gold/rust/moss. Flat soft light from LEFT, no cast shadow or floor. No labels, numbers, logo, UI, signature, people or characters. Pixel density target 96 pixels per meter. SINGLE isolated object, front view only with barely visible top (10-15 degree downward angle), no isometric view. Entire object complete, horizontally centered, foot at exact bottom edge, no empty rows below the ground contact. True transparent PNG background. Maintain subject's requested proportions; request exact target canvas size. Native larger image acceptable if necessary but make pixels especially crisp so nearest-neighbor reduction works. DISTANT SCENERY 48px/m, muted violet silhouettes with minimal detail, no ground plane. Asset assets/hd2d/sky/distant_island_c.png target 768 x 384 px. Subject: petite île lointaine rocheuse ; fond transparent.",
+      "prompt": "Correct this HD-2D game background sprite according to its actual specification: ONE SMALL DISTANT ROCKY FLOATING ISLAND, muted violet/lavender silhouette. Keep the crisp square-pixel stepped-shading style. Remove ALL buildings including the church and ruins, remove trees, and remove EVERY detached floating island, floating rock, white fragment and peripheral speck. The asset must contain ONLY ONE CONNECTED rocky island: low uneven rocky plateau above, tapered craggy cliff underside below, a few short roots attached to the main body allowed. Simple sparse distant detail, subdued violet tones, no prominent orange or high-contrast cream coloring. TRUE TRANSPARENT alpha-zero background everywhere outside this ONE connected island contour, with no pale matte, no white/black background, no halos. No clouds, no detached rocks, no rubble, no ground plane. Center the full small island on a 2:1 horizontal canvas intended for 768x384 pixels with generous transparent space left and right. No words, numbers, people, UI, signature. Native larger clean pixel rendition acceptable.",
       "dimensions_native": [
         1774,
         887
       ],
-      "sha256": "7f8f557498bd5689d35b6f3c97c1c07d8dfec102ea6777bae5b64ff52830f9f2",
+      "sha256": "1025533a746a2ee708749c60cba6d021d8299473c3a60d89d6062079e35a899b",
+      "native_path": "assets/source/resumed_2d/pixel/decor_corrections/distant_island_c_native.png",
+      "native_dimensions": [
+        1774,
+        887
+      ],
+      "generated_with": "image_gen",
+      "generation_date": "2026-10-08",
+      "generation_path": "/workspace/generated_images/exec-6d469acd-176a-46aa-bcc8-6701924f700f.png",
+      "native_preserved": true,
+      "native_sha256": "0832e87d2fc8d3fc237d59a735bc22c3b37e4d5122269f67528ecc370870bb98",
+      "replaces_source_path": "assets/source/resumed_2d/pixel/hd2d/sky/distant_island_c.png",
+      "correction_reference_paths": [
+        "assets/hd2d/sky/distant_island_c.png"
+      ],
+      "correction_reason": "remove detached alpha fragments; respect muted violet distant island subject",
+      "technical_cleanup": {
+        "operation": "alpha threshold at 128; retain largest connected alpha component; clear RGB outside silhouette",
+        "threshold": 128,
+        "connectivity": 4,
+        "components_before": 1,
+        "components_after": 1,
+        "detached_opaque_pixels_removed": 0,
+        "no_rgb_redraw": true,
+        "generator_native_preserved": "assets/source/resumed_2d/pixel/decor_corrections/distant_island_c_native.png",
+        "normalized_source_path": "assets/source/resumed_2d/pixel/decor_corrections/distant_island_c_clean.png",
+        "post_fit_cleanup": {
+          "nearest_resize_to": [
+            768,
+            384
+          ],
+          "palette_colors": 64,
+          "operation": "remove disconnected components after nearest-neighbor fitting; no RGB redrawing",
+          "disconnected_pixels_removed": 0,
+          "components_after": 1
+        }
+      },
+      "prepared_dimensions": [
+        768,
+        384
+      ],
       "style": "pixel_art",
       "name": "distant island c",
       "fit_report": {
         "path": "assets/hd2d/sky/distant_island_c.png",
-        "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/hd2d/sky/distant_island_c.png",
+        "source": "/workspace/Yume-WordEnd/assets/source/resumed_2d/pixel/decor_corrections/distant_island_c_clean_768x384.png",
         "archives": {
-          "source_png": "assets/source/hd2d_raw/assets/hd2d/sky/distant_island_c/7f8f557498bd5689d35b6f3c97c1c07d8dfec102ea6777bae5b64ff52830f9f2.png",
+          "source_png": "assets/source/hd2d_raw/assets/hd2d/sky/distant_island_c/1025533a746a2ee708749c60cba6d021d8299473c3a60d89d6062079e35a899b.png",
           "previous_png": "assets/source/hd2d_raw/assets/hd2d/sky/distant_island_c/ac0eec43de302158a1cbe798ab385fcc60b1c95d3dc1fd14f5c4bfb328db3cf0.png"
         },
         "resample": "nearest",
@@ -2272,7 +2435,7 @@
           "status": "provided",
           "errors": [],
           "warnings": [],
-          "bytes": 220866,
+          "bytes": 155724,
           "dimensions": [
             768,
             384
@@ -2632,17 +2795,17 @@
       "id": "pixel_collon_front",
       "name": "Collon",
       "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/collon_directions.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/collon_directions_novel_corrected.png",
       "path": "assets/characters/collon/collon_front.png",
       "dimensions": [
-        507,
-        520
+        616,
+        516
       ],
       "height_m": 1.2,
       "reference_pages": [
         47
       ],
-      "reference_status": "scan_confirmed",
+      "reference_status": "scan_costume_plus_user_story_bible_accessories",
       "character_ids": [
         "collon"
       ],
@@ -2658,9 +2821,9 @@
       },
       "style": "pixel_art",
       "status": "measured_crops_animation_review",
-      "generated_source": "/workspace/generated_images/exec-0f59c3bc-c3cb-4511-bff7-20662dd2ff9c.png",
-      "sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
-      "description": "P47 : neuf ans, chevelure rose presque jusqu’aux genoux avec petite attache au sommet ; longue tunique blanche, col/manche mauve bordé or, short rose bouffant. Espèce source : leprechaun.",
+      "generated_source": "/workspace/generated_images/exec-e693b51e-6301-4eba-80e9-a2894e9c83c1.png",
+      "sha256": "251783a303b55fb519623872d707fa244d8714b2c52f58786df563dcf157939e",
+      "description": "P47 : neuf ans, chevelure rose presque jusqu’aux genoux avec petite attache au sommet ; longue tunique blanche, col/manche mauve bordé or, short rose bouffant. Espèce source : leprechaun. Bandeau rouge complet autour du front et de la tête, canine visible dans les expressions et le portrait ; identité et costume p47 conservés.",
       "animations": [
         "repos",
         "marche",
@@ -2670,27 +2833,68 @@
       "limitations": [
         "Découpe mesurée ; cycles, contact des pieds et fenêtres de combat à revoir dans Godot."
       ],
+      "provenance": {
+        "tool": "image_gen",
+        "date": "2026-10-08",
+        "original_source_path": "assets/source/resumed_2d/pixel/characters/collon_directions.png",
+        "original_source_sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
+        "original_preserved": true,
+        "correction_authority": "user_story_bible",
+        "change": "Bandeau rouge complet autour du front et de la tête, canine visible dans les expressions et le portrait ; identité et costume p47 conservés.",
+        "backend_version": "not_exposed"
+      },
+      "validation": {
+        "cut_rows": "passed",
+        "directions": 3,
+        "body_frames": 42,
+        "portraits": 1,
+        "frame_counts_by_direction": {
+          "front": [
+            2,
+            6,
+            4,
+            2
+          ],
+          "back": [
+            2,
+            6,
+            4,
+            2
+          ],
+          "right": [
+            2,
+            6,
+            4,
+            2
+          ]
+        },
+        "alpha_preparation": "threshold128 in-memory for cut_rows check; raw PNG unchanged",
+        "visual_details_reviewed": true,
+        "limitations": [
+          "Animation cycles and feet contact require final Godot review."
+        ]
+      },
       "aliases": [],
       "frames_json_path": "assets/characters/collon/collon_front.json",
       "density_px_m": 96,
-      "source_sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
+      "source_sha256": "251783a303b55fb519623872d707fa244d8714b2c52f58786df563dcf157939e",
       "portrait_path": "assets/characters/collon/collon_portrait.png"
     },
     {
       "id": "pixel_collon_back",
       "name": "Collon",
       "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/collon_directions.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/collon_directions_novel_corrected.png",
       "path": "assets/characters/collon/collon_back.png",
       "dimensions": [
-        508,
-        508
+        606,
+        513
       ],
       "height_m": 1.2,
       "reference_pages": [
         47
       ],
-      "reference_status": "scan_confirmed",
+      "reference_status": "scan_costume_plus_user_story_bible_accessories",
       "character_ids": [
         "collon"
       ],
@@ -2706,9 +2910,9 @@
       },
       "style": "pixel_art",
       "status": "measured_crops_animation_review",
-      "generated_source": "/workspace/generated_images/exec-0f59c3bc-c3cb-4511-bff7-20662dd2ff9c.png",
-      "sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
-      "description": "P47 : neuf ans, chevelure rose presque jusqu’aux genoux avec petite attache au sommet ; longue tunique blanche, col/manche mauve bordé or, short rose bouffant. Espèce source : leprechaun.",
+      "generated_source": "/workspace/generated_images/exec-e693b51e-6301-4eba-80e9-a2894e9c83c1.png",
+      "sha256": "251783a303b55fb519623872d707fa244d8714b2c52f58786df563dcf157939e",
+      "description": "P47 : neuf ans, chevelure rose presque jusqu’aux genoux avec petite attache au sommet ; longue tunique blanche, col/manche mauve bordé or, short rose bouffant. Espèce source : leprechaun. Bandeau rouge complet autour du front et de la tête, canine visible dans les expressions et le portrait ; identité et costume p47 conservés.",
       "animations": [
         "repos",
         "marche",
@@ -2718,27 +2922,68 @@
       "limitations": [
         "Découpe mesurée ; cycles, contact des pieds et fenêtres de combat à revoir dans Godot."
       ],
+      "provenance": {
+        "tool": "image_gen",
+        "date": "2026-10-08",
+        "original_source_path": "assets/source/resumed_2d/pixel/characters/collon_directions.png",
+        "original_source_sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
+        "original_preserved": true,
+        "correction_authority": "user_story_bible",
+        "change": "Bandeau rouge complet autour du front et de la tête, canine visible dans les expressions et le portrait ; identité et costume p47 conservés.",
+        "backend_version": "not_exposed"
+      },
+      "validation": {
+        "cut_rows": "passed",
+        "directions": 3,
+        "body_frames": 42,
+        "portraits": 1,
+        "frame_counts_by_direction": {
+          "front": [
+            2,
+            6,
+            4,
+            2
+          ],
+          "back": [
+            2,
+            6,
+            4,
+            2
+          ],
+          "right": [
+            2,
+            6,
+            4,
+            2
+          ]
+        },
+        "alpha_preparation": "threshold128 in-memory for cut_rows check; raw PNG unchanged",
+        "visual_details_reviewed": true,
+        "limitations": [
+          "Animation cycles and feet contact require final Godot review."
+        ]
+      },
       "aliases": [],
       "frames_json_path": "assets/characters/collon/collon_back.json",
       "density_px_m": 96,
-      "source_sha256": "def46233bded0e3d722a5c4f6381b6ff9851d27f55fde9029d3202e27844b4af",
+      "source_sha256": "251783a303b55fb519623872d707fa244d8714b2c52f58786df563dcf157939e",
       "portrait_path": "assets/characters/collon/collon_portrait.png"
     },
     {
       "id": "pixel_lakhesh_front",
       "name": "Lakhesh",
       "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.png",
       "path": "assets/characters/lakhesh/lakhesh_front.png",
       "dimensions": [
-        433,
-        468
+        504,
+        493
       ],
       "height_m": 1.2,
       "reference_pages": [
         49
       ],
-      "reference_status": "scan_confirmed",
+      "reference_status": "novel_description_overrides_old_scan_costume",
       "character_ids": [
         "lakhesh"
       ],
@@ -2754,9 +2999,9 @@
       },
       "style": "pixel_art",
       "status": "measured_crops_animation_review",
-      "generated_source": "/workspace/generated_images/exec-5d7624d1-5500-4794-a2bb-4a4862516a3d.png",
-      "sha256": "ee0bb492e970ecc9b343222582caac1ead212e5459b695506d63387142a036ab",
-      "description": "P49 : neuf ans, carré blond et petite queue latérale ; robe brune sur manches blanches, ceinture nouée blanche et ourlet blanc. Espèce source : leprechaun.",
+      "generated_source": "/workspace/generated_images/exec-24712cef-ed11-4226-b001-ed63a2e64c93.png",
+      "sha256": "735b8d670162455190e6a85e8803f891f9444d7969db4d0bacf0dd54b137d3b8",
+      "description": "Lakhesh : petite fée polie, cheveux PÊCHE et UNE petite couette latérale, yeux bruns ; GILET BRUN CLOUTÉ sur robe claire et manches crème. Distincte d’Almita ; 42 poses en trois vues et portrait.",
       "animations": [
         "repos",
         "marche",
@@ -2766,27 +3011,51 @@
       "limitations": [
         "Découpe mesurée ; cycles, contact des pieds et fenêtres de combat à revoir dans Godot."
       ],
+      "prompt": "Fix spacing ONLY in this supplied corrected sprite atlas; preserve character design, clothing, hair color and pixel style. CRITICAL: current figures touch vertically and cannot be extracted. REDRAW AND RELAYOUT all 43 figures with much smaller sprites: reduce each full-body sprite height to 60% of its current height relative to the SAME portrait 1:2 canvas. This deliberate generous empty padding is essential. Canvas has exactly6 equal columns and12 equal rows. Every full-body figure occupies at most60% of its cell height, at most70% cell width, with at least25% cell height transparent between consecutive rows. Completely blank alpha gutters across full canvas width separate ALL12rows, no hair/clothes crossing gutters, no figures touching or stacked. All body heights equal (except slight leaning run); no miniatures in talk rows. Exactly42full-body figures plus ONE bust portrait, using this precise grid: FRONT rows1–4; BACK rows5–8; RIGHT PROFILE rows9–12. Each group row1=TWOidle figures cols1,2; row2=SIXwalking cols1–6; row3=FOURrunning cols1–4; row4=TWOtalking cols1,2. Lastrow12col6 ONEportrait only. All unassigned cells transparent; no extra sprites. Clear clean binary-alpha transparent background, no grid, no shadow, no text. There must be43 visibly separate silhouettes, completely separated, even with nearest neighbor alpha threshold. Keep Lakhesh PEACH hair, distinct separate BROWN METAL STUDDED VEST over CREAM blouse/dress. ONE SMALL short side ponytail only, no bun on the other side. Make this ponytail HALF its current size (no wider than25% ofhead width), recognizably a short tied tuft. Brown eyes/boots. Allfront/back/profilesandportrait consistent.",
+      "source_description_document": "docs/ASSETS_HD2D.md §3.4",
+      "provenance_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.provenance.json",
+      "native_dimensions": [
+        887,
+        1774
+      ],
+      "source_validation": {
+        "pose_count": 42,
+        "portrait_count": 1,
+        "counts_per_direction": [
+          2,
+          6,
+          4,
+          2
+        ],
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "cut_rows": "passed",
+        "alpha_threshold": 128
+      },
       "aliases": [],
       "frames_json_path": "assets/characters/lakhesh/lakhesh_front.json",
       "density_px_m": 96,
-      "source_sha256": "ee0bb492e970ecc9b343222582caac1ead212e5459b695506d63387142a036ab",
+      "source_sha256": "735b8d670162455190e6a85e8803f891f9444d7969db4d0bacf0dd54b137d3b8",
       "portrait_path": "assets/characters/lakhesh/lakhesh_portrait.png"
     },
     {
       "id": "pixel_lakhesh_back",
       "name": "Lakhesh",
       "category": "characters",
-      "source_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions.png",
+      "source_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.png",
       "path": "assets/characters/lakhesh/lakhesh_back.png",
       "dimensions": [
-        443,
-        489
+        518,
+        485
       ],
       "height_m": 1.2,
       "reference_pages": [
         49
       ],
-      "reference_status": "scan_confirmed",
+      "reference_status": "novel_description_overrides_old_scan_costume",
       "character_ids": [
         "lakhesh"
       ],
@@ -2802,9 +3071,9 @@
       },
       "style": "pixel_art",
       "status": "measured_crops_animation_review",
-      "generated_source": "/workspace/generated_images/exec-5d7624d1-5500-4794-a2bb-4a4862516a3d.png",
-      "sha256": "ee0bb492e970ecc9b343222582caac1ead212e5459b695506d63387142a036ab",
-      "description": "P49 : neuf ans, carré blond et petite queue latérale ; robe brune sur manches blanches, ceinture nouée blanche et ourlet blanc. Espèce source : leprechaun.",
+      "generated_source": "/workspace/generated_images/exec-24712cef-ed11-4226-b001-ed63a2e64c93.png",
+      "sha256": "735b8d670162455190e6a85e8803f891f9444d7969db4d0bacf0dd54b137d3b8",
+      "description": "Lakhesh : petite fée polie, cheveux PÊCHE et UNE petite couette latérale, yeux bruns ; GILET BRUN CLOUTÉ sur robe claire et manches crème. Distincte d’Almita ; 42 poses en trois vues et portrait.",
       "animations": [
         "repos",
         "marche",
@@ -2814,10 +3083,34 @@
       "limitations": [
         "Découpe mesurée ; cycles, contact des pieds et fenêtres de combat à revoir dans Godot."
       ],
+      "prompt": "Fix spacing ONLY in this supplied corrected sprite atlas; preserve character design, clothing, hair color and pixel style. CRITICAL: current figures touch vertically and cannot be extracted. REDRAW AND RELAYOUT all 43 figures with much smaller sprites: reduce each full-body sprite height to 60% of its current height relative to the SAME portrait 1:2 canvas. This deliberate generous empty padding is essential. Canvas has exactly6 equal columns and12 equal rows. Every full-body figure occupies at most60% of its cell height, at most70% cell width, with at least25% cell height transparent between consecutive rows. Completely blank alpha gutters across full canvas width separate ALL12rows, no hair/clothes crossing gutters, no figures touching or stacked. All body heights equal (except slight leaning run); no miniatures in talk rows. Exactly42full-body figures plus ONE bust portrait, using this precise grid: FRONT rows1–4; BACK rows5–8; RIGHT PROFILE rows9–12. Each group row1=TWOidle figures cols1,2; row2=SIXwalking cols1–6; row3=FOURrunning cols1–4; row4=TWOtalking cols1,2. Lastrow12col6 ONEportrait only. All unassigned cells transparent; no extra sprites. Clear clean binary-alpha transparent background, no grid, no shadow, no text. There must be43 visibly separate silhouettes, completely separated, even with nearest neighbor alpha threshold. Keep Lakhesh PEACH hair, distinct separate BROWN METAL STUDDED VEST over CREAM blouse/dress. ONE SMALL short side ponytail only, no bun on the other side. Make this ponytail HALF its current size (no wider than25% ofhead width), recognizably a short tied tuft. Brown eyes/boots. Allfront/back/profilesandportrait consistent.",
+      "source_description_document": "docs/ASSETS_HD2D.md §3.4",
+      "provenance_path": "assets/source/resumed_2d/pixel/characters/lakhesh_directions_novel.provenance.json",
+      "native_dimensions": [
+        887,
+        1774
+      ],
+      "source_validation": {
+        "pose_count": 42,
+        "portrait_count": 1,
+        "counts_per_direction": [
+          2,
+          6,
+          4,
+          2
+        ],
+        "directions": [
+          "front",
+          "back",
+          "right"
+        ],
+        "cut_rows": "passed",
+        "alpha_threshold": 128
+      },
       "aliases": [],
       "frames_json_path": "assets/characters/lakhesh/lakhesh_back.json",
       "density_px_m": 96,
-      "source_sha256": "ee0bb492e970ecc9b343222582caac1ead212e5459b695506d63387142a036ab",
+      "source_sha256": "735b8d670162455190e6a85e8803f891f9444d7969db4d0bacf0dd54b137d3b8",
       "portrait_path": "assets/characters/lakhesh/lakhesh_portrait.png"
     },
     {
@@ -2960,13 +3253,27 @@
           "count": 2,
           "original_count": 1,
           "columns": 2
+        },
+        "right:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png",
+          "row": 0,
+          "rows": 1,
+          "count": 1,
+          "original_count": 4,
+          "columns": 1,
+          "scale_reference": "idle",
+          "indices": [
+            0
+          ]
         }
       },
       "correction_prompts": {
-        "right:parle": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 2 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth300px andmaximumheight420px, placeatcenters384,1152; allsamebaseline&scale. Body turned STRICTRIGHTSIDE PROFILE lookingright. TWO talkinggestures cupheldontray, entireboots visible. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Warmgraymale adultcat,white shirt,mutedbrownwaistcoat,darktrousers,longbeigeapron,tea cup heldsafelyontray. Smileandtinyvisiblecanines."
+        "right:parle": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 2 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth300px andmaximumheight420px, placeatcenters384,1152; allsamebaseline&scale. Body turned STRICTRIGHTSIDE PROFILE lookingright. TWO talkinggestures cupheldontray, entireboots visible. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Warmgraymale adultcat,white shirt,mutedbrownwaistcoat,darktrousers,longbeigeapron,tea cup heldsafelyontray. Smileandtinyvisiblecanines.",
+        "right:course": "Produce a targeted replacement PIXEL-ART game SINGLE animation frame for WordEnd HD-2D. Use reference ONLY to match identity,costume,palette and usual standingidlebody proportions; NOframefromreferencecopied. Crisp discretepixelclusters, steppedlimitedmutedcolors, darkcoloredoutlines(no pureblack), NOsmoothpainting/AA/3D. Transparent PNG background nofloor/shadows/labels/text/grid/portraits. Canvas1024x1024 square. Exactly ONE SOLO fullbody character ONLY, centrallyplaced, no extra limbs or secondperson ANYWHERE. Each figure straightRIGHTPROFILE facingright; veryslightoverhead10degreecamera, same3heads-tallbody as standingidle, adulthead/torso/legs proportions NOTminiature/chibi shrunken. Whole ears,hat,tail,arms,feet,props includedwith60pxtransparentpadding. Figure natural standingheight about650px, feet on samebaseline. Action: FIRST RUNNING phase, rightfoot forward andotherlegrear, mildtorsolean, holds tray withONEteacup, nofoodtrail. Single head torso andtwoarms twolegs. Character:café cat waiter (game visual interpretation of described canon character): slim pleasant warm gray male cat with amber eyes and visible tiny canines, white shirt, muted brown waistcoat, dark trousers, long beige service apron, tray with teacup, friendly slight bow. "
       },
       "correction_sha256s": {
-        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851"
+        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851",
+        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png": "b92b6302e2e4301f9182573ba76b5e99c42bca5ba9b92f52930b288fe068eb6c"
       },
       "source_validation": {
         "status": "passed_component_cut_and_frame_counts",
@@ -2985,10 +3292,12 @@
         "portraits": 1,
         "verified_source_sha256": {
           "assets/source/resumed_2d/pixel/characters/cat_waiter_directions.png": "c91c0b5760e9a4f504d5af8a802b6d651008b9cdc22fa5f0d837345f538d4ecc",
-          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851"
+          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851",
+          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png": "b92b6302e2e4301f9182573ba76b5e99c42bca5ba9b92f52930b288fe068eb6c"
         },
         "animation_review_required": true
       },
+      "targeted_correction_reason": "Native running/dialgoue silhouettes touched; replace only running frame0.",
       "aliases": [],
       "frames_json_path": "assets/characters/cat_waiter/cat_waiter_front.json",
       "density_px_m": 96,
@@ -3042,13 +3351,27 @@
           "count": 2,
           "original_count": 1,
           "columns": 2
+        },
+        "right:course": {
+          "source_path": "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png",
+          "row": 0,
+          "rows": 1,
+          "count": 1,
+          "original_count": 4,
+          "columns": 1,
+          "scale_reference": "idle",
+          "indices": [
+            0
+          ]
         }
       },
       "correction_prompts": {
-        "right:parle": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 2 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth300px andmaximumheight420px, placeatcenters384,1152; allsamebaseline&scale. Body turned STRICTRIGHTSIDE PROFILE lookingright. TWO talkinggestures cupheldontray, entireboots visible. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Warmgraymale adultcat,white shirt,mutedbrownwaistcoat,darktrousers,longbeigeapron,tea cup heldsafelyontray. Smileandtinyvisiblecanines."
+        "right:parle": "Create ONE PIXEL-ART NPC animationstrip matching SAME identity/costume/palette ofreference, crisp squarepixelclusters andsteppedshading noantialiasfringe, limitedmutedcolors,NOpainterlysmoothness,NO3D. TRANSPARENT PNG nofloor/shadows/portraits/grids/text. Landscape1536x1024. EXACTLY 2 fullbodyfigures in ONE SINGLE horizontalrow. Large emptytransparentgapsatleast30px betweenALL figures, wings,tails,ears,props NEVER TOUCH neighbouringframe. EACHfigure maximumwidth300px andmaximumheight420px, placeatcenters384,1152; allsamebaseline&scale. Body turned STRICTRIGHTSIDE PROFILE lookingright. TWO talkinggestures cupheldontray, entireboots visible. No copiedphase; differentleg+armpositionsgenuinely animated. All ears,hands,feet,boots,wings fullyvisible. Description:Warmgraymale adultcat,white shirt,mutedbrownwaistcoat,darktrousers,longbeigeapron,tea cup heldsafelyontray. Smileandtinyvisiblecanines.",
+        "right:course": "Produce a targeted replacement PIXEL-ART game SINGLE animation frame for WordEnd HD-2D. Use reference ONLY to match identity,costume,palette and usual standingidlebody proportions; NOframefromreferencecopied. Crisp discretepixelclusters, steppedlimitedmutedcolors, darkcoloredoutlines(no pureblack), NOsmoothpainting/AA/3D. Transparent PNG background nofloor/shadows/labels/text/grid/portraits. Canvas1024x1024 square. Exactly ONE SOLO fullbody character ONLY, centrallyplaced, no extra limbs or secondperson ANYWHERE. Each figure straightRIGHTPROFILE facingright; veryslightoverhead10degreecamera, same3heads-tallbody as standingidle, adulthead/torso/legs proportions NOTminiature/chibi shrunken. Whole ears,hat,tail,arms,feet,props includedwith60pxtransparentpadding. Figure natural standingheight about650px, feet on samebaseline. Action: FIRST RUNNING phase, rightfoot forward andotherlegrear, mildtorsolean, holds tray withONEteacup, nofoodtrail. Single head torso andtwoarms twolegs. Character:café cat waiter (game visual interpretation of described canon character): slim pleasant warm gray male cat with amber eyes and visible tiny canines, white shirt, muted brown waistcoat, dark trousers, long beige service apron, tray with teacup, friendly slight bow. "
       },
       "correction_sha256s": {
-        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851"
+        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851",
+        "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png": "b92b6302e2e4301f9182573ba76b5e99c42bca5ba9b92f52930b288fe068eb6c"
       },
       "source_validation": {
         "status": "passed_component_cut_and_frame_counts",
@@ -3067,10 +3390,12 @@
         "portraits": 1,
         "verified_source_sha256": {
           "assets/source/resumed_2d/pixel/characters/cat_waiter_directions.png": "c91c0b5760e9a4f504d5af8a802b6d651008b9cdc22fa5f0d837345f538d4ecc",
-          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851"
+          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_parle.png": "2dca0504fb745e3956edd17a996ddc61011b91d773fce2a6cd5d53cd921b0851",
+          "assets/source/resumed_2d/pixel/characters/cat_waiter_right_course_frame0.png": "b92b6302e2e4301f9182573ba76b5e99c42bca5ba9b92f52930b288fe068eb6c"
         },
         "animation_review_required": true
       },
+      "targeted_correction_reason": "Native running/dialgoue silhouettes touched; replace only running frame0.",
       "aliases": [],
       "frames_json_path": "assets/characters/cat_waiter/cat_waiter_back.json",
       "density_px_m": 96,
@@ -3669,7 +3994,8 @@
           "rows": 1,
           "count": 2,
           "original_count": 2,
-          "columns": 2
+          "columns": 2,
+          "scale_reference": "idle"
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 2 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT RIGHT PROFILE lookingright. TWO talking gesture frames ONLY. Whole boots MUST be included with padding, no cropping. Camera slightelevated10degrees. Sourceidentity:baker: enormous round bear-headed male with chestnut fur, small round bear ears, pale rolled sleeves, flour-dusted ivory apron, brown trousers, oversized boots, loaf held in cloth at elbow. Natural professions, not armed enemies. Show correct obvious animal traits; all fully clad.",
@@ -3695,6 +4021,7 @@
         },
         "animation_review_required": true
       },
+      "targeted_correction_reason": "Existing two replacement drawings are complete adult bodies; legacy scale-reference shrank them to122px. Fit to idle scale192px.",
       "aliases": [],
       "frames_json_path": "assets/characters/baker/baker_front.json",
       "density_px_m": 96,
@@ -3747,7 +4074,8 @@
           "rows": 1,
           "count": 2,
           "original_count": 2,
-          "columns": 2
+          "columns": 2,
+          "scale_reference": "idle"
         }
       },
       "correction_prompt": "Make a REPLACEMENT PIXEL ART animation strip matching the referenced SAME CHARACTER, exact palette/costume/identity, crisp squarepixel stepped edges and limitedcolor clusters, NO painterly smooth gradients or3D. Transparent background NO floor/shadows/grid/text/labels. Landscape canvas1536x1024, 2 equallyspaced columns ONLY ONE ROW acrossmiddle; no extra rows orportraits. All 2 fullbody figures about550px tall withlargepadding, keep entirety ears,horns,tail,feet,boots,hands/telescope no cutoffs or overlaps. All frames STRICT RIGHT PROFILE lookingright. TWO talking gesture frames ONLY. Whole boots MUST be included with padding, no cropping. Camera slightelevated10degrees. Sourceidentity:baker: enormous round bear-headed male with chestnut fur, small round bear ears, pale rolled sleeves, flour-dusted ivory apron, brown trousers, oversized boots, loaf held in cloth at elbow. Natural professions, not armed enemies. Show correct obvious animal traits; all fully clad.",
@@ -3773,6 +4101,7 @@
         },
         "animation_review_required": true
       },
+      "targeted_correction_reason": "Existing two replacement drawings are complete adult bodies; legacy scale-reference shrank them to122px. Fit to idle scale192px.",
       "aliases": [],
       "frames_json_path": "assets/characters/baker/baker_back.json",
       "density_px_m": 96,
@@ -4166,7 +4495,7 @@
     "provided": 69,
     "missing_required": 0,
     "failed_provided": 0,
-    "total_image_bytes": 9542842,
+    "total_image_bytes": 9525508,
     "errors": [],
     "files": [
       {
@@ -4176,10 +4505,10 @@
         "warnings": [
           "Le contrôle technique ne valide pas le dessin, les cycles ni le contact des pieds."
         ],
-        "bytes": 163885,
+        "bytes": 165987,
         "dimensions": [
-          479,
-          498
+          535,
+          491
         ]
       },
       {
@@ -4187,7 +4516,7 @@
         "status": "provided",
         "errors": [],
         "warnings": [],
-        "bytes": 35866,
+        "bytes": 33377,
         "dimensions": [
           256,
           256
@@ -4200,10 +4529,10 @@
         "warnings": [
           "Le contrôle technique ne valide pas le dessin, les cycles ni le contact des pieds."
         ],
-        "bytes": 141189,
+        "bytes": 160440,
         "dimensions": [
-          409,
-          480
+          514,
+          481
         ]
       },
       {
@@ -4211,7 +4540,7 @@
         "status": "provided",
         "errors": [],
         "warnings": [],
-        "bytes": 28090,
+        "bytes": 22509,
         "dimensions": [
           256,
           256
@@ -4248,10 +4577,10 @@
         "warnings": [
           "Le contrôle technique ne valide pas le dessin, les cycles ni le contact des pieds."
         ],
-        "bytes": 194809,
+        "bytes": 179255,
         "dimensions": [
           941,
-          791
+          675
         ]
       },
       {
@@ -4320,10 +4649,10 @@
         "warnings": [
           "Le contrôle technique ne valide pas le dessin, les cycles ni le contact des pieds."
         ],
-        "bytes": 259070,
+        "bytes": 272968,
         "dimensions": [
           1060,
-          737
+          807
         ]
       },
       {
@@ -4601,7 +4930,7 @@
         "status": "provided",
         "errors": [],
         "warnings": [],
-        "bytes": 334676,
+        "bytes": 291832,
         "dimensions": [
           768,
           384
@@ -4612,7 +4941,7 @@
         "status": "provided",
         "errors": [],
         "warnings": [],
-        "bytes": 220866,
+        "bytes": 155724,
         "dimensions": [
           768,
           384
@@ -4691,10 +5020,10 @@
         "warnings": [
           "Le contrôle technique ne valide pas le dessin, les cycles ni le contact des pieds."
         ],
-        "bytes": 189368,
+        "bytes": 201148,
         "dimensions": [
-          507,
-          520
+          616,
+          516
         ]
       },
       {
@@ -4704,10 +5033,10 @@
         "warnings": [
           "Le contrôle technique ne valide pas le dessin, les cycles ni le contact des pieds."
         ],
-        "bytes": 164260,
+        "bytes": 180431,
         "dimensions": [
-          508,
-          508
+          606,
+          513
         ]
       },
       {
@@ -4717,10 +5046,10 @@
         "warnings": [
           "Le contrôle technique ne valide pas le dessin, les cycles ni le contact des pieds."
         ],
-        "bytes": 153505,
+        "bytes": 184436,
         "dimensions": [
-          433,
-          468
+          504,
+          493
         ]
       },
       {
@@ -4730,10 +5059,10 @@
         "warnings": [
           "Le contrôle technique ne valide pas le dessin, les cycles ni le contact des pieds."
         ],
-        "bytes": 134157,
+        "bytes": 154300,
         "dimensions": [
-          443,
-          489
+          518,
+          485
         ]
       },
       {
