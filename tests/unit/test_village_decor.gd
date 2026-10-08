@@ -7,8 +7,10 @@ extends GutTest
 ##   chemins jusqu'aux portails et l'abord de chaque PNJ (depuis le centre de la cour, comme les
 ##   tests de la vraie partie) sont libres ;
 ## - occlusion : depuis la caméra de sa conversation, aucun pixel opaque du décor ne cache un
-##   PNJ ; le décor qui passe devant le joueur (l'entrepôt quand il est derrière) s'efface autour
-##   de lui (see_through.gd), sans matériau ni draw call de plus.
+##   PNJ ; en marchant dans la cour, aucun PNJ à l'écran ne reste caché plus d'une seconde de
+##   marche ; on ne passe plus derrière le L de l'entrepôt ; le décor qui passe devant le joueur
+##   (un arbre, le porche, les draps) s'efface autour de lui (see_through.gd), sans matériau ni
+##   draw call de plus.
 ##
 ## Les places elles-mêmes (sol, dégagement, accès) restent vérifiées par
 ## test_world_story_spots.gd.
@@ -35,15 +37,30 @@ const NPC_HALF_WIDTH := 0.25
 ## Palissade : à 21,2 m du centre ; ouverture libre des portails (de part et d'autre du chemin)
 ## et début des modules après le poteau.
 const FENCE := 21.2
-const GATE_OPENING := 1.5
+const GATE_OPENING := 1.2
 const FENCE_FROM := 2.4
+## Marche dans la cour : pas des relevés (m) et plus longue traversée où un PNJ à l'écran peut
+## rester caché (une seconde à walk_speed, player.gd : 4 m/s).
+const WALK_STEP := 1.0
+const HIDDEN_WALK_LIMIT := 4.0
+## Part centrale de l'écran (en angle) où l'on suit un PNJ : au bord du cadre, sous le panneau de
+## quête ou au ras de la palissade, il revient au centre dès qu'on marche vers lui.
+const VIEW_SHARE := 0.8
+## Allées relevées : lignes est-ouest (z) et nord-sud (x) qui balaient la cour, jusqu'à la
+## palissade (local au village).
+const WALK_ROWS: Array[float] = [-17.0, -13.0, -8.0, -4.0, 0.0, 4.0, 8.0, 12.0, 16.0, 19.5]
+const WALK_COLUMNS: Array[float] = [-17.0, -12.0, -8.0, -4.0, 0.0, 4.0, 8.0, 12.0, 16.0, 20.0]
+const WALK_FROM := -20.5
+const WALK_TO := 20.5
+## Couloirs fermés derrière le L de l'entrepôt (local au village) : un point dans chacun.
+const BEHIND_WAREHOUSE: Array[Vector3] = [Vector3(-11.0, 0.0, -20.1), Vector3(-20.1, 0.0, -6.0)]
 ## Obstacles du décor : point (local au village) → nœud attendu dans le chemin du collisionneur.
 const BLOCKERS := {
 	"WarehouseMain": Vector3(-11.0, 0.0, -15.0),
 	"WarehouseWing": Vector3(-16.0, 0.0, -6.5),
 	"ToolShed": Vector3(17.0, 0.0, -17.3),
 	"Well": Vector3(0.0, 0.0, 0.0),
-	"ArmoryDoor": Vector3(-13.9, 0.0, -1.6),
+	"ArmoryDoor": Vector3(-13.6, 0.0, -1.6),
 	"ClimbingTree": Vector3(11.0, 0.0, -13.0),
 	"Lamps": Vector3(-5.5, 0.0, -8.7),
 	"LaundryLines": Vector3(7.5, 0.0, 5.4),
@@ -60,10 +77,14 @@ var _npcs: Dictionary[String, Vector3] = {}
 var _pitch := 0.0
 var _distance := 0.0
 var _focus_height := 0.0
+## Demi-angles de la part centrale du champ de la caméra (rad) : vertical, horizontal (16:9).
+var _half_fov := 0.0
+var _half_hfov := 0.0
 ## Triangles opaques possibles du décor fondu : sommets (monde), UV, image de chaque triangle.
 var _vertices := PackedVector3Array()
 var _uvs := PackedVector2Array()
 var _triangle_images: Array[Image] = []
+var _triangle_names: Array[String] = []
 
 
 func before_all() -> void:
@@ -82,6 +103,8 @@ func before_all() -> void:
 	_pitch = deg_to_rad(float(rig.get(&"pitch_deg")))
 	_distance = float(rig.get(&"distance"))
 	_focus_height = float(rig.get(&"focus_height"))
+	_half_fov = deg_to_rad(float(rig.get(&"fov_deg"))) / 2.0 * VIEW_SHARE
+	_half_hfov = atan(tan(deg_to_rad(float(rig.get(&"fov_deg"))) / 2.0) * 16.0 / 9.0) * VIEW_SHARE
 	rig.free()
 	_collect_panels()
 
@@ -140,6 +163,28 @@ func test_every_npc_can_be_approached_from_the_yard() -> void:
 		_assert_open(at + away * reach, stop, "abord de %s depuis %.1f m" % [npc, reach])
 
 
+func test_the_back_of_the_warehouse_is_closed() -> void:
+	# Le couloir derrière le corps principal et celui derrière l'aile sont libres de décor, mais
+	# on n'y entre ni par l'est (nord du chemin nord) ni par le sud (ouest du chemin ouest).
+	for inside: Vector3 in BEHIND_WAREHOUSE:
+		assert_true(_decor_at(_village.to_global(inside)).is_empty(), "couloir %s" % inside)
+	var closures := {
+		"BackFence nord-est": [Vector3(-1.5, 0.0, -20.1), Vector3(-5.0, 0.0, -20.1)],
+		"BackFence sud-ouest": [Vector3(-20.1, 0.0, -1.0), Vector3(-20.1, 0.0, -4.0)],
+	}
+	for label: String in closures:
+		var ends: Array = closures[label]
+		var from: Vector3 = ends[0]
+		var to: Vector3 = ends[1]
+		var blocked := false
+		var steps := ceili(from.distance_to(to) / 0.1)
+		for i in steps + 1:
+			if not _decor_at(_village.to_global(from.lerp(to, float(i) / steps))).is_empty():
+				blocked = true
+				break
+		assert_true(blocked, "%s ferme le couloir" % label)
+
+
 # --- Occlusion ----------------------------------------------------------------------------------
 
 
@@ -162,6 +207,39 @@ func test_no_decor_hides_an_npc_from_the_dialogue_camera() -> void:
 				hidden.is_empty(),
 				"%s visible (joueur à %.1f m) ; caché en %s" % [npc, reach, ", ".join(hidden)]
 			)
+
+
+func test_no_npc_stays_hidden_while_walking_the_yard() -> void:
+	# La caméra suit le joueur : on la place au-dessus de chaque pas des allées qui balaient la
+	# cour ; un PNJ à l'écran dont l'axe du corps est caché par le décor ne doit pas le rester
+	# plus de HIDDEN_WALK_LIMIT m de marche d'affilée.
+	var walks: Array[PackedVector3Array] = []
+	for z: float in WALK_ROWS:
+		walks.append(_walk(Vector3(WALK_FROM, 0.0, z), Vector3(WALK_TO, 0.0, z)))
+	for x: float in WALK_COLUMNS:
+		walks.append(_walk(Vector3(x, 0.0, WALK_FROM), Vector3(x, 0.0, WALK_TO)))
+	var samples := 0
+	var failures: Array[String] = []
+	for walk: PackedVector3Array in walks:
+		var runs: Dictionary[String, float] = {}
+		var worst: Dictionary[String, String] = {}
+		for step: Vector3 in walk:
+			var reachable := _reachable(step)
+			var camera := Vector3.ZERO
+			if reachable:
+				samples += 1
+				camera = _camera_for(_village.to_global(step))
+			for npc: String in _npcs:
+				var occluder := _npc_hidden(camera, _npcs[npc]) if reachable else ""
+				if occluder.is_empty():
+					runs[npc] = 0.0
+					continue
+				runs[npc] = runs.get(npc, 0.0) + WALK_STEP
+				if runs[npc] >= HIDDEN_WALK_LIMIT and not worst.has(npc):
+					worst[npc] = "%s par %s, joueur en %s" % [npc, occluder, step]
+		failures.append_array(worst.values())
+	assert_gt(samples, 500, "pas relevés dans la cour")
+	assert_true(failures.is_empty(), "PNJ cachés en marchant : %s" % ", ".join(failures))
 
 
 func test_decor_fades_around_the_player_behind_the_warehouse() -> void:
@@ -240,6 +318,44 @@ func _assert_open(from: Vector3, to: Vector3, label: String) -> void:
 	assert_true(blocked.is_empty(), "%s libre (%s)" % [label, ", ".join(blocked)])
 
 
+## Pas de WALK_STEP m de from à to (local au village).
+func _walk(from: Vector3, to: Vector3) -> PackedVector3Array:
+	var points := PackedVector3Array()
+	var steps := ceili(from.distance_to(to) / WALK_STEP)
+	for i in steps + 1:
+		points.append(from.lerp(to, float(i) / steps))
+	return points
+
+
+## Vrai si le joueur peut se tenir en `at` (local au village) : hors du décor et hors des
+## couloirs fermés derrière le L de l'entrepôt.
+func _reachable(at: Vector3) -> bool:
+	if (at.x < -18.8 and at.z < -2.6) or (at.z < -18.8 and at.x < -3.4):
+		return false
+	return _decor_at(_village.to_global(at)).is_empty()
+
+
+## Image du décor qui cache l'axe du corps du PNJ en `at` (monde) à toutes les hauteurs relevées,
+## quand il est dans la part centrale de l'écran de la caméra en `camera` ; "" s'il est visible
+## ou hors de cette part.
+func _npc_hidden(camera: Vector3, at: Vector3) -> String:
+	var forward := Vector3(0.0, -sin(_pitch), -cos(_pitch))
+	var up := Vector3(0.0, cos(_pitch), -sin(_pitch))
+	var head := Vector3(at.x, NPC_HEIGHTS[NPC_HEIGHTS.size() - 1], at.z) - camera
+	var depth := head.dot(forward)
+	if depth <= 0.0:
+		return ""
+	if absf(atan2(head.dot(up), depth)) > _half_fov or absf(atan2(head.x, depth)) > _half_hfov:
+		return ""
+	var occluder := ""
+	for height: float in NPC_HEIGHTS:
+		var t := _occluder(camera, Vector3(at.x, height, at.z))
+		if t < 0:
+			return ""
+		occluder = _triangle_names[t]
+	return occluder
+
+
 ## Position de la caméra quand le joueur est en `player` (sans avance ni verrouillage).
 func _camera_for(player: Vector3) -> Vector3:
 	var back := Vector3(0.0, sin(_pitch), cos(_pitch))
@@ -271,10 +387,17 @@ func _collect_panels() -> void:
 			_uvs.append(uvs[v])
 		for _t in range(0, vertices.size(), 3):
 			_triangle_images.append(image)
+			_triangle_names.append(texture.resource_path.get_file().get_basename())
 
 
 ## Vrai si un pixel opaque du décor est sur le segment caméra → point, à plus de 0,3 m du point.
 func _opaque_between(from: Vector3, to: Vector3) -> bool:
+	return _occluder(from, to) >= 0
+
+
+## Triangle du décor dont un pixel opaque est sur le segment caméra → point (à plus de 0,3 m du
+## point), -1 sinon.
+func _occluder(from: Vector3, to: Vector3) -> int:
 	var direction := (to - from).normalized()
 	var limit := from.distance_to(to) - 0.3
 	var low := from.min(to)
@@ -298,8 +421,8 @@ func _opaque_between(from: Vector3, to: Vector3) -> bool:
 		if hit == null or from.distance_to(hit as Vector3) > limit:
 			continue
 		if _alpha_at(t, hit as Vector3) >= 0.5:
-			return true
-	return false
+			return t
+	return -1
 
 
 ## Opacité de l'image du triangle t au point p (coordonnées barycentriques, UV répétées).
