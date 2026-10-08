@@ -37,9 +37,10 @@ const VIEWS := {
 	"sud": Vector3(-20.0, 0.0, 22.0),
 	"sud-est": Vector3(20.0, 0.0, 22.0),
 }
-## Vues où l'on se tient dans le sous-bois (dix arbres ou plus à l'écran).
+## Vues où l'on se tient dans le sous-bois (dix arbres ou plus à l'écran) ; le marais, l'entrée,
+## le bord de la cascade et le gué sont des trouées (roseaux, chemin, vide, ruisseau).
 const WOODS: Array[String] = [
-	"marais", "ours", "est", "ouest", "nord-est", "bord est", "bord ouest", "sud", "sud-est"
+	"ours", "est", "ouest", "nord-est", "bord est", "bord ouest", "sud", "sud-est"
 ]
 ## Vues mesurées en draw calls : celles des bois, plus le terrain d'entraînement et le nord.
 const CAMERA_VIEWS := {
