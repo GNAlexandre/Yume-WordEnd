@@ -1532,3 +1532,10 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **Budget Web** : le cahier n° 2 ajouterait 15 à 20 Mo à l'export (23,7 Mo pour 25 Mo
   aujourd'hui) : à trancher avant son intégration (relever le budget, compresser les grandes
   images ou charger par zone).
+- **Budget Web relevé de 25 à 60 Mo compressés** (choix de l'utilisateur : la qualité des images
+  passe avant le poids). Les 25 Mo étaient un objectif du plan (temps de premier chargement), pas
+  une limite de GitHub Pages ; le plan prévoyait déjà 60 Mo à M4. `tools/build_size.sh`,
+  `tools/check.sh`, l'étape de la CI, `PLAN.md` et `docs/web.md` passent à 60 Mo ; le budget des
+  images du manifeste (`test_hd2d_assets.gd`) de 16 à 64 Mo de PNG. Les images restent importées
+  sans perte (WebP sans perte) ; le cahier n° 2 ne demande plus de réduire les couleurs. Les
+  mesures et critères déjà passés (recette M2, lot L9) gardent leurs 25 Mo d'alors.
