@@ -153,7 +153,12 @@ func update_camera(delta: float, zoom_axis: float = 0.0) -> void:
 ## Point visé idéal : à _ahead m au nord du joueur (avec l'avance lissée dans le sens de la
 ## marche si with_lead, et vers la cible verrouillée), borné à limits.
 func focus_goal(with_lead: bool = true) -> Vector3:
-	var goal := anchor() + Vector3.UP * focus_height + Vector3.FORWARD * _ahead
+	return _goal_from(anchor(), with_lead)
+
+
+## Point visé idéal pour des pieds en feet (voir focus_goal).
+func _goal_from(feet: Vector3, with_lead: bool) -> Vector3:
+	var goal := feet + Vector3.UP * focus_height + Vector3.FORWARD * _ahead
 	if with_lead:
 		goal += _lead
 	var target := _valid_target()
@@ -163,7 +168,7 @@ func focus_goal(with_lead: bool = true) -> Vector3:
 			if target.is_physics_interpolated_and_enabled()
 			else target.global_position
 		)
-		var offset := shown - anchor()
+		var offset := shown - feet
 		offset.y = 0.0
 		goal += (offset * lock_focus).limit_length(lock_focus_max)
 	goal.x = clampf(goal.x, limits.position.x, limits.end.x)
@@ -188,9 +193,12 @@ func snap() -> void:
 	if body != null:
 		# Téléportation : le joueur ne glisse pas de l'ancienne place à la nouvelle.
 		body.reset_physics_interpolation()
+	reset_physics_interpolation()
 	_lead = Vector3.ZERO
 	_ahead = talk_ahead if _talking else focus_ahead
-	_focus = focus_goal(false)
+	# La place affichée n'est recalculée qu'une fois par image : juste après une téléportation,
+	# elle donne encore l'ancienne. La caméra se recale sur la vraie position.
+	_focus = _goal_from(global_position, false)
 	_distance = _target_distance
 	_apply()
 
