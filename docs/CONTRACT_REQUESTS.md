@@ -360,3 +360,22 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   ciel et ce qui flotte au-delà du bord ne se voient qu'au bord nord de l'île (bois). Les nuages
   ont la palette de la mer de nuages (pêche, lavande) : sans base plus sombre ou plus contrastée,
   ils s'y fondent (vu dans `demo_formats`).
+
+## H10 — dirigeables du cahier n° 2 : densité et place (phase de pose)
+- Besoin : `assets/hd2d/props/airship_ferry.png` (1344 × 672) et `airship_barocupot.png`
+  (2304 × 1056) sont maintenant à 96 px/m (cahier n° 2, section 11), et leurs hélices sont des
+  bandes à part (`assets/hd2d/anim/airship_*_propeller.png`, 4 images, 12 images/s, moyeu au
+  centre de l'image). Les scènes `src/world/props/airship_ferry.tscn` et
+  `airship_barocupot.tscn` gardent `pixels_per_meter = 48.0` : les navires s'affichent deux fois
+  trop grands (28 m et 48 m), amarrés au sud du quai, hors du champ de la caméra.
+- Proposition : `pixels_per_meter = 96.0`, navires de flanc à l'est et à l'ouest du quai (le
+  Barocupot à son pylône `mooring_tower`), pales posées sur les moyeux (au milieu de la coque du
+  passeur ; au tiers et aux deux tiers du Barocupot, à mi-hauteur de la coque).
+- En attendant : rien ne change dans le jeu (navires hors champ).
+
+## H10 — atlas du sol à 27 tuiles (H9)
+- Besoin : l'atlas fait 7 rangées (1536 × 2688 px, ordre du contrat commun) ; le shader du sol
+  doit déduire le nombre de rangées de la taille de l'atlas (contrat commun, point 6).
+- En attendant : `ATLAS_ROWS = 7.0` dans `src/world/shaders/terrain.gdshader` et taille attendue
+  1536 × 2688 dans `tests/unit/test_hd2d_decor.gd` (deux lignes, commit à part de H10) ; à la
+  fusion, garder la version de H9.

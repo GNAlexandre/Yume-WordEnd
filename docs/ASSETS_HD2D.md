@@ -50,7 +50,7 @@ pierre claire `#C2B49F`, ombre `#837667` ; sable `#D6C19E` ; bois clair `#A57C58
 
 | Règle | Valeur |
 | --- | --- |
-| Densité | **96 px par mètre** partout dans le monde (sol, falaises, façades, décors, personnages) ; décor lointain (dirigeables, îles au loin) : 48 px/m |
+| Densité | **96 px par mètre** partout dans le monde (sol, falaises, façades, décors, personnages, dirigeables à quai du cahier n° 2) ; décor lointain (îles au loin) : 48 px/m ; navires en vol (cahier n° 2) : 24 px/m |
 | Format | PNG RGBA 8 bits ; tuiles et textures sans raccord : opaques |
 | Taille | exacte au pixel près (tableaux ci-dessous) ; si l'outil ne sait pas la produire, livre l'image la plus nette possible en plus grand et lance `python3 tools/hd2d_assets.py fit <fichier>` (réduction au plus proche voisin, alpha seuillé) |
 | Cadrage des panneaux | objet entier, collé au bord bas (aucune ligne vide sous le pied), centré horizontalement ; **ancre = milieu du bord bas = point posé au sol** (pied du tronc, base du mur) |
@@ -325,8 +325,8 @@ Décor lointain (48 px/m) :
 
 | Prio | Nom | Taille (px) | Description à coller |
 | --- | --- | --- | --- |
-| 3 | `airship_ferry` | 576 × 336 | petit dirigeable du passeur : coque de bois et de cuivre, ballon allongé beige, deux rotors |
-| 3 | `airship_barocupot` | 1056 × 480 | Barocupot, transport militaire de la Garde ailée : coque sombre, deux pales de rotor, trappe |
+| 3 | `airship_ferry` | 1344 × 672 | refait : navire volant du passeur, de profil, à 96 px/m (cahier n° 2, section 11) |
+| 3 | `airship_barocupot` | 2304 × 1056 | refait : le Barocupot de profil, à 96 px/m (cahier n° 2, section 11) |
 
 Ces deux dirigeables sont **refaits** d'après le cahier n° 2 (`docs/ASSETS_HD2D_MONDE.md`,
 section 11) : navires sans ballon, de profil, à 96 px/m, hélices animées à part.
@@ -363,11 +363,13 @@ flottent juste sous l'île sont permis.
 
 1. Dépose l'image au chemin exact de ce document : elle écrase le remplaçant du même nom (les
    fichiers `.import` ne changent pas).
-2. `python3 tools/hd2d_assets.py check` : taille, alpha, raccord des tuiles (planches de
-   personnages : `python3 tools/hd2d_sheets.py check`, section 3) ;
+2. `python3 tools/hd2d_assets.py check` : taille, alpha, raccord des tuiles, ancrage (planches de
+   personnages : `python3 tools/hd2d_sheets.py check`, section 3) ; il connaît aussi les images
+   du cahier n° 2 (décalques, bandes animées, flancs : `check --lot A` à `G`) ;
    `python3 tools/hd2d_assets.py fit <fichier>` ramène une image trop grande à sa taille ; après
-   une tuile de sol, `python3 tools/hd2d_assets.py atlas` (le jeu lit les douze tuiles réunies
-   dans `assets/hd2d/ground/atlas/ground_atlas.png` ; `fit` et `gen` le refont d'eux-mêmes).
+   une tuile de sol, `python3 tools/hd2d_assets.py atlas` (le jeu lit les 27 tuiles des deux
+   cahiers réunies dans `assets/hd2d/ground/atlas/ground_atlas.png` ; `fit` et `gen` le refont
+   d'eux-mêmes).
 3. `tools/screenshot.sh res://src/world/island.tscn build/shots/hd2d.png` pour voir le résultat,
    puis `tools/check.sh`.
 4. Note la provenance dans `assets/CREDITS.md` (« généré avec ChatGPT le … », licence accordée).

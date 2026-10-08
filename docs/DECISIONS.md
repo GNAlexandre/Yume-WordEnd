@@ -1601,3 +1601,65 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **H9 — démo des formats** : l'île sans ses zones et un atlas de 27 tuiles fabriqué à l'exécution
   (les `_b` sont la tuile retournée et éclaircie, les matières des teintes) ; aucune image du
   cahier n° 2 lue (le lot H10 les crée).
+- **H10 — manifeste du cahier n° 2** (`tools/hd2d_manifest.json`, version 2, une image par ligne) :
+  les 300 images de `docs/ASSETS_HD2D_MONDE.md` s'ajoutent aux 99 du cahier n° 1 (399 en tout ;
+  les deux dirigeables gardent leur chemin à leur nouvelle taille). Clés nouvelles : `lot` (A à G),
+  genres `decal`, `anim` (`frames`, `fps` : la taille est celle d'une image, le fichier fait
+  `frames ×` sa largeur) et `side` (`roof` gable avec `wall_m`, ou eaves), `soft_alpha`, `wrap`
+  (x ou y), `anchor` center (ce qui vole : nuages, navires en vol, feuilles, oiseaux, papillon,
+  lucioles, hélices), `solid_edge` (bord haut plein des bordures d'herbe), `pairs_with`
+  (`grass_edge_b` se raccorde à `grass_edge_a`), `variant_of` (tuile `_b` → tuile d'origine, cherchée
+  dans le même dossier : `ground/rock`, pas `props/rock`), `ppm` (48 : nuages, îles, île n° 53,
+  `horizon_islands` ; 24 : navires en vol). Les lisières (`forest_wall_*`, `treeline_autumn_*`) se
+  raccordent aussi à gauche et à droite, comme les bordures listées par le cahier.
+- **H10 — cadences des bandes animées** (`fps`, notées dans le manifeste et la section 12 du
+  cahier) : linge 4, fanion 10, fumée 6, brasero 10, cascade 10, oiseaux 10, feuilles 10, roseaux 3,
+  herbe 4, manche à air 6, guirlande 5, cloche 6, fontaine 8, pigeon 4, papillon 12, lucioles 4,
+  vapeur 8, clochette 6, hélices 12 : un mouvement d'étoffe ou de plante lent, un battement d'ailes
+  ou une flamme vifs, une boucle d'une demi-seconde à une seconde et demie.
+- **H10 — corrections du cahier n° 2** : (1) les hélices tournaient d'un huitième de tour par
+  image : avec quatre pales identiques, 45° rend les images 3 et 4 identiques aux images 1 et 2 et
+  le sens de rotation indécidable (l'œil voit aussi bien −45°) ; elles tournent d'un seizième de
+  tour (22,5°, 4 pales) et d'un vingtième (18°, 5 pales) : en 4 images une pale prend la place de
+  la suivante. (2) La section 3.4 demandait chaque image d'une bande « collée au bas » alors que
+  les hélices (« moyeu au centre exact ») et les feuilles (« reste au centre ») sont centrées :
+  exception écrite pour ce qui vole (et les nuages), clé `anchor` center. (3) Les flancs des
+  maisons de 9.2 sont nommés (`<nom>_side`) dans le tableau ; les chemins des dirigeables et de
+  leurs hélices (`props/`, `anim/`) sont écrits ; les densités du ciel (48 ou 96 px/m) sont dites
+  pour chaque famille ; `canopy_shadow_b` et `sand_drift_b` sont marqués « alpha doux » comme
+  leur famille ; `edge_roots` pend sous la lèvre (haut de l'image = lèvre) ; la clochette du café
+  pend à une potence qui part du bas de l'image (l'ancre) ; la cloche de veille se balance sur
+  6 images (et non « gauche, centre, droite, centre », qui en fait 4). Cahier n° 1 : lignes des
+  dirigeables à leur nouvelle taille, renvoi au cahier n° 2.
+- **H10 — remplaçants du cahier n° 2** : une recette par image dans `tools/hd2d_nature.py`
+  (lot A), `hd2d_decals.py`, `hd2d_town.py`, `hd2d_ships.py`, `hd2d_anim.py`, `hd2d_sky.py` et
+  `hd2d_ground.py` ; `gen` les refait toutes en 25 s environ, à l'octet près d'une passe à l'autre.
+  Ils partent des images livrées quand ils en
+  dérivent : tuiles `_b` (pourtour de la tuile livrée, intérieur pris ailleurs dans la même tuile et
+  cousu par des coupes de coût minimal qui suivent les joints), prairie fleurie (herbe livrée),
+  matières `_b` (matières livrées recolorées, moussues, rouillées ou tournées), flancs des neuf
+  bâtiments existants (matière du volume, fenêtres découpées dans la façade livrée), bandes du
+  linge, du fanion, de la manche à air, des roseaux, de l'herbe haute et de la cloche (le panneau
+  livré mis en mouvement : rangées ou colonnes décalées, cloche tournée autour de son anneau).
+  14,7 Mo de PNG (29,1 Mo pour tout le manifeste, budget 64).
+- **H10 — dirigeables remplacés** : les deux images livrées (ballon, 48 px/m) sont remplacées par
+  des remplaçants au format du cahier n° 2 (1344 × 672 et 2304 × 1056 px à 96 px/m) ; leurs scènes
+  (`src/world/props/airship_*.tscn`, hors de H10) restent à `pixels_per_meter = 48` et amarrées
+  au sud du quai, hors champ : elles les affichent deux fois trop grands jusqu'à la phase de pose
+  (docs/CONTRACT_REQUESTS.md).
+- **H10 — atlas du sol à 27 tuiles** (1536 × 2688 px, ordre du contrat) : en attendant que H9
+  déduise le nombre de rangées de la taille de l'atlas, `ATLAS_ROWS` de `terrain.gdshader` passe
+  de 3 à 7 et `test_hd2d_decor.gd` attend 1536 × 2688 (deux lignes hors du périmètre de H10, à
+  reprendre telles que H9 les écrit à la fusion) ; les 12 premières cases n'ont pas bougé, le sol
+  rend à l'identique.
+- **H10 — vérifications** : `hd2d_assets.py check` (et `--lot`) vérifie toutes les règles des
+  genres ; `test_hd2d_assets.gd` en reprend l'essentiel (raccords sur colonnes échantillonnées,
+  limite 2 au lieu de 1,5) et compare l'atlas sans `assert_eq` sur les octets (13 s gagnées). La
+  mesure de raccord reste celle du cahier n° 1 (écart des bords rapporté au plus grand écart
+  intérieur) : elle attrape un bord coupé ou décalé, pas deux herbes voisines de teinte proche.
+- **H10 — mesures** : export Web 32,7 Mo compressés (wasm 9,7 + pck 23,0 ; 23,7 avant H10),
+  budget 60 : `export_filter = all_resources` emporte les 300 nouvelles images bien qu'aucune scène
+  ne les utilise encore (vérifié dans le .pck : 45 décalques, 21 bandes, 19 flancs) ; livrées (40
+  à 45 Mo de PNG prévus au lieu de 15), elles porteraient l'export vers 40 Mo compressés. Draw calls
+  inchangés (`tools/hd2d_shots.sh` : cour 172, port 63, bois 56, Couchant 33, colline 51, avant
+  comme après) : les nouvelles images ne sont pas encore posées.
