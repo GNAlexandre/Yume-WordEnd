@@ -187,7 +187,7 @@ func test_focus_band_follows_the_player_on_screen() -> void:
 func test_building_facade_fits_in_the_frame() -> void:
 	# Le joueur dans la cour, devant le mur de 6,5 m de l'entrepôt : la façade et le bas du toit
 	# tiennent dans le cadre, le joueur reste à l'écran.
-	for ahead: float in [3.0, 6.0, 10.0]:
+	for ahead: float in [3.0, 6.0, 10.0, 14.0]:
 		var rig := _spawn_rig(Vector3(0, 0, 4.0 + ahead))
 		var building := _warehouse(Vector3(-2, 0, 0))
 		_update(rig, 3.0)
@@ -204,9 +204,8 @@ func test_building_framing_lets_go_elsewhere() -> void:
 	var rig := _spawn_rig(Vector3(0, 0, 9))
 	var building := _warehouse(Vector3(0, 0, 0))
 	_update(rig, 3.0)
-	assert_gt(
-		rig.camera.global_position.distance_to(rig.focus()), rig.distance + 1.0, "recul devant"
-	)
+	assert_lt(-rig.pitch(), deg_to_rad(rig.pitch_deg - 2.0), "devant la façade : lève les yeux")
+	assert_eq(rig.forward(), Vector3.FORWARD, "sans tourner")
 	# Derrière le bâtiment, loin devant ou sur le côté : cadrage habituel, centré sur le joueur.
 	for spot: Vector3 in [Vector3(0, 0, -9), Vector3(0, 0, 30), Vector3(30, 0, 9)]:
 		(rig.get_parent() as Node3D).position = spot
@@ -220,6 +219,7 @@ func test_building_framing_lets_go_elsewhere() -> void:
 		assert_almost_eq(
 			rig.camera.global_position.distance_to(rig.focus()), rig.distance, 0.05, "à sa distance"
 		)
+		assert_almost_eq(-rig.pitch(), deg_to_rad(rig.pitch_deg), 0.002, "tangage habituel")
 	building.free()
 
 

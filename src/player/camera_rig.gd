@@ -13,9 +13,11 @@ extends Node3D
 ## (H5) Cadrage des bâtiments : avec ce tangage et ce champ, le haut de l'écran passe à 6,5 m
 ## au-dessus du joueur et plus bas derrière lui ; un mur de l'entrepôt au nord du joueur serait
 ## coupé. Quand la façade sud d'un Building (groupe Building.GROUP) est à moins de FRAME_REACH m
-## au nord du joueur et dans le champ, la caméra recule et vise plus au nord juste assez pour que
-## la façade et le bas du toit tiennent dans le cadre, le joueur restant dans le bas de l'écran
-## (FRAME_FEET) ; elle revient en douceur ailleurs. Il n'y a pas de bâtiment là où l'on se bat.
+## au nord du joueur et dans le champ, la caméra lève les yeux sans bouger (tangage jusqu'à
+## FRAME_MIN_PITCH) et, si cela ne suffit pas, recule (jusqu'à FRAME_MAX_DISTANCE), juste assez
+## pour que la façade et le bas du toit tiennent dans le cadre, le joueur restant dans le bas de
+## l'écran (FRAME_FEET) ; elle revient en douceur ailleurs. Il n'y a pas de bâtiment là où l'on
+## se bat : le combat garde le cadrage habituel.
 ##
 ## Structure : Camera3D (caméra courante, top_level : elle ne suit pas les rotations du joueur) et
 ## PostFX (CanvasLayer derrière l'interface : flou de profondeur, lueur, étalonnage chaud,
@@ -25,12 +27,15 @@ extends Node3D
 
 ## (H5) Cadrage des bâtiments : portée au nord du joueur (m), marge au-dessus du mur (m : le bas
 ## du toit), place de la façade et des pieds du joueur à l'écran (coordonnées normalisées, 1 en
-## haut, −1 en bas), recul maximal (m), pas de la recherche (m) et lissage (1/s).
-const FRAME_REACH := 14.0
-const FRAME_MARGIN := 0.6
-const FRAME_TOP := 0.96
-const FRAME_FEET := -0.64
-const FRAME_MAX_DISTANCE := 30.0
+## haut, −1 en bas), tangage minimal (degrés), recul maximal (m), pas de la recherche (degrés,
+## m) et lissage (1/s).
+const FRAME_REACH := 16.0
+const FRAME_MARGIN := 0.4
+const FRAME_TOP := 0.97
+const FRAME_FEET := -0.7
+const FRAME_MIN_PITCH := 24.0
+const FRAME_MAX_DISTANCE := 29.0
+const FRAME_PITCH_STEP := 0.5
 const FRAME_STEP := 0.5
 const FRAME_SMOOTHING := 2.5
 ## (H5) Profondeur nette du flou de profondeur autour du joueur (m) : derrière lui (vers le
@@ -80,8 +85,8 @@ var _distance: float = 19.0
 var _target_distance: float = 19.0
 var _started: bool = false
 var _post: ShaderMaterial
-## Cadrage des bâtiments lissé : avancée du point visé vers le nord (m) et recul (m, 0 : aucun).
-var _frame_shift: float = 0.0
+## Cadrage des bâtiments lissé : tangage (degrés) et recul (m, 0 : aucun).
+var _frame_pitch: float = 32.0
 var _frame_distance: float = 0.0
 
 @onready var camera: Camera3D = $Camera3D
@@ -90,6 +95,7 @@ var _frame_distance: float = 0.0
 func _ready() -> void:
 	_target_distance = clampf(distance, min_distance, max_distance)
 	_distance = _target_distance
+	_frame_pitch = pitch_deg
 	camera.top_level = true
 	camera.fov = fov_deg
 	var screen := get_node_or_null(^"PostFX/Screen") as CanvasItem
@@ -129,7 +135,7 @@ func update_camera(delta: float, zoom_axis: float = 0.0) -> void:
 		zoom(zoom_axis * zoom_stick_speed * delta)
 	var framing := _building_framing()
 	var frame_weight := 1.0 - exp(-FRAME_SMOOTHING * delta)
-	_frame_shift = lerpf(_frame_shift, framing.x, frame_weight)
+	_frame_pitch = lerpf(_frame_pitch, framing.x, frame_weight)
 	_frame_distance = lerpf(_frame_distance, framing.y, frame_weight)
 	var goal := focus_goal()
 	_focus = _focus.lerp(goal, 1.0 - exp(-follow_speed * delta))
@@ -140,9 +146,16 @@ func update_camera(delta: float, zoom_axis: float = 0.0) -> void:
 
 
 ## Point visé idéal : le joueur (un peu en avant dans le sens de la marche si with_lead, et vers
-## la cible verrouillée ; (H5) plus au nord devant un bâtiment), borné à limits.
+## la cible verrouillée), borné à limits ; (H5) devant un bâtiment, plus haut et plus au nord, là
+## où regarde la caméra qui lève les yeux sans bouger.
 func focus_goal(with_lead: bool = true) -> Vector3:
-	var goal := global_position + Vector3.UP * focus_height + Vector3.FORWARD * _frame_shift
+	var reach := maxf(_target_distance, _frame_distance)
+	return _player_focus(with_lead) + (_back(pitch_deg) - _back(_frame_pitch)) * reach
+
+
+## Point visé sans cadrage de bâtiment : le joueur, l'avance, la cible verrouillée, les bornes.
+func _player_focus(with_lead: bool) -> Vector3:
+	var goal := global_position + Vector3.UP * focus_height
 	if with_lead:
 		goal += Vector3(follow_velocity.x, 0.0, follow_velocity.z) * lead_time
 	var target := _valid_target()
@@ -161,7 +174,7 @@ func snap() -> void:
 		return
 	_started = true
 	var framing := _building_framing()
-	_frame_shift = framing.x
+	_frame_pitch = framing.x
 	_frame_distance = framing.y
 	_focus = focus_goal(false)
 	_distance = maxf(_target_distance, _frame_distance)
@@ -198,9 +211,10 @@ func yaw() -> float:
 	return 0.0
 
 
-## Tangage (radians, négatif : la caméra regarde vers le bas).
+## Tangage (radians, négatif : la caméra regarde vers le bas) ; (H5) pitch_deg, sauf devant un
+## bâtiment (cadrage).
 func pitch() -> float:
-	return -deg_to_rad(pitch_deg)
+	return -deg_to_rad(_frame_pitch)
 
 
 ## Avant horizontal de la caméra : le nord.
@@ -209,10 +223,17 @@ func forward() -> Vector3:
 
 
 func _apply() -> void:
-	var tilt := deg_to_rad(pitch_deg)
-	var back := Vector3(0.0, sin(tilt), cos(tilt)) * _distance
-	camera.global_transform = Transform3D(Basis(Vector3.RIGHT, -tilt), _focus + back)
+	var tilt := deg_to_rad(_frame_pitch)
+	camera.global_transform = Transform3D(
+		Basis(Vector3.RIGHT, -tilt), _focus + _back(_frame_pitch) * _distance
+	)
 	_update_focus_band()
+
+
+## Direction du point visé vers la caméra pour un tangage (degrés).
+static func _back(degrees: float) -> Vector3:
+	var tilt := deg_to_rad(degrees)
+	return Vector3(0.0, sin(tilt), cos(tilt))
 
 
 ## (H5) La bande nette du flou de profondeur (post_fx.gdshader : focus_center, focus_half) suit
@@ -241,54 +262,62 @@ func _valid_target() -> Node3D:
 	return null
 
 
-## (H5) Cadrage des bâtiments voulu : Vector2(avancée du point visé vers le nord, recul), (0, 0)
-## sans façade à cadrer. Le plus petit recul (à partir du zoom du joueur) pour lequel une avancée
-## suffit à mettre le haut de chaque façade proche sous FRAME_TOP sans que les pieds du joueur
-## passent sous FRAME_FEET ; au recul maximal, le joueur reste à l'écran avant la façade.
+## (H5) Cadrage des bâtiments voulu : Vector2(tangage en degrés, recul), (pitch_deg, 0) sans
+## façade à cadrer. La caméra garde sa place (au recul du zoom du joueur, au tangage pitch_deg) et
+## lève les yeux juste assez pour que le haut de chaque façade proche passe sous FRAME_TOP, les
+## pieds du joueur restant au-dessus de FRAME_FEET ; sinon elle recule par pas de FRAME_STEP. Au
+## recul maximal, le joueur passe avant la façade.
 func _building_framing() -> Vector2:
+	var none := Vector2(pitch_deg, 0.0)
 	if not is_inside_tree():
-		return Vector2.ZERO
-	var walls := _walls_in_front()
+		return none
+	var origin := _player_focus(true)
+	var walls := _walls_in_front(origin)
 	if walls.is_empty():
-		return Vector2.ZERO
-	var tilt := deg_to_rad(pitch_deg)
-	var sp := sin(tilt)
-	var cp := cos(tilt)
+		return none
+	# Pieds du joueur : écart au nord du point visé et hauteur au-dessus de lui.
+	var feet := Vector2(origin.z - global_position.z, global_position.y - origin.y)
 	var t := tan(deg_to_rad(camera.fov) / 2.0)
-	var top_denominator := sp - FRAME_TOP * t * cp
-	var feet_denominator := sp - FRAME_FEET * t * cp
-	if top_denominator <= 0.0:
-		return Vector2.ZERO
 	var reach := _target_distance
-	var shift := 0.0
+	var best := none
 	while true:
-		# Avancée nécessaire : chaque façade (dz : écart au nord, h : hauteur au-dessus du point
-		# visé) au plus a_max en avant du point visé ; avancée permise par les pieds du joueur.
-		var need := 0.0
-		for wall: Vector2 in walls:
-			var ahead := (FRAME_TOP * t * (reach - wall.y * sp) - wall.y * cp) / top_denominator
-			need = maxf(need, wall.x - ahead)
-		if need <= 0.0:
-			return Vector2(0.0, reach) if reach > _target_distance else Vector2.ZERO
-		var allowed := (
-			(-focus_height * cp - FRAME_FEET * t * (reach + focus_height * sp)) / feet_denominator
-		)
-		shift = minf(need, maxf(allowed, 0.0))
-		if need <= allowed or reach >= FRAME_MAX_DISTANCE:
-			break
+		var tilt := pitch_deg
+		while tilt >= FRAME_MIN_PITCH:
+			if _frame_ndc(feet, reach, tilt, t) < FRAME_FEET:
+				break
+			best = Vector2(tilt, reach)
+			var fits := true
+			for wall: Vector2 in walls:
+				fits = fits and _frame_ndc(wall, reach, tilt, t) <= FRAME_TOP
+			if fits:
+				return best if tilt < pitch_deg or reach > _target_distance else none
+			tilt -= FRAME_PITCH_STEP
+		if reach >= FRAME_MAX_DISTANCE:
+			return best
 		reach = minf(reach + FRAME_STEP, FRAME_MAX_DISTANCE)
-	return Vector2(shift, reach)
+	return best
 
 
-## Façades sud à cadrer : Vector2(écart au nord du joueur, hauteur à montrer au-dessus du point
-## visé) de chaque Building dont la façade est à moins de FRAME_REACH m au nord du joueur et dont
-## la largeur croise le milieu du champ.
-func _walls_in_front() -> Array[Vector2]:
+## Hauteur à l'écran (coordonnées normalisées, 1 en haut) d'un point à point.x m au nord du point
+## visé sans cadrage et point.y m au-dessus, vu par la caméra placée à reach m de ce point au
+## tangage pitch_deg et qui regarde avec le tangage tilt (degrés) ; t : tangente du demi-champ.
+func _frame_ndc(point: Vector2, reach: float, tilt: float, t: float) -> float:
+	var eye := _back(pitch_deg) * reach
+	var to_point := Vector2(-point.x - eye.z, point.y - eye.y)
+	var angle := deg_to_rad(tilt)
+	var ahead := -to_point.y * sin(angle) - to_point.x * cos(angle)
+	var up := to_point.y * cos(angle) - to_point.x * sin(angle)
+	return up / maxf(ahead, 0.001) / t
+
+
+## Façades sud à cadrer : Vector2(écart au nord du point visé, hauteur à montrer au-dessus de lui)
+## de chaque Building dont la façade est à moins de FRAME_REACH m au nord du joueur et dont la
+## largeur croise le milieu du champ.
+func _walls_in_front(origin: Vector3) -> Array[Vector2]:
 	var walls: Array[Vector2] = []
 	var size := get_viewport().get_visible_rect().size
 	var aspect := size.x / size.y if size.y > 0.0 else 16.0 / 9.0
 	var half_width := 0.8 * _target_distance * tan(deg_to_rad(camera.fov) / 2.0) * aspect
-	var eye := global_position + Vector3.UP * focus_height
 	for node: Node in get_tree().get_nodes_in_group(Building.GROUP):
 		var building := node as Building
 		if building == null or not building.is_visible_in_tree():
@@ -310,5 +339,5 @@ func _walls_in_front() -> Array[Vector2]:
 			continue
 		var tall := building.ridge_height if building.gable_front else building.wall_height
 		var top := xform.origin.y + tall * xform.basis.get_scale().y + FRAME_MARGIN
-		walls.append(Vector2(ahead, top - eye.y))
+		walls.append(Vector2(origin.z - front, top - origin.y))
 	return walls

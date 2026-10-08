@@ -1237,3 +1237,52 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   retirés ; nouvelles classes `DecorPanel` et `Building` ; règle du décor en images (CLAUDE.md) ;
   `tools/check.sh` fait respecter le budget de taille. Ni `project.godot`, ni `event_bus.gd`, ni
   les couches de collision ne changent.
+- **H5 — pixel art filtré** : les images du monde (96 px/m) sont plus denses que l'écran
+  (≈ 65 px/m au point visé en 1280 × 720) ; au plus proche voisin et sans mipmaps, elles faisaient
+  du moiré et scintillaient dès que la caméra glissait. Panneaux, murs, toits et roche passent par
+  `src/world/shaders/pixel_art.gdshaderinc` (sampler linéaire) : de près, pixels nets dont seule la
+  frontière est lissée sur un pixel d'écran ; de loin, 2 × 2 échantillons bilinéaires sur
+  l'empreinte du pixel (sans mipmaps : les images importées n'en ont pas, et en créer une copie
+  doublerait leur mémoire). Écart moyen entre deux images à un demi-pixel de caméra (sur 255) :
+  7,7 → 2,4 (bois), 9,1 → 2,9 (colline), 7,9 → 2,3 (cour).
+- **H5 — sol à mipmaps** : `IslandTerrain.mipmapped_atlas()` refait en jeu l'atlas du sol avec ses
+  mipmaps (moyenne 2 × 2 : jamais deux tuiles de 384 px mélangées jusqu'au niveau 7 ; 11 ms, une
+  fois ; l'atlas importé est relâché). Le shader lit `textureLod` au niveau tiré des dérivées
+  continues de la position et prend deux échantillons le long de l'axe étiré par la perspective
+  (anisotrope fait main) : le filtrage anisotrope du pilote, avec le saut de `fract()` d'une
+  tuile à l'autre, débordait sur les cases voisines de l'atlas (lignes à chaque tuile). Le
+  tramage des masques passe au pixel d'écran quand un pixel d'art devient plus petit que l'écran,
+  et les fleurs d'un pixel s'y effacent.
+- **H5 — cadrage des façades** (demande de l'orchestrateur : l'entrepôt garde ses murs de 6,5 m) :
+  avec 32° de tangage et 30° de champ, le haut de l'écran passe à 6,5 m au-dessus du joueur et
+  plus bas derrière lui. Devant la façade sud d'un `Building` (groupe `Building.GROUP`, ajouté) à
+  moins de 16 m au nord du joueur et dans le champ, la caméra garde sa place et lève les yeux
+  (tangage jusqu'à 24°) juste assez pour que le haut du mur + 0,4 m (le bas du toit) tienne dans
+  le cadre, les pieds du joueur au-dessus de 85 % de l'écran ; si cela ne suffit pas, elle recule
+  (jusqu'à 29 m) ; lissage 2,5/s. Lever les yeux garde la taille des personnages (un recul de
+  29 m les réduisait à 72 %) : cour de l'entrepôt 24,5°, porche 27°, rue du Port 27°, toujours à
+  21 m. Pas de bâtiment là où l'on se bat : la veille et les bois gardent 32°.
+- **H5 — bornes de la caméra** : `limits` = Rect2(−71, −70, 142, 136) (au lieu de −64…64) : au bord
+  du Couchant (x = −77) le joueur restait à 13 m du centre, au bord de l'écran ; il en est
+  désormais à 6 m au plus et l'on voit la lèvre, la falaise et la mer de nuages.
+- **H5 — flou de profondeur** : la bande nette va de 4,5 m devant le joueur à 9 m derrière lui,
+  projetés par la caméra à chaque image (`focus_center`, `focus_half` de post_fx.gdshader) : le
+  joueur et ceux qui l'entourent ne sont jamais flous, même décentrés (retard, avance,
+  verrouillage, bornes, cadrage d'une façade). Le flou lit les mipmaps de l'image
+  (`hint_screen_texture, filter_linear_mipmap`, que le rendu Compatibility floute lui-même) :
+  quatre lectures en croix au lieu de douze, rayon continu (5,5 px en haut, 2,5 px en bas) ; la
+  lueur lit deux niveaux (3 et 5) au-dessus d'un seuil de 0,7. Le matériau est copié par chaque
+  caméra.
+- **H5 — étalonnage** : en plus de la teinte chaude, du contraste, de la saturation et de la
+  vignette : virage des ombres vers le lavande et des hautes lumières vers l'or (12 %), voile de
+  brume pêche en haut de l'écran (le lointain) et lumière du couchant au bord gauche (l'ouest).
+- **H5 — réglages de lumière** : `HD2DLighting` (`src/world/materials/hd2d_lighting.gd`) réunit
+  soleil, ambiance, brouillard, ciel, mer de nuages, lanternes et étalonnage ;
+  `lighting_sunset.tres` (valeurs d'island.tscn et de post_fx.gdshader, testé),
+  `lighting_dusk.tres`, `lighting_night.tres` (lune froide à l'est-sud-est, lanternes × 2,2). Rien
+  ne les active : `apply(island)` les pose sur des copies (environnement, mer de nuages,
+  matériau de la caméra) pour la promesse de nuit et le cycle jour/nuit de M3.
+- **H5 — ombres et brume** : l'ombre des panneaux (fx/shadow.png, presque opaque) est ramenée à
+  55 % au cœur, poussée et allongée de 12 % vers l'est (le couchant à l'ouest) ; le brouillard de
+  hauteur passe à 0,015 par mètre sous −8 m (0,04 sous −6 m) : la mer de nuages se voit sous la
+  brume au bord de l'île au lieu d'un aplat rose.
