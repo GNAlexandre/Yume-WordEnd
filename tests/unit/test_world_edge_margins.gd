@@ -10,6 +10,8 @@ extends GutTest
 ##
 ## Le mobilier du bord (EDGE_PROPS : lèvre, parapets, garde-corps, bittes et bras d'amarrage,
 ## passerelle, navires, rochers flottants) est fait pour être au bord ou au-delà : il est exempté.
+## Le quai (IslandEdge.PORT_SECTOR) est un ouvrage bordé d'une rambarde : caisses, filets, tuyaux
+## et flaques y vont près du bord, comme sur un vrai quai (marges QUAY_*).
 ## Les lots de pose s'en servent pour vérifier leurs zones après la fusion ; un message liste
 ## chaque écart (chemin, distance, angle du bord le plus proche).
 
@@ -29,6 +31,8 @@ const EDGE_PROPS: Array[String] = [
 const DECOR_MARGIN := 1.0
 const BLOCKING_MARGIN := 3.0
 const TRIGGER_DISC_MARGIN := 1.0
+const QUAY_DECOR_MARGIN := 0.3
+const QUAY_BLOCKING_MARGIN := 1.5
 const WORLD_LAYER := 1
 
 var _island: Node3D
@@ -54,10 +58,13 @@ func test_decor_stays_clear_of_the_void() -> void:
 				continue
 			count += 1
 			var label := "%s %s (%s)" % [zone.name, zone.get_path_to(prop), id]
-			var at := prop.global_position
-			_check(problems, label + " : ancre", Vector2(at.x, at.z), DECOR_MARGIN)
+			var at := Vector2(prop.global_position.x, prop.global_position.z)
+			var on_quay := _on_quay(at)
+			var anchor_margin := QUAY_DECOR_MARGIN if on_quay else DECOR_MARGIN
+			_check(problems, label + " : ancre", at, anchor_margin)
+			var blocking_margin := QUAY_BLOCKING_MARGIN if on_quay else BLOCKING_MARGIN
 			for corner: Vector2 in _collision_corners(prop):
-				if _check(problems, label + " : collision", corner, BLOCKING_MARGIN):
+				if _check(problems, label + " : collision", corner, blocking_margin):
 					break
 	assert_gt(count, 100, "décors de l'île parcourus")
 	assert_true(problems.is_empty(), "décors trop près du vide :\n%s" % "\n".join(problems))
@@ -106,6 +113,12 @@ func test_quest_triggers_stay_clear_of_the_void() -> void:
 
 
 ## Ajoute un problème si le point est à moins de margin m du vide ; vrai si c'est le cas.
+## Point (x, z) au droit du quai (secteur du port, IslandEdge.PORT_SECTOR, en degrés).
+func _on_quay(point: Vector2) -> bool:
+	var angle := rad_to_deg(atan2(point.y, point.x))
+	return angle >= IslandEdge.PORT_SECTOR.x and angle <= IslandEdge.PORT_SECTOR.y
+
+
 func _check(problems: Array[String], label: String, point: Vector2, margin: float) -> bool:
 	var gap := IslandTerrain.distance_to_edge(point.x, point.y)
 	if gap >= margin:

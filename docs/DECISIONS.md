@@ -2070,3 +2070,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   (`LEDGES`, +1,6 m) ; `couchant_edge` reste près du bord (disque à 1,9 m, centre à 4,9 m).
   `EDGE_MARGIN` des places de l'acte 1 reste 3 m (HISTOIRE.md ; 6 m exclurait le passeur, au bout
   de sa passerelle, et `couchant_edge`, « au bord ») ; il se mesure à la distance exacte.
+- **Marges au bord sur le quai** (fusion de B1 avec la pose du port) : le quai est un ouvrage
+  bordé d'une rambarde, son tracé n'a pas changé. Caisses, filets, tuyaux et flaques y vont
+  près du bord : dans le secteur du port (`IslandEdge.PORT_SECTOR`), `test_world_edge_margins`
+  demande 0,3 m pour l'ancre d'un décor et 1,5 m pour une collision (au lieu de 1 et 3 m sur la
+  côte naturelle). Une caisse de la Garde a reculé de 0,6 m.
