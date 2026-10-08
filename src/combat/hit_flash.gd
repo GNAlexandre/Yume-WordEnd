@@ -31,9 +31,17 @@ func _ready() -> void:
 	material_override = _material
 
 
-## Sprite dont l'éclair prend la forme.
+## Sprite dont l'éclair prend la forme. L'éclair suit chaque changement d'image ou d'animation
+## de la source dès qu'il a lieu (un Timere touché passe à « degats » juste après l'éclair).
 func bind(source: AnimatedSprite3D) -> void:
+	if is_instance_valid(_source):
+		for source_signal: Signal in [_source.frame_changed, _source.animation_changed]:
+			if source_signal.is_connected(_on_source_changed):
+				source_signal.disconnect(_on_source_changed)
 	_source = source
+	if is_instance_valid(_source):
+		_source.frame_changed.connect(_on_source_changed)
+		_source.animation_changed.connect(_on_source_changed)
 
 
 ## Éclair pendant duration s (le plus long l'emporte s'il y en a déjà un).
@@ -66,15 +74,23 @@ func _process(delta: float) -> void:
 	_material.set_shader_parameter(&"strength", max_strength * (0.6 + 0.4 * ratio))
 
 
-## Recopie l'image du sprite source ; false s'il n'affiche rien.
+func _on_source_changed() -> void:
+	if visible and not _sync():
+		visible = false
+
+
+## Recopie l'image du sprite source ; false s'il n'affiche rien. Une image de planche est une
+## AtlasTexture (SheetLoader) : l'éclair lit la planche entière aux UV de la région ; une image
+## simple se lit telle quelle.
 func _sync() -> bool:
 	if not is_instance_valid(_source) or _source.sprite_frames == null:
 		return false
 	var anim := _source.animation
 	if not _source.sprite_frames.has_animation(anim):
 		return false
-	var atlas := _source.sprite_frames.get_frame_texture(anim, _source.frame) as AtlasTexture
-	var sheet: Texture2D = atlas.atlas if atlas != null else null
+	var image := _source.sprite_frames.get_frame_texture(anim, _source.frame)
+	var atlas := image as AtlasTexture
+	var sheet: Texture2D = atlas.atlas if atlas != null else image
 	if sheet == null:
 		return false
 	if sheet != _sheet:

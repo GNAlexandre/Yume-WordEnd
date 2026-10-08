@@ -8,7 +8,7 @@ paliers. Ce sont des remplaçants : une image dessinée à la main peut prendre 
 
 Puis tools/import.sh (fichiers .import à commiter). Les bandes (glint, impact, bite, whip, dust,
 slash, wave) portent plusieurs images de même taille côte à côte, de gauche à droite ; le jeu les
-découpe d'après FRAMES dans src/combat/combat_fx.gd. Les images blanches ou grises (impact,
+découpe d'après STRIPS dans src/combat/combat_fx.gd. Les images blanches ou grises (impact,
 bite, dust) sont teintées par le jeu (modulate) : un seul dessin sert à l'épée, à l'onde et aux
 crocs des Timeres.
 """

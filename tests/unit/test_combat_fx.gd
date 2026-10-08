@@ -273,6 +273,10 @@ func test_hit_flash_takes_the_shape_of_the_sprite_then_ends() -> void:
 	assert_eq(flash.offset, sprite.offset, "même ancre")
 	assert_almost_eq(flash.global_basis.get_scale(), Vector3.ONE * 1.3, Vector3.ONE * 0.001)
 	assert_true(flash.material_override is ShaderMaterial, "silhouette peinte (hit_flash.gdshader)")
+	# Un Timere touché passe à « degats » juste après l'éclair : la silhouette suit aussitôt.
+	visual.play(&"degats", true)
+	assert_eq(flash.animation, sprite.animation, "suit le changement d'animation sans attendre")
+	assert_eq(flash.frame, sprite.frame)
 	await wait_seconds(0.2)
 	assert_false(flash.is_flashing(), "fini")
 	assert_false(flash.visible)
