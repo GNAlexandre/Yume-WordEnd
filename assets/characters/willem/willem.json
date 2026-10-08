@@ -1,7 +1,7 @@
 {
   "version": 1,
   "echelle": 1,
-  "planche": [642, 337],
+  "planche": [642, 509],
   "direction": "right",
   "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
   "status": "measured_crops_animation_review",
@@ -29,6 +29,14 @@
         [326, 172, 101, 165, 40, 165],
         [431, 173, 107, 164, 43, 164],
         [542, 175, 100, 162, 47, 162]
+      ]
+    },
+    "parle": {
+      "ips": 6,
+      "boucle": true,
+      "images": [
+        [0, 341, 103, 168, 37, 168],
+        [107, 341, 103, 168, 37, 168]
       ]
     }
   }

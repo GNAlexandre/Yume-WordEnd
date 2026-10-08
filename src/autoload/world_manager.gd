@@ -83,6 +83,8 @@ func teleport(zone_id: StringName, marker: StringName = SPAWN_MARKER) -> void:
 	if target == null:
 		return
 	player.global_position = ground_position(target.global_position, player)
+	# Lissage physique : pas de glissement de l'ancienne place à la nouvelle.
+	player.reset_physics_interpolation()
 	if player is CharacterBody3D:
 		(player as CharacterBody3D).velocity = Vector3.ZERO
 

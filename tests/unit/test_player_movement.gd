@@ -421,7 +421,7 @@ func test_respawn_resets_velocity_knockback_lock_and_camera() -> void:
 	assert_eq(rig.forward(), Vector3.FORWARD, "(HD-2D) caméra fixe : toujours le nord")
 	assert_almost_eq(
 		rig.focus(),
-		player.global_position + Vector3.UP * rig.focus_height,
+		player.global_position + Vector3.UP * rig.focus_height + Vector3.FORWARD * rig.focus_ahead,
 		Vector3.ONE * 0.05,
 		"recalée sur le joueur"
 	)

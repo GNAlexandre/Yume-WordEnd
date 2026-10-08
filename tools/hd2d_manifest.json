@@ -1,899 +1,407 @@
 {
- "_comment": "Images HD-2D du jeu (docs/ASSETS_HD2D.md) : chemin, taille exacte en px, genre (tile : sans raccord sur les quatre bords ; tile_h : à gauche et à droite ; panorama : ciel équirectangulaire ; facade et panel : fond transparent, collés au bord bas ; fx : effets générés), priorité de commande. Lu par tools/hd2d_assets.py et par les tests.",
- "version": 1,
+ "_comment": "Images HD-2D du jeu (docs/ASSETS_HD2D.md, cahier n° 1 ; docs/ASSETS_HD2D_MONDE.md, cahier n° 2), une par ligne : chemin, taille exacte en px (bande animée : taille d'une image), genre, priorité de commande, lot du cahier n° 2 (A à G, section 15). Genres : tile (opaque, sans raccord sur les quatre bords ; variant_of : se raccorde aussi bord à bord avec sa tuile d'origine), tile_h (opaque, sans raccord à gauche et à droite), panorama (ciel équirectangulaire), facade et side (élévation collée aux bords gauche, droit et bas ; side : flanc est, roof gable = pignon jusqu'au faîtage, mur de wall_m mètres, ou eaves = mur gouttereau), panel (fond transparent, collé au bord bas ; anchor center : sprite qui vole, centré ; anchor free : lointain qui flotte, île ou rai de lumière, sans ancre), decal (vu de dessus, ancre au centre, bord irrégulier ; solid_edge : bord plein voulu), anim (frames images côte à côte, jouées à fps images/s ; chacune comme un panneau, ou centrée), fx (effets générés). Drapeaux : soft_alpha (alpha continu permis), wrap x ou y (sans raccord à gauche et à droite, ou en haut et en bas), pairs_with (se raccorde aussi avec cette image), ppm (densité si elle n'est pas 96 px/m). Lu par tools/hd2d_assets.py (gen, check, fit, sheet) et par tests/unit/test_hd2d_assets.gd.",
+ "version": 2,
  "px_per_m": 96,
  "images": [
-  {
-   "path": "assets/hd2d/ground/grass.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/ground/path_dirt.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/ground/flagstone.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/ground/forest_floor.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/ground/grass_dry.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/ground/sand.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/ground/rock.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/ground/cobble.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/ground/peat.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/ground/water.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/ground/mud.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/ground/metal.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/cliff/cliff.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/cliff/underside.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/cliff/lip.png",
-   "size": [
-    384,
-    96
-   ],
-   "kind": "tile_h",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/buildings/warehouse_main.png",
-   "size": [
-    1536,
-    624
-   ],
-   "kind": "facade",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/buildings/warehouse_porch.png",
-   "size": [
-    576,
-    312
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/buildings/warehouse_wing.png",
-   "size": [
-    576,
-    624
-   ],
-   "kind": "facade",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/buildings/armory_door.png",
-   "size": [
-    240,
-    240
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/buildings/tool_shed.png",
-   "size": [
-    288,
-    216
-   ],
-   "kind": "facade",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/buildings/cafe.png",
-   "size": [
-    672,
-    528
-   ],
-   "kind": "facade",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/buildings/shop_bakery.png",
-   "size": [
-    480,
-    576
-   ],
-   "kind": "facade",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/buildings/shop_bookshop.png",
-   "size": [
-    480,
-    576
-   ],
-   "kind": "facade",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/buildings/projection_hall.png",
-   "size": [
-    672,
-    576
-   ],
-   "kind": "facade",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/buildings/stone_house.png",
-   "size": [
-    480,
-    480
-   ],
-   "kind": "facade",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/buildings/limashenka_house.png",
-   "size": [
-    576,
-    576
-   ],
-   "kind": "facade",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/buildings/materials/wall_planks.png",
-   "size": [
-    192,
-    192
-   ],
-   "kind": "tile",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/buildings/materials/roof_slate.png",
-   "size": [
-    192,
-    192
-   ],
-   "kind": "tile",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/buildings/materials/wall_stone.png",
-   "size": [
-    192,
-    192
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/buildings/materials/wall_plaster.png",
-   "size": [
-    192,
-    192
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/buildings/materials/roof_tiles.png",
-   "size": [
-    192,
-    192
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/buildings/materials/roof_tin.png",
-   "size": [
-    192,
-    192
-   ],
-   "kind": "tile",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/props/well.png",
-   "size": [
-    168,
-    240
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/palisade.png",
-   "size": [
-    192,
-    154
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/palisade_gate.png",
-   "size": [
-    384,
-    288
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/crystal_lamp.png",
-   "size": [
-    64,
-    250
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/tree_autumn.png",
-   "size": [
-    480,
-    672
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/tree_autumn_rust.png",
-   "size": [
-    480,
-    672
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/tree_autumn_yellow.png",
-   "size": [
-    480,
-    672
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/climbing_tree.png",
-   "size": [
-    768,
-    960
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/bush.png",
-   "size": [
-    134,
-    106
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/bench.png",
-   "size": [
-    154,
-    86
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/laundry_line.png",
-   "size": [
-    576,
-    211
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/vegetable_patch.png",
-   "size": [
-    480,
-    96
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/flower_bed.png",
-   "size": [
-    120,
-    48
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/crate.png",
-   "size": [
-    77,
-    77
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/ball.png",
-   "size": [
-    32,
-    32
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/myosotis.png",
-   "size": [
-    58,
-    38
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/tree_old_pine.png",
-   "size": [
-    384,
-    1056
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/tree_old_pine_clawed.png",
-   "size": [
-    384,
-    1056
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/tree_pine.png",
-   "size": [
-    288,
-    672
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/reeds.png",
-   "size": [
-    144,
-    134
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/log_bridge.png",
-   "size": [
-    384,
-    77
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/berry_bush.png",
-   "size": [
-    125,
-    96
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/bear_rock.png",
-   "size": [
-    576,
-    384
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/mossy_rock.png",
-   "size": [
-    192,
-    115
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/mushroom.png",
-   "size": [
-    58,
-    48
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/stick_rack.png",
-   "size": [
-    115,
-    115
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/play_goal.png",
-   "size": [
-    288,
-    192
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/play_goal_red.png",
-   "size": [
-    288,
-    192
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/vigil_bell.png",
-   "size": [
-    134,
-    230
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/watch_post_ruin.png",
-   "size": [
-    576,
-    336
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/ruined_wall.png",
-   "size": [
-    384,
-    192
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/signal_pillar.png",
-   "size": [
-    77,
-    336
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/garde_pennant.png",
-   "size": [
-    96,
-    336
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/wind_rock_a.png",
-   "size": [
-    288,
-    192
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/wind_rock_b.png",
-   "size": [
-    192,
-    144
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/wind_rock_c.png",
-   "size": [
-    115,
-    96
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/edge_parapet.png",
-   "size": [
-    192,
-    58
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/fallen_lantern.png",
-   "size": [
-    96,
-    48
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/props/grass_tuft.png",
-   "size": [
-    58,
-    38
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/props/ring_stone.png",
-   "size": [
-    58,
-    20
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/props/signpost.png",
-   "size": [
-    115,
-    230
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/market_stall.png",
-   "size": [
-    240,
-    230
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/market_stall_veg.png",
-   "size": [
-    240,
-    230
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/snack_stall.png",
-   "size": [
-    192,
-    230
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/cargo_crane.png",
-   "size": [
-    288,
-    576
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/crates_barrels.png",
-   "size": [
-    192,
-    144
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/scrap_pile.png",
-   "size": [
-    192,
-    96
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/mooring_arm.png",
-   "size": [
-    192,
-    384
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/gangway.png",
-   "size": [
-    192,
-    115
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/edge_railing.png",
-   "size": [
-    192,
-    106
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/bollard.png",
-   "size": [
-    38,
-    58
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/props/wind_sock.png",
-   "size": [
-    115,
-    384
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/props/rock.png",
-   "size": [
-    144,
-    96
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/props/lone_tree.png",
-   "size": [
-    384,
-    480
-   ],
-   "kind": "panel",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/props/lookout.png",
-   "size": [
-    384,
-    384
-   ],
-   "kind": "panel",
-   "prio": 1
-  },
-  {
-   "path": "assets/hd2d/props/tall_grass.png",
-   "size": [
-    96,
-    77
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/props/airship_ferry.png",
-   "size": [
-    576,
-    336
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/props/airship_barocupot.png",
-   "size": [
-    1056,
-    480
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/sky/sky.png",
-   "size": [
-    2048,
-    1024
-   ],
-   "kind": "panorama",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/sky/cloud_sea.png",
-   "size": [
-    1024,
-    1024
-   ],
-   "kind": "tile",
-   "prio": 2
-  },
-  {
-   "path": "assets/hd2d/sky/distant_island_a.png",
-   "size": [
-    768,
-    384
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/sky/distant_island_b.png",
-   "size": [
-    768,
-    384
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/sky/distant_island_c.png",
-   "size": [
-    768,
-    384
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/sky/floating_rock.png",
-   "size": [
-    192,
-    192
-   ],
-   "kind": "panel",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/fx/shadow.png",
-   "size": [
-    128,
-    64
-   ],
-   "kind": "fx",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/fx/glow.png",
-   "size": [
-    128,
-    128
-   ],
-   "kind": "fx",
-   "prio": 3
-  },
-  {
-   "path": "assets/hd2d/fx/light_pool.png",
-   "size": [
-    256,
-    256
-   ],
-   "kind": "fx",
-   "prio": 3
-  }
+  {"path": "assets/hd2d/ground/grass.png", "size": [384, 384], "kind": "tile", "prio": 1},
+  {"path": "assets/hd2d/ground/path_dirt.png", "size": [384, 384], "kind": "tile", "prio": 1},
+  {"path": "assets/hd2d/ground/flagstone.png", "size": [384, 384], "kind": "tile", "prio": 1},
+  {"path": "assets/hd2d/ground/forest_floor.png", "size": [384, 384], "kind": "tile", "prio": 1},
+  {"path": "assets/hd2d/ground/grass_dry.png", "size": [384, 384], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/ground/sand.png", "size": [384, 384], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/ground/rock.png", "size": [384, 384], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/ground/cobble.png", "size": [384, 384], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/ground/peat.png", "size": [384, 384], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/ground/water.png", "size": [384, 384], "kind": "tile", "prio": 3},
+  {"path": "assets/hd2d/ground/mud.png", "size": [384, 384], "kind": "tile", "prio": 3},
+  {"path": "assets/hd2d/ground/metal.png", "size": [384, 384], "kind": "tile", "prio": 3},
+  {"path": "assets/hd2d/cliff/cliff.png", "size": [384, 384], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/cliff/underside.png", "size": [384, 384], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/cliff/lip.png", "size": [384, 96], "kind": "tile_h", "prio": 3},
+  {"path": "assets/hd2d/buildings/warehouse_main.png", "size": [1536, 624], "kind": "facade", "prio": 1},
+  {"path": "assets/hd2d/buildings/warehouse_porch.png", "size": [576, 312], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/buildings/warehouse_wing.png", "size": [576, 624], "kind": "facade", "prio": 1},
+  {"path": "assets/hd2d/buildings/armory_door.png", "size": [240, 240], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/buildings/tool_shed.png", "size": [288, 216], "kind": "facade", "prio": 2},
+  {"path": "assets/hd2d/buildings/cafe.png", "size": [672, 528], "kind": "facade", "prio": 2},
+  {"path": "assets/hd2d/buildings/shop_bakery.png", "size": [480, 576], "kind": "facade", "prio": 2},
+  {"path": "assets/hd2d/buildings/shop_bookshop.png", "size": [480, 576], "kind": "facade", "prio": 2},
+  {"path": "assets/hd2d/buildings/projection_hall.png", "size": [672, 576], "kind": "facade", "prio": 2},
+  {"path": "assets/hd2d/buildings/stone_house.png", "size": [480, 480], "kind": "facade", "prio": 3},
+  {"path": "assets/hd2d/buildings/limashenka_house.png", "size": [576, 576], "kind": "facade", "prio": 3},
+  {"path": "assets/hd2d/buildings/materials/wall_planks.png", "size": [192, 192], "kind": "tile", "prio": 1},
+  {"path": "assets/hd2d/buildings/materials/roof_slate.png", "size": [192, 192], "kind": "tile", "prio": 1},
+  {"path": "assets/hd2d/buildings/materials/wall_stone.png", "size": [192, 192], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/buildings/materials/wall_plaster.png", "size": [192, 192], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/buildings/materials/roof_tiles.png", "size": [192, 192], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/buildings/materials/roof_tin.png", "size": [192, 192], "kind": "tile", "prio": 3},
+  {"path": "assets/hd2d/props/well.png", "size": [168, 240], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/palisade.png", "size": [192, 154], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/palisade_gate.png", "size": [384, 288], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/crystal_lamp.png", "size": [64, 250], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/tree_autumn.png", "size": [480, 672], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/tree_autumn_rust.png", "size": [480, 672], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/tree_autumn_yellow.png", "size": [480, 672], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/climbing_tree.png", "size": [768, 960], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/bush.png", "size": [134, 106], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/bench.png", "size": [154, 86], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/laundry_line.png", "size": [576, 211], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/vegetable_patch.png", "size": [480, 96], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/flower_bed.png", "size": [120, 48], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/crate.png", "size": [77, 77], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/ball.png", "size": [32, 32], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/myosotis.png", "size": [58, 38], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/tree_old_pine.png", "size": [384, 1056], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/tree_old_pine_clawed.png", "size": [384, 1056], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/tree_pine.png", "size": [288, 672], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/reeds.png", "size": [144, 134], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/log_bridge.png", "size": [384, 77], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/berry_bush.png", "size": [125, 96], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/bear_rock.png", "size": [576, 384], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/mossy_rock.png", "size": [192, 115], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/mushroom.png", "size": [58, 48], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/stick_rack.png", "size": [115, 115], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/play_goal.png", "size": [288, 192], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/play_goal_red.png", "size": [288, 192], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/vigil_bell.png", "size": [134, 230], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/watch_post_ruin.png", "size": [576, 336], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/ruined_wall.png", "size": [384, 192], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/signal_pillar.png", "size": [77, 336], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/garde_pennant.png", "size": [96, 336], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/wind_rock_a.png", "size": [288, 192], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/wind_rock_b.png", "size": [192, 144], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/wind_rock_c.png", "size": [115, 96], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/edge_parapet.png", "size": [192, 58], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/fallen_lantern.png", "size": [96, 48], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/props/grass_tuft.png", "size": [58, 38], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/props/ring_stone.png", "size": [58, 20], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/props/signpost.png", "size": [115, 230], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/market_stall.png", "size": [240, 230], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/market_stall_veg.png", "size": [240, 230], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/snack_stall.png", "size": [192, 230], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/cargo_crane.png", "size": [288, 576], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/crates_barrels.png", "size": [192, 144], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/scrap_pile.png", "size": [192, 96], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/mooring_arm.png", "size": [192, 384], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/gangway.png", "size": [192, 115], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/edge_railing.png", "size": [192, 106], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/bollard.png", "size": [38, 58], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/props/wind_sock.png", "size": [115, 384], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/props/rock.png", "size": [144, 96], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/props/lone_tree.png", "size": [384, 480], "kind": "panel", "prio": 2},
+  {"path": "assets/hd2d/props/lookout.png", "size": [384, 384], "kind": "panel", "prio": 1},
+  {"path": "assets/hd2d/props/tall_grass.png", "size": [96, 77], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/props/airship_ferry.png", "size": [1344, 672], "kind": "panel", "prio": 1, "lot": "C"},
+  {"path": "assets/hd2d/props/airship_barocupot.png", "size": [2304, 1056], "kind": "panel", "prio": 1, "lot": "C"},
+  {"path": "assets/hd2d/sky/sky.png", "size": [2048, 1024], "kind": "panorama", "prio": 2},
+  {"path": "assets/hd2d/sky/cloud_sea.png", "size": [1024, 1024], "kind": "tile", "prio": 2},
+  {"path": "assets/hd2d/sky/distant_island_a.png", "size": [768, 384], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/sky/distant_island_b.png", "size": [768, 384], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/sky/distant_island_c.png", "size": [768, 384], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/sky/floating_rock.png", "size": [192, 192], "kind": "panel", "prio": 3},
+  {"path": "assets/hd2d/fx/shadow.png", "size": [128, 64], "kind": "fx", "prio": 3},
+  {"path": "assets/hd2d/fx/glow.png", "size": [128, 128], "kind": "fx", "prio": 3},
+  {"path": "assets/hd2d/fx/light_pool.png", "size": [256, 256], "kind": "fx", "prio": 3},
+  {"path": "assets/hd2d/buildings/materials/roof_tiles_b.png", "size": [192, 192], "kind": "tile", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/buildings/materials/roof_slate_b.png", "size": [192, 192], "kind": "tile", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/buildings/materials/wall_plaster_b.png", "size": [192, 192], "kind": "tile", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/buildings/materials/wall_stone_b.png", "size": [192, 192], "kind": "tile", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/buildings/materials/wall_brick.png", "size": [192, 192], "kind": "tile", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/buildings/materials/roof_shingles.png", "size": [192, 192], "kind": "tile", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/buildings/materials/wall_tin.png", "size": [192, 192], "kind": "tile", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/buildings/materials/roof_tin_b.png", "size": [192, 192], "kind": "tile", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/buildings/materials/wall_planks_b.png", "size": [192, 192], "kind": "tile", "prio": 3, "lot": "D"},
+  {"path": "assets/hd2d/buildings/materials/wall_plaster_c.png", "size": [192, 192], "kind": "tile", "prio": 3, "lot": "D"},
+  {"path": "assets/hd2d/ground/grass_b.png", "size": [384, 384], "kind": "tile", "prio": 1, "lot": "B", "variant_of": "grass"},
+  {"path": "assets/hd2d/ground/forest_floor_b.png", "size": [384, 384], "kind": "tile", "prio": 1, "lot": "B", "variant_of": "forest_floor"},
+  {"path": "assets/hd2d/ground/path_dirt_b.png", "size": [384, 384], "kind": "tile", "prio": 1, "lot": "B", "variant_of": "path_dirt"},
+  {"path": "assets/hd2d/ground/leaf_litter.png", "size": [384, 384], "kind": "tile", "prio": 1, "lot": "B"},
+  {"path": "assets/hd2d/ground/moss.png", "size": [384, 384], "kind": "tile", "prio": 1, "lot": "B"},
+  {"path": "assets/hd2d/ground/grass_dry_b.png", "size": [384, 384], "kind": "tile", "prio": 2, "lot": "B", "variant_of": "grass_dry"},
+  {"path": "assets/hd2d/ground/flagstone_b.png", "size": [384, 384], "kind": "tile", "prio": 2, "lot": "B", "variant_of": "flagstone"},
+  {"path": "assets/hd2d/ground/cobble_b.png", "size": [384, 384], "kind": "tile", "prio": 2, "lot": "B", "variant_of": "cobble"},
+  {"path": "assets/hd2d/ground/meadow_flowers.png", "size": [384, 384], "kind": "tile", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/ground/gravel.png", "size": [384, 384], "kind": "tile", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/ground/garden_soil.png", "size": [384, 384], "kind": "tile", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/ground/sand_b.png", "size": [384, 384], "kind": "tile", "prio": 3, "lot": "B", "variant_of": "sand"},
+  {"path": "assets/hd2d/ground/rock_b.png", "size": [384, 384], "kind": "tile", "prio": 3, "lot": "B", "variant_of": "rock"},
+  {"path": "assets/hd2d/ground/planks.png", "size": [384, 384], "kind": "tile", "prio": 3, "lot": "B"},
+  {"path": "assets/hd2d/ground/stream_bed.png", "size": [384, 384], "kind": "tile", "prio": 3, "lot": "B"},
+  {"path": "assets/hd2d/decals/leaves_gold_a.png", "size": [288, 192], "kind": "decal", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/decals/leaves_gold_b.png", "size": [192, 144], "kind": "decal", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/decals/leaves_rust_a.png", "size": [288, 192], "kind": "decal", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/decals/leaves_rust_b.png", "size": [192, 144], "kind": "decal", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/decals/leaves_scatter.png", "size": [384, 288], "kind": "decal", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/decals/grass_edge_a.png", "size": [384, 96], "kind": "decal", "prio": 1, "lot": "B", "wrap": "x", "solid_edge": "top"},
+  {"path": "assets/hd2d/decals/grass_edge_b.png", "size": [384, 96], "kind": "decal", "prio": 1, "lot": "B", "wrap": "x", "solid_edge": "top", "pairs_with": "grass_edge_a"},
+  {"path": "assets/hd2d/decals/canopy_shadow_a.png", "size": [576, 576], "kind": "decal", "prio": 1, "lot": "A", "soft_alpha": true},
+  {"path": "assets/hd2d/decals/canopy_shadow_b.png", "size": [576, 576], "kind": "decal", "prio": 1, "lot": "A", "soft_alpha": true},
+  {"path": "assets/hd2d/decals/sun_dapple.png", "size": [384, 384], "kind": "decal", "prio": 1, "lot": "A", "soft_alpha": true},
+  {"path": "assets/hd2d/decals/roots_a.png", "size": [288, 192], "kind": "decal", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/decals/roots_b.png", "size": [192, 192], "kind": "decal", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/decals/branches_a.png", "size": [192, 96], "kind": "decal", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/decals/pebbles_a.png", "size": [144, 144], "kind": "decal", "prio": 1, "lot": "B"},
+  {"path": "assets/hd2d/decals/garden_bed.png", "size": [480, 288], "kind": "decal", "prio": 1, "lot": "B"},
+  {"path": "assets/hd2d/decals/moss_patch_a.png", "size": [192, 144], "kind": "decal", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/decals/moss_patch_b.png", "size": [144, 96], "kind": "decal", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/decals/clover_patch.png", "size": [192, 144], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/flowers_patch_a.png", "size": [192, 144], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/flowers_patch_b.png", "size": [144, 96], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/needles_patch.png", "size": [192, 144], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/puddle_a.png", "size": [192, 115], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/puddle_b.png", "size": [134, 96], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/mud_patch.png", "size": [192, 144], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/cracks_a.png", "size": [192, 192], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/cracks_b.png", "size": [144, 96], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/pebbles_b.png", "size": [192, 96], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/branches_b.png", "size": [288, 115], "kind": "decal", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/decals/stepping_stones.png", "size": [288, 192], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/lily_pads.png", "size": [192, 144], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/sand_drift_a.png", "size": [288, 192], "kind": "decal", "prio": 2, "lot": "B", "soft_alpha": true},
+  {"path": "assets/hd2d/decals/sand_drift_b.png", "size": [192, 115], "kind": "decal", "prio": 2, "lot": "B", "soft_alpha": true},
+  {"path": "assets/hd2d/decals/ring_stone_flat_a.png", "size": [96, 77], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/ring_stone_flat_b.png", "size": [115, 67], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/ring_stone_flat_c.png", "size": [77, 77], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/chalk_drawings.png", "size": [192, 192], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/chalk_hopscotch.png", "size": [192, 384], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/oil_stain.png", "size": [144, 96], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/rust_streak.png", "size": [192, 96], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/footprints.png", "size": [96, 288], "kind": "decal", "prio": 2, "lot": "B"},
+  {"path": "assets/hd2d/decals/cart_ruts.png", "size": [192, 384], "kind": "decal", "prio": 3, "lot": "B", "wrap": "y"},
+  {"path": "assets/hd2d/decals/drain_grate.png", "size": [96, 96], "kind": "decal", "prio": 3, "lot": "B"},
+  {"path": "assets/hd2d/decals/hay_scatter.png", "size": [144, 96], "kind": "decal", "prio": 3, "lot": "B"},
+  {"path": "assets/hd2d/decals/boardwalk.png", "size": [96, 384], "kind": "decal", "prio": 3, "lot": "B", "wrap": "y"},
+  {"path": "assets/hd2d/decals/mist_patch.png", "size": [384, 192], "kind": "decal", "prio": 3, "lot": "B", "soft_alpha": true},
+  {"path": "assets/hd2d/props/oak_a.png", "size": [576, 768], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/oak_b.png", "size": [576, 768], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/oak_c.png", "size": [576, 768], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/beech_a.png", "size": [480, 864], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/beech_b.png", "size": [480, 864], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/maple_a.png", "size": [480, 672], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/maple_b.png", "size": [480, 672], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/birch_a.png", "size": [288, 720], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/birch_b.png", "size": [288, 720], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/pine_small_a.png", "size": [192, 432], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/pine_small_b.png", "size": [192, 432], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/forest_wall_a.png", "size": [1536, 1056], "kind": "panel", "prio": 1, "lot": "A", "wrap": "x"},
+  {"path": "assets/hd2d/props/forest_wall_b.png", "size": [1536, 1056], "kind": "panel", "prio": 1, "lot": "A", "wrap": "x"},
+  {"path": "assets/hd2d/props/forest_wall_c.png", "size": [1536, 1056], "kind": "panel", "prio": 1, "lot": "A", "wrap": "x"},
+  {"path": "assets/hd2d/props/oak_d.png", "size": [576, 768], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/beech_c.png", "size": [480, 864], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/maple_c.png", "size": [480, 672], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/pine_tall_b.png", "size": [384, 1056], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/pine_dead.png", "size": [240, 672], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/dead_tree_a.png", "size": [384, 480], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/dead_tree_b.png", "size": [288, 384], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/sapling_a.png", "size": [144, 240], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/sapling_b.png", "size": [115, 211], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/treeline_autumn_a.png", "size": [1536, 768], "kind": "panel", "prio": 2, "lot": "A", "wrap": "x"},
+  {"path": "assets/hd2d/props/treeline_autumn_b.png", "size": [1536, 768], "kind": "panel", "prio": 2, "lot": "A", "wrap": "x"},
+  {"path": "assets/hd2d/props/forest_wall_d.png", "size": [1536, 1056], "kind": "panel", "prio": 2, "lot": "A", "wrap": "x"},
+  {"path": "assets/hd2d/props/willow.png", "size": [576, 672], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/lone_tree_b.png", "size": [384, 480], "kind": "panel", "prio": 3, "lot": "A"},
+  {"path": "assets/hd2d/props/bush_b.png", "size": [154, 115], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/bush_c.png", "size": [125, 96], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/bush_d.png", "size": [173, 106], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/bush_e.png", "size": [106, 96], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/fern_a.png", "size": [144, 106], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/fern_b.png", "size": [115, 86], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/fern_c.png", "size": [96, 67], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/grass_clump_a.png", "size": [96, 77], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/grass_clump_b.png", "size": [77, 58], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/grass_clump_c.png", "size": [115, 86], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/bush_f.png", "size": [144, 125], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/fern_d.png", "size": [192, 134], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/grass_clump_d.png", "size": [58, 48], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/wildflowers_a.png", "size": [77, 48], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/wildflowers_b.png", "size": [77, 38], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/heather.png", "size": [115, 48], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/myosotis_b.png", "size": [77, 48], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/myosotis_c.png", "size": [48, 38], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/cattails.png", "size": [96, 154], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/reeds_b.png", "size": [115, 125], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/mushroom_cep.png", "size": [48, 38], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/mushroom_chanterelle.png", "size": [58, 29], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/ivy_ground.png", "size": [144, 58], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/nettles.png", "size": [96, 77], "kind": "panel", "prio": 3, "lot": "A"},
+  {"path": "assets/hd2d/props/thistle.png", "size": [58, 86], "kind": "panel", "prio": 3, "lot": "A"},
+  {"path": "assets/hd2d/props/berry_bush_b.png", "size": [125, 96], "kind": "panel", "prio": 3, "lot": "A"},
+  {"path": "assets/hd2d/props/fg_trunk_a.png", "size": [192, 960], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/fg_trunk_b.png", "size": [144, 960], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/fg_fern.png", "size": [288, 192], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/fg_grass.png", "size": [288, 144], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/fg_bush.png", "size": [288, 192], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/boulder_a.png", "size": [288, 192], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/boulder_b.png", "size": [240, 211], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/boulder_c.png", "size": [336, 154], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/rock_small_a.png", "size": [58, 38], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/rock_small_b.png", "size": [77, 48], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/rock_small_c.png", "size": [48, 29], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/edge_rocks_a.png", "size": [384, 154], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/edge_rocks_b.png", "size": [384, 115], "kind": "panel", "prio": 1, "lot": "A"},
+  {"path": "assets/hd2d/props/boulder_d.png", "size": [384, 288], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/rock_small_d.png", "size": [67, 48], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/rock_pile.png", "size": [192, 96], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/edge_roots.png", "size": [288, 192], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/props/edge_grass.png", "size": [384, 96], "kind": "panel", "prio": 2, "lot": "A", "wrap": "x"},
+  {"path": "assets/hd2d/props/wind_rock_d.png", "size": [240, 154], "kind": "panel", "prio": 2, "lot": "A"},
+  {"path": "assets/hd2d/sky/floating_rock_b.png", "size": [144, 144], "kind": "panel", "prio": 3, "lot": "A"},
+  {"path": "assets/hd2d/sky/floating_rock_c.png", "size": [240, 240], "kind": "panel", "prio": 3, "lot": "A"},
+  {"path": "assets/hd2d/buildings/warehouse_main_side.png", "size": [768, 864], "kind": "side", "prio": 1, "lot": "D", "roof": "gable", "wall_m": 6.5},
+  {"path": "assets/hd2d/buildings/warehouse_wing_side.png", "size": [864, 336], "kind": "side", "prio": 1, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/cafe_side.png", "size": [576, 720], "kind": "side", "prio": 1, "lot": "D", "roof": "gable", "wall_m": 5.5},
+  {"path": "assets/hd2d/buildings/shop_bakery_side.png", "size": [480, 384], "kind": "side", "prio": 1, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/shop_bookshop_side.png", "size": [480, 384], "kind": "side", "prio": 1, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/stone_house_side.png", "size": [432, 312], "kind": "side", "prio": 1, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/projection_hall_side.png", "size": [672, 720], "kind": "side", "prio": 2, "lot": "D", "roof": "gable", "wall_m": 6.0},
+  {"path": "assets/hd2d/buildings/limashenka_house_side.png", "size": [480, 360], "kind": "side", "prio": 2, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/tool_shed_side.png", "size": [240, 250], "kind": "side", "prio": 2, "lot": "D", "roof": "gable", "wall_m": 2.25},
+  {"path": "assets/hd2d/buildings/house_timber_a.png", "size": [480, 576], "kind": "facade", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/buildings/house_timber_a_side.png", "size": [432, 336], "kind": "side", "prio": 1, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/house_timber_b.png", "size": [672, 528], "kind": "facade", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/buildings/house_timber_b_side.png", "size": [480, 720], "kind": "side", "prio": 1, "lot": "D", "roof": "gable", "wall_m": 5.5},
+  {"path": "assets/hd2d/buildings/clockmaker.png", "size": [480, 624], "kind": "facade", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/buildings/clockmaker_side.png", "size": [480, 384], "kind": "side", "prio": 1, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/house_narrow.png", "size": [384, 768], "kind": "facade", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/buildings/house_narrow_side.png", "size": [480, 576], "kind": "side", "prio": 1, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/butcher.png", "size": [576, 336], "kind": "facade", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/buildings/butcher_side.png", "size": [480, 528], "kind": "side", "prio": 2, "lot": "D", "roof": "gable", "wall_m": 3.5},
+  {"path": "assets/hd2d/buildings/inn.png", "size": [864, 576], "kind": "facade", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/buildings/inn_side.png", "size": [672, 816], "kind": "side", "prio": 2, "lot": "D", "roof": "gable", "wall_m": 6.0},
+  {"path": "assets/hd2d/buildings/harbor_office.png", "size": [480, 576], "kind": "facade", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/buildings/harbor_office_side.png", "size": [480, 384], "kind": "side", "prio": 2, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/port_hangar.png", "size": [960, 480], "kind": "facade", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/buildings/port_hangar_side.png", "size": [768, 672], "kind": "side", "prio": 2, "lot": "D", "roof": "gable", "wall_m": 5.0},
+  {"path": "assets/hd2d/buildings/boiler_workshop.png", "size": [576, 624], "kind": "facade", "prio": 3, "lot": "D"},
+  {"path": "assets/hd2d/buildings/boiler_workshop_side.png", "size": [576, 384], "kind": "side", "prio": 3, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/house_stone_b.png", "size": [480, 480], "kind": "facade", "prio": 3, "lot": "D"},
+  {"path": "assets/hd2d/buildings/house_stone_b_side.png", "size": [432, 312], "kind": "side", "prio": 3, "lot": "D", "roof": "eaves"},
+  {"path": "assets/hd2d/props/chimney_brick.png", "size": [96, 192], "kind": "panel", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/props/chimney_stone.png", "size": [96, 173], "kind": "panel", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/props/dormer_slate.png", "size": [154, 154], "kind": "panel", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/props/dormer_tiles.png", "size": [154, 154], "kind": "panel", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/props/ivy_wall_a.png", "size": [192, 288], "kind": "panel", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/props/ivy_wall_b.png", "size": [288, 192], "kind": "panel", "prio": 1, "lot": "D"},
+  {"path": "assets/hd2d/props/warehouse_roof_deck.png", "size": [576, 154], "kind": "panel", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/props/wall_lantern.png", "size": [48, 77], "kind": "panel", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/props/window_box.png", "size": [115, 48], "kind": "panel", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/props/hanging_sign_key.png", "size": [96, 115], "kind": "panel", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/props/hanging_sign_propeller.png", "size": [96, 115], "kind": "panel", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/props/drainpipe.png", "size": [29, 384], "kind": "panel", "prio": 2, "lot": "D"},
+  {"path": "assets/hd2d/props/outdoor_stairs.png", "size": [192, 288], "kind": "panel", "prio": 3, "lot": "D"},
+  {"path": "assets/hd2d/props/awning_green.png", "size": [288, 96], "kind": "panel", "prio": 3, "lot": "D"},
+  {"path": "assets/hd2d/props/wheelbarrow.png", "size": [154, 86], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/firewood_pile.png", "size": [240, 192], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/stump_axe.png", "size": [115, 96], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/rain_barrel.png", "size": [77, 106], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/laundry_basket.png", "size": [86, 58], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/toys_a.png", "size": [96, 58], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/toys_b.png", "size": [77, 58], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/bench_b.png", "size": [154, 106], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/fence_low.png", "size": [192, 77], "kind": "panel", "prio": 1, "lot": "E", "wrap": "x"},
+  {"path": "assets/hd2d/props/bucket.png", "size": [38, 38], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/watering_can.png", "size": [48, 38], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/garden_tools.png", "size": [77, 154], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/scarecrow.png", "size": [115, 192], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/kids_table.png", "size": [192, 96], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/flower_pots.png", "size": [115, 58], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/crate_stack.png", "size": [115, 125], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/bench_stone.png", "size": [134, 58], "kind": "panel", "prio": 3, "lot": "E"},
+  {"path": "assets/hd2d/props/sack_apples.png", "size": [67, 58], "kind": "panel", "prio": 3, "lot": "E"},
+  {"path": "assets/hd2d/props/cafe_table.png", "size": [134, 96], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/barrel_group.png", "size": [154, 106], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/sacks_pile.png", "size": [134, 77], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/hand_cart.png", "size": [240, 134], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/fountain.png", "size": [288, 240], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/notice_board.png", "size": [154, 192], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/market_stall_fruit.png", "size": [240, 230], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/market_stall_cloth.png", "size": [240, 230], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/bread_rack.png", "size": [134, 115], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/book_cart.png", "size": [134, 96], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/menu_slate.png", "size": [58, 106], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/street_lamp_double.png", "size": [115, 288], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/planter_long.png", "size": [154, 77], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/bunting.png", "size": [576, 96], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/crate_apples.png", "size": [96, 67], "kind": "panel", "prio": 3, "lot": "E"},
+  {"path": "assets/hd2d/props/broom_bucket.png", "size": [58, 134], "kind": "panel", "prio": 3, "lot": "E"},
+  {"path": "assets/hd2d/props/mooring_tower.png", "size": [288, 576], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/cargo_net.png", "size": [192, 154], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/crystal_crates.png", "size": [154, 115], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/fuel_barrels.png", "size": [134, 106], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/rope_coil.png", "size": [96, 48], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/steam_pipes.png", "size": [192, 192], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/workbench.png", "size": [192, 115], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/luggage.png", "size": [115, 77], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/ticket_booth.png", "size": [192, 240], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/dock_lamp.png", "size": [77, 336], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/pallet_sacks.png", "size": [154, 96], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/chain_pile.png", "size": [96, 48], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/tool_rack.png", "size": [115, 154], "kind": "panel", "prio": 3, "lot": "E"},
+  {"path": "assets/hd2d/props/propeller_spare.png", "size": [192, 192], "kind": "panel", "prio": 3, "lot": "E"},
+  {"path": "assets/hd2d/props/ruined_wall_b.png", "size": [288, 154], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/ruined_wall_c.png", "size": [192, 134], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/dead_shrub_a.png", "size": [96, 77], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/wind_grass_a.png", "size": [77, 48], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/dead_shrub_b.png", "size": [115, 86], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/wind_grass_b.png", "size": [96, 38], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/sandbags.png", "size": [192, 77], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/broken_spears.png", "size": [115, 154], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/ruined_arch.png", "size": [384, 336], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/cart_wreck.png", "size": [288, 154], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/broken_pillar.png", "size": [96, 192], "kind": "panel", "prio": 3, "lot": "E"},
+  {"path": "assets/hd2d/props/garde_crate.png", "size": [96, 77], "kind": "panel", "prio": 3, "lot": "E"},
+  {"path": "assets/hd2d/props/fallen_tree.png", "size": [576, 192], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/stump_a.png", "size": [115, 77], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/stump_b.png", "size": [134, 96], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/log_hollow.png", "size": [288, 115], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/training_dummy.png", "size": [96, 192], "kind": "panel", "prio": 1, "lot": "E"},
+  {"path": "assets/hd2d/props/target_board.png", "size": [115, 154], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/hunting_stand.png", "size": [192, 384], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/cairn.png", "size": [96, 115], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/rope_fence.png", "size": [192, 86], "kind": "panel", "prio": 2, "lot": "E", "wrap": "x"},
+  {"path": "assets/hd2d/props/stone_steps.png", "size": [192, 77], "kind": "panel", "prio": 2, "lot": "E"},
+  {"path": "assets/hd2d/props/old_telescope.png", "size": [77, 154], "kind": "panel", "prio": 3, "lot": "E"},
+  {"path": "assets/hd2d/props/log_pile_forest.png", "size": [192, 115], "kind": "panel", "prio": 3, "lot": "E"},
+  {"path": "assets/hd2d/anim/airship_ferry_propeller.png", "size": [192, 192], "kind": "anim", "prio": 1, "lot": "C", "frames": 4, "fps": 12, "anchor": "center"},
+  {"path": "assets/hd2d/anim/airship_barocupot_propeller.png", "size": [288, 288], "kind": "anim", "prio": 1, "lot": "C", "frames": 4, "fps": 12, "anchor": "center"},
+  {"path": "assets/hd2d/sky/airship_far_a.png", "size": [480, 192], "kind": "panel", "prio": 2, "lot": "C", "anchor": "center", "ppm": 24},
+  {"path": "assets/hd2d/sky/airship_far_b.png", "size": [288, 144], "kind": "panel", "prio": 2, "lot": "C", "anchor": "center", "ppm": 24},
+  {"path": "assets/hd2d/sky/airship_far_c.png", "size": [768, 288], "kind": "panel", "prio": 2, "lot": "C", "anchor": "center", "ppm": 24},
+  {"path": "assets/hd2d/sky/airship_far_d.png", "size": [192, 96], "kind": "panel", "prio": 3, "lot": "C", "anchor": "center", "ppm": 24},
+  {"path": "assets/hd2d/anim/laundry_wave.png", "size": [576, 211], "kind": "anim", "prio": 1, "lot": "F", "frames": 4, "fps": 4},
+  {"path": "assets/hd2d/anim/pennant_wave.png", "size": [96, 336], "kind": "anim", "prio": 1, "lot": "F", "frames": 6, "fps": 10},
+  {"path": "assets/hd2d/anim/chimney_smoke.png", "size": [96, 288], "kind": "anim", "prio": 1, "lot": "F", "frames": 8, "fps": 6, "soft_alpha": true},
+  {"path": "assets/hd2d/anim/brazier_fire.png", "size": [48, 58], "kind": "anim", "prio": 1, "lot": "F", "frames": 6, "fps": 10},
+  {"path": "assets/hd2d/anim/edge_waterfall.png", "size": [288, 576], "kind": "anim", "prio": 1, "lot": "F", "frames": 6, "fps": 10, "soft_alpha": true},
+  {"path": "assets/hd2d/anim/birds_flock.png", "size": [192, 96], "kind": "anim", "prio": 1, "lot": "F", "frames": 6, "fps": 10, "anchor": "center"},
+  {"path": "assets/hd2d/anim/falling_leaf_gold.png", "size": [16, 16], "kind": "anim", "prio": 1, "lot": "F", "frames": 8, "fps": 10, "anchor": "center"},
+  {"path": "assets/hd2d/anim/falling_leaf_rust.png", "size": [16, 16], "kind": "anim", "prio": 1, "lot": "F", "frames": 8, "fps": 10, "anchor": "center"},
+  {"path": "assets/hd2d/anim/reeds_sway.png", "size": [144, 134], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 3},
+  {"path": "assets/hd2d/anim/grass_sway.png", "size": [96, 77], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 4},
+  {"path": "assets/hd2d/anim/windsock_wave.png", "size": [115, 384], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 6},
+  {"path": "assets/hd2d/anim/bunting_wave.png", "size": [576, 96], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 5},
+  {"path": "assets/hd2d/anim/vigil_bell_ring.png", "size": [134, 230], "kind": "anim", "prio": 2, "lot": "F", "frames": 6, "fps": 6},
+  {"path": "assets/hd2d/anim/fountain_water.png", "size": [288, 240], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 8},
+  {"path": "assets/hd2d/anim/pigeons.png", "size": [38, 29], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 4},
+  {"path": "assets/hd2d/anim/butterfly.png", "size": [24, 24], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 12, "anchor": "center"},
+  {"path": "assets/hd2d/anim/fireflies.png", "size": [12, 12], "kind": "anim", "prio": 3, "lot": "F", "frames": 4, "fps": 4, "anchor": "center", "soft_alpha": true},
+  {"path": "assets/hd2d/anim/furnace_steam.png", "size": [96, 192], "kind": "anim", "prio": 3, "lot": "F", "frames": 6, "fps": 8, "soft_alpha": true},
+  {"path": "assets/hd2d/anim/cafe_door_bell.png", "size": [48, 48], "kind": "anim", "prio": 3, "lot": "F", "frames": 4, "fps": 6},
+  {"path": "assets/hd2d/sky/cloud_a.png", "size": [768, 256], "kind": "panel", "prio": 1, "lot": "G", "anchor": "center", "soft_alpha": true, "ppm": 48},
+  {"path": "assets/hd2d/sky/cloud_b.png", "size": [576, 192], "kind": "panel", "prio": 1, "lot": "G", "anchor": "center", "soft_alpha": true, "ppm": 48},
+  {"path": "assets/hd2d/sky/cloud_c.png", "size": [384, 128], "kind": "panel", "prio": 1, "lot": "G", "anchor": "center", "soft_alpha": true, "ppm": 48},
+  {"path": "assets/hd2d/sky/distant_island_d.png", "size": [768, 384], "kind": "panel", "prio": 1, "lot": "G", "ppm": 48, "anchor": "free"},
+  {"path": "assets/hd2d/sky/island_53.png", "size": [1024, 512], "kind": "panel", "prio": 1, "lot": "G", "ppm": 48, "anchor": "free"},
+  {"path": "assets/hd2d/sky/cloud_d.png", "size": [960, 288], "kind": "panel", "prio": 2, "lot": "G", "anchor": "center", "soft_alpha": true, "ppm": 48},
+  {"path": "assets/hd2d/sky/cloud_e.png", "size": [480, 192], "kind": "panel", "prio": 2, "lot": "G", "anchor": "center", "soft_alpha": true, "ppm": 48},
+  {"path": "assets/hd2d/sky/distant_island_e.png", "size": [768, 384], "kind": "panel", "prio": 2, "lot": "G", "ppm": 48, "anchor": "free"},
+  {"path": "assets/hd2d/sky/distant_island_f.png", "size": [768, 384], "kind": "panel", "prio": 2, "lot": "G", "ppm": 48, "anchor": "free"},
+  {"path": "assets/hd2d/sky/horizon_islands.png", "size": [2048, 192], "kind": "panel", "prio": 2, "lot": "G", "wrap": "x", "ppm": 48},
+  {"path": "assets/hd2d/sky/mist_band.png", "size": [1024, 128], "kind": "panel", "prio": 2, "lot": "G", "anchor": "center", "wrap": "x", "soft_alpha": true},
+  {"path": "assets/hd2d/sky/light_shaft_a.png", "size": [192, 768], "kind": "panel", "prio": 2, "lot": "G", "soft_alpha": true, "anchor": "free"},
+  {"path": "assets/hd2d/sky/light_shaft_b.png", "size": [288, 960], "kind": "panel", "prio": 2, "lot": "G", "soft_alpha": true, "anchor": "free"},
+  {"path": "assets/hd2d/sky/sky_dusk.png", "size": [2048, 1024], "kind": "panorama", "prio": 3, "lot": "G"},
+  {"path": "assets/hd2d/sky/sky_night.png", "size": [2048, 1024], "kind": "panorama", "prio": 3, "lot": "G"}
  ],
  "sheets": [
   {
@@ -940,15 +448,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    },
-    "_front": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "nopht",
@@ -993,12 +493,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "tiat",
@@ -1009,18 +504,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    },
-    "_front": {
-     "parle": "repos"
-    },
-    "_back": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "pannibal",
@@ -1031,12 +515,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "accepted": {
-    "side": [
-     "height"
-    ]
-   }
+   ]
   },
   {
    "id": "collon",
@@ -1059,12 +538,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "_front": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "almita",
@@ -1086,15 +560,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    },
-    "_front": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "cat_waiter",
@@ -1105,12 +571,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "ramikeldi",
@@ -1135,12 +596,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "baker",
@@ -1165,12 +621,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "side": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "egg_vendor",
@@ -1181,12 +632,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "aliases": {
-    "_back": {
-     "parle": "repos"
-    }
-   }
+   ]
   },
   {
    "id": "garde_lookout",

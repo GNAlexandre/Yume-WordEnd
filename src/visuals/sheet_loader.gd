@@ -149,15 +149,18 @@ static func frame_offset(texture: Texture2D, flipped: bool) -> Vector2:
 	return Vector2(anchor.x - size.x if flipped else -anchor.x, anchor.y - size.y)
 
 
-## Taille d'un pixel de planche en mètres : height_m / hauteur de la 1re image de « repos » du
-## profil (sheet). (H6) Pour une autre vue (view_sheet) : la même hauteur debout que le profil (de
-## l'ancre au haut de la 1re image de « repos »), pour que le personnage garde sa taille en se
-## tournant même si la vue est dessinée un peu plus petite ou plus grande.
+## Taille d'un pixel de planche en mètres : height_m / hauteur debout de la 1re image de
+## « repos » du profil (sheet), du haut de l'image aux pieds (l'ancre) : ce qui dépasse sous les
+## pieds (pointe de l'épée de bois de Pannibal, pattes du Timere) ne compte pas. (H6) Pour une
+## autre vue (view_sheet) : la même hauteur debout que le profil (de l'ancre au haut de la 1re
+## image de « repos »), pour que le personnage garde sa taille en se tournant même si la vue est
+## dessinée un peu plus petite ou plus grande.
 static func pixel_size(skin: SkinData, sheet: Dictionary, view_sheet: Dictionary = {}) -> float:
 	var first := _first_idle_image(sheet)
 	if first.is_empty() or skin == null or skin.height_m <= 0.0:
 		return DEFAULT_PIXEL_SIZE
-	var size := skin.height_m / float(first[3])
+	var standing := float(first[5]) if float(first[5]) > 0.0 else float(first[3])
+	var size := skin.height_m / standing
 	var other := _first_idle_image(view_sheet)
 	if other.is_empty() or float(other[5]) <= 0.0 or float(first[5]) <= 0.0:
 		return size

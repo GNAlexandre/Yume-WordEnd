@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """Outils de dessin du pixel art HD-2D de remplacement (tools/hd2d_assets.py) : couleurs de
-MONDE.md 5.4 en paliers, bruit sans raccord, tramage ordonné, formes ombrées, contours."""
+MONDE.md 5.4 en paliers, bruit sans raccord, tramage ordonné, formes ombrées, contours ; pour le
+cahier n° 2, lecture des images livrées, dessin sans raccord à gauche et à droite, alpha doux en
+paliers, recoloration."""
 
 import colorsys
+import math
+import os
 import zlib
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
@@ -283,3 +287,102 @@ def shade_texture(img, rnd, amount=0.08, cells=8):
     a = img.getchannel("A")
     out.putalpha(a)
     return out
+
+
+# --- Cahier n° 2 : images livrées, dessin sans raccord, alpha doux --------------------------------
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def asset(key):
+    """Image du jeu (« props/laundry_line », « buildings/materials/wall_stone ») en RGBA, ou None :
+    les remplaçants du cahier n° 2 partent des images livrées quand ils en dérivent (variante de
+    tuile, flanc d'une façade, bande animée d'un panneau)."""
+    path = os.path.join(ROOT, "assets", "hd2d", key + ".png")
+    if not os.path.exists(path):
+        return None
+    return Image.open(path).convert("RGBA")
+
+
+class WrapCanvas(Canvas):
+    """Canvas dont chaque trait est aussi posé une largeur à gauche et à droite : le dessin se
+    raccorde à gauche et à droite (lisières, bordures, modules de clôture)."""
+
+    def blob(self, cx, cy, rx, ry, colors, light=(-0.5, -0.6), rim=True):
+        for dx in (-self.w, 0, self.w):
+            if -rx - 2 <= cx + dx <= self.w + rx + 2:
+                Canvas.blob(self, cx + dx, cy, rx, ry, colors, light, rim)
+
+    def poly(self, points, color, outline_color=None):
+        for dx in (-self.w, 0, self.w):
+            Canvas.poly(self, [(x + dx, y) for x, y in points], color, outline_color)
+
+    def rect(self, x0, y0, x1, y1, color):
+        for dx in (-self.w, 0, self.w):
+            Canvas.rect(self, x0 + dx, y0, x1 + dx, y1, color)
+
+    def line(self, points, color, width=1):
+        for dx in (-self.w, 0, self.w):
+            Canvas.line(self, [(x + dx, y) for x, y in points], color, width)
+
+    def ellipse(self, cx, cy, rx, ry, color):
+        for dx in (-self.w, 0, self.w):
+            Canvas.ellipse(self, cx + dx, cy, rx, ry, color)
+
+    def pixel(self, x, y, color):
+        Canvas.pixel(self, int(x) % self.w, y, color)
+
+    def finish(self, outline_color, alpha_level=128):
+        self.img = wrap_x(hard_alpha(self.img), lambda im: outline(im, outline_color, alpha_level))
+        return self.img
+
+
+def wrap_x(img, fn):
+    """Applique fn (filtre de voisinage) comme si l'image se répétait à gauche et à droite."""
+    w, h = img.size
+    big = Image.new(img.mode, (3 * w, h))
+    for k in range(3):
+        big.paste(img, (k * w, 0))
+    return fn(big).crop((w, 0, 2 * w, h))
+
+
+def wrap_y(img, fn):
+    w, h = img.size
+    big = Image.new(img.mode, (w, 3 * h))
+    for k in range(3):
+        big.paste(img, (0, k * h))
+    return fn(big).crop((0, h, w, 2 * h))
+
+
+def steps_alpha(img, levels=8):
+    """Alpha doux en paliers (pixel art) : levels niveaux de 0 à 255."""
+    a = img.getchannel("A").point(lambda v: min(255, round(v * levels / 255.0) * 255 // levels))
+    out = img.copy()
+    out.putalpha(a)
+    return out
+
+
+def recolor(img, color, keep=0.35):
+    """Recoloration d'une image (variation de teinte d'une matière livrée) : la luminance garde le
+    dessin, la teinte vient de color ; keep garde une part de la couleur d'origine."""
+    gray = img.convert("L")
+    lo, hi = gray.getextrema()
+    tones = ramp(color, 7, spread=0.6)
+    span = max(1, hi - lo)
+    lut = []
+    for c in range(3):
+        for v in range(256):
+            t = max(0.0, min(1.0, (v - lo) / float(span)))
+            pos = t * (len(tones) - 1)
+            i = min(len(tones) - 2, int(pos))
+            f = pos - i
+            lut.append(round(tones[i][c] + (tones[i + 1][c] - tones[i][c]) * f))
+    tinted = Image.merge("RGB", [gray.point(lut[c * 256:(c + 1) * 256]) for c in range(3)])
+    out = Image.blend(tinted, img.convert("RGB"), keep).convert("RGBA")
+    out.putalpha(img.getchannel("A"))
+    return out
+
+
+def rotate_points(points, cx, cy, angle):
+    ca, sa = math.cos(angle), math.sin(angle)
+    return [(cx + (x - cx) * ca - (y - cy) * sa, cy + (x - cx) * sa + (y - cy) * ca) for x, y in points]
