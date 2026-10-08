@@ -31,9 +31,13 @@ change pas sans PR « contrats ».
   `fit <fichier>` (image livrée trop grande), `atlas` (après une tuile de sol). Puis
   `tools/import.sh`.
 - Export Web : `tools/godot --headless --export-release Web build/web/index.html`
+- Application Windows (docs/bureau.md) : `tools/build_desktop.sh` (exe, installateur NSIS et zip
+  dans `build/dist`), `--linux` (le même pck en build Linux, lancé sans écran jusqu'à une partie) ;
+  `tools/desktop_boot.sh --xvfb` (captures du menu). Une Release GitHub naît d'un tag `vX.Y.Z`.
 - Lint : `gdlint src tests tools && gdformat --check src tests tools` (`gdformat src tests tools`
   pour corriger). gdtoolkit 4.5.0, réglages dans `gdlintrc`.
-- Environnement neuf : `bash tools/setup.sh` (Godot, templates Web, gdtoolkit, Pillow ; idempotent).
+- Environnement neuf : `bash tools/setup.sh` (Godot, templates Web, Windows et Linux, gdtoolkit,
+  Pillow, NSIS ; idempotent).
 - Navigateur (à la main, hors check.sh) : export, `python3 -m http.server 8347 --bind 127.0.0.1
   --directory build/web`, puis `NODE_PATH=/opt/node-tools/node_modules node tools/web_m2.js
   http://127.0.0.1:8347/index.html build/shots` (début de l'acte 1, reprise, images/s par zone ;
@@ -199,6 +203,11 @@ change pas sans PR « contrats ».
   durer au moins une image physique (sinon il est encore « just pressed » à la reprise). En
   headless, la fenêtre fait 64 × 64 px : un clic porte `root.get_final_transform() * position`,
   et la couche de GUT (`GutLayer`) prend les clics si elle n'est pas cachée.
+- (bureau) `user://` porte le nom du jeu hors Web (`use_custom_user_dir`) : `build/xdg/data/WordEnd`
+  sous `tools/godot`, `%APPDATA%\WordEnd` sous Windows ; le Web garde
+  `/userfs/godot/app_userdata/WordEnd`. L'autoload `DesktopApp` (plein écran, « Quitter ») se croit
+  sur le bureau dans les tests : `DesktopApp.simulated_web` (1 : Web), `settings_path` et
+  `quit_enabled = false` (sinon « Quitter » ferme GUT), rétablis dans `after_each`.
 - `zone_entered` n'est émis qu'au changement de zone (M2) : un test qui replace le joueur dans
   la zone où il est déjà ne le reçoit pas (`Zone.LAST_ZONE_META` sur le corps du joueur).
 - Quêtes et dialogues JSON : une clé inconnue (faute de frappe) les rend invalides, sauf une clé

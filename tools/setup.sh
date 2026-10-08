@@ -1,5 +1,6 @@
 #!/bin/bash
-# tools/setup.sh — Godot headless + templates d'export Web + outils (VM Claude Code, CI, poste local).
+# tools/setup.sh — Godot headless + templates d'export (Web, Windows, Linux) + outils (VM Claude
+# Code, CI, poste local).
 #
 # Idempotent et « meilleur effort » : chaque étape saute si son résultat est déjà là, et le
 # script se termine toujours par exit 0 (un échec est signalé, jamais bloquant).
@@ -7,9 +8,12 @@
 # Ordre pour Godot :
 #   1. binaire et templates depuis les releases GitHub de godotengine/godot (joignables depuis
 #      les VM cloud) ; les templates sont extraits par requêtes HTTP Range (tools/fetch_templates.py),
-#      seulement templates/web*.zip et version.txt, sinon téléchargement complet du .tpz puis suppression ;
+#      seulement ceux de TEMPLATE_FILES qui manquent (Web mono-thread ; (bureau) Windows et Linux
+#      x86_64 en release, docs/bureau.md) et version.txt, sinon téléchargement complet du .tpz
+#      (1,3 Go) puis suppression ;
 #   2. repli : image docker barichello/godot-ci (si un démon docker répond).
-# Puis : gdtoolkit (gdlint, gdformat) et Pillow (tools/gen_placeholders.py).
+# Puis : gdtoolkit (gdlint, gdformat) et Pillow (tools/gen_placeholders.py) ; (bureau) NSIS et zip
+# pour l'installateur Windows (tools/build_desktop.sh).
 #
 # Variables : GODOT_VERSION (défaut 4.7.2), GDTOOLKIT_VERSION (défaut 4.5.0),
 #             GODOT_BIN_DIR (défaut /usr/local/bin, ou ~/.local/bin sans droits d'écriture).
@@ -21,6 +25,9 @@ TAG="${GODOT_VERSION}-stable"
 RELEASES="https://github.com/godotengine/godot/releases/download/${TAG}"
 TPL_DIR="${HOME}/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
 IMG="barichello/godot-ci:${GODOT_VERSION}"
+# Templates des préréglages d'export_presets.cfg : Web mono-thread (release et debug, L9) ;
+# (bureau) Windows et Linux x86_64 en release (l'export release n'exige pas le template debug).
+TEMPLATE_FILES="web_nothreads_release.zip web_nothreads_debug.zip windows_release_x86_64.exe linux_release.x86_64"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 
 log() { echo "[setup] $*"; }
@@ -40,18 +47,26 @@ godot_ok() {
   command -v godot >/dev/null 2>&1 && godot --headless --version 2>/dev/null | grep -q "^${GODOT_VERSION}\.stable"
 }
 
-templates_ok() {
-  [ -f "$TPL_DIR/web_nothreads_release.zip" ] && [ -f "$TPL_DIR/web_nothreads_debug.zip" ]
+# Membres du .tpz absents de TPL_DIR (templates/<fichier>, un par ligne).
+missing_templates() {
+  local file
+  for file in $TEMPLATE_FILES; do
+    [ -f "$TPL_DIR/$file" ] || echo "templates/$file"
+  done
 }
 
-# 1. Bibliothèques runtime de Godot, Xvfb + Mesa (captures), git-lfs, unzip.
+templates_ok() {
+  [ -z "$(missing_templates)" ]
+}
+
+# 1. Bibliothèques runtime de Godot, Xvfb + Mesa (captures), git-lfs, unzip ; (bureau) zip et NSIS.
 install_packages() {
   command -v apt-get >/dev/null 2>&1 || return 0
   local asound=libasound2t64
   apt-cache show libasound2t64 >/dev/null 2>&1 || asound=libasound2
   local wanted="xvfb xauth libgl1 libgl1-mesa-dri libglx-mesa0 libx11-6 libxcursor1 libxinerama1
     libxrandr2 libxi6 libxext6 libxrender1 ${asound} libpulse0 libfontconfig1 libdbus-1-3 libudev1
-    git-lfs unzip curl python3-pip"
+    git-lfs unzip zip curl python3-pip nsis"
   local missing=""
   for pkg in $wanted; do
     dpkg -s "$pkg" >/dev/null 2>&1 || missing="$missing $pkg"
@@ -84,19 +99,22 @@ install_godot_release() {
   rm -rf "$tmp"
 }
 
-# 2b. Templates d'export Web depuis les releases GitHub.
+# 2b. Templates d'export manquants (Web, Windows, Linux) depuis les releases GitHub.
 install_templates_release() {
   local tpz="Godot_v${TAG}_export_templates.tpz"
+  local wanted
+  # shellcheck disable=SC2207
+  wanted=($(missing_templates) 'templates/version.txt')
   mkdir -p "$TPL_DIR"
-  log "templates Web (extraction partielle de $tpz)"
-  if python3 "$HERE/fetch_templates.py" "$RELEASES/$tpz" "$TPL_DIR" 'templates/web*.zip' 'templates/version.txt'; then
+  log "templates : ${wanted[*]} (extraction partielle de $tpz)"
+  if python3 "$HERE/fetch_templates.py" "$RELEASES/$tpz" "$TPL_DIR" "${wanted[@]}" && templates_ok; then
     return 0
   fi
   log "extraction partielle impossible : téléchargement complet (1,3 Go)"
   local tmp
   tmp="$(mktemp -d)"
   if curl -fsSL --retry 3 -o "$tmp/$tpz" "$RELEASES/$tpz"; then
-    unzip -q -o -j "$tmp/$tpz" 'templates/web*.zip' 'templates/version.txt' -d "$TPL_DIR" \
+    unzip -q -o -j "$tmp/$tpz" "${wanted[@]}" -d "$TPL_DIR" \
       || log "ATTENTION : décompression des templates impossible"
   else
     log "ATTENTION : téléchargement des templates impossible"
@@ -150,7 +168,11 @@ if godot_ok; then
 else
   log "ATTENTION : godot ${GODOT_VERSION} absent ; tools/godot tentera docker"
 fi
-templates_ok && log "templates Web : $TPL_DIR" || log "ATTENTION : templates Web absents ($TPL_DIR)"
+if templates_ok; then
+  log "templates Web, Windows et Linux : $TPL_DIR"
+else
+  log "ATTENTION : templates absents de $TPL_DIR :" $(missing_templates)
+fi
 gdlint --version 2>/dev/null | sed 's/^/[setup] /' || log "ATTENTION : gdlint absent"
 case ":$PATH:" in
   *":$BIN_DIR:"*) ;;

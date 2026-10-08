@@ -13,6 +13,7 @@ extends Control
 ## - Nouvelle partie → SaveManager.new_game(skin choisi), confirmée si une sauvegarde existe.
 ## - Sauvegarde : export (texte sélectionnable, presse-papiers) et import (import_json) ; en
 ##   navigation privée (not SaveManager.is_persistent()), avertissement et export mis en avant.
+## - (bureau) « Plein écran » et « Quitter », hors Web seulement : DesktopApp.setup_menu_buttons.
 ## Clavier, manette (croix ou stick : focus ; A valide ; B revient), souris et toucher.
 
 const CREDITS_SCENE := preload("res://src/ui/credits.tscn")
@@ -80,6 +81,7 @@ func _ready() -> void:
 	_copy_button.pressed.connect(copy_export)
 	(%ImportButton as Button).pressed.connect(_on_import_pressed)
 	(%SaveBackButton as Button).pressed.connect(close_overlay)
+	DesktopApp.setup_menu_buttons(%FullscreenButton as Button, %ExitGameButton as Button, "quit")
 	refresh_continue()
 	show_storage_warning(SaveManager.is_persistent())
 	MenuInput.focus_on_hover(self)

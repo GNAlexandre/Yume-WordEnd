@@ -67,10 +67,20 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Commandes"
 
+[node name="FullscreenButton" type="Button" parent="MainPanel/Box"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
 [node name="QuitButton" type="Button" parent="MainPanel/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Retour au menu"
+
+[node name="ExitGameButton" type="Button" parent="MainPanel/Box"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
 
 [node name="Status" type="Label" parent="MainPanel/Box"]
 unique_name_in_owner = true

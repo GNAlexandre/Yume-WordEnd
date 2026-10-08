@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """Extrait quelques membres d'une archive ZIP distante sans la télécharger en entier.
 
-Utilisé par tools/setup.sh pour récupérer seulement les templates d'export Web dans
-le fichier Godot_v<version>-stable_export_templates.tpz (1,3 Go) des releases GitHub :
-le serveur répond aux requêtes HTTP Range (206), on lit donc la fin de l'archive
-(répertoire central), puis uniquement les octets des membres voulus.
+Utilisé par tools/setup.sh pour récupérer seulement les templates d'export utiles (Web
+mono-thread ; (bureau) Windows et Linux x86_64) dans le fichier
+Godot_v<version>-stable_export_templates.tpz (1,3 Go) des releases GitHub : le serveur répond
+aux requêtes HTTP Range (206), on lit donc la fin de l'archive (répertoire central), puis
+uniquement les octets des membres voulus, par morceaux de 8 Mo (chacun réessayé trois fois),
+décompressés au fil de l'eau : un template Windows (36 Mo compressés, 104 Mo) ne tient pas
+tout entier en mémoire.
 
 Usage :
     python3 tools/fetch_templates.py <url.tpz> <dossier_de_sortie> <motif> [<motif> ...]
-    ex. motifs : 'templates/web*.zip' 'templates/version.txt'
+    ex. motifs : 'templates/web_nothreads_*.zip' 'templates/windows_release_x86_64.exe'
+                 'templates/linux_release.x86_64' 'templates/version.txt'
 
 Les membres sont écrits à plat dans le dossier de sortie (sans le préfixe templates/).
 Bibliothèque standard seulement (urllib suit HTTPS_PROXY et SSL_CERT_FILE).
@@ -19,6 +23,7 @@ import fnmatch
 import os
 import struct
 import sys
+import time
 import urllib.request
 import zlib
 
@@ -28,15 +33,27 @@ ZIP64_LOCATOR = 0x07064B50
 ZIP64_EOCD = 0x06064B50
 CENTRAL = 0x02014B50
 LOCAL = 0x04034B50
+CHUNK = 8 << 20
+RETRIES = 3
 
 
 def fetch(url, start, end):
-    """Octets [start, end] inclus de l'URL (requête Range)."""
-    req = urllib.request.Request(url, headers={"Range": "bytes=%d-%d" % (start, end)})
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        if resp.status != 206:
-            raise RuntimeError("le serveur ignore Range (HTTP %d)" % resp.status)
-        return resp.read()
+    """Octets [start, end] inclus de l'URL (requête Range), réessayée en cas de coupure."""
+    for attempt in range(RETRIES):
+        req = urllib.request.Request(url, headers={"Range": "bytes=%d-%d" % (start, end)})
+        try:
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                if resp.status != 206:
+                    raise RuntimeError("le serveur ignore Range (HTTP %d)" % resp.status)
+                data = resp.read()
+            if len(data) != end - start + 1:
+                raise OSError("réponse tronquée (%d octets sur %d)" % (len(data), end - start + 1))
+            return data
+        except OSError:
+            if attempt == RETRIES - 1:
+                raise
+            time.sleep(2 * (attempt + 1))
+    raise RuntimeError("inaccessible")
 
 
 def total_size(url):
@@ -107,18 +124,26 @@ def extract(url, name, method, crc, comp, size, offset, out_path):
     if sig != LOCAL:
         raise RuntimeError("en-tête local invalide pour " + name)
     start = offset + 30 + name_len + extra_len
-    raw = fetch(url, start, start + comp - 1) if comp else b""
-    if method == 0:
-        data = raw
-    elif method == 8:
-        data = zlib.decompressobj(-15).decompress(raw)
-    else:
+    if method not in (0, 8):
         raise RuntimeError("compression %d non gérée pour %s" % (method, name))
-    if len(data) != size or (zlib.crc32(data) & 0xFFFFFFFF) != crc:
-        raise RuntimeError("contrôle d'intégrité raté pour " + name)
+    inflater = zlib.decompressobj(-15) if method == 8 else None
     tmp = out_path + ".part"
+    written = 0
+    check = 0
     with open(tmp, "wb") as handle:
-        handle.write(data)
+        pos, end = start, start + comp
+        while pos < end:
+            raw = fetch(url, pos, min(pos + CHUNK, end) - 1)
+            pos += len(raw)
+            data = inflater.decompress(raw) if inflater else raw
+            if pos >= end and inflater:
+                data += inflater.flush()
+            handle.write(data)
+            written += len(data)
+            check = zlib.crc32(data, check)
+    if written != size or (check & 0xFFFFFFFF) != crc:
+        os.remove(tmp)
+        raise RuntimeError("contrôle d'intégrité raté pour " + name)
     os.replace(tmp, out_path)
 
 

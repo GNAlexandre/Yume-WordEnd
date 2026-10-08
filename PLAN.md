@@ -71,20 +71,24 @@ Les quatre systèmes de jeu émettent leurs signaux dans `EventBus` ; HUD, `Game
 ```
 Yume-WordEnd/
 ├── project.godot              # autoloads, input map, couches de collision, renderer
-├── export_presets.cfg         # preset "Web" (commit, sans secret)
+├── export_presets.cfg         # preset "Web" (commit, sans secret) ; (bureau) "Windows Desktop" et "Linux"
 ├── CLAUDE.md                  # règles pour les agents (section 11)
 ├── PLAN.md                    # ce document, exporté en Markdown
 ├── .gitignore / .gitattributes
 ├── gdlintrc                   # (L0) réglages de gdlint (défauts sauf max-public-methods)
 ├── .claude/settings.json      # hook SessionStart → tools/session_start.sh
-├── .github/workflows/ci.yml   # lint + tests + export web + déploiement Pages
+├── .github/workflows/ci.yml   # lint + tests + export web + déploiement Pages ; (bureau) installateur, Release sur tag v*
 ├── addons/gut/                # GUT vendoré
 ├── docs/
 │   ├── DECISIONS.md           # choix faits par les agents quand le plan ne suffit pas
+│   ├── bureau.md              # (bureau) application Windows : construire, publier, installer, SmartScreen
 │   └── CONTRACT_REQUESTS.md   # besoins de contrat hors périmètre d'un lot
 ├── tools/
-│   ├── setup.sh               # installe Godot + templates (cloud et CI)
-│   ├── fetch_templates.py     # (L0) extrait seulement les templates Web du .tpz (requêtes Range)
+│   ├── setup.sh               # installe Godot + templates (cloud et CI) ; (bureau) Windows, Linux, NSIS, zip
+│   ├── fetch_templates.py     # (L0) extrait seulement les templates utiles du .tpz (requêtes Range)
+│   ├── build_desktop.sh       # (bureau) export Windows → installateur NSIS + zip portable (build/dist)
+│   ├── desktop_boot.sh        # (bureau) build Linux du même pck lancé sans écran (ou Xvfb) : menu, partie, reprise
+│   ├── installer/             # (bureau) wordend.nsi, wordend.ico, welcome.bmp, make_installer_art.py (.gdignore)
 │   ├── session_start.sh       # reprise de session cloud : LFS, import
 │   ├── godot                  # wrapper: binaire natif ou docker ; user:// isolé par worktree (build/xdg)
 │   ├── check.sh               # import + gdlint + tests + smoke + export (le "vert" du projet)
@@ -105,7 +109,8 @@ Yume-WordEnd/
 ├── src/
 │   ├── main.tscn              # racine : menu, chargement, puis game.tscn
 │   ├── game.tscn              # (L0) Island + Player + QuestTracker + UI (HUD, dialogue, inventaire…)
-│   ├── autoload/              # EventBus, GameState, SaveManager, SkinRegistry, WorldManager
+│   ├── autoload/              # EventBus, GameState, SaveManager, SkinRegistry, WorldManager, (bureau) DesktopApp
+│   ├── desktop_check.gd       # (bureau) vérification du jeu exporté (--desktop-check), sans effet sinon
 │   ├── player/                # player.tscn, player.gd (déplacement), camera_rig.tscn (caméra fixe HD-2D),
 │   │                          # post_fx.gdshader (flou de profondeur, lueur, étalonnage)
 │   ├── combat/                # health.gd, hitbox.tscn, hurtbox.tscn, attack_data.gd,
@@ -158,6 +163,7 @@ Yume-WordEnd/
 | `SaveManager` | Écrit/lit `user://save_v1.json` (nom historique ; schéma v2 depuis le Lot Q), versionne le schéma, migre | L8 |
 | `SkinRegistry` | Charge `data/skins/*.tres`, expose la liste et le skin par défaut (Chtholly) | L3 |
 | `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort | L2 |
+| `DesktopApp` | (bureau) Application de bureau, sans effet sur le Web : fenêtre de départ, plein écran (F11, Alt+Entrée, bouton) mémorisé dans `user://settings.cfg`, boutons « Plein écran » et « Quitter » des menus, sauvegarde avant de quitter (docs/bureau.md) | bureau |
 
 ### Contrats d'interface
 
@@ -307,6 +313,16 @@ func is_zone_safe(zone_id: StringName) -> bool   # (M1) Zone.safe de la zone (fa
 var respawn_delay: float = 2.2            # (L0) délai entre player_died et respawn()
 signal rescued(zone_id: StringName)       # (Systèmes et textes) rescue() a rattrapé le joueur au Spawn de
                                           # zone_id → HUD : fondu au blanc et « Tes ailes se sont ouvertes… »
+
+# (bureau) src/autoload/desktop_app.gd — tout est sans effet sur le Web (OS.has_feature("web"))
+func is_web() -> bool / func is_desktop() -> bool   # vraie plateforme, ou simulated_web (tests : 0 bureau, 1 Web)
+func is_fullscreen() -> bool / func set_fullscreen(enabled: bool) -> void / func toggle_fullscreen() -> void
+                                          # choix écrit dans user://settings.cfg (SETTINGS_PATH), rétabli au lancement
+func setup_menu_buttons(fullscreen_button: Button, quit_button: Button, quit_text: String) -> void
+                                          # boutons montrés et branchés sur le bureau, cachés sur le Web
+func text(key: String) -> String          # data/texts/story.json, section « desktop »
+func quit_game() -> void                  # SaveManager.save() si une partie est suivie, close_game(), puis quit()
+signal fullscreen_changed(enabled: bool) / signal quit_requested
 
 # Interactable — tout nœud du groupe "interactable" implémente :
 func get_prompt() -> String            # "Parler", "Ramasser"
@@ -460,8 +476,8 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/npc/placements/<zone_id>.tscn` | `NPCs` (Node3D), instancié dans chaque zone | PNJ de la zone et (Lot Q) déclencheurs de quête `QuestTrigger` (coordonnées locales à la zone) | — | L6 |
 | `src/enemies/placements/<zone_id>.tscn` | `Enemies` (Node3D ; (acte 1) script `src/enemies/free_enemies.gd`) | ennemis libres de la zone (forêt : 4 Timeres), qui reviennent pendant une étape « vaincre » qui les vise | — | L5 |
 | `src/items/placements/<zone_id>.tscn` | `Pickups` (Node3D) | objets uniques, nommés `<zone>_<objet>_<n>` (ex. `forest_page_1`) | — | L7 |
-| `src/ui/main_menu.tscn` + `.gd` | `MainMenu` (Control) | `%NewGameButton` | — | L10 |
-| `src/ui/hud.tscn`, `arena_end.tscn`, `credits.tscn` | `HUD`, `ArenaEnd`, `Credits` (Control) | `HUD/PauseMenu` (L10), (Lot Q) `HUD/Journal` (`src/ui/journal.tscn`, PROCESS_MODE_ALWAYS ; (Systèmes et textes) script `src/ui/hud_journal.gd`, qui étend journal.gd : textes de quête avec `{player}`) | — | L10 |
+| `src/ui/main_menu.tscn` + `.gd` | `MainMenu` (Control) | `%NewGameButton` ; (bureau) `%FullscreenButton`, `%ExitGameButton` (cachés sur le Web) | — | L10 |
+| `src/ui/hud.tscn`, `arena_end.tscn`, `credits.tscn` | `HUD`, `ArenaEnd`, `Credits` (Control) | `HUD/PauseMenu` (L10 ; (bureau) `%FullscreenButton`, `%ExitGameButton`, cachés sur le Web), (Lot Q) `HUD/Journal` (`src/ui/journal.tscn`, PROCESS_MODE_ALWAYS ; (Systèmes et textes) script `src/ui/hud_journal.gd`, qui étend journal.gd : textes de quête avec `{player}`) | — | L10 |
 | `src/ui/dialogue_box.tscn` | `DialogueBox` (Control) | — | — | L6 |
 | `src/ui/inventory.tscn` | `Inventory` (Control) | — | — | L7 |
 | `src/ui/loading.tscn`, `touch_controls.tscn` | `Loading`, `TouchControls` (Control) | `Loading` : `set_progress(ratio: float)` facultatif, appelé par main.gd ; (M2) `load_scene(path, budget_ms)` qui charge la partie en plusieurs images, utilisée par main.gd si présente | — | L9 |
@@ -842,6 +858,17 @@ Règles propres à cette phase :
 - Toute PR de rendu joint la vue `tools/hd2d_shots.sh` de ses zones avant et après, et le nombre
   de draw calls lu dans le journal de la capture.
 
+### Application de bureau (bureau, PR « contrats »)
+
+**En plus du Web, inchangé, une application Windows avec son installateur** (docs/bureau.md),
+faite avant M5 parce que le Web grossit avec les images du cahier n° 2. Même projet, même rendu
+(Compatibility), même pck (38 Mo, celui du Web à quelques octets près) ; le Web reste le
+préréglage par défaut de `tools/check.sh` et du déploiement.
+
+| Lot | Objet | Fichiers possédés | Dépend de | Critères d'acceptation |
+| --- | --- | --- | --- | --- |
+| **D1 Bureau Windows** (PR « contrats ») | Préréglages « Windows Desktop » (x86_64, pck dans l'exe, icône et métadonnées écrites par Godot, sans rcedit) et « Linux » (même pck, pour vérifier le démarrage ici) ; gabarits Windows et Linux dans `tools/setup.sh` ; dossier utilisateur `WordEnd` hors Web ; autoload `DesktopApp` (fenêtre, plein écran F11 / Alt+Entrée / bouton mémorisé, « Quitter » qui écrit la partie) ; installateur NSIS par utilisateur ; tâches `bureau` et `release` de la CI | `export_presets.cfg` (préréglages 1 et 2), `project.godot` (version, dossier utilisateur, autoload), `src/autoload/desktop_app.gd`, `src/desktop_check.gd`, boutons de `src/ui/main_menu.*` et `src/ui/pause_menu.*`, section « desktop » de `data/texts/story.json`, `tools/build_desktop.sh`, `tools/desktop_boot.sh`, `tools/installer/**`, `tools/setup.sh`, `tools/fetch_templates.py`, `.github/workflows/ci.yml` (tâches `bureau`, `release`), `tests/unit/test_desktop.gd`, `docs/bureau.md` | M2.5 | `tools/check.sh` vert (préréglages vérifiés) ; `tools/build_desktop.sh --linux` : exe, installateur, zip, et le build Linux du même pck démarre sans écran jusqu'à une partie puis la reprend ; capture Xvfb du menu avec « Quitter » ; Web inchangé (préréglage, taille, chemin des sauvegardes) |
+
 ## 8. Feuille de route
 
 **Six jalons, dont trois avant la première mise en ligne (M2, vers la semaine 5).** Les durées sont des estimations pour un rythme soirées et week-ends avec plusieurs sessions Claude Code en parallèle ; elles glissent sans casser le plan, car chaque jalon n'ouvre le suivant que sur sa porte de passage.
@@ -858,13 +885,13 @@ Chaque losange est une porte que tu valides toi-même avant d'ouvrir le jalon su
 | **M2.5 HD-2D** (après M2) | Socle HD-2D fusionné (caméra fixe, décor en images, post-traitement), puis lots H1 à H8 : l'acte 1 entier dans les images commandées d'après `docs/ASSETS_HD2D.md` | Tu joues l'acte 1 dans le navigateur et juges le rendu proche d'*Octopath Traveler* ; 50 images/s par zone ; export < 60 Mo |
 | **M3 Monde vivant et premier donjon** (semaines 6–10) | Cycle jour/nuit, 2 zones de plus, **grotte-donjon** avec clés et boss (Grand Timere renforcé), 2 nouveaux types d'ennemis, équipement (épée améliorée, cœurs supplémentaires), 10 PNJ, 3 quêtes, musique et sons, contrôles tactiles complets | Session de 20 min sans bug bloquant ; le donjon se termine en 10 à 15 min ; 30 images/s sur mobile |
 | **M4 Yume** (semaines 11–14) | Lien avec yumenovel.fr : sauvegarde liée au compte WordPress, classement des meilleurs scores de l'arène, déblocages liés aux parutions, page officielle du jeu, mise en ligne | Deux semaines de « bêta ouverte » sur le site sans incident de sauvegarde ; décision prise sur les personnages (section 13) |
-| **M5 Bureau** (après) | Export Windows/macOS/Linux, catégorie Jeu dans l'application Yume, zones streamées, deuxième donjon | Décidé après M4 selon l'usage réel |
+| **M5 Bureau** (après) | Export Windows/macOS/Linux, catégorie Jeu dans l'application Yume, zones streamées, deuxième donjon ; ((bureau) l'application Windows et son installateur existent déjà : docs/bureau.md) | Décidé après M4 selon l'usage réel |
 
 Après M4, le rythme devient **une « saison » par trimestre** : une zone, des PNJ, des objets et un événement lié à la communauté, produits majoritairement en données.
 
 ## 9. Qualité, tests et CI
 
-**« Vert » veut dire : import sans erreur, lint propre, tests GUT verts, scènes de fumée OK, export Web produit sous le budget.** La même commande `tools/check.sh` donne ce verdict sur la VM cloud, sur ta machine et dans GitHub Actions, de sorte qu'un agent n'ouvre une PR que quand elle passera la CI.
+**« Vert » veut dire : import sans erreur, lint propre, tests GUT verts, scènes de fumée OK, préréglages de bureau présents, export Web produit sous le budget.** La même commande `tools/check.sh` donne ce verdict sur la VM cloud, sur ta machine et dans GitHub Actions, de sorte qu'un agent n'ouvre une PR que quand elle passera la CI.
 
 ### Niveaux de test
 
@@ -891,6 +918,8 @@ Le code de retour est non nul si un test échoue ; la CI publie `build/junit.xml
 | --- | --- | --- |
 | `check` | Toute PR et tout push sur `main` | Conteneur `barichello/godot-ci:4.7.2` + bibliothèques X11/Mesa + Xvfb ; `pip install gdtoolkit` ; `tools/check.sh` ; étape « taille du build » qui échoue au-delà du budget du jalon (100 Mo) et écrit la taille dans le résumé du job ; artefacts `build/web/`, `build/shots/`, `build/junit.xml` |
 | `deploy` | Push sur `main`, après `check` | Copie `web/` (CNAME, page de test) dans `build/web/`, puis publie sur GitHub Pages via `actions/upload-pages-artifact` + `actions/deploy-pages` |
+| `bureau` | (bureau) Toute PR, tout push sur `main` et tout tag `v*` | Même conteneur ; NSIS ; `tools/build_desktop.sh --linux` : export Windows, installateur `WordEnd-Setup-<version>.exe`, zip portable, build Linux du même pck lancé sans écran jusqu'à une partie ; tailles dans le résumé du job (pas de budget : celui de 60 Mo ne vaut que pour le Web) ; artefact `bureau` (7 jours). Un tag `vX.Y.Z` fixe la version (project.godot, `application/config/version`, sinon) |
+| `release` | (bureau) Tag `v*`, ou « Run workflow » avec `release` coché ; après `check` et `bureau` | Seule tâche avec `contents: write` : Release GitHub `vX.Y.Z` avec l'installateur et le zip (`softprops/action-gh-release`) |
 
 Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa manque dans l'image, le job `check` installe `libgl1-mesa-dri xvfb` au préalable.
 
@@ -930,7 +959,7 @@ export 12,4 Mo compressés (18,4 avant la purge des modèles 3D). `tools/check.s
 | Pont page ↔ jeu | M4 | `JavaScriptBridge` côté Godot et `window.postMessage` côté page : la page transmet l'état de connexion WordPress (nonce REST) au jeu après consentement du joueur |
 | Sauvegarde liée au compte | M4 | Endpoint `POST/GET /wp-json/yume/v1/game/save` dans le plugin Yume-WordPress, authentifié par cookie + nonce, une sauvegarde JSON par utilisateur (`user_meta`), fusion « la plus récente gagne » avec la locale |
 | Déblocages communautaires | M4 | Endpoint `GET /wp-json/yume/v1/game/unlocks` renvoyant la liste des contenus ouverts (tome publié, événement) ; le jeu met des `flags` correspondants |
-| Version bureau | M5 | Exports Windows/macOS/Linux depuis le même dépôt ; l'application Yume ouvre l'exécutable ou embarque le build Web dans une WebView |
+| Version bureau | M5 | Exports Windows/macOS/Linux depuis le même dépôt ; l'application Yume ouvre l'exécutable ou embarque le build Web dans une WebView ; (bureau) Windows fait : installateur publié en Release GitHub à chaque tag `vX.Y.Z` (docs/bureau.md) |
 
 ### Snippet iframe
 

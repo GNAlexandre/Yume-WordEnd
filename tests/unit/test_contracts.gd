@@ -99,6 +99,17 @@ const WORLD_MANAGER_METHODS := {
 	"zone_display_name": [[SN], STR],
 	"is_zone_safe": [[SN], BOOL],
 }
+## (bureau) Application de bureau (src/autoload/desktop_app.gd, docs/bureau.md).
+const DESKTOP_APP_METHODS := {
+	"is_web": [[], BOOL],
+	"is_desktop": [[], BOOL],
+	"is_fullscreen": [[], BOOL],
+	"set_fullscreen": [[BOOL], VOID],
+	"toggle_fullscreen": [[], VOID],
+	"setup_menu_buttons": [[OBJ, OBJ, STR], VOID],
+	"text": [[STR], STR],
+	"quit_game": [[], VOID],
+}
 
 ## Champs des ressources : classe → {propriété: type}.
 const RESOURCE_FIELDS := {
@@ -304,7 +315,7 @@ func _is_script_class(node: Node, cls_name: String) -> bool:
 
 func test_autoloads_are_registered_without_class_name() -> void:
 	for autoload: String in [
-		"EventBus", "GameState", "SaveManager", "SkinRegistry", "WorldManager"
+		"EventBus", "GameState", "SaveManager", "SkinRegistry", "WorldManager", "DesktopApp"
 	]:
 		assert_true(ProjectSettings.has_setting("autoload/" + autoload), "autoload %s" % autoload)
 		assert_not_null(get_tree().root.get_node_or_null(autoload), "%s dans l'arbre" % autoload)
@@ -347,6 +358,13 @@ func test_world_manager_api() -> void:
 	_assert_methods(WorldManager, "WorldManager", WORLD_MANAGER_METHODS)
 	assert_eq(WorldManager.VILLAGE, &"village")
 	assert_eq(WorldManager.SPAWN_MARKER, &"Spawn")
+
+
+func test_desktop_app_api() -> void:
+	_assert_methods(DesktopApp, "DesktopApp", DESKTOP_APP_METHODS)
+	assert_true(DesktopApp.has_signal(&"fullscreen_changed"), "(bureau) fullscreen_changed")
+	assert_true(DesktopApp.has_signal(&"quit_requested"), "(bureau) quit_requested")
+	assert_eq(DesktopApp.SETTINGS_PATH, "user://settings.cfg", "réglages hors de la sauvegarde")
 
 
 # --- Classes partagées ------------------------------------------------------------------------
