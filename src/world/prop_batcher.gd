@@ -8,8 +8,13 @@ extends Node3D
 ##
 ## Sont fondus les MeshInstance3D visibles à une surface qui portent un material_override (tous
 ## les décors HD-2D) ; les autres restent tels quels. Les meshes fondus s'appellent « Batch… ».
+## (H9) Les UV2 des sommets sont gardées (phase des bandes animées, décalage vers la caméra des
+## panneaux, ordre des décalques au sol : données propres à chaque exemplaire) ; un mesh qui
+## n'en a pas reçoit (0, 0). Les décors qui bougent seuls (SkyDrift, AmbientSprites) portent leur
+## matériau dans le mesh, pas en material_override : ils ne sont pas fondus.
 
-## Triangles à plat de chaque mesh fondu : [sommets, normales, UV], calculés une fois par mesh.
+## Triangles à plat de chaque mesh fondu : [sommets, normales, UV, UV2], calculés une fois par
+## mesh.
 static var _soups: Dictionary = {}
 
 ## Côté (m) des cases du découpage, dans le repère du nœud ; 0 : une seule case.
@@ -22,6 +27,8 @@ class _Lot:
 	var vertices := PackedVector3Array()
 	var normals := PackedVector3Array()
 	var uvs := PackedVector2Array()
+	var uv2s := PackedVector2Array()
+	var has_uv2 := false
 
 
 func _ready() -> void:
@@ -84,9 +91,11 @@ static func _append(lot: _Lot, mesh: Mesh, xform: Transform3D) -> void:
 		normals[n] = normals[n].normalized()
 	lot.normals.append_array(normals)
 	lot.uvs.append_array(soup[2])
+	lot.uv2s.append_array(soup[3])
+	lot.has_uv2 = lot.has_uv2 or soup[4]
 
 
-## Triangles à plat du mesh (sans index) : sommets, normales, UV.
+## Triangles à plat du mesh (sans index) : sommets, normales, UV, UV2, et si le mesh a des UV2.
 static func _soup(mesh: Mesh) -> Array:
 	if _soups.has(mesh):
 		return _soups[mesh]
@@ -96,6 +105,9 @@ static func _soup(mesh: Mesh) -> Array:
 	var uvs: PackedVector2Array = (
 		arrays[Mesh.ARRAY_TEX_UV] if arrays[Mesh.ARRAY_TEX_UV] != null else PackedVector2Array()
 	)
+	var uv2s: PackedVector2Array = (
+		arrays[Mesh.ARRAY_TEX_UV2] if arrays[Mesh.ARRAY_TEX_UV2] != null else PackedVector2Array()
+	)
 	var indices: PackedInt32Array = (
 		arrays[Mesh.ARRAY_INDEX] if arrays[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
 	)
@@ -104,11 +116,13 @@ static func _soup(mesh: Mesh) -> Array:
 	var flat_vertices := PackedVector3Array()
 	var flat_normals := PackedVector3Array()
 	var flat_uvs := PackedVector2Array()
+	var flat_uv2s := PackedVector2Array()
 	for index in indices:
 		flat_vertices.append(vertices[index])
 		flat_normals.append(normals[index] if index < normals.size() else Vector3.UP)
 		flat_uvs.append(uvs[index] if index < uvs.size() else Vector2.ZERO)
-	var soup := [flat_vertices, flat_normals, flat_uvs]
+		flat_uv2s.append(uv2s[index] if index < uv2s.size() else Vector2.ZERO)
+	var soup := [flat_vertices, flat_normals, flat_uvs, flat_uv2s, not uv2s.is_empty()]
 	_soups[mesh] = soup
 	return soup
 
@@ -119,6 +133,8 @@ func _mesh_instance(lot: _Lot, index: int) -> MeshInstance3D:
 	arrays[Mesh.ARRAY_VERTEX] = lot.vertices
 	arrays[Mesh.ARRAY_NORMAL] = lot.normals
 	arrays[Mesh.ARRAY_TEX_UV] = lot.uvs
+	if lot.has_uv2:
+		arrays[Mesh.ARRAY_TEX_UV2] = lot.uv2s
 	var mesh := ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	var node := MeshInstance3D.new()
