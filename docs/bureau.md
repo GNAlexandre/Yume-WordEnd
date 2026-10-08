@@ -155,11 +155,14 @@ fin « Lancer WordEnd ». Version et éditeur aussi dans les propriétés de l'i
 
 | Mesure | Valeur |
 | --- | --- |
-| `WordEnd.exe` (pck intégré) | 142,3 Mo (template 104 Mo + pck 38 Mo) |
-| `WordEnd-Setup-0.3.0.exe` | 63,3 Mo (LZMA solide) |
-| `WordEnd-0.3.0-windows-portable.zip` | 73,6 Mo |
-| `WordEnd.x86_64` (Linux) | 108,3 Mo |
-| Web (`tools/build_size.sh`) | 47,2 Mo compressés (wasm 9,7 + pck 37,5), budget 60 : préréglage inchangé |
+| `WordEnd.exe` (pck intégré) | 168,9 Mo (template 104 Mo + pck 65 Mo) |
+| `WordEnd-Setup-0.3.0.exe` | 90,0 Mo (LZMA solide) |
+| `WordEnd-0.3.0-windows-portable.zip` | 99,9 Mo |
+| `WordEnd.x86_64` (Linux) | 134,9 Mo |
+| Web (`tools/build_size.sh`) | 73,5 Mo compressés (wasm 9,7 + pck 63,8), budget 100 : préréglage inchangé |
+
+Tailles mesurées avec toutes les images du cahier n° 2 (lots A à G) ; avant elles, l'installateur
+faisait 63,3 Mo et le Web 47,2 Mo.
 
 - `tools/check.sh` vert (793 tests, 155 scènes de fumée, export Web) ; dans Chromium sans écran,
   une nouvelle partie du build Web écrit toujours `/userfs/godot/app_userdata/WordEnd/save_v1.json`
