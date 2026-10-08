@@ -139,14 +139,13 @@ jobs:
             bash tools/setup.sh
             ls -l "$dst/windows_release_x86_64.exe" "$dst/linux_release.x86_64"
           fi
-      - name: NSIS et zip
+      # Bibliothèques runtime de Godot (fontconfig : sans elle, l'import écrit des ERROR que
+      # build_desktop.sh refuse), NSIS et zip : même script que le job check et les VM cloud.
+      - name: Outils (bibliothèques de Godot, NSIS, zip)
         run: |
-          if ! command -v makensis >/dev/null 2>&1 || ! command -v zip >/dev/null 2>&1; then
-            apt-get update -qq
-            DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
-              nsis zip >/dev/null
-          fi
+          bash tools/setup.sh
           makensis -VERSION
+          command -v zip
       # Un tag vX.Y.Z fixe la version de la Release : project.godot (seule source de la version,
       # application/config/version) la reçoit dans cette copie de travail s'il en annonce une autre.
       - name: Version
