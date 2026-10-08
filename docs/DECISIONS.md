@@ -1929,3 +1929,45 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   de 1 m (vérifié par `test_zone_beach.gd`), et rien dans les 4 derniers mètres : l'habillage de la
   lèvre au-delà des bouts du quai est retiré, quelques rochers, touffes et un arbre reculent ; les
   deux navires restent devant le quai (le Barocupot recentré sur sa moitié ouest, x de −32 à −8).
+- **P1 — pose des bois du marais** (`src/world/zones/forest/forest.tscn`) : environ 1 100 décors
+  en une quarantaine de familles, chacune une `PropScatter` (variantes, retournement, échelles 0,85
+  à 1,15) dont chaque image n'appartient qu'à elle : le tirage des variantes (jamais celle du plus
+  proche voisin) suffit à ce que deux voisins n'aient jamais la même image (seuls le cercle de
+  champignons et le caillebotis répètent une image, par nature). Points tirés par un script de
+  travail hors du dépôt, selon des règles écrites dans `tests/unit/test_forest_decor.gd` et
+  `test_world_story_spots.gd` : rien de bloquant à moins de 1 m des places de l'acte 1 ni dans le
+  cercle d'entraînement (buts et râtelier de H4 gardés ; mannequins et cibles au bord, à 16 m),
+  chemins libres sur 3 m, aucun grand décor qui cache à l'écran un chemin, le ruisseau, une place
+  ou un repère (rocher aux ours, affût, cercle de champignons, cascade, gués, mannequins), arbres
+  à 4,6 m les uns des autres au moins, grands arbres posés avant les jeunes sapins et bouleaux.
+- **P1 — un mesh par image dans les bois** (`PropBatcher.cell_size` 32 → 0) : le terrain
+  d'entraînement est au coin de quatre cases quelle que soit leur taille ; avec ~110 images, ses
+  vues dessinaient chaque image jusqu'à quatre fois. En une seule case, chaque vue des bois coûte au
+  plus une fois chaque image (mesures, 21 vues : 55 à 131 draw calls ; 27 à 65 avant). Pour que les vues
+  des zones voisines ne dessinent pas tout, chaque famille a une classe d'emprise qui borne sa boîte
+  englobante (bande sud des bois, vue de la cour : fougères, herbes, bouleaux, premier plan,
+  myosotis, bordures ; sud-est, vu de la colline : en plus hêtres, érables, jeunes sapins, feuilles,
+  gués) ; mesuré (hd2d_shots.sh) : cour 59 → 79, entrepôt 78 → 87, dialogue 64 → 82,
+  colline 52 → 78, Couchant 34 → 34 draw calls.
+- **P1 — arbres des bois en premier plan** : chaque arbre posé dans les bois est une variante
+  `src/world/props/<arbre>_forest.tscn` (scène héritée, `foreground = true`) : quand le joueur passe
+  derrière, l'arbre s'efface en trame autour de lui (on marche partout dans les bois). Chaque image
+  n'existe que sous cette forme dans la zone : pas de draw call de plus.
+- **P1 — lisières** : sept pans (`forest_wall_a..d`, d au-dessus du marais) jointifs (1 m de
+  recouvrement) le long du bord nord, tournés pour suivre sa courbe (`keep_orientation`, lacet de la
+  corde, moins de 40°), à 4,8 m de la lèvre : leur collision reste à 4 m du bord, que le lot B1 rend
+  irrégulier (criques de 4 m au plus là où rien n'est posé ; consigne : aucun décor à moins de 1 m
+  du bord, aucune collision à moins de 3 m, rien dans les 4 derniers mètres si possible). On peut
+  donc passer derrière : ce sont des variantes de premier plan (`forest_wall_*_forest.tscn`), qui
+  s'effacent autour du joueur. Deux fenêtres sur le vide, aux angles où le bord tourne trop pour un
+  pan de 16 m : au nord-ouest (sortie du ruisseau) et au nord-est ; elles restent nues (pierres et
+  herbe de la lèvre, racines, cascade : à poser sur le nouveau bord, docs/CONTRACT_REQUESTS.md).
+  Les côtés ouest et est sont fermés par des bois serrés, arrêtés à 4 m du bord.
+- **P1 — premier plan** (`fg_trunk_*`, `fg_fern`, `fg_bush`, `fg_grass`) seulement contre la
+  palissade de la cour (z local ≥ 25) : au milieu des bois, un tronc de 10 m à 4 m de la caméra
+  couvrait le tiers de l'écran.
+- **P1 — cercle de champignons** déplacé de (20, −1) à (16,8 ; 1,4) : le ruisseau le traversait.
+- **P1 — petites vies** : feuilles or et rouille, papillons autour du terrain, lucioles au marais,
+  dans un nœud `Ambient` de la zone, hors de `Geometry` (le PropBatcher ne fond pas leur mesh, et
+  `test_hd2d_decor.gd` refuse un mesh non fondu dans `Geometry`) ; régions bornées pour que la cour
+  ne les dessine pas.
