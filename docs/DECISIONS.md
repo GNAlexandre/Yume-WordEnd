@@ -1853,3 +1853,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   variantes s'en tiennent aux images les plus utiles (feuillus et sapin du cahier n° 1, buissons b
   et c, une lucarne, un lierre) ; une pose plus riche demandera de relever ce plafond (le vrai
   budget, ≤ 200 draw calls par vue, laisse de la marge : 70 à 110 mesurés).
+- **P3 — premier plan sur les grands décors de passage** : fontaine, étals, snack, panneaux
+  d'affichage, grue, pylône d'ancrage, guichet, tuyaux de vapeur, hélice de rechange et manche à
+  air ont `foreground = true` sur leur instance dans `beach.tscn` (scènes partagées inchangées) :
+  ils s'effacent en trame autour du joueur qui passe derrière eux ; chaque image reste un seul
+  matériau (toutes ses instances au port sont au premier plan).
