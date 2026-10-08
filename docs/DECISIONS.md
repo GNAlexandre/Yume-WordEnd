@@ -1313,3 +1313,14 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   55 % au cœur, poussée et allongée de 12 % vers l'est (le couchant à l'ouest) ; le brouillard de
   hauteur passe à 0,015 par mètre sous −8 m (0,04 sous −6 m) : la mer de nuages se voit sous la
   brume au bord de l'île au lieu d'un aplat rose.
+- **H5 — mesures** (VM partagée entre plusieurs agents, rendu logiciel : chiffres relatifs) :
+  écart moyen entre deux images à un demi-pixel de caméra (sur 255, `build/h5/shimmer.gd`) :
+  village 7,9 → 2,0, entrepôt 7,4 → 2,0, bois 7,7 → 2,1, Couchant 6,2 → 2,1, port 8,0 → 2,6,
+  colline 9,1 → 2,4. Draw calls (`tools/hd2d_shots.sh`) : menu 38, cour 93 (50 au départ : la
+  caméra qui lève les yeux montre la façade et les arbres derrière), entrepôt 79, bois 51,
+  Couchant 32, port 52, colline 50, conversation 66, veille 45 ; budget 200. Chromium headless
+  (`tools/web_m2.js … zones`, Spawn de chaque zone, deux paires départ / H5) : 0,27 à 0,52
+  image/s des deux côtés, sans écart au-delà du bruit. Banc A/B dans un seul processus (Xvfb,
+  llvmpipe, shaders du départ et de H5 échangés à chaud) : le post-traitement de H5 coûte moins
+  (quatre lectures dans les mipmaps contre douze), le sol et les panneaux filtrés coûtent plus ;
+  au total, de −1 % à +9 % selon la vue. Sur un vrai GPU, ces lectures de texture ne pèsent rien.
