@@ -1713,3 +1713,66 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   devicePixelRatio 2 le canevas passe de 1280 × 720 à 2560 × 1440 (4 × les pixels :
   `display/window/dpi/allow_hidpi`, vrai par défaut, sans gain pour du pixel art à 96 px/m) et la
   page rend 0,41 image/s contre 0,62.
+- **P0 — scènes de décor du cahier n° 2** (`tools/hd2d_scenes.py`, table `tools/hd2d_scenes.json`
+  lue aussi par `tests/unit/test_hd2d_scenes.gd`) : une scène `src/world/props/<nom>.tscn` par
+  image des lots A à G de genre panel, anim, decal ou facade (247 nouvelles, plus les deux
+  navires) ; la première catégorie dont un motif (glob sur `props/oak_*`, `decals/*`…) nomme
+  l'image fixe le format et la collision, une image sans catégorie est une erreur. La racine porte
+  `metadata/hd2d_category` (la catégorie) : `test_hd2d_decor.gd` laisse ces scènes à
+  `test_hd2d_scenes.gd`. `gen` ne réécrit une scène qu'avec `--force` (une scène retouchée à la
+  main reste) ; `check` vérifie le texte (image, script, format, collision, flancs).
+- **P0 — collisions par catégorie** (largeur de l'image à 96 px/m, profondeur de la catégorie,
+  forme au pied, centrée sur l'ancre) : troncs en cylindre de 3 m de haut (chênes et saule 0,4 m
+  de rayon, hêtres, érables et arbres moyens 0,28, bouleaux et jeunes sapins 0,16, jeunes arbres
+  0,07 sur 2 m) ; lisières : boîte de toute la largeur (16 m, elles s'enchaînent), 3 m de haut,
+  1,6 m de profondeur ; rochers et blocs (blocs, cairn, tas de pierres, pilier) : cylindre de
+  0,42 × la largeur (comme `rock` et `bear_rock`) sur leur hauteur ; pierres de la lèvre : boîte
+  pleine largeur de 0,6 m ; objets de la vie : boîte de 0,9 × la largeur, 0,7 m de profondeur
+  (1,2 m pour charrettes, filet, guichet, bûcher, table, affût, palette ; 1 m pour troncs couchés
+  et souches ; 0,3 m pour les objets plats ou appuyés ; 0,8 m pour ruines et sacs de sable,
+  comme `ruined_wall`) ; clôtures en modules : boîte pleine largeur de 0,15 m ; poteaux,
+  trépieds, mannequin : cylindre de 0,15 m ; lampadaires 0,12 ; mâts 0,08 ; linge : deux
+  poteaux comme `laundry_line` ; étals : le comptoir de `market_stall` ; fontaine : cylindre de
+  0,45 × la largeur sur 1 m ; pylône d'ancrage : boîte de la moitié de la largeur, 1,5 m.
+  On traverse : plantes, fleurs, herbes, champignons, cailloux, petits objets (image de 0,6 m de
+  haut au plus, 58 px : jouets, seau, arrosoir, pots, panier, sac, cordage, chaînes, pigeon), bancs
+  (comme `bench`), marches de pierre (on marche dessus), guirlande, cloche animée (l'arène porte
+  la collision du poteau), flammes et vapeur, premier plan, détails de mur et de toit, décalques,
+  ciel, navires (au bord du vide).
+- **P0 — formats** : bande animée = `frames` et `fps` du manifeste ; densité `ppm` du manifeste
+  (nuages, îles et île n° 53 à 48, navires en vol à 24) ; ce que le manifeste ancre au centre
+  (nuages, navires en vol, brume) a son origine au centre de l'image (`image_offset`), ce qui pend
+  sous la lèvre (`edge_roots`, `edge_waterfall`) au bord haut ; ciel, détails, plantes basses,
+  premier plan des fougères et herbes sans ombre ; troncs de premier plan avec une petite ombre
+  (0,5) ; lampes et caisses de cristaux avec la lueur de `crystal_lamp` (1,6). Décalage vers la
+  caméra : 0,1 m sur un toit (cheminée, lucarne, terrasse à linge, fumée), 0,06 m contre un mur
+  (lierre, jardinière, applique, enseignes, gouttière, auvent, clochette), 0,05 m sur un brasero
+  ou un four, 0,1 m pour l'escalier extérieur (boîte d'1 m devant le mur). Décalques : couche 0
+  pour les plaques (mousse, flaques, craie, ornières…), 1 pour ce qui traîne dessus (feuilles,
+  branches, cailloux, racines, aiguilles, foin), 2 ombre de feuillage, 3 taches de soleil,
+  4 brume.
+- **P0 — maisons de la section 9.2** : type, mur, faîte, profondeur et matières écrits dans la table
+  (clé `buildings`), largeur de la façade ; l'outil refuse une maison dont la façade ou le flanc
+  n'a pas la taille de ces cotes (`side_contract_size()` égale le flanc à 1 cm près pour les
+  19 bâtiments). Collision : l'emprise sur la hauteur du mur. Bâtiments du cahier n° 1 : une ligne
+  `side_facade` et son `ext_resource` (`5_side`), rien d'autre.
+- **P0 — navires à quai** : 96 px/m (14 × 7 m et 24 × 11 m) ; moyeux mesurés dans les images
+  livrées au bout de l'axe (là où l'hélice se fixe, pas au centre de la bride, que la coque
+  dessine de trois quarts) : passeur (825, 497) px, Barocupot (768, 670) et (1627, 678) px ;
+  chaque hélice (DecorPanel animé, 4 images à 12 images/s, sans ombre, `depth_offset` 0,1 pour
+  passer devant la coque) a son image centrée sur son moyeu, donc son ancre une demi-image plus
+  bas. Pour la pose : la proue est à droite (est) ; un navire tourné vers l'ouest demande
+  `flip_h` sur la coque et ses hélices et l'abscisse des hélices opposée (rien ne le fait seul).
+- **P0 — ce qui pend sous la lèvre** (`edge_roots`, `edge_waterfall`, `floating_rock_*`) : la
+  caméra du jeu (11 m au-dessus et 18 m au sud du point visé) ne voit un point h m sous la lèvre
+  que s'il est à plus de 1,6 × h m au-delà du bord (point visé sur la lèvre ; plus loin quand le
+  joueur s'en écarte) : 3 m pour le bas des racines, 10 m pour le bas d'une cascade de 6 m. La
+  démo les pose 9 m au-delà, vus par une caméra plus basse.
+- **P0 — démo** (`tests/integration/demo_props_monde.tscn`, vues `P0_VIEW`) : l'île sans ses
+  zones, chaque famille posée sur un lieu à part (bois, cour, bourg, maisons du port, port,
+  Couchant, ciel), décors fondus par image dans un `PropBatcher` (cases de 32 m) comme une zone ;
+  draw calls : bois 70, cour 43, bourg 103, maisons 124, port 175 (une centaine d'images
+  différentes à l'écran), Couchant 39, ciel 31.
+- **P0 — budget d'images par zone** (`test_hd2d_decor.gd`, `MAX_IMAGES_PER_ZONE`) : 40 → 48, le
+  port en a 44 avec les flancs de ses six bâtiments et les hélices des deux navires ; la pose du
+  cahier n° 2 le dépassera (le vrai budget est le nombre de draw calls des vues).

@@ -379,3 +379,29 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 - En attendant : `ATLAS_ROWS = 7.0` dans `src/world/shaders/terrain.gdshader` et taille attendue
   1536 × 2688 dans `tests/unit/test_hd2d_decor.gd` (deux lignes, commit à part de H10) ; à la
   fusion, garder la version de H9.
+
+## P0 — panneaux en alpha doux (moteur, H5 ou H9)
+- Besoin : `DecorPanel` découpe toujours l'alpha à 0,5 (`panel.gdshader`, `ALPHA_SCISSOR`). Les
+  images « alpha doux » posées en panneau perdent leur dégradé : fumée (`chimney_smoke`), vapeur
+  (`furnace_steam`), cascade (`edge_waterfall`), nuages (`cloud_*`) deviennent des taches à bord
+  net, et ce qui est plus pâle que 50 % disparaît tout entier : rais de lumière (`light_shaft_*`,
+  15 à 35 %) et bande de brume (`mist_band`) sont invisibles dans `demo_props_monde`.
+- Proposition : `DecorPanel.soft_alpha` (comme `GroundDecal`) : matériau mélangé, sans écriture de
+  profondeur, priorité de rendu au-dessus des panneaux nets ; les scènes du cahier n° 2 dont
+  l'image est marquée `soft_alpha` dans le manifeste l'activeraient (`tools/hd2d_scenes.py` :
+  une ligne).
+- En attendant : les scènes existent au bon format ; le ciel qui dérive (`SkyDrift`) mélange déjà
+  ses nuages ; les rais de lumière et la brume ne se posent pas.
+
+## P0 — dirigeables du cahier n° 2 : densité et hélices réglées (suite de la demande de H10)
+- Fait : `airship_ferry.tscn` et `airship_barocupot.tscn` à 96 px/m, hélices posées sur les moyeux
+  (docs/DECISIONS.md, « P0 — navires à quai »).
+- Reste pour la pose : les amarrer de flanc à l'est et à l'ouest du quai, dans le champ de la
+  caméra (ils sont encore au sud du quai, hors champ, dans `beach.tscn`).
+
+## P0 — tests/unit/test_hd2d_decor.gd (H5, H9)
+- Touché par P0 (quelques lignes) : les scènes du cahier n° 2 (métadonnée `hd2d_category`) ne
+  sont plus vérifiées par sa liste `NON_BLOCKING` ni par sa règle de densité (noms en `island`,
+  `airship`, `floating`) : `test_hd2d_scenes.gd` le fait d'après la table de
+  `tools/hd2d_scenes.py` et le manifeste ; `MAX_IMAGES_PER_ZONE` passe de 40 à 48 (44 au port avec
+  les flancs et les hélices). La pose le dépassera : à régler par H5 sur les draw calls mesurés.
