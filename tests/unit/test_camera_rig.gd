@@ -109,6 +109,25 @@ func test_snap_puts_the_camera_on_the_player_at_once() -> void:
 	assert_eq(rig.forward(), Vector3.FORWARD, "toujours le nord")
 
 
+func test_first_frame_snaps_on_a_player_moved_after_ready() -> void:
+	# Partie chargée : game.gd pose le joueur à la position sauvegardée après le _ready de la
+	# caméra (de même la téléportation au Spawn d'une nouvelle partie). La première image cadre
+	# cette place-là, sans glisser depuis la place de player.tscn ; le suivi lissé vient après.
+	var rig := _spawn_rig()
+	var holder := rig.get_parent() as Node3D
+	holder.position = Vector3(0, 0, -60)
+	rig.update_camera(DT)
+	assert_almost_eq(
+		rig.focus(),
+		Vector3(0, rig.focus_height, -60 - rig.focus_ahead),
+		Vector3.ONE * 0.01,
+		"première image : cadrée d'emblée sur le joueur déplacé"
+	)
+	holder.position = Vector3(4, 0, -60)
+	rig.update_camera(DT)
+	assert_lt(rig.focus().x, 1.0, "ensuite, le léger retard du suivi")
+
+
 func test_zoom_wheel_and_stick_are_clamped() -> void:
 	var rig := _spawn_rig()
 	for _i in 30:

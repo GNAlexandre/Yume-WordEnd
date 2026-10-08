@@ -1685,3 +1685,44 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `height_m` / hauteur du haut de l'image aux pieds (l'ancre), ce que dit `SkinData.height_m`
   (« taille debout ») ; seul le Timere change aussi (cadre de 99 px, ancre à 97 : +2 %, à sa
   taille déclarée). Tests du chargeur et du sprite mesurés à l'ancre.
+- **Audit (8 octobre 2026) — caméra au chargement** : `CameraRig._ready` prenait pour point visé la
+  place de player.tscn (Spawn du village) avant que game.gd ne pose le joueur à la position de la
+  sauvegarde (ou au Spawn d'une nouvelle partie) : la vue glissait plus d'une seconde depuis le
+  village (sonde : 5,6 m d'écart encore à l'image 30). La première `update_camera()` recale la
+  caméra (`_started` remis à faux après le `snap()` du `_ready`) ; le suivi lissé commence ensuite.
+- **Audit — place affichée** : avec le lissage physique, tout ce qui suit un corps à chaque image
+  lit sa place affichée (`get_global_transform_interpolated`), jamais `global_position` : le
+  marqueur de cible du HUD (`HUD.shown_position`) se tenait jusqu'à un pas de physique devant le
+  sprite (201 px d'écart mesurés sur une cible qui avance de 2 m par pas).
+- **Audit — signes déplacés puis montrés** : Godot remet le lissage à zéro à l'entrée dans l'arbre
+  (les éclats et l'onde, posés après `add_child`, sont sains) mais pas quand un nœud redevient
+  visible : un décalque déplacé puis montré glisse depuis son ancienne place pendant un pas de
+  physique (cercle et couloir du Telegraph, trait du 2e coup d'épée qui s'écrase entre +x et −x).
+  Remise à zéro (`reset_physics_interpolation`) à l'apparition seulement : rappelée à chaque pas
+  (le cercle suit sa cible pendant la préparation), elle couperait le lissage ; après une remise
+  à zéro, le nœud est de nouveau lissé au déplacement suivant (sonde).
+- **Audit — docs/sprites** : les PNG de documentation (docs/sprites/section12, 12 Mo) ont un
+  `.gdignore` comme docs/img : sans lui, chaque import les convertissait et laissait quinze
+  `.import` non commités (CI rouge : « fichiers générés non commités »).
+- **Audit — mesures** : scripts du jeu ≈ 0,3 ms de CPU par image en natif (banc headless, 145
+  images/s : PNJ 0,06, visuels 0,05, objets à ramasser 0,14, 4 Timeres libres 0,13 ; 45 µs par
+  Timere de plus, physique comprise ; 1,0 ms de moteur reste tout script éteint) : la lenteur
+  Web n'est pas côté scripts. Rendu logiciel (Xvfb, llvmpipe, cour de l'entrepôt) : 6,1 images/s
+  avec tout, 10,9 sans le sol (terrain.gdshader : 25 segments de chemin, 12 du ruisseau et une
+  dizaine de bruits par pixel), 23,4 sans le sol ni le post-traitement. Chromium sans écran : à
+  devicePixelRatio 2 le canevas passe de 1280 × 720 à 2560 × 1440 (4 × les pixels :
+  `display/window/dpi/allow_hidpi`, vrai par défaut, sans gain pour du pixel art à 96 px/m) et la
+  page rend 0,41 image/s contre 0,62.
+- **Intégration de l'audit** : `docs/sprites/` n'est plus dans l'arbre (retiré à l'intégration
+  de la PR n° 8) : son `.gdignore` part aussi. Pannibal : la proposition de l'audit (redessiner le
+  profil à 120 px) n'est pas retenue, la taille se mesure désormais à l'ancre (« Taille des
+  sprites », plus haut) et le profil, 120 px debout, est à l'échelle.
+- **Audit, proposition retenue : les Timeres ne chassent pas un joueur en conversation**
+  (`Enemy._player_talking`, par `EventBus.dialogue_started` → `dialogue_ended`) : une mort en
+  pleine réplique le faisait réapparaître au village figé, la boîte encore ouverte. Plutôt que de
+  couper le dialogue à la mort (une étape « parler » interrompue serait validée).
+- **Audit, proposition retenue : Web sans haute densité** (`display/window/dpi/allow_hidpi.web =
+  false`, PR « contrats ») : sur un écran Retina ou à 150 %, le canevas était rendu à
+  devicePixelRatio × la fenêtre (4 × les pixels à DPR 2), sans gain pour du pixel art à 96 px/m.
+  Seulement pour le Web : sur le bureau, une application qui n'est pas « DPI-aware » est agrandie
+  floue par Windows.
