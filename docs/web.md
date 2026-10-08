@@ -8,7 +8,7 @@ n'exécute rien du jeu (PLAN.md section 10).
 
 ```bash
 tools/godot --headless --export-release Web build/web/index.html   # ~6 s
-tools/build_size.sh                       # wasm + pck, brut et gzip, budget 60 Mo (code 1 au-delà)
+tools/build_size.sh                       # wasm + pck, brut et gzip, budget 100 Mo (code 1 au-delà)
 cp web/CNAME web/embed-test.html build/web/   # comme le déploiement
 python3 -m http.server 8000 --directory build/web
 ```
@@ -238,8 +238,9 @@ $yume_jeu_pied   = do_blocks( '<!-- wp:template-part {"slug":"footer","tagName":
   des iframes d'un autre site). Parades prévues : export/import JSON au menu, compte WordPress à M4.
 - **WebGL 2** obligatoire (rendu Compatibility) : Chrome, Edge, Firefox, Safari 15+ (iOS 15+) ;
   certains vieux Android ou pilotes en liste noire ne l'ont pas : le shell le dit.
-- **Taille** : 60 Mo compressés au plus (`tools/build_size.sh`, échoue au-delà ; 25 Mo jusqu'au
-  cahier des charges n° 2, relevé pour garder les images sans perte).
+- **Taille** : 100 Mo compressés au plus (`tools/build_size.sh`, échoue au-delà ; 25 Mo jusqu'au
+  cahier des charges n° 2, 60 Mo jusqu'aux lots A et F de ses images, relevé chaque fois pour
+  garder les images sans perte ; mesuré : 73,5 Mo avec toutes les images du cahier n° 2).
   Le premier chargement télécharge tout ; ensuite le cache HTTP du navigateur sert.
 - **Mono-thread** : ni `Thread`, ni `OS.execute`, ni chargement en fil séparé (voir plus haut) ;
   les longues tâches se découpent en images.
