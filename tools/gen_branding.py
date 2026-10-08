@@ -3,8 +3,9 @@
 
 Mêmes couleurs que le shell HTML (web/shell.html, dégradé de #status) et l'écran de chargement
 (src/ui/loading.gd) : ciel violet → corail → or, soleil, trois rangs de dunes, pétales de sakura.
-L'épée plantée dans la dune évoque Seniolis. Dessin suréchantillonné (×4) puis réduit : contours
-lisses. Résultat déterministe ; les PNG sont versionnés et branchés dans project.godot :
+L'épée plantée dans la dune évoque Seniorious (l'image ne porte aucun texte). Dessin
+suréchantillonné (×4) puis réduit : contours lisses. Résultat déterministe ; les PNG sont
+versionnés et branchés dans project.godot :
 application/config/icon (aussi l'icône de l'export Web : index.icon.png, apple-touch-icon) et
 application/boot_splash/image (fond #1b1231, comme le shell).
 

@@ -1,0 +1,63 @@
+{
+  "id": "old_clock",
+  "title": "L’homme-chat",
+  "summary": "Ithea a vu Willem serrer la main d’un homme-chat très élégant au café. Et si on venait le recruter ailleurs ?",
+  "giver": "ithea",
+  "requires": {
+    "flags": [
+      "met_willem"
+    ]
+  },
+  "steps": [
+    {
+      "id": "cafe",
+      "type": "talk",
+      "npc": "cat_waiter",
+      "objective": "Interroger le serveur du café",
+      "hint": "Le café La Clochette donne sur la rue du Port."
+    },
+    {
+      "id": "rami",
+      "type": "talk",
+      "npc": "ramikeldi",
+      "objective": "Trouver M. Rami devant sa maison",
+      "hint": "La maison Limashenka, au bout est de la rue du Port."
+    },
+    {
+      "id": "gears",
+      "type": "collect",
+      "item": "clock_gear",
+      "count": 3,
+      "objective": "Récupérer 3 engrenages de laiton",
+      "hint": "Deux dans la vieille lanterne du poste de guet, au Couchant ; un dans la ferraille du port."
+    },
+    {
+      "id": "comb",
+      "type": "collect",
+      "item": "clock_comb",
+      "count": 1,
+      "objective": "Repêcher un peigne de carillon dans le marais",
+      "hint": "Une boîte à musique est tombée dans le marais, à l’ouest des bois."
+    },
+    {
+      "id": "repair",
+      "type": "talk",
+      "npc": "willem",
+      "objective": "Porter les pièces à Willem"
+    },
+    {
+      "id": "chime",
+      "type": "talk",
+      "npc": "ramikeldi",
+      "objective": "Écouter sonner l’horloge de M. Rami"
+    }
+  ],
+  "rewards": {
+    "items": {
+      "rami_card": 1
+    },
+    "flags": [
+      "rami_clock_fixed"
+    ]
+  }
+}

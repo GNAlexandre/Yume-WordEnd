@@ -12,9 +12,15 @@ extends Node
 ##   les PV au maximum) ; déclenché respawn_delay secondes après EventBus.player_died, si le
 ##   joueur mort est toujours dans l'arbre ;
 ## - rescue() ramène le joueur au Spawn de la zone courante : appelé par la KillZone de l'île
-##   et, en filet de sécurité, quand le joueur passe sous FALL_LIMIT ;
+##   et, en filet de sécurité, quand le joueur passe sous FALL_LIMIT ; (Systèmes et textes) émet
+##   alors rescued(zone_id), sur lequel le HUD montre ses ailes (fondu au blanc) et le message de
+##   data/texts/story.json (fall/message) ;
 ## - zone_entered met à jour current_zone() et GameState.zone ;
 ## - is_zone_safe() dit si une zone est sûre (Zone.safe), pour l'IA des Timeres.
+
+## (Systèmes et textes) Le joueur vient d'être rattrapé après une chute (rescue), au Spawn de
+## zone_id : message « Tes ailes se sont ouvertes… » du HUD.
+signal rescued(zone_id: StringName)
 
 const VILLAGE := &"village"
 const SPAWN_MARKER := &"Spawn"
@@ -88,10 +94,14 @@ func respawn() -> void:
 	EventBus.player_respawned.emit()
 
 
-## Rattrapage : ramène le joueur au Spawn de la zone courante (du village à défaut).
+## Rattrapage : ramène le joueur au Spawn de la zone courante (du village à défaut), puis émet
+## rescued (message du HUD).
 func rescue() -> void:
+	if _player() == null:
+		return
 	var zone := _current_zone if _find_zone(_current_zone) != null else VILLAGE
 	teleport(zone, SPAWN_MARKER)
+	rescued.emit(zone)
 
 
 func current_zone() -> StringName:

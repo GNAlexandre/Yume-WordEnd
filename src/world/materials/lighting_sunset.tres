@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="HD2DLighting" format=3]
+
+[ext_resource type="Script" path="res://src/world/materials/hd2d_lighting.gd" id="1_lighting"]
+
+[resource]
+resource_name = "sunset"
+script = ExtResource("1_lighting")

@@ -1,0 +1,513 @@
+{
+  "_comment": "Acte 1 : scènes 1 et 6 de act1_main, le linge envolé, celles dont on se souvient.",
+  "id": "nygglatho",
+  "start": "hello",
+  "entries": [
+    "morning_1",
+    "report_1",
+    "sheets_done_1",
+    "tea_1",
+    "sheets_progress",
+    "flowers_done_1",
+    "vase_1",
+    "flowers_progress",
+    "laundry_offer_1",
+    "vase_offer_1",
+    "after_act_1",
+    "hint_new_officer",
+    "hint_to_the_woods",
+    "hint_rejetons",
+    "hint_pannibal",
+    "hint_first_vigil",
+    "hint_fever",
+    "hint_training",
+    "hint_the_edge",
+    "hint_barocupot",
+    "hint_starry_hill",
+    "hint_promise"
+  ],
+  "nodes": {
+    "morning_1": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "morning"
+        ]
+      },
+      "text": "Ah, te voilà ! Le vent a hurlé toute la nuit. J’ai bien cru que le toit partait avec le linge.",
+      "next": "morning_2"
+    },
+    "morning_2": {
+      "text": "Le nouveau responsable est arrivé dans le noir. Il a l’air délicieux. Dommage qu’il soit si maigre.",
+      "next": "morning_3"
+    },
+    "morning_3": {
+      "text": "Pannibal l’a « accueilli » au marais, d’un coup d’épée de bois. Il a dormi avec de la vase jusqu’aux oreilles.",
+      "next": "morning_4"
+    },
+    "morning_4": {
+      "text": "Et à l’aube, le cristal de communication a parlé : la Garde a vu des rejetons de Timere tomber dans nos bois.",
+      "next": "morning_5"
+    },
+    "morning_5": {
+      "text": "Minuscules, mais ça grandit. Ithea et Nephren gardent les petites ; toi, tu es l’aînée. Va d’abord saluer le nouveau.",
+      "choices": [
+        {
+          "text": "J’y vais.",
+          "next": "morning_6"
+        },
+        {
+          "text": "Le nouveau ?",
+          "next": "morning_6"
+        }
+      ]
+    },
+    "morning_6": {
+      "text": "Willem. Il t’attend devant la salle des armes, là où dorment les Carillons. Sois gentille : il a eu sa dose de vase.",
+      "advance_quest": [
+        "act1_main",
+        "morning"
+      ],
+      "next": null
+    },
+    "report_1": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "report"
+        ]
+      },
+      "text": "Les bois sont propres, et Pannibal est rentrée avec toutes ses dents ? Parfait. Maintenant, la mauvaise nouvelle.",
+      "next": "report_2"
+    },
+    "report_2": {
+      "text": "La précognition de la Garde annonce d’autres rejetons avec le vent du soir, sur le bord ouest de l’île.",
+      "next": "report_3"
+    },
+    "report_3": {
+      "text": "Il faut tenir la veille : sonner la vieille cloche du poste de guet, et les abattre avant qu’ils prennent racine.",
+      "next": "report_4"
+    },
+    "report_4": {
+      "text": "Au fait, le nouveau t’a regardée partir, tout à l’heure. Longtemps. Je dis ça, je ne dis rien.",
+      "advance_quest": [
+        "act1_main",
+        "report"
+      ],
+      "choices": [
+        {
+          "text": "Tiens, tes draps.",
+          "if": {
+            "quest_step": [
+              "flying_laundry",
+              "sheets"
+            ],
+            "count": [
+              "laundry_sheet",
+              5
+            ]
+          },
+          "next": "sheets_done_1"
+        },
+        {
+          "text": "Et ce thé, alors ?",
+          "if": {
+            "quest_step": [
+              "flying_laundry",
+              "tea"
+            ]
+          },
+          "next": "tea_1"
+        }
+      ],
+      "next": "report_5"
+    },
+    "report_5": {
+      "text": "Allez, file. La cloche ne va pas sonner toute seule, et le vent n’attend personne.",
+      "choices": [
+        {
+          "text": "Tiens, tes myosotis.",
+          "if": {
+            "quest_step": [
+              "forget_me_nots",
+              "flowers"
+            ],
+            "count": [
+              "flower_blue",
+              5
+            ]
+          },
+          "next": "flowers_done_1"
+        },
+        {
+          "text": "Je peux rester un peu ?",
+          "if": {
+            "quest_step": [
+              "forget_me_nots",
+              "vase"
+            ]
+          },
+          "next": "vase_1"
+        }
+      ],
+      "next": null
+    },
+    "laundry_offer_1": {
+      "if": {
+        "quest": [
+          "flying_laundry",
+          "available"
+        ]
+      },
+      "text": "Une catastrophe, ma fille ! Le vent du soir a arraché les draps du toit et les a semés jusqu’aux bords de l’île.",
+      "next": "laundry_offer_2"
+    },
+    "laundry_offer_2": {
+      "text": "Un drap qui tombe dans les nuages ne revient jamais. Tu m’en rapportes cinq ? S’il en manque un, je mange quelqu’un.",
+      "choices": [
+        {
+          "text": "Je m’en occupe.",
+          "start_quest": "flying_laundry",
+          "next": "laundry_go"
+        },
+        {
+          "text": "Plus tard.",
+          "next": "laundry_later"
+        }
+      ]
+    },
+    "laundry_go": {
+      "text": "Port, Couchant, colline, bois : le vent n’a rien épargné. Merci, ma fille. Personne ne sera mangé. Pour l’instant.",
+      "next": null
+    },
+    "laundry_later": {
+      "text": "Plus tard, plus tard… Les draps, eux, n’attendent pas. Le vent non plus.",
+      "next": null
+    },
+    "sheets_progress": {
+      "if": {
+        "quest_step": [
+          "flying_laundry",
+          "sheets"
+        ]
+      },
+      "text": "Il m’en manque encore {left:laundry_sheet:5}. Je compte les petites en attendant, pour savoir qui manger.",
+      "next": null
+    },
+    "sheets_done_1": {
+      "if": {
+        "quest_step": [
+          "flying_laundry",
+          "sheets"
+        ],
+        "count": [
+          "laundry_sheet",
+          5
+        ]
+      },
+      "text": "Les cinq ! Pas un seul dans les nuages. Personne ne sera mangé ce soir.",
+      "advance_quest": [
+        "flying_laundry",
+        "sheets"
+      ],
+      "next": "sheets_done_2"
+    },
+    "sheets_done_2": {
+      "text": "Viens prendre le thé dans ma chambre. L’eau est déjà chaude, et j’ai caché quelque chose.",
+      "choices": [
+        {
+          "text": "Avec plaisir.",
+          "next": "tea_1"
+        },
+        {
+          "text": "Plus tard.",
+          "next": "tea_later"
+        }
+      ]
+    },
+    "tea_later": {
+      "text": "Je garde la théière au chaud. Et la cachette aussi.",
+      "next": null
+    },
+    "tea_1": {
+      "if": {
+        "quest_step": [
+          "flying_laundry",
+          "tea"
+        ]
+      },
+      "text": "Assieds-toi. La cheminée, le service à thé, et pas une petite à l’horizon : le grand luxe.",
+      "next": "tea_2"
+    },
+    "tea_2": {
+      "text": "Tu sais déjà tout ça, mais je le dis quand même. Un Timere se divise quand on le tue. Seuls les Carillons en viennent à bout.",
+      "next": "tea_3"
+    },
+    "tea_3": {
+      "text": "Un fragment tombé sur une île l’avale en quelques heures. La précognition voit venir les gros de loin, les petits trop tard.",
+      "next": "tea_4"
+    },
+    "tea_4": {
+      "text": "Voilà pourquoi la veille. Voilà pourquoi vous… Bon. Assez de choses sérieuses : j’ai caché du cheese-cake.",
+      "choices": [
+        {
+          "text": "Du cheese-cake ?",
+          "next": "tea_5"
+        },
+        {
+          "text": "Merci, Nygglatho.",
+          "next": "tea_5"
+        }
+      ]
+    },
+    "tea_5": {
+      "text": "Mon remède des jours tristes. Des jours gais aussi, en fait. Mange, sinon c’est moi qui te mange.",
+      "advance_quest": [
+        "flying_laundry",
+        "tea"
+      ],
+      "next": null
+    },
+    "vase_offer_1": {
+      "if": {
+        "quest": [
+          "forget_me_nots",
+          "available"
+        ]
+      },
+      "text": "Tu as vu le vase, dans ma chambre ? Il n’est jamais vide. J’aimerais des myosotis, ceux de la colline.",
+      "next": "vase_offer_2"
+    },
+    "vase_offer_2": {
+      "text": "Cinq, ce serait parfait. Tu veux bien ?",
+      "choices": [
+        {
+          "text": "Je vais les cueillir.",
+          "start_quest": "forget_me_nots",
+          "next": "flowers_go"
+        },
+        {
+          "text": "Plus tard.",
+          "next": "flowers_later"
+        }
+      ]
+    },
+    "flowers_go": {
+      "text": "Merci. La colline en est couverte, mais le vent en a semé ailleurs. Il sème tout, ces jours-ci.",
+      "next": null
+    },
+    "flowers_later": {
+      "text": "Le vase attendra. Il a l’habitude d’attendre.",
+      "next": null
+    },
+    "flowers_progress": {
+      "if": {
+        "quest_step": [
+          "forget_me_nots",
+          "flowers"
+        ]
+      },
+      "text": "Encore {left:flower_blue:5} myosotis. Les plus bleus poussent sur la colline, à l’est.",
+      "next": null
+    },
+    "flowers_done_1": {
+      "if": {
+        "quest_step": [
+          "forget_me_nots",
+          "flowers"
+        ],
+        "count": [
+          "flower_blue",
+          5
+        ]
+      },
+      "text": "Cinq myosotis. Ils sont parfaits.",
+      "advance_quest": [
+        "forget_me_nots",
+        "flowers"
+      ],
+      "next": "flowers_done_2"
+    },
+    "flowers_done_2": {
+      "text": "Tu restes un moment avec moi ? Je fais de la place sur le lit.",
+      "choices": [
+        {
+          "text": "Je reste.",
+          "next": "vase_1"
+        },
+        {
+          "text": "Plus tard.",
+          "next": "vase_later"
+        }
+      ]
+    },
+    "vase_later": {
+      "text": "Je laisse la porte entrouverte.",
+      "next": null
+    },
+    "vase_1": {
+      "if": {
+        "quest_step": [
+          "forget_me_nots",
+          "vase"
+        ]
+      },
+      "text": "Ce vase, c’est pour celles qui ne sont pas revenues. Je change les fleurs. Je n’oublie aucun nom.",
+      "next": "vase_2"
+    },
+    "vase_2": {
+      "text": "Tuca. Orco. L’aînée qui portait ta broche, avant toi. Et les autres.",
+      "next": "vase_3"
+    },
+    "vase_3": {
+      "text": "Je me souviens de chacune. C’est le seul travail que je ne laisserai jamais à personne.",
+      "next": "vase_4"
+    },
+    "vase_4": {
+      "text": "Alors fais-moi plaisir : reviens. Je n’ai plus de place pour une fleur de plus.",
+      "choices": [
+        {
+          "text": "Je rentrerai.",
+          "next": "vase_5"
+        },
+        {
+          "text": "…",
+          "next": "vase_5"
+        }
+      ]
+    },
+    "vase_5": {
+      "text": "Tiens, une fleur à faire sécher entre deux pages. Pas dans un roman d’amour : elle en sortirait toute rouge.",
+      "advance_quest": [
+        "forget_me_nots",
+        "vase"
+      ],
+      "next": null
+    },
+    "after_act_1": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Je repasse vos uniformes. Le tien d’abord : je veux qu’il parte impeccable, et qu’il revienne froissé.",
+      "next": "after_act_2"
+    },
+    "after_act_2": {
+      "text": "La suite de ton histoire, c’est l’acte 2, au prochain jalon du jeu. D’ici là, profite des derniers soirs.",
+      "next": null
+    },
+    "hint_new_officer": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "new_officer"
+        ]
+      },
+      "text": "Willem t’attend devant la porte rivetée de la salle des armes. Tu ne peux pas le manquer : il a l’air perdu.",
+      "next": null
+    },
+    "hint_to_the_woods": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "to_the_woods"
+        ]
+      },
+      "text": "Les bois sont au nord, par le portail. Les rejetons ne vont pas t’attendre, ma fille.",
+      "next": null
+    },
+    "hint_rejetons": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "rejetons"
+        ]
+      },
+      "text": "Ils grandissent pendant qu’on bavarde. Les bois, au nord : autour du terrain d’entraînement.",
+      "next": null
+    },
+    "hint_pannibal": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "pannibal"
+        ]
+      },
+      "text": "Pannibal n’est pas rentrée ? Elle doit tendre une embuscade au marais. Ramène-la avant que je mange sa part.",
+      "next": null
+    },
+    "hint_first_vigil": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "first_vigil"
+        ]
+      },
+      "text": "Le bord du Couchant, à l’ouest. Sonne la cloche du poste de guet : les rejetons viendront avec le vent.",
+      "next": null
+    },
+    "hint_fever": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "fever"
+        ]
+      },
+      "text": "Tu es brûlante. Le venenum, encore… Va voir Willem : il dit qu’il sait soigner ça. Moi, je ne sais que menacer.",
+      "next": null
+    },
+    "hint_training": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "training"
+        ]
+      },
+      "text": "Willem t’attend au terrain d’entraînement, dans les bois. Il a pris un Carillon de série. Je n’aime pas ça.",
+      "next": null
+    },
+    "hint_the_edge": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "the_edge"
+        ]
+      },
+      "text": "Va prendre l’air, si tu en as besoin. Mais rentre pour le dîner, sinon je mange ta part.",
+      "next": null
+    },
+    "hint_barocupot": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "barocupot"
+        ]
+      },
+      "text": "Un dirigeable de la Garde s’est amarré au port. Le commandant Limeskin te demande, je crois.",
+      "next": null
+    },
+    "hint_starry_hill": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "starry_hill"
+        ]
+      },
+      "text": "Willem est monté sur la colline, à l’est. Avec des outils et une drôle de tête.",
+      "next": null
+    },
+    "hint_promise": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "promise"
+        ]
+      },
+      "text": "Il est là-haut, au sommet. Va, ma fille. Je garde les petites.",
+      "next": null
+    },
+    "hello": {
+      "text": "Tu as faim ? Moi, toujours. Ne fais pas cette tête, je plaisante. Presque.",
+      "next": null
+    }
+  }
+}

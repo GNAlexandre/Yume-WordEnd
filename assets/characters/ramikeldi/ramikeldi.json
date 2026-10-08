@@ -1,154 +1,43 @@
 {
   "version": 1,
   "echelle": 1,
-  "planche": [
-    807,
-    685
-  ],
+  "planche": [807, 517],
   "direction": "right",
   "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
   "status": "measured_crops_animation_review",
-  "anchors_validated": false,
-  "anchor_method": "bottom of alpha silhouette; horizontal foot centroid",
+  "anchors_validated": true,
+  "anchor_method": "tools/hd2d_sheets.py anchors (H1) : pieds près de l'axe du corps, images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
   "combat_timing_validated": false,
   "density_px_m": 96,
+  "palette_colors": 64,
   "animations": {
     "repos": {
       "ips": 2,
       "boucle": true,
       "images": [
-        [
-          0,
-          0,
-          119,
-          163,
-          63,
-          163
-        ],
-        [
-          123,
-          0,
-          120,
-          163,
-          73,
-          163
-        ]
+        [0, 0, 119, 163, 77, 163],
+        [123, 0, 120, 163, 77, 163]
       ]
     },
     "marche": {
       "ips": 10,
       "boucle": true,
       "images": [
-        [
-          0,
-          175,
-          137,
-          174,
-          90,
-          174
-        ],
-        [
-          141,
-          175,
-          142,
-          174,
-          79,
-          174
-        ],
-        [
-          287,
-          167,
-          130,
-          182,
-          74,
-          182
-        ],
-        [
-          421,
-          167,
-          119,
-          182,
-          64,
-          182
-        ],
-        [
-          544,
-          167,
-          135,
-          182,
-          74,
-          182
-        ],
-        [
-          683,
-          169,
-          124,
-          180,
-          74,
-          180
-        ]
-      ]
-    },
-    "course": {
-      "ips": 12,
-      "boucle": true,
-      "images": [
-        [
-          0,
-          364,
-          169,
-          153,
-          107,
-          153
-        ],
-        [
-          173,
-          365,
-          174,
-          152,
-          87,
-          152
-        ],
-        [
-          351,
-          353,
-          182,
-          164,
-          78,
-          164
-        ],
-        [
-          537,
-          357,
-          180,
-          160,
-          48,
-          160
-        ]
+        [0, 175, 137, 174, 89, 174],
+        [141, 175, 142, 174, 92, 174],
+        [287, 167, 130, 182, 80, 182],
+        [421, 167, 119, 182, 68, 182],
+        [544, 167, 135, 182, 84, 182],
+        [683, 169, 124, 180, 68, 180]
       ]
     },
     "parle": {
       "ips": 6,
       "boucle": true,
       "images": [
-        [
-          0,
-          522,
-          122,
-          163,
-          77,
-          163
-        ],
-        [
-          126,
-          521,
-          145,
-          164,
-          79,
-          164
-        ]
+        [0, 354, 122, 163, 78, 163],
+        [126, 353, 145, 164, 78, 164]
       ]
     }
-  },
-  "palette_colors": 64
+  }
 }

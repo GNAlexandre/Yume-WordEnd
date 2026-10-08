@@ -1,0 +1,37 @@
+{
+  "id": "picture_book",
+  "title": "Le livre d’images",
+  "summary": "Le grand vent a arraché les pages du livre d’images des petites et les a semées dans les bois. Nephren veut le livre entier pour la lecture du soir.",
+  "giver": "nephren",
+  "requires": {
+    "flags": [
+      "met_willem"
+    ]
+  },
+  "steps": [
+    {
+      "id": "pages",
+      "type": "collect",
+      "item": "page_fragment",
+      "count": 5,
+      "npc": "nephren",
+      "consume": true,
+      "objective": "Rapporter 5 pages du livre d’images à Nephren",
+      "hint": "Le vent les a semées dans les bois du marais, jusqu’au milieu des rejetons."
+    },
+    {
+      "id": "reading",
+      "type": "talk",
+      "npc": "willem",
+      "objective": "Demander à Willem de lire le livre aux petites"
+    }
+  ],
+  "rewards": {
+    "items": {
+      "picture_book": 1
+    },
+    "flags": [
+      "book_read"
+    ]
+  }
+}

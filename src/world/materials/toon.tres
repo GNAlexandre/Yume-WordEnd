@@ -1,9 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3]
-
-[resource]
-resource_name = "toon"
-vertex_color_use_as_albedo = true
-vertex_color_is_srgb = true
-diffuse_mode = 3
-specular_mode = 2
-roughness = 0.45

@@ -1,21 +1,30 @@
 extends GutTest
 ## SkinRegistry (L3) et skins jouables de data/skins/ : ordre (Chtholly d'abord), recherche,
-## skin par défaut, rechargement ; onze planches 2D dont sept personnages SukaSuka
-## directionnels. Les fenêtres de combat restent communes aux trois orientations.
+## skin par défaut, rechargement ; Chtholly (skin par défaut), Ithea, Nephren, Nopht et Rhantolk
+## (planches livrées, H1 ; Ithea et Nephren sous un autre id que leur PNJ) sont jouables ; les
+## anciens skins de PNJ sont retirés à l'acte 1, les sept modèles 3D de la PR n° 1 au passage au
+## HD-2D, et les PNJ ont des visuels non jouables (data/npcs/visuals, même densité que Chtholly).
 
 const TEST_DIR := "user://l3_skins"
 const PLAYER_ANIMS := {
 	"repos": 2, "marche": 6, "course": 5, "attaque": 4, "charge": 4, "degats": 1, "mort": 1
 }
-const NPC_SKINS: Array[StringName] = [&"bibliothecaire", &"forgeron", &"enfant"]
-const PIXEL_SKINS: Array[StringName] = [
-	&"sukasuka_chtholly",
-	&"sukasuka_ithea",
-	&"sukasuka_lillia",
-	&"sukasuka_nephren",
-	&"sukasuka_nopht",
-	&"sukasuka_rhantolk",
-	&"sukasuka_willem"
+## Skins de remplacement retirés à l'acte 1 (données et planches).
+const REMOVED_SKINS: Array[String] = ["bibliothecaire", "forgeron", "enfant"]
+## Modèles 3D de la PR n° 1, retirés au passage au HD-2D (planches 2D seulement).
+const REMOVED_MESH_SKINS: Array[String] = [
+	"sukasuka_chtholly",
+	"sukasuka_ithea",
+	"sukasuka_lillia",
+	"sukasuka_nephren",
+	"sukasuka_nopht",
+	"sukasuka_rhantolk",
+	"sukasuka_willem"
+]
+const NPC_VISUALS_DIR := "res://data/npcs/visuals"
+## (HD-2D) Skins jouables du jeu, dans l'ordre du registre (Chtholly d'abord, puis le nom).
+const PLAYABLE: Array[StringName] = [
+	&"chtholly", &"ithea_soldier", &"nephren_soldier", &"nopht", &"rhantolk"
 ]
 
 
@@ -32,35 +41,32 @@ func _ids(skins: Array[SkinData]) -> Array:
 
 
 func test_all_is_sorted_with_chtholly_first() -> void:
-	assert_eq(
-		_ids(SkinRegistry.all()),
-		[
-			&"chtholly",
-			&"bibliothecaire",
-			&"sukasuka_chtholly",
-			&"enfant",
-			&"forgeron",
-			&"sukasuka_ithea",
-			&"sukasuka_lillia",
-			&"sukasuka_nephren",
-			&"sukasuka_nopht",
-			&"sukasuka_rhantolk",
-			&"sukasuka_willem"
-		]
-	)
+	assert_eq(_ids(SkinRegistry.all()), Array(PLAYABLE))
 	assert_eq(SkinRegistry.default_skin().id, &"chtholly")
-	assert_eq(SkinRegistry.get_skin(&"forgeron").display_name, "Forgeron")
+	assert_eq(SkinRegistry.get_skin(&"chtholly").display_name, "Chtholly")
 	assert_null(SkinRegistry.get_skin(&"timere"), "un visuel d'ennemi n'est pas jouable")
+	assert_null(SkinRegistry.get_skin(&"nygglatho"), "un visuel de PNJ n'est pas jouable")
+	assert_null(SkinRegistry.get_skin(&"forgeron"), "ancien skin retiré")
 	assert_null(SkinRegistry.get_skin(&""))
 	SkinRegistry.all().clear()
-	assert_eq(SkinRegistry.all().size(), 11, "all() renvoie une copie")
+	assert_eq(SkinRegistry.all().size(), PLAYABLE.size(), "all() renvoie une copie")
 
 
-func test_four_legacy_skins_keep_their_playable_sheets() -> void:
+func test_removed_skins_and_sheets_are_gone() -> void:
+	for skin_id: String in REMOVED_SKINS:
+		assert_false(ResourceLoader.exists("res://data/skins/%s.tres" % skin_id), skin_id)
+		assert_false(
+			DirAccess.dir_exists_absolute("res://assets/characters/" + skin_id),
+			"planche %s retirée" % skin_id
+		)
+	for skin_id: String in REMOVED_MESH_SKINS:
+		assert_false(ResourceLoader.exists("res://data/skins/%s.tres" % skin_id), skin_id)
+	assert_false(DirAccess.dir_exists_absolute("res://assets/models"), "modèles 3D retirés")
+
+
+func test_playable_skins_have_a_full_sheet_at_chtholly_density() -> void:
 	var checked := 0
 	for skin: SkinData in SkinRegistry.all():
-		if skin.id in PIXEL_SKINS:
-			continue
 		checked += 1
 		var label := String(skin.id)
 		assert_true(
@@ -81,72 +87,28 @@ func test_four_legacy_skins_keep_their_playable_sheets() -> void:
 		if skin.portrait != null:
 			assert_eq(skin.portrait.get_width(), skin.portrait.get_height(), label + " : carré")
 
-	assert_eq(checked, 4, "les quatre planches historiques restent disponibles")
+	assert_eq(checked, PLAYABLE.size(), "chaque skin jouable est une planche")
 
 
-func test_seven_pixel_skins_have_measured_directions_and_square_portrait() -> void:
-	var found: Array[StringName] = []
-	for skin: SkinData in SkinRegistry.all():
-		if skin.id not in PIXEL_SKINS:
+func test_npc_visuals_keep_the_player_density() -> void:
+	var count := 0
+	for file_name: String in ResourceLoader.list_directory(NPC_VISUALS_DIR):
+		if not file_name.ends_with(".tres"):
 			continue
-		found.append(skin.id)
-		assert_null(skin.mesh_scene, String(skin.id) + " : planche HD-2D")
-		assert_not_null(skin.sprite_sheet, String(skin.id) + " : planche importée")
-		assert_not_null(skin.portrait, String(skin.id) + " : portrait")
-		assert_true(ResourceLoader.exists("res://data/skins/%s.tres" % skin.id), "id = fichier")
-		assert_eq(skin.texture_filter, BaseMaterial3D.TEXTURE_FILTER_NEAREST)
-		for direction: String in ["front", "back", "right"]:
-			assert_true(skin.directional_sheets.has(direction), direction + " : texture")
-			assert_true(skin.directional_frames_json.has(direction), direction + " : JSON")
-			var sheet := SheetLoader.read_sheet(skin, direction)
-			var frames := SheetLoader.frames_for(skin, direction)
-			assert_not_null(frames, direction + " : animations chargées")
-			for anim: String in PLAYER_ANIMS:
-				assert_eq(frames.get_frame_count(anim), PLAYER_ANIMS[anim])
-			assert_eq(SheetLoader.hit_frames(sheet, &"attaque"), [1, 2, 3] as Array[int])
-			assert_eq(SheetLoader.wave_frame(sheet, &"charge"), 3)
-			assert_almost_eq(SheetLoader.pixel_size(skin, sheet), 1.0 / 96.0, 0.00006)
+		count += 1
+		var skin := load(NPC_VISUALS_DIR.path_join(file_name)) as SkinData
+		assert_not_null(skin, file_name)
+		if skin == null:
+			continue
+		var label := String(skin.id)
+		assert_eq(label, file_name.get_basename(), "id = fichier")
+		var sheet := SheetLoader.read_sheet(skin)
+		var size := SheetLoader.pixel_size(skin, sheet)
+		assert_almost_eq(size, 1.5 / 144.0, 0.0003, label + " : densité de Chtholly")
+		assert_not_null(skin.portrait, label + " : portrait (dialogue)")
 		if skin.portrait != null:
-			assert_eq(skin.portrait.get_size(), Vector2(256, 256), "portrait 256 × 256")
-	assert_eq(found, PIXEL_SKINS, "sept personnages HD-2D dans l'ordre du registre")
-
-
-func test_registered_pixel_skins_keep_attack_timing_when_turning() -> void:
-	for skin_id: StringName in PIXEL_SKINS:
-		var visual: CharacterVisual = add_child_autofree(
-			preload("res://src/visuals/character_visual.tscn").instantiate()
-		)
-		visual.set_process(false)
-		visual.set_skin(SkinRegistry.get_skin(skin_id))
-		visual.play(&"attaque")
-		visual.advance(1.5 / 14.0)
-		for facing: Vector3 in [Vector3.BACK, Vector3.FORWARD, Vector3.LEFT]:
-			visual.set_facing(facing)
-			assert_eq(visual.current_frame(), 1, String(skin_id) + " : temps conservé")
-			assert_true(visual.is_playing())
-			assert_eq(visual.hit_frames(&"attaque"), [1, 2, 3] as Array[int])
-		visual.advance(0.5 / 14.0)
-		assert_eq(visual.current_frame(), 2, "fraction d'intervalle conservée")
-		assert_true((visual.get_node("Sprite") as AnimatedSprite3D).flip_h)
-
-
-func test_npc_placeholders_have_distinct_colors() -> void:
-	var colors: Array[Color] = []
-	for skin_id in NPC_SKINS:
-		var skin := SkinRegistry.get_skin(skin_id)
-		var idle: Array = SheetLoader.animations(SheetLoader.read_sheet(skin))["repos"]["images"][0]
-		var height: float = idle[3]
-		var tunic := Vector2i(int(idle[4] - 0.07 * height), int(idle[5] - 0.36 * height))
-		colors.append(skin.sprite_sheet.get_image().get_pixelv(tunic))
-	for i in colors.size():
-		assert_eq(colors[i].a, 1.0, "%s : tenue opaque" % NPC_SKINS[i])
-		for j in range(i + 1, colors.size()):
-			var gap := Vector3(
-				colors[i].r - colors[j].r, colors[i].g - colors[j].g, colors[i].b - colors[j].b
-			)
-			assert_gt(
-				gap.length(), 0.25, "%s et %s : couleurs distinctes" % [NPC_SKINS[i], NPC_SKINS[j]]
-			)
+			assert_eq(skin.portrait.get_width(), skin.portrait.get_height(), label + " : carré")
+	assert_eq(count, 17, "17 visuels de PNJ (Willem en a un pour ses trois instances)")
 
 
 func test_reload_reads_skins_dir() -> void:

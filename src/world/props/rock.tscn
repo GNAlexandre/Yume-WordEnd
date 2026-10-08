@@ -1,31 +1,19 @@
 [gd_scene format=3]
 
-[ext_resource type="Mesh" path="res://src/world/props/meshes/rock.tres" id="1_rock"]
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/rock.png" id="2_image"]
 
-[sub_resource type="StandardMaterial3D" id="rock"]
-albedo_color = Color(0.67, 0.67, 0.71, 1)
-
-[sub_resource type="StandardMaterial3D" id="rock_dark"]
-albedo_color = Color(0.56, 0.56, 0.61, 1)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_rock"]
-size = Vector3(1.6, 0.8, 1.3)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1"]
+height = 1
+radius = 0.7
 
 [node name="Rock" type="Node3D"]
-
-[node name="Big" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.597477, 0, 0.478828, 0, 1.1, 0, -0.581434, 0, 1.31557, 0, 0.2, 0)
-mesh = ExtResource("1_rock")
-material_override = SubResource("rock")
-
-[node name="Small" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.8, 0, 0, 0, 0.55, 0, 0, 0, 0.7, 0.85, 0.08, 0.5)
-mesh = ExtResource("1_rock")
-material_override = SubResource("rock_dark")
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape3D" parent="Collision"]
-transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, 0, 0.35, 0)
-shape = SubResource("BoxShape3D_rock")
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.5, 0.05)
+shape = SubResource("CylinderShape3D_1")

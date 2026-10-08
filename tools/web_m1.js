@@ -6,7 +6,7 @@
 //   NODE_PATH=/opt/node-tools/node_modules node tools/web_m1.js http://127.0.0.1:8347/index.html build/shots
 //
 // 1. index.html?zone=dunes : menu → Nouvelle partie → entrée des dunes ; marche jusqu'au panneau
-//    (invite « Affronter les Timeres »), E, vague 1 ; quand un Timere approche, verrouillage et
+//    (invite « Sonner la cloche de veille »), E, vague 1 ; quand un Timere approche, verrouillage et
 //    coups d'épée, une capture par coup (m1_web_0..9.png) ; puis mort et réapparition au village
 //    (m1_web_respawn.png) ; images/s mesurées par requestAnimationFrame.
 // 2. index.html?zone=dunes&timeres=12 : banc de 12 Timeres (m1_web_bench.png), images/s.
@@ -111,7 +111,7 @@ function dump(title, logs) {
 	const logs = [];
 	const page = await open(browser, '?zone=dunes', logs);
 	await page.keyboard.down('KeyW');
-	const prompt = await waitLog(logs, /\[m1\] invite « Affronter les Timeres »/, 180000);
+	const prompt = await waitLog(logs, /\[m1\] invite « Sonner la cloche de veille »/, 180000);
 	await page.keyboard.up('KeyW');
 	console.log('panneau atteint :', prompt);
 	await tap(page, 'KeyE');

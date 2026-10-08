@@ -1,11 +1,12 @@
 extends Node3D
-## Démo du Lot 6 : la bibliothécaire, un joueur factice et la boîte de dialogue.
+## Démo du Lot 6 : Nephren, un joueur factice et la boîte de dialogue.
 ## La conversation démarre seule. La présentation termine la 1re réplique, passe à la question
 ## puis l'affiche en entier avec ses deux choix ; elle compte les images (et non le temps) pour
 ## que la capture soit toujours la même :
 ##   tools/screenshot.sh res://tests/integration/demo_l6.tscn build/shots/l6.png 380
 ## Ensuite : E, Entrée ou clic pour continuer, flèches (ou ZS) et souris pour choisir ; une fois la
-## conversation finie, E la relance (ce qu'elle dit dépend de GameState : quête, pages).
+## conversation finie, E la relance (ce qu'elle dit dépend de GameState : quête, pages). Le
+## nouveau responsable est déjà salué (met_willem) : Nephren propose le livre d'images.
 
 ## Images (process) où la présentation termine la 1re réplique, passe à la suivante, puis
 ## termine la question (≈ 2,5 s, 4,5 s et 5,8 s à 60 images/s).
@@ -16,12 +17,13 @@ const PRESENTATION_FRAMES: Array[int] = [150, 270, 350]
 
 var _frame: int = 0
 
-@onready var npc: Npc = $Librarian
+@onready var npc: Npc = $Nephren
 @onready var player: Node3D = $Player
 @onready var box: DialogueBox = $UI/DialogueBox
 
 
 func _ready() -> void:
+	GameState.set_flag(&"met_willem")
 	_talk.call_deferred()
 
 

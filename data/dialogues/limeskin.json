@@ -1,0 +1,74 @@
+{
+  "_comment": "Acte 1 : scène 11 de act1_main, au pied du Barocupot.",
+  "id": "limeskin",
+  "start": "hello",
+  "entries": [
+    "baro_1",
+    "after_act",
+    "after_tea"
+  ],
+  "nodes": {
+    "baro_1": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "barocupot"
+        ]
+      },
+      "text": "Guerrière. Du pont de mon navire, une fée ssseule qui regarde le vide, ça se voit de loin. Asseyez-vous.",
+      "next": "baro_2"
+    },
+    "baro_2": {
+      "text": "Le thé est brûlant. Amer, aussssi. Le bon thé l’est toujours.",
+      "next": "baro_3"
+    },
+    "baro_3": {
+      "text": "La résolution et la résignation sont deux lames qui se ressemblent. Elles ne coupent pas de la même façon.",
+      "choices": [
+        {
+          "text": "Ce n’est pas la même chose ?",
+          "next": "baro_4a"
+        },
+        {
+          "text": "Merci pour le thé.",
+          "next": "baro_4b"
+        }
+      ]
+    },
+    "baro_4a": {
+      "text": "Non. L’une regarde le vide. L’autre regarde la maison. Je ne vous promets pas que vous reviendrez : je ne mens pas.",
+      "next": "baro_5"
+    },
+    "baro_4b": {
+      "text": "Je ne vous promets pas que vous reviendrez, guerrière. Je ne mens pas. Mais buvez : le thé non plus ne ment pas.",
+      "next": "baro_5"
+    },
+    "baro_5": {
+      "text": "Un guerrier qui a un endroit où rentrer ne se bat pas pareil. Ah : l’officier Willem a demandé Seniorious. Ce sssoir, sur la colline.",
+      "set_flag": "limeskin_tea",
+      "advance_quest": [
+        "act1_main",
+        "barocupot"
+      ],
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Le vent tourne bientôt, guerrière. Buvez votre thé brûlant tant qu’il en est encore temps.",
+      "next": null
+    },
+    "after_tea": {
+      "if": {
+        "flag": "limeskin_tea"
+      },
+      "text": "Le thé était à votre goût ? Il l’est rarement. C’est bon ssssigne.",
+      "next": null
+    },
+    "hello": {
+      "text": "Une essscale de ravitaillement, guerrière. Le Barocupot repart quand le vent tourne. Rien de plus.",
+      "next": null
+    }
+  }
+}

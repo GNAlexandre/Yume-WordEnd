@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="NpcData" format=3]
+
+[ext_resource type="Script" path="res://src/npc/npc_data.gd" id="1_npc"]
+[ext_resource type="Resource" path="res://data/npcs/visuals/nephren.tres" id="2_visual"]
+
+[resource]
+script = ExtResource("1_npc")
+id = &"nephren"
+display_name = "Nephren"
+skin = ExtResource("2_visual")
+dialogue_path = "res://data/dialogues/nephren.json"
+quest_id = &"picture_book"
+home_zone = &"village"

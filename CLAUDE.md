@@ -1,8 +1,12 @@
 # Yume-WordEnd — règles pour Claude Code
 
 ## Le projet
-Jeu 3D action-aventure dans Godot 4.7.2 (GDScript typé, export Web) : Chtholly et son épée
-contre des vagues de Timeres, un village, des PNJ et des quêtes. Style chibi / low-poly coloré.
+Jeu d'action-aventure en HD-2D dans Godot 4.7.2 (GDScript typé, export Web) : Chtholly et son
+épée contre des vagues de Timeres, un village, des PNJ et des quêtes. Direction artistique : HD-2D
+à la manière d'*Octopath Traveler* : personnages en sprites (planches de l'easter egg), décor en
+relief fait uniquement d'images (sol en tuiles de pixel art, façades et décors en panneaux debout,
+ciel peint), caméra fixe inclinée, flou de profondeur, lueur, lumière chaude ; tout à 96 px par
+mètre. Cahier des charges des images : docs/ASSETS_HD2D.md.
 Le plan complet est dans PLAN.md. Ses contrats d'interface (section 3 : signaux, API, ressources,
 couches de collision, « Structure figée au Lot 0 ») font foi : on code contre eux, on ne les
 change pas sans PR « contrats ».
@@ -20,16 +24,28 @@ change pas sans PR « contrats ».
 - Import après avoir créé, renommé ou supprimé un script, une scène ou un asset :
   `tools/import.sh` (liste les .uid / .import à commiter et les orphelins).
 - Capture d'une scène : `tools/screenshot.sh res://src/world/island.tscn build/shots/island.png`,
-  puis ouvre le PNG avec l'outil de lecture d'images.
+  puis ouvre le PNG avec l'outil de lecture d'images. Vues HD-2D de la vraie partie (menu, cinq
+  zones, conversation, veille ; draw calls dans le journal) : `tools/hd2d_shots.sh [vue…]`.
+- Images du décor (docs/ASSETS_HD2D.md, liste dans `tools/hd2d_manifest.json`) :
+  `python3 tools/hd2d_assets.py gen` (remplaçants absents ; `--force`, ou des noms), `check`,
+  `fit <fichier>` (image livrée trop grande), `atlas` (après une tuile de sol). Puis
+  `tools/import.sh`.
 - Export Web : `tools/godot --headless --export-release Web build/web/index.html`
 - Lint : `gdlint src tests tools && gdformat --check src tests tools` (`gdformat src tests tools`
   pour corriger). gdtoolkit 4.5.0, réglages dans `gdlintrc`.
 - Environnement neuf : `bash tools/setup.sh` (Godot, templates Web, gdtoolkit, Pillow ; idempotent).
 - Navigateur (à la main, hors check.sh) : export, `python3 -m http.server 8347 --bind 127.0.0.1
   --directory build/web`, puis `NODE_PATH=/opt/node-tools/node_modules node tools/web_m2.js
-  http://127.0.0.1:8347/index.html build/shots` (tranche verticale ; `tools/web_m1.js` : arène).
-  Mode d'emploi et raccourcis `?zone=`, `?timeres=`, `?trace=1` : docs/web.md.
+  http://127.0.0.1:8347/index.html build/shots` (début de l'acte 1, reprise, images/s par zone ;
+  `tools/web_m1.js` : arène). Mode d'emploi et raccourcis `?zone=`, `?timeres=`, `?trace=1` :
+  docs/web.md.
 - Planches de remplacement : `python3 tools/gen_placeholders.py skin <id> --name "Nom" --tres`.
+- Quêtes : format, dialogues, déclencheurs et tests dans docs/QUETES.md ; vérifier le contenu par
+  `tools/test.sh tests/unit/test_quest_content.gd` ; tester un scénario sur le modèle de
+  `tests/unit/test_quest_example.gd` (base `tests/stubs/q_quest_test.gd`).
+- Textes : `{player}`, scènes à plusieurs voix (`speaker_id`), présence des PNJ
+  (`NpcData.visible_if`) et textes de l'histoire (`data/texts/story.json`) dans docs/QUETES.md ;
+  vérifier par `tools/test.sh tests/unit/test_sys_story_content.gd`.
 - Toujours passer par `tools/godot` (pas `godot`) : chaque worktree y a son propre `user://`.
 
 ## Règles
@@ -46,7 +62,17 @@ change pas sans PR « contrats ».
   nommés ni les fichiers figés** (liste : PLAN.md section 3, « Structure figée au Lot 0 »). On
   peut ajouter des nœuds et des fichiers dans ses propres dossiers.
 - Peupler une zone (PNJ, ennemis libres, objets) se fait dans son fichier d'emplacement
-  `src/npc|enemies|items/placements/<zone>.tscn`, jamais dans la scène de zone (L2).
+  `src/npc|enemies|items/placements/<zone>.tscn`, jamais dans la scène de zone (L2). Les
+  déclencheurs de quête (`src/quests/quest_trigger.tscn`) vont dans `src/npc/placements/<zone>.tscn`.
+- Les quêtes sont des données : `data/quests/<id>.json` (étapes, prérequis, récompenses) et les
+  répliques qui les font avancer dans `data/dialogues/*.json` ; aucun script par quête.
+- Les textes que les systèmes affichent hors dialogues et quêtes (arène, chute, défaite) vivent
+  dans `data/texts/story.json` (`DialogueRunner.story_text`), jamais en dur ; jamais le nom du
+  joueur en dur non plus : `{player}`.
+- Le décor est en images : un décor = une scène de `src/world/props/` dont la racine est un
+  `DecorPanel` (panneau debout) ou un `Building` (volume, matières, façade), sa collision dans un
+  enfant `Collision` (StaticBody3D, couche 1) ; jamais de maillage 3D modélisé ni de forme calculée
+  pour l'apparence. Les images vont dans `assets/hd2d/`, à leur taille exacte (96 px par mètre).
 - Ne modifie que les dossiers de ton lot. Hors périmètre : note le besoin dans
   docs/CONTRACT_REQUESTS.md et continue avec un stub local (dans tests/stubs/, sans class_name).
 - project.godot, export_presets.cfg, src/autoload/event_bus.gd, src/main.*, src/game.* et les
@@ -122,6 +148,19 @@ change pas sans PR « contrats ».
 - Export Web mono-thread : pas de `Thread`, pas de `OS.execute`, pas de `SharedArrayBuffer`.
 - Les planches de sprites utilisent le JSON de l'easter egg (ancres par image, `coup`, `onde`) : ne
   les reformate pas. Elles sont dessinées tournées vers la droite.
+- (HD-2D) La caméra est fixe et regarde le nord (−Z) : le haut de l'écran est le nord, W/Z marche
+  vers le nord quelle que soit la visée. Un test qui marche vers une cible passe par
+  `hold_toward(direction)` / `release_move()` (tests/stubs/m1_game_test.gd) ou
+  `walk_aim_until()` / `hold_aim()` (m2_game_test.gd), jamais par « W après set_aim_direction ».
+- (HD-2D) Un panneau (`DecorPanel`) se tourne toujours vers le sud, quelle que soit la rotation de
+  son nœud (PropScatter en tire une) ; sa collision, elle, garde la rotation. Le `PropBatcher` du
+  nœud `Geometry` fond, au lancement, tout MeshInstance3D qui porte un `material_override` en un
+  mesh par image (« Batch… ») : un décor sans `material_override` n'est pas fondu (un draw call de
+  plus). Le sol lit `assets/hd2d/ground/atlas/ground_atlas.png` : après une tuile changée,
+  `python3 tools/hd2d_assets.py atlas` (test_hd2d_assets.gd le vérifie).
+- (HD-2D) Le post-traitement (flou de profondeur, lueur, étalonnage) est le `CanvasLayer`
+  `CameraRig/PostFX` (couche −1, sous l'interface) : une capture sans joueur (island.tscn seule)
+  ne l'a pas.
 - Godot 4.7 n'affiche jamais les avertissements GDScript en ligne de commande : ils sont réglés en
   erreurs dans project.godot et apparaissent comme `SCRIPT ERROR: Parse Error: … (Warning treated
   as error.)`. Typer aussi les itérateurs (`for x: String in liste`), préfixer par `_` les
@@ -162,3 +201,15 @@ change pas sans PR « contrats ».
   et la couche de GUT (`GutLayer`) prend les clics si elle n'est pas cachée.
 - `zone_entered` n'est émis qu'au changement de zone (M2) : un test qui replace le joueur dans
   la zone où il est déjà ne le reçoit pas (`Zone.LAST_ZONE_META` sur le corps du joueur).
+- Quêtes et dialogues JSON : une clé inconnue (faute de frappe) les rend invalides, sauf une clé
+  qui commence par `_` (commentaire). `QuestData` garde les fichiers lus en cache : un test qui
+  écrit ou retire des quêtes appelle `QuestData.clear_cache()` (ou `add_search_dir` /
+  `remove_search_dir`, comme `tests/stubs/q_quest_test.gd`). Un test qui démarre une quête sans
+  QuestTracker n'a pas d'étape enregistrée : `QuestData.current_step()` donne alors la première.
+- Un QuestTracker dans l'arbre réagit à `GameState.set_quest_state(id, &"done")` (fin forcée) :
+  sans les objets de ses étapes collect restantes, la quête revient à `&"active"`.
+- Un PNJ absent (`NpcData.visible_if` fausse, ou skin du joueur) est caché, `process_mode`
+  DISABLED : ni collision ni `InteractArea`. Sa présence est réévaluée en fin d'image (un test
+  attend une image ou appelle `Npc.refresh_presence()`), jamais pendant sa conversation.
+  `DialogueRunner.find_npc` (portraits, `speaker_id`) cherche `data/npcs` puis les dossiers
+  d'`add_npc_dir` : un test qui en ajoute un le retire dans `after_each`.

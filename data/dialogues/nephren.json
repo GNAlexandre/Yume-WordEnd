@@ -1,0 +1,139 @@
+{
+  "_comment": "Acte 1 : le livre d'images (donneuse), la salle de lecture.",
+  "id": "nephren",
+  "start": "hello",
+  "entries": [
+    "pages_done_1",
+    "pages_progress",
+    "book_offer_1",
+    "reading_hint",
+    "react_book",
+    "after_act",
+    "cracked",
+    "departure",
+    "met"
+  ],
+  "nodes": {
+    "book_offer_1": {
+      "if": {
+        "quest": [
+          "picture_book",
+          "available"
+        ]
+      },
+      "text": "Livre. Vent. Pages.",
+      "next": "book_offer_2"
+    },
+    "book_offer_2": {
+      "text": "Le livre d’images des petites. Cinq pages, dans les bois.",
+      "choices": [
+        {
+          "text": "Je les retrouve.",
+          "start_quest": "picture_book",
+          "next": "book_go"
+        },
+        {
+          "text": "Plus tard.",
+          "next": "book_later"
+        }
+      ]
+    },
+    "book_go": {
+      "text": "Mm. En rentrant, pas de bruit. Salle de lecture.",
+      "next": null
+    },
+    "book_later": {
+      "text": "Mm.",
+      "next": null
+    },
+    "pages_progress": {
+      "if": {
+        "quest_step": [
+          "picture_book",
+          "pages"
+        ]
+      },
+      "text": "Encore {left:page_fragment:5}. Mm.",
+      "next": null
+    },
+    "pages_done_1": {
+      "if": {
+        "quest_step": [
+          "picture_book",
+          "pages"
+        ],
+        "count": [
+          "page_fragment",
+          5
+        ]
+      },
+      "text": "Cinq. Mm.",
+      "advance_quest": [
+        "picture_book",
+        "pages"
+      ],
+      "next": "pages_done_2"
+    },
+    "pages_done_2": {
+      "text": "Je recolle. Willem lira. Il a la voix pour ça.",
+      "next": "pages_done_3"
+    },
+    "pages_done_3": {
+      "text": "Va lui demander. Doucement.",
+      "next": null
+    },
+    "reading_hint": {
+      "if": {
+        "quest_step": [
+          "picture_book",
+          "reading"
+        ]
+      },
+      "text": "Willem. Lecture. Les petites attendent.",
+      "next": null
+    },
+    "react_book": {
+      "if": {
+        "flag": "book_read",
+        "not_flag": "nephren_book_said"
+      },
+      "text": "Il a bien lu. Il s’est arrêté une fois. Mm.",
+      "set_flag": "nephren_book_said",
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Mm.",
+      "next": null
+    },
+    "cracked": {
+      "if": {
+        "flag": "duel_lost",
+        "not_flag": "nephren_cracked_said"
+      },
+      "text": "Willem. Il est fissuré.",
+      "set_flag": "nephren_cracked_said",
+      "next": null
+    },
+    "departure": {
+      "if": {
+        "flag": "departure_told"
+      },
+      "text": "Archives. On a lu. Mm. On part ensemble.",
+      "next": null
+    },
+    "met": {
+      "if": {
+        "flag": "met_willem"
+      },
+      "text": "Willem. Il lit lentement. C’est bien.",
+      "next": null
+    },
+    "hello": {
+      "text": "Chut. Salle de lecture.",
+      "next": null
+    }
+  }
+}

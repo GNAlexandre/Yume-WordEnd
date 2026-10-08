@@ -1,0 +1,49 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/cafe.png" id="2_facade"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_plaster.png" id="3_wall"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/roof_tiles.png" id="4_roof"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1"]
+height = 0.8
+radius = 0.42
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_2"]
+height = 0.8
+radius = 0.42
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_3"]
+height = 0.8
+radius = 0.42
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4"]
+size = Vector3(7, 6, 6)
+
+[node name="Cafe" type="Node3D"]
+script = ExtResource("1_building")
+facade = ExtResource("2_facade")
+wall_texture = ExtResource("3_wall")
+roof_texture = ExtResource("4_roof")
+footprint = Vector2(7.0, 6.0)
+wall_height = 5.5
+ridge_height = 7.5
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0.4, 4.1)
+shape = SubResource("CylinderShape3D_1")
+
+[node name="Shape2" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 4.1)
+shape = SubResource("CylinderShape3D_2")
+
+[node name="Shape3" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0.4, 4.1)
+shape = SubResource("CylinderShape3D_3")
+
+[node name="Shape4" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+shape = SubResource("BoxShape3D_4")

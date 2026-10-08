@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="2_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_planks.png" id="3_planks"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/gangway.png" id="4_rail"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(2, 0.24, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(0.1, 1.2, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3"]
+size = Vector3(0.1, 1.2, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4"]
+size = Vector3(2.1, 1.2, 0.12)
+
+[node name="Gangway" type="Node3D"]
+
+[node name="Deck" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.16, 6)
+script = ExtResource("1_building")
+wall_texture = ExtResource("3_planks")
+roof_texture = ExtResource("3_planks")
+footprint = Vector2(2.0, 12.0)
+wall_height = 0.24
+ridge_height = 0.24
+overhang = 0.0
+
+[node name="Railing" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12)
+script = ExtResource("2_panel")
+texture = ExtResource("4_rail")
+shadow_width = 0.0
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, 6)
+shape = SubResource("BoxShape3D_1")
+
+[node name="Shape2" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.03, 0.6, 6)
+shape = SubResource("BoxShape3D_2")
+
+[node name="Shape3" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.03, 0.6, 6)
+shape = SubResource("BoxShape3D_3")
+
+[node name="Shape4" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 12)
+shape = SubResource("BoxShape3D_4")

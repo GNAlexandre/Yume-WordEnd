@@ -1,19 +1,23 @@
 extends Node
-## SaveManager : sauvegarde JSON de GameState (schéma v1, PLAN.md section 4). Propriétaire : L8.
+## SaveManager : sauvegarde JSON de GameState (schéma v2, PLAN.md section 4). Propriétaire : L8
+## (migration v1 → v2 : Lot Q, avancement des quêtes en étapes).
 ##
-## Fichier save_path : {"version": 1, "saved_at": "AAAA-MM-JJTHH:MM:SSZ" (UTC), puis les champs
+## Fichier save_path : {"version": 2, "saved_at": "AAAA-MM-JJTHH:MM:SSZ" (UTC), puis les champs
 ## de GameState.to_dict() dans leur ordre}. new_game(), load_game() et import_json() émettent
 ## EventBus.game_loaded en cas de succès : c'est le seul signal que main.gd écoute pour passer
-## du menu au jeu. Choix détaillés : docs/DECISIONS.md, section L8.
+## du menu au jeu. Choix détaillés : docs/DECISIONS.md, sections L8 et Lot Q. Le nom du fichier
+## (save_v1.json) ne suit pas la version du schéma : il ne change jamais (sauvegardes gardées).
 ##
 ## - Écriture sûre : <save_path>.tmp est écrit et fermé, puis renommé en save_path ; une
 ##   écriture interrompue laisse l'ancienne sauvegarde intacte.
 ## - Fichier corrompu ou illisible : load_game() le met de côté dans backup_path(), démarre une
 ##   nouvelle partie et renvoie ERR_FILE_CORRUPT ; last_error (et push_error) l'explique.
-## - Versions : version absente ou 0 = format v0 (voir _migrate_v0), migré en v1 ; version plus
-##   récente que SAVE_VERSION : refus (ERR_INVALID_DATA), GameState et fichier intacts.
-## - Auto-sauvegarde sur arena_finished, item_collected, quest_updated, zone_entered et
-##   save_requested, seulement entre game_loaded et close_game() : la première demande lance un
+## - Versions : version absente ou 0 = format v0 (voir _migrate_v0), migré en v1, puis v1 migré
+##   en v2 (_migrate_v1 : avancement des quêtes actives) ; version plus récente que
+##   SAVE_VERSION : refus (ERR_INVALID_DATA), GameState et fichier intacts.
+## - Auto-sauvegarde sur arena_finished, item_collected, quest_updated, quest_step_completed,
+##   zone_entered et save_requested, seulement entre game_loaded et close_game() : la première
+##   demande lance un
 ##   minuteur de autosave_delay s (actif même en pause) ; les demandes suivantes s'y regroupent
 ##   et une seule écriture a lieu, à la fin. L'état écrit est donc complet (zone mise à jour par
 ##   WorldManager, récompense de quête donnée) et il y a au plus une écriture par délai.
@@ -30,7 +34,8 @@ extends Node
 ## Une sauvegarde vient d'être écrite (save, auto-sauvegarde, flush) : pour un indicateur du HUD.
 signal saved(path: String)
 
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
+## Chemin historique, gardé quelle que soit la version du schéma (les parties y sont).
 const DEFAULT_SAVE_PATH := "user://save_v1.json"
 ## Regroupement des auto-sauvegardes : au plus une écriture par délai (secondes).
 const DEFAULT_AUTOSAVE_DELAY := 0.5
@@ -86,6 +91,7 @@ func _ready() -> void:
 	EventBus.arena_finished.connect(_request_autosave.unbind(3))
 	EventBus.item_collected.connect(_request_autosave.unbind(2))
 	EventBus.quest_updated.connect(_request_autosave.unbind(2))
+	EventBus.quest_step_completed.connect(_request_autosave.unbind(2))
 	EventBus.zone_entered.connect(_request_autosave.unbind(1))
 	EventBus.save_requested.connect(_request_autosave)
 	_watch_page_visibility()
@@ -368,7 +374,7 @@ func _utc_now() -> String:
 # --- Lecture, migration, validation -----------------------------------------------------------
 
 
-## Analyse un texte de sauvegarde. OK : out reçoit les données migrées en v1 et vérifiées.
+## Analyse un texte de sauvegarde. OK : out reçoit les données migrées en v2 et vérifiées.
 ## Sinon last_error explique : ERR_PARSE_ERROR (pas un objet JSON), ERR_INVALID_DATA (version
 ## plus récente que le jeu), ERR_FILE_CORRUPT (version ou champ invalide).
 func _decode(text: String, out: Dictionary) -> Error:
@@ -383,9 +389,16 @@ func _decode(text: String, out: Dictionary) -> Error:
 	if version < 0:
 		last_error = "champ « version » invalide"
 		return ERR_FILE_CORRUPT
-	# Une étape par version : _migrate_v1 s'ajoutera ici le jour où le schéma v2 existera.
+	# Une étape par version, dans l'ordre : v0 → v1 → v2.
 	if version == 0:
 		data = _migrate_v0(data)
+		version = 1
+	if version == 1:
+		var v1_field := _invalid_field(data)
+		if not v1_field.is_empty():
+			last_error = "champ « %s » invalide" % v1_field
+			return ERR_FILE_CORRUPT
+		data = _migrate_v1(data)
 	var field := _invalid_field(data)
 	if not field.is_empty():
 		last_error = "champ « %s » invalide" % field
@@ -432,6 +445,33 @@ func _migrate_v0(data: Dictionary) -> Dictionary:
 	}
 	if not data.has("best_scores") and (entry["score"] > 0 or entry["games"] > 0):
 		data["best_scores"] = {V0_ARENA: entry}
+	data["version"] = 1
+	return data
+
+
+## Format v1 (jalon M2) → v2 (Lot Q) : v1 n'a que l'état de chaque quête. Chaque quête active
+## reprend à sa première étape (compteur à 0) dans quest_progress, et la première quête active
+## devient la quête suivie (tracked_quest). Une quête sans données (data/quests) n'a pas
+## d'avancement ; le QuestTracker vérifie tout au chargement (étape validée par l'état de la
+## partie : objets déjà en poche, drapeau déjà posé…). Quête des pages : son unique étape.
+func _migrate_v1(data: Dictionary) -> Dictionary:
+	var progress := {}
+	var first_active := ""
+	var quests: Variant = data.get("quests", {})
+	if quests is Dictionary:
+		for quest_id: Variant in quests:
+			if str(quests[quest_id]) != String(GameState.QUEST_ACTIVE):
+				continue
+			var quest := QuestData.find(StringName(str(quest_id)))
+			if quest == null:
+				continue
+			progress[str(quest_id)] = {"step": String(quest.steps[0].id), "count": 0}
+			if first_active.is_empty():
+				first_active = str(quest_id)
+	if not data.has("quest_progress"):
+		data["quest_progress"] = progress
+	if not data.has("tracked_quest"):
+		data["tracked_quest"] = first_active
 	data["version"] = SAVE_VERSION
 	return data
 
@@ -452,7 +492,7 @@ func _take_count(data: Dictionary, keys: Array[String]) -> int:
 	return maxi(count, 0)
 
 
-## Premier champ dont la valeur ne suit pas le schéma v1, "" si tout va bien. Un champ absent est
+## Premier champ dont la valeur ne suit pas le schéma v2, "" si tout va bien. Un champ absent est
 ## permis : GameState.from_dict lui donne sa valeur par défaut.
 func _invalid_field(data: Dictionary) -> String:
 	var checks: Dictionary[String, Callable] = {
@@ -466,6 +506,8 @@ func _invalid_field(data: Dictionary) -> String:
 		"quests": _is_map.bind(_is_text),
 		"collected_pickups": _is_text_list,
 		"best_scores": _is_map.bind(_is_score),
+		"quest_progress": _is_map.bind(_is_progress),
+		"tracked_quest": _is_text,
 	}
 	for key: String in checks:
 		if data.has(key) and not checks[key].call(data[key]):
@@ -501,6 +543,13 @@ func _is_score(value: Variant) -> bool:
 		if (value as Dictionary).has(key) and not _is_count(value[key]):
 			return false
 	return true
+
+
+## Entrée de quest_progress (v2) : {"step": texte, "count": entier positif (facultatif)}.
+func _is_progress(value: Variant) -> bool:
+	if not value is Dictionary or not (value as Dictionary).get("step") is String:
+		return false
+	return not (value as Dictionary).has("count") or _is_count(value["count"])
 
 
 func _is_vector(value: Variant) -> bool:

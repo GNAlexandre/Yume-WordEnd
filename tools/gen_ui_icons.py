@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Icônes de l'interface (menu, HUD, fin d'arène) : formes simples, contour prune, style chibi.
+"""Icônes de l'interface (menu, HUD, fin d'arène) : formes simples, contour prune, style rond.
 
 Chaque icône est dessinée à 4 fois sa taille (contours lissés), avec un contour foncé et un
 reflet clair, puis réduite. Résultat déterministe ; les PNG générés sont versionnés dans

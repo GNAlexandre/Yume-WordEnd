@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://src/world/shaders/rock.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/cliff/lip.png" id="2_lip"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/cliff/cliff.png" id="3_cliff"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/cliff/underside.png" id="4_underside"]
+
+[resource]
+resource_name = "rock"
+shader = ExtResource("1_shader")
+shader_parameter/lip_texture = ExtResource("2_lip")
+shader_parameter/cliff_texture = ExtResource("3_cliff")
+shader_parameter/underside_texture = ExtResource("4_underside")

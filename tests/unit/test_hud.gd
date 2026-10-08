@@ -37,7 +37,7 @@ func test_hearts_start_from_game_state_then_follow_signal() -> void:
 	var expected: Array[Texture2D] = [full, full, full, empty, empty]
 	assert_eq(_hearts(hud), expected)
 	EventBus.player_health_changed.emit(4, 6)
-	assert_eq(_hearts(hud).size(), 6, "6 cœurs avec le marque-page")
+	assert_eq(_hearts(hud).size(), 6, "6 cœurs avec la promesse du gâteau au beurre")
 	assert_eq(hud.health(), Vector2i(4, 6))
 
 
@@ -233,8 +233,13 @@ func test_layout_leaves_touch_corners_free_and_lets_mouse_through() -> void:
 	var area := hud.get_global_rect()
 	var top_right := Rect2(area.end.x - 200.0, area.position.y, 200.0, 100.0)
 	var bottom := Rect2(area.position.x, area.end.y - 200.0, area.size.x, 200.0)
+	# Écrans modaux enfants du HUD (menu pause, journal de quêtes du Lot Q) : ils prennent la
+	# souris quand ils sont ouverts.
 	var overlays: Array[Node] = [
-		_node(hud, "DamageFlash"), _node(hud, "DeathFade"), _node(hud, "PauseMenu")
+		_node(hud, "DamageFlash"),
+		_node(hud, "DeathFade"),
+		_node(hud, "PauseMenu"),
+		_node(hud, "Journal"),
 	]
 	for node: Node in hud.find_children("*", "Control", true, false):
 		var control := node as Control

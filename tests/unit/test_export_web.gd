@@ -114,3 +114,12 @@ func test_build_size_script_budget() -> void:
 	for file: String in ["index.wasm", "index.pck"]:
 		DirAccess.remove_absolute(dir.path_join(file))
 	DirAccess.remove_absolute(dir)
+
+
+func test_check_enforces_the_size_budget() -> void:
+	# (HD-2D) tools/check.sh échoue si l'export dépasse le budget (25 Mo compressés).
+	var check := FileAccess.get_file_as_string("res://tools/check.sh")
+	assert_string_contains(check, "tools/build_size.sh build/web")
+	assert_string_contains(check, "au-delà du budget")
+	var presets := FileAccess.get_file_as_string("res://export_presets.cfg")
+	assert_false(presets.contains("assets/models"), "plus de modèles 3D à exporter")

@@ -1,5 +1,5 @@
 extends GutTest
-## SheetLoader (L3) : planches HD-2D mesurées de Chtholly et Timere,
+## SheetLoader (L3) : planches de l'easter egg lues telles quelles (Chtholly, Timere),
 ## SpriteFrames construit (un AtlasTexture par image, ancre en métadonnée) et mis en cache,
 ## taille d'un pixel, données invalides ignorées.
 
@@ -46,7 +46,8 @@ func test_chtholly_sheet_is_read_as_is() -> void:
 	_assert_sheet(CHTHOLLY, CHTHOLLY_ANIMS)
 	var sheet := SheetLoader.read_sheet(CHTHOLLY)
 	assert_eq(int(sheet["version"]), 1)
-	assert_eq(int(sheet["echelle"]), 1, "planches HD-2D à leur résolution native")
+	var size: Array = sheet["planche"]
+	assert_eq(Vector2(size[0], size[1]), CHTHOLLY.sprite_sheet.get_size(), "planche = PNG")
 	assert_eq(SheetLoader.hit_frames(sheet, &"attaque"), [1, 2, 3] as Array[int])
 	assert_eq(SheetLoader.wave_frame(sheet, &"charge"), 3)
 	assert_eq(SheetLoader.hit_frames(sheet, &"marche"), [] as Array[int], "pas de coup")
@@ -96,8 +97,9 @@ func test_pixel_size_and_shadow_footprint() -> void:
 	var timere_sheet := SheetLoader.read_sheet(TIMERE)
 	assert_almost_eq(SheetLoader.pixel_size(TIMERE, timere_sheet), TIMERE.height_m / 99.0, 1e-6)
 	assert_almost_eq(SheetLoader.pixel_size(null, {}), SheetLoader.DEFAULT_PIXEL_SIZE, 1e-6)
-	assert_eq(SheetLoader.body_half_width(sheet), 47.0, "côté sans épée de la 1re image de repos")
-	assert_eq(SheetLoader.body_half_width(timere_sheet), 49.0)
+	# (H1) Planches livrées (PR n° 2), ancres entre les pieds (tools/hd2d_sheets.py anchors).
+	assert_eq(SheetLoader.body_half_width(sheet), 46.0, "côté sans épée de la 1re image de repos")
+	assert_eq(SheetLoader.body_half_width(timere_sheet), 44.0)
 
 
 func test_invalid_entries_are_ignored() -> void:

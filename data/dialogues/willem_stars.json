@@ -1,0 +1,88 @@
+{
+  "_comment": "Acte 1 : scène 13 de act1_main, la promesse. Willem au sommet (HISTOIRE.md 3.3), présent à partir de l’étape promise (visible_if : drapeau starry_night).",
+  "id": "willem_stars",
+  "start": "hello",
+  "entries": [
+    "promise_1",
+    "after_act"
+  ],
+  "nodes": {
+    "promise_1": {
+      "if": {
+        "quest_step": [
+          "act1_main",
+          "promise"
+        ]
+      },
+      "text": "Te voilà. Donne-moi ton épée. Je ne vais pas la casser. Pas plus qu’elle ne l’est déjà, en tout cas.",
+      "next": "promise_2"
+    },
+    "promise_2": {
+      "speaker": "",
+      "text": "Il la démonte avec des gestes sûrs. Les quarante et un talismans s’élèvent autour de vous, comme des étoiles.",
+      "next": "promise_3"
+    },
+    "promise_3": {
+      "text": "Celui-là, c’est pour ne pas se brûler la langue. Celui-là trouve le nord. Celui-là imite un miaulement. Qui fait ça ?",
+      "next": "promise_4"
+    },
+    "promise_4": {
+      "text": "Et celui-ci évite de se couper les ongles trop court. Bon. Résistances à zéro, et un peu plus contre les malédictions.",
+      "choices": [
+        {
+          "text": "Épouse-moi.",
+          "next": "promise_5a"
+        },
+        {
+          "text": "Tu fais le gâteau au beurre ?",
+          "next": "promise_5b"
+        }
+      ]
+    },
+    "promise_5a": {
+      "text": "Non. Tu es une enfant. Courageuse, têtue, mais une enfant. Je te propose mieux.",
+      "next": "promise_6a"
+    },
+    "promise_6a": {
+      "text": "Reviens, et je te ferai un gâteau au beurre. Une montagne de gâteau. C’est promis.",
+      "advance_quest": [
+        "act1_main",
+        "promise"
+      ],
+      "choices": [
+        {
+          "text": "Laisse-moi faire.",
+          "next": null
+        }
+      ]
+    },
+    "promise_5b": {
+      "text": "Mon maître m’a forcé à apprendre. Quelqu’un le faisait bien mieux que moi, mais… oui.",
+      "next": "promise_6b"
+    },
+    "promise_6b": {
+      "text": "Alors reviens, {player}, et je t’en ferai manger une montagne. C’est promis.",
+      "advance_quest": [
+        "act1_main",
+        "promise"
+      ],
+      "choices": [
+        {
+          "text": "Laisse-moi faire.",
+          "next": null
+        }
+      ]
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Les étoiles se lèvent plus tôt, ces soirs-ci. Ou c’est moi qui les regarde plus souvent.",
+      "next": null
+    },
+    "hello": {
+      "text": "Joli ciel. On voit toute l’île, d’ici. Et un peu plus loin, si on ne pense à rien.",
+      "next": null
+    }
+  }
+}

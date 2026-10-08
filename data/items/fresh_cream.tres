@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/items/fresh_cream.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"fresh_cream"
+display_name = "Crème fraîche"
+icon = ExtResource("2_icon")
+stackable = true
+max_stack = 99
+description = "Un pot de crème du café La Clochette."
+color = Color(1, 0.97, 0.88, 1)

@@ -28,6 +28,7 @@ const CONTROLS := [
 	["Zoom", "Molette", "—"],
 	["Verrouiller une cible", "Clic molette", "R3 (clic du stick)"],
 	["Sac", "I", "Y"],
+	["Journal de quêtes", "Tab ou L", "Select"],
 	["Pause", "Échap", "Start"],
 	["Performances", "F3", "—"],
 ]

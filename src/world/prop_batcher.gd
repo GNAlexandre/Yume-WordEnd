@@ -1,62 +1,63 @@
 class_name PropBatcher
 extends Node3D
-## Décor statique d'une zone (nœud « Geometry ») : au lancement, regroupe les MeshInstance3D de
-## tous ses descendants (y compris les décors posés par PropScatter) en un MultiMeshInstance3D
-## par mesh partagé de src/world/props/meshes/ : un draw call par forme et par zone, couleur
-## par instance (albedo du matériau d'origine). Les collisions des décors ne bougent pas.
+## Décor statique d'une zone (nœud « Geometry ») : au lancement, fond les meshes de tous ses
+## descendants (panneaux DecorPanel, murs, toits et façades des Building, ombres au sol) en un
+## mesh par matériau, c'est-à-dire par image : un draw call par image et par case. Chaque matériau
+## peut être découpé en cases de cell_size m pour que la caméra écarte le décor hors champ. Les
+## collisions des décors ne bougent pas. Dans l'éditeur, rien n'est fondu. Propriétaire : L2.
 ##
-## Sont regroupés les meshes à une surface dont le matériau est un StandardMaterial3D (ou
-## absent) ; les autres (ShaderMaterial…) restent tels quels. Un matériau non éclairé
-## (shading_mode = UNSHADED : fenêtres, lanternes) passe dans le lot « glow ».
-## Dans l'éditeur, rien n'est regroupé : on voit et on déplace les décors un par un.
+## Sont fondus les MeshInstance3D visibles à une surface qui portent un material_override (tous
+## les décors HD-2D) ; les autres restent tels quels. Les meshes fondus s'appellent « Batch… ».
 
-const TOON := preload("res://src/world/materials/toon.tres")
-const GLOW := preload("res://src/world/materials/glow.tres")
+## Triangles à plat de chaque mesh fondu : [sommets, normales, UV], calculés une fois par mesh.
+static var _soups: Dictionary = {}
 
-## Matériau blanc des meshes sans matériau.
-static var _default_material := StandardMaterial3D.new()
-
-## Variation de luminosité par instance (0 = aucune), pour que les copies ne soient pas
-## identiques ; tirée de la position, donc stable.
-@export_range(0.0, 0.3) var color_jitter: float = 0.06
+## Côté (m) des cases du découpage, dans le repère du nœud ; 0 : une seule case.
+@export_range(0.0, 200.0) var cell_size: float = 0.0
 
 
 class _Lot:
-	var mesh: Mesh
-	var unshaded: bool
-	var shadow: GeometryInstance3D.ShadowCastingSetting
-	var transforms: Array[Transform3D] = []
-	var colors: PackedColorArray = PackedColorArray()
+	var material: Material
+	var cell: Vector2i
+	var vertices := PackedVector3Array()
+	var normals := PackedVector3Array()
+	var uvs := PackedVector2Array()
 
 
 func _ready() -> void:
-	batch()
+	if not Engine.is_editor_hint():
+		batch()
 
 
-## Regroupe les meshes des descendants ; renvoie le nombre de MultiMeshInstance3D créés.
+## Fond les meshes des descendants ; renvoie le nombre de meshes créés.
 func batch() -> int:
-	var lots: Dictionary[String, _Lot] = {}
+	var lots: Dictionary = {}
+	var order: Array[String] = []
 	var instances: Array[MeshInstance3D] = []
 	_collect(self, instances)
 	var inverse := global_transform.affine_inverse()
 	for instance in instances:
-		var material := _source_material(instance)
-		var unshaded := material.shading_mode == BaseMaterial3D.SHADING_MODE_UNSHADED
-		var key := "%d/%s/%d" % [instance.mesh.get_instance_id(), unshaded, instance.cast_shadow]
+		var xform := inverse * instance.global_transform
+		var cell := Vector2i.ZERO
+		if cell_size > 0.0:
+			var at := inverse * instance.global_position
+			cell = Vector2i(floori(at.x / cell_size), floori(at.z / cell_size))
+		var key := "%s/%s" % [instance.material_override.get_instance_id(), cell]
 		var lot: _Lot = lots.get(key)
 		if lot == null:
 			lot = _Lot.new()
-			lot.mesh = instance.mesh
-			lot.unshaded = unshaded
-			lot.shadow = instance.cast_shadow
+			lot.material = instance.material_override
+			lot.cell = cell
 			lots[key] = lot
-		var xform := inverse * instance.global_transform
-		lot.transforms.append(xform)
-		lot.colors.append(_jittered(material.albedo_color, xform.origin))
+			order.append(key)
+		_append(lot, instance.mesh, xform)
 		instance.mesh = null
-	for lot: _Lot in lots.values():
-		add_child(_multimesh_instance(lot))
-	return lots.size()
+		instance.visible = false
+	var index := 0
+	for key in order:
+		add_child(_mesh_instance(lots[key], index))
+		index += 1
+	return order.size()
 
 
 func _collect(node: Node, out: Array[MeshInstance3D]) -> void:
@@ -66,50 +67,63 @@ func _collect(node: Node, out: Array[MeshInstance3D]) -> void:
 			instance != null
 			and instance.mesh != null
 			and instance.mesh.get_surface_count() == 1
+			and instance.material_override != null
 			and instance.is_visible_in_tree()
-			and _source_material(instance) != null
 		):
 			out.append(instance)
 		_collect(child, out)
 
 
-## Matériau effectif de la surface 0 : StandardMaterial3D, défaut blanc si aucun, null sinon.
-static func _source_material(instance: MeshInstance3D) -> StandardMaterial3D:
-	var material := instance.material_override
-	if material == null:
-		material = instance.get_surface_override_material(0)
-	if material == null:
-		material = instance.mesh.surface_get_material(0)
-	if material == null:
-		return _default_material
-	return material as StandardMaterial3D
+## Ajoute au lot les triangles du mesh placés par xform.
+static func _append(lot: _Lot, mesh: Mesh, xform: Transform3D) -> void:
+	var soup := _soup(mesh)
+	lot.vertices.append_array(xform * (soup[0] as PackedVector3Array))
+	var normal_basis := Transform3D(xform.basis.inverse().transposed(), Vector3.ZERO)
+	var normals := normal_basis * (soup[1] as PackedVector3Array)
+	for n in normals.size():
+		normals[n] = normals[n].normalized()
+	lot.normals.append_array(normals)
+	lot.uvs.append_array(soup[2])
 
 
-func _jittered(color: Color, origin: Vector3) -> Color:
-	var noise := sin(origin.x * 12.9898 + origin.z * 78.233 + origin.y * 3.71) * 43758.5453
-	var factor := 1.0 + color_jitter * (2.0 * (noise - floorf(noise)) - 1.0)
-	return Color(color.r * factor, color.g * factor, color.b * factor, color.a)
-
-
-func _multimesh_instance(lot: _Lot) -> MultiMeshInstance3D:
-	var multimesh := MultiMesh.new()
-	multimesh.transform_format = MultiMesh.TRANSFORM_3D
-	multimesh.use_colors = true
-	multimesh.mesh = lot.mesh
-	multimesh.instance_count = lot.transforms.size()
-	for i in lot.transforms.size():
-		multimesh.set_instance_transform(i, lot.transforms[i])
-		multimesh.set_instance_color(i, lot.colors[i])
-	var node := MultiMeshInstance3D.new()
-	node.name = (
-		"Batch_%s%s%s"
-		% [
-			lot.mesh.resource_path.get_file().get_basename(),
-			"_glow" if lot.unshaded else "",
-			"_no_shadow" if lot.shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF else "",
-		]
+## Triangles à plat du mesh (sans index) : sommets, normales, UV.
+static func _soup(mesh: Mesh) -> Array:
+	if _soups.has(mesh):
+		return _soups[mesh]
+	var arrays := mesh.surface_get_arrays(0)
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+	var uvs: PackedVector2Array = (
+		arrays[Mesh.ARRAY_TEX_UV] if arrays[Mesh.ARRAY_TEX_UV] != null else PackedVector2Array()
 	)
-	node.multimesh = multimesh
-	node.material_override = GLOW if lot.unshaded else TOON
-	node.cast_shadow = lot.shadow
+	var indices: PackedInt32Array = (
+		arrays[Mesh.ARRAY_INDEX] if arrays[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+	)
+	if indices.is_empty():
+		indices = PackedInt32Array(range(vertices.size()))
+	var flat_vertices := PackedVector3Array()
+	var flat_normals := PackedVector3Array()
+	var flat_uvs := PackedVector2Array()
+	for index in indices:
+		flat_vertices.append(vertices[index])
+		flat_normals.append(normals[index] if index < normals.size() else Vector3.UP)
+		flat_uvs.append(uvs[index] if index < uvs.size() else Vector2.ZERO)
+	var soup := [flat_vertices, flat_normals, flat_uvs]
+	_soups[mesh] = soup
+	return soup
+
+
+func _mesh_instance(lot: _Lot, index: int) -> MeshInstance3D:
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = lot.vertices
+	arrays[Mesh.ARRAY_NORMAL] = lot.normals
+	arrays[Mesh.ARRAY_TEX_UV] = lot.uvs
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	var node := MeshInstance3D.new()
+	node.name = "Batch%d_%d_%d" % [index, lot.cell.x, lot.cell.y]
+	node.mesh = mesh
+	node.material_override = lot.material
+	node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	return node

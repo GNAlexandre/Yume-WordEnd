@@ -12,3 +12,5 @@ pierces = false
 range_m = 1.2
 cooldown = 0.3
 arc_deg = 90.0
+hitstop = 0.08
+shake = 0.05

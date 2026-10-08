@@ -1,7 +1,7 @@
 extends GutTest
-## Lot 6 : conversation complète dans la démo (bibliothécaire, joueur factice, boîte de
-## dialogue), pilotée par de vrais événements d'entrée comme au clavier ou à la manette :
-## « dialogue jouable avec le joueur stub » (PLAN.md section 7).
+## Lot 6 : conversation complète dans la démo (Nephren, joueur factice, boîte de dialogue),
+## pilotée par de vrais événements d'entrée comme au clavier ou à la manette : « dialogue jouable
+## avec le joueur stub » (PLAN.md section 7). Acte 1 : Nephren propose le livre d'images.
 
 const DEMO := preload("res://tests/integration/demo_l6.tscn")
 
@@ -37,7 +37,7 @@ func _text() -> String:
 
 
 func test_npc_faces_the_player_stub() -> void:
-	var npc := _demo.get_node("Librarian") as Npc
+	var npc := _demo.get_node("Nephren") as Npc
 	var player := _demo.get_node("Player") as Node3D
 	assert_true(player.is_in_group(&"player"))
 	assert_true(npc.look_toward(player.global_position), "joueur à moins de 4 m")
@@ -46,19 +46,21 @@ func test_npc_faces_the_player_stub() -> void:
 func test_whole_conversation_with_keys() -> void:
 	assert_true(_box.is_open(), "dialogue lancé automatiquement")
 	assert_true(_box.is_typing(), "texte lettre par lettre")
-	assert_string_contains(_text(), "Timeres")
+	assert_string_contains(_text(), "Livre. Vent. Pages.")
 	_press(&"interact")
 	assert_true(_box.is_waiting(), "1er appui : ligne entière")
 	_press(&"interact")
-	assert_string_contains(_text(), "rapporter cinq", "2e appui : réplique suivante")
+	assert_string_contains(_text(), "Cinq pages", "2e appui : réplique suivante")
 	_press(&"ui_accept")
 	assert_true(_box.is_choosing(), "deux choix")
 	_press(&"ui_down")
 	assert_eq(_box.selected_choice(), 1)
 	_press(&"ui_up")
 	_press(&"interact")
-	assert_eq(GameState.quest_state(&"pages"), &"active", "« Je m’en occupe. » démarre la quête")
-	assert_true(GameState.has_flag(&"quest_pages_accepted"))
+	assert_eq(
+		GameState.quest_state(&"picture_book"), &"active", "« Je les retrouve. » démarre la quête"
+	)
+	assert_string_contains(_text(), "Salle de lecture")
 	_press(&"interact")
 	_press(&"interact")
 	assert_false(_box.is_open(), "fin : boîte masquée")
@@ -67,7 +69,7 @@ func test_whole_conversation_with_keys() -> void:
 	await wait_seconds(0.4)
 	_press(&"interact")
 	assert_true(_box.is_open(), "E relance la conversation")
-	assert_string_contains(_text(), "encore 5 pages", "réplique de quête en cours")
+	assert_eq(_text(), "Encore 5. Mm.", "réplique de quête en cours")
 
 
 func test_later_then_mouse_choice() -> void:
@@ -77,5 +79,5 @@ func test_later_then_mouse_choice() -> void:
 	var later := _box.get_node("%Choice1") as Button
 	later.mouse_entered.emit()
 	later.pressed.emit()
-	assert_eq(GameState.quest_state(&"pages"), &"", "« Plus tard. » ne démarre rien")
-	assert_string_contains(_text(), "quand tu voudras")
+	assert_eq(GameState.quest_state(&"picture_book"), &"", "« Plus tard. » ne démarre rien")
+	assert_eq(_text(), "Mm.")

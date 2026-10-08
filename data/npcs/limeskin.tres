@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="NpcData" format=3]
+
+[ext_resource type="Script" path="res://src/npc/npc_data.gd" id="1_npc"]
+[ext_resource type="Resource" path="res://data/npcs/visuals/limeskin.tres" id="2_visual"]
+
+[resource]
+script = ExtResource("1_npc")
+id = &"limeskin"
+display_name = "Limeskin"
+skin = ExtResource("2_visual")
+dialogue_path = "res://data/dialogues/limeskin.json"
+home_zone = &"beach"
+visible_if = {
+"flag": "duel_lost"
+}

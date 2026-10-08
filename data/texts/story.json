@@ -1,0 +1,30 @@
+{
+  "_comment": "Textes de l’histoire hors dialogues (docs/lore/HISTOIRE.md, section 3.5 ; développement n° 4), lus par DialogueRunner.story_text() et arena_text() ; {player} et les variables des dialogues y sont remplacés. Format et clés : docs/QUETES.md, « Textes de l’histoire ». Une clé qui commence par « _ » est un commentaire.",
+  "arenas": {
+    "_comment": "Par arène (son arena_id), sinon « default » : prompt (invite du panneau), sign (texte écrit sur le panneau), end_title (titre de l’écran de fin de série), new_record (bandeau du nouveau record), games (légende du nombre de séries jouées, sous le meilleur score).",
+    "default": {
+      "prompt": "Affronter les Timeres",
+      "sign": "Affronter\nles Timeres",
+      "end_title": "Fin de la série",
+      "new_record": "Nouveau record !",
+      "games": "Séries jouées"
+    },
+    "dunes": {
+      "_comment": "La veille du Couchant (docs/lore/MONDE.md, section 2.4).",
+      "prompt": "Sonner la cloche de veille",
+      "sign": "Cloche\nde veille",
+      "end_title": "Fin de la veille",
+      "new_record": "Nouveau record de veille !",
+      "games": "Veilles tenues"
+    }
+  },
+  "fall": {
+    "_comment": "Rattrapage d’une chute hors de l’île (WorldManager.rescued) : fondu au blanc, puis le message (docs/lore/MONDE.md, section 2.8).",
+    "message": "Tes ailes se sont ouvertes : te revoilà au bord."
+  },
+  "defeat": {
+    "_comment": "Mort du joueur : texte du fondu au noir, puis message à la réapparition devant l’infirmerie de l’entrepôt.",
+    "fade": "Retour à l’entrepôt…",
+    "message": "Les autres t’ont ramenée à l’entrepôt."
+  }
+}

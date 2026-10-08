@@ -2,8 +2,35 @@ extends "res://tests/stubs/l10_ui_test.gd"
 ## Menu principal (L10) : « Cliquer pour jouer » (rien avant le geste, son muet), Continuer selon
 ## la sauvegarde et chaque code de load_game, nouvelle partie avec le skin choisi, présélection
 ## depuis la sauvegarde, confirmation d'écrasement, vignettes, manette et crédits.
+## Acte 1 : Chtholly est le seul skin jouable ; pour choisir, les tests prennent un dossier de
+## skins temporaire (Chtholly et trois fées faites des visuels d'Ithea, Nephren et Tiat).
 
 const MENU := preload("res://src/ui/main_menu.tscn")
+const TEST_SKINS_DIR := "user://test_menu_skins"
+const TEST_SKINS: Array[String] = [
+	"res://data/skins/chtholly.tres",
+	"res://data/npcs/visuals/ithea.tres",
+	"res://data/npcs/visuals/nephren.tres",
+	"res://data/npcs/visuals/tiat.tres",
+]
+
+
+func before_each() -> void:
+	super()
+	DirAccess.make_dir_recursive_absolute(TEST_SKINS_DIR)
+	for path: String in TEST_SKINS:
+		assert_eq(ResourceSaver.save(load(path), TEST_SKINS_DIR.path_join(path.get_file())), OK)
+	SkinRegistry.skins_dir = TEST_SKINS_DIR
+	SkinRegistry.reload()
+
+
+func after_each() -> void:
+	super()
+	SkinRegistry.skins_dir = SkinRegistry.SKINS_DIR
+	SkinRegistry.reload()
+	for path: String in TEST_SKINS:
+		DirAccess.remove_absolute(TEST_SKINS_DIR.path_join(path.get_file()))
+	DirAccess.remove_absolute(TEST_SKINS_DIR)
 
 
 func _menu(require_gesture: bool = false) -> MenuScript:
@@ -96,35 +123,35 @@ func test_continue_hidden_without_save_and_shown_with_one() -> void:
 
 
 func test_continue_ok_loads_saved_game() -> void:
-	write_valid_save(&"forgeron")
+	write_valid_save(&"ithea")
 	var menu := _menu()
 	watch_signals(EventBus)
 	_button(menu, "ContinueButton").pressed.emit()
 	assert_signal_emitted(EventBus, "game_loaded", "OK : le jeu démarre")
-	assert_eq(GameState.count(&"shell"), 2, "partie rechargée")
-	assert_eq(GameState.skin_id, &"forgeron", "skin de la sauvegarde")
+	assert_eq(GameState.count(&"flower_blue"), 2, "partie rechargée")
+	assert_eq(GameState.skin_id, &"ithea", "skin de la sauvegarde")
 	assert_eq(menu.message(), "")
 
 
 func test_continue_applies_a_skin_chosen_in_the_menu() -> void:
-	write_valid_save(&"forgeron")
+	write_valid_save(&"ithea")
 	var menu := _menu()
-	menu.skin_card(&"enfant").pressed.emit()
+	menu.skin_card(&"tiat").pressed.emit()
 	assert_eq(menu.continue_game(), OK)
-	assert_eq(GameState.skin_id, &"enfant", "le joueur a choisi un autre skin avant Continuer")
-	assert_eq(GameState.count(&"shell"), 2)
+	assert_eq(GameState.skin_id, &"tiat", "le joueur a choisi un autre skin avant Continuer")
+	assert_eq(GameState.count(&"flower_blue"), 2)
 
 
 func test_continue_corrupt_save_starts_new_game_and_shows_error() -> void:
-	write_save_text('{"version": 1, "inventory": {"shell"')
+	write_save_text('{"version": 1, "inventory": {"flower_blue"')
 	var menu := _menu()
-	menu.skin_card(&"enfant").pressed.emit()
+	menu.skin_card(&"tiat").pressed.emit()
 	watch_signals(EventBus)
 	assert_eq(menu.continue_game(), ERR_FILE_CORRUPT)
 	assert_push_error("Sauvegarde illisible")
 	assert_signal_emitted(EventBus, "game_loaded", "la partie démarre quand même")
-	assert_eq(GameState.count(&"shell"), 0, "nouvelle partie")
-	assert_eq(GameState.skin_id, &"enfant", "avec le skin choisi")
+	assert_eq(GameState.count(&"flower_blue"), 0, "nouvelle partie")
+	assert_eq(GameState.skin_id, &"tiat", "avec le skin choisi")
 	assert_false(SaveManager.last_error.is_empty())
 	assert_eq(menu.message(), SaveManager.last_error, "erreur affichée au menu")
 	await wait_process_frames(1)
@@ -172,20 +199,20 @@ func test_skin_cards_come_from_registry() -> void:
 func test_new_game_uses_selected_skin() -> void:
 	var menu := _menu()
 	assert_eq(menu.selected_skin(), &"chtholly", "sans sauvegarde : Chtholly")
-	menu.skin_card(&"forgeron").pressed.emit()
-	assert_eq(menu.skin_card(&"forgeron").theme_type_variation, &"SkinCardSelected")
+	menu.skin_card(&"ithea").pressed.emit()
+	assert_eq(menu.skin_card(&"ithea").theme_type_variation, &"SkinCardSelected")
 	assert_eq(menu.skin_card(&"chtholly").theme_type_variation, &"SkinCard")
 	watch_signals(EventBus)
 	_button(menu, "NewGameButton").pressed.emit()
 	assert_signal_emitted(EventBus, "game_loaded")
-	assert_eq(GameState.skin_id, &"forgeron", "skin de la nouvelle partie")
+	assert_eq(GameState.skin_id, &"ithea", "skin de la nouvelle partie")
 
 
 func test_preselects_skin_of_existing_save() -> void:
-	write_valid_save(&"bibliothecaire")
+	write_valid_save(&"nephren")
 	var menu := _menu()
-	assert_eq(menu.selected_skin(), &"bibliothecaire", "skin lu dans la sauvegarde")
-	assert_eq(GameState.count(&"shell"), 0, "la partie n'est pas chargée")
+	assert_eq(menu.selected_skin(), &"nephren", "skin lu dans la sauvegarde")
+	assert_eq(GameState.count(&"flower_blue"), 0, "la partie n'est pas chargée")
 	menu.free()
 	write_save_text('{"version": 1, "skin": "inconnu"}')
 	assert_eq(_menu().selected_skin(), &"chtholly", "skin inconnu : Chtholly")
@@ -194,7 +221,7 @@ func test_preselects_skin_of_existing_save() -> void:
 func test_new_game_confirms_before_overwriting_save() -> void:
 	write_valid_save(&"chtholly")
 	var menu := _menu()
-	menu.skin_card(&"enfant").pressed.emit()
+	menu.skin_card(&"tiat").pressed.emit()
 	watch_signals(EventBus)
 	_button(menu, "NewGameButton").pressed.emit()
 	assert_true(menu.is_confirm_open(), "confirmation demandée")
@@ -207,8 +234,8 @@ func test_new_game_confirms_before_overwriting_save() -> void:
 	_button(menu, "NewGameButton").pressed.emit()
 	_button(menu, "ConfirmOk").pressed.emit()
 	assert_signal_emitted(EventBus, "game_loaded", "confirmé : nouvelle partie")
-	assert_eq(GameState.skin_id, &"enfant")
-	assert_eq(GameState.count(&"shell"), 0)
+	assert_eq(GameState.skin_id, &"tiat")
+	assert_eq(GameState.count(&"flower_blue"), 0)
 
 
 func test_escape_cancels_confirmation() -> void:
@@ -223,7 +250,7 @@ func test_escape_cancels_confirmation() -> void:
 
 
 func test_export_shows_saved_file_and_copies_it() -> void:
-	write_valid_save(&"enfant")
+	write_valid_save(&"tiat")
 	var menu := _menu()
 	_button(menu, "SaveButton").pressed.emit()
 	assert_true(menu.is_save_panel_open())
@@ -241,11 +268,11 @@ func test_export_shows_saved_file_and_copies_it() -> void:
 
 
 func test_export_follows_game_in_progress() -> void:
-	SaveManager.new_game(&"forgeron")
+	SaveManager.new_game(&"ithea")
 	GameState.add_item(&"flower_blue", 3)
 	var menu := _menu()
 	var data: Dictionary = JSON.parse_string(menu.export_text())
-	assert_eq(data["skin"], "forgeron")
+	assert_eq(data["skin"], "ithea")
 	assert_eq(data["inventory"], {"flower_blue": 3.0}, "SaveManager.export_json() de la partie")
 
 
@@ -258,15 +285,15 @@ func test_import_reports_errors_then_loads_valid_save() -> void:
 	assert_eq(menu.import_save('{"version": 42}'), ERR_INVALID_DATA)
 	assert_string_contains(menu.save_status(), SaveManager.last_error)
 	assert_signal_not_emitted(EventBus, "game_loaded")
-	GameState.skin_id = &"forgeron"
-	GameState.add_item(&"shell", 4)
+	GameState.skin_id = &"ithea"
+	GameState.add_item(&"flower_blue", 4)
 	var text := SaveManager.export_json()
 	GameState.reset()
 	(menu.get_node("%ImportText") as TextEdit).text = text
 	_button(menu, "ImportButton").pressed.emit()
 	assert_signal_emitted(EventBus, "game_loaded", "import réussi : le jeu démarre")
-	assert_eq(GameState.count(&"shell"), 4)
-	assert_eq(GameState.skin_id, &"forgeron")
+	assert_eq(GameState.count(&"flower_blue"), 4)
+	assert_eq(GameState.skin_id, &"ithea")
 
 
 func test_private_browsing_warns_and_puts_export_forward() -> void:

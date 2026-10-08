@@ -6,9 +6,9 @@
 [resource]
 script = ExtResource("1_item")
 id = &"flower_blue"
-display_name = "Fleur bleue"
+display_name = "Myosotis"
 icon = ExtResource("2_icon")
 stackable = true
 max_stack = 99
-description = "Une petite fleur bleue au parfum discret. Elle pousse là où le vent est doux."
+description = "Petite fleur bleue des pentes de la colline. On l’appelle aussi « ne m’oubliez pas »."
 color = Color(0.55, 0.72, 1, 1)

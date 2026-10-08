@@ -30,3 +30,12 @@ extends Resource
 @export var duration: float = 0.0
 ## Vitesse du projectile en m/s (onde) ; 0 = corps à corps.
 @export var speed: float = 0.0
+
+@export_group("Lisibilité HD-2D (H7)")
+## Préparation avant le coup (s) : le Timere se ramasse, un éclat et la zone du coup au sol le
+## signalent, puis l'animation de l'attaque part (rush : avant la charge). 0 = sans signe.
+@export var windup: float = 0.0
+## Arrêt sur image quand le coup porte (s) : la cible (et l'épée qui frappe) se figent.
+@export var hitstop: float = 0.0
+## Secousse de l'écran quand le coup porte (m d'amplitude au point visé de la caméra).
+@export var shake: float = 0.0

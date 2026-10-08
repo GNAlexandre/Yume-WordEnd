@@ -1,215 +1,288 @@
 extends GutTest
-## Lot 1 — caméra du joueur (camera_rig.tscn) : réglages de la scène, zoom borné (3 à 10 m) à
-## la molette, tangage borné, orbite souris et stick, capture du pointeur au clic et libération
-## (pause, mise en pause, dialogue, sortie de l'arbre), recentrage doux derrière le joueur qui
-## avance, cadrage de la cible verrouillée, collision du bras avec le décor (couche 1 seulement).
-## La caméra est pilotée par update_camera() (son _process est coupé).
+## (HD-2D) Caméra fixe du joueur (camera_rig.tscn) : réglages de la scène (inclinaison, champ
+## étroit, regard vers le nord), suivi du joueur avec un léger retard, bornes de l'île, zoom borné
+## (molette et stick droit), cadrage de la cible verrouillée sans rotation, post-traitement sous
+## l'interface et son shader qui compile ; (H5) bande nette du flou qui suit le joueur à l'écran,
+## façade d'un bâtiment de 6,5 m cadrée quand le joueur est devant (et rien ailleurs), sans saut
+## en chemin, joueur au-dessus de la boîte de dialogue en conversation, bornes qui gardent le
+## joueur près du centre au bord de l'île. La caméra est pilotée par update_camera()
+## (son _process est coupé).
 
 const RIG := preload("res://src/player/camera_rig.tscn")
 const CameraRigScript := preload("res://src/player/camera_rig.gd")
+const POST_SHADER := preload("res://src/player/post_fx.gdshader")
 const DT := 1.0 / 60.0
 
 # --- Outils -----------------------------------------------------------------------------------
 
 
-func _spawn_rig() -> CameraRigScript:
+func _spawn_rig(at: Vector3 = Vector3.ZERO) -> CameraRigScript:
+	var holder := Node3D.new()
+	holder.position = at
+	add_child_autofree(holder)
 	var rig: CameraRigScript = RIG.instantiate()
-	add_child_autofree(rig)
+	holder.add_child(rig)
 	rig.set_process(false)
 	return rig
 
 
-func _mouse_button(rig: CameraRigScript, index: MouseButton, device: int = 0) -> void:
+func _mouse_button(rig: CameraRigScript, index: MouseButton) -> void:
 	var event := InputEventMouseButton.new()
 	event.button_index = index
 	event.pressed = true
-	event.device = device
 	rig._unhandled_input(event)
 
 
-func _update(rig: CameraRigScript, seconds: float, look: Vector2 = Vector2.ZERO) -> void:
+func _update(rig: CameraRigScript, seconds: float, zoom_axis: float = 0.0) -> void:
 	for _i in roundi(seconds / DT):
-		rig.update_camera(DT, look)
+		rig.update_camera(DT, zoom_axis)
 
 
-func _add_wall(at: Vector3, layer: int) -> StaticBody3D:
-	var body := StaticBody3D.new()
-	body.collision_layer = layer
-	body.collision_mask = 0
-	var shape := CollisionShape3D.new()
-	var box := BoxShape3D.new()
-	box.size = Vector3(8, 8, 0.3)
-	shape.shape = box
-	body.add_child(shape)
-	body.position = at
-	add_child_autofree(body)
-	return body
+# --- Réglages ---------------------------------------------------------------------------------
 
 
-# --- Réglages, zoom, orbite -------------------------------------------------------------------
-
-
-func test_scene_defaults() -> void:
+func test_scene_defaults_fixed_tilted_narrow() -> void:
 	var rig := _spawn_rig()
-	assert_eq(rig.spring_arm.collision_mask, 1, "le bras ne heurte que le décor")
 	assert_true(rig.camera.current, "caméra courante")
-	assert_eq(get_viewport().get_camera_3d(), rig.camera)
-	assert_almost_eq(rig.pitch(), deg_to_rad(-22.0), 0.01, "caméra au-dessus, 22° vers le bas")
-	assert_almost_eq(rig.yaw(), 0.0, 0.001, "derrière le joueur (regarde vers −Z)")
-	assert_almost_eq(rig.zoom_distance(), 6.0, 0.001)
+	assert_true(rig.camera.top_level, "ne suit pas les rotations du joueur")
+	assert_between(rig.pitch_deg, 30.0, 40.0, "inclinée de 30 à 40°")
+	assert_lte(rig.camera.fov, 40.0, "champ étroit")
+	assert_eq(rig.forward(), Vector3.FORWARD, "regarde le nord")
+	assert_eq(rig.yaw(), 0.0)
+	var look := -rig.camera.global_basis.z
+	assert_almost_eq(rad_to_deg(asin(-look.y)), rig.pitch_deg, 0.1, "inclinaison appliquée")
+	assert_almost_eq(look.x, 0.0, 0.001, "pas de lacet")
+	assert_lt(look.z, 0.0, "vers le nord")
+	var post := rig.get_node(^"PostFX") as CanvasLayer
+	assert_lt(post.layer, 1, "post-traitement sous l'interface (UI : couche 1)")
 
 
-func test_wheel_zoom_is_clamped_between_3_and_10_m() -> void:
-	var rig := _spawn_rig()
-	for _i in 12:
-		_mouse_button(rig, MOUSE_BUTTON_WHEEL_UP)
-	assert_almost_eq(rig.zoom_distance(), 3.0, 0.001, "zoom avant borné à 3 m")
-	for _i in 20:
-		_mouse_button(rig, MOUSE_BUTTON_WHEEL_DOWN)
-	assert_almost_eq(rig.zoom_distance(), 10.0, 0.001, "zoom arrière borné à 10 m")
-	_update(rig, 1.0)
-	assert_almost_eq(rig.spring_arm.spring_length, 10.0, 0.01, "le bras rejoint la distance")
-
-
-func test_pitch_is_clamped() -> void:
-	var rig := _spawn_rig()
-	rig.rotate_view(0.0, -10.0)
-	assert_almost_eq(rig.pitch(), deg_to_rad(rig.min_pitch_deg), 0.001, "pas plus haut")
-	rig.rotate_view(0.0, 10.0)
-	assert_almost_eq(rig.pitch(), deg_to_rad(rig.max_pitch_deg), 0.001, "pas plus bas")
-	_update(rig, 0.5, Vector2(0, -1))
-	assert_almost_eq(rig.pitch(), deg_to_rad(rig.max_pitch_deg), 0.001, "stick : même borne")
-
-
-func test_mouse_and_stick_orbit() -> void:
-	var rig := _spawn_rig()
-	rig.orbit_mouse(Vector2(100, 0))
-	assert_almost_eq(rig.yaw(), -100 * rig.mouse_sensitivity, 0.0001, "souris à droite")
-	assert_gt(rig.forward().x, 0.0, "la vue tourne vers la droite")
-	var pitch_before := rig.pitch()
-	rig.orbit_mouse(Vector2(0, -40))
-	assert_almost_eq(rig.pitch(), pitch_before + 40 * rig.mouse_sensitivity, 0.0001, "vers le haut")
-	rig.invert_y = true
-	rig.orbit_mouse(Vector2(0, -40))
-	assert_almost_eq(rig.pitch(), pitch_before, 0.0001, "axe vertical inversé")
-	var yaw_before := rig.yaw()
-	rig.update_camera(0.5, Vector2(1, 0))
-	assert_almost_eq(rig.yaw(), yaw_before - 0.5 * rig.stick_speed.x, 0.0001, "stick à droite")
-
-
-# --- Pointeur de la souris ----------------------------------------------------------------------
-
-
-func test_click_captures_pointer_and_pause_releases_it() -> void:
-	var rig := _spawn_rig()
-	assert_false(rig.is_pointer_captured())
-	_mouse_button(rig, MOUSE_BUTTON_LEFT)
-	assert_true(rig.is_pointer_captured(), "clic dans le jeu : capture")
-	var pause := InputEventAction.new()
-	pause.action = &"pause"
-	pause.pressed = true
-	rig._input(pause)
-	assert_false(rig.is_pointer_captured(), "action pause : libéré")
-	_mouse_button(rig, MOUSE_BUTTON_LEFT)
-	rig.notification(Node.NOTIFICATION_PAUSED)
-	assert_false(rig.is_pointer_captured(), "arbre mis en pause (menu, inventaire) : libéré")
-	_mouse_button(rig, MOUSE_BUTTON_LEFT, InputEvent.DEVICE_ID_EMULATION)
-	assert_false(rig.is_pointer_captured(), "toucher émulé en clic : pas de capture")
-	_mouse_button(rig, MOUSE_BUTTON_LEFT)
-	remove_child(rig)
-	assert_false(rig.is_pointer_captured(), "sortie de l'arbre (retour au menu) : libéré")
-	add_child(rig)
-
-
-func test_dialogue_releases_pointer_and_blocks_capture() -> void:
-	var rig := _spawn_rig()
-	_mouse_button(rig, MOUSE_BUTTON_LEFT)
-	EventBus.dialogue_started.emit(&"l1_test")
-	assert_false(rig.is_pointer_captured(), "souris libre pour les choix du dialogue")
-	_mouse_button(rig, MOUSE_BUTTON_LEFT)
-	assert_false(rig.is_pointer_captured(), "pas de capture pendant le dialogue")
-	EventBus.dialogue_ended.emit(&"l1_test")
-	_mouse_button(rig, MOUSE_BUTTON_LEFT)
-	assert_true(rig.is_pointer_captured(), "capture au clic après le dialogue")
-
-
-# --- Recentrage -------------------------------------------------------------------------------
-
-
-func test_recenters_behind_moving_player_after_delay() -> void:
-	var rig := _spawn_rig()
-	rig.follow_velocity = Vector3(4, 0, -4)
-	_update(rig, 0.5)
-	assert_almost_eq(rig.yaw(), 0.0, 0.001, "pas avant recenter_delay")
-	_update(rig, 4.0)
-	assert_almost_eq(rig.yaw(), -PI / 4.0, 0.02, "derrière le joueur qui avance en diagonale")
-
-
-func test_does_not_spin_toward_a_player_walking_to_the_camera() -> void:
-	var rig := _spawn_rig()
-	rig.follow_velocity = Vector3(0, 0, 4)
-	_update(rig, 3.0)
-	assert_almost_eq(rig.yaw(), 0.0, 0.001, "pas de demi-tour de la caméra")
-	rig.follow_velocity = Vector3.ZERO
-	_update(rig, 3.0)
-	assert_almost_eq(rig.yaw(), 0.0, 0.001, "joueur immobile : caméra immobile")
-
-
-func test_manual_orbit_postpones_recentering() -> void:
-	var rig := _spawn_rig()
-	rig.follow_velocity = Vector3(4, 0, 0)
-	_update(rig, 1.2)
-	rig.rotate_view(0.6, 0.0)
-	var manual := rig.yaw()
-	_update(rig, 0.8)
-	assert_almost_eq(rig.yaw(), manual, 0.001, "la caméra touchée n'est pas reprise tout de suite")
-	_update(rig, 4.0)
-	assert_almost_eq(rig.yaw(), -PI / 2.0, 0.02, "puis elle se replace derrière le joueur")
-
-
-func test_snap_and_recenter_behind_a_direction() -> void:
-	var rig := _spawn_rig()
-	rig.rotate_view(1.0, 0.5)
-	rig.snap_behind(Vector3(1, 0, 0))
-	assert_almost_eq(rig.yaw(), -PI / 2.0, 0.001, "immédiatement derrière")
-	assert_almost_eq(rig.pitch(), rig.default_pitch(), 0.001)
-	rig.recenter_behind(Vector3(0, 0, 1))
-	_update(rig, 1.5)
-	assert_almost_eq(absf(angle_difference(rig.yaw(), PI)), 0.0, 0.02, "en douceur")
-
-
-# --- Verrouillage -------------------------------------------------------------------------------
-
-
-func test_frames_locked_target_and_ignores_manual_orbit() -> void:
-	var rig := _spawn_rig()
-	var target: Node3D = add_child_autofree(Node3D.new())
-	target.position = Vector3(6, -1.3, 0)
-	rig.lock_target = target
-	_update(rig, 1.0)
-	assert_almost_eq(rig.yaw(), -PI / 2.0, 0.01, "regarde vers la cible")
-	assert_almost_eq(rig.pitch(), deg_to_rad(rig.lock_pitch_deg), 0.02, "tangage de cadrage")
-	assert_gt(rig.spring_arm.position.x, 1.0, "point visé avancé vers la cible")
-	assert_lt(rig.spring_arm.position.x, rig.lock_focus_max + 0.01)
-	var locked_yaw := rig.yaw()
-	rig.orbit_mouse(Vector2(300, 0))
-	rig.update_camera(DT, Vector2(1, 0))
-	assert_almost_eq(rig.yaw(), locked_yaw, 0.01, "orbite manuelle ignorée pendant le verrou")
-	target.free()
-	_update(rig, 1.0)
+func test_camera_frames_the_player_from_the_south() -> void:
+	var rig := _spawn_rig(Vector3(5, 0, 8))
+	_update(rig, 0.1)
+	var eye := rig.camera.global_position
+	assert_gt(eye.z, 8.0, "au sud du joueur")
+	assert_gt(eye.y, 5.0, "au-dessus")
+	var to_player := (Vector3(5, rig.focus_height, 8) - eye).normalized()
 	assert_almost_eq(
-		rig.spring_arm.position.length(), 0.0, 0.01, "cible libérée : retour au joueur"
+		to_player, -rig.camera.global_basis.z, Vector3.ONE * 0.02, "le joueur au centre"
+	)
+	assert_almost_eq(eye.distance_to(rig.focus()), rig.distance, 0.05, "à sa distance")
+
+
+func test_follows_the_player_with_a_slight_lag() -> void:
+	var rig := _spawn_rig()
+	_update(rig, 0.2)
+	var holder := rig.get_parent() as Node3D
+	holder.position = Vector3(4, 0, 0)
+	_update(rig, DT)
+	assert_lt(rig.focus().x, 1.0, "léger retard")
+	assert_gt(rig.focus().x, 0.0, "mais elle suit")
+	_update(rig, 2.0)
+	assert_almost_eq(rig.focus().x, 4.0, 0.05, "rejoint le joueur")
+	assert_eq(rig.forward(), Vector3.FORWARD, "sans tourner")
+
+
+func test_stays_within_the_island_limits() -> void:
+	var rig := _spawn_rig(Vector3(78, 0, -79))
+	_update(rig, 3.0)
+	assert_almost_eq(rig.focus().x, rig.limits.end.x, 0.01, "bornée à l'est")
+	assert_almost_eq(rig.focus().z, rig.limits.position.y, 0.01, "bornée au nord")
+
+
+func test_snap_puts_the_camera_on_the_player_at_once() -> void:
+	var rig := _spawn_rig()
+	_update(rig, 0.2)
+	(rig.get_parent() as Node3D).position = Vector3(-20, 0, 30)
+	rig.snap_behind(Vector3.RIGHT)
+	assert_almost_eq(rig.focus(), Vector3(-20, rig.focus_height, 30), Vector3.ONE * 0.01)
+	assert_eq(rig.forward(), Vector3.FORWARD, "toujours le nord")
+
+
+func test_zoom_wheel_and_stick_are_clamped() -> void:
+	var rig := _spawn_rig()
+	for _i in 30:
+		_mouse_button(rig, MOUSE_BUTTON_WHEEL_DOWN)
+	assert_eq(rig.zoom_distance(), rig.max_distance, "molette : au plus max_distance")
+	for _i in 30:
+		_mouse_button(rig, MOUSE_BUTTON_WHEEL_UP)
+	assert_eq(rig.zoom_distance(), rig.min_distance, "au moins min_distance")
+	_update(rig, 2.0, 1.0)
+	assert_eq(rig.zoom_distance(), rig.max_distance, "stick droit vers le bas : s'éloigne")
+	_update(rig, 2.0)
+	assert_almost_eq(
+		rig.camera.global_position.distance_to(rig.focus()), rig.max_distance, 0.05, "rejointe"
 	)
 
 
-# --- Collision du bras --------------------------------------------------------------------------
-
-
-func test_spring_arm_shortens_against_world_only() -> void:
+func test_locked_target_is_framed_without_turning() -> void:
 	var rig := _spawn_rig()
-	var wall := _add_wall(Vector3(0, 0.8, 2.0), 1)
-	await wait_physics_frames(3)
-	assert_lt(rig.spring_arm.get_hit_length(), 2.5, "mur du décor derrière : bras raccourci")
-	wall.collision_layer = 2
-	await wait_physics_frames(3)
-	assert_almost_eq(rig.spring_arm.get_hit_length(), 6.0, 0.01, "autre couche : ignorée")
+	var target := Node3D.new()
+	target.position = Vector3(6, 0, 0)
+	add_child_autofree(target)
+	rig.lock_target = target
+	_update(rig, 2.0)
+	assert_gt(rig.focus().x, 1.0, "le point visé avance vers la cible")
+	assert_lte(rig.focus().x, rig.lock_focus_max + 0.01, "mais pas au-delà de lock_focus_max")
+	assert_eq(rig.forward(), Vector3.FORWARD, "sans rotation")
+	target.free()
+	_update(rig, 2.0)
+	assert_almost_eq(rig.focus().x, 0.0, 0.05, "cible disparue : retour au joueur")
+
+
+func test_post_fx_shader_compiles() -> void:
+	var rig := _spawn_rig()
+	var screen := rig.get_node(^"PostFX/Screen") as ColorRect
+	var material := screen.material as ShaderMaterial
+	assert_eq(material.shader, POST_SHADER)
+	assert_eq(screen.mouse_filter, Control.MOUSE_FILTER_IGNORE, "ne prend pas les clics")
+	var code := POST_SHADER.code
+	assert_string_contains(code, "hint_screen_texture")
+	assert_string_contains(code, "focus_center", "flou de profondeur")
+	assert_string_contains(code, "glow_threshold", "lueur")
+	# Un shader qui ne compile pas n'a aucun uniforme exposé.
+	assert_gt(POST_SHADER.get_shader_uniform_list().size(), 8, "le shader compile")
+
+
+# --- (H5) Bande nette du flou, cadrage des bâtiments -----------------------------------------
+
+
+func _screen_y(rig: CameraRigScript, point: Vector3) -> float:
+	return rig.camera.unproject_position(point).y / rig.get_viewport().get_visible_rect().size.y
+
+
+func _warehouse(at: Vector3) -> Building:
+	var building := Building.new()
+	building.footprint = Vector2(16.0, 8.0)
+	building.wall_height = 6.5
+	building.ridge_height = 9.0
+	building.position = at
+	add_child_autofree(building)
+	return building
+
+
+func test_focus_band_follows_the_player_on_screen() -> void:
+	var rig := _spawn_rig(Vector3(3, 0, -4))
+	var holder := rig.get_parent() as Node3D
+	_update(rig, 0.5)
+	var post := (rig.get_node(^"PostFX/Screen") as ColorRect).material as ShaderMaterial
+	var scene_post := RIG.instantiate()
+	var shared := (scene_post.get_node(^"PostFX/Screen") as ColorRect).material
+	assert_ne(post, shared, "matériau propre à la caméra : la scène n'est pas touchée")
+	scene_post.free()
+	for offset: Vector3 in [Vector3.ZERO, Vector3(0, 0, -3), Vector3(0, 0, 3)]:
+		# Retard du suivi : le joueur se décale à l'écran, la bande le suit dans la même image.
+		holder.position = Vector3(3, 0, -4) + offset
+		_update(rig, DT)
+		var center: float = post.get_shader_parameter(&"focus_center")
+		var half: float = post.get_shader_parameter(&"focus_half")
+		var player := holder.global_position + Vector3.UP * rig.focus_height
+		var y := _screen_y(rig, player)
+		assert_between(y, center - half, center + half, "joueur dans la bande nette (%s)" % offset)
+		var behind := _screen_y(rig, player + Vector3.FORWARD * 6.0)
+		assert_gt(behind, center - half, "6 m derrière le joueur : encore net")
+		var far := _screen_y(rig, player + Vector3.FORWARD * 14.0)
+		assert_lt(far, center - half, "14 m derrière : dans le flou du lointain")
+
+
+func test_building_facade_fits_in_the_frame() -> void:
+	# Le joueur dans la cour, devant le mur de 6,5 m de l'entrepôt : la façade et le bas du toit
+	# tiennent dans le cadre, le joueur reste à l'écran.
+	for ahead: float in [3.0, 6.0, 10.0, 14.0]:
+		var rig := _spawn_rig(Vector3(0, 0, 4.0 + ahead))
+		var building := _warehouse(Vector3(-2, 0, 0))
+		_update(rig, 3.0)
+		var wall_top := Vector3(-2, building.wall_height + 0.3, 4.0)
+		assert_gt(_screen_y(rig, wall_top), 0.0, "%.0f m : haut du mur dans le cadre" % ahead)
+		var feet := _screen_y(rig, rig.global_position)
+		assert_between(feet, 0.5, 0.86, "%.0f m : joueur à l'écran, dans le bas" % ahead)
+		assert_lte(rig.camera.global_position.distance_to(rig.focus()), 30.01, "recul borné")
+		building.free()
+		(rig.get_parent() as Node3D).free()
+
+
+func test_building_framing_lets_go_elsewhere() -> void:
+	var rig := _spawn_rig(Vector3(0, 0, 9))
+	var building := _warehouse(Vector3(0, 0, 0))
+	_update(rig, 3.0)
+	assert_lt(-rig.pitch(), deg_to_rad(rig.pitch_deg - 2.0), "devant la façade : lève les yeux")
+	assert_eq(rig.forward(), Vector3.FORWARD, "sans tourner")
+	# Derrière le bâtiment, loin devant ou sur le côté : cadrage habituel, centré sur le joueur.
+	for spot: Vector3 in [Vector3(0, 0, -9), Vector3(0, 0, 30), Vector3(30, 0, 9)]:
+		(rig.get_parent() as Node3D).position = spot
+		_update(rig, 4.0)
+		assert_almost_eq(
+			rig.focus(),
+			spot + Vector3.UP * rig.focus_height,
+			Vector3.ONE * 0.05,
+			"centré %s" % spot
+		)
+		assert_almost_eq(
+			rig.camera.global_position.distance_to(rig.focus()), rig.distance, 0.05, "à sa distance"
+		)
+		assert_almost_eq(-rig.pitch(), deg_to_rad(rig.pitch_deg), 0.002, "tangage habituel")
+	building.free()
+
+
+func test_building_framing_has_no_jump_along_the_way() -> void:
+	# En s'approchant de la façade (de 22 m à 1 m) ou en la longeant, le cadrage voulu change en
+	# douceur : la demande d'une façade naît et s'éteint par fondu, pas d'un coup à la portée.
+	var rig := _spawn_rig(Vector3(0, 0, 26))
+	var holder := rig.get_parent() as Node3D
+	var building := _warehouse(Vector3(0, 0, 0))
+	var paths: Array[Array] = [
+		[Vector3(0, 0, 26), Vector3(0, 0, 5)], [Vector3(-30, 0, 12), Vector3(30, 0, 12)]
+	]
+	for path: Array in paths:
+		var from: Vector3 = path[0]
+		var to: Vector3 = path[1]
+		var steps := roundi(from.distance_to(to) / 0.25)
+		holder.position = from
+		var last := rig._building_framing()
+		var tilted := false
+		for i in range(1, steps + 1):
+			holder.position = from.lerp(to, float(i) / steps)
+			var framing := rig._building_framing()
+			var jump := absf(framing.x - last.x)
+			var recoil := absf(maxf(framing.y, rig.distance) - maxf(last.y, rig.distance))
+			if jump > 1.5 or recoil > 1.0:
+				fail_test("saut du cadrage en %s : %.2f°, %.2f m" % [holder.position, jump, recoil])
+				break
+			tilted = tilted or framing.x < rig.pitch_deg - 4.0
+			last = framing
+		assert_true(tilted, "la façade est cadrée en chemin (%s → %s)" % [from, to])
+	building.free()
+
+
+func test_conversation_keeps_the_player_above_the_dialogue_box() -> void:
+	# Devant l'entrepôt, le cadrage de la façade met le joueur dans le bas de l'écran ; en
+	# conversation, il remonte au-dessus de la boîte de dialogue (bas 30 % de l'écran), sans recul.
+	var rig := _spawn_rig(Vector3(0, 0, 10))
+	var building := _warehouse(Vector3(0, 0, 0))
+	_update(rig, 3.0)
+	var framed := _screen_y(rig, rig.global_position)
+	assert_gt(framed, 0.72, "cadrage de la façade : pieds dans le bas de l'écran")
+	EventBus.dialogue_started.emit(&"nygglatho")
+	_update(rig, 3.0)
+	assert_lt(_screen_y(rig, rig.global_position), 0.67, "en conversation : au-dessus de la boîte")
+	assert_almost_eq(
+		rig.camera.global_position.distance_to(rig.global_position + Vector3.UP * rig.focus_height),
+		rig.distance,
+		0.05,
+		"sans recul"
+	)
+	EventBus.dialogue_ended.emit(&"nygglatho")
+	_update(rig, 3.0)
+	assert_almost_eq(_screen_y(rig, rig.global_position), framed, 0.01, "puis le cadrage revient")
+	building.free()
+
+
+func test_wide_limits_keep_the_player_on_screen_at_the_edge() -> void:
+	# Au bord du Couchant (x = −76), le point visé reste à moins de 6 m du joueur (l'écran en
+	# montre 10 de part et d'autre en 16:9) : on voit le vide à côté, jamais le joueur au bord.
+	for spot: Vector3 in [Vector3(-76, 0, 0), Vector3(0, 0, -73), Vector3(0, 0, 70)]:
+		var rig := _spawn_rig(spot)
+		_update(rig, 3.0)
+		var gap := rig.focus() - (spot + Vector3.UP * rig.focus_height)
+		assert_lte(Vector2(gap.x, gap.z).length(), 6.0, "point visé près du joueur en %s" % spot)
+		(rig.get_parent() as Node3D).free()

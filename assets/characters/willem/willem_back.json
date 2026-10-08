@@ -1,250 +1,35 @@
 {
   "version": 1,
   "echelle": 1,
-  "planche": [
-    739,
-    1044
-  ],
+  "planche": [739, 341],
   "direction": "back",
   "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
   "status": "measured_crops_animation_review",
-  "anchors_validated": false,
-  "anchor_method": "bottom of alpha silhouette; horizontal foot centroid",
+  "anchors_validated": true,
+  "anchor_method": "tools/hd2d_sheets.py anchors (H1) : pieds près de l'axe du corps, images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
   "combat_timing_validated": false,
   "density_px_m": 96,
+  "palette_colors": 64,
   "animations": {
     "repos": {
       "ips": 2,
       "boucle": true,
       "images": [
-        [
-          0,
-          0,
-          136,
-          168,
-          43,
-          168
-        ],
-        [
-          140,
-          0,
-          134,
-          168,
-          41,
-          168
-        ]
+        [0, 0, 136, 168, 36, 168],
+        [140, 0, 134, 168, 34, 168]
       ]
     },
     "marche": {
       "ips": 10,
       "boucle": true,
       "images": [
-        [
-          0,
-          173,
-          124,
-          168,
-          44,
-          168
-        ],
-        [
-          128,
-          172,
-          120,
-          169,
-          32,
-          169
-        ],
-        [
-          252,
-          172,
-          123,
-          169,
-          28,
-          169
-        ],
-        [
-          379,
-          173,
-          128,
-          168,
-          33,
-          168
-        ],
-        [
-          511,
-          172,
-          122,
-          169,
-          36,
-          169
-        ],
-        [
-          637,
-          172,
-          102,
-          169,
-          27,
-          169
-        ]
-      ]
-    },
-    "course": {
-      "ips": 14,
-      "boucle": true,
-      "images": [
-        [
-          0,
-          346,
-          132,
-          153,
-          46,
-          153
-        ],
-        [
-          136,
-          345,
-          129,
-          154,
-          43,
-          154
-        ],
-        [
-          269,
-          351,
-          134,
-          148,
-          34,
-          148
-        ],
-        [
-          407,
-          347,
-          134,
-          152,
-          39,
-          152
-        ],
-        [
-          545,
-          347,
-          134,
-          152,
-          36,
-          152
-        ]
-      ]
-    },
-    "attaque": {
-      "ips": 14,
-      "boucle": false,
-      "images": [
-        [
-          0,
-          503,
-          107,
-          178,
-          58,
-          178
-        ],
-        [
-          111,
-          516,
-          191,
-          165,
-          23,
-          165
-        ],
-        [
-          306,
-          533,
-          220,
-          148,
-          55,
-          148
-        ],
-        [
-          530,
-          530,
-          154,
-          151,
-          57,
-          151
-        ]
-      ],
-      "coup": [
-        1,
-        2,
-        3
-      ]
-    },
-    "charge": {
-      "ips": 10,
-      "boucle": false,
-      "images": [
-        [
-          0,
-          685,
-          132,
-          149,
-          54,
-          149
-        ],
-        [
-          136,
-          685,
-          148,
-          149,
-          48,
-          149
-        ],
-        [
-          288,
-          685,
-          184,
-          149,
-          49,
-          149
-        ],
-        [
-          476,
-          686,
-          232,
-          148,
-          56,
-          148
-        ]
-      ],
-      "onde": 3
-    },
-    "degats": {
-      "ips": 1,
-      "boucle": false,
-      "images": [
-        [
-          0,
-          838,
-          123,
-          141,
-          79,
-          141
-        ]
-      ]
-    },
-    "mort": {
-      "ips": 1,
-      "boucle": false,
-      "images": [
-        [
-          0,
-          983,
-          318,
-          61,
-          214,
-          61
-        ]
+        [0, 173, 124, 168, 32, 168],
+        [128, 172, 120, 169, 34, 169],
+        [252, 172, 123, 169, 34, 169],
+        [379, 173, 128, 168, 36, 168],
+        [511, 172, 122, 169, 36, 169],
+        [637, 172, 102, 169, 32, 169]
       ]
     }
-  },
-  "palette_colors": 64
+  }
 }

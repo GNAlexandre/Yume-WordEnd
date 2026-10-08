@@ -1,0 +1,103 @@
+{
+  "_comment": "Guide de la quête de démonstration demo_tour, puis de sa suite demo_followup (Lot Q).",
+  "id": "demo_guide",
+  "start": "hello",
+  "entries": [
+    "story_done",
+    "story_offer",
+    "pages_ready",
+    "tour"
+  ],
+  "nodes": {
+    "hello": {
+      "speaker": "Guide",
+      "text": "Bienvenue au village ! Je fais visiter les environs aux nouveaux venus.",
+      "choices": [
+        {
+          "if": {
+            "quest": [
+              "demo_tour",
+              "available"
+            ]
+          },
+          "text": "Fais-moi visiter.",
+          "start_quest": "demo_tour",
+          "next": "tour_start"
+        },
+        {
+          "text": "Une autre fois.",
+          "next": null
+        }
+      ]
+    },
+    "tour_start": {
+      "speaker": "Guide",
+      "text": "Commence par saluer le soldat de la Garde, à l’est de la place. Il connaît tout le monde.",
+      "next": null
+    },
+    "tour": {
+      "if": {
+        "quest": [
+          "demo_tour",
+          "active"
+        ]
+      },
+      "speaker": "Guide",
+      "text": "Tu t’en sors très bien ! Ton journal (Tab) garde la trace de chaque étape.",
+      "next": null
+    },
+    "pages_ready": {
+      "if": {
+        "quest_step": [
+          "demo_tour",
+          "pages"
+        ],
+        "count": [
+          "page_fragment",
+          2
+        ]
+      },
+      "speaker": "Guide",
+      "text": "Des pages arrachées aux Timeres ? Merci, je les garderai précieusement. Tiens, une fleur pour toi.",
+      "next": null
+    },
+    "story_offer": {
+      "if": {
+        "quest": [
+          "demo_followup",
+          "available"
+        ]
+      },
+      "speaker": "Guide",
+      "text": "Tu as fait tout le tour ! Veux-tu entendre la vieille histoire du puits ?",
+      "choices": [
+        {
+          "text": "Je t’écoute.",
+          "start_quest": "demo_followup",
+          "next": "story"
+        },
+        {
+          "text": "Plus tard.",
+          "next": null
+        }
+      ]
+    },
+    "story": {
+      "speaker": "Guide",
+      "text": "On dit qu’une lumière bleue danse au fond du puits les soirs de fête. Personne ne sait d’où elle vient.",
+      "set_flag": "demo_story_heard",
+      "next": null
+    },
+    "story_done": {
+      "if": {
+        "quest": [
+          "demo_followup",
+          "done"
+        ]
+      },
+      "speaker": "Guide",
+      "text": "Reviens me voir quand tu veux. Le village a encore bien des secrets.",
+      "next": null
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "_comment": "Acte 1 : le dessert spécial (appel au réfectoire).",
+  "id": "lakhesh",
+  "start": "hello",
+  "entries": [
+    "served_1",
+    "after_act",
+    "trust",
+    "departure",
+    "met"
+  ],
+  "nodes": {
+    "served_1": {
+      "if": {
+        "quest_step": [
+          "special_dessert",
+          "served"
+        ]
+      },
+      "text": "Pardon ! Pardon, Mlle {player}… Un dessert ? Pour nous ? Oh, il ne fallait pas. Enfin, si. Merci !",
+      "next": "served_2"
+    },
+    "served_2": {
+      "text": "J’appelle tout le monde au réfectoire. Poliment. Puis moins poliment, pour Pannibal.",
+      "next": "served_3"
+    },
+    "served_3": {
+      "speaker": "",
+      "text": "Le réfectoire se remplit en un clin d’œil. Willem sert. Pour une fois, personne ne s’enfuit.",
+      "next": "served_4"
+    },
+    "served_4": {
+      "text": "M. Willem, c’est délicieux ! Pardon, je parle la bouche pleine. Pardon.",
+      "next": "served_5"
+    },
+    "served_5": {
+      "text": "Vous ne mangez pas le vôtre, Mlle {player} ? Je vous le garde, alors. Bien au frais.",
+      "advance_quest": [
+        "special_dessert",
+        "served"
+      ],
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "Pardon… Je vous ai préparé des provisions pour le voyage. Beaucoup. Trop, peut-être. Pardon.",
+      "next": null
+    },
+    "trust": {
+      "if": {
+        "flag": "little_ones_trust_willem"
+      },
+      "text": "M. Willem a rangé la cuisine. Il a mis les bols au mauvais endroit. Je n’ai rien dit. Pardon.",
+      "next": null
+    },
+    "departure": {
+      "if": {
+        "flag": "departure_told"
+      },
+      "text": "Si je pouvais, j’astiquerais votre épée tous les soirs. Et je lui dirais merci. C’est plus poli.",
+      "next": null
+    },
+    "met": {
+      "if": {
+        "flag": "met_willem"
+      },
+      "text": "M. Willem nous a dit bonjour. Tout le monde a couru se cacher. Pardon pour elles. Et pour moi.",
+      "next": null
+    },
+    "hello": {
+      "text": "Pardon, je compte les provisions. Encore. On ne sait jamais, avec le vent.",
+      "next": null
+    }
+  }
+}

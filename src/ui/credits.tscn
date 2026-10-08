@@ -62,18 +62,19 @@ text = "[center][font_size=34][b]WordEnd[/b][/font_size]
 Chtholly – Bats-toi contre ton destin[/center]
 
 [b]Un jeu de la communauté Yume Novel[/b]
-WordEnd 3D prolonge l'easter egg WordEnd du site yumenovel.fr : Chtholly et son épée Seniolis repoussent des vagues de Timeres, au bord d'un village à explorer.
+WordEnd 3D prolonge l'easter egg WordEnd du site yumenovel.fr : sur l'île n° 68, Chtholly et son épée Seniorious tiennent la veille du Couchant contre les rejetons de Timere, entre l'entrepôt des fées, les bois du marais, le port et la colline des étoiles.
 
 [b]Hommage à SukaSuka[/b]
-Chtholly, son épée Seniolis et les Timeres viennent de [i]SukaSuka[/i] ([i]Shūmatsu Nani Shitemasu ka ? Isogashii desu ka ? Sukutte moratte ii desu ka ?[/i]), le roman d'Akira Kareno illustré par ue. WordEnd est un hommage de fans, gratuit et non commercial : ces personnages et ces créatures restent la propriété de leurs auteurs et de leurs éditeurs.
+Chtholly, son épée Seniorious, Timere, l'entrepôt des fées et ceux qui y vivent viennent de [i]Que faites-vous à la fin du monde ? Êtes-vous occupés ? Voulez-vous bien nous sauver ?[/i] ([i]Shūmatsu Nani Shitemasu ka ? Isogashii desu ka ? Sukutte moratte ii desu ka ?[/i], dit [i]SukaSuka[/i]), le roman d'Akira Kareno illustré par ue, lu dans la traduction française de Yume Novel. WordEnd est un hommage de fans, gratuit et non commercial : ces personnages, ces lieux et ces créatures restent la propriété de leurs auteurs et de leurs éditeurs.
+Les fiches de lecture et la bible du jeu (le canon, ses lieux, ses personnages) ont été faites à partir de la traduction de Yume Novel : elles la résument sans la recopier, et les dialogues du jeu sont écrits pour le jeu.
 
 [b]Personnages et créatures[/b]
 • Chtholly : planche générée par Gemini, découpée par tools/wordend/decouper-planche.py (dépôt Yume-WordPress) et reprise telle quelle de l'easter egg WordEnd ; portrait tiré de la tête de la planche (tools/gen_placeholders.py).
-• Timeres : deux planches en pixel art générées par Gemini, assemblées et découpées de la même façon, reprises de l'easter egg.
-• Bibliothécaire, forgeron et enfant : silhouettes chibi et portraits de remplacement générés par tools/gen_placeholders.py (projet Yume-WordEnd).
+• Timere : deux planches en pixel art générées par Gemini, assemblées et découpées de la même façon, reprises de l'easter egg.
+• Personnages non joueurs, Nopht et Rhantolk : silhouettes et portraits de remplacement générés par tools/gen_placeholders.py (projet Yume-WordEnd), en attendant les dessins de la communauté.
 
 [b]Décor, objets et interface[/b]
-• Damier du sol : généré par tools/gen_placeholders.py.
+• Décor de l'île en HD-2D (tuiles du sol, falaises, façades et matières des bâtiments, décors en panneaux, ciel, horizon) : images de remplacement en pixel art générées par tools/hd2d_assets.py, en attendant les images définitives.
 • Icônes des objets : générées par tools/gen_item_icons.py.
 • Icônes de l'interface (cœurs, marqueur de cible, livre de sauvegarde, étoile) : générées par tools/gen_ui_icons.py.
 Ces images sont produites par le projet, sous la licence de son code (MIT proposée).

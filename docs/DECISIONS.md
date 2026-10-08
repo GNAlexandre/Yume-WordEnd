@@ -810,3 +810,708 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   (écart 0,00 m) ; menu en 1,6 à 3,6 s au rechargement. Console : aucune erreur ; seuls
   avertissements, ceux du pilote logiciel (« GPU stall due to ReadPixels », SwiftShader).
   Build : 10,6 Mo compressés.
+
+## Lot Q — moteur de quêtes
+
+- **Lot Q — format JSON** : une quête est `data/quests/<id>.json` (id, title, summary, giver, main,
+  auto_start, requires, steps, rewards ; format complet : docs/QUETES.md), lue par
+  `FileAccess` + `JSON.parse` (comme les dialogues, sans erreur moteur sur un fichier invalide),
+  vérifiée entièrement (clé inconnue = erreur, clé `_…` = commentaire) puis gardée en cache
+  (`QuestData`, statique). Raison : des agents de contenu écrivent les quêtes à la main ; un
+  `.tres` avec des sous-ressources d'étapes typées est trop fragile à écrire. `QuestData` garde
+  ses champs du L7 (`required_items`, `required_flags` : héritage, quêtes construites en code).
+- **Lot Q — quête des pages** : `pages.tres` devient `pages.json`, une seule étape `collect`
+  « rapporter à » (`npc: librarian`, `consume: true`) : même objectif et même progression dans le
+  HUD (« Fragment de page : 3/5 »), même fin par `complete_quest` dans le dialogue, mêmes tests de
+  bout en bout (`test_m2_quest.gd`, `test_quest_tracker.gd`, `test_hud_quest.gd` inchangés).
+- **Lot Q — disponibilité calculée** : `&"available"` n'est jamais écrit dans GameState :
+  `QuestData.status()` le déduit des prérequis (quêtes terminées, drapeaux posés ou absents) ;
+  la condition de dialogue `quest [id, "available"]` l'utilise, `[id, ""]` garde son sens (jamais
+  commencée). Raison : `test_m2_quest` attend un état vide avant la proposition, et des
+  prérequis modifiés après publication restent cohérents (rien de périmé dans les sauvegardes).
+- **Lot Q — étapes linéaires** : une étape courante par quête active, retenue par son id et un
+  compteur (`GameState.quest_step`, `quest_step_count`) ; une étape inconnue au chargement (données
+  changées) ramène à la première. Pas de branches ni d'étapes facultatives : deux quêtes et un
+  drapeau à la place (docs/QUETES.md, « Limites »).
+- **Lot Q — validation des étapes** : talk et collect « rapporter à » à la fin d'un dialogue avec
+  le PNJ, seulement si l'étape était déjà l'étape courante au `dialogue_started` (le dialogue qui
+  démarre une quête ne valide pas sa première étape ; pas de double validation avec
+  `advance_quest`) ; reach zone aussi quand le joueur y est déjà, déclencheur redéclenché si son
+  étape commence joueur dedans ; kill compté dans la zone du joueur (`GameState.zone` : le signal
+  `enemy_killed` du L0 ne porte pas la zone de l'ennemi) ; arena : meilleure vague commencée ou
+  meilleur score de série pendant l'étape (les records d'avant ne comptent pas) ; collect sans
+  PNJ et flag par l'état de la partie, dès que l'étape commence.
+- **Lot Q — fin forcée** (`complete_quest`, ou `set_quest_state(id, &"done")` par un autre
+  système) : compatibilité L7, synchrone pendant `quest_updated` ; les étapes restantes sont
+  validées d'office (récompenses d'étape comprises) si les objets des étapes collect restantes
+  sont là (comptés dans l'ordre, ceux qu'une étape consomme ne servent plus aux suivantes), sinon
+  refus : quête remise à `&"active"` à la même étape, `completion_refused`, `push_warning`.
+- **Lot Q — file de traitement** : les signaux que le QuestTracker reçoit pendant un traitement
+  (ceux de ses propres changements : `inventory_changed` d'un objet consommé…) attendent leur
+  tour ; après chaque traitement, vérifications d'état jusqu'à stabilité (étapes validées par
+  l'état, quêtes `auto_start`), 200 tours au plus. Raison : une étape collect qui consomme ne se
+  valide jamais deux fois, et deux étapes collect de suite prennent chacune leur part.
+- **Lot Q — quête suivie** : `GameState.tracked_quest` (sauvegardé) ; une quête qui démarre devient
+  la quête suivie ; à sa fin, la première quête active (principales d'abord, puis ordre de
+  démarrage) ; le journal la change (Entrée, A, clic). Le HUD n'affiche plus que cette quête,
+  avec « +n quêtes · Tab / Select » s'il y en a d'autres (avant : toutes les quêtes actives ; une
+  seule existait).
+- **Lot Q — sauvegarde v2** : champs `quest_progress` (quest_id → {step, count}) et
+  `tracked_quest` ; `SAVE_VERSION` = 2, fichier inchangé (`user://save_v1.json`, nom historique :
+  les parties y sont) ; migration v1 → v2 (`_migrate_v1`) : chaque quête active avec données
+  reprend à sa première étape, la première quête active est suivie ; v0 passe par v1. Les
+  anciennes versions du jeu refusent une sauvegarde v2 (version future) au lieu de perdre
+  l'avancement en silence. Auto-sauvegarde sur `quest_step_completed` ; un compteur qui avance
+  (ennemi vaincu) est écrit par le point de contrôle de 5 s (pas une écriture par Timere).
+- **Lot Q — signaux** : `flag_changed` (GameState.set_flag, si la valeur change),
+  `quest_step_updated` (GameState.set_quest_step), `quest_step_completed` (QuestTracker),
+  `quest_advance_requested` (DialogueRunner → QuestTracker : le dialogue ne lit pas le tracker),
+  `trigger_entered` (QuestTrigger), `tracked_quest_changed` (GameState). Raison : chaque système
+  passe par l'EventBus ; le QuestTracker est un nœud de game.tscn, pas un autoload.
+- **Lot Q — dialogues** : condition `quest_step` [quête, étape] ; effets `take_item` (tout ou
+  rien), `give_item` (un nom, [objet, n] ou {objet: n}), `clear_flag`, `advance_quest` (id ou
+  [quête, étape] : garde) ; ordre fixe d'application `take_item`, `give_item`, `set_flag`,
+  `clear_flag`, `start_quest`, `advance_quest`, `complete_quest`, avant le texte et les choix du
+  nœud ; clés des nœuds et des choix vérifiées à la lecture (une faute de frappe rend le dialogue
+  invalide, comme une condition inconnue au L6). Les dialogues du jeu n'utilisaient que des clés
+  connues : aucun ne change.
+- **Lot Q — journal** : `src/ui/journal.tscn`, enfant `Journal` du HUD (game.tscn est figé, comme
+  `PauseMenu`) ; action `journal` : Tab, L (touches physiques libres ; Tab n'est lu qu'hors focus
+  de l'interface, le jeu n'en a pas) et bouton 4 Select / Back (libre) ; modal comme l'inventaire
+  (pause, PROCESS_MODE_ALWAYS, fermé par journal, Échap, pause, inventaire, B, clic dehors ;
+  jamais pendant un dialogue ni par-dessus une pause) ; étapes suivantes cachées (pas de
+  spoiler) ; pastilles des étapes dessinées (le ✓ n'est pas dans la police par défaut).
+- **Lot Q — marqueurs des PNJ** : `QuestMarker`, Label3D face à la caméra, doré à contour prune
+  (couleurs de `HudAccent`), police par défaut grassie, 0,45 m au-dessus de `SkinData.height_m`,
+  flotte de ±6 cm ; « ? » (étape talk, ou collect « rapporter à » objets en poche) prioritaire
+  sur « ! » (quête disponible, hors `auto_start`) ; caché pendant le dialogue du PNJ ; recalculé
+  en fin d'image sur les signaux de quête, d'inventaire et de drapeaux.
+- **Lot Q — déclencheurs** : `QuestTrigger` posé dans `src/npc/placements/<zone>.tscn` (aucun
+  nœud ajouté aux zones figées du L2) ; cylindre réglable (`radius`, `height`) propre à chaque
+  déclencheur, `trigger_id` (défaut : nom du nœud), `set_flag` facultatif ;
+  `test_npc.gd` (`test_village_placement`) ignore les déclencheurs parmi les PNJ du village.
+- **Lot Q — quêtes d'exemple** : `example_patrol` (exemple de docs/QUETES.md), `demo_tour` et
+  `demo_followup` (test d'intégration, captures), leurs PNJ, dialogues et emplacements vivent dans
+  `tests/data/` (exclus de l'export) : le moteur n'ajoute aucun contenu narratif au jeu ; la
+  direction narrative écrit l'histoire (docs/lore/PLAN.md).
+- **Lot Q — tests de contenu** : `tests/unit/test_quest_content.gd` vérifie chaque quête et ses
+  renvois (PNJ avec dialogue, objets, ennemis, zones, arènes, déclencheurs posés, prérequis sans
+  cycle, quête proposée par un dialogue ou `auto_start`, quêtes, étapes et objets nommés par les
+  dialogues, titres ≤ 40 et objectifs ≤ 70 caractères) : un agent de contenu le lance après
+  chaque quête ; `tests/stubs/q_quest_test.gd` donne les raccourcis des tests de scénario.
+- **Lot Q — captures** : `tests/integration/demo_q.tscn`, `Q_SHOT=hud|journal tools/screenshot.sh
+  res://tests/integration/demo_q.tscn build/shots/q_<vue>.png 150`.
+- **Lot Q — navigateur** : build Web exporté rejoué avec `tools/web_m2.js` (Chromium sans écran) :
+  « ! » au-dessus de la bibliothécaire (`QuestData.all()` lit `data/quests` dans le paquet
+  exporté, par `ResourceLoader.list_directory`), marqueur caché pendant son dialogue, quête
+  acceptée, page rechargée puis « Continuer » : quête en cours et position reprises (sauvegarde v2
+  dans IndexedDB) ; console sans erreur (seuls avertissements, ceux du pilote logiciel).
+- **Systèmes et textes — présence des PNJ** : `visible_if` vit dans `NpcData` (pas sur le nœud
+  `Npc`) ; un même personnage à plusieurs endroits = une `NpcData` par emplacement (`willem`,
+  `willem_training`, `willem_stars`), chacune avec sa condition. Pour l'exprimer, la grammaire des
+  dialogues gagne `quest_step` à liste d'étapes et `not_quest_step` (même évaluateur pour les
+  deux usages). Absent : caché et `process_mode` DISABLED (corps et `InteractArea` retirés de la
+  physique) plutôt que des couches à zéro ; réévaluation en fin d'image, jamais pendant la
+  conversation du PNJ. Skin du joueur : comparaison des `SkinData.id`, skin effectif comme le
+  joueur (`GameState.skin_id`, sinon le skin par défaut).
+- **Systèmes et textes — orateur** : `event_bus.gd` est figé, `dialogue_line` ne porte pas
+  l'orateur ; la boîte de dialogue lit `DialogueRunner.current_speaker_id()` (fixé avant chaque
+  ligne). `speaker_id` inconnu : avertissement et repli sur le PNJ du dialogue ; parler par la
+  voix d'un autre ne valide pas d'étape `talk` vers lui. `DialogueRunner.find_npc` cherche
+  `data/npcs` puis les dossiers ajoutés par `add_npc_dir` (tests).
+- **Systèmes et textes — `{player}`** : remplacé en dernier par `format_text` (après `{count:…}`,
+  `{left:…}`, `{best:…}`), aussi dans `speaker` ; « Chtholly » si aucun skin n'est chargé.
+  Le HUD et le journal passent titres, résumés, objectifs et aides par `format_text`.
+- **Systèmes et textes — journal** : `src/ui/journal.gd` est hors du périmètre du lot ; le
+  journal du HUD reçoit le script `src/ui/hud_journal.gd` (sous-classe, posé sur `HUD/Journal`
+  dans `hud.tscn`) qui remplace les variables après chaque `_show_details`. À replier dans
+  `journal.gd` quand ce fichier sera repris.
+- **Systèmes et textes — textes de l'histoire** : un seul fichier, `data/texts/story.json`, lu
+  par `DialogueRunner.story_text` (le moteur de textes) : clés imbriquées, commentaires `_…`,
+  arènes par `arena_id` avec repli sur `default` ; seule l'invite du panneau garde un texte de
+  secours dans le code (sans invite, la série ne pourrait plus commencer). Typographie des
+  dialogues (apostrophe ’, espace insécable) ; le menu garde l'apostrophe droite de ses textes.
+- **Systèmes et textes — chute et défaite** : `WorldManager.rescued(zone_id)` (signal de
+  l'autoload, comme `SaveManager.saved` ; l'EventBus est figé) ; le HUD fait le fondu au blanc
+  (`FallFlash`) et le message (`StoryMessage`, bas de l'écran, en fondu). Défaite : « Retour à
+  l'entrepôt… » pendant le fondu au noir, « Les autres t'ont ramenée à l'entrepôt. » à
+  `player_respawned` ; le message reste figé derrière l'écran de fin d'arène (pause).
+- **Systèmes et textes — corps de Timere** : `drops = {}` dans les quatre `.tres` ; le mécanisme
+  (`EnemyData.drops`, `Enemy.drops_enabled`) reste et se teste sur une copie des données.
+- **Systèmes et textes — tests hors liste** : changer une invite, un nom ou les drops casse des
+  tests qui les figeaient ; mis à jour d'une ligne (aucun n'appartient aux deux autres agents) :
+  `test_arena.gd`, `test_m1_arena.gd`, `test_m1_shortcuts.gd` (invite), `test_quest_example.gd`,
+  `test_quest_data.gd` (noms), `test_enemy.gd`, `tests/integration/test_q_quest.gd` (drops : la
+  démo ramasse deux pages posées), et le script du navigateur `tools/web_m1.js` (invite). `tests/integration/test_m2_quest.gd` (contenu de l'acte 1) n'est
+  pas touché : il joue encore les pages lâchées.
+- **Acte 1 — démarrage** : `act1_main` est `auto_start` : tout QuestTracker la démarre et la suit
+  (nouvelle partie, anciennes sauvegardes) ; `tests/stubs/q_quest_test.gd` met de côté les quêtes
+  `auto_start` du jeu (état `held`) pour les tests du moteur, `release_auto_start()` les rend
+  (scénarios `tests/unit/test_act1_*.gd`).
+- **Acte 1 — plusieurs scènes chez un PNJ** : une étape `talk` se valide à la fin de toute
+  conversation avec son PNJ ; les `entries` mettent donc les scènes d'étape avant les répliques
+  d'avancement, les propositions, l'après-acte et les répliques par défaut (HISTOIRE.md 3.6 ;
+  vérifié par `test_act1_dialogues.gd`), et la dernière réplique d'une scène propose par des
+  choix conditionnels les autres scènes en attente chez le même PNJ (« routeur » : sans choix
+  visible, le nœud suit son `next`).
+- **Acte 1 — portrait d'un second orateur** : les nœuds à plusieurs voix portent `speaker` et la
+  clé provisoire `_speaker_id` (ignorée par le DialogueRunner actuel) ; quand `speaker_id`
+  existera (« Systèmes et textes »), l'intégration la renomme (`test_act1_dialogues.gd` échoue
+  pour le rappeler).
+- **Acte 1 — instances de Willem** : `willem_training` (bois) et `willem_stars` (colline) sont des
+  PNJ à part (visuel `willem`, dialogues propres), toujours présents en attendant `visible_if` ;
+  les étapes `training` et `promise` les visent, le Willem de l'entrepôt donne les aides.
+- **Acte 1 — aides** : des `hint` en plus de HISTOIRE.md sur les étapes de collecte des quêtes
+  secondaires (où chercher draps, myosotis, engrenages, baies, pages).
+- **Acte 1 — hauteurs** : les objets sont posés au sol actuel (y local ≠ 0 en relief :
+  `dunes_gear_2` 0,81, `dunes_flower_1` 0,92, `forest_page_4` 0,17, `forest_berries_3` 0,38,
+  `hill_sheet_1` 8) et `couchant_edge` à y = 0,1 ; à revoir avec le terrain du « Monde »
+  (`test_m1_world.gd`).
+- **Acte 1 — écarts de position (décor actuel)** : le guetteur en (−13 ; 0,2 ; −12) au lieu de
+  (−14 ; 0,2 ; −10) (hors de la ruine) et Willem au sommet en (1 ; 8,2 ; −0,8) au lieu de
+  (3 ; 8,2 ; 0) (entre la rambarde et le banc du belvédère) ; avec le décor du « Monde », qui
+  respecte HISTOIRE.md 3.3, reprendre ces positions (et `tests/unit/test_npc.gd`).
+- **Acte 1 — visuels des PNJ** : `data/npcs/visuals/<id>.tres` (SkinData hors de `data/skins`,
+  donc non jouables), planches de remplacement de `tools/gen_placeholders.py npcs` (options
+  `--style`, `--species`, `--wear`, `--eyes`, `--accent` ; sortie par défaut inchangée) ; seule
+  Chtholly reste jouable, les tests qui choisissent un skin prennent un dossier de skins
+  temporaire.
+- **Acte 1 — objets** : icônes de `tools/gen_item_icons.py` ; souvenirs non empilables (livre,
+  dessin, carte, myosotis séché, promesse), dessert et cheese-cake empilables (soins du M3).
+- **Acte 1 — anciennes sauvegardes** : coquillages et marque-page restent des objets inconnus
+  (nom = id, sans icône) ; la quête `pages`, sans données, n'est plus au journal, mais
+  `QuestData.active_ids()` la compte encore (« +1 quête » du HUD) : à filtrer à l'intégration
+  (QuestData ou migration de SaveManager).
+- **Acte 1 — quête d'exemple des tests** : `example_patrol` requiert le livre d'images et donne
+  deux myosotis ; le forgeron d'exemple est posé par `tests/data/placements/village.tscn` ;
+  l'exemple commenté de docs/QUETES.md est à aligner.
+
+## Acte 1 — Monde (île n° 68)
+
+- **Monde — île flottante** (`src/world/terrain.gd`, `island_rock.gd`, `island.tscn`) : le bord
+  garde le tracé de l'ancienne côte (superellipse, encoche du quai au sud, avancée du Couchant à
+  l'ouest) et devient une lèvre de pierre au niveau du sol ; au-delà, le vide. Sous la lèvre :
+  falaise, dessous en cône de roche, racines, cascade du ruisseau (un mesh, sans collision). La
+  mer de nuages remplace l'eau (nœud `Water` gardé, plan à y = −60 m, shader non éclairé) ; la
+  KillZone (y = −15 m) et `WorldManager.FALL_LIMIT` ramènent au Spawn de la zone (`rescue()`).
+- **Monde — collision du sol** : ConcavePolygonShape3D tirée des mêmes triangles que le mesh
+  visible, coupés sur la ligne exacte du bord (au lieu de la HeightMapShape3D 129 × 129 de L2) :
+  on marche sur ce qu'on voit et rien ne porte au-delà du bord. Pentes < 40° sur chaque facette.
+- **Monde — barrière du bord** : ruban vertical à 0,8 m en deçà du bord, couche 8
+  (`enemy_barrier`), deux faces : les Timeres ne tombent pas, le joueur passe.
+- **Monde — décor fondu** (`prop_batcher.gd`) : une zone fond tous ses meshes en ArrayMesh à
+  couleurs de sommet, par famille (ombre, sans ombre, lumineux) et par case de 32 m (la caméra
+  et la carte d'ombre écartent les cases hors champ) ; matériau `materials/toon.tres`
+  (ShaderMaterial `shaders/props.gdshader`) ; un albedo d'alpha 0,5 marque un feuillage.
+- **Monde — cloche de veille** (`src/enemies/arena.tscn`, visuel seulement) : le panneau de
+  l'arène devient une cloche de bronze à potence sur un poteau (le cahier des charges dit
+  « cloche sur un poteau », MONDE.md un portique) ; `arena_panel.gd`, son invite et
+  `WaveDirector` sont inchangés (le texte de l'invite revient à l'agent Systèmes et textes).
+- **Monde — noms des zones** : ceux de MONDE.md (section 2.1), apostrophe droite comme dans
+  MONDE.md (« L'entrepôt des fées ») ; chaînes mises à jour aussi dans `test_m2_quest.gd`,
+  `test_m2_resume.gd` et `test_m2_menu.gd` (seulement les noms).
+- **Monde — fleur du village** : l'ancienne place de `village_flower_1` (−17, 0, −3) tombe dans
+  l'aile ouest de l'entrepôt ; `test_m1_world.gd` l'exempte tant qu'elle y est (`RELOCATED`) et
+  la vérifie à sa nouvelle place (17, 0, 5).
+- **Monde — places de l'acte 1** (`tests/unit/test_world_story_spots.gd`) : les positions de
+  HISTOIRE.md (section 3.3) sont vérifiées sans dépendre des fichiers d'emplacement : à 3 m du
+  vide, au sol à la hauteur prévue, hors de toute collision et de tout décor visible tout près
+  (les baies restent sur leur buisson), reliées à pied au village. Le belvédère du sommet passe à
+  un plancher de Ø 5,2 m pour que Willem soit « à côté du belvédère » et le drap à son entrée.
+- **Monde — direction artistique** (demande de l'utilisateur : se rapprocher de Zelda: Breath
+  of the Wild dans les limites du rendu Compatibility, à la place du style précédent) : palette
+  naturelle un peu désaturée et chaude (herbe vert-jaune, terre ocre, roche gris-bleu, bois
+  brun) ; éclairage cel discret partagé (`shaders/cel.gdshaderinc` : deux paliers doux, liseré à
+  contre-jour sur les décors, terminateur large sur la roche) ; normales lissées (roche, arbres) ;
+  ciel en dégradé bleu doux, halo chaud du soleil et nuages doux (`shaders/sky.gdshader`, sans
+  TIME : calculé une fois) ; brume bleutée (densité 0,002, diffusion du soleil 0,3, brume basse
+  sous y = −4 m) ; ombres bleutées (ambiante 0,55) ; soleil chaud à 20° à l'ouest-sud-ouest
+  (énergie 0,2, ombre sur 40 m) ; mer de nuages blanche, creux gris-bleu, crêtes dorées côté
+  soleil ; arbres hauts à tronc élancé et feuillage en masses, marches de 0,15 à 0,2 m, portes de
+  2,1 à 2,2 m, champignons à taille réelle.
+- **Monde — herbe** (`src/world/grass.gd`, `shaders/grass.gdshader`) : ~20 000 touffes de sept
+  brins tirées une fois (graine 68, ~0,15 s en natif au chargement), une MultiMeshInstance3D par
+  case de 16 m, sans ombre portée ; balancement au vent ; les touffes s'aplatissent de 18 à 27 m
+  de la caméra puis la case disparaît ; jamais sur les chemins, la cour, le cercle de veille
+  (15 m), la rue, la place, le quai, le marais, le ruisseau ; tracés recopiés de
+  `shaders/terrain.gdshader`.
+- **Monde — horizon** : îles en silhouette (n° 53 au sud, sur la route du passeur ; n° 15 à
+  l'ouest, au-delà du Couchant ; deux au nord) et huit rochers flottants sous le bord, dans
+  `Decor` (sans collision).
+- **Monde — budget Web** (`demo_m1`, draw calls et primitives dont la passe d'ombre) :
+
+  | Vue | Avant l'acte 1 (8263efe) | Acte 1, direction naturelle |
+  | --- | --- | --- |
+  | village (départ) | 79, 104 708 (21 432) | 94, 91 300 (17 328) |
+  | village_dunes | 80, 141 326 (34 296) | 102, 107 155 (18 812) |
+  | village_forest | 84, 142 788 (33 928) | 103, 93 942 (13 440) |
+  | village_beach | 87, 132 620 (24 440) | 111, 111 683 (12 422) |
+  | village_hill | 75, 142 106 (34 128) | 108, 118 924 (20 246) |
+  | dunes / perf (16 Timeres) / forest | 60 / 92 / 40 ; 63 634 / 89 254 / 54 022 | 74 / 95 / 53 ; 57 223 / 61 144 / 46 940 |
+
+  Les cases de 32 m et l'herbe coûtent des draw calls (une trentaine) mais retirent des
+  triangles à la passe d'ombre ; tout reste sous 150 draw calls et 150 000 primitives.
+- **Monde — captures** : `MONDE_VIEW=ile|entrepot|bois|couchant|port|colline|bord|dessous
+  tools/screenshot.sh res://tests/integration/demo_monde.tscn build/shots/monde_<vue>.png 40`.
+- **Monde — terrain d'entraînement** (bois du marais) : herbe rase sans arbre ni rocher sur
+  15 m de rayon autour du local (0, 0) de la zone ; les buts de fortune sont à ses deux bouts
+  (14 m), le banc et le râtelier en bordure (le banc est la place de `WillemTraining`,
+  HISTOIRE.md 3.3) ; `test_m1_world.gd` vérifie plat et sans collision sur 12 m, et la clairière
+  des Timeres sur 6 m.
+- **Assets 3D — skins jouables** (choix validé par l'utilisateur le 7 octobre 2026,
+  `docs/ASSETS_3D.md` section 4.7) : Chtholly, Ithea, Nephren, Nopht, Rhantolk et les fées de la
+  communauté sont jouables, toutes avec Seniorious en main ; Willem reste un PNJ ; Lillia sera
+  un bonus plus tard.
+- **Assets 3D — tenue de Chtholly à l'acte 1** (choix validé par l'utilisateur le 7 octobre 2026,
+  section 4.6) : uniforme de fée soldat de la Garde ailée (veste bleu nuit à boutons argentés,
+  broche d'argent), d'après la bible, au lieu de la tenue noire et dorée de la planche 2D ; la
+  tenue de ville viendra en variante.
+- **Assets 3D — identifiants des modèles** (choix validé par l'utilisateur le 7 octobre 2026,
+  section 4.9) : orthographe de la traduction (`glick`, `kaya`, `suowong`, `suowong_young`,
+  `ebon_candle`, `ebon_candle_ancient`, `doctor`, `baroni_makish`) ; les dossiers de la première
+  livraison seront remplacés sous ces noms.
+
+## Acte 1 — intégration (phase D)
+
+- **Intégration acte 1 — présence de Willem et de Limeskin** (`data/npcs/*.tres`, `visible_if`) :
+  Willem à l'entrepôt sauf pendant `training` et `promise` (`not_quest_step`), au terrain
+  pendant `training` (`quest_step`), au sommet à partir de `promise` et pour toujours (drapeau
+  `starry_night`, nouvelle récompense de l'étape `starry_hill` : la grammaire n'a pas de « ou »,
+  et `quest_step` est faux une fois la quête terminée) ; Limeskin au port à partir de `the_edge`
+  (drapeau `duel_lost`, récompense de `training` : le Barocupot vient la chercher, HISTOIRE.md
+  3.3). Après l'acte, Willem est donc à l'entrepôt **et** sur la colline (« Les étoiles… » de
+  `test_m2_quest.gd`, demandé pour les derniers soirs avant le départ) : écart assumé à
+  HISTOIRE.md 3.3 (« un seul willem ») jusqu'au cycle jour/nuit du M3, qui le mettra au sommet
+  la nuit seulement. Pendant l'acte, un seul Willem à la fois (`test_act1_presence.gd`). Les
+  répliques d'ambiance de `willem_training` hors de son étape ne s'entendent plus (gardées comme
+  repli) ; Willem apparaît au sommet quand le joueur entre dans `hill_summit` (pas de cinématique
+  d'arrivée en M2).
+- **Intégration acte 1 — quêtes sans données** (`QuestData.active_ids()` / `done_ids()`) : une
+  quête de la sauvegarde qui n'a plus de fichier (`pages` restée active dans une partie du jalon
+  M2) est ignorée à la source : ni au journal, ni dans le « +n quêtes » du HUD, ni dans les
+  boucles du QuestTracker. Son état reste dans GameState (aucune migration ne l'efface : une
+  quête rendue au jeu plus tard retrouverait son état). `test_act1_saves.gd`.
+- **Intégration acte 1 — `{player}`** (`DialogueRunner.player_name()`, `first_name()`) : le
+  prénom de la protagoniste, c'est-à-dire le nom affiché du skin sans sa variante (ce qui suit
+  « · », comme « · 3D » des skins de la PR n° 1, qui ne sont pas renommés) réduit à son premier
+  mot : « Chtholly » pour « Chtholly Nota Seniorious · 3D ». Les deux répliques qui l'emploient
+  sont des apostrophes (« Alors reviens, {player} », « Mlle {player} ») ; le nom complet y
+  sonnerait faux. Limite connue : choisir le skin 3D de Willem, d'Ithea ou de Nephren ne cache
+  pas leur PNJ (les ids de skins diffèrent : `sukasuka_ithea` contre `ithea`), et les cacher
+  rendrait leurs quêtes impossibles ; à trancher avec la reprise des modèles 3D.
+- **Intégration acte 1 — rejetons des bois** (`src/enemies/free_enemies.gd`, racine `Enemies`
+  des cinq fichiers d'emplacement d'ennemis) : réapparition plutôt que mort comptée pour l'étape
+  suivante (le joueur voit qui il doit abattre, et un rejeton tué hors des bois, qui ne compte
+  pas, ne bloque plus non plus). Pendant une étape `kill` d'une quête active qui vise la zone
+  (`zone` égale ou absente) et ses ennemis (`any` ou leur id), les ennemis libres tués
+  réapparaissent à leur place, sous leur nom, avec leurs données : au début de l'étape et à
+  chaque retour du joueur dans la zone ; jamais au-delà de la population de départ ; en fin
+  d'image (aucun changement d'arbre pendant un signal de mort). Hors de ces étapes, un mort
+  reste mort jusqu'au rechargement de la partie (comportement d'avant). Pas de script sur les
+  scènes de zone (L2) ; aucun nœud ajouté sous `Enemies` (les tests comptent ses enfants).
+  `tests/unit/test_free_enemies.gd`.
+- **Intégration acte 1 — places sur l'île n° 68** : le guetteur reprend sa place de HISTOIRE.md
+  3.3, (−14 ; 0,2 ; −10), que le décor du monde garantit (l'écart (−13 ; −12) n'avait plus de
+  raison) ; `couchant_edge` est posé au sol (y = 0, mesuré sous le cylindre) ;
+  `test_m1_world.gd` ne fait plus d'exception pour `village_flower_1` (à sa place (17 ; 0 ; 5)
+  depuis le contenu de l'acte 1). Les objets, PNJ et déclencheurs suivent maintenant HISTOIRE.md
+  3.3 sans écart (`test_npc.gd`, `test_world_story_spots.gd`).
+- **Intégration acte 1 — fin de la veille** : l'écran de fin d'arène montre le nom de la zone de
+  MONDE.md 2.1 (« Le bord du Couchant », `Zone.display_name`) et, au Couchant, « Veilles
+  tenues » au lieu de « Séries jouées » (nouvelle clé `arenas/<arène>/games` de
+  `data/texts/story.json`, comme `end_title`) : le vocabulaire de la veille et du registre de
+  Tiat. La cloche de veille (`arena.tscn`, `Panel/Bell`) est la seule chose visible au départ
+  des veilles depuis la fusion du monde ; la planche facultative (`Label`) reste lue par
+  `arena_panel.gd` pour les arènes qui en auraient une.
+- **Intégration acte 1 — quêtes secondaires dans la vraie partie**
+  (`tests/integration/test_act1_side_quests.gd`) : les six quêtes jouées l'une après l'autre
+  dans `main.tscn`, avec les vrais PNJ (présents, abordés de face, E) et les vrais objets de
+  l'île (ramassés en marchant dessus) ; les répliques passent par `dialogue_choice_made` (les
+  appuis qui les lisent sont prouvés par `test_m2_quest.gd`) ; le drapeau `first_vigil_done` est
+  posé par le test (la première veille est jouée par `test_m2_quest.gd`). Garantie de plus,
+  sans scène : `test_act1_items_in_world.gd` (chaque étape collect trouve assez d'objets dans
+  l'île ou chez un PNJ, et les quêtes n'en prennent jamais plus qu'il n'y en a).
+- **Intégration acte 1 — restes du jalon M2** : la quête d'exemple des tests (`example_patrol`,
+  docs/QUETES.md) passe du forgeron au soldat de la Garde (`example_guard`, PNJ de test au
+  visuel du guetteur ; fichier nommé comme son id, `find_npc` le trouve) et vise les rejetons
+  des bois ; la démo du moteur (`demo_tour`) le salue ; les tests du moteur gardent des ids
+  d'objets arbitraires (`shell`), mais plus de textes de l'ancien contenu ; l'exemple de format
+  de PLAN.md section 4 et `test_dialogue_runner.gd` font parler Nephren. Restent, assumés comme
+  historiques : docs/DECISIONS.md, docs/CONTRACT_REQUESTS.md, docs/lore/ (bible, fiches), les
+  dossiers 3D hors périmètre, les fixtures d'anciennes sauvegardes (`test_save_migration.gd`,
+  `test_act1_saves.gd`), les listes d'éléments retirés (`test_skin_registry.gd`,
+  `test_item_data.gd`) et les gardes contre « Seniolis » (`test_credits.gd`,
+  `test_sys_story_content.gd`, `test_act1_dialogues.gd`).
+- **Intégration acte 1 — recherche des restes du jalon M2** (critère 16 de docs/RECETTE_M2.md) :
+  `git grep -n -i "bibliothécaire\|forgeron\|coquillage\|marque-page\|Seniolis"` ; les
+  résultats assumés sont listés à la ligne « restes du jalon M2 » ci-dessus.
+- **Intégration acte 1 — menu des fées** (`src/ui/main_menu.*`) : les vignettes défilent dans un
+  cadre (`%SkinScroll`, deux rangées et demie au plus : `MAX_SKIN_GRID_HEIGHT`, signe qu'il y en a
+  d'autres) et un nom trop long finit par « … » (entier dans l'infobulle). Avec les sept skins
+  « · 3D » de la PR n° 1 (huit vignettes, quatre rangées), le panneau sortait de l'écran de
+  1280 × 720 : titre « Choisis ta fée » et phrase « Ta fée prend la place de Chtholly dans
+  l'histoire. » hors champ, noms débordant des vignettes. La vignette choisie (celle de la
+  sauvegarde) est amenée en vue à l'ouverture ; le clavier et la manette font défiler
+  (`follow_focus`). Les skins eux-mêmes ne changent pas. `test_menu_story.gd`.
+- **Socle HD-2D — changement de direction** (demande de l'utilisateur, PR « contrats ») : la
+  direction artistique passe de « au minimum proche de *Breath of the Wild* » (lignes « Monde —
+  direction artistique » et suivantes, désormais historiques) à un HD-2D à la manière
+  d'*Octopath Traveler* : personnages en sprites, décor en relief fait uniquement d'images, caméra
+  fixe inclinée, flou de profondeur, lueur, lumière chaude. Cahier des charges des images :
+  docs/ASSETS_HD2D.md (remplace docs/ASSETS_3D.md et docs/TEXTURES_PEINTES.md). Tout le code de
+  jeu, les données, les quêtes, l'interface, les ids et le tracé de l'île sont gardés.
+- **Socle HD-2D — purge de la 3D** : retirés (avec leurs .uid, .import et lignes de crédits) les
+  modèles et leur outil (`assets/models/`, `docs/sprites/`, `tools/sukasuka3d/`, les sept skins
+  `sukasuka_*`, `test_sukasuka_models.gd`), la variante mesh de `CharacterVisual` et
+  `SkinData.mesh_scene`, le décor calculé (maillages des décors, herbe en MultiMesh et
+  `grass.gd`, shaders cel / herbe / décors / ciel, matériaux toon et glow, `assets/textures/`),
+  la caméra en orbite (`SpringArm3D`), les démos et tests du seul décor calculé. Ithea et Nephren
+  restent des PNJ donneurs de quête ; leur skin jouable revient avec leur planche HD-2D (H6).
+  Nopht et Rhantolk, jouables, ont une planche de remplacement générée (`gen_placeholders.py`).
+- **Socle HD-2D — échelle** : 96 px d'image par mètre partout (Chtholly 1,5 m = 144 px, la
+  planche de l'easter egg), 48 px/m pour le très lointain (îles lointaines à 12 px/m, aéronefs et
+  rochers flottants à 48 px/m : vus de loin, moitié moins de mémoire). Filtrage au plus proche
+  voisin, sans mipmaps sur les panneaux.
+- **Socle HD-2D — décor en panneaux** : `DecorPanel` (racine d'un décor debout) se tourne
+  toujours vers le sud (la caméra regarde le nord), sa collision garde la rotation du nœud ;
+  ombre au sol = quad d'une image de tache (`assets/hd2d/fx/shadow.png`), pas d'ombre du soleil
+  (ombres du DirectionalLight3D coupées : coûteuses en WebGL 2 et fausses sur un panneau).
+  Les décors bas qui se traversent (liste `NON_BLOCKING` de `test_hd2d_decor.gd` : herbes,
+  fleurs, buissons, champignons, roseaux, potager, pierres de l'anneau, cloche, banc, ballon,
+  lanterne tombée, aéronefs et îles du fond) n'ont pas de collision ; les autres ont leur
+  `Collision` sur la couche 1.
+- **Socle HD-2D — bâtiments** : `Building` = volume simple (murs, toit à deux pans) couvert de
+  matières en tuiles de 2 m (`assets/hd2d/buildings/materials/`) et une façade peinte posée sur
+  la face sud ; l'image de façade porte fenêtres et portes, la lueur des fenêtres est détectée
+  par couleur (proche de `glow_color`) dans `panel.gdshader`, pas par une seconde image.
+- **Socle HD-2D — fusion des draw calls** : `PropBatcher` (déjà dans `Geometry`) fond au
+  lancement les MeshInstance3D qui portent un `material_override` en un mesh par image et par
+  case (« Batch… ») ; mesure (`tools/hd2d_shots.sh`) : 32 à 70 draw calls selon la vue (menu
+  38, cour de l'entrepôt 50, entrepôt de face au zoom le plus large 70, bois 51, Couchant 32,
+  port 39, colline 50, conversation 53, veille 44), budget 200 ; 43 à 67 dans le navigateur.
+- **Socle HD-2D — sol** : les douze tuiles (384 × 384, 4 m) sont réunies dans un atlas
+  (`ground_atlas.png`, 4 × 3) plutôt qu'un Texture2DArray (`sampler2DArray` est fragile en
+  Compatibility / WebGL 2 et son import n'a pas d'équivalent texte simple) ; le shader tire une
+  tuile par pixel d'art (48 par mètre) et trame les bords des masques (Bayer 4 × 4), sans
+  mélange flou. Les masques (chemins, cour, rue, marais, cercle de veille) restent calculés dans
+  le shader, recopiés de MONDE.md section 2.
+- **Socle HD-2D — falaises** : la roche sous l'île garde son maillage calculé (`island_rock.gd`,
+  forme, pas apparence) mais prend trois images (lèvre herbeuse, falaise, dessous) en UV de
+  mètres (périmètre, couture au nord) ; brouillard tramé en quatre paliers vers le bas.
+- **Socle HD-2D — caméra fixe** : tangage 32°, champ 30°, distance 21 m (zoom 14 à 25 m,
+  molette ou stick droit), retard de suivi (5 par seconde) et avance de 0,25 s sur la vitesse,
+  limites Rect2(-64, -66, 128, 128), visée du verrouillage entre joueur et cible (40 %, 5 m au
+  plus) sans tourner ; `yaw()` vaut 0 et `forward()` le nord : les commandes sont relatives à
+  l'écran. `recenter_behind` ne fait plus rien ; `snap_behind` recale sans avance (respawn).
+- **Socle HD-2D — post-traitement** : un `CanvasLayer` `PostFX` (couche −1, sous l'interface en
+  couche 1) dans `camera_rig.tscn`, un ColorRect et un shader canvas_item (`post_fx.gdshader`) :
+  flou de profondeur par bandes de l'écran (tilt-shift, 12 échantillons de Poisson : net au
+  centre, 5 px en haut, 2,5 px en bas), lueur au-dessus de 0,86, étalonnage chaud, contraste,
+  saturation, vignette. Pas de profondeur lue : les bandes suffisent avec une caméra fixe et
+  restent bon marché en WebGL 2. Le menu et les captures sans joueur ne l'ont pas.
+- **Socle HD-2D — lumières** : les lampes de cristal et le portail de la palissade portent une
+  OmniLight3D chaude (portée 5 à 6 m, sans ombre) ; pas de draw call de plus en Compatibility
+  tant qu'elles restent peu nombreuses par vue. Soleil 0,75, ambiance lavande chaude, brouillard
+  orangé.
+- **Socle HD-2D — pierres de l'anneau** : 58 × 20 px (0,6 × 0,2 m), pour que le cercle de veille
+  ne bloque ni la vue ni les tests de veille (rien de plus haut que 0,3 m dans le cercle).
+  Passerelle du port : un `Building` plat (pont) et la rambarde en panneau ; belvédère de la
+  colline : image décalée (`image_offset`) derrière sa collision.
+- **Socle HD-2D — fond du menu** : `main_menu_backdrop.gd` découpe le ciel peint, les îles
+  lointaines, les dunes et des feuilles qui volent dans les mêmes images que le jeu, au plus
+  proche voisin.
+- **Socle HD-2D — tests de marche** : avec la caméra fixe, « W après set_aim_direction » ne
+  marche plus vers la cible ; les tests passent par `hold_toward()` / `release_move()`
+  (`m1_game_test.gd`) et `walk_aim_until()` / `hold_aim()` (`m2_game_test.gd`), et le navigateur
+  par `window.wordendAim` (posé par `src/test_shortcuts.gd`) d'où `tools/web_m2.js` tire les
+  touches à tenir.
+- **Socle HD-2D — budget de l'export** : `tools/check.sh` appelle `tools/build_size.sh` après
+  l'export et passe au rouge au-delà de 25 Mo compressés (`test_export_web.gd` le vérifie) ;
+  mesure : 12,4 Mo compressés (40,8 Mo bruts) contre 18,4 Mo avant le socle.
+- **Socle HD-2D — portraits** : les portraits de remplacement restent à 128 px (tête agrandie
+  ×2) ; le cahier des charges demande 256 px pour les vrais (H6), la boîte de dialogue les met à
+  l'échelle.
+- **Socle HD-2D — contrats changés** (PLAN.md section 3) : structure de `camera_rig.tscn`
+  (`CameraRig` > `Camera3D` + `PostFX/Screen`, plus de `SpringArm3D`) et API de `CameraRig`
+  (mêmes noms, sens « fixe ») ; `SkinData.mesh_scene` et la variante mesh de `CharacterVisual`
+  retirés ; nouvelles classes `DecorPanel` et `Building` ; règle du décor en images (CLAUDE.md) ;
+  `tools/check.sh` fait respecter le budget de taille. Ni `project.godot`, ni `event_bus.gd`, ni
+  les couches de collision ne changent.
+- **H1 — fusion des livraisons d'images (PR n° 2 et 3 de ChatGPT/Codex)** : `main` (7227cf1 puis
+  f7933e6) est fusionnée dans la branche HD-2D, qui fait foi pour le code, les outils, les docs,
+  les données et `export_presets.cfg` ; seules entrent dans l'arbre les images aux chemins du
+  cahier des charges et les planches des personnages de l'acte 1. Restent dans l'historique de
+  `main` (`git show f7933e6:<chemin>`, ou `git checkout f7933e6 -- <chemin>` pour les reprendre) :
+  `assets/source/**` (natifs, 380 Mo), `docs/sprites/**` (galeries, `LIVRAISON_*.md`, aperçus),
+  `assets/sprites2d/**` (trois grandes images d'aperçu : directions de Nygglatho et de Tiat, cour
+  du village), `data/visuals2d/**`, `scenes/dev/**`, `scenes/hd2d/**` (promenade de l'ancienne
+  version), `tools/sukasuka2d/**` (galeries et paquets ZIP, sans usage dans le jeu),
+  `tools/sukasuka3d/**`, `tools/hd2d_priority*_manifest.json`, `tools/hd2d_library_check.gd`, les
+  skins `sukasuka_*`, `docs/ASSETS_3D.md`, les changements de code faits pour la version 3D, et les
+  35 personnages des actes suivants (`almaria`, `ballman`, `baroni`, `bibliothecaire`,
+  `bird_soldier`, `bitora`, `cat_soldier`, `doctor`, `ebon_candle`, `ebon_candle_ancient`,
+  `ecluecla`, `elq`, `enfant`, `forgeron`, `frog_soldier`, `glick`, `godrey`, `golem`,
+  `hawk_soldier`, `illustote`, `jorget`, `kaya`, `knight_canine`, `knight_feline`, `lillia`,
+  `phyr`, `police_golem`, `rabbit_soldier`, `rinsha`, `sarya`, `suowong`, `suowong_young`,
+  `tilfey`, `willemia`, `wolf_soldier`) : l'export Web doit rester sous 25 Mo.
+- **H1 — images de décor livrées** : 95 des 96 images du manifeste prises telles quelles ;
+  `ring_stone` garde son remplaçant (pierre plate de 20 cm : rien ne dépasse 0,3 m dans le cercle
+  de veille) ; `distant_island_b` recadrée sur le bord bas (`fit`) ; `distant_island_b` et `_c`
+  débarrassées des îles « fantômes » lavande détachées autour de l'île (composantes bleutées
+  effacées, le reste intact) ; atlas du sol refait. Icônes d'objets : `flower_blue`,
+  `page_fragment`, `unknown` livrées à leur nom ; `berries`, `gear` et `cloth`, livrées sous les
+  noms de l'ancienne liste d'objets, deviennent `wild_berries`, `clock_gear` et `laundry_sheet`.
+- **H6 — trois vues par planche** (`SkinData.front_sheet`/`front_json`, `back_sheet`/`back_json`,
+  facultatives ; `SheetLoader.SIDE`/`FRONT`/`BACK`, `has_view`, `view_problem`, `view_texture`,
+  `view_json`, `frames_for(skin, view)` ; `CharacterVisual.current_view()`) : le profil
+  (`sprite_sheet` + `frames_json`, tourné vers la droite, en miroir pour la gauche) reste la
+  planche de référence et la seule vue des planches de l'easter egg et des remplaçants. La vue
+  suit la direction par rapport à la caméra fixe : à plus de 45° de l'axe gauche-droite de
+  l'écran, la face (vers le bas de l'écran) ou le dos (vers le haut), sinon le profil, avec une
+  zone morte de ± 10° (on ne quitte une vue qu'une fois la diagonale franchement passée). Une vue
+  n'est prise que si elle a exactement les animations, nombres d'images, cadences, boucles,
+  « coup » et « onde » du profil : l'horloge, les signaux et le combat ignorent la vue affichée,
+  et changer de vue n'émet rien. Taille d'un pixel par vue : la hauteur debout du profil est
+  gardée (Chtholly de face, dessinée à 130 px au lieu de 144, est agrandie de 11 %). Ombre :
+  celle du profil.
+- **H6 — ancres des planches livrées** (`tools/hd2d_sheets.py anchors`) : les ancres calculées
+  par Codex (« à revoir ») faisaient glisser les pieds (jusqu'à 50 px d'une image à l'autre de
+  face) ; elles sont recalculées : pieds sombres (ou alpha pour Nopht et le Timere) cherchés près
+  de l'axe du corps pour les images debout, images immobiles (repos, parle) recalées sur la 1re
+  image de repos par superposition des jambes, y sous les pieds. Chtholly et le Timere gardent les
+  ancres revues à l'œil avant ce recalage ; le dos de Ramikeldi et du boulanger (une queue ou un
+  bras cache un pied) est recalé sur le buste (`anchors --torso`, clé `torso` du manifeste).
+  Planches de contrôle : `python3 tools/hd2d_sheets.py strip`.
+- **H6 — « parle » à une autre échelle** : dans 13 vues (boulanger, serveur, passeur, Nephren,
+  vendeur du snack et Tiat de profil ; Nephren et Tiat de face ; marchande d'œufs, Limeskin,
+  Nygglatho et Tiat de dos ; Limeskin de profil), « parle » est dessinée 6 à 36 % plus petite ou
+  plus grande que « repos » : le personnage rapetissait en se mettant à parler. Ces vues jouent
+  les images de « repos » à la cadence de « parle » (`hd2d_sheets.py alias parle repos`) jusqu'à
+  ce que les dessins soient refaits (liste dans le manifeste, clé `aliases`). Willem n'a pas de
+  « parle » : il garde « repos » en conversation.
+- **H6 — PNJ et skins branchés** : les 17 PNJ de l'acte 1 (`data/npcs/visuals/`) et les skins
+  Nopht et Rhantolk prennent les planches livrées en trois vues ; Ithea et Nephren deviennent
+  jouables (`data/skins/ithea_soldier.tres`, `nephren_soldier.tres`, mêmes planches que leur PNJ,
+  sept animations de combat) sous un autre id que leur PNJ : la limite connue demeure (leur PNJ
+  reste présent quand on les joue, les cacher rendrait leurs quêtes impossibles ; à trancher avec
+  l'histoire). Les planches des PNJ non jouables sont réduites aux animations du cahier (3.2 :
+  repos, marche, parle ; `hd2d_sheets.py trim`) : la `course` livrée en plus et le combat de Willem
+  (qui n'est pas jouable) sortent de l'arbre (planches complètes dans `main`, f7933e6), 1,3 Mo de
+  moins dans l'export ; la marche, que les PNJ ne jouent pas encore, reste (ses défauts d'échelle
+  ne sont que signalés). `tests/unit/test_npc.gd` (L6) demandait aux visuels de PNJ les sept
+  animations de combat des anciennes silhouettes ; il suit désormais le cahier.
+- **H1 — mesures** : export Web 23,5 Mo compressés (12,4 au commit de départ 3fe0c66 ; 24,8 avec
+  les planches complètes des PNJ), budget 25 Mo ; arbre du dépôt 36,7 Mo (8,7 au départ, 465 dans
+  `main` avec les natifs et les galeries). Réserves possibles : les douze tuiles de sol, inutiles
+  à l'exécution (1,1 Mo, docs/CONTRACT_REQUESTS.md), la marche des PNJ (1,4 Mo), l'atlas du sol
+  réduit à 256 couleurs (1,1 Mo).
+- **H2 — découpe du décor autour du joueur** : plutôt qu'un fondu par décor (il faudrait un
+  matériau par bâtiment, donc des draw calls et des images de plus), une découpe tramée (Bayer
+  4 × 4 en pixels d'écran) dans une ellipse autour du corps du joueur (0,8 × 1,1 m) efface tout
+  décor plus proche de la caméra que lui : entrepôt, arbres, draps, palissade. Le nœud
+  `SeeThrough` du village (`see_through.gd`, après `Geometry`) remplace chaque matériau de panneau
+  des meshes fondus par une copie dont le shader est le code de `panel.gdshader` (H5) augmenté au
+  lancement de `see_through.gdshaderinc` : même nombre de matériaux, aucun draw call de plus, et
+  les changements de H5 au panneau sont suivis. Les PNJ ne bougent pas : aucun décor n'est posé
+  devant eux (`test_village_decor.gd` le vérifie pixel par pixel depuis la caméra de leur
+  conversation), la découpe ne suit que le joueur.
+- **H2 — hauteur de l'entrepôt** : murs gardés à 6,5 m et façades à leur taille (les images
+  dessinées livrées dans `main` le sont à cette taille ; consigne de l'orchestrateur) ; le
+  cadrage de l'entrepôt passe par la caméra (H5).
+- **H2 — composition de la cour** : la descente de la salle des armes passe à l'angle sud-est de
+  l'aile (−13,9, −1,35), près de Willem, et laisse voir la porte de l'infirmerie au milieu du
+  pignon ; la seconde corde à linge passe à l'est d'Almita (15,8, 8,6) : elle la cachait, Almita
+  se détache maintenant sur les draps de la première ; la lampe nord-ouest de la place passe au
+  porche (−5,5, −8,7), entre Nygglatho et Nephren ; les parterres de façade, posés dans l'aile,
+  vont le long des murs libres ; les arbres du premier plan restent contre la palissade sud
+  (z ≈ 18 à 19,6) pour encadrer le bas de l'image sans couvrir la cour ; potager en trois rangs,
+  deux buts de deux caisses à l'aire de jeux. Le décor n'utilise que des images partagées ou du
+  village (pas de décor propre aux bois ou au port).
+- **H2 — reprise : composition calée sur les images livrées** (main, PR n° 2 et n° 3, intégrées
+  par H1 aux mêmes chemins et tailles) : porche centré sur la double porte de la façade
+  (x −10,35, il ne peut aller plus à l'ouest sans entrer dans l'aile), poteaux de collision au
+  droit de ceux de l'image et dans son plan ; banc de Nephren sous la fenêtre en saillie
+  (x −4,35) ; descente de la salle des armes à x −13,6, juste à l'est de la porte de
+  l'infirmerie ; poteaux du portail (±1,49 m), du linge (±2,66 m) et margelle du puits (rayon
+  0,8 m) au droit de leur dessin. Les remplaçants encore dans la branche sont décalés de quelques
+  décimètres jusqu'à la fusion de H1. Ces réglages remplacent ceux de la ligne « composition de
+  la cour » pour la descente, les arbres du sud et le banc de l'aire de jeux.
+- **H2 — palissade de profil** : les côtés est et ouest prennent `palisade_side.tscn` (même
+  image, `keep_orientation`, ombre allongée le long de la clôture) : vue de biais, la clôture
+  fuit vers le fond au lieu de s'empiler en escalier de panneaux tournés vers le sud. Le nord et
+  le sud gardent `palisade.tscn` de face.
+- **H2 — arrière de l'entrepôt fermé** : deux modules de palissade (`BackFence`) ferment les
+  couloirs de 2 m entre le L et la palissade (au nord-est du corps principal, au sud-ouest de
+  l'aile). Rien n'y est à voir et la caméra fixe n'y montrait que le toit ; la découpe autour du
+  joueur reste pour les arbres, le porche et les draps.
+- **H2 — premier plan** : un arbre de 7 m contre la palissade sud cache, quand on longe celle-ci,
+  ce qui est 10 à 15 m plus au nord sur la même ligne de visée. Les grands arbres du sud vont donc
+  de part et d'autre du portail sud (sapin x −3,9, rouille x −7,8, jaune x 4,4) et aux coins
+  (x ±19) ; aucun entre x 7 et 17 (il cachait Almita) ni devant l'aire de jeux.
+- **H2 — « pas plus d'une seconde » mesuré** : `test_village_decor.gd` fait marcher la caméra du
+  joueur le long de vingt allées (pas de 1 m) qui balaient la cour ; un PNJ dans la part centrale
+  de l'écran (80 % du champ : au bord, sous le panneau de quête, il revient au centre dès qu'on va
+  vers lui) dont l'axe du corps est caché à 0,25, 0,55 et 0,85 m ne doit pas le rester 4 m d'affilée
+  (une seconde à `walk_speed`). Le message nomme l'image en cause ; le test passe avec les
+  remplaçants et avec les images livrées.
+- **H2 — cheminée** : faite en matières (`warehouse_chimney.tscn`, `Building` 1 × 1 m en
+  `wall_stone` / `roof_slate`, au faîtage, x −7,5) plutôt qu'en image : MONDE.md la veut et le
+  cahier des charges n'en a pas ; elle n'entre dans le cadre que si la caméra montre le toit (H5).
+- **H7 — signes avant l'attaque** : chaque coup et chaque charge d'un Timere passe par un état
+  `windup` (`AttackData.windup` : morsure 0,3 s, fouet 0,35 s, charge 0,4 s ; Grand × 1,5 par
+  `EnemyData.windup_scale`) : posture tassée, éclat au-dessus de la tête, zone exacte de la
+  Hitbox (ou couloir de la charge) au sol (`src/enemies/telegraph.gd`). Pour garder la cadence
+  de l'easter egg, la préparation commence quand la recharge n'en est plus qu'à sa durée : au
+  contact, rien ne ralentit ; seul le premier coup après l'approche attend. La zone suit le
+  joueur pendant la préparation (on s'en sort en reculant, pas d'un pas de côté), puis le coup
+  part dans la direction figée. Pas de son : le jeu n'a pas encore de système audio d'effets.
+- **H7 — effets en sprites** : onde, éclats, crocs, fouet, poussière, coup d'épée au sol,
+  réticule, chevron, ombre nette et signes de préparation sont des images de pixel art à 96 px/m
+  dans `src/combat/fx/` (remplaçants de `make_fx.py`, hors de `assets/hd2d/`, qui est à H1), lues
+  par `CombatFx` ; ce qui dit « où » est une décalcomanie au sol (portée et zone exactes), ce qui
+  dit « quand » un sprite debout. Les éclats et le bord des zones passent devant les corps (sans
+  test de profondeur), la poussière et le remplissage restent derrière. L'onde est un croissant
+  debout tourné vers la caméra (bosse vers où elle file, aussi large à l'écran que sa trace) plus
+  sa trace au sol ; `charge_wave.gdshader` est retiré. Les effets se posent dans la zone, jamais
+  dans `Enemies` ni `Spawned`, dont d'autres systèmes comptent les enfants.
+- **H7 — arrêt sur image et secousse** : chiffres dans `data/attacks` (`hitstop` 0,05 à 0,08 s,
+  `shake` 2,5 à 8 cm) et `EnemyData.strike_shake` (Grand). L'arrêt fige la planche
+  (`process_mode` désactivé, minuteur en temps physique) et retarde le recul du corps touché sans
+  le raccourcir. La secousse décale `Camera3D.h_offset` / `v_offset` (jamais de rotation, le
+  haut de l'écran reste le nord), sans toucher à `camera_rig.*` (H5) : demande d'API dans
+  docs/CONTRACT_REQUESTS.md. Pas de chiffres de dégâts : un éclair de la silhouette exacte du
+  combattant (`HitFlash`, une copie peinte de l'image affichée), crème pour un Timere, rose
+  pour la joueuse.
+- **H7 — corps reconnaissables** : tant que les quatre corps partagent la planche du Timere,
+  `EnemyData.tint` (multiplie la planche) les distingue avec l'échelle ; le bondissant laisse
+  une traînée (poussière, images rémanentes) pendant sa charge, le Grand se prépare plus
+  lentement et fait trembler l'image quand il frappe.
+- **H7 — déplacements en vue fixe** : à moins de 4 m, un Timere vise un point à au moins 30° de
+  l'axe nord-sud du joueur (il arrive par les côtés de l'écran, où l'épée l'atteint encore, au
+  lieu de se cacher derrière ou devant le sprite) ; dans la séparation, un écart nord-sud compte
+  pour 0,7 fois sa longueur, et deux Timeres alignés nord-sud s'écartent de côté.
+- **H7 — ombres nettes** : chaque combattant a sa `GroundShadow` (disque net à la taille du
+  corps, pas du dessin), au-dessus de l'ombre douce du `CharacterVisual`, gardée faute de
+  pouvoir toucher `src/visuals/` (demande dans docs/CONTRACT_REQUESTS.md) ; celle de la joueuse
+  reste au sol pendant un saut. Coût : un draw call par combattant (banc de 12 Timeres au cercle
+  de veille : 97 draw calls contre 66, budget 200).
+- **H7 — vague 5 atteignable** : vérifiée par un joueur automatique qui ne lit que les signes
+  de l'écran (`tests/unit/test_combat_vigil.gd`, vraie partie, rythme réel, 5 PV) : vague 5 en
+  76 à 81 s avec 1 à 3 morsures sur quatre graines ; sans lire les signes, 3 à 6 morsures et
+  parfois la défaite à la vague 4. Le test dure environ 80 s.
+- **H5 — pixel art filtré** : les images du monde (96 px/m) sont plus denses que l'écran
+  (≈ 65 px/m au point visé en 1280 × 720) ; au plus proche voisin et sans mipmaps, elles faisaient
+  du moiré et scintillaient dès que la caméra glissait. Panneaux, murs, toits et roche passent par
+  `src/world/shaders/pixel_art.gdshaderinc` (sampler linéaire) : de près, pixels nets dont seule la
+  frontière est lissée sur un pixel d'écran ; de loin, 2 × 2 échantillons bilinéaires sur
+  l'empreinte du pixel (sans mipmaps : les images importées n'en ont pas, et en créer une copie
+  doublerait leur mémoire). Écart moyen entre deux images à un demi-pixel de caméra (sur 255) :
+  7,7 → 2,4 (bois), 9,1 → 2,9 (colline), 7,9 → 2,3 (cour).
+- **H5 — sol à mipmaps** : `IslandTerrain.mipmapped_atlas()` refait en jeu l'atlas du sol avec ses
+  mipmaps (moyenne 2 × 2 : jamais deux tuiles de 384 px mélangées jusqu'au niveau 7 ; 11 ms, une
+  fois ; l'atlas importé est relâché). Le shader lit `textureLod` au niveau tiré des dérivées
+  continues de la position et prend deux échantillons le long de l'axe étiré par la perspective
+  (anisotrope fait main) : le filtrage anisotrope du pilote, avec le saut de `fract()` d'une
+  tuile à l'autre, débordait sur les cases voisines de l'atlas (lignes à chaque tuile). Les fleurs
+  d'un pixel s'effacent quand un pixel d'art devient plus petit que l'écran.
+- **H5 — tramage du sol** : le tramage au pixel d'écran du travail repris dessinait au loin une
+  grille de points et une couture nette au changement de mode ; de près, l'ordre de Bayer 4 × 4
+  semait une grille régulière (10 % de touffes vertes sur toute la colline, 30 % dans les taches
+  d'herbe sèche). Les masques se calculent une fois (`ground_masks`), la tuile se choisit pour un
+  seuil (`pick_layer`) : de près, un seuil par pixel d'art tiré d'un bruit entier (brins épars,
+  plus de grille ; le style « une tuile par pixel d'art » du socle reste) ; au loin (plus de deux
+  pixels d'art par pixel d'écran), la moyenne des tuiles de quatre seuils décalés par un bruit
+  d'écran, masques lus à la position continue : un mélange sans grain ni escalier ; entre les
+  deux, un fondu. Une tuile n'est lue qu'une fois par pixel (la même tuile pour deux seuils n'est
+  pas relue).
+- **H5 — cadrage des façades** (demande de l'orchestrateur : l'entrepôt garde ses murs de 6,5 m et
+  son faîtage de 9 m) : avec 32° de tangage et 30° de champ, le haut de l'écran passe à 6,5 m
+  au-dessus du joueur et plus bas derrière lui. Devant la façade sud d'un `Building` (groupe
+  `Building.GROUP`, ajouté) à moins de 18 m au nord du joueur et dans le champ, la caméra garde sa
+  place et lève les yeux (tangage jusqu'à 24°) juste assez pour que le haut du mur + 0,4 m (le
+  bas du toit) tienne dans le cadre, les pieds du joueur au-dessus de 85 % de l'écran ; si cela ne
+  suffit pas, elle recule du moins possible (jusqu'à 29 m) ; lissage 2,5/s. Calcul exact par les
+  angles (quelques arcs tangentes par image, dichotomie pour le recul) au lieu d'une double
+  boucle de recherche. La demande d'une façade naît sur son premier mètre et s'éteint sur les 4
+  derniers mètres de la portée et les 3 derniers du champ : aucun saut de plus de 1,5° par quart
+  de mètre (testé). Lever les yeux garde la taille des personnages (un recul de 29 m les
+  réduisait à 72 %) : cour de l'entrepôt 24,6°, vue du village 25,5°, porche 27°, rue du Port
+  27,5°, toujours à 21 m ; au Spawn (20 m de la façade) et là où l'on se bat (veille, bois),
+  32°. Le faîtage entier (9 m, 4 m derrière la façade) demanderait un recul de 25 à 29 m depuis
+  la cour : il n'est pas visé, seul le bas du toit l'est.
+- **H5 — cadrage en conversation** : le cadrage d'une façade met les pieds du joueur vers 80 % de
+  la hauteur de l'écran, sous la boîte de dialogue (bas 30 %) ; entre `EventBus.dialogue_started`
+  et `dialogue_ended`, la caméra garde les pieds au-dessus de 65 % de l'écran et ne recule pas
+  (la façade peut être coupée) : le joueur et son interlocuteur restent au-dessus de la boîte.
+- **H5 — distance de la caméra** : à 21 m et 30° de champ, l'écran montre 11,25 m de haut au point
+  visé : en 1920 × 1080, 96 px par mètre, la densité des images ; les planches s'affichent au
+  pixel près en plein écran HD (en 1280 × 720, aux deux tiers). On garde 21 m.
+- **H5 — bornes de la caméra** : `limits` = Rect2(−71, −70, 142, 136) (au lieu de −64…64) : au bord
+  du Couchant (x = −77) le joueur restait à 13 m du centre, au bord de l'écran ; il en est
+  désormais à 6 m au plus et l'on voit la lèvre, la falaise et la mer de nuages.
+- **H5 — flou de profondeur** : la bande nette va de 4,5 m devant le joueur à 9 m derrière lui,
+  projetés par la caméra à chaque image (`focus_center`, `focus_half` de post_fx.gdshader) : le
+  joueur et ceux qui l'entourent ne sont jamais flous, même décentrés (retard, avance,
+  verrouillage, bornes, cadrage d'une façade). Le flou lit les mipmaps de l'image
+  (`hint_screen_texture, filter_linear_mipmap`, que le rendu Compatibility floute lui-même) :
+  quatre lectures en croix au lieu de douze, rayon continu (5,5 px en haut, 2,5 px en bas) ; la
+  lueur lit deux niveaux (3 et 5) au-dessus d'un seuil de 0,7. Le matériau est copié par chaque
+  caméra.
+- **H5 — étalonnage** : en plus de la teinte chaude, du contraste, de la saturation et de la
+  vignette : virage des ombres vers le lavande et des hautes lumières vers l'or (12 %), voile de
+  brume pêche en haut de l'écran (le lointain) et lumière du couchant au bord gauche (l'ouest).
+- **H5 — réglages de lumière** : `HD2DLighting` (`src/world/materials/hd2d_lighting.gd`) réunit
+  soleil, ambiance, brouillard, ciel, mer de nuages, lanternes et étalonnage ;
+  `lighting_sunset.tres` (valeurs d'island.tscn et de post_fx.gdshader, testé),
+  `lighting_dusk.tres`, `lighting_night.tres` (lune froide à l'est-sud-est, lanternes × 2,2) ;
+  `apply(island)` les pose sur des copies (environnement, mer de nuages, matériau de la caméra).
+  Le nœud `Lighting` d'island.tscn (`day_phase_lighting.gd`) les pose sur
+  `EventBus.day_phase_changed` (contrat existant : evening → crépuscule, night → nuit, morning et
+  day → couchant) ; rien ne l'émet encore : l'acte 1 reste au couchant, la promesse de nuit sur
+  la colline (M3) n'aura qu'à l'émettre. Les planches des personnages ne sont pas éclairées : chaque
+  réglage porte leur teinte (`sprite_tint`, nuit 0,6 / 0,66 / 0,86), rendue par
+  `HD2DLighting.active_sprite_tint()` pour H6 (CONTRACT_REQUESTS).
+- **H5 — ombres et brume** : l'ombre des panneaux (fx/shadow.png, presque opaque) est ramenée à
+  55 % au cœur, poussée et allongée de 12 % vers l'est (le couchant à l'ouest) ; le brouillard de
+  hauteur passe à 0,015 par mètre sous −8 m (0,04 sous −6 m) : la mer de nuages se voit sous la
+  brume au bord de l'île au lieu d'un aplat rose.
+- **H5 — mesures** (VM partagée entre plusieurs agents, rendu logiciel : chiffres relatifs) :
+  écart moyen entre deux images à un demi-pixel de caméra (sur 255, `build/h5/shimmer.gd`) :
+  village 7,9 → 2,0, entrepôt 7,4 → 2,0, bois 7,7 → 2,1, Couchant 6,2 → 2,1, port 8,0 → 2,6,
+  colline 9,1 → 2,4. Draw calls (`tools/hd2d_shots.sh`) : menu 38, cour 93 (50 au départ : la
+  caméra qui lève les yeux montre la façade et les arbres derrière), entrepôt 79, bois 51,
+  Couchant 32, port 52, colline 50, conversation 66, veille 45 ; budget 200. Chromium headless
+  (`tools/web_m2.js … zones`, Spawn de chaque zone, deux paires départ / H5) : 0,27 à 0,52
+  image/s des deux côtés, sans écart au-delà du bruit. Banc A/B dans un seul processus (Xvfb,
+  llvmpipe, shaders du départ et de H5 échangés à chaud) : le post-traitement de H5 coûte moins
+  (quatre lectures dans les mipmaps contre douze), le sol et les panneaux filtrés coûtent plus ;
+  au total, de −1 % à +9 % selon la vue. Sur un vrai GPU, ces lectures de texture ne pèsent rien.
+- **H1 bis — fusion des corrections d'images (PR n° 4, `main` deca738)** : la branche HD-2D fait
+  foi pour le code, les outils et `.gitattributes` (la ligne ajoutée pour les galeries n'a pas
+  d'objet sans elles) ; entrent les images et JSON corrigés d'Ithea, de Nephren, de Nygglatho,
+  Lakhesh, Collon, Pannibal et Limeskin (trois vues et portraits), des profils du serveur et du
+  boulanger, des îles lointaines B et C et de l'enduit crème. Restent dans l'historique de `main`
+  (`git show deca738:<chemin>`) : `docs/sprites/**` (dont `CORRECTIONS_ASSETS.md`, galeries
+  autonomes, aperçus des attaques), `assets/source/**`, `tools/sukasuka2d/**` (dont
+  `make_asset_review.py`), `tools/hd2d_weapon_preview.gd`, `tests/tools/test_prepare_delivery.py`
+  et le chevalier félin (actes suivants).
+- **H1 bis — pipeline de H1 repassé** : ancres recalculées sur les 23 vues corrigées (Collon par
+  le bas de la silhouette, `--feet alpha`, clé `feet` du manifeste : son nouveau bandeau rouge
+  était pris pour ses pieds) et revues sur planches de contrôle ; planches des PNJ réduites à
+  repos, marche et parle. Règle de l'alias `parle` → `repos` rendue explicite : un écart de plus
+  de 6 % (`STANDING_TOLERANCE`) entre une image de `parle` et la 1re de `repos` (elle redonne
+  exactement les 13 vues de H1 sur les planches de f7933e6). Retiré : boulanger de profil,
+  Nygglatho et Limeskin de dos (redessinés à la bonne taille) ; gardé : serveur, passeur, vendeur
+  du snack et Limeskin de profil, Nephren de profil et de face, Tiat, marchande d'œufs de dos ;
+  ajouté : Nygglatho de profil (115 %), Limeskin de face (108 %), Lakhesh de face (106 %),
+  redessinés plus grands par la PR n° 4.
+- **H1 bis — profil de Pannibal toléré** : la PR n° 4 l'a redessiné (épée de bois, brindille) à
+  111 px au lieu de 120, alors que la face et le dos font 118 et 120 px. Garder l'ancien profil
+  ferait apparaître et disparaître l'épée quand il se tourne ; agrandir l'image abîmerait le
+  pixel art. Nouvelle clé `accepted` du manifeste (`{"side": ["height"]}`) : `hd2d_sheets.py
+  check` en fait une remarque tant que l'écart reste sous 12 % ; le jeu garde 1,25 m (pixels
+  8 % plus gros de profil) et met la face et le dos à la hauteur du profil. Dans la liste des
+  images à refaire (`docs/ASSETS_HD2D.md` section 12, nouvelle).
+- **H1 bis — mesures** : export Web 23,7 Mo compressés (wasm 9,7 + pck 14,0 ; 23,5 à la fin de
+  H1), budget 25 Mo ; arbre du dépôt 37,2 Mo (36,7 à 667fd4e) : les planches corrigées sont un peu
+  plus lourdes (Ithea, Limeskin), les PNJ restent réduits à repos, marche et parle.

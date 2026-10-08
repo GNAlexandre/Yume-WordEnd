@@ -1,7 +1,9 @@
 [gd_resource type="ShaderMaterial" format=3]
 
 [ext_resource type="Shader" path="res://src/world/shaders/terrain.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/ground/atlas/ground_atlas.png" id="2_atlas"]
 
 [resource]
 resource_name = "terrain"
 shader = ExtResource("1_shader")
+shader_parameter/ground_atlas = ExtResource("2_atlas")

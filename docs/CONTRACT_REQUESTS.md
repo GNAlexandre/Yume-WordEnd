@@ -144,3 +144,199 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 - L10, boutons de manette pour `ui_accept` / `ui_cancel` : refusée ; le contournement
   (`src/ui/main_menu_input.gd`) est gardé et appliqué à l'inventaire (docs/DECISIONS.md,
   section « Intégration M2 »).
+
+## Lot Q — bouton tactile du journal de quêtes
+- Besoin : le journal de quêtes (action `journal` : Tab, L, bouton Select / Back) n'a pas de bouton
+  tactile ; sur téléphone, il ne s'ouvre pas.
+- Proposition : dans `src/ui/touch_controls.tscn` (L9), un bouton « Journal » à côté de « Sac »
+  (même contexte : visible aussi en pause pour le refermer), qui émet l'action `journal`.
+- En attendant : le journal s'ouvre au clavier et à la manette ; le HUD rappelle « Tab / Select »
+  quand plusieurs quêtes sont actives.
+
+## Lot Q — rappel des commandes du menu pause
+- Besoin : l'écran « Commandes » du menu pause (`src/ui/pause_menu.gd`, L10) ne cite pas le
+  journal de quêtes.
+- Proposition : une ligne `["Journal de quêtes", "Tab ou L", "Select"]` dans `CONTROLS`, après
+  « Sac ».
+- En attendant : docs/QUETES.md et le pied du journal citent ses touches.
+
+## Systèmes et textes — `{player}` dans `src/ui/journal.gd`
+- Besoin : le journal affiche les textes de quête tels quels ; `journal.gd` est hors du périmètre
+  du lot.
+- Proposition : dans `journal.gd`, passer `quest.title`, `quest.summary`, `step.objective` et
+  `step.hint` par `DialogueRunner.format_text`, puis retirer `src/ui/hud_journal.gd` et sa ligne
+  `script = …` de `hud.tscn`.
+- En attendant : `src/ui/hud_journal.gd` (sous-classe posée sur `HUD/Journal`) le fait après
+  chaque mise à jour du détail ; testé par `tests/unit/test_player_name.gd`.
+
+## Systèmes et textes — la quête des pages et les drops
+- Besoin : les corps de Timere ne lâchent plus rien (HISTOIRE.md, sections 3.2 et 7.2), mais
+  `tests/integration/test_m2_quest.gd` (contenu) joue encore `pages` avec quatre pages lâchées, et
+  `data/quests/pages.json` en demande cinq quand trois seulement sont posées.
+- Proposition : le contenu de l'acte 1 remplace `pages` par `picture_book` (cinq pages posées) et
+  réécrit ce test ; l'aide de `tests/data/quests/demo_tour.json` (« Les Timeres de la forêt en
+  lâchent… ») peut devenir « Des pages traînent dans la clairière. ».
+- En attendant : ce test seul échoue dans la branche « Systèmes et textes ».
+
+## Intégration acte 1 — suite donnée aux demandes
+- Lot Q, rappel des commandes du menu pause : faite (`src/ui/pause_menu.gd`, ligne « Journal de
+  quêtes » : Tab ou L, Select ; le panneau « Commandes » tient toujours dans 1280 × 720).
+- Systèmes et textes, la quête des pages et les drops : satisfaite par le contenu de l'acte 1
+  (`picture_book`, cinq pages posées ; `test_m2_quest.gd` joue `act1_main`) ; l'aide de
+  `tests/data/quests/demo_tour.json` dit « Des pages traînent dans la clairière. ».
+- Lot Q, bouton tactile du journal : toujours ouverte (L9) ; au toucher, le HUD montre la quête
+  suivie et son objectif, mais le journal ne s'ouvre pas.
+- Systèmes et textes, `{player}` dans `src/ui/journal.gd` : toujours ouverte ;
+  `src/ui/hud_journal.gd` reste la solution (testée par `test_player_name.gd`).
+
+## H1 / H6 — trois vues dans les contrats (PLAN.md sections 3 et 5)
+- Besoin : `SkinData` a quatre propriétés facultatives de plus (`front_sheet`, `front_json`,
+  `back_sheet`, `back_json`), `SheetLoader` les constantes `SIDE` / `FRONT` / `BACK` et
+  `view_texture`, `view_json`, `has_view`, `view_problem`, `frames_for(skin, view)`,
+  `read_sheet(skin, view)`, `pixel_size(skin, sheet, view_sheet)`, et `CharacterVisual`
+  `current_view()` ; l'interface existante est inchangée (`test_contracts.gd` vert).
+- Proposition : à la prochaine PR « contrats », ajouter ces noms aux lignes `SkinData`,
+  `SheetLoader` et `CharacterVisual` de PLAN.md section 3, et à la section 5 (« Comment les
+  sprites 2D vivent… ») : trois vues par personnage, vue choisie selon la direction à l'écran.
+- En attendant : documentés dans `src/visuals/*.gd` et docs/DECISIONS.md (H6).
+
+## H1 — marge du budget de l'export Web
+- Besoin : avec les images livrées, l'export pèse environ 23,5 Mo compressés sur 25 ; les douze
+  tuiles de sol (`assets/hd2d/ground/*.png`, 1,1 Mo une fois importées) partent dans l'export alors
+  que le jeu ne lit que l'atlas (`ground/atlas/ground_atlas.png`).
+- Proposition (PR « contrats », `export_presets.cfg`) : ajouter `assets/hd2d/ground/*.png` à
+  `exclude_filter` (l'atlas est dans un sous-dossier ; les démos et les tests lisent les tuiles
+  depuis les sources) ; autre réserve : l'atlas (2,4 Mo importé) ne profite pas de la palette de
+  chaque tuile (768 couleurs en tout) et gagnerait 1,1 Mo réduit à 256 couleurs.
+- En attendant : rien ; `tools/check.sh` mesure l'export à chaque passage.
+## H2 — chemin du porche (H5, masques du sol)
+- Besoin : rien au sol ne mène de la cour au porche de Nygglatho (premier objectif de l'acte 1,
+  « Rejoindre Nygglatho sous le porche ») : on y va par l'herbe ; un chemin de terre guiderait
+  l'œil vers elle.
+- Proposition : un segment de plus dans `PATHS` de `src/world/shaders/terrain.gdshader`, du bord
+  de la cour aux marches du porche (centré sur la porte depuis la reprise : x −10,35) :
+  (−6,4, −6,4) → (−10, −8,8), même demi-largeur que les autres chemins. Le décor du village
+  laisse ce couloir libre (`test_village_decor.gd` : abord de Nygglatho).
+- En attendant : la lampe à cristal du porche (entre Nygglatho et Nephren) et les parterres
+  encadrent l'abord.
+
+## H2 — découpe autour du joueur pour toutes les zones (H5)
+- Besoin : la découpe du village (`src/world/zones/village/see_through.gd`) fabrique au
+  lancement une copie de `panel.gdshader` augmentée de `see_through.gdshaderinc` ; le port et
+  les bois en auraient besoin aussi (rue, grands sapins), et une seule source serait plus sûre.
+- Proposition : H5 inclut la découpe dans `panel.gdshader` (uniformes `see_through_*`, ligne
+  d'effacement à la fin de `fragment()`) et un nœud commun (ou `PropBatcher`) pose le centre sur
+  le joueur à chaque image ; `see_through.gd` ne ferait plus que poser les uniformes, ou
+  disparaîtrait.
+- En attendant : la copie suit le code de `panel.gdshader` (fonction `fragment()` augmentée au
+  lancement) ; `test_village_decor.gd` vérifie que l'ajout se fait, compile et garde tous les
+  uniformes du panneau.
+
+## H2 — cheminée et terrasse à linge de l'entrepôt (H1, images)
+- Besoin : MONDE.md (sections 2.2 et 3) cite la cheminée de briques qui fume et la terrasse à
+  linge du toit (`warehouse_roof_deck`), absentes de `docs/ASSETS_HD2D.md` et de
+  `tools/hd2d_manifest.json`.
+- Proposition (section 7, priorité 3) : `assets/hd2d/props/warehouse_roof_deck.png`, 576 × 154 px
+  (6 × 1,6 m) : terrasse plate vue de face, plancher, rambarde de fer basse (0,9 m, à hauteur de
+  fée), cordes et deux draps blancs ; H2 la pose sur le toit de `warehouse_main` (panneau sans
+  collision). Facultatif : `assets/hd2d/fx/chimney_smoke.png`, 96 × 192 px, panache de fumée
+  pâle en pixel art.
+- En attendant : la cheminée est faite en matières (`src/world/props/warehouse_chimney.tscn`,
+  `Building` en `wall_stone` et `roof_slate`, au faîtage) ; pas de terrasse. Avec la caméra
+  actuelle le toit sort du cadre dès qu'on est dans la cour.
+
+## H2 — une vue de la cour dans `tools/hd2d_shots.sh` (H8)
+- Besoin : les vues `village` (−5, −2,5) et `dialogue` cadrent le quart nord-ouest ; le grand
+  arbre, le linge, le potager et l'aire de jeux n'y entrent pas.
+- Proposition : une vue `cour` depuis le Spawn du village (0, 9), qui montre le puits, les deux
+  cordes à linge, le potager, les bancs et l'entrée des chemins ; éventuellement une vue
+  `arbre` (9, −8) pour le grand arbre, la balançoire et la remise.
+- En attendant : captures faites à part par H2 (planches `build/shots/h2_avant_apres_*.png`).
+
+## H2 — battants du portail de la palissade (H1, image livrée)
+- Besoin : dans `assets/hd2d/props/palisade_gate.png` livrée (PR n° 3), les deux battants sont
+  dessinés entrouverts au milieu du portail : le passage dessiné ne fait qu'un mètre (x −0,52 à
+  +0,54 m de l'ancre) alors que le chemin fait 3 m et que la collision laisse 2,5 m entre les
+  poteaux (±1,49 m, au droit des poteaux dessinés). On traverse les battants en passant.
+- Proposition : redemander l'image, 384 × 288 px, « portail de bois à deux montants et linteau,
+  lanterne de cristal suspendue, battants grands ouverts rabattus contre les montants (passage
+  libre de 2,5 m au moins entre eux) ».
+- En attendant : collision aux seuls poteaux ; `test_village_decor.gd` garde 1,2 m libres de part
+  et d'autre de l'axe de chaque portail.
+
+## H2 — cour de l'entrepôt et caméra (H5)
+- Besoin : `test_village_decor.gd` lit `pitch_deg`, `fov_deg`, `distance` et `focus_height` dans
+  `camera_rig.tscn` pour vérifier qu'aucun PNJ ne reste caché en marchant
+  (`test_no_npc_stays_hidden_while_walking_the_yard`) ; un autre cadrage déplace ce que cachent
+  les arbres du premier plan.
+- Proposition : après un changement de cadrage, relancer
+  `tools/test.sh tests/unit/test_village_decor.gd` ; le message nomme le PNJ, l'image du décor en
+  cause et la place du joueur, à corriger dans `village.tscn` (H2). La cheminée
+  (`WarehouseChimney`, faîtage à 10,1 m) n'apparaît que si le cadrage montre le toit.
+- En attendant : vérifié avec la caméra du socle (32°, 30°, 21 m) et les images livrées.
+## H7 Combat — secousse de l'écran dans `CameraRig` (H5)
+- Besoin : la secousse et l'arrêt sur image sont réglés pour la caméra fixe, mais
+  `src/player/camera_rig.*` est à H5 : `CameraRig` n'a pas d'API de secousse.
+- Proposition : `CameraRig.shake(strength_m: float, direction: Vector3)` (décalage amorti, sans
+  rotation, borné), que `ScreenShake` appellerait ; ou la règle « `Camera3D.h_offset` et
+  `v_offset` appartiennent au combat » écrite dans PLAN.md section 3.
+- En attendant : `src/combat/screen_shake.gd` (nœud `Combat/ScreenShake` du joueur) décale
+  `Camera3D.h_offset` / `v_offset` de la caméra courante, que `CameraRig` ne règle pas (il ne pose
+  que `global_transform`) ; il ne rend à zéro qu'un décalage qui est encore le sien. Si H5 se
+  sert de ces décalages (cadrage, verrouillage), passer la secousse par son API.
+
+## H7 Combat — ombre des personnages (`src/visuals/`, H6 et l'intégration des planches)
+- Besoin : des ombres au sol nettes sous les combattants ; l'ombre du `CharacterVisual`
+  (« Shadow », dégradé doux) ne se voit presque pas sur le sable et l'herbe, mais `src/visuals/`
+  n'est pas à H7.
+- Proposition : quand `CharacterVisual` sera repris, garder une seule ombre par personnage : soit
+  l'ombre du Visual prend l'image nette `src/combat/fx/shadow.png` (cœur sombre, bord net, rien
+  qui dépende du dessin), soit elle s'efface sous un combattant qui a la sienne.
+- En attendant : les combattants ont leur `GroundShadow` (`CombatFx.make_shadow`), à la taille de
+  leur corps (capsule × `EnemyData.scale`), posée juste au-dessus de l'ombre douce, qui reste là ;
+  celle du joueur reste au sol pendant un saut.
+
+## H7 Combat — marqueur de cible du HUD
+- Besoin : le verrouillage se lit maintenant au sol (réticule `Combat/LockRing` sous la cible,
+  chevron `Combat/AimMarker` devant le joueur) ; le triangle du HUD (`hud.gd`,
+  `_update_lock_marker`, L10) se pose à la hauteur de la tête et peut cacher l'éclat de
+  préparation du Timere verrouillé.
+- Proposition : relever le triangle de 0,2 m (`_marker_height` : `height_m × scale + 0.5`), ou le
+  retirer au profit du réticule au sol.
+- En attendant : l'éclat de préparation se pose à 85 % de la hauteur du corps, sous le triangle.
+## H5 — les planches des personnages scintillent encore
+- Besoin : les `AnimatedSprite3D` des personnages et des Timeres (`src/visuals/`, H6 ; Timeres :
+  H7) restent au plus proche voisin ; une planche de 144 px s'affiche sur ~97 px en 1280 × 720 :
+  leurs pixels sautent quand ils marchent ou que la caméra glisse, comme le décor avant H5.
+- Proposition : un `material_override` (ShaderMaterial, `render_mode unshaded` ou éclairé, alpha
+  découpé, billboard Y) qui échantillonne la planche par `pixel_art()` de
+  `src/world/shaders/pixel_art.gdshaderinc` (sampler `filter_linear`), et pour l'ombre,
+  `DecorPanel.shadow_material()` / `shadow_mesh()` (même tache douce que le décor, 55 %).
+- En attendant : rien dans `src/visuals/` ; le décor et le sol sont traités.
+
+## H5 — contrats à mettre à jour dans PLAN.md section 3 (ajouts, rien de retiré)
+- `Building.GROUP` (`&"hd2d_buildings"`) : chaque Building en jeu y est ; la caméra cadre leur
+  façade sud.
+- `CameraRig` : `limits` vaut Rect2(−71, −70, 142, 136) ; même API, cadrage des façades (le
+  tangage descend jusqu'à 24° devant un bâtiment : `pitch()` rend le tangage courant,
+  `pitch_deg` reste le réglage) et bande nette du flou posée à chaque image (constantes `FRAME_*`
+  et `BAND_*`, pas d'export ajouté).
+- Nouvelle classe `HD2DLighting` (`src/world/materials/hd2d_lighting.gd`) : `apply(island)`,
+  `apply_post(material)`, `for_phase(phase)`, `active_sprite_tint()`, réglages
+  `lighting_sunset|dusk|night.tres` ; nœud `Lighting` d'island.tscn (`day_phase_lighting.gd`),
+  qui les pose sur `EventBus.day_phase_changed`.
+- `CameraRig` écoute `EventBus.dialogue_started` / `dialogue_ended` (cadrage en conversation).
+- `post_fx.gdshader` : `focus_center` et `focus_half` sont posés par la caméra ; `focus_soft` est
+  retiré ; nouveaux uniformes d'étalonnage (`shadow_tint`, `highlight_tint`, `split_strength`,
+  `haze_*`, `sun_*`, `glow_tint`).
+
+## H5 — les personnages restent en plein jour la nuit
+- Besoin : les planches (`AnimatedSprite3D` de `src/visuals/`, H6 ; Timeres : H7) ne sont pas
+  éclairées ; sous le réglage de nuit (`lighting_night.tres`, posé quand l'histoire émet
+  `EventBus.day_phase_changed(&"night")`), le décor s'assombrit et bleuit mais les personnages
+  restent aussi clairs qu'au couchant.
+- Proposition : `CharacterVisual` multiplie `Sprite.modulate` par
+  `HD2DLighting.active_sprite_tint()` à `_ready` et sur `EventBus.day_phase_changed` (appelé
+  après le nœud `Lighting` de l'île : `call_deferred`) ; blanc au couchant, rien ne change dans
+  l'acte 1.
+- En attendant : rien ne change de jour ; la nuit n'est pas encore jouée.

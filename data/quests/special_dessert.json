@@ -1,0 +1,65 @@
+{
+  "id": "special_dessert",
+  "title": "Le dessert spécial",
+  "summary": "Les petites fuient le nouveau responsable. Willem a un plan : un dessert. Il lui manque des œufs, des baies et de la crème.",
+  "giver": "willem",
+  "requires": {
+    "flags": [
+      "met_willem"
+    ]
+  },
+  "steps": [
+    {
+      "id": "eggs",
+      "type": "collect",
+      "item": "eggs",
+      "count": 1,
+      "objective": "Acheter des œufs au marché du port",
+      "hint": "La marchande d’œufs tient un étal sur la place du marché."
+    },
+    {
+      "id": "berries",
+      "type": "collect",
+      "item": "wild_berries",
+      "count": 3,
+      "objective": "Cueillir 3 grappes de baies dans les bois",
+      "hint": "Des buissons à baies poussent autour du terrain d’entraînement."
+    },
+    {
+      "id": "cream",
+      "type": "collect",
+      "item": "fresh_cream",
+      "count": 1,
+      "objective": "Demander de la crème au café La Clochette",
+      "hint": "Le serveur du café sert sur la terrasse, rue du Port."
+    },
+    {
+      "id": "cook",
+      "type": "talk",
+      "npc": "willem",
+      "objective": "Apporter les ingrédients à Willem"
+    },
+    {
+      "id": "hiding",
+      "type": "talk",
+      "npc": "collon",
+      "objective": "Trouver où se cachent les petites",
+      "hint": "Les petites adorent le grand arbre de la cour."
+    },
+    {
+      "id": "served",
+      "type": "talk",
+      "npc": "lakhesh",
+      "objective": "Appeler tout le monde au réfectoire",
+      "hint": "Lakhesh attend devant la fenêtre du réfectoire."
+    }
+  ],
+  "rewards": {
+    "items": {
+      "dessert_cup": 1
+    },
+    "flags": [
+      "little_ones_trust_willem"
+    ]
+  }
+}

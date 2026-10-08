@@ -1,11 +1,11 @@
 extends "res://tests/stubs/m1_game_test.gd"
 ## Intégration M1, l'arène des dunes dans le vrai jeu (src/game.tscn) : téléportation, panneau
-## « Affronter les Timeres » (appui réel sur interact), vague 1 de 5 Timeres sortis des 4 points,
-## Timeres qui atteignent le joueur (même derrière le poteau du panneau), score à l'épée, fin
-## de série en sortant de l'arène entre deux vagues, Grand dès la vague 3 et jamais deux à la
-## fois, mort du joueur : arena_finished, record, sauvegarde, réapparition au village.
+## « Sonner la cloche de veille » (appui réel sur interact), vague 1 de 5 Timeres sortis des 4
+## points, Timeres qui atteignent le joueur (même derrière le poteau du panneau), score à
+## l'épée, fin de série en sortant de l'arène entre deux vagues, Grand dès la vague 3 et jamais
+## deux à la fois, mort du joueur : arena_finished, record, sauvegarde, réapparition au village.
 
-const PROMPT := "Affronter les Timeres"
+const PROMPT := "Sonner la cloche de veille"
 ## Devant le panneau, côté village (local à la zone des dunes) : départ des séries.
 const PANEL_FRONT := Vector3(10.6, 0.0, -2.0)
 ## Rayon (m) autour d'un point d'apparition où sort un Timere (WaveDirector.SPAWN_SPREAD ±1 m).
@@ -43,11 +43,11 @@ func test_teleport_then_panel_starts_wave_one_from_the_four_points() -> void:
 	# Du Spawn des dunes au panneau, à pied, jusqu'à son invite.
 	var panel := arena.get_node(^"Panel") as Node3D
 	player.set_aim_direction(panel.global_position - player.global_position, true)
-	Input.action_press(&"move_forward")
+	hold_toward(player.aim_direction())
 	var shown: bool = await wait_until(
 		func() -> bool: return player.current_prompt() == PROMPT, 6.0
 	)
-	Input.action_release(&"move_forward")
+	release_move()
 	assert_true(shown, "invite « %s » en arrivant au panneau" % PROMPT)
 	await wait_physics_frames(6)
 	var spawned: Array[String] = []
@@ -184,9 +184,9 @@ func test_leaving_the_arena_before_a_wave_ends_the_series() -> void:
 	# Pendant la pause d'avant la vague 1, le joueur ressort à l'est en courant.
 	player.set_aim_direction(Vector3.RIGHT, true)
 	Input.action_press(&"run")
-	Input.action_press(&"move_forward")
+	hold_toward(player.aim_direction())
 	var stopped: bool = await wait_until(func() -> bool: return not director.is_running(), 1.2)
-	Input.action_release(&"move_forward")
+	release_move()
 	Input.action_release(&"run")
 	assert_true(stopped, "sortir de l'arène entre deux vagues termine la série")
 	assert_false(arena.contains(player.global_position))
@@ -352,10 +352,14 @@ func test_death_in_the_arena_records_the_score_and_respawns_at_the_village() -> 
 	assert_eq(player.visual.current_animation(), &"repos")
 	assert_true(player.visual.visible)
 	assert_null(player.camera_rig.lock_target, "caméra sans cible")
-	assert_almost_eq(player.camera_rig.pitch(), player.camera_rig.default_pitch(), 0.01)
+	assert_lt(
+		flat_distance(player.camera_rig.focus(), player.global_position),
+		1.5,
+		"(HD-2D) caméra fixe recalée sur le joueur"
+	)
 	var facing := -spawn.global_basis.z
 	assert_almost_eq(player.aim_direction(), facing, Vector3.ONE * 0.01, "tourné vers la place")
 	assert_almost_eq(
-		player.camera_rig.forward(), facing, Vector3.ONE * 0.01, "caméra derrière : vue du départ"
+		player.camera_rig.forward(), Vector3.FORWARD, Vector3.ONE * 0.01, "caméra fixe : le nord"
 	)
 	assert_eq(get_signal_emit_count(EventBus, "arena_finished"), 1, "une seule fin de série")

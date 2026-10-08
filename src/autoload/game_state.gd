@@ -2,14 +2,19 @@ extends Node
 ## GameState : état de la partie, sérialisable (PLAN.md sections 3 et 4). Propriétaire : L7.
 ##
 ## Inventaire (total par objet ; les piles sont déduites des ItemData, voir stacks()), drapeaux,
-## quêtes, objets uniques ramassés, meilleurs scores par arène, PV max et skin.
+## quêtes (état, étape courante et compteur, quête suivie), objets uniques ramassés, meilleurs
+## scores par arène, PV max et skin.
 ## Signaux émis (via EventBus) :
 ## - inventory_changed à chaque add_item / remove_item réussi, from_dict et reset ;
 ## - quest_updated dans set_quest_state (si l'état change ; jamais dans from_dict, sinon
 ##   QuestTracker redonnerait la récompense d'une quête finie à chaque chargement) ;
+## - (Lot Q) flag_changed dans set_flag, quest_step_updated dans set_quest_step (si quelque
+##   chose change ; jamais dans from_dict ni reset), tracked_quest_changed quand tracked_quest
+##   change ;
 ## - skin_changed et max_hp_changed quand skin_id / max_hp changent.
 ## Mises à jour attendues des autres lots : zone par WorldManager (L2) à chaque zone_entered,
-## position par le joueur (L1) quand il est au sol. SaveManager (L8) ajoute version et saved_at.
+## position par le joueur (L1) quand il est au sol, étapes et quête suivie par le QuestTracker
+## (Lot Q). SaveManager (L8) ajoute version et saved_at.
 
 ## PV max d'une nouvelle partie (règle de l'easter egg ; la quête des pages le porte à 6).
 const DEFAULT_MAX_HP := 5
@@ -33,7 +38,8 @@ var skin_id: StringName = &"":
 		skin_id = value
 		EventBus.skin_changed.emit(value)
 
-## PV max du joueur (5, puis 6 avec le marque-page de la quête), entre 1 et MAX_HP_LIMIT.
+## PV max du joueur (5, puis 6 avec la promesse de l'acte 1, 7 avec le registre des veilles),
+## entre 1 et MAX_HP_LIMIT.
 var max_hp: int = DEFAULT_MAX_HP:
 	set(value):
 		value = clampi(value, 1, MAX_HP_LIMIT)
@@ -47,10 +53,21 @@ var max_hp: int = DEFAULT_MAX_HP:
 var zone: StringName = &""
 ## Dernière position au sol du joueur (sauvegardée, restaurée par game.gd).
 var position: Vector3 = Vector3.ZERO
+## (Lot Q) Quête suivie, affichée par le HUD ; &"" = aucune (le HUD montre alors la première
+## quête active). Tenue par le QuestTracker (une quête qui démarre devient la quête suivie) et
+## par le journal (choix du joueur) ; émet tracked_quest_changed.
+var tracked_quest: StringName = &"":
+	set(value):
+		if value == tracked_quest:
+			return
+		tracked_quest = value
+		EventBus.tracked_quest_changed.emit(value)
 
 var _inventory: Dictionary[StringName, int] = {}
 var _flags: Dictionary[StringName, bool] = {}
 var _quests: Dictionary[StringName, StringName] = {}
+## (Lot Q) Quêtes actives : quest_id → {"step": StringName, "count": int}.
+var _quest_progress: Dictionary[StringName, Dictionary] = {}
 var _collected_pickups: Dictionary[StringName, bool] = {}
 var _best_scores: Dictionary[StringName, Dictionary] = {}
 
@@ -61,9 +78,11 @@ func reset() -> void:
 	max_hp = DEFAULT_MAX_HP
 	zone = &""
 	position = Vector3.ZERO
+	tracked_quest = &""
 	_inventory.clear()
 	_flags.clear()
 	_quests.clear()
+	_quest_progress.clear()
 	_collected_pickups.clear()
 	_best_scores.clear()
 	EventBus.inventory_changed.emit()
@@ -128,9 +147,14 @@ func stacks() -> Array[Dictionary]:
 # --- Drapeaux et quêtes -----------------------------------------------------------------------
 
 
+## Pose (ou retire, value = false) un drapeau ; émet flag_changed si sa valeur change.
 func set_flag(flag: StringName, value: bool = true) -> void:
-	if not flag.is_empty():
-		_flags[flag] = value
+	if flag.is_empty():
+		return
+	var changed := has_flag(flag) != value
+	_flags[flag] = value
+	if changed:
+		EventBus.flag_changed.emit(flag, value)
 
 
 func has_flag(flag: StringName) -> bool:
@@ -154,8 +178,45 @@ func set_quest_state(quest_id: StringName, state: StringName) -> void:
 
 
 ## Copie des états de quête (quest_id → état), ex. pour afficher les objectifs au chargement.
+## L'ordre est celui où chaque quête a reçu son premier état (journal).
 func quests() -> Dictionary:
 	return _quests.duplicate()
+
+
+## (Lot Q) Étape courante d'une quête (QuestStep.id), &"" si aucune n'est enregistrée.
+func quest_step(quest_id: StringName) -> StringName:
+	var entry: Dictionary = _quest_progress.get(quest_id, {})
+	return StringName(entry.get("step", &""))
+
+
+## (Lot Q) Compteur de l'étape courante (ennemis vaincus, vague ou score atteints), 0 sinon.
+func quest_step_count(quest_id: StringName) -> int:
+	var entry: Dictionary = _quest_progress.get(quest_id, {})
+	return int(entry.get("count", 0))
+
+
+## (Lot Q) Enregistre l'étape courante d'une quête et son compteur (step_id &"" efface) ; émet
+## quest_step_updated si quelque chose change. Appelé par le QuestTracker.
+func set_quest_step(quest_id: StringName, step_id: StringName, step_count: int = 0) -> void:
+	if quest_id.is_empty():
+		return
+	var known := _quest_progress.has(quest_id)
+	var value := maxi(step_count, 0)
+	if step_id.is_empty():
+		if not known:
+			return
+		_quest_progress.erase(quest_id)
+		value = 0
+	else:
+		if known and quest_step(quest_id) == step_id and quest_step_count(quest_id) == value:
+			return
+		_quest_progress[quest_id] = {"step": step_id, "count": value}
+	EventBus.quest_step_updated.emit(quest_id, step_id, value)
+
+
+## (Lot Q) Copie de l'avancement des quêtes : quest_id → {"step": StringName, "count": int}.
+func quest_progress() -> Dictionary:
+	return _quest_progress.duplicate(true)
 
 
 # --- Objets ramassés (pickups uniques du monde) -----------------------------------------------
@@ -203,11 +264,12 @@ func arena_record(arena_id: StringName) -> Dictionary:
 	}
 
 
-# --- Sérialisation (schéma de sauvegarde v1, PLAN.md section 4) --------------------------------
+# --- Sérialisation (schéma de sauvegarde v2, PLAN.md section 4) --------------------------------
 
 
 ## Champs du schéma de sauvegarde, sauf version et saved_at (ajoutés par SaveManager).
-## Types JSON uniquement (String, int, float, bool, Array, Dictionary).
+## Types JSON uniquement (String, int, float, bool, Array, Dictionary). Les champs du schéma v1
+## d'abord, puis ceux du Lot Q (v2) : quest_progress et tracked_quest.
 func to_dict() -> Dictionary:
 	var inventory := {}
 	for item_id: StringName in _inventory:
@@ -225,6 +287,11 @@ func to_dict() -> Dictionary:
 	var scores := {}
 	for arena_id: StringName in _best_scores:
 		scores[String(arena_id)] = arena_record(arena_id)
+	var progress := {}
+	for quest_id: StringName in _quest_progress:
+		progress[String(quest_id)] = {
+			"step": String(quest_step(quest_id)), "count": quest_step_count(quest_id)
+		}
 	return {
 		"skin": String(skin_id),
 		"max_hp": max_hp,
@@ -235,13 +302,17 @@ func to_dict() -> Dictionary:
 		"quests": quests_dict,
 		"collected_pickups": pickups,
 		"best_scores": scores,
+		"quest_progress": progress,
+		"tracked_quest": String(tracked_quest),
 	}
 
 
 ## Relit un dictionnaire produit par to_dict() (ou un JSON de sauvegarde). Un champ absent ou
 ## mal typé prend sa valeur par défaut, une entrée invalide est ignorée (quantité nulle ou non
-## numérique, état de quête inconnu…) ; les nombres JSON (float) redeviennent des int.
-## Sans position valide, zone est vidée : game.gd replace alors le joueur au Spawn du village.
+## numérique, état de quête inconnu, avancement d'une quête qui n'est pas active…) ; les nombres
+## JSON (float) redeviennent des int. Sans position valide, zone est vidée : game.gd replace
+## alors le joueur au Spawn du village. Aucun signal de quête (quest_updated,
+## quest_step_updated) : le QuestTracker relit tout sur game_loaded.
 func from_dict(data: Dictionary) -> void:
 	skin_id = _read_name(data.get("skin"))
 	var hp: Variant = data.get("max_hp")
@@ -286,6 +357,16 @@ func from_dict(data: Dictionary) -> void:
 				"wave": _read_count(entry.get("wave")),
 				"games": _read_count(entry.get("games")),
 			}
+	_quest_progress.clear()
+	var progress := _as_dict(data.get("quest_progress"))
+	for key: Variant in progress:
+		var quest_id := _read_name(key)
+		var entry := _as_dict(progress[key])
+		var step_id := _read_name(entry.get("step"))
+		if step_id.is_empty() or quest_state(quest_id) != QUEST_ACTIVE:
+			continue
+		_quest_progress[quest_id] = {"step": step_id, "count": _read_count(entry.get("count"))}
+	tracked_quest = _read_name(data.get("tracked_quest"))
 	EventBus.inventory_changed.emit()
 
 

@@ -30,31 +30,31 @@ func test_invalid_changes_do_nothing() -> void:
 	GameState.add_item(&"shell", -3)
 	GameState.add_item(&"", 2)
 	assert_false(GameState.remove_item(&"shell", 0))
-	assert_false(GameState.remove_item(&"shell"), "retrait impossible : aucun coquillage")
+	assert_false(GameState.remove_item(&"shell"), "retrait impossible : aucun exemplaire")
 	assert_eq(GameState.items(), {})
 	assert_signal_not_emitted(EventBus, "inventory_changed")
 
 
 func test_stacks_follow_item_data() -> void:
 	GameState.add_item(&"page_fragment", 120)
-	GameState.add_item(&"bookmark", 2)
-	GameState.add_item(&"shell", 3)
+	GameState.add_item(&"picture_book", 2)
+	GameState.add_item(&"flower_blue", 3)
 	assert_eq(GameState.count(&"page_fragment"), 120, "count = total de toutes les piles")
 	assert_eq(
 		GameState.stacks(),
 		[
-			{"item_id": &"bookmark", "quantity": 1},
-			{"item_id": &"bookmark", "quantity": 1},
+			{"item_id": &"flower_blue", "quantity": 3},
 			{"item_id": &"page_fragment", "quantity": 99},
 			{"item_id": &"page_fragment", "quantity": 21},
-			{"item_id": &"shell", "quantity": 3},
+			{"item_id": &"picture_book", "quantity": 1},
+			{"item_id": &"picture_book", "quantity": 1},
 		],
 		"non empilable : une case chacun ; max_stack 99 : deux piles"
 	)
 	assert_true(GameState.remove_item(&"page_fragment", 100), "retrait sur deux piles")
-	assert_false(GameState.remove_item(&"bookmark", 3), "retrait impossible : deux seulement")
-	assert_eq(GameState.count(&"bookmark"), 2)
-	assert_eq(GameState.stacks()[2], {"item_id": &"page_fragment", "quantity": 20})
+	assert_false(GameState.remove_item(&"picture_book", 3), "retrait impossible : deux seulement")
+	assert_eq(GameState.count(&"picture_book"), 2)
+	assert_eq(GameState.stacks()[1], {"item_id": &"page_fragment", "quantity": 20})
 
 
 func test_unknown_item_is_accepted() -> void:
@@ -157,8 +157,10 @@ func test_to_dict_matches_save_schema() -> void:
 			"inventory",
 			"max_hp",
 			"position",
+			"quest_progress",
 			"quests",
 			"skin",
+			"tracked_quest",
 			"zone",
 		]
 	)
@@ -243,7 +245,7 @@ func test_from_dict_never_emits_quest_updated() -> void:
 
 
 func test_round_trip_is_identical() -> void:
-	GameState.skin_id = &"forgeron"
+	GameState.skin_id = &"ithea"
 	GameState.max_hp = 6
 	GameState.position = Vector3(-3.25, 0.5, 8.0)
 	GameState.zone = &"beach"

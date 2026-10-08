@@ -4,10 +4,14 @@
 
 [node name="Pickups" type="Node3D"]
 
-[node name="beach_shell_1" parent="." instance=ExtResource("1_pickup")]
+[node name="beach_sheet_1" parent="." instance=ExtResource("1_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, 13)
-item_id = &"shell"
+item_id = &"laundry_sheet"
 
-[node name="beach_shell_2" parent="." instance=ExtResource("1_pickup")]
+[node name="beach_sheet_2" parent="." instance=ExtResource("1_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 14)
-item_id = &"shell"
+item_id = &"laundry_sheet"
+
+[node name="beach_gear_1" parent="." instance=ExtResource("1_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 10)
+item_id = &"clock_gear"

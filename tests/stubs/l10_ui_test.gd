@@ -61,10 +61,10 @@ func write_save_text(text: String) -> void:
 	file.close()
 
 
-## Sauvegarde valide écrite par SaveManager (skin, deux coquillages) ; GameState remis à zéro.
+## Sauvegarde valide écrite par SaveManager (skin, deux myosotis) ; GameState remis à zéro.
 func write_valid_save(skin_id: StringName) -> void:
 	GameState.skin_id = skin_id
-	GameState.add_item(&"shell", 2)
+	GameState.add_item(&"flower_blue", 2)
 	assert_eq(SaveManager.save(), OK, "sauvegarde de test écrite")
 	GameState.reset()
 

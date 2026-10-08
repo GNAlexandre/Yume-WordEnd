@@ -1,0 +1,20 @@
+{
+  "_comment": "Suite de demo_tour (Lot Q) : disponible quand demo_tour est terminée, étape « flag ».",
+  "id": "demo_followup",
+  "title": "Une histoire de puits",
+  "summary": "Le guide connaît une vieille histoire sur le puits du village.",
+  "giver": "demo_guide",
+  "requires": {
+    "quests": [
+      "demo_tour"
+    ]
+  },
+  "steps": [
+    {
+      "id": "listen",
+      "type": "flag",
+      "flag": "demo_story_heard",
+      "objective": "Écouter l’histoire du guide"
+    }
+  ]
+}

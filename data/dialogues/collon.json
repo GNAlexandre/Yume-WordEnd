@@ -1,0 +1,65 @@
+{
+  "_comment": "Acte 1 : le dessert spécial (les petites cachées dans le grand arbre).",
+  "id": "collon",
+  "start": "hello",
+  "entries": [
+    "hiding_1",
+    "after_act",
+    "trust",
+    "met"
+  ],
+  "nodes": {
+    "hiding_1": {
+      "if": {
+        "quest_step": [
+          "special_dessert",
+          "hiding"
+        ]
+      },
+      "text": "Chut ! On espionne le monstre ! … Quoi ? Il a fait un dessert ? Un vrai, avec de la crème ?",
+      "next": "hiding_2"
+    },
+    "hiding_2": {
+      "speaker": "",
+      "text": "Une branche craque. Puis une autre. Les petites dégringolent du grand arbre, en avalanche.",
+      "next": "hiding_3"
+    },
+    "hiding_3": {
+      "text": "Aïe. On n’est pas tombées, on est descendues très vite. Un dessert ? On ne va pas le laisser déserter !",
+      "next": "hiding_4"
+    },
+    "hiding_4": {
+      "text": "Va dire à Lakhesh d’appeler tout le monde au réfectoire. Elle est polie, elle. Moi, je crie.",
+      "advance_quest": [
+        "special_dessert",
+        "hiding"
+      ],
+      "next": null
+    },
+    "after_act": {
+      "if": {
+        "flag": "act1_done"
+      },
+      "text": "On prépare un dessin pour ton départ. C’est un secret. Un dessin secret, avec plein de couleurs.",
+      "next": null
+    },
+    "trust": {
+      "if": {
+        "flag": "little_ones_trust_willem"
+      },
+      "text": "Willie m’a laissée grimper sur ses épaules ! Il a crié « tonton » au bout de dix minutes. J’ai gagné.",
+      "next": null
+    },
+    "met": {
+      "if": {
+        "flag": "met_willem"
+      },
+      "text": "Tu as vu le monstre de près ? Il a des crocs ? … Comment ça, des dents normales ? C’est encore plus louche !",
+      "next": null
+    },
+    "hello": {
+      "text": "Il paraît que le nouveau est un monstre ! Il n’a même pas de cornes. C’est louche, non ?",
+      "next": null
+    }
+  }
+}

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkinData" format=3]
+
+[ext_resource type="Script" path="res://src/visuals/skin_data.gd" id="1_skin"]
+[ext_resource type="Texture2D" path="res://assets/characters/collon/collon.png" id="2_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/collon/collon.json" id="3_frames"]
+[ext_resource type="Texture2D" path="res://assets/characters/collon/collon_portrait.png" id="4_portrait"]
+[ext_resource type="Texture2D" path="res://assets/characters/collon/collon_front.png" id="5_front"]
+[ext_resource type="JSON" path="res://assets/characters/collon/collon_front.json" id="6_front_frames"]
+[ext_resource type="Texture2D" path="res://assets/characters/collon/collon_back.png" id="7_back"]
+[ext_resource type="JSON" path="res://assets/characters/collon/collon_back.json" id="8_back_frames"]
+
+[resource]
+script = ExtResource("1_skin")
+id = &"collon"
+display_name = "Collon"
+sprite_sheet = ExtResource("2_sheet")
+frames_json = ExtResource("3_frames")
+front_sheet = ExtResource("5_front")
+front_json = ExtResource("6_front_frames")
+back_sheet = ExtResource("7_back")
+back_json = ExtResource("8_back_frames")
+portrait = ExtResource("4_portrait")
+height_m = 1.2

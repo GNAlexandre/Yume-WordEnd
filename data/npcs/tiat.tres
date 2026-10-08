@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="NpcData" format=3]
+
+[ext_resource type="Script" path="res://src/npc/npc_data.gd" id="1_npc"]
+[ext_resource type="Resource" path="res://data/npcs/visuals/tiat.tres" id="2_visual"]
+
+[resource]
+script = ExtResource("1_npc")
+id = &"tiat"
+display_name = "Tiat"
+skin = ExtResource("2_visual")
+dialogue_path = "res://data/dialogues/tiat.json"
+quest_id = &"vigil_register"
+home_zone = &"village"

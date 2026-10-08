@@ -73,12 +73,14 @@ l'utilise depuis l'intégration M2.
 
 Joystick à gauche (`move_*` avec intensité, la zone morte de l'input map s'applique ensuite),
 Épée, Charge (maintenue), Saut, Parler (affiche l'invite d'`interaction_available`, « Suite »
-pendant un dialogue), Cible, Sac, Pause ; glisser ailleurs sur la moitié droite = `camera_*`.
+pendant un dialogue), Cible, Sac, Pause ; glisser ailleurs sur la moitié droite = `camera_*`
+(en HD-2D, la caméra est fixe : seuls `camera_up` / `camera_down` servent, au zoom).
 Visibles seulement sur écran tactile (`'ontouchstart' in window`, Android, iOS) et dès le
 premier toucher ; une touche du jeu, un clic de souris ou un bouton de manette les masquent ;
 masqués, ils ne consomment aucun événement. Pause : seuls Pause et Sac restent ; dialogue :
 Parler et Pause. Tout passe par des `InputEventAction` : aucun autre lot ne les connaît.
-À savoir pour l'intégration : la caméra souris (L1) doit lire `_unhandled_input` (les contrôles
+À savoir pour l'intégration : la molette de la caméra (zoom ; la caméra fixe du HD-2D ne
+tourne plus à la souris) doit lire `_unhandled_input` (les contrôles
 y consomment la souris émulée par le tactile) ; les écrans en pause gardent leur racine en
 `mouse_filter = IGNORE` (déjà le cas des squelettes) ; le HUD laisse libre le coin haut droit
 (Sac, Pause) et le bas de l'écran.
@@ -147,7 +149,7 @@ contenu de la page s'affiche sous le jeu.
 /**
  * Template Name: Jeu WordEnd
  *
- * Page du jeu WordEnd 3D : le jeu est servi par GitHub Pages (https://jeu.yumenovel.fr/) et
+ * Page du jeu WordEnd : le jeu est servi par GitHub Pages (https://jeu.yumenovel.fr/) et
  * affiché dans une iframe ; WordPress n'exécute rien du jeu (Yume-WordEnd, docs/web.md).
  *
  * @package Yume
@@ -260,22 +262,32 @@ boutons sous le pouce, Safari iOS.
 
 ## Raccourcis de test et vérification M1 (intégration)
 
-Pour atteindre l'arène sans parcourir l'île, `src/test_shortcuts.gd` lit des paramètres dans
+Pour atteindre une zone sans parcourir l'île, `src/test_shortcuts.gd` lit des paramètres dans
 l'adresse de la page (Web, par `JavaScriptBridge`) ou dans les arguments utilisateur
 (`tools/godot -- --zone=dunes`, ou « Main Run Args » de l'éditeur). Sans paramètre, le jeu ne
 change pas (testé) ; `src/game.gd` ne crée ce nœud que si l'un d'eux est présent.
 
 | Paramètre | Effet |
 | --- | --- |
-| `?zone=dunes` | Le joueur part du Spawn des dunes, tourné vers le panneau de l'arène : 15 m tout droit (Z/W), puis E lance les vagues. Toute zone de l'île (`village`, `forest`, `beach`, `hill`) ; un nom inconnu est ignoré. |
-| `&timeres=12` | Banc de performance : 12 Timeres (les quatre types, 24 au plus) errent devant le joueur sans le poursuivre. |
+| `?zone=dunes` | Le joueur part du Spawn du bord du Couchant (`dunes`), tourné vers la cloche de veille : 15 m tout droit (Z/W), puis E lance la veille. Toute zone de l'île : `village` (l'entrepôt des fées), `forest` (les bois du marais), `beach` (le port et le bourg), `hill` (la colline des étoiles), tourné vers son centre ; un nom inconnu est ignoré. La partie (nouvelle ou reprise) garde son état : l'acte 1 en est où il en était. |
+| `&timeres=12` | Banc de performance : 12 Timeres (les quatre corps, 24 au plus) errent devant le joueur sans le poursuivre. |
 | `?trace=1` | (intégration M2) Le journal seul : la partie (nouvelle ou reprise) n'est pas touchée. |
 
+Avec l'un d'eux, la page reçoit aussi deux aides (acte 1) : `window.wordendFace("nygglatho")`
+ou `window.wordendFace(x, z)` tourne le joueur vers un PNJ présent (son `NpcData.id`) ou un
+point de l'île ; `window.wordendPos` donne la position du joueur (`[x, z]`) à chaque image. La
+marche reste aux touches. (HD-2D) La caméra fixe ne tourne pas, les touches sont relatives à
+l'écran (le haut est le nord) : `wordendFace` pose aussi la cible dans `window.wordendAim`
+(`[x, z]`), et `tools/web_m2.js` en tire les touches à tenir (W, A, S, D physiques, soit Z, Q,
+S, D en AZERTY, seules ou deux à deux), choisies de nouveau toutes les 300 ms en marchant.
+
 Pendant ce temps, la console du navigateur reçoit `[m1] …` à chaque événement (zone, invite,
-vague, Timere tué, fin de série, dégâts, mort, réapparition) et, toutes les 2 s, images/s, draw
-calls, primitives et distance du Timere le plus proche. `tools/web_m1.js` (Playwright, mode
-d'emploi en tête du fichier) s'en sert pour jouer une partie dans le Chromium sans écran :
-nouvelle partie → dunes → panneau → vague 1 → combat → mort → réapparition, puis le banc.
+dialogue, quête et étape de quête, objet, vague, Timere tué, fin de série, dégâts, mort,
+réapparition, perte du focus) et, toutes les 2 s, images/s, draw calls, primitives, position du
+joueur, état de la sauvegarde et distance du Timere le plus proche. `tools/web_m1.js`
+(Playwright, mode d'emploi en tête du fichier) s'en sert pour jouer une partie dans le Chromium
+sans écran : nouvelle partie → Couchant → cloche de veille → vague 1 → combat → mort →
+réapparition, puis le banc ; `tools/web_m2.js`, pour le début de l'acte 1 (plus bas).
 
 Mesures du 6 octobre 2026 (build de l'intégration M1, Chromium 141 headless, SwiftShader, VM
 partagée) : aucun message d'erreur dans la console ; 1,7 à 2,4 images/s seulement (rendu
@@ -286,34 +298,103 @@ primitives ; pire vue mesurée : le village vu des dunes (96 draw calls, 156 000
 (`M1_SHOT=perf|village tools/screenshot.sh res://tests/integration/demo_m1.tscn …`, voir
 docs/DECISIONS.md, section « Intégration M1 »).
 
-## Vérification M2 (tranche verticale)
+## Vérification de l'acte 1 (navigateur)
 
-`tools/web_m2.js` (Playwright, mode d'emploi en tête du fichier) joue le début de la tranche
-verticale dans le Chromium sans écran, avec le paramètre `?trace=1` des raccourcis de test : le
-journal « [m1] … » seul (la partie est celle du menu, telle quelle), qui donne la zone, la
-position du joueur et l'état de la sauvegarde (« sauvegardée » ou « à écrire »), les dialogues,
-les quêtes, les objets et la perte du focus. Profil neuf : temps jusqu'au menu (repère
-`window.wordendMenuMs`, posé par `src/main.gd` quand le menu s'affiche), « Cliquer pour jouer »,
-Entrée sur « Nouvelle partie », marche jusqu'à la bibliothécaire, dialogue, quête acceptée,
-quelques pas, perte du focus du canevas ; puis la page est rechargée (même profil, donc même
-IndexedDB) et « Continuer » reprend la partie. Captures : `m2_web_menu.png`,
-`m2_web_village.png`, `m2_web_dialogue.png`, `m2_web_continue.png`.
+`tools/web_m2.js` (Playwright, mode d'emploi en tête du fichier) joue le début de l'acte 1 dans
+le Chromium sans écran, puis mesure chaque zone ; dernier argument : `acte1`, `zones` ou `tout`
+(par défaut). Recette complète de l'acte 1 : [RECETTE_M2.md](RECETTE_M2.md).
 
-Mesures du 6 octobre 2026 (build de l'intégration M2, servi en local, Chromium 141 headless,
-SwiftShader, 1 à 2 images/s : indicatif) : menu en 1,9 à 2,2 s (1,6 à 3,6 s au rechargement),
-partie chargée 3 à 7,6 s après Entrée (la page affiche des images pendant le chargement : 12 en
-6,6 s, compteur `requestAnimationFrame`), aucune erreur dans la console (seuls avertissements,
-ceux du pilote logiciel : « GPU stall due to ReadPixels ») ; après rechargement, « Continuer »
-reprend à la position quittée (écart 0,00 m), zone et quête comprises. Build : 10,6 Mo
-compressés (wasm 9,7 Mo, pck 0,9 Mo), budget 25 Mo.
+- **`acte1`**, avec `?trace=1` (le journal « [m1] … » seul : la partie est celle du menu, telle
+  quelle). Profil neuf : temps jusqu'au menu (repère `window.wordendMenuMs`, posé par
+  `src/main.gd` quand le menu s'affiche), « Cliquer pour jouer », Entrée sur « Nouvelle partie » ;
+  puis, à pied (touches tirées de `window.wordendAim`), les trois premières étapes
+  d'`act1_main` : Nygglatho sous le porche et sa scène (étape `new_officer`), Willem devant la
+  salle des armes et ses conseils (`to_the_woods`, drapeau `met_willem`), le portail nord et les
+  bois du marais (`rejetons`). Le canevas perd le focus (SaveManager écrit la partie) ; le
+  script attend la copie dans IndexedDB, recharge la page (même profil) et « Continuer »
+  reprend la partie. Captures : `acte1_web_menu.png`, `acte1_web_entrepot.png`,
+  `acte1_web_nygglatho.png`, `acte1_web_willem.png`, `acte1_web_bois.png`,
+  `acte1_web_continue.png`.
+- **`zones`** : `?zone=<id>` dans un profil neuf pour chacune des cinq zones, nouvelle partie,
+  puis 20 s de mesures : images affichées par la page (compteur `requestAnimationFrame`) et
+  relevés « [m1] … i/s, draw calls, primitives » du moteur ; captures
+  `acte1_web_zone_<id>.png`.
+
+Mesures du 7 octobre 2026 (build de l'intégration de l'acte 1, servi en local, Chromium 141
+headless, SwiftShader, VM partagée : images/s indicatives, sans valeur pour un vrai GPU) :
+
+- `acte1` (deux passages, le second sur le build final) : menu en 1,8 à 1,9 s (2,9 à 3,8 s au
+  rechargement) ; partie chargée 9,0 à 9,2 s après Entrée (6,8 à 8,4 s au rechargement), la
+  page affichant des images pendant le chargement (15 à 16) ; les trois étapes jouées à pied,
+  répliques et étapes conformes (« Le vent a hurlé… », « verrouille ta cible », `new_officer`,
+  `to_the_woods`, `rejetons`) ; partie copiée dans IndexedDB 12 à 60 s après la perte du focus ;
+  après rechargement, « Continuer » reprend dans les bois du marais, à la position quittée
+  (écart 0,00 m), à l'étape `rejetons`. Aucune erreur dans la console (seuls avertissements,
+  ceux du pilote logiciel : « GPU stall due to ReadPixels »). Le panneau des fées du menu tient
+  dans l'écran (`acte1_web_menu.png`).
+- `zones` (vue du Spawn de chaque zone, joueur au repos) :
+
+  | Zone | Images/s (page) | Draw calls | Primitives |
+  | --- | --- | --- | --- |
+  | L'entrepôt des fées (`village`) | 0,33 | 135 | 92 000 |
+  | Les bois du marais (`forest`) | 0,40 | 100 | 68 000 |
+  | Le bord du Couchant (`dunes`) | 0,41 | 70 | 54 000 |
+  | Le port et le bourg (`beach`) | 0,34 | 76 | 59 000 |
+  | La colline des étoiles (`hill`) | 0,54 | 72 | 83 000 |
+
+  Le rendu logiciel de Chromium tombe sous l'image par seconde avec le décor de l'île n° 68
+  (1,7 à 2,4 images/s pour l'île du jalon M1) : ces chiffres ne disent rien d'un vrai GPU.
+  Draw calls et primitives, eux, ne dépendent pas de la machine : tous sous le budget Web du
+  monde (150 draw calls, 150 000 primitives : docs/DECISIONS.md, « Monde — budget Web »),
+  l'entrepôt au plus près (135). Mesure native de comparaison, rendu logiciel aussi (Xvfb, Mesa
+  llvmpipe, 1280 × 720, `src/game.tscn -- --zone=<id>`, 40 s) : entrepôt 5,7 images/s (126 draw
+  calls), bois 9,1 (91), Couchant 4,9 (61), port 5,8 (67), colline 4,6 (63).
+
+Build : 18,4 Mo compressés (wasm 9,7 Mo, pck 8,8 Mo ; 47,3 Mo bruts), budget 25 Mo ; le pck
+porte l'île n° 68 et les 45 modèles 3D de la PR n° 1 (en refonte).
+
+### Socle HD-2D (7 octobre 2026)
+
+Même méthode (`tools/web_m2.js … tout`, Chromium 141 headless, SwiftShader, VM partagée), sur
+le build du socle HD-2D : décor en images, caméra fixe, post-traitement plein écran.
+
+- `acte1` : menu en 2,6 s (3,1 s au rechargement) ; partie chargée 8,2 s après Entrée (6,6 s
+  au rechargement) ; les trois étapes jouées à pied, touches choisies d'après la caméra fixe
+  (Nygglatho, Willem, le portail nord, `new_officer`, `to_the_woods`, `rejetons`) ; partie
+  copiée dans IndexedDB 27 s après la perte du focus ; « Continuer » reprend dans les bois à
+  l'étape `rejetons`, écart 0,00 m. Aucune erreur dans la console (seuls avertissements : « GPU
+  stall due to ReadPixels » du pilote logiciel).
+- `zones` (Spawn de chaque zone, joueur au repos ; entre parenthèses, la mesure d'avant le
+  socle) :
+
+  | Zone | Images/s (page) | Draw calls | Primitives |
+  | --- | --- | --- | --- |
+  | L'entrepôt des fées (`village`) | 0,55 (0,33) | 67 (135) | 17 000 (92 000) |
+  | Les bois du marais (`forest`) | 0,56 (0,40) | 55 (100) | 17 000 (68 000) |
+  | Le bord du Couchant (`dunes`) | 0,57 (0,41) | 43 (70) | 17 000 (54 000) |
+  | Le port et le bourg (`beach`) | 0,53 (0,34) | 50 (76) | 17 000 (59 000) |
+  | La colline des étoiles (`hill`) | 0,45 (0,54) | 48 (72) | 17 000 (83 000) |
+
+  Les images/s du rendu logiciel restent sans valeur pour un vrai GPU (le flou de profondeur et
+  la lueur, plein écran, pèsent ici sur le processeur) ; draw calls et primitives, eux, baissent
+  de 30 à 50 % et de 70 à 80 %. Ces vues (Spawn de chaque zone) ne sont pas celles de la
+  mesure native ci-dessous.
+
+Build : **12,4 Mo compressés** (40,8 Mo bruts), budget 25 Mo, désormais tenu par
+`tools/check.sh` (rouge au-delà) ; les 45 modèles 3D sont partis, les 99 images de remplacement
+du décor pèsent moins de 8 Mo. Mesure native (Xvfb, Mesa llvmpipe, `tools/hd2d_shots.sh`, draw
+calls du moteur à l'image 50) : menu 38, cour de l'entrepôt 50, entrepôt de face au zoom le
+plus large 70, bois 51, Couchant 32, port 39, colline 50, conversation 53, veille 44 (budget du
+HD-2D : 200).
 
 **Sauvegarde et fermeture de l'onglet.** SaveManager écrit la position toutes les 5 s de jeu si
 le joueur a bougé (1 m), et au départ : perte du focus, page masquée (`visibilitychange`, que
 Godot 4.7 ne relaie pas : SaveManager l'écoute par `JavaScriptBridge`), fermeture. Godot copie
 `user://` vers IndexedDB au début de l'image qui suit l'écriture, en asynchrone : avec un vrai
 GPU, c'est immédiat ; dans le Chromium logiciel de la VM, le fil principal saturé retarde la
-copie de 25 à 70 s, et `tools/web_m2.js` l'attend (il lit IndexedDB) avant de recharger. Un
-onglet fermé dans la fraction de seconde qui suit une écriture peut donc perdre cette
-dernière écriture ; la sauvegarde périodique borne la perte aux 5 dernières secondes de marche.
+copie de 12 à 70 s selon les essais, et `tools/web_m2.js` l'attend (il lit IndexedDB) avant de
+recharger. Un onglet fermé dans la fraction de seconde qui suit une écriture peut donc perdre
+cette dernière écriture ; la sauvegarde périodique borne la perte aux 5 dernières secondes de
+marche.
 Godot range aussi son cache de shaders dans `user://shader_cache` (33 entrées dans IndexedDB,
 sans contenu dans le rendu WebGL).

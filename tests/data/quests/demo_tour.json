@@ -1,0 +1,55 @@
+{
+  "_comment": "Quête de démonstration du moteur (Lot Q) : test d'intégration et captures, absente du jeu.",
+  "id": "demo_tour",
+  "title": "Le tour du village",
+  "summary": "Le guide du village fait visiter les environs aux nouveaux venus : saluer le soldat de la Garde, voir le puits de la place, puis faire ses preuves dans la forêt.",
+  "giver": "demo_guide",
+  "steps": [
+    {
+      "id": "guard",
+      "type": "talk",
+      "npc": "example_guard",
+      "objective": "Saluer le soldat de la Garde",
+      "hint": "Il fait sa ronde à l’est de la place."
+    },
+    {
+      "id": "well",
+      "type": "reach",
+      "trigger": "demo_well",
+      "objective": "Aller voir le puits de la place"
+    },
+    {
+      "id": "forest",
+      "type": "reach",
+      "zone": "forest",
+      "objective": "Entrer dans la forêt, au nord du village"
+    },
+    {
+      "id": "timeres",
+      "type": "kill",
+      "count": 2,
+      "zone": "forest",
+      "objective": "Vaincre 2 Timeres dans la forêt",
+      "rewards": {
+        "flags": [
+          "demo_tour_brave"
+        ]
+      }
+    },
+    {
+      "id": "pages",
+      "type": "collect",
+      "item": "page_fragment",
+      "count": 2,
+      "npc": "demo_guide",
+      "consume": true,
+      "objective": "Rapporter 2 fragments de page au guide",
+      "hint": "Des pages traînent dans la clairière."
+    }
+  ],
+  "rewards": {
+    "items": {
+      "flower_blue": 1
+    }
+  }
+}

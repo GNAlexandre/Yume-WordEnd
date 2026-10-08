@@ -1,0 +1,86 @@
+{
+  "_comment": "Dialogue de l'exemple de docs/QUETES.md : le soldat de la Garde donne la quête example_patrol.",
+  "id": "example_guard",
+  "start": "hello",
+  "entries": [
+    "after",
+    "report",
+    "patrol",
+    "offer"
+  ],
+  "nodes": {
+    "hello": {
+      "speaker": "Soldat de la Garde",
+      "text": "Garde ailée, poste de l’entrepôt. Rien à sssignaler. Enfin, presque.",
+      "next": null
+    },
+    "offer": {
+      "if": {
+        "quest": [
+          "example_patrol",
+          "available"
+        ]
+      },
+      "speaker": "Soldat de la Garde",
+      "text": "Des rejetons de Timere rôdent dans la clairière des bois. Tu irais voir de quoi il retourne ?",
+      "choices": [
+        {
+          "text": "J’y vais.",
+          "start_quest": "example_patrol",
+          "next": "go"
+        },
+        {
+          "text": "Pas maintenant.",
+          "next": null
+        }
+      ]
+    },
+    "go": {
+      "speaker": "Soldat de la Garde",
+      "text": "Abats les plus petits, puis reviens me raconter. Nous, on ne peut que regarder.",
+      "next": null
+    },
+    "patrol": {
+      "if": {
+        "quest": [
+          "example_patrol",
+          "active"
+        ]
+      },
+      "speaker": "Soldat de la Garde",
+      "text": "Alors, cette clairière ? Les rejetons ne vont pas s’abattre tout seuls.",
+      "next": null
+    },
+    "report": {
+      "if": {
+        "quest_step": [
+          "example_patrol",
+          "report"
+        ]
+      },
+      "speaker": "Soldat de la Garde",
+      "text": "Deux de moins ! Tiens, deux myosotis de la colline, pour ta peine.",
+      "advance_quest": [
+        "example_patrol",
+        "report"
+      ],
+      "next": "thanks"
+    },
+    "thanks": {
+      "speaker": "Soldat de la Garde",
+      "text": "Les bois respirent mieux grâce à toi. Repasse quand tu veux.",
+      "next": null
+    },
+    "after": {
+      "if": {
+        "quest": [
+          "example_patrol",
+          "done"
+        ]
+      },
+      "speaker": "Soldat de la Garde",
+      "text": "La clairière est calme depuis ta ronde. Tu as l’étoffe d’une vraie gardienne.",
+      "next": null
+    }
+  }
+}

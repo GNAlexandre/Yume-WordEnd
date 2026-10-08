@@ -97,11 +97,6 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Crédits"
 
-[node name="Island68Button" type="Button" parent="Content/Columns/Left/Buttons"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Découvrir l’île n° 68"
-
 [node name="MessagePanel" type="PanelContainer" parent="Content/Columns/Left"]
 unique_name_in_owner = true
 visible = false
@@ -131,10 +126,16 @@ theme_override_constants/separation = 14
 layout_mode = 2
 theme_type_variation = &"HeaderLabel"
 theme_override_font_sizes/font_size = 32
-text = "Choisis ton personnage"
+text = "Choisis ta fée"
 horizontal_alignment = 1
 
-[node name="SkinGrid" type="GridContainer" parent="Content/Columns/SkinPanel/SkinBox"]
+[node name="SkinScroll" type="ScrollContainer" parent="Content/Columns/SkinPanel/SkinBox"]
+unique_name_in_owner = true
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="SkinGrid" type="GridContainer" parent="Content/Columns/SkinPanel/SkinBox/SkinScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -143,10 +144,12 @@ theme_override_constants/v_separation = 16
 columns = 2
 
 [node name="SkinHint" type="Label" parent="Content/Columns/SkinPanel/SkinBox"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
-text = "Il te suit dans la nouvelle partie."
+text = "Ta fée prend la place de Chtholly dans l'histoire."
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="ConfirmOverlay" type="Control" parent="."]
 unique_name_in_owner = true

@@ -1,13 +1,14 @@
 extends "res://tests/stubs/l8_save_test.gd"
-## SaveManager, fichier (L8) : aller-retour identique champ à champ, schéma v1, fichier absent,
-## fichier corrompu → nouvelle partie + .bak, écriture sûre, export / import JSON.
+## SaveManager, fichier (L8) : aller-retour identique champ à champ, schéma courant (v2 depuis le
+## Lot Q), fichier absent, fichier corrompu → nouvelle partie + .bak, écriture sûre, export /
+## import JSON.
 
 const ISO_UTC := "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
 
 
 ## Partie bien remplie : chaque champ du schéma a une valeur différente du défaut.
 func _fill_state() -> void:
-	GameState.skin_id = &"forgeron"
+	GameState.skin_id = &"ithea"
 	GameState.max_hp = 6
 	GameState.position = Vector3(12.25, 1.5, -4.75)
 	GameState.zone = &"forest"
@@ -23,6 +24,8 @@ func _fill_state() -> void:
 	GameState.record_score(&"dunes", 300, 4)
 	GameState.record_score(&"dunes", 120, 2)
 	GameState.record_score(&"dunes", 90, 1)
+	GameState.set_quest_step(&"pages", &"deliver", 2)
+	GameState.tracked_quest = &"pages"
 
 
 func test_no_file_means_no_save() -> void:
@@ -55,18 +58,18 @@ func test_round_trip_is_identical_field_by_field() -> void:
 	assert_eq(after["best_scores"], {"dunes": {"score": 640, "wave": 6, "games": 4}})
 	assert_eq(GameState.best_score(&"dunes"), 640)
 	assert_true(GameState.is_pickup_collected(&"forest_page_1"))
-	assert_eq(GameState.skin_id, &"forgeron")
+	assert_eq(GameState.skin_id, &"ithea")
 	assert_eq(GameState.max_hp, 6)
 
 
-func test_file_follows_schema_v1() -> void:
+func test_file_follows_the_current_schema() -> void:
 	_fill_state()
 	assert_eq(SaveManager.save(), OK)
 	var data := read_save()
 	var keys: Array = data.keys()
 	assert_eq(keys.slice(0, 2), ["version", "saved_at"], "version et saved_at d'abord")
 	assert_eq(keys.slice(2), GameState.to_dict().keys(), "puis les champs de to_dict()")
-	assert_eq(data["version"], 1.0)
+	assert_eq(data["version"], float(SaveManager.SAVE_VERSION))
 	var saved_at := str(data["saved_at"])
 	assert_not_null(
 		RegEx.create_from_string(ISO_UTC).search(saved_at), "ISO 8601 UTC : " + saved_at
@@ -93,7 +96,7 @@ func test_failed_write_keeps_previous_save() -> void:
 	GameState.skin_id = &"enfant"
 	assert_eq(SaveManager.save(), OK)
 	var previous := FileAccess.get_file_as_string(SaveManager.save_path)
-	GameState.skin_id = &"forgeron"
+	GameState.skin_id = &"ithea"
 	# Le fichier temporaire ne peut pas être créé : un dossier occupe son nom.
 	DirAccess.make_dir_absolute(SaveManager.save_path + ".tmp")
 	watch_signals(SaveManager)
@@ -123,7 +126,7 @@ func test_corrupted_file_starts_new_game_and_keeps_backup() -> void:
 	assert_string_contains(SaveManager.last_error, backup)
 	assert_true(SaveManager.is_autosave_pending(), "la nouvelle partie va être écrite")
 	assert_eq(SaveManager.flush(), OK)
-	assert_eq(read_save()["version"], 1.0, "nouvelle sauvegarde valide")
+	assert_eq(read_save()["version"], float(SaveManager.SAVE_VERSION), "nouvelle sauvegarde valide")
 
 
 func test_every_kind_of_damage_is_recovered() -> void:

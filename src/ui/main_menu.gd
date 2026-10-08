@@ -24,6 +24,10 @@ const GESTURE_META := &"wordend_user_gesture"
 const MASTER_BUS := 0
 const CARD_SIZE := Vector2(206, 194)
 const PORTRAIT_SIZE := Vector2(128, 128)
+## (Acte 1, intégration) Hauteur visible de la grille des vignettes au plus : deux rangées et le
+## haut de la troisième (signe qu'elle défile), pour que le panneau, son titre et sa phrase tiennent
+## dans 1280 × 720 quel que soit le nombre de skins.
+const MAX_SKIN_GRID_HEIGHT := 460.0
 const ERROR_COLOR := Color(1.0, 0.72, 0.66)
 const PRIVATE_NOTICE := (
 	"Navigation privée : ta progression sera perdue à la fermeture de l'onglet. "
@@ -53,6 +57,7 @@ var _pad := MenuInput.new()
 @onready var _message_panel: Control = %MessagePanel
 @onready var _message: Label = %Message
 @onready var _skin_grid: GridContainer = %SkinGrid
+@onready var _skin_scroll: ScrollContainer = %SkinScroll
 @onready var _confirm_overlay: Control = %ConfirmOverlay
 @onready var _confirm_cancel: Button = %ConfirmCancel
 @onready var _save_overlay: Control = %SaveOverlay
@@ -70,7 +75,6 @@ func _ready() -> void:
 	_new_game_button.pressed.connect(request_new_game)
 	_save_button.pressed.connect(open_save_panel)
 	_credits_button.pressed.connect(open_credits)
-	(%Island68Button as Button).pressed.connect(_open_island68)
 	_confirm_cancel.pressed.connect(close_overlay)
 	(%ConfirmOk as Button).pressed.connect(start_new_game)
 	_copy_button.pressed.connect(copy_export)
@@ -89,10 +93,6 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	_set_muted(false)
-
-
-func _open_island68() -> void:
-	get_tree().change_scene_to_file("res://scenes/hd2d/island68.tscn")
 
 
 func _process(delta: float) -> void:
@@ -340,6 +340,26 @@ func _enter_menu(animate: bool) -> void:
 	if animate:
 		_content.modulate.a = 0.0
 		create_tween().tween_property(_content, ^"modulate:a", 1.0, 0.35)
+	# La vignette choisie (celle de la sauvegarde) peut être plus bas dans la grille : elle est
+	# montrée une fois la grille mise en page (lien rompu si le menu est libéré avant).
+	if not get_tree().process_frame.is_connected(_reveal_selected_skin):
+		get_tree().process_frame.connect(_reveal_selected_skin, CONNECT_ONE_SHOT)
+
+
+## Fait défiler la grille jusqu'à la vignette du skin choisi.
+func _reveal_selected_skin() -> void:
+	var card := skin_card(_selected_skin)
+	if card != null and _skin_scroll.is_visible_in_tree():
+		_skin_scroll.ensure_control_visible(card)
+
+
+## (Acte 1, intégration) Hauteur de la grille défilante : toutes les rangées, au plus
+## MAX_SKIN_GRID_HEIGHT.
+func _fit_skin_scroll() -> void:
+	var rows := ceili(float(_skin_grid.get_child_count()) / maxi(_skin_grid.columns, 1))
+	var gap := float(_skin_grid.get_theme_constant(&"v_separation"))
+	var height := rows * CARD_SIZE.y + maxf(rows - 1, 0.0) * gap
+	_skin_scroll.custom_minimum_size.y = minf(height, MAX_SKIN_GRID_HEIGHT)
 
 
 func _build_skin_cards() -> void:
@@ -364,6 +384,8 @@ func _build_skin_cards() -> void:
 		label.name = "Name"
 		label.text = skin.display_name
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		# Un nom trop long pour la vignette finit par « … » (en entier dans l'infobulle).
+		label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		box.add_child(portrait)
 		box.add_child(label)
@@ -372,6 +394,7 @@ func _build_skin_cards() -> void:
 		card.pressed.connect(select_skin.bind(skin.id, true))
 		_skin_grid.add_child(card)
 		_cards[skin.id] = card
+	_fit_skin_scroll()
 
 
 func _open_overlay(overlay: Control, focus: Control, return_to: Control) -> void:

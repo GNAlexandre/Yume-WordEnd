@@ -5,6 +5,8 @@
 [ext_resource type="Script" path="res://src/combat/health.gd" id="3_health"]
 [ext_resource type="PackedScene" path="res://src/combat/hurtbox.tscn" id="4_hurtbox"]
 [ext_resource type="PackedScene" path="res://src/combat/hitbox.tscn" id="5_hitbox"]
+[ext_resource type="Script" path="res://src/enemies/telegraph.gd" id="6_telegraph"]
+[ext_resource type="Script" path="res://src/combat/hit_flash.gd" id="7_flash"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_enemy"]
 radius = 0.4
@@ -31,3 +33,11 @@ team = &"enemy"
 [node name="Hitbox" parent="." instance=ExtResource("5_hitbox")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.6)
 team = &"enemy"
+
+[node name="Telegraph" type="Node3D" parent="."]
+script = ExtResource("6_telegraph")
+
+[node name="HitFlash" type="AnimatedSprite3D" parent="."]
+visible = false
+cast_shadow = 0
+script = ExtResource("7_flash")

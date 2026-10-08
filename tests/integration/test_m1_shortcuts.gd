@@ -61,11 +61,11 @@ func test_dunes_shortcut_leads_straight_to_the_arena_panel() -> void:
 	game.add_child(shortcuts)
 	await wait_physics_frames(3)
 	# Le parcours du navigateur (docs/web.md) : tout droit, puis E devant le panneau.
-	Input.action_press(&"move_forward")
+	hold_toward(player.aim_direction())
 	var shown: bool = await wait_until(
-		func() -> bool: return player.current_prompt() == "Affronter les Timeres", 6.0
+		func() -> bool: return player.current_prompt() == "Sonner la cloche de veille", 6.0
 	)
-	Input.action_release(&"move_forward")
+	release_move()
 	assert_true(shown, "tout droit jusqu'au panneau de l'arène")
 	await press(&"interact")
 	assert_true(director.is_running(), "E lance la série")
@@ -78,3 +78,23 @@ func test_unknown_zone_is_ignored() -> void:
 	game.add_child(shortcuts)
 	await wait_physics_frames(3)
 	assert_eq(WorldManager.current_zone(), &"village", "zone inconnue : rien ne bouge")
+
+
+func test_face_turns_the_player_and_the_camera_toward_a_npc() -> void:
+	# (Acte 1) window.wordendFace du script du navigateur : face(id) ou face_point(x, z).
+	await start_game()
+	var shortcuts := TestShortcuts.new()
+	shortcuts.parameters = {"trace": ""}
+	game.add_child(shortcuts)
+	await wait_physics_frames(2)
+	var nygglatho := game.get_node(^"Island/Zones/village/NPCs/Nygglatho") as Node3D
+	assert_true(shortcuts.face(&"nygglatho"), "Nygglatho, sous le porche")
+	var toward := nygglatho.global_position - player.global_position
+	toward.y = 0.0
+	assert_gt(player.aim_direction().dot(toward.normalized()), 0.99, "tourné vers elle")
+	assert_true(shortcuts.face_point(0.0, -40.0), "vers les bois")
+	var north := Vector3(0.0, 0.0, -40.0) - player.global_position
+	north.y = 0.0
+	assert_gt(player.aim_direction().dot(north.normalized()), 0.99, "au nord")
+	assert_false(shortcuts.face(&"inconnu"), "PNJ inconnu : rien")
+	assert_false(shortcuts.face(&"willem_stars"), "PNJ absent (visible_if) : rien")
