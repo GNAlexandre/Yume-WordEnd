@@ -3,10 +3,12 @@ extends GutTest
 ## étroit, regard vers le nord), suivi du joueur avec un léger retard, bornes de l'île, zoom borné
 ## (molette et stick droit), cadrage de la cible verrouillée sans rotation, post-traitement sous
 ## l'interface et son shader qui compile ; (H5) bande nette du flou qui suit le joueur à l'écran,
-## façade d'un bâtiment de 6,5 m cadrée quand le joueur est devant (et rien ailleurs), sans saut
-## en chemin, joueur au-dessus de la boîte de dialogue en conversation, bornes qui gardent le
-## joueur près du centre au bord de l'île. La caméra est pilotée par update_camera()
-## (son _process est coupé).
+## bornes qui gardent le joueur près du centre au bord de l'île ; (recette du 8 octobre 2026)
+## cadrage constant : ni tangage ni recul qui changent en marchant devant ou le long des
+## bâtiments, joueur sous le milieu de l'écran, au-dessus de la boîte de dialogue en
+## conversation, avance dans le sens de la marche qui s'installe et s'éteint sans à-coup, caméra
+## posée hors du lissage physique. La caméra est pilotée par update_camera() (son _process est
+## coupé).
 
 const RIG := preload("res://src/player/camera_rig.tscn")
 const CameraRigScript := preload("res://src/player/camera_rig.gd")
@@ -63,9 +65,12 @@ func test_camera_frames_the_player_from_the_south() -> void:
 	var eye := rig.camera.global_position
 	assert_gt(eye.z, 8.0, "au sud du joueur")
 	assert_gt(eye.y, 5.0, "au-dessus")
-	var to_player := (Vector3(5, rig.focus_height, 8) - eye).normalized()
+	var aimed := Vector3(5, rig.focus_height, 8) + Vector3.FORWARD * rig.focus_ahead
 	assert_almost_eq(
-		to_player, -rig.camera.global_basis.z, Vector3.ONE * 0.02, "le joueur au centre"
+		(aimed - eye).normalized(),
+		-rig.camera.global_basis.z,
+		Vector3.ONE * 0.02,
+		"vise focus_ahead m au nord du joueur"
 	)
 	assert_almost_eq(eye.distance_to(rig.focus()), rig.distance, 0.05, "à sa distance")
 
@@ -95,7 +100,12 @@ func test_snap_puts_the_camera_on_the_player_at_once() -> void:
 	_update(rig, 0.2)
 	(rig.get_parent() as Node3D).position = Vector3(-20, 0, 30)
 	rig.snap_behind(Vector3.RIGHT)
-	assert_almost_eq(rig.focus(), Vector3(-20, rig.focus_height, 30), Vector3.ONE * 0.01)
+	assert_almost_eq(
+		rig.focus(),
+		Vector3(-20, rig.focus_height, 30 - rig.focus_ahead),
+		Vector3.ONE * 0.01,
+		"au nord du joueur, sans retard"
+	)
 	assert_eq(rig.forward(), Vector3.FORWARD, "toujours le nord")
 
 
@@ -185,96 +195,93 @@ func test_focus_band_follows_the_player_on_screen() -> void:
 		assert_lt(far, center - half, "14 m derrière : dans le flou du lointain")
 
 
-func test_building_facade_fits_in_the_frame() -> void:
-	# Le joueur dans la cour, devant le mur de 6,5 m de l'entrepôt : la façade et le bas du toit
-	# tiennent dans le cadre, le joueur reste à l'écran.
-	for ahead: float in [3.0, 6.0, 10.0, 14.0]:
-		var rig := _spawn_rig(Vector3(0, 0, 4.0 + ahead))
-		var building := _warehouse(Vector3(-2, 0, 0))
-		_update(rig, 3.0)
-		var wall_top := Vector3(-2, building.wall_height + 0.3, 4.0)
-		assert_gt(_screen_y(rig, wall_top), 0.0, "%.0f m : haut du mur dans le cadre" % ahead)
-		var feet := _screen_y(rig, rig.global_position)
-		assert_between(feet, 0.5, 0.86, "%.0f m : joueur à l'écran, dans le bas" % ahead)
-		assert_lte(rig.camera.global_position.distance_to(rig.focus()), 30.01, "recul borné")
-		building.free()
-		(rig.get_parent() as Node3D).free()
-
-
-func test_building_framing_lets_go_elsewhere() -> void:
-	var rig := _spawn_rig(Vector3(0, 0, 9))
-	var building := _warehouse(Vector3(0, 0, 0))
-	_update(rig, 3.0)
-	assert_lt(-rig.pitch(), deg_to_rad(rig.pitch_deg - 2.0), "devant la façade : lève les yeux")
-	assert_eq(rig.forward(), Vector3.FORWARD, "sans tourner")
-	# Derrière le bâtiment, loin devant ou sur le côté : cadrage habituel, centré sur le joueur.
-	for spot: Vector3 in [Vector3(0, 0, -9), Vector3(0, 0, 30), Vector3(30, 0, 9)]:
-		(rig.get_parent() as Node3D).position = spot
-		_update(rig, 4.0)
-		assert_almost_eq(
-			rig.focus(),
-			spot + Vector3.UP * rig.focus_height,
-			Vector3.ONE * 0.05,
-			"centré %s" % spot
-		)
-		assert_almost_eq(
-			rig.camera.global_position.distance_to(rig.focus()), rig.distance, 0.05, "à sa distance"
-		)
-		assert_almost_eq(-rig.pitch(), deg_to_rad(rig.pitch_deg), 0.002, "tangage habituel")
-	building.free()
-
-
-func test_building_framing_has_no_jump_along_the_way() -> void:
-	# En s'approchant de la façade (de 22 m à 1 m) ou en la longeant, le cadrage voulu change en
-	# douceur : la demande d'une façade naît et s'éteint par fondu, pas d'un coup à la portée.
+func test_walking_past_buildings_never_tilts_nor_zooms() -> void:
+	# Recette : en marchant vers la façade de l'entrepôt ou le long d'elle, la vue pompait comme
+	# un zoom (tangage et recul qui suivaient les bâtiments). Le cadrage reste constant.
 	var rig := _spawn_rig(Vector3(0, 0, 26))
 	var holder := rig.get_parent() as Node3D
 	var building := _warehouse(Vector3(0, 0, 0))
+	_update(rig, 1.0)
 	var paths: Array[Array] = [
 		[Vector3(0, 0, 26), Vector3(0, 0, 5)], [Vector3(-30, 0, 12), Vector3(30, 0, 12)]
 	]
 	for path: Array in paths:
 		var from: Vector3 = path[0]
 		var to: Vector3 = path[1]
-		var steps := roundi(from.distance_to(to) / 0.25)
-		holder.position = from
-		var last := rig._building_framing()
-		var tilted := false
+		var steps := roundi(from.distance_to(to) / 0.066)
 		for i in range(1, steps + 1):
 			holder.position = from.lerp(to, float(i) / steps)
-			var framing := rig._building_framing()
-			var jump := absf(framing.x - last.x)
-			var recoil := absf(maxf(framing.y, rig.distance) - maxf(last.y, rig.distance))
-			if jump > 1.5 or recoil > 1.0:
-				fail_test("saut du cadrage en %s : %.2f°, %.2f m" % [holder.position, jump, recoil])
+			rig.follow_velocity = (to - from).normalized() * 4.0
+			_update(rig, DT)
+			assert_almost_eq(-rig.pitch(), deg_to_rad(rig.pitch_deg), 0.0001, "tangage fixe")
+			var reach := rig.camera.global_position.distance_to(rig.focus())
+			if not is_equal_approx(reach, rig.distance):
+				fail_test("recul de %.2f m en %s" % [reach - rig.distance, holder.position])
 				break
-			tilted = tilted or framing.x < rig.pitch_deg - 4.0
-			last = framing
-		assert_true(tilted, "la façade est cadrée en chemin (%s → %s)" % [from, to])
+	rig.follow_velocity = Vector3.ZERO
 	building.free()
+
+
+func test_player_stands_below_the_middle_of_the_screen() -> void:
+	var rig := _spawn_rig(Vector3(4, 0, 6))
+	_update(rig, 3.0)
+	var feet := _screen_y(rig, rig.global_position)
+	assert_between(feet, 0.55, 0.72, "pieds sous le milieu, place pour les façades devant")
+	var ahead := _screen_y(rig, rig.global_position + Vector3(0, 6.5, -2.0))
+	assert_gt(ahead, 0.0, "un mur de 6,5 m à 2 m au nord du joueur tient dans le cadre")
 
 
 func test_conversation_keeps_the_player_above_the_dialogue_box() -> void:
-	# Devant l'entrepôt, le cadrage de la façade met le joueur dans le bas de l'écran ; en
-	# conversation, il remonte au-dessus de la boîte de dialogue (bas 30 % de l'écran), sans recul.
+	# La boîte de dialogue couvre le bas 30 % de l'écran : en conversation, le point visé glisse
+	# vers le joueur, sans recul ni tangage, puis revient.
 	var rig := _spawn_rig(Vector3(0, 0, 10))
-	var building := _warehouse(Vector3(0, 0, 0))
 	_update(rig, 3.0)
-	var framed := _screen_y(rig, rig.global_position)
-	assert_gt(framed, 0.72, "cadrage de la façade : pieds dans le bas de l'écran")
+	var walking := _screen_y(rig, rig.global_position)
 	EventBus.dialogue_started.emit(&"nygglatho")
+	_update(rig, DT)
+	assert_almost_eq(_screen_y(rig, rig.global_position), walking, 0.01, "pas de saut")
 	_update(rig, 3.0)
-	assert_lt(_screen_y(rig, rig.global_position), 0.67, "en conversation : au-dessus de la boîte")
+	assert_lt(_screen_y(rig, rig.global_position), 0.62, "en conversation : au-dessus de la boîte")
 	assert_almost_eq(
-		rig.camera.global_position.distance_to(rig.global_position + Vector3.UP * rig.focus_height),
-		rig.distance,
-		0.05,
-		"sans recul"
+		rig.camera.global_position.distance_to(rig.focus()), rig.distance, 0.05, "sans recul"
 	)
+	assert_almost_eq(-rig.pitch(), deg_to_rad(rig.pitch_deg), 0.0001, "sans tangage")
 	EventBus.dialogue_ended.emit(&"nygglatho")
+	_update(rig, 4.0)
+	assert_almost_eq(_screen_y(rig, rig.global_position), walking, 0.01, "puis le cadrage revient")
+
+
+func test_lead_eases_in_and_out() -> void:
+	# Le point visé avance dans le sens de la marche sans à-coup au départ ni à l'arrêt.
+	var rig := _spawn_rig()
+	_update(rig, 1.0)
+	var rest := rig.focus()
+	rig.follow_velocity = Vector3(4, 0, 0)
+	_update(rig, DT)
+	assert_lt(rig.focus().x - rest.x, 0.02, "départ : l'avance ne saute pas")
 	_update(rig, 3.0)
-	assert_almost_eq(_screen_y(rig, rig.global_position), framed, 0.01, "puis le cadrage revient")
-	building.free()
+	assert_almost_eq(
+		rig.focus().x - rest.x, 4.0 * rig.lead_time, 0.05, "en marche : avance de lead_time s"
+	)
+	var moving := rig.focus().x
+	rig.follow_velocity = Vector3.ZERO
+	_update(rig, DT)
+	assert_gt(rig.focus().x, moving - 0.02, "arrêt : pas de recul brusque")
+	_update(rig, 4.0)
+	assert_almost_eq(rig.focus().x, rest.x, 0.05, "puis revient sur le joueur")
+
+
+func test_camera_is_placed_outside_physics_interpolation() -> void:
+	var rig := _spawn_rig()
+	assert_true(
+		ProjectSettings.get_setting("physics/common/physics_interpolation", false),
+		"lissage physique : le joueur ne tremble pas hors de 60 images/s"
+	)
+	assert_eq(
+		rig.camera.physics_interpolation_mode,
+		Node.PHYSICS_INTERPOLATION_MODE_OFF,
+		"la caméra, posée à chaque image, n'est pas interpolée"
+	)
 
 
 func test_wide_limits_keep_the_player_on_screen_at_the_edge() -> void:

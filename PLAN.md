@@ -373,11 +373,17 @@ class_name Building        # src/world/building.gd : volume (murs, toit long ou 
 class_name PropBatcher     # src/world/prop_batcher.gd, nœud « Geometry » des zones : fond les MeshInstance3D à
                            # material_override en un mesh par image et par case (« Batch… ») ; @export cell_size
 # src/player/camera_rig.gd (racine CameraRig de camera_rig.tscn, sans class_name) : caméra fixe vers le nord
-@export pitch_deg (32), fov_deg (30), focus_height, distance (21), min_distance, max_distance, follow_speed, lead_time,
-        limits: Rect2 (bornes du point visé), lock_focus, lock_focus_max
+@export pitch_deg (32), fov_deg (30), focus_height, focus_ahead (2,5 m au nord du joueur), talk_ahead (0, en
+        conversation), ahead_smoothing, distance (21), min_distance, max_distance, follow_speed, lead_time (0,2),
+        lead_smoothing, limits: Rect2 (bornes du point visé), lock_focus, lock_focus_max
 var lock_target: Node3D, follow_velocity: Vector3   # posés par le joueur à chaque image physique
-func update_camera(delta, zoom_axis := 0.0), focus_goal(with_lead := true) -> Vector3, snap(), snap_behind(_dir) (= snap),
-     recenter_behind(_dir) (sans effet), zoom(amount), zoom_distance(), focus(), yaw() (0), pitch(), forward() (le nord)
+func update_camera(delta, zoom_axis := 0.0), focus_goal(with_lead := true) -> Vector3, anchor() -> Vector3 (place
+     affichée du joueur, interpolée), snap(), snap_behind(_dir) (= snap), recenter_behind(_dir) (sans effet),
+     zoom(amount), zoom_distance(), focus(), yaw() (0), pitch() (toujours pitch_deg), forward() (le nord)
+# (recette du 8 octobre 2026) Cadrage constant : plus de cadrage automatique des bâtiments. Lissage physique
+# (project.godot physics/common/physics_interpolation) limité au monde 3D : src/game.tscn Game ON, UI OFF ;
+# src/main.tscn Main OFF. Un nœud 3D déplacé dans _process est en physics_interpolation_mode OFF et lit la place
+# affichée de ce qu'il suit (get_global_transform_interpolated()).
 ```
 
 ### Conventions
@@ -481,7 +487,7 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 | --- | --- | --- |
 | Joueur | `src/player/player.tscn` (`CharacterBody3D`) | Déplacement relatif à l'écran ((HD-2D) haut = nord : la caméra fixe ne tourne pas), course (Maj), saut, gravité, pente jusqu'à 45°, marche 4 m/s, course 7 m/s ; ZQSD/WASD + flèches + manette ; déplacement bloqué pendant `Combat.is_busy()` ; détection d'`Interactable` devant le joueur, touche E / bouton A |
 | Combat joueur | `src/combat/player_combat.gd` (enfant `Combat` du joueur) | Épée J/X ou bouton X ; charge K/C ou bouton B maintenu ; `Hitbox` de l'épée activée par `frame_changed` sur les images `coup` ; `Health` 5 PV ; recul ; mort et réapparition |
-| Caméra | `src/player/camera_rig.tscn` (`Camera3D` + `PostFX`) | (HD-2D) Fixe, à la manière d'*Octopath Traveler* : regarde le nord, inclinée de 32°, champ vertical de 30°, à 21 m du point visé ; suit le joueur avec un léger retard (et un peu en avant de sa marche), bornée à l'île ; molette ou stick droit : léger zoom (14 à 25 m) ; **verrouillage de cible** (clic molette / R3) : le point visé avance vers la cible, le joueur lui fait face ; post-traitement sous l'interface : flou de profondeur, lueur, étalonnage chaud |
+| Caméra | `src/player/camera_rig.tscn` (`Camera3D` + `PostFX`) | (HD-2D) Fixe, à la manière d'*Octopath Traveler* : regarde le nord, inclinée de 32°, champ vertical de 30°, à 21 m du point visé (2,5 m au nord du joueur, qui se tient sous le milieu de l'écran) ; cadrage constant (ni tangage ni recul automatiques) ; suit la place affichée du joueur (lissage physique) avec un léger retard (et un peu en avant de sa marche, sans à-coup), bornée à l'île ; molette ou stick droit : léger zoom (14 à 25 m) ; **verrouillage de cible** (clic molette / R3) : le point visé avance vers la cible, le joueur lui fait face ; post-traitement sous l'interface : flou de profondeur, lueur, étalonnage chaud |
 | Visuel | `src/visuals/character_visual.tscn` | `AnimatedSprite3D` billboard axe Y (face à la caméra fixe), 7 animations de la planche (`repos`, `marche`, `course`, `attaque`, `charge`, `degats`, `mort`), (HD-2D) `parle` pour les PNJ en conversation, retournement gauche/droite selon la direction, ombre disque ; `frame_changed` et `animation_finished` |
 | Timeres | `src/enemies/enemy.tscn` + `data/enemies/timere_*.tres` | Machine à états : `idle` (errance) → `chase` (droit vers le joueur, séparation entre ennemis) → `attack` à portée (morsure/fouet, dégâts sur images `coup`) → `hurt` (recul 0,35 s, sauf Grand) → `dead` (animation 6 images, disparaît après 2,2 s, points). Coureur : `rush` en ligne droite dès 8 m |
 | Arène des dunes | `src/world/zones/dunes/dunes.tscn` + `src/enemies/arena.tscn` | Zone ouest, coucher de soleil (ciel inspiré de `decor.webp`), 4 points d'apparition, `WaveDirector` lisant `data/waves/dunes.json` ; un panneau `Interactable` lance les vagues et la musique (invite « Sonner la cloche de veille », titre de fin « Fin de la veille » : `data/texts/story.json`) ; sortir de l'arène entre deux vagues met fin à la série et enregistre le score |
