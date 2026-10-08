@@ -35,7 +35,7 @@ const int WATER = 9;
 const int MUD = 10;
 const int METAL = 11;
 const float ATLAS_COLUMNS = 4.0;
-const float ATLAS_ROWS = 3.0;
+const float ATLAS_ROWS = 7.0; // (H10) 27 tuiles : 7 rangées de 4 (H9 la déduira de la taille).
 
 uniform sampler2D ground_atlas : source_color, filter_linear_mipmap, repeat_disable;
 // Taille d'une tuile (m) : 384 px à 96 px par mètre.

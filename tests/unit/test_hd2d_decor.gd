@@ -253,7 +253,7 @@ func test_island_ground_reads_a_mipmapped_atlas() -> void:
 	if atlas != null:
 		var image := atlas.get_image()
 		assert_true(image != null and image.has_mipmaps(), "atlas avec mipmaps en jeu")
-		assert_eq(atlas.get_size(), Vector2(1536, 1152), "même atlas, mêmes cases")
+		assert_eq(atlas.get_size(), Vector2(1536, 2688), "même atlas, mêmes cases (27 tuiles)")
 	island.free()
 
 
