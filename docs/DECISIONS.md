@@ -1532,3 +1532,24 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **Budget Web** : le cahier n° 2 ajouterait 15 à 20 Mo à l'export (23,7 Mo pour 25 Mo
   aujourd'hui) : à trancher avant son intégration (relever le budget, compresser les grandes
   images ou charger par zone).
+- **Budget Web relevé de 25 à 60 Mo compressés** (choix de l'utilisateur : la qualité des images
+  passe avant le poids). Les 25 Mo étaient un objectif du plan (temps de premier chargement), pas
+  une limite de GitHub Pages ; le plan prévoyait déjà 60 Mo à M4. `tools/build_size.sh`,
+  `tools/check.sh`, l'étape de la CI, `PLAN.md` et `docs/web.md` passent à 60 Mo ; le budget des
+  images du manifeste (`test_hd2d_assets.gd`) de 16 à 64 Mo de PNG. Les images restent importées
+  sans perte (WebP sans perte) ; le cahier n° 2 ne demande plus de réduire les couleurs. Les
+  mesures et critères déjà passés (recette M2, lot L9) gardent leurs 25 Mo d'alors.
+- **Recette du 8 octobre 2026 : caméra qui pompe et tremblements** (jeu sur GitHub Pages). Deux
+  causes mesurées (marche scriptée, journal image par image) : (1) le cadrage automatique des
+  bâtiments (H5) faisait varier le tangage de 24,7 à 31,9° et glisser le joueur de 170 px à
+  l'écran en passant devant l'entrepôt, ressenti comme un zoom d'avant en arrière ; (2) sans
+  lissage physique, le joueur tremblait de 2 à 3 px à l'écran dès que l'affichage ne tournait pas
+  à 60 images/s (45 ou 144 : 0, 1 ou 2 pas de physique par image). Corrections : cadrage constant
+  (tangage 32°, distance du zoom), point visé à 2,5 m au nord du joueur (un mur de 6,5 m à 2 m
+  devant lui tient dans le cadre), avance dans le sens de la marche lissée (0,2 s, 2,5/s),
+  conversation : point visé qui glisse vers le joueur ; lissage physique activé
+  (`physics/common/physics_interpolation`, PR « contrats »), limité au monde 3D (`Game` ON,
+  `UI` et `Main` OFF) ; caméra, anneau de verrouillage et ombre du joueur posés hors lissage sur
+  la place affichée (`get_global_transform_interpolated`) ; `WorldManager.teleport` et
+  `CameraRig.snap` remettent le lissage à zéro. Mesure après : tremblement < 0,3 px à 45, 60 et
+  144 images/s ; tangage et distance fixes. Les tests du cadrage des bâtiments sont remplacés.

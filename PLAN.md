@@ -54,7 +54,7 @@ Multijoueur, génération procédurale, application mobile native, monétisation
 ### Contraintes à connaître dès le départ
 
 - **Pas d'écran dans le cloud** : les agents valident par import headless, tests, export et captures d'écran rendues sous Xvfb (section 6). Un contrôle visuel humain reste nécessaire à chaque jalon.
-- **Budget Web** : viser moins de 25 Mo compressés (wasm + pck) pour M2, moins de 60 Mo à M4, avec un écran de chargement.
+- **Budget Web** : moins de 60 Mo compressés (wasm + pck), avec un écran de chargement ; relevé de 25 à 60 Mo à M2.5 pour garder toutes les images sans perte de qualité (docs/DECISIONS.md).
 - **Audio Web** : le navigateur exige un geste utilisateur avant tout son, d'où un écran « Cliquer pour jouer ».
 - **Sauvegarde Web** : `user://` est persisté dans IndexedDB par Godot ; une sauvegarde est perdue si le joueur vide les données du site, d'où la synchronisation avec le compte WordPress en M4.
 
@@ -373,11 +373,17 @@ class_name Building        # src/world/building.gd : volume (murs, toit long ou 
 class_name PropBatcher     # src/world/prop_batcher.gd, nœud « Geometry » des zones : fond les MeshInstance3D à
                            # material_override en un mesh par image et par case (« Batch… ») ; @export cell_size
 # src/player/camera_rig.gd (racine CameraRig de camera_rig.tscn, sans class_name) : caméra fixe vers le nord
-@export pitch_deg (32), fov_deg (30), focus_height, distance (21), min_distance, max_distance, follow_speed, lead_time,
-        limits: Rect2 (bornes du point visé), lock_focus, lock_focus_max
+@export pitch_deg (32), fov_deg (30), focus_height, focus_ahead (2,5 m au nord du joueur), talk_ahead (0, en
+        conversation), ahead_smoothing, distance (21), min_distance, max_distance, follow_speed, lead_time (0,2),
+        lead_smoothing, limits: Rect2 (bornes du point visé), lock_focus, lock_focus_max
 var lock_target: Node3D, follow_velocity: Vector3   # posés par le joueur à chaque image physique
-func update_camera(delta, zoom_axis := 0.0), focus_goal(with_lead := true) -> Vector3, snap(), snap_behind(_dir) (= snap),
-     recenter_behind(_dir) (sans effet), zoom(amount), zoom_distance(), focus(), yaw() (0), pitch(), forward() (le nord)
+func update_camera(delta, zoom_axis := 0.0), focus_goal(with_lead := true) -> Vector3, anchor() -> Vector3 (place
+     affichée du joueur, interpolée), snap(), snap_behind(_dir) (= snap), recenter_behind(_dir) (sans effet),
+     zoom(amount), zoom_distance(), focus(), yaw() (0), pitch() (toujours pitch_deg), forward() (le nord)
+# (recette du 8 octobre 2026) Cadrage constant : plus de cadrage automatique des bâtiments. Lissage physique
+# (project.godot physics/common/physics_interpolation) limité au monde 3D : src/game.tscn Game ON, UI OFF ;
+# src/main.tscn Main OFF. Un nœud 3D déplacé dans _process est en physics_interpolation_mode OFF et lit la place
+# affichée de ce qu'il suit (get_global_transform_interpolated()).
 ```
 
 ### Conventions
@@ -481,7 +487,7 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 | --- | --- | --- |
 | Joueur | `src/player/player.tscn` (`CharacterBody3D`) | Déplacement relatif à l'écran ((HD-2D) haut = nord : la caméra fixe ne tourne pas), course (Maj), saut, gravité, pente jusqu'à 45°, marche 4 m/s, course 7 m/s ; ZQSD/WASD + flèches + manette ; déplacement bloqué pendant `Combat.is_busy()` ; détection d'`Interactable` devant le joueur, touche E / bouton A |
 | Combat joueur | `src/combat/player_combat.gd` (enfant `Combat` du joueur) | Épée J/X ou bouton X ; charge K/C ou bouton B maintenu ; `Hitbox` de l'épée activée par `frame_changed` sur les images `coup` ; `Health` 5 PV ; recul ; mort et réapparition |
-| Caméra | `src/player/camera_rig.tscn` (`Camera3D` + `PostFX`) | (HD-2D) Fixe, à la manière d'*Octopath Traveler* : regarde le nord, inclinée de 32°, champ vertical de 30°, à 21 m du point visé ; suit le joueur avec un léger retard (et un peu en avant de sa marche), bornée à l'île ; molette ou stick droit : léger zoom (14 à 25 m) ; **verrouillage de cible** (clic molette / R3) : le point visé avance vers la cible, le joueur lui fait face ; post-traitement sous l'interface : flou de profondeur, lueur, étalonnage chaud |
+| Caméra | `src/player/camera_rig.tscn` (`Camera3D` + `PostFX`) | (HD-2D) Fixe, à la manière d'*Octopath Traveler* : regarde le nord, inclinée de 32°, champ vertical de 30°, à 21 m du point visé (2,5 m au nord du joueur, qui se tient sous le milieu de l'écran) ; cadrage constant (ni tangage ni recul automatiques) ; suit la place affichée du joueur (lissage physique) avec un léger retard (et un peu en avant de sa marche, sans à-coup), bornée à l'île ; molette ou stick droit : léger zoom (14 à 25 m) ; **verrouillage de cible** (clic molette / R3) : le point visé avance vers la cible, le joueur lui fait face ; post-traitement sous l'interface : flou de profondeur, lueur, étalonnage chaud |
 | Visuel | `src/visuals/character_visual.tscn` | `AnimatedSprite3D` billboard axe Y (face à la caméra fixe), 7 animations de la planche (`repos`, `marche`, `course`, `attaque`, `charge`, `degats`, `mort`), (HD-2D) `parle` pour les PNJ en conversation, retournement gauche/droite selon la direction, ombre disque ; `frame_changed` et `animation_finished` |
 | Timeres | `src/enemies/enemy.tscn` + `data/enemies/timere_*.tres` | Machine à états : `idle` (errance) → `chase` (droit vers le joueur, séparation entre ennemis) → `attack` à portée (morsure/fouet, dégâts sur images `coup`) → `hurt` (recul 0,35 s, sauf Grand) → `dead` (animation 6 images, disparaît après 2,2 s, points). Coureur : `rush` en ligne droite dès 8 m |
 | Arène des dunes | `src/world/zones/dunes/dunes.tscn` + `src/enemies/arena.tscn` | Zone ouest, coucher de soleil (ciel inspiré de `decor.webp`), 4 points d'apparition, `WaveDirector` lisant `data/waves/dunes.json` ; un panneau `Interactable` lance les vagues et la musique (invite « Sonner la cloche de veille », titre de fin « Fin de la veille » : `data/texts/story.json`) ; sortir de l'arène entre deux vagues met fin à la série et enregistre le score |
@@ -778,7 +784,7 @@ servent qu'à elles.
 
 | Lot | Objet | Fichiers possédés | Dépend de | Critères d'acceptation |
 | --- | --- | --- | --- | --- |
-| **H1 Images livrées** | Intégrer les images commandées à ChatGPT (ou à un artiste) selon `docs/ASSETS_HD2D.md`, dans l'ordre de sa section 11 : vérifier, recadrer, reconstruire l'atlas du sol, créditer ; corriger le cahier des charges quand une consigne donne de mauvais résultats | `assets/hd2d/**`, `tools/hd2d_assets.py`, `tools/hd2d_manifest.json`, `tools/hd2d_art.py`, `tools/hd2d_ground.py`, `tools/hd2d_props.py`, `tools/hd2d_sky.py`, `docs/ASSETS_HD2D.md`, `tests/unit/test_hd2d_assets.gd`, `assets/CREDITS.md` (ajouts en bas) | socle | `python3 tools/hd2d_assets.py check` sans écart ; atlas à jour ; images à leur taille exacte (96 px/m) ; export Web < 25 Mo ; planche avant/après par livraison (`tools/hd2d_shots.sh`) |
+| **H1 Images livrées** | Intégrer les images commandées à ChatGPT (ou à un artiste) selon `docs/ASSETS_HD2D.md`, dans l'ordre de sa section 11 : vérifier, recadrer, reconstruire l'atlas du sol, créditer ; corriger le cahier des charges quand une consigne donne de mauvais résultats | `assets/hd2d/**`, `tools/hd2d_assets.py`, `tools/hd2d_manifest.json`, `tools/hd2d_art.py`, `tools/hd2d_ground.py`, `tools/hd2d_props.py`, `tools/hd2d_sky.py`, `docs/ASSETS_HD2D.md`, `tests/unit/test_hd2d_assets.gd`, `assets/CREDITS.md` (ajouts en bas) | socle | `python3 tools/hd2d_assets.py check` sans écart ; atlas à jour ; images à leur taille exacte (96 px/m) ; export Web < 60 Mo ; planche avant/après par livraison (`tools/hd2d_shots.sh`) |
 | **H2 Décor de l'entrepôt** | Village de l'entrepôt : composition des volumes et des façades, cour, potager, linge, palissade, lampes ; occlusion de l'entrepôt quand on passe derrière | `src/world/zones/village/` et les décors qui ne servent qu'au village (`warehouse_main`, `warehouse_wing`, `warehouse_porch`, `armory_door`, `tool_shed`, `palisade`, `palisade_gate`, `laundry_line`, `vegetable_patch`, `well`, `flower_bed`, `climbing_tree`), `src/items/placements/village.tscn` | socle (images de H1 quand elles arrivent) | Lieux de MONDE.md section 2 reconnaissables sur `hd2d_village.png` et `hd2d_dialogue.png` ; aucun panneau ne cache le joueur ou un PNJ plus d'une seconde ; collisions testées ; ≤ 200 draw calls |
 | **H3 Décor du port** | La ville du port : rue des boutiques, café, salle de projection, maison de Limeskin, quais, grue, passerelle et aéronefs ; plans successifs de la rue | `src/world/zones/beach/` et ses décors propres (`cafe`, `shop_bakery`, `shop_bookshop`, `projection_hall`, `stone_house`, `limashenka_house`, `market_stall`, `market_stall_veg`, `snack_stall`, `scrap_pile`, `signpost`, `wind_sock`, `gangway`, `cargo_crane`, `mooring_arm`, `bollard`, `crates_barrels`, `edge_railing`, `airship_barocupot`, `airship_ferry`), `src/items/placements/beach.tscn` | socle | `hd2d_beach.png` lisible (rue, quais, navires vus d'en haut) ; scène du thé de Limeskin cadrée ; collisions testées ; ≤ 200 draw calls |
 | **H4 Décor des bois, du Couchant et de la colline** | Bois du marais (sous-bois, lisière, ruisseau), bord du Couchant (cercle de veille, cloche, rochers du vent, ruines) et colline des étoiles (pente, sommet, belvédère) | `src/world/zones/forest/`, `src/world/zones/dunes/`, `src/world/zones/hill/` et leurs décors propres (`tree_old_pine`, `tree_old_pine_clawed`, `mushroom`, `reeds`, `log_bridge`, `berry_bush`, `mossy_rock`, `bear_rock`, `stick_rack`, `play_goal`, `play_goal_red`, `ring_stone`, `vigil_bell`, `wind_rock_a`, `wind_rock_b`, `wind_rock_c`, `watch_post_ruin`, `ruined_wall`, `garde_pennant`, `signal_pillar`, `fallen_lantern`, `grass_tuft`, `lone_tree`, `lookout`, `tall_grass`), `src/items/placements/forest.tscn`, `dunes.tscn`, `hill.tscn` | socle | Sentiers lisibles en vue fixe ; rejetons visibles entre les troncs ; arène lisible pendant trois vagues (`hd2d_vigil.png`) ; rien de plus haut que 0,3 m dans le cercle de veille ; ≤ 200 draw calls par zone |
@@ -786,6 +792,8 @@ servent qu'à elles.
 | **H6 Personnages et planches** | Planches HD-2D de Chtholly (tenue de l'acte 1), des PNJ, des fées jouables et portraits 256 px selon `docs/ASSETS_HD2D.md` section 3 ; échelles du tableau des hauteurs ; ombre et retournement du billboard | `assets/characters/**`, `data/skins/`, `src/visuals/`, `src/autoload/skin_registry.gd`, `tools/gen_placeholders.py`, `assets/characters/CREDITS.md`, `tests/unit/test_skin_registry.gd`, `tests/unit/test_visual_sprite.gd` | socle | Planches lues par `SheetLoader` sans changement du format JSON ; hauteurs à ± 5 % du tableau ; `parle` joué en conversation ; portraits 256 px ; capture de chaque skin |
 | **H7 Combat et Timeres en HD-2D** | Lisibilité du combat en vue fixe : planches de Timere, onde de charge et éclats en sprites, signes avant l'attaque, ombres, indicateur de cible, secousse et arrêt sur image réglés pour la caméra fixe | `src/combat/`, `src/enemies/` (hors `placements/`), `data/attacks/`, `data/enemies/`, `data/waves/`, `assets/enemies/**`, `tests/unit/test_combat*.gd`, `tests/unit/test_enemy.gd`, `tests/unit/test_wave_director.gd`, `docs/REGLAGES_COMBAT.md` | socle | Règles de la section 4 inchangées (tests) ; un coup, une onde et une morsure lisibles sur capture ; vague 5 atteignable ; sensation jugée à la manette |
 | **H8 Acte 1 de bout en bout et navigateur** (après les autres) | Rejouer l'acte 1 entier dans la vraie partie et dans le navigateur, corriger les frottements entre lots, mettre à jour la recette, les mesures et les captures | `tests/integration/test_m2_*.gd`, `tests/integration/test_act1*.gd`, `tests/integration/demo_hd2d.*`, `tests/stubs/m1_game_test.gd`, `tests/stubs/m2_game_test.gd`, `src/test_shortcuts.gd`, `tools/web_m2.js`, `tools/web_m1.js`, `tools/hd2d_shots.sh`, `docs/web.md`, `docs/RECETTE_M2.md` | H1 à H7 | `tools/check.sh` vert ; `node tools/web_m2.js … tout` vert ; recette de l'acte 1 cochée en HD-2D ; captures `hd2d_*` |
+| **H9 Formats du décor (moteur)** (cahier n° 2) | Le moteur apprend les formats de `docs/ASSETS_HD2D_MONDE.md` (section 3 et 17) : bandes animées dans `DecorPanel`, décalques au sol (`GroundDecal`), flancs des `Building`, variantes et retournement dans `PropScatter`, sol à 27 tuiles avec alternance des tuiles `_b` et nouveaux masques, premier plan transparent devant le joueur, ciel qui dérive, petites vies (feuilles, oiseaux) ; tout reste fondu par image | `src/world/decor_panel.gd`, `building.gd`, `prop_batcher.gd`, `prop_scatter.gd`, `terrain.gd`, `island_rock.gd`, nouveaux scripts de `src/world/` (`ground_decal.gd`, `sky_drift.gd`, `ambient_sprites.gd`…), `src/world/shaders/`, `src/world/materials/`, `src/world/island.tscn` (hors `Zones`), `tests/unit/test_hd2d_decor.gd`, `tests/unit/test_hd2d_formats.gd`, `tests/integration/demo_formats.*`, API ajoutées dans la section 3 | H1 à H8 | API existantes inchangées (ajouts seulement) ; chaque format testé et montré par `demo_formats` (capture) ; un draw call par image et par case, animations comprises ; ≤ 200 draw calls dans toutes les vues de `tools/hd2d_shots.sh` ; 50 images/s par zone dans le navigateur |
+| **H10 Images du cahier n° 2 : manifeste et remplaçants** | Les ~300 images de `docs/ASSETS_HD2D_MONDE.md` entrent au manifeste (genres `decal`, `anim`, `side`, alpha doux, lot A à G), `check` les vérifie, `gen` leur donne un remplaçant en pixel art au bon format, l'atlas du sol passe à 27 tuiles | `tools/hd2d_manifest.json`, `tools/hd2d_*.py`, `assets/hd2d/**`, `docs/ASSETS_HD2D.md`, `docs/ASSETS_HD2D_MONDE.md`, `tests/unit/test_hd2d_assets.gd`, `assets/CREDITS.md` (ajouts en bas) | H1 | `python3 tools/hd2d_assets.py check` sans écart sur les ~400 images ; atlas de 27 tuiles à jour ; planches de contrôle par lot ; export Web < 60 Mo |
 
 Règles propres à cette phase :
 
@@ -813,7 +821,7 @@ Chaque losange est une porte que tu valides toi-même avant d'ouvrir le jalon su
 | **M0 Socle** (semaine 1) | Dépôt, L0 fusionné, CI verte, export Web déployé sur GitHub Pages avec l'île greybox vide | Tu ouvres le build dans un navigateur et vois l'île ; `tools/check.sh` vert sur une session cloud neuve |
 | **M1 Combat** (semaines 2–3) | L1 à L5 et L8 fusionnés : Chtholly se déplace sur l'île et affronte des vagues de Timeres dans l'arène des dunes avec les règles de l'easter egg | Sensation de combat (coups, recul, onde, verrouillage) jugée agréable à la manette et au clavier ; la vague 5 est atteignable |
 | **M2 Tranche verticale** (semaines 4–5) | L6, L7, L9, L10 fusionnés : village, quête des pages dans la forêt, sauvegarde, menu, HUD, page d'intégration | Critères de la section 4 cochés ; test par 3 membres de la communauté |
-| **M2.5 HD-2D** (après M2) | Socle HD-2D fusionné (caméra fixe, décor en images, post-traitement), puis lots H1 à H8 : l'acte 1 entier dans les images commandées d'après `docs/ASSETS_HD2D.md` | Tu joues l'acte 1 dans le navigateur et juges le rendu proche d'*Octopath Traveler* ; 50 images/s par zone ; export < 25 Mo |
+| **M2.5 HD-2D** (après M2) | Socle HD-2D fusionné (caméra fixe, décor en images, post-traitement), puis lots H1 à H8 : l'acte 1 entier dans les images commandées d'après `docs/ASSETS_HD2D.md` | Tu joues l'acte 1 dans le navigateur et juges le rendu proche d'*Octopath Traveler* ; 50 images/s par zone ; export < 60 Mo |
 | **M3 Monde vivant et premier donjon** (semaines 6–10) | Cycle jour/nuit, 2 zones de plus, **grotte-donjon** avec clés et boss (Grand Timere renforcé), 2 nouveaux types d'ennemis, équipement (épée améliorée, cœurs supplémentaires), 10 PNJ, 3 quêtes, musique et sons, contrôles tactiles complets | Session de 20 min sans bug bloquant ; le donjon se termine en 10 à 15 min ; 30 images/s sur mobile |
 | **M4 Yume** (semaines 11–14) | Lien avec yumenovel.fr : sauvegarde liée au compte WordPress, classement des meilleurs scores de l'arène, déblocages liés aux parutions, page officielle du jeu, mise en ligne | Deux semaines de « bêta ouverte » sur le site sans incident de sauvegarde ; décision prise sur les personnages (section 13) |
 | **M5 Bureau** (après) | Export Windows/macOS/Linux, catégorie Jeu dans l'application Yume, zones streamées, deuxième donjon | Décidé après M4 selon l'usage réel |
@@ -847,7 +855,7 @@ Le code de retour est non nul si un test échoue ; la CI publie `build/junit.xml
 
 | Job | Déclencheur | Contenu |
 | --- | --- | --- |
-| `check` | Toute PR et tout push sur `main` | Conteneur `barichello/godot-ci:4.7.2` + bibliothèques X11/Mesa + Xvfb ; `pip install gdtoolkit` ; `tools/check.sh` ; étape « taille du build » qui échoue au-delà du budget du jalon (25 Mo jusqu'à M3, 60 Mo ensuite) et écrit la taille dans le résumé du job ; artefacts `build/web/`, `build/shots/`, `build/junit.xml` |
+| `check` | Toute PR et tout push sur `main` | Conteneur `barichello/godot-ci:4.7.2` + bibliothèques X11/Mesa + Xvfb ; `pip install gdtoolkit` ; `tools/check.sh` ; étape « taille du build » qui échoue au-delà du budget du jalon (60 Mo) et écrit la taille dans le résumé du job ; artefacts `build/web/`, `build/shots/`, `build/junit.xml` |
 | `deploy` | Push sur `main`, après `check` | Copie `web/` (CNAME, page de test) dans `build/web/`, puis publie sur GitHub Pages via `actions/upload-pages-artifact` + `actions/deploy-pages` |
 
 Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa manque dans l'image, le job `check` installe `libgl1-mesa-dri xvfb` au préalable.
@@ -856,7 +864,7 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 
 | Mesure | Cible M2 | Cible M4 |
 | --- | --- | --- |
-| Taille compressée (wasm + pck) | < 25 Mo | < 60 Mo |
+| Taille compressée (wasm + pck) | < 60 Mo | < 60 Mo |
 | Temps jusqu'au menu (fibre) | < 10 s | < 15 s |
 | Images/s portable | 60 | 60 |
 | Images/s téléphone récent | 30 | 30 |
@@ -865,7 +873,7 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 
 (HD-2D) Mesures du 7 octobre 2026 (`tools/hd2d_shots.sh`, rendu natif) : 32 à 70 draw calls selon
 la zone, une conversation ou une veille (43 à 67 dans le navigateur, au Spawn de chaque zone) ;
-export 12,4 Mo compressés (18,4 avant la purge des modèles 3D). `tools/check.sh` échoue au-delà de 25 Mo compressés.
+export 12,4 Mo compressés (18,4 avant la purge des modèles 3D). `tools/check.sh` échoue au-delà de 60 Mo compressés (25 Mo jusqu'au cahier des charges n° 2).
 
 ### Hygiène du dépôt
 
@@ -1227,7 +1235,7 @@ jobs:
         run: |
           size=$(tar -czf - build/web | wc -c)
           echo "build/web compressé : $((size / 1048576)) Mo" >> "$GITHUB_STEP_SUMMARY"
-          [ "$size" -lt 26214400 ] || { echo "build > 25 Mo"; exit 1; }
+          [ "$size" -lt 62914560 ] || { echo "build > 60 Mo"; exit 1; }
       - uses: actions/upload-artifact@v4
         with: { name: web, path: build/web }
       - uses: actions/upload-artifact@v4

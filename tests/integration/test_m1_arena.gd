@@ -353,9 +353,12 @@ func test_death_in_the_arena_records_the_score_and_respawns_at_the_village() -> 
 	assert_true(player.visual.visible)
 	assert_null(player.camera_rig.lock_target, "caméra sans cible")
 	assert_lt(
-		flat_distance(player.camera_rig.focus(), player.global_position),
+		flat_distance(
+			player.camera_rig.focus(),
+			player.global_position + Vector3.FORWARD * player.camera_rig.focus_ahead
+		),
 		1.5,
-		"(HD-2D) caméra fixe recalée sur le joueur"
+		"(HD-2D) caméra fixe recalée sur le joueur (point visé au nord de lui)"
 	)
 	var facing := -spawn.global_basis.z
 	assert_almost_eq(player.aim_direction(), facing, Vector3.ONE * 0.01, "tourné vers la place")

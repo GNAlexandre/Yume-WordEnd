@@ -86,8 +86,7 @@ Couleurs de référence : celles du cahier n° 1, section 1 (herbe `#87A35E`, fe
 | Ancre | panneaux, flancs, lisières, bandes animées : milieu du bord bas = point posé au sol (image collée au bord bas, centrée) ; décalques : centre de l'image |
 | Angle de vue | panneaux : vue de face très légèrement plongeante (10 à 15°, on devine le dessus des objets) ; tuiles et décalques : **strictement de dessus** ; flancs et façades : élévation sans perspective |
 | Orientation | animaux et navires dessinés **tournés vers la droite** (le jeu les retourne) ; le reste vu de face |
-| Palette | 64 couleurs au plus par image (128 pour les arbres, les lisières, les bâtiments et les dirigeables ; libre pour le ciel) : les images légères tiennent dans le navigateur |
-| Poids | 400 Ko au plus par image ; 1,2 Mo pour les lisières, les grands bâtiments, le ciel et les dirigeables à quai |
+| Qualité avant poids | ni compression avec perte, ni réduction du nombre de couleurs : le jeu garde les images sans perte. Une image de plus de 1,5 Mo (3 Mo pour les lisières, les grands bâtiments, le ciel et les dirigeables à quai) n'est souvent pas du pixel art net (flou, bruit, anticrénelage) : vérifie-la |
 
 **Images de référence à joindre** (même rendu attendu) : `assets/hd2d/props/tree_autumn.png`,
 `assets/hd2d/props/bear_rock.png`, `assets/hd2d/buildings/cafe.png`,
@@ -663,7 +662,7 @@ Une PR par lot. Dans chaque lot, la priorité 1 d'abord.
    document remplace : les deux dirigeables).
 3. Vérifie chaque image : taille exacte, fond transparent (alpha 0 ou 255 hors « alpha doux »),
    tuiles et bordures sans raccord (colle l'image à côté d'elle-même pour le voir), bandes animées
-   à `n ×` la largeur annoncée, poids et palette de la section 2.
+   à `n ×` la largeur annoncée, qualité sans perte (section 2).
 4. Note la provenance en bas de `assets/CREDITS.md` (« généré avec ChatGPT le …, lot … »).
 5. Dans la description de la PR : la liste des fichiers livrés, ceux qui manquent, et les écarts
    connus (taille, cadrage).
@@ -691,6 +690,6 @@ les images se préparent :
 - **Port** : navires à quai à l'est et à l'ouest du quai, de flanc, dans le champ de la caméra ;
   hélices posées sur les moyeux.
 - **Poids** : ce cahier commande environ 300 images, soit 40 à 45 Mo de PNG au rendu des
-  livraisons actuelles (moins si la palette de la section 2 est tenue), et 15 à 20 Mo de plus
-  dans l'export Web compressé (23,7 Mo aujourd'hui pour un budget de 25 Mo) : le budget est à
-  revoir avant l'intégration (le relever, compresser les grandes images ou charger par zone).
+  livraisons actuelles, et 15 à 20 Mo de plus dans l'export Web compressé (23,7 Mo aujourd'hui) :
+  le budget est passé de 25 à 60 Mo pour les garder sans perte (images importées en WebP sans
+  perte, comme aujourd'hui).

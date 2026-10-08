@@ -24,10 +24,11 @@ const GROUND_LAYERS: Array[String] = [
 ]
 const ATLAS_COLUMNS := 4
 const TILE := 384
-## Budget des images HD-2D (PNG sources, Mo) : l'export Web vise 25 Mo compressés en tout.
-## (H1) Images livrées (PR n° 2 et 3) : 15 Mo de PNG, que l'import réduit à 40 % environ (WebP
-## sans perte) ; tools/check.sh mesure l'export lui-même (tools/build_size.sh).
-const IMAGES_BUDGET_MB := 16.0
+## Budget des images HD-2D (PNG sources, Mo) : l'export Web vise 60 Mo compressés en tout.
+## (H1) Images livrées (PR n° 2 à 4) : 15 Mo de PNG, que l'import réduit à 40 % environ (WebP
+## sans perte : aucune perte de qualité) ; le cahier n° 2 (docs/ASSETS_HD2D_MONDE.md) en ajoute
+## 40 à 45 Mo. tools/check.sh mesure l'export lui-même (tools/build_size.sh).
+const IMAGES_BUDGET_MB := 64.0
 
 var _manifest: Dictionary = {}
 

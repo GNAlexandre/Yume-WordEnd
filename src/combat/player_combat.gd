@@ -503,10 +503,13 @@ func _build_fx() -> void:
 	add_child(_aim_marker)
 	_lock_ring = CombatFx.make_decal("lock_ring", Vector2.ONE, Color.WHITE, "LockRing")
 	_lock_ring.top_level = true
+	# Posés à chaque image sur la place affichée (interpolée) de leur porteur : pas interpolés.
+	_lock_ring.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	_lock_ring.visible = false
 	add_child(_lock_ring)
 	_shadow = CombatFx.make_shadow(SHADOW_RADIUS)
 	_shadow.top_level = true
+	_shadow.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	add_child(_shadow)
 
 
@@ -591,7 +594,7 @@ func _update_lock_ring(delta: float) -> void:
 	var spin := _lock_ring.rotation.y + LOCK_RING_SPIN * delta
 	_lock_ring.global_transform = Transform3D(
 		Basis(Vector3.UP, wrapf(spin, -PI, PI)).scaled(Vector3(diameter, 1.0, diameter)),
-		target.global_position + Vector3.UP * CombatFx.GROUND_LIFT
+		_shown_position(target) + Vector3.UP * CombatFx.GROUND_LIFT
 	)
 	_lock_ring.visible = true
 
@@ -609,7 +612,7 @@ func _update_shadow() -> void:
 	if _shadow == null or not is_inside_tree():
 		return
 	var body := get_parent() as Node3D
-	var feet := body.global_position if body != null else global_position
+	var feet := _shown_position(body) if body != null else global_position
 	var ground := feet
 	var height := 0.0
 	var character := body as CharacterBody3D
@@ -628,6 +631,14 @@ func _update_shadow() -> void:
 		Basis.from_scale(Vector3(shrink, 1.0, shrink)), ground + Vector3.UP * CombatFx.SHADOW_LIFT
 	)
 	_shadow.visible = _state != State.DEAD or height <= 0.0
+
+
+## Place affichée d'un nœud : interpolée entre deux images physiques quand le lissage physique
+## est actif (project.godot), sinon sa position.
+static func _shown_position(node: Node3D) -> Vector3:
+	if node.is_physics_interpolated_and_enabled():
+		return node.get_global_transform_interpolated().origin
+	return node.global_position
 
 
 func _on_player_heal_requested(amount: int) -> void:

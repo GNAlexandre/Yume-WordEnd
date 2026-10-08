@@ -1,11 +1,11 @@
 #!/bin/bash
 # tools/build_size.sh — taille du build Web (wasm + pck) brute et compressée (gzip -6, ce que fait
-# un hébergement comme GitHub Pages) comparée au budget du jalon (PLAN.md section 9 : 25 Mo
-# compressés jusqu'à M3, 60 Mo à M4). Utilisable en local et en CI.
+# un hébergement comme GitHub Pages) comparée au budget (PLAN.md section 9 : 60 Mo compressés,
+# relevé de 25 à 60 Mo pour garder les images sans perte). Utilisable en local et en CI.
 #
-#   tools/build_size.sh                      # build/web, budget 25 Mo
-#   tools/build_size.sh build/web 60         # autre dossier, autre budget (Mo = 1 048 576 octets)
-#   BUILD_BUDGET_MB=60 tools/build_size.sh   # budget par variable d'environnement
+#   tools/build_size.sh                      # build/web, budget 60 Mo
+#   tools/build_size.sh build/web 80         # autre dossier, autre budget (Mo = 1 048 576 octets)
+#   BUILD_BUDGET_MB=80 tools/build_size.sh   # budget par variable d'environnement
 #   tools/build_size.sh --summary            # en plus, tableau dans $GITHUB_STEP_SUMMARY (CI)
 #
 # Code 0 : sous le budget ; 1 : au-delà ; 2 : build absent (lancer l'export d'abord :
@@ -19,7 +19,7 @@ if [ "${1:-}" = "--summary" ]; then
   shift
 fi
 dir="${1:-build/web}"
-budget_mb="${2:-${BUILD_BUDGET_MB:-25}}"
+budget_mb="${2:-${BUILD_BUDGET_MB:-60}}"
 case "$budget_mb" in
   '' | *[!0-9]*) echo "budget invalide : $budget_mb (entier en Mo)"; exit 2 ;;
 esac

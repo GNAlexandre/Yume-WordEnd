@@ -340,3 +340,6 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   après le nœud `Lighting` de l'île : `call_deferred`) ; blanc au couchant, rien ne change dans
   l'acte 1.
 - En attendant : rien ne change de jour ; la nuit n'est pas encore jouée.
+## H1 — marge du budget de l'export Web : réglé
+- Le budget passe à 60 Mo compressés (docs/DECISIONS.md, « Budget Web relevé ») : la marge n'est
+  plus nécessaire ; exclure les tuiles de sol de l'export reste un gain possible (1,1 Mo).
