@@ -540,7 +540,7 @@ func _update_lock_marker() -> void:
 	if target == null or camera == null or not target.is_inside_tree():
 		_lock_marker.hide()
 		return
-	var point := target.global_position + Vector3.UP * _marker_height(target)
+	var point := shown_position(target) + Vector3.UP * _marker_height(target)
 	if camera.is_position_behind(point):
 		_lock_marker.hide()
 		return
@@ -551,6 +551,15 @@ func _update_lock_marker() -> void:
 		+ bob
 	)
 	_lock_marker.show()
+
+
+## Place affichée d'un nœud qui bouge aux images physiques (un Timere) : interpolée entre deux
+## images physiques quand le lissage physique est actif (project.godot), sinon sa position. Le
+## marqueur, dessiné à chaque image, suit ainsi le sprite tel qu'il est rendu, sans trembler.
+static func shown_position(node: Node3D) -> Vector3:
+	if node.is_physics_interpolated_and_enabled():
+		return node.get_global_transform_interpolated().origin
+	return node.global_position
 
 
 ## Hauteur du marqueur : haut du visuel d'un Enemy (EnemyData), sinon lock_marker_height.

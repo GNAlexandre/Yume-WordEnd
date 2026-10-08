@@ -202,6 +202,39 @@ func test_lock_marker_follows_locked_target() -> void:
 	assert_false(marker.visible, "verrou levé")
 
 
+func test_lock_marker_follows_the_shown_position_of_a_moving_target() -> void:
+	# Lissage physique (project.godot) : un Timere est dessiné entre ses deux dernières images
+	# physiques ; le marqueur, posé à chaque image, doit suivre cette place affichée et non la
+	# position physique, sinon il tremble d'un pas de physique par rapport au sprite.
+	assert_true(get_tree().root.is_physics_interpolated_and_enabled(), "lissage physique actif")
+	var camera := Camera3D.new()
+	# Comme la caméra du joueur (camera_rig.gd) : posée à chaque image, hors lissage.
+	camera.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	add_child_autofree(camera)
+	camera.look_at_from_position(Vector3(0, 3, 8), Vector3.ZERO)
+	camera.make_current()
+	var target := Node3D.new()
+	add_child_autofree(target)
+	var player: LockPlayer = add_child_autofree(LockPlayer.new())
+	var hud := _hud()
+	var marker := _node(hud, "LockMarker")
+	await wait_process_frames(1)
+	player.target = target
+	# Un pas de 2 m vers l'est à chaque image physique, sans reset : la place affichée glisse.
+	var stepper := func() -> void: target.position += Vector3(2, 0, 0)
+	get_tree().physics_frame.connect(stepper)
+	var worst := 0.0
+	for _i in 8:
+		await wait_process_frames(1)
+		hud.call(&"_update_lock_marker")
+		var shown := target.get_global_transform_interpolated().origin
+		var expected := camera.unproject_position(shown + Vector3.UP * hud.lock_marker_height)
+		worst = maxf(worst, absf(marker.position.x + marker.size.x * 0.5 - expected.x))
+	get_tree().physics_frame.disconnect(stepper)
+	assert_true(marker.visible, "cible marquée")
+	assert_lt(worst, 0.5, "au-dessus de la place affichée, jamais de la position physique")
+
+
 func test_f3_toggles_performance_overlay() -> void:
 	var hud := _hud()
 	var enemy := Node.new()

@@ -524,9 +524,15 @@ func _show_slash(index: int) -> void:
 	_slash.material_override = CombatFx.ground_material("slash", color, frame, true)
 	var reach := _swing.range_m if _swing != null and _swing.range_m > 0.0 else 1.2
 	var size := reach / (SLASH_SIZE.y - 0.05)
+	var appearing := not _slash.visible
 	_slash.scale = Vector3(-size if _combo_index == 1 else size, 1.0, size)
 	_slash.position = Vector3(0.0, CombatFx.GROUND_LIFT, -SLASH_SIZE.y * 0.5 * size)
 	_slash.visible = true
+	# Retourné (2e coup) puis montré dans la même image : sans remise à zéro du lissage physique
+	# (project.godot), le trait serait dessiné en train de passer de l'ancien coup au nouveau
+	# (échelle qui s'écrase entre +x et −x) pendant un pas de physique.
+	if appearing and _slash.is_inside_tree():
+		_slash.reset_physics_interpolation()
 
 
 func _hide_slash() -> void:
