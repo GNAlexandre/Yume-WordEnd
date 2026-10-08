@@ -207,7 +207,21 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   `pitch_deg` reste le réglage) et bande nette du flou posée à chaque image (constantes `FRAME_*`
   et `BAND_*`, pas d'export ajouté).
 - Nouvelle classe `HD2DLighting` (`src/world/materials/hd2d_lighting.gd`) : `apply(island)`,
-  `apply_post(material)`, réglages `lighting_sunset|dusk|night.tres`.
+  `apply_post(material)`, `for_phase(phase)`, `active_sprite_tint()`, réglages
+  `lighting_sunset|dusk|night.tres` ; nœud `Lighting` d'island.tscn (`day_phase_lighting.gd`),
+  qui les pose sur `EventBus.day_phase_changed`.
+- `CameraRig` écoute `EventBus.dialogue_started` / `dialogue_ended` (cadrage en conversation).
 - `post_fx.gdshader` : `focus_center` et `focus_half` sont posés par la caméra ; `focus_soft` est
   retiré ; nouveaux uniformes d'étalonnage (`shadow_tint`, `highlight_tint`, `split_strength`,
   `haze_*`, `sun_*`, `glow_tint`).
+
+## H5 — les personnages restent en plein jour la nuit
+- Besoin : les planches (`AnimatedSprite3D` de `src/visuals/`, H6 ; Timeres : H7) ne sont pas
+  éclairées ; sous le réglage de nuit (`lighting_night.tres`, posé quand l'histoire émet
+  `EventBus.day_phase_changed(&"night")`), le décor s'assombrit et bleuit mais les personnages
+  restent aussi clairs qu'au couchant.
+- Proposition : `CharacterVisual` multiplie `Sprite.modulate` par
+  `HD2DLighting.active_sprite_tint()` à `_ready` et sur `EventBus.day_phase_changed` (appelé
+  après le nœud `Lighting` de l'île : `call_deferred`) ; blanc au couchant, rien ne change dans
+  l'acte 1.
+- En attendant : rien ne change de jour ; la nuit n'est pas encore jouée.

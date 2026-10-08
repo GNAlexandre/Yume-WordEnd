@@ -1250,9 +1250,18 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   fois ; l'atlas importé est relâché). Le shader lit `textureLod` au niveau tiré des dérivées
   continues de la position et prend deux échantillons le long de l'axe étiré par la perspective
   (anisotrope fait main) : le filtrage anisotrope du pilote, avec le saut de `fract()` d'une
-  tuile à l'autre, débordait sur les cases voisines de l'atlas (lignes à chaque tuile). Le
-  tramage des masques passe au pixel d'écran quand un pixel d'art devient plus petit que l'écran,
-  et les fleurs d'un pixel s'y effacent.
+  tuile à l'autre, débordait sur les cases voisines de l'atlas (lignes à chaque tuile). Les fleurs
+  d'un pixel s'effacent quand un pixel d'art devient plus petit que l'écran.
+- **H5 — tramage du sol** : le tramage au pixel d'écran du travail repris dessinait au loin une
+  grille de points et une couture nette au changement de mode ; de près, l'ordre de Bayer 4 × 4
+  semait une grille régulière (10 % de touffes vertes sur toute la colline, 30 % dans les taches
+  d'herbe sèche). Les masques se calculent une fois (`ground_masks`), la tuile se choisit pour un
+  seuil (`pick_layer`) : de près, un seuil par pixel d'art tiré d'un bruit entier (brins épars,
+  plus de grille ; le style « une tuile par pixel d'art » du socle reste) ; au loin (plus de deux
+  pixels d'art par pixel d'écran), la moyenne des tuiles de quatre seuils décalés par un bruit
+  d'écran, masques lus à la position continue : un mélange sans grain ni escalier ; entre les
+  deux, un fondu. Une tuile n'est lue qu'une fois par pixel (la même tuile pour deux seuils n'est
+  pas relue).
 - **H5 — cadrage des façades** (demande de l'orchestrateur : l'entrepôt garde ses murs de 6,5 m et
   son faîtage de 9 m) : avec 32° de tangage et 30° de champ, le haut de l'écran passe à 6,5 m
   au-dessus du joueur et plus bas derrière lui. Devant la façade sud d'un `Building` (groupe
@@ -1292,9 +1301,14 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **H5 — réglages de lumière** : `HD2DLighting` (`src/world/materials/hd2d_lighting.gd`) réunit
   soleil, ambiance, brouillard, ciel, mer de nuages, lanternes et étalonnage ;
   `lighting_sunset.tres` (valeurs d'island.tscn et de post_fx.gdshader, testé),
-  `lighting_dusk.tres`, `lighting_night.tres` (lune froide à l'est-sud-est, lanternes × 2,2). Rien
-  ne les active : `apply(island)` les pose sur des copies (environnement, mer de nuages,
-  matériau de la caméra) pour la promesse de nuit et le cycle jour/nuit de M3.
+  `lighting_dusk.tres`, `lighting_night.tres` (lune froide à l'est-sud-est, lanternes × 2,2) ;
+  `apply(island)` les pose sur des copies (environnement, mer de nuages, matériau de la caméra).
+  Le nœud `Lighting` d'island.tscn (`day_phase_lighting.gd`) les pose sur
+  `EventBus.day_phase_changed` (contrat existant : evening → crépuscule, night → nuit, morning et
+  day → couchant) ; rien ne l'émet encore : l'acte 1 reste au couchant, la promesse de nuit sur
+  la colline (M3) n'aura qu'à l'émettre. Les planches des personnages ne sont pas éclairées : chaque
+  réglage porte leur teinte (`sprite_tint`, nuit 0,6 / 0,66 / 0,86), rendue par
+  `HD2DLighting.active_sprite_tint()` pour H6 (CONTRACT_REQUESTS).
 - **H5 — ombres et brume** : l'ombre des panneaux (fx/shadow.png, presque opaque) est ramenée à
   55 % au cœur, poussée et allongée de 12 % vers l'est (le couchant à l'ouest) ; le brouillard de
   hauteur passe à 0,015 par mètre sous −8 m (0,04 sous −6 m) : la mer de nuages se voit sous la
