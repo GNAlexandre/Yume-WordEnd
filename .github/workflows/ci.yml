@@ -1,13 +1,22 @@
 # CI du projet (PLAN.md section 9) : vérification complète (tools/check.sh) dans l'image
 # godot-ci, budget de taille du build Web, déploiement sur GitHub Pages à chaque push sur main.
 # Avant le premier push sur main : Settings → Pages → Source : « GitHub Actions » (docs/web.md).
+# (bureau) Application Windows (docs/bureau.md) : la tâche bureau construit l'installateur et le
+# zip portable à chaque PR et à chaque push sur main (artefact « bureau ») ; un tag vX.Y.Z, ou
+# « Run workflow » avec « release » coché, publie en plus une Release GitHub (tâche release).
 name: ci
 
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
+    inputs:
+      release:
+        description: "Publier une Release GitHub de l'application Windows (version de project.godot)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -94,6 +103,125 @@ jobs:
           name: logs
           path: build/*.log
           if-no-files-found: ignore
+
+  # (bureau) Export Windows (pck dans l'exe), installateur NSIS et zip portable, puis le même pck
+  # en build Linux lancé sans écran jusqu'à une partie (tools/build_desktop.sh --linux). Le budget
+  # de 60 Mo ne concerne que le Web : la taille de l'installateur est seulement affichée.
+  bureau:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: barichello/godot-ci:4.7.2
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: git et git-lfs
+        run: |
+          if ! command -v git >/dev/null 2>&1 || ! command -v git-lfs >/dev/null 2>&1; then
+            apt-get update -qq
+            DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+              git git-lfs ca-certificates >/dev/null
+          fi
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+      - name: Dépôt sûr pour git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      # L'image contient tous les templates de 4.7.2, Windows et Linux compris : ils sont liés
+      # comme pour check ; s'il en manquait un, tools/setup.sh l'extrairait du .tpz.
+      - name: Templates d'export (Windows, Linux)
+        run: |
+          src="/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          dst="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$(dirname "$dst")"
+          if [ "$src" != "$dst" ] && [ ! -e "$dst" ]; then ln -s "$src" "$dst"; fi
+          if ! ls -l "$dst/windows_release_x86_64.exe" "$dst/linux_release.x86_64"; then
+            bash tools/setup.sh
+            ls -l "$dst/windows_release_x86_64.exe" "$dst/linux_release.x86_64"
+          fi
+      - name: NSIS et zip
+        run: |
+          if ! command -v makensis >/dev/null 2>&1 || ! command -v zip >/dev/null 2>&1; then
+            apt-get update -qq
+            DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+              nsis zip >/dev/null
+          fi
+          makensis -VERSION
+      # Un tag vX.Y.Z fixe la version de la Release : project.godot (seule source de la version,
+      # application/config/version) la reçoit dans cette copie de travail s'il en annonce une autre.
+      - name: Version
+        id: version
+        shell: bash
+        run: |
+          version=$(sed -n 's/^config\/version="\([^"]*\)"$/\1/p' project.godot)
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            tag="${GITHUB_REF_NAME#v}"
+            if ! [[ "$tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "::error::tag $GITHUB_REF_NAME : attendu vX.Y.Z (ex. v0.3.0)"
+              exit 1
+            fi
+            if [ "$tag" != "$version" ]; then
+              echo "::warning::project.godot annonce $version, le tag $GITHUB_REF_NAME : la Release prend $tag (mets application/config/version à jour sur main)"
+              sed -i "s/^config\/version=\".*\"$/config\/version=\"$tag\"/" project.godot
+              version="$tag"
+            fi
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "WordEnd $version"
+      - name: Installateur, zip portable et démarrage du build Linux
+        run: tools/build_desktop.sh --linux
+      - uses: actions/upload-artifact@v7
+        with:
+          name: bureau
+          path: build/dist
+          if-no-files-found: error
+          retention-days: 7
+          # Installateur (LZMA) et zip déjà compressés.
+          compression-level: 0
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: logs-bureau
+          path: build/desktop/*.log
+          if-no-files-found: ignore
+
+  # (bureau) Release GitHub : à chaque tag vX.Y.Z (créé depuis GitHub : Releases → Draft a new
+  # release → Choose a tag), ou par « Run workflow » avec « release » coché (tag v<version de
+  # project.godot> créé sur ce commit). Seule tâche qui écrit dans le dépôt (droit « contents »).
+  release:
+    if: >-
+      github.event_name != 'pull_request'
+      && (github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && inputs.release))
+    needs: [check, bureau]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: bureau
+          path: build/dist
+      - name: Fichiers de la Release
+        run: ls -l build/dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.bureau.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          name: WordEnd ${{ needs.bureau.outputs.version }}
+          fail_on_unmatched_files: true
+          # Release déjà écrite depuis GitHub : ce texte s'ajoute au sien.
+          append_body: true
+          files: |
+            build/dist/WordEnd-Setup-${{ needs.bureau.outputs.version }}.exe
+            build/dist/WordEnd-${{ needs.bureau.outputs.version }}-windows-portable.zip
+          body: |
+            **WordEnd ${{ needs.bureau.outputs.version }} pour Windows 10 et 11 (64 bits).**
+
+            - `WordEnd-Setup-${{ needs.bureau.outputs.version }}.exe` : l'installateur. Il installe le jeu pour toi seul, sans droits d'administrateur, avec des raccourcis dans le menu Démarrer et sur le Bureau ; il se désinstalle depuis « Applications et fonctionnalités », en gardant tes sauvegardes si tu le veux.
+            - `WordEnd-${{ needs.bureau.outputs.version }}-windows-portable.zip` : le jeu seul (un `.exe`), sans installation.
+
+            Le jeu n'est pas signé : au premier lancement, Windows peut afficher « Windows a protégé votre ordinateur ». Clique sur « Informations complémentaires », puis sur « Exécuter quand même ». Tes sauvegardes sont dans `%APPDATA%\WordEnd`. Le jeu se joue aussi dans le navigateur : https://jeu.yumenovel.fr/
 
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
