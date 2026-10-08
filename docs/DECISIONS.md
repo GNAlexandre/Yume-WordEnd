@@ -1301,7 +1301,7 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   ne sont que signalés). `tests/unit/test_npc.gd` (L6) demandait aux visuels de PNJ les sept
   animations de combat des anciennes silhouettes ; il suit désormais le cahier.
 - **H1 — mesures** : export Web 23,5 Mo compressés (12,4 au commit de départ 3fe0c66 ; 24,8 avec
-  les planches complètes des PNJ), budget 25 Mo ; arbre du dépôt 40 Mo (8,7 au départ, 465 dans
+  les planches complètes des PNJ), budget 25 Mo ; arbre du dépôt 36,7 Mo (8,7 au départ, 465 dans
   `main` avec les natifs et les galeries). Réserves possibles : les douze tuiles de sol, inutiles
   à l'exécution (1,1 Mo, docs/CONTRACT_REQUESTS.md), la marche des PNJ (1,4 Mo), l'atlas du sol
   réduit à 256 couleurs (1,1 Mo).
