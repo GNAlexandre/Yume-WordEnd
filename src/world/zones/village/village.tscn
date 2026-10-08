@@ -31,6 +31,7 @@
 [ext_resource type="PackedScene" path="res://src/world/props/tree_pine.tscn" id="p22_tree_pine"]
 [ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="p23_rock"]
 [ext_resource type="PackedScene" path="res://src/world/props/palisade_side.tscn" id="p24_palisade_side"]
+[ext_resource type="PackedScene" path="res://src/world/props/warehouse_chimney.tscn" id="p25_warehouse_chimney"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bounds"]
 size = Vector3(44, 30, 44)
@@ -67,6 +68,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -15)
 
 [node name="WarehouseWing" parent="Geometry" instance=ExtResource("p2_warehouse_wing")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -6.5)
+
+[node name="WarehouseChimney" parent="Geometry" instance=ExtResource("p25_warehouse_chimney")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 8.4, -15)
 
 [node name="WarehousePorch" parent="Geometry" instance=ExtResource("p3_warehouse_porch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.35, 0, -9.75)
