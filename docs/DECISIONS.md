@@ -1515,3 +1515,20 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **H1 bis — mesures** : export Web 23,7 Mo compressés (wasm 9,7 + pck 14,0 ; 23,5 à la fin de
   H1), budget 25 Mo ; arbre du dépôt 37,2 Mo (36,7 à 667fd4e) : les planches corrigées sont un peu
   plus lourdes (Ithea, Limeskin), les PNJ restent réduits à repos, marche et parle.
+- **Cahier n° 2 du décor** (`docs/ASSETS_HD2D_MONDE.md`) : environ 300 images qui s'ajoutent
+  aux livraisons (variantes de forme par famille, sous-bois et lisières, tuiles `_b` et nouvelles
+  matières de sol, décalques au sol, flancs de bâtiments, maisons du bourg et du port, objets de
+  la vie, bandes animées, nuages et lointain), en lots A à G. Nouveaux formats : décalque au sol
+  (`assets/hd2d/decals/`, vu de dessus), bande animée (`assets/hd2d/anim/`, images côte à côte),
+  flanc de bâtiment (`<nom>_side.png`, plaqué à l'est et retourné à l'ouest), lisière (pan de
+  forêt de 16 m raccordable), premier plan ; « alpha doux » permis pour la fumée, la brume, la
+  lumière, les nuages et les ombres. Le moteur les apprendra dans un lot de code (section 17 du
+  cahier). Captures de l'état actuel jointes dans `docs/img/` (dossier ignoré par Godot).
+- **Dirigeables refaits** : navires volants sans ballon de gaz (BIBLE 3.9 : four enchanté et
+  hélices), dessinés de profil proue à droite, à 96 px/m à quai, hélices latérales en bandes
+  animées posées sur un moyeu. Ils étaient amarrés au sud du quai, hors du champ de la caméra qui
+  regarde le nord : ils iront de flanc à l'est et à l'ouest du quai ; d'autres passent dans le
+  ciel (24 px/m).
+- **Budget Web** : le cahier n° 2 ajouterait 15 à 20 Mo à l'export (23,7 Mo pour 25 Mo
+  aujourd'hui) : à trancher avant son intégration (relever le budget, compresser les grandes
+  images ou charger par zone).
