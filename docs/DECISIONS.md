@@ -1858,3 +1858,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   air ont `foreground = true` sur leur instance dans `beach.tscn` (scènes partagées inchangées) :
   ils s'effacent en trame autour du joueur qui passe derrière eux ; chaque image reste un seul
   matériau (toutes ses instances au port sont au premier plan).
+- **P3 — loin du bord qui va changer** (le bord de l'île deviendra irrégulier, le quai restera
+  droit) : hors du quai, aucun décor bloquant à moins de 3 m du bord actuel ni aucun autre à moins
+  de 1 m (vérifié par `test_zone_beach.gd`), et rien dans les 4 derniers mètres : l'habillage de la
+  lèvre au-delà des bouts du quai est retiré, quelques rochers, touffes et un arbre reculent ; les
+  deux navires restent devant le quai (le Barocupot recentré sur sa moitié ouest, x de −32 à −8).

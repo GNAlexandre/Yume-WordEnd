@@ -92,9 +92,14 @@ const OCCLUSION_STEP := 1.0
 ## Navires : nœud (sous Geometry/Ships), image retournée (proue à l'ouest), place d'où on les voit
 ## en longeant le garde-corps (local).
 const SHIPS := {
-	"Barocupot": [true, Vector3(-30.0, 0.0, 19.5)],
+	"Barocupot": [true, Vector3(-22.0, 0.0, 18.0)],
 	"Ferry": [false, Vector3(16.0, 0.0, 17.8)],
 }
+## Distance au bord de l'île (m) hors du quai : décor bloquant, autre décor (le bord deviendra
+## irrégulier, le quai reste droit). Le quai (local) : x de -32,5 à 32,5, au sud de z = 7,5.
+const EDGE_BLOCKING := 3.0
+const EDGE_OTHER := 1.0
+const QUAY := Rect2(-32.5, 7.5, 65.0, 20.0)
 ## Draw calls hors des décors fondus (sol, falaises, ciel, mer de nuages, personnages, ombres
 ## propres, interface, post-traitement) et budget d'une vue.
 const OTHER_DRAW_CALLS := 45
@@ -320,6 +325,31 @@ func test_ships_float_beyond_the_edge_on_either_side_of_the_quay() -> void:
 		12.0,
 		"Barocupot à son pylône"
 	)
+
+
+# --- Bord de l'île --------------------------------------------------------------------------------
+
+
+func test_decor_keeps_clear_of_the_island_edge_outside_the_quay() -> void:
+	var close: Array[String] = []
+	for element: Array in _elements:
+		var node := element[0] as Node3D
+		var at := element[2] as Vector3
+		var local := _beach.to_local(at)
+		if QUAY.has_point(Vector2(local.x, local.z)) or node.get_parent().name == "Ships":
+			continue
+		var limit := EDGE_BLOCKING if node.get_node_or_null(^"Collision") != null else EDGE_OTHER
+		var edge := IslandTerrain.edge_distance(at.x, at.z)
+		if edge < limit:
+			close.append("%s à %.1f m" % [String(element[1]).get_file(), edge])
+	assert_eq(close, [] as Array[String], "décor trop près du bord hors du quai")
+	# Les navires restent devant le quai, que le bord ne bouge pas.
+	for ship: String in SHIPS:
+		var panel := _beach.get_node(NodePath("Geometry/Ships/" + ship)) as DecorPanel
+		var x := _beach.to_local(panel.global_position).x
+		var half := panel.size_m().x / 2.0
+		assert_between(x - half, QUAY.position.x, QUAY.end.x, "%s devant le quai (ouest)" % ship)
+		assert_between(x + half, QUAY.position.x, QUAY.end.x, "%s devant le quai (est)" % ship)
 
 
 # --- Draw calls ----------------------------------------------------------------------------------
