@@ -17,6 +17,9 @@
 [ext_resource type="PackedScene" path="res://src/world/props/distant_island_b.tscn" id="14_island_b"]
 [ext_resource type="PackedScene" path="res://src/world/props/distant_island_a.tscn" id="13_island_a"]
 [ext_resource type="Script" path="res://src/world/materials/day_phase_lighting.gd" id="17_lighting"]
+[ext_resource type="Script" path="res://src/world/sky_drift.gd" id="18_sky_drift"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/sky/floating_rock.png" id="19_rock_image"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/sky/distant_island_c.png" id="20_island_c_image"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
 panorama = ExtResource("11_sky")
@@ -164,6 +167,20 @@ transform = Transform3D(1.159111, 0, -0.310583, 0, 1.2, 0, 0.310583, 0, 1.159111
 
 [node name="FloatingRock8" parent="Decor" instance=ExtResource("16_floating_rock")]
 transform = Transform3D(1.348184, 0, 1.338805, 0, 1.9, 0, -1.338805, 0, 1.348184, -92.855688, -33, 6.493102)
+
+[node name="SkyDrift" type="Node3D" parent="Decor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -30, -135)
+script = ExtResource("18_sky_drift")
+textures = Array[Texture2D]([ExtResource("19_rock_image"), ExtResource("19_rock_image"), ExtResource("20_island_c_image")])
+pixels_per_meter = 24.0
+count = 5
+span = 700.0
+fade = 60.0
+distance_range = Vector2(0, 70)
+height_range = Vector2(-10, 6)
+speed_range = Vector2(1.2, 2.6)
+scale_range = Vector2(0.7, 1.1)
+random_seed = 68
 
 [node name="Zones" type="Node3D" parent="."]
 

@@ -343,3 +343,20 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 ## H1 — marge du budget de l'export Web : réglé
 - Le budget passe à 60 Mo compressés (docs/DECISIONS.md, « Budget Web relevé ») : la marge n'est
   plus nécessaire ; exclure les tuiles de sol de l'export reste un gain possible (1,1 Mo).
+## H9 — la découpe du village et les nouveaux formats
+- Besoin : `test_village_decor.gd` (H2) exige que chaque mesh fondu de `village/Geometry` porte
+  un matériau de la découpe (`see_through.gd`), qui ne convertit que `panel.gdshader`. Un décalque
+  au sol (`ground_decal*.gdshader`) ou un panneau de premier plan (`panel_foreground.gdshader`)
+  posé dans la cour le fera échouer.
+- Proposition : le test ne compte que les meshes dont le matériau d'origine est de
+  `panel.gdshader` ; les décalques restent entiers (au sol, ils ne cachent rien), le premier plan a
+  son propre effacement autour du joueur.
+- En attendant : rien de neuf dans le village ; à régler avant la pose.
+## H9 — cahier n° 2, section 17 (H10)
+- « Île n° 53 au sud visible depuis le quai » : la caméra regarde toujours le nord, le sud est
+  derrière elle ; l'île n° 53 (`Island53`, z = +560) ne se voit que dans la vue d'ensemble. À
+  corriger : la poser au nord (au-delà du bord nord) ou la réserver à une cinématique.
+- « Trois à six nuages » partout (section 14) : le haut de l'écran est à 17° sous l'horizon ; le
+  ciel et ce qui flotte au-delà du bord ne se voient qu'au bord nord de l'île (bois). Les nuages
+  ont la palette de la mer de nuages (pêche, lavande) : sans base plus sombre ou plus contrastée,
+  ils s'y fondent (vu dans `demo_formats`).

@@ -11,10 +11,24 @@ extends Node3D
 ## Les enfants « Quad » et « Shadow » sont internes, recréés au chargement (aussi dans l'éditeur) :
 ## seules les données ci-dessous sont enregistrées. Matériaux et meshes sont partagés par image,
 ## pour que le PropBatcher de la zone fonde tous les panneaux d'une même image en un draw call.
+##
+## (H9) Formats du cahier n° 2 (docs/ASSETS_HD2D_MONDE.md, sections 3.4 et 3.7) :
+## - bande animée (frames > 1) : images côte à côte, la taille du panneau est celle d'une image ;
+##   l'image change dans le shader (TIME, fps), décalée d'une phase tirée de la position du
+##   panneau (strip_phase), portée par UV2.x des sommets : le PropBatcher fond toujours tous les
+##   panneaux d'une même image en un draw call, animés compris ; l'animation continue en pause ;
+## - flip_h : image retournée (variantes de PropScatter) ;
+## - depth_offset : le panneau est dessiné comme s'il était depth_offset m plus près de la caméra
+##   (UV2.y, sans bouger à l'écran) : cheminée, lucarne, lierre, enseigne posés contre un mur ou
+##   sur un pan de toit passent devant lui sans scintiller ;
+## - foreground : premier plan, qui s'efface en trame autour du joueur quand il passe devant lui
+##   (panel_foreground.gdshader ; centre posé à chaque image par update_foreground).
 
 ## Densité des images du monde (Chtholly : 1,5 m = 144 px).
 const PIXELS_PER_METER := 96.0
 const PANEL_SHADER := preload("res://src/world/shaders/panel.gdshader")
+## (H9) Variante de premier plan, qui s'efface devant le joueur.
+const FOREGROUND_SHADER := preload("res://src/world/shaders/panel_foreground.gdshader")
 const SHADOW_TEXTURE := preload("res://assets/hd2d/fx/shadow.png")
 ## Hauteur de l'ombre au-dessus du sol (m) : pas de scintillement avec le sol.
 const SHADOW_LIFT := 0.04
@@ -23,11 +37,22 @@ const SHADOW_LIFT := 0.04
 ## large d'autant (le soleil couchant est à l'ouest : MONDE.md 5.4, ombres longues vers l'est).
 const SHADOW_OPACITY := 0.55
 const SHADOW_EAST := 0.12
+## (H9) Pas de la phase des bandes animées (une phase sur PHASE_STEPS) : peu de meshes différents.
+const PHASE_STEPS := 32
+## (H9) Hauteur du centre de l'effacement du premier plan au-dessus des pieds du joueur (m).
+const FOREGROUND_HEIGHT := 0.8
+## (H9) Groupe du joueur (PLAN.md section 3, conventions).
+const PLAYER_GROUP := &"player"
 
 ## Matériaux partagés : clé (image, teinte, lueur) → ShaderMaterial.
 static var _materials: Dictionary = {}
-## Meshes partagés : clé (taille) → QuadMesh.
+## Meshes partagés : clé (taille) → QuadMesh ; (H9) clé (taille, retournement, phase, décalage)
+## → ArrayMesh.
 static var _quads: Dictionary = {}
+static var _panel_meshes: Dictionary = {}
+## (H9) Matériaux de premier plan, et image où leur centre a été posé pour la dernière fois.
+static var _foreground_materials: Array[ShaderMaterial] = []
+static var _foreground_frame: int = -1
 static var _shadow_material: StandardMaterial3D
 static var _shadow_mesh: QuadMesh
 
@@ -73,6 +98,32 @@ static var _shadow_mesh: QuadMesh
 	set(value):
 		glow = value
 		_queue_rebuild()
+## (H9) Bande animée : nombre d'images côte à côte dans texture (1 : image fixe).
+@export_range(1, 64) var frames: int = 1:
+	set(value):
+		frames = maxi(value, 1)
+		_queue_rebuild()
+## (H9) Cadence de la bande (images par seconde) ; 0 : chaque exemplaire garde l'image de sa phase.
+@export_range(0.0, 60.0) var fps: float = 0.0:
+	set(value):
+		fps = maxf(value, 0.0)
+		_queue_rebuild()
+## (H9) Image retournée gauche-droite.
+@export var flip_h: bool = false:
+	set(value):
+		flip_h = value
+		_queue_rebuild()
+## (H9) Décalage vers la caméra (m) : un panneau posé contre un mur ou sur un pan de toit passe
+## devant lui (0,05 à 0,1 suffisent).
+@export_range(0.0, 1.0) var depth_offset: float = 0.0:
+	set(value):
+		depth_offset = maxf(value, 0.0)
+		_queue_rebuild()
+## (H9) Premier plan : s'efface en trame autour du joueur quand il passe devant lui.
+@export var foreground: bool = false:
+	set(value):
+		foreground = value
+		_queue_rebuild()
 
 var _quad: MeshInstance3D
 var _shadow: MeshInstance3D
@@ -83,11 +134,25 @@ func _ready() -> void:
 	rebuild()
 
 
-## Taille du panneau dans le monde (m) : celle de l'image à pixels_per_meter.
+## Taille du panneau dans le monde (m) : celle de l'image à pixels_per_meter ; (H9) d'une seule
+## image pour une bande animée.
 func size_m() -> Vector2:
 	if texture == null:
 		return Vector2.ZERO
-	return Vector2(texture.get_size()) / pixels_per_meter
+	var image := Vector2(texture.get_size()) / Vector2(frames, 1.0)
+	return image / pixels_per_meter
+
+
+## (H9) Phase de la bande animée de ce panneau (0..1, par pas de 1 / PHASE_STEPS), tirée de sa
+## position : stable d'un lancement à l'autre, différente d'un panneau à son voisin.
+func strip_phase() -> float:
+	return phase_at(global_position if is_inside_tree() else position)
+
+
+## (H9) Phase tirée d'une position (m, au centimètre près).
+static func phase_at(at: Vector3) -> float:
+	var key := Vector3i((at * 100.0).round())
+	return float(posmod(hash(key), PHASE_STEPS)) / PHASE_STEPS
 
 
 ## Recrée le panneau et son ombre à partir des données.
@@ -99,10 +164,12 @@ func rebuild() -> void:
 	var size := size_m()
 	_quad.visible = texture != null
 	_shadow.visible = texture != null and shadow_width > 0.0
+	set_process(foreground and texture != null and not Engine.is_editor_hint())
 	if texture == null:
 		return
-	_quad.mesh = quad_mesh(size)
-	_quad.material_override = material_for(texture, tint, glow)
+	var phase := strip_phase() if frames > 1 else 0.0
+	_quad.mesh = panel_mesh(size, flip_h, phase, depth_offset)
+	_quad.material_override = material_for(texture, tint, glow, frames, fps, foreground)
 	_shadow.mesh = shadow_mesh()
 	_shadow.material_override = shadow_material()
 	var shadow_size := Vector2(size.x * shadow_width, size.x * shadow_width * shadow_depth)
@@ -131,20 +198,108 @@ static func quad_mesh(size: Vector2) -> QuadMesh:
 	return _quads[key]
 
 
-## Matériau partagé d'une image (panel.gdshader : nearest, alpha découpé, éclairage plat).
+## (H9) Mesh d'un panneau de taille size (m), ancre au milieu du bord bas, face vers +Z, image
+## retournée si flip, phase de bande animée (UV2.x) et décalage vers la caméra (UV2.y, m) ;
+## partagé : le QuadMesh de quad_mesh() quand rien de cela ne sert.
+static func panel_mesh(
+	size: Vector2, flip: bool = false, phase: float = 0.0, offset: float = 0.0
+) -> Mesh:
+	if not flip and phase == 0.0 and offset == 0.0:
+		return quad_mesh(size)
+	var key := "%.4f|%.4f|%d|%.4f|%.3f" % [size.x, size.y, int(flip), phase, offset]
+	if not _panel_meshes.has(key):
+		var half := size.x / 2.0
+		var corners: Array[Vector3] = [
+			Vector3(-half, 0.0, 0.0),
+			Vector3(half, 0.0, 0.0),
+			Vector3(half, size.y, 0.0),
+			Vector3(-half, size.y, 0.0),
+		]
+		var left := 1.0 if flip else 0.0
+		var corner_uvs: Array[Vector2] = [
+			Vector2(left, 1.0),
+			Vector2(1.0 - left, 1.0),
+			Vector2(1.0 - left, 0.0),
+			Vector2(left, 0.0)
+		]
+		var vertices := PackedVector3Array()
+		var uvs := PackedVector2Array()
+		for k: int in [0, 2, 1, 0, 3, 2]:
+			vertices.append(corners[k])
+			uvs.append(corner_uvs[k])
+		var normals := PackedVector3Array()
+		normals.resize(6)
+		normals.fill(Vector3.BACK)
+		var uv2s := PackedVector2Array()
+		uv2s.resize(6)
+		uv2s.fill(Vector2(phase, offset))
+		var arrays := []
+		arrays.resize(Mesh.ARRAY_MAX)
+		arrays[Mesh.ARRAY_VERTEX] = vertices
+		arrays[Mesh.ARRAY_NORMAL] = normals
+		arrays[Mesh.ARRAY_TEX_UV] = uvs
+		arrays[Mesh.ARRAY_TEX_UV2] = uv2s
+		var mesh := ArrayMesh.new()
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+		_panel_meshes[key] = mesh
+	return _panel_meshes[key]
+
+
+## Matériau partagé d'une image (panel.gdshader : nearest, alpha découpé, éclairage plat) ;
+## (H9) bande animée de frame_count images à frame_rate images par seconde, premier plan
+## (panel_foreground.gdshader).
 static func material_for(
-	image: Texture2D, color: Color = Color.WHITE, glow_amount: float = 0.0
+	image: Texture2D,
+	color: Color = Color.WHITE,
+	glow_amount: float = 0.0,
+	frame_count: int = 1,
+	frame_rate: float = 0.0,
+	in_foreground: bool = false
 ) -> Material:
 	var key := "%s|%s|%.2f" % [image.get_rid(), color.to_html(), glow_amount]
+	if frame_count > 1 or in_foreground:
+		key += "|%d|%.3f|%d" % [frame_count, frame_rate, int(in_foreground)]
 	if not _materials.has(key):
 		var material := ShaderMaterial.new()
-		material.shader = PANEL_SHADER
+		material.shader = FOREGROUND_SHADER if in_foreground else PANEL_SHADER
 		material.set_shader_parameter(&"albedo_texture", image)
 		material.set_shader_parameter(&"tint", color)
 		material.set_shader_parameter(&"hd2d_relief", 0.0)
 		material.set_shader_parameter(&"glow_strength", glow_amount)
+		if frame_count > 1:
+			material.set_shader_parameter(&"frames", float(frame_count))
+			material.set_shader_parameter(&"fps", frame_rate)
+		if in_foreground:
+			_foreground_materials.append(material)
 		_materials[key] = material
 	return _materials[key]
+
+
+## (H9) Pose le centre de l'effacement des panneaux de premier plan sur le corps du joueur (groupe
+## « player »), une fois par image quel que soit le nombre de panneaux ; sans joueur, rien ne
+## s'efface. Appelé par chaque panneau de premier plan à chaque image.
+static func update_foreground(tree: SceneTree) -> void:
+	var frame := Engine.get_process_frames()
+	if frame == _foreground_frame:
+		return
+	_foreground_frame = frame
+	var player := tree.get_first_node_in_group(PLAYER_GROUP) as Node3D
+	var strength := 0.0
+	var center := Vector3.ZERO
+	if player != null:
+		strength = 1.0
+		center = displayed_transform(player).origin + Vector3.UP * FOREGROUND_HEIGHT
+	for material: ShaderMaterial in _foreground_materials:
+		material.set_shader_parameter(&"foreground_center", center)
+		material.set_shader_parameter(&"foreground_strength", strength)
+
+
+## (H9) Place affichée d'un nœud qui bouge à l'image physique (joueur, caméra) : lissée entre
+## deux images physiques quand le lissage physique est actif, sinon sa place.
+static func displayed_transform(node: Node3D) -> Transform3D:
+	if node.is_physics_interpolated_and_enabled():
+		return node.get_global_transform_interpolated()
+	return node.global_transform
 
 
 ## Matériau de l'ombre douce au sol (fx/shadow.png, mélangée, non éclairée).
@@ -166,6 +321,11 @@ static func shadow_mesh() -> QuadMesh:
 		_shadow_mesh = QuadMesh.new()
 		_shadow_mesh.size = Vector2.ONE
 	return _shadow_mesh
+
+
+func _process(_delta: float) -> void:
+	if foreground:
+		update_foreground(get_tree())
 
 
 func _internal_mesh(node_name: StringName) -> MeshInstance3D:
