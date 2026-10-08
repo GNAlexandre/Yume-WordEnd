@@ -1782,3 +1782,34 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   Mélange alpha, sans écriture de profondeur, matériau partagé par image (le batcher les fond
   toujours) ; le premier plan garde sa trame. `tools/hd2d_scenes.py` écrit `soft_alpha` d'après
   le manifeste et le vérifie : 11 scènes régénérées.
+- **Intégration de l'audit** : `docs/sprites/` n'est plus dans l'arbre (retiré à l'intégration
+  de la PR n° 8) : son `.gdignore` part aussi. Pannibal : la proposition de l'audit (redessiner le
+  profil à 120 px) n'est pas retenue, la taille se mesure désormais à l'ancre (« Taille des
+  sprites », plus haut) et le profil, 120 px debout, est à l'échelle.
+- **Audit, proposition retenue : les Timeres ne chassent pas un joueur en conversation**
+  (`Enemy._player_talking`, par `EventBus.dialogue_started` → `dialogue_ended`) : une mort en
+  pleine réplique le faisait réapparaître au village figé, la boîte encore ouverte. Plutôt que de
+  couper le dialogue à la mort (une étape « parler » interrompue serait validée).
+- **Audit, proposition retenue : Web sans haute densité** (`display/window/dpi/allow_hidpi.web =
+  false`, PR « contrats ») : sur un écran Retina ou à 150 %, le canevas était rendu à
+  devicePixelRatio × la fenêtre (4 × les pixels à DPR 2), sans gain pour du pixel art à 96 px/m.
+  Seulement pour le Web : sur le bureau, une application qui n'est pas « DPI-aware » est agrandie
+  floue par Windows.
+- **Livraison du lot D (Codex, PR n° 15 : 53 images de bâtiments et de matières)** intégrée
+  par-dessus les remplaçants. `check` : quatre flancs en pignon (entrepôt, café, salle de
+  projection, remise) dessinent l'avancée du toit plus bas que le haut du mur aux angles (21 à
+  22 % de sa hauteur) ; le mur du volume, derrière, complète ce coin : l'outil tolère 25 %.
+  L'enseigne en hélice, à 1 px du bas, y est collée (décalage sans perte).
+- **Livraisons A, D, F et corrections du ciel (G) fusionnées à la main sur `main`** (PR n° 15 à
+  18) ; l'intégration de la pose (scènes de P0, alpha doux) les reprend telles quelles (les images
+  de `main` font foi, y compris les cadrages du lot D que Codex a corrigés lui-même). Guirlande
+  de fanions et clochette du café : objets suspendus, accrochés par le haut, sans ancre au sol
+  (`anchor: free`). 399 images, 21 planches, 249 scènes : rien à reprendre.
+- **Budget Web relevé de 60 à 100 Mo compressés** (même choix de l'utilisateur : la qualité avant
+  le poids ; l'application de bureau devient la version principale). Toutes les images du cahier
+  n° 2 livrées (lots A à G) : 74,8 Mo de PNG, export Web de 73,5 Mo compressés (wasm 9,7 Mo,
+  pck 63,8 Mo), 250 Mo de textures décompressées. `tools/build_size.sh`, `tools/check.sh`, l'étape
+  de la CI, `PLAN.md`, `docs/web.md` passent à 100 Mo, le budget des images du manifeste
+  (`test_hd2d_assets.gd`) à 100 Mo de PNG. Si le premier chargement Web devient trop long, une
+  version Web allégée (images importées en WebP avec perte pour le seul préréglage Web) reste
+  possible sans toucher au bureau.

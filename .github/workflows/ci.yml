@@ -69,7 +69,7 @@ jobs:
             echo "service worker présent : la PWA ne doit pas être activée"
             exit 1
           fi
-      - name: "Taille du build (budget : 60 Mo compressés)"
+      - name: "Taille du build (budget : 100 Mo compressés)"
         run: tools/build_size.sh --summary
       - uses: actions/upload-artifact@v7
         with:

@@ -44,12 +44,12 @@ const GROUND_LAYERS: Array[String] = [
 ]
 const ATLAS_COLUMNS := 4
 const TILE := 384
-## Budget des images HD-2D (PNG sources, Mo) : l'export Web vise 60 Mo compressés en tout.
+## Budget des images HD-2D (PNG sources, Mo) : l'export Web vise 100 Mo compressés en tout.
 ## (H1) Images livrées (PR n° 2 à 4) : 15 Mo de PNG, que l'import réduit à 40 % environ (WebP
 ## sans perte : aucune perte de qualité) ; le cahier n° 2 (docs/ASSETS_HD2D_MONDE.md) en ajoute
-## 40 à 45 Mo (H10 : 15 Mo de remplaçants). tools/check.sh mesure l'export lui-même
-## (tools/build_size.sh).
-const IMAGES_BUDGET_MB := 64.0
+## 40 à 45 Mo (H10 : 15 Mo de remplaçants). Toutes ses images livrées : 74,8 Mo de PNG, export
+## Web de 73,5 Mo compressés. tools/check.sh mesure l'export lui-même (tools/build_size.sh).
+const IMAGES_BUDGET_MB := 100.0
 ## Part d'un bord au-delà de laquelle une silhouette y est coupée net (tools/hd2d_assets.py,
 ## CUT_COVER).
 const CUT_COVER := 0.12
@@ -271,7 +271,10 @@ func test_building_sides_have_the_shape_of_their_roof() -> void:
 			var wall := roundi(float(entry["wall_m"]) * 96.0)
 			if image.get_pixel(0, 0).a > 0.5 or image.get_pixel(w - 1, 0).a > 0.5:
 				problems.append("%s : pignon aux coins du haut pleins" % path)
-			if image.get_pixel(floori(w / 2.0), 1).a < 0.5:
+			# Le faîtage touche le haut de l'image quelque part dans son tiers central (un épi de
+			# faîtage ou une pointe un peu décentrée suffit, comme tools/hd2d_assets.py).
+			var apex := image.get_region(Rect2i(floori(w / 3.0), 0, w - 2 * floori(w / 3.0), 2))
+			if apex.get_used_rect().size == Vector2i.ZERO:
 				problems.append("%s : pignon qui n'atteint pas le faîtage" % path)
 			var y := h - floori(wall / 2.0)
 			if image.get_pixel(0, y).a < 0.5 or image.get_pixel(w - 1, y).a < 0.5:

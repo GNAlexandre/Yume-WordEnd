@@ -56,7 +56,7 @@ pierre claire `#C2B49F`, ombre `#837667` ; sable `#D6C19E` ; bois clair `#A57C58
 | Cadrage des panneaux | objet entier, collé au bord bas (aucune ligne vide sous le pied), centré horizontalement ; **ancre = milieu du bord bas = point posé au sol** (pied du tronc, base du mur) |
 | Angle de vue | tuiles : vue strictement de dessus ; façades : élévation de face, sans perspective ; décors et personnages : vue de face, très légèrement plongeante (on devine le dessus des objets, 10 à 15°) |
 | Orientation | personnages et animaux dessinés **tournés vers la droite** (le jeu les retourne) ; tout le reste vu de face |
-| Poids | aucune compression avec perte ni réduction de couleurs : la qualité passe avant le poids (le jeu entier vise moins de 60 Mo) ; une image de plus de 1,5 Mo n'est souvent pas du pixel art net (flou, bruit) : vérifie-la |
+| Poids | aucune compression avec perte ni réduction de couleurs : la qualité passe avant le poids (le jeu entier vise moins de 100 Mo sur le Web) ; une image de plus de 1,5 Mo n'est souvent pas du pixel art net (flou, bruit) : vérifie-la |
 
 Le jeu filtre les images au plus proche voisin (pixels nets) et les éclaire lui-même (lanternes,
 fenêtres, couchant). Une image livrée remplace le fichier du même nom ; vérification :

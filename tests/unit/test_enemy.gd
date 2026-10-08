@@ -229,6 +229,23 @@ func test_stops_chasing_when_player_is_in_a_safe_zone() -> void:
 	assert_lt(_flat_distance(enemy, player), 10.0)
 
 
+func test_stops_chasing_while_the_player_talks() -> void:
+	# Audit : un Timere qui frappait pendant une conversation tuait le joueur, qui réapparaissait
+	# au village figé, la boîte de dialogue encore ouverte.
+	var player := _player(Vector3(6.0, 0.0, 0.0))
+	var enemy := _enemy(&"timere_normal", Vector3.ZERO)
+	var chasing: bool = await wait_until(func() -> bool: return enemy.state() == &"chase", 3.0)
+	assert_true(chasing, "poursuite engagée")
+	EventBus.dialogue_started.emit(&"pannibal")
+	var stopped: bool = await wait_until(func() -> bool: return enemy.state() == &"idle", 2.0)
+	assert_true(stopped, "en conversation : plus de poursuite")
+	await wait_seconds(0.5)
+	assert_gt(_flat_distance(enemy, player), 1.0, "il ne vient pas frapper")
+	EventBus.dialogue_ended.emit(&"pannibal")
+	var resumed: bool = await wait_until(func() -> bool: return enemy.state() == &"chase", 3.0)
+	assert_true(resumed, "la conversation finie, la poursuite reprend")
+
+
 func test_gives_up_at_the_real_village_border() -> void:
 	var island: Node3D = add_child_autofree(ISLAND.instantiate())
 	var player := PLAYER_STUB.instantiate() as CharacterBody3D

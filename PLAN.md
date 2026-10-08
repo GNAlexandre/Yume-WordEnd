@@ -54,7 +54,7 @@ Multijoueur, génération procédurale, application mobile native, monétisation
 ### Contraintes à connaître dès le départ
 
 - **Pas d'écran dans le cloud** : les agents valident par import headless, tests, export et captures d'écran rendues sous Xvfb (section 6). Un contrôle visuel humain reste nécessaire à chaque jalon.
-- **Budget Web** : moins de 60 Mo compressés (wasm + pck), avec un écran de chargement ; relevé de 25 à 60 Mo à M2.5 pour garder toutes les images sans perte de qualité (docs/DECISIONS.md).
+- **Budget Web** : moins de 100 Mo compressés (wasm + pck), avec un écran de chargement ; relevé de 25 à 60 Mo à M2.5, puis à 100 Mo avec les images du cahier n° 2, pour garder toutes les images sans perte de qualité (docs/DECISIONS.md). L'application de bureau n'a pas de budget de taille.
 - **Audio Web** : le navigateur exige un geste utilisateur avant tout son, d'où un écran « Cliquer pour jouer ».
 - **Sauvegarde Web** : `user://` est persisté dans IndexedDB par Godot ; une sauvegarde est perdue si le joueur vide les données du site, d'où la synchronisation avec le compte WordPress en M4.
 
@@ -818,7 +818,7 @@ servent qu'à elles.
 
 | Lot | Objet | Fichiers possédés | Dépend de | Critères d'acceptation |
 | --- | --- | --- | --- | --- |
-| **H1 Images livrées** | Intégrer les images commandées à ChatGPT (ou à un artiste) selon `docs/ASSETS_HD2D.md`, dans l'ordre de sa section 11 : vérifier, recadrer, reconstruire l'atlas du sol, créditer ; corriger le cahier des charges quand une consigne donne de mauvais résultats | `assets/hd2d/**`, `tools/hd2d_assets.py`, `tools/hd2d_manifest.json`, `tools/hd2d_art.py`, `tools/hd2d_ground.py`, `tools/hd2d_props.py`, `tools/hd2d_sky.py`, `docs/ASSETS_HD2D.md`, `tests/unit/test_hd2d_assets.gd`, `assets/CREDITS.md` (ajouts en bas) | socle | `python3 tools/hd2d_assets.py check` sans écart ; atlas à jour ; images à leur taille exacte (96 px/m) ; export Web < 60 Mo ; planche avant/après par livraison (`tools/hd2d_shots.sh`) |
+| **H1 Images livrées** | Intégrer les images commandées à ChatGPT (ou à un artiste) selon `docs/ASSETS_HD2D.md`, dans l'ordre de sa section 11 : vérifier, recadrer, reconstruire l'atlas du sol, créditer ; corriger le cahier des charges quand une consigne donne de mauvais résultats | `assets/hd2d/**`, `tools/hd2d_assets.py`, `tools/hd2d_manifest.json`, `tools/hd2d_art.py`, `tools/hd2d_ground.py`, `tools/hd2d_props.py`, `tools/hd2d_sky.py`, `docs/ASSETS_HD2D.md`, `tests/unit/test_hd2d_assets.gd`, `assets/CREDITS.md` (ajouts en bas) | socle | `python3 tools/hd2d_assets.py check` sans écart ; atlas à jour ; images à leur taille exacte (96 px/m) ; export Web sous le budget (section 9) ; planche avant/après par livraison (`tools/hd2d_shots.sh`) |
 | **H2 Décor de l'entrepôt** | Village de l'entrepôt : composition des volumes et des façades, cour, potager, linge, palissade, lampes ; occlusion de l'entrepôt quand on passe derrière | `src/world/zones/village/` et les décors qui ne servent qu'au village (`warehouse_main`, `warehouse_wing`, `warehouse_porch`, `armory_door`, `tool_shed`, `palisade`, `palisade_gate`, `laundry_line`, `vegetable_patch`, `well`, `flower_bed`, `climbing_tree`), `src/items/placements/village.tscn` | socle (images de H1 quand elles arrivent) | Lieux de MONDE.md section 2 reconnaissables sur `hd2d_village.png` et `hd2d_dialogue.png` ; aucun panneau ne cache le joueur ou un PNJ plus d'une seconde ; collisions testées ; ≤ 200 draw calls |
 | **H3 Décor du port** | La ville du port : rue des boutiques, café, salle de projection, maison de Limeskin, quais, grue, passerelle et aéronefs ; plans successifs de la rue | `src/world/zones/beach/` et ses décors propres (`cafe`, `shop_bakery`, `shop_bookshop`, `projection_hall`, `stone_house`, `limashenka_house`, `market_stall`, `market_stall_veg`, `snack_stall`, `scrap_pile`, `signpost`, `wind_sock`, `gangway`, `cargo_crane`, `mooring_arm`, `bollard`, `crates_barrels`, `edge_railing`, `airship_barocupot`, `airship_ferry`), `src/items/placements/beach.tscn` | socle | `hd2d_beach.png` lisible (rue, quais, navires vus d'en haut) ; scène du thé de Limeskin cadrée ; collisions testées ; ≤ 200 draw calls |
 | **H4 Décor des bois, du Couchant et de la colline** | Bois du marais (sous-bois, lisière, ruisseau), bord du Couchant (cercle de veille, cloche, rochers du vent, ruines) et colline des étoiles (pente, sommet, belvédère) | `src/world/zones/forest/`, `src/world/zones/dunes/`, `src/world/zones/hill/` et leurs décors propres (`tree_old_pine`, `tree_old_pine_clawed`, `mushroom`, `reeds`, `log_bridge`, `berry_bush`, `mossy_rock`, `bear_rock`, `stick_rack`, `play_goal`, `play_goal_red`, `ring_stone`, `vigil_bell`, `wind_rock_a`, `wind_rock_b`, `wind_rock_c`, `watch_post_ruin`, `ruined_wall`, `garde_pennant`, `signal_pillar`, `fallen_lantern`, `grass_tuft`, `lone_tree`, `lookout`, `tall_grass`), `src/items/placements/forest.tscn`, `dunes.tscn`, `hill.tscn` | socle | Sentiers lisibles en vue fixe ; rejetons visibles entre les troncs ; arène lisible pendant trois vagues (`hd2d_vigil.png`) ; rien de plus haut que 0,3 m dans le cercle de veille ; ≤ 200 draw calls par zone |
@@ -827,7 +827,7 @@ servent qu'à elles.
 | **H7 Combat et Timeres en HD-2D** | Lisibilité du combat en vue fixe : planches de Timere, onde de charge et éclats en sprites, signes avant l'attaque, ombres, indicateur de cible, secousse et arrêt sur image réglés pour la caméra fixe | `src/combat/`, `src/enemies/` (hors `placements/`), `data/attacks/`, `data/enemies/`, `data/waves/`, `assets/enemies/**`, `tests/unit/test_combat*.gd`, `tests/unit/test_enemy.gd`, `tests/unit/test_wave_director.gd`, `docs/REGLAGES_COMBAT.md` | socle | Règles de la section 4 inchangées (tests) ; un coup, une onde et une morsure lisibles sur capture ; vague 5 atteignable ; sensation jugée à la manette |
 | **H8 Acte 1 de bout en bout et navigateur** (après les autres) | Rejouer l'acte 1 entier dans la vraie partie et dans le navigateur, corriger les frottements entre lots, mettre à jour la recette, les mesures et les captures | `tests/integration/test_m2_*.gd`, `tests/integration/test_act1*.gd`, `tests/integration/demo_hd2d.*`, `tests/stubs/m1_game_test.gd`, `tests/stubs/m2_game_test.gd`, `src/test_shortcuts.gd`, `tools/web_m2.js`, `tools/web_m1.js`, `tools/hd2d_shots.sh`, `docs/web.md`, `docs/RECETTE_M2.md` | H1 à H7 | `tools/check.sh` vert ; `node tools/web_m2.js … tout` vert ; recette de l'acte 1 cochée en HD-2D ; captures `hd2d_*` |
 | **H9 Formats du décor (moteur)** (cahier n° 2) | Le moteur apprend les formats de `docs/ASSETS_HD2D_MONDE.md` (section 3 et 17) : bandes animées dans `DecorPanel`, décalques au sol (`GroundDecal`), flancs des `Building`, variantes et retournement dans `PropScatter`, sol à 27 tuiles avec alternance des tuiles `_b` et nouveaux masques, premier plan transparent devant le joueur, ciel qui dérive, petites vies (feuilles, oiseaux) ; tout reste fondu par image | `src/world/decor_panel.gd`, `building.gd`, `prop_batcher.gd`, `prop_scatter.gd`, `terrain.gd`, `island_rock.gd`, nouveaux scripts de `src/world/` (`ground_decal.gd`, `sky_drift.gd`, `ambient_sprites.gd`…), `src/world/shaders/`, `src/world/materials/`, `src/world/island.tscn` (hors `Zones`), `tests/unit/test_hd2d_decor.gd`, `tests/unit/test_hd2d_formats.gd`, `tests/integration/demo_formats.*`, API ajoutées dans la section 3 | H1 à H8 | API existantes inchangées (ajouts seulement) ; chaque format testé et montré par `demo_formats` (capture) ; un draw call par image et par case, animations comprises ; ≤ 200 draw calls dans toutes les vues de `tools/hd2d_shots.sh` ; 50 images/s par zone dans le navigateur |
-| **H10 Images du cahier n° 2 : manifeste et remplaçants** | Les ~300 images de `docs/ASSETS_HD2D_MONDE.md` entrent au manifeste (genres `decal`, `anim`, `side`, alpha doux, lot A à G), `check` les vérifie, `gen` leur donne un remplaçant en pixel art au bon format, l'atlas du sol passe à 27 tuiles | `tools/hd2d_manifest.json`, `tools/hd2d_*.py`, `assets/hd2d/**`, `docs/ASSETS_HD2D.md`, `docs/ASSETS_HD2D_MONDE.md`, `tests/unit/test_hd2d_assets.gd`, `assets/CREDITS.md` (ajouts en bas) | H1 | `python3 tools/hd2d_assets.py check` sans écart sur les ~400 images ; atlas de 27 tuiles à jour ; planches de contrôle par lot ; export Web < 60 Mo |
+| **H10 Images du cahier n° 2 : manifeste et remplaçants** | Les ~300 images de `docs/ASSETS_HD2D_MONDE.md` entrent au manifeste (genres `decal`, `anim`, `side`, alpha doux, lot A à G), `check` les vérifie, `gen` leur donne un remplaçant en pixel art au bon format, l'atlas du sol passe à 27 tuiles | `tools/hd2d_manifest.json`, `tools/hd2d_*.py`, `assets/hd2d/**`, `docs/ASSETS_HD2D.md`, `docs/ASSETS_HD2D_MONDE.md`, `tests/unit/test_hd2d_assets.gd`, `assets/CREDITS.md` (ajouts en bas) | H1 | `python3 tools/hd2d_assets.py check` sans écart sur les ~400 images ; atlas de 27 tuiles à jour ; planches de contrôle par lot ; export Web sous le budget (section 9) |
 
 Règles propres à cette phase :
 
@@ -889,7 +889,7 @@ Le code de retour est non nul si un test échoue ; la CI publie `build/junit.xml
 
 | Job | Déclencheur | Contenu |
 | --- | --- | --- |
-| `check` | Toute PR et tout push sur `main` | Conteneur `barichello/godot-ci:4.7.2` + bibliothèques X11/Mesa + Xvfb ; `pip install gdtoolkit` ; `tools/check.sh` ; étape « taille du build » qui échoue au-delà du budget du jalon (60 Mo) et écrit la taille dans le résumé du job ; artefacts `build/web/`, `build/shots/`, `build/junit.xml` |
+| `check` | Toute PR et tout push sur `main` | Conteneur `barichello/godot-ci:4.7.2` + bibliothèques X11/Mesa + Xvfb ; `pip install gdtoolkit` ; `tools/check.sh` ; étape « taille du build » qui échoue au-delà du budget du jalon (100 Mo) et écrit la taille dans le résumé du job ; artefacts `build/web/`, `build/shots/`, `build/junit.xml` |
 | `deploy` | Push sur `main`, après `check` | Copie `web/` (CNAME, page de test) dans `build/web/`, puis publie sur GitHub Pages via `actions/upload-pages-artifact` + `actions/deploy-pages` |
 
 Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa manque dans l'image, le job `check` installe `libgl1-mesa-dri xvfb` au préalable.
@@ -898,7 +898,7 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 
 | Mesure | Cible M2 | Cible M4 |
 | --- | --- | --- |
-| Taille compressée (wasm + pck) | < 60 Mo | < 60 Mo |
+| Taille compressée (wasm + pck) | < 60 Mo | < 100 Mo |
 | Temps jusqu'au menu (fibre) | < 10 s | < 15 s |
 | Images/s portable | 60 | 60 |
 | Images/s téléphone récent | 30 | 30 |
@@ -907,7 +907,7 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 
 (HD-2D) Mesures du 7 octobre 2026 (`tools/hd2d_shots.sh`, rendu natif) : 32 à 70 draw calls selon
 la zone, une conversation ou une veille (43 à 67 dans le navigateur, au Spawn de chaque zone) ;
-export 12,4 Mo compressés (18,4 avant la purge des modèles 3D). `tools/check.sh` échoue au-delà de 60 Mo compressés (25 Mo jusqu'au cahier des charges n° 2).
+export 12,4 Mo compressés (18,4 avant la purge des modèles 3D). `tools/check.sh` échoue au-delà de 100 Mo compressés (25 Mo jusqu'au cahier des charges n° 2, 60 Mo jusqu'à ses lots A et F ; 73,5 Mo mesurés avec toutes ses images).
 
 ### Hygiène du dépôt
 
@@ -1269,7 +1269,7 @@ jobs:
         run: |
           size=$(tar -czf - build/web | wc -c)
           echo "build/web compressé : $((size / 1048576)) Mo" >> "$GITHUB_STEP_SUMMARY"
-          [ "$size" -lt 62914560 ] || { echo "build > 60 Mo"; exit 1; }
+          [ "$size" -lt 104857600 ] || { echo "build > 100 Mo"; exit 1; }
       - uses: actions/upload-artifact@v4
         with: { name: web, path: build/web }
       - uses: actions/upload-artifact@v4
