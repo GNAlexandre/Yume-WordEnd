@@ -1,12 +1,12 @@
 {
   "version": 1,
   "echelle": 1,
-  "planche": [742, 1014],
+  "planche": [642, 337],
   "direction": "right",
   "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
   "status": "measured_crops_animation_review",
-  "anchors_validated": false,
-  "anchor_method": "bottom of alpha silhouette; horizontal foot centroid",
+  "anchors_validated": true,
+  "anchor_method": "tools/hd2d_sheets.py anchors (H1) : pieds près de l'axe du corps, images immobiles recalées sur la 1re de repos ; revues sur planche de contrôle",
   "combat_timing_validated": false,
   "density_px_m": 96,
   "palette_colors": 64,
@@ -29,53 +29,6 @@
         [326, 172, 101, 165, 40, 165],
         [431, 173, 107, 164, 43, 164],
         [542, 175, 100, 162, 47, 162]
-      ]
-    },
-    "course": {
-      "ips": 14,
-      "boucle": true,
-      "images": [
-        [0, 344, 144, 135, 84, 135],
-        [148, 343, 127, 136, 46, 136],
-        [279, 348, 139, 131, 78, 130],
-        [422, 341, 138, 138, 81, 138],
-        [564, 342, 144, 137, 62, 137]
-      ]
-    },
-    "attaque": {
-      "ips": 14,
-      "boucle": false,
-      "coup": [1, 2, 3],
-      "images": [
-        [0, 483, 121, 166, 69, 166],
-        [125, 507, 199, 142, 54, 142],
-        [328, 513, 234, 136, 56, 136],
-        [566, 512, 176, 137, 50, 137]
-      ]
-    },
-    "charge": {
-      "ips": 10,
-      "boucle": false,
-      "onde": 3,
-      "images": [
-        [0, 653, 115, 154, 40, 153],
-        [119, 659, 143, 148, 46, 148],
-        [266, 669, 203, 138, 55, 137],
-        [473, 676, 260, 131, 52, 131]
-      ]
-    },
-    "degats": {
-      "ips": 1,
-      "boucle": false,
-      "images": [
-        [0, 811, 131, 144, 76, 143]
-      ]
-    },
-    "mort": {
-      "ips": 1,
-      "boucle": false,
-      "images": [
-        [0, 959, 295, 55, 104, 53]
       ]
     }
   }

@@ -240,13 +240,12 @@ func test_npc_visuals_are_not_playable_skins() -> void:
 		assert_not_null(skin.portrait, "%s : portrait" % visual_id)
 		var sheet := SheetLoader.read_sheet(skin)
 		var animations := SheetLoader.animations(sheet)
-		# (H1) Planches livrées : un PNJ a repos, marche et parle (docs/ASSETS_HD2D.md 3.2) ; une
-		# fée soldate (Willem, Ithea, Nephren) a aussi les animations de combat de la fée jouable.
+		# (H1) Planches livrées : un PNJ a repos, marche et parle (docs/ASSETS_HD2D.md 3.2 ; Willem
+		# n'a pas encore « parle ») ; Ithea et Nephren, jouables, ont aussi le combat de la fée.
 		for anim: String in ["repos", "marche"]:
 			assert_true(animations.has(anim), "%s : animation %s" % [visual_id, anim])
-		assert_true(
-			animations.has("parle") or animations.has("attaque"), "%s : parle ou combat" % visual_id
-		)
+		if visual_id != &"willem":
+			assert_true(animations.has("parle"), "%s : parle" % visual_id)
 		if animations.has("attaque"):
 			assert_eq(SheetLoader.hit_frames(sheet, &"attaque"), [1, 2, 3] as Array[int])
 			assert_eq(SheetLoader.wave_frame(sheet, &"charge"), 3)

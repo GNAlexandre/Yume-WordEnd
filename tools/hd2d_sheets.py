@@ -13,10 +13,11 @@ Usage (Python 3.9+, Pillow) :
     python3 tools/hd2d_sheets.py anchors <json>…        # ancres recalculées (aperçu des écarts)
     python3 tools/hd2d_sheets.py anchors <json>… --write [--feet dark|alpha] [--no-axis] [--torso]
     python3 tools/hd2d_sheets.py alias parle repos <json>…   # parle joue les images de repos
+    python3 tools/hd2d_sheets.py trim repos,marche,parle <json>…  # retire les autres animations
     python3 tools/hd2d_sheets.py strip <out.png> <json>… [--anims repos,parle] [--scale 1]
 
 Manifeste (« sheets ») : id, dir, table (fairy : fée jouable ou soldate, 3.1 ; npc : PNJ, 3.2 ;
-timere, 3.3), height_m, views ; facultatifs : talks (PNJ qui parle), feet (alpha), axis (false :
+timere, 3.3), height_m, views ; facultatifs : feet (alpha), axis (false :
 pieds cherchés sur toute la largeur), torso (vues recalées sur le buste), aliases (vue →
 {animation : animation dont elle joue les images}, à faire redessiner).
 
@@ -108,6 +109,8 @@ ALIGN_SEARCH = (20, 8)
 # et décalage cherché en x (px).
 TORSO_BAND = (0.3, 0.62)
 TORSO_SEARCH = 30
+# Planche réduite (trim) : espace transparent entre deux rangées (px).
+TRIM_GAP = 4
 
 
 def load_manifest():
@@ -393,6 +396,9 @@ def check_view(json_path, table, height_px, profile_height=0.0):
     anims = data.get("animations", {})
     for name, (count, fps, loops, hits, wave) in TABLES[table].items():
         anim = anims.get(name)
+        if anim is None and table == "npc" and name == "parle":
+            notes.append("parle absente (le PNJ garde repos en conversation)")
+            continue
         if anim is None:
             problems.append("%s absente" % name)
             continue
@@ -467,8 +473,6 @@ def check_sheet(entry):
         problems, notes = check_view(path, entry["table"], height_px, profile if view else 0.0)
         if view and not problems and os.path.exists(side) and _signature(path) != _signature(side):
             problems.append("animations, cadences, coup ou onde différents du profil")
-        if not view and entry.get("talks") and "parle" not in read_json(path).get("animations", {}):
-            notes.append("parle absente (le PNJ garde repos en conversation)")
         for anim, source in entry.get("aliases", {}).get(view or "side", {}).items():
             notes.append("%s remplacée par les images de %s (dessins à refaire)" % (anim, source))
         if problems or notes:
@@ -508,6 +512,49 @@ def cmd_alias(paths, anim, source):
         anims[anim]["images"] = [list(frame) for frame in anims[source]["images"]]
         write_json(path, data)
         print("%s : %s ← images de %s" % (os.path.relpath(path, ROOT), anim, source))
+    return 0
+
+
+def cmd_trim(paths, keep):
+    """Ne garde dans la planche (PNG et JSON) que les animations keep, que le jeu joue : les
+    autres sont retirées et les rangées restantes resserrées (x inchangés, TRIM_GAP px entre deux
+    rangées ; une image partagée par deux animations, « parle » remplacée par « repos », n'est
+    copiée qu'une fois). Le budget de l'export Web en profite ; les planches complètes restent
+    dans l'historique (livraison)."""
+    for path in paths:
+        data = read_json(path)
+        image = Image.open(sheet_png(path)).convert("RGBA")
+        anims = data["animations"]
+        kept = {name: anim for name, anim in anims.items() if name in keep}
+        placed = {}
+        offset = 0
+        for anim in kept.values():
+            todo = [tuple(int(v) for v in f[:4]) for f in anim["images"]]
+            todo = [rect for rect in todo if rect not in placed]
+            if not todo:
+                continue
+            top = min(r[1] for r in todo)
+            bottom = max(r[1] + r[3] for r in todo)
+            for rect in todo:
+                placed[rect] = (rect[0], offset + rect[1] - top)
+            offset += bottom - top + TRIM_GAP
+        width = max(r[0] + r[2] for r in placed)
+        height = max(placed[r][1] + r[3] for r in placed)
+        sheet = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        for rect, (x, y) in placed.items():
+            sheet.paste(image.crop((rect[0], rect[1], rect[0] + rect[2], rect[1] + rect[3])), (x, y))
+        for anim in kept.values():
+            for frame in anim["images"]:
+                frame[1] = placed[tuple(int(v) for v in frame[:4])][1]
+        dropped = [name for name in anims if name not in keep]
+        data["animations"] = kept
+        data["planche"] = [width, height]
+        sheet.save(sheet_png(path), optimize=True)
+        write_json(path, data)
+        print(
+            "%s : %s retirées, %d × %d → %d × %d"
+            % (os.path.relpath(path, ROOT), ", ".join(dropped) or "rien", image.width, image.height, width, height)
+        )
     return 0
 
 
@@ -588,6 +635,9 @@ def main():
     alias.add_argument("anim")
     alias.add_argument("source")
     alias.add_argument("files", nargs="+")
+    trim = sub.add_parser("trim", help="ne garde que les animations données (PNG et JSON)")
+    trim.add_argument("keep", help="animations gardées, séparées par des virgules")
+    trim.add_argument("files", nargs="+")
     strip = sub.add_parser("strip", help="planche de contrôle alignée sur les ancres")
     strip.add_argument("out")
     strip.add_argument("files", nargs="+")
@@ -600,6 +650,8 @@ def main():
         return cmd_anchors(args.files, args.write, args.feet, not args.no_axis, args.torso)
     if args.command == "alias":
         return cmd_alias(args.files, args.anim, args.source)
+    if args.command == "trim":
+        return cmd_trim(args.files, args.keep.split(","))
     only = [name for name in args.anims.split(",") if name]
     return cmd_strip(args.out, args.files, args.scale, only)
 

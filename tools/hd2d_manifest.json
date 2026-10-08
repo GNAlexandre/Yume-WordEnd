@@ -929,8 +929,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "talks": true
+   ]
   },
   {
    "id": "nephren",
@@ -942,7 +941,6 @@
     "_front",
     "_back"
    ],
-   "talks": true,
    "aliases": {
     "side": {
      "parle": "repos"
@@ -978,14 +976,13 @@
   {
    "id": "willem",
    "dir": "assets/characters/willem",
-   "table": "fairy",
+   "table": "npc",
    "height_m": 1.75,
    "views": [
     "",
     "_front",
     "_back"
-   ],
-   "talks": true
+   ]
   },
   {
    "id": "nygglatho",
@@ -997,7 +994,6 @@
     "_front",
     "_back"
    ],
-   "talks": true,
    "aliases": {
     "_back": {
      "parle": "repos"
@@ -1014,7 +1010,6 @@
     "_front",
     "_back"
    ],
-   "talks": true,
    "aliases": {
     "side": {
      "parle": "repos"
@@ -1036,8 +1031,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "talks": true
+   ]
   },
   {
    "id": "collon",
@@ -1048,8 +1042,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "talks": true
+   ]
   },
   {
    "id": "lakhesh",
@@ -1060,8 +1053,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "talks": true
+   ]
   },
   {
    "id": "almita",
@@ -1072,8 +1064,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "talks": true
+   ]
   },
   {
    "id": "limeskin",
@@ -1085,7 +1076,6 @@
     "_front",
     "_back"
    ],
-   "talks": true,
    "aliases": {
     "side": {
      "parle": "repos"
@@ -1105,7 +1095,6 @@
     "_front",
     "_back"
    ],
-   "talks": true,
    "aliases": {
     "side": {
      "parle": "repos"
@@ -1122,7 +1111,6 @@
     "_front",
     "_back"
    ],
-   "talks": true,
    "torso": [
     "_back"
    ]
@@ -1137,7 +1125,6 @@
     "_front",
     "_back"
    ],
-   "talks": true,
    "aliases": {
     "side": {
      "parle": "repos"
@@ -1154,7 +1141,6 @@
     "_front",
     "_back"
    ],
-   "talks": true,
    "torso": [
     "_back"
    ],
@@ -1174,7 +1160,6 @@
     "_front",
     "_back"
    ],
-   "talks": true,
    "aliases": {
     "side": {
      "parle": "repos"
@@ -1191,7 +1176,6 @@
     "_front",
     "_back"
    ],
-   "talks": true,
    "aliases": {
     "_back": {
      "parle": "repos"
@@ -1207,8 +1191,7 @@
     "",
     "_front",
     "_back"
-   ],
-   "talks": true
+   ]
   }
  ]
 }
