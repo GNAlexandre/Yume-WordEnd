@@ -1553,3 +1553,135 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   la place affichée (`get_global_transform_interpolated`) ; `WorldManager.teleport` et
   `CameraRig.snap` remettent le lissage à zéro. Mesure après : tremblement < 0,3 px à 45, 60 et
   144 images/s ; tangage et distance fixes. Les tests du cadrage des bâtiments sont remplacés.
+- **H9 — données de chaque exemplaire dans UV2** : la phase d'une bande animée (UV2.x) et le
+  décalage vers la caméra (UV2.y, m) d'un panneau, la part de l'exemplaire (x) et la couche (y)
+  d'un décalque passent par les sommets ; le PropBatcher garde les UV2 : tous les panneaux d'une
+  image restent un draw call par case, animés compris. Phase : hachage de la position au centimètre,
+  32 pas (peu de meshes) ; l'image change dans le shader avec TIME, qui continue pendant la pause.
+- **H9 — panel.gdshader en deux** : son cœur (uniformes, bande, décalage, couleur) passe dans
+  `panel_core.gdshaderinc`, partagé avec `panel_foreground.gdshader` ; panel.gdshader garde sa
+  fonction fragment écrite en clair (la découpe du village l'augmente) et écrit POSITION (décalage
+  vers la caméra) ; rien ne change à l'œil.
+- **H9 — premier plan** : shader à part (la découpe du village ne convertit que panel.gdshader),
+  ellipse de 1,4 × 1,9 m autour du corps du joueur où il s'efface en trame 4 × 4 en gardant 20 %
+  de ses pixels au cœur (le tronc flou devient translucide) ; le centre est posé une fois par image
+  par les panneaux de premier plan eux-mêmes, sur la place affichée du joueur (lissage physique).
+- **H9 — décalques couchés sur le sol** : le mesh reprend les triangles mêmes du sol sous le
+  décalque, découpés à son bord (pas de projection ni de quad flottant) : aucun jour ni scintillement
+  sur les pentes ; tiré vers la caméra de 0,1 % de sa distance, plus 0,04 % par couche et 0,02 % ×
+  la part de l'exemplaire (ordre stable entre deux décalques superposés). Décalques doux : priorité
+  de rendu −9 + couche (sous les ombres des panneaux, −1, et sous les personnages) ; décalques durs :
+  un matériau par image quelle que soit la couche. Un décalque déplacé se recouche (notification).
+- **H9 — flancs** : quad de la taille de l'image (pas étiré à l'emprise) à FACADE_GAP devant le
+  mur, côté gauche au sud des deux côtés (retourné vu de l'ouest), éclairé comme les murs (relief
+  0,6 : le flanc ouest, au couchant, plus clair) ; `side_contract_size()` donne la taille attendue
+  pour les vérifications de la pose.
+- **H9 — petits panneaux de mur et de toit** : cheminées, lucarnes, lierre, enseignes se posent
+  sur la surface (contre la façade, à FACADE_GAP devant le mur, ou au pied de la cheminée sur le pan
+  sud) avec `depth_offset` 0,05 à 0,1 m et `shadow_width` 0 : dessinés devant le mur ou le toit sans
+  bouger à l'écran ; contre un flanc : `keep_orientation` en plus.
+- **H9 — variantes** : graphe des plus proches voisins (une forêt) parcouru en largeur, chaque
+  point évite la variante du point qui l'atteint (toujours possible dès deux variantes) ; tirages
+  des variantes et du retournement sur des suites à part : les lacets et échelles des PropScatter
+  existants ne changent pas ; retournement seulement si la racine de la scène est un DecorPanel.
+- **H9 — sol à 27 tuiles** : alternance des `_b` par plaques de bruit (deux octaves, environ 8 m)
+  au bord tramé comme les autres masques ; masques des nouvelles matières calculés seulement si
+  l'atlas a plus de 12 tuiles (le sol coûte ce qu'il coûtait) ; prairie fleurie sur la colline
+  seulement si sa tuile existe (son repli, l'herbe verte, trouerait l'herbe dorée) ; potager : teinte
+  d'avant tant que `garden_soil` manque ; gravier : chemins entre z = 28 et 58 (le bourg) ; mousse
+  et feuilles plus denses à plus de 2 à 9 m d'un chemin.
+- **H9 — ciel qui dérive** : mouvement dans le shader, matériau porté par le mesh (le PropBatcher
+  de Decor ne le fond pas), boîte du trajet entier (écarté hors champ) ; dans island.tscn, cinq
+  voyageurs (floating_rock deux fois, distant_island_c) à 24 px/m, z de −135 à −205, y de −40 à −20 :
+  la caméra regarde vers le bas (17° au haut de l'écran), le ciel ne se voit qu'au bord nord de
+  l'île, au-dessus de la mer de nuages.
+- **H9 — petites vies** : chaque sprite a sa place dans un pavage du monde de période la boîte,
+  ramenée dans la boîte qui suit le point visé par la caméra (rien ne glisse avec elle) ; temps
+  propre (figé en pause) ; caméra et joueur lus à leur place affichée ; caché hors de sa région.
+- **H9 — démo des formats** : l'île sans ses zones et un atlas de 27 tuiles fabriqué à l'exécution
+  (les `_b` sont la tuile retournée et éclaircie, les matières des teintes) ; aucune image du
+  cahier n° 2 lue (le lot H10 les crée).
+- **H10 — manifeste du cahier n° 2** (`tools/hd2d_manifest.json`, version 2, une image par ligne) :
+  les 300 images de `docs/ASSETS_HD2D_MONDE.md` s'ajoutent aux 99 du cahier n° 1 (399 en tout ;
+  les deux dirigeables gardent leur chemin à leur nouvelle taille). Clés nouvelles : `lot` (A à G),
+  genres `decal`, `anim` (`frames`, `fps` : la taille est celle d'une image, le fichier fait
+  `frames ×` sa largeur) et `side` (`roof` gable avec `wall_m`, ou eaves), `soft_alpha`, `wrap`
+  (x ou y), `anchor` center (ce qui vole : nuages, navires en vol, feuilles, oiseaux, papillon,
+  lucioles, hélices), `solid_edge` (bord haut plein des bordures d'herbe), `pairs_with`
+  (`grass_edge_b` se raccorde à `grass_edge_a`), `variant_of` (tuile `_b` → tuile d'origine, cherchée
+  dans le même dossier : `ground/rock`, pas `props/rock`), `ppm` (48 : nuages, îles, île n° 53,
+  `horizon_islands` ; 24 : navires en vol). Les lisières (`forest_wall_*`, `treeline_autumn_*`) se
+  raccordent aussi à gauche et à droite, comme les bordures listées par le cahier.
+- **H10 — cadences des bandes animées** (`fps`, notées dans le manifeste et la section 12 du
+  cahier) : linge 4, fanion 10, fumée 6, brasero 10, cascade 10, oiseaux 10, feuilles 10, roseaux 3,
+  herbe 4, manche à air 6, guirlande 5, cloche 6, fontaine 8, pigeon 4, papillon 12, lucioles 4,
+  vapeur 8, clochette 6, hélices 12 : un mouvement d'étoffe ou de plante lent, un battement d'ailes
+  ou une flamme vifs, une boucle d'une demi-seconde à une seconde et demie.
+- **H10 — corrections du cahier n° 2** : (1) les hélices tournaient d'un huitième de tour par
+  image : avec quatre pales identiques, 45° rend les images 3 et 4 identiques aux images 1 et 2 et
+  le sens de rotation indécidable (l'œil voit aussi bien −45°) ; elles tournent d'un seizième de
+  tour (22,5°, 4 pales) et d'un vingtième (18°, 5 pales) : en 4 images une pale prend la place de
+  la suivante. (2) La section 3.4 demandait chaque image d'une bande « collée au bas » alors que
+  les hélices (« moyeu au centre exact ») et les feuilles (« reste au centre ») sont centrées :
+  exception écrite pour ce qui vole (et les nuages), clé `anchor` center. (3) Les flancs des
+  maisons de 9.2 sont nommés (`<nom>_side`) dans le tableau ; les chemins des dirigeables et de
+  leurs hélices (`props/`, `anim/`) sont écrits ; les densités du ciel (48 ou 96 px/m) sont dites
+  pour chaque famille ; `canopy_shadow_b` et `sand_drift_b` sont marqués « alpha doux » comme
+  leur famille ; `edge_roots` pend sous la lèvre (haut de l'image = lèvre) ; la clochette du café
+  pend à une potence qui part du bas de l'image (l'ancre) ; la cloche de veille se balance sur
+  6 images (et non « gauche, centre, droite, centre », qui en fait 4). Cahier n° 1 : lignes des
+  dirigeables à leur nouvelle taille, renvoi au cahier n° 2.
+- **H10 — remplaçants du cahier n° 2** : une recette par image dans `tools/hd2d_nature.py`
+  (lot A), `hd2d_decals.py`, `hd2d_town.py`, `hd2d_ships.py`, `hd2d_anim.py`, `hd2d_sky.py` et
+  `hd2d_ground.py` ; `gen` les refait toutes en 25 s environ, à l'octet près d'une passe à l'autre.
+  Ils partent des images livrées quand ils en
+  dérivent : tuiles `_b` (pourtour de la tuile livrée, intérieur pris ailleurs dans la même tuile et
+  cousu par des coupes de coût minimal qui suivent les joints), prairie fleurie (herbe livrée),
+  matières `_b` (matières livrées recolorées, moussues, rouillées ou tournées), flancs des neuf
+  bâtiments existants (matière du volume, fenêtres découpées dans la façade livrée), bandes du
+  linge, du fanion, de la manche à air, des roseaux, de l'herbe haute et de la cloche (le panneau
+  livré mis en mouvement : rangées ou colonnes décalées, cloche tournée autour de son anneau).
+  14,7 Mo de PNG (29,1 Mo pour tout le manifeste, budget 64).
+- **H10 — dirigeables remplacés** : les deux images livrées (ballon, 48 px/m) sont remplacées par
+  des remplaçants au format du cahier n° 2 (1344 × 672 et 2304 × 1056 px à 96 px/m) ; leurs scènes
+  (`src/world/props/airship_*.tscn`, hors de H10) restent à `pixels_per_meter = 48` et amarrées
+  au sud du quai, hors champ : elles les affichent deux fois trop grands jusqu'à la phase de pose
+  (docs/CONTRACT_REQUESTS.md).
+- **H10 — atlas du sol à 27 tuiles** (1536 × 2688 px, ordre du contrat) : en attendant que H9
+  déduise le nombre de rangées de la taille de l'atlas, `ATLAS_ROWS` de `terrain.gdshader` passe
+  de 3 à 7 et `test_hd2d_decor.gd` attend 1536 × 2688 (deux lignes hors du périmètre de H10, à
+  reprendre telles que H9 les écrit à la fusion) ; les 12 premières cases n'ont pas bougé, le sol
+  rend à l'identique.
+- **H10 — vérifications** : `hd2d_assets.py check` (et `--lot`) vérifie toutes les règles des
+  genres ; `test_hd2d_assets.gd` en reprend l'essentiel (raccords sur colonnes échantillonnées,
+  limite 2 au lieu de 1,5) et compare l'atlas sans `assert_eq` sur les octets (13 s gagnées). La
+  mesure de raccord reste celle du cahier n° 1 (écart des bords rapporté au plus grand écart
+  intérieur) : elle attrape un bord coupé ou décalé, pas deux herbes voisines de teinte proche.
+- **H10 — mesures** : export Web 32,7 Mo compressés (wasm 9,7 + pck 23,0 ; 23,7 avant H10),
+  budget 60 : `export_filter = all_resources` emporte les 300 nouvelles images bien qu'aucune scène
+  ne les utilise encore (vérifié dans le .pck : 45 décalques, 21 bandes, 19 flancs) ; livrées (40
+  à 45 Mo de PNG prévus au lieu de 15), elles porteraient l'export vers 40 Mo compressés. Draw calls
+  inchangés (`tools/hd2d_shots.sh` : cour 172, port 63, bois 56, Couchant 33, colline 51, avant
+  comme après) : les nouvelles images ne sont pas encore posées.
+- **Intégration de la PR n° 8 (corrections de la section 12, Codex)** : planches et JSON corrigés
+  gardés ; `assets/source/section12/` (40 Mo de sources et de prompts), `docs/sprites/` (30 Mo,
+  page d'aperçus) et `tools/hd2d_correction_review.py` (outil ponctuel qui l'alimente) retirés de
+  l'arbre, comme les sources des livraisons précédentes : ils restent dans l'historique de `main`
+  (commit `28d49f3`). La ligne de `.gitattributes` qui visait la page est retirée aussi.
+- **Livraisons du cahier n° 2 par Codex (PR n° 9 à 12 : lots G, E, C, B, 140 images)** intégrées
+  par-dessus les remplaçants de H10 (les images livrées prennent leur place, chemins et `.import`
+  inchangés) ; atlas du sol refait (27 tuiles, dont 15 livrées). `check` signalait 41 images :
+  presque toutes cadrées au plus juste, qui touchent leur bord sur 1 à 5 % de sa longueur (rien
+  ne se voit en jeu). L'outil ne parle plus de coupure qu'au-delà de 12 % du bord (`CUT_COVER`),
+  l'ancrage au sol reste vérifié au moindre pixel ; les lointains qui flottent (îles, rais de
+  lumière) n'ont plus d'ancre au sol (`anchor: free`) ; nuages, brume et dirigeables lointains
+  sont centrés par leur cadre (les hélices et les feuilles, qui tournent, par leur masse).
+  Retouches sans perte : quatre dirigeables lointains et un nuage recentrés par décalage de
+  pixels ; la tache d'huile, coupée au bord droit sur 14 %, effilochée sur 6 px de chaque côté.
+- **Taille des sprites : hauteur debout mesurée à l'ancre** (`SheetLoader.pixel_size`). La PR
+  n° 8 a redessiné Pannibal de profil avec la pointe de son épée de bois 10 px sous ses pieds :
+  sa 1re image de « repos » fait 130 px pour 120 px debout, et `main` est rouge
+  (`test_skin_registry` : densité 1/104 au lieu de 1/96). La taille d'un pixel est désormais
+  `height_m` / hauteur du haut de l'image aux pieds (l'ancre), ce que dit `SkinData.height_m`
+  (« taille debout ») ; seul le Timere change aussi (cadre de 99 px, ancre à 97 : +2 %, à sa
+  taille déclarée). Tests du chargeur et du sprite mesurés à l'ancre.
