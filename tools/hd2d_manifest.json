@@ -894,5 +894,29 @@
    "kind": "fx",
    "prio": 3
   }
+ ],
+ "sheets": [
+  {
+   "id": "chtholly",
+   "dir": "assets/characters/chtholly",
+   "table": "fairy",
+   "height_m": 1.5,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  },
+  {
+   "id": "timere",
+   "dir": "assets/enemies/timere",
+   "table": "timere",
+   "height_m": 1.03,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ]
+  }
  ]
 }
