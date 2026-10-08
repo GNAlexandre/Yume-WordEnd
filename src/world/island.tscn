@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" path="res://src/world/props/distant_island_c.tscn" id="15_island_c"]
 [ext_resource type="PackedScene" path="res://src/world/props/distant_island_b.tscn" id="14_island_b"]
 [ext_resource type="PackedScene" path="res://src/world/props/distant_island_a.tscn" id="13_island_a"]
+[ext_resource type="Script" path="res://src/world/materials/day_phase_lighting.gd" id="17_lighting"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
 panorama = ExtResource("11_sky")
@@ -70,6 +71,9 @@ transform = Transform3D(0.287311, 0.3276, -0.900073, 0, 0.939693, 0.34202, 0.957
 light_color = Color(1, 0.86, 0.68, 1)
 light_energy = 0.75
 shadow_enabled = false
+
+[node name="Lighting" type="Node" parent="."]
+script = ExtResource("17_lighting")
 
 [node name="OverviewCamera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.731354, 0.681998, 0, -0.681998, 0.731354, 0, 112, 132)

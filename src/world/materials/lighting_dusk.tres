@@ -16,6 +16,7 @@ fog_density = 0.0022
 sky_energy = 0.6
 clouds_tint = Color(0.62, 0.52, 0.72, 1)
 lamp_energy = 1.5
+sprite_tint = Color(0.88, 0.8, 0.9, 1)
 grade = Color(0.94, 0.9, 1.02, 1)
 shadow_tint = Color(0.36, 0.3, 0.58, 1)
 highlight_tint = Color(1, 0.68, 0.5, 1)

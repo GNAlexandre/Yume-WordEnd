@@ -9,15 +9,29 @@ extends Resource
 ## - lighting_dusk.tres : crépuscule, le soleil sous l'horizon, ciel violet ;
 ## - lighting_night.tres : nuit claire (la promesse de l'acte 1 sur la colline ; cycle jour/nuit
 ##   de M3) : lune froide venue de l'est, lanternes et fenêtres qui portent la lumière.
-## Rien ne les active encore en jeu : apply(island) les pose sur une île (et sur la caméra qui la
-## regarde) ; un futur cycle jour/nuit (EventBus.day_phase_changed) ou une scène les appellera.
-## apply() travaille sur des copies (environnement, mer de nuages) : les ressources partagées
-## d'island.tscn ne changent pas.
+## apply(island) les pose sur une île (et sur la caméra qui la regarde). Le nœud « Lighting »
+## d'island.tscn (day_phase_lighting.gd) les pose quand l'histoire émet
+## EventBus.day_phase_changed (for_phase : evening → crépuscule, night → nuit, sinon couchant) ;
+## rien ne l'émet encore : l'île reste au couchant. apply() travaille sur des copies
+## (environnement, mer de nuages) : les ressources partagées d'island.tscn ne changent pas.
+## Les planches des personnages ne sont pas éclairées (AnimatedSprite3D non ombré) :
+## active_sprite_tint() dit la teinte que le dernier réglage posé leur donne (CONTRACT_REQUESTS,
+## H6).
 
 ## Méta d'une OmniLight3D : son énergie avant tout réglage (lanterns × lamp_energy).
 const BASE_ENERGY_META := &"hd2d_base_energy"
 ## Méta d'une ressource déjà copiée par apply().
 const OWN_META := &"hd2d_lighting_copy"
+## Réglage de chaque phase de la journée (EventBus.day_phase_changed) ; les autres : le couchant.
+const PHASE_PRESETS := {
+	&"evening": "res://src/world/materials/lighting_dusk.tres",
+	&"night": "res://src/world/materials/lighting_night.tres",
+}
+const DEFAULT_PRESET := "res://src/world/materials/lighting_sunset.tres"
+
+## Teinte des personnages du dernier réglage posé par apply() (une couleur, pas la ressource :
+## rien ne reste chargé à la sortie).
+static var _active_sprite_tint: Color = Color.WHITE
 
 @export_group("Soleil")
 ## Couleur et énergie de la DirectionalLight3D « Sun » (le soleil, ou la lune la nuit).
@@ -42,6 +56,10 @@ const OWN_META := &"hd2d_lighting_copy"
 ## Facteur de l'énergie des OmniLight3D de l'île (lampes de cristal, portail).
 @export var lamp_energy: float = 1.0
 
+@export_group("Personnages")
+## Teinte des planches des personnages, que la lumière de la scène n'éclaire pas.
+@export var sprite_tint: Color = Color.WHITE
+
 @export_group("Post-traitement")
 @export var grade: Color = Color(1.04, 0.99, 0.92)
 @export var shadow_tint: Color = Color(0.47, 0.4, 0.62)
@@ -57,6 +75,16 @@ const OWN_META := &"hd2d_lighting_copy"
 @export var sky_light_strength: float = 0.1
 @export var glow_threshold: float = 0.7
 @export var glow_strength: float = 0.6
+
+
+## Réglage d'une phase de la journée (EventBus.day_phase_changed : morning|day|evening|night).
+static func for_phase(phase: StringName) -> HD2DLighting:
+	return load(PHASE_PRESETS.get(phase, DEFAULT_PRESET)) as HD2DLighting
+
+
+## Teinte des planches des personnages sous le dernier réglage posé (blanc : le couchant).
+static func active_sprite_tint() -> Color:
+	return _active_sprite_tint
 
 
 ## Direction (unitaire) d'où vient la lumière : vers le soleil.
@@ -95,6 +123,7 @@ func post_parameters() -> Dictionary:
 ## Pose le réglage sur une île (WorldEnvironment, Sun, Water, lanternes) et sur le
 ## post-traitement de la caméra courante de sa vue, s'il y en a un (CameraRig/PostFX/Screen).
 func apply(island: Node3D) -> void:
+	_active_sprite_tint = sprite_tint
 	var world := island.get_node_or_null(^"WorldEnvironment") as WorldEnvironment
 	if world != null and world.environment != null:
 		world.environment = _own(world.environment, true) as Environment

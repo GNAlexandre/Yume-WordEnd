@@ -359,3 +359,25 @@ func test_lighting_presets_set_the_post_processing() -> void:
 	assert_lt(night.sun_energy, sunset.sun_energy, "la nuit est plus sombre")
 	assert_gt(night.lamp_energy, sunset.lamp_energy, "les lanternes portent la nuit")
 	assert_lt(night.saturation, sunset.saturation)
+
+
+func test_day_phase_sets_the_island_lighting() -> void:
+	# L'île reste au couchant tant que l'histoire n'annonce pas une autre phase de la journée ;
+	# la nuit (la promesse sur la colline) et le soir posent leur réglage, le jour revient au
+	# couchant ; les personnages, non éclairés, reçoivent la teinte du réglage.
+	var island := FIXTURE.island()
+	add_child(island)
+	var world := island.get_node(^"WorldEnvironment") as WorldEnvironment
+	var sunset := _lighting("sunset")
+	assert_eq(world.environment.ambient_light_color, sunset.ambient_color, "couchant au départ")
+	EventBus.day_phase_changed.emit(&"night")
+	var night := _lighting("night")
+	assert_eq(world.environment.ambient_light_color, night.ambient_color, "nuit")
+	assert_eq(HD2DLighting.active_sprite_tint(), night.sprite_tint, "personnages de nuit")
+	assert_lt(night.sprite_tint.v, 0.9, "la nuit assombrit les personnages")
+	EventBus.day_phase_changed.emit(&"evening")
+	assert_eq(world.environment.fog_light_color, _lighting("dusk").fog_color, "crépuscule")
+	EventBus.day_phase_changed.emit(&"day")
+	assert_eq(world.environment.ambient_light_color, sunset.ambient_color, "retour au couchant")
+	assert_eq(HD2DLighting.active_sprite_tint(), Color.WHITE, "personnages au naturel")
+	island.free()
