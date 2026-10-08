@@ -532,12 +532,19 @@ def cmd_check(lot=""):
 # --- Ajustement d'une image livrée ---------------------------------------------------------------
 
 
+def _margin(want):
+    """Marge transparente gardée autour de ce qui ne touche aucun bord (décalques, sprites centrés)."""
+    return max(2, round(0.04 * min(want)))
+
+
 def _fit_into(img, want, anchor):
-    """Recadre img sur sa silhouette, la réduit pour tenir dans want, la pose au bas (ou au centre)."""
+    """Recadre img sur sa silhouette, la réduit pour tenir dans want, la pose au bas (ou au centre,
+    avec une marge tout autour)."""
     box = img.getchannel("A").getbbox()
     if box:
         img = img.crop(box)
-    scale = min(want[0] / img.width, want[1] / img.height)
+    room = (want[0] - 2 * _margin(want), want[1] - 2 * _margin(want)) if anchor == "center" else want
+    scale = min(room[0] / img.width, room[1] / img.height)
     size = (max(1, round(img.width * scale)), max(1, round(img.height * scale)))
     img = img.resize(size, Image.NEAREST)
     out = Image.new("RGBA", want, (0, 0, 0, 0))
@@ -576,9 +583,10 @@ def fit_image(img, entry):
                 union = box if union is None else (min(union[0], box[0]), min(union[1], box[1]),
                                                    max(union[2], box[2]), max(union[3], box[3]))
         out = Image.new("RGBA", file_size(entry), (0, 0, 0, 0))
+        room = (want[0] - 2 * _margin(want), want[1] - 2 * _margin(want)) if anchor == "center" else want
         for i, f in enumerate(frames):
             f = f.crop(union) if union else f
-            scale = min(want[0] / f.width, want[1] / f.height)
+            scale = min(room[0] / f.width, room[1] / f.height)
             size = (max(1, round(f.width * scale)), max(1, round(f.height * scale)))
             f = f.resize(size, Image.NEAREST)
             y = (want[1] - size[1]) // 2 if anchor == "center" else want[1] - size[1]

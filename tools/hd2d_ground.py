@@ -878,7 +878,7 @@ def roof_slate_b(size, rnd):
 
 
 def wall_plaster_b(size, rnd):
-    img = recolor(_origin("buildings/materials/wall_plaster", size), "#C9A050", keep=0.25)
+    img = recolor(_origin("buildings/materials/wall_plaster", size), "#B8995A", keep=0.4)
     dirt = threshold(fractal(size, (4, 4), rnd, 3), 190)
     img.paste(Image.blend(img, Image.new("RGBA", size, rgba("#7A6440")), 0.25), (0, 0), dirt)
     return img

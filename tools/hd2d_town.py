@@ -12,7 +12,7 @@ import random
 
 from PIL import Image, ImageDraw
 
-from hd2d_art import Canvas, WrapCanvas, asset, darker, mix, ramp, rgba, seed_for, tile_fill
+from hd2d_art import Canvas, WrapCanvas, asset, darker, mix, ramp, seed_for, tile_fill
 from hd2d_props import boards, crate, door, glow, post, rock_shape, window
 
 WOOD = "wood"

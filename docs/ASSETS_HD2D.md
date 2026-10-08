@@ -50,7 +50,7 @@ pierre claire `#C2B49F`, ombre `#837667` ; sable `#D6C19E` ; bois clair `#A57C58
 
 | Règle | Valeur |
 | --- | --- |
-| Densité | **96 px par mètre** partout dans le monde (sol, falaises, façades, décors, personnages) ; décor lointain (dirigeables, îles au loin) : 48 px/m |
+| Densité | **96 px par mètre** partout dans le monde (sol, falaises, façades, décors, personnages, dirigeables à quai du cahier n° 2) ; décor lointain (îles au loin) : 48 px/m ; navires en vol (cahier n° 2) : 24 px/m |
 | Format | PNG RGBA 8 bits ; tuiles et textures sans raccord : opaques |
 | Taille | exacte au pixel près (tableaux ci-dessous) ; si l'outil ne sait pas la produire, livre l'image la plus nette possible en plus grand et lance `python3 tools/hd2d_assets.py fit <fichier>` (réduction au plus proche voisin, alpha seuillé) |
 | Cadrage des panneaux | objet entier, collé au bord bas (aucune ligne vide sous le pied), centré horizontalement ; **ancre = milieu du bord bas = point posé au sol** (pied du tronc, base du mur) |

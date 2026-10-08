@@ -1571,14 +1571,15 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   dirigeables à leur nouvelle taille, renvoi au cahier n° 2.
 - **H10 — remplaçants du cahier n° 2** : une recette par image dans `tools/hd2d_nature.py`
   (lot A), `hd2d_decals.py`, `hd2d_town.py`, `hd2d_ships.py`, `hd2d_anim.py`, `hd2d_sky.py` et
-  `hd2d_ground.py` ; `gen` les refait toutes en 22 s. Ils partent des images livrées quand ils en
+  `hd2d_ground.py` ; `gen` les refait toutes en 25 s environ, à l'octet près d'une passe à l'autre.
+  Ils partent des images livrées quand ils en
   dérivent : tuiles `_b` (pourtour de la tuile livrée, intérieur pris ailleurs dans la même tuile et
   cousu par des coupes de coût minimal qui suivent les joints), prairie fleurie (herbe livrée),
   matières `_b` (matières livrées recolorées, moussues, rouillées ou tournées), flancs des neuf
   bâtiments existants (matière du volume, fenêtres découpées dans la façade livrée), bandes du
   linge, du fanion, de la manche à air, des roseaux, de l'herbe haute et de la cloche (le panneau
   livré mis en mouvement : rangées ou colonnes décalées, cloche tournée autour de son anneau).
-  11,4 Mo de PNG (25,9 Mo pour tout le manifeste, budget 64).
+  14,7 Mo de PNG (29,1 Mo pour tout le manifeste, budget 64).
 - **H10 — dirigeables remplacés** : les deux images livrées (ballon, 48 px/m) sont remplacées par
   des remplaçants au format du cahier n° 2 (1344 × 672 et 2304 × 1056 px à 96 px/m) ; leurs scènes
   (`src/world/props/airship_*.tscn`, hors de H10) restent à `pixels_per_meter = 48` et amarrées
@@ -1594,3 +1595,9 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   limite 2 au lieu de 1,5) et compare l'atlas sans `assert_eq` sur les octets (13 s gagnées). La
   mesure de raccord reste celle du cahier n° 1 (écart des bords rapporté au plus grand écart
   intérieur) : elle attrape un bord coupé ou décalé, pas deux herbes voisines de teinte proche.
+- **H10 — mesures** : export Web 32,7 Mo compressés (wasm 9,7 + pck 23,0 ; 23,7 avant H10),
+  budget 60 : `export_filter = all_resources` emporte les 300 nouvelles images bien qu'aucune scène
+  ne les utilise encore (vérifié dans le .pck : 45 décalques, 21 bandes, 19 flancs) ; livrées (40
+  à 45 Mo de PNG prévus au lieu de 15), elles porteraient l'export vers 40 Mo compressés. Draw calls
+  inchangés (`tools/hd2d_shots.sh` : cour 172, port 63, bois 56, Couchant 33, colline 51, avant
+  comme après) : les nouvelles images ne sont pas encore posées.

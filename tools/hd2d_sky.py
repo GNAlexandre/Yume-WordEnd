@@ -195,7 +195,7 @@ def cloud(size, rnd, bumps, flat=0.62, stretch=1.0, fray=0.0, dark_base=0.0):
             d.ellipse((x - r * 3, y - r, x + r * 3, y + r), fill=255)
     d.rectangle((0, int(base_y + h * 0.04), w, h), fill=0)
     mask = mask.filter(ImageFilter.MaxFilter(3)).filter(ImageFilter.MinFilter(3))
-    edge = ImageChops_lighter_ring(mask)
+    edge = _soft_rim(mask)
     lit = [rgb("cloud_crest"), mix("cloud_crest", "#FFF4E8", 0.5)]
     mid = [rgb("cloud_hollow"), mix("cloud_hollow", "cloud_crest", 0.5)]
     low = [mix("cloud_deep", "#2E2640", dark_base), rgb("cloud_deep")]
@@ -235,18 +235,10 @@ def cloud(size, rnd, bumps, flat=0.62, stretch=1.0, fray=0.0, dark_base=0.0):
     return img
 
 
-def ImageChops_lighter_ring(mask):
+def _soft_rim(mask):
     """Bord de 2 px de la silhouette (où l'alpha s'adoucit)."""
     from PIL import ImageChops
     return ImageChops.subtract(mask, mask.filter(ImageFilter.MinFilter(5)))
-
-
-def _haze(img, amount=0.35):
-    """Teinte violacée de la distance."""
-    tint = Image.new("RGBA", img.size, rgba("#8A7AA0"))
-    out = Image.blend(img, tint, amount)
-    out.putalpha(img.getchannel("A"))
-    return out
 
 
 def distant_island_d(size, rnd):

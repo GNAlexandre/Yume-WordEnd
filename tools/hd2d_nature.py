@@ -11,7 +11,7 @@ import math
 from PIL import Image, ImageChops, ImageDraw
 
 from hd2d_art import Canvas, WrapCanvas, darker, fractal, mix, posterize, ramp, rgba, shade_texture
-from hd2d_props import crown, pine_tiers, rock_shape, trunk
+from hd2d_props import pine_tiers, rock_shape, trunk
 
 BARK = "wood_dark"
 LEAF_COPPER = "#B8642E"
@@ -108,14 +108,6 @@ def tree(size, rnd, build, outline_base):
     if leaves is not None:
         wood.img.alpha_composite(leaves)
     return wood.finish(darker(outline_base, 0.4))
-
-
-def foot(c, cx, y, half, base=GREEN):
-    """Touffes d'herbe au pied (petits brins)."""
-    tones = ramp(base, 4)
-    for _ in range(int(half / 2)):
-        x = cx + c.rnd.uniform(-half, half)
-        c.line([(x, y), (x + c.rnd.uniform(-3, 3), y - c.rnd.uniform(3, 9))], tones[c.rnd.randint(1, 3)])
 
 
 # --- Arbres (section 6) -------------------------------------------------------------------------

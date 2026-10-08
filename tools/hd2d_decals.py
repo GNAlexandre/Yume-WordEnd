@@ -144,13 +144,13 @@ def roots(size, rnd, thick=True):
             width = rnd.uniform(14, 20) * (1.0 - 0.15 * k)
             hidden = {rnd.randint(2, 3), rnd.randint(5, 6)}
             for s in range(8):
-                if s in hidden:
-                    for p in (pts[s], pts[s + 1]):
-                        c.ellipse(p[0], p[1] + width * 0.25, width * 0.55, width * 0.3, soil[0])
-                    continue
                 wd = width * (1.0 - s / 12.0)
                 c.line([pts[s], pts[s + 1]], bark[1], int(wd))
                 c.line([(pts[s][0], pts[s][1] - wd * 0.3), (pts[s + 1][0], pts[s + 1][1] - wd * 0.3)], bark[3], max(1, int(wd * 0.3)))
+            # La racine plonge sous un bourrelet de terre puis ressort.
+            for s in hidden:
+                mx, my = (pts[s][0] + pts[s + 1][0]) / 2.0, (pts[s][1] + pts[s + 1][1]) / 2.0
+                c.blob(mx, my, width * 0.95, width * 0.62, soil[0:4])
             for _ in range(3):
                 p = pts[rnd.randrange(8)]
                 if c.img.getpixel((int(p[0]), int(p[1])))[3]:
