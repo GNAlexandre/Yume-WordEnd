@@ -304,7 +304,7 @@ func test_ships_float_beyond_the_edge_on_either_side_of_the_quay() -> void:
 				"%s : au-delà du bord en x %.1f" % [ship, x]
 			)
 		for propeller: Node in panel.get_children():
-			if propeller is DecorPanel:
+			if propeller is DecorPanel and String(propeller.name).begins_with("Propeller"):
 				assert_eq((propeller as DecorPanel).flip_h, panel.flip_h, "%s : hélice" % ship)
 				assert_gt((propeller as DecorPanel).frames, 1, "%s : hélice qui tourne" % ship)
 		# Dans le champ quand on longe le garde-corps : le pont, à hauteur du quai, à l'écran.
