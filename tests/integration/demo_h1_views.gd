@@ -11,7 +11,8 @@ extends Node
 ##   ithea, nephren : la fée jouable (repos, 2e et 4e images d'attaque, image « onde » de la
 ##            charge) ;
 ##   parler : (H1 bis) une vraie conversation avec le PNJ H1_NPC (nom de son nœud, Nygglatho par
-##            défaut), le joueur à H1_SIDE (est par défaut, le PNJ de profil ; sud : de face).
+##            défaut), le joueur à H1_SIDE (est par défaut, le PNJ de profil ; sud : au sud-est,
+##            à 60° de l'axe de l'écran, le PNJ de face sans que le joueur le cache).
 
 const GAME_SCENE := preload("res://src/game.tscn")
 const VISUAL := preload("res://src/visuals/character_visual.tscn")
@@ -23,7 +24,7 @@ const SKINS := "res://data/skins/%s.tres"
 const FAIRIES := {"ithea": "ithea_soldier", "nephren": "nephren_soldier"}
 const FAIRY_ROWS := [[&"repos", 0], [&"attaque", 1], [&"attaque", 3], [&"charge", 3]]
 ## Conversation (parler) : le joueur à cette distance du PNJ ; la capture montre la 1re réplique.
-const TALK_OFFSETS := {"est": Vector3(1.4, 0.0, 0.0), "sud": Vector3(0.0, 0.0, 1.4)}
+const TALK_OFFSETS := {"est": Vector3(1.4, 0.0, 0.0), "sud": Vector3(1.0, 0.0, 1.75)}
 ## Drapeaux qui font venir les PNJ absents au début de l'acte (Limeskin après le duel).
 const TALK_FLAGS: Array[StringName] = [&"duel_lost"]
 ## Où se tient la rangée (zone, position locale du joueur).

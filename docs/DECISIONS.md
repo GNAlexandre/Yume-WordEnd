@@ -1357,3 +1357,32 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **H2 — cheminée** : faite en matières (`warehouse_chimney.tscn`, `Building` 1 × 1 m en
   `wall_stone` / `roof_slate`, au faîtage, x −7,5) plutôt qu'en image : MONDE.md la veut et le
   cahier des charges n'en a pas ; elle n'entre dans le cadre que si la caméra montre le toit (H5).
+- **H1 bis — fusion des corrections d'images (PR n° 4, `main` deca738)** : la branche HD-2D fait
+  foi pour le code, les outils et `.gitattributes` (la ligne ajoutée pour les galeries n'a pas
+  d'objet sans elles) ; entrent les images et JSON corrigés d'Ithea, de Nephren, de Nygglatho,
+  Lakhesh, Collon, Pannibal et Limeskin (trois vues et portraits), des profils du serveur et du
+  boulanger, des îles lointaines B et C et de l'enduit crème. Restent dans l'historique de `main`
+  (`git show deca738:<chemin>`) : `docs/sprites/**` (dont `CORRECTIONS_ASSETS.md`, galeries
+  autonomes, aperçus des attaques), `assets/source/**`, `tools/sukasuka2d/**` (dont
+  `make_asset_review.py`), `tools/hd2d_weapon_preview.gd`, `tests/tools/test_prepare_delivery.py`
+  et le chevalier félin (actes suivants).
+- **H1 bis — pipeline de H1 repassé** : ancres recalculées sur les 23 vues corrigées (Collon par
+  le bas de la silhouette, `--feet alpha`, clé `feet` du manifeste : son nouveau bandeau rouge
+  était pris pour ses pieds) et revues sur planches de contrôle ; planches des PNJ réduites à
+  repos, marche et parle. Règle de l'alias `parle` → `repos` rendue explicite : un écart de plus
+  de 6 % (`STANDING_TOLERANCE`) entre une image de `parle` et la 1re de `repos` (elle redonne
+  exactement les 13 vues de H1 sur les planches de f7933e6). Retiré : boulanger de profil,
+  Nygglatho et Limeskin de dos (redessinés à la bonne taille) ; gardé : serveur, passeur, vendeur
+  du snack et Limeskin de profil, Nephren de profil et de face, Tiat, marchande d'œufs de dos ;
+  ajouté : Nygglatho de profil (115 %), Limeskin de face (108 %), Lakhesh de face (106 %),
+  redessinés plus grands par la PR n° 4.
+- **H1 bis — profil de Pannibal toléré** : la PR n° 4 l'a redessiné (épée de bois, brindille) à
+  111 px au lieu de 120, alors que la face et le dos font 118 et 120 px. Garder l'ancien profil
+  ferait apparaître et disparaître l'épée quand il se tourne ; agrandir l'image abîmerait le
+  pixel art. Nouvelle clé `accepted` du manifeste (`{"side": ["height"]}`) : `hd2d_sheets.py
+  check` en fait une remarque tant que l'écart reste sous 12 % ; le jeu garde 1,25 m (pixels
+  8 % plus gros de profil) et met la face et le dos à la hauteur du profil. Dans la liste des
+  images à refaire (`docs/ASSETS_HD2D.md` section 12, nouvelle).
+- **H1 bis — mesures** : export Web 23,7 Mo compressés (wasm 9,7 + pck 14,0 ; 23,5 à la fin de
+  H1), budget 25 Mo ; arbre du dépôt 37,2 Mo (36,7 à 667fd4e) : les planches corrigées sont un peu
+  plus lourdes (Ithea, Limeskin), les PNJ restent réduits à repos, marche et parle.
