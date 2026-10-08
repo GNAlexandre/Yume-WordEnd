@@ -50,6 +50,9 @@ const TILE := 384
 ## 40 à 45 Mo (H10 : 15 Mo de remplaçants). tools/check.sh mesure l'export lui-même
 ## (tools/build_size.sh).
 const IMAGES_BUDGET_MB := 64.0
+## Part d'un bord au-delà de laquelle une silhouette y est coupée net (tools/hd2d_assets.py,
+## CUT_COVER).
+const CUT_COVER := 0.12
 ## Raccord : écart moyen des bords opposés rapporté au plus grand écart entre deux colonnes
 ## voisines de l'intérieur (échantillonnées) ; plus large que SEAM_LIMIT de hd2d_assets.py, qui
 ## mesure toutes les colonnes.
@@ -129,8 +132,35 @@ func test_every_image_exists_at_its_exact_size() -> void:
 	assert_true(problems.is_empty(), "; ".join(problems))
 
 
+## Part de la ligne de pixels extérieure d'un bord (« left », « right », « top », « bottom »)
+## couverte par la silhouette (alpha ≥ 128).
+func _edge_cover(image: Image, side: String) -> float:
+	var horizontal := side in ["top", "bottom"]
+	var count := image.get_width() if horizontal else image.get_height()
+	var covered := 0
+	for i in count:
+		var at := Vector2i(i, 0)
+		match side:
+			"bottom":
+				at = Vector2i(i, image.get_height() - 1)
+			"left":
+				at = Vector2i(0, i)
+			"right":
+				at = Vector2i(image.get_width() - 1, i)
+		if image.get_pixelv(at).a >= 0.5:
+			covered += 1
+	return float(covered) / maxf(1.0, count)
+
+
+## Bord où la silhouette est coupée net : plus de CUT_COVER de sa ligne extérieure couverte (une
+## image cadrée au plus juste le touche sur quelques pixels, ce qui ne se voit pas).
+func _cut(image: Image, side: String) -> bool:
+	return _edge_cover(image, side) > CUT_COVER
+
+
 ## Problèmes d'ancrage d'une image debout (ou d'une image d'une bande) : collée au bord bas, ou
-## centrée sans toucher les bords (sprites qui volent).
+## centrée sans être coupée par un bord (sprites qui volent) ; un lointain qui flotte (anchor
+## free : île, rai de lumière) n'a pas d'ancre.
 func _standing_problems(image: Image, entry: Dictionary, label: String) -> Array[String]:
 	var problems: Array[String] = []
 	var used := image.get_used_rect()
@@ -138,9 +168,11 @@ func _standing_problems(image: Image, entry: Dictionary, label: String) -> Array
 		problems.append("%s : image vide" % label)
 		return problems
 	var wrap_axis := String(entry.get("wrap", ""))
+	if String(entry.get("anchor", "")) == "free":
+		return problems
 	if String(entry.get("anchor", "")) == "center":
-		var touches_x := used.position.x == 0 or used.end.x == image.get_width()
-		var touches_y := used.position.y == 0 or used.end.y == image.get_height()
+		var touches_x := _cut(image, "left") or _cut(image, "right")
+		var touches_y := _cut(image, "top") or _cut(image, "bottom")
 		if (touches_x and wrap_axis != "x") or (touches_y and wrap_axis != "y"):
 			problems.append("%s : sprite centré coupé par un bord" % label)
 		var offset := Vector2(used.get_center()) - Vector2(image.get_size()) / 2.0
@@ -197,13 +229,13 @@ func test_decals_fade_into_the_ground_away_from_their_edges() -> void:
 		var wrap_axis := String(entry.get("wrap", ""))
 		var solid := String(entry.get("solid_edge", ""))
 		var cut: Array[String] = []
-		if used.position.x == 0 and wrap_axis != "x":
+		if _cut(image, "left") and wrap_axis != "x":
 			cut.append("gauche")
-		if used.end.x == image.get_width() and wrap_axis != "x":
+		if _cut(image, "right") and wrap_axis != "x":
 			cut.append("droit")
-		if used.position.y == 0 and wrap_axis != "y" and solid != "top":
+		if _cut(image, "top") and wrap_axis != "y" and solid != "top":
 			cut.append("haut")
-		if used.end.y == image.get_height() and wrap_axis != "y":
+		if _cut(image, "bottom") and wrap_axis != "y":
 			cut.append("bas")
 		if not cut.is_empty():
 			problems.append("%s : coupé par le bord %s" % [path, ", ".join(cut)])
