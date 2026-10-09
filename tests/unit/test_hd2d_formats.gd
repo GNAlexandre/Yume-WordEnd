@@ -12,6 +12,7 @@ const PLAYER_STUB := preload("res://tests/stubs/player_stub.tscn")
 const SHADERS: Array[String] = [
 	"res://src/world/shaders/panel.gdshader",
 	"res://src/world/shaders/panel_foreground.gdshader",
+	"res://src/world/shaders/panel_soft.gdshader",
 	"res://src/world/shaders/ground_decal.gdshader",
 	"res://src/world/shaders/ground_decal_soft.gdshader",
 	"res://src/world/shaders/sky_drift.gdshader",
@@ -178,6 +179,37 @@ func test_foreground_panel_fades_around_the_player() -> void:
 	assert_almost_eq(center, shown + Vector3.UP * DecorPanel.FOREGROUND_HEIGHT, Vector3.ONE * 0.01)
 	assert_almost_eq(center, Vector3(0.5, 0.8, -3.0), Vector3.ONE * 0.01, "corps du joueur")
 	panel.free()
+
+
+func test_one_foreground_panel_drives_the_fade_for_all() -> void:
+	var texture := _strip(64, 256)
+	var panels: Array[DecorPanel] = []
+	for k in 3:
+		var panel := _panel(texture, Vector3(2.0 * k, 0.0, 4.0))
+		panel.foreground = true
+		panel.rebuild()
+		panels.append(panel)
+	var plain := _panel(texture, Vector3(0.0, 0.0, 8.0))
+	var processing := panels.filter(func(panel: DecorPanel) -> bool: return panel.is_processing())
+	assert_eq(processing.size(), 1, "un seul _process pour tous les panneaux de premier plan")
+	assert_false(plain.is_processing(), "un panneau ordinaire n'a pas de _process")
+	# Le meneur part : le suivant prend le relais, et l'effacement suit toujours le joueur.
+	var leader := processing[0] as DecorPanel
+	panels.erase(leader)
+	leader.free()
+	var next := panels.filter(func(panel: DecorPanel) -> bool: return panel.is_processing())
+	assert_eq(next.size(), 1, "relais pris par un autre panneau")
+	var player := add_child_autofree(PLAYER_STUB.instantiate()) as Node3D
+	player.global_position = Vector3(1.0, 0.0, -2.0)
+	player.reset_physics_interpolation()
+	await wait_physics_frames(2)
+	await wait_process_frames(2)
+	var material := _quad(panels[0]).material_override as ShaderMaterial
+	var center: Vector3 = material.get_shader_parameter(&"foreground_center")
+	assert_almost_eq(center, Vector3(1.0, 0.8, -2.0), Vector3.ONE * 0.01, "centre posé")
+	for panel: DecorPanel in panels:
+		panel.free()
+	plain.free()
 
 
 # --- Décalques au sol -------------------------------------------------------------------------
@@ -577,6 +609,33 @@ func test_ambient_sprites_are_one_draw_call_around_the_camera() -> void:
 	assert_eq(lives.process_mode, Node.PROCESS_MODE_INHERIT, "suit la pause")
 	lives.free()
 	camera.free()
+
+
+func test_soft_alpha_panel_blends_its_gradient() -> void:
+	# Fumée, brume, nuages, rais de lumière : alpha mélangé, pas découpé à 0,5 (sinon un rai de
+	# lumière à 15-35 % d'opacité disparaît). Le premier plan garde sa trame.
+	var texture := _strip(32, 64)
+	var hard := _panel(texture, Vector3(-3, 0, 0))
+	var soft := _panel(texture, Vector3(0, 0, 0))
+	soft.soft_alpha = true
+	soft.rebuild()
+	var front := _panel(texture, Vector3(3, 0, 0))
+	front.foreground = true
+	front.soft_alpha = true
+	front.rebuild()
+	var shader_of := func(panel: DecorPanel) -> Shader:
+		return (_quad(panel).material_override as ShaderMaterial).shader
+	assert_eq(shader_of.call(hard), DecorPanel.PANEL_SHADER, "par défaut : découpé")
+	assert_eq(shader_of.call(soft), DecorPanel.SOFT_SHADER, "alpha doux : mélangé")
+	assert_eq(shader_of.call(front), DecorPanel.FOREGROUND_SHADER, "premier plan : sa trame")
+	assert_ne(_quad(soft).material_override, _quad(hard).material_override, "un matériau par mode")
+	var twin := _panel(texture, Vector3(6, 0, 0))
+	twin.soft_alpha = true
+	twin.rebuild()
+	assert_eq(_quad(twin).material_override, _quad(soft).material_override, "partagé : fondu")
+	var code := DecorPanel.SOFT_SHADER.code
+	assert_string_contains(code, "blend_mix", "transparence mélangée")
+	assert_false(code.contains("ALPHA_SCISSOR_THRESHOLD"), "jamais découpée")
 
 
 func test_format_shaders_compile() -> void:

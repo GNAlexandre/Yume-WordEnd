@@ -1713,6 +1713,75 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   devicePixelRatio 2 le canevas passe de 1280 × 720 à 2560 × 1440 (4 × les pixels :
   `display/window/dpi/allow_hidpi`, vrai par défaut, sans gain pour du pixel art à 96 px/m) et la
   page rend 0,41 image/s contre 0,62.
+- **P0 — scènes de décor du cahier n° 2** (`tools/hd2d_scenes.py`, table `tools/hd2d_scenes.json`
+  lue aussi par `tests/unit/test_hd2d_scenes.gd`) : une scène `src/world/props/<nom>.tscn` par
+  image des lots A à G de genre panel, anim, decal ou facade (247 nouvelles, plus les deux
+  navires) ; la première catégorie dont un motif (glob sur `props/oak_*`, `decals/*`…) nomme
+  l'image fixe le format et la collision, une image sans catégorie est une erreur. La racine porte
+  `metadata/hd2d_category` (la catégorie) : `test_hd2d_decor.gd` laisse ces scènes à
+  `test_hd2d_scenes.gd`. `gen` ne réécrit une scène qu'avec `--force` (une scène retouchée à la
+  main reste) ; `check` vérifie le texte (image, script, format, collision, flancs).
+- **P0 — collisions par catégorie** (largeur de l'image à 96 px/m, profondeur de la catégorie,
+  forme au pied, centrée sur l'ancre) : troncs en cylindre de 3 m de haut (chênes et saule 0,4 m
+  de rayon, hêtres, érables et arbres moyens 0,28, bouleaux et jeunes sapins 0,16, jeunes arbres
+  0,07 sur 2 m) ; lisières : boîte de toute la largeur (16 m, elles s'enchaînent), 3 m de haut,
+  1,6 m de profondeur ; rochers et blocs (blocs, cairn, tas de pierres, pilier) : cylindre de
+  0,42 × la largeur (comme `rock` et `bear_rock`) sur leur hauteur ; pierres de la lèvre : boîte
+  pleine largeur de 0,6 m ; objets de la vie : boîte de 0,9 × la largeur, 0,7 m de profondeur
+  (1,2 m pour charrettes, filet, guichet, bûcher, table, affût, palette ; 1 m pour troncs couchés
+  et souches ; 0,3 m pour les objets plats ou appuyés ; 0,8 m pour ruines et sacs de sable,
+  comme `ruined_wall`) ; clôtures en modules : boîte pleine largeur de 0,15 m ; poteaux,
+  trépieds, mannequin : cylindre de 0,15 m ; lampadaires 0,12 ; mâts 0,08 ; linge : deux
+  poteaux comme `laundry_line` ; étals : le comptoir de `market_stall` ; fontaine : cylindre de
+  0,45 × la largeur sur 1 m ; pylône d'ancrage : boîte de la moitié de la largeur, 1,5 m.
+  On traverse : plantes, fleurs, herbes, champignons, cailloux, petits objets (image de 0,6 m de
+  haut au plus, 58 px : jouets, seau, arrosoir, pots, panier, sac, cordage, chaînes, pigeon), bancs
+  (comme `bench`), marches de pierre (on marche dessus), guirlande, cloche animée (l'arène porte
+  la collision du poteau), flammes et vapeur, premier plan, détails de mur et de toit, décalques,
+  ciel, navires (au bord du vide).
+- **P0 — formats** : bande animée = `frames` et `fps` du manifeste ; densité `ppm` du manifeste
+  (nuages, îles et île n° 53 à 48, navires en vol à 24) ; ce que le manifeste ancre au centre
+  (nuages, navires en vol, brume) a son origine au centre de l'image (`image_offset`), ce qui pend
+  sous la lèvre (`edge_roots`, `edge_waterfall`) au bord haut ; ciel, détails, plantes basses,
+  premier plan des fougères et herbes sans ombre ; troncs de premier plan avec une petite ombre
+  (0,5) ; lampes et caisses de cristaux avec la lueur de `crystal_lamp` (1,6). Décalage vers la
+  caméra : 0,1 m sur un toit (cheminée, lucarne, terrasse à linge, fumée), 0,06 m contre un mur
+  (lierre, jardinière, applique, enseignes, gouttière, auvent, clochette), 0,05 m sur un brasero
+  ou un four, 0,1 m pour l'escalier extérieur (boîte d'1 m devant le mur). Décalques : couche 0
+  pour les plaques (mousse, flaques, craie, ornières…), 1 pour ce qui traîne dessus (feuilles,
+  branches, cailloux, racines, aiguilles, foin), 2 ombre de feuillage, 3 taches de soleil,
+  4 brume.
+- **P0 — maisons de la section 9.2** : type, mur, faîte, profondeur et matières écrits dans la table
+  (clé `buildings`), largeur de la façade ; l'outil refuse une maison dont la façade ou le flanc
+  n'a pas la taille de ces cotes (`side_contract_size()` égale le flanc à 1 cm près pour les
+  19 bâtiments). Collision : l'emprise sur la hauteur du mur. Bâtiments du cahier n° 1 : une ligne
+  `side_facade` et son `ext_resource` (`5_side`), rien d'autre.
+- **P0 — navires à quai** : 96 px/m (14 × 7 m et 24 × 11 m) ; moyeux mesurés dans les images
+  livrées au bout de l'axe (là où l'hélice se fixe, pas au centre de la bride, que la coque
+  dessine de trois quarts) : passeur (825, 497) px, Barocupot (768, 670) et (1627, 678) px ;
+  chaque hélice (DecorPanel animé, 4 images à 12 images/s, sans ombre, `depth_offset` 0,1 pour
+  passer devant la coque) a son image centrée sur son moyeu, donc son ancre une demi-image plus
+  bas. Pour la pose : la proue est à droite (est) ; un navire tourné vers l'ouest demande
+  `flip_h` sur la coque et ses hélices et l'abscisse des hélices opposée (rien ne le fait seul).
+- **P0 — ce qui pend sous la lèvre** (`edge_roots`, `edge_waterfall`, `floating_rock_*`) : la
+  caméra du jeu (11 m au-dessus et 18 m au sud du point visé) ne voit un point h m sous la lèvre
+  que s'il est à plus de 1,6 × h m au-delà du bord (point visé sur la lèvre ; plus loin quand le
+  joueur s'en écarte) : 3 m pour le bas des racines, 10 m pour le bas d'une cascade de 6 m. La
+  démo les pose 9 m au-delà, vus par une caméra plus basse.
+- **P0 — démo** (`tests/integration/demo_props_monde.tscn`, vues `P0_VIEW`) : l'île sans ses
+  zones, chaque famille posée sur un lieu à part (bois, cour, bourg, maisons du port, port,
+  Couchant, ciel), décors fondus par image dans un `PropBatcher` (cases de 32 m) comme une zone ;
+  draw calls : bois 70, cour 43, bourg 103, maisons 124, port 175 (une centaine d'images
+  différentes à l'écran), Couchant 39, ciel 31.
+- **P0 — budget d'images par zone** (`test_hd2d_decor.gd`, `MAX_IMAGES_PER_ZONE`) : 40 → 48, le
+  port en a 44 avec les flancs de ses six bâtiments et les hélices des deux navires ; la pose du
+  cahier n° 2 le dépassera (le vrai budget est le nombre de draw calls des vues).
+- **Alpha doux des panneaux debout** (`DecorPanel.soft_alpha`, `panel_soft.gdshader`, demande
+  de P0) : les panneaux découpaient leur transparence à 0,5 ; fumée, vapeur, cascade et nuages
+  perdaient leur dégradé, rais de lumière (15 à 35 % d'opacité) et bande de brume disparaissaient.
+  Mélange alpha, sans écriture de profondeur, matériau partagé par image (le batcher les fond
+  toujours) ; le premier plan garde sa trame. `tools/hd2d_scenes.py` écrit `soft_alpha` d'après
+  le manifeste et le vérifie : 11 scènes régénérées.
 - **Intégration de l'audit** : `docs/sprites/` n'est plus dans l'arbre (retiré à l'intégration
   de la PR n° 8) : son `.gdignore` part aussi. Pannibal : la proposition de l'audit (redessiner le
   profil à 120 px) n'est pas retenue, la taille se mesure désormais à l'ancre (« Taille des
@@ -1726,3 +1795,297 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   devicePixelRatio × la fenêtre (4 × les pixels à DPR 2), sans gain pour du pixel art à 96 px/m.
   Seulement pour le Web : sur le bureau, une application qui n'est pas « DPI-aware » est agrandie
   floue par Windows.
+- **Livraison du lot D (Codex, PR n° 15 : 53 images de bâtiments et de matières)** intégrée
+  par-dessus les remplaçants. `check` : quatre flancs en pignon (entrepôt, café, salle de
+  projection, remise) dessinent l'avancée du toit plus bas que le haut du mur aux angles (21 à
+  22 % de sa hauteur) ; le mur du volume, derrière, complète ce coin : l'outil tolère 25 %.
+  L'enseigne en hélice, à 1 px du bas, y est collée (décalage sans perte).
+- **Livraisons A, D, F et corrections du ciel (G) fusionnées à la main sur `main`** (PR n° 15 à
+  18) ; l'intégration de la pose (scènes de P0, alpha doux) les reprend telles quelles (les images
+  de `main` font foi, y compris les cadrages du lot D que Codex a corrigés lui-même). Guirlande
+  de fanions et clochette du café : objets suspendus, accrochés par le haut, sans ancre au sol
+  (`anchor: free`). 399 images, 21 planches, 249 scènes : rien à reprendre.
+- **Budget Web relevé de 60 à 100 Mo compressés** (même choix de l'utilisateur : la qualité avant
+  le poids ; l'application de bureau devient la version principale). Toutes les images du cahier
+  n° 2 livrées (lots A à G) : 74,8 Mo de PNG, export Web de 73,5 Mo compressés (wasm 9,7 Mo,
+  pck 63,8 Mo), 250 Mo de textures décompressées. `tools/build_size.sh`, `tools/check.sh`, l'étape
+  de la CI, `PLAN.md`, `docs/web.md` passent à 100 Mo, le budget des images du manifeste
+  (`test_hd2d_assets.gd`) à 100 Mo de PNG. Si le premier chargement Web devient trop long, une
+  version Web allégée (images importées en WebP avec perte pour le seul préréglage Web) reste
+  possible sans toucher au bureau.
+- **Bureau (D1, PR « contrats ») — préréglages** : « Windows Desktop » (préréglage 1 : x86_64,
+  pck intégré à l'exe, S3TC/BPTC, sans console ni signature) et « Linux » (préréglage 2, même
+  filtre : pour lancer le même jeu ici, sans écran) à côté du « Web », qui reste le préréglage 0,
+  le seul de sa plateforme, celui de `tools/check.sh` et du déploiement. Même rendu
+  (Compatibility) : ANGLE, son repli Direct3D 11 sous Windows, est dans le template officiel
+  (aucune DLL exportée à côté de l'exe).
+- **Bureau — pas de rcedit** : Godot 4.7 écrit lui-même l'icône et les métadonnées dans l'exe
+  (`application/modify_resources=true`, sans rcedit ni wine, aucun avertissement à l'export) ;
+  vérifié par `7z l` : `.rsrc/version.txt` (0.3.0.0, WordEnd, Yume Novel) et six icônes. L'icône
+  `tools/installer/wordend.ico` (16 à 256 px, celles qu'exige l'export) sert aussi aux raccourcis
+  de l'installateur.
+- **Bureau — version** : `application/config/version` de project.godot (0.3.0 : l'acte 1 en
+  HD-2D) est la seule source : Godot la met dans l'exe (`file_version` et `product_version`
+  vides), `tools/build_desktop.sh` dans l'installateur et les noms de fichiers. Un tag `vX.Y.Z`
+  fait foi pour sa Release : la tâche `bureau` l'écrit dans sa copie de project.godot s'il
+  diffère (avertissement), pour que publier se résume à créer le tag depuis GitHub.
+- **Bureau — dossier utilisateur** : `use_custom_user_dir=true`, `custom_user_dir_name="WordEnd"`
+  (`%APPDATA%\WordEnd`, `~/.local/share/WordEnd`) et `use_custom_user_dir.web=false` : le Web
+  garde `/userfs/godot/app_userdata/WordEnd` et ses parties (vérifié dans Chromium). Effet de
+  bord sans conséquence : sous `tools/godot`, user:// passe de
+  `build/xdg/data/godot/app_userdata/WordEnd` à `build/xdg/data/WordEnd`.
+- **Bureau — autoload `DesktopApp`** (dernier des autoloads, sans class_name) plutôt que du code
+  dans main.gd ou les menus : fenêtre de départ à 80 % de l'écran en 16:9 (640 × 360 au moins,
+  seulement dans le jeu exporté avec un écran), plein écran « fenêtre sans bordure »
+  (`WINDOW_MODE_FULLSCREEN`, pas l'exclusif) par F11, Alt+Entrée (signal `window_input` de la
+  fenêtre, avant toute scène) ou le bouton des menus, mémorisé dans `user://settings.cfg`, hors de
+  la sauvegarde. « Quitter » (menu principal) et « Quitter le jeu » (menu pause) écrivent la
+  partie suivie (`SaveManager.save()`, `close_game(false)`) puis ferment ; textes dans la section
+  `desktop` de `data/texts/story.json`. Sur le Web : boutons cachés, raccourcis ignorés, aucun
+  fichier. Limite acceptée : Alt+Entrée pendant une conversation fait aussi avancer la réplique
+  (`dialogue_box.gd` lit `ui_accept` dans `_input`, avant les autoloads).
+- **Bureau — contrôles tactiles** : hors Web, `TouchControls.is_touch_device()` ne suppose plus
+  d'écran tactile au démarrage (un portable tactile les verrait sinon par-dessus le jeu au
+  clavier) ; le mode AUTO les montre au premier toucher, comme avant.
+- **Bureau — vérification du jeu exporté** : un jeu exporté ignore `--script` ; la vérification
+  voyage donc dans le pck (`src/desktop_check.gd`), créée par DesktopApp seulement avec
+  l'argument utilisateur `--desktop-check=<phase>`, comme les raccourcis de test
+  (`src/test_shortcuts.gd`). `tools/desktop_boot.sh` lance le build Linux sans écran (ou sous
+  Xvfb avec openbox, sans quoi X11 n'a pas de vrai plein écran) : menu, F11, Alt+Entrée,
+  nouvelle partie, pause, « Quitter le jeu », puis reprise.
+- **Bureau — installateur** : NSIS 3 (`makensis` existe sous Linux, l'image de la CI est une
+  Ubuntu 24.04), installateur 64 bits (le jeu est x86_64) en LZMA solide, par utilisateur
+  (`RequestExecutionLevel user`, `%LOCALAPPDATA%\Programs\WordEnd`, clés sous HKCU), en
+  français ; le désinstalleur garde les sauvegardes par défaut (« Oui », et en mode silencieux).
+  Avertissements de makensis = erreurs (`-WX`). Bandeau des pages d'accueil et de fin découpé
+  dans l'écran de démarrage (`make_installer_art.py`) ; `tools/installer/.gdignore` évite que
+  Godot importe le BMP.
+- **Bureau — CI** : tâche `bureau` (PR, `main`, tags `v*`) dans le même conteneur
+  `barichello/godot-ci:4.7.2`, qui contient déjà tous les templates (Windows et Linux compris,
+  Dockerfile lu) ; NSIS installé par apt ; artefact `bureau` gardé 7 jours, sans recompression.
+  Tâche `release` (tag `v*`, ou « Run workflow » avec `release` coché) après `check` et
+  `bureau`, seule à avoir `contents: write`, par `softprops/action-gh-release@v2` (texte ajouté
+  à celui d'une Release écrite depuis GitHub). Le check et le déploiement Pages ne changent pas.
+- **Bureau — wine** : l'installateur a été vérifié sous wine 9.0 (installation et
+  désinstallation silencieuses, raccourcis, clé d'« Applications et fonctionnalités », page
+  d'accueil) ; le jeu, lui, plante sous ce wine dès le lancement (`kernelbase`, après
+  `dinput8`), template officiel nu compris : il n'a pas été lancé sur un vrai Windows.
+- **Souris en jeu** (recette du 8 octobre 2026 : « les clics droit et gauche ne font rien »).
+  Clic gauche : coup d'épée ; clic droit maintenu : charge magique. Le joueur se tourne d'abord
+  vers le point du sol sous le pointeur, même en marchant, sauf avec une cible verrouillée.
+  Les clics ne passent pas par l'input map : `Player._unhandled_input` ne reçoit que ceux que
+  l'interface n'a pas pris (un clic sur « Reprendre » ne frappe pas à la reprise) et ignore la
+  souris émulée par le tactile ; il les envoie en `InputEventAction`, comme les boutons
+  tactiles. Un bouton relâché pendant la pause relâche son action à la reprise. Le rappel des
+  commandes de la pause n'annonce plus de « caméra à la souris » (vestige de la caméra 3D :
+  la caméra HD-2D est fixe) ; le stick droit y est donné pour le zoom.
+- **P3 — navires à quai** : la caméra se tient 15 m au sud du joueur et regarde le nord ; un
+  navire au-delà du bord sud du quai n'entre dans le champ que par le bas de l'écran, et un navire
+  plus au nord serait sur l'île. Les deux navires flottent donc juste au-delà du bord (0,3 à 0,9 m),
+  le pont à hauteur du quai (comme un bateau à quai) : on les voit en entier en longeant le
+  garde-corps, leur superstructure depuis le milieu du quai. Le Barocupot, proue à l'ouest
+  (`airship_barocupot_beach.tscn` : `flip_h` sur la coque et les hélices, abscisses opposées),
+  à l'ouest du quai contre son pylône (`mooring_tower`, près de Limeskin), pont 1,6 m au-dessus du
+  quai ; le navire du passeur, proue à l'est (`airship_ferry_beach.tscn`), au bout d'une passerelle
+  raccourcie à 6,3 m (`gangway_beach.tscn`, tête à 1 m du passeur, inchangé). Les deux scènes sont
+  en premier plan (`foreground`) : la coque s'efface autour du joueur quand elle passe devant lui.
+- **P3 — rue d'un seul tenant « de chaque côté »** : rang nord jointif (joints ≤ 0,1 m, façades à
+  z = −9,5, le café à −9) d'ouest en est : auberge, horloger, café, maison étroite, boulangerie,
+  le chemin de l'entrepôt, librairie, salle de projection, maisons à colombages b, Limashenka,
+  colombages a ; café et boulangerie glissés de 0,9 m vers l'ouest (le serveur et le boulanger
+  restent devant leur porte), la maison de pierre et celle du deuxième rang retirées. Une maison
+  bâtie au sud de la rue cacherait le joueur qui y marche : le côté sud est fait des maisons du
+  port (bureau du port, chaudronnerie, boucherie, maison de pierre b, hangar), façades sur le bord
+  nord du quai, assez loin pour que leurs toits restent sous le joueur à l'écran (le haut d'un
+  toit doit être à plus de 1,29 × sa hauteur au sud du joueur) : depuis la rue, leurs toits et
+  leurs jardins bordent le bas de l'écran ; depuis le quai, leurs façades ferment la vue.
+- **P3 — jardins et arrière-cours clos** : derrière un bâtiment (au nord de lui), le joueur est
+  caché par son toit. Les jardins des maisons du port (clôture basse au bord de la rue, z = −3,6,
+  clôtures de profil aux bouts, barils entre les maisons) et les arrière-cours du rang nord
+  (clôture à z = −25 ; le chemin de l'entrepôt passe entre deux clôtures de profil,
+  `keep_orientation`) sont clos ; `test_zone_beach.gd` vérifie qu'aucun mur ni toit ne passe
+  devant le joueur où qu'il marche dans le bourg et sur le quai.
+- **P3 — détails accordés aux façades livrées** : les façades du cahier n° 2 dessinent déjà
+  enseignes, jardinières, lierre, appliques et certaines cheminées ; la pose ajoute la fumée sur
+  ces cheminées dessinées (maison étroite, colombages a, maison de pierre b, chaudronnerie), la
+  vapeur sur le four dessiné, la clochette du café, des gouttières, des cheminées et lucarnes sur
+  les toits (briques sur les tuiles, pierre sur l'ardoise et les bardeaux), du lierre sur un flanc.
+- **P3 — étals et lampadaires** : chaque marchand se tient devant (au sud de) son étal : l'étal des
+  œufs et le snack passent au nord de leur vendeur, qu'ils cachaient ; les étals restent à plus de
+  3 m au sud de la rue. Les lampadaires de la rue sont côté nord (au sud, ils passaient devant le
+  joueur) ; guirlandes tendues entre deux maisons, devant les façades. La terrasse du café met une
+  table sur chacun des trois pieds de la collision du café (le pied du milieu était invisible).
+- **P3 — budget d'images** : 140 matériaux par zone (`test_hd2d_decor.gd`) : 132 au port. Les
+  variantes s'en tiennent aux images les plus utiles (feuillus et sapin du cahier n° 1, buissons b
+  et c, une lucarne, un lierre) ; une pose plus riche demandera de relever ce plafond (le vrai
+  budget, ≤ 200 draw calls par vue, laisse de la marge : 70 à 110 mesurés).
+- **P3 — premier plan sur les grands décors de passage** : fontaine, étals, snack, panneaux
+  d'affichage, grue, pylône d'ancrage, guichet, tuyaux de vapeur, hélice de rechange et manche à
+  air ont `foreground = true` sur leur instance dans `beach.tscn` (scènes partagées inchangées) :
+  ils s'effacent en trame autour du joueur qui passe derrière eux ; chaque image reste un seul
+  matériau (toutes ses instances au port sont au premier plan).
+- **P3 — loin du bord qui va changer** (le bord de l'île deviendra irrégulier, le quai restera
+  droit) : hors du quai, aucun décor bloquant à moins de 3 m du bord actuel ni aucun autre à moins
+  de 1 m (vérifié par `test_zone_beach.gd`), et rien dans les 4 derniers mètres : l'habillage de la
+  lèvre au-delà des bouts du quai est retiré, quelques rochers, touffes et un arbre reculent ; les
+  deux navires restent devant le quai (le Barocupot recentré sur sa moitié ouest, x de −32 à −8).
+- **P1 — pose des bois du marais** (`src/world/zones/forest/forest.tscn`) : environ 1 100 décors
+  en une quarantaine de familles, chacune une `PropScatter` (variantes, retournement, échelles 0,85
+  à 1,15) dont chaque image n'appartient qu'à elle : le tirage des variantes (jamais celle du plus
+  proche voisin) suffit à ce que deux voisins n'aient jamais la même image (seuls le cercle de
+  champignons et le caillebotis répètent une image, par nature). Points tirés par un script de
+  travail hors du dépôt, selon des règles écrites dans `tests/unit/test_forest_decor.gd` et
+  `test_world_story_spots.gd` : rien de bloquant à moins de 1 m des places de l'acte 1 ni dans le
+  cercle d'entraînement (buts et râtelier de H4 gardés ; mannequins et cibles au bord, à 16 m),
+  chemins libres sur 3 m, aucun grand décor qui cache à l'écran un chemin, le ruisseau, une place
+  ou un repère (rocher aux ours, affût, cercle de champignons, cascade, gués, mannequins), arbres
+  à 4,6 m les uns des autres au moins, grands arbres posés avant les jeunes sapins et bouleaux.
+- **P1 — un mesh par image dans les bois** (`PropBatcher.cell_size` 32 → 0) : le terrain
+  d'entraînement est au coin de quatre cases quelle que soit leur taille ; avec ~110 images, ses
+  vues dessinaient chaque image jusqu'à quatre fois. En une seule case, chaque vue des bois coûte au
+  plus une fois chaque image (mesures, 21 vues : 55 à 131 draw calls ; 27 à 65 avant). Pour que les vues
+  des zones voisines ne dessinent pas tout, chaque famille a une classe d'emprise qui borne sa boîte
+  englobante (bande sud des bois, vue de la cour : fougères, herbes, bouleaux, premier plan,
+  myosotis, bordures ; sud-est, vu de la colline : en plus hêtres, érables, jeunes sapins, feuilles,
+  gués) ; mesuré (hd2d_shots.sh) : cour 59 → 79, entrepôt 78 → 87, dialogue 64 → 82,
+  colline 52 → 78, Couchant 34 → 34 draw calls.
+- **P1 — arbres des bois en premier plan** : chaque arbre posé dans les bois est une variante
+  `src/world/props/<arbre>_forest.tscn` (scène héritée, `foreground = true`) : quand le joueur passe
+  derrière, l'arbre s'efface en trame autour de lui (on marche partout dans les bois). Chaque image
+  n'existe que sous cette forme dans la zone : pas de draw call de plus.
+- **P1 — lisières** : sept pans (`forest_wall_a..d`, d au-dessus du marais) jointifs (1 m de
+  recouvrement) le long du bord nord, tournés pour suivre sa courbe (`keep_orientation`, lacet de la
+  corde, moins de 40°), à 4,8 m de la lèvre : leur collision reste à 4 m du bord, que le lot B1 rend
+  irrégulier (criques de 4 m au plus là où rien n'est posé ; consigne : aucun décor à moins de 1 m
+  du bord, aucune collision à moins de 3 m, rien dans les 4 derniers mètres si possible). On peut
+  donc passer derrière : ce sont des variantes de premier plan (`forest_wall_*_forest.tscn`), qui
+  s'effacent autour du joueur. Deux fenêtres sur le vide, aux angles où le bord tourne trop pour un
+  pan de 16 m : au nord-ouest (sortie du ruisseau) et au nord-est ; elles restent nues (pierres et
+  herbe de la lèvre, racines, cascade : à poser sur le nouveau bord, docs/CONTRACT_REQUESTS.md).
+  Les côtés ouest et est sont fermés par des bois serrés, arrêtés à 4 m du bord.
+- **P1 — premier plan** (`fg_trunk_*`, `fg_fern`, `fg_bush`, `fg_grass`) seulement contre la
+  palissade de la cour (z local ≥ 25) : au milieu des bois, un tronc de 10 m à 4 m de la caméra
+  couvrait le tiers de l'écran.
+- **P1 — cercle de champignons** déplacé de (20, −1) à (16,8 ; 1,4) : le ruisseau le traversait.
+- **P1 — petites vies** : feuilles or et rouille, papillons autour du terrain, lucioles au marais,
+  dans un nœud `Ambient` de la zone, hors de `Geometry` (le PropBatcher ne fond pas leur mesh, et
+  `test_hd2d_decor.gd` refuse un mesh non fondu dans `Geometry`) ; régions bornées pour que la cour
+  ne les dessine pas.
+- **Premier plan : un seul `_process` pour tous les panneaux** (remarque du lot P1 : 175 panneaux
+  de premier plan dans les bois, plusieurs centaines dans l'île posée, chacun appelé à chaque
+  image pour un travail fait une seule fois). Les panneaux de premier plan s'inscrivent dans
+  une liste statique de `DecorPanel` ; seul le premier a un `_process` et pose le centre de
+  l'effacement pour tous ; quand il quitte l'arbre, le suivant prend le relais. Même rendu.
+- **P2 — pose de la cour de l'entrepôt** (cahier n° 2, section 14) : 386 décors et 105 images au
+  lieu de 181 et 24 (82 modules de palissade inchangés). Entrepôt : cheminée de briques
+  (`warehouse_chimney.tscn` passe en `wall_brick`, au bout est du faîtage) et sa fumée, terrasse
+  à linge, deux lucarnes, lierre, gouttière, deux appliques, trois jardinières, provisions et pots
+  au porche. Cour : 31 bordures d'herbe (chemins et place), marelle et craie près de l'aire de
+  jeux, fissures, gravier, mousse, feuilles, flaques et boue à l'aire de jeux, pas de petites
+  bottes (dont une trace de la place au porche de Nygglatho, faute de chemin au sol) ; potager vu
+  de dessus (`garden_bed` sur la terre du potager, un rang de tuteurs derrière), clôture basse
+  devant et derrière, épouvantail, outils, brouette, tonneau, arrosoir ; linge animé
+  (`laundry_wave`) et flaque sous les draps, panier, bûcher et billot, jouets, table d'enfants,
+  seau ; ombre et feuilles sous le grand arbre ; feuillus en variantes (chêne, hêtre, bouleau,
+  érable, jeunes arbres), buissons, herbes et fleurs tirés par `PropScatter.variants` et
+  `random_flip` ; feuilles qui tombent, oiseaux, papillons au potager (`Ambience`, quatre
+  `AmbientSprites`, un draw call chacun).
+- **P2 — le toit hors champ** : la caméra fixe (tangage 32°, 17° sous l'horizon en haut de
+  l'écran) ne montre ce qui dépasse 6 m que s'il est au sud du joueur : cheminée, fumée, terrasse
+  et lucarnes ne se voient qu'en sortant par le portail nord (vue d'ensemble aussi). Posées quand
+  même (MONDE.md 2.2), elles ne coûtent un draw call que dans le champ.
+- **P2 — lisière nord, toile de fond** : `treeline_autumn_*` derrière la palissade nord (z −22,7,
+  quatre pans de 16 m, ouverts au portail), en variantes sans collision
+  (`treeline_autumn_*_village.tscn` : la palissade ferme déjà la cour, et 64 m de mur couperaient
+  le passage entre les bois et les zones voisines). Un panneau regarde toujours le sud : au sud
+  du village une lisière serait entre la caméra et le joueur, à l'est et à l'ouest elle entrerait
+  dans les zones voisines ; là, des arbres en variantes le long de la palissade. Quand le joueur
+  sort par le nord, la lisière et les arbres du bord nord passent entre la caméra et lui et
+  cacheraient 15 m de bois : la découpe du village (`see_through.gd`, `backdrop_textures`)
+  efface en trame ces toiles de fond au-delà de la palissade, sur 1,2 m, dès qu'elles sont au sud
+  du joueur (images réservées au bord nord, vérifié par `test_village_decor.gd`).
+- **P2 — découpe et formats** : seuls les matériaux de `panel.gdshader` reçoivent la découpe ;
+  décalques, premier plan et alpha doux gardent leur shader (demande H9 réglée). Dans
+  `test_village_decor.gd`, l'occlusion des PNJ ignore décalques et alpha doux, compte le premier
+  plan, prend la plus forte opacité des images d'une bande animée, et range les triangles par
+  cases de 4 m (le test reste à 4 s).
+- **P2 — sud dégagé** : les trois grands arbres du sud de la cour (sapin, rouille, jaune autour
+  du portail sud) cachaient la moitié de l'écran quand on longe la palissade sud ; buissons et
+  premier plan (`fg_bush`, `fg_grass`, qui s'effacent autour du joueur) les remplacent, les coins
+  gardent un arbre.
+- **P2 — mesures** (`tools/hd2d_shots.sh`, draw calls avant → après) : cour (vue `village`)
+  59 → 110, entrepôt 78 → 120, conversation 64 → 111 ; vues de la pose (`build/shots/p2_*`) :
+  sous 135 partout. `test_village_pose.gd` compte les meshes fondus du village dans le champ de
+  dix places (sous 140) : densité 29 à 55 décors à moins de 12 m du joueur, aucun voisin à moins
+  de 2 m de la même image, aucun trou de 4 m sans décor, couloir de 3 m sur les quatre chemins,
+  rien de bloquant à moins de 1 m des PNJ et du myosotis.
+- **B1 — un bord d'île irrégulier** (demande de l'utilisateur : « une map carrée ne fait pas très
+  réaliste », des irrégularités sauf au port) : la forme du bord quitte terrain.gd pour
+  `IslandEdge` (`src/world/island_edge.gd`, terrain.gd dépassait les 1 000 lignes) : un rayon par
+  angle (forme étoilée), cuit une fois dans une table de 2 048 rayons et pentes ; le shader du sol
+  lit la même table en texture RGF (texelFetch, interpolation refaite à la main, aucune formule
+  propre au shader). Le tracé d'origine (superellipse, quai, Couchant) reste la base : la côte
+  n'avance qu'au-dehors (minimum adouci), sauf dans deux anses où rien n'était posé à 6 m (sud-est,
+  sud du Couchant ; 2,2 m au plus). Grandes avancées décidées à la main (`CAPES` : éperon de 10 m
+  au nord-est tourné vers le nord-nord-est, caps de 5 à 7 m autour de la cascade, au sud-ouest, au
+  sud-est et au sortir du port), pas sur les diagonales : des caps sur les diagonales remplissaient
+  les coins du carré des murs, l'île en devenait plus carrée. Ondulations moyennes (1 à 3 m sur 6
+  à 14 m) menées par un bruit de Fourier et une onde à fréquence modulée (le bruit seul laissait des
+  tronçons calmes de 20 m), ramenées entre un fond (0,6 m) et la place laissée par les murs (bord à
+  ±79,2 m au plus, 0,9 m de marge avant d'adoucir) pour ne jamais aplatir un cap contre un mur ;
+  ébréchures anguleuses (ligne brisée de 1,5 à 3,5 m, ±0,45 m) et bruit fin. Mesuré : tronçon de
+  20 m le plus droit hors du quai à 0,65 m de sa corde ; périmètre 525 → 584 m.
+- **B1 — distance au bord** : `edge_distance()` divise l'écart radial par la pente de la côte
+  (première approximation de la distance vraie, juste sur les flancs des caps) ; la distance
+  exacte au tracé (`IslandTerrain.distance_to_edge`) sert aux marges. `edge_radius()` est
+  désormais un rayon euclidien (il était en norme 4).
+- **B1 — relief** : il s'efface toujours vers le tracé d'origine (mêmes hauteurs qu'avant dans
+  toutes les zones ; les avancées de la côte sont plates, à y = 0) et vers la côte lissée (les
+  anses). Le refaire vers le nouveau bord gonflait les dunes du Couchant (pente de 45°).
+- **B1 — cascade** : `Island/Waterfall` tombait 5 m à l'est de la sortie du ruisseau (angle −2,3) :
+  elle tombe désormais au point où le lit coupe le tracé d'origine (−2,3532 rad, (−62,0 ; −62,4)),
+  au fond d'une ravine (caps de part et d'autre, pas d'ébréchure sur le mètre où l'eau passe) ; le
+  lit du ruisseau (`STREAM`) ne change pas et traverse la lèvre de pierre. Le haut du ruban
+  affleure sous la lèvre, à 5 cm au-delà du bord (à 0,6 m en deçà et 2 cm au-dessus du sol, il
+  traçait un trait clair en travers du lit dans la vue du jeu).
+- **B1 — roche** : la lèvre et le premier anneau suivent le bord exact du sol (`rim_loop()`, une
+  boucle ordonnée depuis le nord) ; les anneaux plus bas suivent la côte de moins en moins
+  ébréchée (384, 256, 192, 192 puis 128 points), raccordés d'un anneau à l'autre par angle
+  croissant ; leurs variations viennent d'un bruit lisse le long du tour (128 cases), le même quel
+  que soit le nombre de points. UV.x = longueur de bord depuis le nord, `IslandRock.uv_turn()` =
+  périmètre arrondi à un nombre entier de textures de 4 m (584 m) ; étirement le long de la lèvre
+  ≤ 4 %. Triangles : sol 11 576 → 12 258, roche 3 964 → 6 048 (un draw call chacun) ; vues de
+  `tools/hd2d_shots.sh` : mêmes draw calls (village 59, entrepôt 78, bois 65, Couchant 34, port 44,
+  colline 52, dialogue 64, veille 50 → 51 ; menu 43 → 46 à cause du bouton Continuer, une partie
+  étant enregistrée dans le `user://` du worktree), 2 800 primitives de plus par vue (≈ 16 400 →
+  19 200).
+- **B1 — lèvre de pierre du sol** : bande de 0,2 à 1,4 m (dalles qui affleurent par plaques,
+  herbe ou sous-bois jusqu'au bord ailleurs) au lieu d'un ruban régulier de 0,9 m qui faisait
+  bordure pavée ; le ruisseau la traverse.
+- **B1 — marges au vide** (`tests/unit/test_world_edge_margins.gd`, island.tscn complète) : ancre
+  d'un décor à 1 m, collision d'un décor, PNJ, objet, Timere, point d'apparition et centre d'un
+  déclencheur à 3 m, disque d'un déclencheur à 1 m. Mobilier du bord exempté par préfixe de scène
+  (`edge_`, `airship_`, `gangway`, `mooring_`, `bollard`, `floating_rock`, `distant_island`). La
+  ruine du poste de guet du Couchant (collision à 1,5 m du vide avant B1) a un replat devant elle
+  (`LEDGES`, +1,6 m) ; `couchant_edge` reste près du bord (disque à 1,9 m, centre à 4,9 m).
+  `EDGE_MARGIN` des places de l'acte 1 reste 3 m (HISTOIRE.md ; 6 m exclurait le passeur, au bout
+  de sa passerelle, et `couchant_edge`, « au bord ») ; il se mesure à la distance exacte.
+- **Marges au bord sur le quai** (fusion de B1 avec la pose du port) : le quai est un ouvrage
+  bordé d'une rambarde, son tracé n'a pas changé. Caisses, filets, tuyaux et flaques y vont
+  près du bord : dans le secteur du port (`IslandEdge.PORT_SECTOR`), `test_world_edge_margins`
+  demande 0,3 m pour l'ancre d'un décor et 1,5 m pour une collision (au lieu de 1 et 3 m sur la
+  côte naturelle). Une caisse de la Garde a reculé de 0,6 m.
+- **Refonte de l'île n° 68** (`docs/REFONTE.md`, 9 octobre 2026), à la suite de la recette « monde
+  vide, infidèle, quêtes superflues, Timeres sur les îles, personnages statiques, aucun intérieur,
+  dirigeables plats ». Relecture intégrale des six volumes (`docs/lore/canon/`, qui priment sur la
+  bible quand ils la contredisent). Choix de l'utilisateur, tous selon la recommandation :
+  - une carte par lieu, façon *Octopath Traveler*, avec intérieurs et carte de l'île (contrat :
+    `docs/REFONTE.md`, section 7.1) ;
+  - à l'acte 1, aucun Timere : entraînement, duels et faune de la forêt profonde et de la
+    montagne ; Timere et l'arène à vagues passent à l'acte 2 (île n° 15) ;
+  - l'acte 1 suit le volume 1 et l'épisode du volume EX en une douzaine de jours et de scènes ;
+    les quêtes secondaires, les marqueurs au-dessus des têtes et l'encadré d'objectif permanent
+    disparaissent ; le calendrier de Chtholly sert de journal ;
+  - première tranche : l'entrepôt (dehors, dedans, vie des petites, jours 1 à 4).
+  La « saison des rejetons » et la « veille du Couchant » (`MONDE.md`, section 1.1) sont retirées :
+  c'étaient des inventions qui contredisent l'œuvre.

@@ -166,9 +166,10 @@ func test_return_to_menu_from_pause() -> void:
 	var at := player.global_position
 	var quitting: Array[bool] = []
 	pause_menu.connect(&"quit_to_menu_started", func() -> void: quitting.append(true))
-	# Échap, puis flèche bas jusqu'à « Retour au menu », Entrée.
+	# Échap, puis flèche bas jusqu'à « Retour au menu », Entrée ; (bureau) hors Web, « Plein écran »
+	# le précède (Reprendre, Sauvegarder, Commandes, Plein écran).
 	await tap_key(KEY_ESCAPE)
-	for _step in 3:
+	for _step in 4:
 		await tap_key(KEY_DOWN)
 	assert_eq(_focus_owner(), pause_menu.get_node("%QuitButton"), "focus sur Retour au menu")
 	await tap_key(KEY_ENTER)

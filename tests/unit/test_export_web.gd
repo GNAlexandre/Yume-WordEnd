@@ -20,7 +20,14 @@ func _text(path: String) -> String:
 func test_single_web_preset_without_threads() -> void:
 	assert_eq(_presets.get_value(PRESET, "name", ""), "Web")
 	assert_eq(_presets.get_value(PRESET, "platform", ""), "Web")
-	assert_false(_presets.has_section("preset.1"), "un seul preset")
+	# (bureau) Windows et Linux ont leurs préréglages (tests/unit/test_desktop.gd) : le Web reste
+	# le premier et le seul de sa plateforme.
+	var web_presets: Array[String] = []
+	for section: String in _presets.get_sections():
+		if section.begins_with("preset.") and not section.ends_with(".options"):
+			if _presets.get_value(section, "platform", "") == "Web":
+				web_presets.append(section)
+	assert_eq(web_presets, [PRESET] as Array[String], "un seul preset Web")
 	assert_eq(_presets.get_value("runnable_presets", "Web", ""), "Web", "preset lancé par défaut")
 	assert_false(_presets.get_value(OPTIONS, "variant/thread_support", true), "pas de COOP/COEP")
 	assert_false(
@@ -117,7 +124,7 @@ func test_build_size_script_budget() -> void:
 
 
 func test_check_enforces_the_size_budget() -> void:
-	# (HD-2D) tools/check.sh échoue si l'export dépasse le budget (60 Mo compressés).
+	# (HD-2D) tools/check.sh échoue si l'export dépasse le budget (100 Mo compressés).
 	var check := FileAccess.get_file_as_string("res://tools/check.sh")
 	assert_string_contains(check, "tools/build_size.sh build/web")
 	assert_string_contains(check, "au-delà du budget")

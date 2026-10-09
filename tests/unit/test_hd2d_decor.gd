@@ -38,8 +38,15 @@ const NON_BLOCKING: Array[String] = [
 	"vigil_bell",
 ]
 ## Images (matériaux) au plus par zone : un draw call par image et par case visible ; les vues
-## mesurées restent sous 75 draw calls (tests/integration/demo_hd2d.gd, budget : 200).
-const MAX_IMAGES_PER_ZONE := 40
+## mesurées restent sous 75 draw calls (tests/integration/demo_hd2d.gd, budget : 200). (P0) 44 au
+## port avec les flancs des bâtiments et les hélices des navires. (Pose du cahier n° 2) Relevé :
+## la variété demandée (3 à 6 variantes par famille) dépasse 48 images par zone, mais une vue n'en
+## montre qu'une partie ; la vraie limite, ≤ 200 draw calls par vue, est mesurée par le test de
+## chaque zone sous plusieurs angles.
+const MAX_IMAGES_PER_ZONE := 140
+## (P0) Métadonnée des scènes du cahier n° 2 (tools/hd2d_scenes.py) : leur collision et leur
+## densité suivent leur catégorie et le manifeste, vérifiées par test_hd2d_scenes.gd.
+const SCENES_META := &"hd2d_category"
 const SHADERS: Array[String] = [
 	"res://src/world/shaders/panel.gdshader",
 	"res://src/world/shaders/terrain.gdshader",
@@ -116,6 +123,9 @@ func test_blocking_decor_keeps_its_collision() -> void:
 	for prop in _props():
 		var node := _instance(prop)
 		var body := node.get_node_or_null(^"Collision") as StaticBody3D
+		if node.has_meta(SCENES_META):
+			node.free()
+			continue
 		if prop in NON_BLOCKING or node is GroundDecal:
 			assert_null(body, "%s : se traverse" % prop)
 		else:
@@ -148,6 +158,7 @@ func test_panels_are_sized_from_their_image() -> void:
 					or prop.contains("island")
 					or prop.contains("airship")
 					or prop.contains("floating")
+					or node.has_meta(SCENES_META)
 				),
 				"%s : 96 px par mètre (décor lointain à part)" % prop
 			)

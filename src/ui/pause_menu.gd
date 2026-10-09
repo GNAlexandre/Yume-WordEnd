@@ -9,6 +9,8 @@ extends Control
 ## - Retour au menu : la partie suivie est écrite (SaveManager.save(), puis close_game() coupe
 ##   l'auto-sauvegarde), la pause est levée, puis get_tree().reload_current_scene() recharge
 ##   main.tscn, qui rouvre le menu (rien n'est ajouté à main.gd).
+## - (bureau) « Plein écran » et « Quitter le jeu » (partie écrite, puis fermeture), hors Web
+##   seulement : DesktopApp.setup_menu_buttons.
 
 signal opened
 signal closed
@@ -21,11 +23,10 @@ const CONTROLS := [
 	["Se déplacer", "ZQSD ou WASD, flèches", "Stick gauche"],
 	["Courir", "Maj (maintenue)", "L3 (clic du stick)"],
 	["Sauter", "Espace", "A"],
-	["Coup d'épée", "J ou X", "X"],
-	["Charge magique", "K ou C (maintenue)", "B (maintenu)"],
+	["Coup d'épée (vers le pointeur)", "J, X ou clic gauche", "X"],
+	["Charge magique", "K, C ou clic droit (maintenus)", "B (maintenu)"],
 	["Parler, ramasser", "E", "A"],
-	["Caméra", "Souris (clic pour la tenir)", "Stick droit"],
-	["Zoom", "Molette", "—"],
+	["Zoom", "Molette", "Stick droit (haut, bas)"],
 	["Verrouiller une cible", "Clic molette", "R3 (clic du stick)"],
 	["Sac", "I", "Y"],
 	["Journal de quêtes", "Tab ou L", "Select"],
@@ -57,6 +58,9 @@ func _ready() -> void:
 	(%ControlsButton as Button).pressed.connect(show_controls)
 	(%QuitButton as Button).pressed.connect(quit_to_menu)
 	(%ControlsBack as Button).pressed.connect(hide_controls)
+	DesktopApp.setup_menu_buttons(
+		%FullscreenButton as Button, %ExitGameButton as Button, "quit_game"
+	)
 	var grid := %ControlsGrid as GridContainer
 	for row: Array in CONTROLS:
 		for column in row.size():

@@ -379,3 +379,114 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 - En attendant : `ATLAS_ROWS = 7.0` dans `src/world/shaders/terrain.gdshader` et taille attendue
   1536 × 2688 dans `tests/unit/test_hd2d_decor.gd` (deux lignes, commit à part de H10) ; à la
   fusion, garder la version de H9.
+
+## P0 — panneaux en alpha doux (moteur, H5 ou H9)
+- Besoin : `DecorPanel` découpe toujours l'alpha à 0,5 (`panel.gdshader`, `ALPHA_SCISSOR`). Les
+  images « alpha doux » posées en panneau perdent leur dégradé : fumée (`chimney_smoke`), vapeur
+  (`furnace_steam`), cascade (`edge_waterfall`), nuages (`cloud_*`) deviennent des taches à bord
+  net, et ce qui est plus pâle que 50 % disparaît tout entier : rais de lumière (`light_shaft_*`,
+  15 à 35 %) et bande de brume (`mist_band`) sont invisibles dans `demo_props_monde`.
+- Proposition : `DecorPanel.soft_alpha` (comme `GroundDecal`) : matériau mélangé, sans écriture de
+  profondeur, priorité de rendu au-dessus des panneaux nets ; les scènes du cahier n° 2 dont
+  l'image est marquée `soft_alpha` dans le manifeste l'activeraient (`tools/hd2d_scenes.py` :
+  une ligne).
+- En attendant : les scènes existent au bon format ; le ciel qui dérive (`SkyDrift`) mélange déjà
+  ses nuages ; les rais de lumière et la brume ne se posent pas.
+
+## P0 — dirigeables du cahier n° 2 : densité et hélices réglées (suite de la demande de H10)
+- Fait : `airship_ferry.tscn` et `airship_barocupot.tscn` à 96 px/m, hélices posées sur les moyeux
+  (docs/DECISIONS.md, « P0 — navires à quai »).
+- Reste pour la pose : les amarrer de flanc à l'est et à l'ouest du quai, dans le champ de la
+  caméra (ils sont encore au sud du quai, hors champ, dans `beach.tscn`).
+
+## P0 — tests/unit/test_hd2d_decor.gd (H5, H9)
+- Touché par P0 (quelques lignes) : les scènes du cahier n° 2 (métadonnée `hd2d_category`) ne
+  sont plus vérifiées par sa liste `NON_BLOCKING` ni par sa règle de densité (noms en `island`,
+  `airship`, `floating`) : `test_hd2d_scenes.gd` le fait d'après la table de
+  `tools/hd2d_scenes.py` et le manifeste ; `MAX_IMAGES_PER_ZONE` passe de 40 à 48 (44 au port avec
+  les flancs et les hélices). La pose le dépassera : à régler par H5 sur les draw calls mesurés.
+## P0 — alpha doux des panneaux debout : réglé
+- `DecorPanel.soft_alpha` (docs/DECISIONS.md, « Alpha doux des panneaux debout »).
+## P3 — dirigeables à quai : réglé
+- Amarrés de flanc au-delà du bord, de part et d'autre du quai (docs/DECISIONS.md, « P3 — navires
+  à quai ») ; les scènes partagées `airship_*.tscn` ne changent pas.
+
+## P3 — pavés de la rue du Port jusqu'aux façades (moteur, H5 ou H9)
+- Besoin : le masque `m.street` de `terrain.gdshader` pave z = 43 à 47 (monde) ; les façades du
+  rang nord sont à z = 41,5 : il reste 1,5 m d'herbe devant les boutiques (trottoir en herbe).
+- Proposition : étendre la rue au nord jusqu'à z = 41,3 de x = −34 à 34 (hors du chemin de
+  l'entrepôt), ou un masque « trottoir » de dalles.
+- En attendant : bordures d'herbe (`grass_edge_*`) le long de la rue, terrasses et étals sur
+  l'herbe.
+
+## P3 — plafond d'images par zone (H5, `test_hd2d_decor.gd`)
+- 132 matériaux au port pour un plafond de 140 : la variété demandée (3 à 6 variantes par
+  famille, flancs, détails) le touche. Proposition : compter les matériaux par vue (le budget
+  réel, ≤ 200 draw calls, est loin : 70 à 110 au port).
+
+## P1 — premier plan : une mise à jour par image, pas un `_process` par panneau (H9, moteur)
+- Constat : chaque `DecorPanel` de premier plan garde son `_process` (qui appelle
+  `update_foreground`, une fois utile par image) ; les bois en ont environ 170 (arbres en variante
+  `<arbre>_forest`, premier plan) : 170 appels de script par image pour rien, sensibles sur le Web.
+- Proposition : que le PropBatcher (ou un seul nœud) appelle `DecorPanel.update_foreground` une
+  fois par image, et que les panneaux fondus coupent leur `_process`.
+
+## P1 — cascade de l'île (`Island/Waterfall`, H5)
+- Constat : `IslandRock.WATERFALL_ANGLE` (−2,3) pose le ruban à (−58,4 ; −65,4) (monde), 5 m à
+  l'est de la sortie du ruisseau (−62,5 ; −62,5, angle −3π/4 ≈ −2,356) ; depuis la caméra du jeu, on
+  ne le voit pas (voir ci-dessous : la cascade des bois est à poser sur le nouveau bord).
+- Proposition : aligner l'angle sur la sortie du ruisseau (−2,356), ou retirer le ruban.
+
+## P1 — habiller le nouveau bord des bois (lot B1 ou suite de la pose)
+- Fait par P1 : rien dans les 4 derniers mètres avant le bord actuel des bois (lisières à 4,8 m de
+  la lèvre), à la demande de l'orchestrateur, pour que B1 rende le bord irrégulier.
+- Reste : la cascade du ruisseau (`edge_waterfall`, au droit de la sortie du ruisseau, vers
+  (−62,5 ; −62,5) monde ; la caméra, qui regarde le nord, n'en voit que le haut : 3 à 4 m au-delà
+  de la lèvre, ancre à y = 0, elle montre sa lèvre de pierre et le départ de l'eau), les pierres et
+  l'herbe de la lèvre (`edge_rocks_*`, `edge_grass`, de face sur le bord : `keep_orientation` au
+  lacet du bord) et les racines (`edge_roots`, 2,5 m au-delà) dans les deux fenêtres sur le vide
+  (nord-ouest x −66 à −52 ; nord-est x 62 à 70, local aux bois), sur les nouveaux caps.
+## P2 — la découpe du village et les nouveaux formats : réglé
+- `see_through.gd` ne convertit que `panel.gdshader` ; `test_village_decor.gd` ne compte que ces
+  meshes et vérifie que décalques, premier plan et alpha doux gardent leur shader
+  (docs/DECISIONS.md, « P2 — découpe et formats »).
+## P2 — images de la cour (H1, ChatGPT)
+- Besoin : (1) les pans de `treeline_autumn_*` sont coupés droit pour se raccorder : au portail
+  nord, où la lisière s'ouvre sur le chemin des bois, le bord coupé se voit au-dessus de la
+  palissade (deux jeunes sapins le masquent en partie) ; (2) `chimney_brick` est dessinée sur un
+  pan de tuiles rouges, qui jure sur l'ardoise de l'entrepôt ; (3) la clôture basse du potager
+  n'existe que de face.
+- Proposition : (1) `treeline_autumn_end_l.png` et `_r.png` (768 × 768 px, lisière qui se
+  termine par un arbre entier du côté du passage, raccordable de l'autre côté) ; (2)
+  `chimney_brick_slate.png` (96 × 192 px, même cheminée, base sur ardoise bleu-gris) ; (3)
+  `fence_low_side.png` (77 px de haut, la clôture vue de profil, comme `palisade_side`).
+- En attendant : pans coupés au portail, cheminée en matières (`warehouse_chimney.tscn`,
+  `wall_brick`), potager fermé devant et derrière seulement.
+
+## B1 — bornes de la caméra (H5, `src/player/camera_rig.gd`)
+- Besoin : le bord avance jusqu'à ±79,2 m (côte nord jusqu'à z ≈ −78,6, Couchant x ≈ −78, colline
+  x ≈ 78, éperon nord-est (58,7 ; −75,1)) ; `limits` = Rect2(−71, −70, 142, 136) arrête le point
+  visé à 7 à 9 m du joueur qui se tient sur la lèvre : il descend vers le bas de l'écran.
+- Proposition : `limits` = Rect2(−75, −75, 150, 141) (le point visé suit le joueur jusqu'à 4 m de
+  la lèvre ; au sud, le quai ne bouge pas).
+- En attendant : le joueur reste à l'écran partout (captures `b1_apres_*`).
+
+## B1 — habillage du nouveau bord (lots de pose : bois, Couchant, colline, port)
+- Le bord a bougé (docs/lore/MONDE.md 2.8, docs/DECISIONS.md « B1 ») ; pour poser au bord, lire
+  `IslandTerrain.edge_point(angle)`, `IslandEdge.normal(angle)` (vers le vide) et
+  `IslandTerrain.distance_to_edge(x, z)` ; tests/unit/test_world_edge_margins.gd vérifie les
+  marges (1 m pour un décor, 3 m pour ce qui bloque), mobilier du bord (`edge_*`…) exempté.
+- Avancées nouvelles, à habiller (pierres, racines, herbe de la lèvre) : éperon du nord-est
+  (pointe en (58,7 ; −75,1), +10 m) ; caps de part et d'autre de la cascade ((−51,6 ; −76,5) et
+  (−78,3 ; −48,9), +7 m) ; cap du sud-ouest ((−74,3 ; 62,4), +7 m) et cap au sortir ouest du port
+  ((−55,5 ; 76,4), +6 m) ; caps du sud-est ((77,2 ; 41,0) et (52,2 ; 74,5), +5 m) ; cap de la côte
+  est sous l'éperon ((75,5 ; −43,6), +5 m) ; replat devant la ruine du Couchant ((−77,1 ; −0,7),
+  +1,6 m). Partout ailleurs, la côte ondule de 0 à 3 m au-delà de l'ancien bord.
+- Le bord recule (anses) : au sud du Couchant, autour de (−73,9 ; 30,6), jusqu'à 2,2 m en deçà de
+  l'ancien bord (secteur 150° à 165°) ; ailleurs, jamais plus de 0,3 m (ébréchures, sud-est).
+- Mobilier resté à l'intérieur : les parapets du Couchant (dunes, `Parapets` : 1,6 à 1,8 m de la
+  lèvre pour les trois du milieu et du nord, 0,6 et 0,9 m pour les deux du sud, près de l'anse) et
+  du pied de la colline (hill, `Parapets` : 1,6 à 2,4 m) étaient à 0,7 m de l'ancienne lèvre : à
+  reposer sur la nouvelle. Le garde-corps et les bittes du quai ne bougent pas.
+- La cascade (`Island/Waterfall`) tombe désormais au bout du lit du ruisseau, en (−62,1 ; −62,4)
+  (`IslandEdge.WATERFALL_ANGLE`) : l'image `edge_waterfall` se pose là, sous la lèvre.

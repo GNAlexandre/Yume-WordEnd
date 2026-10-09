@@ -1,7 +1,8 @@
 extends GutTest
 ## Relief de l'île flottante (IslandTerrain, src/world/terrain.gd) : repères à y = 0, arène
 ## plate, pentes praticables (< 40°) sur toute la surface, surface coupée net au bord (lèvre à
-## y = 0, rien au-delà), bord à l'intérieur des murs, vide au-delà.
+## y = 0, rien au-delà), bord à l'intérieur des murs, vide au-delà. La forme du bord : voir
+## test_world_edge.gd (B1).
 
 ## Points d'arrivée des zones et de l'arène, en coordonnées de l'île (PLAN.md, repères).
 const LANDMARKS := {
@@ -115,13 +116,19 @@ func test_the_lip_is_flat_all_around() -> void:
 
 
 func test_edge_stays_inside_the_walls_and_the_void_lies_beyond() -> void:
+	# (B1) Rayon euclidien : de 60 m (fond de l'encoche du quai) à plus de 100 m (éperon).
+	var limit := IslandEdge.EDGE_LIMIT
 	for angle in range(0, 360, 2):
 		var radius := IslandTerrain.edge_radius(deg_to_rad(angle))
-		assert_between(radius, 60.0, 78.0, "bord à %d° : %.1f m" % [angle, radius])
+		assert_between(radius, 60.0, limit * sqrt(2.0), "bord à %d° : %.1f m" % [angle, radius])
 		var edge := IslandTerrain.edge_point(deg_to_rad(angle))
-		assert_lt(maxf(absf(edge.x), absf(edge.y)), 78.0, "%d° : dans le carré de ±78 m" % angle)
+		assert_lte(
+			maxf(absf(edge.x), absf(edge.y)),
+			limit,
+			"%d° : dans le carré de ±%.1f m" % [angle, limit]
+		)
 		var outside := edge + edge.normalized() * 0.6
 		assert_false(IslandTerrain.is_land(outside.x, outside.y), "%d° : le vide" % angle)
-	for p: Vector2 in [Vector2(79.0, 0.0), Vector2(0.0, -79.0), Vector2(-79.0, 79.0)]:
+	for p: Vector2 in [Vector2(79.6, 0.0), Vector2(0.0, -79.6), Vector2(-79.6, 79.6)]:
 		assert_false(IslandTerrain.is_land(p.x, p.y), "%s : le vide" % p)
 		assert_lt(IslandTerrain.height_at(p.x, p.y), KILL_ZONE_TOP, "%s : sous la KillZone" % p)

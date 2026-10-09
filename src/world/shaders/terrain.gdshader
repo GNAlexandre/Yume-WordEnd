@@ -15,7 +15,10 @@
 // (masques lus à la position continue), soit un mélange en paliers fins, sans grain ni
 // scintillement ; entre les deux, l'un ou l'autre selon un bruit d'écran. Les fleurs d'un pixel
 // s'effacent au loin.
-// Les uniformes de forme sont recopiés de terrain.gd au lancement ; edge_distance() est la même.
+// Les uniformes de forme sont recopiés de terrain.gd au lancement. (B1) Le bord n'a pas de formule
+// ici : edge_table est la table du bord (IslandEdge.texture, src/world/island_edge.gd : un texel
+// par angle, rayon et pente dR/dθ), lue sans filtre et interpolée comme IslandEdge._sample() ;
+// edge_distance() fait le même calcul que IslandEdge.distance(). Une seule forme.
 // (H9) Atlas à 27 tuiles (contrat du cahier n° 2, IslandTerrain.GROUND_LAYERS) : le nombre de
 // rangées se lit dans la taille de l'atlas, une tuile absente (atlas encore à 12 tuiles)
 // retombe sur sa tuile d'origine (FALLBACK, resolve_layer). Les tuiles `_b` alternent avec leur
@@ -73,9 +76,8 @@ uniform float max_lod = 6.0;
 // Pixels d'art par mètre du tramage des bords (deux pixels d'image par pixel d'art).
 uniform float art_pixels = 48.0;
 
-uniform float edge_radius = 74.5;
-uniform float bay_depth = 6.0;
-uniform float west_bulge = 2.5;
+// (B1) Table du bord (IslandEdge.texture), posée en jeu ; absente (éditeur) : pas de lèvre.
+uniform sampler2D edge_table : filter_nearest, hint_default_black;
 uniform vec2 arena_center = vec2(-51.0, 0.0);
 uniform float arena_radius = 12.0;
 uniform float plaza_radius = 9.0;
@@ -108,21 +110,19 @@ const vec2 STREAM[STREAM_COUNT] = {
 
 varying vec3 world_pos;
 
-float wrap_angle(float a) {
-	return mod(a + PI, TAU) - PI;
-}
-
+// Distance (m, au premier ordre) au bord : > 0 sur l'île (IslandTerrain.edge_distance).
 float edge_distance(vec2 p) {
-	float x2 = p.x * p.x;
-	float z2 = p.y * p.y;
-	float norm = sqrt(sqrt(x2 * x2 + z2 * z2));
-	float angle = atan(p.y, p.x);
-	float radius = edge_radius + 1.2 * sin(3.0 * angle + 0.4) + 0.8 * sin(5.0 * angle + 2.1);
-	radius += 0.4 * sin(9.0 * angle + 0.7);
-	float bay = wrap_angle(angle - PI * 0.5) / 0.32;
-	float bulge = wrap_angle(angle - PI) / 0.45;
-	radius += -bay_depth * exp(-bay * bay) + west_bulge * exp(-bulge * bulge);
-	return radius - norm;
+	int samples = textureSize(edge_table, 0).x;
+	if (samples < 2) {
+		return 1000.0;
+	}
+	float u = fract(atan(p.y, p.x) / TAU) * float(samples);
+	int i = min(int(floor(u)), samples - 1);
+	vec2 a = texelFetch(edge_table, ivec2(i, 0), 0).rg;
+	vec2 b = texelFetch(edge_table, ivec2((i + 1) % samples, 0), 0).rg;
+	vec2 edge = mix(a, b, u - floor(u));
+	float slope = edge.y / edge.x;
+	return (edge.x - length(p)) / sqrt(1.0 + slope * slope);
 }
 
 float hash(vec2 p) {
@@ -365,8 +365,12 @@ Masks ground_masks(vec2 p, float h, int tile_count) {
 	m.market = 1.0 - smoothstep(6.0, 6.6, distance(p, vec2(-23.0, 50.0)) + 0.6 * n2);
 	// Le quai : bord de l'île plaqué de tôle rivetée.
 	m.quay = (1.0 - step(32.5, abs(p.x))) * step(58.9, p.y + 0.4 * sin(p.x * 0.31)) > 0.5;
-	// La lèvre de pierre, nette et ébréchée, sur le dernier mètre avant le vide.
-	m.edge = edge_distance(p) - 0.45 * n2 < 0.9 && !m.quay;
+	// La lèvre de pierre, nette et ébréchée, avant le vide ; (B1) sa largeur varie de 0,2 à 1,4 m
+	// (dalles qui affleurent par endroits, herbe ou sous-bois jusqu'au bord ailleurs), le ruisseau
+	// passe par-dessus jusqu'à la cascade.
+	float lip_width = 0.2 + 1.2 * smoothstep(0.5, 0.8, noise(p * 0.27 + vec2(5.7, 1.3)));
+	lip_width += 0.3 * (n2 - 0.5);
+	m.edge = edge_distance(p) - 0.5 * (n3 - 0.5) < lip_width && !m.quay && m.water < 0.5;
 	return m;
 }
 

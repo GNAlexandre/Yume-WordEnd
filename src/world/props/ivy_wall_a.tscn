@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/props/ivy_wall_a.png" id="2_image"]
+
+[node name="IvyWallA" type="Node3D"]
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
+shadow_width = 0.0
+depth_offset = 0.06
+metadata/hd2d_category = "wall_detail"

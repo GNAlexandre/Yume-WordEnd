@@ -384,7 +384,9 @@ def _check_side(mask, entry):
                 problems.append("pignon : coin haut %s plein (fond transparent de part et d'autre du triangle)" % name)
         if mask.crop((w // 3, 0, w - w // 3, 2)).getbbox() is None:
             problems.append("pignon : le triangle n'atteint pas le haut de l'image (faîtage)")
-        band = (0, h - wall + wall // 8, w, h)
+        # L'avancée du toit peut descendre sur le haut du mur aux angles (livraison du lot D :
+        # 21 à 22 % de sa hauteur) : le mur du volume, derrière, complète ce coin.
+        band = (0, h - wall + wall // 4, w, h)
     else:
         band = (0, h // 8, w, h)
     for name, x in (("gauche", 0), ("droit", w - 1)):

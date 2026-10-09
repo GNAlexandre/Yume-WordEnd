@@ -23,7 +23,11 @@ extends CharacterBody3D
 ##   EventBus.interaction_available(invite) quand l'invite change ("" : plus rien) ; interact
 ##   passe avant jump quand une invite est affichée (bouton A de la manette) ;
 ## - verrouillage (lock_target) : ennemi vivant le plus proche, exposé par locked_target() et
-##   cadré par la caméra ; perdu si la cible meurt, quitte le groupe ou s'éloigne trop.
+##   cadré par la caméra ; perdu si la cible meurt, quitte le groupe ou s'éloigne trop ;
+## - souris : clic gauche = attack, clic droit maintenu = charge (MOUSE_ACTIONS, envoyés comme
+##   les boutons tactiles, en InputEventAction) ; le joueur se tourne d'abord vers le point du sol
+##   sous le pointeur, sauf s'il a une cible verrouillée. Seuls les clics que l'interface n'a pas
+##   pris arrivent ici, jamais la souris émulée par le tactile (ses contrôles ont leurs boutons).
 ## Comportements du Lot 0 conservés : skin de GameState (et skin_changed), recul sur
 ## Hurtbox.hit_taken, GameState.position tenue à jour au sol, animations repos / marche /
 ## course seulement quand Combat.is_busy() est faux. Réapparition (player_respawned) :
@@ -35,6 +39,11 @@ const CameraRigScript := preload("res://src/player/camera_rig.gd")
 const IDLE_SPEED := 0.3
 ## Un interactable plus proche que cette distance (m) compte même hors du cône frontal.
 const NEAR_RADIUS := 0.6
+## Boutons de la souris et action qu'ils tiennent.
+const MOUSE_ACTIONS: Dictionary[int, StringName] = {
+	MOUSE_BUTTON_LEFT: &"attack",
+	MOUSE_BUTTON_RIGHT: &"charge",
+}
 
 @export_group("Déplacement")
 ## Vitesse de marche (m/s, easter egg : 72 px/s).
@@ -84,6 +93,10 @@ var _wait_release: bool = false
 var _interactable: Node3D
 var _prompt: String = ""
 var _lock_target: Node3D
+## Boutons de la souris dont l'action est tenue (relâchés s'ils le sont hors de portée).
+var _mouse_held: Dictionary[int, bool] = {}
+## Visée vers le pointeur au dernier clic, appliquée à l'image suivante (ZERO : aucune).
+var _pointer_aim: Vector3 = Vector3.ZERO
 
 @onready var visual: CharacterVisual = $Visual
 @onready var combat: PlayerCombat = $Combat
@@ -127,6 +140,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_release_lost_mouse_buttons()
 	tick(delta, read_commands())
 
 
@@ -135,6 +149,63 @@ func _unhandled_input(event: InputEvent) -> void:
 	# stick est inconfortable) ; au clavier, Maj se maintient.
 	if event is InputEventJoypadButton and event.is_action_pressed(&"run"):
 		_run_latched = true
+	var click := event as InputEventMouseButton
+	if click != null and click.device != InputEvent.DEVICE_ID_EMULATION:
+		if handle_mouse_button(click.button_index, click.pressed, click.position):
+			get_viewport().set_input_as_handled()
+
+
+## Clic de souris au point `at` de la fenêtre : tient ou relâche l'action du bouton
+## (MOUSE_ACTIONS) et, à l'appui, retient la visée vers le sol sous le pointeur. True si le clic
+## est pris. Rien pendant un dialogue ni après la mort ; un relâchement sans appui pris est ignoré.
+func handle_mouse_button(button: int, pressed: bool, at: Vector2) -> bool:
+	var action: StringName = MOUSE_ACTIONS.get(button, &"")
+	if action == &"":
+		return false
+	if pressed:
+		if _in_dialogue or health.is_dead():
+			return false
+		_pointer_aim = pointer_direction(at)
+		_mouse_held[button] = true
+	elif not _mouse_held.erase(button):
+		return false
+	_send_action(action, pressed)
+	return true
+
+
+## Direction horizontale (unitaire) du joueur vers le point du sol, à sa hauteur, sous le point
+## `at` de la fenêtre ; ZERO sans caméra ou si le rayon ne coupe pas ce plan.
+func pointer_direction(at: Vector2) -> Vector3:
+	var camera := get_viewport().get_camera_3d()
+	if camera == null:
+		return Vector3.ZERO
+	var origin := camera.project_ray_origin(at)
+	var normal := camera.project_ray_normal(at)
+	if absf(normal.y) < 0.0001:
+		return Vector3.ZERO
+	var distance := (global_position.y - origin.y) / normal.y
+	if distance <= 0.0:
+		return Vector3.ZERO
+	var offset := origin + normal * distance - global_position
+	offset.y = 0.0
+	return offset.normalized() if offset.length_squared() > 0.0001 else Vector3.ZERO
+
+
+## Un bouton relâché pendant que le jeu ne recevait pas l'événement (pause, interface) : son
+## action est relâchée ici, sinon la charge resterait tenue.
+func _release_lost_mouse_buttons() -> void:
+	for button: int in _mouse_held.keys():
+		if not Input.is_mouse_button_pressed(button as MouseButton):
+			_mouse_held.erase(button)
+			_send_action(MOUSE_ACTIONS[button], false)
+
+
+static func _send_action(action: StringName, pressed: bool) -> void:
+	var event := InputEventAction.new()
+	event.action = action
+	event.pressed = pressed
+	event.strength = 1.0 if pressed else 0.0
+	Input.parse_input_event(event)
 
 
 ## Commandes de l'image courante, lues dans les actions d'entrée du Lot 0.
@@ -262,6 +333,13 @@ func tick(delta: float, commands: Commands) -> void:
 	_update_running(commands)
 	_update_move_velocity(direction, frozen, delta)
 	_update_aim(direction)
+	if _pointer_aim != Vector3.ZERO:
+		# Clic de souris : le coup part vers le pointeur, même en marchant (pas pendant un coup
+		# ou une charge, ni avec une cible verrouillée).
+		if not frozen and _lock_target == null:
+			_aim = _pointer_aim
+			visual.set_facing(_aim)
+		_pointer_aim = Vector3.ZERO
 	_apply_aim()
 	var press := &""
 	if not frozen:

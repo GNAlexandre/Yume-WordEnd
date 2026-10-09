@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_stone.png" id="2_wall"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_brick.png" id="2_wall"]
 [ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/roof_slate.png" id="3_roof"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]

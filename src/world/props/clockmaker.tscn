@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/clockmaker.png" id="2_facade"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_stone.png" id="3_wall"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/roof_slate.png" id="4_roof"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/clockmaker_side.png" id="5_side"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(5, 4, 5)
+
+[node name="Clockmaker" type="Node3D"]
+script = ExtResource("1_building")
+facade = ExtResource("2_facade")
+wall_texture = ExtResource("3_wall")
+roof_texture = ExtResource("4_roof")
+footprint = Vector2(5.0, 5.0)
+wall_height = 4.0
+ridge_height = 6.5
+gable_front = true
+side_facade = ExtResource("5_side")
+metadata/hd2d_category = "building"
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+shape = SubResource("BoxShape3D_1")

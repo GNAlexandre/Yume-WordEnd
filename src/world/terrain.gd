@@ -6,9 +6,13 @@ extends StaticBody3D
 ##
 ## Le relief est une fonction de (x, z) en coordonnées de l'île (repères de PLAN.md section 3 :
 ## sol à y = 0, 160 × 160 m centrés sur l'origine, nord = −Z, ouest = −X). L'île est une dalle de
-## pierre qui flotte au-dessus d'une mer de nuages : son bord (superellipse un peu ondulée,
-## encoche du quai au sud, avancée du Couchant à l'ouest) est une lèvre nette au niveau du sol ;
-## au-delà, le vide (height_at() y vaut VOID_HEIGHT).
+## pierre qui flotte au-dessus d'une mer de nuages : son bord est une lèvre nette au niveau du
+## sol ; au-delà, le vide (height_at() y vaut VOID_HEIGHT).
+##
+## (B1) Le bord est une côte de roche naturelle (caps, éperon, anses, ébréchures ; le quai garde
+## son tracé) : sa forme vit dans IslandEdge (src/world/island_edge.gd), une table de rayons que
+## le shader du sol lit aussi ; edge_radius(), edge_point(), edge_distance(), is_land() et
+## distance_to_edge() en sont les raccourcis.
 ##
 ## - surface praticable : grille de STEP m découpée sur la ligne exacte du bord (une case qui le
 ##   traverse est coupée au point où edge_distance() s'annule) ; un bloc plat de BLOCK × BLOCK
@@ -19,11 +23,9 @@ extends StaticBody3D
 ##   au bord exact de la surface ;
 ## - relief : cercle de veille plat sur ARENA_FLAT_RADIUS m, dunes basses au-delà, colline à
 ##   l'est avec un plateau au sommet (belvédère), bosses douces dans les bois, butte au vent du
-##   port ; il s'efface sur les RIM_FADE derniers mètres : la lèvre est partout à y = 0.
-##   Pentes ≤ 40° (tests/unit/test_world_terrain.gd).
-##
-## La forme du bord est reprise telle quelle par shaders/terrain.gdshader (edge_distance) :
-## garder edge_radius() identique dans les deux.
+##   port ; il s'efface sur les RIM_FADE derniers mètres (vers le tracé d'origine du bord et vers
+##   les anses : IslandEdge.fade_distance) : la lèvre est partout à y = 0. Pentes ≤ 40°
+##   (tests/unit/test_world_terrain.gd).
 ##
 ## (H9) Atlas du sol à 27 tuiles (GROUND_LAYERS, contrat du cahier n° 2) : le shader du sol déduit
 ## ses rangées de sa taille et replie une tuile absente sur sa tuile d'origine (GROUND_FALLBACK,
@@ -41,14 +43,12 @@ const BLOCK := 4
 ## Hauteur renvoyée hors de l'île : le vide, sous la KillZone (y < −10) et sous la roche.
 const VOID_HEIGHT := -100.0
 
-## Bord : rayon moyen de la superellipse (puissance 4), encoche du quai au sud, avancée du
-## Couchant à l'ouest (même tracé que l'ancienne côte : les zones ne bougent pas).
-const EDGE_RADIUS := 74.5
-const BAY_DEPTH := 6.0
-const WEST_BULGE := 2.5
-## Le relief s'efface entre RIM_FADE et RIM_FLAT m du bord ; le dernier mètre est plat, à y = 0.
+## Le relief s'efface entre RIM_FADE et RIM_FLAT m du bord ; le dernier mètre est plat, à y = 0
+## (B1 : mesuré à la côte lissée ; au vrai bord, ébréchures comprises, RIM_FLAT_SURE m au moins).
 const RIM_FLAT := 1.0
 const RIM_FADE := 8.0
+## (B1) Mètres, en deçà du bord exact (ébréchures comprises), où le relief est nul à coup sûr.
+const RIM_FLAT_SURE := 0.6
 
 ## Cercle de veille (arène du Couchant) : centre (x, z) de l'île, rayon des bornes de l'arène,
 ## rayon plat et largeur de la rampe au-delà de laquelle les dunes s'élèvent.
@@ -160,6 +160,8 @@ static var _shape_cache: ConcavePolygonShape3D = null
 static var _atlas_cache: Texture2D = null
 ## (H9) Blocs plats de la surface (1 : plat), calculés une fois.
 static var _flat_blocks := PackedByteArray()
+## (B1) Rim de la surface en une boucle ordonnée, calculée une fois.
+static var _rim_loop_cache := PackedVector3Array()
 
 var _mesh_instance: MeshInstance3D
 var _rock_instance: MeshInstance3D
@@ -231,7 +233,9 @@ class Surface:
 		var t1 := 1.0
 		var e1 := edge[outer]
 		var t := e0 / (e0 - e1)
-		for _iteration in 5:
+		# (B1) Fausse position « Illinois » : converge aussi sur les ébréchures anguleuses du bord.
+		var side := 0
+		for _iteration in 24:
 			var probe := a.lerp(b, t)
 			var e := IslandTerrain.edge_distance(probe.x, probe.y)
 			if absf(e) < 0.0002:
@@ -239,9 +243,15 @@ class Surface:
 			if e > 0.0:
 				t0 = t
 				e0 = e
+				if side == 1:
+					e1 *= 0.5
+				side = 1
 			else:
 				t1 = t
 				e1 = e
+				if side == -1:
+					e0 *= 0.5
+				side = -1
 			t = t0 + e0 / (e0 - e1) * (t1 - t0)
 		var p := a.lerp(b, t)
 		var index := vertices.size()
@@ -263,10 +273,12 @@ func build() -> void:
 		_rock_instance = _internal_mesh(&"Rock")
 	apply_shape_uniforms(MATERIAL)
 	if not Engine.is_editor_hint():
-		# En jeu seulement : dans l'éditeur, le matériau enregistré garderait la copie.
+		# En jeu seulement : dans l'éditeur, le matériau enregistré garderait la copie (sans la
+		# table du bord, le shader n'y dessine pas la lèvre de pierre).
 		MATERIAL.set_shader_parameter(
 			&"ground_atlas", mipmapped_atlas(MATERIAL.get_shader_parameter(&"ground_atlas"))
 		)
+		MATERIAL.set_shader_parameter(&"edge_table", IslandEdge.texture())
 	_mesh_instance.mesh = terrain_mesh()
 	_rock_instance.mesh = IslandRock.rock_mesh()
 	if Engine.is_editor_hint() or _collision != null:
@@ -286,38 +298,35 @@ func _internal_mesh(node_name: StringName) -> MeshInstance3D:
 
 
 # --- Bord -------------------------------------------------------------------------------------
+# (B1) La forme du bord vit dans IslandEdge (src/world/island_edge.gd) ; ces raccourcis gardent
+# l'API d'avant.
 
 
-## Rayon du bord dans la direction angle = atan2(z, x) (sud = +π/2, ouest = π), en norme 4
-## (superellipse). Formule reprise par terrain.gdshader.
+## Rayon (m, distance au centre de l'île) du bord dans la direction angle = atan2(z, x) (sud =
+## +π/2, ouest = π).
 static func edge_radius(angle: float) -> float:
-	var radius := EDGE_RADIUS
-	radius += 1.2 * sin(3.0 * angle + 0.4) + 0.8 * sin(5.0 * angle + 2.1)
-	radius += 0.4 * sin(9.0 * angle + 0.7)
-	var bay := angle_difference(angle, PI / 2.0) / 0.32
-	var bulge := angle_difference(angle, PI) / 0.45
-	return radius - BAY_DEPTH * exp(-bay * bay) + WEST_BULGE * exp(-bulge * bulge)
+	return IslandEdge.radius(angle)
 
 
-## Distance (m, approchée) du point au bord : > 0 sur l'île, < 0 dans le vide.
+## Distance (m, approchée au premier ordre) du point au bord : > 0 sur l'île, < 0 dans le vide.
 static func edge_distance(x: float, z: float) -> float:
-	var x2 := x * x
-	var z2 := z * z
-	var norm := sqrt(sqrt(x2 * x2 + z2 * z2))
-	return edge_radius(atan2(z, x)) - norm
+	return IslandEdge.distance(x, z)
 
 
 ## Point (x, z) du bord dans la direction angle = atan2(z, x).
 static func edge_point(angle: float) -> Vector2:
-	var direction := Vector2.from_angle(angle)
-	var x2 := direction.x * direction.x
-	var z2 := direction.y * direction.y
-	return direction * edge_radius(angle) / sqrt(sqrt(x2 * x2 + z2 * z2))
+	return IslandEdge.point(angle)
 
 
 ## True si le point est sur l'île (en deçà du bord).
 static func is_land(x: float, z: float) -> bool:
-	return edge_distance(x, z) > 0.0
+	return IslandEdge.distance(x, z) > 0.0
+
+
+## (B1) Distance exacte (m) du point au bord (> 0 sur l'île) : marges d'un décor, d'un PNJ, d'un
+## objet (1 ou 3 m du vide, tests/unit/test_world_edge_margins.gd).
+static func distance_to_edge(x: float, z: float) -> float:
+	return IslandEdge.exact_distance(x, z)
 
 
 # --- Relief -----------------------------------------------------------------------------------
@@ -331,9 +340,10 @@ static func height_at(x: float, z: float) -> float:
 
 
 ## Hauteur du relief en (x, z), prolongée au-delà du bord (0) : sert aux normales et aux points
-## de coupe du bord.
+## de coupe du bord. (B1) Effacé comme avant vers le tracé d'origine (au-delà, les avancées de la
+## côte sont plates, à y = 0) et vers la côte lissée (les anses) : IslandEdge.fade_distance().
 static func land_height(x: float, z: float) -> float:
-	var fade := smoothstep(RIM_FLAT, RIM_FADE, edge_distance(x, z))
+	var fade := smoothstep(RIM_FLAT, RIM_FADE, IslandEdge.fade_distance(x, z))
 	if fade <= 0.0:
 		return 0.0
 	var relief := _bumps(x, z, MOUNDS)
@@ -463,6 +473,52 @@ static func rim_segments() -> PackedVector3Array:
 	for n in s.rim.size():
 		points[n] = s.vertices[s.rim[n]]
 	return points
+
+
+## (B1) Bord de la surface en une seule boucle fermée (points de rim_segments() enchaînés), dans
+## le sens des angles croissants, en commençant au nord (angle −π/2). Vide si le bord n'est pas
+## une boucle unique (tests/unit/test_world_terrain.gd le vérifie).
+static func rim_loop() -> PackedVector3Array:
+	if not _rim_loop_cache.is_empty():
+		return _rim_loop_cache
+	var s := surface()
+	var next: Dictionary[int, int] = {}
+	for n in range(0, s.rim.size(), 2):
+		next[s.rim[n]] = s.rim[n + 1]
+	if next.is_empty():
+		return PackedVector3Array()
+	var first: int = next.keys()[0]
+	var order := PackedInt32Array([first])
+	var current: int = next[first]
+	while current != first:
+		if not next.has(current) or order.size() > next.size():
+			return PackedVector3Array()
+		order.append(current)
+		current = next[current]
+	if order.size() != next.size():
+		return PackedVector3Array()
+	# Sens des angles croissants, départ au premier point après le nord.
+	var turn := 0.0
+	for n in order.size():
+		var a := s.vertices[order[n]]
+		var b := s.vertices[order[(n + 1) % order.size()]]
+		turn += angle_difference(atan2(a.z, a.x), atan2(b.z, b.x))
+	if turn < 0.0:
+		order.reverse()
+	var start := 0
+	var best := INF
+	for n in order.size():
+		var p := s.vertices[order[n]]
+		var after := fposmod(atan2(p.z, p.x) + PI / 2.0, TAU)
+		if after < best:
+			best = after
+			start = n
+	var loop := PackedVector3Array()
+	loop.resize(order.size())
+	for n in order.size():
+		loop[n] = s.vertices[order[(start + n) % order.size()]]
+	_rim_loop_cache = loop
+	return loop
 
 
 ## True si les (BLOCK + 1)² sommets du bloc de coin (i0, j0) sont sur l'île et à la même hauteur.
@@ -595,10 +651,9 @@ static func _is_flat_block(block: Vector2i) -> bool:
 
 
 ## Recopie les constantes de forme dans les uniformes d'un shader de l'île.
+## (B1) La forme du bord passe par la texture edge_table (IslandEdge.texture), posée en jeu par
+## build().
 static func apply_shape_uniforms(material: ShaderMaterial) -> void:
-	material.set_shader_parameter(&"edge_radius", EDGE_RADIUS)
-	material.set_shader_parameter(&"bay_depth", BAY_DEPTH)
-	material.set_shader_parameter(&"west_bulge", WEST_BULGE)
 	material.set_shader_parameter(&"arena_center", ARENA_CENTER)
 	material.set_shader_parameter(&"arena_radius", ARENA_RADIUS)
 	material.set_shader_parameter(&"plaza_radius", PLAZA_RADIUS)

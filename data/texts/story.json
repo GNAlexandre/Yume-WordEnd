@@ -26,5 +26,12 @@
     "_comment": "Mort du joueur : texte du fondu au noir, puis message à la réapparition devant l’infirmerie de l’entrepôt.",
     "fade": "Retour à l’entrepôt…",
     "message": "Les autres t’ont ramenée à l’entrepôt."
+  },
+  "desktop": {
+    "_comment": "Application de bureau (Windows, Linux ; docs/bureau.md), lus par DesktopApp : boutons du menu principal et du menu pause, cachés sur le Web. fullscreen_on / fullscreen_off : bouton du plein écran selon le réglage (F11 ou Alt+Entrée font de même) ; quit : menu principal ; quit_game : menu pause (la partie est écrite avant).",
+    "fullscreen_off": "Plein écran : non (F11)",
+    "fullscreen_on": "Plein écran : oui (F11)",
+    "quit": "Quitter",
+    "quit_game": "Quitter le jeu"
   }
 }
