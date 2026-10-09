@@ -2124,23 +2124,37 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   coupe et hauteur gardée dans UV2). Scènes écrites par `tools/hd2d_interior.py scenes` dans
   `src/world/props/` (sans méta de catégorie : `test_hd2d_decor` leur demande une collision).
   Règle de pose : au-delà d'1 m, contre un mur nord ; au milieu d'une pièce, profondeur
-  d'emprise ≥ (h − 0,25) / 0,78 − 0,35 m (pente du regard de la caméra) ; d'où la chaise à 0,7 m.
-- **E3 — images du lot I** : au manifeste avec `lot: "I"` (56 images : 12 matières, 3 portes,
-  2 fenêtres, 9 éléments de mur, 28 meubles, 2 tapis), remplaçants de `tools/hd2d_interior.py`.
-  En attendant le cahier n° 3, leurs noms et tailles sont dans `docs/INTERIEURS.md` (section 4),
-  que `test_hd2d_assets.gd` lit avec `docs/REFONTE.md`. `tools/hd2d_scenes.py`,
-  `test_hd2d_scenes.gd` et le compte des 45 décalques ne portent plus que sur les lots A à G du
-  cahier n° 2.
+  d'emprise ≥ (h − 0,25) / 0,78 − 0,35 m (pente du regard de la caméra) ; d'où la chaise à
+  0,65 m. Dans les 5 m nord d'un étage, la caméra butée sur `camera_bounds` voit plus à plat : on
+  n'y laisse derrière un meuble haut que moins de 0,7 m (chaises du réfectoire contre le mur
+  nord). Un meuble plaqué au mur (emprise < 0,3 m : le grand miroir) est coupé comme le mur
+  (`cut_height` 0,15), sinon son mètre gardé cache le joueur de l'autre côté du mur.
+- **E3 — images du lot I** (après la livraison réelle, PR #21) : au manifeste avec `lot: "I"`,
+  75 images à leur taille réelle (12 matières, 4 portes, 3 fenêtres, 12 éléments de mur,
+  42 meubles, 2 tapis de `assets/hd2d/decals/`) : les images livrées qu'emploie la carte d'essai
+  et 6 remplaçants pour les noms encore absents (`floor_flagstone_cellar`, `wall_cellar_stone`,
+  `wallcut_stone`, `door_armory`, `wallitem_height_marks`, et `door_frame_wood`, hors cahier).
+  Les remplaçants doublons d'une image livrée sous un autre nom sont retirés avec leurs scènes ;
+  `tools/hd2d_interior.py` ne dessine plus que les remplaçants, jamais une image livrée.
+  `test_hd2d_assets.gd` lit aussi `docs/ASSETS_HD2D_SUKASUKA.md` (qui écrit les chemins
+  complets) et accepte `solid_edge` sur tout bord, comme `tools/hd2d_assets.py check`
+  (`rug_brown` touche le bord bas). `tools/hd2d_scenes.py`, `test_hd2d_scenes.gd` et le compte des
+  45 décalques ne portent que sur les lots A à G du cahier n° 2.
+- **E3 — portes qu'on franchit** : image à ouverture transparente (`door_frame_wood`) ou aucune ;
+  `door_room` et `door_room_open` (battant ou embrasure opaques) cacheraient le joueur sur le seuil
+  avant que la coupe ne passe : réservées aux portes fermées (`passable: false`).
 - **E3 — carte d'essai** `entrepot_rdc_essai` (40 × 24 m) : couloir en L, réfectoire, cuisine,
-  salle de lecture, archives, descente vers la salle des armes (porte de cave fermée), salle de
-  bains, infirmerie, entrée, salle de jeux, toilettes (d'après `v1_vex.md` et `v2_v3.md`,
-  rubrique 3 ; toilettes et placard du couloir : canon, emplacement original). `camera_bounds` =
+  salle de lecture, archives, descente vers la salle des armes (porte rivetée fermée), salle de
+  bains, infirmerie, entrée, salle de jeux, chambre de Nygglatho (d'après `v1_vex.md` et
+  `v2_v3.md`, rubrique 3, et `docs/ASSETS_HD2D_SUKASUKA.md`, 3.17 ; la chambre de Nygglatho au
+  rez-de-chaussée, près de l'entrée : emplacement original, à revoir avec les lieux de D2), meublée
+  des images livrées. `camera_bounds` =
   Rect2(2, 5, 36, 14) : en x tout le bâtiment, la caméra reste au droit du joueur (le
   `Rect2(10, 9, L − 20, P − 17)` des cartes du dehors la décalerait, et une cloison nord-sud
   cacherait le joueur en biais). Après la fusion avec E1 : racine `Map`, sortie `MapExit`
   « vers_entrepot » franchie en marchant par la porte d'entrée, vers le `Spawn` de
   `ile_ancienne` tant que la carte `entrepot` (le dehors) n'existe pas ; la sortie « Descendre »
-  de la porte de cave attend la carte `entrepot_crypte` (marqueur `from_entrepot_crypte` déjà
+  de la porte rivetée attend la carte `entrepot_crypte` (marqueur `from_entrepot_crypte` déjà
   posé) : `test_maps.gd` demande des cibles qui existent.
 - **E3 — lumière d'une carte intérieure** (en attendant E9, comme `map_light.tscn` dehors) :
   enfant `Light`, instance de `src/world/interior_light.tscn` (WorldEnvironment au fond uni

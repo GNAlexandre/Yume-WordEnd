@@ -4,18 +4,19 @@
 [ext_resource type="Texture2D" path="res://assets/hd2d/interior/props/reading_table.png" id="2_image"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_reading_table"]
-size = Vector3(1.508, 0.854, 0.8)
+size = Vector3(1.694, 0.948, 0.9)
 
 [node name="reading_table" type="Node3D"]
 script = ExtResource("1_panel")
 texture = ExtResource("2_image")
 shadow_width = 0.9
-shadow_depth = 0.554
-image_offset = Vector3(0, 0, 0.4)
+shadow_depth = 0.555
+image_offset = Vector3(0, 0, 0.45)
+glow = 1
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.427, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.474, 0)
 shape = SubResource("BoxShape3D_reading_table")

@@ -1,12 +1,12 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://src/world/interior_panel.gd" id="1_panel"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/interior/props/medicine_cabinet.png" id="2_image"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/interior/props/towel_shelf.png" id="2_image"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_medicine_cabinet"]
-size = Vector3(0.94, 1.802, 0.4)
+[sub_resource type="BoxShape3D" id="BoxShape3D_towel_shelf"]
+size = Vector3(0.94, 1.604, 0.4)
 
-[node name="medicine_cabinet" type="Node3D"]
+[node name="towel_shelf" type="Node3D"]
 script = ExtResource("1_panel")
 texture = ExtResource("2_image")
 shadow_width = 0.9
@@ -17,5 +17,5 @@ image_offset = Vector3(0, 0, 0.2)
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.901, 0)
-shape = SubResource("BoxShape3D_medicine_cabinet")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.802, 0)
+shape = SubResource("BoxShape3D_towel_shelf")

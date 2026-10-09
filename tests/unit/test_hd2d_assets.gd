@@ -5,15 +5,16 @@ extends GutTest
 ## net (sauf « alpha doux ») et touchent le bord bas (ancre au sol) ou restent centrés (sprites qui
 ## volent), les décalques ne sont coupés par aucun bord, les flancs ont la forme de leur toit, les
 ## tuiles sont opaques, les bordures et les tuiles _b se raccordent, l'atlas du sol (27 tuiles) est
-## à jour, les deux cahiers nomment chaque image, et le poids des images tient dans le budget de
+## à jour, les cahiers nomment chaque image, et le poids des images tient dans le budget de
 ## l'export Web. tools/hd2d_assets.py check fait les mêmes vérifications, plus finement.
 
 const MANIFEST := "res://tools/hd2d_manifest.json"
-## (E3) Les intérieurs (lot I) : conventions de docs/REFONTE.md (section 8.1), liste et tailles de
-## docs/INTERIEURS.md, en attendant le cahier n° 3.
+## (E3) Les intérieurs (lot I) : conventions de docs/REFONTE.md (section 8.1), images du cahier n° 3
+## (docs/ASSETS_HD2D_SUKASUKA.md, section 3) et remplaçants hors cahier de docs/INTERIEURS.md.
 const DOCS: Array[String] = [
 	"res://docs/ASSETS_HD2D.md",
 	"res://docs/ASSETS_HD2D_MONDE.md",
+	"res://docs/ASSETS_HD2D_SUKASUKA.md",
 	"res://docs/REFONTE.md",
 	"res://docs/INTERIEURS.md",
 ]
@@ -241,13 +242,14 @@ func test_decals_fade_into_the_ground_away_from_their_edges() -> void:
 		var wrap_axis := String(entry.get("wrap", ""))
 		var solid := String(entry.get("solid_edge", ""))
 		var cut: Array[String] = []
-		if _cut(image, "left") and wrap_axis != "x":
+		# solid_edge : le bord plein voulu, quel qu'il soit (comme tools/hd2d_assets.py check).
+		if _cut(image, "left") and wrap_axis != "x" and solid != "left":
 			cut.append("gauche")
-		if _cut(image, "right") and wrap_axis != "x":
+		if _cut(image, "right") and wrap_axis != "x" and solid != "right":
 			cut.append("droit")
 		if _cut(image, "top") and wrap_axis != "y" and solid != "top":
 			cut.append("haut")
-		if _cut(image, "bottom") and wrap_axis != "y":
+		if _cut(image, "bottom") and wrap_axis != "y" and solid != "bottom":
 			cut.append("bas")
 		if not cut.is_empty():
 			problems.append("%s : coupé par le bord %s" % [path, ", ".join(cut)])
@@ -400,7 +402,9 @@ func test_specification_names_every_image() -> void:
 	for entry: Dictionary in _entries():
 		var image_name := String(entry["path"]).get_file().get_basename()
 		var size := "%d × %d" % [int(entry["size"][0]), int(entry["size"][1])]
-		if not doc.contains("`%s" % image_name):
+		# Le cahier n° 3 écrit le chemin complet : `assets/hd2d/interior/door_room.png`.
+		var named := doc.contains("`%s" % image_name) or doc.contains("/%s.png`" % image_name)
+		if not named:
 			missing.append(image_name)
 		elif String(entry["kind"]) in STANDING_KINDS + ["decal"] and not doc.contains(size):
 			missing.append("%s (%s)" % [image_name, size])

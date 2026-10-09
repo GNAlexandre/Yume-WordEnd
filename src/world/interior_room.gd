@@ -68,7 +68,7 @@ const FLOOR_RELIEF := 0.5
 const WALL_RELIEF := 0.6
 ## Lueur des vitres et des lampes de mur.
 const WINDOW_GLOW := 0.5
-const GLOWS := {"wallitem_lamp": 1.6}
+const GLOWS := {"wallitem_wall_lamp": 1.6}
 ## Ce que suit la lueur d'un panneau (panel_material) : rien, le jour, les lampes.
 const GLOW_STEADY := 0
 const GLOW_DAYLIGHT := 1

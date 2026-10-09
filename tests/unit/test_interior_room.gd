@@ -44,10 +44,11 @@ func _small() -> Dictionary:
 		"doors":
 		[
 			{"between": ["a", "b"], "z": 3.0, "image": "door_frame_wood"},
-			{"id": "dehors", "room": "a", "side": "S", "x": 3.0, "image": "door_wood"},
+			{"id": "dehors", "room": "a", "side": "S", "x": 3.0, "image": "door_room"},
 		],
-		"windows": [{"room": "a", "side": "N", "x": 3.0, "image": "window_cross"}],
-		"wall_items": [{"room": "b", "side": "N", "x": 7.0, "y": 1.5, "image": "wallitem_clock"}],
+		"windows": [{"room": "a", "side": "N", "x": 3.0, "image": "window_cross_small"}],
+		"wall_items":
+		[{"room": "b", "side": "N", "x": 7.0, "y": 1.5, "image": "wallitem_wall_clock"}],
 		"lights": [{"room": "b", "at": [7.0, 2.0], "radius": 2.5}],
 	}
 
@@ -73,9 +74,9 @@ func test_example_floor_is_valid() -> void:
 	assert_eq(plan.problems, [] as Array[String], "rez-de-chaussée d'essai sans faute")
 	assert_eq(plan.map_size, Vector2i(40, 24))
 	assert_eq(plan.rooms.size(), 11, "onze pièces")
-	assert_eq(plan.doors.size(), 13, "treize portes")
+	assert_eq(plan.doors.size(), 14, "quatorze portes")
 	assert_eq(plan.windows.size(), 11)
-	assert_eq(plan.wall_items.size(), 13)
+	assert_eq(plan.wall_items.size(), 17)
 	assert_eq(plan.lights.size(), 14)
 	assert_eq(plan.room_at(Vector3(8.0, 0.0, 5.0)), &"refectoire")
 	assert_eq(plan.room_at(Vector3(36.5, 0.0, 8.0)), &"couloir", "couloir en L")
@@ -209,7 +210,7 @@ func test_cut_follows_the_player_and_reaches_the_furniture() -> void:
 	player.position = Vector3(8.0, 0.0, 5.0)
 	room._process(0.016)
 	assert_eq(room.cut_line(), 10.0, "première image : la coupe se pose sur la limite")
-	var chair := load("%s/chair.tscn" % PROPS_DIR) as PackedScene
+	var chair := load("%s/chair_wood.tscn" % PROPS_DIR) as PackedScene
 	var panel := chair.instantiate() as InteriorPanel
 	add_child_autofree(panel)
 	var material := (panel.get_child(0, true) as MeshInstance3D).material_override as ShaderMaterial
@@ -302,7 +303,8 @@ func test_one_mesh_per_material() -> void:
 	assert_eq(names.keys().size(), expected.size(), "meshes : %s" % ", ".join(names.keys()))
 	for key: String in expected:
 		assert_true(names.has(key), "mesh %s" % key)
-	assert_lt(room.surfaces().size(), 32, "%d draw calls pour l'étage nu" % room.surfaces().size())
+	# Un par image : 5 sols, 5 murs, 2 dessus, 4 portes, 3 fenêtres, 12 éléments de mur, le vide.
+	assert_lt(room.surfaces().size(), 40, "%d draw calls pour l'étage nu" % room.surfaces().size())
 
 
 func test_collisions_are_the_floor_and_the_walls() -> void:
@@ -379,14 +381,16 @@ func _furniture_entries() -> Array[Dictionary]:
 	json.parse(FileAccess.get_file_as_string(MANIFEST))
 	var out: Array[Dictionary] = []
 	for entry: Dictionary in json.data["images"]:
-		if String(entry["path"]).begins_with("assets/hd2d/interior/props/"):
+		var path := String(entry["path"])
+		var rug := path.begins_with("assets/hd2d/decals/") and String(entry.get("lot", "")) == "I"
+		if path.begins_with("assets/hd2d/interior/props/") or rug:
 			out.append(entry)
 	return out
 
 
 func test_furniture_scenes_are_interior_panels_with_their_footprint() -> void:
 	var entries := _furniture_entries()
-	assert_gt(entries.size(), 25, "meubles du lot I")
+	assert_gt(entries.size(), 40, "meubles et tapis du lot I")
 	var problems: Array[String] = []
 	for entry in entries:
 		var image_name := String(entry["path"]).get_file().get_basename()
@@ -426,6 +430,10 @@ func _furniture_problems(node: Node, entry: Dictionary, label: String) -> Array[
 		problems.append("%s : l'emprise va de l'image (bord sud) vers le nord" % label)
 	if not is_equal_approx(shape.position.y, box.size.y / 2.0) or box.size.y < size.y - 0.01:
 		problems.append("%s : boîte posée au sol, de la hauteur de l'image" % label)
+	var wall_mounted := box.size.z < 0.3
+	var cut_like_wall := is_equal_approx(panel.cut_height, InteriorRoom.CUT_HEIGHT)
+	if wall_mounted != cut_like_wall:
+		problems.append("%s : coupé comme le mur si et seulement s'il y est plaqué" % label)
 	var quad := panel.get_child(0, true) as MeshInstance3D
 	var material := quad.material_override as ShaderMaterial
 	if material == null or material.shader != InteriorRoom.PANEL_SHADER:

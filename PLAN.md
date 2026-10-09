@@ -685,8 +685,8 @@ func front_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
   = &"interieur"`) et deux cartes de lumière vues de dessus, bornées à leur pièce (jour des fenêtres,
   lampes), ajoutées en émission ; aucune lumière du moteur ni ombre portée.
 - *Draw calls* : un par matière de sol, de mur, de dessus de mur, par image de panneau et de meuble
-  (le `PropBatcher` garde la coordonnée de coupe dans UV2), plus le vide : 31 à 51 par vue
-  meublée dans l'étage d'essai.
+  (le `PropBatcher` garde la coordonnée de coupe dans UV2), plus le vide : 36 à 67 par vue
+  meublée dans l'étage d'essai, dans la vraie partie, interface comprise.
 
 **Mode d'emploi pour décrire et meubler un intérieur** (détails : `docs/INTERIEURS.md`, section 1).
 1. Dessiner le plan sur une grille d'un mètre (origine au nord-ouest), 2 m de vide autour.
@@ -703,15 +703,21 @@ func front_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
    réglage par défaut rendu en partant), en attendant E9.
 4. Meubler sous `Geometry` avec les scènes `InteriorPanel` de `src/world/props/` : nœud au milieu
    de l'emprise, image au bord sud ; au-delà d'1 m de haut, contre un mur nord ; au milieu d'une
-   pièce, profondeur d'emprise ≥ `(h − 0,25) / 0,78 − 0,35` m ; 0,8 m de passage ; tapis :
-   `GroundDecal` `rug_*`.
+   pièce, profondeur d'emprise ≥ `(h − 0,25) / 0,78 − 0,35` m (dans les 5 m nord, où la caméra
+   bute sur ses bornes, moins de 0,7 m derrière un meuble haut) ; chaises `chair_wood` au nord
+   des tables, `chair_wood_back` au sud ; lits vus de flanc, tête à l'ouest ; 0,8 m de passage ;
+   tapis : `GroundDecal` de `assets/hd2d/decals/rug_*`. Portes qu'on franchit : image à
+   ouverture transparente (`door_frame_wood`) ou aucune ; `door_room` aux portes fermées.
 5. Tester l'étage sur le modèle de `tests/unit/test_interior_entrepot.gd` (circulation, portes,
    occlusion depuis chaque case, draw calls), dans la vraie partie sur le modèle de
    `tests/integration/test_interior_in_game.gd`, et le capturer sur le modèle de
    `tests/integration/demo_interieur.gd` (`game.tscn`, puis `WorldManager.enter_map`).
-Nouvelle image : `tools/hd2d_interior.py` (listes et recettes), puis `python3
-tools/hd2d_interior.py manifest`, `python3 tools/hd2d_assets.py gen --lot I`, `python3
-tools/hd2d_interior.py scenes`, `tools/import.sh`.
+Images : celles du cahier n° 3 (`docs/ASSETS_HD2D_SUKASUKA.md`, section 3), jamais retouchées.
+Une image qu'une carte emploie entre dans les listes de `tools/hd2d_interior.py` (taille réelle ;
+profondeur et lueur d'un meuble ; recette pour un remplaçant seulement), puis `python3
+tools/hd2d_interior.py manifest`, `python3 tools/hd2d_assets.py gen --lot I` (remplaçants),
+`python3 tools/hd2d_interior.py scenes`, `tools/import.sh`, `python3 tools/hd2d_assets.py check
+--lot I`.
 
 ## 4. Tranche verticale : WordEnd en HD-2D
 

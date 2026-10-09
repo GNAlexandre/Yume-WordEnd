@@ -1,21 +1,21 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://src/world/interior_panel.gd" id="1_panel"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/interior/props/kitchen_counter.png" id="2_image"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/interior/props/bed_iron.png" id="2_image"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_kitchen_counter"]
-size = Vector3(1.88, 1.052, 0.65)
+[sub_resource type="BoxShape3D" id="BoxShape3D_bed_iron"]
+size = Vector3(1.88, 1.052, 1)
 
-[node name="kitchen_counter" type="Node3D"]
+[node name="bed_iron" type="Node3D"]
 script = ExtResource("1_panel")
 texture = ExtResource("2_image")
 shadow_width = 0.9
-shadow_depth = 0.361
-image_offset = Vector3(0, 0, 0.325)
+shadow_depth = 0.556
+image_offset = Vector3(0, 0, 0.5)
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.526, 0)
-shape = SubResource("BoxShape3D_kitchen_counter")
+shape = SubResource("BoxShape3D_bed_iron")

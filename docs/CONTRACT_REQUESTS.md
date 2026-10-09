@@ -495,8 +495,8 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
 - Fait à la fusion avec E1 (commit 7c13393) : racine `Map`, sortie `MapExit`, stubs locaux
   retirés ; `test_maps.gd` vert pour `entrepot_rdc_essai`.
 - Sorties de l'étage d'essai à rebrancher quand les cartes existeront : `vers_entrepot` vise le
-  `Spawn` de `ile_ancienne` (à faire viser `entrepot` / `from_entrepot_rdc_essai`) ; la porte de
-  cave (`id` « crypte », `door_position(&"crypte")`) recevra sa `MapExit` « Descendre » vers
+  `Spawn` de `ile_ancienne` (à faire viser `entrepot` / `from_entrepot_rdc_essai`) ; la porte rivetée
+  (`id` « crypte », `door_position(&"crypte")`) recevra sa `MapExit` « Descendre » vers
   `entrepot_crypte` / `from_entrepot_rdc_essai` (marqueur d'arrivée `from_entrepot_crypte` déjà
   posé). Pour y entrer depuis la partie : une sortie dans `ile_ancienne` (porte de l'entrepôt du
   village) vers `entrepot_rdc_essai` / `from_ile_ancienne`, si E1 la veut avant la carte
@@ -509,3 +509,11 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   `InteriorRoom.VOID_COLOR` (aucun ciel n'est visible).
 - E2 : `InteriorRoom` offre `height_at`, `material_at`, `is_walkable` (et `room_at`) comme
   `MapGround` ; à garder alignés si leurs signatures changent.
+- Cahier n° 3 (lot I, `docs/ASSETS_HD2D_SUKASUKA.md`, 3.2) : ajouter `door_frame_wood`
+  (126 × 221, porte : chambranle de bois seul, seuil usé, **ouverture de 1,1 × 2,2 m
+  transparente**) pour les portes qu'on franchit : `door_room` et `door_room_open` sont opaques et
+  cacheraient le joueur sur le seuil. En attendant : remplaçant de `tools/hd2d_interior.py`, comme
+  `floor_flagstone_cellar`, `wall_cellar_stone`, `wallcut_stone`, `door_armory` et
+  `wallitem_height_marks` (prio 2, pas encore livrées).
+- Lieux (D2) : la carte d'essai pose la chambre de Nygglatho au rez-de-chaussée, près de l'entrée
+  (emplacement original) ; la vraie carte de l'entrepôt suivra le plan de D2.

@@ -10,12 +10,16 @@ extends Node
 ##   couloir     : le couloir, ses plannings, ses écriteaux, ses lampes (défaut) ;
 ##   refectoire  : le réfectoire, sa grande fenêtre, ses tables ;
 ##   cuisine     : la cuisine et son fourneau de cristal ;
-##   lecture     : la salle de lecture et son siège à la fenêtre ;
+##   lecture     : la salle de lecture et sa fenêtre à banc ;
 ##   archives    : les archives, l'océan de papiers, le canapé ;
 ##   infirmerie  : l'infirmerie, ses lits ;
 ##   jeux        : la salle de jeux, son tapis ;
+##   bains       : la salle de bains, sa cuve, son grand miroir ;
+##   entree      : l'entrée, ses patères, la double porte ;
+##   nygglatho   : la chambre de Nygglatho, sa cheminée, sa table à thé ;
 ##   derriere    : le joueur au sud du réfectoire, juste derrière le mur du couloir (coupé) ;
 ##   table       : le joueur derrière la table de la cuisine ;
+##   lit         : le joueur derrière un lit de l'infirmerie ;
 ##   porte       : le joueur dans la porte de la cloison réfectoire-cuisine (colonne de coupe) ;
 ##   descente    : la descente vers la salle des armes ;
 ##   plan        : tout l'étage, caméra au plus loin.
@@ -32,10 +36,14 @@ const SPOTS := {
 	"cuisine": [Vector3(18.6, 0.0, 4.4), Vector3(-1.0, 0.0, 0.0)],
 	"lecture": [Vector3(24.6, 0.0, 4.2), Vector3(0.0, 0.0, -1.0)],
 	"archives": [Vector3(31.4, 0.0, 7.4), Vector3(1.0, 0.0, 0.0)],
-	"infirmerie": [Vector3(12.0, 0.0, 16.6), Vector3(0.0, 0.0, -1.0)],
+	"infirmerie": [Vector3(11.9, 0.0, 17.3), Vector3(0.0, 0.0, -1.0)],
 	"jeux": [Vector3(27.0, 0.0, 15.4), Vector3(0.0, 0.0, 1.0)],
+	"bains": [Vector3(6.3, 0.0, 16.0), Vector3(-1.0, 0.0, 0.0)],
+	"entree": [Vector3(19.0, 0.0, 17.5), Vector3(0.0, 0.0, -1.0)],
+	"nygglatho": [Vector3(35.6, 0.0, 17.6), Vector3(0.0, 0.0, -1.0)],
 	"derriere": [Vector3(6.6, 0.0, 9.4), Vector3(1.0, 0.0, 0.0)],
-	"table": [Vector3(18.0, 0.0, 5.3), Vector3(0.0, 0.0, 1.0)],
+	"table": [Vector3(18.0, 0.0, 5.15), Vector3(0.0, 0.0, 1.0)],
+	"lit": [Vector3(10.0, 0.0, 17.3), Vector3(0.0, 0.0, 1.0)],
 	"porte": [Vector3(15.0, 0.0, 4.0), Vector3(1.0, 0.0, 0.0)],
 	"descente": [Vector3(36.5, 0.0, 4.6), Vector3(0.0, 0.0, -1.0)],
 	"plan": [Vector3(20.0, 0.0, 12.0), Vector3(0.0, 0.0, 1.0)],
