@@ -490,3 +490,31 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   reposer sur la nouvelle. Le garde-corps et les bittes du quai ne bougent pas.
 - La cascade (`Island/Waterfall`) tombe désormais au bout du lit du ruisseau, en (−62,1 ; −62,4)
   (`IslandEdge.WATERFALL_ANGLE`) : l'image `edge_waterfall` se pose là, sous la lèvre.
+
+## E9 — les personnages restent en plein jour la nuit (`src/visuals/`, E4 ou H6) — remplace la demande H5
+- Besoin : les planches (`AnimatedSprite3D` non ombré de `CharacterVisual`, Timeres compris) ne
+  sont pas éclairées ; la nuit, sous la pluie ou dans un intérieur, le décor s'assombrit mais les
+  personnages restent aussi clairs qu'au couchant.
+- Proposition : `CharacterVisual` multiplie `Sprite.modulate` par `Atmosphere.sprite_tint()` à
+  chaque image (la teinte change pendant les transitions ; blanche au couchant et au clair : rien
+  ne change dans l'acte 1 tel qu'il est). Teintes : `sprite_tint` des préréglages de
+  `data/lighting/` (nuit 0,7 / 0,76 / 0,92), multipliée par celle du temps.
+- En attendant : rien ; ils ressortent la nuit, ce qui les garde lisibles.
+
+## E9 — les cartes de E2 et E3 ne portent plus de lumière
+- Besoin : `src/world/map_light.tscn` est retiré ; une carte qui l'instancie ne se charge plus.
+  Une carte qui porte son propre `WorldEnvironment` ou sa `DirectionalLight3D` est réglée par
+  Atmosphere comme l'ancienne île, mais le contrat (docs/REFONTE.md 7.1, PLAN.md « (E9) Lumière
+  et temps ») veut qu'elle n'en ait pas.
+- Proposition : retirer ces nœuds des cartes `essai_relief` (E2) et `entrepot_rdc_essai` (E3) ;
+  E3 : `interior = true` (préréglage `interieur`, qui suit le moment du dehors), lampes et
+  cheminées en `OmniLight3D` (énergie de jour : `lamp_energy` les multiplie), fenêtres de nuit
+  `<nom>_night.png`.
+
+## E9 — flaques animées sous la pluie (`GroundDecal`, H9 / E2)
+- Besoin : `puddle_rain_a|b` (cahier n° 3, lot N : décalques animés) ; `GroundDecal` n'a pas de
+  bande animée.
+- Proposition : `frames` et `fps` sur `GroundDecal` comme sur `DecorPanel` (phase dans UV2) ;
+  les flaques posées par image `puddle_*` ne se montreraient que sous la pluie (HD2DLightTargets
+  les réglerait par leur nom, comme les vitres éclairées `window_lit_*`).
+- En attendant : sol mouillé et reflets seulement.
