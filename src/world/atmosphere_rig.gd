@@ -31,8 +31,10 @@ const CURTAIN_FPS := 12.0
 const CURTAIN_LAYER := 0
 ## Soleil d'une carte sans le sien (celui d'island.tscn) et hauteur d'où il éclaire (m).
 const SUN_HEIGHT := 40.0
+## Taille d'un pixel de l'orbe (m) : un peu plus grande que le décor, pour qu'elle se voie.
+const ORB_PIXEL_SIZE := 1.0 / 64.0
 ## Opacité du rideau à l'averse : il double les gouttes du monde, il ne les cache pas.
-const CURTAIN_OPACITY := 0.55
+const CURTAIN_OPACITY := 0.8
 
 ## Lumière du joueur : énergie et portée à pleine force, couleur (blanc bleuté de l'orbe),
 ## hauteur (m, la main levée) et écart de côté (m, vers où il regarde).
@@ -85,7 +87,7 @@ func setup(map: Node) -> void:
 	orb.name = &"Orb"
 	orb.texture = ORB_TEXTURE
 	orb.hframes = ORB_FRAMES
-	orb.pixel_size = 1.0 / DecorPanel.PIXELS_PER_METER
+	orb.pixel_size = ORB_PIXEL_SIZE
 	orb.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	orb.shaded = false
 	orb.transparent = true
@@ -133,7 +135,7 @@ func apply(lighting: HD2DLighting, light_part: float) -> void:
 	orb.modulate = Color(1.0, 1.0, 1.0, _light_amount)
 	_rain_amount = lighting.rain
 	rain.intensity = lighting.rain
-	rain.tint = Color(lighting.sky_light_color.lerp(Color(0.8, 0.86, 0.96), 0.7), 0.5)
+	rain.tint = Color(lighting.ambient_color.lerp(Color(0.86, 0.9, 0.98), 0.6), 0.75)
 	curtain_layer.visible = lighting.rain > 0.01
 	_curtain_material.set_shader_parameter(&"intensity", lighting.rain * CURTAIN_OPACITY)
 	_curtain_material.set_shader_parameter(&"heavy", smoothstep(0.45, 0.9, lighting.rain))

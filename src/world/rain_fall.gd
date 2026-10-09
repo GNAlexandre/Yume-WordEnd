@@ -31,7 +31,7 @@ var intensity: float = 0.0:
 		intensity = clampf(value, 0.0, 1.0)
 		_update_visibility()
 ## Teinte des gouttes (alpha : opacité à l'averse) ; posée par le préréglage.
-var tint: Color = Color(0.78, 0.84, 0.96, 0.5):
+var tint: Color = Color(0.82, 0.88, 0.98, 0.7):
 	set(value):
 		tint = value
 		if _drop_material != null:

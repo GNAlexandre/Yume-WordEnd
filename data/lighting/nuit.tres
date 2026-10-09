@@ -13,6 +13,7 @@ sun_azimuth_deg = 110.0
 sky_texture = ExtResource("2_sky")
 clouds_tint = Color(0.34, 0.38, 0.56, 1)
 clouds_warm = Color(0.72, 0.82, 1, 1)
+clouds_stars = 1.0
 ambient_color = Color(0.34, 0.38, 0.6, 1)
 ambient_energy = 0.62
 fog_color = Color(0.16, 0.18, 0.32, 1)

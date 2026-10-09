@@ -121,6 +121,7 @@ func _apply_clouds(lighting: HD2DLighting, clouds_from: Texture2D, mix: float) -
 	for material: ShaderMaterial in clouds:
 		material.set_shader_parameter(&"tint", lighting.clouds_tint)
 		material.set_shader_parameter(&"warm", lighting.clouds_warm)
+		material.set_shader_parameter(&"stars", lighting.clouds_stars)
 		if flat.length() > 0.01:
 			material.set_shader_parameter(&"sun_direction", flat.normalized())
 		var base := material.get_meta(DAY_TEXTURE_META) as Texture2D

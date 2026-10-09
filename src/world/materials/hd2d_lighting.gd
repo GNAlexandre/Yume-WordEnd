@@ -73,6 +73,9 @@ static var _blend_properties: Array = []
 @export var clouds_tint: Color = Color.WHITE
 ## (E9) Couleur du côté du soleil (le couchant : orangé ; la nuit : argent froid).
 @export var clouds_warm: Color = Color(0.99, 0.78, 0.55)
+## (E9) Étoiles dans les creux de la mer de nuages (0..1) : la caméra, inclinée, ne voit jamais
+## le ciel au-dessus de l'horizon ; la nuit, ses étoiles se voient là.
+@export_range(0.0, 1.0) var clouds_stars: float = 0.0
 
 @export_group("Ambiance")
 @export var ambient_color: Color = Color(0.78, 0.72, 0.86)

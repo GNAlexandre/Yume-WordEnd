@@ -102,7 +102,7 @@
   {"path": "assets/hd2d/fx/shadow.png", "size": [128, 64], "kind": "fx", "prio": 3},
   {"path": "assets/hd2d/fx/glow.png", "size": [128, 128], "kind": "fx", "prio": 3},
   {"path": "assets/hd2d/fx/light_pool.png", "size": [256, 256], "kind": "fx", "prio": 3},
-  {"path": "assets/hd2d/fx/rain_drop.png", "size": [4, 48], "kind": "fx", "prio": 3},
+  {"path": "assets/hd2d/fx/rain_drop.png", "size": [6, 56], "kind": "fx", "prio": 3},
   {"path": "assets/hd2d/buildings/materials/roof_tiles_b.png", "size": [192, 192], "kind": "tile", "prio": 1, "lot": "D"},
   {"path": "assets/hd2d/buildings/materials/roof_slate_b.png", "size": [192, 192], "kind": "tile", "prio": 1, "lot": "D"},
   {"path": "assets/hd2d/buildings/materials/wall_plaster_b.png", "size": [192, 192], "kind": "tile", "prio": 1, "lot": "D"},

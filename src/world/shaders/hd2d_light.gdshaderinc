@@ -19,8 +19,9 @@ void light() {
 	DIFFUSE_LIGHT += LIGHT_COLOR * ATTENUATION * shape * (1.0 - 0.3 * hd2d_wetness) / PI;
 	if (hd2d_wetness > 0.0) {
 		float flat_part = mix(0.2, 1.0, hd2d_relief);
-		float gloss = pow(clamp(dot(NORMAL, normalize(LIGHT + VIEW)), 0.0, 1.0), 28.0);
+		float gloss = pow(clamp(dot(NORMAL, normalize(LIGHT + VIEW)), 0.0, 1.0), 64.0);
 		float sheen = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 4.0);
-		SPECULAR_LIGHT += LIGHT_COLOR * ATTENUATION * hd2d_wetness * flat_part * (gloss * 0.9 + sheen * 0.35);
+		vec3 lit = min(LIGHT_COLOR * ATTENUATION, vec3(1.5));
+		SPECULAR_LIGHT += lit * hd2d_wetness * flat_part * (gloss * 0.22 + sheen * 0.1);
 	}
 }

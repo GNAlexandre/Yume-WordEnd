@@ -6,7 +6,8 @@
 // src/world/materials/hd2d_lighting.gd). (E9) Les préréglages de lumière (Atmosphere) posent
 // tint, warm (couleur du côté du soleil ou de la lune) et sun_direction ; une autre image
 // (clouds_next : la mer de nuages de nuit ou de pluie du cahier n° 3) se fond dans la première
-// pendant une transition (clouds_mix de 0 à 1 ; à 1, Atmosphere la pose dans clouds).
+// pendant une transition (clouds_mix de 0 à 1 ; à 1, Atmosphere la pose dans clouds) ; la nuit,
+// des étoiles scintillent dans ses creux (stars).
 shader_type spatial;
 render_mode unshaded, cull_disabled, shadows_disabled;
 
@@ -20,6 +21,11 @@ uniform vec2 drift = vec2(0.6, 0.25);
 uniform vec2 sun_direction = vec2(-1.0, 0.0);
 uniform vec4 warm : source_color = vec4(0.99, 0.78, 0.55, 1.0);
 uniform vec4 tint : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+// (E9) Étoiles dans les creux sombres de la mer de nuages, la nuit (0..1) : des points de
+// lumière fixes qui scintillent, seule part du ciel étoilé que montre la caméra inclinée (elle ne
+// voit jamais au-dessus de l'horizon).
+uniform float stars : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 star_color : source_color = vec4(0.9, 0.94, 1.0, 1.0);
 
 varying vec3 world_pos;
 
@@ -51,5 +57,13 @@ void fragment() {
 	}
 	float toward_sun = clamp(dot(normalize(p + vec2(0.0001)), normalize(sun_direction)), 0.0, 1.0);
 	c = mix(c, c * warm.rgb * 1.15, toward_sun * 0.5);
-	ALBEDO = c * tint.rgb;
+	vec3 shine = vec3(0.0);
+	if (stars > 0.001) {
+		vec2 cell = floor(p / 1.4);
+		float h = fract(sin(dot(cell, vec2(12.9898, 78.233))) * 43758.5453);
+		float hollow = 1.0 - smoothstep(0.2, 0.5, dot(c, vec3(0.33)));
+		float twinkle = 0.55 + 0.45 * sin(TIME * (1.2 + 2.5 * fract(h * 7.31)) + h * 40.0);
+		shine = star_color.rgb * step(0.993, h) * hollow * twinkle * stars;
+	}
+	ALBEDO = c * tint.rgb + shine;
 }

@@ -5,7 +5,7 @@
 [resource]
 resource_name = "pluie"
 script = ExtResource("1_script")
-rain = 0.35
+rain = 0.45
 wetness = 0.55
 sun_scale = 0.6
 ambient_scale = 0.92
