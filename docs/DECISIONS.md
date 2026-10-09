@@ -2134,7 +2134,10 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   fois l'écran revenu, dans le style du nom de zone du HUD ; vide pour `ile_ancienne` (le HUD
   annonce ses zones).
 - **E1 — chargement découpé** : comme `Loading.load_scene` (dépendances d'abord, feuilles en
-  premier), 40 ms de travail par image sous le noir. L'ancienne carte est libérée (`free`) juste
+  premier), 100 ms de travail par image sous le noir, où le monde 3D n'est plus dessiné
+  (`Viewport.disable_3d`, rétabli juste après l'installation, une image avant le fondu de
+  retour) : sur le Web en rendu logiciel, l'île se rechargeait en 17 s et 30 images (chacune
+  redessinait la carte sous le noir), en 5 s et 15 images ensuite. L'ancienne carte est libérée (`free`) juste
   avant l'instanciation de la nouvelle, une fois les ressources de la nouvelle chargées : les
   images communes restent en cache, une seule carte instanciée. Aucune carte n'est préchargée
   (`preload`) par du code durable : elle resterait en mémoire.
@@ -2151,3 +2154,15 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   « Carte d'essai », arrivée `from_essai` en (41 ; 66,2) tournée vers le sud (à 6,5 m du bord).
 - **E1 — décalques** : `GroundDecal.follow_ground` suit `IslandTerrain` (le relief de l'île) ;
   sur une nouvelle carte, le mettre à faux tant que E2 ne l'a pas branché sur `MapGround`.
+- **E1 — une seule carte en mémoire** (`tools/map_bench.gd`, aller-retour île ↔ essai) : deux
+  caches statiques gardaient l'ancienne carte. `PropBatcher._soups` (triangles de chaque mesh
+  fondu, clé = le mesh) gardait en vie les meshes propres à chaque décor (murs des `Building`,
+  décalques drapés) de chaque carte instanciée : + 566 objets et + 3 Mo par aller-retour ; il est
+  désormais propre à chaque `batch()`. Les caches de matériaux de `DecorPanel`, `Building` et
+  `GroundDecal` (clé = RID de l'image) gardaient toutes les images vues : ils sont en références
+  faibles, clé = chemin de l'image (RID sans chemin), et `update_foreground` oublie les matériaux
+  morts. Mesuré sans écran : carte d'essai seule 148 Mo, 231 ressources ; après l'île, avant
+  410 Mo et 584 ressources, après 263 Mo et 311 ressources (restent les caches de l'île :
+  `IslandTerrain` et `IslandRock`, maillages et atlas du sol, et les planches des PNJ de
+  `SheetLoader`) ; nœuds, objets et ressources identiques d'une visite à l'autre. Revers : l'île
+  se recharge de zéro à chaque retour (1,5 s sous Xvfb au lieu de 0,3 s).

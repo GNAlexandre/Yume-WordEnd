@@ -71,9 +71,10 @@ const GROUND_PROBE_DOWN := 30.0
 const GROUND_CLEARANCE := 0.05
 ## (E1) Images physiques après une arrivée pendant lesquelles is_transitioning() reste vrai.
 const SETTLE_FRAMES := 3
-## (E1) Durée de chaque fondu (s) et travail de chargement par image (ms), par défaut.
+## (E1) Durée de chaque fondu (s) et travail de chargement par image (ms), par défaut : sous le
+## noir, rien ne bouge à l'écran, une image tous les 100 ms suffit à garder la page vivante.
 const DEFAULT_FADE_TIME := 0.35
-const DEFAULT_LOAD_BUDGET_MS := 40.0
+const DEFAULT_LOAD_BUDGET_MS := 100.0
 ## (E1) Bornes de la caméra sans carte : celles de l'ancienne île.
 const DEFAULT_CAMERA_BOUNDS := Rect2(-71.0, -70.0, 142.0, 136.0)
 ## Ordre de chargement des dépendances (feuilles d'abord) : celui de l'écran de chargement.
@@ -138,24 +139,35 @@ func go_to(map_id: StringName, marker: StringName = SPAWN_MARKER) -> void:
 	transition_started.emit(map_id)
 	await _fade_to(1.0)
 	var faded := Time.get_ticks_usec()
+	# Écran noir : le monde 3D n'est plus dessiné pendant le chargement (une image ne coûte plus
+	# que l'interface : le chargement découpé avance bien plus vite, surtout sur le Web).
+	_set_world_hidden(true)
 	var scene: PackedScene = null
 	var frames := 0
 	var current := current_map_node()
-	if is_instance_valid(slot) and (current == null or current.map_id() != map_id):
+	var needs_load := current == null or current.map_id() != map_id
+	if is_instance_valid(slot) and needs_load:
 		var loaded: Array = await _load_in_frames(Map.scene_path(map_id))
 		scene = loaded[0] as PackedScene
 		frames = int(loaded[1])
 	if not is_instance_valid(slot) or not slot.is_inside_tree():
 		# La partie a été libérée pendant le fondu (retour au menu) : rien à installer.
-		_finish(player, false)
+		_set_world_hidden(false)
+		_finish(player)
 		return
 	var loaded_at := Time.get_ticks_usec()
-	var installed := _install(scene, map_id, marker, null)
+	var installed := not (needs_load and scene == null) and _install(scene, map_id, marker, null)
+	if not installed:
+		push_error("WorldManager : carte %s illisible, on reste ici" % map_id)
 	var installed_at := Time.get_ticks_usec()
-	# Une image de la nouvelle carte sous le noir (constructions différées), puis le retour.
+	# Une image de la nouvelle carte sous le noir (constructions différées, premiers shaders),
+	# puis le retour.
+	_set_world_hidden(false)
 	await get_tree().process_frame
 	await _fade_to(0.0)
-	_finish(player, installed)
+	_finish(player)
+	if not installed:
+		return
 	_last_transition = {
 		"map": map_id,
 		"marker": _arrival_marker,
@@ -454,12 +466,18 @@ func _fade_to(target: float) -> void:
 
 ## Fin d'un changement de carte : joueur rendu, fondu levé, sorties sourdes encore
 ## SETTLE_FRAMES images physiques.
-func _finish(player: Node3D, _installed: bool) -> void:
+func _finish(player: Node3D) -> void:
 	_fade = 0.0
 	if is_instance_valid(player):
 		player.process_mode = _frozen_mode
 	_settle_frames = SETTLE_FRAMES
 	_busy = false
+
+
+## Écran noir d'un changement de carte : le monde 3D de la fenêtre n'est plus dessiné
+## (Viewport.disable_3d), l'interface si.
+func _set_world_hidden(hidden: bool) -> void:
+	get_tree().root.disable_3d = hidden
 
 
 ## Fige le joueur pendant le changement de carte (ni mouvement, ni coup, ni interaction), en

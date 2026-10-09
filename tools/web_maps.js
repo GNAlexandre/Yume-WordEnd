@@ -106,11 +106,12 @@ async function waitLog(logs, pattern, timeoutMs, from = 0) {
 		}
 		console.log(logs[done]);
 		console.log(`  ${frames} images affichées par la page en ${((Date.now() - begin) / 1000).toFixed(1)} s`);
-		await sleep(1500);
+		// Le rendu logiciel tourne à 1 ou 2 images/s : la fin du fondu met plusieurs secondes à paraître.
+		await sleep(4000);
 		await page.screenshot({ path: `${SHOTS}/maps_web_${i}_${maps[i]}.png` });
 		from = done + 1;
 	}
-	console.log('voyage terminé :', (await waitLog(logs, /\[m1\] voyage terminé/, 60000)) >= 0);
+	console.log('voyage terminé :', (await waitLog(logs, /\[m1\] voyage terminé/, 180000)) >= 0);
 	const fps = logs.filter((l) => /\[m1\] \d+ i\/s/.test(l)).slice(-3);
 	for (const l of fps) {
 		console.log(l);

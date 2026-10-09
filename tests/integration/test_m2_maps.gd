@@ -104,9 +104,12 @@ func test_fade_hides_the_swap() -> void:
 	await start_game()
 	WorldManager.fade_time = 0.25
 	var at_swap: Array[float] = []
+	var hidden_at_swap: Array[bool] = []
 	listen(
 		EventBus.map_entered,
-		func(_map_id: StringName) -> void: at_swap.append(WorldManager.fade_alpha())
+		func(_map_id: StringName) -> void:
+			at_swap.append(WorldManager.fade_alpha())
+			hidden_at_swap.append(get_tree().root.disable_3d)
 	)
 	var seen: Array[float] = []
 	var fade := game.get_node(^"UI/MapFade")
@@ -115,6 +118,8 @@ func test_fade_hides_the_swap() -> void:
 		await get_tree().process_frame
 		seen.append(fade.call(&"black_alpha"))
 	assert_eq(at_swap, [1.0] as Array[float], "carte changée sous le noir complet")
+	assert_eq(hidden_at_swap, [true] as Array[bool], "monde 3D non dessiné sous le noir")
+	assert_false(get_tree().root.disable_3d, "monde 3D de nouveau dessiné")
 	assert_true(seen.any(func(a: float) -> bool: return a > 0.05 and a < 0.95), "fondu progressif")
 	assert_eq(seen.max(), 1.0, "noir complet")
 	assert_eq(fade.call(&"black_alpha"), 0.0, "écran rendu")

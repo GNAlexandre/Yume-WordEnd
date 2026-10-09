@@ -11,11 +11,22 @@ extends SceneTree
 ## d'une partie) puis pour chaque WorldManager.go_to : fondu, chargement découpé (et ses
 ## images), installation (ancienne carte libérée, nouvelle instanciée, joueur posé), total ;
 ## puis, à chaque arrivée, les nœuds, objets et ressources vivants et la mémoire statique.
-## Une carte quittée doit être libérée : ResourceLoader.has_cached(sa scène) faux, et les mêmes
-## comptes à chaque visite d'une même carte. Code de retour 1 sinon. Tout est libéré avant de
-## quitter (pas de « resources still in use at exit »).
+## Une carte quittée doit être libérée : ResourceLoader.has_cached(sa scène, une image qui
+## n'est qu'à elle) faux, et les mêmes comptes à chaque visite d'une même carte (nœuds exacts,
+## objets à OBJECT_SLACK près : un tween ou une minuterie en vol). Code de
+## retour 1 sinon. Tout est libéré avant de quitter (pas de « resources still in use at
+## exit »).
 
 const GAME_SCENE := "res://src/game.tscn"
+## Images propres à une carte : libérées avec elle (caches de matériaux en références faibles).
+const OWN_IMAGES := {
+	"ile_ancienne": "res://assets/hd2d/buildings/port_hangar.png",
+	"essai": "res://assets/hd2d/ground/path_dirt.png",
+}
+
+## Objets tolérés en plus ou en moins d'une visite à l'autre (une fuite en laissait des
+## centaines par carte rechargée).
+const OBJECT_SLACK := 20
 
 var _failures: Array[String] = []
 
@@ -81,7 +92,10 @@ func _run() -> void:
 			var scene_path := "res://src/world/maps/%s/%s.tscn" % [previous, previous]
 			if previous != map_id and ResourceLoader.has_cached(scene_path):
 				_failures.append("%s encore en mémoire après le départ" % previous)
-			if seen.has(map_id) and seen[map_id] != counts:
+			var image := str(OWN_IMAGES.get(previous, ""))
+			if previous != map_id and not image.is_empty() and ResourceLoader.has_cached(image):
+				_failures.append("%s : image %s gardée après le départ" % [previous, image])
+			if seen.has(map_id) and not _same_counts(seen[map_id], counts):
 				_failures.append("%s : %s puis %s" % [map_id, seen[map_id], counts])
 			seen[map_id] = counts
 	game.free()
@@ -112,6 +126,10 @@ func _report(world: Node, label: String) -> Array[int]:
 		)
 	)
 	return [nodes, objects] as Array[int]
+
+
+func _same_counts(before: Array[int], after: Array[int]) -> bool:
+	return before[0] == after[0] and absi(before[1] - after[1]) <= OBJECT_SLACK
 
 
 func _frames(count: int) -> void:

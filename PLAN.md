@@ -98,7 +98,9 @@ Yume-WordEnd/
 │   ├── warnings_allow.txt     # avertissements Godot tolérés à l'import
 │   ├── screenshot.sh          # rend une scène en PNG sous Xvfb
 │   ├── screenshot.gd          # script Godot appelé par screenshot.sh
-│   ├── hd2d_shots.sh          # (HD-2D) captures de la vraie partie : menu, cinq zones, conversation, veille
+│   ├── hd2d_shots.sh          # (HD-2D) captures de la vraie partie : menu, cinq zones, conversation, veille,
+│   │                          # (E1) quai, fondu, essai, retour (cartes)
+│   ├── map_bench.gd           # (E1) temps de chargement et mémoire des changements de carte
 │   ├── hd2d_assets.py         # (HD-2D) images de remplacement : gen, check, fit, atlas (Pillow)
 │   ├── hd2d_manifest.json     # (HD-2D) liste exacte des images du décor (chemin, taille, genre)
 │   ├── hd2d_art.py, hd2d_ground.py, hd2d_props.py, hd2d_sky.py   # recettes de pixel art
@@ -337,7 +339,7 @@ func camera_bounds() -> Rect2             # Map.bounds() de la carte courante ; 
 func is_transitioning() -> bool           # fondus, chargement, et SETTLE_FRAMES (3) images physiques après l'arrivée
 func fade_alpha() -> float                # opacité du noir (0..1), dessinée par UI/MapFade
 func last_transition() -> Dictionary      # mesures du dernier go_to : fade_out_ms, load_ms, load_frames, install_ms, total_ms
-var fade_time: float = 0.35 / var load_budget_ms: float = 40.0
+var fade_time: float = 0.35 / var load_budget_ms: float = 100.0   # sous le noir, le monde 3D n'est pas dessiné
 signal transition_started(map_id: StringName) / signal transition_finished(map_id: StringName)
 const LEGACY_MAP := &"ile_ancienne" / const START_MAP := &"ile_ancienne"   # l'île héritée ; une nouvelle partie y commence
 # (E1) Zones : elles n'existent que dans ile_ancienne. load_zone/teleport d'une zone de l'île (LEGACY_ZONES) depuis une
@@ -552,6 +554,73 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 **Repères de l'île** : sol à y = 0, île de 160 × 160 m centrée sur l'origine, nord = −Z, ouest = −X. Village au centre (`Bounds` ±22 m, `Spawn` local (0, 0,2, 9)) ; dunes à x = −51 (`Spawn` côté village (24, 0,2, 0), arène de 12 m de rayon au centre, `SpawnN/S/E/W` à 13 m) ; forêt à z = −51 ; plage à z = +51 ; colline à x = +51. Les cinq zones pavent l'île : chaque pas sur l'île est dans une zone.
 
 **Tests** : (Lot Q) base des tests de quêtes `tests/stubs/q_quest_test.gd`, contenu des quêtes vérifié par `tests/unit/test_quest_content.gd` ; stubs dans `tests/stubs/` (`visual_stub.tscn` hérite de `character_visual.tscn` et émet `frame_changed` / `animation_finished` à la demande, `player_stub.tscn` du groupe `player` avec Health et Hurtbox, `dummy.tscn` mannequin du groupe `enemies`), sans `class_name`. `tests/unit/test_contracts.gd` vérifie tout ce qui précède : un lot qui le fait échouer a cassé un contrat. Propriété des tests du Lot 0 : `test_health.gd` passe à L4, `test_game_state.gd` à L7, `test_save_roundtrip_l0.gd` à L8 (ils peuvent les adapter à leur implémentation) ; `test_contracts.gd`, `test_stubs_l0.gd`, `tests/integration/test_game_flow_l0.gd` et les stubs existants ne changent que dans une PR « contrats ». Un lot qui a besoin d'un autre stub en crée un nouveau fichier (`tests/stubs/<lot>_<nom>.gd`/`.tscn`, sans `class_name`).
+
+### (E1) Créer une carte : mode d'emploi
+
+Contrat : `docs/REFONTE.md`, section 7.1 ; exemple complet : `src/world/maps/essai/essai.tscn`.
+
+1. **Fichier et racine.** `src/world/maps/<map_id>/<map_id>.tscn`, `map_id` en `snake_case`
+   ASCII qui commence par une lettre (`entrepot_rdc`, `sentier`). Racine `Node3D` nommée
+   `<map_id>`, script `res://src/world/map.gd` (`Map`), avec ses exports :
+   - `display_name` : annoncé à l'entrée par `UI/MapFade` (vide : rien) ;
+   - `region` (lieu de la carte de l'île), `interior`, `light_preset` (E9) ;
+   - `size` (largeur x, profondeur z, en m) ;
+   - `camera_bounds` : bornes du **point visé** (2,5 m au nord du joueur), pas de l'image. La vue
+     montre environ 10 m de part et d'autre du point visé, 7 m au sud et 21 m au nord : pour ne
+     rien montrer au-delà des bords est, ouest et sud d'une carte de L × P m, prendre à peu près
+     `Rect2(10, 9, L − 20, P − 17)` (carte d'essai, 40 × 30 : `Rect2(10, 9, 20, 13)`) ; au nord,
+     c'est le décor haut du bord (lisière, façades, falaise) qui ferme la vue, ou ce qu'on
+     contemple au-delà (ciel, mer de nuages). Vide : la carte entière.
+2. **Repères.** Coin nord-ouest à l'origine, x vers l'est, z vers le sud, 1 unité = 1 m, sol
+   courant à y = 0, paliers de 0,5 m ; tout dans [0, size.x] × [0, size.y]. La caméra regarde le
+   nord : le haut de l'écran est le nord ; rien de haut au sud d'un endroit où l'on marche, ce
+   qu'on contemple au-delà d'un bord se pose au nord.
+3. **Enfants figés** (`Map.REQUIRED_CHILDREN`, tous des `Node3D`) :
+   - `Ground` : le sol et sa collision, couche 1 (`MapGround` d'E2 dehors, `InteriorRoom` d'E3
+     dedans ; en attendant, un `StaticBody3D` plat avec ses murs invisibles, comme la carte
+     d'essai). La carte doit être fermée : murs, falaises ou décor tout autour ;
+   - `Geometry` : script `res://src/world/prop_batcher.gd` ; les décors de `src/world/props/`
+     (instances), fondus en un draw call par image. Un `GroundDecal` y garde
+     `follow_ground = false` tant qu'E2 ne l'a pas branché sur `MapGround` (sinon il suit le
+     relief de l'ancienne île) ;
+   - `Markers` : des `Marker3D`. `Spawn` obligatoire (nouvelle partie, réapparition par défaut) ;
+     un marqueur `from_<carte d'origine>` par sortie qui mène ici (`from_<carte>_<suffixe>` si
+     plusieurs). Le joueur est posé au sol sous le marqueur, tourné vers son −Z : un marqueur
+     se place à 2 ou 3 m de la sortie qui y ramène, hors de sa forme et de toute collision, à
+     y = 0,2 au-dessus du sol ;
+   - `Exits` : des `Area3D` au script `res://src/world/map_exit.gd`, chacune avec une
+     `CollisionShape3D` qui couvre le passage (une boîte de 2 à 4 m), `collision_layer = 0`,
+     `collision_mask = 2` ; exports `target_map`, `target_marker` (`from_<cette carte>`),
+     `prompt` (vide : bout de sentier, on passe en marchant ; rempli : « Entrer », « Monter à
+     bord », on passe par E ou A). Une sortie à pied se pose au bord, devant un mur ;
+   - `Life` : PNJ, animaux, objets (E4, E5 ; un déclencheur de quête `QuestTrigger` marche
+     partout).
+   D'autres enfants sont permis : la lumière, en attendant E9, est une instance de
+   `src/world/map_light.tscn`.
+4. **Les deux bouts d'une sortie.** Une sortie de A vers B demande le marqueur `from_A` dans B ;
+   d'ordinaire, B a aussi la sortie de retour, avec le marqueur `from_B` dans A.
+5. **Vérifier.**
+   - `tools/import.sh`, puis `tools/test.sh tests/unit/test_maps.gd` : `Map.problems()` et
+     `Map.exit_problems()` sur chaque carte (enfants, Spawn, sol sur la couche 1, Geometry,
+     marqueurs dans la carte, sorties, cibles et marqueurs d'arrivée) ;
+   - une démonstration : instancier `src/game.tscn` puis `WorldManager.enter_map(&"<map_id>")`
+     (sans fondu) ou `await WorldManager.go_to(&"<map_id>")` ; modèle : les vues `essai`,
+     `fondu` et `retour` de `tests/integration/demo_hd2d.gd` (`tools/hd2d_shots.sh essai`) ;
+     au plus 200 draw calls par vue ;
+   - le temps de chargement : `tools/godot --headless --script tools/map_bench.gd -- --bench-maps=<map_id>,essai`
+     (et sous Xvfb, voir l'en-tête du fichier), puis dans le navigateur
+     `index.html?maps=<map_id>,essai` et `tools/web_maps.js` (docs/web.md).
+6. **Pièges.**
+   - Une carte n'est jamais préchargée (`preload`) par du code qui dure : elle resterait en
+     mémoire. Les caches de matériaux des décors sont en références faibles (une carte quittée
+     libère ses images) ; un nouveau cache statique doit l'être aussi.
+   - Dans un test, `WorldManager.fade_time = 0.0` (rétabli dans `after_each`) ;
+     `await WorldManager.go_to(…)` attend la fin du fondu de retour, `is_transitioning()` encore
+     trois images physiques. Le joueur est figé (`process_mode` DISABLED) pendant le changement.
+   - Les zones (`Zone`, `zone_entered`) n'existent que dans `ile_ancienne` ; une nouvelle carte
+     n'en a pas besoin (son nom s'annonce par `display_name`).
+   - Une démonstration n'ajoute jamais une carte à côté d'une autre : une seule carte à la fois,
+     posée par WorldManager.
 
 ## 4. Tranche verticale : WordEnd en HD-2D
 

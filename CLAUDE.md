@@ -25,7 +25,8 @@ change pas sans PR « contrats ».
   `tools/import.sh` (liste les .uid / .import à commiter et les orphelins).
 - Capture d'une scène : `tools/screenshot.sh res://src/world/island.tscn build/shots/island.png`,
   puis ouvre le PNG avec l'outil de lecture d'images. Vues HD-2D de la vraie partie (menu, cinq
-  zones, conversation, veille ; draw calls dans le journal) : `tools/hd2d_shots.sh [vue…]`.
+  zones, conversation, veille, (E1) sortie du quai, fondu, carte d'essai, retour ; draw calls
+  dans le journal) : `tools/hd2d_shots.sh [vue…]`.
 - Images du décor (docs/ASSETS_HD2D.md, liste dans `tools/hd2d_manifest.json`) :
   `python3 tools/hd2d_assets.py gen` (remplaçants absents ; `--force`, ou des noms), `check`,
   `fit <fichier>` (image livrée trop grande), `atlas` (après une tuile de sol). Puis

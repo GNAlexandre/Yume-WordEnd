@@ -5,7 +5,8 @@ extends Node
 ## nœud que si l'un d'eux est présent (docs/web.md, « Raccourcis de test ») :
 ##   zone=<id>    place le joueur au Spawn de la zone, tourné vers le panneau de son arène s'il y
 ##                en a une (dunes : 15 m tout droit jusqu'au panneau), sinon vers son centre ;
-##                une zone inconnue est ignorée ;
+##                une zone inconnue est ignorée ; (E1) une partie reprise dans une autre carte
+##                revient d'abord sur l'ancienne île ;
 ##   timeres=<n>  banc de performance : n Timeres (les quatre types, au plus MAX_BENCH) errent
 ##                devant le joueur, dans le champ de la caméra, sans le poursuivre ;
 ##   trace        (intégration M2) le journal seul : la partie est celle du menu, telle quelle
@@ -39,6 +40,8 @@ const MAX_BENCH := 24
 const BENCH_RING := Vector2(3.5, 7.0)
 const BENCH_AHEAD := 6.5
 const REPORT_PERIOD := 2.0
+## (E1) Pause entre deux cartes du voyage (paramètre maps), en secondes.
+const MAP_PAUSE := 2.0
 
 ## Paramètres de cette exécution (clé → texte), posés par game.gd avant l'ajout à l'arbre.
 var parameters: Dictionary = {}
@@ -105,6 +108,9 @@ static func _keep(result: Dictionary, pair: String) -> void:
 func _ready() -> void:
 	var player := get_tree().get_first_node_in_group(&"player") as Player
 	var zone_id := StringName(str(parameters.get("zone", "")))
+	if zone_id in WorldManager.LEGACY_ZONES:
+		# (E1) Une partie reprise dans une autre carte revient d'abord sur l'ancienne île.
+		WorldManager.load_zone(zone_id)
 	var zone := _zone(zone_id)
 	if player != null and zone != null:
 		WorldManager.teleport(zone_id)
@@ -233,6 +239,8 @@ func _travel(map_ids: PackedStringArray) -> void:
 			_log("carte inconnue : %s" % map_id)
 			continue
 		await WorldManager.go_to(StringName(map_id))
+		# Le temps de regarder (et de capturer) chaque carte, même au rendu logiciel.
+		await get_tree().create_timer(MAP_PAUSE).timeout
 	_log("voyage terminé")
 
 
