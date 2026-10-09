@@ -2,8 +2,8 @@
 class_name PropScatter
 extends Node3D
 ## Pose plusieurs exemplaires d'un décor (scène de src/world/props/) : un point par exemplaire,
-## posé sur le relief de l'île (IslandTerrain.height_at), lacet et taille variés de façon
-## stable (graine). Les exemplaires sont des enfants internes recréés au chargement (aussi dans
+## posé sur le relief de l'île (IslandTerrain.height_at) ou, (T1) sur une carte de la refonte,
+## sur son sol en relief (MapGround.height_at), lacet et taille variés de façon stable (graine). Les exemplaires sont des enfants internes recréés au chargement (aussi dans
 ## l'éditeur) : seules les données ci-dessous sont enregistrées dans la scène. Le PropBatcher
 ## de la zone les regroupe ensuite en MultiMesh avec le reste du décor.
 ##
@@ -163,10 +163,29 @@ static func nearest_neighbor(at: PackedVector3Array, i: int) -> int:
 	return best
 
 
-## Hauteur du relief sous le point local (x, z), relative au y local 0.
+## Hauteur du relief sous le point local (x, z), relative au y local 0 : (T1) le sol en relief
+## (MapGround, enfant « Ground ») de la carte qui porte le décor, sinon l'île (IslandTerrain).
 func _ground_offset(point: Vector3) -> float:
 	var world := global_transform * Vector3(point.x, 0.0, point.z)
+	var ground := _map_ground()
+	if ground != null:
+		var local := ground.global_transform.affine_inverse() * world
+		var height := ground.height_at(local.x, local.z)
+		if height <= MapGround.VOID_HEIGHT:
+			return 0.0
+		return (ground.global_transform * Vector3(local.x, height, local.z)).y - world.y
 	return IslandTerrain.height_at(world.x, world.z) - world.y
+
+
+## (T1) Sol en relief (MapGround) du premier ancêtre qui en a un, comme GroundDecal ; null sinon.
+func _map_ground() -> MapGround:
+	var node := get_parent()
+	while node != null:
+		var ground := node.get_node_or_null(^"Ground") as MapGround
+		if ground != null:
+			return ground
+		node = node.get_parent()
+	return null
 
 
 func _queue_rebuild() -> void:

@@ -1,0 +1,59 @@
+{
+  "_comment": "Sol en relief de la carte entrepot, écrit par tools/map_build.py gen d'après plan.json avec heights.png, materials.png et structures.png : modifier le plan et relancer gen (format : PLAN.md, « Format du sol des cartes extérieures »).",
+  "format": "map_ground",
+  "version": 1,
+  "size": [88, 60],
+  "heights_image": "heights.png",
+  "height_step_value": 16,
+  "materials_image": "materials.png",
+  "materials_scale": 2,
+  "palette": {
+    "#5aa83c": "herbe",
+    "#3c6e32": "sous_bois",
+    "#d0a060": "chemin",
+    "#2e8a5a": "mousse",
+    "#504020": "tourbe",
+    "#c89a5a": "terre_battue",
+    "#3a70b0": "eau_basse",
+    "#4f9a46": "herbe_drue",
+    "#a8b040": "herbe_haute",
+    "#403020": "potager",
+    "#c070c0": "prairie",
+    "#60a0c0": "lit_ruisseau",
+    "#b0602a": "feuilles"
+  },
+  "edges": {
+    "north": "land",
+    "east": "land",
+    "south": "land",
+    "west": "land"
+  },
+  "skirt": 16,
+  "barrier": true,
+  "height_zero_value": 16,
+  "materials": {
+    "herbe_drue": {
+      "label": "Herbe drue et molle de la clairière (grass_b)",
+      "layer": "grass_b",
+      "color": "#4f9a46",
+      "variant": false
+    },
+    "chemin": {
+      "label": "Chemin de terre (path_dirt_b)",
+      "layer": "path_dirt_b",
+      "color": "#d0a060",
+      "variant": false,
+      "path": true
+    },
+    "eau_basse": {
+      "label": "Eau basse du marais : on y marche (VEX)",
+      "layer": "water",
+      "color": "#3a70b0",
+      "walkable": true,
+      "ripple": true,
+      "tint": [0.78, 0.86, 0.8]
+    }
+  },
+  "structures_image": "structures.png",
+  "spawn": [42, 33]
+}

@@ -620,6 +620,8 @@ def generate(map_id, plan_path=None):
     w, d = plan["size"]
     scale = int(plan.get("materials_scale", 1))
     step_value = int(plan.get("height_step_value", DEFAULT_STEP_VALUE))
+    # (T1) Paliers sous le sol courant (champ, marais à −0,5 m) : gris du palier 0 relevé.
+    zero_value = int(plan.get("height_zero_value", 0))
     noise = _value_noise(plan.get("seed", 1))
     base = plan.get("base", {})
     levels = [base.get("level", 0)] * (w * d)
@@ -685,7 +687,9 @@ def generate(map_id, plan_path=None):
     hp = heights.load()
     for c, level in enumerate(levels):
         if level is not None:
-            v = max(0, min(255, level * step_value))
+            v = zero_value + level * step_value
+            if not 0 <= v <= 255:
+                raise ValueError("palier %d hors de l'image (height_zero_value %d)" % (level, zero_value))
             hp[c % w, c // w] = (v, v, v, 255)
     heights.save(os.path.join(folder, "heights.png"), optimize=True)
     used = []
@@ -717,6 +721,8 @@ def generate(map_id, plan_path=None):
         "skirt": plan.get("skirt", DEFAULT_SKIRT),
         "barrier": plan.get("barrier", True),
     }
+    if zero_value:
+        spec["height_zero_value"] = zero_value
     if plan.get("materials"):
         spec["materials"] = plan["materials"]
     if any(entry is not None for entry in structures):
