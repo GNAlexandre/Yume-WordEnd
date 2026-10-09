@@ -55,8 +55,9 @@ renvoient aux **points nommés** de ce document (`entrepot:cour_willem`, `entrep
   caractère vaut 0,5 × 0,5 m ; dehors, 1 m (est-ouest) × 2 m (nord-sud). Les cotes en mètres sont
   en haut et à gauche. Symboles : `+ - |` murs, `=` porte sur un mur est-ouest, `:` porte sur un
   mur nord-sud, un trou dans un mur = ouverture sans porte, `o` fenêtre, `*` sortie à invite,
-  `< > ^ v` sortie à pied au bord, `@` marqueur `Spawn`, `T` tronc d'arbre, `#` bâtiment, `^`
-  forêt ou lisière, `&` fourré, `X` falaise ou roche, `H` rambarde, `/` toit, `W` eau profonde.
+  `< > ^ v` sortie à pied au bord, `@` marqueur `Spawn`, `T` tronc d'arbre, `#` bâtiment ou
+  rangée de maisons, `^` forêt ou lisière, `&` fourré ou haie, `X` falaise ou roche, `H` rambarde
+  ou parapet, `/` toit, `"` jardins clos, `-` muret (dehors), `W` eau profonde.
   Sols dehors : `.` herbe, `'` herbe fleurie, `,` herbe sèche, `:` terre et sentier, `=` potager,
   planches ou tôle, `~` boue, `w` eau basse, `%` tourbe, `;` sous-bois, `_` pavés et dalles.
   Les lettres sont les meubles et décors, légendés sous chaque plan.
@@ -1233,9 +1234,1565 @@ point armes_coffret 7.4 6.8
 point armes_centre 7.2 4.5
 ```
 
-## 4 à 11. Les autres lieux
+## 4. Le sentier et le marais (`sentier`)
 
-Ces lieux sont dessinés dans la suite de ce document.
+### 4.1 Ce que dit l'œuvre
+
+- Un sentier étroit qui s'enfonce dans une forêt noire, **sans lampadaire ni aucune lumière** ; la
+  nuit, si couvert que seule la lumière des étoiles filtre par endroits et qu'on ne voit pas ses
+  pieds (V1, « L'Homme sans Marque »).
+- En s'en écartant, Willem a les pieds dans l'eau : le marais sent l'eau, la terre et le vent ; il
+  y tombe à la renverse dans une gerbe ; une lumière zigzague, Pannibal bondit de l'ombre avec son
+  épée de bois et une petite lumière dans la main, puis Chtholly arrive avec la sienne (même
+  chapitre).
+- De jour, un petit sentier forestier aux pierres clairsemées, mal entretenues, mangées d'herbe, où
+  l'on ne se perd pas tant qu'on le suit ; le soleil filtre entre les arbres (V3, « Je suis à la
+  maison ») ; on y court de l'entrepôt au bord de l'île (V1, « La fille errante… ») ; de l'entrepôt
+  on **descend** vers la ville (V5, « La fin imminente »).
+
+### 4.2 Plan
+
+<!-- ascii:sentier -->
+```text
+sentier : 80 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord en haut
+      0         10        20        30        40        50        60        70        80
+    0 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^wwwwAAAAwwwwwwwwAAAAwwwwwwwwAAAAwwwwAAAAww^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^wwwwTwwwwwwwwwwwwwIIIIwwwwwJJwwwwwwTwwwwww^^^^^^^^^^^^^^^^^^^^^^
+   10 ^^^^^^^^^^^^^^^^wwwwwwwwwwwBBwwwwwIIIEEEFFwJJwwwwwwwwwwwww^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^wwwwwwwwwwwwwwwwwwwwwEEEFFwwwCCwwwwwwwwwww^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^wwwwwwwwwwwwwwwCCwwwwwwwDDwwwwwwwwwwwwwwww^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^wwwwwwwwGGwwwwwwwwwwwwwwDDwwwwwwwwwwwwwwww^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww;;;;;;;;;;;;;;;;;;;;;;
+   20 ;;;;;;;;PPPPPPPP;;;;;;;;;;;;;;;;KK;;;;;;;;;;;;;;;;;;;;;;;;;;;;PPPPPPPP;;;;;;;;;;
+      ::::::::KKPPPPPP::::LL::::::::::KK::::::::::::LL::::::::::::KK:::::::::::::::::>
+      <:::::@:KK::::MM::::::::::::::::::::::::::::::::::::::::::::KK:::::::::::QQ:::::
+      ;;;;NNNN;;;;;;;;;;;;;;;;;;NNNN;;;;;;;;;;;;;;;;;;;;NNNN;;;;::::::::::::::;;;;^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^;;::::::::::::::;;;;^^^^
+   30 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^;;::::::::::::::;;^^^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^::::::::::;;^^^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^::::::::::;;^^^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^::::::::::;;^^^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^:::::::v::;;^^^^^^
+```
+Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_a ; `D` marsh_hummock_b ; `E` reeds ; `F` reeds_b ; `G` cattails ; `I` bog_pool_a ; `J` lily_pads ; `K` path_stones_a ; `L` path_stones_b ; `M` path_root_step ; `N` path_edge_ferns ; `P` fg_canopy_a ; `Q` thicket_b.
+<!-- /ascii:sentier -->
+
+- **Taille** 80 × 40 m ; **bornes** `Rect2(10, 9, 60, 23)`. Le sentier court d'ouest en est sur
+  une levée de terre ; le marais s'étend **au nord** (on le contemple, on peut y entrer) ; au sud,
+  sous-bois bas et premier plan. À l'est, la bifurcation : le chemin de la ville descend vers le
+  sud-est.
+- **Paliers** : sentier à 0 ; marais à −0,5 (eau au ras, berge `cliff/step_marsh`) ; lisière nord
+  à +1 (`cliff/wall_earth_1m`) ; le chemin de la ville descend à −0,5 par une rampe (62 → 70 ;
+  26 → 30).
+- **Matières** : sentier `path_overgrown` (cahier n° 3, **à confirmer** : en attendant
+  `path_dirt_b` et `grass_edge_*`), 1,5 m de terre visible au milieu d'une bande libre de 3 m ;
+  pierres plates `path_stones_a/b` ; marais `peat` et eau ; sous-bois `forest_floor`,
+  `leaf_litter`.
+- **Grands décors** : rideaux de roseaux `marsh_reed_wall` au fond du marais ; deux aulnes
+  (`alder`) ; souche noyée `marsh_snag` ; touradons `marsh_hummock_a/b` ; mare de tourbe
+  `bog_pool_a`, nénuphars `lily_pads` ; la racine qui fait marche `path_root_step` ; la voûte de
+  feuillage en premier plan suspendu `fg_canopy_a` (**à confirmer** par E10) au-dessus du sentier.
+- **Kits** : bord de chemin (`path_edge_ferns` hors de la bande libre, `fern_*`, `grass_clump_*`,
+  `stepping_stones`) ; marais (roseaux, massettes `cattails`, brume `mist_patch`, libellules) ;
+  lisière (`forest_wall_*` au nord) ; sous-bois sud (`fg_trunk_a/b`, `fg_bush`, `fg_fern`, premier
+  plan).
+- **Place réservée** `embuscade` (30 → 44, 13 → 21,5) : le bord du marais où tombe Willem ;
+  points `marais_chute` (35,5 ; 16,5), `lumiere_pannibal` (40 ; 12,5) (d'où part la lumière qui
+  zigzague), `chtholly_arrivee` (30 ; 21,8), `bifurcation`, `vue_marais`.
+- **Sorties** : `vers_entrepot` (ouest) → `entrepot`, `from_sentier` ; `vers_port` (est) → `port`,
+  `from_sentier` ; `vers_ville` (sud-est) → `ville_haute`, `from_sentier`. Marqueurs `from_entrepot`,
+  `from_port`, `from_ville_haute`.
+- **Lumière** : **aucune**. La nuit, préréglage `nuit_sans_lune` (E9) : seules les étoiles par les
+  trouées (`light_shaft_a` en bleu pâle) et les lumières de fée. Le jour, rais de soleil
+  (`light_shaft_a/b`, `sun_dapple`).
+- **Vue au nord** : le marais, ses roseaux, ses aulnes et la lisière noire ; la nuit, des
+  lucioles au-dessus de l'eau (`anim/fireflies`, **original**, absentes en fin d'automne : à garder
+  pour le printemps de l'acte 4).
+- **Densité** : 80 à 120 éléments par écran ; de la vie : grenouilles, libellules, corbeau (VIE.md).
+
+```plan
+carte sentier 80 40 dehors
+nom "Le sentier et le marais"
+region sentier
+sol forest_floor 0 0 80 40
+sol leaf_litter 0 26 80 34
+sol peat 16 5 58 19
+sol path_overgrown 0 22 80 26
+sol path_overgrown 58 24 72 40
+sol moss 58 18 80 22
+palier 1.0 0 0 80 5
+palier -0.5 16 5 58 18
+palier -0.5 62 30 74 40
+rampe 62 26 70 30 0 -0.5 S
+# --- bords : forêt dense, marais au nord du sentier (V1, « L'Homme sans Marque ») ---
+bord foret 0 0 80 5 11
+bord foret 0 5 16 19 10
+bord foret 58 5 80 18 10
+bord foret 0 29 56 40 9 pp
+bord foret 76 26 80 40 9 pp
+bord foret 56 32 62 40 9 pp
+bord foret 74 30 76 40 9 pp
+eau 16 5 58 19
+decor marsh_reed_wall 22 6.5 4 0.6 2 libre
+decor marsh_reed_wall 34 6.5 4 0.6 2 libre
+decor marsh_reed_wall 46 6.5 4 0.6 2 libre
+decor marsh_reed_wall 54 7 4 0.6 2 libre
+arbre alder 20 7.5 4 7
+arbre alder 51 8 4 7
+decor marsh_snag 28 11 2 1.2 2 libre
+decor marsh_hummock_a 32 15 1.2 0.8 0.8 libre
+decor marsh_hummock_b 41 16 0.9 0.6 0.6 libre
+decor marsh_hummock_a 46 13 1.2 0.8 0.8 libre
+decor reeds 38.5 11.5 1.5 1.5 1.4 libre
+decor reeds_b 40.5 12.5 1.5 1.5 1.4 libre
+decor cattails 25 16.5 1.5 1 1.4 libre
+decor bog_pool_a 36 9.5 3 2 0 libre
+decor lily_pads 44 10 2 1.5 0 libre
+# --- le sentier : pierres clairsemées, herbes (V3, « Je suis à la maison ») ---
+decor path_stones_a 9 24 2 1.5 0 libre
+decor path_stones_b 21 22.5 1.5 1 0 libre
+decor path_stones_a 33 21.8 2 1.5 0 libre
+decor path_stones_b 47 23 1.5 1 0 libre
+decor path_stones_a 61 23.5 2 1.5 0 libre
+decor path_root_step 15 24.6 2 0.6 0.6 libre
+decor path_edge_ferns 6 27 4 0.8 1.1 libre pp
+decor path_edge_ferns 28 26.4 4 0.8 1.1 libre pp
+decor path_edge_ferns 52 27 4 0.8 1.1 libre pp
+decor fg_canopy_a 12 22 8 1 4 libre pp
+decor fg_canopy_a 66 21 8 1 4 libre pp
+decor thicket_b 74 25.5 2 0.8 1.4
+# --- chemins ---
+chemin sentier 3 1;24 12;23.5 24;22 36;22.3 48;23.4 58;23.5 68;22 79;21.5
+chemin vers_ville 3 58;23.5 64;28 68;33 69;39
+place embuscade 30 13 44 21.5
+# --- sorties et marqueurs ---
+sortie vers_entrepot 0 22 0.6 26 entrepot from_sentier ""
+sortie vers_port 79.4 19.5 80 23.5 port from_sentier ""
+sortie vers_ville 67 39.4 71 40 ville_haute from_sentier ""
+marqueur Spawn 6 24 E
+marqueur from_entrepot 2.5 24 E
+marqueur from_port 77.5 21.5 O
+marqueur from_ville_haute 69 37.5 N
+point marais_chute 35.5 16.5
+point lumiere_pannibal 40 12.5
+point chtholly_arrivee 30 21.8
+point bifurcation 58 23.5
+point vue_marais 46 21.5
+```
+
+## 5. Le village des hommes-bêtes (`village`, `cafe`, `maison_limashenka`)
+
+### 5.1 Ce que dit l'œuvre
+
+- À quelques pas de l'entrepôt, au bord de l'île ; pas très grand, mais pas assez petit pour que
+  les fées connaissent tout le monde ; la campagne : presque personne n'y porte de beaux habits,
+  les gens élégants viennent d'ailleurs (VEX, « Cinq cents ans »).
+- Le café fait tout, faute d'autre endroit où manger : café le jour, alcool le soir ; une sonnette
+  à la porte ; une arrière-boutique ; l'après-midi, on y mange ou on y prend le thé ; une tablée
+  d'hommes-bêtes éméchés rit fort ; le serveur homme-chat en tablier offre des jus « pour la
+  maison » en cachette du patron (même chapitre).
+- La maison Limashenka : un salon, une vieille horloge murale purement mécanique, peigne doré dans
+  une caisse de résonance qui joue une comptine ; les pièces de rechange commandées (VEX,
+  « L'homme-chat »).
+
+### 5.2 Le village (`village`)
+
+<!-- ascii:village -->
+```text
+village : 56 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord en haut
+      0         10        20        30        40        50
+    0 
+         H########HHH#######HHHHHHHHH        HHHHHHHHHHHHHHHHH
+      www.########...#######..#####..^^^FF^^^..######..#####..
+      www.#grange#...#cafe##..#mai#..^^^^^^^^..#lima#..#cha#..
+      www.########.D.#######..#G###..^^^^^^^^..######..#####..
+   10 www::::::::::D::::*::::::G::::::::::::::::::*:::::::::::
+      www:::::::::::::::::::::::::::::::::::::::::::::::@::::>
+      www:::::::::::::::::::::::::::::::::::::::::::::::::::::
+      www...........::::..BBBB==========....::::..............
+      www...........::::..=========II===....::::..............
+   20 www...........::::..===JJJJ=======....::::..............
+      wMMM..#######.::::..===JJJJ=======....::::..####..####..
+      wMMM..#chaum#.::::..BBBB=======EEEEEE.::::..#ch#..#ap#..
+      www.::#######::::::::::::::::::EEEEEE:::::::####::......
+      www.::::::::::::::::::::::::::::::::::::::::::::::......
+   30 www,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^^KK^^
+      www,,,LLLL,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^^^^^^
+      wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+      wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+      &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+```
+Légende des lettres : `A` edge_waterfall ; `B` fence_wattle ; `C` wall_lantern ; `D` hanging_sign_key ; `E` laundry_line ; `F` bench_stone ; `G` flower_pots ; `I` haystack ; `J` cart_hay ; `K` beehives ; `L` washing_trough ; `M` firewood_pile.
+<!-- /ascii:village -->
+
+- **Taille** 56 × 40 m ; **bornes** `Rect2(10, 9, 36, 23)`. **Composition (original)** : une
+  rue est-ouest ; au nord, une rangée de maisons tournées vers elle, **le vide derrière elles**
+  (on le voit entre les maisons et depuis le belvédère) ; au sud, une seconde rangée basse, des
+  jardins, la rivière et le lavoir ; la rivière tombe du bord en cascade à l'ouest.
+- **Bâtiments** (façades livrées ou du cahier) : `village_barn` (x 4 → 12), **`cafe`** (livré,
+  x 15 → 22, porte à clochette `anim/cafe_door_bell`), `village_house_stone` (x 24 → 29),
+  **`limashenka_house`** (livrée, x 41 → 47, volets clos qui se rouvrent le jour 11),
+  `cottage_thatch_a` (x 49 → 54) ; seconde rangée `cottage_thatch_b` (x 6 → 13, z 22 → 27),
+  `cottage_thatch_c` (x 44 → 48), appentis `village_shed` (x 50 → 54). Les façades du cahier n° 3
+  ont des fenêtres éteintes, que la nuit allume (`window_lit_*`, lot N).
+- **Paliers** : rue et jardins à 0 ; le belvédère, un ressaut de rocher à +1 (31 → 39 ;
+  3,5 → 9) avec un banc de pierre ; la rivière à −0,5.
+- **Grands décors** : garde-fou bas au bord (`edge_parapet`, livré) ; cascade du bord
+  (`anim/edge_waterfall`) ; meule (`haystack`), charrette de foin (`cart_hay`), ruches
+  (`beehives`), lavoir (`washing_trough`), clôtures tressées (`fence_wattle`), corde à linge
+  (`laundry_line`, premier plan), bûches.
+- **Kits** : rue (`cart_ruts`, `hay_scatter`, `pebbles_*`, `flower_pots`, `window_box`) ;
+  jardins (`garden_bed`, `vegetable_patch`, `scarecrow`, `watering_can`) ; bord de l'île
+  (`edge_rocks_a/b`, `edge_grass`, `edge_roots`) ; sud (`fg_bush`, `fg_grass`, premier plan).
+- **Places** : `devant_cafe` (13 → 25, 10 → 15), `belvedere` (32 → 38,5 ; 5,5 → 8,5). **Points** :
+  `cafe_porte`, `cafe_terrasse`, `limashenka_porte`, `belvedere_vue`, `cascade_vue`, `lavoir`,
+  `ruche`.
+- **Sorties** : `vers_entrepot` (est) ; `porte_cafe` → `cafe`, « Entrer » ; `porte_limashenka` →
+  `maison_limashenka`, « Entrer » (fermée hors du jour 11 : « La maison est close. »).
+- **Lumière** : le jour ; le soir, les fenêtres du café et la lanterne à cristal de sa porte.
+- **Vue au nord** : le vide et la mer de nuages entre les maisons, des îles lointaines
+  (`distant_island_*`), la cascade qui se perd dans les nuages.
+- **Densité** : 70 à 100 éléments par écran ; habitants (VIE.md, section 2.6).
+
+```plan
+carte village 56 40 dehors
+nom "Le village"
+region village
+sol grass 0 0 56 40
+sol path_dirt 0 10 56 15.5
+sol path_dirt_b 4 27 50 31
+sol path_dirt_b 14 15.5 18 27
+sol path_dirt_b 38 15.5 42 27
+sol garden_soil 20 17 34 25
+sol grass_dry 0 31 56 40
+sol stream_bed 0 3 3 37
+sol stream_bed 3 34 56 37
+sol rock 31 3.5 39 9
+palier 1.0 31 3.5 39 9
+palier -0.5 0 3 3 37
+palier -0.5 3 34 56 37
+rampe 33 9 37 11 1.0 0 S
+# --- le bord de l'île : vide au nord, garde-fou bas (VEX : « au bord de l'île ») ---
+vide 0 0 56 3
+bord parapet 3 3 31 3.5 0.7
+bord parapet 39 3 56 3.5 0.7
+eau 0 3 3 37
+eau 3 34 56 37
+decor edge_waterfall 1.5 2.0 3 1 0 libre
+# --- rangée nord : les maisons tournées vers la rue, le vide derrière (original) ---
+bati grange 4 3.5 12 9.5 7 village_barn
+bati cafe 15 3.5 22 9.5 7.5 cafe
+bati maison_pierre 24 4 29 9 6 village_house_stone
+bati limashenka 41 4 47 9 6 limashenka_house
+bati chaumiere_est 49 4 54 9 5.5 cottage_thatch_a
+decor bench_stone 35 4.6 1.6 0.5 0.6
+decor fence_wattle 32 3.9 1.8 0.3 0.9 libre
+decor wall_lantern 17 9.6 0.4 0.2 0.6 libre
+decor flower_pots 25.6 10.0 0.7 0.5 0.6
+decor hanging_sign_key 13.5 9.9 0.4 0.3 2.2 libre
+# --- seconde rangée, basse (original) ---
+bati chaumiere_longue 6 22 13 27 5 cottage_thatch_b
+bati chaumiere_penchee 44 23 48 27 5 cottage_thatch_c
+bati appentis 50 22 54 25 3.5 village_shed
+decor haystack 30 19 2 1.6 1.6
+decor cart_hay 25 22.5 3 1.5 2
+decor beehives 53 31.4 1.6 0.8 1.0
+decor washing_trough 8 32.5 3 1 1.0
+decor fence_wattle 22 16.8 4 0.3 0.9
+decor fence_wattle 22 25.2 4 0.3 0.9
+decor laundry_line 34 26 6 0.3 2.2 libre pp
+decor firewood_pile 2.8 24 2 0.8 1.2
+# --- bord sud, bas (premier plan) ---
+bord haie 0 38 56 40 1.5 pp
+bord foret 50 31 56 34 6 pp
+# --- chemins et places ---
+chemin rue 4 4;12.5 55;12.5
+chemin ruelle_ouest 3 16;14 16;29
+chemin ruelle_est 3 40;14 40;29
+chemin chemin_bas 3 5;29 49;29
+place devant_cafe 13 10 25 15
+place belvedere 32 5.5 38.5 8.5
+# --- sorties ---
+sortie vers_entrepot 55.4 10.5 56 14.5 entrepot from_village ""
+sortie porte_cafe 17.8 9.5 19.2 10.1 cafe from_village "Entrer"
+sortie porte_limashenka 43.3 9 44.7 9.6 maison_limashenka from_village "Entrer"
+marqueur Spawn 50 12.5 O
+marqueur from_entrepot 53 12.5 O
+marqueur from_cafe 18.5 12 S
+marqueur from_maison_limashenka 44 11.5 S
+point cafe_porte 18.5 11
+point cafe_terrasse 22.5 13
+point limashenka_porte 44 10.6
+point belvedere_vue 35 6.2
+point cascade_vue 5 12.5
+point lavoir 8 30.4
+point ruche 53 29.6
+lumiere lanterne_cafe 17 9.6 2.0 cristal
+lumiere fenetres_cafe 18.5 9.5 2.0 fenetres
+```
+
+### 5.3 Le café (`cafe`) et la maison Limashenka (`maison_limashenka`)
+
+<!-- ascii:cafe -->
+```text
+cafe : 12 × 10 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord en haut
+      0         5         10
+    0 
+      
+        +--------------+----+
+        |...BBBBsalle..|III.|
+    2   |..............|arri|
+        |..CCCCCC......:....|
+        |..CCCCCC......:....|
+        |..............:....|
+    4   |..............|....|
+        |.EE.....EE....|....|
+        o.EED.AA.EED...|KKK.|
+        |.DDD.AA.DDD...|KKK.|
+    6   |.FFD....FFD...|KKK.|
+        |.FF.....FF....|....|
+        |..............|....|
+        |GGG...........|JJJ.|
+    8   |GGG....@......|JJJ.|
+        |..............|JJJ.|
+        +------==------+----+
+                v
+```
+Légende des lettres : `A` crystal_pendant ; `B` cafe_bottle_shelf ; `C` cafe_counter ; `D` cafe_table_heavy ; `E` chair_wood ; `F` chair_wood_back ; `G` cafe_drinkers_table ; `I` pantry_cupboard ; `J` sacks_vegetables ; `K` crates_barrels.
+<!-- /ascii:cafe -->
+
+| Pièce | Cotes (m) | Mobilier (images) | À examiner |
+| --- | --- | --- | --- |
+| **Salle du café** | 7,5 × 8 | comptoir `cafe_counter` (cafetière de cuivre, réchaud de cristal) et vitrine `cafe_cake_case` ; étagères `cafe_bottle_shelf` derrière ; deux tables `cafe_table_heavy` et leurs chaises `chair_wood` ; la table des buveurs `cafe_drinkers_table` ; menu à la craie `wallitem_menu_cafe` ; suspension à cristal | le menu (dessins de tasse, de chope, de gâteau) ; la clochette |
+| **Arrière-boutique** | 2,5 × 8 | rideau rayé `door_backroom` ; garde-manger, sacs, caisses | « Réservé au personnel » (le serveur y prend les jus) |
+
+Sortie au sud (mur coupé) vers `village`, `from_cafe` ; points `comptoir`, `table_fees` (la table
+des trois aînées, jour 9), `table_buveurs`, `arriere`. **Bornes** : la pièce entière.
+
+<!-- ascii:maison_limashenka -->
+```text
+maison_limashenka : 10 × 8 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord en haut
+      0         5         10
+    0 
+      
+        +----+----------+
+        |entr|BBBsalon..|
+    2   |....|...CCC....|
+        |....|...CCC.EEE|
+        |....|.AAAAAAEEE|
+        |....:.AAAAAAA..o
+    4   |....:.AAAAAAA..|
+        |....:.ADDDDAA..|
+        |....|.ADDDDAAFF|
+        |....|..DDDD..FF|
+    6   |.@..|..........|
+        |....|..........|
+        +-==-+----------+
+          v
+```
+Légende des lettres : `A` rug_salon ; `B` display_cabinet ; `C` toolbox_gears ; `D` sofa_salon ; `E` armchair_sheeted ; `F` side_table_salon.
+<!-- /ascii:maison_limashenka -->
+
+| Pièce | Cotes (m) | Mobilier (images) | À examiner |
+| --- | --- | --- | --- |
+| **Vestibule** | 2,5 × 6 | patères `wallitem_coat_hooks` | — |
+| **Salon** | 5,5 × 6 | **horloge `wallitem_clock_limashenka`** (fermée), puis `_open` (engrenages et peigne doré) pendant la réparation, puis le balancier qui va (`anim/clock_limashenka_swing`) ; boîte à outils `toolbox_gears` ; canapé `sofa_salon` ; fauteuil sous un drap `armchair_sheeted` ; vitrine de bibelots `display_cabinet` (boîtes à tabac) ; guéridon ; portrait de famille ; tapis `rug_salon` ; volets `window_shutters` | l'horloge ; le portrait (une mère et son petit) |
+
+Points `horloge` (Willem au travail), `rami`, `canape`. Maison fermée depuis le deuil (draps sur
+les meubles, **original**).
+
+```plan
+carte cafe 12 10 dedans
+nom "Le café du village"
+region village
+piece salle 1 1 8.5 9 floor_terracotta wall_panel_dark "salle"
+piece arriere 8.5 1 11 9 floor_planks_worn wall_plaster_worn "arrière"
+porte salle arriere 8.5 3.0 1.2 door_backroom
+porte salle dehors 4.75 9 1.4 door_room
+meuble cafe_bottle_shelf 4.0 1.45 2 0.6 2.0
+meuble cafe_counter 4.0 3.0 3 0.8 1.2
+objet cafe_cake_case 4.8 3.0
+mural wallitem_menu_cafe salle N 6.8 1.2 0.8
+fenetre salle O 5.0 window_cross_small 0.8
+meuble cafe_table_heavy 2.6 5.6 1.2 1.0 0.8
+meuble chair_wood 2.6 4.85 0.5 0.5 1.0
+meuble chair_wood_back 2.6 6.35 0.5 0.5 1.0
+meuble cafe_table_heavy 6.2 5.6 1.2 1.0 0.8
+meuble chair_wood 6.2 4.85 0.5 0.5 1.0
+meuble chair_wood_back 6.2 6.35 0.5 0.5 1.0
+objet juice_glasses 6.2 5.6
+meuble cafe_drinkers_table 2.2 8.0 1.6 0.9 0.8
+meuble crystal_pendant 4.4 5.6 0.8 0.3 0 libre
+meuble pantry_cupboard 9.75 1.45 1.1 0.6 2.0
+meuble sacks_vegetables 9.75 8.2 1.2 0.7 0.7
+meuble crates_barrels 9.75 5.6 1.2 1.0 1.2
+sortie vers_village 4.05 9 5.45 10 village from_cafe ""
+marqueur Spawn 4.75 8.2 N
+marqueur from_village 6.8 7.8 N
+point comptoir 4.0 4.1
+point table_fees 7.6 5.6
+point table_buveurs 3.4 7.2
+point arriere 9.75 3.6
+lumiere suspension 4.4 5.6 2.2 cristal
+lumiere comptoir 4.0 3.0 1.2 cristal
+```
+
+
+```plan
+carte maison_limashenka 10 8 dedans
+nom "La maison Limashenka"
+region village
+piece vestibule 1 1 3.5 7 floor_planks_worn wall_plaster_worn "entrée"
+piece salon 3.5 1 9 7 floor_planks_worn wall_wallpaper_floral "salon"
+porte vestibule salon 3.5 4.0 1.2 door_room
+porte vestibule dehors 2.25 7 1.2 door_room
+mural wallitem_coat_hooks vestibule O 3.0 0.9 1.2
+mural wallitem_clock_limashenka salon N 6.2 0.9 0.8
+mural wallitem_family_portrait salon N 8.0 1.4 0.6
+fenetre salon E 3.5 window_shutters 1.2
+meuble display_cabinet 4.5 1.4 1.2 0.5 1.9
+meuble toolbox_gears 6.2 2.6 0.8 0.5 0.4
+meuble sofa_salon 6.0 5.2 2.0 0.9 1.0
+meuble armchair_sheeted 8.2 3.0 1.0 0.9 1.05
+meuble side_table_salon 8.3 5.5 0.6 0.5 0.7
+meuble rug_salon 6.3 4.3 3 2 0 libre
+sortie vers_village 1.65 7 2.85 8 village from_maison_limashenka ""
+marqueur Spawn 2.25 6.0 N
+marqueur from_village 2.25 6.0 N
+point horloge 6.2 3.6
+point rami 8.0 4.4
+point canape 6.0 6.25
+lumiere fenetre 9 3.5 1.2 jour
+```
+
+## 6. Le port (`port`, `transport_garde`, `barocupot`)
+
+### 6.1 Ce que dit l'œuvre
+
+- La rue du port, au bord du vide, porte le panneau usé par les vents violents, aux flèches
+  rouges (V1, « L'Homme sans Marque ») ; le port garde ce qu'il faut aux dirigeables ; on s'y tient
+  au bord du vide et l'on voit, sous quelques nuages, la surface grise (V1, « Entrepôt de fées »).
+- Le transport de la Garde descend d'au-dessus de la mer de nuages précédé d'une lumière si forte
+  qu'on ne voit pas sa silhouette ; il est petit ; l'amarrage fait un lourd bruit de métal ; une
+  passerelle ; **trois bras d'ancrage** qui se fixent de l'arrière vers l'avant ; deux pales de
+  rotor qui ralentissent ; la chaudière enchantée qui se tait ; la trappe qui s'ouvre sous la
+  pression ; le lézard qui se fait petit pour sortir (même chapitre).
+- Rampe, sifflet à vapeur, charrettes de sacs qui filent sur l'aire-port (V2, « Le chemin du
+  retour… ») ; une colline toujours ventée juste à côté, d'où l'on voit tout arriver (V3, « La
+  Fille sans visage ») ; une pluie fine au crépuscule (V1).
+- Le Barocupot : au moins deux ponts, une petite salle du conseil de guerre où l'on est à l'étroit
+  avec un lézard deux fois plus grand qu'une fée ; une serviette prêtée ; un thé chaud, amer et
+  piquant, dans des tasses minuscules (V1, « La fille errante et le lézard volant »).
+
+### 6.2 Le port (`port`)
+
+<!-- ascii:port -->
+```text
+port : 70 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord en haut
+      0         10        20        30        40        50        60        70
+    0 
+      
+      HHH#####H####HHHHHHHHHHD  G  D   GG DHHHHHHHHH##########HH
+      ===#####=####==II==FF==D==G==D=B*GG=D==EE=JJJ=##########,,,,,,,,,,U,,,
+      ===#bur#=#ca#==II====CC===================JJJ=##########,,,,,,,,VV,,,,
+   10 ===#####=####==KKK============================#hangar###,,,,,,,,VV,,,,
+      ====================LL================LL======##########,,,,,,,,,,,,,,
+      ________________________________________________________,,,,,,,,,,,,,,
+      <___@___________________________________________________,,,,,,,,,,,,,,
+      ________________________________________________________,,,,,,,,,,,,,,
+   20 _____MM__________NNNN__________________NN_____________::::::::::::::::
+      ______________________________________________________::::::::::::::::
+      _______________________________________________QQ_____::::::::::::::::
+      ___________SS_____________PPPP___RR____________QQ_____::::XXXXXXXXXXXX
+      __________________________PPPP________________________::::::::::::::::
+   30 ......................................................................
+      .....................................................................>
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+```
+Légende des lettres : `A` garde_transport_side ; `B` gangway ; `C` rope_coil ; `D` mooring_arm_open ; `E` steam_whistle ; `F` capstan ; `G` bollard ; `I` crates_barrels ; `J` crystal_crates ; `K` cargo_cart_a ; `L` dock_lamp ; `M` signpost_port ; `N` wind_fence ; `P` cargo_cart_b ; `Q` hand_cart ; `R` sacks_pile ; `S` pallet_sacks ; `U` wind_sock ; `V` bench.
+<!-- /ascii:port -->
+
+- **Taille** 70 × 40 m ; **bornes** `Rect2(10, 6, 50, 17)`. **Composition** : au nord, le **vide**
+  et le poste d'amarrage ; le quai de tôle (z 5 → 14) ; la rue du port (z 14 → 20) ; au sud,
+  l'aire-port des charrettes ; à l'est, la colline ventée (+1, +2, +3) et la route de la ville qui
+  la contourne par le sud.
+- **Le navire au nord du quai** (`docs/REFONTE.md`, 3.1) : le transport de la Garde s'amarre
+  **de flanc**, son flanc (`ships/garde_transport_side`, 16 × 7 m, **à confirmer** par E7) face à
+  la caméra, de x 22 à 38, la quille sous le niveau du quai ; trois bras `mooring_arm_open`
+  (x 23,5, 29,5, 36,5 ; animation `anim/mooring_arm_clamp`) ; la passerelle `gangway` (x 32,5) ; la
+  trappe ronde (`anim/garde_transport_hatch`) au droit de la passerelle ; rotors
+  (`anim/garde_transport_rotor`). **En dehors des scènes, le poste est vide** : le passeur ne
+  vient que la nuit d'arrivée, et l'île n'a pas de ligne publique (V1).
+- **Bâtiments** : `harbor_office` (livré, x 3 → 8), la cabane du gardien `port_house_b` (x 9 → 13),
+  le hangar `port_hangar` (livré, x 46 → 56), tous sur le quai, **au nord de la rue** : rien de haut
+  au sud d'où l'on marche.
+- **Grands décors** : garde-corps `edge_railing` (livré) au bord, sauf au poste ; sifflet à vapeur
+  `steam_whistle` (vapeur `anim/furnace_steam`) ; cabestan `capstan` ; bittes `bollard` ; caisses
+  `crates_barrels`, `crystal_crates` ; charrettes `cargo_cart_a/b`, `hand_cart` ; brise-vent
+  `wind_fence` ; **le panneau aux flèches rouges** `signpost_port` (6 ; 21,2) : la flèche de droite
+  (est) montre de petites maisons de pierre (la ville), celle de gauche un bâtiment de bois dans
+  les arbres (l'entrepôt) ; sur la colline, la manche à air `wind_sock` (`anim/windsock_wave`) et
+  un banc.
+- **Paliers** : quai et rue à 0 ; colline ventée +1 → +3 (talus `cliff/wall_earth_1m` au sud et à
+  l'ouest) ; au-delà du bord, la falaise (`cliff/lip`, `cliff`) et la mer de nuages.
+- **Kits** : quai (`rope_coil`, `cargo_net`, `chain_pile`, `oil_stain`, `rust_streak`,
+  `drain_grate`, `fuel_barrels`) ; rue (`cobble`, `cart_ruts`, `puddle_*` sous la pluie) ;
+  aire-port (`sacks_pile`, `pallet_sacks`, `luggage`) ; colline (`wind_grass_a/b`, `grass_tuft`,
+  `rock_small_*`) ; sud (`fg_*`, premier plan).
+- **Places et points** : `accostage` (24 → 37, 7 → 13 : Willem attend, Limeskin jette les
+  épées) ; `aire_port` ; points `bord_du_vide` (17,5 ; 6,3 : Willem seul au bord), `accostage`,
+  `panneau`, `guichet`, `colline_sommet`, `charrettes`.
+- **Sorties** : `vers_sentier` (ouest) ; `vers_ville` (est, la route de 2 000 marmer) → `ville_marche`,
+  `from_port` ; `passerelle` → `transport_garde`, « Monter à bord » (seulement quand un navire est à
+  quai et que l'histoire le permet ; à l'acte 1, jamais).
+- **Lumière** : deux lanternes de quai à cristal `dock_lamp` (**original**), la fenêtre du bureau ;
+  le **projecteur du navire** (`sky/ship_searchlight`) qui perce les nuages à la descente ; au
+  crépuscule du jour 7, pluie fine (`anim/rain_drizzle`, flaques `anim/puddle_rain_a`).
+- **Vue au nord** : le vide, la mer de nuages, la surface grise par les trouées, des îles
+  lointaines et des dirigeables de passage (`airship_far_*`) ; le navire à quai.
+- **Densité** : 60 à 100 éléments par écran ; dockers et employés (VIE.md).
+
+```plan
+carte port 70 40 dehors
+nom "Le port"
+region port
+sol cobble 0 14 58 20
+sol metal 0 5 58 14
+sol gravel 0 20 58 30
+sol grass_dry 56 5 70 30
+sol path_dirt 54 20 70 34
+sol grass 0 30 70 40
+palier 1.0 58 5 70 27
+palier 2.0 61 5 70 22
+palier 3.0 63 5 70 16
+rampe 58 22 61 26 2.0 1.0 O
+rampe 61 16 64 20 3.0 2.0 O
+# --- le vide au nord : les navires s'amarrent au nord du quai (REFONTE, 3.1) ---
+vide 0 0 70 5
+bord rambarde 0 5 23 5.4 1.1
+bord rambarde 37 5 58 5.4 1.1
+decor garde_transport_side 30 2.6 16 1 7 libre
+decor mooring_arm_open 23.5 5.9 1 0.8 4
+decor mooring_arm_open 29.5 5.9 1 0.8 4
+decor mooring_arm_open 36.5 5.9 1 0.8 4
+decor gangway 32.5 6.4 2 1.6 1.1 libre
+decor steam_whistle 40 6.4 0.8 0.6 2
+decor capstan 20 6.6 1 0.9 0.9
+decor bollard 26.5 5.9 0.5 0.5 0.6
+decor bollard 34 5.9 0.5 0.5 0.6
+decor crates_barrels 16 8 2 1.5 1.5
+decor crystal_crates 43.5 8.5 2 1.2 1.2
+decor cargo_cart_a 16.5 11.2 3 1.6 1.8
+decor rope_coil 22 9 0.8 0.8 0.4 libre
+decor dock_lamp 21 12.6 0.5 0.5 3.2
+decor dock_lamp 39 12.6 0.5 0.5 3.2
+# --- le bureau du port et la cabane du gardien, sur le quai (cahiers n° 2 et 3) ---
+bati bureau_port 3 5.4 8 10.4 6 harbor_office
+bati cabane_gardien 9 5.4 13 10.4 6.5 port_house_b
+bati hangar 46 5.4 56 13.4 7 port_hangar
+# --- la rue du port et l'aire-port (V1 ; V2) ---
+decor signpost_port 6 21.2 1.6 0.4 3 pp
+decor wind_fence 18 21 2 0.3 1.4
+decor wind_fence 20 21 2 0.3 1.4
+decor wind_fence 40 21 2 0.3 1.4
+decor cargo_cart_b 28 28.5 2.5 1.2 1.4
+decor hand_cart 48 26 1.6 1 1.2
+decor sacks_pile 34 27 1.6 1 1
+decor pallet_sacks 12 27 1.6 1.2 1.1
+# --- la colline toujours ventée, à côté de l'aire-port (V3, « La Fille sans visage ») ---
+decor wind_sock 66.5 7 0.4 0.4 4
+decor bench 65 10 1.6 0.5 0.9
+bord falaise 58 27 70 28 1.0
+# --- bords ---
+bord foret 0 34 54 40 8 pp
+bord foret 58 34 70 40 8 pp
+bord foret 54 37 58 40 8 pp
+# --- chemins, places ---
+chemin rue_du_port 5 1;17 57;17
+chemin route_ville 4 55.5;18 55.5;31 62;32 69;32
+chemin montee_colline 3 57;20 60;24 63;18 65;12
+place accostage 24 7 37 13
+place aire_port 22 22 46 25
+# --- sorties ---
+sortie vers_sentier 0 14 0.6 20 sentier from_port ""
+sortie vers_ville 69.4 30 70 34 ville_marche from_port ""
+sortie passerelle 31.5 6.6 33.5 7.2 transport_garde from_port "Monter à bord"
+marqueur Spawn 4 17 E
+marqueur from_sentier 2.5 17 E
+marqueur from_ville_marche 67.5 32 O
+marqueur from_transport_garde 32.5 9.5 S
+point bord_du_vide 17.5 6.3
+point accostage 30 9.5
+point panneau 6 19.5
+point guichet 5.5 11.6
+point colline_sommet 65 12.2
+point charrettes 30 23.5
+lumiere lampe_quai_1 21 12.6 3.2 cristal
+lumiere lampe_quai_2 39 12.6 3.2 cristal
+lumiere bureau 5.5 10.4 2.0 fenetres
+lumiere projecteur_navire 30 0 12 projecteur
+```
+
+### 6.3 À bord : le transport de la Garde (`transport_garde`) et le Barocupot (`barocupot`)
+
+<!-- ascii:transport_garde -->
+```text
+transport_garde : 20 × 11 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord en haut
+      0                   10                  20
+    0 
+      
+          HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+          ===EE======DDDD=====CCCCCCCC====
+          ===EE======DDDD=====CCCCCCCC====
+          ===========DDDD=====CCCCCCCC====
+          ================================
+          ================================
+          =====FFFF=======================
+          =====FFFF=======@===============
+          ================================
+          HHHHHHHHHHHHHH====HHHHHHHHHHHHHH
+      
+      
+      ========================================
+      ========================================
+      ========================================
+      ========================================
+      ========================================
+      ========================================
+   10 ========================================
+      ====================v===================
+```
+Légende des lettres : `A` gangway ; `B` garde_transport_rotor ; `C` deck_bridge ; `D` deck_crates_lashed ; `E` deck_vent ; `F` deck_hatch.
+<!-- /ascii:transport_garde -->
+
+- **Le pont du transport** (20 × 11 m, dehors) : le pont vu de dessus (`ships/garde_transport_deck`,
+  **à confirmer**) de x 2 à 18, proue à l'est ; bastingage `deck_railing` ; passerelle au sud vers
+  le quai ; passerelle de commandement `deck_bridge` ; caisses arrimées `deck_crates_lashed` ;
+  manche à air `deck_vent` ; écoutille `deck_hatch` ; rotors en bout de bras. Pont étroit :
+  passages de 1,2 m (instruction `passage 1.2`). **À l'acte 1, on n'y monte pas** (V1 : seuls les
+  guerriers entrent là où se tiennent les guerriers) ; la carte sert aux actes suivants.
+
+<!-- ascii:barocupot -->
+```text
+barocupot : 14 × 8 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord en haut
+      0         5         10
+    0 
+      
+        +--o-------o--+---------+
+        |....BBBB..CCC|..DDsas..|
+    2   |.BB.AAAA.....|..DD.....|
+        |.BB.AAAA.....|...*.....|
+        |....AAAA.....|.........|
+        |conseil......|.........|
+    4   |.............|.........|
+        |.............|.........|
+        +------=------+----=----+
+        |coursive...............|
+    6   |......@................|
+        |.......................|
+        +-----------------------+
+      
+```
+Légende des lettres : `A` war_table ; `B` war_chair ; `C` map_cabinet ; `D` ship_ladder.
+<!-- /ascii:barocupot -->
+
+- **La salle du conseil de guerre** (6,75 × 3,75 m utiles) : la table aux cartes `war_table`, trois
+  chaises lourdes `war_chair` (Limeskin reste debout, la tête sous le plafond), le petit service
+  `tea_set_tiny` et sa serviette pliée, deux hublots `window_porthole` sur les nuages, l'aile
+  peinte `wallitem_garde_emblem`, le porte-voix `wallitem_speaking_tube`, le meuble à cartes
+  `map_cabinet` ; le **sas** et l'échelle `ship_ladder` vers le pont ; la **coursive** au sud. Sols
+  et murs : `floor_ship_planks`, `wall_ship_plate`, `wallcut_ship`, portes `door_bulkhead`.
+- **On y arrive par une scène** (fondu au blanc depuis la chute dans les nuages, ACTE1.md jour 8)
+  et l'on en repart par l'échelle : « Remonter sur le pont » ouvre la scène du retour en volant
+  (`entrepot`, `from_barocupot`). Points `conseil_chtholly`, `conseil_limeskin`.
+- **Lumière** : jour gris des nuages par les hublots, lampe à cristal ; le grondement des fours
+  enchantés (son).
+
+```plan
+carte transport_garde 20 11 dehors
+nom "Le transport de la Garde"
+region port
+passage 1.2
+echelle 0.5 0.5
+sol metal 2 1 18 6
+sol metal 0 7 20 11
+vide 0 0 20 1
+vide 0 6 9 7
+vide 11 6 20 7
+vide 0 1 2 6
+vide 18 1 20 6
+bord rambarde 2 1 18 1.4 1.1
+bord rambarde 2 5.6 9 6 1.1 pp
+bord rambarde 11 5.6 18 6 1.1 pp
+decor gangway 10 6.5 2 1 1.1 libre
+decor deck_bridge 14 2.2 4 1.4 3
+decor deck_crates_lashed 8.5 2.2 1.6 1.2 1.2
+decor deck_vent 4 2 0.6 0.6 1.4
+decor deck_hatch 5.5 4.4 1.2 0.6 0.4
+decor garde_transport_rotor 1.5 3.5 1 1 2 libre
+decor garde_transport_rotor 18.5 3.5 1 1 2 libre
+sortie vers_port 9 10.4 11 11 port from_transport_garde "Descendre à quai"
+marqueur Spawn 10 4.4 N
+marqueur from_port 10 4.4 N
+point trappe 5.5 3.6
+point proue 16.5 4.4
+```
+
+
+```plan
+carte barocupot 14 8 dedans
+nom "Le Barocupot"
+region ciel
+piece conseil 1 1 8 5 floor_ship_planks wall_ship_plate "conseil"
+piece sas 8 1 13 5 floor_ship_planks wall_ship_plate "sas"
+piece coursive 1 5 13 7 floor_ship_planks wall_ship_plate "coursive"
+porte conseil coursive 4.5 5 1.2 door_bulkhead
+porte sas coursive 10.5 5 1.2 door_bulkhead
+fenetre conseil N 2.5 window_porthole 0.6
+fenetre conseil N 6.5 window_porthole 0.6
+mural wallitem_garde_emblem conseil N 4.5 1.5 0.8
+mural wallitem_speaking_tube conseil O 3.0 1.4 0.3
+mural wallitem_ship_pipes sas N 12.0 1.6 1.6
+meuble war_table 4.5 2.7 2 1 0.8
+objet tea_set_tiny 4.5 2.7
+meuble war_chair 3.9 1.65 0.6 0.5 1.1
+meuble war_chair 5.1 1.65 0.6 0.5 1.1
+meuble war_chair 2.6 2.7 0.6 0.5 1.1
+meuble map_cabinet 7.2 1.45 1.2 0.5 1.1
+meuble ship_ladder 10.0 1.65 1.0 1.0 3.0
+sortie echelle 9.5 2.1 10.5 2.6 entrepot from_barocupot "Remonter sur le pont"
+marqueur Spawn 4.5 6.0 N
+point conseil_chtholly 2.6 3.9
+point conseil_limeskin 6.8 3.6
+point coursive 7 6
+lumiere hublots 4.5 1 1.2 jour
+lumiere lampe 4.5 2.7 2.0 cristal
+```
+
+## 7. La colline des étoiles (`colline`)
+
+- **Ce que dit l'œuvre** : une petite colline à la périphérie de l'île, au vent calme, à l'air
+  limpide, sous une douce lumière d'étoiles, assez près de l'entrepôt pour y aller à pied la nuit
+  avec Seniorious ; herbe (V1, « Le ciel étoilé sous le ciel étoilé » ; ill.) ; les 41 talismans
+  flottent à environ cinq pas autour d'un petit cristal et tintent comme un métallophone (même
+  chapitre). **À ne pas confondre** avec la colline toujours ventée de l'aire-port (V3), posée au
+  port.
+
+<!-- ascii:colline -->
+```text
+colline : 40 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord en haut
+      0         10        20        30        40
+    0 
+      XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      ^^^^........''''''''''''''''........^^^^
+      ^^^^........''''''''''''''''........^^^^
+      ^^^^........''''''''''''''''..T.....^^^^
+   10 ^^^^........'''''''''''CC'''........^^^^
+      ^^^^....DDD.'''''''''''CC'''........^^^^
+      ^^^^....DDD.''''''''''''''''........^^^^
+      ^^^^........''''''''''''''FF........^^^^
+      ^^^^........''''''''''''''''........^^^^
+   20 ^^^^............................EE..^^^^
+      ^^^^.....AA.....................EE..^^^^
+      ^^^^.....AA.........................^^^^
+      ^^^^........::::::::::::::::........^^^^
+      ^^^^........::::::::::::::::.BB.....^^^^
+   30 ^^^^..............::::.......BB.....^^^^
+      ^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^;;;;;;;;;;;;;;;;@;;;;;;;;;;;;;;;^^^^
+      ^^^^^^^^^^^^^^^^^^;;v;^^^^^^^^^^^^^^^^^^
+```
+Légende des lettres : `A` heather ; `B` tall_grass ; `C` wildflowers_a ; `D` boulder_a ; `E` mossy_rock ; `F` rock_small_a.
+<!-- /ascii:colline -->
+
+- **Taille** 40 × 40 m ; **bornes** `Rect2(10, 6, 20, 23)`. La colline est un cap : elle monte du
+  sud (entrée depuis l'entrepôt) en trois terrasses (+1, +2, +3, talus `cliff/wall_earth_1m` et
+  `cliff/step_rock` face au sud) jusqu'au sommet, qui finit au nord **sur le vide**.
+- **Le sommet** : la place `cercle_talismans` (14 → 26, 6 → 18), 12 × 12 m d'herbe rase ; le petit
+  cristal au centre (`talismans_centre`, 20 ; 12) ; les talismans (`anim/talisman_float`) sur un
+  cercle de 3,5 m ; le point `dos_a_dos` (Willem et Chtholly assis dos à dos) ; `vue_nord` au bord.
+- **Grands décors** : l'arbre noueux solitaire `lone_tree` (livré) en (30 ; 9) ; un rocher
+  `boulder_a` (où l'on s'assoit, `rocher`) ; herbes hautes, bruyère, fleurs d'automne. Pas de
+  belvédère ni de myosotis : c'étaient des inventions de l'ancienne bible.
+- **Kits** : herbe (`tall_grass`, `wind_grass_a/b`, `heather`, `wildflowers_*`), rochers
+  (`rock_small_*`, `mossy_rock`), lisières est et ouest (`forest_wall_*`), bord (`edge_rocks_*`).
+- **Lumière** : de nuit (préréglage `nuit_claire`) ; la lueur du cristal et des talismans. **Vue
+  au nord** : la mer de nuages argentée sous les étoiles (`cloud_sea_night`) ; pour la scène, la
+  caméra lève les yeux vers le ciel (`sky_night`). **Densité** : 40 à 70 éléments par écran (une
+  colline nue, voulue) ; grillons et chouette la nuit.
+
+```plan
+carte colline 40 40 dehors
+nom "La colline des étoiles"
+region colline
+sol grass_dry 0 0 40 40
+sol grass 4 4 36 32
+sol meadow_flowers 12 4 28 20
+sol path_dirt_b 12 26 28 30
+sol path_dirt_b 18 30 22 40
+sol forest_floor 0 32 40 40
+palier 1.0 4 4 36 32
+palier 2.0 8 4 32 26
+palier 3.0 12 4 28 20
+rampe 12 30 16 34 1.0 0 S
+rampe 24 26 28 29 2.0 1.0 S
+rampe 14 20 18 23 3.0 2.0 S
+# --- la pointe de l'île : le vide au nord (V1 : « petite colline à la périphérie ») ---
+vide 0 0 40 3
+bord falaise 0 3 40 4 0.6
+bord foret 0 4 4 40 10
+bord foret 36 4 40 40 10
+bord foret 4 38 17.5 40 9 pp
+bord foret 22.5 38 36 40 9 pp
+arbre lone_tree 30 9 4 5
+decor boulder_a 9.5 14 2 1.5 1.5
+decor mossy_rock 33 22 1.5 1 1
+decor rock_small_a 27 17 0.6 0.5 0.4
+decor heather 10 24 1.5 1 0.5 libre
+decor tall_grass 30 30 2 1 0.8 libre
+decor wildflowers_a 24 12 1.5 1 0.3 libre
+# --- montée et sommet ---
+chemin montee 3 20;39 20;35 14;31 14;28 26;28 26;24 16;24 16;19 20;14
+place cercle_talismans 14 6 26 18
+sortie vers_entrepot 18 39.4 22 40 entrepot from_colline ""
+marqueur Spawn 20 36.5 N
+marqueur from_entrepot 20 37 N
+point talismans_centre 20 12
+point dos_a_dos 20 13.2
+point vue_nord 20 5.0
+point rocher 9.5 15.6
+lumiere cristal_reglage 20 12 0.5 cristal
+lumiere talismans 20 12 1.5 etoiles
+```
+
+## 8. La forêt profonde (`foret_profonde`)
+
+- **Ce que dit l'œuvre** : des bosquets profonds, des fourrés aux petites branches qui percent la
+  peau (V1, « Entrepôt de fées ») ; une forêt assez dense où l'eau s'accumule dans des creux
+  difficiles à voir, dangereux pour les enfants (V5, épilogue) ; la rivière où l'on puise l'eau du
+  bain (V3) ; Chtholly s'y enfuit quand c'est trop (VEX, « Des émotions sans nom ») ; un petit
+  animal grimpeur poursuivi par une fillette (V5, épilogue). Le **refuge** de Chtholly est
+  **original**.
+
+<!-- ascii:foret_profonde -->
+```text
+foret_profonde : 80 × 60 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord en haut
+      0         10        20        30        40        50        60        70        80
+    0 ^^^^^^wwww^^^^^^^^^^^^^^^^^^^^^^^^^^^;::^:;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^wwww^^^^^^^^^^^^^^^^^^^^^^^^^^^;::::;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^wwww^^^^^^^^^^^JJJJJJ^^^^^^^^^^;::@:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^^^;;wwwwwwwwww;;;JJJJJJ;;;;;;;;;;;::::;;;;;;;;;;;;;;;;;;T;;;;;;;;;;;;;;;^^^^
+      ^^^^^^;;wwwwwwwwww;;;;;;;;;;;;T;;;;;;;::::;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+   10 ^^^^^^;;wwwwwwwwww;;;;;;;;;;;;;;;;;;;;::::;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^^^;;wwwwwwwwww;;;;;;;;;;;;;;;;;;;;::::;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^^^;;;;;;;;;;;;wwwwwwwwwwww;;;;;;;;;;::::::;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^^^;;;;;;;;;;;;wwwwwwwwwwww;;;;;;;;;;::::::;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^^^;;;;;;;;;;;;wwwwwwwwwwww;;;;;;;;;;::::::;;;;;;;;;;;BBw;;;;;;;;;;;;;;;;^^^^
+   20 ^^^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;::::::;;;;;;;;;;;BBw;;;;;;;;;;;;;;;;^^^^
+      ^^^^^^;;;;;;;;;;;;;;;;;;;;;;;;wwwwwwwwwwwwww::;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^^^;;;;;;;;;;;;;;;;;;;;;;;;wwwwwwwwwwwwww::;;;;;;;;;;;;;;;;;;;KK;;;;;;;;;^^^^
+      ^^^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;::CCCCCwwwwwwwwwwwww;;;;;KK;;;;;;;;;^^^^
+      ^^^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;::CCCCCwwwwwwwwwwwww;;;;;;;;;;;;;;;;^^^^
+   30 ^^^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;::::::::::::::::::::::::::::::::^^^^
+      ^^^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;II;;;;;;;::::::::::::::::wwwwwwwwwwwwwwwwwwww
+      ^^^^^^;;;;;;;;EEEE;;;;;;;;;;;;;;;;;II;;;;;;;:::::::::LL:::::wwwwwwwwwwwwwwwwwwww
+      ^^^^^^;;;;;;;;EEEE;;;;;;;;;;;;;;;;;;;;;;;;;;::::::::::::::::::::::::::::::::^^^^
+      ^^^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;::::::::::::::::::::::::::::::::^^^^
+   40 ^^^^^^;;;;;;;;;;;DD;;;;;;;;;;;;;;;;;;;;;;;;;::::::::::::::::::::::::::T:::::^^^^
+      ^^^^^^;;;;;;;;;;;DD;;;;;;;;;AAA;;;;;;;;;;;;;::::::::::::::::::::::::::::::::^^^^
+      ^^^^^^;;;;;;;;;;;;;;;;;;;;;;www;;;;;;;;;;;;;::::::::::::::::::::::::::::::::::::
+      ^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::::::::::::::::::::::::::::::::::>
+      ^^^^;;;;;;;;;;;;;;;;~~~~~~~~;;;;;;;;;;;;;;;;;;;;GGGG;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+   50 ^^^^;;;;;;;;;;;;;;;;~~~~~~~~;;;;;;;;;;;;;;;;;;;;GGGG;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^;;;;;;;;;;;;;;;;~~~~~~~~;;;;;;;;;FFFFFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^;;T;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FFFFFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+```
+Légende des lettres : `A` hidden_pool_a ; `B` hidden_pool_b ; `C` log_bridge_b ; `D` mushroom_cep ; `E` refuge_oak ; `F` fallen_pine ; `G` thicket_a ; `I` thicket_b ; `J` grove_dense ; `K` rowan ; `L` log_hollow.
+<!-- /ascii:foret_profonde -->
+
+- **Taille** 80 × 60 m ; **bornes** `Rect2(10, 9, 60, 43)`. On entre par le nord (depuis
+  l'entrepôt) et l'on descend vers le sud, la rivière en travers ; un sentier mène à l'est vers la
+  montagne, trois branches mènent au refuge (ouest), à la clairière des cerfs (nord-est) et à la
+  souille (sud-ouest).
+- **Paliers** : sol à 0 ; lit de la rivière à −0,5 ; deux ressauts rocheux à +1 (nord-est,
+  sud-ouest).
+- **Grands décors** : **le refuge** `refuge_oak` (chêne creux de 8 × 10 m, cahier n° 3) en
+  (16 ; 36), son creux tourné vers le sud ; place `refuge` devant ; le gué et son tronc
+  `log_bridge_b` ; sapin immense `tree_old_pine`, chênes `oak_c`, `oak_d`, hêtre `beech_a` ;
+  bosquet `grove_dense` ; sapin abattu `fallen_pine` ; sorbier `rowan` ; tronc creux `log_hollow` ;
+  **mares cachées** `hidden_pool_a/b` (eau au ras, sous les feuilles).
+- **Kits** : sous-bois (`forest_wall_deep`, `fern_*`, `nettles`, `mushroom_*`, `needles_patch`,
+  `leaves_*`, `roots_a/b`) ; fourrés (`thicket_*`, `bramble_hedge`) ; rivière (`river_bank`,
+  `pebbles_*`, `anim/river_rapids`) ; **tout arbre à moins de 12 m au sud d'un sentier est un
+  panneau de premier plan**.
+- **Places** : `refuge` (10 → 22, 38 → 46), `clairiere_cerfs` (54 → 72, 8 → 18),
+  `clairiere_loups` (62 → 74, 50 → 55). **Points** : `refuge_creux`, `mare_cachee`, `gue`,
+  `cerfs`, `souille`, `loups`, `lisiere_riviere`.
+- **Sorties** : `vers_entrepot` (nord) ; `vers_montagne` (est) → `montagne`, `from_foret_profonde`.
+- **Lumière** : pénombre verte et or ; rais de lumière (`light_shaft_a/b`) ; au crépuscule, bleu
+  sombre (les loups, VIE.md). **Vue au nord** : la lisière et le grand sapin. **Densité** : 90 à
+  120 éléments par écran.
+
+```plan
+carte foret_profonde 80 60 dehors
+nom "La forêt profonde"
+region foret_profonde
+sol forest_floor 0 0 80 60
+sol leaf_litter 30 30 70 50
+sol moss 8 34 24 46
+sol path_overgrown 38 0 42 14
+sol path_overgrown 40 14 46 30
+sol path_overgrown 44 30 80 48
+sol mud 20 48 28 54
+sol stream_bed 60 32 80 36
+sol stream_bed 44 26 60 30
+sol stream_bed 30 22 44 26
+sol stream_bed 18 14 30 20
+sol stream_bed 8 6 18 14
+sol stream_bed 6 0 10 6
+palier -0.5 60 32 80 36
+palier -0.5 44 26 60 30
+palier -0.5 30 22 44 26
+palier -0.5 18 14 30 20
+palier -0.5 8 6 18 14
+palier 1.0 52 0 80 8
+palier 1.0 0 46 12 60
+# --- la rivière (V3 : on y puise l'eau du bain) ; mares cachées (V5, épilogue) ---
+eau 60 32 80 36
+eau 44 26 60 30
+eau 30 22 44 26
+eau 18 14 30 20
+eau 8 6 18 14
+eau 6 0 10 6
+eau 28 42 31 44.5
+eau 57 19.5 59.5 21
+decor hidden_pool_a 29.5 43.2 2 1.5 0 libre
+decor hidden_pool_b 58.2 20.2 1.5 1.2 0 libre
+decor log_bridge_b 44.5 28 4 1 0.5 libre
+# --- bords : forêt dense tout autour ---
+bord foret 0 0 6 46 11
+bord foret 10 0 37 6 11
+bord foret 43 0 80 4 11
+bord foret 76 4 80 32 10
+bord foret 76 36 80 44 10
+bord foret 76 49 80 60 10 pp
+bord foret 0 56 76 60 10 pp
+bord foret 0 46 4 56 10
+# --- le refuge de Chtholly (original, VEX : elle s'enfuit dans la forêt) ---
+decor refuge_oak 16 36 3 2 10
+place refuge 10 38 22 46
+# --- clairière des cerfs, souille, meute (faune, original) ---
+place clairiere_cerfs 54 8 72 18
+place clairiere_loups 62 50 74 55
+arbre tree_old_pine 60 5.5 5 12
+arbre oak_c 30 8 7 10
+arbre oak_d 70 40 7 10
+arbre beech_a 6 54 6 9
+decor fallen_pine 40 54 6 1.2 1.6
+decor thicket_a 50 50 2.5 1 1.6
+decor thicket_b 36 34 2 1 1.4
+decor grove_dense 24 6 6 2 9
+decor rowan 66 26 1 1 5
+decor log_hollow 54 35 2 0.8 0.8
+decor mushroom_cep 18 42 0.5 0.5 0.3 libre
+# --- sentiers ---
+chemin sentier 3 40;1 40;12 43;22 44.5;28 50;38 64;46 79;46.5
+chemin vers_refuge 3 43;22 32;30 20;40
+chemin vers_cerfs 3 40;12 52;12 62;13
+chemin vers_souille 3 50;38 36;46 25;51
+sortie vers_entrepot 37 0 43 0.6 entrepot from_foret_profonde ""
+sortie vers_montagne 79.4 44.5 80 48.5 montagne from_foret_profonde ""
+marqueur Spawn 40 3 S
+marqueur from_entrepot 40 3 S
+marqueur from_montagne 77.5 46.5 O
+point refuge_creux 16 38.6
+point mare_cachee 29.5 45.2
+point gue 44.5 28
+point cerfs 63 13
+point souille 24 51
+point loups 68 52.5
+point lisiere_riviere 52 30.8
+```
+
+## 9. Le centre-ville (`ville_haute`, `ville_marche` et six intérieurs)
+
+### 9.1 Ce que dit l'œuvre
+
+- Des **centaines de bâtiments de pierre sur une légère pente**, une atmosphère idyllique, des
+  passants qui ne se soucient pas qu'on n'ait pas de traits (V1, « Directeur en carton ») ; on y
+  descend de l'entrepôt par un sentier (V5) ; un vent froid (V2).
+- Le **snack-bar** du jeune lycanthrope à tête de chien, qui fait sauter sa poêle (V1) ; une
+  librairie, un horloger, une salle de projection, un magasin d'accessoires, un café, un boucher
+  (V2, « Temps écoulé depuis lors ») ; la **boulangerie** au patron grincheux où travaille
+  Lakhesh, le **marché du matin** (V3, « Je suis à la maison ») ; le **café habituel**, la
+  librairie au coin de la rue (V3, « Le grand et jeune lézard ») ; un apothicaire **(déduction)**.
+
+### 9.2 La ville haute (`ville_haute`)
+
+<!-- ascii:ville_haute -->
+```text
+ville_haute : 60 × 60 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord en haut
+      0         10        20        30        40        50        60
+    0 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      ####________######_####_____________#####_########______####
+      ####________######_####_____________#####_########______####
+      ####________#mais#_#ma#___E_________#mai#_#maison#______####
+   10 ______________CC________II________GG____________________####
+      <___@___________________________________________________####
+      ____________________________________________JJ__________####
+      """"""""""""""""""""""""""________""""""""""""""""""""""""""
+      """"""""""""""""""""""""""________""""""""""""""""""""""""""
+   20 """"""""""""""""""""""""""________""""""""""""""""""""""""""
+      """"""""""""""""""""""""""________""""""""""""""""""""""""""
+      """"________#####_#######_________"#####"####"######""""""""
+      """"________#####_#######__________#####_####_######____""""
+      """"________#lib#_#cafe_#__________#sna#_#ac#_#mais#____""""
+   30 """"__________*__B____*_______________*_A_______________""""
+      """"____________________________________________________""""
+      ####"""""""""""""""""""""F________""""""""""""""""""""""####
+      ####""""""""""""""""""""""________""""""""""""""""""""""####
+      ####""""""""""""""""""""""________""""""""""""""""""""""####
+   40 ####""""""""""""""""""""""________""""""""""""""""""""""####
+      ####""""""""""""""""""""""________""""""""""""""""""""""####
+      ####____________#######___________""""""""""""""""""""""####
+      ####______####__#######_____________#####_####_######___####
+      ####______#ap#__#salle#_____________#col#_#ma#_#mais#___####
+   50 ####_KK___####__#######_____________#####_####_######___####
+      ####_KK_____________*__________________________DD_______####
+      ####____________________________________________________####
+      ####____________________________________________________####
+      ####__________________________v_________________________####
+```
+Légende des lettres : `A` hanging_sign_pan ; `B` hanging_sign_cup ; `C` town_doorsteps ; `D` town_cellar_hatch ; `E` wall_lantern ; `F` street_lamp_double ; `G` town_planter_stone ; `I` town_wall_fountain ; `J` bench_stone ; `K` crate_apples.
+<!-- /ascii:ville_haute -->
+
+- **Taille** 60 × 60 m ; **bornes** `Rect2(10, 9, 40, 43)`. **La ville monte vers le nord** par
+  trois terrasses (+2, +1, 0) ; la **grand-rue** descend du nord au sud (x 26 → 34), coupée de
+  deux volées de marches (`town_stairs_b`, rampes en données) ; chaque terrasse porte une ruelle
+  est-ouest devant une rangée de maisons, et **derrière chaque rangée, des jardins clos** (jamais
+  un endroit où l'on marche : la règle de caméra). C'est la composition d'*Octopath* : on regarde
+  la ville monter, façades au sud, toits étagés.
+- **Terrasse haute** (+2) : la rue haute, d'où arrive le chemin de la forêt (ouest) ; `town_house_e`
+  (la plus haute, girouette en poisson volant), `house_narrow`, `town_house_a`, `town_house_b` ;
+  la fontaine murale `town_wall_fountain` ; la lisière au-dessus de la ville.
+- **Terrasse du milieu** (+1), **la rue du café** : la **librairie** `shop_bookshop` (x 12 → 17),
+  le **café habituel** `cafe_town` (x 18 → 25, au coin de la grand-rue), le **snack-bar** `shop_snack`
+  (x 35 → 40, comptoir ouvert sur la rue, enseigne en poêle `hanging_sign_pan`), le magasin
+  d'**accessoires** `shop_accessories` (x 41 → 45), `town_house_f` ; place `carrefour` devant.
+- **Terrasse basse** (0) : l'**apothicaire** `shop_apothecary` (x 10 → 14), la **salle de
+  projection** `projection_hall` (livrée, x 16 → 23), `house_timber_a`, `town_house_c`,
+  `town_house_d` ; la rue basse et le **bas de la ville** (place `bas_de_ville`), d'où l'on descend
+  vers la place du marché.
+- **Façades à deux paliers** : les maisons du cahier n° 3 ont un socle de 0,5 m (**à confirmer**,
+  E2) ; murs de soutènement `cliff/town_retaining_wall` entre les terrasses, muret
+  `town_wall_low` des jardins, garde-corps `town_railing` au bord des terrasses.
+- **Kits** : rues (`cobble`, `drain_grate`, `cart_ruts`, `town_doorsteps`, `town_cellar_hatch`,
+  `window_box`, `flower_pots`) ; jardins (`town_planter_stone`, arbres d'or entre les toits) ;
+  lointains au nord (`town_roofs_a/b` au-delà de la lisière, **sans** cacher la grand-rue).
+- **Sorties** : `vers_sentier` (ouest, terrasse haute) ; `vers_marche` (sud) ; portes de la
+  librairie, du café, du snack et de la salle de projection (« Entrer »). Les autres boutiques sont
+  closes à l'acte 1 (invite « Fermé », **original**).
+- **Points** : `snack_comptoir`, `cafe_porte`, `librairie_porte`, `projection_porte`,
+  `haut_de_rue`, `fontaine`.
+- **Lumière** : lanternes à cristal aux portes, un réverbère double au carrefour (**original**) ;
+  fenêtres allumées le soir. **Vue au nord** : la ville qui monte, ses toits, la lisière.
+  **Densité** : 80 à 120 éléments par écran ; passants (VIE.md).
+
+```plan
+carte ville_haute 60 60 dehors
+nom "Le centre-ville"
+region ville
+# la ville monte vers le nord par terrasses (V1 : « une légère pente » ; cahier n° 3, 5.5)
+sol cobble 0 0 60 60
+sol flagstone 26 10 34 60
+sol cobble_b 4 10 56 16
+sol cobble_b 4 30 56 34
+sol cobble_b 4 51 56 60
+sol garden_soil 4 16 26 24
+sol garden_soil 34 16 56 25
+sol garden_soil 4 34 26 44
+sol garden_soil 34 34 56 46
+palier 2.0 0 0 60 16
+palier 1.0 0 16 60 34
+rampe 26 15 34 18 2.0 1.0 S
+rampe 26 33 34 36 1.0 0 S
+# --- lisière de la forêt au-dessus de la ville, et les rangs de maisons (façades au sud) ---
+bord foret 0 0 60 4 11
+bord jardins 4 16 26 24 1.2
+bord jardins 34 16 56 25 1.2
+bord jardins 4 34 26 44 1.2
+bord jardins 34 34 56 46 1.2
+bord jardins 0 16 4 34 1.2
+bord maisons 0 34 4 60 7
+bord maisons 56 4 60 16 7
+bord jardins 56 16 60 34 1.2
+bord maisons 56 34 60 60 7
+bord maisons 0 4 4 10 7
+bati maison_haute 12 4 18 10 10 town_house_e
+bati maison_etroite 19 5 23 10 8 house_narrow
+bati maison_a 36 4 41 10 9 town_house_a
+bati maison_b 42 4 50 10 8.5 town_house_b
+bati librairie 12 25 17 30 6 shop_bookshop
+bati cafe_habituel 18 24 25 30 6 cafe_town
+bati snack 35 25 40 30 6 shop_snack
+bati accessoires 41 25 45 30 6.5 shop_accessories
+bati maison_f 46 25 52 30 6 town_house_f
+bati apothicaire 10 46 14 51 6.5 shop_apothecary
+bati salle_projection 16 44 23 51 7.5 projection_hall
+bati colombages 36 46.5 41 51 6 house_timber_a
+bati maison_c 42 46 46 51 7.5 town_house_c
+bati maison_d 47 46 53 51 7 town_house_d
+decor hanging_sign_pan 40.3 30.3 0.4 0.3 2.2 libre
+decor hanging_sign_cup 17.7 30.3 0.4 0.3 2.2 libre
+decor street_lamp_double 25.4 34.6 0.4 0.4 3.6 pp
+decor town_planter_stone 35 10.4 1.6 0.6 0.8
+decor town_wall_fountain 25 10.4 1.2 0.6 1.6
+decor bench_stone 45 15.6 1.6 0.5 0.6
+decor town_doorsteps 15 10.4 1.2 0.5 0.3 libre
+decor town_cellar_hatch 48 52.2 1.2 0.6 0.3 libre
+decor crate_apples 6 52.0 1 0.8 0.8
+decor wall_lantern 26.5 9.8 0.4 0.2 0.6 libre
+# --- rues ---
+chemin rue_haute 4 1;13 53;13
+chemin grand_rue 6 30;10 30;59
+chemin rue_du_cafe 3 6;32 54;32
+chemin rue_basse 4 6;55 54;55
+place carrefour 18 30.5 42 34
+place bas_de_ville 24 52 36 58
+sortie vers_sentier 0 11 0.6 15 sentier from_ville_haute ""
+sortie vers_marche 26 59.4 34 60 ville_marche from_ville_haute ""
+sortie porte_cafe 20.8 30 22.2 30.6 ville_cafe from_ville_haute "Entrer"
+sortie porte_snack 36.8 30 38.2 30.6 ville_snack from_ville_haute "Entrer"
+sortie porte_librairie 13.8 30 15.2 30.6 ville_librairie from_ville_haute "Entrer"
+sortie porte_projection 18.8 51 20.2 51.6 ville_projection from_ville_haute "Entrer"
+marqueur Spawn 4 13 E
+marqueur from_sentier 2.5 13 E
+marqueur from_ville_marche 30 57.5 N
+marqueur from_ville_cafe 21.5 32.2 S
+marqueur from_ville_snack 37.5 32.2 S
+marqueur from_ville_librairie 14.5 32.2 S
+marqueur from_ville_projection 19.5 53 S
+point snack_comptoir 37.5 31.6
+point cafe_porte 21.5 31.6
+point librairie_porte 14.5 31.6
+point projection_porte 19.5 52.8
+point haut_de_rue 30 13
+point fontaine 25 11.8
+lumiere reverbere 25.4 34.6 3.6 cristal
+lumiere lanterne_haut 26.5 9.8 2.0 cristal
+```
+
+### 9.3 La place du marché (`ville_marche`)
+
+<!-- ascii:ville_marche -->
+```text
+ville_marche : 56 × 44 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord en haut
+      0         10        20        30        40        50
+    0 ########################____^___########################
+      ########################________########################
+      ####____#####_#######_______@_____######_#####_#########
+      ####____#bou#_#maiso#_____________#bouc#_#hor#_#mai#####
+      ####______*___________LL____________________*_______####
+   10 ####__AAA______________________________________DDD__####
+      ####__AAA______________________________________DDD__####
+      ####________________________________________________####
+      ####__BBB______________________________________EEE__####
+      ####________________________________________________####
+   20 ####__CCC______________________________________FFF__####
+      ####__CCC______________________________________FFF__####
+      ####________________________________________________####
+      ####________________________________________________####
+      _____________________________________________GG_____####
+   30 <____________________________________________GG_____####
+      ####_____II________________________________JJ_______####
+      ####_______________________KK______________JJ_______####
+      ####_______________________KK_______________________####
+      ####________________________________________________####
+   40 ____----------------------------------------------------
+      ____----------------------------------------------------
+```
+Légende des lettres : `A` market_stall_dairy ; `B` market_stall_honey ; `C` market_stall_flour ; `D` market_stall_veg ; `E` market_stall_fruit ; `F` market_stall_cloth ; `G` hand_cart ; `I` crate_stack ; `J` sack_apples ; `K` bench_stone ; `L` street_lamp_double.
+<!-- /ascii:ville_marche -->
+
+- **Taille** 56 × 44 m ; **bornes** `Rect2(10, 6, 36, 21)`. La place dallée du **marché du matin**
+  (V3), au pied de la ville ; au nord, la rangée de boutiques : la **boulangerie** `shop_bakery`
+  (livrée, x 8 → 13), `house_timber_b`, la **boucherie** `butcher` (livrée), l'**horloger**
+  `clockmaker` (livré), `house_stone_b` ; la grand-rue y descend entre elles (x 24 → 32) ; la
+  route du port arrive à l'ouest.
+- **Étals** (le matin seulement, VIE.md) : `market_stall_dairy`, `_honey`, `_flour` à l'ouest,
+  `market_stall_veg`, `_fruit`, `_cloth` (livrés) à l'est ; l'après-midi, les bâches pliées
+  (`market_stall_cloth` seul) et la place nue.
+- **Place** `marche` (12 → 44, 10 → 32) ; points `boulangerie_porte`, `horloger_porte`,
+  `boucherie`, `etal_lait`, `place_centre`, `banc`.
+- **Sorties** : `vers_haute` (nord) ; `vers_port` (ouest) ; portes de la boulangerie et de
+  l'horloger.
+- **Densité** : 60 à 90 éléments le matin (étals, paniers, caisses, marchands), 40 à 60 l'après-midi.
+
+```plan
+carte ville_marche 56 44 dehors
+nom "La place du marché"
+region ville
+sol cobble 0 0 56 44
+sol flagstone 10 8 46 34
+sol cobble_b 0 28 10 32
+bord maisons 0 0 24 3 7
+bord maisons 32 0 56 3 7
+bati boulangerie 8 3 13 8 6 shop_bakery
+bati maison_colombages 14 3 21 8 7.5 house_timber_b
+bati boucherie 34 3 40 8 5.5 butcher
+bati horloger 41 3 46 8 6.5 clockmaker
+bati maison_pierre 47 3.5 52 8 5 house_stone_b
+bord maisons 0 3 4 28 7
+bord maisons 0 32 4 40 7 pp
+bord maisons 52 3 56 40 7
+bord muret 4 40 56 44 1.0 pp
+decor market_stall_dairy 7.5 12 2.5 1.5 2.4
+decor market_stall_honey 7.5 17 2.5 1.5 2.4
+decor market_stall_flour 7.5 22 2.5 1.5 2.4
+decor market_stall_veg 48.5 12 2.5 1.5 2.4
+decor market_stall_fruit 48.5 17 2.5 1.5 2.4
+decor market_stall_cloth 48.5 22 2.5 1.5 2.4
+decor hand_cart 46 30 1.6 1 1.2
+decor crate_stack 10 33 1.5 1 1.2
+decor sack_apples 44 34 0.8 0.6 0.6
+decor bench_stone 28 36 1.6 0.5 0.6
+decor street_lamp_double 23 9.2 0.4 0.4 3.6
+chemin descente 6 28;0 28;20
+chemin route_port 4 1;30 20;30
+place marche 12 10 44 32
+sortie vers_haute 24 0 32 0.6 ville_haute from_ville_marche ""
+sortie vers_port 0 28 0.6 32 port from_ville_marche ""
+sortie porte_boulangerie 9.8 8 11.2 8.6 ville_boulangerie from_ville_marche "Entrer"
+sortie porte_horloger 42.8 8 44.2 8.6 ville_horloger from_ville_marche "Entrer"
+marqueur Spawn 28 3 S
+marqueur from_ville_haute 28 2.5 S
+marqueur from_port 2.5 30 E
+marqueur from_ville_boulangerie 10.5 10.2 S
+marqueur from_ville_horloger 43.5 10.2 S
+point boulangerie_porte 10.5 9.6
+point horloger_porte 43.5 9.6
+point boucherie 37 9.6
+point etal_lait 10 12
+point place_centre 28 21
+point banc 28 37.3
+lumiere reverbere 23 9.2 3.6 cristal
+```
+
+### 9.4 Les six intérieurs de la ville
+
+| Carte | Cotes (m) | Ce que dit l'œuvre | Mobilier (images) | Points |
+| --- | --- | --- | --- | --- |
+| `ville_snack` | 7 × 5 | le lycanthrope fait sauter sa poêle ; pommes de terre frites, légumes, lard épais, petit pain, soupe dans une tasse (V1) | `snack_counter`, `snack_shelf`, `snack_stools`, `cafe_table_heavy`, `snack_meal_tray` | `snack_tabouret`, `snack_table` |
+| `ville_cafe` | 9 × 6 | pas de thé ; café, boisson médicinale piquante, sandwich au bacon ; petites chaises trop petites pour un lézard ; serveur demi-bête terrifié (V3) ; lourdes tables de bois, thé amer « affreux » (V5) | `cafe_town_counter`, `cafe_town_table` ×3, `wallitem_menu_town` | `cafe_comptoir`, `cafe_table_nygglatho` |
+| `ville_librairie` | 7 × 5 | tout l'entrepôt y passe ses commandes (V3) | `bookshop_shelves` ×2, `bookshop_counter` (commandes ficelées), `bookshop_table` | `librairie_rayons`, `librairie_comptoir` |
+| `ville_projection` | 10 × 8 | films muets aux images floues, tirées de cristaux enregistreurs ; la lumière revient à la fin ; romances de lézards (V2) | `cinema_screen`, `anim/projection_flicker`, six `cinema_benches` (dossiers vers la caméra), `crystal_projector` (premier plan) | `projection_allee`, `ecran` |
+| `ville_boulangerie` | 5 × 5 + 4 × 5 | le patron grincheux ; Lakhesh y travaille le matin (V3) | boutique : `bread_shelves`, `bakery_counter` ; fournil : `bakery_oven` (`anim/oven_glow`), `kneading_trough` | `boulangerie_comptoir`, `boulangerie_lakhesh`, `fournil_four` |
+| `ville_horloger` | 7 × 5 | (V2 ; les horloges modernes marchent aux cristaux, VEX) | `wallitem_clocks`, `longcase_clock`, `watch_workbench` | `horloger_etabli` |
+
+<!-- ascii:ville_snack -->
+```text
+ville_snack : 9 × 7 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord en haut
+      0         5
+    0 
+      
+        +-------------+
+        |....AAAAsnack|
+    2   |...BBBBBB....|
+        |...BBBBBB....|
+        |....CCCC.....|
+        |....CCCC.....|
+    4   |DDD..........|
+        |DDD..........|
+        |DDD......@...|
+        |.............|
+    6   +---------=---+
+                  v
+```
+Légende des lettres : `A` snack_shelf ; `B` snack_counter ; `C` snack_stools ; `D` cafe_table_heavy.
+<!-- /ascii:ville_snack -->
+
+<!-- ascii:ville_boulangerie -->
+```text
+ville_boulangerie : 11 × 7 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord en haut
+      0         5         10
+    0 
+      
+        +---------+-------+
+        |..AAAA...|.CCCC..|
+    2   |boutique.|.CCCC..|
+        |.........|fournil|
+        |..BBBB...:.......|
+        |..BBBB...:.......|
+    4   |.........:.DDDD..|
+        |.........|.DDDD..|
+        |....@....|.......|
+        |.........|.......|
+    6   +----=----+-------+
+             v
+```
+Légende des lettres : `A` bread_shelves ; `B` bakery_counter ; `C` bakery_oven ; `D` kneading_trough.
+<!-- /ascii:ville_boulangerie -->
+
+```plan
+carte ville_snack 9 7 dedans
+nom "Le snack-bar"
+region ville
+piece salle 1 1 8 6 floor_stone_town wall_stone_inside "snack"
+porte salle dehors 6.0 6 1.4 door_room
+meuble snack_shelf 4.5 1.4 1.6 0.5 1.6
+meuble snack_counter 4.5 2.4 3 0.8 1.2
+meuble snack_stools 4.5 3.3 1.6 0.5 0.8
+meuble cafe_table_heavy 2.0 4.6 1.2 1.0 0.8
+objet snack_meal_tray 2.0 4.6
+sortie vers_rue 5.3 6 6.7 7 ville_haute from_ville_snack ""
+marqueur Spawn 6.0 5.0 N
+marqueur from_ville_haute 6.0 5.0 N
+point snack_tabouret 4.5 4.3
+point snack_table 3.4 4.6
+```
+
+
+```plan
+carte ville_cafe 11 8 dedans
+nom "Le café habituel"
+region ville
+piece salle 1 1 10 7 floor_stone_town wall_plaster_ochre "café"
+porte salle dehors 5.5 7 1.4 door_room
+meuble cafe_town_counter 5.5 2.4 3 0.8 1.2
+mural wallitem_menu_town salle N 8.5 1.1 1.0
+meuble cafe_town_table 2.5 4.6 1.4 1.0 0.8
+meuble cafe_town_table 5.5 5.2 1.4 1.0 0.8
+meuble cafe_town_table 8.3 4.6 1.4 1.0 0.8
+sortie vers_rue 4.8 7 6.2 8 ville_haute from_ville_cafe ""
+marqueur Spawn 5.5 6.3 N
+marqueur from_ville_haute 4.0 6.3 N
+point cafe_comptoir 5.5 3.6
+point cafe_table_nygglatho 8.3 6.0
+```
+
+
+```plan
+carte ville_librairie 9 7 dedans
+nom "La librairie"
+region ville
+piece salle 1 1 8 6 floor_stone_town wall_plaster_ochre "librairie"
+porte salle dehors 4.5 6 1.2 door_room
+meuble bookshop_shelves 2.5 1.4 2 0.5 2.4
+meuble bookshop_shelves 6.5 1.4 2 0.5 2.4
+meuble bookshop_counter 6.6 4.0 1.6 0.7 1.1
+meuble bookshop_table 3.0 4.0 1.6 0.8 0.9
+sortie vers_rue 3.9 6 5.1 7 ville_haute from_ville_librairie ""
+marqueur Spawn 4.5 5.2 N
+marqueur from_ville_haute 4.5 5.2 N
+point librairie_rayons 4.5 2.4
+point librairie_comptoir 6.6 5.1
+```
+
+
+```plan
+carte ville_projection 12 10 dedans
+nom "La salle de projection"
+region ville
+piece salle 1 1 11 9 floor_planks_dark wall_panel_dark "projection"
+porte salle dehors 6.0 9 1.4 door_room
+meuble cinema_screen 6.0 1.35 4 0.4 3.0
+objet projection_flicker 6.0 1.35
+meuble cinema_benches 3.4 4.0 3 0.8 0.9
+meuble cinema_benches 8.6 4.0 3 0.8 0.9
+meuble cinema_benches 3.4 5.6 3 0.8 0.9
+meuble cinema_benches 8.6 5.6 3 0.8 0.9
+meuble cinema_benches 3.4 7.2 3 0.8 0.9
+meuble cinema_benches 8.6 7.2 3 0.8 0.9
+meuble crystal_projector 10.3 8.3 0.8 0.6 1.6 pp
+sortie vers_rue 5.3 9 6.7 10 ville_haute from_ville_projection ""
+marqueur Spawn 6.0 8.2 N
+marqueur from_ville_haute 6.0 8.2 N
+point projection_allee 6.0 5.0
+point ecran 6.0 2.4
+```
+
+
+```plan
+carte ville_boulangerie 11 7 dedans
+nom "La boulangerie"
+region ville
+piece boutique 1 1 6 6 floor_stone_town wall_stone_inside "boutique"
+piece fournil 6 1 10 6 floor_stone_town wall_stone_inside "fournil"
+porte boutique fournil 6 3.5 1.2 door_room
+porte boutique dehors 3.5 6 1.2 door_room
+meuble bread_shelves 3.5 1.45 2 0.6 2.2
+meuble bakery_counter 3.5 3.3 2 0.6 1.1
+meuble bakery_oven 8.0 1.65 2 1 2.0
+objet oven_glow 8.0 1.65
+meuble kneading_trough 8.0 4.4 1.6 0.7 1.0
+sortie vers_place 2.9 6 4.1 7 ville_marche from_ville_boulangerie ""
+marqueur Spawn 3.5 5.2 N
+marqueur from_ville_marche 3.5 5.2 N
+point boulangerie_comptoir 3.5 4.6
+point boulangerie_lakhesh 3.5 2.375
+point fournil_four 8.0 2.9
+```
+
+
+```plan
+carte ville_horloger 9 7 dedans
+nom "L'horloger"
+region ville
+piece salle 1 1 8 6 floor_stone_town wall_stone_inside "horloger"
+porte salle dehors 4.5 6 1.2 door_room
+mural wallitem_clocks salle N 3.0 1.2 2.0
+meuble longcase_clock 6.8 1.35 0.6 0.4 2.2
+meuble watch_workbench 4.0 3.3 1.6 0.7 1.1
+sortie vers_place 3.9 6 5.1 7 ville_marche from_ville_horloger ""
+marqueur Spawn 4.5 5.2 N
+marqueur from_ville_marche 4.5 5.2 N
+point horloger_etabli 4.0 4.4
+```
+
+## 10. La montagne (`montagne`)
+
+- **Ce que dit l'œuvre** : des montagnes où vivent les ours, qui hibernent l'hiver ; Nygglatho y
+  part frapper les arbres et les ours quand le chagrin déborde, et en rapporte de quoi faire un
+  ragoût (V2, « Qu'est-il advenu de la promesse ? ») ; elle chasse « de l'autre côté de la
+  montagne » (V5, « Faire face au passé »). Le reste est **original** (cahier n° 3, 7.5).
+
+<!-- ascii:montagne -->
+```text
+montagne : 80 × 60 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord en haut
+      0         10        20        30        40        50        60        70        80
+    0 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^EEEE^^^^^^^^^XXX
+      ^^^^^^^^^^T^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^EEEE^^^^^^^^^XXX
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^GGGG^^^^^^^^^^^^^^^^^^^^^^^XXX
+   10 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^XXX
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^XXX
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^XXX
+      ^^^^^^^^^^^^^^^^^^^wwwwww^^^^^^^^FFFFFF^^^^^^^::::::::::::::::::^^^^^^^^^^^^^XXX
+      ^^^^^^^^^^^^^^^^^^^wwwwww^^^^^^^^^^^^^^^^^^^^^::::::::::::::::::^^^^^^^^T^^^^XXX
+   20 ^^^^^^^^^^^^^^^^^^^wwwwww^^^^^^^^^^^^^^^^^^^^^::::::::::::::::::^^^^^^^^^^^^^XXX
+      ^^^^^^^^^^^^^^^^^^^wwwwww^^^^^^^^^^^^^^^^^^^^^::::::::::::::::::^^^^^^^^^^^^^XXX
+      ^^^^^^^^^^^^^^^^^^^wwwwww^^^^^^^^^^^^^^^^^^^^^::::::::::::::::::^^^^^^^^^^^^^XXX
+      ^^^^^^^^^^^^^^^^^^^wwwwww^^^^^^^^^^^^^^^^^^^^^::::::::::::::::::^^^^^^^^^^^^^XXX
+      ^^^^^^^^^^^^^^^^^^^wwwwww^^^^^^^^^^^^^^^^^^^^^::::::::::::::::::^^^^^^^^^^^^^XXX
+   30 ^^^,,,,,,,,,,,,,,,wwww,,,,,,,,::::::::::::::::::::,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      ^^^,,,T,,,,,,,,,,,wwww,,,,IIII::::::::::::::::::::,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      ^^^,,,,,,,,,,,,,,,wwww,,,,IIII::::::::::::::::::::,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      ^^^,,,,,,,,,,,,,,,wwww,,,,,,,,::::::::::::::::::::,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      ^^^,,,,,,,,,,,,,,,wwww,,,,,,,,::::::::::::::::::::,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+   40 ^^^,,,,,,,,,,,,,,,wwww,,,,,,,,:::::::DD:::::::::::,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      ^^^,,,,,,,,,,,,,,,wwww,,,,,,,,::::::::::::::::::::,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      ^^^,,,,,,,wwwwwwwwww,,,,,,,,,,::::::::::::::::::::,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      ::::::::::wwBBBBwwww::::::::::::::,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      <::@::::::wwwwwwwwww::::::::::::::,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+   50 ^^^wwwwwww,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      ^^^wwwwwww,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      ^^^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,XXX
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^XXX
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^XXX
+```
+Légende des lettres : `A` small_waterfall ; `B` log_bridge_b ; `C` scree ; `D` animal_tracks ; `E` bear_den ; `F` rock_overhang ; `G` boulder_mountain_a ; `I` boulder_mountain_b.
+<!-- /ascii:montagne -->
+
+- **Taille** 80 × 60 m ; **bornes** `Rect2(10, 6, 60, 37)`. On entre par l'ouest, en remontant
+  le torrent ; la montagne **monte vers le nord** en quatre paliers (0, +1, +2,5, +4,5 ; parois
+  `cliff/cliff_mountain` et `cliff/wall_rock_1m` face au sud) ; au fond, la chaîne en lointain
+  (`sky/mountain_backdrop_a/b`) : **l'autre côté de la montagne**, où l'on ne va pas.
+- **Grands décors** : la **tanière** `bear_den` (66 ; 5,5) sur le palier haut, place `taniere`
+  devant ; le surplomb `rock_overhang` (36 ; 17) où s'abriter ; la petite cascade
+  `anim/small_waterfall` (22 ; 15,5), source du torrent qui devient la rivière de la forêt
+  profonde ; le tronc-passerelle `log_bridge_b` (14 ; 47,5) ; rochers `boulder_mountain_a/b`,
+  éboulis `scree`, sapins tordus `mountain_pine_a/b`, traces `animal_tracks`.
+- **Kits** : roche (`rock_*`, `boulder_*`), herbe rase (`grass_dry`, `heather`), torrent
+  (`anim/river_rapids`, `river_bank`), sous-bois clairsemé à l'ouest.
+- **Points** : `taniere`, `surplomb`, `cascade`, `belvedere_haut`, `gue`. **Sortie** `vers_foret`
+  (ouest).
+- **Lumière** : air froid, lumière plus blanche ; premières neiges sur les sommets du lointain
+  (fin d'automne). **Vue au nord** : les pics. **Densité** : 50 à 80 éléments par écran (une
+  montagne plus nue, voulue) ; ours, corbeaux, cerfs (VIE.md).
+
+```plan
+carte montagne 80 60 dehors
+nom "La montagne"
+region montagne
+sol grass_dry 0 0 80 60
+sol rock 0 0 80 16
+sol rock_b 0 16 80 30
+sol path_dirt_b 0 46 34 50
+sol path_dirt_b 30 30 50 46
+sol path_dirt_b 46 16 64 30
+sol stream_bed 19 16 25 30
+sol stream_bed 18 30 22 44
+sol stream_bed 10 44 20 50
+sol stream_bed 0 50 10 54
+palier 1.0 0 30 77 44
+palier 2.5 0 16 77 30
+palier 4.5 0 4 77 16
+rampe 30 44 34 47 1.0 0 S
+rampe 44 30 48 33 2.5 1.0 S
+rampe 58 16 62 20 4.5 2.5 S
+# --- la montagne, ses ours (V2, « Qu'est-il advenu de la promesse ? » ; V5) ---
+bord falaise 0 0 80 4 12
+bord foret 0 4 3 46 10
+bord foret 0 50 3 60 10 pp
+bord falaise 77 4 80 60 10
+bord foret 3 57 77 60 9 pp
+eau 19 16 25 30
+eau 18 30 22 44
+eau 10 44 20 50
+eau 0 50 10 54
+decor small_waterfall 22 15.5 2 0.5 3 libre
+decor log_bridge_b 14 47.5 4 1 0.5 libre
+decor bear_den 66 5.5 4 1.5 3
+decor rock_overhang 36 17.2 5 1.5 3.5
+decor boulder_mountain_a 52 9 4 2 3
+decor boulder_mountain_b 28 34 2.5 1.5 2
+decor scree 40 24 3 2 0 libre
+arbre mountain_pine_a 10 6 2.5 6
+arbre mountain_pine_b 72 18 2 4.5
+arbre mountain_pine_a 6 32 2.5 6
+decor animal_tracks 38 41 1.5 2 0 libre
+chemin sentier 3 1;48 14;48 26;48 32;45 32;40 44;36 46;32 48;26 58;22 60;18 62;12 66;10
+place taniere 58 8 74 14
+sortie vers_foret 0 46 0.6 50 foret_profonde from_montagne ""
+marqueur Spawn 3 48 E
+marqueur from_foret_profonde 2.5 48 E
+point taniere 66 8.4
+point surplomb 36 19.5
+point cascade 22.5 19
+point belvedere_haut 48 6
+point gue 14 47.5
+```
+
+## 11. Ce que les lots du moteur doivent savoir
+
+- **E1 (cartes)** : 23 cartes ; marqueurs `from_<carte>` et, quand deux sorties relient les mêmes
+  cartes, `from_<carte>_<suffixe>` (`from_entrepot_service`) ; les bornes de caméra sont données
+  par carte ; la carte `barocupot` se quitte par une scène (pas de marche vers le ciel) ; les
+  portes des boutiques closes à l'acte 1 ont l'invite « Fermé » sans sortie.
+- **E2 (sol)** : paliers de 0,5 et 1 m, rampes données ; la ville et la montagne montent vers le
+  nord (faces de paliers visibles) ; eau « basse » au ras du sol où l'on marche (marais, rivière),
+  eau « profonde » nulle part à l'acte 1 sauf les mares cachées, qui font glisser (VIE.md).
+- **E3 (intérieurs)** : cartes à plusieurs pièces (rez-de-chaussée et étage) : murs est-ouest
+  coupés, mur nord du bâtiment haut ; portes sur des murs coupés dessinées en panneau ; éléments de
+  mur et fenêtres sur les murs nord, est, ouest ; ouvertures de 1,2 m (2 m pour l'entrée).
+- **E4 (vie)** et **E6 (récit)** : les points nommés de ce document sont les lieux des emplois du
+  temps (VIE.md) et des scènes (ACTE1.md).
+- **E7 (navires)** : le transport de la Garde s'amarre de flanc au nord du quai du port ; le
+  Barocupot ne vient jamais au port à l'acte 1.
+- **E9 (lumière)** : préréglages cités : `interieur`, `noir` (crypte), `nuit_sans_lune` (sentier),
+  `nuit_claire` (colline), crépuscule de pluie fine (port, jour 7).
+- **E10 (densité)** : les kits de chaque carte et les densités visées ; les arbres près des
+  chemins en premier plan.
 
 ## 12. Images : inventaire et commandes
 
@@ -1258,17 +2815,22 @@ document (livrée dans `assets/`, à livrer d'après un cahier, ou nom proposé 
 sont à ajouter au cahier n° 3 avant d'être commandés.
 
 <!-- inventaire -->
-192 images ou matières citées : 127 livrées ; 3 proposées ; 62 à livrer.
+378 images ou matières citées : 186 livrées ; 3 proposées ; 189 à livrer.
 
 | Image ou matière | Cartes | État |
 | --- | --- | --- |
-| `alder` | entrepot | à livrer (cahier n° 3) |
+| `alder` | entrepot, sentier | à livrer (cahier n° 3) |
+| `animal_tracks` | montagne | à livrer (cahier n° 3) |
 | `archive_shelves` | entrepot_rdc | livrée : `assets/hd2d/interior/props/archive_shelves.png` |
 | `armchair_reading` | entrepot_rdc | à livrer (cahier n° 3) |
+| `armchair_sheeted` | maison_limashenka | à livrer (cahier n° 3) |
+| `bakery_counter` | ville_boulangerie | à livrer (cahier n° 3) |
+| `bakery_oven` | ville_boulangerie | à livrer (cahier n° 3) |
 | `ball` | entrepot | livrée : `assets/hd2d/props/ball.png` |
 | `ball_white` | entrepot_rdc | livrée : `assets/hd2d/interior/props/ball_white.png` |
 | `bath_puddles` | entrepot_rdc | à livrer (cahier n° 3) |
 | `bath_tub` | entrepot_rdc | livrée : `assets/hd2d/interior/props/bath_tub.png` |
+| `bear_den` | montagne | à livrer (cahier n° 3) |
 | `bed_child` | entrepot_etage | livrée : `assets/hd2d/interior/props/bed_child.png` |
 | `bed_child_messy` | entrepot_etage | livrée : `assets/hd2d/interior/props/bed_child_messy.png` |
 | `bed_chtholly` | entrepot_etage | livrée : `assets/hd2d/interior/props/bed_chtholly.png` |
@@ -1276,119 +2838,261 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `bed_nygglatho` | entrepot_etage | livrée : `assets/hd2d/interior/props/bed_nygglatho.png` |
 | `bed_plain` | entrepot_etage | livrée : `assets/hd2d/interior/props/bed_plain.png` |
 | `bedside_table` | entrepot_rdc | livrée : `assets/hd2d/interior/props/bedside_table.png` |
+| `beech_a` | foret_profonde | livrée : `assets/hd2d/props/beech_a.png` |
+| `beehives` | village | à livrer (cahier n° 3) |
+| `bench` | port | livrée : `assets/hd2d/props/bench.png` |
 | `bench_b` | entrepot | livrée : `assets/hd2d/props/bench_b.png` |
+| `bench_stone` | village, ville_haute, ville_marche | livrée : `assets/hd2d/props/bench_stone.png` |
 | `board_games_shelf` | entrepot_rdc | livrée : `assets/hd2d/interior/props/board_games_shelf.png` |
 | `boardwalk` | entrepot | livrée : `assets/hd2d/decals/boardwalk.png` |
+| `bog_pool_a` | sentier | à livrer (cahier n° 3) |
+| `bollard` | port | livrée : `assets/hd2d/props/bollard.png` |
 | `book_pile` | entrepot_etage, entrepot_rdc | à livrer (cahier n° 3) |
 | `bookshelf_low` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/props/bookshelf_low.png` |
 | `bookshelf_tall` | entrepot_rdc | livrée : `assets/hd2d/interior/props/bookshelf_tall.png` |
 | `bookshelf_tall_b` | entrepot_rdc | à livrer (cahier n° 3) |
+| `bookshop_counter` | ville_librairie | à livrer (cahier n° 3) |
+| `bookshop_shelves` | ville_librairie | à livrer (cahier n° 3) |
+| `bookshop_table` | ville_librairie | à livrer (cahier n° 3) |
+| `boulder_a` | colline | livrée : `assets/hd2d/props/boulder_a.png` |
+| `boulder_mountain_a` | montagne | à livrer (cahier n° 3) |
+| `boulder_mountain_b` | montagne | à livrer (cahier n° 3) |
 | `bramble_hedge` | entrepot | à livrer (cahier n° 3) |
+| `bread_shelves` | ville_boulangerie | à livrer (cahier n° 3) |
 | `bunk_bed` | entrepot_etage | à livrer (cahier n° 3) |
 | `bush_c` | entrepot | livrée : `assets/hd2d/props/bush_c.png` |
+| `butcher` | ville_marche | livrée : `assets/hd2d/buildings/butcher.png` |
+| `cafe` | village | livrée : `assets/hd2d/buildings/cafe.png` |
+| `cafe_bottle_shelf` | cafe | à livrer (cahier n° 3) |
+| `cafe_cake_case` | cafe | à livrer (cahier n° 3) |
+| `cafe_counter` | cafe | à livrer (cahier n° 3) |
+| `cafe_drinkers_table` | cafe | à livrer (cahier n° 3) |
+| `cafe_table_heavy` | cafe, ville_snack | à livrer (cahier n° 3) |
+| `cafe_town` | ville_haute | à livrer (cahier n° 3) |
+| `cafe_town_counter` | ville_cafe | à livrer (cahier n° 3) |
+| `cafe_town_table` | ville_cafe | à livrer (cahier n° 3) |
+| `capstan` | port | à livrer (cahier n° 3) |
 | `cards_floor` | entrepot_etage | à livrer (cahier n° 3) |
+| `cargo_cart_a` | port | à livrer (cahier n° 3) |
+| `cargo_cart_b` | port | à livrer (cahier n° 3) |
+| `cart_hay` | village | à livrer (cahier n° 3) |
+| `cattails` | sentier | livrée : `assets/hd2d/props/cattails.png` |
 | `chair_child` | entrepot_rdc | livrée : `assets/hd2d/interior/props/chair_child.png` |
 | `chair_guest` | entrepot_etage | livrée : `assets/hd2d/interior/props/chair_guest.png` |
-| `chair_wood` | entrepot_rdc | livrée : `assets/hd2d/interior/props/chair_wood.png` |
-| `chair_wood_back` | entrepot_rdc | livrée : `assets/hd2d/interior/props/chair_wood_back.png` |
+| `chair_wood` | cafe, entrepot_rdc | livrée : `assets/hd2d/interior/props/chair_wood.png` |
+| `chair_wood_back` | cafe, entrepot_rdc | livrée : `assets/hd2d/interior/props/chair_wood_back.png` |
 | `chalk_hopscotch` | entrepot | livrée : `assets/hd2d/decals/chalk_hopscotch.png` |
 | `chimney_brick` | entrepot_toit | livrée : `assets/hd2d/props/chimney_brick.png` |
 | `china_cabinet` | entrepot_rdc | livrée : `assets/hd2d/interior/props/china_cabinet.png` |
+| `cinema_benches` | ville_projection | à livrer (cahier n° 3) |
+| `cinema_screen` | ville_projection | à livrer (cahier n° 3) |
 | `cleaning_set` | entrepot_rdc | à livrer (cahier n° 3) |
 | `climbing_tree` | entrepot | livrée : `assets/hd2d/props/climbing_tree.png` |
+| `clockmaker` | ville_marche | livrée : `assets/hd2d/buildings/clockmaker.png` |
 | `clothes_chest` | entrepot_etage | à livrer (cahier n° 3) |
 | `clothes_floor` | entrepot_etage | à livrer (cahier n° 3) |
+| `cobble` | port, ville_haute, ville_marche | livrée : `assets/hd2d/ground/cobble.png` |
+| `cobble_b` | ville_haute, ville_marche | livrée : `assets/hd2d/ground/cobble_b.png` |
 | `coffee_tray` | entrepot_rdc | à livrer (cahier n° 3) |
 | `comm_crystal` | entrepot_etage | livrée : `assets/hd2d/interior/props/comm_crystal.png` |
+| `cottage_thatch_a` | village | à livrer (cahier n° 3) |
+| `cottage_thatch_b` | village | à livrer (cahier n° 3) |
+| `cottage_thatch_c` | village | à livrer (cahier n° 3) |
+| `crate_apples` | ville_haute | livrée : `assets/hd2d/props/crate_apples.png` |
+| `crate_stack` | ville_marche | livrée : `assets/hd2d/props/crate_stack.png` |
+| `crates_barrels` | cafe, port | livrée : `assets/hd2d/props/crates_barrels.png` |
 | `crypt_pillar` | salle_des_armes | livrée : `assets/hd2d/interior/props/crypt_pillar.png` |
 | `crypt_stairs` | salle_des_armes | à livrer (cahier n° 3) |
+| `crystal_crates` | port | livrée : `assets/hd2d/props/crystal_crates.png` |
 | `crystal_lamp_table` | entrepot_rdc | à livrer (cahier n° 3) |
-| `crystal_pendant` | entrepot_rdc | à livrer (cahier n° 3) |
+| `crystal_pendant` | cafe, entrepot_rdc | à livrer (cahier n° 3) |
+| `crystal_projector` | ville_projection | à livrer (cahier n° 3) |
 | `crystal_stove` | entrepot_rdc | livrée : `assets/hd2d/interior/props/crystal_stove.png` |
+| `deck_bridge` | transport_garde | à livrer (cahier n° 3) |
+| `deck_crates_lashed` | transport_garde | à livrer (cahier n° 3) |
+| `deck_hatch` | transport_garde | à livrer (cahier n° 3) |
+| `deck_vent` | transport_garde | à livrer (cahier n° 3) |
 | `desk_buried` | entrepot_rdc | livrée : `assets/hd2d/interior/props/desk_buried.png` |
 | `desk_chtholly` | entrepot_etage | livrée : `assets/hd2d/interior/props/desk_chtholly.png` |
 | `desk_clean_brooch` | entrepot_etage | à livrer (cahier n° 3) |
 | `desk_nygglatho` | entrepot_etage | livrée : `assets/hd2d/interior/props/desk_nygglatho.png` |
 | `dining_table_long` | entrepot_rdc | livrée : `assets/hd2d/interior/props/dining_table_long.png` |
 | `dining_table_set` | entrepot_rdc | livrée : `assets/hd2d/interior/props/dining_table_set.png` |
+| `display_cabinet` | maison_limashenka | à livrer (cahier n° 3) |
+| `dock_lamp` | port | livrée : `assets/hd2d/props/dock_lamp.png` |
 | `door_armory` | entrepot_rdc | à livrer (cahier n° 3) |
 | `door_armory_inside` | salle_des_armes | à livrer (cahier n° 3) |
+| `door_backroom` | cafe | à livrer (cahier n° 3) |
+| `door_bulkhead` | barocupot | à livrer (cahier n° 3) |
 | `door_double` | entrepot_rdc | livrée : `assets/hd2d/interior/door_double.png` |
-| `door_room` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/door_room.png` |
+| `door_room` | cafe, entrepot_etage, entrepot_rdc, maison_limashenka, ville_boulangerie, ville_cafe, ville_horloger, ville_librairie, ville_projection, ville_snack | livrée : `assets/hd2d/interior/door_room.png` |
 | `door_service` | entrepot_rdc | à livrer (cahier n° 3) |
 | `dresser_child` | entrepot_etage | livrée : `assets/hd2d/interior/props/dresser_child.png` |
 | `drying_frame` | entrepot_toit | livrée : `assets/hd2d/interior/props/drying_frame.png` |
+| `edge_waterfall` | village | livrée : `assets/hd2d/anim/edge_waterfall.png` |
+| `fallen_pine` | foret_profonde | à livrer (cahier n° 3) |
+| `fence_wattle` | village | à livrer (cahier n° 3) |
 | `fern_a` | entrepot | livrée : `assets/hd2d/props/fern_a.png` |
+| `fg_canopy_a` | sentier | à livrer (cahier n° 3) |
 | `filing_cabinet` | entrepot_rdc | à livrer (cahier n° 3) |
 | `fireplace` | entrepot_etage | livrée : `assets/hd2d/interior/props/fireplace.png` |
-| `firewood_pile` | entrepot | livrée : `assets/hd2d/props/firewood_pile.png` |
+| `firewood_pile` | entrepot, village | livrée : `assets/hd2d/props/firewood_pile.png` |
+| `flagstone` | ville_haute, ville_marche | livrée : `assets/hd2d/ground/flagstone.png` |
 | `floor_cushions` | entrepot_rdc | à livrer (cahier n° 3) |
 | `floor_flagstone_cellar` | salle_des_armes | à livrer (cahier n° 3) |
 | `floor_kitchen_tiles` | entrepot_rdc | livrée : `assets/hd2d/interior/floor_kitchen_tiles.png` |
-| `floor_planks_dark` | entrepot_etage | livrée : `assets/hd2d/interior/floor_planks_dark.png` |
-| `floor_planks_worn` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/floor_planks_worn.png` |
+| `floor_planks_dark` | entrepot_etage, ville_projection | livrée : `assets/hd2d/interior/floor_planks_dark.png` |
+| `floor_planks_worn` | cafe, entrepot_etage, entrepot_rdc, maison_limashenka | livrée : `assets/hd2d/interior/floor_planks_worn.png` |
 | `floor_roof_deck` | entrepot_toit | à livrer (cahier n° 3) |
+| `floor_ship_planks` | barocupot | à livrer (cahier n° 3) |
+| `floor_stone_town` | ville_boulangerie, ville_cafe, ville_horloger, ville_librairie, ville_snack | à livrer (cahier n° 3) |
+| `floor_terracotta` | cafe | à livrer (cahier n° 3) |
 | `floor_tiles_bath` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/floor_tiles_bath.png` |
 | `flower_bed` | entrepot | livrée : `assets/hd2d/props/flower_bed.png` |
-| `flower_pots` | entrepot | livrée : `assets/hd2d/props/flower_pots.png` |
+| `flower_pots` | entrepot, village | livrée : `assets/hd2d/props/flower_pots.png` |
 | `footlocker` | entrepot_etage | à livrer (cahier n° 3) |
-| `forest_floor` | entrepot | livrée : `assets/hd2d/ground/forest_floor.png` |
+| `forest_floor` | colline, entrepot, foret_profonde, sentier | livrée : `assets/hd2d/ground/forest_floor.png` |
 | `game_table` | entrepot_rdc | livrée : `assets/hd2d/interior/props/game_table.png` |
-| `garden_soil` | entrepot | livrée : `assets/hd2d/ground/garden_soil.png` |
+| `gangway` | port, transport_garde | livrée : `assets/hd2d/props/gangway.png` |
+| `garde_transport_rotor` | transport_garde | à livrer (cahier n° 3) |
+| `garde_transport_side` | port | à livrer (cahier n° 3) |
+| `garden_soil` | entrepot, village, ville_haute | livrée : `assets/hd2d/ground/garden_soil.png` |
 | `garden_tools` | entrepot | livrée : `assets/hd2d/props/garden_tools.png` |
-| `grass` | entrepot | livrée : `assets/hd2d/ground/grass.png` |
+| `grass` | colline, entrepot, port, village | livrée : `assets/hd2d/ground/grass.png` |
 | `grass_b` | entrepot | livrée : `assets/hd2d/ground/grass_b.png` |
-| `grass_dry` | entrepot | livrée : `assets/hd2d/ground/grass_dry.png` |
+| `grass_dry` | colline, entrepot, montagne, port, village | livrée : `assets/hd2d/ground/grass_dry.png` |
+| `gravel` | port | livrée : `assets/hd2d/ground/gravel.png` |
+| `grove_dense` | foret_profonde | à livrer (cahier n° 3) |
 | `hamper` | entrepot_rdc | à livrer (cahier n° 3) |
+| `hand_cart` | port, ville_marche | livrée : `assets/hd2d/props/hand_cart.png` |
+| `hanging_sign_cup` | ville_haute | à livrer (cahier n° 3) |
+| `hanging_sign_key` | village | livrée : `assets/hd2d/props/hanging_sign_key.png` |
+| `hanging_sign_pan` | ville_haute | à livrer (cahier n° 3) |
+| `harbor_office` | port | livrée : `assets/hd2d/buildings/harbor_office.png` |
+| `haystack` | village | à livrer (cahier n° 3) |
 | `hearth_fire` | entrepot_etage | livrée : `assets/hd2d/anim/hearth_fire.png` |
+| `heather` | colline | livrée : `assets/hd2d/props/heather.png` |
+| `hidden_pool_a` | foret_profonde | à livrer (cahier n° 3) |
+| `hidden_pool_b` | foret_profonde | à livrer (cahier n° 3) |
+| `house_narrow` | ville_haute | livrée : `assets/hd2d/buildings/house_narrow.png` |
+| `house_stone_b` | ville_marche | livrée : `assets/hd2d/buildings/house_stone_b.png` |
+| `house_timber_a` | ville_haute | livrée : `assets/hd2d/buildings/house_timber_a.png` |
+| `house_timber_b` | ville_marche | livrée : `assets/hd2d/buildings/house_timber_b.png` |
 | `infirmary_desk` | entrepot_rdc | livrée : `assets/hd2d/interior/props/infirmary_desk.png` |
+| `juice_glasses` | cafe | à livrer (cahier n° 3) |
 | `kitchen_counter` | entrepot_rdc | livrée : `assets/hd2d/interior/props/kitchen_counter.png` |
 | `kitchen_table_ingredients` | entrepot_rdc | livrée : `assets/hd2d/interior/props/kitchen_table_ingredients.png` |
+| `kneading_trough` | ville_boulangerie | à livrer (cahier n° 3) |
 | `laundry_basket` | entrepot_toit | livrée : `assets/hd2d/props/laundry_basket.png` |
+| `laundry_line` | village | livrée : `assets/hd2d/props/laundry_line.png` |
+| `leaf_litter` | foret_profonde, sentier | livrée : `assets/hd2d/ground/leaf_litter.png` |
 | `leak_bucket` | entrepot_etage | à livrer (cahier n° 3) |
 | `leak_drip` | entrepot_etage | à livrer (cahier n° 3) |
-| `marsh_snag` | entrepot | à livrer (cahier n° 3) |
-| `meadow_flowers` | entrepot | livrée : `assets/hd2d/ground/meadow_flowers.png` |
+| `lily_pads` | sentier | livrée : `assets/hd2d/decals/lily_pads.png` |
+| `limashenka_house` | village | livrée : `assets/hd2d/buildings/limashenka_house.png` |
+| `log_bridge_b` | foret_profonde, montagne | à livrer (cahier n° 3) |
+| `log_hollow` | foret_profonde | livrée : `assets/hd2d/props/log_hollow.png` |
+| `lone_tree` | colline | livrée : `assets/hd2d/props/lone_tree.png` |
+| `longcase_clock` | ville_horloger | à livrer (cahier n° 3) |
+| `map_cabinet` | barocupot | à livrer (cahier n° 3) |
+| `market_stall_cloth` | ville_marche | livrée : `assets/hd2d/props/market_stall_cloth.png` |
+| `market_stall_dairy` | ville_marche | à livrer (cahier n° 3) |
+| `market_stall_flour` | ville_marche | à livrer (cahier n° 3) |
+| `market_stall_fruit` | ville_marche | livrée : `assets/hd2d/props/market_stall_fruit.png` |
+| `market_stall_honey` | ville_marche | à livrer (cahier n° 3) |
+| `market_stall_veg` | ville_marche | livrée : `assets/hd2d/props/market_stall_veg.png` |
+| `marsh_hummock_a` | sentier | à livrer (cahier n° 3) |
+| `marsh_hummock_b` | sentier | à livrer (cahier n° 3) |
+| `marsh_reed_wall` | sentier | à livrer (cahier n° 3) |
+| `marsh_snag` | entrepot, sentier | à livrer (cahier n° 3) |
+| `meadow_flowers` | colline, entrepot | livrée : `assets/hd2d/ground/meadow_flowers.png` |
 | `meal_lunch` | entrepot_rdc | livrée : `assets/hd2d/interior/props/meal_lunch.png` |
 | `medicine_cabinet` | entrepot_rdc | livrée : `assets/hd2d/interior/props/medicine_cabinet.png` |
+| `metal` | port, transport_garde | livrée : `assets/hd2d/ground/metal.png` |
 | `mirror_large` | entrepot_rdc | livrée : `assets/hd2d/interior/props/mirror_large.png` |
+| `mooring_arm_open` | port | à livrer (cahier n° 3) |
+| `moss` | foret_profonde, sentier | livrée : `assets/hd2d/ground/moss.png` |
+| `mossy_rock` | colline | livrée : `assets/hd2d/props/mossy_rock.png` |
+| `mountain_pine_a` | montagne | à livrer (cahier n° 3) |
+| `mountain_pine_b` | montagne | à livrer (cahier n° 3) |
+| `mud` | foret_profonde | livrée : `assets/hd2d/ground/mud.png` |
+| `mushroom_cep` | foret_profonde | livrée : `assets/hd2d/props/mushroom_cep.png` |
 | `oak_a` | entrepot | livrée : `assets/hd2d/props/oak_a.png` |
+| `oak_c` | foret_profonde | livrée : `assets/hd2d/props/oak_c.png` |
+| `oak_d` | foret_profonde | livrée : `assets/hd2d/props/oak_d.png` |
 | `oil_lamp` | entrepot_etage | à livrer (cahier n° 3) |
-| `pantry_cupboard` | entrepot_rdc | à livrer (cahier n° 3) |
+| `oven_glow` | ville_boulangerie | à livrer (cahier n° 3) |
+| `pallet_sacks` | port | livrée : `assets/hd2d/props/pallet_sacks.png` |
+| `pantry_cupboard` | cafe, entrepot_rdc | à livrer (cahier n° 3) |
 | `paper_pile_a` | entrepot_rdc | livrée : `assets/hd2d/interior/props/paper_pile_a.png` |
 | `paper_pile_b` | entrepot_rdc | livrée : `assets/hd2d/interior/props/paper_pile_b.png` |
 | `paper_pile_c` | entrepot_rdc | livrée : `assets/hd2d/interior/props/paper_pile_c.png` |
 | `papers_floor` | entrepot_rdc | à livrer (cahier n° 3) |
-| `path_dirt` | entrepot | livrée : `assets/hd2d/ground/path_dirt.png` |
-| `path_dirt_b` | entrepot | livrée : `assets/hd2d/ground/path_dirt_b.png` |
-| `peat` | entrepot | livrée : `assets/hd2d/ground/peat.png` |
+| `path_dirt` | entrepot, port, village | livrée : `assets/hd2d/ground/path_dirt.png` |
+| `path_dirt_b` | colline, entrepot, montagne, village | livrée : `assets/hd2d/ground/path_dirt_b.png` |
+| `path_edge_ferns` | sentier | à livrer (cahier n° 3) |
+| `path_overgrown` | foret_profonde, sentier | à livrer (cahier n° 3) |
+| `path_root_step` | sentier | à livrer (cahier n° 3) |
+| `path_stones_a` | sentier | à livrer (cahier n° 3) |
+| `path_stones_b` | sentier | à livrer (cahier n° 3) |
+| `peat` | entrepot, sentier | livrée : `assets/hd2d/ground/peat.png` |
 | `piano_old` | entrepot_rdc | à livrer (cahier n° 3) |
 | `play_goal` | entrepot | livrée : `assets/hd2d/props/play_goal.png` |
 | `play_goal_red` | entrepot | livrée : `assets/hd2d/props/play_goal_red.png` |
 | `plush_blue` | entrepot_rdc | livrée : `assets/hd2d/interior/props/plush_blue.png` |
 | `plush_pile` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/props/plush_pile.png` |
+| `port_hangar` | port | livrée : `assets/hd2d/buildings/port_hangar.png` |
+| `port_house_b` | port | à livrer (cahier n° 3) |
 | `pot_steam` | entrepot_rdc | à livrer (cahier n° 3) |
+| `projection_flicker` | ville_projection | à livrer (cahier n° 3) |
+| `projection_hall` | ville_haute | livrée : `assets/hd2d/buildings/projection_hall.png` |
 | `rain_barrel` | entrepot | livrée : `assets/hd2d/props/rain_barrel.png` |
 | `reading_table` | entrepot_rdc | livrée : `assets/hd2d/interior/props/reading_table.png` |
-| `reeds` | entrepot | livrée : `assets/hd2d/props/reeds.png` |
-| `reeds_b` | entrepot | livrée : `assets/hd2d/props/reeds_b.png` |
+| `reeds` | entrepot, sentier | livrée : `assets/hd2d/props/reeds.png` |
+| `reeds_b` | entrepot, sentier | livrée : `assets/hd2d/props/reeds_b.png` |
+| `refuge_oak` | foret_profonde | à livrer (cahier n° 3) |
 | `repair_planks` | entrepot_etage | à livrer (cahier n° 3) |
-| `rock` | entrepot_toit | livrée : `assets/hd2d/ground/rock.png` |
+| `rock` | entrepot_toit, montagne, village | livrée : `assets/hd2d/ground/rock.png` |
+| `rock_b` | montagne | livrée : `assets/hd2d/ground/rock_b.png` |
+| `rock_overhang` | montagne | à livrer (cahier n° 3) |
+| `rock_small_a` | colline | livrée : `assets/hd2d/props/rock_small_a.png` |
 | `roof_hatch` | entrepot_toit | à livrer (cahier n° 3) |
 | `roof_ladder` | entrepot_etage | **nom proposé** (absent des cahiers) |
 | `roof_railing_broken` | entrepot_toit | à livrer (cahier n° 3) |
+| `rope_coil` | port | livrée : `assets/hd2d/props/rope_coil.png` |
+| `rowan` | foret_profonde | à livrer (cahier n° 3) |
 | `rug_brown` | entrepot_etage | livrée : `assets/hd2d/decals/rug_brown.png` |
 | `rug_playroom` | entrepot_rdc | livrée : `assets/hd2d/decals/rug_playroom.png` |
+| `rug_salon` | maison_limashenka | à livrer (cahier n° 3) |
 | `runner_rug` | entrepot_etage, entrepot_rdc | à livrer (cahier n° 3) |
-| `sacks_vegetables` | entrepot_rdc | à livrer (cahier n° 3) |
+| `sack_apples` | ville_marche | livrée : `assets/hd2d/props/sack_apples.png` |
+| `sacks_pile` | port | livrée : `assets/hd2d/props/sacks_pile.png` |
+| `sacks_vegetables` | cafe, entrepot_rdc | à livrer (cahier n° 3) |
+| `scree` | montagne | à livrer (cahier n° 3) |
 | `shelf_nygglatho` | entrepot_etage | livrée : `assets/hd2d/interior/props/shelf_nygglatho.png` |
+| `ship_ladder` | barocupot | à livrer (cahier n° 3) |
 | `shoe_rack` | entrepot_rdc | livrée : `assets/hd2d/interior/props/shoe_rack.png` |
+| `shop_accessories` | ville_haute | à livrer (cahier n° 3) |
+| `shop_apothecary` | ville_haute | à livrer (cahier n° 3) |
+| `shop_bakery` | ville_marche | livrée : `assets/hd2d/buildings/shop_bakery.png` |
+| `shop_bookshop` | ville_haute | livrée : `assets/hd2d/buildings/shop_bookshop.png` |
+| `shop_snack` | ville_haute | à livrer (cahier n° 3) |
+| `side_table_salon` | maison_limashenka | à livrer (cahier n° 3) |
+| `signpost_port` | port | à livrer (cahier n° 3) |
 | `sink_stone` | entrepot_rdc | livrée : `assets/hd2d/interior/props/sink_stone.png` |
+| `small_waterfall` | montagne | à livrer (cahier n° 3) |
+| `snack_counter` | ville_snack | à livrer (cahier n° 3) |
+| `snack_meal_tray` | ville_snack | à livrer (cahier n° 3) |
+| `snack_shelf` | ville_snack | à livrer (cahier n° 3) |
+| `snack_stools` | ville_snack | à livrer (cahier n° 3) |
 | `sofa_beige` | entrepot_rdc | livrée : `assets/hd2d/interior/props/sofa_beige.png` |
+| `sofa_salon` | maison_limashenka | à livrer (cahier n° 3) |
 | `stairs_down` | entrepot_etage | à livrer (cahier n° 3) |
 | `stairs_up` | entrepot_rdc | livrée : `assets/hd2d/interior/props/stairs_up.png` |
+| `steam_whistle` | port | à livrer (cahier n° 3) |
 | `stick_rack` | entrepot | livrée : `assets/hd2d/props/stick_rack.png` |
-| `stream_bed` | entrepot | livrée : `assets/hd2d/ground/stream_bed.png` |
+| `stream_bed` | entrepot, foret_profonde, montagne, village | livrée : `assets/hd2d/ground/stream_bed.png` |
+| `street_lamp_double` | ville_haute, ville_marche | livrée : `assets/hd2d/props/street_lamp_double.png` |
 | `stump_a` | entrepot | livrée : `assets/hd2d/props/stump_a.png` |
 | `stump_axe` | entrepot | livrée : `assets/hd2d/props/stump_axe.png` |
 | `stump_b` | entrepot | livrée : `assets/hd2d/props/stump_b.png` |
@@ -1398,44 +3102,76 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `swords_wrapped` | salle_des_armes | livrée : `assets/hd2d/interior/props/swords_wrapped.png` |
 | `tableware_a` | entrepot_rdc | livrée : `assets/hd2d/interior/props/tableware_a.png` |
 | `talisman_chest` | salle_des_armes | à livrer (cahier n° 3) |
+| `tall_grass` | colline | livrée : `assets/hd2d/props/tall_grass.png` |
+| `tea_set_tiny` | barocupot | à livrer (cahier n° 3) |
 | `tea_table` | entrepot_etage | livrée : `assets/hd2d/interior/props/tea_table.png` |
 | `tea_tray_cheesecake` | entrepot_etage | à livrer (cahier n° 3) |
-| `thicket_a` | entrepot | à livrer (cahier n° 3) |
-| `thicket_b` | entrepot | à livrer (cahier n° 3) |
+| `thicket_a` | entrepot, foret_profonde | à livrer (cahier n° 3) |
+| `thicket_b` | entrepot, foret_profonde, sentier | à livrer (cahier n° 3) |
 | `thicket_c` | entrepot | à livrer (cahier n° 3) |
+| `toolbox_gears` | maison_limashenka | à livrer (cahier n° 3) |
 | `towel_shelf` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/props/towel_shelf.png` |
+| `town_cellar_hatch` | ville_haute | à livrer (cahier n° 3) |
+| `town_doorsteps` | ville_haute | à livrer (cahier n° 3) |
+| `town_house_a` | ville_haute | à livrer (cahier n° 3) |
+| `town_house_b` | ville_haute | à livrer (cahier n° 3) |
+| `town_house_c` | ville_haute | à livrer (cahier n° 3) |
+| `town_house_d` | ville_haute | à livrer (cahier n° 3) |
+| `town_house_e` | ville_haute | à livrer (cahier n° 3) |
+| `town_house_f` | ville_haute | à livrer (cahier n° 3) |
+| `town_planter_stone` | ville_haute | à livrer (cahier n° 3) |
+| `town_wall_fountain` | ville_haute | à livrer (cahier n° 3) |
 | `toy_chest` | entrepot_rdc | livrée : `assets/hd2d/interior/props/toy_chest.png` |
 | `toys_a` | entrepot | livrée : `assets/hd2d/props/toys_a.png` |
+| `tree_old_pine` | foret_profonde | livrée : `assets/hd2d/props/tree_old_pine.png` |
 | `vase_flowers` | entrepot_rdc | à livrer (cahier n° 3) |
 | `vegetable_patch` | entrepot | livrée : `assets/hd2d/props/vegetable_patch.png` |
+| `village_barn` | village | à livrer (cahier n° 3) |
+| `village_house_stone` | village | à livrer (cahier n° 3) |
+| `village_shed` | village | à livrer (cahier n° 3) |
 | `wall_cellar_stone` | salle_des_armes | à livrer (cahier n° 3) |
 | `wall_kitchen_tiles` | entrepot_rdc | livrée : `assets/hd2d/interior/wall_kitchen_tiles.png` |
-| `wall_lantern` | entrepot | livrée : `assets/hd2d/props/wall_lantern.png` |
-| `wall_plaster_worn` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/wall_plaster_worn.png` |
+| `wall_lantern` | entrepot, village, ville_haute | livrée : `assets/hd2d/props/wall_lantern.png` |
+| `wall_panel_dark` | cafe, ville_projection | à livrer (cahier n° 3) |
+| `wall_plaster_ochre` | ville_cafe, ville_librairie | à livrer (cahier n° 3) |
+| `wall_plaster_worn` | cafe, entrepot_etage, entrepot_rdc, maison_limashenka | livrée : `assets/hd2d/interior/wall_plaster_worn.png` |
+| `wall_ship_plate` | barocupot | à livrer (cahier n° 3) |
+| `wall_stone_inside` | ville_boulangerie, ville_horloger, ville_snack | à livrer (cahier n° 3) |
 | `wall_wainscot` | entrepot_rdc | livrée : `assets/hd2d/interior/wall_wainscot.png` |
 | `wall_wallpaper_faded` | entrepot_etage | livrée : `assets/hd2d/interior/wall_wallpaper_faded.png` |
+| `wall_wallpaper_floral` | maison_limashenka | à livrer (cahier n° 3) |
 | `wallitem_apron_hook` | entrepot_rdc | à livrer (cahier n° 3) |
 | `wallitem_bath_rules` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_bath_rules.png` |
 | `wallitem_bronze_plaque` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_bronze_plaque.png` |
 | `wallitem_calendar` | entrepot_etage | livrée : `assets/hd2d/interior/wallitem_calendar.png` |
 | `wallitem_chore_chart` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_chore_chart.png` |
 | `wallitem_clippings` | entrepot_rdc | à livrer (cahier n° 3) |
-| `wallitem_coat_hooks` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_coat_hooks.png` |
+| `wallitem_clock_limashenka` | maison_limashenka | à livrer (cahier n° 3) |
+| `wallitem_clocks` | ville_horloger | à livrer (cahier n° 3) |
+| `wallitem_coat_hooks` | entrepot_rdc, maison_limashenka | livrée : `assets/hd2d/interior/wallitem_coat_hooks.png` |
 | `wallitem_cobweb` | salle_des_armes | à livrer (cahier n° 3) |
 | `wallitem_crystal_sconce` | entrepot_etage, entrepot_rdc | à livrer (cahier n° 3) |
 | `wallitem_day_calendar` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_day_calendar.png` |
+| `wallitem_family_portrait` | maison_limashenka | à livrer (cahier n° 3) |
 | `wallitem_frame_landscape` | entrepot_rdc | à livrer (cahier n° 3) |
+| `wallitem_garde_emblem` | barocupot | à livrer (cahier n° 3) |
 | `wallitem_height_marks` | entrepot_rdc | à livrer (cahier n° 3) |
 | `wallitem_kids_drawings` | entrepot_rdc | à livrer (cahier n° 3) |
 | `wallitem_labcoat` | entrepot_rdc | à livrer (cahier n° 3) |
 | `wallitem_menu_board` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_menu_board.png` |
+| `wallitem_menu_cafe` | cafe | à livrer (cahier n° 3) |
+| `wallitem_menu_town` | ville_cafe | à livrer (cahier n° 3) |
 | `wallitem_notice_a` | entrepot_etage | livrée : `assets/hd2d/interior/wallitem_notice_a.png` |
 | `wallitem_notice_b` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_notice_b.png` |
 | `wallitem_notices_mix` | entrepot_rdc | à livrer (cahier n° 3) |
+| `wallitem_ship_pipes` | barocupot | à livrer (cahier n° 3) |
+| `wallitem_speaking_tube` | barocupot | à livrer (cahier n° 3) |
 | `wallitem_spice_shelf` | entrepot_rdc | à livrer (cahier n° 3) |
 | `wallitem_utensils` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_utensils.png` |
 | `wallitem_wall_clock` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_wall_clock.png` |
 | `wallitem_wall_lamp` | entrepot_etage | livrée : `assets/hd2d/interior/wallitem_wall_lamp.png` |
+| `war_chair` | barocupot | à livrer (cahier n° 3) |
+| `war_table` | barocupot | à livrer (cahier n° 3) |
 | `wardrobe_chtholly` | entrepot_etage | livrée : `assets/hd2d/interior/props/wardrobe_chtholly.png` |
 | `wardrobe_plain` | entrepot_etage | livrée : `assets/hd2d/interior/props/wardrobe_plain.png` |
 | `warehouse_front_a` | entrepot | **nom proposé** (absent des cahiers) |
@@ -1443,15 +3179,22 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `warehouse_porch` | entrepot | livrée : `assets/hd2d/buildings/warehouse_porch.png` |
 | `wash_tub` | entrepot_rdc | livrée : `assets/hd2d/interior/props/wash_tub.png` |
 | `washbasin_stand` | entrepot_rdc | à livrer (cahier n° 3) |
+| `washing_trough` | village | à livrer (cahier n° 3) |
 | `washstand_corridor` | entrepot_rdc | livrée : `assets/hd2d/interior/props/washstand_corridor.png` |
+| `watch_workbench` | ville_horloger | à livrer (cahier n° 3) |
 | `water_tub` | entrepot_rdc | livrée : `assets/hd2d/interior/props/water_tub.png` |
 | `watering_can` | entrepot | livrée : `assets/hd2d/props/watering_can.png` |
 | `wheelbarrow` | entrepot | livrée : `assets/hd2d/props/wheelbarrow.png` |
+| `wildflowers_a` | colline | livrée : `assets/hd2d/props/wildflowers_a.png` |
+| `wind_fence` | port | à livrer (cahier n° 3) |
+| `wind_sock` | port | livrée : `assets/hd2d/props/wind_sock.png` |
 | `window_bare` | entrepot_etage | à livrer (cahier n° 3) |
 | `window_cross_large` | entrepot_rdc | livrée : `assets/hd2d/interior/window_cross_large.png` |
-| `window_cross_small` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/window_cross_small.png` |
+| `window_cross_small` | cafe, entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/window_cross_small.png` |
 | `window_curtains_closed` | entrepot_etage | à livrer (cahier n° 3) |
 | `window_curtains_open` | entrepot_etage, entrepot_rdc | à livrer (cahier n° 3) |
 | `window_dusty` | entrepot_rdc | à livrer (cahier n° 3) |
+| `window_porthole` | barocupot | à livrer (cahier n° 3) |
 | `window_reading_seat` | entrepot_rdc | livrée : `assets/hd2d/interior/window_reading_seat.png` |
+| `window_shutters` | maison_limashenka | à livrer (cahier n° 3) |
 <!-- /inventaire -->
