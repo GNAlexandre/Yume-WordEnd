@@ -9,8 +9,8 @@
 // matin:clair), un profil neuf ouvre index.html?trace&moment=<moment>&temps=<temps> : menu, clic,
 // Entrée (nouvelle partie au Spawn du village, sous ce préréglage, posé par Atmosphere), puis les
 // lignes « [m1] <n> i/s, <d> draw calls … » des raccourcis de test (src/test_shortcuts.gd,
-// toutes les 2 s) donnent les images par seconde et les draw calls, moyennés sur REPORTS lignes
-// une fois la partie posée ; capture atmosphere_web_<moment>_<temps>.png. Le rendu logiciel
+// toutes les 2 s) donnent les draw calls, moyennés sur REPORTS lignes une fois la partie posée,
+// et les images affichées par la page sont comptées sur MEASURE_MS (images/s à deux décimales) ; capture atmosphere_web_<moment>_<temps>.png. Le rendu logiciel
 // (SwiftShader) est lent : les images/s valent pour comparer les préréglages entre eux et avec le
 // build d'avant (sans paramètre, le couchant), pas dans l'absolu. Erreurs et avertissements de la
 // console à la fin.
@@ -24,6 +24,10 @@ const PRESETS = process.argv.length > 4
 const VIEW = { width: 1280, height: 720 };
 const REPORTS = 4;
 const SETTLE_MS = 6000;
+// Images affichées par la page (requestAnimationFrame) comptées sur au moins MEASURE_MS (le temps
+// de lire REPORTS lignes du journal, s'il est plus long) : plus fin que les images/s entières du
+// journal quand le rendu logiciel tourne à une image par seconde.
+const MEASURE_MS = 30000;
 const t0 = Date.now();
 
 function sleep(ms) {
@@ -82,6 +86,15 @@ async function measure(browser, preset) {
 		return problems;
 	}
 	await sleep(SETTLE_MS);
+	await page.evaluate(() => {
+		window.atmosphereFrames = 0;
+		const tick = () => {
+			window.atmosphereFrames++;
+			requestAnimationFrame(tick);
+		};
+		requestAnimationFrame(tick);
+	});
+	const measuredFrom = Date.now();
 	const from = logs.length;
 	const pattern = /\[m1\] (\d+) i\/s, (\d+) draw calls, (\d+) primitives/;
 	const deadline = Date.now() + 120000;
@@ -90,11 +103,19 @@ async function measure(browser, preset) {
 		found = logs.slice(from).map((l) => pattern.exec(l)).filter((m) => m !== null);
 		await sleep(250);
 	}
+	const rest = MEASURE_MS - (Date.now() - measuredFrom);
+	if (rest > 0) {
+		await sleep(rest);
+	}
+	const frames = await page.evaluate(() => window.atmosphereFrames);
+	const seconds = (Date.now() - measuredFrom) / 1000;
+	const rate = frames / seconds;
 	await page.screenshot({ path: `${SHOTS}/atmosphere_web_${moment}_${weather}.png` });
 	const mean = (k) => found.reduce((s, m) => s + Number(m[k]), 0) / Math.max(found.length, 1);
 	const draws = found.map((m) => Number(m[2]));
 	console.log(
-		`${preset} : ${mean(1).toFixed(1)} i/s, ${mean(2).toFixed(0)} draw calls (max ${Math.max(...draws, 0)}),`
+		`${preset} : ${rate.toFixed(2)} images/s (page, ${frames} en ${seconds.toFixed(0)} s ;`
+		+ ` journal ${mean(1).toFixed(1)} i/s), ${mean(2).toFixed(0)} draw calls (max ${Math.max(...draws, 0)}),`
 		+ ` ${mean(3).toFixed(0)} primitives, ${found.length} relevés`
 	);
 	await context.close();

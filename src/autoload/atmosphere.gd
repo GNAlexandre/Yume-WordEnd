@@ -87,7 +87,9 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	var map := WorldManager.current_map_node()
-	if map != _valid_map():
+	if map != _valid_map() or (map == null and _targets != null):
+		# Nouvelle carte (posée à la main : démonstration, capture), ou plus de carte (retour au
+		# menu) : on oublie l'ancienne.
 		dress(map)
 	if _transitioning:
 		step(delta)
