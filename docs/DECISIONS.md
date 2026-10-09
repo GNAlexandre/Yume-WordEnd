@@ -2089,3 +2089,56 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   - première tranche : l'entrepôt (dehors, dedans, vie des petites, jours 1 à 4).
   La « saison des rejetons » et la « veille du Couchant » (`MONDE.md`, section 1.1) sont retirées :
   c'étaient des inventions qui contredisent l'œuvre.
+- **E3 — format des intérieurs** : un étage = une carte, décrit dans
+  `data/maps/<map_id>/interior.json` (pièces en rectangles sur la grille d'un mètre, matières par
+  pièce, portes, fenêtres, éléments de mur, lampes ; `docs/INTERIEURS.md`), lu et vérifié par
+  `InteriorLayout`. Les murs se déduisent des pièces (un mur entre deux cases de pièces
+  différentes, le vide compris), centrés sur la ligne de grille, 0,25 m d'épais (la profondeur
+  d'un `wallcut_*`) ; aux angles, le mur nord-sud porte le poteau, un mur est-ouest s'arrête contre
+  lui. Une porte praticable troue le mur sous un linteau ; une porte fermée (`passable: false`)
+  garde le mur et pose son image. Portes et éléments à 0,175 m au moins d'un angle.
+- **E3 — rien ne cache le joueur** : la *ligne de coupe* est la première limite de pièce au sud de
+  la case du joueur, dans sa colonne (porte comprise) ; ce qui est au sud de la ligne moins 0,3 m
+  n'est dessiné que sous 0,15 m (murs, portes, fenêtres, éléments) ou 1 m (meubles
+  `InteriorPanel`, `cut_height`) : le mur sud de la pièce n'est jamais dessiné, la pièce reste
+  close à l'est, à l'ouest et au nord. Une coupe par z seulement aurait laissé les cloisons
+  nord-sud cacher le joueur dans leurs portes (vues par la tranche) : *colonne de coupe* de la
+  cloison qui passe sous le joueur, sur 4,5 m au sud de lui. La ligne glisse à 14 m/s (pas de
+  saut à la porte), saute au-delà de 9 m (arrivée). Dans le shader : `discard` au-dessus de la
+  hauteur gardée, tranche des murs coupés en `section_color` (faces arrière). Vérifié par
+  `test_interior_entrepot.gd` depuis 6 791 cases (grille de 0,25 m), 3 points du corps, caméra
+  bornée comme `CameraRig.limits`.
+- **E3 — lumière des intérieurs** : aucune lumière du moteur (en Compatibility, chaque lumière
+  ponctuelle compte par objet, huit au plus par mesh fondu, et traverse les murs) : deux cartes de
+  lumière vues de dessus (4 texels par mètre, RGBA8 × 2), le jour des fenêtres et les lampes,
+  bornées à la pièce de leur source, ajoutées en émission (albedo × lumière) aux sols, murs,
+  panneaux et meubles ; plus faibles en haut des murs. Préréglage `interieur`
+  (`src/world/materials/lighting_interieur.tres`, `HD2DLighting` : ambiance chaude 0,34, soleil
+  0,38, vignettage 0,45). Moment de la journée : `InteriorRoom.apply_phase` (morning, day,
+  evening, night : teinte et énergie du jour, énergie des lampes), branchée sur
+  `EventBus.day_phase_changed` ; la lueur des vitres suit le jour, celle des appliques et du
+  fourneau suit les lampes. Vide autour du bâtiment : un sol presque noir (`VOID_COLOR`).
+- **E3 — meubles** : `InteriorPanel` (sous-classe de `DecorPanel`, donc racine valide d'un décor) :
+  nœud au milieu de l'emprise, image au bord sud (`image_offset`), ombre et boîte de collision sur
+  l'emprise ; matériau des intérieurs partagé par image (le `PropBatcher` les fond : coordonnée de
+  coupe et hauteur gardée dans UV2). Scènes écrites par `tools/hd2d_interior.py scenes` dans
+  `src/world/props/` (sans méta de catégorie : `test_hd2d_decor` leur demande une collision).
+  Règle de pose : au-delà d'1 m, contre un mur nord ; au milieu d'une pièce, profondeur
+  d'emprise ≥ (h − 0,25) / 0,78 − 0,35 m (pente du regard de la caméra) ; d'où la chaise à 0,7 m.
+- **E3 — images du lot I** : au manifeste avec `lot: "I"` (56 images : 12 matières, 3 portes,
+  2 fenêtres, 9 éléments de mur, 28 meubles, 2 tapis), remplaçants de `tools/hd2d_interior.py`.
+  En attendant le cahier n° 3, leurs noms et tailles sont dans `docs/INTERIEURS.md` (section 4),
+  que `test_hd2d_assets.gd` lit avec `docs/REFONTE.md`. `tools/hd2d_scenes.py`,
+  `test_hd2d_scenes.gd` et le compte des 45 décalques ne portent plus que sur les lots A à G du
+  cahier n° 2.
+- **E3 — carte d'essai** `entrepot_rdc_essai` (40 × 24 m) : couloir en L, réfectoire, cuisine,
+  salle de lecture, archives, descente vers la salle des armes (porte de cave fermée, sortie
+  « Descendre » vers `entrepot_crypte`), salle de bains, infirmerie, entrée (sortie au sud vers
+  `entrepot`, franchie en marchant), salle de jeux, toilettes (d'après `v1_vex.md` et `v2_v3.md`,
+  rubrique 3 ; toilettes et placard du couloir : canon, emplacement original). `camera_bounds` =
+  Rect2(2, 5, 36, 14) : en x tout le bâtiment, la caméra reste au droit du joueur. Racine et
+  sorties sur des stubs locaux de `Map` et `MapExit` (`tests/stubs/e3_map*_stub.gd`), en attendant
+  le lot E1.
+- **E3 — requêtes du sol** : `InteriorRoom` répond aux mêmes questions que `MapGround` (E2) :
+  `height_at`, `material_at` (nom de l'image du sol), `is_walkable` (dans une pièce, hors des
+  murs ; les meubles ne comptent pas) et `room_at`, en coordonnées de la carte.

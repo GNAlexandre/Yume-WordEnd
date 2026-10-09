@@ -36,8 +36,9 @@ fées), démonstration `tests/integration/demo_interieur.tscn`.
    `prompt` vide pour une porte qu'on franchit en marchant (porte sud, ouverte), « Descendre »,
    « Entrer »… pour une porte fermée (`passable: false`).
 6. **Bornes de la caméra** (`camera_bounds`) : celles du point visé, à 2,5 m au nord du joueur.
-   Pour un étage de L × P m : de x = 10 à L − 10 et de z = 6,5 à P − 6,5 environ, pour que les murs
-   remplissent l'écran sans cacher le joueur.
+   En x, tout le bâtiment (de 2 à L − 2 pour un étage de L m) : la caméra reste au droit du
+   joueur, aucune cloison nord-sud ne le cache en biais. En z, de 5 à P − 5 (P : profondeur) :
+   moins de vide noir au-dessus du mur nord, sans trop aplatir la vue.
 7. **Vérifier** : `tools/test.sh tests/unit/test_interior_room.gd` (format, coupe, lumière) et un
    test d'étage sur le modèle de `tests/unit/test_interior_entrepot.gd` (collisions, portes,
    occlusion depuis chaque case, draw calls) ; captures par une démo sur le modèle de
@@ -98,7 +99,8 @@ erreurs au chargement.
   `InteriorPanel`) n'est dessiné que sous sa hauteur de coupe : 0,15 m pour les murs (leur
   épaisseur au ras du sol, `wallcut_*`), 1 m pour les meubles (`InteriorPanel.cut_height`). Le
   mur sud de la pièce du joueur et tout ce qui est au-delà sont donc coupés ; ses murs nord, est et
-  ouest sont entiers. La ligne glisse d'une limite à l'autre (14 m/s) quand on passe une porte.
+  ouest sont entiers. Dans la porte d'une cloison nord-sud, la *colonne de coupe* abaisse aussi
+  cette cloison sur 4,5 m au sud du joueur (vue par la tranche, elle le cacherait). La ligne glisse d'une limite à l'autre (14 m/s) quand on passe une porte.
   La tranche d'un mur coupé est sombre, comme sur un plan. Les collisions ne changent pas.
 - **Lumière** : préréglage `interieur` (`src/world/materials/lighting_interieur.tres`, à poser
   par `HD2DLighting.apply`) plus deux cartes de lumière vues de dessus (4 texels par mètre),
@@ -107,7 +109,8 @@ erreurs au chargement.
   lumière du moteur, aucune ombre portée : pas un draw call de plus.
 - **Moment de la journée** : `set_daylight(teinte, énergie)`, `set_lamps(énergie)`,
   `apply_phase(phase)` (`morning`, `day`, `evening`, `night`), appelée sur
-  `EventBus.day_phase_changed`.
+  `EventBus.day_phase_changed` ; la lueur des vitres suit le jour, celle des appliques et du
+  fourneau suit les lampes.
 - **Collisions** (couche 1) : une dalle sous toute la carte, une boîte par morceau de mur et par
   linteau.
 - **Draw calls** : un par matière de sol, de mur, de dessus de mur, par image de porte, fenêtre,

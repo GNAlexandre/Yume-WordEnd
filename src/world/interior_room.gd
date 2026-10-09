@@ -69,6 +69,10 @@ const WALL_RELIEF := 0.6
 ## Lueur des vitres et des lampes de mur.
 const WINDOW_GLOW := 0.5
 const GLOWS := {"wallitem_lamp": 1.6}
+## Ce que suit la lueur d'un panneau (panel_material) : rien, le jour, les lampes.
+const GLOW_STEADY := 0
+const GLOW_DAYLIGHT := 1
+const GLOW_LAMPS := 2
 const PLAYER_GROUP := &"player"
 ## Parties du mesh des murs (UV2.y) : face, dessus d'un mur entier, dessus d'un mur coupé.
 const PART_FACE := 0.0
@@ -244,6 +248,39 @@ func rebuild() -> void:
 ## Meshes visibles de la pièce (un par matière).
 func surfaces() -> Array[MeshInstance3D]:
 	return _surfaces.duplicate()
+
+
+# --- Requêtes (comme MapGround, lot E2 ; x et z dans le repère de la carte) ----------------------
+
+
+## Hauteur du sol (m) : un étage est plat, à la hauteur du nœud.
+func height_at(_x: float, _z: float) -> float:
+	return global_position.y
+
+
+## Matière du sol (nom de l'image floor_*), &"" hors des pièces.
+func material_at(x: float, z: float) -> StringName:
+	var index := plan.cell(floori(x), floori(z)) if plan != null else -1
+	return StringName(plan.rooms[index]["floor"]) if index >= 0 else &""
+
+
+## Pièce sous un point, &"" hors des pièces.
+func room_at(x: float, z: float) -> StringName:
+	return plan.room_at(Vector3(x, 0.0, z)) if plan != null else &""
+
+
+## Vrai dans une pièce, hors de l'épaisseur des murs (les meubles, dans Geometry, n'y sont pas).
+func is_walkable(x: float, z: float) -> bool:
+	if room_at(x, z).is_empty():
+		return false
+	for piece: Dictionary in plan.pieces:
+		if float(piece["y0"]) > 0.0:
+			continue
+		var box := plan.piece_box(piece)
+		if x > box.position.x - 0.001 and x < box.end.x + 0.001:
+			if z > box.position.z - 0.001 and z < box.end.z + 0.001:
+				return false
+	return true
 
 
 ## Centre d'une porte au sol (repère du monde), Vector3.INF si elle n'existe pas.
@@ -546,8 +583,10 @@ func _build_panels() -> void:
 	for key: String in tools:
 		var st: SurfaceTool = tools[key]
 		var texture := load(InteriorLayout.image_path(key)) as Texture2D
-		var glow := float(GLOWS.get(key, WINDOW_GLOW if key.begins_with("window_") else 0.0))
-		_add_mesh("Panel_" + key, st.commit(), panel_material(texture, glow))
+		var window := key.begins_with("window_")
+		var glow := float(GLOWS.get(key, WINDOW_GLOW if window else 0.0))
+		var follows := GLOW_DAYLIGHT if window else GLOW_LAMPS
+		_add_mesh("Panel_" + key, st.commit(), panel_material(texture, glow, Color.WHITE, follows))
 
 
 func _wall_panel(
@@ -765,11 +804,12 @@ static func share_uniform(key: StringName, value: Variant) -> void:
 
 
 ## Matériau partagé d'une image de panneau d'intérieur (interior_panel.gdshader), avec la lumière
-## et la coupe de la pièce chargée.
+## et la coupe de la pièce chargée ; sa lueur suit le jour (GLOW_DAYLIGHT : vitres), les lampes
+## (GLOW_LAMPS : appliques, fourneau) ou rien (GLOW_STEADY).
 static func panel_material(
-	texture: Texture2D, glow: float = 0.0, tint: Color = Color.WHITE
+	texture: Texture2D, glow: float = 0.0, tint: Color = Color.WHITE, follows: int = GLOW_LAMPS
 ) -> ShaderMaterial:
-	var key := "%s|%.2f|%s" % [texture.get_rid(), glow, tint.to_html()]
+	var key := "%s|%.2f|%s|%d" % [texture.get_rid(), glow, tint.to_html(), follows]
 	if not _panel_materials.has(key):
 		var material := ShaderMaterial.new()
 		material.shader = PANEL_SHADER
@@ -777,6 +817,7 @@ static func panel_material(
 		material.set_shader_parameter(&"tint", tint)
 		material.set_shader_parameter(&"hd2d_relief", 0.0)
 		material.set_shader_parameter(&"glow_strength", glow)
+		material.set_shader_parameter(&"glow_follows", float(follows))
 		for shared_key: StringName in _shared:
 			material.set_shader_parameter(shared_key, _shared[shared_key])
 		_panel_materials[key] = material

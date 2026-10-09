@@ -490,3 +490,24 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   reposer sur la nouvelle. Le garde-corps et les bittes du quai ne bougent pas.
 - La cascade (`Island/Waterfall`) tombe désormais au bout du lit du ruisseau, en (−62,1 ; −62,4)
   (`IslandEdge.WATERFALL_ANGLE`) : l'image `edge_waterfall` se pose là, sous la lèvre.
+
+## E3 — intérieurs (Map, MapExit et WorldManager : E1 ; lumière : E9 ; sol : E2)
+- Stubs à remplacer à la fusion avec E1 : la racine de
+  `src/world/maps/entrepot_rdc_essai/entrepot_rdc_essai.tscn` a pour script
+  `res://tests/stubs/e3_map_stub.gd` (→ `res://src/world/map.gd`), ses deux sorties
+  `res://tests/stubs/e3_map_exit_stub.gd` (→ `res://src/world/map_exit.gd`). Les exports sont
+  ceux du contrat (7.1) ; `test_interior_entrepot.gd` les lit par leur nom (`get`) et ne change pas.
+- Les sorties de l'étage d'essai visent des cartes à venir : `entrepot` (marqueur
+  `from_entrepot_rdc`) et `entrepot_crypte` (`from_entrepot_rdc`). Si le vérificateur des cartes
+  d'E1 exige des cartes existantes, les faire viser la carte d'essai d'E1 en attendant.
+- E1 : `CameraRig.limits` = `Map.camera_bounds` (bornes du point visé) ; l'étage d'essai compte
+  dessus (x de 2 à 38 : la caméra reste au droit du joueur). Facultatif : après `go_to`, appeler
+  `snap_cut()` sur un `Ground` `InteriorRoom` (sinon la coupe se pose d'elle-même à la première
+  image et saute au-delà de 9 m).
+- E9 : `light_preset = &"interieur"` désigne `src/world/materials/lighting_interieur.tres`
+  (`HD2DLighting`) ; `apply()` cherche `WorldEnvironment` et `Sun` sous le nœud donné : à poser là
+  où vivent l'environnement et le soleil du jeu (fond : `InteriorRoom.VOID_COLOR`, aucun ciel n'est
+  visible). Le moment de la journée d'un intérieur passe par `InteriorRoom.apply_phase(phase)` (déjà
+  branchée sur `EventBus.day_phase_changed`), `set_daylight(teinte, énergie)` et `set_lamps(énergie)`.
+- E2 : `InteriorRoom` offre `height_at`, `material_at`, `is_walkable` (et `room_at`) comme
+  `MapGround` ; à garder alignés si leurs signatures changent.

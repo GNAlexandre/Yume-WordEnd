@@ -14,6 +14,9 @@ render_mode cull_disabled, depth_draw_opaque, specular_disabled;
 #include "res://src/world/shaders/panel_core.gdshaderinc"
 #include "res://src/world/shaders/interior_core.gdshaderinc"
 
+// Ce que suit la lueur (pixels couleur cristal) : 0 rien, 1 le jour (vitres), 2 les lampes.
+uniform float glow_follows = 2.0;
+
 varying vec3 world_pos;
 varying vec2 light_xz;
 varying float cut_coord;
@@ -40,5 +43,6 @@ void fragment() {
 	ALPHA = alpha;
 	ALPHA_SCISSOR_THRESHOLD = alpha_cut;
 	ROUGHNESS = 1.0;
-	EMISSION = emission + albedo * interior_light(light_xz, height);
+	float glow_scale = glow_follows > 1.5 ? lamp_energy : (glow_follows > 0.5 ? window_energy : 1.0);
+	EMISSION = emission * glow_scale + albedo * interior_light(light_xz, height);
 }

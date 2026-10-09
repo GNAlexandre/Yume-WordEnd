@@ -319,6 +319,37 @@ func test_collisions_are_the_floor_and_the_walls() -> void:
 		assert_true(shape.shape is BoxShape3D, "boîtes")
 
 
+func test_queries_like_the_outdoor_ground() -> void:
+	var room := _room(_small())
+	assert_eq(room.height_at(3.0, 3.0), 0.0, "étage plat")
+	assert_eq(room.material_at(2.5, 2.5), &"floor_planks_worn")
+	assert_eq(room.material_at(6.0, 2.0), &"floor_tiles_bath")
+	assert_eq(room.material_at(0.5, 0.5), &"", "hors des pièces")
+	assert_eq(room.room_at(6.0, 2.0), &"b")
+	assert_true(room.is_walkable(3.0, 3.0), "dans la pièce")
+	assert_false(room.is_walkable(5.0, 2.0), "dans la cloison")
+	assert_true(room.is_walkable(3.0, 4.95), "dans la porte vers le dehors")
+	assert_false(room.is_walkable(2.0, 4.95), "dans le mur sud")
+	assert_false(room.is_walkable(0.5, 3.0), "dehors")
+
+
+## Construction de l'étage d'essai (40 × 24 m, 11 pièces) : rapide, aussi pour le Web.
+func test_floor_builds_quickly() -> void:
+	var json := JSON.new()
+	json.data = _example()
+	var times: Array[float] = []
+	for _i in 3:
+		var room := InteriorRoom.new()
+		room.layout = json
+		var start := Time.get_ticks_usec()
+		add_child(room)
+		times.append((Time.get_ticks_usec() - start) / 1000.0)
+		room.free()
+	times.sort()
+	gut.p("construction de l'étage d'essai : %.1f ms (médiane de 3)" % times[1])
+	assert_lt(times[1], 400.0, "construction en moins de 400 ms (bureau, sans écran)")
+
+
 func test_door_position_is_on_its_wall() -> void:
 	var room := _room(_example())
 	assert_eq(room.door_position(&"entree"), Vector3(19.0, 0.0, 21.0), "porte d'entrée")
