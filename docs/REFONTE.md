@@ -511,6 +511,59 @@ En tout, **400 à 550 images**.
 
 ---
 
+### 8.1 Conventions d'images de la refonte
+
+Elles font foi pour le cahier n° 3 et pour les lots du moteur. Les règles communes des cahiers
+n° 1 et n° 2 restent valables :
+- 96 px par mètre ;
+- PNG RGBA ;
+- taille exacte ;
+- panneaux collés au bord bas et centrés ;
+- personnages et animaux tournés vers la droite ;
+- transparence découpée, sauf alpha doux annoncé.
+
+**Intérieurs** (`assets/hd2d/interior/`) :
+
+| Genre | Nom | Taille | Règle |
+| --- | --- | --- | --- |
+| Sol | `floor_<matière>.png` | 384 × 384 (4 × 4 m) | sans raccord, vue de dessus, opaque (genre `tile`) |
+| Mur | `wall_<matière>.png` | 384 × 288 (4 m × 3 m) | raccord horizontal (genre `tile_h`), vue de face sans perspective, plinthe et corniche comprises, opaque |
+| Haut de mur coupé | `wallcut_<matière>.png` | 384 × 24 (4 × 0,25 m) | dessus d'un mur vu d'en haut, raccord horizontal ; le jeu ne dessine pas le mur sud d'une pièce, seulement son épaisseur au ras du sol |
+| Porte, fenêtre, élément de mur | `door_<nom>.png`, `window_<nom>.png`, `wallitem_<nom>.png` | à l'échelle (porte : 1,1 × 2,2 m = 106 × 211) | panneau posé contre un mur, ancré en bas |
+| Meuble, objet | `props/<nom>.png` | à l'échelle | panneau ancré en bas ; vue de face légèrement plongeante (10 à 15°) |
+
+Les matières de l'entrepôt sont fixées dès maintenant ; le cahier les reprend et le moteur fait
+leurs remplaçants :
+- sols : `floor_planks_worn` (parquet usé), `floor_planks_dark` (chambres), `floor_tiles_bath`
+  (salle de bains), `floor_flagstone_cellar` (crypte), `floor_kitchen_tiles` ;
+- murs : `wall_plaster_worn` (plâtre usé), `wall_wainscot` (lambris bas et plâtre),
+  `wall_wallpaper_faded` (chambres), `wall_kitchen_tiles`, `wall_cellar_stone` ;
+- dessus de mur : `wallcut_wood`, `wallcut_stone`.
+
+**Personnages** : le format des planches ne change pas (`docs/ASSETS_HD2D.md`, section 3 :
+trois vues, mêmes animations, même hauteur debout). Les animations nouvelles portent ces noms :
+
+| Animation | Images | ips | Boucle | Qui | Contenu |
+| --- | --- | --- | --- | --- | --- |
+| `course` | 5 | 14 | oui | petites, aînées, habitants | course |
+| `saut` | 4 | 12 | non | petites | élan, saut, réception |
+| `frappe` | 4 | 14 | non | petites, aînées | frappe du pied dans le ballon ; `coup` : [2] |
+| `lance` | 4 | 12 | non | petites | lancer à deux mains par-dessus la tête ; `coup` : [2] |
+| `grimpe` | 4 | 8 | oui | petites | grimper à un tronc (vue de dos surtout) |
+| `assis` | 2 | 2 | oui | tous | assis sur un banc ou une chaise, respiration |
+| `lit` | 2 | 2 | oui | tous | assis, un livre ouvert, page qui tourne |
+| `dort` | 2 | 1 | oui | tous | couché sur le côté, respiration |
+| `tombe` | 4 | 10 | non | petites | chute en avant à plat ventre (avalanche, embuscade ratée) |
+| `porte` | 6 | 10 | oui | Willem, Nygglatho, habitants | marche en portant un panier, un plateau ou une caisse (objet dessiné) |
+| `travaille` | 4 | 6 | oui | Willem, Nygglatho, habitants | geste de métier : remuer une marmite, marteler, balayer, servir (une planche par geste et par personnage) |
+| `effondre` | 4 | 8 | non | Willem | chancelle et tombe assis, puis à terre |
+| `hanches` | 2 | 2 | oui | Nygglatho, Chtholly | poings sur les hanches, réprimande |
+
+**Animaux** (`assets/fauna/<id>/`) : même format de planche, trois vues ; `repos`, `marche`,
+`course` pour tous ; `attaque` (avec `coup`), `degats` et `mort` (une bête vaincue s'enfuit ou
+reste à terre, sans sang) pour les animaux dangereux ; `fuite` (envol, bond) pour les oiseaux et
+le petit gibier.
+
 ## 9. Phasage
 
 | Phase | Contenu | Fin de phase |
