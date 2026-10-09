@@ -6,7 +6,9 @@ décrit dans un fichier de données, se meuble dans la scène de la carte et se 
 *Octopath Traveler* : caméra fixe inclinée vers le nord, mur sud jamais dessiné, sols et murs en
 images, lumière chaude. Exemple complet : `data/maps/entrepot_rdc_essai/interior.json` et
 `src/world/maps/entrepot_rdc_essai/entrepot_rdc_essai.tscn` (rez-de-chaussée de l'entrepôt des
-fées), démonstration `tests/integration/demo_interieur.tscn`.
+fées), démonstration `tests/integration/demo_interieur.tscn` (la vraie partie, `game.tscn`, posée dans
+l'étage par `WorldManager.enter_map`), test dans la vraie partie
+`tests/integration/test_interior_in_game.gd`.
 
 ## 1. Mode d'emploi
 
@@ -30,11 +32,15 @@ fées), démonstration `tests/integration/demo_interieur.tscn`.
      (`test_interior_entrepot.gd` le vérifie de toute case praticable) ;
    - garder 0,8 m de passage (le joueur a 0,35 m de rayon) et dégager les portes ;
    - les tapis sont des `GroundDecal` (`rug_*`), sans collision.
-5. **Marqueurs et sorties** : `Markers/Spawn` et un `from_<carte>` par arrivée, à 1,5 m au moins
-   d'une sortie, tournés vers où l'on regarde (−Z : le nord). Une porte vers une autre carte a un
-   `id` ; son `MapExit` se pose devant elle (`InteriorRoom.door_position(id)` donne son centre) :
-   `prompt` vide pour une porte qu'on franchit en marchant (porte sud, ouverte), « Descendre »,
-   « Entrer »… pour une porte fermée (`passable: false`).
+5. **Marqueurs, sorties, lumière** (contrat et pièges : `PLAN.md`, section 3, « (E1) Créer une
+   carte ») : `Markers/Spawn` et un `from_<carte>` par arrivée, à y = 0,2, à 2 ou 3 m d'une
+   sortie, tournés vers où l'on regarde (−Z : le nord). Une porte vers une autre carte a un `id` ;
+   son `MapExit` se pose devant elle (`InteriorRoom.door_position(id)` donne son centre), sa forme
+   couvre la porte : `prompt` vide pour une porte qu'on franchit en marchant (porte sud, ouverte),
+   « Descendre », « Entrer »… pour une porte fermée (`passable: false`) ; la carte cible et son
+   marqueur doivent exister (`tests/unit/test_maps.gd`). La lumière de l'étage est un enfant
+   `Light`, instance de `src/world/interior_light.tscn` : le préréglage `interieur` à l'entrée,
+   le réglage par défaut (couchant) rendu à la caméra et aux personnages en partant.
 6. **Bornes de la caméra** (`camera_bounds`) : celles du point visé, à 2,5 m au nord du joueur.
    En x, tout le bâtiment (de 2 à L − 2 pour un étage de L m) : la caméra reste au droit du
    joueur, aucune cloison nord-sud ne le cache en biais. En z, de 5 à P − 5 (P : profondeur) :
@@ -102,8 +108,8 @@ erreurs au chargement.
   ouest sont entiers. Dans la porte d'une cloison nord-sud, la *colonne de coupe* abaisse aussi
   cette cloison sur 4,5 m au sud du joueur (vue par la tranche, elle le cacherait). La ligne glisse d'une limite à l'autre (14 m/s) quand on passe une porte.
   La tranche d'un mur coupé est sombre, comme sur un plan. Les collisions ne changent pas.
-- **Lumière** : préréglage `interieur` (`src/world/materials/lighting_interieur.tres`, à poser
-  par `HD2DLighting.apply`) plus deux cartes de lumière vues de dessus (4 texels par mètre),
+- **Lumière** : préréglage `interieur` (`src/world/materials/lighting_interieur.tres`, posé par
+  l'enfant `Light` de la carte, `src/world/interior_light.tscn`) plus deux cartes de lumière vues de dessus (4 texels par mètre),
   bornées à leur pièce : le jour des fenêtres et les lampes ; elles s'ajoutent en émission aux
   sols, aux murs, aux portes et fenêtres et aux meubles (`interior_core.gdshaderinc`). Aucune
   lumière du moteur, aucune ombre portée : pas un draw call de plus.

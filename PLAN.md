@@ -629,7 +629,8 @@ Le nœud `Ground` d'une carte intérieure (`docs/REFONTE.md`, section 7.1) : un 
 décrit par des données, bâti en images, vu par la caméra fixe qui regarde le nord. Mode d'emploi
 détaillé, format complet et liste des images : `docs/INTERIEURS.md`. Exemple :
 `data/maps/entrepot_rdc_essai/interior.json` et `src/world/maps/entrepot_rdc_essai/`, démo
-`tests/integration/demo_interieur.tscn` (`INTERIOR_VIEW=<vue>`, `INTERIOR_PHASE`, `INTERIOR_CUT=0`).
+`tests/integration/demo_interieur.tscn` (`game.tscn` et `WorldManager.enter_map` ;
+`INTERIOR_VIEW=<vue>`, `INTERIOR_PHASE`, `INTERIOR_CUT=0`), lumière `src/world/interior_light.tscn`.
 
 **Format** (`data/maps/<map_id>/interior.json`) : `size` (m, = `Map.size`), `wall_height` (3),
 `wall_thickness` (0,25), `rooms.<id>` (`name`, `rects` : `[x, z, largeur, profondeur]` sur la grille
@@ -662,7 +663,7 @@ func height_at(x, z), material_at(x, z) -> StringName, room_at(x, z), is_walkabl
 func door_position(id) -> Vector3, light_at(local) -> Color
 func occluder_triangles(cut_world, player := Vector3.INF) -> PackedVector3Array   # tests
 static func panel_material(texture, glow, tint, follows) -> ShaderMaterial, share_uniform(key, value),
-     panel_mesh(size, cut, keep), part_code(part, line)
+     panel_mesh(size, cut, keep), part_code(part, line)   # caches en références faibles (WeakRef)
 const CUT_HEIGHT (0,15), PROP_CUT_HEIGHT (1), CUT_MARGIN (0,3), CUT_SPEED (14 m/s), COLUMN_HALF,
       COLUMN_FRONT, COLUMN_LENGTH, LIGHT_TEXELS (4/m), VOID_COLOR, PLAYER_GROUP
 
@@ -695,15 +696,19 @@ func front_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
    `light_preset = &"interieur"`, `camera_bounds` : de x = 2 à la largeur − 2 pour que la caméra
    reste au droit du joueur, en z de 5 à la profondeur − 5) ; `Ground` = `StaticBody3D` de script
    `interior_room.gd` (masque 0) avec `layout` ; `Geometry` (`PropBatcher`) ; `Markers` (`Spawn`,
-   `from_<carte>` à 1,5 m au moins des sorties) ; `Exits` (`MapExit` devant chaque porte qui a un
-   `id` : `door_position(id)` ; zone qui couvre la porte quand on la franchit en marchant) ; `Life`.
+   `from_<carte>` à y = 0,2, à 2 ou 3 m des sorties) ; `Exits` (`MapExit` devant chaque porte
+   qui a un `id` : `door_position(id)` ; zone qui couvre la porte quand on la franchit en marchant ;
+   carte cible et marqueur existants, `tests/unit/test_maps.gd`) ; `Life` ; et sa lumière,
+   `Light` = instance de `src/world/interior_light.tscn` (préréglage `interieur` à l'entrée,
+   réglage par défaut rendu en partant), en attendant E9.
 4. Meubler sous `Geometry` avec les scènes `InteriorPanel` de `src/world/props/` : nœud au milieu
    de l'emprise, image au bord sud ; au-delà d'1 m de haut, contre un mur nord ; au milieu d'une
    pièce, profondeur d'emprise ≥ `(h − 0,25) / 0,78 − 0,35` m ; 0,8 m de passage ; tapis :
    `GroundDecal` `rug_*`.
 5. Tester l'étage sur le modèle de `tests/unit/test_interior_entrepot.gd` (circulation, portes,
-   occlusion depuis chaque case, draw calls) et le capturer sur le modèle de
-   `tests/integration/demo_interieur.gd`.
+   occlusion depuis chaque case, draw calls), dans la vraie partie sur le modèle de
+   `tests/integration/test_interior_in_game.gd`, et le capturer sur le modèle de
+   `tests/integration/demo_interieur.gd` (`game.tscn`, puis `WorldManager.enter_map`).
 Nouvelle image : `tools/hd2d_interior.py` (listes et recettes), puis `python3
 tools/hd2d_interior.py manifest`, `python3 tools/hd2d_assets.py gen --lot I`, `python3
 tools/hd2d_interior.py scenes`, `tools/import.sh`.

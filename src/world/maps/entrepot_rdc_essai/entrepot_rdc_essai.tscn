@@ -1,10 +1,11 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://tests/stubs/e3_map_stub.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
 [ext_resource type="Script" path="res://src/world/interior_room.gd" id="2_room"]
 [ext_resource type="JSON" path="res://data/maps/entrepot_rdc_essai/interior.json" id="3_layout"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
-[ext_resource type="Script" path="res://tests/stubs/e3_map_exit_stub.gd" id="5_exit"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
+[ext_resource type="PackedScene" path="res://src/world/interior_light.tscn" id="6_light"]
 [ext_resource type="PackedScene" path="res://src/world/props/dresser_glass.tscn" id="p_dresser_glass"]
 [ext_resource type="PackedScene" path="res://src/world/props/sink_counter.tscn" id="p_sink_counter"]
 [ext_resource type="PackedScene" path="res://src/world/props/table_long.tscn" id="p_table_long"]
@@ -39,9 +40,6 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_entree"]
 size = Vector3(3, 2, 2)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_crypte"]
-size = Vector3(1.2, 2, 1.2)
-
 [node name="entrepot_rdc_essai" type="Node3D"]
 script = ExtResource("1_map")
 display_name = "Entrepôt des fées, rez-de-chaussée (essai)"
@@ -50,6 +48,8 @@ interior = true
 size = Vector2(40, 24)
 camera_bounds = Rect2(2, 5, 36, 14)
 light_preset = &"interieur"
+
+[node name="Light" parent="." instance=ExtResource("6_light")]
 
 [node name="Ground" type="StaticBody3D" parent="."]
 collision_mask = 0
@@ -238,13 +238,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.9, 0, 13.745)
 [node name="Markers" type="Node3D" parent="."]
 
 [node name="Spawn" type="Marker3D" parent="Markers"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 19.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0.2, 19.4)
 
 [node name="from_entrepot" type="Marker3D" parent="Markers"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 19.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0.2, 19.4)
 
 [node name="from_entrepot_crypte" type="Marker3D" parent="Markers"]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 36.5, 0, 4.6)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 36.5, 0.2, 4.6)
 
 [node name="Exits" type="Node3D" parent="."]
 
@@ -253,24 +253,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 22.2)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("5_exit")
-target_map = &"entrepot"
-target_marker = &"from_entrepot_rdc"
+target_map = &"ile_ancienne"
+target_marker = &"Spawn"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_entrepot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("BoxShape3D_entree")
-
-[node name="vers_crypte" type="Area3D" parent="Exits"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.5, 0, 2.9)
-collision_layer = 0
-collision_mask = 2
-script = ExtResource("5_exit")
-target_map = &"entrepot_crypte"
-target_marker = &"from_entrepot_rdc"
-prompt = "Descendre"
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_crypte"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("BoxShape3D_crypte")
 
 [node name="Life" type="Node3D" parent="."]

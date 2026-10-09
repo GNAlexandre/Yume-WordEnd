@@ -2,11 +2,13 @@ extends GutTest
 ## (E3) Le rez-de-chaussée d'essai de l'entrepôt des fées (src/world/maps/entrepot_rdc_essai/,
 ## data/maps/entrepot_rdc_essai/interior.json), carte intérieure du contrat des cartes
 ## (docs/REFONTE.md, section 7.1) :
-## - structure : racine Map (stub de E1), Ground (InteriorRoom), Geometry (PropBatcher, meubles
-##   InteriorPanel), Markers (Spawn, from_*), Exits (MapExit devant leur porte), Life ;
+## - structure : racine Map (contrat de E1), Ground (InteriorRoom), Geometry (PropBatcher, meubles
+##   InteriorPanel), Markers (Spawn, from_*), Exits (MapExit devant sa porte), Life, et sa lumière
+##   (Light : interior_light.tscn, préréglage « interieur », plus sombre que dehors) ;
 ## - circulation : depuis Spawn, à la taille du joueur, on atteint chaque pièce par ses portes,
-##   on ne sort du bâtiment que par la porte d'entrée ; un corps qui marche passe une porte et
-##   bute contre un mur ; la porte de la crypte est fermée ;
+##   on ne sort du bâtiment que par la porte d'entrée (sa sortie) ; un corps qui marche passe une
+##   porte et bute contre un mur ; la porte de la crypte est fermée (sa sortie viendra avec la
+##   carte de la crypte) ;
 ## - rien ne cache le joueur : de toute case praticable, la caméra du jeu (bornée à
 ##   camera_bounds) voit ses pieds, sa taille et sa tête, compte tenu de la coupe (murs, cloisons
 ##   et meubles au sud de la limite qui suit le joueur) ;
@@ -59,7 +61,7 @@ func before_all() -> void:
 	_focus_height = rig.get(&"focus_height")
 	_focus_ahead = rig.get(&"focus_ahead")
 	rig.free()
-	_bounds = _map.get(&"camera_bounds")
+	_bounds = (_map as Map).bounds()
 	_walk()
 
 
@@ -71,20 +73,36 @@ func after_all() -> void:
 
 
 func test_map_follows_the_contract() -> void:
-	assert_eq(String(_map.name), "entrepot_rdc_essai", "racine nommée comme son map_id")
-	assert_true(_map.get(&"interior"), "carte intérieure")
-	assert_eq(_map.get(&"light_preset"), &"interieur", "préréglage de lumière des intérieurs")
-	assert_eq(_map.get(&"region"), &"entrepot")
-	assert_false(String(_map.get(&"display_name")).is_empty(), "nom affiché")
-	var size: Vector2 = _map.get(&"size")
-	assert_eq(Vector2i(size), _room.plan.map_size, "Map.size = size de interior.json")
-	assert_true(Rect2(Vector2.ZERO, size).encloses(_bounds), "bornes de la caméra dans la carte")
+	var map := _map as Map
+	assert_not_null(map, "racine Map")
+	if map == null:
+		return
+	assert_eq(map.map_id(), &"entrepot_rdc_essai", "racine nommée comme son map_id")
+	assert_eq(Map.problems(map), PackedStringArray(), "contrat des cartes")
+	assert_true(map.interior, "carte intérieure")
+	assert_eq(map.light_preset, &"interieur", "préréglage de lumière des intérieurs")
+	assert_eq(map.region, &"entrepot")
+	assert_false(map.display_name.is_empty(), "nom affiché")
+	assert_eq(Vector2i(map.size), _room.plan.map_size, "Map.size = size de interior.json")
+	assert_true(map.area().encloses(map.bounds()), "bornes de la caméra dans la carte")
 	assert_eq(_room.plan.problems, [] as Array[String], "agencement sans faute")
-	assert_true(_map.get_node(^"Geometry") is PropBatcher, "Geometry : PropBatcher")
-	for child: String in ["Markers/Spawn", "Exits", "Life"]:
-		assert_not_null(_map.get_node_or_null(NodePath(child)), child)
 	var furniture := _map.get_node(^"Geometry").find_children("*", "InteriorPanel", true, false)
 	assert_gt(furniture.size(), 40, "étage meublé")
+
+
+func test_the_map_carries_its_interior_light() -> void:
+	var world := _map.get_node_or_null(^"Light/WorldEnvironment") as WorldEnvironment
+	assert_not_null(world, "Light : instance de src/world/interior_light.tscn")
+	if world == null:
+		return
+	var environment := world.environment
+	assert_eq(environment.background_mode, Environment.BG_COLOR, "fond uni : aucun ciel")
+	assert_eq(environment.background_color, InteriorRoom.VOID_COLOR, "le vide autour du bâtiment")
+	var preset := load("res://src/world/materials/lighting_interieur.tres") as HD2DLighting
+	assert_almost_eq(environment.ambient_light_energy, preset.ambient_energy, 0.001, "préréglage")
+	var outside := HD2DLighting.for_phase(&"day")
+	assert_lt(preset.ambient_energy, outside.ambient_energy, "plus sombre que dehors")
+	assert_lt(preset.sun_energy, outside.sun_energy, "moins de soleil que dehors")
 
 
 func test_markers_stand_inside_and_exits_face_their_doors() -> void:
@@ -95,17 +113,12 @@ func test_markers_stand_inside_and_exits_face_their_doors() -> void:
 		for exit: Node in _map.get_node(^"Exits").get_children():
 			var gap := Vector2(at.x, at.z).distance_to(_flat((exit as Node3D).global_position))
 			assert_gt(gap, 1.5, "%s à l'écart de la sortie %s" % [marker.name, exit.name])
-	var exits := {"vers_entrepot": &"entree", "vers_crypte": &"crypte"}
-	for exit_name: String in exits:
-		var exit := _map.get_node(NodePath("Exits/" + exit_name)) as Area3D
-		assert_false(StringName(exit.get(&"target_map")).is_empty(), "%s : carte visée" % exit_name)
-		assert_eq(exit.collision_layer, 0, "%s : couche 0" % exit_name)
-		assert_eq(exit.collision_mask, 2, "%s : masque player" % exit_name)
-		var door := _room.door_position(exits[exit_name] as StringName)
-		var gap := _flat(exit.global_position).distance_to(_flat(door))
-		assert_lt(gap, 1.5, "%s devant sa porte" % exit_name)
-	var closed := _map.get_node(^"Exits/vers_crypte")
-	assert_false(String(closed.get(&"prompt")).is_empty(), "porte fermée : une interaction")
+	var exit := _map.get_node(^"Exits/vers_entrepot") as MapExit
+	assert_not_null(exit, "sortie par la porte d'entrée")
+	if exit != null:
+		assert_false(exit.needs_interaction(), "on la franchit en marchant")
+		var door := _room.door_position(&"entree")
+		assert_lt(_flat(exit.global_position).distance_to(_flat(door)), 1.5, "devant sa porte")
 	assert_true(_blocked(_room.door_position(&"crypte")), "la porte de la crypte est fermée")
 
 
@@ -272,8 +285,8 @@ func _blocked(at: Vector3) -> bool:
 
 ## Vrai si at est dans une sortie qu'on franchit en marchant (prompt vide) : on change de carte.
 func _leaves(at: Vector3) -> bool:
-	for exit: Node in _map.get_node(^"Exits").get_children():
-		if not String(exit.get(&"prompt")).is_empty():
+	for exit: MapExit in (_map as Map).exits():
+		if exit.needs_interaction():
 			continue
 		var shape := exit.get_child(0) as CollisionShape3D
 		var box := (shape.shape as BoxShape3D).size
@@ -286,8 +299,7 @@ func _leaves(at: Vector3) -> bool:
 ## Cases atteintes à pied depuis Spawn, dans la carte ; on s'arrête dans une sortie.
 func _walk() -> void:
 	var start := _cell((_map.get_node(^"Markers/Spawn") as Node3D).global_position)
-	var size: Vector2 = _map.get(&"size")
-	var limit := Vector2i((size / GRID).ceil())
+	var limit := Vector2i(((_map as Map).size / GRID).ceil())
 	var queue: Array[Vector2i] = [start]
 	_reached[start] = true
 	while not queue.is_empty():

@@ -88,11 +88,15 @@ const PHASES := {
 }
 
 ## Matériaux des panneaux, partagés par image (portes, fenêtres, éléments, meubles InteriorPanel :
-## le PropBatcher fond les meubles d'une même image en un draw call) ; uniformes partagés par la
-## pièce chargée (cartes de lumière, coupe).
+## le PropBatcher fond les meubles d'une même image en un draw call) et meshes des meubles, en
+## références faibles (WeakRef, comme les caches de DecorPanel) : rien ne reste d'une carte
+## quittée ; uniformes partagés par la pièce chargée (cartes de lumière, coupe), oubliés quand
+## elle part.
 static var _panel_materials: Dictionary = {}
 static var _panel_meshes: Dictionary = {}
 static var _shared: Dictionary = {}
+## Pièce qui a posé les uniformes partagés en dernier (son instance_id).
+static var _shared_owner: int = 0
 
 ## Agencement de l'étage (data/maps/<map_id>/interior.json).
 @export var layout: JSON:
@@ -140,10 +144,14 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	# La pièce part : les meubles (matériaux partagés) n'ont plus ni lumière ni coupe.
+	# La pièce part : les meubles (matériaux partagés) n'ont plus ni lumière ni coupe, et le cache
+	# ne retient plus ses cartes de lumière (sauf si une autre pièce a déjà pris la place).
+	if _shared_owner != get_instance_id():
+		return
 	for key: StringName in [&"window_light", &"lamp_light"]:
 		share_uniform(key, null)
 	share_uniform(&"cut_line", NO_CUT)
+	_shared.clear()
 
 
 func _process(delta: float) -> void:
@@ -795,14 +803,17 @@ func _set_uniform(key: StringName, value: Variant) -> void:
 	for material in _materials:
 		material.set_shader_parameter(key, value)
 	if is_inside_tree() and plan != null:
+		_shared_owner = get_instance_id()
 		share_uniform(key, value)
 
 
 ## Pose un uniforme des intérieurs sur tous les matériaux de panneaux partagés (et ceux à venir).
 static func share_uniform(key: StringName, value: Variant) -> void:
 	_shared[key] = value
-	for material: ShaderMaterial in _panel_materials.values():
-		material.set_shader_parameter(key, value)
+	for cache_key: String in _panel_materials.keys():
+		var material := DecorPanel.cached_material(_panel_materials, cache_key)
+		if material != null:
+			material.set_shader_parameter(key, value)
 
 
 ## Matériau partagé d'une image de panneau d'intérieur (interior_panel.gdshader), avec la lumière
@@ -811,9 +822,10 @@ static func share_uniform(key: StringName, value: Variant) -> void:
 static func panel_material(
 	texture: Texture2D, glow: float = 0.0, tint: Color = Color.WHITE, follows: int = GLOW_LAMPS
 ) -> ShaderMaterial:
-	var key := "%s|%.2f|%s|%d" % [texture.get_rid(), glow, tint.to_html(), follows]
-	if not _panel_materials.has(key):
-		var material := ShaderMaterial.new()
+	var key := "%s|%.2f|%s|%d" % [DecorPanel.image_key(texture), glow, tint.to_html(), follows]
+	var material := DecorPanel.cached_material(_panel_materials, key) as ShaderMaterial
+	if material == null:
+		material = ShaderMaterial.new()
 		material.shader = PANEL_SHADER
 		material.set_shader_parameter(&"albedo_texture", texture)
 		material.set_shader_parameter(&"tint", tint)
@@ -822,15 +834,17 @@ static func panel_material(
 		material.set_shader_parameter(&"glow_follows", float(follows))
 		for shared_key: StringName in _shared:
 			material.set_shader_parameter(shared_key, _shared[shared_key])
-		_panel_materials[key] = material
-	return _panel_materials[key]
+		_panel_materials[key] = weakref(material)
+	return material
 
 
 ## Mesh d'un panneau d'intérieur de taille size (m), ancre au milieu du bord bas, face vers +Z ;
 ## UV2 = (coordonnée de coupe : z du monde, hauteur gardée par la coupe).
 static func panel_mesh(size: Vector2, cut: float, keep: float) -> ArrayMesh:
 	var key := "%.4f|%.4f|%.3f|%.3f" % [size.x, size.y, cut, keep]
-	if not _panel_meshes.has(key):
+	var ref: WeakRef = _panel_meshes.get(key)
+	var mesh := ref.get_ref() as ArrayMesh if ref != null else null
+	if mesh == null:
 		var st := _begin()
 		var half := size.x / 2.0
 		var corners: Array[Vector3] = [
@@ -845,8 +859,9 @@ static func panel_mesh(size: Vector2, cut: float, keep: float) -> ArrayMesh:
 			st.set_uv(uvs[k])
 			st.set_uv2(Vector2(cut, keep))
 			st.add_vertex(corners[k])
-		_panel_meshes[key] = st.commit()
-	return _panel_meshes[key]
+		mesh = st.commit()
+		_panel_meshes[key] = weakref(mesh)
+	return mesh
 
 
 func _queue_rebuild() -> void:

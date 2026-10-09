@@ -1,8 +1,9 @@
-extends Node3D
-## (E3) Démo des intérieurs : la carte d'essai du rez-de-chaussée de l'entrepôt
-## (src/world/maps/entrepot_rdc_essai/), le vrai joueur (player.tscn, sa caméra fixe et son
-## post-traitement) posé dedans, le préréglage de lumière « interieur »
-## (src/world/materials/lighting_interieur.tres), sans game.tscn. F6 dans l'éditeur.
+extends Node
+## (E3) Démo des intérieurs : la vraie partie (game.tscn), posée dans la carte d'essai du
+## rez-de-chaussée de l'entrepôt (src/world/maps/entrepot_rdc_essai/) par
+## WorldManager.enter_map, sans fondu ; le joueur, sa caméra fixe (bornée à camera_bounds), son
+## post-traitement et la lumière de la carte (src/world/interior_light.tscn, préréglage
+## « interieur »). F6 dans l'éditeur.
 ##
 ## Captures : INTERIOR_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_interieur.tscn
 ## build/e3/interieur_<vue>.png 60
@@ -22,9 +23,8 @@ extends Node3D
 ## INTERIOR_CUT=0 : sans la coupe (pour comparer : ce qui cacherait le joueur).
 ## Draw calls et primitives de l'image mesurée sont écrits dans le journal (« Intérieur vue … »).
 
-const MAP_SCENE := preload("res://src/world/maps/entrepot_rdc_essai/entrepot_rdc_essai.tscn")
-const PLAYER_SCENE := preload("res://src/player/player.tscn")
-const LIGHTING := preload("res://src/world/materials/lighting_interieur.tres")
+const GAME_SCENE := preload("res://src/game.tscn")
+const MAP_ID := &"entrepot_rdc_essai"
 ## Où se tient le joueur (repère de la carte) et où il regarde, pour chaque vue.
 const SPOTS := {
 	"couloir": [Vector3(13.6, 0.0, 11.7), Vector3(1.0, 0.0, 0.0)],
@@ -44,8 +44,9 @@ const STAGE_FRAME := 3
 const MEASURE_FRAME := 50
 
 var _view := ""
+var _state: Dictionary = {}
 var _frame := 0
-var _map: Node3D
+var _game: Node3D
 var _player: Player
 
 
@@ -53,26 +54,17 @@ func _ready() -> void:
 	_view = OS.get_environment("INTERIOR_VIEW")
 	if not SPOTS.has(_view):
 		_view = "couloir"
-	var world := WorldEnvironment.new()
-	world.name = "WorldEnvironment"
-	world.environment = Environment.new()
-	world.environment.background_mode = Environment.BG_COLOR
-	world.environment.background_color = InteriorRoom.VOID_COLOR
-	world.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	world.environment.tonemap_mode = Environment.TONE_MAPPER_LINEAR
-	add_child(world)
-	var sun := DirectionalLight3D.new()
-	sun.name = "Sun"
-	add_child(sun)
-	_map = MAP_SCENE.instantiate() as Node3D
-	add_child(_map)
-	_player = PLAYER_SCENE.instantiate() as Player
-	add_child(_player)
-	var room := _map.get_node(^"Ground") as InteriorRoom
-	var phase := StringName(OS.get_environment("INTERIOR_PHASE"))
-	if not phase.is_empty():
-		room.apply_phase(phase)
-	room.cut_enabled = OS.get_environment("INTERIOR_CUT") != "0"
+	_state = GameState.to_dict()
+	GameState.reset()
+	WorldManager.fade_time = 0.0
+	_game = GAME_SCENE.instantiate() as Node3D
+	add_child(_game)
+	_player = _game.get_node(^"Player") as Player
+
+
+func _exit_tree() -> void:
+	WorldManager.fade_time = WorldManager.DEFAULT_FADE_TIME
+	GameState.from_dict.call_deferred(_state)
 
 
 func _process(_delta: float) -> void:
@@ -94,15 +86,20 @@ func _process(_delta: float) -> void:
 
 
 func _stage() -> void:
+	WorldManager.enter_map(MAP_ID)
+	var map := WorldManager.current_map_node()
+	var room := map.get_node(^"Ground") as InteriorRoom
+	var phase := StringName(OS.get_environment("INTERIOR_PHASE"))
+	if not phase.is_empty():
+		room.apply_phase(phase)
+	room.cut_enabled = OS.get_environment("INTERIOR_CUT") != "0"
 	var spot: Array = SPOTS[_view]
-	_player.global_position = _map.to_global(spot[0] as Vector3)
+	_player.global_position = map.to_global(spot[0] as Vector3)
 	_player.velocity = Vector3.ZERO
 	_player.set_aim_direction(spot[1] as Vector3, true)
 	_player.reset_physics_interpolation()
 	var rig := _player.camera_rig
-	rig.set(&"limits", _map.get(&"camera_bounds"))
 	if _view == "plan":
 		rig.zoom(rig.max_distance)
 	rig.snap()
-	LIGHTING.apply(self)
-	(_map.get_node(^"Ground") as InteriorRoom).snap_cut()
+	room.snap_cut()

@@ -2132,13 +2132,24 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `test_hd2d_scenes.gd` et le compte des 45 décalques ne portent plus que sur les lots A à G du
   cahier n° 2.
 - **E3 — carte d'essai** `entrepot_rdc_essai` (40 × 24 m) : couloir en L, réfectoire, cuisine,
-  salle de lecture, archives, descente vers la salle des armes (porte de cave fermée, sortie
-  « Descendre » vers `entrepot_crypte`), salle de bains, infirmerie, entrée (sortie au sud vers
-  `entrepot`, franchie en marchant), salle de jeux, toilettes (d'après `v1_vex.md` et `v2_v3.md`,
+  salle de lecture, archives, descente vers la salle des armes (porte de cave fermée), salle de
+  bains, infirmerie, entrée, salle de jeux, toilettes (d'après `v1_vex.md` et `v2_v3.md`,
   rubrique 3 ; toilettes et placard du couloir : canon, emplacement original). `camera_bounds` =
-  Rect2(2, 5, 36, 14) : en x tout le bâtiment, la caméra reste au droit du joueur. Racine et
-  sorties sur des stubs locaux de `Map` et `MapExit` (`tests/stubs/e3_map*_stub.gd`), en attendant
-  le lot E1.
+  Rect2(2, 5, 36, 14) : en x tout le bâtiment, la caméra reste au droit du joueur (le
+  `Rect2(10, 9, L − 20, P − 17)` des cartes du dehors la décalerait, et une cloison nord-sud
+  cacherait le joueur en biais). Après la fusion avec E1 : racine `Map`, sortie `MapExit`
+  « vers_entrepot » franchie en marchant par la porte d'entrée, vers le `Spawn` de
+  `ile_ancienne` tant que la carte `entrepot` (le dehors) n'existe pas ; la sortie « Descendre »
+  de la porte de cave attend la carte `entrepot_crypte` (marqueur `from_entrepot_crypte` déjà
+  posé) : `test_maps.gd` demande des cibles qui existent.
+- **E3 — lumière d'une carte intérieure** (en attendant E9, comme `map_light.tscn` dehors) :
+  enfant `Light`, instance de `src/world/interior_light.tscn` (WorldEnvironment au fond uni
+  `VOID_COLOR`, Sun) qui pose le préréglage `interieur` à l'entrée et rend le réglage par défaut
+  (couchant) à l'étalonnage de la caméra et aux personnages en partant, par la carte (ses enfants
+  ont déjà quitté l'arbre) : les cartes du dehors supposent ce réglage.
+- **E3 — caches** : matériaux et meshes partagés des panneaux d'intérieur en références faibles
+  (comme ceux de `DecorPanel` depuis E1) ; uniformes partagés (cartes de lumière, coupe) oubliés
+  quand la pièce qui les a posés part.
 - **E3 — requêtes du sol** : `InteriorRoom` répond aux mêmes questions que `MapGround` (E2) :
   `height_at`, `material_at` (nom de l'image du sol), `is_walkable` (dans une pièce, hors des
   murs ; les meubles ne comptent pas) et `room_at`, en coordonnées de la carte.
