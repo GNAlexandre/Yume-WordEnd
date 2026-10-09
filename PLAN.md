@@ -105,6 +105,7 @@ Yume-WordEnd/
 │   ├── hd2d_manifest.json     # (HD-2D) liste exacte des images du décor (chemin, taille, genre)
 │   ├── hd2d_art.py, hd2d_ground.py, hd2d_props.py, hd2d_sky.py   # recettes de pixel art
 │   ├── map_build.py           # (E2) sol en relief des cartes : check, gen (d'après plan.json), view (vue de dessus)
+│   ├── carte_plans.py         # (D2) vérifie et dessine les plans ```plan de docs/lore/CARTE.md (check, ascii)
 │   └── gen_placeholders.py    # planches de remplacement au format de l'easter egg (Pillow)
 ├── web/
 │   ├── CNAME                  # jeu.yumenovel.fr (copié dans build/web par la CI)
@@ -584,6 +585,11 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 ### (E1) Créer une carte : mode d'emploi
 
 Contrat : `docs/REFONTE.md`, section 7.1 ; exemple complet : `src/world/maps/essai/essai.tscn`.
+(D2) Le plan de chaque lieu est dans `docs/lore/CARTE.md` (cotes, pièces, portes, meubles par
+nom d'image, sorties, marqueurs, places) : ses blocs ```plan se vérifient par
+`python3 tools/carte_plans.py check docs/lore/CARTE.md` (chevauchements, portes alignées,
+passages de 1,2 m dedans et 3 m dehors, accès depuis `Spawn`, règle de caméra). Une carte
+construite suit son plan à la lettre ; un écart se reporte dans le plan et repasse le `check`.
 
 1. **Fichier et racine.** `src/world/maps/<map_id>/<map_id>.tscn`, `map_id` en `snake_case`
    ASCII qui commence par une lettre (`entrepot_rdc`, `sentier`). Racine `Node3D` nommée
