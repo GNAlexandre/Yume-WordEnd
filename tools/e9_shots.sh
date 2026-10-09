@@ -15,10 +15,12 @@ views=""
 if [ $# -gt 0 ]; then
   views=$(IFS=,; echo "$*")
 fi
+# Au plus E9_TIMEOUT s (900 par défaut) : une démo qui ne compile pas ne quitte jamais.
 E9_SHOTS="res://$out" E9_VIEWS="$views" LIBGL_ALWAYS_SOFTWARE=1 \
-  xvfb-run -a -s "-screen 0 1280x720x24" \
+  timeout "${E9_TIMEOUT:-900}" xvfb-run -a -s "-screen 0 1280x720x24" \
   tools/godot --rendering-driver opengl3 --resolution 1280x720 \
   res://tests/integration/demo_e9.tscn > "$out/e9.log" 2>&1
 code=$?
-grep -E "^E9 " "$out/e9.log"
+grep -E "^E9 |SCRIPT ERROR" "$out/e9.log"
+grep -q "^E9 fin" "$out/e9.log" || code=1
 exit $code

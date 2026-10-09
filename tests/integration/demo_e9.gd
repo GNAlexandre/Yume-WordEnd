@@ -7,11 +7,11 @@ extends Node
 ##   E9_SHOTS=<dossier> : où écrire les captures (défaut build/shots/e9) ;
 ##   E9_VIEWS=<liste>   : vues « lieu:moment:temps » séparées par des virgules (défaut : toutes,
 ##                        VIEWS) ; lieu = village (l'entrepôt de l'ancienne île), bord (la côte
-##                        ouest) ou essai ;
+##                        ouest), essai, ou dedans (la carte d'essai prise pour un intérieur) ;
 ##   E9_FRAMES=<n>      : images attendues avant chaque capture (défaut WAIT_FRAMES).
-## Une ligne par capture dans le journal : « E9 vue <nom> : luminance <l> (min LUMA_FLOOR), <d>
-## draw calls, <p> primitives, lumière du joueur <a>, pluie <oui|non> », puis « E9 fin : <n>
-## vues, <k> sous le seuil » ; le code de sortie est 1 si une vue est sous le seuil.
+## Une ligne par capture dans le journal : « E9 vue <nom> : luminance <l> (min LUMA_FLOOR), centre
+## <c> (min CENTER_FLOOR), <d> draw calls, <p> primitives, lumière du joueur <a>, pluie <oui|non> »,
+## puis « E9 fin : <n> vues, <k> sous le seuil » ; code de sortie 1 si une vue est sous le seuil.
 
 const GAME_SCENE := preload("res://src/game.tscn")
 ## Toutes les vues : chaque moment au clair, la pluie et l'averse au couchant et la nuit, sur
@@ -33,6 +33,9 @@ const VIEWS: Array[String] = [
 	"essai:nuit:clair",
 	"essai:couchant:pluie",
 	"essai:nuit:averse",
+	"dedans:apres_midi:clair",
+	"dedans:couchant:averse",
+	"dedans:nuit:clair",
 	"bord:couchant:clair",
 	"bord:nuit:clair",
 ]
@@ -47,6 +50,8 @@ const WAIT_FRAMES := 24
 ## Luminance moyenne (0..1, Rec. 709 sur les valeurs affichées) en deçà de laquelle une vue est
 ## jugée illisible.
 const LUMA_FLOOR := 0.1
+## Même seuil pour le tiers du milieu de l'écran, autour du joueur (ce qu'on doit lire).
+const CENTER_FLOOR := 0.12
 
 var _game: Node3D
 var _player: Player
@@ -99,20 +104,24 @@ func _run() -> void:
 		await RenderingServer.frame_post_draw
 		var image := get_viewport().get_texture().get_image()
 		var luma := mean_luma(image)
+		var third := Vector2i(floori(image.get_width() / 3.0), floori(image.get_height() / 3.0))
+		var middle := mean_luma(image, Rect2i(third, third))
 		var file := "%s/e9_%s_%s_%s.png" % [out, parts[0], parts[1], parts[2]]
 		image.save_png(ProjectSettings.globalize_path(file))
-		if luma < LUMA_FLOOR:
+		if luma < LUMA_FLOOR or middle < CENTER_FLOOR:
 			dark += 1
 		print(
 			(
 				(
-					"E9 vue %s : luminance %.3f (min %.2f), %d draw calls, %d primitives, "
-					+ "lumière du joueur %.2f, pluie %s"
+					"E9 vue %s : luminance %.3f (min %.2f), centre %.3f (min %.2f), %d draw calls, "
+					+ "%d primitives, lumière du joueur %.2f, pluie %s"
 				)
 				% [
 					view,
 					luma,
 					LUMA_FLOOR,
+					middle,
+					CENTER_FLOOR,
 					Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 					Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME),
 					Atmosphere.player_light_amount() if Atmosphere.is_player_light_on() else 0.0,
@@ -128,10 +137,14 @@ func _run() -> void:
 	get_tree().quit(1 if dark > 0 else 0)
 
 
-## Pose le joueur dans l'ancienne île (village, bord) ou au Spawn de la carte d'essai.
+## Pose le joueur dans l'ancienne île (village, bord) ou au Spawn de la carte d'essai (dedans :
+## la même, devenue un intérieur, sous le préréglage « interieur »).
 func _stage(place: String) -> void:
-	if place == "essai":
+	if place == "essai" or place == "dedans":
 		WorldManager.enter_map(&"essai")
+		var map := WorldManager.current_map_node()
+		map.interior = place == "dedans"
+		Atmosphere.dress(map)
 	else:
 		var spot: Array = SPOTS.get(place, SPOTS["village"])
 		if WorldManager.current_map() != WorldManager.LEGACY_MAP:
@@ -146,12 +159,15 @@ func _stage(place: String) -> void:
 		await get_tree().process_frame
 
 
-## Luminance moyenne d'une image (0..1), un pixel sur quatre dans chaque sens.
-static func mean_luma(image: Image) -> float:
+## Luminance moyenne d'une image (0..1), ou de sa région rect, un pixel sur quatre dans chaque
+## sens.
+static func mean_luma(image: Image, rect: Rect2i = Rect2i()) -> float:
+	if not rect.has_area():
+		rect = Rect2i(Vector2i.ZERO, image.get_size())
 	var total := 0.0
 	var count := 0
-	for y in range(0, image.get_height(), 4):
-		for x in range(0, image.get_width(), 4):
+	for y in range(rect.position.y, rect.end.y, 4):
+		for x in range(rect.position.x, rect.end.x, 4):
 			var c := image.get_pixel(x, y)
 			total += 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
 			count += 1
