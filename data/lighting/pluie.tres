@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="HD2DWeather" format=3]
+
+[ext_resource type="Script" path="res://src/world/materials/hd2d_weather.gd" id="1_script"]
+
+[resource]
+resource_name = "pluie"
+script = ExtResource("1_script")
+rain = 0.35
+wetness = 0.55
+sun_scale = 0.6
+ambient_scale = 0.92
+grey = Color(0.6, 0.63, 0.72, 1)
+grey_amount = 0.35
+sky_tint = Color(0.75, 0.77, 0.85, 1)
+clouds_tint = Color(0.78, 0.8, 0.88, 1)
+lamp_scale = 1.15
+sprite_tint = Color(0.94, 0.95, 1, 1)
+fog_add = 0.002
+fog_color = Color(0.58, 0.6, 0.68, 1)
+fog_mix = 0.5
+saturation_scale = 0.85
+contrast_scale = 0.97
+vignette_add = 0.05
+haze_color = Color(0.62, 0.64, 0.72, 1)
+haze_mix = 0.5
+haze_add = 0.06
+sky_light_scale = 0.4
+top_blur_add = 0.5
+window_light_scale = 0.7
