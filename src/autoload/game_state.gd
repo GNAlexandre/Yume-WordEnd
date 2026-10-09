@@ -12,7 +12,8 @@ extends Node
 ##   chose change ; jamais dans from_dict ni reset), tracked_quest_changed quand tracked_quest
 ##   change ;
 ## - skin_changed et max_hp_changed quand skin_id / max_hp changent.
-## Mises à jour attendues des autres lots : zone par WorldManager (L2) à chaque zone_entered,
+## Mises à jour attendues des autres lots : (E1) map par WorldManager à chaque changement de
+## carte, zone par WorldManager (L2) à chaque zone_entered,
 ## position par le joueur (L1) quand il est au sol, étapes et quête suivie par le QuestTracker
 ## (Lot Q). SaveManager (L8) ajoute version et saved_at.
 
@@ -48,10 +49,13 @@ var max_hp: int = DEFAULT_MAX_HP:
 		max_hp = value
 		EventBus.max_hp_changed.emit(value)
 
-## Zone courante (zone_id) ; &"" = nouvelle partie pas encore placée (game.gd téléporte alors
-## le joueur au Spawn du village).
+## (E1) Carte courante (map_id, tenue par WorldManager) ; &"" = nouvelle partie pas encore
+## placée (game.gd pose alors le joueur au Spawn de WorldManager.START_MAP).
+var map: StringName = &""
+## Zone courante dans la carte (zone_id, zones de l'ancienne île) ; &"" hors des zones.
 var zone: StringName = &""
-## Dernière position au sol du joueur (sauvegardée, restaurée par game.gd).
+## Dernière position au sol du joueur, dans le repère de la carte (sauvegardée, restaurée par
+## game.gd).
 var position: Vector3 = Vector3.ZERO
 ## (Lot Q) Quête suivie, affichée par le HUD ; &"" = aucune (le HUD montre alors la première
 ## quête active). Tenue par le QuestTracker (une quête qui démarre devient la quête suivie) et
@@ -76,6 +80,7 @@ var _best_scores: Dictionary[StringName, Dictionary] = {}
 func reset() -> void:
 	skin_id = &""
 	max_hp = DEFAULT_MAX_HP
+	map = &""
 	zone = &""
 	position = Vector3.ZERO
 	tracked_quest = &""
@@ -269,7 +274,8 @@ func arena_record(arena_id: StringName) -> Dictionary:
 
 ## Champs du schéma de sauvegarde, sauf version et saved_at (ajoutés par SaveManager).
 ## Types JSON uniquement (String, int, float, bool, Array, Dictionary). Les champs du schéma v1
-## d'abord, puis ceux du Lot Q (v2) : quest_progress et tracked_quest.
+## d'abord (et, à côté de la position, la carte de la refonte : map, v3), puis ceux du Lot Q
+## (v2) : quest_progress et tracked_quest.
 func to_dict() -> Dictionary:
 	var inventory := {}
 	for item_id: StringName in _inventory:
@@ -296,6 +302,7 @@ func to_dict() -> Dictionary:
 		"skin": String(skin_id),
 		"max_hp": max_hp,
 		"position": [position.x, position.y, position.z],
+		"map": String(map),
 		"zone": String(zone),
 		"inventory": inventory,
 		"flags": flags,
@@ -310,15 +317,17 @@ func to_dict() -> Dictionary:
 ## Relit un dictionnaire produit par to_dict() (ou un JSON de sauvegarde). Un champ absent ou
 ## mal typé prend sa valeur par défaut, une entrée invalide est ignorée (quantité nulle ou non
 ## numérique, état de quête inconnu, avancement d'une quête qui n'est pas active…) ; les nombres
-## JSON (float) redeviennent des int. Sans position valide, zone est vidée : game.gd replace
-## alors le joueur au Spawn du village. Aucun signal de quête (quest_updated,
-## quest_step_updated) : le QuestTracker relit tout sur game_loaded.
+## JSON (float) redeviennent des int. Sans position valide, map et zone sont vidées : game.gd
+## replace alors le joueur au Spawn de la carte de départ (l'entrepôt de l'ancienne île). Aucun
+## signal de quête (quest_updated, quest_step_updated) : le QuestTracker relit tout sur
+## game_loaded.
 func from_dict(data: Dictionary) -> void:
 	skin_id = _read_name(data.get("skin"))
 	var hp: Variant = data.get("max_hp")
 	max_hp = int(hp) if _is_number(hp) and int(hp) >= 1 else DEFAULT_MAX_HP
 	var saved_position: Variant = _read_vector3(data.get("position"))
 	position = saved_position if saved_position is Vector3 else Vector3.ZERO
+	map = _read_name(data.get("map")) if saved_position is Vector3 else &""
 	zone = _read_name(data.get("zone")) if saved_position is Vector3 else &""
 	_inventory.clear()
 	var inventory := _as_dict(data.get("inventory"))

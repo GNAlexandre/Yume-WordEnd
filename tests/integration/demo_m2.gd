@@ -106,7 +106,7 @@ func _nygglatho() -> Npc:
 
 
 func _zone(zone_id: StringName) -> Node3D:
-	return _game.get_node(NodePath("Island/Zones/%s" % zone_id)) as Node3D
+	return _game.get_node(NodePath("World/ile_ancienne/Zones/%s" % zone_id)) as Node3D
 
 
 ## Nygglatho parle (comme E) ; ses premières répliques passent jusqu'à ses deux choix.

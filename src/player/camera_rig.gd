@@ -4,8 +4,9 @@ extends Node3D
 ##
 ## Caméra fixe à la manière d'Octopath Traveler : elle regarde toujours le nord (−Z), inclinée de
 ## pitch_deg vers le bas, avec un champ étroit (fov_deg), à distance du point visé. Elle suit le
-## joueur avec un léger retard (follow_speed) et reste dans les bornes de l'île (limits : au bord,
-## on voit la lèvre, la falaise et la mer de nuages, le joueur restant près du centre). Pas de
+## joueur avec un léger retard (follow_speed) et reste dans les bornes de la carte courante
+## (limits ; sur l'ancienne île, au bord, on voit la lèvre, la falaise et la mer de nuages, le
+## joueur restant près du centre). Pas de
 ## rotation : le haut de l'écran est le nord, les commandes sont relatives à l'écran (player.gd).
 ## La molette ou le stick droit (camera_up / camera_down) zooment un peu (entre min_distance et
 ## max_distance).
@@ -31,6 +32,11 @@ extends Node3D
 ## src/player/post_fx.gdshader ; la bande nette suit le joueur à l'écran).
 ## Verrouillage : lock_target est cadrée avec le joueur (le point visé avance vers elle, sans
 ## rotation). Le joueur (player.gd) pose lock_target et follow_velocity à chaque image physique.
+## (E1) Cartes : à chaque EventBus.map_entered (et à son _ready s'il y a déjà une carte), limits
+## prend les bornes de la carte courante (WorldManager.camera_bounds(), Map.camera_bounds, la
+## carte entière par défaut), la caméra redevient la caméra courante (une carte peut en
+## apporter une, comme l'OverviewCamera de l'île) et se recale sur le joueur (snap), déjà posé
+## sur son marqueur d'arrivée.
 
 ## (H5) Profondeur nette du flou de profondeur autour du joueur (m) : derrière lui (vers le
 ## nord) et devant lui (vers la caméra).
@@ -68,7 +74,9 @@ const BAND_BEHIND := 4.5
 @export var lead_smoothing: float = 2.5
 ## Bornes du point visé dans le plan du sol (x, z). (H5) Assez larges pour que le joueur reste à
 ## moins de 6 m du centre au bord de l'île (le bord du Couchant est à x = −77) : on voit alors
-## la lèvre, la falaise et la mer de nuages, jamais le joueur au bord de l'écran.
+## la lèvre, la falaise et la mer de nuages, jamais le joueur au bord de l'écran. (E1) Remplacées
+## par les bornes de la carte courante à chaque changement de carte ; valeur de la scène tant
+## qu'aucune carte n'est posée.
 @export var limits: Rect2 = Rect2(-71.0, -70.0, 142.0, 136.0)
 
 @export_group("Verrouillage")
@@ -101,6 +109,9 @@ func _ready() -> void:
 	_ahead = focus_ahead
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
+	EventBus.map_entered.connect(_on_map_entered)
+	if WorldManager.current_map_node() != null:
+		limits = WorldManager.camera_bounds()
 	camera.top_level = true
 	# Posée à chaque image (pas aux images physiques) : jamais interpolée.
 	camera.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
@@ -293,3 +304,11 @@ func _on_dialogue_started(_npc_id: StringName) -> void:
 
 func _on_dialogue_ended(_npc_id: StringName) -> void:
 	_talking = false
+
+
+## (E1) Nouvelle carte : ses bornes, la caméra courante, recalée sur le joueur.
+func _on_map_entered(_map_id: StringName) -> void:
+	limits = WorldManager.camera_bounds()
+	if is_inside_tree():
+		camera.make_current()
+		snap()

@@ -139,6 +139,7 @@ func test_properties_emit_signals() -> void:
 func test_to_dict_matches_save_schema() -> void:
 	GameState.skin_id = &"chtholly"
 	GameState.position = Vector3(12.0, 1.0, -4.5)
+	GameState.map = &"ile_ancienne"
 	GameState.zone = &"village"
 	GameState.add_item(&"page_fragment", 3)
 	GameState.set_flag(&"quest_pages_accepted")
@@ -155,6 +156,7 @@ func test_to_dict_matches_save_schema() -> void:
 			"collected_pickups",
 			"flags",
 			"inventory",
+			"map",
 			"max_hp",
 			"position",
 			"quest_progress",
@@ -167,6 +169,7 @@ func test_to_dict_matches_save_schema() -> void:
 	assert_eq(data["skin"], "chtholly")
 	assert_eq(data["max_hp"], 5)
 	assert_eq(data["position"], [12.0, 1.0, -4.5])
+	assert_eq(data["map"], "ile_ancienne", "(E1) carte courante")
 	assert_eq(data["zone"], "village")
 	assert_eq(data["inventory"], {"page_fragment": 3})
 	assert_eq(data["flags"], {"quest_pages_accepted": true})
@@ -227,13 +230,16 @@ func test_from_dict_ignores_badly_typed_fields() -> void:
 
 
 func test_from_dict_without_valid_position_restarts_at_the_village() -> void:
-	GameState.from_dict({"zone": "forest"})
+	GameState.from_dict({"zone": "forest", "map": "ile_ancienne"})
 	assert_eq(GameState.zone, &"", "position absente : replacé au Spawn du village par game.gd")
-	GameState.from_dict({"zone": "forest", "position": [5.0, 0.0, 1e9]})
+	assert_eq(GameState.map, &"", "(E1) ni carte")
+	GameState.from_dict({"zone": "forest", "map": "ile_ancienne", "position": [5.0, 0.0, 1e9]})
 	assert_eq(GameState.zone, &"", "position hors de l'île")
+	assert_eq(GameState.map, &"")
 	assert_eq(GameState.position, Vector3.ZERO)
-	GameState.from_dict({"zone": "forest", "position": [5.0, 0.5, -40.0]})
+	GameState.from_dict({"zone": "forest", "map": "ile_ancienne", "position": [5.0, 0.5, -40.0]})
 	assert_eq(GameState.zone, &"forest")
+	assert_eq(GameState.map, &"ile_ancienne")
 	assert_eq(GameState.position, Vector3(5.0, 0.5, -40.0))
 
 
@@ -248,6 +254,7 @@ func test_round_trip_is_identical() -> void:
 	GameState.skin_id = &"ithea"
 	GameState.max_hp = 6
 	GameState.position = Vector3(-3.25, 0.5, 8.0)
+	GameState.map = &"ile_ancienne"
 	GameState.zone = &"beach"
 	GameState.add_item(&"page_fragment", 5)
 	GameState.add_item(&"mystery_box")
@@ -267,11 +274,13 @@ func test_round_trip_is_identical() -> void:
 
 func test_reset() -> void:
 	GameState.add_item(&"page_fragment")
+	GameState.map = &"essai"
 	GameState.zone = &"forest"
 	GameState.max_hp = 6
 	GameState.record_score(&"dunes", 10, 1)
 	GameState.reset()
 	assert_eq(GameState.count(&"page_fragment"), 0)
+	assert_eq(GameState.map, &"")
 	assert_eq(GameState.zone, &"")
 	assert_eq(GameState.max_hp, GameState.DEFAULT_MAX_HP)
 	assert_eq(GameState.skin_id, &"")
