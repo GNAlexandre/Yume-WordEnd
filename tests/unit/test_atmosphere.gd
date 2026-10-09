@@ -7,7 +7,9 @@ extends "res://tests/stubs/l8_save_test.gd"
 ## fenêtres suit le préréglage, les raccourcis de développement. La luminance des captures est
 ## vérifiée par tests/integration/test_e9_captures.gd (rendu réel, sous Xvfb).
 
-const MAP_SCENE := preload("res://src/world/maps/essai/essai.tscn")
+## Carte d'essai, chargée à chaque test (jamais préchargée : une carte en cache resterait en
+## mémoire pendant toute la suite, test_m2_maps.gd le vérifie).
+const MAP_ID := &"essai"
 const PANEL_SHADER := preload("res://src/world/shaders/panel.gdshader")
 const WINDOW := preload("res://tests/data/lighting/window_e9.png")
 const WINDOW_NIGHT := preload("res://tests/data/lighting/window_e9_night.png")
@@ -20,7 +22,7 @@ func before_each() -> void:
 	super.before_each()
 	Atmosphere.transition_time = Atmosphere.DEFAULT_TRANSITION_TIME
 	Atmosphere.player_light_mode = Atmosphere.LIGHT_AUTO
-	_map = MAP_SCENE.instantiate() as Map
+	_map = (load(Map.scene_path(MAP_ID)) as PackedScene).instantiate() as Map
 	add_child(_map)
 	Atmosphere.dress(_map)
 
