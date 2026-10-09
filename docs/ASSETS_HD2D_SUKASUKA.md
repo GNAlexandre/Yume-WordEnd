@@ -50,7 +50,7 @@ jours 1 à 4 de l'acte 1) ; **2** : le reste de l'acte 1 (sentier, port, village
 **« Format à confirmer par le moteur ».** Quelques genres d'images n'existent pas encore dans le jeu
 (navires en volume, faces des paliers, planches complémentaires…). Ce cahier leur donne des
 tailles raisonnables ; le lot du moteur qui les intègre peut encore les changer. Ils sont
-signalés à la ligne concernée et récapitulés en section 9.4 : ne les commande qu'après accord.
+signalés à la ligne concernée et récapitulés en section 9.4, qui dit lesquels attendre.
 
 ## 1. Bloc de style v3 (à coller au début de chaque conversation)
 
@@ -1879,7 +1879,8 @@ suit les phases de la refonte (`docs/REFONTE.md`, section 9) :
 | 5 | **Lot L**, priorité 2 (port, transport de la Garde) ; **lot K**, priorité 2 (village, café, maison Limashenka, snack-bar, café de la ville) | les jours 5 à 12 : le port sous la pluie, le café du village, l'horloge |
 | 6 | **Lots K, L, M** et **N**, priorité 3 ; **lot J**, priorité 3 (hommes-bêtes, visiteurs, bâton) ; la faune | le monde autour : la ville, la forêt profonde, la montagne, le Barocupot |
 
-Les images « à confirmer par le moteur » (section 9.4) attendent l'accord du lot qui les intègre.
+Une partie des images « à confirmer par le moteur » attend l'accord du lot qui les intègre
+(section 9.4, colonne « Commander »).
 
 ### 9.2 Pour des planches cohérentes
 
@@ -1939,25 +1940,26 @@ Les livraisons précédentes ont surtout péché par l'échelle et la cohérence
 ### 9.4 Formats à confirmer par le moteur
 
 Ces images supposent un format que le jeu n'a pas encore. Leurs tailles sont raisonnables mais
-peuvent changer ; ne les commande qu'après accord du lot du moteur indiqué.
+peuvent changer. Celles dont seul l'usage reste à trancher se commandent tout de suite ; les
+autres attendent l'accord du lot du moteur indiqué (colonne « Commander »).
 
-| Format | Images | Lot du moteur | Ce qu'il faut trancher |
-| --- | --- | --- | --- |
-| Planche complémentaire `<id>_life` | 6 planches (lot J, 4.3 et 4.6) | E4 Vie | fusion dans la planche existante (rangées ajoutées) ou chargement d'une seconde planche ; `hd2d_sheets.py` ne connaît pas encore les animations de la section 8.1 de la refonte |
-| Planches de tenue et de geste (`_home`, `_pajamas`, `_rain`, `willem_cook`…) | 27 planches (lot J) | E4 Vie, E6 Récit | quand le jeu passe d'une planche à l'autre (à la maison, la nuit, sous la pluie, au travail) |
-| Noms d'animation hors de la section 8.1 de la refonte : `etreinte`, `pare`, `broute` ; `travaille` des fées (toilette) | Nygglatho, bâton, faune, pyjamas | E4, E5, E8 | ajout au tableau de la section 8.1 de la refonte |
-| Entraînement au bâton (`_stick`) | 4 planches (lot J, 4.7) | E8 Jeux | animations de parade et de rythme |
-| Nombres d'images et cadences des animaux | 10 planches (lot M, 7.7) | E5 Faune | la section 8.1 de la refonte ne donne que les noms |
-| Couverture de lit en surimpression | `bed_iron_cover` | E3, E4 | un personnage couché sous une couverture |
-| Toit-terrasse | `floor_roof_deck`, `roof_edge_slate` | E3 Intérieurs | le toit est-il une pièce ou une carte du dehors |
-| Décalques dans les pièces (tapis, papiers, flaques, soleil) | 10 décalques (lots I, K, N) | E3 | décalques posés sur le sol d'une `InteriorRoom` |
-| Socle des façades de ville, escaliers et murs de soutènement | `town_house_*`, `town_stairs_*`, `town_retaining_wall` | E2 Sol en relief | façades sur deux paliers, escaliers entre paliers |
-| Faces des paliers | `cliff/step_*`, `cliff/wall_*_1m` (6 images) | E2 | hauteur des faces (0,5 et 1 m), raccords, coins |
-| Nouvelles tuiles de sol | `ground/path_overgrown`, `ground/river_water` | E2 | l'atlas du sol a 27 couches (`GROUND_LAYERS`) |
-| Premier plan suspendu | `fg_canopy_a`, `fg_canopy_b` | E10 Densité | un panneau accroché en haut de l'écran au-dessus du joueur |
-| Navires en volume (flanc, pont, poupe, trois quarts), pont praticable, rotors et trappe | `ships/*` (7 images), `anim/garde_transport_*` | E7 Navires | navire en volume au nord du quai, pont où l'on marche |
-| Pluie en rideau, flaques animées | `rain_curtain`, `rain_drizzle`, `puddle_rain_*` | E9 Lumière et temps | bande animée répétée sur l'écran, décalque animé |
-| Vitres éclairées et fenêtres de nuit | `window_lit_*`, `*_night` | E9 | allumer les façades et changer les fenêtres selon l'heure |
+| Format | Images | Lot du moteur | Ce qu'il faut trancher | Commander |
+| --- | --- | --- | --- | --- |
+| Planche complémentaire `<id>_life` | 6 planches (lot J, 4.3 et 4.6) | E4 Vie | fusion dans la planche existante (rangées ajoutées) ou chargement d'une seconde planche ; `hd2d_sheets.py` ne connaît pas encore les animations de la section 8.1 de la refonte | tout de suite (seul l'usage change) |
+| Planches de tenue et de geste (`_home`, `_pajamas`, `_rain`, `willem_cook`…) | 27 planches (lot J) | E4 Vie, E6 Récit | quand le jeu passe d'une planche à l'autre (à la maison, la nuit, sous la pluie, au travail) | tout de suite |
+| Noms d'animation hors de la section 8.1 de la refonte : `etreinte`, `pare`, `broute` ; `travaille` des fées (toilette) | Nygglatho, bâton, faune, pyjamas | E4, E5, E8 | ajout au tableau de la section 8.1 de la refonte | tout de suite (seul le nom peut changer) |
+| Entraînement au bâton (`_stick`) | 4 planches (lot J, 4.7) | E8 Jeux | animations de parade et de rythme | après accord |
+| Nombres d'images et cadences des animaux | 10 planches (lot M, 7.7) | E5 Faune | la section 8.1 de la refonte ne donne que les noms | après accord |
+| Couverture de lit en surimpression | `bed_iron_cover` | E3, E4 | un personnage couché sous une couverture | après accord |
+| Toit-terrasse | `floor_roof_deck`, `roof_edge_slate` | E3 Intérieurs | le toit est-il une pièce ou une carte du dehors | après accord |
+| Décalques dans les pièces (tapis, papiers, flaques, soleil) | 10 décalques (lots I, K, N) | E3 | décalques posés sur le sol d'une `InteriorRoom` | tout de suite |
+| Socle des façades de ville, escaliers et murs de soutènement | `town_house_*`, `town_stairs_*`, `town_retaining_wall` | E2 Sol en relief | façades sur deux paliers, escaliers entre paliers | après accord |
+| Faces des paliers | `cliff/step_*`, `cliff/wall_*_1m` (6 images) | E2 | hauteur des faces (0,5 et 1 m), raccords, coins | après accord |
+| Nouvelles tuiles de sol | `ground/path_overgrown`, `ground/river_water` | E2 | l'atlas du sol a 27 couches (`GROUND_LAYERS`) | après accord |
+| Premier plan suspendu | `fg_canopy_a`, `fg_canopy_b` | E10 Densité | un panneau accroché en haut de l'écran au-dessus du joueur | après accord |
+| Navires en volume (flanc, pont, poupe, trois quarts), pont praticable, rotors et trappe | `ships/*` (7 images), `anim/garde_transport_*` | E7 Navires | navire en volume au nord du quai, pont où l'on marche | après accord |
+| Pluie en rideau, flaques animées | `rain_curtain`, `rain_drizzle`, `puddle_rain_*` | E9 Lumière et temps | bande animée répétée sur l'écran, décalque animé | après accord |
+| Vitres éclairées et fenêtres de nuit | `window_lit_*`, `*_night` | E9 | allumer les façades et changer les fenêtres selon l'heure | tout de suite (même cadrage que les fenêtres de jour) |
 
 ### 9.5 En résumé
 
