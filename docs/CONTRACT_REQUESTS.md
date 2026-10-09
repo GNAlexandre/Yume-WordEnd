@@ -542,3 +542,5 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   `tools/check.sh` est donc rouge à l'export pour toute branche fusionnée avec main, quoi qu'elle
   fasse. À trancher hors E3 : relever le budget, ou ne plus exporter les images que rien
   n'emploie encore (`export_presets.cfg`, PR « contrats »), ou alléger les images livrées.
+- (Orchestrateur) Budget de l'export Web : **tranché**, relevé à 150 Mo compressés (PR n° 23,
+  `docs/DECISIONS.md`, « Budget Web relevé de 100 à 150 Mo »).
