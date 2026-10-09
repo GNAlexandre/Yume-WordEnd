@@ -1,0 +1,44 @@
+{
+  "_comment": "Bibliothèque du sol en relief des cartes extérieures (lot E2 ; format : PLAN.md, « Format du sol des cartes extérieures »). materials : les matières qu'une carte peut peindre dans materials.png, chacune avec sa tuile de l'atlas du sol (layer : IslandTerrain.GROUND_LAYERS), sa couleur de peinture par défaut (color) et, en option, sa teinte (tint), l'alternance avec la tuile _b (variant, vrai par défaut), son bord (edge : soft, irrégulier et tramé ; sharp, net au bord de la case), chemin (path : une marche de plus de 0,5 m entre deux cases de chemin demande un escalier ou une rampe), praticable (walkable, vrai par défaut), eau qui ondule (ripple) et bordure (border : tuile, largeur en m, teinte, posée en deçà du bord de la matière). structures : les couleurs de structures.png, escaliers et rampes qui montent vers dir, ou style des faces qui descendent de la case (wall : muret ; rock : roche ; earth : talus de terre).",
+  "materials": {
+    "herbe": {"label": "Herbe", "layer": "grass", "color": "#5aa83c"},
+    "herbe_haute": {"label": "Herbe haute et sèche", "layer": "grass_dry", "color": "#a8b040"},
+    "prairie": {"label": "Prairie fleurie", "layer": "meadow_flowers", "color": "#c070c0"},
+    "sous_bois": {"label": "Sous-bois", "layer": "forest_floor", "color": "#3c6e32"},
+    "feuilles": {"label": "Feuilles mortes", "layer": "leaf_litter", "color": "#b0602a"},
+    "mousse": {"label": "Mousse", "layer": "moss", "color": "#2e8a5a"},
+    "terre_battue": {"label": "Terre battue", "layer": "path_dirt", "color": "#c89a5a", "path": true},
+    "sentier": {
+      "label": "Sentier bordé de pierres",
+      "layer": "path_dirt",
+      "color": "#e0b070",
+      "path": true,
+      "border": {"layer": "rock", "width": 0.3, "tint": [0.74, 0.72, 0.76]}
+    },
+    "gravier": {"label": "Gravier", "layer": "gravel", "color": "#c0b090", "path": true},
+    "paves": {"label": "Pavés", "layer": "cobble", "color": "#808080", "edge": "sharp", "path": true},
+    "dalles": {"label": "Dalles", "layer": "flagstone", "color": "#b4b4a0", "edge": "sharp", "path": true},
+    "planches": {"label": "Planches", "layer": "planks", "color": "#8a5a30", "edge": "sharp", "path": true},
+    "tole": {"label": "Tôle rivetée", "layer": "metal", "color": "#6070a0", "edge": "sharp", "path": true},
+    "boue": {"label": "Boue", "layer": "mud", "color": "#6a4a2a"},
+    "tourbe": {"label": "Tourbe", "layer": "peat", "color": "#504020"},
+    "potager": {"label": "Terre de potager", "layer": "garden_soil", "color": "#403020"},
+    "eau": {"label": "Eau dormante", "layer": "water", "color": "#3060c0", "walkable": false, "ripple": true},
+    "lit_ruisseau": {"label": "Lit de ruisseau", "layer": "stream_bed", "color": "#60a0c0", "ripple": true},
+    "sable": {"label": "Sable", "layer": "sand", "color": "#f0d890"},
+    "roche": {"label": "Roche à nu", "layer": "rock", "color": "#9a8a7a"}
+  },
+  "structures": {
+    "#e02020": {"label": "Escalier qui monte vers le nord", "kind": "stairs", "dir": "north"},
+    "#e06020": {"label": "Escalier qui monte vers l'est", "kind": "stairs", "dir": "east"},
+    "#e0a020": {"label": "Escalier qui monte vers le sud", "kind": "stairs", "dir": "south"},
+    "#e02080": {"label": "Escalier qui monte vers l'ouest", "kind": "stairs", "dir": "west"},
+    "#2040e0": {"label": "Rampe qui monte vers le nord", "kind": "ramp", "dir": "north"},
+    "#2080e0": {"label": "Rampe qui monte vers l'est", "kind": "ramp", "dir": "east"},
+    "#20c0e0": {"label": "Rampe qui monte vers le sud", "kind": "ramp", "dir": "south"},
+    "#6020e0": {"label": "Rampe qui monte vers l'ouest", "kind": "ramp", "dir": "west"},
+    "#404040": {"label": "Muret : faces qui descendent de cette case", "face": "wall"},
+    "#806040": {"label": "Falaise de roche : faces qui descendent de cette case", "face": "rock"},
+    "#40a040": {"label": "Talus de terre : faces qui descendent de cette case", "face": "earth"}
+  }
+}

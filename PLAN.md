@@ -104,6 +104,8 @@ Yume-WordEnd/
 │   ├── hd2d_assets.py         # (HD-2D) images de remplacement : gen, check, fit, atlas (Pillow)
 │   ├── hd2d_manifest.json     # (HD-2D) liste exacte des images du décor (chemin, taille, genre)
 │   ├── hd2d_art.py, hd2d_ground.py, hd2d_props.py, hd2d_sky.py   # recettes de pixel art
+│   ├── map_build.py           # (E2) sol en relief des cartes : check, gen (d'après plan.json), view (vue de dessus)
+│   ├── carte_plans.py         # (D2) vérifie et dessine les plans ```plan de docs/lore/CARTE.md (check, ascii)
 │   └── gen_placeholders.py    # planches de remplacement au format de l'easter egg (Pillow)
 ├── web/
 │   ├── CNAME                  # jeu.yumenovel.fr (copié dans build/web par la CI)
@@ -127,6 +129,8 @@ Yume-WordEnd/
 │   │                          # (H9) ground_decal.gd, sky_drift.gd, ambient_sprites.gd (formats du cahier n° 2)
 │   │                          # (E1) map.gd, map_exit.gd, map_light.tscn, maps/<map_id>/<map_id>.tscn (une
 │   │                          # carte par lieu ; maps/ile_ancienne : l'île héritée ; maps/essai : carte d'essai)
+│   │                          # (E2) map_ground.gd (+ _data, _builder, _coast) : sol en relief des cartes
+│   │                          # extérieures ; maps/essai_relief : démonstration du relief
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
@@ -141,6 +145,8 @@ Yume-WordEnd/
 │   ├── quests/*.json          # (Lot Q) quêtes en étapes, format : docs/QUETES.md
 │   ├── skins/*.tres
 │   ├── dialogues/*.json
+│   ├── maps/<map_id>/         # (E2) sol en relief d'une carte : map.json, heights.png, materials.png,
+│   │                          # structures.png, plan.json ; maps/ground_materials.json (matières, structures)
 │   └── texts/story.json       # (Systèmes et textes) textes de l'histoire hors dialogues :
 │                              # arène, chute, défaite (DialogueRunner.story_text)
 ├── assets/
@@ -445,7 +451,9 @@ class_name GroundDecal     # (H9) src/world/ground_decal.gd, racine possible d'u
                            # de dessus, ancre au centre, couchée sur les triangles du sol ; @export texture,
                            # pixels_per_meter (96), soft_alpha, tint, flip_h, layer (0..7, UV2.y), follow_ground ;
                            # size_m(), draped_mesh(), material_for(image, tint, soft, layer) ; HARD_SHADER,
-                           # SOFT_SHADER (ground_decal*.gdshader), SOFT_PRIORITY (−9 + couche)
+                           # SOFT_SHADER (ground_decal*.gdshader), SOFT_PRIORITY (−9 + couche) ; (E2) follow_ground
+                           # drape sur le `MapGround` (enfant `Ground`) du premier ancêtre qui en a un
+                           # (MapGround.triangles_in), sinon sur IslandTerrain (île ancienne)
 class_name Building        # (H9) @export side_facade (flanc est, retourné à l'ouest ; enfant interne « Sides ») ;
                            # side_size_m(), side_contract_size() (pignon : profondeur × faîtage ; gouttereau :
                            # profondeur × mur), side_material(texture, glow)
@@ -463,6 +471,24 @@ class_name IslandEdge      # (B1) src/world/island_edge.gd : la forme du bord, u
                            # table, texture (shader du sol : edge_table), arc, length, base_radius : tracé
                            # d'origine, fade_distance) ; EDGE_LIMIT (±79,2 m), PORT_SECTOR, WATERFALL_ANGLE,
                            # CAPES, LEDGES, COVES ; IslandRock.uv_turn() (périmètre en textures de 4 m)
+# (E2, refonte) Sol en relief des cartes extérieures : format et mode d'emploi en section 4, « Format du sol
+# des cartes extérieures ». Coordonnées de la carte (origine au coin nord-ouest, x est, z sud, 1 case = 1 m).
+class_name MapGround       # src/world/map_ground.gd (StaticBody3D, couche 1) : le nœud « Ground » d'une Map
+                           # extérieure (docs/REFONTE.md 7.1) ; @export map_id (vide : nom de la Map parente),
+                           # data_root (res://data/maps) ; build(), build_from(data) ; height_at(x, z) (VOID_HEIGHT
+                           # dans le vide), material_at(x, z) -> StringName, is_walkable(x, z), level_at(x, z),
+                           # map_size() -> Vector2i, triangles_in(rect) (décalques), set_sun(vers_le_soleil),
+                           # stats() (build_msec, triangles, draw_calls), ground_mesh(), cliff_mesh(),
+                           # collision_faces(), barrier_faces(), rim_segments() ; var data: MapGroundData ;
+                           # enfants internes Mesh (sol, 1 draw call), Cliffs (faces et rideau, 1), CloudSea (si le
+                           # vide), CollisionShape3D (les triangles mêmes du sol et des faces), Barrier (côte, eau
+                           # dormante, bords « land »)
+class_name MapGroundData   # src/world/map_ground_data.gd : lecture et vérification de data/maps/<id>/ ; statiques
+                           # load_map(id, root), from_images(spec, heights, materials, structures), library() ;
+                           # problems (vide : carte valide) ; surface_height, material_index_at, is_walkable,
+                           # level_at, coast_value ; LEVEL_HEIGHT (0,5), STAIR_RISER (0,1), MAX_SLOPE_DEG (40)
+class_name MapGroundBuilder # src/world/map_ground_builder.gd : triangles du sol, faces, collision (MapGround)
+class_name MapGroundCoast  # src/world/map_ground_coast.gd : chaînes de la côte, rideau de roche, barrières
 class_name SkyDrift        # (H9) src/world/sky_drift.gd (Island/Decor/SkyDrift) : panneaux lointains qui dérivent
                            # d'ouest en est en boucle (shader, TIME) ; @export textures, pixels_per_meter (48),
                            # count, span, fade, distance_range, height_range, speed_range, scale_range, tint,
@@ -559,6 +585,11 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 ### (E1) Créer une carte : mode d'emploi
 
 Contrat : `docs/REFONTE.md`, section 7.1 ; exemple complet : `src/world/maps/essai/essai.tscn`.
+(D2) Le plan de chaque lieu est dans `docs/lore/CARTE.md` (cotes, pièces, portes, meubles par
+nom d'image, sorties, marqueurs, places) : ses blocs ```plan se vérifient par
+`python3 tools/carte_plans.py check docs/lore/CARTE.md` (chevauchements, portes alignées,
+passages de 1,2 m dedans et 3 m dehors, accès depuis `Spawn`, règle de caméra). Une carte
+construite suit son plan à la lettre ; un écart se reporte dans le plan et repasse le `check`.
 
 1. **Fichier et racine.** `src/world/maps/<map_id>/<map_id>.tscn`, `map_id` en `snake_case`
    ASCII qui commence par une lettre (`entrepot_rdc`, `sentier`). Racine `Node3D` nommée
@@ -581,9 +612,9 @@ Contrat : `docs/REFONTE.md`, section 7.1 ; exemple complet : `src/world/maps/ess
      dedans ; en attendant, un `StaticBody3D` plat avec ses murs invisibles, comme la carte
      d'essai). La carte doit être fermée : murs, falaises ou décor tout autour ;
    - `Geometry` : script `res://src/world/prop_batcher.gd` ; les décors de `src/world/props/`
-     (instances), fondus en un draw call par image. Un `GroundDecal` y garde
-     `follow_ground = false` tant qu'E2 ne l'a pas branché sur `MapGround` (sinon il suit le
-     relief de l'ancienne île) ;
+     (instances), fondus en un draw call par image. Un `GroundDecal` (`follow_ground`) y suit
+     le relief du `MapGround` de la carte (E2) ; sur une carte au sol plat provisoire, le
+     mettre à faux (sinon il suit le relief de l'ancienne île) ;
    - `Markers` : des `Marker3D`. `Spawn` obligatoire (nouvelle partie, réapparition par défaut) ;
      un marqueur `from_<carte d'origine>` par sortie qui mène ici (`from_<carte>_<suffixe>` si
      plusieurs). Le joueur est posé au sol sous le marqueur, tourné vers son −Z : un marqueur
@@ -622,6 +653,102 @@ Contrat : `docs/REFONTE.md`, section 7.1 ; exemple complet : `src/world/maps/ess
      n'en a pas besoin (son nom s'annonce par `display_name`).
    - Une démonstration n'ajoute jamais une carte à côté d'une autre : une seule carte à la fois,
      posée par WorldManager.
+
+### (E3) Intérieurs : `InteriorRoom`
+
+Le nœud `Ground` d'une carte intérieure (`docs/REFONTE.md`, section 7.1) : un étage d'un bâtiment,
+décrit par des données, bâti en images, vu par la caméra fixe qui regarde le nord. Mode d'emploi
+détaillé, format complet et liste des images : `docs/INTERIEURS.md`. Exemple :
+`data/maps/entrepot_rdc_essai/interior.json` et `src/world/maps/entrepot_rdc_essai/`, démo
+`tests/integration/demo_interieur.tscn` (`game.tscn` et `WorldManager.enter_map` ;
+`INTERIOR_VIEW=<vue>`, `INTERIOR_PHASE`, `INTERIOR_CUT=0`), lumière `src/world/interior_light.tscn`.
+
+**Format** (`data/maps/<map_id>/interior.json`) : `size` (m, = `Map.size`), `wall_height` (3),
+`wall_thickness` (0,25), `rooms.<id>` (`name`, `rects` : `[x, z, largeur, profondeur]` sur la grille
+d'un mètre, `floor`, `wall`, `wallcut` : noms d'images de `assets/hd2d/interior/`), `doors[]`
+(`between` : deux pièces, ou `room` + `side` N/S/E/W ; `x` ou `z` : centre le long du mur ; `width`,
+`height`, `image` `door_*`, `passable`, `id`), `windows[]` (`room`, `side`, `x`/`z`, `image`
+`window_*`, `sill`), `wall_items[]` (idem, `wallitem_*`, `y`), `lights[]` (`room`, `at` [x, z],
+`radius`, `color`, `energy`). Les murs se déduisent des pièces (un mur partout où deux cases voisines
+ne sont pas de la même pièce, le vide compris), centrés sur la ligne de grille ; une clé inconnue
+est une faute (`_…` : commentaire).
+
+```gdscript
+# src/world/interior_layout.gd (class_name InteriorLayout, RefCounted) : lecture et vérification
+static func from_data(data) -> InteriorLayout   # .problems : fautes (vide : valide)
+var map_size: Vector2i, wall_height, wall_thickness, rooms, doors, windows, wall_items, lights, pieces
+func cell(x, z) -> int / room_at(local) -> StringName / room_index(id) / door(id) -> Dictionary
+func cut_line_at(local: Vector3) -> float   # première limite de pièce au sud de la case (NO_CUT)
+func piece_box(piece) -> AABB ; static opening_center(opening), image_path(name)
+const HORIZONTAL, VERTICAL, NO_CUT, DOOR_WIDTH (1,1), DOOR_HEIGHT (2,2), WINDOW_SILL (0,9)
+
+# src/world/interior_room.gd (class_name InteriorRoom, extends StaticBody3D, @tool) : Ground
+@export var layout: JSON, cut_enabled: bool, window_tint: Color, window_energy, lamp_energy
+var plan: InteriorLayout
+func rebuild(), surfaces() -> Array[MeshInstance3D]   # un mesh par matière (+ « Void »)
+func cut_target() -> float, cut_line() -> float, snap_cut()   # coupe (z du monde)
+func set_daylight(tint: Color, energy: float), set_lamps(energy: float), apply_phase(phase)
+     # PHASES : morning, day, evening, night ; branchée sur EventBus.day_phase_changed
+func height_at(x, z), material_at(x, z) -> StringName, room_at(x, z), is_walkable(x, z)
+     # mêmes requêtes que MapGround (E2), repère de la carte
+func door_position(id) -> Vector3, light_at(local) -> Color
+func occluder_triangles(cut_world, player := Vector3.INF) -> PackedVector3Array   # tests
+static func panel_material(texture, glow, tint, follows) -> ShaderMaterial, share_uniform(key, value),
+     panel_mesh(size, cut, keep), part_code(part, line)   # caches en références faibles (WeakRef)
+const CUT_HEIGHT (0,15), PROP_CUT_HEIGHT (1), CUT_MARGIN (0,3), CUT_SPEED (14 m/s), COLUMN_HALF,
+      COLUMN_FRONT, COLUMN_LENGTH, LIGHT_TEXELS (4/m), VOID_COLOR, PLAYER_GROUP
+
+# src/world/interior_panel.gd (class_name InteriorPanel, extends DecorPanel, @tool) : meuble
+@export var cut_height: float = 1.0   # hauteur gardée quand la coupe passe
+func front_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
+```
+
+**Règles du rendu.**
+- *Coupe, rien ne cache le joueur* : la ligne de coupe est la première limite de pièce au sud de
+  la case du joueur, dans sa colonne. Tout ce qui est au sud de cette ligne moins 0,3 m n'est
+  dessiné que sous sa hauteur de coupe : murs (0,15 m, leur épaisseur `wallcut_*`), portes,
+  fenêtres, éléments, meubles `InteriorPanel` (1 m). Le mur sud de la pièce du joueur n'est donc
+  jamais dessiné ; ses murs nord, est et ouest le sont. Dans la porte d'une cloison nord-sud, la
+  colonne de coupe abaisse aussi la cloison sur 4,5 m au sud du joueur. La ligne glisse d'une
+  limite à l'autre (14 m/s). Les collisions ne changent jamais. Shaders :
+  `src/world/shaders/interior.gdshader`, `interior_panel.gdshader`, `interior_core.gdshaderinc`.
+- *Lumière* : préréglage `interieur` (`src/world/materials/lighting_interieur.tres`, `Map.light_preset
+  = &"interieur"`) et deux cartes de lumière vues de dessus, bornées à leur pièce (jour des fenêtres,
+  lampes), ajoutées en émission ; aucune lumière du moteur ni ombre portée.
+- *Draw calls* : un par matière de sol, de mur, de dessus de mur, par image de panneau et de meuble
+  (le `PropBatcher` garde la coordonnée de coupe dans UV2), plus le vide : 36 à 67 par vue
+  meublée dans l'étage d'essai, dans la vraie partie, interface comprise.
+
+**Mode d'emploi pour décrire et meubler un intérieur** (détails : `docs/INTERIEURS.md`, section 1).
+1. Dessiner le plan sur une grille d'un mètre (origine au nord-ouest), 2 m de vide autour.
+2. Écrire `data/maps/<map_id>/interior.json` : pièces et matières, portes, fenêtres, éléments,
+   lampes ; `InteriorLayout.from_data(...).problems` doit être vide.
+3. Carte `src/world/maps/<map_id>/<map_id>.tscn` : racine `Map` (`interior = true`,
+   `light_preset = &"interieur"`, `camera_bounds` : de x = 2 à la largeur − 2 pour que la caméra
+   reste au droit du joueur, en z de 5 à la profondeur − 5) ; `Ground` = `StaticBody3D` de script
+   `interior_room.gd` (masque 0) avec `layout` ; `Geometry` (`PropBatcher`) ; `Markers` (`Spawn`,
+   `from_<carte>` à y = 0,2, à 2 ou 3 m des sorties) ; `Exits` (`MapExit` devant chaque porte
+   qui a un `id` : `door_position(id)` ; zone qui couvre la porte quand on la franchit en marchant ;
+   carte cible et marqueur existants, `tests/unit/test_maps.gd`) ; `Life` ; et sa lumière,
+   `Light` = instance de `src/world/interior_light.tscn` (préréglage `interieur` à l'entrée,
+   réglage par défaut rendu en partant), en attendant E9.
+4. Meubler sous `Geometry` avec les scènes `InteriorPanel` de `src/world/props/` : nœud au milieu
+   de l'emprise, image au bord sud ; au-delà d'1 m de haut, contre un mur nord ; au milieu d'une
+   pièce, profondeur d'emprise ≥ `(h − 0,25) / 0,78 − 0,35` m (dans les 5 m nord, où la caméra
+   bute sur ses bornes, moins de 0,7 m derrière un meuble haut) ; chaises `chair_wood` au nord
+   des tables, `chair_wood_back` au sud ; lits vus de flanc, tête à l'ouest ; 0,8 m de passage ;
+   tapis : `GroundDecal` de `assets/hd2d/decals/rug_*`. Portes qu'on franchit : image à
+   ouverture transparente (`door_frame_wood`) ou aucune ; `door_room` aux portes fermées.
+5. Tester l'étage sur le modèle de `tests/unit/test_interior_entrepot.gd` (circulation, portes,
+   occlusion depuis chaque case, draw calls), dans la vraie partie sur le modèle de
+   `tests/integration/test_interior_in_game.gd`, et le capturer sur le modèle de
+   `tests/integration/demo_interieur.gd` (`game.tscn`, puis `WorldManager.enter_map`).
+Images : celles du cahier n° 3 (`docs/ASSETS_HD2D_SUKASUKA.md`, section 3), jamais retouchées.
+Une image qu'une carte emploie entre dans les listes de `tools/hd2d_interior.py` (taille réelle ;
+profondeur et lueur d'un meuble ; recette pour un remplaçant seulement), puis `python3
+tools/hd2d_interior.py manifest`, `python3 tools/hd2d_assets.py gen --lot I` (remplaçants),
+`python3 tools/hd2d_interior.py scenes`, `tools/import.sh`, `python3 tools/hd2d_assets.py check
+--lot I`.
 
 ## 4. Tranche verticale : WordEnd en HD-2D
 
@@ -698,6 +825,72 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 ```
 
 Les vagues listées sont jouées telles quelles ; au-delà, `generator` produit la vague *n* en tirant `count` ennemis selon `weights`, avec `max_simultaneous` pour le Grand, une vitesse qui augmente de 4 % par vague jusqu'à +50 % et un PV de plus pour le Normal dès la vague 6 : exactement la montée en difficulté de `jeu.js`. `WaveDirector.compose(n)` renvoie cette liste, ce qui la rend testable sans scène.
+
+### Format du sol des cartes extérieures (refonte, lot E2, `data/maps/<map_id>/`)
+
+Le sol d'une carte extérieure (le nœud `Ground` d'une `Map`, un `MapGround` : section 3) est
+**décrit par des données, peintes en images**, et bâti au chargement (moins de 50 ms pour une
+carte de 80 × 60 m). Repères de la carte : origine au coin nord-ouest, x vers l'est, z vers le
+sud ; **un pixel = une case de 1 m** ; la case (i, j) couvre [i, i + 1] × [j, j + 1].
+
+| Fichier | Contenu |
+| --- | --- |
+| `map.json` | `format` (`"map_ground"`), `version` (1), `size` [largeur, profondeur], `palette` (couleur `#rrggbb` → matière), et en option : `heights_image`, `materials_image`, `structures_image` (noms des images), `height_step_value` (16), `height_zero_value` (0), `materials_scale` (1, 2 ou 4 pixels par mètre), `materials` (matières propres à la carte, ou surcharges), `edges` (`north`/`east`/`south`/`west` : `void` le bord de l'île, `land` le sol continue, défaut), `skirt` (16 m de sol prolongé au-delà d'un bord `land`), `barrier` (vrai), `spawn` [i, j] (départ des vérifications d'accès). Une clé inconnue est une erreur (`_commentaire` permis). |
+| `heights.png` | Un pixel par case. **Transparent = le vide.** Gris (rouge) R : palier (R − `height_zero_value`) / `height_step_value`, de **0,5 m** chacun (16 par palier : 0 noir = 0 m, 16 = 0,5 m, 48 = 1,5 m…). La hauteur peinte sous un escalier ou une rampe est ignorée. |
+| `materials.png` | `materials_scale` pixels par mètre, une couleur de la palette par pixel. Matières de `data/maps/ground_materials.json` (chacune : tuile de l'atlas du sol, couleur de peinture, et en option teinte, alternance `_b`, bord `soft` tramé ou `sharp` net, `path` chemin, `walkable`, `ripple` eau qui ondule, `border` bordure) : `herbe`, `herbe_haute`, `prairie`, `sous_bois`, `feuilles`, `mousse`, `terre_battue`, `sentier` (bordé de pierres), `gravier`, `paves`, `dalles`, `planches`, `tole`, `boue`, `tourbe`, `potager`, `eau` (dormante, **non praticable** : une barrière la borde), `lit_ruisseau`, `sable`, `roche`. |
+| `structures.png` | Facultative, un pixel par case, transparent ou noir = rien. Couleurs de la bibliothèque : **escalier** qui monte vers le nord, l'est, le sud ou l'ouest (`#e02020`, `#e06020`, `#e0a020`, `#e02080`), **rampe** (`#2040e0`, `#2080e0`, `#20c0e0`, `#6020e0`), et **style des faces qui descendent de la case** : muret `#404040`, roche `#806040`, talus `#40a040`. |
+| `plan.json` | Facultatif, lu par `tools/map_build.py gen` seulement (pas par le jeu) : la description d'où sortent les trois images et `map.json`. |
+
+**Le relief.**
+- Entre deux cases de paliers différents, une **face verticale** sur la ligne de la grille,
+  tournée vers la plus basse : **talus de terre** jusqu'à 0,5 m (`assets/hd2d/cliff/bank_earth.png`
+  puis la terre de potager), **falaise de roche** au-delà (`lip.png` sur le premier mètre, puis
+  `cliff.png`), ou le style imposé par `structures.png` (**muret** : `wall_stone_b.png`). Les
+  faces tournées vers le nord, que la caméra fixe ne voit jamais, ne sont que dans la collision.
+- **Escalier** : une volée = des cases d'escalier à la suite dans leur sens de montée ; elle relie la
+  case plate d'avant (le bas) à la case plate d'après (le haut, plus haute), en **vraies marches de
+  0,1 m** (la capsule du joueur les monte sans sauter), contremarches dans la tuile de la matière
+  peinte sous l'escalier, joues en muret. **Rampe** : même règle, plan incliné. Pente de **40° au
+  plus** (une case par palier : 26,6°). Une volée large = des colonnes voisines de même profil.
+  Escalier et rampe restent à 2 m au moins du vide et ne touchent pas le bord de la carte.
+- Une marche de 0,5 m sans escalier se saute (le joueur saute 1 m) ; plus haut, c'est une falaise.
+  **Un chemin (`path`) ne franchit jamais plus de 0,5 m sans escalier ni rampe** (vérifié).
+- **La côte** (bord du vide) n'est pas en escalier : une ligne irrégulière (champ lisse tiré des cases
+  vides, plus un bruit), qui déborde jusqu'à une case sur le vide. Dessous : la lèvre, la falaise et
+  le rideau de roche qui se resserre jusqu'à 38 m sous l'île, la mer de nuages (`CloudSea`), une
+  barrière invisible (on ne tombe pas). Les bords `land` ont aussi leur barrière : une sortie
+  (`MapExit`) se pose en deçà du bord.
+- **Le sol** : un draw call (tuiles de l'atlas à 96 px/m, bords tramés, bordures, eau qui ondule,
+  lèvre de pierre et liseré sombre au bord du vide, ombres portées des falaises et ombre de contact à
+  leur pied) ; **les faces** : un draw call ; la **mer de nuages** : un. La collision est faite des
+  triangles mêmes du sol et des faces : on marche exactement sur ce qu'on voit.
+
+**Mode d'emploi : dessiner une carte.**
+1. Créer `data/maps/<map_id>/plan.json` (modèle : `data/maps/essai_relief/plan.json`) : `size`,
+   `edges`, `base` (palier et matière de départ), `spawn`, puis `steps`, appliqués dans l'ordre :
+   `level` (palier), `void` (le vide), `material`, `path` (bande le long de `points`, `width`),
+   `stairs` et `ramp` (`rect` [x, z, largeur, profondeur] de cases, `dir`, `material` facultative),
+   `face` (`wall`, `rock`, `earth` sur les cases hautes d'une falaise). Formes : `rect`, `poly`,
+   `ellipse` [cx, cz, rx, rz], `band` ; `noise` (m) et `noise_scale` brouillent leur bord ; `where`
+   (`level`, `levels`, `material`, `not_material`) restreint une opération.
+2. `python3 tools/map_build.py gen <map_id>` écrit `map.json`, `heights.png`, `materials.png` et
+   `structures.png` et vérifie la carte ; `python3 tools/map_build.py view <map_id>` en fait la vue de
+   dessus (`build/maps/<map_id>_dessus.png`) ; `check` revérifie (toutes les cartes sans argument).
+   On peut aussi peindre les images à la main (pixels purs, sans anticrénelage), puis `check`.
+3. `tools/import.sh`, et commiter les images avec leurs `.import`.
+4. La scène `src/world/maps/<map_id>/<map_id>.tscn`, selon « (E1) Créer une carte » (section 3 ;
+   modèle : `src/world/maps/essai_relief/essai_relief.tscn`) : racine `Map`, `size` = `size` de
+   `map.json`, `camera_bounds`, la lumière (`src/world/map_light.tscn`, en attendant E9) ; `Ground`
+   est un `StaticBody3D` au script `src/world/map_ground.gd` (rien d'autre à régler : il lit
+   `data/maps/<nom de la Map>/`). Les décors vont dans `Geometry` à la hauteur de leur palier
+   (`MapGround.height_at`, ou la vue de dessus) ; un décalque au sol (`GroundDecal`) suit le relief
+   de lui-même. Les marqueurs (`Spawn`, `from_<carte>`) et les sorties se posent sur des cases
+   praticables, en deçà de la barrière des bords.
+5. Vérifier : `tools/test.sh tests/unit/test_map_ground_data.gd` (chaque carte de `data/maps` au format
+   du sol en relief s'y lit sans problème), `tools/test.sh tests/unit/test_maps.gd` (la `Map`) et des
+   captures dans la vraie partie (modèle : `tests/integration/demo_e2_relief.gd`, qui instancie
+   `game.tscn` puis `WorldManager.enter_map` ; `E2_VIEW=<vue> tools/screenshot.sh
+   res://tests/integration/demo_e2_relief.tscn build/shots/e2_<vue>.png 60`).
 
 ### Format de dialogue (JSON)
 

@@ -206,6 +206,7 @@ bas pour les deux premières).
 | 2 | `cliff.png` | 384 × 384 | paroi de falaise verticale de pierre claire (#C2B49F → #837667) en strates horizontales, cassures franches, touffes d'herbe et petites racines ; sans raccord sur les quatre bords |
 | 2 | `underside.png` | 384 × 384 | dessous de l'île flottante : cône de roche aux strates claires et sombres (#837667 et plus sombre, nuancé de violet par l'ombre), racines qui pendent ; sans raccord sur les quatre bords |
 | 3 | `lip.png` | 384 × 96 | lèvre du bord de l'île vue de face, 1 m de haut : bord de dalle ébréché, herbe qui déborde en haut, première strate de roche en bas ; sans raccord à gauche et à droite |
+| 3 | `bank_earth.png` | 384 × 96 | (refonte, E2) talus de terre vu de face, 1 m de haut, la face d'un petit palier des cartes : en haut l'herbe du pré qui déborde en touffes et ses racines qui pendent, puis une terre brune (#56402C) en strates molles, quelques cailloux et mottes ; en bas, les tons de la terre de potager (`garden_soil`) ; sans raccord à gauche et à droite |
 
 ## 6. Bâtiments : façades et matières
 

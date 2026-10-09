@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="HD2DLighting" format=3]
+
+[ext_resource type="Script" path="res://src/world/materials/hd2d_lighting.gd" id="1_lighting"]
+
+[resource]
+resource_name = "interieur"
+script = ExtResource("1_lighting")
+sun_color = Color(1, 0.86, 0.7, 1)
+sun_energy = 0.38
+sun_elevation_deg = 60.0
+sun_azimuth_deg = 190.0
+ambient_color = Color(1, 0.84, 0.66, 1)
+ambient_energy = 0.34
+fog_color = Color(0.3, 0.22, 0.18, 1)
+fog_density = 0.0
+sky_energy = 0.0
+clouds_tint = Color(0.5, 0.42, 0.38, 1)
+lamp_energy = 1.0
+sprite_tint = Color(0.94, 0.86, 0.76, 1)
+grade = Color(1.06, 0.98, 0.88, 1)
+shadow_tint = Color(0.36, 0.28, 0.3, 1)
+highlight_tint = Color(1, 0.82, 0.56, 1)
+split_strength = 0.14
+contrast = 1.08
+saturation = 1.02
+vignette = 0.45
+haze_color = Color(0.6, 0.45, 0.35, 1)
+haze_strength = 0.04
+sky_light_color = Color(1, 0.75, 0.5, 1)
+sky_light_strength = 0.0
+glow_threshold = 0.78
+glow_strength = 0.5
