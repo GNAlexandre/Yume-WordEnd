@@ -1,7 +1,6 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
-[ext_resource type="PackedScene" path="res://src/world/map_light.tscn" id="2_light"]
 [ext_resource type="Texture2D" path="res://assets/hd2d/ground/grass.png" id="3_grass"]
 [ext_resource type="Texture2D" path="res://assets/hd2d/ground/path_dirt.png" id="4_path"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="5_batcher"]
@@ -61,8 +60,6 @@ display_name = "Clairière d'essai"
 region = &"essai"
 size = Vector2(40, 30)
 camera_bounds = Rect2(10, 9, 20, 13)
-
-[node name="Light" parent="." instance=ExtResource("2_light")]
 
 [node name="Ground" type="StaticBody3D" parent="."]
 collision_mask = 0

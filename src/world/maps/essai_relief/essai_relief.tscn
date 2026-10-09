@@ -1,7 +1,6 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
-[ext_resource type="PackedScene" path="res://src/world/map_light.tscn" id="4_light"]
 [ext_resource type="Script" path="res://src/world/map_ground.gd" id="2_ground"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="3_batcher"]
 [ext_resource type="PackedScene" path="res://src/world/props/oak_a.tscn" id="p1_oak_a"]
@@ -47,8 +46,6 @@ display_name = "Essai de relief"
 region = &"essai"
 size = Vector2(60, 45)
 camera_bounds = Rect2(10, 5, 40, 32)
-
-[node name="Light" parent="." instance=ExtResource("4_light")]
 
 [node name="Ground" type="StaticBody3D" parent="."]
 script = ExtResource("2_ground")

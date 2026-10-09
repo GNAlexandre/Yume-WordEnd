@@ -1958,8 +1958,9 @@ autres attendent l'accord du lot du moteur indiqué (colonne « Commander »).
 | Nouvelles tuiles de sol | `ground/path_overgrown`, `ground/river_water` | E2 | l'atlas du sol a 27 couches (`GROUND_LAYERS`) | après accord |
 | Premier plan suspendu | `fg_canopy_a`, `fg_canopy_b` | E10 Densité | un panneau accroché en haut de l'écran au-dessus du joueur | après accord |
 | Navires en volume (flanc, pont, poupe, trois quarts), pont praticable, rotors et trappe | `ships/*` (7 images), `anim/garde_transport_*` | E7 Navires | navire en volume au nord du quai, pont où l'on marche | après accord |
-| Pluie en rideau, flaques animées | `rain_curtain`, `rain_drizzle`, `puddle_rain_*` | E9 Lumière et temps | bande animée répétée sur l'écran, décalque animé | après accord |
-| Vitres éclairées et fenêtres de nuit | `window_lit_*`, `*_night` | E9 | allumer les façades et changer les fenêtres selon l'heure | tout de suite (même cadrage que les fenêtres de jour) |
+| Pluie en rideau, flaques animées | `rain_curtain`, `rain_drizzle`, `puddle_rain_*` | E9 Lumière et temps | (E9, confirmé pour le rideau) bande répétée sur tout l'écran, une image pour 384 px d'un écran haut de 720, en deux couches : `rain_drizzle` derrière, `rain_curtain` devant, 1,5 fois plus grand, qui s'ajoute à l'averse ; les flaques animées attendent un décalque animé (`GroundDecal`) | tout de suite (rideau) ; après accord (flaques) |
+| Vitres éclairées et fenêtres de nuit | `window_lit_*`, `*_night` | E9 | (E9, confirmé) une image `<nom>_night.png` posée à côté de `<nom>.png` la remplace la nuit, au même cadrage ; une vitre `window_lit_*`, posée sur la fenêtre de jour comme un panneau, ne se montre que la nuit | tout de suite (même cadrage que les fenêtres de jour) |
+| Éclaboussures et lumière des fées | `rain_splash`, `fairy_light` | E9 | (E9, confirmé) éclaboussure : bande ancrée au milieu du bas, posée au sol autour de la caméra ; lumière : bande centrée, affichée à 64 px par mètre (un peu plus grande que le décor), dans la main du joueur la nuit dehors | tout de suite |
 
 ### 9.5 En résumé
 

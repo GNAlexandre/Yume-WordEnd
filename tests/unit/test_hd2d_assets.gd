@@ -11,6 +11,7 @@ extends GutTest
 const MANIFEST := "res://tools/hd2d_manifest.json"
 ## (E3) Les intérieurs (lot I) : conventions de docs/REFONTE.md (section 8.1), images du cahier n° 3
 ## (docs/ASSETS_HD2D_SUKASUKA.md, section 3) et remplaçants hors cahier de docs/INTERIEURS.md.
+## (E9) Le cahier n° 3 nomme aussi les images de ses lots (lot N : pluie, lumière des fées).
 const DOCS: Array[String] = [
 	"res://docs/ASSETS_HD2D.md",
 	"res://docs/ASSETS_HD2D_MONDE.md",
