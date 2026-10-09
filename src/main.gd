@@ -4,10 +4,12 @@ extends Node
 ## Passe au jeu sur EventBus.game_loaded (émis par SaveManager.new_game, load_game,
 ## import_json) et seulement sur ce signal. Fichier d'intégration (Lot 0, intégration M2) : les
 ## lots ne le modifient pas (besoin → docs/CONTRACT_REQUESTS.md).
-## Chargement : si la racine de loading.tscn a load_scene(path) (L9), elle charge src/game.tscn
-## en plusieurs images (dépendances d'abord) et sa barre avance vraiment, sans fil d'exécution
-## (export Web mono-thread, docs/web.md) ; sinon set_progress(0) puis set_progress(1) autour d'un
-## load() d'un bloc, si elle a set_progress(ratio: float).
+## Chargement : si la racine de loading.tscn a load_scenes(paths) (E1) ou load_scene(path) (L9),
+## elle charge src/game.tscn et (E1) la carte où commence la partie
+## (WorldManager.starting_map()) en plusieurs images (dépendances d'abord) et sa barre avance
+## vraiment, sans fil d'exécution (export Web mono-thread, docs/web.md) ; sinon set_progress(0)
+## puis set_progress(1) autour d'un load() d'un bloc, si elle a set_progress(ratio: float). La
+## carte reste en cache jusqu'à ce que game.gd l'ait posée (WorldManager.enter_map).
 ## Retour au menu : le menu pause (L10) écrit la partie, appelle SaveManager.close_game(false)
 ## puis recharge main.tscn (reload_current_scene) ; show_menu() fait de même pour un appel direct.
 
@@ -69,19 +71,29 @@ func start_game() -> void:
 	add_child(loading)
 	_set_progress(loading, 0.0)
 	await get_tree().process_frame
-	var game_scene: PackedScene
-	if loading.has_method(&"load_scene"):
-		var loaded: Variant = await loading.call(&"load_scene", GAME_SCENE, loading_budget_ms)
-		game_scene = loaded as PackedScene
+	var paths: Array[String] = [GAME_SCENE]
+	var map_path := Map.scene_path(WorldManager.starting_map())
+	if ResourceLoader.exists(map_path):
+		paths.append(map_path)
+	# La carte chargée ici reste référencée (donc en cache) jusqu'à l'ajout de la partie.
+	var scenes: Array = []
+	if loading.has_method(&"load_scenes"):
+		scenes = await loading.call(&"load_scenes", paths, loading_budget_ms)
+	elif loading.has_method(&"load_scene"):
+		for path: String in paths:
+			scenes.append(await loading.call(&"load_scene", path, loading_budget_ms))
 	else:
-		game_scene = load(GAME_SCENE) as PackedScene
+		for path: String in paths:
+			scenes.append(load(path))
 		_set_progress(loading, 1.0)
+	var game_scene := scenes[0] as PackedScene if not scenes.is_empty() else null
 	_loading = null
 	loading.queue_free()
 	if generation != _generation or game_scene == null:
 		return
 	_game = game_scene.instantiate()
 	add_child(_game)
+	scenes.clear()
 
 
 ## Écran de chargement affiché (null hors chargement).

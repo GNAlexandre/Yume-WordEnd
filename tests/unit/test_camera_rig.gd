@@ -8,7 +8,7 @@ extends GutTest
 ## bâtiments, joueur sous le milieu de l'écran, au-dessus de la boîte de dialogue en
 ## conversation, avance dans le sens de la marche qui s'installe et s'éteint sans à-coup, caméra
 ## posée hors du lissage physique. La caméra est pilotée par update_camera() (son _process est
-## coupé).
+## coupé). (E1) Bornes de la carte courante à chaque map_entered.
 
 const RIG := preload("res://src/player/camera_rig.tscn")
 const CameraRigScript := preload("res://src/player/camera_rig.gd")
@@ -93,6 +93,28 @@ func test_stays_within_the_island_limits() -> void:
 	_update(rig, 3.0)
 	assert_almost_eq(rig.focus().x, rig.limits.end.x, 0.01, "bornée à l'est")
 	assert_almost_eq(rig.focus().z, rig.limits.position.y, 0.01, "bornée au nord")
+
+
+func test_limits_follow_the_current_map() -> void:
+	# (E1) À chaque carte (EventBus.map_entered) : ses bornes (Map.bounds(), la carte entière
+	# par défaut), la caméra courante, recalée sur le joueur.
+	var rig := _spawn_rig(Vector3(5, 0, 5))
+	var map := Map.new()
+	map.name = "carte_test"
+	map.size = Vector2(30, 20)
+	add_child_autofree(map)
+	rig.camera.clear_current(false)
+	EventBus.map_entered.emit(&"carte_test")
+	assert_eq(rig.limits, Rect2(0, 0, 30, 20), "la carte entière")
+	assert_true(rig.camera.current, "redevenue la caméra courante")
+	(rig.get_parent() as Node3D).position = Vector3(-10, 0, 40)
+	_update(rig, 3.0)
+	assert_almost_eq(rig.focus().x, 0.0, 0.01, "bornée à l'ouest de la carte")
+	assert_almost_eq(rig.focus().z, 20.0, 0.01, "bornée au sud de la carte")
+	map.camera_bounds = Rect2(8, 6, 14, 8)
+	EventBus.map_entered.emit(&"carte_test")
+	assert_eq(rig.limits, Rect2(8, 6, 14, 8), "bornes choisies par la carte")
+	assert_almost_eq(rig.focus(), rig.focus_goal(false), Vector3.ONE * 0.01, "recalée aussitôt")
 
 
 func test_snap_puts_the_camera_on_the_player_at_once() -> void:

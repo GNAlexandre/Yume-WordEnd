@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "saved_at": "2026-10-09T08:18:06Z",
+  "skin": "chtholly",
+  "max_hp": 5,
+  "position": [
+    12.0,
+    0.000195310218259692,
+    57.0
+  ],
+  "zone": "beach",
+  "inventory": {
+    "page_fragment": 2
+  },
+  "flags": {
+    "met_willem": true
+  },
+  "quests": {
+    "act1_main": "active"
+  },
+  "collected_pickups": [
+    "forest_page_1"
+  ],
+  "best_scores": {
+    "dunes": {
+      "score": 420,
+      "wave": 4,
+      "games": 1
+    }
+  },
+  "quest_progress": {
+    "act1_main": {
+      "step": "to_the_woods",
+      "count": 0
+    }
+  },
+  "tracked_quest": "act1_main"
+}

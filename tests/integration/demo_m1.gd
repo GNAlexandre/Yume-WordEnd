@@ -53,7 +53,9 @@ func _ready() -> void:
 		"village_dunes", "village_forest", "village_beach", "village_hill":
 			# Spawn de la zone voisine (côté village), tourné vers la place : le village entier.
 			var zone_id := StringName(_shot.trim_prefix("village_"))
-			var spawn := _game.get_node(NodePath("Island/Zones/%s/Spawn" % zone_id)) as Node3D
+			var spawn := (
+				_game.get_node(NodePath("World/ile_ancienne/Zones/%s/Spawn" % zone_id)) as Node3D
+			)
 			_place(zone_id, spawn.position, -spawn.global_position)
 		_:
 			_place(&"dunes", PANEL_FRONT, Vector3.LEFT)
@@ -97,7 +99,7 @@ func _physics_process(delta: float) -> void:
 
 ## Joueur au point local `local_position` de la zone, visée `aim`, caméra derrière lui.
 func _place(zone_id: StringName, local_position: Vector3, aim: Vector3) -> void:
-	var zone := _game.get_node(NodePath("Island/Zones/%s" % zone_id)) as Node3D
+	var zone := _game.get_node(NodePath("World/ile_ancienne/Zones/%s" % zone_id)) as Node3D
 	_player.global_position = WorldManager.ground_position(zone.to_global(local_position), _player)
 	_player.velocity = Vector3.ZERO
 	_player.set_aim_direction(aim, true)

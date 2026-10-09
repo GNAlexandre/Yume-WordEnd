@@ -1,7 +1,7 @@
 extends Control
 ## Écran de chargement (src/ui/loading.tscn, Lot 9) : couchant sur les dunes (couleurs du décor de
-## l'easter egg), barre de progression et message. main.gd appelle set_progress(0) puis
-## set_progress(1) autour du chargement de src/game.tscn.
+## l'easter egg), barre de progression et message. main.gd lui confie le chargement de
+## src/game.tscn et de la carte où commence la partie (load_scenes, E1).
 ##
 ## Export Web mono-thread : sans fil d'exécution, ResourceLoader.load_threaded_request() charge la
 ## ressource entière dans l'appel lui-même (WorkerThreadPool sans fil : la tâche tourne sur le fil
@@ -102,10 +102,24 @@ func status_text() -> String:
 ## Usage : `var scene: PackedScene = await loading.load_scene("res://src/game.tscn")`.
 ## Ne pas libérer l'écran pendant l'attente.
 func load_scene(path: String, frame_budget_ms: float = 50.0) -> PackedScene:
-	if not ResourceLoader.exists(path):
-		push_error("Loading : scène introuvable : %s" % path)
-		return null
-	var queue := dependency_order(path)
+	var scenes: Array[PackedScene] = await load_scenes([path], frame_budget_ms)
+	return scenes[0]
+
+
+## (E1) Comme load_scene, pour plusieurs scènes d'une même barre (la partie et sa première
+## carte) : leurs dépendances, sans doublon, puis chacune ; renvoie les scènes dans l'ordre de
+## paths (null pour une scène qui n'existe pas).
+func load_scenes(paths: Array[String], frame_budget_ms: float = 50.0) -> Array[PackedScene]:
+	var queue: Array[String] = []
+	var seen := {}
+	for path: String in paths:
+		if not ResourceLoader.exists(path):
+			push_error("Loading : scène introuvable : %s" % path)
+			continue
+		for dependency: String in dependency_order(path):
+			if not seen.has(dependency):
+				seen[dependency] = true
+				queue.append(dependency)
 	# Les dépendances déjà chargées restent en cache tant qu'on les référence.
 	var kept: Array[Resource] = []
 	set_progress(0.0)
@@ -115,13 +129,17 @@ func load_scene(path: String, frame_budget_ms: float = 50.0) -> PackedScene:
 		if resource != null:
 			kept.append(resource)
 		if Time.get_ticks_msec() - started >= frame_budget_ms:
-			set_progress(float(i + 1) / float(queue.size() + 1))
+			set_progress(float(i + 1) / float(queue.size() + paths.size()))
 			await get_tree().process_frame
 			started = Time.get_ticks_msec()
-	var scene := ResourceLoader.load(path) as PackedScene
+	var scenes: Array[PackedScene] = []
+	for path: String in paths:
+		scenes.append(
+			ResourceLoader.load(path) as PackedScene if ResourceLoader.exists(path) else null
+		)
 	kept.clear()
 	set_progress(1.0)
-	return scene
+	return scenes
 
 
 ## Typographie française : espace insécable avant « ! » et « % ».

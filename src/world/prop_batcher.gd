@@ -12,10 +12,11 @@ extends Node3D
 ## panneaux, ordre des décalques au sol : données propres à chaque exemplaire) ; un mesh qui
 ## n'en a pas reçoit (0, 0). Les décors qui bougent seuls (SkyDrift, AmbientSprites) portent leur
 ## matériau dans le mesh, pas en material_override : ils ne sont pas fondus.
-
-## Triangles à plat de chaque mesh fondu : [sommets, normales, UV, UV2], calculés une fois par
-## mesh.
-static var _soups: Dictionary = {}
+## (E1) Les triangles à plat de chaque mesh sont calculés une fois par batch() (un mesh partagé
+## par cent panneaux, une fois), plus dans un cache statique : il gardait en vie, pour toute la
+## partie, chaque mesh propre à un décor (murs d'un Building, décalque drapé) de chaque carte
+## chargée ; une carte quittée puis rechargée les accumulait (fuite mesurée par
+## tools/map_bench.gd).
 
 ## Côté (m) des cases du découpage, dans le repère du nœud ; 0 : une seule case.
 @export_range(0.0, 200.0) var cell_size: float = 0.0
@@ -39,6 +40,8 @@ func _ready() -> void:
 ## Fond les meshes des descendants ; renvoie le nombre de meshes créés.
 func batch() -> int:
 	var lots: Dictionary = {}
+	# Triangles à plat de chaque mesh fondu : [sommets, normales, UV, UV2, UV2 présentes].
+	var soups: Dictionary = {}
 	var order: Array[String] = []
 	var instances: Array[MeshInstance3D] = []
 	_collect(self, instances)
@@ -57,7 +60,7 @@ func batch() -> int:
 			lot.cell = cell
 			lots[key] = lot
 			order.append(key)
-		_append(lot, instance.mesh, xform)
+		_append(lot, instance.mesh, xform, soups)
 		instance.mesh = null
 		instance.visible = false
 	var index := 0
@@ -81,9 +84,9 @@ func _collect(node: Node, out: Array[MeshInstance3D]) -> void:
 		_collect(child, out)
 
 
-## Ajoute au lot les triangles du mesh placés par xform.
-static func _append(lot: _Lot, mesh: Mesh, xform: Transform3D) -> void:
-	var soup := _soup(mesh)
+## Ajoute au lot les triangles du mesh placés par xform (soups : triangles déjà calculés).
+static func _append(lot: _Lot, mesh: Mesh, xform: Transform3D, soups: Dictionary) -> void:
+	var soup := _soup(mesh, soups)
 	lot.vertices.append_array(xform * (soup[0] as PackedVector3Array))
 	var normal_basis := Transform3D(xform.basis.inverse().transposed(), Vector3.ZERO)
 	var normals := normal_basis * (soup[1] as PackedVector3Array)
@@ -95,10 +98,11 @@ static func _append(lot: _Lot, mesh: Mesh, xform: Transform3D) -> void:
 	lot.has_uv2 = lot.has_uv2 or soup[4]
 
 
-## Triangles à plat du mesh (sans index) : sommets, normales, UV, UV2, et si le mesh a des UV2.
-static func _soup(mesh: Mesh) -> Array:
-	if _soups.has(mesh):
-		return _soups[mesh]
+## Triangles à plat du mesh (sans index) : sommets, normales, UV, UV2, et si le mesh a des UV2 ;
+## gardés dans soups pour les autres panneaux du même mesh.
+static func _soup(mesh: Mesh, soups: Dictionary) -> Array:
+	if soups.has(mesh):
+		return soups[mesh]
 	var arrays := mesh.surface_get_arrays(0)
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
@@ -123,7 +127,7 @@ static func _soup(mesh: Mesh) -> Array:
 		flat_uvs.append(uvs[index] if index < uvs.size() else Vector2.ZERO)
 		flat_uv2s.append(uv2s[index] if index < uv2s.size() else Vector2.ZERO)
 	var soup := [flat_vertices, flat_normals, flat_uvs, flat_uv2s, not uv2s.is_empty()]
-	_soups[mesh] = soup
+	soups[mesh] = soup
 	return soup
 
 

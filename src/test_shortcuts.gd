@@ -5,11 +5,15 @@ extends Node
 ## nœud que si l'un d'eux est présent (docs/web.md, « Raccourcis de test ») :
 ##   zone=<id>    place le joueur au Spawn de la zone, tourné vers le panneau de son arène s'il y
 ##                en a une (dunes : 15 m tout droit jusqu'au panneau), sinon vers son centre ;
-##                une zone inconnue est ignorée ;
+##                une zone inconnue est ignorée ; (E1) une partie reprise dans une autre carte
+##                revient d'abord sur l'ancienne île ;
 ##   timeres=<n>  banc de performance : n Timeres (les quatre types, au plus MAX_BENCH) errent
 ##                devant le joueur, dans le champ de la caméra, sans le poursuivre ;
 ##   trace        (intégration M2) le journal seul : la partie est celle du menu, telle quelle
-##                (nouvelle partie ou reprise, position et zone non touchées).
+##                (nouvelle partie ou reprise, position et zone non touchées) ;
+##   maps=<a,b…>  (E1) voyage de carte en carte (WorldManager.go_to, Spawn de chaque carte)
+##                une fois la partie posée, et une ligne de mesures par changement (fondu,
+##                chargement découpé et ses images, installation, total) : tools/web_maps.js.
 ## (Acte 1) Sur le Web, la page reçoit aussi window.wordendFace(cible) : le joueur se tourne,
 ## ((HD-2D) la caméra fixe ne tourne plus : la cible est aussi posée dans window.wordendAim, et
 ## la page choisit les touches qui y mènent)
@@ -17,7 +21,8 @@ extends Node
 ## comme un joueur qui oriente la caméra à la souris (impossible dans un navigateur sans écran) ;
 ## la marche reste aux touches ; window.wordendPos donne la position du joueur à chaque image
 ## ([x, z]). tools/web_m2.js s'en sert pour aller d'un PNJ à l'autre.
-## Tant qu'il est actif, la console reçoit une ligne « [m1] … » par événement (zone, invite,
+## Tant qu'il est actif, la console reçoit une ligne « [m1] … » par événement ((E1) carte et
+## mesures de son chargement, zone, invite,
 ## dialogue, quête, (acte 1) étape de quête, objet, vague, Timere tué, fin de série, dégâts,
 ## mort, réapparition), une ligne au départ (zone, position du joueur, quêtes et étapes) et,
 ## toutes les REPORT_PERIOD s, images/s, draw calls, primitives, position et distance du Timere
@@ -25,7 +30,7 @@ extends Node
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
 ## Paramètres reconnus (les autres sont ignorés).
-const KEYS: Array[String] = ["zone", "timeres", "trace"]
+const KEYS: Array[String] = ["zone", "timeres", "trace", "maps"]
 ## Types du banc de performance, en rotation.
 const BENCH_TYPES: Array[StringName] = [
 	&"timere_small", &"timere_normal", &"timere_runner", &"timere_big"
@@ -35,6 +40,8 @@ const MAX_BENCH := 24
 const BENCH_RING := Vector2(3.5, 7.0)
 const BENCH_AHEAD := 6.5
 const REPORT_PERIOD := 2.0
+## (E1) Pause entre deux cartes du voyage (paramètre maps), en secondes.
+const MAP_PAUSE := 2.0
 
 ## Paramètres de cette exécution (clé → texte), posés par game.gd avant l'ajout à l'arbre.
 var parameters: Dictionary = {}
@@ -101,6 +108,9 @@ static func _keep(result: Dictionary, pair: String) -> void:
 func _ready() -> void:
 	var player := get_tree().get_first_node_in_group(&"player") as Player
 	var zone_id := StringName(str(parameters.get("zone", "")))
+	if zone_id in WorldManager.LEGACY_ZONES:
+		# (E1) Une partie reprise dans une autre carte revient d'abord sur l'ancienne île.
+		WorldManager.load_zone(zone_id)
 	var zone := _zone(zone_id)
 	if player != null and zone != null:
 		WorldManager.teleport(zone_id)
@@ -113,6 +123,8 @@ func _ready() -> void:
 	var parent := get_parent() as Node3D
 	if player != null and parent != null and count > 0:
 		spawn_bench(parent, player.global_position + player.aim_direction() * BENCH_AHEAD, count)
+	EventBus.map_entered.connect(_on_map_entered)
+	WorldManager.transition_finished.connect(_on_transition_finished)
 	EventBus.zone_entered.connect(_on_zone_entered)
 	EventBus.interaction_available.connect(_on_interaction_available)
 	EventBus.wave_started.connect(_on_wave_started)
@@ -134,16 +146,21 @@ func _ready() -> void:
 	_log("raccourcis de test %s ; %d Timeres de banc" % [parameters, count])
 	_log(
 		(
-			"partie : zone « %s », %s, quêtes %s, étapes %s, objets %s"
+			"partie : zone « %s », %s, quêtes %s, étapes %s, objets %s, carte « %s »"
 			% [
 				GameState.zone,
 				_position_text(player),
 				GameState.quests(),
 				GameState.quest_progress(),
-				GameState.items()
+				GameState.items(),
+				WorldManager.current_map(),
 			]
 		)
 	)
+
+	var maps := str(parameters.get("maps", ""))
+	if not maps.is_empty():
+		_travel.call_deferred(maps.split(",", false))
 
 
 func _process(delta: float) -> void:
@@ -211,6 +228,43 @@ func _zone(zone_id: StringName) -> Node3D:
 
 func _log(text: String) -> void:
 	print("[m1] ", text)
+
+
+## (E1) Voyage de carte en carte (paramètre maps), après quelques images de la partie.
+func _travel(map_ids: PackedStringArray) -> void:
+	for _frame in 30:
+		await get_tree().process_frame
+	for map_id: String in map_ids:
+		if not Map.exists(StringName(map_id)):
+			_log("carte inconnue : %s" % map_id)
+			continue
+		await WorldManager.go_to(StringName(map_id))
+		# Le temps de regarder (et de capturer) chaque carte, même au rendu logiciel.
+		await get_tree().create_timer(MAP_PAUSE).timeout
+	_log("voyage terminé")
+
+
+func _on_map_entered(map_id: StringName) -> void:
+	_log("carte %s" % map_id)
+
+
+func _on_transition_finished(map_id: StringName) -> void:
+	var stats := WorldManager.last_transition()
+	var text := "carte %s chargée : fondu %.0f ms, chargement %.0f ms en %d images, "
+	text += "installation %.0f ms, total %.0f ms"
+	_log(
+		(
+			text
+			% [
+				map_id,
+				stats.get("fade_out_ms", 0.0),
+				stats.get("load_ms", 0.0),
+				stats.get("load_frames", 0),
+				stats.get("install_ms", 0.0),
+				stats.get("total_ms", 0.0),
+			]
+		)
+	)
 
 
 func _on_zone_entered(zone_id: StringName) -> void:
