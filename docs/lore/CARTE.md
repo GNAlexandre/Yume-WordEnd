@@ -632,7 +632,7 @@ tient en deux écrans). **Lumière** : préréglage `interieur` (E9), lueur chau
 | **Cage d'escalier** | 4 × 7,5 | (original) | ouverte sur le couloir sur 4 m | `stairs_up` contre le mur ouest (x 16,7 → 18,3, z 2,5 → 5,5) ; murs : `wallitem_chore_chart` (nord, x 19,4 : les **plannings de corvées**, V1), `wallitem_notice_b` (« on ne court pas dans les couloirs », V1), `wallitem_notices_mix`, applique | le planning des corvées (qui fait la cuisine aujourd'hui, VIE.md) ; l'écriteau |
 | **Palier des armes** | 2 × 7,5 | la grande porte de métal rivetée à cinq serrures, seul élément militaire (V1, « Entrepôt de fées ») | ouvert sur le couloir ; **porte rivetée au mur nord** (x 21,5, 1,3 m) | `door_armory` ; murs : `wallitem_bronze_plaque` (celle de la « salle de stockage », à côté de la porte des archives, V1), applique | la porte (« cinq serrures ; Nygglatho garde la clé ») |
 | **Archives** (« salle de stockage ») | 4 × 7,5 | plaque de bronze ; un océan de papiers ; un bureau et une chaise sous les piles ; horloge murale dont on entend la trotteuse ; canapé beige à trois places ; personne n'y vient, on s'y cache pour couper aux corvées (V1, « Les valeureux… » ; V3) | porte au couloir (24,2) ; petite fenêtre haute et poussiéreuse au nord | `archive_shelves`, `paper_pile_a/b/c`, `desk_buried`, `filing_cabinet`, `sofa_beige` ; décalque `papers_floor` ; murs : `wallitem_wall_clock` (ouest), `wallitem_clippings` (est) ; `coffee_tray` (la nuit des archives) | l'horloge ; une coupure de magazine pour filles ; un rapport de patrouille de nuit ; le bon de commande de carottes (V1) |
-| **Salle de lecture** | 4,5 × 7,5 | silence imposé (papier roulé de Nephren) ; un siège près du rebord de la fenêtre, avec vue sur le champ, où tout le monde s'agglutine (V1, « Les filles de l'entrepôt ») ; tables, étagères de gros livres (V2 ; V4) | porte au couloir (28,3) ; **fenêtre à banc au nord** (x 29,6), petite fenêtre à l'est (le champ est au nord-est) | `window_reading_seat`, `bookshelf_tall`, `bookshelf_tall_b`, `bookshelf_low` (livres d'images des petites), `reading_table` et sa lampe, `armchair_reading`, `book_pile` | la fenêtre (le champ, les petites au ballon) ; le livre d'images sur les emnetwiht (jour 6) |
+| **Salle de lecture** | 4,5 × 7,5 | silence imposé (papier roulé de Nephren) ; un siège près du rebord de la fenêtre, avec vue sur le champ, où tout le monde s'agglutine (V1, « Les filles de l'entrepôt ») ; tables, étagères de gros livres (V2 ; V4) | porte au couloir (28,3) ; **fenêtre à banc au nord** (x 29,6), petite fenêtre à l'est (le champ est au nord-est) | `window_reading_seat`, `bookshelf_tall`, `bookshelf_tall_b`, `bookshelf_low` (livres d'images des petites), `reading_table` et sa lampe, `armchair_reading`, `book_pile` | la fenêtre (le champ, les petites au ballon) ; le livre d'images sur les emnetwiht, sur l'étagère basse (lu à la salle de jeux, ACTE1.md 6.2) |
 | **Couloir** | 30 × 2 | parquet usé, murs plâtrés, papiers punaisés ; on y épie, on y court (V1) ; le point d'eau froide de la toilette du matin (VEX, « L'homme-chat » ; emplacement **déduit**) | porte de service au pignon ouest (z 9,5) ; fenêtre au pignon est | tapis de couloir `runner_rug` (tourné de 90°) ; au bout est, `washstand_corridor` (auge, cuvettes, brosses à dents) | l'auge et l'eau glacée |
 | **Salle de bains** | 6 × 4,5 | bain bien chaud ; grand miroir installé par Nygglatho ; règlement du bain ; séchage des cheveux (V1 ; V3 ; V4) | porte au couloir (6,0) | `bath_tub`, `wash_tub`, `towel_shelf`, `hamper` ; décalque `bath_puddles` ; murs : `mirror_large` (ouest), `wallitem_bath_rules` (est) ; vapeur `anim/bath_steam` | le règlement (« trois lignes ajoutées d'une autre encre », V4 : clin d'œil permis, il ne révèle rien) ; le miroir |
 | **Toilettes** | 2 × 4,5 | (V1 : il y en a à chaque étage) | porte au couloir (8,0) | — | — |
@@ -1301,7 +1301,7 @@ Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_
   plan).
 - **Place réservée** `embuscade` (30 → 44, 13 → 21,5) : le bord du marais où tombe Willem ;
   points `marais_chute` (35,5 ; 16,5), `lumiere_pannibal` (40 ; 12,5) (d'où part la lumière qui
-  zigzague), `chtholly_arrivee` (30 ; 21,8), `bifurcation`, `vue_marais`.
+  zigzague), `chtholly_arrivee` (30 ; 21,8), `premiere_embuscade` (16 ; 23 : Pannibal y bondit sur Chtholly, ACTE1.md 1.2), `bifurcation`, `vue_marais`.
 - **Sorties** : `vers_entrepot` (ouest) → `entrepot`, `from_sentier` ; `vers_port` (est) → `port`,
   `from_sentier` ; `vers_ville` (sud-est) → `ville_haute`, `from_sentier`. Marqueurs `from_entrepot`,
   `from_port`, `from_ville_haute`.
@@ -1379,6 +1379,7 @@ marqueur from_ville_haute 69 37.5 N
 point marais_chute 35.5 16.5
 point lumiere_pannibal 40 12.5
 point chtholly_arrivee 30 21.8
+point premiere_embuscade 16 23
 point bifurcation 58 23.5
 point vue_marais 46 21.5
 ```
