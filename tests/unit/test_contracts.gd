@@ -52,6 +52,8 @@ const EVENT_BUS_SIGNALS := {
 	"tracked_quest_changed": [SN],
 	# E1 (cartes)
 	"map_entered": [SN],
+	# E9 (lumière et temps)
+	"atmosphere_changed": [SN, SN],
 }
 
 ## Méthodes des autoloads : nom → [types des arguments, type de retour].
@@ -126,6 +128,26 @@ const MAP_EXIT_EXPORTS := {
 	"prompt": STR,
 }
 ## (bureau) Application de bureau (src/autoload/desktop_app.gd, docs/bureau.md).
+## (E9) Atmosphere : la lumière et le temps (src/autoload/atmosphere.gd).
+const ATMOSPHERE_METHODS := {
+	"set_moment": [[SN, FLT], VOID],
+	"set_weather": [[SN, FLT], VOID],
+	"set_atmosphere": [[SN, SN, FLT], VOID],
+	"moment": [[], SN],
+	"weather": [[], SN],
+	"preset_id": [[], SN],
+	"current": [[], OBJ],
+	"is_transitioning": [[], BOOL],
+	"transition_progress": [[], FLT],
+	"player_light_amount": [[], FLT],
+	"is_player_light_on": [[], BOOL],
+	"is_raining": [[], BOOL],
+	"sprite_tint": [[], TYPE_COLOR],
+	"resolve": [[OBJ, SN, SN], OBJ],
+	"dress": [[OBJ], VOID],
+	"snap": [[], VOID],
+	"step": [[FLT], VOID],
+}
 const DESKTOP_APP_METHODS := {
 	"is_web": [[], BOOL],
 	"is_desktop": [[], BOOL],
@@ -341,7 +363,13 @@ func _is_script_class(node: Node, cls_name: String) -> bool:
 
 func test_autoloads_are_registered_without_class_name() -> void:
 	for autoload: String in [
-		"EventBus", "GameState", "SaveManager", "SkinRegistry", "WorldManager", "DesktopApp"
+		"EventBus",
+		"GameState",
+		"SaveManager",
+		"SkinRegistry",
+		"WorldManager",
+		"DesktopApp",
+		"Atmosphere",
 	]:
 		assert_true(ProjectSettings.has_setting("autoload/" + autoload), "autoload %s" % autoload)
 		assert_not_null(get_tree().root.get_node_or_null(autoload), "%s dans l'arbre" % autoload)
@@ -361,6 +389,8 @@ func test_game_state_api() -> void:
 	assert_eq(_property_type(GameState, "zone"), SN, "GameState.zone")
 	assert_eq(_property_type(GameState, "position"), V3, "GameState.position")
 	assert_eq(_property_type(GameState, "tracked_quest"), SN, "(Lot Q) GameState.tracked_quest")
+	assert_eq(_property_type(GameState, "moment"), SN, "(E9) GameState.moment")
+	assert_eq(_property_type(GameState, "weather"), SN, "(E9) GameState.weather")
 
 
 func test_save_manager_api() -> void:
@@ -389,6 +419,15 @@ func test_world_manager_api() -> void:
 	assert_eq(WorldManager.START_MAP, &"ile_ancienne", "(E1) une nouvelle partie y commence")
 	for signal_name: String in ["rescued", "transition_started", "transition_finished"]:
 		_assert_signal(WorldManager, "WorldManager", signal_name, [SN])
+
+
+func test_atmosphere_api() -> void:
+	_assert_methods(Atmosphere, "Atmosphere", ATMOSPHERE_METHODS)
+	_assert_signal(Atmosphere, "Atmosphere", "preset_applied", [SN])
+	assert_eq(GameState.MOMENTS, [&"aube", &"matin", &"apres_midi", &"couchant", &"nuit"])
+	assert_eq(GameState.WEATHERS, [&"clair", &"pluie", &"averse"])
+	assert_eq(GameState.DEFAULT_MOMENT, &"couchant", "le monde de toujours")
+	assert_eq(GameState.DEFAULT_WEATHER, &"clair")
 
 
 func test_desktop_app_api() -> void:

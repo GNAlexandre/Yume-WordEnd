@@ -4,6 +4,8 @@
  "categories": [
   {"id": "ambient", "_comment": "sprites qui volent (feuilles, oiseaux, papillon, lucioles) : textures d'AmbientSprites, pas des décors posés", "scene": "none",
    "match": ["anim/birds_flock", "anim/falling_leaf_*", "anim/butterfly", "anim/fireflies"]},
+  {"id": "weather", "_comment": "(E9) pluie et lumière des fées : images d'AtmosphereRig et de RainFall (src/world/), pas des décors posés", "scene": "none",
+   "match": ["anim/rain_curtain", "anim/rain_drizzle", "anim/rain_splash", "anim/fairy_light"]},
   {"id": "propeller", "_comment": "hélices des navires : enfants des scènes airship_*.tscn, posées sur les moyeux", "scene": "none",
    "match": ["anim/airship_*_propeller"]},
   {"id": "ship", "_comment": "navires à quai, 96 px/m, sans ombre ni collision (au bord du vide, le quai a sa rambarde)", "scene": "ship",

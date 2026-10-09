@@ -158,11 +158,13 @@ func test_to_dict_matches_save_schema() -> void:
 			"inventory",
 			"map",
 			"max_hp",
+			"moment",
 			"position",
 			"quest_progress",
 			"quests",
 			"skin",
 			"tracked_quest",
+			"weather",
 			"zone",
 		]
 	)

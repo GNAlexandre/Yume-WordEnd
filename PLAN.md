@@ -101,6 +101,8 @@ Yume-WordEnd/
 │   ├── hd2d_shots.sh          # (HD-2D) captures de la vraie partie : menu, cinq zones, conversation, veille,
 │   │                          # (E1) quai, fondu, essai, retour (cartes)
 │   ├── map_bench.gd           # (E1) temps de chargement et mémoire des changements de carte
+│   ├── e9_shots.sh            # (E9) captures sous chaque préréglage de lumière (moment × temps), luminance
+│   ├── web_atmosphere.js      # (E9) images/s et draw calls de chaque préréglage dans le build Web
 │   ├── hd2d_assets.py         # (HD-2D) images de remplacement : gen, check, fit, atlas (Pillow)
 │   ├── hd2d_manifest.json     # (HD-2D) liste exacte des images du décor (chemin, taille, genre)
 │   ├── hd2d_art.py, hd2d_ground.py, hd2d_props.py, hd2d_sky.py   # recettes de pixel art
@@ -114,7 +116,8 @@ Yume-WordEnd/
 │   ├── main.tscn              # racine : menu, chargement, puis game.tscn
 │   ├── game.tscn              # (L0) World + Player + QuestTracker + UI (HUD, dialogue, inventaire…) ;
 │   │                          # (E1) World porte la carte courante (avant : Island, l'île entière)
-│   ├── autoload/              # EventBus, GameState, SaveManager, SkinRegistry, WorldManager, (bureau) DesktopApp
+│   ├── autoload/              # EventBus, GameState, SaveManager, SkinRegistry, WorldManager, (bureau) DesktopApp,
+│   │                          # (E9) Atmosphere (lumière et temps)
 │   ├── desktop_check.gd       # (bureau) vérification du jeu exporté (--desktop-check), sans effet sinon
 │   ├── player/                # player.tscn, player.gd (déplacement), camera_rig.tscn (caméra fixe HD-2D),
 │   │                          # post_fx.gdshader (flou de profondeur, lueur, étalonnage)
@@ -127,10 +130,13 @@ Yume-WordEnd/
 │   │                          # (HD-2D) decor_panel.gd, building.gd, prop_batcher.gd, prop_scatter.gd,
 │   │                          # props/<nom>.tscn (un décor = un panneau ou un bâtiment), shaders/, materials/
 │   │                          # (H9) ground_decal.gd, sky_drift.gd, ambient_sprites.gd (formats du cahier n° 2)
-│   │                          # (E1) map.gd, map_exit.gd, map_light.tscn, maps/<map_id>/<map_id>.tscn (une
+│   │                          # (E1) map.gd, map_exit.gd, maps/<map_id>/<map_id>.tscn (une
 │   │                          # carte par lieu ; maps/ile_ancienne : l'île héritée ; maps/essai : carte d'essai)
 │   │                          # (E2) map_ground.gd (+ _data, _builder, _coast) : sol en relief des cartes
 │   │                          # extérieures ; maps/essai_relief : démonstration du relief
+│   │                          # (E9) atmosphere_rig.gd (lumière d'une carte, lumière du joueur, pluie),
+│   │                          # rain_fall.gd ; materials/hd2d_lighting.gd, hd2d_weather.gd,
+│   │                          # hd2d_light_targets.gd ; shaders/sky, rain, rain_curtain (map_light.tscn retiré)
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
@@ -147,8 +153,10 @@ Yume-WordEnd/
 │   ├── dialogues/*.json
 │   ├── maps/<map_id>/         # (E2) sol en relief d'une carte : map.json, heights.png, materials.png,
 │   │                          # structures.png, plan.json ; maps/ground_materials.json (matières, structures)
-│   └── texts/story.json       # (Systèmes et textes) textes de l'histoire hors dialogues :
-│                              # arène, chute, défaite (DialogueRunner.story_text)
+│   ├── texts/story.json       # (Systèmes et textes) textes de l'histoire hors dialogues :
+│   │                          # arène, chute, défaite (DialogueRunner.story_text)
+│   └── lighting/*.tres        # (E9) préréglages de lumière : aube, matin, apres_midi, couchant, nuit,
+│                              # interieur, interieur_nuit (HD2DLighting) ; pluie, averse (HD2DWeather)
 ├── assets/
 │   ├── CREDITS.md             # assets tiers (URL, licence)
 │   ├── characters/CREDITS.md  # dessins des membres (auteur, accord)
@@ -175,6 +183,7 @@ Yume-WordEnd/
 | `SkinRegistry` | Charge `data/skins/*.tres`, expose la liste et le skin par défaut (Chtholly) | L3 |
 | `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort ; (E1) une carte à la fois : changement de carte (fondu, chargement découpé, marqueur d'arrivée), carte courante, bornes de la caméra | L2, E1 |
 | `DesktopApp` | (bureau) Application de bureau, sans effet sur le Web : fenêtre de départ, plein écran (F11, Alt+Entrée, bouton) mémorisé dans `user://settings.cfg`, boutons « Plein écran » et « Quitter » des menus, sauvegarde avant de quitter (docs/bureau.md) | bureau |
+| `Atmosphere` | (E9) La lumière et le temps : préréglage effectif de la carte courante (`light_preset`, intérieur ou moment de la journée, modifié par le temps qu'il fait), transitions douces, pose (environnement, ciel, soleil ou lune, mer de nuages, lanternes, lueurs, images de nuit, sol mouillé, post-traitement), lumière magique du joueur, pluie ; raccourcis `?moment=` / `?temps=`, F7 / F8 ; le moment et le temps eux-mêmes sont dans `GameState` (sauvegardés) | E9 |
 
 ### Contrats d'interface
 
@@ -205,7 +214,8 @@ signal dialogue_choice_made(index: int)       # (L0) DialogueBox → DialogueRun
 signal dialogue_ended(npc_id: StringName)                     # DialogueRunner (le joueur repart)
 signal quest_updated(quest_id: StringName, state: StringName)  # available|active|done ; GameState.set_quest_state
 signal zone_entered(zone_id: StringName)                      # Zone (Area3D « Bounds ») ; (M2) au changement de zone seulement
-signal day_phase_changed(phase: StringName)   # morning|day|evening|night (M3)
+signal day_phase_changed(phase: StringName)   # morning|day|evening|night (M3) ; (E9) ancien nom : Atmosphere le traduit
+                                              # en moment (matin, apres_midi, couchant, nuit : HD2DLighting.PHASE_MOMENTS)
 signal skin_changed(skin_id: StringName)                      # GameState, quand skin_id change ; le joueur l'applique
 signal max_hp_changed(max_value: int)          # (L0) GameState, quand max_hp change → PlayerCombat
 signal save_requested()                                       # n'importe qui → SaveManager.save()
@@ -220,6 +230,10 @@ signal tracked_quest_changed(quest_id: StringName)            # GameState, quand
 # (E1) Cartes — docs/REFONTE.md, section 7.1
 signal map_entered(map_id: StringName)        # WorldManager (go_to, enter_map) : carte posée, joueur placé (sous le
                                               # noir pendant un go_to) → caméra (bornes, recalage), joueur (élan), SaveManager
+                                              # (E9) → Atmosphere : lumière de la carte posée tout de suite
+# (E9) Lumière et temps
+signal atmosphere_changed(moment: StringName, weather: StringName)   # GameState, quand moment ou weather change
+                                              # (setters, from_dict, reset) → Atmosphere (transition douce)
 
 # src/combat/health.gd — composant commun joueur / ennemis (class_name Health, extends Node)
 @export var max_hp: int = 1
@@ -300,6 +314,10 @@ var max_hp: int              # (L0) 5, puis 6 (acte 1 : la promesse du gâteau a
 var map: StringName          # (E1) carte courante, tenue par WorldManager ; &"" = nouvelle partie pas encore placée
 var zone: StringName         # (L0) tenue par WorldManager (zone_entered) ; (E1) vidée à chaque changement de carte
 var position: Vector3        # (L0) tenue par le joueur quand il est au sol ; (E1) dans le repère de la carte
+var moment: StringName       # (E9) moment de la journée, un de MOMENTS (aube, matin, apres_midi, couchant, nuit ; défaut
+                             # DEFAULT_MOMENT = couchant) ; une autre valeur est refusée (avertissement) ; émet atmosphere_changed
+var weather: StringName      # (E9) temps qu'il fait, un de WEATHERS (clair, pluie, averse ; défaut DEFAULT_WEATHER = clair)
+                             # ; émet atmosphere_changed ; moment et weather sont écrits par to_dict (après tracked_quest)
 
 # src/autoload/save_manager.gd
 func has_save() -> bool
@@ -310,6 +328,7 @@ func export_json() -> String / func import_json(text: String) -> Error   # menu,
 var save_path: String = "user://save_v1.json"   # (L0) les tests en utilisent un autre ; (Lot Q) le nom ne suit pas la version
 const SAVE_VERSION := 3                   # (Lot Q) v2 : quest_progress et tracked_quest ; v1 → v2 migrée (quête active : 1re étape)
                                           # (E1) v3 : map ; v2 → v3 migrée (partie placée : map = ile_ancienne, même position)
+                                          # (E9) moment, weather : champs facultatifs du schéma v3 (absents : couchant, clair)
 func save_on_leave() -> Error             # (M2) focus perdu, fermeture, page masquée : écriture en attente, sinon état s'il a changé
 func has_unsaved_changes(tolerance: float = 0.05) -> bool   # (M2) GameState diffère de la dernière écriture (position : au-delà de tolerance m)
 var checkpoint_interval: float = 5.0      # (M2) position écrite toutes les 5 s de jeu si le joueur a bougé de checkpoint_distance (1 m)
@@ -360,6 +379,33 @@ func setup_menu_buttons(fullscreen_button: Button, quit_button: Button, quit_tex
 func text(key: String) -> String          # data/texts/story.json, section « desktop »
 func quit_game() -> void                  # SaveManager.save() si une partie est suivie, close_game(), puis quit()
 signal fullscreen_changed(enabled: bool) / signal quit_requested
+
+# (E9) src/autoload/atmosphere.gd — la lumière et le temps (docs/REFONTE.md, lot E9). Le moment et le temps sont dans
+# GameState (sauvegardés) ; Atmosphere en fait la lumière de la carte courante (WorldManager.current_map_node()).
+func set_moment(moment_id: StringName, duration: float = -1.0) -> void   # GameState.MOMENTS ; duration < 0 :
+                                          # transition_time (4 s), 0 : tout de suite ; sans effet s'il est déjà celui-là
+func set_weather(weather_id: StringName, duration: float = -1.0) -> void # GameState.WEATHERS (clair, pluie, averse)
+func set_atmosphere(moment_id, weather_id, duration = -1.0) -> void      # les deux, une seule transition
+func moment() -> StringName / func weather() -> StringName              # ceux de GameState
+func preset_id() -> StringName            # préréglage effectif : Map.light_preset s'il est rempli (un moment,
+                                          # « interieur » ou tout data/lighting/<id>), sinon « interieur » pour une
+                                          # carte intérieure (Map.interior), sinon le moment
+func resolve(map: Node = null, moment_id := &"", weather_id := &"") -> HD2DLighting   # réglage effectif (nouveau) :
+                                          # préréglage, « interieur » = interieur mêlé à interieur_nuit selon la nuit
+                                          # du dehors (interior_for), puis le temps (HD2DWeather.applied_to ; dedans :
+                                          # seulement la lumière des fenêtres, ni pluie ni sol mouillé)
+func current() -> HD2DLighting            # réglage posé (copie ; mélange en cours pendant une transition)
+func is_transitioning() -> bool / func transition_progress() -> float / func step(delta: float) -> void (tests)
+func dress(map: Node3D) -> void / func snap() -> void   # habille une carte (AtmosphereRig, relevé) et pose tout de
+                                          # suite ; fait à map_entered (sous le noir), et à l'image suivante pour une
+                                          # carte ajoutée à la main (démonstration, capture) ; game_loaded : tout de suite
+func player_light_amount() -> float / func is_player_light_on() -> bool   # lumière magique du joueur (la nuit dehors)
+var player_light_mode: StringName         # LIGHT_AUTO (préréglage), LIGHT_ON, LIGHT_OFF (une scène : Willem sans lumière)
+func is_raining() -> bool / func sprite_tint() -> Color / func rig() -> AtmosphereRig / func targets() -> HD2DLightTargets
+var transition_time: float = 4.0 / var debug_keys: bool / var dev_parameters: Dictionary
+signal preset_applied(preset_id: StringName)   # préréglage posé en entier (fin de transition, arrivée, chargement)
+# Raccourcis : ?moment=nuit&temps=pluie (Web) ou -- --moment=nuit --temps=pluie, posés à chaque partie chargée ;
+# F7 moment suivant, F8 temps suivant (Maj : tout de suite), en version de débogage ou avec l'un de ces paramètres.
 
 # Interactable — tout nœud du groupe "interactable" implémente :
 func get_prompt() -> String            # "Parler", "Ramasser"
@@ -497,6 +543,33 @@ class_name AmbientSprites  # (H9) src/world/ambient_sprites.gd : enum Motion { F
                            # @export texture, frames, fps, pixels_per_meter, motion, count, density, area, lift,
                            # region_size, speed, sway, tint, glow, random_seed ; sprite_count(), sprite_size(),
                            # focus_point(), update_box(focus), sprites_mesh(total, seed) ; un draw call
+# (E9) Lumière et temps (src/world/materials/, src/world/) : ajouts, l'API de H5 reste (apply, apply_post, for_phase,
+# active_sprite_tint)
+class_name HD2DLighting    # préréglage (data/lighting/<id>.tres) : soleil (couleur, énergie, hauteur, azimut), ciel
+                           # (sky_texture, vide : sky.png ; sky_tint, sky_energy), mer de nuages (clouds_texture,
+                           # clouds_tint, clouds_warm, clouds_stars), ambiance, brouillard, lamp_energy, window_glow
+                           # (× glow des panneaux), night_amount (≥ NIGHT_IMAGES_FROM : images de nuit), player_light,
+                           # rain, wetness, sprite_tint, étalonnage et flou (post_parameters : grade… glow_tint,
+                           # top_blur_px, bottom_blur_px) ; statiques preset(id), has_preset(id), preset_path(id),
+                           # for_phase(phase), blend_into(out, from, to, t), post_material(camera), own(resource) ;
+                           # blended(other, t), copy(), sky_image(), uses_night_images(), toward_sun(), sun_basis() ;
+                           # PRESETS_DIR, DEFAULT_PRESET (couchant), INTERIOR, INTERIOR_NIGHT, PHASE_MOMENTS
+class_name HD2DWeather     # temps qu'il fait (data/lighting/pluie|averse.tres ; clair : aucun) : rain, wetness,
+                           # facteurs et teintes (soleil, ambiance, gris, ciel, nuages, lanternes, brouillard,
+                           # étalonnage), window_light_scale (dedans) ; preset(id), applied_to(base, outdoors)
+class_name HD2DLightTargets   # relevé d'une carte (scan(map)) puis pose (apply(lighting, sky_from, mix, clouds_from)) :
+                           # environnement (copié ; ciel en sky.gdshader, deux panoramas fondus), soleil, mers de
+                           # nuages (cloud_sea.gdshader, copiées), Light3D × lamp_energy, glow_strength × window_glow,
+                           # hd2d_wetness (hd2d_light.gdshaderinc) et StandardMaterial3D mouillés, images de nuit
+                           # (<nom>_night.png à côté de <nom>.png) et vitres éclairées (window_lit_*, la nuit seulement) ;
+                           # IGNORE_GROUP (atmosphere_rig) ; counts()
+class_name AtmosphereRig   # enfant « AtmosphereRig » de la carte courante (dress(map)) : WorldEnvironment et Sun si la
+                           # carte n'en a pas (les cartes ne portent plus de lumière ; l'île garde les siens),
+                           # PlayerLight (OmniLight3D) et Orb (fairy_light.png) à côté du joueur, Rain (RainFall),
+                           # RainCurtain (CanvasLayer 0 : rain_drizzle.png et rain_curtain.png répétés à l'écran) ;
+                           # apply(lighting, light_part), light_amount(), is_raining() ; light_energy, light_range…
+class_name RainFall        # gouttes (fx/rain_drop.png) et éclaboussures (anim/rain_splash.png) dans une boîte autour
+                           # du point visé, un draw call chacune (rain.gdshader) ; intensity (0..1), tint, focus_point()
 # src/player/camera_rig.gd (racine CameraRig de camera_rig.tscn, sans class_name) : caméra fixe vers le nord
 @export pitch_deg (32), fov_deg (30), focus_height, focus_ahead (2,5 m au nord du joueur), talk_ahead (0, en
         conversation), ahead_smoothing, distance (21), min_distance, max_distance, follow_speed, lead_time (0,2),
@@ -627,14 +700,21 @@ construite suit son plan à la lettre ; un écart se reporte dans le plan et rep
      bord », on passe par E ou A). Une sortie à pied se pose au bord, devant un mur ;
    - `Life` : PNJ, animaux, objets (E4, E5 ; un déclencheur de quête `QuestTrigger` marche
      partout).
-   D'autres enfants sont permis : la lumière, en attendant E9, est une instance de
-   `src/world/map_light.tscn`.
+   D'autres enfants sont permis. (E9) Une carte ne porte pas sa lumière : Atmosphere lui ajoute
+   un enfant `AtmosphereRig` (environnement et soleil si elle n'en a pas, lumière du joueur,
+   pluie) et pose le préréglage de son `light_preset` (un moment, `interieur`, ou un autre
+   préréglage de `data/lighting/`), sinon `interieur` si `interior`, sinon celui du moment de la
+   journée. Une lampe (`OmniLight3D`), une fenêtre ou un cristal qui luit (`glow` d'un
+   `DecorPanel`) suivent le préréglage ; une image `<nom>_night.png` posée à côté de
+   `<nom>.png` la remplace la nuit, une vitre `window_lit_*` ne se montre que la nuit.
 4. **Les deux bouts d'une sortie.** Une sortie de A vers B demande le marqueur `from_A` dans B ;
    d'ordinaire, B a aussi la sortie de retour, avec le marqueur `from_B` dans A.
 5. **Vérifier.**
    - `tools/import.sh`, puis `tools/test.sh tests/unit/test_maps.gd` : `Map.problems()` et
      `Map.exit_problems()` sur chaque carte (enfants, Spawn, sol sur la couche 1, Geometry,
      marqueurs dans la carte, sorties, cibles et marqueurs d'arrivée) ;
+   - (E9) la lumière : `tools/e9_shots.sh essai:nuit:clair essai:couchant:averse` (sur le modèle
+     des vues `essai` et `dedans` de `tests/integration/demo_e9.gd`) ;
    - une démonstration : instancier `src/game.tscn` puis `WorldManager.enter_map(&"<map_id>")`
      (sans fondu) ou `await WorldManager.go_to(&"<map_id>")` ; modèle : les vues `essai`,
      `fondu` et `retour` de `tests/integration/demo_hd2d.gd` (`tools/hd2d_shots.sh essai`) ;
@@ -749,6 +829,37 @@ profondeur et lueur d'un meuble ; recette pour un remplaçant seulement), puis `
 tools/hd2d_interior.py manifest`, `python3 tools/hd2d_assets.py gen --lot I` (remplaçants),
 `python3 tools/hd2d_interior.py scenes`, `tools/import.sh`, `python3 tools/hd2d_assets.py check
 --lot I`.
+
+### (E9) Lumière et temps : mode d'emploi
+
+Contrat : l'API d'`Atmosphere` ci-dessus ; détails et choix dans docs/DECISIONS.md (« E9 »).
+
+1. **Changer l'heure ou le temps** (récit, E6) : `Atmosphere.set_moment(&"nuit")` (transition
+   de 4 s), `set_weather(&"pluie", 8.0)`, `set_atmosphere(&"couchant", &"pluie", 0.0)` (tout de
+   suite, par exemple sous un fondu). `GameState.moment` / `weather` peuvent aussi être posés
+   directement (transition par défaut) ; ils sont sauvegardés. Moments : `aube`, `matin`,
+   `apres_midi`, `couchant` (le monde de toujours, celui d'une nouvelle partie), `nuit` ; temps :
+   `clair`, `pluie` (fine), `averse`. Écouter `EventBus.atmosphere_changed(moment, weather)`.
+2. **Une carte** choisit sa lumière par `light_preset` : vide (le moment de la journée ;
+   `interieur` si `interior`), un moment (`nuit` : la colline, une nuit claire, quel que soit
+   le moment), `interieur`, ou un préréglage ajouté à `data/lighting/`. Le temps s'y ajoute
+   dehors ; dedans, il ne pleut pas et seule la lumière des fenêtres baisse. Aucune lumière dans
+   la scène de la carte (plus de `map_light.tscn`) : `AtmosphereRig` fournit environnement et
+   soleil. Les lampes (`OmniLight3D`) suivent `lamp_energy`, les lueurs des panneaux (`glow`)
+   `window_glow`.
+3. **Un préréglage** est un `HD2DLighting` (`data/lighting/<id>.tres`, champs commentés dans
+   `src/world/materials/hd2d_lighting.gd`) ; un temps, un `HD2DWeather` qui modifie le
+   préréglage du moment. Vérifier : `tools/test.sh tests/unit/test_atmosphere.gd`, puis
+   `tools/e9_shots.sh` (une capture par préréglage, luminance et draw calls dans
+   `build/shots/e9/e9.log` ; `tests/integration/test_e9_captures.gd` refuse une vue trop sombre).
+4. **Images** (cahier n° 3, lot N) : les ciels (`sky_texture`) et mers de nuages
+   (`clouds_texture`) d'un préréglage se fondent pendant les transitions ; `<nom>_night.png` à
+   côté de `<nom>.png` le remplace la nuit (`night_amount` ≥ 0,5) ; `window_lit_*` ne se montre
+   que la nuit ; `rain_curtain` / `rain_drizzle` (rideau à l'écran), `rain_splash`,
+   `fairy_light` remplacent leurs remplaçants sans toucher au code.
+5. **Tests** : un test qui change le moment ou le temps rétablit `GameState.reset()` (couchant,
+   clair) ; un test qui habille une carte à la main appelle `Atmosphere.dress(null)` dans
+   `after_each` ; `Atmosphere.step(s)` avance une transition sans attendre.
 
 ## 4. Tranche verticale : WordEnd en HD-2D
 
@@ -942,7 +1053,9 @@ sud ; **un pixel = une case de 1 m** ; la case (i, j) couvre [i, i + 1] × [j, j
   "collected_pickups": ["forest_page_1", "beach_shell_2"],
   "best_scores": { "dunes": { "score": 640, "wave": 6, "games": 4 } },
   "quest_progress": { "pages": { "step": "deliver", "count": 0 } },
-  "tracked_quest": "pages"
+  "tracked_quest": "pages",
+  "moment": "couchant",
+  "weather": "clair"
 }
 ```
 
@@ -956,6 +1069,10 @@ ne change pas.
 carte héritée `ile_ancienne`, à la même position, tout le reste inchangé (testé sur une vraie
 sauvegarde du jeu d'avant la refonte, `tests/data/saves/save_v2_avant_refonte.json`) ; une
 carte inconnue au chargement ramène au Spawn de `WorldManager.START_MAP`.
+
+(E9) `moment` et `weather` : le moment de la journée et le temps qu'il fait
+(`GameState.MOMENTS`, `GameState.WEATHERS`), champs facultatifs du schéma v3 sans migration :
+absents (sauvegarde d'avant E9) ou inconnus, la partie reprend au couchant, sans pluie.
 
 `collected_pickups` liste les `name` uniques des `pickup` déjà pris ; `best_scores` reprend ce que l'easter egg garde dans `localStorage['yn.wordend']` (meilleur score, nombre de parties), par arène.
 

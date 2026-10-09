@@ -390,4 +390,11 @@ func test_flying_sprites_have_no_scene() -> void:
 			assert_false(
 				ResourceLoader.exists(_scene_path(item[0])), "%s : pas de scène" % _name(item[0])
 			)
-	assert_eq(count, 7, "oiseaux, deux feuilles, papillon, lucioles et deux hélices")
+	assert_eq(
+		count,
+		11,
+		(
+			"oiseaux, deux feuilles, papillon, lucioles, deux hélices ; (E9) deux bandes de pluie, "
+			+ "l'éclaboussure, la lumière des fées"
+		)
+	)
