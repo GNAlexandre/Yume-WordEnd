@@ -112,7 +112,9 @@ func apply(
 	_apply_clouds(lighting, clouds_from, mix)
 	for lamp: Light3D in lamps:
 		if is_instance_valid(lamp):
-			lamp.light_energy = float(lamp.get_meta(HD2DLighting.BASE_ENERGY_META)) * lighting.lamp_energy
+			lamp.light_energy = (
+				float(lamp.get_meta(HD2DLighting.BASE_ENERGY_META)) * lighting.lamp_energy
+			)
 	_apply_materials(lighting)
 
 

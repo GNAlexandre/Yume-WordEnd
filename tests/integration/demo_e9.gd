@@ -1,10 +1,11 @@
 extends Node
 ## (E9) Démo de la lumière et du temps : la vraie partie (game.tscn), vue par la caméra du joueur,
 ## sous chaque préréglage (moment × temps), dans le village de l'ancienne île et dans la carte
-## d'essai (et au bord ouest de l'île, devant la mer de nuages) ; une capture par préréglage, avec sa luminance moyenne et ses draw calls. F6 dans
-## l'éditeur. Lancée sous Xvfb par tools/e9_shots.sh (le rendu sans écran est factice) :
+## d'essai (et au bord ouest de l'île, devant la mer de nuages) ; une capture par préréglage,
+## avec sa luminance moyenne et ses draw calls. F6 dans l'éditeur. Lancée sous Xvfb par
+## tools/e9_shots.sh (le rendu sans écran est factice) :
 ##   E9_SHOTS=<dossier> : où écrire les captures (défaut build/shots/e9) ;
-##   E9_VIEWS=<liste>   : vues « carte:moment:temps » séparées par des virgules (défaut : toutes,
+##   E9_VIEWS=<liste>   : vues « lieu:moment:temps » séparées par des virgules (défaut : toutes,
 ##                        VIEWS) ; lieu = village (l'entrepôt de l'ancienne île), bord (la côte
 ##                        ouest) ou essai ;
 ##   E9_FRAMES=<n>      : images attendues avant chaque capture (défaut WAIT_FRAMES).
@@ -104,7 +105,10 @@ func _run() -> void:
 			dark += 1
 		print(
 			(
-				"E9 vue %s : luminance %.3f (min %.2f), %d draw calls, %d primitives, lumière du joueur %.2f, pluie %s"
+				(
+					"E9 vue %s : luminance %.3f (min %.2f), %d draw calls, %d primitives, "
+					+ "lumière du joueur %.2f, pluie %s"
+				)
 				% [
 					view,
 					luma,

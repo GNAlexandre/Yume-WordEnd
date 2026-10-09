@@ -49,9 +49,7 @@ func _ready() -> void:
 	_drop_material = _material(0, DROP_TEXTURE, DROP_BOX)
 	_drop_material.set_shader_parameter(&"sprite_size", _size(DROP_TEXTURE, 1))
 	_splash_material = _material(1, SPLASH_TEXTURE, SPLASH_BOX)
-	_splash_material.set_shader_parameter(
-		&"sprite_size", _size(SPLASH_TEXTURE, SPLASH_FRAMES)
-	)
+	_splash_material.set_shader_parameter(&"sprite_size", _size(SPLASH_TEXTURE, SPLASH_FRAMES))
 	_splash_material.set_shader_parameter(&"frames", float(SPLASH_FRAMES))
 	_splash_material.set_shader_parameter(&"fps", SPLASH_FPS)
 	_drops = _mesh_instance(&"Drops", MAX_DROPS, 68, _drop_material)

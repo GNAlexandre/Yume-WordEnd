@@ -9,7 +9,12 @@ extends GutTest
 ## l'export Web. tools/hd2d_assets.py check fait les mêmes vérifications, plus finement.
 
 const MANIFEST := "res://tools/hd2d_manifest.json"
-const DOCS: Array[String] = ["res://docs/ASSETS_HD2D.md", "res://docs/ASSETS_HD2D_MONDE.md"]
+## (E9) Le cahier n° 3 nomme aussi les images de ses lots (lot N : pluie, lumière des fées).
+const DOCS: Array[String] = [
+	"res://docs/ASSETS_HD2D.md",
+	"res://docs/ASSETS_HD2D_MONDE.md",
+	"res://docs/ASSETS_HD2D_SUKASUKA.md",
+]
 const ATLAS := "res://assets/hd2d/ground/atlas/ground_atlas.png"
 ## Ordre des tuiles dans l'atlas (GROUND_LAYERS de tools/hd2d_assets.py, terrain.gdshader) : les
 ## 12 du cahier n° 1, puis les 15 du cahier n° 2.

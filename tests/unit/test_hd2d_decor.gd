@@ -286,17 +286,17 @@ func test_island_ground_reads_a_mipmapped_atlas() -> void:
 	island.free()
 
 
-# --- (H5) Réglages de lumière : couchant (défaut), crépuscule, nuit ----------------------------
+# --- (H5) Réglages de lumière ; (E9) préréglages de data/lighting/ (couchant par défaut) ---------
 
 
 func _lighting(preset: String) -> HD2DLighting:
-	return load("res://src/world/materials/lighting_%s.tres" % preset) as HD2DLighting
+	return HD2DLighting.preset(StringName(preset))
 
 
 func test_sunset_lighting_is_the_island_default() -> void:
 	# Le réglage du couchant reprend exactement island.tscn et post_fx.gdshader : un réglage de
 	# nuit puis celui du couchant rendent l'île de l'acte 1.
-	var sunset := _lighting("sunset")
+	var sunset := _lighting("couchant")
 	var island := FIXTURE.island()
 	var sun := island.get_node(^"Sun") as DirectionalLight3D
 	var environment := (island.get_node(^"WorldEnvironment") as WorldEnvironment).environment
@@ -348,7 +348,7 @@ func test_night_lighting_changes_a_copy_of_the_island() -> void:
 	var lamps := island.find_children("*", "OmniLight3D", true, false)
 	assert_gt(lamps.size(), 0, "lanternes de l'île")
 	var lamp_energy := (lamps[0] as OmniLight3D).light_energy
-	var night := _lighting("night")
+	var night := _lighting("nuit")
 	night.apply(island)
 	assert_ne(world.environment, shared, "environnement copié")
 	assert_eq(shared.ambient_light_color, shared_ambient, "island.tscn n'est pas touchée")
@@ -364,7 +364,7 @@ func test_night_lighting_changes_a_copy_of_the_island() -> void:
 	assert_not_null(clouds, "mer de nuages copiée")
 	assert_eq(clouds.get_shader_parameter(&"tint"), night.clouds_tint, "nuages de nuit")
 	# Retour au couchant : les lanternes reprennent leur énergie de départ.
-	_lighting("sunset").apply(island)
+	_lighting("couchant").apply(island)
 	assert_almost_eq((lamps[0] as OmniLight3D).light_energy, lamp_energy, 0.001)
 	assert_eq(world.environment.ambient_light_color, shared_ambient)
 	island.free()
@@ -373,7 +373,7 @@ func test_night_lighting_changes_a_copy_of_the_island() -> void:
 func test_lighting_presets_set_the_post_processing() -> void:
 	var material := ShaderMaterial.new()
 	material.shader = POST_SHADER
-	for preset: String in ["sunset", "dusk", "night"]:
+	for preset: String in ["aube", "matin", "apres_midi", "couchant", "nuit", "interieur"]:
 		var lighting := _lighting(preset)
 		assert_not_null(lighting, preset)
 		lighting.apply_post(material)
@@ -383,30 +383,37 @@ func test_lighting_presets_set_the_post_processing() -> void:
 				lighting.post_parameters()[key],
 				"%s : %s" % [preset, key]
 			)
-	var night := _lighting("night")
-	var sunset := _lighting("sunset")
+	var night := _lighting("nuit")
+	var sunset := _lighting("couchant")
 	assert_lt(night.sun_energy, sunset.sun_energy, "la nuit est plus sombre")
 	assert_gt(night.lamp_energy, sunset.lamp_energy, "les lanternes portent la nuit")
 	assert_lt(night.saturation, sunset.saturation)
 
 
 func test_day_phase_sets_the_island_lighting() -> void:
-	# L'île reste au couchant tant que l'histoire n'annonce pas une autre phase de la journée ;
-	# la nuit (la promesse sur la colline) et le soir posent leur réglage, le jour revient au
-	# couchant ; les personnages, non éclairés, reçoivent la teinte du réglage.
+	# L'île reste au couchant tant que l'histoire n'annonce pas un autre moment ; (E9) l'ancienne
+	# phase de la journée donne son moment (Atmosphere), qui pose son réglage sur l'île ; les
+	# personnages, non éclairés, reçoivent la teinte du réglage.
 	var island := FIXTURE.island()
 	add_child(island)
+	GameState.reset()
+	Atmosphere.dress(island)
 	var world := island.get_node(^"WorldEnvironment") as WorldEnvironment
-	var sunset := _lighting("sunset")
+	var sunset := _lighting("couchant")
 	assert_eq(world.environment.ambient_light_color, sunset.ambient_color, "couchant au départ")
 	EventBus.day_phase_changed.emit(&"night")
-	var night := _lighting("night")
+	Atmosphere.step(Atmosphere.transition_time + 1.0)
+	var night := _lighting("nuit")
 	assert_eq(world.environment.ambient_light_color, night.ambient_color, "nuit")
 	assert_eq(HD2DLighting.active_sprite_tint(), night.sprite_tint, "personnages de nuit")
-	assert_lt(night.sprite_tint.v, 0.9, "la nuit assombrit les personnages")
+	assert_lt(night.sprite_tint.v, 0.95, "la nuit assombrit les personnages")
+	EventBus.day_phase_changed.emit(&"morning")
+	Atmosphere.step(Atmosphere.transition_time + 1.0)
+	assert_eq(world.environment.fog_light_color, _lighting("matin").fog_color, "matin")
 	EventBus.day_phase_changed.emit(&"evening")
-	assert_eq(world.environment.fog_light_color, _lighting("dusk").fog_color, "crépuscule")
-	EventBus.day_phase_changed.emit(&"day")
+	Atmosphere.step(Atmosphere.transition_time + 1.0)
 	assert_eq(world.environment.ambient_light_color, sunset.ambient_color, "retour au couchant")
 	assert_eq(HD2DLighting.active_sprite_tint(), Color.WHITE, "personnages au naturel")
+	Atmosphere.dress(null)
 	island.free()
+	GameState.reset()

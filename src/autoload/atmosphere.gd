@@ -123,9 +123,7 @@ func set_weather(weather_id: StringName, duration: float = -1.0) -> void:
 
 
 ## Change le moment et le temps d'un coup (une seule transition).
-func set_atmosphere(
-	moment_id: StringName, weather_id: StringName, duration: float = -1.0
-) -> void:
+func set_atmosphere(moment_id: StringName, weather_id: StringName, duration: float = -1.0) -> void:
 	if moment_id == GameState.moment and weather_id == GameState.weather:
 		return
 	_pending_duration = duration
@@ -205,7 +203,9 @@ func targets() -> HD2DLightTargets:
 
 ## Préréglage effectif de la carte map (null : la carte courante) pour moment et weather (par
 ## défaut ceux de GameState) : nouvelle ressource.
-func resolve(map: Node = null, moment_id: StringName = &"", weather_id: StringName = &"") -> HD2DLighting:
+func resolve(
+	map: Node = null, moment_id: StringName = &"", weather_id: StringName = &""
+) -> HD2DLighting:
 	if map == null:
 		map = _valid_map()
 	if moment_id.is_empty():
@@ -299,7 +299,7 @@ func step(delta: float) -> void:
 
 ## Paramètres de développement (moment, temps) de l'adresse de la page (Web) ou des arguments
 ## utilisateur.
-static func read_parameters() -> Dictionary:
+func read_parameters() -> Dictionary:
 	var pairs: PackedStringArray = []
 	if OS.has_feature("web"):
 		var search: Variant = JavaScriptBridge.eval("window.location.search", true)
@@ -312,7 +312,7 @@ static func read_parameters() -> Dictionary:
 
 
 ## Garde moment=<id> et temps=<id> valides parmi des « clé=valeur ».
-static func parse_pairs(pairs: PackedStringArray) -> Dictionary:
+func parse_pairs(pairs: PackedStringArray) -> Dictionary:
 	var result := {}
 	for pair: String in pairs:
 		var key := pair.get_slice("=", 0).strip_edges()
