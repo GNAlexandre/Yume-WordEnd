@@ -1,6 +1,11 @@
-extends Node3D
+extends Map
 ## Île flottante n° 68, 160 × 160 m (PLAN.md sections 3 et 4 ; docs/lore/MONDE.md, section 2).
 ## Propriétaire : L2, repris pour l'acte 1.
+##
+## (E1, refonte) L'île est la carte héritée `ile_ancienne` (src/world/maps/ile_ancienne/, scène
+## héritée d'island.tscn qui ajoute Geometry, Markers, Exits et Life) : une Map dont le sol est
+## Ground et dont les zones restent des zones. Elle garde ses coordonnées, centrées sur
+## l'origine (area()), au lieu du coin nord-ouest des nouvelles cartes.
 ##
 ## Structure figée : WorldEnvironment (ciel au couchant, brume sous l'île), Sun (seule
 ## DirectionalLight3D), OverviewCamera (caméra de survol, courante quand l'île est seule ; la
@@ -32,6 +37,11 @@ func _ready() -> void:
 		clouds.set_shader_parameter(
 			&"sun_direction", Vector2(toward_sun.x, toward_sun.z).normalized()
 		)
+
+
+## (E1) L'île est centrée sur l'origine : [−size/2, size/2] en x et z.
+func area() -> Rect2:
+	return Rect2(-size / 2.0, size)
 
 
 func _on_kill_zone_body_entered(body: Node3D) -> void:

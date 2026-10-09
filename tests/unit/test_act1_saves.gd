@@ -85,7 +85,7 @@ func test_m2_save_with_removed_content_loads_into_the_first_act() -> void:
 	await wait_process_frames(2)
 	var hud := game.get_node(^"UI/HUD") as Control
 	assert_eq(hud.call(&"shown_quest"), &"act1_main", "le HUD suit l'acte 1")
-	var forest := game.get_node(^"Island/Zones/forest/Pickups")
+	var forest := game.get_node(^"World/ile_ancienne/Zones/forest/Pickups")
 	assert_null(forest.get_node_or_null(^"forest_page_1"), "page déjà prise : absente")
 	assert_not_null(forest.get_node_or_null(^"forest_page_4"), "les nouvelles pages sont là")
 	var inventory := game.get_node(^"UI/Inventory") as Control

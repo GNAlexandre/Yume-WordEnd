@@ -1,0 +1,205 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="PackedScene" path="res://src/world/map_light.tscn" id="2_light"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/ground/grass.png" id="3_grass"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/ground/path_dirt.png" id="4_path"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="5_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="6_exit"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_a.tscn" id="7_forest_wall_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_b.tscn" id="8_forest_wall_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/oak_a.tscn" id="9_oak_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/birch_a.tscn" id="10_birch_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_small_a.tscn" id="11_pine_small_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="12_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_b.tscn" id="13_bush_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/rock.tscn" id="14_rock"]
+[ext_resource type="PackedScene" path="res://src/world/props/bench.tscn" id="15_bench"]
+[ext_resource type="PackedScene" path="res://src/world/props/signpost.tscn" id="16_signpost"]
+[ext_resource type="PackedScene" path="res://src/world/props/crystal_lamp.tscn" id="17_crystal_lamp"]
+[ext_resource type="PackedScene" path="res://src/world/props/fern_a.tscn" id="18_fern_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/stump_a.tscn" id="19_stump_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_a.tscn" id="20_grass_clump_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/crate.tscn" id="21_crate"]
+[ext_resource type="PackedScene" path="res://src/world/props/maple_a.tscn" id="22_maple_a"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass"]
+albedo_texture = ExtResource("3_grass")
+metallic_specular = 0.0
+uv1_scale = Vector3(10, 7.5, 1)
+texture_filter = 3
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+material = SubResource("StandardMaterial3D_grass")
+size = Vector2(40, 30)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_path"]
+albedo_texture = ExtResource("4_path")
+metallic_specular = 0.0
+uv1_scale = Vector3(5.5, 0.75, 1)
+texture_filter = 3
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_path"]
+material = SubResource("StandardMaterial3D_path")
+size = Vector2(22, 3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(44, 1, 34)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_ns"]
+size = Vector3(44, 6, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_we"]
+size = Vector3(1, 6, 34)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit_west"]
+size = Vector3(2, 3, 4)
+
+[node name="essai" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "Clairière d'essai"
+region = &"essai"
+size = Vector2(40, 30)
+camera_bounds = Rect2(10, 9, 20, 13)
+
+[node name="Light" parent="." instance=ExtResource("2_light")]
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Floor" type="CollisionShape3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, -0.5, 15)
+shape = SubResource("BoxShape3D_floor")
+
+[node name="WallNorth" type="CollisionShape3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 3, -0.5)
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallSouth" type="CollisionShape3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 3, 30.5)
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallWest" type="CollisionShape3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 3, 15)
+shape = SubResource("BoxShape3D_wall_we")
+
+[node name="WallEast" type="CollisionShape3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.5, 3, 15)
+shape = SubResource("BoxShape3D_wall_we")
+
+[node name="Grass" type="MeshInstance3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 15)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="Path" type="MeshInstance3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.02, 15)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_path")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("5_batcher")
+
+[node name="ForestNorthWest" parent="Geometry" instance=ExtResource("7_forest_wall_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0.8)
+
+[node name="ForestNorth" parent="Geometry" instance=ExtResource("8_forest_wall_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 0.6)
+
+[node name="ForestNorthEast" parent="Geometry" instance=ExtResource("7_forest_wall_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 0.8)
+flip_h = true
+
+[node name="OakNorth" parent="Geometry" instance=ExtResource("9_oak_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 4)
+
+[node name="MapleNorthEast" parent="Geometry" instance=ExtResource("22_maple_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 0, 4.5)
+
+[node name="BirchWest" parent="Geometry" instance=ExtResource("10_birch_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 7)
+
+[node name="BirchWestB" parent="Geometry" instance=ExtResource("10_birch_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, 21.5)
+flip_h = true
+
+[node name="PineEast" parent="Geometry" instance=ExtResource("11_pine_small_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 0, 9)
+
+[node name="PineEastB" parent="Geometry" instance=ExtResource("11_pine_small_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.2, 0, 17)
+
+[node name="PineEastC" parent="Geometry" instance=ExtResource("11_pine_small_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.6, 0, 24)
+
+[node name="BushNorth" parent="Geometry" instance=ExtResource("12_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 3.4)
+
+[node name="BushNorthB" parent="Geometry" instance=ExtResource("13_bush_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 3.2)
+
+[node name="BushEast" parent="Geometry" instance=ExtResource("13_bush_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0, 13)
+
+[node name="BushWest" parent="Geometry" instance=ExtResource("12_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 11.5)
+
+[node name="BushSouth" parent="Geometry" instance=ExtResource("12_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 27.5)
+
+[node name="FernNorth" parent="Geometry" instance=ExtResource("18_fern_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 0, 5)
+
+[node name="FernEast" parent="Geometry" instance=ExtResource("18_fern_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, 20)
+
+[node name="RockNorth" parent="Geometry" instance=ExtResource("14_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, 6)
+
+[node name="RockSouth" parent="Geometry" instance=ExtResource("14_rock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 26.5)
+
+[node name="StumpEast" parent="Geometry" instance=ExtResource("19_stump_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 18)
+
+[node name="GrassA" parent="Geometry" instance=ExtResource("20_grass_clump_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, 23)
+
+[node name="GrassB" parent="Geometry" instance=ExtResource("20_grass_clump_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 25)
+
+[node name="GrassC" parent="Geometry" instance=ExtResource("20_grass_clump_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 10)
+
+[node name="Bench" parent="Geometry" instance=ExtResource("15_bench")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 0, 11)
+
+[node name="Lamp" parent="Geometry" instance=ExtResource("17_crystal_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 10.6)
+
+[node name="Crate" parent="Geometry" instance=ExtResource("21_crate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6, 0, 11.2)
+
+[node name="SignpostWest" parent="Geometry" instance=ExtResource("16_signpost")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0, 12.6)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.2, 16)
+
+[node name="from_ile_ancienne" type="Marker3D" parent="Markers"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 4, 0.2, 15)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="to_ile_ancienne" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 1.5, 15)
+script = ExtResource("6_exit")
+target_map = &"ile_ancienne"
+target_marker = &"from_essai"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/to_ile_ancienne"]
+shape = SubResource("BoxShape3D_exit_west")
+
+[node name="Life" type="Node3D" parent="."]

@@ -274,6 +274,7 @@ change pas (testé) ; `src/game.gd` ne crée ce nœud que si l'un d'eux est pré
 | `?zone=dunes` | Le joueur part du Spawn du bord du Couchant (`dunes`), tourné vers la cloche de veille : 15 m tout droit (Z/W), puis E lance la veille. Toute zone de l'île : `village` (l'entrepôt des fées), `forest` (les bois du marais), `beach` (le port et le bourg), `hill` (la colline des étoiles), tourné vers son centre ; un nom inconnu est ignoré. La partie (nouvelle ou reprise) garde son état : l'acte 1 en est où il en était. |
 | `&timeres=12` | Banc de performance : 12 Timeres (les quatre corps, 24 au plus) errent devant le joueur sans le poursuivre. |
 | `?trace=1` | (intégration M2) Le journal seul : la partie (nouvelle ou reprise) n'est pas touchée. |
+| `?maps=essai,ile_ancienne` | (E1) Une fois la partie posée, voyage de carte en carte (`WorldManager.go_to`, Spawn de chaque carte) ; une ligne « [m1] carte <id> chargée : fondu … ms, chargement … ms en n images, installation … ms, total … ms » par changement, puis « [m1] voyage terminé ». `tools/web_maps.js` s'en sert (section « Cartes » plus bas). |
 
 Avec l'un d'eux, la page reçoit aussi deux aides (acte 1) : `window.wordendFace("nygglatho")`
 ou `window.wordendFace(x, z)` tourne le joueur vers un PNJ présent (son `NpcData.id`) ou un
@@ -283,7 +284,8 @@ l'écran (le haut est le nord) : `wordendFace` pose aussi la cible dans `window.
 (`[x, z]`), et `tools/web_m2.js` en tire les touches à tenir (W, A, S, D physiques, soit Z, Q,
 S, D en AZERTY, seules ou deux à deux), choisies de nouveau toutes les 300 ms en marchant.
 
-Pendant ce temps, la console du navigateur reçoit `[m1] …` à chaque événement (zone, invite,
+Pendant ce temps, la console du navigateur reçoit `[m1] …` à chaque événement ((E1) carte et
+mesures de son chargement, zone, invite,
 dialogue, quête et étape de quête, objet, vague, Timere tué, fin de série, dégâts, mort,
 réapparition, perte du focus) et, toutes les 2 s, images/s, draw calls, primitives, position du
 joueur, état de la sauvegarde et distance du Timere le plus proche. `tools/web_m1.js`

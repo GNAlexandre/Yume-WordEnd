@@ -222,3 +222,8 @@ change pas sans PR « contrats ».
   attend une image ou appelle `Npc.refresh_presence()`), jamais pendant sa conversation.
   `DialogueRunner.find_npc` (portraits, `speaker_id`) cherche `data/npcs` puis les dossiers
   d'`add_npc_dir` : un test qui en ajoute un le retire dans `after_each`.
+- (Cartes, E1) `game.tscn` n'a plus d'`Island` : la carte courante est l'unique enfant de `World`
+  (l'ancienne île : `World/ile_ancienne/Zones/<zone>`). Une seule carte à la fois
+  (`WorldManager.go_to`, `enter_map`) ; un test qui change de carte pose
+  `WorldManager.fade_time = 0.0` et le rétablit dans `after_each`. Créer une carte : mode
+  d'emploi dans PLAN.md, section 3 ; `tools/test.sh tests/unit/test_maps.gd` la vérifie.

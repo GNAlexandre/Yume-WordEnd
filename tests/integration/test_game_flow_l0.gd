@@ -39,7 +39,7 @@ func test_game_places_player_and_emits_initial_state() -> void:
 	var game: Node3D = add_child_autofree(GAME_SCENE.instantiate())
 	await wait_physics_frames(10)
 	var player := game.get_node(^"Player") as Node3D
-	var spawn := game.get_node(^"Island/Zones/village/Spawn") as Node3D
+	var spawn := game.get_node(^"World/ile_ancienne/Zones/village/Spawn") as Node3D
 	assert_lt(player.global_position.distance_to(spawn.global_position), 1.0, "au Spawn du village")
 	assert_signal_emitted_with_parameters(EventBus, "player_health_changed", [5, 5])
 	assert_signal_emitted_with_parameters(EventBus, "zone_entered", [&"village"])
@@ -54,13 +54,13 @@ func test_respawn_brings_player_back_to_village() -> void:
 	var player := game.get_node(^"Player") as Node3D
 	WorldManager.teleport(&"dunes", &"SpawnW")
 	await wait_physics_frames(3)
-	var marker := game.get_node(^"Island/Zones/dunes/SpawnW") as Node3D
+	var marker := game.get_node(^"World/ile_ancienne/Zones/dunes/SpawnW") as Node3D
 	assert_lt(
 		player.global_position.distance_to(marker.global_position), 1.0, "téléporté sur SpawnW"
 	)
 	watch_signals(EventBus)
 	WorldManager.respawn()
-	var spawn := game.get_node(^"Island/Zones/village/Spawn") as Node3D
+	var spawn := game.get_node(^"World/ile_ancienne/Zones/village/Spawn") as Node3D
 	assert_lt(player.global_position.distance_to(spawn.global_position), 1.0, "réapparu au village")
 	assert_signal_emitted(EventBus, "player_respawned")
 
@@ -73,7 +73,7 @@ func test_player_died_triggers_respawn_after_delay() -> void:
 	EventBus.player_died.emit()
 	await wait_seconds(0.3)
 	assert_signal_emitted(EventBus, "player_respawned")
-	var spawn := game.get_node(^"Island/Zones/village/Spawn") as Node3D
+	var spawn := game.get_node(^"World/ile_ancienne/Zones/village/Spawn") as Node3D
 	var player := game.get_node(^"Player") as Node3D
 	assert_lt(player.global_position.distance_to(spawn.global_position), 1.0)
 

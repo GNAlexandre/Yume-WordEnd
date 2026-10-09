@@ -108,7 +108,8 @@ Yume-WordEnd/
 │   └── embed-test.html        # page de test de l'iframe (section 10)
 ├── src/
 │   ├── main.tscn              # racine : menu, chargement, puis game.tscn
-│   ├── game.tscn              # (L0) Island + Player + QuestTracker + UI (HUD, dialogue, inventaire…)
+│   ├── game.tscn              # (L0) World + Player + QuestTracker + UI (HUD, dialogue, inventaire…) ;
+│   │                          # (E1) World porte la carte courante (avant : Island, l'île entière)
 │   ├── autoload/              # EventBus, GameState, SaveManager, SkinRegistry, WorldManager, (bureau) DesktopApp
 │   ├── desktop_check.gd       # (bureau) vérification du jeu exporté (--desktop-check), sans effet sinon
 │   ├── player/                # player.tscn, player.gd (déplacement), camera_rig.tscn (caméra fixe HD-2D),
@@ -122,11 +123,13 @@ Yume-WordEnd/
 │   │                          # (HD-2D) decor_panel.gd, building.gd, prop_batcher.gd, prop_scatter.gd,
 │   │                          # props/<nom>.tscn (un décor = un panneau ou un bâtiment), shaders/, materials/
 │   │                          # (H9) ground_decal.gd, sky_drift.gd, ambient_sprites.gd (formats du cahier n° 2)
+│   │                          # (E1) map.gd, map_exit.gd, map_light.tscn, maps/<map_id>/<map_id>.tscn (une
+│   │                          # carte par lieu ; maps/ile_ancienne : l'île héritée ; maps/essai : carte d'essai)
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
 │   └── ui/                    # hud, dialogue_box, inventory, main_menu, loading, touch_controls,
-│                              # arena_end, credits, journal (Lot Q, enfant du HUD)
+│                              # arena_end, credits, journal (Lot Q, enfant du HUD), (E1) map_fade
 ├── data/
 │   ├── attacks/*.tres         # sword_1..3, charge_wave, bite, whip, rush
 │   ├── enemies/*.tres         # timere_small, timere_normal, timere_runner, timere_big ; visuals/timere.tres
@@ -162,7 +165,7 @@ Yume-WordEnd/
 | `GameState` | PV max, inventaire, drapeaux (`flags`), état des quêtes, (Lot Q) étape courante et compteur de chaque quête active, quête suivie, skin actif, meilleurs scores par arène ; sérialisable en Dictionary | L7 |
 | `SaveManager` | Écrit/lit `user://save_v1.json` (nom historique ; schéma v2 depuis le Lot Q), versionne le schéma, migre | L8 |
 | `SkinRegistry` | Charge `data/skins/*.tres`, expose la liste et le skin par défaut (Chtholly) | L3 |
-| `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort | L2 |
+| `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort ; (E1) une carte à la fois : changement de carte (fondu, chargement découpé, marqueur d'arrivée), carte courante, bornes de la caméra | L2, E1 |
 | `DesktopApp` | (bureau) Application de bureau, sans effet sur le Web : fenêtre de départ, plein écran (F11, Alt+Entrée, bouton) mémorisé dans `user://settings.cfg`, boutons « Plein écran » et « Quitter » des menus, sauvegarde avant de quitter (docs/bureau.md) | bureau |
 
 ### Contrats d'interface
@@ -206,6 +209,9 @@ signal quest_step_completed(quest_id: StringName, step_id: StringName)   # Quest
 signal quest_advance_requested(quest_id: StringName, step_id: StringName)   # DialogueRunner (advance_quest) ou autre → QuestTracker ; &"" : l'étape courante
 signal trigger_entered(trigger_id: StringName)                # QuestTrigger, le joueur y entre → QuestTracker (étapes reach)
 signal tracked_quest_changed(quest_id: StringName)            # GameState, quand tracked_quest change → HUD
+# (E1) Cartes — docs/REFONTE.md, section 7.1
+signal map_entered(map_id: StringName)        # WorldManager (go_to, enter_map) : carte posée, joueur placé (sous le
+                                              # noir pendant un go_to) → caméra (bornes, recalage), joueur (élan), SaveManager
 
 # src/combat/health.gd — composant commun joueur / ennemis (class_name Health, extends Node)
 @export var max_hp: int = 1
@@ -283,8 +289,9 @@ func quest_progress() -> Dictionary          # (Lot Q) copie quest_id → {"step
 var tracked_quest: StringName                # (Lot Q) quête suivie par le HUD ; émet tracked_quest_changed ; &"" = la première quête active
 var skin_id: StringName      # (L0) &"" = skin par défaut ; émet skin_changed
 var max_hp: int              # (L0) 5, puis 6 (acte 1 : la promesse du gâteau au beurre), 7 (registre des veilles) ; émet max_hp_changed
-var zone: StringName         # (L0) tenue par WorldManager (zone_entered) ; &"" = nouvelle partie pas encore placée
-var position: Vector3        # (L0) tenue par le joueur quand il est au sol
+var map: StringName          # (E1) carte courante, tenue par WorldManager ; &"" = nouvelle partie pas encore placée
+var zone: StringName         # (L0) tenue par WorldManager (zone_entered) ; (E1) vidée à chaque changement de carte
+var position: Vector3        # (L0) tenue par le joueur quand il est au sol ; (E1) dans le repère de la carte
 
 # src/autoload/save_manager.gd
 func has_save() -> bool
@@ -293,7 +300,8 @@ func load_game() -> Error                 # remplit GameState, émet game_loaded
 func new_game(skin_id: StringName) -> void   # (L0) GameState.reset() puis émet game_loaded
 func export_json() -> String / func import_json(text: String) -> Error   # menu, section 13 ; import émet game_loaded
 var save_path: String = "user://save_v1.json"   # (L0) les tests en utilisent un autre ; (Lot Q) le nom ne suit pas la version
-const SAVE_VERSION := 2                   # (Lot Q) v2 : quest_progress et tracked_quest ; v1 → v2 migrée (quête active : 1re étape)
+const SAVE_VERSION := 3                   # (Lot Q) v2 : quest_progress et tracked_quest ; v1 → v2 migrée (quête active : 1re étape)
+                                          # (E1) v3 : map ; v2 → v3 migrée (partie placée : map = ile_ancienne, même position)
 func save_on_leave() -> Error             # (M2) focus perdu, fermeture, page masquée : écriture en attente, sinon état s'il a changé
 func has_unsaved_changes(tolerance: float = 0.05) -> bool   # (M2) GameState diffère de la dernière écriture (position : au-delà de tolerance m)
 var checkpoint_interval: float = 5.0      # (M2) position écrite toutes les 5 s de jeu si le joueur a bougé de checkpoint_distance (1 m)
@@ -313,6 +321,27 @@ func is_zone_safe(zone_id: StringName) -> bool   # (M1) Zone.safe de la zone (fa
 var respawn_delay: float = 2.2            # (L0) délai entre player_died et respawn()
 signal rescued(zone_id: StringName)       # (Systèmes et textes) rescue() a rattrapé le joueur au Spawn de
                                           # zone_id → HUD : fondu au blanc et « Tes ailes se sont ouvertes… »
+                                          # (E1) sur une carte sans zone : au marqueur d'arrivée, zone_id = map_id
+# (E1) Cartes (docs/REFONTE.md, section 7.1) : une seule carte chargée, enfant unique de game.tscn « World »
+func go_to(map_id: StringName, marker: StringName = &"Spawn") -> void   # coroutine : fondu au noir (fade_time), chargement
+                                          # découpé (load_budget_ms par image), ancienne carte libérée, nouvelle ajoutée,
+                                          # joueur posé au sol sous le marqueur (Spawn s'il manque), tourné comme son −Z,
+                                          # map_entered, fondu de retour ; joueur figé (process_mode DISABLED) tout du long ;
+                                          # ignoré (avertissement) pendant un autre changement, erreur pour une carte inconnue
+func enter_map(map_id: StringName, marker: StringName = &"Spawn", at: Variant = null) -> bool   # sans fondu, d'un bloc
+                                          # (début de partie, démonstrations) ; at : Vector3 (position sauvegardée)
+func current_map() -> StringName / func current_map_node() -> Map   # carte posée (à défaut, 1re carte de l'arbre)
+func starting_map() -> StringName         # GameState.map si elle existe, sinon START_MAP (main.gd, game.gd)
+func map_display_name(map_id: StringName) -> String   # Map.display_name, sans instancier la carte
+func camera_bounds() -> Rect2             # Map.bounds() de la carte courante ; DEFAULT_CAMERA_BOUNDS sans carte
+func is_transitioning() -> bool           # fondus, chargement, et SETTLE_FRAMES (3) images physiques après l'arrivée
+func fade_alpha() -> float                # opacité du noir (0..1), dessinée par UI/MapFade
+func last_transition() -> Dictionary      # mesures du dernier go_to : fade_out_ms, load_ms, load_frames, install_ms, total_ms
+var fade_time: float = 0.35 / var load_budget_ms: float = 40.0
+signal transition_started(map_id: StringName) / signal transition_finished(map_id: StringName)
+const LEGACY_MAP := &"ile_ancienne" / const START_MAP := &"ile_ancienne"   # l'île héritée ; une nouvelle partie y commence
+# (E1) Zones : elles n'existent que dans ile_ancienne. load_zone/teleport d'une zone de l'île (LEGACY_ZONES) depuis une
+# autre carte y ramènent sans fondu ; respawn() ramène au Spawn du village sur l'île, au marqueur d'arrivée ailleurs.
 
 # (bureau) src/autoload/desktop_app.gd — tout est sans effet sur le Web (OS.has_feature("web"))
 func is_web() -> bool / func is_desktop() -> bool   # vraie plateforme, ou simulated_web (tests : 0 bureau, 1 Web)
@@ -361,6 +390,16 @@ class_name QuestStep  : (Lot Q) id, type (talk|reach|kill|collect|arena|flag), o
 
 # (L0) Autres classes partagées
 class_name Zone            # racine d'une zone : @export display_name: String, @export safe: bool ; func zone_id() -> StringName
+class_name Map             # (E1) src/world/map.gd, racine d'une carte (Node3D, groupe "maps") : @export display_name: String,
+                           # region: StringName, interior: bool, size: Vector2, camera_bounds: Rect2 (vide : la carte),
+                           # light_preset: StringName ; map_id(), area() (Rect2(0, 0, size) ; île héritée : centrée),
+                           # bounds(), marker(name), spawn(), marker_names(), exits() ; statiques scene_path(id), exists(id),
+                           # is_valid_id(id), all_ids(), problems(carte), exit_problems(carte, marqueurs) ; MAPS_DIR,
+                           # REQUIRED_CHILDREN (Ground, Geometry, Markers, Exits, Life), SPAWN_MARKER, FROM_PREFIX ("from_")
+class_name MapExit         # (E1) src/world/map_exit.gd, Area3D enfant de « Exits » : @export target_map: StringName,
+                           # target_marker: StringName (&"Spawn"), prompt: String ; vide : on passe en marchant (couche 0,
+                           # masque 2) ; rempli : interactable (couche 6, groupe "interactable", get_prompt(), interact())
+                           # posé par son _ready ; needs_interaction(), use() (sans effet si WorldManager.is_transitioning())
 class_name Player          # player.gd (L1)
 class_name Pickup          # @export item_id: StringName, quantity: int, persistent: bool ; func collect(), pickup_id()
 class_name Npc             # @export data: NpcData ; (Systèmes et textes) is_present(), refresh_presence() :
@@ -433,7 +472,8 @@ class_name AmbientSprites  # (H9) src/world/ambient_sprites.gd : enum Motion { F
 # src/player/camera_rig.gd (racine CameraRig de camera_rig.tscn, sans class_name) : caméra fixe vers le nord
 @export pitch_deg (32), fov_deg (30), focus_height, focus_ahead (2,5 m au nord du joueur), talk_ahead (0, en
         conversation), ahead_smoothing, distance (21), min_distance, max_distance, follow_speed, lead_time (0,2),
-        lead_smoothing, limits: Rect2 (bornes du point visé), lock_focus, lock_focus_max
+        lead_smoothing, limits: Rect2 (bornes du point visé ; (E1) celles de la carte courante à chaque map_entered,
+        WorldManager.camera_bounds(), avec make_current() et snap()), lock_focus, lock_focus_max
 var lock_target: Node3D, follow_velocity: Vector3   # posés par le joueur à chaque image physique
 func update_camera(delta, zoom_axis := 0.0), focus_goal(with_lead := true) -> Vector3, anchor() -> Vector3 (place
      affichée du joueur, interpolée), snap(), snap_behind(_dir) (= snap), recenter_behind(_dir) (sans effet),
@@ -462,7 +502,7 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | Fichier | Racine (type, `class_name`) | Nœuds nommés | Groupe, couches | Lot |
 | --- | --- | --- | --- | --- |
 | `src/main.tscn` + `main.gd` | `Main` (Node) | menu, chargement et partie ajoutés à l'exécution | — | L0 |
-| `src/game.tscn` + `game.gd` | `Game` (Node3D) | `Island`, `Player`, `QuestTracker`, `UI` (CanvasLayer) avec `UI/HUD`, `UI/DialogueBox`, `UI/Inventory`, `UI/ArenaEnd`, `UI/TouchControls` | — | L0 |
+| `src/game.tscn` + `game.gd` | `Game` (Node3D) | (E1) `World` (Node3D, groupe `map_slot` : la carte courante, posée par game.gd, remplace `Island`), `Player`, `QuestTracker`, `UI` (CanvasLayer) avec `UI/HUD`, `UI/DialogueBox`, `UI/Inventory`, `UI/ArenaEnd`, `UI/TouchControls`, (E1) `UI/MapFade` (`src/ui/map_fade.tscn` : fondu et nom des cartes) | — | L0, E1 |
 | `src/player/player.tscn` + `player.gd` | `Player` (CharacterBody3D, `Player`) | `CollisionShape3D`, `Visual`, `Combat` (`PlayerCombat`) et `Combat/SwordHitbox` (`Hitbox`), `Health` (5 PV, 1,2 s), `Hurtbox`, `CameraRig` ((HD-2D) aux pieds du joueur) | `player` ; couche 2, masque 1+3 | L1 (L4 : valeurs du nœud `Health`) |
 | `src/player/camera_rig.tscn` | `CameraRig` (Node3D) | (HD-2D) `Camera3D` (courante, `top_level`), `PostFX` (CanvasLayer, couche −1) et `PostFX/Screen` (ColorRect, `post_fx.gdshader`) ; plus de `SpringArm3D` | — | L1 |
 | `src/combat/hitbox.tscn` + `hitbox.gd` | `Hitbox` (Area3D) | `CollisionShape3D` (forme locale à la scène) | couche 4, masque 5 | L4 |
@@ -479,8 +519,9 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | (Lot Q) `src/quests/quest_step.gd`, `quest_trigger.tscn` + `quest_trigger.gd` | `QuestStep` (Resource), `QuestTrigger` (Area3D) | `CollisionShape3D` (cylindre propre à chaque déclencheur) | couche 0, masque 2 | Lot Q |
 | `src/npc/npc.tscn` + `npc.gd` | `Npc` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `InteractArea` (Area3D, couche 6), `DialogueRunner`, (Lot Q) `QuestMarker` (Label3D « ! » / « ? ») | `interactable` ; couche 1 | L6 |
 | `src/npc/npc_data.gd`, `dialogue_runner.gd` | `NpcData`, `DialogueRunner` | — | — | L6 |
-| `src/world/island.tscn` + `island.gd` | `Island` (Node3D) | `WorldEnvironment` ((HD-2D) ciel panoramique `assets/hd2d/sky/sky.png`), `Sun`, `OverviewCamera`, `Ground` (relief, tuiles de l'atlas du sol), `Water` (mer de nuages texturée), `Walls`, `KillZone`, `Zones` et `Zones/<zone_id>` pour les 5 zones | — | L2 |
+| `src/world/island.tscn` + `island.gd` | `Island` (Node3D ; (E1) `Map`, carte héritée par `maps/ile_ancienne`) | `WorldEnvironment` ((HD-2D) ciel panoramique `assets/hd2d/sky/sky.png`), `Sun`, `OverviewCamera`, `Ground` (relief, tuiles de l'atlas du sol), `Water` (mer de nuages texturée), `Walls`, `KillZone`, `Zones` et `Zones/<zone_id>` pour les 5 zones | — | L2 |
 | `src/world/zones/<zone_id>/<zone_id>.tscn` + `src/world/zone.gd` (`village`, `dunes`, `forest`, `beach`, `hill`) | `<zone_id>` (Node3D, `Zone`) | `Spawn` (Marker3D), `Bounds` (Area3D, masque 2), `Geometry` ((HD-2D) `PropBatcher` : décors `src/world/props/` en images), `NPCs`, `Enemies`, `Pickups` ; dunes : `SpawnN`, `SpawnS`, `SpawnE`, `SpawnW`, `Arena` (`arena_id = &"dunes"`) ; village : `EnemyBarrier` (couche 8), `safe = true` | `zones` | L2 |
+| (E1) `src/world/map.gd`, `map_exit.gd`, `maps/<map_id>/<map_id>.tscn` | `Map`, `MapExit` ; racine `<map_id>` (`Map`) | `Ground` (sol, couche 1), `Geometry` (`PropBatcher`), `Markers` (`Spawn` + `from_<carte>`), `Exits` (`MapExit`), `Life` ; `ile_ancienne` : scène héritée d'`island.tscn` (`World/ile_ancienne/Zones/<zone>`) | `maps` ; sorties : couche 0 (6 si invite), masque 2 | E1 |
 | `src/npc/placements/<zone_id>.tscn` | `NPCs` (Node3D), instancié dans chaque zone | PNJ de la zone et (Lot Q) déclencheurs de quête `QuestTrigger` (coordonnées locales à la zone) | — | L6 |
 | `src/enemies/placements/<zone_id>.tscn` | `Enemies` (Node3D ; (acte 1) script `src/enemies/free_enemies.gd`) | ennemis libres de la zone (forêt : 4 Timeres), qui reviennent pendant une étape « vaincre » qui les vise | — | L5 |
 | `src/items/placements/<zone_id>.tscn` | `Pickups` (Node3D) | objets uniques, nommés `<zone>_<objet>_<n>` (ex. `forest_page_1`) | — | L7 |
@@ -625,11 +666,12 @@ Les vagues listées sont jouées telles quelles ; au-delà, `generator` produit 
 
 ```json
 {
-  "version": 2,
+  "version": 3,
   "saved_at": "2026-10-05T10:00:00Z",
   "skin": "chtholly",
   "max_hp": 5,
   "position": [12.0, 1.0, -4.5],
+  "map": "ile_ancienne",
   "zone": "village",
   "inventory": { "page_fragment": 3, "flower_blue": 1 },
   "flags": { "quest_pages_accepted": true },
@@ -645,6 +687,12 @@ Les vagues listées sont jouées telles quelles ; au-delà, `generator` produit 
 `tracked_quest` (quête suivie par le HUD). Une sauvegarde v1 est migrée au chargement : chaque
 quête active reprend à sa première étape, la première quête active est suivie. Le nom du fichier
 ne change pas.
+
+(E1) Schéma v3 : `map`, la carte courante (`position` est dans son repère). Une sauvegarde v2
+(d'avant la refonte) est migrée au chargement : une partie placée (zone connue) reprend dans la
+carte héritée `ile_ancienne`, à la même position, tout le reste inchangé (testé sur une vraie
+sauvegarde du jeu d'avant la refonte, `tests/data/saves/save_v2_avant_refonte.json`) ; une
+carte inconnue au chargement ramène au Spawn de `WorldManager.START_MAP`.
 
 `collected_pickups` liste les `name` uniques des `pickup` déjà pris ; `best_scores` reprend ce que l'easter egg garde dans `localStorage['yn.wordend']` (meilleur score, nombre de parties), par arène.
 

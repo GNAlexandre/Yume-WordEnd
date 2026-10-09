@@ -2089,3 +2089,65 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   - première tranche : l'entrepôt (dehors, dedans, vie des petites, jours 1 à 4).
   La « saison des rejetons » et la « veille du Couchant » (`MONDE.md`, section 1.1) sont retirées :
   c'étaient des inventions qui contredisent l'œuvre.
+- **E1 — carte héritée** : `src/world/maps/ile_ancienne/ile_ancienne.tscn` est une scène héritée
+  d'`island.tscn`, dont le script (`island.gd`) étend désormais `Map` : `Ground` est le sol de
+  l'île, les zones restent des zones (`World/ile_ancienne/Zones/<zone>`, `zone_entered`
+  inchangé) ; la scène héritée ajoute `Geometry`, `Markers` (`Spawn` = celui du village, en
+  (0 ; 0,2 ; 9)), `Exits` et `Life`. Elle garde les coordonnées de l'île, centrées sur l'origine
+  (`island.gd` redéfinit `area()`) au lieu du coin nord-ouest du contrat : sauvegardes, PNJ,
+  déclencheurs, masques du sol et tests en dépendent, pour une carte retirée en phase 5.
+  `island.tscn` porte `size` (160 × 160) et les bornes de caméra de l'île.
+- **E1 — nœud de la carte** : dans `game.tscn`, `World` (Node3D, groupe `map_slot`) remplace
+  `Island` ; `game.gd` y pose la carte (`WorldManager.enter_map`, position sauvegardée ou Spawn) ;
+  `main.gd` charge la partie et sa première carte sous une seule barre (`Loading.load_scenes`),
+  la carte restant en cache jusqu'à ce que `game.gd` l'ait posée.
+- **E1 — sorties à invite** : le joueur ne détecte que les couches 6 et 7 ; une `MapExit` dont
+  `prompt` est rempli passe d'elle-même sur la couche 6 et dans le groupe `interactable` à son
+  `_ready` (dans la scène, elle reste en couche 0, comme le dit le contrat).
+- **E1 — joueur figé** : `process_mode` DISABLED du début du fondu au noir à la fin du fondu de
+  retour (ni mouvement, ni coup, ni interaction, ni dégâts : il quitte l'espace physique),
+  appliqué en fin d'image (`call_deferred`) : un `go_to` lancé de l'image physique du joueur (E)
+  ou du pas de la physique (sortie à pied) lui faisait finir son `move_and_slide` sans espace
+  (« Parameter "space" is null »). À `map_entered`, le joueur oublie son élan, sa cible et son
+  invite (`player.gd`, `_stop_motion`, comme à la réapparition) : seule retouche de `player.gd`,
+  la mission demandant une vitesse remise à zéro que seul le joueur tient (`_move_velocity`).
+- **E1 — pas d'aller-retour** : `is_transitioning()` reste vrai `SETTLE_FRAMES` (3) images
+  physiques après une arrivée (`go_to`, `enter_map`) ; une sortie ne part que sur une entrée
+  (`body_entered`) ou une interaction : un joueur posé dedans doit en sortir et y revenir.
+- **E1 — zones et cartes** : changer de carte vide `current_zone()`, `GameState.zone` et la
+  dernière zone annoncée du joueur (`Zone.LAST_ZONE_META`) : de retour sur l'île, la zone
+  d'arrivée s'annonce de nouveau (HUD, auto-sauvegarde). Au début d'une partie (aucune carte
+  avant), la zone de la sauvegarde reste. Sur une carte sans zone, `respawn()` et `rescue()`
+  ramènent au marqueur d'arrivée (`rescued(map_id)`) ; `load_zone`/`teleport` d'une zone de l'île
+  depuis une autre carte ramènent sur l'île sans fondu (raccourci `?zone=`), sans rien faire s'il
+  n'y a pas de nœud `World` (tests sans partie).
+- **E1 — sauvegarde v3** : champ `map` (lu seulement avec une position valide, comme `zone`) ;
+  migration v2 → v3 : `map` = `ile_ancienne` si la zone est connue, vide sinon (partie pas encore
+  placée : Spawn du village, comme avant) ; une carte inconnue au chargement ramène au Spawn de
+  `START_MAP` (avertissement). Vérifié sur une vraie sauvegarde écrite par le jeu de `50ec961`
+  (`tests/data/saves/save_v2_avant_refonte.json` : rue du port, quête principale à
+  `to_the_woods`, deux pages, record de 420 aux dunes).
+- **E1 — fondu** : 0,35 s au noir (#0b0713), 0,35 s de retour ; l'opacité est tenue par
+  WorldManager (`fade_alpha()`, tween pausable) et dessinée par `UI/MapFade` (traité même en
+  pause, souris jamais prise) : une partie libérée pendant un fondu (retour au menu) emporte
+  son noir, et `go_to` s'arrête proprement. Le nom de la carte (`display_name`) s'annonce une
+  fois l'écran revenu, dans le style du nom de zone du HUD ; vide pour `ile_ancienne` (le HUD
+  annonce ses zones).
+- **E1 — chargement découpé** : comme `Loading.load_scene` (dépendances d'abord, feuilles en
+  premier), 40 ms de travail par image sous le noir. L'ancienne carte est libérée (`free`) juste
+  avant l'instanciation de la nouvelle, une fois les ressources de la nouvelle chargées : les
+  images communes restent en cache, une seule carte instanciée. Aucune carte n'est préchargée
+  (`preload`) par du code durable : elle resterait en mémoire.
+- **E1 — caméra** : à chaque `map_entered`, `CameraRig.limits` = `WorldManager.camera_bounds()`,
+  puis `make_current()` (l'`OverviewCamera` de l'île, `current` à son entrée dans l'arbre,
+  prenait la main au retour sur l'île) et `snap()`. Les bornes restent celles du point visé.
+- **E1 — lumière** : en attendant les préréglages de E9 (`light_preset`), une carte porte sa
+  lumière : `src/world/map_light.tscn` (environnement, soleil et nœud `Lighting` de l'île).
+- **E1 — carte d'essai** (`src/world/maps/essai/`) : 40 × 30 m, sol plat provisoire
+  (`StaticBody3D`, plan d'herbe en tuiles de 4 m, chemin de terre, murs invisibles), décors de
+  `src/world/props/`, sentier ouest (sortie à pied vers l'île, arrivée `from_ile_ancienne` tournée
+  vers l'est), bornes de caméra `Rect2(10, 9, 20, 13)` (rien au-delà des bords à l'écran). Sur
+  l'île, sortie de test discrète : un panneau au coin est du hangar du port (41 ; 63,4), invite
+  « Carte d'essai », arrivée `from_essai` en (41 ; 66,2) tournée vers le sud (à 6,5 m du bord).
+- **E1 — décalques** : `GroundDecal.follow_ground` suit `IslandTerrain` (le relief de l'île) ;
+  sur une nouvelle carte, le mettre à faux tant que E2 ne l'a pas branché sur `MapGround`.

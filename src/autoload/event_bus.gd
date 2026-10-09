@@ -4,7 +4,7 @@ extends Node
 ## Un système émet ses signaux ici ; les autres les écoutent. Personne ne lit directement les
 ## nœuds d'un autre système. L'émetteur attendu est indiqué au-dessus de chaque signal.
 ## Les signaux ne sont jamais émis dans cette classe, d'où l'annotation unused_signal.
-## Fichier gelé : ne change qu'au Lot 0 ou dans une PR « contrats » (dernière : Lot Q, quêtes).
+## Fichier gelé : ne change qu'au Lot 0 ou dans une PR « contrats » (dernière : E1, cartes).
 
 @warning_ignore_start("unused_signal")
 
@@ -64,6 +64,10 @@ signal dialogue_ended(npc_id: StringName)
 signal quest_updated(quest_id: StringName, state: StringName)
 ## Le joueur entre dans une zone. Émis par Zone (L2) quand le joueur touche sa zone Bounds.
 signal zone_entered(zone_id: StringName)
+## (E1) Une carte vient d'être posée et le joueur placé dedans (encore sous le fondu au noir
+## pendant un go_to). Émis par WorldManager (go_to, enter_map) ; la caméra prend les bornes de
+## la carte et se recale, SaveManager demande une auto-sauvegarde.
+signal map_entered(map_id: StringName)
 ## Phase du jour : &"morning", &"day", &"evening", &"night" (M3, cycle jour/nuit).
 signal day_phase_changed(phase: StringName)
 ## Skin actif. Émis par GameState quand GameState.skin_id change ; le joueur (L1) l'applique.

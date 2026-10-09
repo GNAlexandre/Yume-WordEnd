@@ -24,7 +24,7 @@ func test_picture_book_quest_end_to_end() -> void:
 	await wait_physics_frames(3)
 	var player := game.get_node(^"Player") as Node3D
 	var pages: Array[Pickup] = []
-	for child: Node in game.get_node(^"Island/Zones/forest/Pickups").get_children():
+	for child: Node in game.get_node(^"World/ile_ancienne/Zones/forest/Pickups").get_children():
 		if child is Pickup and (child as Pickup).item_id == &"page_fragment":
 			pages.append(child as Pickup)
 	assert_eq(pages.size(), 5, "cinq pages dans les bois")
