@@ -2075,3 +2075,17 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   près du bord : dans le secteur du port (`IslandEdge.PORT_SECTOR`), `test_world_edge_margins`
   demande 0,3 m pour l'ancre d'un décor et 1,5 m pour une collision (au lieu de 1 et 3 m sur la
   côte naturelle). Une caisse de la Garde a reculé de 0,6 m.
+- **Refonte de l'île n° 68** (`docs/REFONTE.md`, 9 octobre 2026), à la suite de la recette « monde
+  vide, infidèle, quêtes superflues, Timeres sur les îles, personnages statiques, aucun intérieur,
+  dirigeables plats ». Relecture intégrale des six volumes (`docs/lore/canon/`, qui priment sur la
+  bible quand ils la contredisent). Choix de l'utilisateur, tous selon la recommandation :
+  - une carte par lieu, façon *Octopath Traveler*, avec intérieurs et carte de l'île (contrat :
+    `docs/REFONTE.md`, section 7.1) ;
+  - à l'acte 1, aucun Timere : entraînement, duels et faune de la forêt profonde et de la
+    montagne ; Timere et l'arène à vagues passent à l'acte 2 (île n° 15) ;
+  - l'acte 1 suit le volume 1 et l'épisode du volume EX en une douzaine de jours et de scènes ;
+    les quêtes secondaires, les marqueurs au-dessus des têtes et l'encadré d'objectif permanent
+    disparaissent ; le calendrier de Chtholly sert de journal ;
+  - première tranche : l'entrepôt (dehors, dedans, vie des petites, jours 1 à 4).
+  La « saison des rejetons » et la « veille du Couchant » (`MONDE.md`, section 1.1) sont retirées :
+  c'étaient des inventions qui contredisent l'œuvre.

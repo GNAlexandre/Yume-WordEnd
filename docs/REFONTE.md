@@ -433,6 +433,57 @@ Ce qui change, en lots :
 
 Les lots E1, E2, E3 et E9 ouvrent le chantier. E4 à E8 suivent dès que les cartes existent.
 
+### 7.1 Contrat des cartes
+
+Ce contrat fait foi pour E1, E2, E3 et tous les lots suivants. Il ne change que par une PR
+« contrats ».
+
+**Où et comment s'appelle une carte**
+- Fichier : `src/world/maps/<map_id>/<map_id>.tscn`.
+- Racine : `Map` (`src/world/map.gd`, `class_name Map`, `Node3D`), nommée comme son `map_id`
+  (`snake_case` sans accent : `entrepot`, `entrepot_rdc`, `sentier`, `village`, `port`…).
+
+**Repères**
+- Origine au **coin nord-ouest** ; x vers l'est, z vers le sud, y vers le haut ; 1 unité = 1 m.
+- La carte occupe `[0, largeur] × [0, profondeur]`, ce qui fait coïncider un pixel d'une image de
+  disposition avec une case.
+- Le sol courant est à y = 0 ; les paliers montent par pas de 0,5 m.
+
+**Exports de `Map`**
+- `display_name: String` : nom affiché à l'entrée.
+- `region: StringName` : lieu sur la carte de l'île, plusieurs cartes pouvant partager un lieu
+  (`entrepot` et `entrepot_rdc`).
+- `interior: bool`.
+- `size: Vector2` : largeur et profondeur, en m.
+- `camera_bounds: Rect2` : en x et z, par défaut la carte entière.
+- `light_preset: StringName` : préréglage de lumière de E9 ; vide = celui du moment de la journée.
+
+**Enfants figés**
+- `Ground` : le sol et sa collision (couche 1 world). C'est un `MapGround` (E2) dehors, une
+  `InteriorRoom` (E3) dedans.
+- `Geometry` : le décor (scènes de `src/world/props/`), avec le `PropBatcher` comme script du
+  nœud, comme aujourd'hui.
+- `Markers` : des `Marker3D` nommés, points d'arrivée. `Spawn` est obligatoire, plus un marqueur
+  par sortie, nommé comme la carte d'où l'on vient (`from_sentier`…).
+- `Exits` : des `MapExit` (`Area3D`, couche 0, masque 2 player), avec les exports
+  `target_map: StringName`, `target_marker: StringName` et `prompt: String`.
+  - `prompt` vide : on passe en marchant dedans (bout de sentier).
+  - `prompt` rempli : on passe par une interaction (« Entrer », « Monter à bord »).
+- `Life` : les PNJ, les animaux et les objets (E4, E5).
+
+**API de `WorldManager`** (E1)
+- `go_to(map_id: StringName, marker: StringName = &"Spawn") -> void` : fondu, chargement de la
+  carte, retrait de l'ancienne, pose du joueur sur le marqueur, regard tourné comme lui.
+- `current_map() -> StringName`.
+- `EventBus.map_entered(map_id: StringName)` : nouveau signal, au passé.
+- `GameState` retient la carte et la position pour la sauvegarde.
+
+**Le joueur, la caméra et l'interface** restent dans `game.tscn` ; seule la carte change
+dessous.
+
+**Transition** : l'île actuelle reste jouable comme une carte héritée (`ile_ancienne`) jusqu'à
+la phase 5.
+
 ---
 
 ## 8. Les images : cahier n° 3 pour ChatGPT
@@ -483,7 +534,15 @@ pas retomber sur la limite de session.
 
 ---
 
-## 10. Décisions à prendre
+## 10. Décisions
+
+**Tranchées le 9 octobre 2026**, toutes selon la recommandation :
+1. carte faite de lieux séparés, façon *Octopath Traveler* ;
+2. à l'acte 1, entraînement et faune, Timere à partir de l'acte 2 ;
+3. histoire en jours et en scènes, moments de vie facultatifs, plus de quêtes à collecter ;
+4. première tranche : l'entrepôt.
+
+Les options proposées au moment du choix :
 
 1. **Structure de la carte.**
    - **Recommandé** : une carte par lieu, à la manière d'*Octopath Traveler*, avec intérieurs et
