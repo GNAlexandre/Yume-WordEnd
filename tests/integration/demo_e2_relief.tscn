@@ -2,5 +2,5 @@
 
 [ext_resource type="Script" path="res://tests/integration/demo_e2_relief.gd" id="1_demo"]
 
-[node name="DemoE2Relief" type="Node3D"]
+[node name="DemoE2Relief" type="Node"]
 script = ExtResource("1_demo")

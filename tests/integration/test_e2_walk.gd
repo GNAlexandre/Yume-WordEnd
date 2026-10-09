@@ -3,7 +3,7 @@ extends GutTest
 ## (essai_relief) : il gravit l'escalier et la rampe, la falaise et le muret l'arrêtent, il ne
 ## marche pas sur l'eau dormante, ne tombe pas dans le vide ; il saute sur une butte de 0,5 m.
 
-const MAP_SCENE := preload("res://src/world/maps/essai_relief/essai_relief.tscn")
+const MAP_SCENE := "res://src/world/maps/essai_relief/essai_relief.tscn"
 const PLAYER_SCENE := preload("res://src/player/player.tscn")
 const MOVES: Array[StringName] = [&"move_left", &"move_right", &"move_forward", &"move_back"]
 
@@ -14,7 +14,7 @@ var _player: Player
 
 func before_each() -> void:
 	GameState.reset()
-	_map = MAP_SCENE.instantiate() as Node3D
+	_map = (load(MAP_SCENE) as PackedScene).instantiate() as Node3D
 	add_child_autofree(_map)
 	_ground = _map.get_node(^"Ground") as MapGround
 	_player = PLAYER_SCENE.instantiate() as Player

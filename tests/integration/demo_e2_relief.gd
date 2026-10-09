@@ -1,7 +1,8 @@
-extends Node3D
-## (E2) Démonstration du sol en relief : la carte essai_relief (src/world/maps/essai_relief/), dans
-## la vraie lumière de l'île (WorldEnvironment et Sun d'island.tscn), avec le joueur et sa caméra
-## fixe (post-traitement compris) ; game.tscn n'est pas touché. F6 dans l'éditeur.
+extends Node
+## (E2) Démonstration du sol en relief : la vraie partie (game.tscn), posée sur la carte
+## essai_relief (src/world/maps/essai_relief/) par WorldManager.enter_map, avec sa lumière
+## (src/world/map_light.tscn), le joueur et sa caméra fixe (post-traitement compris). F6 dans
+## l'éditeur.
 ##
 ## Captures : E2_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_e2_relief.tscn
 ## build/shots/e2_<vue>.png 60
@@ -13,9 +14,8 @@ extends Node3D
 ##   large      : la carte de haut, zoom au plus loin.
 ## Draw calls, primitives et mesures du sol sont écrits dans le journal (« E2 vue … »).
 
-const MAP_SCENE := preload("res://src/world/maps/essai_relief/essai_relief.tscn")
-const PLAYER_SCENE := preload("res://src/player/player.tscn")
-const ISLAND_SCENE := preload("res://src/world/island.tscn")
+const GAME_SCENE := preload("res://src/game.tscn")
+const MAP_ID := &"essai_relief"
 ## Où se tient le joueur (position sur la carte, direction regardée, zoom : distance de la caméra,
 ## 0 : celle par défaut) pour chaque vue.
 const SPOTS := {
@@ -32,7 +32,7 @@ const MEASURE_FRAME := 50
 var _view := ""
 var _state: Dictionary = {}
 var _frame := 0
-var _map: Node3D
+var _game: Node3D
 var _player: Player
 
 
@@ -42,20 +42,9 @@ func _ready() -> void:
 		_view = "depart"
 	_state = GameState.to_dict()
 	GameState.reset()
-	# La lumière de l'île : son environnement (ciel, brume, lumière ambiante) et son soleil.
-	var island := ISLAND_SCENE.instantiate()
-	for node_name: String in ["WorldEnvironment", "Sun"]:
-		var node := island.get_node(node_name)
-		island.remove_child(node)
-		node.owner = null
-		add_child(node)
-	island.free()
-	_map = MAP_SCENE.instantiate() as Node3D
-	add_child(_map)
-	_player = PLAYER_SCENE.instantiate() as Player
-	add_child(_player)
-	var size: Vector2 = _map.get(&"size")
-	_player.camera_rig.limits = Rect2(Vector2.ZERO, size)
+	_game = GAME_SCENE.instantiate() as Node3D
+	add_child(_game)
+	_player = _game.get_node(^"Player") as Player
 
 
 func _exit_tree() -> void:
@@ -67,7 +56,7 @@ func _process(_delta: float) -> void:
 	if _frame == STAGE_FRAME:
 		_stage()
 	elif _frame == MEASURE_FRAME:
-		var ground := _map.get_node(^"Ground") as MapGround
+		var ground := WorldManager.current_map_node().get_node(^"Ground") as MapGround
 		print(
 			(
 				"E2 vue %s : %d draw calls, %d primitives, %d objets ; sol : %s"
@@ -82,10 +71,12 @@ func _process(_delta: float) -> void:
 		)
 
 
+## La carte posée sans fondu, le joueur au sol à sa place, la caméra recalée.
 func _stage() -> void:
 	var spot: Array = SPOTS[_view]
 	var at: Vector3 = spot[0]
-	var ground := _map.get_node(^"Ground") as MapGround
+	WorldManager.enter_map(MAP_ID, &"Spawn", at)
+	var ground := WorldManager.current_map_node().get_node(^"Ground") as MapGround
 	_player.global_position = Vector3(at.x, ground.height_at(at.x, at.z) + 0.05, at.z)
 	_player.velocity = Vector3.ZERO
 	_player.set_aim_direction(spot[1] as Vector3, true)

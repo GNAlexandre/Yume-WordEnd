@@ -7,7 +7,7 @@ extends GutTest
 ## - la côte : rideau de roche sans collision, barrière, mer de nuages ;
 ## - la construction d'une carte de 80 × 60 m prend moins de 50 ms.
 
-const DEMO_SCENE := preload("res://src/world/maps/essai_relief/essai_relief.tscn")
+const DEMO_SCENE := "res://src/world/maps/essai_relief/essai_relief.tscn"
 const TEST_ROOT := "res://tests/data/maps"
 ## Temps de construction maximal d'une carte de 80 × 60 m (ms), meilleur de BUILD_RUNS essais.
 const BUILD_BUDGET_MSEC := 50.0
@@ -18,7 +18,7 @@ var _ground: MapGround
 
 
 func before_each() -> void:
-	_map = DEMO_SCENE.instantiate() as Node3D
+	_map = (load(DEMO_SCENE) as PackedScene).instantiate() as Node3D
 	add_child_autofree(_map)
 	_ground = _map.get_node(^"Ground") as MapGround
 
@@ -28,6 +28,8 @@ func _triangle_normal(a: Vector3, b: Vector3, c: Vector3) -> Vector3:
 
 
 func test_map_scene_follows_the_contract() -> void:
+	assert_true(_map is Map, "racine Map (src/world/map.gd)")
+	assert_eq(Map.problems(_map), PackedStringArray(), "contrat des cartes")
 	for node_name: String in ["Ground", "Geometry", "Markers", "Markers/Spawn", "Exits", "Life"]:
 		assert_true(_map.has_node(NodePath(node_name)), "enfant %s" % node_name)
 	assert_true(_map.get_node(^"Ground") is MapGround, "Ground : MapGround")
@@ -261,12 +263,30 @@ func test_triangles_for_ground_decals() -> void:
 		assert_gt(
 			_triangle_normal(points[n], points[n + 1], points[n + 2]).y, 0.0, "face vers le ciel"
 		)
+	# Un décalque de la carte se couche sur ce sol (ici sur la rampe), pas sur le relief de l'île.
+	assert_true((_map.get_node(^"Geometry/LilyPads") as GroundDecal).follow_ground)
+	var decal := GroundDecal.new()
+	decal.texture = load("res://assets/hd2d/decals/lily_pads.png") as Texture2D
+	decal.position = Vector3(48.0, 2.0, 14.0)
+	_map.get_node(^"Geometry").add_child(decal)
+	var arrays := decal.draped_mesh().surface_get_arrays(0)
+	var draped: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	assert_gt(draped.size(), 6, "décalque couché")
+	var worst := 0.0
+	var highest := 0.0
+	for p: Vector3 in draped:
+		worst = maxf(worst, absf(p.y - _ground.height_at(p.x, p.z)))
+		highest = maxf(highest, p.y)
+	assert_lt(worst, 0.01, "sur le sol de la carte")
+	assert_gt(highest, 1.6, "il monte avec la rampe")
 
 
 func test_an_80_by_60_map_builds_in_under_50_ms() -> void:
-	# Caches statiques (atlas avec ses mipmaps, matériau des faces) : une fois par partie.
+	# Caches statiques (atlas avec ses mipmaps, matériau des faces) : une fois par partie ; le
+	# matériau des faces est gardé ici (référence faible ailleurs) pour toute la mesure.
 	IslandTerrain.mipmapped_atlas(MapGround.ATLAS)
-	MapGround.cliff_material()
+	var keep := MapGround.cliff_material()
+	assert_not_null(keep, "matériau des faces")
 	var best := INF
 	var stats := {}
 	for _run in BUILD_RUNS:

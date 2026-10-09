@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://tests/stubs/e2_map_stub.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="PackedScene" path="res://src/world/map_light.tscn" id="4_light"]
 [ext_resource type="Script" path="res://src/world/map_ground.gd" id="2_ground"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="3_batcher"]
 [ext_resource type="PackedScene" path="res://src/world/props/oak_a.tscn" id="p1_oak_a"]
@@ -45,7 +46,9 @@ script = ExtResource("1_map")
 display_name = "Essai de relief"
 region = &"essai"
 size = Vector2(60, 45)
-camera_bounds = Rect2(8, 4, 44, 38)
+camera_bounds = Rect2(10, 5, 40, 32)
+
+[node name="Light" parent="." instance=ExtResource("4_light")]
 
 [node name="Ground" type="StaticBody3D" parent="."]
 script = ExtResource("2_ground")
@@ -167,7 +170,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, 34.2)
 
 [node name="LilyPads" parent="Geometry" instance=ExtResource("p22_lily_pads")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, 31)
-follow_ground = false
 
 [node name="CoastRocks" parent="Geometry" instance=ExtResource("p23_edge_rocks_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 3, 3.5)

@@ -37,8 +37,10 @@ const CLOUD_SEA_SIZE := 3000.0
 ## Soleil par défaut (vers lui) : celui de l'île (island.tscn, Sun).
 const DEFAULT_TOWARD_SUN := Vector3(-0.900073, 0.34202, 0.269984)
 
-## Matériau partagé des faces (mêmes images pour toutes les cartes).
-static var _cliff_material: ShaderMaterial = null
+## Matériau partagé des faces (mêmes images pour toutes les cartes), en référence faible : une
+## carte quittée le libère (règle des caches statiques des cartes, PLAN.md, « (E1) Créer une
+## carte »).
+static var _cliff_material: WeakRef = null
 
 ## Carte dont lire les données ; vide : le nom du nœud parent (la Map, nommée comme son map_id).
 @export var map_id: StringName = &""
@@ -60,7 +62,9 @@ var _ground_material: ShaderMaterial = null
 
 
 func _ready() -> void:
-	build()
+	# Déjà construit si un décalque de la carte l'a demandé avant (triangles_in).
+	if _builder == null:
+		build()
 	if not Engine.is_editor_hint():
 		_follow_sun.call_deferred()
 
@@ -160,21 +164,25 @@ func _make_ground_material() -> ShaderMaterial:
 	return material
 
 
-## Matériau partagé des faces et du rideau.
+## Matériau partagé des faces et du rideau (gardé tant qu'une carte s'en sert).
 static func cliff_material() -> ShaderMaterial:
-	if _cliff_material == null:
-		_cliff_material = ShaderMaterial.new()
-		_cliff_material.shader = CLIFF_SHADER
+	var material: ShaderMaterial = null
+	if _cliff_material != null:
+		material = _cliff_material.get_ref() as ShaderMaterial
+	if material == null:
+		material = ShaderMaterial.new()
+		material.shader = CLIFF_SHADER
 		var atlas: Texture2D = ATLAS
 		if not Engine.is_editor_hint():
 			atlas = IslandTerrain.mipmapped_atlas(ATLAS)
-		_cliff_material.set_shader_parameter(&"ground_atlas", atlas)
-		_cliff_material.set_shader_parameter(&"lip_texture", LIP_IMAGE)
-		_cliff_material.set_shader_parameter(&"cliff_texture", CLIFF_IMAGE)
-		_cliff_material.set_shader_parameter(&"underside_texture", UNDERSIDE_IMAGE)
-		_cliff_material.set_shader_parameter(&"bank_texture", BANK_IMAGE)
-		_cliff_material.set_shader_parameter(&"wall_texture", WALL_IMAGE)
-	return _cliff_material
+		material.set_shader_parameter(&"ground_atlas", atlas)
+		material.set_shader_parameter(&"lip_texture", LIP_IMAGE)
+		material.set_shader_parameter(&"cliff_texture", CLIFF_IMAGE)
+		material.set_shader_parameter(&"underside_texture", UNDERSIDE_IMAGE)
+		material.set_shader_parameter(&"bank_texture", BANK_IMAGE)
+		material.set_shader_parameter(&"wall_texture", WALL_IMAGE)
+		_cliff_material = weakref(material)
+	return material
 
 
 ## Image des matières pour le shader (R8 : indice de matière par pixel de materials.png).
@@ -277,10 +285,13 @@ func map_size() -> Vector2i:
 
 
 ## Triangles du sol qui touchent le rectangle rect (plan x, z) : [sommets par triangles, face
-## avant vers le ciel ; normales], comme IslandTerrain.triangles_in (décalques au sol).
+## avant vers le ciel ; normales], comme IslandTerrain.triangles_in (décalques au sol). Un décalque
+## prêt avant le sol (posé avant lui dans l'arbre) le fait construire.
 func triangles_in(rect: Rect2) -> Array[PackedVector3Array]:
 	var points := PackedVector3Array()
 	var normals := PackedVector3Array()
+	if _builder == null and is_inside_tree():
+		build()
 	if _builder == null:
 		return [points, normals]
 	var vertices := _builder.ground_vertices
