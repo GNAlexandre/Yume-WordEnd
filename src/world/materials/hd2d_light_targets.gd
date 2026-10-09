@@ -38,8 +38,8 @@ const LIT_PREFIX := "window_lit_"
 ## alpha_cut d'une vitre éclairée le jour : rien ne passe.
 const HIDDEN_ALPHA_CUT := 1.01
 ## Un StandardMaterial3D trempé : rugosité et spéculaire.
-const WET_ROUGHNESS := 0.3
-const WET_SPECULAR := 0.6
+const WET_ROUGHNESS := 0.5
+const WET_SPECULAR := 0.35
 
 var world: WorldEnvironment
 var environment: Environment
