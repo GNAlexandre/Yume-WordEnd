@@ -358,6 +358,8 @@ func _clear() -> void:
 			child.free()
 	_surfaces.clear()
 	_materials.clear()
+	# Les nouveaux matériaux recevront la colonne de coupe à la prochaine image.
+	_column = Vector4(-NO_CUT, -NO_CUT, 0.0, 0.0)
 
 
 func _internal(node: Node, node_name: String) -> void:
