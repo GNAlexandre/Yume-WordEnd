@@ -1,0 +1,31 @@
+{
+  "_comment": "Sol en relief de la carte mesure_80x60, écrit par tools/map_build.py gen d'après plan.json avec heights.png, materials.png et structures.png : modifier le plan et relancer gen (format : PLAN.md, « Format du sol des cartes extérieures »).",
+  "format": "map_ground",
+  "version": 1,
+  "size": [80, 60],
+  "heights_image": "heights.png",
+  "height_step_value": 16,
+  "materials_image": "materials.png",
+  "materials_scale": 2,
+  "palette": {
+    "#a8b040": "herbe_haute",
+    "#5aa83c": "herbe",
+    "#c89a5a": "terre_battue",
+    "#808080": "paves",
+    "#b4b4a0": "dalles",
+    "#3c6e32": "sous_bois",
+    "#e0b070": "sentier",
+    "#504020": "tourbe",
+    "#3060c0": "eau"
+  },
+  "edges": {
+    "north": "void",
+    "east": "void",
+    "south": "land",
+    "west": "land"
+  },
+  "skirt": 16,
+  "barrier": true,
+  "structures_image": "structures.png",
+  "spawn": [12, 52]
+}

@@ -490,3 +490,23 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   reposer sur la nouvelle. Le garde-corps et les bittes du quai ne bougent pas.
 - La cascade (`Island/Waterfall`) tombe désormais au bout du lit du ruisseau, en (−62,1 ; −62,4)
   (`IslandEdge.WATERFALL_ANGLE`) : l'image `edge_waterfall` se pose là, sous la lèvre.
+
+## E2 — sol en relief des cartes (pour E1, E9, E10 et le propriétaire de `GroundDecal`)
+- **E1 (fusion)** — *fait par E2 à la fusion d'E1* : `essai_relief.tscn` a pour racine
+  `res://src/world/map.gd`, le remplaçant `tests/stubs/e2_map_stub.gd` est retiré, et la carte
+  passe `tests/unit/test_maps.gd`. Son `Ground` est un `MapGround` qui lit `data/maps/<nom de la Map>/`.
+- **E1** — *fait par E1* (`CameraRig.limits` ← `WorldManager.camera_bounds()`). Reste à savoir :
+  une sortie `MapExit` d'une carte extérieure se pose en deçà du bord, une barrière invisible
+  (couche 1) borde la carte sur ses bords « land » et le long du vide.
+- **E1 / H8** : mesurer le chargement d'une carte en relief dans le build Web (lecture des images
+  par `Texture2D.get_image()`, construction : 35 à 40 ms sans écran pour 80 × 60 m).
+- **`GroundDecal.follow_ground`** (src/world/ground_decal.gd) — *fait par E2, avec l'accord du
+  coordinateur* : il drape sur le `MapGround` de sa carte (`MapGround.triangles_in`), sinon sur
+  `IslandTerrain`. Seule retouche de `ground_decal.gd` (`_ground_triangles`) ; ses caches restent
+  à E1.
+- **E9** : quand la lumière change (moment de la journée, préréglage d'une carte), appeler
+  `MapGround.set_sun(direction vers le soleil)` ; au chargement, `MapGround` suit la première
+  `DirectionalLight3D` de la scène (ombres portées des falaises dans le shader du sol).
+- **E4 / E5 (navigation)** : `MapGround.is_walkable(x, z)` (eau dormante exclue, vide exclu),
+  `height_at`, `level_at` ; les PNJ ne sautent pas les marches de 0,5 m (`tools/map_build.py check`
+  dit lesquelles ne s'atteignent qu'en sautant).

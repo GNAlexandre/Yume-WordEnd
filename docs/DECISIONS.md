@@ -2089,6 +2089,58 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   - première tranche : l'entrepôt (dehors, dedans, vie des petites, jours 1 à 4).
   La « saison des rejetons » et la « veille du Couchant » (`MONDE.md`, section 1.1) sont retirées :
   c'étaient des inventions qui contredisent l'œuvre.
+- **E2 — format du sol en relief** (`data/maps/<map_id>/`, PLAN.md section 4) : trois images de
+  pixels purs et `map.json`. Paliers : gris de 16 en 16 (0,5 m chacun ; lisible à l'œil, 15
+  paliers par défaut, `height_step_value` et `height_zero_value` pour plus), transparent = le vide.
+  Matières : une bibliothèque commune (`data/maps/ground_materials.json`, une couleur de peinture
+  par matière), la palette de `map.json` dit lesquelles la carte emploie ; `materials_scale` (1, 2 ou
+  4 pixels par mètre) pour peindre plus fin. Escaliers, rampes et style des faces dans
+  `structures.png`. `plan.json` (rectangles, polygones, ellipses, chemins, paliers, volées) n'est lu
+  que par `tools/map_build.py gen`.
+- **E2 — escaliers praticables** : la capsule du joueur (rayon 0,35 m, sol à 45° au plus) monte
+  sans sauter une marche de moins de 0,1025 m (mesuré : 0,10 m passe, 0,11 m arrête). Les marches
+  sont donc réelles, de **0,1 m** (5 par palier, giron de 0,2 m pour une case par palier), et la
+  collision est faite d'elles (pas de rampe cachée sous l'escalier). Pente d'une volée 40° au plus.
+- **E2 — marches de 0,5 m** : se sautent (le joueur saute 1 m), les PNJ ne les passeront pas ; plus
+  haut, c'est une falaise. La règle « aucune marche de plus de 0,5 m sans escalier » vise les
+  chemins : deux cases de chemin voisines de plus d'un palier d'écart sont une erreur ; une falaise
+  hors des chemins est voulue. `map_build.py check` avertit des cases praticables hors d'atteinte du
+  départ et de celles qu'on n'atteint qu'en sautant.
+- **E2 — faces** : talus de terre jusqu'à 0,5 m, roche au-delà, muret si `structures.png` le dit ;
+  joues d'escalier en muret, de rampe en talus. Les faces tournées vers le nord (jamais vues par la
+  caméra fixe) ne sont que dans la collision. Un draw call pour le sol, un pour toutes les faces et
+  le rideau de la côte, un pour la mer de nuages.
+- **E2 — la côte** : pas en escalier ; ligne coast_value() = 0 d'un champ lisse (part de terre des
+  4 × 4 cases autour de chaque coin) plus un bruit de 0,11 (± 0,44 m), échantillonnée tous les 1/3 m
+  comme le mesh ; elle déborde d'une case sur le vide quand la terre autour est d'un seul palier.
+  Seules les cases qu'elle peut couper sont découpées. Lèvre de pierre peinte (0,1 à 0,5 m) et
+  liseré sombre au bord ; rideau de roche (lèvre, falaise, dessous qui se resserre jusqu'à 38 m) sans
+  collision ; **barrière invisible le long du vide et des bords « land »** : on ne tombe pas d'une
+  carte (une sortie se pose en deçà du bord). Mer de nuages portée par `MapGround` (`CloudSea`) quand
+  la carte touche le vide.
+- **E2 — eau dormante non praticable** (`walkable: false`) : `is_walkable` dit non et une barrière
+  invisible la borde (pixel par pixel de `materials.png`), pour que le joueur ne marche pas là où les
+  PNJ ne vont pas. Le lit de ruisseau reste praticable.
+- **E2 — prolongement** : au-delà d'un bord « land », le sol continue sur `skirt` m (16 par défaut)
+  avec les cases du bord recopiées, pour que la caméra ne voie jamais la fin du monde ; il n'est pas
+  praticable (barrière au bord de la carte).
+- **E2 — lecture des images** : `load()` de la texture importée (sans perte) puis `get_image()`,
+  comme l'atlas du sol de l'île (`IslandTerrain.mipmapped_atlas`) ; aucun réglage d'import
+  particulier. Sur le Web, `get_image()` relit la texture (WebGL 2) : à mesurer avec le chargement des
+  cartes (E1).
+- **E2 — lumière** : `MapGround` suit la première `DirectionalLight3D` de la scène au chargement
+  (ombres portées des falaises dans le shader du sol, côté chaud des nuages) ; `set_sun()` pour un
+  changement de lumière (E9).
+- **E2 — `Map` en attente** : E1 créait `src/world/map.gd` en parallèle ; la carte de démonstration
+  `essai_relief` a eu pour racine un remplaçant (`tests/stubs/e2_map_stub.gd`) jusqu'à la fusion
+  d'E1, où elle a pris `map.gd` (le remplaçant est retiré).
+- **E2 — talus de terre** : image provisoire `assets/hd2d/cliff/bank_earth.png` (384 × 96, recette
+  dans `tools/hd2d_ground.py`) ; le muret reprend `wall_stone_b.png`, la roche `lip.png` et
+  `cliff.png`.
+- **E2 — mesures** (carte de 80 × 60 m, `tests/data/maps/mesure_80x60`, lecture comprise, sans
+  écran) : 35 à 40 ms ; sol 3 881 triangles, faces 5 648, collision 4 097, barrière 2 284. Carte de
+  démonstration (60 × 45 m) : 33 ms à chaud ; sol 2 358 triangles, faces 3 272 ; 14 à 26 draw calls
+  par vue avec ses décors (3 pour le sol).
 - **C3 — cahier des images n° 3** (`docs/ASSETS_HD2D_SUKASUKA.md`, d'après `docs/REFONTE.md`,
   sections 8 et 8.1) : 404 images, 90 planches et 2 portraits en six lots (I à N), lot J au-delà
   de l'ordre de grandeur (80 planches au lieu de 40 à 60) pour être exhaustif, priorités 1 à 3 ; les
@@ -2183,3 +2235,16 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   étape de taille, les 877 tests passaient. Le reste du cahier n° 3 ajoutera encore des images :
   la version Web allégée (WebP avec perte pour le seul export Web, ou un pck par lieu chargé à la
   demande) est à mesurer en phase 5 de la refonte, sans toucher au bureau.
+- **E2 — décalques sur les cartes** : `GroundDecal.follow_ground` drape sur le `MapGround` (enfant
+  `Ground`) du premier ancêtre qui en a un, par `MapGround.triangles_in` (même forme que
+  `IslandTerrain.triangles_in`, coordonnées de la carte décalées de sa position) ; sans `MapGround`,
+  il suit `IslandTerrain` comme avant (île ancienne). Les décalques d'une carte en relief gardent
+  donc `follow_ground` vrai (nénuphars d'`essai_relief`, décalque d'essai sur la rampe dans les tests).
+- **E2 — matériau des faces partagé** : `MapGround.cliff_material()` est gardé par une référence
+  faible (règle d'E1 : une carte quittée libère ses images) ; le sol se bâtit à `_ready`, ou plus
+  tôt à la première question (`triangles_in` d'un décalque prêt avant lui).
+- **E2 — mesures dans la vraie partie** (`game.tscn` + `WorldManager.enter_map(&"essai_relief")`,
+  Xvfb, `tests/integration/demo_e2_relief.gd`) : 24 à 33 draw calls par vue (sol 1, faces 1, mer de
+  nuages 1 ; le reste : décors, joueur, interface, post-traitement) ; construction du sol 36 à 60 ms
+  à froid avec le rendu (33 ms à chaud sans écran). La vue « large » est au zoom le plus éloigné
+  du jeu (`max_distance` 25 m) ; la carte entière se voit par `tools/map_build.py view`.

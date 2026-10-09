@@ -18,6 +18,7 @@
   {"path": "assets/hd2d/cliff/cliff.png", "size": [384, 384], "kind": "tile", "prio": 2},
   {"path": "assets/hd2d/cliff/underside.png", "size": [384, 384], "kind": "tile", "prio": 2},
   {"path": "assets/hd2d/cliff/lip.png", "size": [384, 96], "kind": "tile_h", "prio": 3},
+  {"path": "assets/hd2d/cliff/bank_earth.png", "size": [384, 96], "kind": "tile_h", "prio": 3, "wrap": "x"},
   {"path": "assets/hd2d/buildings/warehouse_main.png", "size": [1536, 624], "kind": "facade", "prio": 1},
   {"path": "assets/hd2d/buildings/warehouse_porch.png", "size": [576, 312], "kind": "panel", "prio": 1},
   {"path": "assets/hd2d/buildings/warehouse_wing.png", "size": [576, 624], "kind": "facade", "prio": 1},
