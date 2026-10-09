@@ -468,6 +468,10 @@ E1, docs/DECISIONS.md) ; le mode d'emploi pour créer une carte est dans PLAN.md
   qui ne veut pas montrer ses bords resserre ses bornes (carte d'essai : `Rect2(10, 9, 20, 13)`
   pour 40 × 30 m).
 - `light_preset: StringName` : préréglage de lumière de E9 ; vide = celui du moment de la journée.
+  (E9) Un moment (`aube`, `matin`, `apres_midi`, `couchant`, `nuit`), `interieur`, ou tout
+  préréglage de `data/lighting/` ; vide et `interior` : `interieur`, qui suit le moment du dehors
+  (lumière des fenêtres le jour, lampes et cristaux la nuit). Le temps qu'il fait (`pluie`,
+  `averse`) s'ajoute dehors. API et mode d'emploi : PLAN.md, section 3 (`Atmosphere`).
 
 **Enfants figés**
 - `Ground` : le sol et sa collision (couche 1 world). C'est un `MapGround` (E2) dehors, une
@@ -490,9 +494,9 @@ E1, docs/DECISIONS.md) ; le mode d'emploi pour créer une carte est dans PLAN.md
   - (E1) Rien ne part pendant un changement de carte, ni pendant les `SETTLE_FRAMES` images
     physiques qui suivent l'arrivée : un joueur posé dans une sortie doit en sortir et y revenir.
 - `Life` : les PNJ, les animaux et les objets (E4, E5).
-- (E1) D'autres enfants sont permis. En attendant les préréglages de E9 (`light_preset`), une
-  carte porte sa lumière : une instance de `src/world/map_light.tscn` (`WorldEnvironment`, `Sun`
-  et `Lighting`, réglages de l'île).
+- (E1) D'autres enfants sont permis. (E9) Une carte ne porte pas sa lumière (`map_light.tscn`
+  est retiré) : `Atmosphere` lui ajoute un enfant `AtmosphereRig` (environnement et soleil si
+  elle n'en a pas, lumière du joueur, pluie) ; l'ancienne île garde les siens.
 
 **API de `WorldManager`** (E1)
 - `go_to(map_id: StringName, marker: StringName = &"Spawn") -> void` : fondu, chargement de la

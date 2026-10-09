@@ -22,9 +22,10 @@ extends Node3D
 ##   posé au sol sous le marqueur et regarde son −Z ;
 ## - Exits : des MapExit (src/world/map_exit.gd) ;
 ## - Life : les PNJ, les animaux et les objets (E4, E5).
-## D'autres enfants sont permis (lumière, ciel…) : en attendant les préréglages de E9
-## (light_preset), une carte porte sa lumière, par exemple une instance de
-## src/world/map_light.tscn.
+## D'autres enfants sont permis. (E9) La lumière ne fait plus partie de la carte : Atmosphere
+## (src/autoload/atmosphere.gd) lui ajoute un enfant « AtmosphereRig » (environnement et soleil
+## si elle n'en a pas, lumière du joueur, pluie) et pose le préréglage de light_preset, ou
+## celui du moment de la journée.
 
 ## Dossier des cartes : une carte = <MAPS_DIR>/<map_id>/<map_id>.tscn.
 const MAPS_DIR := "res://src/world/maps"
@@ -50,7 +51,8 @@ const WORLD_LAYER := 1
 @export var size: Vector2 = Vector2(40.0, 30.0)
 ## Bornes du point visé par la caméra, en x et z ; vide (taille nulle) : la carte entière.
 @export var camera_bounds: Rect2 = Rect2()
-## Préréglage de lumière (E9) ; vide : celui du moment de la journée.
+## Préréglage de lumière (E9 : data/lighting/<id>.tres, un moment ou « interieur ») ; vide :
+## celui du moment de la journée (« interieur » pour une carte intérieure).
 @export var light_preset: StringName = &""
 
 

@@ -26,7 +26,9 @@ change pas sans PR « contrats ».
 - Capture d'une scène : `tools/screenshot.sh res://src/world/island.tscn build/shots/island.png`,
   puis ouvre le PNG avec l'outil de lecture d'images. Vues HD-2D de la vraie partie (menu, cinq
   zones, conversation, veille, (E1) sortie du quai, fondu, carte d'essai, retour ; draw calls
-  dans le journal) : `tools/hd2d_shots.sh [vue…]`.
+  dans le journal) : `tools/hd2d_shots.sh [vue…]`. (E9) La même vue sous chaque préréglage de
+  lumière (moment × temps, luminance et draw calls dans `build/shots/e9/e9.log`) :
+  `tools/e9_shots.sh [lieu:moment:temps…]` ; dans le jeu, `?moment=nuit&temps=pluie`, F7 / F8.
 - Images du décor (docs/ASSETS_HD2D.md, liste dans `tools/hd2d_manifest.json`) :
   `python3 tools/hd2d_assets.py gen` (remplaçants absents ; `--force`, ou des noms), `check`,
   `fit <fichier>` (image livrée trop grande), `atlas` (après une tuile de sol). Puis
@@ -209,6 +211,12 @@ change pas sans PR « contrats ».
   `/userfs/godot/app_userdata/WordEnd`. L'autoload `DesktopApp` (plein écran, « Quitter ») se croit
   sur le bureau dans les tests : `DesktopApp.simulated_web` (1 : Web), `settings_path` et
   `quit_enabled = false` (sinon « Quitter » ferme GUT), rétablis dans `after_each`.
+- (E9) La lumière n'est pas dans les cartes : `Atmosphere` habille la carte courante
+  (`AtmosphereRig`) et pose le préréglage de son `light_preset` ou du moment
+  (`GameState.moment`, `weather` ; `data/lighting/`). Un test qui change le moment ou le temps
+  rétablit `GameState.reset()` ; un test qui habille une carte à la main (`Atmosphere.dress`)
+  appelle `Atmosphere.dress(null)` dans `after_each` ; `Atmosphere.step(s)` avance une
+  transition. La luminance se mesure sous Xvfb : `tools/e9_shots.sh`.
 - `zone_entered` n'est émis qu'au changement de zone (M2) : un test qui replace le joueur dans
   la zone où il est déjà ne le reçoit pas (`Zone.LAST_ZONE_META` sur le corps du joueur).
 - Quêtes et dialogues JSON : une clé inconnue (faute de frappe) les rend invalides, sauf une clé

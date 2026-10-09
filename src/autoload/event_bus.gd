@@ -4,7 +4,8 @@ extends Node
 ## Un système émet ses signaux ici ; les autres les écoutent. Personne ne lit directement les
 ## nœuds d'un autre système. L'émetteur attendu est indiqué au-dessus de chaque signal.
 ## Les signaux ne sont jamais émis dans cette classe, d'où l'annotation unused_signal.
-## Fichier gelé : ne change qu'au Lot 0 ou dans une PR « contrats » (dernière : E1, cartes).
+## Fichier gelé : ne change qu'au Lot 0 ou dans une PR « contrats » (dernières : E1, cartes ; E9,
+## lumière et temps).
 
 @warning_ignore_start("unused_signal")
 
@@ -68,8 +69,14 @@ signal zone_entered(zone_id: StringName)
 ## pendant un go_to). Émis par WorldManager (go_to, enter_map) ; la caméra prend les bornes de
 ## la carte et se recale, SaveManager demande une auto-sauvegarde.
 signal map_entered(map_id: StringName)
-## Phase du jour : &"morning", &"day", &"evening", &"night" (M3, cycle jour/nuit).
+## Phase du jour : &"morning", &"day", &"evening", &"night" (M3, cycle jour/nuit). (E9) Ancien
+## nom : Atmosphere le traduit en moment (matin, apres_midi, couchant, nuit) ; préférer
+## Atmosphere.set_moment ou GameState.moment.
 signal day_phase_changed(phase: StringName)
+## (E9) Moment de la journée ou temps qu'il fait changé (GameState.MOMENTS, GameState.WEATHERS).
+## Émis par GameState quand moment ou weather change (setters, from_dict, reset) ; Atmosphere
+## pose la lumière (transition douce, ou immédiate au chargement d'une partie et d'une carte).
+signal atmosphere_changed(moment: StringName, weather: StringName)
 ## Skin actif. Émis par GameState quand GameState.skin_id change ; le joueur (L1) l'applique.
 signal skin_changed(skin_id: StringName)
 ## PV max du joueur. Émis par GameState quand GameState.max_hp change (récompense de quête) ;

@@ -26,6 +26,8 @@ func _fill_state() -> void:
 	GameState.record_score(&"dunes", 90, 1)
 	GameState.set_quest_step(&"pages", &"deliver", 2)
 	GameState.tracked_quest = &"pages"
+	GameState.moment = &"nuit"
+	GameState.weather = &"pluie"
 
 
 func test_no_file_means_no_save() -> void:
