@@ -427,6 +427,68 @@ def lip(size, rnd):
     return img
 
 
+def bank_earth(size, rnd):
+    """(E2) Talus de terre vu de face, 1 m de haut : la face d'un petit palier du sol en relief
+    des cartes (map_ground_cliff.gdshader). En haut, l'herbe qui déborde en touffes ; puis la
+    terre en strates molles, racines, cailloux ; en bas, les tons de la terre de potager
+    (garden_soil), que le shader prolonge sous un talus plus haut. Sans raccord à gauche et à
+    droite."""
+    w, h = size
+    soil = ramp("#56402C", 6, spread=0.5)
+    img = posterize(_soft(fractal(size, (8, 3), rnd, 3, gain=0.6)), soil[0:4], dither=90)
+    d = ImageDraw.Draw(img)
+    # Strates : lignes ondulées plus sombres, ou plus claires (sable mêlé), sans raccord.
+    for band in range(4):
+        y0 = 30 + band * 16 + rnd.randint(-3, 3)
+        phase = rnd.uniform(0, 2 * math.pi)
+        tone = soil[0] if band % 2 == 0 else soil[4]
+        for x in range(w):
+            y = y0 + round(2.5 * math.sin(2 * math.pi * x * 3 / w + phase))
+            if rnd.random() < 0.8:
+                d.point((x, y), fill=rgba(tone))
+    _pebbles(img, rnd, 26, "stone_dark", (2, 5))
+    _dots(img, rnd, 260, [soil[0], soil[5]], (1, 1))
+    # Racines qui pendent de l'herbe.
+    roots = ramp("#7A5A3E", 4)
+    for _ in range(14):
+        x = rnd.randrange(w)
+        y = rnd.randint(14, 22)
+        for _k in range(rnd.randint(12, 34)):
+            x += rnd.choice((-1, 0, 0, 0, 1))
+            y += 1
+            if y >= h - 6:
+                break
+            for dx in (-w, 0, w):
+                d.point((x + dx, y), fill=rgba(roots[1]))
+                d.point((x + dx + 1, y), fill=rgba(roots[0]))
+    # Mottes plus claires dans la terre.
+    for _ in range(18):
+        rx = rnd.uniform(2, 4.5)
+        c = Canvas(int(2 * rx) + 4, int(1.2 * rx) + 4, rnd)
+        c.blob(c.w / 2.0, c.h / 2.0, rx, rx * 0.45, soil[2:6])
+        paste_wrap(img, c.finish(soil[0]), rnd.randrange(w), rnd.randint(24, h - 8))
+    # L'herbe du palier (tons de la tuile d'herbe du jeu) : un liseré de gazon au bord irrégulier,
+    # son ombre sur la terre, puis des brins qui retombent.
+    grass_tones = ramp("#7E8A46", 5, spread=0.45)
+    for x in range(w):
+        edge = 12 + round(3 * math.sin(2 * math.pi * x * 5 / w) + 2 * math.sin(2 * math.pi * x * 13 / w + 1.1))
+        d.line((x, edge + 1, x, edge + 3), fill=rgba(darker(soil[0], 0.8)))
+    turf = posterize(fractal((w, 24), (8, 2), rnd, 2), grass_tones[1:4], dither=60)
+    for x in range(w):
+        edge = 12 + round(3 * math.sin(2 * math.pi * x * 5 / w) + 2 * math.sin(2 * math.pi * x * 13 / w + 1.1))
+        img.paste(turf.crop((x, 0, x + 1, edge)), (x, 0))
+        d.point((x, edge), fill=rgba(grass_tones[0]))
+    for _ in range(220):
+        x = rnd.randrange(w)
+        n = rnd.randint(3, 10)
+        col = rnd.choice(grass_tones[1:])
+        y0 = 10 + rnd.randint(0, 5)
+        for k in range(n):
+            for dx in (-w, 0, w):
+                d.point((x + dx + (k // 5), y0 + k), fill=rgba(col if k < n - 1 else grass_tones[0]))
+    return img
+
+
 # --- Matières des bâtiments --------------------------------------------------------------------
 
 
@@ -554,7 +616,7 @@ RECIPES = {
     "ground/flagstone": flagstone, "ground/cobble": cobble, "ground/sand": sand,
     "ground/rock": rock, "ground/forest_floor": forest_floor, "ground/peat": peat,
     "ground/water": water, "ground/mud": mud, "ground/metal": metal,
-    "cliff/cliff": cliff, "cliff/underside": underside, "cliff/lip": lip,
+    "cliff/cliff": cliff, "cliff/underside": underside, "cliff/lip": lip, "cliff/bank_earth": bank_earth,
     "buildings/materials/wall_planks": wall_planks, "buildings/materials/roof_slate": roof_slate,
     "buildings/materials/wall_stone": wall_stone, "buildings/materials/wall_plaster": wall_plaster,
     "buildings/materials/roof_tiles": roof_tiles, "buildings/materials/roof_tin": roof_tin,
