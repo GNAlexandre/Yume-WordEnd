@@ -236,7 +236,7 @@ func test_each_furnished_view_stays_within_the_draw_call_budget() -> void:
 	var meshes: Array[MeshInstance3D] = _batches()
 	meshes.append_array(_room.surfaces())
 	for item: Dictionary in _room.plan.rooms:
-		var rect: Rect2i = (item["rects"] as Array)[0]
+		var rect: Rect2 = (item["rects"] as Array)[0]
 		var feet := Vector3(rect.get_center().x, 0.0, rect.get_center().y)
 		var camera := _camera(feet)
 		var drawn := 0
