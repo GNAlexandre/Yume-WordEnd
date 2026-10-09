@@ -88,6 +88,8 @@ func build(data: MapGroundData) -> void:
 	_structures()
 	_faces()
 	MapGroundCoast.build(self, data, Vector2i(_level_min, _level_max))
+	if data.barrier:
+		_closed_barriers()
 
 
 # --- Grille, vide, côte ---------------------------------------------------------------------------
@@ -301,42 +303,33 @@ func _ground_rect(x0: float, z0: float, x1: float, z1: float, y: float) -> void:
 ## Cases plates entières : rectangles d'un même palier, étendus le long de la rangée, puis vers le
 ## sud tant que la rangée suivante est libre et du même palier sur toute la largeur.
 func _flat_rectangles() -> void:
-	var used := PackedByteArray()
-	used.resize(_w * _d)
+	# Clé de chaque case : palier + 1 pour une case plate entière, 0 sinon ; mise à 0 une fois
+	# prise dans un rectangle.
+	var keys := PackedInt32Array()
+	keys.resize(_w * _d)
+	for k in keys.size():
+		keys[k] = _level[k] - MapGroundData.VOID_LEVEL + 1 if _type[k] == FLAT else 0
 	for j in _d:
+		var row := j * _w
 		var i := 0
 		while i < _w:
-			var k := j * _w + i
-			if not _free(k, _level[k], used):
+			var key := keys[row + i]
+			if key == 0:
 				i += 1
 				continue
-			var level := _level[k]
 			var i1 := i
-			while i1 + 1 < _w and _free(k + i1 + 1 - i, level, used):
+			while i1 + 1 < _w and keys[row + i1 + 1] == key:
 				i1 += 1
 			var j1 := j
-			while j1 + 1 < _d and _row_free(i, i1, j1 + 1, level, used):
+			var span := keys.slice(row + i, row + i1 + 1)
+			while j1 + 1 < _d and keys.slice((j1 + 1) * _w + i, (j1 + 1) * _w + i1 + 1) == span:
 				j1 += 1
 			for jj in range(j, j1 + 1):
 				for ii in range(i, i1 + 1):
-					used[jj * _w + ii] = 1
-			var y := level * MapGroundData.LEVEL_HEIGHT
+					keys[jj * _w + ii] = 0
+			var y := (key - 1 + MapGroundData.VOID_LEVEL) * MapGroundData.LEVEL_HEIGHT
 			_ground_rect(_x0 + i, _z0 + j, _x0 + i1 + 1, _z0 + j1 + 1, y)
 			i = i1 + 1
-
-
-## Vrai si la case k est plate (entière), du palier level et pas encore prise.
-func _free(k: int, level: int, used: PackedByteArray) -> bool:
-	return _type[k] == FLAT and used[k] == 0 and _level[k] == level
-
-
-## Vrai si la rangée j a des cases plates libres du palier level de i0 à i1.
-func _row_free(i0: int, i1: int, j: int, level: int, used: PackedByteArray) -> bool:
-	var row := j * _w
-	for i in range(i0, i1 + 1):
-		if not _free(row + i, level, used):
-			return false
-	return true
 
 
 ## Cases coupées par la côte : découpées, coupées sur la côte ; segments de la côte (sur la ligne
@@ -379,8 +372,19 @@ func _rim_cells() -> void:
 			for b in n:
 				for a in n:
 					var g := b * (n + 1) + a
-					_clip(base, values, Vector3i(g, g + 1, g + n + 1), y, cut)
-					_clip(base, values, Vector3i(g + 1, g + n + 2, g + n + 1), y, cut)
+					var v00 := values[g]
+					var v10 := values[g + 1]
+					var v01 := values[g + n + 1]
+					var v11 := values[g + n + 2]
+					if v00 >= 0.0 and v10 >= 0.0 and v01 >= 0.0 and v11 >= 0.0:
+						# Sous-case entière (le plus souvent) : ses deux triangles tels quels.
+						var q := base + g
+						ground_indices.append_array(
+							PackedInt32Array([q, q + 1, q + n + 1, q + 1, q + n + 2, q + n + 1])
+						)
+					elif v00 >= 0.0 or v10 >= 0.0 or v01 >= 0.0 or v11 >= 0.0:
+						_clip(base, values, Vector3i(g, g + 1, g + n + 1), y, cut)
+						_clip(base, values, Vector3i(g + 1, g + n + 2, g + n + 1), y, cut)
 			_rim_sides(i, j, values, y)
 
 
@@ -757,22 +761,38 @@ func _face(line: PackedVector2Array, heights: Vector4, normal: Vector3, look: Ve
 ## grille ; celles des cases entières fondues le long d'une ligne quand elles se suivent à
 ## l'identique.
 func _faces() -> void:
+	# Une ligne dont les deux rangées (ou colonnes) ont les mêmes paliers n'a pas de face.
+	var above := _level.slice(0, _w)
 	for j in range(1, _d):
-		_face_line(j, true)
+		var below := _level.slice(j * _w, (j + 1) * _w)
+		_face_line(j, true, above, below)
+		above = below
+	var columns := PackedInt32Array()
+	columns.resize(_w * _d)
+	for j in _d:
+		for i in _w:
+			columns[i * _d + j] = _level[j * _w + i]
+	var west := columns.slice(0, _d)
 	for i in range(1, _w):
-		_face_line(i, false)
+		var east := columns.slice(i * _d, (i + 1) * _d)
+		_face_line(i, false, west, east)
+		west = east
 
 
 ## Ligne de la grille : horizontale (z = _z0 + line, entre la rangée du nord et celle du sud) ou
 ## verticale (x = _x0 + line, entre la colonne de l'ouest et celle de l'est).
-func _face_line(line: int, horizontal: bool) -> void:
+func _face_line(
+	line: int, horizontal: bool, first_levels: PackedInt32Array, second_levels: PackedInt32Array
+) -> void:
+	if first_levels == second_levels:
+		return
 	var count := _w if horizontal else _d
 	var run_start := -1
 	var run_key := Vector3i.ZERO
 	for t in count + 1:
 		var key := Vector3i.ZERO
 		var mergeable := false
-		if t < count:
+		if t < count and first_levels[t] != second_levels[t]:
 			var first := (line - 1) * _w + t if horizontal else t * _w + line - 1
 			var second := line * _w + t if horizontal else t * _w + line
 			var ta := _type[first]
@@ -841,6 +861,54 @@ func _clipped_face(line: int, t: int, horizontal: bool, cells: Vector2i) -> void
 		elif vb < 0.0:
 			b = cross_point(a, va, b, vb)
 		_face(PackedVector2Array([a, b]), Vector4(low, low, high, high), normal, Vector2i(style, 0))
+
+
+## Barrière autour des matières qu'on ne foule pas (eau dormante) : le long de chaque côté de pixel
+## de materials.png entre une matière praticable et une qui ne l'est pas, sur une case plate.
+func _closed_barriers() -> void:
+	var data := _data
+	var s := data.materials_scale
+	var w := data.width * s
+	var h := data.depth * s
+	var pixels := data.pixel_materials
+	var size := 1.0 / s
+	for index in data.material_specs.size():
+		if bool(data.material_specs[index]["walkable"]):
+			continue
+		var p := pixels.find(index)
+		while p >= 0:
+			var x := p % w
+			var y := floori(float(p) / w)
+			var c := floori(float(y) / s) * data.width + floori(float(x) / s)
+			if (
+				data.levels[c] != MapGroundData.VOID_LEVEL
+				and data.kinds[c] == MapGroundData.Kind.FLAT
+			):
+				var floor_y := data.levels[c] * MapGroundData.LEVEL_HEIGHT
+				var x0 := x * size
+				var z0 := y * size
+				if x > 0 and _walkable_pixel(pixels[p - 1]):
+					_barrier_wall(Vector2(x0, z0), Vector2(x0, z0 + size), floor_y)
+				if x + 1 < w and _walkable_pixel(pixels[p + 1]):
+					_barrier_wall(Vector2(x0 + size, z0), Vector2(x0 + size, z0 + size), floor_y)
+				if y > 0 and _walkable_pixel(pixels[p - w]):
+					_barrier_wall(Vector2(x0, z0), Vector2(x0 + size, z0), floor_y)
+				if y + 1 < h and _walkable_pixel(pixels[p + w]):
+					_barrier_wall(Vector2(x0, z0 + size), Vector2(x0 + size, z0 + size), floor_y)
+			p = pixels.find(index, p + 1)
+
+
+func _walkable_pixel(index: int) -> bool:
+	return bool(_data.material_specs[index]["walkable"])
+
+
+## Mur invisible de la barrière sur le segment a → b, du sol floor_y − 1 à floor_y + 2 m.
+func _barrier_wall(a: Vector2, b: Vector2, floor_y: float) -> void:
+	var a0 := Vector3(a.x, floor_y - 1.0, a.y)
+	var b0 := Vector3(b.x, floor_y - 1.0, b.y)
+	var a1 := Vector3(a.x, floor_y + 2.0, a.y)
+	var b1 := Vector3(b.x, floor_y + 2.0, b.y)
+	barrier.append_array(PackedVector3Array([a0, b0, b1, a0, b1, a1]))
 
 
 # --- Sorties --------------------------------------------------------------------------------------

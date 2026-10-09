@@ -43,6 +43,8 @@ const NO_FACE := 255
 const NO_MATERIAL := 255
 const DEFAULT_STEP_VALUE := 16
 const DEFAULT_SKIRT := 16.0
+## Mètres de vide, depuis la terre, où les pixels de materials.png prennent la matière voisine.
+const FILL_DEPTH := 3
 ## Liseré de la côte : cases (distance de Tchebychev) d'une case de terre au vide où la côte peut
 ## passer ; découpage de ces cases (pas de 1 / COAST_SUBDIV m) ; écart de la côte au tracé peint.
 const RIM_ZONE := 2
@@ -373,10 +375,13 @@ func _read_heights(image: Image, step: int, spec: Dictionary) -> void:
 	step = maxi(step, 1)
 	var bad := 0
 	var first := Vector2i(-1, -1)
-	for c in width * depth:
-		if bytes[c * 4 + 3] < 128:
+	var words := bytes.to_int32_array()
+	for c in words.size():
+		# Opaque : alpha ≥ 128, le mot (petit-boutiste) est négatif ; le gris est l'octet rouge.
+		var word := words[c]
+		if word >= 0:
 			continue
-		var value := int(bytes[c * 4]) - zero
+		var value := (word & 0xff) - zero
 		if posmod(value, step) != 0:
 			bad += 1
 			if bad == 1:
@@ -396,17 +401,20 @@ func _read_materials(image: Image) -> void:
 	var bytes := _rgba(image, Vector2i(w, depth * materials_scale), "materials.png")
 	if bytes.is_empty():
 		return
+	# Un mot par pixel (octets R, G, B, A lus en petit-boutiste : A tout en haut, négatif dès que
+	# A ≥ 128) ; clé de couleur : les trois octets du bas (B << 16 | G << 8 | R).
+	var words := bytes.to_int32_array()
 	var by_color := {}
 	for index in material_specs.size():
 		for color: Color in material_specs[index]["colors"]:
-			by_color[color.to_rgba32() >> 8] = index
+			by_color[(color.b8 << 16) | (color.g8 << 8) | color.r8] = index
 	var unknown := {}
 	var last_key := -1
 	var last_index := NO_MATERIAL
-	for p in pixel_materials.size():
-		var at := p * 4
-		if bytes[at + 3] >= 128:
-			var key := (bytes[at] << 16) | (bytes[at + 1] << 8) | bytes[at + 2]
+	for p in words.size():
+		var word := words[p]
+		if word < 0:
+			var key := word & 0xffffff
 			if key != last_key:
 				last_key = key
 				last_index = by_color.get(key, NO_MATERIAL)
@@ -418,8 +426,8 @@ func _read_materials(image: Image) -> void:
 		var y := floori(float(p) / w)
 		var cell := floori(float(y) / materials_scale) * width + floori(float(x) / materials_scale)
 		if levels[cell] != VOID_LEVEL:
-			var rgb := (bytes[at] << 16) | (bytes[at + 1] << 8) | bytes[at + 2]
-			unknown["transparent" if bytes[at + 3] < 128 else "#%06x" % rgb] = Vector2i(x, y)
+			var rgb := ((word & 0xff) << 16) | (word & 0xff00) | ((word >> 16) & 0xff)
+			unknown["transparent" if word >= 0 else "#%06x" % rgb] = Vector2i(x, y)
 	for color: String in unknown.keys():
 		var at: Vector2i = unknown[color]
 		problems.append(
@@ -438,16 +446,21 @@ func _read_structures(image: Image) -> void:
 	var by_color := {}
 	for color: String in table.keys():
 		if Color.html_is_valid(color):
-			by_color[Color.html(color).to_rgba32() >> 8] = table[color]
-	for c in width * depth:
-		var key := (bytes[c * 4] << 16) | (bytes[c * 4 + 1] << 8) | bytes[c * 4 + 2]
-		if bytes[c * 4 + 3] < 128 or key == 0:
+			var rgb := Color.html(color)
+			by_color[(rgb.b8 << 16) | (rgb.g8 << 8) | rgb.r8] = table[color]
+	# Mots petit-boutistes comme dans _read_materials : négatifs si opaques.
+	var words := bytes.to_int32_array()
+	for c in words.size():
+		var word := words[c]
+		var key := word & 0xffffff
+		if word >= 0 or key == 0:
 			continue
 		if not by_color.has(key):
+			var rgb := ((word & 0xff) << 16) | (word & 0xff00) | ((word >> 16) & 0xff)
 			problems.append(
 				(
 					"structures.png : couleur #%06x inconnue en (%d, %d)"
-					% [key, c % width, floori(float(c) / width)]
+					% [rgb, c % width, floori(float(c) / width)]
 				)
 			)
 			continue
@@ -590,6 +603,14 @@ func _validate() -> void:
 
 ## Vrai si une case vide (ou le vide au-delà d'un bord « void ») est à moins de reach cases.
 func _void_within(i: int, j: int, reach: int) -> bool:
+	if i >= reach and j >= reach and i + reach < width and j + reach < depth:
+		# Fenêtre dans la carte : lecture directe des paliers.
+		for dj in range(-reach, reach + 1):
+			var row := (j + dj) * width + i
+			for di in range(-reach, reach + 1):
+				if levels[row + di] == VOID_LEVEL:
+					return true
+		return false
 	for dj in range(-reach, reach + 1):
 		for di in range(-reach, reach + 1):
 			if is_void_at(i + di, j + dj):
@@ -643,40 +664,58 @@ func _path_cliff(c: int, n: Vector2i) -> bool:
 ## qui déborde sur le vide, et autour des points du sol).
 func _fill_void_materials() -> void:
 	var w := width * materials_scale
-	var h := depth * materials_scale
-	# Parcours en largeur depuis les pixels peints qui touchent un pixel sans matière.
+	var total := w * depth * materials_scale
 	var empty := pixel_materials.find(NO_MATERIAL)
 	if empty < 0:
 		return
+	# Couches successives, depuis la terre, sur FILL_DEPTH pixels par mètre de matière (la côte ne
+	# déborde pas plus loin sur le vide) : chaque pixel vide de la couche prend la matière d'un
+	# voisin peint ; au-delà, la matière 0 (jamais dessinée).
 	var queue := PackedInt32Array()
-	for p in range(empty, pixel_materials.size()):
-		if pixel_materials[p] == NO_MATERIAL:
+	var p := empty
+	while p >= 0:
+		var x := p % w
+		if (
+			(x > 0 and pixel_materials[p - 1] != NO_MATERIAL)
+			or (x + 1 < w and pixel_materials[p + 1] != NO_MATERIAL)
+			or (p >= w and pixel_materials[p - w] != NO_MATERIAL)
+			or (p + w < total and pixel_materials[p + w] != NO_MATERIAL)
+		):
 			queue.append(p)
-	# Couches successives : chaque pixel vide prend la matière d'un voisin déjà peint.
-	var total := w * h
-	while not queue.is_empty():
+		p = pixel_materials.find(NO_MATERIAL, p + 1)
+	for _layer in FILL_DEPTH * materials_scale:
 		var next := PackedInt32Array()
-		var source := pixel_materials.duplicate()
-		for p in queue:
-			var x := p % w
-			var found := NO_MATERIAL
-			if x > 0 and source[p - 1] != NO_MATERIAL:
-				found = source[p - 1]
-			elif x + 1 < w and source[p + 1] != NO_MATERIAL:
-				found = source[p + 1]
-			elif p >= w and source[p - w] != NO_MATERIAL:
-				found = source[p - w]
-			elif p + w < total and source[p + w] != NO_MATERIAL:
-				found = source[p + w]
-			if found == NO_MATERIAL:
-				next.append(p)
-			else:
-				pixel_materials[p] = found
-		if next.size() == queue.size():
+		var found := PackedByteArray()
+		found.resize(queue.size())
+		for n in queue.size():
+			var at := queue[n]
+			var x := at % w
+			var material := NO_MATERIAL
+			if x > 0 and pixel_materials[at - 1] != NO_MATERIAL:
+				material = pixel_materials[at - 1]
+			elif x + 1 < w and pixel_materials[at + 1] != NO_MATERIAL:
+				material = pixel_materials[at + 1]
+			elif at >= w and pixel_materials[at - w] != NO_MATERIAL:
+				material = pixel_materials[at - w]
+			elif at + w < total and pixel_materials[at + w] != NO_MATERIAL:
+				material = pixel_materials[at + w]
+			found[n] = material
+		for n in queue.size():
+			var at := queue[n]
+			if pixel_materials[at] != NO_MATERIAL or found[n] == NO_MATERIAL:
+				continue
+			pixel_materials[at] = found[n]
+			var x := at % w
+			for q: int in [at - 1 if x > 0 else -1, at + 1 if x + 1 < w else -1, at - w, at + w]:
+				if q >= 0 and q < total and pixel_materials[q] == NO_MATERIAL:
+					next.append(q)
+		if next.is_empty():
 			break
 		queue = next
-	for p in queue:
+	p = pixel_materials.find(NO_MATERIAL)
+	while p >= 0:
 		pixel_materials[p] = 0
+		p = pixel_materials.find(NO_MATERIAL, p + 1)
 
 
 # --- Cases, prolongement, vide --------------------------------------------------------------------

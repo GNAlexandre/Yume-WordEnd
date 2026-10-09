@@ -124,16 +124,30 @@ static func _curtain(builder: MapGroundBuilder, points: PackedVector3Array) -> v
 		vertices.append(lip[n])
 		normals.append(outward[n])
 		uvs.append(Vector2(arc[n], top - lip[n].y))
-	# Sens des triangles (face avant vers le vide), le même pour toute la chaîne.
-	var flip := (lip[1] - points[0]).cross(points[1] - points[0]).dot(outward[0] + outward[1]) < 0.0
-	var indices := PackedInt32Array()
-	for n in count - 1:
-		_quad_indices(indices, base + n, base + n + 1, base + count + n + 1, base + count + n, flip)
 	var picks := PackedInt32Array()
 	for n in range(0, count, DECIMATE):
 		picks.append(n)
 	if picks[picks.size() - 1] != count - 1:
 		picks.append(count - 1)
+	# Quadrilatères : la lèvre, puis une bande par anneau ; deux triangles chacun, dans le sens
+	# (face avant vers le vide) du premier, le même pour toute la chaîne.
+	var flip := (lip[1] - points[0]).cross(points[1] - points[0]).dot(outward[0] + outward[1]) < 0.0
+	# Sommets 1 et 2 de chaque triangle échangés si flip : (a, b, c, a, c, d) ou (a, c, b, a, d, c).
+	var second := 2 if flip else 1
+	var third := 1 if flip else 2
+	var indices := PackedInt32Array()
+	indices.resize(6 * ((count - 1) + RINGS.size() * (picks.size() - 1)))
+	var at := 0
+	for n in count - 1:
+		var a := base + n
+		var d := base + count + n
+		indices[at] = a
+		indices[at + second] = a + 1
+		indices[at + third] = d + 1
+		indices[at + 3] = a
+		indices[at + 3 + second] = d + 1
+		indices[at + 3 + third] = d
+		at += 6
 	var upper_rows := PackedInt32Array()
 	var upper := PackedVector3Array()
 	for n in picks:
@@ -148,7 +162,13 @@ static func _curtain(builder: MapGroundBuilder, points: PackedVector3Array) -> v
 			normals.append(outward[picks[m]])
 			uvs.append(Vector2(arc[picks[m]], top - lower[m].y))
 		for m in picks.size() - 1:
-			_quad_indices(indices, upper_rows[m], upper_rows[m + 1], row + m + 1, row + m, flip)
+			indices[at] = upper_rows[m]
+			indices[at + second] = upper_rows[m + 1]
+			indices[at + third] = row + m + 1
+			indices[at + 3] = upper_rows[m]
+			indices[at + 3 + second] = row + m + 1
+			indices[at + 3 + third] = row + m
+			at += 6
 		for m in picks.size():
 			upper_rows[m] = row + m
 		upper = lower
@@ -160,16 +180,6 @@ static func _curtain(builder: MapGroundBuilder, points: PackedVector3Array) -> v
 	builder.cliff_uvs.append_array(uvs)
 	builder.cliff_uv2s.append_array(styles)
 	builder.cliff_indices.append_array(indices)
-
-
-## Indices des deux triangles du quadrilatère a b c d (dans l'ordre du tour), retournés si flip.
-static func _quad_indices(
-	indices: PackedInt32Array, a: int, b: int, c: int, d: int, flip: bool
-) -> void:
-	if flip:
-		indices.append_array(PackedInt32Array([a, c, b, a, d, c]))
-	else:
-		indices.append_array(PackedInt32Array([a, b, c, a, c, d]))
 
 
 ## Anneau r du rideau sous les points picks : à sa profondeur (plus bas que l'anneau du dessus),
