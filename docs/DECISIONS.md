@@ -2089,3 +2089,91 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   - première tranche : l'entrepôt (dehors, dedans, vie des petites, jours 1 à 4).
   La « saison des rejetons » et la « veille du Couchant » (`MONDE.md`, section 1.1) sont retirées :
   c'étaient des inventions qui contredisent l'œuvre.
+- **C3 — cahier des images n° 3** (`docs/ASSETS_HD2D_SUKASUKA.md`, d'après `docs/REFONTE.md`,
+  sections 8 et 8.1) : 404 images, 90 planches et 2 portraits en six lots (I à N), lot J au-delà
+  de l'ordre de grandeur (80 planches au lieu de 40 à 60) pour être exhaustif, priorités 1 à 3 ; les
+  animations nouvelles d'un personnage livré viennent en planche complémentaire `<id>_life` (rangée
+  `repos` recopiée comme étalon de taille), en planche de tenue (`_home` sans arme, `_pajamas`,
+  `_rain`) ou de geste (`willem_cook`, `nygglatho_tea`…) ; à confirmer par les lots du moteur
+  (section 9.4 du cahier) : ces planches, les noms hors de la section 8.1 (`etreinte`, `pare`,
+  `broute`, `travaille` des fées pour la toilette), les cadences de la faune, les navires en volume
+  (`ships/`), les faces de paliers (`cliff/step_*`), les décalques des pièces, la pluie, les vitres
+  éclairées et les fenêtres de nuit ; aucune fée générique aux cheveux rouges (couleur de
+  l'empiètement, V3).
+- **E1 — carte héritée** : `src/world/maps/ile_ancienne/ile_ancienne.tscn` est une scène héritée
+  d'`island.tscn`, dont le script (`island.gd`) étend désormais `Map` : `Ground` est le sol de
+  l'île, les zones restent des zones (`World/ile_ancienne/Zones/<zone>`, `zone_entered`
+  inchangé) ; la scène héritée ajoute `Geometry`, `Markers` (`Spawn` = celui du village, en
+  (0 ; 0,2 ; 9)), `Exits` et `Life`. Elle garde les coordonnées de l'île, centrées sur l'origine
+  (`island.gd` redéfinit `area()`) au lieu du coin nord-ouest du contrat : sauvegardes, PNJ,
+  déclencheurs, masques du sol et tests en dépendent, pour une carte retirée en phase 5.
+  `island.tscn` porte `size` (160 × 160) et les bornes de caméra de l'île.
+- **E1 — nœud de la carte** : dans `game.tscn`, `World` (Node3D, groupe `map_slot`) remplace
+  `Island` ; `game.gd` y pose la carte (`WorldManager.enter_map`, position sauvegardée ou Spawn) ;
+  `main.gd` charge la partie et sa première carte sous une seule barre (`Loading.load_scenes`),
+  la carte restant en cache jusqu'à ce que `game.gd` l'ait posée.
+- **E1 — sorties à invite** : le joueur ne détecte que les couches 6 et 7 ; une `MapExit` dont
+  `prompt` est rempli passe d'elle-même sur la couche 6 et dans le groupe `interactable` à son
+  `_ready` (dans la scène, elle reste en couche 0, comme le dit le contrat).
+- **E1 — joueur figé** : `process_mode` DISABLED du début du fondu au noir à la fin du fondu de
+  retour (ni mouvement, ni coup, ni interaction, ni dégâts : il quitte l'espace physique),
+  appliqué en fin d'image (`call_deferred`) : un `go_to` lancé de l'image physique du joueur (E)
+  ou du pas de la physique (sortie à pied) lui faisait finir son `move_and_slide` sans espace
+  (« Parameter "space" is null »). À `map_entered`, le joueur oublie son élan, sa cible et son
+  invite (`player.gd`, `_stop_motion`, comme à la réapparition) : seule retouche de `player.gd`,
+  la mission demandant une vitesse remise à zéro que seul le joueur tient (`_move_velocity`).
+- **E1 — pas d'aller-retour** : `is_transitioning()` reste vrai `SETTLE_FRAMES` (3) images
+  physiques après une arrivée (`go_to`, `enter_map`) ; une sortie ne part que sur une entrée
+  (`body_entered`) ou une interaction : un joueur posé dedans doit en sortir et y revenir.
+- **E1 — zones et cartes** : changer de carte vide `current_zone()`, `GameState.zone` et la
+  dernière zone annoncée du joueur (`Zone.LAST_ZONE_META`) : de retour sur l'île, la zone
+  d'arrivée s'annonce de nouveau (HUD, auto-sauvegarde). Au début d'une partie (aucune carte
+  avant), la zone de la sauvegarde reste. Sur une carte sans zone, `respawn()` et `rescue()`
+  ramènent au marqueur d'arrivée (`rescued(map_id)`) ; `load_zone`/`teleport` d'une zone de l'île
+  depuis une autre carte ramènent sur l'île sans fondu (raccourci `?zone=`), sans rien faire s'il
+  n'y a pas de nœud `World` (tests sans partie).
+- **E1 — sauvegarde v3** : champ `map` (lu seulement avec une position valide, comme `zone`) ;
+  migration v2 → v3 : `map` = `ile_ancienne` si la zone est connue, vide sinon (partie pas encore
+  placée : Spawn du village, comme avant) ; une carte inconnue au chargement ramène au Spawn de
+  `START_MAP` (avertissement). Vérifié sur une vraie sauvegarde écrite par le jeu de `50ec961`
+  (`tests/data/saves/save_v2_avant_refonte.json` : rue du port, quête principale à
+  `to_the_woods`, deux pages, record de 420 aux dunes).
+- **E1 — fondu** : 0,35 s au noir (#0b0713), 0,35 s de retour ; l'opacité est tenue par
+  WorldManager (`fade_alpha()`, tween pausable) et dessinée par `UI/MapFade` (traité même en
+  pause, souris jamais prise) : une partie libérée pendant un fondu (retour au menu) emporte
+  son noir, et `go_to` s'arrête proprement. Le nom de la carte (`display_name`) s'annonce une
+  fois l'écran revenu, dans le style du nom de zone du HUD ; vide pour `ile_ancienne` (le HUD
+  annonce ses zones).
+- **E1 — chargement découpé** : comme `Loading.load_scene` (dépendances d'abord, feuilles en
+  premier), 100 ms de travail par image sous le noir, où le monde 3D n'est plus dessiné
+  (`Viewport.disable_3d`, rétabli juste après l'installation, une image avant le fondu de
+  retour) : sur le Web en rendu logiciel, l'île se rechargeait en 17 s et 30 images (chacune
+  redessinait la carte sous le noir), en 5 s et 15 images ensuite. L'ancienne carte est libérée (`free`) juste
+  avant l'instanciation de la nouvelle, une fois les ressources de la nouvelle chargées : les
+  images communes restent en cache, une seule carte instanciée. Aucune carte n'est préchargée
+  (`preload`) par du code durable : elle resterait en mémoire.
+- **E1 — caméra** : à chaque `map_entered`, `CameraRig.limits` = `WorldManager.camera_bounds()`,
+  puis `make_current()` (l'`OverviewCamera` de l'île, `current` à son entrée dans l'arbre,
+  prenait la main au retour sur l'île) et `snap()`. Les bornes restent celles du point visé.
+- **E1 — lumière** : en attendant les préréglages de E9 (`light_preset`), une carte porte sa
+  lumière : `src/world/map_light.tscn` (environnement, soleil et nœud `Lighting` de l'île).
+- **E1 — carte d'essai** (`src/world/maps/essai/`) : 40 × 30 m, sol plat provisoire
+  (`StaticBody3D`, plan d'herbe en tuiles de 4 m, chemin de terre, murs invisibles), décors de
+  `src/world/props/`, sentier ouest (sortie à pied vers l'île, arrivée `from_ile_ancienne` tournée
+  vers l'est), bornes de caméra `Rect2(10, 9, 20, 13)` (rien au-delà des bords à l'écran). Sur
+  l'île, sortie de test discrète : un panneau au coin est du hangar du port (41 ; 63,4), invite
+  « Carte d'essai », arrivée `from_essai` en (41 ; 66,2) tournée vers le sud (à 6,5 m du bord).
+- **E1 — décalques** : `GroundDecal.follow_ground` suit `IslandTerrain` (le relief de l'île) ;
+  sur une nouvelle carte, le mettre à faux tant que E2 ne l'a pas branché sur `MapGround`.
+- **E1 — une seule carte en mémoire** (`tools/map_bench.gd`, aller-retour île ↔ essai) : deux
+  caches statiques gardaient l'ancienne carte. `PropBatcher._soups` (triangles de chaque mesh
+  fondu, clé = le mesh) gardait en vie les meshes propres à chaque décor (murs des `Building`,
+  décalques drapés) de chaque carte instanciée : + 566 objets et + 3 Mo par aller-retour ; il est
+  désormais propre à chaque `batch()`. Les caches de matériaux de `DecorPanel`, `Building` et
+  `GroundDecal` (clé = RID de l'image) gardaient toutes les images vues : ils sont en références
+  faibles, clé = chemin de l'image (RID sans chemin), et `update_foreground` oublie les matériaux
+  morts. Mesuré sans écran : carte d'essai seule 148 Mo, 231 ressources ; après l'île, avant
+  410 Mo et 584 ressources, après 263 Mo et 311 ressources (restent les caches de l'île :
+  `IslandTerrain` et `IslandRock`, maillages et atlas du sol, et les planches des PNJ de
+  `SheetLoader`) ; nœuds, objets et ressources identiques d'une visite à l'autre. Revers : l'île
+  se recharge de zéro à chaque retour (1,5 s sous Xvfb au lieu de 0,3 s).

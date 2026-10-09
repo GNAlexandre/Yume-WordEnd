@@ -1,0 +1,40 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/island.tscn" id="1_island"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="2_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="3_exit"]
+[ext_resource type="PackedScene" path="res://src/world/props/signpost.tscn" id="4_signpost"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_to_essai"]
+size = Vector3(2.4, 3, 2.4)
+
+[node name="ile_ancienne" instance=ExtResource("1_island")]
+region = &"ile_ancienne"
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("2_batcher")
+
+[node name="SignpostEssai" parent="Geometry" instance=ExtResource("4_signpost")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0, 63.4)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 9)
+
+[node name="from_essai" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 41, 0.2, 66.2)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="to_essai" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 1.5, 63.6)
+script = ExtResource("3_exit")
+target_map = &"essai"
+target_marker = &"from_ile_ancienne"
+prompt = "Carte d'essai"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/to_essai"]
+shape = SubResource("BoxShape3D_to_essai")
+
+[node name="Life" type="Node3D" parent="."]

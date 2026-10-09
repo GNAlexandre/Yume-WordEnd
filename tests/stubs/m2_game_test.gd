@@ -143,7 +143,7 @@ func bind_game(node: Node3D) -> void:
 	player = game.get_node(^"Player") as Player
 	combat = player.combat
 	health = player.health
-	dunes = game.get_node(^"Island/Zones/dunes") as Zone
+	dunes = game.get_node(^"World/ile_ancienne/Zones/dunes") as Zone
 	arena = dunes.get_node(^"Arena") as Arena
 	director = arena.director()
 	hud = game.get_node(^"UI/HUD") as Control

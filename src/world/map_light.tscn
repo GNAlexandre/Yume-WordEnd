@@ -1,0 +1,40 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/hd2d/sky/sky.png" id="1_sky"]
+[ext_resource type="Script" path="res://src/world/materials/day_phase_lighting.gd" id="2_lighting"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
+panorama = ExtResource("1_sky")
+filter = false
+
+[sub_resource type="Sky" id="Sky_map"]
+sky_material = SubResource("PanoramaSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_map"]
+background_mode = 2
+sky = SubResource("Sky_map")
+ambient_light_source = 2
+ambient_light_color = Color(0.78, 0.72, 0.86, 1)
+ambient_light_energy = 0.62
+tonemap_mode = 0
+fog_enabled = true
+fog_light_color = Color(0.86, 0.72, 0.74, 1)
+fog_sun_scatter = 0.2
+fog_density = 0.0016
+fog_sky_affect = 0.0
+fog_height = -8.0
+fog_height_density = 0.015
+
+[node name="MapLight" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_map")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.287311, 0.3276, -0.900073, 0, 0.939693, 0.34202, 0.957837, -0.098266, 0.269984, 0, 40, 0)
+light_color = Color(1, 0.86, 0.68, 1)
+light_energy = 0.75
+shadow_enabled = false
+
+[node name="Lighting" type="Node" parent="."]
+script = ExtResource("2_lighting")

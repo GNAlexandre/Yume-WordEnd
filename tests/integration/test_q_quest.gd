@@ -155,7 +155,7 @@ func test_demo_quest_from_offer_to_followup() -> void:
 	)
 	assert_true(written)
 	var saved: Variant = JSON.parse_string(FileAccess.get_file_as_string(SaveManager.save_path))
-	assert_eq(int(saved["version"]), 2)
+	assert_eq(int(saved["version"]), SaveManager.SAVE_VERSION)
 	assert_eq(saved["quest_progress"]["demo_tour"]["step"], "forest", "étape sauvegardée")
 	assert_eq(saved["tracked_quest"], "demo_tour")
 

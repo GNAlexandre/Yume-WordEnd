@@ -436,18 +436,25 @@ Les lots E1, E2, E3 et E9 ouvrent le chantier. E4 à E8 suivent dès que les car
 ### 7.1 Contrat des cartes
 
 Ce contrat fait foi pour E1, E2, E3 et tous les lots suivants. Il ne change que par une PR
-« contrats ».
+« contrats ». (E1) Les précisions marquées « (E1) » viennent de sa mise en œuvre (PR « contrats »
+E1, docs/DECISIONS.md) ; le mode d'emploi pour créer une carte est dans PLAN.md, section 3.
 
 **Où et comment s'appelle une carte**
 - Fichier : `src/world/maps/<map_id>/<map_id>.tscn`.
 - Racine : `Map` (`src/world/map.gd`, `class_name Map`, `Node3D`), nommée comme son `map_id`
   (`snake_case` sans accent : `entrepot`, `entrepot_rdc`, `sentier`, `village`, `port`…).
+- (E1) `Map.problems(carte)` et `Map.exit_problems(carte, marqueurs)` disent ce qui manque ;
+  `tests/unit/test_maps.gd` les applique à chaque carte de `src/world/maps/`, posée dans l'arbre
+  (un `MapGround` ou une `InteriorRoom` construit sa collision dans son `_ready`).
 
 **Repères**
 - Origine au **coin nord-ouest** ; x vers l'est, z vers le sud, y vers le haut ; 1 unité = 1 m.
 - La carte occupe `[0, largeur] × [0, profondeur]`, ce qui fait coïncider un pixel d'une image de
   disposition avec une case.
 - Le sol courant est à y = 0 ; les paliers montent par pas de 0,5 m.
+- (E1) Exception : la carte héritée `ile_ancienne` garde les coordonnées de l'île, centrée sur
+  l'origine (`area()` = [−80, 80]², redéfinie par `island.gd`) : sauvegardes, PNJ, déclencheurs,
+  masques du sol et tests en dépendent.
 
 **Exports de `Map`**
 - `display_name: String` : nom affiché à l'entrée.
@@ -455,34 +462,61 @@ Ce contrat fait foi pour E1, E2, E3 et tous les lots suivants. Il ne change que 
   (`entrepot` et `entrepot_rdc`).
 - `interior: bool`.
 - `size: Vector2` : largeur et profondeur, en m.
-- `camera_bounds: Rect2` : en x et z, par défaut la carte entière.
+- `camera_bounds: Rect2` : en x et z, par défaut la carte entière (un `Rect2` vide).
+  (E1) Ce sont les bornes du **point visé** (à 2,5 m au nord du joueur), pas de ce qu'on voit :
+  la vue s'étend d'environ 10 m de part et d'autre du point visé et de 21 m au nord ; une carte
+  qui ne veut pas montrer ses bords resserre ses bornes (carte d'essai : `Rect2(10, 9, 20, 13)`
+  pour 40 × 30 m).
 - `light_preset: StringName` : préréglage de lumière de E9 ; vide = celui du moment de la journée.
 
 **Enfants figés**
 - `Ground` : le sol et sa collision (couche 1 world). C'est un `MapGround` (E2) dehors, une
-  `InteriorRoom` (E3) dedans.
+  `InteriorRoom` (E3) dedans. (E1) En attendant, un `StaticBody3D` plat suffit (carte d'essai) ;
+  dans `ile_ancienne`, c'est le sol de l'île (`IslandTerrain`).
 - `Geometry` : le décor (scènes de `src/world/props/`), avec le `PropBatcher` comme script du
   nœud, comme aujourd'hui.
 - `Markers` : des `Marker3D` nommés, points d'arrivée. `Spawn` est obligatoire, plus un marqueur
-  par sortie, nommé comme la carte d'où l'on vient (`from_sentier`…).
+  par sortie, nommé comme la carte d'où l'on vient (`from_sentier`…). (E1) Si plusieurs sorties
+  d'une même carte mènent ici : `from_sentier_<suffixe>`. Le joueur est posé au sol sous le
+  marqueur et regarde son −Z ; un marqueur se place à 2 ou 3 m de la sortie qui y ramène, hors
+  de sa forme et de toute collision.
 - `Exits` : des `MapExit` (`Area3D`, couche 0, masque 2 player), avec les exports
   `target_map: StringName`, `target_marker: StringName` et `prompt: String`.
   - `prompt` vide : on passe en marchant dedans (bout de sentier).
-  - `prompt` rempli : on passe par une interaction (« Entrer », « Monter à bord »).
+  - `prompt` rempli : on passe par une interaction (« Entrer », « Monter à bord »). (E1) Le joueur
+    ne détecte que les couches 6 et 7 : une sortie à invite passe elle-même sur la couche 6
+    (interactable) et dans le groupe `interactable` à son `_ready` (dans la scène, on la laisse en
+    couche 0).
+  - (E1) Rien ne part pendant un changement de carte, ni pendant les `SETTLE_FRAMES` images
+    physiques qui suivent l'arrivée : un joueur posé dans une sortie doit en sortir et y revenir.
 - `Life` : les PNJ, les animaux et les objets (E4, E5).
+- (E1) D'autres enfants sont permis. En attendant les préréglages de E9 (`light_preset`), une
+  carte porte sa lumière : une instance de `src/world/map_light.tscn` (`WorldEnvironment`, `Sun`
+  et `Lighting`, réglages de l'île).
 
 **API de `WorldManager`** (E1)
 - `go_to(map_id: StringName, marker: StringName = &"Spawn") -> void` : fondu, chargement de la
   carte, retrait de l'ancienne, pose du joueur sur le marqueur, regard tourné comme lui.
+  (E1) Coroutine : `await WorldManager.go_to(…)` attend la fin du fondu de retour.
 - `current_map() -> StringName`.
 - `EventBus.map_entered(map_id: StringName)` : nouveau signal, au passé.
 - `GameState` retient la carte et la position pour la sauvegarde.
+- (E1) Aussi : `enter_map(map_id, marker, at)` (sans fondu : début de partie, démonstrations),
+  `current_map_node()`, `starting_map()`, `map_display_name(map_id)`, `camera_bounds()`,
+  `is_transitioning()`, `fade_alpha()`, `last_transition()` (mesures), signaux
+  `transition_started(map_id)` et `transition_finished(map_id)`, constantes `LEGACY_MAP` et
+  `START_MAP` (`ile_ancienne`). Détail : PLAN.md, section 3.
 
 **Le joueur, la caméra et l'interface** restent dans `game.tscn` ; seule la carte change
-dessous.
+dessous. (E1) La carte courante est l'unique enfant du nœud `World` (groupe `map_slot`) ; le
+fondu et le nom de la carte sont dessinés par `UI/MapFade`.
 
 **Transition** : l'île actuelle reste jouable comme une carte héritée (`ile_ancienne`) jusqu'à
-la phase 5.
+la phase 5. (E1) `src/world/maps/ile_ancienne/ile_ancienne.tscn` est une scène héritée
+d'`island.tscn` (dont le script étend `Map`) : ses zones restent des zones (`zone_entered`
+inchangé), `World/ile_ancienne/Zones/<zone>`. Une sauvegarde d'avant la refonte (schéma v2) y
+reprend à la même place (schéma v3 : champ `map`). Une sortie de test, au coin est du hangar du
+port, mène à la carte d'essai `essai`.
 
 ---
 
@@ -508,6 +542,8 @@ En tout, **400 à 550 images**.
   seul Web) et le bureau seul pour la version complète.
 - **Les images du cahier n° 2** restent : arbres, rochers, façades, décalques, animations. La
   pose les reprend dans les nouveaux lieux.
+- **Le cahier est écrit** : `docs/ASSETS_HD2D_SUKASUKA.md` (404 images, 90 planches et 2
+  portraits ; ses formats à confirmer par le moteur sont listés dans sa section 9.4).
 
 ---
 

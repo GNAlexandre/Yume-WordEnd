@@ -108,7 +108,7 @@ func start_game() -> void:
 	player = game.get_node(^"Player") as Player
 	combat = player.combat
 	health = player.health
-	dunes = game.get_node(^"Island/Zones/dunes") as Zone
+	dunes = game.get_node(^"World/ile_ancienne/Zones/dunes") as Zone
 	arena = dunes.get_node(^"Arena") as Arena
 	director = arena.director()
 	await wait_physics_frames(3)
@@ -123,7 +123,7 @@ func listen(bus_signal: Signal, callable: Callable) -> void:
 
 ## Zone de l'île par son identifiant.
 func zone(zone_id: StringName) -> Zone:
-	return game.get_node(NodePath("Island/Zones/%s" % zone_id)) as Zone
+	return game.get_node(NodePath("World/ile_ancienne/Zones/%s" % zone_id)) as Zone
 
 
 ## Place le joueur au point local `local_position` de la zone (posé au sol), visée `aim`,

@@ -84,7 +84,7 @@ func _stage() -> void:
 	if _view == "parler":
 		_talk()
 		return
-	var zone := _game.get_node(NodePath("Island/Zones/%s" % SPOT[0])) as Node3D
+	var zone := _game.get_node(NodePath("World/ile_ancienne/Zones/%s" % SPOT[0])) as Node3D
 	WorldManager.load_zone(SPOT[0] as StringName)
 	_player.global_position = WorldManager.ground_position(
 		zone.to_global(SPOT[1] as Vector3), _player
@@ -124,7 +124,7 @@ func _talk() -> void:
 		side = "est"
 	for flag: StringName in TALK_FLAGS:
 		GameState.set_flag(flag)
-	for zone: Node in _game.get_node(^"Island/Zones").get_children():
+	for zone: Node in _game.get_node(^"World/ile_ancienne/Zones").get_children():
 		var npc := zone.get_node_or_null(NodePath("NPCs/" + npc_name)) as Npc
 		if npc == null:
 			continue

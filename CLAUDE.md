@@ -25,7 +25,8 @@ change pas sans PR « contrats ».
   `tools/import.sh` (liste les .uid / .import à commiter et les orphelins).
 - Capture d'une scène : `tools/screenshot.sh res://src/world/island.tscn build/shots/island.png`,
   puis ouvre le PNG avec l'outil de lecture d'images. Vues HD-2D de la vraie partie (menu, cinq
-  zones, conversation, veille ; draw calls dans le journal) : `tools/hd2d_shots.sh [vue…]`.
+  zones, conversation, veille, (E1) sortie du quai, fondu, carte d'essai, retour ; draw calls
+  dans le journal) : `tools/hd2d_shots.sh [vue…]`.
 - Images du décor (docs/ASSETS_HD2D.md, liste dans `tools/hd2d_manifest.json`) :
   `python3 tools/hd2d_assets.py gen` (remplaçants absents ; `--force`, ou des noms), `check`,
   `fit <fichier>` (image livrée trop grande), `atlas` (après une tuile de sol). Puis
@@ -222,3 +223,8 @@ change pas sans PR « contrats ».
   attend une image ou appelle `Npc.refresh_presence()`), jamais pendant sa conversation.
   `DialogueRunner.find_npc` (portraits, `speaker_id`) cherche `data/npcs` puis les dossiers
   d'`add_npc_dir` : un test qui en ajoute un le retire dans `after_each`.
+- (Cartes, E1) `game.tscn` n'a plus d'`Island` : la carte courante est l'unique enfant de `World`
+  (l'ancienne île : `World/ile_ancienne/Zones/<zone>`). Une seule carte à la fois
+  (`WorldManager.go_to`, `enter_map`) ; un test qui change de carte pose
+  `WorldManager.fade_time = 0.0` et le rétablit dans `after_each`. Créer une carte : mode
+  d'emploi dans PLAN.md, section 3 ; `tools/test.sh tests/unit/test_maps.gd` la vérifie.

@@ -46,14 +46,18 @@ const FOREGROUND_HEIGHT := 0.8
 ## (H9) Groupe du joueur (PLAN.md section 3, conventions).
 const PLAYER_GROUP := &"player"
 
-## Matériaux partagés : clé (image, teinte, lueur) → ShaderMaterial.
+## Matériaux partagés : clé (image, teinte, lueur) → WeakRef du ShaderMaterial. (E1) Références
+## faibles : un matériau vit tant qu'un décor s'en sert, puis il part avec son image ; une carte
+## quittée libère ainsi ses images (un cache fort les gardait toutes, de toutes les cartes
+## visitées). Clé de l'image : son chemin (stable d'un chargement à l'autre), son RID sans chemin.
 static var _materials: Dictionary = {}
 ## Meshes partagés : clé (taille) → QuadMesh ; (H9) clé (taille, retournement, phase, décalage)
 ## → ArrayMesh.
 static var _quads: Dictionary = {}
 static var _panel_meshes: Dictionary = {}
-## (H9) Matériaux de premier plan, et image où leur centre a été posé pour la dernière fois.
-static var _foreground_materials: Array[ShaderMaterial] = []
+## (H9) Matériaux de premier plan ((E1) WeakRef), et image où leur centre a été posé pour la
+## dernière fois.
+static var _foreground_materials: Array[WeakRef] = []
 static var _foreground_frame: int = -1
 ## Panneaux de premier plan dans l'arbre : seul le premier a un _process (un appel par image au
 ## lieu d'un par panneau, plusieurs centaines dans l'île posée) ; s'il quitte l'arbre, le
@@ -271,11 +275,12 @@ static func material_for(
 	soft: bool = false
 ) -> Material:
 	var blended := soft and not in_foreground
-	var key := "%s|%s|%.2f" % [image.get_rid(), color.to_html(), glow_amount]
+	var key := "%s|%s|%.2f" % [image_key(image), color.to_html(), glow_amount]
 	if frame_count > 1 or in_foreground or blended:
 		key += "|%d|%.3f|%d|%d" % [frame_count, frame_rate, int(in_foreground), int(blended)]
-	if not _materials.has(key):
-		var material := ShaderMaterial.new()
+	var material := cached_material(_materials, key) as ShaderMaterial
+	if material == null:
+		material = ShaderMaterial.new()
 		material.shader = (
 			FOREGROUND_SHADER if in_foreground else (SOFT_SHADER if blended else PANEL_SHADER)
 		)
@@ -287,9 +292,27 @@ static func material_for(
 			material.set_shader_parameter(&"frames", float(frame_count))
 			material.set_shader_parameter(&"fps", frame_rate)
 		if in_foreground:
-			_foreground_materials.append(material)
-		_materials[key] = material
-	return _materials[key]
+			_foreground_materials.append(weakref(material))
+		_materials[key] = weakref(material)
+	return material
+
+
+## (E1) Clé d'une image dans les caches de matériaux : son chemin, ou son RID si elle n'en a pas
+## (image faite à l'exécution).
+static func image_key(image: Texture2D) -> String:
+	return image.resource_path if not image.resource_path.is_empty() else str(image.get_rid())
+
+
+## (E1) Matériau encore vivant d'un cache de références faibles (null sinon ; l'entrée morte est
+## retirée).
+static func cached_material(cache: Dictionary, key: String) -> Material:
+	var ref: WeakRef = cache.get(key)
+	if ref == null:
+		return null
+	var material := ref.get_ref() as Material
+	if material == null:
+		cache.erase(key)
+	return material
 
 
 ## (H9) Pose le centre de l'effacement des panneaux de premier plan sur le corps du joueur (groupe
@@ -306,7 +329,11 @@ static func update_foreground(tree: SceneTree) -> void:
 	if player != null:
 		strength = 1.0
 		center = displayed_transform(player).origin + Vector3.UP * FOREGROUND_HEIGHT
-	for material: ShaderMaterial in _foreground_materials:
+	for index in range(_foreground_materials.size() - 1, -1, -1):
+		var material := _foreground_materials[index].get_ref() as ShaderMaterial
+		if material == null:
+			_foreground_materials.remove_at(index)
+			continue
 		material.set_shader_parameter(&"foreground_center", center)
 		material.set_shader_parameter(&"foreground_strength", strength)
 

@@ -12,8 +12,14 @@ extends Node
 ##   beach       : la rue du Port, ses façades et le marché ;
 ##   hill        : la colline des étoiles, son belvédère ;
 ##   dialogue    : Nygglatho parle, sous le porche ;
-##   vigil       : une veille en cours au Couchant (vague 1, deux rejetons).
-## Draw calls et primitives de l'image mesurée sont écrits dans le journal (« HD-2D vue … »).
+##   vigil       : une veille en cours au Couchant (vague 1, deux rejetons) ;
+##   (E1, cartes : docs/REFONTE.md, section 7.1)
+##   quai        : le bout du quai, devant le panneau de la sortie d'essai (invite « E ») ;
+##   fondu       : la même sortie prise (WorldManager.go_to), figée au milieu du fondu au noir ;
+##   essai       : la carte d'essai, au Spawn, après son fondu de retour ;
+##   retour      : de retour sur le quai par le sentier ouest de la carte d'essai.
+## Draw calls et primitives de l'image mesurée sont écrits dans le journal (« HD-2D vue … ») ;
+## (E1) les vues de cartes y ajoutent la carte et les mesures de son chargement.
 
 const GAME_SCENE := preload("res://src/game.tscn")
 const MAIN_SCENE := preload("res://src/main.tscn")
@@ -32,6 +38,11 @@ const SPOTS := {
 const STAGE_FRAME := 6
 const DIALOGUE_LINES := 2
 const MEASURE_FRAME := 50
+## (E1) Vues des cartes, image de leur mesure (le retour recharge l'île : tools/hd2d_shots.sh
+## leur laisse MAP_FRAMES images) et opacité où la vue « fondu » se fige.
+const MAP_VIEWS: Array[String] = ["quai", "fondu", "essai", "retour"]
+const MAP_MEASURE_FRAME := 150
+const FADE_HOLD := 0.5
 
 var _view := ""
 var _state: Dictionary = {}
@@ -58,14 +69,18 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if get_tree().paused:
 		get_tree().paused = false
+	WorldManager.fade_time = WorldManager.DEFAULT_FADE_TIME
 	GameState.from_dict.call_deferred(_state)
 
 
 func _process(_delta: float) -> void:
 	_frame += 1
 	if _frame == STAGE_FRAME and _game != null:
-		_stage()
-	elif _frame == MEASURE_FRAME:
+		if _view in MAP_VIEWS:
+			_stage_map_view()
+		else:
+			_stage()
+	elif _frame == (MAP_MEASURE_FRAME if _view in MAP_VIEWS else MEASURE_FRAME):
 		print(
 			(
 				"HD-2D vue %s : %d draw calls, %d primitives, %d objets"
@@ -77,6 +92,22 @@ func _process(_delta: float) -> void:
 				]
 			)
 		)
+		if _view in MAP_VIEWS:
+			print(
+				(
+					"Carte %s, fondu %.2f, joueur %s, caméra %s, dernier changement %s"
+					% [
+						WorldManager.current_map(),
+						WorldManager.fade_alpha(),
+						_player.global_position,
+						get_viewport().get_camera_3d().global_position,
+						WorldManager.last_transition()
+					]
+				)
+			)
+	if _view == "fondu" and not get_tree().paused and WorldManager.fade_alpha() >= FADE_HOLD:
+		# Au milieu du fondu au noir : tout se fige (le fondu de l'interface reste dessiné).
+		get_tree().paused = true
 
 
 func _stage() -> void:
@@ -100,8 +131,36 @@ func _stage() -> void:
 			_start_vigil()
 
 
+## (E1) Vues des cartes : le bout du quai et sa sortie d'essai, le fondu, la carte d'essai, le
+## retour par le sentier ouest.
+func _stage_map_view() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	var island := WorldManager.current_map_node()
+	var exit := island.get_node(^"Exits/to_essai") as Node3D
+	var front := exit.global_position + Vector3(0.0, -1.5, 1.9)
+	_player.global_position = WorldManager.ground_position(front, _player)
+	_player.velocity = Vector3.ZERO
+	_player.reset_physics_interpolation()
+	_player.set_aim_direction(Vector3.FORWARD, true)
+	match _view:
+		"fondu":
+			# La caméra rejoint d'abord le joueur (la place affichée suit la téléportation
+			# une image plus tard), puis la sortie est prise, comme avec E.
+			for _wait in 20:
+				await get_tree().process_frame
+			WorldManager.fade_time = 1.2
+			(exit as MapExit).use()
+		"essai":
+			WorldManager.fade_time = 0.0
+			WorldManager.go_to(&"essai")
+		"retour":
+			WorldManager.fade_time = 0.0
+			await WorldManager.go_to(&"essai")
+			await WorldManager.go_to(WorldManager.LEGACY_MAP, &"from_essai")
+
+
 func _zone(zone_id: StringName) -> Node3D:
-	return _game.get_node(NodePath("Island/Zones/%s" % zone_id)) as Node3D
+	return _game.get_node(NodePath("World/ile_ancienne/Zones/%s" % zone_id)) as Node3D
 
 
 ## Nygglatho parle (comme E) ; ses premières répliques passent.
