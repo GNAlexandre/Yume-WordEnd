@@ -16,11 +16,13 @@
     "#c89a5a": "terre_battue",
     "#3a70b0": "eau_basse",
     "#4f9a46": "herbe_drue",
+    "#b0602a": "feuilles",
     "#a8b040": "herbe_haute",
     "#403020": "potager",
+    "#6a4a2a": "boue",
+    "#c0b090": "gravier",
     "#c070c0": "prairie",
-    "#60a0c0": "lit_ruisseau",
-    "#b0602a": "feuilles"
+    "#60a0c0": "lit_ruisseau"
   },
   "edges": {
     "north": "land",

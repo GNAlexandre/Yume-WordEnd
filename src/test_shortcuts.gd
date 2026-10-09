@@ -13,7 +13,11 @@ extends Node
 ##                (nouvelle partie ou reprise, position et zone non touchées) ;
 ##   maps=<a,b…>  (E1) voyage de carte en carte (WorldManager.go_to, Spawn de chaque carte)
 ##                une fois la partie posée, et une ligne de mesures par changement (fondu,
-##                chargement découpé et ses images, installation, total) : tools/web_maps.js.
+##                chargement découpé et ses images, installation, total) : tools/web_maps.js ;
+##   map=<id>     (T1) la partie se pose sur cette carte (WorldManager.enter_map, sans fondu),
+##                à son Spawn ou au marqueur marker=<nom> (« from_sentier ») : seule entrée vers
+##                les cartes de la refonte (entrepot…) tant que le début de partie n'y mène pas ;
+##                une carte ou un marqueur inconnus sont ignorés (une ligne au journal).
 ## (Acte 1) Sur le Web, la page reçoit aussi window.wordendFace(cible) : le joueur se tourne,
 ## ((HD-2D) la caméra fixe ne tourne plus : la cible est aussi posée dans window.wordendAim, et
 ## la page choisit les touches qui y mènent)
@@ -30,7 +34,7 @@ extends Node
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
 ## Paramètres reconnus (les autres sont ignorés).
-const KEYS: Array[String] = ["zone", "timeres", "trace", "maps"]
+const KEYS: Array[String] = ["zone", "timeres", "trace", "maps", "map", "marker"]
 ## Types du banc de performance, en rotation.
 const BENCH_TYPES: Array[StringName] = [
 	&"timere_small", &"timere_normal", &"timere_runner", &"timere_big"
@@ -107,6 +111,7 @@ static func _keep(result: Dictionary, pair: String) -> void:
 
 func _ready() -> void:
 	var player := get_tree().get_first_node_in_group(&"player") as Player
+	_enter_map(StringName(str(parameters.get("map", ""))), str(parameters.get("marker", "")))
 	var zone_id := StringName(str(parameters.get("zone", "")))
 	if zone_id in WorldManager.LEGACY_ZONES:
 		# (E1) Une partie reprise dans une autre carte revient d'abord sur l'ancienne île.
@@ -228,6 +233,27 @@ func _zone(zone_id: StringName) -> Node3D:
 
 func _log(text: String) -> void:
 	print("[m1] ", text)
+
+
+## (T1) Paramètres map et marker : la partie se pose sur la carte (sans fondu), au marqueur s'il
+## existe, sinon à son Spawn. Rien sans carte ; une carte inconnue est ignorée.
+func _enter_map(map_id: StringName, marker_name: String) -> void:
+	if map_id.is_empty():
+		return
+	if not Map.exists(map_id):
+		_log("carte inconnue : %s" % map_id)
+		return
+	var marker := Map.SPAWN_MARKER
+	if not marker_name.is_empty():
+		# Les nœuds de la scène, sans l'instancier : Markers/<nom>.
+		var state := (load(Map.scene_path(map_id)) as PackedScene).get_state()
+		var wanted := "Markers/" + marker_name
+		for i in state.get_node_count():
+			if String(state.get_node_path(i)).trim_prefix("./") == wanted:
+				marker = StringName(marker_name)
+		if marker == Map.SPAWN_MARKER:
+			_log("marqueur inconnu : %s (Spawn)" % marker_name)
+	WorldManager.enter_map(map_id, marker)
 
 
 ## (E1) Voyage de carte en carte (paramètre maps), après quelques images de la partie.
