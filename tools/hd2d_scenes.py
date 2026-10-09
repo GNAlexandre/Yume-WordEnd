@@ -48,6 +48,8 @@ PROPS_DIR = "src/world/props"
 PPM = 96.0
 # Genres du manifeste qui peuvent demander une scène.
 SCENE_KINDS = ("panel", "anim", "decal", "facade")
+# Lots du cahier n° 2 (les images du lot I, intérieurs, ont leurs scènes par tools/hd2d_interior.py).
+CAHIER2_LOTS = ("A", "B", "C", "D", "E", "F", "G")
 PANEL_SCRIPT = "res://src/world/decor_panel.gd"
 DECAL_SCRIPT = "res://src/world/ground_decal.gd"
 BUILDING_SCRIPT = "res://src/world/building.gd"
@@ -93,7 +95,7 @@ def planned(manifest, table):
     """Images du cahier n° 2 qui peuvent demander une scène : [(entrée, catégorie ou None)]."""
     out = []
     for entry in manifest["images"]:
-        if entry.get("lot") and entry["kind"] in SCENE_KINDS:
+        if entry.get("lot") in CAHIER2_LOTS and entry["kind"] in SCENE_KINDS:
             out.append((entry, category_of(entry, table)))
     return out
 

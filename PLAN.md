@@ -648,6 +648,102 @@ Contrat : `docs/REFONTE.md`, section 7.1 ; exemple complet : `src/world/maps/ess
    - Une démonstration n'ajoute jamais une carte à côté d'une autre : une seule carte à la fois,
      posée par WorldManager.
 
+### (E3) Intérieurs : `InteriorRoom`
+
+Le nœud `Ground` d'une carte intérieure (`docs/REFONTE.md`, section 7.1) : un étage d'un bâtiment,
+décrit par des données, bâti en images, vu par la caméra fixe qui regarde le nord. Mode d'emploi
+détaillé, format complet et liste des images : `docs/INTERIEURS.md`. Exemple :
+`data/maps/entrepot_rdc_essai/interior.json` et `src/world/maps/entrepot_rdc_essai/`, démo
+`tests/integration/demo_interieur.tscn` (`game.tscn` et `WorldManager.enter_map` ;
+`INTERIOR_VIEW=<vue>`, `INTERIOR_PHASE`, `INTERIOR_CUT=0`), lumière `src/world/interior_light.tscn`.
+
+**Format** (`data/maps/<map_id>/interior.json`) : `size` (m, = `Map.size`), `wall_height` (3),
+`wall_thickness` (0,25), `rooms.<id>` (`name`, `rects` : `[x, z, largeur, profondeur]` sur la grille
+d'un mètre, `floor`, `wall`, `wallcut` : noms d'images de `assets/hd2d/interior/`), `doors[]`
+(`between` : deux pièces, ou `room` + `side` N/S/E/W ; `x` ou `z` : centre le long du mur ; `width`,
+`height`, `image` `door_*`, `passable`, `id`), `windows[]` (`room`, `side`, `x`/`z`, `image`
+`window_*`, `sill`), `wall_items[]` (idem, `wallitem_*`, `y`), `lights[]` (`room`, `at` [x, z],
+`radius`, `color`, `energy`). Les murs se déduisent des pièces (un mur partout où deux cases voisines
+ne sont pas de la même pièce, le vide compris), centrés sur la ligne de grille ; une clé inconnue
+est une faute (`_…` : commentaire).
+
+```gdscript
+# src/world/interior_layout.gd (class_name InteriorLayout, RefCounted) : lecture et vérification
+static func from_data(data) -> InteriorLayout   # .problems : fautes (vide : valide)
+var map_size: Vector2i, wall_height, wall_thickness, rooms, doors, windows, wall_items, lights, pieces
+func cell(x, z) -> int / room_at(local) -> StringName / room_index(id) / door(id) -> Dictionary
+func cut_line_at(local: Vector3) -> float   # première limite de pièce au sud de la case (NO_CUT)
+func piece_box(piece) -> AABB ; static opening_center(opening), image_path(name)
+const HORIZONTAL, VERTICAL, NO_CUT, DOOR_WIDTH (1,1), DOOR_HEIGHT (2,2), WINDOW_SILL (0,9)
+
+# src/world/interior_room.gd (class_name InteriorRoom, extends StaticBody3D, @tool) : Ground
+@export var layout: JSON, cut_enabled: bool, window_tint: Color, window_energy, lamp_energy
+var plan: InteriorLayout
+func rebuild(), surfaces() -> Array[MeshInstance3D]   # un mesh par matière (+ « Void »)
+func cut_target() -> float, cut_line() -> float, snap_cut()   # coupe (z du monde)
+func set_daylight(tint: Color, energy: float), set_lamps(energy: float), apply_phase(phase)
+     # PHASES : morning, day, evening, night ; branchée sur EventBus.day_phase_changed
+func height_at(x, z), material_at(x, z) -> StringName, room_at(x, z), is_walkable(x, z)
+     # mêmes requêtes que MapGround (E2), repère de la carte
+func door_position(id) -> Vector3, light_at(local) -> Color
+func occluder_triangles(cut_world, player := Vector3.INF) -> PackedVector3Array   # tests
+static func panel_material(texture, glow, tint, follows) -> ShaderMaterial, share_uniform(key, value),
+     panel_mesh(size, cut, keep), part_code(part, line)   # caches en références faibles (WeakRef)
+const CUT_HEIGHT (0,15), PROP_CUT_HEIGHT (1), CUT_MARGIN (0,3), CUT_SPEED (14 m/s), COLUMN_HALF,
+      COLUMN_FRONT, COLUMN_LENGTH, LIGHT_TEXELS (4/m), VOID_COLOR, PLAYER_GROUP
+
+# src/world/interior_panel.gd (class_name InteriorPanel, extends DecorPanel, @tool) : meuble
+@export var cut_height: float = 1.0   # hauteur gardée quand la coupe passe
+func front_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
+```
+
+**Règles du rendu.**
+- *Coupe, rien ne cache le joueur* : la ligne de coupe est la première limite de pièce au sud de
+  la case du joueur, dans sa colonne. Tout ce qui est au sud de cette ligne moins 0,3 m n'est
+  dessiné que sous sa hauteur de coupe : murs (0,15 m, leur épaisseur `wallcut_*`), portes,
+  fenêtres, éléments, meubles `InteriorPanel` (1 m). Le mur sud de la pièce du joueur n'est donc
+  jamais dessiné ; ses murs nord, est et ouest le sont. Dans la porte d'une cloison nord-sud, la
+  colonne de coupe abaisse aussi la cloison sur 4,5 m au sud du joueur. La ligne glisse d'une
+  limite à l'autre (14 m/s). Les collisions ne changent jamais. Shaders :
+  `src/world/shaders/interior.gdshader`, `interior_panel.gdshader`, `interior_core.gdshaderinc`.
+- *Lumière* : préréglage `interieur` (`src/world/materials/lighting_interieur.tres`, `Map.light_preset
+  = &"interieur"`) et deux cartes de lumière vues de dessus, bornées à leur pièce (jour des fenêtres,
+  lampes), ajoutées en émission ; aucune lumière du moteur ni ombre portée.
+- *Draw calls* : un par matière de sol, de mur, de dessus de mur, par image de panneau et de meuble
+  (le `PropBatcher` garde la coordonnée de coupe dans UV2), plus le vide : 36 à 67 par vue
+  meublée dans l'étage d'essai, dans la vraie partie, interface comprise.
+
+**Mode d'emploi pour décrire et meubler un intérieur** (détails : `docs/INTERIEURS.md`, section 1).
+1. Dessiner le plan sur une grille d'un mètre (origine au nord-ouest), 2 m de vide autour.
+2. Écrire `data/maps/<map_id>/interior.json` : pièces et matières, portes, fenêtres, éléments,
+   lampes ; `InteriorLayout.from_data(...).problems` doit être vide.
+3. Carte `src/world/maps/<map_id>/<map_id>.tscn` : racine `Map` (`interior = true`,
+   `light_preset = &"interieur"`, `camera_bounds` : de x = 2 à la largeur − 2 pour que la caméra
+   reste au droit du joueur, en z de 5 à la profondeur − 5) ; `Ground` = `StaticBody3D` de script
+   `interior_room.gd` (masque 0) avec `layout` ; `Geometry` (`PropBatcher`) ; `Markers` (`Spawn`,
+   `from_<carte>` à y = 0,2, à 2 ou 3 m des sorties) ; `Exits` (`MapExit` devant chaque porte
+   qui a un `id` : `door_position(id)` ; zone qui couvre la porte quand on la franchit en marchant ;
+   carte cible et marqueur existants, `tests/unit/test_maps.gd`) ; `Life` ; et sa lumière,
+   `Light` = instance de `src/world/interior_light.tscn` (préréglage `interieur` à l'entrée,
+   réglage par défaut rendu en partant), en attendant E9.
+4. Meubler sous `Geometry` avec les scènes `InteriorPanel` de `src/world/props/` : nœud au milieu
+   de l'emprise, image au bord sud ; au-delà d'1 m de haut, contre un mur nord ; au milieu d'une
+   pièce, profondeur d'emprise ≥ `(h − 0,25) / 0,78 − 0,35` m (dans les 5 m nord, où la caméra
+   bute sur ses bornes, moins de 0,7 m derrière un meuble haut) ; chaises `chair_wood` au nord
+   des tables, `chair_wood_back` au sud ; lits vus de flanc, tête à l'ouest ; 0,8 m de passage ;
+   tapis : `GroundDecal` de `assets/hd2d/decals/rug_*`. Portes qu'on franchit : image à
+   ouverture transparente (`door_frame_wood`) ou aucune ; `door_room` aux portes fermées.
+5. Tester l'étage sur le modèle de `tests/unit/test_interior_entrepot.gd` (circulation, portes,
+   occlusion depuis chaque case, draw calls), dans la vraie partie sur le modèle de
+   `tests/integration/test_interior_in_game.gd`, et le capturer sur le modèle de
+   `tests/integration/demo_interieur.gd` (`game.tscn`, puis `WorldManager.enter_map`).
+Images : celles du cahier n° 3 (`docs/ASSETS_HD2D_SUKASUKA.md`, section 3), jamais retouchées.
+Une image qu'une carte emploie entre dans les listes de `tools/hd2d_interior.py` (taille réelle ;
+profondeur et lueur d'un meuble ; recette pour un remplaçant seulement), puis `python3
+tools/hd2d_interior.py manifest`, `python3 tools/hd2d_assets.py gen --lot I` (remplaçants),
+`python3 tools/hd2d_interior.py scenes`, `tools/import.sh`, `python3 tools/hd2d_assets.py check
+--lot I`.
+
 ## 4. Tranche verticale : WordEnd en HD-2D
 
 La tranche verticale **recrée l'easter egg dans un monde en relief** ((HD-2D) personnages en sprites, décor en images, caméra fixe) (Chtholly contre des vagues de Timeres sur les dunes au couchant, mêmes règles, même score) **et l'entoure d'un début de monde** : un village sûr avec trois PNJ, une quête, des objets, et une forêt où quelques Timeres rôdent librement. Elle est jouable dans le navigateur à la fin du jalon M2 et fixe la sensation de combat pour tout ce qui suit.

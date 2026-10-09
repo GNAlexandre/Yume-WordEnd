@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/interior_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/interior/props/game_table.png" id="2_image"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_game_table"]
+size = Vector3(1.126, 0.604, 0.6)
+
+[node name="game_table" type="Node3D"]
+script = ExtResource("1_panel")
+texture = ExtResource("2_image")
+shadow_width = 0.9
+shadow_depth = 0.557
+image_offset = Vector3(0, 0, 0.3)
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.302, 0)
+shape = SubResource("BoxShape3D_game_table")
