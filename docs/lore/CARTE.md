@@ -173,18 +173,18 @@ gardées ; seules les directions changent, pour qu'une sortie mène là où poin
 | `entrepot_etage` | étage (`entrepot`) | 32 × 16 | `entrepot_rdc`, `entrepot_toit` | — |
 | `entrepot_toit` | le toit (`entrepot`) | 16 × 16 | `entrepot_etage` | — |
 | `salle_des_armes` | la crypte (`entrepot`) | 14 × 10 | `entrepot_rdc` | — |
-| `village` | le village des hommes-bêtes (`village`) | 56 × 44 | `entrepot` (est), `cafe`, `maison_limashenka` | 250 marmer de l'entrepôt, 4 min |
+| `village` | le village des hommes-bêtes (`village`) | 56 × 40 | `entrepot` (est), `cafe`, `maison_limashenka` | 250 marmer de l'entrepôt, 4 min |
 | `cafe`, `maison_limashenka` | intérieurs (`village`) | 12 × 10, 10 × 8 | `village` | — |
 | `colline` | la colline des étoiles (`colline`) | 40 × 40 | `entrepot` (sud) | 300 marmer, 5 min |
 | `sentier` | le sentier et le marais (`sentier`) | 80 × 40 | `entrepot` (ouest), `port` (est), `ville_haute` (sud-est) | 500 marmer de l'entrepôt au port, 7 min |
 | `port` | le port et l'aire-port (`port`) | 70 × 40 | `sentier` (ouest), `ville_marche` (est), `transport_garde` (passerelle) | — |
-| `transport_garde` | à bord, le pont (`port`) | 20 × 9 | `port` | — |
+| `transport_garde` | à bord, le pont (`port`) | 20 × 11 | `port` | — |
 | `barocupot` | à bord, la salle du conseil de guerre (`ciel`) | 14 × 8 | scène : retour sur l'île (`entrepot`, `from_barocupot`) | — |
 | `foret_profonde` | la forêt profonde (`foret_profonde`) | 80 × 60 | `entrepot` (nord), `montagne` (est) | 400 marmer, 6 min |
 | `montagne` | la montagne aux ours (`montagne`) | 80 × 60 | `foret_profonde` (ouest) | 900 marmer, 13 min |
-| `ville_haute` | le centre-ville, haut (`ville`) | 60 × 52 | `sentier` (nord-ouest), `ville_marche` (sud), 4 portes de boutiques | 1 600 marmer par le chemin de la ville, 23 min depuis l'entrepôt |
+| `ville_haute` | le centre-ville, haut (`ville`) | 60 × 60 | `sentier` (nord-ouest), `ville_marche` (sud), 4 portes de boutiques | 1 600 marmer par le chemin de la ville, 23 min depuis l'entrepôt |
 | `ville_marche` | le centre-ville, place du marché (`ville`) | 56 × 44 | `ville_haute` (nord), `port` (ouest), 2 portes | 2 000 marmer du port, 28 min |
-| `ville_snack`, `ville_cafe`, `ville_librairie`, `ville_projection`, `ville_boulangerie`, `ville_horloger` | intérieurs (`ville`) | 8 × 6 à 12 × 9 | leur rue | — |
+| `ville_snack`, `ville_cafe`, `ville_librairie`, `ville_projection`, `ville_boulangerie`, `ville_horloger` | intérieurs (`ville`) | 9 × 7 à 12 × 10 | leur rue | — |
 
 - **Distances** : on prend **1 marmer ≈ 1 m (original)** et une marche de 1,2 m/s ; la carte de
   l'île affiche la durée indicative (colonne de droite) quand on y choisit un lieu découvert
@@ -894,7 +894,7 @@ fille aux cheveux cramoisis »). La nuit, la lumière filtre sous la porte de Ny
 | Pièce | Cotes (m) | Ce que dit l'œuvre | Portes et fenêtres | Mobilier (images) | À examiner |
 | --- | --- | --- | --- | --- | --- |
 | **Chambre de Willem** | 3,5 × 7,5 (x 1 → 4,5) | presque vide : un lit, une armoire vide, une lampe murale, plancher nu, **pas de rideaux, pas de chaise** ; la nuit, la fenêtre ne montre qu'un noir profond ; les draps sentent le soleil ; il s'assoit au rebord de la fenêtre (V1) | porte (3,6) ; **fenêtre nue au nord** (`window_bare`, x 2) | `bed_plain`, `wardrobe_plain`, `footlocker` (sa malle, original) ; mur : `wallitem_wall_lamp` | la fenêtre (le noir de la forêt, la nuit) ; l'armoire vide |
-| **Chambre de Chtholly** | 3,5 × 7,5 | un calendrier où elle raye les jours ; une armoire au fond de laquelle dort le chapeau offert par Willem ; un miroir, un lit, un oreiller (V1 ; VEX) ; un bureau, une chaise, une fenêtre à rideaux, une porte jamais verrouillée ; chambre bien rangée (V2 ; V3) | porte (6,2) ; fenêtre à rideaux au nord (x 6,2) | `bed_chtholly`, `desk_chtholly`, `wardrobe_chtholly` ; mur : **`wallitem_calendar`** (x 7,45) | **le calendrier : le journal du jeu** (une ligne par jour, ACTE1.md) ; l'armoire (le chapeau, après le jour 3) ; le miroir |
+| **Chambre de Chtholly** | 3,5 × 7,5 | un calendrier où elle raye les jours ; une armoire au fond de laquelle dort le chapeau offert par Willem ; un miroir, un lit, un oreiller (V1 ; VEX) ; un bureau, une chaise, une fenêtre à rideaux, une porte jamais verrouillée ; chambre bien rangée (V2 ; V3) | porte (6,2) ; fenêtre à rideaux au nord (x 6,2) | `bed_chtholly`, `desk_chtholly`, `wardrobe_chtholly` ; mur : **`wallitem_calendar`** (x 7,45) | **le calendrier : le journal du jeu** (une ligne par jour, ACTE1.md) ; l'armoire (le chapeau acheté par Willem sur l'île n° 28, qu'elle cache au fond) ; le miroir |
 | **Chambre de Nygglatho** | 4,5 × 7,5 | petite pièce : table simple, deux chaises, étagère, lit, toutes sortes d'objets ; service à thé ; tapis devant la porte où s'écroule l'avalanche (V1) ; cheminée, bouilloire, petite table à thé, chaise de l'invité, bureau où elle pose le menton, dernière lampe à huile (V2) ; cristal de communication, devant lequel elle s'assoit dos à la porte (V1 ; V5) | porte (11,0) ; pas de fenêtre visible (la cheminée occupe le mur nord) | `fireplace` (feu `anim/hearth_fire`), `comm_crystal` (appel : `anim/comm_crystal_call`), `shelf_nygglatho`, `tea_table` (`tea_tray_cheesecake`), `chair_guest`, `desk_nygglatho` (`oil_lamp`), `bed_nygglatho` ; décalque `rug_brown` devant la porte | le cristal ; la boîte à thé ; le cheese-cake |
 | **Chambre de la grande sœur** | 3,5 × 7,5 | porte non verrouillée ; grand désordre, jeu de cartes éparpillé, seul le bureau est propre, une broche d'argent posée dessus (V1, « Entrepôt de fées ») | porte (14,3) ; rideaux tirés au nord | `bed_plain`, `dresser_child`, `desk_clean_brooch` (la broche ne s'y voit que dans le souvenir du jour 6 : au présent, Chtholly la porte ; variante sans broche, section 12), `clothes_chest` ; décalques `cards_floor`, `clothes_floor` (sans sous-vêtements visibles) | le bureau propre ; les cartes |
 | **Trémie et palier** | 4 × 7,5 | (original) | ouverte sur le couloir (x 18,4 → 20,4) | `stairs_down` (x 16,7 → 18,3, z 2,5 → 5,5) ; murs : `wallitem_notice_a` (« toilettes de l'étage hors service », V1), un second planning de corvées, applique | l'écriteau des toilettes |
@@ -2541,6 +2541,102 @@ ville_boulangerie : 11 × 7 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord
 ```
 Légende des lettres : `A` bread_shelves ; `B` bakery_counter ; `C` bakery_oven ; `D` kneading_trough.
 <!-- /ascii:ville_boulangerie -->
+
+<!-- ascii:ville_cafe -->
+```text
+ville_cafe : 11 × 8 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord en haut
+      0         5         10
+    0 
+      
+        +-----------------+
+        |café.............|
+    2   |.....AAAAAA......|
+        |.....AAAAAA......|
+        |.................|
+        |.................|
+    4   |BBBB........BBB..|
+        |BBBB..BBBB..BBB..|
+        |BBBB..BBBB..BBB..|
+        |......BBBB.......|
+    6   |.................|
+        |........@........|
+        +--------=--------+
+                 v
+```
+Légende des lettres : `A` cafe_town_counter ; `B` cafe_town_table.
+<!-- /ascii:ville_cafe -->
+
+<!-- ascii:ville_librairie -->
+```text
+ville_librairie : 9 × 7 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord en haut
+      0         5
+    0 
+      
+        +-------------+
+        |AAAA....AAAA.|
+    2   |librairie....|
+        |.............|
+        |.............|
+        |.CCCC...BBBB.|
+    4   |.CCCC...BBBB.|
+        |.............|
+        |......@......|
+        |.............|
+    6   +------=------+
+               v
+```
+Légende des lettres : `A` bookshop_shelves ; `B` bookshop_counter ; `C` bookshop_table.
+<!-- /ascii:ville_librairie -->
+
+<!-- ascii:ville_projection -->
+```text
+ville_projection : 12 × 10 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord en haut
+      0         5         10
+    0 
+      
+        +-------------------+
+        |.....AAAAAAAA......|
+    2   |projection.........|
+        |...................|
+        |...................|
+        |BBBBBBB....BBBBBBB.|
+    4   |BBBBBBB....BBBBBBB.|
+        |...................|
+        |BBBBBBB....BBBBBBB.|
+        |BBBBBBB....BBBBBBB.|
+    6   |...................|
+        |BBBBBBB....BBBBBBB.|
+        |BBBBBBB....BBBBBBB.|
+        |BBBBBBB....BBBBBBB.|
+    8   |.........@......CCC|
+        |................CCC|
+        +---------=---------+
+                  v
+```
+Légende des lettres : `A` cinema_screen ; `B` cinema_benches ; `C` crystal_projector.
+<!-- /ascii:ville_projection -->
+
+<!-- ascii:ville_horloger -->
+```text
+ville_horloger : 9 × 7 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord en haut
+      0         5
+    0 
+      
+        +-------------+
+        |horloger..AA.|
+    2   |.............|
+        |...BBBB......|
+        |...BBBB......|
+        |...BBBB......|
+    4   |.............|
+        |.............|
+        |......@......|
+        |.............|
+    6   +------=------+
+               v
+```
+Légende des lettres : `A` longcase_clock ; `B` watch_workbench.
+<!-- /ascii:ville_horloger -->
 
 ```plan
 carte ville_snack 9 7 dedans
