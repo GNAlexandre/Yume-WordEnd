@@ -450,7 +450,9 @@ class_name GroundDecal     # (H9) src/world/ground_decal.gd, racine possible d'u
                            # de dessus, ancre au centre, couchée sur les triangles du sol ; @export texture,
                            # pixels_per_meter (96), soft_alpha, tint, flip_h, layer (0..7, UV2.y), follow_ground ;
                            # size_m(), draped_mesh(), material_for(image, tint, soft, layer) ; HARD_SHADER,
-                           # SOFT_SHADER (ground_decal*.gdshader), SOFT_PRIORITY (−9 + couche)
+                           # SOFT_SHADER (ground_decal*.gdshader), SOFT_PRIORITY (−9 + couche) ; (E2) follow_ground
+                           # drape sur le `MapGround` (enfant `Ground`) du premier ancêtre qui en a un
+                           # (MapGround.triangles_in), sinon sur IslandTerrain (île ancienne)
 class_name Building        # (H9) @export side_facade (flanc est, retourné à l'ouest ; enfant interne « Sides ») ;
                            # side_size_m(), side_contract_size() (pignon : profondeur × faîtage ; gouttereau :
                            # profondeur × mur), side_material(texture, glow)
@@ -604,9 +606,9 @@ Contrat : `docs/REFONTE.md`, section 7.1 ; exemple complet : `src/world/maps/ess
      dedans ; en attendant, un `StaticBody3D` plat avec ses murs invisibles, comme la carte
      d'essai). La carte doit être fermée : murs, falaises ou décor tout autour ;
    - `Geometry` : script `res://src/world/prop_batcher.gd` ; les décors de `src/world/props/`
-     (instances), fondus en un draw call par image. Un `GroundDecal` y garde
-     `follow_ground = false` tant qu'E2 ne l'a pas branché sur `MapGround` (sinon il suit le
-     relief de l'ancienne île) ;
+     (instances), fondus en un draw call par image. Un `GroundDecal` (`follow_ground`) y suit
+     le relief du `MapGround` de la carte (E2) ; sur une carte au sol plat provisoire, le
+     mettre à faux (sinon il suit le relief de l'ancienne île) ;
    - `Markers` : des `Marker3D`. `Spawn` obligatoire (nouvelle partie, réapparition par défaut) ;
      un marqueur `from_<carte d'origine>` par sortie qui mène ici (`from_<carte>_<suffixe>` si
      plusieurs). Le joueur est posé au sol sous le marqueur, tourné vers son −Z : un marqueur
@@ -774,14 +776,19 @@ sud ; **un pixel = une case de 1 m** ; la case (i, j) couvre [i, i + 1] × [j, j
    dessus (`build/maps/<map_id>_dessus.png`) ; `check` revérifie (toutes les cartes sans argument).
    On peut aussi peindre les images à la main (pixels purs, sans anticrénelage), puis `check`.
 3. `tools/import.sh`, et commiter les images avec leurs `.import`.
-4. La scène `src/world/maps/<map_id>/<map_id>.tscn` (racine `Map`, contrat de docs/REFONTE.md 7.1) :
-   `Ground` est un `StaticBody3D` au script `src/world/map_ground.gd` (rien d'autre à régler : il lit
-   `data/maps/<nom de la Map>/`) ; `size` de la `Map` = `size` de `map.json`. Les décors vont dans
-   `Geometry` à la hauteur de leur palier (`MapGround.height_at`) ; un décalque au sol y prend
-   `follow_ground = false`, posé à la hauteur du sol (docs/CONTRACT_REQUESTS.md, E2).
+4. La scène `src/world/maps/<map_id>/<map_id>.tscn`, selon « (E1) Créer une carte » (section 3 ;
+   modèle : `src/world/maps/essai_relief/essai_relief.tscn`) : racine `Map`, `size` = `size` de
+   `map.json`, `camera_bounds`, la lumière (`src/world/map_light.tscn`, en attendant E9) ; `Ground`
+   est un `StaticBody3D` au script `src/world/map_ground.gd` (rien d'autre à régler : il lit
+   `data/maps/<nom de la Map>/`). Les décors vont dans `Geometry` à la hauteur de leur palier
+   (`MapGround.height_at`, ou la vue de dessus) ; un décalque au sol (`GroundDecal`) suit le relief
+   de lui-même. Les marqueurs (`Spawn`, `from_<carte>`) et les sorties se posent sur des cases
+   praticables, en deçà de la barrière des bords.
 5. Vérifier : `tools/test.sh tests/unit/test_map_ground_data.gd` (chaque carte de `data/maps` au format
-   du sol en relief s'y lit sans problème) et une capture (modèle :
-   `tests/integration/demo_e2_relief.gd`, `E2_VIEW=<vue> tools/screenshot.sh …`).
+   du sol en relief s'y lit sans problème), `tools/test.sh tests/unit/test_maps.gd` (la `Map`) et des
+   captures dans la vraie partie (modèle : `tests/integration/demo_e2_relief.gd`, qui instancie
+   `game.tscn` puis `WorldManager.enter_map` ; `E2_VIEW=<vue> tools/screenshot.sh
+   res://tests/integration/demo_e2_relief.tscn build/shots/e2_<vue>.png 60`).
 
 ### Format de dialogue (JSON)
 

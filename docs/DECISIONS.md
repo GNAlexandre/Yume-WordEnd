@@ -2131,9 +2131,9 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **E2 — lumière** : `MapGround` suit la première `DirectionalLight3D` de la scène au chargement
   (ombres portées des falaises dans le shader du sol, côté chaud des nuages) ; `set_sun()` pour un
   changement de lumière (E9).
-- **E2 — `Map` en attente** : E1 crée `src/world/map.gd` en parallèle ; la carte de démonstration
-  `essai_relief` a pour racine le remplaçant `tests/stubs/e2_map_stub.gd` (mêmes exports que le
-  contrat). À la fusion, une ligne de la scène change (docs/CONTRACT_REQUESTS.md, E2).
+- **E2 — `Map` en attente** : E1 créait `src/world/map.gd` en parallèle ; la carte de démonstration
+  `essai_relief` a eu pour racine un remplaçant (`tests/stubs/e2_map_stub.gd`) jusqu'à la fusion
+  d'E1, où elle a pris `map.gd` (le remplaçant est retiré).
 - **E2 — talus de terre** : image provisoire `assets/hd2d/cliff/bank_earth.png` (384 × 96, recette
   dans `tools/hd2d_ground.py`) ; le muret reprend `wall_stone_b.png`, la roche `lip.png` et
   `cliff.png`.
@@ -2218,3 +2218,16 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `IslandTerrain` et `IslandRock`, maillages et atlas du sol, et les planches des PNJ de
   `SheetLoader`) ; nœuds, objets et ressources identiques d'une visite à l'autre. Revers : l'île
   se recharge de zéro à chaque retour (1,5 s sous Xvfb au lieu de 0,3 s).
+- **E2 — décalques sur les cartes** : `GroundDecal.follow_ground` drape sur le `MapGround` (enfant
+  `Ground`) du premier ancêtre qui en a un, par `MapGround.triangles_in` (même forme que
+  `IslandTerrain.triangles_in`, coordonnées de la carte décalées de sa position) ; sans `MapGround`,
+  il suit `IslandTerrain` comme avant (île ancienne). Les décalques d'une carte en relief gardent
+  donc `follow_ground` vrai (nénuphars d'`essai_relief`, décalque d'essai sur la rampe dans les tests).
+- **E2 — matériau des faces partagé** : `MapGround.cliff_material()` est gardé par une référence
+  faible (règle d'E1 : une carte quittée libère ses images) ; le sol se bâtit à `_ready`, ou plus
+  tôt à la première question (`triangles_in` d'un décalque prêt avant lui).
+- **E2 — mesures dans la vraie partie** (`game.tscn` + `WorldManager.enter_map(&"essai_relief")`,
+  Xvfb, `tests/integration/demo_e2_relief.gd`) : 24 à 33 draw calls par vue (sol 1, faces 1, mer de
+  nuages 1 ; le reste : décors, joueur, interface, post-traitement) ; construction du sol 36 à 60 ms
+  à froid avec le rendu (33 ms à chaud sans écran). La vue « large » est au zoom le plus éloigné
+  du jeu (`max_distance` 25 m) ; la carte entière se voit par `tools/map_build.py view`.
