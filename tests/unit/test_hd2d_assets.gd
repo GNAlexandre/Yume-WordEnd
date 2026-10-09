@@ -9,7 +9,15 @@ extends GutTest
 ## l'export Web. tools/hd2d_assets.py check fait les mêmes vérifications, plus finement.
 
 const MANIFEST := "res://tools/hd2d_manifest.json"
-const DOCS: Array[String] = ["res://docs/ASSETS_HD2D.md", "res://docs/ASSETS_HD2D_MONDE.md"]
+## (E3) Les intérieurs (lot I) : conventions de docs/REFONTE.md (section 8.1), liste et tailles de
+## docs/INTERIEURS.md, en attendant le cahier n° 3.
+const DOCS: Array[String] = [
+	"res://docs/ASSETS_HD2D.md",
+	"res://docs/ASSETS_HD2D_MONDE.md",
+	"res://docs/REFONTE.md",
+	"res://docs/INTERIEURS.md",
+]
+const CAHIER2_LOTS: Array[String] = ["A", "B", "C", "D", "E", "F", "G"]
 const ATLAS := "res://assets/hd2d/ground/atlas/ground_atlas.png"
 ## Ordre des tuiles dans l'atlas (GROUND_LAYERS de tools/hd2d_assets.py, terrain.gdshader) : les
 ## 12 du cahier n° 1, puis les 15 du cahier n° 2.
@@ -107,10 +115,13 @@ func test_manifest_lists_every_category() -> void:
 		folders[String(entry["path"]).split("/")[2]] = true
 		if entry.has("lot"):
 			lots[String(entry["lot"])] = true
-	for folder: String in ["ground", "cliff", "buildings", "props", "sky", "fx", "decals", "anim"]:
+	for folder: String in [
+		"ground", "cliff", "buildings", "props", "sky", "fx", "decals", "anim", "interior"
+	]:
 		assert_true(folders.has(folder), "catégorie %s" % folder)
-	for lot: String in ["A", "B", "C", "D", "E", "F", "G"]:
+	for lot: String in CAHIER2_LOTS:
 		assert_true(lots.has(lot), "lot %s du cahier n° 2" % lot)
+	assert_true(lots.has("I"), "lot I (intérieurs, cahier n° 3)")
 	assert_gt(_entries().size(), 390, "les images des deux cahiers")
 
 
@@ -220,7 +231,8 @@ func test_decals_fade_into_the_ground_away_from_their_edges() -> void:
 	for entry: Dictionary in _entries():
 		if String(entry["kind"]) != "decal":
 			continue
-		count += 1
+		if String(entry.get("lot", "")) in CAHIER2_LOTS:
+			count += 1
 		var path := "res://" + String(entry["path"])
 		var image := _loaded(entry)
 		if image == null:
