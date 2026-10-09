@@ -542,6 +542,8 @@ En tout, **400 à 550 images**.
   seul Web) et le bureau seul pour la version complète.
 - **Les images du cahier n° 2** restent : arbres, rochers, façades, décalques, animations. La
   pose les reprend dans les nouveaux lieux.
+- **Le cahier est écrit** : `docs/ASSETS_HD2D_SUKASUKA.md` (404 images, 90 planches et 2
+  portraits ; ses formats à confirmer par le moteur sont listés dans sa section 9.4).
 
 ---
 

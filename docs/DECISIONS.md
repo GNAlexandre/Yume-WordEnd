@@ -2153,6 +2153,17 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **E3 — requêtes du sol** : `InteriorRoom` répond aux mêmes questions que `MapGround` (E2) :
   `height_at`, `material_at` (nom de l'image du sol), `is_walkable` (dans une pièce, hors des
   murs ; les meubles ne comptent pas) et `room_at`, en coordonnées de la carte.
+- **C3 — cahier des images n° 3** (`docs/ASSETS_HD2D_SUKASUKA.md`, d'après `docs/REFONTE.md`,
+  sections 8 et 8.1) : 404 images, 90 planches et 2 portraits en six lots (I à N), lot J au-delà
+  de l'ordre de grandeur (80 planches au lieu de 40 à 60) pour être exhaustif, priorités 1 à 3 ; les
+  animations nouvelles d'un personnage livré viennent en planche complémentaire `<id>_life` (rangée
+  `repos` recopiée comme étalon de taille), en planche de tenue (`_home` sans arme, `_pajamas`,
+  `_rain`) ou de geste (`willem_cook`, `nygglatho_tea`…) ; à confirmer par les lots du moteur
+  (section 9.4 du cahier) : ces planches, les noms hors de la section 8.1 (`etreinte`, `pare`,
+  `broute`, `travaille` des fées pour la toilette), les cadences de la faune, les navires en volume
+  (`ships/`), les faces de paliers (`cliff/step_*`), les décalques des pièces, la pluie, les vitres
+  éclairées et les fenêtres de nuit ; aucune fée générique aux cheveux rouges (couleur de
+  l'empiètement, V3).
 - **E1 — carte héritée** : `src/world/maps/ile_ancienne/ile_ancienne.tscn` est une scène héritée
   d'`island.tscn`, dont le script (`island.gd`) étend désormais `Map` : `Ground` est le sol de
   l'île, les zones restent des zones (`World/ile_ancienne/Zones/<zone>`, `zone_entered`
