@@ -37,3 +37,7 @@ egg n'a pas de licence établie (PLAN.md section 13) et n'est pas copié.
 ### Lot G — corrections des raccords et détourages
 
 Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `assets/hd2d/sky/sky_night.png`, `assets/hd2d/sky/horizon_islands.png`, `assets/hd2d/sky/mist_band.png`, `assets/hd2d/sky/distant_island_d.png`, `assets/hd2d/sky/distant_island_f.png`. Sources conservées hors du dépôt ; assemblage et détourage sans réduction de palette.
+
+### Cahier n° 3 — lot I, priorité 1
+
+91 PNG générés avec ChatGPT / image_gen le 9 octobre 2026, cahier n° 3, lot I. Références : les planches officielles de SukaSuka fournies par l’utilisateur (21 ZIP, 162 pages ; intérieurs p99–111), les descriptions paraphrasées des romans du cahier, et les assets HD-2D déjà livrés. Sources et aperçus conservés hors du dépôt. Mise au format au plus proche voisin, transparence découpée, raccords corrigés avec image_gen ; aucune réduction de palette ni compression avec perte.
