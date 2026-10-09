@@ -78,7 +78,7 @@ jobs:
             echo "service worker présent : la PWA ne doit pas être activée"
             exit 1
           fi
-      - name: "Taille du build (budget : 100 Mo compressés)"
+      - name: "Taille du build (budget : 150 Mo compressés)"
         run: tools/build_size.sh --summary
       - uses: actions/upload-artifact@v7
         with:
@@ -106,7 +106,7 @@ jobs:
 
   # (bureau) Export Windows (pck dans l'exe), installateur NSIS et zip portable, puis le même pck
   # en build Linux lancé sans écran jusqu'à une partie (tools/build_desktop.sh --linux). Le budget
-  # de 100 Mo ne concerne que le Web : la taille de l'installateur est seulement affichée.
+  # de 150 Mo ne concerne que le Web : la taille de l'installateur est seulement affichée.
   bureau:
     runs-on: ubuntu-latest
     timeout-minutes: 30
