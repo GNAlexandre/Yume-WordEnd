@@ -5,7 +5,6 @@
 [ext_resource type="JSON" path="res://data/maps/entrepot_rdc_essai/interior.json" id="3_layout"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
 [ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
-[ext_resource type="PackedScene" path="res://src/world/interior_light.tscn" id="6_light"]
 [ext_resource type="PackedScene" path="res://src/world/props/china_cabinet.tscn" id="p_china_cabinet"]
 [ext_resource type="PackedScene" path="res://src/world/props/sink_stone.tscn" id="p_sink_stone"]
 [ext_resource type="PackedScene" path="res://src/world/props/dining_table_set.tscn" id="p_dining_table_set"]
@@ -62,8 +61,6 @@ interior = true
 size = Vector2(40, 24)
 camera_bounds = Rect2(2, 5, 36, 14)
 light_preset = &"interieur"
-
-[node name="Light" parent="." instance=ExtResource("6_light")]
 
 [node name="Ground" type="StaticBody3D" parent="."]
 collision_mask = 0

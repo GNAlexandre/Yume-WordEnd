@@ -9,8 +9,13 @@ extends RefCounted
 ## - les mers de nuages (matériaux de cloud_sea.gdshader, copiés) : teinte, côté du soleil,
 ##   image ;
 ## - les lumières ponctuelles (OmniLight3D, SpotLight3D) : énergie de départ × lamp_energy ;
+## - (R1) les intérieurs (InteriorRoom.apply_lighting : jour des fenêtres window_light et
+##   window_tint, lampes, cheminées et cristaux lamp_energy) et les sols en relief
+##   (MapGround.set_sun : ombres des falaises, côté chaud de la mer de nuages) ;
 ## - les matériaux des décors (ShaderMaterial des panneaux, bâtiments, sol, roche) :
 ##   - glow_strength (lueur des fenêtres et des cristaux) : valeur de départ × window_glow ;
+##     (R1) sauf les panneaux d'intérieur (interior_panel.gdshader, uniforme glow_follows),
+##     dont la lueur suit la lumière de leur pièce (InteriorRoom) ;
 ##   - hd2d_wetness (hd2d_light.gdshaderinc) : wetness ; un StandardMaterial3D mouillé devient
 ##     un peu brillant (rugosité, spéculaire) ;
 ##   - images de nuit (format confirmé du cahier n° 3, section 8.4) : si l'image d'un matériau
@@ -54,6 +59,9 @@ var wet_standard: Array[BaseMaterial3D] = []
 var night_materials: Array[ShaderMaterial] = []
 var night_images: Array[Texture2D] = []
 var lit_materials: Array[ShaderMaterial] = []
+## (R1) Intérieurs et sols en relief de la carte.
+var rooms: Array[InteriorRoom] = []
+var grounds: Array[MapGround] = []
 
 ## Dernières valeurs posées (on ne repose pas ce qui n'a pas changé).
 var _glow: float = -1.0
@@ -77,6 +85,8 @@ func counts() -> Dictionary:
 		"wet": wet_materials.size() + wet_standard.size(),
 		"night": night_materials.size(),
 		"lit": lit_materials.size(),
+		"rooms": rooms.size(),
+		"grounds": grounds.size(),
 	}
 
 
@@ -115,6 +125,12 @@ func apply(
 			lamp.light_energy = (
 				float(lamp.get_meta(HD2DLighting.BASE_ENERGY_META)) * lighting.lamp_energy
 			)
+	for room: InteriorRoom in rooms:
+		if is_instance_valid(room):
+			room.apply_lighting(lighting)
+	for ground: MapGround in grounds:
+		if is_instance_valid(ground):
+			ground.set_sun(lighting.toward_sun())
 	_apply_materials(lighting)
 
 
@@ -184,6 +200,11 @@ func _scan(map: Node) -> void:
 		if not lamp.has_meta(HD2DLighting.BASE_ENERGY_META):
 			lamp.set_meta(HD2DLighting.BASE_ENERGY_META, lamp.light_energy)
 		lamps.append(lamp)
+	for node: Node in map.find_children("*", "StaticBody3D", true, false):
+		if node is InteriorRoom:
+			rooms.append(node as InteriorRoom)
+		elif node is MapGround:
+			grounds.append(node as MapGround)
 	var materials: Dictionary = {}
 	var uniforms: Dictionary = {}
 	var exists: Dictionary = {}
@@ -275,7 +296,7 @@ func _sort(material: Material, uniforms: Dictionary, exists: Dictionary) -> void
 	var names := _uniform_names(shader_material.shader, uniforms)
 	if names.has(&"hd2d_wetness"):
 		wet_materials.append(shader_material)
-	if names.has(&"glow_strength"):
+	if names.has(&"glow_strength") and not names.has(&"glow_follows"):
 		if not shader_material.has_meta(BASE_GLOW_META):
 			var glow: Variant = shader_material.get_shader_parameter(&"glow_strength")
 			shader_material.set_meta(BASE_GLOW_META, float(glow) if glow != null else 0.0)
@@ -307,6 +328,9 @@ func _sort_image(material: ShaderMaterial, names: Dictionary, exists: Dictionary
 		material.set_meta(DAY_TEXTURE_META, day)
 		night_materials.append(material)
 		night_images.append(load(night_path) as Texture2D)
+		if names.has(&"night_view"):
+			# (R1) Fenêtre d'intérieur : son image de nuit remplace l'assombrissement du shader.
+			material.set_shader_parameter(&"night_view", Color.WHITE)
 
 
 static func _uniform_names(shader: Shader, cache: Dictionary) -> Dictionary:

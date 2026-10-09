@@ -64,6 +64,10 @@ var _facing: Vector3 = Vector3.ZERO
 var _view: StringName = SheetLoader.SIDE
 var _views: Dictionary = {}
 var _side_flip: bool = false
+## (R1) Couleur que d'autres donnent au sprite (EnemyData.tint), et la dernière posée avec la
+## teinte de la lumière.
+var _base_modulate: Color = Color.WHITE
+var _lit_modulate: Color = Color.WHITE
 
 @onready var _sprite: AnimatedSprite3D = $Sprite
 @onready var _shadow: MeshInstance3D = $Shadow
@@ -76,6 +80,20 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	advance(delta)
 	_update_facing()
+
+
+## (R1) La planche, non éclairée, prend la teinte de la lumière posée par Atmosphere
+## (HD2DLighting.active_sprite_tint : la nuit, plus sombre et bleutée ; blanche au couchant),
+## par-dessus la couleur que d'autres lui donnent (EnemyData.tint).
+func _apply_light_tint() -> void:
+	if _sprite == null:
+		return
+	if _sprite.modulate != _lit_modulate:
+		_base_modulate = _sprite.modulate
+	var tint := HD2DLighting.active_sprite_tint()
+	_lit_modulate = _base_modulate * Color(tint.r, tint.g, tint.b)
+	if _sprite.modulate != _lit_modulate:
+		_sprite.modulate = _lit_modulate
 
 
 ## Change de skin, à chaud : si le nouveau skin a l'animation en cours, elle continue au même
@@ -166,8 +184,9 @@ func is_playing() -> bool:
 
 ## Fait avancer l'horloge des animations de delta secondes : appelé par _process, ou par un test
 ## pour un temps exact. Les images sautées par un grand delta sont toutes émises, dans l'ordre
-## (un tour au plus pour une boucle).
+## (un tour au plus pour une boucle). (R1) Pose aussi la teinte de la lumière (_apply_light_tint).
 func advance(delta: float) -> void:
+	_apply_light_tint()
 	if not _playing or not _clips.has(_anim):
 		return
 	var clip: Clip = _clips[_anim]
