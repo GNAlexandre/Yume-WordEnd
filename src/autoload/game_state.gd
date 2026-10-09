@@ -12,6 +12,8 @@ extends Node
 ##   chose change ; jamais dans from_dict ni reset), tracked_quest_changed quand tracked_quest
 ##   change ;
 ## - skin_changed et max_hp_changed quand skin_id / max_hp changent.
+## - (E9) atmosphere_changed quand moment ou weather changent (setters, from_dict et reset
+##   compris) : Atmosphere pose alors la lumière.
 ## Mises à jour attendues des autres lots : (E1) map par WorldManager à chaque changement de
 ## carte, zone par WorldManager (L2) à chaque zone_entered,
 ## position par le joueur (L1) quand il est au sol, étapes et quête suivie par le QuestTracker
@@ -30,6 +32,13 @@ const QUEST_STATES: Array[StringName] = [QUEST_AVAILABLE, QUEST_ACTIVE, QUEST_DO
 const MAX_QUANTITY := 999
 const MAX_HP_LIMIT := 20
 const MAX_COORDINATE := 1000.0
+## (E9) Moments de la journée et temps qu'il fait (préréglages de lumière : data/lighting/,
+## src/autoload/atmosphere.gd), dans l'ordre du jour. Le couchant, sans pluie, est le monde de
+## toujours : celui d'une nouvelle partie et d'une sauvegarde d'avant E9.
+const MOMENTS: Array[StringName] = [&"aube", &"matin", &"apres_midi", &"couchant", &"nuit"]
+const WEATHERS: Array[StringName] = [&"clair", &"pluie", &"averse"]
+const DEFAULT_MOMENT := &"couchant"
+const DEFAULT_WEATHER := &"clair"
 
 ## Skin actif (SkinData.id) ; &"" = skin par défaut de SkinRegistry.
 var skin_id: StringName = &"":
@@ -57,6 +66,28 @@ var zone: StringName = &""
 ## Dernière position au sol du joueur, dans le repère de la carte (sauvegardée, restaurée par
 ## game.gd).
 var position: Vector3 = Vector3.ZERO
+## (E9) Moment de la journée (un de MOMENTS ; une autre valeur est refusée, avertissement) et
+## temps qu'il fait (un de WEATHERS). Tenus par le récit (E6) ou les raccourcis de test, par
+## Atmosphere.set_moment / set_weather (transition douce) ou directement (transition par
+## défaut) ; émettent atmosphere_changed. Sauvegardés.
+var moment: StringName = DEFAULT_MOMENT:
+	set(value):
+		if value == moment:
+			return
+		if not value in MOMENTS:
+			push_warning("GameState : moment inconnu %s" % value)
+			return
+		moment = value
+		EventBus.atmosphere_changed.emit(moment, weather)
+var weather: StringName = DEFAULT_WEATHER:
+	set(value):
+		if value == weather:
+			return
+		if not value in WEATHERS:
+			push_warning("GameState : temps inconnu %s" % value)
+			return
+		weather = value
+		EventBus.atmosphere_changed.emit(moment, weather)
 ## (Lot Q) Quête suivie, affichée par le HUD ; &"" = aucune (le HUD montre alors la première
 ## quête active). Tenue par le QuestTracker (une quête qui démarre devient la quête suivie) et
 ## par le journal (choix du joueur) ; émet tracked_quest_changed.
@@ -83,6 +114,8 @@ func reset() -> void:
 	map = &""
 	zone = &""
 	position = Vector3.ZERO
+	moment = DEFAULT_MOMENT
+	weather = DEFAULT_WEATHER
 	tracked_quest = &""
 	_inventory.clear()
 	_flags.clear()
@@ -275,7 +308,8 @@ func arena_record(arena_id: StringName) -> Dictionary:
 ## Champs du schéma de sauvegarde, sauf version et saved_at (ajoutés par SaveManager).
 ## Types JSON uniquement (String, int, float, bool, Array, Dictionary). Les champs du schéma v1
 ## d'abord (et, à côté de la position, la carte de la refonte : map, v3), puis ceux du Lot Q
-## (v2) : quest_progress et tracked_quest.
+## (v2) : quest_progress et tracked_quest ; enfin (E9) moment et weather, facultatifs dans le
+## schéma v3 (absents d'une sauvegarde plus ancienne : le couchant sans pluie).
 func to_dict() -> Dictionary:
 	var inventory := {}
 	for item_id: StringName in _inventory:
@@ -311,6 +345,8 @@ func to_dict() -> Dictionary:
 		"best_scores": scores,
 		"quest_progress": progress,
 		"tracked_quest": String(tracked_quest),
+		"moment": String(moment),
+		"weather": String(weather),
 	}
 
 
@@ -376,6 +412,11 @@ func from_dict(data: Dictionary) -> void:
 			continue
 		_quest_progress[quest_id] = {"step": step_id, "count": _read_count(entry.get("count"))}
 	tracked_quest = _read_name(data.get("tracked_quest"))
+	# (E9) Absents (sauvegarde d'avant E9) ou inconnus : le couchant sans pluie.
+	var saved_moment := _read_name(data.get("moment"))
+	moment = saved_moment if saved_moment in MOMENTS else DEFAULT_MOMENT
+	var saved_weather := _read_name(data.get("weather"))
+	weather = saved_weather if saved_weather in WEATHERS else DEFAULT_WEATHER
 	EventBus.inventory_changed.emit()
 
 

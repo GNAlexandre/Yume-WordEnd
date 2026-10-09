@@ -3,10 +3,12 @@ extends Node
 ## (migration v1 → v2 : Lot Q, avancement des quêtes en étapes ; v2 → v3 : E1, cartes).
 ##
 ## Fichier save_path : {"version": 3, "saved_at": "AAAA-MM-JJTHH:MM:SSZ" (UTC), puis les champs
-## de GameState.to_dict() dans leur ordre}. new_game(), load_game() et import_json() émettent
-## EventBus.game_loaded en cas de succès : c'est le seul signal que main.gd écoute pour passer
-## du menu au jeu. Choix détaillés : docs/DECISIONS.md, sections L8 et Lot Q. Le nom du fichier
-## (save_v1.json) ne suit pas la version du schéma : il ne change jamais (sauvegardes gardées).
+## de GameState.to_dict() dans leur ordre}. (E9) moment et weather sont des champs facultatifs du
+## schéma v3, sans migration : absents, GameState prend le couchant sans pluie. new_game(),
+## load_game() et import_json() émettent EventBus.game_loaded en cas de succès : c'est le seul
+## signal que main.gd écoute pour passer du menu au jeu. Choix détaillés : docs/DECISIONS.md,
+## sections L8 et Lot Q. Le nom du fichier (save_v1.json) ne suit pas la version du schéma : il
+## ne change jamais (sauvegardes gardées).
 ##
 ## - Écriture sûre : <save_path>.tmp est écrit et fermé, puis renommé en save_path ; une
 ##   écriture interrompue laisse l'ancienne sauvegarde intacte.
@@ -531,6 +533,8 @@ func _invalid_field(data: Dictionary) -> String:
 		"best_scores": _is_map.bind(_is_score),
 		"quest_progress": _is_map.bind(_is_progress),
 		"tracked_quest": _is_text,
+		"moment": _is_text,
+		"weather": _is_text,
 	}
 	for key: String in checks:
 		if data.has(key) and not checks[key].call(data[key]):
