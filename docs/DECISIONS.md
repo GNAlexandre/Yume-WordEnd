@@ -2307,6 +2307,7 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `IslandTerrain` et `IslandRock`, maillages et atlas du sol, et les planches des PNJ de
   `SheetLoader`) ; nœuds, objets et ressources identiques d'une visite à l'autre. Revers : l'île
   se recharge de zéro à chaque retour (1,5 s sous Xvfb au lieu de 0,3 s).
+- **D2 — lieux, acte 1 et vie** (`docs/lore/CARTE.md`, `ACTE1.md`, `VIE.md`) : la côte nord porte le port, le village et la colline des étoiles (la caméra regarde le nord, le vide doit y être), l'entrepôt est au cœur de la forêt, la ville au sud-est, la forêt profonde et la montagne au sud ; l'entrepôt fait 30 × 14 m sur deux niveaux (un toit-terrasse à linge à l'est) et toutes les cartes sont vérifiées par un script hors dépôt ; l'acte 1 tient en douze jours (mission des aînées ramassée en un jour, départ le jour 12, comptes de jours non chiffrés à l'écran) ; hors des scènes, Chtholly porte un bâton, pas Seniorious ; un animal vaincu s'enfuit.
 - **Budget Web relevé de 100 à 150 Mo compressés** (cahier n° 3 ; même choix de l'utilisateur : la
   qualité avant le poids, le bureau d'abord). Les lots I et J de priorité 1 (PR n° 21 et 22) portent
   l'export Web à 101,3 Mo compressés (wasm 9,7 Mo, pck 91,6 Mo) : `main` était rouge sur la seule
