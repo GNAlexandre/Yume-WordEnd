@@ -54,7 +54,7 @@ Multijoueur, génération procédurale, application mobile native, monétisation
 ### Contraintes à connaître dès le départ
 
 - **Pas d'écran dans le cloud** : les agents valident par import headless, tests, export et captures d'écran rendues sous Xvfb (section 6). Un contrôle visuel humain reste nécessaire à chaque jalon.
-- **Budget Web** : moins de 100 Mo compressés (wasm + pck), avec un écran de chargement ; relevé de 25 à 60 Mo à M2.5, puis à 100 Mo avec les images du cahier n° 2, pour garder toutes les images sans perte de qualité (docs/DECISIONS.md). L'application de bureau n'a pas de budget de taille.
+- **Budget Web** : moins de 150 Mo compressés (wasm + pck), avec un écran de chargement ; relevé de 25 à 60 Mo à M2.5, à 100 Mo avec les images du cahier n° 2, puis à 150 Mo avec celles du cahier n° 3, pour garder toutes les images sans perte de qualité (docs/DECISIONS.md). L'application de bureau n'a pas de budget de taille.
 - **Audio Web** : le navigateur exige un geste utilisateur avant tout son, d'où un écran « Cliquer pour jouer ».
 - **Sauvegarde Web** : `user://` est persisté dans IndexedDB par Godot ; une sauvegarde est perdue si le joueur vide les données du site, d'où la synchronisation avec le compte WordPress en M4.
 
@@ -1042,7 +1042,7 @@ Le code de retour est non nul si un test échoue ; la CI publie `build/junit.xml
 
 | Job | Déclencheur | Contenu |
 | --- | --- | --- |
-| `check` | Toute PR et tout push sur `main` | Conteneur `barichello/godot-ci:4.7.2` + bibliothèques X11/Mesa + Xvfb ; `pip install gdtoolkit` ; `tools/check.sh` ; étape « taille du build » qui échoue au-delà du budget du jalon (100 Mo) et écrit la taille dans le résumé du job ; artefacts `build/web/`, `build/shots/`, `build/junit.xml` |
+| `check` | Toute PR et tout push sur `main` | Conteneur `barichello/godot-ci:4.7.2` + bibliothèques X11/Mesa + Xvfb ; `pip install gdtoolkit` ; `tools/check.sh` ; étape « taille du build » qui échoue au-delà du budget du jalon (150 Mo) et écrit la taille dans le résumé du job ; artefacts `build/web/`, `build/shots/`, `build/junit.xml` |
 | `deploy` | Push sur `main`, après `check` | Copie `web/` (CNAME, page de test) dans `build/web/`, puis publie sur GitHub Pages via `actions/upload-pages-artifact` + `actions/deploy-pages` |
 | `bureau` | (bureau) Toute PR, tout push sur `main` et tout tag `v*` | Même conteneur ; NSIS ; `tools/build_desktop.sh --linux` : export Windows, installateur `WordEnd-Setup-<version>.exe`, zip portable, build Linux du même pck lancé sans écran jusqu'à une partie ; tailles dans le résumé du job (pas de budget : celui de 60 Mo ne vaut que pour le Web) ; artefact `bureau` (7 jours). Un tag `vX.Y.Z` fixe la version (project.godot, `application/config/version`, sinon) |
 | `release` | (bureau) Tag `v*`, ou « Run workflow » avec `release` coché ; après `check` et `bureau` | Seule tâche avec `contents: write` : Release GitHub `vX.Y.Z` avec l'installateur et le zip (`softprops/action-gh-release`) |
@@ -1053,7 +1053,7 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 
 | Mesure | Cible M2 | Cible M4 |
 | --- | --- | --- |
-| Taille compressée (wasm + pck) | < 60 Mo | < 100 Mo |
+| Taille compressée (wasm + pck) | < 60 Mo | < 150 Mo |
 | Temps jusqu'au menu (fibre) | < 10 s | < 15 s |
 | Images/s portable | 60 | 60 |
 | Images/s téléphone récent | 30 | 30 |
@@ -1062,7 +1062,7 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 
 (HD-2D) Mesures du 7 octobre 2026 (`tools/hd2d_shots.sh`, rendu natif) : 32 à 70 draw calls selon
 la zone, une conversation ou une veille (43 à 67 dans le navigateur, au Spawn de chaque zone) ;
-export 12,4 Mo compressés (18,4 avant la purge des modèles 3D). `tools/check.sh` échoue au-delà de 100 Mo compressés (25 Mo jusqu'au cahier des charges n° 2, 60 Mo jusqu'à ses lots A et F ; 73,5 Mo mesurés avec toutes ses images).
+export 12,4 Mo compressés (18,4 avant la purge des modèles 3D). `tools/check.sh` échoue au-delà de 150 Mo compressés (25 Mo jusqu'au cahier des charges n° 2, 60 Mo jusqu'à ses lots A et F, 100 Mo jusqu'aux premiers lots du cahier n° 3 ; 73,5 Mo mesurés avec toutes les images du cahier n° 2, 101,3 Mo avec les lots I et J de priorité 1 du n° 3).
 
 ### Hygiène du dépôt
 
@@ -1424,7 +1424,7 @@ jobs:
         run: |
           size=$(tar -czf - build/web | wc -c)
           echo "build/web compressé : $((size / 1048576)) Mo" >> "$GITHUB_STEP_SUMMARY"
-          [ "$size" -lt 104857600 ] || { echo "build > 100 Mo"; exit 1; }
+          [ "$size" -lt 157286400 ] || { echo "build > 150 Mo"; exit 1; }
       - uses: actions/upload-artifact@v4
         with: { name: web, path: build/web }
       - uses: actions/upload-artifact@v4

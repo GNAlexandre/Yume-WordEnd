@@ -124,7 +124,7 @@ if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
       echo "| \`WordEnd.x86_64\` (Linux, même pck ; démarrage vérifié sans écran) | $(megabytes "build/desktop/linux/WordEnd.x86_64") Mo |"
     fi
     echo
-    echo "Le budget de 100 Mo ne concerne que le Web."
+    echo "Le budget de 150 Mo ne concerne que le Web."
   } >> "$GITHUB_STEP_SUMMARY"
 fi
 

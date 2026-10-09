@@ -2177,3 +2177,9 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `IslandTerrain` et `IslandRock`, maillages et atlas du sol, et les planches des PNJ de
   `SheetLoader`) ; nœuds, objets et ressources identiques d'une visite à l'autre. Revers : l'île
   se recharge de zéro à chaque retour (1,5 s sous Xvfb au lieu de 0,3 s).
+- **Budget Web relevé de 100 à 150 Mo compressés** (cahier n° 3 ; même choix de l'utilisateur : la
+  qualité avant le poids, le bureau d'abord). Les lots I et J de priorité 1 (PR n° 21 et 22) portent
+  l'export Web à 101,3 Mo compressés (wasm 9,7 Mo, pck 91,6 Mo) : `main` était rouge sur la seule
+  étape de taille, les 877 tests passaient. Le reste du cahier n° 3 ajoutera encore des images :
+  la version Web allégée (WebP avec perte pour le seul export Web, ou un pck par lieu chargé à la
+  demande) est à mesurer en phase 5 de la refonte, sans toucher au bureau.
