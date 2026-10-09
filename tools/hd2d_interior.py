@@ -1632,7 +1632,7 @@ def furniture_scene(name, size, depth, glow_amount):
         "collision_mask = 0",
         "",
         '[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]',
-        "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, %s, 0)" % _num(h_m / 2.0),
+        "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, %s, 0)" % _num(box[1] / 2.0),
         'shape = SubResource("BoxShape3D_%s")' % name,
         "",
     ]
