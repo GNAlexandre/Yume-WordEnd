@@ -490,3 +490,21 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   reposer sur la nouvelle. Le garde-corps et les bittes du quai ne bougent pas.
 - La cascade (`Island/Waterfall`) tombe désormais au bout du lit du ruisseau, en (−62,1 ; −62,4)
   (`IslandEdge.WATERFALL_ANGLE`) : l'image `edge_waterfall` se pose là, sous la lèvre.
+
+## D2 — images et planches que les documents de lieux demandent (cahier n° 3)
+
+Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le cahier n° 3
+(`docs/ASSETS_HD2D_SUKASUKA.md`) :
+
+- **Sept noms proposés** par `docs/lore/CARTE.md` (section 12.1), à ajouter au cahier avant toute
+  commande : les façades et flancs de l'entrepôt de 30 × 14 m (`buildings/warehouse_front_a`,
+  `warehouse_front_b`, `warehouse_front_a_side`, `warehouse_front_b_side`), l'échelle du toit
+  (`interior/props/roof_ladder`), le bureau de la grande sœur sans la broche
+  (`interior/props/desk_clean`) et le bureau de Chtholly au miroir relevé
+  (`interior/props/desk_chtholly_mirror_up`). Tailles et consignes dans la section 12.1.
+- **Des gestes `travaille`** pour les habitants déjà livrés (`snack_vendor` : la poêle ;
+  `cat_waiter` : le balai ; `baker`) et un geste au marteau pour Willem (le plafond qui fuit),
+  que `docs/lore/VIE.md` (section 2) et `docs/lore/ACTE1.md` (3.3) utilisent avec un repli.
+- **Les planches de l'acte 1 encore à livrer**, par ordre d'usage dans `ACTE1.md` :
+  `chtholly_pajamas` (jour 9), `nygglatho_labcoat` (jour 7), `kana` et `giniette` (jour 10), les
+  planches de bâton `_stick` (jours 9 à 11, après accord du lot E8 sur `pare`).
