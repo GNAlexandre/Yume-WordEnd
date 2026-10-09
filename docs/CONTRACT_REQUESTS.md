@@ -504,7 +504,8 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   (`interior/props/desk_chtholly_mirror_up`). Tailles et consignes dans la section 12.1.
 - **Des gestes `travaille`** pour les habitants déjà livrés (`snack_vendor` : la poêle ;
   `cat_waiter` : le balai ; `baker`) et un geste au marteau pour Willem (le plafond qui fuit),
-  que `docs/lore/VIE.md` (section 2) et `docs/lore/ACTE1.md` (3.3) utilisent avec un repli.
+  que `docs/lore/VIE.md` (section 2) et `docs/lore/ACTE1.md` (scènes 3.3 et 12.1) utilisent avec un
+  repli.
 - **Les planches de l'acte 1 encore à livrer**, par ordre d'usage dans `ACTE1.md` :
   `chtholly_pajamas` (jour 9), `nygglatho_labcoat` (jour 7), `kana` et `giniette` (jour 10), les
   planches de bâton `_stick` (jours 9 à 11, après accord du lot E8 sur `pare`).
