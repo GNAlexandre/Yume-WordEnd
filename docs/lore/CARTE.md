@@ -911,8 +911,8 @@ les autres fées génériques (`fairy_01` à `fairy_12` et celles de la communau
 
 **Points nommés** : `willem_fenetre`, `willem_lit`, `willem_porte`, `chtholly_bureau`,
 `chtholly_calendrier`, `chtholly_lit`, `chtholly_porte`, `nygglatho_cristal`, `nygglatho_the`,
-`nygglatho_bureau`, `nygglatho_tapis`, `grande_soeur_bureau`, `palier`, `couloir_ouest`,
-`couloir_fuite`, `dortoir_a` à `dortoir_d`.
+`nygglatho_bureau`, `nygglatho_tapis`, `grande_soeur_bureau`, `ithea_lit`, `nephren_lit`, `palier`,
+`couloir_ouest`, `couloir_fuite`, `dortoir_a` à `dortoir_d`.
 
 ```plan
 carte entrepot_etage 32 16 dedans
@@ -997,6 +997,8 @@ meuble cards_floor 15.5 3.8 1.5 1.0 0 libre
 meuble clothes_floor 14.5 6.0 2 1.5 0 libre
 meuble clothes_chest 15.8 7.5 0.9 0.5 0.6
 point grande_soeur_bureau 15.6 2.4
+point ithea_lit 22.6 5.4
+point nephren_lit 29.6 5.4
 # --- trémie de l'escalier (original) ---
 meuble stairs_down 17.5 4.0 1.6 3.0 1.1
 mural wallitem_crystal_sconce tremie N 19.6 1.6 0.3

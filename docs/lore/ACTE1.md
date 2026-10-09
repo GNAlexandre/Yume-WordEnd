@@ -1210,8 +1210,7 @@ sur la carte de l'île (`CARTE.md`, 1.2). La ville est découverte le jour 3 au 
 
 #### 11.3 L'horloge des Limashenka (s. 30)
 
-- **Lieu et moment** : `village`, puis `maison_limashenka`, matin jusqu'à la deuxième cloche de
-  l'après-midi.
+- **Lieu et moment** : `village`, puis `maison_limashenka`, du matin à la 6e cloche (« vers deux heures », VEX ; `VIE.md`, 0.1).
 - **Présents** : Willem (`willem_home:assis`, puis debout à l'horloge), Ramikeldi, Chtholly.
 - **Déclencheur** : entrer dans la maison (`village:porte_limashenka`, ouverte ce jour-là).
 - **Déroulé** :
@@ -1219,7 +1218,7 @@ sur la carte de l'île (`CARTE.md`, 1.2). La ville est découverte le jour 3 au 
      sa mère ; la vieille horloge murale (`wallitem_clock_limashenka`, `maison_limashenka:horloge`).
   2. Willem l'ouvre : engrenages, ressorts, le peigne doré (`toolbox_gears`). Moment facultatif
      **(original)** : Chtholly tend la pièce qu'il demande (trois fois, sans échec possible).
-  3. « Laisser passer le temps » ou attendre : vers la deuxième cloche, l'horloge repart et joue sa
+  3. « Laisser passer le temps » ou attendre : vers la 6e cloche, l'horloge repart et joue sa
      comptine. Ramikeldi pleure.
   4. En le raccompagnant, Willem appelle les fées sa famille, la plus précieuse qu'il ait ;
      Chtholly l'entend.
