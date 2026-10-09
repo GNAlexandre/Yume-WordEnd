@@ -165,7 +165,7 @@ Yume-WordEnd/
 | --- | --- | --- |
 | `EventBus` | Tous les signaux transverses ; aucune logique | L0 |
 | `GameState` | PV max, inventaire, drapeaux (`flags`), état des quêtes, (Lot Q) étape courante et compteur de chaque quête active, quête suivie, skin actif, meilleurs scores par arène ; sérialisable en Dictionary | L7 |
-| `SaveManager` | Écrit/lit `user://save_v1.json` (nom historique ; schéma v2 depuis le Lot Q), versionne le schéma, migre | L8 |
+| `SaveManager` | Écrit/lit `user://save_v1.json` (nom historique ; schéma v2 depuis le Lot Q, (E1) v3 : la carte), versionne le schéma, migre | L8 |
 | `SkinRegistry` | Charge `data/skins/*.tres`, expose la liste et le skin par défaut (Chtholly) | L3 |
 | `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort ; (E1) une carte à la fois : changement de carte (fondu, chargement découpé, marqueur d'arrivée), carte courante, bornes de la caméra | L2, E1 |
 | `DesktopApp` | (bureau) Application de bureau, sans effet sur le Web : fenêtre de départ, plein écran (F11, Alt+Entrée, bouton) mémorisé dans `user://settings.cfg`, boutons « Plein écran » et « Quitter » des menus, sauvegarde avant de quitter (docs/bureau.md) | bureau |
@@ -494,6 +494,7 @@ func update_camera(delta, zoom_axis := 0.0), focus_goal(with_lead := true) -> Ve
 - Les chiffres de combat vivent dans `data/attacks` et `data/enemies`, jamais en dur dans un script : l'équilibrage se fait sans toucher au code.
 - Le joueur est toujours le nœud unique du groupe `player` ; les ennemis vivants sont dans le groupe `enemies`.
 - Les zones sont des scènes racine `Node3D` nommées comme leur `zone_id`, avec un `Marker3D` nommé `Spawn` ; une arène est une zone qui contient un `WaveDirector`.
+- (E1) Le monde est une suite de cartes (`Map`, une par lieu, `src/world/maps/<map_id>/<map_id>.tscn`) : une seule chargée à la fois, sous `game.tscn` « World » ; les zones n'existent plus que dans la carte héritée `ile_ancienne`. Mode d'emploi pour créer une carte : plus bas, « (E1) Créer une carte ».
 - Toute scène doit s'ouvrir et se fermer sans erreur en headless : c'est le test de fumée minimal (section 9).
 - (HD-2D) Le décor est fait d'images à 96 px par mètre : un décor de `src/world/props/` a pour racine un `DecorPanel` ou un `Building` (ou un nœud qui en contient, comme la passerelle), sa collision dans un enfant `Collision` (StaticBody3D, couche 1). Aucun maillage modélisé ni forme calculée pour l'apparence. La caméra regarde toujours le nord : le haut de l'écran est le nord.
 
