@@ -1,0 +1,32 @@
+{
+  "_comment": "Sol du toit-terrasse de l'entrepôt (docs/lore/CARTE.md 3.3), écrit par tools/interior_maps.py (pas par map_build.py gen : la terrasse est au niveau 0 et la cour 6,5 m plus bas, height_zero_value) : terrasse de planches, pan d'ardoise du volume ouest (roche, sous le bâtiment), la cour et la lisière tout autour, faces de la chute en muret.",
+  "format": "map_ground",
+  "version": 1,
+  "size": [
+    16,
+    16
+  ],
+  "heights_image": "heights.png",
+  "height_step_value": 16,
+  "height_zero_value": 208,
+  "materials_image": "materials.png",
+  "materials_scale": 1,
+  "structures_image": "structures.png",
+  "palette": {
+    "#9a8a7a": "roche",
+    "#3c6e32": "sous_bois",
+    "#8a5a30": "planches"
+  },
+  "edges": {
+    "north": "land",
+    "east": "land",
+    "south": "land",
+    "west": "land"
+  },
+  "skirt": 16,
+  "barrier": true,
+  "spawn": [
+    12,
+    9
+  ]
+}

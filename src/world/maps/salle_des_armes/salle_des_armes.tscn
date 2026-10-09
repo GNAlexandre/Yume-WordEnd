@@ -1,0 +1,123 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/interior_room.gd" id="2_room"]
+[ext_resource type="JSON" path="res://data/maps/salle_des_armes/interior.json" id="3_layout"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
+[ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/crypt_stairs.tscn" id="p_crypt_stairs"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/sword_rack_a.tscn" id="p_sword_rack_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/sword_rack_b.tscn" id="p_sword_rack_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/crypt_pillar.tscn" id="p_crypt_pillar"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/swords_wrapped.tscn" id="p_swords_wrapped"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/talisman_chest.tscn" id="p_talisman_chest"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/door_armory_inside.tscn" id="p_door_armory_inside"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.304, 3, 0.7)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(1.6, 2.4, 0.5)
+
+[node name="salle_des_armes" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "La salle des armes"
+region = &"entrepot"
+interior = true
+size = Vector2(14, 10)
+camera_bounds = Rect2(5, 3, 4, 3)
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_mask = 0
+script = ExtResource("2_room")
+layout = ExtResource("3_layout")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("4_batcher")
+
+[node name="Crypte" type="Node3D" parent="Geometry"]
+
+[node name="crypt_stairs_1" parent="Geometry/Crypte" instance=ExtResource("p_crypt_stairs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 2.4)
+
+[node name="sword_rack_a_1" parent="Geometry/Crypte" instance=ExtResource("p_sword_rack_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.6, 0, 1.45)
+
+[node name="sword_rack_b_1" parent="Geometry/Crypte" instance=ExtResource("p_sword_rack_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.7, 0, 1.45)
+
+[node name="crypt_pillar_1" parent="Geometry/Crypte" instance=ExtResource("p_crypt_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 5.5)
+
+[node name="crypt_pillar_2" parent="Geometry/Crypte" instance=ExtResource("p_crypt_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, 5.5)
+
+[node name="swords_wrapped_1" parent="Geometry/Crypte" instance=ExtResource("p_swords_wrapped")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 7.6)
+
+[node name="swords_wrapped_1_arriere" type="StaticBody3D" parent="Geometry/Crypte"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Crypte/swords_wrapped_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1.5, 6.85)
+shape = SubResource("BoxShape3D_1")
+
+[node name="talisman_chest_1" parent="Geometry/Crypte" instance=ExtResource("p_talisman_chest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 0, 7.9)
+
+[node name="door_armory_inside_1" parent="Geometry/Crypte" instance=ExtResource("p_door_armory_inside")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.6979, 1.195)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.5, 0.2, 5)
+
+[node name="from_entrepot_rdc" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.5, 0.2, 5)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="remonter" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 3.95)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"entrepot_rdc"
+target_marker = &"from_salle_des_armes"
+prompt = "Remonter"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/remonter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_2")
+
+[node name="Examine" type="Node3D" parent="."]
+
+[node name="rateliers" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.65, 0, 1.75)
+script = ExtResource("6_examine")
+text_key = "salle_des_armes/rateliers"
+size = Vector3(8, 2, 0.8)
+
+[node name="tissu" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 8)
+script = ExtResource("6_examine")
+text_key = "salle_des_armes/tissu"
+size = Vector3(1.6, 2, 0.8)
+
+[node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="armes_rateliers" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, 0, 2.6)
+
+[node name="armes_tissu" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 6.5)
+
+[node name="armes_coffret" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 0, 6.8)
+
+[node name="armes_centre" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 0, 4.5)
