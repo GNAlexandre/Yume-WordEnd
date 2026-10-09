@@ -517,3 +517,9 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   `wallitem_height_marks` (prio 2, pas encore livrées).
 - Lieux (D2) : la carte d'essai pose la chambre de Nygglatho au rez-de-chaussée, près de l'entrée
   (emplacement original) ; la vraie carte de l'entrepôt suivra le plan de D2.
+- Budget de l'export Web (PLAN.md, section 9 ; `tools/build_size.sh`, 100 Mo compressés) :
+  `origin/main` (db96511, livraison réelle des lots I et J) le dépasse déjà seul (wasm + pck :
+  101,3 Mo compressés, mesuré sur une copie de main) ; la branche E3 y ajoute 0,1 Mo (101,4 Mo).
+  `tools/check.sh` est donc rouge à l'export pour toute branche fusionnée avec main, quoi qu'elle
+  fasse. À trancher hors E3 : relever le budget, ou ne plus exporter les images que rien
+  n'emploie encore (`export_presets.cfg`, PR « contrats »), ou alléger les images livrées.
