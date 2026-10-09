@@ -518,3 +518,14 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   les flaques posées par image `puddle_*` ne se montreraient que sous la pluie (HD2DLightTargets
   les réglerait par leur nom, comme les vitres éclairées `window_lit_*`).
 - En attendant : sol mouillé et reflets seulement.
+
+## E9 — l'export Web dépasse le budget de 100 Mo depuis les images des lots I et J (`origin/main`)
+- Constat : à `db96511` (`origin/main` : `c2b12aa` plus les images livrées des lots I et J du
+  cahier n° 3, sans code), `tools/build_size.sh` mesure 101,3 Mo compressés (wasm + pck) : le
+  `tools/check.sh` complet est rouge à l'étape « export web » avant tout lot de la refonte. E9 y
+  ajoute 0,1 Mo (cinq images de remplacement du lot N, 40 ko de PNG ; 101,4 Mo).
+- Proposition : trancher ce que la section 8 de docs/REFONTE.md annonçait (« le Web dépasserait
+  les 100 Mo ») : budget relevé (PLAN.md section 9, `tools/build_size.sh`), ou version Web allégée
+  (images en WebP avec perte pour le seul Web), ou exclusion de l'export Web des images pas
+  encore posées (filtre d'`export_presets.cfg`, PR « contrats »).
+- En attendant : `BUILD_BUDGET_MB=110 tools/check.sh` vérifie tout le reste (vert pour E9).
