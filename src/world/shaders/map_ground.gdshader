@@ -42,7 +42,9 @@ uniform float jitter = 0.16;
 // Direction du soleil (vers lui), lumière restante dans l'ombre des falaises et au pied des faces.
 uniform vec3 toward_sun = vec3(-0.900073, 0.34202, 0.269984);
 uniform float cliff_shadow = 0.72;
-uniform float contact_shadow = 0.78;
+uniform float contact_shadow = 0.7;
+// Liseré sombre au bord du vide (m).
+uniform float rim_line = 0.06;
 
 varying vec3 map_pos;
 varying float coast;
@@ -168,15 +170,20 @@ void fragment() {
 	float far = smoothstep(0.75, 2.0, art_per_pixel);
 	bool blended = ground_screen_noise(FRAGCOORD.xy + vec2(29.0, 13.0)) < far;
 	vec2 p = blended ? map_pos.xz : (cell + 0.5) / art_pixels;
-	// Lèvre de pierre au bord du vide (0,2 à 1,3 m, par plaques).
-	float lip = 0.2 + 1.0 * smoothstep(0.5, 0.8, ground_noise(p * 0.27 + vec2(5.7, 1.3)));
-	lip += 0.3 * (ground_noise(p * 0.47 + vec2(7.3, 1.1)) - 0.5);
-	bool on_lip = coast - 0.5 * (ground_noise(p * 1.7 + vec2(2.4, 9.3)) - 0.5) < lip;
+	// Lèvre de pierre au bord du vide (0,1 à 0,5 m, par plaques), liseré sombre au bord.
+	// Jamais plus d'un demi-mètre : au-delà, UV.x ne suit plus la côte (cases entières).
+	float lip = 0.12 + 0.3 * smoothstep(0.5, 0.8, ground_noise(p * 0.27 + vec2(5.7, 1.3)));
+	lip += 0.06 * (ground_noise(p * 0.47 + vec2(7.3, 1.1)) - 0.5);
+	bool on_lip = coast - 0.15 * (ground_noise(p * 1.7 + vec2(2.4, 9.3)) - 0.5) < lip;
 	vec3 tint;
 	bool ripple;
 	vec3 c = vec3(0.0);
 	if (on_lip) {
 		c = ground_color(ground_resolve(ROCK, rows), texel, texel_dx, texel_dy, rows) * 0.92;
+		// Le bord même, un liseré sombre : l'arête de la falaise qu'on ne voit pas d'ici.
+		if (coast < rim_line) {
+			c *= 0.62;
+		}
 	} else if (blended) {
 		float shift = ground_screen_noise(FRAGCOORD.xy);
 		int last = -1;

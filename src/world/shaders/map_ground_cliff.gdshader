@@ -33,7 +33,7 @@ uniform float bank_meters = 1.0;
 uniform float wall_meters = 2.0;
 // Tuile de l'atlas sous le talus (terre de potager), assombrissement des contremarches.
 uniform int soil_layer = 22;
-uniform float riser_shade = 0.8;
+uniform float riser_shade = 0.7;
 // Profondeur (m sous l'arête) où la falaise devient le dessous de l'île ; brume du dessous.
 uniform float underside_depth = 16.0;
 uniform vec4 depth_tint : source_color = vec4(0.51, 0.46, 0.61, 1.0);

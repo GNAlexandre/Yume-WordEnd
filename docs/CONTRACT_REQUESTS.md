@@ -490,3 +490,24 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   reposer sur la nouvelle. Le garde-corps et les bittes du quai ne bougent pas.
 - La cascade (`Island/Waterfall`) tombe désormais au bout du lit du ruisseau, en (−62,1 ; −62,4)
   (`IslandEdge.WATERFALL_ANGLE`) : l'image `edge_waterfall` se pose là, sous la lèvre.
+
+## E2 — sol en relief des cartes (pour E1, E9, E10 et le propriétaire de `GroundDecal`)
+- **E1 (fusion)** : la carte `src/world/maps/essai_relief/essai_relief.tscn` a pour racine le
+  remplaçant `tests/stubs/e2_map_stub.gd` (mêmes exports que `Map`) ; remplacer son `ext_resource`
+  par `res://src/world/map.gd`, supprimer le remplaçant (et son `.uid`), et laisser la vérification
+  des cartes d'E1 la contrôler. Son `Ground` est un `MapGround` qui lit `data/maps/<nom de la Map>/`.
+- **E1** : `CameraRig.limits` ← `Map.camera_bounds` (la démonstration `demo_e2_relief.gd` borne la
+  caméra à la main). Une sortie `MapExit` d'une carte extérieure se pose en deçà du bord : une
+  barrière invisible (couche 1) borde la carte sur ses bords « land » et le long du vide.
+- **E1 / H8** : mesurer le chargement d'une carte en relief dans le build Web (lecture des images
+  par `Texture2D.get_image()`, construction : 35 à 40 ms sans écran pour 80 × 60 m).
+- **`GroundDecal.follow_ground`** (src/world/ground_decal.gd) : il drape sur `IslandTerrain`
+  seulement. Sur une carte, lire les triangles de `MapGround.triangles_in(rect)` (même forme que
+  `IslandTerrain.triangles_in`) quand un `MapGround` est dans l'arbre ; en attendant, un décalque
+  d'une carte prend `follow_ground = false`, posé à la hauteur du sol.
+- **E9** : quand la lumière change (moment de la journée, préréglage d'une carte), appeler
+  `MapGround.set_sun(direction vers le soleil)` ; au chargement, `MapGround` suit la première
+  `DirectionalLight3D` de la scène (ombres portées des falaises dans le shader du sol).
+- **E4 / E5 (navigation)** : `MapGround.is_walkable(x, z)` (eau dormante exclue, vide exclu),
+  `height_at`, `level_at` ; les PNJ ne sautent pas les marches de 0,5 m (`tools/map_build.py check`
+  dit lesquelles ne s'atteignent qu'en sautant).
