@@ -22,7 +22,7 @@ func before_each() -> void:
 	_game = add_child_autofree(GAME_SCENE.instantiate())
 	await wait_physics_frames(3)
 	_player = _game.get_node(^"Player") as Node3D
-	_enemies = _game.get_node(^"Island/Zones/forest/Enemies") as Node3D
+	_enemies = _game.get_node(^"World/ile_ancienne/Zones/forest/Enemies") as Node3D
 
 
 func after_each() -> void:
@@ -76,7 +76,7 @@ func test_the_forest_placement_respawns_with_its_zone() -> void:
 	assert_eq(_alive().size(), 4, "quatre rejetons dans les bois")
 	assert_false(_enemies.call(&"is_hunted"), "matin : personne ne les chasse")
 	for zone_id: StringName in [&"village", &"dunes", &"beach", &"hill"]:
-		var placement := _game.get_node(NodePath("Island/Zones/%s/Enemies" % zone_id))
+		var placement := _game.get_node(NodePath("World/ile_ancienne/Zones/%s/Enemies" % zone_id))
 		assert_eq(placement.call(&"zone_id"), zone_id, "%s : même racine" % zone_id)
 		assert_eq(placement.call(&"respawn_dead"), 0, "%s : aucun ennemi libre" % zone_id)
 

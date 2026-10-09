@@ -91,4 +91,4 @@ func _place(local_position: Vector3, aim: Vector3) -> void:
 
 
 func _zone(zone_id: StringName) -> Node3D:
-	return _game.get_node(NodePath("Island/Zones/%s" % zone_id)) as Node3D
+	return _game.get_node(NodePath("World/ile_ancienne/Zones/%s" % zone_id)) as Node3D

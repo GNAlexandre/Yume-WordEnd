@@ -1,8 +1,8 @@
 extends Node
-## SaveManager : sauvegarde JSON de GameState (schéma v2, PLAN.md section 4). Propriétaire : L8
-## (migration v1 → v2 : Lot Q, avancement des quêtes en étapes).
+## SaveManager : sauvegarde JSON de GameState (schéma v3, PLAN.md section 4). Propriétaire : L8
+## (migration v1 → v2 : Lot Q, avancement des quêtes en étapes ; v2 → v3 : E1, cartes).
 ##
-## Fichier save_path : {"version": 2, "saved_at": "AAAA-MM-JJTHH:MM:SSZ" (UTC), puis les champs
+## Fichier save_path : {"version": 3, "saved_at": "AAAA-MM-JJTHH:MM:SSZ" (UTC), puis les champs
 ## de GameState.to_dict() dans leur ordre}. new_game(), load_game() et import_json() émettent
 ## EventBus.game_loaded en cas de succès : c'est le seul signal que main.gd écoute pour passer
 ## du menu au jeu. Choix détaillés : docs/DECISIONS.md, sections L8 et Lot Q. Le nom du fichier
@@ -13,10 +13,13 @@ extends Node
 ## - Fichier corrompu ou illisible : load_game() le met de côté dans backup_path(), démarre une
 ##   nouvelle partie et renvoie ERR_FILE_CORRUPT ; last_error (et push_error) l'explique.
 ## - Versions : version absente ou 0 = format v0 (voir _migrate_v0), migré en v1, puis v1 migré
-##   en v2 (_migrate_v1 : avancement des quêtes actives) ; version plus récente que
-##   SAVE_VERSION : refus (ERR_INVALID_DATA), GameState et fichier intacts.
+##   en v2 (_migrate_v1 : avancement des quêtes actives), puis v2 en v3 (_migrate_v2 : la
+##   partie d'avant la refonte reprend dans la carte héritée, ile_ancienne, à la même place) ;
+##   version plus récente que SAVE_VERSION : refus (ERR_INVALID_DATA), GameState et fichier
+##   intacts.
 ## - Auto-sauvegarde sur arena_finished, item_collected, quest_updated, quest_step_completed,
-##   zone_entered et save_requested, seulement entre game_loaded et close_game() : la première
+##   zone_entered, (E1) map_entered et save_requested, seulement entre game_loaded et
+##   close_game() : la première
 ##   demande lance un
 ##   minuteur de autosave_delay s (actif même en pause) ; les demandes suivantes s'y regroupent
 ##   et une seule écriture a lieu, à la fin. L'état écrit est donc complet (zone mise à jour par
@@ -34,7 +37,7 @@ extends Node
 ## Une sauvegarde vient d'être écrite (save, auto-sauvegarde, flush) : pour un indicateur du HUD.
 signal saved(path: String)
 
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 ## Chemin historique, gardé quelle que soit la version du schéma (les parties y sont).
 const DEFAULT_SAVE_PATH := "user://save_v1.json"
 ## Regroupement des auto-sauvegardes : au plus une écriture par délai (secondes).
@@ -93,6 +96,7 @@ func _ready() -> void:
 	EventBus.quest_updated.connect(_request_autosave.unbind(2))
 	EventBus.quest_step_completed.connect(_request_autosave.unbind(2))
 	EventBus.zone_entered.connect(_request_autosave.unbind(1))
+	EventBus.map_entered.connect(_request_autosave.unbind(1))
 	EventBus.save_requested.connect(_request_autosave)
 	_watch_page_visibility()
 
@@ -374,7 +378,7 @@ func _utc_now() -> String:
 # --- Lecture, migration, validation -----------------------------------------------------------
 
 
-## Analyse un texte de sauvegarde. OK : out reçoit les données migrées en v2 et vérifiées.
+## Analyse un texte de sauvegarde. OK : out reçoit les données migrées en v3 et vérifiées.
 ## Sinon last_error explique : ERR_PARSE_ERROR (pas un objet JSON), ERR_INVALID_DATA (version
 ## plus récente que le jeu), ERR_FILE_CORRUPT (version ou champ invalide).
 func _decode(text: String, out: Dictionary) -> Error:
@@ -389,16 +393,20 @@ func _decode(text: String, out: Dictionary) -> Error:
 	if version < 0:
 		last_error = "champ « version » invalide"
 		return ERR_FILE_CORRUPT
-	# Une étape par version, dans l'ordre : v0 → v1 → v2.
+	# Une étape par version, dans l'ordre : v0 → v1 → v2 → v3.
 	if version == 0:
 		data = _migrate_v0(data)
 		version = 1
-	if version == 1:
-		var v1_field := _invalid_field(data)
-		if not v1_field.is_empty():
-			last_error = "champ « %s » invalide" % v1_field
+	if version < SAVE_VERSION:
+		var old_field := _invalid_field(data)
+		if not old_field.is_empty():
+			last_error = "champ « %s » invalide" % old_field
 			return ERR_FILE_CORRUPT
+	if version == 1:
 		data = _migrate_v1(data)
+		version = 2
+	if version == 2:
+		data = _migrate_v2(data)
 	var field := _invalid_field(data)
 	if not field.is_empty():
 		last_error = "champ « %s » invalide" % field
@@ -472,6 +480,20 @@ func _migrate_v1(data: Dictionary) -> Dictionary:
 		data["quest_progress"] = progress
 	if not data.has("tracked_quest"):
 		data["tracked_quest"] = first_active
+	data["version"] = 2
+	return data
+
+
+## Format v2 (Lot Q) → v3 (E1, cartes de la refonte) : v2 n'a qu'une île, à cinq zones, devenue
+## la carte héritée (WorldManager.LEGACY_MAP, mêmes coordonnées). Une partie déjà placée (zone
+## connue) y reprend à sa position, sans perte ; une partie encore sans zone (nouvelle partie
+## pas encore posée) garde une carte vide : game.gd la pose au Spawn de la carte de départ,
+## celui du village, comme avant.
+func _migrate_v2(data: Dictionary) -> Dictionary:
+	if not data.has("map"):
+		var zone: Variant = data.get("zone", "")
+		var placed := zone is String and not (zone as String).is_empty()
+		data["map"] = String(WorldManager.LEGACY_MAP) if placed else ""
 	data["version"] = SAVE_VERSION
 	return data
 
@@ -492,7 +514,7 @@ func _take_count(data: Dictionary, keys: Array[String]) -> int:
 	return maxi(count, 0)
 
 
-## Premier champ dont la valeur ne suit pas le schéma v2, "" si tout va bien. Un champ absent est
+## Premier champ dont la valeur ne suit pas le schéma v3, "" si tout va bien. Un champ absent est
 ## permis : GameState.from_dict lui donne sa valeur par défaut.
 func _invalid_field(data: Dictionary) -> String:
 	var checks: Dictionary[String, Callable] = {
@@ -500,6 +522,7 @@ func _invalid_field(data: Dictionary) -> String:
 		"skin": _is_text,
 		"max_hp": _is_hp,
 		"position": _is_vector,
+		"map": _is_text,
 		"zone": _is_text,
 		"inventory": _is_map.bind(_is_count),
 		"flags": _is_map.bind(_is_bool),

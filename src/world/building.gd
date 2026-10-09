@@ -31,7 +31,8 @@ const ROOF_RELIEF := 1.0
 ## (H5) Groupe des bâtiments en jeu : la caméra du joueur (camera_rig.gd) cadre leur façade sud.
 const GROUP := &"hd2d_buildings"
 
-## Matériaux partagés : clé (matière, relief) → ShaderMaterial.
+## Matériaux partagés : clé (matière, relief) → WeakRef du ShaderMaterial ((E1) références
+## faibles, comme DecorPanel : une carte quittée libère ses images).
 static var _materials: Dictionary = {}
 
 ## Image de la façade sud (élévation de face, fond transparent).
@@ -137,29 +138,31 @@ func side_contract_size() -> Vector2:
 
 ## (H9) Matériau partagé des flancs : l'image, éclairée comme les murs (relief), lueur des fenêtres.
 static func side_material(texture: Texture2D, glow: float) -> Material:
-	var key := "side|%s|%.2f" % [texture.get_rid(), glow]
-	if not _materials.has(key):
-		var material := ShaderMaterial.new()
+	var key := "side|%s|%.2f" % [DecorPanel.image_key(texture), glow]
+	var material := DecorPanel.cached_material(_materials, key) as ShaderMaterial
+	if material == null:
+		material = ShaderMaterial.new()
 		material.shader = DecorPanel.PANEL_SHADER
 		material.set_shader_parameter(&"albedo_texture", texture)
 		material.set_shader_parameter(&"hd2d_relief", WALL_RELIEF)
 		material.set_shader_parameter(&"glow_strength", glow)
-		_materials[key] = material
-	return _materials[key]
+		_materials[key] = weakref(material)
+	return material
 
 
 ## Matériau partagé d'une matière de mur ou de toit (panel.gdshader, relief lisible).
 static func surface_material(texture: Texture2D, relief: float) -> Material:
 	if texture == null:
 		return null
-	var key := "%s|%.2f" % [texture.get_rid(), relief]
-	if not _materials.has(key):
-		var material := ShaderMaterial.new()
+	var key := "%s|%.2f" % [DecorPanel.image_key(texture), relief]
+	var material := DecorPanel.cached_material(_materials, key) as ShaderMaterial
+	if material == null:
+		material = ShaderMaterial.new()
 		material.shader = DecorPanel.PANEL_SHADER
 		material.set_shader_parameter(&"albedo_texture", texture)
 		material.set_shader_parameter(&"hd2d_relief", relief)
-		_materials[key] = material
-	return _materials[key]
+		_materials[key] = weakref(material)
+	return material
 
 
 ## Murs : quatre faces verticales (le sud est caché derrière la façade) et les deux pignons.

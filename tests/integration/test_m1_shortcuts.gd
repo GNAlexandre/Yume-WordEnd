@@ -87,7 +87,7 @@ func test_face_turns_the_player_and_the_camera_toward_a_npc() -> void:
 	shortcuts.parameters = {"trace": ""}
 	game.add_child(shortcuts)
 	await wait_physics_frames(2)
-	var nygglatho := game.get_node(^"Island/Zones/village/NPCs/Nygglatho") as Node3D
+	var nygglatho := game.get_node(^"World/ile_ancienne/Zones/village/NPCs/Nygglatho") as Node3D
 	assert_true(shortcuts.face(&"nygglatho"), "Nygglatho, sous le porche")
 	var toward := nygglatho.global_position - player.global_position
 	toward.y = 0.0

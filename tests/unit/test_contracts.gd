@@ -50,6 +50,8 @@ const EVENT_BUS_SIGNALS := {
 	"quest_advance_requested": [SN, SN],
 	"trigger_entered": [SN],
 	"tracked_quest_changed": [SN],
+	# E1 (cartes)
+	"map_entered": [SN],
 }
 
 ## Méthodes des autoloads : nom → [types des arguments, type de retour].
@@ -98,6 +100,30 @@ const WORLD_MANAGER_METHODS := {
 	"current_zone": [[], SN],
 	"zone_display_name": [[SN], STR],
 	"is_zone_safe": [[SN], BOOL],
+	# E1 (cartes)
+	"go_to": [[SN, SN], VOID],
+	"current_map": [[], SN],
+	"enter_map": [[SN, SN, VOID], BOOL],
+	"current_map_node": [[], OBJ],
+	"starting_map": [[], SN],
+	"map_display_name": [[SN], STR],
+	"camera_bounds": [[], TYPE_RECT2],
+	"is_transitioning": [[], BOOL],
+	"fade_alpha": [[], FLT],
+}
+## (E1) Exports de Map (src/world/map.gd) et de MapExit (src/world/map_exit.gd) : nom → type.
+const MAP_EXPORTS := {
+	"display_name": STR,
+	"region": SN,
+	"interior": BOOL,
+	"size": TYPE_VECTOR2,
+	"camera_bounds": TYPE_RECT2,
+	"light_preset": SN,
+}
+const MAP_EXIT_EXPORTS := {
+	"target_map": SN,
+	"target_marker": SN,
+	"prompt": STR,
 }
 ## (bureau) Application de bureau (src/autoload/desktop_app.gd, docs/bureau.md).
 const DESKTOP_APP_METHODS := {
@@ -331,6 +357,7 @@ func test_game_state_api() -> void:
 	_assert_methods(GameState, "GameState", GAME_STATE_METHODS)
 	assert_eq(_property_type(GameState, "skin_id"), SN, "GameState.skin_id")
 	assert_eq(_property_type(GameState, "max_hp"), INT, "GameState.max_hp")
+	assert_eq(_property_type(GameState, "map"), SN, "(E1) GameState.map")
 	assert_eq(_property_type(GameState, "zone"), SN, "GameState.zone")
 	assert_eq(_property_type(GameState, "position"), V3, "GameState.position")
 	assert_eq(_property_type(GameState, "tracked_quest"), SN, "(Lot Q) GameState.tracked_quest")
@@ -340,7 +367,7 @@ func test_save_manager_api() -> void:
 	_assert_methods(SaveManager, "SaveManager", SAVE_MANAGER_METHODS)
 	assert_eq(_property_type(SaveManager, "save_path"), STR, "SaveManager.save_path")
 	assert_eq(SaveManager.DEFAULT_SAVE_PATH, "user://save_v1.json")
-	assert_eq(SaveManager.SAVE_VERSION, 2, "(Lot Q) schéma v2, même fichier")
+	assert_eq(SaveManager.SAVE_VERSION, 3, "(E1) schéma v3 (carte), même fichier")
 	assert_eq(_property_type(SaveManager, "checkpoint_interval"), FLT, "(M2) checkpoint_interval")
 
 
@@ -358,6 +385,10 @@ func test_world_manager_api() -> void:
 	_assert_methods(WorldManager, "WorldManager", WORLD_MANAGER_METHODS)
 	assert_eq(WorldManager.VILLAGE, &"village")
 	assert_eq(WorldManager.SPAWN_MARKER, &"Spawn")
+	assert_eq(WorldManager.LEGACY_MAP, &"ile_ancienne", "(E1) carte héritée")
+	assert_eq(WorldManager.START_MAP, &"ile_ancienne", "(E1) une nouvelle partie y commence")
+	for signal_name: String in ["rescued", "transition_started", "transition_finished"]:
+		_assert_signal(WorldManager, "WorldManager", signal_name, [SN])
 
 
 func test_desktop_app_api() -> void:
@@ -635,12 +666,15 @@ func test_island_and_game_structure() -> void:
 	for zone_id in ZONES:
 		island_nodes["Zones/" + zone_id] = "Zone"
 	_assert_nodes(island, "island.tscn", island_nodes)
+	assert_true(island is Map, "(E1) l'île est une Map (carte héritée ile_ancienne)")
 	var game := _instance("res://src/game.tscn")
+	assert_true(game.get_node(^"World").is_in_group(&"map_slot"), "(E1) World porte la carte")
+	assert_eq(game.get_node(^"World").get_child_count(), 0, "(E1) carte posée par game.gd")
 	_assert_nodes(
 		game,
 		"game.tscn",
 		{
-			"Island": "Node3D",
+			"World": "Node3D",
 			"Player": "Player",
 			"QuestTracker": "QuestTracker",
 			"UI": "CanvasLayer",
@@ -649,10 +683,39 @@ func test_island_and_game_structure() -> void:
 			"UI/Inventory": "Control",
 			"UI/ArenaEnd": "Control",
 			"UI/TouchControls": "Control",
+			"UI/MapFade": "Control",
 		}
 	)
 	for ui: String in ["main_menu", "credits", "loading"]:
 		assert_true(_instance("res://src/ui/%s.tscn" % ui) is Control, "src/ui/%s.tscn" % ui)
+
+
+## (E1) Cartes (docs/REFONTE.md, section 7.1) : classes Map et MapExit, exports, enfants figés
+## des cartes de src/world/maps/ (le détail de chaque carte : tests/unit/test_maps.gd).
+func test_map_contract() -> void:
+	for cls_name: String in ["Map", "MapExit"]:
+		assert_not_null(_global_class(cls_name), "class_name %s" % cls_name)
+	var map := Map.new()
+	for property: String in MAP_EXPORTS:
+		assert_eq(_property_type(map, property), MAP_EXPORTS[property], "Map.%s" % property)
+	map.free()
+	var exit := MapExit.new()
+	assert_true(exit is Area3D, "MapExit est une Area3D")
+	for property: String in MAP_EXIT_EXPORTS:
+		assert_eq(
+			_property_type(exit, property), MAP_EXIT_EXPORTS[property], "MapExit.%s" % property
+		)
+	exit.free()
+	assert_eq(Map.scene_path(&"essai"), "res://src/world/maps/essai/essai.tscn")
+	assert_true(Map.all_ids().has(&"ile_ancienne"), "carte héritée")
+	for map_id: StringName in Map.all_ids():
+		var root := _instance(Map.scene_path(map_id))
+		assert_true(root is Map, "%s : racine Map" % map_id)
+		assert_eq(StringName(root.name), map_id, "%s : racine nommée comme la carte" % map_id)
+		var nodes := {"Markers/Spawn": "Marker3D"}
+		for child: StringName in Map.REQUIRED_CHILDREN:
+			nodes[String(child)] = "Node3D"
+		_assert_nodes(root, String(map_id), nodes)
 
 
 # --- Projet -----------------------------------------------------------------------------------

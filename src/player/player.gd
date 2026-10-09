@@ -31,7 +31,9 @@ extends CharacterBody3D
 ## Comportements du Lot 0 conservés : skin de GameState (et skin_changed), recul sur
 ## Hurtbox.hit_taken, GameState.position tenue à jour au sol, animations repos / marche /
 ## course seulement quand Combat.is_busy() est faux. Réapparition (player_respawned) :
-## vitesse et recul à zéro, verrou levé, caméra recalée sur le joueur.
+## vitesse et recul à zéro, verrou levé, caméra recalée sur le joueur. (E1) Arrivée dans une
+## carte (EventBus.map_entered, joueur déjà posé sur son marqueur) : de même, sans l'élan de la
+## carte précédente (la caméra se recale d'elle-même).
 
 ## Script de la caméra, pour typer camera_rig sans ajouter de classe globale.
 const CameraRigScript := preload("res://src/player/camera_rig.gd")
@@ -135,6 +137,7 @@ func _ready() -> void:
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	EventBus.player_respawned.connect(_on_player_respawned)
+	EventBus.map_entered.connect(_on_map_entered)
 	hurtbox.hit_taken.connect(_on_hit_taken)
 	_apply_aim()
 
@@ -604,6 +607,17 @@ func _on_dialogue_ended(_npc_id: StringName) -> void:
 
 
 func _on_player_respawned() -> void:
+	_stop_motion()
+	camera_rig.snap_behind(_aim)
+
+
+## (E1) Arrivée dans une nouvelle carte : plus d'élan, de cible ni d'invite de l'ancienne carte.
+func _on_map_entered(_map_id: StringName) -> void:
+	_stop_motion()
+	_refresh_interaction(false)
+
+
+func _stop_motion() -> void:
 	velocity = Vector3.ZERO
 	_move_velocity = Vector3.ZERO
 	_knockback = Vector3.ZERO
@@ -611,4 +625,3 @@ func _on_player_respawned() -> void:
 	_lock_target = null
 	camera_rig.lock_target = null
 	camera_rig.follow_velocity = Vector3.ZERO
-	camera_rig.snap_behind(_aim)

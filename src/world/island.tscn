@@ -65,6 +65,8 @@ size = Vector3(1000, 10, 1000)
 
 [node name="Island" type="Node3D"]
 script = ExtResource("1_island")
+size = Vector2(160, 160)
+camera_bounds = Rect2(-71, -70, 142, 136)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_island")

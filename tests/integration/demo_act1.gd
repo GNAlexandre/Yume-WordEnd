@@ -188,7 +188,7 @@ func _place(zone_id: StringName, local_position: Vector3, aim: Vector3) -> void:
 
 
 func _zone(zone_id: StringName) -> Node3D:
-	return _game.get_node(NodePath("Island/Zones/" + String(zone_id))) as Node3D
+	return _game.get_node(NodePath("World/ile_ancienne/Zones/" + String(zone_id))) as Node3D
 
 
 ## La partie à l'étape step_id d'act1_main : drapeaux des étapes précédentes, quêtes secondaires

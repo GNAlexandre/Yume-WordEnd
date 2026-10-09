@@ -27,7 +27,8 @@ const MAX_LAYER := 7
 ## (DecorPanel.shadow_material, -1) et sous les personnages (0).
 const SOFT_PRIORITY := -9
 
-## Matériaux partagés : clé (image, teinte, doux, couche d'un doux) → ShaderMaterial.
+## Matériaux partagés : clé (image, teinte, doux, couche d'un doux) → WeakRef du ShaderMaterial
+## ((E1) références faibles, comme DecorPanel : une carte quittée libère ses images).
 static var _materials: Dictionary = {}
 
 ## Image du décalque (vue de dessus, fond transparent, bord irrégulier).
@@ -148,18 +149,19 @@ func draped_mesh() -> ArrayMesh:
 static func material_for(
 	image: Texture2D, color: Color = Color.WHITE, soft: bool = false, soft_layer: int = 0
 ) -> Material:
-	var key := "%s|%s|%d" % [image.get_rid(), color.to_html(), int(soft)]
+	var key := "%s|%s|%d" % [DecorPanel.image_key(image), color.to_html(), int(soft)]
 	if soft:
 		key += "|%d" % soft_layer
-	if not _materials.has(key):
-		var material := ShaderMaterial.new()
+	var material := DecorPanel.cached_material(_materials, key) as ShaderMaterial
+	if material == null:
+		material = ShaderMaterial.new()
 		material.shader = SOFT_SHADER if soft else HARD_SHADER
 		material.set_shader_parameter(&"albedo_texture", image)
 		material.set_shader_parameter(&"tint", color)
 		if soft:
 			material.render_priority = SOFT_PRIORITY + soft_layer
-		_materials[key] = material
-	return _materials[key]
+		_materials[key] = weakref(material)
+	return material
 
 
 ## Triangle n du sol découpé au rectangle du décalque (coordonnées locales u, v de -0,5 à 0,5) :

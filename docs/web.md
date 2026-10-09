@@ -274,6 +274,7 @@ change pas (testé) ; `src/game.gd` ne crée ce nœud que si l'un d'eux est pré
 | `?zone=dunes` | Le joueur part du Spawn du bord du Couchant (`dunes`), tourné vers la cloche de veille : 15 m tout droit (Z/W), puis E lance la veille. Toute zone de l'île : `village` (l'entrepôt des fées), `forest` (les bois du marais), `beach` (le port et le bourg), `hill` (la colline des étoiles), tourné vers son centre ; un nom inconnu est ignoré. La partie (nouvelle ou reprise) garde son état : l'acte 1 en est où il en était. |
 | `&timeres=12` | Banc de performance : 12 Timeres (les quatre corps, 24 au plus) errent devant le joueur sans le poursuivre. |
 | `?trace=1` | (intégration M2) Le journal seul : la partie (nouvelle ou reprise) n'est pas touchée. |
+| `?maps=essai,ile_ancienne` | (E1) Une fois la partie posée, voyage de carte en carte (`WorldManager.go_to`, Spawn de chaque carte) ; une ligne « [m1] carte <id> chargée : fondu … ms, chargement … ms en n images, installation … ms, total … ms » par changement, puis « [m1] voyage terminé ». `tools/web_maps.js` s'en sert (section « Cartes » plus bas). |
 
 Avec l'un d'eux, la page reçoit aussi deux aides (acte 1) : `window.wordendFace("nygglatho")`
 ou `window.wordendFace(x, z)` tourne le joueur vers un PNJ présent (son `NpcData.id`) ou un
@@ -283,7 +284,8 @@ l'écran (le haut est le nord) : `wordendFace` pose aussi la cible dans `window.
 (`[x, z]`), et `tools/web_m2.js` en tire les touches à tenir (W, A, S, D physiques, soit Z, Q,
 S, D en AZERTY, seules ou deux à deux), choisies de nouveau toutes les 300 ms en marchant.
 
-Pendant ce temps, la console du navigateur reçoit `[m1] …` à chaque événement (zone, invite,
+Pendant ce temps, la console du navigateur reçoit `[m1] …` à chaque événement ((E1) carte et
+mesures de son chargement, zone, invite,
 dialogue, quête et étape de quête, objet, vague, Timere tué, fin de série, dégâts, mort,
 réapparition, perte du focus) et, toutes les 2 s, images/s, draw calls, primitives, position du
 joueur, état de la sauvegarde et distance du Timere le plus proche. `tools/web_m1.js`
@@ -400,3 +402,33 @@ cette dernière écriture ; la sauvegarde périodique borne la perte aux 5 derni
 marche.
 Godot range aussi son cache de shaders dans `user://shader_cache` (33 entrées dans IndexedDB,
 sans contenu dans le rendu WebGL).
+
+## Cartes : temps de chargement (E1)
+
+Depuis la refonte (docs/REFONTE.md, section 7.1), une seule carte est chargée à la fois.
+`WorldManager.go_to` la change sous un fondu au noir : chargement découpé en images (dépendances
+d'abord, 100 ms de travail par image, sans fil d'exécution, comme l'écran de chargement), le
+monde 3D n'étant plus dessiné tant que l'écran est noir ; puis l'ancienne carte est libérée et
+la nouvelle instanciée, en une image. Au lancement, `main.gd` charge la partie et sa première
+carte sous la même barre.
+
+`tools/web_maps.js` (Playwright, mode d'emploi en tête du fichier) ouvre
+`index.html?maps=essai,ile_ancienne,essai,ile_ancienne` dans un profil neuf, lance une nouvelle
+partie et relève les lignes « [m1] carte <id> chargée : … » des raccourcis de test, avec une
+capture à chaque arrivée (`build/shots/maps_web_<n>_<carte>.png`).
+
+Mesures du 9 octobre 2026 (PR E1, Chromium headless, SwiftShader, VM partagée) :
+
+| Changement | Chargement découpé | Installation (une image) | Remarque |
+| --- | --- | --- | --- |
+| Nouvelle partie (partie et île, écran de chargement) | — | — | partie prête 8,5 s après Entrée |
+| Île → carte d'essai | 35 à 66 ms, 1 image | 90 à 102 ms | |
+| Carte d'essai → île | 4,0 à 4,2 s, 14 à 15 images | 0,71 s | l'île repart de zéro : ses images ont été libérées ; 17 s en 30 images quand la carte restait dessinée sous le noir |
+
+Le rendu logiciel tourne à 1 image/s : le moteur ralentit alors le temps du jeu (au plus huit pas
+de physique par image), et chaque fondu de 0,35 s en dure de 1 à 4. Aucune erreur dans la console.
+Le même aller-retour en natif (`tools/map_bench.gd`, voir son en-tête) : sans écran, essai
+20 ms + 60 à 75 ms, île 1,0 à 1,1 s en 10 images + 0,41 à 0,45 s ; sous Xvfb (Mesa llvmpipe),
+essai 20 ms + 90 à 100 ms, île 1,6 à 1,8 s en 11 images + 0,33 à 0,53 s ; une nouvelle partie
+dans l'île, d'un bloc, 2,7 s. Fondus compris, on change de carte en 0,7 s (essai) et 2,0 s
+(l'île, la plus grosse carte du jeu : 8 800 nœuds).
