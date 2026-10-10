@@ -42,3 +42,20 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 
 91 PNG générés avec ChatGPT / image_gen le 9 octobre 2026, cahier n° 3, lot I. Références : les planches officielles de SukaSuka fournies par l’utilisateur (21 ZIP, 162 pages ; intérieurs p99–111), les descriptions paraphrasées des romans du cahier, et les assets HD-2D déjà livrés. Sources et aperçus conservés hors du dépôt. Mise au format au plus proche voisin, transparence découpée, raccords corrigés avec image_gen ; aucune réduction de palette ni compression avec perte.
 | Lot J priorité 1 : `tiat_life`, `collon_life`, `pannibal_life`, `lakhesh_life`, `almita_life`, `chtholly_home`, `ithea_home`, `nephren_home`, `willem_home`, `willem_cook`, `willem_coat`, `nygglatho_life`, `nygglatho_tea`, `fairy_01`, `fairy_02`, `fairy_03`, `fairy_04`, `fairy_05`, `fairy_06`, `tiat_pajamas`, `collon_pajamas`, `pannibal_pajamas`, `lakhesh_pajamas` (profil, face, dos, PNG et JSON ; 23 variantes, 69 planches) | ChatGPT/Codex (`image_gen`), 9 octobre 2026, cahier fourni `ASSETS_HD2D_SUKASUKA.md` ; pages officielles des 21 ZIP et planches existantes utilisées comme références, variantes domestiques et six fées secondaires originales ; couleurs visibles natives conservées sans réduction de palette ; masques/cadrage au plus proche voisin, repos des `_life` recopiés exactement. Provenance par planche dans `assets/characters/CREDITS.md` | — (images générées) | Images pour le projet ; personnages/univers inspirés de *SukaSuka*, droits des ayants droit réservés | SukaSuka J P1 |
+
+## Cahier n° 3 — Lot I, priorité 2 : portes, fenêtres et crypte
+
+12 PNG originaux générés avec ChatGPT le 2026-10-10 selon `docs/ASSETS_HD2D_SUKASUKA.md`, lot I, priorité 2. Formes de fenêtres et matériaux inspirés de la planche officielle des ZIP p105 ; variante de bibliothèque inspirée du PNG existant `bookshelf_tall`. Les fenêtres ont été reprises pour conserver une silhouette verticale. Les portes comptent cinq serrures et cinq pênes. Compositions de la crypte originales selon les consignes du cahier. Sources, essai de portes non retenu, découpes et aperçus conservés hors dépôt. Alpha binaire, réduction uniforme au plus proche voisin, couleurs natives RGB conservées. Aucun contrat moteur, placement ou carte jouable ajouté ; les sorties et portes sont des images, leurs transitions et collisions restent à intégrer. La suspension garde le crochet au haut de son cadre ; la position de son panneau doit être décalée au-dessus du sol.
+
+- `assets/hd2d/interior/door_service.png` — 96 × 211 px.
+- `assets/hd2d/interior/door_armory.png` — 125 × 221 px.
+- `assets/hd2d/interior/door_armory_inside.png` — 125 × 221 px.
+- `assets/hd2d/interior/props/bookshelf_tall_b.png` — 154 × 221 px.
+- `assets/hd2d/interior/window_curtains_open.png` — 115 × 154 px.
+- `assets/hd2d/interior/window_curtains_closed.png` — 115 × 154 px.
+- `assets/hd2d/interior/window_bare.png` — 106 × 134 px.
+- `assets/hd2d/interior/props/crystal_pendant.png` — 77 × 134 px.
+- `assets/hd2d/interior/props/stairs_down.png` — 154 × 106 px.
+- `assets/hd2d/interior/props/crypt_stairs.png` — 154 × 240 px.
+- `assets/hd2d/interior/props/talisman_chest.png` — 77 × 58 px.
+- `assets/hd2d/interior/wallitem_cobweb.png` — 48 × 48 px.
