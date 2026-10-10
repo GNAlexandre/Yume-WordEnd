@@ -42,3 +42,40 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 
 91 PNG générés avec ChatGPT / image_gen le 9 octobre 2026, cahier n° 3, lot I. Références : les planches officielles de SukaSuka fournies par l’utilisateur (21 ZIP, 162 pages ; intérieurs p99–111), les descriptions paraphrasées des romans du cahier, et les assets HD-2D déjà livrés. Sources et aperçus conservés hors du dépôt. Mise au format au plus proche voisin, transparence découpée, raccords corrigés avec image_gen ; aucune réduction de palette ni compression avec perte.
 | Lot J priorité 1 : `tiat_life`, `collon_life`, `pannibal_life`, `lakhesh_life`, `almita_life`, `chtholly_home`, `ithea_home`, `nephren_home`, `willem_home`, `willem_cook`, `willem_coat`, `nygglatho_life`, `nygglatho_tea`, `fairy_01`, `fairy_02`, `fairy_03`, `fairy_04`, `fairy_05`, `fairy_06`, `tiat_pajamas`, `collon_pajamas`, `pannibal_pajamas`, `lakhesh_pajamas` (profil, face, dos, PNG et JSON ; 23 variantes, 69 planches) | ChatGPT/Codex (`image_gen`), 9 octobre 2026, cahier fourni `ASSETS_HD2D_SUKASUKA.md` ; pages officielles des 21 ZIP et planches existantes utilisées comme références, variantes domestiques et six fées secondaires originales ; couleurs visibles natives conservées sans réduction de palette ; masques/cadrage au plus proche voisin, repos des `_life` recopiés exactement. Provenance par planche dans `assets/characters/CREDITS.md` | — (images générées) | Images pour le projet ; personnages/univers inspirés de *SukaSuka*, droits des ayants droit réservés | SukaSuka J P1 |
+
+## Cahier n° 3 — Lot I, priorité 2 : maison, entretien, lecture et chambres
+
+32 images originales générées avec ChatGPT le 2026-10-10 selon `docs/ASSETS_HD2D_SUKASUKA.md`, lot I, priorité 2. Les dessins officiels des ZIP p082, p084 et p105 servent de référence pour les accessoires, la vaisselle et les matériaux ; les illustrations ajoutées sont des adaptations, pas des scans. Les autres compositions suivent les consignes du cahier et les PNG du projet `bed_iron` et `desk_chtholly`. Les variantes anciennes restent conservées. Sources générées, rectangles de découpe et aperçus conservés hors dépôt. Découpe mesurée, alpha binaire et réduction uniforme au plus proche voisin, sans remappage des couleurs RGB. PNG isolés : aucun placement, animation ou carte jouable ajouté.
+
+- `assets/hd2d/interior/wallitem_notices_mix.png` — 77 × 58 px.
+- `assets/hd2d/interior/wallitem_frame_landscape.png` — 58 × 48 px.
+- `assets/hd2d/interior/wallitem_crystal_sconce.png` — 29 × 48 px.
+- `assets/hd2d/interior/props/towel_rack.png` — 96 × 106 px.
+- `assets/hd2d/interior/props/supply_cupboard.png` — 96 × 192 px.
+- `assets/hd2d/interior/props/leak_bucket.png` — 48 × 43 px.
+- `assets/hd2d/interior/props/repair_planks.png` — 67 × 173 px.
+- `assets/hd2d/interior/props/cleaning_set.png` — 67 × 134 px.
+- `assets/hd2d/interior/props/butter_cake.png` — 58 × 34 px.
+- `assets/hd2d/interior/props/tea_tray_cheesecake.png` — 58 × 29 px.
+- `assets/hd2d/interior/wallitem_spice_shelf.png` — 115 × 67 px.
+- `assets/hd2d/interior/props/sacks_vegetables.png` — 115 × 67 px.
+- `assets/hd2d/interior/props/pantry_cupboard.png` — 106 × 192 px.
+- `assets/hd2d/interior/wallitem_apron_hook.png` — 38 × 86 px.
+- `assets/hd2d/interior/props/armchair_reading.png` — 96 × 101 px.
+- `assets/hd2d/interior/props/book_pile.png` — 48 × 48 px.
+- `assets/hd2d/interior/props/filing_cabinet.png` — 96 × 134 px.
+- `assets/hd2d/interior/props/coffee_tray.png` — 48 × 24 px.
+- `assets/hd2d/interior/props/bed_curtain.png` — 154 × 202 px.
+- `assets/hd2d/interior/props/vase_flowers.png` — 24 × 38 px.
+- `assets/hd2d/interior/props/washbasin_stand.png` — 58 × 96 px.
+- `assets/hd2d/interior/wallitem_labcoat.png` — 48 × 106 px.
+- `assets/hd2d/interior/props/floor_cushions.png` — 115 × 38 px.
+- `assets/hd2d/interior/wallitem_kids_drawings.png` — 115 × 58 px.
+- `assets/hd2d/interior/props/hamper.png` — 58 × 67 px.
+- `assets/hd2d/interior/props/oil_lamp.png` — 24 × 38 px.
+- `assets/hd2d/interior/props/footlocker.png` — 77 × 48 px.
+- `assets/hd2d/interior/props/bunk_bed.png` — 173 × 182 px.
+- `assets/hd2d/interior/props/clothes_chest.png` — 86 × 58 px.
+- `assets/hd2d/interior/props/hat_blue.png` — 48 × 24 px.
+- `assets/hd2d/interior/props/desk_clean_brooch.png` — 106 × 101 px.
+- `assets/hd2d/interior/props/crystal_lamp_table.png` — 29 × 48 px.
