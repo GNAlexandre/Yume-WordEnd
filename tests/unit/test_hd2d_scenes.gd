@@ -19,8 +19,8 @@ const PPM := 96.0
 ## Moyeux dessinés sur le flanc des navires, mesurés dans les images livrées (px depuis le coin
 ## haut gauche : centre du bout de l'axe de cuivre) ; les hélices s'y posent à 0,1 m près.
 const HUBS := {
-	"airship_ferry": [Vector2(825.0, 497.0)],
-	"airship_barocupot": [Vector2(768.0, 670.0), Vector2(1627.0, 678.0)],
+	"airship_ferry": [Vector2(853.0, 499.0)],
+	"airship_barocupot": [Vector2(789.0, 827.0), Vector2(1613.0, 833.0)],
 }
 const HUB_TOLERANCE := 0.1
 ## Petits objets : image de 0,6 m de haut au plus (58 px) ; au-delà, un objet de la vie bloque.
