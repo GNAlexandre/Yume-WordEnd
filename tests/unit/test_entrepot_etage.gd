@@ -18,7 +18,16 @@ func test_map_follows_the_contract_and_its_plan() -> void:
 
 
 func test_every_piece_of_furniture_of_the_plan_is_in_place() -> void:
-	check_furniture()
+	check_furniture(["wardrobe_chtholly"] as Array[String])
+	# Écart au plan (docs/DECISIONS.md, T2) : l'armoire de Chtholly, au milieu du mur est, aurait
+	# caché le joueur et fermé le nord de la chambre ; elle s'adosse au mur sud, à l'est de la
+	# porte, et se coupe avec lui.
+	var wardrobe := _map.find_child("wardrobe_chtholly_1", true, false) as InteriorPanel
+	assert_not_null(wardrobe, "l'armoire de Chtholly")
+	if wardrobe != null:
+		assert_almost_eq(wardrobe.position.x, 7.35, 0.01, "en x = 7,35 (plan)")
+		assert_almost_eq(wardrobe.front_z(), 8.375, 0.01, "contre le mur sud")
+		assert_gt(wardrobe.cut_z(), 8.5, "coupée avec le mur sud")
 
 
 func test_markers_exits_and_named_points() -> void:

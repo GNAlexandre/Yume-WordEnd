@@ -87,11 +87,32 @@ func test_every_place_is_reached_and_the_exit_is_within_reach() -> void:
 
 
 func test_the_railing_and_the_slate_roof_hold_the_player() -> void:
-	for at: Vector3 in [
-		Vector3(8.0, 0.0, 0.6), Vector3(15.6, 0.0, 8.0), Vector3(8.0, 0.0, 15.4),
-		Vector3(11.0, 0.0, 15.4), Vector3(2.5, 0.0, 8.0)
+	# Un corps qui marche vers chaque bord bute (rambarde au nord, à l'est, au sud, module tordu
+	# compris ; pan d'ardoise à l'ouest).
+	var body := CharacterBody3D.new()
+	var shape := CollisionShape3D.new()
+	var capsule := CapsuleShape3D.new()
+	capsule.radius = PLAYER_RADIUS
+	capsule.height = PLAYER_HEIGHT
+	shape.shape = capsule
+	shape.position.y = PLAYER_HEIGHT / 2.0 + 0.05
+	body.add_child(shape)
+	body.collision_layer = 2
+	body.collision_mask = 1
+	_map.add_child(body)
+	for walk: Array in [
+		[Vector3(8.0, 0.0, 2.0), Vector3(0, 0, -2)],
+		[Vector3(14.0, 0.0, 8.0), Vector3(2, 0, 0)],
+		[Vector3(8.0, 0.0, 14.0), Vector3(0, 0, 2)],
+		[Vector3(11.0, 0.0, 14.0), Vector3(0, 0, 2)],
+		[Vector3(4.0, 0.0, 8.0), Vector3(-2, 0, 0)],
 	]:
-		assert_true(blocked(at), "on ne passe pas en %s" % flat(at))
+		body.global_position = _map.to_global(walk[0] as Vector3)
+		assert_true(
+			body.test_move(body.global_transform, walk[1] as Vector3),
+			"de %s vers %s : on bute" % [flat(walk[0] as Vector3), flat(walk[1] as Vector3)]
+		)
+	body.free()
 	var stray: Array[String] = []
 	for cell: Vector2i in _reached:
 		var at := center(cell)

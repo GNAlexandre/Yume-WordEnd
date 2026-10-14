@@ -44,12 +44,9 @@
 [ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
-size = Vector3(0.4, 3, 1.7)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
 size = Vector3(1.6, 2.4, 0.3)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_3"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
 size = Vector3(0.6, 2.4, 0.6)
 
 [node name="entrepot_etage" type="Node3D"]
@@ -117,14 +114,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 1.45)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 0, 4)
 
 [node name="wardrobe_chtholly_1" parent="Geometry/Chtholly" instance=ExtResource("p_wardrobe_chtholly")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.35, 0, 6.6)
-
-[node name="wardrobe_chtholly_1_arriere" type="StaticBody3D" parent="Geometry/Chtholly"]
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Chtholly/wardrobe_chtholly_1_arriere"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 1.5, 5.45)
-shape = SubResource("BoxShape3D_1")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.35, 0, 8.075)
+cut_offset = 0.175
 
 [node name="fireplace_1" parent="Geometry/Nygglatho" instance=ExtResource("p_fireplace")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 1.45)
@@ -321,7 +312,7 @@ prompt = "Descendre"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_rdc"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-shape = SubResource("BoxShape3D_2")
+shape = SubResource("BoxShape3D_1")
 
 [node name="vers_toit" type="Area3D" parent="Exits"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.7, 0, 9.3)
@@ -334,7 +325,7 @@ prompt = "Monter sur le toit"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_toit"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-shape = SubResource("BoxShape3D_3")
+shape = SubResource("BoxShape3D_2")
 
 [node name="Examine" type="Node3D" parent="."]
 
@@ -357,7 +348,7 @@ text_key = "entrepot_etage/chtholly_calendrier"
 size = Vector3(0.8, 2, 0.8)
 
 [node name="chtholly_armoire" type="Area3D" parent="Examine"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.35, 0, 6.9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.35, 0, 8.375)
 script = ExtResource("6_examine")
 text_key = "entrepot_etage/chtholly_armoire"
 size = Vector3(1, 2, 0.8)

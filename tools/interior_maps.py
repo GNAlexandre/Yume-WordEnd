@@ -240,8 +240,18 @@ def wall_side(letter):
     return {"N": "N", "S": "S", "E": "E", "O": "W", "W": "W"}[letter]
 
 
+# Meubles déplacés par rapport au plan (docs/DECISIONS.md, T2) : (image, rang) -> nouveau z du milieu
+# de l'emprise. L'armoire de Chtholly (plan : z 6,6, au milieu du mur est) cacherait le joueur
+# derrière elle, et la place qu'elle cache, avec le lit, fermerait le nord de la chambre (bureau,
+# calendrier) : elle s'adosse au mur sud, à l'est de la porte, et se coupe avec lui.
+MOVED = {
+    ("wardrobe_chtholly", 0): 8.075,
+}
+
+
 def expand_furniture(plan):
-    """Meubles du plan, rangées « xN » dépliées : (image, x, z, l, p, h, libre, ligne, rang)."""
+    """Meubles du plan, rangées « xN » dépliées : (image, x, z, l, p, h, libre, ligne, rang) ; les
+    meubles de MOVED à leur nouvelle place."""
     out = []
     counts = {}
     for item in plan.furniture:
@@ -257,6 +267,7 @@ def expand_furniture(plan):
             z = (rect.z0 + rect.z1) / 2.0
             index = counts.get(item.name, 0)
             counts[item.name] = index + 1
+            z = MOVED.get((item.name, index), z)
             out.append({"image": item.name, "x": x, "z": z, "l": width, "p": rect.d(), "h": item.h,
                         "free": not item.block, "line": item.line, "index": index})
     return out
@@ -1092,6 +1103,10 @@ def generate(map_id, all_plans, write=True):
     deviations = []
     if map_id in INTERIOR_MAPS:
         data, deviations = interior_json(map_id, plan)
+        for item in plan.furniture:
+            if (item.name, 0) in MOVED:
+                deviations.append("%s déplacé en z = %.3f (plan : %.3f)"
+                                  % (item.name, MOVED[(item.name, 0)], (item.rect.z0 + item.rect.z1) / 2.0))
         outputs["data/maps/%s/interior.json" % map_id] = data
         scene = interior_scene(map_id, plan, settings)
     else:
