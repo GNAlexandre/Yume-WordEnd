@@ -654,7 +654,10 @@
   {"path": "assets/hd2d/anim/hearth_fire.png", "size": [77, 48], "kind": "anim", "prio": 1, "lot": "I", "frames": 6, "fps": 10},
   {"path": "assets/hd2d/anim/pot_steam.png", "size": [48, 96], "kind": "anim", "prio": 2, "lot": "I", "frames": 6, "fps": 8, "soft_alpha": true},
   {"path": "assets/hd2d/anim/leak_drip.png", "size": [24, 96], "kind": "anim", "prio": 2, "lot": "I", "frames": 4, "fps": 8, "anchor": "free"},
-  {"path": "assets/hd2d/anim/drying_frame_wave.png", "size": [384, 211], "kind": "anim", "prio": 2, "lot": "I", "frames": 4, "fps": 4}
+  {"path": "assets/hd2d/anim/drying_frame_wave.png", "size": [384, 211], "kind": "anim", "prio": 2, "lot": "I", "frames": 4, "fps": 4},
+  {"path": "assets/hd2d/interior/props/bookshelf_tall_b_side.png", "size": [58, 272], "kind": "panel", "prio": 1, "lot": "R0"},
+  {"path": "assets/hd2d/interior/props/sofa_beige_side.png", "size": [86, 175], "kind": "panel", "prio": 1, "lot": "R0"},
+  {"path": "assets/hd2d/interior/props/wardrobe_chtholly_side.png", "size": [58, 212], "kind": "panel", "prio": 1, "lot": "R0"}
  ],
  "sheets": [
   {

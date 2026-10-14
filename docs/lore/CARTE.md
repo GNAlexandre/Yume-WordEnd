@@ -693,7 +693,7 @@ meuble kitchen_counter 4.4 1.5 1.8 0.7 1.05
 mural wallitem_utensils cuisine N 4.4 1.4 1.2
 mural wallitem_spice_shelf cuisine O 3.0 1.5 1.2
 mural wallitem_apron_hook cuisine O 5.6 0.9 0.4
-meuble pantry_cupboard 1.7 5.8 1.1 0.6 2.0
+meuble pantry_cupboard 1.7 5.8 1.1 0.6 2.0 regard=E
 meuble kitchen_table_ingredients 3.25 4.4 1.6 0.9 1.0
 meuble water_tub 1.7 7.0 1.0 0.8 0.9
 meuble sacks_vegetables 4.7 7.8 1.2 0.7 0.7
@@ -745,23 +745,23 @@ mural wallitem_wall_clock archives O 3.4 1.2 0.5
 mural wallitem_clippings archives E 7.0 1.3 0.8
 meuble archive_shelves 23.7 1.45 2.0 0.6 2.4
 meuble paper_pile_a 25.7 2.4 1.2 0.8 1.4
-meuble desk_buried 23.35 3.9 1.4 0.8 1.3
+meuble desk_buried 23.35 3.6 1.4 0.8 1.3 regard=E
 meuble paper_pile_b 23.2 2.45 0.8 0.6 0.9
-meuble filing_cabinet 25.85 4.3 1.0 0.5 1.4
-meuble sofa_beige 23.65 6.5 2.0 0.9 0.9
-meuble paper_pile_c 26.05 5.0 0.6 0.5 0.5
+meuble filing_cabinet 25.85 4.3 1.0 0.5 1.4 regard=O
+meuble sofa_beige 23.65 6.6 2.0 0.9 0.9 regard=E
+meuble paper_pile_c 26.05 5.1 0.6 0.5 0.5
 meuble papers_floor 24.8 5.3 2 1.5 0 libre
 objet coffee_tray 23.35 3.9
-point archives_bureau 23.35 4.95
+point archives_bureau 24.4 4.9
 point archives_canape 23.65 7.6
 # --- salle de lecture (V1, « Les filles de l'entrepôt » ; V2 ; V4) ---
 meuble window_reading_seat 29.6 1.55 2.0 0.8 2.2
 fenetre lecture E 5.0 window_cross_small 0.8
 meuble bookshelf_tall 27.5 1.45 1.6 0.6 2.3
-meuble bookshelf_low 27.35 5.0 1.4 0.5 0.9
-meuble bookshelf_tall_b 27.5 6.4 1.6 0.6 2.3
+meuble bookshelf_low 27.35 5.0 1.4 0.5 0.9 regard=E
+meuble bookshelf_tall_b 27.5 6.5 1.6 0.6 2.3 regard=E
 meuble reading_table 28.6 4.3 1.8 0.9 0.95
-meuble armchair_reading 30.3 7.4 1.0 0.9 1.05
+meuble armchair_reading 30.3 7.4 1.0 0.9 1.05 regard=N
 meuble book_pile 27.2 7.9 0.5 0.5 0.5
 objet crystal_lamp_table 28.2 4.3
 mural wallitem_crystal_sconce lecture E 7.4 1.6 0.3
@@ -779,7 +779,7 @@ point point_eau 30.0 9.75
 meuble bath_tub 2.5 11.3 2.4 1.0 1.0
 mural mirror_large bains O 13.0 0.0 1.2
 mural wallitem_bath_rules bains E 12.0 1.3 0.4
-meuble towel_shelf 6.3 14.2 1.0 0.5 1.6
+meuble towel_shelf 6.3 14.2 1.0 0.5 1.6 regard=O
 meuble wash_tub 2.0 13.9 0.8 0.6 0.5
 meuble hamper 4.6 14.3 0.6 0.5 0.7
 meuble bath_puddles 3.6 12.8 2 1.5 0 libre
@@ -790,13 +790,13 @@ meuble cleaning_set 10.4 13.0 0.7 0.4 1.4
 # --- entrée (V5 : le manteau à la patère ; V3 : les pantoufles) ---
 mural wallitem_coat_hooks entree O 12.5 0.9 1.2
 mural wallitem_frame_landscape entree E 11.6 1.4 0.6
-meuble shoe_rack 14.25 12.2 1.2 0.4 0.6
+meuble shoe_rack 14.25 12.2 1.2 0.4 0.6 regard=O
 point entree 13 12.6
 # --- salle de jeux (V2 ; VEX ; V4 : le vieux piano) ---
 meuble rug_playroom 19.4 12.9 4 3 0 libre
 meuble piano_old 16.2 11.4 1.6 0.7 1.4
-meuble toy_chest 22.2 11.2 1.0 0.6 0.8
-meuble board_games_shelf 22.25 13.0 1.2 0.5 1.6
+meuble toy_chest 22.2 11.2 1.0 0.6 0.8 regard=O
+meuble board_games_shelf 22.25 13.0 1.2 0.5 1.6 regard=O
 meuble game_table 19.4 12.8 1.2 0.6 0.5
 meuble plush_blue 17.0 13.6 0.5 0.5 0.5
 meuble plush_pile 20.6 14.4 1.0 0.5 0.6
@@ -812,9 +812,9 @@ meuble bed_iron 28.9 11.2 2.0 1.0 1.05
 meuble bedside_table 30.2 11.0 0.5 0.5 0.7
 meuble bed_iron 26.5 14.3 2.0 1.0 1.05
 meuble chair_child 25.0 12.15 0.45 0.4 0.8
-meuble medicine_cabinet 30.35 13.35 1.0 0.5 1.8
+meuble medicine_cabinet 30.35 13.35 1.0 0.5 1.8 regard=O
 meuble washbasin_stand 29.3 14.55 0.6 0.5 1.0
-meuble infirmary_desk 23.9 14.2 1.3 0.8 1.0
+meuble infirmary_desk 23.9 14.2 1.3 0.8 1.0 regard=E
 fenetre infirmerie E 11.8 window_curtains_open 1.2
 mural wallitem_day_calendar infirmerie E 14.4 1.4 0.3
 mural wallitem_labcoat infirmerie O 12.0 0.7 0.5
@@ -962,7 +962,7 @@ fenetre willem N 2.0 window_bare 1.1
 mural wallitem_wall_lamp willem E 5.5 1.5 0.3
 meuble wardrobe_plain 3.8 1.45 1.0 0.6 2.0
 meuble bed_plain 2.25 6.0 2.0 0.95 0.95
-meuble footlocker 1.6 4.2 0.8 0.5 0.5
+meuble footlocker 1.6 4.2 0.8 0.5 0.5 regard=E
 point willem_fenetre 2.0 2.4
 point willem_lit 2.25 7.2
 point willem_porte 3.6 7.8
@@ -971,7 +971,7 @@ fenetre chtholly N 6.2 window_curtains_open 1.2
 mural wallitem_calendar chtholly N 7.45 1.3 0.4
 meuble desk_chtholly 6.2 1.45 1.1 0.6 1.05
 meuble bed_chtholly 5.65 4.0 2.0 0.95 0.95
-meuble wardrobe_chtholly 7.35 6.6 1.0 0.6 2.0
+meuble wardrobe_chtholly 7.35 7.85 1.0 0.6 2.0 regard=O
 point chtholly_bureau 6.2 2.4
 point chtholly_calendrier 7.25 2.4
 point chtholly_lit 5.65 5.1
@@ -983,7 +983,7 @@ meuble comm_crystal 10.3 1.35 0.7 0.4 1.4
 meuble shelf_nygglatho 11.65 1.35 1.2 0.4 1.8
 meuble tea_table 9.0 3.4 0.9 0.9 0.8
 meuble chair_guest 9.0 4.4 0.7 0.6 1.05
-meuble desk_nygglatho 11.65 3.6 1.4 0.8 1.1
+meuble desk_nygglatho 11.65 3.6 1.4 0.8 1.1 regard=O
 objet oil_lamp 11.65 3.6
 objet tea_tray_cheesecake 9.0 3.4
 meuble bed_nygglatho 9.25 7.2 2.1 1.1 1.1
@@ -999,7 +999,7 @@ meuble desk_clean_brooch 15.6 1.45 1.1 0.6 1.05
 meuble bed_plain 13.65 4.0 2.0 0.95 0.95
 meuble cards_floor 15.5 3.8 1.5 1.0 0 libre
 meuble clothes_floor 14.5 6.0 2 1.5 0 libre
-meuble clothes_chest 15.8 7.5 0.9 0.5 0.6
+meuble clothes_chest 15.8 7.5 0.9 0.5 0.6 regard=O
 point grande_soeur_bureau 15.6 2.4
 point ithea_lit 22.6 5.4
 point nephren_lit 29.6 5.4
@@ -1037,7 +1037,7 @@ point couloir_fuite 28.9 9.6
 meuble bunk_bed 2.1 11.2 1.8 0.9 1.9
 meuble bunk_bed 2.1 14.2 1.8 0.9 1.9
 meuble bed_child_messy 5.8 14.3 1.6 0.9 0.9
-meuble dresser_child 6.4 11.1 0.9 0.5 0.9
+meuble dresser_child 6.4 11.1 0.9 0.5 0.9 regard=O
 meuble plush_pile 4.4 14.5 1.0 0.5 0.6
 point dortoir_a 4.2 12.6
 meuble bunk_bed 8.1 11.2 1.8 0.9 1.9

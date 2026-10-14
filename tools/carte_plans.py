@@ -18,19 +18,23 @@ Vérifications :
 - passages : depuis le marqueur Spawn, chaque sortie, marqueur, place et seuil de porte est
   atteignable par un disque de 1,2 m de diamètre dedans et de 3 m dehors ; chaque point nommé par
   un disque de 1,2 m ;
+- (I1) un meuble de regard E ou O (« regard=E » : adossé au mur ouest, il regarde l'est) est aussi
+  vérifié tourné vers sa vue de flanc : emprise tournée d'un quart de tour autour du milieu de son
+  bord arrière (le mur), dans sa pièce, sans chevaucher, passages et caméra compris ;
 - règle de caméra (avertissements) : rien de haut au sud d'un endroit où l'on marche (zone
   cachée de 1,6 × (h − 0,5) m au nord de tout ce qui dépasse 1,2 m, sauf premier plan).
 """
 
 from __future__ import annotations
 
+import copy
 import glob
 import math
 import os
 import re
 import shlex
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 WALL_HALF = 0.125  # demi-épaisseur d'un mur intérieur (m)
 DOOR_MIN = 1.2
@@ -183,7 +187,11 @@ def parse(md: str) -> list[Map]:
                 m.windows.append(Item(k, t[4], Rect(0, 0, 0, 0), extra={"room": t[1], "wall": t[2], "pos": num(t[3]), "img": t[4], "l": num(t[5]) if len(t) > 5 else 1.0}, line=n))
             elif k == "meuble":
                 flags = t[7:]
-                m.furniture.append(Item(k, t[1], centered(num(t[2]), num(t[3]), num(t[4]), num(t[5])), h=num(t[6]), block="libre" not in flags, fg="pp" in flags, extra={"flags": flags}, line=n))
+                regard = next((fl[len("regard="):] for fl in flags if fl.startswith("regard=")), "")
+                if regard not in ("", "N", "S", "E", "O"):
+                    m.err(n, f"regard={regard} : N, S, E ou O attendu")
+                    regard = ""
+                m.furniture.append(Item(k, t[1], centered(num(t[2]), num(t[3]), num(t[4]), num(t[5])), h=num(t[6]), block="libre" not in flags, fg="pp" in flags, extra={"flags": flags, "regard": regard}, line=n))
             elif k == "mural":
                 m.walls.append(Item(k, t[1], Rect(0, 0, 0, 0), extra={"room": t[2], "wall": t[3], "pos": num(t[4]), "bas": num(t[5]), "l": num(t[6]) if len(t) > 6 else 0.5}, line=n))
             elif k == "objet":
@@ -483,6 +491,46 @@ def check_inside(m: Map) -> None:
             m.err(o.line, f"objet {o.name} posé hors de tout meuble")
     reach_check(m, seuils)
     camera_inside(m, seuils)
+    check_turned(m, seuils, rooms)
+
+
+def turned_rect(f: Item) -> Rect:
+    """(I1) Emprise d'un meuble de regard E ou O tourné vers sa vue de flanc : un quart de tour autour
+    du milieu de son bord arrière, contre le mur (ouest pour E, est pour O) ; largeur et profondeur
+    s'échangent."""
+    r = f.rect
+    zc = (r.z0 + r.z1) / 2
+    l, p = r.w(), r.d()
+    if f.extra.get("regard") == "E":
+        return Rect(r.x0, zc - l / 2, r.x0 + p, zc + l / 2)
+    return Rect(r.x1 - p, zc - l / 2, r.x1, zc + l / 2)
+
+
+def check_turned(m: Map, seuils: list, rooms: list) -> None:
+    """(I1) Les meubles de regard E ou O, tournés : dans leur pièce, sans chevaucher, passages et
+    caméra comme la pose de face."""
+    if not any(f.extra.get("regard") in ("E", "O") for f in m.furniture):
+        return
+    turned = copy.copy(m)
+    turned.errors, turned.warnings = [], []
+    turned.furniture = [replace(f, rect=turned_rect(f)) if f.extra.get("regard") in ("E", "O") else f
+                        for f in m.furniture]
+    for f in turned.furniture:
+        if f.extra.get("regard") in ("E", "O") and not any(r.rect.shrink(WALL_HALF - 0.01).contains(f.rect) for r in rooms):
+            turned.err(f.line, f"meuble {f.name} tourné {f.rect} hors de sa pièce")
+    blk = [f for f in turned.furniture if f.block]
+    for i, a in enumerate(blk):
+        for b in blk[i + 1:]:
+            if (a.extra.get("regard") in ("E", "O") or b.extra.get("regard") in ("E", "O")) and a.rect.inter(b.rect):
+                turned.err(b.line, f"meubles {a.name} {a.rect} et {b.name} {b.rect} qui se chevauchent")
+    reach_check(turned, seuils)
+    camera_inside(turned, seuils)
+    for e in turned.errors:
+        if e not in m.errors:
+            m.errors.append(e + " (meubles tournés vers leur vue de flanc, regard=E ou O)")
+    for w in turned.warnings:
+        if w not in m.warnings:
+            m.warnings.append(w + " (meubles tournés)")
 
 
 def camera_inside(m: Map, doors: list) -> None:

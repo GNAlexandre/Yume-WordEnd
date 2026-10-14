@@ -436,6 +436,68 @@ OUTDOOR_POLES = [
 ALL_FURNITURE = FURNITURE + FURNITURE_T2 + FURNITURE_I1
 ALL_OBJECTS = OBJECTS + OBJECTS_I1
 
+# --- (I1) Vues d'un meuble : de flanc, de dos, par le pied (cahier n° 5, section 2.7 et lot R0) ---
+#
+# Un panneau se tourne toujours vers le sud : un meuble adossé à un mur est ou ouest, un fauteuil qui
+# regarde la fenêtre, un lit dont la tête touche le mur nord n'ont donc que l'image de face. Le
+# cahier n° 5 commande, pour chaque meuble qu'on voit autrement, des vues de même échelle et de
+# même matière, en projection orthographique oblique comme la caméra du jeu :
+#   <nom>_side : de flanc, la face du meuble tournée vers l'est (retournée par le moteur pour l'ouest) ;
+#                largeur de l'image = profondeur du meuble, hauteur = celle de la face + 0,53 × (largeur
+#                du meuble − sa profondeur) × 96 ;
+#   <nom>_back : de dos (le meuble regarde le nord), taille de la face ;
+#   <nom>_foot : lit vu par le pied, tête contre le mur nord ; largeur du lit × (hauteur du lit de
+#                flanc + 0,53 × longueur × 96).
+# Le moteur les trouve par leur nom, à côté de l'image de face (DecorPanel.view_texture) : aucune
+# scène ne les nomme, et une vue livrée suffit. Table : base -> {vue: (taille en px, priorité)} ; les
+# vues dont l'image existe (livrée, ou remplaçant de hd2d_interior_props.py) ont leur entrée du
+# manifeste (lot R0).
+# Les cinq dernières lignes (R0.6) sont celles de meubles pas encore livrés : leur image de face
+# arrivera avec le lot R3 ou R4.
+VIEWS = {
+    "armchair_reading": {"side": ((86, 106), 1), "back": ((96, 101), 2)},
+    "board_games_shelf": {"side": ((48, 190), 1)},
+    "bookshelf_low": {"side": ((48, 132), 1)},
+    "bookshelf_tall_b": {"side": ((58, 272), 1)},
+    "bookshelf_tall": {"side": ((58, 272), 1)},
+    "chair_guest": {"side": ((58, 106), 1), "back": ((77, 101), 2)},
+    "desk_buried": {"side": ((77, 156), 1)},
+    "desk_nygglatho": {"side": ((77, 137), 1)},
+    "filing_cabinet": {"side": ((48, 159), 1)},
+    "infirmary_desk": {"side": ((77, 121), 1)},
+    "medicine_cabinet": {"side": ((48, 198), 1)},
+    "pantry_cupboard": {"side": ((58, 217), 1)},
+    "shoe_rack": {"side": ((38, 99), 1)},
+    "sofa_beige": {"side": ((86, 175), 1), "back": ((192, 119), 1)},
+    "towel_shelf": {"side": ((48, 179), 1)},
+    "toy_chest": {"side": ((58, 97), 1)},
+    "wardrobe_chtholly": {"side": ((58, 212), 1)},
+    "chair_child": {"side": ((43, 77), 2), "back": ((43, 77), 2)},
+    "chair_wood": {"side": ((48, 96), 2)},
+    "clothes_chest": {"side": ((48, 78), 2)},
+    "dresser_child": {"side": ((48, 106), 2)},
+    "footlocker": {"side": ((48, 63), 2)},
+    "bath_tub": {"side": ((96, 167), 3)},
+    "bed_child": {"foot": ((77, 118), 2)},
+    "bed_chtholly": {"foot": ((91, 144), 2)},
+    "bed_iron": {"foot": ((96, 152), 2)},
+    "bed_plain": {"foot": ((91, 144), 2)},
+    "bunk_bed": {"foot": ((86, 228), 2)},
+    "armchair_sheeted": {"side": ((86, 101), 1)},
+    "sofa_salon": {"side": ((86, 112), 1), "back": ((192, 96), 2)},
+    "display_cabinet": {"side": ((58, 182), 2)},
+    "bookshop_counter": {"side": ((67, 106), 3)},
+    "crystal_projector": {"back": ((77, 154), 3)},
+}
+
+# Vues du dehors (R0.7, props/) : bancs, de flanc.
+OUTDOOR_VIEWS = {
+    "bench": {"side": ((48, 140), 3)},
+    "bench_b": {"side": ((48, 160), 3)},
+    "bench_stone": {"side": ((48, 104), 3)},
+}
+VIEW_LOT = "R0"
+
 # Remplaçants : images du lot I absentes de la livraison. door_frame_wood (chambranle seul, ouverture
 # transparente, pour les portes qu'on franchit) n'est pas encore au cahier n° 3 :
 # docs/CONTRACT_REQUESTS.md.
@@ -492,11 +554,26 @@ def entries():
         if free:
             entry["anchor"] = "free"
         out.append(entry)
+    for key, size, prio in view_images():
+        out.append(_entry(key, size, "panel", prio, lot=VIEW_LOT))
     return out
 
 
-def _entry(key, size, kind, prio, name=""):
-    lot = LOT_OF.get(name or os.path.basename(key), LOT)
+def view_images():
+    """Vues de VIEWS et d'OUTDOOR_VIEWS qui existent (image livrée ou remplaçant) : [(clé sous
+    assets/hd2d/, taille, priorité)], dans l'ordre des tables."""
+    out = []
+    for folder, table in (("interior/props", VIEWS), ("props", OUTDOOR_VIEWS)):
+        for base, views in table.items():
+            for view, (size, prio) in views.items():
+                key = "%s/%s_%s" % (folder, base, view)
+                if os.path.exists(os.path.join(ROOT, "assets", "hd2d", key + ".png")) or key in RECIPES:
+                    out.append((key, size, prio))
+    return out
+
+
+def _entry(key, size, kind, prio, name="", lot=""):
+    lot = lot or LOT_OF.get(name or os.path.basename(key), LOT)
     return {"path": "assets/hd2d/%s.png" % key, "size": list(size), "kind": kind, "prio": prio, "lot": lot}
 
 

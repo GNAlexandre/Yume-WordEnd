@@ -843,9 +843,10 @@ static func panel_material(
 
 
 ## Mesh d'un panneau d'intérieur de taille size (m), ancre au milieu du bord bas, face vers +Z ;
-## UV2 = (coordonnée de coupe : z du monde, hauteur gardée par la coupe).
-static func panel_mesh(size: Vector2, cut: float, keep: float) -> ArrayMesh:
-	var key := "%.4f|%.4f|%.3f|%.3f" % [size.x, size.y, cut, keep]
+## UV2 = (coordonnée de coupe : z du monde, hauteur gardée par la coupe) ; (I1) flip : image
+## retournée gauche-droite (flanc d'un meuble qui regarde l'ouest).
+static func panel_mesh(size: Vector2, cut: float, keep: float, flip: bool = false) -> ArrayMesh:
+	var key := "%.4f|%.4f|%.3f|%.3f|%d" % [size.x, size.y, cut, keep, int(flip)]
 	var ref: WeakRef = _panel_meshes.get(key)
 	var mesh := ref.get_ref() as ArrayMesh if ref != null else null
 	if mesh == null:
@@ -858,6 +859,8 @@ static func panel_mesh(size: Vector2, cut: float, keep: float) -> ArrayMesh:
 			Vector3(-half, size.y, 0.0),
 		]
 		var uvs: Array[Vector2] = [Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)]
+		if flip:
+			uvs = [Vector2(1, 1), Vector2(0, 1), Vector2(0, 0), Vector2(1, 0)]
 		for k: int in [0, 2, 1, 0, 3, 2]:
 			st.set_normal(Vector3.BACK)
 			st.set_uv(uvs[k])

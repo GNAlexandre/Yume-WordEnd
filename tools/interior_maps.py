@@ -14,6 +14,14 @@ franchit (chambranle door_frame_wood), ouvertures de toute la largeur d'une piè
 0,2 m), lampes par type, objets à examiner (data/texts/entrepot.json), places de la vie (chaises,
 lits), cloisonnement sous l'escalier, sorties vers une carte encore absente (PROVISIONAL).
 
+(I1) Orientation des meubles : une ligne « meuble » du plan peut porter « regard=E|O|N|S » (le meuble
+regarde l'est, l'ouest, le nord ou le sud ; un meuble adossé au mur ouest regarde l'est). Le
+générateur écrit « facing » sur le meuble ; quand l'image de la vue existe (<nom>_side pour E et O,
+<nom>_back ou <nom>_foot pour N : cahier n° 5, lot R0), il le tourne aussi d'un quart de tour autour
+du milieu de son bord arrière (le mur) : emprise, collision et ombre suivent, la vue est choisie par
+DecorPanel. Sans la vue, le meuble garde sa face et son emprise de face, comme avant (docs/INTERIEURS.md,
+section 6). Relancer gen quand une vue arrive.
+
 Usage (Python 3.9+) :
 
     python3 tools/interior_maps.py gen [map_id ...]   # écrit les cartes (toutes sans argument)
@@ -241,21 +249,24 @@ def wall_side(letter):
 
 
 # Meubles déplacés par rapport au plan (docs/DECISIONS.md, T2) : (image, rang) -> nouveau z du milieu
-# de l'emprise. L'armoire de Chtholly (plan : z 6,6, au milieu du mur est) cacherait le joueur
-# derrière elle, et la place qu'elle cache, avec le lit, fermerait le nord de la chambre (bureau,
-# calendrier) : elle s'adosse au mur sud, à l'est de la porte, et se coupe avec lui.
-MOVED = {
-    ("wardrobe_chtholly", 0): 8.075,
-}
+# de l'emprise, tant qu'ils gardent leur face. Vide depuis I1 : l'armoire de Chtholly, que T2 avait
+# reculée contre le mur sud parce que sa face de 1 m cachait le joueur, est au plan contre le mur
+# sud, à l'est de la porte (z 7,85), et tournée vers sa vue de flanc quand elle existe.
+MOVED = {}
 
 
 def expand_furniture(plan):
-    """Meubles du plan, rangées « xN » dépliées : (image, x, z, l, p, h, libre, ligne, rang) ; les
-    meubles de MOVED à leur nouvelle place."""
+    """Meubles du plan, rangées « xN » dépliées. Chaque meuble : image, x, z, l, p (emprise du milieu
+    à sa largeur et sa profondeur : celle de la vue qu'il montre), h, libre, ligne, rang, et (I1) regard
+    (E, O, N, S ou ""), facing (south, east, west, north ou ""), turned (tourné d'un quart de tour : sa
+    vue de flanc ou par le pied existe), depth (profondeur de l'emprise, m), shown (image dessinée : la
+    vue ou la face), yaw (degrés du nœud), face_width (largeur de la face, m). Les meubles de MOVED
+    sont à leur nouvelle place quand ils gardent leur face."""
     out = []
     counts = {}
     for item in plan.furniture:
         flags = item.extra.get("flags", [])
+        regard = item.extra.get("regard", "")
         row = 1
         for flag in flags:
             if flag.startswith("x") and flag[1:].isdigit():
@@ -267,27 +278,91 @@ def expand_furniture(plan):
             z = (rect.z0 + rect.z1) / 2.0
             index = counts.get(item.name, 0)
             counts[item.name] = index + 1
-            z = MOVED.get((item.name, index), z)
-            out.append({"image": item.name, "x": x, "z": z, "l": width, "p": rect.d(), "h": item.h,
-                        "free": not item.block, "line": item.line, "index": index})
+            entry = {"image": item.name, "x": x, "z": z, "l": width, "p": rect.d(), "h": item.h,
+                     "free": not item.block, "line": item.line, "index": index, "regard": regard,
+                     "facing": FACING_OF_REGARD.get(regard, ""), "turned": False, "shown": item.name,
+                     "yaw": 0.0, "face_width": width}
+            view, _size = chosen_view(item.name, regard) if item.name in DEPTHS else (None, None)
+            if view:
+                entry["shown"] = "%s_%s" % (item.name, view)
+            if view in ("side", "foot"):
+                turn_footprint(entry, rect, view)
+            else:
+                entry["z"] = MOVED.get((item.name, index), z)
+                entry["depth"] = DEPTHS.get(item.name, rect.d())
+            out.append(entry)
     return out
+
+
+def turn_footprint(entry, rect, view):
+    """Tourne l'emprise d'un meuble d'un quart de tour autour du milieu de son bord arrière : le mur
+    ouest pour E, est pour O (vue de flanc), le mur nord pour un lit vu par le pied. Sa profondeur
+    devient sa largeur en x, sa largeur sa profondeur en z (docs/INTERIEURS.md, section 6)."""
+    depth = DEPTHS[entry["image"]]
+    width = rect.w()
+    entry["turned"] = True
+    entry["depth"] = width
+    entry["l"] = depth
+    entry["p"] = width
+    if entry["regard"] == "E":
+        entry["x"] = rect.x0 + depth / 2.0
+        entry["yaw"] = 90.0
+    elif entry["regard"] == "O":
+        entry["x"] = rect.x1 - depth / 2.0
+        entry["yaw"] = -90.0
+    else:
+        # Lit vu par le pied : la tête reste contre le mur nord, le lit s'allonge vers le sud.
+        entry["z"] = rect.z0 + width / 2.0
+        entry["yaw"] = 90.0
 
 
 # --- Données des meubles (scènes de tools/hd2d_interior.py) ------------------------------------
 
 DECALS = {n for n, *_ in hd2d_interior.RUGS} | {n for n, *_ in hd2d_interior.DECALS_T2}
-OBJECTS = {n for n, *_ in hd2d_interior.OBJECTS}
+OBJECTS = {n for n, *_ in hd2d_interior.ALL_OBJECTS}
 HANGING = {n for n, *_ in hd2d_interior.HANGING}
 ANIMATED = {n for n, *_ in hd2d_interior.ANIMS}
 OUTDOOR = {n for n, *_ in hd2d_interior.OUTDOOR}
-DEPTHS = {n: depth for n, _s, depth, _g, _p in hd2d_interior.FURNITURE + hd2d_interior.FURNITURE_T2}
+DEPTHS = {n: depth for n, _s, depth, _g, _p in hd2d_interior.ALL_FURNITURE}
 DEPTHS.update({n: depth for n, _i, _s, depth, _g in hd2d_interior.FURNITURE_OTHER_IMAGES})
 HEIGHTS = {}
-for _n, _size, *_rest in (hd2d_interior.FURNITURE + hd2d_interior.FURNITURE_T2 + hd2d_interior.OBJECTS
+for _n, _size, *_rest in (hd2d_interior.ALL_FURNITURE + hd2d_interior.ALL_OBJECTS
                           + hd2d_interior.OUTDOOR + hd2d_interior.HANGING):
     HEIGHTS[_n] = _size[1] / 96.0
 for _n, _image, _size, *_rest in hd2d_interior.FURNITURE_OTHER_IMAGES:
     HEIGHTS[_n] = _size[1] / 96.0
+
+
+PROPS_IMAGES = os.path.join(ROOT, "assets", "hd2d", "interior", "props")
+# Image qu'un meuble de ce regard montre : E et O le flanc, N le dos ou, pour un lit, le pied.
+FACING_OF_REGARD = {"E": "east", "O": "west", "N": "north", "S": "south"}
+# Un lit vu par le pied (tête contre le mur nord).
+BED_PREFIXES = ("bed_", "bunk_bed")
+
+
+def view_size(image, view):
+    """Taille en px de la vue <image>_<view> si son image existe (livrée ou remplaçant), sinon None."""
+    path = os.path.join(PROPS_IMAGES, "%s_%s.png" % (image, view))
+    if not os.path.exists(path):
+        return None
+    with Image.open(path) as picture:
+        return picture.size
+
+
+def chosen_view(image, regard):
+    """(vue, taille) que montre un meuble de ce regard : "side" pour E et O, "back" ou "foot" pour N,
+    la face (None) pour S, sans regard ou sans image de la vue."""
+    if regard in ("E", "O"):
+        views = ["side"]
+    elif regard == "N":
+        views = ["back", "foot"]
+    else:
+        views = []
+    for view in views:
+        size = view_size(image, view)
+        if size:
+            return view, size
+    return None, None
 
 
 def scene_path(image):
@@ -538,39 +613,47 @@ def feet_hidden(player_x, player_z, front, x0, x1, top, bounds):
     return x0 < x_at < x1 and cam_y + (FEET - cam_y) * t < top
 
 
-def image_width(name):
-    """Largeur (m) d'une image d'intérieur (assets/hd2d/interior/, props/ compris)."""
+def image_size_m(name):
+    """(largeur, hauteur) en m d'une image d'intérieur (assets/hd2d/interior/, props/ compris)."""
     for folder in ("interior", os.path.join("interior", "props")):
         path = os.path.join(ROOT, "assets", "hd2d", folder, name + ".png")
         if os.path.exists(path):
             with Image.open(path) as image:
-                return image.width / 96.0
+                return image.width / 96.0, image.height / 96.0
     raise SystemExit("image absente : %s" % name)
+
+
+def image_width(name):
+    return image_size_m(name)[0]
 
 
 def hiding_rules(plan, furniture, settings, item, blockers):
     """Pour un meuble haut : {"cut_offset": m} s'il est adossé au mur sud, ou la boîte (x0, z0, x1,
     z1) qui ferme la place où il cacherait les pieds du joueur ; {} sinon."""
     image = item["image"]
-    if image not in DEPTHS or HEIGHTS.get(image, 0.0) <= TALL:
+    # (I1) L'image qui se dessine est celle de la vue (flanc, dos, pied) : sa largeur et sa hauteur.
+    if image not in DEPTHS:
+        return {}
+    shown_width, shown_height = image_size_m(item["shown"])
+    if (shown_height if item["shown"] != image else HEIGHTS.get(image, 0.0)) <= TALL:
         return {}
     room = plan.rooms[room_of(plan, item["x"], item["z"])].rect
     front = furniture_front(item)
-    back = front - DEPTHS[image]
+    back = front - item["depth"]
     if back <= room.z0 + WALL_HALF + NORTH_REACH:
         return {}
     if front >= room.z1 - WALL_HALF - SOUTH_REACH:
         return {"cut_offset": round(room.z1 - front + 0.05, 3)}
-    width = image_width(image)
+    width = shown_width
     x0, x1 = item["x"] - width / 2.0, item["x"] + width / 2.0
-    top = HEIGHTS[image]
+    top = shown_height
     # Ce qui arrête déjà le joueur (un centre n'y entre pas) : les autres meubles et fermetures.
     solid = []
     for other in furniture:
         if other is item or other["image"] in DECALS or other["image"] in HANGING or other["free"]:
             continue
         o_front = furniture_front(other)
-        o_depth = DEPTHS.get(other["image"], other["p"])
+        o_depth = other["depth"]
         solid.append((other["x"] - other["l"] / 2.0, o_front - o_depth, other["x"] + other["l"] / 2.0, o_front))
     solid += [(bx0, bz0, bx1, bz1) for _name, bx0, bz0, bx1, bz1, _h in blockers]
 
@@ -658,11 +741,22 @@ def interior_scene(map_id, plan, settings):
         z = item["z"]
         if image in DEPTHS:
             # Meuble : son image (bord sud de la scène) au bord sud de l'emprise du plan.
-            z = round(furniture_front(item) - DEPTHS[image] / 2.0, 4)
+            z = round(furniture_front(item) - item["depth"] / 2.0, 4)
         elif image in OBJECTS:
             z = round(furniture_front(item), 4)
         rules = hiding_rules(plan, furniture, settings, item, BLOCKERS.get(map_id, []))
-        props = [("transform", transform(item["x"], y, z))]
+        props = [("transform", transform(item["x"], y, z, item["yaw"]))]
+        if item["turned"]:
+            # (I1) Tourné d'un quart de tour (vue de flanc ou par le pied) : le nœud est au milieu de
+            # l'emprise tournée, l'image au bord sud de sa profondeur (le long du mur), l'ombre sur elle.
+            z = item["z"]
+            props = [("transform", transform(item["x"], y, z, item["yaw"]))]
+            shown_w = image_width(item["shown"])
+            props.append(("image_offset", "Vector3(0, 0, %s)" % num(item["p"] / 2.0)))
+            props.append(("shadow_width", "0.9"))
+            props.append(("shadow_depth", num(round(min(2.0, max(0.05, item["p"] / (shown_w * 0.9))), 3))))
+        if item["facing"]:
+            props.append(("facing", '&"%s"' % item["facing"]))
         if "cut_offset" in rules:
             props.append(("cut_offset", num(rules["cut_offset"])))
         name = unique(image)
@@ -770,6 +864,11 @@ def examine_spots(map_id, plan, furniture):
             item = [f for f in furniture if f["image"] == image][index]
             if image in DECALS:
                 x, z, width, depth = item["x"], item["z"], item["l"], item["p"]
+            elif item["turned"]:
+                # (I1) Tourné vers sa vue de flanc : on l'examine de face, côté pièce (est ou ouest).
+                side = 1.0 if item["regard"] == "E" else -1.0
+                x, z = item["x"] + side * (item["l"] / 2.0 + 0.3), item["z"]
+                width, depth = 0.8, max(item["p"], 0.8)
             else:
                 x, z = item["x"], furniture_front(item)
                 width = max(item["l"], 0.8)
@@ -1104,7 +1203,8 @@ def generate(map_id, all_plans, write=True):
     if map_id in INTERIOR_MAPS:
         data, deviations = interior_json(map_id, plan)
         for item in plan.furniture:
-            if (item.name, 0) in MOVED:
+            turned = chosen_view(item.name, item.extra.get("regard", ""))[0] in ("side", "foot")
+            if (item.name, 0) in MOVED and not turned:
                 deviations.append("%s déplacé en z = %.3f (plan : %.3f)"
                                   % (item.name, MOVED[(item.name, 0)], (item.rect.z0 + item.rect.z1) / 2.0))
         outputs["data/maps/%s/interior.json" % map_id] = data
