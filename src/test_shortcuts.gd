@@ -13,7 +13,15 @@ extends Node
 ##                (nouvelle partie ou reprise, position et zone non touchées) ;
 ##   maps=<a,b…>  (E1) voyage de carte en carte (WorldManager.go_to, Spawn de chaque carte)
 ##                une fois la partie posée, et une ligne de mesures par changement (fondu,
-##                chargement découpé et ses images, installation, total) : tools/web_maps.js.
+##                chargement découpé et ses images, installation, total) : tools/web_maps.js ;
+##   map=<id>     (T1) la partie se pose sur cette carte (WorldManager.enter_map, sans fondu),
+##                à son Spawn ou au marqueur marker=<nom> (« from_sentier ») : seule entrée vers
+##                les cartes de la refonte (entrepot…) tant que le début de partie n'y mène pas ;
+##                une carte ou un marqueur inconnus sont ignorés (une ligne au journal) ;
+##   island=<id>  (X1) une fois la partie posée, voyage en dirigeable vers cette île
+##                (WorldManager.travel : vue du ciel, puis son port), au port port=<id> s'il est
+##                donné (sinon le premier) ; une île inconnue est ignorée (une ligne au journal).
+##                En version de débogage, F6 part aussi vers l'île suivante (WorldManager).
 ## (Acte 1) Sur le Web, la page reçoit aussi window.wordendFace(cible) : le joueur se tourne,
 ## ((HD-2D) la caméra fixe ne tourne plus : la cible est aussi posée dans window.wordendAim, et
 ## la page choisit les touches qui y mènent)
@@ -30,7 +38,7 @@ extends Node
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
 ## Paramètres reconnus (les autres sont ignorés).
-const KEYS: Array[String] = ["zone", "timeres", "trace", "maps"]
+const KEYS: Array[String] = ["zone", "timeres", "trace", "maps", "map", "marker", "island", "port"]
 ## Types du banc de performance, en rotation.
 const BENCH_TYPES: Array[StringName] = [
 	&"timere_small", &"timere_normal", &"timere_runner", &"timere_big"
@@ -107,6 +115,7 @@ static func _keep(result: Dictionary, pair: String) -> void:
 
 func _ready() -> void:
 	var player := get_tree().get_first_node_in_group(&"player") as Player
+	_enter_map(StringName(str(parameters.get("map", ""))), str(parameters.get("marker", "")))
 	var zone_id := StringName(str(parameters.get("zone", "")))
 	if zone_id in WorldManager.LEGACY_ZONES:
 		# (E1) Une partie reprise dans une autre carte revient d'abord sur l'ancienne île.
@@ -121,9 +130,14 @@ func _ready() -> void:
 		_log("zone inconnue : %s" % zone_id)
 	var count := clampi(int(str(parameters.get("timeres", "0"))), 0, MAX_BENCH)
 	var parent := get_parent() as Node3D
+	if count > 0 and not WorldAtlas.rules_for(WorldManager.current_map()).enemies_allowed:
+		# (X1) Les règles de l'île n'admettent pas de Timere : le banc n'apparaîtrait pas.
+		_log("banc refusé : pas de Timere sur %s" % WorldManager.current_island())
+		count = 0
 	if player != null and parent != null and count > 0:
 		spawn_bench(parent, player.global_position + player.aim_direction() * BENCH_AHEAD, count)
 	EventBus.map_entered.connect(_on_map_entered)
+	EventBus.island_entered.connect(_on_island_entered)
 	WorldManager.transition_finished.connect(_on_transition_finished)
 	EventBus.zone_entered.connect(_on_zone_entered)
 	EventBus.interaction_available.connect(_on_interaction_available)
@@ -161,6 +175,9 @@ func _ready() -> void:
 	var maps := str(parameters.get("maps", ""))
 	if not maps.is_empty():
 		_travel.call_deferred(maps.split(",", false))
+	var island := StringName(str(parameters.get("island", "")))
+	if not island.is_empty():
+		_voyage.call_deferred(island, StringName(str(parameters.get("port", ""))))
 
 
 func _process(delta: float) -> void:
@@ -230,6 +247,27 @@ func _log(text: String) -> void:
 	print("[m1] ", text)
 
 
+## (T1) Paramètres map et marker : la partie se pose sur la carte (sans fondu), au marqueur s'il
+## existe, sinon à son Spawn. Rien sans carte ; une carte inconnue est ignorée.
+func _enter_map(map_id: StringName, marker_name: String) -> void:
+	if map_id.is_empty():
+		return
+	if not Map.exists(map_id):
+		_log("carte inconnue : %s" % map_id)
+		return
+	var marker := Map.SPAWN_MARKER
+	if not marker_name.is_empty():
+		# Les nœuds de la scène, sans l'instancier : Markers/<nom>.
+		var state := (load(Map.scene_path(map_id)) as PackedScene).get_state()
+		var wanted := "Markers/" + marker_name
+		for i in state.get_node_count():
+			if String(state.get_node_path(i)).trim_prefix("./") == wanted:
+				marker = StringName(marker_name)
+		if marker == Map.SPAWN_MARKER:
+			_log("marqueur inconnu : %s (Spawn)" % marker_name)
+	WorldManager.enter_map(map_id, marker)
+
+
 ## (E1) Voyage de carte en carte (paramètre maps), après quelques images de la partie.
 func _travel(map_ids: PackedStringArray) -> void:
 	for _frame in 30:
@@ -244,8 +282,23 @@ func _travel(map_ids: PackedStringArray) -> void:
 	_log("voyage terminé")
 
 
+## (X1) Voyage vers une île (paramètres island et port), après quelques images de la partie.
+func _voyage(island: StringName, port: StringName) -> void:
+	for _frame in 30:
+		await get_tree().process_frame
+	if WorldAtlas.arrival(island, port).is_empty():
+		_log("île ou port inconnus : %s %s" % [island, port])
+		return
+	await WorldManager.travel(island, port)
+	_log("voyage vers %s terminé" % island)
+
+
 func _on_map_entered(map_id: StringName) -> void:
 	_log("carte %s" % map_id)
+
+
+func _on_island_entered(island: StringName) -> void:
+	_log("île %s (%s)" % [island, WorldAtlas.island_name(island)])
 
 
 func _on_transition_finished(map_id: StringName) -> void:

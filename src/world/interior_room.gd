@@ -282,7 +282,7 @@ func height_at(_x: float, _z: float) -> float:
 
 ## Matière du sol (nom de l'image floor_*), &"" hors des pièces.
 func material_at(x: float, z: float) -> StringName:
-	var index := plan.cell(floori(x), floori(z)) if plan != null else -1
+	var index := plan.cell(x, z) if plan != null else -1
 	return StringName(plan.rooms[index]["floor"]) if index >= 0 else &""
 
 
@@ -419,7 +419,7 @@ func _build_floors() -> void:
 		if not tools.has(key):
 			tools[key] = _begin()
 		var st: SurfaceTool = tools[key]
-		for rect: Rect2i in room["rects"]:
+		for rect: Rect2 in room["rects"]:
 			var p := Vector3(rect.position.x, 0.0, rect.position.y)
 			var size := Vector3(rect.size.x, 0.0, rect.size.y)
 			var corners: Array[Vector3] = [
@@ -498,7 +498,7 @@ func _end_tool(
 		else:
 			at.x = line + side
 		if room < 0:
-			room = plan.cell(floori(at.x), floori(at.z))
+			room = plan.cell(at.x, at.z)
 	if room < 0:
 		return _tool(walls, _room_image(int(piece["low"]), int(piece["high"]), "wall", true))
 	return _tool(walls, String(plan.rooms[room]["wall"]))
@@ -528,7 +528,7 @@ func _wall_piece(piece: Dictionary, walls: Dictionary, tops: Dictionary) -> void
 	var nw := Vector3(lo.x, lo.y, lo.z)
 	var ne := Vector3(hi.x, lo.y, lo.z)
 	# Partie dans UV2.y ; un mur nord-sud y ajoute sa ligne (colonne de coupe : part_code()).
-	var code := part_code(PART_FACE, -1 if horizontal else int(piece["line"]))
+	var code := part_code(PART_FACE, -1.0 if horizontal else float(piece["line"]))
 	# Les deux bouts : tranche au bord d'une porte, ou bout d'un poteau d'angle (le bout sud d'une
 	# cloison qui touche le mur du couloir fait partie de la face de ce mur).
 	if horizontal:
@@ -547,10 +547,13 @@ func _wall_piece(piece: Dictionary, walls: Dictionary, tops: Dictionary) -> void
 		_cap(caps, lo, hi, CUT_HEIGHT, horizontal, cut, code + PART_LOW)
 
 
-## Code de partie (UV2.y des murs) : la partie (PART_*), plus 4 × (ligne + 1) pour un mur
-## nord-sud (ligne x de la carte, entière), que la colonne de coupe reconnaît.
-static func part_code(part: float, north_south_line: int) -> float:
-	return part + (4.0 * (north_south_line + 1) if north_south_line >= 0 else 0.0)
+## Code de partie (UV2.y des murs) : la partie (PART_*), plus 4 × (rang + 1) pour un mur
+## nord-sud, rang = sa ligne x (m) / InteriorLayout.GRID (T2 : lignes au demi-mètre), que la
+## colonne de coupe reconnaît (interior.gdshader : line_x = (code / 4 − 1) × GRID).
+static func part_code(part: float, north_south_line: float) -> float:
+	if north_south_line < 0.0:
+		return part
+	return part + 4.0 * (roundi(north_south_line / InteriorLayout.GRID) + 1)
 
 
 ## Face verticale entre les points p et q du bas, jusqu'à la hauteur top, tournée vers normal ;
@@ -767,7 +770,7 @@ func _window_pool(values: PackedFloat32Array, size: Vector2i, placed: Dictionary
 	for ty in range(texels.position.y, texels.end.y):
 		for tx in range(texels.position.x, texels.end.x):
 			var at := (Vector2(tx, ty) + Vector2.ONE * 0.5) / LIGHT_TEXELS
-			if plan.cell(floori(at.x), floori(at.y)) != room:
+			if plan.cell(at.x, at.y) != room:
 				continue
 			var depth := ((at.y if horizontal else at.x) - wall) * face
 			var aside := absf((at.x if horizontal else at.y) - center)
@@ -788,7 +791,7 @@ func _lamp_pool(values: PackedFloat32Array, size: Vector2i, lamp: Dictionary) ->
 	for ty in range(texels.position.y, texels.end.y):
 		for tx in range(texels.position.x, texels.end.x):
 			var at := (Vector2(tx, ty) + Vector2.ONE * 0.5) / LIGHT_TEXELS
-			if plan.cell(floori(at.x), floori(at.y)) != int(lamp["room"]):
+			if plan.cell(at.x, at.y) != int(lamp["room"]):
 				continue
 			var f := clampf(1.0 - at.distance_to(at_lamp) / radius, 0.0, 1.0)
 			if f > 0.0:

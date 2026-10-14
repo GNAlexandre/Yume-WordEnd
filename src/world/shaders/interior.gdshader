@@ -4,7 +4,8 @@
 // - UV2.x : coordonnée de coupe (z du monde) ;
 // - UV2.y : partie (0 : sol ou face de mur, coupée au-dessus de cut_height ; 1 : dessus d'un mur
 //   entier, effacé quand le mur est coupé ; 2 : dessus d'un mur coupé, à cut_height, montré
-//   seulement quand il l'est), plus 4 × (ligne + 1) pour un mur nord-sud (ligne x de la carte) :
+//   seulement quand il l'est), plus 4 × (rang + 1) pour un mur nord-sud (rang : sa ligne x de la
+//   carte divisée par line_step, le pas de la grille d'InteriorLayout, 0,5 m) :
 //   la colonne de coupe (cut_column : x et z du joueur dans le repère de la pièce, demi-largeur,
 //   longueur) coupe le mur nord-sud dont la ligne passe sous le joueur (dans une porte de ce mur,
 //   le bout de cloison au sud le cacherait, vu par la tranche), de column_front à
@@ -23,6 +24,8 @@ uniform float cut_height = 0.15;
 uniform vec4 section_color : source_color = vec4(0.3, 0.22, 0.17, 1.0);
 uniform vec4 cut_column = vec4(-1000000.0, -1000000.0, 0.0, 0.0);
 uniform float column_front = 0.3;
+// Pas de la grille des murs (m) : InteriorLayout.GRID.
+const float line_step = 0.5;
 
 varying vec3 world_pos;
 varying vec2 light_xz;
@@ -38,7 +41,7 @@ void vertex() {
 	cut_coord = UV2.x;
 	float code = floor(UV2.y + 0.5);
 	part = mod(code, 4.0);
-	line_x = code > 3.5 ? floor(code / 4.0) - 1.0 : -1000000.0;
+	line_x = code > 3.5 ? (floor(code / 4.0) - 1.0) * line_step : -1000000.0;
 	local_z = VERTEX.z;
 }
 

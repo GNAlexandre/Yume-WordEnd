@@ -21,14 +21,21 @@ extends DecorPanel
 	set(value):
 		cut_height = maxf(value, 0.0)
 		_queue_rebuild()
+## (T2) Décalage vers le sud de la coordonnée de coupe (m) : un meuble adossé au mur sud de sa
+## pièce (placard, étagère, lits superposés) se coupe avec ce mur (cut_offset jusqu'au delà de sa
+## ligne) au lieu de cacher le joueur qui se tient dans la pièce ; 0 : coupé à son image.
+@export_range(0.0, 4.0) var cut_offset: float = 0.0:
+	set(value):
+		cut_offset = maxf(value, 0.0)
+		_queue_rebuild()
 
 
 func rebuild() -> void:
 	super.rebuild()
 	if texture == null:
 		return
-	_quad.mesh = InteriorRoom.panel_mesh(size_m(), front_z(), cut_height)
-	_quad.material_override = InteriorRoom.furniture_material(texture, glow, tint)
+	_quad.mesh = InteriorRoom.panel_mesh(size_m(), cut_z(), cut_height)
+	_quad.material_override = InteriorRoom.panel_material(texture, glow, tint)
 
 
 ## z (monde) du bord sud du meuble : le plan de son image, sa coordonnée de coupe.
@@ -38,17 +45,22 @@ func front_z() -> float:
 	return position.z + image_offset.z * scale.z
 
 
+## (T2) z (monde) de la coordonnée de coupe : le bord sud, plus cut_offset.
+func cut_z() -> float:
+	return front_z() + cut_offset
+
+
 ## Rectangle de l'image dans le monde (deux triangles) tel qu'il se dessine quand la coupe
-## d'InteriorRoom est à cut_line (z du monde) : entier, ou sous cut_height.
+## d'InteriorRoom est à cut_line (z du monde) : entier, ou sous cut_height ; (T2) tourné comme le
+## nœud si keep_orientation (le grand miroir sur un mur ouest).
 func occluder_triangles(cut_line: float) -> PackedVector3Array:
 	var size := size_m() * Vector2(global_basis.get_scale().x, global_basis.get_scale().y)
 	var top := size.y
-	var material := _quad.material_override as ShaderMaterial
-	var furniture_line := float(material.get_shader_parameter(&"furniture_cut_line"))
-	if front_z() >= minf(cut_line, furniture_line) - InteriorRoom.CUT_MARGIN:
+	if cut_z() >= cut_line - InteriorRoom.CUT_MARGIN:
 		top = minf(top, cut_height)
 	var base := global_position + image_offset * global_basis.get_scale()
-	var left := base + Vector3.LEFT * size.x / 2.0
-	var right := base + Vector3.RIGHT * size.x / 2.0
+	var along := global_basis.x.normalized() if keep_orientation else Vector3.RIGHT
+	var left := base - along * size.x / 2.0
+	var right := base + along * size.x / 2.0
 	var up := Vector3.UP * top
 	return PackedVector3Array([left, right, right + up, left, right + up, left + up])

@@ -4,7 +4,8 @@ extends Node
 ##
 ## Fichier save_path : {"version": 3, "saved_at": "AAAA-MM-JJTHH:MM:SSZ" (UTC), puis les champs
 ## de GameState.to_dict() dans leur ordre}. (E9) moment et weather sont des champs facultatifs du
-## schéma v3, sans migration : absents, GameState prend le couchant sans pluie. new_game(),
+## schéma v3, sans migration : absents, GameState prend le couchant sans pluie. (X1) island et
+## known_islands aussi : absents, l'île courante se déduit de la carte à l'arrivée. new_game(),
 ## load_game() et import_json() émettent EventBus.game_loaded en cas de succès : c'est le seul
 ## signal que main.gd écoute pour passer du menu au jeu. Choix détaillés : docs/DECISIONS.md,
 ## sections L8 et Lot Q. Le nom du fichier (save_v1.json) ne suit pas la version du schéma : il
@@ -535,6 +536,8 @@ func _invalid_field(data: Dictionary) -> String:
 		"tracked_quest": _is_text,
 		"moment": _is_text,
 		"weather": _is_text,
+		"island": _is_text,
+		"known_islands": _is_text_list,
 	}
 	for key: String in checks:
 		if data.has(key) and not checks[key].call(data[key]):

@@ -137,6 +137,9 @@ Yume-WordEnd/
 │   │                          # (E9) atmosphere_rig.gd (lumière d'une carte, lumière du joueur, pluie),
 │   │                          # rain_fall.gd ; materials/hd2d_lighting.gd, hd2d_weather.gd,
 │   │                          # hd2d_light_targets.gd ; shaders/sky, rain, rain_curtain (map_light.tscn retiré)
+│   │                          # (X1) world_atlas.gd (mondes, îles, règles), island_rules.gd, airship_dock.gd
+│   │                          # (quais), travel_view.tscn (vue du ciel d'un voyage) ; maps/quai_essai (l'île
+│   │                          # d'essai), maps/surface_essai (la surface)
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
@@ -153,6 +156,9 @@ Yume-WordEnd/
 │   ├── dialogues/*.json
 │   ├── maps/<map_id>/         # (E2) sol en relief d'une carte : map.json, heights.png, materials.png,
 │   │                          # structures.png, plan.json ; maps/ground_materials.json (matières, structures)
+│   ├── world/                 # (X1) worlds/<world_id>.json (regule_aire, surface : îles, règles communes),
+│   │                          # islands/<island_id>.json (cartes, lieux, ports, règles) ; contenu propre à une
+│   │                          # île : data/<kind>/<island_id>/ (life, texts, fauna, scenes : WorldAtlas.data_path)
 │   ├── texts/story.json       # (Systèmes et textes) textes de l'histoire hors dialogues :
 │   │                          # arène, chute, défaite (DialogueRunner.story_text)
 │   └── lighting/*.tres        # (E9) préréglages de lumière : aube, matin, apres_midi, couchant, nuit,
@@ -178,10 +184,10 @@ Yume-WordEnd/
 | Autoload | Rôle | Propriétaire (lot) |
 | --- | --- | --- |
 | `EventBus` | Tous les signaux transverses ; aucune logique | L0 |
-| `GameState` | PV max, inventaire, drapeaux (`flags`), état des quêtes, (Lot Q) étape courante et compteur de chaque quête active, quête suivie, skin actif, meilleurs scores par arène ; sérialisable en Dictionary | L7 |
+| `GameState` | PV max, inventaire, drapeaux (`flags`), état des quêtes, (Lot Q) étape courante et compteur de chaque quête active, quête suivie, skin actif, meilleurs scores par arène ; (E1) carte et position ; (E9) moment et temps ; (X1) île courante et îles connues ; sérialisable en Dictionary | L7 |
 | `SaveManager` | Écrit/lit `user://save_v1.json` (nom historique ; schéma v2 depuis le Lot Q, (E1) v3 : la carte), versionne le schéma, migre | L8 |
 | `SkinRegistry` | Charge `data/skins/*.tres`, expose la liste et le skin par défaut (Chtholly) | L3 |
-| `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort ; (E1) une carte à la fois : changement de carte (fondu, chargement découpé, marqueur d'arrivée), carte courante, bornes de la caméra | L2, E1 |
+| `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort ; (E1) une carte à la fois : changement de carte (fondu, chargement découpé, marqueur d'arrivée), carte courante, bornes de la caméra ; (X1) île courante (`island_entered`), voyage entre îles (`travel` : vue du ciel, port d'arrivée), chute au dernier point sûr | L2, E1, X1 |
 | `DesktopApp` | (bureau) Application de bureau, sans effet sur le Web : fenêtre de départ, plein écran (F11, Alt+Entrée, bouton) mémorisé dans `user://settings.cfg`, boutons « Plein écran » et « Quitter » des menus, sauvegarde avant de quitter (docs/bureau.md) | bureau |
 | `Atmosphere` | (E9) La lumière et le temps : préréglage effectif de la carte courante (`light_preset`, intérieur ou moment de la journée, modifié par le temps qu'il fait), transitions douces, pose (environnement, ciel, soleil ou lune, mer de nuages, lanternes, lueurs, images de nuit, sol mouillé, post-traitement ; (R1) lumière des intérieurs, soleil du sol en relief, teinte des personnages), lumière magique du joueur, pluie ; raccourcis `?moment=` / `?temps=`, F7 / F8 ; le moment et le temps eux-mêmes sont dans `GameState` (sauvegardés) | E9 |
 
@@ -231,6 +237,10 @@ signal tracked_quest_changed(quest_id: StringName)            # GameState, quand
 signal map_entered(map_id: StringName)        # WorldManager (go_to, enter_map) : carte posée, joueur placé (sous le
                                               # noir pendant un go_to) → caméra (bornes, recalage), joueur (élan), SaveManager
                                               # (E9) → Atmosphere : lumière de la carte posée tout de suite
+# (X1) Îles et surface — data/world/, PLAN.md « (X1) Ajouter une île »
+signal island_entered(island_id: StringName)  # WorldManager, juste après le map_entered d'une carte d'une autre île
+                                              # (voyage, sortie, début de partie), GameState.island et îles connues à
+                                              # jour ; jamais pour une carte hors de toute île
 # (E9) Lumière et temps
 signal atmosphere_changed(moment: StringName, weather: StringName)   # GameState, quand moment ou weather change
                                               # (setters, from_dict, reset) → Atmosphere (transition douce)
@@ -279,8 +289,10 @@ class_name EnemyData : id, display_name, visual: SkinData, scale: float, max_hp:
                        points: int, attacks: Array[AttackData], rush: bool, stoic: bool,
                        aggro_range_m: float, drops: Dictionary[StringName, float]   # item_id → probabilité
 
+# (X1) Enemy._ready : un Timere que les règles de l'île de sa carte n'admettent pas (WorldAtlas.enemies_allowed_at :
+# l'île n° 68) se retire aussitôt, sans enemy_spawned ; FreeEnemies n'enregistre alors aucune population.
 # src/enemies/wave_director.gd — un par arène (enfant "WaveDirector" de arena.tscn), lit data/waves/<arena_id>.json
-func start() -> void
+func start() -> void                       # (X1) sans effet là où les règles n'admettent pas de Timere
 func stop() -> void
 func current_wave() -> int
 func compose(wave: int) -> Array[StringName]   # ids d'ennemis de la vague (liste explicite ou generator)
@@ -318,6 +330,10 @@ var moment: StringName       # (E9) moment de la journée, un de MOMENTS (aube, 
                              # DEFAULT_MOMENT = couchant) ; une autre valeur est refusée (avertissement) ; émet atmosphere_changed
 var weather: StringName      # (E9) temps qu'il fait, un de WEATHERS (clair, pluie, averse ; défaut DEFAULT_WEATHER = clair)
                              # ; émet atmosphere_changed ; moment et weather sont écrits par to_dict (après tracked_quest)
+var island: StringName       # (X1) île courante (WorldAtlas.island_of(map)), tenue par WorldManager ; &"" : pas placée
+func known_islands() -> Array[StringName] / func knows_island(id) -> bool / func discover_island(id) -> bool
+                             # (X1) îles où le joueur est allé (ordre de découverte) ; discover : vrai si nouvelle
+                             # ; island et known_islands sont écrits par to_dict après weather
 
 # src/autoload/save_manager.gd
 func has_save() -> bool
@@ -329,6 +345,8 @@ var save_path: String = "user://save_v1.json"   # (L0) les tests en utilisent un
 const SAVE_VERSION := 3                   # (Lot Q) v2 : quest_progress et tracked_quest ; v1 → v2 migrée (quête active : 1re étape)
                                           # (E1) v3 : map ; v2 → v3 migrée (partie placée : map = ile_ancienne, même position)
                                           # (E9) moment, weather : champs facultatifs du schéma v3 (absents : couchant, clair)
+                                          # (X1) island, known_islands : facultatifs aussi, sans migration (absents :
+                                          # vides ; l'île se déduit de la carte à l'arrivée)
 func save_on_leave() -> Error             # (M2) focus perdu, fermeture, page masquée : écriture en attente, sinon état s'il a changé
 func has_unsaved_changes(tolerance: float = 0.05) -> bool   # (M2) GameState diffère de la dernière écriture (position : au-delà de tolerance m)
 var checkpoint_interval: float = 5.0      # (M2) position écrite toutes les 5 s de jeu si le joueur a bougé de checkpoint_distance (1 m)
@@ -369,6 +387,21 @@ signal transition_started(map_id: StringName) / signal transition_finished(map_i
 const LEGACY_MAP := &"ile_ancienne" / const START_MAP := &"ile_ancienne"   # l'île héritée ; une nouvelle partie y commence
 # (E1) Zones : elles n'existent que dans ile_ancienne. load_zone/teleport d'une zone de l'île (LEGACY_ZONES) depuis une
 # autre carte y ramènent sans fondu ; respawn() ramène au Spawn du village sur l'île, au marqueur d'arrivée ailleurs.
+# (X1) Îles (data/world/, WorldAtlas) : chaque carte posée donne l'île courante (island_entered si elle change)
+func travel(island_id: StringName, port: StringName = &"") -> void   # coroutine : comme go_to, mais sous le noir la vue
+                                          # du ciel (src/world/travel_view.tscn, au moins travel_time s ; la carte
+                                          # se charge pendant ce temps par tranches de travel_load_budget_ms), puis
+                                          # WorldAtlas.arrival(île, port) : le port nommé, sinon le premier, sinon
+                                          # arrival_map au Spawn ; île ou port inconnus : erreur ; pendant un autre
+                                          # changement : ignoré (avertissement)
+func current_island() -> StringName / func is_traveling() -> bool / func travel_view() -> TravelView
+func next_island() -> StringName          # île suivante de l'atlas (sans l'ancienne), touche F6 en version de débogage
+func last_safe_point() -> Vector3         # dernier point sûr (Vector3.INF sans) : au sol, à plus de SAFE_MARGIN (1,5 m)
+                                          # du vide ; rescue() y ramène sur une carte sans zone si la règle void_fall
+                                          # de l'île est last_safe (sinon : marqueur d'arrivée)
+var travel_time: float = 3.2 / var travel_load_budget_ms: float = 12.0 / var debug_keys: bool
+signal travel_started(island_id: StringName) / signal travel_finished(island_id: StringName)
+# last_transition() a aussi « island » (l'île du voyage, &"" pour un go_to).
 
 # (bureau) src/autoload/desktop_app.gd — tout est sans effet sur le Web (OS.has_feature("web"))
 func is_web() -> bool / func is_desktop() -> bool   # vraie plateforme, ou simulated_web (tests : 0 bureau, 1 Web)
@@ -389,7 +422,8 @@ func set_atmosphere(moment_id, weather_id, duration = -1.0) -> void      # les d
 func moment() -> StringName / func weather() -> StringName              # ceux de GameState
 func preset_id() -> StringName            # préréglage effectif : Map.light_preset s'il est rempli (un moment,
                                           # « interieur » ou tout data/lighting/<id>), sinon « interieur » pour une
-                                          # carte intérieure (Map.interior), sinon le moment
+                                          # carte intérieure (Map.interior), sinon (X1) le ciel par défaut de son île
+                                          # (règle sky, WorldAtlas.rules_for), sinon le moment
 func resolve(map: Node = null, moment_id := &"", weather_id := &"") -> HD2DLighting   # réglage effectif (nouveau) :
                                           # préréglage, « interieur » = interieur mêlé à interieur_nuit selon la nuit
                                           # du dehors (interior_for ; (R1) le jour des fenêtres, window_light et
@@ -456,7 +490,8 @@ class_name QuestStep  : (Lot Q) id, type (talk|reach|kill|collect|arena|flag), o
 class_name Zone            # racine d'une zone : @export display_name: String, @export safe: bool ; func zone_id() -> StringName
 class_name Map             # (E1) src/world/map.gd, racine d'une carte (Node3D, groupe "maps") : @export display_name: String,
                            # region: StringName, interior: bool, size: Vector2, camera_bounds: Rect2 (vide : la carte),
-                           # light_preset: StringName ; map_id(), area() (Rect2(0, 0, size) ; île héritée : centrée),
+                           # light_preset: StringName, (X1) island: StringName (&"ile_68" ; celle dont le fichier de
+                           # l'île nomme la carte) ; map_id(), area() (Rect2(0, 0, size) ; île héritée : centrée),
                            # bounds(), marker(name), spawn(), marker_names(), exits() ; statiques scene_path(id), exists(id),
                            # is_valid_id(id), all_ids(), problems(carte), exit_problems(carte, marqueurs) ; MAPS_DIR,
                            # REQUIRED_CHILDREN (Ground, Geometry, Markers, Exits, Life), SPAWN_MARKER, FROM_PREFIX ("from_")
@@ -464,6 +499,30 @@ class_name MapExit         # (E1) src/world/map_exit.gd, Area3D enfant de « Exi
                            # target_marker: StringName (&"Spawn"), prompt: String ; vide : on passe en marchant (couche 0,
                            # masque 2) ; rempli : interactable (couche 6, groupe "interactable", get_prompt(), interact())
                            # posé par son _ready ; needs_interaction(), use() (sans effet si WorldManager.is_transitioning())
+# (X1) Îles et surface (data/world/ ; mode d'emploi : « (X1) Ajouter une île »)
+class_name WorldAtlas      # src/world/world_atlas.gd, classe statique (RefCounted, aucun autoload) : worlds(), world_name(id),
+                           # islands(monde = tous), has_island(id), world_of(île), island_name(île), island_number(île)
+                           # (0 sans numéro), is_legacy(île), island_of(map_id) (&"" hors de toute île), maps_of(île),
+                           # arrival_map(île), ports_of(île) (ids), port(île, id) -> {id, name, map, marker},
+                           # arrival(île, port = &"") -> {map, marker, port} ({} inconnu), places_of(île), place(île,
+                           # lieu) -> {id, name, maps, links (lieu → marmer, deux sens), start_known}, place_of(map_id),
+                           # rules_for(map_id), rules_of_island(île) -> IslandRules, map_of_node(nœud),
+                           # enemies_allowed_at(nœud) (carte de ses ancêtres, sinon la courante ; sans carte : vrai),
+                           # data_path(kind, île, fichier), find_data(kind, île, fichier), data_dirs(kind, île),
+                           # problems() (tout : formats, cartes, marqueurs des ports, île dans un seul monde, carte
+                           # dans une seule île), island_problems(données, id, scènes), world_problems(données, id),
+                           # scene_markers(map_id), scene_island(map_id), clear_cache(), set_data_dirs(mondes, îles) ;
+                           # WORLDS_DIR, ISLANDS_DIR, DEFAULT_ISLAND (ile_68), PORT_MARKER (from_dirigeable)
+class_name IslandRules     # src/world/island_rules.gd (RefCounted) : enemies_allowed: bool, fauna: Array[StringName],
+                           # void_below (VOID_CLOUDS, VOID_GROUND), sky: StringName, void_fall (FALL_LAST_SAFE,
+                           # FALL_ARRIVAL), island ; clouds_below(), ground_below(), to_dict() ; statiques merged(couches,
+                           # île) (monde puis île, par-dessus UNRULED), unruled(), problem(rules) ; KEYS, UNRULED
+class_name AirshipDock     # src/world/airship_dock.gd, Area3D sous « Docks » d'une carte : @export island, port, prompt
+                           # (vide : story.json travel/dock_prompt) ; interactable (couche 6, masque 2) ; board()
+                           # (WorldManager.travel), destination_problem()
+class_name TravelView      # src/world/travel_view.tscn (CanvasLayer, couche LAYER = 90) : la vue du ciel d'un voyage,
+                           # posée et libérée par WorldManager ; begin(île, fondu), close(durée) (coroutine), elapsed(),
+                           # black_alpha(), caption, island_id ; signal closed
 class_name Player          # player.gd (L1)
 class_name Pickup          # @export item_id: StringName, quantity: int, persistent: bool ; func collect(), pickup_id()
 class_name Npc             # @export data: NpcData ; (Systèmes et textes) is_present(), refresh_presence() :
@@ -515,7 +574,8 @@ class_name Building        # (H9) @export side_facade (flanc est, retourné à l
                            # profondeur × mur), side_material(texture, glow)
 class_name PropScatter     # (H9) @export variants: Array[PackedScene], random_flip ; pool(), variant_indices(),
                            # pick_variants(points, count, seed) (jamais la variante du plus proche voisin),
-                           # nearest_neighbor(points, i)
+                           # nearest_neighbor(points, i) ; (T1) follow_ground : sur une carte de la refonte,
+                           # le MapGround (enfant « Ground ») du premier ancêtre qui en a un, sinon l'île
 class_name IslandTerrain   # (H9) GROUND_LAYERS (27 tuiles, ordre du contrat), GROUND_FALLBACK, ATLAS_COLUMNS,
                            # atlas_tile_count(size), ground_layer(layer, tile_count), triangles_in(rect),
                            # surface_height(x, z) ; terrain.gdshader : rangées lues dans la taille de l'atlas
@@ -539,7 +599,9 @@ class_name MapGround       # src/world/map_ground.gd (StaticBody3D, couche 1) : 
                            # collision_faces(), barrier_faces(), rim_segments() ; var data: MapGroundData ;
                            # enfants internes Mesh (sol, 1 draw call), Cliffs (faces et rideau, 1), CloudSea (si le
                            # vide ; (R1) la seule mer de nuages de la carte, réglée par Atmosphere), CollisionShape3D (les triangles mêmes du sol et des faces), Barrier (côte, eau
-                           # dormante, bords « land »)
+                           # dormante, bords « land ») ; (X1) la mer de nuages n'est posée que si l'île a
+                           # void_below = clouds ; void_below = ground : FarGround (le sol jusqu'à l'horizon, cadre de
+                           # FAR_GROUND_SIZE m, matière du bord, 1 draw call) ; island_rules(), has_far_ground()
 class_name MapGroundData   # src/world/map_ground_data.gd : lecture et vérification de data/maps/<id>/ ; statiques
                            # load_map(id, root), from_images(spec, heights, materials, structures), library() ;
                            # problems (vide : carte valide) ; surface_height, material_index_at, is_walkable,
@@ -639,6 +701,7 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/world/island.tscn` + `island.gd` | `Island` (Node3D ; (E1) `Map`, carte héritée par `maps/ile_ancienne`) | `WorldEnvironment` ((HD-2D) ciel panoramique `assets/hd2d/sky/sky.png`), `Sun`, `OverviewCamera`, `Ground` (relief, tuiles de l'atlas du sol), `Water` (mer de nuages texturée), `Walls`, `KillZone`, `Zones` et `Zones/<zone_id>` pour les 5 zones | — | L2 |
 | `src/world/zones/<zone_id>/<zone_id>.tscn` + `src/world/zone.gd` (`village`, `dunes`, `forest`, `beach`, `hill`) | `<zone_id>` (Node3D, `Zone`) | `Spawn` (Marker3D), `Bounds` (Area3D, masque 2), `Geometry` ((HD-2D) `PropBatcher` : décors `src/world/props/` en images), `NPCs`, `Enemies`, `Pickups` ; dunes : `SpawnN`, `SpawnS`, `SpawnE`, `SpawnW`, `Arena` (`arena_id = &"dunes"`) ; village : `EnemyBarrier` (couche 8), `safe = true` | `zones` | L2 |
 | (E1) `src/world/map.gd`, `map_exit.gd`, `maps/<map_id>/<map_id>.tscn` | `Map`, `MapExit` ; racine `<map_id>` (`Map`) | `Ground` (sol, couche 1), `Geometry` (`PropBatcher`), `Markers` (`Spawn` + `from_<carte>`), `Exits` (`MapExit`), `Life` ; `ile_ancienne` : scène héritée d'`island.tscn` (`World/ile_ancienne/Zones/<zone>`) | `maps` ; sorties : couche 0 (6 si invite), masque 2 | E1 |
+| (X1) `src/world/world_atlas.gd`, `island_rules.gd`, `airship_dock.gd`, `travel_view.tscn` + `.gd`, `data/world/worlds/`, `data/world/islands/` | `WorldAtlas`, `IslandRules`, `AirshipDock` (Area3D sous `Docks`), `TravelView` (CanvasLayer) | `TravelView` : `View`, `Caption`, `Black` | quais : couche 6, masque 2 | X1 |
 | `src/npc/placements/<zone_id>.tscn` | `NPCs` (Node3D), instancié dans chaque zone | PNJ de la zone et (Lot Q) déclencheurs de quête `QuestTrigger` (coordonnées locales à la zone) | — | L6 |
 | `src/enemies/placements/<zone_id>.tscn` | `Enemies` (Node3D ; (acte 1) script `src/enemies/free_enemies.gd`) | ennemis libres de la zone (forêt : 4 Timeres), qui reviennent pendant une étape « vaincre » qui les vise | — | L5 |
 | `src/items/placements/<zone_id>.tscn` | `Pickups` (Node3D) | objets uniques, nommés `<zone>_<objet>_<n>` (ex. `forest_page_1`) | — | L7 |
@@ -749,6 +812,73 @@ construite suit son plan à la lettre ; un écart se reporte dans le plan et rep
    - Une démonstration n'ajoute jamais une carte à côté d'une autre : une seule carte à la fois,
      posée par WorldManager.
 
+### (X1) Ajouter une île : mode d'emploi
+
+Contrat : `docs/REFONTE.md`, sections 7.1 (`Map.island`) et 11.1 ; exemple complet : l'île d'essai
+(`data/world/islands/ile_essai.json`, `src/world/maps/quai_essai/`), reliée au port provisoire de
+l'île n° 68 (carte `essai`). Une île est **des données** : rien dans le code ne connaît son nom.
+
+1. **Le fichier de l'île** : `data/world/islands/<island_id>.json` (`snake_case`, comme une carte) :
+   - `name` (affiché : « L'île n° 68 »), `number` (facultatif, entier ≥ 1) ;
+   - `maps` : ses cartes (chacune dans une seule île) ; `arrival_map` : l'une d'elles, la carte
+     d'arrivée par défaut (un voyage sans port, une île sans port) ;
+   - `places` : le graphe des lieux pour la carte de l'île (`docs/lore/CARTE.md`, section 1) ; un
+     lieu par `region` de carte : `name`, `maps` (cartes de l'île ; vide : lieu à venir), `links`
+     (lieu → distance en marmer, déclarée une fois, valable dans les deux sens), `start_known` ;
+   - `ports` : `<port_id>` → `name`, `map` (une carte de l'île), `marker` (`from_dirigeable`, ou
+     `from_dirigeable_<suffixe>` s'il y en a plusieurs sur la carte) ;
+   - `rules` (facultatif) : ce qui change par rapport aux règles de son monde ;
+   - `legacy` (facultatif) : l'ancienne île seulement. Une clé inconnue rend le fichier invalide
+     (ignoré, avec un avertissement) ; une clé `_…` est un commentaire.
+2. **La ranger dans un monde** : ajouter son id à `islands` de `data/world/worlds/regule_aire.json`
+   (ou d'un autre monde). Les **règles** du monde valent pour ses îles (`IslandRules`) :
+   `enemies_allowed` (Timeres permis : jamais sur Regule Aire), `fauna` (ids de `data/fauna/`),
+   `void_below` (`clouds` : la mer de nuages sous le bord ; `ground` : le sol jusqu'à l'horizon),
+   `sky` (préréglage de lumière d'une carte sans `light_preset` ; vide : le moment de la journée),
+   `void_fall` (`last_safe` : une chute ramène au dernier point sûr ; `arrival` : au marqueur
+   d'arrivée). Les systèmes les lisent par `WorldAtlas.rules_for(map_id)`, jamais par un nom.
+3. **Ses cartes** : selon « (E1) Créer une carte » plus haut, avec `island = &"<island_id>"` à la
+   racine (le défaut est `ile_68`) et `region` = l'id de son lieu. Au bord du vide, le nord : la mer
+   de nuages vient seule (`MapGround`, si l'île a `void_below = clouds`).
+4. **Le port** : sur la carte du port, le marqueur `from_dirigeable` (à 2 ou 3 m du quai, tourné
+   vers la terre) et un quai pour repartir : un nœud `Docks` (Node3D) à la racine de la carte, avec
+   un `Area3D` au script `res://src/world/airship_dock.gd` (`island`, `port` de la destination ;
+   `prompt` vide : « Embarquer pour <île> ») et une `CollisionShape3D` (une boîte de 2 à 3 m à
+   hauteur d'homme) ; le dirigeable lui-même en décor au **nord** du quai (règle de caméra).
+5. **Le relier** : un quai vers elle dans un port d'une île existante (aujourd'hui la carte `essai`
+   de l'île n° 68) ; le récit (E6) peut aussi appeler `WorldManager.travel(&"<island_id>", &"<port>")`.
+6. **Son contenu** (vie, faune, scènes, textes) : `data/<kind>/<island_id>/`, par
+   `WorldAtlas.data_path(kind, île, fichier)` ; `find_data` retombe sur `data/<kind>/<fichier>`
+   (contenu commun) ; `data_dirs(kind, île)` donne les dossiers à lire, le sien d'abord.
+7. **Vérifier** : `tools/import.sh`, puis `tools/test.sh tests/unit/test_world_atlas.gd` (format,
+   cartes existantes et rangées, `Map.island`, régions des lieux, marqueurs des ports, un quai par
+   port, destinations des quais) et `tests/unit/test_maps.gd` ; le voyage dans la vraie partie sur le
+   modèle de `tests/integration/test_x1_travel.gd` ; des captures par
+   `X1_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_x1.tscn build/shots/x1_<vue>.png 90`
+   (vues `quai`, `surface`, `horizon`, `port`, `voyage` ; draw calls dans le journal, 200 au plus).
+   Dans le navigateur : `index.html?island=<island_id>&port=<port>` (docs/web.md), F6 dans une
+   version de débogage.
+
+### (X1) Ajouter la surface : mode d'emploi
+
+La surface est un **monde** (`data/world/worlds/surface.json`) dont les règles diffèrent de Regule
+Aire : Timeres permis (leurs nids), `void_below = ground` (pas de mer de nuages : le sol continue
+jusqu'à l'horizon, `MapGround.FarGround`), `sky = apres_midi` (« désert gris sous un ciel bleu »,
+V5). Exemple : `data/world/islands/surface_essai.json` et `src/world/maps/surface_essai/`.
+
+1. Une terre de la surface est une « île » de ce monde : même fichier que plus haut, sans `number`
+   (`island_number` rend 0), rangée dans `islands` de `surface.json`.
+2. Ses cartes : `MapGround` aux bords `land` (le sol et sa jupe se prolongent ; aucun vide, ou des
+   gouffres seulement), au moins deux paliers ; matières grises (une teinte sur les tuiles de
+   l'atlas, `tint` dans `materials` de `plan.json` : la surface a perdu ses couleurs) ; décors
+   teintés (`DecorPanel.tint`) tant que le cahier n'a pas livré les siens.
+3. Son port : un terrain plat où se pose le dirigeable (V2 : « sans port, un petit dirigeable peut
+   se poser sur un terrain plat et dégagé ») : `from_dirigeable`, `Docks`, comme plus haut.
+4. Ses Timeres : posés dans `Life` de ses cartes ou par une arène (`arena.tscn`) : ses règles les
+   admettent ; les mêmes, posés sur l'île n° 68, disparaissent aussitôt (`Enemy._ready`).
+5. Vérifier comme une île : `test_world_atlas.gd`, `test_island_rules.gd` (règles appliquées :
+   Timeres, mer de nuages ou sol, ciel), et la vue `surface` / `horizon` de `demo_x1.tscn`.
+
 ### (E3) Intérieurs : `InteriorRoom`
 
 Le nœud `Ground` d'une carte intérieure (`docs/REFONTE.md`, section 7.1) : un étage d'un bâtiment,
@@ -767,7 +897,9 @@ d'un mètre, `floor`, `wall`, `wallcut` : noms d'images de `assets/hd2d/interior
 `window_*`, `sill`), `wall_items[]` (idem, `wallitem_*`, `y`), `lights[]` (`room`, `at` [x, z],
 `radius`, `color`, `energy`). Les murs se déduisent des pièces (un mur partout où deux cases voisines
 ne sont pas de la même pièce, le vide compris), centrés sur la ligne de grille ; une clé inconnue
-est une faute (`_…` : commentaire).
+est une faute (`_…` : commentaire). (T2) La grille est d'un demi-mètre (`InteriorLayout.GRID` =
+0,5) : rectangles, cases, lignes de murs et coupe au demi-mètre (cloison en x = 5,5) ; un plan au
+mètre reste valide.
 
 ```gdscript
 # src/world/interior_layout.gd (class_name InteriorLayout, RefCounted) : lecture et vérification
@@ -800,7 +932,9 @@ const CUT_HEIGHT (0,15), PROP_CUT_HEIGHT (1), CUT_MARGIN (0,3), CUT_SPEED (14 m/
 
 # src/world/interior_panel.gd (class_name InteriorPanel, extends DecorPanel, @tool) : meuble
 @export var cut_height: float = 1.0   # hauteur gardée quand la coupe passe
-func front_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
+@export var cut_offset: float = 0.0   # (T2) ligne de coupe reculée vers le sud (meuble adossé au
+                                      # mur sud : il se coupe avec lui) ; l'image ne bouge pas
+func front_z() -> float, cut_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
 ```
 
 **Règles du rendu.**
@@ -857,6 +991,49 @@ profondeur et lueur d'un meuble ; recette pour un remplaçant seulement), puis `
 tools/hd2d_interior.py manifest`, `python3 tools/hd2d_assets.py gen --lot I` (remplaçants),
 `python3 tools/hd2d_interior.py scenes`, `tools/import.sh`, `python3 tools/hd2d_assets.py check
 --lot I`.
+
+### (T2) L'entrepôt des fées, dedans
+
+Quatre cartes, du plan de `docs/lore/CARTE.md`, section 3 : `entrepot_rdc` (3.1), `entrepot_etage`
+(3.2), `entrepot_toit` (3.3, une carte du dehors : `MapGround` dont le niveau 0 est la terrasse,
+la cour 6,5 m plus bas), `salle_des_armes` (3.4). Région `entrepot` ; aucune lumière dans les
+cartes (Atmosphere, E9 ; lampes et cheminées en cartes de lumière d'`InteriorRoom`). Écarts au
+plan : docs/DECISIONS.md (« T2 »).
+
+- **Outil** : `python3 tools/interior_maps.py gen [id…]` relit les blocs ```plan et écrit
+  `data/maps/<id>/interior.json` (ou le sol du toit) et `src/world/maps/<id>/<id>.tscn` (pièces,
+  portes, fenêtres, meubles, objets, sorties, marqueurs, places, objets à examiner, fermetures
+  « <meuble>_arriere » des places où un meuble haut cacherait le joueur) ; `check` dit si une
+  carte est à réécrire ; `places` réécrit les listes de places dans CARTE.md. Les images :
+  `tools/hd2d_interior.py` (listes, scènes) et `tools/hd2d_interior_props.py` (remplaçants).
+- **Places de la vie** : `Life/Places/<nom>` (`Marker3D`, regard vers ce qu'on y fait) : les
+  `point` du plan, chaque chaise (`refectoire_chaise_a01`…), chaque lit, quelques sièges ; liste
+  après chaque plan dans CARTE.md.
+- **Sorties** : `vers_dehors` / `vers_arriere` (à pied) → `entrepot` (`from_entrepot_rdc`,
+  `from_entrepot_rdc_service`) ; `vers_etage` « Monter », `vers_rdc` « Descendre », `vers_toit`
+  « Monter sur le toit », `trappe` « Descendre », `vers_armes` « Ouvrir », `remonter`
+  « Remonter ». Tant que `entrepot` (T1) n'existe pas, les portes du dehors mènent à `essai`.
+- **Objets à examiner** (colonne « À examiner » des plans) :
+
+```gdscript
+# src/world/examinable.gd (class_name Examinable, extends Area3D) : interactable (couche 6,
+# groupe « interactable »), zone BoxShape3D de taille size posée sur le sol au-dessus du nœud
+signal examined(text_key: String)                 # fin de la lecture
+@export var text_key: String                      # « entrepot_rdc/cuisine_fourneau »
+@export var prompt: String = ""                   # vide : clé « prompt » du fichier (« Examiner »)
+@export var size: Vector3, texts_path: String     # défaut res://data/texts/entrepot.json
+func get_prompt() -> String, interact(player), show_text() -> bool, text_value() -> String
+func dialogue_id() -> StringName                  # « examine_<clé> » (aucun PNJ : pas de portrait)
+static func lookup(path, key_path) -> String, forget_texts()
+```
+  Textes : `data/texts/entrepot.json`, format des textes de l'histoire (une clé par carte, puis
+  par objet ; ligne vide = page suivante ; `{player}`) ; affichés par le protocole de
+  DialogueRunner (dialogue_started, dialogue_line sans nom, dialogue_ended).
+- **Tests** : `tests/unit/test_entrepot_rdc.gd`, `test_entrepot_etage.gd`,
+  `test_entrepot_toit.gd`, `test_salle_des_armes.gd` (base `tests/stubs/t2_map_test.gd` : plan
+  complet, circulation, portes, rien ne cache le joueur de chaque case, draw calls par vue,
+  textes) ; `tests/integration/test_entrepot_in_game.gd` ; captures
+  `tests/integration/demo_entrepot.tscn` (`T2_VIEWS`, `T2_SHOTS`).
 
 ### (E9) Lumière et temps : mode d'emploi
 
@@ -1023,7 +1200,9 @@ sud ; **un pixel = une case de 1 m** ; la case (i, j) couvre [i, i + 1] × [j, j
    `stairs` et `ramp` (`rect` [x, z, largeur, profondeur] de cases, `dir`, `material` facultative),
    `face` (`wall`, `rock`, `earth` sur les cases hautes d'une falaise). Formes : `rect`, `poly`,
    `ellipse` [cx, cz, rx, rz], `band` ; `noise` (m) et `noise_scale` brouillent leur bord ; `where`
-   (`level`, `levels`, `material`, `not_material`) restreint une opération.
+   (`level`, `levels`, `material`, `not_material`) restreint une opération. (T1) Des paliers sous
+   le sol courant (−0,5 m : champ, marais de l'entrepôt) demandent `height_zero_value` (16 : le
+   palier −1 est le gris 0), recopié dans `map.json`.
 2. `python3 tools/map_build.py gen <map_id>` écrit `map.json`, `heights.png`, `materials.png` et
    `structures.png` et vérifie la carte ; `python3 tools/map_build.py view <map_id>` en fait la vue de
    dessus (`build/maps/<map_id>_dessus.png`) ; `check` revérifie (toutes les cartes sans argument).
@@ -1095,7 +1274,9 @@ sud ; **un pixel = une case de 1 m** ; la case (i, j) couvre [i, i + 1] × [j, j
   "quest_progress": { "pages": { "step": "deliver", "count": 0 } },
   "tracked_quest": "pages",
   "moment": "couchant",
-  "weather": "clair"
+  "weather": "clair",
+  "island": "ile_ancienne",
+  "known_islands": ["ile_ancienne"]
 }
 ```
 
@@ -1113,6 +1294,11 @@ carte inconnue au chargement ramène au Spawn de `WorldManager.START_MAP`.
 (E9) `moment` et `weather` : le moment de la journée et le temps qu'il fait
 (`GameState.MOMENTS`, `GameState.WEATHERS`), champs facultatifs du schéma v3 sans migration :
 absents (sauvegarde d'avant E9) ou inconnus, la partie reprend au couchant, sans pluie.
+
+(X1) `island` (l'île courante, `data/world/islands/<id>.json`) et `known_islands` (les îles où le
+joueur est allé, dans l'ordre) : champs facultatifs du schéma v3, sans migration ; absents, ils
+sont vides et `WorldManager` les remplit à l'arrivée dans la carte (l'île se déduit de la carte).
+Mal typés : la sauvegarde est refusée, comme pour les autres champs.
 
 `collected_pickups` liste les `name` uniques des `pickup` déjà pris ; `best_scores` reprend ce que l'easter egg garde dans `localStorage['yn.wordend']` (meilleur score, nombre de parties), par arène.
 

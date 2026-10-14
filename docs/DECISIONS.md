@@ -2502,3 +2502,188 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `entrepot_rdc_essai` ; `relief`, `falaise` dans `essai_relief`) et attend que le nom de la carte
   s'efface avant de mesurer ; `demo_interieur.gd` prend `INTERIOR_MOMENT` (un moment
   d'`Atmosphere`) au lieu de `INTERIOR_PHASE`.
+- **T2 — grille d'un demi-mètre des intérieurs** : les plans de CARTE.md, section 3, posent des
+  cloisons au demi-mètre (cuisine de 4,5 m, couloir z 8,5 → 10,5) ; `InteriorLayout.GRID` = 0,5 m
+  (cases, lignes de murs, coupe, colonne de coupe d'`interior.gdshader`) ; les étages au mètre
+  (carte d'essai d'E3) ne changent pas.
+- **T2 — cartes écrites par un outil** : `tools/interior_maps.py gen` relit les blocs ```plan de
+  CARTE.md et écrit `data/maps/<id>/interior.json` et `src/world/maps/<id>/<id>.tscn` des quatre
+  cartes de l'entrepôt (`check` : à jour ?, `places` : listes de places dans CARTE.md) ; il imprime
+  chaque écart au plan.
+- **T2 — ouvertures ramenées** : une ouverture « de toute une largeur » du plan garde 0,2 m de
+  montant à chaque angle (InteriorLayout refuse une porte contre l'angle) : réfectoire|couloir
+  1,1 m, escalier|couloir et entrée|couloir 3,6 m, palier_armes|couloir 1,6 m, trémie|couloir
+  1,8 m ; une toile d'araignée de la crypte recule de 5 cm de l'angle.
+- **T2 — portes de pièce franchissables** : chambranle `door_frame_wood` (ouverture transparente)
+  au lieu de `door_room` (opaque, cacherait le joueur sur le seuil) ; les portes du dehors gardent
+  leur image (`door_double`, `door_service`, `door_armory` fermée, ouverte par son invite).
+- **T2 — bornes de caméra élargies en x** : rez-de-chaussée et étage `Rect2(2, 4, 28, 6)` au lieu
+  de `Rect2(8, 4, 16, 6)` : bornée à x 8 → 24, la caméra regardait de biais les pièces des bouts
+  et les cloisons nord-sud cachaient le joueur. Salle des armes et toit : bornes du plan.
+- **T2 — rien ne cache le joueur derrière un meuble haut** : un meuble de plus de 1,21 m adossé au
+  mur sud se coupe avec lui (`InteriorPanel.cut_offset`) ; un meuble haut au milieu d'une pièce
+  ferme, par une collision sans image (« <meuble>_arriere »), la place où il cacherait les pieds
+  du joueur (calculée par la caméra du jeu, bornée, regard de biais compris) ; les piliers de la
+  crypte, les séchoirs et la rambarde sud du toit sont des panneaux de premier plan qui
+  s'effacent ; le grand miroir des bains, tourné vers l'est, a son occulteur dans son orientation.
+- **T2 — l'armoire de Chtholly contre le mur sud** : au milieu du mur est (plan : z 6,6), elle
+  cachait le joueur, et la place qu'elle cache fermait avec le lit le nord de la chambre (bureau,
+  calendrier) ; elle s'adosse au mur sud, à l'est de la porte (z 8,075), et se coupe avec lui
+  (`MOVED` de `tools/interior_maps.py`).
+- **T2 — sorties vers le dehors provisoires** : tant que la carte `entrepot` (T1) n'existe pas,
+  les portes d'entrée et de service mènent au `Spawn` d'`essai` ; `tools/interior_maps.py gen`
+  les raccorde (`from_entrepot_rdc`, `from_entrepot_rdc_service`) dès qu'elle existe.
+- **T2 — le toit, une carte du dehors** : `MapGround` (pas d'`InteriorRoom`) dont le niveau 0 est
+  la terrasse (`height_zero_value`), la cour 6,5 m plus bas ; sol `planches` (matière de
+  `map_ground`) faute de `floor_roof_deck` ; le pan d'ardoise ouest est le toit d'un `Building`
+  (`roof_slate`) au lieu de `roof_edge_slate` ; la rambarde en modules de 2 m, le module tordu à la
+  place du module le plus proche de sa cote (x 12).
+- **T2 — salle des armes sans préréglage propre** : le préréglage `noir` d'E9 n'existe pas ; la
+  carte n'a pas de `light_preset` (intérieur : `interieur` d'Atmosphere) et aucune lampe.
+- **T2 — objets à examiner** : `Examinable` (src/world/examinable.gd) lit
+  `data/texts/entrepot.json` (format des textes de l'histoire, une clé par carte puis par objet)
+  et l'affiche par le protocole de DialogueRunner, sans nom ni portrait ; paraphrases, aucune
+  citation ; les noms des épées des râteliers ne s'affichent pas (ils demandent Willem, E6).
+## T1 — L'entrepôt vu du dehors (carte `entrepot`)
+- **T1 — la carte** `src/world/maps/entrepot/entrepot.tscn` suit `docs/lore/CARTE.md`, section 2 :
+  le bloc « plan » de 2.12 est relu par `tests/unit/test_entrepot.gd` (sorties, marqueurs, points,
+  places, bâtiment) ; aucune lumière dans la carte (E9). La scène est écrite par un script de
+  travail hors dépôt (ossature du plan, puis kits par bande tirés à graine fixe) ; ~1 090 décors,
+  136 images, `PropBatcher.cell_size` 24 m.
+- **T1 — sol** (`data/maps/entrepot/plan.json`) : paliers du plan (lisière +1 m, clairière +0,5 m,
+  champ, marais et creux des bois −0,5 m), toutes les faces en talus de terre (`step_earth`,
+  `wall_earth_1m`, `step_marsh` attendus du cahier n° 3 : E2 n'a qu'un talus). Berges des marais et
+  du creux des bois bruitées d'un mètre au plus autour du rectangle du plan, franches au pied des
+  rampes. Le replat d'un mètre entre la lisière et la clairière (z 4 → 5) suit la clairière (pas de
+  fossé) ; une boîte de bord le ferme (x 6 → 12). Matières propres : `herbe_drue` (grass_b),
+  `chemin` (path_dirt_b), `eau_basse` (eau qui ondule, praticable : « on y marche »). La cour est une
+  terre battue aux bords mangés par l'herbe, la place du duel toujours en terre ; usures de terre
+  devant les cages et au milieu du champ ; mousse, feuilles et herbe usée dans la clairière.
+- **T1 — rampes ajoutées au plan** : au marais de l'ouest par le sud (x 2 → 6, z 30 → 32) et au
+  marais du sud-ouest depuis le chemin du village (x 7 → 10, z 43 → 45) : on y descend sans sauter
+  (les PNJ d'E4 ne sautent pas). Le chemin de la clairière passe par sa rampe du sud-est (le tracé
+  du plan, 27,6 ; 22 → 24 ; 19, franchirait le talus) ; la bande libre du plan reste libre.
+- **T1 — `map_build.py gen`** accepte `height_zero_value` dans `plan.json` (paliers négatifs) ; un
+  palier hors de l'image est une erreur au lieu d'être ramené à 0 en silence.
+- **T1 — `PropScatter`** pose ses exemplaires sur le `MapGround` de la carte qui le porte (comme
+  `GroundDecal`), sinon sur l'île : seul changement hors des dossiers du lot, sans effet sur
+  l'ancienne île.
+- **T1 — bâtiment** : deux `Building` (`warehouse_front_a`, 18 × 14 m, faîte 10 m, ardoise ;
+  `warehouse_front_b`, 12 × 14 m, toit plat de planches, rambarde `roof_railing` et séchoirs
+  `drying_frame` posés dessus, linge animé ; `gable_front` vrai : un toit plat n'a pas de
+  pignon, ses flancs sont des gouttereaux comme ceux d'un toit « pignon »). Les façades et flancs du plan (noms proposés, 12.1)
+  ont des remplaçants faits des morceaux de `warehouse_main` (livrée) : porte d'entrée à 12 m du
+  bord gauche (x = 42), fenêtres placées sur les pièces du dedans (dépolies aux bains), plannings
+  et plaque près de la porte ; porte de service à **6 m** de l'angle sud du pignon ouest (z = 20,
+  2.7), pas à 8 m comme l'écrit 12.1 (demande dans docs/CONTRACT_REQUESTS.md). Au manifeste en lot
+  « K » ; `test_hd2d_assets.gd` lit aussi `docs/lore/CARTE.md` (12.1 nomme ces images et leur
+  taille). `roof_railing` et `drying_frame` (lot I, livrées, hors manifeste) : scènes extérieures
+  `warehouse_roof_railing`, `warehouse_drying_frame` ; leur entrée au manifeste revient au lot I
+  (T2) pour éviter un doublon.
+- **T1 — remplaçants du lot M** (cahier n° 3, 7.3 et 7.4) : `thicket_a/b/c`, `bramble_hedge`,
+  `alder`, `marsh_snag`, `marsh_hummock_a/b`, recettes dans `tools/hd2d_nature.py`.
+- **T1 — règle de caméra** : tout décor qui dépasse la tête du joueur (1,4 m) devant une case où
+  l'on marche prend sa variante de premier plan (`_forest`, ou `_fg` nouvelles : grand arbre, cage
+  rouge, aulne, fourrés, porche) ; vérifié depuis 3 887 places par `test_entrepot.gd` (murs et
+  toits : pieds, taille, tête ; décors opaques : tête). Au-delà du bord ouest, saules et aulnes en
+  toile de fond (on ne passe pas derrière).
+- **T1 — portes** : `porte_entree` et `porte_service` portent la cible du plan en métadonnée
+  (`plan_target_map = entrepot_rdc`, `plan_target_marker`) et mènent, tant que le lot T2 n'est pas
+  fusionné, au `Spawn` de `entrepot_rdc_essai` (E3). Une fois `entrepot_rdc` présent,
+  `test_entrepot.gd` exige la vraie cible : **raccord à faire à la fusion** (deux lignes par porte).
+- **T1 — places et points** : points nommés en `Life/Places/<nom>` (Marker3D au sol) ; places
+  réservées en `Life/Areas/<nom>` (Marker3D au centre, `metadata/area` = Rect2 du plan), deux
+  dossiers parce que `coin_soleil` est à la fois une place et un point.
+- **T1 — lumières** : la lanterne à cristal de la porte est une `OmniLight3D` (`Lights/lanterne_porte`,
+  énergie de départ 0,7, réglée par `lamp_energy` d'E9) et le panneau `wall_lantern` (lueur) ;
+  les fenêtres de la façade s'allument par `window_glow` (lueur des panneaux : les vitres des
+  remplaçants sont peintes près de `glow_color`, #FFE6A6, pour s'allumer la nuit) ; `fenetres_facade`
+  reste un repère (Marker3D). Aucun lampadaire. Fumée de la cheminée toujours là (automne).
+- **T1 — cartes d'attente (provisoires, phase 3)** : `village`, `colline`, `sentier`,
+  `foret_profonde`, 32 × 24 m, sol plat assourdi de la bonne matière, une lisière au nord,
+  l'écriteau « Plus loin, bientôt » (`src/world/props/waiting_sign.tscn`, texte dans
+  `data/texts/story.json`, `maps/waiting`, lu par la boîte de dialogue sans portrait), la sortie
+  de retour vers le marqueur de l'entrepôt et `from_entrepot`. Les lots de la phase 3 les
+  remplacent (le lot T2 crée `Examinable` pour les objets à examiner : l'écriteau pourra le
+  prendre).
+- **T1 — raccourci** `?map=<id>&marker=<nom>` (Web) et `--map=` `--marker=` (ligne de commande),
+  dans `src/test_shortcuts.gd` : la partie se pose sur la carte par `WorldManager.enter_map`.
+- **T1 — densité mesurée** (un écran = 20 × 20 m autour du point visé, 7 m au sud, 13 au nord,
+  décors debout et décalques) : cour 71, abords ouest 79, abords est 100, champ 45, clairière 52,
+  bois 103, marais 119, rivière 104 ; aucun carré de 6 × 6 m nu hors des places. La place du duel
+  ne porte que des décalques (traces, cailloux, feuilles).
+- **T1 — mesures** (Xvfb, `tests/integration/demo_entrepot_dehors.tscn`, couchant ; nuit : +1) : draw
+  calls façade 102, porche 95, cour 102, champ 84, clairière 73, marais 90, bois 116, grand arbre
+  90, potager 102 à 121, sentier 94, rivière 102, vue large 125 (budget 200 ; `test_entrepot.gd`
+  en borne le pire cas sur une grille de 6 m). Banc headless (`tools/map_bench.gd`, essai ⇄
+  entrepot) : chargement 917 ms à froid, 429 ms à chaud, installation 211 à 249 ms, total 1,2 à
+  1,7 s ; 4 112 nœuds, mêmes comptes à chaque visite, carte libérée au départ. Web (Chromium sans
+  écran, SwiftShader, `tools/web_maps.js` avec entrepot puis essai) : chargement 1 270 ms en
+  3 images, installation 849 ms ; 1 image/s et 117 draw calls dans l'entrepôt (l'ancienne île :
+  1 image/s, 131 ; essai : 2) : le rendu logiciel compare, il ne mesure pas un vrai navigateur.
+- **C5 — cahier des images n° 5** (`docs/ASSETS_HD2D_ILE68.md`) : inventaire par script (CARTE.md, VIE.md, ACTE1.md, cahiers n° 3 et 4, CONTRACT_REQUESTS.md contre `assets/**`, le manifeste et les JSON des planches ; remplaçant = pixels identiques au rendu de la recette) ; 8 lots dans l'ordre du jeu : R0 corrections et vues manquantes (tables en perspective conique, meubles sans vue de flanc ni de dos, règle `<nom>_side` vers l'est, `_back`, `_foot`, projection orthographique oblique à 32°), R1 entrepôt, R2 personnages de l'acte 1, R3 chemin du port, R4 hommes-bêtes et ville, R5 nature et faune, R6 temps et lumière, R7 navires ; priorités redéfinies (1 : une scène d'ACTE1.md la cite ; 2 : densité et vie ; 3 : bonus) ; noms proposés à confirmer par le moteur : `willem_marsh`, `willem_carry`, `willem_piggyback`, `willem_life`, `*_work`, `_side`/`_back`/`_foot`.
+
+## X1 — Les îles et la surface (PR « contrats »)
+
+- **X1 — `WorldAtlas`, classe statique** (`src/world/world_atlas.gd`), pas un autoload : aucune
+  ligne de `project.godot` ; les fichiers de `data/world/` sont lus à la demande et gardés en cache,
+  comme `QuestData` ; rien d'une partie n'y vit (l'île courante est dans `GameState`, le voyage dans
+  `WorldManager`) ; elle sert aussi sans arbre (tests) et depuis un `@tool` (`MapGround`).
+- **X1 — Appartenance d'une carte** : la liste `maps` du fichier de l'île fait foi ; `Map.island`
+  la répète dans la scène (défaut `ile_68`, aucune carte existante n'a eu à changer sauf
+  `ile_ancienne`) et `test_world_atlas.gd` vérifie l'accord. Une carte hors de toute île (cartes
+  de test sous `tests/`) n'a pas de règle : `IslandRules.UNRULED`, le comportement d'avant X1.
+- **X1 — L'ancienne île est une île à part** (`data/world/islands/ile_ancienne.json`, `legacy`,
+  numéro 68, Timeres permis par ses règles) plutôt qu'une exception par carte dans `ile_68` : elle
+  part en phase 5 avec son fichier et sa carte. La sortie de test essai ⇄ ile_ancienne change
+  d'île sans voyage (`island_entered` émis).
+- **X1 — Règles en deux couches** : celles du monde (`rules` de `data/world/worlds/<monde>.json`),
+  puis celles de l'île ; une règle absente des deux prend sa valeur d'`UNRULED`. Clés :
+  `enemies_allowed`, `fauna`, `void_below` (`clouds`, `ground`), `sky`, `void_fall` (`last_safe`,
+  `arrival`). Une clé inconnue rend le fichier invalide (ignoré, avertissement), comme les quêtes.
+- **X1 — Garde des Timeres** : `Enemy._ready` (tout Timere qui apparaît : libre, de vague, banc de
+  performance) se retire sans `enemy_spawned` si les règles de sa carte l'interdisent ;
+  `WaveDirector.start` ne lance pas la série ; `FreeEnemies` n'enregistre aucune population. Un
+  Timere ajouté hors d'une carte (sous `Game`) suit la carte courante ; sans carte (tests
+  unitaires), rien ne l'interdit.
+- **X1 — Ciel par défaut (`sky`)** : un préréglage de `data/lighting/`, pris quand la carte n'a pas
+  de `light_preset` et n'est pas un intérieur ; vide : le moment de la journée (Regule Aire). La
+  surface prend `apres_midi` (V5 : « désert gris sous un ciel bleu ») et ne suit donc pas le
+  moment : à revoir quand la surface vivra ses journées (un préréglage de surface par moment).
+- **X1 — Le sol jusqu'à l'horizon** (`void_below = ground`) : `MapGround` pose un cadre de 3 km
+  (`FarGround`) autour de la carte et de sa jupe, 4 cm sous le palier 0, avec le matériau même du
+  sol : le shader borne ses lectures à la carte, la matière du bord se prolonge ; un draw call. La
+  caméra (32°, 30° de champ) ne voit jamais l'horizon : ce sol remplit le haut de l'écran au-delà
+  du bord nord, là où Regule Aire montre sa mer de nuages, qui n'est plus posée (même si la carte
+  touche le vide).
+- **X1 — Ports et quais** : un port = une carte et un marqueur ; le marqueur se nomme
+  `from_dirigeable` (convention des `from_<origine>` ; `from_dirigeable_<suffixe>` s'il y a
+  plusieurs ports sur la carte). On embarque à un `AirshipDock` (interactable, couche 6) posé sous
+  un nœud `Docks` de la carte : `Exits` n'accepte que des `MapExit`. Port provisoire de l'île
+  n° 68 sur la carte `essai` (deux quais : l'île d'essai, la surface) jusqu'à la carte du port
+  (C-port, phase 3), qui reprendra l'id de port `essai` ou en déclarera un autre.
+- **X1 — Le voyage** : `travel()` réutilise le changement de carte d'E1 ; la carte d'arrivée se
+  charge sous la vue du ciel, par tranches de 12 ms (la vue reste fluide), et la vue dure au moins
+  `travel_time` (3,2 s). La vue (`src/world/travel_view.tscn`) est un `CanvasLayer` (couche 90)
+  posé à la racine puis libéré ; la 3D n'est pas dessinée dessous. Elle n'emploie que des images
+  du jeu : le ciel peint du moment (préréglage de `GameState.moment`), la ligne des îles, une île
+  lointaine, la mer de nuages (dégradé d'opacité par sommet), le dirigeable de la ligne
+  (`airship_ferry`) qui tangue, des nuages devant. Texte : `story.json`, `travel/caption`
+  (« En dirigeable, cap sur », puis le nom de l'île sur sa ligne : les noms d'îles commencent par
+  une majuscule).
+- **X1 — La chute** (`void_fall`) : `last_safe` ramène à la dernière place au sol (à 0,3 m près)
+  à plus de 1,5 m du vide, relevée toutes les 4 images physiques ; la hauteur du sol sert de
+  preuve, `is_on_floor()` du joueur immobile clignotant d'une image à l'autre. L'ancienne île garde
+  ses zones (Spawn de la zone). La réapparition après la mort reste au marqueur d'arrivée.
+  `test_m2_maps.gd` (rattrapage sur la carte d'essai) attend désormais le dernier point sûr.
+- **X1 — Contenu par île** : `data/<kind>/<island_id>/<fichier>` (`WorldAtlas.data_path`) ;
+  `find_data` retombe sur `data/<kind>/<fichier>` (les fichiers d'avant la convention restent
+  lus) ; `data_dirs` donne le dossier de l'île puis le dossier commun. Rien n'est déplacé tant que
+  E4, E5 et E6 travaillent : la migration est notée dans `docs/CONTRACT_REQUESTS.md`.
+- **X1 — Les terres grises, remplaçant de couleur** : leurs matières (sable, roche, boue) sont
+  teintées pour neutraliser leur jaune (teinte au-delà de 1 sur le bleu), leurs décors teintés
+  `Color(0.66, 0.7, 0.8)` (`DecorPanel.tint`) ; les falaises (`cliff.png`) restent ocre : une face
+  de roche grise est à commander avec les images de la surface.
+- **X1 — Raccourcis** : `?island=<id>&port=<id>` (Web) ou `-- --island=<id>`, et F6 dans une
+  version de débogage (île suivante de `WorldAtlas.islands()`, sans l'ancienne) ; `?timeres=` est
+  refusé (une ligne au journal) là où les règles n'admettent pas de Timere.

@@ -87,8 +87,10 @@ func config() -> Dictionary:
 
 
 ## Lance une série (sans effet pendant une série) : score à 0, première vague après start_delay.
+## (X1) Sans effet non plus là où les règles de l'île n'admettent pas de Timere
+## (WorldAtlas.enemies_allowed_at : l'île n° 68 ; l'ancienne île et la surface les admettent).
 func start() -> void:
-	if _running:
+	if _running or not WorldAtlas.enemies_allowed_at(self):
 		return
 	_running = true
 	_wave = 0

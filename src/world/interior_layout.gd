@@ -2,8 +2,9 @@ class_name InteriorLayout
 extends RefCounted
 ## (E3) Agencement d'un étage d'intérieur, lu dans data/maps/<map_id>/interior.json (format :
 ## PLAN.md, « Intérieurs » ; docs/INTERIEURS.md) et vérifié : pièces en rectangles sur une grille
-## d'un mètre (repère de la carte : origine au coin nord-ouest, x vers l'est, z vers le sud),
-## matières du sol et des murs par pièce, portes entre pièces ou vers l'extérieur, fenêtres,
+## d'un demi-mètre (GRID ; (T2) les plans de docs/lore/CARTE.md, section 3, ont des cloisons à
+## x = 5,5 ou z = 8,5 ; repère de la carte : origine au coin nord-ouest, x vers l'est, z vers le
+## sud), matières du sol et des murs par pièce, portes entre pièces ou vers l'extérieur, fenêtres,
 ## éléments de mur, lampes. Les murs se déduisent des pièces : il y en a un partout où deux cases
 ## voisines n'appartiennent pas à la même pièce (le vide, hors des pièces, compte comme une pièce).
 ## Un mur est centré sur la ligne de la grille, épais de wall_thickness. Utilisé par InteriorRoom
@@ -20,6 +21,10 @@ const HORIZONTAL := 0
 const VERTICAL := 1
 ## Pas de coupe (aucune limite au sud).
 const NO_CUT := 1000000.0
+## (T2) Pas de la grille (m) : une case de la grille interne fait GRID × GRID m. Les cotes de
+## interior.json (pièces, portes, fenêtres, lampes) et tout ce que l'agencement donne (lignes de
+## mur, morceaux, ouvertures) sont en mètres ; cell(), room_at() et cut_line_at() aussi.
+const GRID := 0.5
 const IMAGE_DIR := "res://assets/hd2d/interior/"
 const PIXELS_PER_METER := 96.0
 const DOOR_WIDTH := 1.1
@@ -41,14 +46,15 @@ const WINDOW_KEYS: Array[String] = ["room", "side", "x", "z", "image", "sill"]
 const ITEM_KEYS: Array[String] = ["room", "side", "x", "z", "image", "y"]
 const LIGHT_KEYS: Array[String] = ["room", "at", "radius", "color", "energy"]
 
-## Taille de la carte (m, cases) ; hauteur et épaisseur des murs (m).
+## Taille de la carte (m) ; hauteur et épaisseur des murs (m).
 var map_size: Vector2i = Vector2i.ZERO
 var wall_height: float = 3.0
 var wall_thickness: float = 0.25
-## Pièces : {id, name, rects: Array[Rect2i], floor, wall, wallcut (noms d'images)}.
+## Pièces : {id, name, rects: Array[Rect2] (m, multiples de GRID), floor, wall, wallcut (noms
+## d'images)}.
 var rooms: Array[Dictionary] = []
-## Ouvertures (portes) : {id, axis, line, a, b, center, width, height, low, high (pièces au nord /
-## à l'ouest et au sud / à l'est, -1 : le vide), image, passable}.
+## Ouvertures (portes) : {id, axis, line (m), a, b, center, width, height, low, high (pièces au
+## nord / à l'ouest et au sud / à l'est, -1 : le vide), image, passable}.
 var doors: Array[Dictionary] = []
 ## Fenêtres et éléments de mur : {axis, line, face (+1 : face sud ou est, -1 : nord ou ouest),
 ## a, b, center, bottom, size (m), image, room}.
@@ -56,13 +62,15 @@ var windows: Array[Dictionary] = []
 var wall_items: Array[Dictionary] = []
 ## Lampes : {room, at: Vector2 (x, z), radius, color, energy}.
 var lights: Array[Dictionary] = []
-## Morceaux de mur : {axis, line, a, b, y0, y1, low, high, free_a, free_b} (free : bout libre, au
-## bord d'une porte, qui montre sa tranche).
+## Morceaux de mur : {axis, line (m), a, b, y0, y1, low, high, free_a, free_b} (free : bout libre,
+## au bord d'une porte, qui montre sa tranche).
 var pieces: Array[Dictionary] = []
 ## Fautes trouvées à la lecture (vide : agencement valide).
 var problems: Array[String] = []
 
 var _grid: PackedInt32Array = PackedInt32Array()
+## Nombre de cases de la grille interne (map_size / GRID).
+var _cells: Vector2i = Vector2i.ZERO
 var _index: Dictionary = {}
 
 
@@ -73,21 +81,26 @@ static func from_data(data: Variant) -> InteriorLayout:
 	return plan
 
 
-## Pièce (indice) de la case (x, z), -1 hors des pièces ou de la carte.
-func cell(x: int, z: int) -> int:
-	if x < 0 or z < 0 or x >= map_size.x or z >= map_size.y:
+## Pièce (indice) sous le point (x, z) de la carte (m), -1 hors des pièces ou de la carte.
+func cell(x: float, z: float) -> int:
+	return _at(floori(x / GRID), floori(z / GRID))
+
+
+## Pièce (indice) de la case (i, j) de la grille interne (GRID m), -1 hors des pièces.
+func _at(i: int, j: int) -> int:
+	if i < 0 or j < 0 or i >= _cells.x or j >= _cells.y:
 		return -1
-	return _grid[z * map_size.x + x]
+	return _grid[j * _cells.x + i]
 
 
-## Mur sur la ligne z, entre les cases (x, z - 1) et (x, z).
-func h_wall(x: int, z: int) -> bool:
-	return cell(x, z - 1) != cell(x, z)
+## Mur sur la ligne j de la grille interne (z = j × GRID), entre les cases (i, j - 1) et (i, j).
+func h_wall(i: int, j: int) -> bool:
+	return _at(i, j - 1) != _at(i, j)
 
 
-## Mur sur la ligne x, entre les cases (x - 1, z) et (x, z).
-func v_wall(x: int, z: int) -> bool:
-	return cell(x - 1, z) != cell(x, z)
+## Mur sur la ligne i de la grille interne (x = i × GRID), entre les cases (i - 1, j) et (i, j).
+func v_wall(i: int, j: int) -> bool:
+	return _at(i - 1, j) != _at(i, j)
 
 
 func room_index(id: StringName) -> int:
@@ -96,17 +109,17 @@ func room_index(id: StringName) -> int:
 
 ## Identifiant de la pièce sous un point (repère de la carte), &"" hors des pièces.
 func room_at(local: Vector3) -> StringName:
-	var index := cell(floori(local.x), floori(local.z))
+	var index := cell(local.x, local.z)
 	return StringName(rooms[index]["id"]) if index >= 0 else &""
 
 
 ## Ligne de coupe (z de la carte) pour un joueur en local : la première limite de pièce au sud de
 ## sa case, dans sa colonne (porte comprise) ; NO_CUT s'il n'y en a pas.
 func cut_line_at(local: Vector3) -> float:
-	var x := floori(local.x)
-	for line in range(floori(local.z) + 1, map_size.y + 1):
-		if h_wall(x, line):
-			return float(line)
+	var i := floori(local.x / GRID)
+	for line in range(floori(local.z / GRID) + 1, _cells.y + 1):
+		if h_wall(i, line):
+			return line * GRID
 	return NO_CUT
 
 
@@ -139,11 +152,12 @@ func _read(data: Variant) -> void:
 		problems.append("size : [largeur, profondeur] en mètres attendu")
 		return
 	map_size = Vector2i(int(raw_size[0]), int(raw_size[1]))
+	_cells = Vector2i(roundi(map_size.x / GRID), roundi(map_size.y / GRID))
 	wall_height = float(top.get("wall_height", wall_height))
 	wall_thickness = float(top.get("wall_thickness", wall_thickness))
 	if wall_height < 2.0 or wall_height > 6.0 or wall_thickness < 0.1 or wall_thickness > 0.6:
 		problems.append("wall_height (2 à 6 m) ou wall_thickness (0,1 à 0,6 m) hors limites")
-	_grid.resize(map_size.x * map_size.y)
+	_grid.resize(_cells.x * _cells.y)
 	_grid.fill(-1)
 	_read_rooms(top.get("rooms"))
 	for entry: Variant in _list(top, "doors"):
@@ -228,12 +242,13 @@ func _read_rooms(raw: Variant) -> void:
 				}
 			)
 		)
-		for rect: Rect2i in rects:
+		for rect: Rect2 in rects:
 			_fill(rect, index, label)
 
 
-func _read_rects(raw: Variant, label: String) -> Array[Rect2i]:
-	var rects: Array[Rect2i] = []
+## Rectangles [x, z, largeur, profondeur] en mètres, multiples de GRID.
+func _read_rects(raw: Variant, label: String) -> Array[Rect2]:
+	var rects: Array[Rect2] = []
 	if not raw is Array or (raw as Array).is_empty():
 		problems.append("%s : rects [[x, z, largeur, profondeur], …] attendu" % label)
 		return rects
@@ -241,25 +256,38 @@ func _read_rects(raw: Variant, label: String) -> Array[Rect2i]:
 		var ok := value is Array and (value as Array).size() == 4
 		if ok:
 			for number: Variant in value:
-				ok = ok and (number is float or number is int) and float(number) == roundf(number)
+				ok = ok and (number is float or number is int) and _on_grid(float(number))
 		if not ok:
-			problems.append("%s : rectangle %s (4 entiers attendus)" % [label, value])
+			problems.append(
+				"%s : rectangle %s (4 multiples de %.1f m attendus)" % [label, value, GRID]
+			)
 			continue
-		var rect := Rect2i(int(value[0]), int(value[1]), int(value[2]), int(value[3]))
-		if rect.size.x < 1 or rect.size.y < 1 or not Rect2i(Vector2i.ZERO, map_size).encloses(rect):
+		var rect := Rect2(float(value[0]), float(value[1]), float(value[2]), float(value[3]))
+		var whole := Rect2(Vector2.ZERO, Vector2(map_size))
+		if rect.size.x < GRID or rect.size.y < GRID or not whole.encloses(rect):
 			problems.append("%s : rectangle %s hors de la carte" % [label, rect])
 			continue
 		rects.append(rect)
 	return rects
 
 
-func _fill(rect: Rect2i, index: int, label: String) -> void:
-	for z in range(rect.position.y, rect.end.y):
-		for x in range(rect.position.x, rect.end.x):
-			var at := z * map_size.x + x
+static func _on_grid(value: float) -> bool:
+	return is_equal_approx(value / GRID, roundf(value / GRID))
+
+
+## Remplit les cases de la grille interne couvertes par rect (m).
+func _fill(rect: Rect2, index: int, label: String) -> void:
+	var start := Vector2i((rect.position / GRID).round())
+	var end := Vector2i((rect.end / GRID).round())
+	for j in range(start.y, end.y):
+		for i in range(start.x, end.x):
+			var at := j * _cells.x + i
 			if _grid[at] >= 0 and _grid[at] != index:
 				problems.append(
-					"%s : case (%d, %d) déjà prise par %s" % [label, x, z, rooms[_grid[at]]["id"]]
+					(
+						"%s : case (%.1f, %.1f) déjà prise par %s"
+						% [label, i * GRID, j * GRID, rooms[_grid[at]]["id"]]
+					)
 				)
 				return
 			_grid[at] = index
@@ -325,6 +353,7 @@ func _place(raw: Dictionary, width: float, label: String) -> Dictionary:
 	var center := float(raw[along_key])
 	var a := center - width / 2.0
 	var b := center + width / 2.0
+	# Lignes de la grille interne (indices) ; la place les donne en mètres.
 	var lines := _matching_lines(raw, axis, a, b, label)
 	if lines.size() != 1:
 		if lines.is_empty():
@@ -335,7 +364,7 @@ func _place(raw: Dictionary, width: float, label: String) -> Dictionary:
 	var line := lines[0]
 	var place := {
 		"axis": axis,
-		"line": line,
+		"line": line * GRID,
 		"a": a,
 		"b": b,
 		"center": center,
@@ -350,13 +379,13 @@ func _place(raw: Dictionary, width: float, label: String) -> Dictionary:
 	return place
 
 
-## Lignes candidates : between = [pièce, pièce], ou room + side (N : la pièce est au sud de la
-## ligne, W : à l'est…).
+## Lignes candidates (indices de la grille interne) pour l'intervalle [a, b] (m) : between =
+## [pièce, pièce], ou room + side (N : la pièce est au sud de la ligne, W : à l'est…).
 func _matching_lines(raw: Dictionary, axis: int, a: float, b: float, label: String) -> Array[int]:
 	var found: Array[int] = []
-	var first := floori(a)
-	var last := ceili(b) - 1
-	var limit := map_size.y if axis == HORIZONTAL else map_size.x
+	var first := floori(a / GRID)
+	var last := ceili(b / GRID) - 1
+	var limit := _cells.y if axis == HORIZONTAL else _cells.x
 	var pair := []
 	var room := -1
 	var side := String(raw.get("side", ""))
@@ -388,15 +417,16 @@ func _matching_lines(raw: Dictionary, axis: int, a: float, b: float, label: Stri
 	return found
 
 
-## Case juste avant (nord, ouest) ou après (sud, est) la ligne, à la case k le long d'elle.
+## Case juste avant (nord, ouest) ou après (sud, est) la ligne, à la case k le long d'elle
+## (indices de la grille interne).
 func _cell_on(axis: int, line: int, k: int, after: bool) -> int:
 	if axis == HORIZONTAL:
-		return cell(k, line if after else line - 1)
-	return cell(line if after else line - 1, k)
+		return _at(k, line if after else line - 1)
+	return _at(line if after else line - 1, k)
 
 
 func _side_cell(axis: int, line: int, center: float, after: bool) -> int:
-	return _cell_on(axis, line, floori(center), after)
+	return _cell_on(axis, line, floori(center / GRID), after)
 
 
 func _is_wall(axis: int, line: int, k: int) -> bool:
@@ -410,13 +440,14 @@ func _corner_at(axis: int, line: int, p: int) -> bool:
 	return h_wall(line - 1, p) or h_wall(line, p)
 
 
-## L'intervalle [a, b], élargi du demi-mur, est sur un mur continu, sans angle.
+## L'intervalle [a, b] (m), élargi du demi-mur, est sur un mur continu, sans angle (line : indice
+## de la grille interne).
 func _on_plain_wall(axis: int, line: int, a: float, b: float) -> bool:
 	var margin := wall_thickness / 2.0 + CORNER_GAP
-	for k in range(floori(a - margin), ceili(b + margin)):
+	for k in range(floori((a - margin) / GRID), ceili((b + margin) / GRID)):
 		if not _is_wall(axis, line, k):
 			return false
-	for p in range(ceili(a - margin), floori(b + margin) + 1):
+	for p in range(ceili((a - margin) / GRID), floori((b + margin) / GRID) + 1):
 		if _corner_at(axis, line, p):
 			return false
 	return true
@@ -435,7 +466,7 @@ func _read_light(entry: Variant) -> void:
 		problems.append("%s : room et at [x, z] attendus" % label)
 		return
 	var point := Vector2(float(at[0]), float(at[1]))
-	if cell(floori(point.x), floori(point.y)) != room:
+	if cell(point.x, point.y) != room:
 		problems.append("%s : %s hors de sa pièce" % [label, point])
 		return
 	var color_text := String(raw.get("color", LAMP_COLOR))
@@ -471,7 +502,7 @@ func _check_overlaps() -> void:
 		for j in range(i + 1, placed.size()):
 			var p := placed[i]
 			var q := placed[j]
-			if int(p["axis"]) != int(q["axis"]) or int(p["line"]) != int(q["line"]):
+			if int(p["axis"]) != int(q["axis"]) or not is_equal_approx(p["line"], q["line"]):
 				continue
 			var faces_meet: bool = p.has("height") or q.has("height") or p["face"] == q["face"]
 			if faces_meet and float(p["a"]) < float(q["b"]) and float(q["a"]) < float(p["b"]):
@@ -507,14 +538,14 @@ static func _label(placed: Dictionary) -> String:
 func _build_pieces() -> void:
 	if not problems.is_empty() and rooms.is_empty():
 		return
-	for line in range(0, map_size.y + 1):
-		_runs(HORIZONTAL, line, map_size.x)
-	for line in range(0, map_size.x + 1):
-		_runs(VERTICAL, line, map_size.y)
+	for line in range(0, _cells.y + 1):
+		_runs(HORIZONTAL, line, _cells.x)
+	for line in range(0, _cells.x + 1):
+		_runs(VERTICAL, line, _cells.y)
 
 
-## Murs d'une ligne : suites de bords de mur entre les mêmes deux pièces, prolongées ou
-## raccourcies aux angles, trouées par les portes praticables.
+## Murs d'une ligne (indice de la grille interne) : suites de bords de mur entre les mêmes deux
+## pièces, prolongées ou raccourcies aux angles, trouées par les portes praticables.
 func _runs(axis: int, line: int, length: int) -> void:
 	var k := 0
 	while k < length:
@@ -535,17 +566,18 @@ func _runs(axis: int, line: int, length: int) -> void:
 		_cut_openings(axis, line, span, low, high)
 
 
-## Étendue d'une suite de bords [start, end) : le mur nord-sud porte le poteau des angles.
+## Étendue (m) d'une suite de bords [start, end) (cases de la grille interne) : le mur nord-sud
+## porte le poteau des angles.
 func _run_span(axis: int, line: int, start: int, end: int) -> Vector2:
 	var half := wall_thickness / 2.0
 	if axis == HORIZONTAL:
-		var a := start + (half if _corner_at(axis, line, start) else 0.0)
-		var b := end - (half if _corner_at(axis, line, end) else 0.0)
+		var a := start * GRID + (half if _corner_at(axis, line, start) else 0.0)
+		var b := end * GRID - (half if _corner_at(axis, line, end) else 0.0)
 		return Vector2(a, b)
-	var north := float(start)
+	var north := start * GRID
 	if _corner_at(axis, line, start) and not v_wall(line, start - 1):
 		north -= half
-	var south := float(end) + (half if _corner_at(axis, line, end) else 0.0)
+	var south := end * GRID + (half if _corner_at(axis, line, end) else 0.0)
 	return Vector2(north, south)
 
 
@@ -555,7 +587,7 @@ func _cut_openings(axis: int, line: int, span: Vector2, low: int, high: int) -> 
 		if (
 			bool(opening["passable"])
 			and int(opening["axis"]) == axis
-			and int(opening["line"]) == line
+			and is_equal_approx(float(opening["line"]), line * GRID)
 			and float(opening["a"]) > span.x
 			and float(opening["b"]) < span.y
 		):
@@ -590,7 +622,7 @@ func _add_piece(
 		. append(
 			{
 				"axis": axis,
-				"line": line,
+				"line": line * GRID,
 				"a": span.x,
 				"b": span.y,
 				"y0": y0,

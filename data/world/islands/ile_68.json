@@ -1,0 +1,69 @@
+{
+  "_comment": "L'île n° 68, à la périphérie de Regule Aire (lot X1). Ses cartes, sa carte d'arrivée, le graphe de ses lieux et ses ports ; ses règles sont celles de Regule Aire (data/world/worlds/regule_aire.json). Lieux : docs/lore/CARTE.md, section 1.2 ; un lieu = une region de Map ; links = distance en marmer (1 marmer ≈ 1 m), déclarée une fois et valable dans les deux sens, original sauf les 500 et 2 000 du panneau du port ; un lieu sans carte attend la sienne (phases 3 et 4). Les cartes essai, essai_relief et entrepot_rdc_essai sont celles des lots E1, E2 et E3 ; essai porte le port provisoire jusqu'à la carte du port.",
+  "name": "L'île n° 68",
+  "number": 68,
+  "maps": [
+    "entrepot",
+    "entrepot_rdc",
+    "entrepot_etage",
+    "entrepot_toit",
+    "salle_des_armes",
+    "village",
+    "colline",
+    "sentier",
+    "foret_profonde",
+    "essai",
+    "essai_relief",
+    "entrepot_rdc_essai"
+  ],
+  "arrival_map": "entrepot",
+  "places": {
+    "entrepot": {
+      "name": "L'entrepôt des fées",
+      "maps": ["entrepot", "entrepot_rdc", "entrepot_etage", "entrepot_toit", "salle_des_armes"],
+      "links": {"village": 250, "colline": 300, "sentier": 250, "foret_profonde": 400},
+      "start_known": true
+    },
+    "village": {
+      "name": "Le village",
+      "maps": ["village"]
+    },
+    "colline": {
+      "name": "La colline des étoiles",
+      "maps": ["colline"]
+    },
+    "sentier": {
+      "name": "Le sentier et le marais",
+      "maps": ["sentier"],
+      "links": {"port": 250, "ville": 1350},
+      "start_known": true
+    },
+    "port": {
+      "name": "Le port",
+      "maps": [],
+      "links": {"ville": 2000},
+      "start_known": true
+    },
+    "ville": {
+      "name": "Le centre-ville",
+      "maps": []
+    },
+    "foret_profonde": {
+      "name": "La forêt profonde",
+      "maps": ["foret_profonde"],
+      "links": {"montagne": 900}
+    },
+    "montagne": {
+      "name": "La montagne aux ours",
+      "maps": []
+    }
+  },
+  "ports": {
+    "essai": {
+      "_comment": "Port provisoire sur la carte d'essai, jusqu'à la carte du port (CARTE.md, section 6) : il passe alors sur port, au marqueur from_dirigeable du quai.",
+      "name": "Le quai d'essai",
+      "map": "essai",
+      "marker": "from_dirigeable"
+    }
+  }
+}

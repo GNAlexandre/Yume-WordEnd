@@ -1,5 +1,7 @@
 # Cahier des charges n° 3 : l'île n° 68 de *SukaSuka*
 
+> La suite des commandes : cahier n° 5, `docs/ASSETS_HD2D_ILE68.md` (ce qui manque encore à l'île n° 68, corrections et vues manquantes comprises).
+
 Ce document se donne à ChatGPT (ou à Codex), **lot par lot**. Il commande les images de la refonte
 (`docs/REFONTE.md`, section 8) : l'intérieur de l'entrepôt, les personnages qui vivent leur
 journée, le village et la ville, le port et ses navires en volume, la forêt, sa faune et le temps

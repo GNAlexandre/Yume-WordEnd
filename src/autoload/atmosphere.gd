@@ -7,7 +7,8 @@ extends Node
 ## de la carte courante :
 ## - préréglage effectif (resolve()) : le light_preset de la carte s'il est rempli (un moment,
 ##   « interieur », ou tout préréglage de data/lighting/) ; sinon « interieur » pour une carte
-##   intérieure (Map.interior), sinon celui du moment. « interieur » mêle les préréglages
+##   intérieure (Map.interior), sinon (X1) le ciel par défaut de son île (règle sky de
+##   data/world/, WorldAtlas.rules_for), sinon celui du moment. « interieur » mêle les préréglages
 ##   interieur (jour) et interieur_nuit (lampes, cheminées, cristaux) selon la nuit du dehors, et
 ##   prend le jour des fenêtres du moment du dehors et la couleur de son soleil ; le temps
 ##   (HD2DWeather : pluie, averse) le modifie ensuite, sans pluie dedans ;
@@ -235,13 +236,18 @@ func resolve(
 
 
 ## Identifiant du préréglage de map : son light_preset s'il est rempli, sinon « interieur » pour
-## une carte intérieure, sinon le moment.
+## une carte intérieure, sinon (X1) le ciel par défaut de son île (règle sky, WorldAtlas), sinon
+## le moment.
 static func effective_preset_id(map: Node, moment_id: StringName) -> StringName:
 	var as_map := map as Map
 	if as_map != null and not as_map.light_preset.is_empty():
 		return as_map.light_preset
 	if as_map != null and as_map.interior:
 		return HD2DLighting.INTERIOR
+	if as_map != null:
+		var island_sky := WorldAtlas.rules_for(as_map.map_id()).sky
+		if not island_sky.is_empty():
+			return island_sky
 	return moment_id
 
 

@@ -472,6 +472,13 @@ E1, docs/DECISIONS.md) ; le mode d'emploi pour créer une carte est dans PLAN.md
   préréglage de `data/lighting/` ; vide et `interior` : `interieur`, qui suit le moment du dehors
   (lumière des fenêtres le jour, lampes et cristaux la nuit). Le temps qu'il fait (`pluie`,
   `averse`) s'ajoute dehors. API et mode d'emploi : PLAN.md, section 3 (`Atmosphere`).
+  (X1) Vide sur une carte du dehors : le ciel par défaut de son île (règle `sky`), s'il y en a un.
+- (X1) `island: StringName` : l'île de la carte (`data/world/islands/<island>.json`), `&"ile_68"`
+  par défaut ; ce doit être l'île dont la liste `maps` nomme la carte (le fichier de l'île fait
+  foi, `tests/unit/test_world_atlas.gd` vérifie l'accord). Les règles de l'île (Timeres permis,
+  faune, mer de nuages ou sol jusqu'à l'horizon sous le bord, ciel par défaut, chute) viennent des
+  données (`WorldAtlas.rules_for(map_id)`), jamais du nom de la carte. Mode d'emploi : PLAN.md,
+  section 3, « (X1) Ajouter une île ».
 
 **Enfants figés**
 - `Ground` : le sol et sa collision (couche 1 world). C'est un `MapGround` (E2) dehors, une
@@ -505,6 +512,9 @@ E1, docs/DECISIONS.md) ; le mode d'emploi pour créer une carte est dans PLAN.md
 - `current_map() -> StringName`.
 - `EventBus.map_entered(map_id: StringName)` : nouveau signal, au passé.
 - `GameState` retient la carte et la position pour la sauvegarde.
+- (X1) `travel(island_id, port)` : le voyage entre îles (fondu, vue du ciel, carte d'arrivée au
+  marqueur du port) ; `current_island()`, `EventBus.island_entered(island_id)` ; `GameState`
+  retient l'île courante et les îles connues. Détail : PLAN.md, section 3.
 - (E1) Aussi : `enter_map(map_id, marker, at)` (sans fondu : début de partie, démonstrations),
   `current_map_node()`, `starting_map()`, `map_display_name(map_id)`, `camera_bounds()`,
   `is_transitioning()`, `fade_alpha()`, `last_transition()` (mesures), signaux
@@ -671,6 +681,12 @@ Les options proposées au moment du choix :
 - Trois ou quatre agents à la fois au plus.
 
 ### 11.1 Ouvrir le monde aux autres îles et à la surface (lot X1, Opus, PR « contrats »)
+
+**Fait** (X1) : `data/world/` (mondes `regule_aire` et `surface`, îles `ile_68`, `ile_essai`,
+`ile_ancienne`, `surface_essai`), `WorldAtlas`, `Map.island`, `WorldManager.travel` et sa vue du
+ciel, règles appliquées par les données, cartes `quai_essai` et `surface_essai`, quais provisoires
+sur `essai` ; modes d'emploi « Ajouter une île » et « Ajouter la surface » dans PLAN.md, section 3 ;
+ce que les lots suivants adoptent : `docs/CONTRACT_REQUESTS.md` (X1).
 
 Ce lot passe tôt, avant que les cartes se multiplient :
 - **Une île = des données** : `data/world/islands/<island_id>.json` donne le nom, les cartes, la

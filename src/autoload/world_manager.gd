@@ -38,6 +38,19 @@ extends Node
 ## - zone_entered met à jour current_zone() et GameState.zone ; un changement de carte les vide
 ##   (et oublie la dernière zone annoncée sur le joueur) : la zone d'arrivée s'annonce de nouveau ;
 ## - is_zone_safe() dit si une zone est sûre (Zone.safe), pour l'IA des Timeres.
+##
+## Îles (X1, docs/REFONTE.md 11.1 ; PLAN.md, « Ajouter une île ») :
+## - chaque carte posée donne l'île courante (WorldAtlas.island_of) : GameState.island et les îles
+##   connues suivent, et EventBus.island_entered est émis quand l'île change (voyage, sortie,
+##   début de partie) ;
+## - travel(island_id, port) : le voyage en dirigeable ; fondu au noir, vue du ciel qui défile
+##   (src/world/travel_view.tscn, au moins travel_time s, pendant que la carte d'arrivée se
+##   charge en petites tranches), puis la carte d'arrivée au marqueur du port, fondu de retour ;
+## - une chute hors de l'île, sur une carte sans zone, ramène au dernier point sûr (règle
+##   void_fall de l'île : last_safe) ou au marqueur d'arrivée (arrival) ; le dernier point sûr
+##   est la dernière place au sol du joueur à au moins SAFE_MARGIN m du vide ;
+## - raccourci de développement : F6 (version de débogage) part vers l'île suivante de l'atlas ;
+##   ?island=<id>&port=<id> sur le Web (src/test_shortcuts.gd).
 
 ## (Systèmes et textes) Le joueur vient d'être rattrapé après une chute (rescue), au Spawn de
 ## zone_id (ou, sur une carte sans zone, à son marqueur d'arrivée : zone_id = map_id) :
@@ -47,6 +60,10 @@ signal rescued(zone_id: StringName)
 signal transition_started(map_id: StringName)
 ## (E1) Le changement de carte est fini : fondu de retour terminé, joueur rendu.
 signal transition_finished(map_id: StringName)
+## (X1) Un voyage en dirigeable commence (vers island_id), avant le fondu au noir.
+signal travel_started(island_id: StringName)
+## (X1) Le voyage est fini : carte d'arrivée posée, fondu de retour terminé.
+signal travel_finished(island_id: StringName)
 
 const VILLAGE := &"village"
 const SPAWN_MARKER := &"Spawn"
@@ -79,6 +96,20 @@ const DEFAULT_LOAD_BUDGET_MS := 100.0
 const DEFAULT_CAMERA_BOUNDS := Rect2(-71.0, -70.0, 142.0, 136.0)
 ## Ordre de chargement des dépendances (feuilles d'abord) : celui de l'écran de chargement.
 const LoadingScript := preload("res://src/ui/loading.gd")
+## (X1) Scène de voyage (chargée à la demande, jamais gardée en mémoire).
+const TRAVEL_VIEW_PATH := "res://src/world/travel_view.tscn"
+## (X1) Durée minimale de la vue du ciel d'un voyage (s) et travail de chargement par image
+## pendant qu'elle défile (ms : elle doit rester fluide).
+const DEFAULT_TRAVEL_TIME := 3.2
+const DEFAULT_TRAVEL_LOAD_BUDGET_MS := 12.0
+## (X1) Un point est sûr s'il n'y a pas de vide à moins de SAFE_MARGIN m autour (sol en relief)
+## et que le joueur touche le sol, à SAFE_HEIGHT m près ; vérifié toutes les SAFE_INTERVAL images
+## physiques.
+const SAFE_MARGIN := 1.5
+const SAFE_HEIGHT := 0.3
+const SAFE_INTERVAL := 4
+## (X1) Touche de débogage : voyage vers l'île suivante de l'atlas.
+const TRAVEL_KEYCODE := KEY_F6
 
 ## Délai entre la mort du joueur et sa réapparition (animation de mort + fondu, jeu.js : 2,2 s).
 var respawn_delay: float = 2.2
@@ -86,6 +117,12 @@ var respawn_delay: float = 2.2
 var fade_time: float = DEFAULT_FADE_TIME
 ## (E1) Travail de chargement par image pendant un changement de carte (ms).
 var load_budget_ms: float = DEFAULT_LOAD_BUDGET_MS
+## (X1) Durée minimale de la vue du ciel d'un voyage (s) ; 0 : une image (tests).
+var travel_time: float = DEFAULT_TRAVEL_TIME
+## (X1) Travail de chargement par image pendant la vue du ciel (ms).
+var travel_load_budget_ms: float = DEFAULT_TRAVEL_LOAD_BUDGET_MS
+## (X1) Touche F6 active (voyage vers l'île suivante) : version de débogage.
+var debug_keys: bool = false
 
 var _current_zone: StringName = &""
 ## Carte posée par WorldManager (voir current_map_node()).
@@ -99,11 +136,22 @@ var _fade: float = 0.0
 var _last_transition: Dictionary = {}
 ## process_mode du joueur figé pendant le changement de carte.
 var _frozen_mode: ProcessMode = PROCESS_MODE_INHERIT
+## (X1) Île de la carte posée (&"" : aucune, ou carte hors de toute île).
+var _island: StringName = &""
+## (X1) Voyage en cours (son île d'arrivée, &"" sinon) et vue du ciel ouverte.
+var _traveling: StringName = &""
+var _travel_view: TravelView = null
+## (X1) Dernier point sûr de la carte courante (rattrapage d'une chute) ; valide si _has_safe.
+var _last_safe: Vector3 = Vector3.ZERO
+var _has_safe: bool = false
+var _safe_countdown: int = 0
 
 
 func _ready() -> void:
 	EventBus.zone_entered.connect(_on_zone_entered)
 	EventBus.player_died.connect(_on_player_died)
+	EventBus.game_loaded.connect(_on_game_loaded)
+	debug_keys = OS.is_debug_build()
 
 
 func _physics_process(_delta: float) -> void:
@@ -112,6 +160,19 @@ func _physics_process(_delta: float) -> void:
 	var player := _player()
 	if player != null and not _busy and player.global_position.y < FALL_LIMIT:
 		rescue()
+	elif player != null and not _busy:
+		_track_safe_point(player)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	var key := event as InputEventKey
+	if not debug_keys or key == null or not key.pressed or key.echo:
+		return
+	if key.keycode == TRAVEL_KEYCODE and _map_slot() != null and not is_transitioning():
+		var next := next_island()
+		if not next.is_empty():
+			travel(next)
+			get_viewport().set_input_as_handled()
 
 
 # --- Cartes (E1) ------------------------------------------------------------------------------
@@ -122,6 +183,58 @@ func _physics_process(_delta: float) -> void:
 ## retour. Sans effet (avertissement) pendant un autre changement ; carte inconnue : erreur.
 ## Coroutine : `await WorldManager.go_to(&"essai")` attend la fin du fondu de retour.
 func go_to(map_id: StringName, marker: StringName = SPAWN_MARKER) -> void:
+	await _change_map(map_id, marker, &"")
+
+
+## (X1) Voyage en dirigeable vers island_id : fondu au noir, vue du ciel qui défile (au moins
+## travel_time s, la carte d'arrivée se charge pendant ce temps), puis la carte d'arrivée posée au
+## marqueur du port (WorldAtlas.arrival : le port nommé, sinon le premier port de l'île, sinon sa
+## carte d'arrivée au Spawn), fondu de retour. Émet travel_started, puis (en plus des signaux de
+## go_to et d'island_entered) travel_finished. Sans effet (avertissement) pendant un autre
+## changement ; île ou port inconnus : erreur. Coroutine, comme go_to.
+func travel(island_id: StringName, port: StringName = &"") -> void:
+	var target := WorldAtlas.arrival(island_id, port)
+	if target.is_empty():
+		push_error("WorldManager : voyage impossible vers %s (port « %s »)" % [island_id, port])
+		return
+	await _change_map(target["map"], target["marker"], island_id)
+
+
+## (X1) Île de la carte courante (&"" sans carte, ou carte hors de toute île).
+func current_island() -> StringName:
+	return _island
+
+
+## (X1) Vrai pendant un voyage (de travel() à la fin du fondu de retour).
+func is_traveling() -> bool:
+	return not _traveling.is_empty()
+
+
+## (X1) Vue du ciel du voyage en cours (null hors de la vue).
+func travel_view() -> TravelView:
+	return _travel_view if is_instance_valid(_travel_view) else null
+
+
+## (X1) Île suivante de l'atlas (WorldAtlas.islands(), sans l'ancienne île), en boucle ; &"" s'il
+## n'y en a pas d'autre. Touche F6.
+func next_island() -> StringName:
+	var ids: Array[StringName] = []
+	for island_id: StringName in WorldAtlas.islands():
+		if not WorldAtlas.is_legacy(island_id) and not WorldAtlas.arrival(island_id).is_empty():
+			ids.append(island_id)
+	if ids.is_empty():
+		return &""
+	var next := ids[(ids.find(_island) + 1) % ids.size()]
+	return next if next != _island else &""
+
+
+## (X1) Dernier point sûr de la carte courante (Vector3.INF s'il n'y en a pas encore).
+func last_safe_point() -> Vector3:
+	return _last_safe if _has_safe else Vector3.INF
+
+
+## Changement de carte (go_to), ou voyage si voyage_island n'est pas vide (travel).
+func _change_map(map_id: StringName, marker: StringName, voyage_island: StringName) -> void:
 	if _busy:
 		push_warning("WorldManager : changement de carte en cours, %s ignoré" % map_id)
 		return
@@ -133,23 +246,31 @@ func go_to(map_id: StringName, marker: StringName = SPAWN_MARKER) -> void:
 		push_error("WorldManager : aucun nœud du groupe %s pour la carte" % MAP_SLOT_GROUP)
 		return
 	_busy = true
+	_traveling = voyage_island
 	var started := Time.get_ticks_usec()
 	var player := _player()
 	_freeze(player)
+	if not voyage_island.is_empty():
+		travel_started.emit(voyage_island)
 	transition_started.emit(map_id)
 	await _fade_to(1.0)
 	var faded := Time.get_ticks_usec()
 	# Écran noir : le monde 3D n'est plus dessiné pendant le chargement (une image ne coûte plus
 	# que l'interface : le chargement découpé avance bien plus vite, surtout sur le Web).
 	_set_world_hidden(true)
+	var budget := load_budget_ms
+	if not voyage_island.is_empty():
+		_open_travel_view(voyage_island)
+		budget = travel_load_budget_ms
 	var scene: PackedScene = null
 	var frames := 0
 	var current := current_map_node()
 	var needs_load := current == null or current.map_id() != map_id
 	if is_instance_valid(slot) and needs_load:
-		var loaded: Array = await _load_in_frames(Map.scene_path(map_id))
+		var loaded: Array = await _load_in_frames(Map.scene_path(map_id), budget)
 		scene = loaded[0] as PackedScene
 		frames = int(loaded[1])
+	await _close_travel_view()
 	if not is_instance_valid(slot) or not slot.is_inside_tree():
 		# La partie a été libérée pendant le fondu (retour au menu) : rien à installer.
 		_set_world_hidden(false)
@@ -176,8 +297,11 @@ func go_to(map_id: StringName, marker: StringName = SPAWN_MARKER) -> void:
 		"load_frames": frames,
 		"install_ms": (installed_at - loaded_at) / 1000.0,
 		"total_ms": (Time.get_ticks_usec() - started) / 1000.0,
+		"island": voyage_island,
 	}
 	transition_finished.emit(map_id)
+	if not voyage_island.is_empty():
+		travel_finished.emit(voyage_island)
 
 
 ## Pose la carte map_id tout de suite (sans fondu, chargement d'un bloc ou depuis le cache) et
@@ -315,14 +439,19 @@ func respawn() -> void:
 
 
 ## Rattrapage : ramène le joueur au Spawn de la zone courante (du village à défaut ; sur une
-## carte sans zone, au marqueur d'arrivée), puis émet rescued (message du HUD).
+## carte sans zone, (X1) au dernier point sûr si la règle void_fall de l'île le veut, sinon au
+## marqueur d'arrivée), puis émet rescued (message du HUD).
 func rescue() -> void:
 	if _player() == null:
 		return
 	var zone := _current_zone if _find_zone(_current_zone) != null else VILLAGE
 	var map := current_map_node()
 	if _find_zone(zone) == null and map != null:
-		_place_at_marker(map, _arrival_marker)
+		var rules := WorldAtlas.rules_for(map.map_id())
+		if rules.void_fall == IslandRules.FALL_LAST_SAFE and _has_safe:
+			_place_at(_last_safe)
+		else:
+			_place_at_marker(map, _arrival_marker)
 		rescued.emit(map.map_id())
 		return
 	teleport(zone, SPAWN_MARKER)
@@ -412,9 +541,86 @@ func _install(scene: PackedScene, map_id: StringName, marker: StringName, at: Va
 	GameState.map = map_id
 	if player != null:
 		GameState.position = player.global_position
+		_last_safe = player.global_position
+		_has_safe = true
 	_settle_frames = SETTLE_FRAMES
 	EventBus.map_entered.emit(map_id)
+	_enter_island(WorldAtlas.island_of(map_id))
 	return true
+
+
+## (X1) L'île de la carte posée : GameState.island, îles connues, island_entered si elle change.
+func _enter_island(island_id: StringName) -> void:
+	GameState.island = island_id
+	GameState.discover_island(island_id)
+	if island_id == _island:
+		return
+	_island = island_id
+	if not island_id.is_empty():
+		EventBus.island_entered.emit(island_id)
+
+
+## (X1) Ouvre la vue du ciel d'un voyage (au-dessus de tout, sous le noir qu'elle lève).
+func _open_travel_view(island_id: StringName) -> void:
+	var packed := load(TRAVEL_VIEW_PATH) as PackedScene
+	if packed == null:
+		return
+	_travel_view = packed.instantiate() as TravelView
+	get_tree().root.add_child(_travel_view)
+	_travel_view.begin(island_id, fade_time)
+
+
+## (X1) Ferme la vue du ciel (après travel_time s au moins, fondu au noir) et la libère.
+func _close_travel_view() -> void:
+	if not is_instance_valid(_travel_view):
+		_travel_view = null
+		return
+	await _travel_view.close(travel_time)
+	if is_instance_valid(_travel_view):
+		_travel_view.queue_free()
+	_travel_view = null
+
+
+## (X1) Retient la place du joueur comme dernier point sûr (toutes les SAFE_INTERVAL images
+## physiques) s'il touche le sol (à SAFE_HEIGHT m près) loin du vide : sur un sol en relief, aucune
+## case vide à SAFE_MARGIN m ; ailleurs, le décor statique juste dessous (ground_position).
+func _track_safe_point(player: Node3D) -> void:
+	_safe_countdown -= 1
+	if _safe_countdown > 0 or _settle_frames > 0:
+		return
+	_safe_countdown = SAFE_INTERVAL
+	var map := current_map_node()
+	if map == null:
+		return
+	var at := player.global_position
+	var ground := map.get_node_or_null(^"Ground") as MapGround
+	if ground != null and ground.data != null:
+		var local := map.to_local(at)
+		var height := ground.height_at(local.x, local.z)
+		if height == MapGround.VOID_HEIGHT or absf(local.y - height) > SAFE_HEIGHT:
+			return
+		for offset: Vector2 in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:
+			var probe := Vector2(local.x, local.z) + offset * SAFE_MARGIN
+			if ground.height_at(probe.x, probe.y) == MapGround.VOID_HEIGHT:
+				return
+	else:
+		# ground_position rend le point lui-même s'il n'y a rien dessous.
+		var floor_at := ground_position(at, player)
+		if floor_at.is_equal_approx(at) or absf(at.y - floor_at.y) > SAFE_HEIGHT:
+			return
+	_last_safe = at
+	_has_safe = true
+
+
+## (X1) Pose le joueur à point (dernier point sûr), vitesse nulle, sans changer son regard.
+func _place_at(point: Vector3) -> void:
+	var player := _player()
+	if player == null:
+		return
+	player.global_position = point
+	player.reset_physics_interpolation()
+	if player is CharacterBody3D:
+		(player as CharacterBody3D).velocity = Vector3.ZERO
 
 
 ## Pose le joueur au sol sous le marqueur marker_name de la carte (Spawn s'il n'existe pas),
@@ -435,9 +641,9 @@ func _place_at_marker(map: Map, marker_name: StringName) -> void:
 		player.call(&"set_aim_direction", -target.global_basis.z, true)
 
 
-## Charge path en plusieurs images (dépendances d'abord, au plus load_budget_ms de travail par
+## Charge path en plusieurs images (dépendances d'abord, au plus budget_ms de travail par
 ## image) ; renvoie [PackedScene ou null, nombre d'images].
-func _load_in_frames(path: String) -> Array:
+func _load_in_frames(path: String, budget_ms: float) -> Array:
 	var kept: Array[Resource] = []
 	var frames := 1
 	var started := Time.get_ticks_msec()
@@ -445,7 +651,7 @@ func _load_in_frames(path: String) -> Array:
 		var resource := ResourceLoader.load(dependency)
 		if resource != null:
 			kept.append(resource)
-		if Time.get_ticks_msec() - started >= load_budget_ms:
+		if Time.get_ticks_msec() - started >= budget_ms:
 			await get_tree().process_frame
 			frames += 1
 			started = Time.get_ticks_msec()
@@ -468,6 +674,7 @@ func _fade_to(target: float) -> void:
 ## SETTLE_FRAMES images physiques.
 func _finish(player: Node3D) -> void:
 	_fade = 0.0
+	_traveling = &""
 	if is_instance_valid(player):
 		player.process_mode = _frozen_mode
 	_settle_frames = SETTLE_FRAMES
@@ -530,6 +737,12 @@ func _map_slot() -> Node:
 		return slot
 	var map := current_map_node()
 	return map.get_parent() if map != null else null
+
+
+func _on_game_loaded() -> void:
+	# Une partie commence : l'île de sa première carte s'annoncera (island_entered).
+	_island = &""
+	_has_safe = false
 
 
 func _on_zone_entered(zone_id: StringName) -> void:

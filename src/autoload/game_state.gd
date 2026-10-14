@@ -14,6 +14,8 @@ extends Node
 ## - skin_changed et max_hp_changed quand skin_id / max_hp changent.
 ## - (E9) atmosphere_changed quand moment ou weather changent (setters, from_dict et reset
 ##   compris) : Atmosphere pose alors la lumière.
+## (X1) island (île courante) et les îles connues sont tenues par WorldManager à chaque arrivée
+## sur une île (EventBus.island_entered) ; sauvegardées (champs facultatifs du schéma v3).
 ## Mises à jour attendues des autres lots : (E1) map par WorldManager à chaque changement de
 ## carte, zone par WorldManager (L2) à chaque zone_entered,
 ## position par le joueur (L1) quand il est au sol, étapes et quête suivie par le QuestTracker
@@ -61,6 +63,9 @@ var max_hp: int = DEFAULT_MAX_HP:
 ## (E1) Carte courante (map_id, tenue par WorldManager) ; &"" = nouvelle partie pas encore
 ## placée (game.gd pose alors le joueur au Spawn de WorldManager.START_MAP).
 var map: StringName = &""
+## (X1) Île courante (data/world/islands/<id>.json, WorldAtlas.island_of(map)), tenue par
+## WorldManager ; &"" : pas encore placée, ou carte hors de toute île.
+var island: StringName = &""
 ## Zone courante dans la carte (zone_id, zones de l'ancienne île) ; &"" hors des zones.
 var zone: StringName = &""
 ## Dernière position au sol du joueur, dans le repère de la carte (sauvegardée, restaurée par
@@ -105,6 +110,8 @@ var _quests: Dictionary[StringName, StringName] = {}
 var _quest_progress: Dictionary[StringName, Dictionary] = {}
 var _collected_pickups: Dictionary[StringName, bool] = {}
 var _best_scores: Dictionary[StringName, Dictionary] = {}
+## (X1) Îles où le joueur est déjà allé, dans l'ordre de découverte.
+var _known_islands: Array[StringName] = []
 
 
 ## Nouvelle partie : tout revient aux valeurs par défaut.
@@ -112,6 +119,7 @@ func reset() -> void:
 	skin_id = &""
 	max_hp = DEFAULT_MAX_HP
 	map = &""
+	island = &""
 	zone = &""
 	position = Vector3.ZERO
 	moment = DEFAULT_MOMENT
@@ -123,7 +131,29 @@ func reset() -> void:
 	_quest_progress.clear()
 	_collected_pickups.clear()
 	_best_scores.clear()
+	_known_islands.clear()
 	EventBus.inventory_changed.emit()
+
+
+# --- Îles (X1) --------------------------------------------------------------------------------
+
+
+## Îles connues (où le joueur est déjà allé), dans l'ordre de découverte (copie).
+func known_islands() -> Array[StringName]:
+	return _known_islands.duplicate()
+
+
+## Vrai si le joueur est déjà allé sur l'île.
+func knows_island(island_id: StringName) -> bool:
+	return _known_islands.has(island_id)
+
+
+## Ajoute une île connue ; vrai si elle ne l'était pas (WorldManager, à l'arrivée).
+func discover_island(island_id: StringName) -> bool:
+	if island_id.is_empty() or knows_island(island_id):
+		return false
+	_known_islands.append(island_id)
+	return true
 
 
 # --- Inventaire -------------------------------------------------------------------------------
@@ -309,7 +339,8 @@ func arena_record(arena_id: StringName) -> Dictionary:
 ## Types JSON uniquement (String, int, float, bool, Array, Dictionary). Les champs du schéma v1
 ## d'abord (et, à côté de la position, la carte de la refonte : map, v3), puis ceux du Lot Q
 ## (v2) : quest_progress et tracked_quest ; enfin (E9) moment et weather, facultatifs dans le
-## schéma v3 (absents d'une sauvegarde plus ancienne : le couchant sans pluie).
+## schéma v3 (absents d'une sauvegarde plus ancienne : le couchant sans pluie), et (X1) island
+## et known_islands, facultatifs aussi (absents : WorldManager les déduit de la carte).
 func to_dict() -> Dictionary:
 	var inventory := {}
 	for item_id: StringName in _inventory:
@@ -327,6 +358,9 @@ func to_dict() -> Dictionary:
 	var scores := {}
 	for arena_id: StringName in _best_scores:
 		scores[String(arena_id)] = arena_record(arena_id)
+	var known: Array[String] = []
+	for island_id: StringName in _known_islands:
+		known.append(String(island_id))
 	var progress := {}
 	for quest_id: StringName in _quest_progress:
 		progress[String(quest_id)] = {
@@ -347,6 +381,8 @@ func to_dict() -> Dictionary:
 		"tracked_quest": String(tracked_quest),
 		"moment": String(moment),
 		"weather": String(weather),
+		"island": String(island),
+		"known_islands": known,
 	}
 
 
@@ -417,6 +453,13 @@ func from_dict(data: Dictionary) -> void:
 	moment = saved_moment if saved_moment in MOMENTS else DEFAULT_MOMENT
 	var saved_weather := _read_name(data.get("weather"))
 	weather = saved_weather if saved_weather in WEATHERS else DEFAULT_WEATHER
+	# (X1) Absents (sauvegarde d'avant X1) : vides ; WorldManager les remplit à l'arrivée.
+	island = _read_name(data.get("island")) if saved_position is Vector3 else &""
+	_known_islands.clear()
+	var known: Variant = data.get("known_islands")
+	if known is Array:
+		for island_id: Variant in known:
+			discover_island(_read_name(island_id))
 	EventBus.inventory_changed.emit()
 
 

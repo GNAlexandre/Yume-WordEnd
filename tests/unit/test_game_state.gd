@@ -156,6 +156,8 @@ func test_to_dict_matches_save_schema() -> void:
 			"collected_pickups",
 			"flags",
 			"inventory",
+			"island",
+			"known_islands",
 			"map",
 			"max_hp",
 			"moment",

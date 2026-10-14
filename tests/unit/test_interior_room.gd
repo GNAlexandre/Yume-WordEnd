@@ -442,6 +442,9 @@ func test_furniture_scenes_are_interior_panels_with_their_footprint() -> void:
 	for entry in entries:
 		var image_name := String(entry["path"]).get_file().get_basename()
 		var path := "%s/%s.tscn" % [PROPS_DIR, image_name]
+		# (T2) Les scènes ajoutées par les cartes de l'entrepôt sont dans props/interior/.
+		if not ResourceLoader.exists(path):
+			path = "%s/interior/%s.tscn" % [PROPS_DIR, image_name]
 		if not ResourceLoader.exists(path):
 			problems.append("%s absente" % path)
 			continue
@@ -462,9 +465,16 @@ func _furniture_problems(node: Node, entry: Dictionary, label: String) -> Array[
 		if node.get_node_or_null(^"Collision") != null:
 			problems.append("%s : un tapis se traverse" % label)
 		return problems
+	if not node is InteriorPanel and node is DecorPanel:
+		return _outdoor_problems(node as DecorPanel, image, label)
 	var panel := node as InteriorPanel
 	if panel == null or panel.texture == null or panel.texture.resource_path != image:
 		problems.append("%s : InteriorPanel sur son image" % label)
+		return problems
+	if node.get_node_or_null(^"Collision") == null:
+		# (T2) Objet posé sur un meuble (« objet » des plans) : petit, sans ombre ni collision.
+		if panel.size_m().y > 0.61 or panel.shadow_width > 0.0:
+			problems.append("%s : sans collision, un objet posé (petit, sans ombre)" % label)
 		return problems
 	var body := node.get_node_or_null(^"Collision") as StaticBody3D
 	var shape: CollisionShape3D = body.get_child(0) as CollisionShape3D if body != null else null
@@ -488,4 +498,18 @@ func _furniture_problems(node: Node, entry: Dictionary, label: String) -> Array[
 	var uv2: PackedVector2Array = quad.mesh.surface_get_arrays(0)[Mesh.ARRAY_TEX_UV2]
 	if uv2.is_empty() or not is_equal_approx(uv2[0].x, panel.front_z()):
 		problems.append("%s : coordonnée de coupe = bord sud" % label)
+	return problems
+
+
+## (T2) Décor de plein air (toit), de premier plan (pilier de la crypte) ou suspendu (suspension
+## du réfectoire) : DecorPanel sur son image ; s'il bloque, sa collision est sur la couche 1.
+func _outdoor_problems(panel: DecorPanel, image: String, label: String) -> Array[String]:
+	var problems: Array[String] = []
+	if panel.texture == null or panel.texture.resource_path != image:
+		problems.append("%s : DecorPanel sur son image" % label)
+	var body := panel.get_node_or_null(^"Collision") as StaticBody3D
+	if body != null and (body.collision_layer != 1 or body.get_child_count() == 0):
+		problems.append("%s : collision sur la couche 1" % label)
+	if body == null and not panel.foreground and panel.shadow_width > 0.0:
+		problems.append("%s : un décor sans collision s'efface ou n'a pas d'ombre" % label)
 	return problems

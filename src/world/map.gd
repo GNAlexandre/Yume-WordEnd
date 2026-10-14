@@ -54,6 +54,9 @@ const WORLD_LAYER := 1
 ## Préréglage de lumière (E9 : data/lighting/<id>.tres, un moment ou « interieur ») ; vide :
 ## celui du moment de la journée (« interieur » pour une carte intérieure).
 @export var light_preset: StringName = &""
+## (X1) Île de la carte (data/world/islands/<island>.json, WorldAtlas) ; elle doit être celle dont
+## « maps » nomme la carte (tests/unit/test_world_atlas.gd). L'île n° 68 par défaut.
+@export var island: StringName = &"ile_68"
 
 
 func _enter_tree() -> void:

@@ -25,6 +25,14 @@ Usage :
     python3 tools/hd2d_interior.py scenes     # écrit les scènes des meubles et des tapis
     python3 tools/hd2d_assets.py check --lot I
 
+(T2) Les cartes de l'entrepôt (docs/lore/CARTE.md, section 3) ajoutent leurs images : meubles livrés
+ou remplaçants (FURNITURE_T2), objets posés sur un meuble (OBJECTS : sans collision), décors du toit
+en plein air (OUTDOOR : DecorPanel), la suspension du réfectoire (HANGING : DecorPanel de premier
+plan, qui s'efface devant le joueur), bandes animées (ANIMS) et décalques (DECALS_T2). Leurs
+remplaçants sont dans tools/hd2d_interior_props.py ; leurs scènes dans src/world/props/interior/
+(celles d'E3 restent dans src/world/props/). Les cartes elles-mêmes s'écrivent par
+tools/interior_maps.py.
+
 Le résultat est déterministe (graine tirée du nom de chaque image).
 """
 
@@ -38,10 +46,13 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from hd2d_art import (  # noqa: E402
     Canvas, WrapCanvas, darker, fractal, mix, noise, paste_wrap, posterize, ramp, rgba, threshold)
+import hd2d_interior_props  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST = os.path.join(ROOT, "tools", "hd2d_manifest.json")
 PROPS_DIR = os.path.join(ROOT, "src", "world", "props")
+# (T2) Scènes des images ajoutées par les cartes de l'entrepôt.
+T2_PROPS_DIR = os.path.join(PROPS_DIR, "interior")
 PPM = 96
 LOT = "I"
 # Meuble plaqué au mur (emprise de moins de 0,3 m, comme le grand miroir) : coupé comme le mur
@@ -151,6 +162,139 @@ RUGS = [
     ("rug_brown", (192, 115), 1, "bottom"),
 ]
 
+# --- (T2) Cartes de l'entrepôt (docs/lore/CARTE.md, section 3) -----------------------------------
+
+# Portes, fenêtres et éléments de mur ajoutés : (nom, taille, priorité). Remplaçants (sauf
+# wallitem_calendar, livré) : tools/hd2d_interior_props.py.
+WALL_PANELS_T2 = [
+    ("door_service", (96, 211), 2),
+    ("door_armory_inside", (125, 221), 2),
+    ("window_curtains_open", (115, 154), 2),
+    ("window_curtains_closed", (115, 154), 2),
+    ("window_bare", (106, 134), 2),
+    ("window_dusty", (96, 96), 3),
+    ("wallitem_calendar", (38, 48), 1),
+    ("wallitem_notices_mix", (77, 58), 2),
+    ("wallitem_frame_landscape", (58, 48), 2),
+    ("wallitem_crystal_sconce", (29, 48), 2),
+    ("wallitem_spice_shelf", (115, 67), 2),
+    ("wallitem_apron_hook", (38, 86), 2),
+    ("wallitem_clippings", (77, 58), 3),
+    ("wallitem_labcoat", (48, 106), 2),
+    ("wallitem_kids_drawings", (115, 58), 2),
+    ("wallitem_cobweb", (48, 48), 2),
+]
+
+# Meubles ajoutés (assets/hd2d/interior/props/ ; InteriorPanel) : (nom, taille, profondeur de
+# l'emprise (m) : celle des plans de CARTE.md, lueur, priorité). Livrés : bed_*, dresser_child,
+# wardrobe_*, desk_chtholly, crypt_pillar, sword_rack_*, swords_wrapped, stairs_up, ball_white ;
+# les autres sont des remplaçants. roof_ladder n'est pas au cahier (CARTE.md 12.1).
+FURNITURE_T2 = [
+    ("bed_child", (154, 77), 0.8, 0.0, 1),
+    ("bed_child_messy", (154, 86), 0.9, 0.0, 1),
+    ("bed_chtholly", (192, 91), 0.95, 0.0, 1),
+    ("bed_plain", (192, 91), 0.95, 0.0, 1),
+    ("dresser_child", (86, 86), 0.5, 0.0, 1),
+    ("wardrobe_plain", (96, 192), 0.6, 0.0, 1),
+    ("wardrobe_chtholly", (96, 192), 0.6, 0.0, 1),
+    ("desk_chtholly", (106, 101), 0.6, 0.0, 1),
+    ("sword_rack_a", (384, 182), 0.6, 0.0, 1),
+    ("sword_rack_b", (384, 182), 0.6, 0.0, 1),
+    ("swords_wrapped", (154, 154), 0.8, 0.0, 1),
+    ("stairs_up", (154, 288), 3.0, 0.0, 1),
+    ("pantry_cupboard", (106, 192), 0.6, 0.0, 2),
+    ("sacks_vegetables", (115, 67), 0.7, 0.0, 2),
+    ("filing_cabinet", (96, 134), 0.5, 0.0, 2),
+    ("bookshelf_tall_b", (154, 221), 0.6, 0.0, 2),
+    ("armchair_reading", (96, 101), 0.9, 0.0, 2),
+    ("book_pile", (48, 48), 0.5, 0.0, 2),
+    ("supply_cupboard", (96, 192), 0.5, 0.0, 2),
+    # Plus profond que l'image (0,4 m) : au milieu du placard, on ne se tient pas juste derrière
+    # ce qui dépasse 1,2 m (règle de caméra, CARTE.md 0.3).
+    ("cleaning_set", (67, 134), 1.1, 0.0, 2),
+    ("hamper", (58, 67), 0.5, 0.0, 2),
+    ("piano_old", (154, 134), 0.7, 0.0, 3),
+    ("floor_cushions", (115, 38), 0.4, 0.0, 2),
+    ("washbasin_stand", (58, 96), 0.5, 0.0, 2),
+    ("bunk_bed", (173, 182), 0.9, 0.0, 2),
+    ("clothes_chest", (86, 58), 0.5, 0.0, 2),
+    ("desk_clean_brooch", (106, 101), 0.6, 0.0, 2),
+    ("footlocker", (77, 48), 0.5, 0.0, 2),
+    ("leak_bucket", (48, 43), 0.45, 0.0, 2),
+    ("repair_planks", (67, 173), 0.3, 0.0, 2),
+    ("roof_ladder", (77, 288), 0.9, 0.0, 2),
+    ("stairs_down", (154, 106), 3.0, 0.0, 2),
+    ("crypt_stairs", (154, 240), 2.5, 0.0, 2),
+    ("talisman_chest", (77, 58), 0.6, 0.0, 2),
+]
+
+# Meuble dont l'image n'est pas dans props/ : la fenêtre à banc, que le plan pose en meuble
+# (emprise de 0,8 m) ; son entrée de manifeste est celle d'E3 (WALL_PANELS).
+FURNITURE_OTHER_IMAGES = [
+    ("window_reading_seat", "assets/hd2d/interior/window_reading_seat.png", (192, 211), 0.8, 0.0),
+    # La porte rivetée vue de la crypte, plaquée au mur nord en haut des marches (« mural » du plan).
+    ("door_armory_inside", "assets/hd2d/interior/door_armory_inside.png", (125, 221), 0.1, 0.0),
+]
+
+# Objets posés sur un meuble (« objet » des plans) ou par terre sans collision (« libre » : la balle
+# blanche) : InteriorPanel sans collision ni ombre, posé à la hauteur du plateau ; (nom, taille,
+# lueur, priorité).
+OBJECTS = [
+    ("meal_lunch", (96, 29), 0.0, 1),
+    ("ball_white", (19, 19), 0.0, 1),
+    ("tableware_a", (96, 29), 0.0, 1),
+    ("crystal_lamp_table", (29, 48), 1.5, 2),
+    ("coffee_tray", (48, 24), 0.0, 2),
+    ("vase_flowers", (24, 38), 0.0, 2),
+    ("oil_lamp", (24, 38), 1.2, 2),
+    ("tea_tray_cheesecake", (58, 29), 0.0, 2),
+]
+# Hauteur au-delà de laquelle une image n'est plus un « objet posé » (m).
+OBJECT_MAX_HEIGHT = 0.6
+
+# Décors du toit en plein air (carte entrepot_toit, sol MapGround) : DecorPanel éclairé comme le
+# dehors ; (nom, taille, priorité, boîte de collision (largeur, hauteur, profondeur) ou None).
+OUTDOOR = [
+    ("roof_railing", (192, 77), 1, (2.0, 0.8, 0.3)),
+    ("roof_railing_broken", (192, 77), 2, (2.0, 0.8, 0.3)),
+    ("roof_hatch", (96, 58), 2, (1.0, 0.6, 0.6)),
+]
+
+# Meubles hauts et minces au milieu d'une pièce, où l'on passe derrière : DecorPanel de premier
+# plan (comme les grands arbres au milieu des passages, CARTE.md 0.3), qui s'efface autour du
+# joueur ; image au bord sud de l'emprise, collision sur l'emprise ; (nom, taille, priorité,
+# emprise (largeur, profondeur)).
+FOREGROUND = [
+    ("crypt_pillar", (58, 288), 1, (0.6, 0.6)),
+]
+
+# Suspendu (ancre libre, le haut de l'image au plafond) : DecorPanel de premier plan, qui s'efface
+# autour du joueur quand il passe derrière ; (nom, taille, lueur, priorité).
+HANGING = [
+    ("crystal_pendant", (77, 134), 1.6, 2),
+]
+
+# Bandes animées (assets/hd2d/anim/, DecorPanel animé) : (nom, taille d'une image, images, ips,
+# priorité, alpha doux, ancre libre, lueur). hearth_fire est livrée ; drying_frame_wave part du
+# séchoir livré (drying_frame).
+ANIMS = [
+    ("hearth_fire", (77, 48), 6, 10, 1, False, False, 1.4),
+    ("pot_steam", (48, 96), 6, 8, 2, True, False, 0.0),
+    ("leak_drip", (24, 96), 4, 8, 2, False, True, 0.0),
+    ("drying_frame_wave", (384, 211), 4, 4, 2, False, False, 0.0),
+]
+# Collision des poteaux du séchoir (cylindres de 0,1 m à ± POLE_X m), comme laundry_wave.
+DRYING_POLE_X = 1.85
+
+# Décalques (assets/hd2d/decals/, GroundDecal) : (nom, taille, priorité, raccord, alpha doux).
+DECALS_T2 = [
+    ("runner_rug", (96, 384), 2, "y", False),
+    ("papers_floor", (192, 144), 2, "", False),
+    ("bath_puddles", (192, 144), 2, "", True),
+    ("cards_floor", (144, 96), 2, "", False),
+    ("clothes_floor", (192, 144), 2, "", False),
+]
+
 # Remplaçants : images du lot I absentes de la livraison. door_frame_wood (chambranle seul, ouverture
 # transparente, pour les portes qu'on franchit) n'est pas encore au cahier n° 3 :
 # docs/CONTRACT_REQUESTS.md.
@@ -169,14 +313,40 @@ def entries():
     out = []
     for name, size, kind, prio in SURFACES:
         out.append(_entry("interior/" + name, size, kind, prio))
-    for name, size, prio in WALL_PANELS:
+    for name, size, prio in WALL_PANELS + WALL_PANELS_T2:
         out.append(_entry("interior/" + name, size, "panel", prio))
-    for name, size, _depth, _glow, prio in FURNITURE:
+    for name, size, _depth, _glow, prio in FURNITURE + FURNITURE_T2:
         out.append(_entry("interior/props/" + name, size, "panel", prio))
+    for name, size, _glow, prio in OBJECTS:
+        out.append(_entry("interior/props/" + name, size, "panel", prio))
+    for name, size, prio, _box in OUTDOOR:
+        out.append(_entry("interior/props/" + name, size, "panel", prio))
+    for name, size, prio, _footprint in FOREGROUND:
+        out.append(_entry("interior/props/" + name, size, "panel", prio))
+    for name, size, _glow, prio in HANGING:
+        entry = _entry("interior/props/" + name, size, "panel", prio)
+        entry["anchor"] = "free"
+        out.append(entry)
     for name, size, prio, solid in RUGS:
         entry = _entry("decals/" + name, size, "decal", prio)
         if solid:
             entry["solid_edge"] = solid
+        out.append(entry)
+    for name, size, prio, wrap, soft in DECALS_T2:
+        entry = _entry("decals/" + name, size, "decal", prio)
+        if wrap:
+            entry["wrap"] = wrap
+        if soft:
+            entry["soft_alpha"] = True
+        out.append(entry)
+    for name, size, frames, fps, prio, soft, free, _glow in ANIMS:
+        entry = _entry("anim/" + name, size, "anim", prio)
+        entry["frames"] = frames
+        entry["fps"] = fps
+        if soft:
+            entry["soft_alpha"] = True
+        if free:
+            entry["anchor"] = "free"
         out.append(entry)
     return out
 
@@ -389,6 +559,7 @@ def wallitem_height_marks(size, rnd):
 
 
 RECIPES = {"interior/" + _name: globals()[_name] for _name in PLACEHOLDERS}
+RECIPES.update(hd2d_interior_props.RECIPES)
 
 
 # --- Manifeste et scènes ------------------------------------------------------------------------------
@@ -426,9 +597,10 @@ def _num(value):
     return "0" if text in ("-0", "") else text
 
 
-def furniture_scene(name, size, depth, glow_amount):
+def furniture_scene(name, size, depth, glow_amount, image="", node_name=""):
     """Texte de la scène d'un meuble : InteriorPanel posé au milieu de son emprise (l'image au bord
     sud, image_offset), ombre sur l'emprise, boîte de collision (couche 1) sur l'emprise."""
+    image = image or "assets/hd2d/interior/props/%s.png" % name
     w_m, h_m = size[0] / float(PPM), size[1] / float(PPM)
     shadow_width = 0.9
     shadow_depth = min(2.0, max(0.05, depth / (w_m * shadow_width)))
@@ -437,12 +609,12 @@ def furniture_scene(name, size, depth, glow_amount):
         "[gd_scene format=3]",
         "",
         '[ext_resource type="Script" path="res://src/world/interior_panel.gd" id="1_panel"]',
-        '[ext_resource type="Texture2D" path="res://assets/hd2d/interior/props/%s.png" id="2_image"]' % name,
+        '[ext_resource type="Texture2D" path="res://%s" id="2_image"]' % image,
         "",
         '[sub_resource type="BoxShape3D" id="BoxShape3D_%s"]' % name,
         "size = Vector3(%s)" % _vec(*box),
         "",
-        '[node name="%s" type="Node3D"]' % name,
+        '[node name="%s" type="Node3D"]' % (node_name or name),
         'script = ExtResource("1_panel")',
         'texture = ExtResource("2_image")',
         "shadow_width = %s" % _num(shadow_width),
@@ -466,7 +638,7 @@ def furniture_scene(name, size, depth, glow_amount):
     return "\n".join(lines)
 
 
-def rug_scene(name):
+def rug_scene(name, soft=False):
     return "\n".join([
         "[gd_scene format=3]",
         "",
@@ -476,23 +648,118 @@ def rug_scene(name):
         '[node name="%s" type="Node3D"]' % name,
         'script = ExtResource("1_decal")',
         'texture = ExtResource("2_image")',
+    ] + (["soft_alpha = true"] if soft else []) + [
         "follow_ground = false",
         "",
     ])
 
 
+def object_scene(name, size, glow_amount):
+    """(T2) Objet posé sur un meuble : InteriorPanel sans ombre ni collision ; la carte le pose à
+    la hauteur du plateau, juste devant l'image du meuble."""
+    lines = [
+        "[gd_scene format=3]",
+        "",
+        '[ext_resource type="Script" path="res://src/world/interior_panel.gd" id="1_panel"]',
+        '[ext_resource type="Texture2D" path="res://assets/hd2d/interior/props/%s.png" id="2_image"]' % name,
+        "",
+        '[node name="%s" type="Node3D"]' % name,
+        'script = ExtResource("1_panel")',
+        'texture = ExtResource("2_image")',
+        "shadow_width = 0",
+    ]
+    if glow_amount > 0.0:
+        lines.append("glow = %s" % _num(glow_amount))
+    return "\n".join(lines + [""])
+
+
+def outdoor_scene(name, image, box, glow_amount=0.0, frames=1, fps=0.0, foreground=False, poles=0.0,
+                  soft=False, offset=0.0):
+    """(T2) Décor en plein air ou animé : DecorPanel (éclairé comme le dehors, bande animée,
+    premier plan) ; collision : une boîte (largeur, hauteur, profondeur) au pied de l'image, ou
+    deux poteaux à ± poles m."""
+    lines = [
+        "[gd_scene format=3]",
+        "",
+        '[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="1_panel"]',
+        '[ext_resource type="Texture2D" path="res://%s" id="2_image"]' % image,
+        "",
+    ]
+    if box:
+        lines += ['[sub_resource type="BoxShape3D" id="BoxShape3D_%s"]' % name,
+                  "size = Vector3(%s)" % _vec(*box), ""]
+    if poles:
+        lines += ['[sub_resource type="CylinderShape3D" id="CylinderShape3D_%s"]' % name,
+                  "height = 2.2", "radius = 0.1", ""]
+    lines += ['[node name="%s" type="Node3D"]' % name, 'script = ExtResource("1_panel")',
+              'texture = ExtResource("2_image")']
+    if not box and not poles:
+        lines.append("shadow_width = 0")
+    if glow_amount > 0.0:
+        lines.append("glow = %s" % _num(glow_amount))
+    if frames > 1:
+        lines += ["frames = %d" % frames, "fps = %s" % _num(fps)]
+    if foreground:
+        lines.append("foreground = true")
+    if offset:
+        lines.append("image_offset = Vector3(0, 0, %s)" % _num(offset))
+    if soft:
+        lines.append("soft_alpha = true")
+    if box or poles:
+        lines += ["", '[node name="Collision" type="StaticBody3D" parent="."]', "collision_mask = 0"]
+    if box:
+        lines += ["", '[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]',
+                  "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, %s, 0)" % _num(box[1] / 2.0),
+                  'shape = SubResource("BoxShape3D_%s")' % name]
+    for k, x in enumerate((-poles, poles) if poles else ()):
+        lines += ["", '[node name="Pole%d" type="CollisionShape3D" parent="Collision"]' % (k + 1),
+                  "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, 1.1, 0)" % _num(x),
+                  'shape = SubResource("CylinderShape3D_%s")' % name]
+    return "\n".join(lines + [""])
+
+
+def scene_path(name):
+    """Chemin (relatif à la racine) de la scène d'une image : src/world/props/<nom>.tscn pour celles
+    d'E3, src/world/props/interior/<nom>.tscn pour celles des cartes de l'entrepôt (T2)."""
+    legacy = {n for n, *_ in FURNITURE} | {n for n, *_ in RUGS}
+    folder = "src/world/props" if name in legacy else "src/world/props/interior"
+    return "%s/%s.tscn" % (folder, name)
+
+
 def cmd_scenes(force=False):
     written = 0
-    for name, size, depth, glow_amount, _prio in FURNITURE:
+    for name, size, depth, glow_amount, _prio in FURNITURE + FURNITURE_T2:
         written += _write(name, furniture_scene(name, size, depth, glow_amount), force)
+    for name, image, size, depth, glow_amount in FURNITURE_OTHER_IMAGES:
+        written += _write(name, furniture_scene(name, size, depth, glow_amount, image), force)
+    for name, size, glow_amount, _prio in OBJECTS:
+        written += _write(name, object_scene(name, size, glow_amount), force)
+    for name, _size, _prio, box in OUTDOOR:
+        written += _write(name, outdoor_scene(name, "assets/hd2d/interior/props/%s.png" % name, box), force)
+    for name, size, _prio, (width, depth) in FOREGROUND:
+        box = (width, round(size[1] / float(PPM), 3), depth)
+        text = outdoor_scene(name, "assets/hd2d/interior/props/%s.png" % name, box, foreground=True,
+                             offset=depth / 2.0)
+        written += _write(name, text, force)
+    for name, _size, glow_amount, _prio in HANGING:
+        image = "assets/hd2d/interior/props/%s.png" % name
+        written += _write(name, outdoor_scene(name, image, None, glow_amount, foreground=True), force)
+    for name, _size, frames, fps, _prio, soft, _free, glow_amount in ANIMS:
+        poles = DRYING_POLE_X if name == "drying_frame_wave" else 0.0
+        text = outdoor_scene(name, "assets/hd2d/anim/%s.png" % name, None, glow_amount, frames, fps,
+                             poles=poles, soft=soft)
+        written += _write(name, text, force)
     for name, _size, _prio, _solid in RUGS:
         written += _write(name, rug_scene(name), force)
+    for name, _size, _prio, _wrap, soft in DECALS_T2:
+        written += _write(name, rug_scene(name, soft), force)
     print("%d scène(s) écrite(s) dans src/world/props/" % written)
     return 0
 
 
 def _write(name, text, force):
-    path = os.path.join(PROPS_DIR, name + ".tscn")
+    path = os.path.join(ROOT, scene_path(name))
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     if os.path.exists(path) and not force:
         with open(path, encoding="utf-8") as handle:
             if handle.read() == text:

@@ -1,0 +1,592 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/interior_room.gd" id="2_room"]
+[ext_resource type="JSON" path="res://data/maps/entrepot_etage/interior.json" id="3_layout"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/wardrobe_plain.tscn" id="p_wardrobe_plain"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/bed_plain.tscn" id="p_bed_plain"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/footlocker.tscn" id="p_footlocker"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/desk_chtholly.tscn" id="p_desk_chtholly"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/bed_chtholly.tscn" id="p_bed_chtholly"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/wardrobe_chtholly.tscn" id="p_wardrobe_chtholly"]
+[ext_resource type="PackedScene" path="res://src/world/props/fireplace.tscn" id="p_fireplace"]
+[ext_resource type="PackedScene" path="res://src/world/props/comm_crystal.tscn" id="p_comm_crystal"]
+[ext_resource type="PackedScene" path="res://src/world/props/shelf_nygglatho.tscn" id="p_shelf_nygglatho"]
+[ext_resource type="PackedScene" path="res://src/world/props/tea_table.tscn" id="p_tea_table"]
+[ext_resource type="PackedScene" path="res://src/world/props/chair_guest.tscn" id="p_chair_guest"]
+[ext_resource type="PackedScene" path="res://src/world/props/desk_nygglatho.tscn" id="p_desk_nygglatho"]
+[ext_resource type="PackedScene" path="res://src/world/props/bed_nygglatho.tscn" id="p_bed_nygglatho"]
+[ext_resource type="PackedScene" path="res://src/world/props/rug_brown.tscn" id="p_rug_brown"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/dresser_child.tscn" id="p_dresser_child"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/desk_clean_brooch.tscn" id="p_desk_clean_brooch"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/cards_floor.tscn" id="p_cards_floor"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/clothes_floor.tscn" id="p_clothes_floor"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/clothes_chest.tscn" id="p_clothes_chest"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/stairs_down.tscn" id="p_stairs_down"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/bed_child.tscn" id="p_bed_child"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/book_pile.tscn" id="p_book_pile"]
+[ext_resource type="PackedScene" path="res://src/world/props/bookshelf_low.tscn" id="p_bookshelf_low"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/runner_rug.tscn" id="p_runner_rug"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/roof_ladder.tscn" id="p_roof_ladder"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/leak_bucket.tscn" id="p_leak_bucket"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/repair_planks.tscn" id="p_repair_planks"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/bunk_bed.tscn" id="p_bunk_bed"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/bed_child_messy.tscn" id="p_bed_child_messy"]
+[ext_resource type="PackedScene" path="res://src/world/props/plush_pile.tscn" id="p_plush_pile"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/supply_cupboard.tscn" id="p_supply_cupboard"]
+[ext_resource type="PackedScene" path="res://src/world/props/towel_shelf.tscn" id="p_towel_shelf"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/hearth_fire.tscn" id="p_hearth_fire"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/oil_lamp.tscn" id="p_oil_lamp"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/tea_tray_cheesecake.tscn" id="p_tea_tray_cheesecake"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/leak_drip.tscn" id="p_leak_drip"]
+[ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.6, 2.4, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(0.6, 2.4, 0.6)
+
+[node name="entrepot_etage" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "L'entrepôt — étage"
+region = &"entrepot"
+interior = true
+size = Vector2(32, 16)
+camera_bounds = Rect2(2, 4, 28, 6)
+light_preset = &"interieur"
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_mask = 0
+script = ExtResource("2_room")
+layout = ExtResource("3_layout")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("4_batcher")
+
+[node name="Willem" type="Node3D" parent="Geometry"]
+
+[node name="Chtholly" type="Node3D" parent="Geometry"]
+
+[node name="Nygglatho" type="Node3D" parent="Geometry"]
+
+[node name="GrandeSoeur" type="Node3D" parent="Geometry"]
+
+[node name="Tremie" type="Node3D" parent="Geometry"]
+
+[node name="Ithea" type="Node3D" parent="Geometry"]
+
+[node name="Absentes" type="Node3D" parent="Geometry"]
+
+[node name="Nephren" type="Node3D" parent="Geometry"]
+
+[node name="Couloir" type="Node3D" parent="Geometry"]
+
+[node name="DortoirA" type="Node3D" parent="Geometry"]
+
+[node name="DortoirB" type="Node3D" parent="Geometry"]
+
+[node name="Placard" type="Node3D" parent="Geometry"]
+
+[node name="Toilettes" type="Node3D" parent="Geometry"]
+
+[node name="DortoirC" type="Node3D" parent="Geometry"]
+
+[node name="Lingerie" type="Node3D" parent="Geometry"]
+
+[node name="DortoirD" type="Node3D" parent="Geometry"]
+
+[node name="wardrobe_plain_1" parent="Geometry/Willem" instance=ExtResource("p_wardrobe_plain")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 0, 1.45)
+
+[node name="bed_plain_1" parent="Geometry/Willem" instance=ExtResource("p_bed_plain")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 0, 6)
+
+[node name="footlocker_1" parent="Geometry/Willem" instance=ExtResource("p_footlocker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 0, 4.2)
+
+[node name="desk_chtholly_1" parent="Geometry/Chtholly" instance=ExtResource("p_desk_chtholly")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 1.45)
+
+[node name="bed_chtholly_1" parent="Geometry/Chtholly" instance=ExtResource("p_bed_chtholly")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 0, 4)
+
+[node name="wardrobe_chtholly_1" parent="Geometry/Chtholly" instance=ExtResource("p_wardrobe_chtholly")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.35, 0, 8.075)
+cut_offset = 0.175
+
+[node name="fireplace_1" parent="Geometry/Nygglatho" instance=ExtResource("p_fireplace")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 1.45)
+
+[node name="comm_crystal_1" parent="Geometry/Nygglatho" instance=ExtResource("p_comm_crystal")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 0, 1.35)
+
+[node name="shelf_nygglatho_1" parent="Geometry/Nygglatho" instance=ExtResource("p_shelf_nygglatho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 0, 1.35)
+
+[node name="tea_table_1" parent="Geometry/Nygglatho" instance=ExtResource("p_tea_table")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 3.5)
+
+[node name="chair_guest_1" parent="Geometry/Nygglatho" instance=ExtResource("p_chair_guest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 4.35)
+
+[node name="desk_nygglatho_1" parent="Geometry/Nygglatho" instance=ExtResource("p_desk_nygglatho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 0, 3.6)
+
+[node name="bed_nygglatho_1" parent="Geometry/Nygglatho" instance=ExtResource("p_bed_nygglatho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 0, 7.2)
+
+[node name="rug_brown_1" parent="Geometry/Nygglatho" instance=ExtResource("p_rug_brown")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 7.6)
+
+[node name="dresser_child_1" parent="Geometry/GrandeSoeur" instance=ExtResource("p_dresser_child")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.3, 0, 1.45)
+
+[node name="desk_clean_brooch_1" parent="Geometry/GrandeSoeur" instance=ExtResource("p_desk_clean_brooch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.6, 0, 1.45)
+
+[node name="bed_plain_2" parent="Geometry/GrandeSoeur" instance=ExtResource("p_bed_plain")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.65, 0, 4)
+
+[node name="cards_floor_1" parent="Geometry/GrandeSoeur" instance=ExtResource("p_cards_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.5, 0, 3.8)
+
+[node name="clothes_floor_1" parent="Geometry/GrandeSoeur" instance=ExtResource("p_clothes_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 0, 6)
+
+[node name="clothes_chest_1" parent="Geometry/GrandeSoeur" instance=ExtResource("p_clothes_chest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.8, 0, 7.5)
+
+[node name="stairs_down_1" parent="Geometry/Tremie" instance=ExtResource("p_stairs_down")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, 4)
+
+[node name="bed_child_1" parent="Geometry/Ithea" instance=ExtResource("p_bed_child")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.45, 0, 4)
+
+[node name="dresser_child_2" parent="Geometry/Ithea" instance=ExtResource("p_dresser_child")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.75, 0, 1.45)
+
+[node name="book_pile_1" parent="Geometry/Ithea" instance=ExtResource("p_book_pile")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 1.5)
+
+[node name="bed_plain_3" parent="Geometry/Absentes" instance=ExtResource("p_bed_plain")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.65, 0, 3.6)
+
+[node name="bed_plain_4" parent="Geometry/Absentes" instance=ExtResource("p_bed_plain")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.35, 0, 6)
+
+[node name="clothes_chest_2" parent="Geometry/Absentes" instance=ExtResource("p_clothes_chest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.6, 0, 1.45)
+
+[node name="bed_child_2" parent="Geometry/Nephren" instance=ExtResource("p_bed_child")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.45, 0, 4)
+
+[node name="bookshelf_low_1" parent="Geometry/Nephren" instance=ExtResource("p_bookshelf_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.05, 0, 1.4)
+
+[node name="book_pile_2" parent="Geometry/Nephren" instance=ExtResource("p_book_pile")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 6.8)
+
+[node name="runner_rug_1" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, 9.5)
+
+[node name="runner_rug_2" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, 9.5)
+
+[node name="runner_rug_3" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 12, 0, 9.5)
+
+[node name="runner_rug_4" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 16, 0, 9.5)
+
+[node name="runner_rug_5" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 20, 0, 9.5)
+
+[node name="runner_rug_6" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 24, 0, 9.5)
+
+[node name="runner_rug_7" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 26, 0, 9.5)
+
+[node name="roof_ladder_1" parent="Geometry/Couloir" instance=ExtResource("p_roof_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.45, 0, 9.1)
+
+[node name="leak_bucket_1" parent="Geometry/Couloir" instance=ExtResource("p_leak_bucket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.45, 0, 10)
+
+[node name="repair_planks_1" parent="Geometry/Couloir" instance=ExtResource("p_repair_planks")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6, 0, 8.85)
+
+[node name="bunk_bed_1" parent="Geometry/DortoirA" instance=ExtResource("p_bunk_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0, 11.2)
+
+[node name="bunk_bed_2" parent="Geometry/DortoirA" instance=ExtResource("p_bunk_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0, 14.2)
+cut_offset = 0.4
+
+[node name="bed_child_messy_1" parent="Geometry/DortoirA" instance=ExtResource("p_bed_child_messy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, 0, 14.3)
+
+[node name="dresser_child_3" parent="Geometry/DortoirA" instance=ExtResource("p_dresser_child")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4, 0, 11.1)
+
+[node name="plush_pile_1" parent="Geometry/DortoirA" instance=ExtResource("p_plush_pile")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 0, 14.45)
+
+[node name="bunk_bed_3" parent="Geometry/DortoirB" instance=ExtResource("p_bunk_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.1, 0, 11.2)
+
+[node name="bunk_bed_4" parent="Geometry/DortoirB" instance=ExtResource("p_bunk_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.4, 0, 14.2)
+cut_offset = 0.4
+
+[node name="bed_child_3" parent="Geometry/DortoirB" instance=ExtResource("p_bed_child")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 14.3)
+
+[node name="supply_cupboard_1" parent="Geometry/Placard" instance=ExtResource("p_supply_cupboard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, 14.4)
+cut_offset = 0.4
+
+[node name="bunk_bed_5" parent="Geometry/DortoirC" instance=ExtResource("p_bunk_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.6, 0, 11.2)
+
+[node name="bunk_bed_6" parent="Geometry/DortoirC" instance=ExtResource("p_bunk_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.4, 0, 14.2)
+cut_offset = 0.4
+
+[node name="bed_child_4" parent="Geometry/DortoirC" instance=ExtResource("p_bed_child")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 14.3)
+
+[node name="towel_shelf_1" parent="Geometry/Lingerie" instance=ExtResource("p_towel_shelf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0, 14.45)
+cut_offset = 0.4
+
+[node name="bunk_bed_7" parent="Geometry/DortoirD" instance=ExtResource("p_bunk_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.6, 0, 11.2)
+
+[node name="bunk_bed_8" parent="Geometry/DortoirD" instance=ExtResource("p_bunk_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.8, 0, 11.2)
+
+[node name="bunk_bed_9" parent="Geometry/DortoirD" instance=ExtResource("p_bunk_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.8, 0, 14.2)
+cut_offset = 0.4
+
+[node name="bed_child_5" parent="Geometry/DortoirD" instance=ExtResource("p_bed_child")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 14.3)
+
+[node name="hearth_fire_1" parent="Geometry/Nygglatho" instance=ExtResource("p_hearth_fire")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.1, 1.77)
+
+[node name="oil_lamp_1" parent="Geometry/Nygglatho" instance=ExtResource("p_oil_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 1.1, 4.02)
+
+[node name="tea_tray_cheesecake_1" parent="Geometry/Nygglatho" instance=ExtResource("p_tea_tray_cheesecake")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.8, 3.87)
+
+[node name="leak_drip_1" parent="Geometry/Couloir" instance=ExtResource("p_leak_drip")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.45, 0.45, 10.245)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0.2, 9.5)
+
+[node name="from_entrepot_rdc" type="Marker3D" parent="Markers"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 17.4, 0.2, 1.8)
+
+[node name="from_entrepot_toit" type="Marker3D" parent="Markers"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 28.9, 0.2, 9.5)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="vers_rdc" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, 2.35)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"entrepot_rdc"
+target_marker = &"from_entrepot_etage"
+prompt = "Descendre"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_rdc"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="vers_toit" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.7, 0, 9.3)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"entrepot_toit"
+target_marker = &"from_entrepot_etage"
+prompt = "Monter sur le toit"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_toit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_2")
+
+[node name="Examine" type="Node3D" parent="."]
+
+[node name="willem_fenetre" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 1.525)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/willem_fenetre"
+size = Vector3(1.1, 2, 0.8)
+
+[node name="willem_armoire" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 0, 1.75)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/willem_armoire"
+size = Vector3(1, 2, 0.8)
+
+[node name="chtholly_calendrier" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.45, 0, 1.525)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/chtholly_calendrier"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="chtholly_armoire" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.35, 0, 8.375)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/chtholly_armoire"
+size = Vector3(1, 2, 0.8)
+
+[node name="chtholly_miroir" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 1.75)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/chtholly_miroir"
+size = Vector3(1.1, 2, 0.8)
+
+[node name="nygglatho_cristal" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 0, 1.55)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/nygglatho_cristal"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="nygglatho_the" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 0, 1.55)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/nygglatho_the"
+size = Vector3(1.2, 2, 0.8)
+
+[node name="nygglatho_gateau" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 3.85)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/nygglatho_gateau"
+size = Vector3(0.9, 2, 0.8)
+
+[node name="grande_soeur_bureau" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.6, 0, 1.75)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/grande_soeur_bureau"
+size = Vector3(1.1, 2, 0.8)
+
+[node name="grande_soeur_cartes" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.5, 0, 3.8)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/grande_soeur_cartes"
+size = Vector3(1.5, 2, 1)
+
+[node name="ecriteau_toilettes" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.975, 0, 7.2)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/ecriteau_toilettes"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="ithea_roman" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 1.75)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/ithea_roman"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="absentes_coffre" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.8, 0, 7.75)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/absentes_coffre"
+size = Vector3(0.9, 2, 0.8)
+
+[node name="nephren_livres" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.05, 0, 1.65)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/nephren_livres"
+size = Vector3(1.4, 2, 0.8)
+
+[node name="couloir_seau" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.45, 0, 10.225)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/couloir_seau"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="couloir_trappe" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6, 0, 9)
+script = ExtResource("6_examine")
+text_key = "entrepot_etage/couloir_trappe"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="willem_fenetre" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 2.4)
+
+[node name="willem_lit" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 0, 7.2)
+
+[node name="willem_porte" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 0, 7.8)
+
+[node name="chtholly_bureau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 2.4)
+
+[node name="chtholly_calendrier" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.25, 0, 2.4)
+
+[node name="chtholly_lit" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 0, 5.1)
+
+[node name="chtholly_porte" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 7.8)
+
+[node name="nygglatho_cristal" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 0, 2.35)
+
+[node name="nygglatho_the" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2, 0, 4.7)
+
+[node name="nygglatho_bureau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 0, 4.7)
+
+[node name="nygglatho_tapis" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 7.5)
+
+[node name="grande_soeur_bureau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.6, 0, 2.4)
+
+[node name="ithea_lit" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.6, 0, 5.4)
+
+[node name="nephren_lit" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6, 0, 5.4)
+
+[node name="palier" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 4)
+
+[node name="couloir_ouest" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 9.5)
+
+[node name="couloir_fuite" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.9, 0, 9.6)
+
+[node name="dortoir_a" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, 12.6)
+
+[node name="dortoir_b" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 12.6)
+
+[node name="dortoir_c" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.8, 0, 12.8)
+
+[node name="dortoir_d" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.8, 0, 12.8)
+
+[node name="willem_lit_couche" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 0, 6)
+
+[node name="chtholly_lit_couche" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 0, 4)
+
+[node name="nygglatho_lit" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 0, 7.2)
+
+[node name="grande_soeur_lit" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.65, 0, 4)
+
+[node name="ithea_lit_couche" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.45, 0, 4)
+
+[node name="absentes_lit_1" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.65, 0, 3.6)
+
+[node name="absentes_lit_2" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.35, 0, 6)
+
+[node name="nephren_lit_couche" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.45, 0, 4)
+
+[node name="dortoir_a_lit_1_bas" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0, 11.2)
+
+[node name="dortoir_a_lit_1_haut" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0, 11.2)
+
+[node name="dortoir_a_lit_2_bas" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0, 14.2)
+
+[node name="dortoir_a_lit_2_haut" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0, 14.2)
+
+[node name="dortoir_a_lit_3" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, 0, 14.3)
+
+[node name="dortoir_b_lit_1_bas" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.1, 0, 11.2)
+
+[node name="dortoir_b_lit_1_haut" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.1, 0, 11.2)
+
+[node name="dortoir_b_lit_2_bas" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.4, 0, 14.2)
+
+[node name="dortoir_b_lit_2_haut" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.4, 0, 14.2)
+
+[node name="dortoir_b_lit_3" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 14.3)
+
+[node name="dortoir_c_lit_1_bas" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.6, 0, 11.2)
+
+[node name="dortoir_c_lit_1_haut" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.6, 0, 11.2)
+
+[node name="dortoir_c_lit_2_bas" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.4, 0, 14.2)
+
+[node name="dortoir_c_lit_2_haut" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.4, 0, 14.2)
+
+[node name="dortoir_c_lit_3" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 14.3)
+
+[node name="dortoir_d_lit_1_bas" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.6, 0, 11.2)
+
+[node name="dortoir_d_lit_1_haut" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.6, 0, 11.2)
+
+[node name="dortoir_d_lit_2_bas" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.8, 0, 11.2)
+
+[node name="dortoir_d_lit_2_haut" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.8, 0, 11.2)
+
+[node name="dortoir_d_lit_3_bas" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.8, 0, 14.2)
+
+[node name="dortoir_d_lit_3_haut" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.8, 0, 14.2)
+
+[node name="dortoir_d_lit_4" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 14.3)
+
+[node name="nygglatho_chaise_invite" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 9, 0, 4.4)
+
+[node name="chtholly_chaise" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 1.9)
+
+[node name="willem_rebord_fenetre" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2, 0, 1.6)

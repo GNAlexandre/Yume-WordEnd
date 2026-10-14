@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/warehouse_front_b.png" id="2_facade"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_planks.png" id="3_wall"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_planks.png" id="4_roof"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/warehouse_front_b_side.png" id="5_side"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(12, 6.5, 14)
+
+[node name="WarehouseFrontB" type="Node3D"]
+script = ExtResource("1_building")
+facade = ExtResource("2_facade")
+wall_texture = ExtResource("3_wall")
+roof_texture = ExtResource("4_roof")
+footprint = Vector2(12, 14)
+wall_height = 6.5
+ridge_height = 6.5
+gable_front = true
+overhang = 0.1
+window_glow = 0.6
+side_facade = ExtResource("5_side")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.25, 0)
+shape = SubResource("BoxShape3D_1")
