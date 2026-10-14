@@ -2089,6 +2089,136 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   - première tranche : l'entrepôt (dehors, dedans, vie des petites, jours 1 à 4).
   La « saison des rejetons » et la « veille du Couchant » (`MONDE.md`, section 1.1) sont retirées :
   c'étaient des inventions qui contredisent l'œuvre.
+- **E2 — format du sol en relief** (`data/maps/<map_id>/`, PLAN.md section 4) : trois images de
+  pixels purs et `map.json`. Paliers : gris de 16 en 16 (0,5 m chacun ; lisible à l'œil, 15
+  paliers par défaut, `height_step_value` et `height_zero_value` pour plus), transparent = le vide.
+  Matières : une bibliothèque commune (`data/maps/ground_materials.json`, une couleur de peinture
+  par matière), la palette de `map.json` dit lesquelles la carte emploie ; `materials_scale` (1, 2 ou
+  4 pixels par mètre) pour peindre plus fin. Escaliers, rampes et style des faces dans
+  `structures.png`. `plan.json` (rectangles, polygones, ellipses, chemins, paliers, volées) n'est lu
+  que par `tools/map_build.py gen`.
+- **E2 — escaliers praticables** : la capsule du joueur (rayon 0,35 m, sol à 45° au plus) monte
+  sans sauter une marche de moins de 0,1025 m (mesuré : 0,10 m passe, 0,11 m arrête). Les marches
+  sont donc réelles, de **0,1 m** (5 par palier, giron de 0,2 m pour une case par palier), et la
+  collision est faite d'elles (pas de rampe cachée sous l'escalier). Pente d'une volée 40° au plus.
+- **E2 — marches de 0,5 m** : se sautent (le joueur saute 1 m), les PNJ ne les passeront pas ; plus
+  haut, c'est une falaise. La règle « aucune marche de plus de 0,5 m sans escalier » vise les
+  chemins : deux cases de chemin voisines de plus d'un palier d'écart sont une erreur ; une falaise
+  hors des chemins est voulue. `map_build.py check` avertit des cases praticables hors d'atteinte du
+  départ et de celles qu'on n'atteint qu'en sautant.
+- **E2 — faces** : talus de terre jusqu'à 0,5 m, roche au-delà, muret si `structures.png` le dit ;
+  joues d'escalier en muret, de rampe en talus. Les faces tournées vers le nord (jamais vues par la
+  caméra fixe) ne sont que dans la collision. Un draw call pour le sol, un pour toutes les faces et
+  le rideau de la côte, un pour la mer de nuages.
+- **E2 — la côte** : pas en escalier ; ligne coast_value() = 0 d'un champ lisse (part de terre des
+  4 × 4 cases autour de chaque coin) plus un bruit de 0,11 (± 0,44 m), échantillonnée tous les 1/3 m
+  comme le mesh ; elle déborde d'une case sur le vide quand la terre autour est d'un seul palier.
+  Seules les cases qu'elle peut couper sont découpées. Lèvre de pierre peinte (0,1 à 0,5 m) et
+  liseré sombre au bord ; rideau de roche (lèvre, falaise, dessous qui se resserre jusqu'à 38 m) sans
+  collision ; **barrière invisible le long du vide et des bords « land »** : on ne tombe pas d'une
+  carte (une sortie se pose en deçà du bord). Mer de nuages portée par `MapGround` (`CloudSea`) quand
+  la carte touche le vide.
+- **E2 — eau dormante non praticable** (`walkable: false`) : `is_walkable` dit non et une barrière
+  invisible la borde (pixel par pixel de `materials.png`), pour que le joueur ne marche pas là où les
+  PNJ ne vont pas. Le lit de ruisseau reste praticable.
+- **E2 — prolongement** : au-delà d'un bord « land », le sol continue sur `skirt` m (16 par défaut)
+  avec les cases du bord recopiées, pour que la caméra ne voie jamais la fin du monde ; il n'est pas
+  praticable (barrière au bord de la carte).
+- **E2 — lecture des images** : `load()` de la texture importée (sans perte) puis `get_image()`,
+  comme l'atlas du sol de l'île (`IslandTerrain.mipmapped_atlas`) ; aucun réglage d'import
+  particulier. Sur le Web, `get_image()` relit la texture (WebGL 2) : à mesurer avec le chargement des
+  cartes (E1).
+- **E2 — lumière** : `MapGround` suit la première `DirectionalLight3D` de la scène au chargement
+  (ombres portées des falaises dans le shader du sol, côté chaud des nuages) ; `set_sun()` pour un
+  changement de lumière (E9).
+- **E2 — `Map` en attente** : E1 créait `src/world/map.gd` en parallèle ; la carte de démonstration
+  `essai_relief` a eu pour racine un remplaçant (`tests/stubs/e2_map_stub.gd`) jusqu'à la fusion
+  d'E1, où elle a pris `map.gd` (le remplaçant est retiré).
+- **E2 — talus de terre** : image provisoire `assets/hd2d/cliff/bank_earth.png` (384 × 96, recette
+  dans `tools/hd2d_ground.py`) ; le muret reprend `wall_stone_b.png`, la roche `lip.png` et
+  `cliff.png`.
+- **E2 — mesures** (carte de 80 × 60 m, `tests/data/maps/mesure_80x60`, lecture comprise, sans
+  écran) : 35 à 40 ms ; sol 3 881 triangles, faces 5 648, collision 4 097, barrière 2 284. Carte de
+  démonstration (60 × 45 m) : 33 ms à chaud ; sol 2 358 triangles, faces 3 272 ; 14 à 26 draw calls
+  par vue avec ses décors (3 pour le sol).
+- **E3 — format des intérieurs** : un étage = une carte, décrit dans
+  `data/maps/<map_id>/interior.json` (pièces en rectangles sur la grille d'un mètre, matières par
+  pièce, portes, fenêtres, éléments de mur, lampes ; `docs/INTERIEURS.md`), lu et vérifié par
+  `InteriorLayout`. Les murs se déduisent des pièces (un mur entre deux cases de pièces
+  différentes, le vide compris), centrés sur la ligne de grille, 0,25 m d'épais (la profondeur
+  d'un `wallcut_*`) ; aux angles, le mur nord-sud porte le poteau, un mur est-ouest s'arrête contre
+  lui. Une porte praticable troue le mur sous un linteau ; une porte fermée (`passable: false`)
+  garde le mur et pose son image. Portes et éléments à 0,175 m au moins d'un angle.
+- **E3 — rien ne cache le joueur** : la *ligne de coupe* est la première limite de pièce au sud de
+  la case du joueur, dans sa colonne (porte comprise) ; ce qui est au sud de la ligne moins 0,3 m
+  n'est dessiné que sous 0,15 m (murs, portes, fenêtres, éléments) ou 1 m (meubles
+  `InteriorPanel`, `cut_height`) : le mur sud de la pièce n'est jamais dessiné, la pièce reste
+  close à l'est, à l'ouest et au nord. Une coupe par z seulement aurait laissé les cloisons
+  nord-sud cacher le joueur dans leurs portes (vues par la tranche) : *colonne de coupe* de la
+  cloison qui passe sous le joueur, sur 4,5 m au sud de lui. La ligne glisse à 14 m/s (pas de
+  saut à la porte), saute au-delà de 9 m (arrivée). Dans le shader : `discard` au-dessus de la
+  hauteur gardée, tranche des murs coupés en `section_color` (faces arrière). Vérifié par
+  `test_interior_entrepot.gd` depuis 6 791 cases (grille de 0,25 m), 3 points du corps, caméra
+  bornée comme `CameraRig.limits`.
+- **E3 — lumière des intérieurs** : aucune lumière du moteur (en Compatibility, chaque lumière
+  ponctuelle compte par objet, huit au plus par mesh fondu, et traverse les murs) : deux cartes de
+  lumière vues de dessus (4 texels par mètre, RGBA8 × 2), le jour des fenêtres et les lampes,
+  bornées à la pièce de leur source, ajoutées en émission (albedo × lumière) aux sols, murs,
+  panneaux et meubles ; plus faibles en haut des murs. Préréglage `interieur`
+  (`src/world/materials/lighting_interieur.tres`, `HD2DLighting` : ambiance chaude 0,34, soleil
+  0,38, vignettage 0,45). Moment de la journée : `InteriorRoom.apply_phase` (morning, day,
+  evening, night : teinte et énergie du jour, énergie des lampes), branchée sur
+  `EventBus.day_phase_changed` ; la lueur des vitres suit le jour, celle des appliques et du
+  fourneau suit les lampes. Vide autour du bâtiment : un sol presque noir (`VOID_COLOR`).
+- **E3 — meubles** : `InteriorPanel` (sous-classe de `DecorPanel`, donc racine valide d'un décor) :
+  nœud au milieu de l'emprise, image au bord sud (`image_offset`), ombre et boîte de collision sur
+  l'emprise ; matériau des intérieurs partagé par image (le `PropBatcher` les fond : coordonnée de
+  coupe et hauteur gardée dans UV2). Scènes écrites par `tools/hd2d_interior.py scenes` dans
+  `src/world/props/` (sans méta de catégorie : `test_hd2d_decor` leur demande une collision).
+  Règle de pose : au-delà d'1 m, contre un mur nord ; au milieu d'une pièce, profondeur
+  d'emprise ≥ (h − 0,25) / 0,78 − 0,35 m (pente du regard de la caméra) ; d'où la chaise à
+  0,65 m. Dans les 5 m nord d'un étage, la caméra butée sur `camera_bounds` voit plus à plat : on
+  n'y laisse derrière un meuble haut que moins de 0,7 m (chaises du réfectoire contre le mur
+  nord). Un meuble plaqué au mur (emprise < 0,3 m : le grand miroir) est coupé comme le mur
+  (`cut_height` 0,15), sinon son mètre gardé cache le joueur de l'autre côté du mur.
+- **E3 — images du lot I** (après la livraison réelle, PR #21) : au manifeste avec `lot: "I"`,
+  75 images à leur taille réelle (12 matières, 4 portes, 3 fenêtres, 12 éléments de mur,
+  42 meubles, 2 tapis de `assets/hd2d/decals/`) : les images livrées qu'emploie la carte d'essai
+  et 6 remplaçants pour les noms encore absents (`floor_flagstone_cellar`, `wall_cellar_stone`,
+  `wallcut_stone`, `door_armory`, `wallitem_height_marks`, et `door_frame_wood`, hors cahier).
+  Les remplaçants doublons d'une image livrée sous un autre nom sont retirés avec leurs scènes ;
+  `tools/hd2d_interior.py` ne dessine plus que les remplaçants, jamais une image livrée.
+  `test_hd2d_assets.gd` lit aussi `docs/ASSETS_HD2D_SUKASUKA.md` (qui écrit les chemins
+  complets) et accepte `solid_edge` sur tout bord, comme `tools/hd2d_assets.py check`
+  (`rug_brown` touche le bord bas). `tools/hd2d_scenes.py`, `test_hd2d_scenes.gd` et le compte des
+  45 décalques ne portent que sur les lots A à G du cahier n° 2.
+- **E3 — portes qu'on franchit** : image à ouverture transparente (`door_frame_wood`) ou aucune ;
+  `door_room` et `door_room_open` (battant ou embrasure opaques) cacheraient le joueur sur le seuil
+  avant que la coupe ne passe : réservées aux portes fermées (`passable: false`).
+- **E3 — carte d'essai** `entrepot_rdc_essai` (40 × 24 m) : couloir en L, réfectoire, cuisine,
+  salle de lecture, archives, descente vers la salle des armes (porte rivetée fermée), salle de
+  bains, infirmerie, entrée, salle de jeux, chambre de Nygglatho (d'après `v1_vex.md` et
+  `v2_v3.md`, rubrique 3, et `docs/ASSETS_HD2D_SUKASUKA.md`, 3.17 ; la chambre de Nygglatho au
+  rez-de-chaussée, près de l'entrée : emplacement original, à revoir avec les lieux de D2), meublée
+  des images livrées. `camera_bounds` =
+  Rect2(2, 5, 36, 14) : en x tout le bâtiment, la caméra reste au droit du joueur (le
+  `Rect2(10, 9, L − 20, P − 17)` des cartes du dehors la décalerait, et une cloison nord-sud
+  cacherait le joueur en biais). Après la fusion avec E1 : racine `Map`, sortie `MapExit`
+  « vers_entrepot » franchie en marchant par la porte d'entrée, vers le `Spawn` de
+  `ile_ancienne` tant que la carte `entrepot` (le dehors) n'existe pas ; la sortie « Descendre »
+  de la porte rivetée attend la carte `entrepot_crypte` (marqueur `from_entrepot_crypte` déjà
+  posé) : `test_maps.gd` demande des cibles qui existent.
+- **E3 — lumière d'une carte intérieure** (en attendant E9, comme `map_light.tscn` dehors) :
+  enfant `Light`, instance de `src/world/interior_light.tscn` (WorldEnvironment au fond uni
+  `VOID_COLOR`, Sun) qui pose le préréglage `interieur` à l'entrée et rend le réglage par défaut
+  (couchant) à l'étalonnage de la caméra et aux personnages en partant, par la carte (ses enfants
+  ont déjà quitté l'arbre) : les cartes du dehors supposent ce réglage.
+- **E3 — caches** : matériaux et meshes partagés des panneaux d'intérieur en références faibles
+  (comme ceux de `DecorPanel` depuis E1) ; uniformes partagés (cartes de lumière, coupe) oubliés
+  quand la pièce qui les a posés part.
+- **E3 — requêtes du sol** : `InteriorRoom` répond aux mêmes questions que `MapGround` (E2) :
+  `height_at`, `material_at` (nom de l'image du sol), `is_walkable` (dans une pièce, hors des
+  murs ; les meubles ne comptent pas) et `room_at`, en coordonnées de la carte.
 - **C3 — cahier des images n° 3** (`docs/ASSETS_HD2D_SUKASUKA.md`, d'après `docs/REFONTE.md`,
   sections 8 et 8.1) : 404 images, 90 planches et 2 portraits en six lots (I à N), lot J au-delà
   de l'ordre de grandeur (80 planches au lieu de 40 à 60) pour être exhaustif, priorités 1 à 3 ; les
@@ -2177,9 +2307,23 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `IslandTerrain` et `IslandRock`, maillages et atlas du sol, et les planches des PNJ de
   `SheetLoader`) ; nœuds, objets et ressources identiques d'une visite à l'autre. Revers : l'île
   se recharge de zéro à chaque retour (1,5 s sous Xvfb au lieu de 0,3 s).
+- **D2 — lieux, acte 1 et vie** (`docs/lore/CARTE.md`, `ACTE1.md`, `VIE.md`) : la côte nord porte le port, le village et la colline des étoiles (la caméra regarde le nord, le vide doit y être), l'entrepôt est au cœur de la forêt, la ville au sud-est, la forêt profonde et la montagne au sud ; l'entrepôt fait 30 × 14 m sur deux niveaux (un toit-terrasse à linge à l'est) et toutes les cartes sont vérifiées par un script hors dépôt ; l'acte 1 tient en douze jours (mission des aînées ramassée en un jour, départ le jour 12, comptes de jours non chiffrés à l'écran) ; hors des scènes, Chtholly porte un bâton, pas Seniorious ; un animal vaincu s'enfuit.
 - **Budget Web relevé de 100 à 150 Mo compressés** (cahier n° 3 ; même choix de l'utilisateur : la
   qualité avant le poids, le bureau d'abord). Les lots I et J de priorité 1 (PR n° 21 et 22) portent
   l'export Web à 101,3 Mo compressés (wasm 9,7 Mo, pck 91,6 Mo) : `main` était rouge sur la seule
   étape de taille, les 877 tests passaient. Le reste du cahier n° 3 ajoutera encore des images :
   la version Web allégée (WebP avec perte pour le seul export Web, ou un pck par lieu chargé à la
   demande) est à mesurer en phase 5 de la refonte, sans toucher au bureau.
+- **E2 — décalques sur les cartes** : `GroundDecal.follow_ground` drape sur le `MapGround` (enfant
+  `Ground`) du premier ancêtre qui en a un, par `MapGround.triangles_in` (même forme que
+  `IslandTerrain.triangles_in`, coordonnées de la carte décalées de sa position) ; sans `MapGround`,
+  il suit `IslandTerrain` comme avant (île ancienne). Les décalques d'une carte en relief gardent
+  donc `follow_ground` vrai (nénuphars d'`essai_relief`, décalque d'essai sur la rampe dans les tests).
+- **E2 — matériau des faces partagé** : `MapGround.cliff_material()` est gardé par une référence
+  faible (règle d'E1 : une carte quittée libère ses images) ; le sol se bâtit à `_ready`, ou plus
+  tôt à la première question (`triangles_in` d'un décalque prêt avant lui).
+- **E2 — mesures dans la vraie partie** (`game.tscn` + `WorldManager.enter_map(&"essai_relief")`,
+  Xvfb, `tests/integration/demo_e2_relief.gd`) : 24 à 33 draw calls par vue (sol 1, faces 1, mer de
+  nuages 1 ; le reste : décors, joueur, interface, post-traitement) ; construction du sol 36 à 60 ms
+  à froid avec le rendu (33 ms à chaud sans écran). La vue « large » est au zoom le plus éloigné
+  du jeu (`max_distance` 25 m) ; la carte entière se voit par `tools/map_build.py view`.

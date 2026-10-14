@@ -1,5 +1,15 @@
 # L'histoire et les quêtes de WordEnd
 
+> **Avertissement (refonte d'octobre 2026).** L'acte 1 de ce document est **dépassé** : il est
+> remplacé par `docs/lore/ACTE1.md` (l'acte 1 en douze jours et en scènes), qui remplace toute
+> la **section 3** (la quête `act1_main`, les quêtes secondaires, les emplacements, les drapeaux).
+> Les lieux sont dans `docs/lore/CARTE.md`, la vie de l'île dans `docs/lore/VIE.md`, le cap de
+> la refonte dans `docs/REFONTE.md`. Sont faux et barrés ou corrigés sur place : la saison des
+> rejetons et les Timeres de l'acte 1 (sections 2, 3 et 7.2), la veille du Couchant et ses
+> dunes (sections 2 et 3), le bourg réduit à la rue du port (section 5.3). Les actes 2 à 4
+> (sections 2 et 4), les personnages (5), le guide de ton (8) restent valables, sous réserve de
+> la refonte. L'ancienne île et ses quêtes restent jouables jusqu'à la phase 5.
+
 Document de direction narrative (phase B de `docs/lore/PLAN.md`) : arc principal, quêtes,
 personnages, objets, ennemis, guide de ton et développements nécessaires. Le cadre, la carte et les
 lieux sont dans [MONDE.md](MONDE.md) ; le joueur y est défini (section 1.2) : **la fée qui porte
@@ -37,7 +47,7 @@ avec les briques du moteur de quêtes (format complet : `docs/QUETES.md`) :
 
 | Acte | Jalon | Volumes | Lieux | Fil | Se termine sur |
 | --- | --- | --- | --- | --- | --- |
-| 1 « Dans la forêt céleste » | M2 | V1 (+ VEX, 2e épisode) | île n° 68 | l'arrivée de Willem, la saison des rejetons, la veille, la promesse | la nuit de la promesse, veille du départ |
+| 1 « Dans la forêt céleste » | M2 | V1 (+ VEX, 2e épisode) | île n° 68 | l'arrivée de Willem, ~~la saison des rejetons, la veille,~~ la promesse | ~~la nuit de la promesse, veille du départ~~ le départ au couchant (`ACTE1.md`) |
 | 2 « Le chemin du retour » | M3 | V2 | îles n° 15, 11, 68 | la bataille de l'île n° 15, Collina di Luce, le retour, le coma | « Bienvenue à la maison » |
 | 3 « Le rayonnement actuel » | M4 | V3 | îles n° 68 et 49, la surface | le gâteau promis, l'oubli, Gomag, la dernière bataille | Tiat et la broche, deux semaines après |
 | 4 « La relève » | M5 | V4, V5 (+ VEX, 1er épisode, en bonus) | Gomag en rêve, île n° 11, île n° 68 | le rêve de Gomag, Collina di Luce, Lakhesh et Seniorious | des années plus tard, un retour à l'entrepôt |
@@ -48,16 +58,22 @@ Titre repris du chapitre 2 du volume 1. Il remplace la tranche verticale actuell
 principale, avec les cinq zones existantes. Le matin qui suit la nuit du grand vent, l'aînée de
 l'entrepôt fait la connaissance du nouvel officier responsable, l'homme sans traits croisé au Market
 Medley de l'île n° 28 (V1, chap. « Le chat qui filait et la jeune fille », « L'Homme sans Marque »).
-Le vent a aussi semé des rejetons de Timere dans les bois **(original)** : elle les abat, ramène
-Pannibal partie les « embusquer », puis tient la première veille au bord du Couchant. La fièvre du
+~~Le vent a aussi semé des rejetons de Timere dans les bois **(original)** : elle les abat, ramène
+Pannibal partie les « embusquer », puis tient la première veille au bord du Couchant.~~ La fièvre du
 venenum lui fait avouer ce qu'elle cachait : dans cinq jours, elle part pour l'île n° 15 et ne
 compte pas revenir (V1, chap. « Les valeureux et leurs successeurs »). Willem la bat sans effort au
 terrain d'entraînement, lui dit qu'elle peut devenir plus forte et qu'elle doit donc revenir, puis
 chancelle ; seule au bord de l'île, elle est recueillie par le Barocupot, où Limeskin lui parle de
 résolution et de résignation (V1, chap. « La fille errante et le lézard volant »). La nuit, sur la
 colline, Willem règle Seniorious et promet un gâteau au beurre si elle revient (V1, chap. « Le ciel
-étoilé sous le ciel étoilé »). Entre ces étapes, six quêtes secondaires tirées du quotidien de
-l'entrepôt. Après la promesse, M2 reste jouable : ce sont les derniers soirs avant le départ.
+étoilé sous le ciel étoilé »). ~~Entre ces étapes, six quêtes secondaires tirées du quotidien de
+l'entrepôt. Après la promesse, M2 reste jouable : ce sont les derniers soirs avant le départ.~~
+
+**Corrigé (refonte, lot D2)** : l'acte 1 commence la nuit de l'arrivée de Willem (le joueur cherche
+Pannibal sur le sentier et trouve Willem au marais) et finit au départ des trois aînées, au couchant
+du jour 12 ; aucun rejeton, aucune veille, aucun Timere sur l'île n° 68 (dossier `canon/v1_vex.md`,
+rubrique 7) ; le duel a lieu dans la cour, la fugue mène au Barocupot dans les nuages, pas au port ;
+les quêtes secondaires deviennent des scènes et des moments de vie. Tout est dans `ACTE1.md`.
 
 ### Acte 2 — « Le chemin du retour » (M3, volume 2)
 
@@ -87,7 +103,8 @@ Rhantolk, Desperatio, le cercueil de glace, la marée de Timere de 18 h 26 à 18
 Nephren et de Willem, le dernier retour accordé par Elq et la dernière bataille avec Desperatio
 (SPOILER V3). L'épilogue se joue en Tiat, qui s'entraîne avec la broche. Particularité : le joueur
 n'a plus d'épée jusqu'à la fin (il porte, guide, lance l'huile, se cache). M4 relie le jeu à
-yumenovel.fr : classement des veilles du Couchant (jamais de classement sur la dernière bataille),
+yumenovel.fr : ~~classement des veilles du Couchant~~ (corrigé : il n'y a plus de veille ; un
+classement, s'il existe, suivra l'arène de l'acte 2) (jamais de classement sur la dernière bataille),
 verrou de lecture par volume.
 
 ### Acte 4 — « La relève » (M5, volumes 4 et 5)
@@ -100,6 +117,14 @@ l'épilogue des années plus tard (SPOILER V5). Bonus du volume EX : les rêves 
 joue Lillia **(original, d'après le VEX)**. Après M5 : la suite de la série quand Yume la traduira.
 
 ## 3. Acte 1 : fiche de production (M2)
+
+> **Corrigé (refonte, lot D2)** : **toute cette section est remplacée par `docs/lore/ACTE1.md`.**
+> Elle décrit la quête de l'ancienne île, encore jouable jusqu'à la phase 5 (ses fichiers
+> `data/quests/` et ses tests restent tels quels jusque-là). Y sont faux : les rejetons de Timere
+> (étapes `to_the_woods`, `rejetons`), la veille du Couchant et l'arène des dunes (`report`,
+> `first_vigil`, `vigil_register`), le bord du Couchant (`the_edge`), le Barocupot au port
+> (`barocupot`), les myosotis de la colline (`forget_me_nots`). La correspondance des étapes avec
+> les scènes est dans `ACTE1.md`, section 5.
 
 Tout se produit avec les briques du moteur. Coordonnées **locales à la zone** (celles des fichiers
 `src/npc|enemies|items/placements/<zone>.tscn`), y = hauteur du sol. Les identifiants techniques
@@ -616,6 +641,8 @@ et or, volEX.md image1).
   voyageurs. Ce sont des hommes-bêtes (lycanthropes, hommes-chats, lézards, boggarts, orcs, trolls,
   sang-mêlés de mouton, de cerf, de lapin…) : un trait animal visible est obligatoire, car les sans
   traits sont rares et mal vus (V1, chap. « Le chat qui filait et la jeune fille »).
+  **Corrigé (refonte, lot D2)** : pas de « bourg » réduit à la rue du port : les habitants vivent au
+  village voisin de l'entrepôt, en ville et au port (`CARTE.md`, 5, 6 et 9 ; `VIE.md`, 2.6 et 2.7).
 - Chaque dessin de membre suit la règle de `PLAN.md`, section 5 : accord écrit, ligne dans
   `assets/characters/CREDITS.md`.
 
@@ -689,6 +716,11 @@ débloque en réglant l'épée, pas des objets : ils font partie de Seniorious.
 
 ### 7.2 Les quatre corps de l'acte 1
 
+**Corrigé (refonte, lot D2)** : **pas de Timere à l'acte 1** (dossier `canon/v1_vex.md`, rubrique 7
+; `docs/REFONTE.md`, 5). Les quatre corps, leurs données (`data/enemies/timere_*.tres`) et l'arène à
+vagues passent à l'acte 2 (île n° 15) ; les ennemis de l'acte 1 sont des animaux (`data/fauna/`,
+`VIE.md`, 6 ; `ACTE1.md`, 3.5). Le tableau ci-dessous vaut pour les noms affichés de l'acte 2.
+
 Mêmes données (`data/enemies/timere_*.tres`), mêmes chiffres, nouveaux noms affichés. À l'acte 1,
 les noms restent au niveau du volume 1 (des fragments plus ou moins gros) ; les formes décrites par
 les volumes 2 et 3 n'arrivent qu'avec leurs actes :
@@ -701,8 +733,8 @@ les volumes 2 et 3 n'arrivent qu'avec leurs actes :
 | `timere_big` | Grand fragment de Timere | plus un fragment est gros, plus il est dangereux (V1) | masse à lianes, carapace (V2, « Chasseur d'âmes — A ») | fouet long, ne recule que sous l'onde |
 
 Variantes visuelles pour les actes 2 et 3 : pattes en ressort, lianes, carapace (une planche de
-plus au même format, mêmes animations). La veille garde ses vagues et ses points ;
-dans les bois, les rejetons ne lâchent plus d'objets.
+plus au même format, mêmes animations). ~~La veille garde ses vagues et ses points ;
+dans les bois, les rejetons ne lâchent plus d'objets.~~
 
 ### 7.3 Ennemis des actes suivants
 

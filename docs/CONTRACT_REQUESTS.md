@@ -490,3 +490,75 @@ Ajoute ta demande en bas (fusion par union entre lots), au format :
   reposer sur la nouvelle. Le garde-corps et les bittes du quai ne bougent pas.
 - La cascade (`Island/Waterfall`) tombe désormais au bout du lit du ruisseau, en (−62,1 ; −62,4)
   (`IslandEdge.WATERFALL_ANGLE`) : l'image `edge_waterfall` se pose là, sous la lèvre.
+
+## E2 — sol en relief des cartes (pour E1, E9, E10 et le propriétaire de `GroundDecal`)
+- **E1 (fusion)** — *fait par E2 à la fusion d'E1* : `essai_relief.tscn` a pour racine
+  `res://src/world/map.gd`, le remplaçant `tests/stubs/e2_map_stub.gd` est retiré, et la carte
+  passe `tests/unit/test_maps.gd`. Son `Ground` est un `MapGround` qui lit `data/maps/<nom de la Map>/`.
+- **E1** — *fait par E1* (`CameraRig.limits` ← `WorldManager.camera_bounds()`). Reste à savoir :
+  une sortie `MapExit` d'une carte extérieure se pose en deçà du bord, une barrière invisible
+  (couche 1) borde la carte sur ses bords « land » et le long du vide.
+- **E1 / H8** : mesurer le chargement d'une carte en relief dans le build Web (lecture des images
+  par `Texture2D.get_image()`, construction : 35 à 40 ms sans écran pour 80 × 60 m).
+- **`GroundDecal.follow_ground`** (src/world/ground_decal.gd) — *fait par E2, avec l'accord du
+  coordinateur* : il drape sur le `MapGround` de sa carte (`MapGround.triangles_in`), sinon sur
+  `IslandTerrain`. Seule retouche de `ground_decal.gd` (`_ground_triangles`) ; ses caches restent
+  à E1.
+- **E9** : quand la lumière change (moment de la journée, préréglage d'une carte), appeler
+  `MapGround.set_sun(direction vers le soleil)` ; au chargement, `MapGround` suit la première
+  `DirectionalLight3D` de la scène (ombres portées des falaises dans le shader du sol).
+- **E4 / E5 (navigation)** : `MapGround.is_walkable(x, z)` (eau dormante exclue, vide exclu),
+  `height_at`, `level_at` ; les PNJ ne sautent pas les marches de 0,5 m (`tools/map_build.py check`
+  dit lesquelles ne s'atteignent qu'en sautant).
+## E3 — intérieurs (cartes : E1 ; lumière : E9 ; sol : E2)
+- Fait à la fusion avec E1 (commit 7c13393) : racine `Map`, sortie `MapExit`, stubs locaux
+  retirés ; `test_maps.gd` vert pour `entrepot_rdc_essai`.
+- Sorties de l'étage d'essai à rebrancher quand les cartes existeront : `vers_entrepot` vise le
+  `Spawn` de `ile_ancienne` (à faire viser `entrepot` / `from_entrepot_rdc_essai`) ; la porte rivetée
+  (`id` « crypte », `door_position(&"crypte")`) recevra sa `MapExit` « Descendre » vers
+  `entrepot_crypte` / `from_entrepot_rdc_essai` (marqueur d'arrivée `from_entrepot_crypte` déjà
+  posé). Pour y entrer depuis la partie : une sortie dans `ile_ancienne` (porte de l'entrepôt du
+  village) vers `entrepot_rdc_essai` / `from_ile_ancienne`, si E1 la veut avant la carte
+  `entrepot` (sinon `WorldManager.enter_map(&"entrepot_rdc_essai")` et la démo).
+- E9 : `light_preset = &"interieur"` désigne `src/world/materials/lighting_interieur.tres`
+  (`HD2DLighting`), posé pour l'instant par l'enfant `Light` de la carte
+  (`src/world/interior_light.tscn`). Le moment de la journée d'un intérieur passe par
+  `InteriorRoom.apply_phase(phase)` (déjà branchée sur `EventBus.day_phase_changed`),
+  `set_daylight(teinte, énergie)` et `set_lamps(énergie)` ; fond des intérieurs :
+  `InteriorRoom.VOID_COLOR` (aucun ciel n'est visible).
+- E2 : `InteriorRoom` offre `height_at`, `material_at`, `is_walkable` (et `room_at`) comme
+  `MapGround` ; à garder alignés si leurs signatures changent.
+- Cahier n° 3 (lot I, `docs/ASSETS_HD2D_SUKASUKA.md`, 3.2) : ajouter `door_frame_wood`
+  (126 × 221, porte : chambranle de bois seul, seuil usé, **ouverture de 1,1 × 2,2 m
+  transparente**) pour les portes qu'on franchit : `door_room` et `door_room_open` sont opaques et
+  cacheraient le joueur sur le seuil. En attendant : remplaçant de `tools/hd2d_interior.py`, comme
+  `floor_flagstone_cellar`, `wall_cellar_stone`, `wallcut_stone`, `door_armory` et
+  `wallitem_height_marks` (prio 2, pas encore livrées).
+- Lieux (D2) : la carte d'essai pose la chambre de Nygglatho au rez-de-chaussée, près de l'entrée
+  (emplacement original) ; la vraie carte de l'entrepôt suivra le plan de D2.
+- Budget de l'export Web (PLAN.md, section 9 ; `tools/build_size.sh`, 100 Mo compressés) :
+  `origin/main` (db96511, livraison réelle des lots I et J) le dépasse déjà seul (wasm + pck :
+  101,3 Mo compressés, mesuré sur une copie de main) ; la branche E3 y ajoute 0,1 Mo (101,4 Mo).
+  `tools/check.sh` est donc rouge à l'export pour toute branche fusionnée avec main, quoi qu'elle
+  fasse. À trancher hors E3 : relever le budget, ou ne plus exporter les images que rien
+  n'emploie encore (`export_presets.cfg`, PR « contrats »), ou alléger les images livrées.
+- (Orchestrateur) Budget de l'export Web : **tranché**, relevé à 150 Mo compressés (PR n° 23,
+  `docs/DECISIONS.md`, « Budget Web relevé de 100 à 150 Mo »).
+## D2 — images et planches que les documents de lieux demandent (cahier n° 3)
+
+Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le cahier n° 3
+(`docs/ASSETS_HD2D_SUKASUKA.md`) :
+
+- **Sept noms proposés** par `docs/lore/CARTE.md` (section 12.1), à ajouter au cahier avant toute
+  commande : les façades et flancs de l'entrepôt de 30 × 14 m (`buildings/warehouse_front_a`,
+  `warehouse_front_b`, `warehouse_front_a_side`, `warehouse_front_b_side`), l'échelle du toit
+  (`interior/props/roof_ladder`), le bureau de la grande sœur sans la broche
+  (`interior/props/desk_clean`) et le bureau de Chtholly au miroir relevé
+  (`interior/props/desk_chtholly_mirror_up`). Tailles et consignes dans la section 12.1.
+- **Des gestes `travaille`** pour les habitants déjà livrés (`snack_vendor` : la poêle ;
+  `cat_waiter` : le balai ; `baker`) et un geste au marteau pour Willem (le plafond qui fuit),
+  que `docs/lore/VIE.md` (section 2) et `docs/lore/ACTE1.md` (scènes 3.3 et 12.1) utilisent avec un
+  repli.
+- **Les planches de l'acte 1 encore à livrer**, par ordre d'usage dans `ACTE1.md` :
+  `chtholly_pajamas` (jour 9), `nygglatho_labcoat` (jour 7), `kana` et `giniette` (jour 10), les
+  planches de bâton `_stick` (jours 9 à 11, après accord du lot E8 sur `pare`).

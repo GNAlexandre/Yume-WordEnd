@@ -8,7 +8,9 @@ extends Node3D
 ##
 ## - Couché sur le relief de l'île : le mesh reprend exactement les triangles du sol sous lui
 ##   (IslandTerrain.triangles_in, découpés au bord du décalque), leurs normales comprises : il
-##   reçoit la lumière comme le sol ; follow_ground faux : à plat à la hauteur du nœud.
+##   reçoit la lumière comme le sol ; follow_ground faux : à plat à la hauteur du nœud. (E2) Sur
+##   une carte extérieure, ce sont les triangles de son sol en relief (MapGround.triangles_in : le
+##   nœud « Ground » de la carte qui porte le décalque).
 ## - Rotation libre autour de Y et échelle (x, z) du nœud, flip_h : la même image varie.
 ## - Jamais de scintillement : le shader tire le décalque vers la caméra (au-dessus du sol), plus
 ##   par couche (layer : les plus hautes dessus) et d'une part propre à l'exemplaire (UV2) ; les
@@ -120,7 +122,7 @@ func draped_mesh() -> ArrayMesh:
 		var bounds := Rect2(corners[0], Vector2.ZERO)
 		for corner in corners:
 			bounds = bounds.expand(corner)
-		var ground := IslandTerrain.triangles_in(bounds)
+		var ground := _ground_triangles(bounds)
 		points = ground[0]
 		normals = ground[1]
 	else:
@@ -142,6 +144,24 @@ func draped_mesh() -> ArrayMesh:
 				st.set_uv2(extra)
 				st.add_vertex(corner[0])
 	return st.commit()
+
+
+## (E2) Triangles du sol sous bounds (plan x, z du monde) : ceux du sol en relief (MapGround) de la
+## carte qui porte le décalque, sinon ceux de l'île (IslandTerrain) ; [sommets, normales].
+func _ground_triangles(bounds: Rect2) -> Array[PackedVector3Array]:
+	var node := get_parent()
+	while node != null:
+		var ground := node.get_node_or_null(^"Ground") as MapGround
+		if ground != null:
+			var offset := ground.global_position
+			var local := Rect2(bounds.position - Vector2(offset.x, offset.z), bounds.size)
+			var found := ground.triangles_in(local)
+			var points: PackedVector3Array = found[0]
+			for n in points.size():
+				points[n] += offset
+			return [points, found[1]]
+		node = node.get_parent()
+	return IslandTerrain.triangles_in(bounds)
 
 
 ## Matériau partagé d'une image (ground_decal.gdshader ou, doux, ground_decal_soft.gdshader, à

@@ -1,0 +1,35 @@
+{
+  "_comment": "Sol en relief de la carte essai_relief, écrit par tools/map_build.py gen d'après plan.json avec heights.png, materials.png et structures.png : modifier le plan et relancer gen (format : PLAN.md, « Format du sol des cartes extérieures »).",
+  "format": "map_ground",
+  "version": 1,
+  "size": [60, 45],
+  "heights_image": "heights.png",
+  "height_step_value": 16,
+  "materials_image": "materials.png",
+  "materials_scale": 2,
+  "palette": {
+    "#9a8a7a": "roche",
+    "#a8b040": "herbe_haute",
+    "#5aa83c": "herbe",
+    "#3c6e32": "sous_bois",
+    "#e0b070": "sentier",
+    "#c070c0": "prairie",
+    "#b0602a": "feuilles",
+    "#c89a5a": "terre_battue",
+    "#504020": "tourbe",
+    "#6a4a2a": "boue",
+    "#b4b4a0": "dalles",
+    "#3060c0": "eau",
+    "#403020": "potager"
+  },
+  "edges": {
+    "north": "void",
+    "east": "land",
+    "south": "land",
+    "west": "land"
+  },
+  "skirt": 16,
+  "barrier": true,
+  "structures_image": "structures.png",
+  "spawn": [31, 42]
+}

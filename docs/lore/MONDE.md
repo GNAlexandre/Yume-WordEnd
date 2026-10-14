@@ -1,5 +1,17 @@
 # Le monde et la carte de WordEnd
 
+> **Avertissement (refonte d'octobre 2026).** Ce document décrit l'**ancienne île** du jeu,
+> en cinq zones (`village`, `forest`, `dunes`, `beach`, `hill`), qui reste jouable jusqu'à la
+> phase 5 de la refonte. Là où il contredit les dossiers du canon (`docs/lore/canon/`), il est
+> **dépassé** : la refonte est décrite dans `docs/REFONTE.md`, les lieux de l'île n° 68 dans
+> `docs/lore/CARTE.md`, l'acte 1 en jours et en scènes dans `docs/lore/ACTE1.md`, la vie de
+> l'île dans `docs/lore/VIE.md`. Les erreurs sont barrées ou corrigées sur place, sans
+> réécrire le reste : la saison des rejetons et les Timeres de l'acte 1 (1.1, 2.1, 2.3, 2.9),
+> la veille du Couchant et les dunes (1.1, 2.1, 2.4, 2.9), les bornes de l'acte 1 (1.3), le
+> bourg réduit à la rue du port (1.6, 2.2, 2.5), les lampadaires (2.2, 2.5, 2.9). Restent
+> valables : le cadre (1.1, hors les passages barrés), le joueur (1.2), le ton (1.4), le canon
+> et les spoilers (1.5).
+
 Document de direction narrative (phase B de `docs/lore/PLAN.md`) : cadre du jeu, carte de l'île
 principale, décors à produire, destinations des jalons suivants et commande de carte pour ChatGPT.
 Son pendant, [HISTOIRE.md](HISTOIRE.md), fixe l'arc principal, les quêtes, les personnages, les
@@ -34,13 +46,18 @@ fées »).
 
 Le jeu s'ouvre à l'automne, au lendemain de la nuit du grand vent : le nouvel officier responsable
 de l'entrepôt, Willem, est arrivé dans le noir et Pannibal l'a fait tomber dans le marais d'un coup
-d'épée de bois (V1, chap. « L'Homme sans Marque »). **(original)** Le même vent a semé sur l'île une
-volée de *rejetons* de Timere, trop petits pour que la précognition les ait annoncés. Le joueur
-incarne la fée qui porte Seniorious, l'aînée de l'entrepôt : entre les corvées, la chasse aux
-rejetons dans les bois et la veille au bord du Couchant, il vit les derniers jours avant le départ
+d'épée de bois (V1, chap. « L'Homme sans Marque »). ~~**(original)** Le même vent a semé sur l'île une
+volée de *rejetons* de Timere, trop petits pour que la précognition les ait annoncés.~~ Le joueur
+incarne la fée qui porte Seniorious, l'aînée de l'entrepôt : ~~entre les corvées, la chasse aux
+rejetons dans les bois et la veille au bord du Couchant,~~ il vit les derniers jours avant le départ
 pour l'île n° 15, que menace le grand fragment repéré six mois plus tôt (V1).
 
-**La saison des rejetons (original, à garder cohérente partout).** Timere se déchire en millions de
+**Corrigé (refonte, lot D2)** : l'œuvre ne montre aucune Bête, aucun fragment ni aucun rejeton sur
+l'île n° 68 ; les fées partent se battre ailleurs (dossier `canon/v1_vex.md`, rubrique 7). À l'acte
+1, les combats sont des entraînements, un duel et la faune (`docs/REFONTE.md`, 5 ; `ACTE1.md`, 3) ;
+le joueur vit les douze jours de `ACTE1.md`, de la nuit d'arrivée au départ.
+
+~~**La saison des rejetons (original, à garder cohérente partout).** Timere se déchire en millions de
 fragments que le vent emporte, et la précognition voit les gros de loin, les petits tard (V1) ; pour
 monter au ciel, il lui faut d'abord, à la surface, un corps assez grand pour se diviser, dont le vent
 emporte les morceaux au hasard (SPOILER V5, chap. « Les anciennes villes et les fées » : à ne pas
@@ -51,7 +68,10 @@ morceaux montent avec les vents d'ouest, violents la nuit sur l'île n° 68 (V1)
 retombent sur son bord ouest. Ils ne menacent pas encore l'île, mais ils grandissent : chaque soir,
 les fées tiennent la veille au bord du Couchant et nettoient les bois. La saison finit avec la
 bataille de l'île n° 15 (acte 2). Dans le jeu, on n'en dit pas plus que le volume 1 : le vent a
-apporté des rejetons, trop petits pour la précognition.
+apporté des rejetons, trop petits pour la précognition.~~
+
+**Corrigé (refonte, lot D2)** : la saison des rejetons est retirée (`docs/REFONTE.md`, 1.2 et 5) :
+Timere n'entre en jeu qu'à l'acte 2, sur l'île n° 15 ; l'arène à vagues l'y suit.
 
 ### 1.2 Qui incarne le joueur (décision)
 
@@ -120,6 +140,10 @@ actuel du jeu) : « les derniers soirs avant le départ ». Pas de mot d'heure (
 les objectifs tant que le cycle jour/nuit (M3) n'existe pas. Le détail des actes est dans
 HISTOIRE.md, section 2.
 
+**Corrigé (refonte, lot D2)** : l'acte 1 commence la nuit de l'arrivée de Willem et finit au départ
+des trois aînées, au couchant du jour 12, suivi d'un épilogue facultatif ; il se joue en jours et en
+moments (aube à nuit), sans objectif au HUD (`ACTE1.md`, 0.1 et 1.1 ; `docs/REFONTE.md`, 6).
+
 ### 1.4 Ton
 
 - **La douceur du quotidien sur fond de fin annoncée.** Repas, ballon, linge, lectures, chahut des
@@ -161,8 +185,14 @@ HISTOIRE.md, section 2.
 L'île du jeu (160 × 160 m, traversée en 40 s à pied) est une miniature de l'île n° 68, « assez
 grande », où le port est à 500 *marmer* de l'entrepôt et à 2 000 du centre-ville (V1, chap.
 « L'Homme sans Marque »). On garde l'ordre des lieux, pas les distances : le port au sud, l'entrepôt
-dans sa clairière au milieu des bois, le quartier commerçant du bourg contre le port (comme le
-centre-ville, le port venteux et l'aire-port du V3, chap. « Je suis à la maison »).
+dans sa clairière au milieu des bois, ~~le quartier commerçant du bourg contre le port (comme le
+centre-ville, le port venteux et l'aire-port du V3, chap. « Je suis à la maison »).~~
+
+**Corrigé (refonte, lot D2)** : l'île est faite de lieux séparés, et la carte de l'île garde les
+distances de l'œuvre en durées de marche (1 marmer ≈ 1 m) : le centre-ville est une ville en pente
+à 2 000 marmer du port, avec sa place du marché, distincte du
+port ; le village des hommes-bêtes et son café sont à quelques pas de l'entrepôt, au bord de l'île
+(VEX) ; les lieux se relient par des sorties (`CARTE.md`, 1.2).
 
 ## 2. Carte de l'île n° 68
 
@@ -201,10 +231,15 @@ ouest = −X ; coordonnées monde en mètres.
 | Zone (`zone_id`) | Nom affiché (HUD) | Lieu du canon | Centre | Rôle |
 | --- | --- | --- | --- | --- |
 | `village` | L'entrepôt des fées | Entrepôt n° 4 de l'Alliance d'Orlandry (V1 ; V2 ; V3 ; V5 ; VEX) | (0, 0) | maison, PNJ principaux, réapparition, zone sûre |
-| `forest` | Les bois du marais | grande forêt de l'île, marais, champ de ballon, clairière d'entraînement (V1 ; VEX) | (0, −51) | chasse aux rejetons, cueillette, scènes de Willem |
-| `dunes` | Le bord du Couchant | **(original)** bord ouest battu par le vent, d'où les fées partent au couchant (V1) | (−51, 0) | arène : la veille du Couchant |
+| `forest` | Les bois du marais | grande forêt de l'île, marais, champ de ballon, clairière d'entraînement (V1 ; VEX) | (0, −51) | ~~chasse aux rejetons~~, cueillette, scènes de Willem |
+| `dunes` | Le bord du Couchant | **(original)** bord ouest battu par le vent, d'où les fées partent au couchant (V1) | (−51, 0) | ~~arène : la veille du Couchant~~ |
 | `beach` | Le port et le bourg | port au bord du vide, panneau aux flèches rouges, aire-port, rue du port et ses boutiques (V1 ; V2 ; V3 ; VEX) | (0, 51) | commerces, Limeskin, dirigeables, voyages (M3) |
 | `hill` | La colline des étoiles | colline de la périphérie où Willem règle Seniorious (V1 ; VEX) | (52, −3) | la promesse, myosotis |
+
+**Corrigé (refonte, lot D2)** : le bord du Couchant, sa veille et ses dunes n'existent pas dans
+l'œuvre (les dunes sont à la surface, V1, épilogue) ; les trois aînées s'envolent de l'entrepôt au
+couchant (`ACTE1.md`, 12.2). Pas de rejetons dans les bois, pas de myosotis sur la colline. Les
+lieux de la refonte : `CARTE.md`, sections 1 à 10.
 
 ### 2.2 `village` — L'entrepôt des fées
 
@@ -216,7 +251,9 @@ cinquantaine de personnes, dans une clairière défrichée entre la forêt dense
 chap. « De ce côté-ci de l'écran » ; VEX, chap. « Cinq cents ans ») ; un orc le compare à une étable
 de ferme en ruine (V5, chap. « La fin imminente »). Les sources le placent au cœur de la forêt (V2 ;
 V3) ou au bord de l'île, à deux pas d'un village d'hommes-bêtes (VEX) : la miniature garde le cœur
-de la forêt, et le village voisin devient le bourg du port, à deux pas lui aussi.
+de la forêt, ~~et le village voisin devient le bourg du port, à deux pas lui aussi.~~
+**Corrigé (refonte, lot D2)** : le village voisin reste un village, à quelques pas de l'entrepôt
+(`CARTE.md`, 5).
 
 **Ce qui reste du jeu actuel.** Zone sûre (`safe = true`, `EnemyBarrier` sur tout le pourtour),
 place plate de 9 m de rayon avec le puits au centre, `Spawn` en (0, 0,2, 9), quatre portes au bout
@@ -244,7 +281,9 @@ des chemins (N, S, E, O) à 21,2 m.
     C'est le seul détail froid de la cour.
 - **La cour** (la place de 9 m) : terre battue et vieilles dalles, le puits de pierre grise au toit
   de bardeaux, deux cordes à linge au sud-est (draps blancs), un ballon de cuir cousu qui traîne
-  (V5, illustrations), des lampadaires à cristal lumineux (V1) autour de la place et aux portails.
+  (V5, illustrations), ~~des lampadaires à cristal lumineux (V1) autour de la place et aux portails.~~
+  **Corrigé (refonte, lot D2)** : les cristaux allumés jour et nuit du V1 sont ceux de l'île n° 28 ;
+  à l'entrepôt, pas de lampadaire, une lanterne à cristal à la porte (`CARTE.md`, 2.9).
 - **Le grand arbre** en (11, −13) : un feuillu d'automne aux branches basses, Ø 8 m, avec une
   balançoire de corde ; les petites y grimpent (V5, chap. « Faire face au passé »).
 - Une remise à outils en (16, −17) ; un petit potager d'automne en (13, −4) (choux, citrouilles,
@@ -307,9 +346,11 @@ Seniorious ») ; les mares cachées et la montagne où Nygglatho chasse l'ours (
 
 **PNJ.** Pannibal (au bord du marais) ; Willem au terrain d'entraînement pendant son étape.
 
-**Ennemis.** Les rejetons : quatre Timeres libres autour du terrain (deux rejetons, un fragment, un
+~~**Ennemis.** Les rejetons : quatre Timeres libres autour du terrain (deux rejetons, un fragment, un
 Timere bondissant), qui réapparaissent au rechargement de la zone : la saison des rejetons. Ils ne
-gardent ni ne lâchent aucun objet : Timere cherche les vivants et ignore les choses (V3).
+gardent ni ne lâchent aucun objet : Timere cherche les vivants et ignore les choses (V3).~~
+**Corrigé (refonte, lot D2)** : pas de Timere à l'acte 1 ; dans les bois, la faune (`VIE.md`, 6 ;
+`ACTE1.md`, 3.5).
 
 **Ambiance et lumière.** Pénombre verte et or, brume sur le marais, craquements, silence soudain
 quand des rejetons sont proches.
@@ -318,6 +359,13 @@ quand des rejetons sont proches.
 danger qui y grandit sans bruit.
 
 ### 2.4 `dunes` — Le bord du Couchant
+
+**Corrigé (refonte, lot D2)** : toute cette zone est une invention de l'ancienne île, **sans appui
+dans l'œuvre** : pas de bord du Couchant, pas de veille, pas de dunes sur l'île n° 68 (les dunes
+sont celles de la surface, V1, épilogue) ; les fées ne partent pas d'un bord ouest mais s'envolent
+de l'entrepôt, au couchant (`ACTE1.md`, 12.2). La zone reste jouable dans l'ancienne île jusqu'à la
+phase 5 ; l'arène rejoint l'acte 2 (`docs/REFONTE.md`, 5 et 9). Le bord de l'île, dans la refonte,
+est au nord de chaque carte qui le touche : village, colline, port (`CARTE.md`).
 
 **Lieu.** **(original)** Le bord ouest de l'île, face au vent dominant et au soleil couchant. Appuis
 du canon : les îles sont des dalles de pierre que pousse le vent (V1, chap. « Le chat qui filait et
@@ -378,8 +426,13 @@ café habituel, la librairie (V3, chap. « Je suis à la maison », « La Fille 
 de projection, l'horloger, le boucher (V2, chap. « De ce côté-ci de l'écran ») ; le café du village
 au serveur homme-chat et à la porte à clochette (VEX, chap. « Cinq cents ans ») ; le snack tenu par un
 jeune lycanthrope à tête de chien (V1, chap. « Directeur en carton »). La ville est « la ville »
-(V1), « le village voisin » (VEX) ou « le bourg » (V5) : le jeu en montre le quartier du port et
-l'appelle le bourg. Ses habitants sont des hommes-bêtes qui craignent l'entrepôt (V1).
+(V1), « le village voisin » (VEX) ou « le bourg » (V5) : ~~le jeu en montre le quartier du port et
+l'appelle le bourg.~~ Ses habitants sont des hommes-bêtes qui craignent l'entrepôt (V1).
+
+**Corrigé (refonte, lot D2)** : la ville (V1), le village voisin (VEX) et le port sont trois lieux :
+le port et l'aire-port au bord du vide (`CARTE.md`, 6), le village et son café près de l'entrepôt
+(`CARTE.md`, 5), le centre-ville en pente, à 2 000 marmer, avec ses boutiques et sa place du marché
+(`CARTE.md`, 9).
 
 **Description visuelle.**
 
@@ -419,7 +472,8 @@ marchande d'œufs (marché), le jeune lycanthrope (snack), M. Rami (devant sa ma
 **Ennemis.** Aucun.
 
 **Ambiance et lumière.** Odeurs de pain et de friture, clochette du café, grondement des chaudières,
-vent du large ; les cristaux lumineux des lampadaires s'allument (V1) ; le métal du quai renvoie le
+vent du large ; ~~les cristaux lumineux des lampadaires s'allument (V1)~~ (corrigé : deux lanternes
+de quai à cristal, **original**, `CARTE.md`, 6.2) ; le métal du quai renvoie le
 couchant.
 
 **Ce que la zone raconte.** Le lien avec le reste du monde ; les arrivées et les départs ; la vie
@@ -517,9 +571,9 @@ Une île flottante n'est pas entourée d'eau mais de ciel.
 | Île entourée d'eau, plage, haut-fond, bouées | Île flottante : lèvre rocheuse, falaises, mer de nuages ; garde-corps de fer au port | Regule Aire (V1) |
 | Zone « Village », 6 maisons, haies, 4 arches vermillon de style torii | L'entrepôt des fées en L, remise, potager, grand arbre ; palissade de rondins et portails de bois ; les maisons partent au bourg | Entrepôt (V1 ; V2 ; V5 ; VEX) ; le torii n'existe pas dans cet univers |
 | Puits | Gardé : le puits de la cour | Pas de contradiction |
-| Lampadaires | Lampadaires à cristal lumineux | V1 |
-| « Dunes au couchant », ruines, poteaux, bannière | Le bord du Couchant : dalle à nu, sable de pierre, ancien poste de guet, fanion de la Garde | **(original)** cohérent avec le vent et les dalles (V1) |
-| Arène et panneau « Affronter les Timeres » | Le cercle de veille et sa cloche ; invite « Sonner la cloche de veille » | La saison des rejetons **(original)** |
+| Lampadaires | ~~Lampadaires à cristal lumineux~~ ; corrigé : aucun lampadaire sur l'île n° 68 (le V1 les montre sur l'île n° 28) | V1 |
+| « Dunes au couchant », ruines, poteaux, bannière | ~~Le bord du Couchant : dalle à nu, sable de pierre, ancien poste de guet, fanion de la Garde~~ ; corrigé : retiré en phase 5 (section 2.4) | **(original)** sans appui dans l'œuvre |
+| Arène et panneau « Affronter les Timeres » | ~~Le cercle de veille et sa cloche ; invite « Sonner la cloche de veille »~~ ; corrigé : l'arène rejoint l'acte 2 | ~~La saison des rejetons **(original)**~~ ; `docs/REFONTE.md`, 5 |
 | « Forêt des Timeres », clairière | Les bois du marais ; la clairière devient le terrain d'entraînement et champ de ballon ; champignons gardés | V1 ; VEX |
 | « Plage aux coquillages », palmiers, parasols, ponton | Le port et le bourg : quai plaqué de métal, étals sous bâches, passerelle d'embarquement, dirigeables, rue du Port | V1 ; V3 ; VEX |
 | « Colline du belvédère » | La colline des étoiles ; belvédère gardé | V1 ; VEX |
