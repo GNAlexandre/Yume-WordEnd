@@ -340,7 +340,14 @@ func check_contract() -> void:
 	assert_true(_map.area().encloses(_map.bounds()), "bornes de la caméra dans la carte")
 	assert_eq(_map.light_preset, StringName(expected_light_preset), "préréglage de lumière")
 	assert_null(_map.get_node_or_null(^"Light"), "aucune lumière portée : Atmosphere (E9)")
-	assert_eq(_map.find_children("*", "Light3D", true, false).size(), 0, "pas de lumière du moteur")
+	# Aucune lumière du moteur posée par la carte (celles d'Atmosphere, AtmosphereRig, à part).
+	var lights: Array[String] = []
+	for light: Node in _map.find_children("*", "Light3D", true, false):
+		if not _map.get_path_to(light).get_concatenated_names().begins_with(
+			String(AtmosphereRig.NODE_NAME)
+		):
+			lights.append(String(_map.get_path_to(light)))
+	assert_eq(lights, [] as Array[String], "pas de lumière du moteur")
 	var places := _map.get_node_or_null(^"Life/Places")
 	assert_not_null(places, "Life/Places")
 

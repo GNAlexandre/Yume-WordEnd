@@ -192,17 +192,17 @@ Ce qu'elles ajoutent aux règles ci-dessus :
 
 | Remplaçant | Taille (px) | Genre | Contenu |
 | --- | --- | --- | --- |
-| `anim/drying_frame_wave` | 1536 × 211 | bande de 4 images | séchoir du toit, linge au vent |
-| `anim/leak_drip` | 96 × 96 | bande | goutte de la fuite du couloir de l'étage |
-| `anim/pot_steam` | 288 × 96 | bande | vapeur de la marmite |
-| `decals/bath_puddles` | 192 × 144 | décalque | flaques des bains |
-| `decals/cards_floor` | 144 × 96 | décalque | cartes à jouer par terre (grande sœur) |
-| `decals/clothes_floor` | 192 × 144 | décalque | vêtements par terre (grande sœur) |
-| `decals/papers_floor` | 192 × 144 | décalque | papiers des archives |
-| `decals/runner_rug` | 96 × 384 | décalque | tapis de couloir, bout à bout |
-| `interior/props/piano_old` | 154 × 134 | meuble | vieux piano de la salle de jeux |
-| `interior/props/roof_hatch` | 96 × 58 | objet | trappe du toit |
-| `interior/props/roof_ladder` | 77 × 288 | meuble | échelle vers le toit (hors cahier : `docs/CONTRACT_REQUESTS.md`) |
-| `interior/props/roof_railing_broken` | 192 × 77 | panneau | module tordu de la rambarde |
-| `interior/wallitem_clippings` | 77 × 58 | élément de mur | coupures de magazine des archives |
-| `interior/window_dusty` | 96 × 96 | fenêtre | petite fenêtre haute et poussiéreuse |
+| `drying_frame_wave` (`anim/`) | 1536 × 211 | bande de 4 images | séchoir du toit, linge au vent |
+| `leak_drip` (`anim/`) | 96 × 96 | bande | goutte de la fuite du couloir de l'étage |
+| `pot_steam` (`anim/`) | 288 × 96 | bande | vapeur de la marmite |
+| `bath_puddles` (`decals/`) | 192 × 144 | décalque | flaques des bains |
+| `cards_floor` (`decals/`) | 144 × 96 | décalque | cartes à jouer par terre (grande sœur) |
+| `clothes_floor` (`decals/`) | 192 × 144 | décalque | vêtements par terre (grande sœur) |
+| `papers_floor` (`decals/`) | 192 × 144 | décalque | papiers des archives |
+| `runner_rug` (`decals/`) | 96 × 384 | décalque | tapis de couloir, bout à bout |
+| `piano_old` (`interior/props/`) | 154 × 134 | meuble | vieux piano de la salle de jeux |
+| `roof_hatch` (`interior/props/`) | 96 × 58 | objet | trappe du toit |
+| `roof_ladder` (`interior/props/`) | 77 × 288 | meuble | échelle vers le toit (hors cahier : `docs/CONTRACT_REQUESTS.md`) |
+| `roof_railing_broken` (`interior/props/`) | 192 × 77 | panneau | module tordu de la rambarde |
+| `wallitem_clippings` (`interior/`) | 77 × 58 | élément de mur | coupures de magazine des archives |
+| `window_dusty` (`interior/`) | 96 × 96 | fenêtre | petite fenêtre haute et poussiéreuse |
