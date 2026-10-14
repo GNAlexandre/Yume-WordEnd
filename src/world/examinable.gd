@@ -125,12 +125,15 @@ func dialogue_id() -> StringName:
 
 
 ## Texte au chemin key_path (« entrepot_rdc/cuisine_fourneau ») d'un fichier de textes ; vide s'il
-## manque. Le fichier est lu une fois (forget_texts() l'oublie).
+## manque ou si c'est un commentaire (clé « _… »). Le fichier est lu une fois (forget_texts()
+## l'oublie).
 static func lookup(path: String, key_path: String) -> String:
 	if not _texts.has(path):
 		_texts[path] = DialogueRunner.load_story_texts(path)
 	var value: Variant = _texts[path]
 	for key: String in key_path.split("/"):
+		if key.begins_with("_"):
+			return ""
 		value = (value as Dictionary).get(key) if value is Dictionary else null
 	return value if value is String else ""
 

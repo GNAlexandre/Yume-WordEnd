@@ -126,3 +126,22 @@ func test_light_stays_behind_a_half_metre_partition() -> void:
 	assert_eq(room.material_at(5.4, 2.0), &"floor_planks_worn")
 	assert_true(room.is_walkable(5.5, 3.0), "dans la porte")
 	assert_false(room.is_walkable(5.5, 2.0), "dans la cloison")
+
+
+## (T2) InteriorPanel.cut_offset : un meuble haut adossé au mur sud recule sa ligne de coupe
+## jusqu'au mur et se coupe avec lui ; sans décalage, il reste entier quand la coupe passe au mur.
+func test_cut_offset_cuts_a_wardrobe_with_the_south_wall() -> void:
+	var panel := InteriorPanel.new()
+	panel.texture = load("res://assets/hd2d/interior/props/wardrobe_chtholly.png") as Texture2D
+	panel.image_offset = Vector3(0.0, 0.0, 0.3)
+	panel.position = Vector3(7.35, 0.0, 8.075)
+	add_child_autofree(panel)
+	var wall_line := 8.5 + InteriorRoom.CUT_MARGIN + 0.01
+	assert_almost_eq(panel.cut_z(), 8.375, 0.001, "sans décalage : la coupe à l'image")
+	var whole := panel.occluder_triangles(wall_line)
+	assert_almost_eq(whole[2].y, panel.size_m().y, 0.001, "entier quand la coupe passe au mur")
+	panel.cut_offset = 0.175
+	assert_almost_eq(panel.cut_z(), 8.55, 0.001, "la coupe au-delà du mur sud")
+	var cut := panel.occluder_triangles(wall_line)
+	assert_almost_eq(cut[2].y, panel.cut_height, 0.001, "coupé avec le mur")
+	assert_almost_eq(cut[0].z, 8.375, 0.001, "l'image ne bouge pas")

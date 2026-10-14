@@ -1,10 +1,10 @@
 extends "res://tests/stubs/t2_map_test.gd"
 ## (T2) La salle des armes, sous l'entrepôt (src/world/maps/salle_des_armes/, plan de
 ## docs/lore/CARTE.md, 3.4) : base commune tests/stubs/t2_map_test.gd (plan, circulation, rien ne
-## cache le joueur, draw calls, objets à examiner), plus l'escalier qui remonte vers la porte rivetée
-## (vue de dedans, en haut des marches), les épées contre le mur nord, les deux piliers (premier
-## plan qui s'efface devant le joueur) et aucune lumière de la carte (le préréglage « noir » d'E9
-## n'existe pas : celui des intérieurs, docs/DECISIONS.md).
+## cache le joueur, draw calls, objets à examiner), plus l'escalier qui remonte vers la porte
+## rivetée (vue de dedans, en haut des marches), les épées contre le mur nord, les deux piliers
+## (premier plan qui s'efface devant le joueur) et aucune lumière de la carte (le préréglage
+## « noir » d'E9 n'existe pas : celui des intérieurs, docs/DECISIONS.md).
 
 
 func before_all() -> void:
@@ -17,7 +17,9 @@ func test_map_follows_the_contract_and_its_plan() -> void:
 	check_contract()
 	check_rooms_and_openings()
 	assert_true(_map.interior, "un intérieur : préréglage « interieur » d'Atmosphere")
-	assert_eq(_room.plan.lights, [] as Array[Dictionary], "crypte sans lumière : ni lampe ni cristal")
+	assert_eq(
+		_room.plan.lights, [] as Array[Dictionary], "crypte sans lumière : ni lampe ni cristal"
+	)
 
 
 func test_every_piece_of_furniture_of_the_plan_is_in_place() -> void:
