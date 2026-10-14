@@ -1349,8 +1349,6 @@ script = ExtResource("5_map_exit")
 target_map = &"entrepot_rdc"
 target_marker = &"from_entrepot"
 prompt = "Entrer"
-metadata/plan_target_map = &"entrepot_rdc"
-metadata/plan_target_marker = &"from_entrepot"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/porte_entree"]
 shape = SubResource("BoxShape3D_exit_porte_entree")
@@ -1363,8 +1361,6 @@ script = ExtResource("5_map_exit")
 target_map = &"entrepot_rdc"
 target_marker = &"from_entrepot_service"
 prompt = "Entrer"
-metadata/plan_target_map = &"entrepot_rdc"
-metadata/plan_target_marker = &"from_entrepot_service"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/porte_service"]
 shape = SubResource("BoxShape3D_exit_porte_service")
