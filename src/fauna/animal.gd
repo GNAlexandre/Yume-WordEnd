@@ -141,7 +141,8 @@ func _physics_process(delta: float) -> void:
 		var move := _think(delta)
 		_fly_height = minf(_fly_height + FLY_CLIMB * delta, FLY_MAX)
 		visual.position.y = _fly_height
-		global_position += Vector3(move.x, 0.0, move.z) * delta
+		velocity = Vector3(move.x, 0.0, move.z)
+		move_and_slide()
 		return
 	super._physics_process(delta)
 
@@ -219,7 +220,7 @@ func _flee(_delta: float, player: Node3D) -> Vector3:
 	if _species.vanish_s > 0.0 and _mode_time >= _species.vanish_s:
 		_dissolve()
 		return Vector3.ZERO
-	if _mode_time > 1.0 and distance >= _species.calm_distance():
+	if _species.vanish_s <= 0.0 and _mode_time > 1.0 and distance >= _species.calm_distance():
 		_wander_target = origin
 		_set_mode(Mode.GRAZE)
 		return Vector3.ZERO
@@ -265,7 +266,7 @@ func _start_flying() -> void:
 	remove_from_group(ENEMIES_GROUP)
 	hurtbox.set_deferred(&"monitorable", false)
 	set_deferred(&"collision_layer", 0)
-	set_deferred(&"collision_mask", 0)
+	collision_mask = 0
 
 
 ## Facteur de bruit du joueur : il court (plus fort), reste immobile (plus discret) ou marche.

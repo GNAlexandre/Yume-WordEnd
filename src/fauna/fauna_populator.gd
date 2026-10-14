@@ -252,12 +252,12 @@ func _hidden(spot: Vector3) -> bool:
 
 func _alive(group: Dictionary) -> Array[Animal]:
 	var list: Array[Animal] = []
-	for animal: Animal in group["animals"]:
-		if (
-			is_instance_valid(animal)
-			and not animal.is_queued_for_deletion()
-			and not animal.is_leaving()
-		):
+	# Variant : une bête déjà libérée ne se range pas dans un Array[Animal].
+	for entry: Variant in group["animals"]:
+		if not is_instance_valid(entry):
+			continue
+		var animal := entry as Animal
+		if not animal.is_queued_for_deletion() and not animal.is_leaving():
 			list.append(animal)
 	group["animals"] = list
 	return list

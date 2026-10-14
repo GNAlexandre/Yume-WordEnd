@@ -32,6 +32,11 @@ static func clear_cache() -> void:
 	_population_cache.clear()
 
 
+## Remplace le peuplement d'une île (tests) ; clear_cache() rétablit celui du fichier.
+static func set_population(island_id: StringName, data: Dictionary) -> void:
+	_population_cache[island_id] = data
+
+
 # --- Espèces ----------------------------------------------------------------------------------
 
 
