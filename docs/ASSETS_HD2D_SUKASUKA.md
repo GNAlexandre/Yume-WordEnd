@@ -1973,3 +1973,17 @@ autres attendent l'accord du lot du moteur indiqué (colonne « Commander »).
 | M | 52 | 10 | 3 images | 19 images, 1 planche | 30 images, 9 planches |
 | N | 30 | — | 14 images | 13 images | 3 images |
 | **Total** | **406** | **90** | **108 images, 23 planches** | **150 images, 29 planches** | **148 images, 38 planches** |
+
+### Cadrages remplacés par le cahier n° 5, lot R0 (14 octobre 2026)
+
+Ces cinq dimensions de PNG remplacent celles des tableaux ci-dessus : le cadrage comprend le
+dessus du meuble en projection oblique et ses objets. Le manifeste et le catalogue des
+intérieurs reprennent ces tailles ; cette correction ne change pas les emprises des meubles.
+
+| Image | Nouveau cadrage |
+| --- | --- |
+| `game_table` | 115 × 76 |
+| `kitchen_counter` | 192 × 132 |
+| `kitchen_table_ingredients` | 154 × 135 |
+| `reading_table` | 173 × 130 |
+| `sofa_beige` | 192 × 119 |
