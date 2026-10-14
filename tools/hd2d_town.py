@@ -1923,3 +1923,195 @@ RECIPES = {
     "props/rope_fence": lambda s, r: fence_module(s, r, rope=True), "props/stone_steps": stone_steps,
     "props/old_telescope": old_telescope, "props/log_pile_forest": log_pile_forest,
 }
+
+
+# --- (T1, refonte) L'entrepôt vu du dehors : docs/lore/CARTE.md, sections 2.4 et 12.1 ------------
+# Remplaçants des noms proposés warehouse_front_a, _b et de leurs flancs, faits des morceaux de
+# warehouse_main.png (livrée) posés à la place que le plan donne aux pièces du dedans (dehors =
+# dedans + (29, 11)) : la porte d'entrée à 12 m du bord gauche de warehouse_front_a (x = 42), la
+# porte de service à 6 m de l'angle sud du pignon ouest (z = 20, section 2.7).
+
+MAIN_POST = (255, 0, 300, 624)
+MAIN_DOOR = (596, 296, 942, 624)
+MAIN_NOTICES = (496, 390, 600, 522)
+MAIN_PLAQUE = (936, 414, 1024, 480)
+MAIN_TOP = (300, 0, 500, 46)
+MAIN_BEAM = (300, 262, 500, 306)
+MAIN_PLINTH = (300, 486, 500, 624)
+MAIN_WINDOW_LOW = (125, 335, 237, 500)
+MAIN_WINDOW_UP = (150, 80, 250, 232)
+MAIN_LEAF = (637, 330, 772, 618)
+
+
+def _frosted(piece):
+    """Fenêtre de salle de bains : les vitres claires deviennent laiteuses (verre dépoli)."""
+    if piece is None:
+        return None
+    out = piece.copy()
+    px = out.load()
+    for y in range(out.height):
+        for x in range(out.width):
+            r, g, b, a = px[x, y]
+            if a and r > 170 and g > 130 and b < 170:
+                lum = (r + g + b) / 3.0
+                v = int(150 + (lum - 150) * 0.45)
+                px[x, y] = (v + 8, v + 14, v + 18, a)
+    return out
+
+
+# Vitres éclairées de warehouse_main (#ECBF79) : ramenées près de la couleur de lueur des
+# panneaux (panel_core.gdshaderinc, glow_color #FFE6A6) pour que window_glow les allume la nuit.
+MAIN_PANE = (236, 191, 121)
+GLOW_PANE = (255, 230, 166)
+
+
+def _lit_panes(img):
+    px = img.load()
+    for y in range(img.height):
+        for x in range(img.width):
+            r, g, b, a = px[x, y]
+            if not a:
+                continue
+            gap = ((r - MAIN_PANE[0]) ** 2 + (g - MAIN_PANE[1]) ** 2 + (b - MAIN_PANE[2]) ** 2) ** 0.5
+            if gap < 40:
+                shade = 0.96 + 0.04 * min(1.0, (r + g + b) / float(sum(MAIN_PANE)))
+                px[x, y] = tuple(int(v * shade) for v in GLOW_PANE) + (a,)
+    return img
+
+
+def _scaled(piece, factor):
+    if piece is None:
+        return None
+    return piece.resize((max(1, round(piece.width * factor)), max(1, round(piece.height * factor))), Image.NEAREST)
+
+
+def _warehouse_wall(size, rnd, posts):
+    """Mur de l'entrepôt : planches, poutres du haut et de l'étage, soubassement de pierre, poteaux."""
+    w, h = size
+    c = Canvas(w, h, rnd)
+    c.img.paste(material("wall_planks", size), (0, 0))
+    for box, y in ((MAIN_PLINTH, h - (MAIN_PLINTH[3] - MAIN_PLINTH[1])), (MAIN_BEAM, MAIN_BEAM[1]),
+                   (MAIN_TOP, 0)):
+        strip = facade_piece("warehouse_main", box)
+        if strip is None:
+            continue
+        x = 0
+        while x < w:
+            c.img.alpha_composite(strip.crop((0, 0, min(strip.width, w - x), strip.height)), (x, y))
+            x += strip.width
+    post_piece = facade_piece("warehouse_main", MAIN_POST)
+    for x in posts:
+        if post_piece is not None:
+            left = int(min(max(x - post_piece.width / 2.0, 0), w - post_piece.width))
+            c.img.alpha_composite(post_piece, (left, 0))
+    return c
+
+
+def _warehouse_front(size, rnd, posts, lower, upper, extras=()):
+    """Façade sud : lower, upper et extras, listes de (genre, x en m) ; genres window, small,
+    frosted, door, notices, plaque, up, up_small."""
+    c = _warehouse_wall(size, rnd, [x * 96 for x in posts])
+    w, h = size
+    pieces = {
+        "window": facade_piece("warehouse_main", MAIN_WINDOW_LOW),
+        "small": _scaled(facade_piece("warehouse_main", MAIN_WINDOW_LOW), 0.72),
+        "frosted": _frosted(facade_piece("warehouse_main", MAIN_WINDOW_LOW)),
+        "door": facade_piece("warehouse_main", MAIN_DOOR),
+        "notices": facade_piece("warehouse_main", MAIN_NOTICES),
+        "plaque": facade_piece("warehouse_main", MAIN_PLAQUE),
+        "up": facade_piece("warehouse_main", MAIN_WINDOW_UP),
+        "up_small": _scaled(facade_piece("warehouse_main", MAIN_WINDOW_UP), 0.72),
+    }
+    bottoms = {"window": 500, "small": 470, "frosted": 500, "door": h, "notices": 522, "plaque": 480,
+               "up": 232, "up_small": 214}
+    for kind, x in list(lower) + list(upper) + list(extras):
+        paste_piece(c, pieces[kind], x * 96, bottoms[kind])
+    img = c.img
+    img.putalpha(Image.new("L", size, 255))
+    return _lit_panes(img)
+
+
+def warehouse_front_a(size, rnd):
+    # De l'ouest à l'est (dedans x 1 → 19) : bains (deux fenêtres dépolies), toilettes (une petite),
+    # placard (pan plein), entrée (porte à 12 m, plannings et plaque), salle de jeux ; à l'étage,
+    # dortoirs A et B (deux fenêtres chacun), placard, toilettes (une petite), dortoir C.
+    return _warehouse_front(
+        size, rnd, posts=[0.23, 3.0, 6.0, 8.0, 15.2, 17.77],
+        lower=[("frosted", 1.55), ("frosted", 4.45), ("small", 7.0), ("window", 16.5)],
+        upper=[("up", 1.55), ("up", 4.45), ("up", 7.35), ("up", 10.2), ("up_small", 14.5), ("up", 16.6)],
+        extras=[("door", 12.0), ("notices", 9.55), ("plaque", 14.35)])
+
+
+def warehouse_front_b(size, rnd):
+    # Dedans x 19 → 31 : salle de jeux (deux fenêtres), infirmerie (deux) ; à l'étage, dortoir C,
+    # lingerie (une petite), dortoir D (deux).
+    return _warehouse_front(
+        size, rnd, posts=[0.23, 4.0, 8.0, 11.77],
+        lower=[("window", 1.3), ("window", 2.95), ("window", 6.0), ("window", 9.9)],
+        upper=[("up", 1.8), ("up_small", 5.0), ("up", 7.4), ("up", 10.2)])
+
+
+def _side_frame(c, w, h, posts):
+    """Colombage du flanc, comme la façade : poutre de l'égout, poutre de l'étage, poteaux."""
+    wall_top = h - 624
+    for box, y in ((MAIN_BEAM, wall_top + MAIN_BEAM[1]), (MAIN_TOP, wall_top)):
+        strip = facade_piece("warehouse_main", box)
+        if strip is None:
+            continue
+        x = 0
+        while x < w:
+            c.img.alpha_composite(strip.crop((0, 0, min(strip.width, w - x), strip.height)), (x, y))
+            x += strip.width
+    post_piece = facade_piece("warehouse_main", MAIN_POST)
+    if post_piece is not None:
+        for x in posts:
+            left = int(min(max(x - post_piece.width / 2.0, 0), w - post_piece.width))
+            c.img.alpha_composite(post_piece.crop((0, 0, post_piece.width, 624 - 110)), (left, wall_top))
+
+
+def warehouse_front_a_side(size, rnd):
+    """Pignon ouest (retourné : le bord gauche reste l'angle sud) : porte de service à 6 m de
+    l'angle sud, fenêtre dépolie de la salle de bains, deux fenêtres à l'étage, œil-de-bœuf,
+    gouttière, lierre au nord."""
+    def features(c, w, h, top):
+        _side_frame(c, w, h, [22, w * 4.6 / 14.0, w * 7.5 / 14.0, w - 22])
+        paste_piece(c, _frosted(facade_piece("warehouse_main", MAIN_WINDOW_LOW)), w * 2.4 / 14.0, h - 124)
+        paste_piece(c, facade_piece("warehouse_main", MAIN_WINDOW_UP), w * 10.6 / 14.0, h - 392)
+        paste_piece(c, facade_piece("warehouse_main", MAIN_WINDOW_UP), w * 3.4 / 14.0, h - 392)
+        paste_piece(c, facade_piece("warehouse_wing", (245, 105, 332, 192)), w / 2.0, top - 40)
+        leaf = _scaled(facade_piece("warehouse_main", MAIN_LEAF), 0.8)
+        if leaf is not None:
+            frame = ramp(DARK, 5)
+            x0 = w * 6.0 / 14.0 - leaf.width / 2.0
+            c.rect(x0 - 8, h - leaf.height - 10, x0 + leaf.width + 8, h, frame[1])
+            c.rect(x0 - 8, h - leaf.height - 10, x0 + leaf.width + 8, h - leaf.height - 4, frame[3])
+            paste_piece(c, leaf, w * 6.0 / 14.0, h)
+        pipe = ramp(IRON, 4)
+        c.rect(6, top + 6, 14, h - 8, pipe[1])
+        c.rect(7, top + 6, 9, h - 8, pipe[3])
+        ivy(c, rnd, w * 0.78, w, top + 30, h - 40, 140)
+    return _lit_panes(
+        building_side(size, rnd, "wall_planks", "roof_slate", gable_wall_m=6.5, plinth=110, features=features))
+
+
+def warehouse_front_b_side(size, rnd):
+    """Flanc est (gouttereau du toit-terrasse) : la fenêtre à banc de la salle de lecture à 3,5 m
+    du bord droit (angle nord), une petite fenêtre (couloir), deux fenêtres à l'étage, une échelle
+    de bois appuyée."""
+    def features(c, w, h, top):
+        _side_frame(c, w, h, [22, w * 4.5 / 14.0, w * 8.0 / 14.0, w - 22])
+        bay = facade_piece("warehouse_main", (1236, 322, 1484, 528))
+        paste_piece(c, bay, w - 3.5 * 96, h - 60)
+        paste_piece(c, _scaled(facade_piece("warehouse_main", MAIN_WINDOW_LOW), 0.72), w * 5.5 / 14.0, h - 150)
+        for x in (3.4, 10.2):
+            paste_piece(c, facade_piece("warehouse_main", MAIN_WINDOW_UP), w * x / 14.0, h - 392)
+        ladder(c, w * 0.12, top + 20, h, 40)
+        c.rect(0, 0, w, 10, ramp(DARK, 4)[1])
+    return _lit_panes(building_side(size, rnd, "wall_planks", "roof_slate", plinth=110, features=features))
+
+
+RECIPES.update({
+    "buildings/warehouse_front_a": warehouse_front_a, "buildings/warehouse_front_b": warehouse_front_b,
+    "buildings/warehouse_front_a_side": warehouse_front_a_side,
+    "buildings/warehouse_front_b_side": warehouse_front_b_side,
+})

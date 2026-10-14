@@ -612,8 +612,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 15.5)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("5_exit")
-target_map = &"essai"
-target_marker = &"Spawn"
+target_map = &"entrepot"
+target_marker = &"from_entrepot_rdc"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_dehors"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
@@ -624,8 +624,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 9.5)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("5_exit")
-target_map = &"essai"
-target_marker = &"Spawn"
+target_map = &"entrepot"
+target_marker = &"from_entrepot_rdc_service"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_arriere"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)

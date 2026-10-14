@@ -1128,3 +1128,122 @@ RECIPES = {
     "props/edge_roots": edge_roots, "props/edge_grass": edge_grass, "props/wind_rock_d": wind_rock_d,
     "sky/floating_rock_b": floating_rock_b, "sky/floating_rock_c": floating_rock_c,
 }
+
+
+# --- (T1, refonte) Fourrés, haie et marais de l'entrepôt (cahier n° 3, lot M, sections 7.3 et 7.4) ----
+
+
+def thicket(size, rnd, colors, berries, hole=False, thorns=26):
+    """Fourré dense de prunellier, d'aubépine et de ronces : buisson large, brindilles épineuses qui
+    dépassent ; hole : un trou sombre au ras du sol (là où roule le ballon)."""
+    img = shrub(size, rnd, colors, "low", stems=3, berries=berries, bare=thorns, outline_base="#4A3A2A",
+                dark=0.15)
+    w, h = size
+    c = Canvas(w, h, rnd)
+    c.img = img
+    c.draw = ImageDraw.Draw(img)
+    wood = ramp("#5A4434", 4)
+    for _ in range(thorns):
+        x = rnd.uniform(w * 0.1, w * 0.9)
+        y = rnd.uniform(h * 0.15, h * 0.55)
+        if not img.getpixel((int(x), int(y)))[3]:
+            continue
+        x1, y1 = x + rnd.uniform(-14, 14), y - rnd.uniform(6, 16)
+        c.line([(x, y), (x1, y1)], wood[0], 1)
+        c.pixel(x1, y1, wood[2])
+    if hole:
+        dark = ramp("#1E1814", 4)
+        c.blob(w * 0.42, h - h * 0.16, w * 0.13, h * 0.17, [dark[0], dark[0], dark[1], dark[1], dark[2]], rim=False)
+        c.rect(w * 0.3, h - 3, w * 0.54, h, dark[0])
+    return c.img
+
+
+def bramble_hedge(size, rnd):
+    """Haie de ronces et d'églantiers, sans raccord à gauche et à droite : mûres et cynorhodons."""
+    w, h = size
+    c = WrapCanvas(w, h, rnd)
+    for k in range(9):
+        x = w * k / 9.0 + rnd.uniform(-8, 8)
+        leaf_mass(c, x, h * rnd.uniform(0.5, 0.62), w * 0.09, h * 0.38, rnd.choice(["#6E7A3A", "#8A4A2E", "#7A6A34"]),
+                  density=1.2, grain=0.55, dark=0.12)
+    tones = ramp("#5A4434", 4)
+    for _ in range(46):
+        x = rnd.uniform(0, w)
+        y = rnd.uniform(h * 0.2, h * 0.7)
+        c.line([(x, y), (x + rnd.uniform(-16, 16), y - rnd.uniform(4, 14))], tones[0], 1)
+    for color, count in (("#2A2030", 70), ("#C0302A", 40)):
+        berry = ramp(color, 4)
+        for _ in range(count):
+            x, y = rnd.uniform(0, w - 3), rnd.uniform(h * 0.25, h * 0.85)
+            if c.img.getpixel((int(x), int(y)))[3]:
+                c.rect(x, y, x + 3, y + 3, berry[1])
+                c.pixel(x, y, berry[3])
+    c.rect(0, h - 3, w, h, ramp("#3E4A2A", 4)[0])
+    return c.finish(darker("#4A3A2A", 0.4))
+
+
+def alder(size, rnd):
+    """Aulne du marais : tronc sombre penché, racines dans l'eau, feuillage vert-brun clairsemé."""
+    def build(c, w, h):
+        pts = [(w * 0.44, h), (w * 0.46, h * 0.78), (w * 0.54, h * 0.6), (w * 0.58, h * 0.44)]
+        for k in range(3):
+            limb(c, pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1], w * (0.1 - 0.02 * k), w * (0.08 - 0.02 * k),
+                 "#3E342E")
+        for dx in (-0.16, -0.08, 0.1, 0.18):
+            limb(c, w * 0.45, h * 0.94, w * (0.45 + dx), h, 6, 3, "#3E342E")
+        limb(c, w * 0.52, h * 0.64, w * 0.24, h * 0.5, 8, 3, "#3E342E")
+        limb(c, w * 0.56, h * 0.5, w * 0.82, h * 0.38, 7, 3, "#3E342E")
+        return foliage(w, h, rnd, [(w * 0.54, h * 0.32, w * 0.4, h * 0.2, "#6E7A3A", 18),
+                                   (w * 0.26, h * 0.48, w * 0.22, h * 0.12, "#7A6A34", 9),
+                                   (w * 0.8, h * 0.42, w * 0.18, h * 0.11, "#6E7A3A", 8),
+                                   (w * 0.5, h * 0.16, w * 0.24, h * 0.1, "#8A6A34", 8)],
+                       holes=[(w * 0.42, h * 0.34, w * 0.05)])
+    return tree(size, rnd, build, "#6E7A3A")
+
+
+def marsh_snag(size, rnd):
+    """Souche noyée : tronc cassé gris, branches mortes, mousse et champignons, pied dans l'eau."""
+    w, h = size
+    c = Canvas(w, h, rnd)
+    pale = "#8A8478"
+    limb(c, w * 0.48, h, w * 0.5, h * 0.45, w * 0.17, w * 0.12, pale)
+    tones = ramp(pale, 5)
+    c.poly([(w * 0.42, h * 0.47), (w * 0.46, h * 0.36), (w * 0.5, h * 0.44), (w * 0.55, h * 0.32), (w * 0.58, h * 0.47)],
+           tones[2])
+    twigs(c, w * 0.44, h * 0.62, -2.5, h * 0.3, 3, rnd, base=pale, width=6)
+    twigs(c, w * 0.56, h * 0.55, -0.6, h * 0.34, 3, rnd, base=pale, width=6)
+    moss = ramp("#4E6A34", 4)
+    for _ in range(40):
+        x, y = rnd.uniform(w * 0.36, w * 0.62), rnd.uniform(h * 0.55, h * 0.95)
+        if c.img.getpixel((int(x), int(y)))[3]:
+            c.rect(x, y, x + 4, y + 3, moss[rnd.randint(1, 3)])
+    shroom = ramp("#C89A5A", 4)
+    for k in range(4):
+        x, y = w * 0.58 + k * 3, h * (0.7 - k * 0.05)
+        c.rect(x, y, x + 8, y + 3, shroom[2])
+    water = ramp("#3A5458", 4)
+    c.rect(w * 0.2, h - 5, w * 0.8, h, water[1])
+    c.rect(w * 0.26, h - 6, w * 0.74, h - 5, water[3])
+    return c.finish(darker(pale, 0.4))
+
+
+def marsh_hummock(size, rnd, count=28):
+    """Touradon : motte d'herbe dure et de carex qui sort de l'eau noire, le pied mouillé."""
+    img = grass_clump(size, rnd, "#8A8A48", count=count, droop=0.3)
+    w, h = size
+    c = Canvas(w, h, rnd)
+    c.img = img
+    c.draw = ImageDraw.Draw(img)
+    dark = ramp("#2A3430", 4)
+    c.blob(w * 0.5, h - 6, w * 0.34, 7, [dark[0], dark[1], dark[1], dark[2], dark[3]], rim=False)
+    return c.img
+
+
+RECIPES.update({
+    "props/thicket_a": lambda s, r: thicket(s, r, ["#7A4A2E", "#5E6A34", "#8A5A2E"], "#2A2030"),
+    "props/thicket_b": lambda s, r: thicket(s, r, ["#6E7A3A", "#8A4A2E"], "#2A2030", thorns=34),
+    "props/thicket_c": lambda s, r: thicket(s, r, ["#5E6A34", "#7A4A2E", "#4E5A30"], "#C0302A", hole=True),
+    "props/bramble_hedge": bramble_hedge, "props/alder": alder, "props/marsh_snag": marsh_snag,
+    "props/marsh_hummock_a": marsh_hummock,
+    "props/marsh_hummock_b": lambda s, r: marsh_hummock(s, r, count=18),
+})

@@ -1,0 +1,90 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/map_ground.gd" id="2_ground"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="3_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="4_exit"]
+[ext_resource type="PackedScene" path="res://src/world/props/waiting_sign.tscn" id="5_sign"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_a.tscn" id="6_wall_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_c.tscn" id="7_wall_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_b.tscn" id="8_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/fern_b.tscn" id="9_fern"]
+[ext_resource type="PackedScene" path="res://src/world/props/fg_bush.tscn" id="10_fg_bush"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit"]
+size = Vector3(4, 3, 0.6)
+
+[node name="foret_profonde" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "La forêt profonde"
+region = &"foret_profonde"
+size = Vector2(32, 24)
+camera_bounds = Rect2(10, 9, 12, 7)
+
+[node name="Ground" type="StaticBody3D" parent="."]
+script = ExtResource("2_ground")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("3_batcher")
+
+[node name="Lisiere1" parent="Geometry" instance=ExtResource("6_wall_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 2.6)
+
+[node name="Lisiere2" parent="Geometry" instance=ExtResource("7_wall_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 2.6)
+
+[node name="Fern1" parent="Geometry" instance=ExtResource("9_fern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 5)
+
+[node name="Fern2" parent="Geometry" instance=ExtResource("9_fern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 4.6)
+
+[node name="Fern3" parent="Geometry" instance=ExtResource("9_fern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, 4.8)
+
+[node name="Fern4" parent="Geometry" instance=ExtResource("9_fern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.5, 0, 5.2)
+
+[node name="Bush1" parent="Geometry" instance=ExtResource("8_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 0, 18)
+
+[node name="Bush2" parent="Geometry" instance=ExtResource("8_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.4, 0, 17)
+
+[node name="Bush3" parent="Geometry" instance=ExtResource("8_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 7.5)
+
+[node name="Bush4" parent="Geometry" instance=ExtResource("8_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 7)
+
+[node name="FrontBush1" parent="Geometry" instance=ExtResource("10_fg_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 23.4)
+
+[node name="FrontBush2" parent="Geometry" instance=ExtResource("10_fg_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 23.4)
+
+[node name="Sign" parent="Geometry" instance=ExtResource("5_sign")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.8, 0, 13.6)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 16, 0.2, 4)
+
+[node name="from_entrepot" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 16, 0.2, 2.5)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="vers_entrepot" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 1.5, 0.3)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("4_exit")
+target_map = &"entrepot"
+target_marker = &"from_foret_profonde"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_entrepot"]
+shape = SubResource("BoxShape3D_exit")
+
+[node name="Life" type="Node3D" parent="."]

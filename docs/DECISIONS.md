@@ -2544,3 +2544,80 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `data/texts/entrepot.json` (format des textes de l'histoire, une clé par carte puis par objet)
   et l'affiche par le protocole de DialogueRunner, sans nom ni portrait ; paraphrases, aucune
   citation ; les noms des épées des râteliers ne s'affichent pas (ils demandent Willem, E6).
+## T1 — L'entrepôt vu du dehors (carte `entrepot`)
+- **T1 — la carte** `src/world/maps/entrepot/entrepot.tscn` suit `docs/lore/CARTE.md`, section 2 :
+  le bloc « plan » de 2.12 est relu par `tests/unit/test_entrepot.gd` (sorties, marqueurs, points,
+  places, bâtiment) ; aucune lumière dans la carte (E9). La scène est écrite par un script de
+  travail hors dépôt (ossature du plan, puis kits par bande tirés à graine fixe) ; ~1 090 décors,
+  136 images, `PropBatcher.cell_size` 24 m.
+- **T1 — sol** (`data/maps/entrepot/plan.json`) : paliers du plan (lisière +1 m, clairière +0,5 m,
+  champ, marais et creux des bois −0,5 m), toutes les faces en talus de terre (`step_earth`,
+  `wall_earth_1m`, `step_marsh` attendus du cahier n° 3 : E2 n'a qu'un talus). Berges des marais et
+  du creux des bois bruitées d'un mètre au plus autour du rectangle du plan, franches au pied des
+  rampes. Le replat d'un mètre entre la lisière et la clairière (z 4 → 5) suit la clairière (pas de
+  fossé) ; une boîte de bord le ferme (x 6 → 12). Matières propres : `herbe_drue` (grass_b),
+  `chemin` (path_dirt_b), `eau_basse` (eau qui ondule, praticable : « on y marche »). La cour est une
+  terre battue aux bords mangés par l'herbe, la place du duel toujours en terre ; usures de terre
+  devant les cages et au milieu du champ ; mousse, feuilles et herbe usée dans la clairière.
+- **T1 — rampes ajoutées au plan** : au marais de l'ouest par le sud (x 2 → 6, z 30 → 32) et au
+  marais du sud-ouest depuis le chemin du village (x 7 → 10, z 43 → 45) : on y descend sans sauter
+  (les PNJ d'E4 ne sautent pas). Le chemin de la clairière passe par sa rampe du sud-est (le tracé
+  du plan, 27,6 ; 22 → 24 ; 19, franchirait le talus) ; la bande libre du plan reste libre.
+- **T1 — `map_build.py gen`** accepte `height_zero_value` dans `plan.json` (paliers négatifs) ; un
+  palier hors de l'image est une erreur au lieu d'être ramené à 0 en silence.
+- **T1 — `PropScatter`** pose ses exemplaires sur le `MapGround` de la carte qui le porte (comme
+  `GroundDecal`), sinon sur l'île : seul changement hors des dossiers du lot, sans effet sur
+  l'ancienne île.
+- **T1 — bâtiment** : deux `Building` (`warehouse_front_a`, 18 × 14 m, faîte 10 m, ardoise ;
+  `warehouse_front_b`, 12 × 14 m, toit plat de planches, rambarde `roof_railing` et séchoirs
+  `drying_frame` posés dessus, linge animé ; `gable_front` vrai : un toit plat n'a pas de
+  pignon, ses flancs sont des gouttereaux comme ceux d'un toit « pignon »). Les façades et flancs du plan (noms proposés, 12.1)
+  ont des remplaçants faits des morceaux de `warehouse_main` (livrée) : porte d'entrée à 12 m du
+  bord gauche (x = 42), fenêtres placées sur les pièces du dedans (dépolies aux bains), plannings
+  et plaque près de la porte ; porte de service à **6 m** de l'angle sud du pignon ouest (z = 20,
+  2.7), pas à 8 m comme l'écrit 12.1 (demande dans docs/CONTRACT_REQUESTS.md). Au manifeste en lot
+  « K » ; `test_hd2d_assets.gd` lit aussi `docs/lore/CARTE.md` (12.1 nomme ces images et leur
+  taille). `roof_railing` et `drying_frame` (lot I, livrées, hors manifeste) : scènes extérieures
+  `warehouse_roof_railing`, `warehouse_drying_frame` ; leur entrée au manifeste revient au lot I
+  (T2) pour éviter un doublon.
+- **T1 — remplaçants du lot M** (cahier n° 3, 7.3 et 7.4) : `thicket_a/b/c`, `bramble_hedge`,
+  `alder`, `marsh_snag`, `marsh_hummock_a/b`, recettes dans `tools/hd2d_nature.py`.
+- **T1 — règle de caméra** : tout décor qui dépasse la tête du joueur (1,4 m) devant une case où
+  l'on marche prend sa variante de premier plan (`_forest`, ou `_fg` nouvelles : grand arbre, cage
+  rouge, aulne, fourrés, porche) ; vérifié depuis 3 887 places par `test_entrepot.gd` (murs et
+  toits : pieds, taille, tête ; décors opaques : tête). Au-delà du bord ouest, saules et aulnes en
+  toile de fond (on ne passe pas derrière).
+- **T1 — portes** : `porte_entree` et `porte_service` portent la cible du plan en métadonnée
+  (`plan_target_map = entrepot_rdc`, `plan_target_marker`) et mènent, tant que le lot T2 n'est pas
+  fusionné, au `Spawn` de `entrepot_rdc_essai` (E3). Une fois `entrepot_rdc` présent,
+  `test_entrepot.gd` exige la vraie cible : **raccord à faire à la fusion** (deux lignes par porte).
+- **T1 — places et points** : points nommés en `Life/Places/<nom>` (Marker3D au sol) ; places
+  réservées en `Life/Areas/<nom>` (Marker3D au centre, `metadata/area` = Rect2 du plan), deux
+  dossiers parce que `coin_soleil` est à la fois une place et un point.
+- **T1 — lumières** : la lanterne à cristal de la porte est une `OmniLight3D` (`Lights/lanterne_porte`,
+  énergie de départ 0,7, réglée par `lamp_energy` d'E9) et le panneau `wall_lantern` (lueur) ;
+  les fenêtres de la façade s'allument par `window_glow` (lueur des panneaux : les vitres des
+  remplaçants sont peintes près de `glow_color`, #FFE6A6, pour s'allumer la nuit) ; `fenetres_facade`
+  reste un repère (Marker3D). Aucun lampadaire. Fumée de la cheminée toujours là (automne).
+- **T1 — cartes d'attente (provisoires, phase 3)** : `village`, `colline`, `sentier`,
+  `foret_profonde`, 32 × 24 m, sol plat assourdi de la bonne matière, une lisière au nord,
+  l'écriteau « Plus loin, bientôt » (`src/world/props/waiting_sign.tscn`, texte dans
+  `data/texts/story.json`, `maps/waiting`, lu par la boîte de dialogue sans portrait), la sortie
+  de retour vers le marqueur de l'entrepôt et `from_entrepot`. Les lots de la phase 3 les
+  remplacent (le lot T2 crée `Examinable` pour les objets à examiner : l'écriteau pourra le
+  prendre).
+- **T1 — raccourci** `?map=<id>&marker=<nom>` (Web) et `--map=` `--marker=` (ligne de commande),
+  dans `src/test_shortcuts.gd` : la partie se pose sur la carte par `WorldManager.enter_map`.
+- **T1 — densité mesurée** (un écran = 20 × 20 m autour du point visé, 7 m au sud, 13 au nord,
+  décors debout et décalques) : cour 71, abords ouest 79, abords est 100, champ 45, clairière 52,
+  bois 103, marais 119, rivière 104 ; aucun carré de 6 × 6 m nu hors des places. La place du duel
+  ne porte que des décalques (traces, cailloux, feuilles).
+- **T1 — mesures** (Xvfb, `tests/integration/demo_entrepot_dehors.tscn`, couchant ; nuit : +1) : draw
+  calls façade 102, porche 95, cour 102, champ 84, clairière 73, marais 90, bois 116, grand arbre
+  90, potager 102 à 121, sentier 94, rivière 102, vue large 125 (budget 200 ; `test_entrepot.gd`
+  en borne le pire cas sur une grille de 6 m). Banc headless (`tools/map_bench.gd`, essai ⇄
+  entrepot) : chargement 917 ms à froid, 429 ms à chaud, installation 211 à 249 ms, total 1,2 à
+  1,7 s ; 4 112 nœuds, mêmes comptes à chaque visite, carte libérée au départ. Web (Chromium sans
+  écran, SwiftShader, `tools/web_maps.js` avec entrepot puis essai) : chargement 1 270 ms en
+  3 images, installation 849 ms ; 1 image/s et 117 draw calls dans l'entrepôt (l'ancienne île :
+  1 image/s, 131 ; essai : 2) : le rendu logiciel compare, il ne mesure pas un vrai navigateur.
