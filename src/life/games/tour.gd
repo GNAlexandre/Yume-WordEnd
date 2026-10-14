@@ -9,6 +9,8 @@ extends LifeGame
 ## se rassoit, on recommence. Le joueur, en parlant à l'une d'elles pendant la pile, prend son
 ## élan… et s'arrête au bord, rouge (le gag). Paramètres : stack_time, hold_time, rest_time.
 
+enum Phase { GATHER, STACK, HOLD, FALLEN, REST }
+
 const BASE := &"base"
 ## Étages de la pile autour de la base : décalage (x, y, z) en m (z > 0 : vers la caméra, donc
 ## dessiné devant) et pose.
@@ -20,8 +22,6 @@ const LEVELS: Array = [
 	[Vector3(-0.08, 1.46, 0.18), &"grimpe"],
 	[Vector3(0.12, 1.72, 0.22), &"assis"],
 ]
-
-enum Phase { GATHER, STACK, HOLD, FALLEN, REST }
 
 var phase: Phase = Phase.GATHER
 var stacked: Array[LifeActor] = []

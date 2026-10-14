@@ -43,7 +43,9 @@ var events: Array = []
 
 
 ## Prépare le jeu (appelé par LifeDirector une fois).
-func setup(id: StringName, on_map: StringName, at_place: StringName, game_params: Dictionary) -> void:
+func setup(
+	id: StringName, on_map: StringName, at_place: StringName, game_params: Dictionary
+) -> void:
 	game_id = id
 	map_id = on_map
 	place = at_place

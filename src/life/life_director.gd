@@ -261,6 +261,22 @@ func outfit_skin(data: NpcData, outfit: StringName) -> SkinData:
 	return data.load_outfit(outfit) if data != null else null
 
 
+## Fait paraître un PNJ hors de son emploi du temps (une scène du récit, E6 ; les tests) : posé
+## en at, debout (activité « attendre ») ; il marche ensuite par LifeActor.walk_to. Un PNJ déjà
+## présent est rendu tel quel. null si le PNJ n'existe pas ou sans carte peuplée.
+func spawn_actor(npc_id: StringName, at: Vector3) -> LifeActor:
+	var present: LifeActor = _actors.get(npc_id)
+	if present != null:
+		return present
+	var spawned := _spawn(npc_id)
+	if spawned == null:
+		return null
+	spawned.place_now({"activity": LifeData.DEFAULT_ACTIVITY})
+	spawned.set_position(at)
+	spawned.spot = Transform3D(Basis.IDENTITY, at)
+	return spawned
+
+
 ## Retire un PNJ parti (arrivé à sa sortie).
 func despawn(who: LifeActor) -> void:
 	_drop(who)
@@ -271,7 +287,7 @@ func despawn(who: LifeActor) -> void:
 ## charge, degats, mort) ; null sinon (le joueur garde sa planche ; aujourd'hui chtholly_home n'a
 ## pas le combat : docs/CONTRACT_REQUESTS.md). Le skin choisi par la communauté prime : seul le
 ## skin par défaut (Chtholly) en change.
-static func player_home_outfit(map: Map, skin: SkinData) -> SkinData:
+func player_home_outfit(map: Map, skin: SkinData) -> SkinData:
 	if map == null or not map.interior or map.region != &"entrepot" or skin == null:
 		return null
 	if skin.id != SkinRegistry.default_skin().id:
@@ -361,7 +377,9 @@ func avoidance(who: LifeActor, pos: Vector3, forward: Vector3) -> Dictionary:
 		if player is CharacterBody3D:
 			player_velocity = (player as CharacterBody3D).velocity
 		player_velocity.y = 0.0
-		var player_heading := player_velocity.normalized() if player_velocity.length() > 0.3 else Vector3.ZERO
+		var player_heading := (
+			player_velocity.normalized() if player_velocity.length() > 0.3 else Vector3.ZERO
+		)
 		others.append([player.global_position, player_heading, null])
 	for entry: Array in others:
 		var at: Vector3 = entry[0]
@@ -485,22 +503,25 @@ func stats_text() -> String:
 	var data := stats()
 	var frames := maxi(int(data["frames"]), 1)
 	return (
-		"créneau %s, %d PNJ ; directeur %.3f ms/image (max %.3f), navigation %.3f ms (max %.3f), "
-		+ "chemins %.3f ms (max %.3f, %d) ; grille %s (%.1f ms en %d images)"
-	) % [
-		slot(),
-		int(data["actors"]),
-		float(data["usec"]) / frames / 1000.0,
-		float(data["max_usec"]) / 1000.0,
-		float(data["nav_usec"]) / frames / 1000.0,
-		float(data["nav_max_usec"]) / 1000.0,
-		float(data["path_usec"]) / frames / 1000.0,
-		float(data["path_max_usec"]) / 1000.0,
-		int(data["paths"]),
-		"prête" if data["nav_ready"] else "en cours",
-		float(data["nav_build_usec"]) / 1000.0,
-		int(data["nav_frames"]),
-	]
+		(
+			"créneau %s, %d PNJ ; directeur %.3f ms/image (max %.3f), navigation %.3f ms (max %.3f), "
+			+ "chemins %.3f ms (max %.3f, %d) ; grille %s (%.1f ms en %d images)"
+		)
+		% [
+			slot(),
+			int(data["actors"]),
+			float(data["usec"]) / frames / 1000.0,
+			float(data["max_usec"]) / 1000.0,
+			float(data["nav_usec"]) / frames / 1000.0,
+			float(data["nav_max_usec"]) / 1000.0,
+			float(data["path_usec"]) / frames / 1000.0,
+			float(data["path_max_usec"]) / 1000.0,
+			int(data["paths"]),
+			"prête" if data["nav_ready"] else "en cours",
+			float(data["nav_build_usec"]) / 1000.0,
+			int(data["nav_frames"]),
+		]
+	)
 
 
 ## Remet les mesures à zéro.
@@ -561,7 +582,10 @@ func _apply_slot(walk: bool) -> void:
 				else:
 					current.place_now(line)
 			elif walk:
-				current.leave_by(_exit_toward(_target_of(line)), _rng.randf_range(DEPART_SPREAD.x, DEPART_SPREAD.y))
+				current.leave_by(
+					_exit_toward(_target_of(line)),
+					_rng.randf_range(DEPART_SPREAD.x, DEPART_SPREAD.y)
+				)
 			else:
 				_drop(current)
 		elif here:
@@ -571,7 +595,9 @@ func _apply_slot(walk: bool) -> void:
 			if walk:
 				var before := LifeData.line_for(npc_id, previous_slot, previous_day)
 				var entry := _exit_toward(_target_of(before))
-				arriving.arrive_from(entry, line, _rng.randf_range(DEPART_SPREAD.x + 1.0, DEPART_SPREAD.y + 2.0))
+				arriving.arrive_from(
+					entry, line, _rng.randf_range(DEPART_SPREAD.x + 1.0, DEPART_SPREAD.y + 2.0)
+				)
 			else:
 				arriving.place_now(line)
 	slot_changed.emit(_slot)

@@ -46,7 +46,9 @@ static func raw(key_path: String) -> Variant:
 
 
 ## Un texte au chemin (tiré au hasard dans une liste), variables remplacées ; fallback sinon.
-static func text(key_path: String, fallback: String = "", rng: RandomNumberGenerator = null) -> String:
+static func text(
+	key_path: String, fallback: String = "", rng: RandomNumberGenerator = null
+) -> String:
 	var value: Variant = raw(key_path)
 	if value is Array and not (value as Array).is_empty():
 		var list: Array = value

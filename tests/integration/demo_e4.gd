@@ -14,8 +14,9 @@ extends Node
 ##   tour       : la tour de fées sur Willem, le soir, dans la salle de jeux ;
 ##   lecture    : la salle de lecture l'après-midi ;
 ##   nuit       : la nuit, Willem aux archives.
-## LIFE_SEQUENCE=<dossier> : en plus, une image toutes les 0,5 s pendant 5 s (<dossier>/<vue>_NN.png),
-## à partir de LIFE_SEQUENCE_FROM images (défaut : 60 ; l'avalanche : quand le joueur se met en marche).
+## LIFE_SEQUENCE=<dossier> : en plus, une image toutes les 0,5 s pendant 5 s
+## (<dossier>/<vue>_NN.png), à partir de LIFE_SEQUENCE_FROM images (défaut : 60 ; l'avalanche :
+## quand le joueur se met en marche).
 ## Le journal donne les draw calls (« Vie vue … ») et les mesures du directeur.
 
 const GAME_SCENE := preload("res://src/game.tscn")
@@ -93,7 +94,11 @@ func _process(delta: float) -> void:
 				]
 			)
 		)
-	if not _sequence_dir.is_empty() and _frame >= _sequence_from and _sequence_index < SEQUENCE_COUNT:
+	if (
+		not _sequence_dir.is_empty()
+		and _frame >= _sequence_from
+		and _sequence_index < SEQUENCE_COUNT
+	):
 		_sequence_left -= delta
 		if _sequence_left <= 0.0:
 			_sequence_left = SEQUENCE_STEP

@@ -162,7 +162,9 @@ func test_avalanche_falls_when_the_door_opens() -> void:
 	_enter(RDC, &"nuit", Vector3(25.0, 0.0, 11.6))
 	var game := LifeDirector.game_at(&"avalanche", &"porte_nygglatho")
 	assert_not_null(game)
-	assert_true(await _until(func() -> bool: return game.phase == game.Phase.SPYING, 15.0), "collées")
+	assert_true(
+		await _until(func() -> bool: return game.phase == game.Phase.SPYING, 15.0), "collées"
+	)
 	assert_ne(game.door, Vector3.INF, "la porte de Nygglatho")
 	_player.global_position = game.door + Vector3(0.0, 0.0, 0.8)
 	await wait_physics_frames(3)
@@ -178,7 +180,9 @@ func test_fairy_tower_stacks_on_willem() -> void:
 	assert_not_null(tour)
 	var base: LifeActor = tour.base_actor()
 	assert_eq(base.id, &"willem", "Willem est la base")
-	assert_true(await _until(func() -> bool: return tour.stacked.size() >= 2, 30.0), "elles grimpent")
+	assert_true(
+		await _until(func() -> bool: return tour.stacked.size() >= 2, 30.0), "elles grimpent"
+	)
 	var first: LifeActor = tour.stacked[0]
 	var second: LifeActor = tour.stacked[1]
 	assert_eq(first.id, &"nephren", "Nephren d'abord, collée à son dos")
@@ -194,10 +198,18 @@ func test_corridor_race_and_scolding() -> void:
 	assert_eq(race.with_role(&"gronde").size(), 1, "Nygglatho gronde")
 	assert_gte(race.runners().size(), 2)
 	assert_true(
-		await _until(func() -> bool: return race.events.any(func(e: Array) -> bool: return e[0] == &"scolded"), 60.0),
+		await _until(
+			func() -> bool:
+				return race.events.any(func(e: Array) -> bool: return e[0] == &"scolded"),
+			60.0
+		),
 		"on ne court pas dans les couloirs"
 	)
 	assert_true(
-		await _until(func() -> bool: return race.events.any(func(e: Array) -> bool: return e[0] == &"race_won"), 40.0),
+		await _until(
+			func() -> bool:
+				return race.events.any(func(e: Array) -> bool: return e[0] == &"race_won"),
+			40.0
+		),
 		"une gagnante"
 	)

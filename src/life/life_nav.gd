@@ -13,6 +13,8 @@ extends RefCounted
 ## construction est découpée (build_step, budget en microsecondes par image) : pas de pic
 ## d'image à l'entrée d'une carte ; find_path attend ready.
 
+enum Kind { FLAT, OUTDOOR, INTERIOR }
+
 const OUTDOOR_CELL := 1.0
 const INDOOR_CELL := 0.5
 ## Montée ou descente permise d'un point de mesure au suivant (m) : marches de 0,1 à 0,17 m,
@@ -39,8 +41,6 @@ const STAGE_GRAPH := 2
 const STAGE_DIAGONALS := 3
 const STAGE_DONE := 4
 
-enum Kind { FLAT, OUTDOOR, INTERIOR }
-
 ## Taille d'une case (m) et nombre de cases.
 var cell: float = OUTDOOR_CELL
 var size: Vector2i = Vector2i.ZERO
@@ -64,7 +64,7 @@ var _astar := AStar2D.new()
 var _stage: int = STAGE_CELLS
 var _row: int = 0
 var _disabled: Array[int] = []
-## Cases évitées pendant le calcul d'un chemin (find_path, avoid) : le lissage n'y passe pas non plus.
+## Cases évitées pendant le calcul d'un chemin (find_path, avoid) : le lissage non plus.
 var _avoided: Dictionary = {}
 
 
@@ -292,7 +292,9 @@ func _sample_walkable(x: float, z: float) -> bool:
 			var wz := floori(z / WALL_RES)
 			if wx < 0 or wz < 0 or wx >= _wall_size.x or wz >= _wall_size.y:
 				return false
-			return _wall[wz * _wall_size.x + wx] == 0
+			# Dans un mur : non ; au bord d'un mur : la réponse exacte du sol.
+			var wall := _wall[wz * _wall_size.x + wx]
+			return wall == 0 or (wall == 1 and room.is_walkable(x, z))
 	return true
 
 
@@ -314,7 +316,15 @@ func _scan_walls() -> void:
 		var z1 := mini(_wall_size.y - 1, floori((box.end.z + 0.001) / WALL_RES))
 		for wz: int in range(z0, z1 + 1):
 			for wx: int in range(x0, x1 + 1):
-				_wall[wz * _wall_size.x + wx] = 1
+				# 2 : pixel tout entier dans le mur ; 1 : à cheval sur son bord.
+				var inside := (
+					wx * WALL_RES > box.position.x + 0.001
+					and (wx + 1) * WALL_RES < box.end.x - 0.001
+					and wz * WALL_RES > box.position.z + 0.001
+					and (wz + 1) * WALL_RES < box.end.z - 0.001
+				)
+				var index := wz * _wall_size.x + wx
+				_wall[index] = 2 if inside else maxi(_wall[index], 1)
 
 
 func _measure_row(row: int) -> void:
@@ -351,7 +361,9 @@ func _scan_props() -> void:
 				var inside_x := c.x > box.position.x - PROP_MARGIN and c.x < box.end.x + PROP_MARGIN
 				var inside_z := c.z > box.position.z - PROP_MARGIN and c.z < box.end.z + PROP_MARGIN
 				var ground := _height[row * size.x + col]
-				var overlaps := box.end.y > ground + BODY_LOW and box.position.y < ground + BODY_HIGH
+				var overlaps := (
+					box.end.y > ground + BODY_LOW and box.position.y < ground + BODY_HIGH
+				)
 				if inside_x and inside_z and overlaps:
 					_prop[row * size.x + col] = 1
 
@@ -410,7 +422,11 @@ func _connected(a: Vector2i, b: Vector2i) -> bool:
 	var id_b := _id(b)
 	if a.x < 0 or a.y < 0 or b.x < 0 or b.y < 0 or a.x >= size.x or b.x >= size.x:
 		return false
-	return _astar.has_point(id_a) and _astar.has_point(id_b) and _astar.are_points_connected(id_a, id_b)
+	return (
+		_astar.has_point(id_a)
+		and _astar.has_point(id_b)
+		and _astar.are_points_connected(id_a, id_b)
+	)
 
 
 ## Arête entre deux cases voisines : mesures le long du segment (sol, marches).
@@ -440,6 +456,10 @@ func _smooth(raw: PackedVector3Array) -> PackedVector3Array:
 		var j := i + 1
 		while j + 1 < raw.size() and j - i < SMOOTH_LOOKAHEAD and cells_clear(raw[i], raw[j + 1]):
 			j += 1
+		# Le segment retenu, mesuré pour de bon (un montant de porte, un coin de meuble) : on
+		# recule jusqu'à ce qu'il soit libre (le pas suivant du chemin brut l'est toujours).
+		while j > i + 1 and not line_clear(raw[i], raw[j]):
+			j -= 1
 		result.append(raw[j])
 		i = j
 	return result

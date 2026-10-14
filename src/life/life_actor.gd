@@ -53,6 +53,8 @@ var role: StringName = &""
 var game: LifeGame = null
 var talking: bool = false
 var rng := RandomNumberGenerator.new()
+## Délai sans progrès au bout duquel on se replace d'un coup au but (s ; STUCK_TIME).
+var stuck_time: float = STUCK_TIME
 
 var _path := PackedVector3Array()
 var _path_index: int = 0
@@ -285,7 +287,11 @@ func _tick_move(delta: float) -> void:
 		var side: Vector3 = avoidance.get("side", Vector3.ZERO)
 		var nav_side: LifeNav = LifeDirector.nav()
 		var aside := pos + side * speed * delta * 0.6
-		if side != Vector3.ZERO and nav_side != null and nav_side.is_walkable_point(aside.x, aside.z):
+		if (
+			side != Vector3.ZERO
+			and nav_side != null
+			and nav_side.is_walkable_point(aside.x, aside.z)
+		):
 			aside.y = nav_side.height_at(aside.x, aside.z)
 			set_position(aside)
 			face(forward)
@@ -324,7 +330,7 @@ func _check_stuck(delta: float, pos: Vector3) -> void:
 		_stuck = 0.0
 		return
 	_stuck += delta
-	if _stuck > STUCK_TIME:
+	if _stuck > stuck_time:
 		# Jamais coincé : on se replace d'un coup au but.
 		set_position(_goal)
 		_arrive()
@@ -377,7 +383,6 @@ func _take_line(new_line: Dictionary) -> void:
 		_outfit_dirty = true
 
 
-
 ## Vrai si la tenue de la ligne n'est pas encore portée (elle se met au départ).
 func outfit_pending() -> bool:
 	return _outfit_dirty
@@ -396,7 +401,9 @@ func _line_gait() -> StringName:
 
 func _claim_spot() -> void:
 	point_index = LifeDirector.claim_point(self, place)
-	spot = LifeDirector.places().point(place, point_index) if LifeDirector.places() != null else spot
+	spot = (
+		LifeDirector.places().point(place, point_index) if LifeDirector.places() != null else spot
+	)
 
 
 func _release_spot() -> void:
@@ -488,7 +495,9 @@ func _pause_time() -> float:
 
 
 func _react_to_player(delta: float, player: Node3D) -> void:
-	var partner: LifeActor = LifeDirector.pair_partner(self) if activity.get("pair", false) else null
+	var partner: LifeActor = (
+		LifeDirector.pair_partner(self) if activity.get("pair", false) else null
+	)
 	var looking := false
 	if player != null and activity.get("look", true):
 		var offset := player.global_position - position()
@@ -529,8 +538,9 @@ func _check_aside(delta: float, player: Node3D, distance: float) -> void:
 		velocity.y = 0.0
 		var toward := position() - player.global_position
 		toward.y = 0.0
-		pushing = distance < 0.8 or (
-			velocity.length() > 0.5 and velocity.normalized().dot(toward.normalized()) > 0.5
+		pushing = (
+			distance < 0.8
+			or (velocity.length() > 0.5 and velocity.normalized().dot(toward.normalized()) > 0.5)
 		)
 	_aside_time = _aside_time + delta if pushing else 0.0
 	if _aside_time < ASIDE_TIME:
@@ -541,7 +551,9 @@ func _check_aside(delta: float, player: Node3D, distance: float) -> void:
 	away = away.normalized() if away.length_squared() > 0.0001 else Vector3.RIGHT
 	var side := Vector3(-away.z, 0.0, away.x)
 	var nav: LifeNav = LifeDirector.nav()
-	for candidate: Vector3 in [side, -side, away, (side + away).normalized(), (away - side).normalized()]:
+	for candidate: Vector3 in [
+		side, -side, away, (side + away).normalized(), (away - side).normalized()
+	]:
 		var target := position() + candidate * ASIDE_STEP
 		if nav == null or nav.is_walkable_point(target.x, target.z):
 			state = State.ASIDE

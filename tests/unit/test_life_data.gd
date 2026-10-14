@@ -41,7 +41,10 @@ func test_every_life_file_is_valid() -> void:
 
 
 func test_a_valid_line_passes() -> void:
-	assert_eq(_problems([_line({"outfit": "vie", "day": [2, 4], "if": {"flag": "x"}})]), PackedStringArray())
+	assert_eq(
+		_problems([_line({"outfit": "vie", "day": [2, 4], "if": {"flag": "x"}})]),
+		PackedStringArray()
+	)
 
 
 func test_unknown_keys_are_refused() -> void:
@@ -83,7 +86,9 @@ func test_line_follows_slot_day_and_condition() -> void:
 	assert_eq(LifeData.line_for(&"willem", &"nuit", 0)["place"], &"archives_bureau")
 	assert_eq(LifeData.line_for(&"willem", &"matin", 0)["outfit"], &"cuisine")
 	# Lakhesh : sa ligne « day » (boulangerie, jours 3 à 12) l'emporte sur la ligne de base.
-	assert_eq(LifeData.line_for(&"lakhesh", &"matin", 0)["place"], &"refectoire_table_b", "pas de jour")
+	assert_eq(
+		LifeData.line_for(&"lakhesh", &"matin", 0)["place"], &"refectoire_table_b", "pas de jour"
+	)
 	assert_eq(LifeData.line_for(&"lakhesh", &"matin", 2)["map"], &"entrepot_rdc_essai")
 	assert_eq(LifeData.line_for(&"lakhesh", &"matin", 3)["away"], &"ville_boulangerie", "jour 3")
 	assert_eq(LifeData.line_for(&"lakhesh", &"matin", 12)["away"], &"ville_boulangerie", "jour 12")

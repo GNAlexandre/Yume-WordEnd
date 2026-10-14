@@ -43,7 +43,9 @@ static var _cache: Dictionary = {}
 ## principale y sont ajoutées (copies marquées EXTRA_KEY) ; sans planche principale : {}.
 static func read_sheet(skin: SkinData, view: StringName = SIDE) -> Dictionary:
 	var main := _json_data(view_json(skin, view))
-	var extra := _json_data(extra_view_json(skin, view))
+	var extra := (
+		_json_data(extra_view_json(skin, view)) if extra_view_texture(skin, view) != null else {}
+	)
 	if main.is_empty() or extra.is_empty():
 		return main
 	return merge_sheets(main, extra)

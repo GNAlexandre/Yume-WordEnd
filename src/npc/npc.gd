@@ -61,6 +61,11 @@ const BUBBLE_TIME := 2.6
 ## ferme la dernière réplique ne doit pas relancer la conversation dans la même image.
 @export var talk_cooldown: float = 0.3
 
+## (E4) Le meneur de vie (LifeDirector) ; null : PNJ posé à la main, immobile (ancienne île).
+var life: LifeActor = null
+## (E4) Tenue affichée à la place de data.skin (LifeActor, set_outfit) ; null : data.skin.
+var outfit_skin: SkinData = null
+
 var _breath_time: float = 0.0
 var _base_scale: Vector3 = Vector3.ONE
 var _ended_at_msec: int = -1
@@ -72,10 +77,6 @@ var _talking: bool = false
 var _present: bool = true
 ## process_mode d'origine, rendu quand le PNJ redevient présent.
 var _present_process_mode: ProcessMode = PROCESS_MODE_INHERIT
-## (E4) Le meneur de vie (LifeDirector) ; null : PNJ posé à la main, immobile (ancienne île).
-var life: LifeActor = null
-## (E4) Tenue affichée à la place de data.skin (LifeActor, set_outfit) ; null : data.skin.
-var outfit_skin: SkinData = null
 var _bubble_left: float = 0.0
 
 @onready var visual: CharacterVisual = $Visual

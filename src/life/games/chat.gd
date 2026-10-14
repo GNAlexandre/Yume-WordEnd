@@ -103,7 +103,10 @@ func _tick(delta: float, player: Node3D) -> void:
 	# Le joueur chasseur touche en courant contre une petite.
 	if player_chases and player_in and player != null:
 		var touched := _nearest_member(player.global_position)
-		if touched != null and flat_distance(touched.position(), player.global_position) < tag_radius + 0.2:
+		if (
+			touched != null
+			and flat_distance(touched.position(), player.global_position) < tag_radius + 0.2
+		):
 			_player_tags(touched)
 	var hunter_at := _hunter_position()
 	for actor: LifeActor in members:

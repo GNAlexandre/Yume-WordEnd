@@ -79,7 +79,6 @@ static var _activities: Dictionary = {}
 static var _activities_loaded: bool = false
 static var _places: Dictionary = {}
 
-
 # --- Emplois du temps --------------------------------------------------------------------------
 
 
@@ -173,7 +172,9 @@ static func schedule_problems(
 	if npc == null:
 		found.append("%s : PNJ introuvable (data/npcs/%s.tres ou generic/)" % [npc_id, npc_id])
 	if data.has("gait") and not is_gait(data["gait"]):
-		found.append("%s : « gait » %s inconnue (speeds d'activities.json)" % [npc_id, data["gait"]])
+		found.append(
+			"%s : « gait » %s inconnue (speeds d'activities.json)" % [npc_id, data["gait"]]
+		)
 	var lines: Variant = data.get("lines")
 	if not lines is Array or (lines as Array).is_empty():
 		found.append("%s : « lines » doit être une liste non vide" % npc_id)
@@ -364,7 +365,9 @@ static func _line_problems(
 		elif check_world and not Map.exists(map_id):
 			found.append("%s : carte %s absente" % [label, map_id])
 		elif check_world and not map_places(map_id).has(str(line["place"])):
-			found.append("%s : place %s absente de %s/%s" % [label, line["place"], map_id, PLACES_PATH])
+			found.append(
+				"%s : place %s absente de %s/%s" % [label, line["place"], map_id, PLACES_PATH]
+			)
 	elif line.has("place"):
 		found.append("%s : « place » sans « map »" % label)
 	if line.has("away") and not Map.is_valid_id(StringName(str(line["away"]))):
@@ -377,10 +380,15 @@ static func _line_problems(
 		if npc != null and not npc.has_outfit(outfit):
 			found.append("%s : tenue %s absente de NpcData.outfits" % [label, outfit])
 		elif npc != null and check_world and not ResourceLoader.exists(npc.outfit_path(outfit)):
-			found.append("%s : tenue %s : %s introuvable" % [label, outfit, npc.outfit_path(outfit)])
+			found.append(
+				"%s : tenue %s : %s introuvable" % [label, outfit, npc.outfit_path(outfit)]
+			)
 	if line.has("gait") and not is_gait(line["gait"]):
 		found.append("%s : « gait » %s inconnue" % [label, line["gait"]])
-	if line.has("role") and not (line["role"] is String and Map.is_valid_id(StringName(line["role"]))):
+	if (
+		line.has("role")
+		and not (line["role"] is String and Map.is_valid_id(StringName(line["role"])))
+	):
 		found.append("%s : « role » : un identifiant" % label)
 
 
@@ -445,20 +453,23 @@ static func _normalize(raw: Dictionary) -> Dictionary:
 	var default_gait := StringName(str(raw.get("gait", DEFAULT_GAIT)))
 	var index := 0
 	for value: Dictionary in raw["lines"]:
-		lines.append(
-			{
-				"slots": _slot_list(value["slot"]),
-				"day": _day_range(value["day"]) if value.has("day") else Vector2i.ZERO,
-				"condition": value.get("if"),
-				"map": StringName(str(value.get("map", ""))),
-				"place": StringName(str(value.get("place", ""))),
-				"away": StringName(str(value.get("away", ""))),
-				"activity": StringName(str(value.get("activity", DEFAULT_ACTIVITY))),
-				"outfit": StringName(str(value.get("outfit", ""))),
-				"gait": StringName(str(value.get("gait", default_gait))),
-				"role": StringName(str(value.get("role", ""))),
-				"index": index,
-			}
+		(
+			lines
+			. append(
+				{
+					"slots": _slot_list(value["slot"]),
+					"day": _day_range(value["day"]) if value.has("day") else Vector2i.ZERO,
+					"condition": value.get("if"),
+					"map": StringName(str(value.get("map", ""))),
+					"place": StringName(str(value.get("place", ""))),
+					"away": StringName(str(value.get("away", ""))),
+					"activity": StringName(str(value.get("activity", DEFAULT_ACTIVITY))),
+					"outfit": StringName(str(value.get("outfit", ""))),
+					"gait": StringName(str(value.get("gait", default_gait))),
+					"role": StringName(str(value.get("role", ""))),
+					"index": index,
+				}
+			)
 		)
 		index += 1
 	return {"gait": default_gait, "lines": lines}

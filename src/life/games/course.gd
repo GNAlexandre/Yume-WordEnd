@@ -8,10 +8,10 @@ extends LifeGame
 ## milieu). Le joueur entre en se tenant près du départ quand elles s'alignent : il court avec
 ## elles et peut gagner. Paramètres : ready_time, pause, scold_radius, lane.
 
+enum Phase { GATHER, READY, RUN, PAUSE }
+
 const SCOLDER := &"gronde"
 const RUNNER := &"coureuse"
-
-enum Phase { GATHER, READY, RUN, PAUSE }
 
 var phase: Phase = Phase.GATHER
 var scolded: bool = false
@@ -58,7 +58,7 @@ func _lane(actor: LifeActor, at: Vector3, toward: Vector3) -> Vector3:
 	var list := runners()
 	var index := list.find(actor)
 	var lane := float(param("lane", 0.6))
-	var forward := (toward - at)
+	var forward := toward - at
 	forward.y = 0.0
 	forward = forward.normalized()
 	var side := Vector3(-forward.z, 0.0, forward.x)
@@ -116,7 +116,12 @@ func _go(depart: Vector3, goal_line: Vector3) -> void:
 	_arrived.clear()
 	_emit(&"race_started", runners().size())
 	for actor: LifeActor in runners():
-		actor.walk_to(_lane(actor, goal_line, depart + (goal_line - depart) * 2.0), goal_line - depart, &"course", Callable())
+		actor.walk_to(
+			_lane(actor, goal_line, depart + (goal_line - depart) * 2.0),
+			goal_line - depart,
+			&"course",
+			Callable()
+		)
 
 
 func _tick_run(player: Node3D, goal_line: Vector3) -> void:
@@ -157,7 +162,9 @@ func _scold(scolder: LifeActor) -> void:
 	_emit(&"scolded", scolder.id)
 	for actor: LifeActor in runners():
 		if actor.is_moving():
-			actor.walk_to(actor.goal(), actor.goal() - actor.position(), &"marche", Callable(), true)
+			actor.walk_to(
+				actor.goal(), actor.goal() - actor.position(), &"marche", Callable(), true
+			)
 
 
 func _accepts_player() -> bool:
@@ -169,4 +176,7 @@ func _player_close(player: Node3D) -> bool:
 
 
 func _player_far(player: Node3D) -> bool:
-	return phase != Phase.RUN and flat_distance(player.global_position, _point(0).origin) > leave_distance
+	return (
+		phase != Phase.RUN
+		and flat_distance(player.global_position, _point(0).origin) > leave_distance
+	)

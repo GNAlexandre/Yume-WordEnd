@@ -86,7 +86,9 @@ func radius(place: StringName) -> float:
 	var middle := center(place)
 	var result := 0.0
 	for xform: Transform3D in _points.get(place, []):
-		result = maxf(result, Vector2(xform.origin.x - middle.x, xform.origin.z - middle.z).length())
+		result = maxf(
+			result, Vector2(xform.origin.x - middle.x, xform.origin.z - middle.z).length()
+		)
 	return result
 
 

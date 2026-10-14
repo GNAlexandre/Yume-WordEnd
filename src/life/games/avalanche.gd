@@ -1,9 +1,9 @@
 extends LifeGame
 ## (E4) L'avalanche (V1 ; docs/lore/VIE.md, 5.3) : des petites collées à une porte pour épier
 ## (les points de la place, tournées vers la porte) ; quand le joueur l'ouvre ou la franchit
-## (il arrive à trigger_distance de son milieu, ou les bouscule), elles s'écroulent les unes sur les autres (tombe),
-## se relèvent, gênées, et s'enfuient en courant (vers la place flee, où elles disparaissent) ;
-## cooldown s plus tard, elles reviennent épier. La porte : params.door, l'id d'une porte de
+## (il arrive à trigger_distance de son milieu, ou les bouscule), elles s'écroulent les unes sur
+## les autres (tombe), se relèvent, gênées, et s'enfuient en courant (vers la place flee, où
+## elles disparaissent) ; cooldown s plus tard, elles reviennent épier. La porte : params.door, l'id d'une porte de
 ## l'intérieur (InteriorRoom.door_position) ou les deux pièces qu'elle sépare ([pièce, pièce]) ;
 ## sans porte, le milieu de la place. Paramètres : door, trigger_distance, fall_time, flee,
 ## cooldown, whisper.
@@ -92,8 +92,9 @@ func _tick_spying(delta: float, player: Node3D) -> void:
 		who.npc.say(text("whisper", "Chut…"), 1.4)
 	if player == null:
 		return
-	var near_door := door != Vector3.INF and (
-		flat_distance(player.global_position, door) < float(param("trigger_distance", 1.1))
+	var near_door := (
+		door != Vector3.INF
+		and (flat_distance(player.global_position, door) < float(param("trigger_distance", 1.1)))
 	)
 	var bumped := false
 	for actor: LifeActor in members:
