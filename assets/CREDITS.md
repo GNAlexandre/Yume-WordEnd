@@ -111,3 +111,40 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/interior/props/wardrobe_chtholly_side.png` — 58 × 212 px.
 - `assets/hd2d/interior/props/sofa_beige_back.png` — 192 × 119 px.
 - `assets/hd2d/interior/props/infirmary_desk.png` — 125 × 96 px.
+
+## Cahier n° 5 — Île 68, R0 : fin du mobilier et faces associées
+
+32 PNG générés avec ChatGPT / image_gen le 14 octobre 2026 : les 27 images restantes de R0 (quatre corrections, vingt-trois vues nouvelles) et cinq faces R3 nécessaires à leur cohérence. Références : PNG du mobilier déjà livré ; bloc de style v5, sections 2.7 et R0 du cahier Île 68. Recalage géométrique autorisé au plus proche voisin, alpha binaire, sans nouvelle couleur RGB visible. Originaux et anciens PNG conservés hors dépôt. Les hauteurs des profils du fauteuil sous drap (106 px), du canapé du salon (152 px), de la vitrine (213 px) et du comptoir de librairie (152 px) suivent la formule 2.7, avec accord de l’utilisateur. Le cristal et la manivelle du projecteur changent de côté dans la vue arrière. Les nouvelles images sont importables ; leur enregistrement au catalogue moteur, leur sélection et leur placement dans les cartes restent à intégrer. R0 totalise désormais 54 PNG livrés ; les cinq faces associées ne constituent pas le lot R3 complet.
+
+- `assets/hd2d/interior/props/chair_child.png` — 43 × 77 px.
+- `assets/hd2d/interior/props/chair_wood.png` — 48 × 96 px.
+- `assets/hd2d/interior/props/chair_child_side.png` — 43 × 77 px.
+- `assets/hd2d/interior/props/chair_wood_side.png` — 48 × 96 px.
+- `assets/hd2d/interior/props/clothes_chest_side.png` — 48 × 78 px.
+- `assets/hd2d/interior/props/dresser_child_side.png` — 48 × 106 px.
+- `assets/hd2d/interior/props/footlocker_side.png` — 48 × 63 px.
+- `assets/hd2d/interior/props/bath_tub_side.png` — 96 × 167 px.
+- `assets/hd2d/interior/props/armchair_reading_back.png` — 96 × 101 px.
+- `assets/hd2d/interior/props/chair_child_back.png` — 43 × 77 px.
+- `assets/hd2d/interior/props/chair_guest_back.png` — 77 × 101 px.
+- `assets/hd2d/interior/props/bed_child_foot.png` — 77 × 118 px.
+- `assets/hd2d/interior/props/bed_chtholly_foot.png` — 91 × 144 px.
+- `assets/hd2d/interior/props/bed_iron_foot.png` — 96 × 152 px.
+- `assets/hd2d/interior/props/bed_plain_foot.png` — 91 × 144 px.
+- `assets/hd2d/interior/props/bunk_bed_foot.png` — 86 × 228 px.
+- `assets/hd2d/interior/props/armchair_sheeted_side.png` — 86 × 106 px.
+- `assets/hd2d/interior/props/sofa_salon_side.png` — 86 × 152 px.
+- `assets/hd2d/interior/props/display_cabinet_side.png` — 58 × 213 px.
+- `assets/hd2d/interior/props/sofa_salon_back.png` — 192 × 96 px.
+- `assets/hd2d/interior/props/bookshop_counter_side.png` — 67 × 152 px.
+- `assets/hd2d/interior/props/crystal_projector_back.png` — 77 × 154 px.
+- `assets/hd2d/props/gangway.png` — 192 × 115 px.
+- `assets/hd2d/props/bench.png` — 154 × 86 px.
+- `assets/hd2d/props/bench_b_side.png` — 48 × 160 px.
+- `assets/hd2d/props/bench_side.png` — 48 × 140 px.
+- `assets/hd2d/props/bench_stone_side.png` — 48 × 104 px.
+- `assets/hd2d/interior/props/armchair_sheeted.png` — 96 × 101 px.
+- `assets/hd2d/interior/props/sofa_salon.png` — 192 × 96 px.
+- `assets/hd2d/interior/props/display_cabinet.png` — 115 × 182 px.
+- `assets/hd2d/interior/props/bookshop_counter.png` — 154 × 106 px.
+- `assets/hd2d/interior/props/crystal_projector.png` — 77 × 154 px.
