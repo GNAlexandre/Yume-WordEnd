@@ -2687,3 +2687,68 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **X1 — Raccourcis** : `?island=<id>&port=<id>` (Web) ou `-- --island=<id>`, et F6 dans une
   version de débogage (île suivante de `WorldAtlas.islands()`, sans l'ancienne) ; `?timeres=` est
   refusé (une ligne au journal) là où les règles n'admettent pas de Timere.
+- **E5 — Format de la faune** : une espèce est une ressource `.tres` (`AnimalData`, qui hérite
+  d'`EnemyData`) dans `data/fauna/<île>/<id>.tres`, pas un JSON : ses attaques sont des `AttackData`
+  (`data/fauna/<île>/attacks/`, et non `data/attacks/` : les chiffres d'un animal vivent avec lui) et sa
+  planche un `SkinData` (`data/fauna/<île>/visuals/`), exactement comme un Timere. Le peuplement, lui, est
+  un JSON par île (`peuplement.json`), vérifié clé par clé (`FaunaRules.problems`), comme les quêtes.
+- **E5 — Un animal est un `Enemy`** : `Animal` (`src/fauna/animal.gd`) en hérite et réutilise son corps, sa
+  Health, ses boîtes de coup, la préparation d'un coup (zone au sol), le recul et l'IA de poursuite. La
+  garde des Timeres (X1) devient la méthode `Enemy._is_admitted()` : `Enemy` demande `enemies_allowed`,
+  `Animal` demande `FaunaRules.allowed_at` (liste `fauna` de l'île, régions sans animaux). Les deux se
+  distinguent par les données (une `AnimalData`, l'id d'espèce dans les règles), jamais par un nom ; un
+  animal n'est donc jamais retiré comme un Timere, et ne passe pas outre les règles de son île. Seul
+  changement dans `src/enemies/` : cette méthode et son appel.
+- **E5 — Ce qui est un « ennemi »** : tout animal est dans le groupe `fauna` ; seuls les dangereux (loup,
+  sanglier, ours) restent dans `enemies` (verrouillage, « Ennemis » du HUD). Un animal ne fait jamais
+  `EventBus.enemy_killed` (aucune quête ni arène ne le compte) mais `enemy_spawned` et `enemy_damaged`
+  restent émis (le bruit d'un combat alarme les paisibles proches).
+- **E5 — Un animal vaincu s'enfuit** (`docs/lore/ACTE1.md`, 3.5, vérifié) : à zéro PV il ne meurt pas, il
+  court loin de celui qui l'a frappé (`degats` un instant, puis `course`) puis rétrécit et disparaît ;
+  `max_hp` est donc le nombre de coups avant la fuite (loup 3, sanglier 4, ours 10, tous les autres 1 :
+  « un coup de bâton les fait fuir »). L'animation `mort` des planches n'est jamais jouée ; le cahier la
+  garde (« une bête vaincue reste à terre, sans sang ») pour une scène du récit.
+- **E5 — Moments** : le jeu en a cinq (`GameState.MOMENTS`) ; `VIE.md` dit midi = `matin`, soir et
+  crépuscule = `couchant`. Loups : `couchant` et `nuit` seulement (absents le jour plutôt que « cachés » :
+  ils ne sont pas dans la scène) ; ours : `matin` et `apres_midi` (il dort la nuit) ; cerfs : `aube` et
+  `couchant` ; sanglier : `matin` et `couchant` ; renard : `aube` et `couchant` ; écureuil et corbeau :
+  matin et après-midi ; merle : `aube` et `matin` ; chouette : `nuit` ; grenouille : jour et couchant ;
+  papillons : matin et après-midi par beau temps, libellules : l'après-midi par beau temps. Un groupe de
+  `peuplement.json` peut restreindre ces moments (`moments`), jamais les élargir.
+- **E5 — Où l'on ne croise pas d'animaux** : `banned_regions` de `peuplement.json` (entrepôt, village, ville,
+  port), vérifié par `Map.region` et par le lieu du fichier de l'île ; la liste `fauna` des règles de l'île
+  dit quelles espèces vivent sur quelle île (aucune sur la surface ni sur l'ancienne île). Les merles de
+  l'entrepôt, les corbeaux du port, les papillons des jardins (`VIE.md`, 6.3) restent des `AmbientSprites`
+  de ces cartes (consigne de la mission) : ce lot ne pose d'oiseaux (des `Animal` qui s'envolent) que dans
+  les cartes de bois, et ses papillons et libellules (`behavior = ambiant`) que là aussi.
+- **E5 — Peuplement** : un nœud `Fauna` sous `Life` de la carte (`src/fauna/fauna.tscn`) et des marqueurs
+  sous `Life/Places`. Au chargement tout est posé ; ensuite `EventBus.atmosphere_changed` renvoie les
+  groupes hors de saison (les bêtes s'éloignent et disparaissent) et fait venir les autres, hors du champ de
+  la caméra et à 14 m du joueur au moins ; un groupe qui a perdu des bêtes (fuite, envol) les retrouve au
+  bout de `respawn_s` (40 s par défaut, 90 à 120 s pour les dangereux). `planned` garde le peuplement
+  des vraies cartes (`VIE.md`, 6.3) qui n'ont pas encore leur nœud `Fauna`.
+- **E5 — La meute** : chaque loup a un créneau sur un cercle de 3,2 m autour du joueur, qui tourne à
+  0,6 rad/s ; un seul porteur du jeton s'approche (bond annoncé 0,5 s, puis morsure) et le rend en frappant
+  ou touché, avec 0,9 s de pause ; la moitié de l'effectif de départ partie, le reste se débande
+  (`ACTE1.md`, 3.5). Une meute alertée chasse jusqu'à deux fois la portée de repérage de chacun.
+- **E5 — Sanglier et ours** : la charge du sanglier est le « bond » d'`Enemy` (attaque `rush`, sans dégâts,
+  portée de déclenchement 8 m) avec 1 s de préparation (il gratte le sol : `broute`, la zone de la charge se
+  dessine) puis un coup de boutoir au contact ; contre un `StaticBody3D` (arbre, rocher, bord de carte), il
+  reste étourdi 2 s (`stun_s`). L'ours est `stoic` (l'épée ne le fait pas reculer), annonce son coup 0,8 s,
+  avance à 1,2 m/s et abandonne la poursuite à 15 m de sa tanière (`leash_m`).
+- **E5 — Bruit** : un paisible alerte ou fuit à des distances multipliées par 1,5 si le joueur court (au-delà
+  de 5,5 m/s), par 0,6 s'il est immobile ; un combat (un autre animal ou le joueur touché) à moins de
+  `combat_noise_m` (12 à 14 m) l'alarme. Le coup d'épée dans le vide ne fait pas de bruit (aucun signal :
+  à ajouter par une PR « contrats » si le récit le veut).
+- **E5 — Navigation** : `FaunaNav` ne connaît que le sol de la carte (`MapGround.is_walkable`, `level_at` :
+  un cran de palier, 0,5 m, au plus par pas) et essaie des directions de plus en plus détournées ; les décors
+  se contournent par la collision (`Enemy._detour`). Une carte sans `MapGround` n'a pour limite que sa collision.
+- **E5 — Planches de remplacement** : `tools/gen_fauna.py` (appelé par `gen_placeholders.py fauna`), profil
+  seulement ; hauteurs au repos et animations du cahier n° 5, section 7.3, dont les nombres d'images et les
+  cadences proposés sont **confirmés tels quels**, avec `broute` (4 images, 4 ips, boucle) et `fuite` ; la
+  1re image de `repos` mesure la hauteur du cahier à 96 px par mètre. Les trois insectes du lot R5
+  (`butterfly_orange_b`, `dragonfly_amber`, `dragonfly_blue`) ont leur recette dans `tools/hd2d_anim.py`.
+- **E5 — Carte d'essai `foret_essai`** : 56 × 40 m, sur `MapGround`, région `essai`, dans `maps` de l'île
+  n° 68 (pas dans un lieu : comme `essai` et `essai_relief`), `?map=foret_essai` ; une terrasse d'un mètre au
+  nord (clairière des loups, rampe), la clairière des cerfs, la souille, la tanière de l'ours, une mare. La
+  vraie `foret_profonde` (80 × 60 m, `CARTE.md`) viendra plus tard : `peuplement.json` la prévoit.
