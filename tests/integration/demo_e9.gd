@@ -10,7 +10,8 @@ extends Node
 ##                        ouest), essai, dedans (la carte d'essai prise pour un intérieur),
 ##                        (R1) refectoire et couloir (l'intérieur d'essai entrepot_rdc_essai : sa
 ##                        lumière, fenêtres et lampes), relief (essai_relief, au bord du vide au
-##                        nord : sol en relief, ombres des falaises, mer de nuages) ;
+##                        nord : sol en relief, mer de nuages), falaise (essai_relief, au pied de
+##                        l'escalier : ombres des falaises selon le soleil) ;
 ##   E9_FRAMES=<n>      : images attendues avant chaque capture (défaut WAIT_FRAMES).
 ## Une ligne par capture dans le journal : « E9 vue <nom> : luminance <l> (min LUMA_FLOOR), centre
 ## <c> (min CENTER_FLOOR), <d> draw calls, <p> primitives, lumière du joueur <a>, pluie <oui|non> »,
@@ -58,11 +59,13 @@ const SPOTS := {
 	"bord": [&"dunes", Vector3(-19.0, 0.0, -4.0), Vector3(0.0, 0.0, -1.0)],
 }
 ## (R1) Lieux d'autres cartes : carte, position sur la carte, direction (les vues « refectoire »
-## et « couloir » de demo_interieur.gd, « belvedere » de demo_e2_relief.gd).
+## et « couloir » de demo_interieur.gd, « belvedere » et « escalier » de demo_e2_relief.gd : la
+## falaise, ses ombres portées selon le soleil du moment).
 const MAP_SPOTS := {
 	"refectoire": [&"entrepot_rdc_essai", Vector3(8.5, 0.0, 6.4), Vector3(0.0, 0.0, -1.0)],
 	"couloir": [&"entrepot_rdc_essai", Vector3(13.6, 0.0, 11.7), Vector3(1.0, 0.0, 0.0)],
 	"relief": [&"essai_relief", Vector3(45.0, 3.0, 6.0), Vector3(0.0, 0.0, -1.0)],
+	"falaise": [&"essai_relief", Vector3(27.5, 0.0, 33.5), Vector3(-1.0, 0.0, -1.0)],
 }
 const WAIT_FRAMES := 24
 ## Luminance moyenne (0..1, Rec. 709 sur les valeurs affichées) en deçà de laquelle une vue est

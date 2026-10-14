@@ -183,7 +183,7 @@ Yume-WordEnd/
 | `SkinRegistry` | Charge `data/skins/*.tres`, expose la liste et le skin par défaut (Chtholly) | L3 |
 | `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort ; (E1) une carte à la fois : changement de carte (fondu, chargement découpé, marqueur d'arrivée), carte courante, bornes de la caméra | L2, E1 |
 | `DesktopApp` | (bureau) Application de bureau, sans effet sur le Web : fenêtre de départ, plein écran (F11, Alt+Entrée, bouton) mémorisé dans `user://settings.cfg`, boutons « Plein écran » et « Quitter » des menus, sauvegarde avant de quitter (docs/bureau.md) | bureau |
-| `Atmosphere` | (E9) La lumière et le temps : préréglage effectif de la carte courante (`light_preset`, intérieur ou moment de la journée, modifié par le temps qu'il fait), transitions douces, pose (environnement, ciel, soleil ou lune, mer de nuages, lanternes, lueurs, images de nuit, sol mouillé, post-traitement), lumière magique du joueur, pluie ; raccourcis `?moment=` / `?temps=`, F7 / F8 ; le moment et le temps eux-mêmes sont dans `GameState` (sauvegardés) | E9 |
+| `Atmosphere` | (E9) La lumière et le temps : préréglage effectif de la carte courante (`light_preset`, intérieur ou moment de la journée, modifié par le temps qu'il fait), transitions douces, pose (environnement, ciel, soleil ou lune, mer de nuages, lanternes, lueurs, images de nuit, sol mouillé, post-traitement ; (R1) lumière des intérieurs, soleil du sol en relief, teinte des personnages), lumière magique du joueur, pluie ; raccourcis `?moment=` / `?temps=`, F7 / F8 ; le moment et le temps eux-mêmes sont dans `GameState` (sauvegardés) | E9 |
 
 ### Contrats d'interface
 
@@ -392,16 +392,23 @@ func preset_id() -> StringName            # préréglage effectif : Map.light_pr
                                           # carte intérieure (Map.interior), sinon le moment
 func resolve(map: Node = null, moment_id := &"", weather_id := &"") -> HD2DLighting   # réglage effectif (nouveau) :
                                           # préréglage, « interieur » = interieur mêlé à interieur_nuit selon la nuit
-                                          # du dehors (interior_for), puis le temps (HD2DWeather.applied_to ; dedans :
-                                          # seulement la lumière des fenêtres, ni pluie ni sol mouillé)
+                                          # du dehors (interior_for ; (R1) le jour des fenêtres, window_light et
+                                          # window_tint, est celui du moment du dehors), puis le temps
+                                          # (HD2DWeather.applied_to ; dedans : seulement la lumière des fenêtres, ni
+                                          # pluie ni sol mouillé)
 func current() -> HD2DLighting            # réglage posé (copie ; mélange en cours pendant une transition)
 func is_transitioning() -> bool / func transition_progress() -> float / func step(delta: float) -> void (tests)
 func dress(map: Node3D) -> void / func snap() -> void   # habille une carte (AtmosphereRig, relevé) et pose tout de
                                           # suite ; fait à map_entered (sous le noir), et à l'image suivante pour une
                                           # carte ajoutée à la main (démonstration, capture) ; game_loaded : tout de suite
+                                          # (R1) la pose (et chaque image d'une transition) règle aussi les intérieurs
+                                          # (InteriorRoom.apply_lighting), le soleil du sol en relief (MapGround.set_sun)
+                                          # et la teinte des personnages (HD2DLighting.active_sprite_tint)
 func player_light_amount() -> float / func is_player_light_on() -> bool   # lumière magique du joueur (la nuit dehors)
 var player_light_mode: StringName         # LIGHT_AUTO (préréglage), LIGHT_ON, LIGHT_OFF (une scène : Willem sans lumière)
 func is_raining() -> bool / func sprite_tint() -> Color / func rig() -> AtmosphereRig / func targets() -> HD2DLightTargets
+                                          # (R1) sprite_tint : celle que CharacterVisual pose ; blanche et current() null
+                                          # sans carte (menu) ; static interior_for(dehors) : « interieur » sous un moment
 var transition_time: float = 4.0 / var debug_keys: bool / var dev_parameters: Dictionary
 signal preset_applied(preset_id: StringName)   # préréglage posé en entier (fin de transition, arrivée, chargement)
 # Raccourcis : ?moment=nuit&temps=pluie (Web) ou -- --moment=nuit --temps=pluie, posés à chaque partie chargée ;
@@ -422,6 +429,9 @@ func hit_frames(anim: StringName) -> Array[int]   # le "coup" du JSON de la plan
 func wave_frame(anim: StringName) -> int          # (L0) l'"onde" du JSON, -1 si absente
 func show_frame(anim: StringName, frame: int) -> void   # (L0) fige une image (charge maintenue)
 func has_animation(anim: StringName) -> bool      # (L0) ; current_animation() -> StringName
+# (R1) La planche, non éclairée, prend la teinte de la lumière : Sprite.modulate = couleur posée par d'autres
+# (EnemyData.tint) × HD2DLighting.active_sprite_tint() (Atmosphere : la nuit, plus sombre ; blanche au couchant et
+# sans carte), à chaque advance(), dehors comme dedans
 signal frame_changed(anim: StringName, frame: int)   # permet à la Hitbox de s'activer sur les images "coup"
 signal animation_finished(anim: StringName)
 
@@ -523,11 +533,12 @@ class_name MapGround       # src/world/map_ground.gd (StaticBody3D, couche 1) : 
                            # extérieure (docs/REFONTE.md 7.1) ; @export map_id (vide : nom de la Map parente),
                            # data_root (res://data/maps) ; build(), build_from(data) ; height_at(x, z) (VOID_HEIGHT
                            # dans le vide), material_at(x, z) -> StringName, is_walkable(x, z), level_at(x, z),
-                           # map_size() -> Vector2i, triangles_in(rect) (décalques), set_sun(vers_le_soleil),
-                           # stats() (build_msec, triangles, draw_calls), ground_mesh(), cliff_mesh(),
+                           # map_size() -> Vector2i, triangles_in(rect) (décalques), set_sun(vers_le_soleil)
+                           # ((R1) appelé par Atmosphere à chaque pose, transitions comprises ; plus de recherche
+                           # de la première DirectionalLight3D), stats() (build_msec, triangles, draw_calls), ground_mesh(), cliff_mesh(),
                            # collision_faces(), barrier_faces(), rim_segments() ; var data: MapGroundData ;
                            # enfants internes Mesh (sol, 1 draw call), Cliffs (faces et rideau, 1), CloudSea (si le
-                           # vide), CollisionShape3D (les triangles mêmes du sol et des faces), Barrier (côte, eau
+                           # vide ; (R1) la seule mer de nuages de la carte, réglée par Atmosphere), CollisionShape3D (les triangles mêmes du sol et des faces), Barrier (côte, eau
                            # dormante, bords « land »)
 class_name MapGroundData   # src/world/map_ground_data.gd : lecture et vérification de data/maps/<id>/ ; statiques
                            # load_map(id, root), from_images(spec, heights, materials, structures), library() ;
@@ -548,7 +559,8 @@ class_name AmbientSprites  # (H9) src/world/ambient_sprites.gd : enum Motion { F
 class_name HD2DLighting    # préréglage (data/lighting/<id>.tres) : soleil (couleur, énergie, hauteur, azimut), ciel
                            # (sky_texture, vide : sky.png ; sky_tint, sky_energy), mer de nuages (clouds_texture,
                            # clouds_tint, clouds_warm, clouds_stars), ambiance, brouillard, lamp_energy, window_glow
-                           # (× glow des panneaux), night_amount (≥ NIGHT_IMAGES_FROM : images de nuit), player_light,
+                           # (× glow des panneaux), (R1) window_light et window_tint (jour qui entre par les
+                           # fenêtres d'un intérieur : énergie, couleur ; celui du moment du dehors), night_amount (≥ NIGHT_IMAGES_FROM : images de nuit), player_light,
                            # rain, wetness, sprite_tint, étalonnage et flou (post_parameters : grade… glow_tint,
                            # top_blur_px, bottom_blur_px) ; statiques preset(id), has_preset(id), preset_path(id),
                            # for_phase(phase), blend_into(out, from, to, t), post_material(camera), own(resource) ;
@@ -559,12 +571,15 @@ class_name HD2DWeather     # temps qu'il fait (data/lighting/pluie|averse.tres ;
                            # étalonnage), window_light_scale (dedans) ; preset(id), applied_to(base, outdoors)
 class_name HD2DLightTargets   # relevé d'une carte (scan(map)) puis pose (apply(lighting, sky_from, mix, clouds_from)) :
                            # environnement (copié ; ciel en sky.gdshader, deux panoramas fondus), soleil, mers de
-                           # nuages (cloud_sea.gdshader, copiées), Light3D × lamp_energy, glow_strength × window_glow,
+                           # nuages (cloud_sea.gdshader, copiées), Light3D × lamp_energy, glow_strength × window_glow
+                           # (sauf les panneaux d'intérieur, glow_follows : leur pièce), (R1) intérieurs
+                           # (rooms : InteriorRoom.apply_lighting) et sols en relief (grounds : MapGround.set_sun),
                            # hd2d_wetness (hd2d_light.gdshaderinc) et StandardMaterial3D mouillés, images de nuit
                            # (<nom>_night.png à côté de <nom>.png) et vitres éclairées (window_lit_*, la nuit seulement) ;
                            # IGNORE_GROUP (atmosphere_rig) ; counts()
 class_name AtmosphereRig   # enfant « AtmosphereRig » de la carte courante (dress(map)) : WorldEnvironment et Sun si la
-                           # carte n'en a pas (les cartes ne portent plus de lumière ; l'île garde les siens),
+                           # carte n'en a pas (les cartes ne portent plus de lumière ; l'île garde les siens ;
+                           # (R1) carte intérieure : fond uni InteriorRoom.VOID_COLOR, aucun ciel),
                            # PlayerLight (OmniLight3D) et Orb (fairy_light.png) à côté du joueur, Rain (RainFall),
                            # RainCurtain (CanvasLayer 0 : rain_drizzle.png et rain_curtain.png répétés à l'écran) ;
                            # apply(lighting, light_part), light_amount(), is_raining() ; light_energy, light_range…
@@ -741,7 +756,8 @@ décrit par des données, bâti en images, vu par la caméra fixe qui regarde le
 détaillé, format complet et liste des images : `docs/INTERIEURS.md`. Exemple :
 `data/maps/entrepot_rdc_essai/interior.json` et `src/world/maps/entrepot_rdc_essai/`, démo
 `tests/integration/demo_interieur.tscn` (`game.tscn` et `WorldManager.enter_map` ;
-`INTERIOR_VIEW=<vue>`, `INTERIOR_PHASE`, `INTERIOR_CUT=0`), lumière `src/world/interior_light.tscn`.
+`INTERIOR_VIEW=<vue>`, `INTERIOR_MOMENT`, `INTERIOR_CUT=0`) ; (R1) lumière : celle d'`Atmosphere`,
+seule (la carte n'en porte aucune).
 
 **Format** (`data/maps/<map_id>/interior.json`) : `size` (m, = `Map.size`), `wall_height` (3),
 `wall_thickness` (0,25), `rooms.<id>` (`name`, `rects` : `[x, z, largeur, profondeur]` sur la grille
@@ -764,11 +780,15 @@ const HORIZONTAL, VERTICAL, NO_CUT, DOOR_WIDTH (1,1), DOOR_HEIGHT (2,2), WINDOW_
 
 # src/world/interior_room.gd (class_name InteriorRoom, extends StaticBody3D, @tool) : Ground
 @export var layout: JSON, cut_enabled: bool, window_tint: Color, window_energy, lamp_energy
+     # (R1) posées par Atmosphere (apply_lighting) ; valeurs de départ : un jour clair (éditeur)
 var plan: InteriorLayout
 func rebuild(), surfaces() -> Array[MeshInstance3D]   # un mesh par matière (+ « Void »)
 func cut_target() -> float, cut_line() -> float, snap_cut()   # coupe (z du monde)
-func set_daylight(tint: Color, energy: float), set_lamps(energy: float), apply_phase(phase)
-     # PHASES : morning, day, evening, night ; branchée sur EventBus.day_phase_changed
+func apply_lighting(lighting: HD2DLighting)   # (R1) HD2DLightTargets, à chaque pose et chaque image d'une
+     # transition : set_daylight(window_tint, window_light), set_lamps(lamp_energy)
+func set_daylight(tint: Color, energy: float), set_lamps(energy: float)   # à la main (tests)
+func apply_phase(phase)   # (R1) ancienne API : la phase (morning, day, evening, night) devient le moment
+     # d'Atmosphere (HD2DLighting.PHASE_MOMENTS), tout de suite ; plus de PHASES ni de day_phase_changed ici
 func height_at(x, z), material_at(x, z) -> StringName, room_at(x, z), is_walkable(x, z)
      # mêmes requêtes que MapGround (E2), repère de la carte
 func door_position(id) -> Vector3, light_at(local) -> Color
@@ -792,9 +812,15 @@ func front_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
   colonne de coupe abaisse aussi la cloison sur 4,5 m au sud du joueur. La ligne glisse d'une
   limite à l'autre (14 m/s). Les collisions ne changent jamais. Shaders :
   `src/world/shaders/interior.gdshader`, `interior_panel.gdshader`, `interior_core.gdshaderinc`.
-- *Lumière* : préréglage `interieur` (`src/world/materials/lighting_interieur.tres`, `Map.light_preset
-  = &"interieur"`) et deux cartes de lumière vues de dessus, bornées à leur pièce (jour des fenêtres,
-  lampes), ajoutées en émission ; aucune lumière du moteur ni ombre portée.
+- *Lumière* (R1) : celle d'`Atmosphere`, seule. Le préréglage `interieur` (`data/lighting/interieur.tres`
+  le jour, `interieur_nuit.tres` la nuit, mêlés selon la part de nuit du moment du dehors : ambiance,
+  lumière d'ensemble, étalonnage, teinte des personnages) et deux cartes de lumière vues de dessus,
+  bornées à leur pièce, ajoutées en émission : le jour des fenêtres (`window_light`, `window_tint`
+  du moment du dehors : flaques de soleil le matin, orangées au couchant, un peu de lune bleue la
+  nuit ; la vitre s'assombrit et bleuit, `night_view`) et les lampes, cheminées et cristaux
+  (`lamp_energy` : 0,25 le jour, 2,7 la nuit). `Atmosphere` les pose à l'arrivée et à chaque image
+  d'une transition (`InteriorRoom.apply_lighting`) ; aucune lumière du moteur ni ombre portée, pas
+  un draw call de plus.
 - *Draw calls* : un par matière de sol, de mur, de dessus de mur, par image de panneau et de meuble
   (le `PropBatcher` garde la coordonnée de coupe dans UV2), plus le vide : 36 à 67 par vue
   meublée dans l'étage d'essai, dans la vraie partie, interface comprise.
@@ -809,9 +835,9 @@ func front_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
    `interior_room.gd` (masque 0) avec `layout` ; `Geometry` (`PropBatcher`) ; `Markers` (`Spawn`,
    `from_<carte>` à y = 0,2, à 2 ou 3 m des sorties) ; `Exits` (`MapExit` devant chaque porte
    qui a un `id` : `door_position(id)` ; zone qui couvre la porte quand on la franchit en marchant ;
-   carte cible et marqueur existants, `tests/unit/test_maps.gd`) ; `Life` ; et sa lumière,
-   `Light` = instance de `src/world/interior_light.tscn` (préréglage `interieur` à l'entrée,
-   réglage par défaut rendu en partant), en attendant E9.
+   carte cible et marqueur existants, `tests/unit/test_maps.gd`) ; `Life`. (R1) Aucune lumière :
+   ni `WorldEnvironment`, ni `DirectionalLight3D`, ni lampe du moteur ; `Atmosphere` éclaire la
+   carte (préréglage `interieur`, fond uni) et ses lampes viennent de `lights[]` (`interior.json`).
 4. Meubler sous `Geometry` avec les scènes `InteriorPanel` de `src/world/props/` : nœud au milieu
    de l'emprise, image au bord sud ; au-delà d'1 m de haut, contre un mur nord ; au milieu d'une
    pièce, profondeur d'emprise ≥ `(h − 0,25) / 0,78 − 0,35` m (dans les 5 m nord, où la caméra
@@ -844,14 +870,26 @@ Contrat : l'API d'`Atmosphere` ci-dessus ; détails et choix dans docs/DECISIONS
    `interieur` si `interior`), un moment (`nuit` : la colline, une nuit claire, quel que soit
    le moment), `interieur`, ou un préréglage ajouté à `data/lighting/`. Le temps s'y ajoute
    dehors ; dedans, il ne pleut pas et seule la lumière des fenêtres baisse. Aucune lumière dans
-   la scène de la carte (plus de `map_light.tscn`) : `AtmosphereRig` fournit environnement et
-   soleil. Les lampes (`OmniLight3D`) suivent `lamp_energy`, les lueurs des panneaux (`glow`)
-   `window_glow`.
+   la scène de la carte (plus de `map_light.tscn` ni, R1, d'`interior_light.tscn`) :
+   `AtmosphereRig` fournit environnement et soleil. Les lampes (`OmniLight3D`) suivent
+   `lamp_energy`, les lueurs des panneaux (`glow`) `window_glow`.
+   **(R1) Un intérieur** (`interior = true`, `Ground` = `InteriorRoom`) ne porte aucune lumière :
+   `Atmosphere` pose le préréglage `interieur` (fond uni, ambiance) et règle la pièce à chaque
+   pose et à chaque image d'une transition (`InteriorRoom.apply_lighting`) : le jour de ses
+   fenêtres est celui du moment du dehors (`window_light`, `window_tint` de `matin.tres`,
+   `nuit.tres`…), ses lampes, cheminées et cristaux (`lights[]` de `interior.json`, et la lueur
+   des appliques et du fourneau) suivent `lamp_energy` (part de nuit : `interieur.tres` le jour,
+   `interieur_nuit.tres` la nuit). Le sol en relief d'une carte du dehors reçoit la direction du
+   soleil ou de la lune (`MapGround.set_sun`), sa mer de nuages est la seule de la carte. Les
+   personnages prennent `sprite_tint` (`CharacterVisual`).
 3. **Un préréglage** est un `HD2DLighting` (`data/lighting/<id>.tres`, champs commentés dans
    `src/world/materials/hd2d_lighting.gd`) ; un temps, un `HD2DWeather` qui modifie le
-   préréglage du moment. Vérifier : `tools/test.sh tests/unit/test_atmosphere.gd`, puis
+   préréglage du moment. Vérifier : `tools/test.sh tests/unit/test_atmosphere.gd` et
+   `tests/unit/test_light_links.gd` (R1 : intérieurs, sol en relief, personnages), puis
    `tools/e9_shots.sh` (une capture par préréglage, luminance et draw calls dans
-   `build/shots/e9/e9.log` ; `tests/integration/test_e9_captures.gd` refuse une vue trop sombre).
+   `build/shots/e9/e9.log` ; lieux `village`, `bord`, `essai`, `dedans`, (R1) `refectoire`,
+   `couloir`, `relief` ; `tests/integration/test_e9_captures.gd` refuse une vue trop sombre et un
+   intérieur dont la nuit ne se distingue pas du matin).
 4. **Images** (cahier n° 3, lot N) : les ciels (`sky_texture`) et mers de nuages
    (`clouds_texture`) d'un préréglage se fondent pendant les transitions ; `<nom>_night.png` à
    côté de `<nom>.png` le remplace la nuit (`night_amount` ≥ 0,5) ; `window_lit_*` ne se montre

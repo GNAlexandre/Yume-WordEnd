@@ -600,3 +600,18 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   (images en WebP avec perte pour le seul Web), ou exclusion de l'export Web des images pas
   encore posées (filtre d'`export_presets.cfg`, PR « contrats »).
 - En attendant : `BUILD_BUDGET_MB=110 tools/check.sh` vérifie tout le reste (vert pour E9).
+
+## R1 — raccord de la lumière (suites des demandes E2, E3 et E9)
+- *Fait* : « E9 — les personnages restent en plein jour la nuit » (`CharacterVisual` pose
+  `HD2DLighting.active_sprite_tint()`, quelques lignes, la couleur d'un ennemi gardée) ;
+  « E9 — les cartes de E2 et E3 ne portent plus de lumière » pour `entrepot_rdc_essai`
+  (`interior_light.tscn` retirée ; les lampes restent les `lights[]` d'`interior.json`, sans
+  `OmniLight3D`) ; « E2 — E9 appelle `MapGround.set_sun` » (à chaque pose et transition).
+- Cahier n° 3, lot N (images) : les fenêtres de nuit des intérieurs (`window_cross_small_night`,
+  `window_cross_large_night`, `window_reading_seat_night`…) restent attendues ; en attendant,
+  `interior_panel.gdshader` assombrit et bleuit les vitres la nuit (`night_view`), et l'image
+  livrée le remplacera sans code.
+- Pour les lots qui construisent des intérieurs (T2…) : une carte intérieure ne porte aucune
+  lumière (ni `Light`, ni `WorldEnvironment`, ni `DirectionalLight3D`) ; ses lampes sont les
+  `lights[]` de son `interior.json` ; `InteriorRoom.apply_phase` n'est plus qu'un passage vers
+  `Atmosphere.set_moment`.

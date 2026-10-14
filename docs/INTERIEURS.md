@@ -4,7 +4,7 @@ Lot E3 de la refonte (`docs/REFONTE.md`, sections 7.1 et 8.1). Un étage d'un b�
 carte (`Map`, `interior = true`) dont le nœud `Ground` est une **`InteriorRoom`**. L'étage se
 décrit dans un fichier de données, se meuble dans la scène de la carte et se voit comme dans
 *Octopath Traveler* : caméra fixe inclinée vers le nord, mur sud jamais dessiné, sols et murs en
-images, lumière chaude. Exemple complet : `data/maps/entrepot_rdc_essai/interior.json` et
+images, lumière chaude, qui suit le moment du dehors (R1 : celle d'`Atmosphere`, section 3). Exemple complet : `data/maps/entrepot_rdc_essai/interior.json` et
 `src/world/maps/entrepot_rdc_essai/entrepot_rdc_essai.tscn` (rez-de-chaussée de l'entrepôt des
 fées), démonstration `tests/integration/demo_interieur.tscn` (la vraie partie, `game.tscn`, posée dans
 l'étage par `WorldManager.enter_map`), test dans la vraie partie
@@ -21,7 +21,8 @@ l'étage par `WorldManager.enter_map`), test dans la vraie partie
 3. **Créer la carte** `src/world/maps/<map_id>/<map_id>.tscn` selon le contrat (racine `Map`,
    `interior = true`, `light_preset = &"interieur"`, enfants `Ground`, `Geometry`, `Markers`,
    `Exits`, `Life`) ; `Ground` est un `StaticBody3D` de script `src/world/interior_room.gd`
-   (couche 1, masque 0) dont `layout` pointe sur le JSON.
+   (couche 1, masque 0) dont `layout` pointe sur le JSON. **Aucune lumière** dans la scène : ni
+   `WorldEnvironment`, ni `DirectionalLight3D`, ni `OmniLight3D` (section 3, « Lumière »).
 4. **Meubler** : instancier les meubles de `src/world/props/` sous `Geometry` (le
    `PropBatcher` les fond par image). Un meuble est une scène dont la racine est un
    `InteriorPanel` : son nœud est **au milieu de son emprise**, son image au bord sud. Contre un
@@ -46,17 +47,19 @@ l'étage par `WorldManager.enter_map`), test dans la vraie partie
    son `MapExit` se pose devant elle (`InteriorRoom.door_position(id)` donne son centre), sa forme
    couvre la porte : `prompt` vide pour une porte qu'on franchit en marchant (porte sud, ouverte),
    « Descendre », « Entrer »… pour une porte fermée (`passable: false`) ; la carte cible et son
-   marqueur doivent exister (`tests/unit/test_maps.gd`). La lumière de l'étage est un enfant
-   `Light`, instance de `src/world/interior_light.tscn` : le préréglage `interieur` à l'entrée,
-   le réglage par défaut (couchant) rendu à la caméra et aux personnages en partant.
+   marqueur doivent exister (`tests/unit/test_maps.gd`). La lumière de l'étage est celle
+   d'`Atmosphere` (R1) : rien à poser ; ses lampes sont les `lights[]` du JSON.
 6. **Bornes de la caméra** (`camera_bounds`) : celles du point visé, à 2,5 m au nord du joueur.
    En x, tout le bâtiment (de 2 à L − 2 pour un étage de L m) : la caméra reste au droit du
    joueur, aucune cloison nord-sud ne le cache en biais. En z, de 5 à P − 5 (P : profondeur) :
    moins de vide noir au-dessus du mur nord, sans trop aplatir la vue.
 7. **Vérifier** : `tools/test.sh tests/unit/test_interior_room.gd` (format, coupe, lumière) et un
    test d'étage sur le modèle de `tests/unit/test_interior_entrepot.gd` (collisions, portes,
-   occlusion depuis chaque case, draw calls) ; captures par une démo sur le modèle de
-   `tests/integration/demo_interieur.gd`.
+   occlusion depuis chaque case, draw calls) ; la lumière au fil des moments sur le modèle de
+   `tests/unit/test_light_links.gd` ; captures par une démo sur le modèle de
+   `tests/integration/demo_interieur.gd` (`INTERIOR_MOMENT=nuit`), luminance et draw calls par
+   `tools/e9_shots.sh refectoire:matin:clair refectoire:nuit:clair` (lieux de
+   `tests/integration/demo_e9.gd`, `MAP_SPOTS`).
 
 Nouvelle matière, porte, fenêtre, élément de mur ou meuble (livré, ou à dessiner en remplaçant) :
 l'ajouter aux listes de `tools/hd2d_interior.py` (section 4 de ce document), puis
@@ -95,7 +98,7 @@ l'ajouter aux listes de `tools/hd2d_interior.py` (section 4 de ce document), pui
 | `doors[]` | entre deux pièces (`between`) ou sur un côté d'une pièce (`room` + `side` : `N`, `S`, `E`, `W`) ; centre le long du mur : `x` (mur est-ouest) ou `z` (mur nord-sud) ; `width` (1,1 m), `height` (2,2 m), `image` (`door_*`, facultative : posée sur les deux faces), `passable` (vrai : ouverture qu'on franchit ; faux : le mur reste, l'image le couvre), `id` (sortie). Une porte qu'on franchit prend une image à ouverture transparente (`door_frame_wood`) ou aucune : un battant opaque (`door_room`, `door_room_open`) cacherait le joueur sur le seuil, il va aux portes fermées |
 | `windows[]` | `room`, `side`, `x` ou `z`, `image` (`window_*`), `sill` (bas, 0,9 m ; celui que donne le cahier n° 3 : 1 m pour `window_cross_small`, 0,8 m pour `window_cross_large`, 0 pour `window_reading_seat`, posée au sol) ; posée sur la face de sa pièce ; laisse entrer le jour (flaque devant elle) |
 | `wall_items[]` | `room`, `side`, `x` ou `z`, `image` (`wallitem_*`), `y` (bas, 1,2 m ; celui que donne le cahier n° 3, « bas à 1,4 m ») : écriteaux, plannings, horloge, patères, lampe de mur |
-| `lights[]` | `room`, `at` `[x, z]`, `radius` (3,5 m), `color` (`#ffc98a`), `energy` (1) : halo sur le sol et les murs de sa pièce |
+| `lights[]` | `room`, `at` `[x, z]`, `radius` (3,5 m), `color` (`#ffc98a`), `energy` (1) : halo sur le sol et les murs de sa pièce (lampe, cheminée, fourneau, cristal) ; × `lamp_energy` du réglage d'`Atmosphere` (faible le jour, fort la nuit) |
 
 Une clé inconnue est une faute, sauf `_…` (commentaire). Une porte, une fenêtre ou un élément ne
 touche jamais un angle (0,175 m au moins d'un mur perpendiculaire) et ne chevauche rien sur sa
@@ -117,15 +120,31 @@ erreurs au chargement.
   ouest sont entiers. Dans la porte d'une cloison nord-sud, la *colonne de coupe* abaisse aussi
   cette cloison sur 4,5 m au sud du joueur (vue par la tranche, elle le cacherait). La ligne glisse d'une limite à l'autre (14 m/s) quand on passe une porte.
   La tranche d'un mur coupé est sombre, comme sur un plan. Les collisions ne changent pas.
-- **Lumière** : préréglage `interieur` (`src/world/materials/lighting_interieur.tres`, posé par
-  l'enfant `Light` de la carte, `src/world/interior_light.tscn`) plus deux cartes de lumière vues de dessus (4 texels par mètre),
-  bornées à leur pièce : le jour des fenêtres et les lampes ; elles s'ajoutent en émission aux
-  sols, aux murs, aux portes et fenêtres et aux meubles (`interior_core.gdshaderinc`). Aucune
-  lumière du moteur, aucune ombre portée : pas un draw call de plus.
-- **Moment de la journée** : `set_daylight(teinte, énergie)`, `set_lamps(énergie)`,
-  `apply_phase(phase)` (`morning`, `day`, `evening`, `night`), appelée sur
-  `EventBus.day_phase_changed` ; la lueur des vitres suit le jour, celle des appliques et du
-  fourneau suit les lampes.
+- **Lumière** (R1) : une seule, celle d'`Atmosphere` ; la carte n'en porte aucune.
+  - *Le préréglage* `interieur` : `data/lighting/interieur.tres` (le jour) mêlé à
+    `interieur_nuit.tres` (la nuit) selon la part de nuit du moment du dehors (`night_amount` :
+    0 le matin et l'après-midi, 0,15 au couchant, 0,45 à l'aube, 1 la nuit) : ambiance, lumière
+    d'ensemble (le soleil d'`AtmosphereRig`, teinté par celui du dehors), étalonnage, teinte des
+    personnages ; fond uni `VOID_COLOR` (aucun ciel). La pluie dehors ne fait que baisser et
+    griser la lumière des fenêtres (`window_light_scale`).
+  - *Deux cartes de lumière* vues de dessus (4 texels par mètre), bornées à leur pièce, ajoutées
+    en émission aux sols, aux murs, aux portes et fenêtres et aux meubles
+    (`interior_core.gdshaderinc`) : le jour des fenêtres (flaque devant chacune), × `window_tint`
+    et `window_light` **du moment du dehors** (`matin.tres`, `couchant.tres`, `nuit.tres`… :
+    1,3 le matin, 0,85 orangé au couchant, 0,4 de lune bleue la nuit) ; et les lampes
+    (`lights[]`), × `lamp_energy` (0,25 le jour, 2,7 la nuit : flaques de lumière chaude, coins
+    plus sombres).
+  - *Les panneaux* : la lueur des vitres suit le jour, celle des appliques, du fourneau et des
+    cristaux suit les lampes (`glow_follows`, pas le `window_glow` du dehors) ; une fenêtre
+    s'assombrit et bleuit avec le jour (`night_view` d'`interior_panel.gdshader`) tant que son
+    image de nuit (`<nom>_night.png`, cahier n° 3, lot N) n'est pas livrée : livrée, elle la
+    remplace la nuit sans toucher au code.
+  - `Atmosphere` règle la pièce à l'arrivée et à chaque image d'une transition
+    (`InteriorRoom.apply_lighting`, par `HD2DLightTargets`). Aucune lumière du moteur, aucune
+    ombre portée : pas un draw call de plus (réfectoire 41, couloir 56, le matin comme la nuit).
+- **Moment de la journée** : `Atmosphere.set_moment(&"nuit")` (section précédente) ; à la main,
+  `set_daylight(teinte, énergie)` et `set_lamps(énergie)` ; l'ancienne `apply_phase(phase)`
+  (`morning`, `day`, `evening`, `night`) pose le moment correspondant d'`Atmosphere`.
 - **Collisions** (couche 1) : une dalle sous toute la carte, une boîte par morceau de mur et par
   linteau.
 - **Draw calls** : un par matière de sol, de mur, de dessus de mur, par image de porte, fenêtre,
