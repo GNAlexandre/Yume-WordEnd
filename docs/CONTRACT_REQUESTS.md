@@ -612,3 +612,12 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   `structures.png` par face nommée permettrait de les poser (berges de tourbe au marais).
 - **Manifeste, lot I** : `interior/props/roof_railing.png` et `drying_frame.png` (livrées) sont
   posées dehors sur le toit-terrasse ; leur entrée au manifeste est laissée au lot I (T2).
+- **Cahier des façades (CARTE.md 12.1), vitres** : les panneaux s'allument la nuit par les pixels
+  proches de `glow_color` (#FFE6A6, `panel_core.gdshaderinc`, fois `window_glow`) ; les vitres de
+  `warehouse_main` (#ECBF79) n'en sont pas assez près et restent éteintes la nuit. Les
+  remplaçants de T1 repeignent leurs vitres près de #FFE6A6 : à dire au dessinateur des vraies
+  façades (ou un masque de lueur par image, PR « contrats »).
+- **Tests rouges hérités d'`integ-monde` (f393bb1, avant T1)** : `test_interior_entrepot`
+  (« préréglage » 0,568 au lieu de 0,34) et `test_interior_in_game` (« étalonnage ») échouent dans
+  la suite complète, déjà sur f393bb1 seul : la lumière d'Atmosphere habille la carte d'essai
+  intérieure par-dessus `interior_light`. Le raccord est la mission de R1 ; T1 n'y touche pas.

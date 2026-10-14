@@ -2487,7 +2487,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   dossiers parce que `coin_soleil` est à la fois une place et un point.
 - **T1 — lumières** : la lanterne à cristal de la porte est une `OmniLight3D` (`Lights/lanterne_porte`,
   énergie de départ 0,7, réglée par `lamp_energy` d'E9) et le panneau `wall_lantern` (lueur) ;
-  les fenêtres de la façade s'allument par `window_glow` (lueur des panneaux) ; `fenetres_facade`
+  les fenêtres de la façade s'allument par `window_glow` (lueur des panneaux : les vitres des
+  remplaçants sont peintes près de `glow_color`, #FFE6A6, pour s'allumer la nuit) ; `fenetres_facade`
   reste un repère (Marker3D). Aucun lampadaire. Fumée de la cheminée toujours là (automne).
 - **T1 — cartes d'attente (provisoires, phase 3)** : `village`, `colline`, `sentier`,
   `foret_profonde`, 32 × 24 m, sol plat assourdi de la bonne matière, une lisière au nord,
@@ -2502,3 +2503,12 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   décors debout et décalques) : cour 71, abords ouest 79, abords est 100, champ 45, clairière 52,
   bois 103, marais 119, rivière 104 ; aucun carré de 6 × 6 m nu hors des places. La place du duel
   ne porte que des décalques (traces, cailloux, feuilles).
+- **T1 — mesures** (Xvfb, `tests/integration/demo_entrepot.tscn`, couchant ; nuit : +1) : draw
+  calls façade 102, porche 95, cour 102, champ 84, clairière 73, marais 90, bois 116, grand arbre
+  90, potager 102 à 121, sentier 94, rivière 102, vue large 125 (budget 200 ; `test_entrepot.gd`
+  en borne le pire cas sur une grille de 6 m). Banc headless (`tools/map_bench.gd`, essai ⇄
+  entrepot) : chargement 917 ms à froid, 429 ms à chaud, installation 211 à 249 ms, total 1,2 à
+  1,7 s ; 4 112 nœuds, mêmes comptes à chaque visite, carte libérée au départ. Web (Chromium sans
+  écran, SwiftShader, `tools/web_maps.js` avec entrepot puis essai) : chargement 1 270 ms en
+  3 images, installation 849 ms ; 1 image/s et 117 draw calls dans l'entrepôt (l'ancienne île :
+  1 image/s, 131 ; essai : 2) : le rendu logiciel compare, il ne mesure pas un vrai navigateur.
