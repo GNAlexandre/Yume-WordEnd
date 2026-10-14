@@ -15,12 +15,12 @@ const BASE := &"base"
 ## Étages de la pile autour de la base : décalage (x, y, z) en m (z > 0 : vers la caméra, donc
 ## dessiné devant) et pose.
 const LEVELS: Array = [
-	[Vector3(0.0, 0.32, -0.12), &"grimpe"],
-	[Vector3(0.18, 0.62, 0.06), &"assis"],
-	[Vector3(-0.16, 0.9, 0.1), &"assis"],
-	[Vector3(0.1, 1.18, 0.14), &"assis"],
-	[Vector3(-0.08, 1.46, 0.18), &"grimpe"],
-	[Vector3(0.12, 1.72, 0.22), &"assis"],
+	[Vector3(0.0, 0.35, -0.12), &"grimpe"],
+	[Vector3(0.26, 0.85, 0.06), &"assis"],
+	[Vector3(-0.24, 1.3, 0.1), &"assis"],
+	[Vector3(0.2, 1.72, 0.14), &"grimpe"],
+	[Vector3(-0.16, 2.12, 0.18), &"assis"],
+	[Vector3(0.1, 2.5, 0.22), &"grimpe"],
 ]
 
 var phase: Phase = Phase.GATHER

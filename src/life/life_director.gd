@@ -191,7 +191,7 @@ func attach(map: Map) -> void:
 		return
 	_map = map
 	_places = LifePlaces.read(map)
-	_nav = LifeNav.for_map(map)
+	_nav = null
 	_slot = LifeSlots.current()
 	_day = GameState.day
 	for npc_id: StringName in LifeData.cast():
@@ -200,6 +200,10 @@ func attach(map: Map) -> void:
 			var placed := _spawn(npc_id)
 			if placed != null:
 				placed.place_now(line)
+	# La navigation ne se construit que pour une carte qui a de la vie (des places, des PNJ) :
+	# l'ancienne île (160 m, des milliers de décors) n'en a pas.
+	if not _places.names().is_empty() or not _actors.is_empty():
+		_ensure_nav()
 	populated.emit(map.map_id())
 
 
@@ -220,8 +224,15 @@ func places() -> LifePlaces:
 
 ## Construit tout de suite la navigation (tests, démonstrations).
 func build_nav_now() -> void:
-	if _nav != null:
+	if _ensure_nav() != null:
 		_nav.build_now()
+
+
+## La navigation de la carte peuplée (créée au besoin ; null sans carte).
+func _ensure_nav() -> LifeNav:
+	if _nav == null and _map != null and is_instance_valid(_map):
+		_nav = LifeNav.for_map(_map)
+	return _nav
 
 
 # --- PNJ ---------------------------------------------------------------------------------------
@@ -354,6 +365,7 @@ func release_point(who: LifeActor, place: StringName, index: int) -> void:
 
 ## Met un PNJ dans la file des chemins.
 func request_path(who: LifeActor) -> void:
+	_ensure_nav()
 	if not _path_queue.has(who):
 		_path_queue.append(who)
 
