@@ -808,8 +808,10 @@ func front_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
   la case du joueur, dans sa colonne. Tout ce qui est au sud de cette ligne moins 0,3 m n'est
   dessiné que sous sa hauteur de coupe : murs (0,15 m, leur épaisseur `wallcut_*`), portes,
   fenêtres, éléments, meubles `InteriorPanel` (1 m). Le mur sud de la pièce du joueur n'est donc
-  jamais dessiné ; ses murs nord, est et ouest le sont. Dans la porte d'une cloison nord-sud, la
-  colonne de coupe abaisse aussi la cloison sur 4,5 m au sud du joueur. La ligne glisse d'une
+  jamais dessiné ; ses murs nord, est et ouest le sont. Les meubles suivent aussi le z du joueur :
+  au sud de lui, leur sommet est coupé à `cut_height`, y compris dans sa propre pièce. Les
+  matériaux de meubles sont distincts des panneaux de murs et de portes. Dans la porte d’une
+  cloison nord-sud, la colonne de coupe abaisse aussi la cloison sur 4,5 m au sud du joueur. La ligne glisse d'une
   limite à l'autre (14 m/s). Les collisions ne changent jamais. Shaders :
   `src/world/shaders/interior.gdshader`, `interior_panel.gdshader`, `interior_core.gdshaderinc`.
 - *Lumière* (R1) : celle d'`Atmosphere`, seule. Le préréglage `interieur` (`data/lighting/interieur.tres`

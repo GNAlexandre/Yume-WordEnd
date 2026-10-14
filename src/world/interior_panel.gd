@@ -6,9 +6,9 @@ extends DecorPanel
 ## (InteriorRoom.panel_material, interior_panel.gdshader) : il prend la lumière de la pièce
 ## (fenêtres, lampes) et se coupe avec les murs. Quand la coupe d'InteriorRoom passe au nord de
 ## son bord sud (l'image, posée à image_offset), il n'est plus dessiné qu'au-dessous de
-## cut_height : un meuble au sud du joueur ne le cache jamais. Les meubles d'une même image se
-## fondent en un draw call (PropBatcher : la coordonnée de coupe et cut_height voyagent dans UV2
-## des sommets). Racine des scènes de meubles de src/world/props/ (tools/hd2d_interior.py
+## cut_height ; la même coupe suit aussi le z du joueur à l’intérieur de sa pièce. Les meubles
+## d’une même image se fondent en un draw call (PropBatcher : coordonnée de coupe et cut_height
+## dans UV2 des sommets). Racine des scènes de meubles de src/world/props/ (tools/hd2d_interior.py
 ## scenes) : le nœud est au milieu de l'emprise, l'image au bord sud (image_offset.z = la moitié
 ## de la profondeur), la boîte de collision sur l'emprise.
 ##
@@ -28,7 +28,7 @@ func rebuild() -> void:
 	if texture == null:
 		return
 	_quad.mesh = InteriorRoom.panel_mesh(size_m(), front_z(), cut_height)
-	_quad.material_override = InteriorRoom.panel_material(texture, glow, tint)
+	_quad.material_override = InteriorRoom.furniture_material(texture, glow, tint)
 
 
 ## z (monde) du bord sud du meuble : le plan de son image, sa coordonnée de coupe.
@@ -43,7 +43,9 @@ func front_z() -> float:
 func occluder_triangles(cut_line: float) -> PackedVector3Array:
 	var size := size_m() * Vector2(global_basis.get_scale().x, global_basis.get_scale().y)
 	var top := size.y
-	if front_z() >= cut_line - InteriorRoom.CUT_MARGIN:
+	var material := _quad.material_override as ShaderMaterial
+	var furniture_line := float(material.get_shader_parameter(&"furniture_cut_line"))
+	if front_z() >= minf(cut_line, furniture_line) - InteriorRoom.CUT_MARGIN:
 		top = minf(top, cut_height)
 	var base := global_position + image_offset * global_basis.get_scale()
 	var left := base + Vector3.LEFT * size.x / 2.0
