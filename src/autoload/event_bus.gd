@@ -5,7 +5,7 @@ extends Node
 ## nœuds d'un autre système. L'émetteur attendu est indiqué au-dessus de chaque signal.
 ## Les signaux ne sont jamais émis dans cette classe, d'où l'annotation unused_signal.
 ## Fichier gelé : ne change qu'au Lot 0 ou dans une PR « contrats » (dernières : E1, cartes ; E9,
-## lumière et temps).
+## lumière et temps ; X1, îles et surface).
 
 @warning_ignore_start("unused_signal")
 
@@ -69,6 +69,11 @@ signal zone_entered(zone_id: StringName)
 ## pendant un go_to). Émis par WorldManager (go_to, enter_map) ; la caméra prend les bornes de
 ## la carte et se recale, SaveManager demande une auto-sauvegarde.
 signal map_entered(map_id: StringName)
+## (X1) Le joueur vient d'arriver sur une autre île (data/world/islands/<island_id>.json) : par
+## un voyage (WorldManager.travel), une sortie ou le début d'une partie. Émis par WorldManager
+## juste après le map_entered de la carte d'arrivée (encore sous le fondu au noir), une fois
+## GameState.island et les îles connues mis à jour ; jamais pour une carte hors de toute île.
+signal island_entered(island_id: StringName)
 ## Phase du jour : &"morning", &"day", &"evening", &"night" (M3, cycle jour/nuit). (E9) Ancien
 ## nom : Atmosphere le traduit en moment (matin, apres_midi, couchant, nuit) ; préférer
 ## Atmosphere.set_moment ou GameState.moment.

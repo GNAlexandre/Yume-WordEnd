@@ -1,0 +1,220 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/map_ground.gd" id="2_ground"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="3_batcher"]
+[ext_resource type="Script" path="res://src/world/airship_dock.gd" id="4_dock"]
+[ext_resource type="PackedScene" path="res://src/world/props/airship_ferry.tscn" id="5_airship_ferry"]
+[ext_resource type="PackedScene" path="res://src/world/props/garde_crate.tscn" id="6_garde_crate"]
+[ext_resource type="PackedScene" path="res://src/world/props/luggage.tscn" id="7_luggage"]
+[ext_resource type="PackedScene" path="res://src/world/props/ruined_arch.tscn" id="8_ruined_arch"]
+[ext_resource type="PackedScene" path="res://src/world/props/ruined_wall.tscn" id="9_ruined_wall"]
+[ext_resource type="PackedScene" path="res://src/world/props/ruined_wall_b.tscn" id="10_ruined_wall_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/ruined_wall_c.tscn" id="11_ruined_wall_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/broken_pillar.tscn" id="12_broken_pillar"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_rock_b.tscn" id="13_wind_rock_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_rock_a.tscn" id="14_wind_rock_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_rock_c.tscn" id="15_wind_rock_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/ring_stone.tscn" id="16_ring_stone"]
+[ext_resource type="PackedScene" path="res://src/world/props/firewood_pile.tscn" id="17_firewood_pile"]
+[ext_resource type="PackedScene" path="res://src/world/props/fallen_lantern.tscn" id="18_fallen_lantern"]
+[ext_resource type="PackedScene" path="res://src/world/props/broken_spears.tscn" id="19_broken_spears"]
+[ext_resource type="PackedScene" path="res://src/world/props/dead_tree_a.tscn" id="20_dead_tree_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/dead_tree_b.tscn" id="21_dead_tree_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/dead_shrub_a.tscn" id="22_dead_shrub_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/dead_shrub_b.tscn" id="23_dead_shrub_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/rock_pile.tscn" id="24_rock_pile"]
+[ext_resource type="PackedScene" path="res://src/world/props/scrap_pile.tscn" id="25_scrap_pile"]
+[ext_resource type="PackedScene" path="res://src/world/props/cart_wreck.tscn" id="26_cart_wreck"]
+[ext_resource type="PackedScene" path="res://src/world/props/cairn.tscn" id="27_cairn"]
+[ext_resource type="PackedScene" path="res://src/world/props/watch_post_ruin.tscn" id="28_watch_post_ruin"]
+[ext_resource type="PackedScene" path="res://src/world/props/cracks_a.tscn" id="29_cracks_a"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dock"]
+size = Vector3(4, 2, 1.6)
+
+[node name="surface_essai" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "Les terres grises"
+region = &"surface_essai"
+size = Vector2(40, 30)
+camera_bounds = Rect2(10, 9, 20, 13)
+island = &"surface_essai"
+
+[node name="Ground" type="StaticBody3D" parent="."]
+script = ExtResource("2_ground")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("3_batcher")
+
+[node name="Ship" parent="Geometry" instance=ExtResource("5_airship_ferry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 3)
+
+[node name="Crate1" parent="Geometry" instance=ExtResource("6_garde_crate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.6, 0, 6.4)
+
+[node name="Crate2" parent="Geometry" instance=ExtResource("6_garde_crate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.6, 0, 7)
+
+[node name="Luggage" parent="Geometry" instance=ExtResource("7_luggage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4, 0, 6.8)
+
+[node name="Arch" parent="Geometry" instance=ExtResource("8_ruined_arch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 7.6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="WallA" parent="Geometry" instance=ExtResource("9_ruined_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.6, 0.5, 6.4)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="WallB" parent="Geometry" instance=ExtResource("10_ruined_wall_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 0.5, 6.2)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="WallC" parent="Geometry" instance=ExtResource("11_ruined_wall_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.6, 0.5, 11.4)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Pillar1" parent="Geometry" instance=ExtResource("12_broken_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0.5, 10.8)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Pillar2" parent="Geometry" instance=ExtResource("12_broken_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.2, 0.5, 12)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="RockEastA" parent="Geometry" instance=ExtResource("13_wind_rock_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.5, 0.5, 6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="WindRock" parent="Geometry" instance=ExtResource("14_wind_rock_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.4, 0.5, 8.4)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="RockEastC" parent="Geometry" instance=ExtResource("15_wind_rock_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 0, 13.6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="RockEastD" parent="Geometry" instance=ExtResource("15_wind_rock_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.4, 0, 12.6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="RingStone1" parent="Geometry" instance=ExtResource("16_ring_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.2, 0, 12.4)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="RingStone2" parent="Geometry" instance=ExtResource("16_ring_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 12.6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="RingStone3" parent="Geometry" instance=ExtResource("16_ring_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.8, 0, 13.5)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="RingStone4" parent="Geometry" instance=ExtResource("16_ring_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 14.3)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="RingStone5" parent="Geometry" instance=ExtResource("16_ring_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.8, 0, 14.1)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="RingStone6" parent="Geometry" instance=ExtResource("16_ring_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.4, 0, 13.2)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Firewood" parent="Geometry" instance=ExtResource("17_firewood_pile")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.2, 0, 13.6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Lantern" parent="Geometry" instance=ExtResource("18_fallen_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.4, 0, 14.6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="CampCrate" parent="Geometry" instance=ExtResource("6_garde_crate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.8, 0, 12.6)
+
+[node name="Spears" parent="Geometry" instance=ExtResource("19_broken_spears")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.8, 0, 16.4)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="DeadTreeA" parent="Geometry" instance=ExtResource("20_dead_tree_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 19)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="DeadTreeB" parent="Geometry" instance=ExtResource("21_dead_tree_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.6, 0, 21)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Shrub1" parent="Geometry" instance=ExtResource("22_dead_shrub_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, 16.5)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Shrub2" parent="Geometry" instance=ExtResource("23_dead_shrub_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 0, 19.5)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Shrub3" parent="Geometry" instance=ExtResource("22_dead_shrub_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 24.5)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Shrub4" parent="Geometry" instance=ExtResource("23_dead_shrub_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 26)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="WindRockC" parent="Geometry" instance=ExtResource("15_wind_rock_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.4, 0, 18.4)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="RockPile" parent="Geometry" instance=ExtResource("24_rock_pile")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 0, 15.2)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Scrap" parent="Geometry" instance=ExtResource("25_scrap_pile")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0, 17.2)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Cart" parent="Geometry" instance=ExtResource("26_cart_wreck")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 25.6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Cairn" parent="Geometry" instance=ExtResource("27_cairn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 22.6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Tower" parent="Geometry" instance=ExtResource("28_watch_post_ruin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 3)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Scrap2" parent="Geometry" instance=ExtResource("25_scrap_pile")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.6, 0, 21.6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="CracksA" parent="Geometry" instance=ExtResource("29_cracks_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.4, 0, 19.6)
+tint = Color(0.66, 0.7, 0.8, 1)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.2, 24)
+
+[node name="from_dirigeable" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 21, 0.2, 10.4)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="Docks" type="Node3D" parent="."]
+
+[node name="vers_ile_68" type="Area3D" parent="Docks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 1, 7.6)
+collision_layer = 32
+collision_mask = 2
+script = ExtResource("4_dock")
+island = &"ile_68"
+port = &"essai"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Docks/vers_ile_68"]
+shape = SubResource("BoxShape3D_dock")
+
+[node name="Life" type="Node3D" parent="."]

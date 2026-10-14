@@ -1,0 +1,18 @@
+{
+  "_comment": "Quai de l'île d'essai (lot X1) : 32 × 24 m, le vide et la mer de nuages au nord, un ponton de planches au bord, un sentier qui y descend. Le dirigeable de la ligne attend au nord du quai (règle de caméra). Plan lu par tools/map_build.py gen quai_essai ; le jeu ne lit pas ce fichier.",
+  "size": [32, 24],
+  "seed": 99,
+  "materials_scale": 2,
+  "edges": {"north": "void", "east": "land", "south": "land", "west": "land"},
+  "skirt": 16,
+  "spawn": [16, 18],
+  "base": {"level": 0, "material": "herbe"},
+  "steps": [
+    {"op": "void", "shape": {"poly": [[-3, -3], [35, -3], [35, 4.5], [29, 5.2], [24, 4.4], [21, 5.6], [11, 5.6], [8, 4.2], [4, 5], [-3, 4.6]], "noise": 0.4, "noise_scale": 2}},
+    {"op": "material", "material": "prairie", "shape": {"rect": [-1, 6, 7, 19], "noise": 1.4, "noise_scale": 2.5, "seed": 3}},
+    {"op": "material", "material": "herbe_haute", "shape": {"rect": [26, 6, 7, 19], "noise": 1.4, "noise_scale": 2.5, "seed": 4}},
+    {"op": "material", "material": "gravier", "shape": {"rect": [9, 6, 14, 6], "noise": 0.6, "noise_scale": 2, "seed": 5}},
+    {"op": "material", "material": "planches", "shape": {"rect": [12, 6, 8, 4]}},
+    {"op": "path", "material": "sentier", "width": 2.6, "points": [[16, 25], [16, 18], [16, 12]], "noise": 0.25, "noise_scale": 1.5}
+  ]
+}

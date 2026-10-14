@@ -54,6 +54,8 @@ const EVENT_BUS_SIGNALS := {
 	"map_entered": [SN],
 	# E9 (lumière et temps)
 	"atmosphere_changed": [SN, SN],
+	# X1 (îles et surface)
+	"island_entered": [SN],
 }
 
 ## Méthodes des autoloads : nom → [types des arguments, type de retour].
@@ -79,6 +81,10 @@ const GAME_STATE_METHODS := {
 	"quest_step_count": [[SN], INT],
 	"set_quest_step": [[SN, SN, INT], VOID],
 	"quest_progress": [[], DICT],
+	# X1 (îles et surface)
+	"known_islands": [[], ARR],
+	"knows_island": [[SN], BOOL],
+	"discover_island": [[SN], BOOL],
 }
 const SAVE_MANAGER_METHODS := {
 	"has_save": [[], BOOL],
@@ -112,6 +118,10 @@ const WORLD_MANAGER_METHODS := {
 	"camera_bounds": [[], TYPE_RECT2],
 	"is_transitioning": [[], BOOL],
 	"fade_alpha": [[], FLT],
+	# X1 (îles et surface)
+	"travel": [[SN, SN], VOID],
+	"current_island": [[], SN],
+	"is_traveling": [[], BOOL],
 }
 ## (E1) Exports de Map (src/world/map.gd) et de MapExit (src/world/map_exit.gd) : nom → type.
 const MAP_EXPORTS := {
@@ -121,6 +131,7 @@ const MAP_EXPORTS := {
 	"size": TYPE_VECTOR2,
 	"camera_bounds": TYPE_RECT2,
 	"light_preset": SN,
+	"island": SN,
 }
 const MAP_EXIT_EXPORTS := {
 	"target_map": SN,
@@ -391,6 +402,7 @@ func test_game_state_api() -> void:
 	assert_eq(_property_type(GameState, "tracked_quest"), SN, "(Lot Q) GameState.tracked_quest")
 	assert_eq(_property_type(GameState, "moment"), SN, "(E9) GameState.moment")
 	assert_eq(_property_type(GameState, "weather"), SN, "(E9) GameState.weather")
+	assert_eq(_property_type(GameState, "island"), SN, "(X1) GameState.island")
 
 
 func test_save_manager_api() -> void:

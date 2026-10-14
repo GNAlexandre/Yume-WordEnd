@@ -1,0 +1,12 @@
+{
+  "_comment": "Regule Aire, l'archipel des îles volantes (lot X1 ; PLAN.md, « Ajouter une île »). Ses îles, dans l'ordre, et les règles qu'elles partagent : aucun Timere (ils ne vivent qu'à la surface, docs/lore/canon/v2_v3.md rubrique 7), la mer de nuages sous le bord, une chute ramène au dernier point sûr. Une île peut remplacer une règle dans son propre fichier.",
+  "name": "Regule Aire",
+  "islands": ["ile_68", "ile_essai", "ile_ancienne"],
+  "rules": {
+    "enemies_allowed": false,
+    "fauna": [],
+    "void_below": "clouds",
+    "sky": "",
+    "void_fall": "last_safe"
+  }
+}
