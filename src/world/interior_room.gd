@@ -145,6 +145,7 @@ func _exit_tree() -> void:
 	for key: StringName in [&"window_light", &"lamp_light"]:
 		share_uniform(key, null)
 	share_uniform(&"cut_line", NO_CUT)
+	share_uniform(&"furniture_cut_line", NO_CUT)
 	_shared.clear()
 
 
@@ -167,6 +168,7 @@ func _process(delta: float) -> void:
 		_column = column
 		for material in _materials:
 			material.set_shader_parameter(&"cut_column", column)
+	_update_furniture_cut()
 
 
 ## Ligne de coupe voulue (z du monde) pour le joueur, NO_CUT sans joueur ni limite au sud.
@@ -195,6 +197,17 @@ func cut_line() -> float:
 func snap_cut() -> void:
 	_cut_shown = cut_target()
 	_set_uniform(&"cut_line", _cut_shown)
+	_update_furniture_cut()
+
+
+## Les meubles au sud du joueur se coupent aussi à l’intérieur de sa pièce.
+func _update_furniture_cut() -> void:
+	var player := _player()
+	var line := NO_CUT
+	if cut_enabled and player != null:
+		line = DecorPanel.displayed_transform(player).origin.z
+	if float(_shared.get(&"furniture_cut_line", NO_CUT)) != line:
+		share_uniform(&"furniture_cut_line", line)
 
 
 # --- Lumière d'Atmosphere (R1) --------------------------------------------------------------
@@ -829,16 +842,37 @@ static func panel_material(
 	var key := "%s|%.2f|%s|%d" % [DecorPanel.image_key(texture), glow, tint.to_html(), follows]
 	var material := DecorPanel.cached_material(_panel_materials, key) as ShaderMaterial
 	if material == null:
-		material = ShaderMaterial.new()
-		material.shader = PANEL_SHADER
-		material.set_shader_parameter(&"albedo_texture", texture)
-		material.set_shader_parameter(&"tint", tint)
-		material.set_shader_parameter(&"hd2d_relief", 0.0)
-		material.set_shader_parameter(&"glow_strength", glow)
-		material.set_shader_parameter(&"glow_follows", float(follows))
-		for shared_key: StringName in _shared:
-			material.set_shader_parameter(shared_key, _shared[shared_key])
+		material = _make_panel_material(texture, glow, tint, follows, false)
 		_panel_materials[key] = weakref(material)
+	return material
+
+
+## Variante de meuble : coupe à la position du joueur, matériau distinct des panneaux muraux.
+static func furniture_material(
+	texture: Texture2D, glow: float = 0.0, tint: Color = Color.WHITE
+) -> ShaderMaterial:
+	var key := "furniture|%s|%.2f|%s" % [DecorPanel.image_key(texture), glow, tint.to_html()]
+	var material := DecorPanel.cached_material(_panel_materials, key) as ShaderMaterial
+	if material == null:
+		material = _make_panel_material(texture, glow, tint, GLOW_LAMPS, true)
+		_panel_materials[key] = weakref(material)
+	return material
+
+
+static func _make_panel_material(
+	texture: Texture2D, glow: float, tint: Color, follows: int, furniture: bool
+) -> ShaderMaterial:
+	var material := ShaderMaterial.new()
+	material.shader = PANEL_SHADER
+	material.set_shader_parameter(&"albedo_texture", texture)
+	material.set_shader_parameter(&"tint", tint)
+	material.set_shader_parameter(&"hd2d_relief", 0.0)
+	material.set_shader_parameter(&"glow_strength", glow)
+	material.set_shader_parameter(&"glow_follows", float(follows))
+	material.set_shader_parameter(&"furniture_panel", furniture)
+	material.set_shader_parameter(&"furniture_cut_line", NO_CUT)
+	for shared_key: StringName in _shared:
+		material.set_shader_parameter(shared_key, _shared[shared_key])
 	return material
 
 

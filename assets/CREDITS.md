@@ -79,3 +79,35 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/interior/props/hat_blue.png` — 48 × 24 px.
 - `assets/hd2d/interior/props/desk_clean_brooch.png` — 106 × 101 px.
 - `assets/hd2d/interior/props/crystal_lamp_table.png` — 29 × 48 px.
+
+## Cahier n° 5 — Île 68, R0 : premier lot de mobilier
+
+27 PNG générés avec ChatGPT / image_gen le 14 octobre 2026 : neuf corrections de face, dix-sept vues de flanc et une vue de dos. Références : les PNG existants du même mobilier et les cotes du cahier fourni `ASSETS_HD2D_ILE68.md`, sections 1, 2.7 et R0. Sources générées et anciens PNG conservés hors dépôt. Recalage géométrique autorisé par l’utilisateur : cadrage, projection des plateaux et bandes de hauteur, échantillonnage au plus proche voisin, alpha binaire ; aucune nouvelle couleur RGB visible ni réduction de palette. Les profils montrent la face du meuble vers l’est ; le dos du canapé conserve la couverture du côté opposé à la vue de face. Les nouvelles vues sont livrées comme images importables : leur sélection et leur placement dans les pièces restent à intégrer par le moteur.
+
+- `assets/hd2d/interior/props/chair_guest.png` — 77 × 101 px.
+- `assets/hd2d/interior/props/dining_table_long.png` — 384 × 106 px.
+- `assets/hd2d/interior/props/dining_table_set.png` — 384 × 115 px.
+- `assets/hd2d/interior/props/game_table.png` — 115 × 76 px.
+- `assets/hd2d/interior/props/kitchen_counter.png` — 192 × 132 px.
+- `assets/hd2d/interior/props/kitchen_table_ingredients.png` — 154 × 135 px.
+- `assets/hd2d/interior/props/reading_table.png` — 173 × 130 px.
+- `assets/hd2d/interior/props/sofa_beige.png` — 192 × 119 px.
+- `assets/hd2d/interior/props/armchair_reading_side.png` — 86 × 106 px.
+- `assets/hd2d/interior/props/board_games_shelf_side.png` — 48 × 190 px.
+- `assets/hd2d/interior/props/bookshelf_low_side.png` — 48 × 132 px.
+- `assets/hd2d/interior/props/bookshelf_tall_b_side.png` — 58 × 272 px.
+- `assets/hd2d/interior/props/bookshelf_tall_side.png` — 58 × 272 px.
+- `assets/hd2d/interior/props/chair_guest_side.png` — 58 × 106 px.
+- `assets/hd2d/interior/props/desk_buried_side.png` — 77 × 156 px.
+- `assets/hd2d/interior/props/desk_nygglatho_side.png` — 77 × 137 px.
+- `assets/hd2d/interior/props/filing_cabinet_side.png` — 48 × 159 px.
+- `assets/hd2d/interior/props/infirmary_desk_side.png` — 77 × 121 px.
+- `assets/hd2d/interior/props/medicine_cabinet_side.png` — 48 × 198 px.
+- `assets/hd2d/interior/props/pantry_cupboard_side.png` — 58 × 217 px.
+- `assets/hd2d/interior/props/shoe_rack_side.png` — 38 × 99 px.
+- `assets/hd2d/interior/props/sofa_beige_side.png` — 86 × 175 px.
+- `assets/hd2d/interior/props/towel_shelf_side.png` — 48 × 179 px.
+- `assets/hd2d/interior/props/toy_chest_side.png` — 58 × 97 px.
+- `assets/hd2d/interior/props/wardrobe_chtholly_side.png` — 58 × 212 px.
+- `assets/hd2d/interior/props/sofa_beige_back.png` — 192 × 119 px.
+- `assets/hd2d/interior/props/infirmary_desk.png` — 125 × 96 px.

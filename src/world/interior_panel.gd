@@ -6,9 +6,9 @@ extends DecorPanel
 ## (InteriorRoom.panel_material, interior_panel.gdshader) : il prend la lumière de la pièce
 ## (fenêtres, lampes) et se coupe avec les murs. Quand la coupe d'InteriorRoom passe au nord de
 ## son bord sud (l'image, posée à image_offset), il n'est plus dessiné qu'au-dessous de
-## cut_height : un meuble au sud du joueur ne le cache jamais. Les meubles d'une même image se
-## fondent en un draw call (PropBatcher : la coordonnée de coupe et cut_height voyagent dans UV2
-## des sommets). Racine des scènes de meubles de src/world/props/ (tools/hd2d_interior.py
+## cut_height ; la même coupe suit aussi le z du joueur à l’intérieur de sa pièce. Les meubles
+## d’une même image se fondent en un draw call (PropBatcher : coordonnée de coupe et cut_height
+## dans UV2 des sommets). Racine des scènes de meubles de src/world/props/ (tools/hd2d_interior.py
 ## scenes) : le nœud est au milieu de l'emprise, l'image au bord sud (image_offset.z = la moitié
 ## de la profondeur), la boîte de collision sur l'emprise.
 ##
