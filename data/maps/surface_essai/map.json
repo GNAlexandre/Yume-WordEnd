@@ -10,8 +10,8 @@
   "palette": {
     "#a0a09c": "poussiere",
     "#606068": "roc_gris",
-    "#5a5a58": "boue_grise",
-    "#808080": "gravats"
+    "#808080": "gravats",
+    "#5a5a58": "boue_grise"
   },
   "edges": {
     "north": "land",
@@ -26,26 +26,27 @@
       "label": "Poussière grise de la surface (sable assourdi)",
       "layer": "sand",
       "color": "#a0a09c",
-      "tint": [0.6, 0.6, 0.62]
+      "tint": [0.6, 0.71, 0.97]
     },
     "gravats": {
-      "label": "Gravats gris",
-      "layer": "gravel",
+      "label": "Terre craquelée, grise",
+      "layer": "rock",
       "color": "#808080",
-      "tint": [0.66, 0.66, 0.7]
+      "tint": [0.56, 0.66, 0.86]
     },
     "roc_gris": {
       "label": "Roche grise",
       "layer": "rock",
       "color": "#606068",
-      "tint": [0.72, 0.72, 0.76]
+      "tint": [0.66, 0.78, 1.02]
     },
     "boue_grise": {
       "label": "Boue grise",
       "layer": "mud",
       "color": "#5a5a58",
-      "tint": [0.58, 0.58, 0.6]
+      "tint": [0.6, 0.74, 0.9]
     }
   },
+  "structures_image": "structures.png",
   "spawn": [20, 24]
 }

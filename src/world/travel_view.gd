@@ -43,6 +43,10 @@ const SKY_PARALLAX := 0.08
 const HORIZON_PARALLAX := 0.18
 const ISLAND_PARALLAX := 0.32
 const CLOUD_PARALLAX := 1.9
+## Haut de la mer de nuages (part de la hauteur de l'écran) et taille de sa première bande.
+const SEA_TOP := 0.6
+const SEA_ZOOM := 0.42
+const SEA_FADE := 0.12
 ## Hauteur de référence de l'écran (project.godot : 1280 × 720).
 const REFERENCE_HEIGHT := 720.0
 ## Clé du texte affiché (data/texts/story.json).
@@ -169,14 +173,9 @@ func _draw_view() -> void:
 		1.6,
 		Color(0.9, 0.93, 1.0, 0.9)
 	)
-	# La mer de nuages, en carreaux, du milieu de l'écran jusqu'en bas.
-	var sea_scale := 0.5 * unit
-	var sea_tile := CLOUD_SEA_IMAGE.get_width() * sea_scale
-	var sea_top := size.y * 0.6
-	var rows := ceili((size.y - sea_top) / sea_tile) + 1
-	for row in rows:
-		var row_speed := 1.0 + row * 0.35
-		_draw_strip(_clouds, sea_top + row * sea_tile, sea_scale, travel * row_speed, _cloud_tint)
+	# La mer de nuages au premier plan, qui défile plus vite que tout le reste ; son bord haut se
+	# fond dans celle, lointaine, du ciel peint (dégradé d'opacité par sommet).
+	_draw_sea(size.y * SEA_TOP, SEA_ZOOM * unit, travel)
 	# Le dirigeable, qui tangue.
 	var ship_scale := 0.42 * unit
 	var ship_size := Vector2(SHIP_IMAGE.get_size()) * ship_scale
@@ -195,6 +194,29 @@ func _draw_view() -> void:
 		0.8,
 		Color(1, 1, 1, 0.85) * _cloud_tint
 	)
+
+
+## La mer de nuages de top jusqu'en bas de l'écran, carreaux de zoom, décalée de shift px : un
+## polygone aux UV répétés (View : texture_repeat), transparent en haut sur SEA_FADE de hauteur.
+func _draw_sea(top: float, zoom: float, shift: float) -> void:
+	var size := _view.size
+	var tile := Vector2(_clouds.get_size()) * zoom
+	var fade := size.y * SEA_FADE
+	var rows: Array[float] = [top, top + fade, size.y]
+	var alphas: Array[float] = [0.0, 1.0, 1.0]
+	for band in 2:
+		var y0 := rows[band]
+		var y1 := rows[band + 1]
+		var points := PackedVector2Array(
+			[Vector2(0, y0), Vector2(size.x, y0), Vector2(size.x, y1), Vector2(0, y1)]
+		)
+		var uvs := PackedVector2Array()
+		for point: Vector2 in points:
+			uvs.append(Vector2((point.x + shift) / tile.x, (point.y - top) / tile.y))
+		var top_color := _cloud_tint * Color(1, 1, 1, alphas[band])
+		var bottom_color := _cloud_tint * Color(1, 1, 1, alphas[band + 1])
+		var colors := PackedColorArray([top_color, top_color, bottom_color, bottom_color])
+		_view.draw_polygon(points, colors, uvs, _clouds)
 
 
 ## Une image répétée en bande horizontale à la hauteur y, décalée de shift px vers la gauche.

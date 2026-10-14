@@ -102,8 +102,12 @@ const TRAVEL_VIEW_PATH := "res://src/world/travel_view.tscn"
 ## pendant qu'elle défile (ms : elle doit rester fluide).
 const DEFAULT_TRAVEL_TIME := 3.2
 const DEFAULT_TRAVEL_LOAD_BUDGET_MS := 12.0
-## (X1) Un point est sûr s'il n'y a pas de vide à moins de SAFE_MARGIN m autour (sol en relief).
+## (X1) Un point est sûr s'il n'y a pas de vide à moins de SAFE_MARGIN m autour (sol en relief)
+## et que le joueur touche le sol, à SAFE_HEIGHT m près ; vérifié toutes les SAFE_INTERVAL images
+## physiques.
 const SAFE_MARGIN := 1.5
+const SAFE_HEIGHT := 0.3
+const SAFE_INTERVAL := 4
 ## (X1) Touche de débogage : voyage vers l'île suivante de l'atlas.
 const TRAVEL_KEYCODE := KEY_F6
 
@@ -140,6 +144,7 @@ var _travel_view: TravelView = null
 ## (X1) Dernier point sûr de la carte courante (rattrapage d'une chute) ; valide si _has_safe.
 var _last_safe: Vector3 = Vector3.ZERO
 var _has_safe: bool = false
+var _safe_countdown: int = 0
 
 
 func _ready() -> void:
@@ -576,22 +581,34 @@ func _close_travel_view() -> void:
 	_travel_view = null
 
 
-## (X1) Retient la place du joueur comme dernier point sûr s'il est au sol, loin du vide.
+## (X1) Retient la place du joueur comme dernier point sûr (toutes les SAFE_INTERVAL images
+## physiques) s'il touche le sol (à SAFE_HEIGHT m près) loin du vide : sur un sol en relief, aucune
+## case vide à SAFE_MARGIN m ; ailleurs, le décor statique juste dessous (ground_position).
 func _track_safe_point(player: Node3D) -> void:
-	var body := player as CharacterBody3D
-	if body == null or not body.is_on_floor() or _settle_frames > 0:
+	_safe_countdown -= 1
+	if _safe_countdown > 0 or _settle_frames > 0:
 		return
+	_safe_countdown = SAFE_INTERVAL
 	var map := current_map_node()
 	if map == null:
 		return
+	var at := player.global_position
 	var ground := map.get_node_or_null(^"Ground") as MapGround
 	if ground != null and ground.data != null:
-		var at := map.to_local(player.global_position)
+		var local := map.to_local(at)
+		var height := ground.height_at(local.x, local.z)
+		if height == MapGround.VOID_HEIGHT or absf(local.y - height) > SAFE_HEIGHT:
+			return
 		for offset: Vector2 in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:
-			var probe := Vector2(at.x, at.z) + offset * SAFE_MARGIN
+			var probe := Vector2(local.x, local.z) + offset * SAFE_MARGIN
 			if ground.height_at(probe.x, probe.y) == MapGround.VOID_HEIGHT:
 				return
-	_last_safe = player.global_position
+	else:
+		# ground_position rend le point lui-même s'il n'y a rien dessous.
+		var floor_at := ground_position(at, player)
+		if floor_at.is_equal_approx(at) or absf(at.y - floor_at.y) > SAFE_HEIGHT:
+			return
+	_last_safe = at
 	_has_safe = true
 
 

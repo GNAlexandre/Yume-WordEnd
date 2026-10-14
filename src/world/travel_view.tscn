@@ -19,6 +19,7 @@ script = ExtResource("1_travel")
 [node name="View" type="Control" parent="."]
 unique_name_in_owner = true
 texture_filter = 1
+texture_repeat = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -35,7 +36,7 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -480.0
-offset_top = -112.0
+offset_top = -150.0
 offset_right = 480.0
 offset_bottom = -60.0
 grow_horizontal = 2

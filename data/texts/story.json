@@ -28,7 +28,7 @@
   },
   "travel": {
     "_comment": "(X1) Voyage entre îles en dirigeable (WorldManager.travel, src/world/travel_view.gd) : texte de la vue du ciel ({island} : nom de l’île d'arrivée, data/world/islands/<id>.json) ; invite des quais (AirshipDock, {island} aussi).",
-    "caption": "En route vers {island}…",
+    "caption": "En dirigeable, cap sur\n{island}",
     "dock_prompt": "Embarquer pour {island}"
   },
   "fall": {
