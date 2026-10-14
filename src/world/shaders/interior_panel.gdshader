@@ -24,6 +24,10 @@ uniform float glow_follows = 2.0;
 // remplace celle du jour la nuit).
 uniform vec4 night_view : source_color = vec4(0.36, 0.42, 0.66, 1.0);
 
+// Les panneaux de meubles ont une coupe propre, les murs et portes gardent cut_line.
+uniform bool furniture_panel = false;
+uniform float furniture_cut_line = 1000000.0;
+
 varying vec3 world_pos;
 varying vec2 light_xz;
 varying float cut_coord;
@@ -43,7 +47,8 @@ void fragment() {
 	vec3 emission;
 	panel_shade(UV, albedo, alpha, emission);
 	float height = world_pos.y - floor_y;
-	if (interior_is_cut(cut_coord) && height > keep_height + 0.002) {
+	bool furniture_cut = furniture_panel && cut_coord >= furniture_cut_line - cut_margin;
+	if ((interior_is_cut(cut_coord) || furniture_cut) && height > keep_height + 0.002) {
 		discard;
 	}
 	if (glow_follows > 0.5 && glow_follows < 1.5) {
