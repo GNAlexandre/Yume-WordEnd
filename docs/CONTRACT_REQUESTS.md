@@ -600,3 +600,19 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   (images en WebP avec perte pour le seul Web), ou exclusion de l'export Web des images pas
   encore posées (filtre d'`export_presets.cfg`, PR « contrats »).
 - En attendant : `BUILD_BUDGET_MB=110 tools/check.sh` vérifie tout le reste (vert pour E9).
+
+## T2 — images et préréglages pour l'entrepôt
+- `roof_ladder` (échelle du couloir de l'étage vers le toit) : absente du cahier n° 3 ;
+  remplaçant à la taille du plan, 77 × 288 px (0,8 × 3,0 m), lot I de `tools/hd2d_manifest.json`.
+  À ajouter au cahier.
+- `floor_roof_deck` et `roof_edge_slate` (« à confirmer », CARTE.md 3.3) : le toit se fait sans
+  eux (matière `planches`, toit `roof_slate` d'un `Building`) ; à trancher au cahier.
+- Préréglage `noir` (CARTE.md 3.4, salle des armes sans lumière) : absent de `data/lighting` (E9) ;
+  la carte prend `interieur` en attendant.
+- Halo des appliques `wallitem_crystal_sconce` (GLOWS d'`InteriorRoom`) : la lumière d'une
+  applique est déclarée en carte de lumière, mais l'image elle-même ne luit pas ; à voir avec R1.
+- Remplaçants encore en place (cahier n° 3, lot I) : `anim/drying_frame_wave`, `anim/leak_drip`,
+  `anim/pot_steam`, `decals/bath_puddles`, `decals/cards_floor`, `decals/clothes_floor`,
+  `decals/papers_floor`, `decals/runner_rug`, `interior/props/piano_old`, `interior/props/roof_hatch`,
+  `interior/props/roof_ladder`, `interior/props/roof_railing_broken`, `interior/wallitem_clippings`,
+  `interior/window_dusty`.

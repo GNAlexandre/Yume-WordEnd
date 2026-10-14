@@ -2435,3 +2435,45 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   dix préréglages sur la carte d'essai et le village, environ 30 s) et lit les luminances et les
   draw calls ; sans `xvfb-run`, il est en attente. `tools/e9_shots.sh` sans argument rend les
   vingt vues (village, carte d'essai, carte d'essai prise pour un intérieur, bord de l'île).
+- **T2 — grille d'un demi-mètre des intérieurs** : les plans de CARTE.md, section 3, posent des
+  cloisons au demi-mètre (cuisine de 4,5 m, couloir z 8,5 → 10,5) ; `InteriorLayout.GRID` = 0,5 m
+  (cases, lignes de murs, coupe, colonne de coupe d'`interior.gdshader`) ; les étages au mètre
+  (carte d'essai d'E3) ne changent pas.
+- **T2 — cartes écrites par un outil** : `tools/interior_maps.py gen` relit les blocs ```plan de
+  CARTE.md et écrit `data/maps/<id>/interior.json` et `src/world/maps/<id>/<id>.tscn` des quatre
+  cartes de l'entrepôt (`check` : à jour ?, `places` : listes de places dans CARTE.md) ; il imprime
+  chaque écart au plan.
+- **T2 — ouvertures ramenées** : une ouverture « de toute une largeur » du plan garde 0,2 m de
+  montant à chaque angle (InteriorLayout refuse une porte contre l'angle) : réfectoire|couloir
+  1,1 m, escalier|couloir et entrée|couloir 3,6 m, palier_armes|couloir 1,6 m, trémie|couloir
+  1,8 m ; une toile d'araignée de la crypte recule de 5 cm de l'angle.
+- **T2 — portes de pièce franchissables** : chambranle `door_frame_wood` (ouverture transparente)
+  au lieu de `door_room` (opaque, cacherait le joueur sur le seuil) ; les portes du dehors gardent
+  leur image (`door_double`, `door_service`, `door_armory` fermée, ouverte par son invite).
+- **T2 — bornes de caméra élargies en x** : rez-de-chaussée et étage `Rect2(2, 4, 28, 6)` au lieu
+  de `Rect2(8, 4, 16, 6)` : bornée à x 8 → 24, la caméra regardait de biais les pièces des bouts
+  et les cloisons nord-sud cachaient le joueur. Salle des armes et toit : bornes du plan.
+- **T2 — rien ne cache le joueur derrière un meuble haut** : un meuble de plus de 1,21 m adossé au
+  mur sud se coupe avec lui (`InteriorPanel.cut_offset`) ; un meuble haut au milieu d'une pièce
+  ferme, par une collision sans image (« <meuble>_arriere »), la place où il cacherait les pieds
+  du joueur (calculée par la caméra du jeu, bornée, regard de biais compris) ; les piliers de la
+  crypte, les séchoirs et la rambarde sud du toit sont des panneaux de premier plan qui
+  s'effacent ; le grand miroir des bains, tourné vers l'est, a son occulteur dans son orientation.
+- **T2 — l'armoire de Chtholly contre le mur sud** : au milieu du mur est (plan : z 6,6), elle
+  cachait le joueur, et la place qu'elle cache fermait avec le lit le nord de la chambre (bureau,
+  calendrier) ; elle s'adosse au mur sud, à l'est de la porte (z 8,075), et se coupe avec lui
+  (`MOVED` de `tools/interior_maps.py`).
+- **T2 — sorties vers le dehors provisoires** : tant que la carte `entrepot` (T1) n'existe pas,
+  les portes d'entrée et de service mènent au `Spawn` d'`essai` ; `tools/interior_maps.py gen`
+  les raccorde (`from_entrepot_rdc`, `from_entrepot_rdc_service`) dès qu'elle existe.
+- **T2 — le toit, une carte du dehors** : `MapGround` (pas d'`InteriorRoom`) dont le niveau 0 est
+  la terrasse (`height_zero_value`), la cour 6,5 m plus bas ; sol `planches` (matière de
+  `map_ground`) faute de `floor_roof_deck` ; le pan d'ardoise ouest est le toit d'un `Building`
+  (`roof_slate`) au lieu de `roof_edge_slate` ; la rambarde en modules de 2 m, le module tordu à la
+  place du module le plus proche de sa cote (x 12).
+- **T2 — salle des armes sans préréglage propre** : le préréglage `noir` d'E9 n'existe pas ; la
+  carte n'a pas de `light_preset` (intérieur : `interieur` d'Atmosphere) et aucune lampe.
+- **T2 — objets à examiner** : `Examinable` (src/world/examinable.gd) lit
+  `data/texts/entrepot.json` (format des textes de l'histoire, une clé par carte puis par objet)
+  et l'affiche par le protocole de DialogueRunner, sans nom ni portrait ; paraphrases, aucune
+  citation ; les noms des épées des râteliers ne s'affichent pas (ils demandent Willem, E6).
