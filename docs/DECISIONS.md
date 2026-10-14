@@ -2564,8 +2564,10 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   sont. Dedans, l'épaisseur des murs est relevée une fois en bitmap (8 px/m) et la réponse exacte
   d'`InteriorRoom.is_walkable` n'est demandée qu'au bord d'un mur (testé : mêmes réponses). Les
   meubles : leurs formes de collision (couche 1), élargies de 0,2 m, dans la tranche du corps.
-  Construction découpée (3 ms par image) après l'entrée ; chemins en file (deux par image), lissés
-  par le parcours des cases du graphe, puis le segment retenu vérifié pour de bon.
+  Construction découpée (3 ms par image) après l'entrée, en petits pas (une pièce de mur, un
+  décor, huit cases d'une rangée : le pas le plus long reste court dans le build Web), et
+  seulement sur une carte qui a des places ou des PNJ (pas l'ancienne île) ; chemins en file
+  (deux par image), lissés par le parcours des cases du graphe, puis le segment retenu vérifié.
 - **E4 — évitement** : face à un PNJ qui vient, chacun garde sa droite ; un PNJ arrêté ou le
   joueur juste devant : un pas de côté, puis un autre chemin qui évite sa case au bout de 0,8 s ;
   sans progrès 7 s, on se replace d'un coup au but. Personne ne bloque plus de 2 s un passage

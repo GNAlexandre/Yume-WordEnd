@@ -1070,7 +1070,7 @@ hauteur et vers la caméra (ordre d'affichage) ; la pile s'écroule ; parler à 
    `_member_added` / `_member_removed`, et pour le joueur `_accepts_player`, `_player_joined`,
    `_player_left`, `on_player_interact`, `on_player_attack` ; mener les PNJ par
    `LifeActor.walk_to(point, regard, allure, rappel, direct)`, `hold(anim, s)`, `play`, `face`,
-   `npc.say(texte)` ; noter ce qui compte par `_emit(&"…", détail)`.
+   `say(texte)` (bulle) ; noter ce qui compte par `_emit(&"…", détail)`.
 2. Une activité dans `activities.json` : `{"game": "<jeu>", "params": {…}}` ; ses répliques dans
    `data/texts/life.json`, `games/<jeu>/` ; une place avec ses points (le terrain).
 3. Les lignes des joueuses nomment l'activité (et leur `role`).
@@ -1078,6 +1078,16 @@ hauteur et vers la caméra (ordre d'affichage) ; la pile s'écroule ; parler à 
    `LifeDirector.game_at`).
 Le ballon (E8) : un jeu `ballon` sur ce cadre (`assign_teams`, `formation`, un `ball` dans `Life`,
 le joueur qui entre dans le champ) ; la place `champ` porte les positions (buts, coup d'envoi).
+
+**Mesures** (fin d'E4, rez-de-chaussée d'essai, petit-déjeuner, 15 PNJ). Natif (Xvfb) : 89 draw
+calls (vue du réfectoire) ; directeur 0,25 à 0,6 ms/image ; grille intérieure 105 à 125 ms de
+travail, extérieure (`essai_relief`) 420 à 580 ms, découpée à 3 ms par image (pas le plus long :
+1,3 ms) ; un chemin 2,5 ms au plus. Build Web (`tools/web_life.js`, Chromium sans GPU, SwiftShader) :
+vie coupée 74 draw calls, vie en marche 106 (max 111, sous 200) ; directeur 0,34 à 0,5 ms/image une
+fois la grille prête ; pendant les 70 images de sa construction (225 ms de travail), 2,2 ms/image,
+8 ms au plus (avant le découpage en petits pas : 50 ms d'un coup) ; chemins 0,9 ms au plus. Le
+rendu logiciel tourne à environ 1 image/s, vie coupée comme en marche : la durée d'image du
+navigateur (≤ 25 ms visés) se vérifie sur une vraie carte graphique, pas ici.
 
 **Pièges.** Un test qui change le créneau rétablit `GameState.reset()` ; un test qui pose une carte
 à la main et l'habite appelle `LifeDirector.attach(null)` dans `after_each`. Le directeur ne peuple
