@@ -1,9 +1,9 @@
 extends "res://tests/stubs/e5_fauna_test.gd"
-## (E5) Comportements de la faune : le paisible lève la tête puis fuit (au bruit du joueur qui court,
-## à celui d'un combat proche), le fuyard et l'oiseau fuient, le vaincu s'enfuit au lieu de mourir,
-## la meute encercle et attaque un par un, le sanglier gratte puis charge en ligne droite et reste
-## étourdi contre un obstacle, l'ours lent frappe fort et ne quitte pas sa tanière, la navigation
-## suit le sol (eau, falaise).
+## (E5) Comportements de la faune : le paisible lève la tête puis fuit (au bruit du joueur qui
+## court, à celui d'un combat proche), le fuyard et l'oiseau fuient, le vaincu s'enfuit au lieu
+## de mourir, la meute encercle et attaque un par un, le sanglier gratte puis charge en ligne
+## droite et reste étourdi contre un obstacle, l'ours lent frappe fort et ne quitte pas sa
+## tanière, la navigation suit le sol (eau, falaise).
 
 const FOREST := &"foret_essai"
 const BOAR_CHARGE := &"boar_charge"

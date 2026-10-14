@@ -1,10 +1,12 @@
 extends "res://tests/stubs/e5_fauna_test.gd"
-## (E5) La garde des Timeres (X1) et celle de la faune : un Timere n'apparaît pas là où les règles de
-## l'île n'en veulent pas (l'île n° 68), un animal n'apparaît pas là où la liste fauna de l'île ne
-## le permet pas ; les deux se distinguent par les données (AnimalData, espèce, règles de l'île),
-## jamais par un nom. Non-régression : les Timeres de l'ancienne île et de la surface.
+## (E5) La garde des Timeres (X1) et celle de la faune : un Timere n'apparaît pas là où les
+## règles de l'île n'en veulent pas (l'île n° 68), un animal n'apparaît pas là où la liste fauna
+## de l'île ne le permet pas ; les deux se distinguent par les données (AnimalData, espèce,
+## règles de l'île), jamais par un nom. Non-régression : les Timeres de l'ancienne île et de la
+## surface.
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
+const TIMERE_DATA := preload("res://data/enemies/timere_small.tres")
 
 
 func _map(map_id: StringName) -> Map:
@@ -16,7 +18,7 @@ func _map(map_id: StringName) -> Map:
 
 func _timere() -> Enemy:
 	var enemy := ENEMY_SCENE.instantiate() as Enemy
-	enemy.data = load("res://data/enemies/timere_small.tres") as EnemyData
+	enemy.data = TIMERE_DATA
 	enemy.drops_enabled = false
 	return enemy
 
@@ -104,7 +106,7 @@ func test_outside_any_map_the_rules_do_not_apply() -> void:
 
 func test_an_animal_without_species_data_is_refused() -> void:
 	var animal := ANIMAL_SCENE.instantiate() as Animal
-	animal.data = load("res://data/enemies/timere_small.tres") as EnemyData
+	animal.data = TIMERE_DATA
 	world.add_child(animal)
 	await wait_physics_frames(2)
 	assert_false(is_around(animal), "un Timere ne devient pas un animal")
