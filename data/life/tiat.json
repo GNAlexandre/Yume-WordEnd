@@ -1,0 +1,11 @@
+{
+  "_comment": "Tiat (VIE.md, 2.4) : la toilette en pyjama, le chat dans les hautes herbes, la course du couloir ; collée à la porte de Nygglatho la nuit (l'avalanche).",
+  "gait": "course",
+  "lines": [
+    {"slot": "aube", "map": "entrepot_rdc_essai", "place": "point_eau", "activity": "toilette", "outfit": "pyjama"},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_b", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "essai_relief", "place": "herbes_chat", "activity": "jeu_chat", "outfit": "vie"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "couloir_course", "activity": "course_couloir", "outfit": "vie"},
+    {"slot": "nuit", "map": "entrepot_rdc_essai", "place": "porte_nygglatho", "activity": "avalanche", "outfit": "pyjama"}
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "_comment": "Willem (docs/lore/VIE.md, 2.1), sur les cartes d'essai : la cuisine au matin, le réfectoire à midi, la lecture aux petites l'après-midi, la tour de fées le soir, les archives la nuit.",
+  "lines": [
+    {"slot": ["aube", "matin"], "map": "entrepot_rdc_essai", "place": "cuisine_table", "activity": "cuisiner", "outfit": "cuisine"},
+    {"slot": "midi", "map": "entrepot_rdc_essai", "place": "refectoire_bout_est", "activity": "manger", "outfit": "maison"},
+    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "jeux_lecture", "activity": "lire", "outfit": "maison"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_tour", "activity": "tour_de_fees", "outfit": "maison", "role": "base"},
+    {"slot": "nuit", "map": "entrepot_rdc_essai", "place": "archives_bureau", "activity": "lire", "outfit": "maison"}
+  ]
+}

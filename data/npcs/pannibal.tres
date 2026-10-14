@@ -10,3 +10,4 @@ display_name = "Pannibal"
 skin = ExtResource("2_visual")
 dialogue_path = "res://data/dialogues/pannibal.json"
 home_zone = &"forest"
+outfits = Dictionary[StringName, String]({ &"vie": "res://data/npcs/outfits/pannibal_life.tres", &"pyjama": "res://data/npcs/outfits/pannibal_pajamas.tres" })

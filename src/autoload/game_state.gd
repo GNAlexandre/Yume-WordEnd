@@ -41,6 +41,11 @@ const MOMENTS: Array[StringName] = [&"aube", &"matin", &"apres_midi", &"couchant
 const WEATHERS: Array[StringName] = [&"clair", &"pluie", &"averse"]
 const DEFAULT_MOMENT := &"couchant"
 const DEFAULT_WEATHER := &"clair"
+## (E4) Créneaux de la vie (emplois du temps, data/life/ ; docs/lore/VIE.md, 0.1), dans l'ordre
+## du jour : un de plus que les moments (midi), le soir est le couchant (LifeSlots.moment_of).
+const SLOTS: Array[StringName] = [&"aube", &"matin", &"midi", &"apres_midi", &"soir", &"nuit"]
+## (E4) Plus grand jour de l'acte accepté (sauvegarde trafiquée).
+const MAX_DAY := 99
 
 ## Skin actif (SkinData.id) ; &"" = skin par défaut de SkinRegistry.
 var skin_id: StringName = &"":
@@ -93,6 +98,23 @@ var weather: StringName = DEFAULT_WEATHER:
 			return
 		weather = value
 		EventBus.atmosphere_changed.emit(moment, weather)
+## (E4) Jour de l'acte (docs/lore/ACTE1.md : 1 à 12), tenu par le récit (E6) ; 0 (défaut) : pas
+## de jour, les lignes d'emploi du temps qui demandent un jour (clé « day ») ne s'appliquent pas.
+## Lu par LifeDirector. Sauvegardé (champ facultatif du schéma v3, absent : 0).
+var day: int = 0:
+	set(value):
+		day = clampi(value, 0, MAX_DAY)
+## (E4) Créneau de la vie (un de SLOTS, ou &"" : celui du moment, LifeSlots.default_for). Il ne
+## sert qu'à distinguer deux créneaux d'un même moment de lumière (midi garde la lumière du
+## matin) : LifeDirector.set_slot le pose avec le moment ; un moment qui change ailleurs (F7, le
+## récit par Atmosphere.set_moment) le remet à &"" s'il ne lui va plus. Une autre valeur est
+## refusée (avertissement). Sauvegardé (champ facultatif du schéma v3, absent : &"").
+var slot: StringName = &"":
+	set(value):
+		if not value.is_empty() and not value in SLOTS:
+			push_warning("GameState : créneau inconnu %s" % value)
+			return
+		slot = value
 ## (Lot Q) Quête suivie, affichée par le HUD ; &"" = aucune (le HUD montre alors la première
 ## quête active). Tenue par le QuestTracker (une quête qui démarre devient la quête suivie) et
 ## par le journal (choix du joueur) ; émet tracked_quest_changed.
@@ -124,6 +146,8 @@ func reset() -> void:
 	position = Vector3.ZERO
 	moment = DEFAULT_MOMENT
 	weather = DEFAULT_WEATHER
+	day = 0
+	slot = &""
 	tracked_quest = &""
 	_inventory.clear()
 	_flags.clear()
@@ -339,8 +363,9 @@ func arena_record(arena_id: StringName) -> Dictionary:
 ## Types JSON uniquement (String, int, float, bool, Array, Dictionary). Les champs du schéma v1
 ## d'abord (et, à côté de la position, la carte de la refonte : map, v3), puis ceux du Lot Q
 ## (v2) : quest_progress et tracked_quest ; enfin (E9) moment et weather, facultatifs dans le
-## schéma v3 (absents d'une sauvegarde plus ancienne : le couchant sans pluie), et (X1) island
-## et known_islands, facultatifs aussi (absents : WorldManager les déduit de la carte).
+## schéma v3 (absents d'une sauvegarde plus ancienne : le couchant sans pluie), (X1) island
+## et known_islands, facultatifs aussi (absents : WorldManager les déduit de la carte), et (E4)
+## day et slot, facultatifs aussi (absents : 0 et "").
 func to_dict() -> Dictionary:
 	var inventory := {}
 	for item_id: StringName in _inventory:
@@ -383,6 +408,8 @@ func to_dict() -> Dictionary:
 		"weather": String(weather),
 		"island": String(island),
 		"known_islands": known,
+		"day": day,
+		"slot": String(slot),
 	}
 
 
@@ -460,6 +487,10 @@ func from_dict(data: Dictionary) -> void:
 	if known is Array:
 		for island_id: Variant in known:
 			discover_island(_read_name(island_id))
+	# (E4) Absents ou invalides : pas de jour, le créneau du moment.
+	day = _read_count(data.get("day"))
+	var saved_slot := _read_name(data.get("slot"))
+	slot = saved_slot if saved_slot in SLOTS else &""
 	EventBus.inventory_changed.emit()
 
 

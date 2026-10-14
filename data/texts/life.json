@@ -1,0 +1,149 @@
+{
+  "_comment": "Textes de la vie (lot E4), lus par LifeTexts (src/life/life_texts.gd) : un texte, une liste de textes (une bulle tirée au hasard) ou un objet de même forme ; clés « _… » : commentaires ; {player} est le prénom de la protagoniste (avec parcimonie). greetings/<id du PNJ>, sinon le groupe (petites, ainees), sinon default : la bulle de salutation quand le joueur approche. talk/generic : ce que répond une fée générique (sans dialogue) quand on lui parle. games/<jeu>/<clé> : les répliques des jeux de groupe. fairy_names : les prénoms des fées génériques (originaux, aucun de l'œuvre).",
+  "greetings": {
+    "default": [
+      "Bonjour !",
+      "Oh, bonjour !",
+      "Tu te promènes ?"
+    ],
+    "petites": [
+      "Mademoiselle {player} !",
+      "On joue après ?",
+      "Tu as vu ? Tu as vu ?",
+      "Chut, on a un secret."
+    ],
+    "ainees": [
+      "Tiens, te voilà.",
+      "Tu cherches quelqu’un ?"
+    ],
+    "willem": [
+      "Ah, bonjour.",
+      "Tout va bien ?",
+      "On se croise beaucoup, aujourd’hui."
+    ],
+    "nygglatho": [
+      "Oh, ma petite {player} !",
+      "Pas de course dans les couloirs, d’accord ?",
+      "Tu as bien mangé ?"
+    ],
+    "tiat": [
+      "Mademoiselle {player} ! Regardez-moi !",
+      "Je vous ai vue de loin !"
+    ],
+    "collon": [
+      "Tu sais pas la nouvelle ?",
+      "Hé ! Hé ! Écoute !"
+    ],
+    "pannibal": [
+      "…",
+      "Halte. Qui va là ?"
+    ],
+    "lakhesh": [
+      "Bonjour, {player}.",
+      "Tu veux un petit pain ?"
+    ],
+    "almita": [
+      "Bonjour ! Bonjour !",
+      "Tu joues avec nous ?"
+    ]
+  },
+  "talk": {
+    "generic": [
+      "On joue au chat, tout à l’heure. Tu viens ?",
+      "Nygglatho a dit qu’il y aurait un dessert…",
+      "J’ai fait une tache sur ma robe. Chut.",
+      "Tu racontes une histoire, ce soir ?",
+      "Le grand arbre, c’est interdit. Mais d’en haut, on voit tout."
+    ]
+  },
+  "games": {
+    "chat": {
+      "player_it": [
+        "C’est toi le chat, {player} !",
+        "Touchée ! À toi de courir !"
+      ],
+      "tagged": [
+        "Zut, touchée !",
+        "Pas juste !",
+        "C’est moi le chat…"
+      ],
+      "tag": [
+        "Touchée !",
+        "Attrapée !",
+        "C’est toi !"
+      ],
+      "player_left": [
+        "Tu reviens jouer ?",
+        "Elle abandonne !"
+      ],
+      "end": [
+        "Pouce !",
+        "On fait une pause !"
+      ]
+    },
+    "course": {
+      "start": [
+        "La première au bout a deux desserts !",
+        "Trois, deux, un… partez !"
+      ],
+      "scold": [
+        "On ne court pas dans les couloirs !",
+        "Qu’est-ce que j’ai dit pour les couloirs ?"
+      ],
+      "won": [
+        "Gagné !",
+        "Deux desserts !"
+      ],
+      "player_won": [
+        "{player} a gagné le dessert !",
+        "Pas juste, elle a de grandes jambes !"
+      ]
+    },
+    "avalanche": {
+      "whisper": [
+        "Chut…",
+        "Pousse-toi…",
+        "Je vois rien…"
+      ],
+      "fall": [
+        "Waaah !",
+        "Aïe !"
+      ],
+      "sorry": [
+        "On n’écoutait pas, promis !",
+        "On passait par là !"
+      ]
+    },
+    "tour": {
+      "base": [
+        "Hé, doucement…",
+        "Encore une ?"
+      ],
+      "top": [
+        "Plus haut !",
+        "On voit le plafond !"
+      ],
+      "collapse": [
+        "Ouf…",
+        "Tout le monde va bien ?"
+      ],
+      "gag": [
+        "{player} prend son élan… et s’arrête au bord, toute rouge."
+      ]
+    }
+  },
+  "fairy_names": [
+    "Brisa",
+    "Fenna",
+    "Mirelle",
+    "Odile",
+    "Liesel",
+    "Tamsin",
+    "Ysolde",
+    "Pervenche",
+    "Clio",
+    "Nelka",
+    "Sabine",
+    "Vesna"
+  ]
+}

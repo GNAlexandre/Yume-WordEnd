@@ -24,6 +24,19 @@ extends Resource
 ## (H6) Vue de dos (<id>_back.png et .json), facultative.
 @export var back_sheet: Texture2D
 @export var back_json: JSON
+## (E4) Planche complémentaire d'une tenue (docs/ASSETS_HD2D_SUKASUKA.md, 4.1 : `<id>_life`),
+## facultative : ses animations absentes de la planche principale s'y ajoutent, vue par vue
+## (SheetLoader.read_sheet et frames_for les fusionnent ; la planche principale l'emporte sur les
+## animations communes). Même échelle que la planche principale : sa rangée « repos » en est la
+## copie au pixel près, et c'est celle de la planche principale qui donne la taille. Une vue
+## (face, dos) sans sa planche complémentaire perd les animations en plus : SheetLoader.has_view
+## la refuse alors (le profil reste).
+@export var extra_sheet: Texture2D
+@export var extra_json: JSON
+@export var extra_front_sheet: Texture2D
+@export var extra_front_json: JSON
+@export var extra_back_sheet: Texture2D
+@export var extra_back_json: JSON
 ## Portrait (boîte de dialogue, menu). Facultatif.
 @export var portrait: Texture2D
 ## Taille du personnage debout, en mètres. pixel_size = height_m / hauteur (px) de la

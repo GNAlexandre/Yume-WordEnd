@@ -915,6 +915,544 @@
     "_front",
     "_back"
    ]
+  },
+  {
+   "id": "tiat_life",
+   "dir": "assets/characters/tiat",
+   "table": "life",
+   "height_m": 1.1,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe"
+   ],
+   "lot": "J",
+   "complement": "tiat"
+  },
+  {
+   "id": "collon_life",
+   "dir": "assets/characters/collon",
+   "table": "life",
+   "height_m": 1.2,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe"
+   ],
+   "lot": "J",
+   "complement": "collon"
+  },
+  {
+   "id": "pannibal_life",
+   "dir": "assets/characters/pannibal",
+   "table": "life",
+   "height_m": 1.25,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe",
+    "attaque"
+   ],
+   "lot": "J",
+   "complement": "pannibal"
+  },
+  {
+   "id": "lakhesh_life",
+   "dir": "assets/characters/lakhesh",
+   "table": "life",
+   "height_m": 1.2,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe"
+   ],
+   "lot": "J",
+   "complement": "lakhesh"
+  },
+  {
+   "id": "almita_life",
+   "dir": "assets/characters/almita",
+   "table": "life",
+   "height_m": 0.95,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe"
+   ],
+   "lot": "J",
+   "complement": "almita"
+  },
+  {
+   "id": "chtholly_home",
+   "dir": "assets/characters/chtholly",
+   "table": "life",
+   "height_m": 1.5,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "frappe",
+    "assis",
+    "lit",
+    "dort",
+    "hanches"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "ithea_home",
+   "dir": "assets/characters/ithea",
+   "table": "life",
+   "height_m": 1.45,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "frappe",
+    "assis",
+    "lit",
+    "dort"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "nephren_home",
+   "dir": "assets/characters/nephren",
+   "table": "life",
+   "height_m": 1.3,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "frappe",
+    "assis",
+    "lit",
+    "dort"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "willem_home",
+   "dir": "assets/characters/willem",
+   "table": "life",
+   "height_m": 1.75,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "assis",
+    "lit",
+    "dort",
+    "porte",
+    "effondre"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "willem_cook",
+   "dir": "assets/characters/willem",
+   "table": "life",
+   "height_m": 1.75,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "travaille",
+    "porte"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "willem_coat",
+   "dir": "assets/characters/willem",
+   "table": "life",
+   "height_m": 1.75,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "nygglatho_life",
+   "dir": "assets/characters/nygglatho",
+   "table": "life",
+   "height_m": 1.85,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "course",
+    "porte",
+    "hanches",
+    "assis",
+    "lit",
+    "dort",
+    "etreinte"
+   ],
+   "lot": "J",
+   "complement": "nygglatho"
+  },
+  {
+   "id": "nygglatho_tea",
+   "dir": "assets/characters/nygglatho",
+   "table": "life",
+   "height_m": 1.85,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "parle",
+    "travaille",
+    "porte"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "tiat_pajamas",
+   "dir": "assets/characters/tiat",
+   "table": "life",
+   "height_m": 1.1,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "tombe",
+    "assis",
+    "dort",
+    "travaille"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "collon_pajamas",
+   "dir": "assets/characters/collon",
+   "table": "life",
+   "height_m": 1.2,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "tombe",
+    "assis",
+    "dort",
+    "travaille"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "pannibal_pajamas",
+   "dir": "assets/characters/pannibal",
+   "table": "life",
+   "height_m": 1.25,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "tombe",
+    "assis",
+    "dort",
+    "travaille"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "lakhesh_pajamas",
+   "dir": "assets/characters/lakhesh",
+   "table": "life",
+   "height_m": 1.2,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "tombe",
+    "assis",
+    "dort",
+    "travaille"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "fairy_01",
+   "dir": "assets/characters/fairy_01",
+   "table": "life",
+   "height_m": 1.0,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "fairy_02",
+   "dir": "assets/characters/fairy_02",
+   "table": "life",
+   "height_m": 1.05,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "fairy_03",
+   "dir": "assets/characters/fairy_03",
+   "table": "life",
+   "height_m": 1.05,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "fairy_04",
+   "dir": "assets/characters/fairy_04",
+   "table": "life",
+   "height_m": 1.1,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "fairy_05",
+   "dir": "assets/characters/fairy_05",
+   "table": "life",
+   "height_m": 1.1,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe"
+   ],
+   "lot": "J"
+  },
+  {
+   "id": "fairy_06",
+   "dir": "assets/characters/fairy_06",
+   "table": "life",
+   "height_m": 1.15,
+   "views": [
+    "",
+    "_front",
+    "_back"
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "parle",
+    "course",
+    "saut",
+    "frappe",
+    "lance",
+    "grimpe",
+    "assis",
+    "lit",
+    "dort",
+    "tombe"
+   ],
+   "lot": "J"
   }
  ]
 }

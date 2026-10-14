@@ -1,0 +1,10 @@
+{
+  "_comment": "Nephren (VIE.md, 2.3) : la lecture l'après-midi, collée au dos de Willem dans la tour le soir.",
+  "lines": [
+    {"slot": "aube", "away": "entrepot_etage"},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_c", "activity": "manger", "outfit": "maison"},
+    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "lecture_table", "activity": "lire", "outfit": "maison"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_tour", "activity": "tour_de_fees", "outfit": "maison", "role": "pile_1"},
+    {"slot": "nuit", "away": "entrepot_etage"}
+  ]
+}
