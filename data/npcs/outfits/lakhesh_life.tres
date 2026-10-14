@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="SkinData" format=3]
+
+[ext_resource type="Script" path="res://src/visuals/skin_data.gd" id="1_skin"]
+[ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh.png" id="2_sprite_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/lakhesh/lakhesh.json" id="3_frames_json"]
+[ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh_front.png" id="4_front_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/lakhesh/lakhesh_front.json" id="5_front_json"]
+[ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh_back.png" id="6_back_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/lakhesh/lakhesh_back.json" id="7_back_json"]
+[ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh_life.png" id="8_extra_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/lakhesh/lakhesh_life.json" id="9_extra_json"]
+[ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh_life_front.png" id="10_extra_front_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/lakhesh/lakhesh_life_front.json" id="11_extra_front_json"]
+[ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh_life_back.png" id="12_extra_back_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/lakhesh/lakhesh_life_back.json" id="13_extra_back_json"]
+[ext_resource type="Texture2D" path="res://assets/characters/lakhesh/lakhesh_portrait.png" id="14_portrait"]
+
+[resource]
+script = ExtResource("1_skin")
+id = &"lakhesh_life"
+display_name = "Lakhesh · vie"
+sprite_sheet = ExtResource("2_sprite_sheet")
+frames_json = ExtResource("3_frames_json")
+front_sheet = ExtResource("4_front_sheet")
+front_json = ExtResource("5_front_json")
+back_sheet = ExtResource("6_back_sheet")
+back_json = ExtResource("7_back_json")
+extra_sheet = ExtResource("8_extra_sheet")
+extra_json = ExtResource("9_extra_json")
+extra_front_sheet = ExtResource("10_extra_front_sheet")
+extra_front_json = ExtResource("11_extra_front_json")
+extra_back_sheet = ExtResource("12_extra_back_sheet")
+extra_back_json = ExtResource("13_extra_back_json")
+portrait = ExtResource("14_portrait")
+height_m = 1.2

@@ -32,6 +32,7 @@ SkinRegistry="*res://src/autoload/skin_registry.gd"
 WorldManager="*res://src/autoload/world_manager.gd"
 DesktopApp="*res://src/autoload/desktop_app.gd"
 Atmosphere="*res://src/autoload/atmosphere.gd"
+LifeDirector="*res://src/life/life_director.gd"
 
 [debug]
 

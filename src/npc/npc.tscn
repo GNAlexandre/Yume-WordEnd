@@ -47,3 +47,18 @@ text = "!"
 font = SubResource("FontVariation_marker")
 font_size = 96
 outline_size = 26
+
+[node name="Bubble" type="Label3D" parent="."]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
+pixel_size = 0.0045
+billboard = 1
+double_sided = false
+modulate = Color(1, 0.98, 0.93, 1)
+outline_modulate = Color(0.16, 0.1, 0.18, 1)
+text = "…"
+font_size = 40
+outline_size = 14
+vertical_alignment = 2
+autowrap_mode = 3
+width = 520.0

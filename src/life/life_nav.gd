@@ -1,0 +1,418 @@
+class_name LifeNav
+extends RefCounted
+## (E4) Navigation des PNJ sur une carte : une grille (1 m dehors, 0,5 m dedans), un graphe
+## AStar2D (C++, compatible Web mono-thread) et des chemins lissés. Propriétaire : E4.
+##
+## Praticabilité d'un point : celle du sol de la carte (MapGround.is_walkable dehors ;
+## InteriorRoom dedans : une pièce, hors de l'épaisseur des murs debout, ce que fait
+## InteriorRoom.is_walkable, relevé une fois en bitmap pour aller vite), et hors des collisions
+## des meubles et décors (formes de la couche 1 hors du sol, élargies de PROP_MARGIN). Deux
+## cases voisines sont reliées si les points entre elles le sont et que le sol ne monte ni ne
+## descend de plus de MAX_RISE d'un point au suivant (escaliers et rampes oui, falaises, talus
+## et murets non) ; une diagonale, si ses deux côtés le sont (on ne coupe pas les coins). La
+## construction est découpée (build_step, budget en microsecondes par image) : pas de pic
+## d'image à l'entrée d'une carte ; find_path attend ready.
+
+const OUTDOOR_CELL := 1.0
+const INDOOR_CELL := 0.5
+## Montée ou descente permise d'un point de mesure au suivant (m) : marches de 0,1 à 0,17 m,
+## rampes ; un talus de 0,5 m (qu'on franchit en sautant) arrête.
+const MAX_RISE := 0.3
+## Pas des mesures le long d'une arête et d'une ligne droite (m).
+const SAMPLE_STEP := 0.25
+## Élargissement des collisions des meubles (m) : le corps du PNJ.
+const PROP_MARGIN := 0.2
+## Une collision ne gêne que si elle occupe cette tranche au-dessus du sol (m) : ni un tapis, ni
+## un auvent.
+const BODY_LOW := 0.12
+const BODY_HIGH := 1.5
+## Résolution du relevé des murs d'un intérieur (m).
+const WALL_RES := 0.125
+const STAGE_CELLS := 0
+const STAGE_PROPS := 1
+const STAGE_GRAPH := 2
+const STAGE_DONE := 3
+
+enum Kind { FLAT, OUTDOOR, INTERIOR }
+
+## Taille d'une case (m) et nombre de cases.
+var cell: float = OUTDOOR_CELL
+var size: Vector2i = Vector2i.ZERO
+var kind: Kind = Kind.FLAT
+## Vrai quand la grille et le graphe sont prêts.
+var ready: bool = false
+## Mesures : durée de construction (µs de travail), nombre d'images, cases praticables.
+var build_usec: int = 0
+var build_frames: int = 0
+
+var _map: Node3D
+var _ground: Node
+var _area: Rect2
+var _walk := PackedByteArray()
+var _height := PackedFloat32Array()
+var _prop := PackedByteArray()
+var _wall := PackedByteArray()
+var _wall_size := Vector2i.ZERO
+var _boxes: Array[AABB] = []
+var _astar := AStar2D.new()
+var _stage: int = STAGE_CELLS
+var _row: int = 0
+var _disabled: Array[int] = []
+
+
+## Grille d'une carte (Map) : le type de sol décide de la taille des cases ; rien n'est encore
+## mesuré (build_step, build_now).
+static func for_map(map: Node3D) -> LifeNav:
+	var nav := LifeNav.new()
+	nav._map = map
+	nav._ground = map.get_node_or_null(^"Ground") if map != null else null
+	var area := Rect2(0.0, 0.0, 40.0, 30.0)
+	if map is Map:
+		area = (map as Map).area()
+	nav._area = area
+	if nav._ground is InteriorRoom:
+		nav.kind = Kind.INTERIOR
+		nav.cell = INDOOR_CELL
+	elif nav._ground is MapGround:
+		nav.kind = Kind.OUTDOOR
+		nav.cell = OUTDOOR_CELL
+	else:
+		nav.kind = Kind.FLAT
+		nav.cell = OUTDOOR_CELL
+	nav.size = Vector2i(ceili(area.size.x / nav.cell), ceili(area.size.y / nav.cell))
+	nav._walk.resize(nav.size.x * nav.size.y)
+	nav._height.resize(nav.size.x * nav.size.y)
+	nav._prop.resize(nav.size.x * nav.size.y)
+	return nav
+
+
+## Avance la construction d'au plus budget_usec µs ; vrai quand tout est prêt.
+func build_step(budget_usec: int) -> bool:
+	if ready:
+		return true
+	var started := Time.get_ticks_usec()
+	build_frames += 1
+	while not ready and Time.get_ticks_usec() - started < budget_usec:
+		match _stage:
+			STAGE_CELLS:
+				if _row == 0 and kind == Kind.INTERIOR and _wall.is_empty():
+					_scan_walls()
+				_measure_row(_row)
+				_row += 1
+				if _row >= size.y:
+					_row = 0
+					_stage = STAGE_PROPS
+			STAGE_PROPS:
+				_scan_props()
+				_stage = STAGE_GRAPH
+			STAGE_GRAPH:
+				_graph_row(_row)
+				_row += 1
+				if _row >= size.y:
+					_stage = STAGE_DONE
+					ready = true
+	build_usec += Time.get_ticks_usec() - started
+	return ready
+
+
+## Construit tout d'un coup (tests, démonstrations).
+func build_now() -> void:
+	while not build_step(1_000_000):
+		pass
+
+
+# --- Requêtes ---------------------------------------------------------------------------------
+
+
+## Case d'un point (repère de la carte, x et z).
+func cell_of(point: Vector3) -> Vector2i:
+	return Vector2i(
+		floori((point.x - _area.position.x) / cell), floori((point.z - _area.position.y) / cell)
+	)
+
+
+## Centre d'une case, à la hauteur du sol.
+func center(at: Vector2i) -> Vector3:
+	var x := _area.position.x + (at.x + 0.5) * cell
+	var z := _area.position.y + (at.y + 0.5) * cell
+	return Vector3(x, height_at(x, z), z)
+
+
+## Vrai si la case existe et qu'on peut s'y tenir (sol et meubles).
+func is_open(at: Vector2i) -> bool:
+	if at.x < 0 or at.y < 0 or at.x >= size.x or at.y >= size.y:
+		return false
+	var index := at.y * size.x + at.x
+	return _walk[index] == 1 and _prop[index] == 0
+
+
+## Vrai si l'on peut se tenir au point (x, z) : sol praticable, hors des meubles.
+func is_walkable_point(x: float, z: float) -> bool:
+	if not _sample_walkable(x, z):
+		return false
+	var at := cell_of(Vector3(x, 0.0, z))
+	if at.x < 0 or at.y < 0 or at.x >= size.x or at.y >= size.y:
+		return false
+	return not ready or _prop[at.y * size.x + at.x] == 0
+
+
+## Hauteur du sol en (x, z).
+func height_at(x: float, z: float) -> float:
+	match kind:
+		Kind.OUTDOOR:
+			var h := (_ground as MapGround).height_at(x, z)
+			return h if h > MapGround.VOID_HEIGHT + 1.0 else 0.0
+		Kind.INTERIOR:
+			return (_ground as InteriorRoom).height_at(x, z)
+	return 0.0
+
+
+## Vrai si l'on va de a à b en ligne droite (mesures tous les SAMPLE_STEP : sol, meubles, pas de
+## marche trop haute).
+func line_clear(a: Vector3, b: Vector3) -> bool:
+	var flat := Vector2(b.x - a.x, b.z - a.z)
+	var steps := maxi(1, ceili(flat.length() / SAMPLE_STEP))
+	var previous := height_at(a.x, a.z)
+	for i: int in range(1, steps + 1):
+		var t := float(i) / steps
+		var x := lerpf(a.x, b.x, t)
+		var z := lerpf(a.z, b.z, t)
+		if not is_walkable_point(x, z):
+			return false
+		var h := height_at(x, z)
+		if absf(h - previous) > MAX_RISE:
+			return false
+		previous = h
+	return true
+
+
+## Case praticable reliée au graphe la plus proche d'un point (à moins de max_cells cases) ;
+## Vector2i(-1, -1) sinon.
+func nearest_open(point: Vector3, max_cells: int = 6) -> Vector2i:
+	var origin := cell_of(point)
+	if is_open(origin) and _astar.has_point(_id(origin)):
+		return origin
+	var best := Vector2i(-1, -1)
+	var best_distance := INF
+	for radius: int in range(1, max_cells + 1):
+		for dz: int in range(-radius, radius + 1):
+			for dx: int in range(-radius, radius + 1):
+				if absi(dx) != radius and absi(dz) != radius:
+					continue
+				var at := origin + Vector2i(dx, dz)
+				if not is_open(at) or not _astar.has_point(_id(at)):
+					continue
+				var d := center(at).distance_squared_to(point)
+				if d < best_distance:
+					best_distance = d
+					best = at
+		if best.x >= 0:
+			return best
+	return best
+
+
+## Chemin de from à to (repère de la carte) : points au sol, lissé (lignes droites quand elles
+## sont libres), du premier point après from jusqu'au centre de la case libre la plus proche de
+## to (le dernier pas, vers un siège, se fait à part). avoid : cases à éviter (PNJ arrêtés, le
+## joueur). Vide si pas de chemin (ou grille pas prête).
+func find_path(from: Vector3, to: Vector3, avoid: Array[Vector2i] = []) -> PackedVector3Array:
+	var result := PackedVector3Array()
+	if not ready:
+		return result
+	var start := nearest_open(from)
+	var goal := nearest_open(to)
+	if start.x < 0 or goal.x < 0:
+		return result
+	for at: Vector2i in avoid:
+		var id := _id(at)
+		if at != start and at != goal and _astar.has_point(id) and not _astar.is_point_disabled(id):
+			_astar.set_point_disabled(id, true)
+			_disabled.append(id)
+	var ids := _astar.get_id_path(_id(start), _id(goal))
+	for id: int in _disabled:
+		_astar.set_point_disabled(id, false)
+	_disabled.clear()
+	if ids.is_empty():
+		return result
+	var raw := PackedVector3Array()
+	raw.append(from)
+	for id: int in ids:
+		raw.append(center(Vector2i(id % size.x, floori(float(id) / size.x))))
+	return _smooth(raw)
+
+
+## Nombre de cases praticables (mesures).
+func open_count() -> int:
+	var count := 0
+	for i: int in _walk.size():
+		if _walk[i] == 1 and _prop[i] == 0:
+			count += 1
+	return count
+
+
+# --- Construction -----------------------------------------------------------------------------
+
+
+func _id(at: Vector2i) -> int:
+	return at.y * size.x + at.x
+
+
+## Praticabilité du sol seul au point (x, z).
+func _sample_walkable(x: float, z: float) -> bool:
+	if not _area.has_point(Vector2(x, z)):
+		return false
+	match kind:
+		Kind.OUTDOOR:
+			return (_ground as MapGround).is_walkable(x, z)
+		Kind.INTERIOR:
+			var room := _ground as InteriorRoom
+			if room.plan == null or room.room_at(x, z).is_empty():
+				return false
+			var wx := floori(x / WALL_RES)
+			var wz := floori(z / WALL_RES)
+			if wx < 0 or wz < 0 or wx >= _wall_size.x or wz >= _wall_size.y:
+				return false
+			return _wall[wz * _wall_size.x + wx] == 0
+	return true
+
+
+## Relevé des murs debout d'un intérieur (les pièces de mur au sol, comme InteriorRoom.is_walkable).
+func _scan_walls() -> void:
+	var room := _ground as InteriorRoom
+	_wall_size = Vector2i(ceili(_area.end.x / WALL_RES) + 1, ceili(_area.end.y / WALL_RES) + 1)
+	_wall.resize(_wall_size.x * _wall_size.y)
+	_wall.fill(0)
+	if room.plan == null:
+		return
+	for piece: Dictionary in room.plan.pieces:
+		if float(piece["y0"]) > 0.0:
+			continue
+		var box := room.plan.piece_box(piece)
+		var x0 := maxi(0, floori((box.position.x - 0.001) / WALL_RES))
+		var x1 := mini(_wall_size.x - 1, floori((box.end.x + 0.001) / WALL_RES))
+		var z0 := maxi(0, floori((box.position.z - 0.001) / WALL_RES))
+		var z1 := mini(_wall_size.y - 1, floori((box.end.z + 0.001) / WALL_RES))
+		for wz: int in range(z0, z1 + 1):
+			for wx: int in range(x0, x1 + 1):
+				_wall[wz * _wall_size.x + wx] = 1
+
+
+func _measure_row(row: int) -> void:
+	for col: int in size.x:
+		var x := _area.position.x + (col + 0.5) * cell
+		var z := _area.position.y + (row + 0.5) * cell
+		var index := row * size.x + col
+		_walk[index] = 1 if _sample_walkable(x, z) else 0
+		_height[index] = height_at(x, z) if _walk[index] == 1 else 0.0
+
+
+## Collisions des décors et meubles (couche 1, hors du sol, de la vie et des sorties) : leurs
+## boîtes élargies marquent les cases qu'elles couvrent dans la tranche du corps.
+func _scan_props() -> void:
+	_boxes.clear()
+	if _map == null:
+		return
+	var skip: Array[Node] = []
+	for child_name: String in ["Ground", "Life", "Exits", "Markers"]:
+		var node := _map.get_node_or_null(NodePath(child_name))
+		if node != null:
+			skip.append(node)
+	_collect_boxes(_map, skip)
+	var inverse := (_map as Node3D).global_transform.affine_inverse()
+	for world_box: AABB in _boxes:
+		var box := inverse * world_box
+		var x0 := maxi(0, floori((box.position.x - PROP_MARGIN - _area.position.x) / cell))
+		var x1 := mini(size.x - 1, floori((box.end.x + PROP_MARGIN - _area.position.x) / cell))
+		var z0 := maxi(0, floori((box.position.z - PROP_MARGIN - _area.position.y) / cell))
+		var z1 := mini(size.y - 1, floori((box.end.z + PROP_MARGIN - _area.position.y) / cell))
+		for row: int in range(z0, z1 + 1):
+			for col: int in range(x0, x1 + 1):
+				var c := center(Vector2i(col, row))
+				var inside_x := c.x > box.position.x - PROP_MARGIN and c.x < box.end.x + PROP_MARGIN
+				var inside_z := c.z > box.position.z - PROP_MARGIN and c.z < box.end.z + PROP_MARGIN
+				var ground := _height[row * size.x + col]
+				var overlaps := box.end.y > ground + BODY_LOW and box.position.y < ground + BODY_HIGH
+				if inside_x and inside_z and overlaps:
+					_prop[row * size.x + col] = 1
+
+
+func _collect_boxes(node: Node, skip: Array[Node]) -> void:
+	if skip.has(node):
+		return
+	if node is CollisionShape3D and not (node as CollisionShape3D).disabled:
+		var owner_body := node.get_parent() as CollisionObject3D
+		if owner_body != null and owner_body.collision_layer & 1:
+			var shape := (node as CollisionShape3D).shape
+			if shape != null:
+				var local := shape.get_debug_mesh().get_aabb()
+				_boxes.append((node as Node3D).global_transform * local)
+	for child: Node in node.get_children():
+		_collect_boxes(child, skip)
+
+
+func _graph_row(row: int) -> void:
+	for col: int in size.x:
+		var at := Vector2i(col, row)
+		if not is_open(at):
+			continue
+		var id := _id(at)
+		var c := center(at)
+		_astar.add_point(id, Vector2(c.x, c.z))
+		for step: Vector2i in [Vector2i(-1, 0), Vector2i(0, -1)]:
+			var other := at + step
+			if is_open(other) and _edge_clear(at, other):
+				_astar.connect_points(id, _id(other))
+		for step: Vector2i in [Vector2i(-1, -1), Vector2i(1, -1)]:
+			var other := at + step
+			if not is_open(other):
+				continue
+			var side_a := at + Vector2i(step.x, 0)
+			var side_b := at + Vector2i(0, step.y)
+			var linked := (
+				_linked(at, side_a) and _linked(at, side_b)
+				and _linked(side_a, other) and _linked(side_b, other)
+			)
+			if linked:
+				_astar.connect_points(id, _id(other))
+
+
+## Vrai si deux cases voisines sont déjà reliées, ou le seraient (arête mesurée).
+func _linked(a: Vector2i, b: Vector2i) -> bool:
+	if not is_open(a) or not is_open(b):
+		return false
+	if _astar.has_point(_id(a)) and _astar.has_point(_id(b)):
+		if _astar.are_points_connected(_id(a), _id(b)):
+			return true
+	return _edge_clear(a, b)
+
+
+## Arête entre deux cases voisines : mesures le long du segment (sol, marches).
+func _edge_clear(a: Vector2i, b: Vector2i) -> bool:
+	var pa := center(a)
+	var pb := center(b)
+	var steps := maxi(2, ceili(cell / SAMPLE_STEP))
+	var previous := pa.y
+	for i: int in range(1, steps):
+		var t := float(i) / steps
+		var x := lerpf(pa.x, pb.x, t)
+		var z := lerpf(pa.z, pb.z, t)
+		if not _sample_walkable(x, z):
+			return false
+		var h := height_at(x, z)
+		if absf(h - previous) > MAX_RISE:
+			return false
+		previous = h
+	return absf(pb.y - previous) <= MAX_RISE
+
+
+## Lissage : du premier point, on va aussi loin que la ligne droite le permet, et ainsi de suite.
+func _smooth(raw: PackedVector3Array) -> PackedVector3Array:
+	var result := PackedVector3Array()
+	var i := 0
+	while i < raw.size() - 1:
+		var j := i + 1
+		while j + 1 < raw.size() and line_clear(raw[i], raw[j + 1]):
+			j += 1
+		result.append(raw[j])
+		i = j
+	return result

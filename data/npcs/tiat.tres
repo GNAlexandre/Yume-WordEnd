@@ -11,3 +11,4 @@ skin = ExtResource("2_visual")
 dialogue_path = "res://data/dialogues/tiat.json"
 quest_id = &"vigil_register"
 home_zone = &"village"
+outfits = Dictionary[StringName, String]({ &"vie": "res://data/npcs/outfits/tiat_life.tres", &"pyjama": "res://data/npcs/outfits/tiat_pajamas.tres" })

@@ -1,0 +1,11 @@
+{
+  "_comment": "Almita (VIE.md, 2.4) : sur le tapis de la salle de jeux l'après-midi, dans la tour le soir.",
+  "gait": "course",
+  "lines": [
+    {"slot": "aube", "away": "entrepot_etage"},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_b", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "jeux_tapis", "activity": "jouer", "outfit": "vie"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_tour", "activity": "tour_de_fees", "outfit": "vie", "role": "pile_4"},
+    {"slot": "nuit", "away": "entrepot_etage"}
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "_comment": "Odile, fée générique : la banquette de la salle de lecture, le dîner.",
+  "lines": [
+    {"slot": "aube", "away": "entrepot_etage"},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_a", "activity": "manger"},
+    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "lecture_banquette", "activity": "lire"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "refectoire_table_c", "activity": "manger"},
+    {"slot": "nuit", "away": "entrepot_etage"}
+  ]
+}
