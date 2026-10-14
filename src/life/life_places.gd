@@ -27,13 +27,13 @@ static func read(map: Node3D) -> LifePlaces:
 		if not child is Marker3D:
 			continue
 		var marker := child as Marker3D
-		var points: Array[Transform3D] = []
-		for point: Node in marker.get_children():
-			if point is Marker3D:
-				points.append((point as Marker3D).global_transform)
-		if points.is_empty():
-			points.append(marker.global_transform)
-		places._points[StringName(marker.name)] = points
+		var spots: Array[Transform3D] = []
+		for child_point: Node in marker.get_children():
+			if child_point is Marker3D:
+				spots.append((child_point as Marker3D).global_transform)
+		if spots.is_empty():
+			spots.append(marker.global_transform)
+		places._points[StringName(marker.name)] = spots
 	return places
 
 

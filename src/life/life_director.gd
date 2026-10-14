@@ -50,9 +50,9 @@ const BLOCK_LATERAL := 0.45
 ## Directeur actif (faux : rien n'est peuplé ; ?vie=off).
 var enabled: bool = true
 ## Travail de construction de la navigation par image (µs).
-var nav_budget_usec: int = 2500
+var nav_budget_usec: int = 3000
 ## Chemins calculés par image au plus.
-var paths_per_frame: int = 3
+var paths_per_frame: int = 2
 var debug_keys: bool = false
 var trace: bool = false
 var cycle: bool = false
@@ -348,6 +348,7 @@ func avoidance(who: LifeActor, pos: Vector3, forward: Vector3) -> Dictionary:
 	var steer := Vector3.ZERO
 	var blocked := false
 	var cells: Array[Vector2i] = []
+	var side := Vector3.ZERO
 	var right := Vector3(-forward.z, 0.0, forward.x)
 	var others: Array = []
 	for other: LifeActor in _actors.values():
@@ -384,10 +385,11 @@ func avoidance(who: LifeActor, pos: Vector3, forward: Vector3) -> Dictionary:
 		else:
 			if absf(lateral) < BLOCK_LATERAL and distance < BLOCK_DISTANCE:
 				blocked = true
+				side = -right * signf(lateral if absf(lateral) > 0.05 else -1.0)
 				if _nav != null:
 					cells.append(_nav.cell_of(at))
 			steer -= right * signf(lateral if absf(lateral) > 0.01 else -0.1) * weight
-	return {"steer": steer, "blocked": blocked, "cells": cells}
+	return {"steer": steer, "blocked": blocked, "cells": cells, "side": side}
 
 
 ## Rang d'un PNJ parmi ceux qui font la même activité à deux, à la même place (0, 1…).
@@ -652,14 +654,23 @@ func _drop(who: LifeActor) -> void:
 		who.npc.queue_free()
 
 
+func _exit_tree() -> void:
+	_clear()
+
+
 func _clear() -> void:
 	for game: LifeGame in _games.values():
 		game.finish()
+		for member: LifeActor in game.members:
+			member.game = null
+		game.members.clear()
 	_games.clear()
 	for who: LifeActor in _actors.values():
 		who.state = LifeActor.State.GONE
-		if is_instance_valid(who.npc) and is_instance_valid(_map) and who.npc.is_inside_tree():
-			who.npc.queue_free()
+		if is_instance_valid(who.npc):
+			who.npc.life = null
+			if is_instance_valid(_map) and who.npc.is_inside_tree():
+				who.npc.queue_free()
 	_actors.clear()
 	_claims.clear()
 	_path_queue.clear()
@@ -721,6 +732,8 @@ func _on_game_loaded() -> void:
 
 
 func _on_dialogue(npc_id: StringName, started: bool) -> void:
+	if _map != null and not is_instance_valid(_map):
+		_clear()
 	var who: LifeActor = _actors.get(npc_id)
-	if who != null:
+	if who != null and is_instance_valid(who.npc):
 		who.set_talking(started)

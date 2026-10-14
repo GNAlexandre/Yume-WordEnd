@@ -70,15 +70,15 @@ func _send_to_post(actor: LifeActor) -> void:
 		var post := _point(2)
 		actor.walk_to(post.origin, LifePlaces.facing_of(post), &"marche", Callable())
 		return
-	var start := _point(0).origin
-	var finish := _point(1).origin
-	var at := _lane(actor, start, finish)
-	actor.walk_to(at, finish - start, &"marche", Callable())
+	var depart := _point(0).origin
+	var goal_line := _point(1).origin
+	var at := _lane(actor, depart, goal_line)
+	actor.walk_to(at, goal_line - depart, &"marche", Callable())
 
 
 func _tick(delta: float, player: Node3D) -> void:
-	var start := _point(0).origin
-	var finish := _point(1).origin
+	var depart := _point(0).origin
+	var goal_line := _point(1).origin
 	match phase:
 		Phase.GATHER:
 			var ready := true
@@ -87,7 +87,7 @@ func _tick(delta: float, player: Node3D) -> void:
 					ready = false
 				else:
 					actor.play(&"repos")
-					actor.face(finish - start)
+					actor.face(goal_line - depart)
 			if ready and not runners().is_empty():
 				phase = Phase.READY
 				_left = float(param("ready_time", 1.6))
@@ -95,9 +95,9 @@ func _tick(delta: float, player: Node3D) -> void:
 		Phase.READY:
 			_left -= delta
 			if _left <= 0.0:
-				_go(start, finish)
+				_go(depart, goal_line)
 		Phase.RUN:
-			_tick_run(player, finish)
+			_tick_run(player, goal_line)
 		Phase.PAUSE:
 			_left -= delta
 			if _left <= 0.0:
@@ -109,17 +109,17 @@ func _tick(delta: float, player: Node3D) -> void:
 			actor.play(&"repos")
 
 
-func _go(start: Vector3, finish: Vector3) -> void:
+func _go(depart: Vector3, goal_line: Vector3) -> void:
 	phase = Phase.RUN
 	scolded = false
 	winner = &""
 	_arrived.clear()
 	_emit(&"race_started", runners().size())
 	for actor: LifeActor in runners():
-		actor.walk_to(_lane(actor, finish, start + (finish - start) * 2.0), finish - start, &"course", Callable())
+		actor.walk_to(_lane(actor, goal_line, depart + (goal_line - depart) * 2.0), goal_line - depart, &"course", Callable())
 
 
-func _tick_run(player: Node3D, finish: Vector3) -> void:
+func _tick_run(player: Node3D, goal_line: Vector3) -> void:
 	var scold_radius := float(param("scold_radius", 2.5))
 	var scolders := with_role(SCOLDER)
 	for actor: LifeActor in runners():
@@ -137,7 +137,7 @@ func _tick_run(player: Node3D, finish: Vector3) -> void:
 				actor.npc.say(text("won", "Gagné !"))
 				_emit(&"race_won", actor.id)
 	if player_in and player != null and winner.is_empty():
-		if flat_distance(player.global_position, finish) < 1.2:
+		if flat_distance(player.global_position, goal_line) < 1.2:
 			winner = &"player"
 			var first := runners()[0] if not runners().is_empty() else null
 			if first != null:

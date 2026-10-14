@@ -125,7 +125,7 @@
     "avalanche": {
       "_comment": "Collées à la porte de Nygglatho pour épier (V1) : src/life/games/avalanche.gd.",
       "game": "avalanche",
-      "params": {"min_members": 1, "door": ["couloir", "nygglatho"], "trigger_distance": 1.2, "fall_time": 1.8, "flee": "vers_entrepot_etage", "cooldown": 45}
+      "params": {"min_members": 1, "door": ["couloir", "nygglatho"], "trigger_distance": 1.5, "fall_time": 1.8, "flee": "vers_entrepot_etage", "cooldown": 45}
     },
     "tour_de_fees": {
       "_comment": "La tour de fées sur Willem assis (VEX) : src/life/games/tour.gd. Premier point de la place : la base ; les suivants : où l'on attend.",

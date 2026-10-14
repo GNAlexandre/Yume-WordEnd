@@ -1,7 +1,7 @@
 extends LifeGame
 ## (E4) L'avalanche (V1 ; docs/lore/VIE.md, 5.3) : des petites collées à une porte pour épier
 ## (les points de la place, tournées vers la porte) ; quand le joueur l'ouvre ou la franchit
-## (il arrive à trigger_distance de son milieu), elles s'écroulent les unes sur les autres (tombe),
+## (il arrive à trigger_distance de son milieu, ou les bouscule), elles s'écroulent les unes sur les autres (tombe),
 ## se relèvent, gênées, et s'enfuient en courant (vers la place flee, où elles disparaissent) ;
 ## cooldown s plus tard, elles reviennent épier. La porte : params.door, l'id d'une porte de
 ## l'intérieur (InteriorRoom.door_position) ou les deux pièces qu'elle sépare ([pièce, pièce]) ;
@@ -38,10 +38,13 @@ func _gather() -> void:
 
 
 func _send_to_door(actor: LifeActor) -> void:
-	var places := LifeDirector.places()
-	var index := members.find(actor)
-	var spot := places.point(place, index % maxi(places.size(place), 1))
-	actor.walk_to(spot.origin, door - spot.origin if door != Vector3.INF else LifePlaces.facing_of(spot), &"marche", Callable())
+	# Chacune à son point de la place (celui que le directeur lui a donné).
+	var spot := actor.spot
+	var facing := door - spot.origin if door != Vector3.INF else LifePlaces.facing_of(spot)
+	if LifeGame.flat_distance(actor.position(), spot.origin) < 0.05:
+		actor.face(facing)
+		return
+	actor.walk_to(spot.origin, facing, &"marche", Callable())
 
 
 func _tick(delta: float, player: Node3D) -> void:
@@ -87,9 +90,16 @@ func _tick_spying(delta: float, player: Node3D) -> void:
 		var who := members[rng.randi_range(0, members.size() - 1)]
 		who.hold(&"parle", 1.2)
 		who.npc.say(text("whisper", "Chut…"), 1.4)
-	if player != null and door != Vector3.INF:
-		if flat_distance(player.global_position, door) < float(param("trigger_distance", 1.1)):
-			fall()
+	if player == null:
+		return
+	var near_door := door != Vector3.INF and (
+		flat_distance(player.global_position, door) < float(param("trigger_distance", 1.1))
+	)
+	var bumped := false
+	for actor: LifeActor in members:
+		bumped = bumped or flat_distance(player.global_position, actor.position()) < 0.75
+	if near_door or bumped:
+		fall()
 
 
 ## L'avalanche : elles tombent (la porte s'ouvre, ou le joueur la franchit).

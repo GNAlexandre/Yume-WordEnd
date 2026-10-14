@@ -281,7 +281,17 @@ func _tick_move(delta: float) -> void:
 	var avoidance: Dictionary = LifeDirector.avoidance(self, pos, forward)
 	if avoidance.get("blocked", false):
 		_blocked += delta
-		play(&"repos")
+		# Un pas de côté pour contourner (sinon on attend), puis un autre chemin.
+		var side: Vector3 = avoidance.get("side", Vector3.ZERO)
+		var nav_side: LifeNav = LifeDirector.nav()
+		var aside := pos + side * speed * delta * 0.6
+		if side != Vector3.ZERO and nav_side != null and nav_side.is_walkable_point(aside.x, aside.z):
+			aside.y = nav_side.height_at(aside.x, aside.z)
+			set_position(aside)
+			face(forward)
+			play(_gait)
+		else:
+			play(&"repos")
 		if _blocked > BLOCKED_REPATH and not _direct and not last_leg:
 			_blocked = 0.0
 			_avoid.assign(avoidance.get("cells", []))
@@ -566,6 +576,8 @@ func set_talking(value: bool) -> void:
 	if talking == value:
 		return
 	talking = value
+	if not is_instance_valid(npc):
+		return
 	if value:
 		npc.set_moving(false)
 		return

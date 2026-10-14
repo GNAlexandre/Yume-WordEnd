@@ -20,6 +20,9 @@ const INDOOR_CELL := 0.5
 const MAX_RISE := 0.3
 ## Pas des mesures le long d'une arête et d'une ligne droite (m).
 const SAMPLE_STEP := 0.25
+## Pas des mesures le long d'une arête du graphe (m) : assez fin pour qu'une marche de talus
+## (0,5 m d'un coup) dépasse MAX_RISE, assez large pour construire vite.
+const EDGE_STEP := 0.34
 ## Élargissement des collisions des meubles (m) : le corps du PNJ.
 const PROP_MARGIN := 0.2
 ## Une collision ne gêne que si elle occupe cette tranche au-dessus du sol (m) : ni un tapis, ni
@@ -28,10 +31,13 @@ const BODY_LOW := 0.12
 const BODY_HIGH := 1.5
 ## Résolution du relevé des murs d'un intérieur (m).
 const WALL_RES := 0.125
+## Lissage : on regarde au plus SMOOTH_LOOKAHEAD points plus loin (coût borné par chemin).
+const SMOOTH_LOOKAHEAD := 40
 const STAGE_CELLS := 0
 const STAGE_PROPS := 1
 const STAGE_GRAPH := 2
-const STAGE_DONE := 3
+const STAGE_DIAGONALS := 3
+const STAGE_DONE := 4
 
 enum Kind { FLAT, OUTDOOR, INTERIOR }
 
@@ -58,6 +64,8 @@ var _astar := AStar2D.new()
 var _stage: int = STAGE_CELLS
 var _row: int = 0
 var _disabled: Array[int] = []
+## Cases évitées pendant le calcul d'un chemin (find_path, avoid) : le lissage n'y passe pas non plus.
+var _avoided: Dictionary = {}
 
 
 ## Grille d'une carte (Map) : le type de sol décide de la taille des cases ; rien n'est encore
@@ -107,6 +115,12 @@ func build_step(budget_usec: int) -> bool:
 				_stage = STAGE_GRAPH
 			STAGE_GRAPH:
 				_graph_row(_row)
+				_row += 1
+				if _row >= size.y:
+					_row = 0
+					_stage = STAGE_DIAGONALS
+			STAGE_DIAGONALS:
+				_diagonal_row(_row)
 				_row += 1
 				if _row >= size.y:
 					_stage = STAGE_DONE
@@ -179,6 +193,8 @@ func line_clear(a: Vector3, b: Vector3) -> bool:
 		var z := lerpf(a.z, b.z, t)
 		if not is_walkable_point(x, z):
 			return false
+		if not _avoided.is_empty() and _avoided.has(cell_of(Vector3(x, 0.0, z))):
+			return false
 		var h := height_at(x, z)
 		if absf(h - previous) > MAX_RISE:
 			return false
@@ -223,7 +239,9 @@ func find_path(from: Vector3, to: Vector3, avoid: Array[Vector2i] = []) -> Packe
 	var goal := nearest_open(to)
 	if start.x < 0 or goal.x < 0:
 		return result
+	_avoided.clear()
 	for at: Vector2i in avoid:
+		_avoided[at] = true
 		var id := _id(at)
 		if at != start and at != goal and _astar.has_point(id) and not _astar.is_point_disabled(id):
 			_astar.set_point_disabled(id, true)
@@ -238,7 +256,9 @@ func find_path(from: Vector3, to: Vector3, avoid: Array[Vector2i] = []) -> Packe
 	raw.append(from)
 	for id: int in ids:
 		raw.append(center(Vector2i(id % size.x, floori(float(id) / size.x))))
-	return _smooth(raw)
+	var smoothed := _smooth(raw)
+	_avoided.clear()
+	return smoothed
 
 
 ## Nombre de cases praticables (mesures).
@@ -362,35 +382,42 @@ func _graph_row(row: int) -> void:
 			var other := at + step
 			if is_open(other) and _edge_clear(at, other):
 				_astar.connect_points(id, _id(other))
+
+
+## Diagonales d'une rangée, une fois toutes les arêtes droites posées : une diagonale si les
+## quatre côtés du carré sont reliés (on ne coupe pas les coins).
+func _diagonal_row(row: int) -> void:
+	for col: int in size.x:
+		var at := Vector2i(col, row)
+		var id := _id(at)
+		if not _astar.has_point(id):
+			continue
 		for step: Vector2i in [Vector2i(-1, -1), Vector2i(1, -1)]:
 			var other := at + step
-			if not is_open(other):
-				continue
 			var side_a := at + Vector2i(step.x, 0)
 			var side_b := at + Vector2i(0, step.y)
-			var linked := (
-				_linked(at, side_a) and _linked(at, side_b)
-				and _linked(side_a, other) and _linked(side_b, other)
-			)
-			if linked:
+			if (
+				_connected(at, side_a)
+				and _connected(at, side_b)
+				and _connected(side_a, other)
+				and _connected(side_b, other)
+			):
 				_astar.connect_points(id, _id(other))
 
 
-## Vrai si deux cases voisines sont déjà reliées, ou le seraient (arête mesurée).
-func _linked(a: Vector2i, b: Vector2i) -> bool:
-	if not is_open(a) or not is_open(b):
+func _connected(a: Vector2i, b: Vector2i) -> bool:
+	var id_a := _id(a)
+	var id_b := _id(b)
+	if a.x < 0 or a.y < 0 or b.x < 0 or b.y < 0 or a.x >= size.x or b.x >= size.x:
 		return false
-	if _astar.has_point(_id(a)) and _astar.has_point(_id(b)):
-		if _astar.are_points_connected(_id(a), _id(b)):
-			return true
-	return _edge_clear(a, b)
+	return _astar.has_point(id_a) and _astar.has_point(id_b) and _astar.are_points_connected(id_a, id_b)
 
 
 ## Arête entre deux cases voisines : mesures le long du segment (sol, marches).
 func _edge_clear(a: Vector2i, b: Vector2i) -> bool:
 	var pa := center(a)
 	var pb := center(b)
-	var steps := maxi(2, ceili(cell / SAMPLE_STEP))
+	var steps := maxi(2, ceili(cell / EDGE_STEP))
 	var previous := pa.y
 	for i: int in range(1, steps):
 		var t := float(i) / steps
@@ -411,8 +438,67 @@ func _smooth(raw: PackedVector3Array) -> PackedVector3Array:
 	var i := 0
 	while i < raw.size() - 1:
 		var j := i + 1
-		while j + 1 < raw.size() and line_clear(raw[i], raw[j + 1]):
+		while j + 1 < raw.size() and j - i < SMOOTH_LOOKAHEAD and cells_clear(raw[i], raw[j + 1]):
 			j += 1
 		result.append(raw[j])
 		i = j
 	return result
+
+
+## Vrai si la ligne droite de a à b ne passe que par des cases du graphe reliées entre elles
+## (parcours des cases traversées, DDA ; les arêtes du graphe portent déjà murs, portes,
+## marches et meubles) : bien plus rapide que line_clear, pour le lissage. La case de départ
+## peut être hors du graphe (un siège).
+func cells_clear(a: Vector3, b: Vector3) -> bool:
+	var current := cell_of(a)
+	var goal := cell_of(b)
+	var x0 := (a.x - _area.position.x) / cell
+	var z0 := (a.z - _area.position.y) / cell
+	var dx := (b.x - a.x) / cell
+	var dz := (b.z - a.z) / cell
+	var step_x := 1 if dx > 0.0 else -1
+	var step_z := 1 if dz > 0.0 else -1
+	var next_x := (floorf(x0) + (1.0 if dx > 0.0 else 0.0) - x0) / dx if absf(dx) > 1e-6 else INF
+	var next_z := (floorf(z0) + (1.0 if dz > 0.0 else 0.0) - z0) / dz if absf(dz) > 1e-6 else INF
+	var delta_x := absf(1.0 / dx) if absf(dx) > 1e-6 else INF
+	var delta_z := absf(1.0 / dz) if absf(dz) > 1e-6 else INF
+	var first := true
+	var guard := 0
+	while current != goal and guard < 4 * (size.x + size.y):
+		guard += 1
+		var moves: Array[Vector2i] = []
+		if next_x < next_z - 1e-6:
+			moves.append(Vector2i(step_x, 0))
+			next_x += delta_x
+		elif next_z < next_x - 1e-6:
+			moves.append(Vector2i(0, step_z))
+			next_z += delta_z
+		else:
+			# Par un coin : les deux côtés doivent être libres.
+			if not _linked_cells(current, current + Vector2i(step_x, 0), first):
+				return false
+			if not _linked_cells(current, current + Vector2i(0, step_z), first):
+				return false
+			moves.append(Vector2i(step_x, 0))
+			moves.append(Vector2i(0, step_z))
+			next_x += delta_x
+			next_z += delta_z
+		for move: Vector2i in moves:
+			var following := current + move
+			if not _linked_cells(current, following, first):
+				return false
+			current = following
+			first = false
+	return current == goal
+
+
+func _linked_cells(a: Vector2i, b: Vector2i, leaving: bool) -> bool:
+	if not is_open(b) or _avoided.has(b):
+		return false
+	var id_b := _id(b)
+	if not _astar.has_point(id_b):
+		return false
+	var id_a := _id(a)
+	if not _astar.has_point(id_a):
+		return leaving
+	return _astar.are_points_connected(id_a, id_b)
