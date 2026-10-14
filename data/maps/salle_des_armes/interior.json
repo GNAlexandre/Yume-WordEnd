@@ -1,0 +1,16 @@
+{
+  "_comment": "La salle des armes : écrit par tools/interior_maps.py d'après docs/lore/CARTE.md (section 3, bloc plan « carte salle_des_armes ») ; modifier le plan ou l'outil, puis relancer gen. Format : docs/INTERIEURS.md.",
+  "size": [14, 10],
+  "wall_height": 3.0,
+  "wall_thickness": 0.25,
+  "rooms": {
+    "crypte": {"name": "Crypte", "rects": [[1.0, 1.0, 12.0, 8.0]], "floor": "floor_flagstone_cellar", "wall": "wall_cellar_stone", "wallcut": "wallcut_stone"}
+  },
+  "doors": [],
+  "windows": [],
+  "wall_items": [
+    {"room": "crypte", "side": "N", "x": 12.55, "y": 2.4, "image": "wallitem_cobweb"},
+    {"room": "crypte", "side": "W", "z": 7.5, "y": 2.4, "image": "wallitem_cobweb"}
+  ],
+  "lights": []
+}

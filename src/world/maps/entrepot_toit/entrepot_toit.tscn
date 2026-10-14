@@ -1,0 +1,216 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/map_ground.gd" id="2_ground"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/entrepot_volume_ouest.tscn" id="7_volume"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/drying_frame_wave.tscn" id="p_drying_frame_wave"]
+[ext_resource type="PackedScene" path="res://src/world/props/laundry_basket.tscn" id="p_laundry_basket"]
+[ext_resource type="PackedScene" path="res://src/world/props/chimney_brick.tscn" id="p_chimney_brick"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/roof_hatch.tscn" id="p_roof_hatch"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/roof_railing.tscn" id="p_roof_railing"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/roof_railing_broken.tscn" id="p_roof_railing_broken"]
+[ext_resource type="PackedScene" path="res://src/world/props/treeline_autumn_b.tscn" id="p_treeline_autumn_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/treeline_autumn_a.tscn" id="p_treeline_autumn_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust.tscn" id="p_tree_autumn_rust"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn.tscn" id="p_tree_autumn"]
+[ext_resource type="PackedScene" path="res://src/world/props/bucket.tscn" id="p_bucket"]
+[ext_resource type="PackedScene" path="res://src/world/props/moss_patch_a.tscn" id="p_moss_patch_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/moss_patch_b.tscn" id="p_moss_patch_b"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(0.35, 2.4, 0.6)
+
+[node name="entrepot_toit" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "L'entrepôt — le toit"
+region = &"entrepot"
+size = Vector2(16, 16)
+camera_bounds = Rect2(6, 4, 4, 4)
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_mask = 0
+script = ExtResource("2_ground")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("4_batcher")
+
+[node name="Terrasse" type="Node3D" parent="Geometry"]
+
+[node name="Rambarde" type="Node3D" parent="Geometry"]
+
+[node name="VolumeOuest" type="Node3D" parent="Geometry"]
+
+[node name="Lisiere" type="Node3D" parent="Geometry"]
+
+[node name="drying_frame_wave_1" parent="Geometry/Terrasse" instance=ExtResource("p_drying_frame_wave")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 6)
+foreground = true
+
+[node name="drying_frame_wave_2" parent="Geometry/Terrasse" instance=ExtResource("p_drying_frame_wave")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 11)
+foreground = true
+
+[node name="laundry_basket_1" parent="Geometry/Terrasse" instance=ExtResource("p_laundry_basket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 0, 13)
+
+[node name="chimney_brick_1" parent="Geometry/VolumeOuest" instance=ExtResource("p_chimney_brick")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1.5, 4)
+
+[node name="roof_hatch_1" parent="Geometry/Terrasse" instance=ExtResource("p_roof_hatch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.45, 0, 9.1)
+
+[node name="roof_railing_1" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 1.15)
+
+[node name="roof_railing_2" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 1.15)
+
+[node name="roof_railing_3" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 1.15)
+
+[node name="roof_railing_4" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 1.15)
+
+[node name="roof_railing_5" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 1.15)
+
+[node name="roof_railing_6" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 1.15)
+
+[node name="roof_railing_7" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 15.15, 0, 2)
+keep_orientation = true
+
+[node name="roof_railing_8" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 15.15, 0, 4)
+keep_orientation = true
+
+[node name="roof_railing_9" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 15.15, 0, 6)
+keep_orientation = true
+
+[node name="roof_railing_10" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 15.15, 0, 8)
+keep_orientation = true
+
+[node name="roof_railing_11" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 15.15, 0, 10)
+keep_orientation = true
+
+[node name="roof_railing_12" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 15.15, 0, 12)
+keep_orientation = true
+
+[node name="roof_railing_13" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 15.15, 0, 14)
+keep_orientation = true
+
+[node name="roof_railing_14" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 14.85)
+foreground = true
+
+[node name="roof_railing_15" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 14.85)
+foreground = true
+
+[node name="roof_railing_16" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 14.85)
+foreground = true
+
+[node name="roof_railing_17" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 14.85)
+foreground = true
+
+[node name="roof_railing_broken_1" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing_broken")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 14.85)
+foreground = true
+
+[node name="roof_railing_18" parent="Geometry/Rambarde" instance=ExtResource("p_roof_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 14.85)
+foreground = true
+
+[node name="entrepot_volume_ouest" parent="Geometry/VolumeOuest" instance=ExtResource("7_volume")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -6.5, 8)
+
+[node name="treeline_autumn_b_1" parent="Geometry/Lisiere" instance=ExtResource("p_treeline_autumn_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.5, -2.5)
+
+[node name="treeline_autumn_a_1" parent="Geometry/Lisiere" instance=ExtResource("p_treeline_autumn_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, -6.5, -2.5)
+
+[node name="treeline_autumn_a_2" parent="Geometry/Lisiere" instance=ExtResource("p_treeline_autumn_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -6.5, -9)
+
+[node name="treeline_autumn_b_2" parent="Geometry/Lisiere" instance=ExtResource("p_treeline_autumn_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, -6.5, -9)
+
+[node name="treeline_autumn_a_3" parent="Geometry/Lisiere" instance=ExtResource("p_treeline_autumn_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -6.5, -9)
+
+[node name="treeline_autumn_b_3" parent="Geometry/Lisiere" instance=ExtResource("p_treeline_autumn_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -6.5, -16)
+
+[node name="treeline_autumn_a_4" parent="Geometry/Lisiere" instance=ExtResource("p_treeline_autumn_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, -6.5, -16)
+
+[node name="tree_autumn_rust_1" parent="Geometry/Lisiere" instance=ExtResource("p_tree_autumn_rust")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, -6.5, 3)
+
+[node name="tree_autumn_1" parent="Geometry/Lisiere" instance=ExtResource("p_tree_autumn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, -6.5, 9.5)
+
+[node name="laundry_basket_2" parent="Geometry/Terrasse" instance=ExtResource("p_laundry_basket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.6, 0, 13)
+
+[node name="bucket_1" parent="Geometry/Terrasse" instance=ExtResource("p_bucket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.2, 0, 12.6)
+
+[node name="moss_patch_a_1" parent="Geometry/Terrasse" instance=ExtResource("p_moss_patch_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 3)
+
+[node name="moss_patch_b_1" parent="Geometry/Terrasse" instance=ExtResource("p_moss_patch_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 13.8)
+
+[node name="moss_patch_a_2" parent="Geometry/Terrasse" instance=ExtResource("p_moss_patch_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 0, 9.5)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 12.2, 0.2, 9.1)
+
+[node name="from_entrepot_etage" type="Marker3D" parent="Markers"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 12.2, 0.2, 9.1)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="trappe" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.775, 0, 9.1)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"entrepot_etage"
+target_marker = &"from_entrepot_toit"
+prompt = "Descendre"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/trappe"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="toit_balustrade_nord" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.6, 0, 2.6)
+
+[node name="toit_sechoir" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 7.1)
+
+[node name="toit_bord_sud" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 13.2)
+
+[node name="toit_coin_est" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, 3)

@@ -1,0 +1,1090 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/interior_room.gd" id="2_room"]
+[ext_resource type="JSON" path="res://data/maps/entrepot_rdc/interior.json" id="3_layout"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
+[ext_resource type="PackedScene" path="res://src/world/props/crystal_stove.tscn" id="p_crystal_stove"]
+[ext_resource type="PackedScene" path="res://src/world/props/kitchen_counter.tscn" id="p_kitchen_counter"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/pantry_cupboard.tscn" id="p_pantry_cupboard"]
+[ext_resource type="PackedScene" path="res://src/world/props/kitchen_table_ingredients.tscn" id="p_kitchen_table_ingredients"]
+[ext_resource type="PackedScene" path="res://src/world/props/water_tub.tscn" id="p_water_tub"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/sacks_vegetables.tscn" id="p_sacks_vegetables"]
+[ext_resource type="PackedScene" path="res://src/world/props/china_cabinet.tscn" id="p_china_cabinet"]
+[ext_resource type="PackedScene" path="res://src/world/props/sink_stone.tscn" id="p_sink_stone"]
+[ext_resource type="PackedScene" path="res://src/world/props/chair_wood.tscn" id="p_chair_wood"]
+[ext_resource type="PackedScene" path="res://src/world/props/dining_table_set.tscn" id="p_dining_table_set"]
+[ext_resource type="PackedScene" path="res://src/world/props/dining_table_long.tscn" id="p_dining_table_long"]
+[ext_resource type="PackedScene" path="res://src/world/props/chair_wood_back.tscn" id="p_chair_wood_back"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/crystal_pendant.tscn" id="p_crystal_pendant"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/stairs_up.tscn" id="p_stairs_up"]
+[ext_resource type="PackedScene" path="res://src/world/props/archive_shelves.tscn" id="p_archive_shelves"]
+[ext_resource type="PackedScene" path="res://src/world/props/paper_pile_a.tscn" id="p_paper_pile_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/desk_buried.tscn" id="p_desk_buried"]
+[ext_resource type="PackedScene" path="res://src/world/props/paper_pile_b.tscn" id="p_paper_pile_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/filing_cabinet.tscn" id="p_filing_cabinet"]
+[ext_resource type="PackedScene" path="res://src/world/props/sofa_beige.tscn" id="p_sofa_beige"]
+[ext_resource type="PackedScene" path="res://src/world/props/paper_pile_c.tscn" id="p_paper_pile_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/papers_floor.tscn" id="p_papers_floor"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/window_reading_seat.tscn" id="p_window_reading_seat"]
+[ext_resource type="PackedScene" path="res://src/world/props/bookshelf_tall.tscn" id="p_bookshelf_tall"]
+[ext_resource type="PackedScene" path="res://src/world/props/bookshelf_low.tscn" id="p_bookshelf_low"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/bookshelf_tall_b.tscn" id="p_bookshelf_tall_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/reading_table.tscn" id="p_reading_table"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/armchair_reading.tscn" id="p_armchair_reading"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/book_pile.tscn" id="p_book_pile"]
+[ext_resource type="PackedScene" path="res://src/world/props/washstand_corridor.tscn" id="p_washstand_corridor"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/runner_rug.tscn" id="p_runner_rug"]
+[ext_resource type="PackedScene" path="res://src/world/props/bath_tub.tscn" id="p_bath_tub"]
+[ext_resource type="PackedScene" path="res://src/world/props/towel_shelf.tscn" id="p_towel_shelf"]
+[ext_resource type="PackedScene" path="res://src/world/props/wash_tub.tscn" id="p_wash_tub"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/hamper.tscn" id="p_hamper"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/bath_puddles.tscn" id="p_bath_puddles"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/supply_cupboard.tscn" id="p_supply_cupboard"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/cleaning_set.tscn" id="p_cleaning_set"]
+[ext_resource type="PackedScene" path="res://src/world/props/shoe_rack.tscn" id="p_shoe_rack"]
+[ext_resource type="PackedScene" path="res://src/world/props/rug_playroom.tscn" id="p_rug_playroom"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/piano_old.tscn" id="p_piano_old"]
+[ext_resource type="PackedScene" path="res://src/world/props/toy_chest.tscn" id="p_toy_chest"]
+[ext_resource type="PackedScene" path="res://src/world/props/board_games_shelf.tscn" id="p_board_games_shelf"]
+[ext_resource type="PackedScene" path="res://src/world/props/game_table.tscn" id="p_game_table"]
+[ext_resource type="PackedScene" path="res://src/world/props/plush_blue.tscn" id="p_plush_blue"]
+[ext_resource type="PackedScene" path="res://src/world/props/plush_pile.tscn" id="p_plush_pile"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/floor_cushions.tscn" id="p_floor_cushions"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/ball_white.tscn" id="p_ball_white"]
+[ext_resource type="PackedScene" path="res://src/world/props/bed_iron.tscn" id="p_bed_iron"]
+[ext_resource type="PackedScene" path="res://src/world/props/bedside_table.tscn" id="p_bedside_table"]
+[ext_resource type="PackedScene" path="res://src/world/props/chair_child.tscn" id="p_chair_child"]
+[ext_resource type="PackedScene" path="res://src/world/props/medicine_cabinet.tscn" id="p_medicine_cabinet"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/washbasin_stand.tscn" id="p_washbasin_stand"]
+[ext_resource type="PackedScene" path="res://src/world/props/infirmary_desk.tscn" id="p_infirmary_desk"]
+[ext_resource type="PackedScene" path="res://src/world/props/mirror_large.tscn" id="p_mirror_large"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/pot_steam.tscn" id="p_pot_steam"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/meal_lunch.tscn" id="p_meal_lunch"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/tableware_a.tscn" id="p_tableware_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/coffee_tray.tscn" id="p_coffee_tray"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/crystal_lamp_table.tscn" id="p_crystal_lamp_table"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/vase_flowers.tscn" id="p_vase_flowers"]
+[ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(0.5, 3, 1.85)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(0.02, 3, 0.35)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3"]
+size = Vector3(0.4, 3, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4"]
+size = Vector3(1.05, 3, 2.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5"]
+size = Vector3(0.2, 3, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6"]
+size = Vector3(0.6, 3, 0.65)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7"]
+size = Vector3(0.4, 3, 1.25)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8"]
+size = Vector3(1.6, 3, 1.375)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_9"]
+size = Vector3(2, 2.4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_10"]
+size = Vector3(1, 2.4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_11"]
+size = Vector3(1.6, 2.4, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_12"]
+size = Vector3(1.3, 2.4, 0.55)
+
+[node name="entrepot_rdc" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "L'entrepôt — rez-de-chaussée"
+region = &"entrepot"
+interior = true
+size = Vector2(32, 16)
+camera_bounds = Rect2(2, 4, 28, 6)
+light_preset = &"interieur"
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_mask = 0
+script = ExtResource("2_room")
+layout = ExtResource("3_layout")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("4_batcher")
+
+[node name="Cuisine" type="Node3D" parent="Geometry"]
+
+[node name="Refectoire" type="Node3D" parent="Geometry"]
+
+[node name="Escalier" type="Node3D" parent="Geometry"]
+
+[node name="PalierArmes" type="Node3D" parent="Geometry"]
+
+[node name="Archives" type="Node3D" parent="Geometry"]
+
+[node name="Lecture" type="Node3D" parent="Geometry"]
+
+[node name="Couloir" type="Node3D" parent="Geometry"]
+
+[node name="Bains" type="Node3D" parent="Geometry"]
+
+[node name="Toilettes" type="Node3D" parent="Geometry"]
+
+[node name="Placard" type="Node3D" parent="Geometry"]
+
+[node name="Entree" type="Node3D" parent="Geometry"]
+
+[node name="Jeux" type="Node3D" parent="Geometry"]
+
+[node name="Infirmerie" type="Node3D" parent="Geometry"]
+
+[node name="crystal_stove_1" parent="Geometry/Cuisine" instance=ExtResource("p_crystal_stove")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 1.475)
+
+[node name="kitchen_counter_1" parent="Geometry/Cuisine" instance=ExtResource("p_kitchen_counter")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 0, 1.525)
+
+[node name="pantry_cupboard_1" parent="Geometry/Cuisine" instance=ExtResource("p_pantry_cupboard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 5.8)
+
+[node name="pantry_cupboard_1_arriere" type="StaticBody3D" parent="Geometry/Cuisine"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Cuisine/pantry_cupboard_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.85, 1.5, 4.575)
+shape = SubResource("BoxShape3D_1")
+
+[node name="kitchen_table_ingredients_1" parent="Geometry/Cuisine" instance=ExtResource("p_kitchen_table_ingredients")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 0, 4.4)
+
+[node name="water_tub_1" parent="Geometry/Cuisine" instance=ExtResource("p_water_tub")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 7.05)
+
+[node name="sacks_vegetables_1" parent="Geometry/Cuisine" instance=ExtResource("p_sacks_vegetables")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7, 0, 7.8)
+
+[node name="china_cabinet_1" parent="Geometry/Refectoire" instance=ExtResource("p_china_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8, 0, 1.475)
+
+[node name="sink_stone_1" parent="Geometry/Refectoire" instance=ExtResource("p_sink_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.6, 0, 1.425)
+
+[node name="chair_wood_1" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 0, 3.125)
+
+[node name="chair_wood_2" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.25, 0, 3.125)
+
+[node name="chair_wood_3" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.75, 0, 3.125)
+
+[node name="chair_wood_4" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 0, 3.125)
+
+[node name="chair_wood_5" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 3.125)
+
+[node name="chair_wood_6" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.25, 0, 3.125)
+
+[node name="chair_wood_7" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.75, 0, 3.125)
+
+[node name="chair_wood_8" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.25, 0, 3.125)
+
+[node name="chair_wood_9" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.75, 0, 3.125)
+
+[node name="chair_wood_10" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.25, 0, 3.125)
+
+[node name="chair_wood_11" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.75, 0, 3.125)
+
+[node name="chair_wood_12" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.25, 0, 3.125)
+
+[node name="chair_wood_13" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.75, 0, 3.125)
+
+[node name="chair_wood_14" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 0, 3.125)
+
+[node name="dining_table_set_1" parent="Geometry/Refectoire" instance=ExtResource("p_dining_table_set")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 3.95)
+
+[node name="dining_table_long_1" parent="Geometry/Refectoire" instance=ExtResource("p_dining_table_long")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 3.95)
+
+[node name="chair_wood_back_1" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 0, 4.625)
+
+[node name="chair_wood_back_2" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.25, 0, 4.625)
+
+[node name="chair_wood_back_3" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.75, 0, 4.625)
+
+[node name="chair_wood_back_4" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 0, 4.625)
+
+[node name="chair_wood_back_5" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 4.625)
+
+[node name="chair_wood_back_6" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.25, 0, 4.625)
+
+[node name="chair_wood_back_7" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.75, 0, 4.625)
+
+[node name="chair_wood_back_8" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.25, 0, 4.625)
+
+[node name="chair_wood_back_9" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.75, 0, 4.625)
+
+[node name="chair_wood_back_10" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.25, 0, 4.625)
+
+[node name="chair_wood_back_11" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.75, 0, 4.625)
+
+[node name="chair_wood_back_12" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.25, 0, 4.625)
+
+[node name="chair_wood_back_13" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.75, 0, 4.625)
+
+[node name="chair_wood_back_14" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 0, 4.625)
+
+[node name="chair_wood_15" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 0, 6.325)
+
+[node name="chair_wood_16" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.25, 0, 6.325)
+
+[node name="chair_wood_17" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.75, 0, 6.325)
+
+[node name="chair_wood_18" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 0, 6.325)
+
+[node name="chair_wood_19" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 6.325)
+
+[node name="chair_wood_20" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.25, 0, 6.325)
+
+[node name="chair_wood_21" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.75, 0, 6.325)
+
+[node name="chair_wood_22" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.25, 0, 6.325)
+
+[node name="chair_wood_23" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.75, 0, 6.325)
+
+[node name="chair_wood_24" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.25, 0, 6.325)
+
+[node name="chair_wood_25" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.75, 0, 6.325)
+
+[node name="chair_wood_26" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.25, 0, 6.325)
+
+[node name="chair_wood_27" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.75, 0, 6.325)
+
+[node name="chair_wood_28" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 0, 6.325)
+
+[node name="dining_table_long_2" parent="Geometry/Refectoire" instance=ExtResource("p_dining_table_long")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 7.15)
+
+[node name="dining_table_set_2" parent="Geometry/Refectoire" instance=ExtResource("p_dining_table_set")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 7.15)
+
+[node name="chair_wood_back_15" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 0, 7.825)
+
+[node name="chair_wood_back_16" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.25, 0, 7.825)
+
+[node name="chair_wood_back_17" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.75, 0, 7.825)
+
+[node name="chair_wood_back_18" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 0, 7.825)
+
+[node name="chair_wood_back_19" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 7.825)
+
+[node name="chair_wood_back_20" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.25, 0, 7.825)
+
+[node name="chair_wood_back_21" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.75, 0, 7.825)
+
+[node name="chair_wood_back_22" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.25, 0, 7.825)
+
+[node name="chair_wood_back_23" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.75, 0, 7.825)
+
+[node name="chair_wood_back_24" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.25, 0, 7.825)
+
+[node name="chair_wood_back_25" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.75, 0, 7.825)
+
+[node name="chair_wood_back_26" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.25, 0, 7.825)
+
+[node name="chair_wood_back_27" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.75, 0, 7.825)
+
+[node name="chair_wood_back_28" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 0, 7.825)
+
+[node name="crystal_pendant_1" parent="Geometry/Refectoire" instance=ExtResource("p_crystal_pendant")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 1.6042, 3.95)
+
+[node name="crystal_pendant_2" parent="Geometry/Refectoire" instance=ExtResource("p_crystal_pendant")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 1.6042, 7.15)
+
+[node name="stairs_up_1" parent="Geometry/Escalier" instance=ExtResource("p_stairs_up")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, 4)
+
+[node name="archive_shelves_1" parent="Geometry/Archives" instance=ExtResource("p_archive_shelves")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.7, 0, 1.475)
+
+[node name="paper_pile_a_1" parent="Geometry/Archives" instance=ExtResource("p_paper_pile_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.7, 0, 2.225)
+
+[node name="desk_buried_1" parent="Geometry/Archives" instance=ExtResource("p_desk_buried")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 0, 3.775)
+
+[node name="desk_buried_1_arriere" type="StaticBody3D" parent="Geometry/Archives"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Archives/desk_buried_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1.5, 3.075)
+shape = SubResource("BoxShape3D_2")
+
+[node name="paper_pile_b_1" parent="Geometry/Archives" instance=ExtResource("p_paper_pile_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.2, 0, 2.45)
+
+[node name="filing_cabinet_1" parent="Geometry/Archives" instance=ExtResource("p_filing_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.85, 0, 4.3)
+
+[node name="filing_cabinet_1_arriere" type="StaticBody3D" parent="Geometry/Archives"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Archives/filing_cabinet_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.7, 1.5, 3.75)
+shape = SubResource("BoxShape3D_3")
+
+[node name="sofa_beige_1" parent="Geometry/Archives" instance=ExtResource("p_sofa_beige")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.65, 0, 6.5)
+
+[node name="paper_pile_c_1" parent="Geometry/Archives" instance=ExtResource("p_paper_pile_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.05, 0, 5.025)
+
+[node name="papers_floor_1" parent="Geometry/Archives" instance=ExtResource("p_papers_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.8, 0, 5.3)
+
+[node name="window_reading_seat_1" parent="Geometry/Lecture" instance=ExtResource("p_window_reading_seat")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6, 0, 1.55)
+
+[node name="bookshelf_tall_1" parent="Geometry/Lecture" instance=ExtResource("p_bookshelf_tall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, 1.525)
+
+[node name="bookshelf_low_1" parent="Geometry/Lecture" instance=ExtResource("p_bookshelf_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.35, 0, 5)
+
+[node name="bookshelf_tall_b_1" parent="Geometry/Lecture" instance=ExtResource("p_bookshelf_tall_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, 6.4)
+
+[node name="bookshelf_tall_b_1_arriere" type="StaticBody3D" parent="Geometry/Lecture"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Lecture/bookshelf_tall_b_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.625, 1.5, 4.95)
+shape = SubResource("BoxShape3D_4")
+
+[node name="reading_table_1" parent="Geometry/Lecture" instance=ExtResource("p_reading_table")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.6, 0, 4.3)
+
+[node name="armchair_reading_1" parent="Geometry/Lecture" instance=ExtResource("p_armchair_reading")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.3, 0, 7.4)
+
+[node name="book_pile_1" parent="Geometry/Lecture" instance=ExtResource("p_book_pile")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.2, 0, 7.9)
+
+[node name="washstand_corridor_1" parent="Geometry/Couloir" instance=ExtResource("p_washstand_corridor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 8.85)
+
+[node name="runner_rug_1" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, 9.5)
+
+[node name="runner_rug_2" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, 9.5)
+
+[node name="runner_rug_3" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 12, 0, 9.5)
+
+[node name="runner_rug_4" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 16, 0, 9.5)
+
+[node name="runner_rug_5" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 20, 0, 9.5)
+
+[node name="runner_rug_6" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 24, 0, 9.5)
+
+[node name="runner_rug_7" parent="Geometry/Couloir" instance=ExtResource("p_runner_rug")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 26, 0, 9.5)
+
+[node name="bath_tub_1" parent="Geometry/Bains" instance=ExtResource("p_bath_tub")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 11.3)
+
+[node name="towel_shelf_1" parent="Geometry/Bains" instance=ExtResource("p_towel_shelf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.3, 0, 14.25)
+cut_offset = 0.6
+
+[node name="wash_tub_1" parent="Geometry/Bains" instance=ExtResource("p_wash_tub")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 13.95)
+
+[node name="hamper_1" parent="Geometry/Bains" instance=ExtResource("p_hamper")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.6, 0, 14.3)
+
+[node name="bath_puddles_1" parent="Geometry/Bains" instance=ExtResource("p_bath_puddles")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 0, 12.8)
+
+[node name="supply_cupboard_1" parent="Geometry/Placard" instance=ExtResource("p_supply_cupboard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 14.3)
+cut_offset = 0.5
+
+[node name="cleaning_set_1" parent="Geometry/Placard" instance=ExtResource("p_cleaning_set")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4, 0, 12.65)
+
+[node name="cleaning_set_1_arriere" type="StaticBody3D" parent="Geometry/Placard"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Placard/cleaning_set_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 1.5, 12.05)
+shape = SubResource("BoxShape3D_5")
+
+[node name="shoe_rack_1" parent="Geometry/Entree" instance=ExtResource("p_shoe_rack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 0, 12.2)
+
+[node name="rug_playroom_1" parent="Geometry/Jeux" instance=ExtResource("p_rug_playroom")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 12.9)
+
+[node name="piano_old_1" parent="Geometry/Jeux" instance=ExtResource("p_piano_old")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.2, 0, 11.4)
+
+[node name="toy_chest_1" parent="Geometry/Jeux" instance=ExtResource("p_toy_chest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.2, 0, 11.2)
+
+[node name="board_games_shelf_1" parent="Geometry/Jeux" instance=ExtResource("p_board_games_shelf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.25, 0, 13.05)
+
+[node name="board_games_shelf_1_arriere" type="StaticBody3D" parent="Geometry/Jeux"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Jeux/board_games_shelf_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.1, 1.5, 12.525)
+shape = SubResource("BoxShape3D_6")
+
+[node name="game_table_1" parent="Geometry/Jeux" instance=ExtResource("p_game_table")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 12.8)
+
+[node name="plush_blue_1" parent="Geometry/Jeux" instance=ExtResource("p_plush_blue")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 13.65)
+
+[node name="plush_pile_1" parent="Geometry/Jeux" instance=ExtResource("p_plush_pile")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.6, 0, 14.35)
+
+[node name="floor_cushions_1" parent="Geometry/Jeux" instance=ExtResource("p_floor_cushions")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.6, 0, 14.4)
+
+[node name="ball_white_1" parent="Geometry/Jeux" instance=ExtResource("p_ball_white")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.3, 0, 12.3)
+
+[node name="bed_iron_1" parent="Geometry/Infirmerie" instance=ExtResource("p_bed_iron")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 11.2)
+
+[node name="bedside_table_1" parent="Geometry/Infirmerie" instance=ExtResource("p_bedside_table")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.3, 0, 11.025)
+
+[node name="bed_iron_2" parent="Geometry/Infirmerie" instance=ExtResource("p_bed_iron")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.9, 0, 11.2)
+
+[node name="bedside_table_2" parent="Geometry/Infirmerie" instance=ExtResource("p_bedside_table")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.2, 0, 11.025)
+
+[node name="bed_iron_3" parent="Geometry/Infirmerie" instance=ExtResource("p_bed_iron")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 0, 14.3)
+
+[node name="chair_child_1" parent="Geometry/Infirmerie" instance=ExtResource("p_chair_child")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 12.125)
+
+[node name="medicine_cabinet_1" parent="Geometry/Infirmerie" instance=ExtResource("p_medicine_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.35, 0, 13.4)
+
+[node name="medicine_cabinet_1_arriere" type="StaticBody3D" parent="Geometry/Infirmerie"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Infirmerie/medicine_cabinet_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.2, 1.5, 12.575)
+shape = SubResource("BoxShape3D_7")
+
+[node name="washbasin_stand_1" parent="Geometry/Infirmerie" instance=ExtResource("p_washbasin_stand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.3, 0, 14.55)
+
+[node name="infirmary_desk_1" parent="Geometry/Infirmerie" instance=ExtResource("p_infirmary_desk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.9, 0, 14.225)
+
+[node name="mirror_large_1" parent="Geometry/Bains" instance=ExtResource("p_mirror_large")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.205, 0, 13)
+keep_orientation = true
+image_offset = Vector3(0, 0, 0)
+
+[node name="pot_steam_1" parent="Geometry/Cuisine" instance=ExtResource("p_pot_steam")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.05, 1.87)
+
+[node name="meal_lunch_1" parent="Geometry/Refectoire" instance=ExtResource("p_meal_lunch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.8, 4.47)
+
+[node name="tableware_a_1" parent="Geometry/Refectoire" instance=ExtResource("p_tableware_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.8, 7.67)
+
+[node name="coffee_tray_1" parent="Geometry/Archives" instance=ExtResource("p_coffee_tray")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 1.3, 4.32)
+
+[node name="crystal_lamp_table_1" parent="Geometry/Lecture" instance=ExtResource("p_crystal_lamp_table")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.2, 0.95, 4.77)
+
+[node name="vase_flowers_1" parent="Geometry/Infirmerie" instance=ExtResource("p_vase_flowers")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.3, 0.7, 11.27)
+
+[node name="sous_escalier" type="StaticBody3D" parent="Geometry/Escalier"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Escalier/sous_escalier"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 1.5, 1.8125)
+shape = SubResource("BoxShape3D_8")
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.2, 12.8)
+
+[node name="from_entrepot" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.2, 14)
+
+[node name="from_entrepot_service" type="Marker3D" parent="Markers"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 2.2, 0.2, 9.5)
+
+[node name="from_entrepot_etage" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 17.5, 0.2, 6.8)
+
+[node name="from_salle_des_armes" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 21.5, 0.2, 2.4)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="vers_dehors" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 15.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"essai"
+target_marker = &"Spawn"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_dehors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_9")
+
+[node name="vers_arriere" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 9.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"essai"
+target_marker = &"Spawn"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_10")
+
+[node name="vers_etage" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, 5.85)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"entrepot_etage"
+target_marker = &"from_entrepot_rdc"
+prompt = "Monter"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_etage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_11")
+
+[node name="vers_armes" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, 1.425)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"salle_des_armes"
+target_marker = &"from_entrepot_rdc"
+prompt = "Ouvrir"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_armes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_12")
+
+[node name="Examine" type="Node3D" parent="."]
+
+[node name="cuisine_fourneau" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 1.85)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/cuisine_fourneau"
+size = Vector3(1.4, 2, 0.8)
+
+[node name="cuisine_moutarde" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.525, 0, 3)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/cuisine_moutarde"
+size = Vector3(0.8, 2, 1.2)
+
+[node name="cuisine_tablier" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.525, 0, 5.6)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/cuisine_tablier"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="refectoire_menu" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.8, 0, 1.525)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/refectoire_menu"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="refectoire_marques" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4, 0, 1.525)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/refectoire_marques"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="refectoire_vaisselier" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8, 0, 1.75)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/refectoire_vaisselier"
+size = Vector3(1.6, 2, 0.8)
+
+[node name="refectoire_fenetre" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 1.525)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/refectoire_fenetre"
+size = Vector3(2.4, 2, 0.8)
+
+[node name="planning" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 1.525)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/planning"
+size = Vector3(1, 2, 0.8)
+
+[node name="ecriteau_couloir" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.975, 0, 6.4)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/ecriteau_couloir"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="porte_armes" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.78, 0, 1.4)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/porte_armes"
+size = Vector3(0.35, 2, 0.6)
+
+[node name="archives_horloge" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.025, 0, 3.4)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/archives_horloge"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="archives_coupures" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.975, 0, 7)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/archives_coupures"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="archives_rapport" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.7, 0, 2.8)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/archives_rapport"
+size = Vector3(1.2, 2, 0.8)
+
+[node name="archives_bon" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 0, 4.3)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/archives_bon"
+size = Vector3(1.4, 2, 0.8)
+
+[node name="lecture_fenetre" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6, 0, 1.95)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/lecture_fenetre"
+size = Vector3(2, 2, 0.8)
+
+[node name="lecture_livre" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.35, 0, 5.25)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/lecture_livre"
+size = Vector3(1.4, 2, 0.8)
+
+[node name="point_eau" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 9.15)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/point_eau"
+size = Vector3(1.6, 2, 0.8)
+
+[node name="bains_reglement" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.475, 0, 12)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/bains_reglement"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="bains_miroir" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.525, 0, 13)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/bains_miroir"
+size = Vector3(0.8, 2, 1.2)
+
+[node name="placard_marteau" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 14.55)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/placard_marteau"
+size = Vector3(1, 2, 0.8)
+
+[node name="entree_pateres" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.525, 0, 12.5)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/entree_pateres"
+size = Vector3(0.8, 2, 1.2)
+
+[node name="jeux_partie" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 13.1)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/jeux_partie"
+size = Vector3(1.2, 2, 0.8)
+
+[node name="jeux_piano" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.2, 0, 11.75)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/jeux_piano"
+size = Vector3(1.6, 2, 0.8)
+
+[node name="infirmerie_calendrier" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.475, 0, 14.4)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/infirmerie_calendrier"
+size = Vector3(0.8, 2, 0.8)
+
+[node name="infirmerie_trousse" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.35, 0, 13.6)
+script = ExtResource("6_examine")
+text_key = "entrepot_rdc/infirmerie_trousse"
+size = Vector3(1, 2, 0.8)
+
+[node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="cuisine_fourneau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 2.55)
+
+[node name="cuisine_table" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 0, 5.6)
+
+[node name="cuisine_tonneau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9, 0, 7)
+
+[node name="refectoire_vaisselier" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8, 0, 2.4)
+
+[node name="refectoire_evier" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.6, 0, 2.4)
+
+[node name="refectoire_fenetre" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 2.35)
+
+[node name="refectoire_allee" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 5.55)
+
+[node name="refectoire_bout_est" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 5.6)
+
+[node name="refectoire_bout_ouest" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 0, 5.6)
+
+[node name="refectoire_porte_cuisine" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 0, 4.6)
+
+[node name="escalier_pied" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, 6.7)
+
+[node name="planning" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 4)
+
+[node name="porte_armes" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, 2.4)
+
+[node name="archives_bureau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 0, 4.95)
+
+[node name="archives_canape" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.65, 0, 7.6)
+
+[node name="lecture_banquette" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6, 0, 2.55)
+
+[node name="lecture_table" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.8, 0, 5.4)
+
+[node name="couloir_ouest" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 9.5)
+
+[node name="couloir_centre" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 9.5)
+
+[node name="couloir_est" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 9.5)
+
+[node name="point_eau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 9.75)
+
+[node name="bains_baignoire" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 12.4)
+
+[node name="entree" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 12.6)
+
+[node name="jeux_tapis" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 14)
+
+[node name="jeux_mur_balle" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 13)
+
+[node name="infirmerie_lit_a" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 12.4)
+
+[node name="infirmerie_fenetre" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.4, 0, 12.4)
+
+[node name="infirmerie_bureau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 13)
+
+[node name="refectoire_chaise_a01" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 7.75, 0, 3.2)
+
+[node name="refectoire_chaise_a02" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8.25, 0, 3.2)
+
+[node name="refectoire_chaise_a03" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8.75, 0, 3.2)
+
+[node name="refectoire_chaise_a04" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 9.25, 0, 3.2)
+
+[node name="refectoire_chaise_a05" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 9.75, 0, 3.2)
+
+[node name="refectoire_chaise_a06" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 10.25, 0, 3.2)
+
+[node name="refectoire_chaise_a07" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 10.75, 0, 3.2)
+
+[node name="refectoire_chaise_a08" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 11.25, 0, 3.2)
+
+[node name="refectoire_chaise_a09" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 11.75, 0, 3.2)
+
+[node name="refectoire_chaise_a10" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 12.25, 0, 3.2)
+
+[node name="refectoire_chaise_a11" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 12.75, 0, 3.2)
+
+[node name="refectoire_chaise_a12" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 13.25, 0, 3.2)
+
+[node name="refectoire_chaise_a13" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 13.75, 0, 3.2)
+
+[node name="refectoire_chaise_a14" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 14.25, 0, 3.2)
+
+[node name="refectoire_chaise_b01" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 0, 4.7)
+
+[node name="refectoire_chaise_b02" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.25, 0, 4.7)
+
+[node name="refectoire_chaise_b03" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.75, 0, 4.7)
+
+[node name="refectoire_chaise_b04" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 0, 4.7)
+
+[node name="refectoire_chaise_b05" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 4.7)
+
+[node name="refectoire_chaise_b06" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.25, 0, 4.7)
+
+[node name="refectoire_chaise_b07" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.75, 0, 4.7)
+
+[node name="refectoire_chaise_b08" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.25, 0, 4.7)
+
+[node name="refectoire_chaise_b09" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.75, 0, 4.7)
+
+[node name="refectoire_chaise_b10" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.25, 0, 4.7)
+
+[node name="refectoire_chaise_b11" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.75, 0, 4.7)
+
+[node name="refectoire_chaise_b12" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.25, 0, 4.7)
+
+[node name="refectoire_chaise_b13" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.75, 0, 4.7)
+
+[node name="refectoire_chaise_b14" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 0, 4.7)
+
+[node name="refectoire_chaise_c01" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 7.75, 0, 6.4)
+
+[node name="refectoire_chaise_c02" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8.25, 0, 6.4)
+
+[node name="refectoire_chaise_c03" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8.75, 0, 6.4)
+
+[node name="refectoire_chaise_c04" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 9.25, 0, 6.4)
+
+[node name="refectoire_chaise_c05" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 9.75, 0, 6.4)
+
+[node name="refectoire_chaise_c06" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 10.25, 0, 6.4)
+
+[node name="refectoire_chaise_c07" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 10.75, 0, 6.4)
+
+[node name="refectoire_chaise_c08" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 11.25, 0, 6.4)
+
+[node name="refectoire_chaise_c09" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 11.75, 0, 6.4)
+
+[node name="refectoire_chaise_c10" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 12.25, 0, 6.4)
+
+[node name="refectoire_chaise_c11" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 12.75, 0, 6.4)
+
+[node name="refectoire_chaise_c12" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 13.25, 0, 6.4)
+
+[node name="refectoire_chaise_c13" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 13.75, 0, 6.4)
+
+[node name="refectoire_chaise_c14" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 14.25, 0, 6.4)
+
+[node name="refectoire_chaise_d01" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 0, 7.9)
+
+[node name="refectoire_chaise_d02" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.25, 0, 7.9)
+
+[node name="refectoire_chaise_d03" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.75, 0, 7.9)
+
+[node name="refectoire_chaise_d04" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 0, 7.9)
+
+[node name="refectoire_chaise_d05" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 7.9)
+
+[node name="refectoire_chaise_d06" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.25, 0, 7.9)
+
+[node name="refectoire_chaise_d07" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.75, 0, 7.9)
+
+[node name="refectoire_chaise_d08" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.25, 0, 7.9)
+
+[node name="refectoire_chaise_d09" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.75, 0, 7.9)
+
+[node name="refectoire_chaise_d10" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.25, 0, 7.9)
+
+[node name="refectoire_chaise_d11" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.75, 0, 7.9)
+
+[node name="refectoire_chaise_d12" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.25, 0, 7.9)
+
+[node name="refectoire_chaise_d13" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.75, 0, 7.9)
+
+[node name="refectoire_chaise_d14" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 0, 7.9)
+
+[node name="infirmerie_lit_1" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 11.2)
+
+[node name="infirmerie_lit_2" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.9, 0, 11.2)
+
+[node name="infirmerie_lit_3" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 0, 14.3)
+
+[node name="lecture_fauteuil" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 30.3, 0, 7.4)
+
+[node name="archives_canape_assise" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 23.65, 0, 6.5)
+
+[node name="infirmerie_chevet" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 25, 0, 12.15)
+
+[node name="jeux_piano" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.2, 0, 12.1)
+
+[node name="bains_sechage" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 12.6)
