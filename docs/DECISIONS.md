@@ -2462,7 +2462,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   l'ancienne île.
 - **T1 — bâtiment** : deux `Building` (`warehouse_front_a`, 18 × 14 m, faîte 10 m, ardoise ;
   `warehouse_front_b`, 12 × 14 m, toit plat de planches, rambarde `roof_railing` et séchoirs
-  `drying_frame` posés dessus, linge animé). Les façades et flancs du plan (noms proposés, 12.1)
+  `drying_frame` posés dessus, linge animé ; `gable_front` vrai : un toit plat n'a pas de
+  pignon, ses flancs sont des gouttereaux comme ceux d'un toit « pignon »). Les façades et flancs du plan (noms proposés, 12.1)
   ont des remplaçants faits des morceaux de `warehouse_main` (livrée) : porte d'entrée à 12 m du
   bord gauche (x = 42), fenêtres placées sur les pièces du dedans (dépolies aux bains), plannings
   et plaque près de la porte ; porte de service à **6 m** de l'angle sud du pignon ouest (z = 20,

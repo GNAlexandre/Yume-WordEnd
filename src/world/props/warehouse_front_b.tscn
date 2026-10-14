@@ -17,6 +17,7 @@ roof_texture = ExtResource("4_roof")
 footprint = Vector2(12, 14)
 wall_height = 6.5
 ridge_height = 6.5
+gable_front = true
 overhang = 0.1
 window_glow = 0.6
 side_facade = ExtResource("5_side")
