@@ -505,7 +505,8 @@ class_name Building        # (H9) @export side_facade (flanc est, retourné à l
                            # profondeur × mur), side_material(texture, glow)
 class_name PropScatter     # (H9) @export variants: Array[PackedScene], random_flip ; pool(), variant_indices(),
                            # pick_variants(points, count, seed) (jamais la variante du plus proche voisin),
-                           # nearest_neighbor(points, i)
+                           # nearest_neighbor(points, i) ; (T1) follow_ground : sur une carte de la refonte,
+                           # le MapGround (enfant « Ground ») du premier ancêtre qui en a un, sinon l'île
 class_name IslandTerrain   # (H9) GROUND_LAYERS (27 tuiles, ordre du contrat), GROUND_FALLBACK, ATLAS_COLUMNS,
                            # atlas_tile_count(size), ground_layer(layer, tile_count), triangles_in(rect),
                            # surface_height(x, z) ; terrain.gdshader : rangées lues dans la taille de l'atlas
@@ -983,7 +984,9 @@ sud ; **un pixel = une case de 1 m** ; la case (i, j) couvre [i, i + 1] × [j, j
    `stairs` et `ramp` (`rect` [x, z, largeur, profondeur] de cases, `dir`, `material` facultative),
    `face` (`wall`, `rock`, `earth` sur les cases hautes d'une falaise). Formes : `rect`, `poly`,
    `ellipse` [cx, cz, rx, rz], `band` ; `noise` (m) et `noise_scale` brouillent leur bord ; `where`
-   (`level`, `levels`, `material`, `not_material`) restreint une opération.
+   (`level`, `levels`, `material`, `not_material`) restreint une opération. (T1) Des paliers sous
+   le sol courant (−0,5 m : champ, marais de l'entrepôt) demandent `height_zero_value` (16 : le
+   palier −1 est le gris 0), recopié dans `map.json`.
 2. `python3 tools/map_build.py gen <map_id>` écrit `map.json`, `heights.png`, `materials.png` et
    `structures.png` et vérifie la carte ; `python3 tools/map_build.py view <map_id>` en fait la vue de
    dessus (`build/maps/<map_id>_dessus.png`) ; `check` revérifie (toutes les cartes sans argument).

@@ -18,6 +18,8 @@ const DOCS: Array[String] = [
 	"res://docs/ASSETS_HD2D_SUKASUKA.md",
 	"res://docs/REFONTE.md",
 	"res://docs/INTERIEURS.md",
+	# (T1) Noms proposés par les plans des lieux, à ajouter au cahier n° 3 (section 12.1).
+	"res://docs/lore/CARTE.md",
 ]
 const CAHIER2_LOTS: Array[String] = ["A", "B", "C", "D", "E", "F", "G"]
 const ATLAS := "res://assets/hd2d/ground/atlas/ground_atlas.png"
@@ -300,7 +302,8 @@ func test_building_sides_have_the_shape_of_their_roof() -> void:
 			for y: int in [floori(h / 4.0), floori(h / 2.0), h - 2]:
 				if image.get_pixel(0, y).a < 0.5 or image.get_pixel(w - 1, y).a < 0.5:
 					problems.append("%s : mur gouttereau pas plein" % path)
-	assert_eq(count, 19, "19 flancs (cahier n° 2, 9.1 et 9.2)")
+	# (T1) Plus les deux flancs de l'entrepôt de la refonte (docs/lore/CARTE.md, 12.1).
+	assert_eq(count, 21, "19 flancs (cahier n° 2, 9.1 et 9.2) et 2 de l'entrepôt (CARTE.md 12.1)")
 	assert_true(problems.is_empty(), "; ".join(problems))
 
 

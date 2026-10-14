@@ -600,3 +600,15 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   (images en WebP avec perte pour le seul Web), ou exclusion de l'export Web des images pas
   encore posées (filtre d'`export_presets.cfg`, PR « contrats »).
 - En attendant : `BUILD_BUDGET_MB=110 tools/check.sh` vérifie tout le reste (vert pour E9).
+
+## T1 — L'entrepôt vu du dehors
+- **CARTE.md 12.1, `warehouse_front_a_side`** : la consigne met la porte de service « à 8 m de
+  l'angle sud » ; les données (2.7 : sortie z 19,4 → 20,6 ; 2.4 : « (30 ; 20) dehors ») la mettent
+  à 6 m. Le remplaçant suit les données (6 m). À corriger dans 12.1 avant la commande (lot D2).
+  Au passage, 2.4 écrit « (1 ; 9,5) dedans » pour (30 ; 20) dehors, alors que dedans = dehors −
+  (29, 11) donne (1 ; 9) : le couloir du dedans est centré sur 9,5.
+- **E2, faces des paliers** : `cliff/step_earth`, `wall_earth_1m` et `step_marsh` (cahier n° 3, 7.6)
+  ne sont pas encore lus par `MapGround` (un seul talus, `bank_earth.png`) : une couleur de
+  `structures.png` par face nommée permettrait de les poser (berges de tourbe au marais).
+- **Manifeste, lot I** : `interior/props/roof_railing.png` et `drying_frame.png` (livrées) sont
+  posées dehors sur le toit-terrasse ; leur entrée au manifeste est laissée au lot I (T2).
