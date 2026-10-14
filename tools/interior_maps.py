@@ -511,10 +511,11 @@ def support_of(furniture, x, z):
     return best
 
 
-def feet_hidden(player_z, front, top, bounds):
-    """Vrai si l'image (bord sud en front, haut à top) cache les pieds d'un joueur en player_z
-    (dans la colonne de l'image), vu par la caméra du jeu bornée à bounds (x, z, largeur,
-    profondeur)."""
+def feet_hidden(player_x, player_z, front, x0, x1, top, bounds):
+    """Vrai si l'image (bord sud en front, de x0 à x1, haut à top) cache les pieds d'un joueur en
+    (player_x, player_z), vu par la caméra du jeu bornée à bounds (x, z, largeur, profondeur) : la
+    caméra suit le joueur dans ses bornes, donc le regarde de biais au-delà."""
+    focus_x = min(max(player_x, bounds[0]), bounds[0] + bounds[2])
     focus_z = min(max(player_z - FOCUS_AHEAD, bounds[1]), bounds[1] + bounds[3])
     pitch = math.radians(CAMERA_PITCH)
     cam_y = FOCUS_HEIGHT + CAMERA_DISTANCE * math.sin(pitch)
@@ -522,7 +523,8 @@ def feet_hidden(player_z, front, top, bounds):
     if front <= player_z or front >= cam_z:
         return False
     t = (cam_z - front) / (cam_z - player_z)
-    return cam_y + (FEET - cam_y) * t < top
+    x_at = focus_x + (player_x - focus_x) * t
+    return x0 < x_at < x1 and cam_y + (FEET - cam_y) * t < top
 
 
 def image_width(name):
@@ -551,31 +553,46 @@ def hiding_rules(plan, furniture, settings, item, blockers):
     width = image_width(image)
     x0, x1 = item["x"] - width / 2.0, item["x"] + width / 2.0
     top = HEIGHTS[image]
-    z_ok = back - PLAYER_RADIUS
-    while z_ok > room.z0 and feet_hidden(z_ok, front, top, settings["camera_bounds"]):
-        z_ok -= 0.05
-    # Le prochain obstacle au nord, dans la colonne de l'image : un mur, une fermeture, un meuble
-    # haut (un meuble bas ne cache pas ce qui est derrière lui : la place cachée continue).
-    obstacle = room.z0 + WALL_HALF
+    # Ce qui arrête déjà le joueur (un centre n'y entre pas) : les autres meubles et fermetures.
+    solid = []
     for other in furniture:
         if other is item or other["image"] in DECALS or other["image"] in HANGING or other["free"]:
             continue
-        if HEIGHTS.get(other["image"], 0.0) <= TALL:
-            continue
         o_front = furniture_front(other)
-        if other["x"] + other["l"] / 2.0 > x0 and other["x"] - other["l"] / 2.0 < x1 and o_front <= back + 1e-6:
-            obstacle = max(obstacle, o_front)
-    for _name, bx0, _bz0, bx1, bz1, _h in blockers:
-        if bx1 > x0 and bx0 < x1 and bz1 <= back + 1e-6:
-            obstacle = max(obstacle, bz1)
-    # La capsule du joueur est ronde : la boîte déborde un peu dans la colonne (BOX_INSET) et
-    # commence un peu avant la limite (BOX_LEAD), pour qu'aucun centre caché ne s'y glisse en biais.
-    z0 = max(z_ok + PLAYER_RADIUS - BOX_LEAD, obstacle)
+        o_depth = DEPTHS.get(other["image"], other["p"])
+        solid.append((other["x"] - other["l"] / 2.0, o_front - o_depth, other["x"] + other["l"] / 2.0, o_front))
+    solid += [(bx0, bz0, bx1, bz1) for _name, bx0, bz0, bx1, bz1, _h in blockers]
+
+    def reachable(px, pz):
+        return not any(sx0 - PLAYER_RADIUS < px < sx1 + PLAYER_RADIUS and sz0 - PLAYER_RADIUS < pz < sz1 + PLAYER_RADIUS
+                       for sx0, sz0, sx1, sz1 in solid)
+
+    # Les centres du joueur dont les pieds sont cachés, derrière l'image (pas de 5 cm).
+    hidden = []
+    left = room.x0 + WALL_HALF + PLAYER_RADIUS
+    right = room.x1 - WALL_HALF - PLAYER_RADIUS
+    north = room.z0 + WALL_HALF + PLAYER_RADIUS
+    steps_x = int(round((right - left) / 0.05))
+    pz = back - PLAYER_RADIUS
+    while pz >= north - 1e-6:
+        for k in range(steps_x + 1):
+            px = left + 0.05 * k
+            if feet_hidden(px, pz, front, x0, x1, top, settings["camera_bounds"]) and reachable(px, pz):
+                hidden.append((px, pz))
+        pz -= 0.05
+    if not hidden:
+        return {}
+    # La capsule du joueur est ronde : la boîte déborde un peu dans la place cachée (BOX_INSET) et
+    # commence un peu avant sa limite (BOX_LEAD), pour qu'aucun centre caché ne s'y glisse en biais.
+    z0 = max(min(z for _x, z in hidden) + PLAYER_RADIUS - BOX_LEAD, room.z0 + WALL_HALF)
     if back - z0 < 0.05:
         return {}
-    bx0, bx1 = x0 + BOX_INSET, x1 - BOX_INSET
+    hx0, hx1 = min(x for x, _z in hidden), max(x for x, _z in hidden)
+    bx0 = max(hx0 - 0.025 + BOX_INSET, room.x0 + WALL_HALF)
+    bx1 = min(hx1 + 0.025 - BOX_INSET, room.x1 - WALL_HALF)
     if bx1 - bx0 < 0.02:
-        bx0, bx1 = item["x"] - 0.01, item["x"] + 0.01
+        # Place cachée plus étroite que le joueur : une boîte fine en son milieu suffit.
+        bx0, bx1 = (hx0 + hx1) / 2.0 - 0.01, (hx0 + hx1) / 2.0 + 0.01
     return {"box": (round(bx0, 3), round(z0, 3), round(bx1, 3), round(back, 3))}
 
 
@@ -586,7 +603,6 @@ def interior_scene(map_id, plan, settings):
     layout = scene.res("JSON", "data/maps/%s/interior.json" % map_id, "3_layout")
     batcher = scene.res("Script", "src/world/prop_batcher.gd", "4_batcher")
     exit_script = scene.res("Script", "src/world/map_exit.gd", "5_exit")
-    examine_script = scene.res("Script", "src/world/examinable.gd", "6_examine")
     bounds = settings["camera_bounds"]
     props = [("script", map_script), ("display_name", json.dumps(plan.meta["nom"][0], ensure_ascii=False)),
              ("region", '&"%s"' % plan.meta["region"][0]), ("interior", "true"),
@@ -691,11 +707,11 @@ def interior_scene(map_id, plan, settings):
         scene.node("CollisionShape3D", "CollisionShape3D", "%s/%s" % (parent, name),
                    props=[("transform", transform((x0 + x1) / 2.0, h / 2.0, (z0 + z1) / 2.0)),
                           ("shape", scene.box((x1 - x0, h, z1 - z0)))])
-    markers_exits_life(scene, map_id, plan, furniture, exit_script, examine_script)
+    markers_exits_life(scene, map_id, plan, furniture, exit_script)
     return scene
 
 
-def markers_exits_life(scene, map_id, plan, furniture, exit_script, examine_script):
+def markers_exits_life(scene, map_id, plan, furniture, exit_script):
     scene.node("Markers", "Node3D", ".")
     for name, marker in plan.markers.items():
         scene.node(name, "Marker3D", "Markers",
@@ -720,6 +736,7 @@ def markers_exits_life(scene, map_id, plan, furniture, exit_script, examine_scri
                           ("shape", scene.box((r.w(), 2.4, r.d())))])
     examinables = examine_spots(map_id, plan, furniture)
     if examinables:
+        examine_script = scene.res("Script", "src/world/examinable.gd", "6_examine")
         scene.node("Examine", "Node3D", ".")
     for key, x, z, size in examinables:
         scene.node(key, "Area3D", "Examine",
@@ -923,7 +940,6 @@ def roof_scene(map_id, plan, settings):
     ground_script = scene.res("Script", "src/world/map_ground.gd", "2_ground")
     batcher = scene.res("Script", "src/world/prop_batcher.gd", "4_batcher")
     exit_script = scene.res("Script", "src/world/map_exit.gd", "5_exit")
-    examine_script = scene.res("Script", "src/world/examinable.gd", "6_examine")
     building = scene.res("PackedScene", "src/world/props/interior/entrepot_volume_ouest.tscn", "7_volume")
     bounds = settings["camera_bounds"]
     props = [("script", map_script), ("display_name", json.dumps(plan.meta["nom"][0], ensure_ascii=False)),
@@ -953,7 +969,10 @@ def roof_scene(map_id, plan, settings):
         x, z = (r.x0 + r.x1) / 2.0, (r.z0 + r.z1) / 2.0
         image = decor.name
         if image == "drying_frame":
-            image = "drying_frame_wave"
+            # Le séchoir (2,2 m) cacherait le joueur qui passe derrière : panneau de premier plan,
+            # qui s'efface devant lui (règle de caméra, CARTE.md 0.3).
+            place("Geometry/Terrasse", "drying_frame_wave", x, 0.0, z, 0.0, [("foreground", "true")])
+            continue
         if image == "chimney_brick":
             # Sur le pan d'ardoise, à la hauteur du toit à cet endroit (faîtage à 3,5 m en z = 8).
             place("Geometry/VolumeOuest", image, x, round(3.5 * min(1.0, (z - 1.0) / 7.0), 3), z)
@@ -985,7 +1004,7 @@ def roof_scene(map_id, plan, settings):
         place("Geometry/Lisiere", image, x, -6.5, z)
     for image, x, z in ROOF_DETAILS:
         place("Geometry/Terrasse", image, x, 0.0, z)
-    markers_exits_life(scene, map_id, plan, [], exit_script, examine_script)
+    markers_exits_life(scene, map_id, plan, [], exit_script)
     return scene
 
 

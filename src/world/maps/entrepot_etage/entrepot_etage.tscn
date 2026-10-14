@@ -5,7 +5,6 @@
 [ext_resource type="JSON" path="res://data/maps/entrepot_etage/interior.json" id="3_layout"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
 [ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
-[ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/wardrobe_plain.tscn" id="p_wardrobe_plain"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/bed_plain.tscn" id="p_bed_plain"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/footlocker.tscn" id="p_footlocker"]
@@ -42,9 +41,10 @@
 [ext_resource type="PackedScene" path="res://src/world/props/interior/oil_lamp.tscn" id="p_oil_lamp"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/tea_tray_cheesecake.tscn" id="p_tea_tray_cheesecake"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/leak_drip.tscn" id="p_leak_drip"]
+[ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
-size = Vector3(0.7, 3, 1.75)
+size = Vector3(0.4, 3, 1.7)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2"]
 size = Vector3(1.6, 2.4, 0.3)
@@ -123,7 +123,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.35, 0, 6.6)
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Chtholly/wardrobe_chtholly_1_arriere"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.35, 1.5, 5.425)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 1.5, 5.45)
 shape = SubResource("BoxShape3D_1")
 
 [node name="fireplace_1" parent="Geometry/Nygglatho" instance=ExtResource("p_fireplace")]

@@ -4,7 +4,6 @@
 [ext_resource type="Script" path="res://src/world/map_ground.gd" id="2_ground"]
 [ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
 [ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
-[ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/entrepot_volume_ouest.tscn" id="7_volume"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/drying_frame_wave.tscn" id="p_drying_frame_wave"]
 [ext_resource type="PackedScene" path="res://src/world/props/laundry_basket.tscn" id="p_laundry_basket"]
@@ -47,9 +46,11 @@ script = ExtResource("4_batcher")
 
 [node name="drying_frame_wave_1" parent="Geometry/Terrasse" instance=ExtResource("p_drying_frame_wave")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 6)
+foreground = true
 
 [node name="drying_frame_wave_2" parent="Geometry/Terrasse" instance=ExtResource("p_drying_frame_wave")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 11)
+foreground = true
 
 [node name="laundry_basket_1" parent="Geometry/Terrasse" instance=ExtResource("p_laundry_basket")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 0, 13)
