@@ -35,11 +35,16 @@ const BODY_HIGH := 1.5
 const WALL_RES := 0.125
 ## Lissage : on regarde au plus SMOOTH_LOOKAHEAD points plus loin (coût borné par chemin).
 const SMOOTH_LOOKAHEAD := 40
-const STAGE_CELLS := 0
-const STAGE_PROPS := 1
-const STAGE_GRAPH := 2
-const STAGE_DIAGONALS := 3
-const STAGE_DONE := 4
+## Cases mesurées ou reliées par pas de construction (un morceau de rangée) : un pas reste
+## court même dans le build Web (WebAssembly, plusieurs fois plus lent).
+const SEGMENT_COLS := 8
+const STAGE_WALLS := 0
+const STAGE_CELLS := 1
+const STAGE_BOXES := 2
+const STAGE_PROPS := 3
+const STAGE_GRAPH := 4
+const STAGE_DIAGONALS := 5
+const STAGE_DONE := 6
 
 ## Taille d'une case (m) et nombre de cases.
 var cell: float = OUTDOOR_CELL
@@ -50,6 +55,8 @@ var ready: bool = false
 ## Mesures : durée de construction (µs de travail), nombre d'images, cases praticables.
 var build_usec: int = 0
 var build_frames: int = 0
+## Pas de construction le plus long (µs) : la mesure du découpage.
+var build_max_usec: int = 0
 
 var _map: Node3D
 var _ground: Node
@@ -61,8 +68,11 @@ var _wall := PackedByteArray()
 var _wall_size := Vector2i.ZERO
 var _boxes: Array[AABB] = []
 var _astar := AStar2D.new()
-var _stage: int = STAGE_CELLS
+var _stage: int = STAGE_WALLS
 var _row: int = 0
+var _col: int = 0
+## Pièce de mur ou boîte de décor en cours (étapes WALLS et PROPS : une par pas).
+var _item: int = 0
 var _disabled: Array[int] = []
 ## Cases évitées pendant le calcul d'un chemin (find_path, avoid) : le lissage non plus.
 var _avoided: Dictionary = {}
@@ -102,30 +112,36 @@ func build_step(budget_usec: int) -> bool:
 	build_frames += 1
 	while not ready and Time.get_ticks_usec() - started < budget_usec:
 		match _stage:
+			STAGE_WALLS:
+				if _wall_step():
+					_item = 0
+					_stage = STAGE_CELLS
 			STAGE_CELLS:
-				if _row == 0 and kind == Kind.INTERIOR and _wall.is_empty():
-					_scan_walls()
-				_measure_row(_row)
-				_row += 1
-				if _row >= size.y:
-					_row = 0
-					_stage = STAGE_PROPS
+				_measure_row(_row, _col, _segment_end())
+				if _next_segment():
+					_stage = STAGE_BOXES
+			STAGE_BOXES:
+				_collect_props()
+				_item = 0
+				_stage = STAGE_PROPS
 			STAGE_PROPS:
-				_scan_props()
-				_stage = STAGE_GRAPH
+				if _item >= _boxes.size():
+					_stage = STAGE_GRAPH
+				else:
+					_mark_box(_item)
+					_item += 1
 			STAGE_GRAPH:
-				_graph_row(_row)
-				_row += 1
-				if _row >= size.y:
-					_row = 0
+				_graph_row(_row, _col, _segment_end())
+				if _next_segment():
 					_stage = STAGE_DIAGONALS
 			STAGE_DIAGONALS:
-				_diagonal_row(_row)
-				_row += 1
-				if _row >= size.y:
+				_diagonal_row(_row, _col, _segment_end())
+				if _next_segment():
 					_stage = STAGE_DONE
 					ready = true
-	build_usec += Time.get_ticks_usec() - started
+	var spent := Time.get_ticks_usec() - started
+	build_usec += spent
+	build_max_usec = maxi(build_max_usec, spent)
 	return ready
 
 
@@ -298,17 +314,26 @@ func _sample_walkable(x: float, z: float) -> bool:
 	return true
 
 
-## Relevé des murs debout d'un intérieur (les pièces de mur au sol, comme InteriorRoom.is_walkable).
-func _scan_walls() -> void:
+## Relevé des murs debout d'un intérieur (les pièces de mur au sol, comme
+## InteriorRoom.is_walkable), une pièce par appel ; vrai quand tout est relevé (ou sans murs).
+func _wall_step() -> bool:
 	var room := _ground as InteriorRoom
-	_wall_size = Vector2i(ceili(_area.end.x / WALL_RES) + 1, ceili(_area.end.y / WALL_RES) + 1)
-	_wall.resize(_wall_size.x * _wall_size.y)
-	_wall.fill(0)
-	if room.plan == null:
-		return
-	for piece: Dictionary in room.plan.pieces:
-		if float(piece["y0"]) > 0.0:
-			continue
+	if kind != Kind.INTERIOR or room == null or room.plan == null:
+		return true
+	if _wall.is_empty():
+		_wall_size = Vector2i(ceili(_area.end.x / WALL_RES) + 1, ceili(_area.end.y / WALL_RES) + 1)
+		_wall.resize(_wall_size.x * _wall_size.y)
+		_wall.fill(0)
+		_item = 0
+	if _item >= room.plan.pieces.size():
+		return true
+	_wall_piece(room, room.plan.pieces[_item])
+	_item += 1
+	return false
+
+
+func _wall_piece(room: InteriorRoom, piece: Dictionary) -> void:
+	if float(piece["y0"]) <= 0.0:
 		var box := room.plan.piece_box(piece)
 		var x0 := maxi(0, floori((box.position.x - 0.001) / WALL_RES))
 		var x1 := mini(_wall_size.x - 1, floori((box.end.x + 0.001) / WALL_RES))
@@ -327,8 +352,24 @@ func _scan_walls() -> void:
 				_wall[index] = 2 if inside else maxi(_wall[index], 1)
 
 
-func _measure_row(row: int) -> void:
-	for col: int in size.x:
+func _segment_end() -> int:
+	return mini(_col + SEGMENT_COLS, size.x)
+
+
+## Passe au morceau de rangée suivant ; vrai (et retour au début) à la fin de la grille.
+func _next_segment() -> bool:
+	_col += SEGMENT_COLS
+	if _col >= size.x:
+		_col = 0
+		_row += 1
+	if _row >= size.y:
+		_row = 0
+		return true
+	return false
+
+
+func _measure_row(row: int, col0: int, col1: int) -> void:
+	for col: int in range(col0, col1):
 		var x := _area.position.x + (col + 0.5) * cell
 		var z := _area.position.y + (row + 0.5) * cell
 		var index := row * size.x + col
@@ -336,9 +377,9 @@ func _measure_row(row: int) -> void:
 		_height[index] = height_at(x, z) if _walk[index] == 1 else 0.0
 
 
-## Collisions des décors et meubles (couche 1, hors du sol, de la vie et des sorties) : leurs
-## boîtes élargies marquent les cases qu'elles couvrent dans la tranche du corps.
-func _scan_props() -> void:
+## Collisions des décors et meubles (couche 1, hors du sol, de la vie et des sorties), en
+## boîtes dans le repère de la carte ; _mark_box les pose ensuite une par une.
+func _collect_props() -> void:
 	_boxes.clear()
 	if _map == null:
 		return
@@ -349,23 +390,26 @@ func _scan_props() -> void:
 			skip.append(node)
 	_collect_boxes(_map, skip)
 	var inverse := (_map as Node3D).global_transform.affine_inverse()
-	for world_box: AABB in _boxes:
-		var box := inverse * world_box
-		var x0 := maxi(0, floori((box.position.x - PROP_MARGIN - _area.position.x) / cell))
-		var x1 := mini(size.x - 1, floori((box.end.x + PROP_MARGIN - _area.position.x) / cell))
-		var z0 := maxi(0, floori((box.position.z - PROP_MARGIN - _area.position.y) / cell))
-		var z1 := mini(size.y - 1, floori((box.end.z + PROP_MARGIN - _area.position.y) / cell))
-		for row: int in range(z0, z1 + 1):
-			for col: int in range(x0, x1 + 1):
-				var c := center(Vector2i(col, row))
-				var inside_x := c.x > box.position.x - PROP_MARGIN and c.x < box.end.x + PROP_MARGIN
-				var inside_z := c.z > box.position.z - PROP_MARGIN and c.z < box.end.z + PROP_MARGIN
-				var ground := _height[row * size.x + col]
-				var overlaps := (
-					box.end.y > ground + BODY_LOW and box.position.y < ground + BODY_HIGH
-				)
-				if inside_x and inside_z and overlaps:
-					_prop[row * size.x + col] = 1
+	for i: int in _boxes.size():
+		_boxes[i] = inverse * _boxes[i]
+
+
+## Une boîte élargie marque les cases qu'elle couvre dans la tranche du corps.
+func _mark_box(index: int) -> void:
+	var box := _boxes[index]
+	var x0 := maxi(0, floori((box.position.x - PROP_MARGIN - _area.position.x) / cell))
+	var x1 := mini(size.x - 1, floori((box.end.x + PROP_MARGIN - _area.position.x) / cell))
+	var z0 := maxi(0, floori((box.position.z - PROP_MARGIN - _area.position.y) / cell))
+	var z1 := mini(size.y - 1, floori((box.end.z + PROP_MARGIN - _area.position.y) / cell))
+	for row: int in range(z0, z1 + 1):
+		for col: int in range(x0, x1 + 1):
+			var c := center(Vector2i(col, row))
+			var inside_x := c.x > box.position.x - PROP_MARGIN and c.x < box.end.x + PROP_MARGIN
+			var inside_z := c.z > box.position.z - PROP_MARGIN and c.z < box.end.z + PROP_MARGIN
+			var ground := _height[row * size.x + col]
+			var overlaps := box.end.y > ground + BODY_LOW and box.position.y < ground + BODY_HIGH
+			if inside_x and inside_z and overlaps:
+				_prop[row * size.x + col] = 1
 
 
 func _collect_boxes(node: Node, skip: Array[Node]) -> void:
@@ -376,14 +420,33 @@ func _collect_boxes(node: Node, skip: Array[Node]) -> void:
 		if owner_body != null and owner_body.collision_layer & 1:
 			var shape := (node as CollisionShape3D).shape
 			if shape != null:
-				var local := shape.get_debug_mesh().get_aabb()
-				_boxes.append((node as Node3D).global_transform * local)
+				_boxes.append((node as Node3D).global_transform * shape_box(shape))
 	for child: Node in node.get_children():
 		_collect_boxes(child, skip)
 
 
-func _graph_row(row: int) -> void:
-	for col: int in size.x:
+## Boîte d'une forme dans son repère, sans construire son maillage de débogage (lent) pour les
+## formes simples.
+static func shape_box(shape: Shape3D) -> AABB:
+	if shape is BoxShape3D:
+		var half := (shape as BoxShape3D).size * 0.5
+		return AABB(-half, half * 2.0)
+	if shape is SphereShape3D:
+		var r := (shape as SphereShape3D).radius
+		return AABB(-Vector3.ONE * r, Vector3.ONE * r * 2.0)
+	if shape is CapsuleShape3D:
+		var capsule := shape as CapsuleShape3D
+		var half_c := Vector3(capsule.radius, capsule.height * 0.5, capsule.radius)
+		return AABB(-half_c, half_c * 2.0)
+	if shape is CylinderShape3D:
+		var cylinder := shape as CylinderShape3D
+		var half_y := Vector3(cylinder.radius, cylinder.height * 0.5, cylinder.radius)
+		return AABB(-half_y, half_y * 2.0)
+	return shape.get_debug_mesh().get_aabb()
+
+
+func _graph_row(row: int, col0: int, col1: int) -> void:
+	for col: int in range(col0, col1):
 		var at := Vector2i(col, row)
 		if not is_open(at):
 			continue
@@ -398,8 +461,8 @@ func _graph_row(row: int) -> void:
 
 ## Diagonales d'une rangée, une fois toutes les arêtes droites posées : une diagonale si les
 ## quatre côtés du carré sont reliés (on ne coupe pas les coins).
-func _diagonal_row(row: int) -> void:
-	for col: int in size.x:
+func _diagonal_row(row: int, col0: int, col1: int) -> void:
+	for col: int in range(col0, col1):
 		var at := Vector2i(col, row)
 		var id := _id(at)
 		if not _astar.has_point(id):

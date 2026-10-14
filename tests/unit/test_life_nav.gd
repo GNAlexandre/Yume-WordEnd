@@ -131,6 +131,28 @@ func test_from_room_to_room_through_the_door() -> void:
 	assert_true(in_corridor, "par le couloir")
 
 
+func test_chunked_build_gives_the_same_grid() -> void:
+	_map = _instance(RDC_SCENE)
+	var whole := LifeNav.for_map(_map)
+	whole.build_now()
+	var chunked := LifeNav.for_map(_map)
+	var steps := 0
+	# Budget d'une microseconde : un morceau de rangée, une pièce de mur ou un décor par pas.
+	while not chunked.build_step(1) and steps < 100000:
+		steps += 1
+	assert_true(chunked.ready)
+	assert_gt(chunked.build_frames, chunked.size.y * 3, "murs, rangs, décors, graphe : pas à pas")
+	assert_eq(chunked.open_count(), whole.open_count())
+	assert_eq(chunked._walk, whole._walk, "mêmes cases praticables")
+	assert_eq(chunked._prop, whole._prop, "mêmes décors")
+	gut.p(
+		(
+			"découpé : %d pas, pas le plus long %.2f ms"
+			% [chunked.build_frames, chunked.build_max_usec / 1000.0]
+		)
+	)
+
+
 func test_around_a_piece_of_furniture() -> void:
 	_map = _corridor_map()
 	var nav := LifeNav.for_map(_map)
