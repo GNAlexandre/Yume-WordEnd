@@ -746,12 +746,12 @@ def cmd_manifest():
     new = "\n".join(kept) + "".join(",\n  " + json.dumps(e, ensure_ascii=False) for e in entries()) + tail
     json.loads(new)
     if new == text:
-        print("manifeste à jour (%d images du lot %s)" % (len(entries()), LOT))
+        print("manifeste à jour (%d images d'intérieur)" % len(entries()))
         return 0
     with open(MANIFEST, "w", encoding="utf-8") as handle:
         handle.write(new)
-    print("manifeste : %d images du lot %s (%d entrée(s) retirée(s))"
-          % (len(entries()), LOT, len(lines) - len(kept)))
+    print("manifeste : %d images d'intérieur (%d entrée(s) retirée(s))"
+          % (len(entries()), len(lines) - len(kept)))
     return 0
 
 

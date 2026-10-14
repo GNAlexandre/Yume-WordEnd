@@ -61,11 +61,22 @@
 [ext_resource type="PackedScene" path="res://src/world/props/infirmary_desk.tscn" id="p_infirmary_desk"]
 [ext_resource type="PackedScene" path="res://src/world/props/mirror_large.tscn" id="p_mirror_large"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/pot_steam.tscn" id="p_pot_steam"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/mixing_bowl_whisk.tscn" id="p_mixing_bowl_whisk"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/milk_jug_stoneware.tscn" id="p_milk_jug_stoneware"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/egg_basket_low.tscn" id="p_egg_basket_low"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/flour_sack_open.tscn" id="p_flour_sack_open"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/butter_dish_open.tscn" id="p_butter_dish_open"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/flan_mould_empty.tscn" id="p_flan_mould_empty"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/meal_lunch.tscn" id="p_meal_lunch"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/tableware_a.tscn" id="p_tableware_a"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/coffee_tray.tscn" id="p_coffee_tray"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/inkwell_quill.tscn" id="p_inkwell_quill"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/crystal_lamp_table.tscn" id="p_crystal_lamp_table"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/book_open_stand.tscn" id="p_book_open_stand"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/vase_flowers.tscn" id="p_vase_flowers"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/medicine_bottles_tray.tscn" id="p_medicine_bottles_tray"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/bandage_rolls.tscn" id="p_bandage_rolls"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/compress_bowl.tscn" id="p_compress_bowl"]
 [ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
@@ -585,6 +596,24 @@ image_offset = Vector3(0, 0, 0)
 [node name="pot_steam_1" parent="Geometry/Cuisine" instance=ExtResource("p_pot_steam")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.05, 1.87)
 
+[node name="mixing_bowl_whisk_1" parent="Geometry/Cuisine" instance=ExtResource("p_mixing_bowl_whisk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.95, 1.05, 1.87)
+
+[node name="milk_jug_stoneware_1" parent="Geometry/Cuisine" instance=ExtResource("p_milk_jug_stoneware")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 1.05, 1.87)
+
+[node name="egg_basket_low_1" parent="Geometry/Cuisine" instance=ExtResource("p_egg_basket_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.05, 1.87)
+
+[node name="flour_sack_open_1" parent="Geometry/Cuisine" instance=ExtResource("p_flour_sack_open")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.85, 1, 4.87)
+
+[node name="butter_dish_open_1" parent="Geometry/Cuisine" instance=ExtResource("p_butter_dish_open")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4, 1, 4.87)
+
+[node name="flan_mould_empty_1" parent="Geometry/Cuisine" instance=ExtResource("p_flan_mould_empty")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 1, 4.87)
+
 [node name="meal_lunch_1" parent="Geometry/Refectoire" instance=ExtResource("p_meal_lunch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.8, 4.47)
 
@@ -594,11 +623,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.8, 7.67)
 [node name="coffee_tray_1" parent="Geometry/Archives" instance=ExtResource("p_coffee_tray")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 1.3, 4.02)
 
+[node name="inkwell_quill_1" parent="Geometry/Archives" instance=ExtResource("p_inkwell_quill")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.9, 1.3, 4.02)
+
 [node name="crystal_lamp_table_1" parent="Geometry/Lecture" instance=ExtResource("p_crystal_lamp_table")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.2, 0.95, 4.77)
 
+[node name="book_open_stand_1" parent="Geometry/Lecture" instance=ExtResource("p_book_open_stand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 0.95, 4.77)
+
 [node name="vase_flowers_1" parent="Geometry/Infirmerie" instance=ExtResource("p_vase_flowers")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.3, 0.7, 11.27)
+
+[node name="medicine_bottles_tray_1" parent="Geometry/Infirmerie" instance=ExtResource("p_medicine_bottles_tray")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.65, 1, 14.62)
+
+[node name="bandage_rolls_1" parent="Geometry/Infirmerie" instance=ExtResource("p_bandage_rolls")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.3, 1, 14.82)
+
+[node name="compress_bowl_1" parent="Geometry/Infirmerie" instance=ExtResource("p_compress_bowl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.2, 0.7, 11.27)
 
 [node name="sous_escalier" type="StaticBody3D" parent="Geometry/Escalier"]
 collision_mask = 0

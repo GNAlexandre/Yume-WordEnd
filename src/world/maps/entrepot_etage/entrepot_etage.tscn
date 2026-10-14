@@ -37,9 +37,14 @@
 [ext_resource type="PackedScene" path="res://src/world/props/plush_pile.tscn" id="p_plush_pile"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/supply_cupboard.tscn" id="p_supply_cupboard"]
 [ext_resource type="PackedScene" path="res://src/world/props/towel_shelf.tscn" id="p_towel_shelf"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/repair_nail_box.tscn" id="p_repair_nail_box"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/letter_sealed_bundle.tscn" id="p_letter_sealed_bundle"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/hearth_fire.tscn" id="p_hearth_fire"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/oil_lamp.tscn" id="p_oil_lamp"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/tea_tray_cheesecake.tscn" id="p_tea_tray_cheesecake"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/thread_spools_pair.tscn" id="p_thread_spools_pair"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/patched_cloth_folded.tscn" id="p_patched_cloth_folded"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/mending_basket.tscn" id="p_mending_basket"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/leak_drip.tscn" id="p_leak_drip"]
 [ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 
@@ -284,6 +289,12 @@ cut_offset = 0.4
 [node name="bed_child_5" parent="Geometry/DortoirD" instance=ExtResource("p_bed_child")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 14.3)
 
+[node name="repair_nail_box_1" parent="Geometry/Willem" instance=ExtResource("p_repair_nail_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45, 0.5, 4.47)
+
+[node name="letter_sealed_bundle_1" parent="Geometry/Chtholly" instance=ExtResource("p_letter_sealed_bundle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.05, 1.77)
+
 [node name="hearth_fire_1" parent="Geometry/Nygglatho" instance=ExtResource("p_hearth_fire")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.1, 1.77)
 
@@ -292,6 +303,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 1.1, 4.02)
 
 [node name="tea_tray_cheesecake_1" parent="Geometry/Nygglatho" instance=ExtResource("p_tea_tray_cheesecake")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.8, 3.87)
+
+[node name="thread_spools_pair_1" parent="Geometry/Ithea" instance=ExtResource("p_thread_spools_pair")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.55, 0.9, 1.72)
+
+[node name="patched_cloth_folded_1" parent="Geometry/Ithea" instance=ExtResource("p_patched_cloth_folded")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.95, 0.9, 1.72)
+
+[node name="mending_basket_1" parent="Geometry/Absentes" instance=ExtResource("p_mending_basket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.6, 0.6, 1.72)
 
 [node name="leak_drip_1" parent="Geometry/Couloir" instance=ExtResource("p_leak_drip")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.45, 0.45, 10.245)

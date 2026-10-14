@@ -523,6 +523,10 @@ def check_turned(m: Map, seuils: list, rooms: list) -> None:
         for b in blk[i + 1:]:
             if (a.extra.get("regard") in ("E", "O") or b.extra.get("regard") in ("E", "O")) and a.rect.inter(b.rect):
                 turned.err(b.line, f"meubles {a.name} {a.rect} et {b.name} {b.rect} qui se chevauchent")
+    for o in m.objects:
+        x, z = o.rect.x0, o.rect.z0
+        if not any(f.rect.has(x, z) for f in turned.furniture):
+            turned.err(o.line, f"objet {o.name} posé hors de tout meuble")
     reach_check(turned, seuils)
     camera_inside(turned, seuils)
     for e in turned.errors:

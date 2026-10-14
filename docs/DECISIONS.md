@@ -2622,3 +2622,52 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   3 images, installation 849 ms ; 1 image/s et 117 draw calls dans l'entrepôt (l'ancienne île :
   1 image/s, 131 ; essai : 2) : le rendu logiciel compare, il ne mesure pas un vrai navigateur.
 - **C5 — cahier des images n° 5** (`docs/ASSETS_HD2D_ILE68.md`) : inventaire par script (CARTE.md, VIE.md, ACTE1.md, cahiers n° 3 et 4, CONTRACT_REQUESTS.md contre `assets/**`, le manifeste et les JSON des planches ; remplaçant = pixels identiques au rendu de la recette) ; 8 lots dans l'ordre du jeu : R0 corrections et vues manquantes (tables en perspective conique, meubles sans vue de flanc ni de dos, règle `<nom>_side` vers l'est, `_back`, `_foot`, projection orthographique oblique à 32°), R1 entrepôt, R2 personnages de l'acte 1, R3 chemin du port, R4 hommes-bêtes et ville, R5 nature et faune, R6 temps et lumière, R7 navires ; priorités redéfinies (1 : une scène d'ACTE1.md la cite ; 2 : densité et vie ; 3 : bonus) ; noms proposés à confirmer par le moteur : `willem_marsh`, `willem_carry`, `willem_piggyback`, `willem_life`, `*_work`, `_side`/`_back`/`_foot`.
+- **I1 — 88 images livrées inscrites au manifeste** : navires (`docs/ASSETS_HD2D_NAVIRES.md`, lots L et S1 à
+  S5, 48 images), cahier n° 4 (O1, O2, P, Q : 24), lot N (4 ciels, `cloud_sea_night`, `sun_window`, 3
+  fenêtres de nuit) et le reste du lot I (`door_room_open`, `bed_curtain`, `towel_rack`, `butter_cake`,
+  `hat_blue`, `dessert_flans`, `drying_frame`). Tailles réelles, genres (`tile`, `tile_h`, `panorama`,
+  `decal` doux, `panel`), lot du cahier d'origine (clé `lot`, chaîne libre : `check --lot S3`), priorité
+  du cahier (2 pour L, 3 pour S2 à S5 et Q : le cahier ne la donne pas). Aucune bande animée dans la
+  livraison. Les images d'intérieur passent par les listes de `tools/hd2d_interior.py` (`SURFACES_I1`,
+  `WALL_PANELS_I1`, `FURNITURE_I1`, `OBJECTS_I1`, `OUTDOOR_POLES`, `LOT_NAMES`) et `manifest` ; les
+  ciels, `sun_window`, `deck_*` et `trail_ribbon_stake` sont des lignes du manifeste. `ground_atlas.png`
+  reste la seule image sans entrée (générée) ; `test_hd2d_assets.gd` le garantit.
+- **I1 — scènes de décor** : meubles et objets d'intérieur par `hd2d_interior.py scenes`
+  (`src/world/props/interior/`) ; profondeurs choisies par taille faute de cahier (0,15 m pour
+  `ship_tool_rack` et `ship_privacy_curtain`, coupés comme le mur ; 1 m pour `ship_boiler`…) ; objets de
+  0,6 m au plus sans collision ni ombre (`ship_compass`, `ship_crystal_lamp` avec lueur, les 24 petits
+  objets) ; `drying_frame` en plein air, deux poteaux comme sa bande. Pont des navires et piquet : lots
+  `L` et `Q` ajoutés à `hd2d_scenes.py` / `test_hd2d_scenes.gd` (avec `N`), catégories `deck_cabin`
+  (boîte de 2 m), `stake`, `deck_hatch` traversable (0,6 m), `deck_railing` en clôture, `deck_vent` et
+  `deck_crates_lashed` ; les images sous `interior/` n'y passent jamais. Les moyeux des hélices de
+  `hd2d_scenes.json` sont ceux des silhouettes refaites (la PR des navires avait changé le test, pas la table).
+- **I1 — recettes de remplaçants** : une image livrée sous le nom d'un remplaçant fait foi et sa recette
+  s'en va (40 recettes de `tools/hd2d_interior_props.py` et `door_armory` retirées ; 22 remplaçants
+  d'intérieur restent, dont les 3 vues de flanc, listés dans docs/INTERIEURS.md) ; `hd2d_assets.py gen --force` et `gen <noms>` ne réécrivent
+  jamais un fichier que sa recette ne dessine plus (`--overwrite-delivered`). Les ~400 recettes des
+  cahiers n° 1 et 2 (`hd2d_ground`, `props`, `nature`, `town`…) restent, hors périmètre : la même garde les
+  protège. `hd2d_assets.py orphans` liste les images sans entrée.
+- **I1 — vues par le nom, orientation par le plan** : `<nom>_side`, `_back`, `_foot` se trouvent à côté
+  de la face (`DecorPanel.view_texture`), aucune scène ne les nomme ; l'orientation est `facing` ou la
+  rotation du nœud. Le plan (`regard=E|O|N|S`, CARTE.md) est la donnée : `interior.json` ne porte pas les
+  meubles (ils sont dans la scène générée), le générateur écrit `facing` sur eux et les tourne d'un quart
+  de tour autour de leur bord arrière quand la vue existe ; les murs de la pièce redisent l'orientation
+  (`InteriorLayout.facing_against_wall`, tolérance 0,25 m, le mur le plus proche l'emporte dans un angle).
+  18 meubles marqués : ceux du plan adossés à un mur est ou ouest dont le cahier commande un flanc (hors
+  lits, escaliers, tas de papiers), plus `armchair_reading` vers le nord (il regarde la fenêtre) ; les
+  lits ne sont pas marqués (aucun n'a la tête au nord dans les plans). Emprise tournée : profondeur
+  d'échelle (`DEPTHS`) en x, largeur du plan en z ; un lit vu par le pied (N sans `_back`) est tourné de
+  même autour de son bord nord. Remplaçants `_side` du canapé, de la grande bibliothèque et de l'armoire
+  de Chtholly (recettes de `hd2d_interior_props.py`, tailles du cahier).
+- **I1 — plan retouché pour les deux états (face et tourné)** : `carte_plans.py check` vérifie les deux ;
+  canapé z 6,5 → 6,6, bureau enterré z 3,9 → 3,6, tas `paper_pile_c` z 5,0 → 5,1, grande bibliothèque
+  z 6,4 → 6,5, point `archives_bureau` (23,35 ; 4,95) → (24,4 ; 4,9) (un disque de 1,2 m n'y passait plus
+  entre le bureau tourné et le canapé), armoire de Chtholly au plan contre le mur sud (z 7,85) : elle
+  remplace le `MOVED` de T2 (vide) et passe, tournée ou non, les tests de caméra. Essai de l'état « toutes les
+  vues livrées » (29 images factices) : cartes de l'entrepôt, tests verts.
+- **I1 — petits objets du cahier n° 4 posés** (13 sur 24) : cuisine (comptoir : jatte au fouet, broc de
+  lait, panier d'œufs ; table : sac de farine, plat de beurre, moule à flan), lecture (lutrin),
+  archives (encrier), infirmerie (plateau de flacons, bandages, cuvette), chambres (courrier, boîte
+  de clous, bobines, pièce reprisée, panier de reprise) ; chacun dans l'emprise de son meuble de face
+  et tourné. Pas posés : la scie et le rabot (aucun établi dans les plans de l'entrepôt) et le lot Q
+  (accessoires de départ : à poser par les scènes S2).
