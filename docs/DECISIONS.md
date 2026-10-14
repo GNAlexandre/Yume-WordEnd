@@ -2622,3 +2622,68 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   3 images, installation 849 ms ; 1 image/s et 117 draw calls dans l'entrepôt (l'ancienne île :
   1 image/s, 131 ; essai : 2) : le rendu logiciel compare, il ne mesure pas un vrai navigateur.
 - **C5 — cahier des images n° 5** (`docs/ASSETS_HD2D_ILE68.md`) : inventaire par script (CARTE.md, VIE.md, ACTE1.md, cahiers n° 3 et 4, CONTRACT_REQUESTS.md contre `assets/**`, le manifeste et les JSON des planches ; remplaçant = pixels identiques au rendu de la recette) ; 8 lots dans l'ordre du jeu : R0 corrections et vues manquantes (tables en perspective conique, meubles sans vue de flanc ni de dos, règle `<nom>_side` vers l'est, `_back`, `_foot`, projection orthographique oblique à 32°), R1 entrepôt, R2 personnages de l'acte 1, R3 chemin du port, R4 hommes-bêtes et ville, R5 nature et faune, R6 temps et lumière, R7 navires ; priorités redéfinies (1 : une scène d'ACTE1.md la cite ; 2 : densité et vie ; 3 : bonus) ; noms proposés à confirmer par le moteur : `willem_marsh`, `willem_carry`, `willem_piggyback`, `willem_life`, `*_work`, `_side`/`_back`/`_foot`.
+
+## X1 — Les îles et la surface (PR « contrats »)
+
+- **X1 — `WorldAtlas`, classe statique** (`src/world/world_atlas.gd`), pas un autoload : aucune
+  ligne de `project.godot` ; les fichiers de `data/world/` sont lus à la demande et gardés en cache,
+  comme `QuestData` ; rien d'une partie n'y vit (l'île courante est dans `GameState`, le voyage dans
+  `WorldManager`) ; elle sert aussi sans arbre (tests) et depuis un `@tool` (`MapGround`).
+- **X1 — Appartenance d'une carte** : la liste `maps` du fichier de l'île fait foi ; `Map.island`
+  la répète dans la scène (défaut `ile_68`, aucune carte existante n'a eu à changer sauf
+  `ile_ancienne`) et `test_world_atlas.gd` vérifie l'accord. Une carte hors de toute île (cartes
+  de test sous `tests/`) n'a pas de règle : `IslandRules.UNRULED`, le comportement d'avant X1.
+- **X1 — L'ancienne île est une île à part** (`data/world/islands/ile_ancienne.json`, `legacy`,
+  numéro 68, Timeres permis par ses règles) plutôt qu'une exception par carte dans `ile_68` : elle
+  part en phase 5 avec son fichier et sa carte. La sortie de test essai ⇄ ile_ancienne change
+  d'île sans voyage (`island_entered` émis).
+- **X1 — Règles en deux couches** : celles du monde (`rules` de `data/world/worlds/<monde>.json`),
+  puis celles de l'île ; une règle absente des deux prend sa valeur d'`UNRULED`. Clés :
+  `enemies_allowed`, `fauna`, `void_below` (`clouds`, `ground`), `sky`, `void_fall` (`last_safe`,
+  `arrival`). Une clé inconnue rend le fichier invalide (ignoré, avertissement), comme les quêtes.
+- **X1 — Garde des Timeres** : `Enemy._ready` (tout Timere qui apparaît : libre, de vague, banc de
+  performance) se retire sans `enemy_spawned` si les règles de sa carte l'interdisent ;
+  `WaveDirector.start` ne lance pas la série ; `FreeEnemies` n'enregistre aucune population. Un
+  Timere ajouté hors d'une carte (sous `Game`) suit la carte courante ; sans carte (tests
+  unitaires), rien ne l'interdit.
+- **X1 — Ciel par défaut (`sky`)** : un préréglage de `data/lighting/`, pris quand la carte n'a pas
+  de `light_preset` et n'est pas un intérieur ; vide : le moment de la journée (Regule Aire). La
+  surface prend `apres_midi` (V5 : « désert gris sous un ciel bleu ») et ne suit donc pas le
+  moment : à revoir quand la surface vivra ses journées (un préréglage de surface par moment).
+- **X1 — Le sol jusqu'à l'horizon** (`void_below = ground`) : `MapGround` pose un cadre de 3 km
+  (`FarGround`) autour de la carte et de sa jupe, 4 cm sous le palier 0, avec le matériau même du
+  sol : le shader borne ses lectures à la carte, la matière du bord se prolonge ; un draw call. La
+  caméra (32°, 30° de champ) ne voit jamais l'horizon : ce sol remplit le haut de l'écran au-delà
+  du bord nord, là où Regule Aire montre sa mer de nuages, qui n'est plus posée (même si la carte
+  touche le vide).
+- **X1 — Ports et quais** : un port = une carte et un marqueur ; le marqueur se nomme
+  `from_dirigeable` (convention des `from_<origine>` ; `from_dirigeable_<suffixe>` s'il y a
+  plusieurs ports sur la carte). On embarque à un `AirshipDock` (interactable, couche 6) posé sous
+  un nœud `Docks` de la carte : `Exits` n'accepte que des `MapExit`. Port provisoire de l'île
+  n° 68 sur la carte `essai` (deux quais : l'île d'essai, la surface) jusqu'à la carte du port
+  (C-port, phase 3), qui reprendra l'id de port `essai` ou en déclarera un autre.
+- **X1 — Le voyage** : `travel()` réutilise le changement de carte d'E1 ; la carte d'arrivée se
+  charge sous la vue du ciel, par tranches de 12 ms (la vue reste fluide), et la vue dure au moins
+  `travel_time` (3,2 s). La vue (`src/world/travel_view.tscn`) est un `CanvasLayer` (couche 90)
+  posé à la racine puis libéré ; la 3D n'est pas dessinée dessous. Elle n'emploie que des images
+  du jeu : le ciel peint du moment (préréglage de `GameState.moment`), la ligne des îles, une île
+  lointaine, la mer de nuages (dégradé d'opacité par sommet), le dirigeable de la ligne
+  (`airship_ferry`) qui tangue, des nuages devant. Texte : `story.json`, `travel/caption`
+  (« En dirigeable, cap sur », puis le nom de l'île sur sa ligne : les noms d'îles commencent par
+  une majuscule).
+- **X1 — La chute** (`void_fall`) : `last_safe` ramène à la dernière place au sol (à 0,3 m près)
+  à plus de 1,5 m du vide, relevée toutes les 4 images physiques ; la hauteur du sol sert de
+  preuve, `is_on_floor()` du joueur immobile clignotant d'une image à l'autre. L'ancienne île garde
+  ses zones (Spawn de la zone). La réapparition après la mort reste au marqueur d'arrivée.
+  `test_m2_maps.gd` (rattrapage sur la carte d'essai) attend désormais le dernier point sûr.
+- **X1 — Contenu par île** : `data/<kind>/<island_id>/<fichier>` (`WorldAtlas.data_path`) ;
+  `find_data` retombe sur `data/<kind>/<fichier>` (les fichiers d'avant la convention restent
+  lus) ; `data_dirs` donne le dossier de l'île puis le dossier commun. Rien n'est déplacé tant que
+  E4, E5 et E6 travaillent : la migration est notée dans `docs/CONTRACT_REQUESTS.md`.
+- **X1 — Les terres grises, remplaçant de couleur** : leurs matières (sable, roche, boue) sont
+  teintées pour neutraliser leur jaune (teinte au-delà de 1 sur le bleu), leurs décors teintés
+  `Color(0.66, 0.7, 0.8)` (`DecorPanel.tint`) ; les falaises (`cliff.png`) restent ocre : une face
+  de roche grise est à commander avec les images de la surface.
+- **X1 — Raccourcis** : `?island=<id>&port=<id>` (Web) ou `-- --island=<id>`, et F6 dans une
+  version de débogage (île suivante de `WorldAtlas.islands()`, sans l'ancienne) ; `?timeres=` est
+  refusé (une ligne au journal) là où les règles n'admettent pas de Timere.

@@ -209,13 +209,18 @@ func test_respawn_and_rescue_on_a_map_without_village() -> void:
 	await wait_transition()
 	var arrival := current_map().marker(&"Spawn")
 	await put_player(Vector3(30.0, 0.2, 22.0), Vector3.LEFT)
+	var stood_at := player.global_position
 	watch_signals(WorldManager)
 	WorldManager.respawn()
 	assert_lt(distance_to(arrival), 0.05, "réapparition au marqueur d'arrivée")
 	player.global_position = Vector3(20.0, WorldManager.FALL_LIMIT - 5.0, 15.0)
 	await frames(3)
 	assert_signal_emitted_with_parameters(WorldManager, "rescued", [ESSAI])
-	assert_lt(distance_to(arrival), 0.05, "rattrapée au marqueur d'arrivée")
+	# (X1) Règle void_fall de l'île n° 68 (data/world/worlds/regule_aire.json) : le dernier point
+	# sûr, là où le joueur se tenait avant la réapparition (aucune image entre les deux).
+	assert_lt(
+		flat_distance(player.global_position, stood_at), 0.2, "rattrapée au dernier point sûr"
+	)
 
 
 func test_only_one_map_in_memory() -> void:

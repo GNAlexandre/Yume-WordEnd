@@ -1,0 +1,46 @@
+{
+  "_comment": "Terres grises, carte d'essai de la surface (lot X1) : 40 × 30 m d'une poussière grise et boueuse (V1, « Entrepôt de fées » ; V5 : « désert gris sous un ciel bleu », roches où s'abriter, vestiges de camp). Bords « land » : le sol se prolonge jusqu'à l'horizon (règle void_below = ground du monde surface, MapGround.FarGround) ; deux buttes de 0,5 et 1 m. Plan lu par tools/map_build.py gen surface_essai ; le jeu ne lit pas ce fichier.",
+  "size": [40, 30],
+  "seed": 527,
+  "materials_scale": 2,
+  "edges": {"north": "land", "east": "land", "south": "land", "west": "land"},
+  "skirt": 16,
+  "spawn": [20, 24],
+  "base": {"level": 0, "material": "poussiere"},
+  "materials": {
+    "poussiere": {
+      "label": "Poussière grise de la surface (sable assourdi)",
+      "layer": "sand",
+      "color": "#a0a09c",
+      "tint": [0.6, 0.71, 0.97]
+    },
+    "gravats": {
+      "label": "Terre craquelée, grise",
+      "layer": "rock",
+      "color": "#808080",
+      "tint": [0.56, 0.66, 0.86]
+    },
+    "roc_gris": {
+      "label": "Roche grise",
+      "layer": "rock",
+      "color": "#606068",
+      "tint": [0.66, 0.78, 1.02]
+    },
+    "boue_grise": {
+      "label": "Boue grise",
+      "layer": "mud",
+      "color": "#5a5a58",
+      "tint": [0.6, 0.74, 0.9]
+    }
+  },
+  "steps": [
+    {"op": "level", "level": 1, "shape": {"ellipse": [9, 9, 7, 4.5], "noise": 1.0, "noise_scale": 2.5}},
+    {"op": "level", "level": 2, "shape": {"ellipse": [8, 8, 3.5, 2.2], "noise": 0.6, "noise_scale": 2}},
+    {"op": "level", "level": 1, "shape": {"ellipse": [32, 7, 6, 3.5], "noise": 1.0, "noise_scale": 2.5, "seed": 2}},
+    {"op": "material", "material": "roc_gris", "shape": {"ellipse": [8, 8, 4.5, 3], "noise": 1.0, "noise_scale": 2, "seed": 3}},
+    {"op": "material", "material": "gravats", "shape": {"ellipse": [28, 18, 6, 4], "noise": 1.4, "noise_scale": 2.5, "seed": 4}},
+    {"op": "material", "material": "gravats", "shape": {"ellipse": [5, 24, 5, 3], "noise": 1.4, "noise_scale": 2.5, "seed": 5}},
+    {"op": "material", "material": "boue_grise", "shape": {"ellipse": [33, 25, 3.5, 2.2], "noise": 1.2, "noise_scale": 2, "seed": 6}, "where": {"level": 0}},
+    {"op": "face", "face": "rock", "shape": {"rect": [0, 0, 40, 30]}, "where": {"levels": [1, 2]}}
+  ]
+}

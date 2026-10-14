@@ -26,6 +26,11 @@
       "text": "Plus loin, bientôt. Le chemin continue, mais on ne le trace pas encore : reviens à l’entrepôt."
     }
   },
+  "travel": {
+    "_comment": "(X1) Voyage entre îles en dirigeable (WorldManager.travel, src/world/travel_view.gd) : texte de la vue du ciel ({island} : nom de l’île d'arrivée, data/world/islands/<id>.json) ; invite des quais (AirshipDock, {island} aussi).",
+    "caption": "En dirigeable, cap sur\n{island}",
+    "dock_prompt": "Embarquer pour {island}"
+  },
   "fall": {
     "_comment": "Rattrapage d’une chute hors de l’île (WorldManager.rescued) : fondu au blanc, puis le message (docs/lore/MONDE.md, section 2.8).",
     "message": "Tes ailes se sont ouvertes : te revoilà au bord."

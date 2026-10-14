@@ -650,3 +650,38 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   (« préréglage » 0,568 au lieu de 0,34) et `test_interior_in_game` (« étalonnage ») échouent dans
   la suite complète, déjà sur f393bb1 seul : la lumière d'Atmosphere habille la carte d'essai
   intérieure par-dessus `interior_light`. Le raccord est la mission de R1 ; T1 n'y touche pas.
+## X1 — îles et surface : ce que les lots suivants adoptent
+- **Toute nouvelle carte** (C-sentier, C-village, C-port, C-colline, C-foret, C-ville,
+  C-montagne, E7) : l'ajouter à la liste `maps` de son île (`data/world/islands/ile_68.json`) et,
+  si c'est un lieu de la carte de l'île, aux `maps` de son lieu (`places`, dont l'id est la
+  `region` de la carte) ; `Map.island` vaut `ile_68` par défaut. `tests/unit/test_world_atlas.gd`
+  refuse une carte rangée nulle part.
+- **C-port** : la carte `port` reprend le port de l'île n° 68 : dans `ile_68.json`, `ports.essai`
+  (ou un nouvel id, et les quais qui le visent) passe sur `port`, marqueur `from_dirigeable` au
+  quai, avec un `AirshipDock` sous un nœud `Docks` ; les deux quais provisoires de `essai`
+  peuvent alors partir.
+- **E7 (navires)** : les dirigeables à quai et leurs intérieurs (`transport_garde`, `barocupot`)
+  sont des cartes d'une île (celle du port) ; « Monter à bord » reste une `MapExit` ;
+  `AirshipDock` (ou le récit) lance `WorldManager.travel(île, port)`. La vue du voyage
+  (`src/world/travel_view.tscn`) peut prendre le navire du port de départ au lieu du ferry.
+- **E4 (la vie)** : ses données vont dans `data/life/ile_68/` (`WorldAtlas.data_path("life",
+  &"ile_68", "<fichier>")`, ou `data_dirs("life", île)` pour lister) ; tant que les fichiers sont
+  à la racine de `data/life/`, `find_data` les trouve encore. Migration : un `git mv` vers
+  `data/life/ile_68/`, sans autre changement si le code passe par `find_data` / `data_dirs`.
+- **E5 (faune)** : `data/fauna/<island_id>/` pour ce qui est propre à une île (ou `data/fauna/` pour
+  les espèces communes) ; avant de faire apparaître un animal, demander
+  `WorldAtlas.rules_for(map_id).fauna` (liste vide pour l'instant : la remplir dans
+  `ile_68.json`, `rules.fauna`, ou par lieu si E5 en a besoin : clé à ajouter par PR « contrats ») ;
+  un animal qui réutilise `Enemy` doit passer outre sa garde des Timeres (`enemies_allowed`), par
+  exemple par une classe fille ou un drapeau d'`EnemyData`.
+- **E6 (récit)** : les scènes et textes propres à une île dans `data/<kind>/ile_68/` (scènes :
+  `data/scenes/ile_68/` si E6 garde ce nom ; textes : `data/texts/ile_68/`). `data/texts/story.json`
+  (textes des systèmes) reste commun ; `data/texts/entrepot.json` (T2, `Examinable.texts_path`)
+  rejoindra `data/texts/ile_68/entrepot.json` avec la migration (défaut d'`Examinable` à changer
+  dans la même PR). Les voyages se déclenchent par `WorldManager.travel(île, port)` ; écouter
+  `EventBus.island_entered` ; `GameState.island` et `known_islands()` sont sauvegardés.
+- **E6 / début de partie** : `WorldManager.START_MAP` reste `ile_ancienne` ; la carte d'arrivée
+  de l'île n° 68 (`arrival_map` : `entrepot`) est là pour le début de partie à l'entrepôt.
+- **Images (cahier, surface)** : une face de falaise grise (`cliff/` pour la surface) et des décors
+  de la surface sans mousse ni automne (roches, ruines, épaves) ; en attendant, les terres grises
+  teintent les leurs.
