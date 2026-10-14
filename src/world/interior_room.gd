@@ -15,14 +15,17 @@ extends StaticBody3D
 ##   rien ne le cache. La coupe glisse d'une limite à l'autre (CUT_SPEED) ; collisions inchangées ;
 ## - portes, fenêtres, éléments de mur : panneaux posés PANEL_GAP m devant le mur ;
 ## - pas de plafond ; collisions (couche 1) : le sol, les murs, les linteaux ;
-## - lumière : chaud et plus sombre que dehors (préréglage « interieur » de la carte,
-##   src/world/materials/lighting_interieur.tres), plus deux cartes de lumière vues de dessus,
-##   bornées à leur pièce : le jour des fenêtres (flaques douces devant elles) et les lampes (halo
-##   autour d'elles), ajoutées par interior_core.gdshaderinc aux sols, aux murs et aux panneaux ;
+## - lumière : celle d'Atmosphere, seule (R1 ; la carte n'en porte aucune) : le préréglage
+##   « interieur » (data/lighting/interieur.tres et interieur_nuit.tres, mêlés selon la part de
+##   nuit du dehors : ambiance, lumière d'ensemble, étalonnage) plus deux cartes de lumière vues
+##   de dessus, bornées à leur pièce : le jour des fenêtres (flaques douces devant elles,
+##   window_tint × window_energy) et les lampes, cheminées et cristaux (halo autour d'elles,
+##   lamp_energy), ajoutées par interior_core.gdshaderinc aux sols, aux murs et aux panneaux ;
 ##   aucune ombre portée, aucune lumière du moteur : rien ne coûte un draw call de plus ;
 ## - un draw call par matière (sol, mur, dessus de mur, image de panneau), plus le vide autour.
-## Moment de la journée (E9) : set_daylight(teinte, énergie), set_lamps(énergie), ou
-## apply_phase(phase), appelée sur EventBus.day_phase_changed (PHASES).
+## Moment de la journée : Atmosphere appelle apply_lighting(réglage) à chaque pose, transitions
+## comprises (HD2DLightTargets) : window_light et window_tint du moment du dehors, lamp_energy ;
+## set_daylight(teinte, énergie) et set_lamps(énergie) règlent la pièce à la main (tests).
 ## Enfants internes (meshes « Floor_… », « Walls_… », « Tops_… », « Panel_… », « Void », formes de
 ## collision) recréés au chargement, aussi dans l'éditeur (sans coupe).
 
@@ -78,14 +81,6 @@ const PLAYER_GROUP := &"player"
 const PART_FACE := 0.0
 const PART_TOP := 1.0
 const PART_LOW := 2.0
-## Moment de la journée (EventBus.day_phase_changed) : [teinte du jour, énergie des fenêtres,
-## énergie des lampes].
-const PHASES := {
-	&"morning": [Color(1.0, 0.97, 0.9), 1.25, 0.3],
-	&"day": [Color(1.0, 0.93, 0.8), 1.0, 0.6],
-	&"evening": [Color(1.0, 0.68, 0.45), 0.6, 1.0],
-	&"night": [Color(0.5, 0.6, 0.95), 0.2, 1.25],
-}
 
 ## Matériaux des panneaux, partagés par image (portes, fenêtres, éléments, meubles InteriorPanel :
 ## le PropBatcher fond les meubles d'une même image en un draw call) et meshes des meubles, en
@@ -106,7 +101,8 @@ static var _shared_owner: int = 0
 ## Coupe au sud du joueur (dans l'éditeur, jamais).
 @export var cut_enabled: bool = true
 @export_group("Lumière")
-## Teinte et énergie du jour qui entre par les fenêtres, énergie des lampes.
+## Teinte et énergie du jour qui entre par les fenêtres, énergie des lampes, cheminées et
+## cristaux : posées par Atmosphere (apply_lighting) ; valeurs de départ : un jour clair.
 @export var window_tint: Color = Color(1.0, 0.93, 0.8):
 	set(value):
 		window_tint = value
@@ -138,8 +134,6 @@ func _ready() -> void:
 	collision_layer = 1
 	collision_mask = 0
 	rebuild()
-	if not Engine.is_editor_hint():
-		EventBus.day_phase_changed.connect(apply_phase)
 	set_process(not Engine.is_editor_hint())
 
 
@@ -203,7 +197,15 @@ func snap_cut() -> void:
 	_set_uniform(&"cut_line", _cut_shown)
 
 
-# --- Moment de la journée (E9) -------------------------------------------------------------
+# --- Lumière d'Atmosphere (R1) --------------------------------------------------------------
+
+
+## Lumière de la pièce sous le réglage posé par Atmosphere (HD2DLightTargets, à chaque pose et
+## à chaque image d'une transition) : le jour des fenêtres (window_light, window_tint : celui du
+## moment du dehors) et les lampes, cheminées et cristaux (lamp_energy).
+func apply_lighting(lighting: HD2DLighting) -> void:
+	set_daylight(lighting.window_tint, lighting.window_light)
+	set_lamps(lighting.lamp_energy)
 
 
 ## Jour qui entre par les fenêtres : teinte et énergie (0 : nuit noire).
@@ -217,13 +219,12 @@ func set_lamps(energy: float) -> void:
 	lamp_energy = energy
 
 
-## Réglage d'un moment de la journée (PHASES ; inconnu : sans effet).
+## Ancienne API (E3) : une phase de la journée (morning, day, evening, night) devient le moment
+## correspondant d'Atmosphere (HD2DLighting.PHASE_MOMENTS), posé tout de suite, qui éclaire la
+## pièce comme le reste ; une phase inconnue est sans effet.
 func apply_phase(phase: StringName) -> void:
-	if not PHASES.has(phase):
-		return
-	var values: Array = PHASES[phase]
-	set_daylight(values[0] as Color, float(values[1]))
-	set_lamps(float(values[2]))
+	if HD2DLighting.PHASE_MOMENTS.has(phase):
+		Atmosphere.set_moment(HD2DLighting.PHASE_MOMENTS[phase], 0.0)
 
 
 # --- Construction ----------------------------------------------------------------------------

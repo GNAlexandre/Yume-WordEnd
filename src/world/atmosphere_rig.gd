@@ -3,9 +3,10 @@ extends Node3D
 ## (E9) Ce que la lumière ajoute à la carte courante, posé par Atmosphere (src/autoload/
 ## atmosphere.gd) comme enfant « AtmosphereRig » de la carte (libéré avec elle) :
 ## - si la carte n'a pas les siens : un WorldEnvironment (ciel peint, ambiance, brouillard :
-##   les réglages de l'île) et un soleil (« Sun », DirectionalLight3D sans ombre). Les cartes ne
-##   portent plus leur lumière (ancien src/world/map_light.tscn) ; l'ancienne île garde ceux
-##   d'island.tscn, que la lumière règle de même ;
+##   les réglages de l'île ; (R1) dans une carte intérieure, fond uni InteriorRoom.VOID_COLOR) et
+##   un soleil (« Sun », DirectionalLight3D sans ombre ; dedans, la lumière d'ensemble des
+##   fenêtres). Les cartes ne portent plus leur lumière (anciens src/world/map_light.tscn et
+##   interior_light.tscn) ; l'ancienne île garde ceux d'island.tscn, que la lumière règle de même ;
 ## - la lumière magique du joueur (V1, « L'Homme sans Marque » : les fées allument une petite
 ##   lumière dans la main) : PlayerLight (OmniLight3D douce) et Orb (l'orbe, bande animée
 ##   assets/hd2d/anim/fairy_light.png), à côté du joueur (groupe « player »), la nuit dehors ;
@@ -71,7 +72,7 @@ static func dress(map: Node) -> AtmosphereRig:
 ## Crée les nœuds ; un environnement et un soleil seulement si la carte n'en a pas.
 func setup(map: Node) -> void:
 	if map.find_children("*", "WorldEnvironment", true, false).is_empty():
-		add_child(_make_environment())
+		add_child(_make_environment(map is Map and (map as Map).interior))
 	if map.find_children("*", "DirectionalLight3D", true, false).is_empty():
 		add_child(_make_sun())
 	player_light = OmniLight3D.new()
@@ -179,7 +180,9 @@ func _follow_player() -> void:
 	player_light.global_position = hand + Vector3.UP * 0.25
 
 
-func _make_environment() -> WorldEnvironment:
+## Environnement d'une carte : le ciel peint dehors ; (R1) dedans, un fond uni, celui du vide
+## autour du bâtiment (InteriorRoom.VOID_COLOR) : aucun ciel ne se voit, rien à dessiner.
+func _make_environment(interior: bool) -> WorldEnvironment:
 	var sky_material := ShaderMaterial.new()
 	sky_material.shader = SKY_SHADER
 	var sky := Sky.new()
@@ -187,6 +190,9 @@ func _make_environment() -> WorldEnvironment:
 	var environment := Environment.new()
 	environment.background_mode = Environment.BG_SKY
 	environment.sky = sky
+	if interior:
+		environment.background_mode = Environment.BG_COLOR
+		environment.background_color = InteriorRoom.VOID_COLOR
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	environment.fog_enabled = true

@@ -8,16 +8,18 @@ extends Node
 ## - préréglage effectif (resolve()) : le light_preset de la carte s'il est rempli (un moment,
 ##   « interieur », ou tout préréglage de data/lighting/) ; sinon « interieur » pour une carte
 ##   intérieure (Map.interior), sinon celui du moment. « interieur » mêle les préréglages
-##   interieur (fenêtres) et interieur_nuit (lampes, cristaux) selon la nuit du dehors, et prend
-##   la couleur de son soleil ; le temps (HD2DWeather : pluie, averse) le modifie ensuite, sans
-##   pluie dedans ;
+##   interieur (jour) et interieur_nuit (lampes, cheminées, cristaux) selon la nuit du dehors, et
+##   prend le jour des fenêtres du moment du dehors et la couleur de son soleil ; le temps
+##   (HD2DWeather : pluie, averse) le modifie ensuite, sans pluie dedans ;
 ## - transition douce (transition_time s, ou la durée demandée) d'un préréglage à l'autre quand
 ##   le moment ou le temps changent ; immédiate au chargement d'une partie (game_loaded) et à
 ##   l'arrivée dans une carte (map_entered, sous le fondu au noir) ;
 ## - pose (HD2DLightTargets, AtmosphereRig) : environnement, ciel, soleil ou lune, mer de
-##   nuages, lanternes, lueur des fenêtres et des cristaux, images de nuit, sol mouillé, lumière
-##   magique du joueur, pluie ; étalonnage et flou de profondeur du post-traitement de la caméra
-##   courante (CameraRig/PostFX/Screen).
+##   nuages, lanternes, lueur des fenêtres et des cristaux, images de nuit, sol mouillé, (R1)
+##   lumière des intérieurs (InteriorRoom : jour des fenêtres, lampes) et direction du soleil du
+##   sol en relief (MapGround.set_sun), teinte des personnages, lumière magique du joueur,
+##   pluie ; étalonnage et flou de profondeur du post-traitement de la caméra courante
+##   (CameraRig/PostFX/Screen). Transitions comprises : tout suit le mélange à chaque image.
 ## La carte courante est WorldManager.current_map_node() : celle que WorldManager a posée, ou la
 ## première carte de l'arbre (démonstration, capture d'une carte seule) ; une carte qui entre
 ## dans l'arbre est habillée à l'image suivante (dress), à son map_entered tout de suite.
@@ -188,7 +190,8 @@ func is_raining() -> bool:
 
 
 ## Teinte des planches des personnages sous le réglage posé (blanc : le couchant ; la nuit,
-## bleutée et plus sombre). CharacterVisual ne la lit pas encore (docs/CONTRACT_REQUESTS.md).
+## bleutée et plus sombre ; blanc sans carte). (R1) CharacterVisual la pose sur son sprite à
+## chaque image, par HD2DLighting.active_sprite_tint() (la même, posée avec le réglage).
 func sprite_tint() -> Color:
 	return _current.sprite_tint if _current != null else Color.WHITE
 
@@ -242,9 +245,11 @@ static func effective_preset_id(map: Node, moment_id: StringName) -> StringName:
 	return moment_id
 
 
-## Lumière d'un intérieur sous le moment du dehors (outdoor) : interieur (jour, les fenêtres)
-## mêlé à interieur_nuit (lampes et cristaux) selon sa part de nuit, la lumière des fenêtres
-## teintée par son soleil ; jamais de lumière du joueur.
+## Lumière d'un intérieur sous le moment du dehors (outdoor) : interieur (jour, lampes éteintes)
+## mêlé à interieur_nuit (lampes, cheminées et cristaux) selon sa part de nuit ; (R1) le jour
+## des fenêtres (window_light, window_tint : flaques de lumière d'InteriorRoom) est celui du
+## dehors, et la lumière d'ensemble (sun_color) est teintée par son soleil ; jamais de lumière
+## du joueur.
 static func interior_for(outdoor: HD2DLighting) -> HD2DLighting:
 	var day := HD2DLighting.preset(HD2DLighting.INTERIOR)
 	var night := HD2DLighting.preset(HD2DLighting.INTERIOR_NIGHT)
@@ -252,6 +257,8 @@ static func interior_for(outdoor: HD2DLighting) -> HD2DLighting:
 		return outdoor.copy()
 	var result := day.blended(night, outdoor.night_amount) if night != null else day.copy()
 	result.sun_color = result.sun_color * outdoor.sun_color.lerp(Color.WHITE, 0.35)
+	result.window_light = outdoor.window_light
+	result.window_tint = outdoor.window_tint
 	result.night_amount = outdoor.night_amount
 	result.player_light = 0.0
 	return result
@@ -263,9 +270,12 @@ func dress(map: Node3D) -> void:
 	_map = map
 	_transitioning = false
 	if map == null or not map.is_inside_tree():
+		# Plus de carte (menu) : plus de réglage, les personnages au naturel.
 		_map = null
 		_targets = null
 		_rig = null
+		_current = null
+		HD2DLighting.set_active_sprite_tint(Color.WHITE)
 		return
 	_rig = AtmosphereRig.dress(map)
 	_targets = HD2DLightTargets.scan(map)

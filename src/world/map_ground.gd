@@ -13,6 +13,8 @@ extends StaticBody3D
 ## - Cliffs : les faces verticales (falaises, talus, murets, contremarches) et le rideau de roche
 ##   sous la côte, un draw call (shaders/map_ground_cliff.gdshader) ;
 ## - CloudSea : la mer de nuages de l'île (shaders/cloud_sea.gdshader), si la carte touche le vide ;
+##   (R1) la seule de la carte : Atmosphere n'en ajoute pas, il règle celle-ci (copie de son
+##   matériau : teinte, côté du soleil, étoiles, image de la nuit) ;
 ## - CollisionShape3D : les triangles mêmes du sol et des faces (on marche exactement sur ce qu'on
 ##   voit) ; Barrier : un mur invisible le long de la côte et des bords « land » de la carte.
 ##
@@ -65,8 +67,6 @@ func _ready() -> void:
 	# Déjà construit si un décalque de la carte l'a demandé avant (triangles_in).
 	if _builder == null:
 		build()
-	if not Engine.is_editor_hint():
-		_follow_sun.call_deferred()
 
 
 ## Lit les données et construit le sol, ses faces, la mer de nuages et la collision.
@@ -231,23 +231,15 @@ func height_image() -> Image:
 	return Image.create_from_data(data.width, data.depth, false, Image.FORMAT_R8, bytes)
 
 
-## Le soleil de la scène (première DirectionalLight3D) donne la direction des ombres des falaises
-## et le côté chaud de la mer de nuages.
-func _follow_sun() -> void:
-	if not is_inside_tree():
-		return
-	var lights := get_tree().root.find_children("*", "DirectionalLight3D", true, false)
-	if lights.is_empty():
-		return
-	set_sun((lights[0] as Node3D).global_basis.z)
-
-
-## Direction du soleil (vers lui) : ombres portées des falaises, côté chaud des nuages.
+## Direction du soleil (vers lui) : ombres portées des falaises, côté chaud des nuages. (R1)
+## Atmosphere l'appelle à chaque pose de la lumière (arrivée sur la carte, chaque image d'une
+## transition : HD2DLightTargets) avec le soleil ou la lune du réglage ; avant, celui de l'île.
 func set_sun(toward_sun: Vector3) -> void:
 	if _ground_material != null:
 		_ground_material.set_shader_parameter(&"toward_sun", toward_sun.normalized())
 	if _clouds != null and _clouds.mesh != null:
-		var clouds := (_clouds.mesh as PlaneMesh).material as ShaderMaterial
+		# Le matériau dessiné : la copie qu'Atmosphere règle (material_override), sinon le sien.
+		var clouds := _clouds.get_active_material(0) as ShaderMaterial
 		var flat := Vector2(toward_sun.x, toward_sun.z)
 		if clouds != null and flat.length_squared() > 0.0001:
 			clouds.set_shader_parameter(&"sun_direction", flat.normalized())

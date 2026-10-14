@@ -14,16 +14,17 @@ const TABLE := "res://tools/hd2d_scenes.json"
 const PROPS_DIR := "res://src/world/props"
 ## Genres du manifeste qui peuvent demander une scène.
 const SCENE_KINDS: Array[String] = ["panel", "anim", "decal", "facade"]
-## Lots du cahier n° 2 ; (E3) les images du lot I (intérieurs) ont leurs scènes par
-## tools/hd2d_interior.py, vérifiées par test_interior_room.gd.
-const CAHIER2_LOTS: Array[String] = ["A", "B", "C", "D", "E", "F", "G"]
+## Lots du cahier n° 2, et (E9) le lot N du cahier n° 3 (pluie, lumière des fées) ; (E3) les
+## images du lot I (intérieurs) ont leurs scènes par tools/hd2d_interior.py, vérifiées par
+## test_interior_room.gd.
+const PLANNED_LOTS: Array[String] = ["A", "B", "C", "D", "E", "F", "G", "N"]
 const META := &"hd2d_category"
 const PPM := 96.0
 ## Moyeux dessinés sur le flanc des navires, mesurés dans les images livrées (px depuis le coin
 ## haut gauche : centre du bout de l'axe de cuivre) ; les hélices s'y posent à 0,1 m près.
 const HUBS := {
-	"airship_ferry": [Vector2(825.0, 497.0)],
-	"airship_barocupot": [Vector2(768.0, 670.0), Vector2(1627.0, 678.0)],
+	"airship_ferry": [Vector2(853.0, 499.0)],
+	"airship_barocupot": [Vector2(789.0, 827.0), Vector2(1613.0, 833.0)],
 }
 const HUB_TOLERANCE := 0.1
 ## Petits objets : image de 0,6 m de haut au plus (58 px) ; au-delà, un objet de la vie bloque.
@@ -41,7 +42,7 @@ func before_all() -> void:
 	_table = _json(TABLE)
 	for entry: Dictionary in _manifest.get("images", []):
 		_by_key[_key(entry)] = entry
-		if String(entry.get("lot", "")) in CAHIER2_LOTS and String(entry["kind"]) in SCENE_KINDS:
+		if String(entry.get("lot", "")) in PLANNED_LOTS and String(entry["kind"]) in SCENE_KINDS:
 			_plan.append([entry, _category(entry)])
 
 

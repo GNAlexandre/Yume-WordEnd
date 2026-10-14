@@ -10,16 +10,17 @@ extends Resource
 ## (E9) Les préréglages sont des données : data/lighting/<id>.tres (preset(id)).
 ## - Un par moment de la journée (GameState.MOMENTS) : aube, matin, apres_midi, couchant (le
 ##   monde de toujours : les valeurs d'island.tscn et de post_fx.gdshader, testé) et nuit ;
-## - interieur et interieur_nuit : la lumière chaude d'un intérieur de jour (fenêtres) et de
-##   nuit (lampes et cristaux), mêlées selon le moment du dehors (Atmosphere) ;
+## - interieur et interieur_nuit : la lumière chaude d'un intérieur de jour (lampes éteintes) et
+##   de nuit (lampes, cheminées et cristaux), mêlées selon la part de nuit du moment du dehors,
+##   qui donne aussi le jour des fenêtres (window_light, window_tint ; Atmosphere) ;
 ## - le temps qu'il fait (pluie, averse) est un HD2DWeather qui modifie un préréglage
 ##   (data/lighting/<temps>.tres, src/world/materials/hd2d_weather.gd).
 ## Atmosphere (src/autoload/atmosphere.gd) choisit le préréglage, le mêle au précédent pendant
 ## une transition (blend_into) et le pose sur la carte courante (HD2DLightTargets). apply(carte)
 ## le pose d'un coup sur une carte, sans transition (ancienne API de H5, gardée).
 ## Les planches des personnages ne sont pas éclairées (AnimatedSprite3D non ombré) :
-## active_sprite_tint() dit la teinte que le dernier réglage posé leur donne (CONTRACT_REQUESTS,
-## H5 puis E9).
+## active_sprite_tint() dit la teinte que le dernier réglage posé leur donne ; (R1)
+## CharacterVisual la pose sur son sprite à chaque image.
 
 ## Méta d'une Light3D : son énergie avant tout réglage (lanterns × lamp_energy).
 const BASE_ENERGY_META := &"hd2d_base_energy"
@@ -95,6 +96,15 @@ static var _blend_properties: Array = []
 @export_range(0.0, 1.0) var night_amount: float = 0.0
 ## (E9) Lumière magique du joueur (0 : éteinte, 1 : pleine ; Atmosphere en règle l'énergie).
 @export_range(0.0, 1.0) var player_light: float = 0.0
+
+@export_group("Intérieurs")
+## (R1) Jour qui entre par les fenêtres d'un intérieur (InteriorRoom : flaques de lumière devant
+## elles, lueur des vitres) : énergie (0 : aucun ; le matin le plus fort, la nuit un peu de lune)
+## et couleur. Dans un moment (aube… nuit), c'est la lumière du dehors à ce moment : un intérieur
+## sous le préréglage « interieur » prend celle du moment du dehors (Atmosphere.interior_for),
+## pendant que ses lampes, cheminées et cristaux suivent lamp_energy (part de nuit).
+@export var window_light: float = 1.0
+@export var window_tint: Color = Color(1.0, 0.93, 0.8)
 
 @export_group("Pluie")
 ## (E9) Pluie (0 : aucune, 1 : averse) et sol mouillé (0 : sec, 1 : trempé) ; posés par le temps

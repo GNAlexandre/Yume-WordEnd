@@ -41,11 +41,31 @@ func test_walk_in_the_interior_and_out_by_the_front_door() -> void:
 	var map_ref: WeakRef = weakref(map)
 	assert_lt(distance_to(map.spawn()), 0.3, "posé au Spawn, dans l'entrée")
 	assert_eq(player.camera_rig.limits, map.bounds(), "caméra bornée à l'étage")
-	var inside := load("res://src/world/materials/lighting_interieur.tres") as HD2DLighting
+	# (R1) La lumière d'Atmosphere : le préréglage « interieur » sous le moment du dehors.
+	assert_null(map.get_node_or_null(^"Light"), "la carte ne porte aucune lumière")
+	assert_eq(Atmosphere.preset_id(), HD2DLighting.INTERIOR, "préréglage des intérieurs")
+	var inside := Atmosphere.resolve()
 	assert_almost_eq(float(_post(&"vignette")), inside.vignette, 0.001, "étalonnage intérieur")
 	var room := _room()
+	assert_almost_eq(room.lamp_energy, inside.lamp_energy, 0.001, "lampes de la pièce")
 	await frames(2)
 	assert_eq(room.cut_line(), 21.0, "dans l'entrée : coupe sur son mur sud")
+	# La nuit tombe dehors : les fenêtres s'éteignent, les lampes s'allument, Chtholly se teinte.
+	var day_windows := room.window_energy
+	var moment := GameState.moment
+	Atmosphere.set_moment(&"nuit", 0.0)
+	await frames(2)
+	assert_lt(room.window_energy, day_windows, "fenêtres de nuit")
+	assert_gt(room.lamp_energy, inside.lamp_energy, "lampes de nuit")
+	var sprite := player.get_node(^"Visual/Sprite") as AnimatedSprite3D
+	var tint := HD2DLighting.active_sprite_tint()
+	assert_ne(tint, Color.WHITE, "teinte de la nuit")
+	assert_true(
+		sprite.modulate.is_equal_approx(Color(tint.r, tint.g, tint.b)),
+		"Chtholly teintée : %s (%s)" % [sprite.modulate, tint]
+	)
+	Atmosphere.set_moment(moment, 0.0)
+	await frames(2)
 	# Vers le nord, par l'arche de l'entrée, jusque dans le couloir.
 	assert_true(
 		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 12.4, 6.0),
@@ -70,6 +90,9 @@ func test_walk_in_the_interior_and_out_by_the_front_door() -> void:
 	assert_eq(WorldManager.current_map(), WorldManager.LEGACY_MAP, "de retour sur l'île")
 	await frames(2)
 	assert_null(map_ref.get_ref(), "l'intérieur est libéré")
-	var outside := HD2DLighting.for_phase(&"day")
+	# (R1) Dehors, la lumière du moment (celle de l'île au couchant), plus celle de l'intérieur.
+	var outside := HD2DLighting.preset(GameState.moment)
+	assert_eq(Atmosphere.preset_id(), GameState.moment, "préréglage du moment")
 	assert_almost_eq(float(_post(&"vignette")), outside.vignette, 0.001, "étalonnage du dehors")
+	assert_ne(outside.vignette, inside.vignette, "il a changé")
 	assert_eq(HD2DLighting.active_sprite_tint(), outside.sprite_tint, "personnages du dehors")

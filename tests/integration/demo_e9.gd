@@ -7,7 +7,11 @@ extends Node
 ##   E9_SHOTS=<dossier> : où écrire les captures (défaut build/shots/e9) ;
 ##   E9_VIEWS=<liste>   : vues « lieu:moment:temps » séparées par des virgules (défaut : toutes,
 ##                        VIEWS) ; lieu = village (l'entrepôt de l'ancienne île), bord (la côte
-##                        ouest), essai, ou dedans (la carte d'essai prise pour un intérieur) ;
+##                        ouest), essai, dedans (la carte d'essai prise pour un intérieur),
+##                        (R1) refectoire et couloir (l'intérieur d'essai entrepot_rdc_essai : sa
+##                        lumière, fenêtres et lampes), relief (essai_relief, au bord du vide au
+##                        nord : sol en relief, mer de nuages), falaise (essai_relief, au pied de
+##                        l'escalier : ombres des falaises selon le soleil) ;
 ##   E9_FRAMES=<n>      : images attendues avant chaque capture (défaut WAIT_FRAMES).
 ## Une ligne par capture dans le journal : « E9 vue <nom> : luminance <l> (min LUMA_FLOOR), centre
 ## <c> (min CENTER_FLOOR), <d> draw calls, <p> primitives, lumière du joueur <a>, pluie <oui|non> »,
@@ -38,6 +42,14 @@ const VIEWS: Array[String] = [
 	"dedans:nuit:clair",
 	"bord:couchant:clair",
 	"bord:nuit:clair",
+	"refectoire:matin:clair",
+	"refectoire:couchant:clair",
+	"refectoire:nuit:clair",
+	"couloir:matin:clair",
+	"couloir:couchant:clair",
+	"couloir:nuit:clair",
+	"relief:matin:clair",
+	"relief:nuit:clair",
 ]
 ## Où se tient le joueur dans le village (zone, position locale, direction) : la vue
 ## « village » de tests/integration/demo_hd2d.gd ; « bord » : la côte ouest du Couchant, la mer
@@ -45,6 +57,15 @@ const VIEWS: Array[String] = [
 const SPOTS := {
 	"village": [&"village", Vector3(-5.0, 0.0, -2.5), Vector3(1.0, 0.0, 0.0)],
 	"bord": [&"dunes", Vector3(-19.0, 0.0, -4.0), Vector3(0.0, 0.0, -1.0)],
+}
+## (R1) Lieux d'autres cartes : carte, position sur la carte, direction (les vues « refectoire »
+## et « couloir » de demo_interieur.gd, « belvedere » et « escalier » de demo_e2_relief.gd : la
+## falaise, ses ombres portées selon le soleil du moment).
+const MAP_SPOTS := {
+	"refectoire": [&"entrepot_rdc_essai", Vector3(8.5, 0.0, 6.4), Vector3(0.0, 0.0, -1.0)],
+	"couloir": [&"entrepot_rdc_essai", Vector3(13.6, 0.0, 11.7), Vector3(1.0, 0.0, 0.0)],
+	"relief": [&"essai_relief", Vector3(45.0, 3.0, 6.0), Vector3(0.0, 0.0, -1.0)],
+	"falaise": [&"essai_relief", Vector3(27.5, 0.0, 33.5), Vector3(-1.0, 0.0, -1.0)],
 }
 const WAIT_FRAMES := 24
 ## Luminance moyenne (0..1, Rec. 709 sur les valeurs affichées) en deçà de laquelle une vue est
@@ -138,8 +159,12 @@ func _run() -> void:
 
 
 ## Pose le joueur dans l'ancienne île (village, bord) ou au Spawn de la carte d'essai (dedans :
-## la même, devenue un intérieur, sous le préréglage « interieur »).
+## la même, devenue un intérieur, sous le préréglage « interieur »), ou (R1) à sa place sur une
+## autre carte (MAP_SPOTS).
 func _stage(place: String) -> void:
+	if MAP_SPOTS.has(place):
+		await _stage_map(MAP_SPOTS[place])
+		return
 	if place == "essai" or place == "dedans":
 		WorldManager.enter_map(&"essai")
 		var map := WorldManager.current_map_node()
@@ -156,6 +181,33 @@ func _stage(place: String) -> void:
 		_player.velocity = Vector3.ZERO
 		_player.set_aim_direction(spot[2] as Vector3, true)
 	for _wait in 6:
+		await get_tree().process_frame
+
+
+## (R1) Le joueur à sa place sur une carte (MAP_SPOTS), au sol, caméra recalée, et la coupe d'un
+## intérieur posée.
+func _stage_map(spot: Array) -> void:
+	var at := spot[1] as Vector3
+	WorldManager.enter_map(spot[0] as StringName, &"Spawn", at)
+	var map := WorldManager.current_map_node()
+	var ground := map.get_node(^"Ground")
+	var height := at.y
+	if ground is MapGround:
+		height = (ground as MapGround).height_at(at.x, at.z) + 0.05
+	_player.global_position = map.to_global(Vector3(at.x, height, at.z))
+	_player.velocity = Vector3.ZERO
+	_player.set_aim_direction(spot[2] as Vector3, true)
+	_player.reset_physics_interpolation()
+	_player.camera_rig.snap()
+	if ground is InteriorRoom:
+		(ground as InteriorRoom).snap_cut()
+	for _wait in 6:
+		await get_tree().process_frame
+	# Le nom de la carte s'efface avant les mesures (les vues d'un même lieu se comparent).
+	var fade := _game.get_node_or_null(^"UI/MapFade")
+	for _wait in 600:
+		if fade == null or String(fade.call(&"title_text")).is_empty():
+			break
 		await get_tree().process_frame
 
 
