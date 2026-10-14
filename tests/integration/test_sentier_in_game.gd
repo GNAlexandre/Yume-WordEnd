@@ -1,8 +1,7 @@
 extends "res://tests/stubs/m2_game_test.gd"
 ## (C1) Le sentier et le marais dans la vraie partie (main.tscn, appuis réels) : de l'entrepôt au
 ## sentier par la sortie à pied (on arrive sur from_entrepot), le long de la levée jusqu'au marais
-## où
-## l'on descend par la rampe (−0,5 m, eau basse : on y marche) ; la nuit, la lumière des fées du
+## où l'on descend par la rampe (−0,5 m, eau basse : on y marche) ; la nuit, la lumière des fées du
 ## joueur est allumée ; au chemin de la ville, la rampe descend et l'écriteau « Plus loin, bientôt »
 ## s'offre à la lecture ; à l'est, la sortie à pied mène au port d'attente et l'on en revient sur
 ## from_port ; puis le retour à l'entrepôt, sur from_sentier.

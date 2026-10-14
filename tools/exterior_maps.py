@@ -100,6 +100,7 @@ WAITING_SIZE = (32, 24)
 BASIS = {"N": "1, 0, 0, 0, 1, 0, 0, 0, 1", "S": "-1, 0, 0, 0, 1, 0, 0, 0, -1",
          "E": "0, 0, -1, 0, 1, 0, 1, 0, 0", "O": "0, 0, 1, 0, 1, 0, -1, 0, 0"}
 
+
 def f(v):
     s = ("%.3f" % v).rstrip("0").rstrip(".")
     return "0" if s in ("-0", "") else s
@@ -121,12 +122,6 @@ def exists(map_id):
 
 def is_waiting(map_id):
     return map_id in WAITING
-
-
-def is_built(map_id):
-    """Une carte qui a sa recette, ou une carte du dépôt qui n'est pas d'attente (les intérieurs,
-    le toit…) : une sortie qui y mène n'est plus provisoire."""
-    return map_id not in WAITING and exists(map_id)
 
 
 # --- Le sol d'une carte d'attente ------------------------------------------------------------------

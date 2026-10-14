@@ -1,15 +1,12 @@
 extends "res://tests/stubs/c1_exterior_test.gd"
 ## (C1) La carte sentier, le sentier et le marais (src/world/maps/sentier/, plan de
-## docs/lore/CARTE.md,
-## section 4, écrite par tools/exterior_maps.py). Base commune tests/stubs/c1_exterior_test.gd
-## (plan, sorties, marqueurs, points, circulation à pied, rien ne cache le joueur, densité, sol nu,
-## draw calls, aucune lumière), plus :
+## docs/lore/CARTE.md, section 4, écrite par tools/exterior_maps.py). Base commune
+## tests/stubs/c1_exterior_test.gd (plan, sorties, marqueurs, points, circulation à pied, rien ne
+## cache le joueur, densité, sol nu, draw calls, aucune lumière), plus :
 ## - les sorties vers l'entrepôt et le port (carte d'attente) ; le chemin de la ville n'a pas de
-##   sortie
-##   tant que ville_haute n'existe pas, un écriteau à sa place ;
+##   sortie tant que ville_haute n'existe pas, un écriteau à sa place ;
 ## - le relief : lisière +1 m, marais −0,5 m (eau basse praticable), levée du sentier à 0, chemin de
-##   la
-##   ville qui descend par sa rampe, les deux descentes de la levée dans le marais ;
+##   la ville qui descend par sa rampe, les deux descentes de la levée dans le marais ;
 ## - les décors du plan et les images du cahier n° 5 (lot R3) ;
 ## - le point premiere_embuscade de ACTE1.md sur le sentier, les places de la vie en plus du plan ;
 ## - la carte ne porte aucune lumière : la nuit est celle d'Atmosphere et de la lumière des fées.

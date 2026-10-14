@@ -2,8 +2,7 @@ extends GutTest
 ## (C1) Base des tests des cartes du dehors construites par tools/exterior_maps.py
 ## (tests/unit/test_sentier.gd, et les cartes de la phase 3 qui suivent), dont ils héritent par
 ## chemin (stub sans class_name). Sur le modèle de tests/unit/test_entrepot.gd (lot T1). Chaque
-## carte
-## suit son plan de docs/lore/CARTE.md (bloc ```plan, relu ici par plan_lines) :
+## carte suit son plan de docs/lore/CARTE.md (bloc ```plan, relu ici par plan_lines) :
 ##
 ## - exports de la Map (nom, lieu, taille, bornes de caméra) et contrat des cartes ;
 ## - sorties, marqueurs, places réservées et points nommés du plan, à leur place ; une sortie vers
@@ -12,8 +11,8 @@ extends GutTest
 ## - règle de caméra (CARTE.md 0.3) : depuis la caméra du jeu, bornée comme CameraRig.limits, aucun
 ##   mur ni toit ne cache le joueur où qu'il se tienne, et aucun décor opaque (hors premier plan,
 ##   qui s'efface autour de lui, décalques et alpha doux) ne cache sa tête (1,4 m) ;
-## - densité mesurée par écran, de la vie dans chaque vue ; aucun sol nu de plus de 6 × 6 m hors
-##   des places ;
+## - densité mesurée par écran, de la vie dans chaque vue ; aucun sol nu de plus de 6 × 6 m hors des
+##   places ;
 ## - draw calls : les décors fondus dans le champ, sur une grille de points de vue, plus le reste
 ##   (sol, personnages, interface, post-traitement), tiennent dans le budget (200) ;
 ## - aucune lumière : ni lampe (Light3D) ni lampadaire dans une carte sans lumière (V1).

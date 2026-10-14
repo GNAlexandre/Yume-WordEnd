@@ -685,3 +685,22 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
 - **Images (cahier, surface)** : une face de falaise grise (`cliff/` pour la surface) et des décors
   de la surface sans mousse ni automne (roches, ruines, épaves) ; en attendant, les terres grises
   teintent les leurs.
+
+- **C1 — premier plan suspendu** (E10, cahier n° 5, section 5.1 : `fg_canopy_a`, `fg_canopy_b`) : un
+  panneau accroché en haut de l'écran au-dessus du joueur (une couche de l'interface, ou un
+  `DecorPanel` qui suit la caméra). En attendant, les voûtes du sentier sont des panneaux de premier
+  plan posés en l'air à 2,6 m (`tools/exterior_recipes/sentier.py`, `CANOPY_LIFT`), qui s'effacent
+  devant le joueur ; quand le moteur les accroche à l'écran, les retirer de la recette.
+- **C1 — préréglage `nuit_sans_lune`** (E9) : CARTE.md (4.2) l'appelle pour le sentier, il n'existe pas
+  (`data/lighting/` : `nuit` seulement, une nuit claire). Le sentier de nuit de l'acte 1 (jour 1 :
+  « on ne voit pas ses pieds ») le demande : plus sombre que `nuit`, la lumière des fées du joueur
+  restant seule à éclairer. Mesure du sentier avec `nuit` dans docs/DECISIONS.md (C1) : l'écran à 0,12,
+  autour du joueur 0,2 avec sa lumière. Une fois le préréglage posé, c'est le moment de la scène (E6) qui
+  le choisit, ou `light_preset` de la carte (un écart : la carte serait noire aussi les autres nuits).
+- **C1 — images du lot R3 livrées** : quand le cahier livre `marsh_reed_wall`, `path_edge_ferns`,
+  `path_root_step`, `fg_canopy_a`, `bog_pool_a`, `path_stones_a/b`, elles remplacent les remplaçants
+  du même nom (même taille) sans toucher au code ; retirer alors leurs recettes de
+  `tools/hd2d_sentier.py` et leurs entrées du manifeste (lot I1).
+- **C1 — sortie `vers_ville` du sentier** : la carte `ville_haute` (C-ville) n'existe pas ; sa
+  sortie s'écrit d'elle-même dès qu'elle existe (`python3 tools/exterior_maps.py gen sentier`, qui retire
+  aussi l'écriteau) ; elle demande le marqueur `from_sentier` dans `ville_haute`.

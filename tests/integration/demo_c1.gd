@@ -1,17 +1,14 @@
 extends Node
 ## (C1) Démonstration des cartes du dehors de la phase 3 (le sentier et le marais, le port
-## d'attente) :
-## la vraie partie (game.tscn), posée sur la carte par WorldManager.enter_map, avec la lumière
-## d'Atmosphere (E9), le joueur et sa caméra fixe (post-traitement compris).
+## d'attente) : la vraie partie (game.tscn), posée sur la carte par WorldManager.enter_map, avec la
+## lumière d'Atmosphere (E9), le joueur et sa caméra fixe (post-traitement compris).
 ##
 ## Captures : C1_MAP=<carte> C1_VIEW=<vue> [C1_MOMENT=nuit] [C1_LIGHT=off] tools/screenshot.sh
 ## res://tests/integration/demo_c1.tscn build/shots/c1_<carte>_<vue>.png 60
-##   sentier : entree (défaut), ouest, milieu, marais, embuscade, berge, est, fourche, ville, large
-## ;
-##   port : entree.
+##   sentier : entree (défaut), ouest, milieu, marais, embuscade, berge, est, fourche, ville,
+##   large ; port : entree.
 ## C1_LIGHT=off éteint la lumière magique du joueur (le sentier de nuit sans lumière) ;
-## C1_WEATHER=pluie.
-## Draw calls et primitives sont écrits dans le journal (« C1 vue … »).
+## C1_WEATHER=pluie. Draw calls et primitives sont écrits dans le journal (« C1 vue … »).
 
 const GAME_SCENE := preload("res://src/game.tscn")
 ## Où se tient le joueur (position sur la carte, direction regardée, zoom : distance de la caméra,

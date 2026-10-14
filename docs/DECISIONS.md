@@ -2687,3 +2687,93 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **X1 — Raccourcis** : `?island=<id>&port=<id>` (Web) ou `-- --island=<id>`, et F6 dans une
   version de débogage (île suivante de `WorldAtlas.islands()`, sans l'ancienne) ; `?timeres=` est
   refusé (une ligne au journal) là où les règles n'admettent pas de Timere.
+
+## C1 — L'outil des cartes du dehors et le sentier (cartes `sentier`, `port` d'attente)
+- **C1 — `tools/exterior_maps.py`** (`gen`, `check`, `places`, `props` ; mode d'emploi en tête du
+  fichier et dans PLAN.md, « (C1) Les cartes du dehors ») : les scripts de travail de T1 (hors
+  dépôt) sont repris, généralisés (`tools/exterior_pose.py` : la pose et la règle de caméra ;
+  `tools/exterior_ground.py` : le sol déduit du plan ; `tools/exterior_recipes/<id>.py` : une recette
+  par carte) et rangés dans `tools/`. **Preuve** : `gen entrepot` redonne `entrepot.tscn` à l'octet,
+  sauf les quatre lignes `metadata/plan_target_*` des deux portes (la cible provisoire d'avant T2 n'a
+  plus de raison d'être : elles ne s'écrivent que si la sortie est provisoire) ; le sol et les images
+  de `data/maps/entrepot/` sont identiques ; `test_entrepot.gd` reste vert. `check` compare les fichiers
+  écrits à ce que l'outil écrirait (code 1 sinon), liste les écarts au plan et les avertissements de
+  la règle de caméra (quatre pour l'entrepôt, connus de T1 : marsh_snag, play_goal, thicket_c,
+  firewood_pile, sans variante de premier plan).
+- **C1 — sortie vers une carte absente** : provisoire si la recette en donne une (`provisional`),
+  sinon omise (`omit_if_missing`) ; l'outil la remet dès que la carte existe (`gen` relancé). Le
+  chemin de la ville du sentier n'a donc **pas de sortie vers `ville_haute`** tant que cette carte
+  n'existe pas : un écriteau « Plus loin, bientôt » (`waiting_sign_fg`) au bout du chemin ; le
+  marqueur `from_ville_haute` est écrit quand même. Une carte d'attente n'a que la sortie de retour
+  vers une carte construite (le port : `vers_sentier`).
+- **C1 — cartes d'attente par l'outil** : `village`, `colline`, `foret_profonde` redonnent les fichiers
+  de T1 à l'octet ; leur nom, leur lieu, la sortie de retour et ses marqueurs viennent maintenant du
+  plan (CARTE.md). Le **port** (`port`, 32 × 24 m, sortie `vers_sentier` → `sentier`, `from_port`,
+  arrivée `from_sentier`) entre dans `ile_68.json` (`maps`, lieu `port`) ; le port provisoire des
+  dirigeables reste sur `essai` jusqu'à la vraie carte (C-port).
+- **C1 — sol du sentier** (`data/maps/sentier/plan.json`) : paliers du plan (lisière +1 m, marais et
+  chemin de la ville −0,5 m), rampe de la ville, faces en talus de terre. Ajouts : deux descentes de
+  la levée dans le marais (x 33 → 36 et 52 → 55, z 18 → 20, mousse sous les pieds) : on y descend
+  sans sauter, comme les PNJ d'E4 ; eau basse du marais libre au milieu (rectangle bruité de 1,5 m),
+  tourbe sur les berges, six îlots de tourbe où poussent les touradons ; berges du creux du chemin
+  de la ville bruitées (faiblement : le bruit de `map_build` ne déplace le bord que d'une case) ;
+  plaques de mousse et de feuilles au bord du sentier. `path_overgrown` (cahier n° 5, « à confirmer »)
+  est peint en `chemin` (path_dirt_b) **sur la bande du chemin seulement** (1,8 m de terre dans la
+  bande libre de 3 m), pas sur le rectangle de 14 × 16 m du plan au sud-est : un tapis de terre nue de
+  cette taille contredit le sentier mangé d'herbe de V3.
+- **C1 — décor du sentier** : tout le plan (aulnes, roseaux, touradons, souche, mares, nénuphars,
+  pierres, racine, fougères de bord, voûtes, fourré) à ses cotes ; kits par bande (lisière : rang
+  d'arbres devant cinq pans de 16 m ; deux pans dressés à l'ouest et à l'est du marais ; marais :
+  rideau de roseaux, roseaux, massettes, touradons, mares, brume ; levée : pierres, herbes, fougères,
+  feuilles, ombres de feuillage ; sud : grands troncs rares, buissons et fougères de premier plan ;
+  fourche : forêt des deux côtés, mousse, cairn). Au sud du sentier la caméra est près des arbres
+  (21 m, 32°) : **pas de grands arbres serrés** (un pin de 11 m à 5 m au sud du joueur couvre
+  l'écran), deux troncs en tout et des arbres moyens à 8 m les uns des autres. Pas de lucioles
+  (CARTE.md 4.2 : absentes en fin d'automne), pas de rais de lumière (leur image de nuit n'existe pas :
+  le sentier de nuit resterait éclairé), pas de `stepping_stones` (pierres de gué bleutées : le
+  sentier a les siennes, `path_stones_a/b`).
+- **C1 — règle de caméra du sentier** : le rideau de roseaux (2 m) et l'écriteau d'attente (2,4 m)
+  se dressent au sud d'endroits où l'on marche : variantes `marsh_reed_wall_fg` et `waiting_sign_fg`
+  (premier plan, `tools/exterior_props.py`), que `Pose.place` choisit seule. Les deux voûtes de
+  feuillage (`fg_canopy_a`) sont des panneaux de premier plan **posés en l'air** à 2,6 m : le premier
+  plan accroché à l'écran (cahier n° 5 : « format à confirmer par E10 ») n'existe pas encore
+  (docs/CONTRACT_REQUESTS.md). `test_sentier.gd` vérifie que ni mur ni décor opaque ne cache le joueur
+  (pieds, taille, tête) depuis 1 546 places.
+- **C1 — images du lot R3** : sept remplaçants au manifeste (lot `R3`, `tools/hd2d_sentier.py`,
+  scènes dans `tools/exterior_props.py`) : `props/marsh_reed_wall` (384 × 192, raccord), `path_edge_ferns`
+  (384 × 106, raccord), `path_root_step` (192 × 58), `fg_canopy_a` (768 × 384, ancre libre : un
+  panneau en l'air), `decals/bog_pool_a` (288 × 192), `path_stones_a` (192 × 144), `path_stones_b`
+  (144 × 96). Seul `hd2d_assets.py` change (`recipes()` lit le nouveau module). La tuile
+  `ground/path_overgrown` et les images de prio 3 (`bog_pool_b`, `fg_canopy_b`, `willow_pollard`)
+  ne sont pas dans le plan : non faites.
+- **C1 — places de la vie en plus du plan** (`PLACES_WHY`, `Life/Places`, listées dans CARTE.md par
+  `exterior_maps.py places`) : `sentier_ouest`, `sentier_milieu`, `sentier_est`, `fourche_ville`
+  (passants de VIE.md), `marais_berge_ouest`, `marais_berge_est` (grenouilles, libellules),
+  `corbeau_perchoir` (la souche), `lisiere_renard`, `merle_sol` (VIE.md, faune). Une scène de E4 ou
+  d'E5 les prend par leur nom ; `premiere_embuscade` (16 ; 23) est celui d'ACTE1.md.
+- **C1 — la nuit** : aucune lampe dans la carte (V1) ; la nuit est le préréglage `nuit` d'E9 (le
+  `nuit_sans_lune` de CARTE.md n'existe pas : demandé dans CONTRACT_REQUESTS.md) et la lumière des
+  fées du joueur (4 m). Mesure (luminance moyenne, capture 1280 × 720, vues milieu / embuscade /
+  marais) : jour 0,32 / 0,32 / 0,30 ; nuit avec la lumière du joueur 0,12 / 0,12 / 0,11 sur l'écran,
+  **0,23 / 0,20 / 0,18 autour du joueur** (un rond de lumière net sur un fond à 0,10) ; nuit sans
+  lumière (`Atmosphere.LIGHT_OFF`) 0,11 / 0,11 / 0,10 partout : le sol et les roseaux restent devinés,
+  on ne voit pas le sentier mais on ne se perd pas non plus. Le sentier est donc lisible avec la
+  lumière des fées ; le noir complet de V1 serait un préréglage plus sombre (E9).
+- **C1 — densité mesurée** (écran de 20 × 20 m autour du point visé, décors debout et décalques,
+  `test_sentier.gd`) : entrée 97, ouest 113, milieu 108, marais 90, embuscade 114, berge 135, est 83,
+  fourche 119, chemin de la ville 122 (plan : 80 à 120 ; la berge et le chemin de la ville, entre
+  roseaux et mousse, jusqu'à 140). Aucun carré de 6 × 6 m nu hors de la place `embuscade`. De la vie
+  dans chaque vue : roseaux qui ondulent (`reeds_sway`), feuilles qui tombent, oiseaux.
+- **C1 — mesures** (Xvfb, `tests/integration/demo_c1.tscn`, couchant ; nuit : +1) : draw calls
+  entrée 112, ouest 113, milieu 92, marais 45, embuscade 85, berge 96, est 102, fourche 108, chemin de
+  la ville 126, vue large 111 (budget 200 ; la carte d'attente du port : 18) ; `test_sentier.gd` en
+  borne le pire cas sur une grille de 6 m : 107 lots de décor + 45 d'ailleurs. Banc headless
+  (`tools/map_bench.gd`, ile_ancienne → sentier ⇄ essai) : chargement 88 ms à chaud, 353 ms à froid,
+  installation 188 à 260 ms, total 0,9 à 1,1 s ; 2 731 nœuds (l'entrepôt : 4 112), mêmes comptes à
+  chaque visite, 0 échec.
+- **C1 — tests** : `tests/unit/test_sentier.gd` (23 : plan, exports, sorties, marqueurs, points, marche,
+  caméra, densité, sol nu, draw calls, aucune lumière, relief, décors et images R3, voûtes, places de
+  la vie) sur la base `tests/stubs/c1_exterior_test.gd` (réutilisable par les cartes qui suivent),
+  `tests/unit/test_exterior_maps.gd` (4 : `check` de l'outil, cartes d'attente, `port` dans l'île,
+  listes de places), `tests/integration/test_sentier_in_game.gd` (1 : de l'entrepôt au sentier, au
+  marais, à la rampe de la ville, au port d'attente, et retour).
