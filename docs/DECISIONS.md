@@ -2502,3 +2502,87 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `entrepot_rdc_essai` ; `relief`, `falaise` dans `essai_relief`) et attend que le nom de la carte
   s'efface avant de mesurer ; `demo_interieur.gd` prend `INTERIOR_MOMENT` (un moment
   d'`Atmosphere`) au lieu de `INTERIOR_PHASE`.
+
+## E4 — La vie
+
+- **E4 — six créneaux pour cinq lumières** : la vie compte six créneaux (`GameState.SLOTS` :
+  `aube`, `matin`, `midi`, `apres_midi`, `soir`, `nuit`, ceux de docs/lore/VIE.md, 0.1) ; leur
+  lumière est un moment d'E9 (`LifeSlots.MOMENT_OF`) : midi garde celle du matin, le soir est le
+  couchant. Le créneau est `GameState.slot` s'il va avec le moment, sinon celui du moment ; un
+  moment posé ailleurs (F7, `Atmosphere.set_moment` du récit) l'emporte et efface `slot`.
+  `LifeDirector.set_slot` pose les deux : le récit (E6) passe de matin à midi sans changer la
+  lumière. `slot` et `day` sont des champs facultatifs du schéma de sauvegarde v3 (absents : `""`
+  et 0), comme `moment` et `weather` ; pas de nouvelle version.
+- **E4 — le jour de l'acte** : `GameState.day` (0 par défaut : aucun jour, les lignes à `day` ne
+  s'appliquent pas), ajouté par E4 pour être lu ; c'est E6 qui le tiendra (`ACTE1.md`, 1 à 12).
+- **E4 — choix d'une ligne** : les lignes à `day` ou `if` passent d'abord, puis les autres, la
+  première qui va l'emporte : on écrit la journée de base, puis ses variations (VIE.md, section 3),
+  dans l'ordre qu'on veut. Aucune ligne : le PNJ n'est nulle part.
+- **E4 — `away` plutôt qu'une carte absente** : une ligne vers une carte pas encore construite
+  (l'étage, la ville) dit `"away": "entrepot_etage"` ; la vérification refuse une `map` absente
+  (une faute de frappe) mais accepte `away` (un identifiant). On quitte la carte par la place
+  `vers_<carte>` (avant la `MapExit` vers elle) : dans le rez-de-chaussée d'essai, qui n'a pas
+  d'escalier, `vers_entrepot_etage` est au bout ouest du couloir (provisoire).
+- **E4 — le directeur peuple, les cartes ne listent pas leurs PNJ** : les PNJ de la vie naissent
+  des emplois du temps (`data/life/`), ajoutés au nœud `Life` de la carte à son `map_entered` ;
+  aucune scène de carte n'a à les poser. Une carte posée à la main (un test d'une carte seule)
+  reste vide (`LifeDirector.attach` pour une démonstration) : les tests d'E2 et E3 ne changent pas.
+- **E4 — PNJ réutilisés** : Willem, Nygglatho, Ithea, Nephren et les petites gardent leur
+  `NpcData` (dialogues, quêtes, `visible_if`, skin du joueur absent) : le même personnage parle
+  sur l'ancienne île et dans l'entrepôt d'essai ; une seule carte est chargée, il n'est jamais en
+  double. Les quêtes et leurs marqueurs restent (E6 les retire).
+- **E4 — planches complémentaires** (cahier n° 3, 4.1, « format à confirmer par le moteur ») : une
+  tenue `<id>_life` est une `SkinData` dont la planche principale est la planche de base
+  (`tiat.png` : repos, marche, parle) et la planche complémentaire (`extra_*`) `tiat_life.png` ;
+  `SheetLoader` fusionne vue par vue (la planche principale l'emporte, la taille vient d'elle). Le
+  check des planches vérifie que la rangée `repos` complémentaire est la copie au pixel près.
+- **E4 — tenues** : `NpcData.outfits` (nom → chemin d'une `SkinData` de `data/npcs/outfits/`)
+  plutôt qu'un tableau de ressources : une tenue n'est chargée qu'au besoin (`load_outfit`), et
+  le cache de `SheetLoader` passe en références faibles (un jeu d'images vit tant qu'un visuel
+  l'affiche ; quitter la carte libère ses planches). Les tenues ne sont ni dans `data/skins/`
+  (jouables) ni dans `data/npcs/visuals/` (dont le nombre et les portraits sont testés).
+- **E4 — le PNJ change de tenue au départ** (après son délai, avant de marcher) ; posé d'un coup
+  (entrée sur la carte), il est déjà dans la tenue du créneau.
+- **E4 — fées génériques** : `data/npcs/generic/fairy_01` à `fairy_06`, planche `fairy_0N`, un
+  prénom original tiré de `data/texts/life.json` (« fairy_names » : Brisa, Fenna, Mirelle, Odile,
+  Liesel, Tamsin, Ysolde, Pervenche, Clio, Nelka, Sabine, Vesna ; aucun de l'œuvre) ; sans
+  dialogue : on leur parle, elles répondent d'une bulle (`talk/generic`). Hors de `data/npcs/` :
+  `test_npc.gd` y attend la liste exacte des PNJ de l'acte 1 et leur dialogue.
+- **E4 — le joueur garde sa planche dans l'entrepôt** : `chtholly_home` (livrée) n'a pas les
+  animations de combat (`attaque`, `charge`, `degats`, `mort`) ; `LifeDirector.player_home_outfit`
+  ne la pose donc pas (elle le fera seule si la planche les gagne ; le skin choisi par la
+  communauté prime toujours). Demande au cahier n° 3 (docs/CONTRACT_REQUESTS.md).
+- **E4 — marcher sans physique** : un PNJ de la vie est déplacé par le directeur (position posée à
+  chaque image physique, hauteur du sol lue sur `MapGround.height_at` / l'étage), pas par
+  `move_and_slide` : les chemins évitent déjà murs, meubles, falaises et talus, et les escaliers
+  se montent sans pas de marche. Pendant qu'il marche, son corps quitte la couche 1 (structure
+  figée : couche 1 à l'arrêt) : il ne bloque jamais le joueur, c'est lui qui l'évite.
+- **E4 — navigation** : `AStar2D` (C++, mono-thread) sur une grille d'un mètre dehors, d'un
+  demi-mètre dedans ; deux cases sont reliées si les points de mesure entre elles sont
+  praticables et que le sol ne monte ni ne descend de plus de 0,3 m de l'un au suivant (escaliers
+  et rampes oui, talus de 0,5 m et falaises non) ; diagonales seulement si les quatre côtés le
+  sont. Dedans, l'épaisseur des murs est relevée une fois en bitmap (8 px/m) et la réponse exacte
+  d'`InteriorRoom.is_walkable` n'est demandée qu'au bord d'un mur (testé : mêmes réponses). Les
+  meubles : leurs formes de collision (couche 1), élargies de 0,2 m, dans la tranche du corps.
+  Construction découpée (3 ms par image) après l'entrée ; chemins en file (deux par image), lissés
+  par le parcours des cases du graphe, puis le segment retenu vérifié pour de bon.
+- **E4 — évitement** : face à un PNJ qui vient, chacun garde sa droite ; un PNJ arrêté ou le
+  joueur juste devant : un pas de côté, puis un autre chemin qui évite sa case au bout de 0,8 s ;
+  sans progrès 7 s, on se replace d'un coup au but. Personne ne bloque plus de 2 s un passage
+  (VIE.md, 0.4) : un PNJ debout que le joueur pousse s'écarte de 1,3 m, puis revient.
+- **E4 — places et sièges** : un siège devant une chaise vue de face est posé 0,4 m au sud du
+  pied de la chaise (le PNJ se dessine devant son dossier et derrière la table) ; derrière une
+  chaise vue de dos, au pied de la chaise ; les planches `assis` sont ancrées au sol sous
+  l'assise.
+- **E4 — l'avalanche se déclenche à l'approche de la porte** (à 1,5 m de son milieu) ou quand le
+  joueur bouscule l'une d'elles : les portes d'essai ne s'ouvrent pas (images), et c'est en
+  arrivant à la porte qu'on l'ouvrirait. La porte est donnée par ses deux pièces
+  (`["couloir", "nygglatho"]`) : celles d'`entrepot_rdc_essai` n'ont pas d'id, et en ajouter
+  demanderait des `MapExit` (règle d'E3).
+- **E4 — sorties d'essai** : `entrepot_rdc_essai` gagne une sortie à invite dans l'entrée
+  (« Sortir dans le pré (essai) », vers `essai_relief`, marqueur `from_essai_relief`), la porte
+  d'entrée menant toujours à l'ancienne île (tests d'E3) ; les PNJ, eux, sortent par la porte
+  d'entrée (place `vers_essai_relief`). `essai_relief` gagne une sortie au bout sud du sentier
+  (vers l'intérieur d'essai, marqueur `from_entrepot_rdc_essai`).
+- **E4 — touche F6** : créneau suivant (Maj : tout de suite), comme F7 (moment) et F8 (temps), en
+  version de débogage ou avec un paramètre de développement.

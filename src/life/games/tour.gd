@@ -127,7 +127,7 @@ func _climb_next(base: LifeActor) -> void:
 		phase = Phase.HOLD
 		_left = float(param("hold_time", 6.0))
 		if not stacked.is_empty():
-			stacked[-1].npc.say(text("top", "Plus haut !"), 2.0)
+			stacked[-1].say(text("top", "Plus haut !"), 2.0)
 		_emit(&"stacked", stacked.size())
 		return
 	var actor := queue[stacked.size()]
@@ -142,7 +142,7 @@ func _climb_next(base: LifeActor) -> void:
 	base.hold(&"assis", 3600.0)
 	_emit(&"climbed", [actor.id, stacked.size()])
 	if stacked.size() == 1 and is_instance_valid(base.npc):
-		base.npc.say(text("base", "Hé, doucement…"), 1.8)
+		base.say(text("base", "Hé, doucement…"), 1.8)
 
 
 func _collapse(base: LifeActor) -> void:
@@ -161,7 +161,7 @@ func _collapse(base: LifeActor) -> void:
 		actor.hold(&"tombe", _left)
 	if base != null:
 		base.hold(&"effondre", _left + 1.0)
-		base.npc.say(text("collapse", "Ouf…"), 1.8)
+		base.say(text("collapse", "Ouf…"), 1.8)
 	stacked.clear()
 	_emit(&"collapsed", null)
 
@@ -169,7 +169,7 @@ func _collapse(base: LifeActor) -> void:
 func on_player_interact(actor: LifeActor) -> bool:
 	if phase != Phase.STACK and phase != Phase.HOLD:
 		return false
-	actor.npc.say(text("gag", "{player} prend son élan… et s’arrête au bord, toute rouge."), 3.0)
+	actor.say(text("gag", "{player} prend son élan… et s’arrête au bord, toute rouge."), 3.0)
 	_emit(&"gag", actor.id)
 	return true
 

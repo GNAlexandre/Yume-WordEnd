@@ -53,7 +53,7 @@ func _player_joined() -> void:
 	# Une petite le touche : c'est lui le chat.
 	var nearest := _nearest_member(_player.global_position if _player != null else center())
 	if nearest != null:
-		nearest.npc.say(text("player_it", "C’est toi le chat !"))
+		nearest.say(text("player_it", "C’est toi le chat !"))
 	_player_becomes_chaser()
 
 
@@ -64,7 +64,7 @@ func _player_left() -> void:
 			_make_chaser(members[rng.randi_range(0, members.size() - 1)])
 	var nearest := _nearest_member(center())
 	if nearest != null:
-		nearest.npc.say(text("player_left", "Tu reviens jouer ?"))
+		nearest.say(text("player_left", "Tu reviens jouer ?"))
 
 
 func on_player_attack(player: Node3D) -> void:
@@ -149,7 +149,7 @@ func _tick_chaser(actor: LifeActor, retarget: bool, tag_radius: float) -> void:
 		return
 	if best < tag_radius:
 		_emit(&"tagged", [actor.id, prey.id if prey != null else &"player"])
-		actor.npc.say(text("tag", "Touchée !"))
+		actor.say(text("tag", "Touchée !"))
 		tag(prey)
 		return
 	if retarget or not actor.is_moving():
@@ -220,7 +220,7 @@ func _player_becomes_chaser() -> void:
 
 func _player_tags(actor: LifeActor) -> void:
 	_emit(&"tagged", [&"player", actor.id])
-	actor.npc.say(text("tagged", "Zut, touchée !"))
+	actor.say(text("tagged", "Zut, touchée !"))
 	_make_chaser(actor)
 
 
@@ -237,7 +237,7 @@ func _end_round() -> void:
 		actor.hold(&"tombe", _rest_left)
 	var nearest := _nearest_member(center())
 	if nearest != null:
-		nearest.npc.say(text("end", "Pouce !"))
+		nearest.say(text("end", "Pouce !"))
 	_emit(&"round_ended", null)
 
 

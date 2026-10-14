@@ -112,6 +112,7 @@ func _physics_process(delta: float) -> void:
 	var path_usec := Time.get_ticks_usec() - path_started
 	_greet_left = maxf(_greet_left - delta, 0.0)
 	var player := player_node()
+	_watch_attacks(player)
 	for who: LifeActor in _actors.values():
 		who.tick(delta, player)
 	for game: LifeGame in _games.values():
@@ -686,7 +687,9 @@ func _exit_tree() -> void:
 
 func _clear() -> void:
 	for game: LifeGame in _games.values():
-		game.finish()
+		# Sans finish() : les PNJ sont peut-être déjà libérés avec la carte.
+		game.running = false
+		game.player_in = false
 		for member: LifeActor in game.members:
 			member.game = null
 		game.members.clear()
@@ -739,6 +742,23 @@ func _reset_stats() -> void:
 		"path_max_usec": 0,
 		"paths": 0,
 	}
+
+
+## Les coups d'épée du joueur (PlayerCombat.attack_started) vont aux jeux où il est entré (sans
+## mal : le chat).
+func _watch_attacks(player: Node3D) -> void:
+	var combat := player.get_node_or_null(^"Combat") if player != null else null
+	if combat == null or not combat.has_signal(&"attack_started"):
+		return
+	if not combat.is_connected(&"attack_started", _on_player_attack):
+		combat.connect(&"attack_started", _on_player_attack)
+
+
+func _on_player_attack(_attack: AttackData) -> void:
+	var player := player_node()
+	for game: LifeGame in _games.values():
+		if game.player_in and player != null:
+			game.on_player_attack(player)
 
 
 func _on_map_entered(_map_id: StringName) -> void:

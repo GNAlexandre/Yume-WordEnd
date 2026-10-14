@@ -91,7 +91,7 @@ func _tick(delta: float, player: Node3D) -> void:
 			if ready and not runners().is_empty():
 				phase = Phase.READY
 				_left = float(param("ready_time", 1.6))
-				runners()[0].npc.say(text("start", "Le premier arrivé a deux desserts !"))
+				runners()[0].say(text("start", "Le premier arrivé a deux desserts !"))
 		Phase.READY:
 			_left -= delta
 			if _left <= 0.0:
@@ -139,14 +139,14 @@ func _tick_run(player: Node3D, goal_line: Vector3) -> void:
 			if winner.is_empty():
 				winner = actor.id
 				actor.hold(&"saut", 1.0)
-				actor.npc.say(text("won", "Gagné !"))
+				actor.say(text("won", "Gagné !"))
 				_emit(&"race_won", actor.id)
 	if player_in and player != null and winner.is_empty():
 		if flat_distance(player.global_position, goal_line) < 1.2:
 			winner = &"player"
 			var first := runners()[0] if not runners().is_empty() else null
 			if first != null:
-				first.npc.say(text("player_won", "{player} a gagné le dessert !"))
+				first.say(text("player_won", "{player} a gagné le dessert !"))
 			_emit(&"race_won", &"player")
 	if _arrived.size() >= runners().size():
 		phase = Phase.PAUSE
@@ -158,7 +158,7 @@ func _tick_run(player: Node3D, goal_line: Vector3) -> void:
 func _scold(scolder: LifeActor) -> void:
 	scolded = true
 	scolder.hold(&"hanches", 3.0)
-	scolder.npc.say(text("scold", "On ne court pas dans les couloirs !"))
+	scolder.say(text("scold", "On ne court pas dans les couloirs !"))
 	_emit(&"scolded", scolder.id)
 	for actor: LifeActor in runners():
 		if actor.is_moving():

@@ -213,3 +213,17 @@ func test_corridor_race_and_scolding() -> void:
 		),
 		"une gagnante"
 	)
+
+
+func test_a_sword_touch_tags_without_harm() -> void:
+	_enter(RELIEF, &"apres_midi", Vector3(30.0, 0.0, 40.0))
+	var chat := LifeDirector.game_at(&"chat", &"herbes_chat")
+	_player.global_position = chat.center() + Vector3(0.0, 0.0, 1.0)
+	await wait_physics_frames(3)
+	assert_true(chat.player_chases, "c'est lui le chat")
+	var target: LifeActor = chat.members[1]
+	_player.global_position = target.position() + Vector3(-1.2, 0.0, 0.0)
+	_player.set_aim_direction(Vector3.RIGHT)
+	_player.get_node(^"Combat").emit_signal(&"attack_started", null)
+	assert_eq(chat.chaser, target, "touchée d'un coup d'épée")
+	assert_eq(GameState.max_hp, GameState.DEFAULT_MAX_HP)

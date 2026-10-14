@@ -138,6 +138,9 @@ Yume-WordEnd/
 │   │                          # rain_fall.gd ; materials/hd2d_lighting.gd, hd2d_weather.gd,
 │   │                          # hd2d_light_targets.gd ; shaders/sky, rain, rain_curtain (map_light.tscn retiré)
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
+│   ├── life/                  # (E4) la vie : life_director.gd (autoload LifeDirector), life_data.gd (emplois du
+│   │                          # temps, activités), life_slots.gd, life_places.gd, life_nav.gd, life_actor.gd,
+│   │                          # life_game.gd, life_texts.gd ; games/<jeu>.gd (chat, course, avalanche, tour)
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
 │   └── ui/                    # hud, dialogue_box, inventory, main_menu, loading, touch_controls,
@@ -147,14 +150,15 @@ Yume-WordEnd/
 │   ├── enemies/*.tres         # timere_small, timere_normal, timere_runner, timere_big ; visuals/timere.tres
 │   ├── waves/*.json           # composition des vagues par arène
 │   ├── items/*.tres
-│   ├── npcs/*.tres
+│   ├── npcs/*.tres            # (E4) + outfits/<planche>.tres (tenues, SkinData), generic/<id>.tres (fées génériques)
+│   ├── life/*.json            # (E4) emplois du temps data/life/<npc_id>.json, activities.json
 │   ├── quests/*.json          # (Lot Q) quêtes en étapes, format : docs/QUETES.md
 │   ├── skins/*.tres
 │   ├── dialogues/*.json
 │   ├── maps/<map_id>/         # (E2) sol en relief d'une carte : map.json, heights.png, materials.png,
 │   │                          # structures.png, plan.json ; maps/ground_materials.json (matières, structures)
 │   ├── texts/story.json       # (Systèmes et textes) textes de l'histoire hors dialogues :
-│   │                          # arène, chute, défaite (DialogueRunner.story_text)
+│   │                          # arène, chute, défaite (DialogueRunner.story_text) ; (E4) texts/life.json (LifeTexts)
 │   └── lighting/*.tres        # (E9) préréglages de lumière : aube, matin, apres_midi, couchant, nuit,
 │                              # interieur, interieur_nuit (HD2DLighting) ; pluie, averse (HD2DWeather)
 ├── assets/
@@ -183,6 +187,7 @@ Yume-WordEnd/
 | `SkinRegistry` | Charge `data/skins/*.tres`, expose la liste et le skin par défaut (Chtholly) | L3 |
 | `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort ; (E1) une carte à la fois : changement de carte (fondu, chargement découpé, marqueur d'arrivée), carte courante, bornes de la caméra | L2, E1 |
 | `DesktopApp` | (bureau) Application de bureau, sans effet sur le Web : fenêtre de départ, plein écran (F11, Alt+Entrée, bouton) mémorisé dans `user://settings.cfg`, boutons « Plein écran » et « Quitter » des menus, sauvegarde avant de quitter (docs/bureau.md) | bureau |
+| `LifeDirector` | (E4) La vie : emplois du temps (`data/life/`) appliqués à la carte courante (PNJ posés dans `Life`, trajets à chaque changement de créneau, sorties vers les autres cartes), navigation, jeux de groupe, réactions au joueur ; créneaux (`set_slot`, F6, `?creneau=`) ; mesures (`?vie=trace`) | E4 |
 | `Atmosphere` | (E9) La lumière et le temps : préréglage effectif de la carte courante (`light_preset`, intérieur ou moment de la journée, modifié par le temps qu'il fait), transitions douces, pose (environnement, ciel, soleil ou lune, mer de nuages, lanternes, lueurs, images de nuit, sol mouillé, post-traitement ; (R1) lumière des intérieurs, soleil du sol en relief, teinte des personnages), lumière magique du joueur, pluie ; raccourcis `?moment=` / `?temps=`, F7 / F8 ; le moment et le temps eux-mêmes sont dans `GameState` (sauvegardés) | E9 |
 
 ### Contrats d'interface
@@ -318,6 +323,10 @@ var moment: StringName       # (E9) moment de la journée, un de MOMENTS (aube, 
                              # DEFAULT_MOMENT = couchant) ; une autre valeur est refusée (avertissement) ; émet atmosphere_changed
 var weather: StringName      # (E9) temps qu'il fait, un de WEATHERS (clair, pluie, averse ; défaut DEFAULT_WEATHER = clair)
                              # ; émet atmosphere_changed ; moment et weather sont écrits par to_dict (après tracked_quest)
+var day: int                 # (E4) jour de l'acte (ACTE1.md : 1 à 12), tenu par le récit (E6) ; 0 (défaut) : aucun, les
+                             # lignes d'emploi du temps à « day » ne s'appliquent pas ; sauvegardé (facultatif, absent : 0)
+var slot: StringName         # (E4) créneau de la vie (SLOTS : aube, matin, midi, apres_midi, soir, nuit) ; &"" : celui du
+                             # moment (LifeSlots.default_for) ; posé par LifeDirector.set_slot ; sauvegardé (facultatif)
 
 # src/autoload/save_manager.gd
 func has_save() -> bool
@@ -438,10 +447,14 @@ signal animation_finished(anim: StringName)
 # data/*.tres — ressources
 class_name ItemData   : id, display_name, icon, stackable, max_stack, description
 class_name SkinData   : id, display_name, sprite_sheet, frames_json: JSON, portrait, height_m   # (HD-2D) sans mesh_scene
+                        # (E4) extra_sheet / extra_json (+ extra_front_*, extra_back_*) : planche complémentaire
+                        # `<id>_life`, fusionnée par SheetLoader (ses animations absentes de la planche principale)
 class_name NpcData    : id, display_name, skin, dialogue_path, quest_id, home_zone
                         # (Systèmes et textes) visible_if: Dictionary (présence, même grammaire que les « if »
                         # de dialogue) ; is_present() (faux aussi si skin = celui du joueur), is_player_skin(),
                         # visible_if_problem()
+                        # (E4) outfits: Dictionary[StringName, String] (tenue → chemin d'une SkinData de
+                        # data/npcs/outfits/, chargée à la demande) ; outfit_path(), has_outfit(), load_outfit()
 class_name QuestData  : id, title, giver_npc, required_items: Dictionary[StringName, int], required_flags: Array[StringName],
                         reward_items: Dictionary[StringName, int]
                         # (L7) objective, reward_max_hp ; (Lot Q) lue dans data/quests/<id>.json : summary, main, auto_start,
@@ -470,6 +483,9 @@ class_name Npc             # @export data: NpcData ; (Systèmes et textes) is_pr
                            # absent = caché, process_mode DISABLED (ni collision ni InteractArea), sans invite,
                            # dialogue ni marqueur ; réévalué en fin d'image sur les signaux de quête, drapeaux,
                            # inventaire, game_loaded, skin_changed, arena_finished (après le dialogue en cours)
+                           # (E4) life: LifeActor (null : immobile, l'ancienne île) ; enter_life(acteur),
+                           # set_outfit(skin) (à chaud), set_moving(bool) (couche 0 en marche), say(texte, s) /
+                           # hide_bubble() / bubble_text() (enfant Bubble, Label3D) ; sans dialogue : une bulle
 class_name DialogueRunner  # start(npc: NpcData), stop(), is_running() ; un par PNJ
                            # (Systèmes et textes) statiques : current_speaker_id() (speaker_id du nœud ou PNJ
                            # du dialogue, fixé avant dialogue_line), find_npc(id), add_npc_dir / remove_npc_dir,
@@ -483,6 +499,8 @@ class_name QuestTracker    # Node unique de game.tscn (seul le 1er du groupe que
 class_name QuestTrigger    # (Lot Q) src/quests/quest_trigger.tscn, Area3D couche 0 / masque 2 : trigger_id (défaut : nom du
                            # nœud), radius, height, set_flag ; émet trigger_entered ; à poser dans src/npc/placements/<zone>.tscn
 class_name SheetLoader     # lecture des planches (read_sheet, build_frames, hit_frames, wave_frame, pixel_size)
+                           # (E4) merge_sheets, add_frames, extra_view_texture/json, cached_count, EXTRA_KEY ;
+                           # cache des SpriteFrames en références faibles (libérés avec la carte quittée)
 # (HD-2D) Décor et caméra
 class_name DecorPanel      # src/world/decor_panel.gd : racine d'un décor en panneau ; @export texture, pixels_per_meter (96),
                            # shadow_width, shadow_depth, keep_orientation, image_offset, tint, glow ; size_m() ; statiques
@@ -634,11 +652,11 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/items/pickup.tscn` + `pickup.gd` | `Pickup` (Area3D) | `CollisionShape3D`, `Mesh` | `interactable` ; couche 7, masque 2 | L7 |
 | `src/items/item_data.gd`, `src/quests/quest_data.gd`, `quest_tracker.gd` | `ItemData`, `QuestData`, `QuestTracker` | — | — | L7 |
 | (Lot Q) `src/quests/quest_step.gd`, `quest_trigger.tscn` + `quest_trigger.gd` | `QuestStep` (Resource), `QuestTrigger` (Area3D) | `CollisionShape3D` (cylindre propre à chaque déclencheur) | couche 0, masque 2 | Lot Q |
-| `src/npc/npc.tscn` + `npc.gd` | `Npc` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `InteractArea` (Area3D, couche 6), `DialogueRunner`, (Lot Q) `QuestMarker` (Label3D « ! » / « ? ») | `interactable` ; couche 1 | L6 |
+| `src/npc/npc.tscn` + `npc.gd` | `Npc` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `InteractArea` (Area3D, couche 6), `DialogueRunner`, (Lot Q) `QuestMarker` (Label3D « ! » / « ? »), (E4) `Bubble` (Label3D, bulle de la vie) | `interactable` ; couche 1 | L6 |
 | `src/npc/npc_data.gd`, `dialogue_runner.gd` | `NpcData`, `DialogueRunner` | — | — | L6 |
 | `src/world/island.tscn` + `island.gd` | `Island` (Node3D ; (E1) `Map`, carte héritée par `maps/ile_ancienne`) | `WorldEnvironment` ((HD-2D) ciel panoramique `assets/hd2d/sky/sky.png`), `Sun`, `OverviewCamera`, `Ground` (relief, tuiles de l'atlas du sol), `Water` (mer de nuages texturée), `Walls`, `KillZone`, `Zones` et `Zones/<zone_id>` pour les 5 zones | — | L2 |
 | `src/world/zones/<zone_id>/<zone_id>.tscn` + `src/world/zone.gd` (`village`, `dunes`, `forest`, `beach`, `hill`) | `<zone_id>` (Node3D, `Zone`) | `Spawn` (Marker3D), `Bounds` (Area3D, masque 2), `Geometry` ((HD-2D) `PropBatcher` : décors `src/world/props/` en images), `NPCs`, `Enemies`, `Pickups` ; dunes : `SpawnN`, `SpawnS`, `SpawnE`, `SpawnW`, `Arena` (`arena_id = &"dunes"`) ; village : `EnemyBarrier` (couche 8), `safe = true` | `zones` | L2 |
-| (E1) `src/world/map.gd`, `map_exit.gd`, `maps/<map_id>/<map_id>.tscn` | `Map`, `MapExit` ; racine `<map_id>` (`Map`) | `Ground` (sol, couche 1), `Geometry` (`PropBatcher`), `Markers` (`Spawn` + `from_<carte>`), `Exits` (`MapExit`), `Life` ; `ile_ancienne` : scène héritée d'`island.tscn` (`World/ile_ancienne/Zones/<zone>`) | `maps` ; sorties : couche 0 (6 si invite), masque 2 | E1 |
+| (E1) `src/world/map.gd`, `map_exit.gd`, `maps/<map_id>/<map_id>.tscn` | `Map`, `MapExit` ; racine `<map_id>` (`Map`) | `Ground` (sol, couche 1), `Geometry` (`PropBatcher`), `Markers` (`Spawn` + `from_<carte>`), `Exits` (`MapExit`), `Life` ((E4) `Life/Places` : les places des emplois du temps ; les PNJ de la vie y sont ajoutés) ; `ile_ancienne` : scène héritée d'`island.tscn` (`World/ile_ancienne/Zones/<zone>`) | `maps` ; sorties : couche 0 (6 si invite), masque 2 | E1 |
 | `src/npc/placements/<zone_id>.tscn` | `NPCs` (Node3D), instancié dans chaque zone | PNJ de la zone et (Lot Q) déclencheurs de quête `QuestTrigger` (coordonnées locales à la zone) | — | L6 |
 | `src/enemies/placements/<zone_id>.tscn` | `Enemies` (Node3D ; (acte 1) script `src/enemies/free_enemies.gd`) | ennemis libres de la zone (forêt : 4 Timeres), qui reviennent pendant une étape « vaincre » qui les vise | — | L5 |
 | `src/items/placements/<zone_id>.tscn` | `Pickups` (Node3D) | objets uniques, nommés `<zone>_<objet>_<n>` (ex. `forest_page_1`) | — | L7 |
@@ -898,6 +916,174 @@ Contrat : l'API d'`Atmosphere` ci-dessus ; détails et choix dans docs/DECISIONS
 5. **Tests** : un test qui change le moment ou le temps rétablit `GameState.reset()` (couchant,
    clair) ; un test qui habille une carte à la main appelle `Atmosphere.dress(null)` dans
    `after_each` ; `Atmosphere.step(s)` avance une transition sans attendre.
+
+### (E4) La vie : format, API et mode d'emploi
+
+La journée des habitants (docs/REFONTE.md, section 4 ; docs/lore/VIE.md) : chaque personnage a un
+emploi du temps écrit à la main ; un autoload, `LifeDirector`, l'applique à la carte courante.
+Démonstration : les cartes d'essai `entrepot_rdc_essai` et `essai_relief`
+(`tests/integration/demo_e4.tscn`, `LIFE_VIEW=<vue>`) ; décisions : docs/DECISIONS.md (« E4 »).
+
+**Créneaux.** Six (`GameState.SLOTS`) : `aube`, `matin`, `midi`, `apres_midi`, `soir`, `nuit` ;
+leur lumière est un moment d'E9 (`LifeSlots.MOMENT_OF` : midi garde la lumière du matin, le soir
+est le couchant). Le créneau courant (`LifeSlots.current()`) est `GameState.slot` s'il va avec
+`GameState.moment`, sinon celui du moment (`LifeSlots.default_for`) : changer le moment par
+`Atmosphere.set_moment` change le créneau ; `LifeDirector.set_slot(&"midi")` pose les deux.
+
+**Emploi du temps** (`data/life/<npc_id>.json`, le nom du fichier est l'id du PNJ ; clé inconnue
+refusée, `_…` : commentaire) :
+
+```json
+{
+  "_comment": "Tiat : la toilette en pyjama, le chat dans les hautes herbes…",
+  "gait": "course",
+  "lines": [
+    {"slot": "aube", "map": "entrepot_rdc_essai", "place": "point_eau", "activity": "toilette", "outfit": "pyjama"},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_b", "activity": "manger", "outfit": "vie"},
+    {"slot": "matin", "day": [3, 12], "away": "ville_boulangerie"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc_essai", "place": "jeux_tapis", "activity": "jouer"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_tour", "activity": "tour_de_fees", "role": "pile_2"},
+    {"slot": "nuit", "away": "entrepot_etage"}
+  ]
+}
+```
+
+- `slot` (obligatoire) : un créneau ou une liste ; `day` : un jour (`GameState.day`, tenu par E6 ;
+  0 = aucun) ou `[premier, dernier]` ; `if` : une condition sur l'histoire, grammaire des « if »
+  de dialogue (drapeaux, objets, quêtes : docs/QUETES.md).
+- `map` + `place` : la carte et une place de son `Life/Places` ; ou `away` : hors des cartes
+  construites (l'id de la carte à venir) ; sans ligne pour un créneau, le PNJ n'est nulle part.
+- `activity` (`activities.json`, défaut `attendre`), `outfit` (une tenue de `NpcData.outfits` ;
+  défaut : `NpcData.skin`), `gait` (allure du trajet : `marche`, `course`, `porte`), `role` (dans
+  un jeu de groupe).
+- **Choix** : les lignes à `day` ou `if` passent d'abord, puis les autres ; la première qui va
+  l'emporte. On écrit la journée de base, puis les variations (VIE.md, section 3), où l'on veut.
+- Le PNJ : `data/npcs/<id>.tres` (ou `data/npcs/generic/<id>.tres`, les fées génériques, nommées
+  par `data/texts/life.json`, « fairy_names ») ; ses tenues : `NpcData.outfits` (nom → SkinData de
+  `data/npcs/outfits/`, trois vues, une planche complémentaire `<id>_life` en `extra_*`).
+
+**Places** : un `Marker3D` nommé sous `Life/Places` de la carte (posé au sol, à la hauteur du
+palier dehors ; tourné vers où l'on regarde : son −Z). Ses enfants `Marker3D` en font une zone :
+les sièges d'une table (un PNJ par point, le premier libre), les deux bouts d'une conversation, les
+points où l'on erre, le terrain d'un jeu. Un siège se pose devant l'image d'une chaise vue de face
+(+0,4 m au sud), derrière celle d'une chaise vue de dos, derrière la table. `vers_<carte>` : par où
+l'on part vers une carte (et d'où l'on en arrive), avant la `MapExit` vers cette carte ; une carte
+à venir (`away`) n'a que sa place `vers_`.
+
+**Activités** (`data/life/activities.json`) : `speeds` (allure → m/s), `fallbacks` (animation →
+remplaçantes, si la planche portée ne l'a pas), `activities.<id>` : `poses` (`[{anim, time}]`,
+enchaînées en boucle, ou au hasard avec `order: "random"` ; `time` en s ou `[min, max]`, sans
+`time` jusqu'au créneau suivant), `arrive` / `leave` (s'asseoir, se lever), `wander` (errer entre
+les points de la place : `{pause, gait}`), `pair` (à deux, face à face, à tour de rôle), `look`,
+`greet`, `step_aside` (regarder le joueur, le saluer d'une bulle, s'écarter s'il pousse : vrais par
+défaut), `gait`, `game` + `params` (jeu de groupe). Activités livrées : attendre, manger, lire,
+balayer, toilette, porter_linge, servir, cuisiner, the, dormir, gronder, errer, bavarder, jouer,
+balle_mur, regarder, jeu_chat, course_couloir, avalanche, tour_de_fees.
+
+```gdscript
+# src/life/life_director.gd — autoload LifeDirector (project.godot, seul ajout d'E4)
+signal slot_changed(slot: StringName)          # créneau appliqué (trajets lancés)
+signal populated(map_id: StringName)           # PNJ de la carte posés (entrée)
+func slot() -> StringName / func set_slot(slot, duration := -1.0) / func next_slot(duration := -1.0)
+func where(npc_id) -> Dictionary               # ligne du créneau courant (consultation, hors carte compris)
+func refresh(walk := true) -> void             # relit les lignes (le récit a changé un drapeau)
+func attach(map: Map) -> void                  # peuple une carte (fait à map_entered ; démonstrations)
+func actor(npc_id) -> LifeActor / func npc(npc_id) -> Npc / func actors() / func games()
+func spawn_actor(npc_id, at: Vector3) -> LifeActor   # un PNJ hors emploi du temps (scène du récit, tests)
+func game_at(game_id, place) -> LifeGame / func nav() -> LifeNav / func places() -> LifePlaces
+func build_nav_now() / func stats() -> Dictionary / func stats_text() -> String / func reset_stats()
+func player_home_outfit(map, skin) -> SkinData  # tenue de la maison du joueur (null : il garde sa planche)
+var enabled, nav_budget_usec (3000), paths_per_frame (2), debug_keys, trace, cycle
+# Raccourcis : F6 créneau suivant (Maj : tout de suite) ; ?creneau=<créneau>, ?vie=trace|off|cycle
+# (Web) ou -- --creneau=… --vie=… ; trace : « [vie] … » toutes les 2 s dans le journal.
+
+# src/life/ — classes
+class_name LifeSlots   # MOMENT_OF, SLOT_OF ; all(), is_slot(), moment_of(), default_for(), current(),
+                       # resolve(slot, moment), next()
+class_name LifeData    # cast(), schedule(id), schedule_path(id), line_for(id, slot, day, evaluate), current_line(id),
+                       # find_npc(id), schedule_problems(id, raw, check_world), all_problems(), activities_data(),
+                       # activity(id), has_activity(id), speed(gait), is_gait(), fallbacks(anim), pose_time(pose, rng),
+                       # activities_problems(raw), map_places(map_id), add_dir / remove_dir, clear_cache() ;
+                       # DATA_DIR, PLACES_PATH (Life/Places), ANIMS, GAMES_DIR (src/life/games)
+class_name LifePlaces  # read(map) ; has, names, points, size, point(place, i), center, radius, departure(map_id) ;
+                       # facing_of(xform) (−Z au sol) ; DEPARTURE_PREFIX (vers_)
+class_name LifeNav     # for_map(map) ; build_step(budget_usec) -> bool, build_now(), ready, cell (1 m dehors, 0,5 m
+                       # dedans), cell_of, center, is_open, is_walkable_point, height_at, line_clear, cells_clear,
+                       # nearest_open, find_path(from, to, avoid) -> PackedVector3Array (lissé), open_count ;
+                       # AStar2D ; MAX_RISE (0,3 m d'un point au suivant), PROP_MARGIN (0,2 m)
+class_name LifeActor   # un PNJ vivant : place_now(ligne), walk_to_line(ligne, délai), leave_by(sortie, délai),
+                       # arrive_from(entrée, ligne, délai), walk_to(point, regard, allure, à l'arrivée, direct),
+                       # hold(anim, s), stop(), play(anim), face(dir), position(), is_moving(), on_interact(),
+                       # set_talking() ; state (ACTIVITY, WALKING, LEAVING, GAME, ASIDE, GONE), line, activity,
+                       # place, spot, outfit, role, game, stuck_time (7 s : puis il se replace au but)
+class_name LifeGame    # cadre des jeux de groupe (ci-dessous) ; signal event(kind, detail), events
+class_name LifeTexts   # data/texts/life.json : text(chemin, défaut, rng), greeting(id), fairy_names(), fairy_name(id)
+```
+
+**Ce que fait le directeur.** À `EventBus.map_entered` (sous le fondu) : chaque PNJ dont la ligne
+courante est sur la carte est ajouté au nœud `Life` (`npc.tscn`, `Npc.life` = son `LifeActor`),
+posé à sa place, déjà en activité, dans sa tenue (aucun trajet : ce qui a changé pendant
+l'absence du joueur est déjà fait). Puis la navigation se construit par morceaux. Quand le créneau
+(ou `GameState.day`) change, chacun part à pied après un délai tiré (0,2 à 2,6 s) : vers sa
+nouvelle place par un chemin (portes comprises), ou vers sa sortie s'il change de carte (il
+disparaît en l'atteignant) ; qui arrive d'ailleurs entre par la sortie de sa carte d'origine. Hors
+de la carte, rien ne tourne (`where()`). Le PNJ en marche quitte la couche 1 (il ne bloque jamais
+le joueur, il l'évite) ; arrêté, il y revient. Évitement : on garde sa droite face à un PNJ qui
+vient, on contourne d'un pas de côté un PNJ arrêté ou le joueur, puis on cherche un autre chemin ;
+sans progrès 7 s, on se replace au but. Le joueur : à 3,5 m on le regarde ; à 3 m, parfois une
+bulle (`greetings/<id>`, une à la fois) ; s'il pousse un PNJ debout, celui-ci s'écarte puis revient ;
+en conversation, l'activité s'arrête et reprend. Une fée générique sans dialogue répond d'une bulle.
+
+**Jeux de groupe** (`src/life/games/<jeu>.gd`, `extends LifeGame`). Les PNJ dont l'activité nomme
+le même jeu à la même place forment le groupe ; le jeu mène leurs gestes. Le cadre :
+- `members`, `roles` (rôle de la ligne, ou donné : `set_role`, `role_of`, `with_role`), `teams`
+  (`assign_teams([&"rouge", &"blanc"])`, `team_of` : pour le ballon d'E8), `formation(n)` (points
+  de la place, ou un cercle) ;
+- `start()` à `min_members`, `finish()` en deçà ; `_tick(delta, joueur)` ; `events` / `event` ;
+- le joueur : `join_distance`, `leave_distance` (`_player_close` / `_player_far` à redéfinir),
+  `_accepts_player()`, `join_player()` / `leave_player()` (`player_in`), `on_player_interact(PNJ)`
+  (vrai : remplace le dialogue), `on_player_attack(joueur)` (un coup d'épée, sans mal) ;
+- `param(clé, défaut)` (`activities.json`, `params`), `text(clé)` (`life.json`, `games/<jeu>/`).
+Jeux livrés : **chat** (une chasseuse court après les autres ; touchée, on devient le chat ; le
+joueur entre en approchant, c'est lui le chat, il touche au contact ou d'un coup d'épée, on le
+poursuit ; manches de 90 s, puis tout le monde s'effondre dans l'herbe), **course** (départ,
+arrivée, poste de celle qui gronde : elles courent, Nygglatho les gronde, poings sur les hanches,
+elles finissent en marchant ; le joueur sur la ligne de départ court avec elles), **avalanche**
+(collées à une porte, `door` : un id ou `[pièce, pièce]`, `InteriorRoom.door_position` ; le joueur
+l'ouvre ou les bouscule : elles tombent, s'excusent, s'enfuient, reviennent plus tard), **tour**
+(la base assise, rôle `base` ; les autres, `pile_1`, `pile_2`… sautent sur la pile, décalées en
+hauteur et vers la caméra (ordre d'affichage) ; la pile s'écroule ; parler à l'une : le gag).
+
+**Mode d'emploi : écrire la journée d'un personnage**
+1. Le PNJ existe (`data/npcs/<id>.tres`) et a ses tenues (`outfits`, SkinData de
+   `data/npcs/outfits/`, planche inscrite au manifeste `tools/hd2d_manifest.json`, « sheets »,
+   table `life` : `python3 tools/hd2d_sheets.py check`).
+2. Les places existent dans la carte (`Life/Places`, un `Marker3D` par place, ses points enfants).
+3. Écrire `data/life/<id>.json` (ci-dessus), une ligne par créneau, puis les variations (`day`,
+   `if`) ; vérifier : `tools/test.sh tests/unit/test_life_data.gd` (tous les fichiers de
+   `data/life/` : clés, cartes, places, activités, tenues) ;
+4. Voir : `LIFE_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_e4.tscn sortie.png 120`
+   (ou une vue à soi sur ce modèle), F6 pour passer les créneaux.
+
+**Mode d'emploi : écrire un jeu**
+1. `src/life/games/<jeu>.gd` : `extends LifeGame`, redéfinir `_setup`, `_started`, `_tick`,
+   `_member_added` / `_member_removed`, et pour le joueur `_accepts_player`, `_player_joined`,
+   `_player_left`, `on_player_interact`, `on_player_attack` ; mener les PNJ par
+   `LifeActor.walk_to(point, regard, allure, rappel, direct)`, `hold(anim, s)`, `play`, `face`,
+   `npc.say(texte)` ; noter ce qui compte par `_emit(&"…", détail)`.
+2. Une activité dans `activities.json` : `{"game": "<jeu>", "params": {…}}` ; ses répliques dans
+   `data/texts/life.json`, `games/<jeu>/` ; une place avec ses points (le terrain).
+3. Les lignes des joueuses nomment l'activité (et leur `role`).
+4. Tester sur le modèle de `tests/integration/test_life.gd` (`game.tscn`, `enter_map`,
+   `LifeDirector.game_at`).
+Le ballon (E8) : un jeu `ballon` sur ce cadre (`assign_teams`, `formation`, un `ball` dans `Life`,
+le joueur qui entre dans le champ) ; la place `champ` porte les positions (buts, coup d'envoi).
+
+**Pièges.** Un test qui change le créneau rétablit `GameState.reset()` ; un test qui pose une carte
+à la main et l'habite appelle `LifeDirector.attach(null)` dans `after_each`. Le directeur ne peuple
+que les cartes posées par WorldManager (ou `attach`) : une carte instanciée seule par un test reste
+vide. `LifeData` garde ce qu'il a lu (`clear_cache()`, `add_dir` / `remove_dir`).
+
 
 ## 4. Tranche verticale : WordEnd en HD-2D
 

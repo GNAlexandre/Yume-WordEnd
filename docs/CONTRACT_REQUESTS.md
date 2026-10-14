@@ -615,3 +615,29 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   lumière (ni `Light`, ni `WorldEnvironment`, ni `DirectionalLight3D`) ; ses lampes sont les
   `lights[]` de son `interior.json` ; `InteriorRoom.apply_phase` n'est plus qu'un passage vers
   `Atmosphere.set_moment`.
+
+## E4 — la vie : poses et planches manquantes (cahier n° 3), et suites
+- **`chtholly_home` sans combat** : la planche livrée (repos, marche, parle, course, frappe, assis,
+  lit, dort, hanches) n'a ni `attaque`, ni `charge`, ni `degats`, ni `mort` : le joueur ne peut pas
+  la porter dans l'entrepôt (on y frappe encore de l'épée). Ajouter ces rangées à
+  `chtholly_home` (sans arme ? avec un bâton ?) ou décider qu'on ne se bat pas dedans
+  (`LifeDirector.player_home_outfit` la posera seule).
+- **Pas de pose empilée ni de pose « collée à une porte »** : la tour de fées décale les sprites
+  `assis` et `grimpe` en hauteur ; l'avalanche part de `repos` tourné vers la porte. Deux poses
+  aideraient (cahier n° 3, lot J, prio 3) : `pile` (assise à califourchon sur des épaules, vue de
+  face) et `epie` (penchée, l'oreille contre une porte, vue de dos).
+- **`nygglatho_tea` n'a pas de `marche`** : elle se déplace en `porte` (le plateau) ; acceptable.
+  `nygglatho_life` complète la planche de base sans `parle` ni `marche` (pris à `nygglatho`).
+- **Gestes `travaille` des fées génériques** : `toilette` et `balayer` retombent sur `parle` ou
+  `repos` faute de planche ; les pyjamas des génériques (`fairy_02_pajamas`, prio 3) manquent.
+- **E6 (récit)** : `GameState.day` est ajouté (0 par défaut) pour qu'E6 le tienne ; le créneau se
+  pose par `LifeDirector.set_slot` ; une scène qui déplace des personnages peut prendre la main
+  par `LifeDirector.npc(id)` / `spawn_actor` puis `LifeActor.walk_to`, et rendre la main par
+  `LifeDirector.refresh(false)`. Les marqueurs de quête « ! » / « ? » restent sur les PNJ de la
+  vie qui ont une quête (Nygglatho), jusqu'à leur retrait par E6.
+- **V1 (la vie sur les vraies cartes)** : les places de `docs/lore/CARTE.md` (« Points nommés »)
+  deviennent des `Marker3D` de `Life/Places` ; les sièges du réfectoire se posent comme dans
+  `entrepot_rdc_essai` ; les emplois du temps de VIE.md, section 2, remplacent ceux de
+  démonstration (`data/life/`, qui visent les cartes d'essai).
+- **E8 (ballon)** : le cadre des jeux (`LifeGame` : `assign_teams`, `formation`, joueur qui entre
+  et sort, `on_player_attack`) ; un jeu `src/life/games/ballon.gd` et l'activité qui le nomme.

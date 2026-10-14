@@ -3,8 +3,9 @@ extends LifeGame
 ## (les points de la place, tournées vers la porte) ; quand le joueur l'ouvre ou la franchit
 ## (il arrive à trigger_distance de son milieu, ou les bouscule), elles s'écroulent les unes sur
 ## les autres (tombe), se relèvent, gênées, et s'enfuient en courant (vers la place flee, où
-## elles disparaissent) ; cooldown s plus tard, elles reviennent épier. La porte : params.door, l'id d'une porte de
-## l'intérieur (InteriorRoom.door_position) ou les deux pièces qu'elle sépare ([pièce, pièce]) ;
+## elles disparaissent) ; cooldown s plus tard, elles reviennent épier. La porte : params.door,
+## l'id d'une porte de l'intérieur (InteriorRoom.door_position) ou les deux pièces qu'elle sépare
+## ([pièce, pièce]) ;
 ## sans porte, le milieu de la place. Paramètres : door, trigger_distance, fall_time, flee,
 ## cooldown, whisper.
 
@@ -89,7 +90,7 @@ func _tick_spying(delta: float, player: Node3D) -> void:
 		_whisper = rng.randf_range(4.0, 9.0)
 		var who := members[rng.randi_range(0, members.size() - 1)]
 		who.hold(&"parle", 1.2)
-		who.npc.say(text("whisper", "Chut…"), 1.4)
+		who.say(text("whisper", "Chut…"), 1.4)
 	if player == null:
 		return
 	var near_door := (
@@ -112,7 +113,7 @@ func fall() -> void:
 	for actor: LifeActor in members:
 		actor.hold(&"tombe", _left)
 	if not members.is_empty():
-		members[0].npc.say(text("fall", "Waaah !"), 1.6)
+		members[0].say(text("fall", "Waaah !"), 1.6)
 	_emit(&"fell", members.size())
 
 
@@ -126,7 +127,7 @@ func _flee() -> void:
 	for i: int in members.size():
 		var actor := members[i]
 		if i == members.size() - 1:
-			actor.npc.say(text("sorry", "On n’écoutait pas, promis !"), 2.0)
+			actor.say(text("sorry", "On n’écoutait pas, promis !"), 2.0)
 		actor.walk_to(target, target - actor.position(), &"course", Callable())
 	_emit(&"fled", members.size())
 

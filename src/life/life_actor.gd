@@ -211,6 +211,12 @@ func hold(anim: StringName, seconds: float) -> void:
 	_hold_left = seconds
 
 
+## Bulle au-dessus de la tête (sans effet si le PNJ n'est plus là).
+func say(text: String, seconds: float = Npc.BUBBLE_TIME) -> void:
+	if is_instance_valid(npc):
+		npc.say(text, seconds)
+
+
 ## Arrête le trajet en cours (jeux).
 func stop() -> void:
 	_stop_moving()
@@ -524,7 +530,7 @@ func _greet() -> void:
 		return
 	_greet_cooldown = GREET_COOLDOWN
 	if rng.randf() < GREET_CHANCE and LifeDirector.may_greet():
-		npc.say(LifeTexts.greeting(id, rng))
+		say(LifeTexts.greeting(id, rng))
 
 
 func _check_aside(delta: float, player: Node3D, distance: float) -> void:
