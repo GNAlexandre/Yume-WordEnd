@@ -40,7 +40,7 @@ func rebuild() -> void:
 	if texture == null:
 		return
 	_quad.mesh = InteriorRoom.panel_mesh(size_m(), cut_z(), cut_height, flip_h != view_flipped())
-	_quad.material_override = InteriorRoom.panel_material(displayed_texture(), glow, tint)
+	_quad.material_override = InteriorRoom.furniture_material(displayed_texture(), glow, tint)
 
 
 ## z (monde) du bord sud du meuble : le plan de son image, sa coordonnée de coupe.
@@ -61,7 +61,11 @@ func cut_z() -> float:
 func occluder_triangles(cut_line: float) -> PackedVector3Array:
 	var size := size_m() * Vector2(global_basis.get_scale().x, global_basis.get_scale().y)
 	var top := size.y
-	if cut_z() >= cut_line - InteriorRoom.CUT_MARGIN:
+	var furniture_line := cut_line
+	var material := _quad.material_override as ShaderMaterial if _quad != null else null
+	if material != null:
+		furniture_line = minf(cut_line, float(material.get_shader_parameter(&"furniture_cut_line")))
+	if cut_z() >= furniture_line - InteriorRoom.CUT_MARGIN:
 		top = minf(top, cut_height)
 	var base := global_position + image_offset * global_basis.get_scale()
 	var along := global_basis.x.normalized() if keep_orientation else Vector3.RIGHT

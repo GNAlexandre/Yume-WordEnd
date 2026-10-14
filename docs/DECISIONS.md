@@ -2822,3 +2822,4 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   (vers l'intérieur d'essai, marqueur `from_entrepot_rdc_essai`).
 - **E4 — touche F6** : créneau suivant (Maj : tout de suite), comme F7 (moment) et F8 (temps), en
   version de débogage ou avec un paramètre de développement.
+- **R2 — raccord des livraisons R0 (PR n° 34) et d'I1** : la fusion avait perdu deux lignes de `InteriorPanel` (matériau `InteriorRoom.furniture_material`, et `occluder_triangles` qui lit `furniture_cut_line`), donc les meubles ne se coupaient plus au sud du joueur dans sa pièce ; rétablies sur la base d'I1 (`displayed_texture()`, `cut_z()`). Le coffre à jouets (`toy_chest`), tourné par sa vue de flanc livrée, touchait presque le mur nord : plan décalé à (22,3 ; 11,4) pour que les murs le fassent regarder O.

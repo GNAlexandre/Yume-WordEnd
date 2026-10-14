@@ -806,7 +806,7 @@ point entree 13 12.6
 # --- salle de jeux (V2 ; VEX ; V4 : le vieux piano) ---
 meuble rug_playroom 19.4 12.9 4 3 0 libre
 meuble piano_old 16.2 11.4 1.6 0.7 1.4
-meuble toy_chest 22.2 11.2 1.0 0.6 0.8 regard=O
+meuble toy_chest 22.3 11.4 1.0 0.6 0.8 regard=O
 meuble board_games_shelf 22.25 13.0 1.2 0.5 1.6 regard=O
 meuble game_table 19.4 12.8 1.2 0.6 0.5
 meuble plush_blue 17.0 13.6 0.5 0.5 0.5
