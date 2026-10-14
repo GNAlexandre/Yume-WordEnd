@@ -71,6 +71,25 @@ TABLES = {
         "marche": (6, 10, True, None, None),
         "parle": ([2, 3, 4], 6, True, None, None),
     },
+    # (E5) Faune (docs/ASSETS_HD2D_ILE68.md, 7.3) : toutes les animations possibles ; une espèce
+    # n'exige que celles de sa clé « anims » du manifeste. marche et course : 6 et 5 images, ou 4
+    # sauts (oiseaux, grenouille). « fauna_bird » : la fuite (envol) boucle.
+    "fauna": {
+        "repos": (2, 2, True, None, None),
+        "marche": ([4, 6], 8, True, None, None),
+        "course": ([4, 5], 14, True, None, None),
+        "attaque": (4, 12, False, [2], None),
+        "degats": (1, 1, False, None, None),
+        "mort": (2, 4, False, None, None),
+        "fuite": (4, 12, False, None, None),
+        "broute": (4, 4, True, None, None),
+    },
+    "fauna_bird": {
+        "repos": (2, 2, True, None, None),
+        "marche": (4, 8, True, None, None),
+        "course": (4, 14, True, None, None),
+        "fuite": (4, 12, True, None, None),
+    },
     "timere": {
         "repos": (5, 6, True, None, None),
         "marche": (4, 7, True, None, None),
@@ -85,7 +104,13 @@ TABLES = {
 UPRIGHT = ("repos", "marche", "parle")
 # Animations debout que le jeu joue, par tableau : une échelle fausse y bloque (ailleurs : une
 # remarque). Les PNJ ne marchent pas ; le Timere, sans pieds ni tête fixes, n'est pas mesuré.
-USED = {"fairy": ("repos", "marche", "parle"), "npc": ("repos", "parle"), "timere": ()}
+USED = {
+    "fairy": ("repos", "marche", "parle"),
+    "npc": ("repos", "parle"),
+    "timere": (),
+    "fauna": ("repos",),
+    "fauna_bird": ("repos",),
+}
 # Une ancre peut dépasser du cadre de l'image de quelques px (pied coupé au ras du cadre).
 ANCHOR_MARGIN = 2
 STANDING_TOLERANCE = 0.06
@@ -372,7 +397,7 @@ def _expected_count_ok(want, count):
     return count in want if isinstance(want, list) else count == want
 
 
-def check_view(json_path, table, height_px, profile_height=0.0, accepted=()):
+def check_view(json_path, table, height_px, profile_height=0.0, accepted=(), only=None):
     """(problèmes, remarques) d'une vue. Les problèmes bloquent (format, animations du tableau,
     images, ancres, hauteur du profil, échelle des animations jouées : USED) ; les remarques
     (échelle des autres animations, vue dessinée plus petite ou plus grande que le profil, que
@@ -400,6 +425,8 @@ def check_view(json_path, table, height_px, profile_height=0.0, accepted=()):
         problems.append("planche %s au lieu de %s" % (data.get("planche"), list(image.size)))
     anims = data.get("animations", {})
     for name, (count, fps, loops, hits, wave) in TABLES[table].items():
+        if only is not None and name not in only:
+            continue
         anim = anims.get(name)
         if anim is None and table == "npc" and name == "parle":
             notes.append("parle absente (le PNJ garde repos en conversation)")
@@ -481,7 +508,9 @@ def check_sheet(entry):
     for view in entry.get("views", [""]):
         path = base + view + ".json"
         accepted = entry.get("accepted", {}).get(view or "side", [])
-        problems, notes = check_view(path, entry["table"], height_px, profile if view else 0.0, accepted)
+        problems, notes = check_view(
+            path, entry["table"], height_px, profile if view else 0.0, accepted, entry.get("anims")
+        )
         if view and not problems and os.path.exists(side) and _signature(path) != _signature(side):
             problems.append("animations, cadences, coup ou onde différents du profil")
         for anim, source in entry.get("aliases", {}).get(view or "side", {}).items():

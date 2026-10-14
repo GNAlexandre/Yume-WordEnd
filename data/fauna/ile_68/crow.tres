@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AnimalData" format=3]
+
+[ext_resource type="Script" path="res://src/fauna/animal_data.gd" id="1_animal"]
+[ext_resource type="Resource" path="res://data/fauna/ile_68/visuals/crow.tres" id="2_visual"]
+
+[resource]
+script = ExtResource("1_animal")
+id = &"crow"
+display_name = "Corbeau"
+visual = ExtResource("2_visual")
+behavior = &"paisible"
+max_hp = 1
+speed = 4.0
+walk_speed = 0.8
+body_radius_m = 0.15
+flies = true
+flee_range_m = 5.0
+flee_animation = &"fuite"
+vanish_s = 1.8
+wander_radius_m = 2.0
+moments = Array[StringName]([&"matin", &"apres_midi"])

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="AnimalData" format=3]
+
+[ext_resource type="Script" path="res://src/fauna/animal_data.gd" id="1_animal"]
+[ext_resource type="Resource" path="res://data/fauna/ile_68/visuals/frog.tres" id="2_visual"]
+
+[resource]
+script = ExtResource("1_animal")
+id = &"frog"
+display_name = "Grenouille"
+visual = ExtResource("2_visual")
+behavior = &"fuyard"
+max_hp = 1
+speed = 2.5
+walk_speed = 0.6
+body_radius_m = 0.08
+flee_range_m = 2.0
+flee_animation = &"fuite"
+vanish_s = 0.4
+wander_radius_m = 1.5
+moments = Array[StringName]([&"matin", &"apres_midi", &"couchant"])

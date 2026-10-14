@@ -14,9 +14,14 @@
     "foret_profonde",
     "essai",
     "essai_relief",
-    "entrepot_rdc_essai"
+    "entrepot_rdc_essai",
+    "foret_essai"
   ],
   "arrival_map": "entrepot",
+  "rules": {
+    "_comment": "(E5) La faune de l'île n° 68 : les espèces de data/fauna/ile_68/ (docs/lore/VIE.md, section 6). Où, combien et quand : data/fauna/ile_68/peuplement.json, qui interdit aussi les régions sans animaux (l'entrepôt, le village, la ville, le port). La carte foret_essai est celle de la démonstration de la faune (lot E5).",
+    "fauna": ["bear", "wolf", "boar", "deer", "fox", "squirrel", "frog", "blackbird", "crow", "owl", "butterfly", "dragonfly"]
+  },
   "places": {
     "entrepot": {
       "name": "L'entrepôt des fées",
