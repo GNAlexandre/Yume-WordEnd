@@ -468,6 +468,10 @@ E1, docs/DECISIONS.md) ; le mode d'emploi pour créer une carte est dans PLAN.md
   qui ne veut pas montrer ses bords resserre ses bornes (carte d'essai : `Rect2(10, 9, 20, 13)`
   pour 40 × 30 m).
 - `light_preset: StringName` : préréglage de lumière de E9 ; vide = celui du moment de la journée.
+  (E9) Un moment (`aube`, `matin`, `apres_midi`, `couchant`, `nuit`), `interieur`, ou tout
+  préréglage de `data/lighting/` ; vide et `interior` : `interieur`, qui suit le moment du dehors
+  (lumière des fenêtres le jour, lampes et cristaux la nuit). Le temps qu'il fait (`pluie`,
+  `averse`) s'ajoute dehors. API et mode d'emploi : PLAN.md, section 3 (`Atmosphere`).
 
 **Enfants figés**
 - `Ground` : le sol et sa collision (couche 1 world). C'est un `MapGround` (E2) dehors, une
@@ -490,9 +494,9 @@ E1, docs/DECISIONS.md) ; le mode d'emploi pour créer une carte est dans PLAN.md
   - (E1) Rien ne part pendant un changement de carte, ni pendant les `SETTLE_FRAMES` images
     physiques qui suivent l'arrivée : un joueur posé dans une sortie doit en sortir et y revenir.
 - `Life` : les PNJ, les animaux et les objets (E4, E5).
-- (E1) D'autres enfants sont permis. En attendant les préréglages de E9 (`light_preset`), une
-  carte porte sa lumière : une instance de `src/world/map_light.tscn` (`WorldEnvironment`, `Sun`
-  et `Lighting`, réglages de l'île).
+- (E1) D'autres enfants sont permis. (E9) Une carte ne porte pas sa lumière (`map_light.tscn`
+  est retiré) : `Atmosphere` lui ajoute un enfant `AtmosphereRig` (environnement et soleil si
+  elle n'en a pas, lumière du joueur, pluie) ; l'ancienne île garde les siens.
 
 **API de `WorldManager`** (E1)
 - `go_to(map_id: StringName, marker: StringName = &"Spawn") -> void` : fondu, chargement de la
@@ -650,3 +654,67 @@ Les options proposées au moment du choix :
    - **Recommandé** : « l'entrepôt » (dehors, dedans, vie des petites, jours 1 à 4), pour juger
      le cap sur pièce avant d'étendre.
    - Autre voie : toutes les fondations d'abord, puis tout le contenu.
+
+---
+
+## 11. Feuille de route : terminer l'île n° 68, ouvrir les autres
+
+**Établie le 14 octobre 2026.** Le but : une île n° 68 complète et fidèle (acte 1 entier, jours 1
+à 12), avec un code qui accueille sans réécriture les autres îles de Regule Aire et la surface.
+
+**Organisation**
+- Le superviseur écrit les plans et les consignes, relit, fusionne et vérifie.
+- Les lots tournent surtout sur des agents **Sonnet**, guidés par des consignes précises
+  (`CARTE.md`, `ACTE1.md`, `VIE.md` sont écrits pour être suivis à la lettre).
+- Un agent **Opus** seulement pour les lots de moteur qui inventent une architecture ou un
+  ressenti de jeu (marqués « Opus » ci-dessous).
+- Trois ou quatre agents à la fois au plus.
+
+### 11.1 Ouvrir le monde aux autres îles et à la surface (lot X1, Opus, PR « contrats »)
+
+Ce lot passe tôt, avant que les cartes se multiplient :
+- **Une île = des données** : `data/world/islands/<island_id>.json` donne le nom, les cartes, la
+  carte de l'île (graphe des lieux), les ports et les règles (faune, ennemis permis, ciel, mer de
+  nuages ou sol de la surface).
+  - `Map` gagne `island: StringName` (défaut `&"ile_68"`).
+  - `WorldManager.go_to` reste tel quel. Un voyage entre îles passe par un port et un trajet en
+    dirigeable : une scène de voyage, puis la carte d'arrivée.
+- **La surface** est un monde de plus, avec ses règles propres :
+  - pas de mer de nuages, un sol jusqu'à l'horizon ;
+  - les Timeres permis, alors que l'île n° 68 n'en a pas ;
+  - les règles de la surface viennent des données de l'île ou du monde, jamais d'un test sur un
+    nom de carte.
+- **Le contenu par île** : les dossiers `data/life/`, les scènes et les textes acceptent un
+  sous-dossier par île, pour que l'île n° 68 ne mélange pas ses données avec celles des suivantes.
+- **Mode d'emploi** « Ajouter une île » dans `PLAN.md`, avec une île d'essai minimale reliée au
+  port de l'île n° 68.
+
+### 11.2 Les lots
+
+| Phase | Lot | Contenu | Modèle | Dépend de |
+| --- | --- | --- | --- | --- |
+| 2 | T1 | L'entrepôt dehors (`entrepot`), cartes d'attente | Opus (en cours) | — |
+| 2 | T2 | L'entrepôt dedans (`entrepot_rdc`, `entrepot_etage`, `entrepot_toit`, `salle_des_armes`) | Opus (en cours) | — |
+| 2 | R1 | Raccord de la lumière (intérieurs, sol en relief, personnages la nuit) | Opus (en cours) | — |
+| 2 | E4 | La vie : tenues, emplois du temps, directeur, navigation, jeux des petites | Opus (repris) | — |
+| 2 | X1 | Îles et surface (11.1) | Opus | T1, T2 |
+| 2 | E6 | Le récit : jours, moments, scènes scriptées, calendrier, indice discret, début de partie à l'entrepôt, retrait des quêtes et de leur HUD | Opus | E4 |
+| 2 | V1 | La vie de l'entrepôt écrite dans les données (`VIE.md` → `data/life/`) sur les vraies cartes | Sonnet | E4, T1, T2 |
+| 2 | S1 | Les scènes des jours 1 à 4 (`ACTE1.md` → données de E6) | Sonnet | E6 |
+| 2 | E8 | Le ballon (groupe d'E4) et l'entraînement au bâton | Sonnet | E4 |
+| 2 | I1 | Intégration continue des images livrées : manifeste, scènes de décor, remplaçants retirés | Sonnet | — |
+| 3 | C-sentier, C-village, C-port, C-colline | Les cartes de `CARTE.md` 4 à 7 (plus `cafe`, `maison_limashenka`), sur le modèle de T1 et T2 | Sonnet | T1, T2, X1 |
+| 3 | E7 | Les navires en volume : coque, pont praticable, rotors, bras d'ancrage ; `transport_garde`, `barocupot` | Opus | X1 |
+| 3 | E8b | Le duel ingagnable et l'entraînement avec Seniorious (`ACTE1.md`, section 3) | Opus | E8 |
+| 3 | S2 | Les scènes des jours 5 à 12 et la vie qui va avec | Sonnet | S1, cartes de la phase 3 |
+| 4 | E5 | La faune : paisibles, fuyards, dangereux ; meutes ; `data/fauna/` | Sonnet | X1 |
+| 4 | C-foret, C-ville, C-montagne | `foret_profonde`, `ville_haute`, `ville_marche` et ses six intérieurs, `montagne` | Sonnet | E5 |
+| 4 | V2 | Les habitants : passants, métiers, foules du village et de la ville | Sonnet | E4 |
+| 5 | E10 | Densité : kits, outils de pose, mesures automatiques | Sonnet | — |
+| 5 | F1 | Retrait de l'ancienne île et de son code, performances Web et bureau, version publiée | Opus | tout |
+
+**Images** : le cahier n° 5 (`docs/ASSETS_HD2D_ILE68.md`) commande ce qui manque encore pour
+l'île n° 68, dans l'ordre de ces phases. Chaque livraison passe par le lot I1.
+
+**Fin de phase** : comme en section 9, une version jouable, des captures, et la recette de
+l'utilisateur. La fin de la phase 2 est le moment de juger le cap sur les jours 1 à 4.

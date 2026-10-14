@@ -462,3 +462,118 @@ RECIPES.update({
     "sky/sky_dusk": sky_dusk, "sky/sky_night": sky_night,
 })
 
+
+# --- (E9) Cahier n° 3 (docs/ASSETS_HD2D_SUKASUKA.md, section 8, lot N) : remplaçants -----------
+# La pluie, ses éclaboussures et la lumière des fées, jusqu'à la livraison du lot N ; plus le trait
+# d'une goutte (effet généré, fx). Les bandes de pluie sont sans raccord : chaque trait est dessiné
+# aussi de l'autre côté des bords, et descend d'un quart de l'image d'une image à l'autre.
+
+
+def fx_rain_drop(size, rnd):
+    """Trait d'une goutte qui tombe : pâle en haut, plus net en bas (la tête de la goutte)."""
+    w, h = size
+    img = Image.new("RGBA", size, (0, 0, 0, 0))
+    px = img.load()
+    for y in range(h):
+        t = (y + 0.5) / h
+        a = 255 * (0.15 + 0.85 * t ** 1.6)
+        for x in range(w):
+            edge = abs((x + 0.5) / w - 0.5) * 2.0
+            px[x, y] = (214, 226, 244, round(a * max(0.0, 1.0 - edge ** 2)))
+    return img
+
+
+def _rain_strip(size, rnd, n, count, length, slant, alpha, color, width=1):
+    """Bande de pluie sans raccord : count traits (longueurs et opacités variées) qui
+    descendent d'un quart de l'image par image, penchés de slant pixels par pixel de chute."""
+    w, h = size
+    drops = [(rnd.random() * w, rnd.random() * h, length * (0.55 + 0.9 * rnd.random()),
+              alpha[0] + (alpha[1] - alpha[0]) * rnd.random()) for _ in range(count)]
+    frames = []
+    for f in range(n):
+        img = Image.new("RGBA", size, (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        fall = f * h / n
+        for x0, y0, ln, a in drops:
+            x = (x0 + slant * fall) % w
+            y = (y0 + fall) % h
+            for ox in (-w, 0, w):
+                for oy in (-h, 0, h):
+                    sx, sy = x + ox, y + oy
+                    ex, ey = sx + slant * ln, sy + ln
+                    if ex < -2 or sx > w + 2 or ey < -2 or sy > h + 2:
+                        continue
+                    d.line((sx, sy, ex, ey), fill=rgba(color)[:3] + (round(255 * a),), width=width)
+        frames.append(img)
+    return frames
+
+
+def anim_rain_curtain(size, rnd, n):
+    return _rain_strip(size, rnd, n, 150, 34, 0.22, (0.3, 0.6), "#DCE4F0")
+
+
+def anim_rain_drizzle(size, rnd, n):
+    return _rain_strip(size, rnd, n, 70, 12, 0.04, (0.2, 0.4), "#E4EAF4")
+
+
+def anim_rain_splash(size, rnd, n):
+    """Goutte qui s'écrase : impact, couronne qui jaillit, retombée, ride au sol."""
+    w, h = size
+    water = rgba("#D4E0F0")
+    light = rgba("#F0F6FF")
+    cx = w // 2
+    frames = []
+    for f in range(n):
+        img = Image.new("RGBA", size, (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        if f == 0:
+            d.rectangle((cx - 1, h - 7, cx, h - 1), fill=water)
+            d.rectangle((cx - 3, h - 2, cx + 2, h - 1), fill=light)
+        elif f == 1:
+            for k, (dx, dy) in enumerate(((-9, 7), (-6, 11), (-2, 13), (2, 13), (6, 11), (9, 7))):
+                d.rectangle((cx + dx - 1, h - dy, cx + dx, h - dy + 1), fill=light if k % 2 else water)
+            d.rectangle((cx - 8, h - 2, cx + 7, h - 1), fill=water)
+        elif f == 2:
+            d.rectangle((cx - 12, h - 5, cx - 11, h - 4), fill=water)
+            d.rectangle((cx + 11, h - 4, cx + 12, h - 3), fill=water)
+            d.rectangle((cx - 10, h - 1, cx + 9, h - 1), fill=water)
+        else:
+            d.rectangle((cx - 6, h - 1, cx - 3, h - 1), fill=water)
+            d.rectangle((cx + 2, h - 1, cx + 5, h - 1), fill=water)
+        frames.append(img)
+    return frames
+
+
+def anim_fairy_light(size, rnd, n):
+    """Lumière magique des fées : orbe blanc bleuté, halo doux, étincelles qui tournent ; elle
+    pulse d'une image à l'autre."""
+    w, h = size
+    cx, cy = w / 2.0, h / 2.0
+    frames = []
+    for f in range(n):
+        pulse = [0.85, 1.0, 0.9, 0.78][f % 4]
+        img = Image.new("RGBA", size, (0, 0, 0, 0))
+        px = img.load()
+        for y in range(h):
+            for x in range(w):
+                r = math.hypot(x + 0.5 - cx, y + 0.5 - cy) / (w * 0.42)
+                halo = max(0.0, 1.0 - r) ** 2.2 * pulse
+                core = max(0.0, 1.0 - r / 0.22) ** 0.8
+                a = min(1.0, halo * 0.75 + core)
+                col = mix("#9EC4FF", "#FFFFFF", min(1.0, core * 1.4 + halo * 0.3))
+                px[x, y] = col + (round(255 * a),)
+        d = ImageDraw.Draw(img)
+        for k in range(3):
+            angle = 2 * math.pi * (k / 3.0 + f / float(n) / 3.0)
+            sx, sy = cx + math.cos(angle) * w * 0.27, cy + math.sin(angle) * h * 0.22
+            d.rectangle((sx - 0.5, sy - 0.5, sx + 0.5, sy + 0.5), fill=rgba("#F4F8FF"))
+        frames.append(img)
+    return frames
+
+
+RECIPES.update({
+    "fx/rain_drop": fx_rain_drop,
+    "anim/rain_curtain": anim_rain_curtain, "anim/rain_drizzle": anim_rain_drizzle,
+    "anim/rain_splash": anim_rain_splash, "anim/fairy_light": anim_fairy_light,
+})
+

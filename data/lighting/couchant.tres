@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="HD2DLighting" format=3]
+
+[ext_resource type="Script" path="res://src/world/materials/hd2d_lighting.gd" id="1_script"]
+
+[resource]
+resource_name = "couchant"
+script = ExtResource("1_script")
+night_amount = 0.15
+window_light = 0.85
+window_tint = Color(1, 0.7, 0.46, 1)

@@ -274,6 +274,7 @@ change pas (testé) ; `src/game.gd` ne crée ce nœud que si l'un d'eux est pré
 | `?zone=dunes` | Le joueur part du Spawn du bord du Couchant (`dunes`), tourné vers la cloche de veille : 15 m tout droit (Z/W), puis E lance la veille. Toute zone de l'île : `village` (l'entrepôt des fées), `forest` (les bois du marais), `beach` (le port et le bourg), `hill` (la colline des étoiles), tourné vers son centre ; un nom inconnu est ignoré. La partie (nouvelle ou reprise) garde son état : l'acte 1 en est où il en était. |
 | `&timeres=12` | Banc de performance : 12 Timeres (les quatre corps, 24 au plus) errent devant le joueur sans le poursuivre. |
 | `?trace=1` | (intégration M2) Le journal seul : la partie (nouvelle ou reprise) n'est pas touchée. |
+| `?moment=nuit&temps=pluie` | (E9) Lus par `Atmosphere` (pas par ce nœud : ajouter `trace` pour le journal), posés à chaque partie chargée, sans transition et sauvegardés : moments `aube`, `matin`, `apres_midi`, `couchant`, `nuit` ; temps `clair`, `pluie`, `averse` ; une valeur inconnue est ignorée. Avec l'un d'eux (ou dans l'éditeur), F7 passe au moment suivant et F8 au temps suivant (transition de 4 s ; Maj : tout de suite). `tools/web_atmosphere.js` s'en sert (section « Lumière et temps » plus bas). |
 | `?maps=essai,ile_ancienne` | (E1) Une fois la partie posée, voyage de carte en carte (`WorldManager.go_to`, Spawn de chaque carte) ; une ligne « [m1] carte <id> chargée : fondu … ms, chargement … ms en n images, installation … ms, total … ms » par changement, puis « [m1] voyage terminé ». `tools/web_maps.js` s'en sert (section « Cartes » plus bas). |
 
 Avec l'un d'eux, la page reçoit aussi deux aides (acte 1) : `window.wordendFace("nygglatho")`
@@ -432,3 +433,31 @@ Le même aller-retour en natif (`tools/map_bench.gd`, voir son en-tête) : sans 
 essai 20 ms + 90 à 100 ms, île 1,6 à 1,8 s en 11 images + 0,33 à 0,53 s ; une nouvelle partie
 dans l'île, d'un bloc, 2,7 s. Fondus compris, on change de carte en 0,7 s (essai) et 2,0 s
 (l'île, la plus grosse carte du jeu : 8 800 nœuds).
+
+## Lumière et temps (E9)
+
+Le moment de la journée et le temps qu'il fait (`GameState.moment`, `weather`, sauvegardés) sont
+posés par `Atmosphere` (PLAN.md, section 3) : `index.html?moment=nuit&temps=averse` ouvre une
+partie la nuit sous l'averse ; F7 et F8 changent ensuite le moment et le temps.
+`tools/web_atmosphere.js` (Playwright, mode d'emploi en tête du fichier) ouvre, pour chaque
+préréglage, `index.html?trace&moment=…&temps=…` dans un profil neuf, lance une nouvelle partie
+(Spawn du village) et relève les draw calls du journal « [m1] … » et les images affichées par la
+page (requestAnimationFrame), avec une capture `build/shots/atmosphere_web_<moment>_<temps>.png`.
+En natif, `tools/e9_shots.sh` rend la même vue sous chaque préréglage (luminance et draw calls).
+
+Mesures du 9 octobre 2026 (PR E9, Chromium headless, SwiftShader, VM partagée, Spawn du village ;
+le build d'avant E9 mesuré deux fois, avant et après, sans paramètre) :
+
+| Préréglage | Images/s (page) | Draw calls (moyenne, max) | Primitives |
+| --- | --- | --- | --- |
+| Avant E9 (couchant) | 0,53 et 0,66 | 133, 140 | 20 424 |
+| Couchant, clair | 0,55 | 133, 140 | 20 424 |
+| Nuit, clair (lumière du joueur et son orbe) | 0,61 | 134, 141 | 20 426 |
+| Couchant, pluie | 0,55 | 136, 143 | 22 546 |
+| Nuit, averse | 0,60 | 137, 144 | 22 548 |
+
+Le rendu logiciel tourne à une image toutes les deux secondes : les écarts d'images/s sont du
+bruit, aucun préréglage ne coûte notablement (la lumière du joueur ne coûte aucun draw call ; la
+pluie en coûte trois, cachés sans pluie). Aucune erreur dans la console (seuls les
+avertissements « GPU stall due to ReadPixels » de SwiftShader, déjà là avant).
+

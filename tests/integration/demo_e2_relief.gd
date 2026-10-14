@@ -1,8 +1,7 @@
 extends Node
 ## (E2) Démonstration du sol en relief : la vraie partie (game.tscn), posée sur la carte
-## essai_relief (src/world/maps/essai_relief/) par WorldManager.enter_map, avec sa lumière
-## (src/world/map_light.tscn), le joueur et sa caméra fixe (post-traitement compris). F6 dans
-## l'éditeur.
+## essai_relief (src/world/maps/essai_relief/) par WorldManager.enter_map, avec la lumière
+## d'Atmosphere (E9), le joueur et sa caméra fixe (post-traitement compris). F6 dans l'éditeur.
 ##
 ## Captures : E2_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_e2_relief.tscn
 ## build/shots/e2_<vue>.png 60

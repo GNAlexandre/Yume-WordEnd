@@ -31,6 +31,7 @@ SaveManager="*res://src/autoload/save_manager.gd"
 SkinRegistry="*res://src/autoload/skin_registry.gd"
 WorldManager="*res://src/autoload/world_manager.gd"
 DesktopApp="*res://src/autoload/desktop_app.gd"
+Atmosphere="*res://src/autoload/atmosphere.gd"
 
 [debug]
 

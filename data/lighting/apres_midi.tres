@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="HD2DLighting" format=3]
+
+[ext_resource type="Script" path="res://src/world/materials/hd2d_lighting.gd" id="1_script"]
+
+[resource]
+resource_name = "apres_midi"
+script = ExtResource("1_script")
+sun_color = Color(1, 0.96, 0.88, 1)
+sun_energy = 0.86
+sun_elevation_deg = 50.0
+sun_azimuth_deg = 200.0
+sky_tint = Color(0.92, 1, 1.14, 1)
+sky_energy = 1.05
+clouds_tint = Color(1.06, 1.06, 1.1, 1)
+clouds_warm = Color(1, 0.96, 0.88, 1)
+ambient_color = Color(0.8, 0.8, 0.88, 1)
+ambient_energy = 0.68
+fog_color = Color(0.86, 0.87, 0.93, 1)
+fog_density = 0.0014
+lamp_energy = 0.5
+window_glow = 0.6
+window_light = 1.15
+window_tint = Color(1, 0.97, 0.9, 1)
+grade = Color(1.02, 1.01, 0.98, 1)
+shadow_tint = Color(0.46, 0.46, 0.6, 1)
+highlight_tint = Color(1, 0.92, 0.78, 1)
+split_strength = 0.08
+contrast = 1.06
+saturation = 1.08
+vignette = 0.24
+haze_color = Color(0.88, 0.9, 0.98, 1)
+haze_strength = 0.1
+sky_light_color = Color(1, 0.95, 0.85, 1)
+sky_light_strength = 0.02
+glow_threshold = 0.78
+glow_strength = 0.45

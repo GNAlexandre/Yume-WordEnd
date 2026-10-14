@@ -2327,3 +2327,178 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   nuages 1 ; le reste : décors, joueur, interface, post-traitement) ; construction du sol 36 à 60 ms
   à froid avec le rendu (33 ms à chaud sans écran). La vue « large » est au zoom le plus éloigné
   du jeu (`max_distance` 25 m) ; la carte entière se voit par `tools/map_build.py view`.
+
+## E9 — La lumière et le temps
+
+- **E9 — où vivent le moment et le temps** : dans `GameState` (`moment`, `weather`, setters qui
+  émettent `EventBus.atmosphere_changed(moment, weather)`, sauvegardés), comme `skin_id` ; un
+  autoload `Atmosphere` (`src/autoload/atmosphere.gd`, seul ajout à `project.godot`) en fait la
+  lumière. Identifiants en français, ce sont des données comme les `map_id` : moments `aube`,
+  `matin`, `apres_midi`, `couchant`, `nuit` (`GameState.MOMENTS`), temps `clair`, `pluie` (pluie
+  fine), `averse` (`GameState.WEATHERS`) ; une autre valeur est refusée (avertissement). Une
+  nouvelle partie et une sauvegarde d'avant E9 sont au couchant, sans pluie : le monde de
+  toujours.
+- **E9 — sauvegarde** : `moment` et `weather` sont des champs facultatifs du schéma v3 (absents
+  ou inconnus : couchant, clair), sans nouvelle version ni migration (`SAVE_VERSION` reste 3) ;
+  `to_dict` les écrit après `tracked_quest`.
+- **E9 — préréglages** : des données, `data/lighting/<id>.tres` : un `HD2DLighting` par moment,
+  plus `interieur` et `interieur_nuit` ; le temps est un `HD2DWeather` (`pluie.tres`,
+  `averse.tres` ; « clair » n'a pas de fichier) qui *modifie* le préréglage du moment (moins de
+  soleil, gris, brouillard, étalonnage terne, gouttes, sol mouillé) : la pluie au matin, au
+  couchant ou la nuit sort du même fichier. Le couchant reprend exactement les valeurs
+  d'`island.tscn` et de `post_fx.gdshader` (testé ; captures du village et de la carte d'essai
+  identiques au pixel près à celles d'avant E9, hors bandeau du nom de la carte). Les anciens
+  `src/world/materials/lighting_sunset|dusk|night.tres` sont retirés : le crépuscule n'est pas
+  un moment du récit (« le port sous une pluie fine au crépuscule » = couchant + pluie).
+- **E9 — préréglage effectif** : `Map.light_preset` s'il est rempli (un moment, `interieur`, ou
+  tout `data/lighting/<id>`), sinon `interieur` pour une carte `interior`, sinon le moment ; le
+  temps s'y ajoute dehors. Dedans, ni pluie ni sol mouillé : seule la lumière des fenêtres
+  baisse et grisaille (`window_light_scale`). `interieur` mêle `interieur` (jour : lumière des
+  fenêtres) et `interieur_nuit` (lampes ×2,2, cristaux, fenêtres sombres) selon le
+  `night_amount` du moment du dehors (aube 0,45, couchant 0,15, nuit 1, jour 0), et teinte la
+  lumière des fenêtres du soleil du dehors (orangée au couchant).
+- **E9 — la lumière quitte les cartes** : `src/world/map_light.tscn` est retiré (la carte d'essai
+  ne le porte plus), ainsi que le nœud `Lighting` d'`island.tscn` et `day_phase_lighting.gd`.
+  `Atmosphere` ajoute à la carte courante un enfant `AtmosphereRig` (libéré avec elle) : un
+  `WorldEnvironment` (réglages de l'île) et un soleil seulement si la carte n'en a pas, la
+  lumière du joueur et la pluie. L'ancienne île garde son `WorldEnvironment` et son `Sun`
+  (structure figée) : la lumière les règle sur une copie de l'environnement, sans en ajouter (un
+  seul environnement par scène). Une carte de E2 ou E3 qui porterait encore les siens serait
+  réglée de même.
+- **E9 — quand la lumière se pose** : tout de suite à `map_entered` (sous le fondu au noir) et à
+  `game_loaded` (paramètres de développement compris) ; à chaque image, `Atmosphere` compare la
+  carte courante (`WorldManager.current_map_node()`) à celle qu'il a habillée : une carte posée à
+  la main (démonstration, capture d'une carte seule) est habillée à l'image suivante. Le relevé
+  (`HD2DLightTargets.scan`) se fait une fois par carte ; les transitions ne règlent ensuite que
+  ce qui change (lueur, sol mouillé et images de nuit seulement quand leur valeur change).
+- **E9 — transitions** : 4 s par défaut (`Atmosphere.transition_time`), adoucies (smoothstep) ;
+  couleurs et nombres interpolés, l'azimut du soleil par le plus court chemin ; les deux ciels
+  se fondent dans `sky.gdshader` (deux panoramas), les deux mers de nuages dans
+  `cloud_sea.gdshader` ; un changement en cours de transition repart du mélange posé (le ciel
+  repart de celui qui dominait). `set_moment(…, 0.0)` : tout de suite. Elles s'arrêtent pendant
+  la pause.
+- **E9 — le ciel ne se voit pas** : la caméra (32° vers le bas, champ de 30°) ne voit jamais
+  au-dessus de l'horizon (le haut de l'écran est à 17° dessous) ; le panorama ne se voit qu'au
+  bord d'une carte sans mer de nuages. `sky.gdshader` remplace le `PanoramaSkyMaterial` (même
+  lecture au plus proche voisin, même rendu) ; la nuit prend `sky_night.png` (cahier n° 2) ; ses
+  étoiles se voient dans les creux sombres de la mer de nuages (`clouds_stars`, points fixes qui
+  scintillent), seule part du ciel étoilé à l'écran.
+- **E9 — la nuit lisible** : lune froide à l'est (40°, énergie 0,42), ambiance bleutée 0,62,
+  lanternes ×2,2, lueur des fenêtres et cristaux ×1,8, étalonnage bleuté sans noir écrasé, et la
+  lumière du joueur. Mesuré : luminance moyenne 0,18 à 0,23 de l'écran, 0,25 à 0,30 du tiers du
+  milieu (couchant 0,38) ; `test_e9_captures.gd` refuse une vue sous 0,10 (écran) ou 0,12
+  (milieu).
+- **E9 — la lumière des fées** (V1, « L'Homme sans Marque ») : une `OmniLight3D` blanc bleuté
+  (énergie 1,5, portée 7,5 m) et l'orbe (`anim/fairy_light.png`, affiché à 64 px/m pour qu'il se
+  voie) à hauteur de main, du côté où le joueur regarde (`Player.aim_direction`, lue par
+  `has_method`), qui flotte un peu. Allumée la nuit dehors seulement (`player_light` du
+  préréglage, mêlée pendant les transitions : elle s'allume avec la nuit) ;
+  `Atmosphere.player_light_mode` (`auto`, `on`, `off`) pour une scène (Willem arrive sans
+  lumière). Réglages dans `AtmosphereRig` (`light_energy`, `light_range`, `light_color`,
+  `light_height`).
+- **E9 — la pluie** : dans le monde, `RainFall` (gouttes en traits obliques, vent d'ouest, et
+  éclaboussures au sol, 900 + 160 sprites, deux draw calls, tout le mouvement dans
+  `rain.gdshader`, l'intensité est la part des gouttes qui tombent : rien à reconstruire, la
+  pluie s'arrête en douceur) ; à l'écran, le rideau (`rain_curtain.gdshader`, un draw call : la
+  bande de la pluie fine derrière, celle de l'averse devant, 1,5 fois plus grande) ; caché sans
+  pluie, sans coût. Sol et décors mouillés : `hd2d_wetness` dans `hd2d_light.gdshaderinc` (ajout,
+  0 par défaut : rien ne change ailleurs), posé sur chaque matériau de la carte : diffus −30 %
+  sous chaque lumière, reflet serré des lumières (lune, lanternes, lumière du joueur) borné pour
+  ne pas éblouir, lustre rasant léger ; plus fort à plat (sol, toits) qu'en panneau ; un
+  `StandardMaterial3D` (sol provisoire de la carte d'essai) devient moins rugueux et un peu
+  spéculaire. Les flaques animées attendent un `GroundDecal` animé (demande).
+- **E9 — formats d'images confirmés** (cahier n° 3, sections 8 et 9.4) : rideau de pluie
+  (`rain_curtain`, `rain_drizzle` : 384 × 384, 4 images, répétées à l'écran, une image pour
+  384 px d'un écran de 720) ; éclaboussure (`rain_splash`, ancrée au milieu du bas) ; lumière des
+  fées (`fairy_light`, centrée) ; fenêtres de nuit (`<nom>_night.png` à côté de `<nom>.png` le
+  remplace quand `night_amount` ≥ 0,5) ; vitres éclairées (`window_lit_*` : ne se montrent que la
+  nuit, par leur `alpha_cut`). Remplaçants générés (`tools/hd2d_sky.py`, lot N du manifeste,
+  `python3 tools/hd2d_assets.py check` sans écart) et un effet `fx/rain_drop.png` (6 × 56).
+  `test_hd2d_assets.gd` lit aussi le cahier n° 3 pour nommer chaque image.
+- **E9 — la lueur des panneaux** : `glow_strength` de chaque matériau de la carte (fenêtres des
+  façades, cristaux, lampadaires) × `window_glow` du préréglage (après-midi 0,6, nuit 1,8), la
+  valeur de départ gardée en méta (les matériaux sont partagés entre cartes par les caches).
+- **E9 — les personnages ne sont pas teintés** : leurs planches ne sont pas éclairées et
+  `src/visuals/` n'est pas à E9 ; la nuit, ils restent clairs (ils ressortent, la lisibilité y
+  gagne). `Atmosphere.sprite_tint()` donne la teinte à poser (demande dans
+  docs/CONTRACT_REQUESTS.md).
+- **E9 — raccourcis** : `?moment=nuit&temps=pluie` (Web) ou `-- --moment=nuit --temps=pluie` sont
+  lus par `Atmosphere` lui-même (pas par `src/test_shortcuts.gd`, hors périmètre), posés à chaque
+  partie chargée, sans transition ; avec `?trace` pour les mesures. F7 (moment suivant) et F8
+  (temps suivant), Maj : tout de suite, dans une version de débogage (éditeur) ou quand l'un de
+  ces paramètres est donné : jamais dans une partie publiée sans paramètre.
+- **E9 — l'ancienne phase de la journée** : `EventBus.day_phase_changed` (M3, que rien
+  n'émet) reste au contrat ; `Atmosphere` le traduit en moment (morning → matin, day →
+  apres_midi, evening → couchant, night → nuit).
+- **E9 — luminance testée sous Xvfb** : le rendu des tests sans écran est factice ;
+  `tests/integration/test_e9_captures.gd` lance `tools/e9_shots.sh` (une partie rendue sous Xvfb,
+  dix préréglages sur la carte d'essai et le village, environ 30 s) et lit les luminances et les
+  draw calls ; sans `xvfb-run`, il est en attente. `tools/e9_shots.sh` sans argument rend les
+  vingt vues (village, carte d'essai, carte d'essai prise pour un intérieur, bord de l'île).
+
+## R1 — Le raccord de la lumière (E3, E9, E2, personnages)
+
+- **R1 — une seule lumière pour les intérieurs, celle d'`Atmosphere`** : `InteriorRoom` ne
+  connaît plus de phases (`PHASES` et le branchement sur `day_phase_changed` sont retirés) ;
+  `HD2DLightTargets` relève les `InteriorRoom` de la carte et leur passe le réglage posé à chaque
+  pose et à chaque image d'une transition (`InteriorRoom.apply_lighting`). `apply_phase(phase)`
+  reste comme simple passage vers le moment correspondant d'`Atmosphere` (tout de suite).
+  `src/world/interior_light.tscn` / `.gd` et `src/world/materials/lighting_interieur.tres` sont
+  retirés, et le nœud `Light` de `entrepot_rdc_essai` : une carte intérieure ne porte aucune
+  lumière. Fond des intérieurs : `AtmosphereRig` y pose un environnement à fond uni
+  (`InteriorRoom.VOID_COLOR`), sans ciel.
+- **R1 — le jour des fenêtres vient du moment du dehors** : deux champs ajoutés à
+  `HD2DLighting`, `window_light` (énergie des flaques de jour devant les fenêtres et de la lueur
+  des vitres) et `window_tint` (leur couleur), avec une valeur dans chaque préréglage : aube 0,6
+  rosé, matin 1,3, après-midi 1,15, couchant 0,85 orangé, nuit 0,4 bleu lune ; `interieur` 1,15
+  et `interieur_nuit` 0,4 pour une carte qui les prendrait directement. `Atmosphere.interior_for`
+  copie ceux du moment du dehors (le matin, l'après-midi et le couchant se distinguent dedans,
+  ce que le seul mélange `interieur` / `interieur_nuit` par la part de nuit ne faisait pas) ; les
+  lampes, cheminées et cristaux suivent `lamp_energy` du mélange (part de nuit). La pluie dehors
+  baisse et grise la lumière des fenêtres (`HD2DWeather.window_light_scale`, aussi sur
+  `window_light`), jamais les lampes.
+- **R1 — la nuit dedans se voit** : `interieur.tres` lampes ×0,25 (éteintes ou presque le
+  jour) ; `interieur_nuit.tres` lampes ×2,7 (flaques chaudes sous chaque lampe, appliques et
+  fourneau qui luisent), ambiance plus froide et plus basse (0,5, bleu-violet), vignette 0,42,
+  teinte des personnages 0,82 / 0,76 / 0,74. Mesuré sous Xvfb (`tools/e9_shots.sh`, luminance
+  de l'écran / du tiers du milieu) : réfectoire matin 0,243 / 0,321, couchant 0,209 / 0,266, nuit
+  0,110 / 0,156 ; couloir matin 0,333 / 0,449, couchant 0,289 / 0,400, nuit 0,165 / 0,343. Avant
+  le raccord, la nuit du réfectoire tombait sous le seuil de lisibilité (0,096) avec des fenêtres
+  toujours au jour et des lampes sans effet ; `test_e9_captures.gd` vérifie désormais que la nuit
+  reste au-dessus des seuils d'E9 et sous 0,65 fois la luminance du matin.
+- **R1 — les vitres la nuit** : une fenêtre qui a son image de nuit (`<nom>_night.png`, lot N ;
+  livrées depuis `f393bb1` pour `window_cross_small`, `window_cross_large`,
+  `window_reading_seat`) la prend la nuit (`HD2DLightTargets`, `night_amount` ≥ 0,5). Pour une
+  fenêtre sans image de nuit, `interior_panel.gdshader` assombrit et bleuit l'image de jour quand
+  le jour des fenêtres baisse (`night_view`, bleu nuit, selon `window_energy` de 0,15 à 0,9) ;
+  quand l'image de nuit existe, `HD2DLightTargets` pose `night_view` à blanc (pas de double
+  assombrissement).
+- **R1 — la lueur des panneaux d'intérieur** suit leur pièce (`glow_follows` : le jour pour les
+  vitres, les lampes pour les appliques, le fourneau, les cristaux) et n'est plus multipliée en
+  plus par le `window_glow` du préréglage (elle l'était deux fois depuis la fusion d'E9) :
+  `HD2DLightTargets` ignore la lueur des matériaux qui ont l'uniforme `glow_follows`.
+- **R1 — aucune lumière du moteur en plus** : ni lampe `OmniLight3D` ni environnement dans la
+  carte (le soleil d'`AtmosphereRig` sert de lumière d'ensemble, comme celui de l'ancienne
+  `interior_light.tscn`) ; draw calls inchangés : réfectoire 41, couloir 56, le matin, au
+  couchant et la nuit (vues sans le bandeau du nom de la carte).
+- **R1 — le soleil du sol en relief** : `HD2DLightTargets` relève les `MapGround` de la carte et
+  appelle `set_sun(toward_sun())` à chaque pose et à chaque image d'une transition (ombres
+  portées des falaises : elles tournent du matin au couchant, puis suivent la lune) ;
+  `MapGround._follow_sun` (la première `DirectionalLight3D` de l'arbre, une fois au chargement)
+  est retiré. `set_sun` règle le matériau effectivement dessiné de la mer de nuages (la copie
+  qu'`Atmosphere` pose en `material_override`), plus l'original devenu invisible.
+- **R1 — une seule mer de nuages** : vérifié sur `essai_relief` au nord (vue `relief` de
+  `demo_e9.gd`) : la mer de nuages est celle de `MapGround` (`CloudSea`, E2) ; `Atmosphere` n'en
+  ajoute pas, il règle celle-ci (teinte, côté du soleil, étoiles, image de nuit). On garde celle
+  d'E2 : elle est construite avec la carte, seulement si elle touche le vide, à la bonne
+  profondeur ; `test_light_links.gd` vérifie qu'il n'y en a qu'une.
+- **R1 — les personnages** : `CharacterVisual` multiplie la couleur de son sprite par
+  `HD2DLighting.active_sprite_tint()` (posée par `Atmosphere` avec chaque réglage, transitions
+  comprises), dans `advance()` (appelé à chaque image par `_process`, ou par les tests qui
+  pilotent l'horloge des visuels), en gardant la couleur que d'autres posent sur le sprite
+  (`EnemyData.tint`). Blanche au couchant et sans carte : `Atmosphere.dress(null)` (retour au
+  menu) oublie le réglage (`current()` null) et rend la teinte blanche.
+- **R1 — démonstrations** : `demo_e9.gd` a trois lieux de plus (`refectoire`, `couloir` dans
+  `entrepot_rdc_essai` ; `relief`, `falaise` dans `essai_relief`) et attend que le nom de la carte
+  s'efface avant de mesurer ; `demo_interieur.gd` prend `INTERIOR_MOMENT` (un moment
+  d'`Atmosphere`) au lieu de `INTERIOR_PHASE`.

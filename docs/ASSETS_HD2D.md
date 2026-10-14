@@ -358,7 +358,8 @@ flottent juste sous l'île sont permis.
 - **Portraits** : 256 × 256 (3.1).
 - **Effets** (`assets/hd2d/fx/`, générés par le jeu, facultatifs) : `shadow.png` (ombre douce,
   128 × 64), `glow.png` (halo de lumière chaude, 128 × 128), `light_pool.png` (flaque de lumière au
-  sol, 256 × 256).
+  sol, 256 × 256), (E9) `rain_drop.png` (trait d'une goutte de pluie, pâle en haut, 6 × 56 : la
+  pluie dans le monde, `src/world/rain_fall.gd`).
 
 ## 10. Où déposer, comment remplacer
 

@@ -2,8 +2,8 @@ extends Node
 ## (E3) Démo des intérieurs : la vraie partie (game.tscn), posée dans la carte d'essai du
 ## rez-de-chaussée de l'entrepôt (src/world/maps/entrepot_rdc_essai/) par
 ## WorldManager.enter_map, sans fondu ; le joueur, sa caméra fixe (bornée à camera_bounds), son
-## post-traitement et la lumière de la carte (src/world/interior_light.tscn, préréglage
-## « interieur »). F6 dans l'éditeur.
+## post-traitement et la lumière d'Atmosphere (préréglage « interieur » selon le moment du
+## dehors ; la carte n'en porte aucune). F6 dans l'éditeur.
 ##
 ## Captures : INTERIOR_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_interieur.tscn
 ## build/e3/interieur_<vue>.png 60
@@ -23,7 +23,9 @@ extends Node
 ##   porte       : le joueur dans la porte de la cloison réfectoire-cuisine (colonne de coupe) ;
 ##   descente    : la descente vers la salle des armes ;
 ##   plan        : tout l'étage, caméra au plus loin.
-## INTERIOR_PHASE=morning|day|evening|night : moment de la journée (InteriorRoom.apply_phase).
+## INTERIOR_MOMENT=aube|matin|apres_midi|couchant|nuit : moment du dehors (Atmosphere.set_moment,
+## tout de suite ; défaut : celui d'une nouvelle partie, le couchant). (R1) Mesures de la lumière
+## par moment : tools/e9_shots.sh refectoire:nuit:clair… (luminance, draw calls).
 ## INTERIOR_CUT=0 : sans la coupe (pour comparer : ce qui cacherait le joueur).
 ## Draw calls et primitives de l'image mesurée sont écrits dans le journal (« Intérieur vue … »).
 
@@ -97,9 +99,9 @@ func _stage() -> void:
 	WorldManager.enter_map(MAP_ID)
 	var map := WorldManager.current_map_node()
 	var room := map.get_node(^"Ground") as InteriorRoom
-	var phase := StringName(OS.get_environment("INTERIOR_PHASE"))
-	if not phase.is_empty():
-		room.apply_phase(phase)
+	var moment := StringName(OS.get_environment("INTERIOR_MOMENT"))
+	if moment in GameState.MOMENTS:
+		Atmosphere.set_moment(moment, 0.0)
 	room.cut_enabled = OS.get_environment("INTERIOR_CUT") != "0"
 	var spot: Array = SPOTS[_view]
 	_player.global_position = map.to_global(spot[0] as Vector3)

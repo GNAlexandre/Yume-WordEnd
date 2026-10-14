@@ -562,3 +562,56 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
 - **Les planches de l'acte 1 encore à livrer**, par ordre d'usage dans `ACTE1.md` :
   `chtholly_pajamas` (jour 9), `nygglatho_labcoat` (jour 7), `kana` et `giniette` (jour 10), les
   planches de bâton `_stick` (jours 9 à 11, après accord du lot E8 sur `pare`).
+## E9 — les personnages restent en plein jour la nuit (`src/visuals/`, E4 ou H6) — remplace la demande H5
+- Besoin : les planches (`AnimatedSprite3D` non ombré de `CharacterVisual`, Timeres compris) ne
+  sont pas éclairées ; la nuit, sous la pluie ou dans un intérieur, le décor s'assombrit mais les
+  personnages restent aussi clairs qu'au couchant.
+- Proposition : `CharacterVisual` multiplie `Sprite.modulate` par `Atmosphere.sprite_tint()` à
+  chaque image (la teinte change pendant les transitions ; blanche au couchant et au clair : rien
+  ne change dans l'acte 1 tel qu'il est). Teintes : `sprite_tint` des préréglages de
+  `data/lighting/` (nuit 0,7 / 0,76 / 0,92), multipliée par celle du temps.
+- En attendant : rien ; ils ressortent la nuit, ce qui les garde lisibles.
+
+## E9 — les cartes de E2 et E3 ne portent plus de lumière
+- Besoin : `src/world/map_light.tscn` est retiré ; une carte qui l'instancie ne se charge plus.
+  Une carte qui porte son propre `WorldEnvironment` ou sa `DirectionalLight3D` est réglée par
+  Atmosphere comme l'ancienne île, mais le contrat (docs/REFONTE.md 7.1, PLAN.md « (E9) Lumière
+  et temps ») veut qu'elle n'en ait pas.
+- Proposition : retirer ces nœuds des cartes `essai_relief` (E2) et `entrepot_rdc_essai` (E3) ;
+  E3 : `interior = true` (préréglage `interieur`, qui suit le moment du dehors), lampes et
+  cheminées en `OmniLight3D` (énergie de jour : `lamp_energy` les multiplie), fenêtres de nuit
+  `<nom>_night.png`.
+
+## E9 — flaques animées sous la pluie (`GroundDecal`, H9 / E2)
+- Besoin : `puddle_rain_a|b` (cahier n° 3, lot N : décalques animés) ; `GroundDecal` n'a pas de
+  bande animée.
+- Proposition : `frames` et `fps` sur `GroundDecal` comme sur `DecorPanel` (phase dans UV2) ;
+  les flaques posées par image `puddle_*` ne se montreraient que sous la pluie (HD2DLightTargets
+  les réglerait par leur nom, comme les vitres éclairées `window_lit_*`).
+- En attendant : sol mouillé et reflets seulement.
+
+## E9 — l'export Web dépasse le budget de 100 Mo depuis les images des lots I et J (`origin/main`)
+- Constat : à `db96511` (`origin/main` : `c2b12aa` plus les images livrées des lots I et J du
+  cahier n° 3, sans code), `tools/build_size.sh` mesure 101,3 Mo compressés (wasm + pck) : le
+  `tools/check.sh` complet est rouge à l'étape « export web » avant tout lot de la refonte. E9 y
+  ajoute 0,1 Mo (cinq images de remplacement du lot N, 40 ko de PNG ; 101,4 Mo).
+- Proposition : trancher ce que la section 8 de docs/REFONTE.md annonçait (« le Web dépasserait
+  les 100 Mo ») : budget relevé (PLAN.md section 9, `tools/build_size.sh`), ou version Web allégée
+  (images en WebP avec perte pour le seul Web), ou exclusion de l'export Web des images pas
+  encore posées (filtre d'`export_presets.cfg`, PR « contrats »).
+- En attendant : `BUILD_BUDGET_MB=110 tools/check.sh` vérifie tout le reste (vert pour E9).
+
+## R1 — raccord de la lumière (suites des demandes E2, E3 et E9)
+- *Fait* : « E9 — les personnages restent en plein jour la nuit » (`CharacterVisual` pose
+  `HD2DLighting.active_sprite_tint()`, quelques lignes, la couleur d'un ennemi gardée) ;
+  « E9 — les cartes de E2 et E3 ne portent plus de lumière » pour `entrepot_rdc_essai`
+  (`interior_light.tscn` retirée ; les lampes restent les `lights[]` d'`interior.json`, sans
+  `OmniLight3D`) ; « E2 — E9 appelle `MapGround.set_sun` » (à chaque pose et transition).
+- Cahier n° 3, lot N (images) : les fenêtres de nuit livrées (`window_cross_small_night`,
+  `window_cross_large_night`, `window_reading_seat_night`) se posent seules la nuit ; une
+  fenêtre sans image de nuit (`window_curtains_open`, `window_bare`…) est assombrie et bleuie par
+  `interior_panel.gdshader` (`night_view`) en attendant la sienne.
+- Pour les lots qui construisent des intérieurs (T2…) : une carte intérieure ne porte aucune
+  lumière (ni `Light`, ni `WorldEnvironment`, ni `DirectionalLight3D`) ; ses lampes sont les
+  `lights[]` de son `interior.json` ; `InteriorRoom.apply_phase` n'est plus qu'un passage vers
+  `Atmosphere.set_moment`.
