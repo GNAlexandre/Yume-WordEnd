@@ -14,6 +14,11 @@ extends DecorPanel
 ##
 ## Ni bande animée, ni premier plan, ni décalage vers la caméra : frames, fps, foreground et
 ## depth_offset sont sans effet ici.
+##
+## (I1) Vues : comme tout DecorPanel, un meuble tourné vers l'est, l'ouest ou le nord montre sa vue
+## de flanc, de dos ou par le pied quand elle existe (DecorPanel.facing). L'image de la vue prend
+## la place de la face : même bord sud (image_offset, posé par ce qui pose le meuble), mêmes
+## règles de coupe ; occluder_triangles et size_m parlent de l'image affichée.
 
 ## Hauteur gardée quand la coupe passe (m) : les tables, bancs et lits restent entiers, les
 ## armoires et rayonnages ne montrent que leur bas.
@@ -34,8 +39,8 @@ func rebuild() -> void:
 	super.rebuild()
 	if texture == null:
 		return
-	_quad.mesh = InteriorRoom.panel_mesh(size_m(), cut_z(), cut_height)
-	_quad.material_override = InteriorRoom.panel_material(texture, glow, tint)
+	_quad.mesh = InteriorRoom.panel_mesh(size_m(), cut_z(), cut_height, flip_h != view_flipped())
+	_quad.material_override = InteriorRoom.panel_material(displayed_texture(), glow, tint)
 
 
 ## z (monde) du bord sud du meuble : le plan de son image, sa coordonnée de coupe.

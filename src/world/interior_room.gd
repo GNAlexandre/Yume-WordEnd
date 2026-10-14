@@ -292,6 +292,24 @@ func is_walkable(x: float, z: float) -> bool:
 	return true
 
 
+## (I1) Emprise au sol d'un meuble (sa boîte de collision, tournée comme son nœud) dans le repère de
+## la carte : Rect2(x, z, largeur, profondeur) ; vide sans collision.
+func footprint_of(panel: Node3D) -> Rect2:
+	var shape := panel.get_node_or_null(^"Collision/CollisionShape3D") as CollisionShape3D
+	var box := shape.shape as BoxShape3D if shape != null else null
+	if box == null:
+		return Rect2()
+	var aabb := shape.global_transform * AABB(-box.size / 2.0, box.size)
+	var low := to_local(aabb.position)
+	return Rect2(low.x, low.z, aabb.size.x, aabb.size.z)
+
+
+## (I1) Orientation que les murs de la pièce donnent à un meuble : sa face vers l'est s'il est
+## adossé au mur ouest, vers l'ouest au mur est, vers le sud au mur nord (InteriorLayout).
+func facing_against_wall(panel: Node3D) -> StringName:
+	return plan.facing_against_wall(footprint_of(panel))
+
+
 ## Centre d'une porte au sol (repère du monde), Vector3.INF si elle n'existe pas.
 func door_position(id: StringName) -> Vector3:
 	var opening := plan.door(id) if plan != null else {}
@@ -843,9 +861,10 @@ static func panel_material(
 
 
 ## Mesh d'un panneau d'intérieur de taille size (m), ancre au milieu du bord bas, face vers +Z ;
-## UV2 = (coordonnée de coupe : z du monde, hauteur gardée par la coupe).
-static func panel_mesh(size: Vector2, cut: float, keep: float) -> ArrayMesh:
-	var key := "%.4f|%.4f|%.3f|%.3f" % [size.x, size.y, cut, keep]
+## UV2 = (coordonnée de coupe : z du monde, hauteur gardée par la coupe) ; (I1) flip : image
+## retournée gauche-droite (flanc d'un meuble qui regarde l'ouest).
+static func panel_mesh(size: Vector2, cut: float, keep: float, flip: bool = false) -> ArrayMesh:
+	var key := "%.4f|%.4f|%.3f|%.3f|%d" % [size.x, size.y, cut, keep, int(flip)]
 	var ref: WeakRef = _panel_meshes.get(key)
 	var mesh := ref.get_ref() as ArrayMesh if ref != null else null
 	if mesh == null:
@@ -858,6 +877,8 @@ static func panel_mesh(size: Vector2, cut: float, keep: float) -> ArrayMesh:
 			Vector3(-half, size.y, 0.0),
 		]
 		var uvs: Array[Vector2] = [Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)]
+		if flip:
+			uvs = [Vector2(1, 1), Vector2(0, 1), Vector2(0, 0), Vector2(1, 0)]
 		for k: int in [0, 2, 1, 0, 3, 2]:
 			st.set_normal(Vector3.BACK)
 			st.set_uv(uvs[k])

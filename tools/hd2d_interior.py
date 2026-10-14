@@ -295,6 +295,209 @@ DECALS_T2 = [
     ("clothes_floor", (192, 144), 2, "", False),
 ]
 
+# --- (I1) Images livrées après coup (docs/ASSETS_HD2D_COMPLEMENTS.md, ASSETS_HD2D_NAVIRES.md, lots N et
+# I priorité 2) ---------------------------------------------------------------------------------------
+#
+# Chaque livraison arrive sur main par une PR d'images seules ; ces listes les inscrivent au manifeste
+# (taille réelle, genre, lot du cahier d'origine) et leur donnent leurs scènes. Aucune n'a de
+# recette : le fichier livré fait foi, et ces listes ne le redessinent jamais. Le lot de chaque image
+# est LOT_OF (défaut : I) ; le manifeste le porte, `check --lot <lot>` le filtre.
+
+# Lots du cahier n° 4 (O1, O2, P, Q), des navires (L : conseil, coursive, pont ; S1 à S5 : pièces de
+# bord) et du lot N (temps et lumière : fenêtres de nuit).
+LOT_NAMES = {
+    "O1": ["flour_sack_open", "egg_basket_low", "milk_jug_stoneware", "butter_dish_open", "mixing_bowl_whisk",
+           "flan_mould_empty"],
+    "O2": ["repair_nail_box", "hand_plane_worn", "hand_saw_short", "mending_basket", "thread_spools_pair",
+           "patched_cloth_folded"],
+    "P": ["book_open_stand", "inkwell_quill", "letter_sealed_bundle", "bandage_rolls", "medicine_bottles_tray",
+          "compress_bowl"],
+    "Q": ["field_satchel_set_down", "leather_canteen", "oilskin_cloak_folded", "walking_boots_drying",
+          "provisions_cloth_bundle"],
+    "L": ["floor_ship_planks", "wall_ship_plate", "wallcut_ship", "war_table", "war_chair", "tea_set_tiny",
+          "window_porthole", "door_bulkhead", "ship_ladder", "wallitem_ship_pipes", "wallitem_garde_emblem",
+          "map_cabinet", "wallitem_speaking_tube"],
+    "S1": ["ship_helm", "ship_engine_telegraph", "ship_navigation_desk", "ship_compass", "ship_pilot_chair",
+           "ship_cockpit_window"],
+    "S2": ["ship_bunk", "ship_locker", "ship_folding_table", "ship_wall_bench", "ship_hammock", "ship_washstand"],
+    "S3": ["ship_boiler", "ship_motor", "ship_fuel_bin", "ship_tool_rack", "ship_workbench", "ship_pressure_tank"],
+    "S4": ["ship_medical_cot", "ship_medical_cabinet", "ship_mess_counter", "ship_mess_bench", "ship_water_can",
+           "ship_crystal_lamp"],
+    "S5": ["ship_latrine", "ship_privacy_curtain", "ship_cargo_trolley", "ship_sword_rack", "floor_ship_grating",
+           "ceiling_ship_plate"],
+    "N": ["window_cross_small_night", "window_cross_large_night", "window_reading_seat_night"],
+}
+LOT_OF = {name: lot for lot, names in LOT_NAMES.items() for name in names}
+
+# Matières livrées (assets/hd2d/interior/) : (nom, taille, genre, priorité). Le plafond de tôle est
+# fourni pour réutilisation : le moteur ne l'affiche pas encore (NAVIRES.md).
+SURFACES_I1 = [
+    ("floor_ship_planks", (384, 384), "tile", 2),
+    ("floor_ship_grating", (384, 384), "tile", 3),
+    ("ceiling_ship_plate", (384, 384), "tile", 3),
+    ("wall_ship_plate", (384, 288), "tile_h", 2),
+    ("wallcut_ship", (384, 24), "tile_h", 2),
+]
+
+# Portes, fenêtres et éléments de mur livrés : (nom, taille, priorité). Les fenêtres de nuit
+# (<nom>_night, lot N) n'ont pas de scène : HD2DLightTargets les échange avec celles de jour la nuit.
+WALL_PANELS_I1 = [
+    ("door_room_open", (106, 211), 1),
+    ("door_bulkhead", (106, 211), 2),
+    ("window_porthole", (58, 58), 2),
+    ("ship_cockpit_window", (230, 96), 2),
+    ("wallitem_garde_emblem", (77, 77), 2),
+    ("wallitem_ship_pipes", (192, 96), 2),
+    ("wallitem_speaking_tube", (29, 58), 2),
+    ("window_cross_small_night", (77, 96), 1),
+    ("window_cross_large_night", (230, 173), 1),
+    ("window_reading_seat_night", (192, 211), 1),
+]
+
+# Meubles livrés (assets/hd2d/interior/props/ ; InteriorPanel) : (nom, taille, profondeur de
+# l'emprise (m), lueur, priorité). Profondeurs : celles d'un meuble de cette taille, le cahier ne les
+# donne pas (docs/DECISIONS.md, I1). ship_tool_rack et ship_privacy_curtain, plaqués au mur ou sur
+# rail, sont minces (moins de 0,3 m : coupés comme le mur).
+FURNITURE_I1 = [
+    ("bed_curtain", (154, 202), 0.2, 0.0, 2),
+    ("towel_rack", (96, 106), 0.35, 0.0, 2),
+    ("map_cabinet", (115, 106), 0.6, 0.0, 2),
+    ("war_table", (192, 106), 0.9, 0.0, 2),
+    ("war_chair", (58, 106), 0.55, 0.0, 2),
+    ("ship_ladder", (96, 288), 0.6, 0.0, 2),
+    ("ship_helm", (77, 96), 0.6, 0.0, 2),
+    ("ship_engine_telegraph", (48, 115), 0.4, 0.0, 2),
+    ("ship_navigation_desk", (154, 106), 0.8, 0.0, 2),
+    ("ship_pilot_chair", (58, 106), 0.6, 0.0, 2),
+    ("ship_bunk", (192, 173), 0.9, 0.0, 3),
+    ("ship_locker", (77, 182), 0.5, 0.0, 3),
+    ("ship_folding_table", (115, 86), 0.7, 0.0, 3),
+    ("ship_wall_bench", (154, 58), 0.45, 0.0, 3),
+    ("ship_hammock", (192, 77), 0.5, 0.0, 3),
+    ("ship_washstand", (77, 86), 0.5, 0.0, 3),
+    ("ship_boiler", (154, 211), 1.0, 0.8, 3),
+    ("ship_motor", (154, 134), 0.8, 0.0, 3),
+    ("ship_fuel_bin", (96, 106), 0.7, 0.0, 3),
+    ("ship_tool_rack", (154, 96), 0.15, 0.0, 3),
+    ("ship_workbench", (192, 106), 0.8, 0.0, 3),
+    ("ship_pressure_tank", (77, 134), 0.7, 0.0, 3),
+    ("ship_medical_cot", (192, 86), 0.9, 0.0, 3),
+    ("ship_medical_cabinet", (77, 134), 0.45, 0.0, 3),
+    ("ship_mess_counter", (192, 115), 0.6, 0.0, 3),
+    ("ship_mess_bench", (154, 58), 0.4, 0.0, 3),
+    ("ship_water_can", (48, 58), 0.4, 0.0, 3),
+    ("ship_latrine", (77, 96), 0.7, 0.0, 3),
+    ("ship_privacy_curtain", (96, 173), 0.15, 0.0, 3),
+    ("ship_cargo_trolley", (154, 106), 0.8, 0.0, 3),
+    ("ship_sword_rack", (154, 154), 0.5, 0.0, 3),
+]
+
+# Objets livrés, posés sur un meuble (ou par terre : sacoche, bottes) : (nom, taille, lueur,
+# priorité) ; InteriorPanel sans collision ni ombre, de 0,6 m de haut au plus.
+OBJECTS_I1 = [
+    ("butter_cake", (58, 34), 0.0, 2),
+    ("dessert_flans", (77, 24), 0.0, 1),
+    ("hat_blue", (48, 24), 0.0, 2),
+    ("tea_set_tiny", (48, 24), 0.0, 2),
+    ("ship_compass", (34, 38), 0.0, 2),
+    ("ship_crystal_lamp", (38, 58), 1.2, 3),
+    ("flour_sack_open", (48, 58), 0.0, 1),
+    ("egg_basket_low", (58, 34), 0.0, 1),
+    ("milk_jug_stoneware", (29, 43), 0.0, 1),
+    ("butter_dish_open", (34, 19), 0.0, 1),
+    ("mixing_bowl_whisk", (48, 29), 0.0, 1),
+    ("flan_mould_empty", (38, 24), 0.0, 1),
+    ("repair_nail_box", (34, 24), 0.0, 2),
+    ("hand_plane_worn", (38, 19), 0.0, 2),
+    ("hand_saw_short", (58, 24), 0.0, 2),
+    ("mending_basket", (48, 34), 0.0, 2),
+    ("thread_spools_pair", (24, 19), 0.0, 2),
+    ("patched_cloth_folded", (38, 14), 0.0, 2),
+    ("book_open_stand", (48, 48), 0.0, 2),
+    ("inkwell_quill", (29, 34), 0.0, 2),
+    ("letter_sealed_bundle", (34, 14), 0.0, 2),
+    ("bandage_rolls", (34, 19), 0.0, 2),
+    ("medicine_bottles_tray", (48, 34), 0.0, 2),
+    ("compress_bowl", (34, 24), 0.0, 2),
+    ("field_satchel_set_down", (48, 48), 0.0, 3),
+    ("leather_canteen", (29, 38), 0.0, 3),
+    ("oilskin_cloak_folded", (58, 24), 0.0, 3),
+    ("walking_boots_drying", (48, 43), 0.0, 3),
+    ("provisions_cloth_bundle", (48, 29), 0.0, 3),
+]
+
+# Le séchoir livré (le linge fixe ; sa bande animée est drying_frame_wave), en plein air : deux
+# poteaux qui bloquent, comme la bande animée ; (nom, taille, priorité).
+OUTDOOR_POLES = [
+    ("drying_frame", (384, 211), 1),
+]
+
+# Tous les meubles, objets et décors de plein air des cartes : listes d'E3, de T2 et d'I1.
+ALL_FURNITURE = FURNITURE + FURNITURE_T2 + FURNITURE_I1
+ALL_OBJECTS = OBJECTS + OBJECTS_I1
+
+# --- (I1) Vues d'un meuble : de flanc, de dos, par le pied (cahier n° 5, section 2.7 et lot R0) ---
+#
+# Un panneau se tourne toujours vers le sud : un meuble adossé à un mur est ou ouest, un fauteuil qui
+# regarde la fenêtre, un lit dont la tête touche le mur nord n'ont donc que l'image de face. Le
+# cahier n° 5 commande, pour chaque meuble qu'on voit autrement, des vues de même échelle et de
+# même matière, en projection orthographique oblique comme la caméra du jeu :
+#   <nom>_side : de flanc, la face du meuble tournée vers l'est (retournée par le moteur pour l'ouest) ;
+#                largeur de l'image = profondeur du meuble, hauteur = celle de la face + 0,53 × (largeur
+#                du meuble − sa profondeur) × 96 ;
+#   <nom>_back : de dos (le meuble regarde le nord), taille de la face ;
+#   <nom>_foot : lit vu par le pied, tête contre le mur nord ; largeur du lit × (hauteur du lit de
+#                flanc + 0,53 × longueur × 96).
+# Le moteur les trouve par leur nom, à côté de l'image de face (DecorPanel.view_texture) : aucune
+# scène ne les nomme, et une vue livrée suffit. Table : base -> {vue: (taille en px, priorité)} ; les
+# vues dont l'image existe (livrée, ou remplaçant de hd2d_interior_props.py) ont leur entrée du
+# manifeste (lot R0).
+# Les cinq dernières lignes (R0.6) sont celles de meubles pas encore livrés : leur image de face
+# arrivera avec le lot R3 ou R4.
+VIEWS = {
+    "armchair_reading": {"side": ((86, 106), 1), "back": ((96, 101), 2)},
+    "board_games_shelf": {"side": ((48, 190), 1)},
+    "bookshelf_low": {"side": ((48, 132), 1)},
+    "bookshelf_tall_b": {"side": ((58, 272), 1)},
+    "bookshelf_tall": {"side": ((58, 272), 1)},
+    "chair_guest": {"side": ((58, 106), 1), "back": ((77, 101), 2)},
+    "desk_buried": {"side": ((77, 156), 1)},
+    "desk_nygglatho": {"side": ((77, 137), 1)},
+    "filing_cabinet": {"side": ((48, 159), 1)},
+    "infirmary_desk": {"side": ((77, 121), 1)},
+    "medicine_cabinet": {"side": ((48, 198), 1)},
+    "pantry_cupboard": {"side": ((58, 217), 1)},
+    "shoe_rack": {"side": ((38, 99), 1)},
+    "sofa_beige": {"side": ((86, 175), 1), "back": ((192, 119), 1)},
+    "towel_shelf": {"side": ((48, 179), 1)},
+    "toy_chest": {"side": ((58, 97), 1)},
+    "wardrobe_chtholly": {"side": ((58, 212), 1)},
+    "chair_child": {"side": ((43, 77), 2), "back": ((43, 77), 2)},
+    "chair_wood": {"side": ((48, 96), 2)},
+    "clothes_chest": {"side": ((48, 78), 2)},
+    "dresser_child": {"side": ((48, 106), 2)},
+    "footlocker": {"side": ((48, 63), 2)},
+    "bath_tub": {"side": ((96, 167), 3)},
+    "bed_child": {"foot": ((77, 118), 2)},
+    "bed_chtholly": {"foot": ((91, 144), 2)},
+    "bed_iron": {"foot": ((96, 152), 2)},
+    "bed_plain": {"foot": ((91, 144), 2)},
+    "bunk_bed": {"foot": ((86, 228), 2)},
+    "armchair_sheeted": {"side": ((86, 101), 1)},
+    "sofa_salon": {"side": ((86, 112), 1), "back": ((192, 96), 2)},
+    "display_cabinet": {"side": ((58, 182), 2)},
+    "bookshop_counter": {"side": ((67, 106), 3)},
+    "crystal_projector": {"back": ((77, 154), 3)},
+}
+
+# Vues du dehors (R0.7, props/) : bancs, de flanc.
+OUTDOOR_VIEWS = {
+    "bench": {"side": ((48, 140), 3)},
+    "bench_b": {"side": ((48, 160), 3)},
+    "bench_stone": {"side": ((48, 104), 3)},
+}
+VIEW_LOT = "R0"
+
 # Remplaçants : images du lot I absentes de la livraison. door_frame_wood (chambranle seul, ouverture
 # transparente, pour les portes qu'on franchit) n'est pas encore au cahier n° 3 :
 # docs/CONTRACT_REQUESTS.md.
@@ -303,44 +506,47 @@ PLACEHOLDERS = [
     "wall_cellar_stone",
     "wallcut_stone",
     "door_frame_wood",
-    "door_armory",
     "wallitem_height_marks",
 ]
 
 
 def entries():
-    """Entrées du manifeste du lot I, dans l'ordre."""
+    """Entrées du manifeste des images d'intérieur, dans l'ordre : le lot I (E3, T2), puis les images
+    livrées après coup (I1 : lots L, S1 à S5, O1, O2, P, Q, N, et les vues de flanc, de dos et de
+    pied qui existent)."""
     out = []
-    for name, size, kind, prio in SURFACES:
-        out.append(_entry("interior/" + name, size, kind, prio))
-    for name, size, prio in WALL_PANELS + WALL_PANELS_T2:
-        out.append(_entry("interior/" + name, size, "panel", prio))
-    for name, size, _depth, _glow, prio in FURNITURE + FURNITURE_T2:
-        out.append(_entry("interior/props/" + name, size, "panel", prio))
-    for name, size, _glow, prio in OBJECTS:
-        out.append(_entry("interior/props/" + name, size, "panel", prio))
+    for name, size, kind, prio in SURFACES + SURFACES_I1:
+        out.append(_entry("interior/" + name, size, kind, prio, name))
+    for name, size, prio in WALL_PANELS + WALL_PANELS_T2 + WALL_PANELS_I1:
+        out.append(_entry("interior/" + name, size, "panel", prio, name))
+    for name, size, _depth, _glow, prio in ALL_FURNITURE:
+        out.append(_entry("interior/props/" + name, size, "panel", prio, name))
+    for name, size, _glow, prio in ALL_OBJECTS:
+        out.append(_entry("interior/props/" + name, size, "panel", prio, name))
     for name, size, prio, _box in OUTDOOR:
-        out.append(_entry("interior/props/" + name, size, "panel", prio))
+        out.append(_entry("interior/props/" + name, size, "panel", prio, name))
+    for name, size, prio in OUTDOOR_POLES:
+        out.append(_entry("interior/props/" + name, size, "panel", prio, name))
     for name, size, prio, _footprint in FOREGROUND:
-        out.append(_entry("interior/props/" + name, size, "panel", prio))
+        out.append(_entry("interior/props/" + name, size, "panel", prio, name))
     for name, size, _glow, prio in HANGING:
-        entry = _entry("interior/props/" + name, size, "panel", prio)
+        entry = _entry("interior/props/" + name, size, "panel", prio, name)
         entry["anchor"] = "free"
         out.append(entry)
     for name, size, prio, solid in RUGS:
-        entry = _entry("decals/" + name, size, "decal", prio)
+        entry = _entry("decals/" + name, size, "decal", prio, name)
         if solid:
             entry["solid_edge"] = solid
         out.append(entry)
     for name, size, prio, wrap, soft in DECALS_T2:
-        entry = _entry("decals/" + name, size, "decal", prio)
+        entry = _entry("decals/" + name, size, "decal", prio, name)
         if wrap:
             entry["wrap"] = wrap
         if soft:
             entry["soft_alpha"] = True
         out.append(entry)
     for name, size, frames, fps, prio, soft, free, _glow in ANIMS:
-        entry = _entry("anim/" + name, size, "anim", prio)
+        entry = _entry("anim/" + name, size, "anim", prio, name)
         entry["frames"] = frames
         entry["fps"] = fps
         if soft:
@@ -348,11 +554,27 @@ def entries():
         if free:
             entry["anchor"] = "free"
         out.append(entry)
+    for key, size, prio in view_images():
+        out.append(_entry(key, size, "panel", prio, lot=VIEW_LOT))
     return out
 
 
-def _entry(key, size, kind, prio):
-    return {"path": "assets/hd2d/%s.png" % key, "size": list(size), "kind": kind, "prio": prio, "lot": LOT}
+def view_images():
+    """Vues de VIEWS et d'OUTDOOR_VIEWS qui existent (image livrée ou remplaçant) : [(clé sous
+    assets/hd2d/, taille, priorité)], dans l'ordre des tables."""
+    out = []
+    for folder, table in (("interior/props", VIEWS), ("props", OUTDOOR_VIEWS)):
+        for base, views in table.items():
+            for view, (size, prio) in views.items():
+                key = "%s/%s_%s" % (folder, base, view)
+                if os.path.exists(os.path.join(ROOT, "assets", "hd2d", key + ".png")) or key in RECIPES:
+                    out.append((key, size, prio))
+    return out
+
+
+def _entry(key, size, kind, prio, name="", lot=""):
+    lot = lot or LOT_OF.get(name or os.path.basename(key), LOT)
+    return {"path": "assets/hd2d/%s.png" % key, "size": list(size), "kind": kind, "prio": prio, "lot": lot}
 
 
 # --- Remplaçants : sols et murs de pierre -----------------------------------------------------------
@@ -471,63 +693,6 @@ def door_frame_wood(size, rnd):
     return c.finish(darker(DARK, 0.5))
 
 
-def door_armory(size, rnd):
-    """Porte de la salle des armes, côté couloir : métal gris sombre riveté tout autour, cinq
-    serrures alignées, poignée lourde, usure brillante autour des serrures, encadrement de pierre."""
-    w, h = size
-    c = Canvas(w, h, rnd)
-    stone = ramp("#7A7066", 5, spread=0.4)
-    # Encadrement de pierre : linteau et deux montants en blocs.
-    c.rect(0, 0, w, h, stone[1])
-    y = 0
-    while y < h:
-        bh = rnd.randint(18, 28)
-        for x0, x1 in ((0, 11), (w - 11, w)):
-            c.rect(x0 + 1, y + 1, x1 - 1, min(h, y + bh) - 1, stone[rnd.choice([2, 3])])
-            c.rect(x0 + 1, y + 1, x1 - 1, y + 3, stone[4])
-        y += bh
-    x = 0
-    while x < w:
-        bw = rnd.randint(22, 34)
-        c.rect(x + 1, 1, min(w, x + bw) - 1, 10, stone[rnd.choice([2, 3])])
-        c.rect(x + 1, 1, min(w, x + bw) - 1, 3, stone[4])
-        x += bw
-    # Battant de métal : plaques, cornières, rivets.
-    metal = ramp("#4C5056", 5, spread=0.5)
-    x0, x1, y0, y1 = 11, w - 11, 11, h - 3
-    c.rect(x0, y0, x1, y1, metal[2])
-    plates = [y0, y0 + (y1 - y0) * 0.33, y0 + (y1 - y0) * 0.66, y1]
-    for k in range(3):
-        c.rect(x0 + 3, plates[k] + 3, x1 - 3, plates[k + 1] - 3, metal[1 + k % 2])
-        c.rect(x0 + 3, plates[k] + 3, x1 - 3, plates[k] + 4, metal[3])
-    for yy in plates:
-        c.rect(x0, yy - 2, x1, yy + 2, metal[0])
-        c.rect(x0, yy - 2, x1, yy - 1, metal[3])
-    c.rect(x0, y0, x0 + 4, y1, metal[0])
-    c.rect(x1 - 4, y0, x1, y1, metal[0])
-    rivet = ramp("#8A8E94", 4, spread=0.4)
-    for yy in plates:
-        for rx in range(x0 + 6, x1 - 4, 9):
-            c.rect(rx, yy - 1, rx + 1, yy, rivet[3])
-    for rx in (x0 + 2, x1 - 3):
-        for ry in range(int(y0) + 6, int(y1) - 4, 10):
-            c.rect(rx, ry, rx + 1, ry + 1, rivet[3])
-    # Cinq serrures alignées et leur usure brillante.
-    lock_x = x1 - 20
-    for k in range(5):
-        ly = h * 0.3 + k * h * 0.085
-        c.ellipse(lock_x + 3, ly + 3, 7, 6, metal[3])
-        c.rect(lock_x, ly, lock_x + 7, ly + 7, ramp(BRASS, 4)[1])
-        c.rect(lock_x, ly, lock_x + 7, ly + 1, ramp(BRASS, 4)[3])
-        c.rect(lock_x + 3, ly + 2, lock_x + 4, ly + 5, metal[0])
-    # Poignée lourde.
-    iron = ramp(IRON, 4)
-    c.rect(x1 - 34, h * 0.52, x1 - 26, h * 0.52 + 26, iron[1])
-    c.rect(x1 - 34, h * 0.52, x1 - 32, h * 0.52 + 26, iron[3])
-    c.rect(0, h - 3, w, h, stone[0])
-    return c.finish(darker("#3A3C40", 0.5))
-
-
 def wallitem_height_marks(size, rnd):
     """Marques de taille sur le plâtre : traits entre 0,9 et 1,5 m, un signe à côté de chacun."""
     w, h = size
@@ -566,25 +731,27 @@ RECIPES.update(hd2d_interior_props.RECIPES)
 
 
 def cmd_manifest():
-    """Remplace les entrées du lot I du manifeste par celles d'entries(), à la fin de la liste des
+    """Remplace les entrées du lot I du manifeste, et celles des images d'intérieur des autres lots
+    (I1 : navires, cahier n° 4, fenêtres de nuit), par celles d'entries(), à la fin de la liste des
     images (une par ligne)."""
     with open(MANIFEST, encoding="utf-8") as handle:
         text = handle.read()
     marker = "\n ],\n \"sheets\""
     head, tail = text[:text.index(marker)], text[text.index(marker):]
     lines = head.split("\n")
-    kept = [line for line in lines if '"lot": "%s"' % LOT not in line]
+    managed = ['"path": "%s"' % entry["path"] for entry in entries()]
+    kept = [line for line in lines if '"lot": "%s"' % LOT not in line and not any(m in line for m in managed)]
     if kept[-1].endswith(","):
         kept[-1] = kept[-1][:-1]
     new = "\n".join(kept) + "".join(",\n  " + json.dumps(e, ensure_ascii=False) for e in entries()) + tail
     json.loads(new)
     if new == text:
-        print("manifeste à jour (%d images du lot %s)" % (len(entries()), LOT))
+        print("manifeste à jour (%d images d'intérieur)" % len(entries()))
         return 0
     with open(MANIFEST, "w", encoding="utf-8") as handle:
         handle.write(new)
-    print("manifeste : %d images du lot %s (%d entrée(s) retirée(s))"
-          % (len(entries()), LOT, len(lines) - len(kept)))
+    print("manifeste : %d images d'intérieur (%d entrée(s) retirée(s))"
+          % (len(entries()), len(lines) - len(kept)))
     return 0
 
 
@@ -728,14 +895,17 @@ def scene_path(name):
 
 def cmd_scenes(force=False):
     written = 0
-    for name, size, depth, glow_amount, _prio in FURNITURE + FURNITURE_T2:
+    for name, size, depth, glow_amount, _prio in ALL_FURNITURE:
         written += _write(name, furniture_scene(name, size, depth, glow_amount), force)
     for name, image, size, depth, glow_amount in FURNITURE_OTHER_IMAGES:
         written += _write(name, furniture_scene(name, size, depth, glow_amount, image), force)
-    for name, size, glow_amount, _prio in OBJECTS:
+    for name, size, glow_amount, _prio in ALL_OBJECTS:
         written += _write(name, object_scene(name, size, glow_amount), force)
     for name, _size, _prio, box in OUTDOOR:
         written += _write(name, outdoor_scene(name, "assets/hd2d/interior/props/%s.png" % name, box), force)
+    for name, _size, _prio in OUTDOOR_POLES:
+        text = outdoor_scene(name, "assets/hd2d/interior/props/%s.png" % name, None, poles=DRYING_POLE_X)
+        written += _write(name, text, force)
     for name, size, _prio, (width, depth) in FOREGROUND:
         box = (width, round(size[1] / float(PPM), 3), depth)
         text = outdoor_scene(name, "assets/hd2d/interior/props/%s.png" % name, box, foreground=True,

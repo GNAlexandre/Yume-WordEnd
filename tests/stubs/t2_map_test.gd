@@ -145,10 +145,13 @@ static func _read_instruction(plan: Dictionary, t: PackedStringArray) -> void:
 		"meuble":
 			var count := 1
 			var free := false
+			var regard := ""
 			for flag: String in t.slice(7):
 				free = free or flag == "libre"
 				if flag.begins_with("x") and flag.substr(1).is_valid_int():
 					count = int(flag.substr(1))
+				if flag.begins_with("regard="):
+					regard = flag.substr("regard=".length())
 			var x := float(t[2])
 			var l := float(t[4])
 			for k in count:
@@ -163,6 +166,7 @@ static func _read_instruction(plan: Dictionary, t: PackedStringArray) -> void:
 							"p": float(t[5]),
 							"h": float(t[6]),
 							"free": free,
+							"regard": regard,
 						}
 					)
 				)
@@ -411,10 +415,36 @@ func _panel_on_wall(placed: Array[Dictionary], spec: Dictionary, tolerance: floa
 	return false
 
 
+## (I1) Image de la vue <image>_<vue> d'un meuble : son chemin si elle existe (importée), sinon "".
+static func view_path(image: String, view: String) -> String:
+	for folder: String in ["res://assets/hd2d/interior/props/", "res://assets/hd2d/interior/"]:
+		var path := "%s%s_%s.png" % [folder, image, view]
+		if ResourceLoader.exists(path):
+			return path
+	return ""
+
+
+## (I1) Un meuble de regard E ou O (ou N : un lit vu par le pied) est tourné d'un quart de tour
+## autour du milieu de son bord arrière (le mur) quand l'image de sa vue de flanc (ou de pied)
+## existe, et garde sa face et son emprise de face sans elle. Vrai si celle de ce meuble existe.
+static func is_turned(item: Dictionary) -> bool:
+	var regard := String(item.get("regard", ""))
+	var image := String(item["image"])
+	if regard in ["E", "O"]:
+		return not view_path(image, "side").is_empty()
+	return (
+		regard == "N"
+		and view_path(image, "back").is_empty()
+		and not view_path(image, "foot").is_empty()
+	)
+
+
 ## Chaque meuble du plan (rangées dépliées) est posé à sa place, par son image, à 1 cm près : un
 ## meuble (InteriorPanel) a son image au bord sud de l'emprise du plan, en son milieu ; un
 ## décalque ou un panneau suspendu, au centre de l'emprise ; un tapis de couloir, bout à bout sur
-## sa longueur ; chaque objet posé, au-dessus de sa place.
+## sa longueur ; chaque objet posé, au-dessus de sa place. (I1) Un meuble tourné vers sa vue : son
+## nœud au milieu de l'emprise tournée, collée au mur, l'image au bord sud de sa largeur de face ;
+## un meuble de regard marqué porte son orientation (facing) et montre la vue qui existe.
 func check_furniture(skip: Array[String] = []) -> void:
 	var placed := decors()
 	var unused := placed.duplicate()
@@ -436,6 +466,8 @@ func check_furniture(skip: Array[String] = []) -> void:
 				var front := where.z + (node as InteriorPanel).image_offset.z
 				var plan_front := at.y + float(item["p"]) / 2.0
 				close = absf(where.x - at.x) < 0.011 and absf(front - plan_front) < 0.011
+				if is_turned(item):
+					close = _turned_in_place(node as InteriorPanel, item, where)
 			if image == "runner_rug":
 				close = (
 					absf(where.z - at.y) < 0.011 and absf(where.x - at.x) <= float(item["l"]) / 2.0
@@ -455,6 +487,36 @@ func check_furniture(skip: Array[String] = []) -> void:
 			if entry[1] == obj["image"] and absf(where.x - at.x) < 0.011 and where.z >= at.y - 0.01:
 				found = found or where.z - at.y < 1.2
 		assert_true(found, "objet %s posé en %s" % [obj["image"], at])
+
+
+## (I1) Meuble tourné : emprise tournée collée au mur (bord arrière du plan), centrée sur le plan en
+## z, image au bord sud de sa largeur de face ; orientation et vue conformes à son regard.
+func _turned_in_place(panel: InteriorPanel, item: Dictionary, where: Vector3) -> bool:
+	var regard := String(item["regard"])
+	var shape := panel.get_node(^"Collision").get_child(0) as CollisionShape3D
+	var depth := (shape.shape as BoxShape3D).size.z
+	var width := float(item["l"])
+	var back_x := float(item["x"]) - width / 2.0
+	var expected_x := back_x + depth / 2.0
+	var expected_z := float(item["z"])
+	if regard == "O":
+		expected_x = float(item["x"]) + width / 2.0 - depth / 2.0
+	if regard == "N":
+		expected_x = float(item["x"])
+		expected_z = float(item["z"]) - float(item["p"]) / 2.0 + width / 2.0
+	var front := where.z + panel.image_offset.z
+	var wanted_facing: StringName = {"E": &"east", "O": &"west", "N": &"north"}[regard]
+	var facing_ok := panel.facing == wanted_facing
+	var view_ok := panel.view_name() == (&"foot" if regard == "N" else &"side")
+	var flip_ok := panel.view_flipped() == (regard == "O")
+	return (
+		absf(where.x - expected_x) < 0.011
+		and absf(where.z - expected_z) < 0.011
+		and absf(front - (expected_z + width / 2.0)) < 0.011
+		and facing_ok
+		and view_ok
+		and (flip_ok or regard == "N")
+	)
 
 
 func check_markers_exits_points() -> void:

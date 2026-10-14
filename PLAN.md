@@ -562,6 +562,15 @@ class_name DecorPanel      # (H9) @export frames, fps (bande animée : size_m() 
                            # material_for(image, tint, glow, frame_count, frame_rate, in_foreground, soft),
                            # panel_mesh(size, flip, phase, offset), update_foreground(tree), displayed_transform(node)
                            # (place affichée, lissage physique) ; FOREGROUND_SHADER, PHASE_STEPS, PLAYER_GROUP
+class_name DecorPanel      # (I1) Vues d'un meuble (cahier n° 5, section 2.7) : @export facing (south, east, west, north ;
+                           # vide : d'après la rotation du nœud, sa face est son +Z) choisit l'image : <nom>_side (flanc,
+                           # face tournée vers l'est) à l'est, retournée à l'ouest ; <nom>_back (dos), ou <nom>_foot (lit par
+                           # le pied), au nord ; la face au sud et quand l'image de la vue n'existe pas. view_texture(base,
+                           # vue) trouve l'image par son nom, à côté de la face ; displayed_texture(), view_name() (&"front",
+                           # &"side", &"back", &"foot"), view_flipped(), current_facing(), resolve_view() ; size_m() est celle
+                           # de l'image affichée ; statique facing_of(front: Vector3) ; FACING_*, VIEW_*. Rien ne change pour
+                           # keep_orientation ni pour une bande animée. La collision suit la rotation du nœud : ce qui pose
+                           # le meuble le tourne quand la vue existe (tools/interior_maps.py)
 class_name GroundDecal     # (H9) src/world/ground_decal.gd, racine possible d'un décor, sans collision : image vue
                            # de dessus, ancre au centre, couchée sur les triangles du sol ; @export texture,
                            # pixels_per_meter (96), soft_alpha, tint, flip_h, layer (0..7, UV2.y), follow_ground ;
@@ -907,6 +916,8 @@ static func from_data(data) -> InteriorLayout   # .problems : fautes (vide : val
 var map_size: Vector2i, wall_height, wall_thickness, rooms, doors, windows, wall_items, lights, pieces
 func cell(x, z) -> int / room_at(local) -> StringName / room_index(id) / door(id) -> Dictionary
 func cut_line_at(local: Vector3) -> float   # première limite de pièce au sud de la case (NO_CUT)
+func facing_against_wall(footprint: Rect2, tolerance := 0.25) -> StringName   # (I1) &"east" au mur ouest, &"west" à
+     # l'est, &"south" au nord (le mur le plus proche), &"" sinon : l'orientation que les murs donnent à un meuble
 func piece_box(piece) -> AABB ; static opening_center(opening), image_path(name)
 const HORIZONTAL, VERTICAL, NO_CUT, DOOR_WIDTH (1,1), DOOR_HEIGHT (2,2), WINDOW_SILL (0,9)
 
@@ -924,9 +935,12 @@ func apply_phase(phase)   # (R1) ancienne API : la phase (morning, day, evening,
 func height_at(x, z), material_at(x, z) -> StringName, room_at(x, z), is_walkable(x, z)
      # mêmes requêtes que MapGround (E2), repère de la carte
 func door_position(id) -> Vector3, light_at(local) -> Color
+func footprint_of(panel: Node3D) -> Rect2, facing_against_wall(panel) -> StringName   # (I1) emprise d'un meuble (sa
+     # boîte de collision, tournée comme son nœud) dans le repère de la carte, et l'orientation que les murs lui donnent
 func occluder_triangles(cut_world, player := Vector3.INF) -> PackedVector3Array   # tests
 static func panel_material(texture, glow, tint, follows) -> ShaderMaterial, share_uniform(key, value),
-     panel_mesh(size, cut, keep), part_code(part, line)   # caches en références faibles (WeakRef)
+     panel_mesh(size, cut, keep, flip := false), part_code(part, line)   # caches en références faibles (WeakRef) ;
+     # (I1) flip : image retournée (flanc d'un meuble qui regarde l'ouest)
 const CUT_HEIGHT (0,15), PROP_CUT_HEIGHT (1), CUT_MARGIN (0,3), CUT_SPEED (14 m/s), COLUMN_HALF,
       COLUMN_FRONT, COLUMN_LENGTH, LIGHT_TEXELS (4/m), VOID_COLOR, PLAYER_GROUP
 
@@ -1004,6 +1018,14 @@ plan : docs/DECISIONS.md (« T2 »).
   « <meuble>_arriere » des places où un meuble haut cacherait le joueur) ; `check` dit si une
   carte est à réécrire ; `places` réécrit les listes de places dans CARTE.md. Les images :
   `tools/hd2d_interior.py` (listes, scènes) et `tools/hd2d_interior_props.py` (remplaçants).
+- **Orientation des meubles (I1)** : une ligne `meuble` du plan porte `regard=E|O|N|S` (un meuble
+  adossé au mur ouest regarde l'est ; `tools/carte_plans.py` en vérifie l'état tourné) ; le générateur
+  écrit `facing` sur le meuble et, quand l'image de sa vue existe (`<nom>_side`, `_back` ou `_foot` :
+  cahier n° 5, lot R0 ; liste `VIEWS` de `tools/hd2d_interior.py`), le tourne d'un quart de tour autour
+  du milieu de son bord arrière (emprise, collision, ombre, occlusion, examen suivent) ; sans la vue,
+  il garde sa face. Une vue qui arrive : `interior_maps.py gen` ; `test_panel_facing.gd` le vérifie.
+  Objets du cahier n° 4 (lots O1, O2, P) posés par des lignes `objet` sur les meubles de la cuisine, de
+  la lecture, des archives, de l'infirmerie et des chambres (docs/DECISIONS.md, I1).
 - **Places de la vie** : `Life/Places/<nom>` (`Marker3D`, regard vers ce qu'on y fait) : les
   `point` du plan, chaque chaise (`refectoire_chaise_a01`…), chaque lit, quelques sièges ; liste
   après chaque plan dans CARTE.md.

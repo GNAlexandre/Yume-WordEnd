@@ -61,24 +61,35 @@
 [ext_resource type="PackedScene" path="res://src/world/props/infirmary_desk.tscn" id="p_infirmary_desk"]
 [ext_resource type="PackedScene" path="res://src/world/props/mirror_large.tscn" id="p_mirror_large"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/pot_steam.tscn" id="p_pot_steam"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/mixing_bowl_whisk.tscn" id="p_mixing_bowl_whisk"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/milk_jug_stoneware.tscn" id="p_milk_jug_stoneware"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/egg_basket_low.tscn" id="p_egg_basket_low"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/flour_sack_open.tscn" id="p_flour_sack_open"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/butter_dish_open.tscn" id="p_butter_dish_open"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/flan_mould_empty.tscn" id="p_flan_mould_empty"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/meal_lunch.tscn" id="p_meal_lunch"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/tableware_a.tscn" id="p_tableware_a"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/coffee_tray.tscn" id="p_coffee_tray"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/inkwell_quill.tscn" id="p_inkwell_quill"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/crystal_lamp_table.tscn" id="p_crystal_lamp_table"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/book_open_stand.tscn" id="p_book_open_stand"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/vase_flowers.tscn" id="p_vase_flowers"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/medicine_bottles_tray.tscn" id="p_medicine_bottles_tray"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/bandage_rolls.tscn" id="p_bandage_rolls"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/compress_bowl.tscn" id="p_compress_bowl"]
 [ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(0.5, 3, 1.85)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2"]
-size = Vector3(0.02, 3, 0.35)
+size = Vector3(0.02, 3, 0.4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3"]
 size = Vector3(0.4, 3, 0.6)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4"]
-size = Vector3(1.05, 3, 2.3)
+size = Vector3(0.05, 3, 2.2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5"]
 size = Vector3(0.2, 3, 0.1)
@@ -155,6 +166,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 0, 1.525)
 
 [node name="pantry_cupboard_1" parent="Geometry/Cuisine" instance=ExtResource("p_pantry_cupboard")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 5.8)
+facing = &"east"
 
 [node name="pantry_cupboard_1_arriere" type="StaticBody3D" parent="Geometry/Cuisine"]
 collision_mask = 0
@@ -374,13 +386,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.7, 0, 1.475)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.7, 0, 2.225)
 
 [node name="desk_buried_1" parent="Geometry/Archives" instance=ExtResource("p_desk_buried")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 0, 3.775)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 0, 3.475)
+facing = &"east"
 
 [node name="desk_buried_1_arriere" type="StaticBody3D" parent="Geometry/Archives"]
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Archives/desk_buried_1_arriere"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1.5, 3.075)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1.5, 2.75)
 shape = SubResource("BoxShape3D_2")
 
 [node name="paper_pile_b_1" parent="Geometry/Archives" instance=ExtResource("p_paper_pile_b")]
@@ -388,6 +401,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.2, 0, 2.45)
 
 [node name="filing_cabinet_1" parent="Geometry/Archives" instance=ExtResource("p_filing_cabinet")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.85, 0, 4.3)
+facing = &"west"
 
 [node name="filing_cabinet_1_arriere" type="StaticBody3D" parent="Geometry/Archives"]
 collision_mask = 0
@@ -397,10 +411,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.7, 1.5, 3.75)
 shape = SubResource("BoxShape3D_3")
 
 [node name="sofa_beige_1" parent="Geometry/Archives" instance=ExtResource("p_sofa_beige")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.65, 0, 6.5)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 23.1, 0, 6.6)
+image_offset = Vector3(0, 0, 1)
+shadow_width = 0.9
+shadow_depth = 2
+facing = &"east"
 
 [node name="paper_pile_c_1" parent="Geometry/Archives" instance=ExtResource("p_paper_pile_c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.05, 0, 5.025)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.05, 0, 5.125)
 
 [node name="papers_floor_1" parent="Geometry/Archives" instance=ExtResource("p_papers_floor")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.8, 0, 5.3)
@@ -413,15 +431,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, 1.525)
 
 [node name="bookshelf_low_1" parent="Geometry/Lecture" instance=ExtResource("p_bookshelf_low")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.35, 0, 5)
+facing = &"east"
 
 [node name="bookshelf_tall_b_1" parent="Geometry/Lecture" instance=ExtResource("p_bookshelf_tall_b")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, 6.4)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 27, 0, 6.5)
+image_offset = Vector3(0, 0, 0.8)
+shadow_width = 0.9
+shadow_depth = 2
+facing = &"east"
 
 [node name="bookshelf_tall_b_1_arriere" type="StaticBody3D" parent="Geometry/Lecture"]
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Lecture/bookshelf_tall_b_1_arriere"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.625, 1.5, 4.95)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.125, 1.5, 4.6)
 shape = SubResource("BoxShape3D_4")
 
 [node name="reading_table_1" parent="Geometry/Lecture" instance=ExtResource("p_reading_table")]
@@ -429,6 +452,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.6, 0, 4.3)
 
 [node name="armchair_reading_1" parent="Geometry/Lecture" instance=ExtResource("p_armchair_reading")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.3, 0, 7.4)
+facing = &"north"
 
 [node name="book_pile_1" parent="Geometry/Lecture" instance=ExtResource("p_book_pile")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.2, 0, 7.9)
@@ -462,6 +486,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 11.3)
 
 [node name="towel_shelf_1" parent="Geometry/Bains" instance=ExtResource("p_towel_shelf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.3, 0, 14.25)
+facing = &"west"
 cut_offset = 0.6
 
 [node name="wash_tub_1" parent="Geometry/Bains" instance=ExtResource("p_wash_tub")]
@@ -489,6 +514,7 @@ shape = SubResource("BoxShape3D_5")
 
 [node name="shoe_rack_1" parent="Geometry/Entree" instance=ExtResource("p_shoe_rack")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 0, 12.2)
+facing = &"west"
 
 [node name="rug_playroom_1" parent="Geometry/Jeux" instance=ExtResource("p_rug_playroom")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 12.9)
@@ -498,9 +524,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.2, 0, 11.4)
 
 [node name="toy_chest_1" parent="Geometry/Jeux" instance=ExtResource("p_toy_chest")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.2, 0, 11.2)
+facing = &"west"
 
 [node name="board_games_shelf_1" parent="Geometry/Jeux" instance=ExtResource("p_board_games_shelf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.25, 0, 13.05)
+facing = &"west"
 
 [node name="board_games_shelf_1_arriere" type="StaticBody3D" parent="Geometry/Jeux"]
 collision_mask = 0
@@ -544,6 +572,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 12.125)
 
 [node name="medicine_cabinet_1" parent="Geometry/Infirmerie" instance=ExtResource("p_medicine_cabinet")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.35, 0, 13.4)
+facing = &"west"
 
 [node name="medicine_cabinet_1_arriere" type="StaticBody3D" parent="Geometry/Infirmerie"]
 collision_mask = 0
@@ -557,6 +586,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.3, 0, 14.55)
 
 [node name="infirmary_desk_1" parent="Geometry/Infirmerie" instance=ExtResource("p_infirmary_desk")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.9, 0, 14.225)
+facing = &"east"
 
 [node name="mirror_large_1" parent="Geometry/Bains" instance=ExtResource("p_mirror_large")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.205, 0, 13)
@@ -566,6 +596,24 @@ image_offset = Vector3(0, 0, 0)
 [node name="pot_steam_1" parent="Geometry/Cuisine" instance=ExtResource("p_pot_steam")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.05, 1.87)
 
+[node name="mixing_bowl_whisk_1" parent="Geometry/Cuisine" instance=ExtResource("p_mixing_bowl_whisk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.95, 1.05, 1.87)
+
+[node name="milk_jug_stoneware_1" parent="Geometry/Cuisine" instance=ExtResource("p_milk_jug_stoneware")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 1.05, 1.87)
+
+[node name="egg_basket_low_1" parent="Geometry/Cuisine" instance=ExtResource("p_egg_basket_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.05, 1.87)
+
+[node name="flour_sack_open_1" parent="Geometry/Cuisine" instance=ExtResource("p_flour_sack_open")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.85, 1, 4.87)
+
+[node name="butter_dish_open_1" parent="Geometry/Cuisine" instance=ExtResource("p_butter_dish_open")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4, 1, 4.87)
+
+[node name="flan_mould_empty_1" parent="Geometry/Cuisine" instance=ExtResource("p_flan_mould_empty")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 1, 4.87)
+
 [node name="meal_lunch_1" parent="Geometry/Refectoire" instance=ExtResource("p_meal_lunch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.8, 4.47)
 
@@ -573,13 +621,28 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.8, 4.47)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.8, 7.67)
 
 [node name="coffee_tray_1" parent="Geometry/Archives" instance=ExtResource("p_coffee_tray")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 1.3, 4.32)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 1.3, 4.02)
+
+[node name="inkwell_quill_1" parent="Geometry/Archives" instance=ExtResource("p_inkwell_quill")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.9, 1.3, 4.02)
 
 [node name="crystal_lamp_table_1" parent="Geometry/Lecture" instance=ExtResource("p_crystal_lamp_table")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.2, 0.95, 4.77)
 
+[node name="book_open_stand_1" parent="Geometry/Lecture" instance=ExtResource("p_book_open_stand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 0.95, 4.77)
+
 [node name="vase_flowers_1" parent="Geometry/Infirmerie" instance=ExtResource("p_vase_flowers")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.3, 0.7, 11.27)
+
+[node name="medicine_bottles_tray_1" parent="Geometry/Infirmerie" instance=ExtResource("p_medicine_bottles_tray")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.65, 1, 14.62)
+
+[node name="bandage_rolls_1" parent="Geometry/Infirmerie" instance=ExtResource("p_bandage_rolls")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.3, 1, 14.82)
+
+[node name="compress_bowl_1" parent="Geometry/Infirmerie" instance=ExtResource("p_compress_bowl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.2, 0.7, 11.27)
 
 [node name="sous_escalier" type="StaticBody3D" parent="Geometry/Escalier"]
 collision_mask = 0
@@ -738,7 +801,7 @@ text_key = "entrepot_rdc/archives_rapport"
 size = Vector3(1.2, 2, 0.8)
 
 [node name="archives_bon" type="Area3D" parent="Examine"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 0, 4.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 0, 4)
 script = ExtResource("6_examine")
 text_key = "entrepot_rdc/archives_bon"
 size = Vector3(1.4, 2, 0.8)
@@ -853,7 +916,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 4)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, 2.4)
 
 [node name="archives_bureau" type="Marker3D" parent="Life/Places"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 0, 4.95)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.4, 0, 4.9)
 
 [node name="archives_canape" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.65, 0, 7.6)
