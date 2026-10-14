@@ -1959,6 +1959,26 @@ def _frosted(piece):
     return out
 
 
+# Vitres éclairées de warehouse_main (#ECBF79) : ramenées près de la couleur de lueur des
+# panneaux (panel_core.gdshaderinc, glow_color #FFE6A6) pour que window_glow les allume la nuit.
+MAIN_PANE = (236, 191, 121)
+GLOW_PANE = (255, 230, 166)
+
+
+def _lit_panes(img):
+    px = img.load()
+    for y in range(img.height):
+        for x in range(img.width):
+            r, g, b, a = px[x, y]
+            if not a:
+                continue
+            gap = ((r - MAIN_PANE[0]) ** 2 + (g - MAIN_PANE[1]) ** 2 + (b - MAIN_PANE[2]) ** 2) ** 0.5
+            if gap < 40:
+                shade = 0.96 + 0.04 * min(1.0, (r + g + b) / float(sum(MAIN_PANE)))
+                px[x, y] = tuple(int(v * shade) for v in GLOW_PANE) + (a,)
+    return img
+
+
 def _scaled(piece, factor):
     if piece is None:
         return None
@@ -2008,7 +2028,7 @@ def _warehouse_front(size, rnd, posts, lower, upper, extras=()):
         paste_piece(c, pieces[kind], x * 96, bottoms[kind])
     img = c.img
     img.putalpha(Image.new("L", size, 255))
-    return img
+    return _lit_panes(img)
 
 
 def warehouse_front_a(size, rnd):
@@ -2070,7 +2090,8 @@ def warehouse_front_a_side(size, rnd):
         c.rect(6, top + 6, 14, h - 8, pipe[1])
         c.rect(7, top + 6, 9, h - 8, pipe[3])
         ivy(c, rnd, w * 0.78, w, top + 30, h - 40, 140)
-    return building_side(size, rnd, "wall_planks", "roof_slate", gable_wall_m=6.5, plinth=110, features=features)
+    return _lit_panes(
+        building_side(size, rnd, "wall_planks", "roof_slate", gable_wall_m=6.5, plinth=110, features=features))
 
 
 def warehouse_front_b_side(size, rnd):
@@ -2086,7 +2107,7 @@ def warehouse_front_b_side(size, rnd):
             paste_piece(c, facade_piece("warehouse_main", MAIN_WINDOW_UP), w * x / 14.0, h - 392)
         ladder(c, w * 0.12, top + 20, h, 40)
         c.rect(0, 0, w, 10, ramp(DARK, 4)[1])
-    return building_side(size, rnd, "wall_planks", "roof_slate", plinth=110, features=features)
+    return _lit_panes(building_side(size, rnd, "wall_planks", "roof_slate", plinth=110, features=features))
 
 
 RECIPES.update({
