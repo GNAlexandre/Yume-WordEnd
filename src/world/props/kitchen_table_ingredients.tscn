@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/hd2d/interior/props/kitchen_table_ingredients.png" id="2_image"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kitchen_table_ingredients"]
-size = Vector3(1.508, 1.104, 0.9)
+size = Vector3(1.508, 1.406, 0.9)
 
 [node name="kitchen_table_ingredients" type="Node3D"]
 script = ExtResource("1_panel")
@@ -17,5 +17,5 @@ image_offset = Vector3(0, 0, 0.45)
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.552, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.703, 0)
 shape = SubResource("BoxShape3D_kitchen_table_ingredients")
