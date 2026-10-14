@@ -52,6 +52,13 @@ def decal(node, image, props="", meta="decal"):
     return "\n".join(lines) + "\n"
 
 
+def inherited(base, node, props):
+    """Scène héritée d'un décor de src/world/props/ : ses propriétés en plus."""
+    return ("[gd_scene format=3]\n\n"
+            '[ext_resource type="PackedScene" path="res://src/world/props/%s.tscn" id="1_base"]\n\n'
+            '[node name="%s" instance=ExtResource("1_base")]\n%s\n' % (base, node, props))
+
+
 # Cahier n° 5, lot R3 (docs/ASSETS_HD2D_ILE68.md, 5.1) : le sentier et le marais. Remplaçants dans
 # tools/hd2d_sentier.py ; CARTE.md, section 4.
 PROPS = {
@@ -60,6 +67,10 @@ PROPS = {
     "path_root_step": panel("PathRootStep", "props/path_root_step.png", "shadow_width = 0.3", "plant_low"),
     # Premier plan suspendu au-dessus du sentier : le panneau se pose en l'air (y de la pose), s'efface
     # autour du joueur quand il passe dessous ; le premier plan accroché à l'écran est au lot E10.
+    # Variantes de premier plan (CARTE.md 0.3) : le rideau de roseaux se dresse au sud d'un joueur qui
+    # marche derrière lui ; l'écriteau d'attente au bout d'un chemin qu'on parcourt vers lui.
+    "marsh_reed_wall_fg": inherited("marsh_reed_wall", "MarshReedWall", "foreground = true"),
+    "waiting_sign_fg": inherited("waiting_sign", "WaitingSign", "foreground = true"),
     "fg_canopy_a": panel("FgCanopyA", "props/fg_canopy_a.png", "shadow_width = 0.0\nforeground = true",
                          "foreground_canopy"),
     "bog_pool_a": decal("BogPoolA", "decals/bog_pool_a.png"),
