@@ -1,0 +1,66 @@
+{
+  "_comment": "L'entrepôt — étage : écrit par tools/interior_maps.py d'après docs/lore/CARTE.md (section 3, bloc plan « carte entrepot_etage ») ; modifier le plan ou l'outil, puis relancer gen. Format : docs/INTERIEURS.md.",
+  "size": [32, 16],
+  "wall_height": 3.0,
+  "wall_thickness": 0.25,
+  "rooms": {
+    "willem": {"name": "Chambre de Willem", "rects": [[1.0, 1.0, 3.5, 7.5]], "floor": "floor_planks_dark", "wall": "wall_plaster_worn"},
+    "chtholly": {"name": "Chambre de Chtholly", "rects": [[4.5, 1.0, 3.5, 7.5]], "floor": "floor_planks_dark", "wall": "wall_wallpaper_faded"},
+    "nygglatho": {"name": "Chambre de Nygglatho", "rects": [[8.0, 1.0, 4.5, 7.5]], "floor": "floor_planks_dark", "wall": "wall_wallpaper_faded"},
+    "grande_soeur": {"name": "Chambre de la grande sœur", "rects": [[12.5, 1.0, 4.0, 7.5]], "floor": "floor_planks_dark", "wall": "wall_wallpaper_faded"},
+    "tremie": {"name": "Trémie et palier", "rects": [[16.5, 1.0, 4.0, 7.5]], "floor": "floor_planks_worn", "wall": "wall_plaster_worn"},
+    "ithea": {"name": "Chambre d'Ithea", "rects": [[20.5, 1.0, 3.0, 7.5]], "floor": "floor_planks_dark", "wall": "wall_wallpaper_faded"},
+    "absentes": {"name": "Chambre des aînées absentes", "rects": [[23.5, 1.0, 4.0, 7.5]], "floor": "floor_planks_dark", "wall": "wall_wallpaper_faded"},
+    "nephren": {"name": "Chambre de Nephren", "rects": [[27.5, 1.0, 3.5, 7.5]], "floor": "floor_planks_dark", "wall": "wall_wallpaper_faded"},
+    "couloir": {"name": "Couloir", "rects": [[1.0, 8.5, 30.0, 2.0]], "floor": "floor_planks_worn", "wall": "wall_plaster_worn"},
+    "dortoir_a": {"name": "Dortoir A", "rects": [[1.0, 10.5, 6.0, 4.5]], "floor": "floor_planks_dark", "wall": "wall_wallpaper_faded"},
+    "dortoir_b": {"name": "Dortoir B", "rects": [[7.0, 10.5, 5.5, 4.5]], "floor": "floor_planks_dark", "wall": "wall_wallpaper_faded"},
+    "placard": {"name": "Placard", "rects": [[12.5, 10.5, 2.0, 4.5]], "floor": "floor_planks_worn", "wall": "wall_plaster_worn"},
+    "toilettes": {"name": "Toilettes", "rects": [[14.5, 10.5, 2.0, 4.5]], "floor": "floor_tiles_bath", "wall": "wall_plaster_worn"},
+    "dortoir_c": {"name": "Dortoir C", "rects": [[16.5, 10.5, 6.0, 4.5]], "floor": "floor_planks_dark", "wall": "wall_wallpaper_faded"},
+    "lingerie": {"name": "Lingerie", "rects": [[22.5, 10.5, 2.0, 4.5]], "floor": "floor_planks_worn", "wall": "wall_plaster_worn"},
+    "dortoir_d": {"name": "Dortoir D", "rects": [[24.5, 10.5, 6.5, 4.5]], "floor": "floor_planks_dark", "wall": "wall_wallpaper_faded"}
+  },
+  "doors": [
+    {"between": ["willem", "couloir"], "x": 3.6, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["chtholly", "couloir"], "x": 6.2, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["nygglatho", "couloir"], "x": 11.0, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["grande_soeur", "couloir"], "x": 14.3, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["tremie", "couloir"], "x": 19.4, "width": 1.8},
+    {"between": ["ithea", "couloir"], "x": 22.0, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["absentes", "couloir"], "x": 25.0, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["nephren", "couloir"], "x": 28.6, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["dortoir_a", "couloir"], "x": 4.0, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["dortoir_b", "couloir"], "x": 10.6, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["placard", "couloir"], "x": 13.5, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["toilettes", "couloir"], "x": 15.5, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["dortoir_c", "couloir"], "x": 20.0, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["lingerie", "couloir"], "x": 23.5, "width": 1.2, "image": "door_frame_wood"},
+    {"between": ["dortoir_d", "couloir"], "x": 27.8, "width": 1.2, "image": "door_frame_wood"}
+  ],
+  "windows": [
+    {"room": "willem", "side": "N", "x": 2.0, "image": "window_bare", "sill": 0.7},
+    {"room": "chtholly", "side": "N", "x": 6.2, "image": "window_curtains_open", "sill": 0.8},
+    {"room": "grande_soeur", "side": "N", "x": 14.4, "image": "window_curtains_closed", "sill": 0.8},
+    {"room": "ithea", "side": "N", "x": 21.8, "image": "window_curtains_open", "sill": 0.8},
+    {"room": "absentes", "side": "N", "x": 25.5, "image": "window_curtains_closed", "sill": 0.8},
+    {"room": "nephren", "side": "N", "x": 28.6, "image": "window_curtains_open", "sill": 0.8},
+    {"room": "nephren", "side": "E", "z": 5.0, "image": "window_cross_small", "sill": 1.0},
+    {"room": "couloir", "side": "E", "z": 9.5, "image": "window_cross_small", "sill": 1.0}
+  ],
+  "wall_items": [
+    {"room": "willem", "side": "E", "z": 5.5, "y": 1.5, "image": "wallitem_wall_lamp"},
+    {"room": "chtholly", "side": "N", "x": 7.45, "y": 1.3, "image": "wallitem_calendar"},
+    {"room": "tremie", "side": "N", "x": 19.6, "y": 1.6, "image": "wallitem_crystal_sconce"},
+    {"room": "tremie", "side": "E", "z": 7.2, "y": 1.4, "image": "wallitem_notice_a"},
+    {"room": "tremie", "side": "E", "z": 4.0, "y": 1.2, "image": "wallitem_chore_chart"},
+    {"room": "couloir", "side": "W", "z": 9.5, "y": 1.6, "image": "wallitem_crystal_sconce"}
+  ],
+  "lights": [
+    {"room": "nygglatho", "at": [9.2, 1.45], "radius": 3.8, "color": "#ff9a50", "energy": 1.1},
+    {"room": "nygglatho", "at": [11.55, 4.0], "radius": 2.6, "color": "#ffc070", "energy": 0.85},
+    {"room": "tremie", "at": [19.6, 1.2], "radius": 3.6, "color": "#ffd59a", "energy": 0.75},
+    {"room": "couloir", "at": [1.2, 9.5], "radius": 3.6, "color": "#ffd59a", "energy": 0.75},
+    {"room": "willem", "at": [4.4, 5.5], "radius": 3.6, "color": "#ffd59a", "energy": 0.75}
+  ]
+}

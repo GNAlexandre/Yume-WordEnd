@@ -615,3 +615,38 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   lumière (ni `Light`, ni `WorldEnvironment`, ni `DirectionalLight3D`) ; ses lampes sont les
   `lights[]` de son `interior.json` ; `InteriorRoom.apply_phase` n'est plus qu'un passage vers
   `Atmosphere.set_moment`.
+## T2 — images et préréglages pour l'entrepôt
+- `roof_ladder` (échelle du couloir de l'étage vers le toit) : absente du cahier n° 3 ;
+  remplaçant à la taille du plan, 77 × 288 px (0,8 × 3,0 m), lot I de `tools/hd2d_manifest.json`.
+  À ajouter au cahier.
+- `floor_roof_deck` et `roof_edge_slate` (« à confirmer », CARTE.md 3.3) : le toit se fait sans
+  eux (matière `planches`, toit `roof_slate` d'un `Building`) ; à trancher au cahier.
+- Préréglage `noir` (CARTE.md 3.4, salle des armes sans lumière) : absent de `data/lighting` (E9) ;
+  la carte prend `interieur` en attendant.
+- Halo des appliques `wallitem_crystal_sconce` (GLOWS d'`InteriorRoom`) : la lumière d'une
+  applique est déclarée en carte de lumière, mais l'image elle-même ne luit pas ; à voir avec R1.
+- Remplaçants encore en place (cahier n° 3, lot I) : `anim/drying_frame_wave`, `anim/leak_drip`,
+  `anim/pot_steam`, `decals/bath_puddles`, `decals/cards_floor`, `decals/clothes_floor`,
+  `decals/papers_floor`, `decals/runner_rug`, `interior/props/piano_old`, `interior/props/roof_hatch`,
+  `interior/props/roof_ladder`, `interior/props/roof_railing_broken`, `interior/wallitem_clippings`,
+  `interior/window_dusty`.
+## T1 — L'entrepôt vu du dehors
+- **CARTE.md 12.1, `warehouse_front_a_side`** : la consigne met la porte de service « à 8 m de
+  l'angle sud » ; les données (2.7 : sortie z 19,4 → 20,6 ; 2.4 : « (30 ; 20) dehors ») la mettent
+  à 6 m. Le remplaçant suit les données (6 m). À corriger dans 12.1 avant la commande (lot D2).
+  Au passage, 2.4 écrit « (1 ; 9,5) dedans » pour (30 ; 20) dehors, alors que dedans = dehors −
+  (29, 11) donne (1 ; 9) : le couloir du dedans est centré sur 9,5.
+- **E2, faces des paliers** : `cliff/step_earth`, `wall_earth_1m` et `step_marsh` (cahier n° 3, 7.6)
+  ne sont pas encore lus par `MapGround` (un seul talus, `bank_earth.png`) : une couleur de
+  `structures.png` par face nommée permettrait de les poser (berges de tourbe au marais).
+- **Manifeste, lot I** : `interior/props/roof_railing.png` et `drying_frame.png` (livrées) sont
+  posées dehors sur le toit-terrasse ; leur entrée au manifeste est laissée au lot I (T2).
+- **Cahier des façades (CARTE.md 12.1), vitres** : les panneaux s'allument la nuit par les pixels
+  proches de `glow_color` (#FFE6A6, `panel_core.gdshaderinc`, fois `window_glow`) ; les vitres de
+  `warehouse_main` (#ECBF79) n'en sont pas assez près et restent éteintes la nuit. Les
+  remplaçants de T1 repeignent leurs vitres près de #FFE6A6 : à dire au dessinateur des vraies
+  façades (ou un masque de lueur par image, PR « contrats »).
+- **Tests rouges hérités d'`integ-monde` (f393bb1, avant T1)** : `test_interior_entrepot`
+  (« préréglage » 0,568 au lieu de 0,34) et `test_interior_in_game` (« étalonnage ») échouent dans
+  la suite complète, déjà sur f393bb1 seul : la lumière d'Atmosphere habille la carte d'essai
+  intérieure par-dessus `interior_light`. Le raccord est la mission de R1 ; T1 n'y touche pas.

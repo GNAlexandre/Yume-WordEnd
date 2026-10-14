@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/props/climbing_tree.tscn" id="1_base"]
+
+[node name="ClimbingTree" instance=ExtResource("1_base")]
+foreground = true

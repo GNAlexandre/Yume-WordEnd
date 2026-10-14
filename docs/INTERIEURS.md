@@ -188,3 +188,40 @@ Images livrées qu'emploie la carte d'essai (tailles : celles du cahier) :
 Les autres images livrées du lot I (chambres de l'étage, toit, salle des armes, `door_room_open`,
 `wallitem_calendar`…) attendent leurs cartes : les ajouter aux listes de `tools/hd2d_interior.py`
 le jour où une carte les emploie.
+
+## 5. L'entrepôt des fées (lot T2)
+
+Les quatre cartes de l'entrepôt (`docs/lore/CARTE.md`, section 3) sont écrites par
+`python3 tools/interior_maps.py gen` depuis les blocs ```plan (récapitulatif : PLAN.md, « (T2) »).
+Ce qu'elles ajoutent aux règles ci-dessus :
+
+- **Grille d'un demi-mètre** (`InteriorLayout.GRID` = 0,5) : les rectangles, les lignes de murs et
+  la coupe tombent au demi-mètre (cloison en x = 5,5) ; une ouverture garde 0,2 m de montant à
+  chaque angle.
+- **Rien ne cache le joueur** : un meuble de plus de 1,21 m contre le mur sud se coupe avec lui
+  (`InteriorPanel.cut_offset` : la ligne de coupe du meuble recule au-delà du mur) ; au milieu
+  d'une pièce, la place où il cacherait les pieds du joueur (caméra du jeu bornée, regard de biais
+  compris) est fermée par une collision sans image, « <meuble>_arriere » ; un pilier, un séchoir
+  ou une rambarde au premier plan est un `DecorPanel` `foreground` qui s'efface.
+- **Portes qu'on franchit** : `door_frame_wood` ; portes du dehors à leur image.
+- **Objets à examiner** : nœuds `Examine/<clé>` (`Examinable`, src/world/examinable.gd), textes
+  dans `data/texts/entrepot.json`.
+- **Remplaçants** (lot I, recettes de `tools/hd2d_interior_props.py`) encore en place au
+  14 octobre 2026 ; une image livrée sous le même nom les remplace sans toucher au code :
+
+| Remplaçant | Taille (px) | Genre | Contenu |
+| --- | --- | --- | --- |
+| `drying_frame_wave` (`anim/`) | 1536 × 211 | bande de 4 images | séchoir du toit, linge au vent |
+| `leak_drip` (`anim/`) | 96 × 96 | bande | goutte de la fuite du couloir de l'étage |
+| `pot_steam` (`anim/`) | 288 × 96 | bande | vapeur de la marmite |
+| `bath_puddles` (`decals/`) | 192 × 144 | décalque | flaques des bains |
+| `cards_floor` (`decals/`) | 144 × 96 | décalque | cartes à jouer par terre (grande sœur) |
+| `clothes_floor` (`decals/`) | 192 × 144 | décalque | vêtements par terre (grande sœur) |
+| `papers_floor` (`decals/`) | 192 × 144 | décalque | papiers des archives |
+| `runner_rug` (`decals/`) | 96 × 384 | décalque | tapis de couloir, bout à bout |
+| `piano_old` (`interior/props/`) | 154 × 134 | meuble | vieux piano de la salle de jeux |
+| `roof_hatch` (`interior/props/`) | 96 × 58 | objet | trappe du toit |
+| `roof_ladder` (`interior/props/`) | 77 × 288 | meuble | échelle vers le toit (hors cahier : `docs/CONTRACT_REQUESTS.md`) |
+| `roof_railing_broken` (`interior/props/`) | 192 × 77 | panneau | module tordu de la rambarde |
+| `wallitem_clippings` (`interior/`) | 77 × 58 | élément de mur | coupures de magazine des archives |
+| `window_dusty` (`interior/`) | 96 × 96 | fenêtre | petite fenêtre haute et poussiéreuse |

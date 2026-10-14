@@ -18,6 +18,14 @@
       "games": "Veilles tenues"
     }
   },
+  "maps": {
+    "_comment": "(T1, refonte) Cartes d’attente de la phase 2 (village, colline, sentier, forêt profonde : docs/DECISIONS.md, T1) : l’écriteau qu’on y lit (src/world/props/waiting_sign.gd) ; prompt : invite, speaker : nom affiché, text : ce qu’il dit.",
+    "waiting": {
+      "prompt": "Lire",
+      "speaker": "Écriteau",
+      "text": "Plus loin, bientôt. Le chemin continue, mais on ne le trace pas encore : reviens à l’entrepôt."
+    }
+  },
   "fall": {
     "_comment": "Rattrapage d’une chute hors de l’île (WorldManager.rescued) : fondu au blanc, puis le message (docs/lore/MONDE.md, section 2.8).",
     "message": "Tes ailes se sont ouvertes : te revoilà au bord."

@@ -1,0 +1,38 @@
+{
+  "_comment": "Sol en relief de la carte colline, écrit par tools/map_build.py gen d'après plan.json avec heights.png, materials.png et structures.png : modifier le plan et relancer gen (format : PLAN.md, « Format du sol des cartes extérieures »).",
+  "format": "map_ground",
+  "version": 1,
+  "size": [32, 24],
+  "heights_image": "heights.png",
+  "height_step_value": 16,
+  "materials_image": "materials.png",
+  "materials_scale": 1,
+  "palette": {
+    "#7a8a6a": "sobre",
+    "#d0a060": "chemin"
+  },
+  "edges": {
+    "north": "land",
+    "east": "land",
+    "south": "land",
+    "west": "land"
+  },
+  "skirt": 16,
+  "barrier": true,
+  "materials": {
+    "sobre": {
+      "label": "Sol de la carte d'attente, assourdi",
+      "layer": "meadow_flowers",
+      "color": "#7a8a6a",
+      "tint": [0.78, 0.78, 0.8]
+    },
+    "chemin": {
+      "label": "Chemin de terre (path_dirt_b)",
+      "layer": "path_dirt_b",
+      "color": "#d0a060",
+      "variant": false,
+      "path": true
+    }
+  },
+  "spawn": [16, 20]
+}

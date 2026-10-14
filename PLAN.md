@@ -515,7 +515,8 @@ class_name Building        # (H9) @export side_facade (flanc est, retourné à l
                            # profondeur × mur), side_material(texture, glow)
 class_name PropScatter     # (H9) @export variants: Array[PackedScene], random_flip ; pool(), variant_indices(),
                            # pick_variants(points, count, seed) (jamais la variante du plus proche voisin),
-                           # nearest_neighbor(points, i)
+                           # nearest_neighbor(points, i) ; (T1) follow_ground : sur une carte de la refonte,
+                           # le MapGround (enfant « Ground ») du premier ancêtre qui en a un, sinon l'île
 class_name IslandTerrain   # (H9) GROUND_LAYERS (27 tuiles, ordre du contrat), GROUND_FALLBACK, ATLAS_COLUMNS,
                            # atlas_tile_count(size), ground_layer(layer, tile_count), triangles_in(rect),
                            # surface_height(x, z) ; terrain.gdshader : rangées lues dans la taille de l'atlas
@@ -767,7 +768,9 @@ d'un mètre, `floor`, `wall`, `wallcut` : noms d'images de `assets/hd2d/interior
 `window_*`, `sill`), `wall_items[]` (idem, `wallitem_*`, `y`), `lights[]` (`room`, `at` [x, z],
 `radius`, `color`, `energy`). Les murs se déduisent des pièces (un mur partout où deux cases voisines
 ne sont pas de la même pièce, le vide compris), centrés sur la ligne de grille ; une clé inconnue
-est une faute (`_…` : commentaire).
+est une faute (`_…` : commentaire). (T2) La grille est d'un demi-mètre (`InteriorLayout.GRID` =
+0,5) : rectangles, cases, lignes de murs et coupe au demi-mètre (cloison en x = 5,5) ; un plan au
+mètre reste valide.
 
 ```gdscript
 # src/world/interior_layout.gd (class_name InteriorLayout, RefCounted) : lecture et vérification
@@ -800,7 +803,9 @@ const CUT_HEIGHT (0,15), PROP_CUT_HEIGHT (1), CUT_MARGIN (0,3), CUT_SPEED (14 m/
 
 # src/world/interior_panel.gd (class_name InteriorPanel, extends DecorPanel, @tool) : meuble
 @export var cut_height: float = 1.0   # hauteur gardée quand la coupe passe
-func front_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
+@export var cut_offset: float = 0.0   # (T2) ligne de coupe reculée vers le sud (meuble adossé au
+                                      # mur sud : il se coupe avec lui) ; l'image ne bouge pas
+func front_z() -> float, cut_z() -> float, occluder_triangles(cut_world) -> PackedVector3Array
 ```
 
 **Règles du rendu.**
@@ -855,6 +860,49 @@ profondeur et lueur d'un meuble ; recette pour un remplaçant seulement), puis `
 tools/hd2d_interior.py manifest`, `python3 tools/hd2d_assets.py gen --lot I` (remplaçants),
 `python3 tools/hd2d_interior.py scenes`, `tools/import.sh`, `python3 tools/hd2d_assets.py check
 --lot I`.
+
+### (T2) L'entrepôt des fées, dedans
+
+Quatre cartes, du plan de `docs/lore/CARTE.md`, section 3 : `entrepot_rdc` (3.1), `entrepot_etage`
+(3.2), `entrepot_toit` (3.3, une carte du dehors : `MapGround` dont le niveau 0 est la terrasse,
+la cour 6,5 m plus bas), `salle_des_armes` (3.4). Région `entrepot` ; aucune lumière dans les
+cartes (Atmosphere, E9 ; lampes et cheminées en cartes de lumière d'`InteriorRoom`). Écarts au
+plan : docs/DECISIONS.md (« T2 »).
+
+- **Outil** : `python3 tools/interior_maps.py gen [id…]` relit les blocs ```plan et écrit
+  `data/maps/<id>/interior.json` (ou le sol du toit) et `src/world/maps/<id>/<id>.tscn` (pièces,
+  portes, fenêtres, meubles, objets, sorties, marqueurs, places, objets à examiner, fermetures
+  « <meuble>_arriere » des places où un meuble haut cacherait le joueur) ; `check` dit si une
+  carte est à réécrire ; `places` réécrit les listes de places dans CARTE.md. Les images :
+  `tools/hd2d_interior.py` (listes, scènes) et `tools/hd2d_interior_props.py` (remplaçants).
+- **Places de la vie** : `Life/Places/<nom>` (`Marker3D`, regard vers ce qu'on y fait) : les
+  `point` du plan, chaque chaise (`refectoire_chaise_a01`…), chaque lit, quelques sièges ; liste
+  après chaque plan dans CARTE.md.
+- **Sorties** : `vers_dehors` / `vers_arriere` (à pied) → `entrepot` (`from_entrepot_rdc`,
+  `from_entrepot_rdc_service`) ; `vers_etage` « Monter », `vers_rdc` « Descendre », `vers_toit`
+  « Monter sur le toit », `trappe` « Descendre », `vers_armes` « Ouvrir », `remonter`
+  « Remonter ». Tant que `entrepot` (T1) n'existe pas, les portes du dehors mènent à `essai`.
+- **Objets à examiner** (colonne « À examiner » des plans) :
+
+```gdscript
+# src/world/examinable.gd (class_name Examinable, extends Area3D) : interactable (couche 6,
+# groupe « interactable »), zone BoxShape3D de taille size posée sur le sol au-dessus du nœud
+signal examined(text_key: String)                 # fin de la lecture
+@export var text_key: String                      # « entrepot_rdc/cuisine_fourneau »
+@export var prompt: String = ""                   # vide : clé « prompt » du fichier (« Examiner »)
+@export var size: Vector3, texts_path: String     # défaut res://data/texts/entrepot.json
+func get_prompt() -> String, interact(player), show_text() -> bool, text_value() -> String
+func dialogue_id() -> StringName                  # « examine_<clé> » (aucun PNJ : pas de portrait)
+static func lookup(path, key_path) -> String, forget_texts()
+```
+  Textes : `data/texts/entrepot.json`, format des textes de l'histoire (une clé par carte, puis
+  par objet ; ligne vide = page suivante ; `{player}`) ; affichés par le protocole de
+  DialogueRunner (dialogue_started, dialogue_line sans nom, dialogue_ended).
+- **Tests** : `tests/unit/test_entrepot_rdc.gd`, `test_entrepot_etage.gd`,
+  `test_entrepot_toit.gd`, `test_salle_des_armes.gd` (base `tests/stubs/t2_map_test.gd` : plan
+  complet, circulation, portes, rien ne cache le joueur de chaque case, draw calls par vue,
+  textes) ; `tests/integration/test_entrepot_in_game.gd` ; captures
+  `tests/integration/demo_entrepot.tscn` (`T2_VIEWS`, `T2_SHOTS`).
 
 ### (E9) Lumière et temps : mode d'emploi
 
@@ -1021,7 +1069,9 @@ sud ; **un pixel = une case de 1 m** ; la case (i, j) couvre [i, i + 1] × [j, j
    `stairs` et `ramp` (`rect` [x, z, largeur, profondeur] de cases, `dir`, `material` facultative),
    `face` (`wall`, `rock`, `earth` sur les cases hautes d'une falaise). Formes : `rect`, `poly`,
    `ellipse` [cx, cz, rx, rz], `band` ; `noise` (m) et `noise_scale` brouillent leur bord ; `where`
-   (`level`, `levels`, `material`, `not_material`) restreint une opération.
+   (`level`, `levels`, `material`, `not_material`) restreint une opération. (T1) Des paliers sous
+   le sol courant (−0,5 m : champ, marais de l'entrepôt) demandent `height_zero_value` (16 : le
+   palier −1 est le gris 0), recopié dans `map.json`.
 2. `python3 tools/map_build.py gen <map_id>` écrit `map.json`, `heights.png`, `materials.png` et
    `structures.png` et vérifie la carte ; `python3 tools/map_build.py view <map_id>` en fait la vue de
    dessus (`build/maps/<map_id>_dessus.png`) ; `check` revérifie (toutes les cartes sans argument).
