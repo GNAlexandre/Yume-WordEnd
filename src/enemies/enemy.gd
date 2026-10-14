@@ -183,6 +183,14 @@ var _shadow: MeshInstance3D
 
 
 func _ready() -> void:
+	if not WorldAtlas.enemies_allowed_at(self):
+		# (X1) Les règles de l'île n'en veulent pas (l'île n° 68 : les Timeres ne vivent qu'à la
+		# surface) : rien n'apparaît, ni enemy_spawned.
+		set_physics_process(false)
+		set_process(false)
+		remove_from_group(&"enemies")
+		queue_free()
+		return
 	origin = global_position
 	hitbox.source = self
 	_sprite = visual.get_node_or_null(^"Sprite") as AnimatedSprite3D

@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/travel_view.gd" id="1_travel"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_caption"]
+font_size = 30
+font_color = Color(1, 0.97, 0.9, 1)
+outline_size = 8
+outline_color = Color(0.12, 0.1, 0.16, 0.85)
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_offset = Vector2(2, 3)
+
+[node name="TravelView" type="CanvasLayer"]
+process_mode = 3
+layer = 90
+script = ExtResource("1_travel")
+
+[node name="View" type="Control" parent="."]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Caption" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -480.0
+offset_top = -112.0
+offset_right = 480.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+label_settings = SubResource("LabelSettings_caption")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Black" type="ColorRect" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

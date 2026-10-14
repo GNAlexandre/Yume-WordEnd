@@ -1,0 +1,20 @@
+{
+  "_comment": "Île d'essai minimale (lot X1) : une carte, un port relié au quai d'essai de l'île n° 68. Elle fait vivre le mode d'emploi « Ajouter une île » (PLAN.md) et le test du voyage (tests/integration/test_x1_travel.gd).",
+  "name": "L'île d'essai",
+  "maps": ["quai_essai"],
+  "arrival_map": "quai_essai",
+  "places": {
+    "quai_essai": {
+      "name": "Le quai de l'île d'essai",
+      "maps": ["quai_essai"],
+      "start_known": true
+    }
+  },
+  "ports": {
+    "quai": {
+      "name": "Le quai de l'île d'essai",
+      "map": "quai_essai",
+      "marker": "from_dirigeable"
+    }
+  }
+}

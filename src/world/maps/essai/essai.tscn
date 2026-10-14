@@ -21,6 +21,8 @@
 [ext_resource type="PackedScene" path="res://src/world/props/grass_clump_a.tscn" id="20_grass_clump_a"]
 [ext_resource type="PackedScene" path="res://src/world/props/crate.tscn" id="21_crate"]
 [ext_resource type="PackedScene" path="res://src/world/props/maple_a.tscn" id="22_maple_a"]
+[ext_resource type="Script" path="res://src/world/airship_dock.gd" id="23_dock"]
+[ext_resource type="PackedScene" path="res://src/world/props/dock_lamp.tscn" id="24_dock_lamp"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass"]
 albedo_texture = ExtResource("3_grass")
@@ -53,6 +55,9 @@ size = Vector3(1, 6, 34)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_exit_west"]
 size = Vector3(2, 3, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dock"]
+size = Vector3(1.6, 2, 2)
 
 [node name="essai" type="Node3D"]
 script = ExtResource("1_map")
@@ -180,6 +185,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6, 0, 11.2)
 [node name="SignpostWest" parent="Geometry" instance=ExtResource("16_signpost")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0, 12.6)
 
+[node name="SignpostDockIsland" parent="Geometry" instance=ExtResource("16_signpost")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.2, 0, 14.2)
+
+[node name="SignpostDockSurface" parent="Geometry" instance=ExtResource("16_signpost")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.2, 0, 18.2)
+
+[node name="DockLamp" parent="Geometry" instance=ExtResource("24_dock_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.6, 0, 16.2)
+
 [node name="Markers" type="Node3D" parent="."]
 
 [node name="Spawn" type="Marker3D" parent="Markers"]
@@ -187,6 +201,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.2, 16)
 
 [node name="from_ile_ancienne" type="Marker3D" parent="Markers"]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 4, 0.2, 15)
+
+[node name="from_dirigeable" type="Marker3D" parent="Markers"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 30.2, 0.2, 16.2)
 
 [node name="Exits" type="Node3D" parent="."]
 
@@ -198,5 +215,29 @@ target_marker = &"from_essai"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/to_ile_ancienne"]
 shape = SubResource("BoxShape3D_exit_west")
+
+[node name="Docks" type="Node3D" parent="."]
+
+[node name="vers_ile_essai" type="Area3D" parent="Docks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 1, 14.6)
+collision_layer = 32
+collision_mask = 2
+script = ExtResource("23_dock")
+island = &"ile_essai"
+port = &"quai"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Docks/vers_ile_essai"]
+shape = SubResource("BoxShape3D_dock")
+
+[node name="vers_surface" type="Area3D" parent="Docks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 1, 17.8)
+collision_layer = 32
+collision_mask = 2
+script = ExtResource("23_dock")
+island = &"surface_essai"
+port = &"campement"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Docks/vers_surface"]
+shape = SubResource("BoxShape3D_dock")
 
 [node name="Life" type="Node3D" parent="."]

@@ -1,0 +1,167 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/map_ground.gd" id="2_ground"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="3_batcher"]
+[ext_resource type="Script" path="res://src/world/airship_dock.gd" id="4_dock"]
+[ext_resource type="PackedScene" path="res://src/world/props/airship_ferry.tscn" id="5_ship"]
+[ext_resource type="PackedScene" path="res://src/world/props/mooring_arm.tscn" id="6_arm"]
+[ext_resource type="PackedScene" path="res://src/world/props/dock_lamp.tscn" id="7_lamp"]
+[ext_resource type="PackedScene" path="res://src/world/props/bollard.tscn" id="8_bollard"]
+[ext_resource type="PackedScene" path="res://src/world/props/edge_railing.tscn" id="9_railing"]
+[ext_resource type="PackedScene" path="res://src/world/props/crate_stack.tscn" id="10_crates"]
+[ext_resource type="PackedScene" path="res://src/world/props/crate.tscn" id="11_crate"]
+[ext_resource type="PackedScene" path="res://src/world/props/luggage.tscn" id="12_luggage"]
+[ext_resource type="PackedScene" path="res://src/world/props/bench.tscn" id="13_bench"]
+[ext_resource type="PackedScene" path="res://src/world/props/signpost.tscn" id="14_signpost"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_a.tscn" id="15_wall_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_c.tscn" id="16_wall_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_small_a.tscn" id="17_pine"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_b.tscn" id="18_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/fern_b.tscn" id="19_fern"]
+[ext_resource type="PackedScene" path="res://src/world/props/fg_bush.tscn" id="20_fg_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_a.tscn" id="21_grass"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dock"]
+size = Vector3(3, 2, 1.6)
+
+[node name="quai_essai" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "Le quai de l'île d'essai"
+region = &"quai_essai"
+size = Vector2(32, 24)
+camera_bounds = Rect2(10, 9, 12, 7)
+island = &"ile_essai"
+
+[node name="Ground" type="StaticBody3D" parent="."]
+script = ExtResource("2_ground")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("3_batcher")
+
+[node name="Ship" parent="Geometry" instance=ExtResource("5_ship")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, -1.2, 1.5)
+
+[node name="ArmWest" parent="Geometry" instance=ExtResource("6_arm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.6, 0, 6.6)
+
+[node name="ArmEast" parent="Geometry" instance=ExtResource("6_arm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.4, 0, 6.6)
+
+[node name="LampWest" parent="Geometry" instance=ExtResource("7_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.6, 0, 9.8)
+
+[node name="LampEast" parent="Geometry" instance=ExtResource("7_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 9.8)
+
+[node name="BollardWest" parent="Geometry" instance=ExtResource("8_bollard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4, 0, 6.6)
+
+[node name="BollardEast" parent="Geometry" instance=ExtResource("8_bollard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.6, 0, 6.6)
+
+[node name="RailingWest1" parent="Geometry" instance=ExtResource("9_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 6.4)
+
+[node name="RailingWest2" parent="Geometry" instance=ExtResource("9_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 6.4)
+
+[node name="RailingWest3" parent="Geometry" instance=ExtResource("9_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 6.4)
+
+[node name="RailingWest4" parent="Geometry" instance=ExtResource("9_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 6.4)
+
+[node name="RailingEast1" parent="Geometry" instance=ExtResource("9_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 6.4)
+
+[node name="RailingEast2" parent="Geometry" instance=ExtResource("9_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 6.4)
+
+[node name="RailingEast3" parent="Geometry" instance=ExtResource("9_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 6.4)
+
+[node name="RailingEast4" parent="Geometry" instance=ExtResource("9_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 6.4)
+
+[node name="Crates" parent="Geometry" instance=ExtResource("10_crates")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, 9.4)
+
+[node name="Crate" parent="Geometry" instance=ExtResource("11_crate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.3, 0, 10.2)
+
+[node name="Luggage" parent="Geometry" instance=ExtResource("12_luggage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.4, 0, 9.8)
+
+[node name="Bench" parent="Geometry" instance=ExtResource("13_bench")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 13)
+
+[node name="Sign" parent="Geometry" instance=ExtResource("14_signpost")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.6, 0, 13.6)
+
+[node name="ForestWest" parent="Geometry" instance=ExtResource("15_wall_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 11)
+
+[node name="ForestEast" parent="Geometry" instance=ExtResource("16_wall_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 0, 11)
+
+[node name="PineWest" parent="Geometry" instance=ExtResource("17_pine")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 0, 10.5)
+
+[node name="PineEast" parent="Geometry" instance=ExtResource("17_pine")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.6, 0, 11.2)
+
+[node name="PineSouthWest" parent="Geometry" instance=ExtResource("17_pine")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0, 17.5)
+
+[node name="PineSouthEast" parent="Geometry" instance=ExtResource("17_pine")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.8, 0, 18.5)
+
+[node name="Bush1" parent="Geometry" instance=ExtResource("18_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 16)
+
+[node name="Bush2" parent="Geometry" instance=ExtResource("18_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 0, 15)
+
+[node name="Fern1" parent="Geometry" instance=ExtResource("19_fern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 19.5)
+
+[node name="Fern2" parent="Geometry" instance=ExtResource("19_fern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 20)
+
+[node name="Grass1" parent="Geometry" instance=ExtResource("21_grass")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 15.5)
+
+[node name="Grass2" parent="Geometry" instance=ExtResource("21_grass")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 16.5)
+
+[node name="FrontBush1" parent="Geometry" instance=ExtResource("20_fg_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 23.4)
+
+[node name="FrontBush2" parent="Geometry" instance=ExtResource("20_fg_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 23.4)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.2, 18)
+
+[node name="from_dirigeable" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 16, 0.2, 11)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="Docks" type="Node3D" parent="."]
+
+[node name="vers_ile_68" type="Area3D" parent="Docks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 1, 8)
+collision_layer = 32
+collision_mask = 2
+script = ExtResource("4_dock")
+island = &"ile_68"
+port = &"essai"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Docks/vers_ile_68"]
+shape = SubResource("BoxShape3D_dock")
+
+[node name="Life" type="Node3D" parent="."]

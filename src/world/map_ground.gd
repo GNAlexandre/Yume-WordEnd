@@ -12,9 +12,14 @@ extends StaticBody3D
 ##   bords tramés, bordures, eau, lèvre de pierre au bord du vide, ombres des falaises) ;
 ## - Cliffs : les faces verticales (falaises, talus, murets, contremarches) et le rideau de roche
 ##   sous la côte, un draw call (shaders/map_ground_cliff.gdshader) ;
-## - CloudSea : la mer de nuages de l'île (shaders/cloud_sea.gdshader), si la carte touche le vide ;
-##   (R1) la seule de la carte : Atmosphere n'en ajoute pas, il règle celle-ci (copie de son
-##   matériau : teinte, côté du soleil, étoiles, image de la nuit) ;
+## - CloudSea : la mer de nuages de l'île (shaders/cloud_sea.gdshader), si la carte touche le vide
+##   et que son île a la mer de nuages sous le bord ((X1) règle void_below = clouds,
+##   WorldAtlas.rules_for ; une carte hors de toute île l'a aussi) ; (R1) la seule de la carte :
+##   Atmosphere n'en ajoute pas, il règle celle-ci (copie de son matériau : teinte, côté du
+##   soleil, étoiles, image de la nuit) ;
+## - (X1) FarGround : le sol jusqu'à l'horizon (règle void_below = ground : la surface), un cadre
+##   de FAR_GROUND_SIZE m autour de la carte et de sa jupe, dans la matière du bord de la carte
+##   (même matériau que le sol : un draw call de plus), juste sous le palier 0 ;
 ## - CollisionShape3D : les triangles mêmes du sol et des faces (on marche exactement sur ce qu'on
 ##   voit) ; Barrier : un mur invisible le long de la côte et des bords « land » de la carte.
 ##
@@ -36,6 +41,11 @@ const CLOUD_IMAGE := preload("res://assets/hd2d/sky/cloud_sea.png")
 ## Mer de nuages : profondeur sous le sol (m) et côté (m), comme le nœud Water de l'île.
 const CLOUD_SEA_DEPTH := -60.0
 const CLOUD_SEA_SIZE := 3000.0
+## (X1) Sol jusqu'à l'horizon : côté (m) et hauteur sous le palier 0 (m), recouvrement sous la
+## jupe des bords (m).
+const FAR_GROUND_SIZE := 3000.0
+const FAR_GROUND_DROP := -0.04
+const FAR_GROUND_OVERLAP := 1.0
 ## Soleil par défaut (vers lui) : celui de l'île (island.tscn, Sun).
 const DEFAULT_TOWARD_SUN := Vector3(-0.900073, 0.34202, 0.269984)
 
@@ -58,6 +68,7 @@ var _builder: MapGroundBuilder = null
 var _mesh: MeshInstance3D = null
 var _cliffs: MeshInstance3D = null
 var _clouds: MeshInstance3D = null
+var _far: MeshInstance3D = null
 var _shape: CollisionShape3D = null
 var _barrier: CollisionShape3D = null
 var _ground_material: ShaderMaterial = null
@@ -130,7 +141,9 @@ func _build_collision() -> void:
 
 
 func _build_clouds() -> void:
-	if not data.has_void():
+	var rules := island_rules()
+	_build_far_ground(rules.ground_below())
+	if not data.has_void() or not rules.clouds_below():
 		if _clouds != null:
 			_clouds.visible = false
 		return
@@ -145,6 +158,73 @@ func _build_clouds() -> void:
 		_clouds.mesh = plane
 	_clouds.visible = true
 	_clouds.position = Vector3(data.width * 0.5, CLOUD_SEA_DEPTH, data.depth * 0.5)
+
+
+## (X1) Règles de l'île de cette carte (WorldAtlas : map_id, ou le nom de la Map parente) ; hors
+## de toute île, IslandRules.unruled() (mer de nuages).
+func island_rules() -> IslandRules:
+	var id := map_id
+	if id == &"" and get_parent() != null:
+		id = StringName(get_parent().name)
+	return WorldAtlas.rules_for(id)
+
+
+## (X1) Vrai si le sol s'étend jusqu'à l'horizon autour de la carte (règle void_below = ground).
+func has_far_ground() -> bool:
+	return _far != null and _far.visible
+
+
+## (X1) Le sol jusqu'à l'horizon : un cadre autour de la carte (et de sa jupe sur les bords
+## « land »), qui reprend la matière du bord (le shader du sol borne ses lectures à la carte).
+func _build_far_ground(wanted: bool) -> void:
+	if not wanted:
+		if _far != null:
+			_far.visible = false
+		return
+	if _far == null:
+		_far = _internal_mesh(&"FarGround")
+	var inner := Rect2(0.0, 0.0, data.width, data.depth)
+	var grow := {}
+	for side: String in MapGroundData.SIDES:
+		var land := str(data.edges.get(side, "land")) == "land"
+		grow[side] = maxf((data.skirt if land else 0.0) - FAR_GROUND_OVERLAP, 0.0)
+	inner = inner.grow_individual(grow["west"], grow["north"], grow["east"], grow["south"])
+	var outer := Rect2(
+		inner.get_center() - Vector2.ONE * FAR_GROUND_SIZE * 0.5, Vector2.ONE * FAR_GROUND_SIZE
+	)
+	var vertices := PackedVector3Array()
+	var rects: Array[Rect2] = [
+		Rect2(
+			outer.position.x, outer.position.y, outer.size.x, inner.position.y - outer.position.y
+		),
+		Rect2(outer.position.x, inner.end.y, outer.size.x, outer.end.y - inner.end.y),
+		Rect2(
+			outer.position.x, inner.position.y, inner.position.x - outer.position.x, inner.size.y
+		),
+		Rect2(inner.end.x, inner.position.y, outer.end.x - inner.end.x, inner.size.y),
+	]
+	for rect: Rect2 in rects:
+		var a := Vector3(rect.position.x, FAR_GROUND_DROP, rect.position.y)
+		var b := Vector3(rect.end.x, FAR_GROUND_DROP, rect.position.y)
+		var c := Vector3(rect.end.x, FAR_GROUND_DROP, rect.end.y)
+		var d := Vector3(rect.position.x, FAR_GROUND_DROP, rect.end.y)
+		vertices.append_array([a, b, c, a, c, d])
+	var normals := PackedVector3Array()
+	var uvs := PackedVector2Array()
+	for _vertex in vertices.size():
+		normals.append(Vector3.UP)
+		# UV.x : distance au vide (lèvre de pierre du shader) ; loin de tout vide.
+		uvs.append(Vector2(1000.0, 0.0))
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_NORMAL] = normals
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	mesh.surface_set_material(0, _ground_material)
+	_far.mesh = mesh
+	_far.visible = true
 
 
 ## Matériau du sol de cette carte : atlas du sol et images de données (matières, table, paliers).
@@ -327,12 +407,12 @@ func rim_segments() -> PackedVector3Array:
 
 
 ## Mesures : temps de construction (ms), triangles du sol, des faces, de la collision, de la
-## barrière, draw calls du sol (sol, faces, mer de nuages).
+## barrière, draw calls du sol (sol, faces, mer de nuages, (X1) sol jusqu'à l'horizon).
 func stats() -> Dictionary:
 	if _builder == null:
 		return {}
 	var draw_calls := 0
-	for instance: MeshInstance3D in [_mesh, _cliffs, _clouds]:
+	for instance: MeshInstance3D in [_mesh, _cliffs, _clouds, _far]:
 		if instance != null and instance.visible and instance.mesh != null:
 			draw_calls += instance.mesh.get_surface_count()
 	return {

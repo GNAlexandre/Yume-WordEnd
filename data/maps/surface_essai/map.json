@@ -1,0 +1,51 @@
+{
+  "_comment": "Sol en relief de la carte surface_essai, écrit par tools/map_build.py gen d'après plan.json avec heights.png, materials.png et structures.png : modifier le plan et relancer gen (format : PLAN.md, « Format du sol des cartes extérieures »).",
+  "format": "map_ground",
+  "version": 1,
+  "size": [40, 30],
+  "heights_image": "heights.png",
+  "height_step_value": 16,
+  "materials_image": "materials.png",
+  "materials_scale": 2,
+  "palette": {
+    "#a0a09c": "poussiere",
+    "#606068": "roc_gris",
+    "#5a5a58": "boue_grise",
+    "#808080": "gravats"
+  },
+  "edges": {
+    "north": "land",
+    "east": "land",
+    "south": "land",
+    "west": "land"
+  },
+  "skirt": 16,
+  "barrier": true,
+  "materials": {
+    "poussiere": {
+      "label": "Poussière grise de la surface (sable assourdi)",
+      "layer": "sand",
+      "color": "#a0a09c",
+      "tint": [0.6, 0.6, 0.62]
+    },
+    "gravats": {
+      "label": "Gravats gris",
+      "layer": "gravel",
+      "color": "#808080",
+      "tint": [0.66, 0.66, 0.7]
+    },
+    "roc_gris": {
+      "label": "Roche grise",
+      "layer": "rock",
+      "color": "#606068",
+      "tint": [0.72, 0.72, 0.76]
+    },
+    "boue_grise": {
+      "label": "Boue grise",
+      "layer": "mud",
+      "color": "#5a5a58",
+      "tint": [0.58, 0.58, 0.6]
+    }
+  },
+  "spawn": [20, 24]
+}

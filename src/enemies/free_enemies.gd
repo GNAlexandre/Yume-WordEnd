@@ -21,6 +21,10 @@ var _respawn_pending: bool = false
 func _ready() -> void:
 	var zone := get_parent() as Zone
 	_zone_id = zone.zone_id() if zone != null else &""
+	if not WorldAtlas.enemies_allowed_at(self):
+		# (X1) Les règles de l'île n'admettent pas de Timere : aucun ne s'est montré (Enemy), aucun
+		# ne reviendra.
+		return
 	for child: Node in get_children():
 		var enemy := child as Enemy
 		if enemy != null and enemy.data != null and not enemy.scene_file_path.is_empty():

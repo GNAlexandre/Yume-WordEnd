@@ -10,6 +10,7 @@ size = Vector3(2.4, 3, 2.4)
 
 [node name="ile_ancienne" instance=ExtResource("1_island")]
 region = &"ile_ancienne"
+island = &"ile_ancienne"
 
 [node name="Geometry" type="Node3D" parent="."]
 script = ExtResource("2_batcher")

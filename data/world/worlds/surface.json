@@ -1,0 +1,12 @@
+{
+  "_comment": "La surface, le monde d'en bas ravagé par les Bêtes (lot X1) : « désert gris sous un ciel bleu » (docs/lore/canon/v4_v5.md ; V1, « Entrepôt de fées » : une poussière grise et boueuse). Les Timeres y vivent (nids sous terre), le sol s'étend jusqu'à l'horizon, sans mer de nuages. On y descend en mission dans les volumes suivants.",
+  "name": "La surface",
+  "islands": ["surface_essai"],
+  "rules": {
+    "enemies_allowed": true,
+    "fauna": [],
+    "void_below": "ground",
+    "sky": "apres_midi",
+    "void_fall": "last_safe"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "_comment": "Terre d'essai de la surface (lot X1) : une carte grise, un sol jusqu'à l'horizon, les Timeres permis par les règles du monde « surface ». Un dirigeable s'y pose au campement et repart vers le quai d'essai de l'île n° 68.",
+  "name": "Les terres grises",
+  "maps": ["surface_essai"],
+  "arrival_map": "surface_essai",
+  "places": {
+    "surface_essai": {
+      "name": "Les terres grises",
+      "maps": ["surface_essai"],
+      "start_known": true
+    }
+  },
+  "ports": {
+    "campement": {
+      "name": "Le campement",
+      "map": "surface_essai",
+      "marker": "from_dirigeable"
+    }
+  }
+}
