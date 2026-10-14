@@ -292,6 +292,24 @@ func is_walkable(x: float, z: float) -> bool:
 	return true
 
 
+## (I1) Emprise au sol d'un meuble (sa boîte de collision, tournée comme son nœud) dans le repère de
+## la carte : Rect2(x, z, largeur, profondeur) ; vide sans collision.
+func footprint_of(panel: Node3D) -> Rect2:
+	var shape := panel.get_node_or_null(^"Collision/CollisionShape3D") as CollisionShape3D
+	var box := shape.shape as BoxShape3D if shape != null else null
+	if box == null:
+		return Rect2()
+	var aabb := shape.global_transform * AABB(-box.size / 2.0, box.size)
+	var low := to_local(aabb.position)
+	return Rect2(low.x, low.z, aabb.size.x, aabb.size.z)
+
+
+## (I1) Orientation que les murs de la pièce donnent à un meuble : sa face vers l'est s'il est
+## adossé au mur ouest, vers l'ouest au mur est, vers le sud au mur nord (InteriorLayout).
+func facing_against_wall(panel: Node3D) -> StringName:
+	return plan.facing_against_wall(footprint_of(panel))
+
+
 ## Centre d'une porte au sol (repère du monde), Vector3.INF si elle n'existe pas.
 func door_position(id: StringName) -> Vector3:
 	var opening := plan.door(id) if plan != null else {}
