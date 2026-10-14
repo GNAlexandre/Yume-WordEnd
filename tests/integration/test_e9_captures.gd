@@ -4,6 +4,9 @@ extends GutTest
 ## capture par préréglage ; la luminance moyenne de chacune, et celle du tiers du milieu de
 ## l'écran (autour du joueur), restent au-dessus d'un seuil, et chaque vue tient dans le budget
 ## de draw calls. Chaque moment au clair, la pluie et l'averse, un intérieur de jour et de nuit.
+## (R1) Dans le vrai intérieur (entrepot_rdc_essai, réfectoire et couloir), la nuit reste lisible
+## mais nettement plus sombre que le matin (fenêtres éteintes, lampes allumées), sans un draw
+## call de plus.
 ## Sans xvfb-run (machine sans affichage virtuel), le test est en attente.
 
 ## Vues rendues (lieu:moment:temps, demo_e9.gd).
@@ -18,7 +21,14 @@ const VIEWS: Array[String] = [
 	"dedans:apres_midi:clair",
 	"dedans:nuit:clair",
 	"village:nuit:averse",
+	"refectoire:matin:clair",
+	"refectoire:nuit:clair",
+	"couloir:matin:clair",
+	"couloir:nuit:clair",
 ]
+## (R1) Intérieurs comparés (lieu), et part de la luminance du matin que la nuit ne dépasse pas.
+const INTERIORS: Array[String] = ["refectoire", "couloir"]
+const NIGHT_RATIO := 0.65
 ## Seuils (ceux de demo_e9.gd) et budget de draw calls par vue (PLAN.md section 9).
 const LUMA_FLOOR := 0.1
 const CENTER_FLOOR := 0.12
@@ -38,14 +48,23 @@ func test_no_preset_makes_a_view_unreadable() -> void:
 	var text := "\n".join(output)
 	var pattern := RegEx.create_from_string(LINE)
 	var seen: Array[String] = []
+	var measured: Dictionary = {}
 	for line: String in text.split("\n"):
 		var found := pattern.search(line)
 		if found == null:
 			continue
 		var view := found.get_string(1)
 		seen.append(view)
+		measured[view] = [float(found.get_string(2)), int(found.get_string(4))]
 		assert_gt(float(found.get_string(2)), LUMA_FLOOR, "%s : luminance de l'écran" % view)
 		assert_gt(float(found.get_string(3)), CENTER_FLOOR, "%s : autour du joueur" % view)
 		assert_lte(int(found.get_string(4)), MAX_DRAW_CALLS, "%s : draw calls" % view)
 	assert_eq(seen.size(), VIEWS.size(), "toutes les vues rendues :\n%s" % text)
 	assert_eq(code, 0, "tools/e9_shots.sh (build/shots/e9/e9.log)")
+	for place: String in INTERIORS:
+		var day: Array = measured.get("%s:matin:clair" % place, [])
+		var night: Array = measured.get("%s:nuit:clair" % place, [])
+		if day.is_empty() or night.is_empty():
+			continue
+		assert_lt(float(night[0]), float(day[0]) * NIGHT_RATIO, "%s : la nuit se voit" % place)
+		assert_lte(int(night[1]), int(day[1]), "%s : pas un draw call de plus la nuit" % place)

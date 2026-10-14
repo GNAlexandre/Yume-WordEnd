@@ -3,8 +3,8 @@ extends GutTest
 ## data/maps/entrepot_rdc_essai/interior.json), carte intérieure du contrat des cartes
 ## (docs/REFONTE.md, section 7.1) :
 ## - structure : racine Map (contrat de E1), Ground (InteriorRoom), Geometry (PropBatcher, meubles
-##   InteriorPanel), Markers (Spawn, from_*), Exits (MapExit devant sa porte), Life, et sa lumière
-##   (Light : interior_light.tscn, préréglage « interieur », plus sombre que dehors) ;
+##   InteriorPanel), Markers (Spawn, from_*), Exits (MapExit devant sa porte), Life ; (R1) aucune
+##   lumière à elle : celle d'Atmosphere (préréglage « interieur », plus sombre que dehors) ;
 ## - circulation : depuis Spawn, à la taille du joueur, on atteint chaque pièce par ses portes,
 ##   on ne sort du bâtiment que par la porte d'entrée (sa sortie) ; un corps qui marche passe une
 ##   porte et bute contre un mur ; la porte de la crypte est fermée (sa sortie viendra avec la
@@ -90,19 +90,25 @@ func test_map_follows_the_contract() -> void:
 	assert_gt(furniture.size(), 40, "étage meublé")
 
 
-func test_the_map_carries_its_interior_light() -> void:
-	var world := _map.get_node_or_null(^"Light/WorldEnvironment") as WorldEnvironment
-	assert_not_null(world, "Light : instance de src/world/interior_light.tscn")
-	if world == null:
-		return
-	var environment := world.environment
+## (R1) La carte ne porte aucune lumière : celle d'Atmosphere (préréglage « interieur »).
+func test_the_map_takes_the_interior_light_of_atmosphere() -> void:
+	GameState.reset()
+	for node: Node in _map.find_children("*", "Light3D", true, false):
+		assert_true(node.get_parent() is AtmosphereRig, "%s : posée par Atmosphere" % node.name)
+	assert_null(_map.get_node_or_null(^"Light"), "plus de nœud Light")
+	Atmosphere.dress(_map)
+	var environment := Atmosphere.targets().environment
 	assert_eq(environment.background_mode, Environment.BG_COLOR, "fond uni : aucun ciel")
 	assert_eq(environment.background_color, InteriorRoom.VOID_COLOR, "le vide autour du bâtiment")
-	var preset := load("res://src/world/materials/lighting_interieur.tres") as HD2DLighting
+	var preset := Atmosphere.resolve(_map)
+	assert_eq(Atmosphere.preset_id(), HD2DLighting.INTERIOR, "préréglage des intérieurs")
 	assert_almost_eq(environment.ambient_light_energy, preset.ambient_energy, 0.001, "préréglage")
-	var outside := HD2DLighting.for_phase(&"day")
+	assert_almost_eq(_room.window_energy, preset.window_light, 0.001, "jour des fenêtres")
+	assert_almost_eq(_room.lamp_energy, preset.lamp_energy, 0.001, "lampes")
+	var outside := HD2DLighting.preset(GameState.moment)
 	assert_lt(preset.ambient_energy, outside.ambient_energy, "plus sombre que dehors")
 	assert_lt(preset.sun_energy, outside.sun_energy, "moins de soleil que dehors")
+	Atmosphere.dress(null)
 
 
 func test_markers_stand_inside_and_exits_face_their_doors() -> void:

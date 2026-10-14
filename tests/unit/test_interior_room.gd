@@ -8,11 +8,13 @@ extends GutTest
 ##   praticables trouent le mur sous un linteau ;
 ## - la coupe : première limite de pièce au sud du joueur, suivie à chaque image, partagée avec
 ##   les meubles ; ce qui est au sud n'est dessiné que sous sa hauteur de coupe ;
-## - la lumière reste dans sa pièce ; fenêtres et lampes suivent le moment de la journée ;
+## - la lumière reste dans sa pièce ; fenêtres et lampes suivent le réglage d'Atmosphere (R1) ;
 ## - un mesh par matière ; collisions de la couche 1 ;
 ## - les meubles et tapis du lot I ont leur scène (InteriorPanel, GroundDecal) et leur collision.
 
 const LAYOUT := "res://data/maps/entrepot_rdc_essai/interior.json"
+## Script de l'autoload Atmosphere (ses fonctions statiques : interior_for).
+const ATMOSPHERE := preload("res://src/autoload/atmosphere.gd")
 const MANIFEST := "res://tools/hd2d_manifest.json"
 const PROPS_DIR := "res://src/world/props"
 const NO_CUT := InteriorLayout.NO_CUT
@@ -265,17 +267,26 @@ func test_light_stays_in_its_room() -> void:
 	assert_eq(room.light_at(Vector3(3.0, 0.0, 1.5)), Color.BLACK, "nuit noire")
 
 
-func test_day_phases_change_windows_and_lamps() -> void:
+## (R1) La lumière vient d'Atmosphere (apply_lighting : un HD2DLighting) ; le moment du dehors
+## dans la vraie carte : tests/unit/test_light_links.gd.
+func test_lighting_changes_windows_and_lamps() -> void:
 	var room := _room(_small())
+	var morning := HD2DLighting.preset(&"matin")
+	var night := ATMOSPHERE.interior_for(HD2DLighting.preset(&"nuit"))
+	room.apply_lighting(morning)
+	assert_almost_eq(room.window_energy, morning.window_light, 0.001, "jour des fenêtres")
+	assert_eq(room.window_tint, morning.window_tint, "sa couleur")
+	assert_almost_eq(room.lamp_energy, morning.lamp_energy, 0.001, "lampes")
 	var day := room.light_at(Vector3(3.0, 0.0, 1.5))
-	EventBus.day_phase_changed.emit(&"night")
-	assert_eq(room.lamp_energy, float(InteriorRoom.PHASES[&"night"][2]), "lampes de la nuit")
-	assert_lt(room.light_at(Vector3(3.0, 0.0, 1.5)).g, day.g, "moins de jour la nuit")
-	assert_gt(room.light_at(Vector3(7.0, 0.0, 2.0)).r, 1.0, "les lampes portent la lumière")
+	var lamp := room.light_at(Vector3(7.0, 0.0, 2.0))
+	room.apply_lighting(night)
+	assert_almost_eq(room.lamp_energy, night.lamp_energy, 0.001, "lampes de la nuit")
+	assert_lt(room.light_at(Vector3(3.0, 0.0, 1.5)).g, day.g * 0.5, "moins de jour la nuit")
+	assert_gt(room.light_at(Vector3(7.0, 0.0, 2.0)).r, lamp.r, "les lampes portent la lumière")
+	assert_gt(room.light_at(Vector3(7.0, 0.0, 2.0)).r, 1.0, "une flaque sous la lampe")
 	var surface := room.surfaces()[0].material_override as ShaderMaterial
 	assert_eq(surface.get_shader_parameter(&"lamp_energy"), room.lamp_energy, "uniforme posé")
-	room.apply_phase(&"inconnue")
-	assert_eq(room.lamp_energy, float(InteriorRoom.PHASES[&"night"][2]), "phase inconnue : rien")
+	assert_eq(surface.get_shader_parameter(&"window_tint"), room.window_tint, "teinte posée")
 
 
 # --- Meshes, matériaux, collisions -----------------------------------------------------------

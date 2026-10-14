@@ -5,6 +5,8 @@
 // tous les meubles d'une même image en un draw call) :
 // - UV2.x : coordonnée de coupe (z du monde : ligne du mur, bord sud du meuble) ;
 // - UV2.y : hauteur gardée quand la coupe passe (m au-dessus du sol).
+// (R1) La lumière vient d'Atmosphere (InteriorRoom.apply_lighting) : une fenêtre s'assombrit et
+// bleuit avec le jour du dehors (night_view), une lampe ou un cristal luit selon lamp_energy.
 // Compatible Compatibility / WebGL 2.
 shader_type spatial;
 render_mode cull_disabled, depth_draw_opaque, specular_disabled;
@@ -16,6 +18,11 @@ render_mode cull_disabled, depth_draw_opaque, specular_disabled;
 
 // Ce que suit la lueur (pixels couleur cristal) : 0 rien, 1 le jour (vitres), 2 les lampes.
 uniform float glow_follows = 2.0;
+// (R1) Une fenêtre (glow_follows = 1) montre le dehors : quand le jour des fenêtres baisse
+// (window_energy, posée par Atmosphere), son image s'assombrit vers cette teinte bleu nuit.
+// Blanc : sans effet (HD2DLightTargets le pose quand l'image <nom>_night.png du cahier n° 3
+// remplace celle du jour la nuit).
+uniform vec4 night_view : source_color = vec4(0.36, 0.42, 0.66, 1.0);
 
 varying vec3 world_pos;
 varying vec2 light_xz;
@@ -38,6 +45,9 @@ void fragment() {
 	float height = world_pos.y - floor_y;
 	if (interior_is_cut(cut_coord) && height > keep_height + 0.002) {
 		discard;
+	}
+	if (glow_follows > 0.5 && glow_follows < 1.5) {
+		albedo *= mix(night_view.rgb, vec3(1.0), smoothstep(0.15, 0.9, window_energy));
 	}
 	ALBEDO = albedo;
 	ALPHA = alpha;

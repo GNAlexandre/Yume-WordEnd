@@ -8,8 +8,8 @@
 // - la lumière de la pièce : deux cartes vues de dessus (InteriorRoom.LIGHT_TEXELS texels par
 //   mètre, bornées à leur pièce), la lumière du jour des fenêtres et celle des lampes, ajoutées
 //   en émission (albedo × lumière) par-dessus l'éclairage de la scène ; plus faibles en haut des
-//   murs. Les énergies et la teinte du jour sont des uniformes : le moment de la journée (E9) les
-//   change sans refaire les cartes.
+//   murs. Les énergies et la teinte du jour sont des uniformes : le moment de la journée les
+//   change sans refaire les cartes ((R1) Atmosphere, par InteriorRoom.apply_lighting).
 // Compatible Compatibility / WebGL 2.
 
 uniform float cut_line = 1000000.0;

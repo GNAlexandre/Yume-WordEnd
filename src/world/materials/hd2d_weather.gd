@@ -47,7 +47,7 @@ extends Resource
 @export var sky_light_scale: float = 1.0
 @export var top_blur_add: float = 0.0
 @export_group("Dedans")
-## Facteur de la lumière des fenêtres (soleil d'un intérieur) par ce temps.
+## Facteur de la lumière des fenêtres (soleil d'un intérieur et, R1, window_light) par ce temps.
 @export var window_light_scale: float = 1.0
 
 
@@ -65,6 +65,8 @@ func applied_to(base: HD2DLighting, outdoors: bool) -> HD2DLighting:
 	if not outdoors:
 		result.sun_energy = base.sun_energy * window_light_scale
 		result.sun_color = base.sun_color.lerp(grey, grey_amount * 0.5)
+		result.window_light = base.window_light * window_light_scale
+		result.window_tint = base.window_tint.lerp(grey, grey_amount * 0.5)
 		return result
 	result.rain = rain
 	result.wetness = wetness
