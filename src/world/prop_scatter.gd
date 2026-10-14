@@ -3,9 +3,10 @@ class_name PropScatter
 extends Node3D
 ## Pose plusieurs exemplaires d'un décor (scène de src/world/props/) : un point par exemplaire,
 ## posé sur le relief de l'île (IslandTerrain.height_at) ou, (T1) sur une carte de la refonte,
-## sur son sol en relief (MapGround.height_at), lacet et taille variés de façon stable (graine). Les exemplaires sont des enfants internes recréés au chargement (aussi dans
-## l'éditeur) : seules les données ci-dessous sont enregistrées dans la scène. Le PropBatcher
-## de la zone les regroupe ensuite en MultiMesh avec le reste du décor.
+## sur son sol en relief (MapGround.height_at), lacet et taille variés de façon stable (graine).
+## Les exemplaires sont des enfants internes recréés au chargement (aussi dans l'éditeur) :
+## seules les données ci-dessous sont enregistrées dans la scène. Le PropBatcher de la zone les
+## regroupe ensuite en MultiMesh avec le reste du décor.
 ##
 ## (H9) Variantes (docs/ASSETS_HD2D_MONDE.md, section 3.2) : chaque exemplaire tire une scène parmi
 ## prop et variants, de façon stable (graine), sans jamais prendre celle de son plus proche voisin

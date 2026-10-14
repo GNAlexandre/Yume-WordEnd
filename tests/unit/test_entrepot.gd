@@ -126,7 +126,7 @@ static func _words(line: String) -> PackedStringArray:
 	var current := ""
 	var quoted := false
 	for character: String in line:
-		if character == "\"":
+		if character == '"':
 			quoted = not quoted
 			if not quoted:
 				words.append(current)
@@ -182,7 +182,9 @@ func test_exits_follow_the_plan() -> void:
 		var shape := exit.get_node(^"CollisionShape3D") as CollisionShape3D
 		var box := shape.shape as BoxShape3D
 		var center := shape.global_position
-		assert_almost_eq(Vector2(center.x, center.z), rect.get_center(), Vector2.ONE * 0.01, words[1])
+		assert_almost_eq(
+			Vector2(center.x, center.z), rect.get_center(), Vector2.ONE * 0.01, words[1]
+		)
 		assert_true(
 			box.size.x >= rect.size.x - 0.01 and box.size.z >= rect.size.y - 0.01,
 			"%s couvre sa zone" % words[1]
@@ -237,7 +239,9 @@ func test_places_and_named_points_follow_the_plan() -> void:
 		)
 		assert_eq(area.get_meta(&"area", Rect2()), rect, "%s : rectangle" % words[1])
 		assert_true(_is_reached(area.global_position), "%s : on y va à pied" % words[1])
-		assert_eq(_blocking_in(rect.grow(-0.4)), [] as Array[String], "%s : rien n'y bloque" % words[1])
+		assert_eq(
+			_blocking_in(rect.grow(-0.4)), [] as Array[String], "%s : rien n'y bloque" % words[1]
+		)
 
 
 func test_the_building_and_its_doors_are_where_the_plan_puts_them() -> void:
@@ -269,7 +273,11 @@ func test_the_building_and_its_doors_are_where_the_plan_puts_them() -> void:
 	assert_between(service.z - INSIDE_OFFSET.y, 8.4, 10.6, "dans le couloir du dedans")
 	# Le porche, devant la porte : son banc et ses poteaux de part et d'autre du seuil.
 	var porch := _map.get_node(^"Geometry/Porch/Porch") as Node3D
-	assert_almost_eq(Vector2(porch.global_position.x, porch.global_position.z), Vector2(42, 27.2), Vector2.ONE * 0.01)
+	assert_almost_eq(
+		Vector2(porch.global_position.x, porch.global_position.z),
+		Vector2(42, 27.2),
+		Vector2.ONE * 0.01
+	)
 	# Les deux portes s'atteignent : leur zone d'interaction touche une case où l'on marche.
 	for exit_name: String in ["porte_entree", "porte_service"]:
 		var exit := _map.get_node(NodePath("Exits/" + exit_name)) as MapExit
@@ -304,7 +312,7 @@ func test_exit_markers_stand_clear_of_their_exits() -> void:
 		assert_between(nearest, 1.2, 4.0, "%s à 2 ou 3 m de %s" % [found, words[1]])
 
 
-# --- Marche ----------------------------------------------------------------------------------------
+# --- Marche ---------------------------------------------------------------------------
 
 
 func test_every_band_of_the_map_is_reached_on_foot() -> void:
@@ -314,13 +322,19 @@ func test_every_band_of_the_map_is_reached_on_foot() -> void:
 			cells += 1
 	assert_gt(cells * GRID * GRID, 2600.0, "plus de 2 600 m² où l'on marche")
 	for spot: Vector3 in [
-		Vector3(75, 0, 18), Vector3(15, 0, 15), Vector3(3, 0, 12), Vector3(9.5, 0, 48),
-		Vector3(44, 0, 50), Vector3(14, 0, 2.5), Vector3(86, 0, 38), Vector3(2, 0, 40),
+		Vector3(75, 0, 18),
+		Vector3(15, 0, 15),
+		Vector3(3, 0, 12),
+		Vector3(9.5, 0, 48),
+		Vector3(44, 0, 50),
+		Vector3(14, 0, 2.5),
+		Vector3(86, 0, 38),
+		Vector3(2, 0, 40),
 	]:
 		assert_true(_is_reached(spot), "%s atteint à pied" % spot)
 
 
-# --- Règle de caméra -------------------------------------------------------------------------------
+# --- Règle de caméra ---------------------------------------------------------------------------
 
 
 func test_no_wall_roof_or_opaque_decor_hides_the_player() -> void:
@@ -351,7 +365,7 @@ func test_no_wall_roof_or_opaque_decor_hides_the_player() -> void:
 	assert_eq(hidden, [] as Array[String], "joueur caché")
 
 
-# --- Densité ---------------------------------------------------------------------------------------
+# --- Densité ---------------------------------------------------------------------------
 
 
 func test_each_view_shows_its_density_and_some_life() -> void:
@@ -381,14 +395,25 @@ func test_each_view_shows_its_density_and_some_life() -> void:
 		for node: Node in _map.get_node(^"Ambience").get_children():
 			var sprites := node as AmbientSprites
 			var region := Rect2(
-				Vector2(sprites.global_position.x, sprites.global_position.z) - sprites.region_size / 2.0,
+				(
+					Vector2(sprites.global_position.x, sprites.global_position.z)
+					- sprites.region_size / 2.0
+				),
 				sprites.region_size
 			)
-			if not sprites.region_size.is_zero_approx() and not region.grow(4.0).has_point(Vector2(at.x, at.z)):
+			if (
+				not sprites.region_size.is_zero_approx()
+				and not region.grow(4.0).has_point(Vector2(at.x, at.z))
+			):
 				continue
 			ambient += 1
 		var total := standing + decals
-		gut.p("%s : %d éléments (%d debout, %d décalques), %d qui bougent, %d vies ambiantes" % [view, total, standing, decals, moving, ambient])
+		gut.p(
+			(
+				"%s : %d éléments (%d debout, %d décalques), %d qui bougent, %d vies ambiantes"
+				% [view, total, standing, decals, moving, ambient]
+			)
+		)
 		assert_between(total, spec[1], spec[2], "%s : %d éléments à l'écran" % [view, total])
 		assert_gt(moving + ambient, 0, "%s : de la vie à l'écran" % view)
 
@@ -417,7 +442,7 @@ func test_no_bare_ground_wider_than_six_metres_outside_the_places() -> void:
 	assert_eq(bare, [] as Array[String], "sol nu de 6 × 6 m hors des places")
 
 
-# --- Draw calls ------------------------------------------------------------------------------------
+# --- Draw calls ---------------------------------------------------------------------------
 
 
 func test_batched_decor_in_each_view_stays_within_the_draw_call_budget() -> void:
@@ -453,7 +478,7 @@ func test_batched_decor_in_each_view_stays_within_the_draw_call_budget() -> void
 	assert_lte(worst + OTHER_DRAW_CALLS, DRAW_CALL_BUDGET, "au plus 200 draw calls par vue")
 
 
-# --- Outils ----------------------------------------------------------------------------------------
+# --- Outils ---------------------------------------------------------------------------
 
 
 func _collect(node: Node) -> void:
@@ -607,10 +632,15 @@ func _collect_occluders() -> void:
 		var material := batch.material_override as ShaderMaterial
 		if material == null:
 			continue
-		if material.shader in [
-			GroundDecal.HARD_SHADER, GroundDecal.SOFT_SHADER, DecorPanel.SOFT_SHADER,
-			DecorPanel.FOREGROUND_SHADER
-		]:
+		if (
+			material.shader
+			in [
+				GroundDecal.HARD_SHADER,
+				GroundDecal.SOFT_SHADER,
+				DecorPanel.SOFT_SHADER,
+				DecorPanel.FOREGROUND_SHADER
+			]
+		):
 			continue
 		var texture := material.get_shader_parameter(&"albedo_texture") as Texture2D
 		if texture == null:

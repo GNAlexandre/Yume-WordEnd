@@ -85,7 +85,9 @@ func test_walk_from_the_yard_to_the_field_the_clearing_and_the_marsh() -> void:
 	assert_eq(player.camera_rig.limits, _map().bounds(), "caméra bornée à la carte")
 	# Vers l'est le long de la cour, au nord le long du flanc est, puis la rampe du champ.
 	assert_true(
-		await walk_keys_until([KEY_D], func() -> bool: return player.global_position.x > 61.3, 10.0),
+		await walk_keys_until(
+			[KEY_D], func() -> bool: return player.global_position.x > 61.3, 10.0
+		),
 		"au coin est de la cour"
 	)
 	assert_true(
@@ -142,7 +144,11 @@ func test_each_path_leads_to_its_waiting_map_and_back() -> void:
 		)
 		release_all_input()
 		assert_true(await wait_transition(), "%s : retour" % exit_name)
-		assert_lt(distance_to(_map().marker(spec[0] as StringName)), 0.3, "%s : sur %s" % [exit_name, spec[0]])
+		assert_lt(
+			distance_to(_map().marker(spec[0] as StringName)),
+			0.3,
+			"%s : sur %s" % [exit_name, spec[0]]
+		)
 
 
 func test_the_doors_open_on_enter_and_lead_back_to_their_markers() -> void:
@@ -167,4 +173,8 @@ func test_the_doors_open_on_enter_and_lead_back_to_their_markers() -> void:
 		assert_true(await wait_transition(), "%s : arrivée" % exit_name)
 		await WorldManager.go_to(MAP_ID, spec[0] as StringName)
 		assert_true(await wait_transition(), "%s : retour" % exit_name)
-		assert_lt(distance_to(_map().marker(spec[0] as StringName)), 0.3, "%s : sur %s" % [exit_name, spec[0]])
+		assert_lt(
+			distance_to(_map().marker(spec[0] as StringName)),
+			0.3,
+			"%s : sur %s" % [exit_name, spec[0]]
+		)
