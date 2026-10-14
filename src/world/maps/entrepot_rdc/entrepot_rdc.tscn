@@ -80,39 +80,42 @@
 [ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
-size = Vector3(0.5, 3, 1.85)
+size = Vector3(0.02, 3, 1.8)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2"]
-size = Vector3(0.02, 3, 0.4)
+size = Vector3(1.3, 3, 0.65)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3"]
-size = Vector3(0.4, 3, 0.6)
+size = Vector3(0.02, 3, 0.35)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4"]
 size = Vector3(0.05, 3, 2.2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5"]
-size = Vector3(0.2, 3, 0.1)
+size = Vector3(1.5, 3, 0.55)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_6"]
-size = Vector3(0.6, 3, 0.65)
+size = Vector3(0.2, 3, 0.1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7"]
-size = Vector3(0.4, 3, 1.25)
+size = Vector3(0.02, 3, 0.05)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_8"]
-size = Vector3(1.6, 3, 1.375)
+size = Vector3(0.02, 3, 0.9)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_9"]
-size = Vector3(2, 2.4, 1)
+size = Vector3(1.6, 3, 1.375)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_10"]
-size = Vector3(1, 2.4, 1)
+size = Vector3(2, 2.4, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_11"]
-size = Vector3(1.6, 2.4, 0.6)
+size = Vector3(1, 2.4, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_12"]
+size = Vector3(1.6, 2.4, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_13"]
 size = Vector3(1.3, 2.4, 0.55)
 
 [node name="entrepot_rdc" type="Node3D"]
@@ -165,18 +168,28 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 1.475)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 0, 1.525)
 
 [node name="pantry_cupboard_1" parent="Geometry/Cuisine" instance=ExtResource("p_pantry_cupboard")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 5.8)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.45, 0, 5.8)
+image_offset = Vector3(0, 0, 0.55)
+shadow_width = 0.9
+shadow_depth = 2
 facing = &"east"
 
 [node name="pantry_cupboard_1_arriere" type="StaticBody3D" parent="Geometry/Cuisine"]
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Cuisine/pantry_cupboard_1_arriere"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.85, 1.5, 4.575)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1.5, 4.35)
 shape = SubResource("BoxShape3D_1")
 
 [node name="kitchen_table_ingredients_1" parent="Geometry/Cuisine" instance=ExtResource("p_kitchen_table_ingredients")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 0, 4.4)
+
+[node name="kitchen_table_ingredients_1_arriere" type="StaticBody3D" parent="Geometry/Cuisine"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Cuisine/kitchen_table_ingredients_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 1.5, 3.625)
+shape = SubResource("BoxShape3D_2")
 
 [node name="water_tub_1" parent="Geometry/Cuisine" instance=ExtResource("p_water_tub")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 7.05)
@@ -386,28 +399,27 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.7, 0, 1.475)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.7, 0, 2.225)
 
 [node name="desk_buried_1" parent="Geometry/Archives" instance=ExtResource("p_desk_buried")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 0, 3.475)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 23.175, 0, 3.6)
+image_offset = Vector3(0, 0, 0.7)
+shadow_width = 0.9
+shadow_depth = 1.939
 facing = &"east"
-
-[node name="desk_buried_1_arriere" type="StaticBody3D" parent="Geometry/Archives"]
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Archives/desk_buried_1_arriere"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1.5, 2.75)
-shape = SubResource("BoxShape3D_2")
 
 [node name="paper_pile_b_1" parent="Geometry/Archives" instance=ExtResource("p_paper_pile_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.2, 0, 2.45)
 
 [node name="filing_cabinet_1" parent="Geometry/Archives" instance=ExtResource("p_filing_cabinet")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.85, 0, 4.3)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 26.1, 0, 4.3)
+image_offset = Vector3(0, 0, 0.5)
+shadow_width = 0.9
+shadow_depth = 2
 facing = &"west"
 
 [node name="filing_cabinet_1_arriere" type="StaticBody3D" parent="Geometry/Archives"]
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Archives/filing_cabinet_1_arriere"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.7, 1.5, 3.75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.95, 1.5, 3.625)
 shape = SubResource("BoxShape3D_3")
 
 [node name="sofa_beige_1" parent="Geometry/Archives" instance=ExtResource("p_sofa_beige")]
@@ -430,7 +442,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6, 0, 1.55)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, 1.525)
 
 [node name="bookshelf_low_1" parent="Geometry/Lecture" instance=ExtResource("p_bookshelf_low")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.35, 0, 5)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 26.9, 0, 5)
+image_offset = Vector3(0, 0, 0.7)
+shadow_width = 0.9
+shadow_depth = 2
 facing = &"east"
 
 [node name="bookshelf_tall_b_1" parent="Geometry/Lecture" instance=ExtResource("p_bookshelf_tall_b")]
@@ -449,6 +464,13 @@ shape = SubResource("BoxShape3D_4")
 
 [node name="reading_table_1" parent="Geometry/Lecture" instance=ExtResource("p_reading_table")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.6, 0, 4.3)
+
+[node name="reading_table_1_arriere" type="StaticBody3D" parent="Geometry/Lecture"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Lecture/reading_table_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.6, 1.5, 3.575)
+shape = SubResource("BoxShape3D_5")
 
 [node name="armchair_reading_1" parent="Geometry/Lecture" instance=ExtResource("p_armchair_reading")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.3, 0, 7.4)
@@ -485,9 +507,12 @@ transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 26, 0, 9.5)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 11.3)
 
 [node name="towel_shelf_1" parent="Geometry/Bains" instance=ExtResource("p_towel_shelf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.3, 0, 14.25)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6.6, 0, 14.2)
+image_offset = Vector3(0, 0, 0.5)
+shadow_width = 0.9
+shadow_depth = 2
 facing = &"west"
-cut_offset = 0.6
+cut_offset = 0.35
 
 [node name="wash_tub_1" parent="Geometry/Bains" instance=ExtResource("p_wash_tub")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 13.95)
@@ -510,10 +535,13 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Placard/cleaning_set_1_arriere"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 1.5, 12.05)
-shape = SubResource("BoxShape3D_5")
+shape = SubResource("BoxShape3D_6")
 
 [node name="shoe_rack_1" parent="Geometry/Entree" instance=ExtResource("p_shoe_rack")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 0, 12.2)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 14.65, 0, 12.2)
+image_offset = Vector3(0, 0, 0.6)
+shadow_width = 0.9
+shadow_depth = 2
 facing = &"west"
 
 [node name="rug_playroom_1" parent="Geometry/Jeux" instance=ExtResource("p_rug_playroom")]
@@ -523,19 +551,25 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 12.9)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.2, 0, 11.4)
 
 [node name="toy_chest_1" parent="Geometry/Jeux" instance=ExtResource("p_toy_chest")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.2, 0, 11.2)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 22.4, 0, 11.2)
+image_offset = Vector3(0, 0, 0.5)
+shadow_width = 0.9
+shadow_depth = 1.839
 facing = &"west"
 
 [node name="board_games_shelf_1" parent="Geometry/Jeux" instance=ExtResource("p_board_games_shelf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.25, 0, 13.05)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 22.65, 0, 13)
+image_offset = Vector3(0, 0, 0.6)
+shadow_width = 0.9
+shadow_depth = 2
 facing = &"west"
 
 [node name="board_games_shelf_1_arriere" type="StaticBody3D" parent="Geometry/Jeux"]
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Jeux/board_games_shelf_1_arriere"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.1, 1.5, 12.525)
-shape = SubResource("BoxShape3D_6")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.475, 1.5, 12.375)
+shape = SubResource("BoxShape3D_7")
 
 [node name="game_table_1" parent="Geometry/Jeux" instance=ExtResource("p_game_table")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4, 0, 12.8)
@@ -571,22 +605,29 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 0, 14.3)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 12.125)
 
 [node name="medicine_cabinet_1" parent="Geometry/Infirmerie" instance=ExtResource("p_medicine_cabinet")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.35, 0, 13.4)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 30.65, 0, 13.35)
+image_offset = Vector3(0, 0, 0.5)
+shadow_width = 0.9
+shadow_depth = 2
 facing = &"west"
 
 [node name="medicine_cabinet_1_arriere" type="StaticBody3D" parent="Geometry/Infirmerie"]
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Infirmerie/medicine_cabinet_1_arriere"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.2, 1.5, 12.575)
-shape = SubResource("BoxShape3D_7")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, 1.5, 12.4)
+shape = SubResource("BoxShape3D_8")
 
 [node name="washbasin_stand_1" parent="Geometry/Infirmerie" instance=ExtResource("p_washbasin_stand")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.3, 0, 14.55)
 
 [node name="infirmary_desk_1" parent="Geometry/Infirmerie" instance=ExtResource("p_infirmary_desk")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.9, 0, 14.225)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 23.625, 0, 14.2)
+image_offset = Vector3(0, 0, 0.65)
+shadow_width = 0.9
+shadow_depth = 1.801
 facing = &"east"
+cut_offset = 0.2
 
 [node name="mirror_large_1" parent="Geometry/Bains" instance=ExtResource("p_mirror_large")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.205, 0, 13)
@@ -621,10 +662,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.8, 4.47)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.8, 7.67)
 
 [node name="coffee_tray_1" parent="Geometry/Archives" instance=ExtResource("p_coffee_tray")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 1.3, 4.02)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 1.3, 4.32)
 
 [node name="inkwell_quill_1" parent="Geometry/Archives" instance=ExtResource("p_inkwell_quill")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.9, 1.3, 4.02)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.9, 1.3, 4.32)
 
 [node name="crystal_lamp_table_1" parent="Geometry/Lecture" instance=ExtResource("p_crystal_lamp_table")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.2, 0.95, 4.77)
@@ -636,7 +677,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 0.95, 4.77)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.3, 0.7, 11.27)
 
 [node name="medicine_bottles_tray_1" parent="Geometry/Infirmerie" instance=ExtResource("p_medicine_bottles_tray")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.65, 1, 14.62)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.65, 1, 14.87)
 
 [node name="bandage_rolls_1" parent="Geometry/Infirmerie" instance=ExtResource("p_bandage_rolls")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.3, 1, 14.82)
@@ -649,7 +690,7 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Escalier/sous_escalier"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 1.5, 1.8125)
-shape = SubResource("BoxShape3D_8")
+shape = SubResource("BoxShape3D_9")
 
 [node name="Markers" type="Node3D" parent="."]
 
@@ -680,7 +721,7 @@ target_marker = &"from_entrepot_rdc"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_dehors"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-shape = SubResource("BoxShape3D_9")
+shape = SubResource("BoxShape3D_10")
 
 [node name="vers_arriere" type="Area3D" parent="Exits"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 9.5)
@@ -692,7 +733,7 @@ target_marker = &"from_entrepot_rdc_service"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_arriere"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-shape = SubResource("BoxShape3D_10")
+shape = SubResource("BoxShape3D_11")
 
 [node name="vers_etage" type="Area3D" parent="Exits"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, 5.85)
@@ -705,7 +746,7 @@ prompt = "Monter"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_etage"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-shape = SubResource("BoxShape3D_11")
+shape = SubResource("BoxShape3D_12")
 
 [node name="vers_armes" type="Area3D" parent="Exits"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, 1.425)
@@ -718,7 +759,7 @@ prompt = "Ouvrir"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_armes"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-shape = SubResource("BoxShape3D_12")
+shape = SubResource("BoxShape3D_13")
 
 [node name="Examine" type="Node3D" parent="."]
 
@@ -801,10 +842,10 @@ text_key = "entrepot_rdc/archives_rapport"
 size = Vector3(1.2, 2, 0.8)
 
 [node name="archives_bon" type="Area3D" parent="Examine"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.35, 0, 4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 3.6)
 script = ExtResource("6_examine")
 text_key = "entrepot_rdc/archives_bon"
-size = Vector3(1.4, 2, 0.8)
+size = Vector3(0.8, 2, 1.4)
 
 [node name="lecture_fenetre" type="Area3D" parent="Examine"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6, 0, 1.95)
@@ -813,10 +854,10 @@ text_key = "entrepot_rdc/lecture_fenetre"
 size = Vector3(2, 2, 0.8)
 
 [node name="lecture_livre" type="Area3D" parent="Examine"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.35, 0, 5.25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.45, 0, 5)
 script = ExtResource("6_examine")
 text_key = "entrepot_rdc/lecture_livre"
-size = Vector3(1.4, 2, 0.8)
+size = Vector3(0.8, 2, 1.4)
 
 [node name="point_eau" type="Area3D" parent="Examine"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 9.15)
@@ -867,10 +908,10 @@ text_key = "entrepot_rdc/infirmerie_calendrier"
 size = Vector3(0.8, 2, 0.8)
 
 [node name="infirmerie_trousse" type="Area3D" parent="Examine"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.35, 0, 13.6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.15, 0, 13.35)
 script = ExtResource("6_examine")
 text_key = "entrepot_rdc/infirmerie_trousse"
-size = Vector3(1, 2, 0.8)
+size = Vector3(0.8, 2, 1)
 
 [node name="Life" type="Node3D" parent="."]
 

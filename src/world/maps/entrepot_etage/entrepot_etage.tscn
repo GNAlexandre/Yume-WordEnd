@@ -49,9 +49,12 @@
 [ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
-size = Vector3(1.6, 2.4, 0.3)
+size = Vector3(0.2, 3, 0.25)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(1.6, 2.4, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3"]
 size = Vector3(0.6, 2.4, 0.6)
 
 [node name="entrepot_etage" type="Node3D"]
@@ -143,8 +146,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 3.5)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 4.35)
 
 [node name="desk_nygglatho_1" parent="Geometry/Nygglatho" instance=ExtResource("p_desk_nygglatho")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 0, 3.6)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 11.95, 0, 3.6)
+image_offset = Vector3(0, 0, 0.7)
+shadow_width = 0.9
+shadow_depth = 1.939
 facing = &"west"
+
+[node name="desk_nygglatho_1_arriere" type="StaticBody3D" parent="Geometry/Nygglatho"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Nygglatho/desk_nygglatho_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, 1.5, 2.775)
+shape = SubResource("BoxShape3D_1")
 
 [node name="bed_nygglatho_1" parent="Geometry/Nygglatho" instance=ExtResource("p_bed_nygglatho")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 0, 7.2)
@@ -299,7 +312,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.05, 1.77)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.1, 1.77)
 
 [node name="oil_lamp_1" parent="Geometry/Nygglatho" instance=ExtResource("p_oil_lamp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 1.1, 4.02)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 1.1, 4.32)
 
 [node name="tea_tray_cheesecake_1" parent="Geometry/Nygglatho" instance=ExtResource("p_tea_tray_cheesecake")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.8, 3.87)
@@ -340,7 +353,7 @@ prompt = "Descendre"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_rdc"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-shape = SubResource("BoxShape3D_1")
+shape = SubResource("BoxShape3D_2")
 
 [node name="vers_toit" type="Area3D" parent="Exits"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.7, 0, 9.3)
@@ -353,7 +366,7 @@ prompt = "Monter sur le toit"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_toit"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-shape = SubResource("BoxShape3D_2")
+shape = SubResource("BoxShape3D_3")
 
 [node name="Examine" type="Node3D" parent="."]
 
