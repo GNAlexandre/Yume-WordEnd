@@ -17,6 +17,8 @@ extends Node
 
 const GAME_SCENE := preload("res://src/game.tscn")
 const WAIT_FRAMES := 30
+## Secondes d'attente à l'entrée d'une carte (bannière de son nom, src/ui/hud.gd).
+const BANNER_WAIT := 4.0
 ## Où se tient le joueur (repère de la carte) et où il regarde, par carte et par lieu.
 const SPOTS := {
 	"entrepot_rdc":
@@ -164,6 +166,8 @@ func _run() -> void:
 			var start := Time.get_ticks_usec()
 			WorldManager.enter_map(StringName(current))
 			load_ms = (Time.get_ticks_usec() - start) / 1000.0
+			# La bannière du nom de la carte (HUD, zone_time puis fondu) passe avant la capture.
+			await get_tree().create_timer(BANNER_WAIT).timeout
 		Atmosphere.set_atmosphere(StringName(parts[2]), &"clair", 0.0)
 		_stage(current, parts[1])
 		for _frame in frames:
