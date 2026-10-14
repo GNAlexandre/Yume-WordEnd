@@ -124,6 +124,16 @@ func test_interior_carries_no_light_of_its_own() -> void:
 		float(material.get_shader_parameter(&"glow_strength")), InteriorRoom.WINDOW_GLOW, 0.001
 	)
 	assert_does_not_have(Atmosphere.targets().glow_materials, material, "lueur de la pièce")
+	# La nuit, l'image de nuit livrée (cahier n° 3, lot N) remplace la vitre de jour, et
+	# l'assombrissement du shader (night_view) s'efface devant elle.
+	var night_image := "res://assets/hd2d/interior/window_cross_large_night.png"
+	if ResourceLoader.exists(night_image):
+		var shown := material.get_shader_parameter(&"albedo_texture") as Texture2D
+		assert_eq(shown.resource_path, night_image, "vitre de nuit")
+		assert_eq(material.get_shader_parameter(&"night_view"), Color.WHITE, "sans assombrir")
+		Atmosphere.set_moment(&"matin", 0.0)
+		shown = material.get_shader_parameter(&"albedo_texture") as Texture2D
+		assert_ne(shown.resource_path, night_image, "le jour revient")
 
 
 func test_weather_only_dims_the_windows_inside() -> void:

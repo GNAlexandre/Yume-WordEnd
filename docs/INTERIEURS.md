@@ -135,10 +135,10 @@ erreurs au chargement.
     (`lights[]`), × `lamp_energy` (0,25 le jour, 2,7 la nuit : flaques de lumière chaude, coins
     plus sombres).
   - *Les panneaux* : la lueur des vitres suit le jour, celle des appliques, du fourneau et des
-    cristaux suit les lampes (`glow_follows`, pas le `window_glow` du dehors) ; une fenêtre
-    s'assombrit et bleuit avec le jour (`night_view` d'`interior_panel.gdshader`) tant que son
-    image de nuit (`<nom>_night.png`, cahier n° 3, lot N) n'est pas livrée : livrée, elle la
-    remplace la nuit sans toucher au code.
+    cristaux suit les lampes (`glow_follows`, pas le `window_glow` du dehors) ; la nuit, une
+    fenêtre prend son image de nuit (`<nom>_night.png`, cahier n° 3, lot N : vitres bleu nuit,
+    étoiles) ; sans image de nuit, elle s'assombrit et bleuit avec le jour (`night_view`
+    d'`interior_panel.gdshader`).
   - `Atmosphere` règle la pièce à l'arrivée et à chaque image d'une transition
     (`InteriorRoom.apply_lighting`, par `HD2DLightTargets`). Aucune lumière du moteur, aucune
     ombre portée : pas un draw call de plus (réfectoire 41, couloir 56, le matin comme la nuit).

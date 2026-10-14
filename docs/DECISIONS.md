@@ -2466,12 +2466,13 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   le raccord, la nuit du réfectoire tombait sous le seuil de lisibilité (0,096) avec des fenêtres
   toujours au jour et des lampes sans effet ; `test_e9_captures.gd` vérifie désormais que la nuit
   reste au-dessus des seuils d'E9 et sous 0,65 fois la luminance du matin.
-- **R1 — les vitres la nuit** : les fenêtres du cahier n° 3 montrent le dehors de jour et leurs
-  images de nuit (`window_*_night.png`, lot N) ne sont pas livrées ; en attendant,
-  `interior_panel.gdshader` assombrit et bleuit l'image d'une fenêtre (lueur qui suit le jour)
-  quand le jour des fenêtres baisse (`night_view`, bleu nuit, selon `window_energy` de 0,15 à
-  0,9). Quand l'image de nuit existe, `HD2DLightTargets` pose `night_view` à blanc : l'image
-  livrée la remplace sans toucher au code.
+- **R1 — les vitres la nuit** : une fenêtre qui a son image de nuit (`<nom>_night.png`, lot N ;
+  livrées depuis `f393bb1` pour `window_cross_small`, `window_cross_large`,
+  `window_reading_seat`) la prend la nuit (`HD2DLightTargets`, `night_amount` ≥ 0,5). Pour une
+  fenêtre sans image de nuit, `interior_panel.gdshader` assombrit et bleuit l'image de jour quand
+  le jour des fenêtres baisse (`night_view`, bleu nuit, selon `window_energy` de 0,15 à 0,9) ;
+  quand l'image de nuit existe, `HD2DLightTargets` pose `night_view` à blanc (pas de double
+  assombrissement).
 - **R1 — la lueur des panneaux d'intérieur** suit leur pièce (`glow_follows` : le jour pour les
   vitres, les lampes pour les appliques, le fourneau, les cristaux) et n'est plus multipliée en
   plus par le `window_glow` du préréglage (elle l'était deux fois depuis la fusion d'E9) :

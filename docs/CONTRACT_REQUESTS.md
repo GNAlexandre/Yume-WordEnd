@@ -607,10 +607,10 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   « E9 — les cartes de E2 et E3 ne portent plus de lumière » pour `entrepot_rdc_essai`
   (`interior_light.tscn` retirée ; les lampes restent les `lights[]` d'`interior.json`, sans
   `OmniLight3D`) ; « E2 — E9 appelle `MapGround.set_sun` » (à chaque pose et transition).
-- Cahier n° 3, lot N (images) : les fenêtres de nuit des intérieurs (`window_cross_small_night`,
-  `window_cross_large_night`, `window_reading_seat_night`…) restent attendues ; en attendant,
-  `interior_panel.gdshader` assombrit et bleuit les vitres la nuit (`night_view`), et l'image
-  livrée le remplacera sans code.
+- Cahier n° 3, lot N (images) : les fenêtres de nuit livrées (`window_cross_small_night`,
+  `window_cross_large_night`, `window_reading_seat_night`) se posent seules la nuit ; une
+  fenêtre sans image de nuit (`window_curtains_open`, `window_bare`…) est assombrie et bleuie par
+  `interior_panel.gdshader` (`night_view`) en attendant la sienne.
 - Pour les lots qui construisent des intérieurs (T2…) : une carte intérieure ne porte aucune
   lumière (ni `Light`, ni `WorldEnvironment`, ni `DirectionalLight3D`) ; ses lampes sont les
   `lights[]` de son `interior.json` ; `InteriorRoom.apply_phase` n'est plus qu'un passage vers
