@@ -844,6 +844,10 @@ lumiere lampe_lecture 28.2 4.3 1.0 cristal
 lumiere applique_refectoire 5.6 2.6 1.6 cristal
 ```
 
+<!-- places:entrepot_rdc -->
+**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; chaque chaise, `refectoire_chaise_a01` à `refectoire_chaise_d14` (rangées a à d du nord au sud, numérotées d'ouest en est ; regard vers la table) ; chaque lit : `infirmerie_lit_1`, `infirmerie_lit_2`, `infirmerie_lit_3` ; et `lecture_fauteuil`, `archives_canape_assise`, `infirmerie_chevet`, `jeux_piano`, `bains_sechage`.
+<!-- /places:entrepot_rdc -->
+
 ### 3.2 Étage (`entrepot_etage`)
 
 <!-- ascii:entrepot_etage -->
@@ -1065,6 +1069,10 @@ lumiere applique_couloir 1.2 9.5 1.6 cristal
 lumiere lampe_willem 4.4 5.5 1.5 cristal
 ```
 
+<!-- places:entrepot_etage -->
+**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; chaque lit : `willem_lit_couche`, `chtholly_lit_couche`, `nygglatho_lit`, `grande_soeur_lit`, `ithea_lit_couche`, `absentes_lit_1`, `absentes_lit_2`, `nephren_lit_couche`, `dortoir_a_lit_1_bas`, `dortoir_a_lit_1_haut`, `dortoir_a_lit_2_bas`, `dortoir_a_lit_2_haut`, `dortoir_a_lit_3`, `dortoir_b_lit_1_bas`, `dortoir_b_lit_1_haut`, `dortoir_b_lit_2_bas`, `dortoir_b_lit_2_haut`, `dortoir_b_lit_3`, `dortoir_c_lit_1_bas`, `dortoir_c_lit_1_haut`, `dortoir_c_lit_2_bas`, `dortoir_c_lit_2_haut`, `dortoir_c_lit_3`, `dortoir_d_lit_1_bas`, `dortoir_d_lit_1_haut`, `dortoir_d_lit_2_bas`, `dortoir_d_lit_2_haut`, `dortoir_d_lit_3_bas`, `dortoir_d_lit_3_haut`, `dortoir_d_lit_4` ; et `nygglatho_chaise_invite`, `chtholly_chaise`, `willem_rebord_fenetre`.
+<!-- /places:entrepot_etage -->
+
 ### 3.3 Le toit (`entrepot_toit`)
 
 <!-- ascii:entrepot_toit -->
@@ -1160,6 +1168,10 @@ point toit_coin_est 13.5 3.0
 lumiere trappe 14.45 9.1 0.3 cristal_dessous
 ```
 
+<!-- places:entrepot_toit -->
+**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom.
+<!-- /places:entrepot_toit -->
+
 ### 3.4 La salle des armes (`salle_des_armes`)
 
 <!-- ascii:salle_des_armes -->
@@ -1235,6 +1247,10 @@ point armes_tissu 11.0 6.5
 point armes_coffret 7.4 6.8
 point armes_centre 7.2 4.5
 ```
+
+<!-- places:salle_des_armes -->
+**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom.
+<!-- /places:salle_des_armes -->
 
 ## 4. Le sentier et le marais (`sentier`)
 
