@@ -354,7 +354,8 @@ class Writer:
                                                                     f(r.x1 - r.x0), f(r.z1 - r.z0)))
         # Lumières : la lanterne à cristal (une lampe OmniLight3D que Atmosphere règle selon le moment,
         # lamp_energy) ; les autres, des repères (Marker3D). Aucune carte du dehors n'a de lampadaire.
-        self.node('[node name="Lights" type="Node3D" parent="."]\n')
+        if m.lights:
+            self.node('[node name="Lights" type="Node3D" parent="."]\n')
         for light in m.lights:
             x, z = light.rect.x0, light.rect.z0
             y = h(x, z) + light.h

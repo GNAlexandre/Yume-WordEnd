@@ -11,6 +11,7 @@
     "village",
     "colline",
     "sentier",
+    "port",
     "foret_profonde",
     "essai",
     "essai_relief",
@@ -40,7 +41,7 @@
     },
     "port": {
       "name": "Le port",
-      "maps": [],
+      "maps": ["port"],
       "links": {"ville": 2000},
       "start_known": true
     },
