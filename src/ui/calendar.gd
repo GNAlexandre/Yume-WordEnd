@@ -16,22 +16,15 @@ extends Control
 ##   par la pause, ne le couvre pas.
 ## - Aucun style en dur : panneaux et textes prennent le thème du HUD ; les couleurs de la page
 ##   (papier, encre, trait, cercle, jour courant) se lisent dans le type de thème « Calendar »
-##   (couleurs paper, ink, strike, ring, today), à défaut DEFAULT_COLORS.
+##   (couleurs paper, ink, strike, ring, today : case prune, encre crème, rayure et cercle or).
 
 signal opened
 signal closed
 
 const GROUP := &"story_calendar"
 const CELL_SIZE := Vector2(118, 96)
-## Type de thème des couleurs de la page, et leurs valeurs quand le thème ne les donne pas.
+## Type du thème (wordend_theme.tres) qui porte les couleurs de la page.
 const THEME_TYPE := &"Calendar"
-const DEFAULT_COLORS := {
-	&"paper": Color(1.0, 0.98, 0.94, 0.9),
-	&"ink": Color(0.33, 0.22, 0.4),
-	&"strike": Color(0.75, 0.22, 0.2, 0.85),
-	&"ring": Color(0.82, 0.33, 0.43),
-	&"today": Color(1.0, 0.84, 0.45, 0.55),
-}
 
 var _paused_by_me: bool = false
 var _in_dialogue: bool = false
@@ -40,11 +33,13 @@ var _in_dialogue: bool = false
 @onready var _grid: GridContainer = %Days
 @onready var _lines: VBoxContainer = %Lines
 @onready var _hint: Label = %CalendarHint
+@onready var _panel: Control = $Panel
 
 
 func _ready() -> void:
 	add_to_group(GROUP)
 	hide()
+	UiStyle.frost(_panel)
 	(%CloseButton as Button).pressed.connect(close)
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
@@ -70,6 +65,7 @@ func open() -> void:
 		return
 	refresh()
 	show()
+	UiStyle.appear(_panel)
 	if not get_tree().paused:
 		get_tree().paused = true
 		_paused_by_me = true
@@ -132,12 +128,9 @@ func refresh() -> void:
 	_hint.visible = not hint.is_empty()
 
 
-## Couleur de la page (paper, ink, strike, ring, today) : celle du thème (type Calendar), à
-## défaut DEFAULT_COLORS.
+## Couleur de la page (paper, ink, strike, ring, today) : celle du thème, type Calendar.
 func page_color(color_name: StringName) -> Color:
-	if has_theme_color(color_name, THEME_TYPE):
-		return get_theme_color(color_name, THEME_TYPE)
-	return DEFAULT_COLORS.get(color_name, Color.WHITE)
+	return get_theme_color(color_name, THEME_TYPE)
 
 
 ## Lignes affichées (tests) : « Jour N — texte ».

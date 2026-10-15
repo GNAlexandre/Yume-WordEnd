@@ -56,6 +56,8 @@ const CALENDAR_CARD_TIME := 2.6
 ## Au plus ce temps (ms) d'attente de la fin d'une marche de scène avant de rendre un PNJ à la vie.
 const RELEASE_WAIT_MS := 12000
 ## Ce que fait le directeur entre deux scènes (_busy) : dormir, laisser passer le temps.
+## Raison qui cache les signes d'interaction pendant une scène (InteractSign.suppress).
+const SCENE_SIGNS := &"scene"
 const BUSY_SLEEP := &"_sommeil"
 const BUSY_REST := &"_repos"
 
@@ -601,6 +603,7 @@ func _run_scene(scene_id: StringName, data: Dictionary, resume: bool = false) ->
 		LifeDirector.reserve(StringName(npc_id))
 		_releases.erase(StringName(npc_id))
 	_stage.set_control(false)
+	_scene_ui(true)
 	_update_skip_prompt(scene_id, data)
 	scene_started.emit(scene_id)
 	if resume and WorldManager.current_map() != StringName(str(data.get("map", ""))):
@@ -622,6 +625,7 @@ func _end_scene(scene_id: StringName, data: Dictionary, completed: bool) -> void
 		if float(overlay_node.call(&"fade_alpha")) > 0.0 and completed:
 			overlay_node.call(&"fade_to", overlay_node.call(&"fade_color"), 0.0, 0.6)
 	_stage.clear()
+	_scene_ui(false)
 	_scene_hint = ""
 	_current = &""
 	if not completed:
@@ -654,6 +658,14 @@ func _update_skip_prompt(scene_id: StringName, data: Dictionary) -> void:
 		return
 	var skippable: bool = data.get("sequence", false) == true and has_seen(scene_id)
 	overlay_node.call(&"set_skip_text", ui_text("skip", "Échap : passer") if skippable else "")
+
+
+## Pendant une scène (on) : signes d'interaction cachés (InteractSign.suppress) ; après : rendus,
+## et la boîte de dialogue reprend sa présentation « nuit ».
+func _scene_ui(on: bool) -> void:
+	InteractSign.suppress(SCENE_SIGNS, on)
+	if not on and DialogueBox.presentation() != DialogueBox.PRESENTATION_NUIT:
+		DialogueBox.set_presentation(DialogueBox.PRESENTATION_NUIT)
 
 
 ## Rend à la vie les présents d'une scène finie, une fois leur dernière marche de scène finie
@@ -690,6 +702,7 @@ func _apply_day_state(slot: StringName) -> void:
 func _on_game_loaded() -> void:
 	_runner.stop()
 	_stage.clear()
+	_scene_ui(false)
 	_examined.clear()
 	_talked.clear()
 	_expect = {}

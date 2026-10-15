@@ -20,11 +20,6 @@ signal closed
 
 const MenuInput := preload("res://src/ui/main_menu_input.gd")
 const QUEST_ICON := preload("res://assets/ui/quest.png")
-const TITLE_COLOR := Color(0.33, 0.22, 0.4)
-const MUTED_COLOR := Color(0.53, 0.4, 0.48)
-const ACCENT_COLOR := Color(0.82, 0.33, 0.43)
-const DONE_COLOR := Color(0.42, 0.72, 0.47)
-const CURRENT_COLOR := Color(1.0, 0.72, 0.25)
 ## Côté (px) de la pastille d'une étape.
 const MARK_SIZE := 26.0
 
@@ -35,7 +30,7 @@ var _entries: Dictionary[StringName, Button] = {}
 var _order: Array[StringName] = []
 var _selected: StringName = &""
 
-@onready var _dim: ColorRect = %Dim
+@onready var _dim: Control = %Dim
 @onready var _list: VBoxContainer = %List
 @onready var _close_button: Button = %CloseButton
 @onready var _quest_title: Label = %QuestTitle
@@ -196,7 +191,7 @@ func _add_section(title: String, ids: Array[StringName], active: bool) -> void:
 		return
 	var header := Label.new()
 	header.text = title
-	header.add_theme_color_override(&"font_color", ACCENT_COLOR)
+	header.add_theme_color_override(&"font_color", UiStyle.color(&"gold"))
 	header.add_theme_font_size_override(&"font_size", 20)
 	_list.add_child(header)
 	for quest_id: StringName in shown:
@@ -209,7 +204,7 @@ func _add_section(title: String, ids: Array[StringName], active: bool) -> void:
 		button.custom_minimum_size = Vector2(300, 0)
 		button.add_theme_font_size_override(&"font_size", 21)
 		if not active:
-			button.add_theme_color_override(&"font_color", MUTED_COLOR)
+			button.add_theme_color_override(&"font_color", UiStyle.color(&"muted"))
 		button.focus_entered.connect(select.bind(quest_id))
 		button.pressed.connect(_on_entry_pressed.bind(quest_id))
 		_list.add_child(button)
@@ -307,7 +302,9 @@ func _step_row(step: QuestStep, done: bool, progress: String) -> Control:
 	objective.text = step.objective
 	objective.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	objective.add_theme_font_size_override(&"font_size", 21)
-	objective.add_theme_color_override(&"font_color", MUTED_COLOR if done else TITLE_COLOR)
+	objective.add_theme_color_override(
+		&"font_color", UiStyle.color(&"muted") if done else UiStyle.color(&"cream")
+	)
 	text.add_child(objective)
 	if not done and not step.hint.is_empty():
 		var hint := _muted_label(step.hint, 17)
@@ -317,7 +314,7 @@ func _step_row(step: QuestStep, done: bool, progress: String) -> Control:
 		var progress_label := Label.new()
 		progress_label.text = progress
 		progress_label.add_theme_font_size_override(&"font_size", 18)
-		progress_label.add_theme_color_override(&"font_color", ACCENT_COLOR)
+		progress_label.add_theme_color_override(&"font_color", UiStyle.color(&"gold"))
 		text.add_child(progress_label)
 	row.add_child(text)
 	return row
@@ -329,7 +326,7 @@ func _draw_mark(mark: Control, done: bool) -> void:
 	var center := Vector2(MARK_SIZE, MARK_SIZE) * 0.5 + Vector2(0.0, 3.0)
 	var radius := MARK_SIZE * 0.42
 	if done:
-		mark.draw_circle(center, radius, DONE_COLOR)
+		mark.draw_circle(center, radius, UiStyle.color(&"gold"))
 		var check := PackedVector2Array(
 			[
 				center + Vector2(-5.5, 0.5),
@@ -337,10 +334,10 @@ func _draw_mark(mark: Control, done: bool) -> void:
 				center + Vector2(6.0, -4.0),
 			]
 		)
-		mark.draw_polyline(check, Color.WHITE, 3.0, true)
+		mark.draw_polyline(check, UiStyle.color(&"ink"), 3.0, true)
 	else:
-		mark.draw_arc(center, radius - 1.5, 0.0, TAU, 32, CURRENT_COLOR, 3.0, true)
-		mark.draw_circle(center, radius * 0.38, CURRENT_COLOR)
+		mark.draw_arc(center, radius - 1.5, 0.0, TAU, 32, UiStyle.color(&"gold"), 3.0, true)
+		mark.draw_circle(center, radius * 0.38, UiStyle.color(&"gold"))
 
 
 func _rewards_text(quest: QuestData) -> String:
@@ -366,7 +363,7 @@ func _npc_name(npc_id: StringName) -> String:
 func _muted_label(text: String, font_size: int) -> Label:
 	var label := Label.new()
 	label.text = text
-	label.add_theme_color_override(&"font_color", MUTED_COLOR)
+	label.add_theme_color_override(&"font_color", UiStyle.color(&"muted"))
 	label.add_theme_font_size_override(&"font_size", font_size)
 	return label
 

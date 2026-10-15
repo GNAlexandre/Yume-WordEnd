@@ -29,8 +29,8 @@ const DIALOGUE_PREFIX := "story_"
 const TALK := &"parle"
 const IDLE := &"repos"
 ## Présentations du dialogue (DialogueBox.set_presentation, lot U1).
-const PRESENT_HELD := &"bandeau"
-const PRESENT_FREE := &"nuit"
+const PRESENT_HELD := DialogueBox.PRESENTATION_BANDEAU
+const PRESENT_FREE := DialogueBox.PRESENTATION_NUIT
 
 var director: Node
 var stage: StoryStage
@@ -360,12 +360,10 @@ func _presentation(step: Dictionary) -> StringName:
 	return PRESENT_HELD if body != null and body.is_story_held() else PRESENT_FREE
 
 
-## Demande la présentation à la boîte de dialogue, si elle sait la changer
-## (DialogueBox.set_presentation, lot U1 ; sans elle, rien).
+## Demande la présentation à la boîte de dialogue (DialogueBox.set_presentation, lot U1).
 func _present(presentation: StringName) -> void:
-	var box := stage.dialogue_box()
-	if box != null and box.has_method(&"set_presentation"):
-		box.call(&"set_presentation", presentation)
+	if DialogueBox.presentation() != presentation:
+		DialogueBox.set_presentation(presentation)
 
 
 func _camera(step: Dictionary) -> void:
@@ -465,7 +463,7 @@ static func _names(value: Variant) -> Array[String]:
 # --- Qui parle -----------------------------------------------------------------------------------
 
 
-func _on_dialogue_line(_speaker: String, _line: String, _choices: Array[String]) -> void:
+func _on_dialogue_line(_speaker: String, _line: String, _choices: Array) -> void:
 	if not _dialogue.is_running():
 		return
 	var speaker := DialogueRunner.current_speaker_id()

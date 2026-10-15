@@ -125,14 +125,6 @@ func camera_rig() -> Node:
 	return body.get_node_or_null(^"CameraRig") if body != null else null
 
 
-## La boîte de dialogue de la partie (UI/DialogueBox ; null sans partie).
-func dialogue_box() -> Control:
-	for node: Node in get_tree().root.find_children("DialogueBox", "", true, false):
-		if node is DialogueBox:
-			return node as Control
-	return null
-
-
 ## Le voile des scènes (HUD/StoryOverlay ; null sans partie).
 func overlay() -> Node:
 	return get_tree().get_first_node_in_group(&"story_overlay")

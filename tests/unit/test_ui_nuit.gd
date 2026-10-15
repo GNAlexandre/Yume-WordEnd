@@ -8,8 +8,9 @@ const UI_DIR := "res://src/ui/"
 const DIALOGUE_BOX := preload("res://src/ui/dialogue_box.tscn")
 ## Scènes qui ne sont pas des écrans : la case de l'inventaire prend le thème de l'inventaire.
 const NOT_SCREENS: Array[String] = ["inventory_slot.tscn"]
-## (E6) Le journal de quêtes est hors du périmètre d'U1 : le lot E6 retire l'ancien encadré.
-const NOT_OWNED: Array[String] = ["journal.tscn"]
+## Scènes d'interface dispensées de la règle « aucune couleur en dur » (aucune depuis E6 : le
+## journal de quêtes prend aussi le thème).
+const NOT_OWNED: Array[String] = []
 ## Caractères du français que les polices doivent porter.
 const FRENCH := "àâäçéèêëîïôöùûüÿœæÀÂÇÉÈÊËÎÏÔÙÛŒÆ«»  –—’…·"
 
