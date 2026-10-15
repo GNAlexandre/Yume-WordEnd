@@ -1,0 +1,141 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/interior_room.gd" id="2_room"]
+[ext_resource type="JSON" path="res://data/maps/maison_limashenka/interior.json" id="3_layout"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/display_cabinet.tscn" id="p_display_cabinet"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/toolbox_gears.tscn" id="p_toolbox_gears"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/sofa_salon.tscn" id="p_sofa_salon"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/armchair_sheeted.tscn" id="p_armchair_sheeted"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/side_table_salon.tscn" id="p_side_table_salon"]
+[ext_resource type="PackedScene" path="res://src/world/props/rug_salon.tscn" id="p_rug_salon"]
+[ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.2, 2.4, 1)
+
+[node name="maison_limashenka" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "La maison Limashenka"
+region = &"village"
+interior = true
+size = Vector2(10, 8)
+camera_bounds = Rect2(2, 4, 6, 0)
+light_preset = &"interieur"
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_mask = 0
+script = ExtResource("2_room")
+layout = ExtResource("3_layout")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("4_batcher")
+
+[node name="Vestibule" type="Node3D" parent="Geometry"]
+
+[node name="Salon" type="Node3D" parent="Geometry"]
+
+[node name="display_cabinet_1" parent="Geometry/Salon" instance=ExtResource("p_display_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 1.4)
+
+[node name="toolbox_gears_1" parent="Geometry/Salon" instance=ExtResource("p_toolbox_gears")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 2.6)
+
+[node name="sofa_salon_1" parent="Geometry/Salon" instance=ExtResource("p_sofa_salon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 5.2)
+
+[node name="armchair_sheeted_1" parent="Geometry/Salon" instance=ExtResource("p_armchair_sheeted")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 0, 3.05)
+
+[node name="side_table_salon_1" parent="Geometry/Salon" instance=ExtResource("p_side_table_salon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.3, 0, 5.5)
+
+[node name="rug_salon_1" parent="Geometry/Salon" instance=ExtResource("p_rug_salon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.3, 0, 4.3)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 0.2, 6)
+
+[node name="from_village" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 0.2, 6)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="vers_village" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 0, 7.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"village"
+target_marker = &"from_maison_limashenka"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="Examine" type="Node3D" parent="."]
+
+[node name="horloge" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 1.525)
+script = ExtResource("6_examine")
+text_key = "maison_limashenka/horloge"
+size = Vector3(0.8, 2, 0.8)
+texts_path = "res://data/texts/village.json"
+
+[node name="portrait" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 1.525)
+script = ExtResource("6_examine")
+text_key = "maison_limashenka/portrait"
+size = Vector3(0.8, 2, 0.8)
+texts_path = "res://data/texts/village.json"
+
+[node name="vitrine" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 1.65)
+script = ExtResource("6_examine")
+text_key = "maison_limashenka/vitrine"
+size = Vector3(1.2, 2, 0.8)
+texts_path = "res://data/texts/village.json"
+
+[node name="boite_outils" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 2.85)
+script = ExtResource("6_examine")
+text_key = "maison_limashenka/boite_outils"
+size = Vector3(0.8, 2, 0.8)
+texts_path = "res://data/texts/village.json"
+
+[node name="fauteuil" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 0, 3.45)
+script = ExtResource("6_examine")
+text_key = "maison_limashenka/fauteuil"
+size = Vector3(1, 2, 0.8)
+texts_path = "res://data/texts/village.json"
+
+[node name="pateres" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.525, 0, 3)
+script = ExtResource("6_examine")
+text_key = "maison_limashenka/pateres"
+size = Vector3(0.8, 2, 1.2)
+texts_path = "res://data/texts/village.json"
+
+[node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="horloge" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 3.6)
+
+[node name="rami" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 4.4)
+
+[node name="canape" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 6.25)
+
+[node name="salon_canape_assise" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 6, 0, 5.3)
+
+[node name="vestibule_porte" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 0, 5.6)

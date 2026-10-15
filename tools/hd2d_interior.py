@@ -326,6 +326,12 @@ LOT_NAMES = {
     "S5": ["ship_latrine", "ship_privacy_curtain", "ship_cargo_trolley", "ship_sword_rack", "floor_ship_grating",
            "ceiling_ship_plate"],
     "N": ["window_cross_small_night", "window_cross_large_night", "window_reading_seat_night"],
+    # (C2) Le café et la maison Limashenka (cahier n° 5, lot R3, sections 5.4 et 5.5).
+    "R3": ["floor_terracotta", "wall_panel_dark", "door_backroom", "cafe_counter", "cafe_table_heavy",
+           "juice_glasses", "cafe_bottle_shelf", "cafe_cake_case", "cafe_drinkers_table", "wallitem_menu_cafe",
+           "wall_wallpaper_floral", "window_shutters", "toolbox_gears", "wallitem_clock_limashenka",
+           "wallitem_clock_limashenka_open", "clock_limashenka_swing", "side_table_salon",
+           "wallitem_family_portrait", "rug_salon"],
 }
 LOT_OF = {name: lot for lot, names in LOT_NAMES.items() for name in names}
 
@@ -438,9 +444,52 @@ OUTDOOR_POLES = [
     ("drying_frame", (384, 211), 1),
 ]
 
-# Tous les meubles, objets et décors de plein air des cartes : listes d'E3, de T2 et d'I1.
-ALL_FURNITURE = FURNITURE + FURNITURE_T2 + FURNITURE_I1
-ALL_OBJECTS = OBJECTS + OBJECTS_I1
+# --- (C2) Le café du village et la maison Limashenka (docs/lore/CARTE.md, section 5) ---------------------------
+#
+# Images du lot R3 (cahier n° 5, 5.4 et 5.5) que le plan cite : remplaçants de tools/hd2d_village.py (une image
+# livrée sous le même nom les remplace sans toucher au code). Profondeurs : celles des plans de CARTE.md.
+SURFACES_C2 = [
+    ("floor_terracotta", (384, 384), "tile", 1),
+    ("wall_panel_dark", (384, 288), "tile_h", 1),
+    ("wall_wallpaper_floral", (384, 288), "tile_h", 2),
+]
+# Le portrait de famille : 58 × 77 (0,6 × 0,8 m, la largeur du plan) au lieu du 256 × 256 du cahier, qui est la taille
+# d'un portrait de dialogue, pas d'un tableau au mur (docs/DECISIONS.md, C2).
+WALL_PANELS_C2 = [
+    ("door_backroom", (106, 211), 2),
+    ("window_shutters", (115, 154), 2),
+    ("wallitem_menu_cafe", (77, 96), 2),
+    ("wallitem_clock_limashenka", (77, 134), 1),
+    ("wallitem_clock_limashenka_open", (77, 134), 1),
+    ("wallitem_family_portrait", (58, 77), 3),
+]
+FURNITURE_C2 = [
+    ("cafe_counter", (288, 115), 0.8, 0.8, 1),
+    ("cafe_table_heavy", (115, 96), 1.0, 0.0, 1),
+    ("cafe_bottle_shelf", (192, 192), 0.6, 0.0, 2),
+    ("cafe_drinkers_table", (154, 106), 0.9, 0.0, 2),
+    ("toolbox_gears", (77, 48), 0.5, 0.0, 1),
+    ("side_table_salon", (58, 67), 0.5, 0.0, 3),
+]
+OBJECTS_C2 = [
+    ("juice_glasses", (48, 29), 0.0, 1),
+    ("cafe_cake_case", (96, 58), 0.0, 2),
+]
+# Le tapis du salon (décalque à bord plein) : même scène que les autres tapis (RUGS).
+RUGS_C2 = [("rug_salon", (288, 192), 3, "")]
+# Le balancier de l'horloge réparée (bande animée : l'horloge qui va, jour 11) ; posée par la scène du récit.
+ANIMS_C2 = [("clock_limashenka_swing", (77, 134), 4, 2, 3, False, False, 0.0)]
+# Le meuble du dehors que le café range dans son arrière-boutique : même image, scène d'intérieur.
+FURNITURE_OTHER_IMAGES_C2 = [
+    ("crates_barrels", "assets/hd2d/props/crates_barrels.png", (192, 144), 1.0, 0.0),
+]
+FURNITURE_OTHER_IMAGES = FURNITURE_OTHER_IMAGES + FURNITURE_OTHER_IMAGES_C2
+RUGS = RUGS + RUGS_C2
+ANIMS = ANIMS + ANIMS_C2
+
+# Tous les meubles, objets et décors de plein air des cartes : listes d'E3, de T2, d'I1 et de C2.
+ALL_FURNITURE = FURNITURE + FURNITURE_T2 + FURNITURE_I1 + FURNITURE_C2
+ALL_OBJECTS = OBJECTS + OBJECTS_I1 + OBJECTS_C2
 
 # --- (I1) Vues d'un meuble : de flanc, de dos, par le pied (cahier n° 5, section 2.7 et lot R0) ---
 #
@@ -521,9 +570,9 @@ def entries():
     livrées après coup (I1 : lots L, S1 à S5, O1, O2, P, Q, N, et les vues de flanc, de dos et de
     pied qui existent)."""
     out = []
-    for name, size, kind, prio in SURFACES + SURFACES_I1:
+    for name, size, kind, prio in SURFACES + SURFACES_I1 + SURFACES_C2:
         out.append(_entry("interior/" + name, size, kind, prio, name))
-    for name, size, prio in WALL_PANELS + WALL_PANELS_T2 + WALL_PANELS_I1:
+    for name, size, prio in WALL_PANELS + WALL_PANELS_T2 + WALL_PANELS_I1 + WALL_PANELS_C2:
         out.append(_entry("interior/" + name, size, "panel", prio, name))
     for name, size, _depth, _glow, prio in ALL_FURNITURE:
         out.append(_entry("interior/props/" + name, size, "panel", prio, name))

@@ -2985,3 +2985,52 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **V1 — pluie** : `LifeDirector` tient deux drapeaux d'après `GameState.weather` : `pluie_du_jour` tant qu'il pleut (pluie, averse), `apres_pluie` quand elle cesse, jusqu'à l'aube suivante ; les lignes `{"if": {"flag": "pluie_du_jour"}}` font rentrer tout le monde (salle de jeux, lecture, balle contre le mur), `apres_pluie` envoie les petites sauter dans les flaques du champ (`boue`). Le récit (E6) peut aussi poser ces drapeaux.
 - **V1 — navigation** : `LifeNav.nearest_open` ne choisit plus, dedans, une case de l'autre côté d'un mur (un lit contre la porte d'un dortoir finissait dans le couloir) ; correctif sûr, éprouvé par `tests/unit/test_life_ile_68_nav.gd`.
 - **V1 — jours** : `GameState.day` 0 (aucun jour) joue la journée de base ; les variations de VIE.md, section 3, sont des lignes à `day` : fuite (1 à 3), en ville (3), dessert (4, 6, 9, 11), aînées absentes et petite blessée (7 à 9), fièvre de Willem (8), entraînement (9 à 12), café et chasse à l'ours (9), horloge (11), départ (12). Les soirs, la tour de fées a lieu aux jours 0, 10 et 12 ; les jours 1 à 9 et 11, jeux de société. Un trajet qui change de carte s'arrête à la sortie de la carte courante (l'étage vers la ville : l'escalier) : le directeur ne suit pas la correspondance entre cartes.
+- **C2 — la porte du café est à x = 19,8** (sortie `porte_cafe` 19,1 → 20,5, marqueur `from_cafe`, point
+  `cafe_porte`), au droit de la porte de la façade livrée (`cafe.png`), au lieu de 18,5 du plan ; CARTE.md
+  est corrigé en conséquence (idem `hanging_sign_key` à 12,7 et `firewood_pile` à 4,5, qui tombait dans le
+  ruisseau). Les écarts de la carte sont dans la liste des écarts de la recette `village.py`.
+- **C2 — le café a sa scène `cafe_village`** (7 × 6 m, mur 5,5 m, faîte 7,5 m) : celle de T1 pose trois
+  tables de terrasse bloquantes dans la place `devant_cafe`, qui doit rester libre. `BUILDING_SCENES` de la
+  recette donne la scène d'un bâtiment du plan qui n'a pas le nom de son image.
+- **C2 — jardins clos et bords invisibles** : un toit de 5 m cache 7 m au nord de lui, et la règle de caméra
+  veut que rien où l'on marche ne soit derrière un toit ; les jardins derrière les trois chaumières du sud
+  sont donc clos (`Edges` invisibles, clôture de branches au nord, haies sur les côtés) et les trous entre
+  bâtiments sont fermés par des haies et buissons visibles (jamais une collision seule qui se voit mal).
+- **C2 — variantes de premier plan nommées `*_front`** (`scarecrow_front`, `firewood_pile_front`) : un `*_fg`
+  libre est découvert par l'outil comme variante de la règle de caméra et changeait la scène de l'entrepôt ;
+  `*_front` n'est pas un suffixe de cette règle, la recette de `village` les pose à la main.
+- **C2 — aucune lumière dans les trois cartes** (règle de la mission) : ni lampe ni fenêtre lumineuse ; la
+  nuit, Atmosphere et la lumière magique du joueur. `no_lights` dans `SETTINGS` d'une carte du dehors supprime
+  le nœud `Lights` ; le café n'a donc pas de vitres allumées de nuit (demande dans CONTRACT_REQUESTS.md).
+- **C2 — la porte de la maison Limashenka est posée ouverte, sa condition (jour 11) est en métadonnée** de
+  la sortie (`open_from_day = 11`, `closed_text_key = "village/maison_close"`) : `MapExit` ne sait pas se
+  fermer et n'est pas à C2 (demande dans CONTRACT_REQUESTS.md). L'examen `maison_close` donne le texte de
+  la maison close.
+- **C2 — `door_backroom`** (rideau rayé entre la salle du café et l'arrière-boutique) est une porte à image
+  propre (`OWN_IMAGE_DOORS` de `interior_maps.py`) ; `door_room` des intérieurs a un côté « dehors » (`OUTSIDE_DOORS`).
+- **C2 — `BLOCKERS["cafe"]`** : la vitrine à gâteaux masque la taille de qui se tient derrière le comptoir ;
+  une zone bloquante `derriere_vitrine` (4,7 → 5,3 ; 1,8 → 2,55) l'interdit, la place `comptoir_arriere`
+  restant libre à côté.
+- **C2 — portrait de famille 58 × 77 px** (`wallitem_family_portrait`) : l'image la plus grande qui tienne
+  sur le mur du salon à 96 px par mètre sans passer sous l'horloge ; `test_hd2d_assets` la compte (CARTE.md
+  le mentionne).
+- **C2 — l'horloge du salon** a trois états (`wallitem_clock_limashenka` fermée, `_open` ouverte,
+  `anim/clock_limashenka_swing` : balancier de 4 images à 2 images/s, mêmes pixels du cadran : `random.Random(4242)`
+  fixe) ; le récit (E6) les échange au jour 11 au point `horloge`. La scène `clock_limashenka_swing` est prête.
+- **C2 — 38 remplaçants au manifeste, lot R3** (`tools/hd2d_village.py`) : 19 pour le dehors (matériaux
+  `roof_thatch`, `wall_wattle_daub` ; chaumières `cottage_thatch_a/b/c`, `village_barn`, `village_house_stone`,
+  `village_shed` avec leurs `_side` ; `fence_wattle`, `beehives`, `cart_hay`, `haystack`, `washing_trough`) et
+  19 pour les intérieurs (sol `floor_terracotta`, `wall_panel_dark`, `wall_wallpaper_floral`, `door_backroom`,
+  `window_shutters`, `wallitem_menu_cafe`, `wallitem_clock_limashenka` (et `_open`), `wallitem_family_portrait`, `cafe_counter`,
+  `cafe_table_heavy`, `cafe_bottle_shelf`, `cafe_drinkers_table`, `toolbox_gears`, `side_table_salon`,
+  `juice_glasses`, `cafe_cake_case`, `decals/rug_salon`, `anim/clock_limashenka_swing`). Une image livrée
+  du même nom les remplace sans toucher au code ; `--force --overwrite-delivered` n'est que pour refaire un
+  remplaçant.
+- **C2 — outils touchés hors des cartes** : `exterior_maps.py` (réglages `no_lights`, `examine`, `exit_meta`,
+  `PLACES_LOT`), `exterior_pose.py` (`Pose.height` rend 0 sur une case de vide), `exterior_props.py`
+  (`building()`, décors du village), `interior_maps.py` (cafe, maison, `image_size_m` cherche aussi
+  `props/`), `tests/stubs/t2_map_test.gd` (`expected_region`, `texts_path`, `OWN_IMAGE_DOORS`) ;
+  `test_waiting_maps`, `test_exterior_maps`, `test_hd2d_assets`, `test_hd2d_scenes` suivent (le village n'est
+  plus une carte d'attente ; 27 façades latérales au lieu de 21), sans rien relâcher.
+- **C2 — mesures** : draw calls du village entre 78 et 139 par vue du jeu (≤ 200 ; la vue d'ensemble, hors
+  jeu, 271), café 32 à 46, maison 29 à 41 ; chargement du village 390 à 600 ms, café 173 ms, maison 104 ms.
