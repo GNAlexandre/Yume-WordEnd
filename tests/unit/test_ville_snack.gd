@@ -39,6 +39,8 @@ func test_map_follows_the_contract_and_its_plan() -> void:
 	assert_eq(room["floor"], "floor_stone_town", "dalles claires")
 	assert_eq(room["wall"], "wall_stone_inside", "pierre apparente")
 	assert_eq(room["name"], "Salle du snack-bar", "le nom de la pièce n'est pas celui du café")
+	# (QC-14, QC-15) Le soir, la plaque de cuisson et une applique éclairent la salle.
+	assert_eq(_room.plan.lights.size(), 2, "la plaque de cuisson et l'applique")
 
 
 func test_every_piece_of_furniture_of_the_plan_is_in_place() -> void:

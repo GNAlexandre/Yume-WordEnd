@@ -11,5 +11,8 @@
   ],
   "windows": [],
   "wall_items": [],
-  "lights": []
+  "lights": [
+    {"room": "salle", "at": [4.5, 2.1], "radius": 3.0, "color": "#ffb062", "energy": 1.0},
+    {"room": "salle", "at": [7.8, 3.6], "radius": 2.6, "color": "#ffc070", "energy": 0.85}
+  ]
 }

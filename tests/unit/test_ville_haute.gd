@@ -28,6 +28,7 @@ const EXTRA_PLACES: Array[String] = [
 	"carrefour_ouest",
 	"carrefour_est",
 	"snack_terrasse",
+	"porte_snack",
 	"cafe_devant",
 	"bas_de_ville_centre",
 	"rue_basse_ouest",

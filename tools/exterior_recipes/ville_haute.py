@@ -57,6 +57,7 @@ PLACES_WHY = [
     ("carrefour_ouest", 14.0, 32.0, 0.0, "la rue du café devant la librairie : le client qui hésite devant la vitrine"),
     ("carrefour_est", 47.0, 32.0, 0.0, "la rue du café devant l'accessoiriste : la cliente qui regarde les chapeaux"),
     ("snack_terrasse", 38.8, 32.2, 180.0, "devant le comptoir du snack, sur la rue : le client qui attend sa part"),
+    ("porte_snack", 37.5, 32.2, 0.0, "devant la porte du snack-bar : où l'on entre, d'où l'on sort (ACTE1.md 3.3 : `ville_haute:porte_snack`)"),
     ("cafe_devant", 23.0, 32.2, 180.0, "devant le café, au coin de la grand-rue : le buveur qui sort fumer"),
     ("bas_de_ville_centre", 30.0, 55.0, 0.0, "la place du bas de la ville : on s'y retrouve avant de descendre au marché"),
     ("rue_basse_ouest", 12.0, 55.0, 0.0, "la rue basse devant l'apothicaire : les passants du matin"),
@@ -189,6 +190,13 @@ def pose(p):
     for k, x in enumerate((24.0, 26.0, 28.0, 30.0, 32.0, 34.0, 36.0)):
         place("Edge", "town_wall_low", x, 9.4, name="MuretHaut%d" % (k + 1), flip=k % 2 == 1, check=False)
     walk_grid()
+    # Derrière le muret, le jardin qu'il ferme (le bois en arrière-plan) : des arbres d'or, des buissons, des fleurs.
+    for k, (x, z, scene) in enumerate(((25.5, 6.6, "tree_autumn_yellow"), (31.0, 5.6, "maple_b"), (35.2, 7.0, "tree_autumn_rust"),
+                                       (28.4, 8.2, "sapling_a"), (33.2, 8.4, "sapling_b"))):
+        place("Garden", scene, x, z, name="ArbreJardinHaut%d" % (k + 1), check=False)
+    pocket = poisson(Rect(23.8, 5.0, 36.2, 8.9), 1.3, 22, lambda x, z: True, seed=96)
+    scatter("JardinHaut", BUSHES[:5] + FLOWERS + ["heather", "grass_clump_c"], pocket, seed=97, check=False)
+    place("Garden", "bench", 30.0, 8.9, name="BancJardinHaut", check=False)
 
     # Maisons du bord de la carte (les `bord maisons` du plan) : des façades qu'on voit de loin, de part et d'autre.
     for k, (scene, x, z) in enumerate((("town_house_c", 2.0, 7.5), ("town_house_c", 58.0, 7.0),
@@ -235,7 +243,7 @@ def pose(p):
     place("Facade", "drainpipe", 41.5, 9.7, y=height(41.5, 9.7), name="DescenteMaisonA", check=False)
     # Le garde-corps au bord de la terrasse haute (le plan en parle : « garde-corps `town_railing` au bord des
     # terrasses »), sauf devant les marches de la grand-rue.
-    for k, x in enumerate([5.0 + 2.0 * i for i in range(10)] + [35.0 + 2.0 * i for i in range(11)]):
+    for k, x in enumerate([5.0 + 2.0 * i for i in range(10)] + [35.0 + 2.0 * i for i in range(11) if i != 5]):
         place("Edge", "town_railing", x, 15.55, name="GardeCorpsHaut%d" % (k + 1), flip=k % 2 == 1, check=False)
     # Le linge d'une fenêtre à l'autre, la guirlande de la rue haute.
     place("Roof", "bunting_wave", 14.0, 11.6, y=height(14.0, 11.6) + 3.0, name="GuirlandeHaute", check=False)
@@ -361,7 +369,7 @@ def pose(p):
         place("Street", scene, x, z, name="BasDecal%d" % (k + 1), flip=k % 2 == 0, check=False)
     # Le long de la grand-rue (8 m de large entre les façades et les jardins) : des feuilles, des cailloux, une grille
     # d'égout, de part et d'autre de la bande qu'on suit, tous les 5 m (pas de sol nu de 6 × 6 m).
-    cycle = ["leaves_gold_a", "pebbles_a", "leaves_rust_a", "drain_grate", "pebbles_b", "leaves_gold_b"]
+    cycle = ["leaves_gold_a", "pebbles_a", "leaves_rust_a", "moss_patch_a", "pebbles_b", "leaves_gold_b", "roots_a"]
     for k, z in enumerate(range(13, 59, 5)):
         for side, x in enumerate((26.8, 33.2)):
             place("Street", cycle[(k + side) % len(cycle)], x, z + (side * 2.5) % 4, name="GrandRueDecal%d_%d" % (k + 1, side),

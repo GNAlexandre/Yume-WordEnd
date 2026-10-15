@@ -23,11 +23,13 @@ from PIL import Image, ImageDraw
 import hd2d_ground
 from hd2d_art import Canvas, WrapCanvas, darker, fractal, mix, noise, posterize, ramp, rgba, threshold
 from hd2d_interior_props import DARK, IRON
-from hd2d_props import boards, door, window
+from hd2d_props import boards, door
 from hd2d_town import building_side, new_facade, shutters_closed
 
 PPM = 96
 STONE = "#C9BCA4"
+# Les vitres : la couleur que la lueur de nuit des façades allume par défaut (#FFCA63 à 0,12 : Building.window_glow_color).
+GLASS = ["#B8904A", "#E6B455", "#FFCA63", "#FFD06C", "#FFD676"]
 BLUE_SHUTTER = "#6F8AA6"
 GREEN_SHUTTER = "#5E7A5A"
 BRASS = "brass"
@@ -49,6 +51,21 @@ hd2d_ground.RECIPES.update({"buildings/materials/wall_stone_town": wall_stone_to
 
 
 # --- Façades et flancs ----------------------------------------------------------------------------------------------
+
+
+def window(c, x, y, w, h, frame="wood_dark", shutters=None):
+    """Fenêtre à croisillon, vitres aux tons de GLASS, volets pleins de chaque côté si shutters."""
+    wood = ramp(frame, 5)
+    c.rect(x - 3, y - 3, x + w + 3, y + h + 5, wood[1])
+    c.rect(x, y, x + w, y + h, GLASS[2])
+    c.rect(x, y, x + w, y + h * 0.4, GLASS[3])
+    c.rect(x + 2, y + 2, x + w * 0.4, y + h * 0.3, GLASS[4])
+    c.rect(x + w / 2.0 - 1, y, x + w / 2.0 + 1, y + h, wood[2])
+    c.rect(x, y + h / 2.0 - 1, x + w, y + h / 2.0 + 1, wood[2])
+    c.rect(x - 5, y + h + 3, x + w + 5, y + h + 7, wood[3])
+    if shutters:
+        boards(c, x - 3 - w * 0.45, y - 2, x - 3, y + h + 3, shutters, width=6)
+        boards(c, x + w + 3, y - 2, x + w + 3 + w * 0.45, y + h + 3, shutters, width=6)
 
 
 def quoins(c, w, h, top, plinth=0, step=64, color="#E2D8C2"):
@@ -281,7 +298,7 @@ def cafe_town(size, rnd):
     def features(c, w, h, top):
         quoins(c, w, h, top, plinth=24, step=70)
         iron = ramp(IRON, 4)
-        glass = ramp("crystal", 5, spread=0.4)
+        glass = GLASS
         wd = ramp(DARK, 5)
         # Trois grandes baies, la porte vitrée au milieu.
         for fx in (0.06, 0.66):
@@ -325,8 +342,20 @@ def shop_snack(size, rnd):
         stone = ramp("#D6CBB6", 5)
         # Le comptoir ouvert sur la rue : une baie sombre, la plaque de cuisson dans le fond, les braises.
         c.rect(w * 0.12 - 8, h - 250, w * 0.88 + 8, h - 6, stone[2])
-        c.rect(w * 0.12, h - 242, w * 0.88, h - 70, ramp("#2A2430", 4)[1])
-        c.rect(w * 0.12, h - 242, w * 0.88, h - 232, ramp("#2A2430", 4)[0])
+        c.rect(w * 0.12, h - 242, w * 0.88, h - 70, ramp("#3A2A26", 4)[1])
+        c.rect(w * 0.12, h - 242, w * 0.88, h - 232, ramp("#3A2A26", 4)[0])
+        # Le fond de la cuisine : une étagère de pots et de bouteilles, des ustensiles pendus à une barre.
+        shelf = ramp("#7A5A40", 4)
+        c.rect(w * 0.16, h - 176, w * 0.84, h - 170, shelf[3])
+        for k, col in enumerate(("#A8785A", "#C8A040", "#8AA050", "#A8785A", "#B8906A", "#C8A040", "#8A6A52", "#8AA050")):
+            jx = w * (0.18 + 0.082 * k)
+            c.rect(jx, h - 198, jx + 20, h - 176, ramp(col, 4)[2])
+            c.rect(jx + 5, h - 206, jx + 15, h - 198, ramp(col, 4)[1])
+        c.rect(w * 0.14, h - 226, w * 0.86, h - 222, ramp(IRON, 4)[1])
+        for k in range(6):
+            ux = w * (0.2 + 0.12 * k)
+            c.rect(ux, h - 222, ux + 2, h - 206, ramp(IRON, 4)[0])
+            c.ellipse(ux + 1, h - 200 + (k % 2) * 4, 8 if k % 2 else 5, 9 if k % 2 else 7, ramp(IRON, 4)[2])
         # Plaque et poêle au fond : lueur de cristal.
         c.rect(w * 0.3, h - 124, w * 0.7, h - 104, ramp(IRON, 4)[1])
         c.blob(w * 0.5, h - 104, w * 0.16, 14, ramp("#FFB062", 4))
@@ -364,7 +393,7 @@ def shop_accessories(size, rnd):
     def features(c, w, h, top):
         quoins(c, w, h, top, plinth=24, step=64)
         wd = ramp(DARK, 5)
-        glass = ramp("crystal", 5, spread=0.4)
+        glass = GLASS
         # La vitrine de chapeaux, sur des têtes de bois.
         c.rect(w * 0.08 - 5, h - 230, w * 0.92 + 5, h - 24, wd[1])
         c.rect(w * 0.08, h - 224, w * 0.92, h - 30, ramp("#CFA9B0", 4)[1])
@@ -405,7 +434,7 @@ def shop_apothecary(size, rnd):
     def features(c, w, h, top):
         quoins(c, w, h, top, plinth=24, step=64)
         wd = ramp(DARK, 5)
-        glass = ramp("crystal", 5, spread=0.4)
+        glass = GLASS
         # La vitrine de bocaux de verre colorés, la porte vitrée à droite.
         c.rect(w * 0.06 - 5, h - 236, w * 0.58 + 5, h - 24, wd[1])
         c.rect(w * 0.06, h - 230, w * 0.58, h - 30, glass[2])
@@ -603,29 +632,34 @@ def town_railing(size, rnd):
 
 
 def _roofs(size, rnd, rows, spread):
-    """La ville vue de loin, en plusieurs rangées de toits (les plus éloignés plus hauts, plus petits et plus
-    bleutés), cheminées, lucarnes, quelques arbres dorés ; sans raccord à gauche et à droite."""
+    """La ville vue de loin, en rangées de toits qui se recouvrent (les plus éloignées plus hautes, plus petites et
+    plus bleutées), cheminées, un clocher de pierre, quelques arbres dorés entre les toits, un mur de jardin au pied ;
+    sans raccord à gauche et à droite."""
     w, h = size
     c = WrapCanvas(w, h, rnd)
     slate = ["#5E6C86", "#6A5A62", "#5A6A7A"]
     tiles = ["#B65E4B", "#A8503E", "#C07A4A"]
+    step = min(118, (h - 110) // rows)
+    tower_row = rows // 2
+    tower_x = int(w * rnd.uniform(0.3, 0.6))
     for row in range(rows):
-        far = row / float(max(1, rows - 1))
-        base_y = h - 40 - (rows - 1 - row) * (h - 120) / float(max(1, rows - 1)) * 0.78
-        scale = 1.0 - 0.45 * far
+        far = 1.0 - row / float(max(1, rows - 1))
+        base_y = h - 36 - (rows - 1 - row) * step
+        scale = 1.0 - 0.42 * far
+        haze = 0.5 * far
+        wall = ramp(mix("#C9BCA4", "#A8A4C4", 0.2 + haze), 4)
         x = rnd.randint(0, 40)
         while x < w + 40:
             house_w = int(rnd.randint(150, 230) * scale)
-            wall_h = int(rnd.randint(70, 120) * scale)
+            wall_h = int(rnd.randint(110, 160) * scale)
             ridge_h = int(rnd.randint(60, 100) * scale)
             gable = rnd.random() < 0.5
             palette = rnd.choice([slate, tiles, slate])
-            roof = ramp(mix(rnd.choice(palette), "#9AA0C0", 0.35 * (1 - far) + 0.25 * far), 5)
-            wall = ramp(mix("#C9BCA4", "#B8B0C8", 0.45 * (1 - far)), 4)
+            roof = ramp(mix(rnd.choice(palette), "#9AA0C0", 0.1 + 0.5 * far), 5)
             y1 = base_y
             y0 = y1 - wall_h
-            c.rect(x, y0, x + house_w, y1, wall[1])
-            c.rect(x, y0, x + 4, y1, wall[0])
+            c.rect(x, y0, x + house_w, y1 + 6, wall[1])
+            c.rect(x, y0, x + 4, y1 + 6, wall[0])
             if gable:
                 c.poly([(x - 6, y0), (x + house_w / 2.0, y0 - ridge_h), (x + house_w + 6, y0)], roof[2])
                 c.poly([(x + house_w / 2.0, y0 - ridge_h), (x + house_w + 6, y0), (x + house_w * 0.62, y0)], roof[1])
@@ -634,36 +668,52 @@ def _roofs(size, rnd, rows, spread):
                         (x + house_w + 8, y0 + 4)], roof[2])
                 c.rect(x + 10, y0 - ridge_h * 0.7, x + house_w - 10, y0 - ridge_h * 0.7 + 4, roof[3])
             for wx in range(int(x + 16 * scale + 8), int(x + house_w - 24), int(46 * scale + 14)):
-                c.rect(wx, y0 + 16 * scale, wx + 18 * scale, y0 + 16 * scale + 28 * scale, ramp("#3A4A66", 3)[1])
-            if rnd.random() < 0.55:
+                c.rect(wx, y0 + 18 * scale, wx + 18 * scale, y0 + 18 * scale + 30 * scale, ramp("#3A4A66", 3)[1])
+                c.rect(wx, y0 + 58 * scale, wx + 18 * scale, y0 + 58 * scale + 30 * scale, ramp("#3A4A66", 3)[1])
+            if rnd.random() < 0.6:
                 chx = x + house_w * rnd.uniform(0.2, 0.7)
                 top = y0 - ridge_h * (0.9 if gable else 0.7)
                 c.rect(chx, top - 26 * scale, chx + 14 * scale, top + 10, ramp("#A0584A", 4)[1])
                 c.rect(chx - 2, top - 30 * scale, chx + 16 * scale, top - 24 * scale, ramp("#A0584A", 4)[3])
-            x += house_w + rnd.randint(-10, 18) + int(8 * scale)
+            x += house_w + rnd.randint(-14, 8)
+        if row == tower_row:
+            # Le clocher de pierre, planté dans cette rangée : fût, étage des cloches (arcs sombres), flèche d'ardoise.
+            tw = int(74 * scale + 10)
+            top = base_y - int(330 * scale)
+            c.rect(tower_x, top, tower_x + tw, base_y + 6, ramp("#C9BCA4", 5)[2])
+            c.rect(tower_x, top, tower_x + 5, base_y + 6, ramp("#C9BCA4", 5)[3])
+            c.rect(tower_x + tw - 6, top, tower_x + tw, base_y + 6, ramp("#C9BCA4", 5)[1])
+            for k in range(2):
+                ax = tower_x + tw * (0.2 + 0.4 * k)
+                c.rect(ax, top + 30 * scale, ax + tw * 0.24, top + 80 * scale, ramp("#2A2430", 3)[1])
+                c.ellipse(ax + tw * 0.12, top + 30 * scale, tw * 0.12, 10 * scale, ramp("#2A2430", 3)[1])
+            c.rect(tower_x + tw * 0.4, top + 120 * scale, tower_x + tw * 0.6, top + 170 * scale, ramp("#3A4A66", 3)[1])
+            c.poly([(tower_x - 8, top + 6), (tower_x + tw / 2.0, top - 150 * scale), (tower_x + tw + 8, top + 6)],
+                   ramp("#5E6C86", 5)[2])
+            c.poly([(tower_x + tw / 2.0, top - 150 * scale), (tower_x + tw + 8, top + 6), (tower_x + tw * 0.6, top + 6)],
+                   ramp("#5E6C86", 5)[1])
     # Le pied de l'image : un mur de jardin et ses haies, qui touche le bas (les lointains se posent au sol).
     c.rect(0, h - 34, w, h, ramp("#8A8070", 5)[2])
     c.rect(0, h - 34, w, h - 30, ramp("#B0A58E", 5)[3])
     for gx in range(0, w, 48):
-        c.blob(gx + 24, h - 36, rnd.randint(22, 30), rnd.randint(12, 18), ramp(rnd.choice(["#6E8A4E", "#A8883A", "#8A5A3A"]), 4))
-    # Un clocher de pierre, des arbres dorés entre les toits.
-    tx = int(w * rnd.uniform(0.3, 0.6))
-    c.rect(tx, h * 0.12, tx + 52, h - 40, ramp("#C9BCA4", 5)[2])
-    c.poly([(tx - 6, h * 0.12 + 6), (tx + 26, h * 0.0), (tx + 58, h * 0.12 + 6)], ramp("#5E6C86", 5)[2])
-    c.rect(tx + 18, h * 0.2, tx + 34, h * 0.3, ramp("#3A4A66", 3)[1])
+        c.blob(gx + 24, h - 36, rnd.randint(22, 30), rnd.randint(12, 18),
+               ramp(rnd.choice(["#6E8A4E", "#A8883A", "#8A5A3A"]), 4))
+    # Des arbres dorés entre les toits : un tronc court, une couronne.
     for k in range(spread):
         gx = rnd.randint(0, w)
-        gy = h - rnd.randint(44, 110)
-        c.blob(gx, gy, rnd.randint(22, 34), rnd.randint(20, 30), ramp(rnd.choice(["#CC9446", "#D2B45C", "#A95A3A"]), 4))
+        gy = h - 50 - rnd.randint(0, (rows - 1) * step)
+        r = rnd.randint(14, 24)
+        c.rect(gx - 3, gy, gx + 3, gy + 26, ramp("#6A4A32", 4)[1])
+        c.blob(gx, gy - r * 0.2, r, r * 0.9, ramp(rnd.choice(["#CC9446", "#D2B45C", "#A95A3A"]), 4))
     return c.finish(darker("#3A3448", 0.5))
 
 
 def town_roofs_a(size, rnd):
-    return _roofs(size, rnd, 4, 9)
+    return _roofs(size, rnd, 6, 9)
 
 
 def town_roofs_b(size, rnd):
-    return _roofs(size, rnd, 3, 14)
+    return _roofs(size, rnd, 5, 14)
 
 
 # --- Le snack-bar (intérieur) --------------------------------------------------------------------------------------
@@ -727,11 +777,17 @@ def wall_plaster_ochre(size, rnd):
     """Enduit ocre clair, propre mais vieilli, corniche en haut, plinthe de bois peint ; se raccorde à gauche et à
     droite."""
     w, h = size
-    tones = ramp("#D9B56E", 6, spread=0.3)
-    img = posterize(noise((w, h), (8, 4), rnd), tones[1:4], dither=40)
+    tones = ramp("#D9B56E", 6, spread=0.14)
+    img = Image.new("RGBA", (w, h), rgba(tones[3]))
     d = ImageDraw.Draw(img)
-    stain = threshold(fractal((w, h), (4, 3), rnd, 3), 214)
-    img.paste(Image.new("RGBA", (w, h), rgba("#8A6A40")), (0, 0), stain.point(lambda v: int(v * 0.2)))
+    for _ in range(900):
+        x, y = rnd.randrange(w), rnd.randrange(h)
+        d.point((x, y), fill=rgba(tones[rnd.choice([2, 2, 4])]))
+    for _ in range(40):
+        x, y = rnd.randrange(w), rnd.randrange(10, h - 46)
+        d.line((x, y, x + rnd.randint(-2, 2), y + rnd.randint(6, 22)), fill=rgba(tones[2]))
+    stain = threshold(fractal((w, h), (3, 2), rnd, 3), 200)
+    img.paste(Image.new("RGBA", (w, h), rgba("#8A6A40")), (0, 0), stain.point(lambda v: int(v * 0.09)))
     cor = ramp("#E8DCC0", 5)
     d.rectangle((0, 0, w, 8), fill=rgba(cor[3]))
     d.rectangle((0, 8, w, 10), fill=rgba(cor[0]))
