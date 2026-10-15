@@ -298,21 +298,19 @@ def pose(p):
 
     # Au nord : un rideau continu derrière (z −2), un rang devant à la lisière (z 5 à 5,6 à l'ouest de la trouée de
     # l'entrée, 3 à 3,9 à l'est, où la lisière est à z 4).
-    for k in range(9):
-        x = -4.0 + 12.5 * k
-        wall("WallNorthBack%d" % (k + 1), WALLS[(k + 1) % len(WALLS)], x, -2.0 - 0.3 * (k % 2), 1.0 if x > 56 else 0.0,
-             k % 2 == 1)
+    for k, x in enumerate((-8.0, 8.0, 24.0, 40.0, 56.0, 72.0, 88.0)):
+        wall("WallNorthBack%d" % (k + 1), WALLS[(k + 1) % len(WALLS)], x, -2.0, 1.0 if x > 51 else 0.0, k % 2 == 1)
     front = [(18.0, 5.2, 0.0), (29.0, 5.5, 0.0), (51.2, 3.0, 0.0), (63.7, 3.3, 1.0), (76.2, 3.6, 1.0), (88.7, 3.9, 1.0)]
     for k, (x, z, y) in enumerate(front):
         wall("WallNorth%d" % (k + 1), WALLS[k % len(WALLS)], x, z, y, k % 2 == 0)
     # À l'ouest : x −2 (leur collision s'arrête à x 6, la lisière), du nord au sud, chacun un peu devant le précédent.
-    west = [(-2.0, 12.0, 0.0), (-2.6, 23.4, 0.0), (-2.0, 34.8, 0.0), (-2.6, 46.2, 0.0), (-4.0, 57.0, 1.0)]
+    west = [(-2.0, 12.0, 0.0), (-2.0, 23.4, 0.0), (-2.0, 34.8, 0.0), (-2.0, 46.2, 0.0), (-4.0, 57.0, 1.0)]
     for k, (x, z, y) in enumerate(west):
-        wall("WallWest%d" % (k + 1), WALLS[(k + 2) % len(WALLS)], x, z, y, k % 2 == 1)
+        wall("WallWest%d" % (k + 1), WALLS[(k + 2) % len(WALLS)], x, z, y, False)
     # À l'est : x 84 au nord du passage de la rivière, x 88 au sud (le sentier de la montagne reste vu).
-    east = [(84.0, 14.0, 0.0), (84.0, 26.0, 0.0), (88.0, 41.0, 0.0), (88.0, 55.0, 0.0)]
+    east = [(84.0, 14.0, 0.0), (84.4, 26.0, 0.0), (88.0, 41.0, 0.0), (88.0, 55.0, 0.0)]
     for k, (x, z, y) in enumerate(east):
-        wall("WallEast%d" % (k + 1), WALLS[(k + 3) % len(WALLS)], x, z, y, k % 2 == 0)
+        wall("WallEast%d" % (k + 1), WALLS[(k + 3) % len(WALLS)], x, z, y, False)
     p.walls = walls
     p.walk_grid()
 
@@ -394,14 +392,17 @@ def pose(p):
 
     # === 3b. Les troncs des jointures : un grand tronc de premier plan couvre chaque bout de pan à découvert =============
     # Un bout est à découvert s'il est dans le champ de la caméra (x de −6,5 à 86,5 : 10 m de part et d'autre du point visé,
-    # 16 m en haut de l'écran) et qu'aucun pan plus proche de la caméra ne le recouvre (son corps, à 1,2 m des bords).
+    # 16 m en haut de l'écran) et qu'il ne touche pas le bout d'un autre pan du même rang (z et hauteur à 0,6 m près :
+    # deux pans bout à bout se continuent). Un grand décor (un tronc, un conifère, un chêne) est alors posé devant lui ;
+    # `exterior_maps.py check` (open_seams) juge de ce qui reste visible depuis la caméra du jeu.
     seams = 0
     for name, xc, z, y in walls:
         for side in (-1, 1):
             end = xc + 8.0 * side
             if not -6.5 < end < 86.5:
                 continue
-            if any(z2 > z + 0.05 and x2 - 7.3 + 1.2 < end < x2 + 7.3 - 1.2 for _n, x2, z2, _y in walls):
+            if any(n2 != name and abs(z2 - z) <= 0.6 and abs(y2 - y) <= 0.6 and abs(x2 - 8.0 * side - end) <= 0.3
+                   for n2, x2, z2, y2 in walls):
                 continue
             seams += 1
             inside = -0.35 * side
@@ -410,14 +411,20 @@ def pose(p):
                 place("Belt", ["fg_trunk_a", "fg_trunk_b"][seams % 2], end + inside, z + 0.7, y=y,
                       name="SeamTrunk%d" % seams, flip=seams % 3 == 0, check=False)
             else:
-                # À l'ouest et à l'est : un grand conifère (sa pointe se voit : un tronc coupé en l'air se verrait) et un feuillu
-                # qui l'épaule, sur la ligne de la lisière.
+                # À l'ouest et à l'est : un grand conifère (sa pointe se voit : un tronc coupé en l'air se verrait).
                 place("Belt", ["tree_old_pine", "pine_tall_b"][seams % 2], end + inside, z + 1.0, y=y,
                       name="SeamPine%d" % seams, flip=seams % 2 == 0)
-                place("Belt", ["oak_a", "beech_b", "oak_d", "beech_c"][seams % 4], end + 3.0 * inside, z + 2.4,
-                      y=y, name="SeamBroad%d" % seams, flip=seams % 2 == 1)
+            # Dans les deux cas un chêne couvre le bout, de son tronc au pied et de sa couronne plus haut.
+            place("Belt", "oak_a", end + 0.2 * inside, z + 1.4, y=y, name="SeamOak%d" % seams, flip=seams % 2 == 1)
+            place("Belt", "beech_a", end + 1.3 * side, z + 2.0, y=y, name="SeamBeech%d" % seams, flip=seams % 2 == 0)
+            if not (z < 8.0 or name.startswith("WallNorth")):
+                place("Belt", "oak_c", end + 2.6 * side, z + 1.0, y=y, name="SeamOakC%d" % seams, flip=seams % 2 == 1)
+                place("Belt", "pine_tall_b", end + 0.9 * side, z + 0.6, y=y, name="SeamPineB%d" % seams)
+            # Au pied du bout : un fourré juste devant (le pied se voit sous un chêne quand la caméra est de côté).
+            place("Belt", "thicket_a", end + 0.7 * side, z + 0.6, y=y, name="SeamFoot%d" % seams, flip=seams % 2 == 0,
+                  check=False)
             for k, (dx, scene) in enumerate(((-1.3, "bush_e"), (1.2, "fern_d"), (0.1, "thicket_b"))):
-                place("Belt", scene, end + dx, z + 1.5 + 0.3 * k, y=y, name="SeamBrush%d_%d" % (seams, k + 1),
+                place("Belt", scene, end + dx, z + 1.9 + 0.3 * k, y=y, name="SeamBrush%d_%d" % (seams, k + 1),
                       flip=k % 2 == 1, check=False)
     p.seam_trunks = seams
 

@@ -229,6 +229,7 @@ func test_no_forest_wall_ends_in_the_open() -> void:
 			image.begins_with("fg_trunk")
 			or image.begins_with("tree_old_pine")
 			or image.begins_with("pine_tall_b")
+			or image.begins_with("oak_a")
 		):
 			trunks.append(at)
 	assert_gte(walls.size(), 15, "trois chaînes de pans de forêt")
@@ -241,6 +242,16 @@ func test_no_forest_wall_ends_in_the_open() -> void:
 				continue
 			checked += 1
 			var covered := false
+			for other in walls:
+				if (
+					other["name"] != wall["name"]
+					and absf(float(other["z"]) - float(wall["z"])) <= 0.6
+					and (
+						absf(float(other["x"]) - side * float(other["half"]) - end) <= 0.3
+						or absf(float(other["x"]) + side * float(other["half"]) - end) <= 0.3
+					)
+				):
+					covered = true
 			for other in walls:
 				var reach: float = float(other["inner"])
 				if (
