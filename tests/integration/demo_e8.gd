@@ -1,6 +1,7 @@
 extends Node
-## (E8) Démo des jeux : la vraie partie (game.tscn) posée sur l'entrepôt par WorldManager.enter_map ;
-## le ballon au champ ou l'entraînement au bâton à la clairière (MiniGames, comme `?jeu=`).
+## (E8) Démo des jeux : la vraie partie (game.tscn) posée sur l'entrepôt par
+## WorldManager.enter_map ; le ballon au champ ou l'entraînement au bâton à la clairière
+## (MiniGames, comme `?jeu=`).
 ## Le jeu est avancé à la main jusqu'à un moment parlant (plus vite que le temps), puis il joue en
 ## temps réel pendant les captures.
 ##
@@ -143,15 +144,6 @@ func _stage_ball(forward: float) -> void:
 		LifeDirector._physics_process(DT)
 	if game != null:
 		print("E8 match : %s, score %s, %d membres" % [game.phase, game.score, game.members.size()])
-		var ball := game.ball
-		print(
-			(
-				"E8 ballon en %s, visible %s, enfants %s"
-				% [ball.global_position, ball.visible, ball.get_children()]
-			)
-		)
-		for child: Node in ball.get_node("Image").get_children():
-			print("   ", child.name, " ", child.get("visible"), " ", child.get("mesh"))
 
 
 func _stage_training(forward: float) -> void:

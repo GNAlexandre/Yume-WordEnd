@@ -1,9 +1,9 @@
 extends "res://tests/stubs/m2_game_test.gd"
-## (E8) Les jeux dans la vraie partie (main.tscn, menu, nouvelle partie, appuis réels) : le raccourci
-## ?jeu=ballon pose la partie sur l'entrepôt et lance le match au champ (le joueur y entre en marchant
-## vers le terrain, sa parade et ses coups sont de vrais appuis) ; ?jeu=baton lance l'entraînement à
-## la clairière (le bâton en main, la touche de charge lève la parade, aucun dégât) ; un jeu inconnu
-## est ignoré.
+## (E8) Les jeux dans la vraie partie (main.tscn, menu, nouvelle partie, appuis réels) : le
+## raccourci ?jeu=ballon pose la partie sur l'entrepôt et lance le match au champ (le joueur y entre
+## en marchant vers le terrain, ses coups sont de vrais appuis) ; ?jeu=baton lance l'entraînement
+## à la clairière (le bâton en main, la touche de charge lève la parade, aucun dégât) ; un jeu
+## inconnu est ignoré.
 
 const MAP_ID := &"entrepot"
 

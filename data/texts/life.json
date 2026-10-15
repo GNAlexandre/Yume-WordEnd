@@ -133,59 +133,59 @@
     },
     "ballon": {
       "kickoff": [
-        "Coup d’envoi !",
-        "On y va !"
+        "Coup d’envoi !",
+        "On y va !"
       ],
       "half_time": [
-        "Mi-temps ! Les meilleures buteuses restent.",
-        "Mi-temps ! Un peu d’eau, vite."
+        "Mi-temps ! Les meilleures buteuses restent.",
+        "Mi-temps ! Un peu d’eau, vite."
       ],
       "full_time": [
-        "Fin du match !",
-        "C’est fini, on rentre goûter !"
+        "Fin du match !",
+        "C’est fini, on rentre goûter !"
       ],
       "goal": [
-        "But !",
-        "Elle l’a mis !",
-        "Dans la cage !"
+        "But !",
+        "Elle l’a mis !",
+        "Dans la cage !"
       ],
       "save": [
-        "Arrêt !",
-        "Pas passé !",
-        "Je l’ai !"
+        "Arrêt !",
+        "Pas passé !",
+        "Je l’ai !"
       ],
       "fall": [
-        "Aïe !",
+        "Aïe !",
         "Pouce, j’ai glissé…",
-        "Ouf, ça va !"
+        "Ouf, ça va !"
       ],
       "lost": [
-        "Mon ballon !",
-        "Il est parti dans les ronces !",
-        "Je vais le chercher !"
+        "Mon ballon !",
+        "Il est parti dans les ronces !",
+        "Je vais le chercher !"
       ],
       "found": [
-        "Je l’ai !",
-        "Retrouvé !"
+        "Je l’ai !",
+        "Retrouvé !"
       ],
       "found_player": [
-        "Merci, {player} !",
-        "{player} a trouvé le ballon !"
+        "Merci, {player} !",
+        "{player} a trouvé le ballon !"
       ],
       "bench": [
-        "Allez !",
-        "Vas-y !",
-        "Tire !"
+        "Allez !",
+        "Vas-y !",
+        "Tire !"
       ],
       "sub": [
-        "À toi !",
-        "Je te laisse ma place !"
+        "À toi !",
+        "Je te laisse ma place !"
       ],
       "player_in_blanc": [
-        "{player} joue avec les blanches !"
+        "{player} joue avec les blanches !"
       ],
       "player_in_rouge": [
-        "{player} joue avec les rouges !"
+        "{player} joue avec les rouges !"
       ],
       "team_blanc": "Blanches",
       "team_rouge": "Rouges",
@@ -203,7 +203,7 @@
       ],
       "tired": [
         "Tes genoux tremblent. Tiens bon.",
-        "Le poids, Chtholly : entre tenir et pousser."
+        "Le poids, Chtholly : entre tenir et pousser."
       ],
       "success_a": [
         "Voilà. Tu y es."
@@ -212,14 +212,14 @@
         "Soixante secondes. Pas mal."
       ],
       "touched": [
-        "Touché ! Bien joué.",
-        "Ah ! Dans la garde. Bien."
+        "Touché ! Bien joué.",
+        "Ah ! Dans la garde. Bien."
       ],
       "fail": [
         "Assez pour aujourd’hui. Reprends ton souffle."
       ],
       "open": [
-        "Ah !",
+        "Ah !",
         "Hm."
       ],
       "hud_streak": "Enchaînement",
