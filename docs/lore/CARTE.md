@@ -97,6 +97,11 @@ ce qui se trouve au nord de lui sur environ **1,6 × (h − 0,5) m** (1 / tan 32
   **premier plan** (`pp`, `DecorPanel.foreground`), qui s'effacent autour du joueur ;
 - derrière un bâtiment (au nord), rien où l'on marche : bois, fourrés, tas de bûches, que la
   caméra ne voit pas ;
+- (QC-S) un pan **à raccord** (manifeste `wrap: x` : `forest_wall_*`, `treeline_*`) est peint pour
+  se continuer bord à bord : son bout est un arbre coupé net sur 6 m. Il ne finit jamais libre
+  dans le champ : bout contre bout avec un autre pan du même rang, prolongé au-delà du bord de la
+  carte, ou caché par un grand arbre posé devant lui (un chêne `oak_a` : tronc et couronne pleins
+  du pied à 6,4 m). `tools/exterior_maps.py check` le vérifie (docs/QUALITE.md, QC-33) ;
 - dedans, le mur sud de chaque pièce est coupé (`docs/REFONTE.md`, 7.1 et 8.1). Pour une carte à
   plusieurs pièces, ce document recommande à E3 : **tous les murs est-ouest coupés au ras du
   sol** (`wallcut_*`), sauf le mur nord du bâtiment, haut ; les murs nord-sud entiers. Ce qui doit
@@ -1431,7 +1436,11 @@ Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_
   `bog_pool_a`, nénuphars `lily_pads` ; la racine qui fait marche `path_root_step`. (QC) La voûte de
   feuillage `fg_canopy_a`, posée en l'air au-dessus du sentier, se lisait comme une masse sombre
   au milieu de l'écran : retirée, elle attend le premier plan accroché à l'écran (E10 ;
-  docs/QUALITE.md, QC-12).
+  docs/QUALITE.md, QC-12). (QC-S) Aux deux coins du marais, un grand chêne (`oak_a`, x 15,7 et
+  57,7) se dresse devant le bout des pans de forêt de l'ouest et de l'est, qui sans lui se voyait
+  comme une bande de feuillage rouge coupée net (QC-33) ; les deux saules s'écartent vers le marais
+  (x 20,6 et 54,4) ; les pans de la lisière nord et les rideaux d'arbres au-delà vont bout à bout
+  et débordent de la carte.
 - **Kits** : bord de chemin (`path_edge_ferns` hors de la bande libre, `fern_*`, `grass_clump_*`,
   `stepping_stones`) ; marais (roseaux, massettes `cattails`, brume `mist_patch`, libellules) ;
   lisière (`forest_wall_*` au nord) ; sous-bois sud (`fg_trunk_a/b`, `fg_bush`, `fg_fern`, premier

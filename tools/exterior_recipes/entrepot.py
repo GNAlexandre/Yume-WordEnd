@@ -135,6 +135,12 @@ def pose(p):
                                     (56.0, "forest_wall_c"), (72.0, "forest_wall_a"), (88.0, "forest_wall_b"))):
         place("Lisiere", scene, x, 3.7, y=lisiere_y, name="ForestWall%d" % (k + 1), flip=k % 2 == 1, check=False)
     place("Lisiere", "treeline_autumn_a_village", 14.0, -5.0, y=lisiere_y, name="TreelineBeyond", check=False)
+    # (QC-S) Un bout libre de pan à raccord se voit comme une bande coupée net (docs/QUALITE.md, QC-33) : un
+    # pan de plus au-delà du bord ouest ; aux deux bords de la trouée (x 12 et 16), un chêne devant le bout
+    # du pan (son tronc le couvre, sa couronne fait voûte au-dessus du chemin de la colline).
+    place("Lisiere", "forest_wall_b", -12.0, 3.7, y=lisiere_y, name="ForestWall0", flip=True, check=False)
+    place("Lisiere", "oak_a", 11.7, 4.3, y=lisiere_y, name="GateOakWest")
+    place("Lisiere", "oak_a", 16.3, 4.3, y=lisiere_y, name="GateOakEast", flip=True)
 
     walk_grid()
 
