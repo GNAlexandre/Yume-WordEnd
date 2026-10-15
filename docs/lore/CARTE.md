@@ -2180,23 +2180,50 @@ Légende des lettres : `A` heather ; `B` tall_grass ; `C` wildflowers_a ; `D` bo
 - **Taille** 40 × 40 m ; **bornes** `Rect2(10, 6, 20, 26)` (la caméra monte jusqu'au bord pour la vue au
   nord, z = 6, et descend jusqu'au pied du chemin, z = 32, comme la règle P − 8 ; (C3) le plan disait
   `Rect2(10, 6, 20, 23)`, qui arrêtait le point visé à z = 29 et sortait le joueur de l'écran sur le bas
-  du chemin). La colline est un cap : elle monte du
-  sud (entrée depuis l'entrepôt) en trois terrasses (+1, +2, +3, talus `cliff/wall_earth_1m` et
-  `cliff/step_rock` face au sud) jusqu'au sommet, qui finit au nord **sur le vide**.
-- **Le sommet** : la place `cercle_talismans` (14 → 26, 6 → 18), 12 × 12 m d'herbe rase ; le petit
-  cristal au centre (`talismans_centre`, 20 ; 12) ; les talismans (`anim/talisman_float`) sur un
-  cercle de 3,5 m ; le point `dos_a_dos` (Willem et Chtholly assis dos à dos) ; `vue_nord` au bord.
+  du chemin).
+- **Le relief** ((C3b) : la reprise visuelle ; l'orchestrateur jugeait les terrasses « des plaques de carton
+  empilées »). La colline est un cap : elle monte du sud (entrée depuis l'entrepôt) en trois paliers aux
+  **contours irréguliers**, dessinés en tronçons de 3 à 6 m décalés d'un ou deux mètres (la grille du sol est
+  d'un mètre, une diagonale ferait une scie de marches d'une case) : le pied à 0, la terrasse basse à
+  **+1 m**, la terrasse haute à **+2,5 m** (falaise de 1,5 m) et le sommet à **+3,5 m** (falaise de 1 m) ;
+  à l'angle sud-est de la terrasse haute, un replat de +1,5 m défait la pente en marches de 0,5 m (talus de
+  terre) ; un replat de 0,5 m au pied, de chaque côté de l'entrée. Les `palier` du plan en donnent l'enveloppe,
+  les contours exacts sont dans `tools/exterior_recipes/colline_relief.py`. Les faces (visibles, tournées vers le
+  sud) sont en talus de terre et en roche par pans de longueurs différentes, jamais un seul style sur une
+  longue ligne, habillées de lierre, de racines, de buissons et de fougères. **Trois rampes larges** (cinq
+  cases de large, 11 à 14° de pente : 5 × 4, 5 × 6 et 5 × 5 cases) ; leurs joues (les triangles de terre de
+  chaque côté, vus de biais, que le moteur dessine sans qu'on puisse les cacher) sont couvertes d'une haie de buissons. Le chemin
+  ne franchit aucune marche, même de 0,5 m : seules les rampes montent.
+- **Le sommet** : la place `cercle_talismans` (14 → 26, 6 → 18), 12 × 12 m d'herbe rase, plate à 3,5 m, dont
+  **rien ne se dresse** ; le petit cristal au centre (`talismans_centre`, 20 ; 12) ; les talismans
+  (`anim/talisman_float`) sur un cercle de 3,5 m ; le point `dos_a_dos` (Willem et Chtholly assis dos à dos) ;
+  `vue_nord` au bord. Le cercle est dessiné **dans le sol** : un anneau de dalles de roche à bord rompu (rayon
+  6,15 m), de l'herbe haute, des bruyères et des fleurs en bouquets (décalques `flowers_patch_*`) tout autour.
 - **Grands décors** : l'arbre noueux solitaire `lone_tree` (livré) en (30 ; 9) ; un rocher
-  `boulder_a` (où l'on s'assoit, `rocher`) ; herbes hautes, bruyère, fleurs d'automne. Pas de
-  belvédère ni de myosotis : c'étaient des inventions de l'ancienne bible.
-- **Kits** : herbe (`tall_grass`, `wind_grass_a/b`, `heather`, `wildflowers_*`), rochers
-  (`rock_small_*`, `mossy_rock`), lisières est et ouest (`forest_wall_*`), bord (`edge_rocks_*`).
+  `boulder_a` (où l'on s'assoit, `rocher`) ; deux pierres sculptées par le vent (`wind_rock_a`, `wind_rock_b`)
+  aux épaules du cap, un cairn au bord ; herbes hautes, bruyère, fleurs d'automne **en bouquets** (un bouquet,
+  c'est 3 à 4 décors d'un même thème : bruyère, prairie, herbes, pierres, buissons, fougères), des pierres
+  plates (`pebbles_*`) sur le chemin. Pas de belvédère ni de myosotis : c'étaient des inventions de l'ancienne
+  bible.
+- **Kits** : herbe (`tall_grass`, `wind_grass_a/b`, `grass_clump_*`, `heather`, `wildflowers_*`), buissons
+  et fougères, rochers (`rock_small_*`, `rock_pile`, `mossy_rock`), talus (`ivy_wall_b`, `edge_roots`,
+  `grass_edge_*`), lisières est et ouest (`forest_wall_*`, dès z = 9 : au nord, la côte recule), bord
+  (`edge_rocks_*`, `edge_grass`).
+- **Le vide au nord** ((C3b) : « le vide ne se lit pas »). La caméra regarde le nord à 32° : **elle ne voit jamais
+  la falaise du cap** (elle est au nord de la terre, face à l'ombre) ; le vide se lit donc par la **côte** (une
+  ligne irrégulière : le cap avance au centre, z ≈ 2,5, et recule aux épaules, z ≈ 8), la **mer de nuages** (une
+  nappe 60 m sous le sol, qu'on voit de 120 à 250 m au nord), et, dans le groupe `Sky` de la carte, des **rochers
+  qui flottent** à 12 → 76 m, des **îles lointaines** (`distant_island_*`, 64 × 32 m à l'échelle 1, posées ici à
+  l'échelle 0,4 → 0,8, la base dans les nuages), des cumulus et des bancs de brume sur la nappe, et
+  l'horizon (`horizon_islands`). Des piliers de roche qui sortent de la mer de nuages, dont la face tournée
+  vers le sud serait la vraie falaise, sont commandés au cahier n° 5 (R0.12) ; une caméra qui s'incline au bord du
+  vide est demandée dans docs/CONTRACT_REQUESTS.md.
 - **Lumière** : de nuit (préréglage `nuit_claire` ; (C3) celui d'E9 qui est une nuit claire s'appelle `nuit`, c'est
   le `light_preset` de la carte) ; la lueur du cristal et des talismans (la scène de l'acte 1 : la carte ne
   porte aucune lumière, les deux lignes `lumiere` du plan sont des repères). **Vue
   au nord** : la mer de nuages argentée sous les étoiles (`cloud_sea_night`) ; pour la scène, la
-  caméra lève les yeux vers le ciel (`sky_night`). **Densité** : 40 à 70 éléments par écran (une
-  colline nue, voulue) ; grillons et chouette la nuit.
+  caméra lève les yeux vers le ciel (`sky_night`). **Densité** : 40 à 70 éléments par écran, visée haute
+  (45 à 67 aujourd'hui) ; grillons et chouette la nuit.
 
 ```plan
 carte colline 40 40 dehors

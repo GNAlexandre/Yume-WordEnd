@@ -67,7 +67,7 @@ profonde, la faune, le centre-ville et la montagne.
 
 | Lot | Section | Contenu | Prio 1 | Prio 2 | Prio 3 |
 | --- | --- | --- | --- | --- | --- |
-| **R0** | 2 bis | **Corrections et vues manquantes** : tables mal faites, canapé et meubles sans vue de flanc ou de dos, lits par le pied, bancs | 28 images | 19 images | 7 images |
+| **R0** | 2 bis | **Corrections et vues manquantes** : tables mal faites, canapé et meubles sans vue de flanc ou de dos, lits par le pied, bancs ; (C3b) piliers de la mer de nuages et dalles du sentier de la colline | 28 images | 23 images | 8 images |
 | **R1** | 3 | **L'entrepôt complet** : façades et flancs, toit, pièces, dehors, remplaçants | 12 images | 19 images | 8 images |
 | **R2** | 4 | **Les personnages de l'acte 1** : tenues, gestes, scènes, fées, bâton | 10 planches | 2 images, 23 planches | 2 planches |
 | **R3** | 5 | **Le chemin du port** : sentier et marais, village, café, maison Limashenka, port, paliers | 19 images | 30 images | 26 images |
@@ -593,6 +593,29 @@ n'en garde que quatre dans la cour et trois au champ en attendant.
 
 **À ne pas faire** : six empreintes identiques en file, des bouts nets, un contraste plus fort que les
 cailloux du sol.
+
+### R0.12 La colline des étoiles : le vide et le sentier (reprise visuelle C3b, 15 octobre 2026)
+
+**Constat** (carte `colline`, vues `bord` et `large` de `tests/integration/demo_c3.gd` ; captures `build/c3b/avant/` et
+`build/c3b/apres/`). La caméra regarde le nord à 32° : au sommet, **elle ne voit jamais la falaise du cap** (elle est au
+nord de la terre, face à l'ombre). Le vide se lit par la côte, la mer de nuages, des rochers qui flottent et des îles
+lointaines (images déjà livrées, posées par la recette). Ce qui manque pour **sentir la falaise** : des **piliers de
+roche qui sortent de la mer de nuages**, à 20 ou 40 m au nord du bord, dont la face tournée vers le sud, elle, se voit : on
+y lit la hauteur du cap et la profondeur de la mer de nuages. Et le sentier de la colline n'a que des cailloux
+épars : il lui faut des **dalles plates claires** (les `ring_stone_flat_*` livrées sont des ovales sombres : posées sur
+l'herbe, elles se lisent comme des trous ; la colline les a retirées).
+
+| Prio | Fichier | Taille (px) | Genre, ancre | Consigne à coller |
+| --- | --- | --- | --- | --- |
+| 2 | `assets/hd2d/sky/sea_stack_a.png` | 288 × 1152 (6 × 24 m à 48 px/m) | pilier dans la mer de nuages, **alpha doux** dans les 4 derniers mètres du bas, ancre milieu du bord bas | pilier de roche claire (#C2B49F) en strates horizontales et fissures verticales, vu de face (la face tournée vers le sud, lumière de la gauche), haut de 24 m, large de 6 m à la base et de 4,5 m au milieu, une couronne d'herbe d'automne (#A8B040) et de bruyère au sommet avec un petit arbre noueux ; la base se dissout dans une brume rose pâle et gris lavande (alpha doux), aucun sol sous le pilier |
+| 2 | `assets/hd2d/sky/sea_stack_b.png` | 384 × 1344 (8 × 28 m à 48 px/m) | idem | pilier plus massif, deux ressauts (une corniche à mi-hauteur, des racines pendantes), mousse dans les fissures, herbe haute au sommet ; même lumière, même brume au pied |
+| 3 | `assets/hd2d/sky/sea_stack_c.png` | 192 × 768 (4 × 16 m à 48 px/m) | idem | aiguille de roche étroite et penchée, quelques touffes d'herbe, une arche naturelle à mi-hauteur ; même brume au pied |
+| 2 | `assets/hd2d/decals/path_flagstones_a.png` | 192 × 192 (2 × 2 m) | décalque de sol, **alpha doux** sur le bord, centre = point posé | quatre dalles plates de calcaire clair (#C8BBA6), vues de dessus, de 40 à 70 cm, aux bords arrondis, jointoyées d'herbe courte et de mousse, un peu de terre battue (#C89A5A) autour ; contraste modéré avec la terre du sentier (plus clair, pas blanc), aucune ombre portée, **aucun contour noir** |
+| 2 | `assets/hd2d/decals/path_flagstones_b.png` | 144 × 144 (1,5 × 1,5 m) | idem | deux dalles et un caillou, même matière, même terre autour |
+
+**À ne pas faire** : un pilier posé sur un sol (il flotte dans la brume : sa base est invisible) ; une silhouette plate
+sans strates ; des dalles en ovales sombres ou cernées de noir comme `ring_stone_flat_*` ; des dalles régulières
+alignées comme un dallage (le sentier est de terre, les dalles y sont posées ça et là).
 
 ## 3. Lot R1 : l'entrepôt complet
 

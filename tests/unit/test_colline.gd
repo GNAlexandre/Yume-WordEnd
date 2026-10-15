@@ -104,7 +104,7 @@ func test_the_relief_follows_the_plan() -> void:
 	assert_almost_eq(_ground.height_at(20.0, 23.5), 2.5, 0.05, "la terrasse haute, +2,5 m")
 	assert_almost_eq(_ground.height_at(20.0, 12.0), 3.5, 0.05, "le sommet, +3,5 m")
 	assert_almost_eq(_ground.height_at(26.0, 10.0), 3.5, 0.05, "le sommet, l'est du cercle")
-	# Les trois rampes du plan : (x0, z0, x1, z1, bas, haut). Larges (5 cases) et longues : 11 à 14° de pente.
+	# Les trois rampes du plan : (x0, z0, x1, z1, bas, haut), larges (5 cases) et longues (11 à 14°).
 	for rect: Array in [
 		[10.0, 30.0, 15.0, 34.0, 0.0, 1.0],
 		[23.0, 24.0, 28.0, 30.0, 1.0, 2.5],
@@ -114,7 +114,11 @@ func test_the_relief_follows_the_plan() -> void:
 		var depth: float = rect[3] - rect[1]
 		assert_gte(rect[2] - rect[0], 5.0, "une rampe large %s" % [rect.slice(0, 4)])
 		var rise: float = rect[5] - rect[4]
-		assert_lt(rad_to_deg(atan(rise / depth)), 15.0, "une vraie pente, pas un coin %s" % [rect.slice(0, 4)])
+		assert_lt(
+			rad_to_deg(atan(rise / depth)),
+			15.0,
+			"une vraie pente, pas un coin %s" % [rect.slice(0, 4)]
+		)
 		var middle := _ground.height_at(cx, (rect[1] + rect[3]) / 2.0)
 		assert_between(middle, rect[4] + 0.1, rect[5] - 0.1, "à mi-rampe %s" % [rect.slice(0, 4)])
 		var foot := _ground.height_at(cx, rect[3] + 0.4)
@@ -152,8 +156,13 @@ func test_the_terraces_are_irregular_not_stacked_plates() -> void:
 				longest_straight = maxi(longest_straight, run)
 			else:
 				run = 0
-	assert_lte(longest_straight, 12, "aucune falaise rectiligne de plus de 12 m (%d)" % longest_straight)
-	assert_true(drops.has(0.5) and drops.has(1.0) and drops.has(1.5), "des marches de 0,5, 1 et 1,5 m : %s" % [drops.keys()])
+	assert_lte(
+		longest_straight, 12, "aucune falaise rectiligne de plus de 12 m (%d)" % longest_straight
+	)
+	assert_true(
+		drops.has(0.5) and drops.has(1.0) and drops.has(1.5),
+		"des marches de 0,5, 1 et 1,5 m : %s" % [drops.keys()]
+	)
 
 
 func _level_count() -> int:

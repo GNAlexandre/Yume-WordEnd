@@ -16,17 +16,22 @@ import exterior_ground
 
 # Paliers de 0,5 m : +1 m, +2,5 m, +3,5 m.
 LEVEL_LOW, LEVEL_MID, LEVEL_HIGH = 2, 5, 7
-# Contours (x, z) ; le nord est prolongé au-delà de la côte (le vide les recoupe).
-LOW_TERRACE = [(6.0, 16.0), (33.0, 16.0), (35.8, 23), (37.2, 28.5), (34, 32.4), (30.5, 33.6), (27, 31.8),
-               (22.5, 33.2), (18, 32.2), (14, 33.8), (9.5, 32.0), (6.5, 33.4), (3.6, 31.0), (3.1, 25), (5.0, 19.5)]
-MID_TERRACE = [(3.8, -3), (36.6, -3), (36.8, 8), (36.6, 13.5), (36.8, 19), (36.4, 24.6), (31.6, 27.4), (28.4, 25.8),
-               (24.6, 27.6), (20.8, 26.0), (17.0, 28.0), (13.0, 26.2), (9.2, 28.0), (6.4, 25.4), (3.8, 19.5),
-               (3.6, 13), (3.8, 7)]
-SUMMIT = [(8.6, -3), (30.8, -3), (31.6, 6), (31.0, 12), (31.6, 16.5), (30.0, 19.8), (27.6, 20.8), (24.2, 19.8),
-          (20.2, 21.6), (16.6, 20.2), (12.4, 21.8), (9.2, 19.6), (7.8, 15.8), (7.6, 11), (8.2, 6)]
-# Marches de 0,5 m de la pente ouest et est (talus de terre) : de la terrasse basse à la haute.
-STEPS_WEST = [([(5.6, 19), (10.0, 20.5), (12.8, 24.0), (12.6, 26.6), (9.2, 27.6), (5.6, 27.8), (4.0, 30.4), (4.2, 22)], 3)]
-STEPS_EAST = [([(33.5, 21), (30.5, 23.5), (29.2, 29.0), (33.2, 30.8), (36.4, 29.5), (36.4, 22)], 3)]
+# Contours (x, z) ; le nord est prolongé au-delà de la côte (le vide les recoupe). Des tronçons parallèles aux axes
+# (la grille est d'un mètre : une diagonale ferait une scie de marches d'une case), de 3 à 6 m, décalés d'un
+# mètre ou deux d'un tronçon à l'autre : avancées et retraits, jamais une longue ligne droite.
+LOW_TERRACE = [(6.0, 16.0), (33.0, 16.0), (33.0, 23.0), (36.8, 23.0), (36.8, 33.2), (31.2, 33.2), (31.2, 34.6),
+               (27.0, 34.6), (27.0, 32.6), (21.2, 32.6), (21.2, 34.2), (16.4, 34.2), (16.4, 32.4), (9.0, 32.4),
+               (9.0, 33.8), (5.2, 33.8), (5.2, 31.6), (3.4, 31.6), (3.4, 25.0), (6.0, 25.0)]
+MID_TERRACE = [(3.8, -3), (36.6, -3), (36.6, 24.6), (33.0, 24.6), (33.0, 27.4), (29.4, 27.4), (29.4, 25.6),
+               (22.6, 25.6), (22.6, 27.8), (17.0, 27.8), (17.0, 26.0), (13.2, 26.0), (13.2, 28.0), (9.2, 28.0),
+               (9.2, 25.4), (3.8, 25.4)]
+SUMMIT = [(8.6, -3), (31.6, -3), (31.6, 9.0), (30.6, 9.0), (30.6, 14.0), (32.4, 14.0), (32.4, 19.6), (27.4, 19.6),
+          (27.4, 21.0), (23.0, 21.0), (23.0, 20.2), (18.8, 20.2), (18.8, 21.8), (12.6, 21.8), (12.6, 20.4),
+          (9.6, 20.4), (9.6, 18.2), (7.8, 18.2), (7.8, 14.0), (7.4, 14.0), (7.4, 9.0), (8.6, 9.0)]
+# Marches de 0,5 m (talus de terre) : un replat de +1,5 m autour de l'angle sud-est de la terrasse haute, entre elle
+# et la terrasse basse ; à l'ouest, la falaise de 1,5 m tombe d'un coup.
+STEPS_WEST = [([(3.0, 25.4), (8.8, 25.4), (8.8, 27.6), (3.0, 27.6)], 3)]
+STEPS_EAST = [([(29.0, 24.0), (36.8, 24.0), (36.8, 29.8), (29.0, 29.8)], 3)]
 # Les rampes : ((x, z, largeur, profondeur) en cases, palier du bas, palier du haut). Montée vers le nord.
 # Larges et longues (11 à 14° de pente) : le plan d'origine les faisait de 4 sur 3 ou 4 cases.
 RAMPS = [((10, 30, 5, 4), 0, LEVEL_LOW), ((23, 24, 5, 6), LEVEL_LOW, LEVEL_MID), ((14, 19, 5, 5), LEVEL_MID, LEVEL_HIGH)]
@@ -55,7 +60,7 @@ def ground_plan(m):
         s["noise"] = 0.0
     steps = []
 
-    def level(poly, lv, seed, noise=0.55):
+    def level(poly, lv, seed, noise=0.4):
         steps.append({"op": "level", "level": lv, "shape": {"poly": [list(q) for q in poly], "noise": noise,
                                                             "noise_scale": 3.4, "seed": seed}})
 
@@ -71,7 +76,7 @@ def ground_plan(m):
     for poly, lv in STEPS_EAST:
         level(poly, lv, 40 + lv)
     level(MID_TERRACE, LEVEL_MID, 23)
-    level(SUMMIT, LEVEL_HIGH, 24, noise=0.6)
+    level(SUMMIT, LEVEL_HIGH, 24, noise=0.4)
     # Un replat de 0,5 m au pied, de chaque côté de l'entrée (le sol de la forêt n'est pas plat).
     level([(0, 29), (8.5, 32.6), (9.4, 37.4), (4.6, 39), (0, 37)], 1, 51, noise=0.5)
     level([(40, 30), (31.8, 33.6), (30.4, 38.2), (35.2, 39.4), (40, 37.6)], 1, 52, noise=0.5)

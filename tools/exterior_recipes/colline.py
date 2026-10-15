@@ -246,11 +246,10 @@ def pose(p):
 
     # Des pans de forêt de 16 m dressés au-delà du bord praticable (x < 4 et x > 36), du nord au sud : le
     # joueur n'y va pas, ils ne le cachent pas (leur emprise reste hors des cases où l'on marche).
-    for k, (x, z, scene) in enumerate(((-4.5, 8.0, "forest_wall_c"), (-4.5, 20.0, "forest_wall_a"),
-                                       (-4.5, 32.0, "forest_wall_d"))):
+    # (C3b) Les pans commencent à z = 9 : au nord, la côte recule aux épaules et le pan flotterait au-dessus du vide.
+    for k, (x, z, scene) in enumerate(((-4.5, 17.0, "forest_wall_c"), (-4.5, 33.0, "forest_wall_d"))):
         place("Lisiere", scene, x, z, y=0.0, name="ForestWallWest%d" % (k + 1), flip=k % 2 == 1, check=False)
-    for k, (x, z, scene) in enumerate(((44.5, 8.0, "forest_wall_a"), (44.5, 20.0, "forest_wall_d"),
-                                       (44.5, 32.0, "forest_wall_c"))):
+    for k, (x, z, scene) in enumerate(((44.5, 17.0, "forest_wall_a"), (44.5, 33.0, "forest_wall_c"))):
         place("Lisiere", scene, x, z, y=0.0, name="ForestWallEast%d" % (k + 1), flip=k % 2 == 0, check=False)
 
     # Un rang d'arbres devant les pans, sur le bord (x 0 → 3,4 ; x 36,6 → 40), sur la terre seulement.
@@ -354,14 +353,15 @@ def pose(p):
                       flip=rng.random() < 0.5, check=False)
                 taluses += 1
             # Pied : fougères, pierres.
-            if k % 4 == 0 and usable(x + 0.6, j + 0.6, coast=0.3, way=0.5):
+            if rng.random() < 0.4 and usable(x + 0.6, j + 0.6, coast=0.3, way=0.5):
                 FOOT_SCENE = rng.choice(FOOT[key])
                 place("Talus", FOOT_SCENE, x + 0.6 + rng.uniform(-0.3, 0.3), j + 0.6, y=foot_y,
                       scale=fit(FOOT_SCENE, round(rng.uniform(0.9, 1.15), 2)), flip=rng.random() < 0.5, check=False)
                 taluses += 1
             # Au flanc : des racines qui pendent d'un rocher (falaises d'un mètre au moins).
-            if drop >= 2 and k % 4 == 1 and usable(x, j + 0.2, coast=0.3, way=0.9):
-                place("Talus", "edge_roots", x, j + 0.07, y=top_y + 0.12 - 2.0, scale=1.0, flip=rng.random() < 0.5,
+            if drop >= 2 and rng.random() < 0.6 and usable(x, j + 0.2, coast=0.3, way=0.9):
+                hang = "ivy_wall_b" if rng.random() < 0.55 else "edge_roots"
+                place("Talus", hang, x, j + 0.07, y=top_y + 0.12 - 2.0, scale=1.0, flip=rng.random() < 0.5,
                       check=False)
                 taluses += 1
             x += rng.uniform(4.4, 6.2)
@@ -370,7 +370,7 @@ def pose(p):
     # fougères qui s'abaisse avec la joue, du haut vers le bas.
     for (rx, rz, rw, rd), _low, _high in relief.RAMPS:
         for side, dx in ((0, -0.5), (1, rw + 0.5)):
-            for frac, scene, scale in ((0.18, "bush_c", 1.25), (0.62, "fern_a", 1.05)):
+            for frac, scene, scale in ((0.2, "bush_c", 1.25),):
                 scene = rng.choice([scene, scene.replace("bush_c", "bush_d")]) if scene.startswith("bush") else scene
                 x, z = rx + dx + rng.uniform(-0.15, 0.15), rz + rd * frac
                 if land(x, z) and path_distance(x, z) > 0.6:
@@ -404,7 +404,7 @@ def pose(p):
         ("Flora", 27.6, 31.6, 3, 1.5, "bruyere"),
         # Le pied : fougères et buissons, de plus en plus fermés vers le sud.
         ("Woods", 8.0, 35.6, 4, 2.2, "fougeres"), ("Woods", 31.0, 35.6, 4, 2.2, "fougeres"),
-        ("Woods", 5.2, 33.0, 3, 1.4, "buissons"), ("Woods", 34.8, 33.2, 3, 1.4, "buissons"),
+        ("Woods", 34.8, 33.2, 3, 1.4, "buissons"),
     ]
     for group, sx, sz, n, radius, theme in stations:
         cluster(group, sx, sz, n, radius, theme)
@@ -493,7 +493,7 @@ def pose(p):
     rng = sect("fond")
 
     backdrop = [(-5.0, z + rng.uniform(-1.0, 1.0)) for z in (12.0, 19.0, 26.0, 33.0, 40.0)]
-    backdrop += [(45.0, z + rng.uniform(-1.0, 1.0)) for z in (6.0, 13.0, 20.0, 27.0, 34.0, 41.0)]
+    backdrop += [(45.0, z + rng.uniform(-1.0, 1.0)) for z in (12.0, 18.0, 24.0, 30.0, 36.0, 41.0)]
     for k, (x, z) in enumerate(backdrop):
         scene = (TREES_DARK + TREES_RUST)[k % 12]
         place("Backdrop", scene, x, z, y=0.0, name="Backdrop%d" % (k + 1), flip=k % 2 == 1, check=False)
