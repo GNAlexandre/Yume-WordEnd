@@ -193,8 +193,9 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/props/marsh_snag.png` — 192 × 192 px.
 - `assets/hd2d/props/thicket_c.png` — 288 × 173 px.
 
-## Île 68 — R2 priorité 2 : pyjamas (15 octobre 2026)
-
-Généré avec ChatGPT le 15 octobre 2026, cahier n° 5 (`docs/ASSETS_HD2D_ILE68.md`), lot R2, section 4.6. Neuf PNG et neuf JSON : `almita/almita_pajamas` (91 px debout), `ithea/ithea_pajamas` (139 px), `nephren/nephren_pajamas` (125 px), chacun en profil droit, face et dos ; 189 poses. Repos, marche, dialogue, assise, sommeil et toilette du matin ; course et chute pour Almita. Ithea suit les planches officielles de l’anime, cheveux orange courts à la nuque conformément à la correction de l’utilisateur.
-
-Références : trois vues existantes de chaque personnage, Chtholly en pyjama pour le rendu, et planches officielles des ZIP fournis par l’utilisateur (pages 21, 27 et 64). Recalage au plus proche voisin, alpha net, montage local autorisé pour immobiliser les pieds et fermer la bouche du dialogue 0 ; originaux conservés séparément. Les planches restent à enregistrer et placer dans le jeu. Aucun ancien PNG/JSON ni dessin anime modifié.
+| Fichier(s) | Auteur / source | URL | Licence | Ajouté par |
+| --- | --- | --- | --- | --- |
+| `assets/fonts/Nunito.ttf` (texte de l'interface ; police variable, sous-ensemble latin par fontTools, `assets/fonts/OFL-Nunito.txt`) | Nunito, The Nunito Project Authors (Vernon Adams, Cyreal, Jacques Le Bailly) | https://github.com/googlefonts/nunito | SIL Open Font License 1.1 | U1 |
+| `assets/fonts/CormorantGaramond.ttf`, `assets/fonts/CormorantGaramond-Italic.ttf` (noms, titres, jour du menu de pause ; polices variables, sous-ensemble latin, `assets/fonts/OFL-CormorantGaramond.txt`) | Cormorant Garamond, The Cormorant Project Authors (Christian Thalmann, Catharsis Fonts) | https://github.com/CatharsisFonts/Cormorant | SIL Open Font License 1.1 | U1 |
+| `assets/hd2d/fx/sign_talk.png`, `sign_examine.png`, `sign_take.png`, `sign_enter.png` (signes d'interaction, remplaçants commandés au cahier n° 5, R0.13) | généré par `tools/hd2d_assets.py gen` (recettes `tools/hd2d_sky.py`) | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |
+| `assets/ui/heart_full.png`, `assets/ui/heart_empty.png` (cœurs « Nuit douce », redessinés) | généré par `tools/gen_ui_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |

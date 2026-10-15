@@ -1,0 +1,45 @@
+{
+  "_comment": "ACTE1.md 1.2 : sous le porche, la nuit du grand vent.",
+  "id": "j1_2_lumiere",
+  "start": "porche",
+  "nodes": {
+    "porche": {
+      "speaker_id": "nygglatho",
+      "text": "Ah, te voilà. Le nouveau responsable arrive cette nuit, tu le savais ? Je me demande s'il sera appétissant.",
+      "next": "porche_2"
+    },
+    "porche_2": {
+      "speaker_id": "nygglatho",
+      "text": "Seulement voilà : le lit de Pannibal est vide. Et son épée de bois a disparu avec elle.",
+      "next": "porche_3"
+    },
+    "porche_3": {
+      "speaker_id": "nygglatho",
+      "text": "Ramène-la-moi, veux-tu ? Sinon c'est elle que je mangerai, pour la peine.",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker_id": "nygglatho",
+      "text": "Je te laisse y aller avec ta petite lumière ?",
+      "choices": [
+        {
+          "text": "J'y vais.",
+          "next": "j_y_vais"
+        },
+        {
+          "text": "Encore elle ?",
+          "next": "encore"
+        }
+      ]
+    },
+    "j_y_vais": {
+      "speaker": "",
+      "text": "Une petite lumière naît au creux de ta main. Elle éclaire le chemin, à quelques pas."
+    },
+    "encore": {
+      "speaker_id": "nygglatho",
+      "text": "Encore elle, oui. Elle a de l'énergie à revendre, cette enfant.",
+      "next": "j_y_vais"
+    }
+  }
+}

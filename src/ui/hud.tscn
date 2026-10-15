@@ -7,6 +7,10 @@
 [ext_resource type="PackedScene" path="res://src/ui/pause_menu.tscn" id="5_pause"]
 [ext_resource type="PackedScene" path="res://src/ui/journal.tscn" id="6_journal"]
 [ext_resource type="Script" path="res://src/ui/hud_journal.gd" id="7_hud_journal"]
+[ext_resource type="PackedScene" path="res://src/ui/story_overlay.tscn" id="8_story_overlay"]
+[ext_resource type="PackedScene" path="res://src/ui/story_hint.tscn" id="9_story_hint"]
+[ext_resource type="PackedScene" path="res://src/ui/calendar.tscn" id="10_calendar"]
+[ext_resource type="Script" path="res://src/ui/interact_signs.gd" id="8_signs"]
 
 [sub_resource type="Gradient" id="Gradient_flash"]
 offsets = PackedFloat32Array(0.5, 1)
@@ -55,6 +59,16 @@ texture = ExtResource("3_lock")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="InteractSigns" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_signs")
+
 [node name="TopLeft" type="VBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 24.0
@@ -73,7 +87,7 @@ mouse_filter = 2
 unique_name_in_owner = true
 layout_mode = 0
 mouse_filter = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 3
 
 [node name="ChargeRow" type="HBoxContainer" parent="TopLeft"]
 unique_name_in_owner = true
@@ -141,10 +155,9 @@ text = "Score 0"
 
 [node name="RecordLabel" type="Label" parent="ArenaPanel/Row"]
 unique_name_in_owner = true
-modulate = Color(1, 0.88, 0.8, 0.85)
 layout_mode = 2
 size_flags_vertical = 8
-theme_type_variation = &"HudLabel"
+theme_type_variation = &"HudMuted"
 theme_override_font_sizes/font_size = 19
 text = "Record 0"
 
@@ -170,12 +183,12 @@ theme_type_variation = &"HudTitle"
 theme_override_font_sizes/font_size = 44
 horizontal_alignment = 1
 
-[node name="ZoneLine" type="ColorRect" parent="ZoneBanner"]
-custom_minimum_size = Vector2(240, 4)
+[node name="ZoneLine" type="Panel" parent="ZoneBanner"]
+custom_minimum_size = Vector2(300, 2)
 layout_mode = 2
 size_flags_horizontal = 4
 mouse_filter = 2
-color = Color(1, 0.84, 0.45, 0.9)
+theme_type_variation = &"GoldRule"
 
 [node name="Banner" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
@@ -203,70 +216,6 @@ layout_mode = 2
 theme_type_variation = &"HudAccent"
 theme_override_font_sizes/font_size = 32
 horizontal_alignment = 1
-
-[node name="Prompt" type="PanelContainer" parent="."]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 84.0
-offset_top = -48.0
-offset_right = 324.0
-offset_bottom = 4.0
-grow_horizontal = 1
-grow_vertical = 2
-mouse_filter = 2
-theme_type_variation = &"HudPanel"
-
-[node name="Row" type="HBoxContainer" parent="Prompt"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 8
-alignment = 1
-
-[node name="Key" type="PanelContainer" parent="Prompt/Row"]
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-theme_type_variation = &"KeyCap"
-
-[node name="Label" type="Label" parent="Prompt/Row/Key"]
-layout_mode = 2
-theme_type_variation = &"KeyCapLabel"
-text = "E"
-horizontal_alignment = 1
-
-[node name="Slash" type="Label" parent="Prompt/Row"]
-layout_mode = 2
-theme_type_variation = &"HudLabel"
-text = "/"
-
-[node name="Pad" type="PanelContainer" parent="Prompt/Row"]
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-theme_type_variation = &"PadA"
-
-[node name="Label" type="Label" parent="Prompt/Row/Pad"]
-layout_mode = 2
-theme_type_variation = &"PadLabel"
-text = "A"
-horizontal_alignment = 1
-
-[node name="Colon" type="Label" parent="Prompt/Row"]
-layout_mode = 2
-theme_type_variation = &"HudLabel"
-text = ":"
-
-[node name="PromptLabel" type="Label" parent="Prompt/Row"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"HudLabel"
-theme_override_font_sizes/font_size = 25
 
 [node name="SavedIndicator" type="PanelContainer" parent="."]
 unique_name_in_owner = true
@@ -321,10 +270,9 @@ layout_mode = 2
 theme_type_variation = &"HudLabel"
 theme_override_font_sizes/font_size = 17
 
-[node name="FallFlash" type="ColorRect" parent="."]
+[node name="FallFlash" type="Panel" parent="."]
 unique_name_in_owner = true
 visible = false
-modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -332,7 +280,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(1, 0.98, 0.94, 1)
+theme_type_variation = &"FlashWhite"
 
 [node name="StoryMessage" type="PanelContainer" parent="."]
 unique_name_in_owner = true
@@ -359,10 +307,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="DeathFade" type="ColorRect" parent="."]
+[node name="DeathFade" type="Panel" parent="."]
 unique_name_in_owner = true
 visible = false
-modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -370,7 +317,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.07, 0.04, 0.1, 1)
+theme_type_variation = &"FadeBlack"
 
 [node name="DeathLabel" type="Label" parent="DeathFade"]
 unique_name_in_owner = true
@@ -386,6 +333,10 @@ text = "Retour à l’entrepôt…"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="StoryOverlay" parent="." instance=ExtResource("8_story_overlay")]
+unique_name_in_owner = true
+layout_mode = 1
+
 [node name="PauseMenu" parent="." instance=ExtResource("5_pause")]
 unique_name_in_owner = true
 layout_mode = 1
@@ -394,3 +345,11 @@ layout_mode = 1
 unique_name_in_owner = true
 layout_mode = 1
 script = ExtResource("7_hud_journal")
+
+[node name="StoryHint" parent="." instance=ExtResource("9_story_hint")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="Calendar" parent="." instance=ExtResource("10_calendar")]
+unique_name_in_owner = true
+layout_mode = 1

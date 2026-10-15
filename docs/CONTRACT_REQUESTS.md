@@ -818,3 +818,56 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   près sur un lit de l'infirmerie quand quelqu'un y est couché (même position, même regard que le lit) ; aucun lit
   ne la porte au plan. **Bureau au miroir relevé** (`desk_chtholly_mirror_up`, acte 2) : scène prête, pas posée.
 
+## E6 — le récit (début de partie, jours 1 à 4)
+- **E8 (combats)** : l'étape `game` attend `StoryDirector.register_game(&"embuscade_pannibal", appel)`
+  (paramètres `{"day": 1, "help": true}`), l'appel rendant la main à la fin du combat ; sans lui, le
+  repli joue une courte séquence. Le ballon (jour 5) suivra le même crochet.
+- **C1 (sentier)** : à l'ouest de `marais_chute` (x ≈ 33,3 ; z ≈ 19), la levée a une marche que la
+  navigation croit franchissable : un joueur qui remonte vers l'ouest y bute (il passe en allant
+  vers le sud-ouest). Un chemin de `LifeNav` qui passe là coince un personnage mené.
+- **Cartes** : le port (carte d'attente) et la ville (`ville_haute`, le snack-bar) ; à leur
+  arrivée, `j1_1_port`, `j3_2_chemin` et `j3_3_snack` (racontées en cartons) pourront s'y jouer.
+- **Places** (`entrepot_rdc`) : le passage de Willem au réfectoire (`j2_2_fuite`, `[13, 7.4]` en
+  attendant). (L'oreille contre la porte de Nygglatho prend `epie_nygglatho`, livrée par V1.)
+- **Planches** : `willem_marsh` (la chute dans le marais, jour 1 ; Pannibal assise sur son dos), la
+  pose `hanches` de la protagoniste à la maison, une planche propre pour `fairy_12` (cuisinière du
+  jour 4).
+- **C2 (porte fermée jusqu'au jour 11)** : fait par le récit (`StoryStage.apply_doors`), sans
+  toucher `MapExit` ; le test de la vraie partie du village vérifie la porte close puis l'ouvre au
+  jour 11.
+- **I2 (cristal)** : l'étape `show` (`{"do": "show", "node": "Geometry/Nygglatho/comm_crystal_call_1",
+  "visible": true}`) est prête pour les scènes du cristal (jours 6 et 8, lot S2).
+- **U1 (interface « Nuit douce »)** : le récit appelle `DialogueBox.set_presentation(&"bandeau")`
+  avant le dialogue d'une scène qui tient le joueur, `&"nuit"` sinon et après chaque dialogue
+  (appel tolérant : `has_method`). Le calendrier et l'indice n'ont plus de couleur en dur : panneaux
+  et textes prennent le thème ; la page lit ses couleurs dans le type de thème `Calendar` (`paper`,
+  `ink`, `strike`, `ring`, `today`), à défaut des valeurs du script : U1 peut les y poser.
+
+## QO — options visuelles tranchées
+- **Fait (I2, vitres du lot R1)** : `Building.window_glow_color` et `window_glow_tolerance` (PR « contrats » de QO,
+  QC-02) ; les façades de l'entrepôt ont leur règle, rien à redessiner. Le café garde la règle par défaut :
+  sa vitrine attend la façade de nuit (cahier n° 5, R0.9).
+\n
+- **C3b — une caméra qui s'incline au bord du vide** (CameraRig, propriétaire : le lot caméra ; non bloquant) : à 32° d'inclinaison fixe, la caméra ne voit pas la falaise sous le bord nord de la colline (la face est au nord de la terre) : la « falaise visible sous le bord » demandée pour la colline (CARTE.md 7, la scène 8.8 de l'acte 1) n'existe que si la caméra s'incline davantage (50 à 60°) quand le joueur est à moins de 6 m d'un bord `void` : on verrait alors la lèvre, la face de roche, le rideau de roche et la mer de nuages 60 m plus bas. Sans cela, le vide se lit par la mer de nuages, les rochers qui flottent et les îles (la recette), et par les piliers de roche commandés au cahier n° 5 (R0.12, `sky/sea_stack_*`).
+## U1 — interface « Nuit douce » : ce que les autres lots doivent savoir
+- **Pour E6 (le récit)** : une scène sans contrôle du joueur demande `DialogueBox.set_presentation(&"bandeau")`
+  avant ses répliques, puis `DialogueBox.set_presentation(&"nuit")` à sa fin (le réglage dure jusqu'au prochain appel).
+  Pendant le bandeau, les signes d'interaction sont cachés. Pour cacher les signes sans bandeau (un jeu, une
+  séquence) : `InteractSign.suppress(&"<raison>", true)` puis `false`.
+- **Pour E6 et E8** : cacher le signe d'un participant : `InteractSign.set_hidden(noeud, true)` (méta
+  `interact_sign` = `&"none"`), le rendre : `set_hidden(noeud, false)`. Un PNJ dont `get_prompt()` est vide n'a
+  déjà pas de signe.
+- **Demande au propriétaire de `src/npc/dialogue_runner.gd`** (facultatif) : une clé `"presentation"` (`"nuit"` ou
+  `"bandeau"`) dans les nœuds de dialogue, que le runner passerait à `DialogueBox.set_presentation` ; sans elle,
+  le récit appelle l'API lui-même (la clé est aujourd'hui refusée par `NODE_KEYS`).
+- **Pour E6 (calendrier, indice discret)** : tout Control ajouté sous un écran qui porte `wordend_theme.tres` en
+  prend le style sans rien faire ; un panneau `PanelContainer` est déjà un panneau Nuit douce (fond translucide,
+  filet doré) ; `UiStyle.frost(panneau)` lui ajoute le verre dépoli, `UiStyle.appear(noeud)` le fondu d'entrée.
+  Couleurs et durées : `UiStyle.color(&"gold")`, `UiStyle.seconds(&"appear_ms")`… jamais de `Color(` dans une scène
+  de `src/ui/` (`test_ui_nuit.gd`). Le menu de pause a une entrée « Options » ; « Calendrier » peut s'y ajouter
+  au-dessus d'« Options » (nœud `MainPanel/Box`), avec un panneau comme `OptionsPanel`.
+- **E8 → E6 (après fusion de 52be5d1)** : `MiniGames` lance le ballon et l'entraînement au bâton,
+  pas l'embuscade du jour 1 (combat 3.1) : à ajouter par E8 et à inscrire par
+  `StoryDirector.register_game(&"embuscade_pannibal", appel)` (le joueur est tenu par la scène :
+  l'appel lui rend la main le temps du combat). Les scènes du ballon (jour 5) et du bâton (jour 10)
+  sont au lot S2. U1 : branché (présentation, signes, thème `Calendar`).

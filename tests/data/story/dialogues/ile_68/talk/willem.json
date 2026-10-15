@@ -1,0 +1,20 @@
+{
+  "id": "talk_willem",
+  "start": "bonjour",
+  "entries": [
+    "jour_2"
+  ],
+  "nodes": {
+    "jour_2": {
+      "if": {
+        "day": 2
+      },
+      "speaker_id": "willem",
+      "text": "Deuxième jour."
+    },
+    "bonjour": {
+      "speaker_id": "willem",
+      "text": "Bonjour, {player}."
+    }
+  }
+}

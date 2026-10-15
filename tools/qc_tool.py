@@ -3,6 +3,8 @@
 
   python3 tools/qc_tool.py check               # la liste des vues (tools/qc_views.json) couvre-t-elle l'île ?
   python3 tools/qc_tool.py contact <dossier>   # planches contact des captures d'un passage de tools/qc_shots.sh
+  python3 tools/qc_tool.py board <sortie.png> <titre> <option>=<dossier>... -- <vue>[@x0,y0,x1,y1]...
+                                               # planche comparative : une colonne par option, une ligne par vue
 
 check (code 1 si un manque) :
 - chaque carte de data/world/islands/ile_68.json a ses vues, et chaque carte des vues est une carte de l'île ;
@@ -200,7 +202,74 @@ def contact(folder: str) -> int:
     return 0
 
 
+BOARD_WIDTH = 640
+
+
+def board(out: str, title: str, columns: list[tuple[str, str]], views: list[str]) -> int:
+    """(QO) Planche comparative d'une décision : une colonne par option (son nom en gros au-dessus), une
+    ligne par vue (<carte>_<vue>_<moment>[_<temps>], le nom d'une capture sans .png), chaque capture réduite
+    à BOARD_WIDTH px ; une vue suivie de @x0,y0,x1,y1 ajoute sous elle le détail de ce cadre (pixels de la
+    capture), agrandi à la même largeur, pour une différence qui ne se voit pas en petit."""
+    from PIL import Image, ImageDraw, ImageFont
+
+    bold = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+    plain = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+    big = ImageFont.truetype(bold, 34) if os.path.exists(bold) else ImageFont.load_default(34)
+    small = ImageFont.truetype(plain, 16) if os.path.exists(plain) else ImageFont.load_default(16)
+    rows: list[tuple[str, tuple[int, int, int, int] | None]] = []
+    for spec in views:
+        name, _, box = spec.partition("@")
+        rows.append((name, None))
+        if box:
+            x0, y0, x1, y1 = (int(v) for v in box.split(","))
+            rows.append((name, (x0, y0, x1, y1)))
+    cells: list[list[Image.Image]] = []
+    for name, box in rows:
+        line = []
+        for _, folder in columns:
+            path = os.path.join(folder, name + ".png")
+            if not os.path.exists(path):
+                line.append(Image.new("RGB", (BOARD_WIDTH, 360), (70, 70, 70)))
+                continue
+            image = Image.open(path).convert("RGB")
+            if box is not None:
+                image = image.crop(box)
+                size = (BOARD_WIDTH, round(image.height * BOARD_WIDTH / image.width))
+                line.append(image.resize(size, Image.NEAREST))
+            else:
+                line.append(image.resize((BOARD_WIDTH, round(image.height * BOARD_WIDTH / image.width))))
+        cells.append(line)
+    pad, head, label = 8, 92, 24
+    heights = [max(c.height for c in line) + label for line in cells]
+    width = pad + len(columns) * (BOARD_WIDTH + pad)
+    sheet = Image.new("RGB", (width, head + sum(heights) + pad * len(rows)), (24, 22, 28))
+    draw = ImageDraw.Draw(sheet)
+    draw.text((pad, 6), title, fill=(235, 235, 235), font=small)
+    for i, (option, _) in enumerate(columns):
+        draw.text((pad + i * (BOARD_WIDTH + pad) + 4, 34), option, fill=(255, 214, 120), font=big)
+    y = head
+    for (name, box), line, height in zip(rows, cells, heights):
+        text = name if box is None else f"{name} : détail {box[0]},{box[1]} → {box[2]},{box[3]}"
+        for i, cell in enumerate(line):
+            x = pad + i * (BOARD_WIDTH + pad)
+            draw.text((x + 2, y + 2), text, fill=(220, 220, 220), font=small)
+            sheet.paste(cell, (x, y + label))
+        y += height + pad
+    os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+    sheet.save(out)
+    print(f"QC planche : {out} ({len(columns)} options, {len(rows)} lignes)")
+    return 0
+
+
 def main() -> int:
+    if len(sys.argv) >= 2 and sys.argv[1] == "board":
+        args = sys.argv[2:]
+        if "--" not in args or len(args) < 4:
+            print(__doc__)
+            return 2
+        cut = args.index("--")
+        columns = [tuple(item.split("=", 1)) for item in args[2:cut]]
+        return board(args[0], args[1], columns, args[cut + 1 :])
     if len(sys.argv) < 2 or sys.argv[1] not in ("check", "contact"):
         print(__doc__)
         return 2

@@ -1,0 +1,57 @@
+{
+  "id": "j2_2_fuite",
+  "start": "pain",
+  "nodes": {
+    "pain": {
+      "speaker": "",
+      "text": "Les assiettes sont déjà vides. Lakhesh, l'air de rien, fait glisser un morceau de pain vers toi.",
+      "next": "pain_2"
+    },
+    "pain_2": {
+      "speaker_id": "lakhesh",
+      "text": "Je l'ai gardé… au cas où."
+    },
+    "fuite": {
+      "speaker": "",
+      "text": "En un instant, toutes les chaises se sont vidées. Willem mange seul, au bout de la table.",
+      "next": "fuite_2"
+    },
+    "fuite_2": {
+      "speaker_id": "willem",
+      "text": "Je sens encore le marais, c'est ça ?",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "Elles ont peur de toi.",
+          "next": "peur"
+        },
+        {
+          "text": "(T'asseoir plus loin, sans un mot.)",
+          "next": "silence"
+        }
+      ]
+    },
+    "peur": {
+      "speaker": "{player}",
+      "text": "Elles ont peur de toi. La plupart n'ont jamais vu un homme de près.",
+      "next": "peur_2"
+    },
+    "peur_2": {
+      "speaker": "{player}",
+      "text": "Et un sans-traits, c'est encore pire. Tu ressembles à ce qu'on raconte dans les histoires.",
+      "next": "peur_3"
+    },
+    "peur_3": {
+      "speaker_id": "willem",
+      "text": "Super. Je vais finir par me faire peur à moi-même."
+    },
+    "silence": {
+      "speaker": "",
+      "text": "Tu t'assois à l'autre bout de la table. Il ne dit rien non plus. Le pain est encore tiède."
+    }
+  }
+}

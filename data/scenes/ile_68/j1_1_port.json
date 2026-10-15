@@ -1,0 +1,37 @@
+{
+  "_comment": "ACTE1.md 1.1 (s. 1), séquence. La carte du port n'existe pas encore (lot C-port) : la scène se résume en cartons sur le noir.",
+  "title": "L'homme au port",
+  "day": 1,
+  "map": "entrepot",
+  "trigger": {
+    "on": "ready"
+  },
+  "sequence": true,
+  "steps": [
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0
+    },
+    {
+      "do": "card",
+      "text": "titre",
+      "time": 2.6
+    },
+    {
+      "do": "card",
+      "text": "port_1",
+      "time": 2.4
+    },
+    {
+      "do": "card",
+      "text": "port_2",
+      "time": 3.0
+    },
+    {
+      "do": "card",
+      "text": "port_3",
+      "time": 3.2
+    }
+  ]
+}

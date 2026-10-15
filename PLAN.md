@@ -143,6 +143,9 @@ Yume-WordEnd/
 │   ├── fauna/                 # (E5) animal.tscn + animal.gd (Animal, hérite d'Enemy), animal_data.gd, animal_pack.gd
 │   │                          # (meute), fauna_rules.gd, fauna_nav.gd, fauna_populator.gd + fauna.tscn (nœud Fauna)
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
+│   ├── story/                 # (E6) le récit : story_director.gd (autoload StoryDirector), story_data.gd (format,
+│   │                          # vérification), story_runner.gd (étapes), story_stage.gd (places, joueur, voile,
+│   │                          # suiveurs), story_dialogue.gd, story_prompt.gd (invites « Dormir »…)
 │   ├── life/                  # (E4) la vie : life_director.gd (autoload LifeDirector), life_data.gd (emplois du
 │   │                          # temps, activités), life_slots.gd, life_places.gd, life_nav.gd, life_actor.gd,
 │   │                          # life_game.gd, life_texts.gd ; games/<jeu>.gd (chat, course, avalanche, tour, ballon)
@@ -162,6 +165,8 @@ Yume-WordEnd/
 │   ├── items/*.tres
 │   ├── npcs/*.tres            # (E4) + outfits/<planche>.tres (tenues, SkinData), generic/<id>.tres (fées génériques)
 │   ├── life/*.json            # (E4) emplois du temps data/life/<npc_id>.json, activities.json
+│   ├── scenes/<île>/          # (E6) act.json (l'acte en jours) et une scène par fichier ; textes des scènes :
+│   │                          # dialogues/<île>/ (et talk/<pnj>.json), texts/<île>/story.json
 │   ├── quests/*.json          # (Lot Q) quêtes en étapes, format : docs/QUETES.md
 │   ├── skins/*.tres
 │   ├── dialogues/*.json
@@ -202,6 +207,7 @@ Yume-WordEnd/
 | `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort ; (E1) une carte à la fois : changement de carte (fondu, chargement découpé, marqueur d'arrivée), carte courante, bornes de la caméra ; (X1) île courante (`island_entered`), voyage entre îles (`travel` : vue du ciel, port d'arrivée), chute au dernier point sûr | L2, E1, X1 |
 | `DesktopApp` | (bureau) Application de bureau, sans effet sur le Web : fenêtre de départ, plein écran (F11, Alt+Entrée, bouton) mémorisé dans `user://settings.cfg`, boutons « Plein écran » et « Quitter » des menus, sauvegarde avant de quitter (docs/bureau.md) | bureau |
 | `LifeDirector` | (E4) La vie : emplois du temps (`data/life/`) appliqués à la carte courante (PNJ posés dans `Life`, trajets à chaque changement de créneau, sorties vers les autres cartes), navigation, jeux de groupe, réactions au joueur ; créneaux (`set_slot`, F6, `?creneau=`) ; mesures (`?vie=trace`) | E4 |
+| `StoryDirector` | (E6) Le récit : l'acte en jours et ses scènes (`data/scenes/<île>/`), jouées par `StoryRunner` ; le jour et le créneau (dormir, laisser passer le temps), l'indice discret, le calendrier, les séquences déjà vues, le crochet des jeux (E8). Mode d'emploi : « (E6) Le récit » | E6 |
 | `Atmosphere` | (E9) La lumière et le temps : préréglage effectif de la carte courante (`light_preset`, intérieur ou moment de la journée, modifié par le temps qu'il fait), transitions douces, pose (environnement, ciel, soleil ou lune, mer de nuages, lanternes, lueurs, images de nuit, sol mouillé, post-traitement ; (R1) lumière des intérieurs, soleil du sol en relief, teinte des personnages), lumière magique du joueur, pluie ; raccourcis `?moment=` / `?temps=`, F7 / F8 ; le moment et le temps eux-mêmes sont dans `GameState` (sauvegardés) | E9 |
 
 ### Contrats d'interface
@@ -393,6 +399,12 @@ var day: int                 # (E4) jour de l'acte (ACTE1.md : 1 à 12), tenu pa
                              # lignes d'emploi du temps à « day » ne s'appliquent pas ; sauvegardé (facultatif, absent : 0)
 var slot: StringName         # (E4) créneau de la vie (SLOTS : aube, matin, midi, apres_midi, soir, nuit) ; &"" : celui du
                              # moment (LifeSlots.default_for) ; posé par LifeDirector.set_slot ; sauvegardé (facultatif)
+func story_running() -> bool # (E6) day ≥ 1 : l'acte en jours (les quêtes à collecter se taisent : ni tracker, ni HUD,
+                             # ni journal, ni marqueur « ! » / « ? »)
+func is_scene_done(id) / mark_scene_done(id) / forget_scene(id) / scenes_done() -> Array[StringName]   # (E6)
+func write_calendar(day, line := &"") / has_calendar_line(day) / calendar() -> Dictionary[int, StringName]   # (E6)
+var story_scene: StringName  # (E6) scène en cours (rejouée depuis son début à la reprise) ; scenes_done, calendar et
+                             # story_scene : champs facultatifs du schéma v3 (absents : vides)
 
 # src/autoload/save_manager.gd
 func has_save() -> bool
@@ -443,7 +455,11 @@ func fade_alpha() -> float                # opacité du noir (0..1), dessinée p
 func last_transition() -> Dictionary      # mesures du dernier go_to : fade_out_ms, load_ms, load_frames, install_ms, total_ms
 var fade_time: float = 0.35 / var load_budget_ms: float = 100.0   # sous le noir, le monde 3D n'est pas dessiné
 signal transition_started(map_id: StringName) / signal transition_finished(map_id: StringName)
-const LEGACY_MAP := &"ile_ancienne" / const START_MAP := &"ile_ancienne"   # l'île héritée ; une nouvelle partie y commence
+const LEGACY_MAP := &"ile_ancienne" / const START_MAP := &"entrepot"   # l'île héritée ; (E6) une nouvelle partie ouvre
+                                          # l'acte 1 à l'entrepôt de l'île n° 68 (arrival_map de ile_68.json)
+var start_map: StringName = START_MAP     # (E6) carte d'une nouvelle partie (les tests de l'ancienne île : LEGACY_MAP) ;
+                                          # starting_map() : GameState.map si elle existe, sinon l'ancienne île pour une
+                                          # partie placée hors de l'acte, sinon start_map
 # (E1) Zones : elles n'existent que dans ile_ancienne. load_zone/teleport d'une zone de l'île (LEGACY_ZONES) depuis une
 # autre carte y ramènent sans fondu ; respawn() ramène au Spawn du village sur l'île, au marqueur d'arrivée ailleurs.
 # (X1) Îles (data/world/, WorldAtlas) : chaque carte posée donne l'île courante (island_entered si elle change)
@@ -552,7 +568,8 @@ class_name QuestStep  : (Lot Q) id, type (talk|reach|kill|collect|arena|flag), o
 # (L0) Autres classes partagées
 class_name Zone            # racine d'une zone : @export display_name: String, @export safe: bool ; func zone_id() -> StringName
 class_name Map             # (E1) src/world/map.gd, racine d'une carte (Node3D, groupe "maps") : @export display_name: String,
-                           # region: StringName, interior: bool, size: Vector2, camera_bounds: Rect2 (vide : la carte),
+                           # region: StringName, interior: bool, size: Vector2, camera_bounds: Rect2 (Rect2() : la carte ;
+                           # (QO) plat ou réduit à un point : une ligne, une caméra fixe),
                            # light_preset: StringName, (X1) island: StringName (&"ile_68" ; celle dont le fichier de
                            # l'île nomme la carte) ; map_id(), area() (Rect2(0, 0, size) ; île héritée : centrée),
                            # bounds(), marker(name), spawn(), marker_names(), exits() ; statiques scene_path(id), exists(id),
@@ -648,7 +665,11 @@ class_name GroundDecal     # (H9) src/world/ground_decal.gd, racine possible d'u
                            # (MapGround.triangles_in), sinon sur IslandTerrain (île ancienne)
 class_name Building        # (H9) @export side_facade (flanc est, retourné à l'ouest ; enfant interne « Sides ») ;
                            # side_size_m(), side_contract_size() (pignon : profondeur × faîtage ; gouttereau :
-                           # profondeur × mur), side_material(texture, glow)
+                           # profondeur × mur), side_material(texture, glow, glow_color, glow_tolerance) ; (QO)
+                           # @export window_glow_color (couleur des carreaux, sRGB de l'image), window_glow_tolerance
+                           # (défaut : celle du shader, #FFCA63 à 0,12) ; DecorPanel.set_glow_rule(material, couleur,
+                           # tolérance), glow_shader_color(couleur), glow_weight(pixel, couleur, tolérance) (jumeau du
+                           # shader), GLOW_COLOR, GLOW_TOLERANCE ; material_for(…, glow_color, glow_tolerance)
 class_name PropScatter     # (H9) @export variants: Array[PackedScene], random_flip ; pool(), variant_indices(),
                            # pick_variants(points, count, seed) (jamais la variante du plus proche voisin),
                            # nearest_neighbor(points, i) ; (T1) follow_ground : sur une carte de la refonte,
@@ -1111,8 +1132,8 @@ func front_z() -> float, cut_z() -> float, occluder_triangles(cut_world) -> Pack
 2. Écrire `data/maps/<map_id>/interior.json` : pièces et matières, portes, fenêtres, éléments,
    lampes ; `InteriorLayout.from_data(...).problems` doit être vide.
 3. Carte `src/world/maps/<map_id>/<map_id>.tscn` : racine `Map` (`interior = true`,
-   `light_preset = &"interieur"`, `camera_bounds` : de x = 2 à la largeur − 2 pour que la caméra
-   reste au droit du joueur, en z de 5 à la profondeur − 5) ; `Ground` = `StaticBody3D` de script
+   `light_preset = &"interieur"`, `camera_bounds` : (QO) les pignons aux bords de l'écran, le joueur
+   jamais hors du cadre ; une pièce qui tient à l'écran a une caméra fixe, `Rect2(x, z, 0, 0)`) ; `Ground` = `StaticBody3D` de script
    `interior_room.gd` (masque 0) avec `layout` ; `Geometry` (`PropBatcher`) ; `Markers` (`Spawn`,
    `from_<carte>` à y = 0,2, à 2 ou 3 m des sorties) ; `Exits` (`MapExit` devant chaque porte
    qui a un `id` : `door_position(id)` ; zone qui couvre la porte quand on la franchit en marchant ;
@@ -1532,6 +1553,180 @@ que les cartes posées par WorldManager (ou `attach`) : une carte instanciée se
 vide. `LifeData` garde ce qu'il a lu (`clear_cache()`, `add_dir` / `remove_dir`).
 
 
+### (E6) Le récit : format, API et mode d'emploi
+
+L'acte 1 joué en jours et en scènes (docs/REFONTE.md, section 6 ; docs/lore/ACTE1.md, 0.1 et
+0.2) : une île qui a `data/scenes/<île>/act.json` a un récit, mené par l'autoload
+`StoryDirector`. Une nouvelle partie posée sur cette île (`WorldManager.start_map`, l'entrepôt)
+l'ouvre ; `GameState.day` ≥ 1 tant qu'il dure (`GameState.story_running()`) ; l'ancienne île,
+sans acte, garde son moteur de quêtes. Décisions : docs/DECISIONS.md (« E6 »).
+
+**Les données d'une île** (convention X1) :
+- `data/scenes/<île>/act.json` : `start` (`map`, `marker`, `day`, `slot`, `weather` : la
+  nouvelle partie), `departure_day` (entouré au calendrier dès le jour 1), `sleep` (`map`,
+  `point`, `prompt`, `slots` où l'on se couche, `wake_slot`), `rest` (`prompt`, `points` :
+  `{map, point}` où l'on laisse passer le temps ; le lit aussi), `calendar.examine` (l'objet à
+  examiner qui ouvre le calendrier), `days.<n>` (`weather`, `sleep_after` : scènes à jouer avant
+  de se coucher, `sleep_hint`) ;
+- `data/scenes/<île>/<scène>.json` : une scène par fichier, son id est le nom du fichier (les
+  jours 1 à 4 : `j1_1_port` … `j4_2_diner`) ;
+- `data/dialogues/<île>/<scène>.json` : les dialogues de la scène (format de DialogueRunner :
+  `speaker_id` et portraits, `"speaker": "{player}"` pour la protagoniste, choix, effets) ;
+  `data/dialogues/<île>/talk/<pnj>.json` : ce que dit un personnage hors des scènes (entrées par
+  jour) ; jamais les dialogues des quêtes de l'ancienne île sur l'île n° 68 ;
+- `data/texts/<île>/story.json` : indices, cartons, bulles, invites (`ui/…`), jours
+  (`days/<n>/calendar` : la ligne écrite au coucher, `sleep_hint`) ; une clé sans « / » se lit
+  sous l'id de la scène.
+
+**Une scène** (clé inconnue refusée, `_…` : commentaire) :
+
+```json
+{
+  "title": "La lumière dans la nuit",
+  "day": 1,                       // un jour ou [premier, dernier] (facultatif)
+  "slot": ["nuit"],               // créneau(x) où elle peut partir (facultatif)
+  "after": ["j1_1_port"],         // scènes jouées avant (facultatif)
+  "if": {"flag": "…"},            // condition de dialogue (+ day, slot, scene, not_scene)
+  "map": "entrepot",              // sa carte (où « ready » part, où elle reprend)
+  "marker": "Spawn",              // (facultatif) où la reprendre
+  "trigger": {"on": "ready"},     // ready | enter (marker) | reach (point, radius) | talk (npc)
+                                  // | examine (key) | prompt (point, prompt, size)
+  "present": ["nygglatho"],       // PNJ réservés (hors de leur emploi du temps)
+  "sequence": false,              // séquence sans contrôle : se passe d'Échap une fois vue
+  "key": true,                    // scène clé : « laisser passer le temps » s'arrête à son créneau
+  "hint": "hint",                 // indice tant qu'elle attend son déclencheur
+  "steps": [ … ]
+}
+```
+
+**Les étapes** (`"do"`, toutes avec un `"if"` facultatif ; `who` : `player` ou un PNJ de
+`present` ; un point : une place `Life/Places`, un marqueur `Markers`, `player`, un PNJ présent ou
+`[x, z]`, avec `offset` `[dx, dz]` ; `toward` : un point ou north / south / east / west) :
+
+| Étape | Clés | Ce qu'elle fait |
+| --- | --- | --- |
+| `place` | who, at, offset, facing, outfit, anim | fait paraître (ou pose) le personnage |
+| `walk` | who, to, offset, gait (marche, course), wait (vrai), facing, direct | marche par la navigation (le joueur : vraie physique) et l'attend |
+| `follow` / `unfollow` | who, distance (2), stop_beyond (8), gait | le PNJ suit le joueur, d'une carte à l'autre, sans le gêner |
+| `face` | who, toward | le tourne |
+| `anim` | who, anim, time, wait | joue une animation (planche ou remplaçant d'activities.json) |
+| `outfit` | who, outfit | change sa tenue (`NpcData.outfits`) |
+| `leave` / `release` | who | le fait disparaître / le rend tout de suite à la vie |
+| `bubble` | who, text, time | une bulle |
+| `dialogue` | node, file (la scène), npc, presentation | un dialogue (choix : deux au plus) ; présentation « bandeau » (sans boîte) ou « nuit » (la boîte), par défaut bandeau tant que la scène tient le joueur (`DialogueBox.set_presentation` du lot U1 ; « nuit » rendue à la fin de la scène) |
+| `camera` / `camera_reset` | to, offset, distance, pitch, time, wait | cadrage, gros plan (9 m), lever les yeux (15°) ; rendre la caméra |
+| `fade` | to (black, white, clear), time | fondu |
+| `card` | text, time | un carton sur l'écran (résumé d'une carte à venir) |
+| `go_to` | map, marker | change de carte (WorldManager.go_to) |
+| `moment` / `slot` / `next_day` | moment, weather, time / slot (ou next) | lumière, temps, créneau, jour suivant |
+| `flag` | set, clear | drapeaux |
+| `wait` / `wait_for` | time / reach (+ radius, map), map, examine, talk ; timeout, timeout_flag | attend un temps, ou le joueur (il garde la main) |
+| `control` | on | rend ou reprend le contrôle (la scène le prend au début, le rend à la fin) |
+| `game` | game, params, fallback | crochet d'E8 (`StoryDirector.register_game`) ; sans jeu inscrit, ses étapes de repli |
+| `hint` / `calendar` | text (vide : rien) / line | l'indice de la scène ; une ligne du calendrier |
+| `show` | node (chemin dans la carte), visible | montre ou cache un nœud de la carte courante (le cristal qui sonne : `Geometry/Nygglatho/comm_crystal_call_1` d'`entrepot_etage`) |
+
+```gdscript
+# src/story/story_director.gd — autoload StoryDirector (project.godot, seul ajout d'E6)
+signal scene_started(id) / scene_finished(id) / hint_changed(text) / day_started(day)
+signal game_requested(game_id, params) / calendar_requested
+func island() / current_scene() / is_playing() / runner() -> StoryRunner / stage() -> StoryStage
+func hint() -> String / day_count() / departure_day() / calendar_line(day) / ui_text(clé, défaut)
+func play(id) -> bool (tests) / skip() / is_skippable() / has_seen(id) / mark_seen(id) / forget_seen()
+func register_game(id, appel) / has_game(id)          # E8 : l'étape « game » attend appel.call(params)
+func can_sleep() / sleep() / can_rest() / pass_time() / advance_day()   # sleep et pass_time : coroutines
+func prompts() -> Array[StoryPrompt] / refresh()
+var enabled := true / seen_path := "user://story_seen.cfg"   # séquences vues, hors sauvegarde
+# src/story/ — classes
+class_name StoryData   # use_root(chemin) (tests), file_path, dialogue_path, talk_path, has_act, act, scene_ids,
+                       # scene, texts, text, day_data ; scene_problems(id, brut, île, monde), act_problems,
+                       # all_problems(île) ; STEPS, TRIGGERS, SCENE_KEYS…
+class_name StoryRunner # run(id, données, île) (coroutine), stop(), skip(), current_step() ; signal step_started
+class_name StoryStage  # resolve(point, offset) -> Transform3D, direction(), player_within(), place_player(),
+                       # walk_player() (coroutine), route() (portes, murs), set_control(), camera_rig(),
+                       # overlay(), fade_overlay(), wait_overlay(), add_follower(), followers(),
+                       # apply_doors(carte) (portes fermées jusqu'à un jour)…
+class_name StoryDialogue  # play(chemin, nœud, id, pnj) : un dialogue ouvert à un nœud
+class_name StoryPrompt    # invite du récit (couche 6) posée sur la carte : Dormir, Laisser passer le temps…
+# Ajouts ailleurs : LifeDirector.reserve / stage / release / release_all / dismiss / is_reserved /
+# talk_handler (LifeActor.State.SCENE) ; Player.set_story_hold / story_drive ; CameraRig.frame_story /
+# release_story ; conditions de dialogue day, slot, scene, not_scene ; HUD/StoryOverlay,
+# HUD/StoryHint, HUD/Calendar ; bouton « Calendrier » du menu pause.
+```
+
+**Le temps.** Le jour et le créneau n'avancent que par les scènes (`slot`, `next_day`) et par le
+joueur : « Dormir » dans son lit (`sleep`) le soir ou la nuit quand les scènes de `sleep_after`
+sont jouées (fondu, la ligne du jour écrite au calendrier, aube du jour suivant, temps du jour) ;
+« Laisser passer le temps » (un créneau, jamais au-delà de celui de la prochaine scène clé du
+jour, jamais au-delà de la nuit). La lumière suit le créneau (`LifeDirector.set_slot`).
+
+**L'interface.** L'indice discret (`HUD/StoryHint`, en bas) paraît quelques secondes quand il
+change et se rappelle à la fermeture du calendrier ; le calendrier (`HUD/Calendar`) s'ouvre par
+Tab / L / Select pendant l'acte (à la place du journal), par le menu pause ou en examinant celui
+de la chambre ; le voile des scènes (`HUD/StoryOverlay`) porte les fondus, les cartons et
+« Échap : passer ». Pendant l'acte : ni encadré de quête, ni journal, ni « ! » / « ? ».
+Pendant une scène, les signes d'interaction (U1) sont cachés : `InteractSign.suppress(&"scene")`.
+Le calendrier prend le thème (type `Calendar` de `wordend_theme.tres` : case prune, encre crème,
+rayure et cercle or) ; « Calendrier » est au menu pause, au-dessus d'« Options ».
+
+**Les portes fermées jusqu'à un jour.** Une sortie (`MapExit`) qui porte les métadonnées
+`open_from_day` (jour d'ouverture) et `closed_text_key` (« village/maison_close » : la clé de
+`data/texts/village.json`, fichier nommé par le premier segment) ne mène nulle part avant ce jour :
+`StoryStage.apply_doors` la remplace par une zone à examiner (`ClosedDoor`, même invite) qui lit
+le texte. Appliqué à chaque arrivée sur une carte et à chaque changement de `GameState.day`.
+
+**Mode d'emploi : écrire une scène** (lot S2 : jours 5 à 12).
+1. Lire sa fiche dans ACTE1.md (lieu, présents, déclencheur, déroulé, choix, idées de
+   répliques, contrôle, indice). Vérifier que les places existent (`Life/Places` de la carte :
+   LifeData.map_places) ; une place qui manque se demande au lot de la carte
+   (docs/CONTRACT_REQUESTS.md), en attendant `[x, z]`.
+2. Écrire `data/scenes/ile_68/jN_k_nom.json` (déclencheur, conditions, présents, étapes), puis
+   ses répliques dans `data/dialogues/ile_68/jN_k_nom.json` (paraphrasées, jamais recopiées ;
+   `{player}`, jamais « Chtholly » en dur) et ses textes courts dans `data/texts/ile_68/story.json`
+   (section de la scène). Une carte qui n'existe pas encore : un fondu et des cartons (comme
+   `j1_1_port`, `j3_2_chemin`), jamais une carte inventée. Un combat : une étape `game` et son repli.
+3. Le jour : sa ligne du calendrier (`days/<n>/calendar`), `sleep_after` et `sleep_hint` dans
+   `act.json`.
+4. Vérifier : `tools/test.sh tests/unit/test_story_data.gd` (format et monde de toutes les
+   scènes) ; jouer la journée sur le modèle de `tests/integration/test_e6_days.gd` (poses et
+   dialogues lus) ou de `test_e6_day1.gd` (vrais appuis, base `tests/stubs/e6_story_test.gd`) ;
+   voir : `E6_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_e6.tscn sortie.png 60`.
+
+**Pièges.** Une séquence (`sequence`) n'a ni choix, ni effet dans ses répliques, ni `control`, ni
+`wait_for` (elle se passe d'une touche). `ready` part sur la carte de la scène seulement. Une
+étape `hint` en fin de scène s'efface avec elle : l'indice de ce qui suit est le `hint` de la
+scène suivante. Les tests : `StoryData.use_root("res://tests/data/story")` (acte d'essai),
+`StoryDirector.seen_path` propre au test, `WorldManager.start_map` rétabli ; les tests de
+l'ancienne île mettent `start_map` à `LEGACY_MAP` (bases m1/m2).
+
+### (U1) L'interface « Nuit douce » : thème, dialogue et signes
+
+- **Thème unique** : `src/ui/wordend_theme.tres`, à la racine de chaque écran (`theme`). Tout Control ajouté
+  dessous en prend le style : `PanelContainer` = panneau prune translucide aux coins arrondis, ombre douce et
+  filet doré (`NuitBox`, `src/ui/nuit_box.gd`) ; `Button` = entrée en texte simple, halo et point doré au
+  focus ; `Label` crème ombré ; variations `HeaderLabel` (serif doré), `TitleLabel`, `SubtitleLabel`,
+  `DayLabel` (italique doré), `MutedLabel`, `ErrorLabel`, `AccentLabel`, `HudPanel`, `HudLabel`, `HudAccent`,
+  `HudMuted`, `HudTitle`, `PrimaryButton` (entrée dorée), `SkinCard(Selected)`, `InventorySlot`, `SlotCount`,
+  voiles `Dim`, `FadeBlack`, `FlashWhite`, `GoldRule`, `BandeauVeil` (des `Panel`). Polices : Nunito (texte),
+  Cormorant Garamond (noms, titres), `assets/fonts/`.
+- **Jetons** (`UiStyle`, `src/ui/ui_style.gd`) : `UiStyle.color(&"gold" | &"cream" | &"ink" | &"panel" | &"muted" |
+  &"error" | &"black")`, `UiStyle.constant(&"slide_px" | &"heart_px")`, `UiStyle.seconds(&"appear_ms" |
+  &"breath_ms")` ; aides `UiStyle.frost(panneau)` (verre dépoli : flou de l'arrière-plan, `frost.gdshader`),
+  `UiStyle.appear(noeud, direction)` (fondu et glissement d'entrée), `UiStyle.settle(noeud)`. Aucune `Color(`
+  dans une scène de `src/ui/` (`tests/unit/test_ui_nuit.gd`).
+- **Dialogue** : deux présentations. `DialogueBox.set_presentation(&"nuit")` (défaut : verre dépoli, nom serif
+  doré, portrait en buste qui déborde et s'estompe, triangle doré qui respire) ou `&"bandeau"` (scènes du
+  récit sans contrôle du joueur : dégradé sombre depuis le bas, nom en capitales serif espacées, texte blanc
+  ombré) ; vaut pour la boîte ouverte et les suivantes jusqu'au prochain appel ; `DialogueBox.presentation()`,
+  `shown_presentation()`. Le récit (E6) demande `bandeau` au début d'une scène et `nuit` à sa fin.
+- **Signes d'interaction** (`HUD/InteractSigns`, `src/ui/interact_signs.gd`, API `InteractSign`) : un signe
+  posé au-dessus de la cible du joueur (plein) et des autres cibles proches, à moins de 3,5 m (pâles), à la place de l'invite
+  « E / A : Parler » ; genre `InteractSign.kind_of(cible)` (`&"talk"`, `&"examine"`, `&"take"`, `&"enter"`, `&""`
+  sans invite) ; cacher une cible : `InteractSign.set_hidden(cible, true)` (méta `interact_sign` = `&"none"`) ;
+  cacher tous les signes : `InteractSign.suppress(&"raison", true)` ; réglage « toujours montrer la touche » :
+  `InteractSign.always_show_key()` (Options de la pause). Tests : `full_target()`, `full_kind()`,
+  `pale_targets()`, `is_key_hint_shown()`, `hovered_target()` du nœud (`HUD.interact_signs()`).
+
 ### (E8) Les jeux : le ballon, l'entraînement au bâton, l'arme de Chtholly
 
 Trois choses (docs/REFONTE.md, 4.2 et 5 ; docs/lore/VIE.md, 5.1 ; docs/lore/ACTE1.md, 3.0 et 3.2) :
@@ -1658,7 +1853,6 @@ et `StaffTraining.advance`) : deux minutes de match en une seconde. GDScript : u
 lignes échoue au lint : BallMatch hérite de BallPlay. Le ballon du décor fondu n'est retiré qu'à l'exécution
 (docs/CONTRACT_REQUESTS.md, « E8 »).
 
-
 ## 4. Tranche verticale : WordEnd en HD-2D
 
 La tranche verticale **recrée l'easter egg dans un monde en relief** ((HD-2D) personnages en sprites, décor en images, caméra fixe) (Chtholly contre des vagues de Timeres sur les dunes au couchant, mêmes règles, même score) **et l'entoure d'un début de monde** : un village sûr avec trois PNJ, une quête, des objets, et une forêt où quelques Timeres rôdent librement. Elle est jouable dans le navigateur à la fin du jalon M2 et fixe la sensation de combat pour tout ce qui suit.
@@ -1700,10 +1894,10 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 | Île | `src/world/island.tscn` | Île flottante de 160 × 160 m (relief calculé, places de HISTOIRE.md 3.3 garanties) : village (centre), dunes (ouest), forêt (nord), port (sud), colline (est). (HD-2D) Sol en tuiles de pixel art mélangées par zone et par masque (atlas `assets/hd2d/ground/atlas/ground_atlas.png`, `terrain.gdshader`), falaises et dessous texturés (`rock.gdshader`), bâtiments en volumes avec façades en images (`Building`), décors en panneaux avec ombre douce (`DecorPanel`), fondus par image (`PropBatcher`), ciel panoramique, mer de nuages texturée, lanternes éclairées ; murs invisibles et rattrapage sous l'île |
 | Zones | `src/world/zones/*` | Chaque zone = scène fille avec `Area3D` qui émet `zone_entered` ; `WorldManager` charge toutes les zones au départ en M2 (streaming en M3) ; le village est une zone `safe` où aucun ennemi n'entre |
 | PNJ | `src/npc/npc.tscn` | (acte 1) les PNJ de docs/lore/HISTOIRE.md 3.3 dans les cinq zones (Nygglatho, Willem et les fées à l'entrepôt, Pannibal aux bois, le guetteur au Couchant, Limeskin et les gens du bourg au port), visuels non jouables `data/npcs/visuals/` ; présents selon l'histoire (`NpcData.visible_if`) ; regardent le joueur à moins de 4 m ; `interact()` lance `DialogueRunner` |
-| Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | Boîte en bas d'écran, portrait (celui de l'orateur du nœud, `speaker_id`), texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête ; `{player}` : prénom de la protagoniste (skin choisi) |
+| Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | (U1) Nuit douce ou Bandeau (`DialogueBox.set_presentation`) ; boîte en bas d'écran, portrait (celui de l'orateur du nœud, `speaker_id`), texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête ; `{player}` : prénom de la protagoniste (skin choisi) |
 | Objets | `src/items/pickup.tscn` | Objet flottant, ramassage par `interact()` ou contact ; émet `item_collected` ; les drops des ennemis restent possibles (`EnemyData.drops`), mais les corps de Timere n'en ont aucun |
 | Quête | `src/quests/quest_tracker.gd` | (acte 1, docs/lore/HISTOIRE.md 3.1 et 3.2) la quête principale `act1_main`, « Dans la forêt céleste » (13 étapes, de Nygglatho sous le porche à la promesse sur la colline ; récompense : la promesse du gâteau au beurre, PV max portés à 6) et six quêtes secondaires. (Lot Q) Quêtes en étapes écrites en JSON (`data/quests/`), journal de quêtes, marqueurs « ! » / « ? » : docs/QUETES.md |
-| HUD | `src/ui/hud.tscn` | Cœurs, jauge de charge, numéro de vague et score dans l'arène, nom de la zone à l'entrée, invite d'interaction, objectif de quête |
+| HUD | `src/ui/hud.tscn` | Cœurs, jauge de charge, numéro de vague et score dans l'arène, nom de la zone à l'entrée, (U1) signes d'interaction posés au-dessus des cibles, objectif de quête |
 | Inventaire | `src/ui/inventory.tscn` | Grille d'icônes, touche I / bouton Y, quantité, description |
 | Menu | `src/ui/main_menu.tscn` | Choix du skin (vignettes, « Ta fée prend la place de Chtholly dans l'histoire. »), Nouvelle partie / Continuer, crédits ; écran « Cliquer pour jouer » avant tout son |
 | Sauvegarde | `SaveManager` | Auto-sauvegarde à `arena_finished`, `item_collected`, `quest_updated`, `zone_entered` ; chargement au menu (pas de sauvegarde « à la fermeture » : le navigateur ne la garantit pas) ; (M2) position écrite toutes les 5 s de jeu si le joueur a bougé, et au départ (focus perdu, page masquée) quand l'état a changé |
@@ -1875,6 +2069,11 @@ carte inconnue au chargement ramène au Spawn de `WorldManager.START_MAP`.
 (E9) `moment` et `weather` : le moment de la journée et le temps qu'il fait
 (`GameState.MOMENTS`, `GameState.WEATHERS`), champs facultatifs du schéma v3 sans migration :
 absents (sauvegarde d'avant E9) ou inconnus, la partie reprend au couchant, sans pluie.
+
+(E6) `scenes_done` (scènes jouées), `calendar` (jour → ligne écrite, `""` : la ligne du jour) et
+`story_scene` (scène en cours, rejouée depuis son début à la reprise), avec (E4) `day` et `slot` :
+champs facultatifs du schéma v3, sans migration ; absents, la partie est hors de l'acte en jours
+(une sauvegarde d'avant la refonte reprend sur l'ancienne île).
 
 (X1) `island` (l'île courante, `data/world/islands/<id>.json`) et `known_islands` (les îles où le
 joueur est allé, dans l'ordre) : champs facultatifs du schéma v3, sans migration ; absents, ils

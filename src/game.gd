@@ -5,9 +5,10 @@ extends Node3D
 ## Fichier d'intégration (Lot 0, puis E1 : cartes) : quand chaque lot remplit ses scènes, le jeu
 ## est câblé sans retouche ici. Au démarrage, pose la carte et le joueur
 ## (WorldManager.enter_map) : nouvelle partie (GameState.map vide) → Spawn de
-## WorldManager.START_MAP (celui du village de l'ancienne île) ; partie chargée →
-## GameState.position dans GameState.map (une carte qui n'existe plus ramène au Spawn de
-## START_MAP). main.gd a déjà chargé la carte avec l'écran de chargement : elle sort du cache.
+## WorldManager.start_map ((E6) l'entrepôt de l'île n° 68 : StoryDirector y ouvre
+## l'acte 1) ; partie chargée → GameState.position dans GameState.map (une carte qui n'existe
+## plus ramène au Spawn de WorldManager.starting_map()). main.gd a déjà chargé la carte avec
+## l'écran de chargement : elle sort du cache.
 ## Raccourcis de test (intégration M1) : si l'adresse de la page (Web) ou la ligne de commande
 ## en donne (?zone=dunes, --timeres=12…), un nœud src/test_shortcuts.gd les applique ensuite ;
 ## sans paramètre, rien ne change.

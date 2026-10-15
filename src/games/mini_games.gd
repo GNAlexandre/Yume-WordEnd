@@ -110,8 +110,8 @@ static func stop_ball_match(place: StringName = BALL_PLACE) -> void:
 
 ## Lance l'entraînement. options : variant (&"default", &"jour10"), place_player (poser le joueur
 ## face à Willem), restore_weapon (rendre l'arme d'avant à la fin, vrai), with_hud (vrai),
-## overrides (chemins de data/games/staff_training.json). Renvoie l'exercice ; null sans joueur ni
-## clairière.
+## overrides (chemins de data/games/staff_training.json), seed (graine du tirage : un exercice
+## rejouable, pour les tests). Renvoie l'exercice ; null sans joueur ni clairière.
 static func start_staff_training(options: Dictionary = {}) -> StaffTraining:
 	var places := LifeDirector.places()
 	var player := LifeDirector.player_node() as Player
@@ -140,6 +140,8 @@ static func start_staff_training(options: Dictionary = {}) -> StaffTraining:
 	var training := StaffTraining.new()
 	training.overrides = options.get("overrides", {})
 	training.show_hud = bool(options.get("with_hud", true))
+	if options.has("seed"):
+		training.seed_random(int(options["seed"]))
 	host.add_child(training)
 	if bool(options.get("place_player", false)):
 		var spot := willem.position() + Vector3(0.0, 0.0, 2.2)

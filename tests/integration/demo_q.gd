@@ -32,6 +32,8 @@ func _ready() -> void:
 	QuestData.add_search_dir(FIXTURES_DIR)
 	if _shot == "journal":
 		GameState.from_dict(_journal_state())
+	# (E6) Une nouvelle partie ouvre l'île n° 68 : la démo des quêtes joue sur l'ancienne île.
+	WorldManager.start_map = WorldManager.LEGACY_MAP
 	_game = GAME_SCENE.instantiate() as Node3D
 	add_child(_game)
 	_zone(&"village").add_child(VILLAGE_DEMO.instantiate())
@@ -39,6 +41,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	WorldManager.start_map = WorldManager.START_MAP
 	if get_tree().paused:
 		get_tree().paused = false
 	QuestData.remove_search_dir(FIXTURES_DIR)

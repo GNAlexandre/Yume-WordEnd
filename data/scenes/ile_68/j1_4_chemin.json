@@ -1,0 +1,52 @@
+{
+  "_comment": "ACTE1.md 1.4 (original) : {player} mène, sa lumière à la main ; Willem la suit à 2 m et s'arrête si elle s'éloigne de plus de 8 m ; Pannibal marche devant (elle suit de plus près).",
+  "title": "Le chemin de l'entrepôt",
+  "day": 1,
+  "after": [
+    "j1_3_intrus"
+  ],
+  "map": "sentier",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "willem",
+    "pannibal"
+  ],
+  "steps": [
+    {
+      "do": "follow",
+      "who": "willem",
+      "distance": 2,
+      "stop_beyond": 8
+    },
+    {
+      "do": "follow",
+      "who": "pannibal",
+      "distance": 1.3,
+      "stop_beyond": 40,
+      "gait": "course"
+    },
+    {
+      "do": "hint",
+      "text": "hint"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "map": "entrepot"
+    },
+    {
+      "do": "dialogue",
+      "node": "garder"
+    },
+    {
+      "do": "wait_for",
+      "reach": "porte_seuil",
+      "radius": 3.5
+    }
+  ]
+}

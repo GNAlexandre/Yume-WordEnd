@@ -1,0 +1,413 @@
+{
+  "_comment": "ACTE1.md 1.5 (s. 3) : le porche, la salle de bains (séquence), les couloirs, la chambre de Nygglatho et l'avalanche n° 1.",
+  "title": "Premiers pas dans l'entrepôt",
+  "day": 1,
+  "after": [
+    "j1_4_chemin"
+  ],
+  "map": "entrepot",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "nygglatho",
+    "willem",
+    "pannibal",
+    "collon",
+    "lakhesh",
+    "tiat"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "porche_banc",
+      "offset": [
+        0.8,
+        0.4
+      ],
+      "facing": "west",
+      "outfit": "vie"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "porte_seuil",
+      "offset": [
+        -0.6,
+        1.6
+      ],
+      "facing": "east"
+    },
+    {
+      "do": "face",
+      "who": "player",
+      "toward": "nygglatho"
+    },
+    {
+      "do": "dialogue",
+      "node": "porche"
+    },
+    {
+      "do": "leave",
+      "who": "pannibal"
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.8
+    },
+    {
+      "do": "go_to",
+      "map": "entrepot_rdc",
+      "marker": "from_entrepot"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "bains_sechage",
+      "facing": "west",
+      "outfit": "maison"
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "couloir_ouest",
+      "offset": [
+        1.5,
+        0
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "camera",
+      "to": "willem",
+      "distance": 9,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.8
+    },
+    {
+      "do": "dialogue",
+      "node": "miroir"
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.5
+    },
+    {
+      "do": "camera_reset",
+      "time": 0
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "couloir_ouest",
+      "facing": "east"
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.5
+    },
+    {
+      "do": "dialogue",
+      "node": "couloir"
+    },
+    {
+      "do": "follow",
+      "who": "willem",
+      "distance": 1.8,
+      "stop_beyond": 30
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "couloir_centre",
+      "offset": [
+        3,
+        -0.6
+      ],
+      "facing": "west",
+      "outfit": "pyjama"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "couloir_centre",
+      "offset": [
+        3.8,
+        -0.6
+      ],
+      "facing": "west",
+      "outfit": "pyjama"
+    },
+    {
+      "do": "hint",
+      "text": "hint_etage"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "reach": "couloir_centre",
+      "radius": 3
+    },
+    {
+      "do": "bubble",
+      "who": "tiat",
+      "text": "chut"
+    },
+    {
+      "do": "bubble",
+      "who": "lakhesh",
+      "text": "cible"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "tiat"
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "couloir_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "lakhesh",
+      "to": "couloir_est",
+      "gait": "course"
+    },
+    {
+      "do": "leave",
+      "who": "tiat"
+    },
+    {
+      "do": "leave",
+      "who": "lakhesh"
+    },
+    {
+      "do": "wait_for",
+      "map": "entrepot_etage"
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "nygglatho_the",
+      "facing": "south",
+      "outfit": "the"
+    },
+    {
+      "do": "wait_for",
+      "reach": "nygglatho_tapis",
+      "radius": 2.5
+    },
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "unfollow",
+      "who": "willem"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "nygglatho_chaise_invite",
+      "facing": "east"
+    },
+    {
+      "do": "dialogue",
+      "node": "the"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "palier"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "epie_nygglatho",
+      "offset": [
+        -0.8,
+        0.0
+      ],
+      "facing": "north",
+      "outfit": "pyjama"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "epie_nygglatho",
+      "offset": [
+        0.2,
+        0.0
+      ],
+      "facing": "north",
+      "outfit": "pyjama"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "epie_nygglatho",
+      "offset": [
+        -0.3,
+        0.9
+      ],
+      "facing": "north",
+      "outfit": "pyjama"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "epie_nygglatho",
+      "offset": [
+        1.0,
+        0.8
+      ],
+      "facing": "north",
+      "outfit": "pyjama"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "epie_nygglatho",
+      "offset": [
+        0.2,
+        1.8
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "dialogue",
+      "node": "porte"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "nygglatho_tapis",
+      "offset": [
+        -0.8,
+        0.1
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "nygglatho_tapis",
+      "offset": [
+        0.2,
+        0.0
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "nygglatho_tapis",
+      "offset": [
+        -0.3,
+        0.8
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "nygglatho_tapis",
+      "offset": [
+        0.9,
+        0.7
+      ],
+      "anim": "tombe"
+    },
+    {
+      "if": {
+        "flag": "j1_ecoute"
+      },
+      "do": "place",
+      "who": "player",
+      "at": "nygglatho_tapis",
+      "offset": [
+        1.7,
+        0.5
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "camera",
+      "to": "nygglatho_tapis",
+      "distance": 12,
+      "time": 0.6
+    },
+    {
+      "do": "wait",
+      "time": 0.8
+    },
+    {
+      "do": "dialogue",
+      "node": "avalanche"
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "lakhesh",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "dortoir_b",
+      "wait": false
+    },
+    {
+      "do": "wait",
+      "time": 1.2
+    },
+    {
+      "do": "leave",
+      "who": "collon"
+    },
+    {
+      "do": "leave",
+      "who": "lakhesh"
+    },
+    {
+      "do": "leave",
+      "who": "tiat"
+    },
+    {
+      "do": "camera_reset"
+    },
+    {
+      "do": "control",
+      "on": true
+    }
+  ]
+}

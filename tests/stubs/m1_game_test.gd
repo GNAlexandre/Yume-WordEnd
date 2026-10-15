@@ -47,6 +47,7 @@ var _previous_path: String
 var _previous_autosave: float
 var _previous_respawn: float
 var _previous_zone: StringName
+var _previous_start: StringName
 
 
 func before_each() -> void:
@@ -55,6 +56,9 @@ func before_each() -> void:
 	_previous_autosave = SaveManager.autosave_delay
 	_previous_respawn = WorldManager.respawn_delay
 	_previous_zone = WorldManager.current_zone()
+	# (E6) Une nouvelle partie ouvre l'acte 1 à l'entrepôt : ces tests jouent l'ancienne île.
+	_previous_start = WorldManager.start_map
+	WorldManager.start_map = start_map_for_test()
 	SaveManager.close_game(false)
 	SaveManager.save_path = save_file()
 	_delete_save_files()
@@ -84,10 +88,17 @@ func after_each() -> void:
 	SaveManager.save_path = _previous_path
 	SaveManager.autosave_delay = _previous_autosave
 	WorldManager.respawn_delay = _previous_respawn
+	WorldManager.start_map = _previous_start
 	if WorldManager.current_zone() != _previous_zone:
 		EventBus.zone_entered.emit(_previous_zone)
 	SaveManager.close_game(false)
 	GameState.reset()
+
+
+## (E6) Carte d'une nouvelle partie pendant le test : l'ancienne île (ses zones, ses quêtes) ;
+## les tests de l'acte en jours la redéfinissent (WorldManager.START_MAP).
+func start_map_for_test() -> StringName:
+	return WorldManager.LEGACY_MAP
 
 
 ## Sauvegarde propre au script de test.
@@ -108,9 +119,9 @@ func start_game() -> void:
 	player = game.get_node(^"Player") as Player
 	combat = player.combat
 	health = player.health
-	dunes = game.get_node(^"World/ile_ancienne/Zones/dunes") as Zone
-	arena = dunes.get_node(^"Arena") as Arena
-	director = arena.director()
+	dunes = game.get_node_or_null(^"World/ile_ancienne/Zones/dunes") as Zone
+	arena = dunes.get_node(^"Arena") as Arena if dunes != null else null
+	director = arena.director() if arena != null else null
 	await wait_physics_frames(3)
 
 

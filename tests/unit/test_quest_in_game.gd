@@ -7,11 +7,14 @@ const GAME_SCENE := preload("res://src/game.tscn")
 
 
 func before_each() -> void:
+	# (E6) Une nouvelle partie ouvre l'acte 1 à l'entrepôt : ce test joue l'ancienne île.
+	WorldManager.start_map = WorldManager.LEGACY_MAP
 	GameState.reset()
 	get_tree().paused = false
 
 
 func after_each() -> void:
+	WorldManager.start_map = WorldManager.START_MAP
 	get_tree().paused = false
 
 

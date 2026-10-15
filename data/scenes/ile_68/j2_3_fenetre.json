@@ -1,0 +1,43 @@
+{
+  "_comment": "ACTE1.md 2.3 (s. 5) : l'après-midi, à la porte de Willem ; il décide d'aller en ville. ACTE1 ne donne pas d'indice : une ligne (original) dit où il est, puisque la scène compte pour le coucher.",
+  "title": "Le directeur au rebord de la fenêtre",
+  "day": 2,
+  "slot": "apres_midi",
+  "after": [
+    "j2_2_fuite"
+  ],
+  "map": "entrepot_etage",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "willem_porte",
+    "radius": 2.2
+  },
+  "present": [
+    "willem"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "willem_rebord_fenetre",
+      "facing": "north",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "camera",
+      "to": "willem",
+      "distance": 10,
+      "time": 1.2,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "fenetre"
+    },
+    {
+      "do": "camera_reset"
+    }
+  ]
+}

@@ -21,7 +21,10 @@ extends Node
 ##     prérequis remplis, QuestData.status() ; "" : jamais commencée ; "active", "done"),
 ##     "quest_step" [id, étape] (quête active à cette étape, Lot Q ; Systèmes et textes : ou
 ##     [id, [étapes]], à l'une d'elles), "not_quest_step" (mêmes formes : à aucune de ces étapes,
-##     vraie aussi si la quête n'est pas active), "best_score" [arène, minimum]. Même grammaire
+##     vraie aussi si la quête n'est pas active), "best_score" [arène, minimum] ; (E6) le récit :
+##     "day" (jour de l'acte, GameState.day : un jour ou [premier, dernier]), "slot" (créneau
+##     courant, LifeSlots.current() : un nom ou une liste), "scene" et "not_scene" (scènes jouées,
+##     GameState.is_scene_done : un id ou une liste, toutes jouées / aucune). Même grammaire
 ##     pour la présence des PNJ (NpcData.visible_if).
 ##   effets, appliqués dans cet ordre (EFFECT_KEYS) : "take_item" puis "give_item" (un objet,
 ##     [objet, quantité] ou {objet: quantité, …}), "set_flag" puis "clear_flag" (un nom ou une
@@ -49,7 +52,17 @@ const DONE_NODE := "done"
 const MAX_CHOICES := 2
 ## Clés acceptées dans un "if" (et dans NpcData.visible_if).
 const CONDITION_KEYS: Array[String] = [
-	"flag", "not_flag", "count", "quest", "quest_step", "not_quest_step", "best_score"
+	"flag",
+	"not_flag",
+	"count",
+	"quest",
+	"quest_step",
+	"not_quest_step",
+	"best_score",
+	"day",
+	"slot",
+	"scene",
+	"not_scene",
 ]
 ## Effets d'un nœud ou d'un choix, dans l'ordre où ils s'appliquent.
 const EFFECT_KEYS: Array[String] = [
@@ -567,14 +580,60 @@ static func _test(key: String, value: Variant) -> bool:
 			return _test_flags(value, false)
 		"count", "best_score", "quest", "quest_step", "not_quest_step":
 			return _test_pair(key, value)
+		"day", "slot", "scene", "not_scene":
+			return _test_story(key, value)
 	push_warning("DialogueRunner : condition inconnue « %s »" % key)
 	return false
 
 
+## (E6) "day" (jour ou [premier, dernier]), "slot" (créneaux), "scene" / "not_scene" (scènes).
+static func _test_story(key: String, value: Variant) -> bool:
+	if not _is_condition_value(key, value):
+		push_warning("DialogueRunner : « %s » mal formé : %s" % [key, value])
+		return false
+	match key:
+		"day":
+			var days := day_range(value)
+			return GameState.day >= days.x and GameState.day <= days.y
+		"slot":
+			return _names(value).has(String(LifeSlots.current()))
+		"scene":
+			for scene_id: String in _names(value):
+				if not GameState.is_scene_done(StringName(scene_id)):
+					return false
+			return true
+	for scene_id: String in _names(value):
+		if GameState.is_scene_done(StringName(scene_id)):
+			return false
+	return true
+
+
+## (E6) Un jour (entier ≥ 1) ou [premier, dernier] → Vector2i(premier, dernier) ; (0, -1) si la
+## valeur est mal formée (aucun jour ne la remplit).
+static func day_range(value: Variant) -> Vector2i:
+	if (value is int or value is float) and int(value) >= 1 and float(value) == int(value):
+		return Vector2i(int(value), int(value))
+	if value is Array and (value as Array).size() == 2:
+		var first: Variant = value[0]
+		var last: Variant = value[1]
+		if (first is int or first is float) and (last is int or last is float):
+			if int(first) >= 1 and int(last) >= int(first):
+				return Vector2i(int(first), int(last))
+	return Vector2i(0, -1)
+
+
 ## Vrai si value a la forme attendue par la condition key (sans rien évaluer).
 static func _is_condition_value(key: String, value: Variant) -> bool:
-	if key == "flag" or key == "not_flag":
+	if key == "flag" or key == "not_flag" or key == "scene" or key == "not_scene":
 		return not _names(value).is_empty()
+	if key == "day":
+		return day_range(value).x >= 1
+	if key == "slot":
+		var slots := _names(value)
+		for slot_name: String in slots:
+			if not LifeSlots.is_slot(StringName(slot_name)):
+				return false
+		return not slots.is_empty()
 	var pair: Array = value if value is Array else []
 	if pair.size() != 2 or not _is_text(pair[0]):
 		return false

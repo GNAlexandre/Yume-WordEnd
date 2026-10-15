@@ -5,6 +5,8 @@ extends "res://tests/stubs/l10_ui_test.gd"
 const HUD := preload("res://src/ui/hud.tscn")
 const HudScript := preload("res://src/ui/hud.gd")
 const LockPlayer := preload("res://tests/stubs/l10_lock_player.gd")
+const SignPlayer := preload("res://tests/stubs/u1_sign_player.gd")
+const Board := preload("res://tests/stubs/l1_interactable_stub.gd")
 
 
 func _hud() -> HudScript:
@@ -125,26 +127,39 @@ func test_zone_name_on_entry() -> void:
 	assert_false(_node(hud, "ZoneBanner").visible, "en fondu")
 
 
+## (U1) L'invite « E / A : Parler » est devenue un signe posé au-dessus de la cible du joueur.
 func test_interaction_prompt() -> void:
 	var hud := _hud()
-	var prompt := _node(hud, "Prompt")
-	assert_false(prompt.visible)
-	EventBus.interaction_available.emit("Parler")
-	assert_true(prompt.visible)
-	assert_eq((_node(hud, "PromptLabel") as Label).text, "Parler")
-	EventBus.interaction_available.emit("")
-	assert_false(prompt.visible, '"" : plus rien')
+	var signs := hud.interact_signs()
+	var player := add_child_autofree(SignPlayer.new()) as Node3D
+	var board := add_child_autofree(Board.new()) as Node3D
+	board.set(&"prompt", "Parler")
+	await wait_process_frames(2)
+	assert_null(signs.call(&"full_target"), "pas de cible : pas de signe")
+	player.set(&"target", board)
+	await wait_process_frames(2)
+	assert_eq(signs.call(&"full_target"), board, "signe sur la cible")
+	assert_eq(signs.call(&"full_kind"), InteractSign.EXAMINE)
+	board.set(&"prompt", "")
+	await wait_process_frames(2)
+	assert_null(signs.call(&"full_target"), '"" : plus rien')
 
 
 func test_dialogue_hides_prompt_and_gauge() -> void:
 	var hud := _hud()
-	EventBus.interaction_available.emit("Parler")
+	var signs := hud.interact_signs()
+	var player := add_child_autofree(SignPlayer.new()) as Node3D
+	player.set(&"target", add_child_autofree(Board.new()))
 	EventBus.charge_progress.emit(0.5)
+	await wait_process_frames(2)
+	assert_not_null(signs.call(&"full_target"))
 	EventBus.dialogue_started.emit(&"librarian")
-	assert_false(_node(hud, "Prompt").visible, "invite masquée pendant un dialogue")
+	await wait_process_frames(2)
+	assert_null(signs.call(&"full_target"), "signe masqué pendant un dialogue")
 	assert_false(_node(hud, "ChargeRow").visible, "jauge masquée pendant un dialogue")
 	EventBus.dialogue_ended.emit(&"librarian")
-	assert_true(_node(hud, "Prompt").visible)
+	await wait_process_frames(2)
+	assert_not_null(signs.call(&"full_target"))
 	assert_true(_node(hud, "ChargeRow").visible)
 
 
@@ -266,14 +281,22 @@ func test_layout_leaves_touch_corners_free_and_lets_mouse_through() -> void:
 	var area := hud.get_global_rect()
 	var top_right := Rect2(area.end.x - 200.0, area.position.y, 200.0, 100.0)
 	var bottom := Rect2(area.position.x, area.end.y - 200.0, area.size.x, 200.0)
-	# Écrans modaux enfants du HUD (menu pause, journal de quêtes du Lot Q) : ils prennent la
-	# souris quand ils sont ouverts.
+	# Écrans modaux enfants du HUD (menu pause, journal de quêtes du Lot Q, (E6) calendrier et
+	# voile des scènes, plein écran) : ils prennent la souris quand ils sont ouverts.
 	var overlays: Array[Node] = [
 		_node(hud, "DamageFlash"),
 		_node(hud, "DeathFade"),
 		_node(hud, "PauseMenu"),
 		_node(hud, "Journal"),
+		_node(hud, "StoryOverlay"),
+		_node(hud, "Calendar"),
+		# (U1) Les signes d'interaction se dessinent au-dessus du monde, là où sont les cibles,
+		# sans prendre la souris.
+		_node(hud, "InteractSigns"),
 	]
+	assert_eq(
+		_node(hud, "InteractSigns").mouse_filter, Control.MOUSE_FILTER_IGNORE, "signes : IGNORE"
+	)
 	for node: Node in hud.find_children("*", "Control", true, false):
 		var control := node as Control
 		var in_overlay := overlays.any(

@@ -53,6 +53,11 @@ func test_camera_bounds_default_to_the_whole_map() -> void:
 	assert_eq(map.bounds(), Rect2(0, 0, 60, 45), "bornes vides : la carte entière")
 	map.camera_bounds = Rect2(10, 8, 40, 20)
 	assert_eq(map.bounds(), Rect2(10, 8, 40, 20))
+	# (QO) Réduites à un point : caméra fixe (café, maison) ; plates : une ligne.
+	map.camera_bounds = Rect2(6, 5, 0, 0)
+	assert_eq(map.bounds(), Rect2(6, 5, 0, 0), "caméra fixe")
+	map.camera_bounds = Rect2(2, 5, 8, 0)
+	assert_eq(map.bounds(), Rect2(2, 5, 8, 0), "sur une ligne")
 	map.free()
 
 

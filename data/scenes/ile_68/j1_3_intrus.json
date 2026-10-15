@@ -1,0 +1,162 @@
+{
+  "_comment": "ACTE1.md 1.3 (s. 2). La chute dans le marais n'a pas d'animation (planche willem_marsh à livrer) : un carton sur le noir la raconte.",
+  "title": "L'intrus maîtrisé",
+  "day": 1,
+  "after": [
+    "j1_2_embuscade"
+  ],
+  "map": "sentier",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "chtholly_arrivee",
+    "radius": 4
+  },
+  "present": [
+    "willem",
+    "pannibal"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "vue_marais",
+      "facing": "west",
+      "outfit": "manteau"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "lumiere_pannibal",
+      "facing": "south",
+      "outfit": "vie"
+    },
+    {
+      "do": "camera",
+      "to": "marais_chute",
+      "distance": 15,
+      "time": 1.2,
+      "wait": true
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "marais_chute"
+    },
+    {
+      "do": "bubble",
+      "who": "willem",
+      "text": "vase"
+    },
+    {
+      "do": "anim",
+      "who": "pannibal",
+      "anim": "saut",
+      "wait": true
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "willem",
+      "offset": [
+        -1.1,
+        -0.4
+      ],
+      "gait": "course"
+    },
+    {
+      "do": "anim",
+      "who": "pannibal",
+      "anim": "attaque",
+      "wait": true
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.5
+    },
+    {
+      "do": "card",
+      "text": "chute",
+      "time": 3.4
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "willem",
+      "offset": [
+        1.2,
+        -0.2
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.6
+    },
+    {
+      "do": "dialogue",
+      "node": "victoire"
+    },
+    {
+      "do": "camera_reset"
+    },
+    {
+      "do": "hint",
+      "text": "approche"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "reach": "willem",
+      "radius": 3
+    },
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "willem",
+      "offset": [
+        -1.4,
+        0.5
+      ]
+    },
+    {
+      "do": "face",
+      "who": "player",
+      "toward": "willem"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "player"
+    },
+    {
+      "do": "face",
+      "who": "pannibal",
+      "toward": "player"
+    },
+    {
+      "do": "camera",
+      "to": "willem",
+      "distance": 9,
+      "time": 0.8,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "reconnaissance"
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.0
+    }
+  ]
+}

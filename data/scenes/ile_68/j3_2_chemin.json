@@ -1,0 +1,62 @@
+{
+  "_comment": "ACTE1.md 3.2 (original) : le chemin de la ville. La ville n'a pas encore ses cartes (ville_haute, lot C-ville) : la scène se résume par un fondu et des cartons.",
+  "title": "Le chemin de la ville",
+  "day": 3,
+  "after": [
+    "j3_1_information"
+  ],
+  "map": "sentier",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "ithea",
+    "nephren"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "player",
+      "offset": [
+        1.2,
+        0.8
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "player",
+      "offset": [
+        1.8,
+        -0.6
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "dialogue",
+      "node": "bavardage"
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.0
+    },
+    {
+      "do": "slot",
+      "slot": "midi",
+      "time": 0
+    },
+    {
+      "do": "card",
+      "text": "descente",
+      "time": 3.0
+    },
+    {
+      "do": "card",
+      "text": "passant",
+      "time": 3.0
+    }
+  ]
+}

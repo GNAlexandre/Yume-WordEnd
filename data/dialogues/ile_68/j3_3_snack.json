@@ -1,0 +1,84 @@
+{
+  "id": "j3_3_snack",
+  "start": "snack",
+  "nodes": {
+    "snack": {
+      "speaker": "",
+      "text": "Les trois aînées entrent. Les oreilles du serveur retombent d'un coup : il croit que l'entrepôt vient le manger.",
+      "next": "snack_2"
+    },
+    "snack_2": {
+      "speaker_id": "snack_vendor",
+      "text": "B-bienvenue… Qu'est-ce que je… vous sers ?",
+      "next": "snack_3"
+    },
+    "snack_3": {
+      "speaker_id": "ithea",
+      "text": "Bonjour, Officier ! Ithea, pour vous servir. Et voici Nephren. Elle ne mord pas. Enfin, pas souvent.",
+      "next": "snack_4"
+    },
+    "snack_4": {
+      "speaker_id": "willem",
+      "text": "« Officier » ? Je suis juste le responsable…",
+      "next": "snack_5"
+    },
+    "snack_5": {
+      "speaker": "",
+      "text": "Nephren l'observe sans un mot, sa tasse entre les mains.",
+      "next": "snack_6"
+    },
+    "snack_6": {
+      "speaker_id": "ithea",
+      "text": "Dis, {player}… vous vous connaissiez déjà, tous les deux ?",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker_id": "ithea",
+      "text": "Tu rougis. Tu rougis !",
+      "choices": [
+        {
+          "text": "Jamais vu.",
+          "next": "jamais"
+        },
+        {
+          "text": "Une fois, sur l'île n° 28.",
+          "next": "une_fois"
+        }
+      ]
+    },
+    "jamais": {
+      "speaker_id": "ithea",
+      "text": "Mmh. Je note.",
+      "next": "suite"
+    },
+    "une_fois": {
+      "speaker_id": "ithea",
+      "text": "L'île n° 28 ! C'est encore mieux que je pensais.",
+      "next": "suite"
+    },
+    "suite": {
+      "speaker_id": "ithea",
+      "text": "En vrai, il est mieux que dans les romans.",
+      "next": "suite_2"
+    },
+    "suite_2": {
+      "speaker_id": "willem",
+      "text": "Quels romans ?",
+      "next": "suite_3"
+    },
+    "suite_3": {
+      "speaker_id": "nephren",
+      "text": "Mm.",
+      "next": "suite_4"
+    },
+    "suite_4": {
+      "speaker_id": "ithea",
+      "text": "Trois menus du jour, s'il vous plaît ! C'est l'Officier qui paie.",
+      "next": "suite_5"
+    },
+    "suite_5": {
+      "speaker": "",
+      "text": "Willem paie. Le serveur respire enfin."
+    }
+  }
+}

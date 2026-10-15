@@ -1,0 +1,58 @@
+{
+  "_comment": "ACTE1.md 1.7 : le nom complet est {player} suivi du nom de son arme (0.3).",
+  "id": "j1_7_chambre",
+  "start": "au_lit",
+  "nodes": {
+    "au_lit": {
+      "speaker": "",
+      "text": "Poings sur les hanches, tu toises le tas de petites.",
+      "next": "au_lit_2"
+    },
+    "au_lit_2": {
+      "speaker": "{player}",
+      "text": "Au lit. Tout de suite. Toutes."
+    },
+    "nom": {
+      "speaker_id": "willem",
+      "text": "Merci. Au fait… je ne connais pas encore ton nom.",
+      "next": "nom_2"
+    },
+    "nom_2": {
+      "speaker": "{player}",
+      "text": "{player} Nota Seniorious. L'aînée, ici.",
+      "next": "nom_3"
+    },
+    "nom_3": {
+      "speaker": "{player}",
+      "text": "Les armes dont tu as la charge, ce sont nous. Les fées ne sont pas des enfants qu'on protège : on les range, et on les sort quand il faut.",
+      "next": "nom_4"
+    },
+    "nom_4": {
+      "speaker": "",
+      "text": "Elle le dit à plat, comme on donne l'heure. Willem ne rit pas.",
+      "next": "fin"
+    },
+    "fin": {
+      "speaker": "{player}",
+      "text": "Alors ne t'en fais pas pour nous.",
+      "choices": [
+        {
+          "text": "Dors bien, responsable.",
+          "next": "dors"
+        },
+        {
+          "text": "Ne t'inquiète pas pour nous.",
+          "next": "inquiete"
+        }
+      ]
+    },
+    "dors": {
+      "speaker_id": "willem",
+      "text": "Toi aussi, {player}."
+    },
+    "inquiete": {
+      "speaker_id": "willem",
+      "text": "… Je vais essayer."
+    }
+  }
+}

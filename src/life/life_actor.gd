@@ -16,8 +16,11 @@ extends RefCounted
 ## - Le joueur : à LOOK_DISTANCE, on le regarde ; en approchant, parfois une bulle de salutation
 ##   (LifeTexts) ; s'il nous pousse (on bloque un passage), on s'écarte puis on revient ; quand il
 ##   nous parle, on s'arrête (parle), puis on reprend.
+## - (E6) Réservé par le récit (LifeDirector.stage, état SCENE) : plus d'activité ni de réaction
+##   au joueur ; il ne fait que ce que la scène demande (walk_to, play, face, say), jusqu'à ce que
+##   LifeDirector.release le rende à son emploi du temps.
 
-enum State { ACTIVITY, WALKING, LEAVING, GAME, ASIDE, GONE }
+enum State { ACTIVITY, WALKING, LEAVING, GAME, ASIDE, GONE, SCENE }
 
 const ARRIVE_DISTANCE := 0.08
 const LOOK_DISTANCE := 3.5
@@ -236,7 +239,7 @@ func tick(delta: float, player: Node3D) -> void:
 		return
 	_greet_cooldown = maxf(_greet_cooldown - delta, 0.0)
 	if talking:
-		if player != null:
+		if player != null and state != State.SCENE:
 			face(player.global_position - position())
 		return
 	if _hold_left > 0.0:
@@ -249,6 +252,19 @@ func tick(delta: float, player: Node3D) -> void:
 			_tick_activity(delta, player)
 		State.ASIDE:
 			_tick_aside(delta, player)
+		State.SCENE:
+			pass
+
+
+## (E6) Pris par le récit : plus de trajet, de jeu, de place ni d'activité ; debout (repos).
+func take_for_scene() -> void:
+	_leave_game()
+	_release_spot()
+	_stop_moving()
+	_hold_left = 0.0
+	line = {}
+	state = State.SCENE
+	play(&"repos")
 
 
 func _tick_activity(delta: float, player: Node3D) -> void:
@@ -592,6 +608,10 @@ func talk_blocked() -> bool:
 ## Le joueur interagit (touche E) : un jeu peut répondre à la place du dialogue (vrai : rien
 ## d'autre ne se passe).
 func on_interact() -> bool:
+	# (E6) Le récit d'abord : une scène qui attend cette conversation, ou ce que le personnage dit
+	# hors des scènes (LifeDirector.talk_handler).
+	if LifeDirector.handle_talk(self):
+		return true
 	return game != null and game.on_player_interact(self)
 
 

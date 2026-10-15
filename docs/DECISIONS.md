@@ -3122,7 +3122,79 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   retouchée ; correction à commander dans `docs/ASSETS_HD2D_ILE68.md` (3.6) et variante moteur
   (`Building.window_glow_color`) dans `docs/CONTRACT_REQUESTS.md`.
 
+- **E6 — le récit est fait de données** : `data/scenes/<île>/act.json` (l'acte en jours : début, lit,
+  repos, calendrier, jours) et une scène par fichier (déclencheur, conditions, présents, étapes),
+  répliques dans `data/dialogues/<île>/`, textes courts dans `data/texts/<île>/story.json`. Un seul
+  autoload ajouté (`StoryDirector`) ; `StoryRunner`, `StoryStage`, `StoryDialogue`, `StoryPrompt` en
+  sont des enfants ou des outils. Le format se vérifie sans lancer le jeu (`StoryData.all_problems`),
+  une clé inconnue est refusée (sauf `_…`).
+- **E6 — nouvelle partie** : `WorldManager.START_MAP` devient `entrepot` (= `arrival_map` de l'île
+  n° 68) ; l'acte s'ouvre à `game_loaded` d'une partie neuve (`SaveManager.started_new`, carte vide,
+  jour 0, aucune scène jouée) et pose jour 1, nuit, grand vent. Une sauvegarde dont la carte n'est
+  pas connue et qui n'a pas d'acte reprend sur `LEGACY_MAP`, avec ses quêtes, sans récit.
+- **E6 — le temps n'avance que par les scènes et par le joueur** : « Dormir » au lit le soir ou la
+  nuit quand les scènes de `sleep_after` sont faites ; « Laisser passer le temps » un créneau à la
+  fois, jamais au-delà du créneau de la prochaine scène clé du jour ni au-delà de la nuit.
+- **E6 — le calendrier remplace le journal pendant l'acte** (Tab / L / Select, menu pause, examen du
+  calendrier de la chambre) : 12 cases, jours passés rayés, jour du départ entouré, la ligne du jour
+  écrite au coucher (une ligne posée par une scène n'est pas réécrite).
+- **E6 — quêtes à collecter tues pendant l'acte** : `QuestTracker` ne démarre rien, le HUD cache
+  l'encadré, le journal et les « ! » / « ? » (`GameState.story_running()`) ; leur code et leurs
+  données restent pour l'ancienne île.
+- **E6 — cartes manquantes** : le port (carte d'attente de C1) et la ville (`ville_haute`, le
+  snack-bar) ne sont pas jouées : `j1_1_port`, `j3_2_chemin` et `j3_3_snack` se racontent en fondu
+  et cartons ; aucune carte inventée.
+- **E6 — combats** : une étape `game` (crochet d'E8 : `StoryDirector.register_game`) et ses étapes
+  de repli (courte séquence sans contrôle) ; l'embuscade du jour 1 est `embuscade_pannibal`.
+- **E6 — écarts au scénario** : la chute de Willem dans le marais est un carton (planche
+  `willem_marsh` absente) ; la cuisinière du jour 4 est `fairy_12` (sa ligne de V1 au fourneau ; elle porte une planche de
+  `fairy_0x`), écartée à la table pendant que Willem cuisine ;
+  le j2_3 reçoit un indice (« Willem n'est pas sorti de sa chambre… », original) puisqu'il compte pour le coucher ;
+  la pose « hanches » de la protagoniste est dite par une réplique (absente de sa planche).
+- **E6 — le jour 1 sur le vrai sentier de C1** : l'embuscade part quand on approche
+  `premiere_embuscade` (7 m), l'intrus à `chtholly_arrivee` (4 m) ; Willem vient de `vue_marais` et
+  tombe à `marais_chute`, Pannibal guette à `lumiere_pannibal`.
+- **E6 — portes fermées jusqu'à un jour** : `StoryStage.apply_doors` lit `open_from_day` et
+  `closed_text_key` d'une `MapExit` (porte de la maison Limashenka, C2) ; avant le jour, la sortie est
+  coupée et un `Examinable` (`ClosedDoor`, même invite) lit le texte (fichier
+  `data/texts/<premier segment>.json`). `MapExit` n'est pas modifiée.
+- **E6 — étape `show`** : montre ou cache un nœud de la carte courante (le cristal
+  `comm_crystal_call_1` d'I2, qui sonne aux jours 6 et 8 : lot S2) ; le `PropBatcher` ne fond pas un
+  nœud caché, il reste donc à part et se montre seul.
+- **E6 — écart entre les personnages** : deux personnages qui se parlent se tiennent à 1 m au moins,
+  tournés l'un vers l'autre (étapes `walk` / `place` vers un personnage : décalage d'1 m au moins ;
+  la protagoniste est menée à sa place avant le dialogue) ; seules exceptions, les voisines assises
+  à table (chaises à 0,5 m) et les piles de petites (`tombe`). À vérifier sur la capture de
+  chaque dialogue (lot S2 compris).
+- **E6 — présentation des dialogues du récit** : champ facultatif `presentation` (bandeau, nuit) de
+  l'étape `dialogue` ; sans lui, bandeau quand la scène a retiré le contrôle, nuit sinon (règle
+  donnée pour l'interface « Nuit douce » du lot U1).
 - **QC — garant de la qualité visuelle** : série standard de vues en données (`tools/qc_views.json`, une entrée par carte de `ile_68.json`), captures dans la vraie partie par `tools/qc_shots.sh` (`tests/integration/demo_qc.gd`), planches contact et vérification de couverture par `tools/qc_tool.py` ; grille et registre : `docs/QUALITE.md`. Les vues d'ensemble (caméra haute) ne comptent pas pour le budget de 200 draw calls.
 - **QC — lueur des vitres** : `glow_color` (`panel_core.gdshaderinc`) n'a plus `source_color` et la couleur de l'image est ramenée en sRGB pour la comparaison ; sous Compatibility, la comparaison d'une couleur sRGB au pixel linéaire éteignait toutes les vitres, la nuit comme le jour. Tolérance inchangée (0,05 à 0,12) : plus large, elle allumerait le torchis ocre des chaumières.
 - **QC — voûtes du sentier** : `fg_canopy_a` n'est plus posé en l'air au-dessus du sentier (une masse sombre au milieu de l'écran) ; il attend le premier plan accroché à l'écran (E10). `test_sentier.gd` vérifie qu'aucune voûte ne flotte.
+- **U1 — interface « Nuit douce »** : un seul thème, `src/ui/wordend_theme.tres`, porté à la racine de chaque écran ; ses boîtes sont des `NuitBox` (`src/ui/nuit_box.gd`, StyleBox en script : fond arrondi, ombre, filet doré qui s'efface, point doré), ses jetons (couleurs, durées, tailles) au type `Nuit`, lus par `UiStyle` (`src/ui/ui_style.gd`). Les voiles (`Dim`, `FadeBlack`, `FlashWhite`, `GoldRule`, `BandeauVeil`) sont des `Panel` stylés par le thème : plus aucune `Color(` dans `src/ui/*.tscn` hors `journal.tscn` (E6), vérifié par `test_ui_nuit.gd`. `dialogue_box_theme.tres` est retiré.
+- **U1 — verre dépoli** : `src/ui/frost.gdshader` (posé par `UiStyle.frost`) lit `hint_screen_texture` en niveaux de détail (le rendu Compatibility, Web compris, floute les mipmaps de la copie de l'écran) et ne touche que les pixels du fond de la NuitBox (même couleur que son `fill`) : ombre, filet et point gardent leur dessin. Une seule copie de l'écran par image, même avec plusieurs panneaux. Dialogue Nuit douce : 133 draw calls (129 avant).
+- **U1 — polices** : Nunito (texte, graisse 600, gras 800, italique par inclinaison `variation_transform`) et Cormorant Garamond (noms, titres, graisse 600 ; italique pour le jour du menu de pause), SIL OFL 1.1, réduites au latin par fontTools (axes variables gardés : 507 Ko en tout). Nunito n'a pas l'espace fine insécable (U+202F) : elle se prend dans Cormorant (`fallbacks`).
+- **U1 — présentations du dialogue** : `DialogueBox.set_presentation(&"bandeau" | &"nuit")` vaut pour la boîte ouverte et les suivantes jusqu'au prochain appel (variable statique) ; la géométrie des deux présentations est en constantes du type `DialogueBox` du thème. Les choix gardent le panneau Nuit douce dans les deux.
+- **U1 — menu de pause** : panneau à droite, en tête « Jour n · moment » (`GameState.day`, `GameState.slot`, sinon `GameState.moment`), « Pause » quand `day` vaut 0 (l'ancienne île) ; noms des créneaux dans `pause_menu.gd` (`SLOT_NAMES`) en attendant ceux du calendrier d'E6.
+- **U1 — signes d'interaction** : l'invite « E / A : Parler » (pastille `HUD/Prompt`) est retirée ; `HUD/InteractSigns` (`src/ui/interact_signs.gd`) pose un signe au-dessus de la cible (`Player.current_interactable()`) et des signes pâles sur les autres cibles à moins de 3,5 m du joueur (3 au plus : ce qu'on pourrait faire à deux pas). Genre par classe (Npc : parler, Pickup : prendre, MapExit et AirshipDock : entrer, le reste : examiner), ou par la méta `interact_sign` ; aucun signe quand `get_prompt()` est vide (règle d'E8). `EventBus.interaction_available` et `Player.current_prompt()` ne changent pas (les boutons tactiles affichent toujours le texte de l'invite).
+- **U1 — rappel de la touche** : « E » (clavier et souris) ou « A » (manette) à côté du signe pendant les 180 premières secondes de jeu **depuis le lancement** (aucun compteur de temps de jeu n'est sauvegardé), après 3 s d'arrêt devant la cible, ou toujours (Options de la pause, `user://interface.cfg`, hors sauvegarde de la partie).
+- **U1 — souris sur une cible** : liseré doré dessiné à ses pieds par le HUD (pas de modulate du sprite : il porte la teinte de la lumière, E9) et curseur en main ; un clic sur la cible du joueur vaut « interact » (le clic n'arrive pas au jeu : pas de coup d'épée). Le PNJ qui devient la cible se tourne vers le joueur (`Npc.look_toward`) s'il est arrêté.
 - **E8 — pas d'invite « Parler » pendant un jeu** : `LifeGame.blocks_talk()` réserve les participants (le ballon tant que le joueur joue, l'entraînement jusqu'à sa fin) ; le plus petit changement hors périmètre est dans `Npc.get_prompt` / `Npc.interact` (via `LifeActor.talk_blocked`). Le ballon du jeu prend l'image claire `ball_white` (0,4 m) pour se lire sur l'herbe sèche ; données dans `data/games/ballon.json`.
+- **QO — QC-02, lueur des vitres par bâtiment** : `Building.window_glow_color` et `window_glow_tolerance` (façade et flancs, par `DecorPanel.set_glow_rule` vers `glow_color` / `glow_tolerance` de `panel_core.gdshaderinc`). Constat : le rendu Compatibility lit l'image sans la convertir en linéaire, le pixel comparé est la couleur du fichier à la puissance 1/2,2 ; la règle par défaut allume donc les pixels proches de #FFCA63 (pas #FFE6A6) et la couleur d'un bâtiment est élevée de même avant d'aller au shader. Réglages : aile ouest (`warehouse_front_a`) #FCDB86 à 0,12, aile est (`warehouse_front_b`) #FCD070 à 0,15, café #E9C18D à 0,015 (ses quatre lampes de vitrine : la vitrine n'a pas de carreaux jaunes) ; les chaumières gardent la règle par défaut, leur torchis reste éteint (`tests/unit/test_window_glow.gd`). La commande d'image du cahier n° 5 (3.6) n'est plus nécessaire.
+- **QO — QC-20, bornes de caméra des intérieurs resserrées** (remplace T2, « bornes élargies en x ») : rez-de-chaussée `Rect2(6, 4, 20, 6)`, étage `Rect2(5.5, 4, 21, 6)`, café `Rect2(5.5, 5, 3, 0)`, maison `Rect2(3.5, 4, 1.5, 0)` (`tools/interior_maps.py`, `MAP_SETTINGS` ; CARTE.md). La borne la plus serrée possible est la dernière cloison nord-sud à moins de 0,5 m : plus loin (x 8 → 24 du plan, ou une caméra fixe au café et à la maison), la caméra voit la pièce du bout de biais et la cloison cache les pieds du joueur qui la longe (`test_no_wall_or_tall_furniture_hides_the_player`). Le vide noir passe d'environ 45 % à 25 % de la largeur en haut de l'écran aux bouts de l'entrepôt, à presque rien en bas ; le joueur reste à moins de 0,55 du centre (−1 à 1). `Map.bounds()` : seul `Rect2()` vaut « toute la carte » ; un rectangle plat ou réduit à un point borne aussi (les bornes plates du café et de la maison étaient ignorées : la caméra y suivait le joueur dans toute la carte).
+- **QO — QC-23, suspensions de cristal : la lumière seule** : les huit `meuble crystal_pendant` des plans (réfectoire, couloirs du rez-de-chaussée et de l'étage, infirmerie, café) sont retirés ; leurs `lumiere suspension_*` restent (flaques de lumière au sol). L'image, sans plafond, faisait un fouillis sombre de chaînes à hauteur de tête. Essayée et non retenue : la suspension remontée de 0,6 m avec la lueur de ses lanternes (règle de lueur propre) : toujours une silhouette noire, qui passe en plus devant le menu du réfectoire (planche `build/qo/QC-23.png`). L'image et sa scène restent au dépôt, non posées.
+- **QO — QC-27, bordures habitées de la cour et du champ** : 20 décors bas (au plus 1,2 m) posés à la main en fin de recette (`tools/exterior_recipes/entrepot.py`, sans tirage : le reste de la carte ne bouge pas) : dans la cour, entre le duel et le bord (lessive au nord-ouest, bancs, souches et bûches au sud, brouette et caisse à l'est) ; au champ, sur le bord ouest où l'on ne joue pas (bancs, jouets, seau, ballon), souche et bûches au sud et au nord. Dans les places `cour` et `champ`, rien qui bloque (test « rien n'y bloque ») ; à plus de 1,2 m des places de la vie (marelle, corvée, cercle, jeu, buts, fourrés), hors des chemins ; le duel reste nu. Draw calls : cour 116 → 123, champ 85 → 93.
+- **QO — QC-02, le café garde la règle de lueur par défaut** : la règle propre à ses lampes de vitrine (#E9C18D à 0,015) en faisait des taches blanches bruitées, au contour pixelisé ; retirée (`tools/exterior_props.py`). La vitrine du café attend sa façade de nuit (cahier n° 5, R0.9 ; docs/QUALITE.md, QC-16).
+
+- **C3b — la colline, reprise visuelle** : le relief de `colline` n'est plus déduit des rectangles du plan mais dessiné en contours dans `tools/exterior_recipes/colline_relief.py` (polygones en tronçons parallèles aux axes, bord bruité de 0,4 m : la grille d'un mètre fait d'une diagonale une scie de marches) ; terrasses à +1, +2,5 et +3,5 m (sommet à 3,5 m, et non 3 m), un replat de +1,5 m au sud-est, trois rampes de 5 cases de large (11 à 14°). Les `palier` et `rampe` du plan en donnent l'enveloppe exacte (CARTE.md 7), les `sol` ne sont plus peints en rectangles. Les faces sont en talus de terre et en roche par pans (`ROCK_FACES`). Le chemin ne franchit aucune marche, même de 0,5 m : la recette le vérifie (un avertissement de `exterior_maps.py gen`).
+- **C3b — le vide de la colline** : la caméra à 32° ne voit pas la face nord d'une falaise ; la recette peuple le groupe `Sky` (rochers flottants à 12 → 76 m, îles lointaines à l'échelle 0,4 → 0,8 posées vers 70 → 280 m au nord, cumulus et brume sur la nappe à y = −60 m, `horizon_islands`) pour que la mer de nuages se lise loin sous le bord. `distant_island_*` mesure 64 × 32 m à l'échelle 1. Les piliers de roche qui sortiraient de la nappe (la vraie falaise, face au sud) et une caméra qui s'incline au bord du vide sont demandés (cahier n° 5, R0.12 ; CONTRACT_REQUESTS).
+- **C3b — le cercle des talismans** : dessiné dans le sol (anneau de dalles de roche à bord rompu, rayon 6,15 m) plutôt que posé en décalques `ring_stone_flat_*` (des ovales sombres qui se lisent comme des trous dans l'herbe). Rien de debout n'y entre, sauf l'herbe haute, la bruyère et les fleurs.
+- **C3b — densité** : le tirage de la pose est fait par section (`random.Random("colline/<section>")`) : ajouter un bouquet ne déplace plus les autres décors ; visée haute de la fourchette de CARTE.md (45 à 67 éléments par écran pour 40 à 70).
+- **E6 — branché sur « Nuit douce » (U1)** : présentation bandeau tant que la scène tient le joueur,
+  nuit sinon et à la fin de chaque scène ; signes d'interaction cachés pendant une scène ; couleurs
+  du calendrier dans le type `Calendar` du thème, sans valeurs de repli ; le journal de quêtes
+  (ancienne île) prend lui aussi le thème (jetons `UiStyle`), plus d'exception dans `test_ui_nuit`.
+- **E6 — l'embuscade de Pannibal reste la séquence de repli** : E8 offre le ballon et le bâton
+  (`MiniGames`), pas de combat d'embuscade ; l'étape `game` « embuscade_pannibal » attend son
+  inscription (`StoryDirector.register_game`).

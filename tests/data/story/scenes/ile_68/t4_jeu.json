@@ -1,0 +1,28 @@
+{
+  "_comment": "Le crochet des jeux (E8).",
+  "day": 1,
+  "after": [
+    "t3_lieu"
+  ],
+  "map": "entrepot_rdc",
+  "trigger": {
+    "on": "ready"
+  },
+  "steps": [
+    {
+      "do": "game",
+      "game": "jeu_essai",
+      "params": {
+        "n": 2
+      },
+      "fallback": [
+        {
+          "do": "flag",
+          "set": [
+            "t4_repli"
+          ]
+        }
+      ]
+    }
+  ]
+}

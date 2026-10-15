@@ -5,7 +5,10 @@ extends Node
 ## Fichier save_path : {"version": 3, "saved_at": "AAAA-MM-JJTHH:MM:SSZ" (UTC), puis les champs
 ## de GameState.to_dict() dans leur ordre}. (E9) moment et weather sont des champs facultatifs du
 ## schéma v3, sans migration : absents, GameState prend le couchant sans pluie. (X1) island et
-## known_islands aussi : absents, l'île courante se déduit de la carte à l'arrivée. new_game(),
+## known_islands aussi : absents, l'île courante se déduit de la carte à l'arrivée. (E4) day et
+## slot, (E6) scenes_done, calendar et story_scene aussi : absents, hors de l'acte en jours, ou
+## jour, scènes et calendrier vierges (la nouvelle partie de l'acte est posée par StoryDirector à
+## son arrivée sur l'île de l'acte, WorldManager.start_map). new_game(),
 ## load_game() et import_json() émettent EventBus.game_loaded en cas de succès : c'est le seul
 ## signal que main.gd écoute pour passer du menu au jeu. Choix détaillés : docs/DECISIONS.md,
 ## sections L8 et Lot Q. Le nom du fichier (save_v1.json) ne suit pas la version du schéma : il
@@ -74,6 +77,10 @@ var checkpoint_distance: float = DEFAULT_CHECKPOINT_DISTANCE
 ## Explication en français du dernier échec, ou de la sauvegarde mise de côté (pour le menu) ;
 ## "" après une opération réussie.
 var last_error: String = ""
+## (E6) Vrai si la dernière partie chargée est une nouvelle partie (new_game, ou fichier illisible
+## remplacé par une nouvelle partie) ; faux pour une partie lue (load_game, import_json).
+## StoryDirector n'ouvre l'acte qu'à une nouvelle partie.
+var started_new: bool = false
 
 var _game_loaded: bool = false
 var _timer: Timer
@@ -253,12 +260,14 @@ func close_game(flush_pending: bool = true) -> void:
 
 
 func _start_new_game(skin_id: StringName) -> void:
+	started_new = true
 	GameState.reset()
 	GameState.skin_id = skin_id
 	_begin()
 
 
 func _apply(data: Dictionary) -> void:
+	started_new = false
 	data.erase("version")
 	data.erase("saved_at")
 	GameState.from_dict(data)
@@ -538,6 +547,11 @@ func _invalid_field(data: Dictionary) -> String:
 		"weather": _is_text,
 		"island": _is_text,
 		"known_islands": _is_text_list,
+		"day": _is_count,
+		"slot": _is_text,
+		"scenes_done": _is_text_list,
+		"calendar": _is_map.bind(_is_text),
+		"story_scene": _is_text,
 	}
 	for key: String in checks:
 		if data.has(key) and not checks[key].call(data[key]):

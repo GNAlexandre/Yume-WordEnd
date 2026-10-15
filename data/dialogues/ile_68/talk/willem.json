@@ -1,0 +1,55 @@
+{
+  "_comment": "Ce que dit Willem quand on lui parle hors des scènes, sur l'île n° 68 (StoryDirector : jamais les dialogues des quêtes de l'ancienne île). Entrées par jour ; la dernière, start, vaut toujours.",
+  "id": "talk_willem",
+  "start": "n4",
+  "entries": [
+    "n0",
+    "n1",
+    "n2",
+    "n3"
+  ],
+  "nodes": {
+    "n0": {
+      "speaker_id": "willem",
+      "text": "Il fait noir comme dans un four, ici. Merci pour la lumière.",
+      "if": {
+        "day": 1
+      }
+    },
+    "n1": {
+      "speaker_id": "willem",
+      "text": "Les petites se sauvent quand j'entre dans une pièce. Je ne mords pas, pourtant.",
+      "if": {
+        "day": [
+          2,
+          2
+        ]
+      }
+    },
+    "n2": {
+      "speaker_id": "willem",
+      "text": "La ville est plus grande que je pensais. Et le snack-bar, plutôt bon.",
+      "if": {
+        "day": [
+          3,
+          3
+        ]
+      }
+    },
+    "n3": {
+      "speaker_id": "willem",
+      "text": "J'ai obtenu la cuisine pour l'après-midi. Ne le dis à personne.",
+      "if": {
+        "day": [
+          4,
+          4
+        ],
+        "not_scene": "j4_2_diner"
+      }
+    },
+    "n4": {
+      "speaker_id": "willem",
+      "text": "Tu as besoin de quelque chose, l'aînée ?"
+    }
+  }
+}

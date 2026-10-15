@@ -1,0 +1,273 @@
+{
+  "_comment": "ACTE1.md 4.2 (s. 7) : le réfectoire « illuminé ». Toute la maison (28 places) : les fées qui ont une planche, assises ; les flans au caramel sont racontés.",
+  "title": "Le réfectoire illuminé",
+  "day": 4,
+  "slot": "soir",
+  "after": [
+    "j4_1_cuisine"
+  ],
+  "map": "entrepot_rdc",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "refectoire_allee",
+    "radius": 2.2
+  },
+  "present": [
+    "willem",
+    "nygglatho",
+    "ithea",
+    "nephren",
+    "collon",
+    "lakhesh",
+    "tiat",
+    "pannibal",
+    "almita",
+    "fairy_01",
+    "fairy_02",
+    "fairy_03",
+    "fairy_04",
+    "fairy_05",
+    "fairy_06",
+    "fairy_12"
+  ],
+  "steps": [
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "refectoire_chaise_b04",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "refectoire_chaise_b05",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "refectoire_chaise_c04",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "refectoire_chaise_c05",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "almita",
+      "at": "refectoire_chaise_b06",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_01",
+      "at": "refectoire_chaise_c06",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_02",
+      "at": "refectoire_chaise_b07",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_03",
+      "at": "refectoire_chaise_c07",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_04",
+      "at": "refectoire_chaise_b08",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_05",
+      "at": "refectoire_chaise_c08",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_06",
+      "at": "refectoire_chaise_b09",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_12",
+      "at": "refectoire_chaise_b11",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "refectoire_chaise_c10",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "refectoire_chaise_b10",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "refectoire_bout_est",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "refectoire_bout_ouest",
+      "facing": "east",
+      "outfit": "vie"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "refectoire_bout_ouest",
+      "offset": [
+        1.1,
+        0.0
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "camera",
+      "to": "refectoire_allee",
+      "distance": 16,
+      "time": 1.0
+    },
+    {
+      "do": "dialogue",
+      "node": "priere"
+    },
+    {
+      "do": "anim",
+      "who": "collon",
+      "anim": "saut"
+    },
+    {
+      "do": "anim",
+      "who": "tiat",
+      "anim": "saut"
+    },
+    {
+      "do": "anim",
+      "who": "fairy_01",
+      "anim": "saut",
+      "wait": true
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "willem",
+      "offset": [
+        -0.8,
+        -0.6
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "willem",
+      "offset": [
+        -0.8,
+        0.6
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "lakhesh",
+      "to": "willem",
+      "offset": [
+        -1.4,
+        0.0
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_01",
+      "to": "willem",
+      "offset": [
+        0.0,
+        1.0
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_02",
+      "to": "willem",
+      "offset": [
+        -1.4,
+        1.0
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "willem",
+      "offset": [
+        -1.4,
+        -1.0
+      ],
+      "gait": "course"
+    },
+    {
+      "do": "walk",
+      "who": "nygglatho",
+      "to": "willem",
+      "offset": [
+        0.6,
+        -0.8
+      ],
+      "facing": "willem"
+    },
+    {
+      "do": "camera",
+      "to": "willem",
+      "distance": 12,
+      "time": 1.0
+    },
+    {
+      "do": "dialogue",
+      "node": "renifle"
+    },
+    {
+      "do": "camera_reset"
+    },
+    {
+      "do": "control",
+      "on": true
+    }
+  ]
+}

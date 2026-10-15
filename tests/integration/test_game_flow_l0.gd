@@ -10,11 +10,14 @@ var _respawn_delay: float
 
 
 func before_each() -> void:
+	# (E6) Une nouvelle partie ouvre l'acte 1 à l'entrepôt : ce test joue l'ancienne île.
+	WorldManager.start_map = WorldManager.LEGACY_MAP
 	GameState.reset()
 	_respawn_delay = WorldManager.respawn_delay
 
 
 func after_each() -> void:
+	WorldManager.start_map = WorldManager.START_MAP
 	WorldManager.respawn_delay = _respawn_delay
 
 

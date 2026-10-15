@@ -31,6 +31,8 @@ var _previous_zone: StringName
 
 
 func before_each() -> void:
+	# (E6) Une nouvelle partie ouvre l'acte 1 à l'entrepôt : ce test joue l'ancienne île.
+	WorldManager.start_map = WorldManager.LEGACY_MAP
 	_previous_zone = WorldManager.current_zone()
 	GameState.reset()
 	DirAccess.make_dir_recursive_absolute(TEMP_DIR)
@@ -45,6 +47,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
+	WorldManager.start_map = WorldManager.START_MAP
 	if is_instance_valid(dialogue_runner):
 		dialogue_runner.stop()
 	EventBus.dialogue_line.disconnect(_on_dialogue_line)

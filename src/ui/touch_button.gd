@@ -17,6 +17,9 @@ const TEXT_PRESSED := Color(0.165, 0.071, 0.251)
 @export var label: String = "Épée"
 @export var context: Context = Context.GAMEPLAY
 @export var tint: Color = Color(0.953, 0.651, 0.784)
+## (U1) Couleur du thème (TouchButton/colors/<tint_name>) qui remplace tint ; &"attack" par
+## défaut, &"" : tint tel quel.
+@export var tint_name: StringName = &"attack"
 
 var _finger: int = -1
 var _caption: String = ""
@@ -50,6 +53,8 @@ static func send_strengths(
 
 func _ready() -> void:
 	mouse_filter = MOUSE_FILTER_IGNORE
+	if not tint_name.is_empty() and has_theme_color(tint_name, &"TouchButton"):
+		tint = get_theme_color(tint_name, &"TouchButton")
 	if _caption.is_empty():
 		_caption = label
 

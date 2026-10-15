@@ -1,0 +1,29 @@
+{
+  "_comment": "Une séquence longue, à passer.",
+  "day": 1,
+  "after": [
+    "t4_jeu"
+  ],
+  "map": "entrepot_rdc",
+  "sequence": true,
+  "trigger": {
+    "on": "ready"
+  },
+  "steps": [
+    {
+      "do": "wait",
+      "time": 20
+    },
+    {
+      "do": "card",
+      "text": "carton",
+      "time": 20
+    },
+    {
+      "do": "flag",
+      "set": [
+        "t5_fin"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "_comment": "Textes du récit de l'île n° 68 (lot E6 ; StoryData.text) : interface (ui), jours (titre, ligne du calendrier écrite au coucher, indice du coucher), puis une section par scène (indices, cartons, bulles). {player} : le prénom de la protagoniste. Paraphrases originales, jamais recopiées de l'œuvre (ACTE1.md, 0.3).",
+  "ui": {
+    "sleep": "Dormir",
+    "rest": "Laisser passer le temps",
+    "rest_hint": "Rien ne presse : tu peux laisser passer le temps.",
+    "calendar_title": "Le calendrier de {player}",
+    "calendar_empty": "Pas encore une croix. La première s'écrira ce soir.",
+    "day": "Jour {day}",
+    "departure": "Départ",
+    "hint_label": "En ce moment",
+    "skip": "Échap : passer"
+  },
+  "days": {
+    "1": {
+      "title": "La nuit du grand vent",
+      "calendar": "Un nouveau responsable. Tombé dans le marais avant même d'arriver.",
+      "sleep_hint": "Il est tard. Au lit."
+    },
+    "2": {
+      "title": "Les jours de fuite",
+      "calendar": "Les petites le fuient. Lui s'ennuie à sa fenêtre.",
+      "sleep_hint": "La journée est finie. Ton lit t'attend."
+    },
+    "3": {
+      "title": "Déjeuner en ville",
+      "calendar": "Ithea veut tout savoir de lui. Le serveur a cru qu'on venait le manger.",
+      "sleep_hint": "La journée est finie. Ton lit t'attend."
+    },
+    "4": {
+      "title": "Le dessert spécial",
+      "calendar": "Il a fait un dessert. Les petites ne le fuient plus.",
+      "sleep_hint": "La journée est finie. Ton lit t'attend."
+    }
+  },
+  "j1_1_port": {
+    "titre": "Cet acte suit le volume 1 de la traduction Yume Novel.",
+    "port_1": "L'île n° 68, à la nuit tombée. Le vent hurle sur le quai désert.",
+    "port_2": "Un homme descend seul d'un petit bateau, qui repart aussitôt. Personne ne l'attend : il n'a prévenu personne.",
+    "port_3": "Sur le panneau, deux flèches rouges : la ville à 2 000 marmer, l'entrepôt à 500. Il remonte son col et prend le sentier."
+  },
+  "j1_2_lumiere": {
+    "hint": "Pannibal est sortie. Cherche-la sur le sentier."
+  },
+  "j1_2_embuscade": {
+    "hint": "Pannibal est sortie. Cherche-la sur le sentier.",
+    "cri": "Haaa ! Halte-là, l'intrus !",
+    "hint_suivre": "Pannibal file vers l'est. Suis-la."
+  },
+  "j1_3_intrus": {
+    "hint": "Pannibal file vers l'est. Suis-la.",
+    "vase": "… Ça sent la vase.",
+    "chute": "Il esquive une fois, deux fois… glisse à la troisième, et tombe de tout son long dans l'eau basse du marais. Pannibal s'assoit sur son dos, l'épée de bois levée.",
+    "approche": "Approche-toi de l'intrus."
+  },
+  "j1_4_chemin": {
+    "hint": "Ramène-le à l'entrepôt."
+  },
+  "j1_5_premiers_pas": {
+    "hint_etage": "Conduis Willem chez Nygglatho, à l'étage.",
+    "chut": "Chut ! La cible va nous entendre…",
+    "cible": "C'est lui ? C'est lui !"
+  },
+  "j1_6_diner": {
+    "hint": "Couche Pannibal, au dortoir.",
+    "bonne_nuit": "Mmh… j'ai gagné…",
+    "tetes": "… ?"
+  },
+  "j1_7_chambre": {
+    "hint": "Du bruit devant la chambre du nouveau.",
+    "question_1": "Tu viens d'où ?",
+    "question_2": "Tu as des cornes, cachées ?",
+    "question_3": "Pourquoi tu n'as pas de queue ?",
+    "question_4": "Tu manges les fées ?",
+    "au_revoir": "Bonne nuiiit, Willeeem…"
+  },
+  "j2_1_matin": {
+    "hint": "Les petites font leur toilette au point d'eau, en bas.",
+    "brrr": "C'est glacé !",
+    "hint_cloche": "La cloche du petit-déjeuner. Au réfectoire !"
+  },
+  "j2_3_fenetre": {
+    "hint": "Willem n'est pas sorti de sa chambre de l'après-midi."
+  },
+  "j3_1_information": {
+    "hint": "Ithea et Nephren t'attendent sous le porche.",
+    "hint_ville": "Willem est parti en ville. Le chemin passe par le sentier."
+  },
+  "j3_2_chemin": {
+    "descente": "Au bout du sentier, le chemin descend vers la ville : des centaines de maisons de pierre posées sur une pente douce.",
+    "passant": "Un passant à tête de chien change de trottoir en voyant les trois fées de l'entrepôt. Ithea lui fait un signe de la main."
+  },
+  "j3_3_snack": {
+    "snack": "Le snack-bar de la rue du café. Au comptoir, le nouveau responsable ; derrière, un jeune lycanthrope fait sauter sa poêle.",
+    "retour": "L'après-midi passe en ville. Au soir, les trois aînées reprennent le sentier."
+  },
+  "j4_1_cuisine": {
+    "hint": "Il se passe quelque chose à la cuisine.",
+    "chuchote": "Il est encore là-dedans…",
+    "caramel": "Ça sent le sucre brûlé !"
+  },
+  "j4_2_diner": {
+    "hint": "Le dîner est servi."
+  }
+}

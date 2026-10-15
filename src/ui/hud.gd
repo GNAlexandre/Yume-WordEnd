@@ -10,7 +10,8 @@ extends Control
 ## - Jauge de charge : charge_progress (cachée à 0, dorée et « Onde prête ! » à 1).
 ## - Arène : vague, score et record (wave_started, arena_score_changed), bannières « Vague n » et
 ##   « Vague n terminée +bonus » (wave_cleared) ; tout disparaît sur arena_finished.
-## - Nom de la zone en fondu (zone_entered) ; invite « E / A : Parler » (interaction_available).
+## - Nom de la zone en fondu (zone_entered) ; (U1) signes d'interaction posés dans le monde
+##   (InteractSigns, src/ui/interact_signs.gd) à la place de l'invite « E / A : Parler ».
 ## - (Lot Q) Quête suivie : une seule quête affichée, la quête suivie (GameState.tracked_quest) si
 ##   elle est active, sinon la première quête active (QuestData.shown_quest()) ; son titre,
 ##   l'objectif de son étape courante et sa progression (« Fragment de page : 3/5 »,
@@ -31,13 +32,15 @@ extends Control
 ##   Pause tactiles) et bas de l'écran (joystick, boutons) laissés libres ; tout le HUD laisse
 ##   passer la souris (mouse_filter IGNORE). Le menu pause (PauseMenu) et le journal de quêtes
 ##   (Journal, Lot Q) sont des enfants du HUD (game.tscn est figé).
+## - (E6) Le récit : enfants StoryOverlay (fondus et cartons des scènes), StoryHint (l'indice
+##   discret) et Calendar (le calendrier, qui remplace le journal pendant l'acte en jours) ;
+##   pendant l'acte (GameState.story_running()), l'encadré de quête (%Quests) est caché.
 
 const HEART_FULL := preload("res://assets/ui/heart_full.png")
 const HEART_EMPTY := preload("res://assets/ui/heart_empty.png")
 const QUEST_ICON := preload("res://assets/ui/quest.png")
 const PLAYER_GROUP := &"player"
 const ENEMIES_GROUP := &"enemies"
-const HEART_SIZE := Vector2(42, 42)
 ## Rafraîchissement de la surcouche F3 (s).
 const PERF_PERIOD := 0.25
 
@@ -64,7 +67,6 @@ const PERF_PERIOD := 0.25
 var _hp: int = 0
 var _max_hp: int = 0
 var _charge: float = 0.0
-var _prompt: String = ""
 var _in_dialogue: bool = false
 var _arena: StringName = &""
 var _wave: int = 0
@@ -95,8 +97,7 @@ var _time: float = 0.0
 @onready var _banner: Control = %Banner
 @onready var _banner_label: Label = %BannerLabel
 @onready var _banner_sub: Label = %BannerSub
-@onready var _prompt_panel: Control = %Prompt
-@onready var _prompt_label: Label = %PromptLabel
+@onready var _signs: Control = %InteractSigns
 @onready var _saved_indicator: Control = %SavedIndicator
 @onready var _perf_overlay: Control = %PerfOverlay
 @onready var _perf_label: Label = %PerfLabel
@@ -120,7 +121,6 @@ func _ready() -> void:
 	EventBus.arena_score_changed.connect(_on_arena_score_changed)
 	EventBus.arena_finished.connect(_on_arena_finished)
 	EventBus.zone_entered.connect(_on_zone_entered)
-	EventBus.interaction_available.connect(_on_interaction_available)
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	EventBus.quest_updated.connect(_on_quest_updated)
@@ -131,6 +131,11 @@ func _ready() -> void:
 	SaveManager.saved.connect(_on_saved)
 	WorldManager.rescued.connect(_on_rescued)
 	_death_label.text = DialogueRunner.story_text("defeat/fade", _death_label.text)
+	# (U1) Fondus transparents au départ ; panneaux en verre dépoli (UiStyle).
+	_death_fade.modulate.a = 0.0
+	_fall_flash.modulate.a = 0.0
+	for panel: Control in [_saved_indicator, _story_message, _arena_panel]:
+		UiStyle.frost(panel)
 	set_health(GameState.max_hp, GameState.max_hp)
 	var states := GameState.quests()
 	for quest_id: StringName in states:
@@ -165,13 +170,14 @@ func set_health(current: int, max_value: int) -> void:
 	var healed := _max_hp > 0 and current > _hp
 	_max_hp = maxi(max_value, 0)
 	_hp = clampi(current, 0, _max_hp)
+	var heart_size := Vector2.ONE * UiStyle.constant(&"heart_px")
 	while _hearts.get_child_count() < _max_hp:
 		var heart := TextureRect.new()
-		heart.custom_minimum_size = HEART_SIZE
+		heart.custom_minimum_size = heart_size
 		heart.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		heart.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		heart.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		heart.pivot_offset = HEART_SIZE * 0.5
+		heart.pivot_offset = heart_size * 0.5
 		_hearts.add_child(heart)
 	while _hearts.get_child_count() > _max_hp:
 		var extra := _hearts.get_child(_hearts.get_child_count() - 1)
@@ -282,25 +288,19 @@ func _on_zone_entered(zone_id: StringName) -> void:
 	_flash(&"zone", _zone_banner, zone_time)
 
 
-func _on_interaction_available(prompt: String) -> void:
-	_prompt = prompt
-	_prompt_label.text = prompt
-	_refresh_prompt()
-
-
-func _refresh_prompt() -> void:
-	_prompt_panel.visible = not _prompt.is_empty() and not _in_dialogue
+## (U1) Signes d'interaction posés dans le monde (src/ui/interact_signs.gd), à la place de
+## l'ancienne invite « E / A : Parler ».
+func interact_signs() -> Control:
+	return _signs
 
 
 func _on_dialogue_started(_npc_id: StringName) -> void:
 	_in_dialogue = true
-	_refresh_prompt()
 	_refresh_charge()
 
 
 func _on_dialogue_ended(_npc_id: StringName) -> void:
 	_in_dialogue = false
-	_refresh_prompt()
 	_refresh_charge()
 
 
@@ -398,7 +398,10 @@ func shown_quest() -> StringName:
 ## Met le panneau sur la quête à afficher (QuestData.shown_quest()) et ses textes à jour.
 func _refresh_quest_panel() -> void:
 	_panel_pending = false
-	var shown := QuestData.shown_quest()
+	# (E6) Pendant l'acte en jours, pas d'encadré de quête : l'indice discret (StoryHint) le
+	# remplace.
+	_quests.visible = not GameState.story_running()
+	var shown := QuestData.shown_quest() if _quests.visible else &""
 	if shown != _shown_quest:
 		for quest_id: StringName in _quest_entries:
 			_quest_entries[quest_id].queue_free()

@@ -1,0 +1,24 @@
+{
+  "_comment": "Ce que dit Collon quand on lui parle hors des scènes, sur l'île n° 68 (StoryDirector : jamais les dialogues des quêtes de l'ancienne île). Entrées par jour ; la dernière, start, vaut toujours.",
+  "id": "talk_collon",
+  "start": "n1",
+  "entries": [
+    "n0"
+  ],
+  "nodes": {
+    "n0": {
+      "speaker_id": "collon",
+      "text": "La cible a des yeux tout noirs. On va l'espionner encore.",
+      "if": {
+        "day": [
+          1,
+          3
+        ]
+      }
+    },
+    "n1": {
+      "speaker_id": "collon",
+      "text": "Le responsable sait faire des flans ! Des vrais !"
+    }
+  }
+}

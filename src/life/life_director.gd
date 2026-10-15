@@ -18,6 +18,10 @@ extends Node
 ##   joueur (avoidance) ; jeux de groupe (LifeGame) ; une salutation à la fois (may_greet).
 ## - Rien n'est fait pour une carte posée à la main (démonstration, test d'une carte seule) :
 ##   attach(carte) la peuple ; l'ancienne île n'a pas d'emploi du temps, rien n'y change.
+## - (E6) Le récit réserve des PNJ pour ses scènes (reserve, stage : état LifeActor.SCENE) : ils
+##   ne suivent plus leur emploi du temps (ni posés à l'entrée d'une carte, ni déplacés au
+##   changement de créneau) jusqu'à release, qui les rend à leur ligne (ils y marchent, ou partent
+##   par leur sortie). talk_handler laisse le récit répondre quand on parle à un PNJ.
 ## Créneau : set_slot (le moment de lumière suit, par Atmosphere), next_slot ; F6 (créneau suivant,
 ## Maj : tout de suite) en version de débogage ou avec un paramètre ; ?creneau=midi (Web) ou
 ## -- --creneau=midi posé à chaque partie chargée ; ?vie=trace (mesures toutes les 2 s dans le
@@ -62,8 +66,13 @@ var debug_keys: bool = false
 var trace: bool = false
 var cycle: bool = false
 var dev_parameters: Dictionary = {}
+## (E6) Le récit (StoryDirector) répond quand on parle à un PNJ de la vie : appelé avec son id,
+## vrai s'il a pris la conversation (le dialogue du PNJ ne s'ouvre pas). Vide : jamais.
+var talk_handler: Callable = Callable()
 
 var _map: Map
+## (E6) PNJ réservés par le récit (id → vrai) : hors de leur emploi du temps.
+var _reserved: Dictionary[StringName, bool] = {}
 var _nav: LifeNav
 var _places: LifePlaces
 var _actors: Dictionary = {}
@@ -206,7 +215,7 @@ func attach(map: Map) -> void:
 	_day = GameState.day
 	for npc_id: StringName in LifeData.cast():
 		var line := LifeData.line_for(npc_id, _slot, _day)
-		if line.get("map", &"") == map.map_id():
+		if line.get("map", &"") == map.map_id() and not _reserved.has(npc_id):
 			var placed := _spawn(npc_id)
 			if placed != null:
 				placed.place_now(line)
@@ -302,6 +311,86 @@ func spawn_actor(npc_id: StringName, at: Vector3) -> LifeActor:
 ## Retire un PNJ parti (arrivé à sa sortie).
 func despawn(who: LifeActor) -> void:
 	_drop(who)
+
+
+# --- Récit (E6) -------------------------------------------------------------------------------
+
+
+## Réserve un PNJ pour une scène : il ne suit plus son emploi du temps ; présent sur la carte, il
+## s'arrête (état SCENE). Sans effet sur un PNJ inconnu.
+func reserve(npc_id: StringName) -> void:
+	if LifeData.find_npc(npc_id) == null:
+		return
+	_reserved[npc_id] = true
+	var who: LifeActor = _actors.get(npc_id)
+	if who != null and who.state != LifeActor.State.SCENE:
+		who.take_for_scene()
+
+
+## Vrai si le PNJ est réservé par le récit.
+func is_reserved(npc_id: StringName) -> bool:
+	return _reserved.has(npc_id)
+
+
+## PNJ réservés par le récit.
+func reserved() -> Array[StringName]:
+	var ids: Array[StringName] = []
+	ids.assign(_reserved.keys())
+	return ids
+
+
+## Pose un PNJ réservé pour une scène en at (repère du monde), regard facing (ZERO : inchangé),
+## debout ; il apparaît s'il n'était pas sur la carte. null sans carte peuplée ou PNJ inconnu.
+func stage(npc_id: StringName, at: Vector3, facing: Vector3 = Vector3.ZERO) -> LifeActor:
+	reserve(npc_id)
+	if not _reserved.has(npc_id):
+		return null
+	var who := spawn_actor(npc_id, at)
+	if who == null:
+		return null
+	who.take_for_scene()
+	who.set_position(at)
+	who.spot = Transform3D(Basis.IDENTITY, at)
+	who.face(facing)
+	return who
+
+
+## Rend un PNJ réservé à son emploi du temps : présent sur la carte, il marche vers sa place
+## (walk) ou y est posé, ou s'en va par sa sortie s'il est attendu ailleurs ou nulle part.
+func release(npc_id: StringName, walk: bool = true) -> void:
+	_reserved.erase(npc_id)
+	var who: LifeActor = _actors.get(npc_id)
+	if who == null or who.state != LifeActor.State.SCENE or _map == null:
+		return
+	var line := LifeData.line_for(npc_id, LifeSlots.current(), GameState.day)
+	var delay := _rng.randf_range(DEPART_SPREAD.x, DEPART_SPREAD.y) if walk else 0.0
+	if line.get("map", &"") == _map.map_id():
+		if walk:
+			who.walk_to_line(line, delay)
+		else:
+			who.place_now(line)
+	elif walk:
+		who.leave_by(_exit_toward(_target_of(line)), delay)
+	else:
+		_drop(who)
+
+
+## Rend tous les PNJ réservés à leur emploi du temps.
+func release_all(walk: bool = true) -> void:
+	for npc_id: StringName in reserved():
+		release(npc_id, walk)
+
+
+## Retire tout de suite un PNJ de la carte (il disparaît ; une scène le fait sortir du champ).
+func dismiss(npc_id: StringName) -> void:
+	var who: LifeActor = _actors.get(npc_id)
+	if who != null:
+		_drop(who)
+
+
+## Conversation avec un PNJ de la vie (LifeActor.on_interact) : vraie si le récit la prend.
+func handle_talk(who: LifeActor) -> bool:
+	return talk_handler.is_valid() and bool(talk_handler.call(who.id))
 
 
 ## (Joueur) Tenue de la maison de la protagoniste dans un intérieur de l'entrepôt : la tenue
@@ -599,6 +688,8 @@ func _apply_slot(walk: bool) -> void:
 		return
 	var map_id := _map.map_id()
 	for npc_id: StringName in LifeData.cast():
+		if _reserved.has(npc_id):
+			continue
 		var line := LifeData.line_for(npc_id, _slot, _day)
 		var here: bool = line.get("map", &"") == map_id
 		var current: LifeActor = _actors.get(npc_id)
@@ -813,6 +904,7 @@ func _track_rain(weather: StringName) -> void:
 
 
 func _on_game_loaded() -> void:
+	_reserved.clear()
 	var wanted: StringName = dev_parameters.get(SLOT_KEY, &"")
 	if not wanted.is_empty():
 		set_slot(wanted, 0.0)

@@ -13,6 +13,8 @@ extends Control
 ## en pause (menu pause, fin d'arène).
 ## Contenu mis à jour uniquement sur EventBus.inventory_changed, en relisant GameState
 ## (items() pour les quantités, stacks() pour les cases).
+## (U1) Style « Nuit douce » du thème (src/ui/wordend_theme.tres) : panneau de verre dépoli qui
+## entre en fondu et léger glissement, cases InventorySlot.
 
 ## L'inventaire vient de s'ouvrir / de se fermer.
 signal opened
@@ -31,7 +33,8 @@ var _paused_by_me: bool = false
 var _dialogue_running: bool = false
 var _pad := MenuInput.new()
 
-@onready var _dim: ColorRect = %Dim
+@onready var _dim: Control = %Dim
+@onready var _panel: Control = %Panel
 @onready var _grid: GridContainer = %Grid
 @onready var _close_button: Button = %CloseButton
 @onready var _detail_icon: TextureRect = %DetailIcon
@@ -46,6 +49,7 @@ func _ready() -> void:
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	_close_button.pressed.connect(close)
 	_dim.gui_input.connect(_on_dim_gui_input)
+	UiStyle.frost(_panel)
 	_refresh()
 
 
@@ -68,6 +72,7 @@ func open() -> void:
 	_paused_by_me = true
 	_pad.reset()
 	_focus_selection()
+	UiStyle.appear(_panel, Vector2.DOWN)
 	opened.emit()
 
 
@@ -75,6 +80,7 @@ func open() -> void:
 func close() -> void:
 	if not visible:
 		return
+	UiStyle.settle(_panel)
 	visible = false
 	_pad.reset()
 	if _paused_by_me:

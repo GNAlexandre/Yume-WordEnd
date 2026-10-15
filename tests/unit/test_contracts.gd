@@ -381,6 +381,8 @@ func test_autoloads_are_registered_without_class_name() -> void:
 		"WorldManager",
 		"DesktopApp",
 		"Atmosphere",
+		"LifeDirector",
+		"StoryDirector",
 	]:
 		assert_true(ProjectSettings.has_setting("autoload/" + autoload), "autoload %s" % autoload)
 		assert_not_null(get_tree().root.get_node_or_null(autoload), "%s dans l'arbre" % autoload)
@@ -428,7 +430,12 @@ func test_world_manager_api() -> void:
 	assert_eq(WorldManager.VILLAGE, &"village")
 	assert_eq(WorldManager.SPAWN_MARKER, &"Spawn")
 	assert_eq(WorldManager.LEGACY_MAP, &"ile_ancienne", "(E1) carte héritée")
-	assert_eq(WorldManager.START_MAP, &"ile_ancienne", "(E1) une nouvelle partie y commence")
+	assert_eq(WorldManager.START_MAP, &"entrepot", "(E6) une nouvelle partie ouvre l'acte 1")
+	assert_eq(
+		WorldManager.START_MAP,
+		WorldAtlas.arrival_map(&"ile_68"),
+		"(E6) la carte d'arrivée de l'île n° 68"
+	)
 	for signal_name: String in ["rescued", "transition_started", "transition_finished"]:
 		_assert_signal(WorldManager, "WorldManager", signal_name, [SN])
 

@@ -40,6 +40,13 @@ const PANEL_SHADER := preload("res://src/world/shaders/panel.gdshader")
 const FOREGROUND_SHADER := preload("res://src/world/shaders/panel_foreground.gdshader")
 ## Variante à alpha doux (soft_alpha : fumée, vapeur, cascade, nuages, brume, rais de lumière).
 const SOFT_SHADER := preload("res://src/world/shaders/panel_soft.gdshader")
+## (QO) Lueur propre par défaut (panel_core.gdshaderinc : glow_color, glow_tolerance) : la couleur
+## de l'image qu'allume le réglage par défaut du shader (1 ; 0,9 ; 0,65), soit #FFCA63 une fois
+## ramenée de la puissance 1/2,2 (glow_shader_color), et la distance au-delà de laquelle un pixel
+## reste éteint. GLOW_LIFT : puissance appliquée par le shader au pixel lu.
+const GLOW_LIFT := 1.0 / 2.2
+const GLOW_COLOR := Color(1.0, 0.7931, 0.3876)
+const GLOW_TOLERANCE := 0.12
 const SHADOW_TEXTURE := preload("res://assets/hd2d/fx/shadow.png")
 ## Hauteur de l'ombre au-dessus du sol (m) : pas de scintillement avec le sol.
 const SHADOW_LIFT := 0.04
@@ -388,12 +395,20 @@ static func material_for(
 	frame_count: int = 1,
 	frame_rate: float = 0.0,
 	in_foreground: bool = false,
-	soft: bool = false
+	soft: bool = false,
+	glow_color: Color = GLOW_COLOR,
+	glow_tolerance: float = GLOW_TOLERANCE
 ) -> Material:
 	var blended := soft and not in_foreground
 	var key := "%s|%s|%.2f" % [image_key(image), color.to_html(), glow_amount]
 	if frame_count > 1 or in_foreground or blended:
 		key += "|%d|%.3f|%d|%d" % [frame_count, frame_rate, int(in_foreground), int(blended)]
+	var custom_glow := (
+		not glow_color.is_equal_approx(GLOW_COLOR)
+		or not is_equal_approx(glow_tolerance, GLOW_TOLERANCE)
+	)
+	if custom_glow:
+		key += "|%s|%.3f" % [glow_color.to_html(false), glow_tolerance]
 	var material := cached_material(_materials, key) as ShaderMaterial
 	if material == null:
 		material = ShaderMaterial.new()
@@ -404,6 +419,8 @@ static func material_for(
 		material.set_shader_parameter(&"tint", color)
 		material.set_shader_parameter(&"hd2d_relief", 0.0)
 		material.set_shader_parameter(&"glow_strength", glow_amount)
+		if custom_glow:
+			set_glow_rule(material, glow_color, glow_tolerance)
 		if frame_count > 1:
 			material.set_shader_parameter(&"frames", float(frame_count))
 			material.set_shader_parameter(&"fps", frame_rate)
@@ -411,6 +428,40 @@ static func material_for(
 			_foreground_materials.append(weakref(material))
 		_materials[key] = weakref(material)
 	return material
+
+
+## (QO) Couleur de lueur telle que le shader la compare (panel_core.gdshaderinc) à partir d'une
+## couleur de l'image : le rendu Compatibility lit l'image telle quelle, sans la convertir en
+## linéaire (constaté sur les façades de l'entrepôt), et le shader élève le pixel lu à la
+## puissance 1/2,2 ; on élève la couleur de la même façon pour comparer ce qui se compare.
+static func glow_shader_color(image_color: Color) -> Vector4:
+	return Vector4(
+		pow(image_color.r, GLOW_LIFT),
+		pow(image_color.g, GLOW_LIFT),
+		pow(image_color.b, GLOW_LIFT),
+		1.0
+	)
+
+
+## (QO) Pose la règle de lueur propre d'un matériau de panneau : couleur de l'image (sRGB, celle
+## des carreaux) et tolérance (distance, après élévation à la puissance 1/2,2).
+static func set_glow_rule(
+	material: ShaderMaterial, glow_color: Color, glow_tolerance: float
+) -> void:
+	material.set_shader_parameter(&"glow_color", glow_shader_color(glow_color))
+	material.set_shader_parameter(&"glow_tolerance", glow_tolerance)
+
+
+## (QO) Jumeau sur le processeur de la lueur propre de panel_core.gdshaderinc : part (0..1) dont
+## s'allume un pixel de l'image (couleur sRGB, telle que dans le fichier) sous une règle de lueur.
+## Sert aux tests (les carreaux s'allument, le torchis non).
+static func glow_weight(
+	pixel: Color, glow_color: Color = GLOW_COLOR, glow_tolerance: float = GLOW_TOLERANCE
+) -> float:
+	var lifted := glow_shader_color(pixel)
+	var rule := glow_shader_color(glow_color)
+	var offset := Vector3(lifted.x - rule.x, lifted.y - rule.y, lifted.z - rule.z)
+	return 1.0 - smoothstep(glow_tolerance * 5.0 / 12.0, glow_tolerance, offset.length())
 
 
 ## (E1) Clé d'une image dans les caches de matériaux : son chemin, ou son RID si elle n'en a pas

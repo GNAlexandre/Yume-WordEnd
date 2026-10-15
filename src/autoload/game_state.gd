@@ -14,6 +14,11 @@ extends Node
 ## - skin_changed et max_hp_changed quand skin_id / max_hp changent.
 ## - (E9) atmosphere_changed quand moment ou weather changent (setters, from_dict et reset
 ##   compris) : Atmosphere pose alors la lumière.
+## (E6) Le récit : day (jour de l'acte, 1 à 12 ; 0 hors de l'acte en jours), les scènes jouées
+## (scenes_done), les lignes du calendrier de la protagoniste (calendar) et la scène en cours
+## (story_scene, rejouée depuis son début à la reprise d'une partie) ; tenus par StoryDirector,
+## sauvegardés (champs facultatifs du schéma v3). story_running() : vrai pendant l'acte en jours
+## (les quêtes à collecter se taisent alors : ni HUD, ni journal, ni marqueur).
 ## (X1) island (île courante) et les îles connues sont tenues par WorldManager à chaque arrivée
 ## sur une île (EventBus.island_entered) ; sauvegardées (champs facultatifs du schéma v3).
 ## Mises à jour attendues des autres lots : (E1) map par WorldManager à chaque changement de
@@ -46,6 +51,8 @@ const DEFAULT_WEATHER := &"clair"
 const SLOTS: Array[StringName] = [&"aube", &"matin", &"midi", &"apres_midi", &"soir", &"nuit"]
 ## (E4) Plus grand jour de l'acte accepté (sauvegarde trafiquée).
 const MAX_DAY := 99
+## (E6) Plus grand nombre de scènes jouées retenues (sauvegarde trafiquée).
+const MAX_SCENES := 999
 
 ## Skin actif (SkinData.id) ; &"" = skin par défaut de SkinRegistry.
 var skin_id: StringName = &"":
@@ -115,6 +122,9 @@ var slot: StringName = &"":
 			push_warning("GameState : créneau inconnu %s" % value)
 			return
 		slot = value
+## (E6) Scène du récit en cours (data/scenes/<île>/<id>.json), &"" hors scène : tenue par
+## StoryDirector ; une partie reprise au milieu d'une scène la rejoue depuis son début.
+var story_scene: StringName = &""
 ## (Lot Q) Quête suivie, affichée par le HUD ; &"" = aucune (le HUD montre alors la première
 ## quête active). Tenue par le QuestTracker (une quête qui démarre devient la quête suivie) et
 ## par le journal (choix du joueur) ; émet tracked_quest_changed.
@@ -134,6 +144,10 @@ var _collected_pickups: Dictionary[StringName, bool] = {}
 var _best_scores: Dictionary[StringName, Dictionary] = {}
 ## (X1) Îles où le joueur est déjà allé, dans l'ordre de découverte.
 var _known_islands: Array[StringName] = []
+## (E6) Scènes du récit jouées jusqu'au bout, dans l'ordre.
+var _scenes_done: Array[StringName] = []
+## (E6) Calendrier : jour → ligne écrite (&"" : la ligne du jour, sinon une clé de ligne).
+var _calendar: Dictionary[int, StringName] = {}
 
 
 ## Nouvelle partie : tout revient aux valeurs par défaut.
@@ -148,6 +162,7 @@ func reset() -> void:
 	weather = DEFAULT_WEATHER
 	day = 0
 	slot = &""
+	story_scene = &""
 	tracked_quest = &""
 	_inventory.clear()
 	_flags.clear()
@@ -156,7 +171,55 @@ func reset() -> void:
 	_collected_pickups.clear()
 	_best_scores.clear()
 	_known_islands.clear()
+	_scenes_done.clear()
+	_calendar.clear()
 	EventBus.inventory_changed.emit()
+
+
+# --- Récit (E6) -------------------------------------------------------------------------------
+
+
+## Vrai pendant l'acte en jours (day ≥ 1) : le récit mène, les quêtes à collecter se taisent.
+func story_running() -> bool:
+	return day > 0
+
+
+## Vrai si la scène a été jouée jusqu'au bout.
+func is_scene_done(scene_id: StringName) -> bool:
+	return _scenes_done.has(scene_id)
+
+
+## Retient une scène jouée (sans effet si elle l'est déjà).
+func mark_scene_done(scene_id: StringName) -> void:
+	if scene_id.is_empty() or is_scene_done(scene_id) or _scenes_done.size() >= MAX_SCENES:
+		return
+	_scenes_done.append(scene_id)
+
+
+## Oublie une scène jouée (outils de test, raccourcis de développement).
+func forget_scene(scene_id: StringName) -> void:
+	_scenes_done.erase(scene_id)
+
+
+## Scènes jouées, dans l'ordre (copie).
+func scenes_done() -> Array[StringName]:
+	return _scenes_done.duplicate()
+
+
+## Écrit la ligne du jour au calendrier (line : &"" la ligne du jour, sinon une clé de ligne).
+func write_calendar(calendar_day: int, line: StringName = &"") -> void:
+	if calendar_day >= 1 and calendar_day <= MAX_DAY:
+		_calendar[calendar_day] = line
+
+
+## Vrai si le calendrier porte une ligne pour ce jour.
+func has_calendar_line(calendar_day: int) -> bool:
+	return _calendar.has(calendar_day)
+
+
+## Calendrier : jour → clé de ligne (&"" : la ligne du jour), copie.
+func calendar() -> Dictionary[int, StringName]:
+	return _calendar.duplicate()
 
 
 # --- Îles (X1) --------------------------------------------------------------------------------
@@ -365,7 +428,8 @@ func arena_record(arena_id: StringName) -> Dictionary:
 ## (v2) : quest_progress et tracked_quest ; enfin (E9) moment et weather, facultatifs dans le
 ## schéma v3 (absents d'une sauvegarde plus ancienne : le couchant sans pluie), (X1) island
 ## et known_islands, facultatifs aussi (absents : WorldManager les déduit de la carte), et (E4)
-## day et slot, facultatifs aussi (absents : 0 et "").
+## day et slot, facultatifs aussi (absents : 0 et ""), et (E6) scenes_done, calendar et
+## story_scene, facultatifs aussi (absents : aucune scène, calendrier vierge, hors scène).
 func to_dict() -> Dictionary:
 	var inventory := {}
 	for item_id: StringName in _inventory:
@@ -386,6 +450,12 @@ func to_dict() -> Dictionary:
 	var known: Array[String] = []
 	for island_id: StringName in _known_islands:
 		known.append(String(island_id))
+	var scenes: Array[String] = []
+	for scene_id: StringName in _scenes_done:
+		scenes.append(String(scene_id))
+	var calendar_lines := {}
+	for calendar_day: int in _calendar:
+		calendar_lines[str(calendar_day)] = String(_calendar[calendar_day])
 	var progress := {}
 	for quest_id: StringName in _quest_progress:
 		progress[String(quest_id)] = {
@@ -410,6 +480,9 @@ func to_dict() -> Dictionary:
 		"known_islands": known,
 		"day": day,
 		"slot": String(slot),
+		"scenes_done": scenes,
+		"calendar": calendar_lines,
+		"story_scene": String(story_scene),
 	}
 
 
@@ -491,6 +564,20 @@ func from_dict(data: Dictionary) -> void:
 	day = _read_count(data.get("day"))
 	var saved_slot := _read_name(data.get("slot"))
 	slot = saved_slot if saved_slot in SLOTS else &""
+	# (E6) Absents ou invalides : aucune scène, calendrier vierge, hors scène.
+	_scenes_done.clear()
+	var scenes: Variant = data.get("scenes_done")
+	if scenes is Array:
+		for scene_id: Variant in scenes:
+			mark_scene_done(_read_name(scene_id))
+	_calendar.clear()
+	var calendar_lines := _as_dict(data.get("calendar"))
+	for key: Variant in calendar_lines:
+		var calendar_day := str(key).to_int() if str(key).is_valid_int() else 0
+		var line: Variant = calendar_lines[key]
+		if line is String:
+			write_calendar(calendar_day, StringName(line))
+	story_scene = _read_name(data.get("story_scene"))
 	EventBus.inventory_changed.emit()
 
 

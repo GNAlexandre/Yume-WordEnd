@@ -1,0 +1,111 @@
+{
+  "_comment": "ACTE1.md 1.2, étapes 3 et 4 (combat 3.1, première manche) : près de premiere_embuscade, Pannibal bondit des roseaux. Le combat est un crochet du lot E8 (« embuscade_pannibal ») ; sans lui, une courte séquence sans contrôle.",
+  "title": "L'embuscade",
+  "day": 1,
+  "after": [
+    "j1_2_lumiere"
+  ],
+  "map": "sentier",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "premiere_embuscade",
+    "radius": 7
+  },
+  "present": [
+    "pannibal"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "premiere_embuscade",
+      "offset": [
+        1.5,
+        -2.2
+      ],
+      "facing": "south",
+      "outfit": "vie"
+    },
+    {
+      "do": "wait",
+      "time": 0.6
+    },
+    {
+      "do": "bubble",
+      "who": "pannibal",
+      "text": "cri"
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "player",
+      "offset": [
+        1.2,
+        -0.4
+      ],
+      "gait": "course"
+    },
+    {
+      "do": "face",
+      "who": "player",
+      "toward": "pannibal"
+    },
+    {
+      "do": "game",
+      "game": "embuscade_pannibal",
+      "params": {
+        "day": 1,
+        "help": true
+      },
+      "fallback": [
+        {
+          "do": "anim",
+          "who": "pannibal",
+          "anim": "attaque",
+          "wait": true
+        },
+        {
+          "do": "anim",
+          "who": "player",
+          "anim": "degats",
+          "wait": true
+        },
+        {
+          "do": "anim",
+          "who": "pannibal",
+          "anim": "attaque",
+          "wait": true
+        },
+        {
+          "do": "wait",
+          "time": 0.4
+        }
+      ]
+    },
+    {
+      "do": "face",
+      "who": "pannibal",
+      "toward": "player"
+    },
+    {
+      "do": "dialogue",
+      "node": "reconnue"
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "lumiere_pannibal",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "hint",
+      "text": "hint_suivre"
+    },
+    {
+      "do": "control",
+      "on": true
+    }
+  ]
+}

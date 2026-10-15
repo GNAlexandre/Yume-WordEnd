@@ -10,6 +10,8 @@ var _previous_zone: StringName
 
 
 func before_each() -> void:
+	# (E6) Une nouvelle partie ouvre l'acte 1 à l'entrepôt : ce test joue l'ancienne île.
+	WorldManager.start_map = WorldManager.LEGACY_MAP
 	_previous_path = SaveManager.save_path
 	_previous_delay = SaveManager.autosave_delay
 	_previous_zone = WorldManager.current_zone()
@@ -20,6 +22,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
+	WorldManager.start_map = WorldManager.START_MAP
 	get_tree().paused = false
 	if WorldManager.current_zone() != _previous_zone:
 		EventBus.zone_entered.emit(_previous_zone)

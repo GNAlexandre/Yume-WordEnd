@@ -16,80 +16,148 @@ mouse_filter = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_pause")
 
-[node name="Dim" type="ColorRect" parent="."]
+[node name="Dim" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.106, 0.071, 0.192, 0.55)
+theme_type_variation = &"Dim"
 
 [node name="MainPanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
+anchors_preset = 6
+anchor_left = 1.0
 anchor_top = 0.5
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -220.0
-offset_top = -205.0
-offset_right = 220.0
-offset_bottom = 205.0
-grow_horizontal = 2
+offset_left = -400.0
+offset_top = -150.0
+offset_right = -60.0
+offset_bottom = 150.0
+grow_horizontal = 0
 grow_vertical = 2
 
 [node name="Box" type="VBoxContainer" parent="MainPanel"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 6
 
 [node name="Header" type="Label" parent="MainPanel/Box"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"HeaderLabel"
-theme_override_font_sizes/font_size = 46
+theme_type_variation = &"DayLabel"
 text = "Pause"
-horizontal_alignment = 1
+
+[node name="Gap" type="Control" parent="MainPanel/Box"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+mouse_filter = 2
 
 [node name="ResumeButton" type="Button" parent="MainPanel/Box"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"PrimaryButton"
 text = "Reprendre"
+alignment = 0
 
 [node name="SaveButton" type="Button" parent="MainPanel/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Sauvegarder"
+alignment = 0
+
+[node name="CalendarButton" type="Button" parent="MainPanel/Box"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Calendrier"
+alignment = 0
+
+[node name="OptionsButton" type="Button" parent="MainPanel/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Options"
+alignment = 0
 
 [node name="ControlsButton" type="Button" parent="MainPanel/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Commandes"
+alignment = 0
 
 [node name="FullscreenButton" type="Button" parent="MainPanel/Box"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+alignment = 0
 
 [node name="QuitButton" type="Button" parent="MainPanel/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Retour au menu"
+alignment = 0
 
 [node name="ExitGameButton" type="Button" parent="MainPanel/Box"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+alignment = 0
 
 [node name="Status" type="Label" parent="MainPanel/Box"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(360, 0)
+custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[node name="OptionsPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -560.0
+offset_top = -110.0
+offset_right = -60.0
+offset_bottom = 110.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="Box" type="VBoxContainer" parent="OptionsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Header" type="Label" parent="OptionsPanel/Box"]
+layout_mode = 2
+theme_type_variation = &"DayLabel"
+text = "Options"
+
+[node name="KeyHintToggle" type="Button" parent="OptionsPanel/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "Rappel de la touche d'action : au besoin"
+alignment = 0
+
+[node name="KeyHintNote" type="Label" parent="OptionsPanel/Box"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 17
+text = "Au besoin : les premières minutes de jeu, ou après trois secondes d'arrêt devant ce qu'on peut faire."
+autowrap_mode = 3
+
+[node name="OptionsBack" type="Button" parent="OptionsPanel/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Retour"
+alignment = 0
 
 [node name="ControlsPanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true

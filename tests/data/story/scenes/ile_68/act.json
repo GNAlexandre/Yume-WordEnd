@@ -1,0 +1,48 @@
+{
+  "_comment": "Acte d'essai des tests du moteur du récit (tests/unit/test_story_runner.gd) : le rez-de-chaussée de l'entrepôt.",
+  "start": {
+    "map": "entrepot_rdc",
+    "marker": "Spawn",
+    "day": 1,
+    "slot": "matin",
+    "weather": "clair"
+  },
+  "departure_day": 3,
+  "sleep": {
+    "map": "entrepot_rdc",
+    "point": "lecture_banquette",
+    "prompt": "ui/sleep",
+    "slots": [
+      "soir",
+      "nuit"
+    ],
+    "wake_slot": "aube"
+  },
+  "rest": {
+    "prompt": "ui/rest",
+    "points": [
+      {
+        "map": "entrepot_rdc",
+        "point": "refectoire_allee"
+      }
+    ]
+  },
+  "calendar": {
+    "examine": "entrepot_rdc/planning"
+  },
+  "days": {
+    "1": {
+      "weather": "clair",
+      "sleep_after": [
+        "t6_soir"
+      ],
+      "sleep_hint": "days/1/sleep_hint"
+    },
+    "2": {
+      "weather": "pluie"
+    },
+    "3": {
+      "weather": "clair"
+    }
+  }
+}

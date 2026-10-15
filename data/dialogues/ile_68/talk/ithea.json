@@ -1,0 +1,35 @@
+{
+  "_comment": "Ce que dit Ithea quand on lui parle hors des scènes, sur l'île n° 68 (StoryDirector : jamais les dialogues des quêtes de l'ancienne île). Entrées par jour ; la dernière, start, vaut toujours.",
+  "id": "talk_ithea",
+  "start": "n2",
+  "entries": [
+    "n0",
+    "n1"
+  ],
+  "nodes": {
+    "n0": {
+      "speaker_id": "ithea",
+      "text": "Un homme à l'entrepôt. Un vrai. Ça va faire des histoires… j'adore les histoires.",
+      "if": {
+        "day": [
+          1,
+          2
+        ]
+      }
+    },
+    "n1": {
+      "speaker_id": "ithea",
+      "text": "L'Officier rougit quand on l'appelle Officier. Nya-ha-ha.",
+      "if": {
+        "day": [
+          3,
+          4
+        ]
+      }
+    },
+    "n2": {
+      "speaker_id": "ithea",
+      "text": "Tu as la tête de quelqu'un qui pense à quelqu'un."
+    }
+  }
+}

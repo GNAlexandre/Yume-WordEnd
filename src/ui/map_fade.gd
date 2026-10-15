@@ -23,6 +23,8 @@ var _pending_title: String = ""
 
 
 func _ready() -> void:
+	# (U1) Couleur du noir : jeton « black » du thème (UiStyle).
+	_black.color = UiStyle.color(&"black")
 	EventBus.map_entered.connect(_on_map_entered)
 	_apply(WorldManager.fade_alpha())
 

@@ -1,0 +1,48 @@
+{
+  "id": "j2_3_fenetre",
+  "start": "fenetre",
+  "nodes": {
+    "fenetre": {
+      "speaker": "",
+      "text": "Willem est assis sur le rebord de sa fenêtre et regarde la forêt.",
+      "next": "fenetre_2"
+    },
+    "fenetre_2": {
+      "speaker_id": "willem",
+      "text": "Dis-moi, l'aînée. Qu'est-ce qu'un responsable est censé faire, ici ?",
+      "next": "fenetre_3"
+    },
+    "fenetre_3": {
+      "speaker_id": "willem",
+      "text": "Les armes n'ont besoin de rien, et les enfants me fuient.",
+      "next": "fenetre_4"
+    },
+    "fenetre_4": {
+      "speaker": "{player}",
+      "text": "C'est justement ça, le poste. Il n'y a rien à faire.",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker_id": "willem",
+      "text": "Rien à faire… Il va falloir que je trouve quelque chose.",
+      "choices": [
+        {
+          "text": "Va te promener en ville.",
+          "next": "ville"
+        },
+        {
+          "text": "Les petites finiront par venir.",
+          "next": "petites"
+        }
+      ]
+    },
+    "ville": {
+      "speaker_id": "willem",
+      "text": "La ville… Pourquoi pas. J'irai demain."
+    },
+    "petites": {
+      "speaker_id": "willem",
+      "text": "Tu crois ? En attendant, j'irai voir la ville demain."
+    }
+  }
+}

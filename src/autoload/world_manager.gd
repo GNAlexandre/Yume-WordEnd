@@ -71,8 +71,11 @@ const ZONES_GROUP := &"zones"
 const PLAYER_GROUP := &"player"
 ## (E1) Carte héritée : l'île à cinq zones, jouable jusqu'à la phase 5 de la refonte.
 const LEGACY_MAP := &"ile_ancienne"
-## (E1) Carte d'une nouvelle partie (et d'une sauvegarde dont la carte n'existe plus).
-const START_MAP := &"ile_ancienne"
+## (E1) Carte d'une nouvelle partie (et d'une sauvegarde dont la carte n'existe plus). (E6) La
+## carte d'arrivée de l'île n° 68 (data/world/islands/ile_68.json, arrival_map) : une nouvelle
+## partie ouvre l'acte 1 en jours (StoryDirector) ; l'ancienne île n'est plus que celle des
+## sauvegardes d'avant la refonte (et des tests de l'ancienne île : start_map).
+const START_MAP := &"entrepot"
 ## (E1) Zones de la carte héritée : load_zone() et teleport() y ramènent.
 const LEGACY_ZONES: Array[StringName] = [&"village", &"dunes", &"forest", &"beach", &"hill"]
 ## (E1) Groupe du nœud qui porte la carte courante (« World » de game.tscn).
@@ -123,6 +126,9 @@ var travel_time: float = DEFAULT_TRAVEL_TIME
 var travel_load_budget_ms: float = DEFAULT_TRAVEL_LOAD_BUDGET_MS
 ## (X1) Touche F6 active (voyage vers l'île suivante) : version de débogage.
 var debug_keys: bool = false
+## (E6) Carte d'une nouvelle partie (START_MAP) ; les tests de l'ancienne île y mettent LEGACY_MAP
+## (et la rétablissent après eux), comme respawn_delay.
+var start_map: StringName = START_MAP
 
 var _current_zone: StringName = &""
 ## Carte posée par WorldManager (voir current_map_node()).
@@ -341,9 +347,15 @@ func current_map_node() -> Map:
 	return null
 
 
-## Carte où commence la partie : GameState.map si elle existe, sinon START_MAP.
+## Carte où commence la partie : GameState.map si elle existe ; sinon, pour une partie placée
+## hors de l'acte en jours dont la carte n'existe plus (sauvegarde d'avant la refonte), l'ancienne
+## île ; sinon (nouvelle partie) start_map (START_MAP, l'entrepôt de l'île n° 68).
 func starting_map() -> StringName:
-	return GameState.map if Map.exists(GameState.map) else START_MAP
+	if Map.exists(GameState.map):
+		return GameState.map
+	if not GameState.map.is_empty() and not GameState.story_running() and Map.exists(LEGACY_MAP):
+		return LEGACY_MAP
+	return start_map if Map.exists(start_map) else START_MAP
 
 
 ## Nom affiché d'une carte (Map.display_name) ; "" pour une carte inconnue ou sans nom. Lit la
