@@ -311,7 +311,12 @@ func test_the_hill_is_lit_by_a_clear_night_whatever_the_moment() -> void:
 func test_the_map_carries_no_lamp_even_though_the_plan_names_two() -> void:
 	assert_eq(_lines("lumiere").size(), 2, "le plan nomme cristal_reglage et talismans")
 	assert_null(_map.get_node_or_null(^"Lights"), "aucune lumière dans la carte")
-	assert_eq(_map.find_children("*", "OmniLight3D", true, false).size(), 0)
+	# Atmosphere habille la carte de son AtmosphereRig (soleil, lumière du joueur) : pas la carte.
+	var own: Array[String] = []
+	for lamp: Node in _map.find_children("*", "Light3D", true, false):
+		if not String(_map.get_path_to(lamp)).contains("AtmosphereRig"):
+			own.append(String(_map.get_path_to(lamp)))
+	assert_eq(own, [] as Array[String], "aucune lampe à la carte")
 
 
 # --- La vie --------------------------------------------------------------------------------------
