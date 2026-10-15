@@ -1290,25 +1290,25 @@ salle_des_armes : 14 × 10 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-
     0 
       
         +-----------------------+
-        |BBBB..CCCCCCCCDDDDDDDDD|
-    2   |BBBBcrypte.............|
-        |BBBB...................|
-        |BBBB...................|
-        |BBBB.......AA..........|
-    4   |..*........AA..........|
+        |AAAA..BBBBBBBBCCCCCCCCC|
+    2   |AAAAcrypte.............|
+        |AAAA...................|
+        |AAAA...................|
+        |AAAA...................|
+    4   |..*....................|
         |.......................|
-        |..@...EE.......EE......|
-        |......EE.......EE......|
+        |..@...DD.......DD......|
+        |......DD.......DD......|
     6   |.......................|
         |.......................|
-        |.................FFFF..|
-        |...........GG....FFFF..|
-    8   |...........GG..........|
+        |.................EEEE..|
+        |...........FF....EEEE..|
+    8   |...........FF..........|
         |.......................|
         +-----------------------+
       
 ```
-Légende des lettres : `A` crystal_pendant ; `B` crypt_stairs ; `C` sword_rack_a ; `D` sword_rack_b ; `E` crypt_pillar ; `F` swords_wrapped ; `G` talisman_chest.
+Légende des lettres : `A` crypt_stairs ; `B` sword_rack_a ; `C` sword_rack_b ; `D` crypt_pillar ; `E` swords_wrapped ; `F` talisman_chest.
 <!-- /ascii:salle_des_armes -->
 
 - **Ce que dit l'œuvre** : derrière la porte rivetée à cinq serrures, un son grave ; une odeur
@@ -1348,14 +1348,6 @@ meuble swords_wrapped 11.0 7.6 1.6 0.8 1.0
 meuble talisman_chest 7.4 7.9 0.8 0.6 0.6
 mural wallitem_cobweb crypte N 12.6 2.4 0.5
 mural wallitem_cobweb crypte O 7.5 2.4 0.5
-# (QC) Deux appliques de cristal : la crypte n'a ni fenêtre ni lampe, elle était noire la nuit
-# (docs/QUALITE.md, QC-11).
-mural wallitem_crystal_sconce crypte O 6.0 1.6 0.3
-lumiere applique_crypte_ouest 1.1 6.0 1.6 cristal
-mural wallitem_crystal_sconce crypte E 4.5 1.6 0.3
-lumiere applique_crypte_est 12.9 4.5 1.6 cristal
-meuble crystal_pendant 7.6 4.0 0.8 0.3 0 libre
-lumiere suspension_crypte 7.6 4.0 2.2 cristal
 sortie remonter 1.7 3.7 3.3 4.2 entrepot_rdc from_salle_des_armes "Remonter"
 marqueur Spawn 2.5 5.0 S
 marqueur from_entrepot_rdc 2.5 5.0 S

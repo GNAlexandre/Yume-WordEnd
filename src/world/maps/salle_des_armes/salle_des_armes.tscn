@@ -11,7 +11,6 @@
 [ext_resource type="PackedScene" path="res://src/world/props/interior/crypt_pillar.tscn" id="p_crypt_pillar"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/swords_wrapped.tscn" id="p_swords_wrapped"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/talisman_chest.tscn" id="p_talisman_chest"]
-[ext_resource type="PackedScene" path="res://src/world/props/interior/crystal_pendant.tscn" id="p_crystal_pendant"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/door_armory_inside.tscn" id="p_door_armory_inside"]
 [ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 
@@ -66,9 +65,6 @@ shape = SubResource("BoxShape3D_1")
 
 [node name="talisman_chest_1" parent="Geometry/Crypte" instance=ExtResource("p_talisman_chest")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 0, 7.9)
-
-[node name="crystal_pendant_1" parent="Geometry/Crypte" instance=ExtResource("p_crystal_pendant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.6, 1.6042, 4)
 
 [node name="door_armory_inside_1" parent="Geometry/Crypte" instance=ExtResource("p_door_armory_inside")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.6979, 1.195)
