@@ -1225,8 +1225,8 @@ static func lookup(path, key_path) -> String, forget_texts()
 L'équivalent de `tools/interior_maps.py` pour le dehors : il écrit une carte du dehors **d'après son
 plan** (bloc ```plan de `docs/lore/CARTE.md`, lu par `tools/carte_plans.py`). Cartes construites :
 `entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet),
-`sentier` (C1), `village` (C2), `colline` (C3) et `port` (CP) ; carte d'attente (provisoire, un lot de la
-phase 3 la remplace) : `foret_profonde`.
+`sentier` (C1), `village` (C2), `colline` (C3), `port` (CP) et `foret_profonde` (CF) ; carte d'attente (provisoire, un lot de la
+phase 3 la remplace) : `ville_marche`.
 
 ```text
 python3 tools/exterior_maps.py gen [map_id…]      # écrit les cartes (toutes sans argument)

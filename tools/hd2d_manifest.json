@@ -818,7 +818,17 @@
   {"path": "assets/hd2d/sky/ship_searchlight.png", "size": [384, 768], "kind": "panel", "prio": 1, "lot": "C.1", "soft_alpha": true, "anchor": "free"},
   {"path": "assets/hd2d/sky/ship_glare.png", "size": [576, 384], "kind": "panel", "prio": 2, "lot": "E7", "soft_alpha": true, "anchor": "free"},
   {"path": "assets/hd2d/ships/garde_transport_hull.png", "size": [1536, 240], "kind": "panel", "prio": 3, "lot": "E7"},
-  {"path": "assets/hd2d/ships/garde_transport_deck.png", "size": [1536, 480], "kind": "decal", "prio": 3, "lot": "D.1"}
+  {"path": "assets/hd2d/ships/garde_transport_deck.png", "size": [1536, 480], "kind": "decal", "prio": 3, "lot": "D.1"},
+  {"path": "assets/hd2d/props/forest_wall_deep.png", "size": [1536, 1056], "kind": "panel", "prio": 2, "lot": "R5", "wrap": "x"},
+  {"path": "assets/hd2d/props/grove_dense.png", "size": [768, 864], "kind": "panel", "prio": 2, "lot": "R5"},
+  {"path": "assets/hd2d/props/fallen_pine.png", "size": [576, 154], "kind": "panel", "prio": 3, "lot": "R5"},
+  {"path": "assets/hd2d/props/rowan.png", "size": [288, 480], "kind": "panel", "prio": 3, "lot": "R5"},
+  {"path": "assets/hd2d/props/refuge_oak.png", "size": [768, 960], "kind": "panel", "prio": 1, "lot": "R5"},
+  {"path": "assets/hd2d/props/log_bridge_b.png", "size": [384, 96], "kind": "panel", "prio": 3, "lot": "R5"},
+  {"path": "assets/hd2d/props/river_bank.png", "size": [384, 96], "kind": "panel", "prio": 3, "lot": "R5"},
+  {"path": "assets/hd2d/decals/hidden_pool_a.png", "size": [192, 144], "kind": "decal", "prio": 2, "lot": "R5"},
+  {"path": "assets/hd2d/decals/hidden_pool_b.png", "size": [144, 115], "kind": "decal", "prio": 3, "lot": "R5"},
+  {"path": "assets/hd2d/anim/river_rapids.png", "size": [192, 96], "kind": "anim", "prio": 3, "lot": "R5", "frames": 4, "fps": 8}
  ],
  "sheets": [
   {

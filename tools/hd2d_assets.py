@@ -122,6 +122,7 @@ def recipes():
     import hd2d_anim
     import hd2d_colline
     import hd2d_decals
+    import hd2d_foret
     import hd2d_ground
     import hd2d_interior
     import hd2d_navires
@@ -137,7 +138,7 @@ def recipes():
     table = {}
     for module in (hd2d_ground, hd2d_props, hd2d_sky, hd2d_nature, hd2d_town, hd2d_ships, hd2d_decals, hd2d_anim,
                    hd2d_interior, hd2d_sentier, hd2d_village, hd2d_colline, hd2d_ville,
-                   hd2d_port, hd2d_navires):
+                   hd2d_port, hd2d_navires, hd2d_foret):
         table.update(module.RECIPES)
     return table
 

@@ -2459,6 +2459,37 @@ point loups 68 52.5
 point lisiere_riviere 52 30.8
 ```
 
+<!-- places:foret_profonde -->
+**Places de la vie** (lot CF ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`refuge_creux`, `mare_cachee`, `gue`, `cerfs`, `souille`, `loups`, `lisiere_riviere`) ; les places réservées, en `Life/Areas` avec leur rectangle (`refuge`, `clairiere_cerfs`, `clairiere_loups`) ; et, en plus du plan : `vers_entrepot` (40 ; 2.6 ; le haut du sentier, devant la sortie : par où l'on part vers l'entrepôt, et d'où l'on en arrive), `course_entree` (40 ; 9 ; le sentier au sortir de l'entrepôt : le début de la course libre de Chtholly (ACTE1.md 10.2)), `fourche_refuge` (42.4 ; 21 ; la fourche du refuge, au nord du gué : on quitte le sentier de la montagne vers l'ouest), `gue_nord` (43.4 ; 22.8 ; la rive nord du gué : on y puise l'eau du bain (V3), les petites s'y mouillent les pieds), `gue_sud` (45.6 ; 31.2 ; la rive sud du gué, au pied du sentier de la montagne), `refuge_seuil` (16 ; 41.2 ; devant le creux du chêne, regard au nord : où Chtholly s'écroule et s'assied (ACTE1.md 10.2, `refuge_creux`)), `refuge_ithea` (18.8 ; 40.6 ; à côté du creux : où Ithea s'assoit sans rien demander (ACTE1.md 10.2)), `refuge_retour` (22.6 ; 41 ; la sortie du refuge vers le sentier : par où Ithea ramène Chtholly), `renard_berge` (50 ; 31.4 ; la berge sud où le renard s'arrête avant de traverser (VIE.md, faune)), `clairiere_cerfs_centre` (63 ; 13 ; le milieu de la clairière : les cerfs y broutent à l'aube et au soir (VIE.md, faune)).
+<!-- /places:foret_profonde -->
+
+**Écarts au plan (lot CF ; `tools/exterior_recipes/foret_profonde.py`, `DEVIATIONS`)** : le bloc `plan` ci-dessus n'est pas
+modifié ; la carte écrite s'en écarte ainsi.
+
+- **La rivière est peinte au ras du sol**, sans lit à −0,5 m : sur une rivière en diagonale, la grille d'un mètre en faisait une
+  scie de marches de 0,5 m (faces de terre à lèvre d'herbe tous les deux mètres), lue comme des terrasses en plaques
+  (`docs/QUALITE.md`). Le lit (`stream_bed`) et l'eau basse sont peints en méandres sur les centres des six rectangles du plan,
+  on y marche ; le gué garde le tronc `log_bridge_b` et des pierres plates. Les deux ressauts à +1 m gardent le relief de la carte.
+- **Les ressauts** (nord-est, sud-ouest) ont des contours irréguliers (tronçons de 3 à 6 m décalés d'un ou deux mètres) et des faces
+  en talus de terre (la roche en briques se lisait comme un mur de soutènement), habillées de fougères, de buissons et de rochers
+  moussus ; on ne les gravit pas.
+- **Les chemins** sont peints en terre de sous-bois sur leur bande de 1,8 m (dans la bande libre de 3 m), pas en rectangles de
+  `path_overgrown`, et jamais sur l'eau.
+- **La sortie `vers_montagne`** n'est pas posée tant que `montagne` n'existe pas ; un écriteau (en 77 ; 44,6) ferme le sentier de
+  l'est.
+- **Les lisières** (règle de pose, `docs/QUALITE.md`) : `bord foret` est posé en trois chaînes de pans de forêt qui se chevauchent
+  (nord : un rideau continu derrière à z −2 et un rang à la lisière ; ouest ; est) ; aucun bout de pan n'est à découvert : un pan
+  plus proche le recouvre, ou un grand tronc de premier plan (nord), ou un grand conifère et un feuillu (ouest et est) ; le sud est
+  du premier plan (conifères, buissons, fougères) comme le plan le dit.
+- **Les images** : `refuge_oak`, `forest_wall_deep`, `grove_dense`, `fallen_pine`, `rowan`, `hidden_pool_a` et `_b`,
+  `log_bridge_b`, `river_bank` et `anim/river_rapids` sont des remplaçants du lot R5 (`tools/hd2d_foret.py`, manifeste), dérivés des
+  images livrées quand c'est possible ; une image livrée les remplace sans toucher au code.
+- **La lumière** : aucune lumière dans la carte (pénombre verte et or d'Atmosphere, bleu sombre au couchant) ; les rais de lumière
+  (`light_shaft_a`, `light_shaft_b`) sont posés sur le refuge et sur la clairière des cerfs.
+- **Densité** : 53 à 93 éléments par écran (le plan dit 90 à 120, la leçon de qualité 40 à 70) ; le test impose 40 à 100.
+- **Objets à examiner** (`data/texts/foret_profonde.json`) : `refuge_creux`, `mare_cachee`, `gue`, `lisiere_riviere`, `cerfs`,
+  `souille`, `loups`.
+
 ## 9. Le centre-ville (`ville_haute`, `ville_marche` et six intérieurs)
 
 ### 9.1 Ce que dit l'œuvre
