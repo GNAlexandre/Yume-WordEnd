@@ -2420,6 +2420,8 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 la zone, une conversation ou une veille (43 à 67 dans le navigateur, au Spawn de chaque zone) ;
 export 12,4 Mo compressés (18,4 avant la purge des modèles 3D). `tools/check.sh` échoue au-delà de 150 Mo compressés (25 Mo jusqu'au cahier des charges n° 2, 60 Mo jusqu'à ses lots A et F, 100 Mo jusqu'aux premiers lots du cahier n° 3 ; 73,5 Mo mesurés avec toutes les images du cahier n° 2, 101,3 Mo avec les lots I et J de priorité 1 du n° 3).
 
+(F0, PR « contrats ») Export allégé sans perte visible, de 141,3 à 132,2 Mo compressés : images importées « Lossless » (WebP sans perte), sans mipmaps ni détection 3D (`[importer_defaults]` de project.godot pour les nouvelles, `tools/import.sh` ramène les autres, `tests/unit/test_texture_imports.gd` le vérifie) ; encodeur WebP sans perte à l'effort 4 / 90 (`rendering/textures/webp_compression/*`, −5 Mo) ; les 25 tuiles du sol que seul l'atlas lit et les plans des cartes (`data/maps/*/plan.json`) hors des trois préréglages d'export (−4,4 Mo) ; détail et mesures : docs/DECISIONS.md, F0.
+
 ### Hygiène du dépôt
 
 - `gdformat` passe avant chaque commit (hook `pre-commit` facultatif en local, obligatoire en CI).
