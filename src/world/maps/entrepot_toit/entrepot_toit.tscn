@@ -214,3 +214,21 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 13.2)
 
 [node name="toit_coin_est" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, 3)
+
+[node name="vers_entrepot_etage" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 13.1, 0, 9.1)
+
+[node name="toit_linge" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 9.4)
+
+[node name="p1" type="Marker3D" parent="Life/Places/toit_linge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, -2.5)
+
+[node name="p2" type="Marker3D" parent="Life/Places/toit_linge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, -2.5)
+
+[node name="p3" type="Marker3D" parent="Life/Places/toit_linge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 2.5)
+
+[node name="p4" type="Marker3D" parent="Life/Places/toit_linge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 2.5)

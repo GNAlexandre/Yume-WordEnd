@@ -1,0 +1,15 @@
+{
+  "_comment": "Nelka, fée générique (VIE.md, 2.5) : lit au dortoir D.",
+  "gait": "course",
+  "lines": [
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "matin", "day": [9, 12], "map": "entrepot", "place": "champ_meneuse", "activity": "mener"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire"},
+    {"slot": "aube", "map": "entrepot_toit", "place": "toit_linge", "activity": "porter_linge", "_note": "La journée de base."},
+    {"slot": "matin", "map": "entrepot_toit", "place": "toit_linge", "activity": "porter_linge"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},
+    {"slot": "apres_midi", "map": "entrepot", "place": "champ_jeu", "activity": "errer"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "jeux_balle_mur", "activity": "balle_mur"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_d_lit_2_bas", "activity": "dormir"}
+  ]
+}

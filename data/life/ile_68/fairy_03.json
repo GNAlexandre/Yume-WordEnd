@@ -1,11 +1,20 @@
 {
-  "_comment": "Mirelle, fée générique : le tapis de la salle de jeux, la tour (le repli de Kana, VIE.md 0.2).",
+  "_comment": "Mirelle, fée générique (VIE.md, 2.5) : lit au dortoir C.",
   "gait": "course",
   "lines": [
-    {"slot": "aube", "away": "entrepot_etage"},
-    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_a", "activity": "manger"},
-    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "jeux_tapis", "activity": "jouer"},
-    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_tour", "activity": "tour_de_fees", "role": "pile_5"},
-    {"slot": "nuit", "away": "entrepot_etage"}
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "matin", "day": 12, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "regarder"},
+    {"slot": "nuit", "day": 1, "map": "entrepot_etage", "place": "epie_nygglatho", "activity": "avalanche_nygglatho"},
+    {"slot": "matin", "day": [9, 12], "map": "entrepot", "place": "champ_entrainement", "activity": "entrainement"},
+    {"slot": "soir", "day": [1, 9], "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer"},
+    {"slot": "soir", "day": 11, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer"},
+    {"slot": "apres_midi", "if": {"flag": "apres_pluie"}, "map": "entrepot", "place": "champ_boue", "activity": "boue"},
+    {"slot": "aube", "map": "entrepot_etage", "place": "dortoir_c_lit_1_bas", "activity": "dormir", "_note": "La journée de base."},
+    {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_rang_c", "activity": "manger"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_c", "activity": "manger"},
+    {"slot": "apres_midi", "map": "entrepot", "place": "herbes_chat", "activity": "jeu_chat"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "jeux_tour", "activity": "tour_de_fees", "role": "pile_5"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_c_lit_1_bas", "activity": "dormir"}
   ]
 }

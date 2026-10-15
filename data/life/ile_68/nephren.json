@@ -1,10 +1,20 @@
 {
-  "_comment": "Nephren (VIE.md, 2.3) : la lecture l'après-midi, collée au dos de Willem dans la tour le soir.",
+  "_comment": "Nephren (VIE.md, 2.3 et 3) : la lecture en silence, la tour de fées, la veillée ; les étoiles du toit certaines nuits.",
   "lines": [
-    {"slot": "aube", "away": "entrepot_etage"},
-    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_c", "activity": "manger", "outfit": "maison"},
-    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "lecture_table", "activity": "lire", "outfit": "maison"},
-    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_tour", "activity": "tour_de_fees", "outfit": "maison", "role": "pile_1"},
-    {"slot": "nuit", "away": "entrepot_etage"}
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "outfit": "maison", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "matin", "day": 12, "map": "entrepot_toit", "place": "toit_balustrade_nord", "activity": "attendre", "outfit": "maison"},
+    {"slot": "soir", "day": 10, "map": "entrepot_toit", "place": "toit_balustrade_nord", "activity": "attendre", "outfit": "maison"},
+    {"slot": ["aube", "matin", "midi", "apres_midi", "soir", "nuit"], "day": 7, "away": "port"},
+    {"slot": "matin", "day": 8, "map": "entrepot_rdc", "place": "archives_canape", "activity": "dormir", "outfit": "maison"},
+    {"slot": "nuit", "day": 6, "map": "entrepot_toit", "place": "toit_balustrade_nord", "activity": "attendre", "outfit": "maison"},
+    {"slot": "midi", "day": 3, "away": "ville_snack"},
+    {"slot": "nuit", "day": 1, "map": "entrepot_etage", "place": "nephren_lit_couche", "activity": "lire", "outfit": "maison"},
+    {"slot": "matin", "day": [9, 12], "map": "entrepot", "place": "clairiere_nephren", "activity": "entrainement", "outfit": "maison"},
+    {"slot": "aube", "map": "entrepot_etage", "place": "nephren_lit_couche", "activity": "dormir", "outfit": "maison", "_note": "La journée de base : elle dort encore à l'aube, mange en silence, la lecture, la tour de fées (collée au dos de Willem), la veillée."},
+    {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_aines", "activity": "manger", "outfit": "maison"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_aines", "activity": "manger", "outfit": "maison"},
+    {"slot": "apres_midi", "map": "entrepot_rdc", "place": "lecture_fauteuil", "activity": "lire", "outfit": "maison"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "jeux_tour", "activity": "tour_de_fees", "outfit": "maison", "role": "pile_1"},
+    {"slot": "nuit", "map": "entrepot_rdc", "place": "refectoire_veillee", "activity": "lire", "outfit": "maison"}
   ]
 }

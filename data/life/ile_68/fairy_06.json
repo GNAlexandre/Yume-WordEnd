@@ -1,10 +1,17 @@
 {
-  "_comment": "Tamsin, fée générique (le bandage au genou) : elle bavarde avec Ithea dans le pré, regarde la tour.",
+  "_comment": "Tamsin, fée générique (VIE.md, 2.5) : lit au dortoir C.",
+  "gait": "course",
   "lines": [
-    {"slot": "aube", "away": "entrepot_etage"},
-    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_a", "activity": "manger"},
-    {"slot": "apres_midi", "map": "essai_relief", "place": "pre_bavarde", "activity": "bavarder"},
-    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_spectateurs", "activity": "regarder"},
-    {"slot": "nuit", "away": "entrepot_etage"}
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": ["matin", "midi", "apres_midi", "soir"], "day": [7, 9], "map": "entrepot_rdc", "place": "infirmerie_lit_2", "activity": "lire"},
+    {"slot": ["aube", "nuit"], "day": [7, 9], "map": "entrepot_rdc", "place": "infirmerie_lit_2", "activity": "dormir"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer"},
+    {"slot": "apres_midi", "if": {"flag": "apres_pluie"}, "map": "entrepot", "place": "champ_boue", "activity": "boue"},
+    {"slot": "aube", "map": "entrepot_etage", "place": "dortoir_c_lit_2_haut", "activity": "dormir", "_note": "La journée de base."},
+    {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_rang_c", "activity": "manger"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_c", "activity": "manger"},
+    {"slot": "apres_midi", "map": "entrepot", "place": "herbes_chat", "activity": "jeu_chat"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "couloir_course", "activity": "course_couloir_entrepot"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_c_lit_2_haut", "activity": "dormir"}
   ]
 }

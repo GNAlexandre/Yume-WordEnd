@@ -33,6 +33,11 @@ const NPC_SCENE := preload("res://src/npc/npc.tscn")
 const PLAYER_GROUP := &"player"
 const SLOT_KEY := "creneau"
 const LIFE_KEY := "vie"
+const CONTENT_KEY := "contenu"
+## (V1) Drapeaux de la pluie, tenus d'après GameState.weather (les emplois du temps les lisent par
+## « if ») : la pluie tombe (pluie, averse) ; la pluie vient de cesser, jusqu'à l'aube.
+const RAIN_FLAG := &"pluie_du_jour"
+const AFTER_RAIN_FLAG := &"apres_pluie"
 const SLOT_KEYCODE := KEY_F6
 const TRACE_PERIOD := 2.0
 const CYCLE_PERIOD := 20.0
@@ -84,6 +89,8 @@ func _ready() -> void:
 	EventBus.dialogue_ended.connect(_on_dialogue.bind(false))
 	EventBus.game_loaded.connect(_on_game_loaded)
 	dev_parameters = read_parameters()
+	if dev_parameters.has(CONTENT_KEY):
+		LifeData.use_content(dev_parameters[CONTENT_KEY])
 	debug_keys = OS.is_debug_build() or not dev_parameters.is_empty()
 	var life := str(dev_parameters.get(LIFE_KEY, ""))
 	enabled = life != "off"
@@ -558,7 +565,8 @@ func read_parameters() -> Dictionary:
 	return parse_pairs(pairs)
 
 
-## Garde creneau=<créneau> et vie=trace|off|cycle parmi des « clé=valeur ».
+## Garde creneau=<créneau>, vie=trace|off|cycle et contenu=<dossier de data/life> (les démonstrations
+## d'essai : contenu=essai) parmi des « clé=valeur ».
 func parse_pairs(pairs: PackedStringArray) -> Dictionary:
 	var result := {}
 	for pair: String in pairs:
@@ -568,6 +576,8 @@ func parse_pairs(pairs: PackedStringArray) -> Dictionary:
 			result[SLOT_KEY] = StringName(value)
 		elif key == LIFE_KEY and value in ["trace", "off", "cycle"]:
 			result[LIFE_KEY] = value
+		elif key == CONTENT_KEY and Map.is_valid_id(StringName(value)):
+			result[CONTENT_KEY] = StringName(value)
 	return result
 
 
@@ -579,6 +589,8 @@ func _apply_slot(walk: bool) -> void:
 	var previous_day := _day
 	_slot = LifeSlots.current()
 	_day = GameState.day
+	if _slot == &"aube" and previous_slot != &"aube":
+		GameState.set_flag(AFTER_RAIN_FLAG, false)
 	if _map == null:
 		return
 	var map_id := _map.map_id()
@@ -777,10 +789,23 @@ func _on_map_entered(_map_id: StringName) -> void:
 	attach(WorldManager.current_map_node())
 
 
-func _on_atmosphere_changed(moment: StringName, _weather: StringName) -> void:
+func _on_atmosphere_changed(moment: StringName, weather: StringName) -> void:
 	# Un moment posé ailleurs (F7, le récit) emporte le créneau s'il ne lui va plus.
 	if not GameState.slot.is_empty() and LifeSlots.moment_of(GameState.slot) != moment:
 		GameState.slot = &""
+	_track_rain(weather)
+
+
+## (V1) La pluie, en drapeaux : « pluie_du_jour » tant qu'il pleut, « apres_pluie » quand elle cesse
+## (jusqu'à l'aube, ou la pluie suivante) ; ceux qui ont une ligne « if » sur l'un d'eux changent de
+## place (refresh).
+func _track_rain(weather: StringName) -> void:
+	var raining := weather != GameState.DEFAULT_WEATHER
+	if raining == GameState.has_flag(RAIN_FLAG):
+		return
+	GameState.set_flag(RAIN_FLAG, raining)
+	GameState.set_flag(AFTER_RAIN_FLAG, not raining)
+	refresh(true)
 
 
 func _on_game_loaded() -> void:

@@ -1,12 +1,19 @@
 {
-  "_comment": "Lakhesh (VIE.md, 2.4) : à partir du jour 3, elle part aider à la boulangerie le matin (la ligne à « day » l'emporte) ; la lecture l'après-midi, la course du couloir le soir.",
+  "_comment": "Lakhesh (VIE.md, 2.4) : la boulangerie dès le jour 3, sinon la branche basse du grand arbre ; la lecture ; au lit au dortoir A.",
   "gait": "course",
   "lines": [
-    {"slot": "aube", "away": "entrepot_etage"},
-    {"slot": "matin", "away": "ville_boulangerie", "day": [3, 12]},
-    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_b", "activity": "manger", "outfit": "vie"},
-    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "lecture_table", "activity": "lire", "outfit": "vie"},
-    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "couloir_course", "activity": "course_couloir", "outfit": "vie"},
-    {"slot": "nuit", "away": "entrepot_etage"}
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "outfit": "vie", "_note": "Variations par jour (VIE.md, 3) : à partir du jour 3, la boulangerie à l'aube et le matin."},
+    {"slot": ["aube", "matin"], "day": [3, 12], "away": "ville_boulangerie"},
+    {"slot": "matin", "day": 12, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "regarder", "outfit": "vie"},
+    {"slot": "soir", "day": [1, 9], "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "soir", "day": 11, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire", "outfit": "vie"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire", "outfit": "vie"},
+    {"slot": "aube", "map": "entrepot_rdc", "place": "eau_toilette", "activity": "toilette", "outfit": "pyjama", "_note": "La journée de base : la branche basse du grand arbre (elle tremble), la lecture, les jeux de société."},
+    {"slot": "matin", "map": "entrepot", "place": "arbre_branche_basse", "activity": "grimper", "outfit": "vie"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire", "outfit": "vie"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_a_lit_2_haut", "activity": "dormir", "outfit": "pyjama"}
   ]
 }

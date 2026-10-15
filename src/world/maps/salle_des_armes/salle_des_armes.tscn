@@ -121,3 +121,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 0, 6.8)
 
 [node name="armes_centre" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 0, 4.5)
+
+[node name="vers_entrepot_rdc" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.5, 0, 5)

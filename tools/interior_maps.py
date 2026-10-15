@@ -43,6 +43,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import carte_plans  # noqa: E402
 import hd2d_interior  # noqa: E402
+import life_zones  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CARTE = os.path.join(ROOT, "docs", "lore", "CARTE.md")
@@ -850,8 +851,12 @@ def markers_exits_life(scene, map_id, plan, furniture, exit_script):
                           ("size", "Vector3(%s)" % ", ".join(num(round(v, 3)) for v in size))])
     scene.node("Life", "Node3D", ".")
     scene.node("Places", "Node3D", "Life")
-    for name, x, z, yaw in places(map_id, plan, furniture):
-        scene.node(name, "Marker3D", "Life/Places", props=[("transform", transform(x, 0.0, z, yaw))])
+    for name, x, z, yaw, y, children in places(map_id, plan, furniture):
+        scene.node(name, "Marker3D", "Life/Places", props=[("transform", transform(x, y, z, yaw))])
+        # (V1) Les points d'une zone : enfants du marqueur, en repère local (le marqueur n'est pas tourné).
+        for k, (cx, cz, cyaw, dy) in enumerate(children):
+            scene.node("p%d" % (k + 1), "Marker3D", "Life/Places/%s" % name,
+                       props=[("transform", transform(round(cx - x, 3), round(dy - y, 3), round(cz - z, 3), cyaw))])
 
 
 def examine_spots(map_id, plan, furniture):
@@ -902,9 +907,10 @@ BEDS = ("bed_iron", "bed_plain", "bed_child", "bed_child_messy", "bed_chtholly",
 
 
 def places(map_id, plan, furniture):
-    """Places nommées : les points du plan, puis chaque chaise (assise) et chaque lit (couchage) ;
-    (nom, x, z, regard en degrés)."""
-    out = [(name, p.rect.x0, p.rect.z0, 0.0) for name, p in plan.points.items()]
+    """Places nommées : les points du plan, puis chaque chaise (assise) et chaque lit (couchage), puis les
+    zones et les départs de tools/life_zones.py ; (nom, x, z, regard en degrés, hauteur, points enfants)."""
+    out = [(name, p.rect.x0, p.rect.z0, life_zones.point_yaw(map_id, name), 0.0, [])
+           for name, p in plan.points.items()]
     taken = {name for name, *_ in out}
     rows = {}
     for item in furniture:
@@ -914,7 +920,7 @@ def places(map_id, plan, furniture):
         letter = "abcdefgh"[k]
         for n, item in enumerate(sorted(rows[z], key=lambda f: f["x"])):
             out.append(("%s_chaise_%s%02d" % (room_of(plan, item["x"], item["z"]), letter, n + 1), item["x"],
-                        item["z"], CHAIR_FACING[item["image"]]))
+                        item["z"], CHAIR_FACING[item["image"]], 0.0, []))
     beds = {}
     for item in furniture:
         if item["image"] in BEDS:
@@ -928,13 +934,15 @@ def places(map_id, plan, furniture):
             if base in taken:
                 base += "_couche"
             if item["image"] == "bunk_bed":
-                out.append((base + "_bas", item["x"], item["z"], 0.0))
-                out.append((base + "_haut", item["x"], item["z"], 0.0))
+                out.append((base + "_bas", item["x"], item["z"], 0.0, life_zones.BED_HEIGHT, []))
+                out.append((base + "_haut", item["x"], item["z"], 0.0, life_zones.BUNK_HEIGHT, []))
             else:
-                out.append((base, item["x"], item["z"], 0.0))
+                out.append((base, item["x"], item["z"], 0.0, life_zones.BED_HEIGHT, []))
             taken.add(base)
-    extra = EXTRA_PLACES.get(map_id, [])
-    out += [(name, x, z, yaw) for name, x, z, yaw in extra]
+    out += [(name, x, z, yaw, 0.0, []) for name, x, z, yaw in EXTRA_PLACES.get(map_id, [])]
+    for entry in life_zones.zones_of(map_id):
+        x, z, yaw, _dy = life_zones.anchor(entry)
+        out.append((entry["name"], x, z, yaw, 0.0, entry["pts"]))
     names = [name for name, *_ in out]
     duplicates = {n for n in names if names.count(n) > 1}
     if duplicates:
@@ -949,7 +957,6 @@ EXTRA_PLACES = {
         ("archives_canape_assise", 23.65, 6.5, 180.0),
         ("infirmerie_chevet", 25.0, 12.15, 180.0),
         ("jeux_piano", 16.2, 12.1, 0.0),
-        ("bains_sechage", 4.5, 12.6, 0.0),
     ],
     "entrepot_etage": [
         ("nygglatho_chaise_invite", 9.0, 4.4, 180.0),
@@ -1151,21 +1158,33 @@ def places_markdown(map_id, plan):
     furniture = expand_furniture(plan) if map_id in INTERIOR_MAPS else []
     entries = places(map_id, plan, furniture)
     points = set(plan.points)
-    extra = [e for e in entries if e[0] not in points]
+    zone_names = {z["name"] for z in life_zones.zones_of(map_id)}
+    extra = [e for e in entries if e[0] not in points and e[0] not in zone_names]
     chairs = [e[0] for e in extra if "_chaise_" in e[0] and e[0][-2:].isdigit()]
     beds = [e[0] for e in extra if "_lit" in e[0]]
     others = [e[0] for e in extra if e[0] not in chairs and e[0] not in beds]
     lines = ["<!-- places:%s -->" % map_id,
-             "**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : "
+             "**Places de la vie** (lots T2 et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : "
              "les points nommés ci-dessus, à leur nom"]
     if chairs:
         lines[-1] += " ; chaque chaise, `%s` à `%s` (rangées a à %s du nord au sud, numérotées d'ouest en " \
                      "est ; regard vers la table)" % (chairs[0], chairs[-1], chairs[-1].split("_")[-1][0])
     if beds:
-        lines[-1] += " ; chaque lit : %s" % ", ".join("`%s`" % b for b in beds)
+        lines[-1] += " ; chaque lit (hauteur du dormeur : %s m, %s m en haut d'un lit superposé) : %s" % (
+            ("%g" % life_zones.BED_HEIGHT).replace(".", ","), ("%g" % life_zones.BUNK_HEIGHT).replace(".", ","),
+            ", ".join("`%s`" % b for b in beds))
     if others:
         lines[-1] += " ; et %s" % ", ".join("`%s`" % o for o in others)
     lines[-1] += "."
+    zones = life_zones.zones_of(map_id)
+    if zones:
+        lines.append("")
+        lines.append("**Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z ; "
+                     "`vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :")
+        lines.append("")
+        for entry in zones:
+            count = len(entry["pts"])
+            lines.append("- `%s`%s : %s" % (entry["name"], " (%d points)" % count if count else "", entry["why"]))
     lines.append("<!-- /places:%s -->" % map_id)
     return "\n".join(lines)
 

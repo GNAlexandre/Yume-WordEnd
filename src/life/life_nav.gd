@@ -218,6 +218,23 @@ func line_clear(a: Vector3, b: Vector3) -> bool:
 	return true
 
 
+## Vrai si un mur debout (relevé WALL_RES) coupe le segment de a à b, dedans ; jamais dehors.
+func _wall_between(a: Vector3, b: Vector3) -> bool:
+	if kind != Kind.INTERIOR or _wall.is_empty():
+		return false
+	var steps := maxi(1, ceili(Vector2(b.x - a.x, b.z - a.z).length() / (WALL_RES * 0.5)))
+	for i: int in range(1, steps):
+		var t := float(i) / steps
+		var wx := floori(lerpf(a.x, b.x, t) / WALL_RES)
+		var wz := floori(lerpf(a.z, b.z, t) / WALL_RES)
+		if wx < 0 or wz < 0 or wx >= _wall_size.x or wz >= _wall_size.y:
+			continue
+		# Un mur de 0,25 m n'a souvent que des pixels « à cheval sur son bord » (1) : tout pixel de mur compte.
+		if _wall[wz * _wall_size.x + wx] > 0:
+			return true
+	return false
+
+
 ## Case praticable reliée au graphe la plus proche d'un point (à moins de max_cells cases) ;
 ## Vector2i(-1, -1) sinon.
 func nearest_open(point: Vector3, max_cells: int = 6) -> Vector2i:
@@ -235,6 +252,10 @@ func nearest_open(point: Vector3, max_cells: int = 6) -> Vector2i:
 				if not is_open(at) or not _astar.has_point(_id(at)):
 					continue
 				var d := center(at).distance_squared_to(point)
+				# (V1) Dedans, la case la plus proche est dans la même pièce : jamais à travers un mur
+				# (un lit contre la porte d'un dortoir ne finit pas dans le couloir d'à côté).
+				if d < best_distance and _wall_between(point, center(at)):
+					continue
 				if d < best_distance:
 					best_distance = d
 					best = at

@@ -56,6 +56,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import carte_plans  # noqa: E402
 import exterior_ground  # noqa: E402
 import exterior_pose  # noqa: E402
+import life_zones  # noqa: E402
 import map_build  # noqa: E402
 from exterior_pose import Pose, prop  # noqa: E402
 
@@ -333,12 +334,27 @@ class Writer:
         self.node('[node name="Life" type="Node3D" parent="."]\n')
         self.node('[node name="Places" type="Node3D" parent="Life"]\n')
         for name, (x, z) in p.points.items():
+            yaw = life_zones.point_yaw(m.id, name)
+            basis = "1, 0, 0, 0, 1, 0, 0, 0, 1" if not yaw else _yaw_basis(yaw)
             self.node('[node name="%s" type="Marker3D" parent="Life/Places"]\n'
-                      'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, %s, %s)\n' % (name, f(x), f(h(x, z)), f(z)))
+                      'transform = Transform3D(%s, %s, %s, %s)\n' % (name, basis, f(x), f(h(x, z)), f(z)))
         for name, x, z, yaw in self.settings.get("extra_places", []):
             basis = "1, 0, 0, 0, 1, 0, 0, 0, 1" if not yaw else _yaw_basis(yaw)
             self.node('[node name="%s" type="Marker3D" parent="Life/Places"]\n'
                       'transform = Transform3D(%s, %s, %s, %s)\n' % (name, basis, f(x), f(h(x, z)), f(z)))
+        # (V1) Les zones et les départs de la vie (tools/life_zones.py) : un marqueur et ses points enfants,
+        # posés au sol (la hauteur du palier, plus dy pour une branche d'arbre).
+        for entry in life_zones.zones_of(m.id):
+            x, z, yaw, _dy = life_zones.anchor(entry)
+            y0 = h(x, z)
+            basis = "1, 0, 0, 0, 1, 0, 0, 0, 1" if not yaw else _yaw_basis(yaw)
+            self.node('[node name="%s" type="Marker3D" parent="Life/Places"]\n'
+                      'transform = Transform3D(%s, %s, %s, %s)\n' % (entry["name"], basis, f(x), f(y0), f(z)))
+            for k, (px, pz, pyaw, dy) in enumerate(entry["pts"]):
+                pb = "1, 0, 0, 0, 1, 0, 0, 0, 1" if not pyaw else _yaw_basis(pyaw)
+                self.node('[node name="p%d" type="Marker3D" parent="Life/Places/%s"]\n'
+                          'transform = Transform3D(%s, %s, %s, %s)\n'
+                          % (k + 1, entry["name"], pb, f(px - x), f(h(px, pz) + dy - y0), f(pz - z)))
         self.node('[node name="Areas" type="Node3D" parent="Life"]\n')
         for pl in m.places:
             r = pl.rect
@@ -534,6 +550,15 @@ def places_markdown(map_id, m, extras):
         lines[-1] += " ; et, en plus du plan : %s" % ", ".join(
             "`%s` (%s ; %s)" % (name, "%g ; %g" % (x, z), why) for name, x, z, _yaw, why in extras)
     lines[-1] += "."
+    zones = life_zones.zones_of(map_id)
+    if zones:
+        lines.append("")
+        lines.append("**Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z, "
+                     "posé au sol ; `vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :")
+        lines.append("")
+        for entry in zones:
+            count = len(entry["pts"])
+            lines.append("- `%s`%s : %s" % (entry["name"], " (%d points)" % count if count else "", entry["why"]))
     lines.append("<!-- /places:%s -->" % map_id)
     return "\n".join(lines)
 

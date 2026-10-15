@@ -563,6 +563,32 @@ lumiere fenetres_facade 45 26 3.0 fenetres
 
 <!-- places:entrepot -->
 **Places de la vie** (lot C1 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`porche_banc`, `porte_seuil`, `cour_willem`, `cour_chtholly`, `cour_centre`, `arbre_pied`, `arbre_vigie`, `potager`, `coin_soleil`, `clairiere_centre`, `clairiere_banc`, `clairiere_arbre`, `marais_epee`, `champ_centre`, `champ_but_nord`, `champ_but_sud`, `fourre_ballon`, `riviere_puisage`, `lisiere_sud`) ; les places réservées, en `Life/Areas` avec leur rectangle (`clairiere`, `champ`, `cour`, `duel`, `coin_soleil`).
+
+**Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z, posé au sol ; `vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :
+
+- `vers_entrepot_rdc` : le seuil du porche : on entre (le premier départ : le repli)
+- `vers_entrepot_etage` : le seuil du porche : on entre, puis on monte
+- `vers_entrepot_toit` : le seuil du porche : on entre, puis on monte au toit
+- `vers_sentier` : la sortie est : le sentier du port
+- `vers_ville_boulangerie` : la sortie est, pour la ville (par le sentier)
+- `vers_village` : la sortie ouest : le village
+- `vers_colline` : la sortie nord : la colline des étoiles
+- `vers_foret_profonde` : la sortie sud : la forêt profonde
+- `herbes_chat` (8 points) : le terrain du chat : les hautes herbes du coin d'herbe au soleil
+- `potager_travail` (3 points) : au pied des carrés du potager
+- `cour_corvee` (4 points) : les corvées de la cour : le balai devant la façade
+- `cour_tour` (4 points) : on tourne autour du bâtiment (jours de la fuite)
+- `cour_cercle` (24 points) : le cercle de toute la maison autour de cour_centre, au couchant du départ (jour 12)
+- `arbre_racines` (3 points) : au pied du grand arbre : on grimpe sur les racines
+- `arbre_branche_basse` : le grand arbre, la branche basse (la peur de Lakhesh)
+- `arbre_branche_mi` : le grand arbre, mi-hauteur (Pannibal)
+- `arbre_branche_haute` : le grand arbre, tout en haut, la main en visière (Collon)
+- `champ_entrainement` (8 points) : l'entraînement de base : deux rangées face à celle qui mène
+- `champ_meneuse` : celle qui mène l'entraînement, face aux rangées
+- `champ_jeu` (6 points) : le champ avant la partie (le ballon est du lot E8) : on court, on lance
+- `champ_boue` (6 points) : la boue du champ après la pluie : on saute dans les flaques
+- `fourre_embuscade` (2 points) : les fourrés de l'est : l'embuscade de Pannibal
+- `clairiere_nephren` : la clairière : Nephren à l'entraînement au bâton
 <!-- /places:entrepot -->
 
 ## 3. L'entrepôt, dedans
@@ -864,7 +890,31 @@ lumiere applique_refectoire 5.6 2.6 1.6 cristal
 ```
 
 <!-- places:entrepot_rdc -->
-**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; chaque chaise, `refectoire_chaise_a01` à `refectoire_chaise_d14` (rangées a à d du nord au sud, numérotées d'ouest en est ; regard vers la table) ; chaque lit : `infirmerie_lit_1`, `infirmerie_lit_2`, `infirmerie_lit_3` ; et `lecture_fauteuil`, `archives_canape_assise`, `infirmerie_chevet`, `jeux_piano`, `bains_sechage`.
+**Places de la vie** (lots T2 et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; chaque chaise, `refectoire_chaise_a01` à `refectoire_chaise_d14` (rangées a à d du nord au sud, numérotées d'ouest en est ; regard vers la table) ; chaque lit (hauteur du dormeur : 0,45 m, 1,35 m en haut d'un lit superposé) : `infirmerie_lit_1`, `infirmerie_lit_2`, `infirmerie_lit_3` ; et `lecture_fauteuil`, `archives_canape_assise`, `infirmerie_chevet`, `jeux_piano`.
+
+**Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z ; `vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :
+
+- `vers_entrepot` : la porte d'entrée : on part dehors, vers le village, le sentier…
+- `vers_entrepot_etage` : le pied de l'escalier : on monte à l'étage
+- `vers_entrepot_toit` : le pied de l'escalier : on monte au toit par l'étage
+- `refectoire_rang_a` (5 points) : cinq sièges du rang nord, face à la salle : les petites nommées
+- `refectoire_siege_nygglatho` : le bout ouest du rang nord, près du vaisselier : Nygglatho
+- `refectoire_siege_willem` : le rang nord, côté fenêtre : Willem
+- `refectoire_rang_b` (7 points) : sept sièges dos à la caméra, côté sud de la table nord
+- `refectoire_rang_c` (4 points) : quatre sièges face à la salle, table sud
+- `refectoire_aines` (3 points) : trois sièges à l'est de la table sud : les aînées
+- `refectoire_service` (4 points) : l'allée entre les deux rangées : on sert, le plateau en main
+- `refectoire_veillee` (4 points) : quatre sièges autour de la table ouest : la veillée (thé, cheese-cake)
+- `epie_cuisine` (3 points) : collées à la porte de la cuisine, côté réfectoire (l'avalanche)
+- `couloir_course` (3 points) : la course du couloir : 0 départ, 1 arrivée (le point d'eau), 2 le poste de celle qui gronde
+- `epie_infirmerie` (3 points) : collées à la porte de l'infirmerie, côté couloir (l'avalanche)
+- `epie_archives` (3 points) : collées à la porte des archives, côté couloir (l'avalanche)
+- `eau_toilette` (6 points) : la toilette à l'eau glacée, devant l'auge du couloir
+- `jeux_tour` (7 points) : la tour de fées : 0 la base (Willem assis), les autres attendent leur tour autour du tapis
+- `jeux_societe` (6 points) : assis par terre autour du tapis : les jeux de société
+- `jeux_balle_mur` (2 points) : la balle contre le mur ouest
+- `lecture_sieges` (4 points) : la table de lecture (au sud) et le banc de la fenêtre : lire en silence
+- `bains_sechage` (4 points) : on sort du bain enveloppée d'une serviette : le séchage des cheveux
 <!-- /places:entrepot_rdc -->
 
 ### 3.2 Étage (`entrepot_etage`)
@@ -1094,7 +1144,15 @@ lumiere lampe_willem 4.4 5.5 1.5 cristal
 ```
 
 <!-- places:entrepot_etage -->
-**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; chaque lit : `willem_lit_couche`, `chtholly_lit_couche`, `nygglatho_lit`, `grande_soeur_lit`, `ithea_lit_couche`, `absentes_lit_1`, `absentes_lit_2`, `nephren_lit_couche`, `dortoir_a_lit_1_bas`, `dortoir_a_lit_1_haut`, `dortoir_a_lit_2_bas`, `dortoir_a_lit_2_haut`, `dortoir_a_lit_3`, `dortoir_b_lit_1_bas`, `dortoir_b_lit_1_haut`, `dortoir_b_lit_2_bas`, `dortoir_b_lit_2_haut`, `dortoir_b_lit_3`, `dortoir_c_lit_1_bas`, `dortoir_c_lit_1_haut`, `dortoir_c_lit_2_bas`, `dortoir_c_lit_2_haut`, `dortoir_c_lit_3`, `dortoir_d_lit_1_bas`, `dortoir_d_lit_1_haut`, `dortoir_d_lit_2_bas`, `dortoir_d_lit_2_haut`, `dortoir_d_lit_3_bas`, `dortoir_d_lit_3_haut`, `dortoir_d_lit_4` ; et `nygglatho_chaise_invite`, `chtholly_chaise`, `willem_rebord_fenetre`.
+**Places de la vie** (lots T2 et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; chaque lit (hauteur du dormeur : 0,45 m, 1,35 m en haut d'un lit superposé) : `willem_lit_couche`, `chtholly_lit_couche`, `nygglatho_lit`, `grande_soeur_lit`, `ithea_lit_couche`, `absentes_lit_1`, `absentes_lit_2`, `nephren_lit_couche`, `dortoir_a_lit_1_bas`, `dortoir_a_lit_1_haut`, `dortoir_a_lit_2_bas`, `dortoir_a_lit_2_haut`, `dortoir_a_lit_3`, `dortoir_b_lit_1_bas`, `dortoir_b_lit_1_haut`, `dortoir_b_lit_2_bas`, `dortoir_b_lit_2_haut`, `dortoir_b_lit_3`, `dortoir_c_lit_1_bas`, `dortoir_c_lit_1_haut`, `dortoir_c_lit_2_bas`, `dortoir_c_lit_2_haut`, `dortoir_c_lit_3`, `dortoir_d_lit_1_bas`, `dortoir_d_lit_1_haut`, `dortoir_d_lit_2_bas`, `dortoir_d_lit_2_haut`, `dortoir_d_lit_3_bas`, `dortoir_d_lit_3_haut`, `dortoir_d_lit_4` ; et `nygglatho_chaise_invite`, `chtholly_chaise`, `willem_rebord_fenetre`.
+
+**Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z ; `vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :
+
+- `vers_entrepot_rdc` : le haut de l'escalier : on descend au rez-de-chaussée
+- `vers_entrepot` : le haut de l'escalier : on descend, puis dehors
+- `vers_entrepot_toit` : le pied de l'échelle de la trappe : on monte au toit
+- `epie_nygglatho` (3 points) : collées à la porte de Nygglatho, côté couloir (l'avalanche)
+- `epie_willem` (3 points) : collées à la porte de Willem, côté couloir (l'avalanche)
 <!-- /places:entrepot_etage -->
 
 ### 3.3 Le toit (`entrepot_toit`)
@@ -1193,7 +1251,12 @@ lumiere trappe 14.45 9.1 0.3 cristal_dessous
 ```
 
 <!-- places:entrepot_toit -->
-**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom.
+**Places de la vie** (lots T2 et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom.
+
+**Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z ; `vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :
+
+- `vers_entrepot_etage` : sous la trappe : on descend à l'étage
+- `toit_linge` (4 points) : devant les deux séchoirs : on monte le linge, on l'étend
 <!-- /places:entrepot_toit -->
 
 ### 3.4 La salle des armes (`salle_des_armes`)
@@ -1273,7 +1336,11 @@ point armes_centre 7.2 4.5
 ```
 
 <!-- places:salle_des_armes -->
-**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom.
+**Places de la vie** (lots T2 et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom.
+
+**Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z ; `vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :
+
+- `vers_entrepot_rdc` : au pied des marches : on remonte
 <!-- /places:salle_des_armes -->
 
 ## 4. Le sentier et le marais (`sentier`)
