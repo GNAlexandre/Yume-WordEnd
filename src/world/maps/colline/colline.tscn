@@ -646,93 +646,112 @@ transform = Transform3D(0.94, 0, 0, 0, 0.94, 0, 0, 0, 0.94, 17.058, 2.5, 26.118)
 [node name="grass_clump_a_23" parent="Geometry/Flora" instance=ExtResource("39_grass_clump_a")]
 transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 19.1, 2.5, 26.111)
 
-[node name="heather_24" parent="Geometry/Flora" instance=ExtResource("10_heather")]
+[node name="rock_small_b_24" parent="Geometry/Flora" instance=ExtResource("42_rock_small_b")]
+transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 22.386, 1, 28.257)
+flip_h = true
+
+[node name="rock_small_b_25" parent="Geometry/Flora" instance=ExtResource("42_rock_small_b")]
+transform = Transform3D(1.12, 0, 0, 0, 1.12, 0, 0, 0, 1.12, 21.831, 1, 28.294)
+flip_h = true
+
+[node name="rock_small_b_26" parent="Geometry/Flora" instance=ExtResource("42_rock_small_b")]
+transform = Transform3D(1.11, 0, 0, 0, 1.11, 0, 0, 0, 1.11, 22.851, 2.5, 27.947)
+
+[node name="grass_clump_c_27" parent="Geometry/Flora" instance=ExtResource("37_grass_clump_c")]
+transform = Transform3D(1.07, 0, 0, 0, 1.07, 0, 0, 0, 1.07, 28.531, 1, 27.358)
+flip_h = true
+
+[node name="thistle_28" parent="Geometry/Flora" instance=ExtResource("44_thistle")]
+transform = Transform3D(1.01, 0, 0, 0, 1.01, 0, 0, 0, 1.01, 29.561, 2.5, 27.104)
+flip_h = true
+
+[node name="heather_29" parent="Geometry/Flora" instance=ExtResource("10_heather")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.205, 2.5, 17.674)
 
-[node name="heather_25" parent="Geometry/Flora" instance=ExtResource("10_heather")]
+[node name="heather_30" parent="Geometry/Flora" instance=ExtResource("10_heather")]
 transform = Transform3D(0.92, 0, 0, 0, 0.92, 0, 0, 0, 0.92, 33.288, 2.5, 17.546)
 
-[node name="heather_26" parent="Geometry/Flora" instance=ExtResource("10_heather")]
+[node name="heather_31" parent="Geometry/Flora" instance=ExtResource("10_heather")]
 transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 33.306, 2.5, 16.564)
 
-[node name="wind_grass_a_27" parent="Geometry/Flora" instance=ExtResource("36_wind_grass_a")]
+[node name="wind_grass_a_32" parent="Geometry/Flora" instance=ExtResource("36_wind_grass_a")]
 transform = Transform3D(0.97, 0, 0, 0, 0.97, 0, 0, 0, 0.97, 6.814, 2.5, 17.151)
 
-[node name="grass_clump_c_28" parent="Geometry/Flora" instance=ExtResource("37_grass_clump_c")]
+[node name="grass_clump_c_33" parent="Geometry/Flora" instance=ExtResource("37_grass_clump_c")]
 transform = Transform3D(0.92, 0, 0, 0, 0.92, 0, 0, 0, 0.92, 7.816, 2.5, 16.591)
 
-[node name="grass_clump_c_29" parent="Geometry/Flora" instance=ExtResource("37_grass_clump_c")]
+[node name="grass_clump_c_34" parent="Geometry/Flora" instance=ExtResource("37_grass_clump_c")]
 transform = Transform3D(1.17, 0, 0, 0, 1.17, 0, 0, 0, 1.17, 5.511, 2.5, 16.784)
 
-[node name="bush_d_30" parent="Geometry/Flora" instance=ExtResource("27_bush_d")]
+[node name="bush_d_35" parent="Geometry/Flora" instance=ExtResource("27_bush_d")]
 transform = Transform3D(0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 34.064, 2.5, 11.04)
 
-[node name="thistle_31" parent="Geometry/Flora" instance=ExtResource("44_thistle")]
+[node name="thistle_36" parent="Geometry/Flora" instance=ExtResource("44_thistle")]
 transform = Transform3D(0.92, 0, 0, 0, 0.92, 0, 0, 0, 0.92, 32.968, 2.5, 8.744)
 
-[node name="thistle_32" parent="Geometry/Flora" instance=ExtResource("44_thistle")]
+[node name="thistle_37" parent="Geometry/Flora" instance=ExtResource("44_thistle")]
 transform = Transform3D(1.06, 0, 0, 0, 1.06, 0, 0, 0, 1.06, 31.84, 2.5, 10.695)
 
-[node name="fern_b_33" parent="Geometry/Flora" instance=ExtResource("28_fern_b")]
+[node name="fern_b_38" parent="Geometry/Flora" instance=ExtResource("28_fern_b")]
 transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 7.75, 3.5, 9.925)
 flip_h = true
 
-[node name="fern_b_34" parent="Geometry/Flora" instance=ExtResource("28_fern_b")]
+[node name="fern_b_39" parent="Geometry/Flora" instance=ExtResource("28_fern_b")]
 transform = Transform3D(1.17, 0, 0, 0, 1.17, 0, 0, 0, 1.17, 8.415, 2.5, 8.866)
 flip_h = true
 
-[node name="bush_b_35" parent="Geometry/Flora" instance=ExtResource("30_bush_b")]
+[node name="bush_b_40" parent="Geometry/Flora" instance=ExtResource("30_bush_b")]
 transform = Transform3D(1.04, 0, 0, 0, 1.04, 0, 0, 0, 1.04, 6.388, 2.5, 10.435)
 
-[node name="tall_grass_36" parent="Geometry/Flora" instance=ExtResource("11_tall_grass")]
+[node name="tall_grass_41" parent="Geometry/Flora" instance=ExtResource("11_tall_grass")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 6.96, 2.5, 8.39)
 
-[node name="grass_clump_c_37" parent="Geometry/Flora" instance=ExtResource("37_grass_clump_c")]
+[node name="grass_clump_c_42" parent="Geometry/Flora" instance=ExtResource("37_grass_clump_c")]
 transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 6.329, 2.5, 7.678)
 
-[node name="fern_b_38" parent="Geometry/Flora" instance=ExtResource("28_fern_b")]
+[node name="fern_b_43" parent="Geometry/Flora" instance=ExtResource("28_fern_b")]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 6.288, 1, 29.119)
 
-[node name="thistle_39" parent="Geometry/Flora" instance=ExtResource("44_thistle")]
+[node name="thistle_44" parent="Geometry/Flora" instance=ExtResource("44_thistle")]
 transform = Transform3D(0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 9.955, 1, 29.103)
 flip_h = true
 
-[node name="wind_grass_a_40" parent="Geometry/Flora" instance=ExtResource("36_wind_grass_a")]
+[node name="wind_grass_a_45" parent="Geometry/Flora" instance=ExtResource("36_wind_grass_a")]
 transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 31.383, 1.5, 29.502)
 flip_h = true
 
-[node name="wind_grass_a_41" parent="Geometry/Flora" instance=ExtResource("36_wind_grass_a")]
+[node name="wind_grass_a_46" parent="Geometry/Flora" instance=ExtResource("36_wind_grass_a")]
 transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 33.388, 1.5, 29.745)
 flip_h = true
 
-[node name="grass_clump_c_42" parent="Geometry/Flora" instance=ExtResource("37_grass_clump_c")]
+[node name="grass_clump_c_47" parent="Geometry/Flora" instance=ExtResource("37_grass_clump_c")]
 transform = Transform3D(1.16, 0, 0, 0, 1.16, 0, 0, 0, 1.16, 32.242, 1.5, 29.988)
 
-[node name="flowers_patch_b_43" parent="Geometry/Flora" instance=ExtResource("21_flowers_patch_b")]
+[node name="flowers_patch_b_48" parent="Geometry/Flora" instance=ExtResource("21_flowers_patch_b")]
 transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 18.117, 2.5, 27.853)
 
-[node name="grass_clump_a_44" parent="Geometry/Flora" instance=ExtResource("39_grass_clump_a")]
+[node name="grass_clump_a_49" parent="Geometry/Flora" instance=ExtResource("39_grass_clump_a")]
 transform = Transform3D(1.16, 0, 0, 0, 1.16, 0, 0, 0, 1.16, 15.991, 1, 27.638)
 flip_h = true
 
-[node name="heather_45" parent="Geometry/Flora" instance=ExtResource("10_heather")]
+[node name="heather_50" parent="Geometry/Flora" instance=ExtResource("10_heather")]
 transform = Transform3D(0.91, 0, 0, 0, 0.91, 0, 0, 0, 0.91, 34.579, 1.5, 26.642)
 flip_h = true
 
-[node name="moss_patch_b_46" parent="Geometry/Flora" instance=ExtResource("46_moss_patch_b")]
+[node name="moss_patch_b_51" parent="Geometry/Flora" instance=ExtResource("46_moss_patch_b")]
 transform = Transform3D(0.98, 0, 0, 0, 0.98, 0, 0, 0, 0.98, 35.985, 1.5, 26.738)
 
-[node name="wildflowers_b_47" parent="Geometry/Flora" instance=ExtResource("40_wildflowers_b")]
+[node name="wildflowers_b_52" parent="Geometry/Flora" instance=ExtResource("40_wildflowers_b")]
 transform = Transform3D(0.87, 0, 0, 0, 0.87, 0, 0, 0, 0.87, 34.591, 1.5, 25.553)
 
-[node name="rock_small_c_48" parent="Geometry/Flora" instance=ExtResource("35_rock_small_c")]
+[node name="rock_small_c_53" parent="Geometry/Flora" instance=ExtResource("35_rock_small_c")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 29.379, 1, 31.121)
 
-[node name="moss_patch_b_49" parent="Geometry/Flora" instance=ExtResource("46_moss_patch_b")]
+[node name="moss_patch_b_54" parent="Geometry/Flora" instance=ExtResource("46_moss_patch_b")]
 transform = Transform3D(1.12, 0, 0, 0, 1.12, 0, 0, 0, 1.12, 26.718, 1, 31.75)
 flip_h = true
 
-[node name="heather_50" parent="Geometry/Flora" instance=ExtResource("10_heather")]
+[node name="heather_55" parent="Geometry/Flora" instance=ExtResource("10_heather")]
 transform = Transform3D(1.11, 0, 0, 0, 1.11, 0, 0, 0, 1.11, 27.633, 1, 32.713)
 flip_h = true
 

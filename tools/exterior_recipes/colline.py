@@ -394,7 +394,7 @@ def pose(p):
         ("Flora", 33.6, 8.4, 4, 1.4, "herbes"),
         # La terrasse haute.
         ("Flora", 8.6, 22.4, 2, 1.8, "bruyere"), ("Flora", 30.6, 23.0, 4, 2.0, "herbes"),
-        ("Flora", 21.0, 23.6, 4, 2.0, "prairie"), ("Flora", 12.4, 24.8, 2, 1.6, "pierres"), ("Flora", 17.8, 25.4, 3, 1.4, "herbes"),
+        ("Flora", 21.0, 23.6, 4, 2.0, "prairie"), ("Flora", 12.4, 24.8, 2, 1.6, "pierres"), ("Flora", 17.8, 25.4, 3, 1.4, "herbes"), ("Flora", 22.0, 28.8, 3, 1.1, "pierres"), ("Flora", 28.6, 27.4, 2, 1.0, "herbes"),
         ("Flora", 33.0, 17.5, 3, 1.6, "bruyere"), ("Flora", 6.8, 16.0, 3, 1.3, "herbes"),
         ("Flora", 33.0, 10.0, 3, 1.6, "buissons"), ("Flora", 7.4, 10.0, 3, 1.4, "buissons"), ("Flora", 6.4, 8.2, 2, 1.0, "herbes"),
         # La terrasse basse.
