@@ -43,6 +43,7 @@
 [ext_resource type="PackedScene" path="res://src/world/props/interior/bath_puddles.tscn" id="p_bath_puddles"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/supply_cupboard.tscn" id="p_supply_cupboard"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/cleaning_set.tscn" id="p_cleaning_set"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/potted_plant.tscn" id="p_potted_plant"]
 [ext_resource type="PackedScene" path="res://src/world/props/shoe_rack.tscn" id="p_shoe_rack"]
 [ext_resource type="PackedScene" path="res://src/world/props/rug_playroom.tscn" id="p_rug_playroom"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/piano_old.tscn" id="p_piano_old"]
@@ -59,6 +60,7 @@
 [ext_resource type="PackedScene" path="res://src/world/props/medicine_cabinet.tscn" id="p_medicine_cabinet"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/washbasin_stand.tscn" id="p_washbasin_stand"]
 [ext_resource type="PackedScene" path="res://src/world/props/infirmary_desk.tscn" id="p_infirmary_desk"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/wall_clock_swing.tscn" id="p_wall_clock_swing"]
 [ext_resource type="PackedScene" path="res://src/world/props/mirror_large.tscn" id="p_mirror_large"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/pot_steam.tscn" id="p_pot_steam"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/mixing_bowl_whisk.tscn" id="p_mixing_bowl_whisk"]
@@ -73,6 +75,7 @@
 [ext_resource type="PackedScene" path="res://src/world/props/interior/inkwell_quill.tscn" id="p_inkwell_quill"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/crystal_lamp_table.tscn" id="p_crystal_lamp_table"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/book_open_stand.tscn" id="p_book_open_stand"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/bath_steam.tscn" id="p_bath_steam"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/vase_flowers.tscn" id="p_vase_flowers"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/medicine_bottles_tray.tscn" id="p_medicine_bottles_tray"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/bandage_rolls.tscn" id="p_bandage_rolls"]
@@ -534,6 +537,9 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 1.5, 12.05)
 shape = SubResource("BoxShape3D_6")
 
+[node name="potted_plant_1" parent="Geometry/Entree" instance=ExtResource("p_potted_plant")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.6, 0, 14.5)
+
 [node name="shoe_rack_1" parent="Geometry/Entree" instance=ExtResource("p_shoe_rack")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 14.65, 0, 12.2)
 image_offset = Vector3(0, 0, 0.6)
@@ -619,6 +625,10 @@ shadow_depth = 1.801
 facing = &"east"
 cut_offset = 0.2
 
+[node name="wall_clock_swing_1" parent="Geometry/Archives" instance=ExtResource("p_wall_clock_swing")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 22.655, 1.2, 3.4)
+keep_orientation = true
+
 [node name="mirror_large_1" parent="Geometry/Bains" instance=ExtResource("p_mirror_large")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.205, 0, 13)
 keep_orientation = true
@@ -662,6 +672,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.2, 0.95, 4.77)
 
 [node name="book_open_stand_1" parent="Geometry/Lecture" instance=ExtResource("p_book_open_stand")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 0.95, 4.77)
+
+[node name="bath_steam_1" parent="Geometry/Bains" instance=ExtResource("p_bath_steam")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.7, 11.82)
 
 [node name="vase_flowers_1" parent="Geometry/Infirmerie" instance=ExtResource("p_vase_flowers")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.3, 0.7, 11.27)

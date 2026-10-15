@@ -1,0 +1,34 @@
+{
+  "_comment": "Objets à examiner du village des hommes-bêtes, du café et de la maison Limashenka (lot C2 ; docs/lore/CARTE.md, section 5), lus par Examinable (src/world/examinable.gd) au format des textes de l'histoire (DialogueRunner.load_story_texts). Une clé par carte, puis une par objet (text_key = « carte/objet ») ; une ligne vide sépare deux pages ; {player} est remplacé par le prénom de la joueuse. Paraphrases d'après les dossiers du canon (docs/lore/canon/v1_vex.md, « Cinq cents ans » et « L'homme-chat »), jamais de citation de l'œuvre ; ce qui est original le reste discrètement.",
+  "prompt": "Examiner",
+  "village": {
+    "_comment": "Le village (CARTE.md 5.2) : dehors.",
+    "enseigne_cle": "Une plaquette de bois où l'on a peint une grosse clé noire. Personne au village ne sait plus quelle porte elle ouvrait.",
+    "enseigne_cafe": "L'enseigne du café : une clochette peinte sur du bois, que le vent ne fait jamais sonner. La vraie, elle, tinte à chaque fois que la porte s'ouvre.",
+    "maison_close": "La maison est close. Les volets sont tirés depuis des semaines, et une feuille morte est restée coincée sous la porte.",
+    "lavoir": "Le lavoir : une longue auge de pierre, une planche à laver, un panier de linge encore mouillé. L'eau vient du ruisseau, qui file ensuite vers le bord de l'île.",
+    "ruches": "Trois ruches de paille tressée, posées sur une planche. Elles bourdonnent à peine : avec le froid, les abeilles se serrent les unes contre les autres.",
+    "belvedere": "Un ressaut de roche tout au bord de l'île, avec un banc de pierre. Plus bas, il n'y a rien que la mer de nuages, et très loin, d'autres îles qui flottent.",
+    "cascade": "Le ruisseau du village s'arrête net au bord de l'île et tombe dans les nuages. On ne l'entend pas toucher le fond, parce qu'il n'y en a pas.",
+    "meule": "Une meule de foin ronde, une fourche plantée dedans. Une charrette attend à côté, les brancards posés à terre."
+  },
+  "cafe": {
+    "_comment": "Le café à clochette (CARTE.md 5.3).",
+    "menu": "L'ardoise du menu, à la craie : une tasse fumante, une chope, une part de gâteau. Les prix sont de petits traits alignés ; ici, on les compte du bout du doigt.",
+    "comptoir": "Une grande cafetière de cuivre chauffe sur un réchaud à cristal, à côté d'un bocal de biscuits. Le café le jour, autre chose le soir : le même comptoir sert à tout, faute d'un autre endroit où manger.",
+    "etagere": "Derrière le comptoir, des étagères chargées de bouteilles de toutes les formes, de pots de café et de tasses empilées. Des chopes pendent à des crochets, en rang.",
+    "buveurs": "La table des buveurs : des chopes renversées, un jeu de cartes, un plat de saucisses à moitié mangé. Le soir, c'est de là que viennent les grands éclats de rire.",
+    "fenetre": "Par la petite fenêtre, on voit la rue du village et la terrasse. Les passants n'y portent rien de très beau : ici, on est à la campagne.",
+    "clochette": "La sonnette de la porte tinte à chaque allée et venue. Le patron la reconnaît à sa note, dit-on : un client, ou le vent.",
+    "arriere": "Un rideau rayé masque l'arrière-boutique. Une carte griffonnée y est épinglée : « Réservé au personnel ». C'est là que le serveur va chercher, en cachette, les jus qu'on offre aux petites."
+  },
+  "maison_limashenka": {
+    "_comment": "La maison Limashenka (CARTE.md 5.3) : fermée depuis le deuil, ouverte au jour 11 (ACTE1.md 11.3).",
+    "horloge": "Une vieille horloge murale, sans cristal ni magie : rien que des ressorts, des vis et des rouages. Le cadran n'a que des traits, sans un chiffre, et le balancier est arrêté.",
+    "portrait": "Un portrait de famille dans un cadre doré terni : une mère à tête de chat et son petit garçon. Quelqu'un a épousseté le verre, mais pas le cadre.",
+    "vitrine": "Une vitrine de bibelots : des tasses de porcelaine, de petits animaux de verre, une pipe, des boîtes à tabac. Chacun d'eux a sa petite place, marquée dans la poussière.",
+    "boite_outils": "Une boîte à outils ouverte par terre : pinces, tournevis, burette. Un sachet de papier laisse dépasser des engrenages tout neufs : les pièces de rechange sont arrivées.",
+    "fauteuil": "Un fauteuil recouvert d'un drap. On n'a pas rouvert ce salon depuis le deuil.",
+    "pateres": "Les patères du vestibule. Deux manteaux y pendent encore, raides de poussière."
+  }
+}

@@ -83,6 +83,9 @@
 [ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_gold.png" id="81_falling_leaf_gold"]
 [ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_rust.png" id="82_falling_leaf_rust"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge1"]
+size = Vector3(40, 4, 3)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_edge2"]
 size = Vector3(40, 4, 1)
 
@@ -114,6 +117,10 @@ script = ExtResource("2_map_ground")
 
 [node name="Edges" type="StaticBody3D" parent="."]
 collision_mask = 0
+
+[node name="Edge1" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2, 1.5)
+shape = SubResource("BoxShape3D_edge1")
 
 [node name="Edge2" type="CollisionShape3D" parent="Edges"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 5, 3.5)

@@ -17,8 +17,8 @@ Pour une carte, l'outil écrit :
 
 Deux sortes de cartes :
 - les cartes construites, une recette par carte dans tools/exterior_recipes/<id>.py (entrepot,
-  sentier, colline) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
-- les cartes d'attente (WAITING plus bas : village, foret_profonde, port) : un sol plat de la
+  sentier, village, colline) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
+- les cartes d'attente (WAITING plus bas : foret_profonde, port) : un sol plat de la
   bonne matière, une lisière, l'écriteau « Plus loin, bientôt », la sortie de retour et le
   marqueur d'arrivée du plan. Provisoires : le lot de la carte les remplace par une recette
   (ajouter la carte à RECIPES, retirer l'attente).
@@ -70,7 +70,10 @@ SCENES = os.path.join(ROOT, "src", "world", "maps")
 GROUND_FILES = ["plan.json", "map.json", "heights.png", "materials.png", "structures.png"]
 
 # Cartes construites : une recette par carte (tools/exterior_recipes/<id>.py).
-RECIPES = ["entrepot", "sentier", "colline"]
+RECIPES = ["entrepot", "sentier", "village", "colline"]
+
+# Lot qui a écrit la liste des places d'une carte (C1 par défaut : l'outil).
+PLACES_LOT = {"village": "C2", "colline": "C3"}
 
 # Cartes d'attente (lots de la phase 3 : elles les remplacent). Taille 32 × 24 m. ground : matière du
 # sol ; path : matière du chemin ; back : la sortie du plan (son nom, sa cible, le marqueur du retour)
@@ -78,11 +81,6 @@ RECIPES = ["entrepot", "sentier", "colline"]
 # du marqueur d'arrivée (`from_<carte d'origine>`) et du Spawn ; path_pts : le chemin ; sign : l'écriteau ;
 # gap : (x0, x1) d'une trouée de la lisière au nord.
 WAITING = {
-    "village": {
-        "ground": "herbe", "path": "terre_battue", "back": "vers_entrepot",
-        "exit": (31.4, 10, 32, 14), "marker": (29.5, 12, "O"), "spawn": (27.0, 12, "O"),
-        "path_pts": [[32, 12], [13, 12]], "sign": (12.2, 10.6), "gap": None,
-    },
     "foret_profonde": {
         "ground": "sous_bois", "path": "chemin", "back": "vers_entrepot",
         "exit": (14, 0, 18, 0.6), "marker": (16, 2.5, "S"), "spawn": (16, 4.0, "S"),
@@ -260,8 +258,6 @@ class Writer:
         # Bords du plan (bord) : ce qui ferme la carte, en boîtes invisibles (couche 1).
         self.node('[node name="Edges" type="StaticBody3D" parent="."]\ncollision_mask = 0\n')
         for k, e in enumerate(p.edges):
-            if k < len(m.borders) and m.borders[k].name == "vide":
-                continue  # le vide n'a pas de boîte : la barrière du sol borde la côte
             cx, cz = (e.x0 + e.x1) / 2.0, (e.z0 + e.z1) / 2.0
             y = max(h(min(max(cx, 0.1), p.W - 0.1), min(max(cz, 0.1), p.D - 0.1)), -0.5)
             sid = self.box_shape("edge%d" % (k + 1), (e.x1 - e.x0, 4.0, e.z1 - e.z0))
@@ -319,6 +315,7 @@ class Writer:
             if e.name in p.provisional_exits:
                 meta = 'metadata/plan_target_map = &"%s"\nmetadata/plan_target_marker = &"%s"\n' % (target, marker)
                 target, marker = p.provisional_exits[e.name]
+            meta += self.settings.get("exit_meta", {}).get(e.name, "")
             depth = max(r.z1 - r.z0, 0.6)
             width = max(r.x1 - r.x0, 0.6)
             sid = self.box_shape("exit_%s" % e.name, (width, 3.0, depth))
@@ -364,6 +361,18 @@ class Writer:
                       'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, %s, %s)\n'
                       'metadata/area = Rect2(%s, %s, %s, %s)\n' % (pl.name, f(cx), f(h(cx, cz)), f(cz), f(r.x0), f(r.z0),
                                                                     f(r.x1 - r.x0), f(r.z1 - r.z0)))
+        # Objets à examiner (Examinable ; textes : settings["texts"], format de data/texts/village.json) : (clé, x, z,
+        # taille de la zone) ; text_key = « carte/clé ».
+        examine = self.settings.get("examine", [])
+        if examine:
+            script = self.ext_id("Script", "res://src/world/examinable.gd")
+            self.node('[node name="Examine" type="Node3D" parent="."]\n')
+        for key, x, z, size in examine:
+            self.node('[node name="%s" type="Area3D" parent="Examine"]\n'
+                      'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, %s, %s)\nscript = ExtResource("%s")\n'
+                      'text_key = "%s/%s"\nsize = Vector3(%s, %s, %s)\ntexts_path = "%s"\n'
+                      % (key, f(x), f(h(x, z)), f(z), script, m.id, key, f(size[0]), f(size[1]), f(size[2]),
+                         self.settings["texts"]))
         # Lumières : la lanterne à cristal (une lampe OmniLight3D que Atmosphere règle selon le moment,
         # lamp_energy) ; les autres, des repères (Marker3D). Aucune carte du dehors n'a de lampadaire.
         lights = [] if self.settings.get("no_lights") else m.lights
@@ -546,8 +555,9 @@ def write(built, rels):
 def places_markdown(map_id, m, extras):
     named = list(m.points)
     lines = ["<!-- places:%s -->" % map_id,
-             "**Places de la vie** (lot C1 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, "
-             "E5 et E6) : les points nommés ci-dessus, à leur nom (`%s`)" % "`, `".join(named)]
+             "**Places de la vie** (lot %s ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, "
+             "E5 et E6) : les points nommés ci-dessus, à leur nom (`%s`)" % (PLACES_LOT.get(map_id, "C1"),
+                                                                           "`, `".join(named))]
     if m.places:
         lines[-1] += " ; les places réservées, en `Life/Areas` avec leur rectangle (`%s`)" % "`, `".join(
             p.name for p in m.places)

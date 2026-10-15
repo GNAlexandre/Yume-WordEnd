@@ -788,3 +788,27 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   (une lumière de la scène, pas de la carte) et, quand on lève les yeux, `sky_night` (la caméra regarde le ciel).
   Willem monte à la colline au soir du jour 8 : `data/life/ile_68/willem.json` dit `away: colline` ; une ligne
   `map` + `place` (`colline`, `dos_a_dos`) la remplace quand la scène la joue.
+- **C2 (porte fermée jusqu'au jour 11)** : `MapExit` ne sait pas se fermer. La porte `porte_limashenka` du
+  village (maison Limashenka, ouverte au jour 11, ACTE1.md 11.3) porte les métadonnées `open_from_day = 11` et
+  `closed_text_key = "village/maison_close"` (texte de `data/texts/village.json`) ; il faudrait que `MapExit`
+  (ou le récit, E6) refuse l'invite avant ce jour et lise ce texte. Tant que ce n'est pas fait, la porte
+  s'ouvre à tout moment (le test de la vraie partie l'emprunte).
+- **C2 (fenêtres allumées la nuit)** : le café n'a aucune lampe de carte (règle V1). Une image
+  `window_lit_*` (fenêtres éclairées de nuit) serait à livrer par le cahier d'images si l'on veut que la
+  façade du café se lise de nuit.
+
+## I2 — l'entrepôt complet : lueur des vitres des façades livrées
+- **Vitres du lot R1** (`warehouse_front_a`, `_b` et flancs) : carreaux de #FBD367 à #FCE496, à 0,14 de distance et
+  plus de `glow_color` (#FFE6A6, tolérance 0,12 en RVB linéaire : `panel_core.gdshaderinc`) ; la nuit, les
+  fenêtres de l'entrepôt vu du dehors ne s'allument presque pas. Deux issues : la correction commandée au
+  dessinateur (docs/ASSETS_HD2D_ILE68.md, 3.6), ou une PR « contrats » qui ajoute `Building.window_glow_color`
+  (`@export var`, défaut #FFE6A6, passé à `DecorPanel.material_for` puis au paramètre `glow_color` du shader)
+  et la règle `#FCDC80` pour ces quatre images. I2 n'y touche pas (`src/world/building.gd`, `decor_panel.gd` et
+  `panel_core.gdshaderinc` ne sont pas à ce lot).
+- **Appel du cristal** (`comm_crystal_call`) : nœud caché `Geometry/Nygglatho/comm_crystal_call_1` de la carte
+  `entrepot_etage` ; à `visible = true` par E6 quand Nygglatho est appelée, et à `false` ensuite. Halo : aucune
+  lumière n'est posée (le plan n'a pas de lampe `cristal_bleu`).
+- **Couverture du lit** (`bed_iron_cover`) : scène `src/world/props/interior/bed_iron_cover.tscn`, à poser au pixel
+  près sur un lit de l'infirmerie quand quelqu'un y est couché (même position, même regard que le lit) ; aucun lit
+  ne la porte au plan. **Bureau au miroir relevé** (`desk_chtholly_mirror_up`, acte 2) : scène prête, pas posée.
+

@@ -1,0 +1,24 @@
+{
+  "_comment": "Le café du village : écrit par tools/interior_maps.py d'après docs/lore/CARTE.md (section 3, bloc plan « carte cafe ») ; modifier le plan ou l'outil, puis relancer gen. Format : docs/INTERIEURS.md.",
+  "size": [12, 10],
+  "wall_height": 3.0,
+  "wall_thickness": 0.25,
+  "rooms": {
+    "salle": {"name": "Salle du café", "rects": [[1.0, 1.0, 7.5, 8.0]], "floor": "floor_terracotta", "wall": "wall_panel_dark"},
+    "arriere": {"name": "Arrière-boutique", "rects": [[8.5, 1.0, 2.5, 8.0]], "floor": "floor_planks_worn", "wall": "wall_plaster_worn"}
+  },
+  "doors": [
+    {"between": ["salle", "arriere"], "z": 3.0, "width": 1.2, "image": "door_backroom"},
+    {"id": "sortie", "room": "salle", "side": "S", "x": 4.75, "width": 1.4, "height": 2.2, "image": "door_room"}
+  ],
+  "windows": [
+    {"room": "salle", "side": "W", "z": 5.0, "image": "window_cross_small", "sill": 1.0}
+  ],
+  "wall_items": [
+    {"room": "salle", "side": "N", "x": 6.8, "y": 1.2, "image": "wallitem_menu_cafe"}
+  ],
+  "lights": [
+    {"room": "salle", "at": [4.4, 5.6], "radius": 4.5, "color": "#ffd59a", "energy": 0.75},
+    {"room": "salle", "at": [4.0, 3.0], "radius": 3.6, "color": "#ffd59a", "energy": 0.75}
+  ]
+}
