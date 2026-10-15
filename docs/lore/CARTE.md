@@ -1290,25 +1290,25 @@ salle_des_armes : 14 × 10 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-
     0 
       
         +-----------------------+
-        |AAAA..BBBBBBBBCCCCCCCCC|
-    2   |AAAAcrypte.............|
-        |AAAA...................|
-        |AAAA...................|
-        |AAAA...................|
-    4   |..*....................|
+        |BBBB..CCCCCCCCDDDDDDDDD|
+    2   |BBBBcrypte.............|
+        |BBBB...................|
+        |BBBB...................|
+        |BBBB.......AA..........|
+    4   |..*........AA..........|
         |.......................|
-        |..@...DD.......DD......|
-        |......DD.......DD......|
+        |..@...EE.......EE......|
+        |......EE.......EE......|
     6   |.......................|
         |.......................|
-        |.................EEEE..|
-        |...........FF....EEEE..|
-    8   |...........FF..........|
+        |.................FFFF..|
+        |...........GG....FFFF..|
+    8   |...........GG..........|
         |.......................|
         +-----------------------+
       
 ```
-Légende des lettres : `A` crypt_stairs ; `B` sword_rack_a ; `C` sword_rack_b ; `D` crypt_pillar ; `E` swords_wrapped ; `F` talisman_chest.
+Légende des lettres : `A` crystal_pendant ; `B` crypt_stairs ; `C` sword_rack_a ; `D` sword_rack_b ; `E` crypt_pillar ; `F` swords_wrapped ; `G` talisman_chest.
 <!-- /ascii:salle_des_armes -->
 
 - **Ce que dit l'œuvre** : derrière la porte rivetée à cinq serrures, un son grave ; une odeur
@@ -1354,6 +1354,8 @@ mural wallitem_crystal_sconce crypte O 6.0 1.6 0.3
 lumiere applique_crypte_ouest 1.1 6.0 1.6 cristal
 mural wallitem_crystal_sconce crypte E 4.5 1.6 0.3
 lumiere applique_crypte_est 12.9 4.5 1.6 cristal
+meuble crystal_pendant 7.6 4.0 0.8 0.3 0 libre
+lumiere suspension_crypte 7.6 4.0 2.2 cristal
 sortie remonter 1.7 3.7 3.3 4.2 entrepot_rdc from_salle_des_armes "Remonter"
 marqueur Spawn 2.5 5.0 S
 marqueur from_entrepot_rdc 2.5 5.0 S
@@ -1702,7 +1704,7 @@ cafe : 12 × 10 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord
         |.DDD.AA.DDD...|KKK.|
     6   |.FFD....FFD...|KKK.|
         |.FF.....FF....|....|
-        |.AA...........|....|
+        |..............|....|
         |GGG...........|JJJ.|
     8   |GGG....@......|JJJ.|
         |..............|JJJ.|
@@ -1786,11 +1788,8 @@ point table_buveurs 3.4 7.2
 point arriere 9.75 3.6
 lumiere suspension 4.4 5.6 2.2 cristal
 lumiere comptoir 4.0 3.0 1.2 cristal
-# (QC) Le soir, le café sert l'alcool : une suspension au-dessus de la table des buveurs et une
-# applique au mur est ; une seule lampe faisait une flaque brûlée au milieu du noir (docs/QUALITE.md,
-# QC-14).
-meuble crystal_pendant 2.4 7.6 0.8 0.3 0 libre
-lumiere suspension_buveurs 2.4 7.6 2.2 cristal
+# (QC) Le soir, le café sert l'alcool : une applique au mur est éclaire le coin des buveurs ; une
+# seule lampe faisait une flaque au milieu du noir (docs/QUALITE.md, QC-14).
 mural wallitem_wall_lamp salle E 6.5 1.6 0.3
 lumiere applique_salle 8.4 6.5 1.6 huile
 ```

@@ -16,6 +16,7 @@
   ],
   "lights": [
     {"room": "crypte", "at": [1.1, 6.0], "radius": 3.6, "color": "#ffd59a", "energy": 0.75},
-    {"room": "crypte", "at": [12.9, 4.5], "radius": 3.6, "color": "#ffd59a", "energy": 0.75}
+    {"room": "crypte", "at": [12.9, 4.5], "radius": 3.6, "color": "#ffd59a", "energy": 0.75},
+    {"room": "crypte", "at": [7.6, 4.0], "radius": 4.5, "color": "#ffd59a", "energy": 0.75}
   ]
 }

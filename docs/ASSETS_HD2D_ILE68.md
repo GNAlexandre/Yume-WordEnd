@@ -544,6 +544,56 @@ village en attendant (recette `tools/exterior_recipes/village.py`).
 **À ne pas faire** : des sillons profonds, des bourrelets de cailloux, des bouts coupés droits, une
 couleur plus sombre que la terre de plus de 15 %.
 
+### R0.9 Les façades du village la nuit (constaté par le garant de la qualité, 15 octobre 2026)
+
+**Constat** (`docs/QUALITE.md`, QC-16 ; capture `build/qc/2026-10-15-avant/village_cafe_nuit.png`) : la
+nuit, toutes les façades du village sont éteintes. Le café, qui sert l'alcool le soir (VEX), a l'air
+fermé : vitrine bleu-noir, lanterne sans flamme. Le moteur sait déjà remplacer une image par sa version
+de nuit : une sœur `<nom>_night.png` au même cadrage, prise quand la nuit tombe
+(`HD2DLightTargets`, cahier n° 3, section 8.4) ; il ne manque que les images.
+
+| Prio | Fichier | Taille (px) | Genre, ancre | Consigne |
+| --- | --- | --- | --- | --- |
+| 1 | `assets/hd2d/buildings/cafe_night.png` | 672 × 528 (comme `cafe.png`) | façade, même cadrage au pixel près | `cafe.png` (jointe) **la nuit, café ouvert** : même dessin, mêmes contours ; la vitrine et la porte vitrée éclairées de l'intérieur, lumière chaude **en aplat #FFE6A6** sur les carreaux (silhouettes des tables et des lampes suspendues en contre-jour plus sombre), la lanterne de façade allumée (flamme et verre #FFE6A6), un halo doux peint autour d'elle sur le mur ; le reste de la façade dans la pénombre bleue de la nuit (pierre et colombages assombris, bleutés, sans noir pur) ; store replié |
+| 2 | `assets/hd2d/buildings/limashenka_house_night.png` | 576 × 576 | idem | `limashenka_house.png` (jointe) la nuit : une seule fenêtre du rez-de-chaussée allumée (carreaux #FFE6A6, rideau à demi tiré), les autres sombres ; pénombre bleue |
+| 2 | `assets/hd2d/buildings/village_house_stone_night.png` | 480 × 576 | idem | `village_house_stone.png` (jointe) la nuit : une fenêtre de l'étage allumée (#FFE6A6), les volets du bas fermés ; pénombre bleue |
+| 2 | `assets/hd2d/buildings/cottage_thatch_a_night.png` | 480 × 528 | idem | `cottage_thatch_a.png` (jointe) la nuit : la petite fenêtre allumée d'une lueur de bougie (#FFE6A6 au centre, plus orangé seulement sur le cadre de bois) ; chaume et torchis bleutés |
+| 3 | `assets/hd2d/buildings/cottage_thatch_b_night.png` | 672 × 240 | idem | `cottage_thatch_b.png` (jointe) la nuit : une des trois fenêtres allumée (#FFE6A6), volets des deux autres fermés |
+| 3 | `assets/hd2d/buildings/cottage_thatch_c_night.png` | 384 × 480 | idem | `cottage_thatch_c.png` (jointe) la nuit : la lucarne du chaume allumée (#FFE6A6) |
+
+**À ne pas faire** : changer le cadrage, la taille ou le dessin (l'image de nuit remplace celle du jour
+au pixel près) ; peindre les vitres allumées en orangé (le moteur n'allume que les pixels proches de
+#FFE6A6 : voir 3.6, le même défaut sur les façades de l'entrepôt) ; un ciel ou un fond (transparence
+inchangée) ; tout allumer (un village de campagne dort : une fenêtre ou deux par maison au plus).
+
+### R0.10 Les remplaçants qui se voient au premier rang (priorités relevées)
+
+**Constat** (`docs/QUALITE.md`, QC-17 et QC-18 ; captures `village_chaumieres_matin.png`,
+`village_jardin_matin.png`, `village_lavoir_matin.png`) : au village, quatre remplaçants du lot R3 sont au
+premier rang d'une vue nommée et se voient tout de suite. Ils sont déjà commandés (section 5.3) ; leur
+priorité passe avant le reste du lot R3. Consignes : celles de la section 5.3, inchangées.
+
+| Prio (était) | Fichier | Ce qui se voit |
+| --- | --- | --- |
+| 1 (2) | `assets/hd2d/buildings/materials/roof_thatch.png` | le toit des trois chaumières et de la grange : des rayures régulières de planches et les mêmes taches vertes répétées tous les 2 m, un toit de tôle plutôt qu'un chaume |
+| 1 (3) | `assets/hd2d/props/washing_trough.png` | le lavoir, point nommé du plan : un rectangle pâle à liseré bleu au premier plan |
+| 2 (3) | `assets/hd2d/props/haystack.png`, `assets/hd2d/props/cart_hay.png` | la meule et la charrette à foin du grand jardin : des aplats jaunes sans paille |
+| 2 (3) | `assets/hd2d/props/beehives.png` | les ruches, point nommé du plan |
+
+### R0.11 Les traces de pas (bouts coupés)
+
+**Constat** (`docs/QUALITE.md`, QC-28 ; capture `entrepot_cour_matin.png`) : `assets/hd2d/decals/footprints.png`
+(96 × 288, six empreintes de bottes d'adulte) commence et finit net ; posée plusieurs fois dans la cour et au
+champ, elle fait des pointillés de 3 m qui s'arrêtent au milieu de rien, comme les ornières (R0.8). Le moteur
+n'en garde que quatre dans la cour et trois au champ en attendant.
+
+| Prio | Fichier | Taille | Genre, ancre | Consigne |
+| --- | --- | --- | --- | --- |
+| 3 | `assets/hd2d/decals/footprints.png` (même nom, **remplace** l'actuel) | 96 × 288 (1 × 3 m) | décalque de sol, alpha doux | une traînée de **petits pas d'enfant** (pieds de 18 cm, pas de 45 cm) et de pas d'adulte mêlés, en léger zigzag, sur la terre battue : les premières et les dernières empreintes **s'estompent** (moins marquées, à demi couvertes de poussière) ; contraste faible, aucune ombre portée |
+
+**À ne pas faire** : six empreintes identiques en file, des bouts nets, un contraste plus fort que les
+cailloux du sol.
+
 ## 3. Lot R1 : l'entrepôt complet
 
 ### 3.0 Rappel du format (à coller avec le lot)
