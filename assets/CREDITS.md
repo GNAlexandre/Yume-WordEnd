@@ -192,3 +192,9 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/props/alder.png` — 384 × 672 px.
 - `assets/hd2d/props/marsh_snag.png` — 192 × 192 px.
 - `assets/hd2d/props/thicket_c.png` — 288 × 173 px.
+
+## Île 68 — R2 priorité 2 : pyjamas (15 octobre 2026)
+
+Généré avec ChatGPT le 15 octobre 2026, cahier n° 5 (`docs/ASSETS_HD2D_ILE68.md`), lot R2, section 4.6. Neuf PNG et neuf JSON : `almita/almita_pajamas` (91 px debout), `ithea/ithea_pajamas` (139 px), `nephren/nephren_pajamas` (125 px), chacun en profil droit, face et dos ; 189 poses. Repos, marche, dialogue, assise, sommeil et toilette du matin ; course et chute pour Almita. Ithea suit les planches officielles de l’anime, cheveux orange courts à la nuque conformément à la correction de l’utilisateur.
+
+Références : trois vues existantes de chaque personnage, Chtholly en pyjama pour le rendu, et planches officielles des ZIP fournis par l’utilisateur (pages 21, 27 et 64). Recalage au plus proche voisin, alpha net, montage local autorisé pour immobiliser les pieds et fermer la bouche du dialogue 0 ; originaux conservés séparément. Les planches restent à enregistrer et placer dans le jeu. Aucun ancien PNG/JSON ni dessin anime modifié.
