@@ -140,6 +140,8 @@ Yume-WordEnd/
 │   │                          # (X1) world_atlas.gd (mondes, îles, règles), island_rules.gd, airship_dock.gd
 │   │                          # (quais), travel_view.tscn (vue du ciel d'un voyage) ; maps/quai_essai (l'île
 │   │                          # d'essai), maps/surface_essai (la surface)
+│   ├── fauna/                 # (E5) animal.tscn + animal.gd (Animal, hérite d'Enemy), animal_data.gd, animal_pack.gd
+│   │                          # (meute), fauna_rules.gd, fauna_nav.gd, fauna_populator.gd + fauna.tscn (nœud Fauna)
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
 │   ├── life/                  # (E4) la vie : life_director.gd (autoload LifeDirector), life_data.gd (emplois du
 │   │                          # temps, activités), life_slots.gd, life_places.gd, life_nav.gd, life_actor.gd,
@@ -151,6 +153,8 @@ Yume-WordEnd/
 ├── data/
 │   ├── attacks/*.tres         # sword_1..3, charge_wave, bite, whip, rush
 │   ├── enemies/*.tres         # timere_small, timere_normal, timere_runner, timere_big ; visuals/timere.tres
+│   ├── fauna/<île>/           # (E5) une espèce par fichier <id>.tres (AnimalData), attacks/, visuals/<id>.tres,
+│   │                          # peuplement.json (où, combien, quand) ; format : « (E5) Ajouter un animal »
 │   ├── waves/*.json           # composition des vagues par arène
 │   ├── items/*.tres
 │   ├── npcs/*.tres            # (E4) + outfits/<planche>.tres (tenues, SkinData), generic/<id>.tres (fées génériques)
@@ -172,6 +176,7 @@ Yume-WordEnd/
 │   ├── characters/CREDITS.md  # dessins des membres (auteur, accord)
 │   ├── characters/<skin_id>/  # planche PNG + .json (format de l'easter egg)
 │   ├── enemies/<enemy_id>/    # idem pour les Timeres
+│   ├── fauna/<animal_id>/     # (E5) planches de remplacement des animaux (tools/gen_fauna.py), idem
 │   ├── hd2d/                  # (HD-2D) ground/ (+ atlas/), cliff/, buildings/ (+ materials/), props/, sky/, fx/
 │   ├── items/, ui/            # icônes 64 × 64, interface
 │   └── audio/
@@ -296,6 +301,44 @@ class_name EnemyData : id, display_name, visual: SkinData, scale: float, max_hp:
 
 # (X1) Enemy._ready : un Timere que les règles de l'île de sa carte n'admettent pas (WorldAtlas.enemies_allowed_at :
 # l'île n° 68) se retire aussitôt, sans enemy_spawned ; FreeEnemies n'enregistre alors aucune population.
+# (E5) La faune — src/fauna/, data/fauna/<île>/ ; mode d'emploi : « (E5) Ajouter un animal »
+class_name AnimalData extends EnemyData   # une espèce : data/fauna/<île>/<id>.tres (+ attacks/, visuals/)
+   behavior: StringName    # &"paisible" | &"fuyard" | &"dangereux" | &"ambiant" (AnimalData.BEHAVIORS)
+   flies, body_radius_m, moments: Array[StringName]                      # espèce
+   alert_range_m, flee_range_m, calm_distance_m, flee_speed, graze_animation, graze_ratio,
+   flee_animation, startle_animation, startle_s, vanish_s                # paisibles et fuyards
+   noise_run_factor, noise_still_factor, run_speed_m_s, combat_noise_m   # réactions (bruit, combat)
+   leash_m, wander_radius_m, windup_animation, stun_s, ring_radius_m, ring_speed, attack_gap_s   # dangereux
+   defeat_flee_s, defeat_flee_m                                          # fuite du vaincu
+   ambient_texture, ambient_frames, ambient_fps, ambient_motion, ambient_count, ambient_speed,
+   ambient_sway, ambient_lift, ambient_region_m, ambient_weather         # behavior ambiant : AmbientSprites
+   func active_at(moment) -> bool ; has_body() ; is_dangerous() ; calm_distance() ; escape_speed()
+class_name Animal extends Enemy           # src/fauna/animal.tscn (enemy.tscn + animal.gd) ; data: AnimalData
+   signal fled(animal: Animal)             # vaincu ou débandé : il s'enfuit (jamais EventBus.enemy_killed)
+   var pack: AnimalPack
+   func species() -> AnimalData ; mode_name() -> StringName   # &"graze", &"alert", &"flee", &"leave"
+   func is_leaving() -> bool ; is_stunned() -> bool ; is_flying() -> bool
+   func dismiss() -> void                  # renvoyé (hors de saison) : il s'éloigne et disparaît
+   func rout(from: Node3D) -> void         # débandade de la meute
+# Groupes : tout animal est dans « fauna » ; un dangereux est aussi dans « enemies » (verrouillage, HUD).
+# (E5) Enemy._is_admitted() : la garde d'Enemy._ready ; Enemy demande enemies_allowed (Timere), Animal
+# redéfinit la question (FaunaRules.allowed_at : liste fauna de l'île, régions sans animaux) : la garde
+# des Timeres (X1) ne retire donc jamais un animal, et la faune ne passe pas outre les règles de l'île.
+class_name AnimalPack extends RefCounted  # meute : add(animal), active(), request_attack(animal) (un seul
+   # porteur du jeton à la fois), release(animal), ring_point(animal, centre, rayon, vitesse) (encerclement),
+   # report_fled(animal) (la moitié partie : le reste suit), raise_alert() / is_alert()
+class_name FaunaRules extends RefCounted  # fonctions statiques : species(île, id), species_ids(île),
+   # island_allows(carte, espèce), is_banned(carte, région), allowed_at(nœud, espèce), population(île),
+   # entries_for(carte), entry_wanted(groupe, espèce, moment, temps), entry_problem(groupe),
+   # problems(île) -> PackedStringArray (tout le format), set_population(île, données) (tests), clear_cache()
+class_name FaunaNav extends RefCounted    # praticabilité du sol : ground_of(nœud), can_stand(sol, point),
+   # can_step(sol, de, à) (MapGround.is_walkable, level_at : un cran de palier au plus), steer(sol, de, but),
+   # random_spot(sol, centre, rayon, rng), on_ground(sol, point)
+class_name FaunaPopulator extends Node3D  # le nœud « Fauna » (src/fauna/fauna.tscn) sous « Life » d'une carte
+   signal group_filled(group_id, count)
+   func animals(group_id := &"") -> Array[Animal] ; group_ids() ; ambient_of(group_id) ; is_wanted(group_id)
+   func refresh(fill_all := false) -> void  # EventBus.atmosphere_changed (moment, temps) l'appelle seul
+
 # src/enemies/wave_director.gd — un par arène (enfant "WaveDirector" de arena.tscn), lit data/waves/<arena_id>.json
 func start() -> void                       # (X1) sans effet là où les règles n'admettent pas de Timere
 func stop() -> void
@@ -729,6 +772,7 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/world/zones/<zone_id>/<zone_id>.tscn` + `src/world/zone.gd` (`village`, `dunes`, `forest`, `beach`, `hill`) | `<zone_id>` (Node3D, `Zone`) | `Spawn` (Marker3D), `Bounds` (Area3D, masque 2), `Geometry` ((HD-2D) `PropBatcher` : décors `src/world/props/` en images), `NPCs`, `Enemies`, `Pickups` ; dunes : `SpawnN`, `SpawnS`, `SpawnE`, `SpawnW`, `Arena` (`arena_id = &"dunes"`) ; village : `EnemyBarrier` (couche 8), `safe = true` | `zones` | L2 |
 | (E1) `src/world/map.gd`, `map_exit.gd`, `maps/<map_id>/<map_id>.tscn` | `Map`, `MapExit` ; racine `<map_id>` (`Map`) | `Ground` (sol, couche 1), `Geometry` (`PropBatcher`), `Markers` (`Spawn` + `from_<carte>`), `Exits` (`MapExit`), `Life` ((E4) `Life/Places` : les places des emplois du temps ; les PNJ de la vie y sont ajoutés) ; `ile_ancienne` : scène héritée d'`island.tscn` (`World/ile_ancienne/Zones/<zone>`) | `maps` ; sorties : couche 0 (6 si invite), masque 2 | E1 |
 | (X1) `src/world/world_atlas.gd`, `island_rules.gd`, `airship_dock.gd`, `travel_view.tscn` + `.gd`, `data/world/worlds/`, `data/world/islands/` | `WorldAtlas`, `IslandRules`, `AirshipDock` (Area3D sous `Docks`), `TravelView` (CanvasLayer) | `TravelView` : `View`, `Caption`, `Black` | quais : couche 6, masque 2 | X1 |
+| (E5) `src/fauna/animal.tscn` + `animal.gd`, `animal_data.gd`, `animal_pack.gd`, `fauna_rules.gd`, `fauna_nav.gd`, `fauna_populator.gd` + `fauna.tscn` | `Animal` (CharacterBody3D, hérite d'`Enemy`), `AnimalData`, `AnimalPack`, `FaunaRules`, `FaunaNav`, `FaunaPopulator` (Node3D, nœud `Fauna` sous `Life`) | ceux d'`enemy.tscn` | comme `Enemy` (couche 4) ; groupes `fauna`, `enemies` (dangereux) | E5 |
 | `src/npc/placements/<zone_id>.tscn` | `NPCs` (Node3D), instancié dans chaque zone | PNJ de la zone et (Lot Q) déclencheurs de quête `QuestTrigger` (coordonnées locales à la zone) | — | L6 |
 | `src/enemies/placements/<zone_id>.tscn` | `Enemies` (Node3D ; (acte 1) script `src/enemies/free_enemies.gd`) | ennemis libres de la zone (forêt : 4 Timeres), qui reviennent pendant une étape « vaincre » qui les vise | — | L5 |
 | `src/items/placements/<zone_id>.tscn` | `Pickups` (Node3D) | objets uniques, nommés `<zone>_<objet>_<n>` (ex. `forest_page_1`) | — | L7 |
@@ -906,6 +950,68 @@ V5). Exemple : `data/world/islands/surface_essai.json` et `src/world/maps/surfac
 5. Vérifier comme une île : `test_world_atlas.gd`, `test_island_rules.gd` (règles appliquées :
    Timeres, mer de nuages ou sol, ciel), et la vue `surface` / `horizon` de `demo_x1.tscn`.
 
+### (E5) Ajouter un animal : mode d'emploi
+
+Contrat : `docs/REFONTE.md`, sections 4.4 et 5 ; chiffres et comportements : `docs/lore/VIE.md`, section 6,
+et `docs/lore/ACTE1.md`, section 3.5. La faune est **des données** : l'île n° 68 n'a aucun Timere, mais des
+animaux sauvages ; rien dans le code ne connaît le nom d'une espèce.
+
+1. **Le choix du format** : une espèce est une ressource `.tres` (`AnimalData`, qui hérite d'`EnemyData`),
+   pas un JSON : ses attaques sont des `AttackData` (`data/fauna/<île>/attacks/*.tres`) et sa planche un
+   `SkinData` (`data/fauna/<île>/visuals/<id>.tres`), comme un Timere. Seul le **peuplement**, une liste par
+   carte, est un JSON (`peuplement.json`, vérifié clé par clé, comme les quêtes).
+2. **La planche** : `assets/fauna/<id>/<id>.png` + `.json`, au format des personnages (profil tourné vers la
+   droite, 96 px par mètre, ancres par image, `coup`). Les remplaçants se font par
+   `python3 tools/gen_placeholders.py fauna [<id>…]` (`tools/gen_fauna.py` ; contrôle visuel :
+   `python3 tools/gen_fauna.py preview <id>` → `build/e5/preview_<id>.png`) ; ils ont le profil seulement
+   (`front_*` et `back_*` du `SkinData` sont facultatifs). La vraie planche du cahier n° 5 la remplace au même
+   chemin, sans toucher au code. Animations (cahier, 7.3, confirmées telles quelles par le moteur) :
+   `repos` 2 images à 2 ips, `marche` 6 à 8 (4 pour oiseaux et grenouille), `course` 5 à 14 (4), `attaque` 4 à
+   12 avec `coup` [2], `degats` 1, `mort` 2 à 4 (jamais jouée : un vaincu s'enfuit), `fuite` 4 à 12 (boucle pour
+   les oiseaux), `broute` 4 à 4 ips. Un animal n'a que celles de son comportement (`tests/unit/test_fauna_data.gd`) ;
+   elles sont déclarées dans `tools/hd2d_manifest.json` (« sheets », tableaux `fauna` et `fauna_bird` de
+   `tools/hd2d_sheets.py`, clé `anims`) : `python3 tools/hd2d_sheets.py check`.
+3. **L'espèce** : `data/fauna/<île>/<id>.tres`, `script_class="AnimalData"` (modèle : `deer.tres`, `wolf.tres`).
+   Elle donne la planche (`visual`), les PV (`max_hp` : coups avant de fuir), les vitesses (`speed` : course ;
+   `walk_speed` : marche), `body_radius_m` (corps, Hurtbox, ombre) et `moments` (où dans la journée : `aube`,
+   `matin`, `apres_midi`, `couchant`, `nuit` ; vide : toujours), puis, selon `behavior` :
+   - `paisible` : `alert_range_m` (il lève la tête), `flee_range_m` (il fuit), `calm_distance_m`,
+     `flee_speed`, `graze_animation` (`broute`) ; `fuyard` : pareil sans l'alerte ; les oiseaux ont `flies`
+     (ils s'envolent) et `vanish_s` (ils quittent la scène), la grenouille un `vanish_s` court (plongeon) ;
+     le bruit du joueur (`noise_run_factor` × 1,5 s'il court, `noise_still_factor` × 0,6 immobile) et celui
+     d'un combat proche (`combat_noise_m`) règlent les distances ;
+   - `dangereux` : l'IA d'`Enemy` (`aggro_range_m`, `attacks`, `rush` : un bond ou une charge en ligne droite
+     dont l'attaque sans dégâts donne la portée de déclenchement), plus `leash_m` (la tanière de l'ours : 15 m),
+     `stoic`, `windup_animation` et `stun_s` (le sanglier), `ring_radius_m`, `ring_speed` et `attack_gap_s`
+     (la meute encercle et attaque un par un) ; les dégâts, la préparation (`windup`), la recharge sont dans
+     les `AttackData` ;
+   - `ambiant` : pas de corps, une bande animée (`ambient_*`) que le peuplement pose en `AmbientSprites`
+     (papillons, libellules) ; `ambient_weather` (par beau temps seulement).
+   Un animal vaincu (PV à zéro) **s'enfuit** : `defeat_flee_s` et `defeat_flee_m`, puis il disparaît ; ni sang,
+   ni cadavre, ni `EventBus.enemy_killed`. Le signal est `Animal.fled`.
+4. **Les règles de l'île** : l'id de l'espèce dans `rules.fauna` de son île (`data/world/islands/ile_68.json`) ;
+   sans elle, l'animal n'apparaît pas. `peuplement.json` a aussi `banned_regions` : l'entrepôt, le village, la
+   ville, le port (`Map.region` ou lieu du fichier de l'île) n'ont jamais d'animaux ; les oiseaux et les papillons
+   d'ambiance de ces cartes restent des `AmbientSprites` de la carte.
+5. **Le peuplement d'une carte** : un nœud `Fauna` (instance de `res://src/fauna/fauna.tscn`) sous `Life`, des
+   marqueurs `Marker3D` sous `Life/Places`, et la liste de la carte dans `maps` de `peuplement.json` :
+   `{"id": "loups", "species": "wolf", "count": 3, "at": "loups", "radius": 3.5, "pack": true}` (`at` : nom d'un
+   marqueur de la carte ; ou `"rect": [x0, z0, x1, z1]` ; `moments` restreint ceux de l'espèce ; `weather` ;
+   `respawn_s` : délai avant de regarnir un groupe qui a fui). Au chargement, tout est posé ; ensuite
+   `GameState.moment` et `weather` (`EventBus.atmosphere_changed`) renvoient un groupe hors de saison (les bêtes
+   s'éloignent) et en font venir un autre, toujours hors du champ de la caméra et à 14 m du joueur au moins ; les
+   bêtes qui ont fui reviennent au bout de `respawn_s`. `planned` : le peuplement prévu des cartes qui n'ont pas
+   encore leur nœud `Fauna` (sentier, colline, forêt profonde, montagne) ; on le passe dans `maps` avec la carte.
+   `FaunaRules.problems(&"ile_68")` en dit tout le format ; le test marche sur toutes les cartes de `maps`.
+6. **Le sol** : les animaux marchent sur ce que `FaunaNav` permet (`MapGround.is_walkable`, `level_at` : ni eau
+   dormante, ni vide, ni falaise de plus d'un cran) et contournent les décors par la collision.
+7. **Vérifier** : `tools/import.sh`, `tools/test.sh tests/unit/test_fauna_data.gd` (format), `test_fauna_population.gd`
+   (peuplement), `test_fauna_behavior.gd` (comportements), `test_fauna_guard.gd` (garde des Timeres et de la
+   faune), puis les captures : `tools/e5_shots.sh [cerfs|ecureuils|meute|sanglier|ours|troupeau]` →
+   `build/shots/e5/e5_<vue>.png` (carte `foret_essai`, `tests/integration/demo_e5.tscn` ; draw calls dans le
+   journal, `test_e5_captures.gd` : 12 animaux dans le champ, 200 draw calls au plus). Dans le navigateur :
+   `index.html?map=foret_essai` (docs/web.md) pose la partie dans la forêt d'essai.
+
 ### (E3) Intérieurs : `InteriorRoom`
 
 Le nœud `Ground` d'une carte intérieure (`docs/REFONTE.md`, section 7.1) : un étage d'un bâtiment,
@@ -1074,6 +1180,65 @@ static func lookup(path, key_path) -> String, forget_texts()
   complet, circulation, portes, rien ne cache le joueur de chaque case, draw calls par vue,
   textes) ; `tests/integration/test_entrepot_in_game.gd` ; captures
   `tests/integration/demo_entrepot.tscn` (`T2_VIEWS`, `T2_SHOTS`).
+
+### (C1) Les cartes du dehors : `tools/exterior_maps.py`
+
+L'équivalent de `tools/interior_maps.py` pour le dehors : il écrit une carte du dehors **d'après son
+plan** (bloc ```plan de `docs/lore/CARTE.md`, lu par `tools/carte_plans.py`). Cartes construites :
+`entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet) et
+`sentier` (C1) ; cartes d'attente (provisoires, un lot de la phase 3 les remplace) : `village`,
+`colline`, `foret_profonde`, `port`.
+
+```text
+python3 tools/exterior_maps.py gen [map_id…]      # écrit les cartes (toutes sans argument)
+python3 tools/exterior_maps.py check [map_id…]    # à jour ? écarts au plan, avertissements de la règle de caméra
+python3 tools/exterior_maps.py places [map_id…]   # réécrit dans CARTE.md la liste des places de la vie
+python3 tools/exterior_maps.py props              # écrit les scènes de décor nouvelles (exterior_props.py)
+```
+
+- **Ce qu'il écrit** : le sol (`data/maps/<id>/plan.json`, puis `map.json`, `heights.png`,
+  `materials.png`, `structures.png` comme `tools/map_build.py gen`) et la scène
+  `src/world/maps/<id>/<id>.tscn` : `Map` (nom, lieu, taille, bornes `Rect2(10, 9, L − 20, P − 17)`),
+  `Ground`, `Edges` (les `bord` du plan en boîtes invisibles), `Geometry` (groupes de décors, `Scatter`
+  des `PropScatter`), `Markers`, `Exits`, `Life/Places` (points du plan et places de la vie en plus),
+  `Life/Areas` (places réservées, `metadata/area` = `Rect2`), `Lights` (seulement s'il y en a),
+  `Ambience`. Les sorties vers une carte absente sont provisoires (`SETTINGS["provisional"]`) ou
+  omises (`omit_if_missing` : l'outil les remet dès que la carte existe).
+- **La pose** (`tools/exterior_pose.py`, classe `Pose`) : catalogue des décors (image, taille,
+  emprise qui bloque, lue dans `src/world/props/`), hauteur exacte du sol, `place`, `scatter`,
+  `poisson`, `along`, graines fixes. **Règle de caméra** (CARTE.md 0.3) : un décor qui se dresse
+  au-dessus de la tête (1,4 m) devant une case où l'on marche prend sa variante de premier plan
+  (`<décor>_forest` ou `<décor>_fg`, qui s'efface autour du joueur), faute de quoi il n'est pas posé
+  et l'outil le dit.
+- **Une recette par carte** (`tools/exterior_recipes/<id>.py`) : `SETTINGS` (groupes de décors,
+  sorties provisoires), `ground_plan(plan_map)` (`tools/exterior_ground.py` :
+  `ground_from_plan` déduit le sol du plan, la recette y ajoute berges, îlots, rampes), `prepare(p)`,
+  `pose(p)`, `ambient(p)`, `PLACES_WHY` (places de la vie que le plan ne nomme pas). Modèle court :
+  `sentier.py` ; riche : `entrepot.py`. Ajouter une carte : son bloc ```plan, sa recette, son nom dans
+  `RECIPES` (et le retirer de `WAITING`), `gen`, `tools/hd2d_assets.py gen`, `tools/import.sh`, ses
+  tests (`tests/stubs/c1_exterior_test.gd` en base : plan, sorties, marqueurs, points, marche, caméra,
+  densité, sol nu, draw calls, aucune lumière), son entrée dans `ile_68.json` (`maps` et son lieu).
+- **Les images** que le plan cite et que les cahiers n'ont pas livrées : un remplaçant inscrit au
+  manifeste (`tools/hd2d_sentier.py` : lot `R3`, `props/marsh_reed_wall`, `path_edge_ferns`,
+  `path_root_step`, `fg_canopy_a`, `decals/bog_pool_a`, `path_stones_a`, `path_stones_b`), et sa
+  scène dans `tools/exterior_props.py` (`PROPS`) ; une image livrée remplace le remplaçant du même
+  nom sans toucher au code, une image livrée n'est jamais retouchée.
+- **Le sentier et le marais** (`sentier`, CARTE.md section 4, 80 × 40 m) : lisière nord à +1 m, marais
+  à −0,5 m (tourbe, eau basse où l'on marche, îlots de touradons), levée du sentier à 0, chemin de la
+  ville qui descend à −0,5 m par sa rampe ; sorties à pied vers `entrepot` (`from_sentier`) et `port`
+  (`from_sentier`, carte d'attente) ; la sortie vers `ville_haute` n'existe qu'avec cette carte, un
+  écriteau « Plus loin, bientôt » au bout du chemin en attendant ; points du plan
+  (`premiere_embuscade` pour `ACTE1.md`, `marais_chute`, `lumiere_pannibal`…), place `embuscade`,
+  places de la vie en plus (`sentier_ouest`, `corbeau_perchoir`, `lisiere_renard`…). **Aucune
+  lumière** (V1) : la nuit est celle d'`Atmosphere` (préréglage `nuit`) et de la lumière des fées du
+  joueur (4 m), qui suffit à lire le sentier.
+- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_exterior_maps.gd` (`check` de l'outil,
+  cartes d'attente, `port` dans l'île), `tests/integration/test_sentier_in_game.gd` (de l'entrepôt au
+  sentier, au marais, à la rampe de la ville, au port d'attente, et retour) ; captures
+  `C1_MAP=sentier C1_VIEW=<vue> [C1_MOMENT=nuit] [C1_LIGHT=off] tools/screenshot.sh
+  res://tests/integration/demo_c1.tscn build/shots/c1_<vue>.png 60` (vues : `entree`, `ouest`,
+  `milieu`, `marais`, `embuscade`, `berge`, `est`, `fourche`, `ville`, `large` ; draw calls dans le
+  journal).
 
 ### (E9) Lumière et temps : mode d'emploi
 

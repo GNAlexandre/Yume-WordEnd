@@ -346,6 +346,50 @@ def butterfly(size, rnd, n):
     return frames
 
 
+def butterfly_orange_b(size, rnd, n):
+    """(E5) Autre papillon orange : ailes plus rondes, bordées de brun (cahier n° 5, 7.4)."""
+    w, h = size
+    frames = []
+    orange = ramp("#E08A30", 5)
+    for f in range(n):
+        span = [1.0, 0.65, 0.25, 0.65][f % 4]
+        c = Canvas(w, h, rnd)
+        cx, cy = w / 2.0, h / 2.0
+        for side in (-1, 1):
+            c.ellipse(cx + side * 4.5 * span, cy - 3, 4 * span + 0.5, 3.5, "#5A3418")
+            c.ellipse(cx + side * 4.5 * span, cy - 3, 3 * span + 0.2, 2.6, orange[3])
+            c.ellipse(cx + side * 4 * span, cy + 3, 3.5 * span + 0.4, 3, "#5A3418")
+            c.ellipse(cx + side * 4 * span, cy + 3, 2.6 * span, 2, orange[2])
+        c.rect(cx - 1, cy - 5, cx + 1, cy + 6, "#3A2A20")
+        frames.append(c.finish("#4A2A1A"))
+    return frames
+
+
+def dragonfly(body, wing):
+    """(E5) Libellule vue de dessus, de profil horizontal : corps fin, quatre ailes qui vibrent."""
+
+    def recipe(size, rnd, n):
+        w, h = size
+        frames = []
+        for f in range(n):
+            spread = [1.0, 0.55, 1.0, 0.55][f % 4]
+            c = Canvas(w, h, rnd)
+            cx, cy = w / 2.0, h / 2.0
+            for side in (-1, 1):
+                for dx in (-3, 2):
+                    c.poly(
+                        [(cx + dx, cy), (cx + dx - 4, cy + side * 8 * spread), (cx + dx + 4, cy + side * 7.5 * spread)],
+                        wing,
+                    )
+            c.rect(cx - 12, cy - 1, cx + 6, cy + 1, body)
+            c.ellipse(cx + 8, cy, 3, 2.5, body)
+            c.pixel(cx + 9, cy - 1, "#202020")
+            frames.append(c.finish("#2A2A38"))
+        return frames
+
+    return recipe
+
+
 def fireflies(size, rnd, n):
     w, h = size
     frames = []
@@ -396,7 +440,8 @@ RECIPES = {
     "anim/falling_leaf_gold": falling_leaf("leaf_gold"), "anim/falling_leaf_rust": falling_leaf("leaf_rust"),
     "anim/reeds_sway": sway("props/reeds", 3), "anim/grass_sway": sway("props/tall_grass", 3),
     "anim/windsock_wave": windsock_wave, "anim/bunting_wave": bunting_wave, "anim/vigil_bell_ring": vigil_bell_ring,
-    "anim/fountain_water": fountain_water, "anim/pigeons": pigeons, "anim/butterfly": butterfly,
+    "anim/fountain_water": fountain_water, "anim/pigeons": pigeons, "anim/butterfly": butterfly, "anim/butterfly_orange_b": butterfly_orange_b,
+    "anim/dragonfly_blue": dragonfly("#3A78C8", "#BFE0F0"), "anim/dragonfly_amber": dragonfly("#B8741E", "#F0D8A0"),
     "anim/fireflies": fireflies, "anim/furnace_steam": furnace_steam, "anim/cafe_door_bell": cafe_door_bell,
     "anim/airship_ferry_propeller": propeller(4, "#8A5A3A", "#B0703A", math.pi / 8, "#B0703A"),
     "anim/airship_barocupot_propeller": propeller(5, "#3A3A42", "#AE4A3E", math.pi / 10, "iron"),

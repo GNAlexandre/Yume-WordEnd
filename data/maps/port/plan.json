@@ -1,0 +1,62 @@
+{
+ "_comment": "Carte d'attente (lot T1, provisoire jusqu'à la phase 3 : docs/DECISIONS.md) : sol plat, un chemin vers l'entrepôt. Lu par tools/map_build.py gen port.",
+ "size": [
+  32,
+  24
+ ],
+ "seed": 68,
+ "materials_scale": 1,
+ "edges": {
+  "north": "land",
+  "east": "land",
+  "south": "land",
+  "west": "land"
+ },
+ "skirt": 16,
+ "spawn": [
+  5,
+  12
+ ],
+ "base": {
+  "level": 0,
+  "material": "sobre"
+ },
+ "materials": {
+  "sobre": {
+   "label": "Sol de la carte d'attente, assourdi",
+   "layer": "forest_floor",
+   "color": "#7a8a6a",
+   "tint": [
+    0.78,
+    0.78,
+    0.8
+   ]
+  },
+  "chemin": {
+   "label": "Chemin de terre (path_dirt_b)",
+   "layer": "path_dirt_b",
+   "color": "#d0a060",
+   "variant": false,
+   "path": true
+  }
+ },
+ "steps": [
+  {
+   "op": "path",
+   "material": "chemin",
+   "width": 3.0,
+   "points": [
+    [
+     0,
+     12
+    ],
+    [
+     19,
+     12
+    ]
+   ],
+   "noise": 0.3,
+   "noise_scale": 1.6
+  }
+ ]
+}

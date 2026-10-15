@@ -1,0 +1,357 @@
+{
+ "_comment": "Forêt d'essai de la faune (lot E5) : 56 × 40 m, sur le sol en relief, pour juger les animaux avant la vraie forêt profonde. Une terrasse de 1 m au nord (la clairière des loups, rampe au centre), la clairière des cerfs à l'ouest, la souille du sanglier à l'est (boue), la tanière de l'ours au sud-ouest, une mare au sud-est. Plan lu par tools/map_build.py gen foret_essai.",
+ "size": [
+  56,
+  40
+ ],
+ "seed": 5,
+ "materials_scale": 2,
+ "edges": {
+  "north": "land",
+  "east": "land",
+  "south": "land",
+  "west": "land"
+ },
+ "skirt": 16,
+ "spawn": [
+  28.0,
+  37.5
+ ],
+ "base": {
+  "level": 0,
+  "material": "sous_bois"
+ },
+ "steps": [
+  {
+   "op": "level",
+   "level": 2,
+   "shape": {
+    "poly": [
+     [
+      14,
+      -1
+     ],
+     [
+      42,
+      -1
+     ],
+     [
+      42,
+      11
+     ],
+     [
+      14,
+      11
+     ]
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 2
+   }
+  },
+  {
+   "op": "material",
+   "material": "herbe",
+   "shape": {
+    "ellipse": [
+     13,
+     20,
+     7.5,
+     5.5
+    ],
+    "noise": 1.2,
+    "noise_scale": 2.5,
+    "seed": 3
+   }
+  },
+  {
+   "op": "material",
+   "material": "herbe_haute",
+   "shape": {
+    "ellipse": [
+     13,
+     20,
+     5,
+     3.5
+    ],
+    "noise": 1.0,
+    "noise_scale": 2.0,
+    "seed": 4
+   }
+  },
+  {
+   "op": "material",
+   "material": "prairie",
+   "shape": {
+    "ellipse": [
+     11,
+     19,
+     2.2,
+     1.6
+    ],
+    "noise": 0.8,
+    "noise_scale": 2.0,
+    "seed": 5
+   }
+  },
+  {
+   "op": "material",
+   "material": "mousse",
+   "shape": {
+    "ellipse": [
+     28,
+     5,
+     9,
+     4
+    ],
+    "noise": 1.4,
+    "noise_scale": 2.5,
+    "seed": 6
+   },
+   "where": {
+    "level": 2
+   }
+  },
+  {
+   "op": "material",
+   "material": "feuilles",
+   "shape": {
+    "ellipse": [
+     40,
+     14,
+     5,
+     3.5
+    ],
+    "noise": 1.0,
+    "noise_scale": 2.0,
+    "seed": 7
+   }
+  },
+  {
+   "op": "material",
+   "material": "feuilles",
+   "shape": {
+    "ellipse": [
+     8,
+     8,
+     4,
+     3
+    ],
+    "noise": 1.0,
+    "noise_scale": 2.0,
+    "seed": 8
+   }
+  },
+  {
+   "op": "material",
+   "material": "feuilles",
+   "shape": {
+    "ellipse": [
+     20,
+     35,
+     4,
+     2.5
+    ],
+    "noise": 1.0,
+    "noise_scale": 2.0,
+    "seed": 9
+   }
+  },
+  {
+   "op": "material",
+   "material": "mousse",
+   "shape": {
+    "ellipse": [
+     8,
+     33,
+     4.5,
+     3
+    ],
+    "noise": 1.0,
+    "noise_scale": 2.0,
+    "seed": 10
+   }
+  },
+  {
+   "op": "material",
+   "material": "tourbe",
+   "shape": {
+    "ellipse": [
+     43,
+     24,
+     5.5,
+     4.3
+    ],
+    "noise": 1.1,
+    "noise_scale": 2.5,
+    "seed": 11
+   }
+  },
+  {
+   "op": "material",
+   "material": "boue",
+   "shape": {
+    "ellipse": [
+     43,
+     24,
+     3.8,
+     2.9
+    ],
+    "noise": 0.8,
+    "noise_scale": 2.0,
+    "seed": 12
+   }
+  },
+  {
+   "op": "material",
+   "material": "tourbe",
+   "shape": {
+    "ellipse": [
+     47,
+     34,
+     5.5,
+     3.8
+    ],
+    "noise": 1.1,
+    "noise_scale": 2.5,
+    "seed": 13
+   }
+  },
+  {
+   "op": "material",
+   "material": "boue",
+   "shape": {
+    "ellipse": [
+     47,
+     34,
+     3.8,
+     2.6
+    ],
+    "noise": 0.8,
+    "noise_scale": 2.0,
+    "seed": 14
+   }
+  },
+  {
+   "op": "material",
+   "material": "eau",
+   "shape": {
+    "ellipse": [
+     47,
+     34,
+     2.5,
+     1.6
+    ],
+    "noise": 0.6,
+    "noise_scale": 1.8,
+    "seed": 15
+   }
+  },
+  {
+   "op": "path",
+   "material": "sentier",
+   "width": 2.4,
+   "points": [
+    [
+     28,
+     41
+    ],
+    [
+     28,
+     34
+    ],
+    [
+     27.5,
+     28
+    ],
+    [
+     28.5,
+     22
+    ],
+    [
+     28.5,
+     15
+    ]
+   ],
+   "noise": 0.25,
+   "noise_scale": 1.5,
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "path",
+   "material": "terre_battue",
+   "width": 1.8,
+   "points": [
+    [
+     28,
+     25
+    ],
+    [
+     35,
+     25
+    ],
+    [
+     41,
+     24.2
+    ]
+   ],
+   "noise": 0.25,
+   "noise_scale": 1.5
+  },
+  {
+   "op": "path",
+   "material": "terre_battue",
+   "width": 1.8,
+   "points": [
+    [
+     27.5,
+     26
+    ],
+    [
+     20,
+     22.5
+    ],
+    [
+     15,
+     20.5
+    ]
+   ],
+   "noise": 0.25,
+   "noise_scale": 1.5
+  },
+  {
+   "op": "path",
+   "material": "terre_battue",
+   "width": 1.8,
+   "points": [
+    [
+     27.5,
+     31
+    ],
+    [
+     18,
+     31.5
+    ],
+    [
+     11.5,
+     31.2
+    ]
+   ],
+   "noise": 0.25,
+   "noise_scale": 1.5
+  },
+  {
+   "op": "ramp",
+   "dir": "north",
+   "rect": [
+    27,
+    11,
+    3,
+    4
+   ],
+   "material": "terre_battue"
+  }
+ ]
+}
