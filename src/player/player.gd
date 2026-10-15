@@ -34,6 +34,9 @@ extends CharacterBody3D
 ## vitesse et recul à zéro, verrou levé, caméra recalée sur le joueur. (E1) Arrivée dans une
 ## carte (EventBus.map_entered, joueur déjà posé sur son marqueur) : de même, sans l'élan de la
 ## carte précédente (la caméra se recale d'elle-même).
+## (E6) Le récit peut tenir le joueur (set_story_hold) : ses commandes sont ignorées comme en
+## dialogue, sans invite ; story_drive (m/s, plan du sol) le fait alors marcher ou courir avec la
+## vraie physique (collisions, pentes, animations), là où la scène le mène.
 
 ## Script de la caméra, pour typer camera_rig sans ajouter de classe globale.
 const CameraRigScript := preload("res://src/player/camera_rig.gd")
@@ -81,6 +84,9 @@ const MOUSE_ACTIONS: Dictionary[int, StringName] = {
 ## Distance au-delà de laquelle le verrou est perdu (m).
 @export var lock_break_distance: float = 16.0
 
+## (E6) Marche voulue par une scène quand le récit tient le joueur (m/s, plan du sol).
+var story_drive: Vector3 = Vector3.ZERO
+
 var _move_velocity: Vector3 = Vector3.ZERO
 var _knockback: Vector3 = Vector3.ZERO
 var _aim: Vector3 = Vector3.FORWARD
@@ -92,6 +98,8 @@ var _coyote_left: float = 0.0
 var _jump_buffer_left: float = 0.0
 var _in_dialogue: bool = false
 var _wait_release: bool = false
+## (E6) Tenu par le récit (scène sans contrôle).
+var _story_hold: bool = false
 var _interactable: Node3D
 var _prompt: String = ""
 var _lock_target: Node3D
@@ -166,7 +174,7 @@ func handle_mouse_button(button: int, pressed: bool, at: Vector2) -> bool:
 	if action == &"":
 		return false
 	if pressed:
-		if _in_dialogue or health.is_dead():
+		if _in_dialogue or _story_hold or health.is_dead():
 			return false
 		_pointer_aim = pointer_direction(at)
 		_mouse_held[button] = true
@@ -328,10 +336,16 @@ func tick(delta: float, commands: Commands) -> void:
 	var dead := health.is_dead()
 	var busy := combat.is_busy() or dead
 	var frozen := busy or _in_dialogue
+	if _story_hold:
+		# (E6) Le récit mène : commandes ignorées, seule story_drive fait marcher.
+		commands = Commands.new()
 	_filter_after_dialogue(commands)
 	_update_lock(commands.lock and not _in_dialogue, dead)
 	var direction := Vector3.ZERO
-	if not frozen:
+	if not frozen and _story_hold:
+		direction = Vector3(story_drive.x, 0.0, story_drive.z).limit_length(1.0)
+		commands.run = Vector2(story_drive.x, story_drive.z).length() > walk_speed + 0.1
+	elif not frozen:
 		direction = move_direction(commands.move, _camera_basis())
 	_update_running(commands)
 	_update_move_velocity(direction, frozen, delta)
@@ -361,7 +375,7 @@ func tick(delta: float, commands: Commands) -> void:
 	_forward_combat(commands, busy)
 	if not combat.is_busy() and not health.is_dead():
 		_animate()
-	_refresh_interaction(not _in_dialogue and not health.is_dead())
+	_refresh_interaction(not _in_dialogue and not _story_hold and not health.is_dead())
 	camera_rig.lock_target = locked_target()
 	camera_rig.follow_velocity = _move_velocity
 	_was_busy = busy
@@ -409,6 +423,22 @@ func is_in_dialogue() -> bool:
 ## true si le joueur court (run maintenue, ou course lancée à la manette).
 func is_running() -> bool:
 	return _running
+
+
+## (E6) Le récit prend (true) ou rend (false) le contrôle : tenu, le joueur ignore ses commandes
+## (comme en dialogue, sans invite ni coup) et ne marche que par story_drive ; rendu, story_drive
+## est remis à zéro.
+func set_story_hold(held: bool) -> void:
+	_story_hold = held
+	story_drive = Vector3.ZERO
+	if held:
+		_move_velocity = Vector3.ZERO
+		_refresh_interaction(false)
+
+
+## (E6) Vrai pendant une scène sans contrôle.
+func is_story_held() -> bool:
+	return _story_hold
 
 
 # Après un dialogue, l'appui qui l'a fermé (interact, ou A = jump à la manette) ne doit ni le

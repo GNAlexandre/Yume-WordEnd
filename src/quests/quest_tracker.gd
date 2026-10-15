@@ -6,6 +6,8 @@ extends Node
 ## groupe quest_tracker agit, pour qu'une récompense ne soit jamais donnée deux fois. Règles
 ## d'écriture : docs/QUETES.md.
 ##
+## (E6) Sans effet pendant l'acte en jours (GameState.story_running()) : le récit en scènes
+## remplace les quêtes à collecter sur l'île n° 68.
 ## Démarrage : une quête devient active par GameState.set_quest_state(id, &"active") (effet de
 ## dialogue start_quest), ou toute seule (auto_start) dès que ses prérequis sont remplis ; son
 ## étape courante est alors la première, et elle devient la quête suivie (tracked_quest).
@@ -129,7 +131,9 @@ static func pending_steps(quest: QuestData) -> Array[QuestStep]:
 
 ## Exécute job, puis les vérifications d'état ; pendant un traitement, job attend son tour.
 func _run(job: Callable) -> void:
-	if not is_leader():
+	# (E6) Pendant l'acte en jours (GameState.story_running()), les quêtes à collecter se taisent :
+	# rien ne démarre ni n'avance (l'ancienne île garde son moteur, docs/REFONTE.md, 6.2).
+	if not is_leader() or GameState.story_running():
 		return
 	_queue.append(job)
 	if _running:

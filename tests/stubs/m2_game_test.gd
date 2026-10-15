@@ -143,9 +143,9 @@ func bind_game(node: Node3D) -> void:
 	player = game.get_node(^"Player") as Player
 	combat = player.combat
 	health = player.health
-	dunes = game.get_node(^"World/ile_ancienne/Zones/dunes") as Zone
-	arena = dunes.get_node(^"Arena") as Arena
-	director = arena.director()
+	dunes = game.get_node_or_null(^"World/ile_ancienne/Zones/dunes") as Zone
+	arena = dunes.get_node(^"Arena") as Arena if dunes != null else null
+	director = arena.director() if arena != null else null
 	hud = game.get_node(^"UI/HUD") as Control
 	dialogue_box = game.get_node(^"UI/DialogueBox") as DialogueBox
 	inventory = game.get_node(^"UI/Inventory") as Control

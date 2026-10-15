@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" path="res://src/ui/pause_menu.tscn" id="5_pause"]
 [ext_resource type="PackedScene" path="res://src/ui/journal.tscn" id="6_journal"]
 [ext_resource type="Script" path="res://src/ui/hud_journal.gd" id="7_hud_journal"]
+[ext_resource type="PackedScene" path="res://src/ui/story_overlay.tscn" id="8_story_overlay"]
+[ext_resource type="PackedScene" path="res://src/ui/story_hint.tscn" id="9_story_hint"]
+[ext_resource type="PackedScene" path="res://src/ui/calendar.tscn" id="10_calendar"]
 
 [sub_resource type="Gradient" id="Gradient_flash"]
 offsets = PackedFloat32Array(0.5, 1)
@@ -386,6 +389,10 @@ text = "Retour à l’entrepôt…"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="StoryOverlay" parent="." instance=ExtResource("8_story_overlay")]
+unique_name_in_owner = true
+layout_mode = 1
+
 [node name="PauseMenu" parent="." instance=ExtResource("5_pause")]
 unique_name_in_owner = true
 layout_mode = 1
@@ -394,3 +401,11 @@ layout_mode = 1
 unique_name_in_owner = true
 layout_mode = 1
 script = ExtResource("7_hud_journal")
+
+[node name="StoryHint" parent="." instance=ExtResource("9_story_hint")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="Calendar" parent="." instance=ExtResource("10_calendar")]
+unique_name_in_owner = true
+layout_mode = 1

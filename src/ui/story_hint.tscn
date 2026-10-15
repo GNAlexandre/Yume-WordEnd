@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/ui/story_hint.gd" id="1_hint"]
+[ext_resource type="Theme" path="res://src/ui/wordend_theme.tres" id="2_theme"]
+
+[node name="StoryHint" type="PanelContainer"]
+visible = false
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -360.0
+offset_top = -78.0
+offset_right = 360.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme = ExtResource("2_theme")
+theme_type_variation = &"HudPanel"
+script = ExtResource("1_hint")
+
+[node name="HintLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -341,7 +341,8 @@ static func state_of(quest_id: StringName) -> StringName:
 ## active se valide en lui parlant (talk, ou collect « rapporter à » avec les objets en poche),
 ## sinon MARKER_AVAILABLE (« ! ») s'il donne une quête disponible (hors auto_start), sinon &"".
 static func npc_marker(npc_id: StringName) -> StringName:
-	if npc_id.is_empty():
+	# (E6) Pendant l'acte en jours, aucun marqueur au-dessus des têtes (docs/REFONTE.md, 6.2).
+	if npc_id.is_empty() or GameState.story_running():
 		return &""
 	var available := false
 	for quest: QuestData in all():

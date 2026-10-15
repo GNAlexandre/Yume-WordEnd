@@ -1,0 +1,790 @@
+extends Node
+## (E6) StoryDirector (autoload) : le récit en jours et en scènes (docs/REFONTE.md, 6 ; ACTE1.md,
+## 0.1 et 0.2 ; PLAN.md, « (E6) Le récit »). Propriétaire : E6.
+##
+## - L'acte : une île qui a data/scenes/<île>/act.json a un récit. Une nouvelle partie posée sur
+##   cette île (WorldManager.start_map) l'ouvre : jour, créneau et temps de « start », écran noir
+##   jusqu'à ce que la première scène le lève. GameState.day ≥ 1 tant que l'acte dure
+##   (story_running) ; l'ancienne île, sans acte, garde ses quêtes.
+## - Les scènes (StoryData) : quand aucune ne se joue, la première (par id) dont les conditions
+##   tiennent (jour, créneau, scènes jouées, « if ») et dont le déclencheur part est jouée par
+##   StoryRunner : « ready » (tout de suite), « enter » (sur la carte, arrivé par un marqueur),
+##   « reach » (le joueur à moins de radius m d'une place), « talk » (parler à un PNJ),
+##   « examine » (lire un objet à examiner), « prompt » (une invite posée sur la carte). Ses
+##   présents sont réservés (LifeDirector.reserve) et rendus à la vie à la fin ; le joueur perd
+##   le contrôle au début (étape « control » pour le rendre) et le retrouve à la fin ; la scène
+##   jouée est retenue (GameState) et la partie écrite. Une partie reprise au milieu d'une scène
+##   la rejoue depuis son début, sur sa carte.
+## - Le temps : le jour et le créneau n'avancent que par les scènes (étapes slot, next_day) et
+##   par le joueur : « Dormir » dans son lit le soir ou la nuit quand les scènes du jour sont
+##   faites (fondu, ligne du calendrier écrite, aube du jour suivant), « Laisser passer le temps »
+##   (un créneau, jamais au-delà de celui de la prochaine scène clé). La lumière suit le créneau
+##   (LifeDirector.set_slot).
+## - L'indice (hint, hint_changed) : celui de l'étape « hint » de la scène en cours, sinon celui
+##   de la première scène qui attend son déclencheur, sinon celui du coucher.
+## - Le calendrier (calendar_requested, day_count, departure_day, calendar_line) ; les séquences
+##   déjà vues (user://story_seen.cfg, hors sauvegarde) se passent par l'action « pause ».
+## - Crochet des jeux (E8) : register_game(id, appel) ; sans jeu inscrit, l'étape « game » joue
+##   son « fallback ».
+
+## Une scène commence / finit.
+signal scene_started(scene_id: StringName)
+signal scene_finished(scene_id: StringName)
+## L'indice du récit a changé ("" : plus rien n'attend le joueur).
+signal hint_changed(text: String)
+## Un jour commence (début de l'acte, réveil).
+signal day_started(day: int)
+## Une étape « game » demande un jeu (E8) ; émis aussi sans jeu inscrit (le fallback se joue).
+signal game_requested(game_id: StringName, params: Dictionary)
+## Le calendrier doit s'ouvrir (le joueur a lu celui de sa chambre).
+signal calendar_requested
+
+const SEEN_PATH := "user://story_seen.cfg"
+const SEEN_SECTION := "seen"
+## Réévaluation des déclencheurs, des invites et de l'indice (s).
+const CHECK_TIME := 0.1
+const REFRESH_TIME := 0.3
+const DEFAULT_RADIUS := 2.5
+## Action qui passe une séquence déjà vue.
+const SKIP_ACTION := &"pause"
+const PROMPTS_NODE := "StoryPrompts"
+const EXAMINE_PREFIX := "examine_"
+const SLEEP_FADE := 0.8
+const REST_FADE := 0.5
+const CALENDAR_CARD_TIME := 2.6
+## Ce que fait le directeur entre deux scènes (_busy) : dormir, laisser passer le temps.
+const BUSY_SLEEP := &"_sommeil"
+const BUSY_REST := &"_repos"
+
+## Directeur actif (les tests de l'ancienne île n'en ont pas besoin, rien n'y change).
+var enabled: bool = true
+## Fichier des séquences déjà vues (les tests en prennent un autre).
+var seen_path: String = SEEN_PATH
+
+var _runner: StoryRunner
+var _stage: StoryStage
+var _talk: StoryDialogue
+var _island: StringName = &""
+var _current: StringName = &""
+var _busy: StringName = &""
+var _resume: StringName = &""
+var _begin_pending: bool = false
+var _check_left: float = 0.0
+var _refresh_left: float = 0.0
+var _hint: String = ""
+var _scene_hint: String = ""
+var _examined: Dictionary = {}
+var _talked: Dictionary = {}
+var _expect: Dictionary = {}
+var _games: Dictionary = {}
+var _releases: Array[StringName] = []
+var _prompts: Array[StoryPrompt] = []
+var _seen: ConfigFile = null
+var _rng := RandomNumberGenerator.new()
+
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+	_stage = StoryStage.new()
+	_stage.name = "Stage"
+	add_child(_stage)
+	_runner = StoryRunner.new()
+	_runner.name = "Runner"
+	_runner.director = self
+	_runner.stage = _stage
+	add_child(_runner)
+	_talk = StoryDialogue.new()
+	_talk.name = "TalkDialogue"
+	add_child(_talk)
+	EventBus.game_loaded.connect(_on_game_loaded)
+	EventBus.map_entered.connect(_on_map_entered)
+	EventBus.dialogue_ended.connect(_on_dialogue_ended)
+	LifeDirector.talk_handler = _on_talk
+
+
+func _physics_process(delta: float) -> void:
+	if _runner.is_running() and _stage.player() == null:
+		# Partie libérée en pleine scène (retour au menu) : la scène s'arrête, elle sera rejouée.
+		_runner.stop()
+	if not enabled or not GameState.story_running():
+		return
+	_serve_releases()
+	_stage.tick(delta)
+	if _runner.is_running() or not _busy.is_empty():
+		return
+	if not _stage_ready():
+		return
+	if not _resume.is_empty():
+		_start_resume()
+		return
+	_check_left -= delta
+	if _check_left <= 0.0:
+		_check_left = CHECK_TIME
+		if _check_triggers():
+			return
+	_refresh_left -= delta
+	if _refresh_left <= 0.0:
+		_refresh_left = REFRESH_TIME
+		refresh()
+
+
+func _input(event: InputEvent) -> void:
+	if not _runner.is_running() or not event.is_action_pressed(SKIP_ACTION):
+		return
+	if is_skippable():
+		_runner.skip()
+		get_viewport().set_input_as_handled()
+
+
+# --- État ----------------------------------------------------------------------------------------
+
+
+## Île du récit (celle de la carte courante).
+func island() -> StringName:
+	return _island
+
+
+## Scène en cours (&"" : aucune).
+func current_scene() -> StringName:
+	return _current
+
+
+## Vrai pendant une scène (ou pendant le sommeil et le temps qui passe).
+func is_playing() -> bool:
+	return _runner.is_running() or not _busy.is_empty()
+
+
+## Le joueur de scènes (tests : étape en cours).
+func runner() -> StoryRunner:
+	return _runner
+
+
+## Vrai si la scène en cours est une séquence déjà vue (elle se passe par SKIP_ACTION).
+func is_skippable() -> bool:
+	if not _runner.is_running() or _current.is_empty():
+		return false
+	var data := StoryData.scene(_island, _current)
+	return data.get("sequence", false) == true and has_seen(_current)
+
+
+## Passe la séquence en cours (sans effet si elle ne se passe pas).
+func skip() -> void:
+	if is_skippable():
+		_runner.skip()
+
+
+## Indice courant ("" : rien n'attend le joueur).
+func hint() -> String:
+	return _hint
+
+
+## Nombre de jours de l'acte (le plus grand jour décrit, au moins le départ).
+func day_count() -> int:
+	var count := departure_day()
+	var days: Variant = StoryData.act(_island).get("days", {})
+	if days is Dictionary:
+		for key: Variant in days:
+			if str(key).is_valid_int():
+				count = maxi(count, str(key).to_int())
+	return count
+
+
+## Jour du départ, entouré au calendrier (0 sans acte).
+func departure_day() -> int:
+	return int(StoryData.act(_island).get("departure_day", 0))
+
+
+## Ligne du calendrier d'un jour (celle écrite au coucher, ou une ligne choisie par une scène).
+func calendar_line(day: int) -> String:
+	var line: StringName = GameState.calendar().get(day, &"")
+	if not line.is_empty():
+		return StoryData.text(_island, "calendar/" + String(line))
+	return StoryData.text(_island, "days/%d/calendar" % day)
+
+
+## Texte de l'interface du récit (data/texts/<île>/story.json, « ui/<clé> »).
+func ui_text(key: String, fallback: String = "") -> String:
+	return StoryData.text(_island, "ui/" + key, &"", DialogueRunner.format_text(fallback))
+
+
+## Vrai si la séquence a déjà été vue (sur cette machine, toutes parties confondues).
+func has_seen(scene_id: StringName) -> bool:
+	return _seen_file().has_section_key(SEEN_SECTION, String(scene_id))
+
+
+## Oublie les séquences vues (tests).
+func forget_seen() -> void:
+	_seen = ConfigFile.new()
+	if FileAccess.file_exists(seen_path):
+		DirAccess.remove_absolute(seen_path)
+
+
+# --- Jouer -------------------------------------------------------------------------------------
+
+
+## Joue une scène tout de suite (tests, raccourcis), sans vérifier ses conditions ; faux si une
+## scène se joue déjà ou si elle n'existe pas.
+func play(scene_id: StringName) -> bool:
+	if is_playing():
+		return false
+	var data := StoryData.scene(_island, scene_id)
+	if data.is_empty():
+		return false
+	_run_scene(scene_id, data)
+	return true
+
+
+## Inscrit un jeu (E8) : handler.call(params) est attendu par l'étape « game » (sa valeur est
+## ignorée) ; un Callable vide le retire.
+func register_game(game_id: StringName, handler: Callable) -> void:
+	if handler.is_valid():
+		_games[game_id] = handler
+	else:
+		_games.erase(game_id)
+
+
+func has_game(game_id: StringName) -> bool:
+	return _games.has(game_id) and (_games[game_id] as Callable).is_valid()
+
+
+func run_game(game_id: StringName, params: Dictionary) -> void:
+	game_requested.emit(game_id, params)
+	await (_games[game_id] as Callable).call(params)
+
+
+func announce_game(game_id: StringName, params: Dictionary) -> void:
+	game_requested.emit(game_id, params)
+
+
+# --- Le temps ------------------------------------------------------------------------------------
+
+
+## Vrai si le joueur peut se coucher : créneau du coucher, scènes du jour (sleep_after) faites,
+## aucune scène en cours.
+func can_sleep() -> bool:
+	if is_playing() or not GameState.story_running():
+		return false
+	var sleep_data: Dictionary = StoryData.act(_island).get("sleep", {})
+	if not _names(sleep_data.get("slots", [])).has(String(LifeSlots.current())):
+		return false
+	var day := StoryData.day_data(_island, GameState.day)
+	for scene_id: String in _names(day.get("sleep_after", [])):
+		if not GameState.is_scene_done(StringName(scene_id)):
+			return false
+	return GameState.day < day_count()
+
+
+## Vrai si le joueur peut laisser passer le temps : pas la nuit, pas au-delà du créneau de la
+## prochaine scène clé du jour.
+func can_rest() -> bool:
+	if is_playing() or not GameState.story_running():
+		return false
+	var slots := GameState.SLOTS
+	var current := slots.find(LifeSlots.current())
+	return current >= 0 and current < slots.size() - 1 and current < _rest_cap()
+
+
+## Se couche : fondu, ligne du jour au calendrier, jour suivant à l'aube, réveil (coroutine).
+func sleep() -> void:
+	if not can_sleep():
+		return
+	_busy = BUSY_SLEEP
+	_stage.set_control(false)
+	await _stage.fade_overlay(StoryData.BLACK, 1.0, SLEEP_FADE)
+	var day := GameState.day
+	GameState.write_calendar(day)
+	var title := ui_text("day", "Jour {day}").replace("{day}", str(day))
+	var overlay_node := _stage.overlay()
+	if overlay_node != null:
+		overlay_node.call(&"show_card", "%s\n%s" % [title, calendar_line(day)], CALENDAR_CARD_TIME)
+	await _stage.wait_overlay()
+	advance_day()
+	EventBus.save_requested.emit()
+	await get_tree().physics_frame
+	await _stage.fade_overlay(StoryData.BLACK, 0.0, SLEEP_FADE)
+	_stage.set_control(true)
+	_busy = &""
+	refresh()
+
+
+## Laisse passer un créneau (fondu court) ; coroutine.
+func pass_time() -> void:
+	if not can_rest():
+		return
+	_busy = BUSY_REST
+	_stage.set_control(false)
+	await _stage.fade_overlay(StoryData.BLACK, 1.0, REST_FADE)
+	LifeDirector.set_slot(LifeSlots.next(LifeSlots.current()), 0.0)
+	await get_tree().physics_frame
+	await _stage.fade_overlay(StoryData.BLACK, 0.0, REST_FADE)
+	_stage.set_control(true)
+	_busy = &""
+	EventBus.save_requested.emit()
+	refresh()
+
+
+## Passe au jour suivant : jour + 1, créneau du réveil, temps du jour (tout de suite).
+func advance_day() -> void:
+	var act := StoryData.act(_island)
+	var sleep_data: Dictionary = act.get("sleep", {})
+	GameState.day = GameState.day + 1
+	_apply_day_state(StringName(str(sleep_data.get("wake_slot", "aube"))))
+	day_started.emit(GameState.day)
+
+
+# --- Outils des scènes (StoryRunner) ----------------------------------------------------------
+
+
+## Indice de l'étape « hint » de la scène en cours ("" : aucun).
+func set_scene_hint(text: String) -> void:
+	_scene_hint = text
+	_update_hint()
+
+
+## Ce qu'attend l'étape wait_for en cours ({} : rien).
+func expect(step: Dictionary) -> void:
+	_expect = step
+	_talked.clear()
+	if step.is_empty():
+		_examined.clear()
+
+
+## Vrai quand ce qu'attend wait_for est arrivé.
+func expected_met(step: Dictionary) -> bool:
+	if WorldManager.is_transitioning():
+		return false
+	var map_id := WorldManager.current_map()
+	if step.has("reach"):
+		var on_map := not step.has("map") or StringName(str(step["map"])) == map_id
+		var radius := float(step.get("radius", DEFAULT_RADIUS))
+		return on_map and _stage.player_within(step["reach"], radius)
+	if step.has("map"):
+		return map_id == StringName(str(step["map"]))
+	if step.has("examine"):
+		return _examined.has(str(step["examine"]).replace("/", "_"))
+	return not step.has("talk") or _talked.has(StringName(str(step["talk"])))
+
+
+# --- Invites et indice ----------------------------------------------------------------------------
+
+
+## Réévalue les invites de la carte et l'indice.
+func refresh() -> void:
+	for prompt: StoryPrompt in _prompts:
+		if is_instance_valid(prompt):
+			prompt.set_text(_prompt_text(prompt))
+	_update_hint()
+
+
+## Invites posées sur la carte courante.
+func prompts() -> Array[StoryPrompt]:
+	var result: Array[StoryPrompt] = []
+	for prompt: StoryPrompt in _prompts:
+		if is_instance_valid(prompt):
+			result.append(prompt)
+	return result
+
+
+func _prompt_text(prompt: StoryPrompt) -> String:
+	if is_playing() or not GameState.story_running():
+		return ""
+	if prompt.roles.has(StoryPrompt.ROLE_SCENE):
+		var data := StoryData.scene(_island, prompt.scene_id)
+		if not GameState.is_scene_done(prompt.scene_id) and _conditions_met(data):
+			return StoryData.text(_island, str(data["trigger"]["prompt"]), prompt.scene_id)
+	var act := StoryData.act(_island)
+	if prompt.roles.has(StoryPrompt.ROLE_SLEEP) and can_sleep():
+		var sleep_key := str((act.get("sleep", {}) as Dictionary).get("prompt", ""))
+		return StoryData.text(_island, sleep_key, &"", "Dormir")
+	if prompt.roles.has(StoryPrompt.ROLE_REST) and can_rest():
+		var rest_key := str((act.get("rest", {}) as Dictionary).get("prompt", ""))
+		return StoryData.text(_island, rest_key, &"", "Laisser passer le temps")
+	return ""
+
+
+func _rebuild_prompts(map: Map) -> void:
+	_prompts.clear()
+	if map == null or not StoryData.has_act(_island):
+		return
+	var holder := Node3D.new()
+	holder.name = PROMPTS_NODE
+	map.add_child(holder)
+	var act := StoryData.act(_island)
+	var spots: Dictionary = {}
+	var sleep_data: Dictionary = act.get("sleep", {})
+	if StringName(str(sleep_data.get("map", ""))) == map.map_id():
+		_add_role(spots, sleep_data.get("point"), StoryPrompt.ROLE_SLEEP)
+		_add_role(spots, sleep_data.get("point"), StoryPrompt.ROLE_REST)
+	var rest: Dictionary = act.get("rest", {})
+	for point: Variant in rest.get("points", []):
+		if point is Dictionary and StringName(str(point.get("map", ""))) == map.map_id():
+			_add_role(spots, point.get("point"), StoryPrompt.ROLE_REST)
+	for key: Variant in spots:
+		_add_prompt(holder, spots[key]["point"], spots[key]["roles"], &"", 1.6)
+	for scene_id: StringName in StoryData.scene_ids(_island):
+		var data := StoryData.scene(_island, scene_id)
+		var trigger: Dictionary = data.get("trigger", {})
+		if trigger.get("on") != "prompt":
+			continue
+		var on_map := StringName(str(trigger.get("map", data.get("map", ""))))
+		if on_map == map.map_id() and not GameState.is_scene_done(scene_id):
+			var roles: Array[StringName] = [StoryPrompt.ROLE_SCENE]
+			_add_prompt(holder, trigger["point"], roles, scene_id, float(trigger.get("size", 1.6)))
+	refresh()
+
+
+func _add_role(spots: Dictionary, point: Variant, role: StringName) -> void:
+	var key := str(point)
+	if not spots.has(key):
+		spots[key] = {"point": point, "roles": [] as Array[StringName]}
+	(spots[key]["roles"] as Array[StringName]).append(role)
+
+
+func _add_prompt(
+	holder: Node3D, point: Variant, roles: Array[StringName], scene_id: StringName, size: float
+) -> void:
+	var prompt := StoryPrompt.new(size)
+	prompt.name = "Prompt_%d" % _prompts.size()
+	prompt.roles = roles
+	prompt.scene_id = scene_id
+	prompt.point_name = str(point)
+	holder.add_child(prompt)
+	prompt.global_position = _stage.resolve(point).origin
+	prompt.used.connect(_on_prompt_used)
+	_prompts.append(prompt)
+
+
+func _update_hint() -> void:
+	var text := _scene_hint if _runner.is_running() else _waiting_hint()
+	if text != _hint:
+		_hint = text
+		hint_changed.emit(text)
+
+
+## Indice hors scène : la première scène qui attend son déclencheur, sinon le coucher.
+func _waiting_hint() -> String:
+	if not GameState.story_running() or not _busy.is_empty():
+		return ""
+	for scene_id: StringName in StoryData.scene_ids(_island):
+		if GameState.is_scene_done(scene_id):
+			continue
+		var data := StoryData.scene(_island, scene_id)
+		if data.has("hint") and _conditions_met(data):
+			return StoryData.text(_island, str(data["hint"]), scene_id)
+	var day := StoryData.day_data(_island, GameState.day)
+	if can_sleep() and day.has("sleep_hint"):
+		return StoryData.text(_island, str(day["sleep_hint"]))
+	if can_rest() and _rest_cap() < GameState.SLOTS.size():
+		# Une scène du jour attend un créneau plus tard : le joueur peut laisser passer le temps.
+		return ui_text("rest_hint", "Rien ne presse : tu peux laisser passer le temps.")
+	return ""
+
+
+# --- Déclencheurs ------------------------------------------------------------------------------
+
+
+## Vrai si une scène a commencé.
+func _check_triggers() -> bool:
+	var map_id := WorldManager.current_map()
+	for scene_id: StringName in StoryData.scene_ids(_island):
+		if GameState.is_scene_done(scene_id):
+			continue
+		var data := StoryData.scene(_island, scene_id)
+		if data.is_empty() or not _conditions_met(data):
+			continue
+		if _trigger_fires(data, map_id):
+			_examined.clear()
+			_run_scene(scene_id, data)
+			return true
+	_examined.clear()
+	return false
+
+
+func _trigger_fires(data: Dictionary, map_id: StringName) -> bool:
+	var trigger: Dictionary = data.get("trigger", {})
+	var on_map := StringName(str(trigger.get("map", data.get("map", "")))) == map_id
+	match str(trigger.get("on", "")):
+		"ready":
+			return true
+		"enter":
+			var marker := StringName(str(trigger.get("marker", "")))
+			return on_map and (marker.is_empty() or WorldManager.arrival_marker() == marker)
+		"reach":
+			var radius := float(trigger.get("radius", DEFAULT_RADIUS))
+			return on_map and _stage.player_within(trigger["point"], radius)
+		"examine":
+			return _examined.has(str(trigger["key"]).replace("/", "_"))
+	return false
+
+
+## Conditions d'une scène (sans son déclencheur) : jour, créneau, scènes jouées, « if ».
+func _conditions_met(data: Dictionary, ignore_slot: bool = false) -> bool:
+	if data.is_empty():
+		return false
+	if data.has("day"):
+		var days := DialogueRunner.day_range(data["day"])
+		if GameState.day < days.x or GameState.day > days.y:
+			return false
+	if data.has("slot") and not ignore_slot:
+		if not _names(data["slot"]).has(String(LifeSlots.current())):
+			return false
+	for scene_id: String in _names(data.get("after", [])):
+		if not GameState.is_scene_done(StringName(scene_id)):
+			return false
+	return not data.has("if") or DialogueRunner.evaluate(data["if"])
+
+
+## Créneau (index) au-delà duquel on ne laisse pas passer le temps : le premier créneau de la
+## prochaine scène clé du jour (jour, scènes et « if » remplis) ; SLOTS.size() sans elle.
+func _rest_cap() -> int:
+	var cap := GameState.SLOTS.size()
+	for scene_id: StringName in StoryData.scene_ids(_island):
+		if GameState.is_scene_done(scene_id):
+			continue
+		var data := StoryData.scene(_island, scene_id)
+		if data.get("key", true) != true or not data.has("slot"):
+			continue
+		if not _conditions_met(data, true):
+			continue
+		var first := GameState.SLOTS.find(StringName(_names(data["slot"])[0]))
+		if first >= 0:
+			cap = mini(cap, first)
+	return cap
+
+
+## Prêt à juger les déclencheurs : une carte et un joueur, pas de changement de carte, ni
+## dialogue, ni pause.
+func _stage_ready() -> bool:
+	return (
+		_stage.player() != null
+		and WorldManager.current_map_node() != null
+		and not WorldManager.is_transitioning()
+		and not DialogueRunner.is_any_running()
+		and not get_tree().paused
+	)
+
+
+# --- Scènes ---------------------------------------------------------------------------------------
+
+
+func _run_scene(scene_id: StringName, data: Dictionary, resume: bool = false) -> void:
+	_current = scene_id
+	_stage.scene_label = scene_id
+	GameState.story_scene = scene_id
+	_scene_hint = ""
+	_update_hint()
+	for npc_id: String in _names(data.get("present", [])):
+		LifeDirector.reserve(StringName(npc_id))
+		_releases.erase(StringName(npc_id))
+	_stage.set_control(false)
+	_update_skip_prompt(scene_id, data)
+	scene_started.emit(scene_id)
+	if resume and WorldManager.current_map() != StringName(str(data.get("map", ""))):
+		await WorldManager.go_to(
+			StringName(str(data["map"])), StringName(str(data.get("marker", "Spawn")))
+		)
+	var completed: bool = await _runner.run(scene_id, data, _island)
+	_end_scene(scene_id, data, completed)
+
+
+func _end_scene(scene_id: StringName, data: Dictionary, completed: bool) -> void:
+	var rig := _stage.camera_rig()
+	if rig != null:
+		rig.call(&"release_story", 1.0)
+	var overlay_node := _stage.overlay()
+	if overlay_node != null:
+		overlay_node.call(&"set_skip_text", "")
+		overlay_node.call(&"hide_card")
+		if float(overlay_node.call(&"fade_alpha")) > 0.0 and completed:
+			overlay_node.call(&"fade_to", overlay_node.call(&"fade_color"), 0.0, 0.6)
+	_stage.clear()
+	_scene_hint = ""
+	_current = &""
+	if not completed:
+		return
+	_stage.set_control(true)
+	for npc_id: String in _names(data.get("present", [])):
+		_releases.append(StringName(npc_id))
+	GameState.mark_scene_done(scene_id)
+	GameState.story_scene = &""
+	_mark_seen(scene_id)
+	scene_finished.emit(scene_id)
+	EventBus.save_requested.emit()
+	if _stage_ready() and not _check_triggers():
+		refresh()
+
+
+func _start_resume() -> void:
+	var scene_id := _resume
+	_resume = &""
+	var data := StoryData.scene(_island, scene_id)
+	if data.is_empty() or GameState.is_scene_done(scene_id):
+		GameState.story_scene = &""
+		return
+	_run_scene(scene_id, data, true)
+
+
+func _update_skip_prompt(scene_id: StringName, data: Dictionary) -> void:
+	var overlay_node := _stage.overlay()
+	if overlay_node == null:
+		return
+	var skippable: bool = data.get("sequence", false) == true and has_seen(scene_id)
+	overlay_node.call(&"set_skip_text", ui_text("skip", "Échap : passer") if skippable else "")
+
+
+func _serve_releases() -> void:
+	if _releases.is_empty() or _runner.is_running():
+		return
+	for npc_id: StringName in _releases:
+		LifeDirector.release(npc_id)
+	_releases.clear()
+
+
+# --- Début de l'acte, parties ----------------------------------------------------------------
+
+
+func _apply_day_state(slot: StringName) -> void:
+	var day := StoryData.day_data(_island, GameState.day)
+	var weather := StringName(str(day.get("weather", GameState.weather)))
+	LifeDirector.set_slot(slot, 0.0)
+	Atmosphere.set_atmosphere(LifeSlots.moment_of(slot), weather, 0.0)
+	GameState.slot = slot
+	Atmosphere.snap()
+
+
+func _on_game_loaded() -> void:
+	_runner.stop()
+	_stage.clear()
+	_examined.clear()
+	_talked.clear()
+	_expect = {}
+	_releases.clear()
+	_scene_hint = ""
+	_current = &""
+	_busy = &""
+	_begin_pending = false
+	var start_island := WorldAtlas.island_of(WorldManager.starting_map())
+	_island = start_island
+	_resume = GameState.story_scene
+	var fresh := (
+		GameState.map.is_empty() and GameState.day == 0 and GameState.scenes_done().is_empty()
+	)
+	if enabled and fresh and StoryData.has_act(start_island):
+		var start: Dictionary = StoryData.act(start_island)["start"]
+		GameState.day = int(start["day"])
+		if start.has("weather"):
+			GameState.weather = StringName(str(start["weather"]))
+		_apply_day_state(StringName(str(start["slot"])))
+		_begin_pending = true
+		day_started.emit(GameState.day)
+	_update_hint()
+
+
+func _on_map_entered(map_id: StringName) -> void:
+	_island = WorldAtlas.island_of(map_id)
+	var map := WorldManager.current_map_node()
+	_stage.set_map(map)
+	_rebuild_prompts(map)
+	if _begin_pending:
+		_begin_pending = false
+		var start: Dictionary = StoryData.act(_island).get("start", {})
+		var overlay_node := _stage.overlay()
+		if overlay_node != null:
+			overlay_node.call(&"set_fade", StoryData.BLACK, 1.0)
+		if start.has("marker") and str(start.get("map", "")) == String(map_id):
+			var marker := map.marker(StringName(str(start["marker"]))) if map != null else null
+			if marker != null:
+				_stage.place_player(marker.global_position, -marker.global_basis.z)
+	if _runner.is_running() and not _stage.followers().is_empty():
+		_stage.restage_followers()
+
+
+func _on_dialogue_ended(dialogue_id: StringName) -> void:
+	var text := String(dialogue_id)
+	if not text.begins_with(EXAMINE_PREFIX) or not GameState.story_running():
+		return
+	var key := text.trim_prefix(EXAMINE_PREFIX)
+	_examined[key] = true
+	var calendar: Dictionary = StoryData.act(_island).get("calendar", {})
+	if str(calendar.get("examine", "")).replace("/", "_") == key and not _runner.is_running():
+		calendar_requested.emit.call_deferred()
+
+
+## Conversation avec un PNJ de la vie (LifeDirector.talk_handler) : vraie si le récit la prend.
+func _on_talk(npc_id: StringName) -> bool:
+	if not enabled or not GameState.story_running():
+		return false
+	if not _busy.is_empty():
+		return true
+	if _runner.is_running():
+		if _expect.get("talk", "") == String(npc_id):
+			_talked[npc_id] = true
+			return true
+		return _free_talk(npc_id)
+	var map_id := WorldManager.current_map()
+	for scene_id: StringName in StoryData.scene_ids(_island):
+		var data := StoryData.scene(_island, scene_id)
+		var trigger: Dictionary = data.get("trigger", {})
+		if trigger.get("on") != "talk" or StringName(str(trigger.get("npc", ""))) != npc_id:
+			continue
+		var on_map := StringName(str(trigger.get("map", data.get("map", ""))))
+		if on_map == map_id and not GameState.is_scene_done(scene_id) and _conditions_met(data):
+			_run_scene(scene_id, data)
+			return true
+	return _free_talk(npc_id)
+
+
+## Ce que dit un personnage hors des scènes : data/dialogues/<île>/talk/<pnj>.json, sinon une
+## bulle de salutation. Jamais les dialogues des quêtes de l'ancienne île.
+func _free_talk(npc_id: StringName) -> bool:
+	if DialogueRunner.is_any_running():
+		return true
+	var path := StoryData.talk_path(_island, npc_id)
+	var npc := LifeData.find_npc(npc_id)
+	if not path.is_empty() and npc != null and _talk.play(path, "", npc_id, npc):
+		return true
+	var actor := LifeDirector.actor(npc_id)
+	if actor != null:
+		actor.say(LifeTexts.greeting(npc_id, _rng))
+	return true
+
+
+func _on_prompt_used(prompt: StoryPrompt) -> void:
+	if is_playing():
+		return
+	if prompt.roles.has(StoryPrompt.ROLE_SCENE):
+		var data := StoryData.scene(_island, prompt.scene_id)
+		if not GameState.is_scene_done(prompt.scene_id) and _conditions_met(data):
+			_run_scene(prompt.scene_id, data)
+			return
+	if prompt.roles.has(StoryPrompt.ROLE_SLEEP) and can_sleep():
+		sleep()
+	elif prompt.roles.has(StoryPrompt.ROLE_REST) and can_rest():
+		pass_time()
+
+
+# --- Outils ------------------------------------------------------------------------------------
+
+
+func _seen_file() -> ConfigFile:
+	if _seen == null:
+		_seen = ConfigFile.new()
+		if FileAccess.file_exists(seen_path):
+			_seen.load(seen_path)
+	return _seen
+
+
+func _mark_seen(scene_id: StringName) -> void:
+	var file := _seen_file()
+	if file.has_section_key(SEEN_SECTION, String(scene_id)):
+		return
+	file.set_value(SEEN_SECTION, String(scene_id), true)
+	file.save(seen_path)
+
+
+static func _names(value: Variant) -> Array[String]:
+	var result: Array[String] = []
+	for item: Variant in value if value is Array else [value]:
+		if item is String or item is StringName:
+			result.append(str(item))
+	return result

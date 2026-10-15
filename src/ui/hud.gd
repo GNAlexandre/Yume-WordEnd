@@ -31,6 +31,9 @@ extends Control
 ##   Pause tactiles) et bas de l'écran (joystick, boutons) laissés libres ; tout le HUD laisse
 ##   passer la souris (mouse_filter IGNORE). Le menu pause (PauseMenu) et le journal de quêtes
 ##   (Journal, Lot Q) sont des enfants du HUD (game.tscn est figé).
+## - (E6) Le récit : enfants StoryOverlay (fondus et cartons des scènes), StoryHint (l'indice
+##   discret) et Calendar (le calendrier, qui remplace le journal pendant l'acte en jours) ;
+##   pendant l'acte (GameState.story_running()), l'encadré de quête (%Quests) est caché.
 
 const HEART_FULL := preload("res://assets/ui/heart_full.png")
 const HEART_EMPTY := preload("res://assets/ui/heart_empty.png")
@@ -398,7 +401,10 @@ func shown_quest() -> StringName:
 ## Met le panneau sur la quête à afficher (QuestData.shown_quest()) et ses textes à jour.
 func _refresh_quest_panel() -> void:
 	_panel_pending = false
-	var shown := QuestData.shown_quest()
+	# (E6) Pendant l'acte en jours, pas d'encadré de quête : l'indice discret (StoryHint) le
+	# remplace.
+	_quests.visible = not GameState.story_running()
+	var shown := QuestData.shown_quest() if _quests.visible else &""
 	if shown != _shown_quest:
 		for quest_id: StringName in _quest_entries:
 			_quest_entries[quest_id].queue_free()

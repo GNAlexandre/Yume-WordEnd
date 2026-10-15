@@ -9,6 +9,8 @@ extends Control
 ## - Retour au menu : la partie suivie est écrite (SaveManager.save(), puis close_game() coupe
 ##   l'auto-sauvegarde), la pause est levée, puis get_tree().reload_current_scene() recharge
 ##   main.tscn, qui rouvre le menu (rien n'est ajouté à main.gd).
+## - (E6) Calendrier : pendant l'acte en jours seulement ; ferme le menu et demande la page
+##   (calendar_requested, que le calendrier du HUD écoute).
 ## - (bureau) « Plein écran » et « Quitter le jeu » (partie écrite, puis fermeture), hors Web
 ##   seulement : DesktopApp.setup_menu_buttons.
 
@@ -16,6 +18,8 @@ signal opened
 signal closed
 ## Émis juste avant le rechargement de la scène courante (retour au menu).
 signal quit_to_menu_started
+## (E6) « Calendrier » choisi : le menu se ferme, le calendrier du HUD s'ouvre.
+signal calendar_requested
 
 const MenuInput := preload("res://src/ui/main_menu_input.gd")
 ## Rappel des commandes : action, clavier et souris, manette (input map du Lot 0).
@@ -29,7 +33,7 @@ const CONTROLS := [
 	["Zoom", "Molette", "Stick droit (haut, bas)"],
 	["Verrouiller une cible", "Clic molette", "R3 (clic du stick)"],
 	["Sac", "I", "Y"],
-	["Journal de quêtes", "Tab ou L", "Select"],
+	["Journal de quêtes, calendrier", "Tab ou L", "Select"],
 	["Pause", "Échap", "Start"],
 	["Performances", "F3", "—"],
 ]
@@ -56,6 +60,7 @@ func _ready() -> void:
 	_resume_button.pressed.connect(close)
 	(%SaveButton as Button).pressed.connect(request_save)
 	(%ControlsButton as Button).pressed.connect(show_controls)
+	(%CalendarButton as Button).pressed.connect(request_calendar)
 	(%QuitButton as Button).pressed.connect(quit_to_menu)
 	(%ControlsBack as Button).pressed.connect(hide_controls)
 	DesktopApp.setup_menu_buttons(
@@ -92,6 +97,7 @@ func open() -> void:
 	if not can_open():
 		return
 	show()
+	(%CalendarButton as Button).visible = GameState.story_running()
 	get_tree().paused = true
 	_paused_by_me = true
 	_set_status("")
@@ -109,6 +115,12 @@ func close() -> void:
 		get_tree().paused = false
 		_paused_by_me = false
 	closed.emit()
+
+
+## (E6) Ferme le menu et demande le calendrier.
+func request_calendar() -> void:
+	close()
+	calendar_requested.emit()
 
 
 ## Demande une sauvegarde (SaveManager l'écrit au plus 0,5 s plus tard, même en pause).

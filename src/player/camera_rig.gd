@@ -37,6 +37,10 @@ extends Node3D
 ## carte entière par défaut), la caméra redevient la caméra courante (une carte peut en
 ## apporter une, comme l'OverviewCamera de l'île) et se recale sur le joueur (snap), déjà posé
 ## sur son marqueur d'arrivée.
+## (E6) Cadrage du récit (ACTE1.md, 0.2) : frame_story(point, distance, tangage, durée) fait
+## glisser le point visé vers un point du monde sans tourner (cadrage), approcher la caméra (gros
+## plan : 21 → 9 m) ou lever les yeux (tangage 32° → 15°), hors des bornes du zoom et de la carte ;
+## release_story(durée) rend la caméra du jeu. Le joueur peut bouger pendant un cadrage.
 
 ## (H5) Profondeur nette du flou de profondeur autour du joueur (m) : derrière lui (vers le
 ## nord) et devant lui (vers la caméra).
@@ -99,6 +103,14 @@ var _lead: Vector3 = Vector3.ZERO
 var _ahead: float = 2.5
 ## (H5) Conversation en cours (EventBus.dialogue_started → dialogue_ended).
 var _talking: bool = false
+## (E6) Cadrage du récit : actif, point visé, distance et tangage voulus, vitesse du glissement
+## (1/s) ; tangage affiché (degrés).
+var _story_active: bool = false
+var _story_focus: Vector3 = Vector3.ZERO
+var _story_distance: float = 21.0
+var _story_pitch: float = 32.0
+var _story_speed: float = 3.0
+var _shown_pitch: float = 32.0
 
 @onready var camera: Camera3D = $Camera3D
 
@@ -106,6 +118,7 @@ var _talking: bool = false
 func _ready() -> void:
 	_target_distance = clampf(distance, min_distance, max_distance)
 	_distance = _target_distance
+	_shown_pitch = pitch_deg
 	_ahead = focus_ahead
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
@@ -160,9 +173,57 @@ func update_camera(delta: float, zoom_axis: float = 0.0) -> void:
 	_ahead = lerpf(
 		_ahead, talk_ahead if _talking else focus_ahead, 1.0 - exp(-ahead_smoothing * delta)
 	)
-	_focus = _focus.lerp(focus_goal(), 1.0 - exp(-follow_speed * delta))
-	_distance = lerpf(_distance, _target_distance, 1.0 - exp(-zoom_smoothing * delta))
+	if _story_active:
+		var glide := 1.0 - exp(-_story_speed * delta)
+		_focus = _focus.lerp(_story_focus, glide)
+		_distance = lerpf(_distance, _story_distance, glide)
+		_shown_pitch = lerpf(_shown_pitch, _story_pitch, glide)
+	else:
+		_focus = _focus.lerp(focus_goal(), 1.0 - exp(-follow_speed * delta))
+		_distance = lerpf(_distance, _target_distance, 1.0 - exp(-zoom_smoothing * delta))
+		_shown_pitch = lerpf(_shown_pitch, pitch_deg, 1.0 - exp(-zoom_smoothing * delta))
 	_apply()
+
+
+## (E6) Cadrage du récit : le point visé glisse vers point (repère du monde) en environ time s,
+## la caméra s'approche à shot_distance m (≤ 0 : la distance du zoom) sous shot_pitch degrés
+## (≤ 0 : pitch_deg) ; time ≤ 0 : tout de suite.
+func frame_story(
+	point: Vector3, shot_distance: float = -1.0, shot_pitch: float = -1.0, time: float = 1.2
+) -> void:
+	_story_active = true
+	_story_focus = point
+	_story_distance = shot_distance if shot_distance > 0.0 else _target_distance
+	_story_pitch = shot_pitch if shot_pitch > 0.0 else pitch_deg
+	_story_speed = 3.0 / maxf(time, 0.05)
+	if time <= 0.0:
+		_focus = _story_focus
+		_distance = _story_distance
+		_shown_pitch = _story_pitch
+		_apply()
+
+
+## (E6) Rend la caméra du jeu (elle rejoint le joueur en douceur ; time ≤ 0 : tout de suite).
+func release_story(time: float = 1.0) -> void:
+	if not _story_active:
+		return
+	_story_active = false
+	if time <= 0.0:
+		snap()
+
+
+## (E6) Vrai pendant un cadrage du récit.
+func is_story_framed() -> bool:
+	return _story_active
+
+
+## (E6) Distance et tangage affichés (m, degrés).
+func shown_distance() -> float:
+	return _distance
+
+
+func shown_pitch() -> float:
+	return _shown_pitch
 
 
 ## Point visé idéal : à _ahead m au nord du joueur (avec l'avance lissée dans le sens de la
@@ -215,6 +276,11 @@ func snap() -> void:
 	# elle donne encore l'ancienne. La caméra se recale sur la vraie position.
 	_focus = _goal_from(global_position, false)
 	_distance = _target_distance
+	_shown_pitch = pitch_deg
+	if _story_active:
+		_focus = _story_focus
+		_distance = _story_distance
+		_shown_pitch = _story_pitch
 	_apply()
 
 
@@ -259,9 +325,9 @@ func forward() -> Vector3:
 
 
 func _apply() -> void:
-	var tilt := deg_to_rad(pitch_deg)
+	var tilt := deg_to_rad(_shown_pitch)
 	camera.global_transform = Transform3D(
-		Basis(Vector3.RIGHT, -tilt), _focus + _back(pitch_deg) * _distance
+		Basis(Vector3.RIGHT, -tilt), _focus + _back(_shown_pitch) * _distance
 	)
 	_update_focus_band()
 
