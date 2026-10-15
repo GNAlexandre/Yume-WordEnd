@@ -1,0 +1,7 @@
+{
+  "_comment": "Le cuistot du snack-bar, un jeune lycanthrope (VIE.md, 4.11 : ville_snack, du matin au soir, il fait sauter sa poêle ; ACTE1.md 3.3). Derrière son comptoir (place snack_vendor : une place, pas un point atteignable), tablier et poêle (snack_vendor_work, travaille). Le snack ferme la nuit.",
+  "lines": [
+    {"slot": ["matin", "midi", "apres_midi", "soir"], "map": "ville_snack", "place": "snack_vendor", "activity": "cuisiner", "outfit": "travail"},
+    {"slot": ["aube", "nuit"], "away": "ville_haute"}
+  ]
+}
