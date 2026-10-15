@@ -1,0 +1,65 @@
+{
+  "_comment": "Les règles du duel ingagnable (lot E8b ; src/games/duel.gd ; docs/lore/ACTE1.md, 3.3 et 8.3) : durées en secondes, distances en mètres. Les chiffres de l'œuvre viennent d'ACTE1.md (30 s, 8 s, charge de 2 s, désaturation de 60 %, monde à 0,6, élan de 8 m en deux foulées, battement de 0,6 s, projetée à 6 m) ; les autres sont des inventions. La réussite est impossible : aucun point de vie perdu, aucun écran de défaite. Format : PLAN.md, « (E8b) Le duel ».",
+  "intro_time": 1.2,
+  "end_time": 2.2,
+  "arena_half_size": 6.0,
+  "strike_delay": 0.1,
+  "phase_1": {
+    "_comment": "Phase 1 : Willem s'étire ; chaque attaque de Chtholly passe à côté : à reach m, dans l'arc de arc_deg devant elle, il fait un pas de côté de step m en step_time s (jamais une parade) ; une bulle toutes les say_every esquives. Sans attaque pendant beckon_after s, il lui fait signe d'approcher. Au plus max_time s : alors elle allume son venenum d'elle-même.",
+    "max_time": 30,
+    "beckon_after": 8,
+    "reach": 2.4,
+    "arc_deg": 150,
+    "step": 1.2,
+    "step_time": 0.24,
+    "say_every": 3
+  },
+  "phase_2": {
+    "_comment": "Phase 2, la vision accélérée : la charge tenue charge_hold s l'allume (ou max_time de la phase 1). L'image pâlit de pale (sauf un disque de clear_radius hauteurs d'écran autour de Chtholly), en fade_in s ; le monde à slow de sa vitesse (Willem et ceux à moins de slow_radius m) ; un éclat de la lame toutes les glint_every s. Au premier coup (frappe ou onde), son élan franchit au plus dash_distance m vers Willem en dash_time s, deux foulées (stride_height m), et s'arrête à stop_gap m de lui. Sans coup en max_time s, elle s'élance d'elle-même.",
+    "charge_hold": 2.0,
+    "pale": 0.6,
+    "clear_radius": 0.16,
+    "fade_in": 0.4,
+    "slow": 0.6,
+    "slow_radius": 25,
+    "glint_every": 0.12,
+    "max_time": 10,
+    "dash_distance": 8,
+    "dash_time": 0.42,
+    "strides": 2,
+    "stride_height": 0.22,
+    "stop_gap": 0.9
+  },
+  "phase_3": {
+    "_comment": "Phase 3 : Willem retourne l'élan. L'écran blanchit en white_in s et reste blanc white_hold s (silence) ; deux battements de cœur (beats, à beat_at s du début du blanc, le blanc s'y voile de beat_dip), puis plus rien : la mort hallucinée, sans corps ni sang. Puis le blanc s'efface en white_out s : il dévie la lame (attaque) et elle est projetée à throw_distance m, sur le dos dans l'herbe (degats), en throw_time s (arc de throw_height m). Percival brille percival_time s autant que Seniorious.",
+    "white_in": 0.06,
+    "white_hold": 0.6,
+    "beat_at": [0.08, 0.3],
+    "beat_dip": 0.14,
+    "white_out": 0.45,
+    "throw_distance": 6,
+    "throw_time": 0.55,
+    "throw_height": 1.0,
+    "percival_time": 0.7,
+    "percival_size": 2.6,
+    "shake": 0.08
+  },
+  "reprise": {
+    "_comment": "« Encore une fois ! » : les phases 2 et 3 se rejouent une fois, plus vite (durées divisées par speed), la charge tenue charge_hold s ; sans charge en wait s, elle s'élance d'elle-même. Willem attend en garde (pare). Même fin.",
+    "speed": 1.5,
+    "charge_hold": 1.2,
+    "intro_time": 0.8,
+    "wait": 8
+  },
+  "anims": {
+    "_comment": "Animations jouées, la première que la planche a (willem_duel : repos, marche, parle, attaque, pare ; cahier n° 6, C.10).",
+    "willem_rest": ["repos"],
+    "willem_step": ["marche"],
+    "willem_beckon": ["parle", "repos"],
+    "willem_deflect": ["attaque", "parle"],
+    "willem_guard": ["pare", "repos"],
+    "player_dash": ["course", "marche"],
+    "player_thrown": ["degats", "mort"]
+  },
+  "willem_outfit": "duel"
+}

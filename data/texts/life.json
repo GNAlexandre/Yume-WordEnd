@@ -246,6 +246,86 @@
       "help_guard": "Les taillades : tiens la parade (clic droit, L2), ou recule hors de portée.",
       "hud_streak": "Esquives et parades",
       "hud_points": "Points de Pannibal"
+    },
+    "duel": {
+      "_comment": "(E8b) Le duel ingagnable (src/games/duel.gd ; ACTE1.md 3.3 et 8.3) : les bulles de Willem (il ne dit rien de grand ; elle se jette dans chaque coup comme si c’était le dernier) et la ligne du HUD. Rien pendant le blanc : le silence.",
+      "intro": [
+        "Quand tu veux.",
+        "Vas-y. Je ne bouge pas… enfin, presque."
+      ],
+      "reprise": [
+        "Encore une fois ? D’accord.",
+        "Une dernière, alors."
+      ],
+      "dodge": [
+        "Trop large.",
+        "Tu te jettes dedans.",
+        "Comme si c’était le dernier coup.",
+        "Raté. Respire."
+      ],
+      "beckon": [
+        "Approche. Je ne mords pas.",
+        "Viens. Tu ne m’auras pas de si loin."
+      ],
+      "hud_dodge": "Willem esquive tout. Tiens la charge (clic droit, L2) : le venenum.",
+      "hud_ready": "Encore une fois : tiens la charge.",
+      "hud_vision": "Vision accélérée : frappe !"
+    },
+    "seniorious": {
+      "_comment": "(E8b) L’entraînement spécial avec Seniorious (src/games/seniorious_training.gd ; ACTE1.md 3.4 et 11.4) : les bulles de Willem (il corrige sans gronder ; la Grue s’apprend d’abord à mains nues), les annonces, la jauge et l’invite du marais.",
+      "intro": "Respire d’abord. Le reste viendra.",
+      "breath_start": "Inspire en tenant la charge. Relâche au bout du souffle.",
+      "breath_good": [
+        "C’est ça.",
+        "Bien. Encore.",
+        "Voilà le rythme."
+      ],
+      "breath_early": [
+        "Plus lent.",
+        "Pas si vite. Laisse le souffle finir."
+      ],
+      "breath_late": [
+        "Relâche. Plus tôt.",
+        "Trop long : relâche au bout du souffle."
+      ],
+      "breath_missed": [
+        "Inspire avec moi.",
+        "La charge, en inspirant."
+      ],
+      "moves_start": "Les gestes de base. J’annonce, tu fais.",
+      "gesture_trois_coups": "Trois coups.",
+      "gesture_pare": "Pare.",
+      "gesture_cote": "Côté.",
+      "move_done": [
+        "Bien.",
+        "Oui.",
+        "Mm."
+      ],
+      "move_missed_trois_coups": "Trois. Enchaîne-les.",
+      "move_missed_pare": "Pare : la charge, tout de suite.",
+      "move_missed_cote": "Un pas de côté. Pas en arrière.",
+      "crane_start": "La Grue de Gossamer. On l’apprend d’abord à mains nues… Pare au dernier instant, puis rends.",
+      "crane_parried": [
+        "Trop tôt. Au dernier instant.",
+        "Tu pares, mais tu ne rends rien."
+      ],
+      "crane_hit": [
+        "Pare. Puis rends.",
+        "Au dernier instant, j’ai dit."
+      ],
+      "crane_done": [
+        "C’est ça.",
+        "Encore une."
+      ],
+      "sword_flew": "… Elle t’a échappé. Va la chercher.",
+      "tired": "Assez pour aujourd’hui. Souffle.",
+      "pickup_prompt": "Ramasser Seniorious",
+      "hud_title": "Entraînement avec Seniorious",
+      "hud_breath": "Souffle",
+      "hud_in": "Inspire",
+      "hud_out": "Expire",
+      "hud_moves": "Mouvements",
+      "hud_crane": "Grue de Gossamer"
     }
   },
   "fairy_names": [

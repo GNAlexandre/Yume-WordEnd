@@ -1,0 +1,60 @@
+{
+  "_comment": "Les règles de l'entraînement spécial avec Seniorious (lot E8b ; src/games/seniorious_training.gd ; docs/lore/ACTE1.md, 3.4 et 11.4) : durées en secondes, distances en mètres. Les chiffres de l'œuvre viennent d'ACTE1.md (souffle 2 s + 2 s à 0,3 s près, cinq cycles ; neuf annonces exécutées en 1,5 s ; la Grue : fend annoncé 0,6 s, parade parfaite de 0,2 s, trois Grues) ; les autres sont des inventions. Seniorious en main, la touche de charge allume le venenum (et tient la parade de la Grue). Pas d'écran de défaite : à bout de forces, Chtholly s'assoit. Format : PLAN.md, « (E8b) L'entraînement avec Seniorious ».",
+  "intro_time": 1.4,
+  "link_time": 1.6,
+  "end_time": 1.6,
+  "start_gap": 2.2,
+  "fatigue_time": 150,
+  "breath": {
+    "_comment": "Étape 1, la respiration : inspirer inhale s, expirer exhale s ; on tient la charge pendant l'inspiration (au moins hold_min s) et on la relâche à la fin de l'expiration, à tolerance s près ; cycles cycles. Pas d'échec : Willem corrige (« plus lent », « plus vite »).",
+    "inhale": 2.0,
+    "exhale": 2.0,
+    "tolerance": 0.3,
+    "hold_min": 1.5,
+    "cycles": 5,
+    "first_delay": 0.6
+  },
+  "moves": {
+    "_comment": "Étape 2, les mouvements de base : Willem annonce un geste (gestures : trois coups, pare, côté), le joueur l'exécute dans les window s ; count annonces, gap s entre deux. Trois coups : combo attaques ; pare : la touche de charge ; côté : un pas de side_distance m de travers.",
+    "gestures": ["trois_coups", "pare", "cote"],
+    "count": 9,
+    "window": 1.5,
+    "gap": 1.0,
+    "combo": 3,
+    "side_distance": 0.8
+  },
+  "crane": {
+    "_comment": "Étape 3, la Grue de Gossamer : Willem fend (annoncé warn s, toutes les interval s) ; une parade parfaite (la touche de charge pressée dans les window s avant l'impact) suivie d'une attaque dans les follow s fait pivoter Chtholly, qui détourne son coup et le renvoie (Willem recule de push m). needed Grues : la dernière arrache Seniorious. Au-delà de max_fends coups, ou à fatigue_time s, elle s'assoit : l'échec. À reach m, un fend non paré la touche à peine (recule de recoil m, aucun dégât).",
+    "warn": 0.6,
+    "window": 0.2,
+    "follow": 0.7,
+    "interval": 2.2,
+    "first_delay": 1.2,
+    "needed": 3,
+    "max_fends": 12,
+    "reach": 2.0,
+    "engage_distance": 1.7,
+    "recoil": 0.4,
+    "push": 0.6,
+    "pivot_time": 0.3
+  },
+  "pickup": {
+    "_comment": "Étape 4 : l'épée tourne en l'air (fly_time s, arc de fly_height m) et plonge dans le marais (place marais_epee, sinon offset du joueur) ; on la ramasse (invite « Ramasser Seniorious », à reach m).",
+    "place": "marais_epee",
+    "offset": [-4.0, 0.0, 2.0],
+    "fly_time": 1.1,
+    "fly_height": 3.0,
+    "reach": 1.2
+  },
+  "anims": {
+    "_comment": "Animations jouées, la première que la planche a (willem_duel : repos, marche, parle, attaque, pare).",
+    "willem_rest": ["repos"],
+    "willem_announce": ["parle", "repos"],
+    "willem_fend": ["attaque", "parle"],
+    "willem_guard": ["pare", "repos"],
+    "willem_step": ["marche"],
+    "player_pivot": ["attaque"],
+    "player_tired": ["assis", "degats"]
+  },
+  "willem_outfit": "duel"
+}
