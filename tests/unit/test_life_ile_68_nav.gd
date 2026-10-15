@@ -1,11 +1,15 @@
 extends GutTest
-## (V1) La navigation sur les vraies cartes de l'entrepôt : chaque place nommée par un emploi du temps de
-## data/life/ile_68/ (et chacun de ses points) est atteignable à pied depuis le point d'arrivée de la carte,
-## par un chemin dégagé qui finit dans la même pièce (dedans) ou à la bonne hauteur (dehors) ; chaque
+## (V1) La navigation sur les vraies cartes de l'entrepôt : chaque place nommée par un emploi du
+## temps de
+## data/life/ile_68/ (et chacun de ses points) est atteignable à pied depuis le point d'arrivée de
+## la carte,
+## par un chemin dégagé qui finit dans la même pièce (dedans) ou à la bonne hauteur (dehors) ;
+## chaque
 ## carte a ses départs `vers_<carte>` ; aucune place n'est posée dans un mur.
 
 const MAPS: Array[StringName] = [&"entrepot_rdc", &"entrepot_etage", &"entrepot_toit", &"entrepot"]
-## Distance au sol où le dernier pas se fait « tout droit » (un siège derrière une chaise, un lit) : on
+## Distance au sol où le dernier pas se fait « tout droit » (un siège derrière une chaise, un lit)
+## : on
 ## accepte une case libre à moins de ce rayon.
 const SEAT_REACH := 1.7
 
@@ -49,7 +53,9 @@ func _wanted() -> Dictionary:
 
 func _start_of(map: Map) -> Vector3:
 	var spawn := map.spawn()
-	return spawn.global_position if spawn != null else Vector3(map.size.x / 2.0, 0.0, map.size.y / 2.0)
+	return (
+		spawn.global_position if spawn != null else Vector3(map.size.x / 2.0, 0.0, map.size.y / 2.0)
+	)
 
 
 func _room_of(map: Map, at: Vector3) -> StringName:
@@ -79,14 +85,22 @@ func test_every_named_place_is_reachable_on_foot() -> void:
 				var spot := places.point(place, index)
 				var goal := spot.origin
 				var path := nav.find_path(start, goal)
-				assert_false(path.is_empty(), "%s/%s p%d : un chemin depuis l'arrivée" % [map_id, place, index + 1])
+				assert_false(
+					path.is_empty(),
+					"%s/%s p%d : un chemin depuis l'arrivée" % [map_id, place, index + 1]
+				)
 				if path.is_empty():
 					continue
 				checked += 1
 				var last := path[path.size() - 1]
 				var gap := Vector2(last.x - goal.x, last.z - goal.z).length()
 				assert_lt(
-					gap, SEAT_REACH, "%s/%s p%d : le chemin finit près du point (%.2f m)" % [map_id, place, index + 1, gap]
+					gap,
+					SEAT_REACH,
+					(
+						"%s/%s p%d : le chemin finit près du point (%.2f m)"
+						% [map_id, place, index + 1, gap]
+					)
 				)
 				assert_eq(
 					_room_of(map, last),
@@ -96,7 +110,8 @@ func test_every_named_place_is_reachable_on_foot() -> void:
 				var previous := start
 				for point: Vector3 in path:
 					assert_true(
-						nav.line_clear(previous, point), "%s/%s p%d : chemin dégagé" % [map_id, place, index + 1]
+						nav.line_clear(previous, point),
+						"%s/%s p%d : chemin dégagé" % [map_id, place, index + 1]
 					)
 					previous = point
 	gut.p("%d chemins vérifiés" % checked)
@@ -129,7 +144,9 @@ func test_every_map_has_its_departures() -> void:
 			assert_true(places.has(place), "%s : %s" % [map_id, place])
 			var spot := places.point(place, 0).origin
 			var nav: LifeNav = _navs[map_id]
-			assert_true(nav.is_walkable_point(spot.x, spot.z), "%s/%s : on y marche" % [map_id, place])
+			assert_true(
+				nav.is_walkable_point(spot.x, spot.z), "%s/%s : on y marche" % [map_id, place]
+			)
 	# Le premier départ de chaque carte est le repli des cartes à venir.
 	for map_id: StringName in [&"entrepot_rdc", &"entrepot_etage", &"entrepot"]:
 		var first := &""
@@ -140,8 +157,10 @@ func test_every_map_has_its_departures() -> void:
 		assert_false(first.is_empty(), "%s : un départ" % map_id)
 
 
-## Personne ne partage un point : à chaque jour, créneau et temps, il y a au moins autant de points que de
-## PNJ à une place (sauf ceux qui errent, et les jeux où les points sont un terrain ou une ligne : le chat, la course).
+## Personne ne partage un point : à chaque jour, créneau et temps, il y a au moins autant de
+## points que de
+## PNJ à une place (sauf ceux qui errent, et les jeux où les points sont un terrain ou une ligne :
+## le chat, la course).
 func test_no_place_is_overfull() -> void:
 	var capacity := {}
 	for map_id: StringName in MAPS:
@@ -161,13 +180,19 @@ func test_no_place_is_overfull() -> void:
 					if line.is_empty() or line["map"].is_empty():
 						continue
 					var activity: Dictionary = LifeData.activity(line["activity"])
-					if activity.get("wander", false) or activity.get("game", "") in ["chat", "course"]:
+					if (
+						activity.get("wander", false)
+						or activity.get("game", "") in ["chat", "course"]
+					):
 						continue
 					var key := "%s/%s" % [line["map"], line["place"]]
 					crowd[key] = int(crowd.get(key, 0)) + 1
 				for key: String in crowd:
 					if crowd[key] > int(capacity.get(key, 0)):
-						var text := "%s : %d PNJ pour %d points (jour %d, %s, %s)" % [key, crowd[key], capacity.get(key, 0), day, slot, state]
+						var text := (
+							"%s : %d PNJ pour %d points (jour %d, %s, %s)"
+							% [key, crowd[key], capacity.get(key, 0), day, slot, state]
+						)
 						if not problems.has(text):
 							problems.append(text)
 	GameState.reset()

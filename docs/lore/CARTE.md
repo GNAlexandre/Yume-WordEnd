@@ -577,6 +577,7 @@ lumiere fenetres_facade 45 26 3.0 fenetres
 - `herbes_chat` (8 points) : le terrain du chat : les hautes herbes du coin d'herbe au soleil
 - `potager_travail` (3 points) : au pied des carrés du potager
 - `cour_corvee` (4 points) : les corvées de la cour : le balai devant la façade
+- `marelle` (3 points) : les cases de la marelle à la craie : on saute à cloche-pied
 - `cour_tour` (4 points) : on tourne autour du bâtiment (jours de la fuite)
 - `cour_cercle` (24 points) : le cercle de toute la maison autour de cour_centre, au couchant du départ (jour 12)
 - `arbre_racines` (3 points) : au pied du grand arbre : on grimpe sur les racines

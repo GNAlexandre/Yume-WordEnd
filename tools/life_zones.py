@@ -155,6 +155,7 @@ ZONES = {
              "au pied des carrés du potager"),
         zone("cour_corvee", [(35.5, 30.5, "S"), (38.5, 31.0, "N"), (46.5, 31.0, "S"), (49.5, 30.5, "N")],
              "les corvées de la cour : le balai devant la façade"),
+        zone("marelle", [(51.0, 38.9, "S"), (51.0, 40.0, "S"), (51.0, 41.1, "S")], "les cases de la marelle à la craie : on saute à cloche-pied"),
         zone("cour_tour", [(33.0, 29.5, "S"), (50.0, 29.5, "S"), (31.0, 34.0, "E"), (56.0, 34.0, "O")],
              "on tourne autour du bâtiment (jours de la fuite)"),
         zone("cour_cercle", ring(44.0, 37.0, 4.0, 10) + ring(44.0, 37.0, 5.4, 14, 0.2),

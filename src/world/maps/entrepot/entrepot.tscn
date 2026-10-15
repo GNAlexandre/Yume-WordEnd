@@ -1504,6 +1504,18 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4, 0, 0.25)
 [node name="p4" type="Marker3D" parent="Life/Places/cour_corvee"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -0.25)
 
+[node name="marelle" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 40)
+
+[node name="p1" type="Marker3D" parent="Life/Places/marelle"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, -1.1)
+
+[node name="p2" type="Marker3D" parent="Life/Places/marelle"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
+
+[node name="p3" type="Marker3D" parent="Life/Places/marelle"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 1.1)
+
 [node name="cour_tour" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.5, 0, 31.75)
 

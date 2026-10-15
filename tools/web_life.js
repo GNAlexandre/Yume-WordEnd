@@ -61,7 +61,7 @@ async function measure(browser, mode) {
 	});
 	page.on('pageerror', (e) => problems.push(`${stamp()} [pageerror] ${e.message}`));
 	const life = mode === 'on' ? 'trace' : mode;
-	await page.goto(`${BASE}?trace&maps=entrepot_rdc_essai&moment=matin&creneau=matin&vie=${life}`);
+	await page.goto(`${BASE}?trace&maps=entrepot_rdc_essai&moment=matin&creneau=matin&contenu=essai&vie=${life}`);
 	await waitLog(logs, /Godot Engine v4\.7/, 90000);
 	const menuStart = Date.now();
 	while (Date.now() - menuStart < 90000) {

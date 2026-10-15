@@ -194,6 +194,11 @@
       "poses": [{"anim": "saut", "time": 0.6}, {"anim": "tombe", "time": 0.9}, {"anim": "saut", "time": 0.6}],
       "gait": "course"
     },
+    "marelle": {
+      "_comment": "(V1) La marelle à la craie dans la cour : on saute à cloche-pied, on compte les points.",
+      "poses": [{"anim": "saut", "time": 0.6}, {"anim": "repos", "time": [1, 2.5]}, {"anim": "saut", "time": 0.6}, {"anim": "parle", "time": [1, 2]}],
+      "step_aside": false
+    },
     "secher": {
       "_comment": "(V1) Le séchage des cheveux après le bain : on fuit la serviette, Tiat à leurs trousses (V3).",
       "poses": [{"anim": "travaille", "time": [3, 6]}, {"anim": "parle", "time": [1, 2]}, {"anim": "repos", "time": [1, 2]}]

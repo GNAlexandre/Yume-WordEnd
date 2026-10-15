@@ -8,7 +8,7 @@
     {"slot": "aube", "map": "entrepot_etage", "place": "dortoir_d_lit_1_haut", "activity": "dormir", "_note": "La journée de base."},
     {"slot": "matin", "map": "entrepot_toit", "place": "toit_linge", "activity": "porter_linge"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},
-    {"slot": "apres_midi", "map": "entrepot", "place": "champ_jeu", "activity": "errer"},
+    {"slot": "apres_midi", "map": "entrepot", "place": "marelle", "activity": "marelle"},
     {"slot": "soir", "map": "entrepot_rdc", "place": "jeux_balle_mur", "activity": "balle_mur"},
     {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_d_lit_1_haut", "activity": "dormir"}
   ]

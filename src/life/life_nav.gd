@@ -229,7 +229,8 @@ func _wall_between(a: Vector3, b: Vector3) -> bool:
 		var wz := floori(lerpf(a.z, b.z, t) / WALL_RES)
 		if wx < 0 or wz < 0 or wx >= _wall_size.x or wz >= _wall_size.y:
 			continue
-		# Un mur de 0,25 m n'a souvent que des pixels « à cheval sur son bord » (1) : tout pixel de mur compte.
+		# Un mur de 0,25 m n'a souvent que des pixels « à cheval sur son bord » (1) : tout pixel de mur
+		# compte.
 		if _wall[wz * _wall_size.x + wx] > 0:
 			return true
 	return false

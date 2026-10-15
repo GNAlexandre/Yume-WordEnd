@@ -193,6 +193,9 @@ func refresh(walk: bool = true) -> void:
 ## la ligne courante est ici apparaît à sa place.
 func attach(map: Map) -> void:
 	_clear()
+	# (V1) L'île de cette carte décide du contenu (data/life/<île>/) : map_entered précède
+	# island_entered.
+	LifeData.enter_island(WorldAtlas.island_of(map.map_id()) if map != null else &"")
 	_dress_player(map)
 	if map == null or not enabled:
 		return
@@ -565,7 +568,8 @@ func read_parameters() -> Dictionary:
 	return parse_pairs(pairs)
 
 
-## Garde creneau=<créneau>, vie=trace|off|cycle et contenu=<dossier de data/life> (les démonstrations
+## Garde creneau=<créneau>, vie=trace|off|cycle et contenu=<dossier de data/life> (les
+## démonstrations
 ## d'essai : contenu=essai) parmi des « clé=valeur ».
 func parse_pairs(pairs: PackedStringArray) -> Dictionary:
 	var result := {}

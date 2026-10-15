@@ -81,6 +81,9 @@ static var _added: PackedStringArray = []
 ## Contenu forcé (use_content) : un sous-dossier de data/life (« essai » : les emplois du temps de
 ## démonstration des cartes d'essai d'E4) ; vide : celui de l'île courante.
 static var _content: StringName = &""
+## Île de la carte que le directeur peuple (enter_island) : GameState.island n'est posée qu'après
+## map_entered, trop tard pour la carte qu'on vient d'entrer.
+static var _island: StringName = &""
 ## Dossiers de l'île (ou du contenu) lue au dernier accès : si elle change, les caches sont oubliés.
 static var _seen_island: StringName = &""
 static var _seen_dirs: PackedStringArray = []
@@ -320,7 +323,8 @@ static func map_places(map_id: StringName) -> PackedStringArray:
 
 
 ## Dossiers d'emplois du temps lus, le premier gagnant : ceux du contenu courant (data/life/<île>
-## puis data/life, WorldAtlas.data_dirs), puis ceux d'add_dir. Le contenu courant : use_content, sinon
+## puis data/life, WorldAtlas.data_dirs), puis ceux d'add_dir. Le contenu courant : use_content,
+## sinon
 ## l'île de GameState (WorldAtlas.DEFAULT_ISLAND tant qu'aucune n'est posée). Quand ils changent
 ## (autre île, autre contenu), ce qui a été lu est oublié.
 static func dirs() -> PackedStringArray:
@@ -339,11 +343,19 @@ static func dirs() -> PackedStringArray:
 	return result
 
 
-## Île (ou contenu) dont on lit les emplois du temps.
+## Île (ou contenu) dont on lit les emplois du temps : le contenu forcé (use_content), l'île de la
+## carte peuplée (enter_island), l'île courante de GameState, sinon l'île n° 68.
 static func content_island() -> StringName:
 	if not _content.is_empty():
 		return _content
+	if not _island.is_empty():
+		return _island
 	return GameState.island if not GameState.island.is_empty() else WorldAtlas.DEFAULT_ISLAND
+
+
+## L'île de la carte que le directeur peuple (&"" : plus de carte, on suit GameState.island).
+static func enter_island(island_id: StringName) -> void:
+	_island = island_id
 
 
 ## Force le contenu lu : un sous-dossier de data/life (démonstrations d'essai : « essai ») ; &""

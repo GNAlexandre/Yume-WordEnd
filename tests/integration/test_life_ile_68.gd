@@ -1,9 +1,14 @@
 extends GutTest
-## (V1) La vie de l'entrepôt sur les vraies cartes (data/life/ile_68/, docs/lore/VIE.md), dans game.tscn
-## (WorldManager.enter_map) : à chaque créneau, le directeur peuple chaque carte (chacun à sa place, déjà
-## en activité, sans personne coincé) ; en changeant de créneau, les PNJ marchent vers leurs places par
-## les portes et les escaliers, sans se replacer d'un coup ; les jeux des petites sont aux bons endroits
-## (le chat dans les hautes herbes, la course du couloir, l'avalanche à la porte de Nygglatho, la tour sur
+## (V1) La vie de l'entrepôt sur les vraies cartes (data/life/ile_68/, docs/lore/VIE.md), dans
+## game.tscn
+## (WorldManager.enter_map) : à chaque créneau, le directeur peuple chaque carte (chacun à sa
+## place, déjà
+## en activité, sans personne coincé) ; en changeant de créneau, les PNJ marchent vers leurs
+## places par
+## les portes et les escaliers, sans se replacer d'un coup ; les jeux des petites sont aux bons
+## endroits
+## (le chat dans les hautes herbes, la course du couloir, l'avalanche à la porte de Nygglatho, la
+## tour sur
 ## Willem, l'escalade du grand arbre) ; les variations par jour et par temps changent la journée.
 
 const GAME_SCENE := preload("res://src/game.tscn")
@@ -24,7 +29,7 @@ var _previous_scale: float = 1.0
 
 func before_each() -> void:
 	GameState.reset()
-	LifeData.use_content(&"ile_68")
+	LifeData.use_content(&"")  # le contenu de l'île de la carte : le chemin de la vraie partie
 	WorldManager.fade_time = 0.0
 	_previous_scale = Engine.time_scale
 	_game = GAME_SCENE.instantiate() as Node3D
@@ -89,15 +94,21 @@ func test_every_slot_populates_every_map() -> void:
 					assert_lt(_flat(who.position(), who.spot.origin), 0.05, "%s : à sa place" % tag)
 				assert_not_null(who.npc, "%s : posé dans Life" % tag)
 				assert_eq(who.npc.get_parent().name, "Life", "%s : dans le nœud Life" % tag)
-				assert_false(who.activity.is_empty(), "%s : une activité (%s)" % [tag, who.activity_id])
+				assert_false(
+					who.activity.is_empty(), "%s : une activité (%s)" % [tag, who.activity_id]
+				)
 			# Personne n'est posé dans un mur ou hors de la carte.
 			var nav := LifeDirector.nav()
 			for who: LifeActor in actors:
 				var at := who.position()
-				var seated := who.activity_id in [&"manger", &"lire", &"dormir", &"regarder", &"jouer", &"jardiner"]
+				var seated := (
+					who.activity_id
+					in [&"manger", &"lire", &"dormir", &"regarder", &"jouer", &"jardiner"]
+				)
 				if not seated and not String(who.place).begins_with("arbre_"):
 					assert_true(
-						nav.is_walkable_point(at.x, at.z), "%s/%s : %s marche sur du sol libre" % [map_id, slot, who.id]
+						nav.is_walkable_point(at.x, at.z),
+						"%s/%s : %s marche sur du sol libre" % [map_id, slot, who.id]
 					)
 	gut.p("peuplement : %s" % seen)
 	# Le petit-déjeuner et le déjeuner remplissent le réfectoire ; la nuit, les dortoirs.
@@ -125,7 +136,9 @@ func test_nobody_is_stuck_when_the_slot_changes_three_times() -> void:
 			for who: LifeActor in LifeDirector.actors():
 				var at := who.position()
 				if last.has(who.id) and _flat(last[who.id], at) > JUMP:
-					jumps.append("%s (%s) : %.1f m d'un coup" % [who.id, slot, _flat(last[who.id], at)])
+					jumps.append(
+						"%s (%s) : %.1f m d'un coup" % [who.id, slot, _flat(last[who.id], at)]
+					)
 				last[who.id] = at
 				if who.is_moving():
 					done = false
@@ -133,8 +146,14 @@ func test_nobody_is_stuck_when_the_slot_changes_three_times() -> void:
 		for who: LifeActor in LifeDirector.actors():
 			assert_eq(who.line["map"], RDC, "%s : %s est ici" % [slot, who.id])
 			if not who.activity.get("wander", false):
-				assert_lt(_flat(who.position(), who.spot.origin), 0.6, "%s : %s à sa place" % [slot, who.id])
-	assert_eq(jumps, [] as Array[String], "personne n'a été replacé d'un coup : %s" % "\n".join(jumps))
+				assert_lt(
+					_flat(who.position(), who.spot.origin),
+					0.6,
+					"%s : %s à sa place" % [slot, who.id]
+				)
+	assert_eq(
+		jumps, [] as Array[String], "personne n'a été replacé d'un coup : %s" % "\n".join(jumps)
+	)
 	# Au bout des trois changements, l'après-midi : Nephren à la lecture, plus personne au réfectoire.
 	assert_eq(LifeDirector.where(&"nephren")["place"], &"lecture_fauteuil")
 	assert_null(LifeDirector.actor(&"tiat"), "Tiat est sortie jouer dans les hautes herbes")
@@ -142,7 +161,8 @@ func test_nobody_is_stuck_when_the_slot_changes_three_times() -> void:
 
 func test_people_use_the_stairs_and_the_front_door() -> void:
 	Engine.time_scale = TIME_SCALE
-	# Du dortoir (étage) au réfectoire (rez-de-chaussée) : par l'escalier ; on les voit arriver au pied.
+	# Du dortoir (étage) au réfectoire (rez-de-chaussée) : par l'escalier ; on les voit arriver au
+	# pied.
 	_enter(RDC, &"aube", 0, Vector3(13.0, 0.0, 9.5))
 	assert_null(LifeDirector.actor(&"fairy_03"), "à l'aube, fairy_03 dort à l'étage")
 	LifeDirector.set_slot(&"matin", 0.0)
@@ -184,11 +204,15 @@ func test_the_big_tree_scene_has_climbers_at_the_foot_and_in_the_tree() -> void:
 	var heights := {}
 	for who: LifeActor in LifeDirector.actors():
 		if who.activity_id == &"grimper":
-			heights[who.id] = who.position().y - LifeDirector.nav().height_at(who.position().x, who.position().z)
+			heights[who.id] = (
+				who.position().y - LifeDirector.nav().height_at(who.position().x, who.position().z)
+			)
 	assert_has(heights, &"collon", "Collon grimpe")
 	assert_has(heights, &"pannibal", "Pannibal grimpe")
 	assert_has(heights, &"lakhesh", "Lakhesh tremble sur la branche basse")
-	assert_gt(heights[&"collon"], heights[&"pannibal"], "Collon tout en haut, Pannibal à mi-hauteur")
+	assert_gt(
+		heights[&"collon"], heights[&"pannibal"], "Collon tout en haut, Pannibal à mi-hauteur"
+	)
 	assert_gt(heights[&"pannibal"], heights[&"lakhesh"], "Lakhesh sur la branche basse")
 	var foot := 0
 	for id: StringName in heights:
@@ -210,7 +234,9 @@ func test_the_corridor_race_and_the_tower() -> void:
 	var tour := LifeDirector.game_at(&"tour", &"jeux_tour")
 	assert_not_null(tour, "la tour de fées dans la salle de jeux")
 	assert_eq(tour.base_actor().id, &"willem", "Willem est la base")
-	assert_true(await _until(func() -> bool: return tour.stacked.size() >= 2, 40.0), "elles grimpent")
+	assert_true(
+		await _until(func() -> bool: return tour.stacked.size() >= 2, 40.0), "elles grimpent"
+	)
 	assert_eq(tour.stacked[0].id, &"nephren", "Nephren d'abord, collée à son dos")
 	assert_true(
 		await _until(func() -> bool: return race.phase == race.Phase.RUN or race.scolded, 40.0),
@@ -223,7 +249,9 @@ func test_the_avalanche_at_nygglatho_s_door() -> void:
 	_enter(ETAGE, &"apres_midi", 0, Vector3(19.4, 0.0, 9.5))
 	var game := LifeDirector.game_at(&"avalanche", &"epie_nygglatho")
 	assert_not_null(game, "collées à la porte de Nygglatho")
-	assert_true(await _until(func() -> bool: return game.phase == game.Phase.SPYING, 20.0), "elles épient")
+	assert_true(
+		await _until(func() -> bool: return game.phase == game.Phase.SPYING, 20.0), "elles épient"
+	)
 	assert_ne(game.door, Vector3.INF, "la porte de la chambre")
 	assert_almost_eq(game.door.x, 11.0, 0.3, "la porte de Nygglatho (x = 11)")
 	_player.global_position = game.door + Vector3(0.0, 0.0, 0.8)
@@ -240,7 +268,9 @@ func test_the_night_beds_the_lamp_and_the_archives() -> void:
 			assert_eq(who.npc.visual.current_animation(), &"dort", "%s dort" % who.id)
 			assert_gte(who.position().y, 0.4, "%s sur son lit" % who.id)
 	assert_gte(sleeping, 14, "les petites couchées")
-	assert_eq(LifeDirector.actor(&"nygglatho").place, &"nygglatho_bureau", "la lumière sous sa porte")
+	assert_eq(
+		LifeDirector.actor(&"nygglatho").place, &"nygglatho_bureau", "la lumière sous sa porte"
+	)
 	assert_eq(LifeDirector.where(&"willem")["place"], &"archives_bureau", "Willem aux archives")
 	assert_eq(LifeDirector.where(&"ithea")["place"], &"refectoire_veillee", "la veillée des aînées")
 
@@ -255,11 +285,12 @@ func test_laundry_on_the_roof_at_dawn() -> void:
 
 
 func test_days_change_the_day() -> void:
+	LifeData.use_content(&"ile_68")
 	# Jour 7 : les aînées sont parties ; la petite blessée est à l'infirmerie, dans son lit.
 	assert_eq(LifeData.line_for(&"ithea", &"matin", 7)["away"], &"port")
 	assert_eq(LifeData.line_for(&"nephren", &"nuit", 7)["away"], &"port")
 	assert_eq(LifeData.line_for(&"fairy_06", &"matin", 8)["place"], &"infirmerie_lit_2")
-	assert_eq(LifeData.line_for(&"fairy_06", &"matin", 10)["place"], &"refectoire_rang_c", "guérie")
+	assert_eq(LifeData.line_for(&"fairy_06", &"midi", 10)["place"], &"refectoire_rang_c", "guérie")
 	# Jour 8 : Willem malade, couché à l'infirmerie ; les petites agglutinées devant sa porte.
 	assert_eq(LifeData.line_for(&"willem", &"apres_midi", 8)["place"], &"infirmerie_lit_3")
 	assert_eq(LifeData.line_for(&"willem", &"apres_midi", 8)["activity"], &"dormir")
@@ -299,7 +330,9 @@ func test_rain_brings_everyone_inside_and_mud_follows() -> void:
 		await _until(func() -> bool: return LifeDirector.actors().size() <= 3, 60.0),
 		"dehors, presque personne sous la pluie (%d)" % LifeDirector.actors().size()
 	)
-	assert_eq(LifeData.line_for(&"tiat", &"apres_midi", 0)["place"], &"jeux_societe", "Tiat aux jeux")
+	assert_eq(
+		LifeData.line_for(&"tiat", &"apres_midi", 0)["place"], &"jeux_societe", "Tiat aux jeux"
+	)
 	# Elle cesse : la boue du champ, les petites sautent dans les flaques.
 	Atmosphere.set_weather(&"clair", 0.0)
 	await wait_physics_frames(2)
@@ -307,7 +340,11 @@ func test_rain_brings_everyone_inside_and_mud_follows() -> void:
 	assert_true(GameState.has_flag(LifeDirector.AFTER_RAIN_FLAG), "après la pluie")
 	assert_eq(LifeData.line_for(&"tiat", &"apres_midi", 0)["activity"], &"boue")
 	assert_true(
-		await _until(func() -> bool: return LifeDirector.game_at(&"boue", &"champ_boue") == null and _mud() >= 5, 60.0),
+		await _until(
+			func() -> bool:
+				return LifeDirector.game_at(&"boue", &"champ_boue") == null and _mud() >= 5,
+			60.0
+		),
 		"la boue : on revient jouer dehors"
 	)
 	# À l'aube suivante, la boue est oubliée.
