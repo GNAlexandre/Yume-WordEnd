@@ -122,6 +122,11 @@ func _init() -> void:
 	_rng.seed = Time.get_ticks_usec()
 
 
+## Fixe le tirage (tests, démonstrations) : la même graine rejoue le même exercice.
+func seed_random(value: int) -> void:
+	_rng.seed = value
+
+
 func _physics_process(delta: float) -> void:
 	advance(delta)
 

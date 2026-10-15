@@ -60,6 +60,10 @@ func after_each() -> void:
 func _start(options: Dictionary = {}) -> StaffTraining:
 	var merged := options.duplicate(true)
 	merged["place_player"] = true
+	# Le tirage (cible des contres, côté des coups) est fixé : sans graine, une contre pouvait ne
+	# jamais viser Chtholly dans le temps du test.
+	if not merged.has("seed"):
+		merged["seed"] = 68
 	_training = MiniGames.start_staff_training(merged)
 	assert_not_null(_training, "l'entraînement démarre")
 	_training.set_physics_process(false)
