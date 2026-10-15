@@ -3,8 +3,9 @@
   "gait": "course",
   "lines": [
     {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire"},
     {"slot": "aube", "map": "entrepot_etage", "place": "dortoir_d_lit_2_haut", "activity": "dormir", "_note": "La journée de base."},
-    {"slot": "matin", "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire"},
+    {"slot": "matin", "map": "entrepot", "place": "potager_travail", "activity": "jardiner"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},
     {"slot": "apres_midi", "map": "entrepot_etage", "place": "dortoir_d_lit_2_haut", "activity": "dormir"},
     {"slot": "soir", "map": "entrepot_rdc", "place": "bains_sechage", "activity": "secher"},

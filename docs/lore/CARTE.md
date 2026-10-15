@@ -580,9 +580,9 @@ lumiere fenetres_facade 45 26 3.0 fenetres
 - `cour_tour` (4 points) : on tourne autour du bâtiment (jours de la fuite)
 - `cour_cercle` (24 points) : le cercle de toute la maison autour de cour_centre, au couchant du départ (jour 12)
 - `arbre_racines` (3 points) : au pied du grand arbre : on grimpe sur les racines
-- `arbre_branche_basse` : le grand arbre, la branche basse (la peur de Lakhesh)
-- `arbre_branche_mi` : le grand arbre, mi-hauteur (Pannibal)
-- `arbre_branche_haute` : le grand arbre, tout en haut, la main en visière (Collon)
+- `arbre_branche_basse` (1 points) : le grand arbre, la branche basse à 2,3 m (la peur de Lakhesh)
+- `arbre_branche_mi` (1 points) : le grand arbre, mi-hauteur à 4,3 m (Pannibal)
+- `arbre_branche_haute` (1 points) : le grand arbre, tout en haut à 6,6 m, la main en visière (Collon)
 - `champ_entrainement` (8 points) : l'entraînement de base : deux rangées face à celle qui mène
 - `champ_meneuse` : celle qui mène l'entraînement, face aux rangées
 - `champ_jeu` (6 points) : le champ avant la partie (le ballon est du lot E8) : on court, on lance
@@ -911,7 +911,7 @@ lumiere applique_refectoire 5.6 2.6 1.6 cristal
 - `epie_archives` (3 points) : collées à la porte des archives, côté couloir (l'avalanche)
 - `eau_toilette` (6 points) : la toilette à l'eau glacée, devant l'auge du couloir
 - `jeux_tour` (7 points) : la tour de fées : 0 la base (Willem assis), les autres attendent leur tour autour du tapis
-- `jeux_societe` (6 points) : assis par terre autour du tapis : les jeux de société
+- `jeux_societe` (9 points) : assis par terre autour du tapis : les jeux de société
 - `jeux_balle_mur` (2 points) : la balle contre le mur ouest
 - `lecture_sieges` (4 points) : la table de lecture (au sud) et le banc de la fenêtre : lire en silence
 - `bains_sechage` (4 points) : on sort du bain enveloppée d'une serviette : le séchage des cheveux

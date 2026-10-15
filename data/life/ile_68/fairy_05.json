@@ -3,7 +3,6 @@
   "gait": "course",
   "lines": [
     {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "_note": "Variations par jour (VIE.md, 3)."},
-    {"slot": ["midi", "apres_midi"], "day": 8, "map": "entrepot_rdc", "place": "epie_infirmerie", "activity": "avalanche_infirmerie"},
     {"slot": "nuit", "day": 1, "map": "entrepot_etage", "place": "epie_willem", "activity": "avalanche_willem"},
     {"slot": "matin", "day": [9, 12], "map": "entrepot", "place": "champ_entrainement", "activity": "entrainement"},
     {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer"},

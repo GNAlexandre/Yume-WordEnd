@@ -1609,11 +1609,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.067, 0, 0.033)
 [node name="arbre_branche_basse" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.5, 0, 33)
 
+[node name="p1" type="Marker3D" parent="Life/Places/arbre_branche_basse"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0)
+
 [node name="arbre_branche_mi" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62.4, 0, 33)
 
+[node name="p1" type="Marker3D" parent="Life/Places/arbre_branche_mi"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.3, 0)
+
 [node name="arbre_branche_haute" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.2, 0, 33)
+
+[node name="p1" type="Marker3D" parent="Life/Places/arbre_branche_haute"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.6, 0)
 
 [node name="champ_entrainement" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 73.5, -0.5, 23)

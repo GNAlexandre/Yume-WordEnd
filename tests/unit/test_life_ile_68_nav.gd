@@ -138,3 +138,37 @@ func test_every_map_has_its_departures() -> void:
 				first = place
 				break
 		assert_false(first.is_empty(), "%s : un départ" % map_id)
+
+
+## Personne ne partage un point : à chaque jour, créneau et temps, il y a au moins autant de points que de
+## PNJ à une place (sauf ceux qui errent, et les jeux où les points sont un terrain ou une ligne : le chat, la course).
+func test_no_place_is_overfull() -> void:
+	var capacity := {}
+	for map_id: StringName in MAPS:
+		var places := LifePlaces.read(_maps[map_id])
+		for place: StringName in places.names():
+			capacity["%s/%s" % [map_id, place]] = places.size(place)
+	var problems: Array[String] = []
+	for state: Array in [[], [LifeDirector.RAIN_FLAG], [LifeDirector.AFTER_RAIN_FLAG]]:
+		GameState.reset()
+		for flag: StringName in state:
+			GameState.set_flag(flag)
+		for day: int in range(0, 13):
+			for slot: StringName in GameState.SLOTS:
+				var crowd := {}
+				for npc_id: StringName in LifeData.cast():
+					var line := LifeData.line_for(npc_id, slot, day)
+					if line.is_empty() or line["map"].is_empty():
+						continue
+					var activity: Dictionary = LifeData.activity(line["activity"])
+					if activity.get("wander", false) or activity.get("game", "") in ["chat", "course"]:
+						continue
+					var key := "%s/%s" % [line["map"], line["place"]]
+					crowd[key] = int(crowd.get(key, 0)) + 1
+				for key: String in crowd:
+					if crowd[key] > int(capacity.get(key, 0)):
+						var text := "%s : %d PNJ pour %d points (jour %d, %s, %s)" % [key, crowd[key], capacity.get(key, 0), day, slot, state]
+						if not problems.has(text):
+							problems.append(text)
+	GameState.reset()
+	assert_eq(problems, [] as Array[String], "\n".join(problems))

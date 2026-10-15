@@ -4,7 +4,8 @@
   "lines": [
     {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "_note": "Variations par jour (VIE.md, 3)."},
     {"slot": "matin", "day": [9, 12], "map": "entrepot", "place": "champ_meneuse", "activity": "mener"},
-    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer"},
+    {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer"},
     {"slot": "aube", "map": "entrepot_toit", "place": "toit_linge", "activity": "porter_linge", "_note": "La journée de base."},
     {"slot": "matin", "map": "entrepot_toit", "place": "toit_linge", "activity": "porter_linge"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},

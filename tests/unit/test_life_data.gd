@@ -45,6 +45,23 @@ func test_every_life_file_is_valid() -> void:
 		assert_false(LifeData.cast().has(&"activities"), "activities.json n'est pas un PNJ")
 
 
+func test_content_follows_the_island() -> void:
+	# (V1) data/life/<île>/ : l'île n° 68 par défaut, l'île courante de la partie sinon ; une île sans
+	# dossier n'a aucun emploi du temps (l'ancienne île, l'île d'essai) ; les activités restent communes.
+	LifeData.use_content(&"")
+	assert_eq(LifeData.content_island(), &"ile_68", "par défaut")
+	assert_has(LifeData.cast(), &"willem")
+	assert_eq(LifeData.line_for(&"willem", &"midi", 0)["map"], &"entrepot_rdc", "les vraies cartes")
+	GameState.island = &"ile_ancienne"
+	assert_eq(LifeData.cast(), [] as Array[StringName], "l'ancienne île n'a pas de vie")
+	assert_true(LifeData.has_activity(&"manger"), "activities.json est commun")
+	GameState.island = &"ile_68"
+	assert_has(LifeData.cast(), &"willem")
+	LifeData.use_content(&"essai")
+	assert_eq(LifeData.line_for(&"willem", &"midi", 0)["map"], &"entrepot_rdc_essai", "la démonstration")
+	assert_eq(LifeData.schedule_path(&"willem"), "res://data/life/essai/willem.json")
+
+
 func test_a_valid_line_passes() -> void:
 	assert_eq(
 		_problems([_line({"outfit": "vie", "day": [2, 4], "if": {"flag": "x"}})]),
