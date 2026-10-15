@@ -355,3 +355,170 @@ class Pose:
                     self.blockers.append(Rect(x - hx * scale[1], z - hz * scale[1], x + hx * scale[1],
                                               z + hz * scale[1]))
                 break
+
+
+# --- Les bouts de pans à raccord (QC-S) ------------------------------------------------------------
+#
+# Un pan « à raccord » (manifeste : wrap x, comme les murs de forêt forest_wall_* et les rideaux
+# treeline_*) est peint pour se continuer bord à bord : sa colonne de bord est pleine, un arbre coupé
+# net sur 6 m de haut. Posé seul, son bout se voit comme une bande verticale à bord franc plaquée sur
+# le décor (docs/QUALITE.md, QC-33). Un bout est sûr s'il touche le bout d'un autre pan à raccord du
+# même rang, s'il reste hors du champ de la caméra, ou si un décor posé devant lui, opaque à cet
+# endroit, le cache.
+
+MANIFEST = os.path.join(ROOT, "tools", "hd2d_manifest.json")
+# Hauteur pleine au bord (m) à partir de laquelle un bout se lit comme une bande coupée : les haies, les
+# clôtures et les rideaux de roseaux, plus bas, se lisent comme une rangée qui finit.
+SEAM_MIN_HEIGHT = 2.0
+# La caméra du jeu (src/player/camera_rig.gd) : tangage, champ vertical (degrés), distances du zoom (la
+# plus lointaine voit le plus large), point visé à 0,8 m au-dessus du sol, borné par camera_bounds ;
+# écran 16:9.
+SEAM_PITCH = 32.0
+SEAM_FOV = 30.0
+SEAM_DISTANCES = (21.0, 25.0)
+SEAM_FOCUS_HEIGHT = 0.8
+SEAM_ASPECT = 16.0 / 9.0
+# Deux bouts qui se touchent (m) ; même rang (écart en z et en hauteur, m).
+SEAM_JOIN = 0.3
+SEAM_ROW = 0.6
+# Longueur de bord visible d'un tenant (m) qui fait une bande : un trou d'épingle dans une couronne posée
+# devant ne compte pas.
+SEAM_MIN_RUN = 0.4
+_WRAP_X = []
+_ALPHA = {}
+
+
+def wrap_x_images():
+    """Chemins (assets/…) des images à raccord gauche-droite du manifeste."""
+    if not _WRAP_X:
+        import json
+        with open(MANIFEST, encoding="utf-8") as handle:
+            images = json.load(handle)["images"]
+        _WRAP_X.append({e["path"] for e in images if e.get("wrap") == "x"})
+    return _WRAP_X[0]
+
+
+def _alpha(image):
+    """(largeur, hauteur, accès aux pixels de l'alpha) d'une image du dépôt."""
+    if image not in _ALPHA:
+        img = Image.open(os.path.join(ROOT, image)).convert("RGBA").getchannel("A")
+        _ALPHA[image] = (img.width, img.height, img.load())
+    return _ALPHA[image]
+
+
+def seam_panel(name, scene, x, y, z, scale=1.0, flip=False):
+    """Un panneau pour open_seams : (nom, image, x, y, z, largeur, hauteur, retourné), None sans image
+    debout (décalque, bâtiment, bande animée)."""
+    p = prop(scene)
+    if not p.image or p.decal or p.building or p.frames > 1:
+        return None
+    return (name, p.image, x, y, z, p.w * scale, p.h * scale, flip)
+
+
+def focus_points(bounds, size, walkable, step=1.0, ahead=2.5):
+    """Points visés (x, z) que le jeu peut prendre : ceux des cases où l'on marche (walkable(x, z)) d'une
+    carte de size = (largeur, profondeur) m, le point visé à ahead m au nord du joueur, ramené dans les
+    bornes (x, z, largeur, profondeur)."""
+    bx, bz, bw, bd = bounds
+    out = set()
+    x = step / 2.0
+    while x < size[0]:
+        z = step / 2.0
+        while z < size[1]:
+            if walkable(x, z):
+                out.add((round(min(max(x, bx), bx + bw), 2), round(min(max(z - ahead, bz), bz + bd), 2)))
+            z += step
+        x += step
+    return sorted(out)
+
+
+def _cameras(focus, height):
+    """(point visé x, z, distance, position de la caméra) pour chaque point visé, à chaque distance du
+    zoom."""
+    s, c = math.sin(math.radians(SEAM_PITCH)), math.cos(math.radians(SEAM_PITCH))
+    out = []
+    for fx, fz in focus:
+        fy = height(fx, fz) + SEAM_FOCUS_HEIGHT
+        for d in SEAM_DISTANCES:
+            out.append((fx, fz, d, (fx, fy + d * s, fz + d * c)))
+    return out
+
+
+def _on_screen(cam, px, py, pz):
+    s, c = math.sin(math.radians(SEAM_PITCH)), math.cos(math.radians(SEAM_PITCH))
+    vx, vy, vz = px - cam[0], py - cam[1], pz - cam[2]
+    depth = -vy * s - vz * c
+    if depth <= 0.1:
+        return False
+    up = vy * c - vz * s
+    half = math.tan(math.radians(SEAM_FOV / 2.0))
+    return abs(up) <= depth * half and abs(vx) <= depth * half * SEAM_ASPECT
+
+
+def _hidden(cam, px, py, pz, occluders):
+    """Vrai si un pixel opaque d'un panneau posé devant le point (px, py, pz) le cache à la caméra."""
+    for _name, image, ox, oy, oz, ow, oh, oflip in occluders:
+        if not pz < oz < cam[2]:
+            continue
+        t = (oz - cam[2]) / (pz - cam[2])
+        qx, qy = cam[0] + (px - cam[0]) * t, cam[1] + (py - cam[1]) * t
+        u, v = (qx - ox) / ow + 0.5, (qy - oy) / oh
+        if not (0.0 <= u < 1.0 and 0.0 <= v < 1.0):
+            continue
+        w, h, alpha = _alpha(image)
+        col = min(int((1.0 - u if oflip else u) * w), w - 1)
+        row = min(int((1.0 - v) * h), h - 1)
+        if alpha[col, row] > 128:
+            return True
+    return False
+
+
+def open_seams(panels, focus, height=lambda x, z: 0.0, width=None):
+    """Bouts de pans à raccord qui se voient : [(nom, côté, x du bout, z, point visé (x, z))], d'après
+    les panneaux posés (seam_panel), les points visés possibles (focus_points) et la hauteur du sol.
+    Un bout posé au bord de la carte (x ≤ 0,5 ou ≥ width − 0,5 m) ne compte qu'au cadrage par défaut :
+    au zoom le plus lointain, le bord du monde se voit de toute façon."""
+    panels = [q for q in panels if q is not None]
+    wraps = [q for q in panels if q[1] in wrap_x_images()]
+    cams = None
+    found = []
+    for name, image, x, y, z, pw, ph, flip in wraps:
+        w, h, alpha = _alpha(image)
+        for side, x_end in (("ouest", x - pw / 2.0), ("est", x + pw / 2.0)):
+            col = (w - 1 if side == "ouest" else 0) if flip else (0 if side == "ouest" else w - 1)
+            rows = [r for r in range(0, h, 4) if alpha[col, r] > 128]
+            if len(rows) * 4 * ph / h < SEAM_MIN_HEIGHT:
+                continue
+            if any(o[0] != name and abs(o[4] - z) <= SEAM_ROW and abs(o[3] - y) <= SEAM_ROW
+                   and min(abs(o[2] - o[5] / 2.0 - x_end), abs(o[2] + o[5] / 2.0 - x_end)) <= SEAM_JOIN
+                   for o in wraps):
+                continue
+            if cams is None:
+                cams = _cameras(focus, height)
+            inward = 0.05 if side == "ouest" else -0.05
+            # Ce qui est sous le sol, au pied du bout (un pan posé plus bas que le relief), ne se voit pas.
+            ground = height(x_end, z)
+            pts = [(x_end + inward, y + (h - r) * ph / h, z) for r in rows[::2] if y + (h - r) * ph / h > ground]
+            front = [o for o in panels if o[4] > z + 0.01 and abs(o[2] - x_end) < o[5] / 2.0 + 4.0]
+            edge = width is not None and (x_end <= 0.5 or x_end >= width - 0.5)
+            run = max(1, int(round(SEAM_MIN_RUN * h / (8.0 * ph))))
+            for fx, fz, d, cam in cams:
+                if edge and d != SEAM_DISTANCES[0]:
+                    continue
+                seen = 0
+                for pt in pts:
+                    seen = seen + 1 if _on_screen(cam, *pt) and not _hidden(cam, *pt, front) else 0
+                    if seen >= run:
+                        break
+                if seen >= run:
+                    found.append((name, side, x_end, z, (fx, fz)))
+                    break
+    return found
+
+
+def pose_seams(pose, bounds):
+    """open_seams pour une carte posée, d'après ses décors uniques (les familles d'un PropScatter ne
+    cachent rien ici : leur variante, leur taille et leur sens se tirent au lancement)."""
+    panels = [seam_panel(name, scene, x, y, z, scale, flip)
+              for _group, name, scene, x, y, z, scale, flip, _extra in pose.singles]
+    return open_seams(panels, focus_points(bounds, (pose.W, pose.D), pose.walkable_here), pose.height, pose.W)
