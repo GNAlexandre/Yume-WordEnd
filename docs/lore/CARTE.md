@@ -1935,8 +1935,9 @@ Légende des lettres : `A` garde_transport_side ; `B` gangway ; `C` rope_coil ; 
 - **Écarts de la carte construite (lot CP, `tools/exterior_recipes/port.py`)** : bornes de caméra `Rect2(10, 6, 50, 24)` ;
   relief de la colline refait (les deux `rampe` du plan finissaient devant des terrasses sans route de 0 à +1 : trois rampes qui
   montent vers le nord, 0 → +1 en z 27 → 24, +1 → +2 en z 25 → 22, +2 → +3 en z 19 → 16 ; `bord falaise` réduit à x 63 → 70 ;
-  `montee_colline` repassée par les rampes) ; point `navire_quai` (32,5 ; 7,6) ajouté ; le navire est un panneau de coque
-  remplaçant (E7), la passerelle un plancher du quai à la coque ; aucune lumière écrite (`lampe_quai_*`, `bureau`,
+  `montee_colline` repassée par les rampes) ; point `navire_quai` (32,5 ; 7,6) ajouté ; (E7) le navire en volume, sa
+  passerelle et les bras d'ancrage sont dans le poste d'amarrage `Berth`, vide hors des scènes (PLAN.md, « (E7) Les
+  navires ») ; le bord du vide s'ouvre devant la passerelle posée (x 31,4 → 33,6) ; aucune lumière écrite (`lampe_quai_*`, `bureau`,
   `projecteur_navire` : Atmosphere, les lanternes de quai sont l'image `dock_lamp`) ; `passerelle` et `vers_ville` omises tant que
   `transport_garde` et `ville_marche` n'existent pas (écriteau sur la route de la ville) ; la manche à air est l'image animée
   `windsock_wave` ; les bords du quai, derrière les bras d'ancrage, le pylône, la grue et le sifflet, sont fermés (un décor de 6 m
@@ -2042,21 +2043,21 @@ transport_garde : 20 × 11 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-
           ===EE======DDDD=====CCCCCCCC====
           ===========DDDD=====CCCCCCCC====
           ================================
-          ================================
+          ================@===============
           =====FFFF=======================
-          =====FFFF=======@===============
+          =====FFFF=======================
           ================================
           HHHHHHHHHHHHHH====HHHHHHHHHHHHHH
+                          *
       
       
-      ========================================
-      ========================================
-      ========================================
+      
+      
       ========================================
       ========================================
       ========================================
    10 ========================================
-      ====================v===================
+      ========================================
 ```
 Légende des lettres : `A` gangway ; `B` garde_transport_rotor ; `C` deck_bridge ; `D` deck_crates_lashed ; `E` deck_vent ; `F` deck_hatch.
 <!-- /ascii:transport_garde -->
@@ -2067,6 +2068,12 @@ Légende des lettres : `A` gangway ; `B` garde_transport_rotor ; `C` deck_bridge
   manche à air `deck_vent` ; écoutille `deck_hatch` ; rotors en bout de bras. Pont étroit :
   passages de 1,2 m (instruction `passage 1.2`). **À l'acte 1, on n'y monte pas** (V1 : seuls les
   guerriers entrent là où se tiennent les guerriers) ; la carte sert aux actes suivants.
+- **Écarts de la carte construite (lot E7, `tools/exterior_recipes/transport_garde.py`)** : le vide entre le pont et le
+  quai fait 2,5 m (z 6 → 8,5) au lieu de 1 m (la côte du sol, lissée, refermait une bande de 1 m : le pont semblait
+  posé sur le quai) ; la passerelle de planches le franchit (2 × 2,5 m) ; la sortie « Descendre à quai » est au haut de
+  la passerelle, sur le pont (x 9 → 11, z 5,6 → 6,4), et l'on arrive (`Spawn`, `from_port`) à 2,6 m d'elle, au milieu
+  du pont (10 ; 3,4) ; le pont est le décalque du navire (`ships/garde_transport_deck`) sur la tôle du plan, sa coque
+  sous lui (`ships/garde_transport_hull`, le bas du flanc) ; la caméra ne bouge presque pas en x, bornes `Rect2(9.5, 2, 1, 5)`.
 
 <!-- ascii:barocupot -->
 ```text
@@ -2075,21 +2082,21 @@ barocupot : 14 × 8 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; 
     0 
       
         +--o-------o--+---------+
-        |....BBBB..CCC|..DDsas..|
-    2   |.BB.AAAA.....|..DD.....|
+        |....BBBB..CCC|..DD..EEE|
+    2   |.BB.AAAA.....|..DDsas..|
         |.BB.AAAA.....|...*.....|
         |....AAAA.....|.........|
         |conseil......|.........|
     4   |.............|.........|
         |.............|.........|
         +------=------+----=----+
-        |coursive...............|
+        |coursive..FFFF.......GG|
     6   |......@................|
         |.......................|
         +-----------------------+
       
 ```
-Légende des lettres : `A` war_table ; `B` war_chair ; `C` map_cabinet ; `D` ship_ladder.
+Légende des lettres : `A` war_table ; `B` war_chair ; `C` map_cabinet ; `D` ship_ladder ; `E` ship_locker ; `F` ship_wall_bench ; `G` ship_water_can.
 <!-- /ascii:barocupot -->
 
 - **La salle du conseil de guerre** (6,75 × 3,75 m utiles) : la table aux cartes `war_table`, trois
@@ -2111,25 +2118,25 @@ region port
 passage 1.2
 echelle 0.5 0.5
 sol metal 2 1 18 6
-sol metal 0 7 20 11
+sol metal 0 8.5 20 11
 vide 0 0 20 1
-vide 0 6 9 7
-vide 11 6 20 7
+vide 0 6 9 8.5
+vide 11 6 20 8.5
 vide 0 1 2 6
 vide 18 1 20 6
 bord rambarde 2 1 18 1.4 1.1
 bord rambarde 2 5.6 9 6 1.1 pp
 bord rambarde 11 5.6 18 6 1.1 pp
-decor gangway 10 6.5 2 1 1.1 libre
+decor gangway 10 7.25 2 2.5 1.1 libre
 decor deck_bridge 14 2.2 4 1.4 3
 decor deck_crates_lashed 8.5 2.2 1.6 1.2 1.2
 decor deck_vent 4 2 0.6 0.6 1.4
 decor deck_hatch 5.5 4.4 1.2 0.6 0.4
 decor garde_transport_rotor 1.5 3.5 1 1 2 libre
 decor garde_transport_rotor 18.5 3.5 1 1 2 libre
-sortie vers_port 9 10.4 11 11 port from_transport_garde "Descendre à quai"
-marqueur Spawn 10 4.4 N
-marqueur from_port 10 4.4 N
+sortie vers_port 9 5.6 11 6.4 port from_transport_garde "Descendre à quai"
+marqueur Spawn 10 3.4 N
+marqueur from_port 10 3.4 N
 point trappe 5.5 3.6
 point proue 16.5 4.4
 ```
@@ -2148,7 +2155,7 @@ fenetre conseil N 2.5 window_porthole 0.6
 fenetre conseil N 6.5 window_porthole 0.6
 mural wallitem_garde_emblem conseil N 4.5 1.5 0.8
 mural wallitem_speaking_tube conseil O 3.0 1.4 0.3
-mural wallitem_ship_pipes sas N 12.0 1.6 1.6
+mural wallitem_ship_pipes sas N 11.8 1.6 1.6
 meuble war_table 4.5 2.7 2 1 0.8
 objet tea_set_tiny 4.5 2.7
 meuble war_chair 3.9 1.65 0.6 0.5 1.1
@@ -2156,6 +2163,9 @@ meuble war_chair 5.1 1.65 0.6 0.5 1.1
 meuble war_chair 2.6 2.7 0.6 0.5 1.1
 meuble map_cabinet 7.2 1.45 1.2 0.5 1.1
 meuble ship_ladder 10.0 1.65 1.0 1.0 3.0
+meuble ship_locker 12.3 1.5 0.8 0.5 1.9
+meuble ship_wall_bench 7.5 5.4 1.6 0.45 0.6
+meuble ship_water_can 12.4 5.45 0.5 0.4 0.6
 sortie echelle 9.5 2.1 10.5 2.6 entrepot from_barocupot "Remonter sur le pont"
 marqueur Spawn 4.5 6.0 N
 point conseil_chtholly 2.6 3.9

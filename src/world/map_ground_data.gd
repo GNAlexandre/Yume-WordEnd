@@ -74,6 +74,7 @@ const MAP_KEYS: Array[String] = [
 	"skirt",
 	"barrier",
 	"spawn",
+	"barrier_gaps",
 ]
 const MATERIAL_KEYS: Array[String] = [
 	"label", "layer", "color", "tint", "variant", "edge", "path", "walkable", "ripple", "border"
@@ -89,6 +90,9 @@ var depth: int = 0
 var materials_scale: int = 1
 var skirt: float = DEFAULT_SKIRT
 var barrier: bool = true
+## (E7) Ouvertures de la barrière de la côte (x, z, largeur, profondeur en m) : le mur invisible du
+## bord du vide n'y est pas posé (la passerelle d'un navire, que la scène ferme elle-même).
+var barrier_gaps: Array[Rect2] = []
 ## Bord de la carte (« north », « east », « south », « west ») → « void » ou « land ».
 var edges: Dictionary = {"north": "land", "east": "land", "south": "land", "west": "land"}
 ## Case de départ des vérifications d'accès ((-1, -1) : aucune).
@@ -235,6 +239,12 @@ func _parse_spec(spec: Dictionary) -> void:
 		problems.append("map.json : height_step_value ≥ 1")
 	skirt = maxf(0.0, float(spec.get("skirt", DEFAULT_SKIRT)))
 	barrier = bool(spec.get("barrier", true))
+	barrier_gaps.clear()
+	for gap: Variant in spec.get("barrier_gaps", []):
+		if gap is Array and (gap as Array).size() == 4:
+			barrier_gaps.append(Rect2(float(gap[0]), float(gap[1]), float(gap[2]), float(gap[3])))
+		else:
+			problems.append("map.json : barrier_gaps [[x, z, largeur, profondeur], …]")
 	var sides: Variant = spec.get("edges", {})
 	if sides is Dictionary:
 		for side: String in (sides as Dictionary).keys():

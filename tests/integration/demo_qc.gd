@@ -214,6 +214,12 @@ func _wait_banner() -> void:
 
 func _stage(view: Dictionary) -> void:
 	var map := WorldManager.current_map_node()
+	# (E7) Les navires de la vue (« ships » : id → absent, docked, open_hatch, deploy_gangway) ;
+	# hors de ces vues, le poste d'amarrage est vide (CARTE.md 6.2).
+	var ships: Dictionary = view.get("ships", {})
+	for berth: Node in get_tree().get_nodes_in_group(ShipBerth.GROUP):
+		var ship_id := (berth as ShipBerth).ship_id
+		ShipControl.pose(ship_id, StringName(str(ships.get(String(ship_id), "absent"))))
 	if view.get("overview", false):
 		_stage_overview(map)
 		return

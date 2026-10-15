@@ -190,9 +190,30 @@ func _step(step: Dictionary) -> void:
 			GameState.write_calendar(GameState.day, StringName(str(step.get("line", ""))))
 		"show":
 			_show(str(step["node"]), bool(step["visible"]))
+		"ship":
+			await _ship(step)
 
 
 # --- Étapes -------------------------------------------------------------------------------------
+
+
+## (E7) Un navire : l'action de ShipControl, attendue (sauf « wait » : false) ; séquence passée :
+## son état final, d'un coup.
+func _ship(step: Dictionary) -> void:
+	var ship_id := StringName(str(step["ship"]))
+	var action := StringName(str(step["action"]))
+	if not fast:
+		await ShipControl.play(ship_id, action, false)
+		while (
+			bool(step.get("wait", true))
+			and ShipControl.is_playing(ship_id, action)
+			and not fast
+			and not _stopped
+			and is_inside_tree()
+		):
+			await get_tree().physics_frame
+	if fast:
+		ShipControl.finish(ship_id, action)
 
 
 ## Montre ou cache un nœud de la carte courante (le cristal qui sonne : Geometry/Nygglatho/

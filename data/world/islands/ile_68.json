@@ -14,6 +14,8 @@
     "colline",
     "sentier",
     "port",
+    "transport_garde",
+    "barocupot",
     "foret_profonde",
     "ville_haute",
     "ville_marche",
@@ -54,7 +56,7 @@
     },
     "port": {
       "name": "Le port",
-      "maps": ["port"],
+      "maps": ["port", "transport_garde"],
       "links": {"ville": 2000},
       "start_known": true
     },

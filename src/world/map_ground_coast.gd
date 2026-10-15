@@ -229,6 +229,8 @@ static func _barriers(builder: MapGroundBuilder, data: MapGroundData, levels: Ve
 	for n in range(0, rim.size(), 2):
 		var p := rim[n]
 		var q := rim[n + 1]
+		if _in_gap(data, (Vector2(p.x, p.z) + Vector2(q.x, q.z)) / 2.0):
+			continue
 		_wall(
 			builder, Vector2(p.x, p.z), Vector2(q.x, q.z), p.y - BARRIER_BELOW, p.y + BARRIER_ABOVE
 		)
@@ -242,6 +244,14 @@ static func _barriers(builder: MapGroundBuilder, data: MapGroundData, levels: Ve
 	for side in 4:
 		if data.edges[MapGroundData.SIDES[side]] == "land":
 			_wall(builder, corners[side], corners[(side + 1) % 4], bottom, top)
+
+
+## (E7) Vrai si le point (x, z) est dans une ouverture de la barrière (MapGroundData.barrier_gaps).
+static func _in_gap(data: MapGroundData, at: Vector2) -> bool:
+	for gap: Rect2 in data.barrier_gaps:
+		if gap.has_point(at):
+			return true
+	return false
 
 
 static func _wall(

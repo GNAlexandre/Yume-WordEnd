@@ -909,3 +909,30 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   z 20 → 34) ; la recette la limite au niveau 0 (`where level 0`).
 - **Un joueur de la carte du port peut lire le panneau de plus près** : si la scène 1.1 veut un plan fixe du panneau, la caméra du
   récit (E6) le cadre depuis `panneau_sud` ; le panneau (premier plan) s'efface autour d'un joueur placé au nord.
+## E7 (les navires en volume)
+
+- **Fait : ce que CP laissait à E7** (section CP ci-dessus) : le panneau `Geometry/Ship/TransportGarde` et la passerelle
+  `Geometry/Quay/Passerelle` sont remplacés par le poste d'amarrage `Berth` (le navire en volume `Berth/TransportGarde`, les bras
+  `Berth/Arms/BrasAncrage1..3`, mêmes x, la porte du vide `Berth/Gate`) par la recette ; la sortie `passerelle` est revenue
+  (fermée tant que le récit ne permet pas d'embarquer) ; le bord du vide s'ouvre devant la passerelle posée. PLAN.md, « (E7) Les
+  navires ».
+- **Pour S2 (scène 7.4)** : `ShipControl` ou l'étape `ship` (descend, open_hatch, deploy_gangway, depart…) ; Limeskin paraît au
+  marqueur `port:navire_trappe` (le seuil de la trappe, en haut de la passerelle posée) et descend à `navire_quai` ; Chtholly
+  descend la passerelle à pied depuis `navire_trappe` (le contrôle rendu : la porte du vide est ouverte tant que la passerelle est
+  posée). Le navire est absent hors des scènes : la scène le fait descendre (ou `dock` si elle commence navire posé) et le fait
+  repartir (`depart`, `"wait": false` pour enchaîner le retour sous la pluie). Le « lourd bruit de métal » et la chaudière qui se
+  tait : `ShipBerth.ship_event` (`clamp_1..3`, `rotors_stopped`), quand le jeu aura du son.
+- **Pour S2 / E9 (scène 8.6)** : `await ShipControl.pass_shadow(&"barocupot")` pose l'ombre devant la caméra, dans la carte chargée ;
+  si la chute dans les nuages est un écran blanc de l'interface (E9), l'ombre (3D) passe dessous : la faire passer avant le blanc
+  total, ou baisser l'opacité du blanc le temps de l'ombre.
+- **Pour le moteur du sol (E2)** : `barrier_gaps` (plan.json → map.json, `MapGroundData.barrier_gaps`, `MapGroundCoast._barriers`)
+  ouvre la barrière invisible de la côte sur un rectangle ; seul le port s'en sert (la passerelle du transport). PLAN.md, section 4
+  « Format du sol des cartes extérieures », peut le citer à la prochaine PR « contrats ».
+- **Cahier des images (n° 6, C.1 et D.1)** : le flanc livré `ships/garde_transport_side` devra garder ses deux moyeux là où les
+  rotors se posent (le remplaçant : (526 ; 521) et (1074 ; 521) px depuis le coin haut gauche ; sinon déplacer `Rotors/*` dans
+  `src/world/props/ships/garde_transport.tscn`) et laisser la place de la trappe au droit de la passerelle (2,5 m à l'est du milieu,
+  son seuil sur la ligne du pont, 2,5 m au-dessus de la quille) ; `anim/mooring_arm_clamp` doit commencer par `mooring_arm_open` au
+  pixel près (le bras du quai, ouvert, en est l'image 0 : test_port.gd le vérifie) ; la trappe (`anim/garde_transport_hatch`) est
+  non bouclée : `tools/hd2d_assets.py check` mesure aussi le saut de la dernière image à la première ; la remplaçante passe.
+- **Vue du voyage (X1)** : `src/world/travel_view.tscn` montre toujours le passeur ; quand un voyage partira du transport ou du
+  Barocupot, `data/ships/<id>.json` pourra porter l'image du navire en vol.

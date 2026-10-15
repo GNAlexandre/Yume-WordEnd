@@ -1,0 +1,155 @@
+{
+ "_comment": "Sol du pont du transport de la Garde (lot E7), d'après docs/lore/CARTE.md, section 6.3 : le pont de tôle (de x 2 à 18, z 1 à 6) au-dessus du vide, la passerelle, une bande du quai du port au sud. Lu par tools/map_build.py gen transport_garde ; le jeu ne lit pas ce fichier.",
+ "size": [
+  20,
+  11
+ ],
+ "seed": 68,
+ "materials_scale": 2,
+ "edges": {
+  "north": "void",
+  "east": "void",
+  "south": "land",
+  "west": "void"
+ },
+ "skirt": 16,
+ "spawn": [
+  10,
+  3
+ ],
+ "base": {
+  "level": 0,
+  "material": "tole"
+ },
+ "materials": {
+  "herbe_drue": {
+   "label": "Herbe drue et molle (grass_b)",
+   "layer": "grass_b",
+   "color": "#4f9a46",
+   "variant": false
+  },
+  "chemin": {
+   "label": "Chemin de terre (path_dirt_b)",
+   "layer": "path_dirt_b",
+   "color": "#d0a060",
+   "variant": false,
+   "path": true
+  },
+  "eau_basse": {
+   "label": "Eau basse du marais : on y marche (VEX)",
+   "layer": "water",
+   "color": "#3a70b0",
+   "walkable": true,
+   "ripple": true,
+   "tint": [
+    0.78,
+    0.86,
+    0.8
+   ]
+  }
+ },
+ "steps": [
+  {
+   "op": "void",
+   "shape": {
+    "rect": [
+     -3,
+     -3,
+     26,
+     4
+    ]
+   }
+  },
+  {
+   "op": "void",
+   "shape": {
+    "rect": [
+     -3,
+     -3,
+     26.0,
+     4.0
+    ]
+   }
+  },
+  {
+   "op": "void",
+   "shape": {
+    "rect": [
+     -3,
+     6.0,
+     12.0,
+     2.5
+    ]
+   }
+  },
+  {
+   "op": "void",
+   "shape": {
+    "rect": [
+     11.0,
+     6.0,
+     12.0,
+     2.5
+    ]
+   }
+  },
+  {
+   "op": "void",
+   "shape": {
+    "rect": [
+     -3,
+     1.0,
+     5.0,
+     5.0
+    ]
+   }
+  },
+  {
+   "op": "void",
+   "shape": {
+    "rect": [
+     18.0,
+     1.0,
+     5.0,
+     5.0
+    ]
+   }
+  },
+  {
+   "op": "face",
+   "face": "earth",
+   "shape": {
+    "rect": [
+     0,
+     0,
+     20,
+     11
+    ]
+   }
+  },
+  {
+   "op": "material",
+   "material": "tole",
+   "shape": {
+    "rect": [
+     2.0,
+     1.0,
+     16.0,
+     5.0
+    ]
+   }
+  },
+  {
+   "op": "material",
+   "material": "tole",
+   "shape": {
+    "rect": [
+     0.0,
+     8.5,
+     20.0,
+     2.5
+    ]
+   }
+  }
+ ]
+}

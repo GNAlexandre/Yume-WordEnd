@@ -8,9 +8,9 @@ charrettes de sacs qui filent sur l'aire-port ; une colline toujours ventée jus
 
 Composition vue de la caméra (elle regarde le nord ; CARTE.md 0.3) :
 - au nord, le vide : la mer de nuages loin en contrebas, des rochers qui flottent, des îles et des dirigeables de
-  passage ; le quai de tôle le borde d'un garde-corps, sauf au poste d'amarrage, où le transport de la Garde s'amarre de
-  flanc (un grand panneau de coque, `ships/garde_transport_side` : remplaçant, le lot E7 le remplace) entre ses trois
-  bras d'ancrage, la passerelle au droit du point `navire_quai` ;
+  passage ; le quai de tôle le borde d'un garde-corps, sauf au poste d'amarrage (E7 : le nœud `Berth`, extra_nodes), où
+  le transport de la Garde en volume s'amarre de flanc entre ses trois bras d'ancrage quand le récit le fait descendre
+  (vide hors des scènes), sa passerelle posée au droit du point `navire_quai` ;
 - sur le quai, au nord de la rue : le bureau du port, la cabane du gardien, le hangar (rien de haut au sud d'où l'on
   marche) ; caisses, cordages, filets, tonneaux de mazout, cristaux, sifflet à vapeur, cabestan, lanternes de quai ;
 - la rue du port (pavés), le panneau aux flèches rouges, l'aire-port (gravier) et ses charrettes de sacs, ses palettes,
@@ -25,7 +25,7 @@ la nuit par leur `glow`), la lumière est celle d'Atmosphere (E9).
 import math
 
 import exterior_ground
-from exterior_pose import Rect, along, poisson
+from exterior_pose import Rect, along, poisson, prop
 
 SETTINGS = {
     "groups": ["Ship", "Quay", "Houses", "Rail", "Street", "Yard", "Hill", "Edge", "Hedge", "Woods", "Backdrop", "Sky"],
@@ -82,11 +82,16 @@ DEVIATIONS = [
     "faces), 0 → +1 en z 27 → 24 (x 59 → 63), +1 → +2 en z 25 → 22 (x 64 → 68), +2 → +3 en z 19 → 16 (x 65 → 69), la "
     "falaise du sud n'occupe plus que x 63 → 70 et la montée `montee_colline` passe par elles, tout se marche",
     "point `navire_quai` (32,5 ; 7,6) ajouté au plan : le pied de la passerelle, où la scène fait descendre Willem du "
-    "transport de la Garde ; le panneau de coque (`ships/garde_transport_side`, remplaçant dérivé du flanc du "
-    "Barocupot) est à poser par E7 (docs/CONTRACT_REQUESTS.md, CP)",
+    "transport de la Garde",
+    "(E7) le transport de la Garde, sa passerelle et les trois bras d'ancrage sont dans le poste d'amarrage `Berth` "
+    "(ShipBerth ; navire en volume `ships/garde_transport`, bras `ships/mooring_arm_clamp`), hors de Geometry : vide hors "
+    "des scènes ; le bord du vide (`vide 0 0 70 5` et la barrière de la côte, `barrier_gaps`) s'ouvre de x 31,4 à 33,6 "
+    "devant la passerelle, que la porte du poste ferme tant qu'elle n'est pas posée ; marqueurs `navire_trappe` et "
+    "`navire_passerelle` sur la passerelle posée, pour le récit",
     "les sorties `passerelle` (→ transport_garde) et `vers_ville` (→ ville_marche) sont posées dès que leur carte existe ; "
-    "en attendant, la passerelle n'a pas de sortie (à l'acte 1, jamais : CARTE.md 6.2) et la route de la ville est fermée "
-    "d'un écriteau « Plus loin, bientôt »",
+    "la passerelle reste fermée (ni invite ni signe) tant que le navire n'est pas à quai, sa passerelle posée et "
+    "l'embarquement permis par le récit (à l'acte 1, jamais : CARTE.md 6.2) ; la route de la ville est fermée d'un "
+    "écriteau « Plus loin, bientôt » tant que sa carte n'existe pas",
     "les lumières du plan (`lampe_quai_1`, `lampe_quai_2`, `bureau`, `projecteur_navire`) ne sont pas écrites : aucune "
     "lumière dans les cartes (mission CP), Atmosphere éclaire ; les lanternes de quai sont l'image `dock_lamp` (elle brille "
     "la nuit par son `glow`), le projecteur du navire est celui de la scène 7.4",
@@ -105,10 +110,15 @@ ROCKS = ["rock_small_a", "rock_small_b", "rock_small_c", "rock_small_d"]
 # Scène de chaque bâtiment du plan quand elle n'a pas le nom de son image.
 BUILDING_SCENES = {}
 # Scène posée à la place de l'image du plan (tools/exterior_maps.py, plan_gaps) : la manche à air animée.
-SCENE_ALIASES = {"wind_sock": "windsock_wave", "gangway": "gangway_quay"}
-# Hauteur du bas du panneau de coque : le pont à 1,2 m au-dessus du quai (la passerelle monte de 1,1 m), la quille sous le
-# niveau du quai (CARTE.md 6.2).
-SHIP_Y = -1.6
+SCENE_ALIASES = {"wind_sock": "windsock_wave", "gangway": "ships/garde_transport",
+                 "garde_transport_side": "ships/garde_transport", "mooring_arm_open": "ships/mooring_arm_clamp"}
+# (E7) Le transport de la Garde en volume (src/world/props/ships/garde_transport.tscn, Ship) dans son poste d'amarrage
+# (nœud Berth, ShipBerth) : la quille au milieu du flanc en (30 ; 3), 1,5 m sous le quai, le pont (2,5 m au-dessus de la
+# quille) à 1 m au-dessus du quai ; la passerelle part du seuil de la trappe (x 32,5) et se pose sur le quai en z 6,6.
+SHIP_AT = (30.0, -1.5, 3.0)
+# L'ouverture du bord du vide devant la passerelle (x 31,4 → 33,6) : la porte du poste (Gate) la ferme tant que la
+# passerelle n'est pas posée.
+GATE = (31.4, 33.6)
 
 
 def pascal(text):
@@ -126,6 +136,9 @@ def ground_plan(m):
                 "rampes, le vide de l'île au nord (la mer de nuages). Lu par tools/map_build.py gen port ; le jeu ne "
                 "lit pas ce fichier.")
     plan["edges"]["north"] = "void"
+    # (E7) Le mur invisible de la côte s'ouvre devant la passerelle (GATE) : la porte du poste d'amarrage le referme tant
+    # que la passerelle n'est pas posée.
+    plan["barrier_gaps"] = [[GATE[0], 3.0, GATE[1] - GATE[0], 3.0]]
     steps = plan["steps"]
     # Le quai est de tôle aux bords francs (le plan : sol metal 0 5 58 14) ; là où le bruit des autres matières en laisse un
     # trou, c'est du pavé, pas de l'herbe.
@@ -164,6 +177,14 @@ def ground_plan(m):
 
 
 def prepare(p):
+    # (E7) Le bord du vide (le plan : vide 0 0 70 5) s'ouvre devant la passerelle (GATE) : le poste d'amarrage y pose sa
+    # porte, ouverte quand la passerelle est posée sur le quai.
+    for k, e in enumerate(p.edges):
+        if (e.x0, e.z0, e.x1, e.z1) == (0, 0, 70, 5):
+            p.edges[k] = Rect(0.0, 0.0, GATE[0], 5.0)
+            p.edges.append(Rect(GATE[1], 0.0, 70.0, 5.0))
+            break
+    p.arms = []
     # Le poste d'amarrage n'a pas de garde-fou (x 23 → 37) : la bande du bord (z 5 → 5,9), derrière les bras d'ancrage et les
     # bittes, est fermée par des chaînes que la scène ne pose pas (rien n'y marche : un bras de 4 m cacherait le joueur, et
     # le bord du vide n'est pas un lieu de passage) ; le pied du sifflet de même (z 5,4 → 6,3).
@@ -197,19 +218,22 @@ def pose(p):
         cx, cz = (b.rect.x0 + b.rect.x1) / 2.0, (b.rect.z0 + b.rect.z1) / 2.0
         place("Houses", BUILDING_SCENES.get(b.extra["img"], b.extra["img"]), cx, cz, name=pascal(b.name), check=False)
 
-    arms = 0
     lamps = 0
     for d in M.decors:
         x, z = (d.rect.x0 + d.rect.x1) / 2.0, (d.rect.z0 + d.rect.z1) / 2.0
         n = d.name
         if n == "garde_transport_side":
-            place("Ship", n, x, z, y=SHIP_Y, name="TransportGarde", check=False)
-        elif n == "mooring_arm_open":
-            arms += 1
-            place("Quay", n, x, z, name="BrasAncrage%d" % arms)
+            # (E7) Le navire et sa passerelle sont dans le poste d'amarrage (extra_nodes).
+            continue
         elif n == "gangway":
-            # Du quai (z 6,9) à la coque (z 3,3) : le dessus du plancher à 8 cm du sol.
-            place("Quay", "gangway_quay", x, 5.1, y=-0.17, name="Passerelle", check=False)
+            # La passerelle posée (du seuil de la trappe, z 3,15, au quai, z 6,6) : rien ne se pose à son pied.
+            hx, hz = prop("gangway_quay").half
+            p.blockers.append(Rect(x - hx, 5.1 - hz, x + hx, 5.1 + hz))
+        elif n == "mooring_arm_open":
+            # (E7) Les bras d'ancrage aussi : leur bande se referme sur le navire (extra_nodes).
+            p.arms.append((x, z))
+            hx, hz = prop(n).half
+            p.blockers.append(Rect(x - hx, z - hz, x + hx, z + hz))
         elif n == "dock_lamp":
             lamps += 1
             place("Quay", n, x, z, name="LanterneQuai%d" % lamps)
@@ -410,3 +434,35 @@ def ambient(p):
         ("LeavesGold", "falling_leaf_gold", 8, 10, 0, 6, (28, 9, 18), 0.0, (0, 0), 1.6, 0.8, 4, (30, 0, 22)),
         ("LeavesRust", "falling_leaf_rust", 8, 10, 0, 6, (28, 9, 18), 0.0, (0, 0), 1.8, 0.8, 5, (30, 0, 22)),
     ]
+
+
+def extra_nodes(p, w):
+    """(E7) Le poste d'amarrage du transport de la Garde (nœud Berth, ShipBerth, après les sorties : il règle la sortie
+    « Monter à bord ») : le navire en volume (vide hors des scènes : ShipControl le fait descendre), les trois bras
+    d'ancrage (leur bande se referme de la poupe à la proue), la porte du vide devant la passerelle, et deux marqueurs
+    pour le récit sur la passerelle posée (navire_trappe, au seuil de la trappe ; navire_passerelle, à mi-pente)."""
+    from exterior_maps import f
+    script = w.ext_id("Script", "res://src/world/ships/ship_berth.gd")
+    ship = w.ext_id("PackedScene", "res://src/world/props/ships/garde_transport.tscn")
+    arm = w.ext_id("PackedScene", "res://src/world/props/ships/mooring_arm_clamp.tscn")
+    gate = w.box_shape("berth_gate", (GATE[1] - GATE[0], 4.0, 1.4))
+    exit_path = "" if "passerelle" in p.missing_exits else "../Exits/passerelle"
+    sx, sy, sz = SHIP_AT
+    nodes = ['[node name="Berth" type="Node3D" parent="."]\nscript = ExtResource("%s")\nship_id = &"transport_garde"\n'
+             'exit_path = NodePath("%s")\n' % (script, exit_path),
+             '[node name="TransportGarde" parent="Berth" instance=ExtResource("%s")]\n'
+             'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, %s, %s)\n' % (ship, f(sx), f(sy), f(sz)),
+             '[node name="Arms" type="Node3D" parent="Berth"]\n']
+    for k, (x, z) in enumerate(p.arms):
+        nodes.append('[node name="BrasAncrage%d" parent="Berth/Arms" instance=ExtResource("%s")]\n'
+                     'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, %s, %s)\n'
+                     % (k + 1, arm, f(x), f(p.height(x, z)), f(z)))
+    nodes += ['[node name="Gate" type="StaticBody3D" parent="Berth"]\ncollision_mask = 0\n',
+              '[node name="Shape" type="CollisionShape3D" parent="Berth/Gate"]\n'
+              'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, 2, 4.3)\nshape = SubResource("%s")\n'
+              % (f((GATE[0] + GATE[1]) / 2.0), gate)]
+    # Seuil de la trappe (le pont à 1 m) et mi-pente de la passerelle posée, regard au sud (vers le quai).
+    for name, z, y in (("navire_trappe", 3.6, 1.05), ("navire_passerelle", 5.0, 0.6)):
+        nodes.append('[node name="%s" type="Marker3D" parent="Markers"]\n'
+                     'transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 32.5, %s, %s)\n' % (name, f(y + 0.2), f(z)))
+    return nodes
