@@ -1,0 +1,38 @@
+{
+  "_comment": "Objets à examiner du centre-ville (lot CV ; docs/lore/CARTE.md, section 9) : la ville haute (dehors), le snack-bar et les boutiques d'attente, lus par Examinable (src/world/examinable.gd) au format des textes de l'histoire (DialogueRunner.load_story_texts). Une clé par carte, puis une par objet (text_key = « carte/objet ») ; une ligne vide sépare deux pages ; {player} est remplacé par le prénom de la joueuse. La clé « ville » porte les textes des portes closes (StoryStage.apply_doors : « ville/projection_close »). Paraphrases d'après les dossiers du canon (docs/lore/canon/v1_vex.md, « Directeur en carton » ; v2_v3.md, « Temps écoulé depuis lors »), jamais de citation de l'œuvre ; ce qui est original le reste discrètement.",
+  "prompt": "Examiner",
+  "ville": {
+    "_comment": "Portes closes jusqu'à un jour (métadonnées open_from_day et closed_text_key d'une sortie).",
+    "projection_close": "Pas sans un adulte."
+  },
+  "ville_haute": {
+    "_comment": "La ville haute (CARTE.md 9.2) : dehors.",
+    "fontaine": "Une fontaine adossée au mur : un bec de cuivre verdi, une auge de pierre, une tasse de fer au bout d'une chaînette. L'eau en est si froide qu'on la boit en la tenant à deux mains.",
+    "enseigne_poele": "Une poêle à frire en fer forgé, pendue à une potence : l'enseigne du snack-bar. Elle ne grince jamais, parce que le patron l'huile chaque matin, comme le reste.",
+    "enseigne_tasse": "Une tasse de fer, découpée, qui semble fumer quand le soleil passe derrière. C'est l'enseigne du café où l'on ne sert pas de thé.",
+    "porte_accessoires": "La vitrine du magasin d'accessoires : des chapeaux sur des têtes de bois, des rubans, des broches. La porte est fermée, et le rideau tiré derrière la vitre.",
+    "porte_apothicaire": "Des bocaux de verre vert, bleu et ambré derrière la vitre, des étiquettes sans un mot. La porte est fermée : sur un carton, un sablier dessiné à la main.",
+    "trappe_cave": "Une trappe de cave, inclinée contre le mur, aux pentures de fer. Quelque chose y est entreposé au frais : on sent le cidre.",
+    "caisses_pommes": "Des caisses de pommes, empilées en pyramide. Les plus belles sont sur le dessus, comme partout.",
+    "banc_haut": "Un banc de pierre au bord de la terrasse. De là, on voit la rue descendre, terrasse après terrasse, jusqu'à la place du marché."
+  },
+  "ville_snack": {
+    "_comment": "Le snack-bar du jeune lycanthrope (CARTE.md 9.4 ; V1, « Directeur en carton »).",
+    "comptoir": "Une plaque de fonte chauffée par un réchaud à cristal, une poêle où le lard grésille, une bassine de friture, un panier de pommes de terre, un pot de soupe qui frémit. Le cuisinier a la tête d'un chien, et la poêle ne reste jamais plus d'une seconde sur le feu.",
+    "etagere": "Derrière le comptoir, des pots de grès, des bouteilles d'huile et des sacs de pommes de terre. Chacun a sa place, et le cuisinier la retrouve les yeux fermés.",
+    "table": "Une lourde table de bois, ronde de tant de repas. Un plateau y attend : des pommes de terre frites, des légumes, du lard épais, un petit pain, et de la soupe dans une tasse.",
+    "tabourets": "Trois tabourets hauts devant le comptoir. Celui du milieu est le plus usé : c'est là qu'on regarde la poêle sauter."
+  },
+  "ville_cafe": {
+    "_comment": "Boutique d'attente (le lot du café habituel la meublera).",
+    "ecriteau": "Un carton accroché à la porte : « Fermé pour inventaire. Revenez bientôt. »"
+  },
+  "ville_librairie": {
+    "_comment": "Boutique d'attente (le lot de la librairie la meublera).",
+    "ecriteau": "Un carton accroché à la porte : « Fermé pour inventaire. Revenez bientôt. »"
+  },
+  "ville_projection": {
+    "_comment": "Salle d'attente (le lot de la salle de projection la meublera).",
+    "ecriteau": "Un carton accroché à la porte : « Pas de séance aujourd'hui. Revenez bientôt. »"
+  }
+}

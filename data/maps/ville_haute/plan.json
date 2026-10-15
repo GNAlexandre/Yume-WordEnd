@@ -1,0 +1,306 @@
+{
+ "_comment": "Sol en relief de la ville haute (lot CV), d'après docs/lore/CARTE.md, section 9.2 : trois terrasses (+2, +1, 0), grand-rue de dalles et ruelles pavées, deux volées d'escalier, faces en muret. Lu par tools/map_build.py gen ville_haute ; le jeu ne lit pas ce fichier.",
+ "size": [
+  60,
+  60
+ ],
+ "seed": 68,
+ "materials_scale": 2,
+ "edges": {
+  "north": "land",
+  "east": "land",
+  "south": "land",
+  "west": "land"
+ },
+ "skirt": 16,
+ "spawn": [
+  4,
+  13
+ ],
+ "base": {
+  "level": 0,
+  "material": "paves_v"
+ },
+ "materials": {
+  "herbe_drue": {
+   "label": "Herbe drue et molle (grass_b)",
+   "layer": "grass_b",
+   "color": "#4f9a46",
+   "variant": false
+  },
+  "chemin": {
+   "label": "Chemin de terre (path_dirt_b)",
+   "layer": "path_dirt_b",
+   "color": "#d0a060",
+   "variant": false,
+   "path": true
+  },
+  "eau_basse": {
+   "label": "Eau basse du marais : on y marche (VEX)",
+   "layer": "water",
+   "color": "#3a70b0",
+   "walkable": true,
+   "ripple": true,
+   "tint": [
+    0.78,
+    0.86,
+    0.8
+   ]
+  },
+  "paves_v": {
+   "label": "Pavés de la ville (cobble)",
+   "layer": "cobble",
+   "color": "#7c7c86",
+   "variant": false
+  },
+  "paves_vb": {
+   "label": "Pavés des ruelles (cobble_b)",
+   "layer": "cobble_b",
+   "color": "#8a8070",
+   "variant": false
+  },
+  "dalles_v": {
+   "label": "Dalles de la grand-rue (flagstone)",
+   "layer": "flagstone",
+   "color": "#b0b0a8",
+   "variant": false
+  }
+ },
+ "steps": [
+  {
+   "op": "level",
+   "level": 4,
+   "shape": {
+    "rect": [
+     0.0,
+     0.0,
+     60.0,
+     16.0
+    ]
+   }
+  },
+  {
+   "op": "level",
+   "level": 2,
+   "shape": {
+    "rect": [
+     0.0,
+     16.0,
+     60.0,
+     18.0
+    ]
+   }
+  },
+  {
+   "op": "face",
+   "face": "earth",
+   "shape": {
+    "rect": [
+     0,
+     0,
+     60,
+     60
+    ]
+   }
+  },
+  {
+   "op": "face",
+   "face": "wall",
+   "shape": {
+    "rect": [
+     0,
+     0,
+     60,
+     60
+    ]
+   }
+  },
+  {
+   "op": "material",
+   "material": "paves_v",
+   "shape": {
+    "rect": [
+     0.0,
+     0.0,
+     60.0,
+     60.0
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.5,
+    "seed": 1
+   }
+  },
+  {
+   "op": "material",
+   "material": "dalles_v",
+   "shape": {
+    "rect": [
+     26.0,
+     10.0,
+     8.0,
+     50.0
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.5,
+    "seed": 2
+   }
+  },
+  {
+   "op": "material",
+   "material": "paves_vb",
+   "shape": {
+    "rect": [
+     4.0,
+     10.0,
+     52.0,
+     6.0
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.5,
+    "seed": 3
+   }
+  },
+  {
+   "op": "material",
+   "material": "paves_vb",
+   "shape": {
+    "rect": [
+     4.0,
+     30.0,
+     52.0,
+     4.0
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.5,
+    "seed": 4
+   }
+  },
+  {
+   "op": "material",
+   "material": "paves_vb",
+   "shape": {
+    "rect": [
+     4.0,
+     51.0,
+     52.0,
+     9.0
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.5,
+    "seed": 5
+   }
+  },
+  {
+   "op": "material",
+   "material": "potager",
+   "shape": {
+    "rect": [
+     4.0,
+     16.0,
+     22.0,
+     8.0
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.5,
+    "seed": 6
+   }
+  },
+  {
+   "op": "material",
+   "material": "potager",
+   "shape": {
+    "rect": [
+     34.0,
+     16.0,
+     22.0,
+     9.0
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.5,
+    "seed": 7
+   }
+  },
+  {
+   "op": "material",
+   "material": "potager",
+   "shape": {
+    "rect": [
+     4.0,
+     34.0,
+     22.0,
+     10.0
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.5,
+    "seed": 8
+   }
+  },
+  {
+   "op": "material",
+   "material": "potager",
+   "shape": {
+    "rect": [
+     34.0,
+     34.0,
+     22.0,
+     12.0
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.5,
+    "seed": 9
+   }
+  },
+  {
+   "op": "material",
+   "material": "herbe",
+   "shape": {
+    "rect": [
+     0,
+     4,
+     60,
+     6
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.0,
+    "seed": 7
+   }
+  },
+  {
+   "op": "material",
+   "material": "sous_bois",
+   "shape": {
+    "rect": [
+     0,
+     0,
+     60,
+     4.5
+    ],
+    "noise": 0.6,
+    "noise_scale": 2.0,
+    "seed": 8
+   }
+  },
+  {
+   "op": "stairs",
+   "dir": "north",
+   "rect": [
+    26,
+    15,
+    8,
+    3
+   ],
+   "material": "dalles_v"
+  },
+  {
+   "op": "stairs",
+   "dir": "north",
+   "rect": [
+    26,
+    33,
+    8,
+    3
+   ],
+   "material": "dalles_v"
+  }
+ ]
+}

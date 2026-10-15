@@ -150,6 +150,41 @@ PROPS.update({
 })
 
 
+# (CV) Le centre-ville (CARTE.md, section 9) : maisons et boutiques de pierre (cahier n° 5, 6.4 et 6.5 : type, mur /
+# faîte, profondeur), enseignes, bac, fontaine murale, marches, trappe, muret, garde-corps, lisières de toits, et la
+# variante de premier plan du réverbère (CARTE.md 0.3).
+PROPS.update({
+    "town_house_a": building("TownHouseA", "town_house_a", "wall_stone_town", "roof_slate_b", 5, 6, 6, 9, True),
+    "town_house_b": building("TownHouseB", "town_house_b", "wall_stone_town", "roof_tiles_b", 8, 6, 6, 8.5, False),
+    "town_house_c": building("TownHouseC", "town_house_c", "wall_stone_town", "roof_tiles", 4, 5, 4.5, 7.5, True),
+    "town_house_d": building("TownHouseD", "town_house_d", "wall_stone_b", "roof_slate", 6, 5, 4.5, 7, False),
+    "town_house_e": building("TownHouseE", "town_house_e", "wall_stone_town", "roof_slate_b", 6, 6, 7.5, 10, True),
+    "town_house_f": building("TownHouseF", "town_house_f", "wall_plaster_b", "roof_tiles_b", 6, 5, 3.5, 6, False),
+    "cafe_town": building("CafeTown", "cafe_town", "wall_stone_town", "roof_slate_b", 7, 6, 4, 6, False),
+    "shop_snack": building("ShopSnack", "shop_snack", "wall_stone_town", "roof_tiles", 5, 5, 3.5, 6, False),
+    "shop_accessories": building("ShopAccessories", "shop_accessories", "wall_plaster", "roof_tiles", 4, 5, 4, 6.5,
+                                 True),
+    "shop_apothecary": building("ShopApothecary", "shop_apothecary", "wall_stone_town", "roof_slate", 4, 5, 4, 6.5,
+                                True),
+    "hanging_sign_pan": panel("HangingSignPan", "props/hanging_sign_pan.png", "shadow_width = 0.0", "wall_detail"),
+    "hanging_sign_cup": panel("HangingSignCup", "props/hanging_sign_cup.png", "shadow_width = 0.0", "wall_detail"),
+    "town_planter_stone": panel("TownPlanterStone", "props/town_planter_stone.png", "", "object_small",
+                                [("BoxShape3D", ["size = Vector3(1.5, 0.7, 0.55)"], (0, 0.35, 0))]),
+    "town_wall_fountain": panel("TownWallFountain", "props/town_wall_fountain.png", "", "object_small",
+                                [("BoxShape3D", ["size = Vector3(1.1, 1.0, 0.5)"], (0, 0.5, 0))]),
+    "town_doorsteps": panel("TownDoorsteps", "props/town_doorsteps.png", "shadow_width = 0.0", "object_small"),
+    "town_cellar_hatch": panel("TownCellarHatch", "props/town_cellar_hatch.png", "shadow_width = 0.0",
+                               "object_small"),
+    "town_wall_low": panel("TownWallLow", "props/town_wall_low.png", "", "fence",
+                           [("BoxShape3D", ["size = Vector3(1.95, 0.8, 0.35)"], (0, 0.4, 0))]),
+    "town_railing": panel("TownRailing", "props/town_railing.png", "shadow_width = 0.4", "fence",
+                          [("BoxShape3D", ["size = Vector3(1.95, 1.0, 0.2)"], (0, 0.5, 0))]),
+    "town_roofs_a": panel("TownRoofsA", "props/town_roofs_a.png", "shadow_width = 0.0", "sky"),
+    "town_roofs_b": panel("TownRoofsB", "props/town_roofs_b.png", "shadow_width = 0.0", "sky"),
+    "street_lamp_double_fg": inherited("street_lamp_double", "StreetLampDouble", "foreground = true"),
+})
+
+
 def write_all(quiet=False):
     """Écrit les scènes de PROPS qui manquent ou ont changé ; rend les noms écrits."""
     written = []

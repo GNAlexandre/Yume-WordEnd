@@ -1,0 +1,15 @@
+{
+  "_comment": "Le café habituel : écrit par tools/interior_maps.py d'après docs/lore/CARTE.md (section 3, bloc plan « carte ville_cafe ») ; modifier le plan ou l'outil, puis relancer gen. Format : docs/INTERIEURS.md.",
+  "size": [11, 8],
+  "wall_height": 3.0,
+  "wall_thickness": 0.25,
+  "rooms": {
+    "salle": {"name": "Salle du café habituel", "rects": [[1.0, 1.0, 9.0, 6.0]], "floor": "floor_stone_town", "wall": "wall_plaster_ochre"}
+  },
+  "doors": [
+    {"id": "sortie", "room": "salle", "side": "S", "x": 5.5, "width": 1.4, "height": 2.2, "image": "door_room"}
+  ],
+  "windows": [],
+  "wall_items": [],
+  "lights": []
+}

@@ -1,0 +1,15 @@
+{
+  "_comment": "Le snack-bar : écrit par tools/interior_maps.py d'après docs/lore/CARTE.md (section 3, bloc plan « carte ville_snack ») ; modifier le plan ou l'outil, puis relancer gen. Format : docs/INTERIEURS.md.",
+  "size": [9, 7],
+  "wall_height": 3.0,
+  "wall_thickness": 0.25,
+  "rooms": {
+    "salle": {"name": "Salle du snack-bar", "rects": [[1.0, 1.0, 7.0, 5.0]], "floor": "floor_stone_town", "wall": "wall_stone_inside", "wallcut": "wallcut_stone"}
+  },
+  "doors": [
+    {"id": "sortie", "room": "salle", "side": "S", "x": 6.0, "width": 1.4, "height": 2.2, "image": "door_room"}
+  ],
+  "windows": [],
+  "wall_items": [],
+  "lights": []
+}

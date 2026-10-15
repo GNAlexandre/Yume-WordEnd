@@ -1,0 +1,74 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/interior_room.gd" id="2_room"]
+[ext_resource type="JSON" path="res://data/maps/ville_projection/interior.json" id="3_layout"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
+[ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.4, 2.4, 1)
+
+[node name="ville_projection" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "La salle de projection"
+region = &"ville"
+interior = true
+size = Vector2(12, 10)
+camera_bounds = Rect2(6, 5, 0, 0)
+light_preset = &"interieur"
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_mask = 0
+script = ExtResource("2_room")
+layout = ExtResource("3_layout")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("4_batcher")
+
+[node name="Salle" type="Node3D" parent="Geometry"]
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.2, 8.2)
+
+[node name="from_ville_haute" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.2, 8.2)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="vers_rue" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 9.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"ville_haute"
+target_marker = &"from_ville_projection"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_rue"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="Examine" type="Node3D" parent="."]
+
+[node name="ecriteau" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 7.8)
+script = ExtResource("6_examine")
+text_key = "ville_projection/ecriteau"
+size = Vector3(1.2, 2, 0.6)
+texts_path = "res://data/texts/ville.json"
+
+[node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="projection_allee" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 5)
+
+[node name="ecran" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 2.4)
+
+[node name="projection_entree" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 8.2)

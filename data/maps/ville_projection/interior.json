@@ -1,0 +1,15 @@
+{
+  "_comment": "La salle de projection : écrit par tools/interior_maps.py d'après docs/lore/CARTE.md (section 3, bloc plan « carte ville_projection ») ; modifier le plan ou l'outil, puis relancer gen. Format : docs/INTERIEURS.md.",
+  "size": [12, 10],
+  "wall_height": 3.0,
+  "wall_thickness": 0.25,
+  "rooms": {
+    "salle": {"name": "Salle de projection", "rects": [[1.0, 1.0, 10.0, 8.0]], "floor": "floor_planks_dark", "wall": "wall_panel_dark"}
+  },
+  "doors": [
+    {"id": "sortie", "room": "salle", "side": "S", "x": 6.0, "width": 1.4, "height": 2.2, "image": "door_room"}
+  ],
+  "windows": [],
+  "wall_items": [],
+  "lights": []
+}

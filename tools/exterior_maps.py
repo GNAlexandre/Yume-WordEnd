@@ -94,6 +94,16 @@ WAITING = {
 }
 WAITING_SIZE = (32, 24)
 
+# (CV) La ville haute est construite ; la place du marché (ville_marche) attend son lot : sol de pavés, retour vers la
+# ville haute par le haut de la carte.
+RECIPES.append("ville_haute")
+PLACES_LOT["ville_haute"] = "CV"
+WAITING["ville_marche"] = {
+    "ground": "paves", "path": "chemin", "back": "vers_haute",
+    "exit": (14, 0, 18, 0.6), "marker": (16, 2.5, "S"), "spawn": (16, 4.0, "S"),
+    "path_pts": [[16, 0], [16, 13]], "sign": (17.8, 13.6), "gap": (13, 19),
+}
+
 BASIS = {"N": "1, 0, 0, 0, 1, 0, 0, 0, 1", "S": "-1, 0, 0, 0, 1, 0, 0, 0, -1",
          "E": "0, 0, -1, 0, 1, 0, 1, 0, 0", "O": "0, 0, 1, 0, 1, 0, -1, 0, 0"}
 
@@ -126,7 +136,8 @@ def is_waiting(map_id):
 
 def waiting_ground(map_id, spec, m):
     w, d = WAITING_SIZE
-    layer = {"herbe": "grass", "prairie": "meadow_flowers", "sous_bois": "forest_floor"}[spec["ground"]]
+    layer = {"herbe": "grass", "prairie": "meadow_flowers", "sous_bois": "forest_floor",
+             "paves": "cobble"}[spec["ground"]]
     plan = {
         "_comment": "Carte d'attente (lot T1, provisoire jusqu'à la phase 3 : docs/DECISIONS.md) : sol plat, un "
                     "chemin vers l'entrepôt. Lu par tools/map_build.py gen %s." % map_id,

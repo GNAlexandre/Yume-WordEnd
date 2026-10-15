@@ -1,0 +1,130 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/interior_room.gd" id="2_room"]
+[ext_resource type="JSON" path="res://data/maps/ville_snack/interior.json" id="3_layout"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/snack_shelf.tscn" id="p_snack_shelf"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/snack_counter.tscn" id="p_snack_counter"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/snack_stools.tscn" id="p_snack_stools"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/cafe_table_heavy.tscn" id="p_cafe_table_heavy"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/snack_meal_tray.tscn" id="p_snack_meal_tray"]
+[ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.4, 2.4, 1)
+
+[node name="ville_snack" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "Le snack-bar"
+region = &"ville"
+interior = true
+size = Vector2(9, 7)
+camera_bounds = Rect2(4.5, 3.5, 0, 0)
+light_preset = &"interieur"
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_mask = 0
+script = ExtResource("2_room")
+layout = ExtResource("3_layout")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("4_batcher")
+
+[node name="Salle" type="Node3D" parent="Geometry"]
+
+[node name="snack_shelf_1" parent="Geometry/Salle" instance=ExtResource("p_snack_shelf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 1.4)
+
+[node name="snack_counter_1" parent="Geometry/Salle" instance=ExtResource("p_snack_counter")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 2.4)
+
+[node name="snack_stools_1" parent="Geometry/Salle" instance=ExtResource("p_snack_stools")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 3.3)
+
+[node name="cafe_table_heavy_1" parent="Geometry/Salle" instance=ExtResource("p_cafe_table_heavy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 4.6)
+
+[node name="snack_meal_tray_1" parent="Geometry/Salle" instance=ExtResource("p_snack_meal_tray")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.8, 5.12)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.2, 5)
+
+[node name="from_ville_haute" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.2, 5)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="vers_rue" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 6.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"ville_haute"
+target_marker = &"from_ville_snack"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_rue"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="Examine" type="Node3D" parent="."]
+
+[node name="comptoir" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 2.8)
+script = ExtResource("6_examine")
+text_key = "ville_snack/comptoir"
+size = Vector3(3, 2, 0.8)
+texts_path = "res://data/texts/ville.json"
+
+[node name="etagere" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 1.65)
+script = ExtResource("6_examine")
+text_key = "ville_snack/etagere"
+size = Vector3(1.6, 2, 0.8)
+texts_path = "res://data/texts/ville.json"
+
+[node name="table" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 5.1)
+script = ExtResource("6_examine")
+text_key = "ville_snack/table"
+size = Vector3(1.2, 2, 0.8)
+texts_path = "res://data/texts/ville.json"
+
+[node name="tabourets" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 3.55)
+script = ExtResource("6_examine")
+text_key = "ville_snack/tabourets"
+size = Vector3(1.6, 2, 0.8)
+texts_path = "res://data/texts/ville.json"
+
+[node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="snack_tabouret" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 4.3)
+
+[node name="snack_table" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4, 0, 4.6)
+
+[node name="snack_vendor" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4.5, 0, 1.85)
+
+[node name="snack_tabouret_ouest" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9, 0, 4.3)
+
+[node name="snack_tabouret_est" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1, 0, 4.3)
+
+[node name="snack_table_nord" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2, 0, 3.75)
+
+[node name="snack_table_nord_est" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 3, 0, 3.8)
+
+[node name="snack_entree" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 5.6)
