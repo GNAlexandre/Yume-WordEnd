@@ -30,6 +30,9 @@ const OUTFITS := {&"willem": &"maison", &"ithea": &"maison", &"nephren": &"maiso
 const KID_OUTFIT := &"vie"
 const RING_RADIUS := 5.0
 
+## Ligne d'emploi du temps des PNJ pris par un jeu (pour les y rendre).
+static var _lines: Dictionary = {}
+
 # --- Le ballon -----------------------------------------------------------------------------------
 
 
@@ -95,6 +98,10 @@ static func stop_ball_match(place: StringName = BALL_PLACE) -> void:
 	for actor: LifeActor in game.members.duplicate():
 		LifeDirector.leave_game(actor)
 		actor.state = LifeActor.State.ACTIVITY
+		# Celle qui avait un emploi du temps ici y retourne ; les autres, refresh() s'en charge.
+		if _lines.has(actor.id):
+			actor.place_now(_lines[actor.id])
+		_lines.erase(actor.id)
 	LifeDirector.refresh(true)
 
 
@@ -207,6 +214,11 @@ static func _take(
 		actor = LifeDirector.spawn_actor(npc_id, at)
 	if actor == null:
 		return null
+	# Une petite déjà prise par un autre jeu (le chat des hautes herbes) le quitte.
+	if actor.game != null:
+		LifeDirector.leave_game(actor)
+	if not _lines.has(npc_id) and actor.line.has("map"):
+		_lines[npc_id] = actor.line
 	var outfit: StringName = OUTFITS.get(npc_id, KID_OUTFIT)
 	if actor.data != null and actor.data.outfits.has(outfit):
 		actor.outfit = outfit

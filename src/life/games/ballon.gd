@@ -526,7 +526,8 @@ func _player_joined() -> void:
 	(teams[player_team] as Array).append(PLAYER_ID)
 	_refresh_player_slot()
 	_hud = SCORE_SCRIPT.new() as CanvasLayer
-	LifeDirector.add_child(_hud)
+	# Sous le ballon : il part avec la carte, le score aussi.
+	ball.add_child(_hud)
 	_refresh_hud()
 	_say_referee("player_in_%s" % player_team, "{player} joue avec nous !")
 

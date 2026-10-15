@@ -122,6 +122,10 @@ func _physics_process(delta: float) -> void:
 
 
 func _exit_tree() -> void:
+	# La carte est quittée en plein exercice : le bâton est rendu comme à la fin.
+	if is_running() and _restore_weapon and not _previous_weapon.is_empty():
+		if is_instance_valid(player):
+			player.set_weapon(_previous_weapon)
 	_disconnect_player()
 	_free_hud()
 
@@ -201,7 +205,7 @@ func start(restore_weapon: bool = true) -> void:
 	add_child(_glyph)
 	if show_hud:
 		_hud = SCORE_SCRIPT.new() as CanvasLayer
-		LifeDirector.add_child(_hud)
+		add_child(_hud)
 	_set_phase(&"intro")
 	willem.face(player.global_position - willem.position())
 	willem.say(line("start", "Allez, Chtholly. Prends ton bâton."))
