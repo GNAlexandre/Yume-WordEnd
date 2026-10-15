@@ -364,9 +364,9 @@ static func play_story_duel(params: Dictionary) -> bool:
 
 ## Lance l'entraînement spécial. options : start_stage (1 : la respiration ; 2 : les mouvements,
 ## après la réussite du jour 9 ; 3 : la Grue), pickup (ramasser l'épée tombée dans le marais,
-## vrai), place_player (poser le joueur face à Willem), seed, overrides (chemins de
-## data/games/seniorious.json), with_hud (vrai), restore_weapon (vrai). Renvoie l'exercice ; null
-## sans joueur ni clairière.
+## vrai), place_player (poser le joueur à l'ouest de Willem, face à lui), seed, overrides (chemins
+## de data/games/seniorious.json), with_hud (vrai), restore_weapon (vrai). Renvoie l'exercice ;
+## null sans joueur ni clairière.
 static func start_seniorious_training(options: Dictionary = {}) -> SenioriousTraining:
 	var places := LifeDirector.places()
 	var player := LifeDirector.player_node() as Player
@@ -390,7 +390,7 @@ static func start_seniorious_training(options: Dictionary = {}) -> SenioriousTra
 		willem.stop()
 		willem.set_position(middle)
 		var gap := GameRules.number(&"seniorious", "start_gap", 2.2)
-		_place_player(player, middle + Vector3(0.0, 0.0, gap), middle)
+		_place_player(player, middle + Vector3(-gap, 0.0, 0.0), middle)
 	var training := SenioriousTraining.new()
 	training.overrides = options.get("overrides", {})
 	training.show_hud = bool(options.get("with_hud", true))

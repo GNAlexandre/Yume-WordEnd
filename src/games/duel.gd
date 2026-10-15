@@ -49,6 +49,8 @@ const SIGNS_REASON := &"duel"
 ## L'aire du duel sur la carte (Life/Areas/duel, métadonnée « area » : Rect2 en x, z).
 const AREA_PATH := ^"Life/Areas/duel"
 const BLADE_HEIGHT := 1.0
+## La lumière du venenum, sur Percival et sur Seniorious.
+const GLOW_COLOR := Color(1.0, 0.95, 0.8)
 
 var player: Player = null
 var willem: LifeActor = null
@@ -97,7 +99,7 @@ var _was_held: bool = false
 var _holding: bool = false
 var _ui_taken: bool = false
 var _visual_rest: Vector3 = Vector3.ZERO
-var _glow: AnimatedSprite3D = null
+var _glow: MeshInstance3D = null
 
 
 ## Le jeu muet qui tient Willem : lui parler pendant le duel ne fait rien.
@@ -612,23 +614,59 @@ func _throw() -> void:
 	_shake(rule("phase_3/shake", 0.08))
 
 
+## Percival brille autant que Seniorious : un halo de lumière (un disque doux, additif, devant
+## tout) sur la lame de Willem, que la lueur du post-traitement fait déborder ; un éclat sur
+## Seniorious, de la même lumière.
 func _percival_glow() -> void:
 	_free_glow()
 	if not is_inside_tree():
 		return
-	_glow = CombatFx.make_sprite("glint", rule("phase_3/percival_size", 2.6))
+	var size := rule("phase_3/percival_size", 2.6)
+	_glow = make_glow(size, GLOW_COLOR)
 	_glow.name = "PercivalGlow"
-	_glow.no_depth_test = true
-	_glow.render_priority = 3
-	_glow.modulate = Color(1.0, 0.97, 0.86)
 	add_child(_glow)
-	_glow.global_position = willem.position() + Vector3.UP * (BLADE_HEIGHT + 0.25)
-	_glow.play(&"default")
+	_glow.global_position = willem.position() + Vector3.UP * (BLADE_HEIGHT + 0.2)
+	_glow.scale = Vector3.ONE * 0.4
+	var glow_time := span("phase_3/percival_time", 1.0)
+	var material := _glow.material_override as StandardMaterial3D
 	var tween := _glow.create_tween()
-	tween.tween_property(_glow, "modulate:a", 0.0, span("phase_3/percival_time", 0.7))
+	tween.tween_property(_glow, "scale", Vector3.ONE, glow_time * 0.15)
+	tween.tween_interval(glow_time * 0.3)
+	tween.tween_property(material, "albedo_color:a", 0.0, glow_time * 0.55)
 	tween.tween_callback(_free_glow)
-	# Seniorious, à la même lumière.
-	_burst(player.global_position + Vector3.UP * BLADE_HEIGHT, "glint", Color(1.0, 0.97, 0.86), 2.0)
+	_burst(player.global_position + Vector3.UP * BLADE_HEIGHT, "glint", GLOW_COLOR, 2.0)
+	_burst(_glow.global_position, "glint", GLOW_COLOR, 2.4)
+
+
+## Un halo de lumière : un carré de size m tourné vers la caméra, un disque doux additif.
+static func make_glow(size: float, color: Color) -> MeshInstance3D:
+	var gradient := Gradient.new()
+	gradient.set_color(0, Color(1.0, 1.0, 1.0, 1.0))
+	gradient.set_color(1, Color(1.0, 1.0, 1.0, 0.0))
+	gradient.add_point(0.25, Color(1.0, 1.0, 1.0, 0.85))
+	var texture := GradientTexture2D.new()
+	texture.gradient = gradient
+	texture.fill = GradientTexture2D.FILL_RADIAL
+	texture.fill_from = Vector2(0.5, 0.5)
+	texture.fill_to = Vector2(1.0, 0.5)
+	texture.width = 64
+	texture.height = 64
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	material.no_depth_test = true
+	material.albedo_texture = texture
+	material.albedo_color = color
+	material.render_priority = 3
+	var quad := QuadMesh.new()
+	quad.size = Vector2(size, size)
+	var glow := MeshInstance3D.new()
+	glow.mesh = quad
+	glow.material_override = material
+	glow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return glow
 
 
 func _free_glow() -> void:
@@ -847,7 +885,7 @@ func _set_pale(amount: float) -> void:
 		var at := player.global_position + Vector3.UP * 0.8
 		if size.y > 0.0 and not camera.is_position_behind(at):
 			center = camera.unproject_position(at) / size
-	vision.set_pale(amount, center, rule("phase_2/clear_radius", 0.16))
+	vision.set_pale(amount, center, rule("phase_2/clear_radius", 0.12))
 
 
 func _burst(at: Vector3, fx_name: String, color: Color, size: float = 1.0) -> void:

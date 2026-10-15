@@ -12,6 +12,8 @@ une longue épée de fées dessinée ici (plaques de métal gris acier assemblé
   première image de repos : 0 garde basse, 1 la lame croise, 2 le geste (la lame balaie vers
   l'extérieur, un trait clair), 3 retour au calme ;
 - `pare` (2 à 2, boucle) : garde haute, la lame en travers.
+Écrit aussi src/games/fx/seniorious.png : Seniorious seule (l'épée arrachée de l'entraînement du
+jour 11), une image d'effet comme celles de src/combat/fx/.
 Mêmes animations, cadences, « coup » dans les trois vues ; la hauteur debout (de l'ancre au haut de
 la 1re image de repos) reste celle de `willem_home` (168 px : 1,75 m à 96 px par mètre). Le résultat
 est déterministe ; les fichiers générés sont versionnés. À remplacer par la vraie planche (C.10).
@@ -116,6 +118,33 @@ def blade(layer, hilt, angle_deg, length, glint=False):
         draw.line([at(10, -7), at(tip + 6, -9)], fill=TRAIL, width=2)
 
 
+def seniorious_blade(path):
+    """(E8b) Seniorious seule, pointe à droite, 1,3 m (125 px à 96 px par mètre) : l'épée arrachée
+    par la troisième Grue, qui tourne en l'air et plonge dans le marais (src/games/
+    seniorious_training.gd). Une lame faite de plaques rapiécées, gris argent bleuté, ses fissures
+    d'un bleu clair (la lumière du venenum), garde sombre."""
+    image = Image.new("RGBA", (132, 24), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(image)
+    y = 12
+    # Poignée et pommeau.
+    draw.rectangle([3, y - 2, 18, y + 2], fill=OUTLINE)
+    draw.rectangle([4, y - 1, 17, y + 1], fill=(52, 46, 62, 255))
+    draw.ellipse([0, y - 3, 6, y + 3], fill=(88, 120, 170, 255), outline=OUTLINE)
+    # Garde.
+    draw.rectangle([18, y - 8, 22, y + 8], fill=OUTLINE)
+    draw.rectangle([19, y - 7, 21, y + 7], fill=(96, 104, 128, 255))
+    # Lame : plaques, fil clair, fissures lumineuses.
+    body = [(22, y - 4), (118, y - 4), (130, y), (118, y + 4), (22, y + 4)]
+    draw.polygon(body, fill=(170, 184, 206, 255), outline=OUTLINE)
+    draw.line([(24, y - 2), (118, y - 2)], fill=(228, 236, 248, 255), width=1)
+    draw.line([(24, y + 2), (118, y + 2)], fill=(118, 130, 156, 255), width=1)
+    for x in range(36, 116, 13):
+        draw.line([(x, y - 3), (x + 2, y + 3)], fill=OUTLINE, width=1)
+        draw.line([(x + 5, y - 1), (x + 8, y + 1)], fill=(120, 214, 255, 255), width=1)
+    image.save(path, optimize=True)
+    print("lame %s : %d x %d" % (os.path.relpath(path, ROOT), image.width, image.height))
+
+
 def armed_frame(body, anchor, pose, behind):
     """Une image : le corps élargi de PAD de chaque côté, l'épée devant ou derrière."""
     w, h = body.size
@@ -206,6 +235,9 @@ def make_all(out_dir=None):
         with open(os.path.join(out_dir, OUT_ID + view + ".json"), "w", encoding="utf-8") as handle:
             handle.write(json.dumps(meta, ensure_ascii=False, separators=(",", ":")) + "\n")
         print("planche %s : %d x %d" % (os.path.relpath(png, ROOT), sheet.width, sheet.height))
+    fx_dir = os.path.join(ROOT, "src", "games", "fx")
+    os.makedirs(fx_dir, exist_ok=True)
+    seniorious_blade(os.path.join(fx_dir, "seniorious.png"))
 
 
 if __name__ == "__main__":

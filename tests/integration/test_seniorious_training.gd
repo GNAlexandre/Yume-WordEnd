@@ -127,7 +127,7 @@ func _do_gesture(gesture: StringName) -> void:
 			_run(0.2)
 			_player.combat.charge_release()
 		&"cote":
-			_player.global_position += Vector3(1.0, 0.0, 0.0)
+			_player.global_position += Vector3(0.0, 0.0, 1.0)
 			_run(0.2)
 			_player.global_position = _home
 

@@ -18,7 +18,7 @@
     "_comment": "Phase 2, la vision accélérée : la charge tenue charge_hold s l'allume (ou max_time de la phase 1). L'image pâlit de pale (sauf un disque de clear_radius hauteurs d'écran autour de Chtholly), en fade_in s ; le monde à slow de sa vitesse (Willem et ceux à moins de slow_radius m) ; un éclat de la lame toutes les glint_every s. Au premier coup (frappe ou onde), son élan franchit au plus dash_distance m vers Willem en dash_time s, deux foulées (stride_height m), et s'arrête à stop_gap m de lui. Sans coup en max_time s, elle s'élance d'elle-même.",
     "charge_hold": 2.0,
     "pale": 0.6,
-    "clear_radius": 0.16,
+    "clear_radius": 0.12,
     "fade_in": 0.4,
     "slow": 0.6,
     "slow_radius": 25,
@@ -40,7 +40,7 @@
     "throw_distance": 6,
     "throw_time": 0.55,
     "throw_height": 1.0,
-    "percival_time": 0.7,
+    "percival_time": 1.0,
     "percival_size": 2.6,
     "shake": 0.08
   },

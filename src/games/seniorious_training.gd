@@ -45,9 +45,6 @@ const STAGES: Array[StringName] = [&"breath", &"moves", &"crane"]
 const TelegraphScript := preload("res://src/enemies/telegraph.gd")
 const SCORE_SCRIPT := preload("res://src/games/game_score.gd")
 const SIGNS_REASON := &"seniorious"
-## Couche 6 (interactable) et groupe des interactables (PLAN.md, section 3).
-const INTERACTABLE_LAYER := 32
-const INTERACTABLE_GROUP := &"interactable"
 const BLADE_HEIGHT := 1.0
 
 var player: Player = null
@@ -86,9 +83,7 @@ var _gesture_order: Array = []
 var _next_at: float = 0.0
 var _fend: Dictionary = {}
 var _hop: Dictionary = {}
-var _sword: Dictionary = {}
-var _sword_sprite: AnimatedSprite3D = null
-var _pickup: Area3D = null
+var _sword: SenioriousSword = null
 var _telegraph: TelegraphScript = null
 var _hud: CanvasLayer = null
 var _hush: Hush = null
@@ -110,21 +105,6 @@ class Hush:
 
 	func blocks_talk() -> bool:
 		return active
-
-
-## L'épée dans le marais : invite « Ramasser Seniorious » (contrat Interactable).
-class SwordPickup:
-	extends Area3D
-
-	var training: SenioriousTraining = null
-	var prompt: String = ""
-
-	func get_prompt() -> String:
-		return prompt
-
-	func interact(_player: Node3D) -> void:
-		if training != null and is_instance_valid(training):
-			training.pick_up()
 
 
 func _init() -> void:
@@ -260,12 +240,12 @@ func current_fend() -> Dictionary:
 
 ## L'épée tombée (étape 4) : le point où elle est, Vector3.INF avant.
 func sword_spot() -> Vector3:
-	return _sword.get("to", Vector3.INF) if _sword.get("landed", false) else Vector3.INF
+	return _sword.spot() if _sword != null and _sword.is_landed() else Vector3.INF
 
 
 ## L'invite de l'épée tombée (null avant).
 func pickup_area() -> Area3D:
-	return _pickup
+	return _sword.pickup_area() if _sword != null else null
 
 
 func _set_stage(next: StringName) -> void:
@@ -349,7 +329,8 @@ func advance(delta: float) -> void:
 		return
 	_time += delta
 	_tick_hop()
-	_tick_sword()
+	if _sword != null and is_instance_valid(_sword):
+		_sword.advance(delta)
 	if stage == &"ended":
 		_end_left -= delta
 		if _end_left <= 0.0:
@@ -576,12 +557,12 @@ func _start_fend(impact: float) -> void:
 		"struck": false,
 		"follow_until": -1.0,
 	}
-	var toward := _flat(player.global_position - willem.position())
-	var engage := rule("crane/engage_distance", 1.7)
-	if toward.length() > engage + 0.2:
-		var spot := player.global_position - toward.normalized() * engage
-		if _walkable(willem.position(), spot):
-			_start_hop(spot, warn * 0.6)
+	# Willem fend de côté (à l'est ou à l'ouest de Chtholly : la caméra regarde le nord, les deux
+	# silhouettes ne se cachent pas l'une l'autre), à sa distance.
+	var side := Vector3.RIGHT if willem.position().x >= player.global_position.x else Vector3.LEFT
+	var spot := player.global_position + side * rule("crane/engage_distance", 1.7)
+	if _flat(spot - willem.position()).length() > 0.3 and _walkable(willem.position(), spot):
+		_start_hop(spot, warn * 0.6)
 	_play_willem(anim_list("anims/willem_guard"), true)
 
 
@@ -666,88 +647,43 @@ func _throw_sword() -> void:
 		if offset is Array and (offset as Array).size() >= 3:
 			shift = Vector3(float(offset[0]), float(offset[1]), float(offset[2]))
 		target = player.global_position + shift
-	var from := player.global_position + Vector3.UP * BLADE_HEIGHT
-	_sword = {
-		"from": from,
-		"to": target,
-		"start": _time,
-		"duration": rule("pickup/fly_time", 1.1),
-		"height": rule("pickup/fly_height", 3.0),
-		"landed": false,
-	}
-	_sword_sprite = CombatFx.make_sprite("glint", 1.6)
-	_sword_sprite.name = "Seniorious"
-	_sword_sprite.no_depth_test = true
-	_sword_sprite.modulate = Color(0.78, 0.92, 1.0)
-	add_child(_sword_sprite)
-	_sword_sprite.global_position = from
-	_sword_sprite.play(&"default")
+	_sword = SenioriousSword.new()
+	_sword.prompt = line("pickup_prompt", "Ramasser Seniorious") if with_pickup else ""
+	_sword.reach = rule("pickup/reach", 1.2)
+	add_child(_sword)
+	_sword.landed.connect(_on_sword_landed)
+	_sword.picked.connect(pick_up)
+	_sword.launch(
+		player.global_position + Vector3.UP * BLADE_HEIGHT,
+		target,
+		rule("pickup/fly_time", 1.1),
+		rule("pickup/fly_height", 3.0)
+	)
 	resolved.emit(&"sword", &"flew")
 	willem.say(line("sword_flew", "… Elle t'a échappé. Va la chercher."), 2.2)
 
 
-func _tick_sword() -> void:
-	if _sword.is_empty() or _sword_sprite == null or not is_instance_valid(_sword_sprite):
-		return
-	if bool(_sword["landed"]):
-		# Elle luit dans l'eau basse : l'éclat se rejoue.
-		if not _sword_sprite.is_playing():
-			_sword_sprite.play(&"default")
-		return
-	var ratio := clampf((_time - float(_sword["start"])) / float(_sword["duration"]), 0.0, 1.0)
-	var from: Vector3 = _sword["from"]
-	var to: Vector3 = _sword["to"]
-	var at := from.lerp(to + Vector3.UP * 0.2, ratio)
-	at.y += 4.0 * float(_sword["height"]) * ratio * (1.0 - ratio)
-	_sword_sprite.global_position = at
-	if ratio < 1.0:
-		return
-	_sword["landed"] = true
-	_burst(to + Vector3.UP * 0.1, "dust", Color(0.7, 0.8, 0.85))
-	_burst(to + Vector3.UP * 0.3, "impact", CombatFx.COLOR_WAVE)
+func _on_sword_landed(_at: Vector3) -> void:
 	resolved.emit(&"sword", &"landed")
-	if with_pickup:
-		_make_pickup(to)
-	else:
+	if not with_pickup:
 		_finish(&"grues", true)
-
-
-func _make_pickup(at: Vector3) -> void:
-	var area := SwordPickup.new()
-	area.name = "SwordPickup"
-	area.training = self
-	area.prompt = line("pickup_prompt", "Ramasser Seniorious")
-	area.collision_layer = INTERACTABLE_LAYER
-	area.collision_mask = 0
-	area.monitoring = false
-	area.add_to_group(INTERACTABLE_GROUP)
-	var shape := CollisionShape3D.new()
-	var sphere := SphereShape3D.new()
-	sphere.radius = rule("pickup/reach", 1.2)
-	shape.shape = sphere
-	area.add_child(shape)
-	add_child(area)
-	area.global_position = at + Vector3.UP * 0.5
-	_pickup = area
 
 
 ## Chtholly ramasse Seniorious (l'invite du marais) : l'exercice est réussi.
 func pick_up() -> void:
-	if stage != &"pickup" or not bool(_sword.get("landed", false)) or picked_up:
+	if stage != &"pickup" or _sword == null or not _sword.is_landed() or picked_up:
 		return
 	picked_up = true
+	if not _sword.is_picked():
+		_sword.pick_up()
 	resolved.emit(&"sword", &"picked")
 	_finish(&"grues", true)
 
 
 func _free_sword() -> void:
-	if _sword_sprite != null and is_instance_valid(_sword_sprite):
-		_sword_sprite.queue_free()
-	_sword_sprite = null
-	if _pickup != null and is_instance_valid(_pickup):
-		_pickup.remove_from_group(INTERACTABLE_GROUP)
-		_pickup.queue_free()
-	_pickup = null
+	if _sword != null and is_instance_valid(_sword):
+		_sword.queue_free()
+	_sword = null
 
 
 # --- Fin -----------------------------------------------------------------------------------------
@@ -777,8 +713,8 @@ func _finish(reason: StringName, success: bool) -> void:
 	_set_stage(&"ended")
 	_end_left = rule("end_time", 1.6)
 	_free_hud()
-	if _pickup != null and is_instance_valid(_pickup):
-		_pickup.remove_from_group(INTERACTABLE_GROUP)
+	if _sword != null and is_instance_valid(_sword):
+		_sword.close_pickup()
 	if reason == &"fatigue":
 		var tired := anim_list("anims/player_tired")
 		if not tired.is_empty():
