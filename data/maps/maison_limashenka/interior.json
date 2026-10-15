@@ -1,0 +1,23 @@
+{
+  "_comment": "La maison Limashenka : écrit par tools/interior_maps.py d'après docs/lore/CARTE.md (section 3, bloc plan « carte maison_limashenka ») ; modifier le plan ou l'outil, puis relancer gen. Format : docs/INTERIEURS.md.",
+  "size": [10, 8],
+  "wall_height": 3.0,
+  "wall_thickness": 0.25,
+  "rooms": {
+    "vestibule": {"name": "Vestibule", "rects": [[1.0, 1.0, 2.5, 6.0]], "floor": "floor_planks_worn", "wall": "wall_plaster_worn"},
+    "salon": {"name": "Salon", "rects": [[3.5, 1.0, 5.5, 6.0]], "floor": "floor_planks_worn", "wall": "wall_wallpaper_floral"}
+  },
+  "doors": [
+    {"between": ["vestibule", "salon"], "z": 4.0, "width": 1.2, "image": "door_frame_wood"},
+    {"id": "sortie", "room": "vestibule", "side": "S", "x": 2.25, "width": 1.2, "height": 2.2, "image": "door_room"}
+  ],
+  "windows": [
+    {"room": "salon", "side": "E", "z": 3.5, "image": "window_shutters", "sill": 0.8}
+  ],
+  "wall_items": [
+    {"room": "vestibule", "side": "W", "z": 3.0, "y": 0.9, "image": "wallitem_coat_hooks"},
+    {"room": "salon", "side": "N", "x": 6.2, "y": 0.9, "image": "wallitem_clock_limashenka"},
+    {"room": "salon", "side": "N", "x": 8.0, "y": 1.4, "image": "wallitem_family_portrait"}
+  ],
+  "lights": []
+}

@@ -46,7 +46,7 @@ import hd2d_interior  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CARTE = os.path.join(ROOT, "docs", "lore", "CARTE.md")
-INTERIOR_MAPS = ["entrepot_rdc", "entrepot_etage", "salle_des_armes"]
+INTERIOR_MAPS = ["entrepot_rdc", "entrepot_etage", "salle_des_armes", "cafe", "maison_limashenka"]
 OUTDOOR_MAPS = ["entrepot_toit"]
 WALL_HALF = 0.125
 # Écart d'une ouverture à un angle (InteriorLayout : demi-mur + 0,05 m, et un peu de marge).
@@ -65,12 +65,15 @@ ROOM_NAMES = {
     "absentes": "Chambre des aînées absentes", "nephren": "Chambre de Nephren",
     "dortoir_a": "Dortoir A", "dortoir_b": "Dortoir B", "dortoir_c": "Dortoir C", "dortoir_d": "Dortoir D",
     "lingerie": "Lingerie", "crypte": "Crypte",
+    # (C2) Le café du village et la maison Limashenka (CARTE.md, section 5).
+    "salle": "Salle du café", "arriere": "Arrière-boutique", "vestibule": "Vestibule", "salon": "Salon",
 }
 WALLCUTS = {"wall_cellar_stone": "wallcut_stone"}
 # Appui des fenêtres (cahier n° 3, 3.2) ; window_reading_seat est un meuble dans le plan.
 SILLS = {
     "window_cross_small": 1.0, "window_cross_large": 0.8, "window_dusty": 1.3,
     "window_curtains_open": 0.8, "window_curtains_closed": 0.8, "window_bare": 0.7,
+    "window_shutters": 0.8,
 }
 # Portes vers le dehors (CARTE.md 3.1) : identifiant (InteriorRoom.door_position), hauteur,
 # franchie en marchant (porte d'entrée, porte de service) ou fermée (porte rivetée).
@@ -78,10 +81,15 @@ OUTSIDE_DOORS = {
     "door_double": {"id": "entree", "height": 2.4, "passable": True},
     "door_service": {"id": "service", "height": 2.2, "passable": True},
     "door_armory": {"id": "armes", "height": 2.3, "passable": False},
+    # (C2) La porte du café et celle de la maison Limashenka, sur le mur sud (coupé) : on la franchit en marchant.
+    "door_room": {"id": "sortie", "height": 2.2, "passable": True},
 }
 # Porte d'une pièce qu'on franchit : chambranle seul, ouverture transparente (E3 : door_room,
 # opaque, cacherait le joueur sur le seuil).
 PASSABLE_IMAGE = "door_frame_wood"
+# (C2) Portes d'une pièce qu'on franchit et qui gardent leur image : le rideau de l'arrière-boutique, sur une cloison
+# nord-sud (vue de chant par la caméra : il ne cache pas le joueur).
+OWN_IMAGE_DOORS = ("door_backroom",)
 # Lampes par type (« lumiere » des plans) : rayon (m), couleur, énergie. cristal_eteint : la lampe
 # des archives, éteinte (pas de halo).
 LIGHT_TYPES = {
@@ -101,6 +109,10 @@ MAP_SETTINGS = {
     "entrepot_etage": {"camera_bounds": (2.0, 4.0, 28.0, 6.0), "light_preset": "interieur"},
     "salle_des_armes": {"camera_bounds": (5.0, 3.0, 4.0, 3.0), "light_preset": ""},
     "entrepot_toit": {"camera_bounds": (6.0, 4.0, 4.0, 4.0), "light_preset": ""},
+    # (C2) Une seule pièce de 10 × 8 m ou 12 × 10 m : la caméra reste au droit du joueur (x de 2 à la largeur − 2) et
+    # cadre la pièce entière (docs/INTERIEURS.md, 1.6).
+    "cafe": {"camera_bounds": (2.0, 5.0, 8.0, 0.0), "light_preset": "interieur"},
+    "maison_limashenka": {"camera_bounds": (2.0, 4.0, 6.0, 0.0), "light_preset": "interieur"},
 }
 # Sorties vers une carte qui n'existe pas encore (construite en parallèle) : provisoirement vers
 # une carte existante, au Spawn ; relancer gen les raccorde dès que la cible existe.
@@ -160,11 +172,35 @@ EXAMINE = {
         ("tissu", "meuble", ("swords_wrapped", 0), {}),
     ],
     "entrepot_toit": [],
+    # (C2) Textes : data/texts/village.json (TEXTS_PATH).
+    "cafe": [
+        ("menu", "mural", "wallitem_menu_cafe", {}),
+        ("comptoir", "meuble", ("cafe_counter", 0), {}),
+        ("etagere", "meuble", ("cafe_bottle_shelf", 0), {}),
+        ("buveurs", "meuble", ("cafe_drinkers_table", 0), {}),
+        ("fenetre", "fenetre", "window_cross_small", {}),
+        ("clochette", "point", (4.75, 8.3), {"w": 1.4, "d": 0.6}),
+        ("arriere", "point", (8.0, 3.0), {"w": 0.5, "d": 1.2}),
+    ],
+    "maison_limashenka": [
+        ("horloge", "mural", "wallitem_clock_limashenka", {}),
+        ("portrait", "mural", "wallitem_family_portrait", {}),
+        ("vitrine", "meuble", ("display_cabinet", 0), {}),
+        ("boite_outils", "meuble", ("toolbox_gears", 0), {}),
+        ("fauteuil", "meuble", ("armchair_sheeted", 0), {}),
+        ("pateres", "mural", "wallitem_coat_hooks", {}),
+    ],
 }
+# Fichier des textes à examiner de chaque carte (Examinable.texts_path) ; sans entrée : celui de l'entrepôt.
+TEXTS_PATH = {"cafe": "res://data/texts/village.json", "maison_limashenka": "res://data/texts/village.json"}
 # Ce qui bloque sans image : la place sous le haut de l'escalier (on n'y entre pas : le palier de
 # l'étage est au-dessus). (nom, x0, z0, x1, z1, hauteur).
 BLOCKERS = {
     "entrepot_rdc": [("sous_escalier", 16.7, 1.125, 18.3, 2.5, 3.0)],
+    # (C2) Derrière le comptoir du café, au bout de la vitrine à gâteaux (1,2 m de comptoir + 0,6 m de vitrine) : on n'y
+    # passe pas (la vitrine cacherait la taille du joueur, CARTE.md 0.3) ; le serveur tient en deçà (place
+    # comptoir_arriere, x = 4).
+    "cafe": [("derriere_vitrine", 4.7, 1.8, 5.3, 2.55, 1.0)],
 }
 # Éléments que le plan pose en « mural » mais qui sont des images de meubles (props/) ou de porte :
 # InteriorPanel plaqué au mur. Le grand miroir, sur le mur ouest, regarde l'est (keep_orientation) ;
@@ -498,7 +534,7 @@ def interior_json(map_id, plan):
         else:
             entry = {"between": [a, b], place["axis"]: place["center"], "width": place["width"]}
             if door.kind == "porte":
-                entry["image"] = PASSABLE_IMAGE
+                entry["image"] = image if image in OWN_IMAGE_DOORS else PASSABLE_IMAGE
         doors.append(entry)
     windows = []
     for window in plan.windows:
@@ -615,7 +651,7 @@ def feet_hidden(player_x, player_z, front, x0, x1, top, bounds):
 
 def image_size_m(name):
     """(largeur, hauteur) en m d'une image d'intérieur (assets/hd2d/interior/, props/ compris)."""
-    for folder in ("interior", os.path.join("interior", "props")):
+    for folder in ("interior", os.path.join("interior", "props"), "props"):
         path = os.path.join(ROOT, "assets", "hd2d", folder, name + ".png")
         if os.path.exists(path):
             with Image.open(path) as image:
@@ -847,7 +883,8 @@ def markers_exits_life(scene, map_id, plan, furniture, exit_script):
         scene.node(key, "Area3D", "Examine",
                    props=[("transform", transform(x, 0.0, z)), ("script", examine_script),
                           ("text_key", json.dumps("%s/%s" % (map_id, key))),
-                          ("size", "Vector3(%s)" % ", ".join(num(round(v, 3)) for v in size))])
+                          ("size", "Vector3(%s)" % ", ".join(num(round(v, 3)) for v in size))]
+                   + ([("texts_path", json.dumps(TEXTS_PATH[map_id]))] if map_id in TEXTS_PATH else []))
     scene.node("Life", "Node3D", ".")
     scene.node("Places", "Node3D", "Life")
     for name, x, z, yaw in places(map_id, plan, furniture):
@@ -958,6 +995,15 @@ EXTRA_PLACES = {
     ],
     "salle_des_armes": [],
     "entrepot_toit": [],
+    # (C2) Places que VIE.md et ACTE1.md citent et que les points du plan ne nomment pas.
+    "cafe": [
+        ("comptoir_arriere", 4.0, 2.2, 180.0),
+        ("entree", 4.75, 8.3, 0.0),
+    ],
+    "maison_limashenka": [
+        ("salon_canape_assise", 6.0, 5.3, 180.0),
+        ("vestibule_porte", 2.25, 5.6, 0.0),
+    ],
 }
 
 
@@ -1156,8 +1202,8 @@ def places_markdown(map_id, plan):
     beds = [e[0] for e in extra if "_lit" in e[0]]
     others = [e[0] for e in extra if e[0] not in chairs and e[0] not in beds]
     lines = ["<!-- places:%s -->" % map_id,
-             "**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : "
-             "les points nommés ci-dessus, à leur nom"]
+             "**Places de la vie** (lot %s ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : "
+             "les points nommés ci-dessus, à leur nom" % ("C2" if map_id in ("cafe", "maison_limashenka") else "T2")]
     if chairs:
         lines[-1] += " ; chaque chaise, `%s` à `%s` (rangées a à %s du nord au sud, numérotées d'ouest en " \
                      "est ; regard vers la table)" % (chairs[0], chairs[-1], chairs[-1].split("_")[-1][0])

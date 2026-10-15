@@ -1,8 +1,8 @@
 extends GutTest
 ## (C1) L'outil des cartes du dehors (tools/exterior_maps.py, docs/lore/CARTE.md) :
-## - `check` : toutes les cartes écrites (entrepot, sentier, et les cartes d'attente) sont celles
+## - `check` : toutes les cartes écrites (entrepot, sentier, village, et les cartes d'attente) sont celles
 ##   que l'outil écrirait aujourd'hui d'après les plans ; passé si Python (et Pillow) n'est pas là ;
-## - les cartes d'attente (village, colline, foret_profonde, port) : le nom et le lieu du plan, la
+## - les cartes d'attente (colline, foret_profonde, port) : le nom et le lieu du plan, la
 ##   sortie de retour vers la carte construite, au marqueur d'arrivée du plan, `Spawn` et marqueur
 ##   d'arrivée, écriteau « Plus loin, bientôt », rien de plus ;
 ## - la carte du port d'attente est dans l'île n° 68 (ile_68.json : `maps` et son lieu) ;
@@ -12,8 +12,6 @@ const CARTE := "res://docs/lore/CARTE.md"
 ## Cartes d'attente : [nom du plan, lieu, sortie de retour, carte cible, marqueur de retour,
 ## marqueur d'arrivée].
 const WAITING := {
-	&"village":
-	["Le village", &"village", &"vers_entrepot", &"entrepot", &"from_village", &"from_entrepot"],
 	&"colline":
 	[
 		"La colline des étoiles",
@@ -84,7 +82,7 @@ func test_the_waiting_port_is_in_the_island() -> void:
 
 func test_the_places_of_life_are_listed_in_the_plan_document() -> void:
 	var text := FileAccess.get_file_as_string(CARTE)
-	for map_id: String in ["entrepot", "sentier"]:
+	for map_id: String in ["entrepot", "sentier", "village"]:
 		assert_true(text.contains("<!-- places:%s -->" % map_id), "liste des places de %s" % map_id)
 	var start := text.find("<!-- places:sentier -->")
 	var block := text.substr(start, text.find("<!-- /places:sentier -->") - start)

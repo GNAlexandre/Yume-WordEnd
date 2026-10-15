@@ -320,8 +320,11 @@ func test_every_side_is_the_flank_of_its_building_at_contract_size() -> void:
 		if shape != ("eaves" if building.gable_front else "gable"):
 			problems.append("%s : flanc %s pour ce toit" % [label, shape])
 		building.free()
-	# (T1) Plus les deux volumes de l'entrepôt de la refonte (docs/lore/CARTE.md, 12.1).
-	assert_eq(count, 21, "flancs des 9 bâtiments existants, des 10 nouveaux et de l'entrepôt (T1)")
+	# (T1) Plus les deux volumes de l'entrepôt de la refonte (docs/lore/CARTE.md, 12.1), (C2) et les six maisons du
+	# village (cahier n° 5, 5.3 ; scènes de tools/exterior_props.py).
+	assert_eq(
+		count, 27, "flancs des 9 bâtiments existants, des 10 nouveaux, de l'entrepôt (T1) et du village (C2)"
+	)
 	assert_true(problems.is_empty(), "; ".join(problems))
 
 

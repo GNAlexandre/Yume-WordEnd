@@ -1,0 +1,216 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/interior_room.gd" id="2_room"]
+[ext_resource type="JSON" path="res://data/maps/cafe/interior.json" id="3_layout"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="4_batcher"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_exit"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/cafe_bottle_shelf.tscn" id="p_cafe_bottle_shelf"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/cafe_counter.tscn" id="p_cafe_counter"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/cafe_table_heavy.tscn" id="p_cafe_table_heavy"]
+[ext_resource type="PackedScene" path="res://src/world/props/chair_wood.tscn" id="p_chair_wood"]
+[ext_resource type="PackedScene" path="res://src/world/props/chair_wood_back.tscn" id="p_chair_wood_back"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/cafe_drinkers_table.tscn" id="p_cafe_drinkers_table"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/crystal_pendant.tscn" id="p_crystal_pendant"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/pantry_cupboard.tscn" id="p_pantry_cupboard"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/sacks_vegetables.tscn" id="p_sacks_vegetables"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/crates_barrels.tscn" id="p_crates_barrels"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/cafe_cake_case.tscn" id="p_cafe_cake_case"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/juice_glasses.tscn" id="p_juice_glasses"]
+[ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.3, 3, 0.7)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(0.6, 1, 0.75)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3"]
+size = Vector3(1.4, 2.4, 1)
+
+[node name="cafe" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "Le café du village"
+region = &"village"
+interior = true
+size = Vector2(12, 10)
+camera_bounds = Rect2(2, 5, 8, 0)
+light_preset = &"interieur"
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_mask = 0
+script = ExtResource("2_room")
+layout = ExtResource("3_layout")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("4_batcher")
+
+[node name="Salle" type="Node3D" parent="Geometry"]
+
+[node name="Arriere" type="Node3D" parent="Geometry"]
+
+[node name="cafe_bottle_shelf_1" parent="Geometry/Salle" instance=ExtResource("p_cafe_bottle_shelf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 1.45)
+
+[node name="cafe_counter_1" parent="Geometry/Salle" instance=ExtResource("p_cafe_counter")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 3)
+
+[node name="cafe_table_heavy_1" parent="Geometry/Salle" instance=ExtResource("p_cafe_table_heavy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0, 5.6)
+
+[node name="chair_wood_1" parent="Geometry/Salle" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0, 4.775)
+
+[node name="chair_wood_back_1" parent="Geometry/Salle" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0, 6.275)
+
+[node name="cafe_table_heavy_2" parent="Geometry/Salle" instance=ExtResource("p_cafe_table_heavy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 5.6)
+
+[node name="chair_wood_2" parent="Geometry/Salle" instance=ExtResource("p_chair_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 4.775)
+
+[node name="chair_wood_back_2" parent="Geometry/Salle" instance=ExtResource("p_chair_wood_back")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 6.275)
+
+[node name="cafe_drinkers_table_1" parent="Geometry/Salle" instance=ExtResource("p_cafe_drinkers_table")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, 8)
+
+[node name="crystal_pendant_1" parent="Geometry/Salle" instance=ExtResource("p_crystal_pendant")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 1.6042, 5.6)
+
+[node name="pantry_cupboard_1" parent="Geometry/Arriere" instance=ExtResource("p_pantry_cupboard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 1.45)
+
+[node name="sacks_vegetables_1" parent="Geometry/Arriere" instance=ExtResource("p_sacks_vegetables")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 8.2)
+
+[node name="crates_barrels_1" parent="Geometry/Arriere" instance=ExtResource("p_crates_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 5.6)
+
+[node name="crates_barrels_1_arriere" type="StaticBody3D" parent="Geometry/Arriere"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Arriere/crates_barrels_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 1.5, 4.75)
+shape = SubResource("BoxShape3D_1")
+
+[node name="cafe_cake_case_1" parent="Geometry/Salle" instance=ExtResource("p_cafe_cake_case")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 1.2, 3.42)
+
+[node name="juice_glasses_1" parent="Geometry/Salle" instance=ExtResource("p_juice_glasses")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0.8, 6.12)
+
+[node name="derriere_vitrine" type="StaticBody3D" parent="Geometry/Salle"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Salle/derriere_vitrine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.5, 2.175)
+shape = SubResource("BoxShape3D_2")
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.75, 0.2, 8.2)
+
+[node name="from_village" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8, 0.2, 7.8)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="vers_village" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.75, 0, 9.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"village"
+target_marker = &"from_cafe"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_3")
+
+[node name="Examine" type="Node3D" parent="."]
+
+[node name="menu" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8, 0, 1.525)
+script = ExtResource("6_examine")
+text_key = "cafe/menu"
+size = Vector3(0.8, 2, 0.8)
+texts_path = "res://data/texts/village.json"
+
+[node name="comptoir" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 3.4)
+script = ExtResource("6_examine")
+text_key = "cafe/comptoir"
+size = Vector3(3, 2, 0.8)
+texts_path = "res://data/texts/village.json"
+
+[node name="etagere" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 1.75)
+script = ExtResource("6_examine")
+text_key = "cafe/etagere"
+size = Vector3(2, 2, 0.8)
+texts_path = "res://data/texts/village.json"
+
+[node name="buveurs" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, 8.45)
+script = ExtResource("6_examine")
+text_key = "cafe/buveurs"
+size = Vector3(1.6, 2, 0.8)
+texts_path = "res://data/texts/village.json"
+
+[node name="fenetre" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.525, 0, 5)
+script = ExtResource("6_examine")
+text_key = "cafe/fenetre"
+size = Vector3(0.8, 2, 0.8)
+texts_path = "res://data/texts/village.json"
+
+[node name="clochette" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.75, 0, 8.3)
+script = ExtResource("6_examine")
+text_key = "cafe/clochette"
+size = Vector3(1.4, 2, 0.6)
+texts_path = "res://data/texts/village.json"
+
+[node name="arriere" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 3)
+script = ExtResource("6_examine")
+text_key = "cafe/arriere"
+size = Vector3(0.5, 2, 1.2)
+texts_path = "res://data/texts/village.json"
+
+[node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="comptoir" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 4.1)
+
+[node name="table_fees" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.6, 0, 5.6)
+
+[node name="table_buveurs" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4, 0, 7.2)
+
+[node name="arriere" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 3.6)
+
+[node name="salle_chaise_a01" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.6, 0, 4.85)
+
+[node name="salle_chaise_a02" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 6.2, 0, 4.85)
+
+[node name="salle_chaise_b01" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0, 6.35)
+
+[node name="salle_chaise_b02" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 6.35)
+
+[node name="comptoir_arriere" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4, 0, 2.2)
+
+[node name="entree" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.75, 0, 8.3)

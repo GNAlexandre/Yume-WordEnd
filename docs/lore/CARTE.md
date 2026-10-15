@@ -1455,15 +1455,15 @@ village : 56 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord 
          H########HHH#######HHHHHHHHH        HHHHHHHHHHHHHHHHH
       www.########...#######..#####..^^^FF^^^..######..#####..
       www.#grange#...#cafe##..#mai#..^^^^^^^^..#lima#..#cha#..
-      www.########.D.#######..#G###..^^^^^^^^..######..#####..
-   10 www::::::::::D::::*::::::G::::::::::::::::::*:::::::::::
+      www.########D..#######..#G###..^^^^^^^^..######..#####..
+   10 www:::::::::D:::::::*::::G::::::::::::::::::*:::::::::::
       www:::::::::::::::::::::::::::::::::::::::::::::::@::::>
       www:::::::::::::::::::::::::::::::::::::::::::::::::::::
       www...........::::..BBBB==========....::::..............
       www...........::::..=========II===....::::..............
    20 www...........::::..===JJJJ=======....::::..............
-      wMMM..#######.::::..===JJJJ=======....::::..####..####..
-      wMMM..#chaum#.::::..BBBB=======EEEEEE.::::..#ch#..#ap#..
+      wwwMMM#######.::::..===JJJJ=======....::::..####..####..
+      wwwMMM#chaum#.::::..BBBB=======EEEEEE.::::..#ch#..#ap#..
       www.::#######::::::::::::::::::EEEEEE:::::::####::......
       www.::::::::::::::::::::::::::::::::::::::::::::::......
    30 www,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^^KK^^
@@ -1484,7 +1484,9 @@ Légende des lettres : `A` edge_waterfall ; `B` fence_wattle ; `C` wall_lantern 
   **`limashenka_house`** (livrée, x 41 → 47, volets clos qui se rouvrent le jour 11),
   `cottage_thatch_a` (x 49 → 54) ; seconde rangée `cottage_thatch_b` (x 6 → 13, z 22 → 27),
   `cottage_thatch_c` (x 44 → 48), appentis `village_shed` (x 50 → 54). Les façades du cahier n° 3
-  ont des fenêtres éteintes, que la nuit allume (`window_lit_*`, lot N).
+  ont des fenêtres éteintes, que la nuit allume (`window_lit_*`, lot N). (C2) Leurs flancs (cahier n° 5,
+  5.3) : `cottage_thatch_a_side`, `cottage_thatch_b_side`, `cottage_thatch_c_side`, `village_barn_side`,
+  `village_house_stone_side`, `village_shed_side` ; matières `roof_thatch` et `wall_wattle_daub`.
 - **Paliers** : rue et jardins à 0 ; le belvédère, un ressaut de rocher à +1 (31 → 39 ;
   3,5 → 9) avec un banc de pierre ; la rivière à −0,5.
 - **Grands décors** : garde-fou bas au bord (`edge_parapet`, livré) ; cascade du bord
@@ -1539,7 +1541,7 @@ decor bench_stone 35 4.6 1.6 0.5 0.6
 decor fence_wattle 32 3.9 1.8 0.3 0.9 libre
 decor wall_lantern 17 9.6 0.4 0.2 0.6 libre
 decor flower_pots 25.6 10.0 0.7 0.5 0.6
-decor hanging_sign_key 13.5 9.9 0.4 0.3 2.2 libre
+decor hanging_sign_key 12.7 9.9 0.4 0.3 2.2 libre
 # --- seconde rangée, basse (original) ---
 bati chaumiere_longue 6 22 13 27 5 cottage_thatch_b
 bati chaumiere_penchee 44 23 48 27 5 cottage_thatch_c
@@ -1551,7 +1553,7 @@ decor washing_trough 8 32.5 3 1 1.0
 decor fence_wattle 22 16.8 4 0.3 0.9
 decor fence_wattle 22 25.2 4 0.3 0.9
 decor laundry_line 34 26 6 0.3 2.2 libre pp
-decor firewood_pile 2.8 24 2 0.8 1.2
+decor firewood_pile 4.5 24 2 0.8 1.2
 # --- bord sud, bas (premier plan) ---
 bord haie 0 38 56 40 1.5 pp
 bord foret 50 31 56 34 6 pp
@@ -1564,13 +1566,13 @@ place devant_cafe 13 10 25 15
 place belvedere 32 5.5 38.5 8.5
 # --- sorties ---
 sortie vers_entrepot 55.4 10.5 56 14.5 entrepot from_village ""
-sortie porte_cafe 17.8 9.5 19.2 10.1 cafe from_village "Entrer"
+sortie porte_cafe 19.1 9.5 20.5 10.1 cafe from_village "Entrer"
 sortie porte_limashenka 43.3 9 44.7 9.6 maison_limashenka from_village "Entrer"
 marqueur Spawn 50 12.5 O
 marqueur from_entrepot 53 12.5 O
-marqueur from_cafe 18.5 12 S
+marqueur from_cafe 19.8 12 S
 marqueur from_maison_limashenka 44 11.5 S
-point cafe_porte 18.5 11
+point cafe_porte 19.8 11
 point cafe_terrasse 22.5 13
 point limashenka_porte 44 10.6
 point belvedere_vue 35 6.2
@@ -1580,6 +1582,10 @@ point ruche 53 29.6
 lumiere lanterne_cafe 17 9.6 2.0 cristal
 lumiere fenetres_cafe 18.5 9.5 2.0 fenetres
 ```
+
+<!-- places:village -->
+**Places de la vie** (lot C2 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`cafe_porte`, `cafe_terrasse`, `limashenka_porte`, `belvedere_vue`, `cascade_vue`, `lavoir`, `ruche`) ; les places réservées, en `Life/Areas` avec leur rectangle (`devant_cafe`, `belvedere`) ; et, en plus du plan : `rue_ouest` (8 ; 12.5 ; la rue devant la grange : le passant, le bûcheron qui part vers la forêt), `rue_centre` (30 ; 12.5 ; le milieu de la rue : les passants s'y croisent, le facteur (VIE.md 2.6)), `rue_est` (47 ; 12.5 ; la rue avant la sortie vers l'entrepôt), `grange_porte` (8 ; 10.9 ; la grande porte de la grange : le fermier (VIE.md 2.6)), `terrasse_banc_1` (16.8 ; 10.5 ; le banc de la terrasse, devant la façade du café : on s'y assoit face à la rue), `terrasse_banc_2` (22.6 ; 10.5 ; le second banc de la terrasse, côté ruelle), `meule` (30 ; 20.5 ; au pied de la meule de foin : le fermier (VIE.md 2.6)), `charrette` (25 ; 24.3 ; à côté de la charrette de foin : le fermier), `jardin` (27 ; 21 ; au milieu du grand jardin : on y bêche, on y arrose), `etal_rue` (36.5 ; 14.9 ; la place d'un étal au bord de la rue (un marchand de passage, VIE.md 2.6)), `etal_grange` (10.5 ; 14.9 ; la place d'un étal devant la grange (le fermier vend son foin)), `porte_limashenka_attente` (41.5 ; 12 ; devant la maison Limashenka : les villageois qui attendent d'entendre l'horloge (jour 11)), `ruisseau_berge` (12 ; 33 ; la berge du ruisseau du sud : le pêcheur des marais (VIE.md 2.6)), `jardins_sud` (40 ; 31 ; les jardins du sud : le fermier, l'après-midi (VIE.md 2.6)).
+<!-- /places:village -->
 
 ### 5.3 Le café (`cafe`) et la maison Limashenka (`maison_limashenka`)
 
@@ -1646,7 +1652,7 @@ Légende des lettres : `A` rug_salon ; `B` display_cabinet ; `C` toolbox_gears ;
 | Pièce | Cotes (m) | Mobilier (images) | À examiner |
 | --- | --- | --- | --- |
 | **Vestibule** | 2,5 × 6 | patères `wallitem_coat_hooks` | — |
-| **Salon** | 5,5 × 6 | **horloge `wallitem_clock_limashenka`** (fermée), puis `_open` (engrenages et peigne doré) pendant la réparation, puis le balancier qui va (`anim/clock_limashenka_swing`) ; boîte à outils `toolbox_gears` ; canapé `sofa_salon` ; fauteuil sous un drap `armchair_sheeted` ; vitrine de bibelots `display_cabinet` (boîtes à tabac) ; guéridon ; portrait de famille ; tapis `rug_salon` ; volets `window_shutters` | l'horloge ; le portrait (une mère et son petit) |
+| **Salon** | 5,5 × 6 | **horloge `wallitem_clock_limashenka`** (fermée), puis `_open` (engrenages et peigne doré) pendant la réparation, puis le balancier qui va (`anim/clock_limashenka_swing`) ; boîte à outils `toolbox_gears` ; canapé `sofa_salon` ; fauteuil sous un drap `armchair_sheeted` ; vitrine de bibelots `display_cabinet` (boîtes à tabac) ; guéridon `side_table_salon` ; portrait de famille `wallitem_family_portrait` (58 × 77 px, soit 0,6 × 0,8 m : le cahier n° 5 donne 256 × 256, une taille de portrait de dialogue) ; tapis `rug_salon` ; volets `window_shutters` | l'horloge ; le portrait (une mère et son petit) |
 
 Points `horloge` (Willem au travail), `rami`, `canape`. Maison fermée depuis le deuil (draps sur
 les meubles, **original**).
@@ -1687,6 +1693,10 @@ lumiere suspension 4.4 5.6 2.2 cristal
 lumiere comptoir 4.0 3.0 1.2 cristal
 ```
 
+<!-- places:cafe -->
+**Places de la vie** (lot C2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; chaque chaise, `salle_chaise_a01` à `salle_chaise_b02` (rangées a à b du nord au sud, numérotées d'ouest en est ; regard vers la table) ; et `comptoir_arriere`, `entree`.
+<!-- /places:cafe -->
+
 
 ```plan
 carte maison_limashenka 10 8 dedans
@@ -1714,6 +1724,10 @@ point rami 8.0 4.4
 point canape 6.0 6.25
 lumiere fenetre 9 3.5 1.2 jour
 ```
+
+<!-- places:maison_limashenka -->
+**Places de la vie** (lot C2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; et `salon_canape_assise`, `vestibule_porte`.
+<!-- /places:maison_limashenka -->
 
 ## 6. Le port (`port`, `transport_garde`, `barocupot`)
 

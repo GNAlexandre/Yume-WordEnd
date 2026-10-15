@@ -9,6 +9,8 @@
     "entrepot_toit",
     "salle_des_armes",
     "village",
+    "cafe",
+    "maison_limashenka",
     "colline",
     "sentier",
     "port",
@@ -27,7 +29,7 @@
     },
     "village": {
       "name": "Le village",
-      "maps": ["village"]
+      "maps": ["village", "cafe", "maison_limashenka"]
     },
     "colline": {
       "name": "La colline des étoiles",
