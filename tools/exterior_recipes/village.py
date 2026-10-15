@@ -261,11 +261,10 @@ def pose(p):
     place("Street", "rain_barrel", 49.6, 10.0, name="TonneauChaumiere")
     place("Street", "wash_tub", 53.9, 10.1, name="BaquetChaumiere")
 
-    # Ornières, foin, cailloux, flaques, feuilles : des décalques le long de la rue.
-    ruts = [(5.5, 11.5), (12.5, 13.6), (19.5, 11.9), (26.5, 13.7), (33.0, 11.4), (40.0, 13.5), (47.0, 11.7),
-            (53.0, 13.4)]
-    scatter("CartRuts", ["cart_ruts"], [(x, z, 90.0 + (k % 3 - 1) * 4.0) for k, (x, z) in enumerate(ruts)],
-            scale=(0.9, 1.1), seed=21, check=False)
+    # Foin, cailloux, flaques, feuilles : des décalques le long de la rue. (Orchestrateur) Pas
+    # d'ornières : le décalque cart_ruts livré (cahier n° 2, lot B) montre deux sillons profonds coupés
+    # net, qui, posés par morceaux, se lisaient comme des sillons de labour ; il est recommandé au
+    # cahier n° 5 (R0.8) en bande raccordable et discrète, à reposer ici en une seule traînée.
     for k, (x, z, scene) in enumerate(((8.4, 12.6, "hay_scatter"), (10.4, 13.6, "hay_scatter"),
                                        (30.5, 11.2, "puddle_a"), (45.5, 14.0, "puddle_a"),
                                        (14.0, 11.4, "pebbles_a"), (24.0, 14.4, "pebbles_b"),

@@ -529,6 +529,21 @@ Les chaises de bistrot de `cafe_table.png` (bois cintré) sont les seules de sty
 rustique, sinon les remplacer par `chair_wood`.
 
 
+### R0.8 Les ornières des rues (constaté en jouant, 15 octobre 2026)
+
+**Constat** : `assets/hd2d/decals/cart_ruts.png` (cahier n° 2, lot B, 192 × 384) montre deux sillons
+profonds et sombres, bordés de cailloux, **coupés net aux deux bouts**. Posé par morceaux de 4 m dans
+la rue du village, il se lit comme des **sillons de labour** en travers du chemin. Il est retiré du
+village en attendant (recette `tools/exterior_recipes/village.py`).
+
+| Priorité | Fichier | Taille | Genre, ancre | Consigne |
+| --- | --- | --- | --- | --- |
+| 1 | `assets/hd2d/decals/cart_ruts.png` (même nom, **remplace** l'actuel) | 192 × 384 (2 × 4 m) | décalque de sol, **raccordable en longueur** (le bord haut se raccorde au bord bas), alpha doux sur les bords gauche et droit | deux traces de roues de charrette **discrètes** dans la terre battue, parallèles, écartées de 1,2 m, vues de dessus : un léger creux plus foncé de 15 à 20 cm de large, terre tassée un peu plus lisse, quelques graviers épars sans bordure de cailloux ; contraste faible avec `path_dirt` (le chemin doit rester un chemin, pas un champ labouré) ; **aucun bout visible** : la trace continue hors de l'image en haut et en bas ; pas d'ombre portée, pas de relief marqué |
+| 2 | `assets/hd2d/decals/cart_ruts_end.png` | 192 × 192 (2 × 2 m) | décalque de sol, alpha doux, bord haut raccordé à `cart_ruts` | la fin des deux traces : elles s'estompent et disparaissent dans la terre sur 1,5 m (pour finir une traînée sans coupure) |
+
+**À ne pas faire** : des sillons profonds, des bourrelets de cailloux, des bouts coupés droits, une
+couleur plus sombre que la terre de plus de 15 %.
+
 ## 3. Lot R1 : l'entrepôt complet
 
 ### 3.0 Rappel du format (à coller avec le lot)
