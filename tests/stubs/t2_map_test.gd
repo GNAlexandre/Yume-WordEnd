@@ -727,23 +727,27 @@ func first_low_hit(eye: Vector3, target: Vector3, buckets: Dictionary) -> String
 func _buckets_for(feet: Vector3, cut: float) -> Dictionary:
 	if _room == null:
 		return _buckets(cut)
+	var furniture_z := _map.to_global(feet).z
 	var line := roundf(feet.x / InteriorLayout.GRID) * InteriorLayout.GRID
 	if absf(feet.x - line) >= InteriorRoom.COLUMN_HALF:
-		return _buckets(cut)
+		return _buckets(cut, Vector3.INF, furniture_z)
 	for piece: Dictionary in _room.plan.pieces:
 		if (
 			int(piece["axis"]) == InteriorLayout.VERTICAL
 			and is_equal_approx(float(piece["line"]), line)
 		):
-			return _buckets(cut, feet)
-	return _buckets(cut)
+			return _buckets(cut, feet, furniture_z)
+	return _buckets(cut, Vector3.INF, furniture_z)
 
 
 ## Triangles qui peuvent cacher le joueur pour une coupe (murs, meubles, panneaux du dehors qui ne
 ## s'effacent pas), rangés par case d'un mètre ; [nom, triangles, bas].
-func _buckets(cut: float, player: Vector3 = Vector3.INF) -> Dictionary:
-	if not player.is_finite() and _occluders.has(cut):
-		return _occluders[cut]
+func _buckets(cut: float, player: Vector3 = Vector3.INF, furniture_z: float = NO_CUT) -> Dictionary:
+	# La coupe des meubles suit le z du joueur, même loin d'une cloison.
+	InteriorRoom.share_uniform(&"furniture_cut_line", furniture_z)
+	var key := Vector2(cut, furniture_z)
+	if not player.is_finite() and _occluders.has(key):
+		return _occluders[key]
 	var buckets := {}
 	var cut_world := NO_CUT if cut >= NO_CUT else _map.to_global(Vector3(0.0, 0.0, cut)).z
 	if _room != null:
@@ -768,7 +772,7 @@ func _buckets(cut: float, player: Vector3 = Vector3.INF) -> Dictionary:
 				decor.size_m().y <= LOW_FURNITURE
 			)
 	if not player.is_finite():
-		_occluders[cut] = buckets
+		_occluders[key] = buckets
 	return buckets
 
 
