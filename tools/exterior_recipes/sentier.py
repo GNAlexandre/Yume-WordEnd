@@ -157,13 +157,19 @@ def pose(p):
         x, z = (t.rect.x0 + t.rect.x1) / 2.0, (t.rect.z0 + t.rect.z1) / 2.0
         place("Marsh", t.name, x, z, name=named("Alder_plan"))
 
-    # La lisière : cinq pans de 16 m au nord, un rang d'arbres devant ; au-delà, la forêt qui continue.
-    for k, (x, scene) in enumerate(((8.0, "forest_wall_c"), (24.0, "forest_wall_a"), (40.0, "forest_wall_b"),
-                                    (56.0, "forest_wall_c"), (72.0, "forest_wall_a"))):
-        place("Lisiere", scene, x, 3.7, y=1.0, name="ForestWall%d" % (k + 1), flip=k % 2 == 1, check=False)
-    place("Lisiere", "treeline_autumn_a_village", 20.0, -5.0, y=1.0, name="TreelineBeyond1", check=False)
-    place("Lisiere", "treeline_autumn_b_village", 52.0, -5.0, y=1.0, name="TreelineBeyond2", flip=True, check=False)
-    # Les pans de forêt à l'ouest et à l'est du marais (les bords du plan), dressés derrière le sentier.
+    # La lisière : des pans de 16 m au nord, bout à bout, un rang d'arbres devant ; au-delà, la forêt qui
+    # continue. (QC-S) Pans et rideaux à raccord : un bout libre se voit comme une bande coupée net
+    # (docs/QUALITE.md, QC-33) ; les rangs débordent donc de la carte, d'un pan de chaque côté.
+    for k, (x, scene) in enumerate(((-8.0, "forest_wall_b"), (8.0, "forest_wall_c"), (24.0, "forest_wall_a"),
+                                    (40.0, "forest_wall_b"), (56.0, "forest_wall_c"), (72.0, "forest_wall_a"),
+                                    (88.0, "forest_wall_b"))):
+        place("Lisiere", scene, x, 3.7, y=1.0, name="ForestWall%d" % k, flip=k % 2 == 0, check=False)
+    for k, x in enumerate((-4.0, 12.0, 28.0, 44.0, 60.0, 76.0)):
+        scene = "treeline_autumn_a_village" if k % 2 == 0 else "treeline_autumn_b_village"
+        place("Lisiere", scene, x, -5.0, y=1.0, name="TreelineBeyond%d" % (k + 1), flip=k % 2 == 1, check=False)
+    # Les pans de forêt à l'ouest et à l'est du marais (les bords du plan), dressés derrière le sentier ; au
+    # bord de la carte, un pan de plus ; côté marais, leur bout est caché par un saule (plus bas).
+    place("Lisiere", "forest_wall_c", -8.0, 18.2, name="ForestWallWest0", flip=True, check=False)
     place("Lisiere", "forest_wall_d", 8.0, 18.2, name="ForestWallWest", check=False)
     place("Lisiere", "forest_wall_a", 66.0, 17.0, name="ForestWallEast1", check=False)
     place("Lisiere", "forest_wall_a", 82.0, 17.0, name="ForestWallEast2", check=False)
@@ -213,9 +219,14 @@ def pose(p):
         place("Marsh", "lily_pads", q[0], q[1], name=named("LilyPads"), flip=int(q[0]) % 2 == 0, check=False)
     for q in ((24.0, 9.0), (47.0, 8.0), (54.0, 15.5)):
         place("Marsh", "mist_patch", q[0], q[1], name=named("Mist"), flip=int(q[1]) % 2 == 0, check=False)
-    # Saules sur les berges (de grands arbres : premier plan quand ils cachent quelqu'un).
-    place("Marsh", "willow", 17.2, 17.0, name="WillowWest")
-    place("Marsh", "willow", 57.0, 16.4, name="WillowEast")
+    # Saules sur les berges (de grands arbres : premier plan quand ils cachent quelqu'un). (QC-S) Aux deux
+    # coins du marais, un grand chêne se dresse devant le bout du pan de forêt (x 16 et 58), qui sans lui
+    # se voyait comme une bande de feuillage coupée net (docs/QUALITE.md, QC-33) : son tronc et sa
+    # couronne pleine le couvrent du pied à 6,4 m ; les saules s'écartent d'autant vers le marais.
+    place("Marsh", "oak_a", 15.7, 18.7, name="CornerOakWest")
+    place("Marsh", "oak_a", 57.7, 17.6, name="CornerOakEast")
+    place("Marsh", "willow", 20.6, 16.9, name="WillowWest")
+    place("Marsh", "willow", 54.4, 16.5, name="WillowEast")
 
     # Le sentier : pierres plates clairsemées (4.1), herbe au bord, racines, feuilles mortes.
     stones = []

@@ -251,6 +251,12 @@ def pose(p):
         place("Lisiere", scene, x, z, y=0.0, name="ForestWallWest%d" % (k + 1), flip=k % 2 == 1, check=False)
     for k, (x, z, scene) in enumerate(((44.5, 17.0, "forest_wall_a"), (44.5, 33.0, "forest_wall_c"))):
         place("Lisiere", scene, x, z, y=0.0, name="ForestWallEast%d" % (k + 1), flip=k % 2 == 0, check=False)
+    # (QC-S) Le bout des pans, côté colline (x 3,5 et 36,5), se voyait comme une bande de feuillage coupée
+    # net (docs/QUALITE.md, QC-33) : un chêne se dresse devant chacun (son tronc et sa couronne pleine le
+    # couvrent du pied à 6,4 m).
+    for k, z in enumerate((17.0, 33.0)):
+        place("Lisiere", "oak_a", 3.17, z + 0.6, name="EndOakWest%d" % (k + 1))
+        place("Lisiere", "oak_a", 36.83, z + 0.6, name="EndOakEast%d" % (k + 1), flip=True)
 
     # Un rang d'arbres devant les pans, sur le bord (x 0 → 3,4 ; x 36,6 → 40), sur la terre seulement.
     west = [(1.2, 13.0), (2.4, 15.5), (1.0, 18.0), (2.6, 22.0), (1.4, 26.0), (2.2, 30.0), (1.0, 34.0), (2.0, 38.0)]
