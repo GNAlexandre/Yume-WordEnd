@@ -3070,3 +3070,41 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   retouchée ; correction à commander dans `docs/ASSETS_HD2D_ILE68.md` (3.6) et variante moteur
   (`Building.window_glow_color`) dans `docs/CONTRACT_REQUESTS.md`.
 
+- **E6 — le récit est fait de données** : `data/scenes/<île>/act.json` (l'acte en jours : début, lit,
+  repos, calendrier, jours) et une scène par fichier (déclencheur, conditions, présents, étapes),
+  répliques dans `data/dialogues/<île>/`, textes courts dans `data/texts/<île>/story.json`. Un seul
+  autoload ajouté (`StoryDirector`) ; `StoryRunner`, `StoryStage`, `StoryDialogue`, `StoryPrompt` en
+  sont des enfants ou des outils. Le format se vérifie sans lancer le jeu (`StoryData.all_problems`),
+  une clé inconnue est refusée (sauf `_…`).
+- **E6 — nouvelle partie** : `WorldManager.START_MAP` devient `entrepot` (= `arrival_map` de l'île
+  n° 68) ; l'acte s'ouvre à `game_loaded` d'une partie neuve (`SaveManager.started_new`, carte vide,
+  jour 0, aucune scène jouée) et pose jour 1, nuit, grand vent. Une sauvegarde dont la carte n'est
+  pas connue et qui n'a pas d'acte reprend sur `LEGACY_MAP`, avec ses quêtes, sans récit.
+- **E6 — le temps n'avance que par les scènes et par le joueur** : « Dormir » au lit le soir ou la
+  nuit quand les scènes de `sleep_after` sont faites ; « Laisser passer le temps » un créneau à la
+  fois, jamais au-delà du créneau de la prochaine scène clé du jour ni au-delà de la nuit.
+- **E6 — le calendrier remplace le journal pendant l'acte** (Tab / L / Select, menu pause, examen du
+  calendrier de la chambre) : 12 cases, jours passés rayés, jour du départ entouré, la ligne du jour
+  écrite au coucher (une ligne posée par une scène n'est pas réécrite).
+- **E6 — quêtes à collecter tues pendant l'acte** : `QuestTracker` ne démarre rien, le HUD cache
+  l'encadré, le journal et les « ! » / « ? » (`GameState.story_running()`) ; leur code et leurs
+  données restent pour l'ancienne île.
+- **E6 — cartes manquantes** : le port (carte d'attente de C1) et la ville (`ville_haute`, le
+  snack-bar) ne sont pas jouées : `j1_1_port`, `j3_2_chemin` et `j3_3_snack` se racontent en fondu
+  et cartons ; aucune carte inventée.
+- **E6 — combats** : une étape `game` (crochet d'E8 : `StoryDirector.register_game`) et ses étapes
+  de repli (courte séquence sans contrôle) ; l'embuscade du jour 1 est `embuscade_pannibal`.
+- **E6 — écarts au scénario** : la chute de Willem dans le marais est un carton (planche
+  `willem_marsh` absente) ; la cuisinière du jour 4 (`fairy_12`, sans planche propre) est `fairy_05` ;
+  le j2_3 reçoit un indice (« Willem n'est pas sorti de sa chambre… », original) puisqu'il compte pour le coucher ;
+  la pose « hanches » de la protagoniste est dite par une réplique (absente de sa planche).
+- **E6 — le jour 1 sur le vrai sentier de C1** : l'embuscade part quand on approche
+  `premiere_embuscade` (7 m), l'intrus à `chtholly_arrivee` (4 m) ; Willem vient de `vue_marais` et
+  tombe à `marais_chute`, Pannibal guette à `lumiere_pannibal`.
+- **E6 — portes fermées jusqu'à un jour** : `StoryStage.apply_doors` lit `open_from_day` et
+  `closed_text_key` d'une `MapExit` (porte de la maison Limashenka, C2) ; avant le jour, la sortie est
+  coupée et un `Examinable` (`ClosedDoor`, même invite) lit le texte (fichier
+  `data/texts/<premier segment>.json`). `MapExit` n'est pas modifiée.
+- **E6 — étape `show`** : montre ou cache un nœud de la carte courante (le cristal
+  `comm_crystal_call_1` d'I2, qui sonne aux jours 6 et 8 : lot S2) ; le `PropBatcher` ne fond pas un
+  nœud caché, il reste donc à part et se montre seul.

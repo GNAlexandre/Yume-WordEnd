@@ -1593,6 +1593,7 @@ sans acte, garde son moteur de quêtes. Décisions : docs/DECISIONS.md (« E6 »
 | `control` | on | rend ou reprend le contrôle (la scène le prend au début, le rend à la fin) |
 | `game` | game, params, fallback | crochet d'E8 (`StoryDirector.register_game`) ; sans jeu inscrit, ses étapes de repli |
 | `hint` / `calendar` | text (vide : rien) / line | l'indice de la scène ; une ligne du calendrier |
+| `show` | node (chemin dans la carte), visible | montre ou cache un nœud de la carte courante (le cristal qui sonne : `Geometry/Nygglatho/comm_crystal_call_1` d'`entrepot_etage`) |
 
 ```gdscript
 # src/story/story_director.gd — autoload StoryDirector (project.godot, seul ajout d'E6)
@@ -1612,7 +1613,8 @@ class_name StoryData   # use_root(chemin) (tests), file_path, dialogue_path, tal
 class_name StoryRunner # run(id, données, île) (coroutine), stop(), skip(), current_step() ; signal step_started
 class_name StoryStage  # resolve(point, offset) -> Transform3D, direction(), player_within(), place_player(),
                        # walk_player() (coroutine), route() (portes, murs), set_control(), camera_rig(),
-                       # overlay(), fade_overlay(), wait_overlay(), add_follower(), followers()…
+                       # overlay(), fade_overlay(), wait_overlay(), add_follower(), followers(),
+                       # apply_doors(carte) (portes fermées jusqu'à un jour)…
 class_name StoryDialogue  # play(chemin, nœud, id, pnj) : un dialogue ouvert à un nœud
 class_name StoryPrompt    # invite du récit (couche 6) posée sur la carte : Dormir, Laisser passer le temps…
 # Ajouts ailleurs : LifeDirector.reserve / stage / release / release_all / dismiss / is_reserved /
@@ -1632,6 +1634,12 @@ change et se rappelle à la fermeture du calendrier ; le calendrier (`HUD/Calend
 Tab / L / Select pendant l'acte (à la place du journal), par le menu pause ou en examinant celui
 de la chambre ; le voile des scènes (`HUD/StoryOverlay`) porte les fondus, les cartons et
 « Échap : passer ». Pendant l'acte : ni encadré de quête, ni journal, ni « ! » / « ? ».
+
+**Les portes fermées jusqu'à un jour.** Une sortie (`MapExit`) qui porte les métadonnées
+`open_from_day` (jour d'ouverture) et `closed_text_key` (« village/maison_close » : la clé de
+`data/texts/village.json`, fichier nommé par le premier segment) ne mène nulle part avant ce jour :
+`StoryStage.apply_doors` la remplace par une zone à examiner (`ClosedDoor`, même invite) qui lit
+le texte. Appliqué à chaque arrivée sur une carte et à chaque changement de `GameState.day`.
 
 **Mode d'emploi : écrire une scène** (lot S2 : jours 5 à 12).
 1. Lire sa fiche dans ACTE1.md (lieu, présents, déclencheur, déroulé, choix, idées de

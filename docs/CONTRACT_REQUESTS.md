@@ -800,3 +800,22 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   près sur un lit de l'infirmerie quand quelqu'un y est couché (même position, même regard que le lit) ; aucun lit
   ne la porte au plan. **Bureau au miroir relevé** (`desk_chtholly_mirror_up`, acte 2) : scène prête, pas posée.
 
+## E6 — le récit (début de partie, jours 1 à 4)
+- **E8 (combats)** : l'étape `game` attend `StoryDirector.register_game(&"embuscade_pannibal", appel)`
+  (paramètres `{"day": 1, "help": true}`), l'appel rendant la main à la fin du combat ; sans lui, le
+  repli joue une courte séquence. Le ballon (jour 5) suivra le même crochet.
+- **C1 (sentier)** : à l'ouest de `marais_chute` (x ≈ 33,3 ; z ≈ 19), la levée a une marche que la
+  navigation croit franchissable : un joueur qui remonte vers l'ouest y bute (il passe en allant
+  vers le sud-ouest). Un chemin de `LifeNav` qui passe là coince un personnage mené.
+- **Cartes** : le port (carte d'attente) et la ville (`ville_haute`, le snack-bar) ; à leur
+  arrivée, `j1_1_port`, `j3_2_chemin` et `j3_3_snack` (racontées en cartons) pourront s'y jouer.
+- **Places** (`entrepot_etage`) : devant la porte de Nygglatho, côté couloir (l'avalanche n° 1 de
+  `j1_5_premiers_pas`, quatre petites l'oreille contre la porte : `[10.5, 9.1]` à `[11.8, 9.6]` en
+  attendant) ; (`entrepot_rdc`) le passage de Willem au réfectoire (`j2_2_fuite`, `[13, 7.4]`).
+- **Planches** : `willem_marsh` (la chute dans le marais, jour 1), la pose `hanches` de la
+  protagoniste à la maison, une planche propre pour `fairy_12` (cuisinière du jour 4).
+- **C2 (porte fermée jusqu'au jour 11)** : fait par le récit (`StoryStage.apply_doors`), sans
+  toucher `MapExit` ; le test de la vraie partie du village vérifie la porte close puis l'ouvre au
+  jour 11.
+- **I2 (cristal)** : l'étape `show` (`{"do": "show", "node": "Geometry/Nygglatho/comm_crystal_call_1",
+  "visible": true}`) est prête pour les scènes du cristal (jours 6 et 8, lot S2).
