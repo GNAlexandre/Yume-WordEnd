@@ -12,7 +12,8 @@ extends Node
 ##             et attaque un par un ;
 ##   sanglier  matin : le sanglier gratte le sol (la zone de sa charge se dessine) ;
 ##   ours      matin : l'ours se dresse avant de frapper (annonce de 0,8 s, zone au sol) ;
-##   troupeau  couchant : douze animaux dans le champ (mesure des draw calls, budget 200).
+##   troupeau  couchant : seize animaux de plus autour du joueur, au moins douze dans le champ
+##             (mesure des draw calls, budget 200).
 ## Une ligne par vue dans le journal : « E5 vue <nom> : <d> draw calls, <p> primitives, <a> animaux
 ## dans le champ, <s> animaux en tout », puis « E5 fin ».
 
@@ -76,8 +77,8 @@ const VIEWS := {
 		"moment": &"couchant",
 		"at": Vector3(28.0, 0.0, 26.0),
 		"aim": Vector3(0.0, 0.0, -1.0),
-		"crowd": 12,
-		"after": 30,
+		"crowd": 16,
+		"after": 6,
 	},
 }
 const SETTLE_FRAMES := 8
