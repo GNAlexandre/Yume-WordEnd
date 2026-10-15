@@ -102,18 +102,22 @@ LIGHT_TYPES = {
 }
 SUSPENSION_RADIUS = 4.5
 
-# Réglages de la Map par carte. Bornes de la caméra : celles du plan, élargies en x à tout le
-# bâtiment pour les étages (la caméra reste au droit du joueur ; docs/INTERIEURS.md, 1.6, et
-# docs/DECISIONS.md, T2).
+# Réglages de la Map par carte. Bornes de la caméra (QO, docs/QUALITE.md, QC-20 ; docs/DECISIONS.md) :
+# les pignons au plus près des bords de l'écran. T2 les avait élargies à x 2 → 30 (la caméra suivait le joueur
+# jusqu'au pignon et montrait le vide sur un tiers à la moitié de l'écran). La borne la plus serrée est celle où
+# la caméra s'arrête à moins de 0,5 m de la dernière cloison nord-sud (cuisine et lecture en bas, chambres de
+# Willem et de Nephren en haut) : plus loin, elle regarde la pièce du bout de biais et la cloison cache les
+# pieds du joueur qui la longe (test « rien ne cache le joueur ») ; x de 8 à 24, celles du plan, sortiraient
+# aussi le joueur du cadre au coin sud-ouest. Café et maison : la pièce tient à l'écran ; la caméra ne bouge
+# que de la salle à la cloison de l'arrière-salle ou du vestibule (même raison), z fixe.
 MAP_SETTINGS = {
-    "entrepot_rdc": {"camera_bounds": (2.0, 4.0, 28.0, 6.0), "light_preset": "interieur"},
-    "entrepot_etage": {"camera_bounds": (2.0, 4.0, 28.0, 6.0), "light_preset": "interieur"},
+    "entrepot_rdc": {"camera_bounds": (6.0, 4.0, 20.0, 6.0), "light_preset": "interieur"},
+    "entrepot_etage": {"camera_bounds": (5.5, 4.0, 21.0, 6.0), "light_preset": "interieur"},
     "salle_des_armes": {"camera_bounds": (5.0, 3.0, 4.0, 3.0), "light_preset": ""},
     "entrepot_toit": {"camera_bounds": (6.0, 4.0, 4.0, 4.0), "light_preset": ""},
-    # (C2) Une seule pièce de 10 × 8 m ou 12 × 10 m : la caméra reste au droit du joueur (x de 2 à la largeur − 2) et
-    # cadre la pièce entière (docs/INTERIEURS.md, 1.6).
-    "cafe": {"camera_bounds": (2.0, 5.0, 8.0, 0.0), "light_preset": "interieur"},
-    "maison_limashenka": {"camera_bounds": (2.0, 4.0, 6.0, 0.0), "light_preset": "interieur"},
+    # (C2) Une seule pièce de 10 × 8 m ou 12 × 10 m, cadrée entière (docs/INTERIEURS.md, 1.6).
+    "cafe": {"camera_bounds": (5.5, 5.0, 3.0, 0.0), "light_preset": "interieur"},
+    "maison_limashenka": {"camera_bounds": (3.5, 4.0, 1.5, 0.0), "light_preset": "interieur"},
 }
 # Sorties vers une carte qui n'existe pas encore (construite en parallèle) : provisoirement vers
 # une carte existante, au Spawn ; relancer gen les raccorde dès que la cible existe.

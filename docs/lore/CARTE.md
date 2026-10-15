@@ -653,8 +653,9 @@ entrepot_rdc : 32 × 16 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud
 Légende des lettres : `1` board_games_shelf ; `2` game_table ; `3` plush_blue ; `4` plush_pile ; `5` floor_cushions ; `6` bed_iron ; `7` bedside_table ; `8` chair_child ; `9` medicine_cabinet ; `?` washbasin_stand ; `?` infirmary_desk ; `A` crystal_pendant ; `B` papers_floor ; `C` runner_rug ; `D` bath_puddles ; `E` rug_playroom ; `F` ball_white ; `G` crystal_stove ; `I` kitchen_counter ; `J` pantry_cupboard ; `K` kitchen_table_ingredients ; `L` water_tub ; `M` sacks_vegetables ; `N` china_cabinet ; `P` sink_stone ; `Q` chair_wood ; `R` dining_table_set ; `S` dining_table_long ; `U` chair_wood_back ; `V` stairs_up ; `Y` archive_shelves ; `Z` paper_pile_a ; `a` desk_buried ; `b` paper_pile_b ; `c` filing_cabinet ; `d` sofa_beige ; `e` paper_pile_c ; `f` window_reading_seat ; `g` bookshelf_tall ; `h` bookshelf_low ; `i` bookshelf_tall_b ; `j` reading_table ; `k` armchair_reading ; `m` book_pile ; `n` washstand_corridor ; `p` bath_tub ; `q` towel_shelf ; `r` wash_tub ; `s` hamper ; `t` supply_cupboard ; `u` cleaning_set ; `v` potted_plant ; `x` shoe_rack ; `y` piano_old ; `z` toy_chest.
 <!-- /ascii:entrepot_rdc -->
 
-**Bornes de caméra** `Rect2(8, 4, 16, 6)` (le point visé reste dans le bâtiment ; la vue entière
-tient en deux écrans). **Lumière** : préréglage `interieur` (E9), lueur chaude des cristaux.
+**Bornes de caméra** `Rect2(6, 4, 20, 6)` ((QO) les pignons au plus près des bords de l'écran ;
+plus serrées, la cloison de la cuisine ou de la salle de lecture, vue de biais, cacherait le joueur qui
+la longe ; `tools/interior_maps.py`, `MAP_SETTINGS`). **Lumière** : préréglage `interieur` (E9), lueur chaude des cristaux.
 
 | Pièce | Cotes (m) | Ce que dit l'œuvre | Portes et fenêtres | Mobilier (images) | À examiner |
 | --- | --- | --- | --- | --- | --- |
@@ -978,7 +979,8 @@ entrepot_etage : 32 × 16 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-s
 Légende des lettres : `A` rug_brown ; `B` cards_floor ; `C` clothes_floor ; `D` runner_rug ; `E` crystal_pendant ; `F` wardrobe_plain ; `G` bed_plain ; `I` footlocker ; `J` desk_chtholly ; `K` bed_chtholly ; `L` wardrobe_chtholly ; `M` fireplace ; `N` comm_crystal ; `P` shelf_nygglatho ; `Q` tea_table ; `R` chair_guest ; `S` desk_nygglatho ; `U` bed_nygglatho ; `V` dresser_child ; `Y` desk_clean ; `Z` clothes_chest ; `a` stairs_down ; `b` bed_child ; `c` book_pile ; `d` bookshelf_low ; `e` roof_ladder ; `f` leak_bucket ; `g` repair_planks ; `h` bunk_bed ; `i` bed_child_messy ; `j` plush_pile ; `k` supply_cupboard ; `m` towel_shelf.
 <!-- /ascii:entrepot_etage -->
 
-**Bornes de caméra** `Rect2(8, 4, 16, 6)`. Au nord, les chambres des grands et des aînées ; au
+**Bornes de caméra** `Rect2(5.5, 4, 21, 6)` ((QO) même règle, cloisons des chambres de Willem et
+de Nephren). Au nord, les chambres des grands et des aînées ; au
 sud, contre la façade, les dortoirs des petites. Les murs sont minces : on entend tout (V4, « La
 fille aux cheveux cramoisis »). La nuit, la lumière filtre sous la porte de Nygglatho (V2,
 épilogue). Le plancher des chambres (`floor_planks_dark`) semble pouvoir céder (V5, épilogue).
@@ -1718,7 +1720,8 @@ Légende des lettres : `A` crystal_pendant ; `B` cafe_bottle_shelf ; `C` cafe_co
 | **Arrière-boutique** | 2,5 × 8 | rideau rayé `door_backroom` ; garde-manger, sacs, caisses | « Réservé au personnel » (le serveur y prend les jus) |
 
 Sortie au sud (mur coupé) vers `village`, `from_cafe` ; points `comptoir`, `table_fees` (la table
-des trois aînées, jour 9), `table_buveurs`, `arriere`. **Bornes** : la pièce entière.
+des trois aînées, jour 9), `table_buveurs`, `arriere`. **Bornes** `Rect2(5.5, 5, 3, 0)` : la pièce entière à l'écran ; (QO) la
+caméra ne glisse que jusqu'à la cloison de l'arrière-salle (vue de biais, elle cacherait le joueur).
 
 <!-- ascii:maison_limashenka -->
 ```text
@@ -1749,7 +1752,8 @@ Légende des lettres : `A` rug_salon ; `B` display_cabinet ; `C` toolbox_gears ;
 | **Vestibule** | 2,5 × 6 | patères `wallitem_coat_hooks` | — |
 | **Salon** | 5,5 × 6 | **horloge `wallitem_clock_limashenka`** (fermée), puis `_open` (engrenages et peigne doré) pendant la réparation, puis le balancier qui va (`anim/clock_limashenka_swing`) ; boîte à outils `toolbox_gears` ; canapé `sofa_salon` ; fauteuil sous un drap `armchair_sheeted` ; vitrine de bibelots `display_cabinet` (boîtes à tabac) ; guéridon `side_table_salon` ; portrait de famille `wallitem_family_portrait` (58 × 77 px, soit 0,6 × 0,8 m : le cahier n° 5 donne 256 × 256, une taille de portrait de dialogue) ; tapis `rug_salon` ; volets `window_shutters` | l'horloge ; le portrait (une mère et son petit) |
 
-Points `horloge` (Willem au travail), `rami`, `canape`. Maison fermée depuis le deuil (draps sur
+Points `horloge` (Willem au travail), `rami`, `canape`. **Bornes** `Rect2(3.5, 4, 1.5, 0)` (QO : la
+pièce à l'écran, la caméra glisse du salon à la cloison du vestibule). Maison fermée depuis le deuil (draps sur
 les meubles, **original**).
 
 ```plan

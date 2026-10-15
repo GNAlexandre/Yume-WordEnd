@@ -49,7 +49,9 @@ const WORLD_LAYER := 1
 @export var interior: bool = false
 ## Largeur (x) et profondeur (z) de la carte, en m.
 @export var size: Vector2 = Vector2(40.0, 30.0)
-## Bornes du point visé par la caméra, en x et z ; vide (taille nulle) : la carte entière.
+## Bornes du point visé par la caméra, en x et z ; vide (Rect2()) : la carte entière. (QO) Un
+## rectangle plat ou réduit à un point borne aussi : caméra sur une ligne, ou fixe (une pièce qui
+## tient à l'écran).
 @export var camera_bounds: Rect2 = Rect2()
 ## Préréglage de lumière (E9 : data/lighting/<id>.tres, un moment ou « interieur ») ; vide :
 ## celui du moment de la journée (« interieur » pour une carte intérieure).
@@ -73,9 +75,11 @@ func area() -> Rect2:
 	return Rect2(Vector2.ZERO, size)
 
 
-## Bornes du point visé par la caméra (camera_bounds, ou la carte entière s'il est vide).
+## Bornes du point visé par la caméra (camera_bounds, ou la carte entière s'il est vide). (QO)
+## Plat ou réduit à un point, il compte : la caméra fixe du café suivait le joueur dans toute la
+## carte, comme si ses bornes étaient vides.
 func bounds() -> Rect2:
-	return camera_bounds if camera_bounds.has_area() else area()
+	return camera_bounds if camera_bounds != Rect2() else area()
 
 
 ## Marqueur d'arrivée par son nom (null s'il n'existe pas).

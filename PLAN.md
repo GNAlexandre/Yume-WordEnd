@@ -545,7 +545,8 @@ class_name QuestStep  : (Lot Q) id, type (talk|reach|kill|collect|arena|flag), o
 # (L0) Autres classes partagées
 class_name Zone            # racine d'une zone : @export display_name: String, @export safe: bool ; func zone_id() -> StringName
 class_name Map             # (E1) src/world/map.gd, racine d'une carte (Node3D, groupe "maps") : @export display_name: String,
-                           # region: StringName, interior: bool, size: Vector2, camera_bounds: Rect2 (vide : la carte),
+                           # region: StringName, interior: bool, size: Vector2, camera_bounds: Rect2 (Rect2() : la carte ;
+                           # (QO) plat ou réduit à un point : une ligne, une caméra fixe),
                            # light_preset: StringName, (X1) island: StringName (&"ile_68" ; celle dont le fichier de
                            # l'île nomme la carte) ; map_id(), area() (Rect2(0, 0, size) ; île héritée : centrée),
                            # bounds(), marker(name), spawn(), marker_names(), exits() ; statiques scene_path(id), exists(id),
@@ -1108,8 +1109,8 @@ func front_z() -> float, cut_z() -> float, occluder_triangles(cut_world) -> Pack
 2. Écrire `data/maps/<map_id>/interior.json` : pièces et matières, portes, fenêtres, éléments,
    lampes ; `InteriorLayout.from_data(...).problems` doit être vide.
 3. Carte `src/world/maps/<map_id>/<map_id>.tscn` : racine `Map` (`interior = true`,
-   `light_preset = &"interieur"`, `camera_bounds` : de x = 2 à la largeur − 2 pour que la caméra
-   reste au droit du joueur, en z de 5 à la profondeur − 5) ; `Ground` = `StaticBody3D` de script
+   `light_preset = &"interieur"`, `camera_bounds` : (QO) les pignons aux bords de l'écran, le joueur
+   jamais hors du cadre ; une pièce qui tient à l'écran a une caméra fixe, `Rect2(x, z, 0, 0)`) ; `Ground` = `StaticBody3D` de script
    `interior_room.gd` (masque 0) avec `layout` ; `Geometry` (`PropBatcher`) ; `Markers` (`Spawn`,
    `from_<carte>` à y = 0,2, à 2 ou 3 m des sorties) ; `Exits` (`MapExit` devant chaque porte
    qui a un `id` : `door_position(id)` ; zone qui couvre la porte quand on la franchit en marchant ;
