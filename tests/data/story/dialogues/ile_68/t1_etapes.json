@@ -1,0 +1,29 @@
+{
+  "id": "t1_etapes",
+  "start": "question",
+  "nodes": {
+    "question": {
+      "speaker_id": "willem",
+      "text": "A ou B ?",
+      "choices": [
+        {
+          "text": "A",
+          "next": "a"
+        },
+        {
+          "text": "B",
+          "set_flag": "t_choix_b",
+          "next": "b"
+        }
+      ]
+    },
+    "a": {
+      "speaker_id": "willem",
+      "text": "A, donc."
+    },
+    "b": {
+      "speaker_id": "nygglatho",
+      "text": "B, donc."
+    }
+  }
+}

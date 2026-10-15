@@ -1,0 +1,41 @@
+{
+  "_comment": "Un lieu atteint, un suiveur, une conversation attendue.",
+  "day": 1,
+  "after": [
+    "t1_etapes"
+  ],
+  "map": "entrepot_rdc",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "point_eau",
+    "radius": 2
+  },
+  "present": [
+    "willem"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "point_eau",
+      "offset": [
+        -1.2,
+        0
+      ]
+    },
+    {
+      "do": "follow",
+      "who": "willem",
+      "distance": 1.5
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "talk": "willem"
+    }
+  ]
+}

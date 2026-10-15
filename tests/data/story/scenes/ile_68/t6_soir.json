@@ -1,0 +1,23 @@
+{
+  "_comment": "Un créneau plus tard : le temps qui passe s'y arrête.",
+  "day": 1,
+  "slot": "soir",
+  "after": [
+    "t5_sequence"
+  ],
+  "map": "entrepot_rdc",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "entree",
+    "radius": 1.5
+  },
+  "steps": [
+    {
+      "do": "flag",
+      "set": [
+        "t6_joue"
+      ]
+    }
+  ]
+}

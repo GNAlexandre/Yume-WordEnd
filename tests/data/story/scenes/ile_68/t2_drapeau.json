@@ -1,0 +1,22 @@
+{
+  "_comment": "Une condition « if » sur un choix.",
+  "day": 1,
+  "after": [
+    "t1_etapes"
+  ],
+  "if": {
+    "flag": "t_choix_b"
+  },
+  "map": "entrepot_rdc",
+  "trigger": {
+    "on": "ready"
+  },
+  "steps": [
+    {
+      "do": "flag",
+      "set": [
+        "t2_joue"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "_comment": "Textes de l'acte d'essai.",
+  "ui": {
+    "sleep": "Dormir",
+    "rest": "Laisser passer le temps",
+    "day": "Jour {day}"
+  },
+  "days": {
+    "1": {
+      "calendar": "Une journée d'essai.",
+      "sleep_hint": "Au lit, {player}."
+    },
+    "2": {
+      "calendar": "Il a plu."
+    }
+  },
+  "calendar": {
+    "special": "Une ligne choisie par une scène."
+  },
+  "t1_etapes": {
+    "carton": "Un carton d'essai.",
+    "bulle": "Bonjour !",
+    "indice": "Un indice d'essai."
+  },
+  "t3_lieu": {
+    "hint": "Va au point d'eau."
+  },
+  "t5_sequence": {
+    "carton": "Une longue séquence."
+  },
+  "t6_soir": {
+    "hint": "Il attend le soir."
+  }
+}

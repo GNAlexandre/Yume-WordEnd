@@ -8,7 +8,7 @@ extends Node
 ##   (story_running) ; l'ancienne île, sans acte, garde ses quêtes.
 ## - Les scènes (StoryData) : quand aucune ne se joue, la première (par id) dont les conditions
 ##   tiennent (jour, créneau, scènes jouées, « if ») et dont le déclencheur part est jouée par
-##   StoryRunner : « ready » (tout de suite), « enter » (sur la carte, arrivé par un marqueur),
+##   StoryRunner : « ready » (tout de suite, sur la carte de la scène), « enter » (sur la carte, arrivé par un marqueur),
 ##   « reach » (le joueur à moins de radius m d'une place), « talk » (parler à un PNJ),
 ##   « examine » (lire un objet à examiner), « prompt » (une invite posée sur la carte). Ses
 ##   présents sont réservés (LifeDirector.reserve) et rendus à la vie à la fin ; le joueur perd
@@ -297,7 +297,8 @@ func sleep() -> void:
 	_stage.set_control(false)
 	await _stage.fade_overlay(StoryData.BLACK, 1.0, SLEEP_FADE)
 	var day := GameState.day
-	GameState.write_calendar(day)
+	if not GameState.has_calendar_line(day):
+		GameState.write_calendar(day)
 	var title := ui_text("day", "Jour {day}").replace("{day}", str(day))
 	var overlay_node := _stage.overlay()
 	if overlay_node != null:
@@ -510,7 +511,7 @@ func _trigger_fires(data: Dictionary, map_id: StringName) -> bool:
 	var on_map := StringName(str(trigger.get("map", data.get("map", "")))) == map_id
 	match str(trigger.get("on", "")):
 		"ready":
-			return true
+			return on_map
 		"enter":
 			var marker := StringName(str(trigger.get("marker", "")))
 			return on_map and (marker.is_empty() or WorldManager.arrival_marker() == marker)
@@ -612,7 +613,7 @@ func _end_scene(scene_id: StringName, data: Dictionary, completed: bool) -> void
 		_releases.append(StringName(npc_id))
 	GameState.mark_scene_done(scene_id)
 	GameState.story_scene = &""
-	_mark_seen(scene_id)
+	mark_seen(scene_id)
 	scene_finished.emit(scene_id)
 	EventBus.save_requested.emit()
 	if _stage_ready() and not _check_triggers():
@@ -779,7 +780,7 @@ func _seen_file() -> ConfigFile:
 	return _seen
 
 
-func _mark_seen(scene_id: StringName) -> void:
+func mark_seen(scene_id: StringName) -> void:
 	var file := _seen_file()
 	if file.has_section_key(SEEN_SECTION, String(scene_id)):
 		return

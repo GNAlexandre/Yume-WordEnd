@@ -1,0 +1,126 @@
+{
+  "_comment": "Chaque étape, l'une après l'autre.",
+  "day": 1,
+  "map": "entrepot_rdc",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "willem",
+    "nygglatho"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "refectoire_allee",
+      "facing": "east",
+      "outfit": "maison"
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "refectoire_bout_ouest",
+      "outfit": "vie",
+      "anim": "hanches"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "refectoire_bout_est",
+      "facing": "west"
+    },
+    {
+      "do": "anim",
+      "who": "willem",
+      "anim": "assis"
+    },
+    {
+      "do": "outfit",
+      "who": "willem",
+      "outfit": "cuisine"
+    },
+    {
+      "do": "flag",
+      "set": [
+        "t_drapeau"
+      ]
+    },
+    {
+      "do": "slot",
+      "slot": "midi",
+      "time": 0
+    },
+    {
+      "do": "moment",
+      "weather": "pluie",
+      "time": 0
+    },
+    {
+      "do": "camera",
+      "to": "willem",
+      "distance": 9,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0
+    },
+    {
+      "do": "card",
+      "text": "carton",
+      "time": 0.1
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.1
+    },
+    {
+      "do": "bubble",
+      "who": "nygglatho",
+      "text": "bulle"
+    },
+    {
+      "do": "hint",
+      "text": "indice"
+    },
+    {
+      "do": "calendar",
+      "line": "special"
+    },
+    {
+      "do": "wait",
+      "time": 0.2
+    },
+    {
+      "do": "dialogue",
+      "node": "question"
+    },
+    {
+      "if": {
+        "flag": "t_choix_b"
+      },
+      "do": "flag",
+      "set": [
+        "t_suite_b"
+      ]
+    },
+    {
+      "do": "camera_reset",
+      "time": 0
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "reach": "point_eau",
+      "radius": 1.0,
+      "timeout": 0.3,
+      "timeout_flag": "t_trop_tard"
+    }
+  ]
+}

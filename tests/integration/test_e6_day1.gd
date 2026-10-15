@@ -7,7 +7,7 @@ extends "res://tests/stubs/e6_story_test.gd"
 
 func test_day_1_end_to_end_until_day_2() -> void:
 	# La séquence du port a déjà été vue (une autre partie) : elle se passe d'Échap.
-	StoryDirector.call(&"_mark_seen", &"j1_1_port")
+	StoryDirector.mark_seen(&"j1_1_port")
 	trace("1")
 	assert_true(await new_game_from_menu(), "partie lancée depuis le menu")
 	assert_eq(WorldManager.current_map(), &"entrepot", "l'acte 1 commence à l'entrepôt")
