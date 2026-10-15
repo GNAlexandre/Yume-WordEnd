@@ -776,3 +776,15 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
     (elles dorment en tenue du jour) ; `nygglatho_labcoat` ; les tenues de pluie ; `willem_stick`, le geste au marteau
     (`reparer` joue `travaille`), la passe du pied de Willem (`frappe`) ; les poses `pile` (assise à califourchon) et `epie`
     (l'oreille contre la porte, de dos) ; `cafe_owner`, `drinker_*`, `porter`, `villager_*` (la ville et le village).
+
+- **C3 — préréglage `nuit_claire`** (E9) : CARTE.md (7) et ACTE1.md (8.8) appellent ainsi la lumière de la colline,
+  qui n'existe pas (`data/lighting/` : `nuit` seulement). La carte emploie `light_preset = &"nuit"` (docs/DECISIONS.md,
+  C3). Un préréglage `nuit_claire` (voie lactée plus nette, air limpide, lumière plus douce que `nuit`) se règle
+  dans `data/lighting/` ; la carte passera alors `light_preset` à `nuit_claire` (une ligne de
+  `tools/exterior_recipes/colline.py`, `gen colline`), ou la scène de l'acte 1 le choisit.
+- **C3 — la scène des talismans (E6, récit)** : la carte donne le décor et les points (`talismans_centre` : le petit
+  cristal, 20 ; 12 ; `dos_a_dos`, `vue_nord`, `rocher`) ; elle ne pose ni talismans ni lumière. La scène pose les
+  quarante et un `anim/talisman_float` (remplaçant livré, 24 × 24 px) sur un cercle de 3,5 m, la lueur du cristal
+  (une lumière de la scène, pas de la carte) et, quand on lève les yeux, `sky_night` (la caméra regarde le ciel).
+  Willem monte à la colline au soir du jour 8 : `data/life/ile_68/willem.json` dit `away: colline` ; une ligne
+  `map` + `place` (`colline`, `dos_a_dos`) la remplace quand la scène la joue.
