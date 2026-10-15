@@ -466,11 +466,11 @@ def pose(p):
     rim = [
         # Cour, à l'ouest du duel : le coin de la lessive (baquet au bord, panier, seau) au nord, un banc
         # tourné vers le duel ; au sud, des bûches et des souches pour s'asseoir ; à l'est, un banc entre le
-        # duel et la marelle, la brouette et une caisse au bord, un seau.
+        # duel et la marelle, la brouette et une caisse au bord sud-est (loin du passage vers le champ), un seau.
         ("Yard", "wash_tub", 31.3, 32.6), ("Yard", "laundry_basket", 34.7, 33.0), ("Yard", "bucket", 32.6, 33.8),
         ("Yard", "bench_b", 33.6, 36.8),
         ("Yard", "log_pile_forest", 35.2, 45.0), ("Yard", "stump_a", 38.2, 44.6), ("Yard", "stump_b", 49.8, 44.6),
-        ("Yard", "bench", 52.2, 31.8), ("Yard", "wheelbarrow", 57.0, 33.4), ("Yard", "crate", 56.6, 43.0),
+        ("Yard", "bench", 52.2, 31.8), ("Yard", "wheelbarrow", 58.4, 42.6), ("Yard", "crate", 56.6, 43.0),
         ("Yard", "bucket", 54.2, 43.4),
         # Champ, au bord ouest (où l'on ne joue pas) : les bancs des spectatrices, des jouets, le seau d'eau
         # et un ballon de rechange ; au sud, une souche et des jouets, des bûches hors du champ ; au nord,
@@ -486,7 +486,8 @@ def pose(p):
         crowded = any(abs(x - lx) < half[0] + 1.2 and abs(z - lz) < half[1] + 1.2 for lx, lz in life)
         if crowded or duel.hits(Rect(x - half[0], z - half[1], x + half[0], z + half[1]), 0.6) or keep_out(
                 x, z, half, prop(scene).blocks, places=False):
-            p.warnings.append("bordure : %s en (%.1f ; %.1f) gêne le duel, la vie, un chemin ou un point" % (scene, x, z))
+            p.warnings.append("bordure : %s en (%.1f ; %.1f) gêne le duel, la vie, un chemin ou un point"
+                              % (scene, x, z))
         place(group, scene, x, z, name="Rim%s%d" % (group, k + 1), flip=k % 2 == 1)
 
 

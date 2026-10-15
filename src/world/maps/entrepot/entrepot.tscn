@@ -880,7 +880,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.2, 0, 31.8)
 flip_h = true
 
 [node name="RimYard9" parent="Geometry/Yard" instance=ExtResource("38_wheelbarrow")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 0, 33.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4, 0, 42.6)
 
 [node name="RimYard10" parent="Geometry/Yard" instance=ExtResource("93_crate")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56.6, 0, 43)
