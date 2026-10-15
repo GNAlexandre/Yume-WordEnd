@@ -17,7 +17,11 @@
   "wall_items": [
     {"room": "vestibule", "side": "W", "z": 3.0, "y": 0.9, "image": "wallitem_coat_hooks"},
     {"room": "salon", "side": "N", "x": 6.2, "y": 0.9, "image": "wallitem_clock_limashenka"},
-    {"room": "salon", "side": "N", "x": 8.0, "y": 1.4, "image": "wallitem_family_portrait"}
+    {"room": "salon", "side": "N", "x": 8.0, "y": 1.4, "image": "wallitem_family_portrait"},
+    {"room": "vestibule", "side": "W", "z": 5.2, "y": 1.6, "image": "wallitem_wall_lamp"}
   ],
-  "lights": []
+  "lights": [
+    {"room": "salon", "at": [8.3, 5.5], "radius": 2.6, "color": "#ffc070", "energy": 0.85},
+    {"room": "vestibule", "at": [1.1, 5.2], "radius": 2.6, "color": "#ffc070", "energy": 0.85}
+  ]
 }

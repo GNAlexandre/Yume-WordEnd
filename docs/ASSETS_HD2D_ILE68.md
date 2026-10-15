@@ -67,7 +67,7 @@ profonde, la faune, le centre-ville et la montagne.
 
 | Lot | Section | Contenu | Prio 1 | Prio 2 | Prio 3 |
 | --- | --- | --- | --- | --- | --- |
-| **R0** | 2 bis | **Corrections et vues manquantes** : tables mal faites, canapé et meubles sans vue de flanc ou de dos, lits par le pied, bancs | 28 images | 19 images | 7 images |
+| **R0** | 2 bis | **Corrections et vues manquantes** : tables mal faites, canapé et meubles sans vue de flanc ou de dos, lits par le pied, bancs ; (C3b) piliers de la mer de nuages et dalles du sentier de la colline | 28 images | 23 images | 8 images |
 | **R1** | 3 | **L'entrepôt complet** : façades et flancs, toit, pièces, dehors, remplaçants | 12 images | 19 images | 8 images |
 | **R2** | 4 | **Les personnages de l'acte 1** : tenues, gestes, scènes, fées, bâton | 10 planches | 2 images, 23 planches | 2 planches |
 | **R3** | 5 | **Le chemin du port** : sentier et marais, village, café, maison Limashenka, port, paliers | 19 images | 30 images | 26 images |
@@ -544,6 +544,104 @@ village en attendant (recette `tools/exterior_recipes/village.py`).
 **À ne pas faire** : des sillons profonds, des bourrelets de cailloux, des bouts coupés droits, une
 couleur plus sombre que la terre de plus de 15 %.
 
+### R0.9 Les façades du village la nuit (constaté par le garant de la qualité, 15 octobre 2026)
+
+**Constat** (`docs/QUALITE.md`, QC-16 ; capture `build/qc/2026-10-15-avant/village_cafe_nuit.png`) : la
+nuit, toutes les façades du village sont éteintes. Le café, qui sert l'alcool le soir (VEX), a l'air
+fermé : vitrine bleu-noir, lanterne sans flamme. Le moteur sait déjà remplacer une image par sa version
+de nuit : une sœur `<nom>_night.png` au même cadrage, prise quand la nuit tombe
+(`HD2DLightTargets`, cahier n° 3, section 8.4) ; il ne manque que les images.
+
+| Prio | Fichier | Taille (px) | Genre, ancre | Consigne |
+| --- | --- | --- | --- | --- |
+| 1 | `assets/hd2d/buildings/cafe_night.png` | 672 × 528 (comme `cafe.png`) | façade, même cadrage au pixel près | `cafe.png` (jointe) **la nuit, café ouvert** : même dessin, mêmes contours ; la vitrine et la porte vitrée éclairées de l'intérieur, lumière chaude **en aplat #FFE6A6** sur les carreaux (silhouettes des tables et des lampes suspendues en contre-jour plus sombre), la lanterne de façade allumée (flamme et verre #FFE6A6), un halo doux peint autour d'elle sur le mur ; le reste de la façade dans la pénombre bleue de la nuit (pierre et colombages assombris, bleutés, sans noir pur) ; store replié |
+| 2 | `assets/hd2d/buildings/limashenka_house_night.png` | 576 × 576 | idem | `limashenka_house.png` (jointe) la nuit : une seule fenêtre du rez-de-chaussée allumée (carreaux #FFE6A6, rideau à demi tiré), les autres sombres ; pénombre bleue |
+| 2 | `assets/hd2d/buildings/village_house_stone_night.png` | 480 × 576 | idem | `village_house_stone.png` (jointe) la nuit : une fenêtre de l'étage allumée (#FFE6A6), les volets du bas fermés ; pénombre bleue |
+| 2 | `assets/hd2d/buildings/cottage_thatch_a_night.png` | 480 × 528 | idem | `cottage_thatch_a.png` (jointe) la nuit : la petite fenêtre allumée d'une lueur de bougie (#FFE6A6 au centre, plus orangé seulement sur le cadre de bois) ; chaume et torchis bleutés |
+| 3 | `assets/hd2d/buildings/cottage_thatch_b_night.png` | 672 × 240 | idem | `cottage_thatch_b.png` (jointe) la nuit : une des trois fenêtres allumée (#FFE6A6), volets des deux autres fermés |
+| 3 | `assets/hd2d/buildings/cottage_thatch_c_night.png` | 384 × 480 | idem | `cottage_thatch_c.png` (jointe) la nuit : la lucarne du chaume allumée (#FFE6A6) |
+
+**À ne pas faire** : changer le cadrage, la taille ou le dessin (l'image de nuit remplace celle du jour
+au pixel près) ; peindre les vitres allumées en orangé (le moteur n'allume que les pixels proches de la
+couleur de lueur du bâtiment : voir 3.6 ; (QO) à la livraison, régler `Building.window_glow_color` sur
+#FFE6A6 pour ces façades, la règle par défaut allumant en fait #FFCA63) ; un ciel ou un fond (transparence
+inchangée) ; tout allumer (un village de campagne dort : une fenêtre ou deux par maison au plus).
+
+### R0.10 Les remplaçants qui se voient au premier rang (priorités relevées)
+
+**Constat** (`docs/QUALITE.md`, QC-17 et QC-18 ; captures `village_chaumieres_matin.png`,
+`village_jardin_matin.png`, `village_lavoir_matin.png`) : au village, quatre remplaçants du lot R3 sont au
+premier rang d'une vue nommée et se voient tout de suite. Ils sont déjà commandés (section 5.3) ; leur
+priorité passe avant le reste du lot R3. Consignes : celles de la section 5.3, inchangées.
+
+| Prio (était) | Fichier | Ce qui se voit |
+| --- | --- | --- |
+| 1 (2) | `assets/hd2d/buildings/materials/roof_thatch.png` | le toit des trois chaumières et de la grange : des rayures régulières de planches et les mêmes taches vertes répétées tous les 2 m, un toit de tôle plutôt qu'un chaume |
+| 1 (3) | `assets/hd2d/props/washing_trough.png` | le lavoir, point nommé du plan : un rectangle pâle à liseré bleu au premier plan |
+| 2 (3) | `assets/hd2d/props/haystack.png`, `assets/hd2d/props/cart_hay.png` | la meule et la charrette à foin du grand jardin : des aplats jaunes sans paille |
+| 2 (3) | `assets/hd2d/props/beehives.png` | les ruches, point nommé du plan |
+
+### R0.11 Les traces de pas (bouts coupés)
+
+**Constat** (`docs/QUALITE.md`, QC-28 ; capture `entrepot_cour_matin.png`) : `assets/hd2d/decals/footprints.png`
+(96 × 288, six empreintes de bottes d'adulte) commence et finit net ; posée plusieurs fois dans la cour et au
+champ, elle fait des pointillés de 3 m qui s'arrêtent au milieu de rien, comme les ornières (R0.8). Le moteur
+n'en garde que quatre dans la cour et trois au champ en attendant.
+
+| Prio | Fichier | Taille | Genre, ancre | Consigne |
+| --- | --- | --- | --- | --- |
+| 3 | `assets/hd2d/decals/footprints.png` (même nom, **remplace** l'actuel) | 96 × 288 (1 × 3 m) | décalque de sol, alpha doux | une traînée de **petits pas d'enfant** (pieds de 18 cm, pas de 45 cm) et de pas d'adulte mêlés, en léger zigzag, sur la terre battue : les premières et les dernières empreintes **s'estompent** (moins marquées, à demi couvertes de poussière) ; contraste faible, aucune ombre portée |
+
+**À ne pas faire** : six empreintes identiques en file, des bouts nets, un contraste plus fort que les
+cailloux du sol.
+
+### R0.12 La colline des étoiles : le vide et le sentier (reprise visuelle C3b, 15 octobre 2026)
+
+**Constat** (carte `colline`, vues `bord` et `large` de `tests/integration/demo_c3.gd` ; captures `build/c3b/avant/` et
+`build/c3b/apres/`). La caméra regarde le nord à 32° : au sommet, **elle ne voit jamais la falaise du cap** (elle est au
+nord de la terre, face à l'ombre). Le vide se lit par la côte, la mer de nuages, des rochers qui flottent et des îles
+lointaines (images déjà livrées, posées par la recette). Ce qui manque pour **sentir la falaise** : des **piliers de
+roche qui sortent de la mer de nuages**, à 20 ou 40 m au nord du bord, dont la face tournée vers le sud, elle, se voit : on
+y lit la hauteur du cap et la profondeur de la mer de nuages. Et le sentier de la colline n'a que des cailloux
+épars : il lui faut des **dalles plates claires** (les `ring_stone_flat_*` livrées sont des ovales sombres : posées sur
+l'herbe, elles se lisent comme des trous ; la colline les a retirées).
+
+| Prio | Fichier | Taille (px) | Genre, ancre | Consigne à coller |
+| --- | --- | --- | --- | --- |
+| 2 | `assets/hd2d/sky/sea_stack_a.png` | 288 × 1152 (6 × 24 m à 48 px/m) | pilier dans la mer de nuages, **alpha doux** dans les 4 derniers mètres du bas, ancre milieu du bord bas | pilier de roche claire (#C2B49F) en strates horizontales et fissures verticales, vu de face (la face tournée vers le sud, lumière de la gauche), haut de 24 m, large de 6 m à la base et de 4,5 m au milieu, une couronne d'herbe d'automne (#A8B040) et de bruyère au sommet avec un petit arbre noueux ; la base se dissout dans une brume rose pâle et gris lavande (alpha doux), aucun sol sous le pilier |
+| 2 | `assets/hd2d/sky/sea_stack_b.png` | 384 × 1344 (8 × 28 m à 48 px/m) | idem | pilier plus massif, deux ressauts (une corniche à mi-hauteur, des racines pendantes), mousse dans les fissures, herbe haute au sommet ; même lumière, même brume au pied |
+| 3 | `assets/hd2d/sky/sea_stack_c.png` | 192 × 768 (4 × 16 m à 48 px/m) | idem | aiguille de roche étroite et penchée, quelques touffes d'herbe, une arche naturelle à mi-hauteur ; même brume au pied |
+| 2 | `assets/hd2d/decals/path_flagstones_a.png` | 192 × 192 (2 × 2 m) | décalque de sol, **alpha doux** sur le bord, centre = point posé | quatre dalles plates de calcaire clair (#C8BBA6), vues de dessus, de 40 à 70 cm, aux bords arrondis, jointoyées d'herbe courte et de mousse, un peu de terre battue (#C89A5A) autour ; contraste modéré avec la terre du sentier (plus clair, pas blanc), aucune ombre portée, **aucun contour noir** |
+| 2 | `assets/hd2d/decals/path_flagstones_b.png` | 144 × 144 (1,5 × 1,5 m) | idem | deux dalles et un caillou, même matière, même terre autour |
+
+**À ne pas faire** : un pilier posé sur un sol (il flotte dans la brume : sa base est invisible) ; une silhouette plate
+sans strates ; des dalles en ovales sombres ou cernées de noir comme `ring_stone_flat_*` ; des dalles régulières
+alignées comme un dallage (le sentier est de terre, les dalles y sont posées ça et là).
+
+### R0.13 Les signes d'interaction (constaté en jouant, 15 octobre 2026)
+
+**Constat** : l'invite « E / A : Parler » était une pastille de texte au milieu de l'écran, lourde et
+toujours la même. Le lot U1 (interface « Nuit douce ») la remplace par un **petit signe posé au-dessus
+de la cible** à portée (`src/ui/interact_signs.gd`) : plein sur la cible du joueur, pâle sur les autres.
+Il est dessiné **à taille fixe à l'écran** (20 à 28 px dans une image de 1280 × 720, 30 à 42 px en
+1920 × 1080), en fondu, il respire et rebondit à l'appui. Les images actuelles sont des remplaçants
+dessinés par `tools/hd2d_sky.py` (formes simples à l'outil).
+
+| Priorité | Fichier | Taille | Genre, ancre | Consigne |
+| --- | --- | --- | --- | --- |
+| 2 | `assets/hd2d/fx/sign_talk.png` | 64 × 64 | icône, fond transparent, alpha doux, centrée, bas du dessin à 4 px du bord bas | **parler** : une petite bulle de dialogue arrondie, sa pointe en bas à gauche, trois points « … » au milieu ; bulle crème #F6EEE4, contour doré #E8C98A fin (3 à 4 px), points prune #3A2A40 ; une ombre douce prune en dessous (2 px, floue) pour se détacher d'un sol clair |
+| 2 | `assets/hd2d/fx/sign_examine.png` | 64 × 64 | idem | **examiner** : une étincelle à quatre branches fines (étoile de lumière), crème au cœur et dorée au bord, une seconde étincelle plus petite en haut à droite ; aucun œil ni loupe |
+| 2 | `assets/hd2d/fx/sign_take.png` | 64 × 64 | idem | **prendre** : une petite main ouverte, paume vers le spectateur, doigts serrés et pouce écarté, crème au contour doré, dessinée simplement (pas de jointures, pas d'ongles) |
+| 2 | `assets/hd2d/fx/sign_enter.png` | 64 × 64 | idem | **entrer, sortir, embarquer** : une porte cintrée vue de face, encadrement doré, intérieur prune #3A2A40, une flèche crème qui monte au milieu (on passe la porte) |
+
+Les quatre se commandent dans la même conversation : même épaisseur de contour, même ombre, même
+poids visuel (chacune remplit environ 80 % du carré). Elles doivent rester lisibles **réduites à
+20 px** (vérifier en réduisant l'image) et sur un sol clair comme sur un mur sombre.
+
+**À ne pas faire** : du texte ou une lettre de touche dans l'image (le rappel « E » ou « A » est dessiné
+par le jeu à côté du signe) ; un fond ou un cadre carré ; des couleurs vives ou saturées (rouge, bleu
+électrique) ; du pixel art grossier (ces images sont réduites, pas agrandies) ; un contour noir épais.
+
 ## 3. Lot R1 : l'entrepôt complet
 
 ### 3.0 Rappel du format (à coller avec le lot)
@@ -752,6 +850,11 @@ foncés, reflets plus blancs que #FFFFF0, jamais d'orangé sur les carreaux). Va
 rien redessiner : une couleur de lueur par bâtiment (`Building.window_glow_color`, PR « contrats » : demande dans
 `docs/CONTRACT_REQUESTS.md`). Les fenêtres des intérieurs (`window_cross_*` et leurs versions de nuit du lot N) ne sont
 pas concernées.
+
+**(QO, 15 octobre 2026) Commande annulée** : la variante moteur est retenue (`Building.window_glow_color` et
+`window_glow_tolerance`, réglées sur les carreaux livrés ; docs/QUALITE.md, QC-02). Ne rien redemander. Constat au
+passage : le rendu lit l'image sans la convertir en linéaire, et la règle par défaut allume en fait les pixels
+proches de #FFCA63 ; des carreaux en aplat #FFE6A6 resteraient éteints sans règle propre.
 
 ## 4. Lot R2 : les personnages de l'acte 1
 

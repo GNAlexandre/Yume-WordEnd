@@ -128,6 +128,13 @@ func _examine_the_racks_and_go_up() -> void:
 		return
 	var item := player.current_interactable() as Examinable
 	assert_eq(player.current_prompt(), "Examiner")
+	# (U1) Le HUD montre le signe de la cible au-dessus d'elle (plus de pastille).
+	var signs := hud.call(&"interact_signs") as Control
+	assert_true(
+		await until(func() -> bool: return signs.call(&"full_kind") == InteractSign.EXAMINE, 2.0),
+		"signe « examiner »"
+	)
+	assert_eq(signs.call(&"full_target"), player.current_interactable())
 	await tap_key(KEY_E)
 	assert_true(await until(func() -> bool: return dialogue_box.is_open(), 2.0), "boîte ouverte")
 	var pages := item.text_value().split("\n\n", false)

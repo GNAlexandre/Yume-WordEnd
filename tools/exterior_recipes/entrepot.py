@@ -246,11 +246,13 @@ def pose(p):
         place("Yard", scene, x, z, name="DuelDecal%d" % (k + 1), flip=k % 2 == 0)
     yard_decals = poisson(Rect(31.5, 28.6, 56.5, 45.0), 1.7, 40,
                           lambda x, z: not duel.has(x, z, 1.2) and not PLACES["coin_soleil"].has(x, z), seed=21)
-    scatter("YardDecals", ["pebbles_a", "leaves_rust_a", "pebbles_b", "leaves_gold_b", "footprints"], yard_decals,
+    # (QC) Pas de traces de pas tirées au hasard : la même traînée, à dix angles, faisait des
+    # pistes de fourmis en travers de la cour (docs/QUALITE.md, QC-04) ; restent les quatre posées.
+    scatter("YardDecals", ["pebbles_a", "leaves_rust_a", "pebbles_b", "leaves_gold_b"], yard_decals,
             scale=(0.8, 1.1), seed=22, check=False)
     duel_decals = poisson(Rect(36.5, 31.5, 47.5, 42.5), 2.3, 14,
                           lambda x, z: abs(x - 42) + abs(z - 37) > 2.0, seed=23)
-    scatter("DuelDecals", ["pebbles_b", "footprints", "pebbles_a"], duel_decals, scale=(0.8, 1.0), seed=24,
+    scatter("DuelDecals", ["pebbles_b", "pebbles_a"], duel_decals, scale=(0.8, 1.0), seed=24,
             check=False)
     place("Yard", "toys_b", 33.6, 31.0, name="ToysWest")
     place("Yard", "ball", 54.2, 37.6, name="YardBall", check=False)
@@ -272,7 +274,9 @@ def pose(p):
     place("Field", "clover_patch", 68.6, 21.4, name="FieldClover")
     field_decals = poisson(Rect(66.5, 8.5, 83.5, 27.5), 3.2, 16,
                            lambda x, z: abs(x - 75) + abs(z - 18) > 2.5 and abs(x - 75) > 2.0, seed=25)
-    scatter("FieldDecals", ["footprints", "leaves_gold_a", "clover_patch", "leaves_rust_b", "mud_patch"], field_decals,
+    # (QC) Ni traces ni boue tirées au hasard : sur l'herbe sèche, les plaques de boue se lisaient
+    # comme des carrés bêchés (docs/QUALITE.md, QC-05) ; restent les usures des buts et trois traces.
+    scatter("FieldDecals", ["leaves_gold_a", "clover_patch", "leaves_rust_b"], field_decals,
             scale=(0.8, 1.05), seed=26, check=False)
     field_rim = []
     for z in [6.3 + k * 1.15 for k in range(21)]:
@@ -375,17 +379,11 @@ def pose(p):
     scatter("PathFlowers", ["wildflowers_a", "wildflowers_b"], edge[1::3], seed=61, check=False)
     scatter("PathStones", ["rock_small_a", "rock_small_b", "rock_small_c", "rock_small_d", "fern_c"], edge[2::3],
             seed=62, check=False)
-    stones = []
-    for name, width, pts in PATHS:
-        if name in ("vers_village", "vers_sentier", "vers_foret"):
-            for k in range(len(pts) - 1):
-                (ax, az), (bx, bz) = pts[k], pts[k + 1]
-                n = int(math.hypot(bx - ax, bz - az) / 7.0)
-                for s in range(n):
-                    t = (s + 0.5) / max(n, 1)
-                    stones.append((ax + (bx - ax) * t + rng.uniform(-0.4, 0.4), az + (bz - az) * t))
-    stones = [p for p in stones if not PLACES["cour"].has(p[0], p[1], 1.0)]
-    scatter("SteppingStones", ["stepping_stones"], stones, scale=(0.9, 1.1), seed=63, check=False)
+    # (QC) Les pierres de gué (`stepping_stones` : quatre pierres dans l'eau claire) ne vont que
+    # dans l'eau : semées tous les 7 m sur les chemins secs, elles faisaient des flaques bleues en
+    # travers de la terre (docs/QUALITE.md, QC-03). Un seul gué, sur la rivière, en aval du
+    # puisage.
+    place("Marsh", "stepping_stones", 4.3, 49.4, name="GueRiviere", check=False)
     borders = []
     for name, width, pts in PATHS:
         if name in ("vers_village", "vers_sentier"):
@@ -456,6 +454,42 @@ def pose(p):
     place("Yard", "leaves_gold_a", 61.0, 34.6, name="TreeLeaves")
     place("Yard", "leaves_rust_b", 64.0, 33.4, name="TreeLeaves2")
 
+    # (QO, docs/QUALITE.md, QC-27) Bordures habitées : le duel (place duel), le jeu de balle (place champ :
+    # buts, centre, places de la vie) et les places de la vie restent nus, mais le pourtour de la cour (entre
+    # le duel et le bord de la cour) et le bord du champ sont ceux d'une maison d'enfants : bancs, jouets,
+    # lessive, seaux, brouette, bûches. Posés en dernier, à la main et sans tirage (le reste de la carte ne
+    # bouge pas), loin des chemins, des points et des places de la vie ; rien de plus haut que 1,2 m ; dans
+    # les places cour et champ, rien qui bloque (bancs, jouets, seaux, paniers), le reste juste au dehors.
+    life = [(42.5, 30.75), (42.5, 31.75), (44.0, 37.0), (51.0, 40.0), (44.2, 28.8), (42.0, 28.2),
+            (73.5, 23.0), (75.0, 19.5), (75.0, 16.5), (75.3, 18.2), (75.0, 9.2), (75.0, 26.6), (75.0, 18.0),
+            (83.3, 10.0), (83.6, 17.0)]
+    rim = [
+        # Cour, à l'ouest du duel : le coin de la lessive (baquet au bord, panier, seau) au nord, un banc
+        # tourné vers le duel ; au sud, des bûches et des souches pour s'asseoir ; à l'est, un banc entre le
+        # duel et la marelle, la brouette et une caisse au bord sud-est (loin du passage vers le champ), un seau.
+        ("Yard", "wash_tub", 31.3, 32.6), ("Yard", "laundry_basket", 34.7, 33.0), ("Yard", "bucket", 32.6, 33.8),
+        ("Yard", "bench_b", 33.6, 36.8),
+        ("Yard", "log_pile_forest", 35.2, 45.0), ("Yard", "stump_a", 38.2, 44.6), ("Yard", "stump_b", 49.8, 44.6),
+        ("Yard", "bench", 52.2, 31.8), ("Yard", "wheelbarrow", 58.4, 42.6), ("Yard", "crate", 56.6, 43.0),
+        ("Yard", "bucket", 54.2, 43.4),
+        # Champ, au bord ouest (où l'on ne joue pas) : les bancs des spectatrices, des jouets, le seau d'eau
+        # et un ballon de rechange ; au sud, une souche et des jouets, des bûches hors du champ ; au nord,
+        # derrière la cage blanche, une souche.
+        ("Field", "bench", 67.0, 12.4), ("Field", "toys_a", 67.2, 14.4), ("Field", "bucket", 67.6, 15.6),
+        ("Field", "bench_b", 67.0, 22.4), ("Field", "ball", 67.8, 24.2),
+        ("Field", "stump_b", 69.2, 28.7), ("Field", "toys_b", 80.8, 27.0), ("Field", "log_pile_forest", 65.6, 29.6),
+        ("Field", "stump_a", 81.2, 7.0),
+    ]
+    duel = PLACES["duel"]
+    for k, (group, scene, x, z) in enumerate(rim):
+        half = prop(scene).half if prop(scene).blocks else (prop(scene).w / 2.0, 0.2)
+        crowded = any(abs(x - lx) < half[0] + 1.2 and abs(z - lz) < half[1] + 1.2 for lx, lz in life)
+        if crowded or duel.hits(Rect(x - half[0], z - half[1], x + half[0], z + half[1]), 0.6) or keep_out(
+                x, z, half, prop(scene).blocks, places=False):
+            p.warnings.append("bordure : %s en (%.1f ; %.1f) gêne le duel, la vie, un chemin ou un point"
+                              % (scene, x, z))
+        place(group, scene, x, z, name="Rim%s%d" % (group, k + 1), flip=k % 2 == 1)
+
 
 def ground_plan(M):
     """Le plan.json du sol (CARTE.md 2.3 et 2.12) : paliers, rampes, matières, eau basse."""
@@ -501,7 +535,9 @@ def ground_plan(M):
     # Marais et creux des bois : berges irrégulières (± 1 m autour du rectangle du plan), gardées
     # franches au pied des rampes.
     level(-1, {"rect": [0, 4, 6, 26], "noise": 1.6, "noise_scale": 2.2, "seed": 41}, {"levels": [0]})
-    level(-1, {"rect": [0, 4, 6, 20]})
+    # (QC) Le cœur du marais de l'ouest s'arrête à x = 5 : à 6, sa berge était une droite de 20 m,
+    # une couture visible du pré au marais (docs/QUALITE.md, QC-06) ; le bruit fait la berge.
+    level(-1, {"rect": [0, 4, 5, 20]})
     level(-1, {"rect": [0, 4, 4.5, 26]})
     level(-1, {"rect": [0, 26, 6, 4]})
     level(-1, {"rect": [0, 44, 14, 16], "noise": 1.8, "noise_scale": 2.6, "seed": 42}, {"levels": [0]})

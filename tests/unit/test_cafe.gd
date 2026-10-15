@@ -55,7 +55,14 @@ func test_the_counter_the_tables_and_the_juice() -> void:
 		assert_almost_eq(counter.global_position.x, 4.0, 0.01)
 	assert_not_null(_map.find_child("cafe_cake_case_1", true, false), "la vitrine à gâteaux")
 	assert_not_null(_map.find_child("cafe_bottle_shelf_1", true, false), "l'étagère aux bouteilles")
-	assert_not_null(_map.find_child("crystal_pendant_1", true, false), "la suspension à cristal")
+	# (QO, QC-23) La suspension à cristal est sa lumière seule : l'image, sans plafond, faisait
+	# un fouillis sombre à hauteur de tête.
+	assert_null(_map.find_child("crystal_pendant_1", true, false), "pas d'image de suspension")
+	var suspension := false
+	for light: Dictionary in (_map.get_node(^"Ground") as InteriorRoom).plan.lights:
+		var at: Vector2 = light["at"]
+		suspension = suspension or at.is_equal_approx(Vector2(4.4, 5.6))
+	assert_true(suspension, "la lumière de la suspension, au-dessus de la salle")
 	for chair_place: String in [
 		"salle_chaise_a01", "salle_chaise_a02", "salle_chaise_b01", "salle_chaise_b02"
 	]:

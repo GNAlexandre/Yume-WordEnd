@@ -599,6 +599,12 @@ func _on_back_in_place() -> void:
 	_start_activity(false)
 
 
+## (E8) Vrai quand son jeu réserve le PNJ : ni invite « Parler » ni conversation
+## (LifeGame.blocks_talk).
+func talk_blocked() -> bool:
+	return game != null and game.blocks_talk()
+
+
 ## Le joueur interagit (touche E) : un jeu peut répondre à la place du dialogue (vrai : rien
 ## d'autre ne se passe).
 func on_interact() -> bool:

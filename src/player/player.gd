@@ -107,6 +107,9 @@ var _lock_target: Node3D
 var _mouse_held: Dictionary[int, bool] = {}
 ## Visée vers le pointeur au dernier clic, appliquée à l'image suivante (ZERO : aucune).
 var _pointer_aim: Vector3 = Vector3.ZERO
+## (E8) Pose tenue (hold_pose) : animation et temps restant (s).
+var _pose_anim: StringName = &""
+var _pose_left: float = 0.0
 
 @onready var visual: CharacterVisual = $Visual
 @onready var combat: PlayerCombat = $Combat
@@ -334,8 +337,9 @@ static func is_lockable(node: Node) -> bool:
 ## des commandes fabriquées (après set_physics_process(false)).
 func tick(delta: float, commands: Commands) -> void:
 	var dead := health.is_dead()
+	_pose_left = maxf(_pose_left - delta, 0.0)
 	var busy := combat.is_busy() or dead
-	var frozen := busy or _in_dialogue
+	var frozen := busy or _in_dialogue or _pose_left > 0.0
 	if _story_hold:
 		# (E6) Le récit mène : commandes ignorées, seule story_drive fait marcher.
 		commands = Commands.new()
@@ -403,6 +407,43 @@ func set_aim_direction(direction: Vector3, camera_behind: bool = false) -> void:
 	if camera_behind:
 		camera_rig.snap_behind(_aim)
 	visual.set_facing(_aim)
+
+
+## (E8) Donne l'arme que le récit a choisie : PlayerCombat.WEAPON_STICK (&"baton" : les trois coups
+## et la parade, jamais de charge de venenum ; l'arme de Chtholly hors des scènes de combat réel,
+## ACTE1.md, 3.0) ou PlayerCombat.WEAPON_SENIORIOUS (&"seniorious" : l'épée, tous ses gestes).
+## Faux pour une arme inconnue. Sans planche `_stick`, le bâton garde l'animation d'épée.
+func set_weapon(new_weapon: StringName) -> bool:
+	return combat.set_weapon(new_weapon)
+
+
+## (E8) L'arme en main.
+func weapon() -> StringName:
+	return combat.weapon()
+
+
+## (E8) Tient une pose seconds s (essoufflée, assise dans l'herbe) : le joueur ne bouge pas et joue
+## animation, ou la première de fallbacks que sa planche a. 0 s : relâche.
+func hold_pose(animation: StringName, seconds: float, fallbacks: Array[StringName] = []) -> void:
+	_pose_left = maxf(seconds, 0.0)
+	_pose_anim = &""
+	if _pose_left <= 0.0:
+		return
+	var choices: Array[StringName] = [animation]
+	choices.append_array(fallbacks)
+	for choice: StringName in choices:
+		if visual.has_animation(choice):
+			_pose_anim = choice
+			break
+	if _pose_anim.is_empty():
+		_pose_left = 0.0
+		return
+	visual.play(_pose_anim, true)
+
+
+## (E8) Vrai pendant une pose tenue (hold_pose).
+func is_posing() -> bool:
+	return _pose_left > 0.0
 
 
 ## Interactable dont l'invite est affichée, ou null.
@@ -546,6 +587,12 @@ func _forward_combat(commands: Commands, busy: bool) -> void:
 
 
 func _animate() -> void:
+	if _pose_left > 0.0:
+		visual.play(_pose_anim)
+		return
+	if combat.is_guarding():
+		_animate_guard()
+		return
 	var speed := Vector2(_move_velocity.x, _move_velocity.z).length()
 	if speed < IDLE_SPEED:
 		visual.play(&"repos")
@@ -554,6 +601,16 @@ func _animate() -> void:
 		visual.play(&"course")
 	else:
 		visual.play(&"marche")
+	visual.set_facing(_aim)
+
+
+## (E8) La parade levée : l'animation « pare » de la planche du bâton, sinon l'image 0 de la charge.
+func _animate_guard() -> void:
+	var guard := combat.guard_animation()
+	if guard == &"pare":
+		visual.play(guard)
+	else:
+		visual.show_frame(guard, 0)
 	visual.set_facing(_aim)
 
 

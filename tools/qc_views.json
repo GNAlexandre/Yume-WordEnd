@@ -1,0 +1,157 @@
+{
+  "_comment": "(QC) La série standard de vues du garant de la qualité visuelle (docs/QUALITE.md) : par carte de data/world/islands/ile_68.json, des points de vue dans la vraie partie (game.tscn, caméra du joueur, post-traitement, lumière d'Atmosphere). Une vue : name, at = [x, z] en m dans le repère de la carte (coin nord-ouest), look = N, S, E ou O (où regarde le joueur ; la caméra regarde toujours le nord), moments = liste de « moment » ou « moment:temps » (GameState.MOMENTS, WEATHERS), facultatifs (defaults.moments sinon) ; overview = true : vue d'ensemble, caméra haute au sud de la carte (pas celle du jeu), sans at. kind : dehors, dedans, attente (carte d'attente ou d'essai : vue d'ensemble seulement). Une carte nouvelle de l'île entre ici avec ses vues ; tools/qc_tool.py check vérifie que chaque carte de l'île y est et que chaque pièce, place et point nommé de docs/lore/CARTE.md est dans le champ d'une vue. Captures : tools/qc_shots.sh.",
+  "defaults": {
+    "moments": ["matin", "couchant", "nuit"],
+    "interior_moments": ["matin", "nuit"],
+    "overview_moments": ["apres_midi"]
+  },
+  "maps": {
+    "entrepot": {
+      "kind": "dehors",
+      "views": [
+        {"name": "facade", "at": [42, 34], "look": "N", "moments": ["matin", "couchant", "nuit", "nuit:pluie"]},
+        {"name": "porche", "at": [44, 31], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "cour", "at": [42, 42], "look": "N"},
+        {"name": "potager", "at": [22, 36], "look": "N"},
+        {"name": "clairiere", "at": [17, 20], "look": "N"},
+        {"name": "lisiere_nord", "at": [14, 10], "look": "N", "moments": ["matin"]},
+        {"name": "marais", "at": [9, 27], "look": "O", "moments": ["matin", "nuit"]},
+        {"name": "ouest", "at": [6, 40], "look": "E", "moments": ["matin", "couchant"]},
+        {"name": "riviere", "at": [12, 46], "look": "O", "moments": ["matin", "couchant"]},
+        {"name": "bois_sud", "at": [40, 54], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "arbre", "at": [62.5, 38], "look": "N"},
+        {"name": "champ", "at": [74, 24], "look": "N", "moments": ["matin", "couchant", "couchant:pluie"]},
+        {"name": "champ_est", "at": [80, 18], "look": "N", "moments": ["matin"]},
+        {"name": "sentier_est", "at": [80, 38], "look": "E", "moments": ["matin", "nuit"]},
+        {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}
+      ]
+    },
+    "entrepot_rdc": {
+      "kind": "dedans",
+      "views": [
+        {"name": "cuisine", "at": [3.3, 6.6], "look": "N"},
+        {"name": "refectoire", "at": [11, 5.55], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "refectoire_ouest", "at": [7, 6.8], "look": "N", "moments": ["matin"]},
+        {"name": "escalier", "at": [19.3, 6.8], "look": "N"},
+        {"name": "palier_armes", "at": [21.5, 3.0], "look": "N", "moments": ["matin"]},
+        {"name": "archives", "at": [24.6, 7.4], "look": "N"},
+        {"name": "lecture", "at": [29, 6.2], "look": "N"},
+        {"name": "couloir_ouest", "at": [4, 9.6], "look": "E", "moments": ["matin"]},
+        {"name": "couloir", "at": [13, 9.6], "look": "E"},
+        {"name": "couloir_est", "at": [27, 9.6], "look": "E", "moments": ["matin"]},
+        {"name": "bout_ouest", "at": [1.5, 9.6], "look": "O", "moments": ["matin"]},
+        {"name": "bout_est", "at": [30.5, 9.6], "look": "E", "moments": ["matin"]},
+        {"name": "coin_sud_ouest", "at": [1.5, 14.5], "look": "O", "moments": ["matin"]},
+        {"name": "bains", "at": [4, 12.6], "look": "O"},
+        {"name": "placard", "at": [10, 12.4], "look": "S", "moments": ["matin"]},
+        {"name": "entree", "at": [13, 12.8], "look": "N"},
+        {"name": "jeux", "at": [19.4, 14], "look": "N"},
+        {"name": "infirmerie", "at": [27.5, 12.6], "look": "N"},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "entrepot_etage": {
+      "kind": "dedans",
+      "views": [
+        {"name": "willem", "at": [2.8, 4.0], "look": "N"},
+        {"name": "chtholly", "at": [6.6, 5.4], "look": "N"},
+        {"name": "nygglatho", "at": [10.4, 5.8], "look": "N"},
+        {"name": "grande_soeur", "at": [14.5, 4.8], "look": "N"},
+        {"name": "tremie", "at": [19.4, 4.0], "look": "O", "moments": ["matin"]},
+        {"name": "ithea", "at": [22, 6.6], "look": "N"},
+        {"name": "absentes", "at": [25, 4.8], "look": "N", "moments": ["matin"]},
+        {"name": "nephren", "at": [29.4, 6.6], "look": "N"},
+        {"name": "couloir_ouest", "at": [4, 9.6], "look": "E", "moments": ["matin"]},
+        {"name": "couloir", "at": [19.4, 9.6], "look": "E"},
+        {"name": "couloir_fuite", "at": [28, 9.6], "look": "E", "moments": ["matin", "nuit"]},
+        {"name": "dortoir_a", "at": [4.2, 12.6], "look": "N"},
+        {"name": "dortoir_b", "at": [10, 12.6], "look": "N", "moments": ["matin"]},
+        {"name": "placard_wc", "at": [14.5, 12.6], "look": "S", "moments": ["matin"]},
+        {"name": "dortoir_c", "at": [19.8, 12.8], "look": "N"},
+        {"name": "lingerie_dortoir_d", "at": [27.8, 12.8], "look": "N"},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "entrepot_toit": {
+      "kind": "dehors",
+      "views": [
+        {"name": "terrasse", "at": [12.2, 9.1], "look": "O", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "balustrade", "at": [12.6, 3.2], "look": "N", "moments": ["couchant", "nuit"]},
+        {"name": "sechoir", "at": [8.5, 8.5], "look": "N", "moments": ["matin", "couchant:pluie"]},
+        {"name": "bord_sud", "at": [11, 13.2], "look": "S", "moments": ["matin"]},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "salle_des_armes": {
+      "kind": "dedans",
+      "views": [
+        {"name": "escalier", "at": [2.5, 5.0], "look": "E"},
+        {"name": "crypte", "at": [7.2, 4.5], "look": "N"},
+        {"name": "tissu", "at": [11, 6.5], "look": "N", "moments": ["matin"]},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "sentier": {
+      "kind": "dehors",
+      "views": [
+        {"name": "entree", "at": [6, 24], "look": "E"},
+        {"name": "premiere_embuscade", "at": [16, 25], "look": "E", "moments": ["matin", "nuit"]},
+        {"name": "berge", "at": [22, 20.5], "look": "N", "moments": ["matin", "couchant"]},
+        {"name": "embuscade", "at": [36, 21.5], "look": "N", "moments": ["matin", "couchant", "nuit", "nuit:pluie"]},
+        {"name": "marais", "at": [36, 13], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "vue_marais", "at": [46, 23], "look": "N", "moments": ["matin", "couchant"]},
+        {"name": "fourche", "at": [58, 25], "look": "E"},
+        {"name": "vers_ville", "at": [67, 34], "look": "S", "moments": ["matin", "nuit"]},
+        {"name": "est", "at": [72, 22], "look": "E", "moments": ["matin", "couchant"]},
+        {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}
+      ]
+    },
+    "village": {
+      "kind": "dehors",
+      "views": [
+        {"name": "entree", "at": [52, 12.5], "look": "O"},
+        {"name": "rue_est", "at": [44, 12.5], "look": "O", "moments": ["matin", "nuit"]},
+        {"name": "rue", "at": [30, 12.5], "look": "E", "moments": ["matin", "couchant", "nuit", "couchant:pluie"]},
+        {"name": "cafe", "at": [19.8, 12.5], "look": "N", "moments": ["matin", "couchant", "nuit", "nuit:pluie"]},
+        {"name": "terrasse", "at": [17, 13], "look": "N", "moments": ["matin"]},
+        {"name": "grange", "at": [8, 11.5], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "cascade", "at": [6, 13], "look": "O", "moments": ["matin", "couchant"]},
+        {"name": "limashenka", "at": [44, 11.6], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "belvedere", "at": [35, 7], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "jardin", "at": [27, 20.5], "look": "N", "moments": ["matin", "couchant"]},
+        {"name": "ruelle", "at": [16, 21], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "chaumieres", "at": [9.5, 28.8], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "lavoir", "at": [8, 31], "look": "N", "moments": ["matin"]},
+        {"name": "sud", "at": [30, 30], "look": "N", "moments": ["matin", "couchant"]},
+        {"name": "ruches", "at": [50, 29], "look": "E", "moments": ["matin"]},
+        {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}
+      ]
+    },
+    "cafe": {
+      "kind": "dedans",
+      "views": [
+        {"name": "entree", "at": [4.75, 8.2], "look": "N"},
+        {"name": "comptoir", "at": [4, 5.2], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "table_fees", "at": [7.4, 6.6], "look": "O", "moments": ["matin", "couchant"]},
+        {"name": "arriere", "at": [9.75, 5.5], "look": "N"},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "maison_limashenka": {
+      "kind": "dedans",
+      "views": [
+        {"name": "vestibule", "at": [2.25, 5.0], "look": "N"},
+        {"name": "salon", "at": [6, 5.4], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "horloge", "at": [6.2, 4.2], "look": "N", "moments": ["matin"]},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "colline": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "port": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "foret_profonde": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "essai": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "essai_relief": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "entrepot_rdc_essai": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "foret_essai": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]}
+  }
+}

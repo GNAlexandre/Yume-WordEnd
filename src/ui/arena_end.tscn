@@ -17,14 +17,14 @@ mouse_filter = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_arena_end")
 
-[node name="Dim" type="ColorRect" parent="."]
+[node name="Dim" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.106, 0.071, 0.192, 0.5)
+theme_type_variation = &"Dim"
 
 [node name="Panel" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -87,8 +87,7 @@ stretch_mode = 5
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"HeaderLabel"
-theme_override_colors/font_color = Color(0.93, 0.55, 0.16, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 34
 text = "Nouveau record !"
 
 [node name="StarRight" type="TextureRect" parent="Panel/Box/RecordBadge"]
@@ -137,7 +136,6 @@ mouse_filter = 2
 
 [node name="ContinueButton" type="Button" parent="Panel/Box"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(260, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_type_variation = &"PrimaryButton"

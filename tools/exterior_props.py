@@ -59,9 +59,10 @@ def inherited(base, node, props):
             '[node name="%s" instance=ExtResource("1_base")]\n%s\n' % (base, node, props))
 
 
-def building(node, facade, wall_texture, roof_texture, width, depth, wall, ridge, gable_front, side=True):
+def building(node, facade, wall_texture, roof_texture, width, depth, wall, ridge, gable_front, side=True, glow=None):
     """Scène d'un Building (comme tools/hd2d_scenes.py : façade et flanc <facade>_side, matières, emprise, hauteurs ;
-    collision : l'emprise sur la hauteur du mur)."""
+    collision : l'emprise sur la hauteur du mur). (QO) glow : (couleur des carreaux de l'image « #RRGGBB »,
+    tolérance) pour Building.window_glow_color et window_glow_tolerance (docs/QUALITE.md, QC-02)."""
     lines = ["[gd_scene format=3]", "",
              '[ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]',
              '[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/%s.png" id="2_facade"]' % facade,
@@ -79,6 +80,10 @@ def building(node, facade, wall_texture, roof_texture, width, depth, wall, ridge
         lines.append("gable_front = true")
     if side:
         lines.append('side_facade = ExtResource("5_side")')
+    if glow:
+        rgb = [int(glow[0][i:i + 2], 16) / 255.0 for i in (1, 3, 5)]
+        lines += ["window_glow_color = Color(%s, 1)" % ", ".join("%.7g" % v for v in rgb),
+                  "window_glow_tolerance = %g" % glow[1]]
     lines += ['metadata/hd2d_category = "building"', "", '[node name="Collision" type="StaticBody3D" parent="."]',
               "collision_mask = 0", "", '[node name="Shape1" type="CollisionShape3D" parent="Collision"]',
               "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, %g, 0)" % (wall / 2.0),
@@ -116,6 +121,8 @@ PROPS = {
     "village_house_stone": building("VillageHouseStone", "village_house_stone", "wall_stone", "roof_shingles", 5, 5, 3,
                                     6, True),
     "village_shed": building("VillageShed", "village_shed", "wall_planks_b", "roof_shingles", 4, 3, 2.25, 3.5, False),
+    # (QO) Règle de lueur par défaut : une règle propre à ses lampes de vitrine (#E9C18D) en faisait des taches
+    # blanches bruitées ; la façade de nuit du café est commandée (cahier n° 5, R0.9 ; docs/QUALITE.md, QC-16).
     "cafe_village": building("CafeVillage", "cafe", "wall_plaster", "roof_tiles", 7, 6, 5.5, 7.5, False),
     "fence_wattle": panel("FenceWattle", "props/fence_wattle.png", "shadow_width = 0.6", "fence",
                           [("BoxShape3D", ["size = Vector3(1.9, 0.9, 0.25)"], (0, 0.45, 0))]),
@@ -134,6 +141,13 @@ PROPS = {
     "scarecrow_front": inherited("scarecrow", "Scarecrow", "foreground = true"),
     "firewood_pile_front": inherited("firewood_pile", "FirewoodPile", "foreground = true"),
 }
+
+# (C3) La colline des étoiles : variantes de premier plan (CARTE.md 0.3) de l'arbre solitaire et du rocher
+# du plan, qui s'effacent devant le joueur quand ils se dressent au sud de lui.
+PROPS.update({
+    "lone_tree_fg": inherited("lone_tree", "LoneTree", "foreground = true"),
+    "boulder_a_fg": inherited("boulder_a", "BoulderA", "foreground = true"),
+})
 
 
 def write_all(quiet=False):

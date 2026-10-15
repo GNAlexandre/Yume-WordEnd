@@ -349,9 +349,9 @@ z 12 à 26, façade sud à z = 26 **(original)**. Deux volumes (`Building`) :
 | --- | --- | --- | --- |
 | **Lisière nord** | z 0 → 5, et derrière le bâtiment | `forest_wall_a` à `_d`, `treeline_autumn_a/b`, `oak_*`, `beech_*`, `tree_old_pine`, `fern_*`, `bush_*` | lisières de 16 m sur toute la largeur, deux rangs d'arbres devant, décalés ; un arbre tous les 3 à 5 m ; fougères au pied du talus |
 | **Abords du bâtiment** | 1 à 3 m autour des murs | `flower_bed`, `flower_pots`, `drainpipe`, `ivy_wall_a/b`, `window_box`, `broom_bucket`, `bucket`, `laundry_basket` | rien de plus haut que 1,2 m devant la façade ; une gouttière à chaque angle ; lierre sur le flanc ouest |
-| **Cour en terre** | `place cour` | `chalk_drawings`, `chalk_hopscotch`, `footprints`, `pebbles_a/b`, `toys_a/b`, `ball` | décalques seulement dans la place du duel (`place duel` reste nue) ; au plus un jouet par 20 m² |
+| **Cour en terre** | `place cour` | `chalk_drawings`, `chalk_hopscotch`, `footprints`, `pebbles_a/b`, `toys_a/b`, `ball` | décalques seulement dans la place du duel (`place duel` reste nue) ; au plus un jouet par 20 m² ; (QO, QC-27) pourtour habité entre le duel et le bord : coin de la lessive (`wash_tub`, `laundry_basket`, `bucket`) au nord-ouest, bancs (`bench`, `bench_b`), souches et bûches (`stump_a/b`, `log_pile_forest`) au sud, brouette et caisse au bord est ; dans la place, rien qui bloque |
 | **Bord de chemin** | 1,5 à 3 m de chaque côté des chemins | `grass_clump_*`, `tall_grass`, `wildflowers_a/b`, `fern_*`, `stump_*`, `rock_small_*`, `grass_edge_a/b` | jamais dans la bande libre du chemin ; une touffe tous les 1 à 2 m ; pierres plates au sentier (`stepping_stones`) |
-| **Champ** | `place champ` et ses bords | `grass_dry`, `mud_patch`, `puddle_a/b`, `footprints` ; bords : `thicket_*`, `bramble_hedge`, `bush_*`, `berry_bush` | la place reste nue (on y court) ; après la pluie, 6 à 10 flaques ; fourrés serrés à l'est et au nord, rien de haut au sud |
+| **Champ** | `place champ` et ses bords | `grass_dry`, `mud_patch`, `puddle_a/b`, `footprints` ; bords : `thicket_*`, `bramble_hedge`, `bush_*`, `berry_bush` | la place reste nue (on y court) ; après la pluie, 6 à 10 flaques ; fourrés serrés à l'est et au nord, rien de haut au sud ; (QO, QC-27) au bord ouest, où l'on ne joue pas, les bancs des spectatrices, des jouets, un seau et un ballon de rechange ; souche et bûches au sud, hors des buts |
 | **Clairière d'entraînement** | `place clairiere` et ses bords | `moss_patch_a/b`, `clover_patch`, `wildflowers_*`, `branches_a/b` (bâtons au sol) | la place reste nue ; quelques bâtons au sol près du râtelier |
 | **Marais** | x 0 → 6 et sud-ouest | `reeds`, `reeds_b`, `cattails`, `lily_pads`, `mist_patch`, `marsh_hummock_*`, `alder`, `willow` | eau basse : on y marche, éclaboussures ; roseaux en touffes de 1,5 m tous les 2 m ; brume le matin |
 | **Bois du sud** | z 44 → 60 | `bush_*`, `fern_*`, `sapling_a/b`, `log_hollow`, `mushroom_*`, `leaves_*` ; au bord sud, `fg_trunk_a/b`, `fg_bush`, `fg_fern` en **premier plan** | rien de plus haut que 3 m à moins de 5 m au sud d'un chemin ; les grands troncs seulement en premier plan au bord |
@@ -620,46 +620,47 @@ entrepot_rdc : 32 × 16 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud
     0 
       
         +---o----+----------o----------+-------+-=-+-----o-+--------+
-        |GGG.IIII|NNNNréfectoire...PPPP|escalie|a*m|YYYY...|gggfffff|
-    2   |cuisine.|.....................|.......|...|bb..ZZZ|lecture.|
-        |........|...QQQQQQQQQQQQQQ....|VVV....|...|bb..ZZZ|........|
-        |........|..RRRRRRRRSSSSSSSS...|VVV....|...|aaa....|........|
-        |.KKKKK..|..RRRRRRRRSSSSSSSS...|VVV....|...|aaa....|.jjjj...|
-    4   |.KKKKK..:..RUUUUUUUUUUUUUUS...|VVV....|...|....ccc|.jjjj...|
-        |.KKKKK..:...UUUUUUUUUUUUUU....|VVV....|...|.BBBcee|hjjjj...|
-        |........:.....................|VVV....|...|.BBBBee|hhh.....o
-        |JJ......|.....................|.......|...|.BBBBB.|........|
-    6   |JJ......|...QQQQQQQQQQQQQQ....|.*.....|...|ddddBB.|iii.....|
-        |LL......|..SSSSSSSSRRRRRRRR...|.......|...|dddd...|iii..kkk|
-        |LL...MMM|..SSSSSSSSRRRRRRRR...|.......|...|dddd...|.....kkk|
-        |.....MMM|..SUUUUUUUUUUUUUUR...|.......|...|archive|m....kkk|
-    8   |.....MMM|...UUUUUUUUUUUUUU....|.......|...|.......|m.......|
+        |FFF.GGGG|MMMMréfectoire...NNNN|escalie|a*m|VVVV...|fffeeeee|
+    2   |cuisine.|.....................|.......|...|aa..YYY|lecture.|
+        |........|...PPPPPPPPPPPPPP....|UUU....|...|aa..YYY|........|
+        |........|..QQQQQQQQRRRRRRRR...|UUU....|...|ZZZ....|........|
+        |.JJJJJ..|..QQQQQQQQRRRRRRRR...|UUU....|...|ZZZ....|.iiii...|
+    4   |.JJJJJ..:..QSSSSSSSSSSSSSSR...|UUU....|...|....bbb|.iiii...|
+        |.JJJJJ..:...SSSSSSSSSSSSSS....|UUU....|...|.AAAbdd|giiii...|
+        |........:.....................|UUU....|...|.AAAAdd|ggg.....o
+        |II......|.....................|.......|...|.AAAAA.|........|
+    6   |II......|...PPPPPPPPPPPPPP....|.*.....|...|ccccAA.|hhh.....|
+        |KK......|..RRRRRRRRQQQQQQQQ...|.......|...|cccc...|hhh..jjj|
+        |KK...LLL|..RRRRRRRRQQQQQQQQ...|.......|...|cccc...|.....jjj|
+        |.....LLL|..RSSSSSSSSSSSSSSQ...|.......|...|archive|k....jjj|
+    8   |.....LLL|...SSSSSSSSSSSSSS....|.......|...|.......|k.......|
         +----=---+==-----------------==             --==---+--==----+
-        :.CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC..nnnn|
-      < :.CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC......o
+        :.BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB..mmmm|
+      < :.BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB......o
    10   :couloir....................................................|
         +---------=-+-=-+-=-         -------=-------+-=-------------+
-        |pppppbains.|wc.|pl.|entrée.|yyyEEEEEEEEEzzz|...66667666677.|
-        |ppppp......|...|...|.......|yyyEEEEEEEEEzzz|..88666.66666..|
-   12   |..DDDDD....|...|...|....xxx|.F.EEEEEEEEE...|..88infirmerie.o
-        |..DDDDD....|...|.uu|.......|...EEE222EEE111|...............|
-        |..DDDDD....|...|.uu|...@...|..33EE222EEE111|............999|
-        |rrDDDDD.qqq|...|...|.......|..33EEEEEEEE...|???.6666....999|
-   14   |rr...ss.qqq|...|tt.|v......|...555EEE444...|???.6666...??..|
-        |.....ss....|...|tt.|v......|...555...444...|???.6666...??..|
+        |nnnnnbains.|wc.|pl.|entrée.|xxxDDDDDDDDDyyy|...55556555566.|
+        |nnnnn......|...|...|.......|xxxDDDDDDDDDyyy|..77555.55555..|
+   12   |..CCCCC....|...|...|....vvv|.E.DDDDDDDDD...|..77infirmerie.o
+        |..CCCCC....|...|.tt|.......|...DDD111DDDzzz|...............|
+        |..CCCCC....|...|.tt|...@...|..22DD111DDDzzz|............888|
+        |qqCCCCC.ppp|...|...|.......|..22DDDDDDDD...|???.5555....888|
+   14   |qq...rr.ppp|...|ss.|u......|...444DDD333...|???.5555...99..|
+        |.....rr....|...|ss.|u......|...444...333...|???.5555...99..|
         +-----------+---+---+--===--+---------------+---------------+
                                 v
 ```
-Légende des lettres : `1` board_games_shelf ; `2` game_table ; `3` plush_blue ; `4` plush_pile ; `5` floor_cushions ; `6` bed_iron ; `7` bedside_table ; `8` chair_child ; `9` medicine_cabinet ; `?` washbasin_stand ; `?` infirmary_desk ; `A` crystal_pendant ; `B` papers_floor ; `C` runner_rug ; `D` bath_puddles ; `E` rug_playroom ; `F` ball_white ; `G` crystal_stove ; `I` kitchen_counter ; `J` pantry_cupboard ; `K` kitchen_table_ingredients ; `L` water_tub ; `M` sacks_vegetables ; `N` china_cabinet ; `P` sink_stone ; `Q` chair_wood ; `R` dining_table_set ; `S` dining_table_long ; `U` chair_wood_back ; `V` stairs_up ; `Y` archive_shelves ; `Z` paper_pile_a ; `a` desk_buried ; `b` paper_pile_b ; `c` filing_cabinet ; `d` sofa_beige ; `e` paper_pile_c ; `f` window_reading_seat ; `g` bookshelf_tall ; `h` bookshelf_low ; `i` bookshelf_tall_b ; `j` reading_table ; `k` armchair_reading ; `m` book_pile ; `n` washstand_corridor ; `p` bath_tub ; `q` towel_shelf ; `r` wash_tub ; `s` hamper ; `t` supply_cupboard ; `u` cleaning_set ; `v` potted_plant ; `x` shoe_rack ; `y` piano_old ; `z` toy_chest.
+Légende des lettres : `1` game_table ; `2` plush_blue ; `3` plush_pile ; `4` floor_cushions ; `5` bed_iron ; `6` bedside_table ; `7` chair_child ; `8` medicine_cabinet ; `9` washbasin_stand ; `?` infirmary_desk ; `A` papers_floor ; `B` runner_rug ; `C` bath_puddles ; `D` rug_playroom ; `E` ball_white ; `F` crystal_stove ; `G` kitchen_counter ; `I` pantry_cupboard ; `J` kitchen_table_ingredients ; `K` water_tub ; `L` sacks_vegetables ; `M` china_cabinet ; `N` sink_stone ; `P` chair_wood ; `Q` dining_table_set ; `R` dining_table_long ; `S` chair_wood_back ; `U` stairs_up ; `V` archive_shelves ; `Y` paper_pile_a ; `Z` desk_buried ; `a` paper_pile_b ; `b` filing_cabinet ; `c` sofa_beige ; `d` paper_pile_c ; `e` window_reading_seat ; `f` bookshelf_tall ; `g` bookshelf_low ; `h` bookshelf_tall_b ; `i` reading_table ; `j` armchair_reading ; `k` book_pile ; `m` washstand_corridor ; `n` bath_tub ; `p` towel_shelf ; `q` wash_tub ; `r` hamper ; `s` supply_cupboard ; `t` cleaning_set ; `u` potted_plant ; `v` shoe_rack ; `x` piano_old ; `y` toy_chest ; `z` board_games_shelf.
 <!-- /ascii:entrepot_rdc -->
 
-**Bornes de caméra** `Rect2(8, 4, 16, 6)` (le point visé reste dans le bâtiment ; la vue entière
-tient en deux écrans). **Lumière** : préréglage `interieur` (E9), lueur chaude des cristaux.
+**Bornes de caméra** `Rect2(6, 4, 20, 6)` ((QO) les pignons au plus près des bords de l'écran ;
+plus serrées, la cloison de la cuisine ou de la salle de lecture, vue de biais, cacherait le joueur qui
+la longe ; `tools/interior_maps.py`, `MAP_SETTINGS`). **Lumière** : préréglage `interieur` (E9), lueur chaude des cristaux.
 
 | Pièce | Cotes (m) | Ce que dit l'œuvre | Portes et fenêtres | Mobilier (images) | À examiner |
 | --- | --- | --- | --- | --- | --- |
 | **Cuisine** | 4,5 × 7,5 (x 1 → 5,5) | seule la cuisinière du jour y entre ; fourneau de cristal, comptoir, tablier ; œufs, sucre, lait, crème, baies ; marmite et louche (V1, « Directeur en carton » ; V3) | porte au couloir (3,4) ; porte au réfectoire, mur est (z 4,6) ; petite fenêtre au nord | `crystal_stove`, `kitchen_counter`, `kitchen_table_ingredients`, `water_tub`, `pantry_cupboard`, `sacks_vegetables` ; murs : `wallitem_utensils`, `wallitem_spice_shelf` (le pot de moutarde à l'étiquette d'enfant, VEX), `wallitem_apron_hook` ; vapeur `anim/pot_steam` | le fourneau (« un gros cristal ambré chauffe sous la fonte ») ; le pot de moutarde ; le tablier |
-| **Réfectoire** | 11 × 7,5 | tout le monde y mange ; grande fenêtre ; vaisselier vitré ; évier où l'on rapporte sa tasse ; menu et ligne « dessert du jour » ; marques de taille ; prière, fourchettes levées ensemble (V1 ; V3 ; V4 ; V5 ; VEX, ill.) | portes au couloir aux deux bouts (6,3 et 15,75) ; porte à la cuisine ; grande fenêtre au nord (x = 11) | deux rangées de deux tables (`dining_table_set`, `dining_table_long`), chaises au nord (`chair_wood`) et au sud (`chair_wood_back`, dos à la caméra) : 28 places ; `china_cabinet` (nord-ouest), `sink_stone` (nord-est), deux suspensions `crystal_pendant` ; murs : `wallitem_menu_board` (x 8,8), `wallitem_height_marks` (x 13,4), applique ; sur les tables `meal_lunch`, `tableware_a`, `dessert_flans` (jour 4) | le menu (« la ligne du bas, ajoutée à la craie, attend son dessert ») ; les marques de taille ; le vaisselier ; la fenêtre la nuit |
+| **Réfectoire** | 11 × 7,5 | tout le monde y mange ; grande fenêtre ; vaisselier vitré ; évier où l'on rapporte sa tasse ; menu et ligne « dessert du jour » ; marques de taille ; prière, fourchettes levées ensemble (V1 ; V3 ; V4 ; V5 ; VEX, ill.) | portes au couloir aux deux bouts (6,3 et 15,75) ; porte à la cuisine ; grande fenêtre au nord (x = 11) | deux rangées de deux tables (`dining_table_set`, `dining_table_long`), chaises au nord (`chair_wood`) et au sud (`chair_wood_back`, dos à la caméra) : 28 places ; `china_cabinet` (nord-ouest), `sink_stone` (nord-est), deux suspensions (leur lumière seule : (QO, QC-23) l'image `crystal_pendant`, sans plafond, faisait un fouillis sombre à hauteur de tête) ; murs : `wallitem_menu_board` (x 8,8), `wallitem_height_marks` (x 13,4), applique ; sur les tables `meal_lunch`, `tableware_a`, `dessert_flans` (jour 4) | le menu (« la ligne du bas, ajoutée à la craie, attend son dessert ») ; les marques de taille ; le vaisselier ; la fenêtre la nuit |
 | **Cage d'escalier** | 4 × 7,5 | (original) | ouverte sur le couloir sur 4 m | `stairs_up` contre le mur ouest (x 16,7 → 18,3, z 2,5 → 5,5) ; murs : `wallitem_chore_chart` (nord, x 19,4 : les **plannings de corvées**, V1), `wallitem_notice_b` (« on ne court pas dans les couloirs », V1), `wallitem_notices_mix`, applique | le planning des corvées (qui fait la cuisine aujourd'hui, VIE.md) ; l'écriteau |
 | **Palier des armes** | 2 × 7,5 | la grande porte de métal rivetée à cinq serrures, seul élément militaire (V1, « Entrepôt de fées ») | ouvert sur le couloir ; **porte rivetée au mur nord** (x 21,5, 1,3 m) | `door_armory` ; murs : `wallitem_bronze_plaque` (celle de la « salle de stockage », à côté de la porte des archives, V1), applique | la porte (« cinq serrures ; Nygglatho garde la clé ») |
 | **Archives** (« salle de stockage ») | 4 × 7,5 | plaque de bronze ; un océan de papiers ; un bureau et une chaise sous les piles ; horloge murale dont on entend la trotteuse ; canapé beige à trois places ; personne n'y vient, on s'y cache pour couper aux corvées (V1, « Les valeureux… » ; V3) | porte au couloir (24,2) ; petite fenêtre haute et poussiéreuse au nord | `archive_shelves`, `paper_pile_a/b/c`, `desk_buried`, `filing_cabinet`, `sofa_beige` ; décalque `papers_floor` ; murs : `wallitem_wall_clock` (ouest), `wallitem_clippings` (est) ; `coffee_tray` (la nuit des archives) | l'horloge ; une coupure de magazine pour filles ; un rapport de patrouille de nuit ; le bon de commande de carottes (V1) |
@@ -754,8 +755,6 @@ meuble chair_wood 11 6.4 7 0.5 1.0 x14
 meuble dining_table_long 9 7.15 4 1 0.8
 meuble dining_table_set 13 7.15 4 1 0.8
 meuble chair_wood_back 11 7.9 7 0.5 1.0 x14
-meuble crystal_pendant 9 3.95 0.8 0.3 0 libre
-meuble crystal_pendant 13 7.15 0.8 0.3 0 libre
 objet meal_lunch 9 3.95
 objet tableware_a 13 7.15
 point refectoire_vaisselier 6.8 2.4
@@ -891,6 +890,18 @@ lumiere applique_armes 20.6 4.5 1.6 cristal
 lumiere lampe_archives 23.35 3.9 1.0 cristal_eteint
 lumiere lampe_lecture 28.2 4.3 1.0 cristal
 lumiere applique_refectoire 5.6 2.6 1.6 cristal
+# (QC) Les lampes du soir du couloir et des pièces du sud : la nuit, elles n'avaient que la
+# lumière du joueur (docs/QUALITE.md, QC-08).
+lumiere suspension_couloir_1 8 9.5 2.2 cristal
+lumiere suspension_couloir_2 24 9.5 2.2 cristal
+mural wallitem_crystal_sconce bains O 11.6 1.6 0.3
+lumiere applique_bains 1.1 11.6 1.6 cristal
+mural wallitem_crystal_sconce entree O 11.2 1.6 0.3
+lumiere applique_entree 11.1 11.2 1.6 cristal
+mural wallitem_crystal_sconce jeux O 11.4 1.6 0.3
+lumiere applique_jeux 15.1 11.4 1.6 cristal
+lumiere suspension_infirmerie 27.5 12.8 2.2 cristal
+lumiere lampe_infirmerie 23.7 14.2 1.0 cristal
 ```
 
 <!-- places:entrepot_rdc -->
@@ -963,7 +974,8 @@ entrepot_etage : 32 × 16 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-s
 Légende des lettres : `A` rug_brown ; `B` cards_floor ; `C` clothes_floor ; `D` runner_rug ; `E` wardrobe_plain ; `F` bed_plain ; `G` footlocker ; `I` desk_chtholly ; `J` bed_chtholly ; `K` wardrobe_chtholly ; `L` fireplace ; `M` comm_crystal ; `N` shelf_nygglatho ; `P` tea_table ; `Q` chair_guest ; `R` desk_nygglatho ; `S` bed_nygglatho ; `U` dresser_child ; `V` desk_clean ; `Y` clothes_chest ; `Z` stairs_down ; `a` bed_child ; `b` book_pile ; `c` bookshelf_low ; `d` roof_ladder ; `e` leak_bucket ; `f` repair_planks ; `g` bunk_bed ; `h` bed_child_messy ; `i` plush_pile ; `j` supply_cupboard ; `k` towel_shelf.
 <!-- /ascii:entrepot_etage -->
 
-**Bornes de caméra** `Rect2(8, 4, 16, 6)`. Au nord, les chambres des grands et des aînées ; au
+**Bornes de caméra** `Rect2(5.5, 4, 21, 6)` ((QO) même règle, cloisons des chambres de Willem et
+de Nephren). Au nord, les chambres des grands et des aînées ; au
 sud, contre la façade, les dortoirs des petites. Les murs sont minces : on entend tout (V4, « La
 fille aux cheveux cramoisis »). La nuit, la lumière filtre sous la porte de Nygglatho (V2,
 épilogue). Le plancher des chambres (`floor_planks_dark`) semble pouvoir céder (V5, épilogue).
@@ -1147,6 +1159,10 @@ lumiere lampe_huile 11.55 4.0 1.0 huile
 lumiere applique_palier 19.6 1.2 1.6 cristal
 lumiere applique_couloir 1.2 9.5 1.6 cristal
 lumiere lampe_willem 4.4 5.5 1.5 cristal
+# (QC) Deux suspensions au couloir : la nuit, son bout est (la fuite, la trappe) était noir
+# (docs/QUALITE.md, QC-09). (QO, QC-23) Les suspensions sont leur lumière seule, sans image.
+lumiere suspension_couloir_1 10 9.5 2.2 cristal
+lumiere suspension_couloir_2 25 9.5 2.2 cristal
 ```
 
 <!-- places:entrepot_etage -->
@@ -1382,9 +1398,9 @@ sentier : 80 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord 
       ^^^^^^^^^^^^^^^^wwwwwwwwwwwwwwwCCwwwwwwwDDwwwwwwwwwwwwwwww^^^^^^^^^^^^^^^^^^^^^^
       ^^^^^^^^^^^^^^^^wwwwwwwwGGwwwwwwwwwwwwwwDDwwwwwwwwwwwwwwww^^^^^^^^^^^^^^^^^^^^^^
       ^^^^^^^^^^^^^^^^wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww;;;;;;;;;;;;;;;;;;;;;;
-   20 ;;;;;;;;PPPPPPPP;;;;;;;;;;;;;;;;KK;;;;;;;;;;;;;;;;;;;;;;;;;;;;PPPPPPPP;;;;;;;;;;
-      ::::::::KKPPPPPP::::LL::::::::::KK::::::::::::LL::::::::::::KK:::::::::::::::::>
-      <:::::@:KK::::MM::::::::::::::::::::::::::::::::::::::::::::KK:::::::::::QQ:::::
+   20 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KK;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ::::::::KK::::::::::LL::::::::::KK::::::::::::LL::::::::::::KK:::::::::::::::::>
+      <:::::@:KK::::MM::::::::::::::::::::::::::::::::::::::::::::KK:::::::::::PP:::::
       ;;;;NNNN;;;;;;;;;;;;;;;;;;NNNN;;;;;;;;;;;;;;;;;;;;NNNN;;;;::::::::::::::;;;;^^^^
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^;;::::::::::::::;;;;^^^^
    30 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^;;::::::::::::::;;^^^^^^
@@ -1393,7 +1409,7 @@ sentier : 80 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord 
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^::::::::::;;^^^^^^
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^:::::::v::;;^^^^^^
 ```
-Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_a ; `D` marsh_hummock_b ; `E` reeds ; `F` reeds_b ; `G` cattails ; `I` bog_pool_a ; `J` lily_pads ; `K` path_stones_a ; `L` path_stones_b ; `M` path_root_step ; `N` path_edge_ferns ; `P` fg_canopy_a ; `Q` thicket_b.
+Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_a ; `D` marsh_hummock_b ; `E` reeds ; `F` reeds_b ; `G` cattails ; `I` bog_pool_a ; `J` lily_pads ; `K` path_stones_a ; `L` path_stones_b ; `M` path_root_step ; `N` path_edge_ferns ; `P` thicket_b.
 <!-- /ascii:sentier -->
 
 - **Taille** 80 × 40 m ; **bornes** `Rect2(10, 9, 60, 23)`. Le sentier court d'ouest en est sur
@@ -1409,8 +1425,10 @@ Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_
   `leaf_litter`.
 - **Grands décors** : rideaux de roseaux `marsh_reed_wall` au fond du marais ; deux aulnes
   (`alder`) ; souche noyée `marsh_snag` ; touradons `marsh_hummock_a/b` ; mare de tourbe
-  `bog_pool_a`, nénuphars `lily_pads` ; la racine qui fait marche `path_root_step` ; la voûte de
-  feuillage en premier plan suspendu `fg_canopy_a` (**à confirmer** par E10) au-dessus du sentier.
+  `bog_pool_a`, nénuphars `lily_pads` ; la racine qui fait marche `path_root_step`. (QC) La voûte de
+  feuillage `fg_canopy_a`, posée en l'air au-dessus du sentier, se lisait comme une masse sombre
+  au milieu de l'écran : retirée, elle attend le premier plan accroché à l'écran (E10 ;
+  docs/QUALITE.md, QC-12).
 - **Kits** : bord de chemin (`path_edge_ferns` hors de la bande libre, `fern_*`, `grass_clump_*`,
   `stepping_stones`) ; marais (roseaux, massettes `cattails`, brume `mist_patch`, libellules) ;
   lisière (`forest_wall_*` au nord) ; sous-bois sud (`fg_trunk_a/b`, `fg_bush`, `fg_fern`, premier
@@ -1477,8 +1495,6 @@ decor path_root_step 15 24.6 2 0.6 0.6 libre
 decor path_edge_ferns 6 27 4 0.8 1.1 libre pp
 decor path_edge_ferns 28 26.4 4 0.8 1.1 libre pp
 decor path_edge_ferns 52 27 4 0.8 1.1 libre pp
-decor fg_canopy_a 12 22 8 1 4 libre pp
-decor fg_canopy_a 66 21 8 1 4 libre pp
 decor thicket_b 74 25.5 2 0.8 1.4
 # --- chemins ---
 chemin sentier 3 1;24 12;23.5 24;22 36;22.3 48;23.4 58;23.5 68;22 79;21.5
@@ -1670,25 +1686,25 @@ cafe : 12 × 10 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord
     0 
       
         +--------------+----+
-        |...BBBBsalle..|III.|
+        |...AAAAsalle..|GGG.|
     2   |..............|arri|
-        |..CCCCCC......:....|
-        |..CCCCCC......:....|
+        |..BBBBBB......:....|
+        |..BBBBBB......:....|
         |..............:....|
     4   |..............|....|
+        |.DD.....DD....|....|
+        o.DDC....DDC...|JJJ.|
+        |.CCC....CCC...|JJJ.|
+    6   |.EEC....EEC...|JJJ.|
         |.EE.....EE....|....|
-        o.EED.AA.EED...|KKK.|
-        |.DDD.AA.DDD...|KKK.|
-    6   |.FFD....FFD...|KKK.|
-        |.FF.....FF....|....|
         |..............|....|
-        |GGG...........|JJJ.|
-    8   |GGG....@......|JJJ.|
-        |..............|JJJ.|
+        |FFF...........|III.|
+    8   |FFF....@......|III.|
+        |..............|III.|
         +------==------+----+
                 v
 ```
-Légende des lettres : `A` crystal_pendant ; `B` cafe_bottle_shelf ; `C` cafe_counter ; `D` cafe_table_heavy ; `E` chair_wood ; `F` chair_wood_back ; `G` cafe_drinkers_table ; `I` pantry_cupboard ; `J` sacks_vegetables ; `K` crates_barrels.
+Légende des lettres : `A` cafe_bottle_shelf ; `B` cafe_counter ; `C` cafe_table_heavy ; `D` chair_wood ; `E` chair_wood_back ; `F` cafe_drinkers_table ; `G` pantry_cupboard ; `I` sacks_vegetables ; `J` crates_barrels.
 <!-- /ascii:cafe -->
 
 | Pièce | Cotes (m) | Mobilier (images) | À examiner |
@@ -1697,7 +1713,8 @@ Légende des lettres : `A` crystal_pendant ; `B` cafe_bottle_shelf ; `C` cafe_co
 | **Arrière-boutique** | 2,5 × 8 | rideau rayé `door_backroom` ; garde-manger, sacs, caisses | « Réservé au personnel » (le serveur y prend les jus) |
 
 Sortie au sud (mur coupé) vers `village`, `from_cafe` ; points `comptoir`, `table_fees` (la table
-des trois aînées, jour 9), `table_buveurs`, `arriere`. **Bornes** : la pièce entière.
+des trois aînées, jour 9), `table_buveurs`, `arriere`. **Bornes** `Rect2(5.5, 5, 3, 0)` : la pièce entière à l'écran ; (QO) la
+caméra ne glisse que jusqu'à la cloison de l'arrière-salle (vue de biais, elle cacherait le joueur).
 
 <!-- ascii:maison_limashenka -->
 ```text
@@ -1728,7 +1745,8 @@ Légende des lettres : `A` rug_salon ; `B` display_cabinet ; `C` toolbox_gears ;
 | **Vestibule** | 2,5 × 6 | patères `wallitem_coat_hooks` | — |
 | **Salon** | 5,5 × 6 | **horloge `wallitem_clock_limashenka`** (fermée), puis `_open` (engrenages et peigne doré) pendant la réparation, puis le balancier qui va (`anim/clock_limashenka_swing`) ; boîte à outils `toolbox_gears` ; canapé `sofa_salon` ; fauteuil sous un drap `armchair_sheeted` ; vitrine de bibelots `display_cabinet` (boîtes à tabac) ; guéridon `side_table_salon` ; portrait de famille `wallitem_family_portrait` (58 × 77 px, soit 0,6 × 0,8 m : le cahier n° 5 donne 256 × 256, une taille de portrait de dialogue) ; tapis `rug_salon` ; volets `window_shutters` | l'horloge ; le portrait (une mère et son petit) |
 
-Points `horloge` (Willem au travail), `rami`, `canape`. Maison fermée depuis le deuil (draps sur
+Points `horloge` (Willem au travail), `rami`, `canape`. **Bornes** `Rect2(3.5, 4, 1.5, 0)` (QO : la
+pièce à l'écran, la caméra glisse du salon à la cloison du vestibule). Maison fermée depuis le deuil (draps sur
 les meubles, **original**).
 
 ```plan
@@ -1752,7 +1770,6 @@ meuble chair_wood 6.2 4.85 0.5 0.5 1.0
 meuble chair_wood_back 6.2 6.35 0.5 0.5 1.0
 objet juice_glasses 6.2 5.6
 meuble cafe_drinkers_table 2.2 8.0 1.6 0.9 0.8
-meuble crystal_pendant 4.4 5.6 0.8 0.3 0 libre
 meuble pantry_cupboard 9.75 1.45 1.1 0.6 2.0
 meuble sacks_vegetables 9.75 8.2 1.2 0.7 0.7
 meuble crates_barrels 9.75 5.6 1.2 1.0 1.2
@@ -1765,6 +1782,10 @@ point table_buveurs 3.4 7.2
 point arriere 9.75 3.6
 lumiere suspension 4.4 5.6 2.2 cristal
 lumiere comptoir 4.0 3.0 1.2 cristal
+# (QC) Le soir, le café sert l'alcool : une applique au mur est éclaire le coin des buveurs ; une
+# seule lampe faisait une flaque au milieu du noir (docs/QUALITE.md, QC-14).
+mural wallitem_wall_lamp salle E 6.5 1.6 0.3
+lumiere applique_salle 8.4 6.5 1.6 huile
 ```
 
 <!-- places:cafe -->
@@ -1797,6 +1818,12 @@ point horloge 6.2 3.6
 point rami 8.0 4.4
 point canape 6.0 6.25
 lumiere fenetre 9 3.5 1.2 jour
+# (QC) Une lampe à huile sur la table du salon et une applique dans l'entrée : la maison était noire
+# la nuit (docs/QUALITE.md, QC-15).
+objet oil_lamp 8.3 5.5
+lumiere lampe_salon 8.3 5.5 1.0 huile
+mural wallitem_wall_lamp vestibule O 5.2 1.6 0.3
+lumiere applique_vestibule 1.1 5.2 1.6 huile
 ```
 
 <!-- places:maison_limashenka -->
@@ -2124,20 +2151,20 @@ colline : 40 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord 
       0         10        20        30        40
     0 
       XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-      ^^^^........''''''''''''''''........^^^^
-      ^^^^........''''''''''''''''........^^^^
-      ^^^^........''''''''''''''''..T.....^^^^
-   10 ^^^^........'''''''''''CC'''........^^^^
-      ^^^^....DDD.'''''''''''CC'''........^^^^
-      ^^^^....DDD.''''''''''''''''........^^^^
-      ^^^^........''''''''''''''FF........^^^^
-      ^^^^........''''''''''''''''........^^^^
-   20 ^^^^............................EE..^^^^
+      ^^^^....,,,,,..............,,,,,....^^^^
+      ^^^^....,,,,,..............,,,,,....^^^^
+      ^^^^....,,,,,..............,,,T,....^^^^
+   10 ^^^^....,,,,,..........CC..,,,,,....^^^^
+      ^^^^....DDD,,..........CC..,,,,,....^^^^
+      ^^^^....DDD,,..............,,,,,....^^^^
+      ^^^^....,,,,,.............FF,,,,....^^^^
+      ^^^^....,,,,,..............,,,,,....^^^^
+   20 ^^^^....,,,,,,,,,,,,,,,,,,,,,,,,EE..^^^^
       ^^^^.....AA.....................EE..^^^^
       ^^^^.....AA.........................^^^^
-      ^^^^........::::::::::::::::........^^^^
-      ^^^^........::::::::::::::::.BB.....^^^^
-   30 ^^^^..............::::.......BB.....^^^^
+      ^^^^................................^^^^
+      ^^^^.........................BB.....^^^^
+   30 ^^^^.........................BB.....^^^^
       ^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
       ^^^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;^^^^
       ^^^^;;;;;;;;;;;;;;;;@;;;;;;;;;;;;;;;^^^^
@@ -2146,38 +2173,70 @@ colline : 40 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord 
 Légende des lettres : `A` heather ; `B` tall_grass ; `C` wildflowers_a ; `D` boulder_a ; `E` mossy_rock ; `F` rock_small_a.
 <!-- /ascii:colline -->
 
-- **Taille** 40 × 40 m ; **bornes** `Rect2(10, 6, 20, 23)`. La colline est un cap : elle monte du
-  sud (entrée depuis l'entrepôt) en trois terrasses (+1, +2, +3, talus `cliff/wall_earth_1m` et
-  `cliff/step_rock` face au sud) jusqu'au sommet, qui finit au nord **sur le vide**.
-- **Le sommet** : la place `cercle_talismans` (14 → 26, 6 → 18), 12 × 12 m d'herbe rase ; le petit
-  cristal au centre (`talismans_centre`, 20 ; 12) ; les talismans (`anim/talisman_float`) sur un
-  cercle de 3,5 m ; le point `dos_a_dos` (Willem et Chtholly assis dos à dos) ; `vue_nord` au bord.
+- **Taille** 40 × 40 m ; **bornes** `Rect2(10, 6, 20, 26)` (la caméra monte jusqu'au bord pour la vue au
+  nord, z = 6, et descend jusqu'au pied du chemin, z = 32, comme la règle P − 8 ; (C3) le plan disait
+  `Rect2(10, 6, 20, 23)`, qui arrêtait le point visé à z = 29 et sortait le joueur de l'écran sur le bas
+  du chemin).
+- **Le relief** ((C3b) : la reprise visuelle ; l'orchestrateur jugeait les terrasses « des plaques de carton
+  empilées »). La colline est un cap : elle monte du sud (entrée depuis l'entrepôt) en trois paliers aux
+  **contours irréguliers**, dessinés en tronçons de 3 à 6 m décalés d'un ou deux mètres (la grille du sol est
+  d'un mètre, une diagonale ferait une scie de marches d'une case) : le pied à 0, la terrasse basse à
+  **+1 m**, la terrasse haute à **+2,5 m** (falaise de 1,5 m) et le sommet à **+3,5 m** (falaise de 1 m) ;
+  à l'angle sud-est de la terrasse haute, un replat de +1,5 m défait la pente en marches de 0,5 m (talus de
+  terre) ; un replat de 0,5 m au pied, de chaque côté de l'entrée. Les `palier` du plan en donnent l'enveloppe,
+  les contours exacts sont dans `tools/exterior_recipes/colline_relief.py`. Les faces (visibles, tournées vers le
+  sud) sont en talus de terre et en roche par pans de longueurs différentes, jamais un seul style sur une
+  longue ligne, habillées de lierre, de racines, de buissons et de fougères. **Trois rampes larges** (cinq
+  cases de large, 11 à 14° de pente : 5 × 4, 5 × 6 et 5 × 5 cases) ; leurs joues (les triangles de terre de
+  chaque côté, vus de biais, que le moteur dessine sans qu'on puisse les cacher) sont couvertes d'une haie de buissons. Le chemin
+  ne franchit aucune marche, même de 0,5 m : seules les rampes montent.
+- **Le sommet** : la place `cercle_talismans` (14 → 26, 6 → 18), 12 × 12 m d'herbe rase, plate à 3,5 m, dont
+  **rien ne se dresse** ; le petit cristal au centre (`talismans_centre`, 20 ; 12) ; les talismans
+  (`anim/talisman_float`) sur un cercle de 3,5 m ; le point `dos_a_dos` (Willem et Chtholly assis dos à dos) ;
+  `vue_nord` au bord. Le cercle est dessiné **dans le sol** : un anneau de dalles de roche à bord rompu (rayon
+  6,15 m), de l'herbe haute, des bruyères et des fleurs en bouquets (décalques `flowers_patch_*`) tout autour.
 - **Grands décors** : l'arbre noueux solitaire `lone_tree` (livré) en (30 ; 9) ; un rocher
-  `boulder_a` (où l'on s'assoit, `rocher`) ; herbes hautes, bruyère, fleurs d'automne. Pas de
-  belvédère ni de myosotis : c'étaient des inventions de l'ancienne bible.
-- **Kits** : herbe (`tall_grass`, `wind_grass_a/b`, `heather`, `wildflowers_*`), rochers
-  (`rock_small_*`, `mossy_rock`), lisières est et ouest (`forest_wall_*`), bord (`edge_rocks_*`).
-- **Lumière** : de nuit (préréglage `nuit_claire`) ; la lueur du cristal et des talismans. **Vue
+  `boulder_a` (où l'on s'assoit, `rocher`) ; deux pierres sculptées par le vent (`wind_rock_a`, `wind_rock_b`)
+  aux épaules du cap, un cairn au bord ; herbes hautes, bruyère, fleurs d'automne **en bouquets** (un bouquet,
+  c'est 3 à 4 décors d'un même thème : bruyère, prairie, herbes, pierres, buissons, fougères), des pierres
+  plates (`pebbles_*`) sur le chemin. Pas de belvédère ni de myosotis : c'étaient des inventions de l'ancienne
+  bible.
+- **Kits** : herbe (`tall_grass`, `wind_grass_a/b`, `grass_clump_*`, `heather`, `wildflowers_*`), buissons
+  et fougères, rochers (`rock_small_*`, `rock_pile`, `mossy_rock`), talus (`ivy_wall_b`, `edge_roots`,
+  `grass_edge_*`), lisières est et ouest (`forest_wall_*`, dès z = 9 : au nord, la côte recule), bord
+  (`edge_rocks_*`, `edge_grass`).
+- **Le vide au nord** ((C3b) : « le vide ne se lit pas »). La caméra regarde le nord à 32° : **elle ne voit jamais
+  la falaise du cap** (elle est au nord de la terre, face à l'ombre) ; le vide se lit donc par la **côte** (une
+  ligne irrégulière : le cap avance au centre, z ≈ 2,5, et recule aux épaules, z ≈ 8), la **mer de nuages** (une
+  nappe 60 m sous le sol, qu'on voit de 120 à 250 m au nord), et, dans le groupe `Sky` de la carte, des **rochers
+  qui flottent** à 12 → 76 m, des **îles lointaines** (`distant_island_*`, 64 × 32 m à l'échelle 1, posées ici à
+  l'échelle 0,4 → 0,8, la base dans les nuages), des cumulus et des bancs de brume sur la nappe, et
+  l'horizon (`horizon_islands`). Des piliers de roche qui sortent de la mer de nuages, dont la face tournée
+  vers le sud serait la vraie falaise, sont commandés au cahier n° 5 (R0.12) ; une caméra qui s'incline au bord du
+  vide est demandée dans docs/CONTRACT_REQUESTS.md.
+- **Lumière** : de nuit (préréglage `nuit_claire` ; (C3) celui d'E9 qui est une nuit claire s'appelle `nuit`, c'est
+  le `light_preset` de la carte) ; la lueur du cristal et des talismans (la scène de l'acte 1 : la carte ne
+  porte aucune lumière, les deux lignes `lumiere` du plan sont des repères). **Vue
   au nord** : la mer de nuages argentée sous les étoiles (`cloud_sea_night`) ; pour la scène, la
-  caméra lève les yeux vers le ciel (`sky_night`). **Densité** : 40 à 70 éléments par écran (une
-  colline nue, voulue) ; grillons et chouette la nuit.
+  caméra lève les yeux vers le ciel (`sky_night`). **Densité** : 40 à 70 éléments par écran, visée haute
+  (45 à 67 aujourd'hui) ; grillons et chouette la nuit.
 
 ```plan
 carte colline 40 40 dehors
 nom "La colline des étoiles"
 region colline
-sol grass_dry 0 0 40 40
-sol grass 4 4 36 32
-sol meadow_flowers 12 4 28 20
-sol path_dirt_b 12 26 28 30
-sol path_dirt_b 18 30 22 40
-sol forest_floor 0 32 40 40
-palier 1.0 4 4 36 32
-palier 2.0 8 4 32 26
-palier 3.0 12 4 28 20
-rampe 12 30 16 34 1.0 0 S
-rampe 24 26 28 29 2.0 1.0 S
-rampe 14 20 18 23 3.0 2.0 S
+sol grass 0 0 40 40
+sol grass_dry 8 3 32 21
+sol grass 13.4 5.4 26.6 18.6
+sol forest_floor 0 33 40 40
+sol forest_floor 0 4 4 33
+sol forest_floor 36 4 40 33
+palier 1.0 3.5 4 36.5 33
+palier 2.5 5 4 35 27
+palier 3.5 7.5 4 33 20
+rampe 10 30 15 34 1.0 0 S
+rampe 23 24 28 30 2.5 1.0 S
+rampe 14 19 19 24 3.5 2.5 S
 # --- la pointe de l'île : le vide au nord (V1 : « petite colline à la périphérie ») ---
 vide 0 0 40 3
 bord falaise 0 3 40 4 0.6
@@ -2193,7 +2252,7 @@ decor heather 10 24 1.5 1 0.5 libre
 decor tall_grass 30 30 2 1 0.8 libre
 decor wildflowers_a 24 12 1.5 1 0.3 libre
 # --- montée et sommet ---
-chemin montee 3 20;39 20;35 14;31 14;28 26;28 26;24 16;24 16;19 20;14
+chemin montee 3 20;39 20;36.8 12.5;35.2 12.5;29.4 20;30.2 25.5;30.2 25.5;23.4 16.5;23.4 16.5;18.4 20;14
 place cercle_talismans 14 6 26 18
 sortie vers_entrepot 18 39.4 22 40 entrepot from_colline ""
 marqueur Spawn 20 36.5 N
@@ -2205,6 +2264,10 @@ point rocher 9.5 15.6
 lumiere cristal_reglage 20 12 0.5 cristal
 lumiere talismans 20 12 1.5 etoiles
 ```
+
+<!-- places:colline -->
+**Places de la vie** (lot C3 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher`) ; les places réservées, en `Life/Areas` avec leur rectangle (`cercle_talismans`) ; et, en plus du plan : `vers_entrepot` (20 ; 38.4 ; le pied du chemin, devant la sortie : par où l'on part vers l'entrepôt, et d'où l'on en arrive), `pied_de_colline` (20 ; 34 ; le bas du chemin, avant la première rampe : on s'y arrête avant de monter), `arbre_seul` (28.2 ; 10.8 ; au pied de l'arbre noueux solitaire, côté sommet (VIE.md, faune : la chouette y guette)), `merles` (11 ; 22 ; la bruyère de la terrasse haute, à l'ouest : les merles de l'aube (VIE.md, faune)), `papillons` (24.5 ; 22.5 ; l'herbe fleurie au-dessus de la dernière rampe : les papillons des jours doux (VIE.md, faune)), `chouette` (29.2 ; 10.2 ; la branche basse de l'arbre solitaire : la chouette de la nuit (VIE.md, faune)).
+<!-- /places:colline -->
 
 ## 8. La forêt profonde (`foret_profonde`)
 
@@ -3142,7 +3205,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `crypt_stairs` | salle_des_armes | livrée : `assets/hd2d/interior/props/crypt_stairs.png` |
 | `crystal_crates` | port | livrée : `assets/hd2d/props/crystal_crates.png` |
 | `crystal_lamp_table` | entrepot_rdc | livrée : `assets/hd2d/interior/props/crystal_lamp_table.png` |
-| `crystal_pendant` | cafe, entrepot_rdc | livrée : `assets/hd2d/interior/props/crystal_pendant.png` |
+| `crystal_pendant` | (aucune : QO, QC-23, la lumière seule) | livrée : `assets/hd2d/interior/props/crystal_pendant.png`, non posée |
 | `crystal_projector` | ville_projection | livrée : `assets/hd2d/interior/props/crystal_projector.png` |
 | `crystal_stove` | entrepot_rdc | livrée : `assets/hd2d/interior/props/crystal_stove.png` |
 | `deck_bridge` | transport_garde | livrée : `assets/hd2d/props/deck_bridge.png` |

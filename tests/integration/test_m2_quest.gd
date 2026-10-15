@@ -172,6 +172,13 @@ func _talk_to(zone_id: StringName, npc: Npc, start := Vector3.INF) -> void:
 	)
 	assert_true(near, "invite « Parler » devant %s" % npc.name)
 	assert_eq(player.current_prompt(), "Parler")
+	# (U1) Le HUD montre le signe de la cible au-dessus d'elle (plus de pastille).
+	var signs := hud.call(&"interact_signs") as Control
+	assert_true(
+		await until(func() -> bool: return signs.call(&"full_kind") == InteractSign.TALK, 2.0),
+		"signe « parler »"
+	)
+	assert_eq(signs.call(&"full_target"), player.current_interactable())
 	var started := _started
 	await _tap_talk()
 	assert_eq(_started, started + 1, "la conversation avec %s commence" % npc.name)

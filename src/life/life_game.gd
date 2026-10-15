@@ -154,13 +154,18 @@ func with_role(role: StringName) -> Array[LifeActor]:
 
 
 ## (Ballon, E8) Répartit les membres en équipes, chacun dans la plus petite (un rôle d'équipe
-## donné par la ligne, « role » : « rouge », l'emporte) ; renvoie teams.
-func assign_teams(team_names: Array[StringName]) -> Dictionary:
+## donné par la ligne, « role » : « rouge », l'emporte) ; renvoie teams. Les membres dont le rôle
+## est dans except_roles (l'arbitre) n'entrent dans aucune équipe.
+func assign_teams(
+	team_names: Array[StringName], except_roles: Array[StringName] = []
+) -> Dictionary:
 	teams.clear()
 	for team: StringName in team_names:
 		teams[team] = [] as Array[StringName]
 	for actor: LifeActor in members:
 		var wanted: StringName = roles.get(actor.id, &"")
+		if except_roles.has(wanted):
+			continue
 		if not teams.has(wanted):
 			wanted = team_names[0]
 			for team: StringName in team_names:
@@ -227,6 +232,12 @@ func _emit(kind: StringName, detail: Variant) -> void:
 
 
 # --- À redéfinir -------------------------------------------------------------------------------
+
+
+## (E8) Vrai tant que le jeu réserve ses membres : le joueur n'y participe pas à côté d'une
+## conversation, ils ne proposent pas « Parler » (le ballon quand il y joue, l'entraînement).
+func blocks_talk() -> bool:
+	return false
 
 
 ## Le joueur interagit avec un membre : vrai si le jeu y répond (pas de dialogue).

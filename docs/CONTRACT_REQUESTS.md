@@ -753,6 +753,12 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   démonstration (`data/life/`, qui visent les cartes d'essai).
 - **E8 (ballon)** : le cadre des jeux (`LifeGame` : `assign_teams`, `formation`, joueur qui entre
   et sort, `on_player_attack`) ; un jeu `src/life/games/ballon.gd` et l'activité qui le nomme.
+
+## E8 — les jeux : demandes
+- **CARTE.md / plan de l'entrepôt (E1, T1)** : retirer le panneau `ball` de la liste des décors du champ (recette `tools/exterior_recipes/entrepot.py`, `place("Field", n, x, z, name="Ball")`) : le ballon du match (`GameBall`) le remplace et E8 doit aujourd'hui le retirer du lot fondu à l'exécution (`GameBall.hide_decor_ball`, qui ne touche que la carte instanciée). Si l'on veut un ballon au repos hors des matchs, il ne doit pas être fondu (ou V1 le pose par la vie).
+- **V1 (la vie sur les vraies cartes)** : l'activité `ballon` existe dans `data/life/activities.json` (une place d'un seul point suffit : `champ_centre`) ; une ligne d'emploi du temps (data/life/ile_68/<id>.json, à V1) l'utilise ainsi, une fois pour les jours 5 et 6 et une fois pour les jours 9 à 12 (pas de ballon les jours 7 et 8), avant la ligne de base de l'après-midi : `{"slot": "apres_midi", "day": [5, 6], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "role": "rouge"}` (`role` : `rouge`, `blanc`, ou `arbitre` pour Willem ; sans rôle, la petite va à l'équipe qui en a le moins). Il faut 6 joueuses au moins ; il n'y a que six fées génériques (`data/npcs/generic/`) : pour « douze à vingt petites » (VIE.md, 5.1) il en faut d'autres (cahier n° 3, `fairy_07` à `fairy_12`). Les jours 7 et 8 : pas de ligne de ballon. Les petites portent la tenue `vie` (courir, frapper, tomber) : la planche `<id>_life` doit avoir `frappe`, `lance`, `tombe`, `saut`, `assis`.
+- **E6 (récit)** : `Player.set_weapon(&"baton")` au début de l'acte 1 puis `&"seniorious"` aux scènes que le récit désigne (duel, entraînement spécial, colline) ; l'arme n'est pas dans la sauvegarde : la redonner sur `EventBus.game_loaded`. Lancer un jeu : `MiniGames.start_ball_match` / `MiniGames.start_staff_training` (PLAN.md, « (E8) Les jeux ») après avoir posé le créneau (`LifeDirector.set_slot`) ; recevoir la fin par `match_finished(résultat)` / `finished(résultat)` ; `StaffTraining.window_closed` à relayer à E9 (le rythme tremble, le son s'étouffe). Les répliques de Willem pendant l'entraînement sont dans `data/texts/life.json`, `games/baton/` ; la scène peut les remplacer.
+- **Planches (cahier n° 5, lot R2)** : `<id>_stick` pour Chtholly, Ithea, Nephren et Willem avec l'animation `pare` (2 images, 2 ips, boucle) acceptée par E8 ; Willem n'a ni `frappe` ni `lance` dans `willem_home` (il frappe donc avec `parle`) : lui en donner une. Le joueur frappe le ballon avec son coup d'épée (`attaque`) faute d'un geste de pied ; `chtholly_home` a `frappe` mais pas le combat (déjà noté plus haut).
 - **V1 (la vie de l'entrepôt)** : fait sans changer de contrat ; petits ajouts à `src/life/` (avec leurs tests) :
   `LifeData` lit `data/life/<île>/` (`use_content`, `enter_island`, `dirs`), `LifeDirector` tient les drapeaux
   de la pluie et lit `?contenu=`, `LifeNav.nearest_open` ne traverse plus un mur. Besoins restants, hors
@@ -776,6 +782,18 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
     (elles dorment en tenue du jour) ; `nygglatho_labcoat` ; les tenues de pluie ; `willem_stick`, le geste au marteau
     (`reparer` joue `travaille`), la passe du pied de Willem (`frappe`) ; les poses `pile` (assise à califourchon) et `epie`
     (l'oreille contre la porte, de dos) ; `cafe_owner`, `drinker_*`, `porter`, `villager_*` (la ville et le village).
+
+- **C3 — préréglage `nuit_claire`** (E9) : CARTE.md (7) et ACTE1.md (8.8) appellent ainsi la lumière de la colline,
+  qui n'existe pas (`data/lighting/` : `nuit` seulement). La carte emploie `light_preset = &"nuit"` (docs/DECISIONS.md,
+  C3). Un préréglage `nuit_claire` (voie lactée plus nette, air limpide, lumière plus douce que `nuit`) se règle
+  dans `data/lighting/` ; la carte passera alors `light_preset` à `nuit_claire` (une ligne de
+  `tools/exterior_recipes/colline.py`, `gen colline`), ou la scène de l'acte 1 le choisit.
+- **C3 — la scène des talismans (E6, récit)** : la carte donne le décor et les points (`talismans_centre` : le petit
+  cristal, 20 ; 12 ; `dos_a_dos`, `vue_nord`, `rocher`) ; elle ne pose ni talismans ni lumière. La scène pose les
+  quarante et un `anim/talisman_float` (remplaçant livré, 24 × 24 px) sur un cercle de 3,5 m, la lueur du cristal
+  (une lumière de la scène, pas de la carte) et, quand on lève les yeux, `sky_night` (la caméra regarde le ciel).
+  Willem monte à la colline au soir du jour 8 : `data/life/ile_68/willem.json` dit `away: colline` ; une ligne
+  `map` + `place` (`colline`, `dos_a_dos`) la remplace quand la scène la joue.
 - **C2 (porte fermée jusqu'au jour 11)** : `MapExit` ne sait pas se fermer. La porte `porte_limashenka` du
   village (maison Limashenka, ouverte au jour 11, ACTE1.md 11.3) porte les métadonnées `open_from_day = 11` et
   `closed_text_key = "village/maison_close"` (texte de `data/texts/village.json`) ; il faudrait que `MapExit`
@@ -824,3 +842,27 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   (appel tolérant : `has_method`). Le calendrier et l'indice n'ont plus de couleur en dur : panneaux
   et textes prennent le thème ; la page lit ses couleurs dans le type de thème `Calendar` (`paper`,
   `ink`, `strike`, `ring`, `today`), à défaut des valeurs du script : U1 peut les y poser.
+
+## QO — options visuelles tranchées
+- **Fait (I2, vitres du lot R1)** : `Building.window_glow_color` et `window_glow_tolerance` (PR « contrats » de QO,
+  QC-02) ; les façades de l'entrepôt ont leur règle, rien à redessiner. Le café garde la règle par défaut :
+  sa vitrine attend la façade de nuit (cahier n° 5, R0.9).
+\n
+- **C3b — une caméra qui s'incline au bord du vide** (CameraRig, propriétaire : le lot caméra ; non bloquant) : à 32° d'inclinaison fixe, la caméra ne voit pas la falaise sous le bord nord de la colline (la face est au nord de la terre) : la « falaise visible sous le bord » demandée pour la colline (CARTE.md 7, la scène 8.8 de l'acte 1) n'existe que si la caméra s'incline davantage (50 à 60°) quand le joueur est à moins de 6 m d'un bord `void` : on verrait alors la lèvre, la face de roche, le rideau de roche et la mer de nuages 60 m plus bas. Sans cela, le vide se lit par la mer de nuages, les rochers qui flottent et les îles (la recette), et par les piliers de roche commandés au cahier n° 5 (R0.12, `sky/sea_stack_*`).
+## U1 — interface « Nuit douce » : ce que les autres lots doivent savoir
+- **Pour E6 (le récit)** : une scène sans contrôle du joueur demande `DialogueBox.set_presentation(&"bandeau")`
+  avant ses répliques, puis `DialogueBox.set_presentation(&"nuit")` à sa fin (le réglage dure jusqu'au prochain appel).
+  Pendant le bandeau, les signes d'interaction sont cachés. Pour cacher les signes sans bandeau (un jeu, une
+  séquence) : `InteractSign.suppress(&"<raison>", true)` puis `false`.
+- **Pour E6 et E8** : cacher le signe d'un participant : `InteractSign.set_hidden(noeud, true)` (méta
+  `interact_sign` = `&"none"`), le rendre : `set_hidden(noeud, false)`. Un PNJ dont `get_prompt()` est vide n'a
+  déjà pas de signe.
+- **Demande au propriétaire de `src/npc/dialogue_runner.gd`** (facultatif) : une clé `"presentation"` (`"nuit"` ou
+  `"bandeau"`) dans les nœuds de dialogue, que le runner passerait à `DialogueBox.set_presentation` ; sans elle,
+  le récit appelle l'API lui-même (la clé est aujourd'hui refusée par `NODE_KEYS`).
+- **Pour E6 (calendrier, indice discret)** : tout Control ajouté sous un écran qui porte `wordend_theme.tres` en
+  prend le style sans rien faire ; un panneau `PanelContainer` est déjà un panneau Nuit douce (fond translucide,
+  filet doré) ; `UiStyle.frost(panneau)` lui ajoute le verre dépoli, `UiStyle.appear(noeud)` le fondu d'entrée.
+  Couleurs et durées : `UiStyle.color(&"gold")`, `UiStyle.seconds(&"appear_ms")`… jamais de `Color(` dans une scène
+  de `src/ui/` (`test_ui_nuit.gd`). Le menu de pause a une entrée « Options » ; « Calendrier » peut s'y ajouter
+  au-dessus d'« Options » (nœud `MainPanel/Box`), avec un panneau comme `OptionsPanel`.

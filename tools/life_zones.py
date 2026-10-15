@@ -60,7 +60,9 @@ def anchor(entry):
         return entry["at"]
     xs = [p[0] for p in entry["pts"]]
     zs = [p[1] for p in entry["pts"]]
-    return (round(sum(xs) / len(xs), 3), round(sum(zs) / len(zs), 3), 0.0, 0.0)
+    # fsum : une somme exacte, la même sous toutes les versions de Python (sum() additionne autrement
+    # depuis Python 3.12, et le marqueur bougeait d'un millième selon la machine qui générait la carte).
+    return (round(math.fsum(xs) / len(xs), 3), round(math.fsum(zs) / len(zs), 3), 0.0, 0.0)
 
 
 # Orientation des points nommés du plan (le plan n'en donne pas : N par défaut).

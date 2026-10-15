@@ -148,13 +148,16 @@ Yume-WordEnd/
 │   │                          # suiveurs), story_dialogue.gd, story_prompt.gd (invites « Dormir »…)
 │   ├── life/                  # (E4) la vie : life_director.gd (autoload LifeDirector), life_data.gd (emplois du
 │   │                          # temps, activités), life_slots.gd, life_places.gd, life_nav.gd, life_actor.gd,
-│   │                          # life_game.gd, life_texts.gd ; games/<jeu>.gd (chat, course, avalanche, tour)
+│   │                          # life_game.gd, life_texts.gd ; games/<jeu>.gd (chat, course, avalanche, tour, ballon)
+│   ├── games/                 # (E8) les jeux : ball.gd (GameBall), ball_play.gd + ball_kid.gd (BallPlay, BallKid), staff_training.gd
+│   │                          # (StaffTraining), mini_games.gd (MiniGames : lancer un jeu), game_rules.gd, game_score.gd
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
 │   └── ui/                    # hud, dialogue_box, inventory, main_menu, loading, touch_controls,
 │                              # arena_end, credits, journal (Lot Q, enfant du HUD), (E1) map_fade
 ├── data/
-│   ├── attacks/*.tres         # sword_1..3, charge_wave, bite, whip, rush
+│   ├── attacks/*.tres         # sword_1..3, charge_wave, bite, whip, rush ; (E8) stick_1..3, stick_guard (le bâton)
+│   ├── games/*.json           # (E8) les chiffres des jeux : ballon.json, staff_training.json (GameRules)
 │   ├── enemies/*.tres         # timere_small, timere_normal, timere_runner, timere_big ; visuals/timere.tres
 │   ├── fauna/<île>/           # (E5) une espèce par fichier <id>.tres (AnimalData), attacks/, visuals/<id>.tres,
 │   │                          # peuplement.json (où, combien, quand) ; format : « (E5) Ajouter un animal »
@@ -294,6 +297,10 @@ func attack() -> void                      # enchaînement sword_1 → sword_2 �
 func charge_begin() -> void                # démarre la jauge (0,55 s minimum)
 func charge_release() -> void              # lance l'onde si la jauge est pleine, recharge 1,2 s
 func is_busy() -> bool                     # true pendant attaque/charge/dégâts (bloque le déplacement)
+# (E8) L'arme : set_weapon(&"baton" | &"seniorious") -> bool (le récit choisit ; Seniorious par défaut), weapon(),
+# can_charge() (faux bâton en main : pas de charge de venenum), is_guarding() / guard_animation() (bâton en main,
+# la touche de charge tient la parade), signaux weapon_changed(arme), guard_changed(levée). Player.set_weapon /
+# weapon() les relaient ; Player.hold_pose(anim, s, remplaçantes) / is_posing() tiennent une pose (essoufflée).
 # (L0) Relais à conserver : Health du joueur → player_health_changed / player_damaged / player_died ;
 # player_respawned → Health.reset() ; player_heal_requested → Health.heal() ; max_hp_changed → Health.max_hp ;
 # au départ Health.max_hp = GameState.max_hp. Voisins par nom (../Health, ../Visual, ../Hurtbox, SwordHitbox),
@@ -561,7 +568,8 @@ class_name QuestStep  : (Lot Q) id, type (talk|reach|kill|collect|arena|flag), o
 # (L0) Autres classes partagées
 class_name Zone            # racine d'une zone : @export display_name: String, @export safe: bool ; func zone_id() -> StringName
 class_name Map             # (E1) src/world/map.gd, racine d'une carte (Node3D, groupe "maps") : @export display_name: String,
-                           # region: StringName, interior: bool, size: Vector2, camera_bounds: Rect2 (vide : la carte),
+                           # region: StringName, interior: bool, size: Vector2, camera_bounds: Rect2 (Rect2() : la carte ;
+                           # (QO) plat ou réduit à un point : une ligne, une caméra fixe),
                            # light_preset: StringName, (X1) island: StringName (&"ile_68" ; celle dont le fichier de
                            # l'île nomme la carte) ; map_id(), area() (Rect2(0, 0, size) ; île héritée : centrée),
                            # bounds(), marker(name), spawn(), marker_names(), exits() ; statiques scene_path(id), exists(id),
@@ -657,7 +665,11 @@ class_name GroundDecal     # (H9) src/world/ground_decal.gd, racine possible d'u
                            # (MapGround.triangles_in), sinon sur IslandTerrain (île ancienne)
 class_name Building        # (H9) @export side_facade (flanc est, retourné à l'ouest ; enfant interne « Sides ») ;
                            # side_size_m(), side_contract_size() (pignon : profondeur × faîtage ; gouttereau :
-                           # profondeur × mur), side_material(texture, glow)
+                           # profondeur × mur), side_material(texture, glow, glow_color, glow_tolerance) ; (QO)
+                           # @export window_glow_color (couleur des carreaux, sRGB de l'image), window_glow_tolerance
+                           # (défaut : celle du shader, #FFCA63 à 0,12) ; DecorPanel.set_glow_rule(material, couleur,
+                           # tolérance), glow_shader_color(couleur), glow_weight(pixel, couleur, tolérance) (jumeau du
+                           # shader), GLOW_COLOR, GLOW_TOLERANCE ; material_for(…, glow_color, glow_tolerance)
 class_name PropScatter     # (H9) @export variants: Array[PackedScene], random_flip ; pool(), variant_indices(),
                            # pick_variants(points, count, seed) (jamais la variante du plus proche voisin),
                            # nearest_neighbor(points, i) ; (T1) follow_ground : sur une carte de la refonte,
@@ -1017,7 +1029,7 @@ animaux sauvages ; rien dans le code ne connaît le nom d'une espèce.
    `GameState.moment` et `weather` (`EventBus.atmosphere_changed`) renvoient un groupe hors de saison (les bêtes
    s'éloignent) et en font venir un autre, toujours hors du champ de la caméra et à 14 m du joueur au moins ; les
    bêtes qui ont fui reviennent au bout de `respawn_s`. `planned` : le peuplement prévu des cartes qui n'ont pas
-   encore leur nœud `Fauna` (sentier, colline, forêt profonde, montagne) ; on le passe dans `maps` avec la carte.
+   encore leur nœud `Fauna` (sentier, forêt profonde, montagne ; (C3) la colline l'a, ses groupes sont dans `maps`) ; on le passe dans `maps` avec la carte.
    `FaunaRules.problems(&"ile_68")` en dit tout le format ; le test marche sur toutes les cartes de `maps`.
 6. **Le sol** : les animaux marchent sur ce que `FaunaNav` permet (`MapGround.is_walkable`, `level_at` : ni eau
    dormante, ni vide, ni falaise de plus d'un cran) et contournent les décors par la collision.
@@ -1120,8 +1132,8 @@ func front_z() -> float, cut_z() -> float, occluder_triangles(cut_world) -> Pack
 2. Écrire `data/maps/<map_id>/interior.json` : pièces et matières, portes, fenêtres, éléments,
    lampes ; `InteriorLayout.from_data(...).problems` doit être vide.
 3. Carte `src/world/maps/<map_id>/<map_id>.tscn` : racine `Map` (`interior = true`,
-   `light_preset = &"interieur"`, `camera_bounds` : de x = 2 à la largeur − 2 pour que la caméra
-   reste au droit du joueur, en z de 5 à la profondeur − 5) ; `Ground` = `StaticBody3D` de script
+   `light_preset = &"interieur"`, `camera_bounds` : (QO) les pignons aux bords de l'écran, le joueur
+   jamais hors du cadre ; une pièce qui tient à l'écran a une caméra fixe, `Rect2(x, z, 0, 0)`) ; `Ground` = `StaticBody3D` de script
    `interior_room.gd` (masque 0) avec `layout` ; `Geometry` (`PropBatcher`) ; `Markers` (`Spawn`,
    `from_<carte>` à y = 0,2, à 2 ou 3 m des sorties) ; `Exits` (`MapExit` devant chaque porte
    qui a un `id` : `door_position(id)` ; zone qui couvre la porte quand on la franchit en marchant ;
@@ -1206,9 +1218,9 @@ static func lookup(path, key_path) -> String, forget_texts()
 
 L'équivalent de `tools/interior_maps.py` pour le dehors : il écrit une carte du dehors **d'après son
 plan** (bloc ```plan de `docs/lore/CARTE.md`, lu par `tools/carte_plans.py`). Cartes construites :
-`entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet) et
-`sentier` (C1) et `village` (C2) ; cartes d'attente (provisoires, un lot de la phase 3 les remplace) :
-`colline`, `foret_profonde`, `port`.
+`entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet),
+`sentier` (C1), `village` (C2) et `colline` (C3) ; cartes d'attente (provisoires, un lot de la phase 3
+les remplace) : `foret_profonde`, `port`.
 
 ```text
 python3 tools/exterior_maps.py gen [map_id…]      # écrit les cartes (toutes sans argument)
@@ -1232,7 +1244,9 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   (`<décor>_forest` ou `<décor>_fg`, qui s'efface autour du joueur), faute de quoi il n'est pas posé
   et l'outil le dit.
 - **Une recette par carte** (`tools/exterior_recipes/<id>.py`) : `SETTINGS` (groupes de décors,
-  sorties provisoires), `ground_plan(plan_map)` (`tools/exterior_ground.py` :
+  sorties provisoires ; (C3) `camera_bounds`, `light_preset`, `no_lights`, `fauna` : bornes de caméra qui
+  diffèrent de la règle, préréglage de lumière de la `Map`, plan à lumières que la carte ne porte pas, nœud
+  `Life/Fauna`), `ground_plan(plan_map)` (`tools/exterior_ground.py` :
   `ground_from_plan` déduit le sol du plan, la recette y ajoute berges, îlots, rampes), `prepare(p)`,
   `pose(p)`, `ambient(p)`, `PLACES_WHY` (places de la vie que le plan ne nomme pas). Modèle court :
   `sentier.py` ; riche : `entrepot.py`. Ajouter une carte : son bloc ```plan, sa recette, son nom dans
@@ -1253,7 +1267,24 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   places de la vie en plus (`sentier_ouest`, `corbeau_perchoir`, `lisiere_renard`…). **Aucune
   lumière** (V1) : la nuit est celle d'`Atmosphere` (préréglage `nuit`) et de la lumière des fées du
   joueur (4 m), qui suffit à lire le sentier.
-- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_exterior_maps.gd` (`check` de l'outil,
+- **La colline des étoiles** (`colline`, CARTE.md section 7, 40 × 40 m, lot C3) : un cap de trois terrasses
+  (+1, +2, +3 m) montées par trois rampes, un sommet plat de 12 × 12 m (la place `cercle_talismans`, libre,
+  herbe rase, le petit cristal en `talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher` : les points de la
+  scène de l'acte 1, 8.8), le **vide au nord** (bord `void` de `MapGround` : la mer de nuages nocturne, les
+  paliers vont jusqu'à la côte) ; sortie à pied vers `entrepot` (`from_colline`) ; bornes de caméra
+  `Rect2(10, 6, 20, 26)` ; **`light_preset = &"nuit"`** (la nuit claire d'E9, quel que soit le moment de la
+  journée ; CARTE.md l'appelle `nuit_claire`) et **aucune lumière** dans la carte (la lueur du cristal et des
+  talismans est celle de la scène) ; faune d'E5 (`Life/Fauna`, `merles`, `papillons`, `chouette` : groupes dans
+  `data/fauna/ile_68/peuplement.json`, `maps`) ; places de la vie en plus (`vers_entrepot`, `pied_de_colline`,
+  `arbre_seul`…). Toutes les images du plan sont livrées ; `lone_tree_fg` et `boulder_a_fg` (premier plan,
+  `tools/exterior_props.py`) ; remplaçant du talisman de la scène : `anim/talisman_float` (`tools/hd2d_colline.py`,
+  manifeste, lot R6 du cahier n° 5).
+- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_colline.gd` (28 : plan, relief, vide et mer de
+  nuages, sommet libre, lumière, faune, marche, caméra, densité, draw calls),
+  `tests/integration/test_colline_in_game.gd` (de l'entrepôt à la colline de jour et de nuit, la montée par
+  les trois rampes, le bord, le retour ; captures `tests/integration/demo_c3.tscn` : `C3_VIEW=<vue>
+  [C3_MOMENT=couchant C3_FREE=1] tools/screenshot.sh res://tests/integration/demo_c3.tscn
+  build/shots/c3_<vue>.png 60`), `tests/unit/test_exterior_maps.gd` (`check` de l'outil,
   cartes d'attente, `port` dans l'île), `tests/integration/test_sentier_in_game.gd` (de l'entrepôt au
   sentier, au marais, à la rampe de la ville, au port d'attente, et retour) ; captures
   `C1_MAP=sentier C1_VIEW=<vue> [C1_MOMENT=nuit] [C1_LIGHT=off] tools/screenshot.sh
@@ -1665,6 +1696,159 @@ scène suivante. Les tests : `StoryData.use_root("res://tests/data/story")` (act
 `StoryDirector.seen_path` propre au test, `WorldManager.start_map` rétabli ; les tests de
 l'ancienne île mettent `start_map` à `LEGACY_MAP` (bases m1/m2).
 
+### (U1) L'interface « Nuit douce » : thème, dialogue et signes
+
+- **Thème unique** : `src/ui/wordend_theme.tres`, à la racine de chaque écran (`theme`). Tout Control ajouté
+  dessous en prend le style : `PanelContainer` = panneau prune translucide aux coins arrondis, ombre douce et
+  filet doré (`NuitBox`, `src/ui/nuit_box.gd`) ; `Button` = entrée en texte simple, halo et point doré au
+  focus ; `Label` crème ombré ; variations `HeaderLabel` (serif doré), `TitleLabel`, `SubtitleLabel`,
+  `DayLabel` (italique doré), `MutedLabel`, `ErrorLabel`, `AccentLabel`, `HudPanel`, `HudLabel`, `HudAccent`,
+  `HudMuted`, `HudTitle`, `PrimaryButton` (entrée dorée), `SkinCard(Selected)`, `InventorySlot`, `SlotCount`,
+  voiles `Dim`, `FadeBlack`, `FlashWhite`, `GoldRule`, `BandeauVeil` (des `Panel`). Polices : Nunito (texte),
+  Cormorant Garamond (noms, titres), `assets/fonts/`.
+- **Jetons** (`UiStyle`, `src/ui/ui_style.gd`) : `UiStyle.color(&"gold" | &"cream" | &"ink" | &"panel" | &"muted" |
+  &"error" | &"black")`, `UiStyle.constant(&"slide_px" | &"heart_px")`, `UiStyle.seconds(&"appear_ms" |
+  &"breath_ms")` ; aides `UiStyle.frost(panneau)` (verre dépoli : flou de l'arrière-plan, `frost.gdshader`),
+  `UiStyle.appear(noeud, direction)` (fondu et glissement d'entrée), `UiStyle.settle(noeud)`. Aucune `Color(`
+  dans une scène de `src/ui/` (`tests/unit/test_ui_nuit.gd`).
+- **Dialogue** : deux présentations. `DialogueBox.set_presentation(&"nuit")` (défaut : verre dépoli, nom serif
+  doré, portrait en buste qui déborde et s'estompe, triangle doré qui respire) ou `&"bandeau"` (scènes du
+  récit sans contrôle du joueur : dégradé sombre depuis le bas, nom en capitales serif espacées, texte blanc
+  ombré) ; vaut pour la boîte ouverte et les suivantes jusqu'au prochain appel ; `DialogueBox.presentation()`,
+  `shown_presentation()`. Le récit (E6) demande `bandeau` au début d'une scène et `nuit` à sa fin.
+- **Signes d'interaction** (`HUD/InteractSigns`, `src/ui/interact_signs.gd`, API `InteractSign`) : un signe
+  posé au-dessus de la cible du joueur (plein) et des autres cibles proches, à moins de 3,5 m (pâles), à la place de l'invite
+  « E / A : Parler » ; genre `InteractSign.kind_of(cible)` (`&"talk"`, `&"examine"`, `&"take"`, `&"enter"`, `&""`
+  sans invite) ; cacher une cible : `InteractSign.set_hidden(cible, true)` (méta `interact_sign` = `&"none"`) ;
+  cacher tous les signes : `InteractSign.suppress(&"raison", true)` ; réglage « toujours montrer la touche » :
+  `InteractSign.always_show_key()` (Options de la pause). Tests : `full_target()`, `full_kind()`,
+  `pale_targets()`, `is_key_hint_shown()`, `hovered_target()` du nœud (`HUD.interact_signs()`).
+
+### (E8) Les jeux : le ballon, l'entraînement au bâton, l'arme de Chtholly
+
+Trois choses (docs/REFONTE.md, 4.2 et 5 ; docs/lore/VIE.md, 5.1 ; docs/lore/ACTE1.md, 3.0 et 3.2) :
+le **ballon** des petites (un jeu de groupe de LifeGame), l'**entraînement au bâton** à trois contre un,
+et **le bâton** que Chtholly porte hors des scènes de combat réel (pas de charge de venenum : décision de
+D2). Les chiffres vivent dans `data/games/` (`GameRules`), jamais dans un script. Démonstration :
+`tests/integration/demo_e8.tscn` (`E8_VIEW=ballon|ballon_bord|ballon_banc|baton_a|baton_b`,
+`E8_SEQUENCE=<dossier>` : une image toutes les 0,5 s) ; raccourci de développement : `?jeu=ballon` ou
+`?jeu=baton` (Web) / `-- --jeu=baton` (src/test_shortcuts.gd). Décisions : docs/DECISIONS.md (« E8 »).
+
+**Lancer un jeu depuis le récit (E6)** — `MiniGames` (src/games/mini_games.gd, fonctions statiques ; ni
+autoload ni PR « contrats » : la carte doit être peuplée par LifeDirector et son créneau déjà posé par
+`LifeDirector.set_slot`) :
+
+```gdscript
+# Le match : les blanches (Tiat, Lakhesh, 3 fées), les rouges (Collon, Pannibal, 3 fées), Willem arbitre.
+var game: BallMatch = MiniGames.start_ball_match({
+	"place": &"champ_centre",                  # la place du terrain (défaut)
+	"white": [&"tiat", ...], "red": [&"collon", ...], "referee": &"willem",   # ids de PNJ (défauts ci-dessus)
+	"overrides": {"half_time": 20, "team_size": 4},   # chemins de data/games/ballon.json
+	"muddy": false,                            # après la pluie : le ballon ralentit, elles glissent
+	"with_player": false, "player_at": Vector3(...),   # le joueur entre tout de suite / est posé là
+})
+game.match_finished.connect(func(result: Dictionary) -> void: ...)   # la fin
+# result : {winner: &"rouge"|&"blanc"|&"egalite", score: {rouge, blanc}, scorers: {id: buts},
+#           player_team, player_goals, player_touches, duration, halves, aborted}
+MiniGames.ball_match() -> BallMatch ; MiniGames.stop_ball_match()   # disperse : retour aux emplois du temps
+
+# L'entraînement : Willem seul (phase A), puis avec Ithea et Nephren (phase B).
+var training: StaffTraining = MiniGames.start_staff_training({
+	"variant": &"default",                     # ou &"jour10" : phase A seule, la fenêtre de déviation se ferme à 15 s
+	"place_player": true,                      # pose le joueur face à Willem
+	"restore_weapon": true, "with_hud": true, "overrides": {...},   # chemins de data/games/staff_training.json
+})
+training.finished.connect(func(result: Dictionary) -> void: ...)   # la scène continue toujours
+# result : {success, ended_by: &"success"|&"fatigue"|&"touches"|&"misses"|&"stopped", phase_reached,
+#           phase_a: {success, best_streak, deflections, hits, blocked, dodged},
+#           phase_b: {success, counters, touched_willem, survived}, touches, duration, variant}
+# Signaux : phase_changed(&"intro"|&"a"|&"link"|&"b"|&"ended"), resolved(sorte, issue), touches_changed(n, limite),
+# window_closed (jour 10 : le rythme tremble : effet d'E9). MiniGames.staff_training() ; stop_staff_training().
+```
+
+**L'arme** — `Player.set_weapon(&"baton" | &"seniorious")`, `Player.weapon()` (PlayerCombat : voir le contrat
+ci-dessus). Par défaut **Seniorious** (l'ancienne île et ses Timeres gardent l'épée et la charge) : c'est le
+récit (E6) qui donne le bâton au début de l'acte 1 (`set_weapon(&"baton")`) et Seniorious aux scènes qu'il
+désigne (duel, entraînement spécial, colline). L'arme n'est pas dans GameState : à refaire au chargement
+d'une partie (`EventBus.game_loaded`). Bâton en main : les trois coups de `data/attacks/stick_1..3.tres`
+(mêmes chiffres que l'épée : la faune de E5 reste combattable, un animal vaincu s'enfuit), **pas de charge**
+(`can_charge()` faux) ; la touche de charge (clic droit, L2/gâchette) tient la **parade** (`is_guarding()`,
+`guard_changed`), qui interdit de frapper tant qu'elle est levée. Animation de la parade : `pare`
+(`data/attacks/stick_guard.tres`) si la planche l'a, sinon la charge, image 0. **Sans planche `_stick`**
+(cahier n° 5, lot R2) : le bâton garde l'animation d'épée (`attaque`) et n'est pas dessiné en main ; les
+planches `_stick` demandent `pare` (2 images, 2 ips, boucle) et un `mort` assis sans blessure.
+
+**Le ballon (src/life/games/ballon.gd, class BallMatch ; base : src/games/ball_play.gd)** — un jeu `ballon`
+sur le cadre de LifeGame (activité `ballon` d'activities.json, `game: "ballon"`) :
+- *Groupe* : les PNJ dont la ligne nomme l'activité `ballon` à la même place (`champ_centre` : une place d'un
+  seul point suffit) ; la clé `role` de leur ligne donne l'équipe (`rouge`, `blanc`) ou l'arbitre (`arbitre`),
+  sans rôle : à l'équipe qui en a le moins. `LifeGame.assign_teams(équipes, except_roles)` répartit. Il faut
+  `min_members` (6) ; on attend les retardataires `assemble_wait` s avant de composer les équipes.
+- *Terrain* : `field/width` × `field/length` (18 × 20 m) centré sur la place ; les places `champ_but_nord`
+  (cages des blanches, qui défendent le nord en première mi-temps) et `champ_but_sud` donnent le poste des
+  gardiennes. Le ballon est un `GameBall` (src/games/ball.gd, `top_level`, ajouté à `Life`) ; le ballon
+  décoratif du plan (un panneau fondu au rond central) en est retiré à l'exécution (`GameBall.hide_decor_ball`).
+- *Équipes* : au plus `team_size` (5) sur le terrain, une gardienne chacune, les autres assises au bord ouest
+  (le banc, `assis`) ; à la mi-temps on change de côté, les meilleures buteuses restent (`keep_top_scorers`) et
+  les remplaçantes entrent. Un anneau au sol (`TeamRing`, rouge ou blanc) marque l'équipe de qui joue.
+- *Déroulé* (`BallMatch.Phase`) : ASSEMBLE → GATHER (on s'aligne) → KICKOFF (l'arbitre : « Coup d'envoi ! ») → PLAY
+  (2 × 180 s ; un but : GOAL, 3 s, remise en jeu par l'équipe qui l'a encaissé ; le ballon perdu : LOST) →
+  HALFTIME (8 s) → ... → ENDED (`match_finished`, puis `finish()` ; le groupe se disperse au créneau suivant).
+- *IA* : toutes les 0,25 s, chaque petite choisit : la ou les deux plus proches du ballon (avec un avantage à
+  qui l'a le moins touché : le jeu de Willem, V1) courent après lui, les autres tiennent leur poste en suivant
+  le ballon ; au pied, elle tire près des cages, passe (de préférence à qui a le moins touché), dribble ou le
+  lance haut à deux mains (`lance` : il retombe au hasard à 6 m), avec une erreur de visée ; elles tombent
+  (`tombe`) en courant ou en se bousculant ; la gardienne arrête trois tirs sur quatre et dégage un ballon qui
+  traîne. Les marches sont `LifeActor.walk_to(..., direct)` ; `LifeActor.stuck_time` à 3,5 s : jamais coincées.
+- *Le ballon* : image claire `assets/hd2d/interior/props/ball_white.png` agrandie à 0,4 m, ombre nette au sol
+  (`ball/image`, `ball/size_m`, `ball/shadow_radius`) : lisible sur l'herbe sèche.
+- *Pas de conversation pendant le jeu* : `LifeGame.blocks_talk()` (vrai pour le ballon tant que le joueur y joue,
+  pour l'entraînement jusqu'à sa fin) ; `LifeActor.talk_blocked()` ; `Npc.get_prompt()` rend alors `""` et
+  `Npc.interact` ne fait rien ; tout revient quand le jeu s'arrête.
+- *Le ballon perdu* : frappant le mur est près de `fourre_ballon`, il se perd dans le fourré une fois sur deux ;
+  une petite va le chercher (`saut`, puis `lance`), ou le joueur, en y entrant (`thicket/player_reach`).
+- *Le joueur* : il entre en entrant dans le champ (`player/join_margin`, 1,5 m du bord), rejoint l'équipe qui a
+  le moins de joueuses (les blanches à égalité : une petite lui laisse sa place sur le banc), frappe avec la
+  touche d'attaque (`LifeGame.on_player_attack` : le ballon part dans sa visée s'il est à 1,6 m devant, sans mal
+  pour personne), pousse le ballon en courant contre lui, sort à `player/leave_margin` (4,5 m) ou par
+  `leave_player()`. Un score sobre (`GameScore`, une ligne en haut de l'écran) s'affiche tant qu'il joue.
+- *Événements* (`LifeGame.event`) : `match_started`, `kickoff`, `goal [équipe, marqueuse, score]`, `save`,
+  `kick [qui, sorte]`, `fall`, `half_time`, `ball_lost`, `ball_found`, `player_kick`, `match_ended [résultat]`.
+
+**L'entraînement (src/games/staff_training.gd, class StaffTraining, un Node3D ajouté à `Life`)** — au pas de
+`advance(delta)` (le nœud s'avance seul à chaque image physique ; les tests le coupent). La **parade est la
+touche de charge** bâton en main (pas de nouvelle action : project.godot ne change pas). Phase A : un coup toutes
+les 1,2 s (0,8 s au bout de 60 s), annoncé 0,5 s avant (cercle au sol, flèche, posture de Willem) ; **bloquer** =
+parade tenue à l'impact ; **dévier** = parade relâchée dans les 0,15 s avant (la garde de Willem s'ouvre 0,5 s) ;
+**esquiver** = hors du cercle (0,9 m) ; coup reçu = enchaînement à zéro et une touche de plus (jauge 6) ; la
+fenêtre rétrécit d'un cinquième toutes les 30 s ; à 90 s Chtholly s'assoit (`Player.hold_pose`, `assis`, sinon
+`degats`) ; réussite : 12 réponses de suite dont 3 déviations. Phase B : les aînées se lèvent et se placent de
+part et d'autre de Willem ; elles l'attaquent toutes les 2 à 3 s, il contre toutes les 2 s l'une des trois
+(annoncé 0,4 s avant ; sur Chtholly : esquive ou déviation, la parade tenue n'y suffit pas ; une déviation
+d'une aînée ou de Chtholly découvre Willem 0,4 s) ; réussite : tenir 60 s avec trois contres au plus, ou
+toucher Willem découvert d'un coup de bâton (`touch_reach`, `touch_arc_deg`). **Aucun vrai dégât** : jamais de
+`Health` touchée ; les PNJ sont menés par l'exercice (`LifeActor.state = GAME`, un `Hush` muet : leur parler ne
+fait rien) et rendus à leur emploi du temps (`end_time` s après la fin). Variante du jour 10 : phase A seule.
+
+**Données** : `data/games/ballon.json` (durées, terrain, balle, frappes, IA, chutes, gardiennes, fourré, boue,
+joueur) et `data/games/staff_training.json` (rythme, fenêtres, fatigue, réussites, variantes, animations,
+chacun avec un `_comment`) ; `GameRules.value(jeu, "kick/reach", défaut, surcharges)` / `number()` /
+`problems()` ; l'activité `ballon` peut surcharger des chemins par ses `params` ; les répliques :
+`data/texts/life.json`, `games/ballon/…` et `games/baton/…` (`{player}` accepté).
+
+**Mesures** (après la fusion de V1, quinze PNJ sur la carte). Natif (Xvfb, Mesa logiciel), vue du jeu au plus
+fort du match (dix petites, l'arbitre, le joueur dans la partie, score compris) : 125 draw calls, 144 au plus
+(ballon) ; 111 à 127 au plus (spectateur, banc) ; 94 à 111 (entraînement), 130 au plus (phase B) : sous 200. Le
+match pose 35 objets dessinables de plus que la carte seule ; directeur 0,4 ms par image (9 à 21 ms au plus, aux
+changements d'équipe). Build Web (`tools/web_jeux.js`, Chromium sans GPU, SwiftShader : 0,3 à 0,9 image/s, les
+images/s ne valent pas dans l'absolu) : ballon 95 draw calls (97 au plus), entraînement 99 (107 au plus).
+
+**Pièges.** Un test qui lance un match règle le créneau (`LifeDirector.set_slot`) *avant* d'entrer dans la
+carte ou appelle `LifeDirector.refresh(false)` : sinon le directeur applique le créneau à l'image suivante et
+renvoie les joueuses à leur emploi du temps. Les tests avancent le jeu à la main (`LifeDirector._physics_process(1/60)`
+et `StaffTraining.advance`) : deux minutes de match en une seconde. GDScript : une classe de plus de 1000
+lignes échoue au lint : BallMatch hérite de BallPlay. Le ballon du décor fondu n'est retiré qu'à l'exécution
+(docs/CONTRACT_REQUESTS.md, « E8 »).
 
 ## 4. Tranche verticale : WordEnd en HD-2D
 
@@ -1707,10 +1891,10 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 | Île | `src/world/island.tscn` | Île flottante de 160 × 160 m (relief calculé, places de HISTOIRE.md 3.3 garanties) : village (centre), dunes (ouest), forêt (nord), port (sud), colline (est). (HD-2D) Sol en tuiles de pixel art mélangées par zone et par masque (atlas `assets/hd2d/ground/atlas/ground_atlas.png`, `terrain.gdshader`), falaises et dessous texturés (`rock.gdshader`), bâtiments en volumes avec façades en images (`Building`), décors en panneaux avec ombre douce (`DecorPanel`), fondus par image (`PropBatcher`), ciel panoramique, mer de nuages texturée, lanternes éclairées ; murs invisibles et rattrapage sous l'île |
 | Zones | `src/world/zones/*` | Chaque zone = scène fille avec `Area3D` qui émet `zone_entered` ; `WorldManager` charge toutes les zones au départ en M2 (streaming en M3) ; le village est une zone `safe` où aucun ennemi n'entre |
 | PNJ | `src/npc/npc.tscn` | (acte 1) les PNJ de docs/lore/HISTOIRE.md 3.3 dans les cinq zones (Nygglatho, Willem et les fées à l'entrepôt, Pannibal aux bois, le guetteur au Couchant, Limeskin et les gens du bourg au port), visuels non jouables `data/npcs/visuals/` ; présents selon l'histoire (`NpcData.visible_if`) ; regardent le joueur à moins de 4 m ; `interact()` lance `DialogueRunner` |
-| Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | Boîte en bas d'écran, portrait (celui de l'orateur du nœud, `speaker_id`), texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête ; `{player}` : prénom de la protagoniste (skin choisi) |
+| Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | (U1) Nuit douce ou Bandeau (`DialogueBox.set_presentation`) ; boîte en bas d'écran, portrait (celui de l'orateur du nœud, `speaker_id`), texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête ; `{player}` : prénom de la protagoniste (skin choisi) |
 | Objets | `src/items/pickup.tscn` | Objet flottant, ramassage par `interact()` ou contact ; émet `item_collected` ; les drops des ennemis restent possibles (`EnemyData.drops`), mais les corps de Timere n'en ont aucun |
 | Quête | `src/quests/quest_tracker.gd` | (acte 1, docs/lore/HISTOIRE.md 3.1 et 3.2) la quête principale `act1_main`, « Dans la forêt céleste » (13 étapes, de Nygglatho sous le porche à la promesse sur la colline ; récompense : la promesse du gâteau au beurre, PV max portés à 6) et six quêtes secondaires. (Lot Q) Quêtes en étapes écrites en JSON (`data/quests/`), journal de quêtes, marqueurs « ! » / « ? » : docs/QUETES.md |
-| HUD | `src/ui/hud.tscn` | Cœurs, jauge de charge, numéro de vague et score dans l'arène, nom de la zone à l'entrée, invite d'interaction, objectif de quête |
+| HUD | `src/ui/hud.tscn` | Cœurs, jauge de charge, numéro de vague et score dans l'arène, nom de la zone à l'entrée, (U1) signes d'interaction posés au-dessus des cibles, objectif de quête |
 | Inventaire | `src/ui/inventory.tscn` | Grille d'icônes, touche I / bouton Y, quantité, description |
 | Menu | `src/ui/main_menu.tscn` | Choix du skin (vignettes, « Ta fée prend la place de Chtholly dans l'histoire. »), Nouvelle partie / Continuer, crédits ; écran « Cliquer pour jouer » avant tout son |
 | Sauvegarde | `SaveManager` | Auto-sauvegarde à `arena_finished`, `item_collected`, `quest_updated`, `zone_entered` ; chargement au menu (pas de sauvegarde « à la fermeture » : le navigateur ne la garantit pas) ; (M2) position écrite toutes les 5 s de jeu si le joueur a bougé, et au départ (focus perdu, page masquée) quand l'état a changé |

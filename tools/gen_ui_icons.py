@@ -15,14 +15,19 @@ import argparse
 import math
 import os
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SUPERSAMPLE = 4
 OUTLINE = (59, 35, 64, 255)
-HEART_RED = (240, 98, 130, 255)
-HEART_SHINE = (255, 205, 220, 255)
-HEART_EMPTY = (74, 59, 110, 150)
+# (U1) Cœurs « Nuit douce » : rose chaud au contour prune fin, vide en prune translucide au filet
+# crème ; une ombre douce les détache du sol (couleurs du thème src/ui/wordend_theme.tres).
+HEART_RED = (236, 120, 138, 255)
+HEART_SHINE = (255, 222, 214, 255)
+HEART_OUTLINE = (52, 30, 50, 235)
+HEART_EMPTY = (38, 28, 46, 120)
+HEART_EMPTY_OUTLINE = (246, 238, 228, 170)
+HEART_SHADOW = (20, 10, 18, 120)
 GOLD = (255, 205, 96, 255)
 GOLD_SHINE = (255, 241, 196, 255)
 
@@ -62,17 +67,31 @@ class Canvas:
         x0, y0, x1, y1 = box
         self.draw.ellipse([x0 * self.size, y0 * self.size, x1 * self.size, y1 * self.size], fill=fill)
 
+    def soft_shadow(self, points, color, offset=(0.0, 0.035), blur=0.035):
+        """Ombre floue de la forme, sous ce qui est déjà dessiné."""
+        layer = Image.new("RGBA", self.image.size, (0, 0, 0, 0))
+        moved = [(x + offset[0], y + offset[1]) for x, y in points]
+        ImageDraw.Draw(layer).polygon(self.px(moved), fill=color)
+        layer = layer.filter(ImageFilter.GaussianBlur(blur * self.size))
+        layer.alpha_composite(self.image)
+        self.image = layer
+        self.draw = ImageDraw.Draw(self.image)
+
     def result(self, size):
         return self.image.resize((size, size), Image.LANCZOS)
 
 
 def heart_full(c):
-    c.shape(heart_points(0.5, 0.5, 0.40), HEART_RED)
-    c.ellipse((0.24, 0.27, 0.40, 0.40), HEART_SHINE)
+    points = heart_points(0.5, 0.48, 0.38)
+    c.shape(points, HEART_RED, outline=HEART_OUTLINE, width=0.04)
+    c.ellipse((0.27, 0.27, 0.39, 0.37), HEART_SHINE)
+    c.soft_shadow(points, HEART_SHADOW)
 
 
 def heart_empty(c):
-    c.shape(heart_points(0.5, 0.5, 0.40), HEART_EMPTY)
+    points = heart_points(0.5, 0.48, 0.38)
+    c.shape(points, HEART_EMPTY, outline=HEART_EMPTY_OUTLINE, width=0.035)
+    c.soft_shadow(points, HEART_SHADOW)
 
 
 def lock_marker(c):

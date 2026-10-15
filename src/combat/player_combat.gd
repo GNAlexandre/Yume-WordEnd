@@ -29,6 +29,10 @@ extends Node3D
 signal attack_started(attack_data: AttackData)
 ## L'onde de charge est partie (projectile charge_wave.tscn, ajouté à côté du joueur).
 signal wave_launched(wave: Node3D)
+## (E8) L'arme a changé (WEAPON_SENIORIOUS, WEAPON_STICK).
+signal weapon_changed(weapon: StringName)
+## (E8) La parade du bâton est levée (vrai) ou baissée (faux).
+signal guard_changed(guarding: bool)
 
 enum State { IDLE, ATTACK, CHARGE, WAVE, HURT, DEAD }
 
@@ -38,11 +42,26 @@ const SWORD_COMBO: Array[String] = [
 	"res://data/attacks/sword_2.tres",
 	"res://data/attacks/sword_3.tres",
 ]
+## (E8) Enchaînement du bâton : mêmes coups, sans la charge de venenum (la touche de charge tient
+## la parade). Le bâton est l'arme de Chtholly hors des scènes de combat réel (ACTE1.md, 3.0).
+const STICK_COMBO: Array[String] = [
+	"res://data/attacks/stick_1.tres",
+	"res://data/attacks/stick_2.tres",
+	"res://data/attacks/stick_3.tres",
+]
+## (E8) Animation de la parade (sa planche `_stick` ; en attendant, la charge, image 0).
+const GUARD_ATTACK := "res://data/attacks/stick_guard.tres"
+## (E8) Les armes que le récit donne à Chtholly (Player.set_weapon) : Seniorious (l'épée, tous ses
+## gestes, la charge de venenum) et le bâton (les trois coups et la parade, jamais de charge).
+const WEAPON_SENIORIOUS := &"seniorious"
+const WEAPON_STICK := &"baton"
+const WEAPONS: Array[StringName] = [WEAPON_SENIORIOUS, WEAPON_STICK]
 ## Charge magique (onde qui traverse).
 const CHARGE_WAVE := "res://data/attacks/charge_wave.tres"
 ## Projectile de l'onde.
 const CHARGE_WAVE_SCENE := "res://src/combat/charge_wave.tscn"
 ## Animations du contrat CharacterVisual jouées par ce nœud (hors AttackData.animation).
+const ANIM_GUARD_FALLBACK := &"charge"
 const ANIM_HURT := &"degats"
 const ANIM_DEATH := &"mort"
 const STATE_NAMES: Array[StringName] = [&"idle", &"attack", &"charge", &"wave", &"hurt", &"dead"]
@@ -81,6 +100,9 @@ const DUST_KNOCKBACK := 2.0
 
 var _state: State = State.IDLE
 var _state_time: float = 0.0
+var _weapon: StringName = WEAPON_SENIORIOUS
+var _guarding: bool = false
+var _guard_animation: StringName = &"pare"
 var _swords: Array[AttackData] = []
 var _wave_data: AttackData
 var _wave_scene: PackedScene
@@ -111,10 +133,10 @@ var _shadow: MeshInstance3D
 
 
 func _ready() -> void:
-	for path: String in SWORD_COMBO:
-		var data := load(path) as AttackData
-		if data != null:
-			_swords.append(data)
+	_load_combo()
+	var guard := load(GUARD_ATTACK) as AttackData
+	if guard != null:
+		_guard_animation = guard.animation
 	_wave_data = load(CHARGE_WAVE) as AttackData
 	_wave_scene = load(CHARGE_WAVE_SCENE) as PackedScene
 	if _sword != null:
@@ -148,6 +170,8 @@ func _ready() -> void:
 ## ou juste après (combo_window). Sans effet pendant la charge, l'onde, les dégâts, la mort et
 ## la recharge d'un coup (AttackData.cooldown, 3e coup).
 func attack() -> void:
+	if _guarding:
+		return
 	if _state == State.ATTACK:
 		_attack_queued = true
 	elif _state == State.IDLE and _attack_cooldown <= 0.0 and not _swords.is_empty():
@@ -158,6 +182,10 @@ func attack() -> void:
 ## Démarre la jauge de charge (AttackData.charge_time minimum) ; si le joueur est occupé ou
 ## l'onde en recharge, la charge commencera dès que possible tant que la touche reste tenue.
 func charge_begin() -> void:
+	if _weapon == WEAPON_STICK:
+		# Le bâton n'a pas la charge de venenum : la touche tient la parade.
+		_set_guard(_state == State.IDLE)
+		return
 	_charge_held = true
 	_try_start_charge()
 
@@ -165,6 +193,7 @@ func charge_begin() -> void:
 ## Lance l'onde si la jauge est pleine, puis recharge (AttackData.cooldown) ; relâcher trop tôt
 ## ne fait rien.
 func charge_release() -> void:
+	_set_guard(false)
 	_charge_held = false
 	if _state != State.CHARGE:
 		return
@@ -173,6 +202,51 @@ func charge_release() -> void:
 		_release_wave()
 	else:
 		_set_state(State.IDLE)
+
+
+## (E8) L'arme en main (WEAPON_SENIORIOUS par défaut, WEAPON_STICK).
+func weapon() -> StringName:
+	return _weapon
+
+
+## (E8) Prend une arme (le récit choisit : Player.set_weapon) ; faux pour une arme inconnue. Un coup
+## ou une charge en cours est interrompu ; l'enchaînement repart du premier coup.
+func set_weapon(new_weapon: StringName) -> bool:
+	if not WEAPONS.has(new_weapon):
+		return false
+	if new_weapon == _weapon:
+		return true
+	if _state == State.CHARGE or _state == State.ATTACK:
+		_interrupt()
+		_set_state(State.IDLE)
+	_set_guard(false)
+	_charge_held = false
+	_weapon = new_weapon
+	_load_combo()
+	_combo_index = -1
+	_combo_left = 0.0
+	_attack_queued = false
+	if _sword != null and not _swords.is_empty():
+		_set_sword_attack(_swords[0])
+	weapon_changed.emit(_weapon)
+	return true
+
+
+## (E8) Vrai si l'arme en main a la charge de venenum (Seniorious).
+func can_charge() -> bool:
+	return _weapon == WEAPON_SENIORIOUS
+
+
+## (E8) La parade du bâton est levée (la touche de charge est tenue, bâton en main).
+func is_guarding() -> bool:
+	return _guarding
+
+
+## (E8) Animation de la parade (« pare » si la planche l'a, sinon la charge, image 0).
+func guard_animation() -> StringName:
+	if _visual != null and _visual.has_animation(_guard_animation):
+		return _guard_animation
+	return ANIM_GUARD_FALLBACK
 
 
 ## true pendant attaque, charge, onde, dégâts et mort : le joueur ne se déplace pas.
@@ -245,6 +319,24 @@ func _process(delta: float) -> void:
 
 
 # --- Épée -------------------------------------------------------------------------------------
+
+
+## Charge l'enchaînement de l'arme en main (épée ou bâton).
+func _load_combo() -> void:
+	_swords.clear()
+	var paths: Array[String] = STICK_COMBO if _weapon == WEAPON_STICK else SWORD_COMBO
+	for path: String in paths:
+		var data := load(path) as AttackData
+		if data != null:
+			_swords.append(data)
+
+
+## Lève ou baisse la parade (le signal ne part qu'au changement).
+func _set_guard(value: bool) -> void:
+	if _guarding == value:
+		return
+	_guarding = value
+	guard_changed.emit(value)
 
 
 func _start_swing(index: int) -> void:
@@ -392,6 +484,7 @@ func _set_state(state: State) -> void:
 
 ## Interrompt le coup ou la charge en cours (dégâts, mort, réapparition).
 func _interrupt() -> void:
+	_set_guard(false)
 	if _sword != null:
 		_sword.deactivate()
 	_hide_slash()

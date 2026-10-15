@@ -34,6 +34,7 @@ func _ready() -> void:
 	label.custom_minimum_size = Vector2(760, 0)
 	_panel.add_child(label)
 	add_child(_panel)
+	UiStyle.frost(_panel)
 	_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE)
 	_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_panel.position.y = 24.0

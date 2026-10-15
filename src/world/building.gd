@@ -80,6 +80,19 @@ static var _materials: Dictionary = {}
 	set(value):
 		window_glow = value
 		_queue_rebuild()
+## (QO) Couleur des carreaux de l'image qui s'allument la nuit (sRGB, telle que dans le fichier)
+## et distance à cette couleur au-delà de laquelle un pixel reste éteint (DecorPanel.set_glow_rule,
+## panel_core.gdshaderinc). Par défaut le réglage du shader (#FFCA63 à 0,12) ; une façade aux
+## carreaux d'une autre couleur (entrepôt, café) y règle les siennes, sans allumer le torchis ocre
+## des chaumières, qui garde la règle par défaut (docs/QUALITE.md, QC-02).
+@export var window_glow_color: Color = DecorPanel.GLOW_COLOR:
+	set(value):
+		window_glow_color = value
+		_queue_rebuild()
+@export_range(0.01, 0.5, 0.005) var window_glow_tolerance: float = DecorPanel.GLOW_TOLERANCE:
+	set(value):
+		window_glow_tolerance = value
+		_queue_rebuild()
 ## (H9) Image du flanc est (élévation, fond transparent), retournée à l'ouest ; null : matière.
 @export var side_facade: Texture2D:
 	set(value):
@@ -115,12 +128,24 @@ func rebuild() -> void:
 	if facade != null:
 		var size := Vector2(facade.get_size()) / DecorPanel.PIXELS_PER_METER
 		_facade.mesh = DecorPanel.quad_mesh(size)
-		_facade.material_override = DecorPanel.material_for(facade, Color.WHITE, window_glow)
+		_facade.material_override = DecorPanel.material_for(
+			facade,
+			Color.WHITE,
+			window_glow,
+			1,
+			0.0,
+			false,
+			false,
+			window_glow_color,
+			window_glow_tolerance
+		)
 		_facade.position = Vector3(0.0, 0.0, footprint.y / 2.0 + FACADE_GAP)
 	_sides.visible = side_facade != null
 	if side_facade != null:
 		_sides.mesh = _sides_mesh()
-		_sides.material_override = side_material(side_facade, window_glow)
+		_sides.material_override = side_material(
+			side_facade, window_glow, window_glow_color, window_glow_tolerance
+		)
 
 
 ## (H9) Taille du flanc (m) : celle de l'image side_facade à 96 px par mètre.
@@ -136,9 +161,18 @@ func side_contract_size() -> Vector2:
 	return Vector2(footprint.y, wall_height if gable_front else ridge_height)
 
 
-## (H9) Matériau partagé des flancs : l'image, éclairée comme les murs (relief), lueur des fenêtres.
-static func side_material(texture: Texture2D, glow: float) -> Material:
-	var key := "side|%s|%.2f" % [DecorPanel.image_key(texture), glow]
+## (H9) Matériau partagé des flancs : l'image, éclairée comme les murs (relief), lueur des fenêtres
+## ((QO) couleur et tolérance de lueur de la façade).
+static func side_material(
+	texture: Texture2D,
+	glow: float,
+	glow_color: Color = DecorPanel.GLOW_COLOR,
+	glow_tolerance: float = DecorPanel.GLOW_TOLERANCE
+) -> Material:
+	var key := (
+		"side|%s|%.2f|%s|%.3f"
+		% [DecorPanel.image_key(texture), glow, glow_color.to_html(false), glow_tolerance]
+	)
 	var material := DecorPanel.cached_material(_materials, key) as ShaderMaterial
 	if material == null:
 		material = ShaderMaterial.new()
@@ -146,6 +180,7 @@ static func side_material(texture: Texture2D, glow: float) -> Material:
 		material.set_shader_parameter(&"albedo_texture", texture)
 		material.set_shader_parameter(&"hd2d_relief", WALL_RELIEF)
 		material.set_shader_parameter(&"glow_strength", glow)
+		DecorPanel.set_glow_rule(material, glow_color, glow_tolerance)
 		_materials[key] = weakref(material)
 	return material
 

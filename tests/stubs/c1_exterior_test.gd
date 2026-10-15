@@ -47,6 +47,10 @@ var map_id := ""
 var density: Dictionary = {}
 ## Lieux qu'on doit atteindre à pied (en plus des marqueurs, points et places du plan).
 var walk_spots: Array[Vector3] = []
+## Bornes de caméra du plan, si ce ne sont pas celles de la règle (CARTE.md : Rect2(10, 9, L − 20,
+## P − 17)) ; un Rect2 vide : la règle (la colline, CARTE.md 7, monte la caméra jusqu'au bord :
+## Rect2(10, 6, 20, 26)).
+var expected_camera_bounds := Rect2()
 ## Surface atteinte à pied, au moins (m²), et nombre de places relevées pour l'occlusion, au moins.
 var min_walk_area := 1000.0
 var min_checked_places := 800
@@ -171,7 +175,11 @@ func test_map_exports_follow_the_plan() -> void:
 	assert_eq(_map.size, Vector2(float(header[2]), float(header[3])))
 	assert_eq(
 		_map.camera_bounds,
-		Rect2(10, 9, _map.size.x - 20.0, _map.size.y - 17.0),
+		(
+			expected_camera_bounds
+			if expected_camera_bounds.has_area()
+			else Rect2(10, 9, _map.size.x - 20.0, _map.size.y - 17.0)
+		),
 		"bornes de caméra de CARTE.md (L − 20, P − 17)"
 	)
 	assert_false(_map.interior)
