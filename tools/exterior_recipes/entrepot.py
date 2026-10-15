@@ -454,6 +454,41 @@ def pose(p):
     place("Yard", "leaves_gold_a", 61.0, 34.6, name="TreeLeaves")
     place("Yard", "leaves_rust_b", 64.0, 33.4, name="TreeLeaves2")
 
+    # (QO, docs/QUALITE.md, QC-27) Bordures habitées : le duel (place duel), le jeu de balle (place champ :
+    # buts, centre, places de la vie) et les places de la vie restent nus, mais le pourtour de la cour (entre
+    # le duel et le bord de la cour) et le bord du champ sont ceux d'une maison d'enfants : bancs, jouets,
+    # lessive, seaux, brouette, bûches. Posés en dernier, à la main et sans tirage (le reste de la carte ne
+    # bouge pas), loin des chemins, des points et des places de la vie ; rien de plus haut que 1,2 m ; dans
+    # les places cour et champ, rien qui bloque (bancs, jouets, seaux, paniers), le reste juste au dehors.
+    life = [(42.5, 30.75), (42.5, 31.75), (44.0, 37.0), (51.0, 40.0), (44.2, 28.8), (42.0, 28.2),
+            (73.5, 23.0), (75.0, 19.5), (75.0, 16.5), (75.3, 18.2), (75.0, 9.2), (75.0, 26.6), (75.0, 18.0),
+            (83.3, 10.0), (83.6, 17.0)]
+    rim = [
+        # Cour, à l'ouest du duel : le coin de la lessive (baquet au bord, panier, seau) au nord, un banc
+        # tourné vers le duel ; au sud, des bûches et des souches pour s'asseoir ; à l'est, un banc entre le
+        # duel et la marelle, la brouette et une caisse au bord, un seau.
+        ("Yard", "wash_tub", 31.3, 32.6), ("Yard", "laundry_basket", 34.7, 33.0), ("Yard", "bucket", 32.6, 33.8),
+        ("Yard", "bench_b", 33.6, 36.8),
+        ("Yard", "log_pile_forest", 35.2, 45.0), ("Yard", "stump_a", 38.2, 44.6), ("Yard", "stump_b", 49.8, 44.6),
+        ("Yard", "bench", 52.2, 31.8), ("Yard", "wheelbarrow", 57.0, 33.4), ("Yard", "crate", 56.6, 43.0),
+        ("Yard", "bucket", 54.2, 43.4),
+        # Champ, au bord ouest (où l'on ne joue pas) : les bancs des spectatrices, des jouets, le seau d'eau
+        # et un ballon de rechange ; au sud, une souche et des jouets, des bûches hors du champ ; au nord,
+        # derrière la cage blanche, une souche.
+        ("Field", "bench", 67.0, 12.4), ("Field", "toys_a", 67.2, 14.4), ("Field", "bucket", 67.6, 15.6),
+        ("Field", "bench_b", 67.0, 22.4), ("Field", "ball", 67.8, 24.2),
+        ("Field", "stump_b", 69.2, 28.7), ("Field", "toys_b", 80.8, 27.0), ("Field", "log_pile_forest", 65.6, 29.6),
+        ("Field", "stump_a", 81.2, 7.0),
+    ]
+    duel = PLACES["duel"]
+    for k, (group, scene, x, z) in enumerate(rim):
+        half = prop(scene).half if prop(scene).blocks else (prop(scene).w / 2.0, 0.2)
+        crowded = any(abs(x - lx) < half[0] + 1.2 and abs(z - lz) < half[1] + 1.2 for lx, lz in life)
+        if crowded or duel.hits(Rect(x - half[0], z - half[1], x + half[0], z + half[1]), 0.6) or keep_out(
+                x, z, half, prop(scene).blocks, places=False):
+            p.warnings.append("bordure : %s en (%.1f ; %.1f) gêne le duel, la vie, un chemin ou un point" % (scene, x, z))
+        place(group, scene, x, z, name="Rim%s%d" % (group, k + 1), flip=k % 2 == 1)
+
 
 def ground_plan(M):
     """Le plan.json du sol (CARTE.md 2.3 et 2.12) : paliers, rampes, matières, eau basse."""
