@@ -3198,3 +3198,22 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **E6 — l'embuscade de Pannibal reste la séquence de repli** : E8 offre le ballon et le bâton
   (`MiniGames`), pas de combat d'embuscade ; l'étape `game` « embuscade_pannibal » attend son
   inscription (`StoryDirector.register_game`).
+- **E8c — l'embuscade de Pannibal compte chaque attaque** : « cinq attaques esquivées ou parées de suite »
+  (ACTE1.md 3.1) compte le bond et chaque taillade (un bond et trois taillades font quatre) ; une taillade
+  reçue finit la série (Pannibal compte son point et recule d'un bond) ; le bond ne se pare pas (seul le pas de
+  côté l'esquive), les taillades se parent ou s'esquivent ; la riposte n'est ouverte qu'après une esquive
+  (0,8 s). Le jour 1, l'issue ne change pas la suite (elle reconnaît Chtholly) : la réussite pose
+  `j1_embuscade_gagnee` et donne une réplique de plus (« vaincue »), sans écran de défaite. Le jeu s'arrête aussi
+  si Chtholly s'éloigne de plus de 10 m (`fled`) ou au bout de 75 s (`time`) : la scène ne reste jamais en plan.
+- **E8c — le récit inscrit ses jeux au démarrage** : `StoryDirector._ready` appelle
+  `MiniGames.register_story_games()` (une ligne dans le fichier d'E6, pas d'autoload de plus) ; un jeu qui ne
+  peut pas démarrer rend `false` et l'étape « game » joue son repli (carte d'essai, personnage absent).
+- **E8c — la levée du sentier corrigée par la navigation** : la rampe x 33 → 36 est taillée dans la levée ; ses
+  bords sont des marches franches de 0 à 0,5 m, que le joueur ne franchit plus au-delà de 0,1 m mais que
+  `LifeNav` croyait franchissables jusqu'à 0,3 m (MAX_RISE, mesuré tous les 0,34 m). `LifeNav.MAX_STEP`
+  (0,105 m, mesures fines de 0,05 m là où le sol change de plus de 0,03 m entre deux mesures) refuse une marche
+  franche ; pentes et contremarches d'escalier (0,1 m) passent. Le plan et la recette du sentier ne changent pas
+  (un rebord de rampe existe sur toute carte ; une forme nouvelle déplacerait seulement la marche).
+- **E8c — la place de Willem au réfectoire** : `entrepot_rdc:refectoire_porte_est` (15,75 ; 7,85), le seuil de la
+  porte est (la plus proche de l'escalier) ; les petites filent par la porte ouest vers `couloir_ouest`
+  (« par l'autre porte », ACTE1.md 2.2), au lieu de `couloir_est`, qui les faisait passer devant lui.

@@ -472,11 +472,15 @@ func _advance_slashes() -> void:
 ## stand_off m) et lève son épée de bois ; l'impact tombe à impact.
 func _start_slash(impact: float, warn: float) -> void:
 	var at := pannibal.position()
-	var toward := _flat(player.global_position - at)
-	var step := clampf(
-		toward.length() - rule("slash/stand_off", 0.75), 0.0, rule("slash/lunge", 0.9)
-	)
-	var end := at + (toward.normalized() * step if toward.length() > 0.01 else Vector3.ZERO)
+	# Elle frappe de côté (à l'est ou à l'ouest de Chtholly : la caméra regarde le nord, les deux
+	# silhouettes ne se cachent pas l'une l'autre), à stand_off m, en s'avançant d'au plus lunge m.
+	var post := player.global_position + _side() * rule("slash/stand_off", 0.9)
+	var path := _flat(post - at)
+	var end := at + path.limit_length(rule("slash/lunge", 1.2))
+	if not _walkable(at, end):
+		end = at
+	var toward := _flat(player.global_position - end)
+	var step := _flat(end - at).length()
 	_attack = {
 		"kind": &"slash",
 		"start": _time,
@@ -681,13 +685,21 @@ func _tick_hop() -> void:
 ## tient et qu'on rejoint sans franchir de mur ni de marche.
 func _spot_away(distance: float) -> Vector3:
 	var origin := player.global_position
-	var toward := _flat(pannibal.position() - origin)
-	toward = toward.normalized() if toward.length() > 0.05 else Vector3.RIGHT
-	for degrees: float in [0.0, 30.0, -30.0, 60.0, -60.0, 90.0, -90.0, 135.0, -135.0, 180.0]:
-		var candidate := origin + toward.rotated(Vector3.UP, deg_to_rad(degrees)) * distance
-		if _walkable(origin, candidate):
-			return candidate
+	var side := _side()
+	# De côté d'abord, du sien puis de l'autre (à l'écran, de part et d'autre de Chtholly), un peu
+	# au-dessus ou au-dessous ; jamais droit au sud, hors du cadre.
+	for base: Vector3 in [side, -side]:
+		for degrees: float in [0.0, 20.0, -20.0, 40.0, -40.0]:
+			var candidate := origin + base.rotated(Vector3.UP, deg_to_rad(degrees)) * distance
+			if _walkable(origin, candidate):
+				return candidate
 	return pannibal.position()
+
+
+## Le côté (est ou ouest) de Chtholly où se tient Pannibal.
+func _side() -> Vector3:
+	var dx := pannibal.position().x - player.global_position.x
+	return Vector3.LEFT if dx < -0.05 else Vector3.RIGHT
 
 
 ## Vrai si l'on se tient en to et qu'on le rejoint depuis from (navigation de la carte ; sans

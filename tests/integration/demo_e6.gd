@@ -10,7 +10,10 @@ extends Node
 ## Vues (capture quand la réplique ou l'état est à l'écran) : carton (1.1), porche (1.2),
 ## indice (après 1.2), gros_plan (1.3), miroir (1.5), avalanche (1.5), chambre (1.7), sommeil (la
 ## ligne du calendrier), calendrier (jour 2), fuite (2.2), cuisine (4.1), diner (4.2) ; jour1 :
-## une image toutes les E6_STEP s (3 par défaut) du début de la partie à l'aube du jour 2.
+## une image toutes les E6_STEP s (3 par défaut) du début de la partie à l'aube du jour 2 ;
+## (E8c) embuscade : l'embuscade de Pannibal (1.2) jouée par le pilote (pas de côté au bond, parade
+## aux taillades ; E6_AMBUSH=perdre : il ne fait rien), une image toutes les E6_STEP s (0,5 par
+## défaut) du bond de Pannibal à la première réplique de la suite.
 ## Le journal donne les draw calls de chaque capture (« E6 vue … »).
 
 const GAME_SCENE := preload("res://src/game.tscn")
@@ -69,6 +72,11 @@ var _index := 0
 var _previous_seen := ""
 var _hint_seen_at := -1.0
 var _elapsed := 0.0
+## (E8c) Vue « embuscade » : le jeu a commencé, puis fini (temps de la démo).
+var _ambush_seen := false
+var _ambush_over_at := -1.0
+var _ambush_leap_start := -1.0
+var _ambush_north := true
 
 
 func _ready() -> void:
@@ -76,6 +84,8 @@ func _ready() -> void:
 	_shots = OS.get_environment("E6_SHOTS")
 	if _shots.is_empty():
 		_shots = "res://build/e6/shots"
+	if _view == "embuscade":
+		_step = 0.5
 	if OS.get_environment("E6_STEP").is_valid_float():
 		_step = float(OS.get_environment("E6_STEP"))
 	_state = GameState.to_dict()
@@ -152,10 +162,80 @@ func _physics_process(delta: float) -> void:
 			_save("jour1_%03d" % _index)
 			_finish()
 			return
+	if _view == "embuscade" and _pilot_ambush(delta):
+		return
 	if _check_capture():
 		return
 	if not _acting:
 		_pilot_story()
+
+
+## (E8c) Vue « embuscade » : pendant le jeu, le pilote esquive le bond (un pas vers le nord) et
+## tient la parade aux taillades (vrais appuis : actions de déplacement et « charge ») ; une image
+## toutes les E6_STEP s du bond à la première réplique de la suite. Vrai quand la démo quitte.
+func _pilot_ambush(delta: float) -> bool:
+	var ambush := MiniGames.ambush()
+	if ambush != null and ambush.is_running():
+		if not _ambush_seen:
+			_ambush_seen = true
+			_step_left = 0.0
+			print("E6 embuscade : début (%s)" % ("perdre" if _losing() else "gagner"))
+		_drive_ambush(ambush)
+	elif _ambush_seen and _ambush_over_at < 0.0:
+		_ambush_over_at = _elapsed
+		_release_ambush_keys()
+		var result: Dictionary = ambush.result() if ambush != null else {}
+		print("E6 embuscade : fin, %s" % result)
+	if not _ambush_seen:
+		return false
+	_step_left -= delta
+	if _step_left <= 0.0:
+		_step_left = _step
+		_save("embuscade_%03d" % _index)
+		_index += 1
+	if _ambush_over_at >= 0.0 and ("Ça sent" in _shown_text() or _elapsed - _ambush_over_at > 12.0):
+		_save("embuscade_%03d" % _index)
+		_finish()
+		return true
+	return false
+
+
+func _losing() -> bool:
+	return OS.get_environment("E6_AMBUSH") == "perdre"
+
+
+func _drive_ambush(ambush: Ambush) -> void:
+	var attack := ambush.current_attack()
+	var kind: StringName = attack.get("kind", &"")
+	if _losing() or kind.is_empty():
+		_release_ambush_keys()
+		return
+	if kind == &"slash":
+		Input.action_press(&"charge")
+	else:
+		Input.action_release(&"charge")
+	var target: Vector3 = attack.get("target", _player.global_position)
+	var away := Vector2(_player.global_position.x - target.x, _player.global_position.z - target.z)
+	# Un pas vers le nord (vers le marais : le premier plan du sud cacherait la scène), vers le sud
+	# s'il est barré ; choisi une fois par bond.
+	if kind == &"leap" and not is_equal_approx(float(attack["start"]), _ambush_leap_start):
+		_ambush_leap_start = float(attack["start"])
+		_ambush_north = true
+		var nav := LifeDirector.nav()
+		var step := -1.6 if _ambush_north else 1.6
+		if nav != null and nav.ready and not nav.line_clear(target, target + Vector3(0, 0, step)):
+			_ambush_north = not _ambush_north
+	var wanted := &"move_forward" if _ambush_north else &"move_back"
+	for action: StringName in [&"move_forward", &"move_back"]:
+		if kind == &"leap" and away.length() < 1.4 and action == wanted:
+			Input.action_press(action)
+		else:
+			Input.action_release(action)
+
+
+func _release_ambush_keys() -> void:
+	for action: StringName in [&"charge", &"move_forward", &"move_back"]:
+		Input.action_release(action)
 
 
 ## Les répliques : lues READ_TIME s, puis la suite ou le premier choix (sauf la réplique visée).

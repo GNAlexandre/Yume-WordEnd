@@ -26,10 +26,11 @@ const SAMPLE_STEP := 0.25
 ## (0,5 m d'un coup) dépasse MAX_RISE, assez large pour construire vite.
 const EDGE_STEP := 0.34
 ## (E8c) Marche franche (une rupture du sol, pas une pente) qu'un corps physique franchit encore
-## (m) : le joueur passe 0,1 m et bute à 0,125. Le bord d'une rampe taillée dans un palier (la levée
-## du sentier, à l'ouest de marais_chute) est une marche de 0 à 0,5 m : là où elle est plus basse
-## que MAX_RISE, la navigation ne doit pas y faire passer le joueur mené.
-const MAX_STEP := 0.09
+## (m) : la contremarche d'un escalier (MapGroundData.STAIR_RISER, 0,1 m ; la capsule du joueur
+## monte jusqu'à 0,1025 m) passe ; le joueur bute à 0,125 m. Le bord d'une rampe taillée dans un
+## palier (la levée du sentier, à l'ouest de marais_chute) est une marche de 0 à 0,5 m : là où elle
+## est plus basse que MAX_RISE, la navigation ne doit pas y faire passer le joueur mené.
+const MAX_STEP := 0.105
 ## Pas des mesures fines, entre deux mesures dont le sol diffère de plus de STEP_SUSPECT (m).
 const FINE_STEP := 0.05
 ## En deçà, d'une mesure à la suivante, ni marche franche ni pente à examiner (m) : une rampe monte

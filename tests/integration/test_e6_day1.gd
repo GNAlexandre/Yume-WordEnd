@@ -161,7 +161,7 @@ func test_day_1_end_to_end_until_day_2() -> void:
 
 
 ## Joue l'embuscade avec de vrais appuis jusqu'à sa fin et renvoie son résultat : au bond annoncé,
-## un pas de côté au stick hors du cercle (vers le côté que la navigation dit praticable) ; aux
+## un pas de côté au stick hors du cercle (vers le nord, le sud s'il est barré) ; aux
 ## taillades, la parade tenue (touche K) ; entre deux, rien.
 func _play_ambush(ambush: Ambush) -> Dictionary:
 	var outcome := {}
@@ -169,6 +169,8 @@ func _play_ambush(ambush: Ambush) -> Dictionary:
 	var deadline := Time.get_ticks_msec() + 60000
 	var guarding := false
 	var nav := LifeDirector.nav()
+	var leap_start := -1.0
+	var side := Vector3.FORWARD
 	while not outcome.has("result") and Time.get_ticks_msec() < deadline:
 		var attack: Dictionary = ambush.current_attack() if is_instance_valid(ambush) else {}
 		var kind: StringName = attack.get("kind", &"")
@@ -180,10 +182,13 @@ func _play_ambush(ambush: Ambush) -> Dictionary:
 			var target: Vector3 = attack["target"]
 			var away := player.global_position - target
 			away.y = 0.0
+			if not is_equal_approx(float(attack["start"]), leap_start):
+				# Une fois par bond : vers le nord (le marais), vers le sud s'il est barré.
+				leap_start = float(attack["start"])
+				side = Vector3.FORWARD
+				if nav != null and not nav.line_clear(target, target + side * 1.6):
+					side = -side
 			if away.length() < 1.4:
-				var side := Vector3(0.0, 0.0, -1.0)
-				if nav != null and not nav.is_walkable_point(target.x, target.z - 1.6):
-					side = Vector3(0.0, 0.0, 1.0)
 				stick(side.x, side.z)
 			else:
 				stick(0.0, 0.0)

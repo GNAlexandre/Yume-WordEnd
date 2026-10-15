@@ -111,8 +111,10 @@ func test_the_navigation_no_longer_crosses_the_ramp_side() -> void:
 	var points := PackedVector3Array([start])
 	points.append_array(path)
 	assert_lte(_highest_step(points), 0.1, "aucune marche de plus de 0,1 m sur le chemin")
-	# Et la ligne droite d'autrefois, du haut de la rampe vers l'ouest, est refusée.
-	assert_false(nav.line_clear(Vector3(33.5, 0.0, 19.5), Vector3(20.5, 0.0, 22.5)))
+	# Une ligne droite du milieu de la rampe vers l'ouest (la marche y fait 0,22 m) est refusée ;
+	# près du haut (moins de 0,1 m), le joueur passe et la navigation aussi.
+	assert_false(nav.line_clear(Vector3(33.5, 0.0, 19.0), Vector3(20.5, 0.0, 22.5)))
+	assert_true(nav.line_clear(Vector3(33.5, 0.0, 19.8), Vector3(20.5, 0.0, 22.5)))
 
 
 func test_walking_up_from_the_marsh_to_the_west_does_not_get_stuck() -> void:

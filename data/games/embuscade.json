@@ -19,14 +19,14 @@
     "feint_every": 3
   },
   "slash": {
-    "_comment": "Les trois taillades rapides qui suivent le bond, à interval s d'écart (la première first_delay s après l'atterrissage), chacune annoncée warn s avant ; à chacune Pannibal s'avance d'au plus lunge m vers Chtholly sans approcher à moins de stand_off m. Parée : la parade est tenue à l'impact ; esquivée : Chtholly est à plus de reach m de Pannibal. Une taillade reçue compte un point et finit la série.",
+    "_comment": "Les trois taillades rapides qui suivent le bond, à interval s d'écart (la première first_delay s après l'atterrissage), chacune annoncée warn s avant ; à chacune Pannibal s'avance d'au plus lunge m vers son poste, à stand_off m de Chtholly, de côté (à l'est ou à l'ouest : la caméra regarde le nord). Parée : la parade est tenue à l'impact ; esquivée : Chtholly est à plus de reach m de Pannibal. Une taillade reçue compte un point et finit la série.",
     "count": 3,
     "first_delay": 0.45,
     "interval": 0.35,
     "warn": 0.25,
     "reach": 1.25,
-    "lunge": 0.9,
-    "stand_off": 0.75
+    "lunge": 1.2,
+    "stand_off": 0.9
   },
   "riposte": {
     "_comment": "Après une esquive, Pannibal reste découverte window s : un coup de bâton (touch_delay s après le geste) qui la trouve à reach m, dans l'arc de arc_deg degrés devant Chtholly, la touche : réussite. Un coup qui la trouve couverte, elle l'esquive d'un saut de dodge_step m en arrière.",
