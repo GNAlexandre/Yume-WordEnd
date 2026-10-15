@@ -33,6 +33,11 @@ var _wave: ChargeWave
 @onready var _player: Player = $Game/Player
 
 
+func _enter_tree() -> void:
+	# (E6) Une nouvelle partie ouvre l'île n° 68 : la démo du M1 joue sur l'ancienne île.
+	WorldManager.start_map = WorldManager.LEGACY_MAP
+
+
 func _ready() -> void:
 	_shot = OS.get_environment("M1_SHOT")
 	_player.combat.wave_launched.connect(func(wave: Node3D) -> void: _wave = wave as ChargeWave)
@@ -64,6 +69,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	WorldManager.start_map = WorldManager.START_MAP
 	if _frozen_frames >= 0:
 		get_tree().paused = false
 
