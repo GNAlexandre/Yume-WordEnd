@@ -577,3 +577,87 @@ RECIPES.update({
     "anim/rain_splash": anim_rain_splash, "anim/fairy_light": anim_fairy_light,
 })
 
+
+# --- (U1) Signes d'interaction « Nuit douce » (cahier n° 5, section R0.12) -------------------------
+#
+# Petits signes posés au-dessus d'une cible à portée (src/ui/interact_signs.gd), dessinés à taille
+# fixe à l'écran (20 à 28 px) : bulle « … » (parler), étincelle (examiner), main (prendre), porte
+# (entrer). Crème #F6EEE4, contour doré #E8C98A, glyphe prune #3A2A40, ombre douce ; dessinés à
+# quatre fois leur taille puis réduits (remplaçants en attendant les images du cahier n° 5).
+
+SIGN_CREAM = (246, 238, 228, 255)
+SIGN_GOLD = (232, 201, 138, 255)
+SIGN_INK = (58, 42, 64, 255)
+SIGN_SHADOW = (20, 10, 18, 150)
+SIGN_SCALE = 4
+
+
+def _sign(size, draw_shape):
+    """Signe : forme dessinée par draw_shape(d, s) (s = côté en px), ombre douce dessous."""
+    side = size[0] * SIGN_SCALE
+    shape = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+    draw_shape(ImageDraw.Draw(shape), side)
+    shadow = Image.new("RGBA", (side, side), SIGN_SHADOW[:3] + (0,))
+    shadow.putalpha(shape.getchannel("A").point(lambda v: v * SIGN_SHADOW[3] // 255))
+    shadow = shadow.transform(shadow.size, Image.AFFINE, (1, 0, 0, 0, 1, -round(side * 0.03)))
+    shadow = shadow.filter(ImageFilter.GaussianBlur(side * 0.035))
+    return Image.alpha_composite(shadow, shape).resize(size, Image.LANCZOS)
+
+
+def _u(points, s):
+    return [(x * s, y * s) for x, y in points]
+
+
+def _sign_talk(d, s):
+    w = s * 0.05
+    d.polygon(_u([(0.24, 0.6), (0.17, 0.88), (0.46, 0.68)], s), fill=SIGN_GOLD)
+    d.ellipse((s * 0.06, s * 0.14, s * 0.94, s * 0.74), fill=SIGN_GOLD)
+    d.polygon(_u([(0.28, 0.62), (0.24, 0.79), (0.42, 0.66)], s), fill=SIGN_CREAM)
+    d.ellipse((s * 0.06 + w, s * 0.14 + w, s * 0.94 - w, s * 0.74 - w), fill=SIGN_CREAM)
+    for x in (0.31, 0.5, 0.69):
+        d.ellipse((s * (x - 0.06), s * 0.38, s * (x + 0.06), s * 0.5), fill=SIGN_INK)
+
+
+def _star(cx, cy, r_out, r_in, s):
+    points = []
+    for i in range(8):
+        a = -math.pi / 2 + i * math.pi / 4
+        r = r_out if i % 2 == 0 else r_in
+        points.append(((cx + math.cos(a) * r) * s, (cy + math.sin(a) * r) * s))
+    return points
+
+
+def _sign_examine(d, s):
+    d.polygon(_star(0.42, 0.54, 0.4, 0.12, s), fill=SIGN_GOLD)
+    d.polygon(_star(0.42, 0.54, 0.3, 0.08, s), fill=SIGN_CREAM)
+    d.polygon(_star(0.78, 0.2, 0.17, 0.055, s), fill=SIGN_GOLD)
+    d.polygon(_star(0.78, 0.2, 0.1, 0.03, s), fill=SIGN_CREAM)
+
+
+def _sign_take(d, s):
+    def hand(k, color):
+        d.rounded_rectangle((s * (0.22 + k), s * (0.46 + k), s * (0.74 - k), s * (0.92 - k)), s * 0.15, fill=color)
+        for x, top in ((0.22, 0.26), (0.35, 0.12), (0.48, 0.1), (0.61, 0.17)):
+            d.rounded_rectangle((s * (x + k), s * (top + k), s * (x + 0.13 - k), s * 0.64), s * 0.065, fill=color)
+        d.polygon(_u([(0.66, 0.68), (0.88 - k, 0.44 + k), (0.95 - 2 * k, 0.53), (0.74, 0.84 - k)], s), fill=color)
+    hand(0.0, SIGN_GOLD)
+    hand(0.045, SIGN_CREAM)
+
+
+def _sign_enter(d, s):
+    def door(k, color):
+        d.rounded_rectangle((s * (0.2 + k), s * (0.08 + k), s * (0.8 - k), s * (0.92 - k)), s * (0.3 - k), fill=color)
+        d.rectangle((s * (0.2 + k), s * 0.5, s * (0.8 - k), s * (0.92 - k)), fill=color)
+    door(0.0, SIGN_GOLD)
+    door(0.055, SIGN_INK)
+    d.polygon(_u([(0.5, 0.24), (0.69, 0.47), (0.575, 0.47), (0.575, 0.78), (0.425, 0.78), (0.425, 0.47),
+                  (0.31, 0.47)], s), fill=SIGN_CREAM)
+
+
+RECIPES.update({
+    "fx/sign_talk": lambda size, rnd: _sign(size, _sign_talk),
+    "fx/sign_examine": lambda size, rnd: _sign(size, _sign_examine),
+    "fx/sign_take": lambda size, rnd: _sign(size, _sign_take),
+    "fx/sign_enter": lambda size, rnd: _sign(size, _sign_enter),
+})
+

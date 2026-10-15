@@ -23,6 +23,10 @@ func _ready() -> void:
 	_license.text = Engine.get_license_text()
 	_back.pressed.connect(close)
 	MenuInput.focus_on_hover(self)
+	# (U1) Panneau « Nuit douce » en verre dépoli, entrée en fondu et léger glissement.
+	var panel := $Panel as Control
+	UiStyle.frost(panel)
+	UiStyle.appear(panel, Vector2.DOWN)
 	_back.grab_focus.call_deferred()
 
 

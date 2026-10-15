@@ -812,3 +812,21 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   près sur un lit de l'infirmerie quand quelqu'un y est couché (même position, même regard que le lit) ; aucun lit
   ne la porte au plan. **Bureau au miroir relevé** (`desk_chtholly_mirror_up`, acte 2) : scène prête, pas posée.
 
+
+## U1 — interface « Nuit douce » : ce que les autres lots doivent savoir
+- **Pour E6 (le récit)** : une scène sans contrôle du joueur demande `DialogueBox.set_presentation(&"bandeau")`
+  avant ses répliques, puis `DialogueBox.set_presentation(&"nuit")` à sa fin (le réglage dure jusqu'au prochain appel).
+  Pendant le bandeau, les signes d'interaction sont cachés. Pour cacher les signes sans bandeau (un jeu, une
+  séquence) : `InteractSign.suppress(&"<raison>", true)` puis `false`.
+- **Pour E6 et E8** : cacher le signe d'un participant : `InteractSign.set_hidden(noeud, true)` (méta
+  `interact_sign` = `&"none"`), le rendre : `set_hidden(noeud, false)`. Un PNJ dont `get_prompt()` est vide n'a
+  déjà pas de signe.
+- **Demande au propriétaire de `src/npc/dialogue_runner.gd`** (facultatif) : une clé `"presentation"` (`"nuit"` ou
+  `"bandeau"`) dans les nœuds de dialogue, que le runner passerait à `DialogueBox.set_presentation` ; sans elle,
+  le récit appelle l'API lui-même (la clé est aujourd'hui refusée par `NODE_KEYS`).
+- **Pour E6 (calendrier, indice discret)** : tout Control ajouté sous un écran qui porte `wordend_theme.tres` en
+  prend le style sans rien faire ; un panneau `PanelContainer` est déjà un panneau Nuit douce (fond translucide,
+  filet doré) ; `UiStyle.frost(panneau)` lui ajoute le verre dépoli, `UiStyle.appear(noeud)` le fondu d'entrée.
+  Couleurs et durées : `UiStyle.color(&"gold")`, `UiStyle.seconds(&"appear_ms")`… jamais de `Color(` dans une scène
+  de `src/ui/` (`test_ui_nuit.gd`). Le menu de pause a une entrée « Options » ; « Calendrier » peut s'y ajouter
+  au-dessus d'« Options » (nœud `MainPanel/Box`), avec un panneau comme `OptionsPanel`.

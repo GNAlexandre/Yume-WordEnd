@@ -1525,6 +1525,34 @@ que les cartes posées par WorldManager (ou `attach`) : une carte instanciée se
 vide. `LifeData` garde ce qu'il a lu (`clear_cache()`, `add_dir` / `remove_dir`).
 
 
+### (U1) L'interface « Nuit douce » : thème, dialogue et signes
+
+- **Thème unique** : `src/ui/wordend_theme.tres`, à la racine de chaque écran (`theme`). Tout Control ajouté
+  dessous en prend le style : `PanelContainer` = panneau prune translucide aux coins arrondis, ombre douce et
+  filet doré (`NuitBox`, `src/ui/nuit_box.gd`) ; `Button` = entrée en texte simple, halo et point doré au
+  focus ; `Label` crème ombré ; variations `HeaderLabel` (serif doré), `TitleLabel`, `SubtitleLabel`,
+  `DayLabel` (italique doré), `MutedLabel`, `ErrorLabel`, `AccentLabel`, `HudPanel`, `HudLabel`, `HudAccent`,
+  `HudMuted`, `HudTitle`, `PrimaryButton` (entrée dorée), `SkinCard(Selected)`, `InventorySlot`, `SlotCount`,
+  voiles `Dim`, `FadeBlack`, `FlashWhite`, `GoldRule`, `BandeauVeil` (des `Panel`). Polices : Nunito (texte),
+  Cormorant Garamond (noms, titres), `assets/fonts/`.
+- **Jetons** (`UiStyle`, `src/ui/ui_style.gd`) : `UiStyle.color(&"gold" | &"cream" | &"ink" | &"panel" | &"muted" |
+  &"error" | &"black")`, `UiStyle.constant(&"slide_px" | &"heart_px")`, `UiStyle.seconds(&"appear_ms" |
+  &"breath_ms")` ; aides `UiStyle.frost(panneau)` (verre dépoli : flou de l'arrière-plan, `frost.gdshader`),
+  `UiStyle.appear(noeud, direction)` (fondu et glissement d'entrée), `UiStyle.settle(noeud)`. Aucune `Color(`
+  dans une scène de `src/ui/` (`tests/unit/test_ui_nuit.gd`).
+- **Dialogue** : deux présentations. `DialogueBox.set_presentation(&"nuit")` (défaut : verre dépoli, nom serif
+  doré, portrait en buste qui déborde et s'estompe, triangle doré qui respire) ou `&"bandeau"` (scènes du
+  récit sans contrôle du joueur : dégradé sombre depuis le bas, nom en capitales serif espacées, texte blanc
+  ombré) ; vaut pour la boîte ouverte et les suivantes jusqu'au prochain appel ; `DialogueBox.presentation()`,
+  `shown_presentation()`. Le récit (E6) demande `bandeau` au début d'une scène et `nuit` à sa fin.
+- **Signes d'interaction** (`HUD/InteractSigns`, `src/ui/interact_signs.gd`, API `InteractSign`) : un signe
+  posé au-dessus de la cible du joueur (plein) et des autres cibles proches, à moins de 3,5 m (pâles), à la place de l'invite
+  « E / A : Parler » ; genre `InteractSign.kind_of(cible)` (`&"talk"`, `&"examine"`, `&"take"`, `&"enter"`, `&""`
+  sans invite) ; cacher une cible : `InteractSign.set_hidden(cible, true)` (méta `interact_sign` = `&"none"`) ;
+  cacher tous les signes : `InteractSign.suppress(&"raison", true)` ; réglage « toujours montrer la touche » :
+  `InteractSign.always_show_key()` (Options de la pause). Tests : `full_target()`, `full_kind()`,
+  `pale_targets()`, `is_key_hint_shown()`, `hovered_target()` du nœud (`HUD.interact_signs()`).
+
 ## 4. Tranche verticale : WordEnd en HD-2D
 
 La tranche verticale **recrée l'easter egg dans un monde en relief** ((HD-2D) personnages en sprites, décor en images, caméra fixe) (Chtholly contre des vagues de Timeres sur les dunes au couchant, mêmes règles, même score) **et l'entoure d'un début de monde** : un village sûr avec trois PNJ, une quête, des objets, et une forêt où quelques Timeres rôdent librement. Elle est jouable dans le navigateur à la fin du jalon M2 et fixe la sensation de combat pour tout ce qui suit.
@@ -1566,10 +1594,10 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 | Île | `src/world/island.tscn` | Île flottante de 160 × 160 m (relief calculé, places de HISTOIRE.md 3.3 garanties) : village (centre), dunes (ouest), forêt (nord), port (sud), colline (est). (HD-2D) Sol en tuiles de pixel art mélangées par zone et par masque (atlas `assets/hd2d/ground/atlas/ground_atlas.png`, `terrain.gdshader`), falaises et dessous texturés (`rock.gdshader`), bâtiments en volumes avec façades en images (`Building`), décors en panneaux avec ombre douce (`DecorPanel`), fondus par image (`PropBatcher`), ciel panoramique, mer de nuages texturée, lanternes éclairées ; murs invisibles et rattrapage sous l'île |
 | Zones | `src/world/zones/*` | Chaque zone = scène fille avec `Area3D` qui émet `zone_entered` ; `WorldManager` charge toutes les zones au départ en M2 (streaming en M3) ; le village est une zone `safe` où aucun ennemi n'entre |
 | PNJ | `src/npc/npc.tscn` | (acte 1) les PNJ de docs/lore/HISTOIRE.md 3.3 dans les cinq zones (Nygglatho, Willem et les fées à l'entrepôt, Pannibal aux bois, le guetteur au Couchant, Limeskin et les gens du bourg au port), visuels non jouables `data/npcs/visuals/` ; présents selon l'histoire (`NpcData.visible_if`) ; regardent le joueur à moins de 4 m ; `interact()` lance `DialogueRunner` |
-| Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | Boîte en bas d'écran, portrait (celui de l'orateur du nœud, `speaker_id`), texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête ; `{player}` : prénom de la protagoniste (skin choisi) |
+| Dialogue | `src/ui/dialogue_box.tscn` + `src/npc/dialogue_runner.gd` | (U1) Nuit douce ou Bandeau (`DialogueBox.set_presentation`) ; boîte en bas d'écran, portrait (celui de l'orateur du nœud, `speaker_id`), texte lettre par lettre, choix (2 max), conditions sur `flags`, `count` et état de quête ; `{player}` : prénom de la protagoniste (skin choisi) |
 | Objets | `src/items/pickup.tscn` | Objet flottant, ramassage par `interact()` ou contact ; émet `item_collected` ; les drops des ennemis restent possibles (`EnemyData.drops`), mais les corps de Timere n'en ont aucun |
 | Quête | `src/quests/quest_tracker.gd` | (acte 1, docs/lore/HISTOIRE.md 3.1 et 3.2) la quête principale `act1_main`, « Dans la forêt céleste » (13 étapes, de Nygglatho sous le porche à la promesse sur la colline ; récompense : la promesse du gâteau au beurre, PV max portés à 6) et six quêtes secondaires. (Lot Q) Quêtes en étapes écrites en JSON (`data/quests/`), journal de quêtes, marqueurs « ! » / « ? » : docs/QUETES.md |
-| HUD | `src/ui/hud.tscn` | Cœurs, jauge de charge, numéro de vague et score dans l'arène, nom de la zone à l'entrée, invite d'interaction, objectif de quête |
+| HUD | `src/ui/hud.tscn` | Cœurs, jauge de charge, numéro de vague et score dans l'arène, nom de la zone à l'entrée, (U1) signes d'interaction posés au-dessus des cibles, objectif de quête |
 | Inventaire | `src/ui/inventory.tscn` | Grille d'icônes, touche I / bouton Y, quantité, description |
 | Menu | `src/ui/main_menu.tscn` | Choix du skin (vignettes, « Ta fée prend la place de Chtholly dans l'histoire. »), Nouvelle partie / Continuer, crédits ; écran « Cliquer pour jouer » avant tout son |
 | Sauvegarde | `SaveManager` | Auto-sauvegarde à `arena_finished`, `item_collected`, `quest_updated`, `zone_entered` ; chargement au menu (pas de sauvegarde « à la fermeture » : le navigateur ne la garantit pas) ; (M2) position écrite toutes les 5 s de jeu si le joueur a bougé, et au départ (focus perdu, page masquée) quand l'état a changé |
