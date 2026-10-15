@@ -1,18 +1,17 @@
 extends GutTest
-## (T1, C1) Les cartes d'attente (foret_profonde ; le port, ajouté par tools/exterior_maps.py,
-## lot C1 ; le sentier, d'attente en T1, est construit depuis C1 : tests/unit/test_sentier.gd ; le
-## village depuis C2 : tests/unit/test_village.gd ; la colline depuis C3 :
-## tests/unit/test_colline.gd) : chacune suit le contrat des cartes, a son sol plat, sa lisière, son
+## (T1, C1) Les cartes d'attente (foret_profonde ; le sentier, d'attente en T1, est construit depuis
+## C1 : tests/unit/test_sentier.gd ; le village depuis C2 : tests/unit/test_village.gd ; la colline
+## depuis C3 : tests/unit/test_colline.gd ; le port, d'attente en C1, depuis CP :
+## tests/unit/test_port.gd) : chacune suit le contrat des cartes, a son sol plat, sa lisière, son
 ## écriteau « Plus loin, bientôt » qu'on lit (boîte de dialogue, sans portrait), la sortie de retour
-## vers la carte construite d'où l'on vient (l'entrepôt ; le sentier pour le port), au marqueur
-## from_<carte> du plan de cette carte, et le marqueur d'arrivée from_<cette carte> ; et le
-## raccourci de développement ?map= (src/test_shortcuts.gd).
+## vers la carte construite d'où l'on vient (l'entrepôt), au marqueur from_<carte> du plan de cette
+## carte, et le marqueur d'arrivée from_<cette carte> ; et le raccourci de développement ?map=
+## (src/test_shortcuts.gd).
 
 const TestShortcuts := preload("res://src/test_shortcuts.gd")
 ## Carte d'attente → [carte d'où l'on vient, sa sortie de retour].
 const WAITING := {
 	&"foret_profonde": [&"entrepot", &"vers_entrepot"],
-	&"port": [&"sentier", &"vers_sentier"],
 }
 const SIGN_TEXT := "maps/waiting/text"
 

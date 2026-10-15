@@ -1879,7 +1879,9 @@ port : 70 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord en 
 Légende des lettres : `A` garde_transport_side ; `B` gangway ; `C` rope_coil ; `D` mooring_arm_open ; `E` steam_whistle ; `F` capstan ; `G` bollard ; `I` crates_barrels ; `J` crystal_crates ; `K` cargo_cart_a ; `L` dock_lamp ; `M` signpost_port ; `N` wind_fence ; `P` cargo_cart_b ; `Q` hand_cart ; `R` sacks_pile ; `S` pallet_sacks ; `U` wind_sock ; `V` bench.
 <!-- /ascii:port -->
 
-- **Taille** 70 × 40 m ; **bornes** `Rect2(10, 6, 50, 17)`. **Composition** : au nord, le **vide**
+- **Taille** 70 × 40 m ; **bornes** `Rect2(10, 6, 50, 24)` (CP : le plan disait `Rect2(10, 6, 50, 17)`, qui arrête
+  le point visé à z = 23 : la vue ne descend plus qu'à z = 30 et le joueur sort de l'écran sur l'aire-port et la
+  route de la ville, jusqu'en z = 34). **Composition** : au nord, le **vide**
   et le poste d'amarrage ; le quai de tôle (z 5 → 14) ; la rue du port (z 14 → 20) ; au sud,
   l'aire-port des charrettes ; à l'est, la colline ventée (+1, +2, +3) et la route de la ville qui
   la contourne par le sud.
@@ -1932,8 +1934,9 @@ sol grass 0 30 70 40
 palier 1.0 58 5 70 27
 palier 2.0 61 5 70 22
 palier 3.0 63 5 70 16
-rampe 58 22 61 26 2.0 1.0 O
-rampe 61 16 64 20 3.0 2.0 O
+rampe 58 22 61 26 1.0 0 O
+rampe 62 22 66 25 1.0 2.0 N
+rampe 64 16 68 19 2.0 3.0 N
 # --- le vide au nord : les navires s'amarrent au nord du quai (REFONTE, 3.1) ---
 vide 0 0 70 5
 bord rambarde 0 5 23 5.4 1.1
@@ -1977,7 +1980,7 @@ bord foret 54 37 58 40 8 pp
 # --- chemins, places ---
 chemin rue_du_port 5 1;17 57;17
 chemin route_ville 4 55.5;18 55.5;31 62;32 69;32
-chemin montee_colline 3 57;20 60;24 63;18 65;12
+chemin montee_colline 3 57;24 61;24.5 64;25.5 64;21 66;20 66;17 66;12
 place accostage 24 7 37 13
 place aire_port 22 22 46 25
 # --- sorties ---
@@ -1990,6 +1993,7 @@ marqueur from_ville_marche 67.5 32 O
 marqueur from_transport_garde 32.5 9.5 S
 point bord_du_vide 17.5 6.3
 point accostage 30 9.5
+point navire_quai 32.5 7.6
 point panneau 6 19.5
 point guichet 5.5 11.6
 point colline_sommet 65 12.2
@@ -1999,6 +2003,10 @@ lumiere lampe_quai_2 39 12.6 3.2 cristal
 lumiere bureau 5.5 10.4 2.0 fenetres
 lumiere projecteur_navire 30 0 12 projecteur
 ```
+
+<!-- places:port -->
+**Places de la vie** (lot CP ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`bord_du_vide`, `accostage`, `navire_quai`, `panneau`, `guichet`, `colline_sommet`, `charrettes`) ; les places réservées, en `Life/Areas` avec leur rectangle (`accostage`, `aire_port`) ; et, en plus du plan : `quai_ouest` (16 ; 12.6 ; le quai devant les caisses : le docker qui range, le commis qui attend (VIE.md 2.7)), `quai_est` (43 ; 11.4 ; le quai devant les caisses de cristaux : le docker de l'après-midi), `rue_ouest` (11 ; 17 ; la rue devant la cabane du gardien : un passant, le gardien qui sort fumer), `rue_centre` (30 ; 17 ; le milieu de la rue du port : les passants s'y croisent), `rue_est` (50 ; 17 ; la rue devant le hangar, avant la route de la ville), `bureau_porte` (5.5 ; 11.2 ; devant la porte du bureau du port : le commis (VIE.md 2.7)), `cabane_porte` (11 ; 11.2 ; devant la porte de la cabane : le gardien du port), `sifflet_poste` (40 ; 7.6 ; au pied du sifflet à vapeur : qui tire la chaîne à l'arrivée d'un navire), `bitte_corbeau_1` (26.5 ; 6.3 ; la bitte de l'ouest : le corbeau du port (VIE.md, faune)), `bitte_corbeau_2` (34 ; 6.3 ; la bitte de l'est : le corbeau du port (VIE.md, faune)), `hangar_porte` (51 ; 14.2 ; devant la grande porte du hangar : on charge et on décharge), `aire_ouest` (12 ; 25.5 ; l'ouest de l'aire-port, près des palettes : le docker qui trie), `aire_est` (46 ; 27 ; l'est de l'aire-port, près de la charrette à bras), `route_depart` (60 ; 31.5 ; le départ de la route de la ville : le marchand de passage qui s'en va), `banc_colline` (65 ; 11 ; le banc du sommet de la colline : on s'y assoit pour voir arriver les navires), `colline_pied` (57 ; 24 ; le pied de la montée : le guetteur de la Garde qui monte à son poste), `panneau_sud` (6 ; 22.8 ; au sud du panneau, regard au nord : le panneau aux flèches rouges derrière Willem, hors du premier plan qui s'efface autour de lui (ACTE1.md 1.1)).
+<!-- /places:port -->
 
 ### 6.3 À bord : le transport de la Garde (`transport_garde`) et le Barocupot (`barocupot`)
 

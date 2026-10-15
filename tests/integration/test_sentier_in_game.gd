@@ -3,7 +3,7 @@ extends "res://tests/stubs/m2_game_test.gd"
 ## sentier par la sortie à pied (on arrive sur from_entrepot), le long de la levée jusqu'au marais
 ## où l'on descend par la rampe (−0,5 m, eau basse : on y marche) ; la nuit, la lumière des fées du
 ## joueur est allumée ; au chemin de la ville, la rampe descend et l'écriteau « Plus loin, bientôt »
-## s'offre à la lecture ; à l'est, la sortie à pied mène au port d'attente et l'on en revient sur
+## s'offre à la lecture ; à l'est, la sortie à pied mène au port et l'on en revient sur
 ## from_port ; puis le retour à l'entrepôt, sur from_sentier.
 
 const ENTREPOT := &"entrepot"
@@ -123,7 +123,7 @@ func test_from_the_warehouse_to_the_path_the_marsh_the_port_and_back() -> void:
 			await until(func() -> bool: return player.current_prompt() != "", 3.0),
 			"l'écriteau au bout du chemin de la ville s'offre à la lecture"
 		)
-	# À l'est : la sortie à pied mène au port d'attente, et l'on en revient sur from_port.
+	# À l'est : la sortie à pied mène au port, et l'on en revient sur from_port.
 	await put_player(72.0, 21.8, Vector3.RIGHT)
 	assert_true(
 		await walk_keys_until(
