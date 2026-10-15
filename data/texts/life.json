@@ -254,7 +254,7 @@
         "Vas-y. Je ne bouge pas… enfin, presque."
       ],
       "reprise": [
-        "Encore une fois ? D’accord.",
+        "Encore une fois ? D’accord.",
         "Une dernière, alors."
       ],
       "dodge": [
@@ -267,9 +267,9 @@
         "Approche. Je ne mords pas.",
         "Viens. Tu ne m’auras pas de si loin."
       ],
-      "hud_dodge": "Willem esquive tout. Tiens la charge (clic droit, L2) : le venenum.",
-      "hud_ready": "Encore une fois : tiens la charge.",
-      "hud_vision": "Vision accélérée : frappe !"
+      "hud_dodge": "Willem esquive tout. Tiens la charge (clic droit, L2) : le venenum.",
+      "hud_ready": "Encore une fois : tiens la charge.",
+      "hud_vision": "Vision accélérée : frappe !"
     },
     "seniorious": {
       "_comment": "(E8b) L’entraînement spécial avec Seniorious (src/games/seniorious_training.gd ; ACTE1.md 3.4 et 11.4) : les bulles de Willem (il corrige sans gronder ; la Grue s’apprend d’abord à mains nues), les annonces, la jauge et l’invite du marais.",
@@ -286,7 +286,7 @@
       ],
       "breath_late": [
         "Relâche. Plus tôt.",
-        "Trop long : relâche au bout du souffle."
+        "Trop long : relâche au bout du souffle."
       ],
       "breath_missed": [
         "Inspire avec moi.",
@@ -302,7 +302,7 @@
         "Mm."
       ],
       "move_missed_trois_coups": "Trois. Enchaîne-les.",
-      "move_missed_pare": "Pare : la charge, tout de suite.",
+      "move_missed_pare": "Pare : la charge, tout de suite.",
       "move_missed_cote": "Un pas de côté. Pas en arrière.",
       "crane_start": "La Grue de Gossamer. On l’apprend d’abord à mains nues… Pare au dernier instant, puis rends.",
       "crane_parried": [
