@@ -1,0 +1,15 @@
+{
+  "_comment": "(E7) Le Barocupot, navire de Limeskin (docs/lore/ACTE1.md, 8.6 et 8.7 ; CARTE.md 6.3) : vu de l'intérieur (carte barocupot) et comme une ombre dans les nuages (ShipControl.pass_shadow). shadow : la silhouette livrée (image, à ppm px par mètre : 48, deux fois plus grande qu'à quai) teintée (tint) à alpha doux (opacity), qui passe de span m d'ouest en est en time s, distance m devant la caméra et drop m sous son axe, en fondu sur fade du trajet à chaque bout.",
+  "name": "Le Barocupot",
+  "shadow": {
+    "image": "res://assets/hd2d/props/airship_barocupot.png",
+    "ppm": 48.0,
+    "time": 7.0,
+    "distance": 42.0,
+    "drop": 8.0,
+    "span": 80.0,
+    "tint": [0.16, 0.18, 0.24],
+    "opacity": 0.6,
+    "fade": 0.25
+  }
+}

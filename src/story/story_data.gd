@@ -123,6 +123,9 @@ const STEPS: Dictionary = {
 	"hint": {"text": "text"},
 	"calendar": {"line": "name"},
 	"show": {"node": "path!", "visible": "bool!"},
+	# (E7) Un navire (ShipControl) : descend, s'amarre, ouvre sa trappe, pose sa passerelle, repart ;
+	# l'ombre du Barocupot dans les nuages (action « shadow »).
+	"ship": {"ship": "ship!", "action": "ship_action!", "wait": "bool"},
 }
 ## Ce qu'attend wait_for : une seule de ces clés.
 const WAIT_FOR_KINDS: Array[String] = ["reach", "map", "examine", "talk"]
@@ -654,6 +657,12 @@ static func _check_value(
 				found.append("%s : liste d'étapes attendue" % where)
 			else:
 				_check_steps(value, where, context, found)
+		"ship":
+			if not _is_name(value) or not ShipControl.has_ship(StringName(str(value))):
+				found.append("%s : navire inconnu %s (data/ships/)" % [where, value])
+		"ship_action":
+			if not ShipControl.ACTIONS.has(StringName(str(value))):
+				found.append("%s : %s" % [where, ", ".join(ShipControl.ACTIONS)])
 		_:
 			found.append("%s : type %s inconnu (moteur)" % [where, type])
 
