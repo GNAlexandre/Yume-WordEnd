@@ -70,6 +70,7 @@ var _current: StringName = &""
 var _busy: StringName = &""
 var _resume: StringName = &""
 var _begin_pending: bool = false
+var _doors_day: int = -1
 var _check_left: float = 0.0
 var _refresh_left: float = 0.0
 var _hint: String = ""
@@ -107,6 +108,10 @@ func _physics_process(delta: float) -> void:
 	if _runner.is_running() and _stage.player() == null:
 		# Partie libérée en pleine scène (retour au menu) : la scène s'arrête, elle sera rejouée.
 		_runner.stop()
+	if GameState.day != _doors_day:
+		# Le jour a changé (sommeil, scène, chargement) : les portes fermées jusqu'à un jour.
+		_doors_day = GameState.day
+		_stage.apply_doors(WorldManager.current_map_node())
 	if not enabled or not GameState.story_running():
 		return
 	_serve_releases()

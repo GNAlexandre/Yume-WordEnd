@@ -34,6 +34,7 @@ func after_each() -> void:
 	StoryDirector.forget_seen()
 	StoryData.use_root("")
 	WorldManager.fade_time = WorldManager.DEFAULT_FADE_TIME
+	LifeData.use_content(&"")
 
 
 func _box() -> DialogueBox:
@@ -89,6 +90,8 @@ func test_steps_conditions_triggers_and_days() -> void:
 	assert_eq(LifeSlots.current(), &"midi", "créneau")
 	assert_eq(GameState.weather, &"pluie", "temps")
 	assert_eq(GameState.calendar().get(1), &"special", "ligne du calendrier")
+	var shown := WorldManager.current_map_node().get_node(^"Markers/Spawn") as Node3D
+	assert_false(shown.visible, "nœud de la carte caché (show)")
 	assert_eq(StoryDirector.hint(), "Un indice d'essai.", "indice de l'étape")
 	assert_true(player.camera_rig.is_story_framed(), "cadrage")
 	_box().choose(1)
@@ -201,12 +204,13 @@ func test_free_talk_by_day() -> void:
 
 func test_reserved_npc_ignores_schedule_then_returns_to_life() -> void:
 	StoryDirector.enabled = false
+	LifeData.use_content(&"essai")
 	WorldManager.start_map = &"entrepot_rdc_essai"
 	await start_game()
 	StoryDirector.enabled = true
 	var willem := LifeDirector.actor(&"willem")
+	assert_not_null(willem, "Willem sur la carte d'essai (data/life/essai)")
 	if willem == null:
-		pending("pas d'emploi du temps de Willem sur la carte d'essai")
 		return
 	LifeDirector.reserve(&"willem")
 	assert_eq(willem.state, LifeActor.State.SCENE)

@@ -161,7 +161,28 @@ func test_from_the_warehouse_to_the_cafe_the_house_and_back() -> void:
 	# La sortie à pied, par la porte du mur sud : on revient dans la rue, sur from_cafe.
 	await put_player(4.75, 8.2, Vector3.BACK)
 	assert_true(await _walk_out(KEY_S, VILLAGE, &"from_cafe"), "du café à la rue")
-	# La maison Limashenka : porte à invite, vestibule, sortie à pied.
+	# La maison Limashenka : close avant le jour 11 (E6 lit open_from_day et closed_text_key de la
+	# porte : même invite, le texte de la maison close, on reste dans la rue).
+	GameState.day = 1
+	await put_player(44.0, 11.4, Vector3.FORWARD)
+	var closed := _map().get_node(^"Exits/porte_limashenka/ClosedDoor")
+	assert_true(
+		await walk_keys_until(
+			[KEY_W], func() -> bool: return player.current_interactable() == closed, 6.0
+		),
+		"invite de la porte close"
+	)
+	_lines.clear()
+	await tap_key(KEY_E)
+	assert_true(await until(func() -> bool: return not _lines.is_empty(), 3.0), "texte lu")
+	assert_string_contains(_lines[0], "close")
+	for _page in 3:
+		if DialogueRunner.is_any_running():
+			await tap_key(KEY_E)
+			await frames(3)
+	assert_eq(WorldManager.current_map(), VILLAGE, "la porte ne mène nulle part")
+	# Au jour 11 : porte à invite, vestibule, sortie à pied.
+	GameState.day = 11
 	await put_player(44.0, 11.4, Vector3.FORWARD)
 	assert_true(await _take_exit([KEY_W], "porte_limashenka", MAISON), "dans la maison")
 	assert_eq(WorldManager.map_display_name(MAISON), "La maison Limashenka")

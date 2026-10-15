@@ -185,9 +185,22 @@ func _step(step: Dictionary) -> void:
 			director.call(&"set_scene_hint", _text(str(step["text"])) if step.has("text") else "")
 		"calendar":
 			GameState.write_calendar(GameState.day, StringName(str(step.get("line", ""))))
+		"show":
+			_show(str(step["node"]), bool(step["visible"]))
 
 
 # --- Étapes -------------------------------------------------------------------------------------
+
+
+## Montre ou cache un nœud de la carte courante (le cristal qui sonne : Geometry/Nygglatho/
+## comm_crystal_call_1) ; avertit s'il manque.
+func _show(path: String, shown: bool) -> void:
+	var map := WorldManager.current_map_node()
+	var node := map.get_node_or_null(NodePath(path)) as Node3D if map != null else null
+	if node == null:
+		push_warning("StoryRunner : nœud %s absent de la carte (%s)" % [path, stage.scene_label])
+		return
+	node.visible = shown
 
 
 func _place(step: Dictionary) -> void:

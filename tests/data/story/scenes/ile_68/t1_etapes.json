@@ -91,6 +91,11 @@
       "line": "special"
     },
     {
+      "do": "show",
+      "node": "Markers/Spawn",
+      "visible": false
+    },
+    {
       "do": "wait",
       "time": 0.2
     },

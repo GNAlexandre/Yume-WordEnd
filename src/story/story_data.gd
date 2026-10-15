@@ -122,6 +122,7 @@ const STEPS: Dictionary = {
 	"game": {"game": "name!", "params": "dict", "fallback": "steps"},
 	"hint": {"text": "text"},
 	"calendar": {"line": "name"},
+	"show": {"node": "path!", "visible": "bool!"},
 }
 ## Ce qu'attend wait_for : une seule de ces clés.
 const WAIT_FOR_KINDS: Array[String] = ["reach", "map", "examine", "talk"]
@@ -638,6 +639,10 @@ static func _check_value(
 		"node", "file":
 			if not _is_name(value):
 				found.append("%s : nom attendu" % where)
+		"path":
+			var node_path := str(value) if value is String else ""
+			if node_path.is_empty() or node_path.begins_with("/") or node_path.contains(".."):
+				found.append("%s : chemin d'un nœud de la carte attendu" % where)
 		"steps":
 			if not value is Array:
 				found.append("%s : liste d'étapes attendue" % where)

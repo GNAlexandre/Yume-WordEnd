@@ -14,11 +14,21 @@ extends Node
 ## - Les suiveurs (add_follower : un PNJ suit le joueur à distance, s'arrête s'il est trop loin,
 ##   reparaît derrière lui après un changement de carte : restage_followers) et les remises au
 ##   repos différées (idle_later).
+## - Les portes fermées jusqu'à un jour (apply_doors) : une sortie de carte (MapExit) qui porte
+##   les métadonnées open_from_day (jour d'ouverture) et closed_text_key (« village/maison_close » :
+##   le texte de data/texts/village.json, Examinable.lookup) ne mène nulle part avant ce jour ; à sa
+##   place, une zone à examiner (enfant ClosedDoor, même invite) lit le texte de la porte close.
 
 ## Joueur mené coincé : après STUCK_NUDGE s, des pas de côté ; après STUCK_HOP s, posé au
 ## point de passage.
 const STUCK_NUDGE := 0.4
 const STUCK_HOP := 1.6
+
+## Métadonnées d'une sortie fermée jusqu'à un jour ; enfant qui la remplace.
+const DOOR_OPEN_META := &"open_from_day"
+const DOOR_TEXT_META := &"closed_text_key"
+const CLOSED_DOOR := &"ClosedDoor"
+const TEXTS_DIR := "res://data/texts/"
 
 ## Places de la carte courante (set_map).
 var places: LifePlaces = null
@@ -29,9 +39,56 @@ var _followers: Dictionary = {}
 var _idle_at: Dictionary = {}
 
 
-## Nouvelle carte : ses places.
+## Nouvelle carte : ses places, ses portes fermées.
 func set_map(map: Map) -> void:
 	places = LifePlaces.read(map) if map != null else null
+	apply_doors(map)
+
+
+## Ferme (avant leur jour, GameState.day) ou rouvre les sorties de map qui portent
+## open_from_day ; renvoie le nombre de portes fermées.
+func apply_doors(map: Node) -> int:
+	var exits := map.get_node_or_null(^"Exits") if map != null else null
+	if exits == null:
+		return 0
+	var closed := 0
+	for child: Node in exits.get_children():
+		var door := child as MapExit
+		if door == null or not door.has_meta(DOOR_OPEN_META):
+			continue
+		var shut := GameState.day < int(door.get_meta(DOOR_OPEN_META))
+		_set_door_closed(door, shut)
+		closed += 1 if shut else 0
+	return closed
+
+
+func _set_door_closed(door: MapExit, shut: bool) -> void:
+	var lock := door.get_node_or_null(NodePath(CLOSED_DOOR)) as Examinable
+	if shut == (lock != null):
+		return
+	door.set_deferred(&"monitoring", not shut)
+	if door.needs_interaction():
+		door.collision_layer = 0 if shut else MapExit.INTERACTABLE_LAYER
+		if shut:
+			door.remove_from_group(MapExit.INTERACTABLE_GROUP)
+		else:
+			door.add_to_group(MapExit.INTERACTABLE_GROUP)
+	if not shut:
+		door.remove_child(lock)
+		lock.queue_free()
+		return
+	var key := str(door.get_meta(DOOR_TEXT_META, ""))
+	lock = Examinable.new()
+	lock.name = CLOSED_DOOR
+	lock.text_key = key
+	lock.texts_path = TEXTS_DIR + key.get_slice("/", 0) + ".json"
+	lock.prompt = door.prompt
+	var holder := door.get_node_or_null(^"CollisionShape3D") as CollisionShape3D
+	var box := holder.shape as BoxShape3D if holder != null else null
+	if box != null:
+		lock.size = box.size
+		lock.position = holder.position - Vector3(0.0, box.size.y / 2.0, 0.0)
+	door.add_child(lock)
 
 
 ## Une image physique : remises au repos, suiveurs.

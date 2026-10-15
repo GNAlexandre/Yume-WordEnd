@@ -46,6 +46,7 @@ func test_resume_in_the_middle_of_day_1() -> void:
 	assert_false(StoryDirector.is_playing(), "aucune scène rejouée")
 	assert_eq(GameState.quests(), {})
 	assert_true(await take_exit(&"sentier", 60.0))
+	assert_true(await walk_to_point(&"premiere_embuscade", 1.0, 40.0))
 	assert_true(
 		await until(func() -> bool: return StoryDirector.current_scene() == &"j1_2_embuscade", 5.0),
 		"le récit continue"

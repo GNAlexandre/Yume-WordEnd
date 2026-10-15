@@ -91,6 +91,7 @@ func test_steps_check_their_values() -> void:
 		{"do": "control"},
 		{"do": "wait_for", "reach": "porche_banc", "map": "entrepot", "talk": "willem"},
 		{"do": "game", "game": "ballon", "fallback": [{"do": "wait"}]},
+		{"do": "show", "node": "../ailleurs", "visible": true},
 	]
 	var text := _problems(data)
 	assert_string_contains(text, "willem n'est pas dans « present »")
@@ -99,6 +100,7 @@ func test_steps_check_their_values() -> void:
 	assert_string_contains(text, "« on » manque")
 	assert_string_contains(text, "une seule de reach, map, examine, talk")
 	assert_string_contains(text, "steps[5].fallback[0] : « time » manque")
+	assert_string_contains(text, "chemin d'un nœud de la carte attendu")
 
 
 func test_world_is_checked() -> void:
