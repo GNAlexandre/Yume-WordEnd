@@ -2,7 +2,7 @@ extends GutTest
 ## (CV) Les cartes d'attente de la ville et la ville dans l'île n° 68 :
 ## - la place du marché (`ville_marche`), construite plus tard : carte d'attente du dehors (32 × 24
 ##   m, écriteau
-##   « Plus loin, bientôt », une seule sortie, vers la ville haute) ;
+##   « Plus loin, bientôt », deux sorties : vers la ville haute et, à l'ouest, vers le port) ;
 ## - la librairie, le café habituel et la salle de projection : la pièce, la porte, les points du
 ##   plan, sans meuble
 ##   (leur lot les meublera), un écriteau à examiner sur le seuil ;
@@ -51,20 +51,29 @@ func test_the_waiting_market_leads_back_to_the_upper_town() -> void:
 	var exit := map.get_node(^"Exits/vers_haute") as MapExit
 	assert_eq([exit.target_map, exit.target_marker], [&"ville_haute", &"from_ville_marche"])
 	assert_eq(exit.prompt, "", "on passe en marchant")
-	assert_eq(map.get_node(^"Exits").get_child_count(), 1, "une seule sortie")
-	assert_not_null(map.marker(&"from_ville_haute"), "marqueur d'arrivée")
-	assert_not_null(map.get_node_or_null(^"Geometry/Sign/Reader"), "écriteau")
-	var street := (load(Map.scene_path(&"ville_haute")) as PackedScene).instantiate() as Map
 	assert_eq(
-		Map.exit_problems(map, {&"ville_haute": street.marker_names()}),
+		map.get_node(^"Exits").get_child_count(), 2, "deux sorties : la ville haute et le port"
+	)
+	assert_not_null(map.marker(&"from_ville_haute"), "marqueur d'arrivée de la ville haute")
+	assert_not_null(map.marker(&"from_port"), "marqueur d'arrivée du port (CP)")
+	assert_not_null(map.get_node_or_null(^"Geometry/Sign/Reader"), "écriteau")
+	var to_port := map.get_node(^"Exits/vers_port") as MapExit
+	assert_eq([to_port.target_map, to_port.target_marker], [&"port", &"from_ville_marche"])
+	var street := (load(Map.scene_path(&"ville_haute")) as PackedScene).instantiate() as Map
+	var port := (load(Map.scene_path(&"port")) as PackedScene).instantiate() as Map
+	assert_eq(
+		Map.exit_problems(
+			map, {&"ville_haute": street.marker_names(), &"port": port.marker_names()}
+		),
 		PackedStringArray(),
-		"sortie vers la ville haute"
+		"sorties vers la ville haute et le port"
 	)
 	var to_market := street.get_node(^"Exits/vers_marche") as MapExit
 	assert_eq(
 		[to_market.target_map, to_market.target_marker], [&"ville_marche", &"from_ville_haute"]
 	)
 	street.free()
+	port.free()
 	map.free()
 
 

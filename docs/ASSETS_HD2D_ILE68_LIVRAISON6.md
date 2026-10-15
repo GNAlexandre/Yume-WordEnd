@@ -41,9 +41,9 @@ personnage) ; 2 = la densité et la vie du lieu ; 3 = le bonus.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | **A** | 4 | les jours 1 à 4 : le port, le sentier de nuit, la ville haute, le snack-bar | 58 | 8 | 82 | 20 images, 2 planches | 32 images, 6 planches | 6 images |
 | **B** | 5 | l'existant qui se voit tout de suite : façades de nuit, village, signes, talus, fées de la foule | 13 | 4 | 25 | 8 images | 4 images, 4 planches | 1 image |
-| **C** | 6 | la phase 3 (jours 5 à 12) : navire, pluie, colline, village, café, maison Limashenka, bâton, ballon | 69 | 20 | 125 | 16 images, 6 planches | 40 images, 14 planches | 13 images |
+| **C** | 6 | la phase 3 (jours 5 à 12) : navire, pluie, colline, village, café, maison Limashenka, bâton, ballon | 69 | 21 | 128 | 16 images, 7 planches | 40 images, 14 planches | 13 images |
 | **D** | 7 | le reste : navires, formats en attente, ville, forêt, montagne, faune, gens, reprises | 85 | 29 | 156 | — | 14 images | 71 images, 29 planches, 6 reprises |
-| **Total** | | | **225** | **61** (+ 6 reprises) | **388** | | | |
+| **Total** | | | **225** | **62** (+ 6 reprises) | **391** | | | |
 
 Une **planche de personnage** compte pour trois PNG et trois JSON (profil, face, dos) ; une **planche de faune** pour un PNG et un JSON ; une **reprise** corrige une planche déjà livrée (aucun fichier nouveau). Les images comptées sont celles à **dessiner** : 58 sont encore des remplaçants dessinés par les outils du jeu (le fichier livré les remplace au même nom), 165 sont absentes, 2 sont des images livrées à refaire (`cart_ruts`, `footprints`).
 
@@ -117,8 +117,8 @@ la correction des vitres de l'entrepôt (n° 5, 3.6 : le moteur règle la couleu
 - les images de l'ancienne île seule (palissade, arène, Couchant, dunes), de la surface et des autres îles ;
 - les portraits des habitants de métier (facultatifs, `<id>_portrait.png`, 256 × 256) ;
 - les vues de face et de dos des animaux (le moteur ne lit que le profil) ;
-- `willem_life.lance` : le moteur n'a demandé qu'**un** geste de pied à Willem, `frappe` ; une planche de duel de
-  Willem (avec le Carillon) n'est demandée par aucun document : question ouverte, section 10.
+- `willem_life.lance` : le moteur n'a demandé qu'**un** geste de pied à Willem, `frappe`. (La planche de duel de
+  Willem avec le Carillon Percival est commandée en C.10 : décision de l'utilisateur du 15 octobre 2026.)
 
 ## 1. Bloc de style v6 (à coller au début de chaque conversation)
 
@@ -611,14 +611,14 @@ Près de trente fées vivent à l'entrepôt, des filles de 7 à 15 ans pour la p
 
 ## 6. Lot C : la phase 3 (jours 5 à 12 : le transport de la Garde, la pluie, la colline, le village, le café, la maison Limashenka, le bâton)
 
-**Total du lot C : 69 images et 20 planches de personnages ou d'animaux.**
+**Total du lot C : 69 images et 21 planches de personnages ou d'animaux.**
 
 **Pourquoi ce lot.** La phase 3 de la refonte joue les jours 5 à 12 : le ballon (jour 5), la pluie et le port sous la pluie
 (jour 7), le duel, la fugue et la colline aux étoiles (jour 8), le café du village et le bâton (jour 9), la pluie, la tour de
 fées et le linge (jour 10), la maison Limashenka et l'entraînement avec Seniorious (jour 11), le départ (jour 12).
-**Seniorious et le duel** (`ACTE1.md` 3.3 et 3.4) ne demandent **aucune image nouvelle** : Chtholly porte Seniorious dans
-sa planche livrée, la lueur des fissures et la désaturation sont des effets du moteur (voir la question ouverte sur le
-Carillon de Willem, section 10).
+**Seniorious et le duel** (`ACTE1.md` 3.3 et 3.4) ne demandent qu'**une** planche nouvelle, `willem_duel` (Willem et le
+Carillon Percival, C.10) : Chtholly porte Seniorious dans sa planche livrée, la lueur des fissures et la désaturation sont
+des effets du moteur.
 
 **Dépendances** : `anim/mooring_arm_clamp` (C.1) se dessine en joignant `props/mooring_arm_open.png` (A.2) ; les versions
 de nuit du village (C.5) se commandent **après** leur façade du jour, dans la même conversation ; le café (C.6) joint
@@ -771,6 +771,7 @@ de nuit du village (C.5) se commandent **après** leur façade du jour, dans la 
 | 1 | `assets/characters/ithea/ithea_stick.png` + `.json` | 139 px | `repos` 2 à 2 ; `marche` 6 à 10 ; `course` 5 à 14 ; `attaque` 4 à 14 (non, `coup` [1, 2, 3]) ; `pare` 2 à 2 (boucle) ; `degats` 1 à 1 ; `mort` 1 à 1 | Ithea, écharpe nouée serré, sourire ; elle s'allonge par terre après l'effort (son `mort`) ; le bâton de bois brut de 1,2 m est tenu du même côté que l'épée dans la planche livrée | un bâton de métal ou taillé (il est de bois brut, 1,2 m) ; un bâton tenu d'un autre côté que l'épée de la planche livrée ; du sang ; la pointe du bâton sous la ligne des pieds ; une autre coiffure ou une autre tenue que celle demandée | ithea, ithea_home | 4.8 |
 | 1 | `assets/characters/nephren/nephren_stick.png` + `.json` | 125 px | `repos` 2 à 2 ; `marche` 6 à 10 ; `course` 5 à 14 ; `attaque` 4 à 14 (non, `coup` [1, 2, 3]) ; `pare` 2 à 2 (boucle) ; `degats` 1 à 1 ; `mort` 1 à 1 | Nephren, couettes nouées en arrière, visage impassible même quand elle encaisse ; le bâton de bois brut de 1,2 m est tenu du même côté que l'épée dans la planche livrée | un bâton de métal ou taillé (il est de bois brut, 1,2 m) ; un bâton tenu d'un autre côté que l'épée de la planche livrée ; du sang ; la pointe du bâton sous la ligne des pieds ; une autre coiffure ou une autre tenue que celle demandée | nephren, nephren_home | 4.8 |
 | 1 | `assets/characters/willem/willem_stick.png` + `.json` | 168 px | `repos` 2 à 2 ; `marche` 6 à 10 ; `course` 5 à 14 ; `attaque` 4 à 14 (non, `coup` [1, 2, 3]) ; `pare` 2 à 2 (boucle) ; `degats` 1 à 1 ; `mort` 1 à 1 | Willem en tenue d'entraînement ample et terne (chemise de toile, pantalon serré aux chevilles), bâton sous le bras au `repos` ; il pare et contre « comme un serpent » sous des angles désagréables (VEX) ; son `mort` : assis, essoufflé, il se gratte la tête ; le bâton de bois brut de 1,2 m est tenu du même côté que l'épée dans la planche livrée | un bâton de métal ou taillé (il est de bois brut, 1,2 m) ; un bâton tenu d'un autre côté que l'épée de la planche livrée ; du sang ; la pointe du bâton sous la ligne des pieds ; une autre coiffure ou une autre tenue que celle demandée | willem, willem_home | 4.8 |
+| 1 | `assets/characters/willem/willem_duel.png` + `.json` | 168 px | `repos` 2 à 2 ; `marche` 6 à 10 ; `parle` 2 à 6 ; `attaque` 4 à 14 (non, `coup` [2]) ; `pare` 2 à 2 (boucle) | Willem au duel du jour 8 (`ACTE1.md` 3.3 et 8.3) : la tenue ample de `willem_home` (chemise claire aux manches retroussées, pantalon sombre, pieds solides), et **le Carillon de série Percival** : une longue épée de fées faite de plaques de métal assemblées, gris acier, quelques runes gravées éteintes, tenue d'une main ; voir la fiche propre plus bas | une arme de cristal ou lumineuse au repos (Percival ne brille qu'un instant, et c'est un effet du moteur) ; une armure ; l'uniforme de la Garde | `willem_home.png`, `_front`, `_back` (étalon de taille et de tenue), `chtholly.png` (pour le style d'une épée de fées) | — |
 | 1 | `assets/characters/cat_waiter/cat_waiter_work.png` + `.json` | 158 px | `repos` 2 à 2 (recopiée) ; `travaille` 4 à 6 ; `porte` 6 à 10 | le serveur homme-chat : homme-chat gris au long tablier blanc, gilet brun ; il balaie la terrasse le matin | redessiner la rangée `repos` (elle est recopiée au pixel près de la planche existante) ; changer la hauteur debout ; un objet travaillé dessiné (marmite, pétrin, plafond) sauf s'il tient dans les mains | cat_waiter (trois vues) | 4.3 |
 | 2 | `assets/characters/almita/almita_rain.png` + `.json` | 91 px | `repos` 2 à 2 ; `marche` 6 à 10 ; `parle` 2 à 6 ; `course` 5 à 14 ; `saut` 4 à 12 (non : à pieds joints dans une flaque) | pèlerine jaune citron jusqu'aux chevilles, grosses bottes | du plastique ou du caoutchouc brillant ; un parapluie moderne ; une arme de métal ; un changement de hauteur debout ; le personnage qui rapetisse en marchant | almita, almita_life (trois vues) | 4.7 |
 | 2 | `assets/characters/chtholly/chtholly_rain.png` + `.json` | 144 px | `repos` 2 à 2 ; `marche` 6 à 10 ; `parle` 2 à 6 ; `course` 5 à 14 | pèlerine bleu marine à capuche relevée, quelques mèches bleues mouillées qui dépassent ; pas d'épée | du plastique ou du caoutchouc brillant ; un parapluie moderne ; une arme de métal ; un changement de hauteur debout ; le personnage qui rapetisse en marchant | chtholly, chtholly_home | 4.7 |
@@ -798,6 +799,20 @@ Planche complémentaire de `willem_home` (uniforme sans arme) : joindre `willem_
 | --- | --- | --- |
 | `repos` | 2, 2 | recopiée au pixel près de `willem_home` (étalon) |
 | `frappe` | 4, 14 | passe du pied nonchalante, sans élan ; 0 la jambe en arrière ; 1 pied d'appui planté ; 2 **frappe** : la jambe tendue devant, à 20 cm du sol (`coup` : [2]) ; 3 accompagnement, bras un peu écartés ; le ballon n'est pas dessiné |
+
+**Fiche propre de `willem/willem_duel` : Willem et le Carillon Percival (le duel ingagnable, jour 8)**
+
+Willem ne pare jamais : il fait un pas de côté, puis, au premier coup chargé de Chtholly, il **retourne son élan** d'un
+geste presque doux (`ACTE1.md` 3.3 ; V1, « Les valeureux et leurs successeurs »). Le Carillon est un Carillon de série,
+banal à côté de Seniorious : pas de gemme qui luit, pas de flamme. Joindre `willem_home.png`, `_front`, `_back`.
+
+| Animation | Images, ips | Consigne propre |
+| --- | --- | --- |
+| `repos` | 2, 2 | debout, détendu, Percival posé sur l'épaule droite, la pointe vers l'arrière ; 0 et 1 : la respiration (1 px) |
+| `marche` | 6, 10 | le même port, l'épée toujours sur l'épaule ; le pas de côté du duel se joue avec cette rangée |
+| `parle` | 2, 6 | l'épée sur l'épaule, la main libre qui fait signe d'approcher (« viens ») |
+| `attaque` | 4, 14 | la déviation qui retourne l'élan : 0 garde basse, la lame de biais devant lui ; 1 la lame croise (un trait) ; 2 **le geste** : la lame balaie vers l'extérieur et la main gauche ouverte pousse, à peine (`coup` : [2]) ; 3 retour au calme, la lame redescend |
+| `pare` | 2, 2 | garde haute à deux mains, la lame en travers (la variante « Encore une fois ! » et l'entraînement avec Seniorious, jour 11) ; en boucle |
 
 **Fiche propre de `willem/willem_repair` : Willem répare**
 
@@ -1186,7 +1201,7 @@ rappelle).
 | `CARTE.md` 12.2 donne 37 images pour **« livrées »** (`cafe_table_heavy`, `cottage_thatch_*`, `fg_canopy_a`, `wallitem_family_portrait`, …) qui sont des **remplaçants** générés par les outils ; elle compte 329 livrées sur 398 | ce cahier part de l'état réel (pixels comparés à la recette) : 62 remplaçants au manifeste, dont 4 effets que le jeu génère ; les 58 autres sont commandés ici |
 | `CONTRACT_REQUESTS.md` (E6) et `DECISIONS.md` (E6) tiennent encore `willem_marsh`, la pose « hanches » de Chtholly et la planche propre de `fairy_12` pour **à livrer** | `willem_marsh` et `fairy_12` (avec son `travaille`) sont livrés (PR n° 39) ; `chtholly_home` a sa rangée `hanches` depuis le cahier n° 3 : ni l'un ni l'autre ne se redemandent ; leur **pose dans le jeu** (tenues, `sheets`, scènes) est du travail du moteur |
 | `ACTE1.md` (section 6) place `chtholly_pajamas` en priorité 2 et les planches de bâton en 3 ; le n° 5 les met en 1 et en 2 | `chtholly_pajamas` est livrée ; les planches de bâton sont de priorité 1 du lot C (jours 9 à 11) |
-| `ACTE1.md` 8.3 donne à Willem « le Carillon de série Percival » dans `willem_home`, qui n'a **pas d'arme** (n° 5, 4.1) | **question ouverte** pour l'utilisateur : une planche de duel de Willem avec le Carillon n'est commandée nulle part ; la planche `willem` de base a l'arme |
+| `ACTE1.md` 8.3 donne à Willem « le Carillon de série Percival » dans `willem_home`, qui n'a **pas d'arme** (n° 5, 4.1) | **tranché par l'utilisateur** (15 octobre 2026) : la planche `willem/willem_duel` (Willem et Percival) est commandée en C.10, priorité 1 |
 | `CARTE.md` 6.2 pose `garde_transport_side` au quai en permanence ; le même texte dit « en dehors des scènes, le poste est vide » et `ACTE1.md` 6 : « le transport ne paraît qu'au crépuscule du jour 7 » | `garde_transport_side` est au lot C ; si le port le garde au quai en tout temps, le passer en priorité 1 du lot A |
 | `CARTE.md` 9.4 donne `ville_snack` à 7 × 5 m et `ville_cafe` à 9 × 6 m ; les plans font 9 × 7 et 11 × 8 | aucun effet sur les images (les cotes des meubles sont celles des plans) |
 | `CARTE.md` 12.1 place la porte de service du flanc de l'entrepôt à 8 m de l'angle ; les données la mettent à 6 m | sans objet : `warehouse_front_a_side` est livrée |

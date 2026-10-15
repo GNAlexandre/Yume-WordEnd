@@ -11,6 +11,9 @@
 [ext_resource type="PackedScene" path="res://src/world/props/fern_b.tscn" id="9_fern"]
 [ext_resource type="PackedScene" path="res://src/world/props/fg_bush.tscn" id="10_fg_bush"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit_2"]
+size = Vector3(0.6, 3, 4)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_exit"]
 size = Vector3(4, 3, 0.6)
 
@@ -74,6 +77,9 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 16, 0.2, 4)
 [node name="from_ville_haute" type="Marker3D" parent="Markers"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 16, 0.2, 2.5)
 
+[node name="from_port" type="Marker3D" parent="Markers"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 2.5, 0.2, 12)
+
 [node name="Exits" type="Node3D" parent="."]
 
 [node name="vers_haute" type="Area3D" parent="Exits"]
@@ -86,5 +92,16 @@ target_marker = &"from_ville_marche"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_haute"]
 shape = SubResource("BoxShape3D_exit")
+
+[node name="vers_port" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.5, 12)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("4_exit")
+target_map = &"port"
+target_marker = &"from_ville_marche"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_port"]
+shape = SubResource("BoxShape3D_exit_2")
 
 [node name="Life" type="Node3D" parent="."]
