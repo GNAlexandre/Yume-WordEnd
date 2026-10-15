@@ -58,7 +58,6 @@
     {"room": "escalier", "side": "W", "z": 6.8, "y": 1.6, "image": "wallitem_crystal_sconce"},
     {"room": "palier_armes", "side": "W", "z": 4.5, "y": 1.6, "image": "wallitem_crystal_sconce"},
     {"room": "palier_armes", "side": "E", "z": 7.6, "y": 1.6, "image": "wallitem_bronze_plaque"},
-    {"room": "archives", "side": "W", "z": 3.4, "y": 1.2, "image": "wallitem_wall_clock"},
     {"room": "archives", "side": "E", "z": 7.0, "y": 1.3, "image": "wallitem_clippings"},
     {"room": "lecture", "side": "E", "z": 7.4, "y": 1.6, "image": "wallitem_crystal_sconce"},
     {"room": "bains", "side": "E", "z": 12.0, "y": 1.3, "image": "wallitem_bath_rules"},

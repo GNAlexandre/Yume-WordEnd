@@ -1,0 +1,19 @@
+{
+  "_comment": "Odile, fée générique (VIE.md, 2.5) : lit au dortoir C.",
+  "gait": "course",
+  "lines": [
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": ["midi", "apres_midi"], "day": 8, "map": "entrepot_rdc", "place": "epie_infirmerie", "activity": "avalanche_infirmerie"},
+    {"slot": "apres_midi", "day": 4, "map": "entrepot_rdc", "place": "epie_cuisine", "activity": "avalanche_cuisine"},
+    {"slot": "nuit", "day": 1, "map": "entrepot_etage", "place": "epie_willem", "activity": "avalanche_willem"},
+    {"slot": "matin", "day": [9, 12], "map": "entrepot", "place": "champ_entrainement", "activity": "entrainement"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer"},
+    {"slot": "apres_midi", "if": {"flag": "apres_pluie"}, "map": "entrepot", "place": "champ_boue", "activity": "boue"},
+    {"slot": "aube", "map": "entrepot_etage", "place": "dortoir_c_lit_1_haut", "activity": "dormir", "_note": "La journée de base."},
+    {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_rang_c", "activity": "manger"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_c", "activity": "manger"},
+    {"slot": "apres_midi", "map": "entrepot", "place": "herbes_chat", "activity": "jeu_chat"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "couloir_course", "activity": "course_couloir_entrepot"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_c_lit_1_haut", "activity": "dormir"}
+  ]
+}

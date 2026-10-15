@@ -7,7 +7,9 @@ extends Node
 ##   T2_VIEWS=<liste>    : vues « carte:lieu:moment » séparées par des virgules (défaut : VIEWS) ;
 ##                         lieu = une clé de SPOTS[carte], ou « ensemble » (vue d'ensemble : murs
 ##                         coupés au ras du sol, caméra haute qui embrasse l'étage) ;
-##   T2_FRAMES=<n>       : images attendues avant chaque capture (défaut WAIT_FRAMES).
+##   T2_FRAMES=<n>       : images attendues avant chaque capture (défaut WAIT_FRAMES) ;
+##   T2_REVEAL=<noms>    : (I2) montre les nœuds cachés de la carte dont le nom commence ainsi
+##                         (par exemple comm_crystal_call : l'appel du cristal de Nygglatho).
 ## Une ligne par capture : « T2 vue <nom> : <d> draw calls, <p> primitives, <o> objets,
 ## chargement <ms> ms », puis « T2 fin : <n> vues ».
 ## Lancement :
@@ -208,6 +210,9 @@ func _stage(map_id: String, spot_name: String) -> void:
 	var room := map.get_node_or_null(^"Ground") as InteriorRoom
 	if room != null:
 		room.snap_cut()
+	for node_name: String in OS.get_environment("T2_REVEAL").split(",", false):
+		for found: Node in map.find_children(node_name + "*", "Node3D", true, false):
+			(found as Node3D).visible = true
 	if spot_name == "ensemble":
 		var size := (map as Map).size
 		_overview = Camera3D.new()

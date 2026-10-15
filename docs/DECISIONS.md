@@ -2978,3 +2978,95 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **E4 — touche F6** : créneau suivant (Maj : tout de suite), comme F7 (moment) et F8 (temps), en
   version de débogage ou avec un paramètre de développement.
 - **R2 — raccord des livraisons R0 (PR n° 34) et d'I1** : la fusion avait perdu deux lignes de `InteriorPanel` (matériau `InteriorRoom.furniture_material`, et `occluder_triangles` qui lit `furniture_cut_line`), donc les meubles ne se coupaient plus au sud du joueur dans sa pièce ; rétablies sur la base d'I1 (`displayed_texture()`, `cut_z()`). Le coffre à jouets (`toy_chest`), tourné par sa vue de flanc livrée, touchait presque le mur nord : plan décalé à (22,3 ; 11,4) pour que les murs le fassent regarder O.
+- **V1 — contenu de la vie par île** : `LifeData` lit `data/life/<île>/` (`WorldAtlas.data_dirs`), l'île de la carte que le directeur peuple (`LifeData.enter_island`, posée par `LifeDirector.attach` : `map_entered` précède `island_entered`), sinon `GameState.island`, sinon l'île n° 68 ; `activities.json` reste commun (`data/life/`). Une île sans dossier (l'ancienne île) n'a aucune vie. `LifeData.use_content(&"essai")` force un sous-dossier : les emplois du temps de démonstration d'E4 (cartes d'essai) vivent dans `data/life/essai/` (copiés avant la migration ; tests et démonstrations d'E4 les forcent) ; paramètre de développement `?contenu=essai`.
+- **V1 — créneaux et repas** : un seul créneau `matin` pour le petit-déjeuner, donc le réfectoire est plein au `matin` (12 à 14 PNJ) et au `midi` (21) ; ce que VIE.md place « le matin après le petit-déjeuner » (entraînement de base, linge, potager, grand arbre) est tenu par ceux qui ne déjeunent pas au réfectoire à ce créneau (le linge à l'aube **et** le matin, l'arbre, le potager, la corvée de la cour), et l'entraînement du champ n'a lieu que les jours 9 à 12 (menées par `fairy_10`) ; le ballon (après-midi, jours 5 à 12) est laissé au lot E8 : en attendant, Willem et trois fées sont dans le champ (`champ_jeu`, `errer`).
+- **V1 — dortoirs** : `CARTE.md` (« Qui dort où ») l'emporte sur VIE.md, 2.4 : le quatuor Tiat, Collon, Pannibal, Lakhesh au dortoir A, Almita (Kana et Giniette absentes) et `fairy_01`, `fairy_02` au B, `fairy_03` à `fairy_07` au C, `fairy_08` à `fairy_12` au D ; un PNJ par lit (`dortoir_a_lit_1_bas`…), le dormeur à 0,45 m (lit simple ou du bas) ou 1,35 m (lit du haut) ; les lits du plan prennent cette hauteur (`tools/life_zones.py`).
+- **V1 — places** : les zones, les départs `vers_<carte>` (le premier de chaque carte est le repli des cartes à venir : la porte d'entrée, le pied de l'escalier, le seuil du porche ; des alias vers l'étage, le toit, la ville, pour que les trajets sans correspondance finissent à la porte ou à l'escalier) et l'orientation des points du plan sont dans `tools/life_zones.py`, lu par `tools/interior_maps.py` et `tools/exterior_maps.py` (jamais à la main dans une scène générée) ; `CARTE.md` en donne la liste (`places`). Seuls les sièges où l'on arrive sans traverser une table sont des places : le rang du fond du réfectoire (z = 7,9) n'en a pas. Les trois branches du grand arbre sont des zones à un point de hauteur 2,3 m, 4,3 m et 6,6 m (images de l'arbre, 96 px par mètre) ; la jupe de racines, trois points au sol.
+- **V1 — pluie** : `LifeDirector` tient deux drapeaux d'après `GameState.weather` : `pluie_du_jour` tant qu'il pleut (pluie, averse), `apres_pluie` quand elle cesse, jusqu'à l'aube suivante ; les lignes `{"if": {"flag": "pluie_du_jour"}}` font rentrer tout le monde (salle de jeux, lecture, balle contre le mur), `apres_pluie` envoie les petites sauter dans les flaques du champ (`boue`). Le récit (E6) peut aussi poser ces drapeaux.
+- **V1 — navigation** : `LifeNav.nearest_open` ne choisit plus, dedans, une case de l'autre côté d'un mur (un lit contre la porte d'un dortoir finissait dans le couloir) ; correctif sûr, éprouvé par `tests/unit/test_life_ile_68_nav.gd`.
+- **V1 — jours** : `GameState.day` 0 (aucun jour) joue la journée de base ; les variations de VIE.md, section 3, sont des lignes à `day` : fuite (1 à 3), en ville (3), dessert (4, 6, 9, 11), aînées absentes et petite blessée (7 à 9), fièvre de Willem (8), entraînement (9 à 12), café et chasse à l'ours (9), horloge (11), départ (12). Les soirs, la tour de fées a lieu aux jours 0, 10 et 12 ; les jours 1 à 9 et 11, jeux de société. Un trajet qui change de carte s'arrête à la sortie de la carte courante (l'étage vers la ville : l'escalier) : le directeur ne suit pas la correspondance entre cartes.
+- **C2 — la porte du café est à x = 19,8** (sortie `porte_cafe` 19,1 → 20,5, marqueur `from_cafe`, point
+  `cafe_porte`), au droit de la porte de la façade livrée (`cafe.png`), au lieu de 18,5 du plan ; CARTE.md
+  est corrigé en conséquence (idem `hanging_sign_key` à 12,7 et `firewood_pile` à 4,5, qui tombait dans le
+  ruisseau). Les écarts de la carte sont dans la liste des écarts de la recette `village.py`.
+- **C2 — le café a sa scène `cafe_village`** (7 × 6 m, mur 5,5 m, faîte 7,5 m) : celle de T1 pose trois
+  tables de terrasse bloquantes dans la place `devant_cafe`, qui doit rester libre. `BUILDING_SCENES` de la
+  recette donne la scène d'un bâtiment du plan qui n'a pas le nom de son image.
+- **C2 — jardins clos et bords invisibles** : un toit de 5 m cache 7 m au nord de lui, et la règle de caméra
+  veut que rien où l'on marche ne soit derrière un toit ; les jardins derrière les trois chaumières du sud
+  sont donc clos (`Edges` invisibles, clôture de branches au nord, haies sur les côtés) et les trous entre
+  bâtiments sont fermés par des haies et buissons visibles (jamais une collision seule qui se voit mal).
+- **C2 — variantes de premier plan nommées `*_front`** (`scarecrow_front`, `firewood_pile_front`) : un `*_fg`
+  libre est découvert par l'outil comme variante de la règle de caméra et changeait la scène de l'entrepôt ;
+  `*_front` n'est pas un suffixe de cette règle, la recette de `village` les pose à la main.
+- **C2 — aucune lumière dans les trois cartes** (règle de la mission) : ni lampe ni fenêtre lumineuse ; la
+  nuit, Atmosphere et la lumière magique du joueur. `no_lights` dans `SETTINGS` d'une carte du dehors supprime
+  le nœud `Lights` ; le café n'a donc pas de vitres allumées de nuit (demande dans CONTRACT_REQUESTS.md).
+- **C2 — la porte de la maison Limashenka est posée ouverte, sa condition (jour 11) est en métadonnée** de
+  la sortie (`open_from_day = 11`, `closed_text_key = "village/maison_close"`) : `MapExit` ne sait pas se
+  fermer et n'est pas à C2 (demande dans CONTRACT_REQUESTS.md). L'examen `maison_close` donne le texte de
+  la maison close.
+- **C2 — `door_backroom`** (rideau rayé entre la salle du café et l'arrière-boutique) est une porte à image
+  propre (`OWN_IMAGE_DOORS` de `interior_maps.py`) ; `door_room` des intérieurs a un côté « dehors » (`OUTSIDE_DOORS`).
+- **C2 — `BLOCKERS["cafe"]`** : la vitrine à gâteaux masque la taille de qui se tient derrière le comptoir ;
+  une zone bloquante `derriere_vitrine` (4,7 → 5,3 ; 1,8 → 2,55) l'interdit, la place `comptoir_arriere`
+  restant libre à côté.
+- **C2 — portrait de famille 58 × 77 px** (`wallitem_family_portrait`) : l'image la plus grande qui tienne
+  sur le mur du salon à 96 px par mètre sans passer sous l'horloge ; `test_hd2d_assets` la compte (CARTE.md
+  le mentionne).
+- **C2 — l'horloge du salon** a trois états (`wallitem_clock_limashenka` fermée, `_open` ouverte,
+  `anim/clock_limashenka_swing` : balancier de 4 images à 2 images/s, mêmes pixels du cadran : `random.Random(4242)`
+  fixe) ; le récit (E6) les échange au jour 11 au point `horloge`. La scène `clock_limashenka_swing` est prête.
+- **C2 — 38 remplaçants au manifeste, lot R3** (`tools/hd2d_village.py`) : 19 pour le dehors (matériaux
+  `roof_thatch`, `wall_wattle_daub` ; chaumières `cottage_thatch_a/b/c`, `village_barn`, `village_house_stone`,
+  `village_shed` avec leurs `_side` ; `fence_wattle`, `beehives`, `cart_hay`, `haystack`, `washing_trough`) et
+  19 pour les intérieurs (sol `floor_terracotta`, `wall_panel_dark`, `wall_wallpaper_floral`, `door_backroom`,
+  `window_shutters`, `wallitem_menu_cafe`, `wallitem_clock_limashenka` (et `_open`), `wallitem_family_portrait`, `cafe_counter`,
+  `cafe_table_heavy`, `cafe_bottle_shelf`, `cafe_drinkers_table`, `toolbox_gears`, `side_table_salon`,
+  `juice_glasses`, `cafe_cake_case`, `decals/rug_salon`, `anim/clock_limashenka_swing`). Une image livrée
+  du même nom les remplace sans toucher au code ; `--force --overwrite-delivered` n'est que pour refaire un
+  remplaçant.
+- **C2 — outils touchés hors des cartes** : `exterior_maps.py` (réglages `no_lights`, `examine`, `exit_meta`,
+  `PLACES_LOT`), `exterior_pose.py` (`Pose.height` rend 0 sur une case de vide), `exterior_props.py`
+  (`building()`, décors du village), `interior_maps.py` (cafe, maison, `image_size_m` cherche aussi
+  `props/`), `tests/stubs/t2_map_test.gd` (`expected_region`, `texts_path`, `OWN_IMAGE_DOORS`) ;
+  `test_waiting_maps`, `test_exterior_maps`, `test_hd2d_assets`, `test_hd2d_scenes` suivent (le village n'est
+  plus une carte d'attente ; 27 façades latérales au lieu de 21), sans rien relâcher.
+- **C2 — mesures** : draw calls du village entre 78 et 139 par vue du jeu (≤ 200 ; la vue d'ensemble, hors
+  jeu, 271), café 32 à 46, maison 29 à 41 ; chargement du village 390 à 600 ms, café 173 ms, maison 104 ms.
+
+## I2 — l'entrepôt complet (lot R1 du cahier n° 5)
+
+- **I2 — dix images inscrites, vingt-neuf remplaçants retirés** : la PR n° 37 livre 39 images ; 29 portaient le nom
+  d'un remplaçant déjà au manifeste (façades et flancs de T1, `door_frame_wood`, sols et murs de la crypte,
+  décalques, bandes animées, piano, trappe, échelle, coupures, fenêtre poussiéreuse, six panneaux du dehors) : leurs
+  recettes s'en vont (`hd2d_interior`, `hd2d_interior_props`, `hd2d_town`, `hd2d_nature`) ; il ne reste que les trois
+  vues de flanc de R0.3. Les 10 nouvelles passent par `LOT_NAMES["R1"]`, `SURFACES_R1`, `FURNITURE_R1`,
+  `OUTDOOR_R1`, `ANIMS_R1` (`tools/hd2d_interior.py`) et `manifest` : `desk_clean`, `desk_chtholly_mirror_up`,
+  `polishing_trestle`, `potted_plant`, `bed_iron_cover` (meubles), `roof_edge_slate` (panneau, `wrap` x),
+  `floor_roof_deck` (tuile), `bath_steam` (6 images, 6 ips, alpha doux), `comm_crystal_call` (4, 6 ips),
+  `wall_clock_swing` (4, 2 ips). `hd2d_assets.py check`, `orphans` et `hd2d_sheets.py check` propres.
+- **I2 — le toit-terrasse : matière à part, pas de 28e couche** : une 28e tuile d'atlas toucherait le contrat du
+  cahier n° 2 (`IslandTerrain.GROUND_LAYERS`, deux shaders et leurs tables de repli, `terrain.gd`, tests de
+  27 tuiles, atlas). Le sol de `MapGround` reste (planches de l'atlas, dessous, sans trou) et `floor_roof_deck` s'y
+  pose en 12 `GroundDecal` bout à bout (3 × 4 tuiles de 4 m, étirées à 3,5 m dans le sens des planches pour couvrir
+  les 14 m sans dépasser du bord) ; un draw call de plus (le `PropBatcher` les fond en un) ; les taches de mousse
+  passent à la couche 1 pour rester dessus. `roof_edge_slate` : deux panneaux de 4 m au pied de l'égout sud du volume
+  ouest (x 1 et −3, z 15), sans collision (derrière la rambarde) ; le toit d'ardoise du `Building` reste, c'est lui qui
+  monte vers le faîte.
+- **I2 — bande animée au mur ou sur un meuble** : `bath_steam` est un `objet` sur la baignoire (bas de l'image 0,3 m
+  sous son rebord) ; `wall_clock_swing` remplace l'élément de mur `wallitem_wall_clock` dans le plan (les
+  éléments de mur sont fondus en un maillage sans animation) : `mural` de nom hors `wallitem_`, DecorPanel
+  `keep_orientation` qui regarde l'est ; `comm_crystal_call` reprend `comm_crystal` au pixel près (pied au sol) et
+  est **caché** (un appel est un événement, pas un décor) : E6 le montre. L'horloge regardée de face est vue de
+  chant par la caméra (mur ouest) : on ne voit son balancier que dans la pièce.
+- **I2 — meubles posés** : `desk_clean` à la place de `desk_clean_brooch` (grande sœur ; la variante à broche reste pour
+  le souvenir du jour 6), `potted_plant` dans l'entrée, `polishing_trestle` dans la salle des armes ;
+  **non posés** : `desk_chtholly_mirror_up` (acte 2) et `bed_iron_cover` (surimpression sur un dormeur : à
+  poser par l'histoire ; scène sans ombre, avec la boîte de collision du lit). `carte_plans.py check` : 23 cartes,
+  0 erreur ; CARTE.md : ASCII, places et inventaire réécrits.
+- **I2 — vitres des façades livrées** : de nuit, elles s'allument à peine (carreaux de #FBD367 à #FCE496 à 0,14 de
+  `glow_color` #FFE6A6 pour une tolérance de 0,12 : 15 % des pixels de vitre à l'ouest, 1 à 2 % à l'est). Image non
+  retouchée ; correction à commander dans `docs/ASSETS_HD2D_ILE68.md` (3.6) et variante moteur
+  (`Building.window_glow_color`) dans `docs/CONTRACT_REQUESTS.md`.
+

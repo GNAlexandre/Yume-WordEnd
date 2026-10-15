@@ -1370,13 +1370,13 @@ shape = SubResource("BoxShape3D_exit_porte_service")
 [node name="Places" type="Node3D" parent="Life"]
 
 [node name="porche_banc" type="Marker3D" parent="Life/Places"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.2, 0, 28.8)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 44.2, 0, 28.8)
 
 [node name="porte_seuil" type="Marker3D" parent="Life/Places"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0, 28.2)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 42, 0, 28.2)
 
 [node name="cour_willem" type="Marker3D" parent="Life/Places"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0, 35)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 42, 0, 35)
 
 [node name="cour_chtholly" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0, 40.5)
@@ -1394,13 +1394,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62.5, 0, 33.4)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, 30.3)
 
 [node name="coin_soleil" type="Marker3D" parent="Life/Places"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 33.5)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 22, 0, 33.5)
 
 [node name="clairiere_centre" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.5, 15)
 
 [node name="clairiere_banc" type="Marker3D" parent="Life/Places"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6, 0.5, 15.1)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 24.6, 0.5, 15.1)
 
 [node name="clairiere_arbre" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.5, 8.4)
@@ -1409,7 +1409,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.5, 8.4)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -0.5, 12)
 
 [node name="champ_centre" type="Marker3D" parent="Life/Places"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, -0.5, 18)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 75, -0.5, 18)
 
 [node name="champ_but_nord" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, -0.5, 9.2)
@@ -1425,6 +1425,300 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, -0.5, 48)
 
 [node name="lisiere_sud" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 50)
+
+[node name="vers_entrepot_rdc" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0, 27.3)
+
+[node name="vers_entrepot_etage" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0, 27.3)
+
+[node name="vers_entrepot_toit" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0, 27.3)
+
+[node name="vers_sentier" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 86.6, 0, 38)
+
+[node name="vers_ville_boulangerie" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 86.6, 0, 38)
+
+[node name="vers_village" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.6, 0, 40)
+
+[node name="vers_colline" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 1, 1.6)
+
+[node name="vers_foret_profonde" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 40, -0.5, 58.4)
+
+[node name="herbes_chat" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.087, 0, 33.562)
+
+[node name="p1" type="Marker3D" parent="Life/Places/herbes_chat"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -3.587, 0, -1.362)
+
+[node name="p2" type="Marker3D" parent="Life/Places/herbes_chat"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -1.587, 0, 0.938)
+
+[node name="p3" type="Marker3D" parent="Life/Places/herbes_chat"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.413, 0, -0.962)
+
+[node name="p4" type="Marker3D" parent="Life/Places/herbes_chat"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.613, 0, 0.438)
+
+[node name="p5" type="Marker3D" parent="Life/Places/herbes_chat"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4.113, 0, -1.562)
+
+[node name="p6" type="Marker3D" parent="Life/Places/herbes_chat"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.587, 0, 2.038)
+
+[node name="p7" type="Marker3D" parent="Life/Places/herbes_chat"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1.313, 0, 2.038)
+
+[node name="p8" type="Marker3D" parent="Life/Places/herbes_chat"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.687, 0, -1.562)
+
+[node name="potager_travail" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, 30.233)
+
+[node name="p1" type="Marker3D" parent="Life/Places/potager_travail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -0.033)
+
+[node name="p2" type="Marker3D" parent="Life/Places/potager_travail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.067)
+
+[node name="p3" type="Marker3D" parent="Life/Places/potager_travail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -0.033)
+
+[node name="cour_corvee" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.5, 0, 30.75)
+
+[node name="p1" type="Marker3D" parent="Life/Places/cour_corvee"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -7, 0, -0.25)
+
+[node name="p2" type="Marker3D" parent="Life/Places/cour_corvee"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0.25)
+
+[node name="p3" type="Marker3D" parent="Life/Places/cour_corvee"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4, 0, 0.25)
+
+[node name="p4" type="Marker3D" parent="Life/Places/cour_corvee"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -0.25)
+
+[node name="marelle" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 40)
+
+[node name="p1" type="Marker3D" parent="Life/Places/marelle"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, -1.1)
+
+[node name="p2" type="Marker3D" parent="Life/Places/marelle"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
+
+[node name="p3" type="Marker3D" parent="Life/Places/marelle"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 1.1)
+
+[node name="cour_tour" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.5, 0, 31.75)
+
+[node name="p1" type="Marker3D" parent="Life/Places/cour_tour"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -9.5, 0, -2.25)
+
+[node name="p2" type="Marker3D" parent="Life/Places/cour_tour"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 7.5, 0, -2.25)
+
+[node name="p3" type="Marker3D" parent="Life/Places/cour_tour"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -11.5, 0, 2.25)
+
+[node name="p4" type="Marker3D" parent="Life/Places/cour_tour"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13.5, 0, 2.25)
+
+[node name="cour_cercle" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 37)
+
+[node name="p1" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, 0)
+
+[node name="p2" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0.588, 0, 0.809, 0, 1, 0, -0.809, 0, 0.588, 3.24, 0, 2.35)
+
+[node name="p3" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0.951, 0, 0.309, 0, 1, 0, -0.309, 0, 0.951, 1.24, 0, 3.8)
+
+[node name="p4" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0.951, 0, -0.309, 0, 1, 0, 0.309, 0, 0.951, -1.24, 0, 3.8)
+
+[node name="p5" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0.588, 0, -0.809, 0, 1, 0, 0.809, 0, 0.588, -3.24, 0, 2.35)
+
+[node name="p6" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4, 0, 0)
+
+[node name="p7" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-0.588, 0, -0.809, 0, 1, 0, 0.809, 0, -0.588, -3.24, 0, -2.35)
+
+[node name="p8" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-0.951, 0, -0.309, 0, 1, 0, 0.309, 0, -0.951, -1.24, 0, -3.8)
+
+[node name="p9" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-0.951, 0, 0.309, 0, 1, 0, -0.309, 0, -0.951, 1.24, 0, -3.8)
+
+[node name="p10" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-0.588, 0, 0.809, 0, 1, 0, -0.809, 0, -0.588, 3.24, 0, -2.35)
+
+[node name="p11" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0.199, 0, 0.98, 0, 1, 0, -0.98, 0, 0.199, 5.29, 0, 1.07)
+
+[node name="p12" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0.605, 0, 0.797, 0, 1, 0, -0.797, 0, 0.605, 4.3, 0, 3.26)
+
+[node name="p13" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0.89, 0, 0.456, 0, 1, 0, -0.456, 0, 0.89, 2.46, 0, 4.81)
+
+[node name="p14" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(1, 0, 0.024, 0, 1, 0, -0.024, 0, 1, 0.13, 0, 5.4)
+
+[node name="p15" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0.911, 0, -0.412, 0, 1, 0, 0.412, 0, 0.911, -2.22, 0, 4.92)
+
+[node name="p16" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0.643, 0, -0.766, 0, 1, 0, 0.766, 0, 0.643, -4.14, 0, 3.47)
+
+[node name="p17" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(0.247, 0, -0.969, 0, 1, 0, 0.969, 0, 0.247, -5.23, 0, 1.33)
+
+[node name="p18" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-0.199, 0, -0.98, 0, 1, 0, 0.98, 0, -0.199, -5.29, 0, -1.07)
+
+[node name="p19" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-0.605, 0, -0.797, 0, 1, 0, 0.797, 0, -0.605, -4.3, 0, -3.26)
+
+[node name="p20" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-0.89, 0, -0.456, 0, 1, 0, 0.456, 0, -0.89, -2.46, 0, -4.81)
+
+[node name="p21" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-1, 0, -0.024, 0, 1, 0, 0.024, 0, -1, -0.13, 0, -5.4)
+
+[node name="p22" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-0.911, 0, 0.412, 0, 1, 0, -0.412, 0, -0.911, 2.22, 0, -4.92)
+
+[node name="p23" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-0.643, 0, 0.766, 0, 1, 0, -0.766, 0, -0.643, 4.14, 0, -3.47)
+
+[node name="p24" type="Marker3D" parent="Life/Places/cour_cercle"]
+transform = Transform3D(-0.247, 0, 0.969, 0, 1, 0, -0.969, 0, -0.247, 5.23, 0, -1.33)
+
+[node name="arbre_racines" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62.867, 0, 33.467)
+
+[node name="p1" type="Marker3D" parent="Life/Places/arbre_racines"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.167, 0, 0.033)
+
+[node name="p2" type="Marker3D" parent="Life/Places/arbre_racines"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.233, 0, -0.067)
+
+[node name="p3" type="Marker3D" parent="Life/Places/arbre_racines"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.067, 0, 0.033)
+
+[node name="arbre_branche_basse" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.5, 0, 33)
+
+[node name="p1" type="Marker3D" parent="Life/Places/arbre_branche_basse"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0)
+
+[node name="arbre_branche_mi" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62.4, 0, 33)
+
+[node name="p1" type="Marker3D" parent="Life/Places/arbre_branche_mi"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.3, 0)
+
+[node name="arbre_branche_haute" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.2, 0, 33)
+
+[node name="p1" type="Marker3D" parent="Life/Places/arbre_branche_haute"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.6, 0)
+
+[node name="champ_entrainement" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 73.5, -0.5, 23)
+
+[node name="p1" type="Marker3D" parent="Life/Places/champ_entrainement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -1)
+
+[node name="p2" type="Marker3D" parent="Life/Places/champ_entrainement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -1)
+
+[node name="p3" type="Marker3D" parent="Life/Places/champ_entrainement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -1)
+
+[node name="p4" type="Marker3D" parent="Life/Places/champ_entrainement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -1)
+
+[node name="p5" type="Marker3D" parent="Life/Places/champ_entrainement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 1)
+
+[node name="p6" type="Marker3D" parent="Life/Places/champ_entrainement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 1)
+
+[node name="p7" type="Marker3D" parent="Life/Places/champ_entrainement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 1)
+
+[node name="p8" type="Marker3D" parent="Life/Places/champ_entrainement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 1)
+
+[node name="champ_meneuse" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 75, -0.5, 19.5)
+
+[node name="champ_jeu" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, -0.5, 16.5)
+
+[node name="p1" type="Marker3D" parent="Life/Places/champ_jeu"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -5, 0, -3.5)
+
+[node name="p2" type="Marker3D" parent="Life/Places/champ_jeu"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2, 0, -0.5)
+
+[node name="p3" type="Marker3D" parent="Life/Places/champ_jeu"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2, 0, -3.5)
+
+[node name="p4" type="Marker3D" parent="Life/Places/champ_jeu"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 5, 0, -0.5)
+
+[node name="p5" type="Marker3D" parent="Life/Places/champ_jeu"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -4, 0, 3.5)
+
+[node name="p6" type="Marker3D" parent="Life/Places/champ_jeu"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4, 0, 4.5)
+
+[node name="champ_boue" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75.333, -0.5, 18.167)
+
+[node name="p1" type="Marker3D" parent="Life/Places/champ_boue"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -7.333, 0, -6.167)
+
+[node name="p2" type="Marker3D" parent="Life/Places/champ_boue"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -3.333, 0, 3.833)
+
+[node name="p3" type="Marker3D" parent="Life/Places/champ_boue"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.667, 0, -7.167)
+
+[node name="p4" type="Marker3D" parent="Life/Places/champ_boue"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4.667, 0, 5.833)
+
+[node name="p5" type="Marker3D" parent="Life/Places/champ_boue"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 6.667, 0, -4.167)
+
+[node name="p6" type="Marker3D" parent="Life/Places/champ_boue"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -1.333, 0, 7.833)
+
+[node name="fourre_embuscade" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 83.6, -0.5, 17)
+
+[node name="p1" type="Marker3D" parent="Life/Places/fourre_embuscade"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, -3.5)
+
+[node name="p2" type="Marker3D" parent="Life/Places/fourre_embuscade"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 3.5)
+
+[node name="clairiere_nephren" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 18, 0.5, 16)
 
 [node name="Areas" type="Node3D" parent="Life"]
 

@@ -43,10 +43,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import carte_plans  # noqa: E402
 import hd2d_interior  # noqa: E402
+import life_zones  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CARTE = os.path.join(ROOT, "docs", "lore", "CARTE.md")
-INTERIOR_MAPS = ["entrepot_rdc", "entrepot_etage", "salle_des_armes"]
+INTERIOR_MAPS = ["entrepot_rdc", "entrepot_etage", "salle_des_armes", "cafe", "maison_limashenka"]
 OUTDOOR_MAPS = ["entrepot_toit"]
 WALL_HALF = 0.125
 # Écart d'une ouverture à un angle (InteriorLayout : demi-mur + 0,05 m, et un peu de marge).
@@ -65,12 +66,15 @@ ROOM_NAMES = {
     "absentes": "Chambre des aînées absentes", "nephren": "Chambre de Nephren",
     "dortoir_a": "Dortoir A", "dortoir_b": "Dortoir B", "dortoir_c": "Dortoir C", "dortoir_d": "Dortoir D",
     "lingerie": "Lingerie", "crypte": "Crypte",
+    # (C2) Le café du village et la maison Limashenka (CARTE.md, section 5).
+    "salle": "Salle du café", "arriere": "Arrière-boutique", "vestibule": "Vestibule", "salon": "Salon",
 }
 WALLCUTS = {"wall_cellar_stone": "wallcut_stone"}
 # Appui des fenêtres (cahier n° 3, 3.2) ; window_reading_seat est un meuble dans le plan.
 SILLS = {
     "window_cross_small": 1.0, "window_cross_large": 0.8, "window_dusty": 1.3,
     "window_curtains_open": 0.8, "window_curtains_closed": 0.8, "window_bare": 0.7,
+    "window_shutters": 0.8,
 }
 # Portes vers le dehors (CARTE.md 3.1) : identifiant (InteriorRoom.door_position), hauteur,
 # franchie en marchant (porte d'entrée, porte de service) ou fermée (porte rivetée).
@@ -78,10 +82,15 @@ OUTSIDE_DOORS = {
     "door_double": {"id": "entree", "height": 2.4, "passable": True},
     "door_service": {"id": "service", "height": 2.2, "passable": True},
     "door_armory": {"id": "armes", "height": 2.3, "passable": False},
+    # (C2) La porte du café et celle de la maison Limashenka, sur le mur sud (coupé) : on la franchit en marchant.
+    "door_room": {"id": "sortie", "height": 2.2, "passable": True},
 }
 # Porte d'une pièce qu'on franchit : chambranle seul, ouverture transparente (E3 : door_room,
 # opaque, cacherait le joueur sur le seuil).
 PASSABLE_IMAGE = "door_frame_wood"
+# (C2) Portes d'une pièce qu'on franchit et qui gardent leur image : le rideau de l'arrière-boutique, sur une cloison
+# nord-sud (vue de chant par la caméra : il ne cache pas le joueur).
+OWN_IMAGE_DOORS = ("door_backroom",)
 # Lampes par type (« lumiere » des plans) : rayon (m), couleur, énergie. cristal_eteint : la lampe
 # des archives, éteinte (pas de halo).
 LIGHT_TYPES = {
@@ -101,6 +110,10 @@ MAP_SETTINGS = {
     "entrepot_etage": {"camera_bounds": (2.0, 4.0, 28.0, 6.0), "light_preset": "interieur"},
     "salle_des_armes": {"camera_bounds": (5.0, 3.0, 4.0, 3.0), "light_preset": ""},
     "entrepot_toit": {"camera_bounds": (6.0, 4.0, 4.0, 4.0), "light_preset": ""},
+    # (C2) Une seule pièce de 10 × 8 m ou 12 × 10 m : la caméra reste au droit du joueur (x de 2 à la largeur − 2) et
+    # cadre la pièce entière (docs/INTERIEURS.md, 1.6).
+    "cafe": {"camera_bounds": (2.0, 5.0, 8.0, 0.0), "light_preset": "interieur"},
+    "maison_limashenka": {"camera_bounds": (2.0, 4.0, 6.0, 0.0), "light_preset": "interieur"},
 }
 # Sorties vers une carte qui n'existe pas encore (construite en parallèle) : provisoirement vers
 # une carte existante, au Spawn ; relancer gen les raccorde dès que la cible existe.
@@ -121,7 +134,7 @@ EXAMINE = {
         ("planning", "mural", "wallitem_chore_chart", {}),
         ("ecriteau_couloir", "mural", "wallitem_notice_b", {}),
         ("porte_armes", "point", (20.78, 1.4), {"w": 0.35, "d": 0.6}),
-        ("archives_horloge", "mural", "wallitem_wall_clock", {}),
+        ("archives_horloge", "mural", "wall_clock_swing", {}),
         ("archives_coupures", "mural", "wallitem_clippings", {}),
         ("archives_rapport", "meuble", ("paper_pile_a", 0), {}),
         ("archives_bon", "meuble", ("desk_buried", 0), {}),
@@ -146,7 +159,7 @@ EXAMINE = {
         ("nygglatho_cristal", "meuble", ("comm_crystal", 0), {}),
         ("nygglatho_the", "meuble", ("shelf_nygglatho", 0), {}),
         ("nygglatho_gateau", "meuble", ("tea_table", 0), {}),
-        ("grande_soeur_bureau", "meuble", ("desk_clean_brooch", 0), {}),
+        ("grande_soeur_bureau", "meuble", ("desk_clean", 0), {}),
         ("grande_soeur_cartes", "meuble", ("cards_floor", 0), {}),
         ("ecriteau_toilettes", "mural", "wallitem_notice_a", {}),
         ("ithea_roman", "meuble", ("book_pile", 0), {}),
@@ -160,16 +173,48 @@ EXAMINE = {
         ("tissu", "meuble", ("swords_wrapped", 0), {}),
     ],
     "entrepot_toit": [],
+    # (C2) Textes : data/texts/village.json (TEXTS_PATH).
+    "cafe": [
+        ("menu", "mural", "wallitem_menu_cafe", {}),
+        ("comptoir", "meuble", ("cafe_counter", 0), {}),
+        ("etagere", "meuble", ("cafe_bottle_shelf", 0), {}),
+        ("buveurs", "meuble", ("cafe_drinkers_table", 0), {}),
+        ("fenetre", "fenetre", "window_cross_small", {}),
+        ("clochette", "point", (4.75, 8.3), {"w": 1.4, "d": 0.6}),
+        ("arriere", "point", (8.0, 3.0), {"w": 0.5, "d": 1.2}),
+    ],
+    "maison_limashenka": [
+        ("horloge", "mural", "wallitem_clock_limashenka", {}),
+        ("portrait", "mural", "wallitem_family_portrait", {}),
+        ("vitrine", "meuble", ("display_cabinet", 0), {}),
+        ("boite_outils", "meuble", ("toolbox_gears", 0), {}),
+        ("fauteuil", "meuble", ("armchair_sheeted", 0), {}),
+        ("pateres", "mural", "wallitem_coat_hooks", {}),
+    ],
 }
+# Fichier des textes à examiner de chaque carte (Examinable.texts_path) ; sans entrée : celui de l'entrepôt.
+TEXTS_PATH = {"cafe": "res://data/texts/village.json", "maison_limashenka": "res://data/texts/village.json"}
 # Ce qui bloque sans image : la place sous le haut de l'escalier (on n'y entre pas : le palier de
 # l'étage est au-dessus). (nom, x0, z0, x1, z1, hauteur).
 BLOCKERS = {
     "entrepot_rdc": [("sous_escalier", 16.7, 1.125, 18.3, 2.5, 3.0)],
+    # (C2) Derrière le comptoir du café, au bout de la vitrine à gâteaux (1,2 m de comptoir + 0,6 m de vitrine) : on n'y
+    # passe pas (la vitrine cacherait la taille du joueur, CARTE.md 0.3) ; le serveur tient en deçà (place
+    # comptoir_arriere, x = 4).
+    "cafe": [("derriere_vitrine", 4.7, 1.8, 5.3, 2.55, 1.0)],
 }
 # Éléments que le plan pose en « mural » mais qui sont des images de meubles (props/) ou de porte :
 # InteriorPanel plaqué au mur. Le grand miroir, sur le mur ouest, regarde l'est (keep_orientation) ;
 # la porte rivetée vue de la crypte, en haut des marches, finit au haut du mur.
 FACE_EAST = "E"
+# (I2) Éléments « mural » du plan qui sont des bandes animées (DecorPanel accroché au mur, comme le grand miroir) ;
+# bandes « objet » qui reprennent l'image d'un meuble au pixel près (posées au sol, à son bord sud) ; celles que
+# l'histoire allume (l'appel du cristal de Nygglatho : un nœud caché, `visible = true` quand il sonne) ; chute
+# de la vapeur du bain sous le rebord de la baignoire (m).
+WALL_ANIMS = ("wall_clock_swing",)
+OVERLAYS = ("comm_crystal_call",)
+HIDDEN_OBJECTS = ("comm_crystal_call",)
+BATH_WATER_DROP = 0.3
 PROVISIONAL_NOTE = "provisoire (docs/DECISIONS.md, T2)"
 
 # Rien ne cache le joueur (docs/INTERIEURS.md ; CARTE.md 0.3) : un meuble dont l'image dépasse
@@ -498,7 +543,7 @@ def interior_json(map_id, plan):
         else:
             entry = {"between": [a, b], place["axis"]: place["center"], "width": place["width"]}
             if door.kind == "porte":
-                entry["image"] = PASSABLE_IMAGE
+                entry["image"] = image if image in OWN_IMAGE_DOORS else PASSABLE_IMAGE
         doors.append(entry)
     windows = []
     for window in plan.windows:
@@ -615,7 +660,7 @@ def feet_hidden(player_x, player_z, front, x0, x1, top, bounds):
 
 def image_size_m(name):
     """(largeur, hauteur) en m d'une image d'intérieur (assets/hd2d/interior/, props/ compris)."""
-    for folder in ("interior", os.path.join("interior", "props")):
+    for folder in ("interior", os.path.join("interior", "props"), "props"):
         path = os.path.join(ROOT, "assets", "hd2d", folder, name + ".png")
         if os.path.exists(path):
             with Image.open(path) as image:
@@ -781,6 +826,12 @@ def interior_scene(map_id, plan, settings):
             scene.node(unique(wall.name), parent=parent, instance=instance,
                        props=[("transform", transform(x, wall.extra["bas"], wall.extra["pos"], YAWS[FACE_EAST])),
                               ("keep_orientation", "true"), ("image_offset", "Vector3(0, 0, 0)")])
+        elif wall.name in WALL_ANIMS and side == "W":
+            # (I2) Bande animée accrochée au mur ouest (l'horloge des archives) : DecorPanel qui regarde l'est.
+            x = room.x0 + WALL_HALF + 0.03
+            scene.node(unique(wall.name), parent=parent, instance=instance,
+                       props=[("transform", transform(x, wall.extra["bas"], wall.extra["pos"], YAWS[FACE_EAST])),
+                              ("keep_orientation", "true")])
         elif wall.name == "door_armory_inside" and side == "N":
             height = HEIGHTS[wall.name]
             y = max(0.0, min(wall.extra["bas"], 3.0 - height))
@@ -800,10 +851,18 @@ def interior_scene(map_id, plan, settings):
         y = support["h"] if support else 0.0
         if obj.name == "pot_steam":
             y = support["h"] - 0.15
+        elif obj.name == "bath_steam":
+            # Le bas de l'image est la surface de l'eau : un peu sous le rebord de la baignoire.
+            y = support["h"] - BATH_WATER_DROP
         elif obj.name == "hearth_fire":
             y = 0.1
-        scene.node(unique(obj.name), parent=parent, instance=instance,
-                   props=[("transform", transform(x, round(y, 3), round(front, 3)))])
+        elif obj.name in OVERLAYS:
+            # (I2) Image qui reprend celle d'un meuble au pixel près : même pied, même bord sud.
+            y = 0.0
+        props = [("transform", transform(x, round(y, 3), round(front, 3)))]
+        if obj.name in HIDDEN_OBJECTS:
+            props.append(("visible", "false"))
+        scene.node(unique(obj.name), parent=parent, instance=instance, props=props)
     # Ce qui bloque sans image.
     for name, x0, z0, x1, z1, h in BLOCKERS.get(map_id, []):
         room_id = room_of(plan, (x0 + x1) / 2.0, (z0 + z1) / 2.0)
@@ -847,11 +906,16 @@ def markers_exits_life(scene, map_id, plan, furniture, exit_script):
         scene.node(key, "Area3D", "Examine",
                    props=[("transform", transform(x, 0.0, z)), ("script", examine_script),
                           ("text_key", json.dumps("%s/%s" % (map_id, key))),
-                          ("size", "Vector3(%s)" % ", ".join(num(round(v, 3)) for v in size))])
+                          ("size", "Vector3(%s)" % ", ".join(num(round(v, 3)) for v in size))]
+                   + ([("texts_path", json.dumps(TEXTS_PATH[map_id]))] if map_id in TEXTS_PATH else []))
     scene.node("Life", "Node3D", ".")
     scene.node("Places", "Node3D", "Life")
-    for name, x, z, yaw in places(map_id, plan, furniture):
-        scene.node(name, "Marker3D", "Life/Places", props=[("transform", transform(x, 0.0, z, yaw))])
+    for name, x, z, yaw, y, children in places(map_id, plan, furniture):
+        scene.node(name, "Marker3D", "Life/Places", props=[("transform", transform(x, y, z, yaw))])
+        # (V1) Les points d'une zone : enfants du marqueur, en repère local (le marqueur n'est pas tourné).
+        for k, (cx, cz, cyaw, dy) in enumerate(children):
+            scene.node("p%d" % (k + 1), "Marker3D", "Life/Places/%s" % name,
+                       props=[("transform", transform(round(cx - x, 3), round(dy - y, 3), round(cz - z, 3), cyaw))])
 
 
 def examine_spots(map_id, plan, furniture):
@@ -902,9 +966,10 @@ BEDS = ("bed_iron", "bed_plain", "bed_child", "bed_child_messy", "bed_chtholly",
 
 
 def places(map_id, plan, furniture):
-    """Places nommées : les points du plan, puis chaque chaise (assise) et chaque lit (couchage) ;
-    (nom, x, z, regard en degrés)."""
-    out = [(name, p.rect.x0, p.rect.z0, 0.0) for name, p in plan.points.items()]
+    """Places nommées : les points du plan, puis chaque chaise (assise) et chaque lit (couchage), puis les
+    zones et les départs de tools/life_zones.py ; (nom, x, z, regard en degrés, hauteur, points enfants)."""
+    out = [(name, p.rect.x0, p.rect.z0, life_zones.point_yaw(map_id, name), 0.0, [])
+           for name, p in plan.points.items()]
     taken = {name for name, *_ in out}
     rows = {}
     for item in furniture:
@@ -914,7 +979,7 @@ def places(map_id, plan, furniture):
         letter = "abcdefgh"[k]
         for n, item in enumerate(sorted(rows[z], key=lambda f: f["x"])):
             out.append(("%s_chaise_%s%02d" % (room_of(plan, item["x"], item["z"]), letter, n + 1), item["x"],
-                        item["z"], CHAIR_FACING[item["image"]]))
+                        item["z"], CHAIR_FACING[item["image"]], 0.0, []))
     beds = {}
     for item in furniture:
         if item["image"] in BEDS:
@@ -928,13 +993,15 @@ def places(map_id, plan, furniture):
             if base in taken:
                 base += "_couche"
             if item["image"] == "bunk_bed":
-                out.append((base + "_bas", item["x"], item["z"], 0.0))
-                out.append((base + "_haut", item["x"], item["z"], 0.0))
+                out.append((base + "_bas", item["x"], item["z"], 0.0, life_zones.BED_HEIGHT, []))
+                out.append((base + "_haut", item["x"], item["z"], 0.0, life_zones.BUNK_HEIGHT, []))
             else:
-                out.append((base, item["x"], item["z"], 0.0))
+                out.append((base, item["x"], item["z"], 0.0, life_zones.BED_HEIGHT, []))
             taken.add(base)
-    extra = EXTRA_PLACES.get(map_id, [])
-    out += [(name, x, z, yaw) for name, x, z, yaw in extra]
+    out += [(name, x, z, yaw, 0.0, []) for name, x, z, yaw in EXTRA_PLACES.get(map_id, [])]
+    for entry in life_zones.zones_of(map_id):
+        x, z, yaw, _dy = life_zones.anchor(entry)
+        out.append((entry["name"], x, z, yaw, 0.0, entry["pts"]))
     names = [name for name, *_ in out]
     duplicates = {n for n in names if names.count(n) > 1}
     if duplicates:
@@ -949,7 +1016,6 @@ EXTRA_PLACES = {
         ("archives_canape_assise", 23.65, 6.5, 180.0),
         ("infirmerie_chevet", 25.0, 12.15, 180.0),
         ("jeux_piano", 16.2, 12.1, 0.0),
-        ("bains_sechage", 4.5, 12.6, 0.0),
     ],
     "entrepot_etage": [
         ("nygglatho_chaise_invite", 9.0, 4.4, 180.0),
@@ -958,6 +1024,15 @@ EXTRA_PLACES = {
     ],
     "salle_des_armes": [],
     "entrepot_toit": [],
+    # (C2) Places que VIE.md et ACTE1.md citent et que les points du plan ne nomment pas.
+    "cafe": [
+        ("comptoir_arriere", 4.0, 2.2, 180.0),
+        ("entree", 4.75, 8.3, 0.0),
+    ],
+    "maison_limashenka": [
+        ("salon_canape_assise", 6.0, 5.3, 180.0),
+        ("vestibule_porte", 2.25, 5.6, 0.0),
+    ],
 }
 
 
@@ -1032,6 +1107,11 @@ def roof_ground(map_id, plan):
 # modules de 2 m au nord, à l'est et au sud ; le volume ouest (Building) et son pan d'ardoise ; les
 # lisières au nord, 6,5 m plus bas ; quelques détails (linge, seau, mousse).
 ROOF_RAILING = 2.0
+# Tuiles de sol de la terrasse (floor_roof_deck : 4 × 4 m, étirée à 3,5 m dans le sens nord-sud pour que 4 rangées
+# couvrent les 14 m de la terrasse sans dépasser) et modules du bord d'ardoise (centres en x).
+ROOF_DECK_TILE = 4.0
+ROOF_DECK_TILE_Z = 3.5
+ROOF_EDGE_X = (1.0, -3.0)
 ROOF_TREES = [
     ("treeline_autumn_b", 0.0, -2.5), ("treeline_autumn_a", 15.0, -2.5),
     ("treeline_autumn_a", -6.0, -9.0), ("treeline_autumn_b", 9.0, -9.0), ("treeline_autumn_a", 24.0, -9.0),
@@ -1110,10 +1190,28 @@ def roof_scene(map_id, plan, settings):
     # Le volume ouest : son toit d'ardoise (faîtage est-ouest à 3,5 m au-dessus de la terrasse).
     scene.node("entrepot_volume_ouest", parent="Geometry/VolumeOuest", instance=building,
                props=[("transform", transform(-6.0, -6.5, 8.0))])
+    # (I2) Le sol de la terrasse : floor_roof_deck (livrée) en tuiles de 4 m de large et 3,5 m de long (le sol
+    # de MapGround reste dessous, sans trou), posées bout à bout sur toute la terrasse.
+    columns = int(round(deck.w() / ROOF_DECK_TILE))
+    rows = int(round(deck.d() / ROOF_DECK_TILE_Z))
+    for row in range(rows):
+        for column in range(columns):
+            x = deck.x0 + ROOF_DECK_TILE * (column + 0.5)
+            z = deck.z0 + ROOF_DECK_TILE_Z * (row + 0.5)
+            scale = ROOF_DECK_TILE_Z / ROOF_DECK_TILE
+            instance = scene.res("PackedScene", scene_path("floor_roof_deck"), "p_floor_roof_deck")
+            scene.node(unique("floor_roof_deck"), parent="Geometry/Terrasse", instance=instance,
+                       props=[("transform", "Transform3D(1, 0, 0, 0, 1, 0, 0, 0, %s, %s, 0, %s)"
+                               % (num(scale), num(x), num(z)))])
+    # (I2) Le bord du pan d'ardoise (roof_edge_slate, 4 × 1 m) au pied de l'égout sud du volume ouest, contre la
+    # terrasse : deux modules bout à bout, de x = -5 à 3.
+    for x in ROOF_EDGE_X:
+        place("Geometry/VolumeOuest", "roof_edge_slate", x, 0.0, deck.z1)
     for image, x, z in ROOF_TREES:
         place("Geometry/Lisiere", image, x, -6.5, z)
     for image, x, z in ROOF_DETAILS:
-        place("Geometry/Terrasse", image, x, 0.0, z)
+        # Les taches de mousse (décalques) passent d'une couche : le sol de la terrasse reste dessous.
+        place("Geometry/Terrasse", image, x, 0.0, z, 0.0, [("layer", "1")] if image.startswith("moss_") else [])
     markers_exits_life(scene, map_id, plan, [], exit_script)
     return scene
 
@@ -1151,21 +1249,33 @@ def places_markdown(map_id, plan):
     furniture = expand_furniture(plan) if map_id in INTERIOR_MAPS else []
     entries = places(map_id, plan, furniture)
     points = set(plan.points)
-    extra = [e for e in entries if e[0] not in points]
+    zone_names = {z["name"] for z in life_zones.zones_of(map_id)}
+    extra = [e for e in entries if e[0] not in points and e[0] not in zone_names]
     chairs = [e[0] for e in extra if "_chaise_" in e[0] and e[0][-2:].isdigit()]
     beds = [e[0] for e in extra if "_lit" in e[0]]
     others = [e[0] for e in extra if e[0] not in chairs and e[0] not in beds]
     lines = ["<!-- places:%s -->" % map_id,
-             "**Places de la vie** (lot T2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : "
-             "les points nommés ci-dessus, à leur nom"]
+             "**Places de la vie** (lots %s ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : "
+             "les points nommés ci-dessus, à leur nom" % ("C2 et V1" if map_id in ("cafe", "maison_limashenka") else "T2 et V1")]
     if chairs:
         lines[-1] += " ; chaque chaise, `%s` à `%s` (rangées a à %s du nord au sud, numérotées d'ouest en " \
                      "est ; regard vers la table)" % (chairs[0], chairs[-1], chairs[-1].split("_")[-1][0])
     if beds:
-        lines[-1] += " ; chaque lit : %s" % ", ".join("`%s`" % b for b in beds)
+        lines[-1] += " ; chaque lit (hauteur du dormeur : %s m, %s m en haut d'un lit superposé) : %s" % (
+            ("%g" % life_zones.BED_HEIGHT).replace(".", ","), ("%g" % life_zones.BUNK_HEIGHT).replace(".", ","),
+            ", ".join("`%s`" % b for b in beds))
     if others:
         lines[-1] += " ; et %s" % ", ".join("`%s`" % o for o in others)
     lines[-1] += "."
+    zones = life_zones.zones_of(map_id)
+    if zones:
+        lines.append("")
+        lines.append("**Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z ; "
+                     "`vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :")
+        lines.append("")
+        for entry in zones:
+            count = len(entry["pts"])
+            lines.append("- `%s`%s : %s" % (entry["name"], " (%d points)" % count if count else "", entry["why"]))
     lines.append("<!-- /places:%s -->" % map_id)
     return "\n".join(lines)
 

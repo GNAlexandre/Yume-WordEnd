@@ -204,7 +204,8 @@ class Pose:
         j = min(max(j, 0), self.D - 1)
         c = j * self.W + i
         if ground.kinds[c] == map_build.FLAT:
-            return ground.levels[c] * 0.5
+            # Le vide (case sans palier : le bord de l'île) n'a pas de sol ; un décor qui y est posé donne son y.
+            return 0.0 if ground.levels[c] is None else ground.levels[c] * 0.5
         k, count, low, high, _start = ground.run[c]
         d = ground.dirs[c]
         t = {0: (j + 1) - z, 1: x - i, 2: z - j, 3: (i + 1) - x}[d]
