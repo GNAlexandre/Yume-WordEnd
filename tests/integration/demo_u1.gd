@@ -42,7 +42,7 @@ const ANSWERS: Array[String] = [
 const MENU_VIEWS: Array[String] = ["menu", "sauvegarde", "credits"]
 ## Vues des signes : carte, lieu (repère de la carte), genre de la cible cherchée, créneau.
 const SIGN_VIEWS := {
-	"cour": [&"entrepot", Vector3(42.0, 0.0, 41.0), InteractSign.TALK, &"apres_midi"],
+	"cour": [&"entrepot", Vector3(35.0, 0.0, 34.0), InteractSign.TALK, &"apres_midi", &"nygglatho"],
 	"refectoire": [&"entrepot_rdc", Vector3(11.0, 0.0, 5.55), InteractSign.TALK, &"soir"],
 	"cafe": [&"cafe", Vector3(4.0, 0.0, 4.2), InteractSign.TALK, &"soir"],
 	"objet": [&"entrepot_rdc", Vector3(3.3, 0.0, 6.6), InteractSign.EXAMINE, &"apres_midi"],
@@ -168,6 +168,11 @@ func _stage_sign_view() -> void:
 	_put_player(spot, Vector3.FORWARD)
 	await get_tree().create_timer(1.5).timeout
 	var candidates := _targets_by_distance(spot, setup[2] as StringName)
+	# Une cible nommée (immobile, hors des jeux d'E8) passe d'abord.
+	for candidate: Node3D in candidates.duplicate():
+		if setup.size() > 4 and candidate.name == setup[4]:
+			candidates.erase(candidate)
+			candidates.push_front(candidate)
 	if candidates.is_empty():
 		candidates = _targets_by_distance(spot, &"")
 	if candidates.is_empty():
