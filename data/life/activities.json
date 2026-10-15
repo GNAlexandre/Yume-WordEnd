@@ -122,6 +122,12 @@
       "gait": "course",
       "params": {"min_members": 2, "ready_time": 1.6, "pause": [8, 12], "scold_radius": 2.5, "lane": 0.6}
     },
+    "ballon": {
+      "_comment": "Le ballon dans le champ (E8 ; VIE.md, 5.1) : src/life/games/ballon.gd, chiffres dans data/games/ballon.json (params : surcharges). Place : champ_centre ; la clé « role » de la ligne : rouge, blanc ou arbitre.",
+      "game": "ballon",
+      "gait": "course",
+      "params": {}
+    },
     "avalanche": {
       "_comment": "Collées à la porte de Nygglatho pour épier (V1) : src/life/games/avalanche.gd.",
       "game": "avalanche",

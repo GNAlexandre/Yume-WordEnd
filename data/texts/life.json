@@ -130,6 +130,102 @@
       "gag": [
         "{player} prend son élan… et s’arrête au bord, toute rouge."
       ]
+    },
+    "ballon": {
+      "kickoff": [
+        "Coup d’envoi !",
+        "On y va !"
+      ],
+      "half_time": [
+        "Mi-temps ! Les meilleures buteuses restent.",
+        "Mi-temps ! Un peu d’eau, vite."
+      ],
+      "full_time": [
+        "Fin du match !",
+        "C’est fini, on rentre goûter !"
+      ],
+      "goal": [
+        "But !",
+        "Elle l’a mis !",
+        "Dans la cage !"
+      ],
+      "save": [
+        "Arrêt !",
+        "Pas passé !",
+        "Je l’ai !"
+      ],
+      "fall": [
+        "Aïe !",
+        "Pouce, j’ai glissé…",
+        "Ouf, ça va !"
+      ],
+      "lost": [
+        "Mon ballon !",
+        "Il est parti dans les ronces !",
+        "Je vais le chercher !"
+      ],
+      "found": [
+        "Je l’ai !",
+        "Retrouvé !"
+      ],
+      "found_player": [
+        "Merci, {player} !",
+        "{player} a trouvé le ballon !"
+      ],
+      "bench": [
+        "Allez !",
+        "Vas-y !",
+        "Tire !"
+      ],
+      "sub": [
+        "À toi !",
+        "Je te laisse ma place !"
+      ],
+      "player_in_blanc": [
+        "{player} joue avec les blanches !"
+      ],
+      "player_in_rouge": [
+        "{player} joue avec les rouges !"
+      ],
+      "team_blanc": "Blanches",
+      "team_rouge": "Rouges",
+      "half_1": "1re mi-temps",
+      "half_2": "2e mi-temps",
+      "half_break": "Mi-temps",
+      "full_time_label": "Fin du match"
+    },
+    "baton": {
+      "start": [
+        "Allez, Chtholly. Prends ton bâton."
+      ],
+      "start_b": [
+        "Trois contre un. Voyons ça."
+      ],
+      "tired": [
+        "Tes genoux tremblent. Tiens bon.",
+        "Le poids, Chtholly : entre tenir et pousser."
+      ],
+      "success_a": [
+        "Voilà. Tu y es."
+      ],
+      "success_b": [
+        "Soixante secondes. Pas mal."
+      ],
+      "touched": [
+        "Touché ! Bien joué.",
+        "Ah ! Dans la garde. Bien."
+      ],
+      "fail": [
+        "Assez pour aujourd’hui. Reprends ton souffle."
+      ],
+      "open": [
+        "Ah !",
+        "Hm."
+      ],
+      "hud_streak": "Enchaînement",
+      "hud_touches": "Touches",
+      "hud_counters": "Contres",
+      "hud_title": "Entraînement au bâton"
     }
   },
   "fairy_names": [
