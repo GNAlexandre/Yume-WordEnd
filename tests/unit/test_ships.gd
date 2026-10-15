@@ -356,6 +356,21 @@ func test_the_ship_step_is_checked() -> void:
 	)
 
 
+func test_the_points_of_the_berth_are_known_to_the_scenes() -> void:
+	# Les marqueurs que la scène 7.4 vise sur la passerelle posée, lus dans la scène du port.
+	var data := _scene({"do": "walk", "who": "player", "to": "navire_trappe"})
+	data["steps"].append({"do": "walk", "who": "player", "to": "navire_passerelle"})
+	data["steps"].append({"do": "walk", "who": "player", "to": "navire_quai"})
+	assert_eq(StoryData.scene_problems(&"essai", data, ISLAND, true), PackedStringArray())
+	var top := _map.marker(&"navire_trappe")
+	assert_almost_eq(top.global_position.x, 32.5, 0.01)
+	ShipControl.pose(SHIP, &"deploy_gangway")
+	assert_almost_eq(
+		top.global_position.y - 0.2, _ship().gangway_top().y, 0.1, "au seuil de la trappe"
+	)
+	assert_almost_eq(-top.global_basis.z, Vector3.BACK, Vector3.ONE * 0.01, "regard vers le quai")
+
+
 func test_the_ship_step_plays_and_a_skipped_scene_finishes_it() -> void:
 	var runner := StoryRunner.new()
 	add_child(runner)

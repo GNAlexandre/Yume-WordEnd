@@ -3248,3 +3248,40 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   périmé donne des rectangles d'herbe aux bords des matières).
 - **(G6) Le Carillon de Willem** : sur décision de l'utilisateur (15 octobre 2026), la planche `willem/willem_duel` (Willem et le Carillon de série Percival, duel du jour 8 et entraînement du jour 11) est commandée au cahier n° 6, C.10, priorité 1.
 - **(Intégration CP + CV) Les retours d'une carte d'attente** : `WAITING[<id>]["more"]` (tools/exterior_maps.py) ajoute à une carte d'attente d'autres sorties de retour, chacune avec son marqueur d'arrivée `from_<cible>` ; `ville_marche` reçoit ainsi la route du port (sortie `vers_port`, marqueur `from_port`), que le contrat des cartes (`test_maps`) exige depuis que la route du port vers la ville s'ouvre.
+- **E7 — le navire en volume est un assemblage de panneaux** (`Ship`, src/world/props/ships/garde_transport.tscn) : le flanc
+  (`ships/garde_transport_side`, debout), le pont vu de dessus couché derrière lui (`ships/garde_transport_deck`, remplaçant), les
+  rotors, la trappe, la passerelle (un Building incliné) ; pas un `Building` à façade : sa boîte se verrait derrière la quille
+  courbe et l'étrave. Le navire n'est jamais sous `Geometry` (le PropBatcher fondrait ses panneaux et figerait son mouvement et ses
+  bandes) : il est dans le poste d'amarrage `Berth` de la carte.
+- **E7 — en dehors des scènes, le poste est vide** (CARTE.md 6.2, ACTE1.md 6) : le transport ne paraît qu'appelé par le récit
+  (`ShipControl.descend`, ou `dock` / `pose`) ; son état (à quai, trappe, passerelle, embarquement) est dans des drapeaux de GameState
+  (`ship_transport_garde_docked|hatch|gangway|boarding`), sauvegardés, pour qu'une carte du port rechargée le retrouve.
+- **E7 — les bras d'ancrage sont des bandes** (`anim/mooring_arm_clamp`, image 0 = `mooring_arm_open` au pixel près) posées hors de
+  `Geometry`, sous `Berth/Arms` (mêmes noms `BrasAncrage1..3`, mêmes x, même collision) : une bande posée par-dessus le bras fondu
+  laisserait voir le bras ouvert derrière le bras abaissé. Ils se referment de la poupe (ouest) à la proue (est), s'ouvrent dans
+  l'autre sens au départ.
+- **E7 — la trappe au droit de la passerelle** (x 32,5, CARTE.md 6.2) et non « à l'arrière » (cahier n° 6, C.1) : le plan du port
+  pose la passerelle et le point `navire_quai` à x 32,5, sous le seuil de la trappe, au-dessus du moyeu avant ; le navire reste
+  centré en x 30 (de x 22 à 38). Le pont est à 1 m au-dessus du quai (la quille 1,5 m dessous) ; la passerelle (2 × 3,6 m,
+  pente de 17°) se pose sur le quai en z 6,6, au nord de `navire_quai` (7,6).
+- **E7 — le projecteur cache la silhouette** : un cône (`sky/ship_searchlight`, agrandi à 8 × 17,6 m sous la quille) et un
+  éblouissement devant la coque (`sky/ship_glare`, hors cahier, lot E7), lumineux par eux-mêmes (lueur blanche), éteints entre 35 %
+  et 85 % de la descente ; la descente ralentit (hauteur en (1 − t)²), un roulis de 1,6° s'éteint en arrivant.
+- **E7 — la porte du vide** : le bord du vide du port est ouvert devant la passerelle (la boîte `vide` coupée de x 31,4 à 33,6 par la
+  recette, et la barrière invisible de la côte ouverte par `barrier_gaps`, une clé nouvelle du sol, E2) ; le `Gate` du poste la
+  ferme tant que la passerelle n'est pas posée. La sortie « Monter à bord » (plan : au pied de la passerelle) n'a ni invite ni
+  signe tant que le navire n'est pas à quai, passerelle posée, **et** que le récit n'a pas permis l'embarquement
+  (`ShipControl.allow_boarding` ; jamais à l'acte 1).
+- **E7 — l'API du récit est statique** (`ShipControl`, sans autoload ni PR « contrats »), plus une étape `ship` du moteur de scènes
+  (StoryData.STEPS, StoryRunner) : une séquence passée pose l'état final d'un coup. Les actions sont des lignes de temps du poste,
+  avancées à l'image physique (`ShipBerth.advance`, que les tests et les captures avancent à la main).
+- **E7 — le pont `transport_garde`** : le vide entre le pont et le quai passe de 1 à 2,5 m (la côte lissée du sol refermait 1 m) ;
+  « Descendre à quai » est en haut de la passerelle (on arrive à 2,6 m d'elle) ; la coque sous le pont est un Building dont la façade
+  est le bas du flanc (`ships/garde_transport_hull`, recette : le flanc coupé sous la ligne du pont), 0,4 m au sud du bord du pont
+  pour cacher la roche que le sol dessine sous la côte (CARTE.md 6.3, écarts).
+- **E7 — le Barocupot** : portes de passage en chambranle de bois (`door_frame_wood`, comme partout : `door_bulkhead`, opaque,
+  cacherait le joueur sur le seuil) ; hublots à 1,3 m ; un vestiaire au sas, un banc et un bidon dans la coursive (lot S, en plus
+  du plan) ; région `ciel`, hors de la carte de l'île (on n'y voyage pas : on y arrive par la scène 8.7).
+- **E7 — l'ombre du Barocupot** (8.6) : la silhouette livrée (`props/airship_barocupot`) à 48 px/m, teintée sombre, à alpha doux,
+  posée par `ShipControl.pass_shadow` à 42 m devant la caméra et 8 m sous son axe, qui traverse 80 m d'ouest en est en 7 s, en fondu ;
+  elle se pose dans la carte chargée (la colline, ou la chute dans les nuages d'E9), sans toucher à la carte.

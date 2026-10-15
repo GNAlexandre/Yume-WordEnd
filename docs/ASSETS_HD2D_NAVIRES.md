@@ -96,3 +96,13 @@ Les meubles et éléments de mur sont à fond transparent découpé ; les matiè
 ## Livraison et vérification
 
 Les sources, planches groupées et aperçus restent hors dépôt. Chaque objet est découpé séparément, mis au format au plus proche voisin, sans réduction de palette. Vérifier les 50 PNG avec le contrôleur existant par invocation directe (les nouveaux noms ne sont pas tous au manifeste), les imports, les raccords, l’alignement des hélices dans les quatre scènes et `tools/check.sh` complet. Conserver les anciens dessins dans l’historique Git et conserver tous les autres assets existants. Quelques pixels de teintes extrêmes natifs peuvent subsister ; ne pas recolorer les images pour les supprimer.
+
+## Images du moteur pour les navires en volume (lot E7, hors cahier)
+
+Deux remplaçants que le lot E7 (navires en volume, `tools/hd2d_navires.py`) a ajoutés au manifeste pour la descente et le pont
+du transport de la Garde ; ils ne sont pas commandés au dessinateur (le premier est un effet, le second se refait du flanc).
+
+| Fichier | Taille | Genre | Sujet |
+| --- | --- | --- | --- |
+| `assets/hd2d/sky/ship_glare.png` | 576 × 384 | panel, alpha doux | l'éblouissement blanc du projecteur, ovale, opaque au cœur, fondu vers les bords, posé devant la coque du navire qui descend pour en cacher la silhouette (V1) |
+| `assets/hd2d/ships/garde_transport_hull.png` | 1536 × 240 | panel | le bas du flanc du transport (`ships/garde_transport_side`, sous la ligne du pont : 2,5 m), façade de la coque sous le pont praticable de la carte `transport_garde` ; refait d'après le flanc livré |

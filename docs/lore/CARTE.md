@@ -1926,8 +1926,9 @@ Légende des lettres : `A` garde_transport_side ; `B` gangway ; `C` rope_coil ; 
 - **Écarts de la carte construite (lot CP, `tools/exterior_recipes/port.py`)** : bornes de caméra `Rect2(10, 6, 50, 24)` ;
   relief de la colline refait (les deux `rampe` du plan finissaient devant des terrasses sans route de 0 à +1 : trois rampes qui
   montent vers le nord, 0 → +1 en z 27 → 24, +1 → +2 en z 25 → 22, +2 → +3 en z 19 → 16 ; `bord falaise` réduit à x 63 → 70 ;
-  `montee_colline` repassée par les rampes) ; point `navire_quai` (32,5 ; 7,6) ajouté ; le navire est un panneau de coque
-  remplaçant (E7), la passerelle un plancher du quai à la coque ; aucune lumière écrite (`lampe_quai_*`, `bureau`,
+  `montee_colline` repassée par les rampes) ; point `navire_quai` (32,5 ; 7,6) ajouté ; (E7) le navire en volume, sa
+  passerelle et les bras d'ancrage sont dans le poste d'amarrage `Berth`, vide hors des scènes (PLAN.md, « (E7) Les
+  navires ») ; le bord du vide s'ouvre devant la passerelle posée (x 31,4 → 33,6) ; aucune lumière écrite (`lampe_quai_*`, `bureau`,
   `projecteur_navire` : Atmosphere, les lanternes de quai sont l'image `dock_lamp`) ; `passerelle` et `vers_ville` omises tant que
   `transport_garde` et `ville_marche` n'existent pas (écriteau sur la route de la ville) ; la manche à air est l'image animée
   `windsock_wave` ; les bords du quai, derrière les bras d'ancrage, le pylône, la grue et le sifflet, sont fermés (un décor de 6 m

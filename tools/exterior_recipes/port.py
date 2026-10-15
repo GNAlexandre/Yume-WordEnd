@@ -8,9 +8,9 @@ charrettes de sacs qui filent sur l'aire-port ; une colline toujours ventée jus
 
 Composition vue de la caméra (elle regarde le nord ; CARTE.md 0.3) :
 - au nord, le vide : la mer de nuages loin en contrebas, des rochers qui flottent, des îles et des dirigeables de
-  passage ; le quai de tôle le borde d'un garde-corps, sauf au poste d'amarrage, où le transport de la Garde s'amarre de
-  flanc (un grand panneau de coque, `ships/garde_transport_side` : remplaçant, le lot E7 le remplace) entre ses trois
-  bras d'ancrage, la passerelle au droit du point `navire_quai` ;
+  passage ; le quai de tôle le borde d'un garde-corps, sauf au poste d'amarrage (E7 : le nœud `Berth`, extra_nodes), où
+  le transport de la Garde en volume s'amarre de flanc entre ses trois bras d'ancrage quand le récit le fait descendre
+  (vide hors des scènes), sa passerelle posée au droit du point `navire_quai` ;
 - sur le quai, au nord de la rue : le bureau du port, la cabane du gardien, le hangar (rien de haut au sud d'où l'on
   marche) ; caisses, cordages, filets, tonneaux de mazout, cristaux, sifflet à vapeur, cabestan, lanternes de quai ;
 - la rue du port (pavés), le panneau aux flèches rouges, l'aire-port (gravier) et ses charrettes de sacs, ses palettes,
@@ -82,11 +82,16 @@ DEVIATIONS = [
     "faces), 0 → +1 en z 27 → 24 (x 59 → 63), +1 → +2 en z 25 → 22 (x 64 → 68), +2 → +3 en z 19 → 16 (x 65 → 69), la "
     "falaise du sud n'occupe plus que x 63 → 70 et la montée `montee_colline` passe par elles, tout se marche",
     "point `navire_quai` (32,5 ; 7,6) ajouté au plan : le pied de la passerelle, où la scène fait descendre Willem du "
-    "transport de la Garde ; le panneau de coque (`ships/garde_transport_side`, remplaçant dérivé du flanc du "
-    "Barocupot) est à poser par E7 (docs/CONTRACT_REQUESTS.md, CP)",
+    "transport de la Garde",
+    "(E7) le transport de la Garde, sa passerelle et les trois bras d'ancrage sont dans le poste d'amarrage `Berth` "
+    "(ShipBerth ; navire en volume `ships/garde_transport`, bras `ships/mooring_arm_clamp`), hors de Geometry : vide hors "
+    "des scènes ; le bord du vide (`vide 0 0 70 5` et la barrière de la côte, `barrier_gaps`) s'ouvre de x 31,4 à 33,6 "
+    "devant la passerelle, que la porte du poste ferme tant qu'elle n'est pas posée ; marqueurs `navire_trappe` et "
+    "`navire_passerelle` sur la passerelle posée, pour le récit",
     "les sorties `passerelle` (→ transport_garde) et `vers_ville` (→ ville_marche) sont posées dès que leur carte existe ; "
-    "en attendant, la passerelle n'a pas de sortie (à l'acte 1, jamais : CARTE.md 6.2) et la route de la ville est fermée "
-    "d'un écriteau « Plus loin, bientôt »",
+    "la passerelle reste fermée (ni invite ni signe) tant que le navire n'est pas à quai, sa passerelle posée et "
+    "l'embarquement permis par le récit (à l'acte 1, jamais : CARTE.md 6.2) ; la route de la ville est fermée d'un "
+    "écriteau « Plus loin, bientôt » tant que sa carte n'existe pas",
     "les lumières du plan (`lampe_quai_1`, `lampe_quai_2`, `bureau`, `projecteur_navire`) ne sont pas écrites : aucune "
     "lumière dans les cartes (mission CP), Atmosphere éclaire ; les lanternes de quai sont l'image `dock_lamp` (elle brille "
     "la nuit par son `glow`), le projecteur du navire est celui de la scène 7.4",

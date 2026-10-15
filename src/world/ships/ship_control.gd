@@ -113,7 +113,7 @@ static func play(ship_id: StringName, action: StringName, wait: bool = true) -> 
 			finish(ship_id, action)
 			return
 	if place == null:
-		_settle(ship_id, action)
+		settle(ship_id, action)
 		return
 	place.start(action)
 	if not wait:
@@ -122,7 +122,7 @@ static func play(ship_id: StringName, action: StringName, wait: bool = true) -> 
 	while is_instance_valid(place) and place.is_inside_tree() and place.current_action() == action:
 		await tree.physics_frame
 	if not is_instance_valid(place) or not place.is_inside_tree():
-		_settle(ship_id, action)
+		settle(ship_id, action)
 
 
 ## L'action est-elle en cours (le poste l'anime, ou l'ombre passe encore) ?
@@ -155,12 +155,12 @@ static func finish(ship_id: StringName, action: StringName) -> void:
 				shadow.advance(INF)
 			return
 		&"dock", &"clear", &"allow_boarding", &"forbid_boarding":
-			_settle(ship_id, action)
+			settle(ship_id, action)
 			if place != null:
 				place.apply_state()
 			return
 	if place == null:
-		_settle(ship_id, action)
+		settle(ship_id, action)
 		return
 	place.start(action)
 	place.finish_now()
@@ -245,8 +245,8 @@ static func pose(ship_id: StringName, state: StringName) -> void:
 		place.apply_state()
 
 
-## L'état qu'une action laisse, sans poste à animer.
-static func _settle(ship_id: StringName, action: StringName) -> void:
+## L'état qu'une action laisse, sans poste à animer (ou quand le poste quitte l'arbre en route).
+static func settle(ship_id: StringName, action: StringName) -> void:
 	match action:
 		&"descend", &"dock":
 			set_flag(ship_id, &"docked", true)

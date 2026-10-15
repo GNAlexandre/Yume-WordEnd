@@ -579,6 +579,10 @@ class_name MapExit         # (E1) src/world/map_exit.gd, Area3D enfant de « Exi
                            # target_marker: StringName (&"Spawn"), prompt: String ; vide : on passe en marchant (couche 0,
                            # masque 2) ; rempli : interactable (couche 6, groupe "interactable", get_prompt(), interact())
                            # posé par son _ready ; needs_interaction(), use() (sans effet si WorldManager.is_transitioning())
+class_name ShipControl     # (E7) src/world/ships/ship_control.gd, statique : les navires pour le récit (descend,
+                           # open_hatch, deploy_gangway, depart, pass_shadow…), état dans les drapeaux ship_<id>_* de
+                           # GameState ; Ship (le navire en volume), ShipBerth (poste d'amarrage d'une carte, groupe
+                           # "ship_berths"), ShipStrip, ShipShadow. Mode d'emploi : « (E7) Les navires » (plus bas)
 # (X1) Îles et surface (data/world/ ; mode d'emploi : « (X1) Ajouter une île »)
 class_name WorldAtlas      # src/world/world_atlas.gd, classe statique (RefCounted, aucun autoload) : worlds(), world_name(id),
                            # islands(monde = tous), has_island(id), world_of(île), island_name(île), island_number(île)
@@ -1892,6 +1896,93 @@ renvoie les joueuses à leur emploi du temps. Les tests avancent le jeu à la ma
 et `StaffTraining.advance`) : deux minutes de match en une seconde. GDScript : une classe de plus de 1000
 lignes échoue au lint : BallMatch hérite de BallPlay. Le ballon du décor fondu n'est retiré qu'à l'exécution
 (docs/CONTRACT_REQUESTS.md, « E8 »).
+
+### (E7) Les navires : le transport de la Garde, le Barocupot, et leur API pour le récit
+
+Ce que le récit en demande (docs/lore/ACTE1.md, 6, ligne E7 ; CARTE.md 6.2 et 6.3) : le **transport de la Garde**
+ne paraît qu'au crépuscule du jour 7 (scène 7.4 : il descend, s'amarre aux bras du port, ouvre sa trappe, pose
+sa passerelle, puis repart) ; le **Barocupot** n'est vu que de l'intérieur (8.7) et comme une **ombre dans les
+nuages** (8.6). Hors des scènes, le poste d'amarrage du port est **vide**. Décisions : docs/DECISIONS.md (« E7 »).
+
+**Le navire en volume** (`src/world/ships/`, propriétaire E7) — un assemblage de panneaux, jamais un maillage :
+`Ship` (racine de `src/world/props/ships/<id>.tscn`, origine : la quille au milieu du flanc sud, proue à l'est)
+et ses enfants nommés `Hull` (le flanc, `ships/<id>_side`), `Deck` (le pont vu de dessus, couché derrière le
+flanc), `Rotors/*` (bandes sur les moyeux), `Hatch` (la trappe), `Searchlight` et `Glare` (le projecteur et
+l'éblouissement, alpha doux), `Gangway` (pivot au seuil de la trappe ; `Ramp/Tread`, un Building, et sa
+`Collision`, active une fois posée) et `Collision` (la coque). `ShipStrip` (un `DecorPanel`) est une bande dont
+l'image est choisie par le code (rotors qui ralentissent, trappe, bras) et dont l'opacité varie (alpha doux) :
+jamais sous `Geometry` (le PropBatcher figerait l'image). `ShipBerth` est le **poste d'amarrage** d'une carte (au
+port : le nœud `Berth`, écrit par `tools/exterior_recipes/port.py`, *après* les sorties) : il tient le navire,
+les bras d'ancrage (`Arms/BrasAncrage1..3`, la bande `anim/mooring_arm_clamp`, image 0 = le bras ouvert), la
+porte du vide devant la passerelle (`Gate`) et règle la sortie `Exits/passerelle`. Les données (durées,
+vitesses, hauteurs) : `data/ships/<id>.json` (`transport_garde.json` : descent, searchlight, mooring, rotor,
+hatch, gangway, departure ; `barocupot.json` : shadow).
+
+**L'API du récit** — `ShipControl` (src/world/ships/ship_control.gd, fonctions statiques ; ni autoload ni PR
+« contrats »). Chaque action est une ligne de temps du poste de la carte chargée, jouée à l'image physique ;
+sans poste dans la carte (le récit est ailleurs), seul l'état change. L'**état** (à quai, trappe, passerelle,
+embarquement) est dans les drapeaux de GameState, `ship_<id>_docked|hatch|gangway|boarding` (sauvegardés) : une
+carte du port chargée plus tard le retrouve.
+
+```gdscript
+await ShipControl.descend(&"transport_garde")         # le projecteur perce les nuages et aveugle, il descend
+                                                      # en roulant un peu, les bras se referment de la poupe à
+                                                      # la proue, les pales ralentissent : à quai (~14 s)
+await ShipControl.open_hatch(&"transport_garde")      # la trappe s'ouvre sous la pression (~0,8 s)
+await ShipControl.deploy_gangway(&"transport_garde")  # la passerelle sort et se pose sur le quai (1,6 s) :
+                                                      # le bord du vide s'ouvre devant elle, on y marche
+await ShipControl.stow_gangway(&"transport_garde") ; await ShipControl.close_hatch(&"transport_garde")
+await ShipControl.depart(&"transport_garde")          # rentre la passerelle, ferme la trappe, ouvre les bras
+                                                      # de la proue à la poupe, relance les pales, remonte
+ShipControl.dock(&"transport_garde")                  # à quai d'un coup (une scène qui commence navire posé)
+ShipControl.pose(&"transport_garde", &"deploy_gangway")   # un état d'un coup : absent, docked, open_hatch,
+                                                          # deploy_gangway (captures, reprise)
+ShipControl.allow_boarding(&"transport_garde", true)  # « Monter à bord » au pied de la passerelle posée ;
+                                                      # jamais à l'acte 1 (CARTE.md 6.2)
+await ShipControl.pass_shadow(&"barocupot")           # 8.6 : une silhouette sombre traverse la vue d'ouest en
+                                                      # est, devant la caméra, en fondu (7 s) ; rend ShipShadow
+ShipControl.play(id, action, wait) ; ShipControl.finish(id, action)   # générique ; finish : l'état final
+ShipControl.is_docked(id), has_flag(id, &"hatch"), is_playing(id, action), berth(id), ship(id), data(id)
+```
+
+Signaux du poste (`ShipControl.berth(id)`) pour le son et le récit : `action_started(action)`,
+`action_finished(action)`, `ship_event(event)` — `landed`, `clamp_1` … `clamp_3` (le lourd bruit de métal),
+`moored`, `rotors_stopped`, `hatch_opened`, `gangway_down`, `gangway_up`, `released`, `gone`. Points pour la
+scène, au port : `Life/Places/navire_quai` (pied de la passerelle), `Markers/navire_trappe` (le seuil de la
+trappe, en haut de la passerelle posée, regard au sud), `Markers/navire_passerelle` (mi-pente),
+`Markers/from_transport_garde` (le quai, regard au sud).
+
+**L'étape « ship » des scènes** (data/scenes/ ; StoryData.STEPS) : `{"do": "ship", "ship": "transport_garde",
+"action": "descend"}`, `"wait": false` pour ne pas attendre ; actions : `ShipControl.ACTIONS` (descend, dock,
+open_hatch, close_hatch, deploy_gangway, stow_gangway, depart, clear, allow_boarding, forbid_boarding, shadow).
+Une séquence passée pose l'état final d'un coup. Exemple pour la scène 7.4 (lot S2) :
+
+```json
+{"do": "ship", "ship": "transport_garde", "action": "descend"},
+{"do": "ship", "ship": "transport_garde", "action": "open_hatch"},
+{"do": "place", "who": "limeskin", "at": "navire_trappe"},
+{"do": "ship", "ship": "transport_garde", "action": "deploy_gangway"},
+{"do": "walk", "who": "limeskin", "to": "navire_quai"}, ...
+{"do": "ship", "ship": "transport_garde", "action": "depart", "wait": false}
+```
+
+**Les cartes de bord** : `transport_garde` (dehors, `tools/exterior_recipes/transport_garde.py` : le pont
+praticable au-dessus du vide, sa coque dessous, la passerelle vers une bande du quai ; « Descendre à quai » en
+haut de la passerelle ; lieu `port`) ; `barocupot` (dedans, `tools/interior_maps.py` : la salle du conseil de
+guerre, le sas de l'échelle, la coursive, avec les images du lot L ; « Remonter sur le pont » →
+`entrepot:from_barocupot` ; objets à examiner, data/texts/barocupot.json ; lieu `ciel`, hors de la carte de
+l'île). Au port, la sortie `passerelle` (« Monter à bord ») existe mais reste fermée (ni invite ni signe) tant
+que le navire n'est pas à quai, sa passerelle posée et l'embarquement permis.
+
+**Le sol** (E2) : `barrier_gaps` du plan.json d'une carte du dehors (`[[x, z, largeur, profondeur], …]`, recopié
+dans map.json) ouvre la barrière invisible de la côte (MapGroundCoast) ; ce qui referme l'ouverture est à la
+scène (le `Gate` du poste).
+
+**Démonstration** : `tools/e7_shots.sh [descente|depart|cartes|ombre]` (tests/integration/demo_e7.tscn) : la
+descente au crépuscule sous la pluie, une image toutes les 0,5 s de jeu, la trappe, la passerelle, le départ,
+le pont, le Barocupot, l'ombre ; vues QC (`tools/qc_views.json`, clé `ships` d'une vue : id → état posé par
+`ShipControl.pose`). Tests : tests/unit/test_ships.gd, test_transport_garde.gd, test_barocupot.gd,
+test_port.gd ; tests/integration/test_ships_in_game.gd (on monte la passerelle, on embarque, on redescend).
 
 ## 4. Tranche verticale : WordEnd en HD-2D
 

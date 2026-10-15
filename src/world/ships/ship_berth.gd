@@ -60,6 +60,14 @@ func _ready() -> void:
 	apply_state()
 
 
+## Une carte quittée en pleine action (changement de carte) : l'état final est gardé.
+func _exit_tree() -> void:
+	if _action != &"":
+		var action := _action
+		_action = &""
+		ShipControl.settle(ship_id, action)
+
+
 func _physics_process(delta: float) -> void:
 	if _action != &"":
 		advance(delta)
