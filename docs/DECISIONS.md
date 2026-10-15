@@ -3034,3 +3034,39 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   plus une carte d'attente ; 27 façades latérales au lieu de 21), sans rien relâcher.
 - **C2 — mesures** : draw calls du village entre 78 et 139 par vue du jeu (≤ 200 ; la vue d'ensemble, hors
   jeu, 271), café 32 à 46, maison 29 à 41 ; chargement du village 390 à 600 ms, café 173 ms, maison 104 ms.
+
+## I2 — l'entrepôt complet (lot R1 du cahier n° 5)
+
+- **I2 — dix images inscrites, vingt-neuf remplaçants retirés** : la PR n° 37 livre 39 images ; 29 portaient le nom
+  d'un remplaçant déjà au manifeste (façades et flancs de T1, `door_frame_wood`, sols et murs de la crypte,
+  décalques, bandes animées, piano, trappe, échelle, coupures, fenêtre poussiéreuse, six panneaux du dehors) : leurs
+  recettes s'en vont (`hd2d_interior`, `hd2d_interior_props`, `hd2d_town`, `hd2d_nature`) ; il ne reste que les trois
+  vues de flanc de R0.3. Les 10 nouvelles passent par `LOT_NAMES["R1"]`, `SURFACES_R1`, `FURNITURE_R1`,
+  `OUTDOOR_R1`, `ANIMS_R1` (`tools/hd2d_interior.py`) et `manifest` : `desk_clean`, `desk_chtholly_mirror_up`,
+  `polishing_trestle`, `potted_plant`, `bed_iron_cover` (meubles), `roof_edge_slate` (panneau, `wrap` x),
+  `floor_roof_deck` (tuile), `bath_steam` (6 images, 6 ips, alpha doux), `comm_crystal_call` (4, 6 ips),
+  `wall_clock_swing` (4, 2 ips). `hd2d_assets.py check`, `orphans` et `hd2d_sheets.py check` propres.
+- **I2 — le toit-terrasse : matière à part, pas de 28e couche** : une 28e tuile d'atlas toucherait le contrat du
+  cahier n° 2 (`IslandTerrain.GROUND_LAYERS`, deux shaders et leurs tables de repli, `terrain.gd`, tests de
+  27 tuiles, atlas). Le sol de `MapGround` reste (planches de l'atlas, dessous, sans trou) et `floor_roof_deck` s'y
+  pose en 12 `GroundDecal` bout à bout (3 × 4 tuiles de 4 m, étirées à 3,5 m dans le sens des planches pour couvrir
+  les 14 m sans dépasser du bord) ; un draw call de plus (le `PropBatcher` les fond en un) ; les taches de mousse
+  passent à la couche 1 pour rester dessus. `roof_edge_slate` : deux panneaux de 4 m au pied de l'égout sud du volume
+  ouest (x 1 et −3, z 15), sans collision (derrière la rambarde) ; le toit d'ardoise du `Building` reste, c'est lui qui
+  monte vers le faîte.
+- **I2 — bande animée au mur ou sur un meuble** : `bath_steam` est un `objet` sur la baignoire (bas de l'image 0,3 m
+  sous son rebord) ; `wall_clock_swing` remplace l'élément de mur `wallitem_wall_clock` dans le plan (les
+  éléments de mur sont fondus en un maillage sans animation) : `mural` de nom hors `wallitem_`, DecorPanel
+  `keep_orientation` qui regarde l'est ; `comm_crystal_call` reprend `comm_crystal` au pixel près (pied au sol) et
+  est **caché** (un appel est un événement, pas un décor) : E6 le montre. L'horloge regardée de face est vue de
+  chant par la caméra (mur ouest) : on ne voit son balancier que dans la pièce.
+- **I2 — meubles posés** : `desk_clean` à la place de `desk_clean_brooch` (grande sœur ; la variante à broche reste pour
+  le souvenir du jour 6), `potted_plant` dans l'entrée, `polishing_trestle` dans la salle des armes ;
+  **non posés** : `desk_chtholly_mirror_up` (acte 2) et `bed_iron_cover` (surimpression sur un dormeur : à
+  poser par l'histoire ; scène sans ombre, avec la boîte de collision du lit). `carte_plans.py check` : 23 cartes,
+  0 erreur ; CARTE.md : ASCII, places et inventaire réécrits.
+- **I2 — vitres des façades livrées** : de nuit, elles s'allument à peine (carreaux de #FBD367 à #FCE496 à 0,14 de
+  `glow_color` #FFE6A6 pour une tolérance de 0,12 : 15 % des pixels de vitre à l'ouest, 1 à 2 % à l'est). Image non
+  retouchée ; correction à commander dans `docs/ASSETS_HD2D_ILE68.md` (3.6) et variante moteur
+  (`Building.window_glow_color`) dans `docs/CONTRACT_REQUESTS.md`.
+
