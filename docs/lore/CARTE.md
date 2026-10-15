@@ -554,6 +554,8 @@ point marais_epee 3 12
 point champ_centre 75 18
 point champ_but_nord 75 9.2
 point champ_but_sud 75 26.6
+# (S2) où l'on arrive au champ quand on répond « J'arrive. » à la petite (ACTE1.md 5.2) : le bout du chemin, devant le bord ouest
+point champ_entree 65.4 18.5
 point fourre_ballon 83.3 10
 point riviere_puisage 9.5 48
 point lisiere_sud 44 50
@@ -562,7 +564,7 @@ lumiere fenetres_facade 45 26 3.0 fenetres
 ```
 
 <!-- places:entrepot -->
-**Places de la vie** (lot C1 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`porche_banc`, `porte_seuil`, `cour_willem`, `cour_chtholly`, `cour_centre`, `arbre_pied`, `arbre_vigie`, `potager`, `coin_soleil`, `clairiere_centre`, `clairiere_banc`, `clairiere_arbre`, `marais_epee`, `champ_centre`, `champ_but_nord`, `champ_but_sud`, `fourre_ballon`, `riviere_puisage`, `lisiere_sud`) ; les places réservées, en `Life/Areas` avec leur rectangle (`clairiere`, `champ`, `cour`, `duel`, `coin_soleil`).
+**Places de la vie** (lot C1 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`porche_banc`, `porte_seuil`, `cour_willem`, `cour_chtholly`, `cour_centre`, `arbre_pied`, `arbre_vigie`, `potager`, `coin_soleil`, `clairiere_centre`, `clairiere_banc`, `clairiere_arbre`, `marais_epee`, `champ_centre`, `champ_but_nord`, `champ_but_sud`, `champ_entree`, `fourre_ballon`, `riviere_puisage`, `lisiere_sud`) ; les places réservées, en `Life/Areas` avec leur rectangle (`clairiere`, `champ`, `cour`, `duel`, `coin_soleil`).
 
 **Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z, posé au sol ; `vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :
 

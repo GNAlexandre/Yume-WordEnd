@@ -1,0 +1,102 @@
+{
+  "id": "j6_1_soif_de_sang",
+  "start": "lutte",
+  "nodes": {
+    "lutte": {
+      "speaker": "",
+      "text": "Dans le couloir, Collon prend son élan et saute à pieds joints dans le dos de Willem. Il tombe à genoux.",
+      "next": "lutte_2"
+    },
+    "lutte_2": {
+      "speaker": "",
+      "text": "Pannibal s'assoit par terre à côté de lui et lui tord le bras, avec méthode. Les autres scandent leur cri de guerre.",
+      "next": "lutte_3"
+    },
+    "lutte_3": {
+      "speaker_id": "collon",
+      "text": "Soif de sang ! Soif de sang !",
+      "next": "lutte_4"
+    },
+    "lutte_4": {
+      "speaker_id": "willem",
+      "text": "Aïe. Quelqu'un peut m'expliquer ?",
+      "next": "lutte_5"
+    },
+    "lutte_5": {
+      "speaker_id": "tiat",
+      "text": "Il faut d'abord montrer sa force. Après seulement, on a le droit de demander une faveur.",
+      "next": "lutte_6"
+    },
+    "lutte_6": {
+      "speaker_id": "lakhesh",
+      "text": "Pardon. Elles ont insisté. Pardon pour toutes.",
+      "next": "lutte_7"
+    },
+    "lutte_7": {
+      "speaker_id": "pannibal",
+      "text": "La faveur : que tu nous lises le livre d'images. Celui avec les emnetwiht.",
+      "next": "lutte_8"
+    },
+    "lutte_8": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "Lâchez-le.",
+          "next": "lachez"
+        },
+        {
+          "text": "Montre-moi cette clé de bras, Pannibal.",
+          "set_flag": "j6_cle",
+          "next": "montre"
+        }
+      ]
+    },
+    "lachez": {
+      "speaker": "{player}",
+      "text": "Lâchez-le. On ne court pas dans les couloirs, et on ne saute pas sur les gens non plus."
+    },
+    "montre": {
+      "speaker": "{player}",
+      "text": "Montre-moi cette clé de bras, Pannibal. Pour de vrai.",
+      "next": "montre_2"
+    },
+    "montre_2": {
+      "speaker_id": "pannibal",
+      "text": "Alors. On saisit le poignet, on tourne, et surtout on ne lâche jamais prise.",
+      "next": "montre_3"
+    },
+    "montre_3": {
+      "speaker": "",
+      "text": "Elle lâche Willem, se faufile jusqu'à toi, et te prend le poignet d'un air très savant."
+    },
+    "cle": {
+      "speaker": "",
+      "text": "D'un simple tour du poignet, tu te dégages. Pannibal s'assoit sur le sol du couloir, les yeux ronds.",
+      "next": "cle_2"
+    },
+    "cle_2": {
+      "speaker_id": "pannibal",
+      "text": "… Ça ne marche pas comme ça dans les livres. Je note."
+    },
+    "faveur": {
+      "speaker_id": "willem",
+      "text": "Je lirai. Je lirai ! Mais d'abord, mon bras.",
+      "next": "faveur_2"
+    },
+    "faveur_2": {
+      "speaker_id": "collon",
+      "text": "Tu as promis devant témoins !",
+      "next": "faveur_3"
+    },
+    "faveur_3": {
+      "speaker_id": "willem",
+      "text": "Cet après-midi, dans la salle de jeux. Et personne ne saute plus sur personne.",
+      "next": "faveur_4"
+    },
+    "faveur_4": {
+      "speaker_id": "tiat",
+      "text": "Hourra !"
+    }
+  }
+}

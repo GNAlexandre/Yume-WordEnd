@@ -1,0 +1,281 @@
+{
+  "_comment": "ACTE1.md 6.2 (s. 9) : le livre d'images. Willem lit aux petites sur le tapis de la salle de jeux ; le souvenir est un fondu au blanc et un carton de 3 s (aucun visage, aucun nom). Le choix s'asseoir / rester à la porte ne change rien à la suite.",
+  "title": "Le livre d'images",
+  "day": 6,
+  "slot": "apres_midi",
+  "after": [
+    "j6_1_soif_de_sang"
+  ],
+  "map": "entrepot_rdc",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "jeux_tapis",
+    "radius": 3.8
+  },
+  "present": [
+    "willem",
+    "collon",
+    "tiat",
+    "lakhesh",
+    "pannibal",
+    "almita",
+    "fairy_01",
+    "fairy_02",
+    "fairy_03",
+    "fairy_04",
+    "fairy_05",
+    "fairy_06"
+  ],
+  "steps": [
+    {
+      "do": "hint"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "jeux_tapis",
+      "offset": [
+        0.0,
+        -1.0
+      ],
+      "facing": "south",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "jeux_tapis",
+      "offset": [
+        -1.9,
+        -0.3
+      ],
+      "facing": "east",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "jeux_tapis",
+      "offset": [
+        -2.1,
+        0.9
+      ],
+      "facing": "east",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "jeux_tapis",
+      "offset": [
+        -1.1,
+        1.5
+      ],
+      "facing": "north",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "jeux_tapis",
+      "offset": [
+        1.9,
+        -0.3
+      ],
+      "facing": "west",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "almita",
+      "at": "jeux_tapis",
+      "offset": [
+        0.0,
+        1.6
+      ],
+      "facing": "north",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_01",
+      "at": "jeux_tapis",
+      "offset": [
+        1.4,
+        -1.4
+      ],
+      "facing": "west",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_02",
+      "at": "jeux_tapis",
+      "offset": [
+        2.1,
+        0.9
+      ],
+      "facing": "west",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_03",
+      "at": "jeux_tapis",
+      "offset": [
+        1.2,
+        1.5
+      ],
+      "facing": "north",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_04",
+      "at": "jeux_tapis",
+      "offset": [
+        2.9,
+        0.2
+      ],
+      "facing": "west",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_05",
+      "at": "jeux_tapis",
+      "offset": [
+        -2.9,
+        0.1
+      ],
+      "facing": "east",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_06",
+      "at": "jeux_tapis",
+      "offset": [
+        -3.0,
+        1.4
+      ],
+      "facing": "east",
+      "anim": "assis"
+    },
+    {
+      "do": "camera",
+      "to": "jeux_tapis",
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "distance": 10,
+      "time": 1.0,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "entree",
+      "presentation": "bandeau"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "jeux_tapis",
+      "offset": [
+        -1.1,
+        -1.9
+      ],
+      "wait": true,
+      "facing": "south",
+      "if": {
+        "flag": "j6_tapis"
+      }
+    },
+    {
+      "do": "anim",
+      "who": "player",
+      "anim": "assis",
+      "if": {
+        "flag": "j6_tapis"
+      }
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "jeux_tapis",
+      "offset": [
+        0.0,
+        -2.9
+      ],
+      "wait": true,
+      "facing": "south",
+      "if": {
+        "not_flag": "j6_tapis"
+      }
+    },
+    {
+      "do": "dialogue",
+      "node": "lecture",
+      "presentation": "bandeau"
+    },
+    {
+      "do": "camera",
+      "to": "willem",
+      "offset": [
+        0.0,
+        0.3
+      ],
+      "distance": 8,
+      "time": 1.0,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "mains",
+      "presentation": "bandeau"
+    },
+    {
+      "do": "fade",
+      "to": "white",
+      "time": 0.8
+    },
+    {
+      "do": "card",
+      "text": "souvenir",
+      "time": 3.4
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.9
+    },
+    {
+      "do": "camera",
+      "to": "jeux_tapis",
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "distance": 10,
+      "time": 0.0,
+      "wait": false
+    },
+    {
+      "do": "dialogue",
+      "node": "suite",
+      "presentation": "bandeau"
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.0
+    }
+  ]
+}

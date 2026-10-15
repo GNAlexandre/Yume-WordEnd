@@ -1485,6 +1485,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, -0.5, 9.2)
 [node name="champ_but_sud" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, -0.5, 26.6)
 
+[node name="champ_entree" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 65.4, -0.425, 18.5)
+
 [node name="fourre_ballon" type="Marker3D" parent="Life/Places"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 83.3, -0.5, 10)
 

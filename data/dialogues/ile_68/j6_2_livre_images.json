@@ -1,0 +1,71 @@
+{
+  "id": "j6_2_livre_images",
+  "start": "entree",
+  "nodes": {
+    "entree": {
+      "speaker": "",
+      "text": "Les petites lisent seules, d'habitude. Mais ce livre-là fait peur : elles veulent quelqu'un à côté d'elles. Willem est assis sur le tapis, le livre ouvert sur les genoux.",
+      "next": "entree_2"
+    },
+    "entree_2": {
+      "speaker_id": "willem",
+      "text": "Tu viens ? Il y a de la place.",
+      "choices": [
+        {
+          "text": "S'asseoir sur le tapis.",
+          "set_flag": "j6_tapis",
+          "next": "tapis"
+        },
+        {
+          "text": "Rester à la porte.",
+          "next": "porte"
+        }
+      ]
+    },
+    "tapis": {
+      "speaker": "",
+      "text": "Tu t'installes au bord du tapis, entre Willem et les petites. L'une d'elles te fait de la place sans lever les yeux du livre."
+    },
+    "porte": {
+      "speaker": "",
+      "text": "Tu restes à la porte, l'épaule contre le chambranle. De là, on voit tout."
+    },
+    "lecture": {
+      "speaker_id": "willem",
+      "text": "« Les emnetwiht avaient le cœur plus noir que la nuit. Ce sont eux qui ont fait venir les Bêtes. »",
+      "next": "lecture_2"
+    },
+    "lecture_2": {
+      "speaker": "Une petite",
+      "text": "Brrr ! Je me cache derrière ton bras.",
+      "next": "lecture_3"
+    },
+    "lecture_3": {
+      "speaker_id": "collon",
+      "text": "Nous, on est des Braves ! On les aurait battus !",
+      "next": "lecture_4"
+    },
+    "lecture_4": {
+      "speaker_id": "almita",
+      "text": "… Tu as déjà vu un emnetwiht, toi ?",
+      "next": "lecture_5"
+    },
+    "lecture_5": {
+      "speaker_id": "willem",
+      "text": "Un seul. De loin."
+    },
+    "mains": {
+      "speaker": "",
+      "text": "Ses mains se serrent sur la reliure. Un instant, ses doigts blanchissent."
+    },
+    "suite": {
+      "speaker_id": "willem",
+      "text": "« … et les enfants prirent leurs épées, et le jour se leva. » Voilà. Fin de la page.",
+      "next": "suite_2"
+    },
+    "suite_2": {
+      "speaker": "",
+      "text": "Il a fini la page d'une voix égale. Tu le regardes. Sa voix n'a pas tremblé une seule fois."
+    }
+  }
+}

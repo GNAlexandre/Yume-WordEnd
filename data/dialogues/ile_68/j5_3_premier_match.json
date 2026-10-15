@@ -1,0 +1,20 @@
+{
+  "id": "j5_3_premier_match",
+  "start": "appel",
+  "nodes": {
+    "appel": {
+      "speaker_id": "willem",
+      "text": "Ah, te voilà. Les blanches jouent à une de moins. Entre quand tu veux.",
+      "next": "appel_2"
+    },
+    "appel_2": {
+      "speaker": "Une petite",
+      "text": "On te garde ta place, chez les blancs !",
+      "next": "appel_3"
+    },
+    "appel_3": {
+      "speaker": "",
+      "text": "Il suffit d'entrer dans le champ pour jouer : le ballon se pousse en courant, et la touche d'attaque le frappe."
+    }
+  }
+}

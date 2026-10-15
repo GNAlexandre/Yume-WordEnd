@@ -31,6 +31,16 @@
       "title": "Le dessert spécial",
       "calendar": "Il a fait un dessert. Les petites ne le fuient plus.",
       "sleep_hint": "La journée est finie. Ton lit t'attend."
+    },
+    "5": {
+      "title": "Le jeu de Willem",
+      "calendar": "Plus beaucoup de jours. Ithea m'a encore serrée trop fort.",
+      "sleep_hint": "La journée est finie. Ton lit t'attend."
+    },
+    "6": {
+      "title": "Le livre d'images",
+      "calendar": "Demain, mission. Il a lu aux petites un livre où les méchants lui ressemblent.",
+      "sleep_hint": "Demain, on part à l'aube. Ton lit t'attend."
     }
   },
   "j1_1_port": {
@@ -101,5 +111,32 @@
   },
   "j4_2_diner": {
     "hint": "Le dîner est servi."
+  },
+  "j5_1_jeu_willem": {
+    "hint": "Willem rassemble les petites au champ.",
+    "coup_envoi": "Coup d'envoi !"
+  },
+  "j5_2_fenetre": {
+    "hint": "La banquette de la salle de lecture est libre.",
+    "prompt": "S'asseoir à la fenêtre"
+  },
+  "j5_3_premier_match": {
+    "hint": "Les petites cherchent une joueuse chez les blancs."
+  },
+  "j6_1_soif_de_sang": {
+    "hint": "Il y a du remue-ménage dans le couloir, en bas."
+  },
+  "j6_2_livre_images": {
+    "hint": "Les petites ont un livre à faire lire.",
+    "souvenir": "Une longue table, une lumière chaude, des voix d'enfants qui se chevauchent. Pas un visage. Pas un nom."
+  },
+  "j6_3_ordre_mission": {
+    "hint": "Le dîner est servi."
+  },
+  "j6_4_souvenir": {
+    "hint": "Tu n'arrives pas à dormir.",
+    "prompt": "Examiner le bureau",
+    "souvenir_1": "La même chambre, rangée. Sur le bureau propre, une broche d'argent.",
+    "souvenir_2": "Le réfectoire d'autrefois. Sur la table, un gâteau au beurre. Une ombre le dévore, de retour d'un combat. Contre sa chaise, une grande épée."
   }
 }

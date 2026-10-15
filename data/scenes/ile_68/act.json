@@ -65,10 +65,22 @@
       "sleep_hint": "days/4/sleep_hint"
     },
     "5": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j5_1_jeu_willem",
+        "j5_2_fenetre"
+      ],
+      "sleep_hint": "days/5/sleep_hint"
     },
     "6": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j6_1_soif_de_sang",
+        "j6_2_livre_images",
+        "j6_3_ordre_mission",
+        "j6_4_souvenir"
+      ],
+      "sleep_hint": "days/6/sleep_hint"
     },
     "7": {
       "weather": "pluie"
