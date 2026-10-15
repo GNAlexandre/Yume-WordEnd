@@ -38,11 +38,20 @@ const DRAW_CALL_BUDGET := 200
 const REACH := 1.5
 ## Image des portes qu'on franchit (chambranle à ouverture transparente, docs/INTERIEURS.md).
 const PASSABLE_DOOR := "door_frame_wood"
+## (C2) Portes qu'on franchit et qui gardent leur image (le rideau de l'arrière-boutique du café,
+## sur une
+## cloison nord-sud : vu de chant, il ne cache pas le joueur).
+const OWN_IMAGE_DOORS: Array[String] = ["door_backroom"]
 
 ## Carte testée (à définir par le test de chaque carte).
 var map_id := ""
 ## Préréglage de lumière attendu (vide : celui du moment ou « interieur » pour un intérieur).
 var expected_light_preset := ""
+## (C2) Lieu de la carte sur la carte de l'île (`entrepot` par défaut ; `village` pour le café et la
+## maison
+## Limashenka) et fichier de ses textes à examiner.
+var expected_region := "entrepot"
+var texts_path := TEXTS
 
 var _map: Map
 var _room: InteriorRoom
@@ -339,7 +348,7 @@ func check_contract() -> void:
 	assert_eq(_map.map_id(), StringName(map_id), "racine nommée comme son map_id")
 	assert_eq(Map.problems(_map), PackedStringArray(), "contrat des cartes")
 	assert_eq(_map.display_name, String(_plan["meta"].get("nom", "")), "nom du plan")
-	assert_eq(_map.region, &"entrepot", "région de l'entrepôt")
+	assert_eq(_map.region, StringName(expected_region), "lieu de la carte")
 	assert_eq(_map.size, _plan["size"] as Vector2, "taille du plan")
 	assert_true(_map.area().encloses(_map.bounds()), "bornes de la caméra dans la carte")
 	assert_eq(_map.light_preset, StringName(expected_light_preset), "préréglage de lumière")
@@ -388,7 +397,12 @@ func check_rooms_and_openings() -> void:
 		if outside:
 			assert_eq(found["image"], door["image"], "porte du dehors : image du plan")
 		elif String(door["kind"]) == "porte":
-			assert_eq(found["image"], PASSABLE_DOOR, "porte qu'on franchit : chambranle")
+			var wanted: String = (
+				String(door["image"])
+				if OWN_IMAGE_DOORS.has(String(door["image"]))
+				else PASSABLE_DOOR
+			)
+			assert_eq(found["image"], wanted, "porte qu'on franchit : chambranle ou image propre")
 	for window: Dictionary in _plan["windows"]:
 		assert_true(_panel_on_wall(plan.windows, window), "fenêtre %s" % window["image"])
 	for wall: Dictionary in _plan["walls"]:
@@ -885,7 +899,7 @@ func check_examinables(expected: int) -> void:
 	var found := root.get_children() if root != null else []
 	assert_eq(found.size(), expected, "objets à examiner")
 	var json := JSON.new()
-	assert_eq(json.parse(FileAccess.get_file_as_string(TEXTS)), OK, "entrepot.json lisible")
+	assert_eq(json.parse(FileAccess.get_file_as_string(texts_path)), OK, "%s lisible" % texts_path)
 	assert_eq(DialogueRunner.story_problem(json.data), "", "format des textes de l'histoire")
 	for node: Node in found:
 		var item := node as Examinable

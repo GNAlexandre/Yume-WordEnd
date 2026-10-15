@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [679, 453],
+  "direction": "front",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [4, 4, 123, 168, 88, 168],
+        [131, 4, 83, 168, 43, 168]
+      ]
+    },
+    "effondre": {
+      "ips": 8,
+      "boucle": false,
+      "images": [
+        [4, 176, 147, 152, 71, 152],
+        [155, 205, 153, 123, 78, 123],
+        [312, 229, 144, 99, 74, 95],
+        [460, 273, 215, 55, 96, 55]
+      ]
+    },
+    "assis": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [4, 332, 169, 117, 74, 117],
+        [177, 333, 169, 116, 80, 116]
+      ]
+    }
+  }
+}

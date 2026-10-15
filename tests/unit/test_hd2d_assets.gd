@@ -310,7 +310,13 @@ func test_building_sides_have_the_shape_of_their_roof() -> void:
 				if image.get_pixel(0, y).a < 0.5 or image.get_pixel(w - 1, y).a < 0.5:
 					problems.append("%s : mur gouttereau pas plein" % path)
 	# (T1) Plus les deux flancs de l'entrepôt de la refonte (docs/lore/CARTE.md, 12.1).
-	assert_eq(count, 21, "19 flancs (cahier n° 2, 9.1 et 9.2) et 2 de l'entrepôt (CARTE.md 12.1)")
+	# (C2) Plus les six flancs du village (cahier n° 5, 5.3 : chaumières, grange, maison de pierre,
+	# appentis).
+	assert_eq(
+		count,
+		27,
+		"19 flancs (cahier n° 2, 9.1 et 9.2), 2 de l'entrepôt (CARTE.md 12.1) et 6 du village (C2)"
+	)
 	assert_true(problems.is_empty(), "; ".join(problems))
 
 

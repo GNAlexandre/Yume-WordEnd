@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AnimalData" format=3]
+
+[ext_resource type="Script" path="res://src/fauna/animal_data.gd" id="1_animal"]
+[ext_resource type="Resource" path="res://data/fauna/ile_68/visuals/fox.tres" id="2_visual"]
+
+[resource]
+script = ExtResource("1_animal")
+id = &"fox"
+display_name = "Renard"
+visual = ExtResource("2_visual")
+behavior = &"fuyard"
+max_hp = 1
+speed = 6.5
+walk_speed = 2.0
+body_radius_m = 0.2
+flee_range_m = 6.0
+calm_distance_m = 16.0
+startle_animation = &"fuite"
+startle_s = 0.35
+wander_radius_m = 5.0
+moments = Array[StringName]([&"aube", &"couchant"])

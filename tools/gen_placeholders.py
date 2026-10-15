@@ -25,6 +25,8 @@ Usage (Python 3.9+, pip install Pillow) :
         --wear scarf --accent "#c8423b" --height 1.3
     # portrait d'une planche existante (tête de la 1re image de repos agrandie ×2)
     python3 tools/gen_placeholders.py portrait chtholly --color "#5b7fd0" --side 80 --forward 6
+    # la faune (lot E5) : assets/fauna/<id>/<id>.png + .json et data/fauna/ile_68/visuals/<id>.tres
+    python3 tools/gen_placeholders.py fauna [wolf deer ...]     # (tools/gen_fauna.py)
     # un ennemi : assets/enemies/<id>/<id>.png + .json (son SkinData va dans data/enemies/visuals/)
     python3 tools/gen_placeholders.py enemy <id> --color "#6f8f4f" --height 1.0
     # damier (essais ; le sol du jeu est en tuiles HD-2D : tools/hd2d_assets.py)
@@ -817,6 +819,8 @@ def main():
     enemy.add_argument("--color", default="#6f8f4f")
     enemy.add_argument("--height", type=float, default=1.0, help="hauteur au repos en mètres")
     enemy.add_argument("--out", help="dossier de sortie (défaut : assets/enemies/<id>)")
+    fauna = sub.add_parser("fauna", help="les planches de remplacement de la faune (tools/gen_fauna.py)")
+    fauna.add_argument("species", nargs="*", help="espèces (défaut : toutes)")
     shot = sub.add_parser("portrait", help="portrait tiré d'une planche existante (Chtholly)")
     shot.add_argument("skin_id")
     shot.add_argument("--color", default="#5b7fd0", help="fond")
@@ -837,6 +841,10 @@ def main():
         make_skin(args.skin_id, args.name, look, args.height, args.tres, args.out)
     elif args.command == "npcs":
         make_npcs()
+    elif args.command == "fauna":
+        import gen_fauna
+
+        gen_fauna.make_all(args.species)
     elif args.command == "enemy":
         make_enemy(args.enemy_id, hex_color(args.color), args.height, args.out)
     elif args.command == "portrait":

@@ -1,0 +1,19 @@
+{
+  "_comment": "Nygglatho (VIE.md, 2.2 et 3) : le linge à l'aube, le petit-déjeuner, le thé, la course du couloir, la lumière sous sa porte la nuit.",
+  "lines": [
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "porte_seuil", "activity": "attendre", "outfit": "vie", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "matin", "day": 12, "map": "entrepot_rdc", "place": "refectoire_siege_nygglatho", "activity": "the", "outfit": "the"},
+    {"slot": "nuit", "day": 9, "map": "entrepot_rdc", "place": "refectoire_veillee", "activity": "the", "outfit": "the"},
+    {"slot": "apres_midi", "day": 9, "away": "montagne"},
+    {"slot": "midi", "day": 8, "map": "entrepot_etage", "place": "nygglatho_cristal", "activity": "attendre", "outfit": "vie"},
+    {"slot": "soir", "day": 6, "map": "entrepot_etage", "place": "nygglatho_cristal", "activity": "attendre", "outfit": "vie"},
+    {"slot": "apres_midi", "day": 2, "map": "entrepot", "place": "porte_seuil", "activity": "attendre", "outfit": "vie"},
+    {"slot": "nuit", "day": 1, "map": "entrepot_etage", "place": "nygglatho_the", "activity": "the", "outfit": "the"},
+    {"slot": "aube", "map": "entrepot_toit", "place": "toit_linge", "activity": "porter_linge", "outfit": "vie", "_note": "La journée de base : le linge sur le toit à l'aube, elle sert le petit-déjeuner, le thé chez elle, elle gronde la course du couloir, elle écrit la nuit (la lumière sous sa porte)."},
+    {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_service", "activity": "servir", "outfit": "the"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_siege_nygglatho", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "entrepot_etage", "place": "nygglatho_the", "activity": "the", "outfit": "the"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "couloir_course", "activity": "course_couloir_entrepot", "outfit": "vie", "role": "gronde"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "nygglatho_bureau", "activity": "lire", "outfit": "vie"}
+  ]
+}

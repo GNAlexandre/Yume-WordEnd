@@ -1,0 +1,21 @@
+{
+  "_comment": "Tiat (VIE.md, 2.4) : la toilette, le chat dans les hautes herbes, la serviette du bain, au lit au dortoir A.",
+  "gait": "course",
+  "lines": [
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "outfit": "vie", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "matin", "day": 12, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "regarder", "outfit": "vie"},
+    {"slot": "nuit", "day": 1, "map": "entrepot_etage", "place": "epie_nygglatho", "activity": "avalanche_nygglatho", "outfit": "pyjama"},
+    {"slot": "matin", "day": [9, 12], "map": "entrepot", "place": "champ_entrainement", "activity": "entrainement", "outfit": "vie"},
+    {"slot": "soir", "day": [1, 9], "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "soir", "day": 11, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "apres_midi", "if": {"flag": "apres_pluie"}, "map": "entrepot", "place": "champ_boue", "activity": "boue", "outfit": "vie"},
+    {"slot": "aube", "map": "entrepot_rdc", "place": "eau_toilette", "activity": "toilette", "outfit": "pyjama", "_note": "La journée de base : la toilette en pyjama, le chat dans les hautes herbes, les cheveux à sécher le soir (elle essuie les autres)."},
+    {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "entrepot", "place": "herbes_chat", "activity": "jeu_chat", "outfit": "vie"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "bains_sechage", "activity": "secher", "outfit": "pyjama"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_a_lit_1_bas", "activity": "dormir", "outfit": "pyjama"}
+  ]
+}

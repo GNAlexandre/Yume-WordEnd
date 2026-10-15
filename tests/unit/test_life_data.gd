@@ -8,14 +8,17 @@ const NBSP := "\u00a0"
 const NNBSP := "\u202f"
 
 
+## Les emplois du temps de démonstration des cartes d'essai (data/life/essai/) sont ceux que ce
+## fichier éprouve ; ceux de l'île n° 68 (data/life/ile_68/) sont vérifiés par test_life_ile_68.gd,
+## et leur validité ici aussi (test_every_life_file_is_valid).
 func before_each() -> void:
 	GameState.reset()
-	LifeData.clear_cache()
+	LifeData.use_content(&"essai")
 
 
 func after_each() -> void:
 	GameState.reset()
-	LifeData.clear_cache()
+	LifeData.use_content(&"")
 
 
 func _line(extra: Dictionary) -> Dictionary:
@@ -34,10 +37,37 @@ func _problems(lines: Array, npc_id: StringName = &"tiat") -> PackedStringArray:
 
 
 func test_every_life_file_is_valid() -> void:
-	var problems := LifeData.all_problems()
-	assert_eq(problems, PackedStringArray(), "\n".join(problems))
-	assert_gt(LifeData.cast().size(), 10, "des emplois du temps dans data/life/")
-	assert_false(LifeData.cast().has(&"activities"), "activities.json n'est pas un PNJ")
+	for content: StringName in [&"essai", &"ile_68"]:
+		LifeData.use_content(content)
+		var problems := LifeData.all_problems()
+		assert_eq(problems, PackedStringArray(), "%s : %s" % [content, "\n".join(problems)])
+		assert_gt(LifeData.cast().size(), 10, "%s : des emplois du temps dans data/life/" % content)
+		assert_false(LifeData.cast().has(&"activities"), "activities.json n'est pas un PNJ")
+
+
+func test_content_follows_the_island() -> void:
+	# (V1) data/life/<île>/ : l'île n° 68 par défaut, l'île courante de la partie sinon ; une île sans
+	# dossier n'a aucun emploi du temps (l'ancienne île, l'île d'essai) ; les activités restent
+	# communes.
+	LifeData.use_content(&"")
+	LifeData.enter_island(&"")
+	assert_eq(LifeData.content_island(), &"ile_68", "par défaut")
+	assert_has(LifeData.cast(), &"willem")
+	assert_eq(LifeData.line_for(&"willem", &"midi", 0)["map"], &"entrepot_rdc", "les vraies cartes")
+	GameState.island = &"ile_ancienne"
+	assert_eq(LifeData.cast(), [] as Array[StringName], "l'ancienne île n'a pas de vie")
+	assert_true(LifeData.has_activity(&"manger"), "activities.json est commun")
+	GameState.island = &"ile_68"
+	assert_has(LifeData.cast(), &"willem")
+	# La carte qu'on vient d'entrer décide (map_entered précède island_entered).
+	LifeData.enter_island(&"ile_ancienne")
+	assert_eq(LifeData.cast(), [] as Array[StringName])
+	LifeData.enter_island(&"")
+	LifeData.use_content(&"essai")
+	assert_eq(
+		LifeData.line_for(&"willem", &"midi", 0)["map"], &"entrepot_rdc_essai", "la démonstration"
+	)
+	assert_eq(LifeData.schedule_path(&"willem"), "res://data/life/essai/willem.json")
 
 
 func test_a_valid_line_passes() -> void:

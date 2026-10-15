@@ -131,6 +131,82 @@
       "_comment": "La tour de fées sur Willem assis (VEX) : src/life/games/tour.gd. Premier point de la place : la base ; les suivants : où l'on attend.",
       "game": "tour",
       "params": {"min_members": 3, "stack_time": 2.2, "hold_time": 6, "rest_time": 7}
+    },
+    "course_couloir_entrepot": {
+      "_comment": "(V1) La course du couloir du rez-de-chaussée de l'entrepôt (2 m de large : lane réduit, cinq coureuses au plus).",
+      "game": "course",
+      "gait": "course",
+      "params": {"min_members": 2, "ready_time": 1.6, "pause": [8, 12], "scold_radius": 2.5, "lane": 0.3}
+    },
+    "avalanche_nygglatho": {
+      "_comment": "(V1) Collées à la porte de la chambre de Nygglatho (étage), côté couloir (V1 ; VIE.md, 5.3).",
+      "game": "avalanche",
+      "params": {"min_members": 1, "door": ["couloir", "nygglatho"], "trigger_distance": 1.5, "fall_time": 1.8, "flee": "vers_entrepot_rdc", "cooldown": 45}
+    },
+    "avalanche_willem": {
+      "_comment": "(V1) Collées à la porte de la chambre de Willem (étage), côté couloir (nuit d'arrivée, jour 1).",
+      "game": "avalanche",
+      "params": {"min_members": 1, "door": ["couloir", "willem"], "trigger_distance": 1.5, "fall_time": 1.8, "flee": "vers_entrepot_rdc", "cooldown": 45}
+    },
+    "avalanche_cuisine": {
+      "_comment": "(V1) Collées à la porte de la cuisine, côté réfectoire (le dessert de Willem, jour 4).",
+      "game": "avalanche",
+      "params": {"min_members": 1, "door": ["refectoire", "cuisine"], "trigger_distance": 1.5, "fall_time": 1.8, "flee": "vers_entrepot_etage", "cooldown": 45}
+    },
+    "avalanche_infirmerie": {
+      "_comment": "(V1) Agglutinées devant la porte de l'infirmerie, côté couloir (Willem malade, jour 8).",
+      "game": "avalanche",
+      "params": {"min_members": 1, "door": ["couloir", "infirmerie"], "trigger_distance": 1.5, "fall_time": 1.8, "flee": "vers_entrepot_etage", "cooldown": 45}
+    },
+    "avalanche_archives": {
+      "_comment": "(V1) Collées à la porte des archives, côté couloir.",
+      "game": "avalanche",
+      "params": {"min_members": 1, "door": ["couloir", "archives"], "trigger_distance": 1.5, "fall_time": 1.8, "flee": "vers_entrepot_etage", "cooldown": 45}
+    },
+    "entrainement": {
+      "_comment": "(V1) L'entraînement de base au champ, au bâton dans la clairière : on lance, on frappe, on saute sur place (VEX).",
+      "poses": [{"anim": "lance", "time": 0.7}, {"anim": "frappe", "time": 0.6}, {"anim": "saut", "time": 0.5}, {"anim": "repos", "time": [0.8, 1.6]}],
+      "order": "random",
+      "step_aside": false
+    },
+    "mener": {
+      "_comment": "(V1) Celle qui mène l'entraînement : elle parle, elle regarde les rangées.",
+      "poses": [{"anim": "parle", "time": [3, 5]}, {"anim": "repos", "time": [2, 4]}]
+    },
+    "grimper": {
+      "_comment": "(V1) Le grand arbre interdit (V5) : en tableau, grimpe aux hauteurs fixes de l'image ; on crie ce qu'on voit d'en haut.",
+      "poses": [{"anim": "grimpe", "time": [5, 9]}, {"anim": "parle", "time": [1, 2]}],
+      "step_aside": false
+    },
+    "jardiner": {
+      "_comment": "(V1) Au potager : assise, on arrache les mauvaises herbes, on bavarde (VIE.md, 2.5).",
+      "poses": [{"anim": "assis", "time": [4, 8]}, {"anim": "parle", "time": [1, 2]}],
+      "step_aside": false
+    },
+    "embuscade": {
+      "_comment": "(V1) Pannibal guette dans les fourrés, le bâton prêt (V1 ; V2 ; VIE.md, 5.5).",
+      "poses": [{"anim": "repos", "time": [3, 6]}, {"anim": "attaque", "time": 0.7}, {"anim": "repos", "time": [1, 2]}],
+      "step_aside": false
+    },
+    "boue": {
+      "_comment": "(V1) Après la pluie : on saute à pieds joints dans les flaques, on s'éclabousse, on glisse (V2 ; VIE.md, 5.8).",
+      "wander": {"pause": [0.6, 1.6], "gait": "course"},
+      "poses": [{"anim": "saut", "time": 0.6}, {"anim": "tombe", "time": 0.9}, {"anim": "saut", "time": 0.6}],
+      "gait": "course"
+    },
+    "marelle": {
+      "_comment": "(V1) La marelle à la craie dans la cour : on saute à cloche-pied, on compte les points.",
+      "poses": [{"anim": "saut", "time": 0.6}, {"anim": "repos", "time": [1, 2.5]}, {"anim": "saut", "time": 0.6}, {"anim": "parle", "time": [1, 2]}],
+      "step_aside": false
+    },
+    "secher": {
+      "_comment": "(V1) Le séchage des cheveux après le bain : on fuit la serviette, Tiat à leurs trousses (V3).",
+      "poses": [{"anim": "travaille", "time": [3, 6]}, {"anim": "parle", "time": [1, 2]}, {"anim": "repos", "time": [1, 2]}]
+    },
+    "reparer": {
+      "_comment": "(V1) Le plafond qui fuit : le marteau (V2 ; V3). Pas de geste au marteau livré : travaille, sinon parle.",
+      "poses": [{"anim": "travaille", "time": [4, 7]}, {"anim": "repos", "time": [1, 2]}],
+      "look": false
     }
   }
 }

@@ -1,36 +1,32 @@
 {
- "_comment": "Carte d'attente (lot T1, provisoire jusqu'à la phase 3 : docs/DECISIONS.md) : sol plat, un chemin vers l'entrepôt. Lu par tools/map_build.py gen village.",
+ "_comment": "Sol en relief du village (lot C2), d'après docs/lore/CARTE.md, section 5.2 : rue et jardins à 0, belvédère de roche à +1 m (rampe au sud), ruisseau à −0,5 m (à l'ouest et au sud, eau basse où l'on marche), le vide de l'île au nord (côte irrégulière, la cascade y tombe). Lu par tools/map_build.py gen village ; le jeu ne lit pas ce fichier.",
  "size": [
-  32,
-  24
+  56,
+  40
  ],
  "seed": 68,
- "materials_scale": 1,
+ "materials_scale": 2,
  "edges": {
-  "north": "land",
+  "north": "void",
   "east": "land",
   "south": "land",
   "west": "land"
  },
  "skirt": 16,
  "spawn": [
-  27,
+  50,
   12
  ],
  "base": {
   "level": 0,
-  "material": "sobre"
+  "material": "herbe"
  },
  "materials": {
-  "sobre": {
-   "label": "Sol de la carte d'attente, assourdi",
-   "layer": "grass",
-   "color": "#7a8a6a",
-   "tint": [
-    0.78,
-    0.78,
-    0.8
-   ]
+  "herbe_drue": {
+   "label": "Herbe drue et molle (grass_b)",
+   "layer": "grass_b",
+   "color": "#4f9a46",
+   "variant": false
   },
   "chemin": {
    "label": "Chemin de terre (path_dirt_b)",
@@ -38,25 +34,546 @@
    "color": "#d0a060",
    "variant": false,
    "path": true
+  },
+  "eau_basse": {
+   "label": "Eau basse du marais : on y marche (VEX)",
+   "layer": "water",
+   "color": "#3a70b0",
+   "walkable": true,
+   "ripple": true,
+   "tint": [
+    0.78,
+    0.86,
+    0.8
+   ]
   }
  },
  "steps": [
   {
-   "op": "path",
+   "op": "level",
+   "level": 2,
+   "shape": {
+    "rect": [
+     31.0,
+     3.5,
+     8.0,
+     5.5
+    ]
+   }
+  },
+  {
+   "op": "level",
+   "level": -1,
+   "shape": {
+    "rect": [
+     0.0,
+     3.0,
+     3.0,
+     34.0
+    ]
+   }
+  },
+  {
+   "op": "level",
+   "level": -1,
+   "shape": {
+    "rect": [
+     3.0,
+     34.0,
+     53.0,
+     3.0
+    ]
+   }
+  },
+  {
+   "op": "void",
+   "shape": {
+    "poly": [
+     [
+      -3,
+      -3
+     ],
+     [
+      59,
+      -3
+     ],
+     [
+      59,
+      3.0
+     ],
+     [
+      -3,
+      3.0
+     ]
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.2,
+    "seed": 3
+   }
+  },
+  {
+   "op": "face",
+   "face": "earth",
+   "shape": {
+    "rect": [
+     0,
+     0,
+     56,
+     40
+    ]
+   }
+  },
+  {
+   "op": "face",
+   "face": "rock",
+   "shape": {
+    "rect": [
+     31,
+     3.5,
+     8,
+     5.5
+    ]
+   },
+   "where": {
+    "level": 2
+   }
+  },
+  {
+   "op": "material",
+   "material": "herbe",
+   "shape": {
+    "rect": [
+     0.0,
+     0.0,
+     56.0,
+     40.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 1
+   }
+  },
+  {
+   "op": "material",
    "material": "terre_battue",
-   "width": 3.0,
+   "shape": {
+    "rect": [
+     0.0,
+     10.0,
+     56.0,
+     5.5
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 2
+   }
+  },
+  {
+   "op": "material",
+   "material": "chemin",
+   "shape": {
+    "rect": [
+     4.0,
+     27.0,
+     46.0,
+     4.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 3
+   }
+  },
+  {
+   "op": "material",
+   "material": "chemin",
+   "shape": {
+    "rect": [
+     14.0,
+     15.5,
+     4.0,
+     11.5
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 4
+   }
+  },
+  {
+   "op": "material",
+   "material": "chemin",
+   "shape": {
+    "rect": [
+     38.0,
+     15.5,
+     4.0,
+     11.5
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 5
+   }
+  },
+  {
+   "op": "material",
+   "material": "potager",
+   "shape": {
+    "rect": [
+     20.0,
+     17.0,
+     14.0,
+     8.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 6
+   }
+  },
+  {
+   "op": "material",
+   "material": "herbe_haute",
+   "shape": {
+    "rect": [
+     0.0,
+     31.0,
+     56.0,
+     9.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 7
+   }
+  },
+  {
+   "op": "material",
+   "material": "lit_ruisseau",
+   "shape": {
+    "rect": [
+     0.0,
+     3.0,
+     3.0,
+     34.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 8
+   }
+  },
+  {
+   "op": "material",
+   "material": "lit_ruisseau",
+   "shape": {
+    "rect": [
+     3.0,
+     34.0,
+     53.0,
+     3.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 9
+   }
+  },
+  {
+   "op": "material",
+   "material": "roche",
+   "shape": {
+    "rect": [
+     31.0,
+     3.5,
+     8.0,
+     5.5
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.5,
+    "seed": 10
+   }
+  },
+  {
+   "op": "material",
+   "material": "eau_basse",
+   "shape": {
+    "rect": [
+     0.0,
+     3.0,
+     3.0,
+     34.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.2,
+    "seed": 40
+   }
+  },
+  {
+   "op": "material",
+   "material": "eau_basse",
+   "shape": {
+    "rect": [
+     3.0,
+     34.0,
+     53.0,
+     3.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 2.2,
+    "seed": 41
+   }
+  },
+  {
+   "op": "material",
+   "material": "sous_bois",
+   "shape": {
+    "rect": [
+     0,
+     3,
+     1.2,
+     34
+    ],
+    "noise": 0.3,
+    "noise_scale": 1.8,
+    "seed": 9
+   }
+  },
+  {
+   "op": "ramp",
+   "dir": "north",
+   "rect": [
+    33,
+    9,
+    4,
+    2
+   ],
+   "material": "roche"
+  },
+  {
+   "op": "material",
+   "material": "mousse",
+   "shape": {
+    "ellipse": [
+     3.6,
+     28.0,
+     0.9,
+     3.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 78
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "prairie",
+   "shape": {
+    "ellipse": [
+     46.5,
+     32.0,
+     4.0,
+     1.4
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 77
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "prairie",
+   "shape": {
+    "ellipse": [
+     38.0,
+     20.5,
+     2.4,
+     1.8
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 76
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "prairie",
+   "shape": {
+    "ellipse": [
+     16.0,
+     19.5,
+     2.2,
+     1.6
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 75
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "feuilles",
+   "shape": {
+    "ellipse": [
+     11.0,
+     15.0,
+     2.4,
+     0.8
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 74
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "feuilles",
+   "shape": {
+    "ellipse": [
+     47.0,
+     15.0,
+     3.0,
+     1.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 73
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "feuilles",
+   "shape": {
+    "ellipse": [
+     27.0,
+     14.6,
+     3.0,
+     1.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 72
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "boue",
+   "shape": {
+    "ellipse": [
+     8.0,
+     31.6,
+     2.6,
+     1.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 71
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "mousse",
+   "shape": {
+    "ellipse": [
+     34.0,
+     6.4,
+     2.6,
+     1.2
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 70
+   },
+   "where": {
+    "level": 2
+   }
+  },
+  {
+   "op": "path",
+   "material": "chemin",
+   "width": 2.8,
    "points": [
     [
-     32,
-     12
+     4.0,
+     12.5
     ],
     [
-     13,
-     12
+     55.0,
+     12.5
     ]
    ],
-   "noise": 0.3,
+   "noise": 0.35,
+   "noise_scale": 1.6
+  },
+  {
+   "op": "path",
+   "material": "chemin",
+   "width": 1.8,
+   "points": [
+    [
+     16.0,
+     14.0
+    ],
+    [
+     16.0,
+     29.0
+    ]
+   ],
+   "noise": 0.35,
+   "noise_scale": 1.6
+  },
+  {
+   "op": "path",
+   "material": "chemin",
+   "width": 1.8,
+   "points": [
+    [
+     40.0,
+     14.0
+    ],
+    [
+     40.0,
+     29.0
+    ]
+   ],
+   "noise": 0.35,
+   "noise_scale": 1.6
+  },
+  {
+   "op": "path",
+   "material": "chemin",
+   "width": 1.8,
+   "points": [
+    [
+     5.0,
+     29.0
+    ],
+    [
+     49.0,
+     29.0
+    ]
+   ],
+   "noise": 0.35,
    "noise_scale": 1.6
   }
- ]
+ ],
+ "height_zero_value": 16
 }

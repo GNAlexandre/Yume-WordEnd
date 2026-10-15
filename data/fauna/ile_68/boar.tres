@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="AnimalData" format=3]
+
+[ext_resource type="Script" path="res://src/fauna/animal_data.gd" id="1_animal"]
+[ext_resource type="Resource" path="res://data/fauna/ile_68/visuals/boar.tres" id="2_visual"]
+[ext_resource type="Script" path="res://src/combat/attack_data.gd" id="3_attack"]
+[ext_resource type="Resource" path="res://data/fauna/ile_68/attacks/boar_charge.tres" id="4_boar_charge"]
+[ext_resource type="Resource" path="res://data/fauna/ile_68/attacks/boar_gore.tres" id="5_boar_gore"]
+
+[resource]
+script = ExtResource("1_animal")
+id = &"boar"
+display_name = "Sanglier"
+visual = ExtResource("2_visual")
+attacks = Array[ExtResource("3_attack")]([ExtResource("4_boar_charge"), ExtResource("5_boar_gore")])
+behavior = &"dangereux"
+max_hp = 4
+speed = 6.2
+walk_speed = 1.4
+aggro_range_m = 6.0
+rush = true
+body_radius_m = 0.42
+leash_m = 14.0
+wander_radius_m = 3.0
+windup_animation = &"broute"
+graze_animation = &"broute"
+graze_ratio = 0.7
+stun_s = 2.0
+moments = Array[StringName]([&"matin", &"couchant"])

@@ -55,6 +55,25 @@ func test_rooms_of_willem_chtholly_and_nygglatho() -> void:
 			assert_true(images.has(image), "%s : %s dans la chambre" % [room, image])
 
 
+func test_the_crystal_call_hides_over_its_console_and_the_clean_desk_replaces_the_brooch() -> void:
+	# (I2) L'appel du cristal (lot R1) reprend la console au pixel près, caché tant qu'il ne sonne pas.
+	var ringing := _map.find_child("comm_crystal_call_1", true, false) as DecorPanel
+	var console := _map.find_child("comm_crystal_1", true, false) as InteriorPanel
+	assert_not_null(ringing, "l'appel du cristal")
+	assert_not_null(console, "la console")
+	if ringing != null and console != null:
+		assert_false(ringing.visible, "caché : un appel est un événement")
+		assert_eq([ringing.frames, ringing.fps], [4, 6.0], "4 images à 6 par seconde")
+		assert_almost_eq(ringing.position.x, console.position.x, 0.01, "sur la console")
+		assert_almost_eq(ringing.position.y, 0.0, 0.01, "pied au sol, comme le meuble")
+		assert_almost_eq(
+			ringing.position.z, console.position.z + console.image_offset.z + 0.02, 0.01
+		)
+	# Le bureau de la grande sœur est propre et vide : Chtholly porte la broche à l'acte 1.
+	assert_not_null(_map.find_child("desk_clean_1", true, false), "le bureau sans la broche")
+	assert_null(_map.find_child("desk_clean_brooch_1", true, false), "la broche est un souvenir")
+
+
 func test_the_leaking_corridor_and_the_way_to_the_roof() -> void:
 	var drip := _map.find_child("leak_drip_1", true, false) as DecorPanel
 	assert_not_null(drip, "la goutte qui tombe du plafond")

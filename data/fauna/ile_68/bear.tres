@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="AnimalData" format=3]
+
+[ext_resource type="Script" path="res://src/fauna/animal_data.gd" id="1_animal"]
+[ext_resource type="Resource" path="res://data/fauna/ile_68/visuals/bear.tres" id="2_visual"]
+[ext_resource type="Script" path="res://src/combat/attack_data.gd" id="3_attack"]
+[ext_resource type="Resource" path="res://data/fauna/ile_68/attacks/bear_swipe.tres" id="4_bear_swipe"]
+
+[resource]
+script = ExtResource("1_animal")
+id = &"bear"
+display_name = "Ours"
+visual = ExtResource("2_visual")
+attacks = Array[ExtResource("3_attack")]([ExtResource("4_bear_swipe")])
+behavior = &"dangereux"
+max_hp = 10
+speed = 3.6
+walk_speed = 1.2
+aggro_range_m = 15.0
+stoic = true
+body_radius_m = 0.7
+leash_m = 15.0
+wander_radius_m = 5.0
+moments = Array[StringName]([&"matin", &"apres_midi"])
