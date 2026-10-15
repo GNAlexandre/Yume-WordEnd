@@ -1,0 +1,35 @@
+{
+  "_comment": "ACTE1.md 10.1 (VEX, s. 26) et combat 3.2, variante du jour 10 : rien ne passe, ses yeux vont au visage de Willem (gros plan, deux fois) ; au troisième raté, le grand cri, et elle s'enfuit vers le sud (contrôle de course jusqu'à la sortie vers_foret). Le matin vient tout de suite si l'on arrive à l'aube.",
+  "title": "Tout rater",
+  "day": 10,
+  "slot": ["aube", "matin"],
+  "map": "entrepot",
+  "hint": "hint",
+  "trigger": {"on": "reach", "point": "clairiere_centre", "radius": 6.5},
+  "present": ["willem", "ithea", "nephren"],
+  "steps": [
+    {"do": "control", "on": false},
+    {"do": "slot", "slot": "matin", "time": 0},
+    {"do": "place", "who": "ithea", "at": "clairiere_banc", "offset": [-0.5, 0.0], "facing": "south", "outfit": "maison", "anim": "assis"},
+    {"do": "place", "who": "nephren", "at": "clairiere_banc", "offset": [0.5, 0.0], "facing": "south", "outfit": "maison", "anim": "assis"},
+    {"do": "place", "who": "willem", "at": "clairiere_centre", "facing": "south", "outfit": "maison"},
+    {"do": "walk", "who": "player", "to": "clairiere_centre", "offset": [0.0, 2.2], "facing": "north"},
+    {"do": "dialogue", "node": "debut"},
+    {"do": "camera", "to": "willem", "distance": 9, "time": 0.9, "wait": true},
+    {"do": "wait", "time": 1.0},
+    {"do": "camera_reset", "time": 0.5, "wait": true},
+    {"do": "game", "game": "entrainement_baton", "params": {"variant": "jour10", "place_player": true}, "fallback": [
+      {"do": "card", "text": "repli", "time": 3.0}
+    ]},
+    {"do": "control", "on": false},
+    {"do": "camera", "to": "willem", "distance": 9, "time": 0.6, "wait": true},
+    {"do": "wait", "time": 0.8},
+    {"do": "camera_reset", "time": 0.4, "wait": true},
+    {"do": "dialogue", "node": "cri"},
+    {"do": "bubble", "who": "ithea", "text": "attends"},
+    {"do": "bubble", "who": "willem", "text": "hein"},
+    {"do": "hint", "text": "hint_course"},
+    {"do": "control", "on": true},
+    {"do": "wait_for", "map": "foret_profonde"}
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "j12_2_depart",
+  "start": "willem",
+  "nodes": {
+    "willem": {
+      "speaker_id": "willem",
+      "text": "Je ne vais pas faire de discours. Je ne sais pas en faire, de toute façon.",
+      "next": "willem_2"
+    },
+    "willem_2": {
+      "speaker_id": "willem",
+      "text": "J'ai promis une montagne de gâteau. Une montagne, ça ne se mange pas toute seule. Alors revenez. Toutes les trois.",
+      "choices": [
+        {
+          "text": "Fais-le aux noix, le gâteau.",
+          "next": "noix"
+        },
+        {
+          "text": "À bientôt.",
+          "next": "bientot"
+        }
+      ]
+    },
+    "noix": {
+      "speaker": "{player}",
+      "text": "Fais-le aux noix, le gâteau. Avec beaucoup de noix.",
+      "next": "noix_2"
+    },
+    "noix_2": {
+      "speaker_id": "willem",
+      "text": "Aux noix. C'est noté. Je ne l'oublierai pas."
+    },
+    "bientot": {
+      "speaker": "{player}",
+      "text": "À bientôt.",
+      "next": "bientot_2"
+    },
+    "bientot_2": {
+      "speaker_id": "willem",
+      "text": "À bientôt, {player}."
+    },
+    "dessin": {
+      "speaker_id": "almita",
+      "text": "C'est de la part de toutes les petites. On l'a fait en cachette. Il ne faut pas le plier.",
+      "next": "dessin_2"
+    },
+    "dessin_2": {
+      "speaker": "",
+      "text": "Sur la feuille : trois grandes, un Willem tout en jambes, et un gâteau plus haut que l'entrepôt."
+    },
+    "epilogue": {
+      "speaker": "",
+      "text": "Les trois lueurs ont disparu dans le soir. À l'entrepôt, la vie continue.",
+      "choices": [
+        {
+          "text": "Voir l'épilogue",
+          "set_flag": "j12_voir_epilogue",
+          "next": ""
+        },
+        {
+          "text": "Passer",
+          "next": ""
+        }
+      ]
+    }
+  }
+}

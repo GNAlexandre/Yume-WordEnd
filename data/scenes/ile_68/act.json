@@ -77,13 +77,26 @@
       "weather": "clair"
     },
     "9": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j9_5_veillee"
+      ],
+      "sleep_hint": "days/9/sleep_hint"
     },
     "10": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j10_5_tour",
+        "j10_4_toit"
+      ],
+      "sleep_hint": "days/10/sleep_hint"
     },
     "11": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j11_4_seniorious"
+      ],
+      "sleep_hint": "days/11/sleep_hint"
     },
     "12": {
       "weather": "clair"

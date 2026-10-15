@@ -10,6 +10,7 @@
     {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_balle_mur", "activity": "balle_mur", "outfit": "vie"},
     {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_balle_mur", "activity": "balle_mur", "outfit": "vie"},
     {"slot": "apres_midi", "if": {"flag": "apres_pluie"}, "map": "entrepot", "place": "champ_boue", "activity": "boue", "outfit": "vie"},
+    {"slot": "apres_midi", "day": [9, 12], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "outfit": "vie", "role": "rouge"},
     {"slot": "aube", "map": "entrepot_rdc", "place": "eau_toilette", "activity": "toilette", "outfit": "pyjama", "_note": "La journée de base : mi-hauteur du grand arbre, l'embuscade dans les fourrés, la pile."},
     {"slot": "matin", "map": "entrepot", "place": "arbre_branche_mi", "activity": "grimper", "outfit": "vie"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},

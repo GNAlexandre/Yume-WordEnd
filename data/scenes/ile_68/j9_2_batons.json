@@ -1,0 +1,41 @@
+{
+  "_comment": "ACTE1.md 9.2 (VEX, s. 22) et combat 3.2 : les bâtons dans la clairière. Willem prend deux bâtons au râtelier (stick_rack, au nord du banc) ; l'entraînement d'E8 (« entrainement_baton » : phase A seule contre Willem, phase B à trois contre un) ; la fin : Ithea allongée dans l'herbe, Nephren assise, les genoux de {player} qui lâchent. La réussite pose j9_baton_reussi (une réplique de plus, et l'entraînement du jour 11 commence à l'étape 2).",
+  "title": "Les bâtons dans la clairière",
+  "day": 9,
+  "slot": "matin",
+  "after": ["j9_1_porte"],
+  "map": "entrepot",
+  "hint": "hint",
+  "trigger": {"on": "reach", "point": "clairiere_centre", "radius": 6.5},
+  "present": ["willem", "ithea", "nephren"],
+  "steps": [
+    {"do": "control", "on": false},
+    {"do": "place", "who": "ithea", "at": "clairiere_banc", "offset": [-0.5, 0.0], "facing": "south", "outfit": "maison", "anim": "assis"},
+    {"do": "place", "who": "nephren", "at": "clairiere_banc", "offset": [0.5, 0.0], "facing": "south", "outfit": "maison", "anim": "assis"},
+    {"do": "place", "who": "willem", "at": "clairiere_banc", "offset": [-1.0, -2.6], "facing": "east", "outfit": "maison"},
+    {"do": "walk", "who": "player", "to": "clairiere_centre", "offset": [1.8, 0.6], "facing": "east"},
+    {"do": "camera", "to": "clairiere_centre", "offset": [4.0, -1.0], "distance": 14, "time": 1.0},
+    {"do": "anim", "who": "willem", "anim": "porte", "time": 0.8, "wait": true},
+    {"do": "walk", "who": "willem", "to": "clairiere_centre", "offset": [3.4, 0.6], "facing": "west"},
+    {"do": "dialogue", "node": "batons"},
+    {"do": "camera_reset", "time": 0.6},
+    {"do": "game", "game": "entrainement_baton", "params": {"variant": "default", "place_player": true, "success_flag": "j9_baton_reussi"}, "fallback": [
+      {"do": "card", "text": "repli_1", "time": 3.0},
+      {"do": "card", "text": "repli_2", "time": 3.0}
+    ]},
+    {"do": "control", "on": false},
+    {"do": "wait", "time": 3.4},
+    {"do": "place", "who": "ithea", "at": "clairiere_centre", "offset": [-1.8, 1.6], "facing": "east", "anim": "dort"},
+    {"do": "place", "who": "nephren", "at": "clairiere_centre", "offset": [1.4, 1.8], "facing": "west", "anim": "assis"},
+    {"do": "place", "who": "willem", "at": "clairiere_centre", "offset": [0.0, -1.2], "facing": "south", "outfit": "maison"},
+    {"do": "place", "who": "player", "at": "clairiere_centre", "offset": [0.0, 0.4], "facing": "north"},
+    {"do": "camera", "to": "clairiere_centre", "offset": [0.0, 0.4], "distance": 11, "time": 0.8},
+    {"do": "dialogue", "node": "fin"},
+    {"if": {"flag": "j9_baton_reussi"}, "do": "dialogue", "node": "fin_reussi"},
+    {"if": {"not_flag": "j9_baton_reussi"}, "do": "dialogue", "node": "fin_fatigue"},
+    {"do": "anim", "who": "nephren", "anim": "dort"},
+    {"do": "bubble", "who": "ithea", "text": "grace"},
+    {"do": "wait", "time": 1.6},
+    {"do": "camera_reset"}
+  ]
+}

@@ -5,6 +5,7 @@
     {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "_note": "Variations par jour (VIE.md, 3)."},
     {"slot": ["midi", "apres_midi"], "day": 8, "map": "entrepot_rdc", "place": "epie_infirmerie", "activity": "avalanche_infirmerie"},
     {"slot": "apres_midi", "day": 4, "map": "entrepot_rdc", "place": "epie_cuisine", "activity": "avalanche_cuisine"},
+    {"slot": "apres_midi", "day": [9, 12], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "role": "blanc"},
     {"slot": "aube", "map": "entrepot_etage", "place": "dortoir_b_lit_3", "activity": "dormir", "_note": "La journée de base."},
     {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},

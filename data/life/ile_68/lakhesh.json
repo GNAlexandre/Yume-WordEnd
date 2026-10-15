@@ -9,6 +9,7 @@
     {"slot": "soir", "day": 11, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
     {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire", "outfit": "vie"},
     {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire", "outfit": "vie"},
+    {"slot": "apres_midi", "day": [9, 12], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "outfit": "vie", "role": "blanc"},
     {"slot": "aube", "map": "entrepot_rdc", "place": "eau_toilette", "activity": "toilette", "outfit": "pyjama", "_note": "La journée de base : la branche basse du grand arbre (elle tremble), la lecture, les jeux de société."},
     {"slot": "matin", "map": "entrepot", "place": "arbre_branche_basse", "activity": "grimper", "outfit": "vie"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},

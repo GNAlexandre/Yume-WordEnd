@@ -1,0 +1,24 @@
+{
+  "id": "j10_3_linge",
+  "start": "vent",
+  "nodes": {
+    "vent": {
+      "speaker_id": "nygglatho",
+      "text": "Tu sens ? Le vent est mouillé. Il va pleuvoir d'une minute à l'autre, et tous les draps sont dehors !",
+      "next": "vent_2"
+    },
+    "vent_2": {
+      "speaker_id": "nygglatho",
+      "text": "Aide les petites à les décrocher, veux-tu ? Moi, je plie. Vite, vite !"
+    },
+    "averse": {
+      "speaker": "",
+      "text": "Le dernier drap à peine plié, la pluie tombe d'un coup, comme un seau qu'on renverse.",
+      "next": "averse_2"
+    },
+    "averse_2": {
+      "speaker_id": "nygglatho",
+      "text": "Juste à temps ! Tout le monde à la trappe, et attention aux marches !"
+    }
+  }
+}

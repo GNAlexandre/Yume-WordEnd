@@ -1,0 +1,117 @@
+{
+  "id": "j11_3_horloge",
+  "start": "salon",
+  "nodes": {
+    "salon": {
+      "speaker": "",
+      "text": "Le salon dort sous des housses blanches. Ça sent la poussière et le bois ciré. Au mur, une vieille horloge, muette.",
+      "next": "salon_2"
+    },
+    "salon_2": {
+      "speaker_id": "ramikeldi",
+      "text": "Je suis né dans cette maison. La grande ville m'a attiré, il y a vingt ans, et je n'ai pas su revenir.",
+      "next": "salon_3"
+    },
+    "salon_3": {
+      "speaker_id": "ramikeldi",
+      "text": "Ma mère est partie ce printemps. La maison, elle, m'a attendu. L'horloge aussi, je crois."
+    },
+    "ouvre": {
+      "speaker": "",
+      "text": "Willem ouvre le boîtier : des engrenages, des ressorts, un petit peigne doré. Il écoute, plus qu'il ne regarde.",
+      "next": "ouvre_2"
+    },
+    "ouvre_2": {
+      "speaker_id": "willem",
+      "text": "Les vieilles mécaniques se réparent, quand on prend le temps de les écouter. Tu me passes les pièces ?"
+    },
+    "pieces": {
+      "speaker_id": "willem",
+      "text": "La petite roue dentée, là. Non, l'autre. Enfin… les deux iront.",
+      "choices": [
+        {
+          "text": "La roue de laiton.",
+          "next": "piece_2"
+        },
+        {
+          "text": "La roue d'acier.",
+          "next": "piece_2"
+        }
+      ]
+    },
+    "piece_2": {
+      "speaker_id": "willem",
+      "text": "Parfait. Maintenant, le ressort fin. Celui qui a l'air fragile.",
+      "choices": [
+        {
+          "text": "Le ressort enroulé.",
+          "next": "piece_3"
+        },
+        {
+          "text": "Le ressort droit.",
+          "next": "piece_3"
+        }
+      ]
+    },
+    "piece_3": {
+      "speaker_id": "willem",
+      "text": "Et la goupille. La toute petite. Ne respire pas trop fort.",
+      "choices": [
+        {
+          "text": "Tendre la goupille.",
+          "next": "merci"
+        },
+        {
+          "text": "Retenir son souffle.",
+          "next": "merci"
+        }
+      ]
+    },
+    "merci": {
+      "speaker_id": "willem",
+      "text": "Merci, assistante. Le reste, c'est de la patience."
+    },
+    "air": {
+      "speaker_id": "ramikeldi",
+      "text": "Elle la jouait tous les soirs, cette comptine. Dites-moi, mademoiselle… vous trouvez l'air joli ?",
+      "choices": [
+        {
+          "text": "Il est triste.",
+          "next": "triste"
+        },
+        {
+          "text": "Il est beau.",
+          "next": "beau"
+        }
+      ]
+    },
+    "triste": {
+      "speaker": "{player}",
+      "text": "Il est triste. Mais d'une tristesse qui tient chaud.",
+      "next": "pleure"
+    },
+    "beau": {
+      "speaker": "{player}",
+      "text": "Il est beau. On dirait qu'il attendait quelqu'un.",
+      "next": "pleure"
+    },
+    "pleure": {
+      "speaker": "",
+      "text": "M. Rami ôte son chapeau, et pleure sans bruit, debout dans son salon."
+    },
+    "famille": {
+      "speaker_id": "ramikeldi",
+      "text": "Je ne sais comment vous remercier. Vous avez une famille qui vous attend, j'imagine ?",
+      "next": "famille_2"
+    },
+    "famille_2": {
+      "speaker_id": "willem",
+      "text": "Une trentaine de petites, deux ou trois grandes, et une ogresse qui cuisine. Ma famille. La plus précieuse que j'aie.",
+      "next": "famille_3"
+    },
+    "famille_3": {
+      "speaker": "",
+      "text": "Il l'a dit tout simplement. Tu l'as entendu. Tu fais semblant de regarder le portrait au mur."
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "_comment": "ACTE1.md 12.1 : Pannibal tente une dernière embuscade (combat 3.1, le jeu d'E8c « embuscade_pannibal », jour 12 : les feintes), à la première sortie de {player} sous le porche. Facultatif (pas une scène clé) ; son indice est celui de la dernière journée.",
+  "title": "La dernière embuscade",
+  "day": 12,
+  "slot": ["aube", "matin", "midi", "apres_midi"],
+  "after": ["j12_1_derniere_journee"],
+  "key": false,
+  "map": "entrepot",
+  "hint": "hint",
+  "trigger": {"on": "enter", "marker": "from_entrepot_rdc"},
+  "present": ["pannibal"],
+  "steps": [
+    {"do": "control", "on": false},
+    {"do": "place", "who": "pannibal", "at": "porche_banc", "offset": [2.6, 2.4], "facing": "west", "outfit": "vie"},
+    {"do": "bubble", "who": "pannibal", "text": "cri"},
+    {"do": "wait", "time": 0.8},
+    {"do": "game", "game": "embuscade_pannibal", "params": {"day": 12, "success_flag": "j12_embuscade_gagnee"}, "fallback": [
+      {"do": "card", "text": "repli", "time": 3.0}
+    ]},
+    {"do": "control", "on": false},
+    {"do": "face", "who": "pannibal", "toward": "player"},
+    {"if": {"flag": "j12_embuscade_gagnee"}, "do": "dialogue", "node": "adieu_gagne"},
+    {"if": {"not_flag": "j12_embuscade_gagnee"}, "do": "dialogue", "node": "adieu_perdu"}
+  ]
+}
