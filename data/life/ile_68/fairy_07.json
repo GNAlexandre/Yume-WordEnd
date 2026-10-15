@@ -1,0 +1,14 @@
+{
+  "_comment": "Ysolde, fée générique (VIE.md, 2.5) : lit au dortoir C.",
+  "gait": "course",
+  "lines": [
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire"},
+    {"slot": "aube", "map": "entrepot_etage", "place": "dortoir_c_lit_3", "activity": "dormir", "_note": "La journée de base."},
+    {"slot": "matin", "map": "entrepot", "place": "arbre_racines", "activity": "grimper"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},
+    {"slot": "apres_midi", "map": "entrepot_etage", "place": "epie_nygglatho", "activity": "avalanche_nygglatho"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_c_lit_3", "activity": "dormir"}
+  ]
+}

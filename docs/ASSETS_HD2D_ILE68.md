@@ -529,6 +529,21 @@ Les chaises de bistrot de `cafe_table.png` (bois cintré) sont les seules de sty
 rustique, sinon les remplacer par `chair_wood`.
 
 
+### R0.8 Les ornières des rues (constaté en jouant, 15 octobre 2026)
+
+**Constat** : `assets/hd2d/decals/cart_ruts.png` (cahier n° 2, lot B, 192 × 384) montre deux sillons
+profonds et sombres, bordés de cailloux, **coupés net aux deux bouts**. Posé par morceaux de 4 m dans
+la rue du village, il se lit comme des **sillons de labour** en travers du chemin. Il est retiré du
+village en attendant (recette `tools/exterior_recipes/village.py`).
+
+| Priorité | Fichier | Taille | Genre, ancre | Consigne |
+| --- | --- | --- | --- | --- |
+| 1 | `assets/hd2d/decals/cart_ruts.png` (même nom, **remplace** l'actuel) | 192 × 384 (2 × 4 m) | décalque de sol, **raccordable en longueur** (le bord haut se raccorde au bord bas), alpha doux sur les bords gauche et droit | deux traces de roues de charrette **discrètes** dans la terre battue, parallèles, écartées de 1,2 m, vues de dessus : un léger creux plus foncé de 15 à 20 cm de large, terre tassée un peu plus lisse, quelques graviers épars sans bordure de cailloux ; contraste faible avec `path_dirt` (le chemin doit rester un chemin, pas un champ labouré) ; **aucun bout visible** : la trace continue hors de l'image en haut et en bas ; pas d'ombre portée, pas de relief marqué |
+| 2 | `assets/hd2d/decals/cart_ruts_end.png` | 192 × 192 (2 × 2 m) | décalque de sol, alpha doux, bord haut raccordé à `cart_ruts` | la fin des deux traces : elles s'estompent et disparaissent dans la terre sur 1,5 m (pour finir une traînée sans coupure) |
+
+**À ne pas faire** : des sillons profonds, des bourrelets de cailloux, des bouts coupés droits, une
+couleur plus sombre que la terre de plus de 15 %.
+
 ## 3. Lot R1 : l'entrepôt complet
 
 ### 3.0 Rappel du format (à coller avec le lot)
@@ -715,6 +730,28 @@ ne pas les recommander). Joindre `assets/hd2d/props/tree_old_pine.png` et `bush_
 **Cote d'usage** : un fourré est **impénétrable à l'œil** (on n'y voit pas à travers) sauf le trou au ras du
 sol de `thicket_c` ; `bramble_hedge` borde le champ sur 4 m sans raccord à gauche et à droite.
 
+
+### 3.6 État de la livraison du lot R1 (15 octobre 2026) et correction à commander
+
+Les 39 images du lot R1 sont livrées (PR n° 37), inscrites au manifeste et posées par les plans
+(`docs/INTERIEURS.md`, « Le lot R1, posé ») : façades et flancs, sol et bord du toit, vapeur du bain, horloge
+des archives, appel du cristal, bureaux, plante, tréteau. **Format tranché par le moteur** : `floor_roof_deck` n'est
+pas une 28e couche de l'atlas du sol (ce serait changer le contrat du cahier n° 2 : atlas, deux shaders, `terrain.gd`,
+tests) mais une tuile de 4 m posée en décalques sur la terrasse ; `roof_edge_slate` est un panneau de plein air
+de 4 × 1 m, sans raccord à gauche et à droite (`docs/DECISIONS.md`, I2).
+
+**Correction à commander (priorité 2) : les vitres des quatre façades ne s'allument presque pas la nuit.** Le moteur
+allume les pixels dont la couleur est **proche de #FFE6A6 (255, 230, 166)** (`glow_color` de
+`panel_core.gdshaderinc` : pleine lueur à moins de 0,05, nulle à plus de 0,12, distance en RVB linéaire) ; les
+carreaux livrés sont plus orangés (de #FBD367 à #FCE496, dégradés) : seuls 15 % (façade ouest, pignon ouest) et 1 à 2 %
+(façade est, flanc est) des pixels de vitre atteignent le seuil, et de nuit les fenêtres restent ternes, alors que celles des remplaçants de T1, peints près de #FFE6A6,
+brillaient. À redemander **sans toucher au dessin** : mêmes images (`warehouse_front_a`, `warehouse_front_a_side`,
+`warehouse_front_b`, `warehouse_front_b_side`), mêmes tailles, mais carreaux **en aplat #FFE6A6 (±6 par canal)** ;
+le reflet en diagonale et le dégradé vers l'orange se font en dehors de ce vert-jaune (croisillons et ombres plus
+foncés, reflets plus blancs que #FFFFF0, jamais d'orangé sur les carreaux). Variante côté moteur, si l'on préfère ne
+rien redessiner : une couleur de lueur par bâtiment (`Building.window_glow_color`, PR « contrats » : demande dans
+`docs/CONTRACT_REQUESTS.md`). Les fenêtres des intérieurs (`window_cross_*` et leurs versions de nuit du lot N) ne sont
+pas concernées.
 
 ## 4. Lot R2 : les personnages de l'acte 1
 

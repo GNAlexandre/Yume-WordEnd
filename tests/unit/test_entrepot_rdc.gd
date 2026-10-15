@@ -27,6 +27,34 @@ func test_every_piece_of_furniture_of_the_plan_is_in_place() -> void:
 		assert_almost_eq(mirror.position.z, 13.0, 0.01, "en z = 13 (plan)")
 
 
+func test_the_r1_images_are_posed() -> void:
+	# (I2) Lot R1 : la vapeur du bain, au-dessus de la baignoire ; l'horloge des archives, bande animée
+	# accrochée au mur ouest (et non élément de mur, qui ne s'anime pas) ; la plante de l'entrée.
+	var steam := _map.find_child("bath_steam_1", true, false) as DecorPanel
+	assert_not_null(steam, "la vapeur du bain")
+	if steam != null:
+		assert_eq([steam.frames, steam.fps], [6, 6.0], "6 images à 6 par seconde")
+		assert_true(steam.soft_alpha, "alpha doux")
+		assert_true(steam.visible, "toujours là")
+		var tub := _map.find_child("bath_tub_1", true, false) as Node3D
+		assert_almost_eq(steam.position.x, tub.position.x, 0.01, "sur la baignoire")
+		assert_between(steam.position.y, 0.5, 1.0, "au ras de l'eau, sous le rebord")
+	var clock := _map.find_child("wall_clock_swing_1", true, false) as DecorPanel
+	assert_not_null(clock, "l'horloge des archives")
+	if clock != null:
+		assert_eq([clock.frames, clock.fps], [4, 2.0], "4 images à 2 par seconde")
+		assert_true(clock.keep_orientation, "elle regarde l'est, comme le grand miroir")
+		assert_almost_eq(clock.position.z, 3.4, 0.01, "en z = 3,4 (plan)")
+		assert_almost_eq(clock.position.y, 1.2, 0.01, "bas à 1,2 m")
+		assert_between(clock.position.x, 22.5, 22.8, "contre le mur ouest des archives")
+	for item: Dictionary in _room.plan.wall_items:
+		assert_ne(
+			item["image"], "wallitem_wall_clock", "l'élément de mur statique a laissé la place"
+		)
+	assert_not_null(_map.find_child("potted_plant_1", true, false), "la plante de l'entrée")
+	assert_null(_map.find_child("desk_clean_1", true, false), "ce bureau est à l'étage")
+
+
 func test_markers_exits_and_named_points() -> void:
 	check_markers_exits_points()
 

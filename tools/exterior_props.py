@@ -59,6 +59,33 @@ def inherited(base, node, props):
             '[node name="%s" instance=ExtResource("1_base")]\n%s\n' % (base, node, props))
 
 
+def building(node, facade, wall_texture, roof_texture, width, depth, wall, ridge, gable_front, side=True):
+    """Scène d'un Building (comme tools/hd2d_scenes.py : façade et flanc <facade>_side, matières, emprise, hauteurs ;
+    collision : l'emprise sur la hauteur du mur)."""
+    lines = ["[gd_scene format=3]", "",
+             '[ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]',
+             '[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/%s.png" id="2_facade"]' % facade,
+             '[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/%s.png" id="3_wall"]' % wall_texture,
+             '[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/%s.png" id="4_roof"]' % roof_texture]
+    if side:
+        lines.append('[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/%s_side.png" id="5_side"]' % facade)
+    lines += ["", '[sub_resource type="BoxShape3D" id="BoxShape3D_1"]',
+              "size = Vector3(%g, %g, %g)" % (width, wall, depth), "",
+              '[node name="%s" type="Node3D"]' % node, 'script = ExtResource("1_building")',
+              'facade = ExtResource("2_facade")', 'wall_texture = ExtResource("3_wall")',
+              'roof_texture = ExtResource("4_roof")', "footprint = Vector2(%.1f, %.1f)" % (width, depth),
+              "wall_height = %g" % wall, "ridge_height = %g" % ridge]
+    if gable_front:
+        lines.append("gable_front = true")
+    if side:
+        lines.append('side_facade = ExtResource("5_side")')
+    lines += ['metadata/hd2d_category = "building"', "", '[node name="Collision" type="StaticBody3D" parent="."]',
+              "collision_mask = 0", "", '[node name="Shape1" type="CollisionShape3D" parent="Collision"]',
+              "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, %g, 0)" % (wall / 2.0),
+              'shape = SubResource("BoxShape3D_1")']
+    return "\n".join(lines) + "\n"
+
+
 # Cahier n° 5, lot R3 (docs/ASSETS_HD2D_ILE68.md, 5.1) : le sentier et le marais. Remplaçants dans
 # tools/hd2d_sentier.py ; CARTE.md, section 4.
 PROPS = {
@@ -76,7 +103,44 @@ PROPS = {
     "bog_pool_a": decal("BogPoolA", "decals/bog_pool_a.png"),
     "path_stones_a": decal("PathStonesA", "decals/path_stones_a.png"),
     "path_stones_b": decal("PathStonesB", "decals/path_stones_b.png"),
+    # (C2) Le village des hommes-bêtes (CARTE.md, section 5) : maisons (cahier n° 5, 5.3 : type, mur / faîte,
+    # profondeur), le café sans les trois tables que sa scène de T1 posait devant sa porte (la place devant_cafe est
+    # libre), clôtures, ruches, charrette, meule, lavoir et leurs variantes de premier plan.
+    "cottage_thatch_a": building("CottageThatchA", "cottage_thatch_a", "wall_wattle_daub", "roof_thatch", 5, 5, 2.5,
+                                 5.5, True),
+    "cottage_thatch_b": building("CottageThatchB", "cottage_thatch_b", "wall_wattle_daub", "roof_thatch", 7, 5, 2.5, 5,
+                                 False),
+    "cottage_thatch_c": building("CottageThatchC", "cottage_thatch_c", "wall_wattle_daub", "roof_thatch", 4, 4, 2.25,
+                                 5, True),
+    "village_barn": building("VillageBarn", "village_barn", "wall_planks", "roof_thatch", 8, 6, 3.5, 7, False),
+    "village_house_stone": building("VillageHouseStone", "village_house_stone", "wall_stone", "roof_shingles", 5, 5, 3,
+                                    6, True),
+    "village_shed": building("VillageShed", "village_shed", "wall_planks_b", "roof_shingles", 4, 3, 2.25, 3.5, False),
+    "cafe_village": building("CafeVillage", "cafe", "wall_plaster", "roof_tiles", 7, 6, 5.5, 7.5, False),
+    "fence_wattle": panel("FenceWattle", "props/fence_wattle.png", "shadow_width = 0.6", "fence",
+                          [("BoxShape3D", ["size = Vector3(1.9, 0.9, 0.25)"], (0, 0.45, 0))]),
+    "fence_wattle_libre": panel("FenceWattleLibre", "props/fence_wattle.png", "shadow_width = 0.6", "fence"),
+    "beehives": panel("Beehives", "props/beehives.png", "", "object_small",
+                      [("BoxShape3D", ["size = Vector3(1.5, 0.9, 0.7)"], (0, 0.45, 0))]),
+    "cart_hay": panel("CartHay", "props/cart_hay.png", "", "object_large",
+                      [("BoxShape3D", ["size = Vector3(2.6, 1.0, 1.1)"], (0.1, 0.5, 0))]),
+    "haystack": panel("Haystack", "props/haystack.png", "", "object_large",
+                      [("BoxShape3D", ["size = Vector3(1.6, 1.4, 1.3)"], (0, 0.7, 0))]),
+    "washing_trough": panel("WashingTrough", "props/washing_trough.png", "", "object_large",
+                            [("BoxShape3D", ["size = Vector3(2.8, 0.8, 0.8)"], (0, 0.4, 0))]),
+    # Variantes de premier plan (CARTE.md 0.3) : ce qui dépasse 1,2 m au sud d'un endroit où l'on marche.
+    "cart_hay_fg": inherited("cart_hay", "CartHay", "foreground = true"),
+    "haystack_fg": inherited("haystack", "Haystack", "foreground = true"),
+    "scarecrow_front": inherited("scarecrow", "Scarecrow", "foreground = true"),
+    "firewood_pile_front": inherited("firewood_pile", "FirewoodPile", "foreground = true"),
 }
+
+# (C3) La colline des étoiles : variantes de premier plan (CARTE.md 0.3) de l'arbre solitaire et du rocher
+# du plan, qui s'effacent devant le joueur quand ils se dressent au sud de lui.
+PROPS.update({
+    "lone_tree_fg": inherited("lone_tree", "LoneTree", "foreground = true"),
+    "boulder_a_fg": inherited("boulder_a", "BoulderA", "foreground = true"),
+})
 
 
 def write_all(quiet=False):

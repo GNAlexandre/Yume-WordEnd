@@ -1008,7 +1008,7 @@ animaux sauvages ; rien dans le code ne connaît le nom d'une espèce.
    `GameState.moment` et `weather` (`EventBus.atmosphere_changed`) renvoient un groupe hors de saison (les bêtes
    s'éloignent) et en font venir un autre, toujours hors du champ de la caméra et à 14 m du joueur au moins ; les
    bêtes qui ont fui reviennent au bout de `respawn_s`. `planned` : le peuplement prévu des cartes qui n'ont pas
-   encore leur nœud `Fauna` (sentier, colline, forêt profonde, montagne) ; on le passe dans `maps` avec la carte.
+   encore leur nœud `Fauna` (sentier, forêt profonde, montagne ; (C3) la colline l'a, ses groupes sont dans `maps`) ; on le passe dans `maps` avec la carte.
    `FaunaRules.problems(&"ile_68")` en dit tout le format ; le test marche sur toutes les cartes de `maps`.
 6. **Le sol** : les animaux marchent sur ce que `FaunaNav` permet (`MapGround.is_walkable`, `level_at` : ni eau
    dormante, ni vide, ni falaise de plus d'un cran) et contournent les décors par la collision.
@@ -1159,6 +1159,11 @@ plan : docs/DECISIONS.md (« T2 »).
   il garde sa face. Une vue qui arrive : `interior_maps.py gen` ; `test_panel_facing.gd` le vérifie.
   Objets du cahier n° 4 (lots O1, O2, P) posés par des lignes `objet` sur les meubles de la cuisine, de
   la lecture, des archives, de l'infirmerie et des chambres (docs/DECISIONS.md, I1).
+- **Le lot R1 posé (I2)** : bandes animées par `objet` (`bath_steam`, `comm_crystal_call` : nœud caché
+  `visible = false`, que l'histoire montre quand le cristal sonne) ou `mural` (`wall_clock_swing` : DecorPanel
+  accroché au mur ouest, à la place de l'élément de mur statique) ; `desk_clean`, `potted_plant`,
+  `polishing_trestle` au plan ; le sol de la terrasse (`floor_roof_deck`) en `GroundDecal` de 4 × 3,5 m,
+  le bord d'ardoise (`roof_edge_slate`) en panneau (docs/INTERIEURS.md, docs/DECISIONS.md, I2).
 - **Places de la vie** : `Life/Places/<nom>` (`Marker3D`, regard vers ce qu'on y fait) : les
   `point` du plan, chaque chaise (`refectoire_chaise_a01`…), chaque lit, quelques sièges ; liste
   après chaque plan dans CARTE.md.
@@ -1192,9 +1197,9 @@ static func lookup(path, key_path) -> String, forget_texts()
 
 L'équivalent de `tools/interior_maps.py` pour le dehors : il écrit une carte du dehors **d'après son
 plan** (bloc ```plan de `docs/lore/CARTE.md`, lu par `tools/carte_plans.py`). Cartes construites :
-`entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet) et
-`sentier` (C1) ; cartes d'attente (provisoires, un lot de la phase 3 les remplace) : `village`,
-`colline`, `foret_profonde`, `port`.
+`entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet),
+`sentier` (C1), `village` (C2) et `colline` (C3) ; cartes d'attente (provisoires, un lot de la phase 3
+les remplace) : `foret_profonde`, `port`.
 
 ```text
 python3 tools/exterior_maps.py gen [map_id…]      # écrit les cartes (toutes sans argument)
@@ -1218,7 +1223,9 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   (`<décor>_forest` ou `<décor>_fg`, qui s'efface autour du joueur), faute de quoi il n'est pas posé
   et l'outil le dit.
 - **Une recette par carte** (`tools/exterior_recipes/<id>.py`) : `SETTINGS` (groupes de décors,
-  sorties provisoires), `ground_plan(plan_map)` (`tools/exterior_ground.py` :
+  sorties provisoires ; (C3) `camera_bounds`, `light_preset`, `no_lights`, `fauna` : bornes de caméra qui
+  diffèrent de la règle, préréglage de lumière de la `Map`, plan à lumières que la carte ne porte pas, nœud
+  `Life/Fauna`), `ground_plan(plan_map)` (`tools/exterior_ground.py` :
   `ground_from_plan` déduit le sol du plan, la recette y ajoute berges, îlots, rampes), `prepare(p)`,
   `pose(p)`, `ambient(p)`, `PLACES_WHY` (places de la vie que le plan ne nomme pas). Modèle court :
   `sentier.py` ; riche : `entrepot.py`. Ajouter une carte : son bloc ```plan, sa recette, son nom dans
@@ -1239,13 +1246,60 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   places de la vie en plus (`sentier_ouest`, `corbeau_perchoir`, `lisiere_renard`…). **Aucune
   lumière** (V1) : la nuit est celle d'`Atmosphere` (préréglage `nuit`) et de la lumière des fées du
   joueur (4 m), qui suffit à lire le sentier.
-- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_exterior_maps.gd` (`check` de l'outil,
+- **La colline des étoiles** (`colline`, CARTE.md section 7, 40 × 40 m, lot C3) : un cap de trois terrasses
+  (+1, +2, +3 m) montées par trois rampes, un sommet plat de 12 × 12 m (la place `cercle_talismans`, libre,
+  herbe rase, le petit cristal en `talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher` : les points de la
+  scène de l'acte 1, 8.8), le **vide au nord** (bord `void` de `MapGround` : la mer de nuages nocturne, les
+  paliers vont jusqu'à la côte) ; sortie à pied vers `entrepot` (`from_colline`) ; bornes de caméra
+  `Rect2(10, 6, 20, 26)` ; **`light_preset = &"nuit"`** (la nuit claire d'E9, quel que soit le moment de la
+  journée ; CARTE.md l'appelle `nuit_claire`) et **aucune lumière** dans la carte (la lueur du cristal et des
+  talismans est celle de la scène) ; faune d'E5 (`Life/Fauna`, `merles`, `papillons`, `chouette` : groupes dans
+  `data/fauna/ile_68/peuplement.json`, `maps`) ; places de la vie en plus (`vers_entrepot`, `pied_de_colline`,
+  `arbre_seul`…). Toutes les images du plan sont livrées ; `lone_tree_fg` et `boulder_a_fg` (premier plan,
+  `tools/exterior_props.py`) ; remplaçant du talisman de la scène : `anim/talisman_float` (`tools/hd2d_colline.py`,
+  manifeste, lot R6 du cahier n° 5).
+- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_colline.gd` (28 : plan, relief, vide et mer de
+  nuages, sommet libre, lumière, faune, marche, caméra, densité, draw calls),
+  `tests/integration/test_colline_in_game.gd` (de l'entrepôt à la colline de jour et de nuit, la montée par
+  les trois rampes, le bord, le retour ; captures `tests/integration/demo_c3.tscn` : `C3_VIEW=<vue>
+  [C3_MOMENT=couchant C3_FREE=1] tools/screenshot.sh res://tests/integration/demo_c3.tscn
+  build/shots/c3_<vue>.png 60`), `tests/unit/test_exterior_maps.gd` (`check` de l'outil,
   cartes d'attente, `port` dans l'île), `tests/integration/test_sentier_in_game.gd` (de l'entrepôt au
   sentier, au marais, à la rampe de la ville, au port d'attente, et retour) ; captures
   `C1_MAP=sentier C1_VIEW=<vue> [C1_MOMENT=nuit] [C1_LIGHT=off] tools/screenshot.sh
   res://tests/integration/demo_c1.tscn build/shots/c1_<vue>.png 60` (vues : `entree`, `ouest`,
   `milieu`, `marais`, `embuscade`, `berge`, `est`, `fourche`, `ville`, `large` ; draw calls dans le
   journal).
+
+### (C2) Le village, le café et la maison Limashenka
+
+Trois cartes d'après CARTE.md, section 5 : `village` (extérieur, 58 × 40 m, `tools/exterior_recipes/village.py`,
+remplace la carte d'attente), `cafe` et `maison_limashenka` (intérieurs, `tools/interior_maps.py`, pièces
+`salle` / `arriere` et `vestibule` / `salon`). Les trois sont dans `ile_68.json` (lieu `village`).
+
+- **Réglages ajoutés à `exterior_maps.py`** (pour toute carte du dehors) : `no_lights` (aucun nœud `Lights` :
+  la nuit est celle d'`Atmosphere`), `examine` (objets à examiner posés dans la carte : nœuds `Examine`,
+  `text_key`, `texts`), `exit_meta` (métadonnées d'une sortie). Les bâtiments se posent par `BUILDING_SCENES`
+  (le café a sa scène `cafe_village`, sans terrasse en cylindres).
+- **La porte de la maison Limashenka** ne s'ouvre qu'au jour 11 (ACTE1.md 11.3) : la sortie `porte_limashenka`
+  du village porte `open_from_day = 11` et `closed_text_key = "village/maison_close"` en métadonnées ; `MapExit`
+  ne sait pas encore fermer une porte (demande dans `docs/CONTRACT_REQUESTS.md`), le récit (E6) lit ces
+  métadonnées. Sans cela, la porte s'ouvre.
+- **Le village** : rue d'est en ouest (entrée de l'entrepôt à l'est), chaumières, grange, café, maison close,
+  lavoir, ruches, belvédère au nord-est, ruisseau et jardins au sud, île flottante en toile de fond. Aucune
+  lumière dans la carte ; 14 places de la vie en plus du plan (`rue_ouest`, `rue_centre`, `terrasse_banc_1`,
+  `etal_rue`, `jardins_sud`…). Clôtures, haies et buissons ferment les cases que la règle de caméra cache ;
+  `Edges` bloque le reste.
+- **Le café** : comptoir à vitrine à gâteaux, étagère aux bouteilles, deux tables de deux chaises, table des
+  buveurs, arrière-boutique derrière un rideau rayé, clochette à la porte. Porte du mur sud (x = 4,75).
+- **La maison** : vestibule, salon, horloge à peigne doré (trois états : fermée, ouverte, balancier de 4 images
+  à 2 images/s, au manifeste, pour Willem au jour 11), canapé et fauteuil sous un drap, portrait de famille.
+- **Les images** : 38 remplaçants au manifeste (lot `R3`), recettes Pillow dans `tools/hd2d_village.py`
+  (`python3 tools/hd2d_village.py manifest` les inscrit ; `tools/hd2d_assets.py gen` les écrit) ; une image
+  livrée du même nom remplace le remplaçant sans toucher au code.
+- **Tests** : `tests/unit/test_village.gd`, `test_cafe.gd`, `test_maison_limashenka.gd`,
+  `tests/integration/test_village_in_game.gd` (entrepôt, village, café, maison, retour) ; captures
+  `build/c2/shots.sh <carte>:<lieu>:<moment>` sur `tests/integration/demo_c2.tscn` (voir DECISIONS.md, « C2 »).
 
 ### (E9) Lumière et temps : mode d'emploi
 
@@ -1461,6 +1515,16 @@ fois la grille prête ; pendant les 70 images de sa construction (225 ms de trav
 8 ms au plus (avant le découpage en petits pas : 50 ms d'un coup) ; chemins 0,9 ms au plus. Le
 rendu logiciel tourne à environ 1 image/s, vie coupée comme en marche : la durée d'image du
 navigateur (≤ 25 ms visés) se vérifie sur une vraie carte graphique, pas ici.
+
+**(V1) La vie de l'entrepôt sur les vraies cartes.** Les emplois du temps de l'île n° 68 sont dans
+`data/life/ile_68/` (`LifeData` lit `data/life/<île>/` : l'île de la carte peuplée, `LifeData.enter_island`,
+puis `GameState.island`, puis l'île n° 68 ; `activities.json` reste commun ; `LifeData.use_content(&"essai")`
+ou `?contenu=essai` : les démonstrations d'E4, `data/life/essai/`). Les places (zones, départs `vers_<carte>`,
+orientations) viennent de `tools/life_zones.py`, lu par `tools/interior_maps.py` et `tools/exterior_maps.py`
+(sous-commandes `gen` et `places` ; liste dans CARTE.md). `LifeDirector` tient les drapeaux de la pluie
+(`pluie_du_jour`, `apres_pluie`) d'après `GameState.weather`. Les jours, les décisions et les manques :
+docs/DECISIONS.md (« V1 »), docs/CONTRACT_REQUESTS.md. Tests : `tests/unit/test_life_ile_68_nav.gd`,
+`tests/integration/test_life_ile_68.gd` ; vues : `tests/integration/demo_v1.tscn` (`V1_VIEW=<vue>`).
 
 **Pièges.** Un test qui change le créneau rétablit `GameState.reset()` ; un test qui pose une carte
 à la main et l'habite appelle `LifeDirector.attach(null)` dans `after_each`. Le directeur ne peuple

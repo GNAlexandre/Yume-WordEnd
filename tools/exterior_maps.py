@@ -17,8 +17,8 @@ Pour une carte, l'outil écrit :
 
 Deux sortes de cartes :
 - les cartes construites, une recette par carte dans tools/exterior_recipes/<id>.py (entrepot,
-  sentier) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
-- les cartes d'attente (WAITING plus bas : village, colline, foret_profonde, port) : un sol plat de la
+  sentier, village, colline) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
+- les cartes d'attente (WAITING plus bas : foret_profonde, port) : un sol plat de la
   bonne matière, une lisière, l'écriteau « Plus loin, bientôt », la sortie de retour et le
   marqueur d'arrivée du plan. Provisoires : le lot de la carte les remplace par une recette
   (ajouter la carte à RECIPES, retirer l'attente).
@@ -39,6 +39,9 @@ Une carte nouvelle entre aussi dans l'île : data/world/islands/ile_68.json (`ma
 Ajouter une carte du dehors : son bloc ```plan dans CARTE.md (python3 tools/carte_plans.py check),
 puis exterior_recipes/<id>.py (modèle : sentier.py, plus court ; entrepot.py, plus riche) :
     SETTINGS    groupes de décors (l'ordre des nœuds), sorties provisoires, places de la vie en plus ;
+                (C3) aussi camera_bounds (les bornes de la caméra, si elles ne sont pas celles de la règle),
+                light_preset (le préréglage de lumière de la carte), no_lights (le plan nomme des lumières,
+                la carte n'en porte aucune), fauna (la carte porte le nœud Life/Fauna d'E5) ;
     ground_plan(plan_map) -> dict    le plan.json du sol (ground_from_plan(...) le déduit du plan) ;
     prepare(p), pose(p), ambient(p)  voir tools/exterior_pose.py (Pose : place, scatter, poisson…).
 Ce que le plan ne dit pas va dans docs/DECISIONS.md ; un écart au plan se reporte dans le plan.
@@ -56,6 +59,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import carte_plans  # noqa: E402
 import exterior_ground  # noqa: E402
 import exterior_pose  # noqa: E402
+import life_zones  # noqa: E402
 import map_build  # noqa: E402
 from exterior_pose import Pose, prop  # noqa: E402
 
@@ -66,7 +70,10 @@ SCENES = os.path.join(ROOT, "src", "world", "maps")
 GROUND_FILES = ["plan.json", "map.json", "heights.png", "materials.png", "structures.png"]
 
 # Cartes construites : une recette par carte (tools/exterior_recipes/<id>.py).
-RECIPES = ["entrepot", "sentier"]
+RECIPES = ["entrepot", "sentier", "village", "colline"]
+
+# Lot qui a écrit la liste des places d'une carte (C1 par défaut : l'outil).
+PLACES_LOT = {"village": "C2", "colline": "C3"}
 
 # Cartes d'attente (lots de la phase 3 : elles les remplacent). Taille 32 × 24 m. ground : matière du
 # sol ; path : matière du chemin ; back : la sortie du plan (son nom, sa cible, le marqueur du retour)
@@ -74,16 +81,6 @@ RECIPES = ["entrepot", "sentier"]
 # du marqueur d'arrivée (`from_<carte d'origine>`) et du Spawn ; path_pts : le chemin ; sign : l'écriteau ;
 # gap : (x0, x1) d'une trouée de la lisière au nord.
 WAITING = {
-    "village": {
-        "ground": "herbe", "path": "terre_battue", "back": "vers_entrepot",
-        "exit": (31.4, 10, 32, 14), "marker": (29.5, 12, "O"), "spawn": (27.0, 12, "O"),
-        "path_pts": [[32, 12], [13, 12]], "sign": (12.2, 10.6), "gap": None,
-    },
-    "colline": {
-        "ground": "prairie", "path": "chemin", "back": "vers_entrepot",
-        "exit": (14, 23.4, 18, 24), "marker": (16, 21.5, "N"), "spawn": (16, 20, "N"),
-        "path_pts": [[16, 24], [16, 12]], "sign": (17.8, 11.4), "gap": None,
-    },
     "foret_profonde": {
         "ground": "sous_bois", "path": "chemin", "back": "vers_entrepot",
         "exit": (14, 0, 18, 0.6), "marker": (16, 2.5, "S"), "spawn": (16, 4.0, "S"),
@@ -252,10 +249,11 @@ class Writer:
         exit_script = self.ext_id("Script", "res://src/world/map_exit.gd")
         ambient_script = self.ext_id("Script", "res://src/world/ambient_sprites.gd") if ambient else ""
         bounds = self.settings.get("camera_bounds") or (10, 9, p.W - 20, p.D - 17)
+        preset = 'light_preset = &"%s"\n' % self.settings["light_preset"] if self.settings.get("light_preset") else ""
         self.node('[node name="%s" type="Node3D"]\nscript = ExtResource("%s")\ndisplay_name = "%s"\n'
-                  'region = &"%s"\nsize = Vector2(%d, %d)\ncamera_bounds = Rect2(%s, %s, %s, %s)\n'
-                  % (m.id, map_script, m.meta["nom"][0], m.meta["region"][0], p.W, p.D, f(bounds[0]), f(bounds[1]),
-                     f(bounds[2]), f(bounds[3])))
+                  'region = &"%s"\n%ssize = Vector2(%d, %d)\ncamera_bounds = Rect2(%s, %s, %s, %s)\n'
+                  % (m.id, map_script, m.meta["nom"][0], m.meta["region"][0], preset, p.W, p.D, f(bounds[0]),
+                     f(bounds[1]), f(bounds[2]), f(bounds[3])))
         self.node('[node name="Ground" type="StaticBody3D" parent="."]\nscript = ExtResource("%s")\n' % ground_script)
         # Bords du plan (bord) : ce qui ferme la carte, en boîtes invisibles (couche 1).
         self.node('[node name="Edges" type="StaticBody3D" parent="."]\ncollision_mask = 0\n')
@@ -317,6 +315,7 @@ class Writer:
             if e.name in p.provisional_exits:
                 meta = 'metadata/plan_target_map = &"%s"\nmetadata/plan_target_marker = &"%s"\n' % (target, marker)
                 target, marker = p.provisional_exits[e.name]
+            meta += self.settings.get("exit_meta", {}).get(e.name, "")
             depth = max(r.z1 - r.z0, 0.6)
             width = max(r.x1 - r.x0, 0.6)
             sid = self.box_shape("exit_%s" % e.name, (width, 3.0, depth))
@@ -333,12 +332,27 @@ class Writer:
         self.node('[node name="Life" type="Node3D" parent="."]\n')
         self.node('[node name="Places" type="Node3D" parent="Life"]\n')
         for name, (x, z) in p.points.items():
+            yaw = life_zones.point_yaw(m.id, name)
+            basis = "1, 0, 0, 0, 1, 0, 0, 0, 1" if not yaw else _yaw_basis(yaw)
             self.node('[node name="%s" type="Marker3D" parent="Life/Places"]\n'
-                      'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, %s, %s)\n' % (name, f(x), f(h(x, z)), f(z)))
+                      'transform = Transform3D(%s, %s, %s, %s)\n' % (name, basis, f(x), f(h(x, z)), f(z)))
         for name, x, z, yaw in self.settings.get("extra_places", []):
             basis = "1, 0, 0, 0, 1, 0, 0, 0, 1" if not yaw else _yaw_basis(yaw)
             self.node('[node name="%s" type="Marker3D" parent="Life/Places"]\n'
                       'transform = Transform3D(%s, %s, %s, %s)\n' % (name, basis, f(x), f(h(x, z)), f(z)))
+        # (V1) Les zones et les départs de la vie (tools/life_zones.py) : un marqueur et ses points enfants,
+        # posés au sol (la hauteur du palier, plus dy pour une branche d'arbre).
+        for entry in life_zones.zones_of(m.id):
+            x, z, yaw, _dy = life_zones.anchor(entry)
+            y0 = h(x, z)
+            basis = "1, 0, 0, 0, 1, 0, 0, 0, 1" if not yaw else _yaw_basis(yaw)
+            self.node('[node name="%s" type="Marker3D" parent="Life/Places"]\n'
+                      'transform = Transform3D(%s, %s, %s, %s)\n' % (entry["name"], basis, f(x), f(y0), f(z)))
+            for k, (px, pz, pyaw, dy) in enumerate(entry["pts"]):
+                pb = "1, 0, 0, 0, 1, 0, 0, 0, 1" if not pyaw else _yaw_basis(pyaw)
+                self.node('[node name="p%d" type="Marker3D" parent="Life/Places/%s"]\n'
+                          'transform = Transform3D(%s, %s, %s, %s)\n'
+                          % (k + 1, entry["name"], pb, f(px - x), f(h(px, pz) + dy - y0), f(pz - z)))
         self.node('[node name="Areas" type="Node3D" parent="Life"]\n')
         for pl in m.places:
             r = pl.rect
@@ -347,11 +361,24 @@ class Writer:
                       'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, %s, %s)\n'
                       'metadata/area = Rect2(%s, %s, %s, %s)\n' % (pl.name, f(cx), f(h(cx, cz)), f(cz), f(r.x0), f(r.z0),
                                                                     f(r.x1 - r.x0), f(r.z1 - r.z0)))
+        # Objets à examiner (Examinable ; textes : settings["texts"], format de data/texts/village.json) : (clé, x, z,
+        # taille de la zone) ; text_key = « carte/clé ».
+        examine = self.settings.get("examine", [])
+        if examine:
+            script = self.ext_id("Script", "res://src/world/examinable.gd")
+            self.node('[node name="Examine" type="Node3D" parent="."]\n')
+        for key, x, z, size in examine:
+            self.node('[node name="%s" type="Area3D" parent="Examine"]\n'
+                      'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, %s, %s)\nscript = ExtResource("%s")\n'
+                      'text_key = "%s/%s"\nsize = Vector3(%s, %s, %s)\ntexts_path = "%s"\n'
+                      % (key, f(x), f(h(x, z)), f(z), script, m.id, key, f(size[0]), f(size[1]), f(size[2]),
+                         self.settings["texts"]))
         # Lumières : la lanterne à cristal (une lampe OmniLight3D que Atmosphere règle selon le moment,
         # lamp_energy) ; les autres, des repères (Marker3D). Aucune carte du dehors n'a de lampadaire.
-        if m.lights:
+        lights = [] if self.settings.get("no_lights") else m.lights
+        if lights:
             self.node('[node name="Lights" type="Node3D" parent="."]\n')
-        for light in m.lights:
+        for light in lights:
             x, z = light.rect.x0, light.rect.z0
             y = h(x, z) + light.h
             if light.extra["type"] == "cristal":
@@ -364,6 +391,9 @@ class Writer:
                 self.node('[node name="%s" type="Marker3D" parent="Lights"]\n'
                           'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, %s, %s)\nmetadata/kind = &"%s"\n'
                           % (light.name, f(x), f(y), f(z), light.extra["type"]))
+        if self.settings.get("fauna"):
+            fauna = self.ext_id("PackedScene", "res://src/fauna/fauna.tscn")
+            self.node('[node name="Fauna" parent="Life" instance=ExtResource("%s")]\n' % fauna)
         amb = []
         if ambient:
             self.node('[node name="Ambience" type="Node3D" parent="."]\n')
@@ -525,8 +555,9 @@ def write(built, rels):
 def places_markdown(map_id, m, extras):
     named = list(m.points)
     lines = ["<!-- places:%s -->" % map_id,
-             "**Places de la vie** (lot C1 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, "
-             "E5 et E6) : les points nommés ci-dessus, à leur nom (`%s`)" % "`, `".join(named)]
+             "**Places de la vie** (lot %s ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, "
+             "E5 et E6) : les points nommés ci-dessus, à leur nom (`%s`)" % (PLACES_LOT.get(map_id, "C1"),
+                                                                           "`, `".join(named))]
     if m.places:
         lines[-1] += " ; les places réservées, en `Life/Areas` avec leur rectangle (`%s`)" % "`, `".join(
             p.name for p in m.places)
@@ -534,6 +565,15 @@ def places_markdown(map_id, m, extras):
         lines[-1] += " ; et, en plus du plan : %s" % ", ".join(
             "`%s` (%s ; %s)" % (name, "%g ; %g" % (x, z), why) for name, x, z, _yaw, why in extras)
     lines[-1] += "."
+    zones = life_zones.zones_of(map_id)
+    if zones:
+        lines.append("")
+        lines.append("**Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z, "
+                     "posé au sol ; `vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :")
+        lines.append("")
+        for entry in zones:
+            count = len(entry["pts"])
+            lines.append("- `%s`%s : %s" % (entry["name"], " (%d points)" % count if count else "", entry["why"]))
     lines.append("<!-- /places:%s -->" % map_id)
     return "\n".join(lines)
 

@@ -759,3 +759,62 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
 - **V1 (la vie sur les vraies cartes)** : l'activité `ballon` existe dans `data/life/activities.json` (une place d'un seul point suffit : `champ_centre`) ; une ligne d'emploi du temps l'utilise ainsi : `{"slot": "apres_midi", "day": [5, 12], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "role": "rouge"}` (`role` : `rouge`, `blanc`, ou `arbitre` pour Willem ; sans rôle, la petite va à l'équipe qui en a le moins). Il faut 6 joueuses au moins ; il n'y a que six fées génériques (`data/npcs/generic/`) : pour « douze à vingt petites » (VIE.md, 5.1) il en faut d'autres (cahier n° 3, `fairy_07` à `fairy_12`). Les jours 7 et 8 : pas de ligne de ballon. Les petites portent la tenue `vie` (courir, frapper, tomber) : la planche `<id>_life` doit avoir `frappe`, `lance`, `tombe`, `saut`, `assis`.
 - **E6 (récit)** : `Player.set_weapon(&"baton")` au début de l'acte 1 puis `&"seniorious"` aux scènes que le récit désigne (duel, entraînement spécial, colline) ; l'arme n'est pas dans la sauvegarde : la redonner sur `EventBus.game_loaded`. Lancer un jeu : `MiniGames.start_ball_match` / `MiniGames.start_staff_training` (PLAN.md, « (E8) Les jeux ») après avoir posé le créneau (`LifeDirector.set_slot`) ; recevoir la fin par `match_finished(résultat)` / `finished(résultat)` ; `StaffTraining.window_closed` à relayer à E9 (le rythme tremble, le son s'étouffe). Les répliques de Willem pendant l'entraînement sont dans `data/texts/life.json`, `games/baton/` ; la scène peut les remplacer.
 - **Planches (cahier n° 5, lot R2)** : `<id>_stick` pour Chtholly, Ithea, Nephren et Willem avec l'animation `pare` (2 images, 2 ips, boucle) acceptée par E8 ; Willem n'a ni `frappe` ni `lance` dans `willem_home` (il frappe donc avec `parle`) : lui en donner une. Le joueur frappe le ballon avec son coup d'épée (`attaque`) faute d'un geste de pied ; `chtholly_home` a `frappe` mais pas le combat (déjà noté plus haut).
+- **V1 (la vie de l'entrepôt)** : fait sans changer de contrat ; petits ajouts à `src/life/` (avec leurs tests) :
+  `LifeData` lit `data/life/<île>/` (`use_content`, `enter_island`, `dirs`), `LifeDirector` tient les drapeaux
+  de la pluie et lit `?contenu=`, `LifeNav.nearest_open` ne traverse plus un mur. Besoins restants, hors
+  périmètre :
+  - **Moteur (E4)** : une réaction « fuite » (jours 1 à 3 : les petites détalent à moins de 6 m de Willem,
+    VIE.md, section 3) ; une correspondance entre cartes (un PNJ qui quitte l'étage pour le dehors descend
+    l'escalier puis sort par la porte, au lieu de disparaître à l'escalier) ; une pose empilée au `LEVELS` de la
+    tour de fées ; l'avalanche « au hasard une fois par jour » (aujourd'hui : un créneau et une porte fixés par la
+    ligne) ; Pannibal qui bondit (l'embuscade est un guet sur place, sans bond).
+  - **Ballon (E8)** : le champ (`champ_jeu`, `champ_meneuse`, `champ_centre`, `champ_but_nord`, `champ_but_sud`) ;
+    Willem et `fairy_08` à `fairy_10` y sont l'après-midi (jeu `errer`) : remplacer leurs lignes `apres_midi` par
+    l'activité du ballon ; les lignes du jour 5 à 12 sauf 7 et 8 ; les jours de pluie, le ballon rentre (flag
+    `pluie_du_jour`).
+  - **Récit (E6)** : poser `GameState.day` (0 : la journée de base), `LifeDirector.set_slot` ; les drapeaux
+    `pluie_du_jour` et `apres_pluie` suivent `GameState.weather` tout seuls. Les `away` des lignes
+    (`port`, `ville_snack`, `ville_haute`, `cafe`, `village`, `colline`, `montagne`, `maison_limashenka`,
+    `ville_boulangerie`) sont des cartes à venir : la place `vers_<carte>` de la carte courante, sinon le premier départ.
+  - **Personnages et planches** : `kana` et `giniette` (prio 2 ; leurs lits `dortoir_b_lit_1_haut` et `dortoir_b_lit_2_bas`
+    attendent ; repli prévu `fairy_03` et `fairy_05`) ; `fairy_07` à `fairy_12` n'ont pas de planche propre (elles portent
+    celles de `fairy_01` à `fairy_06`, comme le prévoit VIE.md) ; `almita_pajamas`, les pyjamas des aînées et des génériques
+    (elles dorment en tenue du jour) ; `nygglatho_labcoat` ; les tenues de pluie ; `willem_stick`, le geste au marteau
+    (`reparer` joue `travaille`), la passe du pied de Willem (`frappe`) ; les poses `pile` (assise à califourchon) et `epie`
+    (l'oreille contre la porte, de dos) ; `cafe_owner`, `drinker_*`, `porter`, `villager_*` (la ville et le village).
+
+- **C3 — préréglage `nuit_claire`** (E9) : CARTE.md (7) et ACTE1.md (8.8) appellent ainsi la lumière de la colline,
+  qui n'existe pas (`data/lighting/` : `nuit` seulement). La carte emploie `light_preset = &"nuit"` (docs/DECISIONS.md,
+  C3). Un préréglage `nuit_claire` (voie lactée plus nette, air limpide, lumière plus douce que `nuit`) se règle
+  dans `data/lighting/` ; la carte passera alors `light_preset` à `nuit_claire` (une ligne de
+  `tools/exterior_recipes/colline.py`, `gen colline`), ou la scène de l'acte 1 le choisit.
+- **C3 — la scène des talismans (E6, récit)** : la carte donne le décor et les points (`talismans_centre` : le petit
+  cristal, 20 ; 12 ; `dos_a_dos`, `vue_nord`, `rocher`) ; elle ne pose ni talismans ni lumière. La scène pose les
+  quarante et un `anim/talisman_float` (remplaçant livré, 24 × 24 px) sur un cercle de 3,5 m, la lueur du cristal
+  (une lumière de la scène, pas de la carte) et, quand on lève les yeux, `sky_night` (la caméra regarde le ciel).
+  Willem monte à la colline au soir du jour 8 : `data/life/ile_68/willem.json` dit `away: colline` ; une ligne
+  `map` + `place` (`colline`, `dos_a_dos`) la remplace quand la scène la joue.
+- **C2 (porte fermée jusqu'au jour 11)** : `MapExit` ne sait pas se fermer. La porte `porte_limashenka` du
+  village (maison Limashenka, ouverte au jour 11, ACTE1.md 11.3) porte les métadonnées `open_from_day = 11` et
+  `closed_text_key = "village/maison_close"` (texte de `data/texts/village.json`) ; il faudrait que `MapExit`
+  (ou le récit, E6) refuse l'invite avant ce jour et lise ce texte. Tant que ce n'est pas fait, la porte
+  s'ouvre à tout moment (le test de la vraie partie l'emprunte).
+- **C2 (fenêtres allumées la nuit)** : le café n'a aucune lampe de carte (règle V1). Une image
+  `window_lit_*` (fenêtres éclairées de nuit) serait à livrer par le cahier d'images si l'on veut que la
+  façade du café se lise de nuit.
+
+## I2 — l'entrepôt complet : lueur des vitres des façades livrées
+- **Vitres du lot R1** (`warehouse_front_a`, `_b` et flancs) : carreaux de #FBD367 à #FCE496, à 0,14 de distance et
+  plus de `glow_color` (#FFE6A6, tolérance 0,12 en RVB linéaire : `panel_core.gdshaderinc`) ; la nuit, les
+  fenêtres de l'entrepôt vu du dehors ne s'allument presque pas. Deux issues : la correction commandée au
+  dessinateur (docs/ASSETS_HD2D_ILE68.md, 3.6), ou une PR « contrats » qui ajoute `Building.window_glow_color`
+  (`@export var`, défaut #FFE6A6, passé à `DecorPanel.material_for` puis au paramètre `glow_color` du shader)
+  et la règle `#FCDC80` pour ces quatre images. I2 n'y touche pas (`src/world/building.gd`, `decor_panel.gd` et
+  `panel_core.gdshaderinc` ne sont pas à ce lot).
+- **Appel du cristal** (`comm_crystal_call`) : nœud caché `Geometry/Nygglatho/comm_crystal_call_1` de la carte
+  `entrepot_etage` ; à `visible = true` par E6 quand Nygglatho est appelée, et à `false` ensuite. Halo : aucune
+  lumière n'est posée (le plan n'a pas de lampe `cristal_bleu`).
+- **Couverture du lit** (`bed_iron_cover`) : scène `src/world/props/interior/bed_iron_cover.tscn`, à poser au pixel
+  près sur un lit de l'infirmerie quand quelqu'un y est couché (même position, même regard que le lit) ; aucun lit
+  ne la porte au plan. **Bureau au miroir relevé** (`desk_chtholly_mirror_up`, acte 2) : scène prête, pas posée.
+

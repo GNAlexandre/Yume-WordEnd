@@ -1,0 +1,13 @@
+{
+  "_comment": "Vesna, fée générique (VIE.md, 2.5) : lit au dortoir D.",
+  "gait": "course",
+  "lines": [
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "aube", "map": "entrepot_rdc", "place": "cuisine_fourneau", "activity": "cuisiner", "_note": "La journée de base."},
+    {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_service", "activity": "servir"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_service", "activity": "servir"},
+    {"slot": "apres_midi", "map": "entrepot_rdc", "place": "cuisine_fourneau", "activity": "cuisiner"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "refectoire_service", "activity": "servir"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_d_lit_3_bas", "activity": "dormir"}
+  ]
+}
