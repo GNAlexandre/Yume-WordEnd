@@ -59,7 +59,7 @@
       "who": "pannibal",
       "to": "willem",
       "offset": [
-        -0.8,
+        -1.1,
         -0.4
       ],
       "gait": "course"
@@ -85,8 +85,8 @@
       "who": "pannibal",
       "at": "willem",
       "offset": [
-        0.2,
-        -0.3
+        1.2,
+        -0.2
       ],
       "facing": "west"
     },
@@ -120,6 +120,15 @@
       "on": false
     },
     {
+      "do": "walk",
+      "who": "player",
+      "to": "willem",
+      "offset": [
+        -1.4,
+        0.5
+      ]
+    },
+    {
       "do": "face",
       "who": "player",
       "toward": "willem"
@@ -127,6 +136,11 @@
     {
       "do": "face",
       "who": "willem",
+      "toward": "player"
+    },
+    {
+      "do": "face",
+      "who": "pannibal",
       "toward": "player"
     },
     {

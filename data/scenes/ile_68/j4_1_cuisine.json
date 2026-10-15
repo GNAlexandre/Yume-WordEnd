@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 4.1 (s. 7) : la cuisine interdite. La cuisinière du jour (fairy_12 dans ACTE1) est une fée générique, fairy_05 (les génériques vont de 01 à 06).",
+  "_comment": "ACTE1.md 4.1 (s. 7) : la cuisine interdite. La cuisinière du jour est fairy_12 (ACTE1 ; V1 lui donne sa ligne au fourneau), écartée à la table pendant que Willem cuisine.",
   "title": "La cuisine interdite",
   "day": 4,
   "slot": "apres_midi",
@@ -12,7 +12,7 @@
   },
   "present": [
     "willem",
-    "fairy_05",
+    "fairy_12",
     "collon",
     "lakhesh",
     "tiat",
@@ -33,7 +33,7 @@
     },
     {
       "do": "place",
-      "who": "fairy_05",
+      "who": "fairy_12",
       "at": "cuisine_table",
       "facing": "north"
     },

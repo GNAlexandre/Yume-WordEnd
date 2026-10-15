@@ -301,6 +301,8 @@ func sleep() -> void:
 		return
 	_busy = BUSY_SLEEP
 	_stage.set_control(false)
+	# L'indice ne reste pas sur le noir (il se rappelle au réveil).
+	get_tree().call_group(&"story_hint", &"show_text", "")
 	await _stage.fade_overlay(StoryData.BLACK, 1.0, SLEEP_FADE)
 	var day := GameState.day
 	if not GameState.has_calendar_line(day):
@@ -325,6 +327,8 @@ func pass_time() -> void:
 		return
 	_busy = BUSY_REST
 	_stage.set_control(false)
+	# L'indice ne reste pas sur le noir (il se rappelle au réveil).
+	get_tree().call_group(&"story_hint", &"show_text", "")
 	await _stage.fade_overlay(StoryData.BLACK, 1.0, REST_FADE)
 	LifeDirector.set_slot(LifeSlots.next(LifeSlots.current()), 0.0)
 	await get_tree().physics_frame
@@ -620,8 +624,10 @@ func _end_scene(scene_id: StringName, data: Dictionary, completed: bool) -> void
 	if not completed:
 		return
 	_stage.set_control(true)
+	var kept := _kept_for_next(scene_id, data)
 	for npc_id: String in _names(data.get("present", [])):
-		_releases.append(StringName(npc_id))
+		if not kept.has(StringName(npc_id)):
+			_releases.append(StringName(npc_id))
 	GameState.mark_scene_done(scene_id)
 	GameState.story_scene = &""
 	mark_seen(scene_id)
@@ -647,6 +653,21 @@ func _update_skip_prompt(scene_id: StringName, data: Dictionary) -> void:
 		return
 	var skippable: bool = data.get("sequence", false) == true and has_seen(scene_id)
 	overlay_node.call(&"set_skip_text", ui_text("skip", "Échap : passer") if skippable else "")
+
+
+## Les présents de scene_id qu'une scène qui la suit (after) demande sur la même carte : ils
+## restent réservés entre les deux (Pannibal file vers le marais au lieu de rentrer).
+func _kept_for_next(scene_id: StringName, data: Dictionary) -> Array[StringName]:
+	var kept: Array[StringName] = []
+	for other_id: StringName in StoryData.scene_ids(_island):
+		var other := StoryData.scene(_island, other_id)
+		if str(other.get("map", "")) != str(data.get("map", "")):
+			continue
+		if not _names(other.get("after", [])).has(String(scene_id)):
+			continue
+		for npc_id: String in _names(other.get("present", [])):
+			kept.append(StringName(npc_id))
+	return kept
 
 
 func _serve_releases() -> void:

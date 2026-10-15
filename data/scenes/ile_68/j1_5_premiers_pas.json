@@ -237,9 +237,10 @@
     {
       "do": "place",
       "who": "collon",
-      "at": [
-        10.5,
-        9.1
+      "at": "epie_nygglatho",
+      "offset": [
+        -0.8,
+        0.0
       ],
       "facing": "north",
       "outfit": "pyjama"
@@ -247,9 +248,10 @@
     {
       "do": "place",
       "who": "lakhesh",
-      "at": [
-        11.3,
-        9.1
+      "at": "epie_nygglatho",
+      "offset": [
+        0.2,
+        0.0
       ],
       "facing": "north",
       "outfit": "pyjama"
@@ -257,9 +259,10 @@
     {
       "do": "place",
       "who": "tiat",
-      "at": [
-        10.1,
-        9.6
+      "at": "epie_nygglatho",
+      "offset": [
+        -0.3,
+        0.9
       ],
       "facing": "north",
       "outfit": "pyjama"
@@ -267,9 +270,10 @@
     {
       "do": "place",
       "who": "pannibal",
-      "at": [
-        11.8,
-        9.6
+      "at": "epie_nygglatho",
+      "offset": [
+        1.0,
+        0.8
       ],
       "facing": "north",
       "outfit": "pyjama"
@@ -277,9 +281,10 @@
     {
       "do": "walk",
       "who": "player",
-      "to": [
-        11,
-        10.6
+      "to": "epie_nygglatho",
+      "offset": [
+        0.2,
+        1.8
       ],
       "facing": "north"
     },
@@ -292,8 +297,8 @@
       "who": "collon",
       "at": "nygglatho_tapis",
       "offset": [
-        -0.6,
-        0.2
+        -0.8,
+        0.1
       ],
       "anim": "tombe"
     },
@@ -303,7 +308,7 @@
       "at": "nygglatho_tapis",
       "offset": [
         0.2,
-        0.1
+        0.0
       ],
       "anim": "tombe"
     },
@@ -312,8 +317,8 @@
       "who": "tiat",
       "at": "nygglatho_tapis",
       "offset": [
-        -0.2,
-        0.6
+        -0.3,
+        0.8
       ],
       "anim": "tombe"
     },
@@ -322,8 +327,8 @@
       "who": "pannibal",
       "at": "nygglatho_tapis",
       "offset": [
-        0.7,
-        0.6
+        0.9,
+        0.7
       ],
       "anim": "tombe"
     },
@@ -335,8 +340,8 @@
       "who": "player",
       "at": "nygglatho_tapis",
       "offset": [
-        0,
-        1.1
+        0.3,
+        1.8
       ],
       "facing": "north"
     },

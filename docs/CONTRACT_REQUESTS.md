@@ -809,11 +809,11 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   vers le sud-ouest). Un chemin de `LifeNav` qui passe là coince un personnage mené.
 - **Cartes** : le port (carte d'attente) et la ville (`ville_haute`, le snack-bar) ; à leur
   arrivée, `j1_1_port`, `j3_2_chemin` et `j3_3_snack` (racontées en cartons) pourront s'y jouer.
-- **Places** (`entrepot_etage`) : devant la porte de Nygglatho, côté couloir (l'avalanche n° 1 de
-  `j1_5_premiers_pas`, quatre petites l'oreille contre la porte : `[10.5, 9.1]` à `[11.8, 9.6]` en
-  attendant) ; (`entrepot_rdc`) le passage de Willem au réfectoire (`j2_2_fuite`, `[13, 7.4]`).
-- **Planches** : `willem_marsh` (la chute dans le marais, jour 1), la pose `hanches` de la
-  protagoniste à la maison, une planche propre pour `fairy_12` (cuisinière du jour 4).
+- **Places** (`entrepot_rdc`) : le passage de Willem au réfectoire (`j2_2_fuite`, `[13, 7.4]` en
+  attendant). (L'oreille contre la porte de Nygglatho prend `epie_nygglatho`, livrée par V1.)
+- **Planches** : `willem_marsh` (la chute dans le marais, jour 1 ; Pannibal assise sur son dos), la
+  pose `hanches` de la protagoniste à la maison, une planche propre pour `fairy_12` (cuisinière du
+  jour 4).
 - **C2 (porte fermée jusqu'au jour 11)** : fait par le récit (`StoryStage.apply_doors`), sans
   toucher `MapExit` ; le test de la vraie partie du village vérifie la porte close puis l'ouvre au
   jour 11.

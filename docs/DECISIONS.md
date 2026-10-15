@@ -3095,7 +3095,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **E6 — combats** : une étape `game` (crochet d'E8 : `StoryDirector.register_game`) et ses étapes
   de repli (courte séquence sans contrôle) ; l'embuscade du jour 1 est `embuscade_pannibal`.
 - **E6 — écarts au scénario** : la chute de Willem dans le marais est un carton (planche
-  `willem_marsh` absente) ; la cuisinière du jour 4 (`fairy_12`, sans planche propre) est `fairy_05` ;
+  `willem_marsh` absente) ; la cuisinière du jour 4 est `fairy_12` (sa ligne de V1 au fourneau ; elle porte une planche de
+  `fairy_0x`), écartée à la table pendant que Willem cuisine ;
   le j2_3 reçoit un indice (« Willem n'est pas sorti de sa chambre… », original) puisqu'il compte pour le coucher ;
   la pose « hanches » de la protagoniste est dite par une réplique (absente de sa planche).
 - **E6 — le jour 1 sur le vrai sentier de C1** : l'embuscade part quand on approche
@@ -3108,3 +3109,8 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **E6 — étape `show`** : montre ou cache un nœud de la carte courante (le cristal
   `comm_crystal_call_1` d'I2, qui sonne aux jours 6 et 8 : lot S2) ; le `PropBatcher` ne fond pas un
   nœud caché, il reste donc à part et se montre seul.
+- **E6 — écart entre les personnages** : deux personnages qui se parlent se tiennent à 1 m au moins,
+  tournés l'un vers l'autre (étapes `walk` / `place` vers un personnage : décalage d'1 m au moins ;
+  la protagoniste est menée à sa place avant le dialogue) ; seules exceptions, les voisines assises
+  à table (chaises à 0,5 m) et les piles de petites (`tombe`). À vérifier sur la capture de
+  chaque dialogue (lot S2 compris).

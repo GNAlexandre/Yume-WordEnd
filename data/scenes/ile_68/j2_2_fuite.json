@@ -29,7 +29,12 @@
     {
       "do": "walk",
       "who": "player",
-      "to": "refectoire_allee"
+      "to": "refectoire_bout_ouest",
+      "offset": [
+        0.2,
+        1.1
+      ],
+      "facing": "east"
     },
     {
       "do": "place",
