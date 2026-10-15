@@ -1,0 +1,20 @@
+{
+  "_comment": "Ithea (VIE.md, 2.3 et 3) : au lit à l'aube, le roman sur le banc du porche, la triche aux jeux, la veillée des aînées.",
+  "lines": [
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "outfit": "maison", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "matin", "day": 12, "map": "entrepot_etage", "place": "ithea_lit_couche", "activity": "lire", "outfit": "maison"},
+    {"slot": "apres_midi", "day": 9, "away": "cafe"},
+    {"slot": ["aube", "matin", "midi", "apres_midi", "soir", "nuit"], "day": 7, "away": "port"},
+    {"slot": "nuit", "day": 6, "map": "entrepot_etage", "place": "ithea_lit_couche", "activity": "lire", "outfit": "maison"},
+    {"slot": "midi", "day": 3, "away": "ville_snack"},
+    {"slot": "nuit", "day": 1, "map": "entrepot_etage", "place": "ithea_lit_couche", "activity": "lire", "outfit": "maison"},
+    {"slot": "matin", "day": [9, 12], "map": "entrepot", "place": "clairiere_banc", "activity": "regarder", "outfit": "maison"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "lire", "outfit": "maison"},
+    {"slot": "aube", "map": "entrepot_etage", "place": "ithea_lit_couche", "activity": "dormir", "outfit": "maison", "_note": "La journée de base : au lit à l'aube, le petit-déjeuner, le roman d'amour sur le banc du porche, jeux de société, la veillée."},
+    {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_aines", "activity": "manger", "outfit": "maison"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_aines", "activity": "manger", "outfit": "maison"},
+    {"slot": "apres_midi", "map": "entrepot", "place": "porche_banc", "activity": "lire", "outfit": "maison"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "maison"},
+    {"slot": "nuit", "map": "entrepot_rdc", "place": "refectoire_veillee", "activity": "lire", "outfit": "maison"}
+  ]
+}

@@ -13,6 +13,7 @@ var _player: Player
 
 
 func before_each() -> void:
+	LifeData.use_content(&"essai")
 	GameState.reset()
 	WorldManager.fade_time = 0.0
 	_game = GAME_SCENE.instantiate() as Node3D
@@ -28,6 +29,7 @@ func after_each() -> void:
 	LifeDirector.attach(null)
 	Atmosphere.dress(null)
 	GameState.reset()
+	LifeData.use_content(&"")
 
 
 func _enter(map_id: StringName, slot: StringName, at: Vector3 = Vector3(1.0, 0.0, 1.0)) -> void:

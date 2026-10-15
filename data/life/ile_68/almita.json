@@ -1,0 +1,20 @@
+{
+  "_comment": "Almita (VIE.md, 2.4) : la plus petite, les livres d'images, la pile ; au lit au dortoir B (pas de pyjama livré).",
+  "gait": "course",
+  "lines": [
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "outfit": "vie", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "matin", "day": 12, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "regarder", "outfit": "vie"},
+    {"slot": "nuit", "day": 1, "map": "entrepot_etage", "place": "epie_willem", "activity": "avalanche_willem", "outfit": "vie"},
+    {"slot": "matin", "day": [9, 12], "map": "entrepot", "place": "champ_entrainement", "activity": "entrainement", "outfit": "vie"},
+    {"slot": "soir", "day": [1, 9], "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "soir", "day": 11, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire", "outfit": "vie"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire", "outfit": "vie"},
+    {"slot": "aube", "map": "entrepot_etage", "place": "dortoir_b_lit_1_bas", "activity": "dormir", "outfit": "vie", "_note": "La journée de base : la plus petite, au lit au dortoir B, les livres d'images."},
+    {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire", "outfit": "vie"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "jeux_tour", "activity": "tour_de_fees", "outfit": "vie", "role": "pile_4"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_b_lit_1_bas", "activity": "dormir", "outfit": "vie"}
+  ]
+}

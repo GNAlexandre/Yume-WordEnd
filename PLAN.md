@@ -1455,6 +1455,16 @@ fois la grille prête ; pendant les 70 images de sa construction (225 ms de trav
 rendu logiciel tourne à environ 1 image/s, vie coupée comme en marche : la durée d'image du
 navigateur (≤ 25 ms visés) se vérifie sur une vraie carte graphique, pas ici.
 
+**(V1) La vie de l'entrepôt sur les vraies cartes.** Les emplois du temps de l'île n° 68 sont dans
+`data/life/ile_68/` (`LifeData` lit `data/life/<île>/` : l'île de la carte peuplée, `LifeData.enter_island`,
+puis `GameState.island`, puis l'île n° 68 ; `activities.json` reste commun ; `LifeData.use_content(&"essai")`
+ou `?contenu=essai` : les démonstrations d'E4, `data/life/essai/`). Les places (zones, départs `vers_<carte>`,
+orientations) viennent de `tools/life_zones.py`, lu par `tools/interior_maps.py` et `tools/exterior_maps.py`
+(sous-commandes `gen` et `places` ; liste dans CARTE.md). `LifeDirector` tient les drapeaux de la pluie
+(`pluie_du_jour`, `apres_pluie`) d'après `GameState.weather`. Les jours, les décisions et les manques :
+docs/DECISIONS.md (« V1 »), docs/CONTRACT_REQUESTS.md. Tests : `tests/unit/test_life_ile_68_nav.gd`,
+`tests/integration/test_life_ile_68.gd` ; vues : `tests/integration/demo_v1.tscn` (`V1_VIEW=<vue>`).
+
 **Pièges.** Un test qui change le créneau rétablit `GameState.reset()` ; un test qui pose une carte
 à la main et l'habite appelle `LifeDirector.attach(null)` dans `after_each`. Le directeur ne peuple
 que les cartes posées par WorldManager (ou `attach`) : une carte instanciée seule par un test reste

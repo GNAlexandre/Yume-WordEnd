@@ -1,0 +1,20 @@
+{
+  "_comment": "Pannibal (VIE.md, 2.4) : mi-hauteur du grand arbre, l'embuscade, la pile, au lit au dortoir A.",
+  "gait": "course",
+  "lines": [
+    {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_cercle", "activity": "attendre", "outfit": "vie", "_note": "Variations par jour (VIE.md, 3)."},
+    {"slot": "matin", "day": 12, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "regarder", "outfit": "vie"},
+    {"slot": "nuit", "day": 1, "map": "entrepot", "place": "fourre_embuscade", "activity": "embuscade", "outfit": "pyjama"},
+    {"slot": "soir", "day": [1, 9], "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "soir", "day": 11, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
+    {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_balle_mur", "activity": "balle_mur", "outfit": "vie"},
+    {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_balle_mur", "activity": "balle_mur", "outfit": "vie"},
+    {"slot": "apres_midi", "if": {"flag": "apres_pluie"}, "map": "entrepot", "place": "champ_boue", "activity": "boue", "outfit": "vie"},
+    {"slot": "aube", "map": "entrepot_rdc", "place": "eau_toilette", "activity": "toilette", "outfit": "pyjama", "_note": "La journée de base : mi-hauteur du grand arbre, l'embuscade dans les fourrés, la pile."},
+    {"slot": "matin", "map": "entrepot", "place": "arbre_branche_mi", "activity": "grimper", "outfit": "vie"},
+    {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "entrepot", "place": "fourre_embuscade", "activity": "embuscade", "outfit": "vie"},
+    {"slot": "soir", "map": "entrepot_rdc", "place": "jeux_tour", "activity": "tour_de_fees", "outfit": "vie", "role": "pile_3"},
+    {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_a_lit_2_bas", "activity": "dormir", "outfit": "pyjama"}
+  ]
+}
