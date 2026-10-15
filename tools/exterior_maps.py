@@ -17,8 +17,8 @@ Pour une carte, l'outil écrit :
 
 Deux sortes de cartes :
 - les cartes construites, une recette par carte dans tools/exterior_recipes/<id>.py (entrepot,
-  sentier) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
-- les cartes d'attente (WAITING plus bas : village, colline, foret_profonde, port) : un sol plat de la
+  sentier, colline) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
+- les cartes d'attente (WAITING plus bas : village, foret_profonde, port) : un sol plat de la
   bonne matière, une lisière, l'écriteau « Plus loin, bientôt », la sortie de retour et le
   marqueur d'arrivée du plan. Provisoires : le lot de la carte les remplace par une recette
   (ajouter la carte à RECIPES, retirer l'attente).
@@ -39,6 +39,9 @@ Une carte nouvelle entre aussi dans l'île : data/world/islands/ile_68.json (`ma
 Ajouter une carte du dehors : son bloc ```plan dans CARTE.md (python3 tools/carte_plans.py check),
 puis exterior_recipes/<id>.py (modèle : sentier.py, plus court ; entrepot.py, plus riche) :
     SETTINGS    groupes de décors (l'ordre des nœuds), sorties provisoires, places de la vie en plus ;
+                (C3) aussi camera_bounds (les bornes de la caméra, si elles ne sont pas celles de la règle),
+                light_preset (le préréglage de lumière de la carte), no_lights (le plan nomme des lumières,
+                la carte n'en porte aucune), fauna (la carte porte le nœud Life/Fauna d'E5) ;
     ground_plan(plan_map) -> dict    le plan.json du sol (ground_from_plan(...) le déduit du plan) ;
     prepare(p), pose(p), ambient(p)  voir tools/exterior_pose.py (Pose : place, scatter, poisson…).
 Ce que le plan ne dit pas va dans docs/DECISIONS.md ; un écart au plan se reporte dans le plan.
@@ -67,7 +70,7 @@ SCENES = os.path.join(ROOT, "src", "world", "maps")
 GROUND_FILES = ["plan.json", "map.json", "heights.png", "materials.png", "structures.png"]
 
 # Cartes construites : une recette par carte (tools/exterior_recipes/<id>.py).
-RECIPES = ["entrepot", "sentier"]
+RECIPES = ["entrepot", "sentier", "colline"]
 
 # Cartes d'attente (lots de la phase 3 : elles les remplacent). Taille 32 × 24 m. ground : matière du
 # sol ; path : matière du chemin ; back : la sortie du plan (son nom, sa cible, le marqueur du retour)
@@ -79,11 +82,6 @@ WAITING = {
         "ground": "herbe", "path": "terre_battue", "back": "vers_entrepot",
         "exit": (31.4, 10, 32, 14), "marker": (29.5, 12, "O"), "spawn": (27.0, 12, "O"),
         "path_pts": [[32, 12], [13, 12]], "sign": (12.2, 10.6), "gap": None,
-    },
-    "colline": {
-        "ground": "prairie", "path": "chemin", "back": "vers_entrepot",
-        "exit": (14, 23.4, 18, 24), "marker": (16, 21.5, "N"), "spawn": (16, 20, "N"),
-        "path_pts": [[16, 24], [16, 12]], "sign": (17.8, 11.4), "gap": None,
     },
     "foret_profonde": {
         "ground": "sous_bois", "path": "chemin", "back": "vers_entrepot",
@@ -253,14 +251,17 @@ class Writer:
         exit_script = self.ext_id("Script", "res://src/world/map_exit.gd")
         ambient_script = self.ext_id("Script", "res://src/world/ambient_sprites.gd") if ambient else ""
         bounds = self.settings.get("camera_bounds") or (10, 9, p.W - 20, p.D - 17)
+        preset = 'light_preset = &"%s"\n' % self.settings["light_preset"] if self.settings.get("light_preset") else ""
         self.node('[node name="%s" type="Node3D"]\nscript = ExtResource("%s")\ndisplay_name = "%s"\n'
-                  'region = &"%s"\nsize = Vector2(%d, %d)\ncamera_bounds = Rect2(%s, %s, %s, %s)\n'
-                  % (m.id, map_script, m.meta["nom"][0], m.meta["region"][0], p.W, p.D, f(bounds[0]), f(bounds[1]),
-                     f(bounds[2]), f(bounds[3])))
+                  'region = &"%s"\n%ssize = Vector2(%d, %d)\ncamera_bounds = Rect2(%s, %s, %s, %s)\n'
+                  % (m.id, map_script, m.meta["nom"][0], m.meta["region"][0], preset, p.W, p.D, f(bounds[0]),
+                     f(bounds[1]), f(bounds[2]), f(bounds[3])))
         self.node('[node name="Ground" type="StaticBody3D" parent="."]\nscript = ExtResource("%s")\n' % ground_script)
         # Bords du plan (bord) : ce qui ferme la carte, en boîtes invisibles (couche 1).
         self.node('[node name="Edges" type="StaticBody3D" parent="."]\ncollision_mask = 0\n')
         for k, e in enumerate(p.edges):
+            if k < len(m.borders) and m.borders[k].name == "vide":
+                continue  # le vide n'a pas de boîte : la barrière du sol borde la côte
             cx, cz = (e.x0 + e.x1) / 2.0, (e.z0 + e.z1) / 2.0
             y = max(h(min(max(cx, 0.1), p.W - 0.1), min(max(cz, 0.1), p.D - 0.1)), -0.5)
             sid = self.box_shape("edge%d" % (k + 1), (e.x1 - e.x0, 4.0, e.z1 - e.z0))
@@ -365,9 +366,10 @@ class Writer:
                                                                     f(r.x1 - r.x0), f(r.z1 - r.z0)))
         # Lumières : la lanterne à cristal (une lampe OmniLight3D que Atmosphere règle selon le moment,
         # lamp_energy) ; les autres, des repères (Marker3D). Aucune carte du dehors n'a de lampadaire.
-        if m.lights:
+        lights = [] if self.settings.get("no_lights") else m.lights
+        if lights:
             self.node('[node name="Lights" type="Node3D" parent="."]\n')
-        for light in m.lights:
+        for light in lights:
             x, z = light.rect.x0, light.rect.z0
             y = h(x, z) + light.h
             if light.extra["type"] == "cristal":
@@ -380,6 +382,9 @@ class Writer:
                 self.node('[node name="%s" type="Marker3D" parent="Lights"]\n'
                           'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, %s, %s)\nmetadata/kind = &"%s"\n'
                           % (light.name, f(x), f(y), f(z), light.extra["type"]))
+        if self.settings.get("fauna"):
+            fauna = self.ext_id("PackedScene", "res://src/fauna/fauna.tscn")
+            self.node('[node name="Fauna" parent="Life" instance=ExtResource("%s")]\n' % fauna)
         amb = []
         if ambient:
             self.node('[node name="Ambience" type="Node3D" parent="."]\n')

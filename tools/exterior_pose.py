@@ -204,7 +204,8 @@ class Pose:
         j = min(max(j, 0), self.D - 1)
         c = j * self.W + i
         if ground.kinds[c] == map_build.FLAT:
-            return ground.levels[c] * 0.5
+            # Une case du vide (heights.png transparent) n'a pas de palier : 0, rien ne s'y pose.
+            return (ground.levels[c] or 0) * 0.5
         k, count, low, high, _start = ground.run[c]
         d = ground.dirs[c]
         t = {0: (j + 1) - z, 1: x - i, 2: z - j, 3: (i + 1) - x}[d]
