@@ -105,3 +105,9 @@ Les deux planches composites `willem_carry` et `willem_piggyback` sont des PNG/J
 - `assets/characters/giniette/giniette` : PNG et JSON du profil, de la face et du dos ; 101 px debout ; animations `repos`, `marche`, `parle`, `course`, `saut`, `frappe`, `lance`, `grimpe`, `assis`, `lit`, `dort`, `tombe`.
 - `assets/characters/fairy_11/fairy_11` : PNG et JSON du profil, de la face et du dos ; 134 px debout ; animations `repos`, `marche`, `parle`, `course`, `frappe`, `assis`, `lit`, `dort`.
 - `assets/characters/fairy_12/fairy_12` : PNG et JSON du profil, de la face et du dos ; 139 px debout ; animations `repos`, `marche`, `parle`, `course`, `frappe`, `assis`, `lit`, `dort`, `travaille`.
+
+## Île 68 — R2 priorité 2 : pyjamas (15 octobre 2026)
+
+Généré avec ChatGPT le 15 octobre 2026, cahier n° 5 (`docs/ASSETS_HD2D_ILE68.md`), lot R2, section 4.6. Neuf PNG et neuf JSON : `almita/almita_pajamas` (91 px debout), `ithea/ithea_pajamas` (139 px), `nephren/nephren_pajamas` (125 px), chacun en profil droit, face et dos ; 189 poses. Repos, marche, dialogue, assise, sommeil et toilette du matin ; course et chute pour Almita. Ithea suit les planches officielles de l’anime, cheveux orange courts à la nuque conformément à la correction de l’utilisateur.
+
+Références : trois vues existantes de chaque personnage, Chtholly en pyjama pour le rendu, et planches officielles des ZIP fournis par l’utilisateur (pages 21, 27 et 64). Recalage au plus proche voisin, alpha net, montage local autorisé pour immobiliser les pieds et fermer la bouche du dialogue 0 ; originaux conservés séparément. Les planches restent à enregistrer et placer dans le jeu. Aucun ancien PNG/JSON ni dessin anime modifié.
