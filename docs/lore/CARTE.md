@@ -642,7 +642,7 @@ entrepot_rdc : 32 × 16 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud
         |pppppbains.|wc.|pl.|entrée.|yyyEEEEEEEEEzzz|...66667666677.|
         |ppppp......|...|...|.......|yyyEEEEEEEEEzzz|..88666.66666..|
    12   |..DDDDD....|...|...|....xxx|.F.EEEEEEEEE...|..88infirmerie.o
-        |..DDDDD....|...|.uu|.......|...EEE222EEE111|...............|
+        |..DDDDD....|...|.uu|.......|...EEE222EEE111|.......AA......|
         |..DDDDD....|...|.uu|...@...|..33EE222EEE111|............999|
         |rrDDDDD.qqq|...|...|.......|..33EEEEEEEE...|???.6666....999|
    14   |rr...ss.qqq|...|tt.|v......|...555EEE444...|???.6666...??..|
@@ -891,6 +891,21 @@ lumiere applique_armes 20.6 4.5 1.6 cristal
 lumiere lampe_archives 23.35 3.9 1.0 cristal_eteint
 lumiere lampe_lecture 28.2 4.3 1.0 cristal
 lumiere applique_refectoire 5.6 2.6 1.6 cristal
+# (QC) Les lampes du soir du couloir et des pièces du sud : la nuit, elles n'avaient que la
+# lumière du joueur (docs/QUALITE.md, QC-08).
+meuble crystal_pendant 8 9.5 0.8 0.3 0 libre
+meuble crystal_pendant 24 9.5 0.8 0.3 0 libre
+lumiere suspension_couloir_1 8 9.5 2.2 cristal
+lumiere suspension_couloir_2 24 9.5 2.2 cristal
+mural wallitem_crystal_sconce bains O 11.6 1.6 0.3
+lumiere applique_bains 1.1 11.6 1.6 cristal
+mural wallitem_crystal_sconce entree O 11.2 1.6 0.3
+lumiere applique_entree 11.1 11.2 1.6 cristal
+mural wallitem_crystal_sconce jeux O 11.4 1.6 0.3
+lumiere applique_jeux 15.1 11.4 1.6 cristal
+meuble crystal_pendant 27.5 12.8 0.8 0.3 0 libre
+lumiere suspension_infirmerie 27.5 12.8 2.2 cristal
+lumiere lampe_infirmerie 23.7 14.2 1.0 cristal
 ```
 
 <!-- places:entrepot_rdc -->
@@ -930,37 +945,37 @@ entrepot_etage : 32 × 16 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-s
     0 
       
         +-o----+--o---+--------+---o---+-------+--o--+---o---+-o----+
-        |...EEE|.III..|LLMMMNNN|UU..VVV|escalie|b.UUU|....YYY|..cccc|
+        |...FFF|.JJJ..|MMNNNPPP|VV..YYY|escalie|c.VVV|....ZZZ|..dddd|
     2   |Willem|Chthol|Nygglath|soeur..|.......|Ithea|absente|Nephre|
-        |......|......|PP......|.......|Z*Z....|.....|.......|......|
-        |......|......|PP..RRRR|...BBBB|ZZZ....|.....|FFFF...|......|
-        |G.....|JJJJ..|PP..RRRR|FFFFBBB|ZZZ....|aaa..|FFFF...|aaa...|
-    4   |G.....|JJJJ..|QQ......|FFFFBBB|ZZZ....|aaa..|FFFF...|aaa...|
-        |......|......|QQ......|.......|ZZZ....|.....|.......|......|
-        |......|......|........|.CCCC..|ZZZ....|.....|.......|......o
-        |FFFF..|......|........|.CCCC..|.......|.....|..FFFFF|......|
-    6   |FFFF..|......|........|.CCCC..|.......|.....|..FFFFF|......|
-        |......|......|SSSS....|.CCCC..|.......|.....|.......|b.....|
-        |......|......|SSSSAAA.|....YYY|.......|.....|.......|b.....|
-        |......|...KKK|SSSSAAA.|....YYY|.......|.....|.......|......|
-    8   |......|...KKK|...AAAA.|.......|.......|.....|.......|......|
+        |......|......|QQ......|.......|a*a....|.....|.......|......|
+        |......|......|QQ..SSSS|...BBBB|aaa....|.....|GGGG...|......|
+        |I.....|KKKK..|QQ..SSSS|GGGGBBB|aaa....|bbb..|GGGG...|bbb...|
+    4   |I.....|KKKK..|RR......|GGGGBBB|aaa....|bbb..|GGGG...|bbb...|
+        |......|......|RR......|.......|aaa....|.....|.......|......|
+        |......|......|........|.CCCC..|aaa....|.....|.......|......o
+        |GGGG..|......|........|.CCCC..|.......|.....|..GGGGG|......|
+    6   |GGGG..|......|........|.CCCC..|.......|.....|..GGGGG|......|
+        |......|......|UUUU....|.CCCC..|.......|.....|.......|c.....|
+        |......|......|UUUUAAA.|....ZZZ|.......|.....|.......|c.....|
+        |......|...LLL|UUUUAAA.|....ZZZ|.......|.....|.......|......|
+    8   |......|...LLL|...AAAA.|.......|.......|.....|.......|......|
         +----=-+--==--+-----=--+--==---+---     --=--+--=----+-=----+
-        |.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD....dd|
-        |.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD@DDDDDDDDDDDDDDDD...*eeo
-   10   |couloir..................................................ee|
+        |.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD....ee|
+        |.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD@DDDDDDDDDDDDDDDD...*ffo
+   10   |couloir..................................................ff|
         +-----=-----+------=---+-=-+-=-+------=----+-=-+-----==-----+
-        |ggg.....UUU|ggg.......|pl.|wc.|ggg........|lin|ggg....ggggg|
-        |ggg........|ggg.......|...|...|ggg........|...|ggg....ggggg|
+        |hhh.....VVV|hhh.......|pl.|wc.|hhh........|lin|hhh....hhhhh|
+        |hhh........|hhh.......|...|...|hhh........|...|hhh....hhhhh|
    12   |dortoir A..|dortoir B.|...|...|dortoir C..|...|dortoir D...|
         |...........|..........|...|...|...........|...|............|
         |...........|..........|...|...|...........|...|............|
-        |ggg....hhhh|aaa...gggg|...|...|aaaa...gggg|...|aaaa...ggggg|
-   14   |ggg.iiihhhh|aaa...gggg|jj.|...|aaaa...gggg|kk.|aaaa...ggggg|
-        |ggg.iiihhhh|aaa...gggg|jj.|...|aaaa...gggg|kk.|aaaa...ggggg|
+        |hhh....iiii|bbb...hhhh|...|...|bbbb...hhhh|...|bbbb...hhhhh|
+   14   |hhh.jjjiiii|bbb...hhhh|kk.|...|bbbb...hhhh|mm.|bbbb...hhhhh|
+        |hhh.jjjiiii|bbb...hhhh|kk.|...|bbbb...hhhh|mm.|bbbb...hhhhh|
         +-----------+----------+---+---+-----------+---+------------+
       
 ```
-Légende des lettres : `A` rug_brown ; `B` cards_floor ; `C` clothes_floor ; `D` runner_rug ; `E` wardrobe_plain ; `F` bed_plain ; `G` footlocker ; `I` desk_chtholly ; `J` bed_chtholly ; `K` wardrobe_chtholly ; `L` fireplace ; `M` comm_crystal ; `N` shelf_nygglatho ; `P` tea_table ; `Q` chair_guest ; `R` desk_nygglatho ; `S` bed_nygglatho ; `U` dresser_child ; `V` desk_clean ; `Y` clothes_chest ; `Z` stairs_down ; `a` bed_child ; `b` book_pile ; `c` bookshelf_low ; `d` roof_ladder ; `e` leak_bucket ; `f` repair_planks ; `g` bunk_bed ; `h` bed_child_messy ; `i` plush_pile ; `j` supply_cupboard ; `k` towel_shelf.
+Légende des lettres : `A` rug_brown ; `B` cards_floor ; `C` clothes_floor ; `D` runner_rug ; `E` crystal_pendant ; `F` wardrobe_plain ; `G` bed_plain ; `I` footlocker ; `J` desk_chtholly ; `K` bed_chtholly ; `L` wardrobe_chtholly ; `M` fireplace ; `N` comm_crystal ; `P` shelf_nygglatho ; `Q` tea_table ; `R` chair_guest ; `S` desk_nygglatho ; `U` bed_nygglatho ; `V` dresser_child ; `Y` desk_clean ; `Z` clothes_chest ; `a` stairs_down ; `b` bed_child ; `c` book_pile ; `d` bookshelf_low ; `e` roof_ladder ; `f` leak_bucket ; `g` repair_planks ; `h` bunk_bed ; `i` bed_child_messy ; `j` plush_pile ; `k` supply_cupboard ; `m` towel_shelf.
 <!-- /ascii:entrepot_etage -->
 
 **Bornes de caméra** `Rect2(8, 4, 16, 6)`. Au nord, les chambres des grands et des aînées ; au
@@ -1147,6 +1162,12 @@ lumiere lampe_huile 11.55 4.0 1.0 huile
 lumiere applique_palier 19.6 1.2 1.6 cristal
 lumiere applique_couloir 1.2 9.5 1.6 cristal
 lumiere lampe_willem 4.4 5.5 1.5 cristal
+# (QC) Deux suspensions au couloir : la nuit, son bout est (la fuite, la trappe) était noir
+# (docs/QUALITE.md, QC-09).
+meuble crystal_pendant 10 9.5 0.8 0.3 0 libre
+meuble crystal_pendant 25 9.5 0.8 0.3 0 libre
+lumiere suspension_couloir_1 10 9.5 2.2 cristal
+lumiere suspension_couloir_2 25 9.5 2.2 cristal
 ```
 
 <!-- places:entrepot_etage -->
@@ -1382,9 +1403,9 @@ sentier : 80 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord 
       ^^^^^^^^^^^^^^^^wwwwwwwwwwwwwwwCCwwwwwwwDDwwwwwwwwwwwwwwww^^^^^^^^^^^^^^^^^^^^^^
       ^^^^^^^^^^^^^^^^wwwwwwwwGGwwwwwwwwwwwwwwDDwwwwwwwwwwwwwwww^^^^^^^^^^^^^^^^^^^^^^
       ^^^^^^^^^^^^^^^^wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww;;;;;;;;;;;;;;;;;;;;;;
-   20 ;;;;;;;;PPPPPPPP;;;;;;;;;;;;;;;;KK;;;;;;;;;;;;;;;;;;;;;;;;;;;;PPPPPPPP;;;;;;;;;;
-      ::::::::KKPPPPPP::::LL::::::::::KK::::::::::::LL::::::::::::KK:::::::::::::::::>
-      <:::::@:KK::::MM::::::::::::::::::::::::::::::::::::::::::::KK:::::::::::QQ:::::
+   20 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KK;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ::::::::KK::::::::::LL::::::::::KK::::::::::::LL::::::::::::KK:::::::::::::::::>
+      <:::::@:KK::::MM::::::::::::::::::::::::::::::::::::::::::::KK:::::::::::PP:::::
       ;;;;NNNN;;;;;;;;;;;;;;;;;;NNNN;;;;;;;;;;;;;;;;;;;;NNNN;;;;::::::::::::::;;;;^^^^
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^;;::::::::::::::;;;;^^^^
    30 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^;;::::::::::::::;;^^^^^^
@@ -1393,7 +1414,7 @@ sentier : 80 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord 
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^::::::::::;;^^^^^^
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^:::::::v::;;^^^^^^
 ```
-Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_a ; `D` marsh_hummock_b ; `E` reeds ; `F` reeds_b ; `G` cattails ; `I` bog_pool_a ; `J` lily_pads ; `K` path_stones_a ; `L` path_stones_b ; `M` path_root_step ; `N` path_edge_ferns ; `P` fg_canopy_a ; `Q` thicket_b.
+Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_a ; `D` marsh_hummock_b ; `E` reeds ; `F` reeds_b ; `G` cattails ; `I` bog_pool_a ; `J` lily_pads ; `K` path_stones_a ; `L` path_stones_b ; `M` path_root_step ; `N` path_edge_ferns ; `P` thicket_b.
 <!-- /ascii:sentier -->
 
 - **Taille** 80 × 40 m ; **bornes** `Rect2(10, 9, 60, 23)`. Le sentier court d'ouest en est sur
@@ -1409,8 +1430,10 @@ Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_
   `leaf_litter`.
 - **Grands décors** : rideaux de roseaux `marsh_reed_wall` au fond du marais ; deux aulnes
   (`alder`) ; souche noyée `marsh_snag` ; touradons `marsh_hummock_a/b` ; mare de tourbe
-  `bog_pool_a`, nénuphars `lily_pads` ; la racine qui fait marche `path_root_step` ; la voûte de
-  feuillage en premier plan suspendu `fg_canopy_a` (**à confirmer** par E10) au-dessus du sentier.
+  `bog_pool_a`, nénuphars `lily_pads` ; la racine qui fait marche `path_root_step`. (QC) La voûte de
+  feuillage `fg_canopy_a`, posée en l'air au-dessus du sentier, se lisait comme une masse sombre
+  au milieu de l'écran : retirée, elle attend le premier plan accroché à l'écran (E10 ;
+  docs/QUALITE.md, QC-12).
 - **Kits** : bord de chemin (`path_edge_ferns` hors de la bande libre, `fern_*`, `grass_clump_*`,
   `stepping_stones`) ; marais (roseaux, massettes `cattails`, brume `mist_patch`, libellules) ;
   lisière (`forest_wall_*` au nord) ; sous-bois sud (`fg_trunk_a/b`, `fg_bush`, `fg_fern`, premier
@@ -1477,8 +1500,6 @@ decor path_root_step 15 24.6 2 0.6 0.6 libre
 decor path_edge_ferns 6 27 4 0.8 1.1 libre pp
 decor path_edge_ferns 28 26.4 4 0.8 1.1 libre pp
 decor path_edge_ferns 52 27 4 0.8 1.1 libre pp
-decor fg_canopy_a 12 22 8 1 4 libre pp
-decor fg_canopy_a 66 21 8 1 4 libre pp
 decor thicket_b 74 25.5 2 0.8 1.4
 # --- chemins ---
 chemin sentier 3 1;24 12;23.5 24;22 36;22.3 48;23.4 58;23.5 68;22 79;21.5
@@ -1765,6 +1786,10 @@ point table_buveurs 3.4 7.2
 point arriere 9.75 3.6
 lumiere suspension 4.4 5.6 2.2 cristal
 lumiere comptoir 4.0 3.0 1.2 cristal
+# (QC) Le soir, le café sert l'alcool : une applique au mur est éclaire le coin des buveurs ; une
+# seule lampe faisait une flaque au milieu du noir (docs/QUALITE.md, QC-14).
+mural wallitem_wall_lamp salle E 6.5 1.6 0.3
+lumiere applique_salle 8.4 6.5 1.6 huile
 ```
 
 <!-- places:cafe -->
@@ -1797,6 +1822,12 @@ point horloge 6.2 3.6
 point rami 8.0 4.4
 point canape 6.0 6.25
 lumiere fenetre 9 3.5 1.2 jour
+# (QC) Une lampe à huile sur la table du salon et une applique dans l'entrée : la maison était noire
+# la nuit (docs/QUALITE.md, QC-15).
+objet oil_lamp 8.3 5.5
+lumiere lampe_salon 8.3 5.5 1.0 huile
+mural wallitem_wall_lamp vestibule O 5.2 1.6 0.3
+lumiere applique_vestibule 1.1 5.2 1.6 huile
 ```
 
 <!-- places:maison_limashenka -->

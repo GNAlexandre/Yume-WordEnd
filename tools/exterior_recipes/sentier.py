@@ -12,7 +12,8 @@ Composition vue de la caméra (elle regarde le nord ; CARTE.md 0.3) :
   roseaux, les aulnes et les touradons du marais sont devant elle ;
 - à l'ouest et à l'est du marais, deux pans de forêt dressés derrière le sentier ;
 - au sud, rien de haut qui ne s'efface : la forêt est en premier plan (variantes `_forest`, `fg_*`),
-  les voûtes de feuillage (`fg_canopy_a`) sont suspendues au-dessus du sentier ;
+  (QC) pas de voûte de feuillage (`fg_canopy_a`) suspendue : vue par la caméra, une masse sombre au
+  milieu de l'écran ; elle attend le premier plan accroché à l'écran (E10) ;
 - à l'est, la bifurcation : le chemin de la ville descend vers le sud-est par sa rampe.
 
 Écarts et ajouts (docs/DECISIONS.md, C1) : voir DEVIATIONS ; le chemin de la ville (vers_ville) n'a pas de
@@ -50,7 +51,6 @@ DEVIATIONS = [
     "la matière `path_overgrown` (à confirmer, cahier n° 5) est peinte en `chemin` (path_dirt_b) sur la bande du "
     "chemin seulement (1,8 m de terre visible dans la bande libre de 3 m), au lieu du rectangle de 14 × 16 m "
     "du plan au sud-est",
-    "`fg_canopy_a` posé en l'air à 2,6 m (panneau de premier plan), faute du premier plan accroché à l'écran (E10)",
     "pas de lucioles (CARTE.md 4.2 : absentes en fin d'automne) ; pas de rais de lumière (leur image de nuit "
     "n'existe pas : le sentier de nuit reste noir)",
 ]

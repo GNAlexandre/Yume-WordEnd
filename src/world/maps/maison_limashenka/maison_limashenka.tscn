@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://src/world/props/interior/armchair_sheeted.tscn" id="p_armchair_sheeted"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/side_table_salon.tscn" id="p_side_table_salon"]
 [ext_resource type="PackedScene" path="res://src/world/props/rug_salon.tscn" id="p_rug_salon"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/oil_lamp.tscn" id="p_oil_lamp"]
 [ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
@@ -54,6 +55,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.3, 0, 5.5)
 
 [node name="rug_salon_1" parent="Geometry/Salon" instance=ExtResource("p_rug_salon")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.3, 0, 4.3)
+
+[node name="oil_lamp_1" parent="Geometry/Salon" instance=ExtResource("p_oil_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.3, 0.7, 5.77)
 
 [node name="Markers" type="Node3D" parent="."]
 

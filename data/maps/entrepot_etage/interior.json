@@ -61,6 +61,8 @@
     {"room": "nygglatho", "at": [11.55, 4.0], "radius": 2.6, "color": "#ffc070", "energy": 0.85},
     {"room": "tremie", "at": [19.6, 1.2], "radius": 3.6, "color": "#ffd59a", "energy": 0.75},
     {"room": "couloir", "at": [1.2, 9.5], "radius": 3.6, "color": "#ffd59a", "energy": 0.75},
-    {"room": "willem", "at": [4.4, 5.5], "radius": 3.6, "color": "#ffd59a", "energy": 0.75}
+    {"room": "willem", "at": [4.4, 5.5], "radius": 3.6, "color": "#ffd59a", "energy": 0.75},
+    {"room": "couloir", "at": [10.0, 9.5], "radius": 4.5, "color": "#ffd59a", "energy": 0.75},
+    {"room": "couloir", "at": [25.0, 9.5], "radius": 4.5, "color": "#ffd59a", "energy": 0.75}
   ]
 }

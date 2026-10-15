@@ -3114,3 +3114,6 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   retouchée ; correction à commander dans `docs/ASSETS_HD2D_ILE68.md` (3.6) et variante moteur
   (`Building.window_glow_color`) dans `docs/CONTRACT_REQUESTS.md`.
 
+- **QC — garant de la qualité visuelle** : série standard de vues en données (`tools/qc_views.json`, une entrée par carte de `ile_68.json`), captures dans la vraie partie par `tools/qc_shots.sh` (`tests/integration/demo_qc.gd`), planches contact et vérification de couverture par `tools/qc_tool.py` ; grille et registre : `docs/QUALITE.md`. Les vues d'ensemble (caméra haute) ne comptent pas pour le budget de 200 draw calls.
+- **QC — lueur des vitres** : `glow_color` (`panel_core.gdshaderinc`) n'a plus `source_color` et la couleur de l'image est ramenée en sRGB pour la comparaison ; sous Compatibility, la comparaison d'une couleur sRGB au pixel linéaire éteignait toutes les vitres, la nuit comme le jour. Tolérance inchangée (0,05 à 0,12) : plus large, elle allumerait le torchis ocre des chaumières.
+- **QC — voûtes du sentier** : `fg_canopy_a` n'est plus posé en l'air au-dessus du sentier (une masse sombre au milieu de l'écran) ; il attend le premier plan accroché à l'écran (E10). `test_sentier.gd` vérifie qu'aucune voûte ne flotte.

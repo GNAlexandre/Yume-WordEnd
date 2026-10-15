@@ -1117,6 +1117,10 @@ ROOF_TREES = [
     ("treeline_autumn_a", -6.0, -9.0), ("treeline_autumn_b", 9.0, -9.0), ("treeline_autumn_a", 24.0, -9.0),
     ("treeline_autumn_b", 2.0, -16.0), ("treeline_autumn_a", 18.0, -16.0),
     ("tree_autumn_rust", 19.5, 3.0), ("tree_autumn", 21.0, 9.5),
+    # (QC) Au sud-est, des couronnes au ras de la terrasse : on y voyait le sous-bois 6,5 m plus
+    # bas comme un pré au niveau des planches, et le toit semblait posé par terre (docs/QUALITE.md,
+    # QC-10).
+    ("tree_autumn", 18.6, 12.0), ("tree_autumn_rust", 18.6, 16.5),
 ]
 ROOF_DETAILS = [
     ("laundry_basket", 9.6, 13.0), ("bucket", 14.2, 12.6), ("moss_patch_a", 6.0, 3.0),
