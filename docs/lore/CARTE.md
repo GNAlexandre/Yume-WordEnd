@@ -561,6 +561,10 @@ lumiere lanterne_porte 40.6 25.9 2.0 cristal
 lumiere fenetres_facade 45 26 3.0 fenetres
 ```
 
+<!-- places:entrepot -->
+**Places de la vie** (lot C1 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`porche_banc`, `porte_seuil`, `cour_willem`, `cour_chtholly`, `cour_centre`, `arbre_pied`, `arbre_vigie`, `potager`, `coin_soleil`, `clairiere_centre`, `clairiere_banc`, `clairiere_arbre`, `marais_epee`, `champ_centre`, `champ_but_nord`, `champ_but_sud`, `fourre_ballon`, `riviere_puisage`, `lisiere_sud`) ; les places réservées, en `Life/Areas` avec leur rectangle (`clairiere`, `champ`, `cour`, `duel`, `coin_soleil`).
+<!-- /places:entrepot -->
+
 ## 3. L'entrepôt, dedans
 
 ### 3.0 Principes
@@ -1421,6 +1425,10 @@ point premiere_embuscade 16 23
 point bifurcation 58 23.5
 point vue_marais 46 21.5
 ```
+
+<!-- places:sentier -->
+**Places de la vie** (lot C1 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`marais_chute`, `lumiere_pannibal`, `chtholly_arrivee`, `premiere_embuscade`, `bifurcation`, `vue_marais`) ; les places réservées, en `Life/Areas` avec leur rectangle (`embuscade`) ; et, en plus du plan : `sentier_ouest` (4 ; 24 ; l'entrée du sentier, côté entrepôt : le passant qui arrive ou repart), `sentier_milieu` (40 ; 22.8 ; le milieu du sentier, devant le marais : les passants s'y croisent), `sentier_est` (74 ; 21.8 ; le sentier avant la sortie vers le port), `fourche_ville` (62.5 ; 26.9 ; le départ du chemin de la ville : le facteur, Willem au marché), `marais_berge_ouest` (24 ; 20.4 ; la berge où se tiennent les grenouilles (VIE.md, faune)), `marais_berge_est` (52 ; 20.2 ; la berge est, libellules les jours doux (VIE.md, faune)), `corbeau_perchoir` (28 ; 11.6 ; la souche noyée où se perche le corbeau (VIE.md, faune)), `lisiere_renard` (6 ; 20.6 ; la lisière ouest où le renard s'arrête avant de traverser (VIE.md)), `merle_sol` (30 ; 26.4 ; l'herbe au sud du sentier où le merle picore, à l'aube (VIE.md)).
+<!-- /places:sentier -->
 
 ## 5. Le village des hommes-bêtes (`village`, `cafe`, `maison_limashenka`)
 
