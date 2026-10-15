@@ -4,7 +4,7 @@ extends GutTest
 ## glow_tolerance) pour la façade et les flancs. On compte, sur les images livrées, les pixels qui
 ## s'allument (DecorPanel.glow_weight, jumeau du shader) :
 ## - les carreaux des façades de l'entrepôt (lot R1, #FCD069 à #FCE18F) s'allument ;
-## - les lampes de la vitrine du café s'allument, et presque rien d'autre ;
+## - le café garde la règle par défaut (sa façade de nuit est commandée : cahier n° 5, R0.9) ;
 ## - le torchis ocre des chaumières, qui garde la règle par défaut (#FFCA63 à 0,12), reste éteint.
 
 const WAREHOUSES: Array[String] = [
@@ -46,13 +46,14 @@ func test_warehouse_panes_light_up_at_night() -> void:
 		building.free()
 
 
-func test_cafe_lamps_light_up_and_little_else() -> void:
+func test_cafe_keeps_the_default_rule() -> void:
+	# Une règle propre à ses lampes de vitrine en faisait des taches blanches bruitées : le café garde
+	# la règle par défaut, en attendant sa façade de nuit (cahier n° 5, R0.9 ; QC-16).
 	var building := _building(CAFE)
-	var lamps := _count_lit(building.facade, building)
-	assert_gt(lamps, 300, "les lampes de la vitrine s'allument")
-	var stray := _count_lit(building.side_facade, building)
-	var side_pixels := _opaque(building.side_facade)
-	assert_lt(float(stray) / side_pixels, 0.002, "le flanc de pierre reste éteint")
+	assert_true(
+		building.window_glow_color.is_equal_approx(DecorPanel.GLOW_COLOR), "couleur par défaut"
+	)
+	assert_almost_eq(building.window_glow_tolerance, DecorPanel.GLOW_TOLERANCE, 0.0001, "tolérance")
 	building.free()
 
 

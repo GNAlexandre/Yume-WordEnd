@@ -121,9 +121,9 @@ PROPS = {
     "village_house_stone": building("VillageHouseStone", "village_house_stone", "wall_stone", "roof_shingles", 5, 5, 3,
                                     6, True),
     "village_shed": building("VillageShed", "village_shed", "wall_planks_b", "roof_shingles", 4, 3, 2.25, 3.5, False),
-    # (QO) Ses lampes de vitrine s'allument la nuit (la vitrine n'a pas de carreaux jaunes).
-    "cafe_village": building("CafeVillage", "cafe", "wall_plaster", "roof_tiles", 7, 6, 5.5, 7.5, False,
-                             glow=("#E9C18D", 0.015)),
+    # (QO) Règle de lueur par défaut : une règle propre à ses lampes de vitrine (#E9C18D) en faisait des taches
+    # blanches bruitées ; la façade de nuit du café est commandée (cahier n° 5, R0.9 ; docs/QUALITE.md, QC-16).
+    "cafe_village": building("CafeVillage", "cafe", "wall_plaster", "roof_tiles", 7, 6, 5.5, 7.5, False),
     "fence_wattle": panel("FenceWattle", "props/fence_wattle.png", "shadow_width = 0.6", "fence",
                           [("BoxShape3D", ["size = Vector3(1.9, 0.9, 0.25)"], (0, 0.45, 0))]),
     "fence_wattle_libre": panel("FenceWattleLibre", "props/fence_wattle.png", "shadow_width = 0.6", "fence"),

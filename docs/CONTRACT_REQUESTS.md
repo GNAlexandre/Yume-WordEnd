@@ -815,4 +815,5 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
 
 ## QO — options visuelles tranchées
 - **Fait (I2, vitres du lot R1)** : `Building.window_glow_color` et `window_glow_tolerance` (PR « contrats » de QO,
-  QC-02) ; les façades de l'entrepôt et du café ont leur règle. Rien à redessiner.
+  QC-02) ; les façades de l'entrepôt ont leur règle, rien à redessiner. Le café garde la règle par défaut :
+  sa vitrine attend la façade de nuit (cahier n° 5, R0.9).
