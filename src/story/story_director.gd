@@ -53,6 +53,8 @@ const EXAMINE_PREFIX := "examine_"
 const SLEEP_FADE := 0.8
 const REST_FADE := 0.5
 const CALENDAR_CARD_TIME := 2.6
+## Au plus ce temps (ms) d'attente de la fin d'une marche de scène avant de rendre un PNJ à la vie.
+const RELEASE_WAIT_MS := 12000
 ## Ce que fait le directeur entre deux scènes (_busy) : dormir, laisser passer le temps.
 const BUSY_SLEEP := &"_sommeil"
 const BUSY_REST := &"_repos"
@@ -80,6 +82,7 @@ var _talked: Dictionary = {}
 var _expect: Dictionary = {}
 var _games: Dictionary = {}
 var _releases: Array[StringName] = []
+var _release_since: Dictionary = {}
 var _prompts: Array[StoryPrompt] = []
 var _seen: ConfigFile = null
 var _rng := RandomNumberGenerator.new()
@@ -624,10 +627,8 @@ func _end_scene(scene_id: StringName, data: Dictionary, completed: bool) -> void
 	if not completed:
 		return
 	_stage.set_control(true)
-	var kept := _kept_for_next(scene_id, data)
 	for npc_id: String in _names(data.get("present", [])):
-		if not kept.has(StringName(npc_id)):
-			_releases.append(StringName(npc_id))
+		_releases.append(StringName(npc_id))
 	GameState.mark_scene_done(scene_id)
 	GameState.story_scene = &""
 	mark_seen(scene_id)
@@ -655,27 +656,23 @@ func _update_skip_prompt(scene_id: StringName, data: Dictionary) -> void:
 	overlay_node.call(&"set_skip_text", ui_text("skip", "Échap : passer") if skippable else "")
 
 
-## Les présents de scene_id qu'une scène qui la suit (after) demande sur la même carte : ils
-## restent réservés entre les deux (Pannibal file vers le marais au lieu de rentrer).
-func _kept_for_next(scene_id: StringName, data: Dictionary) -> Array[StringName]:
-	var kept: Array[StringName] = []
-	for other_id: StringName in StoryData.scene_ids(_island):
-		var other := StoryData.scene(_island, other_id)
-		if str(other.get("map", "")) != str(data.get("map", "")):
-			continue
-		if not _names(other.get("after", [])).has(String(scene_id)):
-			continue
-		for npc_id: String in _names(other.get("present", [])):
-			kept.append(StringName(npc_id))
-	return kept
-
-
+## Rend à la vie les présents d'une scène finie, une fois leur dernière marche de scène finie
+## (Pannibal file vers le marais au lieu de rentrer tout de suite ; RELEASE_WAIT_MS au plus).
 func _serve_releases() -> void:
 	if _releases.is_empty() or _runner.is_running():
 		return
+	var waiting: Array[StringName] = []
 	for npc_id: StringName in _releases:
-		LifeDirector.release(npc_id)
-	_releases.clear()
+		var actor := LifeDirector.actor(npc_id)
+		var since: int = _release_since.get(npc_id, Time.get_ticks_msec())
+		var walking := actor != null and actor.state == LifeActor.State.SCENE and actor.is_moving()
+		if walking and Time.get_ticks_msec() - since < RELEASE_WAIT_MS:
+			_release_since[npc_id] = since
+			waiting.append(npc_id)
+		else:
+			_release_since.erase(npc_id)
+			LifeDirector.release(npc_id)
+	_releases = waiting
 
 
 # --- Début de l'acte, parties ----------------------------------------------------------------
@@ -697,6 +694,7 @@ func _on_game_loaded() -> void:
 	_talked.clear()
 	_expect = {}
 	_releases.clear()
+	_release_since.clear()
 	_scene_hint = ""
 	_current = &""
 	_busy = &""
