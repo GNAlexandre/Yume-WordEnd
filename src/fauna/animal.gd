@@ -85,8 +85,8 @@ func _ready() -> void:
 
 
 ## Les règles de l'île admettent l'espèce ici (liste fauna, régions sans animaux), jamais
-## enemies_allowed : un animal n'est pas un Timere. Sans données (la scène nue, la fumée) il n'y a rien
-## à juger ; des données qui ne sont pas d'une espèce (celles d'un Timere) sont refusées.
+## enemies_allowed : un animal n'est pas un Timere. Sans données (la scène nue, la fumée) il n'y
+## a rien à juger ; des données qui ne sont pas d'une espèce (celles d'un Timere) sont refusées.
 func _is_admitted() -> bool:
 	if data == null:
 		return true
