@@ -192,3 +192,19 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/props/alder.png` — 384 × 672 px.
 - `assets/hd2d/props/marsh_snag.png` — 192 × 192 px.
 - `assets/hd2d/props/thicket_c.png` — 288 × 173 px.
+
+
+### Île 68 — cahier n° 5, R2 priorité 2 : gestes (15 octobre 2026)
+
+Généré avec ChatGPT le 15 octobre 2026, cahier n° 5, lot R2, sous-lot des gestes :
+`willem_life`, `willem_repair`, `nygglatho_laundry`, `cat_waiter_work`, `baker_work`.
+Quinze PNG et quinze JSON (profil droit, face, dos), 144 poses ; rangées de repos
+complémentaires recopiées au pixel près des vues existantes. Références : les sprites
+existants de Willem, Nygglatho, du serveur et du boulanger, et les consignes des
+sections 4.0 à 4.3 du cahier. Recalage au plus proche voisin et montages localisés
+autorisés, originaux conservés hors dépôt. Les objets tenus font partie du dessin ;
+le ballon, le plafond, la corde à linge, le comptoir et le pétrin ne sont pas dessinés.
+Le chargement et les cadres sont contrôlés séparément de l'intégration : ensembles
+non inscrits au manifeste et non placés dans les scènes ; transitions à valider après
+intégration. La hauteur debout exclut les mains, le marteau et le drap levés au-dessus
+de la tête. Les autres ensembles de priorité 2 restent à produire.
