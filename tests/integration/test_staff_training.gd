@@ -420,12 +420,16 @@ func test_the_exercise_gives_the_hand_back_to_the_villagers() -> void:
 	var willem := LifeDirector.actor(&"willem")
 	assert_eq(willem.npc.get_prompt(), "", "pas d'invite « Parler » pendant l'exercice")
 	assert_eq(LifeDirector.npc(&"ithea").get_prompt(), "")
+	# (U1) L'invite est un signe posé au-dessus de la cible : aucun sur les participants.
+	assert_eq(InteractSign.kind_of(willem.npc), &"", "pas de signe pendant l'exercice")
+	assert_eq(InteractSign.kind_of(LifeDirector.npc(&"ithea")), &"")
 	_training.stop()
 	assert_eq(_results[0]["ended_by"], &"stopped")
 	_run(4.0)
 	await wait_physics_frames(2)
 	assert_ne(willem.state, LifeActor.State.GAME, "Willem n'est plus mené par l'exercice")
 	assert_eq(willem.npc.get_prompt(), "Parler", "on peut de nouveau lui parler")
+	assert_eq(InteractSign.kind_of(willem.npc), InteractSign.TALK, "le signe « parler » revient")
 	assert_null(MiniGames.staff_training(), "l'exercice est libéré")
 
 

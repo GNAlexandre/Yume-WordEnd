@@ -192,3 +192,10 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/props/alder.png` — 384 × 672 px.
 - `assets/hd2d/props/marsh_snag.png` — 192 × 192 px.
 - `assets/hd2d/props/thicket_c.png` — 288 × 173 px.
+
+| Fichier(s) | Auteur / source | URL | Licence | Ajouté par |
+| --- | --- | --- | --- | --- |
+| `assets/fonts/Nunito.ttf` (texte de l'interface ; police variable, sous-ensemble latin par fontTools, `assets/fonts/OFL-Nunito.txt`) | Nunito, The Nunito Project Authors (Vernon Adams, Cyreal, Jacques Le Bailly) | https://github.com/googlefonts/nunito | SIL Open Font License 1.1 | U1 |
+| `assets/fonts/CormorantGaramond.ttf`, `assets/fonts/CormorantGaramond-Italic.ttf` (noms, titres, jour du menu de pause ; polices variables, sous-ensemble latin, `assets/fonts/OFL-CormorantGaramond.txt`) | Cormorant Garamond, The Cormorant Project Authors (Christian Thalmann, Catharsis Fonts) | https://github.com/CatharsisFonts/Cormorant | SIL Open Font License 1.1 | U1 |
+| `assets/hd2d/fx/sign_talk.png`, `sign_examine.png`, `sign_take.png`, `sign_enter.png` (signes d'interaction, remplaçants commandés au cahier n° 5, R0.13) | généré par `tools/hd2d_assets.py gen` (recettes `tools/hd2d_sky.py`) | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |
+| `assets/ui/heart_full.png`, `assets/ui/heart_empty.png` (cœurs « Nuit douce », redessinés) | généré par `tools/gen_ui_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |

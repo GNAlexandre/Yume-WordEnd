@@ -49,6 +49,7 @@ func _ready() -> void:
 	_continue.pressed.connect(close)
 	_record_badge.resized.connect(_center_record_pivot)
 	MenuInput.focus_on_hover(self)
+	UiStyle.frost($Panel as Control)
 
 
 func _exit_tree() -> void:
@@ -79,6 +80,7 @@ func show_result(arena_id: StringName, score: int, best: bool, wave: int) -> voi
 	_games_value.text = str(record["games"])
 	_record_badge.visible = best
 	show()
+	UiStyle.appear($Panel as Control, Vector2.DOWN)
 	if not get_tree().paused:
 		get_tree().paused = true
 		_paused_by_me = true
@@ -95,6 +97,7 @@ func show_result(arena_id: StringName, score: int, best: bool, wave: int) -> voi
 func close() -> void:
 	if not visible:
 		return
+	UiStyle.settle($Panel as Control)
 	hide()
 	_pad.reset()
 	if _paused_by_me:

@@ -15,6 +15,8 @@ extends Control
 ##   navigation privée (not SaveManager.is_persistent()), avertissement et export mis en avant.
 ## - (bureau) « Plein écran » et « Quitter », hors Web seulement : DesktopApp.setup_menu_buttons.
 ## Clavier, manette (croix ou stick : focus ; A valide ; B revient), souris et toucher.
+## (U1) Style « Nuit douce » (UiStyle) : panneaux de verre dépoli, entrées en texte simple, la
+## sélection marquée d'un halo et d'un point doré ; les écrans entrent en fondu et glissement.
 
 const CREDITS_SCENE := preload("res://src/ui/credits.tscn")
 const CreditsScript := preload("res://src/ui/credits.gd")
@@ -29,7 +31,6 @@ const PORTRAIT_SIZE := Vector2(128, 128)
 ## haut de la troisième (signe qu'elle défile), pour que le panneau, son titre et sa phrase tiennent
 ## dans 1280 × 720 quel que soit le nombre de skins.
 const MAX_SKIN_GRID_HEIGHT := 460.0
-const ERROR_COLOR := Color(1.0, 0.72, 0.66)
 const PRIVATE_NOTICE := (
 	"Navigation privée : ta progression sera perdue à la fermeture de l'onglet. "
 	+ "Pense à exporter ta sauvegarde."
@@ -67,6 +68,8 @@ var _pad := MenuInput.new()
 @onready var _copy_button: Button = %CopyButton
 @onready var _save_status: Label = %SaveStatus
 @onready var _storage_label: Label = %StorageWarning
+@onready var _confirm_panel: Control = %ConfirmPanel
+@onready var _save_panel: Control = %SavePanel
 
 
 func _ready() -> void:
@@ -85,6 +88,8 @@ func _ready() -> void:
 	refresh_continue()
 	show_storage_warning(SaveManager.is_persistent())
 	MenuInput.focus_on_hover(self)
+	for panel: Control in [%MenuPanel, %SkinPanel, %MessagePanel, _confirm_panel, _save_panel]:
+		UiStyle.frost(panel)
 	if require_gesture and not gesture_done(get_tree()):
 		_set_muted(true)
 		_click_screen.show()
@@ -296,6 +301,8 @@ func is_credits_open() -> bool:
 ## Ferme la confirmation ou le panneau de sauvegarde ; le focus revient au bouton d'origine.
 func close_overlay() -> void:
 	var was_open := _confirm_overlay.visible or _save_overlay.visible
+	UiStyle.settle(_confirm_panel)
+	UiStyle.settle(_save_panel)
 	_confirm_overlay.hide()
 	_save_overlay.hide()
 	_content.focus_behavior_recursive = Control.FOCUS_BEHAVIOR_INHERITED
@@ -340,8 +347,7 @@ func _enter_menu(animate: bool) -> void:
 	_content.show()
 	(_continue_button if _continue_button.visible else _new_game_button).grab_focus()
 	if animate:
-		_content.modulate.a = 0.0
-		create_tween().tween_property(_content, ^"modulate:a", 1.0, 0.35)
+		UiStyle.appear(_content, Vector2.DOWN)
 	# La vignette choisie (celle de la sauvegarde) peut être plus bas dans la grille : elle est
 	# montrée une fois la grille mise en page (lien rompu si le menu est libéré avant).
 	if not get_tree().process_frame.is_connected(_reveal_selected_skin):
@@ -402,6 +408,7 @@ func _build_skin_cards() -> void:
 func _open_overlay(overlay: Control, focus: Control, return_to: Control) -> void:
 	close_overlay()
 	overlay.show()
+	UiStyle.appear(_confirm_panel if overlay == _confirm_overlay else _save_panel, Vector2.DOWN)
 	_content.focus_behavior_recursive = Control.FOCUS_BEHAVIOR_DISABLED
 	_overlay_return = return_to
 	focus.grab_focus()
@@ -410,7 +417,7 @@ func _open_overlay(overlay: Control, focus: Control, return_to: Control) -> void
 func _show_message(text: String, error: bool) -> void:
 	_message.text = text
 	if error:
-		_message.add_theme_color_override(&"font_color", ERROR_COLOR)
+		_message.add_theme_color_override(&"font_color", UiStyle.color(&"error"))
 	else:
 		_message.remove_theme_color_override(&"font_color")
 	_message_panel.visible = not text.is_empty()

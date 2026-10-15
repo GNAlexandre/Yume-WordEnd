@@ -618,6 +618,30 @@ l'herbe, elles se lisent comme des trous ; la colline les a retirées).
 sans strates ; des dalles en ovales sombres ou cernées de noir comme `ring_stone_flat_*` ; des dalles régulières
 alignées comme un dallage (le sentier est de terre, les dalles y sont posées ça et là).
 
+### R0.13 Les signes d'interaction (constaté en jouant, 15 octobre 2026)
+
+**Constat** : l'invite « E / A : Parler » était une pastille de texte au milieu de l'écran, lourde et
+toujours la même. Le lot U1 (interface « Nuit douce ») la remplace par un **petit signe posé au-dessus
+de la cible** à portée (`src/ui/interact_signs.gd`) : plein sur la cible du joueur, pâle sur les autres.
+Il est dessiné **à taille fixe à l'écran** (20 à 28 px dans une image de 1280 × 720, 30 à 42 px en
+1920 × 1080), en fondu, il respire et rebondit à l'appui. Les images actuelles sont des remplaçants
+dessinés par `tools/hd2d_sky.py` (formes simples à l'outil).
+
+| Priorité | Fichier | Taille | Genre, ancre | Consigne |
+| --- | --- | --- | --- | --- |
+| 2 | `assets/hd2d/fx/sign_talk.png` | 64 × 64 | icône, fond transparent, alpha doux, centrée, bas du dessin à 4 px du bord bas | **parler** : une petite bulle de dialogue arrondie, sa pointe en bas à gauche, trois points « … » au milieu ; bulle crème #F6EEE4, contour doré #E8C98A fin (3 à 4 px), points prune #3A2A40 ; une ombre douce prune en dessous (2 px, floue) pour se détacher d'un sol clair |
+| 2 | `assets/hd2d/fx/sign_examine.png` | 64 × 64 | idem | **examiner** : une étincelle à quatre branches fines (étoile de lumière), crème au cœur et dorée au bord, une seconde étincelle plus petite en haut à droite ; aucun œil ni loupe |
+| 2 | `assets/hd2d/fx/sign_take.png` | 64 × 64 | idem | **prendre** : une petite main ouverte, paume vers le spectateur, doigts serrés et pouce écarté, crème au contour doré, dessinée simplement (pas de jointures, pas d'ongles) |
+| 2 | `assets/hd2d/fx/sign_enter.png` | 64 × 64 | idem | **entrer, sortir, embarquer** : une porte cintrée vue de face, encadrement doré, intérieur prune #3A2A40, une flèche crème qui monte au milieu (on passe la porte) |
+
+Les quatre se commandent dans la même conversation : même épaisseur de contour, même ombre, même
+poids visuel (chacune remplit environ 80 % du carré). Elles doivent rester lisibles **réduites à
+20 px** (vérifier en réduisant l'image) et sur un sol clair comme sur un mur sombre.
+
+**À ne pas faire** : du texte ou une lettre de touche dans l'image (le rappel « E » ou « A » est dessiné
+par le jeu à côté du signe) ; un fond ou un cadre carré ; des couleurs vives ou saturées (rouge, bleu
+électrique) ; du pixel art grossier (ces images sont réduites, pas agrandies) ; un contour noir épais.
+
 ## 3. Lot R1 : l'entrepôt complet
 
 ### 3.0 Rappel du format (à coller avec le lot)

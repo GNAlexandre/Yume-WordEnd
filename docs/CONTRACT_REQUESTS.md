@@ -825,3 +825,20 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   sa vitrine attend la façade de nuit (cahier n° 5, R0.9).
 \n
 - **C3b — une caméra qui s'incline au bord du vide** (CameraRig, propriétaire : le lot caméra ; non bloquant) : à 32° d'inclinaison fixe, la caméra ne voit pas la falaise sous le bord nord de la colline (la face est au nord de la terre) : la « falaise visible sous le bord » demandée pour la colline (CARTE.md 7, la scène 8.8 de l'acte 1) n'existe que si la caméra s'incline davantage (50 à 60°) quand le joueur est à moins de 6 m d'un bord `void` : on verrait alors la lèvre, la face de roche, le rideau de roche et la mer de nuages 60 m plus bas. Sans cela, le vide se lit par la mer de nuages, les rochers qui flottent et les îles (la recette), et par les piliers de roche commandés au cahier n° 5 (R0.12, `sky/sea_stack_*`).
+## U1 — interface « Nuit douce » : ce que les autres lots doivent savoir
+- **Pour E6 (le récit)** : une scène sans contrôle du joueur demande `DialogueBox.set_presentation(&"bandeau")`
+  avant ses répliques, puis `DialogueBox.set_presentation(&"nuit")` à sa fin (le réglage dure jusqu'au prochain appel).
+  Pendant le bandeau, les signes d'interaction sont cachés. Pour cacher les signes sans bandeau (un jeu, une
+  séquence) : `InteractSign.suppress(&"<raison>", true)` puis `false`.
+- **Pour E6 et E8** : cacher le signe d'un participant : `InteractSign.set_hidden(noeud, true)` (méta
+  `interact_sign` = `&"none"`), le rendre : `set_hidden(noeud, false)`. Un PNJ dont `get_prompt()` est vide n'a
+  déjà pas de signe.
+- **Demande au propriétaire de `src/npc/dialogue_runner.gd`** (facultatif) : une clé `"presentation"` (`"nuit"` ou
+  `"bandeau"`) dans les nœuds de dialogue, que le runner passerait à `DialogueBox.set_presentation` ; sans elle,
+  le récit appelle l'API lui-même (la clé est aujourd'hui refusée par `NODE_KEYS`).
+- **Pour E6 (calendrier, indice discret)** : tout Control ajouté sous un écran qui porte `wordend_theme.tres` en
+  prend le style sans rien faire ; un panneau `PanelContainer` est déjà un panneau Nuit douce (fond translucide,
+  filet doré) ; `UiStyle.frost(panneau)` lui ajoute le verre dépoli, `UiStyle.appear(noeud)` le fondu d'entrée.
+  Couleurs et durées : `UiStyle.color(&"gold")`, `UiStyle.seconds(&"appear_ms")`… jamais de `Color(` dans une scène
+  de `src/ui/` (`test_ui_nuit.gd`). Le menu de pause a une entrée « Options » ; « Calendrier » peut s'y ajouter
+  au-dessus d'« Options » (nœud `MainPanel/Box`), avec un panneau comme `OptionsPanel`.

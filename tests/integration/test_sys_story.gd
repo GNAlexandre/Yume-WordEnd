@@ -63,12 +63,23 @@ func test_an_npc_whose_condition_turns_false_leaves_the_village() -> void:
 		func() -> bool: return player.current_prompt() == "Parler", 2.0
 	)
 	assert_true(prompted, "invite « Parler » devant %s" % npc.name)
+	# (U1) Le HUD montre le signe de la cible au-dessus d'elle (plus de pastille).
+	var signs := hud.call(&"interact_signs") as Control
+	assert_true(
+		await until(func() -> bool: return signs.call(&"full_kind") == InteractSign.TALK, 2.0),
+		"signe « parler »"
+	)
+	assert_eq(signs.call(&"full_target"), player.current_interactable())
 	assert_eq(_first_hit_at(npc), npc, "son corps arrête un rayon (couche world)")
 	GameState.set_flag(&"sys_away")
 	await frames(3)
 	assert_false(npc.is_present(), "%s est parti" % npc.name)
 	assert_false(npc.is_visible_in_tree(), "caché")
 	assert_eq(player.current_prompt(), "", "plus d'invite")
+	assert_true(
+		await until(func() -> bool: return signs.call(&"full_target") == null, 2.0),
+		"plus de signe au-dessus du PNJ parti"
+	)
 	assert_ne(_first_hit_at(npc), npc, "plus de corps : le rayon passe")
 	await tap_key(KEY_E)
 	await frames(2)

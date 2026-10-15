@@ -31,7 +31,11 @@ func _start_series(fast: bool = true) -> void:
 		director.set_config(fast_waves())
 	await place_player(&"dunes", PANEL_FRONT, Vector3.LEFT)
 	assert_eq(player.current_prompt(), PROMPT, "invite du panneau")
-	assert_eq(hud.get_node("%PromptLabel").get(&"text"), PROMPT, "invite dans le HUD")
+	# (U1) Dans le HUD, l'invite est un signe (étincelle) posé au-dessus du panneau.
+	await wait_process_frames(2)
+	var signs := hud.call(&"interact_signs") as Control
+	assert_eq(signs.call(&"full_target"), player.current_interactable(), "signe sur le panneau")
+	assert_eq(signs.call(&"full_kind"), InteractSign.EXAMINE, "signe « examiner » dans le HUD")
 	await tap_key(KEY_E)
 	assert_true(director.is_running(), "E lance la série")
 

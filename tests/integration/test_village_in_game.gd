@@ -148,6 +148,13 @@ func test_from_the_warehouse_to_the_cafe_the_house_and_back() -> void:
 		await until(func() -> bool: return player.current_prompt() == "Examiner", 3.0),
 		"l'ardoise du menu s'offre à l'examen"
 	)
+	# (U1) Le HUD montre le signe de la cible au-dessus d'elle (plus de pastille).
+	var signs := hud.call(&"interact_signs") as Control
+	assert_true(
+		await until(func() -> bool: return signs.call(&"full_kind") == InteractSign.EXAMINE, 2.0),
+		"signe « examiner » sur l'ardoise"
+	)
+	assert_eq(signs.call(&"full_target"), player.current_interactable())
 	await tap_key(KEY_E)
 	assert_true(await until(func() -> bool: return not _lines.is_empty(), 3.0), "texte lu")
 	assert_true(_lines[0].begins_with("|"), "sans nom de personnage")

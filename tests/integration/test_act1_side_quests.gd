@@ -63,6 +63,13 @@ func _talk(zone_id: StringName, node_name: String, answers: Array[int]) -> Array
 	await wait_seconds(0.35)
 	assert_eq(player.current_interactable(), npc, "invite devant %s" % node_name)
 	assert_eq(player.current_prompt(), "Parler")
+	# (U1) Le HUD montre le signe de la cible au-dessus d'elle (plus de pastille).
+	var signs := hud.call(&"interact_signs") as Control
+	assert_true(
+		await until(func() -> bool: return signs.call(&"full_kind") == InteractSign.TALK, 2.0),
+		"signe « parler »"
+	)
+	assert_eq(signs.call(&"full_target"), player.current_interactable())
 	_lines.clear()
 	await tap_key(KEY_E)
 	assert_true(DialogueRunner.is_any_running(), "conversation avec %s" % node_name)

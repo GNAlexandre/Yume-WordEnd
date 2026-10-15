@@ -65,47 +65,57 @@ text = "Chtholly – Bats-toi contre ton destin"
 horizontal_alignment = 1
 
 [node name="Gap" type="Control" parent="Content/Columns/Left"]
-custom_minimum_size = Vector2(0, 16)
+custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Buttons" type="VBoxContainer" parent="Content/Columns/Left"]
-custom_minimum_size = Vector2(400, 0)
+[node name="MenuPanel" type="PanelContainer" parent="Content/Columns/Left"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 14
 
-[node name="ContinueButton" type="Button" parent="Content/Columns/Left/Buttons"]
+[node name="Buttons" type="VBoxContainer" parent="Content/Columns/Left/MenuPanel"]
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ContinueButton" type="Button" parent="Content/Columns/Left/MenuPanel/Buttons"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
 text = "Continuer"
+alignment = 0
 
-[node name="NewGameButton" type="Button" parent="Content/Columns/Left/Buttons"]
+[node name="NewGameButton" type="Button" parent="Content/Columns/Left/MenuPanel/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Nouvelle partie"
+alignment = 0
 
-[node name="SaveButton" type="Button" parent="Content/Columns/Left/Buttons"]
+[node name="SaveButton" type="Button" parent="Content/Columns/Left/MenuPanel/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Sauvegarde"
+alignment = 0
 
-[node name="CreditsButton" type="Button" parent="Content/Columns/Left/Buttons"]
+[node name="CreditsButton" type="Button" parent="Content/Columns/Left/MenuPanel/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Crédits"
+alignment = 0
 
-[node name="FullscreenButton" type="Button" parent="Content/Columns/Left/Buttons"]
+[node name="FullscreenButton" type="Button" parent="Content/Columns/Left/MenuPanel/Buttons"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+alignment = 0
 
-[node name="ExitGameButton" type="Button" parent="Content/Columns/Left/Buttons"]
+[node name="ExitGameButton" type="Button" parent="Content/Columns/Left/MenuPanel/Buttons"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+alignment = 0
 
 [node name="MessagePanel" type="PanelContainer" parent="Content/Columns/Left"]
 unique_name_in_owner = true
@@ -125,6 +135,7 @@ horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="SkinPanel" type="PanelContainer" parent="Content/Columns"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
 
@@ -135,7 +146,7 @@ theme_override_constants/separation = 14
 [node name="SkinTitle" type="Label" parent="Content/Columns/SkinPanel/SkinBox"]
 layout_mode = 2
 theme_type_variation = &"HeaderLabel"
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 36
 text = "Choisis ta fée"
 horizontal_alignment = 1
 
@@ -172,16 +183,17 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Dim" type="ColorRect" parent="ConfirmOverlay"]
+[node name="Dim" type="Panel" parent="ConfirmOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.106, 0.071, 0.192, 0.6)
+theme_type_variation = &"DimStrong"
 
-[node name="Panel" type="PanelContainer" parent="ConfirmOverlay"]
+[node name="ConfirmPanel" type="PanelContainer" parent="ConfirmOverlay"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -195,35 +207,35 @@ offset_bottom = 130.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Box" type="VBoxContainer" parent="ConfirmOverlay/Panel"]
+[node name="Box" type="VBoxContainer" parent="ConfirmOverlay/ConfirmPanel"]
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="Header" type="Label" parent="ConfirmOverlay/Panel/Box"]
+[node name="Header" type="Label" parent="ConfirmOverlay/ConfirmPanel/Box"]
 layout_mode = 2
 theme_type_variation = &"HeaderLabel"
 theme_override_font_sizes/font_size = 34
 text = "Remplacer la sauvegarde ?"
 horizontal_alignment = 1
 
-[node name="Text" type="Label" parent="ConfirmOverlay/Panel/Box"]
+[node name="Text" type="Label" parent="ConfirmOverlay/ConfirmPanel/Box"]
 custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
 text = "Une partie est déjà sauvegardée sur cet appareil. Une nouvelle partie l'effacera (inventaire, quêtes et records)."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Buttons" type="HBoxContainer" parent="ConfirmOverlay/Panel/Box"]
+[node name="Buttons" type="HBoxContainer" parent="ConfirmOverlay/ConfirmPanel/Box"]
 layout_mode = 2
 theme_override_constants/separation = 24
 alignment = 1
 
-[node name="ConfirmCancel" type="Button" parent="ConfirmOverlay/Panel/Box/Buttons"]
+[node name="ConfirmCancel" type="Button" parent="ConfirmOverlay/ConfirmPanel/Box/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Annuler"
 
-[node name="ConfirmOk" type="Button" parent="ConfirmOverlay/Panel/Box/Buttons"]
+[node name="ConfirmOk" type="Button" parent="ConfirmOverlay/ConfirmPanel/Box/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
@@ -240,16 +252,17 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Dim" type="ColorRect" parent="SaveOverlay"]
+[node name="Dim" type="Panel" parent="SaveOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.106, 0.071, 0.192, 0.6)
+theme_type_variation = &"DimStrong"
 
-[node name="Panel" type="PanelContainer" parent="SaveOverlay"]
+[node name="SavePanel" type="PanelContainer" parent="SaveOverlay"]
+unique_name_in_owner = true
 layout_mode = 1
 anchor_left = 0.07
 anchor_top = 0.05
@@ -258,16 +271,16 @@ anchor_bottom = 0.95
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Box" type="VBoxContainer" parent="SaveOverlay/Panel"]
+[node name="Box" type="VBoxContainer" parent="SaveOverlay/SavePanel"]
 layout_mode = 2
 
-[node name="Header" type="Label" parent="SaveOverlay/Panel/Box"]
+[node name="Header" type="Label" parent="SaveOverlay/SavePanel/Box"]
 layout_mode = 2
 theme_type_variation = &"HeaderLabel"
 text = "Sauvegarde"
 horizontal_alignment = 1
 
-[node name="StorageWarning" type="Label" parent="SaveOverlay/Panel/Box"]
+[node name="StorageWarning" type="Label" parent="SaveOverlay/SavePanel/Box"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -276,76 +289,76 @@ text = "Navigation privée : ce navigateur ne garde rien après la fermeture de
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Columns" type="HBoxContainer" parent="SaveOverlay/Panel/Box"]
+[node name="Columns" type="HBoxContainer" parent="SaveOverlay/SavePanel/Box"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 28
 
-[node name="ExportBox" type="VBoxContainer" parent="SaveOverlay/Panel/Box/Columns"]
+[node name="ExportBox" type="VBoxContainer" parent="SaveOverlay/SavePanel/Box/Columns"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ExportTitle" type="Label" parent="SaveOverlay/Panel/Box/Columns/ExportBox"]
+[node name="ExportTitle" type="Label" parent="SaveOverlay/SavePanel/Box/Columns/ExportBox"]
 layout_mode = 2
 text = "Exporter"
 
-[node name="ExportHint" type="Label" parent="SaveOverlay/Panel/Box/Columns/ExportBox"]
+[node name="ExportHint" type="Label" parent="SaveOverlay/SavePanel/Box/Columns/ExportBox"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
 text = "Copie ce texte pour garder ta partie ou la reprendre ailleurs."
 autowrap_mode = 3
 
-[node name="ExportText" type="TextEdit" parent="SaveOverlay/Panel/Box/Columns/ExportBox"]
+[node name="ExportText" type="TextEdit" parent="SaveOverlay/SavePanel/Box/Columns/ExportBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 editable = false
 wrap_mode = 1
 
-[node name="CopyButton" type="Button" parent="SaveOverlay/Panel/Box/Columns/ExportBox"]
+[node name="CopyButton" type="Button" parent="SaveOverlay/SavePanel/Box/Columns/ExportBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Copier"
 
-[node name="ImportBox" type="VBoxContainer" parent="SaveOverlay/Panel/Box/Columns"]
+[node name="ImportBox" type="VBoxContainer" parent="SaveOverlay/SavePanel/Box/Columns"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ImportTitle" type="Label" parent="SaveOverlay/Panel/Box/Columns/ImportBox"]
+[node name="ImportTitle" type="Label" parent="SaveOverlay/SavePanel/Box/Columns/ImportBox"]
 layout_mode = 2
 text = "Importer"
 
-[node name="ImportHint" type="Label" parent="SaveOverlay/Panel/Box/Columns/ImportBox"]
+[node name="ImportHint" type="Label" parent="SaveOverlay/SavePanel/Box/Columns/ImportBox"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
 text = "Colle une sauvegarde exportée : elle remplace celle de cet appareil."
 autowrap_mode = 3
 
-[node name="ImportText" type="TextEdit" parent="SaveOverlay/Panel/Box/Columns/ImportBox"]
+[node name="ImportText" type="TextEdit" parent="SaveOverlay/SavePanel/Box/Columns/ImportBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "Colle ta sauvegarde ici…"
 wrap_mode = 1
 
-[node name="ImportButton" type="Button" parent="SaveOverlay/Panel/Box/Columns/ImportBox"]
+[node name="ImportButton" type="Button" parent="SaveOverlay/SavePanel/Box/Columns/ImportBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 theme_type_variation = &"PrimaryButton"
 text = "Importer et jouer"
 
-[node name="SaveStatus" type="Label" parent="SaveOverlay/Panel/Box"]
+[node name="SaveStatus" type="Label" parent="SaveOverlay/SavePanel/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="SaveBackButton" type="Button" parent="SaveOverlay/Panel/Box"]
+[node name="SaveBackButton" type="Button" parent="SaveOverlay/SavePanel/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -399,7 +412,7 @@ theme_type_variation = &"ClickPill"
 [node name="ClickLabel" type="Label" parent="ClickScreen/Box/ClickPill"]
 layout_mode = 2
 theme_type_variation = &"HudLabel"
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 34
 text = "Cliquer pour jouer"
 horizontal_alignment = 1
 
