@@ -94,6 +94,8 @@ func test_steps_conditions_triggers_and_days() -> void:
 	assert_false(shown.visible, "nœud de la carte caché (show)")
 	assert_eq(StoryDirector.hint(), "Un indice d'essai.", "indice de l'étape")
 	assert_true(player.camera_rig.is_story_framed(), "cadrage")
+	assert_eq(DialogueBox.presentation(), DialogueBox.PRESENTATION_BANDEAU, "bandeau : joueur tenu")
+	assert_true(InteractSign.is_suppressed(), "signes d'interaction cachés pendant la scène")
 	_box().choose(1)
 	assert_true(await _play(&"t1_etapes", 1))
 	assert_true(
@@ -106,6 +108,8 @@ func test_steps_conditions_triggers_and_days() -> void:
 	await wait_physics_frames(3)
 	assert_false(LifeDirector.is_reserved(&"willem"), "rendu à la vie après la scène")
 	assert_false(player.is_story_held(), "le joueur a la main")
+	assert_eq(DialogueBox.presentation(), DialogueBox.PRESENTATION_NUIT, "nuit après la scène")
+	assert_false(InteractSign.is_suppressed(), "signes rendus")
 	# t3 : un lieu atteint, un suiveur, une conversation attendue.
 	assert_eq(StoryDirector.hint(), "Va au point d'eau.")
 	await _place(&"point_eau")

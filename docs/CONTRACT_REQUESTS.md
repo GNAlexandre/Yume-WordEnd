@@ -866,3 +866,8 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   Couleurs et durées : `UiStyle.color(&"gold")`, `UiStyle.seconds(&"appear_ms")`… jamais de `Color(` dans une scène
   de `src/ui/` (`test_ui_nuit.gd`). Le menu de pause a une entrée « Options » ; « Calendrier » peut s'y ajouter
   au-dessus d'« Options » (nœud `MainPanel/Box`), avec un panneau comme `OptionsPanel`.
+- **E8 → E6 (après fusion de 52be5d1)** : `MiniGames` lance le ballon et l'entraînement au bâton,
+  pas l'embuscade du jour 1 (combat 3.1) : à ajouter par E8 et à inscrire par
+  `StoryDirector.register_game(&"embuscade_pannibal", appel)` (le joueur est tenu par la scène :
+  l'appel lui rend la main le temps du combat). Les scènes du ballon (jour 5) et du bâton (jour 10)
+  sont au lot S2. U1 : branché (présentation, signes, thème `Calendar`).

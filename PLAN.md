@@ -1613,7 +1613,7 @@ sans acte, garde son moteur de quêtes. Décisions : docs/DECISIONS.md (« E6 »
 | `outfit` | who, outfit | change sa tenue (`NpcData.outfits`) |
 | `leave` / `release` | who | le fait disparaître / le rend tout de suite à la vie |
 | `bubble` | who, text, time | une bulle |
-| `dialogue` | node, file (la scène), npc, presentation | un dialogue (choix : deux au plus) ; présentation « bandeau » (sans boîte) ou « nuit » (la boîte), par défaut bandeau tant que la scène tient le joueur (`DialogueBox.set_presentation` du lot U1, appelée si elle existe) |
+| `dialogue` | node, file (la scène), npc, presentation | un dialogue (choix : deux au plus) ; présentation « bandeau » (sans boîte) ou « nuit » (la boîte), par défaut bandeau tant que la scène tient le joueur (`DialogueBox.set_presentation` du lot U1 ; « nuit » rendue à la fin de la scène) |
 | `camera` / `camera_reset` | to, offset, distance, pitch, time, wait | cadrage, gros plan (9 m), lever les yeux (15°) ; rendre la caméra |
 | `fade` | to (black, white, clear), time | fondu |
 | `card` | text, time | un carton sur l'écran (résumé d'une carte à venir) |
@@ -1665,6 +1665,9 @@ change et se rappelle à la fermeture du calendrier ; le calendrier (`HUD/Calend
 Tab / L / Select pendant l'acte (à la place du journal), par le menu pause ou en examinant celui
 de la chambre ; le voile des scènes (`HUD/StoryOverlay`) porte les fondus, les cartons et
 « Échap : passer ». Pendant l'acte : ni encadré de quête, ni journal, ni « ! » / « ? ».
+Pendant une scène, les signes d'interaction (U1) sont cachés : `InteractSign.suppress(&"scene")`.
+Le calendrier prend le thème (type `Calendar` de `wordend_theme.tres` : case prune, encre crème,
+rayure et cercle or) ; « Calendrier » est au menu pause, au-dessus d'« Options ».
 
 **Les portes fermées jusqu'à un jour.** Une sortie (`MapExit`) qui porte les métadonnées
 `open_from_day` (jour d'ouverture) et `closed_text_key` (« village/maison_close » : la clé de

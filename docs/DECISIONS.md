@@ -3191,3 +3191,10 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **C3b — le vide de la colline** : la caméra à 32° ne voit pas la face nord d'une falaise ; la recette peuple le groupe `Sky` (rochers flottants à 12 → 76 m, îles lointaines à l'échelle 0,4 → 0,8 posées vers 70 → 280 m au nord, cumulus et brume sur la nappe à y = −60 m, `horizon_islands`) pour que la mer de nuages se lise loin sous le bord. `distant_island_*` mesure 64 × 32 m à l'échelle 1. Les piliers de roche qui sortiraient de la nappe (la vraie falaise, face au sud) et une caméra qui s'incline au bord du vide sont demandés (cahier n° 5, R0.12 ; CONTRACT_REQUESTS).
 - **C3b — le cercle des talismans** : dessiné dans le sol (anneau de dalles de roche à bord rompu, rayon 6,15 m) plutôt que posé en décalques `ring_stone_flat_*` (des ovales sombres qui se lisent comme des trous dans l'herbe). Rien de debout n'y entre, sauf l'herbe haute, la bruyère et les fleurs.
 - **C3b — densité** : le tirage de la pose est fait par section (`random.Random("colline/<section>")`) : ajouter un bouquet ne déplace plus les autres décors ; visée haute de la fourchette de CARTE.md (45 à 67 éléments par écran pour 40 à 70).
+- **E6 — branché sur « Nuit douce » (U1)** : présentation bandeau tant que la scène tient le joueur,
+  nuit sinon et à la fin de chaque scène ; signes d'interaction cachés pendant une scène ; couleurs
+  du calendrier dans le type `Calendar` du thème, sans valeurs de repli ; le journal de quêtes
+  (ancienne île) prend lui aussi le thème (jetons `UiStyle`), plus d'exception dans `test_ui_nuit`.
+- **E6 — l'embuscade de Pannibal reste la séquence de repli** : E8 offre le ballon et le bâton
+  (`MiniGames`), pas de combat d'embuscade ; l'étape `game` « embuscade_pannibal » attend son
+  inscription (`StoryDirector.register_game`).
