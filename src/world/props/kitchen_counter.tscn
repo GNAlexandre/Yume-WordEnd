@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/hd2d/interior/props/kitchen_counter.png" id="2_image"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kitchen_counter"]
-size = Vector3(1.88, 1.052, 0.65)
+size = Vector3(1.88, 1.375, 0.65)
 
 [node name="kitchen_counter" type="Node3D"]
 script = ExtResource("1_panel")
@@ -17,5 +17,5 @@ image_offset = Vector3(0, 0, 0.325)
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.526, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6875, 0)
 shape = SubResource("BoxShape3D_kitchen_counter")

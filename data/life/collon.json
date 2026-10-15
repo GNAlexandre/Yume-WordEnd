@@ -1,0 +1,11 @@
+{
+  "_comment": "Collon (VIE.md, 2.4) : elle refuse l'eau glacée, joue au chat, saute sur la pile ; elle épie à la porte la nuit.",
+  "gait": "course",
+  "lines": [
+    {"slot": "aube", "map": "entrepot_rdc_essai", "place": "point_eau", "activity": "toilette", "outfit": "pyjama"},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_b", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "essai_relief", "place": "herbes_chat", "activity": "jeu_chat", "outfit": "vie"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_tour", "activity": "tour_de_fees", "outfit": "vie", "role": "pile_2"},
+    {"slot": "nuit", "map": "entrepot_rdc_essai", "place": "porte_nygglatho", "activity": "avalanche", "outfit": "pyjama"}
+  ]
+}

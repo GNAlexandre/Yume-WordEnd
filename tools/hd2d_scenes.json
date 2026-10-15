@@ -19,7 +19,7 @@
   {"id": "decal_canopy", "_comment": "ombre de feuillage (alpha doux), par-dessus ce qui traîne", "scene": "decal",
    "match": ["decals/canopy_shadow_*"], "decal": {"layer": 2}},
   {"id": "decal_light", "_comment": "taches de soleil (alpha doux), par-dessus l'ombre de feuillage", "scene": "decal",
-   "match": ["decals/sun_dapple"], "decal": {"layer": 3}},
+   "match": ["decals/sun_dapple", "decals/sun_window"], "decal": {"layer": 3}},
   {"id": "decal_mist", "_comment": "brume basse (alpha doux), tout en haut", "scene": "decal",
    "match": ["decals/mist_patch"], "decal": {"layer": 4}},
   {"id": "decal", "_comment": "plaques posées à même le sol : mousse, fleurs, flaques, boue, fissures, potager, craie, ornières, caillebotis, congères…", "scene": "decal",
@@ -60,7 +60,7 @@
   {"id": "plant", "_comment": "buissons, fougères, roseaux, ronces : on les traverse (comme bush, berry_bush, reeds), ombre au pied", "scene": "panel",
    "match": ["props/bush_*", "props/fern_*", "props/berry_bush_b", "props/cattails", "props/reeds_b", "props/dead_shrub_*", "props/nettles", "props/thistle", "anim/reeds_sway"]},
   {"id": "small_object", "_comment": "petits objets, image de 0,6 m de haut au plus (58 px : un objet d'un demi-mètre et sa marge) : on les traverse", "scene": "panel",
-   "match": ["props/toys_*", "props/laundry_basket", "props/bucket", "props/watering_can", "props/flower_pots", "props/sack_apples", "props/rope_coil", "props/chain_pile", "anim/pigeons"]},
+   "match": ["props/toys_*", "props/laundry_basket", "props/bucket", "props/watering_can", "props/flower_pots", "props/sack_apples", "props/rope_coil", "props/chain_pile", "props/deck_hatch", "anim/pigeons"]},
   {"id": "seat", "_comment": "bancs : traversables, comme bench", "scene": "panel",
    "match": ["props/bench_b", "props/bench_stone"]},
   {"id": "walkable", "_comment": "marches de pierre dans la pente : on marche dessus, sans ombre", "scene": "panel",
@@ -79,7 +79,7 @@
    "match": ["props/street_lamp_double", "props/dock_lamp"], "panel": {"shadow_width": 0.5, "glow": 1.6},
    "collision": {"shape": "cylinder", "radius": 0.12, "height": "image"}},
   {"id": "post", "_comment": "objets sur un poteau ou un trépied : cylindre fin", "scene": "panel",
-   "match": ["props/scarecrow", "props/training_dummy", "props/target_board", "props/old_telescope"], "collision": {"shape": "cylinder", "radius": 0.15, "height": "image"}},
+   "match": ["props/scarecrow", "props/training_dummy", "props/target_board", "props/old_telescope", "props/deck_vent"], "collision": {"shape": "cylinder", "radius": 0.15, "height": "image"}},
   {"id": "fountain", "_comment": "fontaine ronde du marché : cylindre de 0,45 × la largeur, 1 m de haut (le bassin)", "scene": "panel",
    "match": ["props/fountain", "anim/fountain_water"], "collision": {"shape": "cylinder", "radius_factor": 0.45, "height": 1.0}},
   {"id": "stall", "_comment": "étals : le comptoir, 0,9 m de haut, avancé de 0,45 m (comme market_stall)", "scene": "panel",
@@ -87,7 +87,7 @@
   {"id": "tower", "_comment": "pylône d'ancrage : le pied, la moitié de la largeur de l'image, 1,5 m de profondeur", "scene": "panel",
    "match": ["props/mooring_tower"], "collision": {"shape": "box", "width_factor": 0.5, "depth": 1.5, "height": "image"}},
   {"id": "fence", "_comment": "clôtures (modules de 2 m qui s'enchaînent) : boîte fine sur toute la largeur", "scene": "panel",
-   "match": ["props/fence_low", "props/rope_fence"], "collision": {"shape": "box", "width_factor": 1.0, "depth": 0.15, "height": "image"}},
+   "match": ["props/fence_low", "props/rope_fence", "props/deck_railing"], "collision": {"shape": "box", "width_factor": 1.0, "depth": 0.15, "height": "image"}},
   {"id": "board", "_comment": "objets plats ou appuyés (panneau d'affichage, ardoise sur chevalet, balai, outils de jardin) : boîte fine de 0,3 m", "scene": "panel",
    "match": ["props/notice_board", "props/menu_slate", "props/broom_bucket", "props/garden_tools"], "collision": {"shape": "box", "width_factor": 0.9, "depth": 0.3, "height": "image"}},
   {"id": "ruin", "_comment": "pans de mur, arche, sacs de sable : boîte de 0,8 m de profondeur (comme ruined_wall)", "scene": "panel",
@@ -98,8 +98,12 @@
    "match": ["props/crystal_crates"], "panel": {"glow": 1.6}, "collision": {"shape": "box", "width_factor": 0.9, "depth": 0.8, "height": "image"}},
   {"id": "object_large", "_comment": "gros objets au sol (charrettes, filets, guichet, bûcher, table, affût, palette) : boîte de 1,2 m de profondeur", "scene": "panel",
    "match": ["props/firewood_pile", "props/kids_table", "props/hand_cart", "props/cargo_net", "props/ticket_booth", "props/pallet_sacks", "props/cart_wreck", "props/hunting_stand"], "collision": {"shape": "box", "width_factor": 0.9, "depth": 1.2, "height": "image"}},
+  {"id": "deck_cabin", "_comment": "(I1) passerelle de commandement vue depuis le pont : cabine de tôle et de verre de 4 m, boîte de 2 m de profondeur", "scene": "panel",
+   "match": ["props/deck_bridge"], "collision": {"shape": "box", "width_factor": 0.96, "depth": 2.0, "height": "image"}},
+  {"id": "stake", "_comment": "(I1) piquet de repère planté droit (ruban ocre) : cylindre très fin", "scene": "panel",
+   "match": ["props/trail_ribbon_stake"], "collision": {"shape": "cylinder", "radius": 0.08, "height": "image"}},
   {"id": "object", "_comment": "objets de la vie de plus de 0,5 m de haut au sol : boîte de 0,9 × la largeur, 0,7 m de profondeur", "scene": "panel",
-   "match": ["props/wheelbarrow", "props/stump_axe", "props/rain_barrel", "props/crate_stack", "props/cafe_table", "props/barrel_group", "props/sacks_pile", "props/bread_rack", "props/book_cart", "props/planter_long", "props/crate_apples", "props/fuel_barrels", "props/steam_pipes", "props/workbench", "props/luggage", "props/tool_rack", "props/propeller_spare", "props/broken_spears", "props/garde_crate"],
+   "match": ["props/wheelbarrow", "props/stump_axe", "props/rain_barrel", "props/crate_stack", "props/cafe_table", "props/barrel_group", "props/sacks_pile", "props/bread_rack", "props/book_cart", "props/planter_long", "props/crate_apples", "props/fuel_barrels", "props/steam_pipes", "props/workbench", "props/luggage", "props/tool_rack", "props/propeller_spare", "props/broken_spears", "props/garde_crate", "props/deck_crates_lashed"],
    "collision": {"shape": "box", "width_factor": 0.9, "depth": 0.7, "height": "image"}}
  ],
  "buildings": {
@@ -117,7 +121,7 @@
  },
  "ships": {
   "_comment": "Navires à quai (section 11) : hélice (bande de anim/), moyeux mesurés dans l'image de la coque (px depuis le coin haut gauche : centre du bout de l'axe de cuivre) ; chaque hélice est posée moyeu sur moyeu (son image est centrée sur son moyeu), décalée de depth_offset m vers la caméra pour passer devant la coque.",
-  "airship_ferry": {"propeller": "airship_ferry_propeller", "hubs_px": [[825, 497]], "names": ["Propeller"], "depth_offset": 0.1},
-  "airship_barocupot": {"propeller": "airship_barocupot_propeller", "hubs_px": [[768, 670], [1627, 678]], "names": ["PropellerAft", "PropellerFore"], "depth_offset": 0.1}
+  "airship_ferry": {"propeller": "airship_ferry_propeller", "hubs_px": [[853, 499]], "names": ["Propeller"], "depth_offset": 0.1},
+  "airship_barocupot": {"propeller": "airship_barocupot_propeller", "hubs_px": [[789, 827], [1613, 833]], "names": ["PropellerAft", "PropellerFore"], "depth_offset": 0.1}
  }
 }

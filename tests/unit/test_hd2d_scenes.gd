@@ -14,10 +14,12 @@ const TABLE := "res://tools/hd2d_scenes.json"
 const PROPS_DIR := "res://src/world/props"
 ## Genres du manifeste qui peuvent demander une scène.
 const SCENE_KINDS: Array[String] = ["panel", "anim", "decal", "facade"]
-## Lots du cahier n° 2, et (E9) le lot N du cahier n° 3 (pluie, lumière des fées) ; (E3) les
-## images du lot I (intérieurs) ont leurs scènes par tools/hd2d_interior.py, vérifiées par
-## test_interior_room.gd.
-const PLANNED_LOTS: Array[String] = ["A", "B", "C", "D", "E", "F", "G", "N"]
+## Lots du cahier n° 2, (E9) le lot N du cahier n° 3 (pluie, lumière des fées, soleil par la
+## fenêtre) et (I1) les lots L (pont des navires) et Q (piquet de repère) des livraisons
+## suivantes. Les images d'intérieur (assets/hd2d/interior/, quel que soit leur lot : lot I,
+## navires, cahier n° 4, fenêtres de nuit) ont leurs scènes par tools/hd2d_interior.py,
+## vérifiées par test_interior_room.gd.
+const PLANNED_LOTS: Array[String] = ["A", "B", "C", "D", "E", "F", "G", "N", "L", "Q"]
 const META := &"hd2d_category"
 const PPM := 96.0
 ## Moyeux dessinés sur le flanc des navires, mesurés dans les images livrées (px depuis le coin
@@ -42,7 +44,12 @@ func before_all() -> void:
 	_table = _json(TABLE)
 	for entry: Dictionary in _manifest.get("images", []):
 		_by_key[_key(entry)] = entry
-		if String(entry.get("lot", "")) in PLANNED_LOTS and String(entry["kind"]) in SCENE_KINDS:
+		var indoors := _key(entry).begins_with("interior/")
+		if (
+			not indoors
+			and String(entry.get("lot", "")) in PLANNED_LOTS
+			and String(entry["kind"]) in SCENE_KINDS
+		):
 			_plan.append([entry, _category(entry)])
 
 

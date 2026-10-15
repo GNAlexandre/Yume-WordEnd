@@ -229,6 +229,42 @@ func test_cut_follows_the_player_and_reaches_the_furniture() -> void:
 	assert_eq(room.cut_line(), NO_CUT, "sans coupe")
 
 
+func test_furniture_is_cut_south_of_the_player_inside_a_room() -> void:
+	var room := _room(_example())
+	var player := Node3D.new()
+	player.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	player.add_to_group(InteriorRoom.PLAYER_GROUP)
+	add_child_autofree(player)
+	var packed := load("%s/kitchen_table_ingredients.tscn" % PROPS_DIR) as PackedScene
+	var table := packed.instantiate() as InteriorPanel
+	table.position = Vector3(17.8, 0.0, 6.0)
+	add_child_autofree(table)
+	player.position = Vector3(18.375, 0.0, 4.875)
+	room.snap_cut()
+	var region := AABB(Vector3(16.0, 0.0, 5.0), Vector3(4.0, 3.0, 3.0))
+	assert_almost_eq(
+		_max_height(table.occluder_triangles(room.cut_line()), region),
+		table.cut_height,
+		0.001,
+		"table coupée entre joueur et caméra dans la même pièce"
+	)
+	var material := (table.get_child(0, true) as MeshInstance3D).material_override as ShaderMaterial
+	assert_true(material.get_shader_parameter(&"furniture_panel"))
+	var wall := InteriorRoom.panel_material(table.texture)
+	assert_false(wall.get_shader_parameter(&"furniture_panel"), "matière murale indépendante")
+	player.position.z = 7.0
+	room._process(0.016)
+	assert_almost_eq(
+		_max_height(table.occluder_triangles(room.cut_line()), region),
+		table.size_m().y,
+		0.001,
+		"table entière au nord du joueur"
+	)
+	room.cut_enabled = false
+	room._process(0.016)
+	assert_eq(material.get_shader_parameter(&"furniture_cut_line"), NO_CUT, "coupe désactivée")
+
+
 func _max_height(triangles: PackedVector3Array, region: AABB) -> float:
 	var top := 0.0
 	for point in triangles:
@@ -394,6 +430,10 @@ func _furniture_entries() -> Array[Dictionary]:
 	for entry: Dictionary in json.data["images"]:
 		var path := String(entry["path"])
 		var rug := path.begins_with("assets/hd2d/decals/") and String(entry.get("lot", "")) == "I"
+		# (I1) Les vues de flanc, de dos et par le pied (lot R0) n'ont pas de scène : DecorPanel les
+		# trouve par leur nom, à côté de la face (test_panel_facing.gd).
+		if String(entry.get("lot", "")) == "R0":
+			continue
 		if path.begins_with("assets/hd2d/interior/props/") or rug:
 			out.append(entry)
 	return out

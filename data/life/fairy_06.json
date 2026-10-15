@@ -1,0 +1,10 @@
+{
+  "_comment": "Tamsin, fée générique (le bandage au genou) : elle bavarde avec Ithea dans le pré, regarde la tour.",
+  "lines": [
+    {"slot": "aube", "away": "entrepot_etage"},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_a", "activity": "manger"},
+    {"slot": "apres_midi", "map": "essai_relief", "place": "pre_bavarde", "activity": "bavarder"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_spectateurs", "activity": "regarder"},
+    {"slot": "nuit", "away": "entrepot_etage"}
+  ]
+}

@@ -123,6 +123,32 @@ func cut_line_at(local: Vector3) -> float:
 	return NO_CUT
 
 
+## (I1) Orientation d'un meuble d'après les murs de sa pièce : footprint (m, repère de la carte) à
+## moins de tolerance d'un mur nord, il regarde le sud ; d'un mur ouest, l'est ; d'un mur est,
+## l'ouest (le mur le plus proche l'emporte dans un angle) ; sinon (ou hors des pièces) &"".
+## Le plan de docs/lore/CARTE.md l'écrit en « regard=E|O » ; tools/interior_maps.py le pose sur le
+## meuble (DecorPanel.facing) : les tests rapprochent les deux.
+func facing_against_wall(footprint: Rect2, tolerance: float = 0.25) -> StringName:
+	var center := footprint.get_center()
+	var index := cell(center.x, center.y)
+	if index < 0:
+		return &""
+	for rect: Rect2 in rooms[index]["rects"]:
+		if not rect.has_point(center):
+			continue
+		var half := wall_thickness / 2.0
+		var north := footprint.position.y - (rect.position.y + half)
+		var west := footprint.position.x - (rect.position.x + half)
+		var east := (rect.end.x - half) - footprint.end.x
+		var nearest := minf(north, minf(west, east))
+		if nearest > tolerance:
+			return &""
+		if nearest == north:
+			return &"south"
+		return &"east" if nearest == west else &"west"
+	return &""
+
+
 ## Porte d'identifiant id (vide : aucune).
 func door(id: StringName) -> Dictionary:
 	for opening: Dictionary in doors:

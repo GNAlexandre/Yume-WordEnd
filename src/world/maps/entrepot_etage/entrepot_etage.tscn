@@ -37,16 +37,24 @@
 [ext_resource type="PackedScene" path="res://src/world/props/plush_pile.tscn" id="p_plush_pile"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/supply_cupboard.tscn" id="p_supply_cupboard"]
 [ext_resource type="PackedScene" path="res://src/world/props/towel_shelf.tscn" id="p_towel_shelf"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/repair_nail_box.tscn" id="p_repair_nail_box"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/letter_sealed_bundle.tscn" id="p_letter_sealed_bundle"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/hearth_fire.tscn" id="p_hearth_fire"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/oil_lamp.tscn" id="p_oil_lamp"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/tea_tray_cheesecake.tscn" id="p_tea_tray_cheesecake"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/thread_spools_pair.tscn" id="p_thread_spools_pair"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/patched_cloth_folded.tscn" id="p_patched_cloth_folded"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/mending_basket.tscn" id="p_mending_basket"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/leak_drip.tscn" id="p_leak_drip"]
 [ext_resource type="Script" path="res://src/world/examinable.gd" id="6_examine"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
-size = Vector3(1.6, 2.4, 0.3)
+size = Vector3(0.2, 3, 0.25)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(1.6, 2.4, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3"]
 size = Vector3(0.6, 2.4, 0.6)
 
 [node name="entrepot_etage" type="Node3D"]
@@ -105,7 +113,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 0, 1.45)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 0, 6)
 
 [node name="footlocker_1" parent="Geometry/Willem" instance=ExtResource("p_footlocker")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 0, 4.2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.45, 0, 4.2)
+image_offset = Vector3(0, 0, 0.4)
+shadow_width = 0.9
+shadow_depth = 1.778
+facing = &"east"
 
 [node name="desk_chtholly_1" parent="Geometry/Chtholly" instance=ExtResource("p_desk_chtholly")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 1.45)
@@ -114,8 +126,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 1.45)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 0, 4)
 
 [node name="wardrobe_chtholly_1" parent="Geometry/Chtholly" instance=ExtResource("p_wardrobe_chtholly")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.35, 0, 8.075)
-cut_offset = 0.175
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.55, 0, 7.85)
+image_offset = Vector3(0, 0, 0.5)
+shadow_width = 0.9
+shadow_depth = 1.839
+facing = &"west"
+cut_offset = 0.2
 
 [node name="fireplace_1" parent="Geometry/Nygglatho" instance=ExtResource("p_fireplace")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 1.45)
@@ -133,7 +149,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 3.5)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 4.35)
 
 [node name="desk_nygglatho_1" parent="Geometry/Nygglatho" instance=ExtResource("p_desk_nygglatho")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 0, 3.6)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 11.95, 0, 3.6)
+image_offset = Vector3(0, 0, 0.7)
+shadow_width = 0.9
+shadow_depth = 1.939
+facing = &"west"
+
+[node name="desk_nygglatho_1_arriere" type="StaticBody3D" parent="Geometry/Nygglatho"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Nygglatho/desk_nygglatho_1_arriere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, 1.5, 2.775)
+shape = SubResource("BoxShape3D_1")
 
 [node name="bed_nygglatho_1" parent="Geometry/Nygglatho" instance=ExtResource("p_bed_nygglatho")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 0, 7.2)
@@ -157,7 +184,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.5, 0, 3.8)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 0, 6)
 
 [node name="clothes_chest_1" parent="Geometry/GrandeSoeur" instance=ExtResource("p_clothes_chest")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.8, 0, 7.5)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 16, 0, 7.5)
+image_offset = Vector3(0, 0, 0.45)
+shadow_width = 0.9
+shadow_depth = 2
+facing = &"west"
 
 [node name="stairs_down_1" parent="Geometry/Tremie" instance=ExtResource("p_stairs_down")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, 4)
@@ -230,7 +261,11 @@ cut_offset = 0.4
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, 0, 14.3)
 
 [node name="dresser_child_3" parent="Geometry/DortoirA" instance=ExtResource("p_dresser_child")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4, 0, 11.1)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6.6, 0, 11.1)
+image_offset = Vector3(0, 0, 0.45)
+shadow_width = 0.9
+shadow_depth = 2
+facing = &"west"
 
 [node name="plush_pile_1" parent="Geometry/DortoirA" instance=ExtResource("p_plush_pile")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 0, 14.45)
@@ -276,14 +311,29 @@ cut_offset = 0.4
 [node name="bed_child_5" parent="Geometry/DortoirD" instance=ExtResource("p_bed_child")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 14.3)
 
+[node name="repair_nail_box_1" parent="Geometry/Willem" instance=ExtResource("p_repair_nail_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45, 0.5, 4.62)
+
+[node name="letter_sealed_bundle_1" parent="Geometry/Chtholly" instance=ExtResource("p_letter_sealed_bundle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.05, 1.77)
+
 [node name="hearth_fire_1" parent="Geometry/Nygglatho" instance=ExtResource("p_hearth_fire")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.1, 1.77)
 
 [node name="oil_lamp_1" parent="Geometry/Nygglatho" instance=ExtResource("p_oil_lamp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 1.1, 4.02)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 1.1, 4.32)
 
 [node name="tea_tray_cheesecake_1" parent="Geometry/Nygglatho" instance=ExtResource("p_tea_tray_cheesecake")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.8, 3.87)
+
+[node name="thread_spools_pair_1" parent="Geometry/Ithea" instance=ExtResource("p_thread_spools_pair")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.55, 0.9, 1.72)
+
+[node name="patched_cloth_folded_1" parent="Geometry/Ithea" instance=ExtResource("p_patched_cloth_folded")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.95, 0.9, 1.72)
+
+[node name="mending_basket_1" parent="Geometry/Absentes" instance=ExtResource("p_mending_basket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.6, 0.6, 1.72)
 
 [node name="leak_drip_1" parent="Geometry/Couloir" instance=ExtResource("p_leak_drip")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.45, 0.45, 10.245)
@@ -312,7 +362,7 @@ prompt = "Descendre"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_rdc"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-shape = SubResource("BoxShape3D_1")
+shape = SubResource("BoxShape3D_2")
 
 [node name="vers_toit" type="Area3D" parent="Exits"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.7, 0, 9.3)
@@ -325,7 +375,7 @@ prompt = "Monter sur le toit"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_toit"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-shape = SubResource("BoxShape3D_2")
+shape = SubResource("BoxShape3D_3")
 
 [node name="Examine" type="Node3D" parent="."]
 
@@ -348,10 +398,10 @@ text_key = "entrepot_etage/chtholly_calendrier"
 size = Vector3(0.8, 2, 0.8)
 
 [node name="chtholly_armoire" type="Area3D" parent="Examine"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.35, 0, 8.375)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.95, 0, 7.85)
 script = ExtResource("6_examine")
 text_key = "entrepot_etage/chtholly_armoire"
-size = Vector3(1, 2, 0.8)
+size = Vector3(0.8, 2, 1)
 
 [node name="chtholly_miroir" type="Area3D" parent="Examine"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 1.75)
@@ -402,10 +452,10 @@ text_key = "entrepot_etage/ithea_roman"
 size = Vector3(0.8, 2, 0.8)
 
 [node name="absentes_coffre" type="Area3D" parent="Examine"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.8, 0, 7.75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.45, 0, 7.5)
 script = ExtResource("6_examine")
 text_key = "entrepot_etage/absentes_coffre"
-size = Vector3(0.9, 2, 0.8)
+size = Vector3(0.8, 2, 0.9)
 
 [node name="nephren_livres" type="Area3D" parent="Examine"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.05, 0, 1.65)

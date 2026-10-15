@@ -16,6 +16,10 @@ const DOCS: Array[String] = [
 	"res://docs/ASSETS_HD2D.md",
 	"res://docs/ASSETS_HD2D_MONDE.md",
 	"res://docs/ASSETS_HD2D_SUKASUKA.md",
+	# (I1) Cahier n° 4 (petits objets : lots O1, O2, P, Q), navires et leurs intérieurs, cahier n° 5.
+	"res://docs/ASSETS_HD2D_COMPLEMENTS.md",
+	"res://docs/ASSETS_HD2D_NAVIRES.md",
+	"res://docs/ASSETS_HD2D_ILE68.md",
 	"res://docs/REFONTE.md",
 	"res://docs/INTERIEURS.md",
 	# (T1) Noms proposés par les plans des lieux, à ajouter au cahier n° 3 (section 12.1).
@@ -72,6 +76,9 @@ const CUT_COVER := 0.12
 ## mesure toutes les colonnes.
 const SEAM_LIMIT := 2.0
 const STANDING_KINDS: Array[String] = ["panel", "facade", "side", "anim"]
+## (I1) Images de assets/hd2d/ qui n'ont pas d'entrée au manifeste, et pourquoi : l'atlas du sol
+## est fait par tools/hd2d_assets.py atlas d'après les tuiles (il n'a ni recette ni cahier).
+const NOT_IN_MANIFEST: Array[String] = ["assets/hd2d/ground/atlas/ground_atlas.png"]
 
 var _manifest: Dictionary = {}
 var _by_path: Dictionary = {}
@@ -415,6 +422,29 @@ func test_specification_names_every_image() -> void:
 		elif String(entry["kind"]) in STANDING_KINDS + ["decal"] and not doc.contains(size):
 			missing.append("%s (%s)" % [image_name, size])
 	assert_true(missing.is_empty(), "absentes des cahiers des charges : %s" % ", ".join(missing))
+
+
+func _png_files(folder: String, out: Array[String]) -> void:
+	for sub: String in DirAccess.get_directories_at(folder):
+		_png_files(folder.path_join(sub), out)
+	for file: String in DirAccess.get_files_at(folder):
+		if file.get_extension() == "png":
+			out.append(folder.path_join(file).trim_prefix("res://"))
+
+
+## Chaque image livrée est inscrite au manifeste (taille réelle, genre, lot) : une livraison de
+## PNG seuls ne reste jamais sans entrée (python3 tools/hd2d_assets.py orphans la liste).
+func test_manifest_covers_every_image_of_assets_hd2d() -> void:
+	var files: Array[String] = []
+	_png_files("res://assets/hd2d", files)
+	assert_gt(files.size(), 600, "images de assets/hd2d/")
+	var missing: Array[String] = []
+	for path: String in files:
+		if not _by_path.has(path) and not path in NOT_IN_MANIFEST:
+			missing.append(path.trim_prefix("assets/hd2d/"))
+	assert_true(missing.is_empty(), "images absentes du manifeste : %s" % ", ".join(missing))
+	for path: String in NOT_IN_MANIFEST:
+		assert_true(FileAccess.file_exists("res://" + path), "exception %s existe" % path)
 
 
 func test_images_fit_the_web_budget() -> void:
