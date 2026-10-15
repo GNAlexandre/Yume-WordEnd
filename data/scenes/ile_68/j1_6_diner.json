@@ -10,7 +10,7 @@
   "trigger": {
     "on": "reach",
     "point": "dortoir_b",
-    "radius": 2.5
+    "radius": 1.5
   },
   "sequence": true,
   "present": [

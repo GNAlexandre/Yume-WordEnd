@@ -106,8 +106,8 @@
       "who": "ithea",
       "at": "from_ville_haute",
       "offset": [
-        1.6,
-        0.5
+        -0.3,
+        0.7
       ],
       "facing": "north",
       "outfit": "maison"
@@ -117,8 +117,8 @@
       "who": "nephren",
       "at": "from_ville_haute",
       "offset": [
-        -0.3,
-        0.7
+        1.6,
+        0.5
       ],
       "facing": "north",
       "outfit": "maison"
@@ -182,8 +182,8 @@
       "who": "player",
       "to": "snack_table",
       "offset": [
-        0.0,
-        0.4
+        0.3,
+        0.6
       ],
       "facing": "west"
     },
