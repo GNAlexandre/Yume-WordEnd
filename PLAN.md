@@ -1075,6 +1075,65 @@ static func lookup(path, key_path) -> String, forget_texts()
   textes) ; `tests/integration/test_entrepot_in_game.gd` ; captures
   `tests/integration/demo_entrepot.tscn` (`T2_VIEWS`, `T2_SHOTS`).
 
+### (C1) Les cartes du dehors : `tools/exterior_maps.py`
+
+L'équivalent de `tools/interior_maps.py` pour le dehors : il écrit une carte du dehors **d'après son
+plan** (bloc ```plan de `docs/lore/CARTE.md`, lu par `tools/carte_plans.py`). Cartes construites :
+`entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet) et
+`sentier` (C1) ; cartes d'attente (provisoires, un lot de la phase 3 les remplace) : `village`,
+`colline`, `foret_profonde`, `port`.
+
+```text
+python3 tools/exterior_maps.py gen [map_id…]      # écrit les cartes (toutes sans argument)
+python3 tools/exterior_maps.py check [map_id…]    # à jour ? écarts au plan, avertissements de la règle de caméra
+python3 tools/exterior_maps.py places [map_id…]   # réécrit dans CARTE.md la liste des places de la vie
+python3 tools/exterior_maps.py props              # écrit les scènes de décor nouvelles (exterior_props.py)
+```
+
+- **Ce qu'il écrit** : le sol (`data/maps/<id>/plan.json`, puis `map.json`, `heights.png`,
+  `materials.png`, `structures.png` comme `tools/map_build.py gen`) et la scène
+  `src/world/maps/<id>/<id>.tscn` : `Map` (nom, lieu, taille, bornes `Rect2(10, 9, L − 20, P − 17)`),
+  `Ground`, `Edges` (les `bord` du plan en boîtes invisibles), `Geometry` (groupes de décors, `Scatter`
+  des `PropScatter`), `Markers`, `Exits`, `Life/Places` (points du plan et places de la vie en plus),
+  `Life/Areas` (places réservées, `metadata/area` = `Rect2`), `Lights` (seulement s'il y en a),
+  `Ambience`. Les sorties vers une carte absente sont provisoires (`SETTINGS["provisional"]`) ou
+  omises (`omit_if_missing` : l'outil les remet dès que la carte existe).
+- **La pose** (`tools/exterior_pose.py`, classe `Pose`) : catalogue des décors (image, taille,
+  emprise qui bloque, lue dans `src/world/props/`), hauteur exacte du sol, `place`, `scatter`,
+  `poisson`, `along`, graines fixes. **Règle de caméra** (CARTE.md 0.3) : un décor qui se dresse
+  au-dessus de la tête (1,4 m) devant une case où l'on marche prend sa variante de premier plan
+  (`<décor>_forest` ou `<décor>_fg`, qui s'efface autour du joueur), faute de quoi il n'est pas posé
+  et l'outil le dit.
+- **Une recette par carte** (`tools/exterior_recipes/<id>.py`) : `SETTINGS` (groupes de décors,
+  sorties provisoires), `ground_plan(plan_map)` (`tools/exterior_ground.py` :
+  `ground_from_plan` déduit le sol du plan, la recette y ajoute berges, îlots, rampes), `prepare(p)`,
+  `pose(p)`, `ambient(p)`, `PLACES_WHY` (places de la vie que le plan ne nomme pas). Modèle court :
+  `sentier.py` ; riche : `entrepot.py`. Ajouter une carte : son bloc ```plan, sa recette, son nom dans
+  `RECIPES` (et le retirer de `WAITING`), `gen`, `tools/hd2d_assets.py gen`, `tools/import.sh`, ses
+  tests (`tests/stubs/c1_exterior_test.gd` en base : plan, sorties, marqueurs, points, marche, caméra,
+  densité, sol nu, draw calls, aucune lumière), son entrée dans `ile_68.json` (`maps` et son lieu).
+- **Les images** que le plan cite et que les cahiers n'ont pas livrées : un remplaçant inscrit au
+  manifeste (`tools/hd2d_sentier.py` : lot `R3`, `props/marsh_reed_wall`, `path_edge_ferns`,
+  `path_root_step`, `fg_canopy_a`, `decals/bog_pool_a`, `path_stones_a`, `path_stones_b`), et sa
+  scène dans `tools/exterior_props.py` (`PROPS`) ; une image livrée remplace le remplaçant du même
+  nom sans toucher au code, une image livrée n'est jamais retouchée.
+- **Le sentier et le marais** (`sentier`, CARTE.md section 4, 80 × 40 m) : lisière nord à +1 m, marais
+  à −0,5 m (tourbe, eau basse où l'on marche, îlots de touradons), levée du sentier à 0, chemin de la
+  ville qui descend à −0,5 m par sa rampe ; sorties à pied vers `entrepot` (`from_sentier`) et `port`
+  (`from_sentier`, carte d'attente) ; la sortie vers `ville_haute` n'existe qu'avec cette carte, un
+  écriteau « Plus loin, bientôt » au bout du chemin en attendant ; points du plan
+  (`premiere_embuscade` pour `ACTE1.md`, `marais_chute`, `lumiere_pannibal`…), place `embuscade`,
+  places de la vie en plus (`sentier_ouest`, `corbeau_perchoir`, `lisiere_renard`…). **Aucune
+  lumière** (V1) : la nuit est celle d'`Atmosphere` (préréglage `nuit`) et de la lumière des fées du
+  joueur (4 m), qui suffit à lire le sentier.
+- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_exterior_maps.gd` (`check` de l'outil,
+  cartes d'attente, `port` dans l'île), `tests/integration/test_sentier_in_game.gd` (de l'entrepôt au
+  sentier, au marais, à la rampe de la ville, au port d'attente, et retour) ; captures
+  `C1_MAP=sentier C1_VIEW=<vue> [C1_MOMENT=nuit] [C1_LIGHT=off] tools/screenshot.sh
+  res://tests/integration/demo_c1.tscn build/shots/c1_<vue>.png 60` (vues : `entree`, `ouest`,
+  `milieu`, `marais`, `embuscade`, `berge`, `est`, `fourche`, `ville`, `large` ; draw calls dans le
+  journal).
+
 ### (E9) Lumière et temps : mode d'emploi
 
 Contrat : l'API d'`Atmosphere` ci-dessus ; détails et choix dans docs/DECISIONS.md (« E9 »).

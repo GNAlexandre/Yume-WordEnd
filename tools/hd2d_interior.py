@@ -368,6 +368,12 @@ FURNITURE_I1 = [
     ("ship_helm", (77, 96), 0.6, 0.0, 2),
     ("ship_engine_telegraph", (48, 115), 0.4, 0.0, 2),
     ("ship_navigation_desk", (154, 106), 0.8, 0.0, 2),
+    # Faces livrées avec le lot R0 (PR n° 35) pour leurs vues : maison Limashenka et ville (R3, R4).
+    ("armchair_sheeted", (96, 101), 0.8, 0.0, 2),
+    ("sofa_salon", (192, 96), 0.9, 0.0, 2),
+    ("display_cabinet", (115, 182), 0.5, 0.0, 2),
+    ("bookshop_counter", (154, 106), 0.6, 0.0, 2),
+    ("crystal_projector", (77, 154), 0.5, 0.0, 3),
     ("ship_pilot_chair", (58, 106), 0.6, 0.0, 2),
     ("ship_bunk", (192, 173), 0.9, 0.0, 3),
     ("ship_locker", (77, 182), 0.5, 0.0, 3),
@@ -483,10 +489,10 @@ VIEWS = {
     "bed_iron": {"foot": ((96, 152), 2)},
     "bed_plain": {"foot": ((91, 144), 2)},
     "bunk_bed": {"foot": ((86, 228), 2)},
-    "armchair_sheeted": {"side": ((86, 101), 1)},
-    "sofa_salon": {"side": ((86, 112), 1), "back": ((192, 96), 2)},
-    "display_cabinet": {"side": ((58, 182), 2)},
-    "bookshop_counter": {"side": ((67, 106), 3)},
+    "armchair_sheeted": {"side": ((86, 106), 1)},
+    "sofa_salon": {"side": ((86, 152), 1), "back": ((192, 96), 2)},
+    "display_cabinet": {"side": ((58, 213), 2)},
+    "bookshop_counter": {"side": ((67, 152), 3)},
     "crystal_projector": {"back": ((77, 154), 3)},
 }
 
