@@ -148,3 +148,47 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/interior/props/display_cabinet.png` — 115 × 182 px.
 - `assets/hd2d/interior/props/bookshop_counter.png` — 154 × 106 px.
 - `assets/hd2d/interior/props/crystal_projector.png` — 77 × 154 px.
+
+## Cahier n° 5 — Île 68, R1 : entrepôt, toit, crypte et fourrés
+
+39 PNG livrés le 15 octobre 2026 : 29 remplaçants remplacés et dix nouvelles images, dont six bandes animées. Dessins générés avec ChatGPT / image_gen à partir du bloc de style v5, des références PNG livrées et des cadrages des remplaçants R1. Les planches officielles des ZIP (pages 98 à 105) ont été consultées pour l’ambiance ; la construction en bois à deux volumes et ses façades suivent l’adaptation originale du cahier, sans reprendre le manoir de l’anime. Originaux et générations conservés hors dépôt. Découpes et recalage géométrique au plus proche voisin, montage local par calques autorisé par l’utilisateur : bureau sans broche, miroir relevé, console et boîtier immobiles, linge et balancier animés. Les pixels hors des masques de retouche sont contrôlés identiques aux références. Alpha 0/255, sauf les deux vapeurs en alpha doux. Les trois formats préparatoires (sol de terrasse, bord d’ardoises, couverture) ont été validés pour la production des PNG ; leur intégration moteur reste à faire. La porte de service du flanc ouest est placée à 6 m de l’angle sud conformément aux données de la carte et à la demande T1 de CONTRACT_REQUESTS.md, plutôt qu’aux 8 m encore écrits au cahier.
+
+- `assets/hd2d/buildings/warehouse_front_a.png` — 1728 × 624 px.
+- `assets/hd2d/buildings/warehouse_front_a_side.png` — 1344 × 960 px.
+- `assets/hd2d/buildings/warehouse_front_b.png` — 1152 × 624 px.
+- `assets/hd2d/buildings/warehouse_front_b_side.png` — 1344 × 624 px.
+- `assets/hd2d/interior/door_frame_wood.png` — 126 × 221 px.
+- `assets/hd2d/interior/floor_flagstone_cellar.png` — 384 × 384 px.
+- `assets/hd2d/interior/wall_cellar_stone.png` — 384 × 288 px.
+- `assets/hd2d/interior/wallcut_stone.png` — 384 × 24 px.
+- `assets/hd2d/interior/wallitem_height_marks.png` — 38 × 154 px.
+- `assets/hd2d/interior/floor_roof_deck.png` — 384 × 384 px.
+- `assets/hd2d/interior/props/roof_hatch.png` — 96 × 58 px.
+- `assets/hd2d/interior/props/roof_ladder.png` — 77 × 288 px.
+- `assets/hd2d/anim/drying_frame_wave.png` — 384 × 211 px par image, 4 images à 4 ips.
+- `assets/hd2d/interior/props/roof_edge_slate.png` — 384 × 96 px.
+- `assets/hd2d/interior/props/roof_railing_broken.png` — 192 × 77 px.
+- `assets/hd2d/interior/props/bed_iron_cover.png` — 192 × 67 px.
+- `assets/hd2d/anim/bath_steam.png` — 192 × 144 px par image, 6 images à 6 ips.
+- `assets/hd2d/anim/comm_crystal_call.png` — 67 × 134 px par image, 4 images à 6 ips.
+- `assets/hd2d/anim/leak_drip.png` — 24 × 96 px par image, 4 images à 8 ips.
+- `assets/hd2d/anim/pot_steam.png` — 48 × 96 px par image, 6 images à 8 ips.
+- `assets/hd2d/decals/bath_puddles.png` — 192 × 144 px.
+- `assets/hd2d/decals/cards_floor.png` — 144 × 96 px.
+- `assets/hd2d/decals/clothes_floor.png` — 192 × 144 px.
+- `assets/hd2d/decals/papers_floor.png` — 192 × 144 px.
+- `assets/hd2d/decals/runner_rug.png` — 96 × 384 px.
+- `assets/hd2d/interior/props/desk_clean.png` — 106 × 101 px.
+- `assets/hd2d/anim/wall_clock_swing.png` — 48 × 106 px par image, 4 images à 2 ips.
+- `assets/hd2d/interior/props/desk_chtholly_mirror_up.png` — 106 × 101 px.
+- `assets/hd2d/interior/props/piano_old.png` — 154 × 134 px.
+- `assets/hd2d/interior/props/polishing_trestle.png` — 115 × 86 px.
+- `assets/hd2d/interior/props/potted_plant.png` — 38 × 58 px.
+- `assets/hd2d/interior/wallitem_clippings.png` — 77 × 58 px.
+- `assets/hd2d/interior/window_dusty.png` — 96 × 96 px.
+- `assets/hd2d/props/bramble_hedge.png` — 384 × 144 px.
+- `assets/hd2d/props/thicket_a.png` — 240 × 154 px.
+- `assets/hd2d/props/thicket_b.png` — 192 × 134 px.
+- `assets/hd2d/props/alder.png` — 384 × 672 px.
+- `assets/hd2d/props/marsh_snag.png` — 192 × 192 px.
+- `assets/hd2d/props/thicket_c.png` — 288 × 173 px.
