@@ -66,7 +66,7 @@ func test_waiting_maps_follow_the_contract_and_lead_back_to_the_built_map() -> v
 
 
 func test_reading_the_sign_shows_its_text_without_a_portrait() -> void:
-	var map := (load(Map.scene_path(&"colline")) as PackedScene).instantiate() as Map
+	var map := (load(Map.scene_path(&"foret_profonde")) as PackedScene).instantiate() as Map
 	add_child_autofree(map)
 	await wait_physics_frames(1)
 	var reader := map.get_node(^"Geometry/Sign/Reader")
