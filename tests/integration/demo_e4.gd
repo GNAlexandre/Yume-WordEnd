@@ -1,7 +1,7 @@
 extends Node
 ## (E4) Démo de la vie : la vraie partie (game.tscn) posée sur une carte d'essai par
 ## WorldManager.enter_map, au créneau voulu ; LifeDirector y pose les PNJ des emplois du temps
-## (data/life/), qui vivent. F6 dans l'éditeur (F6 en jeu : créneau suivant).
+## (data/life/essai/), qui vivent. F6 dans l'éditeur (F6 en jeu : créneau suivant).
 ##
 ## Captures : LIFE_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_e4.tscn
 ## build/e4/vie_<vue>.png <images>
@@ -64,6 +64,7 @@ func _ready() -> void:
 		_switch_frame = int(switch) if switch.is_valid_int() else 40
 	_state = GameState.to_dict()
 	GameState.reset()
+	LifeData.use_content(&"essai")
 	WorldManager.fade_time = 0.0
 	_game = GAME_SCENE.instantiate() as Node3D
 	add_child(_game)
@@ -71,6 +72,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	LifeData.use_content(&"")
 	WorldManager.fade_time = WorldManager.DEFAULT_FADE_TIME
 	GameState.from_dict.call_deferred(_state)
 

@@ -13,6 +13,7 @@ var _previous_fade: float
 
 func before_each() -> void:
 	super()
+	LifeData.use_content(&"essai")
 	_previous_fade = WorldManager.fade_time
 	WorldManager.fade_time = 0.0
 
@@ -21,6 +22,7 @@ func after_each() -> void:
 	WorldManager.fade_time = _previous_fade
 	super()
 	GameState.reset()
+	LifeData.use_content(&"")
 
 
 func test_the_old_island_keeps_its_npcs() -> void:

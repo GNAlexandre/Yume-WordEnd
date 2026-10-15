@@ -1,0 +1,10 @@
+{
+  "_comment": "Ithea (VIE.md, 2.3) : au réfectoire, puis elle bavarde dans le pré avec Tamsin, regarde la tour le soir ; la nuit, à l'étage.",
+  "lines": [
+    {"slot": "aube", "away": "entrepot_etage"},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_c", "activity": "manger", "outfit": "maison"},
+    {"slot": "apres_midi", "map": "essai_relief", "place": "pre_bavarde", "activity": "bavarder", "outfit": "maison"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_spectateurs", "activity": "regarder", "outfit": "maison"},
+    {"slot": "nuit", "away": "entrepot_etage"}
+  ]
+}

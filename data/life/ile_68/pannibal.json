@@ -1,0 +1,11 @@
+{
+  "_comment": "Pannibal (VIE.md, 2.4) : la balle contre le mur l'après-midi, la pile le soir ; elle épie à la porte la nuit.",
+  "gait": "course",
+  "lines": [
+    {"slot": "aube", "map": "entrepot_rdc_essai", "place": "point_eau", "activity": "toilette", "outfit": "pyjama"},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_b", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "jeux_mur_balle", "activity": "balle_mur", "outfit": "vie"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_tour", "activity": "tour_de_fees", "outfit": "vie", "role": "pile_3"},
+    {"slot": "nuit", "map": "entrepot_rdc_essai", "place": "porte_nygglatho", "activity": "avalanche", "outfit": "pyjama"}
+  ]
+}

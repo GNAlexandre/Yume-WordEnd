@@ -19,6 +19,9 @@ extends RefCounted
 ## l'ordre qu'on veut) ; aucune : le PNJ n'est nulle part (absent de toutes les cartes).
 
 const DATA_DIR := "res://data/life"
+## Genre de contenu pour WorldAtlas.data_path / data_dirs : data/life/<île>/<npc_id>.json (les
+## activités, communes, restent dans data/life/activities.json).
+const KIND := "life"
 const ACTIVITIES_FILE := "activities.json"
 const FILE_EXTENSION := ".json"
 ## Dossiers des PNJ : ceux de DialogueRunner (data/npcs, add_npc_dir), puis les fées génériques.
@@ -73,7 +76,14 @@ const ANIMS: Array[StringName] = [
 ## Jeux de groupe : un script par jeu, src/life/games/<jeu>.gd (extends LifeGame).
 const GAMES_DIR := "res://src/life/games"
 
-static var _dirs: PackedStringArray = [DATA_DIR]
+## Dossiers ajoutés à la main (add_dir : tests, démonstrations), lus après ceux de l'île.
+static var _added: PackedStringArray = []
+## Contenu forcé (use_content) : un sous-dossier de data/life (« essai » : les emplois du temps de
+## démonstration des cartes d'essai d'E4) ; vide : celui de l'île courante.
+static var _content: StringName = &""
+## Dossiers de l'île (ou du contenu) lue au dernier accès : si elle change, les caches sont oubliés.
+static var _seen_island: StringName = &""
+static var _seen_dirs: PackedStringArray = []
 static var _schedules: Dictionary = {}
 static var _activities: Dictionary = {}
 static var _activities_loaded: bool = false
@@ -85,7 +95,7 @@ static var _places: Dictionary = {}
 ## Identifiants des PNJ qui ont un emploi du temps (fichiers des dossiers de la vie), triés.
 static func cast() -> Array[StringName]:
 	var ids: Array[StringName] = []
-	for dir: String in _dirs:
+	for dir: String in dirs():
 		for file_name: String in _list(dir):
 			var id := StringName(file_name.get_basename())
 			if file_name != ACTIVITIES_FILE and not ids.has(id):
@@ -99,6 +109,7 @@ static func cast() -> Array[StringName]:
 ## slots (Array[StringName]), day (Vector2i, ou Vector2i.ZERO sans jour), condition (Variant,
 ## null sans « if »), map, place, away, activity, outfit, gait, role (StringName), index (int).
 static func schedule(npc_id: StringName) -> Dictionary:
+	dirs()
 	if _schedules.has(npc_id):
 		return _schedules[npc_id]
 	var result := {}
@@ -111,7 +122,7 @@ static func schedule(npc_id: StringName) -> Dictionary:
 
 ## Chemin du fichier d'emploi du temps d'un PNJ ("" s'il n'existe pas).
 static func schedule_path(npc_id: StringName) -> String:
-	for dir: String in _dirs:
+	for dir: String in dirs():
 		var path := dir.path_join(String(npc_id) + FILE_EXTENSION)
 		if FileAccess.file_exists(path):
 			return path
@@ -197,9 +208,10 @@ static func all_problems() -> PackedStringArray:
 
 ## Données d'activities.json (lues une fois ; {} si le fichier est invalide).
 static func activities_data() -> Dictionary:
+	dirs()
 	if not _activities_loaded:
 		_activities_loaded = true
-		var raw: Variant = _read_json(DATA_DIR.path_join(ACTIVITIES_FILE))
+		var raw: Variant = _read_json(activities_path())
 		_activities = raw if raw is Dictionary and activities_problems(raw).is_empty() else {}
 	return _activities
 
@@ -249,7 +261,7 @@ static func pose_time(pose: Dictionary, rng: RandomNumberGenerator) -> float:
 static func activities_problems(raw: Variant = null) -> PackedStringArray:
 	var found := PackedStringArray()
 	if raw == null:
-		raw = _read_json(DATA_DIR.path_join(ACTIVITIES_FILE))
+		raw = _read_json(activities_path())
 	if not raw is Dictionary:
 		found.append("activities.json : la racine doit être un objet")
 		return found
@@ -307,17 +319,56 @@ static func map_places(map_id: StringName) -> PackedStringArray:
 # --- Dossiers et caches -----------------------------------------------------------------------
 
 
-## Ajoute un dossier d'emplois du temps (tests, démonstrations).
+## Dossiers d'emplois du temps lus, le premier gagnant : ceux du contenu courant (data/life/<île>
+## puis data/life, WorldAtlas.data_dirs), puis ceux d'add_dir. Le contenu courant : use_content, sinon
+## l'île de GameState (WorldAtlas.DEFAULT_ISLAND tant qu'aucune n'est posée). Quand ils changent
+## (autre île, autre contenu), ce qui a été lu est oublié.
+static func dirs() -> PackedStringArray:
+	var island := content_island()
+	if island != _seen_island or _seen_dirs.is_empty():
+		_seen_island = island
+		_seen_dirs = WorldAtlas.data_dirs(KIND, island)
+		_schedules.clear()
+		_activities.clear()
+		_activities_loaded = false
+		_places.clear()
+	var result := _seen_dirs.duplicate()
+	for dir: String in _added:
+		if not result.has(dir):
+			result.append(dir)
+	return result
+
+
+## Île (ou contenu) dont on lit les emplois du temps.
+static func content_island() -> StringName:
+	if not _content.is_empty():
+		return _content
+	return GameState.island if not GameState.island.is_empty() else WorldAtlas.DEFAULT_ISLAND
+
+
+## Force le contenu lu : un sous-dossier de data/life (démonstrations d'essai : « essai ») ; &""
+## rend la main à l'île courante.
+static func use_content(content: StringName) -> void:
+	_content = content
+	clear_cache()
+
+
+## Chemin d'activities.json : celui de l'île s'il existe, sinon le commun (data/life/).
+static func activities_path() -> String:
+	return WorldAtlas.find_data(KIND, content_island(), ACTIVITIES_FILE)
+
+
+## Ajoute un dossier d'emplois du temps (tests, démonstrations), lu après ceux de l'île.
 static func add_dir(dir: String) -> void:
-	if not _dirs.has(dir):
-		_dirs.append(dir)
+	if not _added.has(dir):
+		_added.append(dir)
 	clear_cache()
 
 
 ## Retire un dossier ajouté par add_dir.
 static func remove_dir(dir: String) -> void:
-	if dir != DATA_DIR and _dirs.has(dir):
-		_dirs.remove_at(_dirs.find(dir))
+	if _added.has(dir):
+		_added.remove_at(_added.find(dir))
 	clear_cache()
 
 
@@ -327,6 +378,8 @@ static func clear_cache() -> void:
 	_activities.clear()
 	_activities_loaded = false
 	_places.clear()
+	_seen_island = &""
+	_seen_dirs = PackedStringArray()
 
 
 # --- Interne ----------------------------------------------------------------------------------

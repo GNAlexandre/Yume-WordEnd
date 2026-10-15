@@ -1,0 +1,11 @@
+{
+  "_comment": "Mirelle, fée générique : le tapis de la salle de jeux, la tour (le repli de Kana, VIE.md 0.2).",
+  "gait": "course",
+  "lines": [
+    {"slot": "aube", "away": "entrepot_etage"},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_a", "activity": "manger"},
+    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "jeux_tapis", "activity": "jouer"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "jeux_tour", "activity": "tour_de_fees", "role": "pile_5"},
+    {"slot": "nuit", "away": "entrepot_etage"}
+  ]
+}

@@ -8,14 +8,17 @@ const NBSP := "\u00a0"
 const NNBSP := "\u202f"
 
 
+## Les emplois du temps de démonstration des cartes d'essai (data/life/essai/) sont ceux que ce
+## fichier éprouve ; ceux de l'île n° 68 (data/life/ile_68/) sont vérifiés par test_life_ile_68.gd,
+## et leur validité ici aussi (test_every_life_file_is_valid).
 func before_each() -> void:
 	GameState.reset()
-	LifeData.clear_cache()
+	LifeData.use_content(&"essai")
 
 
 func after_each() -> void:
 	GameState.reset()
-	LifeData.clear_cache()
+	LifeData.use_content(&"")
 
 
 func _line(extra: Dictionary) -> Dictionary:
@@ -34,10 +37,12 @@ func _problems(lines: Array, npc_id: StringName = &"tiat") -> PackedStringArray:
 
 
 func test_every_life_file_is_valid() -> void:
-	var problems := LifeData.all_problems()
-	assert_eq(problems, PackedStringArray(), "\n".join(problems))
-	assert_gt(LifeData.cast().size(), 10, "des emplois du temps dans data/life/")
-	assert_false(LifeData.cast().has(&"activities"), "activities.json n'est pas un PNJ")
+	for content: StringName in [&"essai", &"ile_68"]:
+		LifeData.use_content(content)
+		var problems := LifeData.all_problems()
+		assert_eq(problems, PackedStringArray(), "%s : %s" % [content, "\n".join(problems)])
+		assert_gt(LifeData.cast().size(), 10, "%s : des emplois du temps dans data/life/" % content)
+		assert_false(LifeData.cast().has(&"activities"), "activities.json n'est pas un PNJ")
 
 
 func test_a_valid_line_passes() -> void:
