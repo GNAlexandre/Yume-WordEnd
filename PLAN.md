@@ -1639,10 +1639,12 @@ chacun avec un `_comment`) ; `GameRules.value(jeu, "kick/reach", défaut, surcha
 `problems()` ; l'activité `ballon` peut surcharger des chemins par ses `params` ; les répliques :
 `data/texts/life.json`, `games/ballon/…` et `games/baton/…` (`{player}` accepté).
 
-**Mesures.** Natif (Xvfb, Mesa logiciel), vue du jeu, au plus fort du match (dix petites, l'arbitre, le joueur
-dans la partie, HUD compris) : 119 à 148 draw calls (ballon), 92 à 130 (entraînement) ; le match pose environ
-35 objets dessinables de plus que la carte seule ; directeur 0,3 ms par image (max 33 ms au changement d'équipe
-de la navigation). Voir « Mesures du Web » ci-dessous pour le navigateur.
+**Mesures** (après la fusion de V1, quinze PNJ sur la carte). Natif (Xvfb, Mesa logiciel), vue du jeu au plus
+fort du match (dix petites, l'arbitre, le joueur dans la partie, score compris) : 125 draw calls, 144 au plus
+(ballon) ; 111 à 127 au plus (spectateur, banc) ; 94 à 111 (entraînement), 130 au plus (phase B) : sous 200. Le
+match pose 35 objets dessinables de plus que la carte seule ; directeur 0,4 ms par image (9 à 21 ms au plus, aux
+changements d'équipe). Build Web (`tools/web_jeux.js`, Chromium sans GPU, SwiftShader : 0,3 à 0,9 image/s, les
+images/s ne valent pas dans l'absolu) : ballon 95 draw calls (97 au plus), entraînement 99 (107 au plus).
 
 **Pièges.** Un test qui lance un match règle le créneau (`LifeDirector.set_slot`) *avant* d'entrer dans la
 carte ou appelle `LifeDirector.refresh(false)` : sinon le directeur applique le créneau à l'image suivante et
