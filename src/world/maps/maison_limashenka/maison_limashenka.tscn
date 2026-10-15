@@ -23,7 +23,7 @@ display_name = "La maison Limashenka"
 region = &"village"
 interior = true
 size = Vector2(10, 8)
-camera_bounds = Rect2(2, 4, 6, 0)
+camera_bounds = Rect2(3.5, 4, 1.5, 0)
 light_preset = &"interieur"
 
 [node name="Ground" type="StaticBody3D" parent="."]

@@ -562,8 +562,9 @@ de nuit : une sœur `<nom>_night.png` au même cadrage, prise quand la nuit tomb
 | 3 | `assets/hd2d/buildings/cottage_thatch_c_night.png` | 384 × 480 | idem | `cottage_thatch_c.png` (jointe) la nuit : la lucarne du chaume allumée (#FFE6A6) |
 
 **À ne pas faire** : changer le cadrage, la taille ou le dessin (l'image de nuit remplace celle du jour
-au pixel près) ; peindre les vitres allumées en orangé (le moteur n'allume que les pixels proches de
-#FFE6A6 : voir 3.6, le même défaut sur les façades de l'entrepôt) ; un ciel ou un fond (transparence
+au pixel près) ; peindre les vitres allumées en orangé (le moteur n'allume que les pixels proches de la
+couleur de lueur du bâtiment : voir 3.6 ; (QO) à la livraison, régler `Building.window_glow_color` sur
+#FFE6A6 pour ces façades, la règle par défaut allumant en fait #FFCA63) ; un ciel ou un fond (transparence
 inchangée) ; tout allumer (un village de campagne dort : une fenêtre ou deux par maison au plus).
 
 ### R0.10 Les remplaçants qui se voient au premier rang (priorités relevées)
@@ -802,6 +803,11 @@ foncés, reflets plus blancs que #FFFFF0, jamais d'orangé sur les carreaux). Va
 rien redessiner : une couleur de lueur par bâtiment (`Building.window_glow_color`, PR « contrats » : demande dans
 `docs/CONTRACT_REQUESTS.md`). Les fenêtres des intérieurs (`window_cross_*` et leurs versions de nuit du lot N) ne sont
 pas concernées.
+
+**(QO, 15 octobre 2026) Commande annulée** : la variante moteur est retenue (`Building.window_glow_color` et
+`window_glow_tolerance`, réglées sur les carreaux livrés ; docs/QUALITE.md, QC-02). Ne rien redemander. Constat au
+passage : le rendu lit l'image sans la convertir en linéaire, et la règle par défaut allume en fait les pixels
+proches de #FFCA63 ; des carreaux en aplat #FFE6A6 resteraient éteints sans règle propre.
 
 ## 4. Lot R2 : les personnages de l'acte 1
 

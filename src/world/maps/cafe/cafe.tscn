@@ -11,7 +11,6 @@
 [ext_resource type="PackedScene" path="res://src/world/props/chair_wood.tscn" id="p_chair_wood"]
 [ext_resource type="PackedScene" path="res://src/world/props/chair_wood_back.tscn" id="p_chair_wood_back"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/cafe_drinkers_table.tscn" id="p_cafe_drinkers_table"]
-[ext_resource type="PackedScene" path="res://src/world/props/interior/crystal_pendant.tscn" id="p_crystal_pendant"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/pantry_cupboard.tscn" id="p_pantry_cupboard"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/sacks_vegetables.tscn" id="p_sacks_vegetables"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/crates_barrels.tscn" id="p_crates_barrels"]
@@ -34,7 +33,7 @@ display_name = "Le café du village"
 region = &"village"
 interior = true
 size = Vector2(12, 10)
-camera_bounds = Rect2(2, 5, 8, 0)
+camera_bounds = Rect2(5.5, 5, 3, 0)
 light_preset = &"interieur"
 
 [node name="Ground" type="StaticBody3D" parent="."]
@@ -75,9 +74,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 6.275)
 
 [node name="cafe_drinkers_table_1" parent="Geometry/Salle" instance=ExtResource("p_cafe_drinkers_table")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, 8)
-
-[node name="crystal_pendant_1" parent="Geometry/Salle" instance=ExtResource("p_crystal_pendant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 1.6042, 5.6)
 
 [node name="pantry_cupboard_1" parent="Geometry/Arriere" instance=ExtResource("p_pantry_cupboard")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 0, 1.45)

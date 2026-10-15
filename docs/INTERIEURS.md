@@ -50,8 +50,12 @@ l'étage par `WorldManager.enter_map`), test dans la vraie partie
    marqueur doivent exister (`tests/unit/test_maps.gd`). La lumière de l'étage est celle
    d'`Atmosphere` (R1) : rien à poser ; ses lampes sont les `lights[]` du JSON.
 6. **Bornes de la caméra** (`camera_bounds`) : celles du point visé, à 2,5 m au nord du joueur.
-   En x, tout le bâtiment (de 2 à L − 2 pour un étage de L m) : la caméra reste au droit du
-   joueur, aucune cloison nord-sud ne le cache en biais. En z, de 5 à P − 5 (P : profondeur) :
+   (QO, QC-20) En x, les pignons au plus près des bords de l'écran : la caméra s'arrête à moins
+   de 0,5 m de la dernière cloison nord-sud de chaque bout (au-delà, elle regarde la pièce du bout
+   de biais et la cloison cache le joueur qui la longe ; le test d'occlusion le dit) ; une pièce
+   qui tient à l'écran ne fait glisser la caméra que jusqu'à sa cloison (`Rect2` plat ; réduit à
+   un point sans cloison : caméra fixe). Ni le joueur ni un personnage ne sortent du cadre
+   (`tools/qc_shots.sh` donne la place du joueur à l'écran). En z, de 5 à P − 5 (P : profondeur) :
    moins de vide noir au-dessus du mur nord, sans trop aplatir la vue.
 7. **Vérifier** : `tools/test.sh tests/unit/test_interior_room.gd` (format, coupe, lumière) et un
    test d'étage sur le modèle de `tests/unit/test_interior_entrepot.gd` (collisions, portes,
