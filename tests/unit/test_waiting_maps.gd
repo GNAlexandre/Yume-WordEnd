@@ -1,8 +1,8 @@
 extends GutTest
-## (T1, C1) Les cartes d'attente (colline, foret_profonde ; le port, ajouté par
-## tools/exterior_maps.py, lot C1 ; le sentier, d'attente en T1, est construit depuis C1 :
-## tests/unit/test_sentier.gd ; le village, d'attente en T1, depuis C2 : tests/unit/test_village.gd)
-## : chacune suit le contrat des cartes, a son sol plat, sa lisière, son
+## (T1, C1) Les cartes d'attente (foret_profonde ; le port, ajouté par tools/exterior_maps.py,
+## lot C1 ; le sentier, d'attente en T1, est construit depuis C1 : tests/unit/test_sentier.gd ; le
+## village depuis C2 : tests/unit/test_village.gd ; la colline depuis C3 :
+## tests/unit/test_colline.gd) : chacune suit le contrat des cartes, a son sol plat, sa lisière, son
 ## écriteau « Plus loin, bientôt » qu'on lit (boîte de dialogue, sans portrait), la sortie de retour
 ## vers la carte construite d'où l'on vient (l'entrepôt ; le sentier pour le port), au marqueur
 ## from_<carte> du plan de cette carte, et le marqueur d'arrivée from_<cette carte> ; et le
@@ -11,7 +11,6 @@ extends GutTest
 const TestShortcuts := preload("res://src/test_shortcuts.gd")
 ## Carte d'attente → [carte d'où l'on vient, sa sortie de retour].
 const WAITING := {
-	&"colline": [&"entrepot", &"vers_entrepot"],
 	&"foret_profonde": [&"entrepot", &"vers_entrepot"],
 	&"port": [&"sentier", &"vers_sentier"],
 }
@@ -67,7 +66,7 @@ func test_waiting_maps_follow_the_contract_and_lead_back_to_the_built_map() -> v
 
 
 func test_reading_the_sign_shows_its_text_without_a_portrait() -> void:
-	var map := (load(Map.scene_path(&"colline")) as PackedScene).instantiate() as Map
+	var map := (load(Map.scene_path(&"foret_profonde")) as PackedScene).instantiate() as Map
 	add_child_autofree(map)
 	await wait_physics_frames(1)
 	var reader := map.get_node(^"Geometry/Sign/Reader")

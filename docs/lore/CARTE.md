@@ -2146,7 +2146,10 @@ colline : 40 × 40 m ; un caractère = 1 m (est-ouest) × 2 m (nord-sud) ; nord 
 Légende des lettres : `A` heather ; `B` tall_grass ; `C` wildflowers_a ; `D` boulder_a ; `E` mossy_rock ; `F` rock_small_a.
 <!-- /ascii:colline -->
 
-- **Taille** 40 × 40 m ; **bornes** `Rect2(10, 6, 20, 23)`. La colline est un cap : elle monte du
+- **Taille** 40 × 40 m ; **bornes** `Rect2(10, 6, 20, 26)` (la caméra monte jusqu'au bord pour la vue au
+  nord, z = 6, et descend jusqu'au pied du chemin, z = 32, comme la règle P − 8 ; (C3) le plan disait
+  `Rect2(10, 6, 20, 23)`, qui arrêtait le point visé à z = 29 et sortait le joueur de l'écran sur le bas
+  du chemin). La colline est un cap : elle monte du
   sud (entrée depuis l'entrepôt) en trois terrasses (+1, +2, +3, talus `cliff/wall_earth_1m` et
   `cliff/step_rock` face au sud) jusqu'au sommet, qui finit au nord **sur le vide**.
 - **Le sommet** : la place `cercle_talismans` (14 → 26, 6 → 18), 12 × 12 m d'herbe rase ; le petit
@@ -2157,7 +2160,9 @@ Légende des lettres : `A` heather ; `B` tall_grass ; `C` wildflowers_a ; `D` bo
   belvédère ni de myosotis : c'étaient des inventions de l'ancienne bible.
 - **Kits** : herbe (`tall_grass`, `wind_grass_a/b`, `heather`, `wildflowers_*`), rochers
   (`rock_small_*`, `mossy_rock`), lisières est et ouest (`forest_wall_*`), bord (`edge_rocks_*`).
-- **Lumière** : de nuit (préréglage `nuit_claire`) ; la lueur du cristal et des talismans. **Vue
+- **Lumière** : de nuit (préréglage `nuit_claire` ; (C3) celui d'E9 qui est une nuit claire s'appelle `nuit`, c'est
+  le `light_preset` de la carte) ; la lueur du cristal et des talismans (la scène de l'acte 1 : la carte ne
+  porte aucune lumière, les deux lignes `lumiere` du plan sont des repères). **Vue
   au nord** : la mer de nuages argentée sous les étoiles (`cloud_sea_night`) ; pour la scène, la
   caméra lève les yeux vers le ciel (`sky_night`). **Densité** : 40 à 70 éléments par écran (une
   colline nue, voulue) ; grillons et chouette la nuit.
@@ -2205,6 +2210,10 @@ point rocher 9.5 15.6
 lumiere cristal_reglage 20 12 0.5 cristal
 lumiere talismans 20 12 1.5 etoiles
 ```
+
+<!-- places:colline -->
+**Places de la vie** (lot C3 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher`) ; les places réservées, en `Life/Areas` avec leur rectangle (`cercle_talismans`) ; et, en plus du plan : `vers_entrepot` (20 ; 38.4 ; le pied du chemin, devant la sortie : par où l'on part vers l'entrepôt, et d'où l'on en arrive), `pied_de_colline` (20 ; 34 ; le bas du chemin, avant la première rampe : on s'y arrête avant de monter), `arbre_seul` (28.2 ; 10.8 ; au pied de l'arbre noueux solitaire, côté sommet (VIE.md, faune : la chouette y guette)), `merles` (11 ; 22 ; la bruyère de la terrasse haute, à l'ouest : les merles de l'aube (VIE.md, faune)), `papillons` (24.5 ; 22.5 ; l'herbe fleurie au-dessus de la dernière rampe : les papillons des jours doux (VIE.md, faune)), `chouette` (29.2 ; 10.2 ; la branche basse de l'arbre solitaire : la chouette de la nuit (VIE.md, faune)).
+<!-- /places:colline -->
 
 ## 8. La forêt profonde (`foret_profonde`)
 
