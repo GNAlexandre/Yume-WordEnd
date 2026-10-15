@@ -1,0 +1,307 @@
+{
+  "_comment": "ACTE1.md 1.7 (s. 4) : l'avalanche n° 2 dans la chambre nue, puis le nom et « nous sommes les armes ». {player} n'a pas l'animation « hanches » dans sa planche de combat (chtholly_home, à la maison, n'a pas le combat) : la réplique le dit.",
+  "title": "La chambre nue",
+  "day": 1,
+  "after": [
+    "j1_6_diner"
+  ],
+  "map": "entrepot_etage",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "willem",
+    "collon",
+    "lakhesh",
+    "tiat",
+    "fairy_03",
+    "fairy_04"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "willem_porte",
+      "offset": [
+        0,
+        -1.2
+      ],
+      "facing": "south",
+      "outfit": "maison"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "willem_porte",
+      "offset": [
+        -0.5,
+        1.3
+      ],
+      "facing": "north",
+      "outfit": "pyjama"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "willem_porte",
+      "offset": [
+        0.3,
+        1.3
+      ],
+      "facing": "north",
+      "outfit": "pyjama"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "willem_porte",
+      "offset": [
+        1.0,
+        1.6
+      ],
+      "facing": "north",
+      "outfit": "pyjama"
+    },
+    {
+      "do": "place",
+      "who": "fairy_03",
+      "at": "willem_porte",
+      "offset": [
+        -0.2,
+        1.9
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "fairy_04",
+      "at": "willem_porte",
+      "offset": [
+        0.6,
+        2.0
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "camera",
+      "to": "willem_porte",
+      "distance": 12,
+      "time": 1.2,
+      "wait": true
+    },
+    {
+      "do": "wait",
+      "time": 0.6
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "willem_porte",
+      "offset": [
+        -0.4,
+        -0.4
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "willem_porte",
+      "offset": [
+        0.3,
+        -0.3
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "willem_porte",
+      "offset": [
+        0.0,
+        0.2
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "fairy_03",
+      "at": "willem_porte",
+      "offset": [
+        -0.6,
+        0.5
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "fairy_04",
+      "at": "willem_porte",
+      "offset": [
+        0.7,
+        0.5
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "bubble",
+      "who": "collon",
+      "text": "question_1"
+    },
+    {
+      "do": "wait",
+      "time": 1.0
+    },
+    {
+      "do": "bubble",
+      "who": "lakhesh",
+      "text": "question_2"
+    },
+    {
+      "do": "wait",
+      "time": 1.0
+    },
+    {
+      "do": "bubble",
+      "who": "tiat",
+      "text": "question_3"
+    },
+    {
+      "do": "wait",
+      "time": 1.0
+    },
+    {
+      "do": "bubble",
+      "who": "fairy_03",
+      "text": "question_4"
+    },
+    {
+      "do": "camera_reset"
+    },
+    {
+      "do": "hint",
+      "text": "hint"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "reach": "willem_porte",
+      "radius": 2.6
+    },
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "face",
+      "who": "player",
+      "toward": "willem"
+    },
+    {
+      "do": "dialogue",
+      "node": "au_lit"
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "lakhesh",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_03",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_04",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "bubble",
+      "who": "tiat",
+      "text": "au_revoir"
+    },
+    {
+      "do": "wait",
+      "time": 1.6
+    },
+    {
+      "do": "leave",
+      "who": "collon"
+    },
+    {
+      "do": "leave",
+      "who": "lakhesh"
+    },
+    {
+      "do": "leave",
+      "who": "tiat"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_03"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_04"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "player"
+    },
+    {
+      "do": "camera",
+      "to": "willem",
+      "distance": 10,
+      "time": 1.0
+    },
+    {
+      "do": "dialogue",
+      "node": "nom"
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.0
+    },
+    {
+      "do": "camera_reset",
+      "time": 0
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "chtholly_porte",
+      "facing": "north"
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.0
+    }
+  ]
+}

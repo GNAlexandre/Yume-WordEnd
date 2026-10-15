@@ -1,0 +1,25 @@
+{
+  "id": "j2_1_matin",
+  "start": "toilette",
+  "nodes": {
+    "toilette": {
+      "speaker_id": "collon",
+      "text": "Je me lave pas. L'eau est glacée. C'est un piège.",
+      "next": "toilette_2"
+    },
+    "toilette_2": {
+      "speaker": "{player}",
+      "text": "Tout le monde se lave le visage le matin. Moi aussi. Regarde.",
+      "next": "toilette_3"
+    },
+    "toilette_3": {
+      "speaker": "",
+      "text": "Tu plonges les mains dans l'eau froide et tu t'en frottes les joues, pour l'exemple. Collon grimace, puis t'imite.",
+      "next": "toilette_4"
+    },
+    "toilette_4": {
+      "speaker": "",
+      "text": "Au loin, la cloche du petit-déjeuner. Ici, l'heure est l'heure : après la seconde cloche, il ne reste plus rien."
+    }
+  }
+}

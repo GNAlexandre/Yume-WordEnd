@@ -1,0 +1,53 @@
+{
+  "id": "j3_1_information",
+  "start": "porche",
+  "nodes": {
+    "porche": {
+      "speaker": "",
+      "text": "Ithea est assise sur le banc du porche et balance un pied dans le vide.",
+      "next": "porche_2"
+    },
+    "porche_2": {
+      "speaker_id": "ithea",
+      "text": "Nya-ha-ha. Devine qui est parti en ville ce matin ? Notre nouveau responsable.",
+      "next": "porche_3"
+    },
+    "porche_3": {
+      "speaker_id": "ithea",
+      "text": "Qui tient l'information tient l'île. Alors on le suit.",
+      "next": "porche_4"
+    },
+    "porche_4": {
+      "speaker_id": "nephren",
+      "text": "… Oui.",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker_id": "ithea",
+      "text": "Tu viens ? Il y a sûrement un roman là-dessous.",
+      "choices": [
+        {
+          "text": "Allons-y.",
+          "next": "allons"
+        },
+        {
+          "text": "Laisse-le tranquille.",
+          "next": "tranquille"
+        }
+      ]
+    },
+    "allons": {
+      "speaker_id": "ithea",
+      "text": "J'adore quand tu dis ça."
+    },
+    "tranquille": {
+      "speaker_id": "ithea",
+      "text": "Trop tard, j'y vais. Tu nous rattraperas.",
+      "next": "tranquille_2"
+    },
+    "tranquille_2": {
+      "speaker": "",
+      "text": "Tu soupires. Et tu les suis."
+    }
+  }
+}

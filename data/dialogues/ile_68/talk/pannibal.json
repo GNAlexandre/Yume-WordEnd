@@ -1,0 +1,24 @@
+{
+  "_comment": "Ce que dit Pannibal quand on lui parle hors des scènes, sur l'île n° 68 (StoryDirector : jamais les dialogues des quêtes de l'ancienne île). Entrées par jour ; la dernière, start, vaut toujours.",
+  "id": "talk_pannibal",
+  "start": "n1",
+  "entries": [
+    "n0"
+  ],
+  "nodes": {
+    "n0": {
+      "speaker_id": "pannibal",
+      "text": "J'ai maîtrisé l'intrus. C'est officiel.",
+      "if": {
+        "day": [
+          1,
+          2
+        ]
+      }
+    },
+    "n1": {
+      "speaker_id": "pannibal",
+      "text": "Garde-toi à gauche. Toujours à gauche."
+    }
+  }
+}

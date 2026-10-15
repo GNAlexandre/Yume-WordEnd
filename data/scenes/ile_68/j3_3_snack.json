@@ -1,0 +1,55 @@
+{
+  "_comment": "ACTE1.md 3.3 (s. 6) : le snack-bar, raconté sur le noir (cartes de la ville à venir) ; Willem et le serveur ne parlent que par leurs répliques.",
+  "title": "Le snack-bar",
+  "day": 3,
+  "after": [
+    "j3_2_chemin"
+  ],
+  "map": "sentier",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "ithea",
+    "nephren"
+  ],
+  "steps": [
+    {
+      "do": "card",
+      "text": "snack",
+      "time": 3.0
+    },
+    {
+      "do": "dialogue",
+      "node": "snack"
+    },
+    {
+      "do": "card",
+      "text": "retour",
+      "time": 2.6
+    },
+    {
+      "do": "leave",
+      "who": "ithea"
+    },
+    {
+      "do": "leave",
+      "who": "nephren"
+    },
+    {
+      "do": "slot",
+      "slot": "soir",
+      "time": 0
+    },
+    {
+      "do": "go_to",
+      "map": "entrepot",
+      "marker": "from_sentier"
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.0
+    }
+  ]
+}

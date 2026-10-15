@@ -159,6 +159,11 @@ func runner() -> StoryRunner:
 	return _runner
 
 
+## Les outils de scène (places, joueur, voile, suiveurs).
+func stage() -> StoryStage:
+	return _stage
+
+
 ## Vrai si la scène en cours est une séquence déjà vue (elle se passe par SKIP_ACTION).
 func is_skippable() -> bool:
 	if not _runner.is_running() or _current.is_empty():

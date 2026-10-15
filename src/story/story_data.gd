@@ -816,7 +816,9 @@ static func _check_dialogue_chain(
 				found.append("%s → %s : pas de choix dans une séquence" % [where, id])
 			for effect: String in DialogueRunner.EFFECT_KEYS:
 				if node.has(effect):
-					found.append("%s → %s : pas d'effet dans une séquence (%s)" % [where, id, effect])
+					found.append(
+						"%s → %s : pas d'effet dans une séquence (%s)" % [where, id, effect]
+					)
 		for choice: Variant in choices:
 			if choice is Dictionary and (choice as Dictionary).get("next") is String:
 				queue.append(str(choice["next"]))

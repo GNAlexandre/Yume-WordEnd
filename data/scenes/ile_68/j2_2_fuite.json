@@ -1,0 +1,219 @@
+{
+  "_comment": "ACTE1.md 2.2 (s. 5) : Willem paraît, les chaises se vident.",
+  "title": "La fuite",
+  "day": 2,
+  "slot": "matin",
+  "after": [
+    "j2_1_matin"
+  ],
+  "map": "entrepot_rdc",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "nygglatho",
+    "willem",
+    "collon",
+    "lakhesh",
+    "tiat",
+    "pannibal",
+    "almita",
+    "fairy_01",
+    "fairy_02"
+  ],
+  "steps": [
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "refectoire_allee"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "refectoire_chaise_b04",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "refectoire_chaise_b05",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "refectoire_chaise_c04",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "refectoire_chaise_c05",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "almita",
+      "at": "refectoire_chaise_b06",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_01",
+      "at": "refectoire_chaise_c06",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_02",
+      "at": "refectoire_chaise_b07",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "refectoire_bout_ouest",
+      "facing": "east",
+      "outfit": "vie"
+    },
+    {
+      "if": {
+        "flag": "j2_petit_dejeuner_rate"
+      },
+      "do": "dialogue",
+      "node": "pain"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "couloir_centre",
+      "facing": "north",
+      "outfit": "maison"
+    },
+    {
+      "do": "camera",
+      "to": "refectoire_allee",
+      "distance": 15,
+      "time": 1.0
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": [
+        13,
+        7.4
+      ]
+    },
+    {
+      "do": "wait",
+      "time": 0.4
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "couloir_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "lakhesh",
+      "to": "couloir_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "couloir_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "couloir_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "almita",
+      "to": "couloir_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_01",
+      "to": "couloir_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_02",
+      "to": "couloir_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "wait",
+      "time": 1.8
+    },
+    {
+      "do": "leave",
+      "who": "collon"
+    },
+    {
+      "do": "leave",
+      "who": "lakhesh"
+    },
+    {
+      "do": "leave",
+      "who": "tiat"
+    },
+    {
+      "do": "leave",
+      "who": "pannibal"
+    },
+    {
+      "do": "leave",
+      "who": "almita"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_01"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_02"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "refectoire_bout_est"
+    },
+    {
+      "do": "anim",
+      "who": "willem",
+      "anim": "assis"
+    },
+    {
+      "do": "camera_reset"
+    },
+    {
+      "do": "dialogue",
+      "node": "fuite"
+    }
+  ]
+}

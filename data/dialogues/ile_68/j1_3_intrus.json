@@ -1,0 +1,59 @@
+{
+  "_comment": "ACTE1.md 1.3 : la rencontre de l'île n° 28 est un souvenir partagé, sans être rejouée.",
+  "id": "j1_3_intrus",
+  "start": "victoire",
+  "nodes": {
+    "victoire": {
+      "speaker_id": "pannibal",
+      "text": "Intrus maîtrisé ! J'exige qu'on reconnaisse ma victoire."
+    },
+    "reconnaissance": {
+      "speaker": "",
+      "text": "Ta lumière éclaire son visage, ruisselant d'eau de marais. Un visage sans cornes ni écailles. Tu le connais.",
+      "next": "reconnaissance_2"
+    },
+    "reconnaissance_2": {
+      "speaker_id": "willem",
+      "text": "… L'accueil est toujours aussi chaleureux, ici ?",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "Toi ?",
+          "next": "toi"
+        },
+        {
+          "text": "Pannibal, descends. Tout de suite.",
+          "next": "descends"
+        }
+      ]
+    },
+    "toi": {
+      "speaker": "{player}",
+      "text": "Toi. Je t'avais demandé de m'oublier.",
+      "next": "toi_2"
+    },
+    "toi_2": {
+      "speaker_id": "willem",
+      "text": "J'ai essayé. Mais on oublie mal quelqu'un qui vous est tombé dessus.",
+      "next": "descends"
+    },
+    "descends": {
+      "speaker": "{player}",
+      "text": "Pannibal. Descends de là.",
+      "next": "descends_2"
+    },
+    "descends_2": {
+      "speaker_id": "pannibal",
+      "text": "Seulement si on reconnaît ma victoire.",
+      "next": "descends_3"
+    },
+    "descends_3": {
+      "speaker": "{player}",
+      "text": "Elle est reconnue. Descends."
+    }
+  }
+}

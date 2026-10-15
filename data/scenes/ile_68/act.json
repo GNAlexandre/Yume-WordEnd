@@ -1,0 +1,92 @@
+{
+  "_comment": "L'acte 1 en jours (docs/lore/ACTE1.md ; format : PLAN.md, « (E6) Le récit »). start : où et quand commence une nouvelle partie (jour 1, la nuit du grand vent) ; sleep : le lit de la protagoniste, « Dormir » le soir ou la nuit quand les scènes de sleep_after sont faites ; rest : où « Laisser passer le temps » (le lit aussi) ; calendar.examine : l'objet à examiner qui ouvre le calendrier ; days : le temps de chaque jour (ACTE1.md 1.1) et ce qu'il faut avoir joué pour se coucher. Les jours 5 à 12 attendent leurs scènes (lot S2).",
+  "start": {
+    "map": "entrepot",
+    "marker": "Spawn",
+    "day": 1,
+    "slot": "nuit",
+    "weather": "clair"
+  },
+  "departure_day": 12,
+  "sleep": {
+    "map": "entrepot_etage",
+    "point": "chtholly_lit",
+    "prompt": "ui/sleep",
+    "slots": [
+      "soir",
+      "nuit"
+    ],
+    "wake_slot": "aube"
+  },
+  "rest": {
+    "prompt": "ui/rest",
+    "points": [
+      {
+        "map": "entrepot",
+        "point": "porche_banc"
+      },
+      {
+        "map": "entrepot_rdc",
+        "point": "lecture_banquette"
+      }
+    ]
+  },
+  "calendar": {
+    "examine": "entrepot_etage/chtholly_calendrier"
+  },
+  "days": {
+    "1": {
+      "weather": "clair",
+      "sleep_after": [
+        "j1_7_chambre"
+      ],
+      "sleep_hint": "days/1/sleep_hint"
+    },
+    "2": {
+      "weather": "clair",
+      "sleep_after": [
+        "j2_2_fuite",
+        "j2_3_fenetre"
+      ],
+      "sleep_hint": "days/2/sleep_hint"
+    },
+    "3": {
+      "weather": "clair",
+      "sleep_after": [
+        "j3_3_snack"
+      ],
+      "sleep_hint": "days/3/sleep_hint"
+    },
+    "4": {
+      "weather": "clair",
+      "sleep_after": [
+        "j4_2_diner"
+      ],
+      "sleep_hint": "days/4/sleep_hint"
+    },
+    "5": {
+      "weather": "clair"
+    },
+    "6": {
+      "weather": "clair"
+    },
+    "7": {
+      "weather": "pluie"
+    },
+    "8": {
+      "weather": "clair"
+    },
+    "9": {
+      "weather": "clair"
+    },
+    "10": {
+      "weather": "clair"
+    },
+    "11": {
+      "weather": "clair"
+    },
+    "12": {
+      "weather": "clair"
+    }
+  }
+}

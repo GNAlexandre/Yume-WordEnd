@@ -1,0 +1,111 @@
+{
+  "_comment": "ACTE1.md 1.5 : la salle de bains se joue habillée, en plan large (0.3, la pudeur).",
+  "id": "j1_5_premiers_pas",
+  "start": "porche",
+  "nodes": {
+    "porche": {
+      "speaker": "",
+      "text": "Nygglatho joint les mains près de son visage.",
+      "next": "porche_2"
+    },
+    "porche_2": {
+      "speaker_id": "nygglatho",
+      "text": "Mais c'est vous ! Je vous ai soigné, à votre réveil. Vous êtes encore plus maigre qu'à l'époque.",
+      "next": "porche_3"
+    },
+    "porche_3": {
+      "speaker_id": "nygglatho",
+      "text": "Et vous sentez le marais. D'abord un bain. Ensuite, un thé chez moi, à l'étage.",
+      "next": "porche_4"
+    },
+    "porche_4": {
+      "speaker_id": "nygglatho",
+      "text": "Quant à toi, Pannibal… file te changer. On en reparlera."
+    },
+    "miroir": {
+      "speaker": "",
+      "text": "La salle de bains. Willem, déjà rhabillé, les cheveux mouillés, une serviette sur les épaules, s'observe dans le grand miroir.",
+      "next": "miroir_2"
+    },
+    "miroir_2": {
+      "speaker_id": "willem",
+      "text": "Pas de cornes. Pas d'écailles. Pas d'oreilles de bête.",
+      "next": "miroir_3"
+    },
+    "miroir_3": {
+      "speaker_id": "willem",
+      "text": "Un sans-traits. Ici, ça doit faire bizarre."
+    },
+    "couloir": {
+      "speaker": "{player}",
+      "text": "Nygglatho t'attend à l'étage. Suis-moi.",
+      "next": "couloir_2"
+    },
+    "couloir_2": {
+      "speaker": "{player}",
+      "text": "Et lis les écriteaux. On ne court pas dans les couloirs."
+    },
+    "the": {
+      "speaker_id": "nygglatho",
+      "text": "Bienvenue à l'entrepôt ! Asseyez-vous, le thé est prêt.",
+      "next": "the_2"
+    },
+    "the_2": {
+      "speaker_id": "nygglatho",
+      "text": "Vous avez l'air délicieux, vous savez. Mais il faudra vous engraisser un peu.",
+      "next": "the_3"
+    },
+    "the_3": {
+      "speaker": "",
+      "text": "Willem avale sa salive. Tu les laisses à leur thé et tu ressors sur le palier."
+    },
+    "porte": {
+      "speaker": "",
+      "text": "Quand tu reviens, quatre petites en pyjama sont collées à la porte de Nygglatho, l'oreille contre le bois.",
+      "choices": [
+        {
+          "text": "Écouter aussi.",
+          "set_flag": "j1_ecoute",
+          "next": "ecouter"
+        },
+        {
+          "text": "Ouvrir.",
+          "next": "ouvrir"
+        }
+      ]
+    },
+    "ecouter": {
+      "speaker": "",
+      "text": "Tu colles l'oreille, toi aussi. La porte cède d'un coup.",
+      "next": "avalanche_vide"
+    },
+    "ouvrir": {
+      "speaker": "",
+      "text": "Tu tournes la poignée. La porte s'ouvre en grand.",
+      "next": "avalanche_vide"
+    },
+    "avalanche_vide": {
+      "speaker": "",
+      "text": "Avalanche ! Les petites s'écroulent les unes sur les autres, sur le tapis de Nygglatho."
+    },
+    "avalanche": {
+      "speaker_id": "nygglatho",
+      "text": "Oh ! Que de monde, à une heure pareille.",
+      "next": "avalanche_2"
+    },
+    "avalanche_2": {
+      "speaker": "",
+      "text": "Nygglatho sourit. Un sourire qui s'ouvre comme une déchirure dans un tissu.",
+      "next": "avalanche_3"
+    },
+    "avalanche_3": {
+      "speaker_id": "nygglatho",
+      "text": "Au lit, toutes. Ou alors je vous mange. L'une après l'autre.",
+      "next": "avalanche_4"
+    },
+    "avalanche_4": {
+      "speaker_id": "nygglatho",
+      "text": "Ma chérie, couche Pannibal, veux-tu ? Elle a eu assez d'aventures pour cette nuit."
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "id": "j4_1_cuisine",
+  "start": "porte",
+  "nodes": {
+    "porte": {
+      "speaker": "",
+      "text": "Les petites sont collées à la porte de la cuisine. Une odeur de caramel passe sous le battant.",
+      "choices": [
+        {
+          "text": "Je suis des vôtres.",
+          "set_flag": "j4_espionne",
+          "next": "complice"
+        },
+        {
+          "text": "Dispersez-vous !",
+          "next": "dispersez"
+        }
+      ]
+    },
+    "complice": {
+      "speaker": "",
+      "text": "Tu colles l'œil à l'entrebâillement, avec elles. Au fourneau, Willem, en tablier, remue une casserole.",
+      "next": "complice_2"
+    },
+    "complice_2": {
+      "speaker_id": "collon",
+      "text": "La cible fait de la magie avec du sucre…",
+      "next": "ouvre"
+    },
+    "dispersez": {
+      "speaker": "{player}",
+      "text": "Dispersez-vous ! La cuisine n'est pas un terrain de jeu.",
+      "next": "dispersez_2"
+    },
+    "dispersez_2": {
+      "speaker": "",
+      "text": "Elles s'éparpillent… et reviennent aussitôt, sur la pointe des pieds.",
+      "next": "ouvre"
+    },
+    "ouvre": {
+      "speaker": "",
+      "text": "La porte s'ouvre de l'intérieur. Avalanche !"
+    },
+    "gouter": {
+      "speaker": "Une petite",
+      "text": "Monsieur le responsable n'a pas le droit ! La cuisine, c'est pour la cuisinière du jour !",
+      "next": "gouter_2"
+    },
+    "gouter_2": {
+      "speaker_id": "willem",
+      "text": "Elle m'a prêté la cuisine pour l'après-midi. N'est-ce pas ?",
+      "next": "gouter_3"
+    },
+    "gouter_3": {
+      "speaker_id": "willem",
+      "text": "Tiens, l'aînée. Un avis ? Juste une cuillère.",
+      "next": "gouter_4"
+    },
+    "gouter_4": {
+      "speaker": "",
+      "text": "Tu goûtes le caramel, l'air de rien. Tu ne dis rien. Tes joues, elles, disent tout."
+    }
+  }
+}

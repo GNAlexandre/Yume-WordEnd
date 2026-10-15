@@ -1,0 +1,72 @@
+{
+  "id": "j4_2_diner",
+  "start": "priere",
+  "nodes": {
+    "priere": {
+      "speaker_id": "nygglatho",
+      "text": "Mains jointes, mes chéries. Une prière… et fourchettes levées, toutes ensemble !",
+      "next": "priere_2"
+    },
+    "priere_2": {
+      "speaker": "",
+      "text": "Le dîner. Puis, au dessert, des flans au caramel.",
+      "next": "priere_3"
+    },
+    "priere_3": {
+      "speaker": "",
+      "text": "Première cuillère. Une petite laisse tomber la sienne. Tintement. Silence.",
+      "next": "priere_4"
+    },
+    "priere_4": {
+      "speaker": "",
+      "text": "Et tout le réfectoire s'illumine.",
+      "next": "priere_5"
+    },
+    "priere_5": {
+      "speaker": "Les petites",
+      "text": "Tu en referas demain ? Dis ? Tu en referas ?"
+    },
+    "renifle": {
+      "speaker": "",
+      "text": "Nygglatho passe derrière Willem et le renifle longuement.",
+      "next": "renifle_2"
+    },
+    "renifle_2": {
+      "speaker_id": "nygglatho",
+      "text": "Hmm. Vous sentez le sucre, maintenant. C'est très, très imprudent.",
+      "next": "renifle_3"
+    },
+    "renifle_3": {
+      "speaker_id": "nygglatho",
+      "text": "Je vous préviens : je ne vous laisserai pas me voler l'estomac de mes filles.",
+      "next": "renifle_4"
+    },
+    "renifle_4": {
+      "speaker_id": "ithea",
+      "text": "Alors, {player} ? Il est bon, son flan ?",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker_id": "ithea",
+      "text": "Avoue.",
+      "choices": [
+        {
+          "text": "C'est trop sucré.",
+          "next": "sucre"
+        },
+        {
+          "text": "… Oui.",
+          "next": "oui"
+        }
+      ]
+    },
+    "sucre": {
+      "speaker_id": "ithea",
+      "text": "Trop sucré, dit-elle, en finissant le sien jusqu'à la dernière miette."
+    },
+    "oui": {
+      "speaker_id": "ithea",
+      "text": "Nya-ha-ha. Je le savais."
+    }
+  }
+}

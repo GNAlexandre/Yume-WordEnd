@@ -1,0 +1,282 @@
+{
+  "_comment": "ACTE1.md 4.1 (s. 7) : la cuisine interdite. La cuisinière du jour (fairy_12 dans ACTE1) est une fée générique, fairy_05 (les génériques vont de 01 à 06).",
+  "title": "La cuisine interdite",
+  "day": 4,
+  "slot": "apres_midi",
+  "map": "entrepot_rdc",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "refectoire_porte_cuisine",
+    "radius": 2.6
+  },
+  "present": [
+    "willem",
+    "fairy_05",
+    "collon",
+    "lakhesh",
+    "tiat",
+    "pannibal"
+  ],
+  "steps": [
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "cuisine_fourneau",
+      "facing": "north",
+      "outfit": "cuisine",
+      "anim": "travaille"
+    },
+    {
+      "do": "place",
+      "who": "fairy_05",
+      "at": "cuisine_table",
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "refectoire_porte_cuisine",
+      "offset": [
+        -0.4,
+        0.2
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "refectoire_porte_cuisine",
+      "offset": [
+        0.4,
+        0.2
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "refectoire_porte_cuisine",
+      "offset": [
+        -0.2,
+        0.8
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "refectoire_porte_cuisine",
+      "offset": [
+        0.6,
+        0.8
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "face",
+      "who": "player",
+      "toward": "refectoire_porte_cuisine"
+    },
+    {
+      "do": "bubble",
+      "who": "collon",
+      "text": "chuchote"
+    },
+    {
+      "do": "wait",
+      "time": 1.0
+    },
+    {
+      "do": "bubble",
+      "who": "tiat",
+      "text": "caramel"
+    },
+    {
+      "do": "dialogue",
+      "node": "porte"
+    },
+    {
+      "if": {
+        "not_flag": "j4_espionne"
+      },
+      "do": "walk",
+      "who": "collon",
+      "to": "couloir_centre",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "if": {
+        "not_flag": "j4_espionne"
+      },
+      "do": "walk",
+      "who": "tiat",
+      "to": "couloir_centre",
+      "gait": "course"
+    },
+    {
+      "if": {
+        "not_flag": "j4_espionne"
+      },
+      "do": "wait",
+      "time": 1.5
+    },
+    {
+      "if": {
+        "not_flag": "j4_espionne"
+      },
+      "do": "walk",
+      "who": "collon",
+      "to": "refectoire_porte_cuisine",
+      "offset": [
+        -0.4,
+        0.2
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "if": {
+        "not_flag": "j4_espionne"
+      },
+      "do": "walk",
+      "who": "tiat",
+      "to": "refectoire_porte_cuisine",
+      "offset": [
+        -0.2,
+        0.8
+      ],
+      "gait": "course"
+    },
+    {
+      "if": {
+        "flag": "j4_espionne"
+      },
+      "do": "camera",
+      "to": "willem",
+      "distance": 9,
+      "time": 1.0,
+      "wait": true
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "refectoire_porte_cuisine",
+      "offset": [
+        -0.5,
+        -0.9
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "refectoire_porte_cuisine",
+      "offset": [
+        0.3,
+        -1.0
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "refectoire_porte_cuisine",
+      "offset": [
+        -0.1,
+        -0.4
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "refectoire_porte_cuisine",
+      "offset": [
+        0.8,
+        -0.5
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "anim",
+      "who": "willem",
+      "anim": "repos"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "player"
+    },
+    {
+      "do": "camera",
+      "to": "cuisine_table",
+      "distance": 12,
+      "time": 0.8
+    },
+    {
+      "do": "dialogue",
+      "node": "gouter"
+    },
+    {
+      "do": "camera_reset"
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "couloir_centre",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "lakhesh",
+      "to": "couloir_centre",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "couloir_centre",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "couloir_centre",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "wait",
+      "time": 1.4
+    },
+    {
+      "do": "leave",
+      "who": "collon"
+    },
+    {
+      "do": "leave",
+      "who": "lakhesh"
+    },
+    {
+      "do": "leave",
+      "who": "tiat"
+    },
+    {
+      "do": "leave",
+      "who": "pannibal"
+    }
+  ]
+}

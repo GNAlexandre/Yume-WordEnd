@@ -1,0 +1,81 @@
+{
+  "_comment": "ACTE1.md 3.1 (V1) : le matin, sous le porche ; Ithea et Nephren suivent {player} (3.2).",
+  "title": "L'information",
+  "day": 3,
+  "slot": [
+    "aube",
+    "matin"
+  ],
+  "map": "entrepot",
+  "hint": "hint",
+  "trigger": {
+    "on": "enter",
+    "marker": "from_entrepot_rdc"
+  },
+  "present": [
+    "ithea",
+    "nephren"
+  ],
+  "steps": [
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "porche_banc",
+      "facing": "south",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "porche_banc",
+      "offset": [
+        1.2,
+        0.6
+      ],
+      "facing": "west",
+      "outfit": "maison"
+    },
+    {
+      "do": "camera",
+      "to": "porche_banc",
+      "distance": 12,
+      "time": 0.8
+    },
+    {
+      "do": "dialogue",
+      "node": "porche"
+    },
+    {
+      "do": "camera_reset"
+    },
+    {
+      "do": "follow",
+      "who": "ithea",
+      "distance": 1.6,
+      "stop_beyond": 60
+    },
+    {
+      "do": "follow",
+      "who": "nephren",
+      "distance": 2.6,
+      "stop_beyond": 60
+    },
+    {
+      "do": "hint",
+      "text": "hint_ville"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "map": "sentier"
+    }
+  ]
+}

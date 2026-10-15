@@ -1,0 +1,161 @@
+{
+  "_comment": "ACTE1.md 1.6 (s. 4), séquence vue d'ailleurs : Willem dîne de restes au réfectoire.",
+  "title": "Le dîner de restes",
+  "day": 1,
+  "after": [
+    "j1_5_premiers_pas"
+  ],
+  "map": "entrepot_etage",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "dortoir_b",
+    "radius": 2.5
+  },
+  "sequence": true,
+  "present": [
+    "pannibal",
+    "willem",
+    "nygglatho",
+    "fairy_01",
+    "fairy_02"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "dortoir_b_lit_1_bas",
+      "outfit": "vie",
+      "anim": "dort"
+    },
+    {
+      "do": "bubble",
+      "who": "pannibal",
+      "text": "bonne_nuit"
+    },
+    {
+      "do": "wait",
+      "time": 1.4
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.6
+    },
+    {
+      "do": "go_to",
+      "map": "entrepot_rdc",
+      "marker": "from_entrepot_etage"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "refectoire_bout_est",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "refectoire_bout_est",
+      "offset": [
+        -1.0,
+        1.2
+      ],
+      "facing": "east",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "fairy_01",
+      "at": "couloir_centre",
+      "offset": [
+        -0.4,
+        -1.4
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "fairy_02",
+      "at": "couloir_centre",
+      "offset": [
+        0.4,
+        -1.4
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "couloir_est",
+      "facing": "west"
+    },
+    {
+      "do": "camera",
+      "to": "refectoire_bout_est",
+      "distance": 12,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.6
+    },
+    {
+      "do": "dialogue",
+      "node": "repas"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "fairy_01"
+    },
+    {
+      "do": "bubble",
+      "who": "willem",
+      "text": "tetes"
+    },
+    {
+      "do": "wait",
+      "time": 0.5
+    },
+    {
+      "do": "leave",
+      "who": "fairy_01"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_02"
+    },
+    {
+      "do": "wait",
+      "time": 1.2
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.6
+    },
+    {
+      "do": "camera_reset",
+      "time": 0
+    },
+    {
+      "do": "go_to",
+      "map": "entrepot_etage",
+      "marker": "from_entrepot_rdc"
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "palier",
+      "facing": "west"
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.6
+    }
+  ]
+}

@@ -15,6 +15,11 @@ extends Node
 ##   reparaît derrière lui après un changement de carte : restage_followers) et les remises au
 ##   repos différées (idle_later).
 
+## Joueur mené coincé : après STUCK_NUDGE s, des pas de côté ; après STUCK_HOP s, posé au
+## point de passage.
+const STUCK_NUDGE := 0.4
+const STUCK_HOP := 1.6
+
 ## Places de la carte courante (set_map).
 var places: LifePlaces = null
 ## Scène en cours (pour les avertissements).
@@ -46,6 +51,8 @@ func player_within(spec: Variant, radius: float) -> bool:
 
 ## Plus de suiveur ni de remise au repos (fin de scène, nouvelle partie).
 func clear() -> void:
+	for npc_id: StringName in followers():
+		remove_follower(npc_id)
 	_followers.clear()
 	_idle_at.clear()
 
@@ -158,10 +165,11 @@ func walk_player(target: Vector3, gait: StringName = &"marche") -> void:
 	var waypoints := PackedVector3Array()
 	var nav := ensure_nav()
 	if nav != null and nav.ready:
-		waypoints = nav.find_path(body.global_position, target)
+		waypoints = route(body.global_position, nav.find_path(body.global_position, target))
 	waypoints.append(target)
 	var speed := body.run_speed if gait == &"course" else body.walk_speed
 	var waited := 0.0
+	var stuck := 0.0
 	var index := 0
 	while (
 		index < waypoints.size() and waited < StoryRunner.WALK_TIMEOUT and is_instance_valid(body)
@@ -173,16 +181,110 @@ func walk_player(target: Vector3, gait: StringName = &"marche") -> void:
 		if toward.length() <= reach:
 			index += 1
 			continue
-		body.story_drive = toward.normalized() * speed
+		var heading := toward.normalized()
+		if stuck > STUCK_NUDGE:
+			# Coincé contre un angle (montant de porte, meuble) : un pas de côté vers le chemin.
+			var side := Vector3(-heading.z, 0.0, heading.x)
+			heading = (
+				(heading * 0.4 + side * (1.0 if int(stuck * 2.0) % 2 == 0 else -1.0)).normalized()
+			)
+		body.story_drive = heading * speed
+		var before := body.global_position
 		await get_tree().physics_frame
+		if not is_instance_valid(body):
+			return
 		if not get_tree().paused:
-			waited += get_physics_process_delta_time()
+			var step := get_physics_process_delta_time()
+			waited += step
+			var moved := Vector2(
+				body.global_position.x - before.x, body.global_position.z - before.z
+			)
+			stuck = stuck + step if moved.length() < speed * step * 0.25 else 0.0
+			if stuck > STUCK_HOP:
+				# Toujours coincé : la scène pose le joueur au point de passage (sans contrôle).
+				place_player(waypoints[index])
+				stuck = 0.0
 	if not is_instance_valid(body):
 		return
 	body.story_drive = Vector3.ZERO
 	if index < waypoints.size():
 		place_player(target)
 	body.set_story_hold(was_held)
+
+
+## Chemin praticable par le joueur (vraie physique) à partir d'un chemin de la navigation :
+## points écartés des murs (clear_point) et, dedans, chaque passage d'une pièce à l'autre
+## franchi par le milieu de la porte (le chemin lissé des PNJ frôle les montants).
+func route(start: Vector3, path: PackedVector3Array) -> PackedVector3Array:
+	var result := PackedVector3Array()
+	var map := WorldManager.current_map_node()
+	var room := map.get_node_or_null(^"Ground") as InteriorRoom if map != null else null
+	var previous := start
+	for point: Vector3 in path:
+		if room != null and room.plan != null:
+			result.append_array(_door_crossing(room, previous, point))
+		result.append(clear_point(point))
+		previous = point
+	return result
+
+
+func _door_crossing(room: InteriorRoom, from: Vector3, to: Vector3) -> PackedVector3Array:
+	var crossing := PackedVector3Array()
+	var local_from := room.to_local(from)
+	var local_to := room.to_local(to)
+	var room_from := room.room_at(local_from.x, local_from.z)
+	var room_to := room.room_at(local_to.x, local_to.z)
+	if room_from == room_to or room_from.is_empty() or room_to.is_empty():
+		return crossing
+	for door: Dictionary in room.plan.doors:
+		if not door.has("axis") or not door.has("line"):
+			continue
+		var center := InteriorLayout.opening_center(door)
+		var across := (
+			Vector3.BACK if int(door["axis"]) == InteriorRoom.HORIZONTAL else Vector3.RIGHT
+		)
+		var before := center - across * 0.5
+		var after := center + across * 0.5
+		var pair := [room.room_at(before.x, before.z), room.room_at(after.x, after.z)]
+		if not (pair.has(room_from) and pair.has(room_to)):
+			continue
+		if pair[0] != room_from:
+			across = -across
+		crossing.append(room.to_global(center - across * 0.7))
+		crossing.append(room.to_global(center + across * 0.7))
+		return crossing
+	return crossing
+
+
+## Un point de passage où le corps du joueur tient sans toucher un mur ni un meuble (la
+## navigation des PNJ, sans physique, frôle les murs d'un quart de case ; le joueur, plus
+## large, s'y accrocherait) : le point lui-même, sinon le plus proche libre à 0,25 ou 0,5 m.
+func clear_point(point: Vector3) -> Vector3:
+	var body := player()
+	if body == null or not body.is_inside_tree():
+		return point
+	var space := body.get_world_3d().direct_space_state
+	var shape := SphereShape3D.new()
+	shape.radius = 0.45
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = shape
+	query.collision_mask = 1
+	for reach: float in [0.0, 0.25, 0.5]:
+		for degrees: float in [0.0, 90.0, 180.0, 270.0, 45.0, 135.0, 225.0, 315.0]:
+			var candidate := (
+				point + Vector3.FORWARD.rotated(Vector3.UP, deg_to_rad(degrees)) * reach
+			)
+			query.transform = Transform3D(Basis.IDENTITY, candidate + Vector3.UP * 0.9)
+			var blocked := false
+			for hit: Dictionary in space.intersect_shape(query, 8):
+				if hit["collider"] is StaticBody3D:
+					blocked = true
+					break
+			if not blocked:
+				return candidate
+			if reach == 0.0:
+				break
+	return point
 
 
 ## La navigation de la carte courante, construite tout de suite au besoin (null sans carte).
@@ -194,8 +296,9 @@ func ensure_nav() -> LifeNav:
 	return LifeDirector.nav()
 
 
-## Un PNJ suit le joueur à distance m (il s'arrête au-delà de stop_beyond m : sans lumière, il
-## ne voit rien) jusqu'à unfollow ou la fin de la scène, d'une carte à l'autre.
+## Un PNJ suit le joueur à distance m, sans le gêner (corps hors de la couche 1) ; il s'arrête
+## au-delà de stop_beyond m (sans lumière, il ne voit rien) ; jusqu'à unfollow ou la fin de la
+## scène, d'une carte à l'autre.
 func add_follower(
 	npc_id: StringName, distance: float, stop_beyond: float, gait: StringName
 ) -> void:
@@ -205,6 +308,9 @@ func add_follower(
 
 func remove_follower(npc_id: StringName) -> void:
 	_followers.erase(npc_id)
+	var actor := LifeDirector.actor(npc_id)
+	if actor != null and is_instance_valid(actor.npc) and not actor.is_moving():
+		actor.npc.set_moving(false)
 
 
 ## Suiveurs en cours (ids).
@@ -237,6 +343,8 @@ func _tick_followers() -> void:
 		var actor := LifeDirector.actor(npc_id)
 		if actor == null or not is_instance_valid(actor.npc):
 			continue
+		# Un suiveur ne barre jamais le passage au joueur (corps hors de la couche 1).
+		actor.npc.set_moving(true)
 		var settings: Dictionary = _followers[npc_id]
 		var keep: float = settings["distance"]
 		var offset := actor.position() - body.global_position

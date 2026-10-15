@@ -1,0 +1,11 @@
+{
+  "_comment": "Ce que dit Almita quand on lui parle hors des scènes, sur l'île n° 68 (StoryDirector : jamais les dialogues des quêtes de l'ancienne île). Entrées par jour ; la dernière, start, vaut toujours.",
+  "id": "talk_almita",
+  "start": "n0",
+  "nodes": {
+    "n0": {
+      "speaker_id": "almita",
+      "text": "Tu viens jouer ? On cherche une joueuse."
+    }
+  }
+}

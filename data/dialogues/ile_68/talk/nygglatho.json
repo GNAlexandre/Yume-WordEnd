@@ -1,0 +1,37 @@
+{
+  "_comment": "Ce que dit Nygglatho quand on lui parle hors des scènes, sur l'île n° 68 (StoryDirector : jamais les dialogues des quêtes de l'ancienne île). Entrées par jour ; la dernière, start, vaut toujours.",
+  "id": "talk_nygglatho",
+  "start": "n2",
+  "entries": [
+    "n0",
+    "n1"
+  ],
+  "nodes": {
+    "n0": {
+      "speaker_id": "nygglatho",
+      "text": "Il est tard, ma chérie. Les petites devraient dormir, et toi aussi.",
+      "if": {
+        "day": 1
+      }
+    },
+    "n1": {
+      "speaker_id": "nygglatho",
+      "text": "Le nouveau est bien maigre. Il faudra le nourrir. Pour la bonne cause, évidemment.",
+      "next": "n1_2",
+      "if": {
+        "day": [
+          2,
+          4
+        ]
+      }
+    },
+    "n1_2": {
+      "speaker_id": "nygglatho",
+      "text": "Tu as eu ton argent de poche ? Chut, c'est entre nous."
+    },
+    "n2": {
+      "speaker_id": "nygglatho",
+      "text": "Tu as bonne mine aujourd'hui. Appétissante, presque."
+    }
+  }
+}

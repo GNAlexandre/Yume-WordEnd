@@ -1,0 +1,123 @@
+{
+  "_comment": "ACTE1.md 2.1 (V1 ; VEX) : le réveil, la toilette des petites au point d'eau, la cloche du petit-déjeuner (90 s avant la seconde cloche : sinon, le pain de Lakhesh, 2.2).",
+  "title": "Le matin de l'aînée",
+  "day": 2,
+  "slot": "aube",
+  "map": "entrepot_etage",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "collon",
+    "lakhesh",
+    "tiat"
+  ],
+  "steps": [
+    {
+      "do": "hint",
+      "text": "hint"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "map": "entrepot_rdc"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "point_eau",
+      "offset": [
+        -0.9,
+        -0.2
+      ],
+      "facing": "north",
+      "outfit": "pyjama",
+      "anim": "travaille"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "point_eau",
+      "offset": [
+        0.0,
+        -0.4
+      ],
+      "facing": "north",
+      "outfit": "pyjama",
+      "anim": "travaille"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "point_eau",
+      "offset": [
+        -1.6,
+        0.3
+      ],
+      "facing": "north",
+      "outfit": "pyjama"
+    },
+    {
+      "do": "wait_for",
+      "reach": "point_eau",
+      "radius": 3.4
+    },
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "bubble",
+      "who": "collon",
+      "text": "brrr"
+    },
+    {
+      "do": "dialogue",
+      "node": "toilette"
+    },
+    {
+      "do": "slot",
+      "slot": "matin",
+      "time": 2.0
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "refectoire_allee",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "lakhesh",
+      "to": "refectoire_allee",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "refectoire_allee",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "hint",
+      "text": "hint_cloche"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "reach": "refectoire_allee",
+      "radius": 2.2,
+      "timeout": 90,
+      "timeout_flag": "j2_petit_dejeuner_rate"
+    }
+  ]
+}

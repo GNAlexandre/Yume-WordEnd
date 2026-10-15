@@ -1,0 +1,20 @@
+{
+  "id": "j3_2_chemin",
+  "start": "bavardage",
+  "nodes": {
+    "bavardage": {
+      "speaker_id": "ithea",
+      "text": "Il paraît qu'il est venu sans prévenir personne. Un homme mystérieux. Ça commence comme le tome 2.",
+      "next": "bavardage_2"
+    },
+    "bavardage_2": {
+      "speaker_id": "nephren",
+      "text": "Il n'y a pas de tome 2.",
+      "next": "bavardage_3"
+    },
+    "bavardage_3": {
+      "speaker_id": "ithea",
+      "text": "Il y en aura un."
+    }
+  }
+}

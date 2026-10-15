@@ -1,0 +1,31 @@
+{
+  "_comment": "ACTE1.md 1.2, étape 4.",
+  "id": "j1_2_embuscade",
+  "start": "reconnue",
+  "nodes": {
+    "reconnue": {
+      "speaker_id": "pannibal",
+      "text": "… Hm ? Ça sent… l'aînée.",
+      "next": "reconnue_2"
+    },
+    "reconnue_2": {
+      "speaker": "{player}",
+      "text": "Évidemment que c'est moi. Pannibal, on frappe d'abord et on regarde ensuite ?",
+      "next": "reconnue_3"
+    },
+    "reconnue_3": {
+      "speaker_id": "pannibal",
+      "text": "Exactement. C'est la bonne méthode.",
+      "next": "reconnue_4"
+    },
+    "reconnue_4": {
+      "speaker_id": "pannibal",
+      "text": "Mais il y a quelqu'un d'autre. Il vient du port. Je l'ai entendu marcher dans le noir.",
+      "next": "reconnue_5"
+    },
+    "reconnue_5": {
+      "speaker_id": "pannibal",
+      "text": "Je vais le maîtriser !"
+    }
+  }
+}

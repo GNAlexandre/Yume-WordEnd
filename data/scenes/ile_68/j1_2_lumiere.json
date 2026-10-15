@@ -1,0 +1,71 @@
+{
+  "_comment": "ACTE1.md 1.2 (s. 2), sous le porche : Nygglatho envoie {player} chercher Pannibal. La lumière de fée est celle du joueur la nuit (Atmosphere).",
+  "title": "La lumière dans la nuit",
+  "day": 1,
+  "after": [
+    "j1_1_port"
+  ],
+  "map": "entrepot",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "nygglatho"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "player",
+      "at": "porte_seuil",
+      "offset": [
+        0.6,
+        1.6
+      ],
+      "facing": "east"
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "porche_banc",
+      "offset": [
+        0.8,
+        0.4
+      ],
+      "facing": "west",
+      "outfit": "vie",
+      "anim": "hanches"
+    },
+    {
+      "do": "camera",
+      "to": "porche_banc",
+      "distance": 13,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.4
+    },
+    {
+      "do": "dialogue",
+      "node": "porche"
+    },
+    {
+      "do": "anim",
+      "who": "nygglatho",
+      "anim": "repos"
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.2
+    },
+    {
+      "do": "hint",
+      "text": "hint"
+    },
+    {
+      "do": "control",
+      "on": true
+    }
+  ]
+}
