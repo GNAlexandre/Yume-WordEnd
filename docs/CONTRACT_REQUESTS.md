@@ -819,3 +819,8 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   jour 11.
 - **I2 (cristal)** : l'étape `show` (`{"do": "show", "node": "Geometry/Nygglatho/comm_crystal_call_1",
   "visible": true}`) est prête pour les scènes du cristal (jours 6 et 8, lot S2).
+- **U1 (interface « Nuit douce »)** : le récit appelle `DialogueBox.set_presentation(&"bandeau")`
+  avant le dialogue d'une scène qui tient le joueur, `&"nuit"` sinon et après chaque dialogue
+  (appel tolérant : `has_method`). Le calendrier et l'indice n'ont plus de couleur en dur : panneaux
+  et textes prennent le thème ; la page lit ses couleurs dans le type de thème `Calendar` (`paper`,
+  `ink`, `strike`, `ring`, `today`), à défaut des valeurs du script : U1 peut les y poser.

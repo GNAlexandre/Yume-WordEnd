@@ -88,7 +88,10 @@ func _ready() -> void:
 	else:
 		SaveManager.new_game(&"chtholly")
 		SaveManager.close_game(false)
+	# La démo regarde aussi pendant la pause (calendrier ouvert) ; la partie, elle, se met en pause.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_game = GAME_SCENE.instantiate() as Node3D
+	_game.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(_game)
 	_player = _game.get_node(^"Player") as Player
 	_box = _game.get_node(^"UI/DialogueBox") as DialogueBox
@@ -126,6 +129,9 @@ func _physics_process(delta: float) -> void:
 	if _done or _player == null:
 		return
 	_elapsed += delta
+	if get_tree().paused:
+		_check_capture()
+		return
 	if _elapsed > 900.0:
 		print(
 			(
@@ -263,7 +269,8 @@ func _satisfy(step: Dictionary) -> Callable:
 	if step.has("reach"):
 		if step.has("map") and StringName(str(step["map"])) != WorldManager.current_map():
 			return _go.bind(StringName(str(step["map"])))
-		return _teleport.bind(step["reach"])
+		# Au bord du rayon, côté sud (on arrive par le bas de l'écran), pas sur le point même.
+		return _teleport.bind(step["reach"], float(step.get("radius", 1.0)))
 	if step.has("map"):
 		return _go.bind(StringName(str(step["map"])))
 	if step.has("talk"):
@@ -302,8 +309,9 @@ func _go(map_id: StringName, marker: StringName = &"") -> void:
 	await WorldManager.go_to(map_id, arrival)
 
 
-func _teleport(spec: Variant) -> void:
-	StoryDirector.stage().place_player(StoryDirector.stage().resolve(spec).origin)
+func _teleport(spec: Variant, back: float = 0.0) -> void:
+	var at := StoryDirector.stage().resolve(spec).origin
+	StoryDirector.stage().place_player(at + Vector3(0.0, 0.0, maxf(back - 0.4, 0.0)))
 	await get_tree().physics_frame
 
 

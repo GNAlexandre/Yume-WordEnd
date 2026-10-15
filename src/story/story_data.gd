@@ -90,7 +90,7 @@ const STEPS: Dictionary = {
 	"leave": {"who": "npc_who!"},
 	"release": {"who": "npc_who!"},
 	"bubble": {"who": "npc_who!", "text": "text!", "time": "number"},
-	"dialogue": {"node": "node!", "file": "file", "npc": "npc"},
+	"dialogue": {"node": "node!", "file": "file", "npc": "npc", "presentation": "presentation"},
 	"camera":
 	{
 		"to": "toward!",
@@ -134,6 +134,9 @@ const DIRECTIONS: Dictionary = {
 	"west": Vector3.LEFT,
 }
 const GAITS: Array[String] = ["marche", "course"]
+## Présentations d'un dialogue (interface « Nuit douce », lot U1) : bandeau (sans boîte, scène
+## sans contrôle) ou nuit (la boîte).
+const PRESENTATIONS: Array[String] = ["bandeau", "nuit"]
 ## Couleurs du voile des scènes (fondu au noir, au blanc).
 const BLACK := Color(0.043, 0.027, 0.075)
 const WHITE := Color(1.0, 0.98, 0.94)
@@ -639,6 +642,9 @@ static func _check_value(
 		"node", "file":
 			if not _is_name(value):
 				found.append("%s : nom attendu" % where)
+		"presentation":
+			if not PRESENTATIONS.has(str(value)):
+				found.append("%s : %s" % [where, " ou ".join(PRESENTATIONS)])
 		"path":
 			var node_path := str(value) if value is String else ""
 			if node_path.is_empty() or node_path.begins_with("/") or node_path.contains(".."):

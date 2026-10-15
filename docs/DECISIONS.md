@@ -3114,3 +3114,6 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   la protagoniste est menée à sa place avant le dialogue) ; seules exceptions, les voisines assises
   à table (chaises à 0,5 m) et les piles de petites (`tombe`). À vérifier sur la capture de
   chaque dialogue (lot S2 compris).
+- **E6 — présentation des dialogues du récit** : champ facultatif `presentation` (bandeau, nuit) de
+  l'étape `dialogue` ; sans lui, bandeau quand la scène a retiré le contrôle, nuit sinon (règle
+  donnée pour l'interface « Nuit douce » du lot U1).

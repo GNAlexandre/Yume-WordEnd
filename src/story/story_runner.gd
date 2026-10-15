@@ -28,6 +28,9 @@ const DEFAULT_CAMERA := 1.2
 const DIALOGUE_PREFIX := "story_"
 const TALK := &"parle"
 const IDLE := &"repos"
+## Présentations du dialogue (DialogueBox.set_presentation, lot U1).
+const PRESENT_HELD := &"bandeau"
+const PRESENT_FREE := &"nuit"
 
 var director: Node
 var stage: StoryStage
@@ -337,6 +340,7 @@ func _talk(step: Dictionary) -> void:
 	var dialogue_id := StringName(DIALOGUE_PREFIX + String(scene_id))
 	if step.has("npc"):
 		npc = LifeData.find_npc(StringName(str(step["npc"])))
+	_present(_presentation(step))
 	if not _dialogue.play(path, str(step["node"]), dialogue_id, npc):
 		push_warning(
 			"StoryRunner : dialogue %s:%s impossible (%s)" % [file, step["node"], scene_id]
@@ -344,6 +348,24 @@ func _talk(step: Dictionary) -> void:
 		return
 	while _dialogue.is_running() and not _stopped:
 		await get_tree().process_frame
+	_present(PRESENT_FREE)
+
+
+## Présentation du dialogue (interface « Nuit douce », lot U1) : « presentation » de l'étape, sinon
+## « bandeau » tant que la scène tient le joueur (séquence sans contrôle), « nuit » s'il a la main.
+func _presentation(step: Dictionary) -> StringName:
+	if step.has("presentation"):
+		return StringName(str(step["presentation"]))
+	var body: Player = stage.player()
+	return PRESENT_HELD if body != null and body.is_story_held() else PRESENT_FREE
+
+
+## Demande la présentation à la boîte de dialogue, si elle sait la changer
+## (DialogueBox.set_presentation, lot U1 ; sans elle, rien).
+func _present(presentation: StringName) -> void:
+	var box := stage.dialogue_box()
+	if box != null and box.has_method(&"set_presentation"):
+		box.call(&"set_presentation", presentation)
 
 
 func _camera(step: Dictionary) -> void:

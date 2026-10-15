@@ -1582,7 +1582,7 @@ sans acte, garde son moteur de quêtes. Décisions : docs/DECISIONS.md (« E6 »
 | `outfit` | who, outfit | change sa tenue (`NpcData.outfits`) |
 | `leave` / `release` | who | le fait disparaître / le rend tout de suite à la vie |
 | `bubble` | who, text, time | une bulle |
-| `dialogue` | node, file (la scène), npc | un dialogue (choix : deux au plus) |
+| `dialogue` | node, file (la scène), npc, presentation | un dialogue (choix : deux au plus) ; présentation « bandeau » (sans boîte) ou « nuit » (la boîte), par défaut bandeau tant que la scène tient le joueur (`DialogueBox.set_presentation` du lot U1, appelée si elle existe) |
 | `camera` / `camera_reset` | to, offset, distance, pitch, time, wait | cadrage, gros plan (9 m), lever les yeux (15°) ; rendre la caméra |
 | `fade` | to (black, white, clear), time | fondu |
 | `card` | text, time | un carton sur l'écran (résumé d'une carte à venir) |

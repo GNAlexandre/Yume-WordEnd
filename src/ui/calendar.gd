@@ -12,16 +12,24 @@ extends Control
 ##   examinant le calendrier de la chambre (StoryDirector.calendar_requested). Ouvert, il met le
 ##   jeu en pause (PROCESS_MODE_ALWAYS) ; journal, Échap ou « Fermer » le referment, et l'indice
 ##   se rappelle (StoryHint.recall).
+## - Aucun style en dur : panneaux et textes prennent le thème du HUD ; les couleurs de la page
+##   (papier, encre, trait, cercle, jour courant) se lisent dans le type de thème « Calendar »
+##   (couleurs paper, ink, strike, ring, today), à défaut DEFAULT_COLORS.
 
 signal opened
 signal closed
 
 const GROUP := &"story_calendar"
 const CELL_SIZE := Vector2(118, 96)
-const INK := Color(0.33, 0.22, 0.4)
-const STRIKE := Color(0.75, 0.22, 0.2, 0.85)
-const RING := Color(0.82, 0.33, 0.43)
-const TODAY := Color(1.0, 0.84, 0.45, 0.55)
+## Type de thème des couleurs de la page, et leurs valeurs quand le thème ne les donne pas.
+const THEME_TYPE := &"Calendar"
+const DEFAULT_COLORS := {
+	&"paper": Color(1.0, 0.98, 0.94, 0.9),
+	&"ink": Color(0.33, 0.22, 0.4),
+	&"strike": Color(0.75, 0.22, 0.2, 0.85),
+	&"ring": Color(0.82, 0.33, 0.43),
+	&"today": Color(1.0, 0.84, 0.45, 0.55),
+}
 
 var _paused_by_me: bool = false
 var _in_dialogue: bool = false
@@ -106,7 +114,6 @@ func refresh() -> void:
 		var row := Label.new()
 		row.text = "%s — %s" % [_day_label(day), StoryDirector.calendar_line(day)]
 		row.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		row.add_theme_color_override(&"font_color", INK)
 		row.add_theme_font_size_override(&"font_size", 22)
 		_lines.add_child(row)
 	if days.is_empty():
@@ -121,6 +128,14 @@ func refresh() -> void:
 		else ""
 	)
 	_hint.visible = not hint.is_empty()
+
+
+## Couleur de la page (paper, ink, strike, ring, today) : celle du thème (type Calendar), à
+## défaut DEFAULT_COLORS.
+func page_color(color_name: StringName) -> Color:
+	if has_theme_color(color_name, THEME_TYPE):
+		return get_theme_color(color_name, THEME_TYPE)
+	return DEFAULT_COLORS.get(color_name, Color.WHITE)
 
 
 ## Lignes affichées (tests) : « Jour N — texte ».
@@ -147,7 +162,7 @@ func _day_cell(day: int) -> Control:
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.set_anchors_preset(Control.PRESET_FULL_RECT)
 	label.add_theme_font_size_override(&"font_size", 34)
-	label.add_theme_color_override(&"font_color", INK)
+	label.add_theme_color_override(&"font_color", page_color(&"ink"))
 	cell.add_child(label)
 	if day == StoryDirector.departure_day():
 		var note := Label.new()
@@ -156,7 +171,7 @@ func _day_cell(day: int) -> Control:
 		note.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 		note.offset_top = -26
 		note.add_theme_font_size_override(&"font_size", 16)
-		note.add_theme_color_override(&"font_color", RING)
+		note.add_theme_color_override(&"font_color", page_color(&"ring"))
 		cell.add_child(note)
 	cell.draw.connect(_draw_cell.bind(cell, day))
 	return cell
@@ -164,16 +179,17 @@ func _day_cell(day: int) -> Control:
 
 func _draw_cell(cell: Control, day: int) -> void:
 	var rect := Rect2(Vector2.ZERO, cell.size)
-	cell.draw_rect(rect, Color(1, 0.98, 0.94, 0.9))
-	cell.draw_rect(rect, Color(INK, 0.35), false, 2.0)
+	cell.draw_rect(rect, page_color(&"paper"))
+	cell.draw_rect(rect, Color(page_color(&"ink"), 0.35), false, 2.0)
 	if day == GameState.day:
-		cell.draw_rect(rect.grow(-4), TODAY)
+		cell.draw_rect(rect.grow(-4), page_color(&"today"))
 	if day < GameState.day:
 		# Les jours passés sont rayés, de sa main (ACTE1.md, 0.1).
-		cell.draw_line(rect.position + Vector2(14, 16), rect.end - Vector2(14, 16), STRIKE, 4.0)
+		var strike := page_color(&"strike")
+		cell.draw_line(rect.position + Vector2(14, 16), rect.end - Vector2(14, 16), strike, 4.0)
 	if day == StoryDirector.departure_day():
 		var center := rect.get_center() - Vector2(0, 6)
-		cell.draw_arc(center, 30.0, 0.0, TAU, 40, RING, 3.0)
+		cell.draw_arc(center, 30.0, 0.0, TAU, 40, page_color(&"ring"), 3.0)
 
 
 func _input(event: InputEvent) -> void:
