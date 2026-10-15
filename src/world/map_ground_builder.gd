@@ -663,6 +663,15 @@ func _side_piece(
 		var style: int = MapGroundData.Face.WALL if stairs else MapGroundData.Face.EARTH
 		if data.faces[c] != MapGroundData.NO_FACE:
 			style = data.faces[c]
+		# (C3b) Joue d'une rampe : dans la matière de la rampe (l'herbe), un talus qui prolonge la pente,
+		# pas une cale de terre sombre vue de biais.
+		if not stairs and data.faces[c] == MapGroundData.NO_FACE:
+			var near := _cell[neighbor]
+			var layer := int(
+				data.material_specs[data.cell_material(near % data.width, floori(float(near) / data.width))]["layer"]
+			)
+			_face(line, Vector4(ground, ground, y0, y1), side, Vector2i(MapGroundData.Face.ATLAS, layer))
+			return
 		_face(line, Vector4(ground, ground, y0, y1), side, Vector2i(style, 0))
 	else:
 		var style := data.face_style(_cell[neighbor], ground - minf(y0, y1))

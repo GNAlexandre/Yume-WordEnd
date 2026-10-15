@@ -4,8 +4,9 @@ extends "res://tests/stubs/c1_exterior_test.gd"
 ## tests/stubs/c1_exterior_test.gd (plan, sorties, marqueurs, points, circulation à pied, rien ne
 ## cache le joueur, densité, sol nu, draw calls, aucune lumière), plus :
 ## - la sortie vers l'entrepôt, le marqueur d'arrivée, Spawn ;
-## - le relief : trois terrasses (+1, +2, +3 m) montées par trois rampes, le sommet de 12 × 12 m
-##   plat à 3 m, le vide au nord (la mer de nuages sous la colline) ;
+## - le relief (C3b) : des terrasses aux contours irréguliers (+1, +2,5 et +3,5 m, des marches de
+##   0,5 m sur les flancs) montées par trois rampes larges, le sommet de 12 × 12 m plat à 3,5 m, le
+##   vide au nord (la mer de nuages sous la colline, des rochers et des îles qui flottent) ;
 ## - le sommet : la place cercle_talismans libre, le petit cristal et les points de la scène de
 ##   l'acte 1 (8.8), la vue au nord ouverte (rien de haut devant le vide, au centre) ;
 ## - les décors et les images du plan, tous livrés ; l'arbre solitaire et le rocher du plan en
@@ -99,22 +100,60 @@ func test_the_exit_leads_to_the_warehouse() -> void:
 
 func test_the_relief_follows_the_plan() -> void:
 	assert_almost_eq(_ground.height_at(20.0, 36.0), 0.0, 0.05, "le pied de la colline, 0")
-	assert_almost_eq(_ground.height_at(30.0, 29.0), 1.0, 0.05, "la terrasse basse, +1 m")
-	assert_almost_eq(_ground.height_at(10.0, 22.0), 2.0, 0.05, "la terrasse haute, +2 m")
-	assert_almost_eq(_ground.height_at(20.0, 12.0), 3.0, 0.05, "le sommet, +3 m")
-	assert_almost_eq(_ground.height_at(26.0, 10.0), 3.0, 0.05, "le sommet, l'est du cercle")
+	assert_almost_eq(_ground.height_at(18.0, 30.0), 1.0, 0.05, "la terrasse basse, +1 m")
+	assert_almost_eq(_ground.height_at(20.0, 23.5), 2.5, 0.05, "la terrasse haute, +2,5 m")
+	assert_almost_eq(_ground.height_at(20.0, 12.0), 3.5, 0.05, "le sommet, +3,5 m")
+	assert_almost_eq(_ground.height_at(26.0, 10.0), 3.5, 0.05, "le sommet, l'est du cercle")
+	# Les trois rampes du plan : (x0, z0, x1, z1, bas, haut). Larges (5 cases) et longues : 11 à 14° de pente.
 	for rect: Array in [
-		[12.0, 30.0, 16.0, 34.0, 0.0, 1.0],
-		[24.0, 26.0, 28.0, 29.0, 1.0, 2.0],
-		[14.0, 20.0, 18.0, 23.0, 2.0, 3.0]
+		[10.0, 30.0, 15.0, 34.0, 0.0, 1.0],
+		[23.0, 24.0, 28.0, 30.0, 1.0, 2.5],
+		[14.0, 19.0, 19.0, 24.0, 2.5, 3.5]
 	]:
-		var middle := _ground.height_at((rect[0] + rect[2]) / 2.0, (rect[1] + rect[3]) / 2.0)
+		var cx: float = (rect[0] + rect[2]) / 2.0
+		var depth: float = rect[3] - rect[1]
+		assert_gte(rect[2] - rect[0], 5.0, "une rampe large %s" % [rect.slice(0, 4)])
+		var rise: float = rect[5] - rect[4]
+		assert_lt(rad_to_deg(atan(rise / depth)), 15.0, "une vraie pente, pas un coin %s" % [rect.slice(0, 4)])
+		var middle := _ground.height_at(cx, (rect[1] + rect[3]) / 2.0)
 		assert_between(middle, rect[4] + 0.1, rect[5] - 0.1, "à mi-rampe %s" % [rect.slice(0, 4)])
-		var foot := _ground.height_at((rect[0] + rect[2]) / 2.0, rect[3] + 0.4)
+		var foot := _ground.height_at(cx, rect[3] + 0.4)
 		assert_between(
 			foot, rect[4] - 0.05, rect[4] + 0.05, "au pied de la rampe %s" % [rect.slice(0, 4)]
 		)
-	assert_gte(_level_count(), 4, "quatre niveaux : 0, 1, 2 et 3 m")
+		var top := _ground.height_at(cx, rect[1] - 0.4)
+		assert_between(
+			top, rect[5] - 0.05, rect[5] + 0.05, "en haut de la rampe %s" % [rect.slice(0, 4)]
+		)
+	assert_gte(_level_count(), 4, "au moins quatre niveaux")
+
+
+## Des contours irréguliers, pas des rectangles : des marches de 0,5 m à 1,5 m, et le bord de chaque
+## terrasse ne court jamais droit sur plus de huit mètres (C3b).
+func test_the_terraces_are_irregular_not_stacked_plates() -> void:
+	var heights := {}
+	for x in range(4, 37):
+		for z in range(4, 38):
+			var h := _ground.height_at(float(x) + 0.5, float(z) + 0.5)
+			if h != MapGround.VOID_HEIGHT:
+				heights[snappedf(h, 0.5)] = true
+	assert_gte(heights.size(), 7, "des paliers de 0,5 m à 3,5 m : %s" % [heights.keys()])
+	# Sur chaque colonne de x (de 6 à 34), on compte les marches vers le sud qui ont plus de 0,4 m.
+	var drops := {}
+	var longest_straight := 0
+	for line in range(18, 36):
+		var run := 0
+		for x in range(6, 35):
+			var up := _ground.height_at(float(x) + 0.5, float(line) - 0.01)
+			var down := _ground.height_at(float(x) + 0.5, float(line) + 0.01)
+			if up != MapGround.VOID_HEIGHT and down != MapGround.VOID_HEIGHT and up - down > 0.4:
+				drops[snappedf(up - down, 0.5)] = true
+				run += 1
+				longest_straight = maxi(longest_straight, run)
+			else:
+				run = 0
+	assert_lte(longest_straight, 12, "aucune falaise rectiligne de plus de 12 m (%d)" % longest_straight)
+	assert_true(drops.has(0.5) and drops.has(1.0) and drops.has(1.5), "des marches de 0,5, 1 et 1,5 m : %s" % [drops.keys()])
 
 
 func _level_count() -> int:
@@ -139,7 +178,7 @@ func test_the_cape_ends_on_the_void_above_the_sea_of_clouds() -> void:
 	# On ne tombe pas : la barrière du bord arrête le joueur avant la côte.
 	assert_false(_ground.is_walkable(20.0, 1.5), "pas de marche dans le vide")
 	assert_true(
-		_blocked_between(Vector3(20.0, 3.5, 5.0), Vector3(20.0, 3.5, 2.0)), "la bande du bord ferme"
+		_blocked_between(Vector3(20.0, 4.0, 5.0), Vector3(20.0, 4.0, 2.0)), "la bande du bord ferme"
 	)
 
 
@@ -169,8 +208,8 @@ func test_the_summit_circle_is_flat_free_grass() -> void:
 			)
 			z += 1.0
 		x += 1.0
-	assert_almost_eq(low, 3.0, 0.05, "le cercle est plat")
-	assert_almost_eq(high, 3.0, 0.05, "le cercle est plat")
+	assert_almost_eq(low, 3.5, 0.05, "le cercle est plat")
+	assert_almost_eq(high, 3.5, 0.05, "le cercle est plat")
 	assert_eq(_elements_in_standing(circle), 0, "rien de debout dans le cercle : la scène s'y joue")
 
 
