@@ -242,6 +242,33 @@ PROPS.update({
 })
 
 
+# (CF) La forêt profonde (CARTE.md, section 8 ; cahier n° 5, lot R5) : le refuge, les bosquets, le sapin abattu, le sorbier,
+# la lisière sombre, la berge, le tronc du gué, les remous et les mares cachées (remplaçants : tools/hd2d_foret.py), et
+# les variantes de premier plan de ce qui se dresse au sud d'un endroit où l'on marche.
+PROPS.update({
+    "forest_wall_deep": panel("ForestWallDeep", "props/forest_wall_deep.png", "", "lisiere",
+                              [("BoxShape3D", ["size = Vector3(16, 3, 1.6)"], (0, 1.5, 0))]),
+    "forest_wall_deep_forest": inherited("forest_wall_deep", "ForestWallDeep", "foreground = true"),
+    "grove_dense": panel("GroveDense", "props/grove_dense.png", "shadow_width = 1.6", "plant_tall",
+                         [("BoxShape3D", ["size = Vector3(5.2, 2.0, 1.6)"], (0, 1.0, 0))]),
+    "grove_dense_fg": inherited("grove_dense", "GroveDense", "foreground = true"),
+    "fallen_pine": panel("FallenPine", "props/fallen_pine.png", "", "log",
+                         [("BoxShape3D", ["size = Vector3(5.4, 1.2, 0.8)"], (0, 0.6, 0))]),
+    "fallen_pine_fg": inherited("fallen_pine", "FallenPine", "foreground = true"),
+    "rowan": panel("Rowan", "props/rowan.png", "", "tree",
+                   [("CylinderShape3D", ["height = 3", "radius = 0.3"], (0, 1.5, 0))]),
+    "rowan_fg": inherited("rowan", "Rowan", "foreground = true"),
+    "refuge_oak": panel("RefugeOak", "props/refuge_oak.png", "shadow_width = 1.8", "tree",
+                        [("BoxShape3D", ["size = Vector3(2.6, 3.0, 1.4)"], (0, 1.5, 0))]),
+    "refuge_oak_fg": inherited("refuge_oak", "RefugeOak", "foreground = true"),
+    "log_bridge_b": panel("LogBridgeB", "props/log_bridge_b.png", "shadow_width = 0.0", "log"),
+    "river_bank": panel("RiverBank", "props/river_bank.png", "shadow_width = 0.0", "plant_low"),
+    "river_rapids": panel("RiverRapids", "anim/river_rapids.png", "shadow_width = 0.0\nframes = 4\nfps = 8.0", "water"),
+    "hidden_pool_a": decal("HiddenPoolA", "decals/hidden_pool_a.png"),
+    "hidden_pool_b": decal("HiddenPoolB", "decals/hidden_pool_b.png"),
+})
+
+
 def write_all(quiet=False):
     """Écrit les scènes de PROPS qui manquent ou ont changé ; rend les noms écrits."""
     written = []

@@ -202,7 +202,7 @@
         {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}
       ]
     },
-    "foret_profonde": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "foret_profonde": {"kind": "dehors", "views": [{"name": "entree", "at": [40, 6], "look": "S", "moments": ["matin", "nuit"]}, {"name": "sentier_nord", "at": [41, 16], "look": "S", "moments": ["matin", "couchant"]}, {"name": "cerfs", "at": [62, 14], "look": "E", "moments": ["matin", "couchant"]}, {"name": "gue", "at": [44, 28.5], "look": "S", "moments": ["matin", "nuit", "nuit:pluie"]}, {"name": "lisiere_riviere", "at": [52, 31], "look": "E", "moments": ["matin", "couchant"]}, {"name": "riviere_nord", "at": [16, 14], "look": "E", "moments": ["matin"]}, {"name": "refuge", "at": [16, 41], "look": "N", "moments": ["matin", "couchant", "nuit"]}, {"name": "mare_cachee", "at": [29.5, 46], "look": "N", "moments": ["matin"]}, {"name": "souille", "at": [24, 51], "look": "N", "moments": ["matin", "couchant"]}, {"name": "sentier_est", "at": [70, 46.5], "look": "E", "moments": ["matin", "nuit"]}, {"name": "loups", "at": [68, 52.5], "look": "N", "moments": ["couchant", "nuit"]}, {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}]},
     "essai": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
     "essai_relief": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
     "entrepot_rdc_essai": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
