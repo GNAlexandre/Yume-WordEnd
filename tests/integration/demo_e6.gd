@@ -282,8 +282,8 @@ func _next_trigger() -> Callable:
 		if GameState.is_scene_done(scene_id):
 			last = scene_id
 	var next := {
-		&"j1_2_lumiere": _go.bind(&"sentier"),
-		&"j1_2_embuscade": _teleport.bind([22, 12]),
+		&"j1_2_lumiere": _ambush,
+		&"j1_2_embuscade": _teleport.bind(&"chtholly_arrivee"),
 		&"j1_5_premiers_pas": _teleport.bind(&"dortoir_b"),
 		&"j1_7_chambre": _sleep,
 		&"j2_1_matin": _teleport.bind(&"refectoire_allee"),
@@ -305,6 +305,12 @@ func _go(map_id: StringName, marker: StringName = &"") -> void:
 func _teleport(spec: Variant) -> void:
 	StoryDirector.stage().place_player(StoryDirector.stage().resolve(spec).origin)
 	await get_tree().physics_frame
+
+
+func _ambush() -> void:
+	if WorldManager.current_map() != &"sentier":
+		await _go(&"sentier")
+	await _teleport(&"premiere_embuscade")
 
 
 func _talk(npc_id: StringName) -> void:

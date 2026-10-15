@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 1.2, étapes 3 et 4 (combat 3.1, première manche) : sur la carte d'attente du sentier (la carte du sentier et du marais viendra, lot C-sentier). Le combat est un crochet du lot E8 (« embuscade_pannibal ») ; sans lui, une courte séquence sans contrôle.",
+  "_comment": "ACTE1.md 1.2, étapes 3 et 4 (combat 3.1, première manche) : près de premiere_embuscade, Pannibal bondit des roseaux. Le combat est un crochet du lot E8 (« embuscade_pannibal ») ; sans lui, une courte séquence sans contrôle.",
   "title": "L'embuscade",
   "day": 1,
   "after": [
@@ -8,7 +8,9 @@
   "map": "sentier",
   "hint": "hint",
   "trigger": {
-    "on": "enter"
+    "on": "reach",
+    "point": "premiere_embuscade",
+    "radius": 7
   },
   "present": [
     "pannibal"
@@ -17,9 +19,10 @@
     {
       "do": "place",
       "who": "pannibal",
-      "at": [
-        16,
-        7
+      "at": "premiere_embuscade",
+      "offset": [
+        1.5,
+        -2.2
       ],
       "facing": "south",
       "outfit": "vie"
@@ -92,10 +95,7 @@
     {
       "do": "walk",
       "who": "pannibal",
-      "to": [
-        27,
-        11
-      ],
+      "to": "lumiere_pannibal",
       "gait": "course",
       "wait": false
     },

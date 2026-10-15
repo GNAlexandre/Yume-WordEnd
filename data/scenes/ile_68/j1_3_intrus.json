@@ -9,10 +9,7 @@
   "hint": "hint",
   "trigger": {
     "on": "reach",
-    "point": [
-      22,
-      12
-    ],
+    "point": "chtholly_arrivee",
     "radius": 4
   },
   "present": [
@@ -23,29 +20,20 @@
     {
       "do": "place",
       "who": "willem",
-      "at": [
-        30,
-        14
-      ],
+      "at": "vue_marais",
       "facing": "west",
       "outfit": "manteau"
     },
     {
       "do": "place",
       "who": "pannibal",
-      "at": [
-        26,
-        9
-      ],
-      "facing": "east",
+      "at": "lumiere_pannibal",
+      "facing": "south",
       "outfit": "vie"
     },
     {
       "do": "camera",
-      "to": [
-        27,
-        12
-      ],
+      "to": "marais_chute",
       "distance": 15,
       "time": 1.2,
       "wait": true
@@ -53,10 +41,7 @@
     {
       "do": "walk",
       "who": "willem",
-      "to": [
-        27.5,
-        13
-      ]
+      "to": "marais_chute"
     },
     {
       "do": "bubble",
