@@ -327,7 +327,7 @@ def pose(p):
     scatter("YardGrass", ["grass_clump_a", "grass_clump_c", "tall_grass", "grass_tuft", "wild_grass" if False else "grass_clump_d"],
             yard[0::2], seed=42, check=False)
     scatter("YardStones", ROCKS + ["fern_c"], yard[1::3], seed=43, check=False)
-    yard_decals = poisson(Rect(0.8, 20.6, 57.0, 29.8), 2.9, 120, lambda x, z: free(decal=True)(x, z), seed=44)
+    yard_decals = poisson(Rect(0.8, 20.6, 57.0, 29.8), 3.4, 100, lambda x, z: free(decal=True)(x, z), seed=44)
     scatter("YardMud", ["mud_patch", "puddle_a", "puddle_b", "hay_scatter", "leaves_rust_b", "leaves_scatter", "pebbles_a",
                         "pebbles_b", "footprints"], yard_decals, seed=45, check=False)
     # Le pied de la route de la ville, avant la sortie : des buissons, des herbes, des cailloux.
