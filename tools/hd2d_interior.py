@@ -327,6 +327,9 @@ LOT_NAMES = {
     # livrées étaient déjà au manifeste sous le nom de leur remplaçant et gardent leur lot).
     "R1": ["floor_roof_deck", "roof_edge_slate", "desk_clean", "desk_chtholly_mirror_up", "polishing_trestle",
            "potted_plant", "bed_iron_cover", "bath_steam", "comm_crystal_call", "wall_clock_swing"],
+    # (CV) Le snack-bar de la ville haute (cahier n° 5, lot R4, sections 6.6 et 6.7).
+    "R4": ["floor_stone_town", "wall_stone_inside", "wall_plaster_ochre", "snack_counter", "snack_shelf",
+           "snack_stools", "snack_meal_tray"],
 }
 LOT_OF = {name: lot for lot, names in LOT_NAMES.items() for name in names}
 
@@ -520,9 +523,28 @@ ANIMS_R1 = [
 OUTDOOR = OUTDOOR + OUTDOOR_R1
 ANIMS = ANIMS + ANIMS_R1
 
-# Tous les meubles, objets et décors de plein air des cartes : listes d'E3, de T2, d'I1, de C2 et d'I2.
-ALL_FURNITURE = FURNITURE + FURNITURE_T2 + FURNITURE_I1 + FURNITURE_C2 + FURNITURE_R1
-ALL_OBJECTS = OBJECTS + OBJECTS_I1 + OBJECTS_C2
+# --- (CV) Le snack-bar de la ville haute (docs/lore/CARTE.md, section 9.4) ------------------------------------
+#
+# Images du lot R4 (cahier n° 5, 6.7) que le plan cite : remplaçants de tools/hd2d_ville.py (une image livrée sous
+# le même nom les remplace sans toucher au code). Profondeurs : celles du plan de CARTE.md ; le sol et les murs
+# servent aussi aux cartes d'attente des autres boutiques (librairie, café habituel).
+SURFACES_CV = [
+    ("floor_stone_town", (384, 384), "tile", 3),
+    ("wall_stone_inside", (384, 288), "tile_h", 3),
+    ("wall_plaster_ochre", (384, 288), "tile_h", 3),
+]
+FURNITURE_CV = [
+    ("snack_counter", (288, 115), 0.8, 0.0, 2),
+    ("snack_shelf", (154, 154), 0.5, 0.0, 3),
+    ("snack_stools", (154, 77), 0.5, 0.0, 2),
+]
+OBJECTS_CV = [
+    ("snack_meal_tray", (48, 24), 0.0, 2),
+]
+
+# Tous les meubles, objets et décors de plein air des cartes : listes d'E3, de T2, d'I1, de C2, d'I2 et de CV.
+ALL_FURNITURE = FURNITURE + FURNITURE_T2 + FURNITURE_I1 + FURNITURE_C2 + FURNITURE_R1 + FURNITURE_CV
+ALL_OBJECTS = OBJECTS + OBJECTS_I1 + OBJECTS_C2 + OBJECTS_CV
 
 # --- (I1) Vues d'un meuble : de flanc, de dos, par le pied (cahier n° 5, section 2.7 et lot R0) ---
 #
@@ -591,7 +613,7 @@ def entries():
     livrées après coup (I1 : lots L, S1 à S5, O1, O2, P, Q, N, et les vues de flanc, de dos et de
     pied qui existent)."""
     out = []
-    for name, size, kind, prio in SURFACES + SURFACES_I1 + SURFACES_C2 + SURFACES_R1:
+    for name, size, kind, prio in SURFACES + SURFACES_I1 + SURFACES_C2 + SURFACES_R1 + SURFACES_CV:
         out.append(_entry("interior/" + name, size, kind, prio, name))
     for name, size, prio in WALL_PANELS + WALL_PANELS_T2 + WALL_PANELS_I1 + WALL_PANELS_C2:
         out.append(_entry("interior/" + name, size, "panel", prio, name))

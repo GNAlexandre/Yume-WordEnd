@@ -2504,6 +2504,38 @@ Légende des lettres : `A` hanging_sign_pan ; `B` hanging_sign_cup ; `C` town_do
 - **Lumière** : lanternes à cristal aux portes, un réverbère double au carrefour (**original**) ;
   fenêtres allumées le soir. **Vue au nord** : la ville qui monte, ses toits, la lisière.
   **Densité** : 80 à 120 éléments par écran ; passants (VIE.md).
+- **Écarts et ajouts (lot CV, `tools/exterior_recipes/ville_haute.py`)** : le plan ci-dessous est suivi sans
+  changement ; ce que la pose y ajoute ou en écarte est dit ici.
+  - **Sol** : les rampes sont de vrais escaliers (marches de 0,1 m, joues en muret) ; les faces des paliers sont en
+    muret de pierre ; rues et grand-rue sont pavées en entier (pas de bande de terre) ; le nord, derrière les
+    maisons, est en herbe et en sous-bois (le plan pave toute la carte).
+  - **Haut de la grand-rue** : un muret de pierre (`town_wall_low`, x 23 → 37) ferme la rue au nord, la fontaine
+    murale et la lanterne s'y adossent ; derrière, le bois et, au loin, les toits de la ville qui continue de
+    monter (`town_roofs_a/b`).
+  - **Passages fermés** (un toit de 6 m cache 9 m au nord de lui, CARTE.md 0.3) : les bandes de 1 à 2 m entre les
+    jardins clos et le pied des maisons derrière eux (z 24 → 25 à l'ouest, z 44 → 46 derrière l'apothicaire, z 4 → 5
+    derrière la maison étroite) et les cours de l'est que la caméra, bornée à x 50, voit à travers le toit voisin ;
+    les autres cours latérales restent ouvertes et sont garnies (caisses, tonneaux, bûches, jeunes arbres).
+  - **Bords** : les `bord maisons` et `bord jardins` des côtés est et ouest portent des maisons aux images du plan
+    (`MaisonBord…`) et des haies de premier plan ; au sud, un muret bas, sauf devant la sortie de la grand-rue ;
+    au bord des terrasses, un garde-corps de fer (`town_railing`, sauf devant les marches).
+  - **Jardins clos** : de jeunes arbres et des buissons, jamais un grand arbre (au sud de la rue haute ou de la rue
+    du café, il couvrirait le bas de l'écran) ; les grands arbres d'or sont à la lisière nord et sur les côtés.
+  - **Portes** : `porte_projection` porte `open_from_day = 5` et `closed_text_key = "ville/projection_close"`
+    (« Pas sans un adulte. ») en métadonnées, comme la maison Limashenka : `StoryStage.apply_doors` les lit. La
+    librairie, le café et la salle de projection mènent à des **cartes d'attente** (la pièce du plan, sa porte et ses
+    points, sans meuble, un écriteau sur le seuil) ; `vers_marche` mène à la place du marché d'attente
+    (`ville_marche`, 32 × 24 m). Les portes de l'accessoiriste et de l'apothicaire sont closes (un texte à examiner).
+  - **Examiner** : fontaine murale, enseignes (poêle, tasse), portes closes, trappe de cave, caisses de pommes, banc
+    (`data/texts/ville.json`).
+  - **Lumières** : aucune dans la carte (le réverbère double et la lanterne ne sont que des images ; E9).
+  - **Images** : les noms du plan que le cahier n° 5 n'a pas livrés ont un remplaçant au manifeste (lot R4,
+    `tools/hd2d_ville.py`) : les façades `town_house_a` à `town_house_f`, `cafe_town`, `shop_snack`,
+    `shop_accessories`, `shop_apothecary`, avec leurs flancs `town_house_a_side`, `town_house_b_side`,
+    `town_house_c_side`, `town_house_d_side`, `town_house_e_side`, `town_house_f_side`, `cafe_town_side`,
+    `shop_snack_side`, `shop_accessories_side`, `shop_apothecary_side`, la matière `wall_stone_town`, les enseignes
+    `hanging_sign_pan` et `hanging_sign_cup`, le bac, la fontaine murale, les marches, la trappe, le muret, le
+    garde-corps et les deux lisières de toits.
 
 ```plan
 carte ville_haute 60 60 dehors
@@ -2588,6 +2620,10 @@ point fontaine 25 11.8
 lumiere reverbere 25.4 34.6 3.6 cristal
 lumiere lanterne_haut 26.5 9.8 2.0 cristal
 ```
+
+<!-- places:ville_haute -->
+**Places de la vie** (lot CV ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`snack_comptoir`, `cafe_porte`, `librairie_porte`, `projection_porte`, `haut_de_rue`, `fontaine`) ; les places réservées, en `Life/Areas` avec leur rectangle (`carrefour`, `bas_de_ville`) ; et, en plus du plan : `rue_haute_ouest` (8 ; 13 ; la rue haute, côté sentier : le passant qui arrive de la forêt ou y retourne), `rue_haute_est` (47 ; 13 ; la rue haute, devant les grandes maisons de l'est : les passants s'y croisent), `rue_haute_trottoir_nord` (9 ; 11.6 ; le trottoir nord de la rue haute : le passant qui change de trottoir à la vue des trois fées (ACTE1.md 3.2)), `rue_haute_trottoir_sud` (9 ; 14.4 ; le trottoir sud de la rue haute, où il passe pour les éviter (ACTE1.md 3.2)), `banc_haut` (45 ; 14.7 ; le banc de pierre au bord de la terrasse haute : on s'y assoit face à la rue), `grand_rue_nord` (30 ; 20 ; la grand-rue, sous la volée du haut : le promeneur qui descend vers la ville), `grand_rue_milieu` (30 ; 27 ; la grand-rue entre la librairie et le snack : les passants qui descendent vers le marché), `carrefour_centre` (30 ; 32 ; le milieu du carrefour de la rue du café : on s'y croise, on s'y arrête pour discuter), `carrefour_ouest` (14 ; 32 ; la rue du café devant la librairie : le client qui hésite devant la vitrine), `carrefour_est` (47 ; 32 ; la rue du café devant l'accessoiriste : la cliente qui regarde les chapeaux), `snack_terrasse` (38.8 ; 32.2 ; devant le comptoir du snack, sur la rue : le client qui attend sa part), `porte_snack` (37.5 ; 32.2 ; devant la porte du snack-bar : où l'on entre, d'où l'on sort (ACTE1.md 3.3 : `ville_haute:porte_snack`)), `cafe_devant` (23 ; 32.2 ; devant le café, au coin de la grand-rue : le buveur qui sort fumer), `bas_de_ville_centre` (30 ; 55 ; la place du bas de la ville : on s'y retrouve avant de descendre au marché), `rue_basse_ouest` (12 ; 55 ; la rue basse devant l'apothicaire : les passants du matin), `rue_basse_est` (47 ; 55 ; la rue basse devant les maisons de l'est : le passant qui rentre chez lui), `vers_marche` (30 ; 58 ; le bas de la grand-rue : d'ici on part vers la place du marché (ville_marche)), `depuis_sentier` (4 ; 13 ; l'entrée de la ville côté sentier : le passant qui arrive de l'entrepôt).
+<!-- /places:ville_haute -->
 
 ### 9.3 La place du marché (`ville_marche`)
 
@@ -2695,6 +2731,26 @@ lumiere reverbere 23 9.2 3.6 cristal
 | `ville_projection` | 10 × 8 | films muets aux images floues, tirées de cristaux enregistreurs ; la lumière revient à la fin ; romances de lézards (V2) | `cinema_screen`, `anim/projection_flicker`, six `cinema_benches` (dossiers vers la caméra), `crystal_projector` (premier plan) | `projection_allee`, `ecran` |
 | `ville_boulangerie` | 5 × 5 + 4 × 5 | le patron grincheux ; Lakhesh y travaille le matin (V3) | boutique : `bread_shelves`, `bakery_counter` ; fournil : `bakery_oven` (`anim/oven_glow`), `kneading_trough` | `boulangerie_comptoir`, `boulangerie_lakhesh`, `fournil_four` |
 | `ville_horloger` | 7 × 5 | (V2 ; les horloges modernes marchent aux cristaux, VEX) | `wallitem_clocks`, `longcase_clock`, `watch_workbench` | `horloger_etabli` |
+
+- **Écarts et ajouts (lot CV, `tools/interior_maps.py`)** :
+  - **Le snack-bar** (`ville_snack`) est construit d'après son plan, sans changement : les images de la colonne
+    « Mobilier » sont celles du lot R4 (`tools/hd2d_ville.py` : `snack_counter`, `snack_shelf`, `snack_stools`,
+    `snack_meal_tray`, le sol `floor_stone_town`, les murs `wall_stone_inside`) ; la table est la `cafe_table_heavy`
+    du café du village. Le nom de la pièce `salle` est propre à la carte (« Salle du snack-bar »).
+  - **Places en plus du plan** : `snack_vendor` (le serveur lycanthrope derrière son comptoir, 4,5 ; 1,85, face à la
+    salle : entre l'étagère et le comptoir il reste 0,35 m, un disque de 1,2 m n'y tient pas, c'est une place, pas un
+    point), `snack_tabouret_ouest` et `snack_tabouret_est` (de part et d'autre du `snack_tabouret`),
+    `snack_table_nord` et `snack_table_nord_est` (les deux autres places de la table des trois aînées, avec
+    `snack_table`), `snack_entree`. Le joueur ne passe pas entre la table et le mur sud (0,07 m de trop).
+  - **Lumières** (ajoutées au plan, QC-14 et QC-15 : sans elles la pièce est noire le soir) : la plaque de cuisson
+    sur son réchaud de cristal (`cristal_ambre`) et une applique à huile au mur est (une suspension au milieu de la
+    salle brûlait le sol, comme au café, QC-23).
+  - **Caméra** : fixe, un point au milieu de la pièce (la pièce tient à l'écran).
+  - **Cartes d'attente** : `ville_cafe`, `ville_librairie` et `ville_projection` sont la pièce du plan (sol, murs,
+    porte, points) sans meuble ni élément de mur, avec un écriteau sur le seuil (`ecriteau`, « Fermé pour inventaire.
+    Revenez bientôt. ») ; leurs lots les meubleront (ajouter leurs images, les retirer de `WAITING_INTERIORS`).
+    `ville_boulangerie` et `ville_horloger` n'ont de porte que sur la place du marché, d'attente elle aussi : pas de
+    carte encore.
 
 <!-- ascii:ville_snack -->
 ```text
@@ -2852,7 +2908,15 @@ marqueur Spawn 6.0 5.0 N
 marqueur from_ville_haute 6.0 5.0 N
 point snack_tabouret 4.5 4.3
 point snack_table 3.4 4.6
+# (CV) Le soir, le snack-bar n'avait que la lumière du joueur (docs/QUALITE.md, QC-14 et QC-15) : la plaque de cuisson,
+# sur son réchaud de cristal, et une applique à huile au mur est (une suspension au milieu brûlait le sol).
+lumiere plaque 4.5 2.1 1.2 cristal_ambre
+lumiere applique_salle 7.8 3.6 1.6 huile
 ```
+
+<!-- places:ville_snack -->
+**Places de la vie** (lots CV et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; et `snack_vendor`, `snack_tabouret_ouest`, `snack_tabouret_est`, `snack_table_nord`, `snack_table_nord_est`, `snack_entree`.
+<!-- /places:ville_snack -->
 
 
 ```plan
@@ -2873,6 +2937,10 @@ point cafe_comptoir 5.5 3.6
 point cafe_table_nygglatho 8.3 6.0
 ```
 
+<!-- places:ville_cafe -->
+**Places de la vie** (lots CV et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; et `cafe_entree`.
+<!-- /places:ville_cafe -->
+
 
 ```plan
 carte ville_librairie 9 7 dedans
@@ -2890,6 +2958,10 @@ marqueur from_ville_haute 4.5 5.2 N
 point librairie_rayons 4.5 2.4
 point librairie_comptoir 6.6 5.1
 ```
+
+<!-- places:ville_librairie -->
+**Places de la vie** (lots CV et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; et `librairie_entree`.
+<!-- /places:ville_librairie -->
 
 
 ```plan
@@ -2913,6 +2985,10 @@ marqueur from_ville_haute 6.0 8.2 N
 point projection_allee 6.0 5.0
 point ecran 6.0 2.4
 ```
+
+<!-- places:ville_projection -->
+**Places de la vie** (lots CV et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; et `projection_entree`.
+<!-- /places:ville_projection -->
 
 
 ```plan

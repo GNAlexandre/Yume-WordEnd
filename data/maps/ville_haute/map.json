@@ -1,0 +1,69 @@
+{
+  "_comment": "Sol en relief de la carte ville_haute, écrit par tools/map_build.py gen d'après plan.json avec heights.png, materials.png et structures.png : modifier le plan et relancer gen (format : PLAN.md, « Format du sol des cartes extérieures »).",
+  "format": "map_ground",
+  "version": 1,
+  "size": [60, 60],
+  "heights_image": "heights.png",
+  "height_step_value": 16,
+  "materials_image": "materials.png",
+  "materials_scale": 2,
+  "palette": {
+    "#3c6e32": "sous_bois",
+    "#7c7c86": "paves_v",
+    "#5aa83c": "herbe",
+    "#8a8070": "paves_vb",
+    "#b0b0a8": "dalles_v",
+    "#403020": "potager"
+  },
+  "edges": {
+    "north": "land",
+    "east": "land",
+    "south": "land",
+    "west": "land"
+  },
+  "skirt": 16,
+  "barrier": true,
+  "materials": {
+    "herbe_drue": {
+      "label": "Herbe drue et molle (grass_b)",
+      "layer": "grass_b",
+      "color": "#4f9a46",
+      "variant": false
+    },
+    "chemin": {
+      "label": "Chemin de terre (path_dirt_b)",
+      "layer": "path_dirt_b",
+      "color": "#d0a060",
+      "variant": false,
+      "path": true
+    },
+    "eau_basse": {
+      "label": "Eau basse du marais : on y marche (VEX)",
+      "layer": "water",
+      "color": "#3a70b0",
+      "walkable": true,
+      "ripple": true,
+      "tint": [0.78, 0.86, 0.8]
+    },
+    "paves_v": {
+      "label": "Pavés de la ville (cobble)",
+      "layer": "cobble",
+      "color": "#7c7c86",
+      "variant": false
+    },
+    "paves_vb": {
+      "label": "Pavés des ruelles (cobble_b)",
+      "layer": "cobble_b",
+      "color": "#8a8070",
+      "variant": false
+    },
+    "dalles_v": {
+      "label": "Dalles de la grand-rue (flagstone)",
+      "layer": "flagstone",
+      "color": "#b0b0a8",
+      "variant": false
+    }
+  },
+  "structures_image": "structures.png",
+  "spawn": [4, 13]
+}

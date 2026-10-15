@@ -137,6 +137,41 @@
         {"name": "ensemble", "overview": true}
       ]
     },
+    "ville_haute": {
+      "kind": "dehors",
+      "views": [
+        {"name": "arrivee", "at": [6, 13], "look": "E", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "rue_haute", "at": [20, 13], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "fontaine", "at": [30, 13], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "maisons_est", "at": [46, 13], "look": "N", "moments": ["matin", "couchant"]},
+        {"name": "marches", "at": [30, 19], "look": "S", "moments": ["matin", "couchant"]},
+        {"name": "grand_rue", "at": [30, 27], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "carrefour", "at": [30, 32], "look": "N", "moments": ["matin", "couchant", "nuit", "nuit:pluie"]},
+        {"name": "snack", "at": [38, 32], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "cafe", "at": [22, 32], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "librairie", "at": [14, 32], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "accessoires", "at": [47, 32], "look": "N", "moments": ["matin"]},
+        {"name": "rue_du_cafe_ouest", "at": [8, 32], "look": "E", "moments": ["matin"]},
+        {"name": "bas_de_ville", "at": [30, 55], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "projection", "at": [20, 55], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "apothicaire", "at": [12, 55], "look": "N", "moments": ["matin"]},
+        {"name": "rue_basse_est", "at": [47, 55], "look": "N", "moments": ["matin", "couchant"]},
+        {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}
+      ]
+    },
+    "ville_snack": {
+      "kind": "dedans",
+      "views": [
+        {"name": "entree", "at": [6, 5.2], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "comptoir", "at": [4.5, 4.4], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "table", "at": [3.4, 5.0], "look": "O", "moments": ["matin"]},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "ville_marche": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "ville_cafe": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "ville_librairie": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "ville_projection": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
     "maison_limashenka": {
       "kind": "dedans",
       "views": [

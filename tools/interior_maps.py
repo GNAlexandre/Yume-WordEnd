@@ -48,6 +48,10 @@ import life_zones  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CARTE = os.path.join(ROOT, "docs", "lore", "CARTE.md")
 INTERIOR_MAPS = ["entrepot_rdc", "entrepot_etage", "salle_des_armes", "cafe", "maison_limashenka"]
+# (CV) La ville : le snack-bar (CARTE.md 9.4, meublé) et trois boutiques d'attente (la pièce, la porte, les points du
+# plan, sans meuble : leur lot les meublera) ; boulangerie et horloger n'ont de porte que sur la place du marché, d'attente.
+INTERIOR_MAPS += ["ville_snack", "ville_cafe", "ville_librairie", "ville_projection"]
+WAITING_INTERIORS = ["ville_cafe", "ville_librairie", "ville_projection"]
 OUTDOOR_MAPS = ["entrepot_toit"]
 WALL_HALF = 0.125
 # Écart d'une ouverture à un angle (InteriorLayout : demi-mur + 0,05 m, et un peu de marge).
@@ -69,7 +73,12 @@ ROOM_NAMES = {
     # (C2) Le café du village et la maison Limashenka (CARTE.md, section 5).
     "salle": "Salle du café", "arriere": "Arrière-boutique", "vestibule": "Vestibule", "salon": "Salon",
 }
-WALLCUTS = {"wall_cellar_stone": "wallcut_stone"}
+# (CV) Nom d'une pièce propre à une carte (la pièce « salle » du café n'est pas celle du snack-bar).
+MAP_ROOM_NAMES = {
+    ("ville_snack", "salle"): "Salle du snack-bar", ("ville_cafe", "salle"): "Salle du café habituel",
+    ("ville_librairie", "salle"): "Librairie", ("ville_projection", "salle"): "Salle de projection",
+}
+WALLCUTS = {"wall_cellar_stone": "wallcut_stone", "wall_stone_inside": "wallcut_stone"}
 # Appui des fenêtres (cahier n° 3, 3.2) ; window_reading_seat est un meuble dans le plan.
 SILLS = {
     "window_cross_small": 1.0, "window_cross_large": 0.8, "window_dusty": 1.3,
@@ -118,6 +127,11 @@ MAP_SETTINGS = {
     # (C2) Une seule pièce de 10 × 8 m ou 12 × 10 m, cadrée entière (docs/INTERIEURS.md, 1.6).
     "cafe": {"camera_bounds": (5.5, 5.0, 3.0, 0.0), "light_preset": "interieur"},
     "maison_limashenka": {"camera_bounds": (3.5, 4.0, 1.5, 0.0), "light_preset": "interieur"},
+    # (CV) Une seule pièce qui tient à l'écran : caméra fixe au milieu (un point), comme le plan de CARTE.md 9.4.
+    "ville_snack": {"camera_bounds": (4.5, 3.5, 0.0, 0.0), "light_preset": "interieur"},
+    "ville_cafe": {"camera_bounds": (5.5, 4.0, 0.0, 0.0), "light_preset": "interieur"},
+    "ville_librairie": {"camera_bounds": (4.5, 3.5, 0.0, 0.0), "light_preset": "interieur"},
+    "ville_projection": {"camera_bounds": (6.0, 5.0, 0.0, 0.0), "light_preset": "interieur"},
 }
 # Sorties vers une carte qui n'existe pas encore (construite en parallèle) : provisoirement vers
 # une carte existante, au Spawn ; relancer gen les raccorde dès que la cible existe.
@@ -177,6 +191,16 @@ EXAMINE = {
         ("tissu", "meuble", ("swords_wrapped", 0), {}),
     ],
     "entrepot_toit": [],
+    # (CV) Textes : data/texts/ville.json (TEXTS_PATH).
+    "ville_snack": [
+        ("comptoir", "meuble", ("snack_counter", 0), {}),
+        ("etagere", "meuble", ("snack_shelf", 0), {}),
+        ("table", "meuble", ("cafe_table_heavy", 0), {}),
+        ("tabourets", "meuble", ("snack_stools", 0), {}),
+    ],
+    "ville_cafe": [("ecriteau", "point", (5.5, 6.3), {"w": 1.2, "d": 0.6})],
+    "ville_librairie": [("ecriteau", "point", (4.5, 5.0), {"w": 1.2, "d": 0.6})],
+    "ville_projection": [("ecriteau", "point", (6.0, 7.8), {"w": 1.2, "d": 0.6})],
     # (C2) Textes : data/texts/village.json (TEXTS_PATH).
     "cafe": [
         ("menu", "mural", "wallitem_menu_cafe", {}),
@@ -197,7 +221,9 @@ EXAMINE = {
     ],
 }
 # Fichier des textes à examiner de chaque carte (Examinable.texts_path) ; sans entrée : celui de l'entrepôt.
-TEXTS_PATH = {"cafe": "res://data/texts/village.json", "maison_limashenka": "res://data/texts/village.json"}
+TEXTS_PATH = {"cafe": "res://data/texts/village.json", "maison_limashenka": "res://data/texts/village.json",
+              "ville_snack": "res://data/texts/ville.json", "ville_cafe": "res://data/texts/ville.json",
+              "ville_librairie": "res://data/texts/ville.json", "ville_projection": "res://data/texts/ville.json"}
 # Ce qui bloque sans image : la place sous le haut de l'escalier (on n'y entre pas : le palier de
 # l'étage est au-dessus). (nom, x0, z0, x1, z1, hauteur).
 BLOCKERS = {
@@ -523,7 +549,7 @@ def interior_json(map_id, plan):
     for room_id, room in plan.rooms.items():
         r = room.rect
         wall = room.extra["mur"]
-        entry = {"name": ROOM_NAMES.get(room_id, room_id), "rects": [[r.x0, r.z0, r.w(), r.d()]],
+        entry = {"name": MAP_ROOM_NAMES.get((map_id, room_id), ROOM_NAMES.get(room_id, room_id)), "rects": [[r.x0, r.z0, r.w(), r.d()]],
                  "floor": room.extra["sol"], "wall": wall}
         if wall in WALLCUTS:
             entry["wallcut"] = WALLCUTS[wall]
@@ -558,7 +584,7 @@ def interior_json(map_id, plan):
                         "sill": SILLS[image]})
     items = []
     for item in plan.walls:
-        if not item.name.startswith("wallitem_"):
+        if not item.name.startswith("wallitem_") or map_id in WAITING_INTERIORS:
             continue
         side = wall_side(item.extra["wall"])
         key = "x" if side in ("N", "S") else "z"
@@ -757,7 +783,7 @@ def interior_scene(map_id, plan, settings):
     scene.node("Ground", "StaticBody3D", ".", props=[("collision_mask", "0"), ("script", room_script),
                                                       ("layout", layout)])
     scene.node("Geometry", "Node3D", ".", props=[("script", batcher)])
-    furniture = expand_furniture(plan)
+    furniture = [] if map_id in WAITING_INTERIORS else expand_furniture(plan)
     groups = []
     for room_id in plan.rooms:
         groups.append(room_id)
@@ -819,7 +845,7 @@ def interior_scene(map_id, plan, settings):
                               ("shape", scene.box((bx1 - bx0, 3.0, bz1 - bz0)))])
     # Éléments « mural » qui sont des meubles ou une porte.
     for wall in plan.walls:
-        if wall.name.startswith("wallitem_"):
+        if wall.name.startswith("wallitem_") or map_id in WAITING_INTERIORS:
             continue
         room = plan.rooms[wall.extra["room"]].rect
         side = wall_side(wall.extra["wall"])
@@ -845,7 +871,7 @@ def interior_scene(map_id, plan, settings):
         else:
             raise SystemExit("%s : élément mural %s non pris en charge" % (map_id, wall.name))
     # Objets posés (sur leur meuble, juste devant son image) et bandes animées.
-    for obj in plan.objects:
+    for obj in [] if map_id in WAITING_INTERIORS else plan.objects:
         x, z = obj.rect.x0, obj.rect.z0
         support = support_of(furniture, x, z)
         room_id = room_of(plan, x, z)
@@ -1037,6 +1063,20 @@ EXTRA_PLACES = {
         ("salon_canape_assise", 6.0, 5.3, 180.0),
         ("vestibule_porte", 2.25, 5.6, 0.0),
     ],
+    # (CV) Les places du snack-bar (ACTE1.md 3.3, VIE.md 2.7) : le serveur derrière son comptoir (pas un point du
+    # plan : entre l'étagère et le comptoir il y a 0,35 m, un disque de 1,2 m n'y tient pas), les tabourets, les
+    # places de la table, la porte.
+    "ville_snack": [
+        ("snack_vendor", 4.5, 1.85, 180.0),
+        ("snack_tabouret_ouest", 3.9, 4.3, 0.0),
+        ("snack_tabouret_est", 5.1, 4.3, 0.0),
+        ("snack_table_nord", 2.0, 3.75, 180.0),
+        ("snack_table_nord_est", 3.0, 3.8, 180.0),
+        ("snack_entree", 6.0, 5.6, 0.0),
+    ],
+    "ville_cafe": [("cafe_entree", 5.5, 6.3, 0.0)],
+    "ville_librairie": [("librairie_entree", 4.5, 5.2, 0.0)],
+    "ville_projection": [("projection_entree", 6.0, 8.2, 0.0)],
 }
 
 
@@ -1254,7 +1294,7 @@ shape = SubResource("BoxShape3D_1")
 
 
 def places_markdown(map_id, plan):
-    furniture = expand_furniture(plan) if map_id in INTERIOR_MAPS else []
+    furniture = expand_furniture(plan) if map_id in INTERIOR_MAPS and map_id not in WAITING_INTERIORS else []
     entries = places(map_id, plan, furniture)
     points = set(plan.points)
     zone_names = {z["name"] for z in life_zones.zones_of(map_id)}
@@ -1264,7 +1304,7 @@ def places_markdown(map_id, plan):
     others = [e[0] for e in extra if e[0] not in chairs and e[0] not in beds]
     lines = ["<!-- places:%s -->" % map_id,
              "**Places de la vie** (lots %s ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : "
-             "les points nommés ci-dessus, à leur nom" % ("C2 et V1" if map_id in ("cafe", "maison_limashenka") else "T2 et V1")]
+             "les points nommés ci-dessus, à leur nom" % ("C2 et V1" if map_id in ("cafe", "maison_limashenka") else "CV et V1" if map_id.startswith("ville_") else "T2 et V1")]
     if chairs:
         lines[-1] += " ; chaque chaise, `%s` à `%s` (rangées a à %s du nord au sud, numérotées d'ouest en " \
                      "est ; regard vers la table)" % (chairs[0], chairs[-1], chairs[-1].split("_")[-1][0])

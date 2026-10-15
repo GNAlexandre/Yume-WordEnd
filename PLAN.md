@@ -1322,6 +1322,10 @@ remplace la carte d'attente), `cafe` et `maison_limashenka` (intérieurs, `tools
   `tests/integration/test_village_in_game.gd` (entrepôt, village, café, maison, retour) ; captures
   `build/c2/shots.sh <carte>:<lieu>:<moment>` sur `tests/integration/demo_c2.tscn` (voir DECISIONS.md, « C2 »).
 
+### (CV) La ville haute et le snack-bar
+
+`ville_haute` (dehors, 60 × 60 m, `tools/exterior_recipes/ville_haute.py`, CARTE.md 9.2 : trois terrasses, grand-rue et deux volées d'escalier, six sorties, portes « Entrer » du snack, du café, de la librairie et de la salle de projection, close avant le jour 5 par `open_from_day = 5` / `closed_text_key = "ville/projection_close"`), `ville_snack` (`tools/interior_maps.py`, 9.4, place `snack_vendor`) et les cartes d'attente `ville_marche`, `ville_cafe`, `ville_librairie`, `ville_projection` (`WAITING`, `WAITING_INTERIORS`) ; lieu `ville` de `ile_68.json` ; 38 remplaçants (lot R4, `tools/hd2d_ville.py`) ; tests `test_ville_haute.gd`, `test_ville_snack.gd`, `test_ville_attente.gd`, `tests/integration/test_ville_in_game.gd` ; textes `data/texts/ville.json` ; décisions : docs/DECISIONS.md (« CV »).
+
 ### (E9) Lumière et temps : mode d'emploi
 
 Contrat : l'API d'`Atmosphere` ci-dessus ; détails et choix dans docs/DECISIONS.md (« E9 »).
