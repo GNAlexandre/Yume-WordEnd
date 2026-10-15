@@ -77,6 +77,10 @@ var checkpoint_distance: float = DEFAULT_CHECKPOINT_DISTANCE
 ## Explication en français du dernier échec, ou de la sauvegarde mise de côté (pour le menu) ;
 ## "" après une opération réussie.
 var last_error: String = ""
+## (E6) Vrai si la dernière partie chargée est une nouvelle partie (new_game, ou fichier illisible
+## remplacé par une nouvelle partie) ; faux pour une partie lue (load_game, import_json).
+## StoryDirector n'ouvre l'acte qu'à une nouvelle partie.
+var started_new: bool = false
 
 var _game_loaded: bool = false
 var _timer: Timer
@@ -256,12 +260,14 @@ func close_game(flush_pending: bool = true) -> void:
 
 
 func _start_new_game(skin_id: StringName) -> void:
+	started_new = true
 	GameState.reset()
 	GameState.skin_id = skin_id
 	_begin()
 
 
 func _apply(data: Dictionary) -> void:
+	started_new = false
 	data.erase("version")
 	data.erase("saved_at")
 	GameState.from_dict(data)

@@ -357,11 +357,19 @@ func test_data_path_convention() -> void:
 	assert_eq(WorldAtlas.data_path("fauna", &"", "ours.tres"), "res://data/fauna/ours.tres")
 	assert_eq(
 		WorldAtlas.find_data("texts", ILE_68, "story.json"),
-		"res://data/texts/story.json",
-		"pas encore de dossier de l'île : le fichier commun"
+		"res://data/texts/ile_68/story.json",
+		"(E6) le fichier de l'île d'abord"
+	)
+	assert_eq(
+		WorldAtlas.find_data("texts", ILE_68, "life.json"),
+		"res://data/texts/life.json",
+		"sans fichier de l'île : le fichier commun"
 	)
 	assert_eq(WorldAtlas.find_data("texts", ILE_68, "absent.json"), "")
-	assert_eq(WorldAtlas.data_dirs("texts", ILE_68), PackedStringArray(["res://data/texts"]))
+	assert_eq(
+		WorldAtlas.data_dirs("texts", ILE_68),
+		PackedStringArray(["res://data/texts/ile_68", "res://data/texts"])
+	)
 	assert_eq(
 		WorldAtlas.data_dirs("world", &"islands"),
 		PackedStringArray(["res://data/world/islands", "res://data/world"]),

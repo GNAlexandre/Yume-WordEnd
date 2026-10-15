@@ -219,7 +219,9 @@ func test_v2_save_without_zone_starts_at_the_start_map() -> void:
 	var text := '{"version": 2, "position": [0.0, 0.0, 0.0], "zone": ""}'
 	assert_eq(SaveManager.import_json(text), OK)
 	assert_eq(GameState.map, &"", "pas encore placée : game.gd la pose au Spawn")
-	assert_eq(WorldManager.starting_map(), WorldManager.START_MAP)
+	assert_eq(
+		WorldManager.starting_map(), WorldManager.start_map, "(E6) la carte d'une nouvelle partie"
+	)
 
 
 func test_v3_map_round_trip() -> void:
@@ -238,7 +240,15 @@ func test_v3_map_round_trip() -> void:
 func test_unknown_map_falls_back_to_the_start_map() -> void:
 	assert_eq(SaveManager.import_json('{"version": 3, "position": [1, 0, 1], "map": "x"}'), OK)
 	assert_eq(GameState.map, &"x", "gardée telle quelle")
-	assert_eq(WorldManager.starting_map(), WorldManager.START_MAP, "carte inconnue : départ")
+	# (E6) Une partie hors de l'acte en jours (d'avant la refonte) reprend sur l'ancienne île ; une
+	# partie de l'acte, à l'entrepôt (START_MAP).
+	assert_eq(
+		WorldManager.starting_map(), WorldManager.LEGACY_MAP, "carte inconnue : l'ancienne île"
+	)
+	WorldManager.start_map = WorldManager.START_MAP
+	var story := '{"version": 3, "position": [1, 0, 1], "map": "x", "day": 2}'
+	assert_eq(SaveManager.import_json(story), OK)
+	assert_eq(WorldManager.starting_map(), WorldManager.START_MAP, "carte inconnue, acte : départ")
 
 
 func test_invalid_v3_map_is_refused() -> void:

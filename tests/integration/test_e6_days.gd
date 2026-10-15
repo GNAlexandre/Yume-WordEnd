@@ -116,11 +116,15 @@ func test_days_2_to_4() -> void:
 	await _resume_day_2()
 	assert_eq(GameState.day, 2)
 	# Jour 2 : la toilette, la fuite, la fenêtre.
-	assert_true(await _read_until(func() -> bool: return StoryDirector.current_scene() == &"j2_1_matin"))
+	assert_true(
+		await _read_until(func() -> bool: return StoryDirector.current_scene() == &"j2_1_matin")
+	)
 	assert_true(await _read_until(func() -> bool: return not player.is_story_held()))
 	await _go(&"entrepot_rdc", &"from_entrepot_etage")
 	await _place(&"point_eau")
-	assert_true(await _read_until(func() -> bool: return LifeSlots.current() == &"matin"), "la cloche")
+	assert_true(
+		await _read_until(func() -> bool: return LifeSlots.current() == &"matin"), "la cloche"
+	)
 	assert_true(await _read_until(func() -> bool: return not player.is_story_held()))
 	await _place(&"refectoire_allee")
 	assert_true(await _done(&"j2_1_matin"))

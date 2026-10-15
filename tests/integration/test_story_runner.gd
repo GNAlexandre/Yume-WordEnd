@@ -69,13 +69,19 @@ func test_steps_conditions_triggers_and_days() -> void:
 	assert_eq(WorldManager.current_map(), &"entrepot_rdc")
 	assert_eq(GameState.day, 1, "l'acte d'essai commence au jour 1")
 	assert_eq(LifeSlots.current(), &"matin")
-	assert_true(await wait_until(func() -> bool: return StoryDirector.current_scene() == &"t1_etapes", 3.0))
+	assert_true(
+		await wait_until(func() -> bool: return StoryDirector.current_scene() == &"t1_etapes", 3.0)
+	)
 	assert_true(player.is_story_held(), "la scène prend le contrôle")
 	assert_true(LifeDirector.is_reserved(&"willem"), "les présents sont réservés")
 	assert_true(await wait_until(func() -> bool: return _box().is_choosing(), 20.0), "le dialogue")
 	var willem := LifeDirector.actor(&"willem")
 	var corner: Vector3 = StoryDirector.stage().resolve(&"refectoire_bout_est").origin
-	assert_lt(Vector2(willem.position().x - corner.x, willem.position().z - corner.z).length(), 0.4, "marche")
+	assert_lt(
+		Vector2(willem.position().x - corner.x, willem.position().z - corner.z).length(),
+		0.4,
+		"marche"
+	)
 	assert_eq(willem.outfit, &"cuisine", "tenue")
 	assert_eq(willem.state, LifeActor.State.SCENE)
 	assert_eq(willem.npc.visual.current_animation(), &"parle", "il parle")
@@ -87,7 +93,9 @@ func test_steps_conditions_triggers_and_days() -> void:
 	assert_true(player.camera_rig.is_story_framed(), "cadrage")
 	_box().choose(1)
 	assert_true(await _play(&"t1_etapes", 1))
-	assert_true(GameState.has_flag(&"t_choix_b") and GameState.has_flag(&"t_suite_b"), "choix et « if »")
+	assert_true(
+		GameState.has_flag(&"t_choix_b") and GameState.has_flag(&"t_suite_b"), "choix et « if »"
+	)
 	assert_true(GameState.has_flag(&"t_trop_tard"), "wait_for : délai écoulé")
 	assert_false(player.camera_rig.is_story_framed(), "caméra rendue")
 	# t2 : sa condition (le choix B) tient, elle part tout de suite.
@@ -98,11 +106,23 @@ func test_steps_conditions_triggers_and_days() -> void:
 	# t3 : un lieu atteint, un suiveur, une conversation attendue.
 	assert_eq(StoryDirector.hint(), "Va au point d'eau.")
 	await _place(&"point_eau")
-	assert_true(await wait_until(func() -> bool: return StoryDirector.current_scene() == &"t3_lieu", 3.0))
+	assert_true(
+		await wait_until(func() -> bool: return StoryDirector.current_scene() == &"t3_lieu", 3.0)
+	)
 	assert_true(await wait_until(func() -> bool: return not player.is_story_held(), 3.0))
 	assert_has(StoryDirector.stage().followers(), &"willem")
 	await _place(&"couloir_est")
-	assert_true(await wait_until(func() -> bool: return LifeDirector.actor(&"willem").position().distance_to(player.global_position) < 2.6, 15.0), "Willem suit")
+	assert_true(
+		await wait_until(
+			func() -> bool:
+				return (
+					LifeDirector.actor(&"willem").position().distance_to(player.global_position)
+					< 2.6
+				),
+			15.0
+		),
+		"Willem suit"
+	)
 	await _place(&"couloir_centre")
 	await wait_physics_frames(30)
 	assert_false(LifeDirector.actor(&"willem").is_moving(), "trop loin (plus de 8 m) : il s'arrête")
@@ -114,7 +134,11 @@ func test_steps_conditions_triggers_and_days() -> void:
 	assert_eq(_game_params, {"n": 2.0})
 	assert_false(GameState.has_flag(&"t4_repli"))
 	# t5 : séquence pas encore vue : elle ne se passe pas ; vue, Échap la passe.
-	assert_true(await wait_until(func() -> bool: return StoryDirector.current_scene() == &"t5_sequence", 3.0))
+	assert_true(
+		await wait_until(
+			func() -> bool: return StoryDirector.current_scene() == &"t5_sequence", 3.0
+		)
+	)
 	assert_false(StoryDirector.is_skippable())
 	StoryDirector.mark_seen(&"t5_sequence")
 	assert_true(StoryDirector.is_skippable())
@@ -157,7 +181,10 @@ func test_free_talk_by_day() -> void:
 	assert_true(await _play(&"t1_etapes", 0))
 	GameState.day = 2
 	var lines: Array[String] = []
-	listen(EventBus.dialogue_line, func(_s: String, text: String, _c: Array[String]) -> void: lines.append(text))
+	listen(
+		EventBus.dialogue_line,
+		func(_s: String, text: String, _c: Array[String]) -> void: lines.append(text)
+	)
 	var willem := LifeDirector.stage(&"willem", player.global_position + Vector3(1.5, 0, 0))
 	LifeDirector.release(&"willem", false)
 	await wait_physics_frames(2)
@@ -165,7 +192,9 @@ func test_free_talk_by_day() -> void:
 	if willem == null:
 		willem = LifeDirector.stage(&"willem", player.global_position + Vector3(1.5, 0, 0))
 	assert_true(LifeDirector.handle_talk(willem), "le récit prend la conversation")
-	assert_eq(lines.back() if not lines.is_empty() else "", "Deuxième jour.", "talk/willem.json, jour 2")
+	assert_eq(
+		lines.back() if not lines.is_empty() else "", "Deuxième jour.", "talk/willem.json, jour 2"
+	)
 	_box().complete_line()
 	_box().advance()
 
@@ -203,7 +232,10 @@ func test_resume_restarts_scene_in_progress() -> void:
 	game = GAME_SCENE.instantiate() as Node3D
 	add_child(game)
 	player = game.get_node(^"Player") as Player
-	assert_true(await wait_until(func() -> bool: return StoryDirector.current_scene() == &"t1_etapes", 5.0), "reprise de la scène")
+	assert_true(
+		await wait_until(func() -> bool: return StoryDirector.current_scene() == &"t1_etapes", 5.0),
+		"reprise de la scène"
+	)
 	assert_true(await _play(&"t1_etapes", 0))
 	assert_eq(GameState.story_scene, &"")
 

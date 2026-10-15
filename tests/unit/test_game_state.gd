@@ -153,6 +153,7 @@ func test_to_dict_matches_save_schema() -> void:
 		keys,
 		[
 			"best_scores",
+			"calendar",
 			"collected_pickups",
 			"day",
 			"flags",
@@ -165,8 +166,10 @@ func test_to_dict_matches_save_schema() -> void:
 			"position",
 			"quest_progress",
 			"quests",
+			"scenes_done",
 			"skin",
 			"slot",
+			"story_scene",
 			"tracked_quest",
 			"weather",
 			"zone",

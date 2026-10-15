@@ -17,6 +17,8 @@ var _previous_zone: StringName
 
 
 func before_each() -> void:
+	# (E6) Une nouvelle partie ouvre l'acte 1 à l'entrepôt : ce test joue l'ancienne île.
+	WorldManager.start_map = WorldManager.LEGACY_MAP
 	_previous_zone = WorldManager.current_zone()
 	GameState.reset()
 	_game = add_child_autofree(GAME_SCENE.instantiate())
@@ -26,6 +28,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
+	WorldManager.start_map = WorldManager.START_MAP
 	if WorldManager.current_zone() != _previous_zone:
 		EventBus.zone_entered.emit(_previous_zone)
 	GameState.reset()

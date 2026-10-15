@@ -355,6 +355,11 @@ func expect(step: Dictionary) -> void:
 		_examined.clear()
 
 
+## Ce qu'attend l'étape wait_for en cours ({} : rien ; démonstrations, tests).
+func expected() -> Dictionary:
+	return _expect.duplicate()
+
+
 ## Vrai quand ce qu'attend wait_for est arrivé.
 func expected_met(step: Dictionary) -> bool:
 	if WorldManager.is_transitioning():
@@ -673,7 +678,10 @@ func _on_game_loaded() -> void:
 	_island = start_island
 	_resume = GameState.story_scene
 	var fresh := (
-		GameState.map.is_empty() and GameState.day == 0 and GameState.scenes_done().is_empty()
+		SaveManager.started_new
+		and GameState.map.is_empty()
+		and GameState.day == 0
+		and GameState.scenes_done().is_empty()
 	)
 	if enabled and fresh and StoryData.has_act(start_island):
 		var start: Dictionary = StoryData.act(start_island)["start"]
