@@ -3285,3 +3285,4 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **E7 — l'ombre du Barocupot** (8.6) : la silhouette livrée (`props/airship_barocupot`) à 48 px/m, teintée sombre, à alpha doux,
   posée par `ShipControl.pass_shadow` à 42 m devant la caméra et 8 m sous son axe, qui traverse 80 m d'ouest en est en 7 s, en fondu ;
   elle se pose dans la carte chargée (la colline, ou la chute dans les nuages d'E9), sans toucher à la carte.
+- **(QC-S) Pans à raccord** : un pan `wrap: x` (`forest_wall_*`, `treeline_*`) ne finit jamais libre dans le champ (joint, prolongé hors de la carte, ou caché par un grand arbre posé devant, `oak_a` de préférence) ; `tools/exterior_maps.py check` échoue sinon (QC-33). Un bout au bord de la carte ne compte qu'au cadrage par défaut (21 m) ; les familles d'un PropScatter ne comptent pas comme cache. Aucune image n'est en cause : leur bord plein est voulu pour le raccord.

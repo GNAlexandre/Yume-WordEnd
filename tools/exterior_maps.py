@@ -479,6 +479,7 @@ class Built:
         self.files = {}
         self.warnings = []
         self.deviations = []
+        self.seams = []
         self.pose = None
         self.scene_text = ""
 
@@ -519,6 +520,12 @@ def build(map_id, all_plans, tmp):
         result.warnings += p.warnings
         result.deviations = list(getattr(recipe, "DEVIATIONS", []))
         result.deviations += plan_gaps(m, writer, p)
+        # (QC-S) Les bouts de pans à raccord qui se voient (docs/QUALITE.md, QC-33) : la carte est fausse.
+        bounds = settings.get("camera_bounds") or (10, 9, p.W - 20, p.D - 17)
+        for name, side, x_end, z, focus in exterior_pose.pose_seams(p, bounds):
+            result.seams.append("bout %s de %s (x %.1f ; z %.1f) dans le champ (point visé %.0f ; %.0f) : bande "
+                                "à bord franc ; le joindre à un autre pan, le cacher derrière un décor ou le "
+                                "sortir du champ" % (side, name, x_end, z, focus[0], focus[1]))
     result.scene_text = scene
     for name, content in ground.items():
         result.files["data/maps/%s/%s" % (map_id, name)] = content
@@ -671,6 +678,9 @@ def main():
                 print("%s : avertissement, %s" % (map_id, line))
             for line in built.deviations:
                 print("%s : écart au plan, %s" % (map_id, line))
+            for line in built.seams:
+                print("%s : raccord visible, %s" % (map_id, line))
+                status = 1
             if args[0] == "check":
                 if rels:
                     print("%s : à réécrire (%s)" % (map_id, ", ".join(rels)))
