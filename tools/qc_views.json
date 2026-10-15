@@ -181,7 +181,11 @@
         {"name": "ensemble", "overview": true}
       ]
     },
-    "colline": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "colline": {"kind": "attente", "views": [
+      {"name": "ensemble", "overview": true},
+      {"name": "lisiere_ouest", "at": [9, 21], "look": "N", "moments": ["matin", "nuit"]},
+      {"name": "lisiere_est", "at": [31, 36], "look": "N", "moments": ["matin", "nuit"]}
+    ]},
     "port": {
       "kind": "dehors",
       "views": [

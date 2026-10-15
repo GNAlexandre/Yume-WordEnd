@@ -460,6 +460,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 2, 2.4)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 2, 2.4)
 flip_h = true
 
+[node name="LisiereBois0" parent="Geometry/Woods" instance=ExtResource("40_forest_wall_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 2, 2.4)
+flip_h = true
+
+[node name="LisiereBois5" parent="Geometry/Woods" instance=ExtResource("39_forest_wall_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 2, 2.4)
+
 [node name="ToitsLointains1" parent="Geometry/Sky" instance=ExtResource("41_town_roofs_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 5, -5.5)
 

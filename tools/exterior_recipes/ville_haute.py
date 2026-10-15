@@ -212,6 +212,10 @@ def pose(p):
     for k, (x, scene) in enumerate(((8.0, "forest_wall_c"), (24.0, "forest_wall_a"), (40.0, "forest_wall_b"),
                                     (56.0, "forest_wall_c"))):
         place("Woods", scene, x, 2.4, y=2.0, name="LisiereBois%d" % (k + 1), flip=k % 2 == 1, check=False)
+    # (QC-S) Un bout libre de pan à raccord se voit comme une bande coupée net (docs/QUALITE.md, QC-33) : un
+    # pan de plus au-delà de chaque bord de la carte.
+    place("Woods", "forest_wall_b", -8.0, 2.4, y=2.0, name="LisiereBois0", flip=True, check=False)
+    place("Woods", "forest_wall_a", 72.0, 2.4, y=2.0, name="LisiereBois5", check=False)
     for k, (x, scene) in enumerate(((10.0, "town_roofs_a"), (26.0, "town_roofs_b"), (42.0, "town_roofs_a"),
                                     (58.0, "town_roofs_b"))):
         place("Sky", scene, x, -5.5, y=5.0, name="ToitsLointains%d" % (k + 1), flip=k % 2 == 1, check=False)
