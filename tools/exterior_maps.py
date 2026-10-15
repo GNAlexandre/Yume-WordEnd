@@ -97,6 +97,8 @@ WAITING["ville_marche"] = {
     "ground": "paves", "path": "chemin", "back": "vers_haute",
     "exit": (14, 0, 18, 0.6), "marker": (16, 2.5, "S"), "spawn": (16, 4.0, "S"),
     "path_pts": [[16, 0], [16, 13]], "sign": (17.8, 13.6), "gap": (13, 19),
+    # (CP) La route du port arrive par l'ouest (CARTE.md 9.3 : sortie vers_port).
+    "more": [{"back": "vers_port", "exit": (0, 10, 0.6, 14), "marker": (2.5, 12, "E")}],
 }
 
 BASIS = {"N": "1, 0, 0, 0, 1, 0, 0, 0, 1", "S": "-1, 0, 0, 0, 1, 0, 0, 0, -1",
@@ -156,8 +158,6 @@ def waiting_scene(map_id, spec, m):
     """La scène d'une carte d'attente."""
     w, d = WAITING_SIZE
     back = [e for e in m.exits if e.name == spec["back"]][0]
-    target, target_marker = back.extra["cible"], back.extra["marqueur"]
-    arrival = "from_" + target
     ext = [("Script", "res://src/world/map.gd", "1_map"), ("Script", "res://src/world/map_ground.gd", "2_ground"),
            ("Script", "res://src/world/prop_batcher.gd", "3_batcher"),
            ("Script", "res://src/world/map_exit.gd", "4_exit"),
@@ -198,21 +198,33 @@ def waiting_scene(map_id, spec, m):
     sx, sz = spec["sign"]
     lines += ['[node name="Sign" parent="Geometry" instance=ExtResource("5_sign")]',
               "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, 0, %s)" % (f(sx), f(sz)), ""]
-    mx, mz, look = spec["marker"]
     px, pz, plook = spec["spawn"]
+    # Les retours : la sortie du plan nommée `back`, puis celles de `more` (une carte d'attente que d'autres
+    # cartes construites visent : chacune a son marqueur d'arrivée from_<cible> et sa sortie de retour).
+    backs = [(back, spec["exit"], spec["marker"], "BoxShape3D_exit")]
+    for k, extra in enumerate(spec.get("more", [])):
+        other = [e for e in m.exits if e.name == extra["back"]][0]
+        backs.append((other, extra["exit"], extra["marker"], "BoxShape3D_exit_%d" % (k + 2)))
+        ex0, ez0, ex1, ez1 = extra["exit"]
+        lines.insert(lines.index('[sub_resource type="BoxShape3D" id="BoxShape3D_exit"]'),
+                     '[sub_resource type="BoxShape3D" id="BoxShape3D_exit_%d"]\nsize = Vector3(%s, 3, %s)\n'
+                     % (k + 2, f(max(ex1 - ex0, 0.6)), f(max(ez1 - ez0, 0.6))))
     lines += ['[node name="Markers" type="Node3D" parent="."]', "",
               '[node name="Spawn" type="Marker3D" parent="Markers"]',
-              "transform = Transform3D(%s, %s, 0.2, %s)" % (BASIS[plook], f(px), f(pz)), "",
-              '[node name="%s" type="Marker3D" parent="Markers"]' % arrival,
-              "transform = Transform3D(%s, %s, 0.2, %s)" % (BASIS[look], f(mx), f(mz)), "",
-              '[node name="Exits" type="Node3D" parent="."]', "",
-              '[node name="%s" type="Area3D" parent="Exits"]' % back.name,
-              "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, 1.5, %s)" % (f((x0 + x1) / 2), f((z0 + z1) / 2)),
-              "collision_layer = 0", "collision_mask = 2", 'script = ExtResource("4_exit")',
-              'target_map = &"%s"' % target, 'target_marker = &"%s"' % target_marker, "",
-              '[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/%s"]' % back.name,
-              'shape = SubResource("BoxShape3D_exit")', "",
-              '[node name="Life" type="Node3D" parent="."]', ""]
+              "transform = Transform3D(%s, %s, 0.2, %s)" % (BASIS[plook], f(px), f(pz)), ""]
+    for exit_, _box, (mx, mz, look), _shape in backs:
+        lines += ['[node name="from_%s" type="Marker3D" parent="Markers"]' % exit_.extra["cible"],
+                  "transform = Transform3D(%s, %s, 0.2, %s)" % (BASIS[look], f(mx), f(mz)), ""]
+    lines += ['[node name="Exits" type="Node3D" parent="."]', ""]
+    for exit_, (bx0, bz0, bx1, bz1), _marker, shape in backs:
+        lines += ['[node name="%s" type="Area3D" parent="Exits"]' % exit_.name,
+                  "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, 1.5, %s)"
+                  % (f((bx0 + bx1) / 2), f((bz0 + bz1) / 2)),
+                  "collision_layer = 0", "collision_mask = 2", 'script = ExtResource("4_exit")',
+                  'target_map = &"%s"' % exit_.extra["cible"], 'target_marker = &"%s"' % exit_.extra["marqueur"], "",
+                  '[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/%s"]' % exit_.name,
+                  'shape = SubResource("%s")' % shape, ""]
+    lines += ['[node name="Life" type="Node3D" parent="."]', ""]
     return "\n".join(lines)
 
 
