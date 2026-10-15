@@ -467,13 +467,13 @@ avertissements « GPU stall due to ReadPixels » de SwiftShader, déjà là avan
 ## La vie (E4)
 
 `tools/web_life.js` mesure la vie du rez-de-chaussée d'essai (quinze PNJ au petit-déjeuner) dans
-le build Web : `index.html?trace&maps=entrepot_rdc_essai&moment=matin&creneau=matin&vie=<mode>`,
+le build Web : `index.html?trace&maps=entrepot_rdc_essai&moment=matin&creneau=matin&contenu=essai&vie=<mode>`,
 avec `vie=off` (directeur coupé : la mesure « avant »), `vie=trace` (les PNJ vivent ; le
 directeur écrit toutes les 2 s « [vie] … directeur … ms/image (max …), navigation …, chemins … »)
 et `vie=cycle` (en plus, le créneau suivant toutes les 20 s : trajets, navigation, chemins). La
 page compte ses images (image la plus longue, images au-delà de 25 et 50 ms). Paramètres de la
 vie : `?creneau=<aube|matin|midi|apres_midi|soir|nuit>` (posé à chaque partie chargée, avec la
-lumière de son moment), `?vie=trace|off|cycle` ; F6 : créneau suivant (Maj : tout de suite).
+lumière de son moment), `?vie=trace|off|cycle` ; `?contenu=essai` (les emplois du temps de démonstration d'E4, `data/life/essai/`, au lieu de ceux de l'île) ; F6 : créneau suivant (Maj : tout de suite). Sur les vraies cartes de l'entrepôt : `?map=entrepot_rdc&creneau=midi` (docs/lore/VIE.md).
 
 ```
 tools/godot --headless --export-release Web build/web/index.html

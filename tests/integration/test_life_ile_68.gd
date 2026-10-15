@@ -117,6 +117,9 @@ func test_every_slot_populates_every_map() -> void:
 	assert_gte(seen["%s/nuit" % ETAGE], 15, "la nuit, les petites couchées dans leurs lits")
 	assert_gte(seen["%s/apres_midi" % DEHORS], 8, "l'après-midi, la cour et les hautes herbes")
 	assert_gte(seen["%s/aube" % TOIT], 2, "le linge sur le toit à l'aube")
+	# De la vie dehors à chaque créneau de jour (une vue, de la vie) ; la nuit, le silence.
+	for slot: StringName in [&"aube", &"matin", &"midi", &"apres_midi", &"soir"]:
+		assert_gte(seen["%s/%s" % [DEHORS, slot]], 1, "dehors, du monde à l'%s" % slot)
 
 
 func test_nobody_is_stuck_when_the_slot_changes_three_times() -> void:
@@ -235,7 +238,7 @@ func test_the_corridor_race_and_the_tower() -> void:
 	assert_not_null(tour, "la tour de fées dans la salle de jeux")
 	assert_eq(tour.base_actor().id, &"willem", "Willem est la base")
 	assert_true(
-		await _until(func() -> bool: return tour.stacked.size() >= 2, 40.0), "elles grimpent"
+		await _until(func() -> bool: return tour.stacked.size() >= 2, 25.0), "elles grimpent"
 	)
 	assert_eq(tour.stacked[0].id, &"nephren", "Nephren d'abord, collée à son dos")
 	assert_true(

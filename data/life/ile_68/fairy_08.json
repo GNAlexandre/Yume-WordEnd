@@ -8,7 +8,7 @@
     {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},
     {"slot": "apres_midi", "map": "entrepot", "place": "champ_jeu", "activity": "errer"},
-    {"slot": "soir", "map": "entrepot_rdc", "place": "refectoire_rang_b", "activity": "manger"},
+    {"slot": "soir", "map": "entrepot", "place": "marelle", "activity": "marelle"},
     {"slot": "nuit", "map": "entrepot_etage", "place": "dortoir_d_lit_1_bas", "activity": "dormir"}
   ]
 }

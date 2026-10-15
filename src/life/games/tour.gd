@@ -53,13 +53,22 @@ func _started() -> void:
 	_gather()
 
 
-func _member_added(actor: LifeActor) -> void:
+func _member_added(_actor: LifeActor) -> void:
 	if running and phase == Phase.GATHER:
-		_send_home(actor)
+		_resend_homes()
 
 
 func _member_removed(actor: LifeActor) -> void:
 	stacked.erase(actor)
+	if running and phase == Phase.GATHER:
+		_resend_homes()
+
+
+## (V1) L'ordre des grimpeuses change avec le groupe (leur rôle) : chacune rejoint le point qui lui revient
+## maintenant, sinon deux PNJ visent le même point et se bloquent.
+func _resend_homes() -> void:
+	for actor: LifeActor in members:
+		_send_home(actor)
 
 
 func _gather() -> void:
