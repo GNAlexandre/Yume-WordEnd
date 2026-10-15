@@ -10,3 +10,4 @@ display_name = "Cuistot du snack"
 skin = ExtResource("2_visual")
 dialogue_path = "res://data/dialogues/snack_vendor.json"
 home_zone = &"beach"
+outfits = Dictionary[StringName, String]({ &"travail": "res://data/npcs/outfits/snack_vendor_work.tres" })

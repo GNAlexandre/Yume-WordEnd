@@ -14,4 +14,4 @@ home_zone = &"village"
 visible_if = {
 "not_quest_step": ["act1_main", ["training", "promise"]]
 }
-outfits = Dictionary[StringName, String]({ &"maison": "res://data/npcs/outfits/willem_home.tres", &"cuisine": "res://data/npcs/outfits/willem_cook.tres", &"manteau": "res://data/npcs/outfits/willem_coat.tres" })
+outfits = Dictionary[StringName, String]({ &"maison": "res://data/npcs/outfits/willem_home.tres", &"cuisine": "res://data/npcs/outfits/willem_cook.tres", &"manteau": "res://data/npcs/outfits/willem_coat.tres", &"marais": "res://data/npcs/outfits/willem_marsh.tres" })

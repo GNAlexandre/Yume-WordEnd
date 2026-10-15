@@ -909,3 +909,19 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   z 20 → 34) ; la recette la limite au niveau 0 (`where level 0`).
 - **Un joueur de la carte du port peut lire le panneau de plus près** : si la scène 1.1 veut un plan fixe du panneau, la caméra du
   récit (E6) le cadre depuis `panneau_sud` ; le panneau (premier plan) s'efface autour d'un joueur placé au nord.
+- **S1b → vie (E4/V1) : Willem, Ithea et Nephren au jour 3** : leurs lignes du jour 3 à midi sont `away: ville_snack` (écrites quand la
+  carte n'existait pas) ; la scène `j3_3_snack` les réserve et les pose, rien ne casse, mais une ligne `map: ville_snack` (Willem à
+  `snack_tabouret`, `manger` ; les aînées à `snack_table_nord` / `snack_table_nord_est`) les y mettrait aussi hors scène. Le matin du
+  jour 3, Willem erre encore dans la cour (`cour_tour`) alors qu'il est parti en ville (ACTE1.md 3.0) : une ligne `away: ville_haute`
+  au matin du jour 3 l'accorderait au récit.
+- **S1b → joueur : cacher la protagoniste dans une séquence sans elle** : `j1_1_port` la pose hors du champ (`port:from_ville_marche`)
+  faute d'un moyen de la cacher ; une étape `hide` (ou `Player.set_story_hidden`) serait plus sûre (sa lumière de fée, la nuit, suit
+  le joueur).
+- **S1b → joueur : l'épée en ville** : la protagoniste porte Seniorious au snack-bar et dans la rue (la planche de combat, tenue de
+  l'entrepôt sans le combat) ; une tenue de ville sans arme, ou l'arme rangée hors combat, éviterait l'épée qui traverse les voisines.
+- **S1b → carte `ville_snack` : des chaises à la table** : la table des trois aînées (`cafe_table_heavy`) n'a pas de chaise ; elles se
+  tiennent debout. Deux chaises (ou un banc) au nord de la table permettraient `assis` à `snack_table_nord` / `_nord_est`.
+- **S1b → vie : le cuistot du snack-bar** : `snack_vendor` n'a pas d'emploi du temps (VIE.md 4.11 : `ville_snack`, du matin au soir,
+  `travaille`) ; `test_life_ile_68_nav` n'admet que les cartes de l'entrepôt et veut chaque place atteignable à pied, or la place
+  `ville_snack:snack_vendor` est derrière le comptoir (0,35 m). Un emploi du temps (et une place « posée », hors navigation) le
+  laisserait à sa poêle après `j3_3_snack`, qui le retire aujourd'hui pendant le fondu.

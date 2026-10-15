@@ -82,6 +82,15 @@
       "outfit": "vie"
     },
     {
+      "do": "walk",
+      "who": "player",
+      "to": "refectoire_porte_cuisine",
+      "offset": [
+        1.7,
+        1.9
+      ]
+    },
+    {
       "do": "face",
       "who": "player",
       "toward": "refectoire_porte_cuisine"
@@ -89,11 +98,12 @@
     {
       "do": "bubble",
       "who": "collon",
-      "text": "chuchote"
+      "text": "chuchote",
+      "time": 1.5
     },
     {
       "do": "wait",
-      "time": 1.0
+      "time": 1.7
     },
     {
       "do": "bubble",

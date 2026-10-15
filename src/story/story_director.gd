@@ -78,6 +78,8 @@ var _doors_day: int = -1
 var _check_left: float = 0.0
 var _refresh_left: float = 0.0
 var _hint: String = ""
+## Un jeu (E8) de la scène en cours se joue : l'indice se tait.
+var _gaming: bool = false
 var _scene_hint: String = ""
 var _examined: Dictionary = {}
 var _talked: Dictionary = {}
@@ -269,7 +271,12 @@ func has_game(game_id: StringName) -> bool:
 ## Joue le jeu inscrit (coroutine) ; faux s'il n'a pas pu démarrer (le repli se joue alors).
 func run_game(game_id: StringName, params: Dictionary) -> bool:
 	game_requested.emit(game_id, params)
+	# L'indice se tait pendant un jeu (il revient à la fin).
+	_gaming = true
+	_update_hint()
 	var played: Variant = await (_games[game_id] as Callable).call(params)
+	_gaming = false
+	_update_hint()
 	return not (played is bool and not played)
 
 
@@ -486,7 +493,11 @@ func _add_prompt(
 
 
 func _update_hint() -> void:
-	var text := _scene_hint if _runner.is_running() else _waiting_hint()
+	# Pendant une scène (dès son début), seul l'indice de ses étapes « hint » ; rien pendant un jeu.
+	var in_scene := _runner.is_running() or not _current.is_empty()
+	var text := _scene_hint if in_scene else _waiting_hint()
+	if _gaming:
+		text = ""
 	if text != _hint:
 		_hint = text
 		hint_changed.emit(text)
@@ -714,6 +725,7 @@ func _on_game_loaded() -> void:
 	_releases.clear()
 	_release_since.clear()
 	_scene_hint = ""
+	_gaming = false
 	_current = &""
 	_busy = &""
 	_begin_pending = false
