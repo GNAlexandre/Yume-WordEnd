@@ -77,8 +77,10 @@ DEVIATIONS = [
     "z = 23, la vue ne descendait plus qu'à z = 30 et le joueur sortait de l'écran sur l'aire-port et la route de la "
     "ville (jusqu'en z = 34)",
     "le relief de la colline (CARTE.md 6.2 : `rampe 58 22 61 26 2.0 1.0 O` et `rampe 61 16 64 20 3.0 2.0 O`) menait nulle "
-    "part (les rampes finissaient devant des terrasses de +1 m, sans route de 0 à +1) : trois rampes (0 → +1 en x 58 → 61, "
-    "+1 → +2 en z 25 → 22, +2 → +3 en z 19 → 16) et la montée `montee_colline` repassée par elles, tout se marche",
+    "part (les rampes finissaient devant des terrasses de +1 m, sans route de 0 à +1) : trois rampes qui montent vers le "
+    "nord, aux flancs est et ouest (la caméra les voit de face : un flanc au sud d'une rampe laisse un trou dans les "
+    "faces), 0 → +1 en z 27 → 24 (x 59 → 63), +1 → +2 en z 25 → 22 (x 64 → 68), +2 → +3 en z 19 → 16 (x 65 → 69), la "
+    "falaise du sud n'occupe plus que x 63 → 70 et la montée `montee_colline` passe par elles, tout se marche",
     "point `navire_quai` (32,5 ; 7,6) ajouté au plan : le pied de la passerelle, où la scène fait descendre Willem du "
     "transport de la Garde ; le panneau de coque (`ships/garde_transport_side`, remplaçant dérivé du flanc du "
     "Barocupot) est à poser par E7 (docs/CONTRACT_REQUESTS.md, CP)",
@@ -255,7 +257,7 @@ def pose(p):
     plates = poisson(Rect(3.2, 5.8, 57.6, 13.8), 2.5, 140, lambda x, z: free(decal=True)(x, z) and not any(
         b.has(x, z, 0.3) for b in BUILDINGS), seed=81)
     scatter("QuayStains", ["oil_stain", "rust_streak", "cracks_a", "cracks_b", "drain_grate"], plates[0::2], seed=82, check=False)
-    scatter("QuayLitter", ["leaves_rust_a", "leaves_gold_a", "pebbles_b", "puddle_b"], plates[1::2], seed=83,
+    scatter("QuayLitter", ["pebbles_b", "puddle_b", "pebbles_a", "cracks_b", "leaves_gold_a"], plates[1::2], seed=83,
             check=False)
     # Les bouts du quai : tonneaux de mazout, filet de charge, chaîne, bagages, caisses de la Garde, tuyaux, grue.
     place("Quay", "mooring_tower", 1.2, 7.6, name="Pylone")
@@ -293,7 +295,7 @@ def pose(p):
         place("Street", scene, x, z, name="RueDecal%d" % (k + 1), flip=k % 2 == 1, check=False)
     street = poisson(Rect(0.8, 14.5, 57.6, 19.8), 2.4, 120, lambda x, z: free(decal=True, paths=False)(x, z), seed=85)
     scatter("StreetStains", ["oil_stain", "rust_streak", "cracks_a", "cracks_b", "mud_patch"], street[0::3], seed=86, check=False)
-    scatter("StreetLitter", ["leaves_rust_a", "leaves_gold_a", "leaves_rust_b", "pebbles_a", "pebbles_b"],
+    scatter("StreetLitter", ["pebbles_a", "pebbles_b", "leaves_gold_a", "pebbles_a", "puddle_a"],
             street[1::3], seed=87, check=False)
     scatter("StreetWeeds", ["grass_tuft", "grass_clump_a", "clover_patch"], street[2::3], seed=88, check=False)
     place("Yard", "bench", 9.6, 14.1, name="BancCabane", check=False)
@@ -346,7 +348,7 @@ def pose(p):
     place("Hill", "old_telescope", 63.8, 8.6, name="LongueVueGuetteur")
     place("Hill", "garde_pennant", 68.6, 6.8, name="FanionGarde")
     # La falaise au sud de la colline (le plan : bord falaise) : des roches.
-    for k, x in enumerate((59.0, 61.6, 64.6, 67.4)):
+    for k, x in enumerate((64.6, 67.4)):
         place("Edge", ["edge_rocks_a", "edge_rocks_b"][k % 2], x, 27.4, name="RocheSud%d" % (k + 1), flip=k % 2 == 0, check=False)
 
     # === 6. Le sud, les bords, la forêt qui continue ====================================================

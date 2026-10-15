@@ -120,25 +120,25 @@ func test_from_the_path_to_the_port_the_sign_the_hill_and_back() -> void:
 		await frames(3)
 	assert_false(DialogueRunner.is_any_running(), "la lecture est finie")
 	# La colline ventée : on la monte à pied, de rampe en rampe, jusqu'au sommet.
-	await put_player(57.0, 24.5, Vector3.RIGHT)
+	await put_player(61.0, 28.6, Vector3.FORWARD)
 	assert_true(
-		await walk_keys_until([KEY_D], func() -> bool: return player.global_position.x > 61.6, 8.0),
-		"par la première rampe, vers l'est"
+		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 24.2, 8.0),
+		"par la première rampe, vers le nord"
 	)
 	release_all_input()
 	await until(func() -> bool: return player.is_on_floor(), 2.0)
 	assert_almost_eq(_local_y(), 1.0, 0.15, "première terrasse, +1 m")
-	await put_player(64.0, 25.6, Vector3.FORWARD)
+	await put_player(66.0, 25.8, Vector3.FORWARD)
 	assert_true(
-		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 20.5, 8.0),
+		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 21.5, 8.0),
 		"par la deuxième rampe, vers le nord"
 	)
 	release_all_input()
 	await until(func() -> bool: return player.is_on_floor(), 2.0)
 	assert_almost_eq(_local_y(), 2.0, 0.15, "deuxième terrasse, +2 m")
-	await put_player(66.0, 19.6, Vector3.FORWARD)
+	await put_player(67.0, 20.2, Vector3.FORWARD)
 	assert_true(
-		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 14.5, 8.0),
+		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 15.5, 8.0),
 		"par la troisième rampe, vers le nord"
 	)
 	release_all_input()

@@ -149,7 +149,7 @@ size = Vector3(23, 4, 0.4)
 size = Vector3(21, 4, 0.4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_edge4"]
-size = Vector3(12, 4, 1)
+size = Vector3(7, 4, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_edge5"]
 size = Vector3(54, 4, 6)
@@ -210,7 +210,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.5, 2, 5.2)
 shape = SubResource("BoxShape3D_edge3")
 
 [node name="Edge4" type="CollisionShape3D" parent="Edges"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 2, 27.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66.5, 2, 27.5)
 shape = SubResource("BoxShape3D_edge4")
 
 [node name="Edge5" type="CollisionShape3D" parent="Edges"]
@@ -781,17 +781,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.8, 3, 8.6)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.6, 3, 6.8)
 
 [node name="RocheSud1" parent="Geometry/Edge" instance=ExtResource("32_edge_rocks_a")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59, 0, 27.4)
-flip_h = true
-
-[node name="RocheSud2" parent="Geometry/Edge" instance=ExtResource("31_edge_rocks_b")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.6, 0, 27.4)
-
-[node name="RocheSud3" parent="Geometry/Edge" instance=ExtResource("32_edge_rocks_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.6, 0, 27.4)
 flip_h = true
 
-[node name="RocheSud4" parent="Geometry/Edge" instance=ExtResource("31_edge_rocks_b")]
+[node name="RocheSud2" parent="Geometry/Edge" instance=ExtResource("31_edge_rocks_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4, 0, 27.4)
 
 [node name="HaieSud1" parent="Geometry/Hedge" instance=ExtResource("74_thicket_a_fg")]
@@ -1004,11 +997,11 @@ random_flip = true
 
 [node name="QuayLitter" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
-prop = ExtResource("38_leaves_rust_a")
+prop = ExtResource("54_pebbles_b")
 points = PackedVector3Array(33.554, 0, 8.874, 36.171, 0, 13.047, 55.481, 0, 13.758, 24.085, 0, 12.989, 33.525, 0, 13.477, 22.204, 0, 8.594, 15.401, 0, 6.603, 26.059, 0, 6.57, 40.804, 0, 8.627, 10.417, 0, 13.36, 19.599, 0, 12.539, 37.843, 0, 6.75, 19.821, 0, 6.243, 35.426, 0, 6.007, 23.941, 0, 10.394, 36.848, 0, 10.186, 44.996, 0, 5.934, 16.367, 0, 8.91, 13.45, 0, 9.157, 30.219, 0, 13.699, 8.305, 0, 7.752, 32.689, 0, 6.296)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 83
-variants = Array[PackedScene]([ExtResource("39_leaves_gold_a"), ExtResource("54_pebbles_b"), ExtResource("56_puddle_b")])
+variants = Array[PackedScene]([ExtResource("56_puddle_b"), ExtResource("37_pebbles_a"), ExtResource("106_cracks_b"), ExtResource("39_leaves_gold_a")])
 random_flip = true
 
 [node name="QuayJunk" type="Node3D" parent="Geometry/Scatter"]
@@ -1032,11 +1025,11 @@ random_flip = true
 
 [node name="StreetLitter" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
-prop = ExtResource("38_leaves_rust_a")
+prop = ExtResource("37_pebbles_a")
 points = PackedVector3Array(6.884, 0, 19.297, 31.266, 0, 18.985, 53.244, 0, 18.125, 47.85, 0, 18.062, 15.678, 0, 16.704, 44.974, 0, 15.278, 29.578, 0, 17.163, 12.069, 0, 14.864, 3.891, 0, 19.437, 54.209, 0, 15.44, 7.178, 0, 15.678, 22.99, 0, 16.824, 25.558, 0, 16.975, 17.816, 0, 18.266, 37.137, 0, 14.692)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 87
-variants = Array[PackedScene]([ExtResource("39_leaves_gold_a"), ExtResource("57_leaves_rust_b"), ExtResource("37_pebbles_a"), ExtResource("54_pebbles_b")])
+variants = Array[PackedScene]([ExtResource("54_pebbles_b"), ExtResource("39_leaves_gold_a"), ExtResource("37_pebbles_a"), ExtResource("55_puddle_a")])
 random_flip = true
 
 [node name="StreetWeeds" type="Node3D" parent="Geometry/Scatter"]
@@ -1078,7 +1071,7 @@ random_flip = true
 [node name="RouteBrush" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
 prop = ExtResource("118_bush")
-points = PackedVector3Array(56.338, 0, 33.882, 61.705, 0, 29.742, 64.745, 0, 29.697, 68.536, 0, 29.507, 58.051, 0, 33.762, 66.454, 0, 29.825, 59.637, 0, 29.422)
+points = PackedVector3Array(56.338, 0, 33.882, 64.745, 0, 29.697, 62.814, 0, 29.703, 68.536, 0, 29.507, 58.051, 0, 33.762, 66.454, 0, 29.825)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 47
 variants = Array[PackedScene]([ExtResource("119_bush_b"), ExtResource("120_bush_c"), ExtResource("121_bush_d"), ExtResource("117_fern_c"), ExtResource("111_tall_grass"), ExtResource("122_heather"), ExtResource("113_rock_small_a"), ExtResource("114_rock_small_b")])
@@ -1087,7 +1080,7 @@ random_flip = true
 [node name="HillGrass" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
 prop = ExtResource("123_wind_grass_a")
-points = PackedVector3Array(56.661, 0, 8.475, 58.317, 0, 8.476, 63.517, 0, 16.456, 57.72, 0, 6.285, 59.1, 0, 13.661, 64.162, 0, 18.828, 61.157, 0, 10.652, 67.875, 0, 21.297, 60.88, 0, 15.229, 59.026, 0, 27.72, 63.858, 0, 8.609, 58.063, 0, 10.42, 65.577, 0, 28.961, 61.415, 0, 12.524, 66.13, 0, 25.488, 57.364, 0, 11.727, 60.393, 0, 17.076, 63.586, 0, 13.41, 59.674, 0, 22.599, 62.27, 0, 9.165, 67.753, 0, 7.154, 67.197, 0, 23.301, 62.161, 0, 7.662, 59.893, 0, 7.581, 67.989, 0, 14.266, 67.736, 0, 24.519, 65.904, 0, 26.801, 63.928, 0, 29.155, 58.174, 0, 21.446, 61.166, 0, 19.758, 65.688, 0, 5.806, 59.843, 0, 26.223, 69.139, 0, 27.227, 59.603, 0, 14.983, 60.363, 0, 29.535, 61.873, 0, 26.483, 65.642, 0, 21.985, 58.602, 0, 12.44, 68.959, 0, 22.885, 56.542, 0, 10.621, 69.252, 0, 7.881, 67.873, 0, 10.191, 62.558, 0, 11.871, 67.155, 0, 5.85, 62.171, 0, 13.839, 59.45, 0, 20.073, 67.041, 0, 28.055)
+points = PackedVector3Array(56.661, 0, 8.475, 58.317, 0, 8.476, 65.174, 0, 9.051, 57.72, 0, 6.285, 59.1, 0, 13.661, 64.162, 0, 18.828, 61.157, 0, 10.652, 66.061, 0, 10.413, 57.043, 0, 13.797, 69.093, 0, 29.039, 64.378, 0, 22.35, 69.491, 0, 10.486, 57.795, 0, 29.195, 58.307, 0, 23.058, 61.068, 0, 6.066, 58.136, 0, 26.392, 57.364, 0, 11.727, 63.048, 0, 28.063, 63.586, 0, 13.41, 61.857, 0, 18.616, 62.264, 0, 17.225, 62.408, 0, 15.355, 67.904, 0, 8.779, 62.161, 0, 7.662, 59.893, 0, 7.581, 63.05, 0, 21.584, 64.84, 0, 12.686, 68.857, 0, 12.506, 58.174, 0, 21.446, 59.829, 0, 9.175, 57.611, 0, 19.679, 63.188, 0, 22.973, 64.13, 0, 7.027, 69.154, 0, 6.314, 59.651, 0, 21.337, 68.645, 0, 19.644, 58.602, 0, 12.44, 62.894, 0, 6.021, 69.252, 0, 7.881, 65.83, 0, 27.571, 67.873, 0, 10.191, 64.366, 0, 20.389, 67.155, 0, 5.85, 60.835, 0, 13.892, 62.631, 0, 26.748, 62.171, 0, 13.839, 60.076, 0, 12.53, 64.063, 0, 9.896, 59.527, 0, 19.815)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 32
 variants = Array[PackedScene]([ExtResource("124_wind_grass_b"), ExtResource("111_tall_grass"), ExtResource("108_grass_clump_a"), ExtResource("110_grass_clump_c")])
@@ -1096,7 +1089,7 @@ random_flip = true
 [node name="HillRocks" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
 prop = ExtResource("113_rock_small_a")
-points = PackedVector3Array(61.646, 0, 22.076, 61.905, 0, 29.513, 59.255, 0, 10.963, 67.457, 0, 29.338, 69.093, 0, 29.039, 57.795, 0, 29.195, 61.068, 0, 6.066, 68.23, 0, 11.96, 60.436, 0, 27.519, 61.857, 0, 18.616, 62.408, 0, 15.355, 67.647, 0, 26.843, 65.772, 0, 23.364, 68.6, 0, 19.315, 64.381, 0, 12.326, 57.611, 0, 19.679, 64.13, 0, 7.027, 60.174, 0, 18.653, 69.563, 0, 24.249, 60.642, 0, 21.017, 65.893, 0, 10.184, 62.156, 0, 20.818, 63.021, 0, 19.607, 57.692, 0, 27.802)
+points = PackedVector3Array(61.646, 0, 22.076, 63.517, 0, 16.456, 59.255, 0, 10.963, 67.457, 0, 29.338, 60.88, 0, 15.229, 68.422, 0, 21.254, 58.063, 0, 10.42, 61.415, 0, 12.524, 64.687, 0, 17.213, 62.941, 0, 29.558, 67.753, 0, 7.154, 65.273, 0, 13.953, 69.202, 0, 17.095, 64.442, 0, 27.777, 61.166, 0, 19.758, 63.659, 0, 11.472, 59.603, 0, 14.983, 66.365, 0, 7.666, 68.948, 0, 13.856, 59.356, 0, 25.527, 59.679, 0, 5.808, 62.576, 0, 10.724, 64.292, 0, 29.286, 67.041, 0, 28.055, 57.692, 0, 27.802)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 33
 variants = Array[PackedScene]([ExtResource("114_rock_small_b"), ExtResource("115_rock_small_c"), ExtResource("116_rock_small_d"), ExtResource("122_heather"), ExtResource("125_thistle")])
@@ -1105,7 +1098,7 @@ random_flip = true
 [node name="HillTufts" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
 prop = ExtResource("107_grass_tuft")
-points = PackedVector3Array(65.174, 0, 9.051, 68.811, 0, 15.39, 68.994, 0, 25.761, 57.043, 0, 13.797, 69.491, 0, 10.486, 67.689, 0, 17.121, 58.136, 0, 26.392, 63.048, 0, 28.063, 63.761, 0, 11.075, 62.264, 0, 17.225, 67.904, 0, 8.779, 69.202, 0, 17.095, 64.442, 0, 27.777, 64.395, 0, 15.123, 59.829, 0, 9.175, 69.533, 0, 13.015, 69.154, 0, 6.314, 66.365, 0, 7.666, 62.894, 0, 6.021, 69.25, 0, 21.31, 59.679, 0, 5.808, 60.835, 0, 13.892, 60.076, 0, 12.53)
+points = PackedVector3Array(59.537, 0, 23.831, 68.811, 0, 15.39, 68.994, 0, 25.761, 64.896, 0, 11.017, 59.026, 0, 27.72, 63.858, 0, 8.609, 65.577, 0, 28.961, 58.118, 0, 24.438, 60.393, 0, 17.076, 62.27, 0, 9.165, 68.427, 0, 23.377, 67.647, 0, 26.843, 67.736, 0, 24.519, 64.395, 0, 15.123, 65.688, 0, 5.806, 69.139, 0, 27.227, 60.174, 0, 18.653, 69.563, 0, 24.249, 56.542, 0, 10.621, 69.405, 0, 22.144, 62.618, 0, 20.335, 59.327, 0, 29.112, 60.193, 0, 22.566, 68.603, 0, 18.272)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 34
 variants = Array[PackedScene]([ExtResource("123_wind_grass_a"), ExtResource("126_wildflowers_b")])

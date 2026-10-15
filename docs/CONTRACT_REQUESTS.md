@@ -871,3 +871,27 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   `StoryDirector.register_game(&"embuscade_pannibal", appel)` (le joueur est tenu par la scène :
   l'appel lui rend la main le temps du combat). Les scènes du ballon (jour 5) et du bâton (jour 10)
   sont au lot S2. U1 : branché (présentation, signes, thème `Calendar`).
+
+## CP (le port de l'île n° 68)
+
+- **E7 (navires en volume) : ce que le lot remplace dans la carte `port`.** Le transport de la Garde est, à l'acte 1, un grand panneau
+  de décor `Geometry/Ship/TransportGarde` (`ships/garde_transport_side.png`, 16 × 7 m, lot R7, **remplaçant** dérivé du flanc du
+  Barocupot ; x 30, z 2,6, bas du panneau à y = −1,6 m, sans collision). E7 le remplace par le navire en volume (coque, pont, deux
+  rotors animés, trappe, passerelle et rampe) **au même endroit** : flanc face à la caméra, de x 22 à 38, quille sous le niveau du quai.
+  Ce que la carte garde : les trois bras d'ancrage `BrasAncrage1..3` (x 23,5 ; 29,5 ; 36,5, image `mooring_arm_open`, la bande animée
+  `anim/mooring_arm_clamp` du cahier se pose sur eux), le **point `navire_quai`** (32,5 ; 7,6 : le pied de la passerelle, où la scène
+  fait descendre Willem), la place `accostage` (24 → 37, 7 → 13, libre), le sifflet `SiffletVapeur` (x 40) et le marqueur
+  `from_transport_garde` (32,5 ; 9,5, regard sud). À remplacer ou retirer : la passerelle provisoire `Geometry/Quay/Passerelle` (un
+  plancher de 2 × 3,6 m, scène `gangway_quay`), à refaire en rampe du quai au pont (le plan : `gangway`, 2 × 1,6 m, 1,1 m de haut).
+  La sortie `passerelle` (→ `transport_garde`, « Monter à bord ») n'est écrite que lorsque la carte `transport_garde` existe ; lancer
+  `python3 tools/exterior_maps.py gen port` puis `tools/import.sh` alors. Les images du navire en volume du cahier (R7) remplacent
+  `ships/garde_transport_side.png` sans toucher au code (une image livrée n'est jamais retouchée).
+- **Moteur (`src/world/`, hors périmètre de CP) : le bord du vide ferme le quai.** Un `bord vide` du plan est une boîte invisible
+  (couche 1) : rien ne se marche au-delà du quai, donc sur la passerelle jusqu'à la coque. Si la scène de l'acte 1 veut un contrôle
+  rendu sur la passerelle (7.4, « Chtholly descend la passerelle »), elle la fait descendre sans la marcher, ou E7 ouvre la boîte
+  devant la passerelle.
+- **Sol (`tools/map_build.py`) : une marche entre deux matières `path`** (terre battue, gravier, pavés, tôle) refuse la carte dès qu'une
+  case de chemin touche un palier plus haut de plus de 0,5 m : le plan du port peint de la terre battue au pied de la colline (x 54 → 70,
+  z 20 → 34) ; la recette la limite au niveau 0 (`where level 0`).
+- **Un joueur de la carte du port peut lire le panneau de plus près** : si la scène 1.1 veut un plan fixe du panneau, la caméra du
+  récit (E6) le cadre depuis `panneau_sud` ; le panneau (premier plan) s'efface autour d'un joueur placé au nord.

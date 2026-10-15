@@ -93,9 +93,9 @@ func before_all() -> void:
 		Vector3(30.0, 0.0, 9.5),
 		Vector3(50.0, 0.0, 17.0),
 		Vector3(30.0, 0.0, 23.5),
-		Vector3(60.0, 0.5, 24.0),
-		Vector3(64.0, 1.0, 24.0),
-		Vector3(66.0, 2.0, 20.0),
+		Vector3(61.0, 0.5, 25.5),
+		Vector3(64.0, 1.0, 25.8),
+		Vector3(67.0, 2.0, 20.5),
 		Vector3(65.0, 3.0, 12.2),
 		Vector3(62.0, 0.0, 32.0),
 		Vector3(67.0, 0.0, 32.0),
@@ -335,9 +335,9 @@ func test_the_windy_hill_has_three_terraces_reached_on_foot() -> void:
 	assert_almost_eq(_ground.height_at(65.0, 12.0), 3.0, 0.05, "le sommet, +3 m")
 	assert_almost_eq(_ground.height_at(56.0, 12.0), 0.0, 0.05, "la rue au pied de la colline")
 	for spot: Vector3 in [
-		Vector3(59.5, 0.5, 24.0),
-		Vector3(64.0, 1.0, 24.0),
-		Vector3(66.0, 2.0, 20.0),
+		Vector3(61.0, 0.5, 25.5),
+		Vector3(64.0, 1.0, 25.8),
+		Vector3(67.0, 2.0, 20.5),
 		Vector3(65.0, 3.0, 12.2)
 	]:
 		assert_true(_is_reached(spot), "%s : on monte à pied, sans sauter" % spot)

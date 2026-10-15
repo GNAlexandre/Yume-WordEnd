@@ -1934,9 +1934,9 @@ sol grass 0 30 70 40
 palier 1.0 58 5 70 27
 palier 2.0 61 5 70 22
 palier 3.0 63 5 70 16
-rampe 58 22 61 26 1.0 0 O
-rampe 62 22 66 25 1.0 2.0 N
-rampe 64 16 68 19 2.0 3.0 N
+rampe 59 24 63 27 0 1.0 N
+rampe 64 22 68 25 1.0 2.0 N
+rampe 65 16 69 19 2.0 3.0 N
 # --- le vide au nord : les navires s'amarrent au nord du quai (REFONTE, 3.1) ---
 vide 0 0 70 5
 bord rambarde 0 5 23 5.4 1.1
@@ -1972,7 +1972,7 @@ decor pallet_sacks 12 27 1.6 1.2 1.1
 # --- la colline toujours ventée, à côté de l'aire-port (V3, « La Fille sans visage ») ---
 decor wind_sock 66.5 7 0.4 0.4 4
 decor bench 65 10 1.6 0.5 0.9
-bord falaise 58 27 70 28 1.0
+bord falaise 63 27 70 28 1.0
 # --- bords ---
 bord foret 0 34 54 40 8 pp
 bord foret 58 34 70 40 8 pp
@@ -1980,7 +1980,7 @@ bord foret 54 37 58 40 8 pp
 # --- chemins, places ---
 chemin rue_du_port 5 1;17 57;17
 chemin route_ville 4 55.5;18 55.5;31 62;32 69;32
-chemin montee_colline 3 57;24 61;24.5 64;25.5 64;21 66;20 66;17 66;12
+chemin montee_colline 3 61;29.5 61;24.6 66;25.4 66;21 67;20 67;17 67;12
 place accostage 24 7 37 13
 place aire_port 22 22 46 25
 # --- sorties ---
