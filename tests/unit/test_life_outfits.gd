@@ -36,7 +36,9 @@ func test_every_outfit_is_a_complete_three_view_sheet() -> void:
 		var anims := SheetLoader.animations(sheet)
 		for anim: String in ["repos"]:
 			assert_true(anims.has(anim), "%s : %s" % [skin.id, anim])
-	assert_eq(count, 23, "les 23 tenues du lot J")
+	assert_eq(
+		count, 25, "les 23 tenues du lot J, et celles de S1b (willem_marsh, snack_vendor_work)"
+	)
 
 
 func test_complement_sheet_adds_its_animations() -> void:
