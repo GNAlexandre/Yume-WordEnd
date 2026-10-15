@@ -316,7 +316,10 @@ func test_building_sides_have_the_shape_of_their_roof() -> void:
 	assert_eq(
 		count,
 		38,
-		"19 flancs (cahier n° 2), 2 de l'entrepôt (T1), 6 du village (C2), 10 de la ville (CV), 1 du port (CP)"
+		(
+			"19 flancs (cahier n° 2), 2 de l'entrepôt (T1), 6 du village (C2), 10 de la ville (CV),"
+			+ " 1 du port (CP)"
+		)
 	)
 	assert_true(problems.is_empty(), "; ".join(problems))
 
