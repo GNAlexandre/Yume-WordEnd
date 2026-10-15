@@ -5,7 +5,8 @@ extends Node
 ##
 ## Lancement (le PNG est écrit par la démo, qui quitte d'elle-même) :
 ##   E6_VIEW=<vue> E6_SHOTS=build/e6/shots xvfb-run -a -s "-screen 0 1280x720x24" \
-##     tools/godot --rendering-driver opengl3 --resolution 1280x720 res://tests/integration/demo_e6.tscn
+##     tools/godot --rendering-driver opengl3 --resolution 1280x720 \
+##     res://tests/integration/demo_e6.tscn
 ## Vues (capture quand la réplique ou l'état est à l'écran) : carton (1.1), porche (1.2),
 ## indice (après 1.2), gros_plan (1.3), miroir (1.5), avalanche (1.5), chambre (1.7), sommeil (la
 ## ligne du calendrier), calendrier (jour 2), fuite (2.2), cuisine (4.1), diner (4.2) ; jour1 :
@@ -272,32 +273,27 @@ func _satisfy(step: Dictionary) -> Callable:
 
 ## Après la dernière scène jouée : ce qui déclenche la suivante (jours 1 à 4).
 func _next_trigger() -> Callable:
-	var last := &""
-	for scene_id: StringName in ORDER:
-		if GameState.is_scene_done(scene_id):
-			last = scene_id
-	match last:
-		&"j1_2_lumiere":
-			return _go.bind(&"sentier")
-		&"j1_2_embuscade":
-			return _teleport.bind([22, 12])
-		&"j1_5_premiers_pas":
-			return _teleport.bind(&"dortoir_b")
-		&"j1_7_chambre", &"j2_3_fenetre", &"j3_3_snack", &"j4_2_diner":
-			return _sleep
-		&"j2_2_fuite":
-			return _afternoon_window
-		&"j2_1_matin":
-			return _teleport.bind(&"refectoire_allee")
-		&"j3_2_chemin":
-			return Callable()
-		&"j4_1_cuisine":
-			return _dinner
 	if GameState.day == 3 and not GameState.is_scene_done(&"j3_1_information"):
 		return _go.bind(&"entrepot", &"from_entrepot_rdc")
 	if GameState.day == 4 and not GameState.is_scene_done(&"j4_1_cuisine"):
 		return _kitchen
-	return Callable()
+	var last := &""
+	for scene_id: StringName in ORDER:
+		if GameState.is_scene_done(scene_id):
+			last = scene_id
+	var next := {
+		&"j1_2_lumiere": _go.bind(&"sentier"),
+		&"j1_2_embuscade": _teleport.bind([22, 12]),
+		&"j1_5_premiers_pas": _teleport.bind(&"dortoir_b"),
+		&"j1_7_chambre": _sleep,
+		&"j2_1_matin": _teleport.bind(&"refectoire_allee"),
+		&"j2_2_fuite": _afternoon_window,
+		&"j2_3_fenetre": _sleep,
+		&"j3_3_snack": _sleep,
+		&"j4_1_cuisine": _dinner,
+		&"j4_2_diner": _sleep,
+	}
+	return next.get(last, Callable())
 
 
 func _go(map_id: StringName, marker: StringName = &"") -> void:
