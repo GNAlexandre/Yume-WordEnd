@@ -211,6 +211,9 @@ func _make_ball() -> void:
 		parent = LifeDirector
 	parent.add_child(ball)
 	ball.place(_field_center())
+	# Le ballon décoratif du rond central (plan du champ) laisse la place à celui du jeu.
+	if map != null:
+		GameBall.hide_decor_ball(map, _field_center())
 
 
 func _free_ball() -> void:

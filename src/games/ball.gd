@@ -28,6 +28,8 @@ signal entered_goal(goal_id: StringName)
 signal kicked(by: StringName)
 
 const IMAGE_SCENE := preload("res://src/world/props/ball.tscn")
+## Image du ballon posé dans le décor (assets/hd2d/props/ball.png) : voir hide_decor_ball().
+const DECOR_IMAGE := "res://assets/hd2d/props/ball.png"
 const SHADOW_RADIUS := 0.17
 const MAX_SUBSTEP := 1.0 / 120.0
 ## Vitesse horizontale (m/s) sous laquelle la balle qui roule s'arrête.
@@ -79,6 +81,55 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	step(delta)
+
+
+## Retire du décor fondu de la carte (PropBatcher) les ballons posés à moins de radius m de near :
+## le plan du champ de l'entrepôt pose un ballon décoratif au rond central, que le ballon du jeu
+## remplace (sans cela, il resterait au centre pendant que l'autre roule). N'agit que sur la
+## carte instanciée (elle revient telle quelle au rechargement) ; renvoie le nombre de triangles
+## retirés. Demande faite au plan des cartes : docs/CONTRACT_REQUESTS.md, « E8 ».
+static func hide_decor_ball(map: Node3D, near: Vector3, radius: float = 0.6) -> int:
+	var removed := 0
+	for node: Node in map.find_children("*", "MeshInstance3D", true, false):
+		var instance := node as MeshInstance3D
+		var material := instance.material_override as ShaderMaterial if instance != null else null
+		if material == null or instance.mesh == null or instance.mesh.get_surface_count() != 1:
+			continue
+		var image := material.get_shader_parameter(&"albedo_texture") as Texture2D
+		if image == null or image.resource_path != DECOR_IMAGE:
+			continue
+		var arrays := instance.mesh.surface_get_arrays(0)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		if arrays[Mesh.ARRAY_INDEX] != null or vertices.size() % 3 != 0:
+			continue
+		var keep := PackedInt32Array()
+		for first: int in range(0, vertices.size(), 3):
+			var middle := (vertices[first] + vertices[first + 1] + vertices[first + 2]) / 3.0
+			var at := instance.to_global(middle)
+			if Vector2(at.x - near.x, at.z - near.z).length() < radius:
+				removed += 1
+			else:
+				keep.append_array(PackedInt32Array([first, first + 1, first + 2]))
+		if keep.size() == vertices.size():
+			continue
+		var rebuilt := []
+		rebuilt.resize(Mesh.ARRAY_MAX)
+		for slot: int in [
+			Mesh.ARRAY_VERTEX, Mesh.ARRAY_NORMAL, Mesh.ARRAY_TEX_UV, Mesh.ARRAY_TEX_UV2
+		]:
+			var column: Variant = arrays[slot]
+			if column == null or column.size() != vertices.size():
+				continue
+			var picked: Variant = column.duplicate()
+			picked.resize(keep.size())
+			for i: int in keep.size():
+				picked[i] = column[keep[i]]
+			rebuilt[slot] = picked
+		var mesh := ArrayMesh.new()
+		if keep.size() > 0:
+			mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, rebuilt)
+		instance.mesh = mesh if keep.size() > 0 else null
+	return removed
 
 
 ## Lit les chiffres de la section « ball » des règles du ballon (overrides : surcharges).

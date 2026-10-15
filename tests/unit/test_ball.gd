@@ -125,3 +125,40 @@ func test_the_ball_has_an_image_and_a_ground_shadow() -> void:
 	assert_almost_eq(
 		shadow.global_position.y, _ball.ground_y + CombatFx.SHADOW_LIFT, 0.01, "reste au sol"
 	)
+
+
+func test_the_decor_ball_of_the_field_plan_can_be_removed_from_the_batched_decor() -> void:
+	# Le plan du champ pose un ballon décoratif au rond central, fondu par le PropBatcher avec les
+	# autres images : le ballon du jeu le retire (sinon il y en aurait deux).
+	var map := Node3D.new()
+	var batcher := PropBatcher.new()
+	batcher.name = "Geometry"
+	map.add_child(batcher)
+	for x: float in [75.0, 90.0]:
+		var decor := (
+			(load("res://src/world/props/ball.tscn") as PackedScene).instantiate() as Node3D
+		)
+		decor.position = Vector3(x, 0.0, 18.0)
+		batcher.add_child(decor)
+	add_child_autofree(map)
+	var lots: Array[MeshInstance3D] = []
+	for child: Node in batcher.get_children():
+		var lot := child as MeshInstance3D
+		if lot == null or lot.mesh == null or not String(lot.name).begins_with("Batch"):
+			continue
+		var material := lot.material_override as ShaderMaterial
+		if material == null:
+			continue
+		var image := material.get_shader_parameter(&"albedo_texture") as Texture2D
+		if image != null and image.resource_path == GameBall.DECOR_IMAGE:
+			lots.append(lot)
+	assert_eq(lots.size(), 1, "les deux ballons sont fondus en un lot")
+	var before := lots[0].mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX].size() as int
+	assert_eq(before, 12, "deux images de deux triangles")
+	var removed := GameBall.hide_decor_ball(map, Vector3(75.0, 0.0, 18.0))
+	assert_eq(removed, 2, "les deux triangles du ballon du centre")
+	var after := lots[0].mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX].size() as int
+	assert_eq(after, 6, "celui du fond de la cour reste")
+	var left := lots[0].mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX] as PackedVector3Array
+	assert_almost_eq(left[0].x, 90.0, 0.5, "c'est celui qui est resté")
+	assert_eq(GameBall.hide_decor_ball(map, Vector3(75.0, 0.0, 18.0)), 0, "rien de plus à retirer")

@@ -96,11 +96,20 @@ var _hud: CanvasLayer = null
 var _end_left: float = -1.0
 var _reposition_left: float = 0.0
 var _saved: Dictionary = {}
+var _hush: Hush = null
 var _rng := RandomNumberGenerator.new()
 var _phase_a: Dictionary = {}
 var _phase_b: Dictionary = {}
 var _sequence: Array[StringName] = [&"a", &"b"]
 var _sequence_index: int = 0
+
+
+## Le jeu muet qui tient les PNJ de l'exercice : leur parler pendant l'entraînement ne fait rien.
+class Hush:
+	extends LifeGame
+
+	func on_player_interact(_actor: LifeActor) -> bool:
+		return true
 
 
 func _init() -> void:
@@ -241,6 +250,9 @@ func _take_control(actor: LifeActor) -> void:
 		"poses": [{"anim": "repos"}], "look": false, "greet": false, "step_aside": false
 	}
 	actor.state = LifeActor.State.GAME
+	if _hush == null:
+		_hush = Hush.new()
+	actor.game = _hush
 	actor.play(&"repos")
 
 
@@ -250,6 +262,7 @@ func _release_all() -> void:
 		if saved.is_empty() or actor.state == LifeActor.State.GONE:
 			continue
 		actor.stop()
+		actor.game = null
 		actor.activity = saved["activity"]
 		actor.state = saved["state"]
 		var scheduled: Dictionary = saved["line"]

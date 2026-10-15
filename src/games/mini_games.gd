@@ -170,9 +170,12 @@ static func stop_staff_training() -> void:
 static func dev_start(game_name: String) -> Object:
 	if game_name != "ballon" and game_name != "baton":
 		return null
+	LifeDirector.set_slot(&"apres_midi" if game_name == "ballon" else &"matin", 0.0)
 	if WorldManager.current_map() != BALL_MAP:
 		WorldManager.enter_map(BALL_MAP)
-	LifeDirector.set_slot(&"apres_midi" if game_name == "ballon" else &"matin", 0.0)
+	# Le créneau est pris en compte tout de suite : sans cela, le directeur l'appliquerait à l'image
+	# suivante et renverrait les joueuses à leur emploi du temps.
+	LifeDirector.refresh(false)
 	LifeDirector.build_nav_now()
 	var player := LifeDirector.player_node()
 	if game_name == "ballon":

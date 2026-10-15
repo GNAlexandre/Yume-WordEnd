@@ -385,20 +385,28 @@ func test_nobody_is_hurt_and_the_old_island_has_no_match() -> void:
 	assert_null(MiniGames.ball_match(), "disperse")
 
 
-func test_draw_calls_stay_low_at_the_busiest_moment() -> void:
-	# 200 au plus (PLAN.md). Mesuré par la vraie capture de démo (tests/integration/demo_e8.gd) ;
-	# ici : le nombre d'objets dessinables que le match ajoute reste petit.
+func test_the_match_adds_few_drawables_to_the_map() -> void:
+	# 200 draw calls au plus par vue (PLAN.md) : le décor fondu du champ plus 45 autres (test_entrepot)
+	# laissent de la place ; mesuré en vrai (Xvfb) par tests/integration/demo_e8.gd, au plus fort du
+	# match. Ici : ce que la vie et le match posent sur la carte (PNJ, ombres, anneaux, ballon).
+	var before := _drawables(LifeDirector.current_map().get_node(^"Life"))
 	_start()
 	_simulate(30.0, func() -> bool: return _in_phase(BallMatch.Phase.PLAY))
-	var added := 0
-	for node: Node in LifeDirector.current_map().find_children("*", "MeshInstance3D", true, false):
-		if (
-			node.get_parent() is Npc
-			or node.get_parent() is GameBall
-			or node.get_parent() is Node3D and node.name == "TeamRing"
-		):
-			added += 1
-	assert_lt(added, 60, "anneaux, ombres et ballon : %d maillages" % added)
+	var added := _drawables(LifeDirector.current_map().get_node(^"Life")) - before
+	gut.p("le match pose %d objets dessinables (11 PNJ, 10 anneaux, ballon)" % added)
+	assert_lt(added, 45, "PNJ, ombres, anneaux et ballon")
+
+
+## Objets dessinables visibles sous node (images, ombres, anneaux ; les enfants internes aussi).
+func _drawables(node: Node) -> int:
+	var count := 0
+	for child: Node in node.get_children(true):
+		var instance := child as GeometryInstance3D
+		if instance != null and instance.is_visible_in_tree():
+			if not (instance is MeshInstance3D and (instance as MeshInstance3D).mesh == null):
+				count += 1
+		count += _drawables(child)
+	return count
 
 
 func flat(a: Vector3, b: Vector3) -> float:
