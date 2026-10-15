@@ -315,8 +315,8 @@ func test_building_sides_have_the_shape_of_their_roof() -> void:
 	# (CV) Plus les dix de la ville (cahier n° 5, 6.4 et 6.5 : six maisons, quatre boutiques).
 	assert_eq(
 		count,
-		37,
-		"19 flancs (cahier n° 2), 2 de l'entrepôt (T1), 6 du village (C2) et 10 de la ville (CV)"
+		38,
+		"19 flancs (cahier n° 2), 2 de l'entrepôt (T1), 6 du village (C2), 10 de la ville (CV), 1 du port (CP)"
 	)
 	assert_true(problems.is_empty(), "; ".join(problems))
 

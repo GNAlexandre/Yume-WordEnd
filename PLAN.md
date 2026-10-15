@@ -1219,8 +1219,8 @@ static func lookup(path, key_path) -> String, forget_texts()
 L'équivalent de `tools/interior_maps.py` pour le dehors : il écrit une carte du dehors **d'après son
 plan** (bloc ```plan de `docs/lore/CARTE.md`, lu par `tools/carte_plans.py`). Cartes construites :
 `entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet),
-`sentier` (C1), `village` (C2) et `colline` (C3) ; cartes d'attente (provisoires, un lot de la phase 3
-les remplace) : `foret_profonde`, `port`.
+`sentier` (C1), `village` (C2), `colline` (C3) et `port` (CP) ; carte d'attente (provisoire, un lot de la
+phase 3 la remplace) : `foret_profonde`.
 
 ```text
 python3 tools/exterior_maps.py gen [map_id…]      # écrit les cartes (toutes sans argument)
@@ -1279,14 +1279,30 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   `arbre_seul`…). Toutes les images du plan sont livrées ; `lone_tree_fg` et `boulder_a_fg` (premier plan,
   `tools/exterior_props.py`) ; remplaçant du talisman de la scène : `anim/talisman_float` (`tools/hd2d_colline.py`,
   manifeste, lot R6 du cahier n° 5).
-- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_colline.gd` (28 : plan, relief, vide et mer de
+- **Le port** (`port`, CARTE.md section 6.2, 70 × 40 m, lot CP, `tools/exterior_recipes/port.py`, remplace la carte
+  d'attente) : le quai de tôle au bord du **vide** (garde-fou, poste d'amarrage ouvert, trois bras d'ancrage
+  `mooring_arm_open`), le transport de la Garde en **grand panneau de coque** `ships/garde_transport_side` (16 × 7 m,
+  `Geometry/Ship/TransportGarde`, sans collision ; remplaçant dérivé du flanc du Barocupot : E7 le remplace par le navire
+  en volume), la passerelle (`Geometry/Quay/Passerelle`, un plancher) et le point `navire_quai` à son pied, la rue du
+  port (pavés), le panneau aux flèches rouges (`signpost_port`, premier plan : `panneau_sud` pour le gros plan), l'aire-port
+  (gravier), la colline ventée (+1, +2, +3 m, trois rampes qui montent vers le nord), la route de la ville ; sortie à pied
+  `vers_sentier` (`from_port`) ; `vers_ville` (→ `ville_marche`) et `passerelle` (→ `transport_garde`) sont omises tant que
+  leur carte n'existe pas (écriteau sur la route de la ville) ; bornes de caméra `Rect2(10, 6, 50, 24)` ; **aucune
+  lumière** ; objets à examiner (`data/texts/port.json`) ; places de la vie en plus (`quai_ouest`, `sifflet_poste`,
+  `bitte_corbeau_1`, `banc_colline`…) ; remplaçants d'images (`tools/hd2d_port.py`, manifeste, lots R3 et R7).
+  **Après chaque `gen`, `tools/import.sh`** : le sol lit `materials.png` par l'import, un import périmé donne des
+  rectangles d'herbe sur les pavés.
+- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_port.gd` (28 : plan, vide, navire, passerelle, relief,
+  bâtiments, images, premier plan, vie, textes, lumière, marche, caméra, densité, draw calls),
+  `tests/integration/test_port_in_game.gd` (du sentier au port, le panneau, la montée de la colline, l'écriteau, le
+  retour), `tests/unit/test_colline.gd` (28 : plan, relief, vide et mer de
   nuages, sommet libre, lumière, faune, marche, caméra, densité, draw calls),
   `tests/integration/test_colline_in_game.gd` (de l'entrepôt à la colline de jour et de nuit, la montée par
   les trois rampes, le bord, le retour ; captures `tests/integration/demo_c3.tscn` : `C3_VIEW=<vue>
   [C3_MOMENT=couchant C3_FREE=1] tools/screenshot.sh res://tests/integration/demo_c3.tscn
   build/shots/c3_<vue>.png 60`), `tests/unit/test_exterior_maps.gd` (`check` de l'outil,
   cartes d'attente, `port` dans l'île), `tests/integration/test_sentier_in_game.gd` (de l'entrepôt au
-  sentier, au marais, à la rampe de la ville, au port d'attente, et retour) ; captures
+  sentier, au marais, à la rampe de la ville, au port, et retour) ; captures
   `C1_MAP=sentier C1_VIEW=<vue> [C1_MOMENT=nuit] [C1_LIGHT=off] tools/screenshot.sh
   res://tests/integration/demo_c1.tscn build/shots/c1_<vue>.png 60` (vues : `entree`, `ouest`,
   `milieu`, `marais`, `embuscade`, `berge`, `est`, `fourche`, `ville`, `large` ; draw calls dans le

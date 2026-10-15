@@ -17,8 +17,8 @@ Pour une carte, l'outil écrit :
 
 Deux sortes de cartes :
 - les cartes construites, une recette par carte dans tools/exterior_recipes/<id>.py (entrepot,
-  sentier, village, colline, ville_haute) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
-- les cartes d'attente (WAITING plus bas : foret_profonde, port, ville_marche) : un sol plat de la
+  sentier, village, colline, ville_haute, port) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
+- les cartes d'attente (WAITING plus bas : foret_profonde, ville_marche) : un sol plat de la
   bonne matière, une lisière, l'écriteau « Plus loin, bientôt », la sortie de retour et le
   marqueur d'arrivée du plan. Provisoires : le lot de la carte les remplace par une recette
   (ajouter la carte à RECIPES, retirer l'attente).
@@ -70,10 +70,10 @@ SCENES = os.path.join(ROOT, "src", "world", "maps")
 GROUND_FILES = ["plan.json", "map.json", "heights.png", "materials.png", "structures.png"]
 
 # Cartes construites : une recette par carte (tools/exterior_recipes/<id>.py).
-RECIPES = ["entrepot", "sentier", "village", "colline"]
+RECIPES = ["entrepot", "sentier", "village", "colline", "port"]
 
 # Lot qui a écrit la liste des places d'une carte (C1 par défaut : l'outil).
-PLACES_LOT = {"village": "C2", "colline": "C3"}
+PLACES_LOT = {"village": "C2", "colline": "C3", "port": "CP"}
 
 # Cartes d'attente (lots de la phase 3 : elles les remplacent). Taille 32 × 24 m. ground : matière du
 # sol ; path : matière du chemin ; back : la sortie du plan (son nom, sa cible, le marqueur du retour)
@@ -85,11 +85,6 @@ WAITING = {
         "ground": "sous_bois", "path": "chemin", "back": "vers_entrepot",
         "exit": (14, 0, 18, 0.6), "marker": (16, 2.5, "S"), "spawn": (16, 4.0, "S"),
         "path_pts": [[16, 0], [16, 13]], "sign": (17.8, 13.6), "gap": (13, 19),
-    },
-    "port": {
-        "ground": "sous_bois", "path": "chemin", "back": "vers_sentier",
-        "exit": (0, 10, 0.6, 14), "marker": (2.5, 12, "E"), "spawn": (5.0, 12, "E"),
-        "path_pts": [[0, 12], [19, 12]], "sign": (19.8, 10.6), "gap": None,
     },
 }
 WAITING_SIZE = (32, 24)
@@ -532,10 +527,12 @@ def plan_gaps(m, writer, p):
         if '[node name="%s" type="Marker3D" parent="Life/Areas"]' % pl.name not in joined:
             gaps.append("place %s absente" % pl.name)
     used = {path for (_kind, path) in writer.ext}
+    # SCENE_ALIASES (recette) : une scène posée à la place de l'image du plan (la manche à air animée du port).
+    aliases = getattr(writer.recipe, "SCENE_ALIASES", {})
     for item in m.decors + m.trees:
         if item.name in ("wall_lantern",):
             continue
-        scenes = [s for s in (item.name, item.name + "_fg", item.name + "_forest")
+        scenes = [s for s in (item.name, item.name + "_fg", item.name + "_forest", aliases.get(item.name, item.name))
                   if "res://src/world/props/%s.tscn" % s in used]
         if not scenes:
             gaps.append("%s %s (ligne %d) n'est posé par aucune scène" % (item.kind, item.name, item.line))

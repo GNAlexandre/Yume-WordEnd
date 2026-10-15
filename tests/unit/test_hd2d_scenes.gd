@@ -326,8 +326,8 @@ func test_every_side_is_the_flank_of_its_building_at_contract_size() -> void:
 	# (CV) et les dix maisons et boutiques de la ville (cahier n° 5, 6.4 et 6.5).
 	assert_eq(
 		count,
-		37,
-		"flancs des 9 bâtiments existants, des 10 nouveaux, de T1, du village (C2) et de la ville (CV)"
+		38,
+		"flancs des 9 bâtiments existants, des 10 nouveaux, de T1, du village (C2), de la ville (CV), du port (CP)"
 	)
 	assert_true(problems.is_empty(), "; ".join(problems))
 

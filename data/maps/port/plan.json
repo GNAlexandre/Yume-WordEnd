@@ -1,36 +1,32 @@
 {
- "_comment": "Carte d'attente (lot T1, provisoire jusqu'à la phase 3 : docs/DECISIONS.md) : sol plat, un chemin vers l'entrepôt. Lu par tools/map_build.py gen port.",
+ "_comment": "Sol en relief du port (lot CP), d'après docs/lore/CARTE.md, section 6.2 : quai de tôle, rue de pavés, aire-port de gravier à 0, la colline ventée en trois terrasses (+1, +2, +3 m) montées par trois rampes, le vide de l'île au nord (la mer de nuages). Lu par tools/map_build.py gen port ; le jeu ne lit pas ce fichier.",
  "size": [
-  32,
-  24
+  70,
+  40
  ],
  "seed": 68,
- "materials_scale": 1,
+ "materials_scale": 2,
  "edges": {
-  "north": "land",
+  "north": "void",
   "east": "land",
   "south": "land",
   "west": "land"
  },
  "skirt": 16,
  "spawn": [
-  5,
-  12
+  4,
+  17
  ],
  "base": {
   "level": 0,
-  "material": "sobre"
+  "material": "paves"
  },
  "materials": {
-  "sobre": {
-   "label": "Sol de la carte d'attente, assourdi",
-   "layer": "forest_floor",
-   "color": "#7a8a6a",
-   "tint": [
-    0.78,
-    0.78,
-    0.8
-   ]
+  "herbe_drue": {
+   "label": "Herbe drue et molle (grass_b)",
+   "layer": "grass_b",
+   "color": "#4f9a46",
+   "variant": false
   },
   "chemin": {
    "label": "Chemin de terre (path_dirt_b)",
@@ -38,24 +34,393 @@
    "color": "#d0a060",
    "variant": false,
    "path": true
+  },
+  "eau_basse": {
+   "label": "Eau basse du marais : on y marche (VEX)",
+   "layer": "water",
+   "color": "#3a70b0",
+   "walkable": true,
+   "ripple": true,
+   "tint": [
+    0.78,
+    0.86,
+    0.8
+   ]
   }
  },
  "steps": [
   {
+   "op": "level",
+   "level": 2,
+   "shape": {
+    "rect": [
+     58.0,
+     5.0,
+     12.0,
+     22.0
+    ]
+   }
+  },
+  {
+   "op": "level",
+   "level": 4,
+   "shape": {
+    "rect": [
+     61.0,
+     5.0,
+     9.0,
+     17.0
+    ]
+   }
+  },
+  {
+   "op": "level",
+   "level": 6,
+   "shape": {
+    "rect": [
+     63.0,
+     5.0,
+     7.0,
+     11.0
+    ]
+   }
+  },
+  {
+   "op": "void",
+   "shape": {
+    "rect": [
+     -3,
+     -3,
+     64,
+     8
+    ]
+   }
+  },
+  {
+   "op": "void",
+   "shape": {
+    "poly": [
+     [
+      58,
+      -3
+     ],
+     [
+      73,
+      -3
+     ],
+     [
+      73,
+      5.3
+     ],
+     [
+      69,
+      4.5
+     ],
+     [
+      65.5,
+      5.4
+     ],
+     [
+      61.5,
+      4.7
+     ],
+     [
+      58,
+      5.0
+     ]
+    ],
+    "noise": 0.25,
+    "noise_scale": 2.0,
+    "seed": 5
+   }
+  },
+  {
+   "op": "face",
+   "face": "earth",
+   "shape": {
+    "rect": [
+     0,
+     0,
+     70,
+     40
+    ]
+   }
+  },
+  {
+   "op": "material",
+   "material": "paves",
+   "shape": {
+    "rect": [
+     0.0,
+     14.0,
+     58.0,
+     6.0
+    ],
+    "noise": 0.35,
+    "noise_scale": 2.5,
+    "seed": 1
+   }
+  },
+  {
+   "op": "material",
+   "material": "tole",
+   "shape": {
+    "rect": [
+     0.0,
+     5.0,
+     58.0,
+     9.0
+    ],
+    "noise_scale": 2.5,
+    "seed": 2
+   }
+  },
+  {
+   "op": "material",
+   "material": "gravier",
+   "shape": {
+    "rect": [
+     0.0,
+     20.0,
+     58.0,
+     10.0
+    ],
+    "noise": 0.35,
+    "noise_scale": 2.5,
+    "seed": 3
+   }
+  },
+  {
+   "op": "material",
+   "material": "herbe_haute",
+   "shape": {
+    "rect": [
+     56.0,
+     5.0,
+     14.0,
+     25.0
+    ],
+    "noise": 0.35,
+    "noise_scale": 2.5,
+    "seed": 4
+   }
+  },
+  {
+   "op": "material",
+   "material": "terre_battue",
+   "shape": {
+    "rect": [
+     54.0,
+     20.0,
+     16.0,
+     14.0
+    ],
+    "noise": 0.35,
+    "noise_scale": 2.5,
+    "seed": 5
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "herbe",
+   "shape": {
+    "rect": [
+     0.0,
+     30.0,
+     70.0,
+     10.0
+    ],
+    "noise": 0.35,
+    "noise_scale": 2.5,
+    "seed": 6
+   }
+  },
+  {
+   "op": "ramp",
+   "dir": "north",
+   "rect": [
+    59,
+    24,
+    4,
+    3
+   ],
+   "material": "terre_battue"
+  },
+  {
+   "op": "ramp",
+   "dir": "north",
+   "rect": [
+    64,
+    22,
+    4,
+    3
+   ],
+   "material": "terre_battue"
+  },
+  {
+   "op": "ramp",
+   "dir": "north",
+   "rect": [
+    65,
+    16,
+    4,
+    3
+   ],
+   "material": "terre_battue"
+  },
+  {
+   "op": "material",
+   "material": "feuilles",
+   "shape": {
+    "ellipse": [
+     28.0,
+     31.4,
+     3.0,
+     0.8
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 74
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "feuilles",
+   "shape": {
+    "ellipse": [
+     44.0,
+     32.4,
+     4.0,
+     1.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 73
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "feuilles",
+   "shape": {
+    "ellipse": [
+     12.0,
+     32.0,
+     4.0,
+     1.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 72
+   },
+   "where": {
+    "level": 0
+   }
+  },
+  {
+   "op": "material",
+   "material": "mousse",
+   "shape": {
+    "ellipse": [
+     67.0,
+     21.0,
+     2.2,
+     1.0
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 71
+   },
+   "where": {
+    "level": 4
+   }
+  },
+  {
+   "op": "material",
+   "material": "mousse",
+   "shape": {
+    "ellipse": [
+     62.0,
+     14.0,
+     2.4,
+     1.4
+    ],
+    "noise": 0.5,
+    "noise_scale": 1.6,
+    "seed": 70
+   },
+   "where": {
+    "level": 6
+   }
+  },
+  {
    "op": "path",
    "material": "chemin",
-   "width": 3.0,
+   "width": 2.0,
    "points": [
     [
-     0,
-     12
+     55.5,
+     18.0
     ],
     [
-     19,
-     12
+     55.5,
+     31.0
+    ],
+    [
+     62.0,
+     32.0
+    ],
+    [
+     69.0,
+     32.0
     ]
    ],
-   "noise": 0.3,
+   "noise": 0.1,
+   "noise_scale": 1.6
+  },
+  {
+   "op": "path",
+   "material": "chemin",
+   "width": 1.8,
+   "points": [
+    [
+     61.0,
+     29.5
+    ],
+    [
+     61.0,
+     24.6
+    ],
+    [
+     66.0,
+     25.4
+    ],
+    [
+     66.0,
+     21.0
+    ],
+    [
+     67.0,
+     20.0
+    ],
+    [
+     67.0,
+     17.0
+    ],
+    [
+     67.0,
+     12.0
+    ]
+   ],
+   "noise": 0.35,
    "noise_scale": 1.6
   }
  ]

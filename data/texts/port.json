@@ -1,0 +1,15 @@
+{
+  "_comment": "Objets à examiner du port (lot CP ; docs/lore/CARTE.md, section 6.2), lus par Examinable (src/world/examinable.gd) au format des textes de l'histoire (DialogueRunner.load_story_texts). Une clé par carte, puis une par objet (text_key = « carte/objet ») ; une ligne vide sépare deux pages ; {player} est remplacé par le prénom de la joueuse. Paraphrases d'après les dossiers du canon (docs/lore/canon/v1_vex.md, « Bord de l'île, port, vue », « Distances et chemins », « Port » et « Navires vus ou évoqués »), jamais de citation de l'œuvre ; ce qui est original le reste discrètement.",
+  "prompt": "Examiner",
+  "port": {
+    "_comment": "Le port (CARTE.md 6.2).",
+    "panneau": "Un poteau fendu, penché par le vent, et deux planches taillées en flèches. La peinture rouge s'écaille. À droite, de petites maisons de pierre : la ville, à deux mille marmer. À gauche, un grand bâtiment de bois dans des arbres : l'entrepôt, à cinq cents.\n\nLe vent a rongé le reste. Personne n'a repeint ce panneau depuis longtemps ; il tient encore, c'est tout ce qu'on lui demande.",
+    "bord_du_vide": "Le quai s'arrête là. En dessous, quelques nuages traînent, puis la surface, loin, d'un gris de boue : ni vert, ni bleu, ni jaune, plus rien de ce qu'on dit qu'elle a eu. À la tombée de la nuit, ce gris se fond dans le noir.",
+    "guichet": "Le guichet du bureau du port. Le volet est baissé ; un registre ouvert dort derrière la vitre, la plume posée en travers. Ici, personne n'attend un navire cette nuit.",
+    "longue_vue": "Une longue-vue de laiton, posée sur l'appui de la fenêtre du gardien et pointée vers le haut, vers les nuages. On ne regarde pas les arrivées au hasard : on les guette.",
+    "bras_d_ancrage": "Trois bras d'ancrage de fer et de cuivre, déployés, pince ouverte. Quand un navire s'amarre, ils se referment sur sa coque, de l'arrière vers l'avant, avec un grand bruit de métal. Cette nuit, ils attendent, graissés de frais.",
+    "sifflet": "Un sifflet à vapeur de laiton terni, au bout d'un tuyau de cuivre qui sort du quai. Une petite chaîne pend à côté : on la tire pour annoncer un navire.",
+    "caisses_cristaux": "Des caisses cerclées de fer, pleines de cristaux jaune pâle. C'est ce qui fait chauffer les chaudières des navires. Elles sont lourdes et fermées d'un cadenas : on ne plaisante pas avec ce qui flambe.",
+    "manche_a_air": "Une manche à air rayée de rouge et de blanc, tendue à l'horizontale. Sur cette colline, le vent ne tombe jamais ; de là-haut, on voit tout arriver."
+  }
+}

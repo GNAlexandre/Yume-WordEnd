@@ -3226,3 +3226,23 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **E8c — la place de Willem au réfectoire** : `entrepot_rdc:refectoire_porte_est` (15,75 ; 7,85), le seuil de la
   porte est (la plus proche de l'escalier) ; les petites filent par la porte ouest vers `couloir_ouest`
   (« par l'autre porte », ACTE1.md 2.2), au lieu de `couloir_est`, qui les faisait passer devant lui.
+- **CP — la carte du port** (`tools/exterior_recipes/port.py`, CARTE.md 6.2) : construite d'après le plan ; écarts notés dans
+  CARTE.md et dans `DEVIATIONS` de la recette : bornes de caméra `Rect2(10, 6, 50, 24)` (le plan arrêtait la vue à z = 30),
+  relief de la colline refait (trois rampes qui montent vers le nord : les deux du plan menaient nulle part), point `navire_quai`
+  ajouté (32,5 ; 7,6), aucune lumière (les lanternes de quai sont l'image `dock_lamp`, qui brille par son `glow`).
+- **CP — le navire à quai** : un grand panneau de décor `ships/garde_transport_side` (16 × 7 m, lot R7 du cahier, sans collision,
+  quille à −1,6 m sous le quai), remplaçant **dérivé du flanc livré du Barocupot** (ramené à 16 × 7 m, un peu bleui ; la recette est
+  dans `tools/hd2d_port.py`). E7 le remplace par le navire en volume ; le point `navire_quai`, la passerelle et les trois bras
+  d'ancrage restent (docs/CONTRACT_REQUESTS.md).
+- **CP — la passerelle** : un plancher de 2 × 3,6 m (`gangway_quay`, `Building` sans façade) du quai à la coque, au lieu de l'image
+  `gangway` (une rampe de flanc) ou de la scène `gangway` de T1 (12 m de long, pour la plage). Le bord du vide (`vide`) est une boîte
+  invisible : on monte sur le début de la passerelle mais on ne marche pas jusqu'à la coque ; la scène du débarquement y fait descendre
+  Willem. Les sorties `passerelle` (→ `transport_garde`) et `vers_ville` (→ `ville_marche`) sont omises tant que leur carte n'existe pas
+  (un écriteau ferme la route de la ville), l'outil les remet quand elle existe.
+- **CP — le panneau aux flèches rouges** : `signpost_port`, dérivé du panneau livré `signpost` (mêmes flèches écaillées, une ville de
+  maisons de pierre à droite, un bâtiment de bois entre deux sapins à gauche). Il est au premier plan (le plan le veut : `pp`) et
+  s'efface autour du joueur qui se tient derrière lui (au nord, comme le point `panneau`) : pour le gros plan de la scène 1.1, la place
+  `panneau_sud` (6 ; 22,8, regard au nord) met le panneau derrière Willem.
+- **CP — pas d'ornières sur les pavés** : le décalque livré `cart_ruts` se lit comme un sillon de labour (QC-32, R0.8), il n'est pas posé.
+- **CP — ordre de travail** : après chaque `gen` d'une carte, `tools/import.sh` (le sol lit `materials.png` par l'import ; un import
+  périmé donne des rectangles d'herbe aux bords des matières).
