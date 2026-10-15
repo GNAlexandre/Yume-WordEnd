@@ -246,11 +246,13 @@ def pose(p):
         place("Yard", scene, x, z, name="DuelDecal%d" % (k + 1), flip=k % 2 == 0)
     yard_decals = poisson(Rect(31.5, 28.6, 56.5, 45.0), 1.7, 40,
                           lambda x, z: not duel.has(x, z, 1.2) and not PLACES["coin_soleil"].has(x, z), seed=21)
-    scatter("YardDecals", ["pebbles_a", "leaves_rust_a", "pebbles_b", "leaves_gold_b", "footprints"], yard_decals,
+    # (QC) Pas de traces de pas tirées au hasard : la même traînée, à dix angles, faisait des
+    # pistes de fourmis en travers de la cour (docs/QUALITE.md, QC-04) ; restent les quatre posées.
+    scatter("YardDecals", ["pebbles_a", "leaves_rust_a", "pebbles_b", "leaves_gold_b"], yard_decals,
             scale=(0.8, 1.1), seed=22, check=False)
     duel_decals = poisson(Rect(36.5, 31.5, 47.5, 42.5), 2.3, 14,
                           lambda x, z: abs(x - 42) + abs(z - 37) > 2.0, seed=23)
-    scatter("DuelDecals", ["pebbles_b", "footprints", "pebbles_a"], duel_decals, scale=(0.8, 1.0), seed=24,
+    scatter("DuelDecals", ["pebbles_b", "pebbles_a"], duel_decals, scale=(0.8, 1.0), seed=24,
             check=False)
     place("Yard", "toys_b", 33.6, 31.0, name="ToysWest")
     place("Yard", "ball", 54.2, 37.6, name="YardBall", check=False)
@@ -272,7 +274,9 @@ def pose(p):
     place("Field", "clover_patch", 68.6, 21.4, name="FieldClover")
     field_decals = poisson(Rect(66.5, 8.5, 83.5, 27.5), 3.2, 16,
                            lambda x, z: abs(x - 75) + abs(z - 18) > 2.5 and abs(x - 75) > 2.0, seed=25)
-    scatter("FieldDecals", ["footprints", "leaves_gold_a", "clover_patch", "leaves_rust_b", "mud_patch"], field_decals,
+    # (QC) Ni traces ni boue tirées au hasard : sur l'herbe sèche, les plaques de boue se lisaient
+    # comme des carrés bêchés (docs/QUALITE.md, QC-05) ; restent les usures des buts et trois traces.
+    scatter("FieldDecals", ["leaves_gold_a", "clover_patch", "leaves_rust_b"], field_decals,
             scale=(0.8, 1.05), seed=26, check=False)
     field_rim = []
     for z in [6.3 + k * 1.15 for k in range(21)]:
@@ -375,17 +379,11 @@ def pose(p):
     scatter("PathFlowers", ["wildflowers_a", "wildflowers_b"], edge[1::3], seed=61, check=False)
     scatter("PathStones", ["rock_small_a", "rock_small_b", "rock_small_c", "rock_small_d", "fern_c"], edge[2::3],
             seed=62, check=False)
-    stones = []
-    for name, width, pts in PATHS:
-        if name in ("vers_village", "vers_sentier", "vers_foret"):
-            for k in range(len(pts) - 1):
-                (ax, az), (bx, bz) = pts[k], pts[k + 1]
-                n = int(math.hypot(bx - ax, bz - az) / 7.0)
-                for s in range(n):
-                    t = (s + 0.5) / max(n, 1)
-                    stones.append((ax + (bx - ax) * t + rng.uniform(-0.4, 0.4), az + (bz - az) * t))
-    stones = [p for p in stones if not PLACES["cour"].has(p[0], p[1], 1.0)]
-    scatter("SteppingStones", ["stepping_stones"], stones, scale=(0.9, 1.1), seed=63, check=False)
+    # (QC) Les pierres de gué (`stepping_stones` : quatre pierres dans l'eau claire) ne vont que
+    # dans l'eau : semées tous les 7 m sur les chemins secs, elles faisaient des flaques bleues en
+    # travers de la terre (docs/QUALITE.md, QC-03). Un seul gué, sur la rivière, en aval du
+    # puisage.
+    place("Marsh", "stepping_stones", 4.3, 49.4, name="GueRiviere", check=False)
     borders = []
     for name, width, pts in PATHS:
         if name in ("vers_village", "vers_sentier"):
@@ -501,7 +499,9 @@ def ground_plan(M):
     # Marais et creux des bois : berges irrégulières (± 1 m autour du rectangle du plan), gardées
     # franches au pied des rampes.
     level(-1, {"rect": [0, 4, 6, 26], "noise": 1.6, "noise_scale": 2.2, "seed": 41}, {"levels": [0]})
-    level(-1, {"rect": [0, 4, 6, 20]})
+    # (QC) Le cœur du marais de l'ouest s'arrête à x = 5 : à 6, sa berge était une droite de 20 m,
+    # une couture visible du pré au marais (docs/QUALITE.md, QC-06) ; le bruit fait la berge.
+    level(-1, {"rect": [0, 4, 5, 20]})
     level(-1, {"rect": [0, 4, 4.5, 26]})
     level(-1, {"rect": [0, 26, 6, 4]})
     level(-1, {"rect": [0, 44, 14, 16], "noise": 1.8, "noise_scale": 2.6, "seed": 42}, {"levels": [0]})

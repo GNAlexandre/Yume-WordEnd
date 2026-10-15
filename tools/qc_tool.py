@@ -14,8 +14,8 @@ check (code 1 si un manque) :
 
 contact : lit <dossier>/index.tsv (écrit par tests/integration/demo_qc.gd ; la dernière ligne d'une capture
 l'emporte) et écrit <dossier>/contact_<carte>.png : les captures réduites en grille, avec le nom de la vue, le
-moment, les draw calls et la luminance ; en rouge ce qui dépasse le budget (200 draw calls) ou passe sous le
-seuil de luminance (0,1 en moyenne).
+moment, les draw calls et la luminance ; en rouge ce qui dépasse le budget (200 draw calls, sauf les vues
+d'ensemble) ou passe sous le seuil de luminance (0,1 en moyenne).
 """
 
 from __future__ import annotations
@@ -172,7 +172,10 @@ def contact(folder: str) -> int:
         if map_id in order:
             views = json.load(open(VIEWS, encoding="utf-8"))["maps"][map_id]["views"]
             view_order = {v["name"]: i for i, v in enumerate(views)}
-        items.sort(key=lambda r: (view_order.get(r["view"], 999), r["view"], r["moment"]))
+        moment_order = ["aube", "matin", "apres_midi", "couchant", "nuit"]
+        items.sort(key=lambda r: (view_order.get(r["view"], 999), r["view"],
+                                  moment_order.index(r["moment"]) if r["moment"] in moment_order else 9,
+                                  r["weather"] != "clair"))
         rows_n = (len(items) + cols - 1) // cols
         sheet = Image.new("RGB", (cols * (tw + pad) + pad, rows_n * (th + label_h + pad) + pad + 28), (24, 24, 28))
         draw = ImageDraw.Draw(sheet)
@@ -186,7 +189,8 @@ def contact(folder: str) -> int:
                 sheet.paste(thumb, (x, y))
             calls = int(float(row["draw_calls"]))
             luma = float(row["luma"])
-            bad = calls > DRAW_CALL_BUDGET or luma < LUMA_FLOOR
+            # Une vue d'ensemble (caméra haute, toute la carte) n'est pas une vue du jeu : pas de budget.
+            bad = (calls > DRAW_CALL_BUDGET and row["view"] != "ensemble") or luma < LUMA_FLOOR
             label = f"{row['view']} · {row['moment']}" + (f" · {row['weather']}" if row["weather"] != "clair" else "")
             label += f" · {calls} dc · L {luma:.2f}"
             draw.text((x + 2, y + th + 2), label, fill=(255, 110, 110) if bad else (230, 230, 230), font=font)

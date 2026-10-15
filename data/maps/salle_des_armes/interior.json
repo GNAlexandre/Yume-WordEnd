@@ -10,7 +10,12 @@
   "windows": [],
   "wall_items": [
     {"room": "crypte", "side": "N", "x": 12.55, "y": 2.4, "image": "wallitem_cobweb"},
-    {"room": "crypte", "side": "W", "z": 7.5, "y": 2.4, "image": "wallitem_cobweb"}
+    {"room": "crypte", "side": "W", "z": 7.5, "y": 2.4, "image": "wallitem_cobweb"},
+    {"room": "crypte", "side": "W", "z": 6.0, "y": 1.6, "image": "wallitem_crystal_sconce"},
+    {"room": "crypte", "side": "E", "z": 4.5, "y": 1.6, "image": "wallitem_crystal_sconce"}
   ],
-  "lights": []
+  "lights": [
+    {"room": "crypte", "at": [1.1, 6.0], "radius": 3.6, "color": "#ffd59a", "energy": 0.75},
+    {"room": "crypte", "at": [12.9, 4.5], "radius": 3.6, "color": "#ffd59a", "energy": 0.75}
+  ]
 }

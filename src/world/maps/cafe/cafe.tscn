@@ -95,6 +95,9 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 1.5, 4.75)
 shape = SubResource("BoxShape3D_1")
 
+[node name="crystal_pendant_2" parent="Geometry/Salle" instance=ExtResource("p_crystal_pendant")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 1.6042, 7.6)
+
 [node name="cafe_cake_case_1" parent="Geometry/Salle" instance=ExtResource("p_cafe_cake_case")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 1.2, 3.42)
 

@@ -15,10 +15,13 @@
     {"room": "salle", "side": "W", "z": 5.0, "image": "window_cross_small", "sill": 1.0}
   ],
   "wall_items": [
-    {"room": "salle", "side": "N", "x": 6.8, "y": 1.2, "image": "wallitem_menu_cafe"}
+    {"room": "salle", "side": "N", "x": 6.8, "y": 1.2, "image": "wallitem_menu_cafe"},
+    {"room": "salle", "side": "E", "z": 6.5, "y": 1.6, "image": "wallitem_wall_lamp"}
   ],
   "lights": [
     {"room": "salle", "at": [4.4, 5.6], "radius": 4.5, "color": "#ffd59a", "energy": 0.75},
-    {"room": "salle", "at": [4.0, 3.0], "radius": 3.6, "color": "#ffd59a", "energy": 0.75}
+    {"room": "salle", "at": [4.0, 3.0], "radius": 3.6, "color": "#ffd59a", "energy": 0.75},
+    {"room": "salle", "at": [2.4, 7.6], "radius": 4.5, "color": "#ffd59a", "energy": 0.75},
+    {"room": "salle", "at": [8.4, 6.5], "radius": 2.6, "color": "#ffc070", "energy": 0.85}
   ]
 }

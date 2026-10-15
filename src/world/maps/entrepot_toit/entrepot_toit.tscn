@@ -161,6 +161,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, -6.5, 3)
 [node name="tree_autumn_1" parent="Geometry/Lisiere" instance=ExtResource("p_tree_autumn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, -6.5, 9.5)
 
+[node name="tree_autumn_2" parent="Geometry/Lisiere" instance=ExtResource("p_tree_autumn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, -6.5, 15.5)
+
+[node name="tree_autumn_rust_2" parent="Geometry/Lisiere" instance=ExtResource("p_tree_autumn_rust")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, -6.5, 20.5)
+
 [node name="laundry_basket_2" parent="Geometry/Terrasse" instance=ExtResource("p_laundry_basket")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.6, 0, 13)
 

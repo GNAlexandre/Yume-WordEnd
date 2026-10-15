@@ -26,7 +26,6 @@ const R3_IMAGES: Array[String] = [
 	"marsh_reed_wall",
 	"path_edge_ferns",
 	"path_root_step",
-	"fg_canopy_a",
 	"bog_pool_a",
 	"path_stones_a",
 	"path_stones_b",
@@ -182,17 +181,15 @@ func _folder_of(image_name: String) -> String:
 	return image_name
 
 
-func test_the_hanging_canopies_are_above_the_path() -> void:
-	var count := 0
+## (QC) La voûte de feuillage (`fg_canopy_a`) n'est plus posée en l'air au-dessus du sentier : vue
+## par la caméra, c'était une masse sombre suspendue au milieu de l'écran (docs/QUALITE.md, QC-12).
+## Elle attend le premier plan accroché à l'écran (E10).
+func test_no_canopy_floats_over_the_path() -> void:
 	for element: Array in _elements:
-		if String(element[1]).get_file() != "fg_canopy_a.png":
-			continue
-		count += 1
-		var panel := element[0] as DecorPanel
-		assert_true(panel.foreground, "premier plan : il s'efface devant le joueur")
 		var at: Vector3 = element[2]
-		assert_gt(at.y, _ground.height_at(at.x, at.z) + 2.0, "suspendue au-dessus du sentier")
-	assert_gte(count, 2, "les deux voûtes du plan, à l'entrée et à la fourche")
+		if String(element[1]).get_file() == "fg_canopy_a.png":
+			fail_test("voûte fg_canopy_a posée en %s" % at)
+	pass_test("aucune voûte suspendue")
 
 
 # --- La vie ---------------------------------------------------------------------------------------
