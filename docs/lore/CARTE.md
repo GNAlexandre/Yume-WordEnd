@@ -639,18 +639,18 @@ entrepot_rdc : 32 × 16 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud
       < :.CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC......o
    10   :couloir....................................................|
         +---------=-+-=-+-=-         -------=-------+-=-------------+
-        |pppppbains.|wc.|pl.|entrée.|xxxEEEEEEEEEyyy|...55556555566.|
-        |ppppp......|...|...|.......|xxxEEEEEEEEE...|..77555.55555..|
-   12   |..DDDDD....|...|...|....vvv|.F.EEEEEEEEE...|..77infirmerie.o
-        |..DDDDD....|...|.uu|.......|...EEE111EEEzzz|...............|
-        |..DDDDD....|...|.uu|...@...|..22EE111EEEzzz|............888|
-        |rrDDDDD.qqq|...|...|.......|..22EEEEEEEE...|???.5555....888|
-   14   |rr...ss.qqq|...|tt.|.......|...444EEE333...|???.5555...99..|
-        |.....ss....|...|tt.|.......|...444...333...|???.5555...99..|
+        |pppppbains.|wc.|pl.|entrée.|yyyEEEEEEEEEzzz|...66667666677.|
+        |ppppp......|...|...|.......|yyyEEEEEEEEEzzz|..88666.66666..|
+   12   |..DDDDD....|...|...|....xxx|.F.EEEEEEEEE...|..88infirmerie.o
+        |..DDDDD....|...|.uu|.......|...EEE222EEE111|...............|
+        |..DDDDD....|...|.uu|...@...|..33EE222EEE111|............999|
+        |rrDDDDD.qqq|...|...|.......|..33EEEEEEEE...|???.6666....999|
+   14   |rr...ss.qqq|...|tt.|v......|...555EEE444...|???.6666...??..|
+        |.....ss....|...|tt.|v......|...555...444...|???.6666...??..|
         +-----------+---+---+--===--+---------------+---------------+
                                 v
 ```
-Légende des lettres : `1` game_table ; `2` plush_blue ; `3` plush_pile ; `4` floor_cushions ; `5` bed_iron ; `6` bedside_table ; `7` chair_child ; `8` medicine_cabinet ; `9` washbasin_stand ; `?` infirmary_desk ; `A` crystal_pendant ; `B` papers_floor ; `C` runner_rug ; `D` bath_puddles ; `E` rug_playroom ; `F` ball_white ; `G` crystal_stove ; `I` kitchen_counter ; `J` pantry_cupboard ; `K` kitchen_table_ingredients ; `L` water_tub ; `M` sacks_vegetables ; `N` china_cabinet ; `P` sink_stone ; `Q` chair_wood ; `R` dining_table_set ; `S` dining_table_long ; `U` chair_wood_back ; `V` stairs_up ; `Y` archive_shelves ; `Z` paper_pile_a ; `a` desk_buried ; `b` paper_pile_b ; `c` filing_cabinet ; `d` sofa_beige ; `e` paper_pile_c ; `f` window_reading_seat ; `g` bookshelf_tall ; `h` bookshelf_low ; `i` bookshelf_tall_b ; `j` reading_table ; `k` armchair_reading ; `m` book_pile ; `n` washstand_corridor ; `p` bath_tub ; `q` towel_shelf ; `r` wash_tub ; `s` hamper ; `t` supply_cupboard ; `u` cleaning_set ; `v` shoe_rack ; `x` piano_old ; `y` toy_chest ; `z` board_games_shelf.
+Légende des lettres : `1` board_games_shelf ; `2` game_table ; `3` plush_blue ; `4` plush_pile ; `5` floor_cushions ; `6` bed_iron ; `7` bedside_table ; `8` chair_child ; `9` medicine_cabinet ; `?` washbasin_stand ; `?` infirmary_desk ; `A` crystal_pendant ; `B` papers_floor ; `C` runner_rug ; `D` bath_puddles ; `E` rug_playroom ; `F` ball_white ; `G` crystal_stove ; `I` kitchen_counter ; `J` pantry_cupboard ; `K` kitchen_table_ingredients ; `L` water_tub ; `M` sacks_vegetables ; `N` china_cabinet ; `P` sink_stone ; `Q` chair_wood ; `R` dining_table_set ; `S` dining_table_long ; `U` chair_wood_back ; `V` stairs_up ; `Y` archive_shelves ; `Z` paper_pile_a ; `a` desk_buried ; `b` paper_pile_b ; `c` filing_cabinet ; `d` sofa_beige ; `e` paper_pile_c ; `f` window_reading_seat ; `g` bookshelf_tall ; `h` bookshelf_low ; `i` bookshelf_tall_b ; `j` reading_table ; `k` armchair_reading ; `m` book_pile ; `n` washstand_corridor ; `p` bath_tub ; `q` towel_shelf ; `r` wash_tub ; `s` hamper ; `t` supply_cupboard ; `u` cleaning_set ; `v` potted_plant ; `x` shoe_rack ; `y` piano_old ; `z` toy_chest.
 <!-- /ascii:entrepot_rdc -->
 
 **Bornes de caméra** `Rect2(8, 4, 16, 6)` (le point visé reste dans le bâtiment ; la vue entière
@@ -779,7 +779,7 @@ mural wallitem_bronze_plaque palier_armes E 7.6 1.6 0.5
 point porte_armes 21.5 2.4
 # --- archives, « salle de stockage » (V1, « Les valeureux… » ; V3) ---
 fenetre archives N 25.5 window_dusty 1.0
-mural wallitem_wall_clock archives O 3.4 1.2 0.5
+mural wall_clock_swing archives O 3.4 1.2 0.5
 mural wallitem_clippings archives E 7.0 1.3 0.8
 meuble archive_shelves 23.7 1.45 2.0 0.6 2.4
 meuble paper_pile_a 25.7 2.4 1.2 0.8 1.4
@@ -825,6 +825,8 @@ meuble towel_shelf 6.3 14.2 1.0 0.5 1.6 regard=O
 meuble wash_tub 2.0 13.9 0.8 0.6 0.5
 meuble hamper 4.6 14.3 0.6 0.5 0.7
 meuble bath_puddles 3.6 12.8 2 1.5 0 libre
+# vapeur du bain (anim livrée, lot R1) : le bas de l'image est la surface de l'eau
+objet bath_steam 2.5 11.3
 point bains_baignoire 2.5 12.4
 # --- placard du bas (V2 ; V3 : le marteau) ---
 meuble supply_cupboard 10.0 14.3 1.0 0.5 2.0
@@ -832,6 +834,7 @@ meuble cleaning_set 10.4 13.0 0.7 0.4 1.4
 # --- entrée (V5 : le manteau à la patère ; V3 : les pantoufles) ---
 mural wallitem_coat_hooks entree O 12.5 0.9 1.2
 mural wallitem_frame_landscape entree E 11.6 1.4 0.6
+meuble potted_plant 11.6 14.5 0.4 0.4 0.6
 meuble shoe_rack 14.25 12.2 1.2 0.4 0.6 regard=O
 point entree 13 12.6
 # --- salle de jeux (V2 ; VEX ; V4 : le vieux piano) ---
@@ -957,7 +960,7 @@ entrepot_etage : 32 × 16 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-s
         +-----------+----------+---+---+-----------+---+------------+
       
 ```
-Légende des lettres : `A` rug_brown ; `B` cards_floor ; `C` clothes_floor ; `D` runner_rug ; `E` wardrobe_plain ; `F` bed_plain ; `G` footlocker ; `I` desk_chtholly ; `J` bed_chtholly ; `K` wardrobe_chtholly ; `L` fireplace ; `M` comm_crystal ; `N` shelf_nygglatho ; `P` tea_table ; `Q` chair_guest ; `R` desk_nygglatho ; `S` bed_nygglatho ; `U` dresser_child ; `V` desk_clean_brooch ; `Y` clothes_chest ; `Z` stairs_down ; `a` bed_child ; `b` book_pile ; `c` bookshelf_low ; `d` roof_ladder ; `e` leak_bucket ; `f` repair_planks ; `g` bunk_bed ; `h` bed_child_messy ; `i` plush_pile ; `j` supply_cupboard ; `k` towel_shelf.
+Légende des lettres : `A` rug_brown ; `B` cards_floor ; `C` clothes_floor ; `D` runner_rug ; `E` wardrobe_plain ; `F` bed_plain ; `G` footlocker ; `I` desk_chtholly ; `J` bed_chtholly ; `K` wardrobe_chtholly ; `L` fireplace ; `M` comm_crystal ; `N` shelf_nygglatho ; `P` tea_table ; `Q` chair_guest ; `R` desk_nygglatho ; `S` bed_nygglatho ; `U` dresser_child ; `V` desk_clean ; `Y` clothes_chest ; `Z` stairs_down ; `a` bed_child ; `b` book_pile ; `c` bookshelf_low ; `d` roof_ladder ; `e` leak_bucket ; `f` repair_planks ; `g` bunk_bed ; `h` bed_child_messy ; `i` plush_pile ; `j` supply_cupboard ; `k` towel_shelf.
 <!-- /ascii:entrepot_etage -->
 
 **Bornes de caméra** `Rect2(8, 4, 16, 6)`. Au nord, les chambres des grands et des aînées ; au
@@ -1052,6 +1055,8 @@ point chtholly_porte 6.2 7.8
 meuble fireplace 9.0 1.45 1.6 0.6 1.4
 objet hearth_fire 9.0 1.45
 meuble comm_crystal 10.3 1.35 0.7 0.4 1.4
+# l'appel : la bande animée reprend la console au pixel près, cachée tant que le cristal ne sonne pas
+objet comm_crystal_call 10.3 1.35
 meuble shelf_nygglatho 11.65 1.35 1.2 0.4 1.8
 meuble tea_table 9.0 3.4 0.9 0.9 0.8
 meuble chair_guest 9.0 4.4 0.7 0.6 1.05
@@ -1067,7 +1072,7 @@ point nygglatho_tapis 11.0 7.5
 # --- chambre de la grande sœur (V1, « Entrepôt de fées ») ---
 fenetre grande_soeur N 14.4 window_curtains_closed 1.2
 meuble dresser_child 13.3 1.45 0.9 0.5 0.9
-meuble desk_clean_brooch 15.6 1.45 1.1 0.6 1.05
+meuble desk_clean 15.6 1.45 1.1 0.6 1.05
 meuble bed_plain 13.65 4.0 2.0 0.95 0.95
 meuble cards_floor 15.5 3.8 1.5 1.0 0 libre
 meuble clothes_floor 14.5 6.0 2 1.5 0 libre
@@ -1281,13 +1286,13 @@ salle_des_armes : 14 × 10 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-
     6   |.......................|
         |.......................|
         |.................EEEE..|
-        |...........FF....EEEE..|
-    8   |...........FF..........|
+        |......GGG..FF....EEEE..|
+    8   |......GGG..FF..........|
         |.......................|
         +-----------------------+
       
 ```
-Légende des lettres : `A` crypt_stairs ; `B` sword_rack_a ; `C` sword_rack_b ; `D` crypt_pillar ; `E` swords_wrapped ; `F` talisman_chest.
+Légende des lettres : `A` crypt_stairs ; `B` sword_rack_a ; `C` sword_rack_b ; `D` crypt_pillar ; `E` swords_wrapped ; `F` talisman_chest ; `G` polishing_trestle.
 <!-- /ascii:salle_des_armes -->
 
 - **Ce que dit l'œuvre** : derrière la porte rivetée à cinq serrures, un son grave ; une odeur
@@ -1325,6 +1330,7 @@ meuble crypt_pillar 5.0 5.5 0.6 0.6 3.0
 meuble crypt_pillar 9.5 5.5 0.6 0.6 3.0
 meuble swords_wrapped 11.0 7.6 1.6 0.8 1.0
 meuble talisman_chest 7.4 7.9 0.8 0.6 0.6
+meuble polishing_trestle 5.2 7.9 1.2 0.6 0.9
 mural wallitem_cobweb crypte N 12.6 2.4 0.5
 mural wallitem_cobweb crypte O 7.5 2.4 0.5
 sortie remonter 1.7 3.7 3.3 4.2 entrepot_rdc from_salle_des_armes "Remonter"
@@ -1762,7 +1768,7 @@ lumiere comptoir 4.0 3.0 1.2 cristal
 ```
 
 <!-- places:cafe -->
-**Places de la vie** (lot C2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; chaque chaise, `salle_chaise_a01` à `salle_chaise_b02` (rangées a à b du nord au sud, numérotées d'ouest en est ; regard vers la table) ; et `comptoir_arriere`, `entree`.
+**Places de la vie** (lots C2 et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; chaque chaise, `salle_chaise_a01` à `salle_chaise_b02` (rangées a à b du nord au sud, numérotées d'ouest en est ; regard vers la table) ; et `comptoir_arriere`, `entree`.
 <!-- /places:cafe -->
 
 
@@ -1794,7 +1800,7 @@ lumiere fenetre 9 3.5 1.2 jour
 ```
 
 <!-- places:maison_limashenka -->
-**Places de la vie** (lot C2 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; et `salon_canape_assise`, `vestibule_porte`.
+**Places de la vie** (lots C2 et V1 ; `Marker3D` de `Life/Places` dans la carte, pour E4 et E6) : les points nommés ci-dessus, à leur nom ; et `salon_canape_assise`, `vestibule_porte`.
 <!-- /places:maison_limashenka -->
 
 ## 6. Le port (`port`, `transport_garde`, `barocupot`)
@@ -3040,7 +3046,7 @@ document (livrée dans `assets/`, à livrer d'après un cahier, ou nom proposé 
 sont à ajouter au cahier n° 3 avant d'être commandés.
 
 <!-- inventaire -->
-394 images ou matières citées : 284 livrées ; 110 à livrer.
+398 images ou matières citées : 329 livrées ; 69 à livrer.
 
 | Image ou matière | Cartes | État |
 | --- | --- | --- |
@@ -3048,13 +3054,14 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `animal_tracks` | montagne | à livrer (cahier n° 3) |
 | `archive_shelves` | entrepot_rdc | livrée : `assets/hd2d/interior/props/archive_shelves.png` |
 | `armchair_reading` | entrepot_rdc | livrée : `assets/hd2d/interior/props/armchair_reading.png` |
-| `armchair_sheeted` | maison_limashenka | à livrer (cahier n° 3) |
+| `armchair_sheeted` | maison_limashenka | livrée : `assets/hd2d/interior/props/armchair_sheeted.png` |
 | `bakery_counter` | ville_boulangerie | à livrer (cahier n° 3) |
 | `bakery_oven` | ville_boulangerie | à livrer (cahier n° 3) |
 | `ball` | entrepot | livrée : `assets/hd2d/props/ball.png` |
 | `ball_white` | entrepot_rdc | livrée : `assets/hd2d/interior/props/ball_white.png` |
 | `bandage_rolls` | entrepot_rdc | livrée : `assets/hd2d/interior/props/bandage_rolls.png` |
 | `bath_puddles` | entrepot_rdc | livrée : `assets/hd2d/decals/bath_puddles.png` |
+| `bath_steam` | entrepot_rdc | livrée : `assets/hd2d/anim/bath_steam.png` |
 | `bath_tub` | entrepot_rdc | livrée : `assets/hd2d/interior/props/bath_tub.png` |
 | `bear_den` | montagne | à livrer (cahier n° 3) |
 | `bed_child` | entrepot_etage | livrée : `assets/hd2d/interior/props/bed_child.png` |
@@ -3065,20 +3072,20 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `bed_plain` | entrepot_etage | livrée : `assets/hd2d/interior/props/bed_plain.png` |
 | `bedside_table` | entrepot_rdc | livrée : `assets/hd2d/interior/props/bedside_table.png` |
 | `beech_a` | foret_profonde | livrée : `assets/hd2d/props/beech_a.png` |
-| `beehives` | village | à livrer (cahier n° 3) |
+| `beehives` | village | livrée : `assets/hd2d/props/beehives.png` |
 | `bench` | port | livrée : `assets/hd2d/props/bench.png` |
 | `bench_b` | entrepot | livrée : `assets/hd2d/props/bench_b.png` |
 | `bench_stone` | village, ville_haute, ville_marche | livrée : `assets/hd2d/props/bench_stone.png` |
 | `board_games_shelf` | entrepot_rdc | livrée : `assets/hd2d/interior/props/board_games_shelf.png` |
 | `boardwalk` | entrepot | livrée : `assets/hd2d/decals/boardwalk.png` |
-| `bog_pool_a` | sentier | à livrer (cahier n° 3) |
+| `bog_pool_a` | sentier | livrée : `assets/hd2d/decals/bog_pool_a.png` |
 | `bollard` | port | livrée : `assets/hd2d/props/bollard.png` |
 | `book_open_stand` | entrepot_rdc | livrée : `assets/hd2d/interior/props/book_open_stand.png` |
 | `book_pile` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/props/book_pile.png` |
 | `bookshelf_low` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/props/bookshelf_low.png` |
 | `bookshelf_tall` | entrepot_rdc | livrée : `assets/hd2d/interior/props/bookshelf_tall.png` |
 | `bookshelf_tall_b` | entrepot_rdc | livrée : `assets/hd2d/interior/props/bookshelf_tall_b.png` |
-| `bookshop_counter` | ville_librairie | à livrer (cahier n° 3) |
+| `bookshop_counter` | ville_librairie | livrée : `assets/hd2d/interior/props/bookshop_counter.png` |
 | `bookshop_shelves` | ville_librairie | à livrer (cahier n° 3) |
 | `bookshop_table` | ville_librairie | à livrer (cahier n° 3) |
 | `boulder_a` | colline | livrée : `assets/hd2d/props/boulder_a.png` |
@@ -3091,11 +3098,11 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `butcher` | ville_marche | livrée : `assets/hd2d/buildings/butcher.png` |
 | `butter_dish_open` | entrepot_rdc | livrée : `assets/hd2d/interior/props/butter_dish_open.png` |
 | `cafe` | village | livrée : `assets/hd2d/buildings/cafe.png` |
-| `cafe_bottle_shelf` | cafe | à livrer (cahier n° 3) |
-| `cafe_cake_case` | cafe | à livrer (cahier n° 3) |
-| `cafe_counter` | cafe | à livrer (cahier n° 3) |
-| `cafe_drinkers_table` | cafe | à livrer (cahier n° 3) |
-| `cafe_table_heavy` | cafe, ville_snack | à livrer (cahier n° 3) |
+| `cafe_bottle_shelf` | cafe | livrée : `assets/hd2d/interior/props/cafe_bottle_shelf.png` |
+| `cafe_cake_case` | cafe | livrée : `assets/hd2d/interior/props/cafe_cake_case.png` |
+| `cafe_counter` | cafe | livrée : `assets/hd2d/interior/props/cafe_counter.png` |
+| `cafe_drinkers_table` | cafe | livrée : `assets/hd2d/interior/props/cafe_drinkers_table.png` |
+| `cafe_table_heavy` | cafe, ville_snack | livrée : `assets/hd2d/interior/props/cafe_table_heavy.png` |
 | `cafe_town` | ville_haute | à livrer (cahier n° 3) |
 | `cafe_town_counter` | ville_cafe | à livrer (cahier n° 3) |
 | `cafe_town_table` | ville_cafe | à livrer (cahier n° 3) |
@@ -3103,7 +3110,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `cards_floor` | entrepot_etage | livrée : `assets/hd2d/decals/cards_floor.png` |
 | `cargo_cart_a` | port | à livrer (cahier n° 3) |
 | `cargo_cart_b` | port | à livrer (cahier n° 3) |
-| `cart_hay` | village | à livrer (cahier n° 3) |
+| `cart_hay` | village | livrée : `assets/hd2d/props/cart_hay.png` |
 | `cattails` | sentier | livrée : `assets/hd2d/props/cattails.png` |
 | `chair_child` | entrepot_rdc | livrée : `assets/hd2d/interior/props/chair_child.png` |
 | `chair_guest` | entrepot_etage | livrée : `assets/hd2d/interior/props/chair_guest.png` |
@@ -3123,10 +3130,11 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `cobble_b` | ville_haute, ville_marche | livrée : `assets/hd2d/ground/cobble_b.png` |
 | `coffee_tray` | entrepot_rdc | livrée : `assets/hd2d/interior/props/coffee_tray.png` |
 | `comm_crystal` | entrepot_etage | livrée : `assets/hd2d/interior/props/comm_crystal.png` |
+| `comm_crystal_call` | entrepot_etage | livrée : `assets/hd2d/anim/comm_crystal_call.png` |
 | `compress_bowl` | entrepot_rdc | livrée : `assets/hd2d/interior/props/compress_bowl.png` |
-| `cottage_thatch_a` | village | à livrer (cahier n° 3) |
-| `cottage_thatch_b` | village | à livrer (cahier n° 3) |
-| `cottage_thatch_c` | village | à livrer (cahier n° 3) |
+| `cottage_thatch_a` | village | livrée : `assets/hd2d/buildings/cottage_thatch_a.png` |
+| `cottage_thatch_b` | village | livrée : `assets/hd2d/buildings/cottage_thatch_b.png` |
+| `cottage_thatch_c` | village | livrée : `assets/hd2d/buildings/cottage_thatch_c.png` |
 | `crate_apples` | ville_haute | livrée : `assets/hd2d/props/crate_apples.png` |
 | `crate_stack` | ville_marche | livrée : `assets/hd2d/props/crate_stack.png` |
 | `crates_barrels` | cafe, port | livrée : `assets/hd2d/props/crates_barrels.png` |
@@ -3135,7 +3143,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `crystal_crates` | port | livrée : `assets/hd2d/props/crystal_crates.png` |
 | `crystal_lamp_table` | entrepot_rdc | livrée : `assets/hd2d/interior/props/crystal_lamp_table.png` |
 | `crystal_pendant` | cafe, entrepot_rdc | livrée : `assets/hd2d/interior/props/crystal_pendant.png` |
-| `crystal_projector` | ville_projection | à livrer (cahier n° 3) |
+| `crystal_projector` | ville_projection | livrée : `assets/hd2d/interior/props/crystal_projector.png` |
 | `crystal_stove` | entrepot_rdc | livrée : `assets/hd2d/interior/props/crystal_stove.png` |
 | `deck_bridge` | transport_garde | livrée : `assets/hd2d/props/deck_bridge.png` |
 | `deck_crates_lashed` | transport_garde | livrée : `assets/hd2d/props/deck_crates_lashed.png` |
@@ -3143,15 +3151,15 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `deck_vent` | transport_garde | livrée : `assets/hd2d/props/deck_vent.png` |
 | `desk_buried` | entrepot_rdc | livrée : `assets/hd2d/interior/props/desk_buried.png` |
 | `desk_chtholly` | entrepot_etage | livrée : `assets/hd2d/interior/props/desk_chtholly.png` |
-| `desk_clean_brooch` | entrepot_etage | livrée : `assets/hd2d/interior/props/desk_clean_brooch.png` |
+| `desk_clean` | entrepot_etage | livrée : `assets/hd2d/interior/props/desk_clean.png` |
 | `desk_nygglatho` | entrepot_etage | livrée : `assets/hd2d/interior/props/desk_nygglatho.png` |
 | `dining_table_long` | entrepot_rdc | livrée : `assets/hd2d/interior/props/dining_table_long.png` |
 | `dining_table_set` | entrepot_rdc | livrée : `assets/hd2d/interior/props/dining_table_set.png` |
-| `display_cabinet` | maison_limashenka | à livrer (cahier n° 3) |
+| `display_cabinet` | maison_limashenka | livrée : `assets/hd2d/interior/props/display_cabinet.png` |
 | `dock_lamp` | port | livrée : `assets/hd2d/props/dock_lamp.png` |
 | `door_armory` | entrepot_rdc | livrée : `assets/hd2d/interior/door_armory.png` |
 | `door_armory_inside` | salle_des_armes | livrée : `assets/hd2d/interior/door_armory_inside.png` |
-| `door_backroom` | cafe | à livrer (cahier n° 3) |
+| `door_backroom` | cafe | livrée : `assets/hd2d/interior/door_backroom.png` |
 | `door_bulkhead` | barocupot | livrée : `assets/hd2d/interior/door_bulkhead.png` |
 | `door_double` | entrepot_rdc | livrée : `assets/hd2d/interior/door_double.png` |
 | `door_room` | cafe, entrepot_etage, entrepot_rdc, maison_limashenka, ville_boulangerie, ville_cafe, ville_horloger, ville_librairie, ville_projection, ville_snack | livrée : `assets/hd2d/interior/door_room.png` |
@@ -3161,9 +3169,9 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `edge_waterfall` | village | livrée : `assets/hd2d/anim/edge_waterfall.png` |
 | `egg_basket_low` | entrepot_rdc | livrée : `assets/hd2d/interior/props/egg_basket_low.png` |
 | `fallen_pine` | foret_profonde | à livrer (cahier n° 3) |
-| `fence_wattle` | village | à livrer (cahier n° 3) |
+| `fence_wattle` | village | livrée : `assets/hd2d/props/fence_wattle.png` |
 | `fern_a` | entrepot | livrée : `assets/hd2d/props/fern_a.png` |
-| `fg_canopy_a` | sentier | à livrer (cahier n° 3) |
+| `fg_canopy_a` | sentier | livrée : `assets/hd2d/props/fg_canopy_a.png` |
 | `filing_cabinet` | entrepot_rdc | livrée : `assets/hd2d/interior/props/filing_cabinet.png` |
 | `fireplace` | entrepot_etage | livrée : `assets/hd2d/interior/props/fireplace.png` |
 | `firewood_pile` | entrepot, village | livrée : `assets/hd2d/props/firewood_pile.png` |
@@ -3174,10 +3182,10 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `floor_kitchen_tiles` | entrepot_rdc | livrée : `assets/hd2d/interior/floor_kitchen_tiles.png` |
 | `floor_planks_dark` | entrepot_etage, ville_projection | livrée : `assets/hd2d/interior/floor_planks_dark.png` |
 | `floor_planks_worn` | cafe, entrepot_etage, entrepot_rdc, maison_limashenka | livrée : `assets/hd2d/interior/floor_planks_worn.png` |
-| `floor_roof_deck` | entrepot_toit | à livrer (cahier n° 3) |
+| `floor_roof_deck` | entrepot_toit | livrée : `assets/hd2d/interior/floor_roof_deck.png` |
 | `floor_ship_planks` | barocupot | livrée : `assets/hd2d/interior/floor_ship_planks.png` |
 | `floor_stone_town` | ville_boulangerie, ville_cafe, ville_horloger, ville_librairie, ville_snack | à livrer (cahier n° 3) |
-| `floor_terracotta` | cafe | à livrer (cahier n° 3) |
+| `floor_terracotta` | cafe | livrée : `assets/hd2d/interior/floor_terracotta.png` |
 | `floor_tiles_bath` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/floor_tiles_bath.png` |
 | `flour_sack_open` | entrepot_rdc | livrée : `assets/hd2d/interior/props/flour_sack_open.png` |
 | `flower_bed` | entrepot | livrée : `assets/hd2d/props/flower_bed.png` |
@@ -3201,7 +3209,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `hanging_sign_key` | village | livrée : `assets/hd2d/props/hanging_sign_key.png` |
 | `hanging_sign_pan` | ville_haute | à livrer (cahier n° 3) |
 | `harbor_office` | port | livrée : `assets/hd2d/buildings/harbor_office.png` |
-| `haystack` | village | à livrer (cahier n° 3) |
+| `haystack` | village | livrée : `assets/hd2d/props/haystack.png` |
 | `hearth_fire` | entrepot_etage | livrée : `assets/hd2d/anim/hearth_fire.png` |
 | `heather` | colline | livrée : `assets/hd2d/props/heather.png` |
 | `hidden_pool_a` | foret_profonde | à livrer (cahier n° 3) |
@@ -3212,7 +3220,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `house_timber_b` | ville_marche | livrée : `assets/hd2d/buildings/house_timber_b.png` |
 | `infirmary_desk` | entrepot_rdc | livrée : `assets/hd2d/interior/props/infirmary_desk.png` |
 | `inkwell_quill` | entrepot_rdc | livrée : `assets/hd2d/interior/props/inkwell_quill.png` |
-| `juice_glasses` | cafe | à livrer (cahier n° 3) |
+| `juice_glasses` | cafe | livrée : `assets/hd2d/interior/props/juice_glasses.png` |
 | `kitchen_counter` | entrepot_rdc | livrée : `assets/hd2d/interior/props/kitchen_counter.png` |
 | `kitchen_table_ingredients` | entrepot_rdc | livrée : `assets/hd2d/interior/props/kitchen_table_ingredients.png` |
 | `kneading_trough` | ville_boulangerie | à livrer (cahier n° 3) |
@@ -3237,7 +3245,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `market_stall_veg` | ville_marche | livrée : `assets/hd2d/props/market_stall_veg.png` |
 | `marsh_hummock_a` | sentier | livrée : `assets/hd2d/props/marsh_hummock_a.png` |
 | `marsh_hummock_b` | sentier | livrée : `assets/hd2d/props/marsh_hummock_b.png` |
-| `marsh_reed_wall` | sentier | à livrer (cahier n° 3) |
+| `marsh_reed_wall` | sentier | livrée : `assets/hd2d/props/marsh_reed_wall.png` |
 | `marsh_snag` | entrepot, sentier | livrée : `assets/hd2d/props/marsh_snag.png` |
 | `meadow_flowers` | colline, entrepot | livrée : `assets/hd2d/ground/meadow_flowers.png` |
 | `meal_lunch` | entrepot_rdc | livrée : `assets/hd2d/interior/props/meal_lunch.png` |
@@ -3269,20 +3277,22 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `patched_cloth_folded` | entrepot_etage | livrée : `assets/hd2d/interior/props/patched_cloth_folded.png` |
 | `path_dirt` | entrepot, port, village | livrée : `assets/hd2d/ground/path_dirt.png` |
 | `path_dirt_b` | colline, entrepot, montagne, village | livrée : `assets/hd2d/ground/path_dirt_b.png` |
-| `path_edge_ferns` | sentier | à livrer (cahier n° 3) |
+| `path_edge_ferns` | sentier | livrée : `assets/hd2d/props/path_edge_ferns.png` |
 | `path_overgrown` | foret_profonde, sentier | à livrer (cahier n° 3) |
-| `path_root_step` | sentier | à livrer (cahier n° 3) |
-| `path_stones_a` | sentier | à livrer (cahier n° 3) |
-| `path_stones_b` | sentier | à livrer (cahier n° 3) |
+| `path_root_step` | sentier | livrée : `assets/hd2d/props/path_root_step.png` |
+| `path_stones_a` | sentier | livrée : `assets/hd2d/decals/path_stones_a.png` |
+| `path_stones_b` | sentier | livrée : `assets/hd2d/decals/path_stones_b.png` |
 | `peat` | entrepot, sentier | livrée : `assets/hd2d/ground/peat.png` |
 | `piano_old` | entrepot_rdc | livrée : `assets/hd2d/interior/props/piano_old.png` |
 | `play_goal` | entrepot | livrée : `assets/hd2d/props/play_goal.png` |
 | `play_goal_red` | entrepot | livrée : `assets/hd2d/props/play_goal_red.png` |
 | `plush_blue` | entrepot_rdc | livrée : `assets/hd2d/interior/props/plush_blue.png` |
 | `plush_pile` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/props/plush_pile.png` |
+| `polishing_trestle` | salle_des_armes | livrée : `assets/hd2d/interior/props/polishing_trestle.png` |
 | `port_hangar` | port | livrée : `assets/hd2d/buildings/port_hangar.png` |
 | `port_house_b` | port | à livrer (cahier n° 3) |
 | `pot_steam` | entrepot_rdc | livrée : `assets/hd2d/anim/pot_steam.png` |
+| `potted_plant` | entrepot_rdc | livrée : `assets/hd2d/interior/props/potted_plant.png` |
 | `projection_flicker` | ville_projection | à livrer (cahier n° 3) |
 | `projection_hall` | ville_haute | livrée : `assets/hd2d/buildings/projection_hall.png` |
 | `rain_barrel` | entrepot | livrée : `assets/hd2d/props/rain_barrel.png` |
@@ -3303,7 +3313,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `rowan` | foret_profonde | à livrer (cahier n° 3) |
 | `rug_brown` | entrepot_etage | livrée : `assets/hd2d/decals/rug_brown.png` |
 | `rug_playroom` | entrepot_rdc | livrée : `assets/hd2d/decals/rug_playroom.png` |
-| `rug_salon` | maison_limashenka | à livrer (cahier n° 3) |
+| `rug_salon` | maison_limashenka | livrée : `assets/hd2d/decals/rug_salon.png` |
 | `runner_rug` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/decals/runner_rug.png` |
 | `sack_apples` | ville_marche | livrée : `assets/hd2d/props/sack_apples.png` |
 | `sacks_pile` | port | livrée : `assets/hd2d/props/sacks_pile.png` |
@@ -3317,7 +3327,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `shop_bakery` | ville_marche | livrée : `assets/hd2d/buildings/shop_bakery.png` |
 | `shop_bookshop` | ville_haute | livrée : `assets/hd2d/buildings/shop_bookshop.png` |
 | `shop_snack` | ville_haute | à livrer (cahier n° 3) |
-| `side_table_salon` | maison_limashenka | à livrer (cahier n° 3) |
+| `side_table_salon` | maison_limashenka | livrée : `assets/hd2d/interior/props/side_table_salon.png` |
 | `signpost_port` | port | à livrer (cahier n° 3) |
 | `sink_stone` | entrepot_rdc | livrée : `assets/hd2d/interior/props/sink_stone.png` |
 | `small_waterfall` | montagne | à livrer (cahier n° 3) |
@@ -3326,7 +3336,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `snack_shelf` | ville_snack | à livrer (cahier n° 3) |
 | `snack_stools` | ville_snack | à livrer (cahier n° 3) |
 | `sofa_beige` | entrepot_rdc | livrée : `assets/hd2d/interior/props/sofa_beige.png` |
-| `sofa_salon` | maison_limashenka | à livrer (cahier n° 3) |
+| `sofa_salon` | maison_limashenka | livrée : `assets/hd2d/interior/props/sofa_salon.png` |
 | `stairs_down` | entrepot_etage | livrée : `assets/hd2d/interior/props/stairs_down.png` |
 | `stairs_up` | entrepot_rdc | livrée : `assets/hd2d/interior/props/stairs_up.png` |
 | `steam_whistle` | port | à livrer (cahier n° 3) |
@@ -3350,7 +3360,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `thicket_b` | entrepot, foret_profonde, sentier | livrée : `assets/hd2d/props/thicket_b.png` |
 | `thicket_c` | entrepot | livrée : `assets/hd2d/props/thicket_c.png` |
 | `thread_spools_pair` | entrepot_etage | livrée : `assets/hd2d/interior/props/thread_spools_pair.png` |
-| `toolbox_gears` | maison_limashenka | à livrer (cahier n° 3) |
+| `toolbox_gears` | maison_limashenka | livrée : `assets/hd2d/interior/props/toolbox_gears.png` |
 | `towel_shelf` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/props/towel_shelf.png` |
 | `town_cellar_hatch` | ville_haute | à livrer (cahier n° 3) |
 | `town_doorsteps` | ville_haute | à livrer (cahier n° 3) |
@@ -3367,40 +3377,41 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `tree_old_pine` | foret_profonde | livrée : `assets/hd2d/props/tree_old_pine.png` |
 | `vase_flowers` | entrepot_rdc | livrée : `assets/hd2d/interior/props/vase_flowers.png` |
 | `vegetable_patch` | entrepot | livrée : `assets/hd2d/props/vegetable_patch.png` |
-| `village_barn` | village | à livrer (cahier n° 3) |
-| `village_house_stone` | village | à livrer (cahier n° 3) |
-| `village_shed` | village | à livrer (cahier n° 3) |
+| `village_barn` | village | livrée : `assets/hd2d/buildings/village_barn.png` |
+| `village_house_stone` | village | livrée : `assets/hd2d/buildings/village_house_stone.png` |
+| `village_shed` | village | livrée : `assets/hd2d/buildings/village_shed.png` |
 | `wall_cellar_stone` | salle_des_armes | livrée : `assets/hd2d/interior/wall_cellar_stone.png` |
+| `wall_clock_swing` | entrepot_rdc | livrée : `assets/hd2d/anim/wall_clock_swing.png` |
 | `wall_kitchen_tiles` | entrepot_rdc | livrée : `assets/hd2d/interior/wall_kitchen_tiles.png` |
 | `wall_lantern` | entrepot, village, ville_haute | livrée : `assets/hd2d/props/wall_lantern.png` |
-| `wall_panel_dark` | cafe, ville_projection | à livrer (cahier n° 3) |
+| `wall_panel_dark` | cafe, ville_projection | livrée : `assets/hd2d/interior/wall_panel_dark.png` |
 | `wall_plaster_ochre` | ville_cafe, ville_librairie | à livrer (cahier n° 3) |
 | `wall_plaster_worn` | cafe, entrepot_etage, entrepot_rdc, maison_limashenka | livrée : `assets/hd2d/interior/wall_plaster_worn.png` |
 | `wall_ship_plate` | barocupot | livrée : `assets/hd2d/interior/wall_ship_plate.png` |
 | `wall_stone_inside` | ville_boulangerie, ville_horloger, ville_snack | à livrer (cahier n° 3) |
 | `wall_wainscot` | entrepot_rdc | livrée : `assets/hd2d/interior/wall_wainscot.png` |
 | `wall_wallpaper_faded` | entrepot_etage | livrée : `assets/hd2d/interior/wall_wallpaper_faded.png` |
-| `wall_wallpaper_floral` | maison_limashenka | à livrer (cahier n° 3) |
+| `wall_wallpaper_floral` | maison_limashenka | livrée : `assets/hd2d/interior/wall_wallpaper_floral.png` |
 | `wallitem_apron_hook` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_apron_hook.png` |
 | `wallitem_bath_rules` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_bath_rules.png` |
 | `wallitem_bronze_plaque` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_bronze_plaque.png` |
 | `wallitem_calendar` | entrepot_etage | livrée : `assets/hd2d/interior/wallitem_calendar.png` |
 | `wallitem_chore_chart` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_chore_chart.png` |
 | `wallitem_clippings` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_clippings.png` |
-| `wallitem_clock_limashenka` | maison_limashenka | à livrer (cahier n° 3) |
+| `wallitem_clock_limashenka` | maison_limashenka | livrée : `assets/hd2d/interior/wallitem_clock_limashenka.png` |
 | `wallitem_clocks` | ville_horloger | à livrer (cahier n° 3) |
 | `wallitem_coat_hooks` | entrepot_rdc, maison_limashenka | livrée : `assets/hd2d/interior/wallitem_coat_hooks.png` |
 | `wallitem_cobweb` | salle_des_armes | livrée : `assets/hd2d/interior/wallitem_cobweb.png` |
 | `wallitem_crystal_sconce` | entrepot_etage, entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_crystal_sconce.png` |
 | `wallitem_day_calendar` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_day_calendar.png` |
-| `wallitem_family_portrait` | maison_limashenka | à livrer (cahier n° 3) |
+| `wallitem_family_portrait` | maison_limashenka | livrée : `assets/hd2d/interior/wallitem_family_portrait.png` |
 | `wallitem_frame_landscape` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_frame_landscape.png` |
 | `wallitem_garde_emblem` | barocupot | livrée : `assets/hd2d/interior/wallitem_garde_emblem.png` |
 | `wallitem_height_marks` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_height_marks.png` |
 | `wallitem_kids_drawings` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_kids_drawings.png` |
 | `wallitem_labcoat` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_labcoat.png` |
 | `wallitem_menu_board` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_menu_board.png` |
-| `wallitem_menu_cafe` | cafe | à livrer (cahier n° 3) |
+| `wallitem_menu_cafe` | cafe | livrée : `assets/hd2d/interior/wallitem_menu_cafe.png` |
 | `wallitem_menu_town` | ville_cafe | à livrer (cahier n° 3) |
 | `wallitem_notice_a` | entrepot_etage | livrée : `assets/hd2d/interior/wallitem_notice_a.png` |
 | `wallitem_notice_b` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_notice_b.png` |
@@ -3409,7 +3420,6 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `wallitem_speaking_tube` | barocupot | livrée : `assets/hd2d/interior/wallitem_speaking_tube.png` |
 | `wallitem_spice_shelf` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_spice_shelf.png` |
 | `wallitem_utensils` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_utensils.png` |
-| `wallitem_wall_clock` | entrepot_rdc | livrée : `assets/hd2d/interior/wallitem_wall_clock.png` |
 | `wallitem_wall_lamp` | entrepot_etage | livrée : `assets/hd2d/interior/wallitem_wall_lamp.png` |
 | `war_chair` | barocupot | livrée : `assets/hd2d/interior/props/war_chair.png` |
 | `war_table` | barocupot | livrée : `assets/hd2d/interior/props/war_table.png` |
@@ -3420,7 +3430,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `warehouse_porch` | entrepot | livrée : `assets/hd2d/buildings/warehouse_porch.png` |
 | `wash_tub` | entrepot_rdc | livrée : `assets/hd2d/interior/props/wash_tub.png` |
 | `washbasin_stand` | entrepot_rdc | livrée : `assets/hd2d/interior/props/washbasin_stand.png` |
-| `washing_trough` | village | à livrer (cahier n° 3) |
+| `washing_trough` | village | livrée : `assets/hd2d/props/washing_trough.png` |
 | `washstand_corridor` | entrepot_rdc | livrée : `assets/hd2d/interior/props/washstand_corridor.png` |
 | `watch_workbench` | ville_horloger | à livrer (cahier n° 3) |
 | `water_tub` | entrepot_rdc | livrée : `assets/hd2d/interior/props/water_tub.png` |
@@ -3437,5 +3447,5 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `window_dusty` | entrepot_rdc | livrée : `assets/hd2d/interior/window_dusty.png` |
 | `window_porthole` | barocupot | livrée : `assets/hd2d/interior/window_porthole.png` |
 | `window_reading_seat` | entrepot_rdc | livrée : `assets/hd2d/interior/window_reading_seat.png` |
-| `window_shutters` | maison_limashenka | à livrer (cahier n° 3) |
+| `window_shutters` | maison_limashenka | livrée : `assets/hd2d/interior/window_shutters.png` |
 <!-- /inventaire -->
