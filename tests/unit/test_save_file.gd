@@ -28,6 +28,8 @@ func _fill_state() -> void:
 	GameState.tracked_quest = &"pages"
 	GameState.moment = &"nuit"
 	GameState.weather = &"pluie"
+	GameState.day = 4
+	GameState.slot = &"nuit"
 
 
 func test_no_file_means_no_save() -> void:

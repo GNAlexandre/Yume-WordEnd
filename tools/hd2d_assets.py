@@ -13,10 +13,12 @@ Densité : 96 px par mètre (48 ou 24 pour le lointain, clé ppm du manifeste).
 Usage (Python 3.9+, pip install Pillow) :
 
     python3 tools/hd2d_assets.py gen            # crée les images absentes
-    python3 tools/hd2d_assets.py gen --force    # refait tous les remplaçants
+    python3 tools/hd2d_assets.py gen --force    # refait tous les remplaçants (jamais une image livrée)
     python3 tools/hd2d_assets.py gen well grass # seulement ces images (noms ou chemins), refaites
     python3 tools/hd2d_assets.py check          # tailles, transparence, raccords, ancrage
-    python3 tools/hd2d_assets.py check --lot A  # seulement un lot du cahier n° 2 (A à G)
+    python3 tools/hd2d_assets.py check --lot A  # seulement un lot (A à G : cahier n° 2 ; I, N, L, S1 à S5,
+                                                # O1, O2, P, Q : cahiers n° 3 et 4, navires)
+    python3 tools/hd2d_assets.py orphans        # images de assets/hd2d/ sans entrée au manifeste
     python3 tools/hd2d_assets.py fit <fichier>  # ramène une image livrée trop grande à sa taille
     python3 tools/hd2d_assets.py atlas          # refait l'atlas du sol après une tuile livrée
     python3 tools/hd2d_assets.py sheet <png>    # planche de contrôle (--dir, --lot, --kind)
@@ -39,6 +41,11 @@ Drapeaux : soft_alpha (alpha continu permis : fumée, brume, lumière, nuages, o
 y (sans raccord à gauche et à droite, ou en haut et en bas) ; pairs_with (se raccorde aussi à
 gauche et à droite avec cette image) ; ppm (densité quand elle n'est pas 96 px/m) ; lot (A à G,
 cahier n° 2, section 15).
+
+Une image livrée (ChatGPT…) n'est jamais réécrite : gen --force et gen <noms> gardent tout fichier qui
+diffère de ce que sa recette dessine (--overwrite-delivered pour refaire quand même un remplaçant que
+la livraison a remplacé). Une livraison de PNG seuls s'inscrit au manifeste (orphans la liste, avec
+une entrée proposée à compléter : lot, ancrage, ips des bandes ; docs/DECISIONS.md, I1).
 
 Le résultat est déterministe (graine tirée du nom de chaque image).
 """
@@ -223,22 +230,39 @@ def _select(manifest, names=(), lot=""):
         yield entry
 
 
-def cmd_gen(names, force, lot=""):
+def is_delivered(entry, table):
+    """Vrai si le fichier de l'entrée existe et diffère de ce que sa recette dessine : une image
+    livrée (ou dessinée par une recette plus ancienne), qu'on ne réécrit pas sans le dire."""
+    path = os.path.join(ROOT, entry["path"])
+    if not os.path.exists(path) or entry_key(entry) not in table:
+        return False
+    current = Image.open(path).convert("RGBA")
+    expected = render(entry, table)
+    return current.size != expected.size or _differs(current, expected)
+
+
+def cmd_gen(names, force, lot="", overwrite_delivered=False):
     manifest = load_manifest()
     table = recipes()
     done = 0
+    kept = 0
     for entry in _select(manifest, names, lot):
         path = os.path.join(ROOT, entry["path"])
         if os.path.exists(path) and not force and not names:
             continue
         if entry_key(entry) not in table:
-            print("ATTENTION : pas de recette pour %s" % entry_key(entry))
+            if not os.path.exists(path):
+                print("ATTENTION : pas de recette pour %s" % entry_key(entry))
+            continue
+        if os.path.exists(path) and not overwrite_delivered and is_delivered(entry, table):
+            kept += 1
+            print("%-56s livrée, gardée" % entry["path"])
             continue
         generate(entry, table)
         done += 1
         w, h = file_size(entry)
         print("%-56s %d x %d" % (entry["path"], w, h))
-    print("%d image(s) générée(s)" % done)
+    print("%d image(s) générée(s), %d livrée(s) gardée(s)" % (done, kept))
     build_atlas()
     return 0
 
@@ -638,6 +662,63 @@ def cmd_fit(files):
     return 0
 
 
+# --- Images sans entrée au manifeste -----------------------------------------------------------------
+
+# Images de assets/hd2d/ qu'on n'inscrit pas : l'atlas du sol, fait d'après les tuiles (atlas).
+NOT_IN_MANIFEST = ("assets/hd2d/ground/atlas/ground_atlas.png",)
+
+
+def orphan_files():
+    """Chemins (sous la racine du projet) des PNG de assets/hd2d/ qui n'ont pas d'entrée au
+    manifeste, hors NOT_IN_MANIFEST."""
+    known = {entry["path"] for entry in load_manifest()["images"]}
+    out = []
+    for folder, _dirs, files in os.walk(os.path.join(ROOT, "assets", "hd2d")):
+        for file in files:
+            if file.endswith(".png"):
+                path = os.path.relpath(os.path.join(folder, file), ROOT).replace(os.sep, "/")
+                if path not in known and path not in NOT_IN_MANIFEST:
+                    out.append(path)
+    return sorted(out)
+
+
+def suggest_entry(path):
+    """Entrée à compléter pour une image livrée : taille réelle, genre d'après le dossier et le nom
+    (à vérifier : lot, priorité, ancrage, frames et fps d'une bande animée, alpha doux)."""
+    image = Image.open(os.path.join(ROOT, path)).convert("RGBA")
+    key = path.split("assets/hd2d/", 1)[1]
+    folder, name = os.path.split(os.path.splitext(key)[0])
+    w, h = image.size
+    alpha_min = image.getchannel("A").getextrema()[0]
+    entry = {"path": path, "size": [w, h], "kind": "panel", "prio": 2, "lot": "?"}
+    if folder == "decals":
+        entry["kind"] = "decal"
+    elif folder == "anim":
+        entry["kind"] = "anim"
+        entry["frames"] = "?"
+        entry["fps"] = "?"
+    elif folder == "fx":
+        entry["kind"] = "fx"
+    elif alpha_min == 255:
+        if w == 2 * h:
+            entry["kind"] = "panorama"
+        elif name.startswith(("wall_", "wallcut_")):
+            entry["kind"] = "tile_h"
+        else:
+            entry["kind"] = "tile"
+    return entry
+
+
+def cmd_orphans():
+    """Liste les images de assets/hd2d/ qui n'ont pas d'entrée au manifeste, avec l'entrée à compléter
+    (code 1 s'il y en a)."""
+    files = orphan_files()
+    for path in files:
+        print(json.dumps(suggest_entry(path), ensure_ascii=False))
+    print("%d image(s) sans entrée au manifeste" % len(files))
+    return 1 if files else 0
+
+
 # --- Planche de contrôle -------------------------------------------------------------------------
 
 
@@ -704,9 +785,12 @@ def main():
     gen = sub.add_parser("gen", help="génère les remplaçants")
     gen.add_argument("names", nargs="*")
     gen.add_argument("--force", action="store_true")
-    gen.add_argument("--lot", default="", help="seulement un lot du cahier n° 2 (A à G)")
+    gen.add_argument("--lot", default="", help="seulement un lot (A à G, I, N, L, S1 à S5, O1, O2, P, Q)")
+    gen.add_argument("--overwrite-delivered", action="store_true",
+                     help="refait aussi les images que la livraison a remplacées")
     check = sub.add_parser("check", help="vérifie les images du manifeste")
-    check.add_argument("--lot", default="", help="seulement un lot du cahier n° 2 (A à G)")
+    check.add_argument("--lot", default="", help="seulement un lot (A à G, I, N, L, S1 à S5, O1, O2, P, Q)")
+    sub.add_parser("orphans", help="images de assets/hd2d/ sans entrée au manifeste")
     fit = sub.add_parser("fit", help="ramène une image livrée à sa taille")
     fit.add_argument("files", nargs="+")
     sub.add_parser("atlas", help="refait l'atlas des tuiles de sol")
@@ -718,7 +802,9 @@ def main():
     sheet.add_argument("--max", type=int, default=256, help="plus grand côté d'une vignette (px)")
     args = parser.parse_args()
     if args.command == "gen":
-        return cmd_gen(args.names, args.force, args.lot)
+        return cmd_gen(args.names, args.force, args.lot, args.overwrite_delivered)
+    if args.command == "orphans":
+        return cmd_orphans()
     if args.command == "check":
         return cmd_check(args.lot)
     if args.command == "fit":

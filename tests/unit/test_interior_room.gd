@@ -430,6 +430,10 @@ func _furniture_entries() -> Array[Dictionary]:
 	for entry: Dictionary in json.data["images"]:
 		var path := String(entry["path"])
 		var rug := path.begins_with("assets/hd2d/decals/") and String(entry.get("lot", "")) == "I"
+		# (I1) Les vues de flanc, de dos et par le pied (lot R0) n'ont pas de scène : DecorPanel les
+		# trouve par leur nom, à côté de la face (test_panel_facing.gd).
+		if String(entry.get("lot", "")) == "R0":
+			continue
 		if path.begins_with("assets/hd2d/interior/props/") or rug:
 			out.append(entry)
 	return out

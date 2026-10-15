@@ -17,7 +17,11 @@ Usage (Python 3.9+, Pillow) :
     python3 tools/hd2d_sheets.py strip <out.png> <json>… [--anims repos,parle] [--scale 1]
 
 Manifeste (« sheets ») : id, dir, table (fairy : fée jouable ou soldate, 3.1 ; npc : PNJ, 3.2 ;
-timere, 3.3), height_m, views ; facultatifs : feet (alpha), axis (false :
+timere, 3.3 ; (E4) life : planches de la vie, cahier n° 3 section 4, docs/REFONTE.md 8.1), height_m,
+views ; (E4) anims (table life : les animations que la planche doit avoir, chacune à la cadence du
+tableau life ; d'autres animations de ce tableau sont permises), complement (planche
+complémentaire `<id>_life` : id de la planche de base du même dossier, dont la rangée « repos » doit
+être recopiée au pixel près, vue par vue), lot ; facultatifs : feet (alpha), axis (false :
 pieds cherchés sur toute la largeur), torso (vues recalées sur le buste), aliases (vue →
 {animation : animation dont elle joue les images}, à faire redessiner), accepted (vue → règles
 tolérées jusqu'à ce que l'image soit refaite : « height », hauteur debout du profil à
@@ -71,6 +75,28 @@ TABLES = {
         "marche": (6, 10, True, None, None),
         "parle": ([2, 3, 4], 6, True, None, None),
     },
+    # (E4) Planches de la vie (cahier n° 3, sections 2.3 et 4.2 ; docs/REFONTE.md, 8.1) : chaque
+    # planche n'a que les animations de sa clé « anims » du manifeste.
+    "life": {
+        "repos": (2, 2, True, None, None),
+        "marche": (6, 10, True, None, None),
+        "parle": ([2, 3, 4], 6, True, None, None),
+        "course": (5, 14, True, None, None),
+        "saut": (4, 12, False, None, None),
+        "frappe": (4, 14, False, [2], None),
+        "lance": (4, 12, False, [2], None),
+        "grimpe": (4, 8, True, None, None),
+        "assis": (2, 2, True, None, None),
+        "lit": (2, 2, True, None, None),
+        "dort": (2, 1, True, None, None),
+        "tombe": (4, 10, False, None, None),
+        "porte": (6, 10, True, None, None),
+        "travaille": (4, 6, True, None, None),
+        "effondre": (4, 8, False, None, None),
+        "hanches": (2, 2, True, None, None),
+        "etreinte": (4, 8, False, None, None),
+        "attaque": (4, 14, False, [1, 2, 3], None),
+    },
     "timere": {
         "repos": (5, 6, True, None, None),
         "marche": (4, 7, True, None, None),
@@ -85,9 +111,17 @@ TABLES = {
 UPRIGHT = ("repos", "marche", "parle")
 # Animations debout que le jeu joue, par tableau : une échelle fausse y bloque (ailleurs : une
 # remarque). Les PNJ ne marchent pas ; le Timere, sans pieds ni tête fixes, n'est pas mesuré.
-USED = {"fairy": ("repos", "marche", "parle"), "npc": ("repos", "parle"), "timere": ()}
+USED = {
+    "fairy": ("repos", "marche", "parle"),
+    "npc": ("repos", "parle"),
+    "life": ("repos", "marche", "parle"),
+    "timere": (),
+}
 # Une ancre peut dépasser du cadre de l'image de quelques px (pied coupé au ras du cadre).
 ANCHOR_MARGIN = 2
+# (E4) Table life : animations dont l'ancre (au sol) peut être sous l'image : pieds en l'air
+# (saut, chute, course) ou assise sur un siège non dessiné (assis, lit : ancre sous l'assise).
+ANCHOR_BELOW = ("saut", "tombe", "course", "assis", "lit", "grimpe")
 STANDING_TOLERANCE = 0.06
 SCALE_TOLERANCE = 0.12
 # Ancres : bande basse où l'on cherche les deux pieds (px au-dessus du pied le plus bas).
@@ -372,7 +406,7 @@ def _expected_count_ok(want, count):
     return count in want if isinstance(want, list) else count == want
 
 
-def check_view(json_path, table, height_px, profile_height=0.0, accepted=()):
+def check_view(json_path, table, height_px, profile_height=0.0, accepted=(), wanted=None):
     """(problèmes, remarques) d'une vue. Les problèmes bloquent (format, animations du tableau,
     images, ancres, hauteur du profil, échelle des animations jouées : USED) ; les remarques
     (échelle des autres animations, vue dessinée plus petite ou plus grande que le profil, que
@@ -380,7 +414,9 @@ def check_view(json_path, table, height_px, profile_height=0.0, accepted=()):
     profil (0 pour le profil lui-même, comparé à height_px). accepted : règles tolérées (clé
     « accepted » du manifeste) ; « height » : la hauteur du profil peut s'écarter jusqu'à
     SCALE_TOLERANCE (remarque au lieu d'un problème : le jeu garde height_m, seuls les pixels
-    du personnage sont un peu plus gros ou plus petits que 96 px/m)."""
+    du personnage sont un peu plus gros ou plus petits que 96 px/m). wanted : (E4) animations
+    attendues (clé « anims » du manifeste), toutes celles du tableau sinon ; pour la table life,
+    une animation de la planche absente du tableau est un problème."""
     problems, notes = [], []
     png = sheet_png(json_path)
     if not os.path.exists(png) or not os.path.exists(json_path):
@@ -399,7 +435,13 @@ def check_view(json_path, table, height_px, profile_height=0.0, accepted=()):
     if data.get("planche") != list(image.size):
         problems.append("planche %s au lieu de %s" % (data.get("planche"), list(image.size)))
     anims = data.get("animations", {})
-    for name, (count, fps, loops, hits, wave) in TABLES[table].items():
+    rows = TABLES[table]
+    if wanted is not None:
+        rows = {name: row for name, row in rows.items() if name in wanted or name in anims}
+        problems += ["%s : animation inconnue du tableau %s" % (n, table) for n in wanted if n not in TABLES[table]]
+    if table == "life":
+        problems += ["%s : animation hors du tableau life" % n for n in anims if n not in TABLES[table]]
+    for name, (count, fps, loops, hits, wave) in rows.items():
         anim = anims.get(name)
         if anim is None and table == "npc" and name == "parle":
             notes.append("parle absente (le PNJ garde repos en conversation)")
@@ -421,7 +463,10 @@ def check_view(json_path, table, height_px, profile_height=0.0, accepted=()):
                 problems.append("%s/%d hors de la planche" % (name, index))
                 continue
             margin = ANCHOR_MARGIN
-            if not (-margin <= ax <= w + margin and -margin <= ay <= h + margin):
+            # (E4) En l'air (saut, chute, course) ou assise sur un siège non dessiné, l'ancre
+            # reste au sol, sous l'image (cahier n° 3, 4.2).
+            below = table == "life" and name in ANCHOR_BELOW and ay > h
+            if not (-margin <= ax <= w + margin and (-margin <= ay <= h + margin or below)):
                 problems.append("%s/%d : ancre hors de l'image" % (name, index))
             part = crop(image, frame)
             if part.getchannel("A").getbbox() is None:
@@ -481,7 +526,12 @@ def check_sheet(entry):
     for view in entry.get("views", [""]):
         path = base + view + ".json"
         accepted = entry.get("accepted", {}).get(view or "side", [])
-        problems, notes = check_view(path, entry["table"], height_px, profile if view else 0.0, accepted)
+        problems, notes = check_view(
+            path, entry["table"], height_px, profile if view else 0.0, accepted, entry.get("anims")
+        )
+        if entry.get("complement") and not problems:
+            base_json = os.path.join(ROOT, entry["dir"], entry["complement"] + view + ".json")
+            problems += complement_problems(path, base_json)
         if view and not problems and os.path.exists(side) and _signature(path) != _signature(side):
             problems.append("animations, cadences, coup ou onde différents du profil")
         for anim, source in entry.get("aliases", {}).get(view or "side", {}).items():
@@ -489,6 +539,27 @@ def check_sheet(entry):
         if problems or notes:
             report[view or "profil"] = (problems, notes)
     return report
+
+
+def complement_problems(json_path, base_json):
+    """(E4) Une planche complémentaire (`<id>_life`) recopie au pixel près la rangée « repos » de
+    sa planche de base (même vue) : même nombre d'images, mêmes tailles et ancres, mêmes pixels.
+    Liste des problèmes (vide : rien à redire)."""
+    if not os.path.exists(base_json) or not os.path.exists(sheet_png(base_json)):
+        return ["planche de base %s absente" % os.path.relpath(base_json, ROOT)]
+    mine = read_json(json_path)["animations"].get("repos", {}).get("images", [])
+    base = read_json(base_json)["animations"].get("repos", {}).get("images", [])
+    if len(mine) != len(base):
+        return ["repos : %d images au lieu des %d de la planche de base" % (len(mine), len(base))]
+    image = Image.open(sheet_png(json_path)).convert("RGBA")
+    base_image = Image.open(sheet_png(base_json)).convert("RGBA")
+    problems = []
+    for index, (frame, base_frame) in enumerate(zip(mine, base)):
+        if [float(v) for v in frame[2:6]] != [float(v) for v in base_frame[2:6]]:
+            problems.append("repos/%d : taille ou ancre différentes de la planche de base" % index)
+        elif ImageChops.difference(crop(image, frame), crop(base_image, base_frame)).getbbox():
+            problems.append("repos/%d : pixels différents de la planche de base" % index)
+    return problems
 
 
 def check_all(manifest=None):
