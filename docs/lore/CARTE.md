@@ -676,6 +676,7 @@ la longe ; `tools/interior_maps.py`, `MAP_SETTINGS`). **Lumière** : préréglag
 **Points nommés** : `cuisine_fourneau`, `cuisine_table`, `cuisine_tonneau`, `refectoire_vaisselier`,
 `refectoire_evier`, `refectoire_fenetre`, `refectoire_allee` (entre les deux rangées),
 `refectoire_bout_est`, `refectoire_bout_ouest`, `refectoire_porte_cuisine` (là où l'on épie),
+`refectoire_porte_est` (le seuil de la porte est, côté salle : Willem y paraît, ACTE1.md 2.2),
 `escalier_pied`, `planning`, `porte_armes`, `archives_bureau`, `archives_canape`,
 `lecture_banquette`, `lecture_table`, `couloir_ouest`, `couloir_centre`, `couloir_est`,
 `point_eau`, `bains_baignoire`, `entree`, `jeux_tapis`, `jeux_mur_balle`, `infirmerie_lit_a`,
@@ -764,6 +765,8 @@ point refectoire_allee 11 5.55
 point refectoire_bout_est 16.0 5.6
 point refectoire_bout_ouest 6.25 5.6
 point refectoire_porte_cuisine 6.25 4.6
+# (E8c) le seuil de la porte est, côté salle (la plus proche de l'escalier) : Willem y paraît (ACTE1.md 2.2) ; les petites filent par la porte ouest
+point refectoire_porte_est 15.75 7.85
 # --- escalier, corvées, écriteaux (V1, « L'Homme sans Marque ») ---
 meuble stairs_up 17.5 4.0 1.6 3.0 3.0
 mural wallitem_chore_chart escalier N 19.4 1.2 1.0

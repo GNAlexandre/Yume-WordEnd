@@ -432,9 +432,12 @@ func _game(step: Dictionary) -> void:
 	var game := StringName(str(step["game"]))
 	var params: Dictionary = step.get("params", {})
 	if bool(director.call(&"has_game", game)) and not fast:
-		await director.call(&"run_game", game, params)
-		return
-	director.call(&"announce_game", game, params)
+		# (E8c) Un jeu qui n'a pas pu démarrer (carte d'essai, personnage absent) rend false :
+		# le repli se joue.
+		if bool(await director.call(&"run_game", game, params)):
+			return
+	else:
+		director.call(&"announce_game", game, params)
 	await _run_steps(step.get("fallback", []))
 
 

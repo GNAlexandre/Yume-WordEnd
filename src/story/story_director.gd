@@ -107,6 +107,8 @@ func _ready() -> void:
 	EventBus.map_entered.connect(_on_map_entered)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	LifeDirector.talk_handler = _on_talk
+	# (E8c) Les jeux du récit : l'embuscade de Pannibal (« embuscade_pannibal »).
+	MiniGames.register_story_games()
 
 
 func _physics_process(delta: float) -> void:
@@ -250,8 +252,9 @@ func play(scene_id: StringName) -> bool:
 	return true
 
 
-## Inscrit un jeu (E8) : handler.call(params) est attendu par l'étape « game » (sa valeur est
-## ignorée) ; un Callable vide le retire.
+## Inscrit un jeu (E8) : handler.call(params) est attendu par l'étape « game » ; s'il rend false,
+## le jeu n'a pas pu démarrer et l'étape joue son repli (toute autre valeur : le jeu a eu lieu). Un
+## Callable vide le retire.
 func register_game(game_id: StringName, handler: Callable) -> void:
 	if handler.is_valid():
 		_games[game_id] = handler
@@ -263,9 +266,11 @@ func has_game(game_id: StringName) -> bool:
 	return _games.has(game_id) and (_games[game_id] as Callable).is_valid()
 
 
-func run_game(game_id: StringName, params: Dictionary) -> void:
+## Joue le jeu inscrit (coroutine) ; faux s'il n'a pas pu démarrer (le repli se joue alors).
+func run_game(game_id: StringName, params: Dictionary) -> bool:
 	game_requested.emit(game_id, params)
-	await (_games[game_id] as Callable).call(params)
+	var played: Variant = await (_games[game_id] as Callable).call(params)
+	return not (played is bool and not played)
 
 
 func announce_game(game_id: StringName, params: Dictionary) -> void:

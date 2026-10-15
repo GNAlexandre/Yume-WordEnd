@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 1.2, étapes 3 et 4 (combat 3.1, première manche) : près de premiere_embuscade, Pannibal bondit des roseaux. Le combat est un crochet du lot E8 (« embuscade_pannibal ») ; sans lui, une courte séquence sans contrôle.",
+  "_comment": "ACTE1.md 1.2, étapes 3 et 4 (combat 3.1, première manche) : près de premiere_embuscade, Pannibal bondit des roseaux. Le combat est le jeu « embuscade_pannibal » d'E8 (MiniGames.play_story_ambush : le joueur a la main le temps du combat) ; la réussite pose j1_embuscade_gagnee et donne une réplique de plus (ACTE1.md 3.0) ; sans jeu (carte d'essai), une courte séquence sans contrôle.",
   "title": "L'embuscade",
   "day": 1,
   "after": [
@@ -56,7 +56,8 @@
       "game": "embuscade_pannibal",
       "params": {
         "day": 1,
-        "help": true
+        "help": true,
+        "success_flag": "j1_embuscade_gagnee"
       },
       "fallback": [
         {
@@ -87,6 +88,13 @@
       "do": "face",
       "who": "pannibal",
       "toward": "player"
+    },
+    {
+      "if": {
+        "flag": "j1_embuscade_gagnee"
+      },
+      "do": "dialogue",
+      "node": "vaincue"
     },
     {
       "do": "dialogue",

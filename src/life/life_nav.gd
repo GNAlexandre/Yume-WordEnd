@@ -25,6 +25,16 @@ const SAMPLE_STEP := 0.25
 ## Pas des mesures le long d'une arête du graphe (m) : assez fin pour qu'une marche de talus
 ## (0,5 m d'un coup) dépasse MAX_RISE, assez large pour construire vite.
 const EDGE_STEP := 0.34
+## (E8c) Marche franche (une rupture du sol, pas une pente) qu'un corps physique franchit encore
+## (m) : le joueur passe 0,1 m et bute à 0,125. Le bord d'une rampe taillée dans un palier (la levée
+## du sentier, à l'ouest de marais_chute) est une marche de 0 à 0,5 m : là où elle est plus basse
+## que MAX_RISE, la navigation ne doit pas y faire passer le joueur mené.
+const MAX_STEP := 0.09
+## Pas des mesures fines, entre deux mesures dont le sol diffère de plus de STEP_SUSPECT (m).
+const FINE_STEP := 0.05
+## En deçà, d'une mesure à la suivante, ni marche franche ni pente à examiner (m) : une rampe monte
+## d'au plus 0,085 m entre deux mesures.
+const STEP_SUSPECT := 0.03
 ## Élargissement des collisions des meubles (m) : le corps du PNJ.
 const PROP_MARGIN := 0.2
 ## Une collision ne gêne que si elle occupe cette tranche au-dessus du sol (m) : ni un tapis, ni
@@ -198,11 +208,13 @@ func height_at(x: float, z: float) -> float:
 
 
 ## Vrai si l'on va de a à b en ligne droite (mesures tous les SAMPLE_STEP : sol, meubles, pas de
-## marche trop haute).
+## marche trop haute, ni franche : _rise_ok).
 func line_clear(a: Vector3, b: Vector3) -> bool:
 	var flat := Vector2(b.x - a.x, b.z - a.z)
 	var steps := maxi(1, ceili(flat.length() / SAMPLE_STEP))
 	var previous := height_at(a.x, a.z)
+	var px := a.x
+	var pz := a.z
 	for i: int in range(1, steps + 1):
 		var t := float(i) / steps
 		var x := lerpf(a.x, b.x, t)
@@ -212,7 +224,29 @@ func line_clear(a: Vector3, b: Vector3) -> bool:
 		if not _avoided.is_empty() and _avoided.has(cell_of(Vector3(x, 0.0, z))):
 			return false
 		var h := height_at(x, z)
-		if absf(h - previous) > MAX_RISE:
+		if not _rise_ok(px, pz, previous, x, z, h):
+			return false
+		previous = h
+		px = x
+		pz = z
+	return true
+
+
+## (E8c) Vrai si l'on passe de (ax, az), hauteur ha, à (bx, bz), hauteur hb, deux mesures voisines :
+## le sol ne monte ni ne descend de plus de MAX_RISE, et, entre les deux, pas de marche franche de
+## plus de MAX_STEP (une pente passe, le bord d'une rampe non).
+func _rise_ok(ax: float, az: float, ha: float, bx: float, bz: float, hb: float) -> bool:
+	var rise := absf(hb - ha)
+	if rise > MAX_RISE:
+		return false
+	if rise <= STEP_SUSPECT:
+		return true
+	var count := maxi(2, ceili(Vector2(bx - ax, bz - az).length() / FINE_STEP))
+	var previous := ha
+	for i: int in range(1, count + 1):
+		var t := float(i) / count
+		var h := height_at(lerpf(ax, bx, t), lerpf(az, bz, t))
+		if absf(h - previous) > MAX_STEP:
 			return false
 		previous = h
 	return true
@@ -520,6 +554,8 @@ func _edge_clear(a: Vector2i, b: Vector2i) -> bool:
 	var pb := center(b)
 	var steps := maxi(2, ceili(cell / EDGE_STEP))
 	var previous := pa.y
+	var px := pa.x
+	var pz := pa.z
 	for i: int in range(1, steps):
 		var t := float(i) / steps
 		var x := lerpf(pa.x, pb.x, t)
@@ -527,10 +563,12 @@ func _edge_clear(a: Vector2i, b: Vector2i) -> bool:
 		if not _sample_walkable(x, z):
 			return false
 		var h := height_at(x, z)
-		if absf(h - previous) > MAX_RISE:
+		if not _rise_ok(px, pz, previous, x, z, h):
 			return false
 		previous = h
-	return absf(pb.y - previous) <= MAX_RISE
+		px = x
+		pz = z
+	return _rise_ok(px, pz, previous, pb.x, pb.z, pb.y)
 
 
 ## Lissage : du premier point, on va aussi loin que la ligne droite le permet, et ainsi de suite.
