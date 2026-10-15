@@ -131,11 +131,13 @@ func _physics_process(delta: float) -> void:
 
 
 func get_prompt() -> String:
-	return "Parler" if _present else ""
+	return "Parler" if _present and not (life != null and life.talk_blocked()) else ""
 
 
 func interact(_player: Node3D) -> void:
 	if data == null or not _present or runner.is_running() or _cooling_down():
+		return
+	if life != null and life.talk_blocked():
 		return
 	if life != null and life.on_interact():
 		return
