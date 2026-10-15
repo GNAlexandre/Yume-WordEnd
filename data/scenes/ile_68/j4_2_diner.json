@@ -28,7 +28,8 @@
     "fairy_03",
     "fairy_04",
     "fairy_05",
-    "fairy_06"
+    "fairy_06",
+    "fairy_12"
   ],
   "steps": [
     {
@@ -108,6 +109,12 @@
     },
     {
       "do": "place",
+      "who": "fairy_12",
+      "at": "refectoire_chaise_b11",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
       "who": "ithea",
       "at": "refectoire_chaise_c10",
       "outfit": "maison",
@@ -139,10 +146,10 @@
       "who": "player",
       "to": "refectoire_bout_ouest",
       "offset": [
-        0.2,
-        1.1
+        1.1,
+        0.0
       ],
-      "facing": "east"
+      "facing": "west"
     },
     {
       "do": "camera",

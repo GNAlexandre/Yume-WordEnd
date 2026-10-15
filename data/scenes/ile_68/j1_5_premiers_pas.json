@@ -340,10 +340,10 @@
       "who": "player",
       "at": "nygglatho_tapis",
       "offset": [
-        0.3,
-        1.8
+        1.7,
+        0.5
       ],
-      "facing": "north"
+      "facing": "west"
     },
     {
       "do": "camera",

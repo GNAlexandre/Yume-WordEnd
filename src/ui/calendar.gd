@@ -12,6 +12,8 @@ extends Control
 ##   examinant le calendrier de la chambre (StoryDirector.calendar_requested). Ouvert, il met le
 ##   jeu en pause (PROCESS_MODE_ALWAYS) ; journal, Échap ou « Fermer » le referment, et l'indice
 ##   se rappelle (StoryHint.recall).
+## - Dessiné au-dessus des autres enfants de UI (z_index 20) : le nom de la carte (MapFade), figé
+##   par la pause, ne le couvre pas.
 ## - Aucun style en dur : panneaux et textes prennent le thème du HUD ; les couleurs de la page
 ##   (papier, encre, trait, cercle, jour courant) se lisent dans le type de thème « Calendar »
 ##   (couleurs paper, ink, strike, ring, today), à défaut DEFAULT_COLORS.

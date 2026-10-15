@@ -31,10 +31,10 @@
       "who": "player",
       "to": "refectoire_bout_ouest",
       "offset": [
-        0.2,
-        1.1
+        1.1,
+        0.0
       ],
-      "facing": "east"
+      "facing": "west"
     },
     {
       "do": "place",
