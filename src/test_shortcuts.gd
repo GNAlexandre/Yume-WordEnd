@@ -20,8 +20,10 @@ extends Node
 ##                une carte ou un marqueur inconnus sont ignorés (une ligne au journal) ;
 ##   jeu=<jeu>    (E8) lance un jeu des petites sur l'entrepôt (MiniGames.dev_start) : `ballon`
 ##                (le match au champ, l'après-midi, le joueur près du terrain) ou `baton`
-##                (l'entraînement à la clairière, le matin, face à Willem) ; un jeu inconnu est
-##                ignoré (une ligne au journal) ;
+##                (l'entraînement à la clairière, le matin, face à Willem), (E8b) `duel` (le
+##                duel ingagnable dans la cour, le matin, puis sa reprise) ou `seniorious`
+##                (l'entraînement avec Seniorious à la clairière, l'après-midi) ; un jeu inconnu
+##                est ignoré (une ligne au journal) ;
 ##   island=<id>  (X1) une fois la partie posée, voyage en dirigeable vers cette île
 ##                (WorldManager.travel : vue du ciel, puis son port), au port port=<id> s'il est
 ##                donné (sinon le premier) ; une île inconnue est ignorée (une ligne au journal).
@@ -291,13 +293,14 @@ func _travel(map_ids: PackedStringArray) -> void:
 	_log("voyage terminé")
 
 
-## (E8) Paramètre jeu : lance le ballon ou l'entraînement au bâton, après quelques images.
+## (E8) Paramètre jeu : lance le ballon, l'entraînement au bâton, (E8b) le duel ou l'entraînement
+## avec Seniorious, après quelques images.
 func _start_game(game_name: String) -> void:
 	for _frame in 10:
 		await get_tree().process_frame
 	var started := MiniGames.dev_start(game_name)
 	if started == null:
-		_log("jeu inconnu : %s (ballon, baton)" % game_name)
+		_log("jeu inconnu : %s (%s)" % [game_name, ", ".join(MiniGames.DEV_GAMES)])
 	else:
 		_log("jeu lancé : %s" % game_name)
 

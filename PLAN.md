@@ -150,14 +150,16 @@ Yume-WordEnd/
 │   │                          # temps, activités), life_slots.gd, life_places.gd, life_nav.gd, life_actor.gd,
 │   │                          # life_game.gd, life_texts.gd ; games/<jeu>.gd (chat, course, avalanche, tour, ballon)
 │   ├── games/                 # (E8) les jeux : ball.gd (GameBall), ball_play.gd + ball_kid.gd (BallPlay, BallKid), staff_training.gd
-│   │                          # (StaffTraining), mini_games.gd (MiniGames : lancer un jeu), game_rules.gd, game_score.gd
+│   │                          # (StaffTraining), mini_games.gd (MiniGames : lancer un jeu), game_rules.gd, game_score.gd ;
+│   │                          # (E8c) ambush.gd ; (E8b) duel.gd, game_vision.gd, seniorious_training.gd,
+│   │                          # seniorious_sword.gd, fx/seniorious.png
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
 │   └── ui/                    # hud, dialogue_box, inventory, main_menu, loading, touch_controls,
 │                              # arena_end, credits, journal (Lot Q, enfant du HUD), (E1) map_fade
 ├── data/
 │   ├── attacks/*.tres         # sword_1..3, charge_wave, bite, whip, rush ; (E8) stick_1..3, stick_guard (le bâton)
-│   ├── games/*.json           # (E8) les chiffres des jeux : ballon.json, staff_training.json (GameRules)
+│   ├── games/*.json           # (E8) les chiffres des jeux : ballon.json, staff_training.json (GameRules) ; embuscade.json, (E8b) duel.json, seniorious.json
 │   ├── enemies/*.tres         # timere_small, timere_normal, timere_runner, timere_big ; visuals/timere.tres
 │   ├── fauna/<île>/           # (E5) une espèce par fichier <id>.tres (AnimalData), attacks/, visuals/<id>.tres,
 │   │                          # peuplement.json (où, combien, quand) ; format : « (E5) Ajouter un animal »
@@ -1648,7 +1650,7 @@ sans acte, garde son moteur de quêtes. Décisions : docs/DECISIONS.md (« E6 »
 | `flag` | set, clear | drapeaux |
 | `wait` / `wait_for` | time / reach (+ radius, map), map, examine, talk ; timeout, timeout_flag | attend un temps, ou le joueur (il garde la main) |
 | `control` | on | rend ou reprend le contrôle (la scène le prend au début, le rend à la fin) |
-| `game` | game, params, fallback | crochet d'E8 (`StoryDirector.register_game`) ; sans jeu inscrit, ou si l'appel rend `false` (le jeu n'a pas pu démarrer : carte d'essai, personnage absent), ses étapes de repli ; (E8c) « embuscade_pannibal » est inscrit au démarrage (`MiniGames.register_story_games`) |
+| `game` | game, params, fallback | crochet d'E8 (`StoryDirector.register_game`) ; sans jeu inscrit, ou si l'appel rend `false` (le jeu n'a pas pu démarrer : carte d'essai, personnage absent), ses étapes de repli ; (E8c) « embuscade_pannibal », (E8b) « duel_willem » et « entrainement_seniorious » sont inscrits au démarrage (`MiniGames.register_story_games`) |
 | `hint` / `calendar` | text (vide : rien) / line | l'indice de la scène ; une ligne du calendrier |
 | `show` | node (chemin dans la carte), visible | montre ou cache un nœud de la carte courante (le cristal qui sonne : `Geometry/Nygglatho/comm_crystal_call_1` d'`entrepot_etage`) |
 
@@ -1812,6 +1814,62 @@ esquive, une riposte au bâton la touche (0,8 s), couverte elle l'esquive. Réus
 présentation « nuit » ; à la fin, l'arme, la main de la scène, la présentation et les signes reviennent. Au récit :
 `MiniGames.register_story_games()` (appelé par `StoryDirector._ready`) inscrit `play_story_ambush(params)` sous
 « embuscade_pannibal » (params de la scène : day, help, seed, overrides, success_flag : posé si Chtholly l'emporte).
+
+**(E8b) Le duel ingagnable** (src/games/duel.gd, class Duel, un Node3D ajouté à `Life` ; ACTE1.md 3.3 et 8.3 ;
+`data/games/duel.json`, textes `games/duel/…` de life.json) — `MiniGames.start_duel({reprise, place (Willem à
+cour_willem, le joueur à cour_chtholly, face à face), seed, overrides, with_hud, restore_weapon}) -> Duel` (null sans
+joueur, sans carte peuplée ou sans Willem) ; `duel.finished(résultat)` après la pose de fin, tout rendu : {success
+(toujours faux), ended_by: &"thrown"|&"stopped", reprise, phases (dans l'ordre), strikes, dodges, beckons, vision_by:
+&"charge"|&"time", dash_distance, thrown_distance, duration} ; signaux `phase_changed(&"intro"|&"dodge"|&"ready"|
+&"vision"|&"reversal"|&"ended")`, `resolved((&"strike", &"dodged"|&"missed"), (&"beckon", &"waiting"), (&"venenum",
+&"charge"|&"time"), (&"dash", &"started"), (&"reversal", &"deflected"), (&"thrown", &"landed"))`, `vision_changed(actif)`,
+`heartbeat(index)` (pour un futur lot du son) ; `MiniGames.duel()`, `stop_duel()`. Phase 1 (`dodge`, 30 s au plus) :
+chaque coup à portée (2,4 m, dans l'arc) passe à côté, Willem fait un pas de côté de 1,2 m, jamais une parade ; sans
+attaque pendant 8 s, il fait signe d'approcher (`parle`). Phase 2 (`vision`) : la touche de charge tenue 2 s
+(Seniorious en main) ; l'image pâlit de 60 % sauf autour de Chtholly, Willem et les PNJ à 25 m à × 0,6, des éclats
+sortent de la lame ; au premier coup (frappe ou onde), l'élan (8 m au plus, deux foulées, arrêté à 0,9 m de Willem ;
+le duel mène alors le joueur : `set_story_hold`). Phase 3 (`reversal`) : écran blanc 0,6 s, deux battements (le blanc
+se voile), puis il dévie (`attaque` de willem_duel), elle est projetée à 6 m (`degats`, tenue jusqu'à la fin), Percival
+brille (halo additif `Duel.make_glow`). Reprise (`reprise: true`, « Encore une fois ! ») : `intro` (Willem en `pare`) →
+`ready` (la charge tenue 1,2 s) → `vision` → `reversal`, durées ÷ 1,5. **Aucun point de vie perdu, aucun écran de
+défaite.** Au récit : « duel_willem » → `play_story_duel(params)` (reprise, place, seed, overrides, flag : posé quand le
+duel est joué) ; la scène 8.3 pose le choix « Encore une fois ! » / « … D'accord. » après l'étape « game » et rappelle
+le jeu avec `{"reprise": true}`.
+
+**(E8b) Les effets** (src/games/game_vision.gd, class GameVision) — deux réglages du post-traitement
+(`src/player/post_fx.gdshader`, nuls par défaut, hors de l'étalonnage d'Atmosphere) : `pale_amount`, `pale_center`,
+`pale_radius` (désaturation sauf un disque, en hauteurs d'écran) et `flash_color` (l'écran blanc, alpha = force).
+`GameVision.post_material(player)` ; `begin(matériau)` retient leur état, `set_pale(part, centre, rayon)`,
+`set_flash(force, couleur)`, `end()` le rend tel quel ; `slow(visuels, échelle)` / `tick(delta)` / `unslow()` mènent
+l'horloge de CharacterVisual (le ralenti). Sans caméra du joueur, les réglages sont seulement retenus.
+
+**(E8b) L'entraînement avec Seniorious** (src/games/seniorious_training.gd, class SenioriousTraining ; l'épée arrachée :
+seniorious_sword.gd, class SenioriousSword ; ACTE1.md 3.4 et 11.4 ; `data/games/seniorious.json`, textes
+`games/seniorious/…`) — `MiniGames.start_seniorious_training({start_stage (1 à 3 ; 2 après la réussite du jour 9),
+pickup (vrai : l'invite « Ramasser Seniorious » dans le marais ; faux : fini quand l'épée tombe), place_player (à
+l'ouest de Willem, à clairiere_centre), seed, overrides, with_hud, restore_weapon}) -> SenioriousTraining` ;
+`finished(résultat)` : {success, ended_by: &"grues"|&"fatigue"|&"stopped", stage_reached (1 à 4), start_stage, breaths
+{good, early, late, missed, cycles}, moves {done, missed, announced}, grues, fends, parried, hits, picked_up, duration} ;
+signaux `stage_changed(&"intro"|&"breath"|&"moves"|&"crane"|&"pickup"|&"ended")`, `resolved((&"breath", &"good"|
+&"early"|&"late"|&"missed"), (&"move", &"done"|&"missed"), (&"fend", &"crane"|&"parried"|&"hit"|&"dodged"),
+(&"sword", &"flew"|&"landed"|&"picked"))`, `announced(&"trois_coups"|&"pare"|&"cote")` ; `MiniGames.
+seniorious_training()`, `stop_seniorious_training()`. Le souffle : la touche de charge tenue à l'inspiration (2 s),
+relâchée à la fin de l'expiration (2 s) à 0,3 s près, cinq cycles, sans échec (Willem corrige). Les gestes : neuf
+annonces (trois de chaque, ordre tiré), 1,5 s pour « Trois coups. » (trois attaques), « Pare. » (la touche de charge),
+« Côté. » (un pas de 0,8 m de travers). La Grue : Willem fend de côté, annoncé 0,6 s (garde `pare`, cercle au sol) ; la
+touche de charge pressée dans les 0,2 s avant l'impact puis une attaque en 0,7 s : Grue (Willem recule) ; trois
+Grues : Seniorious tourne et plonge dans `marais_epee`. Échec : douze fends sans trois Grues ou 150 s : Chtholly
+s'assoit. Au récit : « entrainement_seniorious » → `play_story_seniorious(params)` (start_stage, pickup, place_player,
+seed, overrides, success_flag : posé si réussi, retiré sinon).
+
+**(E8b) Willem au Carillon** — tenue « duel » de Willem (`data/npcs/outfits/willem_duel.tres`) : la planche de
+remplacement `assets/characters/willem/willem_duel*.png` (repos, marche, parle avec Percival sur l'épaule ; attaque
+`coup` [2] ; pare), tirée de willem_home par `python3 tools/gen_placeholders.py duel` (tools/gen_duel_sheet.py, qui
+dessine aussi `src/games/fx/seniorious.png`), en attendant la vraie (cahier n° 6, C.10). Démonstration :
+`tests/integration/demo_e8b.tscn` (`E8B_VIEW=duel|duel_reprise|seniorious|seniorious_grue`, `E8B_SEQUENCE=<dossier>`,
+`E8B_STEP`, `E8B_COUNT` : une image toutes les 0,5 s ; un joueur automatique par les vraies actions) ; raccourcis
+`?jeu=duel`, `?jeu=seniorious`. Mesures (Xvfb, Mesa logiciel) : duel 104 à 124 draw calls (124 au plus, la vision et
+la reprise comprises), entraînement avec Seniorious 60 à 117 : sous 200.
 
 **L'arme** — `Player.set_weapon(&"baton" | &"seniorious")`, `Player.weapon()` (PlayerCombat : voir le contrat
 ci-dessus). Par défaut **Seniorious** (l'ancienne île et ses Timeres gardent l'épée et la charge) : c'est le
