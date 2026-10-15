@@ -1462,7 +1462,9 @@ class_name LifePlaces  # read(map) ; has, names, points, size, point(place, i), 
 class_name LifeNav     # for_map(map) ; build_step(budget_usec) -> bool, build_now(), ready, cell (1 m dehors, 0,5 m
                        # dedans), cell_of, center, is_open, is_walkable_point, height_at, line_clear, cells_clear,
                        # nearest_open, find_path(from, to, avoid) -> PackedVector3Array (lissé), open_count ;
-                       # AStar2D ; MAX_RISE (0,3 m d'un point au suivant), PROP_MARGIN (0,2 m)
+                       # AStar2D ; MAX_RISE (0,3 m d'un point au suivant), PROP_MARGIN (0,2 m) ; (E8c)
+                       # MAX_STEP (0,105 m : une marche franche plus haute arrête, une pente ou une
+                       # contremarche d'escalier de 0,1 m passe ; le bord d'une rampe taillée dans un palier)
 class_name LifeActor   # un PNJ vivant : place_now(ligne), walk_to_line(ligne, délai), leave_by(sortie, délai),
                        # arrive_from(entrée, ligne, délai), walk_to(point, regard, allure, à l'arrivée, direct),
                        # hold(anim, s), stop(), play(anim), face(dir), position(), is_moving(), on_interact(),
@@ -1626,7 +1628,7 @@ sans acte, garde son moteur de quêtes. Décisions : docs/DECISIONS.md (« E6 »
 | `flag` | set, clear | drapeaux |
 | `wait` / `wait_for` | time / reach (+ radius, map), map, examine, talk ; timeout, timeout_flag | attend un temps, ou le joueur (il garde la main) |
 | `control` | on | rend ou reprend le contrôle (la scène le prend au début, le rend à la fin) |
-| `game` | game, params, fallback | crochet d'E8 (`StoryDirector.register_game`) ; sans jeu inscrit, ses étapes de repli |
+| `game` | game, params, fallback | crochet d'E8 (`StoryDirector.register_game`) ; sans jeu inscrit, ou si l'appel rend `false` (le jeu n'a pas pu démarrer : carte d'essai, personnage absent), ses étapes de repli ; (E8c) « embuscade_pannibal » est inscrit au démarrage (`MiniGames.register_story_games`) |
 | `hint` / `calendar` | text (vide : rien) / line | l'indice de la scène ; une ligne du calendrier |
 | `show` | node (chemin dans la carte), visible | montre ou cache un nœud de la carte courante (le cristal qui sonne : `Geometry/Nygglatho/comm_crystal_call_1` d'`entrepot_etage`) |
 
@@ -1772,6 +1774,24 @@ training.finished.connect(func(result: Dictionary) -> void: ...)   # la scène c
 # Signaux : phase_changed(&"intro"|&"a"|&"link"|&"b"|&"ended"), resolved(sorte, issue), touches_changed(n, limite),
 # window_closed (jour 10 : le rythme tremble : effet d'E9). MiniGames.staff_training() ; stop_staff_training().
 ```
+
+**(E8c) L'embuscade de Pannibal** (src/games/ambush.gd, class Ambush, un Node3D ajouté à `Life` ; ACTE1.md 3.1 ;
+`data/games/embuscade.json`, textes `games/embuscade/…` de life.json) — `MiniGames.start_ambush({npc (pannibal),
+day (GameState.day), help, seed, overrides, outfit (vie), with_hud, restore_weapon}) -> Ambush` (null sans joueur,
+sans carte peuplée ou sans le PNJ) ; `ambush.finished(résultat)` après la pose de fin, tout rendu : {success,
+ended_by: &"streak"|&"riposte"|&"points"|&"time"|&"fled"|&"stopped", points, touch_limit, best_streak, parried,
+dodged, hits, leaps, feints, touched, duration, day} ; signaux `phase_changed(&"intro"|&"leap"|&"slash"|&"rest"|
+&"ended")`, `resolved(&"leap"|&"slash"|&"riposte", &"parried"|&"dodged"|&"hit"|&"feint"|&"touched"|&"evaded")`,
+`touches_changed(points, limite)`, `help_shown(&"dodge"|&"guard")` ; `MiniGames.ambush()`, `stop_ambush()`. Le bond
+(annoncé 0,8 s par la lumière qui zigzague et un cercle au sol, lancé de 4 m) s'esquive en sortant du cercle (la
+parade n'y suffit pas ; une feinte sur trois dès le jour 5) ; trois taillades à 0,35 s, parées (parade tenue à
+l'impact) ou esquivées (hors de portée) ; une touche reçue : un point, recul de 0,5 m, fin de la série ; après une
+esquive, une riposte au bâton la touche (0,8 s), couverte elle l'esquive. Réussite : cinq de suite ou la riposte
+(`tombe`) ; échec : trois points (`lance`). Pendant le jeu : le joueur a la main, bâton en main, Pannibal muette
+(Hush : `blocks_talk`, `InteractSign.set_hidden`), signes cachés (`InteractSign.suppress(&"embuscade")`),
+présentation « nuit » ; à la fin, l'arme, la main de la scène, la présentation et les signes reviennent. Au récit :
+`MiniGames.register_story_games()` (appelé par `StoryDirector._ready`) inscrit `play_story_ambush(params)` sous
+« embuscade_pannibal » (params de la scène : day, help, seed, overrides, success_flag : posé si Chtholly l'emporte).
 
 **L'arme** — `Player.set_weapon(&"baton" | &"seniorious")`, `Player.weapon()` (PlayerCombat : voir le contrat
 ci-dessus). Par défaut **Seniorious** (l'ancienne île et ses Timeres gardent l'épée et la charge) : c'est le

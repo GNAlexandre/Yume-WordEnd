@@ -3207,3 +3207,22 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **CV — noms de pièces par carte** : `MAP_ROOM_NAMES` d'`interior_maps.py` (la pièce « salle » du snack n'est pas la « Salle du café »).
 - **CV — images** : trente-huit remplaçants (lot R4 du cahier n° 5, 6.4 à 6.7) : dix façades de maisons et de boutiques avec leur flanc, la matière `wall_stone_town`, deux enseignes, six décors de rue, deux lisières de toits, trois matières de pièce et quatre meubles du snack-bar ; l'enseigne de la poêle et celle de la tasse sont des décors à part (le plan les pose) : les façades du snack et du café n'ont pas la leur. Les `town_stairs_a/b` et `town_retaining_wall` ne sont pas faits (les escaliers et les murets sont dans le sol).
 - **CV — le chemin de la ville** : `exterior_maps.py gen sentier` écrit la sortie `vers_ville` dès que `ville_haute` existe, sans autre changement de recette ; les identifiants d'`ext_resource` de la scène sont renumérotés (l'écriteau n'est plus posé) : en cas de conflit avec une autre modification du sentier, relancer `gen sentier`.
+- **E8c — l'embuscade de Pannibal compte chaque attaque** : « cinq attaques esquivées ou parées de suite »
+  (ACTE1.md 3.1) compte le bond et chaque taillade (un bond et trois taillades font quatre) ; une taillade
+  reçue finit la série (Pannibal compte son point et recule d'un bond) ; le bond ne se pare pas (seul le pas de
+  côté l'esquive), les taillades se parent ou s'esquivent ; la riposte n'est ouverte qu'après une esquive
+  (0,8 s). Le jour 1, l'issue ne change pas la suite (elle reconnaît Chtholly) : la réussite pose
+  `j1_embuscade_gagnee` et donne une réplique de plus (« vaincue »), sans écran de défaite. Le jeu s'arrête aussi
+  si Chtholly s'éloigne de plus de 10 m (`fled`) ou au bout de 75 s (`time`) : la scène ne reste jamais en plan.
+- **E8c — le récit inscrit ses jeux au démarrage** : `StoryDirector._ready` appelle
+  `MiniGames.register_story_games()` (une ligne dans le fichier d'E6, pas d'autoload de plus) ; un jeu qui ne
+  peut pas démarrer rend `false` et l'étape « game » joue son repli (carte d'essai, personnage absent).
+- **E8c — la levée du sentier corrigée par la navigation** : la rampe x 33 → 36 est taillée dans la levée ; ses
+  bords sont des marches franches de 0 à 0,5 m, que le joueur ne franchit plus au-delà de 0,1 m mais que
+  `LifeNav` croyait franchissables jusqu'à 0,3 m (MAX_RISE, mesuré tous les 0,34 m). `LifeNav.MAX_STEP`
+  (0,105 m, mesures fines de 0,05 m là où le sol change de plus de 0,03 m entre deux mesures) refuse une marche
+  franche ; pentes et contremarches d'escalier (0,1 m) passent. Le plan et la recette du sentier ne changent pas
+  (un rebord de rampe existe sur toute carte ; une forme nouvelle déplacerait seulement la marche).
+- **E8c — la place de Willem au réfectoire** : `entrepot_rdc:refectoire_porte_est` (15,75 ; 7,85), le seuil de la
+  porte est (la plus proche de l'escalier) ; les petites filent par la porte ouest vers `couloir_ouest`
+  (« par l'autre porte », ACTE1.md 2.2), au lieu de `couloir_est`, qui les faisait passer devant lui.

@@ -871,3 +871,18 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   `StoryDirector.register_game(&"embuscade_pannibal", appel)` (le joueur est tenu par la scène :
   l'appel lui rend la main le temps du combat). Les scènes du ballon (jour 5) et du bâton (jour 10)
   sont au lot S2. U1 : branché (présentation, signes, thème `Calendar`).
+
+## E8c — suite donnée aux demandes d'E6 et d'E8 (embuscade, levée, réfectoire)
+- **Fait : l'embuscade de Pannibal** (E6 → E8, « embuscade_pannibal ») : `MiniGames.start_ambush` /
+  `play_story_ambush`, inscrite au récit par `StoryDirector._ready` (`MiniGames.register_story_games`) ; la scène
+  `j1_2_embuscade` la joue (le repli reste pour une carte d'essai). PLAN.md, « (E8) Les jeux ».
+- **Fait : la levée du sentier** (E6 → C1) : corrigée par la navigation (`LifeNav.MAX_STEP`), sans toucher au plan
+  ni à `tools/exterior_recipes/sentier.py` (test : `tests/integration/test_sentier_levee.gd`).
+- **Fait : la place de Willem au réfectoire** (E6 → `entrepot_rdc`) : `refectoire_porte_est` (CARTE.md 3.1),
+  utilisée par `j2_2_fuite` (plus de point en dur).
+- **Planches (cahier n° 6)** : `pannibal_life` n'a ni `esquive` (le saut en arrière d'une riposte esquivée : `saut`
+  en attendant) ni `victoire` (l'épée levée après trois points : `lance`) ; Chtholly n'a pas de planche `_stick`
+  (le bâton garde l'animation d'épée, déjà noté pour E8). Les noms sont dans `data/games/embuscade.json`, `anims`.
+- **Reste (S2 ou E8)** : les embuscades de temps libre des jours 2 à 12 (VIE.md 5.5 : Pannibal, et Collon dès le
+  jour 5, cachées sur les chemins, une fois par moment au plus) ; le jeu les accepte déjà (`day`, feintes dès le
+  jour 5, PNJ posé s'il n'est pas sur la carte) mais rien ne les déclenche ; pas de raccourci `?jeu=embuscade`.

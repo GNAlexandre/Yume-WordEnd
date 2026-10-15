@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 2.2 (s. 5) : Willem paraît, les chaises se vident.",
+  "_comment": "ACTE1.md 2.2 (s. 5) : Willem paraît à la porte est du réfectoire (refectoire_porte_est, la plus proche de l'escalier), les chaises se vident, les petites filent par l'autre porte (vers couloir_ouest).",
   "title": "La fuite",
   "day": 2,
   "slot": "matin",
@@ -113,10 +113,7 @@
     {
       "do": "walk",
       "who": "willem",
-      "to": [
-        13,
-        7.4
-      ]
+      "to": "refectoire_porte_est"
     },
     {
       "do": "wait",
@@ -125,49 +122,49 @@
     {
       "do": "walk",
       "who": "collon",
-      "to": "couloir_est",
+      "to": "couloir_ouest",
       "gait": "course",
       "wait": false
     },
     {
       "do": "walk",
       "who": "lakhesh",
-      "to": "couloir_est",
+      "to": "couloir_ouest",
       "gait": "course",
       "wait": false
     },
     {
       "do": "walk",
       "who": "tiat",
-      "to": "couloir_est",
+      "to": "couloir_ouest",
       "gait": "course",
       "wait": false
     },
     {
       "do": "walk",
       "who": "pannibal",
-      "to": "couloir_est",
+      "to": "couloir_ouest",
       "gait": "course",
       "wait": false
     },
     {
       "do": "walk",
       "who": "almita",
-      "to": "couloir_est",
+      "to": "couloir_ouest",
       "gait": "course",
       "wait": false
     },
     {
       "do": "walk",
       "who": "fairy_01",
-      "to": "couloir_est",
+      "to": "couloir_ouest",
       "gait": "course",
       "wait": false
     },
     {
       "do": "walk",
       "who": "fairy_02",
-      "to": "couloir_est",
+      "to": "couloir_ouest",
       "gait": "course",
       "wait": false
     },

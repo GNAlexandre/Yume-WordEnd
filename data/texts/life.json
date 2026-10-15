@@ -226,6 +226,26 @@
       "hud_touches": "Touches",
       "hud_counters": "Contres",
       "hud_title": "Entraînement au bâton"
+    },
+    "embuscade": {
+      "_comment": "(E8c) L'embuscade de Pannibal (src/games/ambush.gd ; ACTE1.md 3.1) : ses bulles (pince-sans-rire, BIBLE.md 9.3), les deux lignes d'aide du jour 1 et la jauge.",
+      "point": [
+        "Un point.",
+        "Touché. Je compte.",
+        "Et de un de plus."
+      ],
+      "fall": [
+        "Pfff… Bon. Celle-là, tu l’as. Hi hi.",
+        "Aïe. Dans l’herbe. … Hi hi hi."
+      ],
+      "victory": [
+        "Trois points. Victoire !",
+        "L’intrus est maîtrisé !"
+      ],
+      "help_dodge": "Le cercle annonce son bond : un pas de côté pour en sortir.",
+      "help_guard": "Les taillades : tiens la parade (clic droit, L2), ou recule hors de portée.",
+      "hud_streak": "Esquives et parades",
+      "hud_points": "Points de Pannibal"
     }
   },
   "fairy_names": [

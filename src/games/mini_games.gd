@@ -10,6 +10,10 @@ extends RefCounted
 ## - start_staff_training(options) : l'entraînement au bâton à la clairière, Willem contre le
 ##   joueur, puis Ithea et Nephren avec lui. Renvoie l'exercice (StaffTraining) : son signal
 ##   finished(résultat) dit la fin ; stop_staff_training() l'arrête.
+## - start_ambush(options) : (E8c) l'embuscade de Pannibal, là où sont le joueur et Pannibal (le
+##   sentier, le jour 1). Renvoie le jeu (Ambush) : son signal finished(résultat) dit la fin ;
+##   stop_ambush() l'arrête. Inscrit au récit (StoryDirector.register_game) sous
+##   STORY_AMBUSH (« embuscade_pannibal ») par register_story_games() : play_story_ambush(params).
 ## - dev_start(jeu) : ce que fait `?jeu=ballon` / `?jeu=baton` (voir src/test_shortcuts.gd).
 ## Les PNJ qui ne sont pas encore sur la carte y sont posés (LifeDirector.spawn_actor) ; à la fin
 ## ils retournent à leur emploi du temps (LifeDirector.refresh). La carte doit être peuplée par
@@ -29,6 +33,11 @@ const ALLY_IDS: Array[StringName] = [&"ithea", &"nephren"]
 const OUTFITS := {&"willem": &"maison", &"ithea": &"maison", &"nephren": &"maison"}
 const KID_OUTFIT := &"vie"
 const RING_RADIUS := 5.0
+## (E8c) L'embuscade : son id au récit (étape « game ») et son adversaire par défaut.
+const STORY_AMBUSH := &"embuscade_pannibal"
+const AMBUSH_NPC := &"pannibal"
+## Où poser Pannibal si elle n'est pas sur la carte (devant le joueur, à l'est).
+const AMBUSH_SPAWN_OFFSET := Vector3(3.0, 0.0, -0.5)
 
 ## Ligne d'emploi du temps des PNJ pris par un jeu (pour les y rendre).
 static var _lines: Dictionary = {}
@@ -168,6 +177,94 @@ static func stop_staff_training() -> void:
 	var training := staff_training()
 	if training != null:
 		training.stop()
+
+
+# --- L'embuscade de Pannibal (E8c) --------------------------------------------------------------
+
+
+## Lance l'embuscade. options (tous facultatifs) : npc (id, pannibal), day (jour de l'acte,
+## GameState.day ; les feintes viennent à partir du jour 5), help (les deux lignes d'aide du jour
+## 1), seed (graine du tirage : une embuscade rejouable, pour les tests), outfit (sa tenue, vie :
+## la planche qui bondit, frappe et tombe), overrides (chemins de
+## data/games/embuscade.json), with_hud (vrai), restore_weapon (rendre l'arme d'avant, vrai). Le
+## PNJ qui n'est pas sur la carte y est posé devant le joueur. Renvoie le jeu ; null sans joueur,
+## sans carte peuplée par LifeDirector ou sans le PNJ (carte d'essai : le récit joue son repli).
+static func start_ambush(options: Dictionary = {}) -> Ambush:
+	var player := LifeDirector.player_node() as Player
+	var map := LifeDirector.current_map()
+	var host := map.get_node_or_null(^"Life") if map != null else null
+	if player == null or host == null:
+		push_warning("MiniGames : pas de joueur ou de carte peuplée (embuscade)")
+		return null
+	_ensure_nav()
+	var npc_id := StringName(str(options.get("npc", AMBUSH_NPC)))
+	var actor := LifeDirector.actor(npc_id)
+	if actor == null:
+		actor = LifeDirector.spawn_actor(npc_id, player.global_position + AMBUSH_SPAWN_OFFSET)
+	if actor == null or actor.state == LifeActor.State.GONE:
+		push_warning("MiniGames : %s n'est pas sur la carte (embuscade)" % npc_id)
+		return null
+	# La tenue de la vie : sa planche bondit, frappe et tombe (pannibal_life).
+	var outfit := StringName(str(options.get("outfit", KID_OUTFIT)))
+	if actor.data != null and actor.data.outfits.has(outfit) and actor.outfit != outfit:
+		actor.outfit = outfit
+		actor.npc.set_outfit(LifeDirector.outfit_skin(actor.data, outfit))
+	var current := ambush()
+	if current != null:
+		current.stop()
+	var game := Ambush.new()
+	game.overrides = options.get("overrides", {})
+	game.show_hud = bool(options.get("with_hud", true))
+	if options.has("seed"):
+		game.seed_random(int(options["seed"]))
+	host.add_child(game)
+	var day := int(options.get("day", maxi(GameState.day, 1)))
+	game.setup(player, actor, day, bool(options.get("help", false)))
+	game.start(bool(options.get("restore_weapon", true)))
+	return game
+
+
+## L'embuscade en cours (null s'il n'y en a pas).
+static func ambush() -> Ambush:
+	var map := LifeDirector.current_map()
+	var host := map.get_node_or_null(^"Life") if map != null else null
+	if host == null:
+		return null
+	for child: Node in host.get_children():
+		if child is Ambush and not (child as Ambush).is_done():
+			return child as Ambush
+	return null
+
+
+## Arrête l'embuscade en cours.
+static func stop_ambush() -> void:
+	var game := ambush()
+	if game != null:
+		game.stop()
+
+
+## Le jeu du récit « embuscade_pannibal » (étape « game » d'E6 ; params de la scène : day, help,
+## seed, overrides, et success_flag : le drapeau posé si Chtholly l'emporte, retiré sinon). Attend
+## la fin du jeu ; faux s'il n'a pas pu démarrer (le récit joue alors le repli de l'étape).
+static func play_story_ambush(params: Dictionary) -> bool:
+	var game := start_ambush(params)
+	if game == null:
+		return false
+	var tree := game.get_tree()
+	var outcome := {}
+	game.finished.connect(func(found: Dictionary) -> void: outcome["result"] = found)
+	while is_instance_valid(game) and not outcome.has("result") and tree != null:
+		await tree.physics_frame
+	var result: Dictionary = outcome.get("result", {})
+	var flag := StringName(str(params.get("success_flag", "")))
+	if not flag.is_empty():
+		GameState.set_flag(flag, bool(result.get("success", false)))
+	return true
+
+
+## Inscrit les jeux d'E8 au récit (StoryDirector.register_game) : l'embuscade de Pannibal.
+static func register_story_games() -> void:
+	StoryDirector.register_game(STORY_AMBUSH, Callable(MiniGames, &"play_story_ambush"))
 
 
 # --- Raccourci de développement ------------------------------------------------------------------
