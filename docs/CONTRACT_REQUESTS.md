@@ -729,3 +729,11 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   démonstration (`data/life/`, qui visent les cartes d'essai).
 - **E8 (ballon)** : le cadre des jeux (`LifeGame` : `assign_teams`, `formation`, joueur qui entre
   et sort, `on_player_attack`) ; un jeu `src/life/games/ballon.gd` et l'activité qui le nomme.
+- **C2 (porte fermée jusqu'au jour 11)** : `MapExit` ne sait pas se fermer. La porte `porte_limashenka` du
+  village (maison Limashenka, ouverte au jour 11, ACTE1.md 11.3) porte les métadonnées `open_from_day = 11` et
+  `closed_text_key = "village/maison_close"` (texte de `data/texts/village.json`) ; il faudrait que `MapExit`
+  (ou le récit, E6) refuse l'invite avant ce jour et lise ce texte. Tant que ce n'est pas fait, la porte
+  s'ouvre à tout moment (le test de la vraie partie l'emprunte).
+- **C2 (fenêtres allumées la nuit)** : le café n'a aucune lampe de carte (règle V1). Une image
+  `window_lit_*` (fenêtres éclairées de nuit) serait à livrer par le cahier d'images si l'on veut que la
+  façade du café se lise de nuit.

@@ -592,7 +592,7 @@ def floor_terracotta(size, rnd):
     cell = w / 20.0
     img = Image.new("RGBA", size, rgba("#5A3A2E"))
     d = ImageDraw.Draw(img)
-    palette = ["#A8553A", "#B8643E", "#9A4A36", "#C07A4A", "#B06A46", "#8E4632"]
+    palette = ["#94604A", "#A06C50", "#885644", "#A8805A", "#9A6E54", "#7C4E3E"]
     for j in range(20):
         for i in range(20):
             base = rnd.choice(palette)

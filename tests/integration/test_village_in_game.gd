@@ -1,9 +1,14 @@
 extends "res://tests/stubs/m2_game_test.gd"
-## (C2) Le village dans la vraie partie (main.tscn, appuis réels) : de l'entrepôt au village par la sortie
-## à pied (on arrive sur from_entrepot, la caméra est bornée à la carte), le long de la rue jusqu'à la
-## porte du café (« Entrer », touche E), dans le café, que l'on quitte à pied par sa porte (on revient
-## sur from_cafe) ; la porte de la maison Limashenka (« Entrer »), la maison, d'où l'on sort à pied sur
-## from_maison_limashenka ; la nuit, la lumière d'Atmosphere éclaire la rue sans lampe de la carte ; enfin
+## (C2) Le village dans la vraie partie (main.tscn, appuis réels) : de l'entrepôt au village par la
+## sortie
+## à pied (on arrive sur from_entrepot, la caméra est bornée à la carte), le long de la rue jusqu'à
+## la
+## porte du café (« Entrer », touche E), dans le café, que l'on quitte à pied par sa porte (on
+## revient
+## sur from_cafe) ; la porte de la maison Limashenka (« Entrer »), la maison, d'où l'on sort à pied
+## sur
+## from_maison_limashenka ; la nuit, la lumière d'Atmosphere éclaire la rue sans lampe de la carte ;
+## enfin
 ## le retour à l'entrepôt par la sortie est, sur from_village.
 
 const ENTREPOT := &"entrepot"
@@ -64,7 +69,8 @@ func put_player(x: float, z: float, aim: Vector3) -> void:
 	await frames(1)
 
 
-## Marche (touches tenues) jusqu'à l'invite de la sortie exit_name, puis appuie sur E et attend l'arrivée
+## Marche (touches tenues) jusqu'à l'invite de la sortie exit_name, puis appuie sur E et attend
+## l'arrivée
 ## dans target.
 func _take_exit(keys: Array[Key], exit_name: String, target: StringName) -> bool:
 	var exit := _map().get_node(NodePath("Exits/" + exit_name)) as MapExit
@@ -83,7 +89,8 @@ func _take_exit(keys: Array[Key], exit_name: String, target: StringName) -> bool
 	return arrived
 
 
-## Sort à pied : marche dans la direction de la sortie jusqu'à la carte cible, arrive sur le marqueur.
+## Sort à pied : marche dans la direction de la sortie jusqu'à la carte cible, arrive sur le
+## marqueur.
 func _walk_out(key_code: Key, target: StringName, arrival: StringName) -> bool:
 	var left := await walk_keys_until(
 		[key_code], func() -> bool: return WorldManager.current_map() == target, 8.0
@@ -91,7 +98,10 @@ func _walk_out(key_code: Key, target: StringName, arrival: StringName) -> bool:
 	release_all_input()
 	assert_true(
 		left,
-		"sortie à pied vers %s (le joueur est en %s sur %s)" % [target, player.global_position, WorldManager.current_map()]
+		(
+			"sortie à pied vers %s (le joueur est en %s sur %s)"
+			% [target, player.global_position, WorldManager.current_map()]
+		)
 	)
 	if not left:
 		return false

@@ -38,7 +38,8 @@ const DRAW_CALL_BUDGET := 200
 const REACH := 1.5
 ## Image des portes qu'on franchit (chambranle à ouverture transparente, docs/INTERIEURS.md).
 const PASSABLE_DOOR := "door_frame_wood"
-## (C2) Portes qu'on franchit et qui gardent leur image (le rideau de l'arrière-boutique du café, sur une
+## (C2) Portes qu'on franchit et qui gardent leur image (le rideau de l'arrière-boutique du café,
+## sur une
 ## cloison nord-sud : vu de chant, il ne cache pas le joueur).
 const OWN_IMAGE_DOORS: Array[String] = ["door_backroom"]
 
@@ -46,7 +47,8 @@ const OWN_IMAGE_DOORS: Array[String] = ["door_backroom"]
 var map_id := ""
 ## Préréglage de lumière attendu (vide : celui du moment ou « interieur » pour un intérieur).
 var expected_light_preset := ""
-## (C2) Lieu de la carte sur la carte de l'île (`entrepot` par défaut ; `village` pour le café et la maison
+## (C2) Lieu de la carte sur la carte de l'île (`entrepot` par défaut ; `village` pour le café et la
+## maison
 ## Limashenka) et fichier de ses textes à examiner.
 var expected_region := "entrepot"
 var texts_path := TEXTS

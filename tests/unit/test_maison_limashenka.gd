@@ -1,8 +1,12 @@
 extends "res://tests/stubs/t2_map_test.gd"
-## (C2) La maison Limashenka (src/world/maps/maison_limashenka/, plan de docs/lore/CARTE.md, 5.3) : base commune
-## tests/stubs/t2_map_test.gd (plan, circulation, rien ne cache le joueur, draw calls, objets à examiner), plus
-## le vestibule et le salon, l'horloge à peigne doré (le point `horloge` où Willem la répare au jour 11 ;
-## ses images : fermée, ouverte, son balancier, au manifeste), le canapé et le fauteuil sous un drap, la sortie
+## (C2) La maison Limashenka (src/world/maps/maison_limashenka/, plan de docs/lore/CARTE.md, 5.3) :
+## base commune
+## tests/stubs/t2_map_test.gd (plan, circulation, rien ne cache le joueur, draw calls, objets à
+## examiner), plus
+## le vestibule et le salon, l'horloge à peigne doré (le point `horloge` où Willem la répare au jour
+## 11 ;
+## ses images : fermée, ouverte, son balancier, au manifeste), le canapé et le fauteuil sous un
+## drap, la sortie
 ## vers le village et ce que la carte garde pour le récit (ACTE1.md 11.3).
 
 
@@ -45,7 +49,8 @@ func test_the_door_leads_back_to_the_village() -> void:
 		village.free()
 
 
-## L'horloge est sur le mur nord du salon, au-dessus du point où Willem la répare ; ses deux autres états et son
+## L'horloge est sur le mur nord du salon, au-dessus du point où Willem la répare ; ses deux autres
+## états et son
 ## balancier (récit, jour 11) existent au manifeste.
 func test_the_clock_and_its_other_states_are_ready_for_the_story() -> void:
 	var clock: Dictionary = {}
@@ -55,7 +60,9 @@ func test_the_clock_and_its_other_states_are_ready_for_the_story() -> void:
 	assert_false(clock.is_empty(), "l'horloge murale du salon")
 	assert_eq(String(clock["room"]), "salon")
 	var point := _map.get_node(^"Life/Places/horloge") as Marker3D
-	assert_almost_eq(float(clock["center"]), point.global_position.x, 0.1, "Willem est sous l'horloge")
+	assert_almost_eq(
+		float(clock["center"]), point.global_position.x, 0.1, "Willem est sous l'horloge"
+	)
 	for image_name: String in [
 		"wallitem_clock_limashenka", "wallitem_clock_limashenka_open", "clock_limashenka_swing"
 	]:
@@ -81,7 +88,8 @@ func _in_manifest(image_name: String) -> bool:
 
 
 func test_the_extra_life_places_are_named() -> void:
-	# Le siège du canapé est sur le canapé (on s'y assoit : la case est prise) ; la place du vestibule se marche.
+	# Le siège du canapé est sur le canapé (on s'y assoit : la case est prise) ; la place du vestibule
+	# se marche.
 	assert_not_null(_map.get_node_or_null(^"Life/Places/salon_canape_assise"), "le siège du canapé")
 	var door_place := _map.get_node_or_null(^"Life/Places/vestibule_porte") as Marker3D
 	assert_not_null(door_place, "la place devant la porte")

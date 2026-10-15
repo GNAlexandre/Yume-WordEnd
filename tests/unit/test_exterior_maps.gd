@@ -1,6 +1,7 @@
 extends GutTest
 ## (C1) L'outil des cartes du dehors (tools/exterior_maps.py, docs/lore/CARTE.md) :
-## - `check` : toutes les cartes écrites (entrepot, sentier, village, et les cartes d'attente) sont celles
+## - `check` : toutes les cartes écrites (entrepot, sentier, village, et les cartes d'attente) sont
+## celles
 ##   que l'outil écrirait aujourd'hui d'après les plans ; passé si Python (et Pillow) n'est pas là ;
 ## - les cartes d'attente (colline, foret_profonde, port) : le nom et le lieu du plan, la
 ##   sortie de retour vers la carte construite, au marqueur d'arrivée du plan, `Spawn` et marqueur

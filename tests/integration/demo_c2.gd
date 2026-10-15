@@ -1,15 +1,20 @@
 extends Node
-## (C2) Démonstration du village des hommes-bêtes, du café et de la maison Limashenka : la vraie partie
-## (game.tscn), posée par WorldManager.enter_map dans chaque carte, vue par la caméra du joueur (bornée à
+## (C2) Démonstration du village des hommes-bêtes, du café et de la maison Limashenka : la vraie
+## partie
+## (game.tscn), posée par WorldManager.enter_map dans chaque carte, vue par la caméra du joueur
+## (bornée à
 ## camera_bounds), sous la lumière d'Atmosphere. Lancée sous Xvfb :
 ##   C2_SHOTS=<dossier>  : où écrire les captures (défaut build/shots/c2) ;
-##   C2_VIEWS=<liste>    : vues « carte:lieu:moment[:temps] » séparées par des virgules (défaut : VIEWS) ;
+##   C2_VIEWS=<liste>    : vues « carte:lieu:moment[:temps] » séparées par des virgules (défaut :
+## VIEWS) ;
 ##                         lieu = une clé de SPOTS[carte], ou « ensemble » (vue d'ensemble) ;
 ##   C2_FRAMES=<n>       : images attendues avant chaque capture (défaut WAIT_FRAMES).
-## Une ligne par capture : « C2 vue <nom> : <d> draw calls, <p> primitives, <o> objets, chargement <ms> ms »,
+## Une ligne par capture : « C2 vue <nom> : <d> draw calls, <p> primitives, <o> objets, chargement
+## <ms> ms »,
 ## puis « C2 fin : <n> vues ». Lancement (tools/c2_shots.sh) :
 ##   C2_SHOTS=res://build/shots/c2 LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a -s "-screen 0 1280x720x24" \
-##     tools/godot --rendering-driver opengl3 --resolution 1280x720 res://tests/integration/demo_c2.tscn
+##     tools/godot --rendering-driver opengl3 --resolution 1280x720
+## res://tests/integration/demo_c2.tscn
 
 const GAME_SCENE := preload("res://src/game.tscn")
 const WAIT_FRAMES := 30

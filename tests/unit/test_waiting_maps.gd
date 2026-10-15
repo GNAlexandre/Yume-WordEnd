@@ -1,7 +1,8 @@
 extends GutTest
 ## (T1, C1) Les cartes d'attente (colline, foret_profonde ; le port, ajouté par
 ## tools/exterior_maps.py, lot C1 ; le sentier, d'attente en T1, est construit depuis C1 :
-## tests/unit/test_sentier.gd ; le village, d'attente en T1, depuis C2 : tests/unit/test_village.gd) : chacune suit le contrat des cartes, a son sol plat, sa lisière, son
+## tests/unit/test_sentier.gd ; le village, d'attente en T1, depuis C2 : tests/unit/test_village.gd)
+## : chacune suit le contrat des cartes, a son sol plat, sa lisière, son
 ## écriteau « Plus loin, bientôt » qu'on lit (boîte de dialogue, sans portrait), la sortie de retour
 ## vers la carte construite d'où l'on vient (l'entrepôt ; le sentier pour le port), au marqueur
 ## from_<carte> du plan de cette carte, et le marqueur d'arrivée from_<cette carte> ; et le

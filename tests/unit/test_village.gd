@@ -1,14 +1,17 @@
 extends "res://tests/stubs/c1_exterior_test.gd"
 ## (C2) La carte village, le village des hommes-bêtes (src/world/maps/village/, plan de
 ## docs/lore/CARTE.md, section 5.2, écrite par tools/exterior_maps.py). Base commune
-## tests/stubs/c1_exterior_test.gd (plan, sorties, marqueurs, points, circulation à pied, rien ne cache
+## tests/stubs/c1_exterior_test.gd (plan, sorties, marqueurs, points, circulation à pied, rien ne
+## cache
 ## le joueur, densité, sol nu, draw calls), plus :
 ## - les trois sorties : l'entrepôt à l'est (à pied), le café et la maison Limashenka (à invite) ;
 ## - la maison Limashenka posée, avec la condition du jour 11 en métadonnée pour le récit ;
-## - le relief : belvédère de roche à +1 m (rampe au sud), ruisseau à −0,5 m, le vide au nord, rive de
+## - le relief : belvédère de roche à +1 m (rampe au sud), ruisseau à −0,5 m, le vide au nord, rive
+## de
 ##   sous-bois à l'ouest ;
 ## - les maisons du plan, à leur emprise, et les scènes du lot R3 (images au manifeste, lot R3) ;
-## - les jardins clos derrière les chaumières du sud (on n'y entre pas : un toit cacherait le joueur) ;
+## - les jardins clos derrière les chaumières du sud (on n'y entre pas : un toit cacherait le
+## joueur) ;
 ## - la place devant le café, libre (la scène `cafe_village`, sans les tables de celle de T1) ;
 ## - les places de la vie en plus du plan, les objets à examiner et leurs textes ;
 ## - aucune lumière : Atmosphere éclaire (l'image d'une lanterne est posée, pas une lampe).
@@ -58,8 +61,10 @@ const TEXTS := "res://data/texts/village.json"
 
 func before_all() -> void:
 	map_id = "village"
-	# Les vues du plan (70 à 100 éléments par écran, CARTE.md 5.2) : l'entrée par l'est, la rue, le café, le
-	# belvédère, le grand jardin, les chaumières du sud, le lavoir ; un peu plus aux bords, un peu moins sur le
+	# Les vues du plan (70 à 100 éléments par écran, CARTE.md 5.2) : l'entrée par l'est, la rue, le
+	# café, le
+	# belvédère, le grand jardin, les chaumières du sud, le lavoir ; un peu plus aux bords, un peu
+	# moins sur le
 	# belvédère nu.
 	density = {
 		"entrée": [Vector3(52.0, 0.0, 12.5), 60, 125],
@@ -94,8 +99,12 @@ func before_all() -> void:
 
 func test_the_plan_has_what_the_chapter_needs() -> void:
 	assert_eq(_lines("sortie").size(), 3, "l'entrepôt, le café, la maison Limashenka")
-	assert_eq(_lines("marqueur").size(), 4, "Spawn, from_entrepot, from_cafe, from_maison_limashenka")
-	assert_eq(_lines("point").size(), 7, "cafe_porte, cafe_terrasse, limashenka_porte, belvedere_vue, …")
+	assert_eq(
+		_lines("marqueur").size(), 4, "Spawn, from_entrepot, from_cafe, from_maison_limashenka"
+	)
+	assert_eq(
+		_lines("point").size(), 7, "cafe_porte, cafe_terrasse, limashenka_porte, belvedere_vue, …"
+	)
 	assert_eq(_lines("place").size(), 2, "devant_cafe, belvedere")
 	assert_eq(_lines("bati").size(), 8, "la rangée du nord et la seconde rangée, basse")
 
@@ -120,7 +129,9 @@ func test_the_exits_lead_to_the_warehouse_the_cafe_and_the_house() -> void:
 ## Le café a sa porte au droit de celle de sa façade livrée (cafe.png : x = 19,76 m).
 func test_the_cafe_door_is_where_its_facade_has_it() -> void:
 	var door := _map.get_node(^"Exits/porte_cafe") as MapExit
-	assert_almost_eq(door.global_position.x, 19.8, 0.1, "la sortie est devant la porte de la façade")
+	assert_almost_eq(
+		door.global_position.x, 19.8, 0.1, "la sortie est devant la porte de la façade"
+	)
 	var bell := _map.find_child("ClocheCafe", true, false) as DecorPanel
 	assert_not_null(bell, "la clochette animée de la porte")
 	if bell != null:
@@ -128,7 +139,8 @@ func test_the_cafe_door_is_where_its_facade_has_it() -> void:
 		assert_almost_eq(bell.global_position.x, 19.78, 0.05)
 
 
-## La maison Limashenka n'ouvre qu'au jour 11 (ACTE1.md 11.3) : la porte est posée, la condition est dite en
+## La maison Limashenka n'ouvre qu'au jour 11 (ACTE1.md 11.3) : la porte est posée, la condition est
+## dite en
 ## métadonnée pour le récit (le moteur des cartes ne sait pas encore fermer une porte).
 func test_the_house_door_carries_the_day_eleven_condition() -> void:
 	var door := _map.get_node(^"Exits/porte_limashenka") as MapExit
@@ -137,10 +149,13 @@ func test_the_house_door_carries_the_day_eleven_condition() -> void:
 	assert_eq(key, "village/maison_close", "le texte de la maison close")
 	var texts: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(TEXTS))
 	assert_true(String((texts["village"] as Dictionary)["maison_close"]).contains("close"))
-	assert_false(_map.get_node(^"Exits/porte_cafe").has_meta(&"open_from_day"), "le café est toujours ouvert")
+	assert_false(
+		_map.get_node(^"Exits/porte_cafe").has_meta(&"open_from_day"), "le café est toujours ouvert"
+	)
 
 
-# --- Le relief et le bord de l'île --------------------------------------------------------------------
+# --- Le relief et le bord de l'île
+# --------------------------------------------------------------------
 
 
 func test_the_relief_follows_the_plan() -> void:
@@ -151,7 +166,9 @@ func test_the_relief_follows_the_plan() -> void:
 	assert_almost_eq(_ground.height_at(0.5, 20.0), -0.5, 0.05, "la rive de sous-bois à l'ouest")
 	var ramp := _ground.height_at(35.0, 10.0)
 	assert_between(ramp, 0.05, 0.95, "à mi-rampe du belvédère (x 33 → 37, z 9 → 11)")
-	assert_true(_is_reached(Vector3(35.0, 1.0, 6.0)), "on monte au belvédère par la rampe, sans sauter")
+	assert_true(
+		_is_reached(Vector3(35.0, 1.0, 6.0)), "on monte au belvédère par la rampe, sans sauter"
+	)
 	assert_gte(_level_count(), 3, "au moins trois niveaux de relief")
 
 
@@ -184,7 +201,8 @@ func test_the_stream_water_is_walkable() -> void:
 	assert_true(_is_reached(Vector3(2.0, -0.5, 20.0)), "on y descend")
 
 
-# --- Les maisons, les décors et les images -----------------------------------------------------------
+# --- Les maisons, les décors et les images
+# -----------------------------------------------------------
 
 
 ## Chaque maison du plan est posée à son emprise (les rectangles du plan).
@@ -198,7 +216,10 @@ func test_every_house_of_the_plan_is_in_place() -> void:
 		var found: Building = null
 		for child: Node in houses.get_children():
 			var building := child as Building
-			if building != null and building.facade.resource_path.get_file().get_basename() == String(words[7]):
+			if (
+				building != null
+				and building.facade.resource_path.get_file().get_basename() == String(words[7])
+			):
 				found = building
 		assert_not_null(found, "bâtiment %s (%s)" % [words[1], words[7]])
 		if found == null:
@@ -250,26 +271,35 @@ func test_the_replacement_images_of_lot_r3_are_in_the_manifest_and_used() -> voi
 		assert_eq(listed.get(material_name, ""), "R3", "matière %s au manifeste" % material_name)
 
 
-## Ce que dépasse 1,2 m au sud d'un endroit où l'on marche passe en premier plan : la meule, la charrette,
+## Ce que dépasse 1,2 m au sud d'un endroit où l'on marche passe en premier plan : la meule, la
+## charrette,
 ## l'épouvantail et le tas de bûches ont leur variante.
 func test_tall_decors_in_the_garden_are_foreground_panels() -> void:
 	for node_name: String in ["Meule", "Charrette", "Epouvantail", "Buches"]:
 		var panel := _map.find_child(node_name, true, false) as DecorPanel
 		assert_not_null(panel, node_name)
 		if panel != null:
-			assert_true(panel.foreground, "%s : premier plan, il s'efface devant le joueur" % node_name)
+			assert_true(
+				panel.foreground, "%s : premier plan, il s'efface devant le joueur" % node_name
+			)
 
 
-# --- Les jardins clos et la place du café -----------------------------------------------------------------
+# --- Les jardins clos et la place du café
+# -----------------------------------------------------------------
 
 
 ## Derrière une chaumière du sud, un toit de 5 m cacherait le joueur sur 7 m : rien n'y marche.
 func test_the_gardens_behind_the_cottages_are_closed() -> void:
 	for spot: Vector3 in [
-		Vector3(9.0, 0.0, 19.0), Vector3(46.0, 0.0, 20.0), Vector3(52.0, 0.0, 19.5), Vector3(12.0, 0.0, 21.0)
+		Vector3(9.0, 0.0, 19.0),
+		Vector3(46.0, 0.0, 20.0),
+		Vector3(52.0, 0.0, 19.5),
+		Vector3(12.0, 0.0, 21.0)
 	]:
 		assert_false(_is_reached(spot), "%s : un jardin clos" % spot)
-	for spot: Vector3 in [Vector3(16.0, 0.0, 19.0), Vector3(27.0, 0.0, 21.0), Vector3(41.0, 0.0, 20.0)]:
+	for spot: Vector3 in [
+		Vector3(16.0, 0.0, 19.0), Vector3(27.0, 0.0, 21.0), Vector3(41.0, 0.0, 20.0)
+	]:
 		assert_true(_is_reached(spot), "%s : les ruelles et le grand jardin se marchent" % spot)
 
 
@@ -303,7 +333,9 @@ func test_the_extra_life_places_are_named_and_reached() -> void:
 
 ## Les places que VIE.md et ACTE1.md citent par leur nom (village:cafe_terrasse, village:lavoir…).
 func test_the_places_of_the_other_documents_exist() -> void:
-	for place_name: String in ["cafe_terrasse", "lavoir", "ruche", "cascade_vue", "belvedere_vue", "limashenka_porte"]:
+	for place_name: String in [
+		"cafe_terrasse", "lavoir", "ruche", "cascade_vue", "belvedere_vue", "limashenka_porte"
+	]:
 		assert_not_null(_map.get_node_or_null(NodePath("Life/Places/" + place_name)), place_name)
 
 
@@ -328,10 +360,12 @@ func test_the_things_to_examine_have_their_text() -> void:
 		assert_true(_is_reached(item.global_position), "%s : on s'en approche à pied" % key)
 
 
-# --- Aucune lumière ---------------------------------------------------------------------------------
+# --- Aucune lumière
+# ---------------------------------------------------------------------------------
 
 
-## Aucune lampe dans la carte : Atmosphere éclaire (la nuit, la lumière des fenêtres est celle des vitres de nuit).
+## Aucune lampe dans la carte : Atmosphere éclaire (la nuit, la lumière des fenêtres est celle des
+## vitres de nuit).
 ## L'image d'une lanterne est posée sur la façade du café (le plan la cite), sans lumière.
 func test_the_map_carries_no_light() -> void:
 	var own: Array[String] = []

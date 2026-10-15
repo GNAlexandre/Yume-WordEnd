@@ -1,8 +1,11 @@
 extends "res://tests/stubs/t2_map_test.gd"
 ## (C2) Le café du village (src/world/maps/cafe/, plan de docs/lore/CARTE.md, 5.3) : base commune
-## tests/stubs/t2_map_test.gd (plan, circulation, rien ne cache le joueur, draw calls, objets à examiner),
-## plus la salle et son arrière-boutique (le rideau rayé sur la cloison), le comptoir (vitrine à gâteaux, étagère
-## aux bouteilles), les deux tables de deux chaises et celle des buveurs, les verres de jus de la table des
+## tests/stubs/t2_map_test.gd (plan, circulation, rien ne cache le joueur, draw calls, objets à
+## examiner),
+## plus la salle et son arrière-boutique (le rideau rayé sur la cloison), le comptoir (vitrine à
+## gâteaux, étagère
+## aux bouteilles), les deux tables de deux chaises et celle des buveurs, les verres de jus de la
+## table des
 ## aînées (jour 9), la sortie vers le village, la clochette et les places de la vie en plus du plan.
 
 
@@ -53,7 +56,9 @@ func test_the_counter_the_tables_and_the_juice() -> void:
 	assert_not_null(_map.find_child("cafe_cake_case_1", true, false), "la vitrine à gâteaux")
 	assert_not_null(_map.find_child("cafe_bottle_shelf_1", true, false), "l'étagère aux bouteilles")
 	assert_not_null(_map.find_child("crystal_pendant_1", true, false), "la suspension à cristal")
-	for chair_place: String in ["salle_chaise_a01", "salle_chaise_a02", "salle_chaise_b01", "salle_chaise_b02"]:
+	for chair_place: String in [
+		"salle_chaise_a01", "salle_chaise_a02", "salle_chaise_b01", "salle_chaise_b02"
+	]:
 		assert_not_null(_map.get_node_or_null(NodePath("Life/Places/" + chair_place)), chair_place)
 	var tables := 0
 	var chairs := 0

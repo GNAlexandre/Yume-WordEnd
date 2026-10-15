@@ -78,7 +78,7 @@ DEVIATIONS = [
     "le grand jardin (x 20 → 34) est ouvert sur ses côtés : le plan ne clôt que x 20 → 24 ; ses grands décors (meule, "
     "charrette, épouvantail) sont des variantes de premier plan",
     "la lanterne à cristal et les fenêtres lumineuses du plan (`lumiere`) ne sont pas écrites : aucune lumière dans "
-    "les cartes, Atmosphere éclaire (la nuit, la façade du café reste éclairée par ses vitres de nuit)",
+    "les cartes, Atmosphere éclaire (la nuit, la façade du café n'a pas de vitres allumées : demande dans CONTRACT_REQUESTS.md)",
     "la porte de la maison Limashenka est posée ouverte : la condition du jour 11 est en métadonnée "
     "(`open_from_day`, `closed_text_key`) pour le récit",
 ]
