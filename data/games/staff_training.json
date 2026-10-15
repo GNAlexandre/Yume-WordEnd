@@ -1,0 +1,61 @@
+{
+  "_comment": "Les règles de l'entraînement au bâton, à trois contre un (lot E8 ; src/games/staff_training.gd ; docs/lore/ACTE1.md, 3.2) : durées en secondes, distances en mètres. Les chiffres viennent de ACTE1.md ; les coups sont des bâtons, aucun vrai dégât : une jauge de touches. Format : PLAN.md, « (E8) Les jeux ».",
+  "intro_time": 1.5,
+  "link_time": 1.5,
+  "link_timeout": 10,
+  "end_time": 3.0,
+  "dodge_distance": 0.9,
+  "engage_distance": 1.9,
+  "reposition_period": 0.5,
+  "ring_radius": 2.0,
+  "ring_angle_deg": 55,
+  "phase_a": {
+    "_comment": "Phase A, « des attaques venues de partout » : Willem frappe en rythme (un coup toutes les tempo_start s, puis de plus en plus vite jusqu'à tempo_end en ramp_time s), chaque coup annoncé warn s avant par sa posture. Bloquer : tenir la parade ; dévier : la relâcher dans les deflect_window s avant le coup (la garde de Willem s'ouvre open_time s) ; esquiver : sortir du cercle. Toutes les fatigue_every s la fenêtre rétrécit de fatigue_shrink ; à sit_at s, Chtholly s'assoit. Réussite : success_streak réponses de suite, dont success_deflections déviations.",
+    "sides": ["gauche", "droite", "haut", "estoc"],
+    "tempo_start": 1.2,
+    "tempo_end": 0.8,
+    "ramp_time": 60,
+    "first_delay": 0.6,
+    "warn": 0.5,
+    "deflect_window": 0.15,
+    "deflect_min_hold": 0.05,
+    "deflect_min_window": 0.04,
+    "open_time": 0.5,
+    "fatigue_every": 30,
+    "fatigue_shrink": 0.2,
+    "sit_at": 90,
+    "touch_limit": 6,
+    "success_streak": 12,
+    "success_deflections": 3
+  },
+  "phase_b": {
+    "_comment": "Phase B, « trois contre un » : Ithea et Nephren attaquent Willem toutes les ally_interval_min à ally_interval_max s ; il pare tout et contre toutes les counter_interval s sur l'une des trois, annoncée counter_warn s avant ; sur Chtholly on l'esquive ou on la dévie (la parade tenue n'y suffit pas). Une déviation (d'une alliée avec ally_deflect_chance) découvre Willem open_time s. Réussite : tenir success_time s en ne recevant pas plus de max_counters contres, ou toucher Willem une fois (à touch_reach m, dans l'arc, touch_delay s après le coup de bâton).",
+    "ally_interval_min": 2.0,
+    "ally_interval_max": 3.0,
+    "counter_interval": 2.0,
+    "counter_warn": 0.4,
+    "counter_first_delay": 1.5,
+    "open_time": 0.4,
+    "ally_deflect_chance": 0.5,
+    "success_time": 60,
+    "max_counters": 3,
+    "touch_reach": 1.7,
+    "touch_delay": 0.12,
+    "touch_arc_deg": 140
+  },
+  "variant_jour10": {
+    "_comment": "Variante du jour 10 (ACTE1.md, 10.1) : phase A seule ; au bout de deflect_closes_at s la fenêtre de déviation se ferme (le rythme tremble) ; au troisième raté l'exercice s'arrête, la scène continue.",
+    "phases": ["a"],
+    "deflect_closes_at": 15,
+    "end_on_misses": 3
+  },
+  "anims": {
+    "_comment": "Animations jouées, la première que la planche a (les planches _stick, cahier n° 5 lot R2, donneront pare et mort assise ; en attendant, celles de la maison).",
+    "strike": ["frappe", "lance", "parle"],
+    "guard": ["pare", "parle"],
+    "rest": ["repos"],
+    "tired": ["assis", "effondre", "repos"],
+    "player_tired": ["assis", "degats"]
+  },
+  "player_tired_time": 2.5
+}

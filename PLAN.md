@@ -145,13 +145,16 @@ Yume-WordEnd/
 │   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
 │   ├── life/                  # (E4) la vie : life_director.gd (autoload LifeDirector), life_data.gd (emplois du
 │   │                          # temps, activités), life_slots.gd, life_places.gd, life_nav.gd, life_actor.gd,
-│   │                          # life_game.gd, life_texts.gd ; games/<jeu>.gd (chat, course, avalanche, tour)
+│   │                          # life_game.gd, life_texts.gd ; games/<jeu>.gd (chat, course, avalanche, tour, ballon)
+│   ├── games/                 # (E8) les jeux : ball.gd (GameBall), ball_play.gd + ball_kid.gd (BallPlay, BallKid), staff_training.gd
+│   │                          # (StaffTraining), mini_games.gd (MiniGames : lancer un jeu), game_rules.gd, game_score.gd
 │   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
 │   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
 │   └── ui/                    # hud, dialogue_box, inventory, main_menu, loading, touch_controls,
 │                              # arena_end, credits, journal (Lot Q, enfant du HUD), (E1) map_fade
 ├── data/
-│   ├── attacks/*.tres         # sword_1..3, charge_wave, bite, whip, rush
+│   ├── attacks/*.tres         # sword_1..3, charge_wave, bite, whip, rush ; (E8) stick_1..3, stick_guard (le bâton)
+│   ├── games/*.json           # (E8) les chiffres des jeux : ballon.json, staff_training.json (GameRules)
 │   ├── enemies/*.tres         # timere_small, timere_normal, timere_runner, timere_big ; visuals/timere.tres
 │   ├── fauna/<île>/           # (E5) une espèce par fichier <id>.tres (AnimalData), attacks/, visuals/<id>.tres,
 │   │                          # peuplement.json (où, combien, quand) ; format : « (E5) Ajouter un animal »
@@ -288,6 +291,10 @@ func attack() -> void                      # enchaînement sword_1 → sword_2 �
 func charge_begin() -> void                # démarre la jauge (0,55 s minimum)
 func charge_release() -> void              # lance l'onde si la jauge est pleine, recharge 1,2 s
 func is_busy() -> bool                     # true pendant attaque/charge/dégâts (bloque le déplacement)
+# (E8) L'arme : set_weapon(&"baton" | &"seniorious") -> bool (le récit choisit ; Seniorious par défaut), weapon(),
+# can_charge() (faux bâton en main : pas de charge de venenum), is_guarding() / guard_animation() (bâton en main,
+# la touche de charge tient la parade), signaux weapon_changed(arme), guard_changed(levée). Player.set_weapon /
+# weapon() les relaient ; Player.hold_pose(anim, s, remplaçantes) / is_posing() tiennent une pose (essoufflée).
 # (L0) Relais à conserver : Health du joueur → player_health_changed / player_damaged / player_died ;
 # player_respawned → Health.reset() ; player_heal_requested → Health.heal() ; max_hp_changed → Health.max_hp ;
 # au départ Health.max_hp = GameState.max_hp. Voisins par nom (../Health, ../Visual, ../Hurtbox, SwordHitbox),
@@ -1552,6 +1559,132 @@ vide. `LifeData` garde ce qu'il a lu (`clear_cache()`, `add_dir` / `remove_dir`)
   cacher tous les signes : `InteractSign.suppress(&"raison", true)` ; réglage « toujours montrer la touche » :
   `InteractSign.always_show_key()` (Options de la pause). Tests : `full_target()`, `full_kind()`,
   `pale_targets()`, `is_key_hint_shown()`, `hovered_target()` du nœud (`HUD.interact_signs()`).
+
+### (E8) Les jeux : le ballon, l'entraînement au bâton, l'arme de Chtholly
+
+Trois choses (docs/REFONTE.md, 4.2 et 5 ; docs/lore/VIE.md, 5.1 ; docs/lore/ACTE1.md, 3.0 et 3.2) :
+le **ballon** des petites (un jeu de groupe de LifeGame), l'**entraînement au bâton** à trois contre un,
+et **le bâton** que Chtholly porte hors des scènes de combat réel (pas de charge de venenum : décision de
+D2). Les chiffres vivent dans `data/games/` (`GameRules`), jamais dans un script. Démonstration :
+`tests/integration/demo_e8.tscn` (`E8_VIEW=ballon|ballon_bord|ballon_banc|baton_a|baton_b`,
+`E8_SEQUENCE=<dossier>` : une image toutes les 0,5 s) ; raccourci de développement : `?jeu=ballon` ou
+`?jeu=baton` (Web) / `-- --jeu=baton` (src/test_shortcuts.gd). Décisions : docs/DECISIONS.md (« E8 »).
+
+**Lancer un jeu depuis le récit (E6)** — `MiniGames` (src/games/mini_games.gd, fonctions statiques ; ni
+autoload ni PR « contrats » : la carte doit être peuplée par LifeDirector et son créneau déjà posé par
+`LifeDirector.set_slot`) :
+
+```gdscript
+# Le match : les blanches (Tiat, Lakhesh, 3 fées), les rouges (Collon, Pannibal, 3 fées), Willem arbitre.
+var game: BallMatch = MiniGames.start_ball_match({
+	"place": &"champ_centre",                  # la place du terrain (défaut)
+	"white": [&"tiat", ...], "red": [&"collon", ...], "referee": &"willem",   # ids de PNJ (défauts ci-dessus)
+	"overrides": {"half_time": 20, "team_size": 4},   # chemins de data/games/ballon.json
+	"muddy": false,                            # après la pluie : le ballon ralentit, elles glissent
+	"with_player": false, "player_at": Vector3(...),   # le joueur entre tout de suite / est posé là
+})
+game.match_finished.connect(func(result: Dictionary) -> void: ...)   # la fin
+# result : {winner: &"rouge"|&"blanc"|&"egalite", score: {rouge, blanc}, scorers: {id: buts},
+#           player_team, player_goals, player_touches, duration, halves, aborted}
+MiniGames.ball_match() -> BallMatch ; MiniGames.stop_ball_match()   # disperse : retour aux emplois du temps
+
+# L'entraînement : Willem seul (phase A), puis avec Ithea et Nephren (phase B).
+var training: StaffTraining = MiniGames.start_staff_training({
+	"variant": &"default",                     # ou &"jour10" : phase A seule, la fenêtre de déviation se ferme à 15 s
+	"place_player": true,                      # pose le joueur face à Willem
+	"restore_weapon": true, "with_hud": true, "overrides": {...},   # chemins de data/games/staff_training.json
+})
+training.finished.connect(func(result: Dictionary) -> void: ...)   # la scène continue toujours
+# result : {success, ended_by: &"success"|&"fatigue"|&"touches"|&"misses"|&"stopped", phase_reached,
+#           phase_a: {success, best_streak, deflections, hits, blocked, dodged},
+#           phase_b: {success, counters, touched_willem, survived}, touches, duration, variant}
+# Signaux : phase_changed(&"intro"|&"a"|&"link"|&"b"|&"ended"), resolved(sorte, issue), touches_changed(n, limite),
+# window_closed (jour 10 : le rythme tremble : effet d'E9). MiniGames.staff_training() ; stop_staff_training().
+```
+
+**L'arme** — `Player.set_weapon(&"baton" | &"seniorious")`, `Player.weapon()` (PlayerCombat : voir le contrat
+ci-dessus). Par défaut **Seniorious** (l'ancienne île et ses Timeres gardent l'épée et la charge) : c'est le
+récit (E6) qui donne le bâton au début de l'acte 1 (`set_weapon(&"baton")`) et Seniorious aux scènes qu'il
+désigne (duel, entraînement spécial, colline). L'arme n'est pas dans GameState : à refaire au chargement
+d'une partie (`EventBus.game_loaded`). Bâton en main : les trois coups de `data/attacks/stick_1..3.tres`
+(mêmes chiffres que l'épée : la faune de E5 reste combattable, un animal vaincu s'enfuit), **pas de charge**
+(`can_charge()` faux) ; la touche de charge (clic droit, L2/gâchette) tient la **parade** (`is_guarding()`,
+`guard_changed`), qui interdit de frapper tant qu'elle est levée. Animation de la parade : `pare`
+(`data/attacks/stick_guard.tres`) si la planche l'a, sinon la charge, image 0. **Sans planche `_stick`**
+(cahier n° 5, lot R2) : le bâton garde l'animation d'épée (`attaque`) et n'est pas dessiné en main ; les
+planches `_stick` demandent `pare` (2 images, 2 ips, boucle) et un `mort` assis sans blessure.
+
+**Le ballon (src/life/games/ballon.gd, class BallMatch ; base : src/games/ball_play.gd)** — un jeu `ballon`
+sur le cadre de LifeGame (activité `ballon` d'activities.json, `game: "ballon"`) :
+- *Groupe* : les PNJ dont la ligne nomme l'activité `ballon` à la même place (`champ_centre` : une place d'un
+  seul point suffit) ; la clé `role` de leur ligne donne l'équipe (`rouge`, `blanc`) ou l'arbitre (`arbitre`),
+  sans rôle : à l'équipe qui en a le moins. `LifeGame.assign_teams(équipes, except_roles)` répartit. Il faut
+  `min_members` (6) ; on attend les retardataires `assemble_wait` s avant de composer les équipes.
+- *Terrain* : `field/width` × `field/length` (18 × 20 m) centré sur la place ; les places `champ_but_nord`
+  (cages des blanches, qui défendent le nord en première mi-temps) et `champ_but_sud` donnent le poste des
+  gardiennes. Le ballon est un `GameBall` (src/games/ball.gd, `top_level`, ajouté à `Life`) ; le ballon
+  décoratif du plan (un panneau fondu au rond central) en est retiré à l'exécution (`GameBall.hide_decor_ball`).
+- *Équipes* : au plus `team_size` (5) sur le terrain, une gardienne chacune, les autres assises au bord ouest
+  (le banc, `assis`) ; à la mi-temps on change de côté, les meilleures buteuses restent (`keep_top_scorers`) et
+  les remplaçantes entrent. Un anneau au sol (`TeamRing`, rouge ou blanc) marque l'équipe de qui joue.
+- *Déroulé* (`BallMatch.Phase`) : ASSEMBLE → GATHER (on s'aligne) → KICKOFF (l'arbitre : « Coup d'envoi ! ») → PLAY
+  (2 × 180 s ; un but : GOAL, 3 s, remise en jeu par l'équipe qui l'a encaissé ; le ballon perdu : LOST) →
+  HALFTIME (8 s) → ... → ENDED (`match_finished`, puis `finish()` ; le groupe se disperse au créneau suivant).
+- *IA* : toutes les 0,25 s, chaque petite choisit : la ou les deux plus proches du ballon (avec un avantage à
+  qui l'a le moins touché : le jeu de Willem, V1) courent après lui, les autres tiennent leur poste en suivant
+  le ballon ; au pied, elle tire près des cages, passe (de préférence à qui a le moins touché), dribble ou le
+  lance haut à deux mains (`lance` : il retombe au hasard à 6 m), avec une erreur de visée ; elles tombent
+  (`tombe`) en courant ou en se bousculant ; la gardienne arrête trois tirs sur quatre et dégage un ballon qui
+  traîne. Les marches sont `LifeActor.walk_to(..., direct)` ; `LifeActor.stuck_time` à 3,5 s : jamais coincées.
+- *Le ballon* : image claire `assets/hd2d/interior/props/ball_white.png` agrandie à 0,4 m, ombre nette au sol
+  (`ball/image`, `ball/size_m`, `ball/shadow_radius`) : lisible sur l'herbe sèche.
+- *Pas de conversation pendant le jeu* : `LifeGame.blocks_talk()` (vrai pour le ballon tant que le joueur y joue,
+  pour l'entraînement jusqu'à sa fin) ; `LifeActor.talk_blocked()` ; `Npc.get_prompt()` rend alors `""` et
+  `Npc.interact` ne fait rien ; tout revient quand le jeu s'arrête.
+- *Le ballon perdu* : frappant le mur est près de `fourre_ballon`, il se perd dans le fourré une fois sur deux ;
+  une petite va le chercher (`saut`, puis `lance`), ou le joueur, en y entrant (`thicket/player_reach`).
+- *Le joueur* : il entre en entrant dans le champ (`player/join_margin`, 1,5 m du bord), rejoint l'équipe qui a
+  le moins de joueuses (les blanches à égalité : une petite lui laisse sa place sur le banc), frappe avec la
+  touche d'attaque (`LifeGame.on_player_attack` : le ballon part dans sa visée s'il est à 1,6 m devant, sans mal
+  pour personne), pousse le ballon en courant contre lui, sort à `player/leave_margin` (4,5 m) ou par
+  `leave_player()`. Un score sobre (`GameScore`, une ligne en haut de l'écran) s'affiche tant qu'il joue.
+- *Événements* (`LifeGame.event`) : `match_started`, `kickoff`, `goal [équipe, marqueuse, score]`, `save`,
+  `kick [qui, sorte]`, `fall`, `half_time`, `ball_lost`, `ball_found`, `player_kick`, `match_ended [résultat]`.
+
+**L'entraînement (src/games/staff_training.gd, class StaffTraining, un Node3D ajouté à `Life`)** — au pas de
+`advance(delta)` (le nœud s'avance seul à chaque image physique ; les tests le coupent). La **parade est la
+touche de charge** bâton en main (pas de nouvelle action : project.godot ne change pas). Phase A : un coup toutes
+les 1,2 s (0,8 s au bout de 60 s), annoncé 0,5 s avant (cercle au sol, flèche, posture de Willem) ; **bloquer** =
+parade tenue à l'impact ; **dévier** = parade relâchée dans les 0,15 s avant (la garde de Willem s'ouvre 0,5 s) ;
+**esquiver** = hors du cercle (0,9 m) ; coup reçu = enchaînement à zéro et une touche de plus (jauge 6) ; la
+fenêtre rétrécit d'un cinquième toutes les 30 s ; à 90 s Chtholly s'assoit (`Player.hold_pose`, `assis`, sinon
+`degats`) ; réussite : 12 réponses de suite dont 3 déviations. Phase B : les aînées se lèvent et se placent de
+part et d'autre de Willem ; elles l'attaquent toutes les 2 à 3 s, il contre toutes les 2 s l'une des trois
+(annoncé 0,4 s avant ; sur Chtholly : esquive ou déviation, la parade tenue n'y suffit pas ; une déviation
+d'une aînée ou de Chtholly découvre Willem 0,4 s) ; réussite : tenir 60 s avec trois contres au plus, ou
+toucher Willem découvert d'un coup de bâton (`touch_reach`, `touch_arc_deg`). **Aucun vrai dégât** : jamais de
+`Health` touchée ; les PNJ sont menés par l'exercice (`LifeActor.state = GAME`, un `Hush` muet : leur parler ne
+fait rien) et rendus à leur emploi du temps (`end_time` s après la fin). Variante du jour 10 : phase A seule.
+
+**Données** : `data/games/ballon.json` (durées, terrain, balle, frappes, IA, chutes, gardiennes, fourré, boue,
+joueur) et `data/games/staff_training.json` (rythme, fenêtres, fatigue, réussites, variantes, animations,
+chacun avec un `_comment`) ; `GameRules.value(jeu, "kick/reach", défaut, surcharges)` / `number()` /
+`problems()` ; l'activité `ballon` peut surcharger des chemins par ses `params` ; les répliques :
+`data/texts/life.json`, `games/ballon/…` et `games/baton/…` (`{player}` accepté).
+
+**Mesures** (après la fusion de V1, quinze PNJ sur la carte). Natif (Xvfb, Mesa logiciel), vue du jeu au plus
+fort du match (dix petites, l'arbitre, le joueur dans la partie, score compris) : 125 draw calls, 144 au plus
+(ballon) ; 111 à 127 au plus (spectateur, banc) ; 94 à 111 (entraînement), 130 au plus (phase B) : sous 200. Le
+match pose 35 objets dessinables de plus que la carte seule ; directeur 0,4 ms par image (9 à 21 ms au plus, aux
+changements d'équipe). Build Web (`tools/web_jeux.js`, Chromium sans GPU, SwiftShader : 0,3 à 0,9 image/s, les
+images/s ne valent pas dans l'absolu) : ballon 95 draw calls (97 au plus), entraînement 99 (107 au plus).
+
+**Pièges.** Un test qui lance un match règle le créneau (`LifeDirector.set_slot`) *avant* d'entrer dans la
+carte ou appelle `LifeDirector.refresh(false)` : sinon le directeur applique le créneau à l'image suivante et
+renvoie les joueuses à leur emploi du temps. Les tests avancent le jeu à la main (`LifeDirector._physics_process(1/60)`
+et `StaffTraining.advance`) : deux minutes de match en une seconde. GDScript : une classe de plus de 1000
+lignes échoue au lint : BallMatch hérite de BallPlay. Le ballon du décor fondu n'est retiré qu'à l'exécution
+(docs/CONTRACT_REQUESTS.md, « E8 »).
 
 ## 4. Tranche verticale : WordEnd en HD-2D
 

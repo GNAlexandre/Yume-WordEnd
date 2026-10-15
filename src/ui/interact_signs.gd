@@ -141,7 +141,7 @@ func _input(event: InputEvent) -> void:
 		_device = Device.KEYBOARD
 	elif event is InputEventMouse and event.device != InputEvent.DEVICE_ID_EMULATION:
 		_device = Device.KEYBOARD
-	if event.is_action_pressed(&"interact") and not event.is_echo() and _full != null:
+	if event.is_action_pressed(&"interact") and not event.is_echo() and is_instance_valid(_full):
 		bounce()
 	_read_click(event)
 
@@ -154,7 +154,12 @@ func _read_click(event: InputEvent) -> void:
 	if click.device == InputEvent.DEVICE_ID_EMULATION:
 		return
 	var point := _to_local(click.position)
-	if click.pressed and _full != null and _click_rect.has_area() and _click_rect.has_point(point):
+	if (
+		click.pressed
+		and is_instance_valid(_full)
+		and _click_rect.has_area()
+		and _click_rect.has_point(point)
+	):
 		_pressing = true
 		TouchButtonScript.send_action(&"interact", true)
 		bounce()
@@ -188,7 +193,7 @@ func full_kind() -> StringName:
 func pale_targets() -> Array[Node3D]:
 	var result: Array[Node3D] = []
 	for entry: Dictionary in _signs.values():
-		var node := entry["node"] as Node3D
+		var node := _node_of(entry)
 		if is_instance_valid(node) and node != _full and entry["wanted"]:
 			result.append(node)
 	return result
@@ -217,7 +222,7 @@ func hovered_target() -> Node3D:
 
 ## Petit rebond du signe plein (appui de « interact »).
 func bounce() -> void:
-	if _full == null:
+	if not is_instance_valid(_full):
 		return
 	_bounce_target = _full
 	_bounce_left = BOUNCE_TIME
@@ -290,7 +295,7 @@ func _update_signs(wanted: Dictionary[int, Dictionary], delta: float) -> void:
 			}
 	for id: int in _signs.keys():
 		var entry := _signs[id]
-		var node := entry["node"] as Node3D
+		var node := _node_of(entry)
 		if not is_instance_valid(node) or not node.is_inside_tree():
 			_signs.erase(id)
 			continue
@@ -362,7 +367,7 @@ func _draw() -> void:
 
 
 func _draw_sign(entry: Dictionary, camera: Camera3D) -> void:
-	var node := entry["node"] as Node3D
+	var node := _node_of(entry)
 	var texture: Texture2D = TEXTURES.get(entry.get("kind", &""))
 	if texture == null or not is_instance_valid(node):
 		return
@@ -471,6 +476,12 @@ func _marker_shift(target: Node3D) -> float:
 	if (marker != null and marker.visible) or (bubble != null and bubble.visible):
 		return MARKER_SHIFT
 	return 0.0
+
+
+## Cible d'un signe, null si elle a été libérée (un objet ramassé, une carte quittée…).
+func _node_of(entry: Dictionary) -> Node3D:
+	var node: Variant = entry.get("node")
+	return node as Node3D if is_instance_valid(node) else null
 
 
 ## Point de l'écran (viewport) dans le repère de ce nœud.

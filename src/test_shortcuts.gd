@@ -18,6 +18,10 @@ extends Node
 ##                à son Spawn ou au marqueur marker=<nom> (« from_sentier ») : seule entrée vers
 ##                les cartes de la refonte (entrepot…) tant que le début de partie n'y mène pas ;
 ##                une carte ou un marqueur inconnus sont ignorés (une ligne au journal) ;
+##   jeu=<jeu>    (E8) lance un jeu des petites sur l'entrepôt (MiniGames.dev_start) : `ballon`
+##                (le match au champ, l'après-midi, le joueur près du terrain) ou `baton`
+##                (l'entraînement à la clairière, le matin, face à Willem) ; un jeu inconnu est
+##                ignoré (une ligne au journal) ;
 ##   island=<id>  (X1) une fois la partie posée, voyage en dirigeable vers cette île
 ##                (WorldManager.travel : vue du ciel, puis son port), au port port=<id> s'il est
 ##                donné (sinon le premier) ; une île inconnue est ignorée (une ligne au journal).
@@ -38,7 +42,9 @@ extends Node
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
 ## Paramètres reconnus (les autres sont ignorés).
-const KEYS: Array[String] = ["zone", "timeres", "trace", "maps", "map", "marker", "island", "port"]
+const KEYS: Array[String] = [
+	"zone", "timeres", "trace", "maps", "map", "marker", "island", "port", "jeu"
+]
 ## Types du banc de performance, en rotation.
 const BENCH_TYPES: Array[StringName] = [
 	&"timere_small", &"timere_normal", &"timere_runner", &"timere_big"
@@ -178,6 +184,9 @@ func _ready() -> void:
 	var island := StringName(str(parameters.get("island", "")))
 	if not island.is_empty():
 		_voyage.call_deferred(island, StringName(str(parameters.get("port", ""))))
+	var game_name := str(parameters.get("jeu", ""))
+	if not game_name.is_empty():
+		_start_game.call_deferred(game_name)
 
 
 func _process(delta: float) -> void:
@@ -280,6 +289,17 @@ func _travel(map_ids: PackedStringArray) -> void:
 		# Le temps de regarder (et de capturer) chaque carte, même au rendu logiciel.
 		await get_tree().create_timer(MAP_PAUSE).timeout
 	_log("voyage terminé")
+
+
+## (E8) Paramètre jeu : lance le ballon ou l'entraînement au bâton, après quelques images.
+func _start_game(game_name: String) -> void:
+	for _frame in 10:
+		await get_tree().process_frame
+	var started := MiniGames.dev_start(game_name)
+	if started == null:
+		_log("jeu inconnu : %s (ballon, baton)" % game_name)
+	else:
+		_log("jeu lancé : %s" % game_name)
 
 
 ## (X1) Voyage vers une île (paramètres island et port), après quelques images de la partie.
