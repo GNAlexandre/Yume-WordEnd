@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 3.3 (s. 6) : le snack-bar, joué dans ville_snack. Elle part devant la porte (ville_haute:porte_snack) : les trois aînées entrent ; Willem au comptoir (snack_tabouret, en manteau), le lycanthrope à la poêle derrière (snack_vendor, tenue travail : travaille) ; ses oreilles tombent ; elles se tiennent à la table (snack_table_nord, snack_table_nord_est ; {player} à snack_table : la table n'a pas de chaise, personne ne s'assoit) ; Ithea commande, Willem paie. Le repas passe (après-midi) : Willem rentre, Ithea et Nephren vont à la librairie ; {player} a l'après-midi libre en ville. Gros plan (10 m) : la caméra fixe de la pièce la montre petite au milieu du noir.",
+  "_comment": "ACTE1.md 3.3 (s. 6) : le snack-bar, joué dans ville_snack. Elle part devant la porte (ville_haute:porte_snack) : les trois aînées entrent ; Willem au comptoir (snack_tabouret, en manteau), le lycanthrope à la poêle derrière (snack_vendor, tenue travail : travaille) ; ses oreilles tombent ; elles se tiennent à la table (snack_table_nord, snack_table_nord_est ; {player} à snack_table : la table n'a pas de chaise, personne ne s'assoit) ; Ithea commande, Willem paie. Le repas passe (après-midi) : Willem rentre, Ithea et Nephren vont à la librairie ; {player} a l'après-midi libre en ville ; le cuistot, qui n'a pas encore d'emploi du temps (sa place n'est pas atteignable à pied), quitte la scène pendant le fondu. Gros plan (10 m) : la caméra fixe de la pièce la montre petite au milieu du noir.",
   "title": "Le snack-bar",
   "day": 3,
   "after": [
@@ -235,6 +235,10 @@
       "do": "slot",
       "slot": "apres_midi",
       "time": 0
+    },
+    {
+      "do": "leave",
+      "who": "snack_vendor"
     },
     {
       "do": "fade",

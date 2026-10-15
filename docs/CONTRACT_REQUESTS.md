@@ -921,3 +921,7 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   l'entrepôt sans le combat) ; une tenue de ville sans arme, ou l'arme rangée hors combat, éviterait l'épée qui traverse les voisines.
 - **S1b → carte `ville_snack` : des chaises à la table** : la table des trois aînées (`cafe_table_heavy`) n'a pas de chaise ; elles se
   tiennent debout. Deux chaises (ou un banc) au nord de la table permettraient `assis` à `snack_table_nord` / `_nord_est`.
+- **S1b → vie : le cuistot du snack-bar** : `snack_vendor` n'a pas d'emploi du temps (VIE.md 4.11 : `ville_snack`, du matin au soir,
+  `travaille`) ; `test_life_ile_68_nav` n'admet que les cartes de l'entrepôt et veut chaque place atteignable à pied, or la place
+  `ville_snack:snack_vendor` est derrière le comptoir (0,35 m). Un emploi du temps (et une place « posée », hors navigation) le
+  laisserait à sa poêle après `j3_3_snack`, qui le retire aujourd'hui pendant le fondu.

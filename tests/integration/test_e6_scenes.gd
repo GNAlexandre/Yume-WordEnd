@@ -190,7 +190,7 @@ func test_j3_3_snack_and_back_home() -> void:
 	assert_eq(LifeSlots.current(), &"apres_midi", "l'après-midi libre")
 	assert_eq(_cards, [] as Array[String], "aucun carton")
 	assert_null(LifeDirector.actor(&"willem"), "Willem est rentré")
-	assert_not_null(LifeDirector.actor(&"snack_vendor"), "le cuistot reste à sa poêle")
+	assert_null(LifeDirector.actor(&"snack_vendor"), "le cuistot quitte la scène pendant le fondu")
 	# Le retour, à pied : la porte, la ville, le sentier, l'entrepôt ; le soir, le lit.
 	assert_true(await wait_control())
 	assert_true(await take_exit(&"ville_haute", 30.0), "dehors")
