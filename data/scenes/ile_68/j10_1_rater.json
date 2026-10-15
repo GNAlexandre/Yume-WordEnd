@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 10.1 (VEX, s. 26) et combat 3.2, variante du jour 10 : rien ne passe, ses yeux vont au visage de Willem (gros plan, deux fois) ; au troisième raté, le grand cri, et elle s'enfuit vers le sud (contrôle de course jusqu'à la sortie vers_foret). Le matin vient tout de suite si l'on arrive à l'aube.",
+  "_comment": "ACTE1.md 10.1 (VEX, s. 26) et combat 3.2, variante du jour 10 : rien ne passe, ses yeux vont au visage de Willem (gros plan, deux fois) ; au troisième raté, le grand cri, et elle s'enfuit vers le sud (contrôle de course jusqu'à la sortie vers_foret). Le matin vient tout de suite si l'on arrive à l'aube. Rien ne passe : la réussite de la phase A est hors d'atteinte ce jour-là (overrides : phase_a/success_streak), seul le troisième raté finit l'exercice.",
   "title": "Tout rater",
   "day": 10,
   "slot": ["aube", "matin"],
@@ -18,7 +18,7 @@
     {"do": "camera", "to": "willem", "distance": 9, "time": 0.9, "wait": true},
     {"do": "wait", "time": 1.0},
     {"do": "camera_reset", "time": 0.5, "wait": true},
-    {"do": "game", "game": "entrainement_baton", "params": {"variant": "jour10", "place_player": true}, "fallback": [
+    {"do": "game", "game": "entrainement_baton", "params": {"variant": "jour10", "place_player": true, "overrides": {"phase_a/success_streak": 99}}, "fallback": [
       {"do": "card", "text": "repli", "time": 3.0}
     ]},
     {"do": "control", "on": false},

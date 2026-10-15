@@ -1633,7 +1633,7 @@ sans acte, garde son moteur de quêtes. Décisions : docs/DECISIONS.md (« E6 »
 
 | Étape | Clés | Ce qu'elle fait |
 | --- | --- | --- |
-| `place` | who, at, offset, facing, outfit, anim | fait paraître (ou pose) le personnage |
+| `place` | who, at, offset, facing, outfit, anim, lift | fait paraître (ou pose) le personnage ; (S2) `lift` : à cette hauteur (m), sans collision (la pile de la tour de fées) |
 | `walk` | who, to, offset, gait (marche, course), wait (vrai), facing, direct | marche par la navigation (le joueur : vraie physique) et l'attend |
 | `follow` / `unfollow` | who, distance (2), stop_beyond (8), gait | le PNJ suit le joueur, d'une carte à l'autre, sans le gêner |
 | `face` | who, toward | le tourne |
@@ -1703,7 +1703,7 @@ rayure et cercle or) ; « Calendrier » est au menu pause, au-dessus d'« Option
 `StoryStage.apply_doors` la remplace par une zone à examiner (`ClosedDoor`, même invite) qui lit
 le texte. Appliqué à chaque arrivée sur une carte et à chaque changement de `GameState.day`.
 
-**Mode d'emploi : écrire une scène** (lot S2 : jours 5 à 12).
+**Mode d'emploi : écrire une scène** (lot S2 : jours 5 à 12 ; jours 9 à 12 faits : `j9_1_porte` … `j12_3_epilogue`, « entrainement_baton » = `MiniGames.play_story_staff`, fin de l'acte : drapeau `acte1_fini`, docs/DECISIONS.md « S2 »).
 1. Lire sa fiche dans ACTE1.md (lieu, présents, déclencheur, déroulé, choix, idées de
    répliques, contrôle, indice). Vérifier que les places existent (`Life/Places` de la carte :
    LifeData.map_places) ; une place qui manque se demande au lot de la carte

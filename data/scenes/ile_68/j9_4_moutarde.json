@@ -1,12 +1,12 @@
 {
-  "_comment": "ACTE1.md 9.4 (VEX, s. 24) : le thé à la moutarde, au goûter du soir. Deux pots étiquetés d'une main d'enfant ; {player} se trompe, boit d'un trait devant tout le monde ; Tiat l'imite en criant. La protagoniste n'a pas de pose assise dans sa planche : elle se tient au bout de la table, à 1 m de Tiat. La fin fait passer à la nuit (9.5 suit).",
+  "_comment": "ACTE1.md 9.4 (VEX, s. 24) : le thé à la moutarde, au goûter du soir. Deux pots étiquetés d'une main d'enfant ; {player} se trompe, boit d'un trait devant tout le monde ; Tiat l'imite en criant. La protagoniste n'a pas de pose assise dans sa planche : elle se tient debout dans l'allée, à 1 m de Tiat. La fin fait passer à la nuit (9.5 suit).",
   "title": "Le thé à la moutarde",
   "day": 9,
   "slot": "soir",
   "after": ["j9_3_cafe"],
   "map": "entrepot_rdc",
   "hint": "hint",
-  "trigger": {"on": "prompt", "point": "refectoire_chaise_c06", "prompt": "asseoir", "size": 1.4},
+  "trigger": {"on": "prompt", "point": "refectoire_allee", "prompt": "asseoir", "size": 1.8},
   "present": ["tiat", "ithea", "collon", "lakhesh", "almita"],
   "steps": [
     {"do": "control", "on": false},
@@ -15,7 +15,7 @@
     {"do": "place", "who": "lakhesh", "at": "refectoire_chaise_b03", "outfit": "vie", "anim": "assis"},
     {"do": "place", "who": "almita", "at": "refectoire_chaise_b01", "outfit": "vie", "anim": "assis"},
     {"do": "place", "who": "ithea", "at": "refectoire_chaise_b06", "outfit": "maison", "anim": "assis"},
-    {"do": "walk", "who": "player", "to": "refectoire_chaise_c06", "offset": [0.0, 0.2], "facing": "north"},
+    {"do": "walk", "who": "player", "to": "refectoire_chaise_c05", "offset": [0.5, -0.9], "facing": "south"},
     {"do": "camera", "to": "refectoire_chaise_c04", "offset": [0.2, -0.8], "distance": 9, "time": 0.8},
     {"do": "dialogue", "node": "pots"},
     {"do": "anim", "who": "tiat", "anim": "saut", "wait": true},
