@@ -89,6 +89,10 @@ WAITING = {
 }
 WAITING_SIZE = (32, 24)
 
+# (E7) Le pont du transport de la Garde (CARTE.md 6.3) : une carte du dehors construite.
+RECIPES.append("transport_garde")
+PLACES_LOT["transport_garde"] = "E7"
+
 # (CV) La ville haute est construite ; la place du marché (ville_marche) attend son lot : sol de pavés, retour vers la
 # ville haute par le haut de la carte.
 RECIPES.append("ville_haute")
@@ -412,6 +416,10 @@ class Writer:
         if self.settings.get("fauna"):
             fauna = self.ext_id("PackedScene", "res://src/fauna/fauna.tscn")
             self.node('[node name="Fauna" parent="Life" instance=ExtResource("%s")]\n' % fauna)
+        # (E7) Nœuds propres à la recette, écrits après tout le reste (le poste d'amarrage du port : il règle la sortie
+        # « Monter à bord » après le _ready de celle-ci) : extra_nodes(p, writer) rend leurs textes.
+        for text in getattr(self.recipe, "extra_nodes", lambda _p, _w: [])(p, self):
+            self.node(text)
         amb = []
         if ambient:
             self.node('[node name="Ambience" type="Node3D" parent="."]\n')

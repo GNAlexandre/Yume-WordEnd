@@ -199,7 +199,28 @@
         {"name": "sommet", "at": [65, 12.2], "look": "N", "moments": ["matin", "couchant", "nuit"]},
         {"name": "route_ville", "at": [62, 31.5], "look": "E", "moments": ["matin", "nuit"]},
         {"name": "sud", "at": [30, 31], "look": "N", "moments": ["matin"]},
+        {"name": "navire_a_quai", "at": [30, 11.5], "look": "N", "moments": ["couchant", "couchant:pluie", "nuit"], "ships": {"transport_garde": "deploy_gangway"}},
+        {"name": "navire_passerelle", "at": [32.5, 7.6], "look": "N", "moments": ["matin"], "ships": {"transport_garde": "deploy_gangway"}},
         {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}
+      ]
+    },
+    "transport_garde": {
+      "kind": "dehors",
+      "views": [
+        {"name": "pont", "at": [10, 4.4], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "poupe", "at": [5.5, 4.6], "look": "O", "moments": ["matin"]},
+        {"name": "proue", "at": [16.5, 4.4], "look": "E", "moments": ["matin", "couchant"]},
+        {"name": "passerelle", "at": [10, 8.6], "look": "N", "moments": ["matin", "couchant:pluie"]},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "barocupot": {
+      "kind": "dedans",
+      "views": [
+        {"name": "coursive", "at": [4.5, 6.0], "look": "N"},
+        {"name": "conseil", "at": [2.6, 3.9], "look": "E", "moments": ["matin", "apres_midi", "nuit"]},
+        {"name": "sas", "at": [10.5, 3.5], "look": "N"},
+        {"name": "ensemble", "overview": true}
       ]
     },
     "foret_profonde": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},

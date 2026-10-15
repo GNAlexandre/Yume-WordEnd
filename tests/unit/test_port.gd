@@ -11,9 +11,10 @@ extends "res://tests/stubs/c1_exterior_test.gd"
 ## route) ;
 ## - le vide au nord, le quai de tôle au garde-fou, le poste d'amarrage ouvert, les trois bras
 ##   d'ancrage ;
-## - le navire à quai : le grand panneau de coque (remplaçant, E7 le remplace), la passerelle, le
-##   point
-##   `navire_quai` à son pied ;
+## - (E7) le poste d'amarrage (Berth) : le transport de la Garde en volume, vide hors des scènes,
+##   ses trois bras d'ancrage (la bande qui se referme, ouverte), sa passerelle qui se pose au
+##   droit du point `navire_quai`, la porte du vide ouverte seulement devant la passerelle posée
+##   (tests/unit/test_ships.gd pour le reste) ;
 ## - la colline ventée : trois terrasses (+1, +2, +3 m) montées à pied par trois rampes ;
 ## - les trois bâtiments du plan, à leur emprise ; les images du lot R3 et R7 au manifeste et
 ##   posées ;
@@ -175,33 +176,40 @@ func test_the_island_ends_in_the_void_to_the_north() -> void:
 
 
 func test_the_berth_has_three_arms_a_gangway_and_the_ship_hull() -> void:
-	var quay := _map.get_node(^"Geometry/Quay")
+	# (E7) Le poste d'amarrage : les bras, le navire en volume et sa passerelle (CONTRACT_REQUESTS,
+	# CP).
+	var berth := _map.get_node_or_null(^"Berth") as ShipBerth
+	assert_not_null(berth, "le poste d'amarrage du transport de la Garde")
+	if berth == null:
+		return
+	var arm_xs: Array[float] = []
 	for arm_name: String in ["BrasAncrage1", "BrasAncrage2", "BrasAncrage3"]:
-		var arm := quay.get_node_or_null(NodePath(arm_name)) as DecorPanel
+		var arm := berth.get_node_or_null(NodePath("Arms/" + arm_name)) as ShipStrip
 		assert_not_null(arm, arm_name)
 		if arm != null:
 			assert_true(
-				arm.texture.resource_path.ends_with("mooring_arm_open.png"),
-				"%s : bras déployé" % arm_name
+				arm.texture.resource_path.ends_with("anim/mooring_arm_clamp.png"),
+				"%s : la bande du bras qui se referme" % arm_name
 			)
-	var arm_xs: Array[float] = []
-	for arm_name: String in ["BrasAncrage1", "BrasAncrage2", "BrasAncrage3"]:
-		arm_xs.append((quay.get_node(NodePath(arm_name)) as Node3D).global_position.x)
+			assert_eq(arm.frame, 0, "%s : bras déployé, pince ouverte" % arm_name)
+			assert_not_null(arm.get_node_or_null(^"Collision"), "%s bloque" % arm_name)
+			arm_xs.append(arm.global_position.x)
 	assert_eq(arm_xs, [23.5, 29.5, 36.5] as Array[float], "x des bras d'ancrage du plan")
-	var deck := quay.get_node_or_null(^"Passerelle") as Building
-	assert_not_null(deck, "la passerelle (un plancher du quai à la coque)")
-	if deck != null:
-		assert_almost_eq(deck.global_position.x, 32.5, 0.01, "au droit du plan (x 32,5)")
-		assert_lt(deck.global_position.z, 6.4, "elle va vers le navire, au nord")
-	var hull := _map.get_node_or_null(^"Geometry/Ship/TransportGarde") as DecorPanel
-	assert_not_null(hull, "le grand panneau de coque du transport de la Garde")
-	if hull != null:
-		var size := Vector2(hull.texture.get_size()) / 96.0
-		assert_eq(size, Vector2(16.0, 7.0), "16 × 7 m (CARTE.md 6.2)")
-		assert_true(hull.texture.resource_path.ends_with("ships/garde_transport_side.png"))
-		assert_almost_eq(hull.global_position.x, 30.0, 0.01, "de x 22 à 38")
-		assert_lt(hull.global_position.y, 0.0, "la quille sous le niveau du quai")
-		assert_null(hull.get_node_or_null(^"Collision"), "libre : sans collision")
+	var ship := berth.ship()
+	assert_not_null(ship, "le transport de la Garde en volume")
+	if ship == null:
+		return
+	var hull := ship.get_node(^"Hull") as DecorPanel
+	var size := Vector2(hull.texture.get_size()) / 96.0
+	assert_eq(size, Vector2(16.0, 7.0), "16 × 7 m (CARTE.md 6.2)")
+	assert_true(hull.texture.resource_path.ends_with("ships/garde_transport_side.png"))
+	assert_almost_eq(hull.global_position.x, 30.0, 0.01, "de x 22 à 38")
+	assert_lt(hull.global_position.y, 0.0, "la quille sous le niveau du quai")
+	assert_lt(hull.global_position.z, 5.0, "au nord du quai, au-dessus du vide")
+	assert_false(ship.visible, "en dehors des scènes, le poste est vide (CARTE.md 6.2)")
+	assert_almost_eq(ship.gangway_foot().x, 32.5, 0.01, "la passerelle au droit du plan (x 32,5)")
+	assert_between(ship.gangway_foot().z, 6.2, 7.2, "posée, son pied est sur le quai")
+	assert_almost_eq(ship.gangway_top().y, 1.0, 0.05, "elle monte au pont, 1 m plus haut")
 
 
 func test_the_named_point_at_the_foot_of_the_gangway() -> void:
@@ -209,27 +217,51 @@ func test_the_named_point_at_the_foot_of_the_gangway() -> void:
 	assert_almost_eq(point.global_position.x, 32.5, 0.01)
 	assert_almost_eq(point.global_position.z, 7.6, 0.01)
 	assert_true(_is_reached(point.global_position), "on y va à pied")
-	var gangway := _map.get_node(^"Geometry/Quay/Passerelle") as Node3D
+	var ship := (_map.get_node(^"Berth") as ShipBerth).ship()
 	assert_lt(
-		absf(point.global_position.x - gangway.global_position.x), 1.0, "au pied de la passerelle"
+		absf(point.global_position.x - ship.gangway_foot().x), 1.0, "au pied de la passerelle"
 	)
-	# On monte sur la passerelle (collision du plancher) depuis le quai : le bord du vide (z < 5)
-	# est fermé, on n'entre
-	# pas dans la coque ; la scène y fait descendre Willem sans le contrôle.
+	assert_between(
+		point.global_position.z - ship.gangway_foot().z, 0.4, 1.6, "au sud de son pied, sur le quai"
+	)
+	# (E7) Le bord du vide (z < 5) est fermé devant la passerelle tant qu'elle n'est pas posée ;
+	# posée, on y monte du quai jusqu'au seuil de la trappe, sans rien toucher d'autre qu'elle.
+	var on_gangway := Vector3(32.5, 0.55 + 0.05 + PLAYER_HEIGHT / 2.0, 4.6)
+	assert_has(_touching(on_gangway), "Berth/Gate", "passerelle rentrée : le vide est fermé")
+	ShipControl.pose(&"transport_garde", &"deploy_gangway")
+	await wait_physics_frames(2)
+	assert_eq(_touching(on_gangway), [] as Array[String], "la capsule passe sur la passerelle")
+	var below := PhysicsRayQueryParameters3D.create(
+		Vector3(32.5, 3.0, 4.6), Vector3(32.5, -3.0, 4.6), 1
+	)
+	var hit := _space.intersect_ray(below)
+	assert_false(hit.is_empty(), "on y marche")
+	if not hit.is_empty():
+		assert_eq(
+			String(_map.get_path_to(hit["collider"] as Node)),
+			"Berth/TransportGarde/Gangway/Collision",
+			"sur le plancher de la passerelle"
+		)
+		assert_between((hit["position"] as Vector3).y, 0.4, 0.75, "à mi-pente")
+	ShipControl.pose(&"transport_garde", &"absent")
+	await wait_physics_frames(2)
+
+
+## Chemins (depuis la carte) des corps de la couche 1, hors sol, que touche la capsule du joueur
+## centrée en at.
+func _touching(at: Vector3) -> Array[String]:
 	var capsule := CapsuleShape3D.new()
 	capsule.radius = PLAYER_RADIUS
 	capsule.height = PLAYER_HEIGHT
 	var query := PhysicsShapeQueryParameters3D.new()
 	query.shape = capsule
 	query.collision_mask = 1
-	query.transform = Transform3D(
-		Basis.IDENTITY, Vector3(32.5, 0.08 + 0.25 + PLAYER_HEIGHT / 2.0, 6.0)
-	)
+	query.transform = Transform3D(Basis.IDENTITY, at)
 	var inside: Array[String] = []
 	for hit: Dictionary in _space.intersect_shape(query, 16):
 		if hit["collider"] != _ground:
 			inside.append(String(_map.get_path_to(hit["collider"] as Node)))
-	assert_eq(inside, [] as Array[String], "la capsule du joueur passe sur la passerelle")
+	return inside
 
 
 # --- Les bâtiments, les décors et les images ----------------------------------------------------
@@ -275,9 +307,25 @@ func test_the_decors_of_the_plan_are_there() -> void:
 			found = found or images.has(words[1] + suffix)
 		if aliases.has(words[1]):
 			found = found or images.has(aliases[words[1]])
-		# La passerelle est un plancher (Building : matière de ses murs), le navire une image.
-		found = found or (words[1] == "gangway" and _map.has_node(^"Geometry/Quay/Passerelle"))
+		# (E7) Le navire, sa passerelle et les bras d'ancrage sont dans le poste d'amarrage.
+		found = found or (words[1] in _berth_parts() and _berth_parts()[words[1]])
 		assert_true(found, "décor %s (ligne du plan)" % words[1])
+
+
+## (E7) Ce que le poste d'amarrage pose à la place des lignes du plan : le flanc du navire, sa
+## passerelle, les bras d'ancrage (la bande qui se referme, dont l'image 0 est le bras ouvert).
+func _berth_parts() -> Dictionary:
+	var berth := _map.get_node_or_null(^"Berth") as ShipBerth
+	if berth == null or berth.ship() == null:
+		return {}
+	var hull := berth.ship().get_node_or_null(^"Hull") as DecorPanel
+	var arms := berth.get_node_or_null(^"Arms")
+	return {
+		"garde_transport_side":
+		hull != null and hull.texture.resource_path.ends_with("garde_transport_side.png"),
+		"gangway": berth.ship().get_node_or_null(^"Gangway/Ramp/Tread") is Building,
+		"mooring_arm_open": arms != null and arms.get_child_count() == 3,
+	}
 
 
 func test_the_replacement_images_are_in_the_manifest_and_used() -> void:
@@ -292,9 +340,21 @@ func test_the_replacement_images_are_in_the_manifest_and_used() -> void:
 		images[String(element[1]).get_file().get_basename()] = true
 	for image_name in R3_IMAGES:
 		assert_eq(listed.get(image_name, ""), "R3", "%s au manifeste, lot R3" % image_name)
-		assert_true(images.has(image_name), "%s posée dans la carte" % image_name)
+		assert_true(
+			images.has(image_name) or _berth_parts().get(image_name, false),
+			"%s posée dans la carte" % image_name
+		)
 	assert_eq(listed.get("garde_transport_side", ""), "R7", "le navire : lot R7 (E7)")
-	assert_true(images.has("garde_transport_side"), "garde_transport_side posée")
+	assert_true(_berth_parts().get("garde_transport_side", false), "garde_transport_side posée")
+	# (E7) La bande des bras qui se referment part du bras ouvert, au pixel près (image 0).
+	var open := (load("res://assets/hd2d/props/mooring_arm_open.png") as Texture2D).get_image()
+	var strip := (load("res://assets/hd2d/anim/mooring_arm_clamp.png") as Texture2D).get_image()
+	open.convert(Image.FORMAT_RGBA8)
+	strip.convert(Image.FORMAT_RGBA8)
+	var first := strip.get_region(Rect2i(Vector2i.ZERO, open.get_size()))
+	assert_true(
+		first.get_data() == open.get_data(), "image 0 de mooring_arm_clamp = mooring_arm_open"
+	)
 	assert_true(listed.has("port_house_b_side"), "le flanc de la cabane")
 	for path: String in [
 		"res://assets/hd2d/props/mooring_arm_open.png",
