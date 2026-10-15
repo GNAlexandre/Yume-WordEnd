@@ -105,3 +105,18 @@ Les deux planches composites `willem_carry` et `willem_piggyback` sont des PNG/J
 - `assets/characters/giniette/giniette` : PNG et JSON du profil, de la face et du dos ; 101 px debout ; animations `repos`, `marche`, `parle`, `course`, `saut`, `frappe`, `lance`, `grimpe`, `assis`, `lit`, `dort`, `tombe`.
 - `assets/characters/fairy_11/fairy_11` : PNG et JSON du profil, de la face et du dos ; 134 px debout ; animations `repos`, `marche`, `parle`, `course`, `frappe`, `assis`, `lit`, `dort`.
 - `assets/characters/fairy_12/fairy_12` : PNG et JSON du profil, de la face et du dos ; 139 px debout ; animations `repos`, `marche`, `parle`, `course`, `frappe`, `assis`, `lit`, `dort`, `travaille`.
+
+
+### Île 68 — cahier n° 5, R2 priorité 2 : fées et portraits (15 octobre 2026)
+
+Généré avec ChatGPT le 15 octobre 2026, cahier n° 5, lot R2 :
+`fairy_07`, `fairy_08`, `fairy_09`, `fairy_10` (profil droit, face et dos,
+444 poses), et portraits 256 × 256 de Kana et Giniette. Quatorze PNG et douze JSON.
+Apparences originales décrites aux sections 4.4 et 4.5 du cahier ; références
+de rendu : sprites de Tiat/Lakhesh, planche d'ensemble des six fées, sprites de
+Kana/Giniette et portrait de Tiat. Recalage au plus proche voisin et montages
+localisés autorisés ; les 35 générations originales sont conservées hors dépôt.
+Sommeil identique dans les trois vues ; pieds immobiles au repos et au dialogue ;
+ballon au ventre occulté dans la vue de dos. Pas de meuble, arbre ni lit dessiné.
+Les planches restent à enregistrer et placer dans les scènes ; cycles, fenêtres
+d'action et contacts à valider en jeu après intégration.

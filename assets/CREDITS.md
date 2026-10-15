@@ -192,3 +192,18 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/props/alder.png` — 384 × 672 px.
 - `assets/hd2d/props/marsh_snag.png` — 192 × 192 px.
 - `assets/hd2d/props/thicket_c.png` — 288 × 173 px.
+
+
+### Île 68 — cahier n° 5, R2 priorité 2 : fées et portraits (15 octobre 2026)
+
+Généré avec ChatGPT le 15 octobre 2026, cahier n° 5, lot R2 :
+`fairy_07`, `fairy_08`, `fairy_09`, `fairy_10` (profil droit, face et dos,
+444 poses), et portraits 256 × 256 de Kana et Giniette. Quatorze PNG et douze JSON.
+Apparences originales décrites aux sections 4.4 et 4.5 du cahier ; références
+de rendu : sprites de Tiat/Lakhesh, planche d'ensemble des six fées, sprites de
+Kana/Giniette et portrait de Tiat. Recalage au plus proche voisin et montages
+localisés autorisés ; les 35 générations originales sont conservées hors dépôt.
+Sommeil identique dans les trois vues ; pieds immobiles au repos et au dialogue ;
+ballon au ventre occulté dans la vue de dos. Pas de meuble, arbre ni lit dessiné.
+Les planches restent à enregistrer et placer dans les scènes ; cycles, fenêtres
+d'action et contacts à valider en jeu après intégration.
