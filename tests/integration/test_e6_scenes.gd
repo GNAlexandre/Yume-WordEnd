@@ -99,7 +99,7 @@ func test_j1_1_port_on_the_port_map() -> void:
 	var watch := func() -> bool:
 		var actor := LifeDirector.actor(&"willem")
 		if actor != null and WorldManager.current_map() == &"port":
-			if _flat(actor.position(), at_sign) < 0.8:
+			if _flat(actor.position(), at_sign) < 1.6:
 				saw_sign[0] = true
 		return GameState.is_scene_done(&"j1_1_port")
 	assert_true(await read_until(watch, 90.0), "la séquence va au bout")

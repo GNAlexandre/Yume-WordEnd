@@ -512,7 +512,7 @@ func _sequence_tick(delta: float) -> bool:
 			var count: int = _seq_index.get(current, 0)
 			_seq_index[current] = count + 1
 			_save("%s_%03d" % [current, count])
-	if GameState.is_scene_done(_seq_until) and current.is_empty():
+	if GameState.is_scene_done(_seq_until) and current != _seq_until:
 		_finish()
 		return true
 	return false
