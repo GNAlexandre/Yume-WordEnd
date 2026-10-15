@@ -315,6 +315,9 @@ texture = SubResource("GradientTexture2D_bandeau")
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dim"]
 bg_color = Color(0.06, 0.04, 0.08, 0.32)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dim_strong"]
+bg_color = Color(0.06, 0.04, 0.08, 0.62)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fade_black"]
 bg_color = Color(0.07, 0.04, 0.1, 1)
 
@@ -406,6 +409,8 @@ DayLabel/font_sizes/font_size = 30
 DayLabel/fonts/font = SubResource("FontVariation_serif_italic")
 Dim/base_type = &"Panel"
 Dim/styles/panel = SubResource("StyleBoxFlat_dim")
+DimStrong/base_type = &"Panel"
+DimStrong/styles/panel = SubResource("StyleBoxFlat_dim_strong")
 ErrorLabel/base_type = &"Label"
 ErrorLabel/colors/font_color = Color(0.97, 0.67, 0.6, 1)
 ErrorLabel/font_sizes/font_size = 21

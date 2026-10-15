@@ -190,7 +190,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_type_variation = &"Dim"
+theme_type_variation = &"DimStrong"
 
 [node name="ConfirmPanel" type="PanelContainer" parent="ConfirmOverlay"]
 unique_name_in_owner = true
@@ -259,7 +259,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_type_variation = &"Dim"
+theme_type_variation = &"DimStrong"
 
 [node name="SavePanel" type="PanelContainer" parent="SaveOverlay"]
 unique_name_in_owner = true

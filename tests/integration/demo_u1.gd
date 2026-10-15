@@ -13,7 +13,7 @@ extends Node
 ##   choix        : une réplique et ses deux réponses ;
 ##   choix_bandeau: les mêmes réponses en Bandeau ;
 ##   inventaire   : le sac ouvert ;
-##   invite       : l'invite « E / A : Parler » près de Nygglatho, deux cœurs perdus ;
+##   invite       : le signe « parler » au-dessus de Nygglatho, deux cœurs perdus ;
 ##   arene        : l'écran de fin de veille ;
 ##   (signes d'interaction : le joueur devant la cible la plus proche d'un lieu ; images à
 ##   attendre : 400)
@@ -31,7 +31,6 @@ const STAGE_FRAME := 6
 const LATE_FRAME := 40
 const MEASURE_FRAME := 60
 const SPOT := [Vector3(-7.2, 0.0, -6.2), Vector3(-1.0, 0.0, -1.0)]
-const PROMPT_SPOT := [Vector3(-5.2, 0.0, -4.6), Vector3(-1.0, 0.0, -1.0)]
 const LINE := (
 	"Pannibal l'a « accueilli » au marais, d'un coup d'épée de bois. Il a dormi avec de la "
 	+ "vase jusqu'aux oreilles."
@@ -126,7 +125,7 @@ func _stage() -> void:
 	if SIGN_VIEWS.has(_view):
 		_stage_sign_view.call_deferred()
 		return
-	var spot: Array = PROMPT_SPOT if _view == "invite" else SPOT
+	var spot: Array = SPOT
 	var zone := _game.get_node(^"World/ile_ancienne/Zones/village") as Node3D
 	WorldManager.load_zone(&"village")
 	_player.global_position = WorldManager.ground_position(zone.to_global(spot[0]), _player)

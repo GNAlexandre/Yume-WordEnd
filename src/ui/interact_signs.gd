@@ -33,8 +33,8 @@ const TEXTURES := {
 	InteractSign.ENTER: preload("res://assets/hd2d/fx/sign_enter.png"),
 }
 ## Côté du signe plein et du signe pâle à l'écran (px de l'interface 1280 × 720).
-const SIGN_PX := 26.0
-const PALE_PX := 19.0
+const SIGN_PX := 28.0
+const PALE_PX := 20.0
 ## Opacité d'un signe pâle ; nombre de signes pâles au plus.
 const PALE_ALPHA := 0.45
 const PALE_MAX := 3
