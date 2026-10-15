@@ -27,10 +27,11 @@ signal entered_goal(goal_id: StringName)
 ## La balle a été frappée (par qui : l'id de celui qui frappe, &"" sinon).
 signal kicked(by: StringName)
 
-const IMAGE_SCENE := preload("res://src/world/props/ball.tscn")
+## Image du ballon du jeu : une balle claire, lisible sur l'herbe sèche (chiffres : ball/image,
+## ball/size_m, ball/shadow_radius de data/games/ballon.json).
+const DEFAULT_IMAGE := "res://assets/hd2d/interior/props/ball_white.png"
 ## Image du ballon posé dans le décor (assets/hd2d/props/ball.png) : voir hide_decor_ball().
 const DECOR_IMAGE := "res://assets/hd2d/props/ball.png"
-const SHADOW_RADIUS := 0.17
 const MAX_SUBSTEP := 1.0 / 120.0
 ## Vitesse horizontale (m/s) sous laquelle la balle qui roule s'arrête.
 const STOP_SPEED := 0.12
@@ -66,6 +67,7 @@ var goal_back_bounce: float = 0.25
 var max_speed: float = 13.0
 
 var _image: Node3D
+var _overrides: Dictionary = {}
 var _shadow: MeshInstance3D
 
 
@@ -134,6 +136,7 @@ static func hide_decor_ball(map: Node3D, near: Vector3, radius: float = 0.6) -> 
 
 ## Lit les chiffres de la section « ball » des règles du ballon (overrides : surcharges).
 func configure(overrides: Dictionary = {}) -> void:
+	_overrides = overrides
 	gravity = GameRules.number(&"ballon", "ball/gravity", gravity, overrides)
 	bounce = GameRules.number(&"ballon", "ball/bounce", bounce, overrides)
 	rest_bounce_speed = GameRules.number(
@@ -322,12 +325,20 @@ func _bounce_wall(side: StringName, at: Vector2) -> void:
 func _build() -> void:
 	if _image != null:
 		return
-	_image = IMAGE_SCENE.instantiate() as Node3D
-	_image.name = "Image"
+	var path := str(GameRules.value(&"ballon", "ball/image", DEFAULT_IMAGE, _overrides))
+	var size_m := GameRules.number(&"ballon", "ball/size_m", 0.4, _overrides)
+	var texture := load(path) as Texture2D
+	var panel := DecorPanel.new()
+	panel.texture = texture
+	if texture != null:
+		panel.pixels_per_meter = float(texture.get_width()) / maxf(size_m, 0.05)
 	# Pas d'ombre propre (DecorPanel) : celle de la balle reste au sol, sous elle.
-	_image.set(&"shadow_width", 0.0)
+	panel.shadow_width = 0.0
+	panel.name = "Image"
+	_image = panel
 	add_child(_image)
-	_shadow = CombatFx.make_shadow(SHADOW_RADIUS)
+	var radius := GameRules.number(&"ballon", "ball/shadow_radius", 0.26, _overrides)
+	_shadow = CombatFx.make_shadow(radius)
 	_shadow.name = "Shadow"
 	add_child(_shadow)
 

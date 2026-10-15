@@ -300,6 +300,10 @@ func test_the_player_joins_by_approaching_kicks_and_leaves() -> void:
 	assert_has(_match.teams[BallMatch.WHITE], &"player")
 	assert_eq(_match.field_kids(BallMatch.WHITE).size(), 4, "une petite lui laisse sa place")
 	assert_string_contains(_match.hud_text(), "Blanches")
+	# Tant qu'il joue, personne du match ne propose de conversation (pas d'invite « Parler »).
+	var tiat := LifeDirector.npc(&"tiat")
+	assert_eq(tiat.get_prompt(), "", "pas d'invite pendant la partie")
+	assert_eq(LifeDirector.npc(&"willem").get_prompt(), "")
 	# Il frappe de l'épée près du ballon : la balle part dans sa direction, sans mal.
 	_player.global_position = Vector3(75.0, -0.5, 14.0)
 	_player.set_aim_direction(Vector3(0.0, 0.0, 1.0))
@@ -314,6 +318,7 @@ func test_the_player_joins_by_approaching_kicks_and_leaves() -> void:
 	_player.global_position = Vector3(55.0, -0.5, 18.0)
 	_simulate(0.2)
 	assert_false(_match.player_in, "il sort en quittant le champ")
+	assert_eq(tiat.get_prompt(), "Parler", "on peut de nouveau leur parler")
 	assert_eq(_match.player_team, &"")
 	_simulate(0.3)
 	assert_eq(_match.field_kids(BallMatch.WHITE).size(), 5, "elle reprend sa place")

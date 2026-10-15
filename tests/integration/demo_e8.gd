@@ -83,7 +83,23 @@ func _process(delta: float) -> void:
 			_max_draw_calls,
 			int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
 		)
+	if _frame == MEASURE_FRAME - 10 and _view.begins_with("ballon"):
+		# Le ballon posé devant le joueur : on le voit sur l'herbe, puis dans le jeu.
+		var now := MiniGames.ball_match()
+		print("E8 placement du ballon : phase ", now.phase if now != null else -1)
+		if now != null and now.ball != null:
+			now.ball.visible = true
+			now.ball.place(_player.global_position + Vector3(2.0, 0.0, -3.0))
+			print(
+				"E8 ballon en ",
+				now.ball.global_position,
+				" visible ",
+				now.ball.is_visible_in_tree()
+			)
 	if _frame == MEASURE_FRAME:
+		print(
+			"E8 invite : « %s » sur %s" % [_player.current_prompt(), _player.current_interactable()]
+		)
 		print(
 			(
 				"E8 vue %s : %d draw calls (max %d), %d primitives, %d objets ; %s"
@@ -142,6 +158,9 @@ func _stage_ball(forward: float) -> void:
 	_player.set_aim_direction(Vector3(1.0, 0.0, 0.0), true)
 	for _i: int in roundi(forward / DT):
 		LifeDirector._physics_process(DT)
+	if game != null and game.phase == BallMatch.Phase.PLAY and not _view.begins_with("baton"):
+		# Le ballon posé devant le joueur : on le voit sur l'herbe, au repos puis dans le jeu.
+		game.ball.place(_player.global_position + Vector3(2.0, 0.0, -3.0))
 	if game != null:
 		print("E8 match : %s, score %s, %d membres" % [game.phase, game.score, game.members.size()])
 

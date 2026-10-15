@@ -34,7 +34,10 @@
     "roll_friction": 1.4,
     "wall_bounce": 0.55,
     "goal_back_bounce": 0.1,
-    "max_speed": 13
+    "max_speed": 13,
+    "image": "res://assets/hd2d/interior/props/ball_white.png",
+    "size_m": 0.4,
+    "shadow_radius": 0.26
   },
   "kick": {
     "_comment": "Les frappes des petites : portée du pied, délai avant que le pied touche (image « coup » de frappe), vitesses, erreur de visée, probabilités de tirer, de passer, de lancer haut.",

@@ -3122,3 +3122,4 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   retouchée ; correction à commander dans `docs/ASSETS_HD2D_ILE68.md` (3.6) et variante moteur
   (`Building.window_glow_color`) dans `docs/CONTRACT_REQUESTS.md`.
 
+- **E8 — pas d'invite « Parler » pendant un jeu** : `LifeGame.blocks_talk()` réserve les participants (le ballon tant que le joueur joue, l'entraînement jusqu'à sa fin) ; le plus petit changement hors périmètre est dans `Npc.get_prompt` / `Npc.interact` (via `LifeActor.talk_blocked`). Le ballon du jeu prend l'image claire `ball_white` (0,4 m) pour se lire sur l'herbe sèche ; données dans `data/games/ballon.json`.

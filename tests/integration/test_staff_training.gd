@@ -414,11 +414,14 @@ func test_the_exercise_gives_the_hand_back_to_the_villagers() -> void:
 	_start()
 	_to_phase_a()
 	var willem := LifeDirector.actor(&"willem")
+	assert_eq(willem.npc.get_prompt(), "", "pas d'invite « Parler » pendant l'exercice")
+	assert_eq(LifeDirector.npc(&"ithea").get_prompt(), "")
 	_training.stop()
 	assert_eq(_results[0]["ended_by"], &"stopped")
 	_run(4.0)
 	await wait_physics_frames(2)
 	assert_ne(willem.state, LifeActor.State.GAME, "Willem n'est plus mené par l'exercice")
+	assert_eq(willem.npc.get_prompt(), "Parler", "on peut de nouveau lui parler")
 	assert_null(MiniGames.staff_training(), "l'exercice est libéré")
 
 

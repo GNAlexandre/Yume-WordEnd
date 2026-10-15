@@ -108,8 +108,13 @@ var _sequence_index: int = 0
 class Hush:
 	extends LifeGame
 
+	var active: bool = true
+
 	func on_player_interact(_actor: LifeActor) -> bool:
-		return true
+		return active
+
+	func blocks_talk() -> bool:
+		return active
 
 
 func _init() -> void:
@@ -697,6 +702,8 @@ func _finish(reason: StringName, success: bool) -> void:
 		"duration": elapsed,
 		"variant": variant,
 	}
+	if _hush != null:
+		_hush.active = false
 	if phase != &"ended":
 		_set_phase(&"ended")
 	_end_left = rule("end_time", 3.0)

@@ -51,6 +51,11 @@ func _setup() -> void:
 	muddy = GameState.weather == &"pluie" or bool(overrides.get("muddy", false))
 
 
+## Tant que le joueur joue, personne du match ne propose de conversation.
+func blocks_talk() -> bool:
+	return player_in
+
+
 ## Vrai si le joueur peut entrer : le match est en cours.
 func _accepts_player() -> bool:
 	return running and not ended and phase != Phase.ASSEMBLE

@@ -1608,6 +1608,11 @@ sur le cadre de LifeGame (activité `ballon` d'activities.json, `game: "ballon"`
   lance haut à deux mains (`lance` : il retombe au hasard à 6 m), avec une erreur de visée ; elles tombent
   (`tombe`) en courant ou en se bousculant ; la gardienne arrête trois tirs sur quatre et dégage un ballon qui
   traîne. Les marches sont `LifeActor.walk_to(..., direct)` ; `LifeActor.stuck_time` à 3,5 s : jamais coincées.
+- *Le ballon* : image claire `assets/hd2d/interior/props/ball_white.png` agrandie à 0,4 m, ombre nette au sol
+  (`ball/image`, `ball/size_m`, `ball/shadow_radius`) : lisible sur l'herbe sèche.
+- *Pas de conversation pendant le jeu* : `LifeGame.blocks_talk()` (vrai pour le ballon tant que le joueur y joue,
+  pour l'entraînement jusqu'à sa fin) ; `LifeActor.talk_blocked()` ; `Npc.get_prompt()` rend alors `""` et
+  `Npc.interact` ne fait rien ; tout revient quand le jeu s'arrête.
 - *Le ballon perdu* : frappant le mur est près de `fourre_ballon`, il se perd dans le fourré une fois sur deux ;
   une petite va le chercher (`saut`, puis `lance`), ou le joueur, en y entrant (`thicket/player_reach`).
 - *Le joueur* : il entre en entrant dans le champ (`player/join_margin`, 1,5 m du bord), rejoint l'équipe qui a

@@ -234,6 +234,12 @@ func _emit(kind: StringName, detail: Variant) -> void:
 # --- À redéfinir -------------------------------------------------------------------------------
 
 
+## (E8) Vrai tant que le jeu réserve ses membres : le joueur n'y participe pas à côté d'une
+## conversation, ils ne proposent pas « Parler » (le ballon quand il y joue, l'entraînement).
+func blocks_talk() -> bool:
+	return false
+
+
 ## Le joueur interagit avec un membre : vrai si le jeu y répond (pas de dialogue).
 func on_player_interact(_actor: LifeActor) -> bool:
 	return false
