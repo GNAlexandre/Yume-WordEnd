@@ -2777,3 +2777,139 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   `tests/unit/test_exterior_maps.gd` (4 : `check` de l'outil, cartes d'attente, `port` dans l'île,
   listes de places), `tests/integration/test_sentier_in_game.gd` (1 : de l'entrepôt au sentier, au
   marais, à la rampe de la ville, au port d'attente, et retour).
+- **I1 — 88 images livrées inscrites au manifeste** : navires (`docs/ASSETS_HD2D_NAVIRES.md`, lots L et S1 à
+  S5, 48 images), cahier n° 4 (O1, O2, P, Q : 24), lot N (4 ciels, `cloud_sea_night`, `sun_window`, 3
+  fenêtres de nuit) et le reste du lot I (`door_room_open`, `bed_curtain`, `towel_rack`, `butter_cake`,
+  `hat_blue`, `dessert_flans`, `drying_frame`). Tailles réelles, genres (`tile`, `tile_h`, `panorama`,
+  `decal` doux, `panel`), lot du cahier d'origine (clé `lot`, chaîne libre : `check --lot S3`), priorité
+  du cahier (2 pour L, 3 pour S2 à S5 et Q : le cahier ne la donne pas). Aucune bande animée dans la
+  livraison. Les images d'intérieur passent par les listes de `tools/hd2d_interior.py` (`SURFACES_I1`,
+  `WALL_PANELS_I1`, `FURNITURE_I1`, `OBJECTS_I1`, `OUTDOOR_POLES`, `LOT_NAMES`) et `manifest` ; les
+  ciels, `sun_window`, `deck_*` et `trail_ribbon_stake` sont des lignes du manifeste. `ground_atlas.png`
+  reste la seule image sans entrée (générée) ; `test_hd2d_assets.gd` le garantit.
+- **I1 — scènes de décor** : meubles et objets d'intérieur par `hd2d_interior.py scenes`
+  (`src/world/props/interior/`) ; profondeurs choisies par taille faute de cahier (0,15 m pour
+  `ship_tool_rack` et `ship_privacy_curtain`, coupés comme le mur ; 1 m pour `ship_boiler`…) ; objets de
+  0,6 m au plus sans collision ni ombre (`ship_compass`, `ship_crystal_lamp` avec lueur, les 24 petits
+  objets) ; `drying_frame` en plein air, deux poteaux comme sa bande. Pont des navires et piquet : lots
+  `L` et `Q` ajoutés à `hd2d_scenes.py` / `test_hd2d_scenes.gd` (avec `N`), catégories `deck_cabin`
+  (boîte de 2 m), `stake`, `deck_hatch` traversable (0,6 m), `deck_railing` en clôture, `deck_vent` et
+  `deck_crates_lashed` ; les images sous `interior/` n'y passent jamais. Les moyeux des hélices de
+  `hd2d_scenes.json` sont ceux des silhouettes refaites (la PR des navires avait changé le test, pas la table).
+- **I1 — recettes de remplaçants** : une image livrée sous le nom d'un remplaçant fait foi et sa recette
+  s'en va (40 recettes de `tools/hd2d_interior_props.py` et `door_armory` retirées ; 22 remplaçants
+  d'intérieur restent, dont les 3 vues de flanc, listés dans docs/INTERIEURS.md) ; `hd2d_assets.py gen --force` et `gen <noms>` ne réécrivent
+  jamais un fichier que sa recette ne dessine plus (`--overwrite-delivered`). Les ~400 recettes des
+  cahiers n° 1 et 2 (`hd2d_ground`, `props`, `nature`, `town`…) restent, hors périmètre : la même garde les
+  protège. `hd2d_assets.py orphans` liste les images sans entrée.
+- **I1 — vues par le nom, orientation par le plan** : `<nom>_side`, `_back`, `_foot` se trouvent à côté
+  de la face (`DecorPanel.view_texture`), aucune scène ne les nomme ; l'orientation est `facing` ou la
+  rotation du nœud. Le plan (`regard=E|O|N|S`, CARTE.md) est la donnée : `interior.json` ne porte pas les
+  meubles (ils sont dans la scène générée), le générateur écrit `facing` sur eux et les tourne d'un quart
+  de tour autour de leur bord arrière quand la vue existe ; les murs de la pièce redisent l'orientation
+  (`InteriorLayout.facing_against_wall`, tolérance 0,25 m, le mur le plus proche l'emporte dans un angle).
+  18 meubles marqués : ceux du plan adossés à un mur est ou ouest dont le cahier commande un flanc (hors
+  lits, escaliers, tas de papiers), plus `armchair_reading` vers le nord (il regarde la fenêtre) ; les
+  lits ne sont pas marqués (aucun n'a la tête au nord dans les plans). Emprise tournée : profondeur
+  d'échelle (`DEPTHS`) en x, largeur du plan en z ; un lit vu par le pied (N sans `_back`) est tourné de
+  même autour de son bord nord. Remplaçants `_side` du canapé, de la grande bibliothèque et de l'armoire
+  de Chtholly (recettes de `hd2d_interior_props.py`, tailles du cahier).
+- **I1 — plan retouché pour les deux états (face et tourné)** : `carte_plans.py check` vérifie les deux ;
+  canapé z 6,5 → 6,6, bureau enterré z 3,9 → 3,6, tas `paper_pile_c` z 5,0 → 5,1, grande bibliothèque
+  z 6,4 → 6,5, point `archives_bureau` (23,35 ; 4,95) → (24,4 ; 4,9) (un disque de 1,2 m n'y passait plus
+  entre le bureau tourné et le canapé), armoire de Chtholly au plan contre le mur sud (z 7,85) : elle
+  remplace le `MOVED` de T2 (vide) et passe, tournée ou non, les tests de caméra. Essai de l'état « toutes les
+  vues livrées » (29 images factices) : cartes de l'entrepôt, tests verts.
+- **I1 — petits objets du cahier n° 4 posés** (13 sur 24) : cuisine (comptoir : jatte au fouet, broc de
+  lait, panier d'œufs ; table : sac de farine, plat de beurre, moule à flan), lecture (lutrin),
+  archives (encrier), infirmerie (plateau de flacons, bandages, cuvette), chambres (courrier, boîte
+  de clous, bobines, pièce reprisée, panier de reprise) ; chacun dans l'emprise de son meuble de face
+  et tourné. Pas posés : la scie et le rabot (aucun établi dans les plans de l'entrepôt) et le lot Q
+  (accessoires de départ : à poser par les scènes S2).
+
+## E4 — La vie
+
+- **E4 — six créneaux pour cinq lumières** : la vie compte six créneaux (`GameState.SLOTS` :
+  `aube`, `matin`, `midi`, `apres_midi`, `soir`, `nuit`, ceux de docs/lore/VIE.md, 0.1) ; leur
+  lumière est un moment d'E9 (`LifeSlots.MOMENT_OF`) : midi garde celle du matin, le soir est le
+  couchant. Le créneau est `GameState.slot` s'il va avec le moment, sinon celui du moment ; un
+  moment posé ailleurs (F7, `Atmosphere.set_moment` du récit) l'emporte et efface `slot`.
+  `LifeDirector.set_slot` pose les deux : le récit (E6) passe de matin à midi sans changer la
+  lumière. `slot` et `day` sont des champs facultatifs du schéma de sauvegarde v3 (absents : `""`
+  et 0), comme `moment` et `weather` ; pas de nouvelle version.
+- **E4 — le jour de l'acte** : `GameState.day` (0 par défaut : aucun jour, les lignes à `day` ne
+  s'appliquent pas), ajouté par E4 pour être lu ; c'est E6 qui le tiendra (`ACTE1.md`, 1 à 12).
+- **E4 — choix d'une ligne** : les lignes à `day` ou `if` passent d'abord, puis les autres, la
+  première qui va l'emporte : on écrit la journée de base, puis ses variations (VIE.md, section 3),
+  dans l'ordre qu'on veut. Aucune ligne : le PNJ n'est nulle part.
+- **E4 — `away` plutôt qu'une carte absente** : une ligne vers une carte pas encore construite
+  (l'étage, la ville) dit `"away": "entrepot_etage"` ; la vérification refuse une `map` absente
+  (une faute de frappe) mais accepte `away` (un identifiant). On quitte la carte par la place
+  `vers_<carte>` (avant la `MapExit` vers elle) : dans le rez-de-chaussée d'essai, qui n'a pas
+  d'escalier, `vers_entrepot_etage` est au bout ouest du couloir (provisoire).
+- **E4 — le directeur peuple, les cartes ne listent pas leurs PNJ** : les PNJ de la vie naissent
+  des emplois du temps (`data/life/`), ajoutés au nœud `Life` de la carte à son `map_entered` ;
+  aucune scène de carte n'a à les poser. Une carte posée à la main (un test d'une carte seule)
+  reste vide (`LifeDirector.attach` pour une démonstration) : les tests d'E2 et E3 ne changent pas.
+- **E4 — PNJ réutilisés** : Willem, Nygglatho, Ithea, Nephren et les petites gardent leur
+  `NpcData` (dialogues, quêtes, `visible_if`, skin du joueur absent) : le même personnage parle
+  sur l'ancienne île et dans l'entrepôt d'essai ; une seule carte est chargée, il n'est jamais en
+  double. Les quêtes et leurs marqueurs restent (E6 les retire).
+- **E4 — planches complémentaires** (cahier n° 3, 4.1, « format à confirmer par le moteur ») : une
+  tenue `<id>_life` est une `SkinData` dont la planche principale est la planche de base
+  (`tiat.png` : repos, marche, parle) et la planche complémentaire (`extra_*`) `tiat_life.png` ;
+  `SheetLoader` fusionne vue par vue (la planche principale l'emporte, la taille vient d'elle). Le
+  check des planches vérifie que la rangée `repos` complémentaire est la copie au pixel près.
+- **E4 — tenues** : `NpcData.outfits` (nom → chemin d'une `SkinData` de `data/npcs/outfits/`)
+  plutôt qu'un tableau de ressources : une tenue n'est chargée qu'au besoin (`load_outfit`), et
+  le cache de `SheetLoader` passe en références faibles (un jeu d'images vit tant qu'un visuel
+  l'affiche ; quitter la carte libère ses planches). Les tenues ne sont ni dans `data/skins/`
+  (jouables) ni dans `data/npcs/visuals/` (dont le nombre et les portraits sont testés).
+- **E4 — le PNJ change de tenue au départ** (après son délai, avant de marcher) ; posé d'un coup
+  (entrée sur la carte), il est déjà dans la tenue du créneau.
+- **E4 — fées génériques** : `data/npcs/generic/fairy_01` à `fairy_06`, planche `fairy_0N`, un
+  prénom original tiré de `data/texts/life.json` (« fairy_names » : Brisa, Fenna, Mirelle, Odile,
+  Liesel, Tamsin, Ysolde, Pervenche, Clio, Nelka, Sabine, Vesna ; aucun de l'œuvre) ; sans
+  dialogue : on leur parle, elles répondent d'une bulle (`talk/generic`). Hors de `data/npcs/` :
+  `test_npc.gd` y attend la liste exacte des PNJ de l'acte 1 et leur dialogue.
+- **E4 — le joueur garde sa planche dans l'entrepôt** : `chtholly_home` (livrée) n'a pas les
+  animations de combat (`attaque`, `charge`, `degats`, `mort`) ; `LifeDirector.player_home_outfit`
+  ne la pose donc pas (elle le fera seule si la planche les gagne ; le skin choisi par la
+  communauté prime toujours). Demande au cahier n° 3 (docs/CONTRACT_REQUESTS.md).
+- **E4 — marcher sans physique** : un PNJ de la vie est déplacé par le directeur (position posée à
+  chaque image physique, hauteur du sol lue sur `MapGround.height_at` / l'étage), pas par
+  `move_and_slide` : les chemins évitent déjà murs, meubles, falaises et talus, et les escaliers
+  se montent sans pas de marche. Pendant qu'il marche, son corps quitte la couche 1 (structure
+  figée : couche 1 à l'arrêt) : il ne bloque jamais le joueur, c'est lui qui l'évite.
+- **E4 — navigation** : `AStar2D` (C++, mono-thread) sur une grille d'un mètre dehors, d'un
+  demi-mètre dedans ; deux cases sont reliées si les points de mesure entre elles sont
+  praticables et que le sol ne monte ni ne descend de plus de 0,3 m de l'un au suivant (escaliers
+  et rampes oui, talus de 0,5 m et falaises non) ; diagonales seulement si les quatre côtés le
+  sont. Dedans, l'épaisseur des murs est relevée une fois en bitmap (8 px/m) et la réponse exacte
+  d'`InteriorRoom.is_walkable` n'est demandée qu'au bord d'un mur (testé : mêmes réponses). Les
+  meubles : leurs formes de collision (couche 1), élargies de 0,2 m, dans la tranche du corps.
+  Construction découpée (3 ms par image) après l'entrée, en petits pas (une pièce de mur, un
+  décor, huit cases d'une rangée : le pas le plus long reste court dans le build Web), et
+  seulement sur une carte qui a des places ou des PNJ (pas l'ancienne île) ; chemins en file
+  (deux par image), lissés par le parcours des cases du graphe, puis le segment retenu vérifié.
+- **E4 — évitement** : face à un PNJ qui vient, chacun garde sa droite ; un PNJ arrêté ou le
+  joueur juste devant : un pas de côté, puis un autre chemin qui évite sa case au bout de 0,8 s ;
+  sans progrès 7 s, on se replace d'un coup au but. Personne ne bloque plus de 2 s un passage
+  (VIE.md, 0.4) : un PNJ debout que le joueur pousse s'écarte de 1,3 m, puis revient.
+- **E4 — places et sièges** : un siège devant une chaise vue de face est posé 0,4 m au sud du
+  pied de la chaise (le PNJ se dessine devant son dossier et derrière la table) ; derrière une
+  chaise vue de dos, au pied de la chaise ; les planches `assis` sont ancrées au sol sous
+  l'assise.
+- **E4 — l'avalanche se déclenche à l'approche de la porte** (à 1,5 m de son milieu) ou quand le
+  joueur bouscule l'une d'elles : les portes d'essai ne s'ouvrent pas (images), et c'est en
+  arrivant à la porte qu'on l'ouvrirait. La porte est donnée par ses deux pièces
+  (`["couloir", "nygglatho"]`) : celles d'`entrepot_rdc_essai` n'ont pas d'id, et en ajouter
+  demanderait des `MapExit` (règle d'E3).
+- **E4 — sorties d'essai** : `entrepot_rdc_essai` gagne une sortie à invite dans l'entrée
+  (« Sortir dans le pré (essai) », vers `essai_relief`, marqueur `from_essai_relief`), la porte
+  d'entrée menant toujours à l'ancienne île (tests d'E3) ; les PNJ, eux, sortent par la porte
+  d'entrée (place `vers_essai_relief`). `essai_relief` gagne une sortie au bout sud du sentier
+  (vers l'intérieur d'essai, marqueur `from_entrepot_rdc_essai`).
+- **E4 — touche F6** : créneau suivant (Maj : tout de suite), comme F7 (moment) et F8 (temps), en
+  version de débogage ou avec un paramètre de développement.
+- **R2 — raccord des livraisons R0 (PR n° 34) et d'I1** : la fusion avait perdu deux lignes de `InteriorPanel` (matériau `InteriorRoom.furniture_material`, et `occluder_triangles` qui lit `furniture_cut_line`), donc les meubles ne se coupaient plus au sud du joueur dans sa pièce ; rétablies sur la base d'I1 (`displayed_texture()`, `cut_z()`). Le coffre à jouets (`toy_chest`), tourné par sa vue de flanc livrée, touchait presque le mur nord : plan décalé à (22,3 ; 11,4) pour que les murs le fassent regarder O.

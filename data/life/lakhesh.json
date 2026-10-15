@@ -1,0 +1,12 @@
+{
+  "_comment": "Lakhesh (VIE.md, 2.4) : à partir du jour 3, elle part aider à la boulangerie le matin (la ligne à « day » l'emporte) ; la lecture l'après-midi, la course du couloir le soir.",
+  "gait": "course",
+  "lines": [
+    {"slot": "aube", "away": "entrepot_etage"},
+    {"slot": "matin", "away": "ville_boulangerie", "day": [3, 12]},
+    {"slot": ["matin", "midi"], "map": "entrepot_rdc_essai", "place": "refectoire_table_b", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "lecture_table", "activity": "lire", "outfit": "vie"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "couloir_course", "activity": "course_couloir", "outfit": "vie"},
+    {"slot": "nuit", "away": "entrepot_etage"}
+  ]
+}

@@ -11,3 +11,4 @@ skin = ExtResource("2_visual")
 dialogue_path = "res://data/dialogues/nygglatho.json"
 quest_id = &"act1_main"
 home_zone = &"village"
+outfits = Dictionary[StringName, String]({ &"vie": "res://data/npcs/outfits/nygglatho_life.tres", &"the": "res://data/npcs/outfits/nygglatho_tea.tres" })

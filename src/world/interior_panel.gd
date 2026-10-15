@@ -6,14 +6,19 @@ extends DecorPanel
 ## (InteriorRoom.panel_material, interior_panel.gdshader) : il prend la lumière de la pièce
 ## (fenêtres, lampes) et se coupe avec les murs. Quand la coupe d'InteriorRoom passe au nord de
 ## son bord sud (l'image, posée à image_offset), il n'est plus dessiné qu'au-dessous de
-## cut_height : un meuble au sud du joueur ne le cache jamais. Les meubles d'une même image se
-## fondent en un draw call (PropBatcher : la coordonnée de coupe et cut_height voyagent dans UV2
-## des sommets). Racine des scènes de meubles de src/world/props/ (tools/hd2d_interior.py
+## cut_height ; la même coupe suit aussi le z du joueur à l’intérieur de sa pièce. Les meubles
+## d’une même image se fondent en un draw call (PropBatcher : coordonnée de coupe et cut_height
+## dans UV2 des sommets). Racine des scènes de meubles de src/world/props/ (tools/hd2d_interior.py
 ## scenes) : le nœud est au milieu de l'emprise, l'image au bord sud (image_offset.z = la moitié
 ## de la profondeur), la boîte de collision sur l'emprise.
 ##
 ## Ni bande animée, ni premier plan, ni décalage vers la caméra : frames, fps, foreground et
 ## depth_offset sont sans effet ici.
+##
+## (I1) Vues : comme tout DecorPanel, un meuble tourné vers l'est, l'ouest ou le nord montre sa vue
+## de flanc, de dos ou par le pied quand elle existe (DecorPanel.facing). L'image de la vue prend
+## la place de la face : même bord sud (image_offset, posé par ce qui pose le meuble), mêmes
+## règles de coupe ; occluder_triangles et size_m parlent de l'image affichée.
 
 ## Hauteur gardée quand la coupe passe (m) : les tables, bancs et lits restent entiers, les
 ## armoires et rayonnages ne montrent que leur bas.
@@ -34,8 +39,8 @@ func rebuild() -> void:
 	super.rebuild()
 	if texture == null:
 		return
-	_quad.mesh = InteriorRoom.panel_mesh(size_m(), cut_z(), cut_height)
-	_quad.material_override = InteriorRoom.panel_material(texture, glow, tint)
+	_quad.mesh = InteriorRoom.panel_mesh(size_m(), cut_z(), cut_height, flip_h != view_flipped())
+	_quad.material_override = InteriorRoom.furniture_material(displayed_texture(), glow, tint)
 
 
 ## z (monde) du bord sud du meuble : le plan de son image, sa coordonnée de coupe.
@@ -56,7 +61,11 @@ func cut_z() -> float:
 func occluder_triangles(cut_line: float) -> PackedVector3Array:
 	var size := size_m() * Vector2(global_basis.get_scale().x, global_basis.get_scale().y)
 	var top := size.y
-	if cut_z() >= cut_line - InteriorRoom.CUT_MARGIN:
+	var furniture_line := cut_line
+	var material := _quad.material_override as ShaderMaterial if _quad != null else null
+	if material != null:
+		furniture_line = minf(cut_line, float(material.get_shader_parameter(&"furniture_cut_line")))
+	if cut_z() >= furniture_line - InteriorRoom.CUT_MARGIN:
 		top = minf(top, cut_height)
 	var base := global_position + image_offset * global_basis.get_scale()
 	var along := global_basis.x.normalized() if keep_orientation else Vector3.RIGHT

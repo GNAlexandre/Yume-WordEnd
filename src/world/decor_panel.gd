@@ -12,6 +12,15 @@ extends Node3D
 ## seules les données ci-dessous sont enregistrées. Matériaux et meshes sont partagés par image,
 ## pour que le PropBatcher de la zone fonde tous les panneaux d'une même image en un draw call.
 ##
+## (I1) Vues d'un meuble (docs/ASSETS_HD2D_ILE68.md, section 2.7) : un panneau se tourne toujours
+## vers le sud, donc un meuble adossé à un mur est ou ouest, ou tourné, n'aurait que sa face. Son
+## orientation (facing : south, east, west, north ; sinon celle du nœud : sa face est son +Z)
+## choisit l'image : <nom>_side (de flanc, face tournée vers l'est) pour l'est, retournée pour
+## l'ouest ; <nom>_back (de dos), ou <nom>_foot (lit vu par le pied), pour le nord ; la face pour
+## le sud, et pour toute vue que la livraison n'a pas encore. Les vues se trouvent par leur nom, à
+## côté de l'image de face (view_texture) ; la collision (enfant « Collision ») suit la rotation
+## du nœud : ce qui pose le meuble (tools/interior_maps.py) le tourne quand la vue existe.
+##
 ## (H9) Formats du cahier n° 2 (docs/ASSETS_HD2D_MONDE.md, sections 3.4 et 3.7) :
 ## - bande animée (frames > 1) : images côte à côte, la taille du panneau est celle d'une image ;
 ##   l'image change dans le shader (TIME, fps), décalée d'une phase tirée de la position du
@@ -45,6 +54,17 @@ const PHASE_STEPS := 32
 const FOREGROUND_HEIGHT := 0.8
 ## (H9) Groupe du joueur (PLAN.md section 3, conventions).
 const PLAYER_GROUP := &"player"
+## (I1) Orientations d'un meuble : où regarde sa face.
+const FACING_SOUTH := &"south"
+const FACING_EAST := &"east"
+const FACING_WEST := &"west"
+const FACING_NORTH := &"north"
+const FACINGS: Array[StringName] = [FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_NORTH]
+## (I1) Vues et suffixes de leur image : de flanc, de dos, par le pied (lit).
+const VIEW_FRONT := &"front"
+const VIEW_SIDE := &"side"
+const VIEW_BACK := &"back"
+const VIEW_FOOT := &"foot"
 
 ## Matériaux partagés : clé (image, teinte, lueur) → WeakRef du ShaderMaterial. (E1) Références
 ## faibles : un matériau vit tant qu'un décor s'en sert, puis il part avec son image ; une carte
@@ -63,6 +83,9 @@ static var _foreground_frame: int = -1
 ## lieu d'un par panneau, plusieurs centaines dans l'île posée) ; s'il quitte l'arbre, le
 ## suivant prend le relais.
 static var _foreground_panels: Array[Node] = []
+## (I1) Chemin de la vue d'une image : clé « chemin|vue » → chemin de l'image de la vue, ou ""
+## quand elle n'existe pas (des chaînes seulement : les textures restent à ResourceLoader).
+static var _view_paths: Dictionary = {}
 static var _shadow_material: StandardMaterial3D
 static var _shadow_mesh: QuadMesh
 
@@ -91,6 +114,13 @@ static var _shadow_mesh: QuadMesh
 @export var keep_orientation: bool = false:
 	set(value):
 		keep_orientation = value
+		_queue_rebuild()
+## (I1) Où regarde la face du meuble : south, east, west ou north ; vide : d'après la rotation du
+## nœud (sa face est son +Z : tourné d'un quart de tour vers l'est, il regarde l'est). Choisit la
+## vue (<nom>_side, <nom>_back, <nom>_foot) quand son image existe, sans quoi la face reste.
+@export var facing: StringName = &"":
+	set(value):
+		facing = value
 		_queue_rebuild()
 ## Décalage de l'image par rapport à l'ancre (m, repère du monde ; l'ombre reste à l'ancre) : un
 ## belvédère dont l'image est posée au fond de sa plateforme, pour qu'on se tienne devant.
@@ -145,6 +175,10 @@ static var _shadow_mesh: QuadMesh
 var _quad: MeshInstance3D
 var _shadow: MeshInstance3D
 var _queued: bool = false
+## (I1) Vue affichée (texture, retournement, nom), choisie par resolve_view().
+var _view_texture: Texture2D
+var _view_flip: bool = false
+var _view_name: StringName = VIEW_FRONT
 
 
 func _ready() -> void:
@@ -156,8 +190,88 @@ func _ready() -> void:
 func size_m() -> Vector2:
 	if texture == null:
 		return Vector2.ZERO
-	var image := Vector2(texture.get_size()) / Vector2(frames, 1.0)
+	var shown := displayed_texture()
+	var image := Vector2(shown.get_size()) / Vector2(frames, 1.0)
 	return image / pixels_per_meter
+
+
+## (I1) Image réellement dessinée : celle de la vue choisie par l'orientation (la face sans vue).
+func displayed_texture() -> Texture2D:
+	resolve_view()
+	return _view_texture if _view_texture != null else texture
+
+
+## (I1) Vue affichée : VIEW_FRONT, VIEW_SIDE, VIEW_BACK ou VIEW_FOOT.
+func view_name() -> StringName:
+	resolve_view()
+	return _view_name
+
+
+## (I1) La vue est-elle retournée gauche-droite (flanc d'un meuble qui regarde l'ouest) ?
+func view_flipped() -> bool:
+	resolve_view()
+	return _view_flip
+
+
+## (I1) Orientation effective : facing s'il est posé, sinon celle du nœud (sa face est son +Z).
+func current_facing() -> StringName:
+	if facing != &"":
+		return facing
+	return facing_of(global_basis.z if is_inside_tree() else basis.z)
+
+
+## (I1) Orientation d'une face qui regarde dans la direction front (repère du monde) : le quart de
+## tour le plus proche, south pour une direction verticale.
+static func facing_of(front: Vector3) -> StringName:
+	var flat := Vector2(front.x, front.z)
+	if flat.length_squared() < 0.0001:
+		return FACING_SOUTH
+	if absf(flat.y) >= absf(flat.x):
+		return FACING_SOUTH if flat.y >= 0.0 else FACING_NORTH
+	return FACING_EAST if flat.x > 0.0 else FACING_WEST
+
+
+## (I1) Image de la vue view (VIEW_SIDE, VIEW_BACK, VIEW_FOOT) d'une image de face, posée à côté
+## d'elle sous le nom <nom>_<vue>.png ; null quand elle n'existe pas.
+static func view_texture(base: Texture2D, view: StringName) -> Texture2D:
+	if base == null or base.resource_path.is_empty():
+		return null
+	var key := "%s|%s" % [base.resource_path, view]
+	if not _view_paths.has(key):
+		var path := (
+			"%s_%s.%s"
+			% [base.resource_path.get_basename(), view, base.resource_path.get_extension()]
+		)
+		_view_paths[key] = path if ResourceLoader.exists(path) else ""
+	var found: String = _view_paths[key]
+	return load(found) as Texture2D if not found.is_empty() else null
+
+
+## (I1) Choisit la vue d'après l'orientation : l'est prend le flanc, l'ouest le flanc retourné, le
+## nord le dos (ou le pied d'un lit), le sud la face ; une vue absente laisse la face. Rien n'est
+## changé pour une bande animée ni pour un panneau qui garde l'orientation de son nœud.
+func resolve_view() -> void:
+	_view_texture = texture
+	_view_flip = false
+	_view_name = VIEW_FRONT
+	if texture == null or frames > 1 or keep_orientation:
+		return
+	var wanted: Array[StringName] = []
+	match current_facing():
+		FACING_EAST:
+			wanted = [VIEW_SIDE]
+		FACING_WEST:
+			wanted = [VIEW_SIDE]
+			_view_flip = true
+		FACING_NORTH:
+			wanted = [VIEW_BACK, VIEW_FOOT]
+	for view in wanted:
+		var found := view_texture(texture, view)
+		if found != null:
+			_view_texture = found
+			_view_name = view
+			return
+	_view_flip = false
 
 
 ## (H9) Phase de la bande animée de ce panneau (0..1, par pas de 1 / PHASE_STEPS), tirée de sa
@@ -185,8 +299,10 @@ func rebuild() -> void:
 	if texture == null:
 		return
 	var phase := strip_phase() if frames > 1 else 0.0
-	_quad.mesh = panel_mesh(size, flip_h, phase, depth_offset)
-	_quad.material_override = material_for(texture, tint, glow, frames, fps, foreground, soft_alpha)
+	_quad.mesh = panel_mesh(size, flip_h != view_flipped(), phase, depth_offset)
+	_quad.material_override = material_for(
+		displayed_texture(), tint, glow, frames, fps, foreground, soft_alpha
+	)
 	_shadow.mesh = shadow_mesh()
 	_shadow.material_override = shadow_material()
 	var shadow_size := Vector2(size.x * shadow_width, size.x * shadow_width * shadow_depth)

@@ -24,6 +24,34 @@ extends Resource
 ## Ex. {"quest_step": ["act1_main", "training"]} : seulement pendant cette étape ;
 ## {"not_quest_step": ["act1_main", ["training", "promise"]]} : sauf pendant ces étapes.
 @export var visible_if: Dictionary = {}
+## (E4) Tenues : nom de la tenue (« maison », « cuisine », « pyjama »… : la clé « outfit » d'une
+## ligne d'emploi du temps, data/life/<id>.json) → chemin d'une SkinData complète à trois vues
+## (data/npcs/outfits/<planche>.tres). Chargée à la demande (load_outfit), libérée quand plus
+## aucun visuel ne l'affiche : une planche par tenue en mémoire. La tenue par défaut, sans nom,
+## est skin.
+@export var outfits: Dictionary[StringName, String] = {}
+
+
+## (E4) Chemin de la SkinData de la tenue outfit ("" : tenue inconnue ; nom vide : celle de skin).
+func outfit_path(outfit: StringName) -> String:
+	if outfit.is_empty():
+		return skin.resource_path if skin != null else ""
+	return outfits.get(outfit, "")
+
+
+## (E4) Vrai si le PNJ a cette tenue (nom vide : la tenue par défaut, skin).
+func has_outfit(outfit: StringName) -> bool:
+	return outfit.is_empty() or outfits.has(outfit)
+
+
+## (E4) SkinData de la tenue outfit, chargée à la demande (skin pour un nom vide ou une tenue
+## inconnue).
+func load_outfit(outfit: StringName) -> SkinData:
+	var path := outfit_path(outfit)
+	if outfit.is_empty() or path.is_empty() or not ResourceLoader.exists(path):
+		return skin
+	var loaded := load(path) as SkinData
+	return loaded if loaded != null else skin
 
 
 ## Vrai si le PNJ doit être là : son skin n'est pas celui du joueur et visible_if est vraie.

@@ -53,6 +53,9 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_entree"]
 size = Vector3(3, 2, 2)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_pre"]
+size = Vector3(0.9, 2, 1.4)
+
 [node name="entrepot_rdc_essai" type="Node3D"]
 script = ExtResource("1_map")
 display_name = "Entrepôt des fées, rez-de-chaussée (essai)"
@@ -332,6 +335,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0.2, 19.4)
 [node name="from_entrepot_crypte" type="Marker3D" parent="Markers"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 36.5, 0.2, 4.6)
 
+[node name="from_essai_relief" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.2, 18.2)
+
 [node name="Exits" type="Node3D" parent="."]
 
 [node name="vers_entrepot" type="Area3D" parent="Exits"]
@@ -346,4 +352,286 @@ target_marker = &"Spawn"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("BoxShape3D_entree")
 
+[node name="vers_essai_relief" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.6, 0, 16.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_exit")
+target_map = &"essai_relief"
+target_marker = &"from_entrepot_rdc_essai"
+prompt = "Sortir dans le pré (essai)"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_essai_relief"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_pre")
+
 [node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="refectoire_table_a" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 0.0, 4.125)
+
+[node name="p1" type="Marker3D" parent="Life/Places/refectoire_table_a"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -1.5, 0, -0.575)
+
+[node name="p2" type="Marker3D" parent="Life/Places/refectoire_table_a"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.5, 0, -0.575)
+
+[node name="p3" type="Marker3D" parent="Life/Places/refectoire_table_a"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.5, 0, -0.575)
+
+[node name="p4" type="Marker3D" parent="Life/Places/refectoire_table_a"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1.5, 0, -0.575)
+
+[node name="p5" type="Marker3D" parent="Life/Places/refectoire_table_a"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0.575)
+
+[node name="p6" type="Marker3D" parent="Life/Places/refectoire_table_a"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.575)
+
+[node name="p7" type="Marker3D" parent="Life/Places/refectoire_table_a"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.575)
+
+[node name="p8" type="Marker3D" parent="Life/Places/refectoire_table_a"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0.575)
+
+[node name="refectoire_table_b" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.7, 0.0, 4.125)
+
+[node name="p1" type="Marker3D" parent="Life/Places/refectoire_table_b"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -1.5, 0, -0.575)
+
+[node name="p2" type="Marker3D" parent="Life/Places/refectoire_table_b"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.5, 0, -0.575)
+
+[node name="p3" type="Marker3D" parent="Life/Places/refectoire_table_b"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.5, 0, -0.575)
+
+[node name="p4" type="Marker3D" parent="Life/Places/refectoire_table_b"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1.5, 0, -0.575)
+
+[node name="p5" type="Marker3D" parent="Life/Places/refectoire_table_b"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0.575)
+
+[node name="p6" type="Marker3D" parent="Life/Places/refectoire_table_b"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.575)
+
+[node name="p7" type="Marker3D" parent="Life/Places/refectoire_table_b"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.575)
+
+[node name="p8" type="Marker3D" parent="Life/Places/refectoire_table_b"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0.575)
+
+[node name="refectoire_table_c" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.7, 0.0, 8.275)
+
+[node name="p1" type="Marker3D" parent="Life/Places/refectoire_table_c"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -1.5, 0, -0.575)
+
+[node name="p2" type="Marker3D" parent="Life/Places/refectoire_table_c"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.5, 0, -0.575)
+
+[node name="p3" type="Marker3D" parent="Life/Places/refectoire_table_c"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.5, 0, -0.575)
+
+[node name="p4" type="Marker3D" parent="Life/Places/refectoire_table_c"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1.5, 0, -0.575)
+
+[node name="p5" type="Marker3D" parent="Life/Places/refectoire_table_c"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0.575)
+
+[node name="p6" type="Marker3D" parent="Life/Places/refectoire_table_c"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.575)
+
+[node name="p7" type="Marker3D" parent="Life/Places/refectoire_table_c"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.575)
+
+[node name="p8" type="Marker3D" parent="Life/Places/refectoire_table_c"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0.575)
+
+[node name="refectoire_bout_est" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 14.15, 0, 3.95)
+
+[node name="refectoire_bout_ouest" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 2.85, 0, 3.95)
+
+[node name="refectoire_allee" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.36, 0.0, 6.7)
+
+[node name="p1" type="Marker3D" parent="Life/Places/refectoire_allee"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.16, 0, -0.6)
+
+[node name="p2" type="Marker3D" parent="Life/Places/refectoire_allee"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.76, 0, -0.8)
+
+[node name="p3" type="Marker3D" parent="Life/Places/refectoire_allee"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.64, 0, -0.5)
+
+[node name="p4" type="Marker3D" parent="Life/Places/refectoire_allee"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4.04, 0, -0.7)
+
+[node name="p5" type="Marker3D" parent="Life/Places/refectoire_allee"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24, 0, 2.6)
+
+[node name="cuisine_table" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 17.8, 0, 5.15)
+
+[node name="cuisine_fourneau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 17.35, 0, 2.95)
+
+[node name="lecture_table" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 0.0, 7.1)
+
+[node name="p1" type="Marker3D" parent="Life/Places/lecture_table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0)
+
+[node name="p2" type="Marker3D" parent="Life/Places/lecture_table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
+
+[node name="lecture_banquette" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 0.0, 2.5)
+
+[node name="p1" type="Marker3D" parent="Life/Places/lecture_banquette"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.6, 0, 0)
+
+[node name="p2" type="Marker3D" parent="Life/Places/lecture_banquette"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.6, 0, 0)
+
+[node name="archives_bureau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 29.6, 0, 7.55)
+
+[node name="archives_canape" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.4, 0.0, 7.15)
+
+[node name="p1" type="Marker3D" parent="Life/Places/archives_canape"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.6, 0, 0)
+
+[node name="p2" type="Marker3D" parent="Life/Places/archives_canape"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.6, 0, 0)
+
+[node name="couloir_ouest" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 3.6, 0, 11.5)
+
+[node name="couloir_centre" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 19, 0, 11.5)
+
+[node name="couloir_est" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 34, 0, 11.5)
+
+[node name="point_eau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.2, 0.0, 11.2)
+
+[node name="p1" type="Marker3D" parent="Life/Places/point_eau"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 0, 0)
+
+[node name="p2" type="Marker3D" parent="Life/Places/point_eau"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="p3" type="Marker3D" parent="Life/Places/point_eau"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 0, 0)
+
+[node name="couloir_course" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.8, 0.0, 11.883)
+
+[node name="p1" type="Marker3D" parent="Life/Places/couloir_course"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -15.6, 0, -0.283333)
+
+[node name="p2" type="Marker3D" parent="Life/Places/couloir_course"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 11.2, 0, -0.283333)
+
+[node name="p3" type="Marker3D" parent="Life/Places/couloir_course"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.4, 0, 0.566667)
+
+[node name="porte_nygglatho" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.233, 0.0, 12.483)
+
+[node name="p1" type="Marker3D" parent="Life/Places/porte_nygglatho"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.483333, 0, 0.016667)
+
+[node name="p2" type="Marker3D" parent="Life/Places/porte_nygglatho"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.016667, 0, -0.083333)
+
+[node name="p3" type="Marker3D" parent="Life/Places/porte_nygglatho"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.466667, 0, 0.066667)
+
+[node name="jeux_tapis" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 0.0, 17.54)
+
+[node name="p1" type="Marker3D" parent="Life/Places/jeux_tapis"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -1.5, 0, 1.16)
+
+[node name="p2" type="Marker3D" parent="Life/Places/jeux_tapis"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0, 1.56)
+
+[node name="p3" type="Marker3D" parent="Life/Places/jeux_tapis"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.9, 0, -1.24)
+
+[node name="p4" type="Marker3D" parent="Life/Places/jeux_tapis"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2.8, 0, -0.54)
+
+[node name="p5" type="Marker3D" parent="Life/Places/jeux_tapis"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -1.9, 0, -0.94)
+
+[node name="jeux_mur_balle" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.7, 0.0, 14.7)
+
+[node name="p1" type="Marker3D" parent="Life/Places/jeux_mur_balle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 0, -0.1)
+
+[node name="p2" type="Marker3D" parent="Life/Places/jeux_mur_balle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0, 0.1)
+
+[node name="jeux_lecture" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 27, 0, 15.5)
+
+[node name="jeux_tour" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.214, 0.0, 18.029)
+
+[node name="p1" type="Marker3D" parent="Life/Places/jeux_tour"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.314286, 0, -1.428571)
+
+[node name="p2" type="Marker3D" parent="Life/Places/jeux_tour"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -2.314286, 0, -1.528571)
+
+[node name="p3" type="Marker3D" parent="Life/Places/jeux_tour"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -1.914286, 0, 0.571429)
+
+[node name="p4" type="Marker3D" parent="Life/Places/jeux_tour"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.714286, 0, 1.171429)
+
+[node name="p5" type="Marker3D" parent="Life/Places/jeux_tour"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.585714, 0, 1.171429)
+
+[node name="p6" type="Marker3D" parent="Life/Places/jeux_tour"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2.285714, 0, -1.228571)
+
+[node name="p7" type="Marker3D" parent="Life/Places/jeux_tour"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2.385714, 0, 1.271429)
+
+[node name="jeux_spectateurs" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.033, 0.0, 16.667)
+
+[node name="p1" type="Marker3D" parent="Life/Places/jeux_spectateurs"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -2.733333, 0, 2.733333)
+
+[node name="p2" type="Marker3D" parent="Life/Places/jeux_spectateurs"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.766667, 0, -1.066667)
+
+[node name="p3" type="Marker3D" parent="Life/Places/jeux_spectateurs"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -2.033333, 0, -1.666667)
+
+[node name="nygglatho_the" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 35.75, 0, 15.95)
+
+[node name="nygglatho_bureau" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 33.4, 0, 17.85)
+
+[node name="entree" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 16)
+
+[node name="vers_essai_relief" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 19, 0, 20.7)
+
+[node name="vers_entrepot_etage" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2.45, 0, 11.5)

@@ -1,0 +1,136 @@
+{
+  "_comment": "Activités de la vie (lot E4 ; format et mode d'emploi : PLAN.md, « (E4) La vie »). speeds : allure → vitesse de marche (m/s). fallbacks : animation → remplaçantes, dans l'ordre, quand la planche portée ne l'a pas. activities : poses (enchaînées en boucle, ou au hasard avec order random ; time : durée en s, un nombre ou [min, max] ; sans time, jusqu'au créneau suivant), arrive (pose jouée à l'arrivée : s'asseoir), leave (pose jouée avant de partir : se lever), wander (errer entre les points de la place, pause [min, max] entre deux, gait), pair (à deux, face à face, à tour de rôle), look (regarder le joueur qui approche, vrai par défaut), step_aside (s'écarter s'il pousse, vrai par défaut ; jamais assis), greet (saluer d'une bulle, vrai par défaut), gait (allure du trajet vers la place), game (jeu de groupe : src/life/games/<jeu>.gd) et params (ses réglages).",
+  "speeds": {
+    "marche": 1.3,
+    "course": 3.0,
+    "porte": 1.15
+  },
+  "fallbacks": {
+    "marche": ["porte", "course"],
+    "course": ["marche", "porte"],
+    "porte": ["marche", "course"],
+    "parle": ["repos"],
+    "assis": ["lit", "repos"],
+    "lit": ["assis", "repos"],
+    "dort": ["assis", "repos"],
+    "travaille": ["parle", "repos"],
+    "hanches": ["parle", "repos"],
+    "tombe": ["effondre", "repos"],
+    "effondre": ["tombe", "dort", "repos"],
+    "grimpe": ["saut", "assis", "repos"],
+    "saut": ["course", "repos"],
+    "lance": ["frappe", "parle", "repos"],
+    "frappe": ["lance", "course", "repos"],
+    "etreinte": ["parle", "repos"]
+  },
+  "activities": {
+    "attendre": {
+      "_comment": "Debout, sans rien faire de particulier.",
+      "poses": [{"anim": "repos"}]
+    },
+    "manger": {
+      "_comment": "Le repas au réfectoire : assise, on bavarde de temps en temps (V1 ; VEX).",
+      "poses": [{"anim": "assis", "time": [3, 7]}, {"anim": "parle", "time": [1, 2.5]}],
+      "arrive": {"anim": "repos", "time": 0.3},
+      "leave": {"anim": "repos", "time": 0.5},
+      "step_aside": false
+    },
+    "lire": {
+      "_comment": "La lecture, assise, le livre ouvert ; on lève les yeux de temps en temps.",
+      "poses": [{"anim": "lit", "time": [8, 15]}, {"anim": "assis", "time": [1.5, 3]}],
+      "leave": {"anim": "repos", "time": 0.5},
+      "greet": false,
+      "step_aside": false
+    },
+    "balayer": {
+      "_comment": "Une corvée (balai, seau : travaille).",
+      "poses": [{"anim": "travaille", "time": [6, 10]}, {"anim": "repos", "time": [1, 2]}]
+    },
+    "toilette": {
+      "_comment": "La toilette du matin au point d'eau, en pyjama (travaille des planches de pyjama) (VEX).",
+      "poses": [{"anim": "travaille", "time": [4, 8]}, {"anim": "repos", "time": [1, 3]}, {"anim": "parle", "time": [1, 2]}]
+    },
+    "porter_linge": {
+      "_comment": "Le panier de linge (porte), d'un point à l'autre de la place (V2 ; VEX).",
+      "wander": {"pause": [1.5, 3], "gait": "porte"},
+      "poses": [{"anim": "repos", "time": [1.5, 3]}],
+      "gait": "porte"
+    },
+    "servir": {
+      "_comment": "Nygglatho sert le repas : le plateau (porte) entre les tables.",
+      "wander": {"pause": [2, 4], "gait": "porte"},
+      "poses": [{"anim": "parle", "time": [1, 2]}, {"anim": "repos", "time": [1, 2]}],
+      "gait": "porte"
+    },
+    "cuisiner": {
+      "_comment": "Willem en cuisine, en tablier : il bat au fouet (willem_cook, travaille) (V1 ; V3).",
+      "poses": [{"anim": "travaille", "time": [5, 9]}, {"anim": "repos", "time": [1, 2]}],
+      "look": false,
+      "step_aside": false
+    },
+    "the": {
+      "_comment": "Le thé chez Nygglatho : elle verse, tourne la cuillère (nygglatho_tea, travaille) (VEX).",
+      "poses": [{"anim": "travaille", "time": [5, 8]}, {"anim": "parle", "time": [1.5, 3]}],
+      "step_aside": false
+    },
+    "dormir": {
+      "_comment": "Couché sur un lit, un canapé, l'herbe (dort).",
+      "poses": [{"anim": "dort"}],
+      "look": false,
+      "greet": false,
+      "step_aside": false
+    },
+    "gronder": {
+      "_comment": "Poings sur les hanches, la réprimande (V1 ; V5).",
+      "poses": [{"anim": "hanches", "time": [3, 5]}, {"anim": "parle", "time": [1, 2]}, {"anim": "repos", "time": [2, 4]}]
+    },
+    "errer": {
+      "_comment": "Marcher d'un point à l'autre de la place, avec des pauses.",
+      "wander": {"pause": [2, 5], "gait": "marche"},
+      "poses": [{"anim": "repos", "time": [2, 5]}]
+    },
+    "bavarder": {
+      "_comment": "Deux PNJ face à face (deux points de la place), qui parlent à tour de rôle.",
+      "pair": true,
+      "poses": [{"anim": "parle", "time": [2, 3.5]}, {"anim": "repos", "time": [2, 3.5]}],
+      "greet": false
+    },
+    "jouer": {
+      "_comment": "Jeux sur le tapis de la salle de jeux : assise, une balle lancée, on rit (V2).",
+      "poses": [{"anim": "assis", "time": [3, 6]}, {"anim": "parle", "time": [1, 2]}, {"anim": "lance", "time": 0.4}, {"anim": "assis", "time": [2, 4]}],
+      "order": "random",
+      "step_aside": false
+    },
+    "balle_mur": {
+      "_comment": "La balle contre le mur, rattrapée (lance) (V2).",
+      "poses": [{"anim": "lance", "time": 0.4}, {"anim": "repos", "time": [0.8, 1.6]}]
+    },
+    "regarder": {
+      "_comment": "Assise, on regarde (la tour de fées, une partie) et on commente.",
+      "poses": [{"anim": "assis", "time": [3, 6]}, {"anim": "parle", "time": [1, 2]}],
+      "step_aside": false
+    },
+    "jeu_chat": {
+      "_comment": "Le chat dans les hautes herbes (VEX, ill.) : src/life/games/chat.gd.",
+      "game": "chat",
+      "gait": "course",
+      "params": {"min_members": 3, "tag_radius": 0.7, "flee_radius": 4.0, "round_time": 90, "rest_time": 5, "count_time": 1.2, "join_distance": 2.5, "leave_distance": 8, "sword_radius": 1.6}
+    },
+    "course_couloir": {
+      "_comment": "La course du couloir, dessert en jeu (V5 ; V1) : src/life/games/course.gd. Points de la place : départ, arrivée, poste de celle qui gronde.",
+      "game": "course",
+      "gait": "course",
+      "params": {"min_members": 2, "ready_time": 1.6, "pause": [8, 12], "scold_radius": 2.5, "lane": 0.6}
+    },
+    "avalanche": {
+      "_comment": "Collées à la porte de Nygglatho pour épier (V1) : src/life/games/avalanche.gd.",
+      "game": "avalanche",
+      "params": {"min_members": 1, "door": ["couloir", "nygglatho"], "trigger_distance": 1.5, "fall_time": 1.8, "flee": "vers_entrepot_etage", "cooldown": 45}
+    },
+    "tour_de_fees": {
+      "_comment": "La tour de fées sur Willem assis (VEX) : src/life/games/tour.gd. Premier point de la place : la base ; les suivants : où l'on attend.",
+      "game": "tour",
+      "params": {"min_members": 3, "stack_time": 2.2, "hold_time": 6, "rest_time": 7}
+    }
+  }
+}

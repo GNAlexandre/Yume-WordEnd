@@ -159,14 +159,16 @@ ancres, consignes ; conventions : `docs/REFONTE.md`, section 8.1, 96 px par mèt
 qu'emploient les intérieurs (entrées du manifeste, lot I, à leur taille réelle), la profondeur et
 la lueur de chaque meuble, et écrit leurs scènes (`src/world/props/<nom>.tscn`). Il ne redessine
 jamais une image livrée : il ne garde des remplaçants que pour les noms que la livraison n'a pas
-encore, et une vraie image livrée sous le même nom les remplace sans toucher au code.
+encore, et une vraie image livrée sous le même nom les remplace sans toucher au code. (I1) Quand
+elle arrive, la recette s'en va (la livraison de la porte rivetée `door_armory`, des meubles de la
+maison, des objets, etc. a retiré les leurs) et `python3 tools/hd2d_assets.py gen --force` ne réécrit
+jamais un fichier que sa recette ne dessine plus (`--overwrite-delivered` pour le faire quand même).
 
 | Remplaçant | Taille (px) | Genre | Contenu |
 | --- | --- | --- | --- |
 | `floor_flagstone_cellar` | 384 × 384 | tile | dalles de la crypte (cahier, prio 2) |
 | `wall_cellar_stone` | 384 × 288 | tile_h | moellons de la crypte (cahier, prio 2) |
 | `wallcut_stone` | 384 × 24 | tile_h | dessus d'un mur de pierre (cahier, prio 2) |
-| `door_armory` | 125 × 221 | panel | porte rivetée de la salle des armes, cinq serrures (cahier, prio 2) |
 | `wallitem_height_marks` | 38 × 154 | panel | marques de taille des petites, bas au sol (cahier, prio 2) |
 | `door_frame_wood` | 126 × 221 | panel | chambranle seul, ouverture de 1,1 × 2,2 m transparente : porte qu'on franchit (hors cahier, demandé dans `docs/CONTRACT_REQUESTS.md`) |
 
@@ -225,3 +227,54 @@ Ce qu'elles ajoutent aux règles ci-dessus :
 | `roof_railing_broken` (`interior/props/`) | 192 × 77 | panneau | module tordu de la rambarde |
 | `wallitem_clippings` (`interior/`) | 77 × 58 | élément de mur | coupures de magazine des archives |
 | `window_dusty` (`interior/`) | 96 × 96 | fenêtre | petite fenêtre haute et poussiéreuse |
+| `sofa_beige_side`, `bookshelf_tall_b_side`, `wardrobe_chtholly_side` (`interior/props/`) | 86 × 175, 58 × 272, 58 × 212 | meubles | vues de flanc du canapé, de la grande bibliothèque et de l'armoire de Chtholly (cahier n° 5, R0.3), pour juger le rendu avant la livraison |
+
+## 6. Orientation des meubles et vues de flanc (lot I1)
+
+Un panneau se tourne toujours vers le sud : un meuble adossé à un mur est ou ouest, posé de face,
+sort du mur comme une péninsule (le canapé des archives, les armoires de la salle de jeux et de
+l'infirmerie). Le cahier n° 5 (`docs/ASSETS_HD2D_ILE68.md`, 2.7 et R0) commande donc, pour chaque
+meuble qu'on voit de côté, des vues `<nom>_side` (de flanc, face tournée vers l'est), `<nom>_back`
+(de dos) et `<nom>_foot` (lit par le pied). Ce que fait le moteur :
+
+- **Le choix de la vue** : `DecorPanel.facing` (`south`, `east`, `west`, `north` ; vide : celle du
+  nœud, sa face est son +Z) prend `_side` à l'est, `_side` retournée à l'ouest, `_back` ou `_foot`
+  au nord, la face au sud, et **la face aussi quand l'image de la vue n'existe pas** (aucune scène
+  ne nomme les vues : `DecorPanel.view_texture` les trouve à côté de la face). La taille du panneau,
+  son occulteur (`InteriorPanel.occluder_triangles`) et son matériau sont ceux de l'image affichée.
+- **La donnée** : le plan de `docs/lore/CARTE.md` marque d'un `regard=E|O|N|S` les meubles adossés
+  (un meuble contre le mur ouest regarde l'est). `tools/interior_maps.py gen` écrit `facing` sur le
+  meuble de la scène et, si la vue existe (`_side` pour E et O ; `_back`, sinon `_foot`, pour N),
+  le tourne d'un quart de tour autour du milieu de son bord arrière, contre le mur : nœud au milieu
+  de l'emprise tournée (profondeur du meuble en x, largeur en z), `image_offset` au bord sud de sa
+  largeur, ombre sur l'emprise ; la collision (enfant `Collision`) suit la rotation. Sans la vue,
+  rien ne change : face au sud, emprise de face. `interior.json` ne porte pas les meubles (ils sont
+  dans la scène, comme avant) : les murs y disent d'où l'on regarde (`InteriorLayout.
+  facing_against_wall`, `InteriorRoom.footprint_of`), et un test rapproche les deux.
+- **Les vérifications** : `tools/carte_plans.py check` vérifie le plan **dans les deux états** (face,
+  puis tournés : dans la pièce, sans chevaucher, passages et caméra) ; les tests de l'entrepôt
+  vérifient l'occlusion de chaque case, les collisions et les points dans l'état présent
+  (`tests/stubs/t2_map_test.gd`, `test_panel_facing.gd`). Avant de commander une livraison de vues,
+  on peut essayer l'état « toutes livrées » avec des images factices (rectangles pleins aux
+  tailles du cahier) : les cartes de l'entrepôt y passent (tous les tests verts, 14 octobre 2026).
+- **Une vue qui arrive** : `python3 tools/hd2d_interior.py manifest` (entrée du lot R0 à sa taille
+  réelle ; `VIEWS` donne celle du cahier), `python3 tools/hd2d_assets.py check --lot R0`,
+  `tools/import.sh`, puis `python3 tools/interior_maps.py gen` (le meuble se tourne) et
+  `tools/test.sh tests/unit/test_entrepot_rdc.gd` (idem `_etage`, `test_panel_facing.gd`) ; le
+  générateur lit les fichiers, pas une liste : une vue sans `gen` laisserait une carte périmée, que
+  le test des meubles marqués signale.
+
+### Les petits objets du cahier n° 4
+
+Posés par des lignes `objet IMAGE x z` du plan (dans les limites de l'emprise de leur meuble, de
+face **et** tourné) : cuisine (`mixing_bowl_whisk`, `milk_jug_stoneware`, `egg_basket_low` sur le
+comptoir ; `flour_sack_open`, `butter_dish_open`, `flan_mould_empty` sur la table de travail), lecture
+(`book_open_stand`), archives (`inkwell_quill` sur le bureau de Willem), soins (`medicine_bottles_tray`
+sur le bureau de l'infirmerie, `bandage_rolls` sur le lave-mains, `compress_bowl` sur le second
+chevet), chambres de l'étage (`letter_sealed_bundle` sur le bureau de Chtholly, `repair_nail_box` sur
+le coffre de Willem, `thread_spools_pair` et `patched_cloth_folded` sur la commode d'Ithea,
+`mending_basket` sur le coffre des aînées absentes). Restent à poser par les scènes ou par une carte
+qui a le meuble : `hand_plane_worn` et `hand_saw_short` (un établi : aucun dans les plans de
+l'entrepôt) et le lot Q (`field_satchel_set_down`, `leather_canteen`, `oilskin_cloak_folded`,
+`walking_boots_drying`, `provisions_cloth_bundle` : accessoires de départ et de retour, à poser le
+jour de la scène).

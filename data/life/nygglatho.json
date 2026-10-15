@@ -1,0 +1,11 @@
+{
+  "_comment": "Nygglatho (VIE.md, 2.2) : le linge à l'aube, elle sert le petit-déjeuner, le thé chez elle l'après-midi, elle gronde la course du couloir le soir, elle écrit la nuit.",
+  "lines": [
+    {"slot": "aube", "map": "entrepot_rdc_essai", "place": "refectoire_allee", "activity": "porter_linge", "outfit": "vie"},
+    {"slot": "matin", "map": "entrepot_rdc_essai", "place": "refectoire_allee", "activity": "servir", "outfit": "the"},
+    {"slot": "midi", "map": "entrepot_rdc_essai", "place": "refectoire_bout_ouest", "activity": "manger", "outfit": "vie"},
+    {"slot": "apres_midi", "map": "entrepot_rdc_essai", "place": "nygglatho_the", "activity": "the", "outfit": "the"},
+    {"slot": "soir", "map": "entrepot_rdc_essai", "place": "couloir_course", "activity": "course_couloir", "outfit": "vie", "role": "gronde"},
+    {"slot": "nuit", "map": "entrepot_rdc_essai", "place": "nygglatho_bureau", "activity": "lire", "outfit": "vie"}
+  ]
+}

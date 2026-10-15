@@ -44,7 +44,7 @@ var _focus_ahead := 2.5
 var _bounds := Rect2()
 ## Cases atteintes à pied depuis Spawn (clé : Vector2i de la grille).
 var _reached: Dictionary = {}
-## Triangles qui peuvent cacher le joueur, par ligne de coupe : {cut: {case 1 m: triangles}}.
+## Triangles par coupe de pièce et z du joueur : {Vector2(cut, z): {case 1 m: triangles}}.
 var _occluders: Dictionary = {}
 
 
@@ -356,7 +356,7 @@ func _first_hit(eye: Vector3, target: Vector3, buckets: Dictionary) -> String:
 func _buckets_for(feet: Vector3, cut: float) -> Dictionary:
 	var line := roundi(feet.x)
 	if absf(feet.x - line) >= InteriorRoom.COLUMN_HALF:
-		return _buckets(cut)
+		return _buckets(cut, Vector3.INF, feet.z)
 	var from := feet.z + InteriorRoom.COLUMN_FRONT
 	for piece: Dictionary in _room.plan.pieces:
 		if (
@@ -365,16 +365,18 @@ func _buckets_for(feet: Vector3, cut: float) -> Dictionary:
 			and float(piece["b"]) > from
 			and float(piece["a"]) < from + InteriorRoom.COLUMN_LENGTH
 		):
-			return _buckets(cut, feet)
-	return _buckets(cut)
+			return _buckets(cut, feet, feet.z)
+	return _buckets(cut, Vector3.INF, feet.z)
 
 
 ## Triangles qui peuvent cacher le joueur pour une coupe donnée (murs d'InteriorRoom, meubles),
 ## rangés par case d'un mètre de leur emprise ; player : place du joueur pour la colonne de
 ## coupe (Vector3.INF : sans colonne, gardés pour chaque coupe).
-func _buckets(cut: float, player: Vector3 = Vector3.INF) -> Dictionary:
-	if not player.is_finite() and _occluders.has(cut):
-		return _occluders[cut]
+func _buckets(cut: float, player: Vector3 = Vector3.INF, furniture_z: float = NO_CUT) -> Dictionary:
+	InteriorRoom.share_uniform(&"furniture_cut_line", furniture_z)
+	var key := Vector2(cut, furniture_z)
+	if not player.is_finite() and _occluders.has(key):
+		return _occluders[key]
 	var buckets := {}
 	var cut_world := NO_CUT if cut >= NO_CUT else _room.to_global(Vector3(0.0, 0.0, cut)).z
 	var walls := _room.occluder_triangles(cut_world, player)
@@ -384,7 +386,7 @@ func _buckets(cut: float, player: Vector3 = Vector3.INF) -> Dictionary:
 		var quad := (panel as InteriorPanel).occluder_triangles(cut_world)
 		_bucket(buckets, "meuble %s" % panel.name, quad)
 	if not player.is_finite():
-		_occluders[cut] = buckets
+		_occluders[key] = buckets
 	return buckets
 
 

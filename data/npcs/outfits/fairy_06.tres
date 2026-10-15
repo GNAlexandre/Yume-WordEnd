@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="SkinData" format=3]
+
+[ext_resource type="Script" path="res://src/visuals/skin_data.gd" id="1_skin"]
+[ext_resource type="Texture2D" path="res://assets/characters/fairy_06/fairy_06.png" id="2_sprite_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/fairy_06/fairy_06.json" id="3_frames_json"]
+[ext_resource type="Texture2D" path="res://assets/characters/fairy_06/fairy_06_front.png" id="4_front_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/fairy_06/fairy_06_front.json" id="5_front_json"]
+[ext_resource type="Texture2D" path="res://assets/characters/fairy_06/fairy_06_back.png" id="6_back_sheet"]
+[ext_resource type="JSON" path="res://assets/characters/fairy_06/fairy_06_back.json" id="7_back_json"]
+
+[resource]
+script = ExtResource("1_skin")
+id = &"fairy_06"
+display_name = "Fée (planche 6)"
+sprite_sheet = ExtResource("2_sprite_sheet")
+frames_json = ExtResource("3_frames_json")
+front_sheet = ExtResource("4_front_sheet")
+front_json = ExtResource("5_front_json")
+back_sheet = ExtResource("6_back_sheet")
+back_json = ExtResource("7_back_json")
+height_m = 1.15
