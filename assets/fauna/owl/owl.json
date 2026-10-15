@@ -1,0 +1,1 @@
+{"version":1,"echelle":2,"planche":[117,98],"format":"images : [x, y, largeur, hauteur, ancre x, ancre y] en px de la planche","animations":{"repos":{"ips":2,"boucle":true,"images":[[0,0,20,40,10,39],[22,0,21,40,10,39]]},"fuite":{"ips":12,"boucle":true,"images":[[0,42,34,51,20,51],[36,42,24,54,10,54],[62,42,21,53,7,53],[85,42,30,54,16,54]]}},"direction":"right"}

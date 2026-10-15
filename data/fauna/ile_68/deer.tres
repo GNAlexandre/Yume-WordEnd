@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="AnimalData" format=3]
+
+[ext_resource type="Script" path="res://src/fauna/animal_data.gd" id="1_animal"]
+[ext_resource type="Resource" path="res://data/fauna/ile_68/visuals/deer.tres" id="2_visual"]
+
+[resource]
+script = ExtResource("1_animal")
+id = &"deer"
+display_name = "Cerf"
+visual = ExtResource("2_visual")
+behavior = &"paisible"
+max_hp = 1
+speed = 7.0
+walk_speed = 1.3
+body_radius_m = 0.5
+alert_range_m = 8.0
+flee_range_m = 6.0
+calm_distance_m = 22.0
+flee_speed = 7.5
+graze_animation = &"broute"
+graze_ratio = 0.7
+combat_noise_m = 14.0
+wander_radius_m = 4.0
+moments = Array[StringName]([&"aube", &"couchant"])

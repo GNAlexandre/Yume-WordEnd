@@ -1,0 +1,50 @@
+{
+  "_comment": "Peuplement de l'île n° 68 (lot E5 ; docs/lore/VIE.md, section 6 ; format et mode d'emploi : PLAN.md, « (E5) Ajouter un animal »). banned_regions : les lieux (Map.region ou lieu du fichier de l'île) où l'on ne croise jamais d'animaux (docs/REFONTE.md, 4.4) ; les papillons et les oiseaux d'ambiance de ces cartes restent des AmbientSprites de la carte. maps : les cartes qui portent un nœud Fauna sous Life (src/fauna/fauna.tscn) ; planned : le peuplement prévu des vraies cartes, à passer dans maps quand la carte aura son nœud Fauna et ses marqueurs (Life/Places). Un groupe : id (unique dans la carte), species (data/fauna/ile_68/<id>.tres, permise par rules.fauna de l'île), count, at (marqueur) ou rect [x0, z0, x1, z1], radius (m, autour de at), moments (restreint ceux de l'espèce : aube, matin, apres_midi, couchant, nuit), weather (clair, pluie, averse), pack (une meute, pour une espèce à ring_radius_m), respawn_s. Correspondance avec VIE.md : midi = matin, soir = couchant, crépuscule = couchant.",
+  "banned_regions": ["entrepot", "village", "ville", "port"],
+  "maps": {
+    "foret_essai": [
+      {"id": "cerfs", "species": "deer", "count": 3, "at": "cerfs", "radius": 4.0},
+      {"id": "loups", "species": "wolf", "count": 3, "at": "loups", "radius": 3.5, "pack": true, "respawn_s": 90.0},
+      {"id": "sanglier", "species": "boar", "count": 1, "at": "souille", "radius": 2.0, "respawn_s": 90.0},
+      {"id": "ours", "species": "bear", "count": 1, "at": "taniere", "radius": 1.5, "respawn_s": 120.0},
+      {"id": "ecureuils", "species": "squirrel", "count": 2, "at": "ecureuils", "radius": 6.0},
+      {"id": "renards", "species": "fox", "count": 1, "at": "renards", "radius": 4.0},
+      {"id": "grenouilles", "species": "frog", "count": 3, "at": "mare", "radius": 2.5},
+      {"id": "merles", "species": "blackbird", "count": 2, "at": "merles", "radius": 3.0},
+      {"id": "corbeaux", "species": "crow", "count": 2, "at": "corbeaux", "radius": 3.0},
+      {"id": "chouette", "species": "owl", "count": 1, "at": "chouette", "radius": 1.0},
+      {"id": "papillons", "species": "butterfly", "count": 1, "at": "cerfs", "radius": 4.0},
+      {"id": "libellules", "species": "dragonfly", "count": 1, "at": "mare", "radius": 3.0}
+    ]
+  },
+  "planned": {
+    "sentier": [
+      {"id": "merles", "species": "blackbird", "count": 3, "at": "marais", "radius": 6.0, "moments": ["aube", "matin"]},
+      {"id": "corbeau", "species": "crow", "count": 1, "at": "souche", "radius": 3.0},
+      {"id": "grenouilles", "species": "frog", "count": 4, "at": "marais", "radius": 4.0},
+      {"id": "libellules", "species": "dragonfly", "count": 1, "at": "marais", "radius": 5.0},
+      {"id": "renard", "species": "fox", "count": 1, "at": "lisiere", "radius": 4.0, "moments": ["couchant"]},
+      {"id": "chouette", "species": "owl", "count": 1, "at": "lisiere", "radius": 2.0}
+    ],
+    "colline": [
+      {"id": "merles", "species": "blackbird", "count": 2, "at": "sommet", "radius": 8.0, "moments": ["aube", "matin"]},
+      {"id": "papillons", "species": "butterfly", "count": 1, "at": "sommet", "radius": 8.0},
+      {"id": "chouette", "species": "owl", "count": 1, "at": "sommet", "radius": 3.0}
+    ],
+    "foret_profonde": [
+      {"id": "cerfs", "species": "deer", "count": 3, "at": "cerfs", "radius": 5.0, "moments": ["aube", "couchant"]},
+      {"id": "renard", "species": "fox", "count": 1, "at": "lisiere_riviere", "radius": 4.0},
+      {"id": "ecureuils", "species": "squirrel", "count": 3, "rect": [10.0, 10.0, 70.0, 50.0]},
+      {"id": "corbeaux", "species": "crow", "count": 2, "rect": [10.0, 10.0, 70.0, 50.0]},
+      {"id": "sanglier", "species": "boar", "count": 1, "at": "souille", "radius": 3.0, "respawn_s": 90.0},
+      {"id": "loups", "species": "wolf", "count": 4, "at": "loups", "radius": 4.0, "pack": true, "respawn_s": 90.0},
+      {"id": "grenouilles", "species": "frog", "count": 3, "at": "gue", "radius": 3.0},
+      {"id": "chouette", "species": "owl", "count": 1, "rect": [10.0, 10.0, 70.0, 50.0]}
+    ],
+    "montagne": [
+      {"id": "cerfs", "species": "deer", "count": 3, "at": "belvedere_haut", "radius": 5.0, "moments": ["aube", "couchant"]},
+      {"id": "ours", "species": "bear", "count": 1, "at": "taniere", "radius": 2.0, "respawn_s": 120.0},
+      {"id": "corbeaux", "species": "crow", "count": 2, "at": "surplomb", "radius": 6.0}
+    ]
+  }
+}

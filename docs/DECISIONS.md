@@ -2687,6 +2687,161 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **X1 — Raccourcis** : `?island=<id>&port=<id>` (Web) ou `-- --island=<id>`, et F6 dans une
   version de débogage (île suivante de `WorldAtlas.islands()`, sans l'ancienne) ; `?timeres=` est
   refusé (une ligne au journal) là où les règles n'admettent pas de Timere.
+
+## C1 — L'outil des cartes du dehors et le sentier (cartes `sentier`, `port` d'attente)
+- **C1 — `tools/exterior_maps.py`** (`gen`, `check`, `places`, `props` ; mode d'emploi en tête du
+  fichier et dans PLAN.md, « (C1) Les cartes du dehors ») : les scripts de travail de T1 (hors
+  dépôt) sont repris, généralisés (`tools/exterior_pose.py` : la pose et la règle de caméra ;
+  `tools/exterior_ground.py` : le sol déduit du plan ; `tools/exterior_recipes/<id>.py` : une recette
+  par carte) et rangés dans `tools/`. **Preuve** : `gen entrepot` redonne `entrepot.tscn` à l'octet,
+  sauf les quatre lignes `metadata/plan_target_*` des deux portes (la cible provisoire d'avant T2 n'a
+  plus de raison d'être : elles ne s'écrivent que si la sortie est provisoire) ; le sol et les images
+  de `data/maps/entrepot/` sont identiques ; `test_entrepot.gd` reste vert. `check` compare les fichiers
+  écrits à ce que l'outil écrirait (code 1 sinon), liste les écarts au plan et les avertissements de
+  la règle de caméra (quatre pour l'entrepôt, connus de T1 : marsh_snag, play_goal, thicket_c,
+  firewood_pile, sans variante de premier plan).
+- **C1 — sortie vers une carte absente** : provisoire si la recette en donne une (`provisional`),
+  sinon omise (`omit_if_missing`) ; l'outil la remet dès que la carte existe (`gen` relancé). Le
+  chemin de la ville du sentier n'a donc **pas de sortie vers `ville_haute`** tant que cette carte
+  n'existe pas : un écriteau « Plus loin, bientôt » (`waiting_sign_fg`) au bout du chemin ; le
+  marqueur `from_ville_haute` est écrit quand même. Une carte d'attente n'a que la sortie de retour
+  vers une carte construite (le port : `vers_sentier`).
+- **C1 — cartes d'attente par l'outil** : `village`, `colline`, `foret_profonde` redonnent les fichiers
+  de T1 à l'octet ; leur nom, leur lieu, la sortie de retour et ses marqueurs viennent maintenant du
+  plan (CARTE.md). Le **port** (`port`, 32 × 24 m, sortie `vers_sentier` → `sentier`, `from_port`,
+  arrivée `from_sentier`) entre dans `ile_68.json` (`maps`, lieu `port`) ; le port provisoire des
+  dirigeables reste sur `essai` jusqu'à la vraie carte (C-port).
+- **C1 — sol du sentier** (`data/maps/sentier/plan.json`) : paliers du plan (lisière +1 m, marais et
+  chemin de la ville −0,5 m), rampe de la ville, faces en talus de terre. Ajouts : deux descentes de
+  la levée dans le marais (x 33 → 36 et 52 → 55, z 18 → 20, mousse sous les pieds) : on y descend
+  sans sauter, comme les PNJ d'E4 ; eau basse du marais libre au milieu (rectangle bruité de 1,5 m),
+  tourbe sur les berges, six îlots de tourbe où poussent les touradons ; berges du creux du chemin
+  de la ville bruitées (faiblement : le bruit de `map_build` ne déplace le bord que d'une case) ;
+  plaques de mousse et de feuilles au bord du sentier. `path_overgrown` (cahier n° 5, « à confirmer »)
+  est peint en `chemin` (path_dirt_b) **sur la bande du chemin seulement** (1,8 m de terre dans la
+  bande libre de 3 m), pas sur le rectangle de 14 × 16 m du plan au sud-est : un tapis de terre nue de
+  cette taille contredit le sentier mangé d'herbe de V3.
+- **C1 — décor du sentier** : tout le plan (aulnes, roseaux, touradons, souche, mares, nénuphars,
+  pierres, racine, fougères de bord, voûtes, fourré) à ses cotes ; kits par bande (lisière : rang
+  d'arbres devant cinq pans de 16 m ; deux pans dressés à l'ouest et à l'est du marais ; marais :
+  rideau de roseaux, roseaux, massettes, touradons, mares, brume ; levée : pierres, herbes, fougères,
+  feuilles, ombres de feuillage ; sud : grands troncs rares, buissons et fougères de premier plan ;
+  fourche : forêt des deux côtés, mousse, cairn). Au sud du sentier la caméra est près des arbres
+  (21 m, 32°) : **pas de grands arbres serrés** (un pin de 11 m à 5 m au sud du joueur couvre
+  l'écran), deux troncs en tout et des arbres moyens à 8 m les uns des autres. Pas de lucioles
+  (CARTE.md 4.2 : absentes en fin d'automne), pas de rais de lumière (leur image de nuit n'existe pas :
+  le sentier de nuit resterait éclairé), pas de `stepping_stones` (pierres de gué bleutées : le
+  sentier a les siennes, `path_stones_a/b`).
+- **C1 — règle de caméra du sentier** : le rideau de roseaux (2 m) et l'écriteau d'attente (2,4 m)
+  se dressent au sud d'endroits où l'on marche : variantes `marsh_reed_wall_fg` et `waiting_sign_fg`
+  (premier plan, `tools/exterior_props.py`), que `Pose.place` choisit seule. Les deux voûtes de
+  feuillage (`fg_canopy_a`) sont des panneaux de premier plan **posés en l'air** à 2,6 m : le premier
+  plan accroché à l'écran (cahier n° 5 : « format à confirmer par E10 ») n'existe pas encore
+  (docs/CONTRACT_REQUESTS.md). `test_sentier.gd` vérifie que ni mur ni décor opaque ne cache le joueur
+  (pieds, taille, tête) depuis 1 546 places.
+- **C1 — images du lot R3** : sept remplaçants au manifeste (lot `R3`, `tools/hd2d_sentier.py`,
+  scènes dans `tools/exterior_props.py`) : `props/marsh_reed_wall` (384 × 192, raccord), `path_edge_ferns`
+  (384 × 106, raccord), `path_root_step` (192 × 58), `fg_canopy_a` (768 × 384, ancre libre : un
+  panneau en l'air), `decals/bog_pool_a` (288 × 192), `path_stones_a` (192 × 144), `path_stones_b`
+  (144 × 96). Seul `hd2d_assets.py` change (`recipes()` lit le nouveau module). La tuile
+  `ground/path_overgrown` et les images de prio 3 (`bog_pool_b`, `fg_canopy_b`, `willow_pollard`)
+  ne sont pas dans le plan : non faites.
+- **C1 — places de la vie en plus du plan** (`PLACES_WHY`, `Life/Places`, listées dans CARTE.md par
+  `exterior_maps.py places`) : `sentier_ouest`, `sentier_milieu`, `sentier_est`, `fourche_ville`
+  (passants de VIE.md), `marais_berge_ouest`, `marais_berge_est` (grenouilles, libellules),
+  `corbeau_perchoir` (la souche), `lisiere_renard`, `merle_sol` (VIE.md, faune). Une scène de E4 ou
+  d'E5 les prend par leur nom ; `premiere_embuscade` (16 ; 23) est celui d'ACTE1.md.
+- **C1 — la nuit** : aucune lampe dans la carte (V1) ; la nuit est le préréglage `nuit` d'E9 (le
+  `nuit_sans_lune` de CARTE.md n'existe pas : demandé dans CONTRACT_REQUESTS.md) et la lumière des
+  fées du joueur (4 m). Mesure (luminance moyenne, capture 1280 × 720, vues milieu / embuscade /
+  marais) : jour 0,32 / 0,32 / 0,30 ; nuit avec la lumière du joueur 0,12 / 0,12 / 0,11 sur l'écran,
+  **0,23 / 0,20 / 0,18 autour du joueur** (un rond de lumière net sur un fond à 0,10) ; nuit sans
+  lumière (`Atmosphere.LIGHT_OFF`) 0,11 / 0,11 / 0,10 partout : le sol et les roseaux restent devinés,
+  on ne voit pas le sentier mais on ne se perd pas non plus. Le sentier est donc lisible avec la
+  lumière des fées ; le noir complet de V1 serait un préréglage plus sombre (E9).
+- **C1 — densité mesurée** (écran de 20 × 20 m autour du point visé, décors debout et décalques,
+  `test_sentier.gd`) : entrée 97, ouest 113, milieu 108, marais 90, embuscade 114, berge 135, est 83,
+  fourche 119, chemin de la ville 122 (plan : 80 à 120 ; la berge et le chemin de la ville, entre
+  roseaux et mousse, jusqu'à 140). Aucun carré de 6 × 6 m nu hors de la place `embuscade`. De la vie
+  dans chaque vue : roseaux qui ondulent (`reeds_sway`), feuilles qui tombent, oiseaux.
+- **C1 — mesures** (Xvfb, `tests/integration/demo_c1.tscn`, couchant ; nuit : +1) : draw calls
+  entrée 112, ouest 113, milieu 92, marais 45, embuscade 85, berge 96, est 102, fourche 108, chemin de
+  la ville 126, vue large 111 (budget 200 ; la carte d'attente du port : 18) ; `test_sentier.gd` en
+  borne le pire cas sur une grille de 6 m : 107 lots de décor + 45 d'ailleurs. Banc headless
+  (`tools/map_bench.gd`, ile_ancienne → sentier ⇄ essai) : chargement 88 ms à chaud, 353 ms à froid,
+  installation 188 à 260 ms, total 0,9 à 1,1 s ; 2 731 nœuds (l'entrepôt : 4 112), mêmes comptes à
+  chaque visite, 0 échec.
+- **C1 — tests** : `tests/unit/test_sentier.gd` (23 : plan, exports, sorties, marqueurs, points, marche,
+  caméra, densité, sol nu, draw calls, aucune lumière, relief, décors et images R3, voûtes, places de
+  la vie) sur la base `tests/stubs/c1_exterior_test.gd` (réutilisable par les cartes qui suivent),
+  `tests/unit/test_exterior_maps.gd` (4 : `check` de l'outil, cartes d'attente, `port` dans l'île,
+  listes de places), `tests/integration/test_sentier_in_game.gd` (1 : de l'entrepôt au sentier, au
+  marais, à la rampe de la ville, au port d'attente, et retour).
+- **E5 — Format de la faune** : une espèce est une ressource `.tres` (`AnimalData`, qui hérite
+  d'`EnemyData`) dans `data/fauna/<île>/<id>.tres`, pas un JSON : ses attaques sont des `AttackData`
+  (`data/fauna/<île>/attacks/`, et non `data/attacks/` : les chiffres d'un animal vivent avec lui) et sa
+  planche un `SkinData` (`data/fauna/<île>/visuals/`), exactement comme un Timere. Le peuplement, lui, est
+  un JSON par île (`peuplement.json`), vérifié clé par clé (`FaunaRules.problems`), comme les quêtes.
+- **E5 — Un animal est un `Enemy`** : `Animal` (`src/fauna/animal.gd`) en hérite et réutilise son corps, sa
+  Health, ses boîtes de coup, la préparation d'un coup (zone au sol), le recul et l'IA de poursuite. La
+  garde des Timeres (X1) devient la méthode `Enemy._is_admitted()` : `Enemy` demande `enemies_allowed`,
+  `Animal` demande `FaunaRules.allowed_at` (liste `fauna` de l'île, régions sans animaux). Les deux se
+  distinguent par les données (une `AnimalData`, l'id d'espèce dans les règles), jamais par un nom ; un
+  animal n'est donc jamais retiré comme un Timere, et ne passe pas outre les règles de son île. Seul
+  changement dans `src/enemies/` : cette méthode et son appel.
+- **E5 — Ce qui est un « ennemi »** : tout animal est dans le groupe `fauna` ; seuls les dangereux (loup,
+  sanglier, ours) restent dans `enemies` (verrouillage, « Ennemis » du HUD). Un animal ne fait jamais
+  `EventBus.enemy_killed` (aucune quête ni arène ne le compte) mais `enemy_spawned` et `enemy_damaged`
+  restent émis (le bruit d'un combat alarme les paisibles proches).
+- **E5 — Un animal vaincu s'enfuit** (`docs/lore/ACTE1.md`, 3.5, vérifié) : à zéro PV il ne meurt pas, il
+  court loin de celui qui l'a frappé (`degats` un instant, puis `course`) puis rétrécit et disparaît ;
+  `max_hp` est donc le nombre de coups avant la fuite (loup 3, sanglier 4, ours 10, tous les autres 1 :
+  « un coup de bâton les fait fuir »). L'animation `mort` des planches n'est jamais jouée ; le cahier la
+  garde (« une bête vaincue reste à terre, sans sang ») pour une scène du récit.
+- **E5 — Moments** : le jeu en a cinq (`GameState.MOMENTS`) ; `VIE.md` dit midi = `matin`, soir et
+  crépuscule = `couchant`. Loups : `couchant` et `nuit` seulement (absents le jour plutôt que « cachés » :
+  ils ne sont pas dans la scène) ; ours : `matin` et `apres_midi` (il dort la nuit) ; cerfs : `aube` et
+  `couchant` ; sanglier : `matin` et `couchant` ; renard : `aube` et `couchant` ; écureuil et corbeau :
+  matin et après-midi ; merle : `aube` et `matin` ; chouette : `nuit` ; grenouille : jour et couchant ;
+  papillons : matin et après-midi par beau temps, libellules : l'après-midi par beau temps. Un groupe de
+  `peuplement.json` peut restreindre ces moments (`moments`), jamais les élargir.
+- **E5 — Où l'on ne croise pas d'animaux** : `banned_regions` de `peuplement.json` (entrepôt, village, ville,
+  port), vérifié par `Map.region` et par le lieu du fichier de l'île ; la liste `fauna` des règles de l'île
+  dit quelles espèces vivent sur quelle île (aucune sur la surface ni sur l'ancienne île). Les merles de
+  l'entrepôt, les corbeaux du port, les papillons des jardins (`VIE.md`, 6.3) restent des `AmbientSprites`
+  de ces cartes (consigne de la mission) : ce lot ne pose d'oiseaux (des `Animal` qui s'envolent) que dans
+  les cartes de bois, et ses papillons et libellules (`behavior = ambiant`) que là aussi.
+- **E5 — Peuplement** : un nœud `Fauna` sous `Life` de la carte (`src/fauna/fauna.tscn`) et des marqueurs
+  sous `Life/Places`. Au chargement tout est posé ; ensuite `EventBus.atmosphere_changed` renvoie les
+  groupes hors de saison (les bêtes s'éloignent et disparaissent) et fait venir les autres, hors du champ de
+  la caméra et à 14 m du joueur au moins ; un groupe qui a perdu des bêtes (fuite, envol) les retrouve au
+  bout de `respawn_s` (40 s par défaut, 90 à 120 s pour les dangereux). `planned` garde le peuplement
+  des vraies cartes (`VIE.md`, 6.3) qui n'ont pas encore leur nœud `Fauna`.
+- **E5 — La meute** : chaque loup a un créneau sur un cercle de 3,2 m autour du joueur, qui tourne à
+  0,6 rad/s ; un seul porteur du jeton s'approche (bond annoncé 0,5 s, puis morsure) et le rend en frappant
+  ou touché, avec 0,9 s de pause ; la moitié de l'effectif de départ partie, le reste se débande
+  (`ACTE1.md`, 3.5). Une meute alertée chasse jusqu'à deux fois la portée de repérage de chacun.
+- **E5 — Sanglier et ours** : la charge du sanglier est le « bond » d'`Enemy` (attaque `rush`, sans dégâts,
+  portée de déclenchement 8 m) avec 1 s de préparation (il gratte le sol : `broute`, la zone de la charge se
+  dessine) puis un coup de boutoir au contact ; contre un `StaticBody3D` (arbre, rocher, bord de carte), il
+  reste étourdi 2 s (`stun_s`). L'ours est `stoic` (l'épée ne le fait pas reculer), annonce son coup 0,8 s,
+  avance à 1,2 m/s et abandonne la poursuite à 15 m de sa tanière (`leash_m`).
+- **E5 — Bruit** : un paisible alerte ou fuit à des distances multipliées par 1,5 si le joueur court (au-delà
+  de 5,5 m/s), par 0,6 s'il est immobile ; un combat (un autre animal ou le joueur touché) à moins de
+  `combat_noise_m` (12 à 14 m) l'alarme. Le coup d'épée dans le vide ne fait pas de bruit (aucun signal :
+  à ajouter par une PR « contrats » si le récit le veut).
+- **E5 — Navigation** : `FaunaNav` ne connaît que le sol de la carte (`MapGround.is_walkable`, `level_at` :
+  un cran de palier, 0,5 m, au plus par pas) et essaie des directions de plus en plus détournées ; les décors
+  se contournent par la collision (`Enemy._detour`). Une carte sans `MapGround` n'a pour limite que sa collision.
+- **E5 — Planches de remplacement** : `tools/gen_fauna.py` (appelé par `gen_placeholders.py fauna`), profil
+  seulement ; hauteurs au repos et animations du cahier n° 5, section 7.3, dont les nombres d'images et les
+  cadences proposés sont **confirmés tels quels**, avec `broute` (4 images, 4 ips, boucle) et `fuite` ; la
+  1re image de `repos` mesure la hauteur du cahier à 96 px par mètre. Les trois insectes du lot R5
+  (`butterfly_orange_b`, `dragonfly_amber`, `dragonfly_blue`) ont leur recette dans `tools/hd2d_anim.py`.
+- **E5 — Carte d'essai `foret_essai`** : 56 × 40 m, sur `MapGround`, région `essai`, dans `maps` de l'île
+  n° 68 (pas dans un lieu : comme `essai` et `essai_relief`), `?map=foret_essai` ; une terrasse d'un mètre au
+  nord (clairière des loups, rampe), la clairière des cerfs, la souille, la tanière de l'ours, une mare. La
+  vraie `foret_profonde` (80 × 60 m, `CARTE.md`) viendra plus tard : `peuplement.json` la prévoit.
 - **I1 — 88 images livrées inscrites au manifeste** : navires (`docs/ASSETS_HD2D_NAVIRES.md`, lots L et S1 à
   S5, 48 images), cahier n° 4 (O1, O2, P, Q : 24), lot N (4 ciels, `cloud_sea_night`, `sun_window`, 3
   fenêtres de nuit) et le reste du lot I (`door_room_open`, `bed_curtain`, `towel_rack`, `butter_cake`,

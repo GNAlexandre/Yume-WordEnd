@@ -97,6 +97,25 @@ TABLES = {
         "etreinte": (4, 8, False, None, None),
         "attaque": (4, 14, False, [1, 2, 3], None),
     },
+    # (E5) Faune (docs/ASSETS_HD2D_ILE68.md, 7.3) : toutes les animations possibles ; une espèce
+    # n'exige que celles de sa clé « anims » du manifeste. marche et course : 6 et 5 images, ou 4
+    # sauts (oiseaux, grenouille). « fauna_bird » : la fuite (envol) boucle.
+    "fauna": {
+        "repos": (2, 2, True, None, None),
+        "marche": ([4, 6], 8, True, None, None),
+        "course": ([4, 5], 14, True, None, None),
+        "attaque": (4, 12, False, [2], None),
+        "degats": (1, 1, False, None, None),
+        "mort": (2, 4, False, None, None),
+        "fuite": (4, 12, False, None, None),
+        "broute": (4, 4, True, None, None),
+    },
+    "fauna_bird": {
+        "repos": (2, 2, True, None, None),
+        "marche": (4, 8, True, None, None),
+        "course": (4, 14, True, None, None),
+        "fuite": (4, 12, True, None, None),
+    },
     "timere": {
         "repos": (5, 6, True, None, None),
         "marche": (4, 7, True, None, None),
@@ -116,6 +135,8 @@ USED = {
     "npc": ("repos", "parle"),
     "life": ("repos", "marche", "parle"),
     "timere": (),
+    "fauna": ("repos",),
+    "fauna_bird": ("repos",),
 }
 # Une ancre peut dépasser du cadre de l'image de quelques px (pied coupé au ras du cadre).
 ANCHOR_MARGIN = 2

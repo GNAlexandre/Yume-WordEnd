@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://src/combat/attack_data.gd" id="1_attack"]
+
+[resource]
+script = ExtResource("1_attack")
+id = &"boar_gore"
+animation = &"attaque"
+damage = 1
+knockback = 5.0
+range_m = 1.0
+cooldown = 1.8
+windup = 0.15
+hitstop = 0.06
+shake = 0.06

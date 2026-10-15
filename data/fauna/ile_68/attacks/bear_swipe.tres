@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://src/combat/attack_data.gd" id="1_attack"]
+
+[resource]
+script = ExtResource("1_attack")
+id = &"bear_swipe"
+animation = &"attaque"
+damage = 2
+knockback = 7.0
+range_m = 1.7
+cooldown = 2.8
+arc_deg = 120.0
+windup = 0.8
+hitstop = 0.1
+shake = 0.12

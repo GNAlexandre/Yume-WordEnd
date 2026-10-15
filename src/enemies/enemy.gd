@@ -183,7 +183,7 @@ var _shadow: MeshInstance3D
 
 
 func _ready() -> void:
-	if not WorldAtlas.enemies_allowed_at(self):
+	if not _is_admitted():
 		# (X1) Les règles de l'île n'en veulent pas (l'île n° 68 : les Timeres ne vivent qu'à la
 		# surface) : rien n'apparaît, ni enemy_spawned.
 		set_physics_process(false)
@@ -223,6 +223,13 @@ func _ready() -> void:
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	_enter(State.IDLE)
 	EventBus.enemy_spawned.emit(self, enemy_id())
+
+
+## (E5) Les règles de l'île admettent-elles ce combattant ici ? Un Timere : enemies_allowed. Un
+## animal (Animal, src/fauna/) redéfinit la question : c'est la liste fauna de l'île qui compte,
+## jamais enemies_allowed ; la garde des Timeres ne le retire donc pas.
+func _is_admitted() -> bool:
+	return WorldAtlas.enemies_allowed_at(self)
 
 
 ## Identifiant du type (EnemyData.id), &"" sans données.
