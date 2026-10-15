@@ -3246,3 +3246,4 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **CP — pas d'ornières sur les pavés** : le décalque livré `cart_ruts` se lit comme un sillon de labour (QC-32, R0.8), il n'est pas posé.
 - **CP — ordre de travail** : après chaque `gen` d'une carte, `tools/import.sh` (le sol lit `materials.png` par l'import ; un import
   périmé donne des rectangles d'herbe aux bords des matières).
+- **(G6) Le Carillon de Willem** : sur décision de l'utilisateur (15 octobre 2026), la planche `willem/willem_duel` (Willem et le Carillon de série Percival, duel du jour 8 et entraînement du jour 11) est commandée au cahier n° 6, C.10, priorité 1.
