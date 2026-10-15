@@ -1,5 +1,7 @@
 # Cahier des charges n° 5 : l'île n° 68, ce qui reste à dessiner
 
+> **Les commandes encore ouvertes sont reprises, à jour et autonomes, dans le cahier n° 6 : `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`** (état au 15 octobre 2026 : R0, R1 et une partie de R2 sont livrés ; ce cahier-ci reste l'archive de la commande, ses inventaires et ses consignes d'origine).
+
 Ce document se donne à ChatGPT (ou à Codex), **lot par lot**. Il termine la première île, l'**île
 n° 68** de *SukaSuka* (traduction Yume Novel), avant qu'on en ouvre d'autres : il commande **tout ce
 qui manque encore** pour que ses lieux, ses gens, sa faune et son ciel soient complets, et rien de plus
