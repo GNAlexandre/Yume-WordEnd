@@ -9,9 +9,11 @@
   "materials_scale": 2,
   "palette": {
     "#a8b040": "herbe_haute",
-    "#3c6e32": "sous_bois",
+    "#9a8a7a": "roche",
     "#5aa83c": "herbe",
     "#c070c0": "prairie",
+    "#3c6e32": "sous_bois",
+    "#2e8a5a": "mousse",
     "#b0602a": "feuilles",
     "#d0a060": "chemin"
   },

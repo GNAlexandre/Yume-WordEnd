@@ -823,3 +823,5 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
 - **Fait (I2, vitres du lot R1)** : `Building.window_glow_color` et `window_glow_tolerance` (PR « contrats » de QO,
   QC-02) ; les façades de l'entrepôt ont leur règle, rien à redessiner. Le café garde la règle par défaut :
   sa vitrine attend la façade de nuit (cahier n° 5, R0.9).
+\n
+- **C3b — une caméra qui s'incline au bord du vide** (CameraRig, propriétaire : le lot caméra ; non bloquant) : à 32° d'inclinaison fixe, la caméra ne voit pas la falaise sous le bord nord de la colline (la face est au nord de la terre) : la « falaise visible sous le bord » demandée pour la colline (CARTE.md 7, la scène 8.8 de l'acte 1) n'existe que si la caméra s'incline davantage (50 à 60°) quand le joueur est à moins de 6 m d'un bord `void` : on verrait alors la lèvre, la face de roche, le rideau de roche et la mer de nuages 60 m plus bas. Sans cela, le vide se lit par la mer de nuages, les rochers qui flottent et les îles (la recette), et par les piliers de roche commandés au cahier n° 5 (R0.12, `sky/sea_stack_*`).

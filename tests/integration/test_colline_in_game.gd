@@ -2,7 +2,7 @@ extends "res://tests/stubs/m2_game_test.gd"
 ## (C3) La colline des étoiles dans la vraie partie (main.tscn, appuis réels) : de l'entrepôt à la
 ## colline par la sortie à pied, de jour et de nuit (on arrive sur from_entrepot) ; la colline est
 ## de nuit quel que soit le moment (light_preset), l'entrepôt suit le moment ; la montée par les
-## trois rampes, de terrasse en terrasse jusqu'au sommet (+1, +2, +3 m) ; au bord, on ne tombe
+## trois rampes, de terrasse en terrasse jusqu'au sommet (+1, +2,5, +3,5 m) ; au bord, on ne tombe
 ## pas ; puis le retour à l'entrepôt par la sortie, sur from_colline.
 
 const ENTREPOT := &"entrepot"
@@ -76,7 +76,7 @@ func _walk_to_the_hill() -> void:
 
 ## Monte jusqu'au sommet par les trois rampes : chaque terrasse a sa hauteur.
 func _climb_to_the_summit() -> void:
-	await put_player(14.0, 34.5, Vector3.FORWARD)
+	await put_player(12.5, 35.4, Vector3.FORWARD)
 	assert_almost_eq(player.global_position.y, 0.0, 0.08, "au pied de la première rampe")
 	assert_true(
 		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 28.6, 6.0),
@@ -85,22 +85,22 @@ func _climb_to_the_summit() -> void:
 	release_all_input()
 	await until(func() -> bool: return player.is_on_floor(), 2.0)
 	assert_almost_eq(player.global_position.y, 1.0, 0.08, "la terrasse basse, +1 m")
-	await put_player(26.0, 29.8, Vector3.FORWARD)
+	await put_player(25.5, 30.8, Vector3.FORWARD)
 	assert_true(
-		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 24.6, 6.0),
+		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 22.6, 6.0),
 		"la deuxième rampe"
 	)
 	release_all_input()
 	await until(func() -> bool: return player.is_on_floor(), 2.0)
-	assert_almost_eq(player.global_position.y, 2.0, 0.08, "la terrasse haute, +2 m")
-	await put_player(16.0, 24.2, Vector3.FORWARD)
+	assert_almost_eq(player.global_position.y, 2.5, 0.08, "la terrasse haute, +2,5 m")
+	await put_player(16.5, 24.6, Vector3.FORWARD)
 	assert_true(
-		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 18.6, 6.0),
+		await walk_keys_until([KEY_W], func() -> bool: return player.global_position.z < 17.6, 6.0),
 		"la troisième rampe"
 	)
 	release_all_input()
 	await until(func() -> bool: return player.is_on_floor(), 2.0)
-	assert_almost_eq(player.global_position.y, 3.0, 0.08, "le sommet, +3 m")
+	assert_almost_eq(player.global_position.y, 3.5, 0.08, "le sommet, +3,5 m")
 	assert_eq(WorldManager.current_map(), COLLINE, "toujours sur la colline")
 
 
@@ -111,7 +111,7 @@ func _stop_at_the_rim() -> void:
 	release_all_input()
 	await frames(6)
 	assert_gt(player.global_position.z, 3.3, "la bande du bord arrête le joueur")
-	assert_almost_eq(player.global_position.y, 3.0, 0.1, "il ne tombe pas")
+	assert_almost_eq(player.global_position.y, 3.5, 0.1, "il ne tombe pas")
 	assert_eq(WorldManager.current_map(), COLLINE)
 
 
