@@ -64,8 +64,8 @@ func _member_removed(actor: LifeActor) -> void:
 		_resend_homes()
 
 
-## (V1) L'ordre des grimpeuses change avec le groupe (leur rôle) : chacune rejoint le point qui lui revient
-## maintenant, sinon deux PNJ visent le même point et se bloquent.
+## (V1) L'ordre des grimpeuses change avec le groupe (leur rôle) : chacune rejoint le point qui
+## lui revient maintenant, sinon deux PNJ visent le même point et se bloquent.
 func _resend_homes() -> void:
 	for actor: LifeActor in members:
 		_send_home(actor)
