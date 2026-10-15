@@ -401,9 +401,9 @@ func test_flying_sprites_have_no_scene() -> void:
 			)
 	assert_eq(
 		count,
-		11,
+		14,
 		(
 			"oiseaux, deux feuilles, papillon, lucioles, deux hélices ; (E9) deux bandes de pluie, "
-			+ "l'éclaboussure, la lumière des fées"
+			+ "l'éclaboussure, la lumière des fées ; (E5) l'autre papillon et deux libellules"
 		)
 	)

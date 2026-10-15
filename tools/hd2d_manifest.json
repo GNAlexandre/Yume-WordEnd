@@ -405,6 +405,9 @@
   {"path": "assets/hd2d/anim/fountain_water.png", "size": [288, 240], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 8},
   {"path": "assets/hd2d/anim/pigeons.png", "size": [38, 29], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 4},
   {"path": "assets/hd2d/anim/butterfly.png", "size": [24, 24], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 12, "anchor": "center"},
+  {"path": "assets/hd2d/anim/butterfly_orange_b.png", "size": [24, 24], "kind": "anim", "prio": 2, "lot": "F", "frames": 4, "fps": 12, "anchor": "center"},
+  {"path": "assets/hd2d/anim/dragonfly_amber.png", "size": [32, 24], "kind": "anim", "prio": 3, "lot": "F", "frames": 4, "fps": 16, "anchor": "center"},
+  {"path": "assets/hd2d/anim/dragonfly_blue.png", "size": [32, 24], "kind": "anim", "prio": 3, "lot": "F", "frames": 4, "fps": 16, "anchor": "center"},
   {"path": "assets/hd2d/anim/fireflies.png", "size": [12, 12], "kind": "anim", "prio": 3, "lot": "F", "frames": 4, "fps": 4, "anchor": "center", "soft_alpha": true},
   {"path": "assets/hd2d/anim/rain_curtain.png", "size": [384, 384], "kind": "anim", "prio": 1, "lot": "N", "frames": 4, "fps": 12, "anchor": "free", "soft_alpha": true},
   {"path": "assets/hd2d/anim/rain_drizzle.png", "size": [384, 384], "kind": "anim", "prio": 1, "lot": "N", "frames": 4, "fps": 10, "anchor": "free", "soft_alpha": true},
@@ -1488,6 +1491,206 @@
     "tombe"
    ],
    "lot": "J"
+  },
+  {
+   "id": "wolf",
+   "dir": "assets/fauna/wolf",
+   "table": "fauna",
+   "height_m": 0.85,
+   "views": [
+    ""
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "course",
+    "attaque",
+    "degats",
+    "mort"
+   ],
+   "feet": "alpha",
+   "axis": false
+  },
+  {
+   "id": "bear",
+   "dir": "assets/fauna/bear",
+   "table": "fauna",
+   "height_m": 1.2,
+   "views": [
+    ""
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "course",
+    "attaque",
+    "degats",
+    "mort"
+   ],
+   "feet": "alpha",
+   "axis": false
+  },
+  {
+   "id": "boar",
+   "dir": "assets/fauna/boar",
+   "table": "fauna",
+   "height_m": 0.9,
+   "views": [
+    ""
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "course",
+    "attaque",
+    "degats",
+    "mort",
+    "broute"
+   ],
+   "feet": "alpha",
+   "axis": false
+  },
+  {
+   "id": "deer",
+   "dir": "assets/fauna/deer",
+   "table": "fauna",
+   "height_m": 1.9,
+   "views": [
+    ""
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "course",
+    "broute"
+   ],
+   "feet": "alpha",
+   "axis": false
+  },
+  {
+   "id": "fox",
+   "dir": "assets/fauna/fox",
+   "table": "fauna",
+   "height_m": 0.45,
+   "views": [
+    ""
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "course",
+    "fuite"
+   ],
+   "feet": "alpha",
+   "axis": false,
+   "accepted": {
+    "side": [
+     "height"
+    ]
+   }
+  },
+  {
+   "id": "squirrel",
+   "dir": "assets/fauna/squirrel",
+   "table": "fauna",
+   "height_m": 0.25,
+   "views": [
+    ""
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "course",
+    "fuite"
+   ],
+   "feet": "alpha",
+   "axis": false,
+   "accepted": {
+    "side": [
+     "height"
+    ]
+   }
+  },
+  {
+   "id": "frog",
+   "dir": "assets/fauna/frog",
+   "table": "fauna",
+   "height_m": 0.12,
+   "views": [
+    ""
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "course",
+    "fuite"
+   ],
+   "feet": "alpha",
+   "axis": false,
+   "accepted": {
+    "side": [
+     "height"
+    ]
+   }
+  },
+  {
+   "id": "blackbird",
+   "dir": "assets/fauna/blackbird",
+   "table": "fauna_bird",
+   "height_m": 0.2,
+   "views": [
+    ""
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "course",
+    "fuite"
+   ],
+   "feet": "alpha",
+   "axis": false,
+   "accepted": {
+    "side": [
+     "height"
+    ]
+   }
+  },
+  {
+   "id": "crow",
+   "dir": "assets/fauna/crow",
+   "table": "fauna_bird",
+   "height_m": 0.4,
+   "views": [
+    ""
+   ],
+   "anims": [
+    "repos",
+    "marche",
+    "course",
+    "fuite"
+   ],
+   "feet": "alpha",
+   "axis": false
+  },
+  {
+   "id": "owl",
+   "dir": "assets/fauna/owl",
+   "table": "fauna_bird",
+   "height_m": 0.4,
+   "views": [
+    ""
+   ],
+   "anims": [
+    "repos",
+    "fuite"
+   ],
+   "feet": "alpha",
+   "axis": false,
+   "accepted": {
+    "side": [
+     "height"
+    ]
+   }
   }
  ]
 }

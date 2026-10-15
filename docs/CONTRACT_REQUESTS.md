@@ -685,6 +685,30 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
 - **Images (cahier, surface)** : une face de falaise grise (`cliff/` pour la surface) et des décors
   de la surface sans mousse ni automne (roches, ruines, épaves) ; en attendant, les terres grises
   teintent les leurs.
+- **E5 → E4 (la vie)** : le nœud `Life` d'une carte peut porter un enfant `Fauna` (`FaunaPopulator`, ses
+  animaux sont ses enfants) et un enfant `Places` (marqueurs nommés : `cerfs`, `souille`, `loups`,
+  `taniere`…). E4 ne doit lire de `Life` que ce qui est à lui (PNJ, `Places` des scènes de vie) et ignorer
+  `Fauna` ; si E4 range aussi ses marqueurs sous `Life/Places`, les noms de la faune sont ceux de
+  `docs/lore/CARTE.md` (points `cerfs`, `souille`, `loups`, `taniere`, `lisiere_riviere`, `gue`…), sans
+  collision avec les siens.
+- **E5 → les cartes de bois** (`sentier`, `colline`, `foret_profonde`, la future `montagne`) : pour peupler
+  la carte, ajouter sous `Life` une instance de `res://src/fauna/fauna.tscn` nommée `Fauna`, les marqueurs
+  attendus sous `Life/Places`, et passer la liste de la carte de `planned` à `maps` dans
+  `data/fauna/ile_68/peuplement.json` (les noms de marqueurs prévus y sont déjà). Pas avant : sans nœud
+  `Fauna`, rien n'apparaît ; `tests/unit/test_fauna_data.gd` vérifie qu'une carte de `maps` a son nœud et
+  ses marqueurs.
+- **E5 → cahier n° 5 (lot R5)** : les planches `assets/fauna/<id>/<id>.png` et `.json` livrées remplacent
+  les remplaçants au même chemin ; vérifier par `python3 tools/hd2d_sheets.py check` (tableaux `fauna` et
+  `fauna_bird`). Les nombres d'images et les cadences du cahier sont retenus tels quels, avec `broute` ;
+  le profil seul suffit (le `SkinData` n'a pas de `front_*` / `back_*` pour les animaux). Les trois
+  insectes (`butterfly_orange_b`, `dragonfly_amber`, `dragonfly_blue`) ont déjà leur remplaçant.
+- **E5 → WorldAtlas / contrats (à ne faire que si utile)** : la liste `rules.fauna` est par île ; « par lieu »
+  est tenu par `banned_regions` de `peuplement.json` (E5 n'a pas eu besoin d'une clé de plus). Un son (cri du
+  loup au couchant, hibou, grillons, grenouilles qui chantent le soir) reste à brancher quand l'audio existera.
+- **E5 → E6 (récit)** : « à zéro point de vie contre la faune : fondu, réveil à l'infirmerie »
+  (`ACTE1.md`, 3.0) n'est pas fait ici : la mort du joueur reste celle de `WorldManager` ; c'est au récit
+  de détourner `EventBus.player_died` sur une carte de l'île n° 68. `Animal.fled(animal)` dit qu'un animal a
+  été chassé (la plainte de Nygglatho si l'on chasse l'ours, le soir) ; aucun `enemy_killed` n'est émis.
 
 - **C1 — premier plan suspendu** (E10, cahier n° 5, section 5.1 : `fg_canopy_a`, `fg_canopy_b`) : un
   panneau accroché en haut de l'écran au-dessus du joueur (une couche de l'interface, ou un
