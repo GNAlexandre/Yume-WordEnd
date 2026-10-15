@@ -11,7 +11,11 @@ uniform sampler2D albedo_texture : source_color, filter_linear, repeat_enable;
 uniform vec4 tint : source_color = vec4(1.0);
 uniform float alpha_cut = 0.5;
 // Lueur propre (fenêtres, cristaux) : les pixels proches de glow_color s'allument sans lumière.
-uniform vec4 glow_color : source_color = vec4(1.0, 0.9, 0.65, 1.0);
+// (QC) glow_color est une couleur de l'image (sRGB), sans conversion : l'image, elle, est lue en
+// linéaire (source_color), on la ramène en sRGB pour comparer. Avec source_color sur glow_color,
+// le rendu Compatibility comparait une couleur sRGB à un pixel linéaire : aucune vitre ne
+// s'allumait la nuit (docs/QUALITE.md, QC-01).
+uniform vec4 glow_color = vec4(1.0, 0.9, 0.65, 1.0);
 uniform float glow_strength = 0.0;
 // Bande animée : nombre d'images côte à côte (1 : image fixe) et cadence (images par seconde ;
 // 0 : chaque exemplaire garde l'image de sa phase).
@@ -46,7 +50,8 @@ void panel_shade(vec2 uv, out vec3 albedo, out float alpha, out vec3 emission) {
 	alpha = c.a;
 	emission = vec3(0.0);
 	if (glow_strength > 0.0) {
-		float near_glow = 1.0 - smoothstep(0.05, 0.12, distance(c.rgb, glow_color.rgb));
+		vec3 image_color = pow(max(c.rgb, vec3(0.0)), vec3(1.0 / 2.2));
+		float near_glow = 1.0 - smoothstep(0.05, 0.12, distance(image_color, glow_color.rgb));
 		emission = c.rgb * near_glow * glow_strength;
 	}
 }

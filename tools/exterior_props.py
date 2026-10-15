@@ -135,6 +135,13 @@ PROPS = {
     "firewood_pile_front": inherited("firewood_pile", "FirewoodPile", "foreground = true"),
 }
 
+# (C3) La colline des étoiles : variantes de premier plan (CARTE.md 0.3) de l'arbre solitaire et du rocher
+# du plan, qui s'effacent devant le joueur quand ils se dressent au sud de lui.
+PROPS.update({
+    "lone_tree_fg": inherited("lone_tree", "LoneTree", "foreground = true"),
+    "boulder_a_fg": inherited("boulder_a", "BoulderA", "foreground = true"),
+})
+
 
 def write_all(quiet=False):
     """Écrit les scènes de PROPS qui manquent ou ont changé ; rend les noms écrits."""

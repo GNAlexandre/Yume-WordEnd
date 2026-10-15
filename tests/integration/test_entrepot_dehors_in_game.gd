@@ -3,8 +3,9 @@ extends "res://tests/stubs/m2_game_test.gd"
 ## longe la façade jusqu'au flanc est et l'on descend par la rampe dans le champ (−0,5 m) ; on monte
 ## à la clairière d'entraînement par sa rampe (+0,5 m) ; on descend au marais de l'ouest (eau
 ## basse, on y marche) ; puis on prend chaque sortie à pied (village, colline, sentier, forêt
-## profonde) et l'on en revient par la sortie de la carte (d'attente, sauf le sentier, construit
-## par le lot C1 : tests/integration/test_sentier_in_game.gd), au marqueur du plan ; les deux
+## profonde) et l'on en revient par la sortie de la carte (d'attente, sauf le sentier et la colline,
+## construits par les lots C1 et C3 : tests/integration/test_sentier_in_game.gd et
+## test_colline_in_game.gd), au marqueur du plan ; les deux
 ## portes du bâtiment s'ouvrent par « Entrer » (vers le rez-de-chaussée, ou, tant qu'il n'existe
 ## pas, la carte d'essai des intérieurs), et l'on revient sur leur marqueur.
 

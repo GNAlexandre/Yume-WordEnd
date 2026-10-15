@@ -1001,7 +1001,7 @@ animaux sauvages ; rien dans le code ne connaît le nom d'une espèce.
    `GameState.moment` et `weather` (`EventBus.atmosphere_changed`) renvoient un groupe hors de saison (les bêtes
    s'éloignent) et en font venir un autre, toujours hors du champ de la caméra et à 14 m du joueur au moins ; les
    bêtes qui ont fui reviennent au bout de `respawn_s`. `planned` : le peuplement prévu des cartes qui n'ont pas
-   encore leur nœud `Fauna` (sentier, colline, forêt profonde, montagne) ; on le passe dans `maps` avec la carte.
+   encore leur nœud `Fauna` (sentier, forêt profonde, montagne ; (C3) la colline l'a, ses groupes sont dans `maps`) ; on le passe dans `maps` avec la carte.
    `FaunaRules.problems(&"ile_68")` en dit tout le format ; le test marche sur toutes les cartes de `maps`.
 6. **Le sol** : les animaux marchent sur ce que `FaunaNav` permet (`MapGround.is_walkable`, `level_at` : ni eau
    dormante, ni vide, ni falaise de plus d'un cran) et contournent les décors par la collision.
@@ -1190,9 +1190,9 @@ static func lookup(path, key_path) -> String, forget_texts()
 
 L'équivalent de `tools/interior_maps.py` pour le dehors : il écrit une carte du dehors **d'après son
 plan** (bloc ```plan de `docs/lore/CARTE.md`, lu par `tools/carte_plans.py`). Cartes construites :
-`entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet) et
-`sentier` (C1) et `village` (C2) ; cartes d'attente (provisoires, un lot de la phase 3 les remplace) :
-`colline`, `foret_profonde`, `port`.
+`entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet),
+`sentier` (C1), `village` (C2) et `colline` (C3) ; cartes d'attente (provisoires, un lot de la phase 3
+les remplace) : `foret_profonde`, `port`.
 
 ```text
 python3 tools/exterior_maps.py gen [map_id…]      # écrit les cartes (toutes sans argument)
@@ -1216,7 +1216,9 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   (`<décor>_forest` ou `<décor>_fg`, qui s'efface autour du joueur), faute de quoi il n'est pas posé
   et l'outil le dit.
 - **Une recette par carte** (`tools/exterior_recipes/<id>.py`) : `SETTINGS` (groupes de décors,
-  sorties provisoires), `ground_plan(plan_map)` (`tools/exterior_ground.py` :
+  sorties provisoires ; (C3) `camera_bounds`, `light_preset`, `no_lights`, `fauna` : bornes de caméra qui
+  diffèrent de la règle, préréglage de lumière de la `Map`, plan à lumières que la carte ne porte pas, nœud
+  `Life/Fauna`), `ground_plan(plan_map)` (`tools/exterior_ground.py` :
   `ground_from_plan` déduit le sol du plan, la recette y ajoute berges, îlots, rampes), `prepare(p)`,
   `pose(p)`, `ambient(p)`, `PLACES_WHY` (places de la vie que le plan ne nomme pas). Modèle court :
   `sentier.py` ; riche : `entrepot.py`. Ajouter une carte : son bloc ```plan, sa recette, son nom dans
@@ -1237,7 +1239,24 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   places de la vie en plus (`sentier_ouest`, `corbeau_perchoir`, `lisiere_renard`…). **Aucune
   lumière** (V1) : la nuit est celle d'`Atmosphere` (préréglage `nuit`) et de la lumière des fées du
   joueur (4 m), qui suffit à lire le sentier.
-- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_exterior_maps.gd` (`check` de l'outil,
+- **La colline des étoiles** (`colline`, CARTE.md section 7, 40 × 40 m, lot C3) : un cap de trois terrasses
+  (+1, +2, +3 m) montées par trois rampes, un sommet plat de 12 × 12 m (la place `cercle_talismans`, libre,
+  herbe rase, le petit cristal en `talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher` : les points de la
+  scène de l'acte 1, 8.8), le **vide au nord** (bord `void` de `MapGround` : la mer de nuages nocturne, les
+  paliers vont jusqu'à la côte) ; sortie à pied vers `entrepot` (`from_colline`) ; bornes de caméra
+  `Rect2(10, 6, 20, 26)` ; **`light_preset = &"nuit"`** (la nuit claire d'E9, quel que soit le moment de la
+  journée ; CARTE.md l'appelle `nuit_claire`) et **aucune lumière** dans la carte (la lueur du cristal et des
+  talismans est celle de la scène) ; faune d'E5 (`Life/Fauna`, `merles`, `papillons`, `chouette` : groupes dans
+  `data/fauna/ile_68/peuplement.json`, `maps`) ; places de la vie en plus (`vers_entrepot`, `pied_de_colline`,
+  `arbre_seul`…). Toutes les images du plan sont livrées ; `lone_tree_fg` et `boulder_a_fg` (premier plan,
+  `tools/exterior_props.py`) ; remplaçant du talisman de la scène : `anim/talisman_float` (`tools/hd2d_colline.py`,
+  manifeste, lot R6 du cahier n° 5).
+- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_colline.gd` (28 : plan, relief, vide et mer de
+  nuages, sommet libre, lumière, faune, marche, caméra, densité, draw calls),
+  `tests/integration/test_colline_in_game.gd` (de l'entrepôt à la colline de jour et de nuit, la montée par
+  les trois rampes, le bord, le retour ; captures `tests/integration/demo_c3.tscn` : `C3_VIEW=<vue>
+  [C3_MOMENT=couchant C3_FREE=1] tools/screenshot.sh res://tests/integration/demo_c3.tscn
+  build/shots/c3_<vue>.png 60`), `tests/unit/test_exterior_maps.gd` (`check` de l'outil,
   cartes d'attente, `port` dans l'île), `tests/integration/test_sentier_in_game.gd` (de l'entrepôt au
   sentier, au marais, à la rampe de la ville, au port d'attente, et retour) ; captures
   `C1_MAP=sentier C1_VIEW=<vue> [C1_MOMENT=nuit] [C1_LIGHT=off] tools/screenshot.sh

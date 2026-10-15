@@ -2985,6 +2985,50 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
 - **V1 — pluie** : `LifeDirector` tient deux drapeaux d'après `GameState.weather` : `pluie_du_jour` tant qu'il pleut (pluie, averse), `apres_pluie` quand elle cesse, jusqu'à l'aube suivante ; les lignes `{"if": {"flag": "pluie_du_jour"}}` font rentrer tout le monde (salle de jeux, lecture, balle contre le mur), `apres_pluie` envoie les petites sauter dans les flaques du champ (`boue`). Le récit (E6) peut aussi poser ces drapeaux.
 - **V1 — navigation** : `LifeNav.nearest_open` ne choisit plus, dedans, une case de l'autre côté d'un mur (un lit contre la porte d'un dortoir finissait dans le couloir) ; correctif sûr, éprouvé par `tests/unit/test_life_ile_68_nav.gd`.
 - **V1 — jours** : `GameState.day` 0 (aucun jour) joue la journée de base ; les variations de VIE.md, section 3, sont des lignes à `day` : fuite (1 à 3), en ville (3), dessert (4, 6, 9, 11), aînées absentes et petite blessée (7 à 9), fièvre de Willem (8), entraînement (9 à 12), café et chasse à l'ours (9), horloge (11), départ (12). Les soirs, la tour de fées a lieu aux jours 0, 10 et 12 ; les jours 1 à 9 et 11, jeux de société. Un trajet qui change de carte s'arrête à la sortie de la carte courante (l'étage vers la ville : l'escalier) : le directeur ne suit pas la correspondance entre cartes.
+- **C3 — la colline par l'outil** : `colline` passe de `WAITING` à `RECIPES` de `tools/exterior_maps.py`
+  (recette `tools/exterior_recipes/colline.py`) ; `gen colline` écrit le sol (`data/maps/colline/`, avec une
+  `structures.png` de plus : les rampes) et la scène ; `check` la reconnaît. L'outil gagne trois réglages de
+  recette (`camera_bounds`, `light_preset`, `fauna` ; `no_lights` est celui de C2), la liste des places d'une carte
+  de C3 (`PLACES_LOT`), et `Pose.height` rend 0 sur une case du vide.
+- **C3 — lumière** : CARTE.md 7 et ACTE1.md 8.8 disent `nuit_claire`, que `data/lighting/` n'a pas ; le
+  préréglage d'E9 qui est une nuit claire est `nuit` (PLAN.md, E9 : « `nuit` : la colline, une nuit claire »).
+  `light_preset = &"nuit"` : la colline est de nuit quel que soit le moment (de jour, on y monte dans la nuit
+  claire ; l'entrepôt retrouve le moment à la sortie). Les deux lignes `lumiere` du plan (`cristal_reglage`,
+  `talismans`) ne sont pas écrites : la carte ne porte aucune lumière (consigne du lot) ; la lueur est celle
+  de la scène de l'acte 1 (8.8). Un préréglage `nuit_claire` plus doux : docs/CONTRACT_REQUESTS.md.
+- **C3 — bornes de la caméra** : `Rect2(10, 6, 20, 26)`, pas le `Rect2(10, 6, 20, 23)` du plan : avec 23, le point
+  visé s'arrête à z = 29, la vue ne descend qu'à z = 36 et le joueur sortait de l'écran sur le bas du chemin
+  (arrivée en z = 36,5, sortie en z = 39,4). z = 6 au nord (la vue sur le vide), z = 32 au sud (règle P − 8).
+  Reporté dans CARTE.md (7) ; le socle de test accepte des bornes propres à la carte
+  (`expected_camera_bounds`).
+- **C3 — relief** : les paliers du plan (+1, +2, +3 m) sont prolongés au nord jusqu'au bord du vide (le plan
+  les arrête à z = 4, ce qui laissait un replat de niveau 0 sous le sommet, une falaise de 3 m tournée vers la
+  mer de nuages) ; le vide est une côte irrégulière autour de z = 2,5 (le bord `falaise 0 3 40 4` du plan ferme
+  la bande de z = 3 à 4, le joueur s'arrête à 1 m de la côte) ; rampes en herbe ; la terre du chemin
+  (`path_dirt_b` du plan, rectangles) n'est peinte que sur la bande du chemin (1,8 m, bords francs) : le
+  rectangle de 12 → 28 × 26 → 30 touchait le pied du talus de 1 m, et `map_build` refuse un chemin qui longe
+  une marche de plus de 0,5 m ; lisières ouest et est en sous-bois.
+- **C3 — décor** : pas de `forest_wall_*` ni d'arbres devant le vide (une lisière au nord flottait sur la mer
+  de nuages) ; les pans de la lisière ouest et est se dressent au-delà du bord (x = −4,5 et 44,5), un rang
+  d'arbres devant ; au sud, grands troncs de premier plan seulement aux deux bouts du bord (au milieu, ils
+  cachaient la montée) ; `lone_tree_fg` et `boulder_a_fg` (premier plan, `tools/exterior_props.py`, ajoutés en
+  fin de table) pour la règle de caméra. Rochers du bord (`edge_rocks_*`) de part et d'autre du cercle, jamais
+  devant lui : la vue au nord reste ouverte. Le cercle ne porte aucun décor debout (la scène s'y joue).
+- **C3 — images** : toutes celles du plan sont livrées, aucun remplaçant n'est nécessaire pour la carte ;
+  `anim/talisman_float` (cahier n° 5, lot R6, cité par CARTE.md 7 et ACTE1.md 8.8, posé par la scène et non
+  par la carte) a un remplaçant (`tools/hd2d_colline.py`, 24 × 24 px × 4, manifeste), à remplacer par la
+  livraison sans toucher au code.
+- **C3 — faune** : les trois groupes de la colline (merles à l'aube et le matin, papillons, chouette) passent
+  de `planned` à `maps` dans `data/fauna/ile_68/peuplement.json`, avec leurs marqueurs dans `Life/Places`
+  (`merles`, `papillons`, `chouette` ; au lieu de `sommet` : le sommet est la scène des talismans, la chouette
+  est à l'arbre solitaire et les merles sur la terrasse haute) et le nœud `Life/Fauna`.
+- **C3 — vie** : places en plus du plan, `PLACES_WHY` : `vers_entrepot` (le départ vers l'entrepôt, devant la
+  sortie), `pied_de_colline`, `arbre_seul`, `merles`, `papillons`, `chouette`. Willem y monte au soir du jour 8
+  (`away: colline` dans `data/life/ile_68/willem.json`) : sa place sur la carte (`talismans_centre`, `dos_a_dos`)
+  est à écrire par E6 et la scène.
+- **C3 — densité et mesures** : 42 à 67 éléments par écran (CARTE.md 7 : 40 à 70) ; au plus 68 lots de décor
+  fondus dans le champ (grille de points de vue) et 113 draw calls avec le reste (budget 200) ;
+  Xvfb, `tests/integration/demo_c3.tscn` : 40 à 82 draw calls selon la vue, la nuit comme le jour.
 - **C2 — la porte du café est à x = 19,8** (sortie `porte_cafe` 19,1 → 20,5, marqueur `from_cafe`, point
   `cafe_porte`), au droit de la porte de la façade livrée (`cafe.png`), au lieu de 18,5 du plan ; CARTE.md
   est corrigé en conséquence (idem `hanging_sign_key` à 12,7 et `firewood_pile` à 4,5, qui tombait dans le
@@ -3070,3 +3114,6 @@ union entre lots) : `- **L<N> — sujet** : décision ; raison.`
   retouchée ; correction à commander dans `docs/ASSETS_HD2D_ILE68.md` (3.6) et variante moteur
   (`Building.window_glow_color`) dans `docs/CONTRACT_REQUESTS.md`.
 
+- **QC — garant de la qualité visuelle** : série standard de vues en données (`tools/qc_views.json`, une entrée par carte de `ile_68.json`), captures dans la vraie partie par `tools/qc_shots.sh` (`tests/integration/demo_qc.gd`), planches contact et vérification de couverture par `tools/qc_tool.py` ; grille et registre : `docs/QUALITE.md`. Les vues d'ensemble (caméra haute) ne comptent pas pour le budget de 200 draw calls.
+- **QC — lueur des vitres** : `glow_color` (`panel_core.gdshaderinc`) n'a plus `source_color` et la couleur de l'image est ramenée en sRGB pour la comparaison ; sous Compatibility, la comparaison d'une couleur sRGB au pixel linéaire éteignait toutes les vitres, la nuit comme le jour. Tolérance inchangée (0,05 à 0,12) : plus large, elle allumerait le torchis ocre des chaumières.
+- **QC — voûtes du sentier** : `fg_canopy_a` n'est plus posé en l'air au-dessus du sentier (une masse sombre au milieu de l'écran) ; il attend le premier plan accroché à l'écran (E10). `test_sentier.gd` vérifie qu'aucune voûte ne flotte.
