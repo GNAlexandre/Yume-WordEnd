@@ -641,7 +641,11 @@ class_name GroundDecal     # (H9) src/world/ground_decal.gd, racine possible d'u
                            # (MapGround.triangles_in), sinon sur IslandTerrain (île ancienne)
 class_name Building        # (H9) @export side_facade (flanc est, retourné à l'ouest ; enfant interne « Sides ») ;
                            # side_size_m(), side_contract_size() (pignon : profondeur × faîtage ; gouttereau :
-                           # profondeur × mur), side_material(texture, glow)
+                           # profondeur × mur), side_material(texture, glow, glow_color, glow_tolerance) ; (QO)
+                           # @export window_glow_color (couleur des carreaux, sRGB de l'image), window_glow_tolerance
+                           # (défaut : celle du shader, #FFCA63 à 0,12) ; DecorPanel.set_glow_rule(material, couleur,
+                           # tolérance), glow_shader_color(couleur), glow_weight(pixel, couleur, tolérance) (jumeau du
+                           # shader), GLOW_COLOR, GLOW_TOLERANCE ; material_for(…, glow_color, glow_tolerance)
 class_name PropScatter     # (H9) @export variants: Array[PackedScene], random_flip ; pool(), variant_indices(),
                            # pick_variants(points, count, seed) (jamais la variante du plus proche voisin),
                            # nearest_neighbor(points, i) ; (T1) follow_ground : sur une carte de la refonte,

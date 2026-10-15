@@ -18,6 +18,8 @@ footprint = Vector2(7.0, 6.0)
 wall_height = 5.5
 ridge_height = 7.5
 side_facade = ExtResource("5_side")
+window_glow_color = Color(0.9137255, 0.75686276, 0.5529412, 1)
+window_glow_tolerance = 0.015
 metadata/hd2d_category = "building"
 
 [node name="Collision" type="StaticBody3D" parent="."]

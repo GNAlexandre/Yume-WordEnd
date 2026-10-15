@@ -19,6 +19,8 @@ wall_height = 6.5
 ridge_height = 10
 overhang = 0.3
 window_glow = 0.6
+window_glow_color = Color(0.9882353, 0.8588235, 0.5254902, 1)
+window_glow_tolerance = 0.12
 side_facade = ExtResource("5_side")
 
 [node name="Collision" type="StaticBody3D" parent="."]

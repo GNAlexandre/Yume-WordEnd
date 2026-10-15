@@ -20,6 +20,8 @@ ridge_height = 6.5
 gable_front = true
 overhang = 0.1
 window_glow = 0.6
+window_glow_color = Color(0.9882353, 0.8156863, 0.4392157, 1)
+window_glow_tolerance = 0.15
 side_facade = ExtResource("5_side")
 
 [node name="Collision" type="StaticBody3D" parent="."]
