@@ -112,6 +112,8 @@ func refresh() -> void:
 		var row := Label.new()
 		row.text = "%s — %s" % [_day_label(day), StoryDirector.calendar_line(day)]
 		row.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		# Largeur donnée : un texte à la ligne sans largeur ferait une colonne d'une lettre.
+		row.custom_minimum_size = Vector2(780, 0)
 		row.add_theme_font_size_override(&"font_size", 22)
 		_lines.add_child(row)
 	if days.is_empty():

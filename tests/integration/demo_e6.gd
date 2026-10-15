@@ -205,7 +205,7 @@ func _check_capture() -> bool:
 				if not calendar.call(&"is_open"):
 					calendar.call(&"open")
 					_hint_seen_at = _elapsed
-				captured = _elapsed - _hint_seen_at > 0.5
+				captured = _elapsed - _hint_seen_at > 1.0
 		_:
 			var wanted: String = LINES.get(_view, "")
 			captured = not wanted.is_empty() and wanted in _shown_text() and _box.is_waiting()
