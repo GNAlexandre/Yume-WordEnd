@@ -17,7 +17,6 @@
 [ext_resource type="PackedScene" path="res://src/world/props/dining_table_set.tscn" id="p_dining_table_set"]
 [ext_resource type="PackedScene" path="res://src/world/props/dining_table_long.tscn" id="p_dining_table_long"]
 [ext_resource type="PackedScene" path="res://src/world/props/chair_wood_back.tscn" id="p_chair_wood_back"]
-[ext_resource type="PackedScene" path="res://src/world/props/interior/crystal_pendant.tscn" id="p_crystal_pendant"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/stairs_up.tscn" id="p_stairs_up"]
 [ext_resource type="PackedScene" path="res://src/world/props/archive_shelves.tscn" id="p_archive_shelves"]
 [ext_resource type="PackedScene" path="res://src/world/props/paper_pile_a.tscn" id="p_paper_pile_a"]
@@ -370,12 +369,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.75, 0, 7.825)
 [node name="chair_wood_back_28" parent="Geometry/Refectoire" instance=ExtResource("p_chair_wood_back")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 0, 7.825)
 
-[node name="crystal_pendant_1" parent="Geometry/Refectoire" instance=ExtResource("p_crystal_pendant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 1.6042, 3.95)
-
-[node name="crystal_pendant_2" parent="Geometry/Refectoire" instance=ExtResource("p_crystal_pendant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 1.6042, 7.15)
-
 [node name="stairs_up_1" parent="Geometry/Escalier" instance=ExtResource("p_stairs_up")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, 4)
 
@@ -604,15 +597,6 @@ shadow_width = 0.9
 shadow_depth = 1.801
 facing = &"east"
 cut_offset = 0.2
-
-[node name="crystal_pendant_3" parent="Geometry/Couloir" instance=ExtResource("p_crystal_pendant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.6042, 9.5)
-
-[node name="crystal_pendant_4" parent="Geometry/Couloir" instance=ExtResource("p_crystal_pendant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1.6042, 9.5)
-
-[node name="crystal_pendant_5" parent="Geometry/Infirmerie" instance=ExtResource("p_crystal_pendant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 1.6042, 12.8)
 
 [node name="wall_clock_swing_1" parent="Geometry/Archives" instance=ExtResource("p_wall_clock_swing")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 22.655, 1.2, 3.4)

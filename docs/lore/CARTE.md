@@ -620,37 +620,37 @@ entrepot_rdc : 32 × 16 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud
     0 
       
         +---o----+----------o----------+-------+-=-+-----o-+--------+
-        |GGG.IIII|NNNNréfectoire...PPPP|escalie|a*m|YYYY...|gggfffff|
-    2   |cuisine.|.....................|.......|...|bb..ZZZ|lecture.|
-        |........|...QQQQQQQQQQQQQQ....|VVV....|...|bb..ZZZ|........|
-        |........|..RRRRRRRRSSSSSSSS...|VVV....|...|aaa....|........|
-        |.KKKKK..|..RRRRRRRRSSSSSSSS...|VVV....|...|aaa....|.jjjj...|
-    4   |.KKKKK..:..RUUUUUUUUUUUUUUS...|VVV....|...|....ccc|.jjjj...|
-        |.KKKKK..:...UUUUUUUUUUUUUU....|VVV....|...|.BBBcee|hjjjj...|
-        |........:.....................|VVV....|...|.BBBBee|hhh.....o
-        |JJ......|.....................|.......|...|.BBBBB.|........|
-    6   |JJ......|...QQQQQQQQQQQQQQ....|.*.....|...|ddddBB.|iii.....|
-        |LL......|..SSSSSSSSRRRRRRRR...|.......|...|dddd...|iii..kkk|
-        |LL...MMM|..SSSSSSSSRRRRRRRR...|.......|...|dddd...|.....kkk|
-        |.....MMM|..SUUUUUUUUUUUUUUR...|.......|...|archive|m....kkk|
-    8   |.....MMM|...UUUUUUUUUUUUUU....|.......|...|.......|m.......|
+        |FFF.GGGG|MMMMréfectoire...NNNN|escalie|a*m|VVVV...|fffeeeee|
+    2   |cuisine.|.....................|.......|...|aa..YYY|lecture.|
+        |........|...PPPPPPPPPPPPPP....|UUU....|...|aa..YYY|........|
+        |........|..QQQQQQQQRRRRRRRR...|UUU....|...|ZZZ....|........|
+        |.JJJJJ..|..QQQQQQQQRRRRRRRR...|UUU....|...|ZZZ....|.iiii...|
+    4   |.JJJJJ..:..QSSSSSSSSSSSSSSR...|UUU....|...|....bbb|.iiii...|
+        |.JJJJJ..:...SSSSSSSSSSSSSS....|UUU....|...|.AAAbdd|giiii...|
+        |........:.....................|UUU....|...|.AAAAdd|ggg.....o
+        |II......|.....................|.......|...|.AAAAA.|........|
+    6   |II......|...PPPPPPPPPPPPPP....|.*.....|...|ccccAA.|hhh.....|
+        |KK......|..RRRRRRRRQQQQQQQQ...|.......|...|cccc...|hhh..jjj|
+        |KK...LLL|..RRRRRRRRQQQQQQQQ...|.......|...|cccc...|.....jjj|
+        |.....LLL|..RSSSSSSSSSSSSSSQ...|.......|...|archive|k....jjj|
+    8   |.....LLL|...SSSSSSSSSSSSSS....|.......|...|.......|k.......|
         +----=---+==-----------------==             --==---+--==----+
-        :.CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC..nnnn|
-      < :.CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC......o
+        :.BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB..mmmm|
+      < :.BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB......o
    10   :couloir....................................................|
         +---------=-+-=-+-=-         -------=-------+-=-------------+
-        |pppppbains.|wc.|pl.|entrée.|yyyEEEEEEEEEzzz|...66667666677.|
-        |ppppp......|...|...|.......|yyyEEEEEEEEEzzz|..88666.66666..|
-   12   |..DDDDD....|...|...|....xxx|.F.EEEEEEEEE...|..88infirmerie.o
-        |..DDDDD....|...|.uu|.......|...EEE222EEE111|.......AA......|
-        |..DDDDD....|...|.uu|...@...|..33EE222EEE111|............999|
-        |rrDDDDD.qqq|...|...|.......|..33EEEEEEEE...|???.6666....999|
-   14   |rr...ss.qqq|...|tt.|v......|...555EEE444...|???.6666...??..|
-        |.....ss....|...|tt.|v......|...555...444...|???.6666...??..|
+        |nnnnnbains.|wc.|pl.|entrée.|xxxDDDDDDDDDyyy|...55556555566.|
+        |nnnnn......|...|...|.......|xxxDDDDDDDDDyyy|..77555.55555..|
+   12   |..CCCCC....|...|...|....vvv|.E.DDDDDDDDD...|..77infirmerie.o
+        |..CCCCC....|...|.tt|.......|...DDD111DDDzzz|...............|
+        |..CCCCC....|...|.tt|...@...|..22DD111DDDzzz|............888|
+        |qqCCCCC.ppp|...|...|.......|..22DDDDDDDD...|???.5555....888|
+   14   |qq...rr.ppp|...|ss.|u......|...444DDD333...|???.5555...99..|
+        |.....rr....|...|ss.|u......|...444...333...|???.5555...99..|
         +-----------+---+---+--===--+---------------+---------------+
                                 v
 ```
-Légende des lettres : `1` board_games_shelf ; `2` game_table ; `3` plush_blue ; `4` plush_pile ; `5` floor_cushions ; `6` bed_iron ; `7` bedside_table ; `8` chair_child ; `9` medicine_cabinet ; `?` washbasin_stand ; `?` infirmary_desk ; `A` crystal_pendant ; `B` papers_floor ; `C` runner_rug ; `D` bath_puddles ; `E` rug_playroom ; `F` ball_white ; `G` crystal_stove ; `I` kitchen_counter ; `J` pantry_cupboard ; `K` kitchen_table_ingredients ; `L` water_tub ; `M` sacks_vegetables ; `N` china_cabinet ; `P` sink_stone ; `Q` chair_wood ; `R` dining_table_set ; `S` dining_table_long ; `U` chair_wood_back ; `V` stairs_up ; `Y` archive_shelves ; `Z` paper_pile_a ; `a` desk_buried ; `b` paper_pile_b ; `c` filing_cabinet ; `d` sofa_beige ; `e` paper_pile_c ; `f` window_reading_seat ; `g` bookshelf_tall ; `h` bookshelf_low ; `i` bookshelf_tall_b ; `j` reading_table ; `k` armchair_reading ; `m` book_pile ; `n` washstand_corridor ; `p` bath_tub ; `q` towel_shelf ; `r` wash_tub ; `s` hamper ; `t` supply_cupboard ; `u` cleaning_set ; `v` potted_plant ; `x` shoe_rack ; `y` piano_old ; `z` toy_chest.
+Légende des lettres : `1` game_table ; `2` plush_blue ; `3` plush_pile ; `4` floor_cushions ; `5` bed_iron ; `6` bedside_table ; `7` chair_child ; `8` medicine_cabinet ; `9` washbasin_stand ; `?` infirmary_desk ; `A` papers_floor ; `B` runner_rug ; `C` bath_puddles ; `D` rug_playroom ; `E` ball_white ; `F` crystal_stove ; `G` kitchen_counter ; `I` pantry_cupboard ; `J` kitchen_table_ingredients ; `K` water_tub ; `L` sacks_vegetables ; `M` china_cabinet ; `N` sink_stone ; `P` chair_wood ; `Q` dining_table_set ; `R` dining_table_long ; `S` chair_wood_back ; `U` stairs_up ; `V` archive_shelves ; `Y` paper_pile_a ; `Z` desk_buried ; `a` paper_pile_b ; `b` filing_cabinet ; `c` sofa_beige ; `d` paper_pile_c ; `e` window_reading_seat ; `f` bookshelf_tall ; `g` bookshelf_low ; `h` bookshelf_tall_b ; `i` reading_table ; `j` armchair_reading ; `k` book_pile ; `m` washstand_corridor ; `n` bath_tub ; `p` towel_shelf ; `q` wash_tub ; `r` hamper ; `s` supply_cupboard ; `t` cleaning_set ; `u` potted_plant ; `v` shoe_rack ; `x` piano_old ; `y` toy_chest ; `z` board_games_shelf.
 <!-- /ascii:entrepot_rdc -->
 
 **Bornes de caméra** `Rect2(6, 4, 20, 6)` ((QO) les pignons au plus près des bords de l'écran ;
@@ -660,7 +660,7 @@ la longe ; `tools/interior_maps.py`, `MAP_SETTINGS`). **Lumière** : préréglag
 | Pièce | Cotes (m) | Ce que dit l'œuvre | Portes et fenêtres | Mobilier (images) | À examiner |
 | --- | --- | --- | --- | --- | --- |
 | **Cuisine** | 4,5 × 7,5 (x 1 → 5,5) | seule la cuisinière du jour y entre ; fourneau de cristal, comptoir, tablier ; œufs, sucre, lait, crème, baies ; marmite et louche (V1, « Directeur en carton » ; V3) | porte au couloir (3,4) ; porte au réfectoire, mur est (z 4,6) ; petite fenêtre au nord | `crystal_stove`, `kitchen_counter`, `kitchen_table_ingredients`, `water_tub`, `pantry_cupboard`, `sacks_vegetables` ; murs : `wallitem_utensils`, `wallitem_spice_shelf` (le pot de moutarde à l'étiquette d'enfant, VEX), `wallitem_apron_hook` ; vapeur `anim/pot_steam` | le fourneau (« un gros cristal ambré chauffe sous la fonte ») ; le pot de moutarde ; le tablier |
-| **Réfectoire** | 11 × 7,5 | tout le monde y mange ; grande fenêtre ; vaisselier vitré ; évier où l'on rapporte sa tasse ; menu et ligne « dessert du jour » ; marques de taille ; prière, fourchettes levées ensemble (V1 ; V3 ; V4 ; V5 ; VEX, ill.) | portes au couloir aux deux bouts (6,3 et 15,75) ; porte à la cuisine ; grande fenêtre au nord (x = 11) | deux rangées de deux tables (`dining_table_set`, `dining_table_long`), chaises au nord (`chair_wood`) et au sud (`chair_wood_back`, dos à la caméra) : 28 places ; `china_cabinet` (nord-ouest), `sink_stone` (nord-est), deux suspensions `crystal_pendant` ; murs : `wallitem_menu_board` (x 8,8), `wallitem_height_marks` (x 13,4), applique ; sur les tables `meal_lunch`, `tableware_a`, `dessert_flans` (jour 4) | le menu (« la ligne du bas, ajoutée à la craie, attend son dessert ») ; les marques de taille ; le vaisselier ; la fenêtre la nuit |
+| **Réfectoire** | 11 × 7,5 | tout le monde y mange ; grande fenêtre ; vaisselier vitré ; évier où l'on rapporte sa tasse ; menu et ligne « dessert du jour » ; marques de taille ; prière, fourchettes levées ensemble (V1 ; V3 ; V4 ; V5 ; VEX, ill.) | portes au couloir aux deux bouts (6,3 et 15,75) ; porte à la cuisine ; grande fenêtre au nord (x = 11) | deux rangées de deux tables (`dining_table_set`, `dining_table_long`), chaises au nord (`chair_wood`) et au sud (`chair_wood_back`, dos à la caméra) : 28 places ; `china_cabinet` (nord-ouest), `sink_stone` (nord-est), deux suspensions (leur lumière seule : (QO, QC-23) l'image `crystal_pendant`, sans plafond, faisait un fouillis sombre à hauteur de tête) ; murs : `wallitem_menu_board` (x 8,8), `wallitem_height_marks` (x 13,4), applique ; sur les tables `meal_lunch`, `tableware_a`, `dessert_flans` (jour 4) | le menu (« la ligne du bas, ajoutée à la craie, attend son dessert ») ; les marques de taille ; le vaisselier ; la fenêtre la nuit |
 | **Cage d'escalier** | 4 × 7,5 | (original) | ouverte sur le couloir sur 4 m | `stairs_up` contre le mur ouest (x 16,7 → 18,3, z 2,5 → 5,5) ; murs : `wallitem_chore_chart` (nord, x 19,4 : les **plannings de corvées**, V1), `wallitem_notice_b` (« on ne court pas dans les couloirs », V1), `wallitem_notices_mix`, applique | le planning des corvées (qui fait la cuisine aujourd'hui, VIE.md) ; l'écriteau |
 | **Palier des armes** | 2 × 7,5 | la grande porte de métal rivetée à cinq serrures, seul élément militaire (V1, « Entrepôt de fées ») | ouvert sur le couloir ; **porte rivetée au mur nord** (x 21,5, 1,3 m) | `door_armory` ; murs : `wallitem_bronze_plaque` (celle de la « salle de stockage », à côté de la porte des archives, V1), applique | la porte (« cinq serrures ; Nygglatho garde la clé ») |
 | **Archives** (« salle de stockage ») | 4 × 7,5 | plaque de bronze ; un océan de papiers ; un bureau et une chaise sous les piles ; horloge murale dont on entend la trotteuse ; canapé beige à trois places ; personne n'y vient, on s'y cache pour couper aux corvées (V1, « Les valeureux… » ; V3) | porte au couloir (24,2) ; petite fenêtre haute et poussiéreuse au nord | `archive_shelves`, `paper_pile_a/b/c`, `desk_buried`, `filing_cabinet`, `sofa_beige` ; décalque `papers_floor` ; murs : `wallitem_wall_clock` (ouest), `wallitem_clippings` (est) ; `coffee_tray` (la nuit des archives) | l'horloge ; une coupure de magazine pour filles ; un rapport de patrouille de nuit ; le bon de commande de carottes (V1) |
@@ -755,8 +755,6 @@ meuble chair_wood 11 6.4 7 0.5 1.0 x14
 meuble dining_table_long 9 7.15 4 1 0.8
 meuble dining_table_set 13 7.15 4 1 0.8
 meuble chair_wood_back 11 7.9 7 0.5 1.0 x14
-meuble crystal_pendant 9 3.95 0.8 0.3 0 libre
-meuble crystal_pendant 13 7.15 0.8 0.3 0 libre
 objet meal_lunch 9 3.95
 objet tableware_a 13 7.15
 point refectoire_vaisselier 6.8 2.4
@@ -894,8 +892,6 @@ lumiere lampe_lecture 28.2 4.3 1.0 cristal
 lumiere applique_refectoire 5.6 2.6 1.6 cristal
 # (QC) Les lampes du soir du couloir et des pièces du sud : la nuit, elles n'avaient que la
 # lumière du joueur (docs/QUALITE.md, QC-08).
-meuble crystal_pendant 8 9.5 0.8 0.3 0 libre
-meuble crystal_pendant 24 9.5 0.8 0.3 0 libre
 lumiere suspension_couloir_1 8 9.5 2.2 cristal
 lumiere suspension_couloir_2 24 9.5 2.2 cristal
 mural wallitem_crystal_sconce bains O 11.6 1.6 0.3
@@ -904,7 +900,6 @@ mural wallitem_crystal_sconce entree O 11.2 1.6 0.3
 lumiere applique_entree 11.1 11.2 1.6 cristal
 mural wallitem_crystal_sconce jeux O 11.4 1.6 0.3
 lumiere applique_jeux 15.1 11.4 1.6 cristal
-meuble crystal_pendant 27.5 12.8 0.8 0.3 0 libre
 lumiere suspension_infirmerie 27.5 12.8 2.2 cristal
 lumiere lampe_infirmerie 23.7 14.2 1.0 cristal
 ```
@@ -946,37 +941,37 @@ entrepot_etage : 32 × 16 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-s
     0 
       
         +-o----+--o---+--------+---o---+-------+--o--+---o---+-o----+
-        |...FFF|.JJJ..|MMNNNPPP|VV..YYY|escalie|c.VVV|....ZZZ|..dddd|
+        |...EEE|.III..|LLMMMNNN|UU..VVV|escalie|b.UUU|....YYY|..cccc|
     2   |Willem|Chthol|Nygglath|soeur..|.......|Ithea|absente|Nephre|
-        |......|......|QQ......|.......|a*a....|.....|.......|......|
-        |......|......|QQ..SSSS|...BBBB|aaa....|.....|GGGG...|......|
-        |I.....|KKKK..|QQ..SSSS|GGGGBBB|aaa....|bbb..|GGGG...|bbb...|
-    4   |I.....|KKKK..|RR......|GGGGBBB|aaa....|bbb..|GGGG...|bbb...|
-        |......|......|RR......|.......|aaa....|.....|.......|......|
-        |......|......|........|.CCCC..|aaa....|.....|.......|......o
-        |GGGG..|......|........|.CCCC..|.......|.....|..GGGGG|......|
-    6   |GGGG..|......|........|.CCCC..|.......|.....|..GGGGG|......|
-        |......|......|UUUU....|.CCCC..|.......|.....|.......|c.....|
-        |......|......|UUUUAAA.|....ZZZ|.......|.....|.......|c.....|
-        |......|...LLL|UUUUAAA.|....ZZZ|.......|.....|.......|......|
-    8   |......|...LLL|...AAAA.|.......|.......|.....|.......|......|
+        |......|......|PP......|.......|Z*Z....|.....|.......|......|
+        |......|......|PP..RRRR|...BBBB|ZZZ....|.....|FFFF...|......|
+        |G.....|JJJJ..|PP..RRRR|FFFFBBB|ZZZ....|aaa..|FFFF...|aaa...|
+    4   |G.....|JJJJ..|QQ......|FFFFBBB|ZZZ....|aaa..|FFFF...|aaa...|
+        |......|......|QQ......|.......|ZZZ....|.....|.......|......|
+        |......|......|........|.CCCC..|ZZZ....|.....|.......|......o
+        |FFFF..|......|........|.CCCC..|.......|.....|..FFFFF|......|
+    6   |FFFF..|......|........|.CCCC..|.......|.....|..FFFFF|......|
+        |......|......|SSSS....|.CCCC..|.......|.....|.......|b.....|
+        |......|......|SSSSAAA.|....YYY|.......|.....|.......|b.....|
+        |......|...KKK|SSSSAAA.|....YYY|.......|.....|.......|......|
+    8   |......|...KKK|...AAAA.|.......|.......|.....|.......|......|
         +----=-+--==--+-----=--+--==---+---     --=--+--=----+-=----+
-        |.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD....ee|
-        |.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD@DDDDDDDDDDDDDDDD...*ffo
-   10   |couloir..................................................ff|
+        |.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD....dd|
+        |.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD@DDDDDDDDDDDDDDDD...*eeo
+   10   |couloir..................................................ee|
         +-----=-----+------=---+-=-+-=-+------=----+-=-+-----==-----+
-        |hhh.....VVV|hhh.......|pl.|wc.|hhh........|lin|hhh....hhhhh|
-        |hhh........|hhh.......|...|...|hhh........|...|hhh....hhhhh|
+        |ggg.....UUU|ggg.......|pl.|wc.|ggg........|lin|ggg....ggggg|
+        |ggg........|ggg.......|...|...|ggg........|...|ggg....ggggg|
    12   |dortoir A..|dortoir B.|...|...|dortoir C..|...|dortoir D...|
         |...........|..........|...|...|...........|...|............|
         |...........|..........|...|...|...........|...|............|
-        |hhh....iiii|bbb...hhhh|...|...|bbbb...hhhh|...|bbbb...hhhhh|
-   14   |hhh.jjjiiii|bbb...hhhh|kk.|...|bbbb...hhhh|mm.|bbbb...hhhhh|
-        |hhh.jjjiiii|bbb...hhhh|kk.|...|bbbb...hhhh|mm.|bbbb...hhhhh|
+        |ggg....hhhh|aaa...gggg|...|...|aaaa...gggg|...|aaaa...ggggg|
+   14   |ggg.iiihhhh|aaa...gggg|jj.|...|aaaa...gggg|kk.|aaaa...ggggg|
+        |ggg.iiihhhh|aaa...gggg|jj.|...|aaaa...gggg|kk.|aaaa...ggggg|
         +-----------+----------+---+---+-----------+---+------------+
       
 ```
-Légende des lettres : `A` rug_brown ; `B` cards_floor ; `C` clothes_floor ; `D` runner_rug ; `E` crystal_pendant ; `F` wardrobe_plain ; `G` bed_plain ; `I` footlocker ; `J` desk_chtholly ; `K` bed_chtholly ; `L` wardrobe_chtholly ; `M` fireplace ; `N` comm_crystal ; `P` shelf_nygglatho ; `Q` tea_table ; `R` chair_guest ; `S` desk_nygglatho ; `U` bed_nygglatho ; `V` dresser_child ; `Y` desk_clean ; `Z` clothes_chest ; `a` stairs_down ; `b` bed_child ; `c` book_pile ; `d` bookshelf_low ; `e` roof_ladder ; `f` leak_bucket ; `g` repair_planks ; `h` bunk_bed ; `i` bed_child_messy ; `j` plush_pile ; `k` supply_cupboard ; `m` towel_shelf.
+Légende des lettres : `A` rug_brown ; `B` cards_floor ; `C` clothes_floor ; `D` runner_rug ; `E` wardrobe_plain ; `F` bed_plain ; `G` footlocker ; `I` desk_chtholly ; `J` bed_chtholly ; `K` wardrobe_chtholly ; `L` fireplace ; `M` comm_crystal ; `N` shelf_nygglatho ; `P` tea_table ; `Q` chair_guest ; `R` desk_nygglatho ; `S` bed_nygglatho ; `U` dresser_child ; `V` desk_clean ; `Y` clothes_chest ; `Z` stairs_down ; `a` bed_child ; `b` book_pile ; `c` bookshelf_low ; `d` roof_ladder ; `e` leak_bucket ; `f` repair_planks ; `g` bunk_bed ; `h` bed_child_messy ; `i` plush_pile ; `j` supply_cupboard ; `k` towel_shelf.
 <!-- /ascii:entrepot_etage -->
 
 **Bornes de caméra** `Rect2(5.5, 4, 21, 6)` ((QO) même règle, cloisons des chambres de Willem et
@@ -1165,9 +1160,7 @@ lumiere applique_palier 19.6 1.2 1.6 cristal
 lumiere applique_couloir 1.2 9.5 1.6 cristal
 lumiere lampe_willem 4.4 5.5 1.5 cristal
 # (QC) Deux suspensions au couloir : la nuit, son bout est (la fuite, la trappe) était noir
-# (docs/QUALITE.md, QC-09).
-meuble crystal_pendant 10 9.5 0.8 0.3 0 libre
-meuble crystal_pendant 25 9.5 0.8 0.3 0 libre
+# (docs/QUALITE.md, QC-09). (QO, QC-23) Les suspensions sont leur lumière seule, sans image.
 lumiere suspension_couloir_1 10 9.5 2.2 cristal
 lumiere suspension_couloir_2 25 9.5 2.2 cristal
 ```
@@ -1693,25 +1686,25 @@ cafe : 12 × 10 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; nord
     0 
       
         +--------------+----+
-        |...BBBBsalle..|III.|
+        |...AAAAsalle..|GGG.|
     2   |..............|arri|
-        |..CCCCCC......:....|
-        |..CCCCCC......:....|
+        |..BBBBBB......:....|
+        |..BBBBBB......:....|
         |..............:....|
     4   |..............|....|
+        |.DD.....DD....|....|
+        o.DDC....DDC...|JJJ.|
+        |.CCC....CCC...|JJJ.|
+    6   |.EEC....EEC...|JJJ.|
         |.EE.....EE....|....|
-        o.EED.AA.EED...|KKK.|
-        |.DDD.AA.DDD...|KKK.|
-    6   |.FFD....FFD...|KKK.|
-        |.FF.....FF....|....|
         |..............|....|
-        |GGG...........|JJJ.|
-    8   |GGG....@......|JJJ.|
-        |..............|JJJ.|
+        |FFF...........|III.|
+    8   |FFF....@......|III.|
+        |..............|III.|
         +------==------+----+
                 v
 ```
-Légende des lettres : `A` crystal_pendant ; `B` cafe_bottle_shelf ; `C` cafe_counter ; `D` cafe_table_heavy ; `E` chair_wood ; `F` chair_wood_back ; `G` cafe_drinkers_table ; `I` pantry_cupboard ; `J` sacks_vegetables ; `K` crates_barrels.
+Légende des lettres : `A` cafe_bottle_shelf ; `B` cafe_counter ; `C` cafe_table_heavy ; `D` chair_wood ; `E` chair_wood_back ; `F` cafe_drinkers_table ; `G` pantry_cupboard ; `I` sacks_vegetables ; `J` crates_barrels.
 <!-- /ascii:cafe -->
 
 | Pièce | Cotes (m) | Mobilier (images) | À examiner |
@@ -1777,7 +1770,6 @@ meuble chair_wood 6.2 4.85 0.5 0.5 1.0
 meuble chair_wood_back 6.2 6.35 0.5 0.5 1.0
 objet juice_glasses 6.2 5.6
 meuble cafe_drinkers_table 2.2 8.0 1.6 0.9 0.8
-meuble crystal_pendant 4.4 5.6 0.8 0.3 0 libre
 meuble pantry_cupboard 9.75 1.45 1.1 0.6 2.0
 meuble sacks_vegetables 9.75 8.2 1.2 0.7 0.7
 meuble crates_barrels 9.75 5.6 1.2 1.0 1.2
@@ -3186,7 +3178,7 @@ sont à ajouter au cahier n° 3 avant d'être commandés.
 | `crypt_stairs` | salle_des_armes | livrée : `assets/hd2d/interior/props/crypt_stairs.png` |
 | `crystal_crates` | port | livrée : `assets/hd2d/props/crystal_crates.png` |
 | `crystal_lamp_table` | entrepot_rdc | livrée : `assets/hd2d/interior/props/crystal_lamp_table.png` |
-| `crystal_pendant` | cafe, entrepot_rdc | livrée : `assets/hd2d/interior/props/crystal_pendant.png` |
+| `crystal_pendant` | (aucune : QO, QC-23, la lumière seule) | livrée : `assets/hd2d/interior/props/crystal_pendant.png`, non posée |
 | `crystal_projector` | ville_projection | livrée : `assets/hd2d/interior/props/crystal_projector.png` |
 | `crystal_stove` | entrepot_rdc | livrée : `assets/hd2d/interior/props/crystal_stove.png` |
 | `deck_bridge` | transport_garde | livrée : `assets/hd2d/props/deck_bridge.png` |

@@ -37,7 +37,6 @@
 [ext_resource type="PackedScene" path="res://src/world/props/plush_pile.tscn" id="p_plush_pile"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/supply_cupboard.tscn" id="p_supply_cupboard"]
 [ext_resource type="PackedScene" path="res://src/world/props/towel_shelf.tscn" id="p_towel_shelf"]
-[ext_resource type="PackedScene" path="res://src/world/props/interior/crystal_pendant.tscn" id="p_crystal_pendant"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/repair_nail_box.tscn" id="p_repair_nail_box"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/letter_sealed_bundle.tscn" id="p_letter_sealed_bundle"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/hearth_fire.tscn" id="p_hearth_fire"]
@@ -312,12 +311,6 @@ cut_offset = 0.4
 
 [node name="bed_child_5" parent="Geometry/DortoirD" instance=ExtResource("p_bed_child")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 14.3)
-
-[node name="crystal_pendant_1" parent="Geometry/Couloir" instance=ExtResource("p_crystal_pendant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.6042, 9.5)
-
-[node name="crystal_pendant_2" parent="Geometry/Couloir" instance=ExtResource("p_crystal_pendant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1.6042, 9.5)
 
 [node name="repair_nail_box_1" parent="Geometry/Willem" instance=ExtResource("p_repair_nail_box")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45, 0.5, 4.62)
