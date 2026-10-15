@@ -313,9 +313,7 @@ func test_building_sides_have_the_shape_of_their_roof() -> void:
 	# (C2) Plus les six flancs du village (cahier n° 5, 5.3 : chaumières, grange, maison de pierre,
 	# appentis).
 	assert_eq(
-		count,
-		27,
-		"19 flancs (cahier n° 2, 9.1 et 9.2), 2 de l'entrepôt (CARTE.md 12.1) et 6 du village (C2)"
+		count, 28, "19 flancs (cahier n° 2), 2 de l'entrepôt, 6 du village (C2), 1 du port (CP)"
 	)
 	assert_true(problems.is_empty(), "; ".join(problems))
 

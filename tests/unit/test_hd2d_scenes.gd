@@ -324,9 +324,7 @@ func test_every_side_is_the_flank_of_its_building_at_contract_size() -> void:
 	# six maisons du
 	# village (cahier n° 5, 5.3 ; scènes de tools/exterior_props.py).
 	assert_eq(
-		count,
-		27,
-		"flancs des 9 bâtiments existants, des 10 nouveaux, de l'entrepôt (T1) et du village (C2)"
+		count, 28, "flancs : 9 existants, 10 nouveaux, entrepôt (T1), village (C2), port (CP)"
 	)
 	assert_true(problems.is_empty(), "; ".join(problems))
 

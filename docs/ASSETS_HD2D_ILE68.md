@@ -1489,6 +1489,9 @@ Deux maisons de la rue du port (façade et flanc, format du lot K) :
 | 3 | `port_house_a` | 576 × 336 | 480 × 576 | long, 3,5 / 6 ; prof. 5 | `wall_stone`, `roof_slate_b` | maison basse de pierre au bord du vide, volets fermés par le vent, câbles d'ancrage scellés au mur, fenêtres éteintes |
 | 3 | `port_house_b` | 384 × 624 | 480 × 384 | pignon, 4 / 6,5 ; prof. 5 | `wall_planks_b`, `roof_tin` | cabane du gardien du port en planches grises, girouette, longue-vue posée sur l'appui de la fenêtre |
 
+Flancs des deux maisons (lot CP : remplaçants inscrits au manifeste, l'image livrée les remplace) : `port_house_a_side` et
+`port_house_b_side` (480 × 384 px, mur gouttereau jusqu'à l'égout, dans le format ci-dessus).
+
 ### 5.7 Ce qui n'est pas dans ce lot
 
 - **Le Barocupot, côté intérieur** : conseil de guerre, coursive et pont sont livrés (`docs/ASSETS_HD2D_NAVIRES.md`,
