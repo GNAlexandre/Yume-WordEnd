@@ -10,9 +10,10 @@ extends Node
 ##   tiennent (jour, créneau, scènes jouées, « if ») et dont le déclencheur part est jouée par
 ##   StoryRunner : « ready » (tout de suite, sur la carte de la scène), « enter » (sur la
 ##   carte, arrivé par un marqueur), « reach » (le joueur à moins de radius m d'une place),
-##   « talk » (parler à un PNJ), « examine » (lire un objet à examiner), « prompt » (une invite posée sur la carte). Ses
-##   présents sont réservés (LifeDirector.reserve) et rendus à la vie à la fin ; le joueur perd
-##   le contrôle au début (étape « control » pour le rendre) et le retrouve à la fin ; la scène
+##   « talk » (parler à un PNJ), « examine » (lire un objet à examiner), « prompt » (une
+##   invite posée sur la carte). Ses présents sont réservés (LifeDirector.reserve) et rendus à
+##   la vie à la fin ; le joueur perd le contrôle au début (étape « control » pour le rendre)
+##   et le retrouve à la fin ; la scène
 ##   jouée est retenue (GameState) et la partie écrite. Une partie reprise au milieu d'une scène
 ##   la rejoue depuis son début, sur sa carte.
 ## - Le temps : le jour et le créneau n'avancent que par les scènes (étapes slot, next_day) et
