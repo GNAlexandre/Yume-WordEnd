@@ -1152,6 +1152,11 @@ plan : docs/DECISIONS.md (« T2 »).
   il garde sa face. Une vue qui arrive : `interior_maps.py gen` ; `test_panel_facing.gd` le vérifie.
   Objets du cahier n° 4 (lots O1, O2, P) posés par des lignes `objet` sur les meubles de la cuisine, de
   la lecture, des archives, de l'infirmerie et des chambres (docs/DECISIONS.md, I1).
+- **Le lot R1 posé (I2)** : bandes animées par `objet` (`bath_steam`, `comm_crystal_call` : nœud caché
+  `visible = false`, que l'histoire montre quand le cristal sonne) ou `mural` (`wall_clock_swing` : DecorPanel
+  accroché au mur ouest, à la place de l'élément de mur statique) ; `desk_clean`, `potted_plant`,
+  `polishing_trestle` au plan ; le sol de la terrasse (`floor_roof_deck`) en `GroundDecal` de 4 × 3,5 m,
+  le bord d'ardoise (`roof_edge_slate`) en panneau (docs/INTERIEURS.md, docs/DECISIONS.md, I2).
 - **Places de la vie** : `Life/Places/<nom>` (`Marker3D`, regard vers ce qu'on y fait) : les
   `point` du plan, chaque chaise (`refectoire_chaise_a01`…), chaque lit, quelques sièges ; liste
   après chaque plan dans CARTE.md.

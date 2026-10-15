@@ -164,13 +164,9 @@ elle arrive, la recette s'en va (la livraison de la porte rivetée `door_armory`
 maison, des objets, etc. a retiré les leurs) et `python3 tools/hd2d_assets.py gen --force` ne réécrit
 jamais un fichier que sa recette ne dessine plus (`--overwrite-delivered` pour le faire quand même).
 
-| Remplaçant | Taille (px) | Genre | Contenu |
-| --- | --- | --- | --- |
-| `floor_flagstone_cellar` | 384 × 384 | tile | dalles de la crypte (cahier, prio 2) |
-| `wall_cellar_stone` | 384 × 288 | tile_h | moellons de la crypte (cahier, prio 2) |
-| `wallcut_stone` | 384 × 24 | tile_h | dessus d'un mur de pierre (cahier, prio 2) |
-| `wallitem_height_marks` | 38 × 154 | panel | marques de taille des petites, bas au sol (cahier, prio 2) |
-| `door_frame_wood` | 126 × 221 | panel | chambranle seul, ouverture de 1,1 × 2,2 m transparente : porte qu'on franchit (hors cahier, demandé dans `docs/CONTRACT_REQUESTS.md`) |
+(I2) Aucun remplaçant du lot I n'est plus en place : la livraison du lot R1 (cahier n° 5, section 3 ; PR n° 37)
+a porté les cinq images que le moteur dessinait lui-même (`floor_flagstone_cellar`, `wall_cellar_stone`,
+`wallcut_stone`, `door_frame_wood`, `wallitem_height_marks`) et leurs recettes sont parties.
 
 Images livrées qu'emploie la carte d'essai (tailles : celles du cahier) :
 
@@ -208,25 +204,13 @@ Ce qu'elles ajoutent aux règles ci-dessus :
 - **Portes qu'on franchit** : `door_frame_wood` ; portes du dehors à leur image.
 - **Objets à examiner** : nœuds `Examine/<clé>` (`Examinable`, src/world/examinable.gd), textes
   dans `data/texts/entrepot.json`.
-- **Remplaçants** (lot I, recettes de `tools/hd2d_interior_props.py`) encore en place au
-  14 octobre 2026 ; une image livrée sous le même nom les remplace sans toucher au code :
+- **Remplaçants** (recettes de `tools/hd2d_interior_props.py`) encore en place au 15 octobre 2026 : les
+  vues de flanc ci-dessous seulement ; la livraison du lot R1 (I2) a remplacé les quatorze autres (vapeur de
+  la marmite, goutte, linge au vent, décalques, piano, trappe et échelle du toit, rambarde tordue, coupures,
+  fenêtre poussiéreuse). Une image livrée sous le même nom remplace une recette sans toucher au code :
 
 | Remplaçant | Taille (px) | Genre | Contenu |
 | --- | --- | --- | --- |
-| `drying_frame_wave` (`anim/`) | 1536 × 211 | bande de 4 images | séchoir du toit, linge au vent |
-| `leak_drip` (`anim/`) | 96 × 96 | bande | goutte de la fuite du couloir de l'étage |
-| `pot_steam` (`anim/`) | 288 × 96 | bande | vapeur de la marmite |
-| `bath_puddles` (`decals/`) | 192 × 144 | décalque | flaques des bains |
-| `cards_floor` (`decals/`) | 144 × 96 | décalque | cartes à jouer par terre (grande sœur) |
-| `clothes_floor` (`decals/`) | 192 × 144 | décalque | vêtements par terre (grande sœur) |
-| `papers_floor` (`decals/`) | 192 × 144 | décalque | papiers des archives |
-| `runner_rug` (`decals/`) | 96 × 384 | décalque | tapis de couloir, bout à bout |
-| `piano_old` (`interior/props/`) | 154 × 134 | meuble | vieux piano de la salle de jeux |
-| `roof_hatch` (`interior/props/`) | 96 × 58 | objet | trappe du toit |
-| `roof_ladder` (`interior/props/`) | 77 × 288 | meuble | échelle vers le toit (hors cahier : `docs/CONTRACT_REQUESTS.md`) |
-| `roof_railing_broken` (`interior/props/`) | 192 × 77 | panneau | module tordu de la rambarde |
-| `wallitem_clippings` (`interior/`) | 77 × 58 | élément de mur | coupures de magazine des archives |
-| `window_dusty` (`interior/`) | 96 × 96 | fenêtre | petite fenêtre haute et poussiéreuse |
 | `sofa_beige_side`, `bookshelf_tall_b_side`, `wardrobe_chtholly_side` (`interior/props/`) | 86 × 175, 58 × 272, 58 × 212 | meubles | vues de flanc du canapé, de la grande bibliothèque et de l'armoire de Chtholly (cahier n° 5, R0.3), pour juger le rendu avant la livraison |
 
 ## 6. Orientation des meubles et vues de flanc (lot I1)
@@ -278,3 +262,29 @@ qui a le meuble : `hand_plane_worn` et `hand_saw_short` (un établi : aucun dans
 l'entrepôt) et le lot Q (`field_satchel_set_down`, `leather_canteen`, `oilskin_cloak_folded`,
 `walking_boots_drying`, `provisions_cloth_bundle` : accessoires de départ et de retour, à poser le
 jour de la scène).
+
+### Le lot R1, posé (I2)
+
+Les dix images nouvelles du lot R1 (cahier n° 5, section 3) sont au manifeste (`lot` `R1`, listes `SURFACES_R1`,
+`FURNITURE_R1`, `OUTDOOR_R1`, `ANIMS_R1` de `tools/hd2d_interior.py`) et posées par le plan, `gen` seul :
+
+- **`bath_steam`** : `objet bath_steam 2.5 11.3` (bains) ; DecorPanel animé à alpha doux, son bas à 0,3 m sous le
+  rebord de la baignoire (`BATH_WATER_DROP`).
+- **`wall_clock_swing`** : `mural wall_clock_swing archives O 3.4 1.2 0.5` ; remplace `wallitem_wall_clock` dans
+  `interior.json` (les éléments de mur y sont fondus en un maillage, sans bande animée) : DecorPanel qui regarde
+  l'est, accroché au mur ouest (`WALL_ANIMS`).
+- **`comm_crystal_call`** : `objet comm_crystal_call 10.3 1.35` (chambre de Nygglatho) ; reprend la console au
+  pixel près (pied au sol, bord sud du meuble : `OVERLAYS`), **cachée** (`visible = false`, `HIDDEN_OBJECTS`) tant
+  que le cristal ne sonne pas : l'histoire montre le nœud `Geometry/Nygglatho/comm_crystal_call_1`. Pas de halo
+  (le cahier : « le jeu ajoute le halo »), à voir avec E9.
+- **`desk_clean`** : remplace `desk_clean_brooch` dans la chambre de la grande sœur (à l'acte 1, Chtholly porte
+  la broche) ; `desk_clean_brooch` reste pour le souvenir du jour 6. **`desk_chtholly_mirror_up`** (acte 2) et
+  **`bed_iron_cover`** (couverture à poser par-dessus un dormeur) ont leur scène, sans place au plan.
+- **`potted_plant`** : dans l'entrée, à l'ouest de la porte (11,6 ; 14,5). **`polishing_trestle`** : dans la salle
+  des armes (5,2 ; 7,9), où l'on polit Seniorious (VEX, prologue).
+- **Le toit** : `floor_roof_deck` en douze `GroundDecal` de 4 × 3,5 m sur la terrasse (voir DECISIONS, I2) ;
+  `roof_edge_slate` en deux modules au pied de l'égout sud du volume ouest ; les taches de mousse passent à la
+  couche 1 pour rester au-dessus.
+- **Les façades** (`warehouse_front_a`, `_b` et leurs flancs) sont lues par `tools/exterior_recipes/entrepot.py`
+  sous leur nom : l'image livrée a remplacé le remplaçant de T1 sans toucher au code. Leurs vitres ne
+  s'allument pas assez la nuit (docs/ASSETS_HD2D_ILE68.md, « Correction à commander »).

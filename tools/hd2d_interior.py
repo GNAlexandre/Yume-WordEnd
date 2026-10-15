@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Intérieurs (lot E3) : images du lot I employées par les intérieurs (cahier n° 3,
 docs/ASSETS_HD2D_SUKASUKA.md, section 3 ; conventions de docs/REFONTE.md, section 8.1), leurs
-entrées du manifeste, les remplaçants des images que la livraison n'a pas encore et les scènes des
-meubles. Guide : docs/INTERIEURS.md.
+entrées du manifeste et les scènes des meubles. Guide : docs/INTERIEURS.md.
 
 Les images vivent dans assets/hd2d/interior/ :
 - sols floor_<matière> (384 × 384, 4 × 4 m, tile : sans raccord, vue de dessus) ;
@@ -15,8 +14,9 @@ Les images vivent dans assets/hd2d/interior/ :
   src/world/props/<nom>.tscn) ;
 et les tapis dans assets/hd2d/decals/ (decal à bord plein, scène GroundDecal).
 
-Les vraies images (livrées) ne se redessinent jamais : seules celles de PLACEHOLDERS ont une
-recette, et une vraie image du même nom les remplacera sans toucher au code.
+Les vraies images (livrées) ne se redessinent jamais : une image livrée sous le nom d'un remplaçant le
+remplace et sa recette s'en va (I1, I2). Seules les vues de flanc de hd2d_interior_props.py (R0.3) en ont
+encore une ; une vraie image du même nom les remplacera sans toucher au code.
 
 Usage :
 
@@ -40,12 +40,8 @@ import json
 import os
 import sys
 
-from PIL import Image, ImageDraw
-
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from hd2d_art import (  # noqa: E402
-    Canvas, WrapCanvas, darker, fractal, mix, noise, paste_wrap, posterize, ramp, rgba, threshold)
 import hd2d_interior_props  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,11 +55,6 @@ LOT = "I"
 # (InteriorRoom.CUT_HEIGHT), sinon ce qu'il garde de haut cacherait le joueur de l'autre côté.
 WALL_MOUNTED = 0.3
 WALL_CUT_HEIGHT = 0.15
-
-DARK = "wood_dark"
-HONEY = "#B08458"
-IRON = "iron"
-BRASS = "brass"
 
 # --- Liste des images (nom, taille en px, priorité du cahier n° 3) ---------------------------------
 
@@ -332,6 +323,10 @@ LOT_NAMES = {
            "wall_wallpaper_floral", "window_shutters", "toolbox_gears", "wallitem_clock_limashenka",
            "wallitem_clock_limashenka_open", "clock_limashenka_swing", "side_table_salon",
            "wallitem_family_portrait", "rug_salon"],
+    # (I2) L'entrepôt complet (cahier n° 5, lot R1, section 3 ; PR n° 37) : les 10 images nouvelles (les 29 autres
+    # livrées étaient déjà au manifeste sous le nom de leur remplaçant et gardent leur lot).
+    "R1": ["floor_roof_deck", "roof_edge_slate", "desk_clean", "desk_chtholly_mirror_up", "polishing_trestle",
+           "potted_plant", "bed_iron_cover", "bath_steam", "comm_crystal_call", "wall_clock_swing"],
 }
 LOT_OF = {name: lot for lot, names in LOT_NAMES.items() for name in names}
 
@@ -487,8 +482,46 @@ FURNITURE_OTHER_IMAGES = FURNITURE_OTHER_IMAGES + FURNITURE_OTHER_IMAGES_C2
 RUGS = RUGS + RUGS_C2
 ANIMS = ANIMS + ANIMS_C2
 
-# Tous les meubles, objets et décors de plein air des cartes : listes d'E3, de T2, d'I1 et de C2.
-ALL_FURNITURE = FURNITURE + FURNITURE_T2 + FURNITURE_I1 + FURNITURE_C2
+# --- (I2) L'entrepôt complet : les images nouvelles du lot R1 (cahier n° 5, section 3) ---------------------------
+#
+# Le sol de la terrasse (floor_roof_deck) est une matière à part : le sol du toit reste celui de MapGround
+# (planches de l'atlas), la tuile se pose par-dessus en décalques de 4 m (TILE_DECALS ; docs/DECISIONS.md, I2). Le bord du toit en
+# pente (roof_edge_slate) est un décor de plein air sans raccord à gauche et à droite (wrap x).
+SURFACES_R1 = [
+    ("floor_roof_deck", (384, 384), "tile", 1),
+]
+# Profondeurs : celles des plans de CARTE.md (bureaux 0,6, tréteau 0,6) ; le pot de fleurs (0,4 m) tient dans un
+# carré de 0,4 m ; la couverture du lit a l'emprise du lit (1 m) et se pose par-dessus lui (COVERS).
+FURNITURE_R1 = [
+    ("desk_clean", (106, 101), 0.6, 0.0, 2),
+    ("desk_chtholly_mirror_up", (106, 101), 0.6, 0.0, 3),
+    ("polishing_trestle", (115, 86), 0.6, 0.0, 3),
+    ("potted_plant", (38, 58), 0.4, 0.0, 3),
+    ("bed_iron_cover", (192, 67), 1.0, 0.0, 1),
+]
+# La couverture seule d'un lit, à poser au pixel près par-dessus lui et son dormeur : sans ombre (celle du lit
+# suffit) ; sa boîte de collision est celle du lit, qu'elle double sans gêner ; l'histoire la pose et la retire.
+COVERS = ("bed_iron_cover",)
+# roof_edge_slate : le bord bas du pan d'ardoise, hors d'atteinte (au-delà de la rambarde) : sans collision.
+OUTDOOR_R1 = [
+    ("roof_edge_slate", (384, 96), 2, None),
+]
+WRAP_X = ("roof_edge_slate",)
+# Tuiles de sol de assets/hd2d/interior/ posées en GroundDecal à plat sur le sol d'une carte du dehors.
+TILE_DECALS = ("floor_roof_deck",)
+# Bandes animées livrées : la vapeur du bain (alpha doux, le bas de l'image est l'eau), l'appel du cristal de
+# communication de Nygglatho (même console que comm_crystal, la lueur est dans l'image) et le balancier de
+# l'horloge des archives (même horloge que wallitem_wall_clock, 4 images à 2 par seconde).
+ANIMS_R1 = [
+    ("bath_steam", (192, 144), 6, 6, 2, True, False, 0.0),
+    ("comm_crystal_call", (67, 134), 4, 6, 2, False, False, 0.0),
+    ("wall_clock_swing", (48, 106), 4, 2, 3, False, False, 0.0),
+]
+OUTDOOR = OUTDOOR + OUTDOOR_R1
+ANIMS = ANIMS + ANIMS_R1
+
+# Tous les meubles, objets et décors de plein air des cartes : listes d'E3, de T2, d'I1, de C2 et d'I2.
+ALL_FURNITURE = FURNITURE + FURNITURE_T2 + FURNITURE_I1 + FURNITURE_C2 + FURNITURE_R1
 ALL_OBJECTS = OBJECTS + OBJECTS_I1 + OBJECTS_C2
 
 # --- (I1) Vues d'un meuble : de flanc, de dos, par le pied (cahier n° 5, section 2.7 et lot R0) ---
@@ -553,24 +586,12 @@ OUTDOOR_VIEWS = {
 }
 VIEW_LOT = "R0"
 
-# Remplaçants : images du lot I absentes de la livraison. door_frame_wood (chambranle seul, ouverture
-# transparente, pour les portes qu'on franchit) n'est pas encore au cahier n° 3 :
-# docs/CONTRACT_REQUESTS.md.
-PLACEHOLDERS = [
-    "floor_flagstone_cellar",
-    "wall_cellar_stone",
-    "wallcut_stone",
-    "door_frame_wood",
-    "wallitem_height_marks",
-]
-
-
 def entries():
     """Entrées du manifeste des images d'intérieur, dans l'ordre : le lot I (E3, T2), puis les images
     livrées après coup (I1 : lots L, S1 à S5, O1, O2, P, Q, N, et les vues de flanc, de dos et de
     pied qui existent)."""
     out = []
-    for name, size, kind, prio in SURFACES + SURFACES_I1 + SURFACES_C2:
+    for name, size, kind, prio in SURFACES + SURFACES_I1 + SURFACES_C2 + SURFACES_R1:
         out.append(_entry("interior/" + name, size, kind, prio, name))
     for name, size, prio in WALL_PANELS + WALL_PANELS_T2 + WALL_PANELS_I1 + WALL_PANELS_C2:
         out.append(_entry("interior/" + name, size, "panel", prio, name))
@@ -579,7 +600,10 @@ def entries():
     for name, size, _glow, prio in ALL_OBJECTS:
         out.append(_entry("interior/props/" + name, size, "panel", prio, name))
     for name, size, prio, _box in OUTDOOR:
-        out.append(_entry("interior/props/" + name, size, "panel", prio, name))
+        entry = _entry("interior/props/" + name, size, "panel", prio, name)
+        if name in WRAP_X:
+            entry["wrap"] = "x"
+        out.append(entry)
     for name, size, prio in OUTDOOR_POLES:
         out.append(_entry("interior/props/" + name, size, "panel", prio, name))
     for name, size, prio, _footprint in FOREGROUND:
@@ -632,154 +656,10 @@ def _entry(key, size, kind, prio, name="", lot=""):
     return {"path": "assets/hd2d/%s.png" % key, "size": list(size), "kind": kind, "prio": prio, "lot": lot}
 
 
-# --- Remplaçants : sols et murs de pierre -----------------------------------------------------------
-
-
-def floor_flagstone_cellar(size, rnd):
-    w, h = size
-    img = posterize(fractal(size, (8, 8), rnd, 2), ramp("#4A443E", 4)[0:3], dither=40)
-    y = 0
-    rows = [64, 64, 64, 64, 64, 64]
-    for rh in rows:
-        widths = []
-        while sum(widths) < w:
-            widths.append(rnd.randint(52, 96))
-        widths[-1] -= sum(widths) - w
-        if widths[-1] < 40:
-            widths[-2] += widths.pop()
-        x = rnd.randrange(w)
-        for sw in widths:
-            base = mix("#8A8076", rnd.choice(["#6E6A66", "#9A8C78", "#7A7468", "#8E8478"]), rnd.uniform(0.2, 0.6))
-            tones = ramp(base, 5, spread=0.38)
-            c = Canvas(sw, rh, rnd)
-            c.rect(2, 2, sw - 2, rh - 2, tones[2])
-            pat = posterize(noise((sw - 6, rh - 6), (3, 3), rnd), tones[1:4], dither=50)
-            c.img.paste(pat, (3, 3))
-            c.rect(2, 2, sw - 2, 4, tones[4])
-            c.rect(2, 2, 4, rh - 2, tones[3])
-            c.rect(2, rh - 4, sw - 2, rh - 2, tones[0])
-            c.rect(sw - 4, 2, sw - 2, rh - 2, tones[0])
-            for _ in range(rnd.randint(0, 2)):
-                cx, cy = rnd.uniform(8, sw - 8), rnd.uniform(8, rh - 8)
-                c.line([(cx, cy), (cx + rnd.uniform(-10, 10), cy + rnd.uniform(4, 14))], tones[0])
-            paste_wrap(img, c.img, x % w, y)
-            x += sw
-        y += rh
-    # Humidité : taches sombres et un peu de mousse dans les joints.
-    damp = fractal(size, (3, 3), rnd, 2).point(lambda v: max(0, int((v - 140) * 1.8)))
-    img.paste(Image.blend(img, Image.new("RGBA", size, rgba("#2E2C2A")), 0.4), (0, 0), damp)
-    moss = threshold(fractal(size, (12, 12), rnd, 2), 215)
-    img.paste(Image.new("RGBA", size, rgba("#4C5A3C")), (0, 0), moss)
-    return img
-
-
-def wall_cellar_stone(size, rnd):
-    w, h = size
-    img = Image.new("RGBA", size, rgba("#3A3430"))
-    c = WrapCanvas(w, h, rnd)
-    c.img = img
-    c.draw = ImageDraw.Draw(c.img)
-    courses = [26, 40, 38, 42, 36, 40, 34]
-    y = 0
-    for i, ch in enumerate(courses):
-        x = rnd.uniform(0, 40)
-        while x < w:
-            sw = rnd.uniform(40, 86)
-            if i == 0:
-                base = "#6E6258"
-            elif i == len(courses) - 1:
-                base = "#4E4640"
-            else:
-                base = mix("#7A7066", rnd.choice(["#6A645E", "#8A7C6C", "#5E5852"]), rnd.uniform(0.2, 0.6))
-            tones = ramp(base, 5, spread=0.38)
-            c.rect(x + 2, y + 2, x + sw - 2, y + ch - 2, tones[2])
-            c.rect(x + 2, y + 2, x + sw - 2, y + 4, tones[4])
-            c.rect(x + 2, y + 2, x + 4, y + ch - 2, tones[3])
-            c.rect(x + 2, y + ch - 4, x + sw - 2, y + ch - 2, tones[0])
-            for _ in range(3):
-                px, py = rnd.uniform(x + 6, x + sw - 6), rnd.uniform(y + 6, y + ch - 6)
-                c.rect(px, py, px + 2, py + 1, tones[rnd.choice([1, 3])])
-            x += sw
-        y += ch
-    damp = Image.linear_gradient("L").resize(size).point(lambda v: max(0, int((v - 120) * 0.9)))
-    c.img.paste(Image.blend(c.img, Image.new("RGBA", size, rgba("#1E1C1A")), 0.45), (0, 0), damp)
-    return c.img
-
-
-def wallcut_stone(size, rnd):
-    w, h = size
-    c = WrapCanvas(w, h, rnd)
-    c.rect(0, 0, w, h, "#3A3430")
-    x = 0
-    while x < w:
-        sw = rnd.choice([32, 48, 48, 64])
-        sw = min(sw, w - x)
-        tones = ramp(mix("#7A7066", rnd.choice(["#6A645E", "#8A7C6C"]), 0.4), 4, spread=0.35)
-        c.rect(x + 1, 1, x + sw - 1, h - 1, tones[2])
-        c.rect(x + 1, 1, x + sw - 1, 3, tones[3])
-        c.rect(x + 1, h - 3, x + sw - 1, h - 1, tones[0])
-        x += sw
-    return c.img
-
-
-# --- Remplaçants : portes et éléments de mur ----------------------------------------------------------
-
-
-def _frame(c, w, h, jamb, lintel, base, sill=0):
-    """Chambranle : montants et linteau moulurés."""
-    tones = ramp(base, 5, spread=0.42)
-    c.rect(0, 0, w, lintel, tones[2])
-    c.rect(0, 0, w, 2, tones[4])
-    c.rect(0, lintel - 2, w, lintel, tones[0])
-    for x0 in (0, w - jamb):
-        c.rect(x0, 0, x0 + jamb, h - sill, tones[2])
-        c.rect(x0, lintel, x0 + 2, h - sill, tones[4] if x0 == 0 else tones[3])
-        c.rect(x0 + jamb - 2, lintel, x0 + jamb, h - sill, tones[1])
-    return tones
-
-
-def door_frame_wood(size, rnd):
-    w, h = size
-    c = Canvas(w, h, rnd)
-    _frame(c, w, h, 10, 10, DARK)
-    # Seuil de bois usé entre les deux montants.
-    c.rect(10, h - 4, w - 10, h, ramp(HONEY, 4)[1])
-    c.rect(10, h - 4, w - 10, h - 3, ramp(HONEY, 4)[3])
-    return c.finish(darker(DARK, 0.5))
-
-
-def wallitem_height_marks(size, rnd):
-    """Marques de taille sur le plâtre : traits entre 0,9 et 1,5 m, un signe à côté de chacun."""
-    w, h = size
-    c = Canvas(w, h, rnd)
-    plaster = ramp("#E6DAC2", 4, spread=0.2)
-    # Fond transparent : seuls les traits et les signes, posés sur une bande de plâtre éclaircie.
-    c.rect(w * 0.3, 0, w * 0.7, h, plaster[2])
-    c.rect(w * 0.3, 0, w * 0.34, h, plaster[3])
-    colors = ["#B5443A", "#4E7A9A", "#5A8A50", "#C88A3A", "#8A5AA0", "#6C625A"]
-    top, bottom = h - 1.5 * PPM, h - 0.9 * PPM
-    levels = sorted(rnd.uniform(top, bottom) for _ in range(9))
-    levels.append(levels[3] + 2)
-    for k, y in enumerate(levels):
-        col = colors[k % len(colors)]
-        c.rect(w * 0.3, y, w * 0.7, y + 1, col)
-        sx = 2 if k % 2 == 0 else w * 0.7 + 2
-        sign = k % 4
-        if sign == 0:
-            c.rect(sx + 2, y - 4, sx + 3, y + 3, col)
-            c.rect(sx, y - 1, sx + 5, y, col)
-        elif sign == 1:
-            c.ellipse(sx + 3, y - 1, 2, 2, col)
-        elif sign == 2:
-            c.poly([(sx, y - 3), (sx + 6, y - 3), (sx + 3, y + 2)], col)
-        else:
-            c.line([(sx, y + 3), (sx + 6, y - 4)], col)
-    c.rect(w * 0.3, h - 3, w * 0.7, h, darker("#E6DAC2", 0.7))
-    return c.finish(darker(HONEY, 0.45))
-
-
-RECIPES = {"interior/" + _name: globals()[_name] for _name in PLACEHOLDERS}
-RECIPES.update(hd2d_interior_props.RECIPES)
+# Remplaçants : seules les vues de hd2d_interior_props.py (R0.3) en ont encore. Les cinq images du lot I que
+# le moteur dessinait lui-même (sols, murs et haut de mur de pierre de la crypte, chambranle, marques de taille)
+# sont livrées avec le lot R1 : leurs recettes sont parties (I2).
+RECIPES = dict(hd2d_interior_props.RECIPES)
 
 
 # --- Manifeste et scènes ------------------------------------------------------------------------------
@@ -839,10 +719,12 @@ def furniture_scene(name, size, depth, glow_amount, image="", node_name=""):
         '[node name="%s" type="Node3D"]' % (node_name or name),
         'script = ExtResource("1_panel")',
         'texture = ExtResource("2_image")',
-        "shadow_width = %s" % _num(shadow_width),
-        "shadow_depth = %s" % _num(round(shadow_depth, 3)),
-        "image_offset = Vector3(0, 0, %s)" % _num(depth / 2.0),
     ]
+    if name in COVERS:
+        lines.append("shadow_width = 0")
+    else:
+        lines += ["shadow_width = %s" % _num(shadow_width), "shadow_depth = %s" % _num(round(shadow_depth, 3))]
+    lines.append("image_offset = Vector3(0, 0, %s)" % _num(depth / 2.0))
     if glow_amount > 0.0:
         lines.append("glow = %s" % _num(glow_amount))
     if depth < WALL_MOUNTED:
@@ -872,6 +754,22 @@ def rug_scene(name, soft=False):
         'texture = ExtResource("2_image")',
     ] + (["soft_alpha = true"] if soft else []) + [
         "follow_ground = false",
+        "",
+    ])
+
+
+def tile_decal_scene(name):
+    """(I2) Tuile de sol (4 × 4 m) posée en décalque sur le sol en relief d'une carte du dehors : GroundDecal
+    qui épouse le sol, que la carte répète (et étire un peu au bord) sur sa surface."""
+    return "\n".join([
+        "[gd_scene format=3]",
+        "",
+        '[ext_resource type="Script" path="res://src/world/ground_decal.gd" id="1_decal"]',
+        '[ext_resource type="Texture2D" path="res://assets/hd2d/interior/%s.png" id="2_image"]' % name,
+        "",
+        '[node name="%s" type="Node3D"]' % name,
+        'script = ExtResource("1_decal")',
+        'texture = ExtResource("2_image")',
         "",
     ])
 
@@ -974,6 +872,8 @@ def cmd_scenes(force=False):
         text = outdoor_scene(name, "assets/hd2d/anim/%s.png" % name, None, glow_amount, frames, fps,
                              poles=poles, soft=soft)
         written += _write(name, text, force)
+    for name in TILE_DECALS:
+        written += _write(name, tile_decal_scene(name), force)
     for name, _size, _prio, _solid in RUGS:
         written += _write(name, rug_scene(name), force)
     for name, _size, _prio, _wrap, soft in DECALS_T2:

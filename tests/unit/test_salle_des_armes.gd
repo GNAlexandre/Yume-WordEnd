@@ -35,6 +35,14 @@ func test_every_piece_of_furniture_of_the_plan_is_in_place() -> void:
 		assert_almost_eq(_map.to_local(door.global_position).x, 2.5, 0.01, "au-dessus des marches")
 
 
+func test_the_polishing_trestle_stands_by_the_chest() -> void:
+	# (I2) Le tréteau où l'on polit les lames (lot R1) : meuble du plan, avec sa collision.
+	var trestle := _map.find_child("polishing_trestle_1", true, false) as InteriorPanel
+	assert_not_null(trestle, "le tréteau à polir")
+	if trestle != null:
+		assert_not_null(trestle.get_node_or_null(^"Collision"), "il bloque")
+
+
 func test_markers_exits_and_named_points() -> void:
 	check_markers_exits_points()
 	var up := _map.get_node(^"Exits/remonter") as MapExit

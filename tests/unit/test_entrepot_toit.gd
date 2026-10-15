@@ -57,6 +57,41 @@ func test_every_decor_of_the_plan_is_in_place() -> void:
 		assert_almost_eq((tree as Node3D).position.y, -DROP, 0.01, "%s : en bas" % tree.name)
 
 
+func test_the_deck_wears_its_own_floor_tile() -> void:
+	# (I2) floor_roof_deck (lot R1) : 3 × 4 décalques de 4 × 3,5 m bout à bout sur la terrasse
+	# (x 3 → 15, z 1 → 15), sous le sol de MapGround ; les taches de mousse passent d'une couche.
+	var tiles := []
+	var mosses := []
+	for entry: Array in decors():
+		if entry[1] == "floor_roof_deck":
+			tiles.append(entry[0])
+		elif String(entry[1]).begins_with("moss_patch"):
+			mosses.append(entry[0])
+	assert_eq(tiles.size(), 12, "douze tuiles")
+	var covered := Rect2()
+	for tile: GroundDecal in tiles:
+		assert_eq(tile.layer, 0, "au plus bas")
+		var size := Vector2(4.0, 4.0 * tile.scale.z)
+		var at := flat(tile.position)
+		covered = (
+			covered.merge(Rect2(at - size / 2.0, size))
+			if covered.has_area()
+			else Rect2(at - size / 2.0, size)
+		)
+	assert_true(
+		covered.is_equal_approx(Rect2(3.0, 1.0, 12.0, 14.0)), "toute la terrasse, sans dépasser"
+	)
+	assert_gt(mosses.size(), 0, "des taches de mousse")
+	for moss: GroundDecal in mosses:
+		assert_eq(moss.layer, 1, "la mousse reste au-dessus du sol")
+	var slate := 0
+	for entry: Array in decors():
+		if entry[1] == "roof_edge_slate":
+			slate += 1
+			assert_almost_eq((entry[0] as Node3D).position.z, 15.0, 0.01, "à l'égout sud")
+	assert_eq(slate, 2, "deux modules de 4 m")
+
+
 func test_the_railing_runs_along_three_edges() -> void:
 	var north := 0
 	var east := 0

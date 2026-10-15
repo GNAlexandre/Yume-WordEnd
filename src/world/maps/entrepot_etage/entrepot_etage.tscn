@@ -20,7 +20,7 @@
 [ext_resource type="PackedScene" path="res://src/world/props/bed_nygglatho.tscn" id="p_bed_nygglatho"]
 [ext_resource type="PackedScene" path="res://src/world/props/rug_brown.tscn" id="p_rug_brown"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/dresser_child.tscn" id="p_dresser_child"]
-[ext_resource type="PackedScene" path="res://src/world/props/interior/desk_clean_brooch.tscn" id="p_desk_clean_brooch"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/desk_clean.tscn" id="p_desk_clean"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/cards_floor.tscn" id="p_cards_floor"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/clothes_floor.tscn" id="p_clothes_floor"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/clothes_chest.tscn" id="p_clothes_chest"]
@@ -40,6 +40,7 @@
 [ext_resource type="PackedScene" path="res://src/world/props/interior/repair_nail_box.tscn" id="p_repair_nail_box"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/letter_sealed_bundle.tscn" id="p_letter_sealed_bundle"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/hearth_fire.tscn" id="p_hearth_fire"]
+[ext_resource type="PackedScene" path="res://src/world/props/interior/comm_crystal_call.tscn" id="p_comm_crystal_call"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/oil_lamp.tscn" id="p_oil_lamp"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/tea_tray_cheesecake.tscn" id="p_tea_tray_cheesecake"]
 [ext_resource type="PackedScene" path="res://src/world/props/interior/thread_spools_pair.tscn" id="p_thread_spools_pair"]
@@ -171,7 +172,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 7.6)
 [node name="dresser_child_1" parent="Geometry/GrandeSoeur" instance=ExtResource("p_dresser_child")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.3, 0, 1.45)
 
-[node name="desk_clean_brooch_1" parent="Geometry/GrandeSoeur" instance=ExtResource("p_desk_clean_brooch")]
+[node name="desk_clean_1" parent="Geometry/GrandeSoeur" instance=ExtResource("p_desk_clean")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.6, 0, 1.45)
 
 [node name="bed_plain_2" parent="Geometry/GrandeSoeur" instance=ExtResource("p_bed_plain")]
@@ -319,6 +320,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.05, 1.77)
 
 [node name="hearth_fire_1" parent="Geometry/Nygglatho" instance=ExtResource("p_hearth_fire")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.1, 1.77)
+
+[node name="comm_crystal_call_1" parent="Geometry/Nygglatho" instance=ExtResource("p_comm_crystal_call")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 0, 1.57)
+visible = false
 
 [node name="oil_lamp_1" parent="Geometry/Nygglatho" instance=ExtResource("p_oil_lamp")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 1.1, 4.32)

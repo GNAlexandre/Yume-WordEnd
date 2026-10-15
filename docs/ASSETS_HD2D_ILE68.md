@@ -731,6 +731,28 @@ ne pas les recommander). Joindre `assets/hd2d/props/tree_old_pine.png` et `bush_
 sol de `thicket_c` ; `bramble_hedge` borde le champ sur 4 m sans raccord à gauche et à droite.
 
 
+### 3.6 État de la livraison du lot R1 (15 octobre 2026) et correction à commander
+
+Les 39 images du lot R1 sont livrées (PR n° 37), inscrites au manifeste et posées par les plans
+(`docs/INTERIEURS.md`, « Le lot R1, posé ») : façades et flancs, sol et bord du toit, vapeur du bain, horloge
+des archives, appel du cristal, bureaux, plante, tréteau. **Format tranché par le moteur** : `floor_roof_deck` n'est
+pas une 28e couche de l'atlas du sol (ce serait changer le contrat du cahier n° 2 : atlas, deux shaders, `terrain.gd`,
+tests) mais une tuile de 4 m posée en décalques sur la terrasse ; `roof_edge_slate` est un panneau de plein air
+de 4 × 1 m, sans raccord à gauche et à droite (`docs/DECISIONS.md`, I2).
+
+**Correction à commander (priorité 2) : les vitres des quatre façades ne s'allument presque pas la nuit.** Le moteur
+allume les pixels dont la couleur est **proche de #FFE6A6 (255, 230, 166)** (`glow_color` de
+`panel_core.gdshaderinc` : pleine lueur à moins de 0,05, nulle à plus de 0,12, distance en RVB linéaire) ; les
+carreaux livrés sont plus orangés (de #FBD367 à #FCE496, dégradés) : seuls 15 % (façade ouest, pignon ouest) et 1 à 2 %
+(façade est, flanc est) des pixels de vitre atteignent le seuil, et de nuit les fenêtres restent ternes, alors que celles des remplaçants de T1, peints près de #FFE6A6,
+brillaient. À redemander **sans toucher au dessin** : mêmes images (`warehouse_front_a`, `warehouse_front_a_side`,
+`warehouse_front_b`, `warehouse_front_b_side`), mêmes tailles, mais carreaux **en aplat #FFE6A6 (±6 par canal)** ;
+le reflet en diagonale et le dégradé vers l'orange se font en dehors de ce vert-jaune (croisillons et ombres plus
+foncés, reflets plus blancs que #FFFFF0, jamais d'orangé sur les carreaux). Variante côté moteur, si l'on préfère ne
+rien redessiner : une couleur de lueur par bâtiment (`Building.window_glow_color`, PR « contrats » : demande dans
+`docs/CONTRACT_REQUESTS.md`). Les fenêtres des intérieurs (`window_cross_*` et leurs versions de nuit du lot N) ne sont
+pas concernées.
+
 ## 4. Lot R2 : les personnages de l'acte 1
 
 ### 4.0 Rappel du format (à coller avec le lot)
