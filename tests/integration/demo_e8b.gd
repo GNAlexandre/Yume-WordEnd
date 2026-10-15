@@ -133,8 +133,14 @@ func _describe() -> String:
 		)
 	if is_instance_valid(_training):
 		return (
-			"Seniorious %s t=%.1f « %s »"
-			% [_training.stage, _training.game_time(), _training.hud_text()]
+			"Seniorious %s t=%.1f « %s » invite « %s » à %.1f m"
+			% [
+				_training.stage,
+				_training.game_time(),
+				_training.hud_text(),
+				_player.current_prompt(),
+				_sword_distance(),
+			]
 		)
 	return "fin"
 
@@ -267,12 +273,17 @@ func _training_bot() -> void:
 			if gesture.is_empty() or now < float(gesture["start"]) + 0.25:
 				_stop_walking()
 				return
+			# Un appui bref à la fois (toutes les 0,25 s), comme un joueur.
+			var last := float(_crane_plan.get("tap_at", -9.0))
 			match gesture["gesture"]:
 				&"trois_coups":
-					if int(now * 10.0) % 3 == 0:
+					if now - last > 0.25:
+						_crane_plan["tap_at"] = now
 						_tap(&"attack")
 				&"pare":
-					_tap(&"charge")
+					if last < float(gesture["start"]):
+						_crane_plan["tap_at"] = now
+						_tap(&"charge")
 				&"cote":
 					_press(&"move_back")
 		&"crane":
@@ -297,5 +308,14 @@ func _training_bot() -> void:
 			var spot := _training.sword_spot()
 			if spot == Vector3.INF:
 				return
-			if _walk_toward(spot, 0.8):
+			# Un appui bref toutes les 0,6 s (tenue, la touche ne relance rien).
+			if _walk_toward(spot, 0.8) and now - float(_crane_plan.get("tap_at", -9.0)) > 0.6:
+				_crane_plan["tap_at"] = now
 				_tap(&"interact")
+
+
+func _sword_distance() -> float:
+	if not is_instance_valid(_training) or _training.sword_spot() == Vector3.INF:
+		return -1.0
+	var offset := _training.sword_spot() - _player.global_position
+	return Vector2(offset.x, offset.z).length()

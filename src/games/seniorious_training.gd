@@ -569,7 +569,7 @@ func _start_fend(impact: float) -> void:
 func _strike_fend() -> void:
 	var impact := float(_fend["impact"])
 	var window := rule("crane/window", 0.2)
-	var charging := player.combat.current_state() == &"charge"
+	var charging := _was_charging
 	if _last_press >= impact - window and _last_press <= impact + 0.001:
 		_fend["perfect"] = true
 		_fend["follow_until"] = impact + rule("crane/follow", 0.7)
@@ -758,9 +758,11 @@ func _on_attack_started(_attack_data: AttackData) -> void:
 			_attacks.pop_front()
 
 
-## La touche de charge, pressée (le venenum s'allume) puis relâchée.
+## La touche de charge, pressée (le venenum s'allume) puis relâchée : l'état de charge du combat,
+## ou la touche tenue (pendant la recharge de l'onde, la charge ne démarre pas encore).
 func _watch_charge() -> void:
-	var charging := player.combat.current_state() == &"charge"
+	var charging := player.combat.current_state() == &"charge" or Input.is_action_pressed(&"charge")
+
 	if charging and not _was_charging:
 		_last_press = _time
 	elif not charging and _was_charging:
