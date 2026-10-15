@@ -1940,7 +1940,7 @@ ShipControl.pose(&"transport_garde", &"deploy_gangway")   # un état d'un coup :
 ShipControl.allow_boarding(&"transport_garde", true)  # « Monter à bord » au pied de la passerelle posée ;
                                                       # jamais à l'acte 1 (CARTE.md 6.2)
 await ShipControl.pass_shadow(&"barocupot")           # 8.6 : une silhouette sombre traverse la vue d'ouest en
-                                                      # est, devant la caméra, en fondu (7 s) ; rend ShipShadow
+                                                      # est dans les nuages, devant la caméra, en fondu (7 s) ; rend ShipShadow
 ShipControl.play(id, action, wait) ; ShipControl.finish(id, action)   # générique ; finish : l'état final
 ShipControl.is_docked(id), has_flag(id, &"hatch"), is_playing(id, action), berth(id), ship(id), data(id)
 ```

@@ -7,7 +7,7 @@ extends Node3D
 ## silhouette livrée du navire, teintée), jamais un maillage. Propriétaire : E7.
 ##
 ## Réglages (data/ships/<id>.json, « shadow ») : image, ppm (densité : plus grand, plus loin),
-## time (s), distance (m devant la caméra), drop (m sous l'axe de la caméra), span (m parcourus),
+## time (s), distance (m devant la caméra, à l'horizontale), drop (m sous elle), span (m parcourus),
 ## tint ([r, g, b]), opacity, fade (part du trajet en fondu à chaque bout).
 
 ## L'ombre est passée.
@@ -83,14 +83,16 @@ func shown_opacity() -> float:
 	return _panel.opacity if _panel != null else 0.0
 
 
-## Le trajet : à distance m devant la caméra, drop m sous son axe, de span / 2 à l'ouest à span / 2
-## à l'est (la caméra regarde le nord).
+## Le trajet : distance m devant la caméra (à l'horizontale), drop m sous elle, de span / 2 à
+## l'ouest à span / 2 à l'est (la caméra regarde le nord) : dans les nuages, au-delà du bord.
 func _place() -> void:
 	var camera := get_viewport().get_camera_3d() if get_viewport() != null else null
 	var eye := camera.global_position if camera != null else Vector3(0.0, 10.0, 20.0)
 	var ahead := -camera.global_basis.z if camera != null else Vector3.FORWARD
-	var center := eye + ahead * float(_settings.get("distance", 40.0))
-	center.y -= float(_settings.get("drop", 6.0))
+	ahead.y = 0.0
+	ahead = ahead.normalized() if ahead.length_squared() > 0.0001 else Vector3.FORWARD
+	var center := eye + ahead * float(_settings.get("distance", 60.0))
+	center.y -= float(_settings.get("drop", 22.0))
 	var half := float(_settings.get("span", 70.0)) / 2.0
 	_start = center + Vector3.LEFT * half
 	_end = center + Vector3.RIGHT * half
