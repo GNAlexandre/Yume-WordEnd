@@ -170,7 +170,7 @@ func _run() -> void:
 			(
 				(
 					"QC vue %s:%s:%s:%s : %d draw calls, %d primitives, %d objets, luminance %.3f, "
-					+ "centre %.3f, personnages %d"
+					+ "centre %.3f, personnages %d, joueur à l'écran %s"
 				)
 				% [
 					map_id,
@@ -183,6 +183,7 @@ func _run() -> void:
 					luma,
 					middle,
 					_characters(),
+					_player_on_screen(),
 				]
 			)
 		)
@@ -249,6 +250,23 @@ func _end_overview() -> void:
 		_overview.queue_free()
 		_overview = null
 		_player.camera_rig.get_node(^"Camera3D").call(&"make_current")
+
+
+## (QO) Place du joueur à l'écran, de −1 à 1 (bord gauche → droit, haut → bas), pieds et tête :
+## « x ; y_pieds ; y_tête », ou « hors champ ». Vérifie que les bornes de caméra ne le sortent pas
+## du cadre aux bouts d'une carte (docs/QUALITE.md, QC-20).
+func _player_on_screen() -> String:
+	var camera := get_viewport().get_camera_3d()
+	var size := get_viewport().get_visible_rect().size
+	if camera == null or size.x <= 0.0:
+		return "?"
+	var feet := _player.global_position
+	var head := feet + Vector3.UP * 1.5
+	if camera.is_position_behind(feet) or camera.is_position_behind(head):
+		return "hors champ"
+	var a := camera.unproject_position(feet) / size * 2.0 - Vector2.ONE
+	var b := camera.unproject_position(head) / size * 2.0 - Vector2.ONE
+	return "%.2f ; %.2f ; %.2f" % [a.x, a.y, b.y]
 
 
 ## Personnages et animaux visibles de la carte (nœuds CharacterVisual affichés sous Life).

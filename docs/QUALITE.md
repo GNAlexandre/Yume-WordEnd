@@ -32,6 +32,10 @@ cherche (section 3) et ce qu'on a trouvé (section 4, le registre).
   luminance).
 - **Avant / après** : on recapture la même vue dans un autre dossier,
   `QC_OUT=build/qc/apres tools/qc_shots.sh village:rue`, et on ouvre les deux images.
+- **Planche comparative** (QO) : `python3 tools/qc_tool.py board <sortie.png> <titre> "A avant=<dossier>"
+  "B après=<dossier>" -- <vue>[@x0,y0,x1,y1]…` : une colonne par option (son nom en gros), une ligne par
+  capture (nom sans `.png`), réduite à 640 px ; `@x0,y0,x1,y1` ajoute le détail de ce cadre, agrandi. Le
+  journal donne aussi la place du joueur à l'écran (« joueur à l'écran x ; y pieds ; y tête », de −1 à 1).
 
 ## 2. Comment on regarde
 
