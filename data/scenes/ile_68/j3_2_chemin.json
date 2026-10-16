@@ -1,62 +1,381 @@
 {
-  "_comment": "ACTE1.md 3.2 (original) : le chemin de la ville. La ville n'a pas encore ses cartes (ville_haute, lot C-ville) : la scène se résume par un fondu et des cartons.",
+  "_comment": "ACTE1.md 3.2 (original) : le chemin de la ville, joué sur les vraies cartes. Sur le sentier, Ithea et Nephren rattrapent {player} et bavardent, puis la suivent (marche libre jusqu'à la sortie vers_ville). À l'entrée de la ville haute, midi : le passant (villager_cat_m) sort de chez lui, voit les trois fées et change de trottoir (du trottoir nord, rue_haute_trottoir_nord, au trottoir sud), puis file vers le sentier. La scène finit devant la porte du snack-bar (porte_snack) : 3.3 prend la suite.",
   "title": "Le chemin de la ville",
   "day": 3,
   "after": [
     "j3_1_information"
   ],
   "map": "sentier",
+  "marker": "from_entrepot",
   "trigger": {
     "on": "ready"
   },
   "present": [
     "ithea",
-    "nephren"
+    "nephren",
+    "villager_cat_m"
   ],
   "steps": [
     {
       "do": "place",
       "who": "ithea",
-      "at": "player",
+      "at": "from_entrepot",
       "offset": [
-        1.2,
-        0.8
+        -0.6,
+        1.0
       ],
-      "facing": "west"
+      "facing": "east",
+      "outfit": "maison"
     },
     {
       "do": "place",
       "who": "nephren",
-      "at": "player",
+      "at": "from_entrepot",
       "offset": [
-        1.8,
-        -0.6
+        -0.9,
+        -0.9
       ],
-      "facing": "west"
+      "facing": "east",
+      "outfit": "maison"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "from_entrepot",
+      "offset": [
+        9.0,
+        -0.5
+      ]
+    },
+    {
+      "do": "walk",
+      "who": "ithea",
+      "to": "from_entrepot",
+      "offset": [
+        7.7,
+        0.3
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "nephren",
+      "to": "from_entrepot",
+      "offset": [
+        7.5,
+        -1.4
+      ],
+      "gait": "course"
+    },
+    {
+      "do": "wait",
+      "time": 0.4
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "from_entrepot",
+      "offset": [
+        7.7,
+        0.3
+      ]
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "from_entrepot",
+      "offset": [
+        7.5,
+        -1.4
+      ]
+    },
+    {
+      "do": "face",
+      "who": "player",
+      "toward": "ithea"
+    },
+    {
+      "do": "face",
+      "who": "ithea",
+      "toward": "player"
+    },
+    {
+      "do": "face",
+      "who": "nephren",
+      "toward": "player"
     },
     {
       "do": "dialogue",
       "node": "bavardage"
     },
     {
-      "do": "fade",
-      "to": "black",
-      "time": 1.0
+      "do": "follow",
+      "who": "ithea",
+      "distance": 1.6,
+      "stop_beyond": 60,
+      "gait": "course"
+    },
+    {
+      "do": "follow",
+      "who": "nephren",
+      "distance": 2.6,
+      "stop_beyond": 60,
+      "gait": "course"
+    },
+    {
+      "do": "hint",
+      "text": "hint"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait",
+      "time": 1.5
+    },
+    {
+      "do": "bubble",
+      "who": "ithea",
+      "text": "bulle_1"
+    },
+    {
+      "do": "wait",
+      "time": 2.5
+    },
+    {
+      "do": "bubble",
+      "who": "nephren",
+      "text": "bulle_2"
+    },
+    {
+      "do": "wait_for",
+      "map": "ville_haute"
+    },
+    {
+      "do": "control",
+      "on": false
     },
     {
       "do": "slot",
       "slot": "midi",
-      "time": 0
+      "time": 2.0
     },
     {
-      "do": "card",
-      "text": "descente",
-      "time": 3.0
+      "do": "unfollow",
+      "who": "ithea"
     },
     {
-      "do": "card",
-      "text": "passant",
-      "time": 3.0
+      "do": "unfollow",
+      "who": "nephren"
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "from_sentier",
+      "offset": [
+        -0.9,
+        -1.0
+      ],
+      "facing": "east",
+      "outfit": "maison"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "from_sentier",
+      "offset": [
+        -1.3,
+        0.9
+      ],
+      "facing": "east",
+      "outfit": "maison"
+    },
+    {
+      "do": "walk",
+      "who": "ithea",
+      "to": "from_sentier",
+      "offset": [
+        3.2,
+        -1.2
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "nephren",
+      "to": "from_sentier",
+      "offset": [
+        2.6,
+        0.2
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "from_sentier",
+      "offset": [
+        4.6,
+        -0.6
+      ],
+      "facing": "east"
+    },
+    {
+      "do": "wait",
+      "time": 0.6
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "from_sentier",
+      "offset": [
+        3.2,
+        -1.2
+      ],
+      "facing": "east"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "from_sentier",
+      "offset": [
+        2.6,
+        0.2
+      ],
+      "facing": "east"
+    },
+    {
+      "do": "camera",
+      "to": [
+        11.0,
+        13.0
+      ],
+      "distance": 15,
+      "time": 1.2
+    },
+    {
+      "do": "place",
+      "who": "villager_cat_m",
+      "at": [
+        15.0,
+        10.9
+      ],
+      "facing": "south"
+    },
+    {
+      "do": "wait",
+      "time": 0.5
+    },
+    {
+      "do": "walk",
+      "who": "villager_cat_m",
+      "to": [
+        11.4,
+        11.6
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "bubble",
+      "who": "villager_cat_m",
+      "text": "sursaut",
+      "time": 1.6
+    },
+    {
+      "do": "face",
+      "who": "ithea",
+      "toward": "villager_cat_m"
+    },
+    {
+      "do": "face",
+      "who": "player",
+      "toward": "villager_cat_m"
+    },
+    {
+      "do": "wait",
+      "time": 0.9
+    },
+    {
+      "do": "walk",
+      "who": "villager_cat_m",
+      "to": [
+        10.6,
+        15.1
+      ],
+      "gait": "course"
+    },
+    {
+      "do": "bubble",
+      "who": "ithea",
+      "text": "salut",
+      "time": 1.8
+    },
+    {
+      "do": "walk",
+      "who": "villager_cat_m",
+      "to": [
+        0.8,
+        15.1
+      ],
+      "gait": "course"
+    },
+    {
+      "do": "leave",
+      "who": "villager_cat_m"
+    },
+    {
+      "do": "face",
+      "who": "player",
+      "toward": "ithea"
+    },
+    {
+      "do": "face",
+      "who": "ithea",
+      "toward": "player"
+    },
+    {
+      "do": "face",
+      "who": "nephren",
+      "toward": "player"
+    },
+    {
+      "do": "dialogue",
+      "node": "passant"
+    },
+    {
+      "do": "camera_reset"
+    },
+    {
+      "do": "follow",
+      "who": "ithea",
+      "distance": 1.6,
+      "stop_beyond": 60,
+      "gait": "course"
+    },
+    {
+      "do": "follow",
+      "who": "nephren",
+      "distance": 2.6,
+      "stop_beyond": 60,
+      "gait": "course"
+    },
+    {
+      "do": "hint",
+      "text": "hint"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "reach": "porte_snack",
+      "radius": 2.0,
+      "map": "ville_haute"
     }
   ]
 }

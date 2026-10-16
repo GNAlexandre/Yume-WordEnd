@@ -1,0 +1,40 @@
+{
+  "id": "j5_1_jeu_willem",
+  "start": "regle",
+  "nodes": {
+    "regle": {
+      "speaker": "",
+      "text": "Après le déjeuner, Willem a rassemblé les petites au champ. Des papillons orange s'envolent des herbes hautes.",
+      "next": "regle_2"
+    },
+    "regle_2": {
+      "speaker_id": "willem",
+      "text": "Deux équipes : les rouges au sud, les blanches au nord. Chacune défend sa cage et vise celle de l'autre.",
+      "next": "regle_3"
+    },
+    "regle_3": {
+      "speaker_id": "pannibal",
+      "text": "Et la clé de bras ? On a le droit ?",
+      "next": "regle_4"
+    },
+    "regle_4": {
+      "speaker_id": "willem",
+      "text": "Non. Une seule règle : tout le monde joue. Tout le monde touche le ballon.",
+      "next": "regle_5"
+    },
+    "regle_5": {
+      "speaker_id": "almita",
+      "text": "… Même moi ?",
+      "next": "regle_6"
+    },
+    "regle_6": {
+      "speaker_id": "willem",
+      "text": "Surtout toi. Rater, ça fait partie du jeu.",
+      "next": "regle_7"
+    },
+    "regle_7": {
+      "speaker": "",
+      "text": "Il pose le ballon au rond central et recule d'un pas."
+    }
+  }
+}

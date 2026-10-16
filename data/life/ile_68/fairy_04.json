@@ -10,6 +10,7 @@
     {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer"},
     {"slot": "apres_midi", "if": {"flag": "apres_pluie"}, "map": "entrepot", "place": "champ_boue", "activity": "boue"},
     {"slot": "apres_midi", "day": [9, 12], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "role": "rouge"},
+    {"slot": "apres_midi", "day": [5, 6], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "role": "blanc"},
     {"slot": "aube", "map": "entrepot_etage", "place": "dortoir_c_lit_1_haut", "activity": "dormir", "_note": "La journée de base."},
     {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_rang_c", "activity": "manger"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_c", "activity": "manger"},

@@ -1711,8 +1711,8 @@ le texte. Appliqué à chaque arrivée sur une carte et à chaque changement de 
 2. Écrire `data/scenes/ile_68/jN_k_nom.json` (déclencheur, conditions, présents, étapes), puis
    ses répliques dans `data/dialogues/ile_68/jN_k_nom.json` (paraphrasées, jamais recopiées ;
    `{player}`, jamais « Chtholly » en dur) et ses textes courts dans `data/texts/ile_68/story.json`
-   (section de la scène). Une carte qui n'existe pas encore : un fondu et des cartons (comme
-   `j1_1_port`, `j3_2_chemin`), jamais une carte inventée. Un combat : une étape `game` et son repli.
+   (section de la scène). Une carte qui n'existe pas encore : un fondu et des cartons (plus aucune
+   scène des jours 1 à 4 n'en a : lot S1b), jamais une carte inventée. Un combat : une étape `game` et son repli.
 3. Le jour : sa ligne du calendrier (`days/<n>/calendar`), `sleep_after` et `sleep_hint` dans
    `act.json`.
 4. Vérifier : `tools/test.sh tests/unit/test_story_data.gd` (format et monde de toutes les
@@ -1720,12 +1720,16 @@ le texte. Appliqué à chaque arrivée sur une carte et à chaque changement de 
    dialogues lus) ou de `test_e6_day1.gd` (vrais appuis, base `tests/stubs/e6_story_test.gd`) ;
    voir : `E6_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_e6.tscn sortie.png 60`.
 
+**(S1b) Les jours 1 à 4 sur les vraies cartes** : `j1_1_port` au port (Willem descend de la passerelle, la protagoniste posée hors du champ à `from_ville_marche`), `j3_2_chemin` du sentier à la ville haute (le passant `villager_cat_m`), `j3_3_snack` dans `ville_snack` ; l'indice se tait dès le début d'une scène et pendant une étape `game` ; `wait_for` prend `map` avec `reach` ; captures : vue `sequence` de `demo_e6` (`E6_FROM`, `E6_UNTIL`, une image toutes les 0,5 s) ; tests : `tests/integration/test_e6_scenes.gd`.
+
 **Pièges.** Une séquence (`sequence`) n'a ni choix, ni effet dans ses répliques, ni `control`, ni
 `wait_for` (elle se passe d'une touche). `ready` part sur la carte de la scène seulement. Une
 étape `hint` en fin de scène s'efface avec elle : l'indice de ce qui suit est le `hint` de la
 scène suivante. Les tests : `StoryData.use_root("res://tests/data/story")` (acte d'essai),
 `StoryDirector.seen_path` propre au test, `WorldManager.start_map` rétabli ; les tests de
 l'ancienne île mettent `start_map` à `LEGACY_MAP` (bases m1/m2).
+
+**(S2) Jours 5 et 6** (`j5_1_jeu_willem` … `j6_4_souvenir`, ACTE1.md 5.1 à 6.4) : le ballon n'est pas une étape `game` mais la vie : la séquence de midi (5.1) finit au créneau de l'après-midi (`slot`), les lignes `ballon` des jours 5 et 6 (`data/life/ile_68/`, arbitre, rouge, blanc) lancent le match d'E8 ; entrer dans le champ suffit pour jouer. Démonstration : `S2_DAY=5|6 tools/godot … res://tests/integration/demo_s2.tscn` (une image toutes les 0,5 s) puis `python3 tools/s2_sheet.py <dossier>` (planches) ; tests : `tests/integration/test_s2_day5.gd` et `test_s2_day6.gd` (base `tests/stubs/s2_story_test.gd` : reprise au réveil d'un jour, `rest_until`, `sleep_by_prompt`).
 
 ### (U1) L'interface « Nuit douce » : thème, dialogue et signes
 
@@ -2568,6 +2572,8 @@ Les captures d'écran en CI utilisent `xvfb-run` dans le conteneur ; si Mesa man
 (HD-2D) Mesures du 7 octobre 2026 (`tools/hd2d_shots.sh`, rendu natif) : 32 à 70 draw calls selon
 la zone, une conversation ou une veille (43 à 67 dans le navigateur, au Spawn de chaque zone) ;
 export 12,4 Mo compressés (18,4 avant la purge des modèles 3D). `tools/check.sh` échoue au-delà de 150 Mo compressés (25 Mo jusqu'au cahier des charges n° 2, 60 Mo jusqu'à ses lots A et F, 100 Mo jusqu'aux premiers lots du cahier n° 3 ; 73,5 Mo mesurés avec toutes les images du cahier n° 2, 101,3 Mo avec les lots I et J de priorité 1 du n° 3).
+
+(F0, PR « contrats ») Export allégé sans perte visible, de 141,3 à 132,2 Mo compressés : images importées « Lossless » (WebP sans perte), sans mipmaps ni détection 3D (`[importer_defaults]` de project.godot pour les nouvelles, `tools/import.sh` ramène les autres, `tests/unit/test_texture_imports.gd` le vérifie) ; encodeur WebP sans perte à l'effort 4 / 90 (`rendering/textures/webp_compression/*`, −5 Mo) ; les 25 tuiles du sol que seul l'atlas lit et les plans des cartes (`data/maps/*/plan.json`) hors des trois préréglages d'export (−4,4 Mo) ; détail et mesures : docs/DECISIONS.md, F0.
 
 ### Hygiène du dépôt
 

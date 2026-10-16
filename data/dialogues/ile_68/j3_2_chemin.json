@@ -1,20 +1,55 @@
 {
   "id": "j3_2_chemin",
+  "_comment": "ACTE1.md 3.2 (original) : Ithea bavarde en chemin ; en ville, on craint la maison à cause de Nygglatho (V1 ; V5).",
   "start": "bavardage",
   "nodes": {
     "bavardage": {
       "speaker_id": "ithea",
-      "text": "Il paraît qu'il est venu sans prévenir personne. Un homme mystérieux. Ça commence comme le tome 2.",
+      "text": "Un homme débarque sans prévenir, tombe dans le marais et devient notre responsable. Avoue que ça commence comme un roman.",
       "next": "bavardage_2"
     },
     "bavardage_2": {
       "speaker_id": "nephren",
-      "text": "Il n'y a pas de tome 2.",
+      "text": "Ça commence comme un accident.",
       "next": "bavardage_3"
     },
     "bavardage_3": {
       "speaker_id": "ithea",
-      "text": "Il y en aura un."
+      "text": "Les meilleurs romans commencent par un accident. Et ce midi, il déjeune au snack-bar de la rue du café. Source sûre.",
+      "next": "bavardage_4"
+    },
+    "bavardage_4": {
+      "speaker_id": "nephren",
+      "text": "… Quelle source ?",
+      "next": "bavardage_5"
+    },
+    "bavardage_5": {
+      "speaker_id": "ithea",
+      "text": "Nya-ha-ha. Secret professionnel."
+    },
+    "passant": {
+      "speaker_id": "ithea",
+      "text": "Tu as vu ? Il a changé de trottoir. Comme d'habitude.",
+      "next": "passant_2"
+    },
+    "passant_2": {
+      "speaker_id": "nephren",
+      "text": "C'est à cause de Nygglatho.",
+      "next": "passant_3"
+    },
+    "passant_3": {
+      "speaker_id": "ithea",
+      "text": "En ville, on raconte qu'à l'entrepôt, une ogresse croque les enfants qui traînent. Elle le dit elle-même tous les matins, remarque.",
+      "next": "passant_4"
+    },
+    "passant_4": {
+      "speaker_id": "nephren",
+      "text": "Elle ne l'a jamais fait.",
+      "next": "passant_5"
+    },
+    "passant_5": {
+      "speaker_id": "ithea",
+      "text": "Pas encore ! Allez, le snack-bar est en bas des marches, sur la rue du café."
     }
   }
 }

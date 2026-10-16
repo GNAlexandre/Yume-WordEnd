@@ -1,0 +1,38 @@
+{
+  "id": "j6_4_souvenir",
+  "start": "bureau",
+  "nodes": {
+    "bureau": {
+      "speaker": "",
+      "text": "La chambre de ta grande sœur est restée comme elle l'a laissée : des cartes à jouer par terre, des vêtements sur la chaise.",
+      "next": "bureau_2"
+    },
+    "bureau_2": {
+      "speaker": "",
+      "text": "Seul le bureau est propre. Tu poses la main sur le bois lisse."
+    },
+    "voix": {
+      "speaker": "La grande sœur",
+      "text": "Regarde-la, cette broche d'argent. Je l'ai volée à ma propre aînée, tu sais. Elle ne s'en est jamais aperçue.",
+      "next": "voix_2"
+    },
+    "voix_2": {
+      "speaker": "La grande sœur",
+      "text": "On dit qu'on n'a pas le droit de garder quoi que ce soit. Moi, je garde."
+    },
+    "retour": {
+      "speaker": "",
+      "text": "Ta main est montée toute seule jusqu'à la broche, sur ta poitrine.",
+      "next": "retour_2"
+    },
+    "retour_2": {
+      "speaker": "",
+      "text": "Tu te souviens de son rire. Pas du goût du gâteau.",
+      "next": "retour_3"
+    },
+    "retour_3": {
+      "speaker": "",
+      "text": "Tu ne sais plus s'il était bon. Tu sais seulement qu'il ne revient plus."
+    }
+  }
+}

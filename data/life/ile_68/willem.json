@@ -28,6 +28,7 @@
     {"slot": "soir", "day": [10, 12], "map": "entrepot_rdc", "place": "jeux_tour", "activity": "tour_de_fees", "outfit": "maison", "role": "base"},
     {"slot": "soir", "day": [1, 9], "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "maison"},
     {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "lire", "outfit": "maison"},
+    {"slot": "apres_midi", "day": [5, 6], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "role": "arbitre", "outfit": "maison"},
     {"slot": "aube", "map": "entrepot_rdc", "place": "eau_toilette", "activity": "toilette", "outfit": "maison", "_note": "La journée de base."},
     {"slot": "matin", "map": "entrepot_rdc", "place": "archives_bureau", "activity": "lire", "outfit": "maison"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_siege_willem", "activity": "manger", "outfit": "maison"},

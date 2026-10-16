@@ -10,7 +10,8 @@
   "present": [
     "collon",
     "lakhesh",
-    "tiat"
+    "tiat",
+    "willem"
   ],
   "steps": [
     {
@@ -24,6 +25,10 @@
     {
       "do": "wait_for",
       "map": "entrepot_rdc"
+    },
+    {
+      "do": "leave",
+      "who": "willem"
     },
     {
       "do": "place",

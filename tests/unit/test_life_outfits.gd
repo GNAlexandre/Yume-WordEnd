@@ -37,7 +37,12 @@ func test_every_outfit_is_a_complete_three_view_sheet() -> void:
 		for anim: String in ["repos"]:
 			assert_true(anims.has(anim), "%s : %s" % [skin.id, anim])
 	assert_eq(
-		count, 26, "les 23 tenues du lot J, willem_duel (E8b, remplaçant), kana et giniette (S2)"
+		count,
+		28,
+		(
+			"les 23 tenues du lot J, willem_duel (E8b), celles de S1b (willem_marsh,"
+			+ " snack_vendor_work) et de S2 (kana, giniette)"
+		)
 	)
 
 

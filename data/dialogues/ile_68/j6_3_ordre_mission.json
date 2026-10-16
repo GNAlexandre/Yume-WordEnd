@@ -1,0 +1,73 @@
+{
+  "id": "j6_3_ordre_mission",
+  "start": "cristal",
+  "nodes": {
+    "cristal": {
+      "speaker": "",
+      "text": "Dans sa chambre, Nygglatho s'est assise devant le grand cristal, qui vient de s'allumer. Elle tourne le dos à la porte.",
+      "next": "cristal_2"
+    },
+    "cristal_2": {
+      "speaker": "Une voix",
+      "text": "Île n° 68. Les trois aînées se tiendront prêtes dès l'aube. Mission de quelques jours, hors de l'île.",
+      "next": "cristal_3"
+    },
+    "cristal_3": {
+      "speaker_id": "nygglatho",
+      "text": "Elles seront prêtes. Merci de m'avoir prévenue à temps.",
+      "next": "cristal_4"
+    },
+    "cristal_4": {
+      "speaker": "Une voix",
+      "text": "Bien. Terminé.",
+      "next": "cristal_5"
+    },
+    "cristal_5": {
+      "speaker": "",
+      "text": "Le cristal s'éteint. Nygglatho reste un moment immobile, les mains jointes."
+    },
+    "annonce": {
+      "speaker_id": "nygglatho",
+      "text": "Mes chéries, une nouvelle. Les trois aînées partent demain à l'aube, pour quelques jours.",
+      "next": "annonce_2"
+    },
+    "annonce_2": {
+      "speaker": "Une petite",
+      "text": "Quelques jours ? Et qu'est-ce qu'on rapporte d'une mission ?",
+      "next": "annonce_3"
+    },
+    "annonce_3": {
+      "speaker_id": "collon",
+      "text": "Des souvenirs ! Il faut des souvenirs !",
+      "next": "annonce_4"
+    },
+    "annonce_4": {
+      "speaker_id": "ithea",
+      "text": "Des histoires, mes petites. Je vous rapporterai tant d'histoires que vous n'aurez plus le temps de dormir.",
+      "next": "annonce_5"
+    },
+    "annonce_5": {
+      "speaker_id": "nephren",
+      "text": "… Mm.",
+      "next": "annonce_6"
+    },
+    "annonce_6": {
+      "speaker": "",
+      "text": "Willem te regarde. Toi, tu manges, sans lever les yeux de ton assiette."
+    },
+    "a_part": {
+      "speaker_id": "willem",
+      "text": "Une mission pour quoi, exactement ?",
+      "next": "a_part_2"
+    },
+    "a_part_2": {
+      "speaker_id": "nygglatho",
+      "text": "Tu le sauras bien assez tôt, monsieur le responsable.",
+      "next": "a_part_3"
+    },
+    "a_part_3": {
+      "speaker": "",
+      "text": "Elle sourit. Ce n'est pas un sourire pour qu'on lui pose d'autres questions."
+    }
+  }
+}

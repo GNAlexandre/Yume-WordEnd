@@ -403,6 +403,8 @@ func _tick_followers() -> void:
 		# Un suiveur ne barre jamais le passage au joueur (corps hors de la couche 1).
 		actor.npc.set_moving(true)
 		var settings: Dictionary = _followers[npc_id]
+		# Sa tenue, qu'il garde d'une carte à l'autre (restage_followers).
+		settings["outfit"] = actor.outfit
 		var keep: float = settings["distance"]
 		var offset := actor.position() - body.global_position
 		offset.y = 0.0
@@ -430,7 +432,11 @@ func restage_followers() -> void:
 	for npc_id: StringName in _followers:
 		var settings: Dictionary = _followers[npc_id]
 		var at := _grounded(body.global_position + back * float(settings["distance"]) * rank)
-		LifeDirector.stage(npc_id, at, -back)
+		var actor := LifeDirector.stage(npc_id, at, -back)
+		var outfit := StringName(settings.get("outfit", &""))
+		if actor != null and not outfit.is_empty() and is_instance_valid(actor.npc):
+			actor.outfit = outfit
+			actor.npc.set_outfit(actor.data.load_outfit(outfit))
 		rank += 1
 	ensure_nav()
 

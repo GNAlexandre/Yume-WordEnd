@@ -160,7 +160,8 @@ func test_every_map_has_its_departures() -> void:
 ## Personne ne partage un point : à chaque jour, créneau et temps, il y a au moins autant de
 ## points que de
 ## PNJ à une place (sauf ceux qui errent, et les jeux où les points sont un terrain ou une ligne :
-## le chat, la course).
+## le chat, la course, le ballon : (S2) une place d'un seul point,
+## champ_centre, pour quinze joueuses).
 func test_no_place_is_overfull() -> void:
 	var capacity := {}
 	for map_id: StringName in MAPS:
@@ -182,7 +183,6 @@ func test_no_place_is_overfull() -> void:
 					var activity: Dictionary = LifeData.activity(line["activity"])
 					if (
 						activity.get("wander", false)
-						# Le ballon place lui-même ses joueurs sur le terrain (E8).
 						or activity.get("game", "") in ["chat", "course", "ballon"]
 					):
 						continue

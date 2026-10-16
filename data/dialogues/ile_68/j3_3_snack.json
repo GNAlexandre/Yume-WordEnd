@@ -1,33 +1,38 @@
 {
   "id": "j3_3_snack",
-  "start": "snack",
+  "_comment": "ACTE1.md 3.3 (s. 6) : l'entrée (les oreilles du serveur), la table (Ithea se présente, la question à {player}), la commande, puis l'après-midi qui commence.",
+  "start": "entree",
   "nodes": {
-    "snack": {
+    "entree": {
       "speaker": "",
-      "text": "Les trois aînées entrent. Les oreilles du serveur retombent d'un coup : il croit que l'entrepôt vient le manger.",
-      "next": "snack_2"
+      "text": "Les oreilles du jeune cuistot retombent d'un coup. Trois fées de l'entrepôt sur le pas de sa porte : il croit qu'on vient le manger.",
+      "next": "entree_2"
     },
-    "snack_2": {
+    "entree_2": {
       "speaker_id": "snack_vendor",
       "text": "B-bienvenue… Qu'est-ce que je… vous sers ?",
-      "next": "snack_3"
+      "next": "entree_3"
     },
-    "snack_3": {
+    "entree_3": {
+      "speaker_id": "willem",
+      "text": "… {player} ? Tu n'es pas venue seule, on dirait."
+    },
+    "table": {
       "speaker_id": "ithea",
       "text": "Bonjour, Officier ! Ithea, pour vous servir. Et voici Nephren. Elle ne mord pas. Enfin, pas souvent.",
-      "next": "snack_4"
+      "next": "table_2"
     },
-    "snack_4": {
+    "table_2": {
       "speaker_id": "willem",
       "text": "« Officier » ? Je suis juste le responsable…",
-      "next": "snack_5"
+      "next": "table_3"
     },
-    "snack_5": {
+    "table_3": {
       "speaker": "",
-      "text": "Nephren l'observe sans un mot, sa tasse entre les mains.",
-      "next": "snack_6"
+      "text": "Nephren l'observe sans un mot, les mains posées sur la table.",
+      "next": "table_4"
     },
-    "snack_6": {
+    "table_4": {
       "speaker_id": "ithea",
       "text": "Dis, {player}… vous vous connaissiez déjà, tous les deux ?",
       "next": "choix"
@@ -68,17 +73,39 @@
     },
     "suite_3": {
       "speaker_id": "nephren",
-      "text": "Mm.",
-      "next": "suite_4"
+      "text": "Mm."
     },
-    "suite_4": {
+    "commande": {
       "speaker_id": "ithea",
       "text": "Trois menus du jour, s'il vous plaît ! C'est l'Officier qui paie.",
-      "next": "suite_5"
+      "next": "commande_2"
     },
-    "suite_5": {
+    "commande_2": {
+      "speaker_id": "snack_vendor",
+      "text": "T-tout de suite ! Pommes de terre, lard, petit pain et soupe… Tout de suite !",
+      "next": "commande_3"
+    },
+    "commande_3": {
       "speaker": "",
       "text": "Willem paie. Le serveur respire enfin."
+    },
+    "apres": {
+      "speaker": "",
+      "text": "Les assiettes sont vides. Dehors, le soleil a tourné.",
+      "next": "apres_2"
+    },
+    "apres_2": {
+      "speaker_id": "willem",
+      "text": "Bon. Je rentre. Ne traînez pas trop en ville, vous trois."
+    },
+    "apres_aines": {
+      "speaker_id": "ithea",
+      "text": "Oui, Officier ! Nephren et moi, on passe voir les nouveautés à la librairie. À ce soir, {player} !",
+      "next": "apres_aines_2"
+    },
+    "apres_aines_2": {
+      "speaker_id": "nephren",
+      "text": "… Merci pour le repas."
     }
   }
 }
