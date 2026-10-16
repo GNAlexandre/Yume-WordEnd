@@ -175,7 +175,7 @@
   {"path": "assets/hd2d/decals/oil_stain.png", "size": [144, 96], "kind": "decal", "prio": 2, "lot": "B"},
   {"path": "assets/hd2d/decals/rust_streak.png", "size": [192, 96], "kind": "decal", "prio": 2, "lot": "B"},
   {"path": "assets/hd2d/decals/footprints.png", "size": [96, 288], "kind": "decal", "prio": 2, "lot": "B", "soft_alpha": true},
-  {"path": "assets/hd2d/decals/cart_ruts.png", "size": [192, 384], "kind": "decal", "prio": 3, "lot": "B", "wrap": "y"},
+  {"path": "assets/hd2d/decals/cart_ruts.png", "size": [192, 384], "kind": "decal", "prio": 3, "lot": "B", "wrap": "y", "soft_alpha": true},
   {"path": "assets/hd2d/decals/drain_grate.png", "size": [96, 96], "kind": "decal", "prio": 3, "lot": "B"},
   {"path": "assets/hd2d/decals/hay_scatter.png", "size": [144, 96], "kind": "decal", "prio": 3, "lot": "B"},
   {"path": "assets/hd2d/decals/boardwalk.png", "size": [96, 384], "kind": "decal", "prio": 3, "lot": "B", "wrap": "y"},
@@ -813,7 +813,9 @@
   {"path": "assets/hd2d/props/cargo_cart_b.png", "size": [240, 134], "kind": "panel", "prio": 3, "lot": "R3"},
   {"path": "assets/hd2d/buildings/port_house_b.png", "size": [384, 624], "kind": "facade", "prio": 3, "lot": "R3"},
   {"path": "assets/hd2d/buildings/port_house_b_side.png", "size": [480, 384], "kind": "side", "prio": 3, "lot": "R3", "roof": "eaves", "wall_m": 4},
-  {"path": "assets/hd2d/ships/garde_transport_side.png", "size": [1536, 672], "kind": "panel", "prio": 1, "lot": "R7"}
+  {"path": "assets/hd2d/ships/garde_transport_side.png", "size": [1536, 672], "kind": "panel", "prio": 1, "lot": "R7"},
+  {"path": "assets/hd2d/props/cafe_backyard_crates.png", "size": [154, 96], "kind": "panel", "prio": 1, "lot": "N6C"},
+  {"path": "assets/hd2d/decals/cart_ruts_end.png", "size": [192, 192], "kind": "decal", "prio": 1, "lot": "N6A", "soft_alpha": true, "solid_edge": "top"}
  ],
  "sheets": [
   {
@@ -1794,7 +1796,6 @@
      "height"
     ]
    }
-  },
-  {"path": "assets/hd2d/props/cafe_backyard_crates.png", "size": [154, 96], "kind": "panel", "prio": 1, "lot": "N6C"}
+  }
  ]
 }
