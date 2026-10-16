@@ -117,8 +117,9 @@ func toggle() -> void:
 ## Relit le récit : jours, lignes écrites, indice.
 func refresh() -> void:
 	_title.text = StoryDirector.ui_text("calendar_title", "Le calendrier de {player}")
-	for child: Node in _grid.get_children():
-		child.queue_free()
+	# (X-L4) Retirées tout de suite : des cases ou des lignes en attente de libération compteraient
+	# dans la hauteur de la page (_fit_page), qui déborderait à la réouverture.
+	_clear(_grid)
 	var free := StoryDirector.is_free()
 	var count := StoryDirector.day_count()
 	# (X-L4) En libre, après le départ, les jours libres continuent : la page montre les count
@@ -127,8 +128,7 @@ func refresh() -> void:
 	_grid.columns = 6 if count > 6 else maxi(count, 1)
 	for day: int in range(first, first + count):
 		_grid.add_child(_day_cell(day))
-	for child: Node in _lines.get_children():
-		child.queue_free()
+	_clear(_lines)
 	var written := GameState.calendar()
 	var days: Array = written.keys()
 	days.sort()
@@ -253,6 +253,12 @@ func _rows(passed: bool) -> PackedStringArray:
 			if child.has_meta(PASSED_META) == passed:
 				result.append((child as Label).text)
 	return result
+
+
+func _clear(container: Node) -> void:
+	for child: Node in container.get_children():
+		container.remove_child(child)
+		child.queue_free()
 
 
 ## (X-L4) Sous la ligne d'un jour, ses scènes laissées passer (libre), en texte discret.
