@@ -31,9 +31,10 @@ env:
 jobs:
   check:
     runs-on: ubuntu-latest
-    # La suite complète (import, tests de l'acte 1 en douze jours, fumée, export) dépasse 30 min
-    # depuis la phase 3 : 60 laisse de la marge sans masquer un blocage sans fin.
-    timeout-minutes: 60
+    # La suite complète (import, tests de l'acte 1 en douze jours et des deux modes, fumée,
+    # export) dépasse 60 min depuis les deux modes de jeu (plus de 1400 tests, dont des parties
+    # entières jouées) : 90 laisse de la marge sans masquer un blocage sans fin.
+    timeout-minutes: 90
     container:
       image: barichello/godot-ci:4.7.2
     steps:
