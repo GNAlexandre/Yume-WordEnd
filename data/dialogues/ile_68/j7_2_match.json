@@ -1,0 +1,54 @@
+{
+  "_comment": "ACTE1.md 7.2 (s. 11) : séquence, sans choix. Tamsin est fairy_06 (original).",
+  "id": "j7_2_match",
+  "start": "fourre",
+  "nodes": {
+    "fourre": {
+      "speaker": "",
+      "text": "Elle ressort du fourré en riant, une main sur la cuisse. Une tache sombre s'élargit sur sa jambière.",
+      "next": "fourre_2"
+    },
+    "fourre_2": {
+      "speaker": "Tamsin",
+      "text": "C'est rien ! On reprend ?",
+      "next": "fourre_3"
+    },
+    "fourre_3": {
+      "speaker_id": "collon",
+      "text": "Elle s'est juste ouverte un peu. On finit le match ?",
+      "next": "fourre_4"
+    },
+    "fourre_4": {
+      "speaker": "",
+      "text": "Personne ne s'inquiète. Personne, sauf lui."
+    },
+    "bras": {
+      "speaker_id": "willem",
+      "text": "Le match attendra. Accroche-toi à mon cou."
+    },
+    "infirmerie": {
+      "speaker": "",
+      "text": "À l'infirmerie, Nygglatho serre un bandage blanc autour de la cuisse de Tamsin.",
+      "next": "infirmerie_2"
+    },
+    "infirmerie_2": {
+      "speaker_id": "nygglatho",
+      "text": "Ce n'est pas grave. Dans deux jours, elle courra de nouveau.",
+      "next": "infirmerie_3"
+    },
+    "infirmerie_3": {
+      "speaker_id": "willem",
+      "text": "Elle riait. La jambe ouverte, elle riait.",
+      "next": "infirmerie_4"
+    },
+    "infirmerie_4": {
+      "speaker_id": "nygglatho",
+      "text": "Les fées ne tiennent pas à leur corps comme des enfants ordinaires, monsieur Willem. C'est ainsi.",
+      "next": "infirmerie_5"
+    },
+    "infirmerie_5": {
+      "speaker_id": "willem",
+      "text": "…"
+    }
+  }
+}

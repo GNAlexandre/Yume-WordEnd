@@ -2302,12 +2302,16 @@ point talismans_centre 20 12
 point dos_a_dos 20 13.2
 point vue_nord 20 5.0
 point rocher 9.5 15.6
+point talisman_1 17 13.8
+point talisman_2 17 10.2
+point talisman_3 23 10.2
+point talisman_4 23 13.8
 lumiere cristal_reglage 20 12 0.5 cristal
 lumiere talismans 20 12 1.5 etoiles
 ```
 
 <!-- places:colline -->
-**Places de la vie** (lot C3 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher`) ; les places réservées, en `Life/Areas` avec leur rectangle (`cercle_talismans`) ; et, en plus du plan : `vers_entrepot` (20 ; 38.4 ; le pied du chemin, devant la sortie : par où l'on part vers l'entrepôt, et d'où l'on en arrive), `pied_de_colline` (20 ; 34 ; le bas du chemin, avant la première rampe : on s'y arrête avant de monter), `arbre_seul` (28.2 ; 10.8 ; au pied de l'arbre noueux solitaire, côté sommet (VIE.md, faune : la chouette y guette)), `merles` (11 ; 22 ; la bruyère de la terrasse haute, à l'ouest : les merles de l'aube (VIE.md, faune)), `papillons` (24.5 ; 22.5 ; l'herbe fleurie au-dessus de la dernière rampe : les papillons des jours doux (VIE.md, faune)), `chouette` (29.2 ; 10.2 ; la branche basse de l'arbre solitaire : la chouette de la nuit (VIE.md, faune)).
+**Places de la vie** (lot C3 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher`, `talisman_1`, `talisman_2`, `talisman_3`, `talisman_4`) ; les places réservées, en `Life/Areas` avec leur rectangle (`cercle_talismans`) ; et, en plus du plan : `vers_entrepot` (20 ; 38.4 ; le pied du chemin, devant la sortie : par où l'on part vers l'entrepôt, et d'où l'on en arrive), `pied_de_colline` (20 ; 34 ; le bas du chemin, avant la première rampe : on s'y arrête avant de monter), `arbre_seul` (28.2 ; 10.8 ; au pied de l'arbre noueux solitaire, côté sommet (VIE.md, faune : la chouette y guette)), `merles` (11 ; 22 ; la bruyère de la terrasse haute, à l'ouest : les merles de l'aube (VIE.md, faune)), `papillons` (24.5 ; 22.5 ; l'herbe fleurie au-dessus de la dernière rampe : les papillons des jours doux (VIE.md, faune)), `chouette` (29.2 ; 10.2 ; la branche basse de l'arbre solitaire : la chouette de la nuit (VIE.md, faune)).
 <!-- /places:colline -->
 
 ## 8. La forêt profonde (`foret_profonde`)

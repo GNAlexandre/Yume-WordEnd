@@ -1603,6 +1603,7 @@ l'ouvre ; `GameState.day` ≥ 1 tant qu'il dure (`GameState.story_running()`) ; 
 | `game` | game, params, fallback | crochet d'E8 (`StoryDirector.register_game`) ; sans jeu inscrit, ou si l'appel rend `false` (le jeu n'a pas pu démarrer : carte d'essai, personnage absent), ses étapes de repli ; (E8c) « embuscade_pannibal », (E8b) « duel_willem » et « entrainement_seniorious » sont inscrits au démarrage (`MiniGames.register_story_games`) |
 | `hint` / `calendar` | text (vide : rien) / line | l'indice de la scène ; une ligne du calendrier |
 | `show` | node (chemin dans la carte), visible | montre ou cache un nœud de la carte courante (le cristal qui sonne : `Geometry/Nygglatho/comm_crystal_call_1` d'`entrepot_etage`) |
+| (S2) `player` / `props` | visible / id, image, at, count, radius, lift, frames, fps, light, color, clear | cache la protagoniste le temps d'une séquence sans elle (rendue à la fin) ; pose un cercle d'images animées et sa lueur (les talismans de 8.8), retiré à la fin ; une `anim` du joueur est une pose tenue (jusqu'à la suivante, une marche ou la main rendue) ; jours 7 et 8 : `j7_*`, `j8_*`, tests `test_s2_day7.gd`, `test_s2_day8.gd`, captures `demo_s2.tscn` |
 
 ```gdscript
 # src/story/story_director.gd — autoload StoryDirector (project.godot, seul ajout d'E6)

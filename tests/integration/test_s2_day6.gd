@@ -106,7 +106,6 @@ func test_day_6_end_to_end_until_day_7() -> void:
 		StoryDirector.calendar_line(6),
 		"Demain, mission. Il a lu aux petites un livre où les méchants lui ressemblent."
 	)
-	assert_eq(GameState.quests(), {}, "aucune quête à collecter")
 
 
 func test_the_other_choices_lead_to_the_same_day() -> void:

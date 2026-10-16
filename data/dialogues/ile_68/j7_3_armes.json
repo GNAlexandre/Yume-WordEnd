@@ -1,0 +1,44 @@
+{
+  "_comment": "ACTE1.md 7.3 (s. 12) : séquence, sans choix ; ce que Willem sait des épées n'est pas dit.",
+  "id": "j7_3_armes",
+  "start": "serrures",
+  "nodes": {
+    "serrures": {
+      "speaker": "",
+      "text": "Nygglatho ouvre une à une les cinq serrures de la porte rivetée. Derrière, le noir complet.",
+      "next": "serrures_2"
+    },
+    "serrures_2": {
+      "speaker_id": "nygglatho",
+      "text": "Restez près de ma lanterne. Ici, personne n'entre sans moi."
+    },
+    "crypte": {
+      "speaker": "",
+      "text": "Des épées usées dorment sur leurs râteliers ; d'autres, dans leur tissu. Des Carillons.",
+      "next": "crypte_2"
+    },
+    "crypte_2": {
+      "speaker_id": "nygglatho",
+      "text": "Aucun humain ne peut s'en servir. Seules les fées les éveillent.",
+      "next": "crypte_3"
+    },
+    "crypte_3": {
+      "speaker_id": "willem",
+      "text": "Je sais."
+    },
+    "garde": {
+      "speaker": "",
+      "text": "Willem pose la main sur une garde. Il la reconnaît ; il ne dit pas d'où.",
+      "next": "garde_2"
+    },
+    "garde_2": {
+      "speaker_id": "willem",
+      "text": "On les assemblait pièce par pièce, des talismans liés les uns aux autres… Le métal se souvient de tout.",
+      "next": "garde_3"
+    },
+    "garde_3": {
+      "speaker": "",
+      "text": "Il n'en dit pas plus."
+    }
+  }
+}
