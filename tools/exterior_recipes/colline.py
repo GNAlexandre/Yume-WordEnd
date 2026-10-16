@@ -30,11 +30,12 @@ import random
 
 import exterior_recipes.colline_relief as relief
 import map_build
+import exterior_kits as kits
 from exterior_pose import Rect, along, poisson, prop
 
 SETTINGS = {
     "groups": ["Rim", "Summit", "Rocks", "Talus", "Flora", "Ring", "Path", "Trees", "Lisiere", "Woods", "Backdrop",
-               "Sky"],
+               "Sky", "Middle", "Foreground"],
     # La caméra monte jusqu'au bord pour la vue au nord (z = 6 au lieu de 9) et descend jusqu'au pied de la
     # colline (z = 32, comme la règle P − 8) : CARTE.md 7 disait Rect2(10, 6, 20, 23), qui arrête la caméra
     # à z = 29 et laisse le joueur hors de l'écran sur les huit derniers mètres du chemin (corrigé dans CARTE.md).
@@ -261,8 +262,13 @@ def pose(p):
     # Un rang d'arbres devant les pans, sur le bord (x 0 → 3,4 ; x 36,6 → 40), sur la terre seulement.
     west = [(1.2, 13.0), (2.4, 15.5), (1.0, 18.0), (2.6, 22.0), (1.4, 26.0), (2.2, 30.0), (1.0, 34.0), (2.0, 38.0)]
     east = [(38.8, 6.5), (37.6, 12.0), (39.0, 17.5), (37.8, 23.0), (38.6, 28.5), (37.6, 34.0), (39.0, 38.5)]
-    scatter("WestTrees", TREES_DARK[:3] + TREES_RUST[:3], [q for q in west if land(*q)], seed=21)
-    scatter("EastTrees", TREES_GOLD[:3] + TREES_DARK[:3], [q for q in east if land(*q)], seed=22)
+    # (RC) Des rangées irrégulières (exterior_kits.row) au lieu de points à pas fixe (les tirages ci-dessus sont gardés).
+    kits.place_row(p, "Lisiere", "ArbreOuest", kits.row([(1.8, 12.6), (1.8, 38.6)], TREES_DARK[:3] + TREES_RUST[:3],
+                                                        seed=1411, step=4.0, depth=0.8, skip=0.08, scale=(0.9, 1.1),
+                                                        keep=land))
+    kits.place_row(p, "Lisiere", "ArbreEst", kits.row([(38.3, 6.4), (38.3, 38.6)], TREES_GOLD[:3] + TREES_DARK[:3],
+                                                       seed=1412, step=4.4, depth=0.75, skip=0.08, scale=(0.9, 1.1),
+                                                       keep=land))
     foot = [(rng.uniform(0.6, 3.6), z + rng.uniform(-1.5, 1.5)) for z in (14.0, 20.0, 26.0, 32.0)]
     foot += [(rng.uniform(36.4, 39.4), z + rng.uniform(-1.5, 1.5)) for z in (9.0, 15.0, 21.0, 27.0, 33.0)]
     scatter("EdgeBrush", BUSHES + FERNS + ["heather"], [q for q in foot if land(*q)], seed=23, check=False)
@@ -513,6 +519,10 @@ def pose(p):
     sky = SKY_ISLANDS + SKY_CLOUDS + SKY_MIST + SKY_ROCKS
     for k, (x, y, z, scale, scene) in enumerate(sky):
         place("Sky", scene, x, z, y=y, scale=scale, name="Vide%d" % (k + 1), flip=k % 3 == 1, check=False)
+
+    # === 11. (RC) Le premier plan (CARTE.md 0.5) : au bas de chaque vue et de chaque passage =================
+    p.walk_grid()
+    kits.foreground_views(p, "colline", seed=1401, most=2, with_passages=False)
 
 
 def ambient(p):

@@ -393,11 +393,14 @@ def foreground_kit(p, bounds, targets, seed, group="Foreground", base="PremierPl
     return len(placed)
 
 
-def foreground_views(p, map_id, seed, **options):
+def foreground_views(p, map_id, seed, with_passages=True, **options):
     """foreground_kit pour les vues de la série QC d'une carte d'abord, puis pour ses passages (les vues sont servies
-    en premier : ce sont elles que le contrôle compte). Rend le nombre de décors posés."""
+    en premier : ce sont elles que le contrôle compte ; with_passages faux : les vues seulement, une petite carte déjà
+    dense). Rend le nombre de décors posés."""
     options.setdefault("most", 3)
     n = foreground_kit(p, p.view_bounds, qc_views(map_id), seed, **options)
+    if not with_passages:
+        return n
     options = dict(options, base=options.get("base", "PremierPlan") + "Passage", most=2)
     return n + foreground_kit(p, p.view_bounds, passages(p), seed + 1, **options)
 

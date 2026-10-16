@@ -27,10 +27,12 @@ import random
 
 import exterior_ground
 import map_build
+import exterior_kits as kits
 from exterior_pose import Rect, along, poisson, prop, seg_distance
 
 SETTINGS = {
-    "groups": ["Wall", "Belt", "River", "Trees", "Groves", "Under", "Path", "Refuge", "Clearing", "Sky"],
+    "groups": ["Wall", "Belt", "River", "Trees", "Groves", "Under", "Path", "Refuge", "Clearing", "Sky", "Middle",
+               "Foreground"],
     "no_lights": True,
     # Le nœud Life/Fauna d'E5 (cerfs, loups, sanglier, renard, écureuils, corbeaux, grenouilles, chouette).
     "fauna": True,
@@ -173,7 +175,7 @@ TREES_DARK = ["tree_pine", "tree_pine", "pine_tall_b", "oak_a", "oak_d", "beech_
 CONIFERS = ["tree_pine", "pine_tall_b", "tree_old_pine"]
 SMALL_TREES = ["pine_small_a", "pine_small_b", "sapling_a", "birch_a", "birch_b"]
 BUSHES = ["bush", "bush_b", "bush_c", "bush_d", "bush_e", "bush_f", "berry_bush", "berry_bush_b"]
-FERNS = ["fern_a", "fern_b", "fern_c", "fern_d", "fern_d"]
+FERNS = ["fern_a", "fern_b", "fern_c", "fern_d"]
 GRASSES = ["grass_clump_a", "grass_clump_b", "grass_clump_c", "grass_clump_d", "tall_grass"]
 ROCKS = ["rock_small_a", "rock_small_b", "rock_small_c", "rock_small_d"]
 WALLS = ["forest_wall_deep", "forest_wall_b", "forest_wall_a", "forest_wall_deep", "forest_wall_c"]
@@ -367,7 +369,7 @@ def pose(p):
 
     # === 6. Le sous-bois : des bouquets, pas une semence uniforme =====================================================
     themes = {
-        "fougeres": ["fern_a", "fern_b", "fern_c", "fern_d", "fern_d", "fern_b", "mushroom_cep"],
+        "fougeres": ["fern_a", "fern_b", "fern_c", "fern_d", "nettles", "ivy_ground", "mushroom_cep"],
         "orties": ["nettles", "nettles", "grass_clump_d", "fern_c", "thistle", "nettles"],
         "buissons": BUSHES[:6] + ["fern_a", "bush_e"],
         "champignons": ["mushroom", "mushroom_cep", "mushroom_chanterelle", "fern_d", "leaves_rust_a", "mushroom"],
@@ -619,6 +621,9 @@ def pose(p):
     # Le sentier de l'est s'arrête là tant que la montagne n'existe pas : un écriteau, à la place de la sortie.
     if "vers_montagne" in p.missing_exits:
         place("Path", "waiting_sign", 77.0, 44.6, name="SignMontagne")
+    p.walk_grid()
+    # (RC) Le premier plan (CARTE.md 0.5) : au bas de chaque vue et de chaque passage, jamais devant une place.
+    kits.foreground_views(p, "foret_profonde", seed=1501)
     p.walk_grid()
 
 

@@ -107,7 +107,8 @@ WAITING["ville_marche"] = {
 # (RC) Contrôle de la refonte image (CARTE.md 0.5) : au plus REPEAT_LIMIT fois la même image (panneau de 0,75 m ou
 # plus) dans le champ d'une vue de la série QC ; au moins SOUTH_MIN objets de 1,5 m ou plus au sud du joueur, qui se
 # voient au bas de l'écran (exterior_kits.view_repeats, view_south ; SETTINGS["south_allowed"] : {vue : pourquoi},
-# les vues sans premier plan possible, dites dans la sortie).
+# les vues sans premier plan possible, dites dans la sortie ; SETTINGS["repeat_allowed"] : {image : pourquoi}, une
+# image qui se répète par nature, le bastingage d'un navire).
 REPEAT_LIMIT = 8
 SOUTH_MIN = 2
 
@@ -563,9 +564,13 @@ def build(map_id, all_plans, tmp):
         repeats = exterior_kits.view_repeats(p, bounds, views)
         south = exterior_kits.view_south(p, bounds, views)
         south_allowed = settings.get("south_allowed", {})
+        repeat_allowed = settings.get("repeat_allowed", {})
         for (name, image, count), (_n, tall) in zip(repeats, south):
             result.view_stats.append((name, image, count, tall))
-            if count > REPEAT_LIMIT + 1e-6:
+            if count > REPEAT_LIMIT + 1e-6 and image in repeat_allowed:
+                result.deviations.append("vue %s : %s %.1f fois dans le champ ; toléré, %s"
+                                         % (name, image, count, repeat_allowed[image]))
+            elif count > REPEAT_LIMIT + 1e-6:
                 result.repeats.append("vue %s : %s %.1f fois dans le champ (au plus %d) ; varier la famille, "
                                       "espacer ou retirer" % (name, image, count, REPEAT_LIMIT))
             if tall < SOUTH_MIN - 1e-6:

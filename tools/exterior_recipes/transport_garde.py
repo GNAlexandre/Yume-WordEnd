@@ -20,6 +20,10 @@ from exterior_pose import Rect, poisson
 
 SETTINGS = {
     "groups": ["Deck", "Rail", "Rotors", "Gangway", "Quay", "Sky"],
+    # (RC) Le pont d'un navire dans le ciel (CARTE.md 0.5) : son bastingage est d'une pièce, et au sud du pont, il n'y a
+    # que le vide.
+    "repeat_allowed": {"deck_railing": "le bastingage d'un navire est une rambarde d'une pièce, rivetée bout à bout"},
+    "south_allowed": {v: "au sud du pont, le bastingage puis le vide" for v in ("pont", "poupe", "proue", "passerelle")},
     # Le pont tient à l'écran (20 m de large) : la caméra ne suit qu'en z, du nord du pont au quai.
     "camera_bounds": (9.5, 2, 1, 5),
     "no_lights": True,

@@ -17,104 +17,96 @@
 [ext_resource type="PackedScene" path="res://src/world/props/forest_wall_d.tscn" id="15_forest_wall_d"]
 [ext_resource type="PackedScene" path="res://src/world/props/forest_wall_a.tscn" id="16_forest_wall_a"]
 [ext_resource type="PackedScene" path="res://src/world/props/oak_a_forest.tscn" id="17_oak_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/wind_rock_a.tscn" id="18_wind_rock_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/wind_rock_b.tscn" id="19_wind_rock_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/cairn.tscn" id="20_cairn"]
-[ext_resource type="PackedScene" path="res://src/world/props/flowers_patch_a.tscn" id="21_flowers_patch_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/flowers_patch_b.tscn" id="22_flowers_patch_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush_c.tscn" id="23_bush_c"]
-[ext_resource type="PackedScene" path="res://src/world/props/edge_roots.tscn" id="24_edge_roots"]
-[ext_resource type="PackedScene" path="res://src/world/props/grass_edge_b.tscn" id="25_grass_edge_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/ivy_wall_b.tscn" id="26_ivy_wall_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/fern_a.tscn" id="27_fern_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush_d.tscn" id="28_bush_d"]
-[ext_resource type="PackedScene" path="res://src/world/props/fern_b.tscn" id="29_fern_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush_f.tscn" id="30_bush_f"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush_b.tscn" id="31_bush_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/edge_grass.tscn" id="32_edge_grass"]
-[ext_resource type="PackedScene" path="res://src/world/props/rock_pile.tscn" id="33_rock_pile"]
-[ext_resource type="PackedScene" path="res://src/world/props/grass_edge_a.tscn" id="34_grass_edge_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="35_bush"]
-[ext_resource type="PackedScene" path="res://src/world/props/rock_small_c.tscn" id="36_rock_small_c"]
-[ext_resource type="PackedScene" path="res://src/world/props/wind_grass_a.tscn" id="37_wind_grass_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_c.tscn" id="38_grass_clump_c"]
-[ext_resource type="PackedScene" path="res://src/world/props/wind_grass_b.tscn" id="39_wind_grass_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_a.tscn" id="40_grass_clump_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/wildflowers_b.tscn" id="41_wildflowers_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_b.tscn" id="42_grass_clump_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/rock_small_b.tscn" id="43_rock_small_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/fern_d.tscn" id="44_fern_d"]
-[ext_resource type="PackedScene" path="res://src/world/props/thistle.tscn" id="45_thistle"]
-[ext_resource type="PackedScene" path="res://src/world/props/clover_patch.tscn" id="46_clover_patch"]
-[ext_resource type="PackedScene" path="res://src/world/props/moss_patch_b.tscn" id="47_moss_patch_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/leaves_rust_a.tscn" id="48_leaves_rust_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/mushroom_cep.tscn" id="49_mushroom_cep"]
-[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_d.tscn" id="50_grass_clump_d"]
-[ext_resource type="PackedScene" path="res://src/world/props/pebbles_b.tscn" id="51_pebbles_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/pebbles_a.tscn" id="52_pebbles_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/fallen_tree.tscn" id="53_fallen_tree"]
-[ext_resource type="PackedScene" path="res://src/world/props/stump_a.tscn" id="54_stump_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/fg_bush.tscn" id="55_fg_bush"]
-[ext_resource type="PackedScene" path="res://src/world/props/fg_fern.tscn" id="56_fg_fern"]
-[ext_resource type="PackedScene" path="res://src/world/props/pine_tall_b.tscn" id="57_pine_tall_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_old_pine.tscn" id="58_tree_old_pine"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_pine.tscn" id="59_tree_pine"]
-[ext_resource type="PackedScene" path="res://src/world/props/oak_a.tscn" id="60_oak_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/beech_a.tscn" id="61_beech_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/pine_dead.tscn" id="62_pine_dead"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust.tscn" id="63_tree_autumn_rust"]
-[ext_resource type="PackedScene" path="res://src/world/props/maple_a.tscn" id="64_maple_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/oak_c.tscn" id="65_oak_c"]
-[ext_resource type="PackedScene" path="res://src/world/props/beech_b.tscn" id="66_beech_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/oak_d.tscn" id="67_oak_d"]
-[ext_resource type="PackedScene" path="res://src/world/props/distant_island_b.tscn" id="68_distant_island_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/distant_island_a.tscn" id="69_distant_island_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/distant_island_e.tscn" id="70_distant_island_e"]
-[ext_resource type="PackedScene" path="res://src/world/props/distant_island_f.tscn" id="71_distant_island_f"]
-[ext_resource type="PackedScene" path="res://src/world/props/distant_island_c.tscn" id="72_distant_island_c"]
-[ext_resource type="PackedScene" path="res://src/world/props/distant_island_d.tscn" id="73_distant_island_d"]
-[ext_resource type="PackedScene" path="res://src/world/props/horizon_islands.tscn" id="74_horizon_islands"]
-[ext_resource type="PackedScene" path="res://src/world/props/cloud_c.tscn" id="75_cloud_c"]
-[ext_resource type="PackedScene" path="res://src/world/props/cloud_a.tscn" id="76_cloud_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/cloud_b.tscn" id="77_cloud_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/mist_band.tscn" id="78_mist_band"]
-[ext_resource type="PackedScene" path="res://src/world/props/floating_rock_b.tscn" id="79_floating_rock_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/floating_rock_c.tscn" id="80_floating_rock_c"]
-[ext_resource type="PackedScene" path="res://src/world/props/floating_rock.tscn" id="81_floating_rock"]
-[ext_resource type="PackedScene" path="res://src/world/props/pine_tall_b_forest.tscn" id="82_pine_tall_b_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_old_pine_forest.tscn" id="83_tree_old_pine_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_pine_forest.tscn" id="84_tree_pine_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust_forest.tscn" id="85_tree_autumn_rust_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/maple_a_forest.tscn" id="86_maple_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/oak_c_forest.tscn" id="87_oak_c_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_yellow.tscn" id="88_tree_autumn_yellow"]
-[ext_resource type="PackedScene" path="res://src/world/props/maple_b.tscn" id="89_maple_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_yellow_forest.tscn" id="90_tree_autumn_yellow_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/beech_a_forest.tscn" id="91_beech_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/maple_b_forest.tscn" id="92_maple_b_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/bush_e.tscn" id="93_bush_e"]
-[ext_resource type="PackedScene" path="res://src/world/props/fern_c.tscn" id="94_fern_c"]
-[ext_resource type="PackedScene" path="res://src/world/props/edge_rocks_a.tscn" id="95_edge_rocks_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/edge_rocks_b.tscn" id="96_edge_rocks_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/rock_small_d.tscn" id="97_rock_small_d"]
-[ext_resource type="PackedScene" path="res://src/world/props/sapling_a_forest.tscn" id="98_sapling_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/birch_a_forest.tscn" id="99_birch_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/birch_b_forest.tscn" id="100_birch_b_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/pine_small_a_forest.tscn" id="101_pine_small_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/pine_small_b_forest.tscn" id="102_pine_small_b_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/leaves_gold_a.tscn" id="103_leaves_gold_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/leaves_gold_b.tscn" id="104_leaves_gold_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/leaves_rust_b.tscn" id="105_leaves_rust_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/leaves_scatter.tscn" id="106_leaves_scatter"]
-[ext_resource type="PackedScene" path="res://src/world/props/fg_trunk_a.tscn" id="107_fg_trunk_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/fg_trunk_b.tscn" id="108_fg_trunk_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/fg_grass.tscn" id="109_fg_grass"]
-[ext_resource type="PackedScene" path="res://src/world/props/canopy_shadow_a.tscn" id="110_canopy_shadow_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/canopy_shadow_b.tscn" id="111_canopy_shadow_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/sun_dapple.tscn" id="112_sun_dapple"]
-[ext_resource type="PackedScene" path="res://src/fauna/fauna.tscn" id="113_fauna"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_gold.png" id="114_falling_leaf_gold"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_rust.png" id="115_falling_leaf_rust"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_tall_b.tscn" id="18_pine_tall_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_old_pine.tscn" id="19_tree_old_pine"]
+[ext_resource type="PackedScene" path="res://src/world/props/maple_a.tscn" id="20_maple_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/oak_c_forest.tscn" id="21_oak_c_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_yellow_forest.tscn" id="22_tree_autumn_yellow_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/beech_a.tscn" id="23_beech_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_pine.tscn" id="24_tree_pine"]
+[ext_resource type="PackedScene" path="res://src/world/props/beech_a_forest.tscn" id="25_beech_a_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_rock_a.tscn" id="26_wind_rock_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_rock_b.tscn" id="27_wind_rock_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/cairn.tscn" id="28_cairn"]
+[ext_resource type="PackedScene" path="res://src/world/props/flowers_patch_a.tscn" id="29_flowers_patch_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/flowers_patch_b.tscn" id="30_flowers_patch_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_c.tscn" id="31_bush_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/edge_roots.tscn" id="32_edge_roots"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_edge_b.tscn" id="33_grass_edge_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/ivy_wall_b.tscn" id="34_ivy_wall_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/fern_a.tscn" id="35_fern_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_d.tscn" id="36_bush_d"]
+[ext_resource type="PackedScene" path="res://src/world/props/fern_b.tscn" id="37_fern_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_f.tscn" id="38_bush_f"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_b.tscn" id="39_bush_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/edge_grass.tscn" id="40_edge_grass"]
+[ext_resource type="PackedScene" path="res://src/world/props/rock_pile.tscn" id="41_rock_pile"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_edge_a.tscn" id="42_grass_edge_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="43_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/rock_small_c.tscn" id="44_rock_small_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_grass_a.tscn" id="45_wind_grass_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_c.tscn" id="46_grass_clump_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/wind_grass_b.tscn" id="47_wind_grass_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_a.tscn" id="48_grass_clump_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/wildflowers_b.tscn" id="49_wildflowers_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_b.tscn" id="50_grass_clump_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/rock_small_b.tscn" id="51_rock_small_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/fern_d.tscn" id="52_fern_d"]
+[ext_resource type="PackedScene" path="res://src/world/props/thistle.tscn" id="53_thistle"]
+[ext_resource type="PackedScene" path="res://src/world/props/clover_patch.tscn" id="54_clover_patch"]
+[ext_resource type="PackedScene" path="res://src/world/props/moss_patch_b.tscn" id="55_moss_patch_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/leaves_rust_a.tscn" id="56_leaves_rust_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/mushroom_cep.tscn" id="57_mushroom_cep"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_d.tscn" id="58_grass_clump_d"]
+[ext_resource type="PackedScene" path="res://src/world/props/pebbles_b.tscn" id="59_pebbles_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/pebbles_a.tscn" id="60_pebbles_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/fallen_tree.tscn" id="61_fallen_tree"]
+[ext_resource type="PackedScene" path="res://src/world/props/stump_a.tscn" id="62_stump_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/fg_bush.tscn" id="63_fg_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/fg_fern.tscn" id="64_fg_fern"]
+[ext_resource type="PackedScene" path="res://src/world/props/oak_a.tscn" id="65_oak_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_dead.tscn" id="66_pine_dead"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust.tscn" id="67_tree_autumn_rust"]
+[ext_resource type="PackedScene" path="res://src/world/props/oak_c.tscn" id="68_oak_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/beech_b.tscn" id="69_beech_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/oak_d.tscn" id="70_oak_d"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_b.tscn" id="71_distant_island_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_a.tscn" id="72_distant_island_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_e.tscn" id="73_distant_island_e"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_f.tscn" id="74_distant_island_f"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_c.tscn" id="75_distant_island_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_d.tscn" id="76_distant_island_d"]
+[ext_resource type="PackedScene" path="res://src/world/props/horizon_islands.tscn" id="77_horizon_islands"]
+[ext_resource type="PackedScene" path="res://src/world/props/cloud_c.tscn" id="78_cloud_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/cloud_a.tscn" id="79_cloud_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/cloud_b.tscn" id="80_cloud_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/mist_band.tscn" id="81_mist_band"]
+[ext_resource type="PackedScene" path="res://src/world/props/floating_rock_b.tscn" id="82_floating_rock_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/floating_rock_c.tscn" id="83_floating_rock_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/floating_rock.tscn" id="84_floating_rock"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_e.tscn" id="85_bush_e"]
+[ext_resource type="PackedScene" path="res://src/world/props/fern_c.tscn" id="86_fern_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/edge_rocks_a.tscn" id="87_edge_rocks_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/edge_rocks_b.tscn" id="88_edge_rocks_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/rock_small_d.tscn" id="89_rock_small_d"]
+[ext_resource type="PackedScene" path="res://src/world/props/sapling_a_forest.tscn" id="90_sapling_a_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/birch_a_forest.tscn" id="91_birch_a_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/birch_b_forest.tscn" id="92_birch_b_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_small_a_forest.tscn" id="93_pine_small_a_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_small_b_forest.tscn" id="94_pine_small_b_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/leaves_gold_a.tscn" id="95_leaves_gold_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/leaves_gold_b.tscn" id="96_leaves_gold_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/leaves_rust_b.tscn" id="97_leaves_rust_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/leaves_scatter.tscn" id="98_leaves_scatter"]
+[ext_resource type="PackedScene" path="res://src/world/props/fg_trunk_a.tscn" id="99_fg_trunk_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/fg_trunk_b.tscn" id="100_fg_trunk_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/fg_grass.tscn" id="101_fg_grass"]
+[ext_resource type="PackedScene" path="res://src/world/props/canopy_shadow_a.tscn" id="102_canopy_shadow_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/canopy_shadow_b.tscn" id="103_canopy_shadow_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/sun_dapple.tscn" id="104_sun_dapple"]
+[ext_resource type="PackedScene" path="res://src/fauna/fauna.tscn" id="105_fauna"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_gold.png" id="106_falling_leaf_gold"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_rust.png" id="107_falling_leaf_rust"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_edge1"]
 size = Vector3(40, 4, 3)
@@ -201,6 +193,8 @@ cell_size = 24.0
 
 [node name="Sky" type="Node3D" parent="Geometry"]
 
+[node name="Foreground" type="Node3D" parent="Geometry"]
+
 [node name="BoulderA_plan_1" parent="Geometry/Rocks" instance=ExtResource("7_boulder_a_fg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 3.5, 14)
 
@@ -253,14 +247,63 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.17, 0.5, 33.6)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.83, 0.5, 33.6)
 flip_h = true
 
-[node name="WindRockWest" parent="Geometry/Rocks" instance=ExtResource("18_wind_rock_a")]
+[node name="ArbreOuest1" parent="Geometry/Lisiere" instance=ExtResource("18_pine_tall_b")]
+transform = Transform3D(0.986, 0, 0, 0, 0.986, 0, 0, 0, 0.986, 2.276, 0, 12.6)
+tone = Vector2(0.025, 0.012)
+
+[node name="ArbreOuest2" parent="Geometry/Lisiere" instance=ExtResource("19_tree_old_pine")]
+transform = Transform3D(1.08, 0, 0, 0, 1.08, 0, 0, 0, 1.08, 2.21, 0, 17.491)
+tone = Vector2(-0.043, -0.018)
+
+[node name="ArbreOuest3" parent="Geometry/Lisiere" instance=ExtResource("20_maple_a")]
+transform = Transform3D(1.092, 0, 0, 0, 1.092, 0, 0, 0, 1.092, 1.413, 0, 21.676)
+tone = Vector2(-0.003, -0.012)
+
+[node name="ArbreOuest4" parent="Geometry/Lisiere" instance=ExtResource("18_pine_tall_b")]
+transform = Transform3D(0.97, 0, 0, 0, 0.97, 0, 0, 0, 0.97, 2.532, 0, 26.339)
+tone = Vector2(-0.021, 0.004)
+
+[node name="ArbreOuest5" parent="Geometry/Lisiere" instance=ExtResource("21_oak_c_forest")]
+transform = Transform3D(1.009, 0, 0, 0, 1.009, 0, 0, 0, 1.009, 1.648, 0.5, 36.142)
+tone = Vector2(-0.013, -0.001)
+
+[node name="ArbreEst1" parent="Geometry/Lisiere" instance=ExtResource("22_tree_autumn_yellow_forest")]
+transform = Transform3D(1.087, 0, 0, 0, 1.087, 0, 0, 0, 1.087, 38.146, 0, 11.007)
+flip_h = true
+tone = Vector2(0.01, -0.007)
+
+[node name="ArbreEst2" parent="Geometry/Lisiere" instance=ExtResource("18_pine_tall_b")]
+transform = Transform3D(1.013, 0, 0, 0, 1.013, 0, 0, 0, 1.013, 38.091, 0, 15.501)
+flip_h = true
+tone = Vector2(0.02, -0.004)
+
+[node name="ArbreEst3" parent="Geometry/Lisiere" instance=ExtResource("23_beech_a")]
+transform = Transform3D(1.081, 0, 0, 0, 1.081, 0, 0, 0, 1.081, 39.019, 0, 20.726)
+flip_h = true
+tone = Vector2(-0.02, 0.002)
+
+[node name="ArbreEst4" parent="Geometry/Lisiere" instance=ExtResource("24_tree_pine")]
+transform = Transform3D(1.044, 0, 0, 0, 1.044, 0, 0, 0, 1.044, 38.831, 0, 26.353)
+flip_h = true
+tone = Vector2(-0.009, 0.012)
+
+[node name="ArbreEst5" parent="Geometry/Lisiere" instance=ExtResource("25_beech_a_forest")]
+transform = Transform3D(0.994, 0, 0, 0, 0.994, 0, 0, 0, 0.994, 37.878, 0, 30.017)
+tone = Vector2(-0.038, -0.004)
+
+[node name="ArbreEst6" parent="Geometry/Lisiere" instance=ExtResource("19_tree_old_pine")]
+transform = Transform3D(0.961, 0, 0, 0, 0.961, 0, 0, 0, 0.961, 37.676, 0.5, 34.345)
+flip_h = true
+tone = Vector2(-0.031, 0.015)
+
+[node name="WindRockWest" parent="Geometry/Rocks" instance=ExtResource("26_wind_rock_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.2, 3.5, 8.6)
 
-[node name="WindRockEast" parent="Geometry/Rocks" instance=ExtResource("19_wind_rock_b")]
+[node name="WindRockEast" parent="Geometry/Rocks" instance=ExtResource("27_wind_rock_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4, 3.5, 6.2)
 flip_h = true
 
-[node name="CairnRim" parent="Geometry/Rocks" instance=ExtResource("20_cairn")]
+[node name="CairnRim" parent="Geometry/Rocks" instance=ExtResource("28_cairn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6, 3.5, 4.5)
 
 [node name="tall_grass_1" parent="Geometry/Ring" instance=ExtResource("11_tall_grass")]
@@ -289,125 +332,125 @@ transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 15.002, 3.5, 7.892)
 transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 25.162, 3.5, 7.586)
 flip_h = true
 
-[node name="flowers_patch_a_8" parent="Geometry/Ring" instance=ExtResource("21_flowers_patch_a")]
+[node name="flowers_patch_a_8" parent="Geometry/Ring" instance=ExtResource("29_flowers_patch_a")]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 16.4, 3.5, 8.2)
 
-[node name="flowers_patch_b_9" parent="Geometry/Ring" instance=ExtResource("22_flowers_patch_b")]
+[node name="flowers_patch_b_9" parent="Geometry/Ring" instance=ExtResource("30_flowers_patch_b")]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 23.9, 3.5, 9)
 flip_h = true
 
-[node name="flowers_patch_b_10" parent="Geometry/Ring" instance=ExtResource("22_flowers_patch_b")]
+[node name="flowers_patch_b_10" parent="Geometry/Ring" instance=ExtResource("30_flowers_patch_b")]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 15.8, 3.5, 14.8)
 
-[node name="flowers_patch_a_11" parent="Geometry/Ring" instance=ExtResource("21_flowers_patch_a")]
+[node name="flowers_patch_a_11" parent="Geometry/Ring" instance=ExtResource("29_flowers_patch_a")]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 24, 3.5, 15.6)
 flip_h = true
 
-[node name="bush_c_1" parent="Geometry/Talus" instance=ExtResource("23_bush_c")]
+[node name="bush_c_1" parent="Geometry/Talus" instance=ExtResource("31_bush_c")]
 transform = Transform3D(1.13, 0, 0, 0, 1.13, 0, 0, 0, 1.13, 9.179, 3.5, 17.55)
 
-[node name="edge_roots_2" parent="Geometry/Talus" instance=ExtResource("24_edge_roots")]
+[node name="edge_roots_2" parent="Geometry/Talus" instance=ExtResource("32_edge_roots")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.475, 1.62, 18.07)
 flip_h = true
 
-[node name="grass_edge_b_3" parent="Geometry/Talus" instance=ExtResource("25_grass_edge_b")]
+[node name="grass_edge_b_3" parent="Geometry/Talus" instance=ExtResource("33_grass_edge_b")]
 transform = Transform3D(1.07, 0, 0, 0, 1.07, 0, 0, 0, 1.07, 11.002, 3.5, 19.55)
 flip_h = true
 
-[node name="ivy_wall_b_4" parent="Geometry/Talus" instance=ExtResource("26_ivy_wall_b")]
+[node name="ivy_wall_b_4" parent="Geometry/Talus" instance=ExtResource("34_ivy_wall_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.088, 1.62, 20.07)
 
-[node name="fern_a_5" parent="Geometry/Talus" instance=ExtResource("27_fern_a")]
+[node name="fern_a_5" parent="Geometry/Talus" instance=ExtResource("35_fern_a")]
 transform = Transform3D(1.06, 0, 0, 0, 1.06, 0, 0, 0, 1.06, 20.836, 3.5, 19.55)
 flip_h = true
 
-[node name="fern_a_6" parent="Geometry/Talus" instance=ExtResource("27_fern_a")]
+[node name="fern_a_6" parent="Geometry/Talus" instance=ExtResource("35_fern_a")]
 transform = Transform3D(0.97, 0, 0, 0, 0.97, 0, 0, 0, 0.97, 29.516, 3.5, 19.55)
 
-[node name="ivy_wall_b_7" parent="Geometry/Talus" instance=ExtResource("26_ivy_wall_b")]
+[node name="ivy_wall_b_7" parent="Geometry/Talus" instance=ExtResource("34_ivy_wall_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.758, 1.62, 20.07)
 
-[node name="bush_d_8" parent="Geometry/Talus" instance=ExtResource("28_bush_d")]
+[node name="bush_d_8" parent="Geometry/Talus" instance=ExtResource("36_bush_d")]
 transform = Transform3D(0.94, 0, 0, 0, 0.94, 0, 0, 0, 0.94, 24.152, 3.5, 20.55)
 
-[node name="bush_c_9" parent="Geometry/Talus" instance=ExtResource("23_bush_c")]
+[node name="bush_c_9" parent="Geometry/Talus" instance=ExtResource("31_bush_c")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.231, 2.5, 23.55)
 
-[node name="edge_roots_10" parent="Geometry/Talus" instance=ExtResource("24_edge_roots")]
+[node name="edge_roots_10" parent="Geometry/Talus" instance=ExtResource("32_edge_roots")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.006, 0.62, 24.07)
 
-[node name="grass_edge_b_11" parent="Geometry/Talus" instance=ExtResource("25_grass_edge_b")]
+[node name="grass_edge_b_11" parent="Geometry/Talus" instance=ExtResource("33_grass_edge_b")]
 transform = Transform3D(0.94, 0, 0, 0, 0.94, 0, 0, 0, 0.94, 5.152, 2.5, 24.55)
 flip_h = true
 
-[node name="edge_roots_12" parent="Geometry/Talus" instance=ExtResource("24_edge_roots")]
+[node name="edge_roots_12" parent="Geometry/Talus" instance=ExtResource("32_edge_roots")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.902, 0.62, 25.07)
 
-[node name="bush_c_13" parent="Geometry/Talus" instance=ExtResource("23_bush_c")]
+[node name="bush_c_13" parent="Geometry/Talus" instance=ExtResource("31_bush_c")]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 7.462, 2.5, 25.55)
 
-[node name="fern_b_14" parent="Geometry/Talus" instance=ExtResource("29_fern_b")]
+[node name="fern_b_14" parent="Geometry/Talus" instance=ExtResource("37_fern_b")]
 transform = Transform3D(0.91, 0, 0, 0, 0.91, 0, 0, 0, 0.91, 8.145, 1.5, 26.6)
 
-[node name="edge_roots_15" parent="Geometry/Talus" instance=ExtResource("24_edge_roots")]
+[node name="edge_roots_15" parent="Geometry/Talus" instance=ExtResource("32_edge_roots")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.329, 0.62, 26.07)
 
-[node name="bush_f_16" parent="Geometry/Talus" instance=ExtResource("30_bush_f")]
+[node name="bush_f_16" parent="Geometry/Talus" instance=ExtResource("38_bush_f")]
 transform = Transform3D(0.91, 0, 0, 0, 0.91, 0, 0, 0, 0.91, 14.349, 2.5, 25.55)
 flip_h = true
 
-[node name="ivy_wall_b_17" parent="Geometry/Talus" instance=ExtResource("26_ivy_wall_b")]
+[node name="ivy_wall_b_17" parent="Geometry/Talus" instance=ExtResource("34_ivy_wall_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.631, 0.62, 26.07)
 
-[node name="bush_b_18" parent="Geometry/Talus" instance=ExtResource("31_bush_b")]
+[node name="bush_b_18" parent="Geometry/Talus" instance=ExtResource("39_bush_b")]
 transform = Transform3D(1.04, 0, 0, 0, 1.04, 0, 0, 0, 1.04, 10.311, 2.5, 27.55)
 
-[node name="edge_grass_19" parent="Geometry/Talus" instance=ExtResource("32_edge_grass")]
+[node name="edge_grass_19" parent="Geometry/Talus" instance=ExtResource("40_edge_grass")]
 transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 18.66, 2.5, 27.55)
 
-[node name="fern_a_20" parent="Geometry/Talus" instance=ExtResource("27_fern_a")]
+[node name="fern_a_20" parent="Geometry/Talus" instance=ExtResource("35_fern_a")]
 transform = Transform3D(1.13, 0, 0, 0, 1.13, 0, 0, 0, 1.13, 29.962, 2.5, 27.55)
 
-[node name="rock_pile_21" parent="Geometry/Talus" instance=ExtResource("33_rock_pile")]
+[node name="rock_pile_21" parent="Geometry/Talus" instance=ExtResource("41_rock_pile")]
 transform = Transform3D(1.04, 0, 0, 0, 1.04, 0, 0, 0, 1.04, 23.01, 0, 32.6)
 flip_h = true
 
-[node name="grass_edge_a_22" parent="Geometry/Talus" instance=ExtResource("34_grass_edge_a")]
+[node name="grass_edge_a_22" parent="Geometry/Talus" instance=ExtResource("42_grass_edge_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.108, 1, 31.55)
 flip_h = true
 
-[node name="bush_23" parent="Geometry/Talus" instance=ExtResource("35_bush")]
+[node name="bush_23" parent="Geometry/Talus" instance=ExtResource("43_bush")]
 transform = Transform3D(1.13, 0, 0, 0, 1.13, 0, 0, 0, 1.13, 24.597, 1, 32.55)
 flip_h = true
 
-[node name="edge_roots_24" parent="Geometry/Talus" instance=ExtResource("24_edge_roots")]
+[node name="edge_roots_24" parent="Geometry/Talus" instance=ExtResource("32_edge_roots")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.876, -0.88, 33.07)
 
-[node name="bush_c_25" parent="Geometry/Talus" instance=ExtResource("23_bush_c")]
+[node name="bush_c_25" parent="Geometry/Talus" instance=ExtResource("31_bush_c")]
 transform = Transform3D(1.11, 0, 0, 0, 1.11, 0, 0, 0, 1.11, 18.436, 1, 33.55)
 
-[node name="rock_pile_26" parent="Geometry/Talus" instance=ExtResource("33_rock_pile")]
+[node name="rock_pile_26" parent="Geometry/Talus" instance=ExtResource("41_rock_pile")]
 transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 19.118, 0, 34.6)
 flip_h = true
 
-[node name="bush_c_27" parent="Geometry/Talus" instance=ExtResource("23_bush_c")]
+[node name="bush_c_27" parent="Geometry/Talus" instance=ExtResource("31_bush_c")]
 transform = Transform3D(1.01, 0, 0, 0, 1.01, 0, 0, 0, 1.01, 28.168, 1, 33.55)
 flip_h = true
 
-[node name="edge_roots_28" parent="Geometry/Talus" instance=ExtResource("24_edge_roots")]
+[node name="edge_roots_28" parent="Geometry/Talus" instance=ExtResource("32_edge_roots")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.159, -0.88, 34.07)
 
-[node name="bush_d_29" parent="Geometry/Talus" instance=ExtResource("28_bush_d")]
+[node name="bush_d_29" parent="Geometry/Talus" instance=ExtResource("36_bush_d")]
 transform = Transform3D(1.13, 0, 0, 0, 1.13, 0, 0, 0, 1.13, 9.612, 1, 30.8)
 
-[node name="bush_c_30" parent="Geometry/Talus" instance=ExtResource("23_bush_c")]
+[node name="bush_c_30" parent="Geometry/Talus" instance=ExtResource("31_bush_c")]
 transform = Transform3D(1.32, 0, 0, 0, 1.32, 0, 0, 0, 1.32, 28.436, 2.5, 25.2)
 flip_h = true
 
-[node name="bush_d_31" parent="Geometry/Talus" instance=ExtResource("28_bush_d")]
+[node name="bush_d_31" parent="Geometry/Talus" instance=ExtResource("36_bush_d")]
 transform = Transform3D(1.13, 0, 0, 0, 1.13, 0, 0, 0, 1.13, 13.55, 3.5, 20)
 
-[node name="bush_c_32" parent="Geometry/Talus" instance=ExtResource("23_bush_c")]
+[node name="bush_c_32" parent="Geometry/Talus" instance=ExtResource("31_bush_c")]
 transform = Transform3D(1.32, 0, 0, 0, 1.32, 0, 0, 0, 1.32, 19.508, 2.5, 20)
 flip_h = true
 
@@ -418,161 +461,161 @@ transform = Transform3D(1.09, 0, 0, 0, 1.09, 0, 0, 0, 1.09, 10.38, 3.5, 10.65)
 transform = Transform3D(0.87, 0, 0, 0, 0.87, 0, 0, 0, 0.87, 9.73, 3.5, 10.717)
 flip_h = true
 
-[node name="rock_small_c_6" parent="Geometry/Summit" instance=ExtResource("36_rock_small_c")]
+[node name="rock_small_c_6" parent="Geometry/Summit" instance=ExtResource("44_rock_small_c")]
 transform = Transform3D(1.06, 0, 0, 0, 1.06, 0, 0, 0, 1.06, 11.2, 3.5, 12.304)
 
-[node name="wind_grass_a_7" parent="Geometry/Summit" instance=ExtResource("37_wind_grass_a")]
+[node name="wind_grass_a_7" parent="Geometry/Summit" instance=ExtResource("45_wind_grass_a")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 11.744, 3.5, 4.743)
 flip_h = true
 
-[node name="wind_grass_a_8" parent="Geometry/Summit" instance=ExtResource("37_wind_grass_a")]
+[node name="wind_grass_a_8" parent="Geometry/Summit" instance=ExtResource("45_wind_grass_a")]
 transform = Transform3D(0.89, 0, 0, 0, 0.89, 0, 0, 0, 0.89, 13.59, 3.5, 4.757)
 
-[node name="wind_grass_a_9" parent="Geometry/Summit" instance=ExtResource("37_wind_grass_a")]
+[node name="wind_grass_a_9" parent="Geometry/Summit" instance=ExtResource("45_wind_grass_a")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 13.117, 3.5, 6.474)
 
-[node name="wind_grass_a_10" parent="Geometry/Summit" instance=ExtResource("37_wind_grass_a")]
+[node name="wind_grass_a_10" parent="Geometry/Summit" instance=ExtResource("45_wind_grass_a")]
 transform = Transform3D(1.07, 0, 0, 0, 1.07, 0, 0, 0, 1.07, 28.481, 3.5, 13.86)
 flip_h = true
 
 [node name="tall_grass_11" parent="Geometry/Summit" instance=ExtResource("11_tall_grass")]
 transform = Transform3D(0.86, 0, 0, 0, 0.86, 0, 0, 0, 0.86, 29.528, 3.5, 14.491)
 
-[node name="grass_clump_c_12" parent="Geometry/Summit" instance=ExtResource("38_grass_clump_c")]
+[node name="grass_clump_c_12" parent="Geometry/Summit" instance=ExtResource("46_grass_clump_c")]
 transform = Transform3D(0.87, 0, 0, 0, 0.87, 0, 0, 0, 0.87, 30.414, 3.5, 13.152)
 flip_h = true
 
-[node name="wind_grass_b_13" parent="Geometry/Summit" instance=ExtResource("39_wind_grass_b")]
+[node name="wind_grass_b_13" parent="Geometry/Summit" instance=ExtResource("47_wind_grass_b")]
 transform = Transform3D(1.07, 0, 0, 0, 1.07, 0, 0, 0, 1.07, 30.16, 3.5, 13.372)
 
-[node name="grass_clump_a_14" parent="Geometry/Summit" instance=ExtResource("40_grass_clump_a")]
+[node name="grass_clump_a_14" parent="Geometry/Summit" instance=ExtResource("48_grass_clump_a")]
 transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 25.249, 3.5, 4.954)
 flip_h = true
 
 [node name="wildflowers_a_15" parent="Geometry/Summit" instance=ExtResource("12_wildflowers_a")]
 transform = Transform3D(0.94, 0, 0, 0, 0.94, 0, 0, 0, 0.94, 25.91, 3.5, 5.385)
 
-[node name="flowers_patch_a_16" parent="Geometry/Summit" instance=ExtResource("21_flowers_patch_a")]
+[node name="flowers_patch_a_16" parent="Geometry/Summit" instance=ExtResource("29_flowers_patch_a")]
 transform = Transform3D(0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 27.596, 3.5, 5.483)
 flip_h = true
 
-[node name="wildflowers_b_17" parent="Geometry/Summit" instance=ExtResource("41_wildflowers_b")]
+[node name="wildflowers_b_17" parent="Geometry/Summit" instance=ExtResource("49_wildflowers_b")]
 transform = Transform3D(0.94, 0, 0, 0, 0.94, 0, 0, 0, 0.94, 10.461, 3.5, 18.479)
 flip_h = true
 
 [node name="wildflowers_a_18" parent="Geometry/Summit" instance=ExtResource("12_wildflowers_a")]
 transform = Transform3D(1.07, 0, 0, 0, 1.07, 0, 0, 0, 1.07, 13.86, 3.5, 16.054)
 
-[node name="wildflowers_b_19" parent="Geometry/Summit" instance=ExtResource("41_wildflowers_b")]
+[node name="wildflowers_b_19" parent="Geometry/Summit" instance=ExtResource("49_wildflowers_b")]
 transform = Transform3D(0.91, 0, 0, 0, 0.91, 0, 0, 0, 0.91, 11.889, 3.5, 18.015)
 flip_h = true
 
-[node name="wildflowers_b_20" parent="Geometry/Summit" instance=ExtResource("41_wildflowers_b")]
+[node name="wildflowers_b_20" parent="Geometry/Summit" instance=ExtResource("49_wildflowers_b")]
 transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 30.405, 3.5, 18.729)
 
-[node name="grass_clump_b_21" parent="Geometry/Summit" instance=ExtResource("42_grass_clump_b")]
+[node name="grass_clump_b_21" parent="Geometry/Summit" instance=ExtResource("50_grass_clump_b")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 27.546, 3.5, 19.76)
 flip_h = true
 
-[node name="wildflowers_b_22" parent="Geometry/Summit" instance=ExtResource("41_wildflowers_b")]
+[node name="wildflowers_b_22" parent="Geometry/Summit" instance=ExtResource("49_wildflowers_b")]
 transform = Transform3D(0.97, 0, 0, 0, 0.97, 0, 0, 0, 0.97, 27.42, 3.5, 17.214)
 flip_h = true
 
 [node name="tall_grass_23" parent="Geometry/Summit" instance=ExtResource("11_tall_grass")]
 transform = Transform3D(1.09, 0, 0, 0, 1.09, 0, 0, 0, 1.09, 22.091, 3.5, 19.545)
 
-[node name="wind_grass_a_24" parent="Geometry/Summit" instance=ExtResource("37_wind_grass_a")]
+[node name="wind_grass_a_24" parent="Geometry/Summit" instance=ExtResource("45_wind_grass_a")]
 transform = Transform3D(1.19, 0, 0, 0, 1.19, 0, 0, 0, 1.19, 21.831, 3.5, 18.376)
 flip_h = true
 
-[node name="grass_clump_c_25" parent="Geometry/Summit" instance=ExtResource("38_grass_clump_c")]
+[node name="grass_clump_c_25" parent="Geometry/Summit" instance=ExtResource("46_grass_clump_c")]
 transform = Transform3D(1.17, 0, 0, 0, 1.17, 0, 0, 0, 1.17, 24.129, 3.5, 18.223)
 flip_h = true
 
-[node name="rock_small_b_26" parent="Geometry/Summit" instance=ExtResource("43_rock_small_b")]
+[node name="rock_small_b_26" parent="Geometry/Summit" instance=ExtResource("51_rock_small_b")]
 transform = Transform3D(1.12, 0, 0, 0, 1.12, 0, 0, 0, 1.12, 11.109, 3.5, 16.335)
 
-[node name="grass_clump_b_27" parent="Geometry/Summit" instance=ExtResource("42_grass_clump_b")]
+[node name="grass_clump_b_27" parent="Geometry/Summit" instance=ExtResource("50_grass_clump_b")]
 transform = Transform3D(0.89, 0, 0, 0, 0.89, 0, 0, 0, 0.89, 10.594, 3.5, 17.056)
 
 [node name="rock_small_a_28" parent="Geometry/Summit" instance=ExtResource("9_rock_small_a")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 9.662, 3.5, 17.281)
 flip_h = true
 
-[node name="grass_clump_b_29" parent="Geometry/Summit" instance=ExtResource("42_grass_clump_b")]
+[node name="grass_clump_b_29" parent="Geometry/Summit" instance=ExtResource("50_grass_clump_b")]
 transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 28.865, 3.5, 7.208)
 flip_h = true
 
-[node name="rock_small_b_30" parent="Geometry/Summit" instance=ExtResource("43_rock_small_b")]
+[node name="rock_small_b_30" parent="Geometry/Summit" instance=ExtResource("51_rock_small_b")]
 transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 29.8, 3.5, 5.88)
 
-[node name="rock_pile_31" parent="Geometry/Summit" instance=ExtResource("33_rock_pile")]
+[node name="rock_pile_31" parent="Geometry/Summit" instance=ExtResource("41_rock_pile")]
 transform = Transform3D(0.87, 0, 0, 0, 0.87, 0, 0, 0, 0.87, 30.25, 3.5, 8.111)
 flip_h = true
 
-[node name="flowers_patch_a_32" parent="Geometry/Summit" instance=ExtResource("21_flowers_patch_a")]
+[node name="flowers_patch_a_32" parent="Geometry/Summit" instance=ExtResource("29_flowers_patch_a")]
 transform = Transform3D(1.01, 0, 0, 0, 1.01, 0, 0, 0, 1.01, 17.108, 3.5, 4.217)
 
-[node name="flowers_patch_a_33" parent="Geometry/Summit" instance=ExtResource("21_flowers_patch_a")]
+[node name="flowers_patch_a_33" parent="Geometry/Summit" instance=ExtResource("29_flowers_patch_a")]
 transform = Transform3D(1.17, 0, 0, 0, 1.17, 0, 0, 0, 1.17, 17.122, 3.5, 4.796)
 
-[node name="grass_clump_b_34" parent="Geometry/Summit" instance=ExtResource("42_grass_clump_b")]
+[node name="grass_clump_b_34" parent="Geometry/Summit" instance=ExtResource("50_grass_clump_b")]
 transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 9.732, 3.5, 7.834)
 
-[node name="wildflowers_b_35" parent="Geometry/Summit" instance=ExtResource("41_wildflowers_b")]
+[node name="wildflowers_b_35" parent="Geometry/Summit" instance=ExtResource("49_wildflowers_b")]
 transform = Transform3D(0.88, 0, 0, 0, 0.88, 0, 0, 0, 0.88, 8.866, 2.5, 8.223)
 flip_h = true
 
-[node name="grass_clump_b_36" parent="Geometry/Summit" instance=ExtResource("42_grass_clump_b")]
+[node name="grass_clump_b_36" parent="Geometry/Summit" instance=ExtResource("50_grass_clump_b")]
 transform = Transform3D(1.19, 0, 0, 0, 1.19, 0, 0, 0, 1.19, 8.343, 2.5, 7.945)
 flip_h = true
 
-[node name="grass_clump_b_37" parent="Geometry/Summit" instance=ExtResource("42_grass_clump_b")]
+[node name="grass_clump_b_37" parent="Geometry/Summit" instance=ExtResource("50_grass_clump_b")]
 transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 15.496, 3.5, 4.584)
 
 [node name="heather_38" parent="Geometry/Summit" instance=ExtResource("10_heather")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 13.911, 3.5, 5.113)
 
-[node name="wildflowers_b_39" parent="Geometry/Summit" instance=ExtResource("41_wildflowers_b")]
+[node name="wildflowers_b_39" parent="Geometry/Summit" instance=ExtResource("49_wildflowers_b")]
 transform = Transform3D(1.13, 0, 0, 0, 1.13, 0, 0, 0, 1.13, 14.645, 3.5, 5.18)
 
 [node name="tall_grass_40" parent="Geometry/Summit" instance=ExtResource("11_tall_grass")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.469, 3.5, 4.009)
 flip_h = true
 
-[node name="grass_clump_c_41" parent="Geometry/Summit" instance=ExtResource("38_grass_clump_c")]
+[node name="grass_clump_c_41" parent="Geometry/Summit" instance=ExtResource("46_grass_clump_c")]
 transform = Transform3D(0.89, 0, 0, 0, 0.89, 0, 0, 0, 0.89, 25.668, 3.5, 4.569)
 flip_h = true
 
-[node name="wind_grass_b_42" parent="Geometry/Summit" instance=ExtResource("39_wind_grass_b")]
+[node name="wind_grass_b_42" parent="Geometry/Summit" instance=ExtResource("47_wind_grass_b")]
 transform = Transform3D(0.88, 0, 0, 0, 0.88, 0, 0, 0, 0.88, 25.637, 3.5, 4.835)
 
-[node name="grass_clump_b_1" parent="Geometry/Flora" instance=ExtResource("42_grass_clump_b")]
+[node name="grass_clump_b_1" parent="Geometry/Flora" instance=ExtResource("50_grass_clump_b")]
 transform = Transform3D(1.16, 0, 0, 0, 1.16, 0, 0, 0, 1.16, 32.225, 2.5, 7.254)
 flip_h = true
 
-[node name="wildflowers_b_2" parent="Geometry/Flora" instance=ExtResource("41_wildflowers_b")]
+[node name="wildflowers_b_2" parent="Geometry/Flora" instance=ExtResource("49_wildflowers_b")]
 transform = Transform3D(1.08, 0, 0, 0, 1.08, 0, 0, 0, 1.08, 32.119, 2.5, 8.515)
 flip_h = true
 
-[node name="wildflowers_b_3" parent="Geometry/Flora" instance=ExtResource("41_wildflowers_b")]
+[node name="wildflowers_b_3" parent="Geometry/Flora" instance=ExtResource("49_wildflowers_b")]
 transform = Transform3D(0.86, 0, 0, 0, 0.86, 0, 0, 0, 0.86, 33.549, 2.5, 6.901)
 flip_h = true
 
-[node name="grass_clump_b_4" parent="Geometry/Flora" instance=ExtResource("42_grass_clump_b")]
+[node name="grass_clump_b_4" parent="Geometry/Flora" instance=ExtResource("50_grass_clump_b")]
 transform = Transform3D(1.08, 0, 0, 0, 1.08, 0, 0, 0, 1.08, 33.787, 2.5, 12.234)
 
-[node name="rock_small_b_5" parent="Geometry/Flora" instance=ExtResource("43_rock_small_b")]
+[node name="rock_small_b_5" parent="Geometry/Flora" instance=ExtResource("51_rock_small_b")]
 transform = Transform3D(1.01, 0, 0, 0, 1.01, 0, 0, 0, 1.01, 33.925, 2.5, 13.446)
 flip_h = true
 
-[node name="grass_clump_b_6" parent="Geometry/Flora" instance=ExtResource("42_grass_clump_b")]
+[node name="grass_clump_b_6" parent="Geometry/Flora" instance=ExtResource("50_grass_clump_b")]
 transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 32.127, 2.5, 13.191)
 
-[node name="rock_small_c_43" parent="Geometry/Summit" instance=ExtResource("36_rock_small_c")]
+[node name="rock_small_c_43" parent="Geometry/Summit" instance=ExtResource("44_rock_small_c")]
 transform = Transform3D(0.89, 0, 0, 0, 0.89, 0, 0, 0, 0.89, 12.582, 3.5, 6.125)
 
-[node name="rock_small_c_44" parent="Geometry/Summit" instance=ExtResource("36_rock_small_c")]
+[node name="rock_small_c_44" parent="Geometry/Summit" instance=ExtResource("44_rock_small_c")]
 transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 11.922, 3.5, 5.318)
 flip_h = true
 
@@ -580,53 +623,53 @@ flip_h = true
 transform = Transform3D(1.06, 0, 0, 0, 1.06, 0, 0, 0, 1.06, 13.537, 3.5, 4.865)
 flip_h = true
 
-[node name="wind_grass_b_46" parent="Geometry/Summit" instance=ExtResource("39_wind_grass_b")]
+[node name="wind_grass_b_46" parent="Geometry/Summit" instance=ExtResource("47_wind_grass_b")]
 transform = Transform3D(0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 24.16, 3.5, 4.363)
 
-[node name="grass_clump_a_47" parent="Geometry/Summit" instance=ExtResource("40_grass_clump_a")]
+[node name="grass_clump_a_47" parent="Geometry/Summit" instance=ExtResource("48_grass_clump_a")]
 transform = Transform3D(0.98, 0, 0, 0, 0.98, 0, 0, 0, 0.98, 25.553, 3.5, 5.703)
 flip_h = true
 
-[node name="grass_clump_a_48" parent="Geometry/Summit" instance=ExtResource("40_grass_clump_a")]
+[node name="grass_clump_a_48" parent="Geometry/Summit" instance=ExtResource("48_grass_clump_a")]
 transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 24.557, 3.5, 5.607)
 flip_h = true
 
-[node name="fern_a_49" parent="Geometry/Summit" instance=ExtResource("27_fern_a")]
+[node name="fern_a_49" parent="Geometry/Summit" instance=ExtResource("35_fern_a")]
 transform = Transform3D(1.13, 0, 0, 0, 1.13, 0, 0, 0, 1.13, 29.442, 3.5, 12.53)
 flip_h = true
 
-[node name="fern_d_50" parent="Geometry/Summit" instance=ExtResource("44_fern_d")]
+[node name="fern_d_50" parent="Geometry/Summit" instance=ExtResource("52_fern_d")]
 transform = Transform3D(0.87, 0, 0, 0, 0.87, 0, 0, 0, 0.87, 27.801, 3.5, 13.174)
 
-[node name="fern_b_51" parent="Geometry/Summit" instance=ExtResource("29_fern_b")]
+[node name="fern_b_51" parent="Geometry/Summit" instance=ExtResource("37_fern_b")]
 transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 29.375, 3.5, 12.481)
 flip_h = true
 
-[node name="thistle_7" parent="Geometry/Flora" instance=ExtResource("45_thistle")]
+[node name="thistle_7" parent="Geometry/Flora" instance=ExtResource("53_thistle")]
 transform = Transform3D(1.04, 0, 0, 0, 1.04, 0, 0, 0, 1.04, 33.146, 2.5, 7.162)
 flip_h = true
 
-[node name="grass_clump_a_8" parent="Geometry/Flora" instance=ExtResource("40_grass_clump_a")]
+[node name="grass_clump_a_8" parent="Geometry/Flora" instance=ExtResource("48_grass_clump_a")]
 transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 35.152, 2.5, 8.736)
 flip_h = true
 
-[node name="wind_grass_a_9" parent="Geometry/Flora" instance=ExtResource("37_wind_grass_a")]
+[node name="wind_grass_a_9" parent="Geometry/Flora" instance=ExtResource("45_wind_grass_a")]
 transform = Transform3D(0.91, 0, 0, 0, 0.91, 0, 0, 0, 0.91, 33.113, 2.5, 7.741)
 
-[node name="grass_clump_c_10" parent="Geometry/Flora" instance=ExtResource("38_grass_clump_c")]
+[node name="grass_clump_c_10" parent="Geometry/Flora" instance=ExtResource("46_grass_clump_c")]
 transform = Transform3D(0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 34.301, 2.5, 8.437)
 
 [node name="heather_11" parent="Geometry/Flora" instance=ExtResource("10_heather")]
 transform = Transform3D(1.17, 0, 0, 0, 1.17, 0, 0, 0, 1.17, 6.835, 2.5, 22.309)
 
-[node name="rock_small_c_12" parent="Geometry/Flora" instance=ExtResource("36_rock_small_c")]
+[node name="rock_small_c_12" parent="Geometry/Flora" instance=ExtResource("44_rock_small_c")]
 transform = Transform3D(1.07, 0, 0, 0, 1.07, 0, 0, 0, 1.07, 10.052, 2.5, 22.777)
 flip_h = true
 
-[node name="wind_grass_b_13" parent="Geometry/Flora" instance=ExtResource("39_wind_grass_b")]
+[node name="wind_grass_b_13" parent="Geometry/Flora" instance=ExtResource("47_wind_grass_b")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 29.859, 2.5, 24.026)
 
-[node name="grass_clump_a_14" parent="Geometry/Flora" instance=ExtResource("40_grass_clump_a")]
+[node name="grass_clump_a_14" parent="Geometry/Flora" instance=ExtResource("48_grass_clump_a")]
 transform = Transform3D(1.08, 0, 0, 0, 1.08, 0, 0, 0, 1.08, 29.601, 2.5, 24.781)
 flip_h = true
 
@@ -641,42 +684,42 @@ flip_h = true
 [node name="wildflowers_a_17" parent="Geometry/Flora" instance=ExtResource("12_wildflowers_a")]
 transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 20.323, 2.5, 25.483)
 
-[node name="clover_patch_18" parent="Geometry/Flora" instance=ExtResource("46_clover_patch")]
+[node name="clover_patch_18" parent="Geometry/Flora" instance=ExtResource("54_clover_patch")]
 transform = Transform3D(1.08, 0, 0, 0, 1.08, 0, 0, 0, 1.08, 21.959, 2.5, 25.239)
 flip_h = true
 
-[node name="rock_small_b_19" parent="Geometry/Flora" instance=ExtResource("43_rock_small_b")]
+[node name="rock_small_b_19" parent="Geometry/Flora" instance=ExtResource("51_rock_small_b")]
 transform = Transform3D(0.89, 0, 0, 0, 0.89, 0, 0, 0, 0.89, 11.752, 2.5, 26.025)
 flip_h = true
 
-[node name="rock_pile_20" parent="Geometry/Flora" instance=ExtResource("33_rock_pile")]
+[node name="rock_pile_20" parent="Geometry/Flora" instance=ExtResource("41_rock_pile")]
 transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 12.307, 2.5, 23.999)
 
-[node name="grass_clump_a_21" parent="Geometry/Flora" instance=ExtResource("40_grass_clump_a")]
+[node name="grass_clump_a_21" parent="Geometry/Flora" instance=ExtResource("48_grass_clump_a")]
 transform = Transform3D(0.89, 0, 0, 0, 0.89, 0, 0, 0, 0.89, 18.682, 2.5, 26.149)
 
-[node name="grass_clump_a_22" parent="Geometry/Flora" instance=ExtResource("40_grass_clump_a")]
+[node name="grass_clump_a_22" parent="Geometry/Flora" instance=ExtResource("48_grass_clump_a")]
 transform = Transform3D(0.94, 0, 0, 0, 0.94, 0, 0, 0, 0.94, 17.058, 2.5, 26.118)
 
-[node name="grass_clump_a_23" parent="Geometry/Flora" instance=ExtResource("40_grass_clump_a")]
+[node name="grass_clump_a_23" parent="Geometry/Flora" instance=ExtResource("48_grass_clump_a")]
 transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 19.1, 2.5, 26.111)
 
-[node name="rock_small_b_24" parent="Geometry/Flora" instance=ExtResource("43_rock_small_b")]
+[node name="rock_small_b_24" parent="Geometry/Flora" instance=ExtResource("51_rock_small_b")]
 transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 22.386, 1, 28.257)
 flip_h = true
 
-[node name="rock_small_b_25" parent="Geometry/Flora" instance=ExtResource("43_rock_small_b")]
+[node name="rock_small_b_25" parent="Geometry/Flora" instance=ExtResource("51_rock_small_b")]
 transform = Transform3D(1.12, 0, 0, 0, 1.12, 0, 0, 0, 1.12, 21.831, 1, 28.294)
 flip_h = true
 
-[node name="rock_small_b_26" parent="Geometry/Flora" instance=ExtResource("43_rock_small_b")]
+[node name="rock_small_b_26" parent="Geometry/Flora" instance=ExtResource("51_rock_small_b")]
 transform = Transform3D(1.11, 0, 0, 0, 1.11, 0, 0, 0, 1.11, 22.851, 2.5, 27.947)
 
-[node name="grass_clump_c_27" parent="Geometry/Flora" instance=ExtResource("38_grass_clump_c")]
+[node name="grass_clump_c_27" parent="Geometry/Flora" instance=ExtResource("46_grass_clump_c")]
 transform = Transform3D(1.07, 0, 0, 0, 1.07, 0, 0, 0, 1.07, 28.531, 1, 27.358)
 flip_h = true
 
-[node name="thistle_28" parent="Geometry/Flora" instance=ExtResource("45_thistle")]
+[node name="thistle_28" parent="Geometry/Flora" instance=ExtResource("53_thistle")]
 transform = Transform3D(1.01, 0, 0, 0, 1.01, 0, 0, 0, 1.01, 29.561, 2.5, 27.104)
 flip_h = true
 
@@ -689,63 +732,63 @@ transform = Transform3D(0.92, 0, 0, 0, 0.92, 0, 0, 0, 0.92, 33.288, 2.5, 17.546)
 [node name="heather_31" parent="Geometry/Flora" instance=ExtResource("10_heather")]
 transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 33.306, 2.5, 16.564)
 
-[node name="wind_grass_a_32" parent="Geometry/Flora" instance=ExtResource("37_wind_grass_a")]
+[node name="wind_grass_a_32" parent="Geometry/Flora" instance=ExtResource("45_wind_grass_a")]
 transform = Transform3D(0.97, 0, 0, 0, 0.97, 0, 0, 0, 0.97, 6.814, 2.5, 17.151)
 
-[node name="grass_clump_c_33" parent="Geometry/Flora" instance=ExtResource("38_grass_clump_c")]
+[node name="grass_clump_c_33" parent="Geometry/Flora" instance=ExtResource("46_grass_clump_c")]
 transform = Transform3D(0.92, 0, 0, 0, 0.92, 0, 0, 0, 0.92, 7.816, 2.5, 16.591)
 
-[node name="grass_clump_c_34" parent="Geometry/Flora" instance=ExtResource("38_grass_clump_c")]
+[node name="grass_clump_c_34" parent="Geometry/Flora" instance=ExtResource("46_grass_clump_c")]
 transform = Transform3D(1.17, 0, 0, 0, 1.17, 0, 0, 0, 1.17, 5.511, 2.5, 16.784)
 
-[node name="bush_d_35" parent="Geometry/Flora" instance=ExtResource("28_bush_d")]
+[node name="bush_d_35" parent="Geometry/Flora" instance=ExtResource("36_bush_d")]
 transform = Transform3D(0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 34.064, 2.5, 11.04)
 
-[node name="thistle_36" parent="Geometry/Flora" instance=ExtResource("45_thistle")]
+[node name="thistle_36" parent="Geometry/Flora" instance=ExtResource("53_thistle")]
 transform = Transform3D(0.92, 0, 0, 0, 0.92, 0, 0, 0, 0.92, 32.968, 2.5, 8.744)
 
-[node name="thistle_37" parent="Geometry/Flora" instance=ExtResource("45_thistle")]
+[node name="thistle_37" parent="Geometry/Flora" instance=ExtResource("53_thistle")]
 transform = Transform3D(1.06, 0, 0, 0, 1.06, 0, 0, 0, 1.06, 31.84, 2.5, 10.695)
 
-[node name="fern_b_38" parent="Geometry/Flora" instance=ExtResource("29_fern_b")]
+[node name="fern_b_38" parent="Geometry/Flora" instance=ExtResource("37_fern_b")]
 transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 7.75, 3.5, 9.925)
 flip_h = true
 
-[node name="fern_b_39" parent="Geometry/Flora" instance=ExtResource("29_fern_b")]
+[node name="fern_b_39" parent="Geometry/Flora" instance=ExtResource("37_fern_b")]
 transform = Transform3D(1.17, 0, 0, 0, 1.17, 0, 0, 0, 1.17, 8.415, 2.5, 8.866)
 flip_h = true
 
-[node name="bush_b_40" parent="Geometry/Flora" instance=ExtResource("31_bush_b")]
+[node name="bush_b_40" parent="Geometry/Flora" instance=ExtResource("39_bush_b")]
 transform = Transform3D(1.04, 0, 0, 0, 1.04, 0, 0, 0, 1.04, 6.388, 2.5, 10.435)
 
 [node name="tall_grass_41" parent="Geometry/Flora" instance=ExtResource("11_tall_grass")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 6.96, 2.5, 8.39)
 
-[node name="grass_clump_c_42" parent="Geometry/Flora" instance=ExtResource("38_grass_clump_c")]
+[node name="grass_clump_c_42" parent="Geometry/Flora" instance=ExtResource("46_grass_clump_c")]
 transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 6.329, 2.5, 7.678)
 
-[node name="fern_b_43" parent="Geometry/Flora" instance=ExtResource("29_fern_b")]
+[node name="fern_b_43" parent="Geometry/Flora" instance=ExtResource("37_fern_b")]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 6.288, 1, 29.119)
 
-[node name="thistle_44" parent="Geometry/Flora" instance=ExtResource("45_thistle")]
+[node name="thistle_44" parent="Geometry/Flora" instance=ExtResource("53_thistle")]
 transform = Transform3D(0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 9.955, 1, 29.103)
 flip_h = true
 
-[node name="wind_grass_a_45" parent="Geometry/Flora" instance=ExtResource("37_wind_grass_a")]
+[node name="wind_grass_a_45" parent="Geometry/Flora" instance=ExtResource("45_wind_grass_a")]
 transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 31.383, 1.5, 29.502)
 flip_h = true
 
-[node name="wind_grass_a_46" parent="Geometry/Flora" instance=ExtResource("37_wind_grass_a")]
+[node name="wind_grass_a_46" parent="Geometry/Flora" instance=ExtResource("45_wind_grass_a")]
 transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 33.388, 1.5, 29.745)
 flip_h = true
 
-[node name="grass_clump_c_47" parent="Geometry/Flora" instance=ExtResource("38_grass_clump_c")]
+[node name="grass_clump_c_47" parent="Geometry/Flora" instance=ExtResource("46_grass_clump_c")]
 transform = Transform3D(1.16, 0, 0, 0, 1.16, 0, 0, 0, 1.16, 32.242, 1.5, 29.988)
 
-[node name="flowers_patch_b_48" parent="Geometry/Flora" instance=ExtResource("22_flowers_patch_b")]
+[node name="flowers_patch_b_48" parent="Geometry/Flora" instance=ExtResource("30_flowers_patch_b")]
 transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 18.117, 2.5, 27.853)
 
-[node name="grass_clump_a_49" parent="Geometry/Flora" instance=ExtResource("40_grass_clump_a")]
+[node name="grass_clump_a_49" parent="Geometry/Flora" instance=ExtResource("48_grass_clump_a")]
 transform = Transform3D(1.16, 0, 0, 0, 1.16, 0, 0, 0, 1.16, 15.991, 1, 27.638)
 flip_h = true
 
@@ -753,16 +796,16 @@ flip_h = true
 transform = Transform3D(0.91, 0, 0, 0, 0.91, 0, 0, 0, 0.91, 34.579, 1.5, 26.642)
 flip_h = true
 
-[node name="moss_patch_b_51" parent="Geometry/Flora" instance=ExtResource("47_moss_patch_b")]
+[node name="moss_patch_b_51" parent="Geometry/Flora" instance=ExtResource("55_moss_patch_b")]
 transform = Transform3D(0.98, 0, 0, 0, 0.98, 0, 0, 0, 0.98, 35.985, 1.5, 26.738)
 
-[node name="wildflowers_b_52" parent="Geometry/Flora" instance=ExtResource("41_wildflowers_b")]
+[node name="wildflowers_b_52" parent="Geometry/Flora" instance=ExtResource("49_wildflowers_b")]
 transform = Transform3D(0.87, 0, 0, 0, 0.87, 0, 0, 0, 0.87, 34.591, 1.5, 25.553)
 
-[node name="rock_small_c_53" parent="Geometry/Flora" instance=ExtResource("36_rock_small_c")]
+[node name="rock_small_c_53" parent="Geometry/Flora" instance=ExtResource("44_rock_small_c")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 29.379, 1, 31.121)
 
-[node name="moss_patch_b_54" parent="Geometry/Flora" instance=ExtResource("47_moss_patch_b")]
+[node name="moss_patch_b_54" parent="Geometry/Flora" instance=ExtResource("55_moss_patch_b")]
 transform = Transform3D(1.12, 0, 0, 0, 1.12, 0, 0, 0, 1.12, 26.718, 1, 31.75)
 flip_h = true
 
@@ -770,271 +813,234 @@ flip_h = true
 transform = Transform3D(1.11, 0, 0, 0, 1.11, 0, 0, 0, 1.11, 27.633, 1, 32.713)
 flip_h = true
 
-[node name="leaves_rust_a_1" parent="Geometry/Woods" instance=ExtResource("48_leaves_rust_a")]
+[node name="leaves_rust_a_1" parent="Geometry/Woods" instance=ExtResource("56_leaves_rust_a")]
 transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 7.141, 0.5, 36.154)
 flip_h = true
 
-[node name="mushroom_cep_2" parent="Geometry/Woods" instance=ExtResource("49_mushroom_cep")]
+[node name="mushroom_cep_2" parent="Geometry/Woods" instance=ExtResource("57_mushroom_cep")]
 transform = Transform3D(1.06, 0, 0, 0, 1.06, 0, 0, 0, 1.06, 9.723, 0, 34.513)
 flip_h = true
 
-[node name="fern_b_3" parent="Geometry/Woods" instance=ExtResource("29_fern_b")]
+[node name="fern_b_3" parent="Geometry/Woods" instance=ExtResource("37_fern_b")]
 transform = Transform3D(1.14, 0, 0, 0, 1.14, 0, 0, 0, 1.14, 9.694, 0, 34.711)
 
-[node name="fern_d_4" parent="Geometry/Woods" instance=ExtResource("44_fern_d")]
+[node name="fern_d_4" parent="Geometry/Woods" instance=ExtResource("52_fern_d")]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 9.771, 0, 35.132)
 
-[node name="fern_b_5" parent="Geometry/Woods" instance=ExtResource("29_fern_b")]
+[node name="fern_b_5" parent="Geometry/Woods" instance=ExtResource("37_fern_b")]
 transform = Transform3D(1.18, 0, 0, 0, 1.18, 0, 0, 0, 1.18, 33.199, 0.5, 34.871)
 
-[node name="leaves_rust_a_6" parent="Geometry/Woods" instance=ExtResource("48_leaves_rust_a")]
+[node name="leaves_rust_a_6" parent="Geometry/Woods" instance=ExtResource("56_leaves_rust_a")]
 transform = Transform3D(1.06, 0, 0, 0, 1.06, 0, 0, 0, 1.06, 30.645, 0, 35.69)
 
-[node name="leaves_rust_a_7" parent="Geometry/Woods" instance=ExtResource("48_leaves_rust_a")]
+[node name="leaves_rust_a_7" parent="Geometry/Woods" instance=ExtResource("56_leaves_rust_a")]
 transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 30.769, 0, 34.935)
 
-[node name="grass_clump_d_8" parent="Geometry/Woods" instance=ExtResource("50_grass_clump_d")]
+[node name="grass_clump_d_8" parent="Geometry/Woods" instance=ExtResource("58_grass_clump_d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.357, 0, 34.584)
 flip_h = true
 
-[node name="bush_d_9" parent="Geometry/Woods" instance=ExtResource("28_bush_d")]
+[node name="bush_d_9" parent="Geometry/Woods" instance=ExtResource("36_bush_d")]
 transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 35.624, 0.5, 32.436)
 
-[node name="fern_a_10" parent="Geometry/Woods" instance=ExtResource("27_fern_a")]
+[node name="fern_a_10" parent="Geometry/Woods" instance=ExtResource("35_fern_a")]
 transform = Transform3D(1.13, 0, 0, 0, 1.13, 0, 0, 0, 1.13, 34.169, 0.5, 32.59)
 
-[node name="fern_b_11" parent="Geometry/Woods" instance=ExtResource("29_fern_b")]
+[node name="fern_b_11" parent="Geometry/Woods" instance=ExtResource("37_fern_b")]
 transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 35.264, 0.5, 33.18)
 
-[node name="pebbles_b_1" parent="Geometry/Path" instance=ExtResource("51_pebbles_b")]
+[node name="pebbles_b_1" parent="Geometry/Path" instance=ExtResource("59_pebbles_b")]
 transform = Transform3D(0.86, 0, 0, 0, 0.86, 0, 0, 0, 0.86, 19.838, 0, 38.081)
 
-[node name="pebbles_a_2" parent="Geometry/Path" instance=ExtResource("52_pebbles_a")]
+[node name="pebbles_a_2" parent="Geometry/Path" instance=ExtResource("60_pebbles_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.97, 0, 36.321)
 flip_h = true
 
-[node name="pebbles_b_3" parent="Geometry/Path" instance=ExtResource("51_pebbles_b")]
+[node name="pebbles_b_3" parent="Geometry/Path" instance=ExtResource("59_pebbles_b")]
 transform = Transform3D(0.82, 0, 0, 0, 0.82, 0, 0, 0, 0.82, 15.219, 0, 35.755)
 
-[node name="pebbles_a_4" parent="Geometry/Path" instance=ExtResource("52_pebbles_a")]
+[node name="pebbles_a_4" parent="Geometry/Path" instance=ExtResource("60_pebbles_a")]
 transform = Transform3D(0.89, 0, 0, 0, 0.89, 0, 0, 0, 0.89, 12.566, 0, 34.103)
 flip_h = true
 
-[node name="pebbles_a_5" parent="Geometry/Path" instance=ExtResource("52_pebbles_a")]
+[node name="pebbles_a_5" parent="Geometry/Path" instance=ExtResource("60_pebbles_a")]
 transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 13.142, 1, 29.281)
 flip_h = true
 
-[node name="pebbles_b_6" parent="Geometry/Path" instance=ExtResource("51_pebbles_b")]
+[node name="pebbles_b_6" parent="Geometry/Path" instance=ExtResource("59_pebbles_b")]
 transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 18.006, 1, 29.831)
 
-[node name="pebbles_a_7" parent="Geometry/Path" instance=ExtResource("52_pebbles_a")]
+[node name="pebbles_a_7" parent="Geometry/Path" instance=ExtResource("60_pebbles_a")]
 transform = Transform3D(0.82, 0, 0, 0, 0.82, 0, 0, 0, 0.82, 20.647, 1, 30.057)
 flip_h = true
 
-[node name="pebbles_b_8" parent="Geometry/Path" instance=ExtResource("51_pebbles_b")]
+[node name="pebbles_b_8" parent="Geometry/Path" instance=ExtResource("59_pebbles_b")]
 transform = Transform3D(0.84, 0, 0, 0, 0.84, 0, 0, 0, 0.84, 24.53, 2.5, 23.306)
 
-[node name="pebbles_a_9" parent="Geometry/Path" instance=ExtResource("52_pebbles_a")]
+[node name="pebbles_a_9" parent="Geometry/Path" instance=ExtResource("60_pebbles_a")]
 transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 19.528, 2.5, 23.67)
 flip_h = true
 
-[node name="pebbles_a_10" parent="Geometry/Path" instance=ExtResource("52_pebbles_a")]
+[node name="pebbles_a_10" parent="Geometry/Path" instance=ExtResource("60_pebbles_a")]
 transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 16.789, 3.5, 17.846)
 flip_h = true
 
-[node name="TroncCouche" parent="Geometry/Woods" instance=ExtResource("53_fallen_tree")]
+[node name="TroncCouche" parent="Geometry/Woods" instance=ExtResource("61_fallen_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.4, 0.5, 38.6)
 flip_h = true
 
-[node name="Souche" parent="Geometry/Woods" instance=ExtResource("54_stump_a")]
+[node name="Souche" parent="Geometry/Woods" instance=ExtResource("62_stump_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, 0.5, 37.4)
 
-[node name="GapBushWest" parent="Geometry/Woods" instance=ExtResource("55_fg_bush")]
+[node name="GapBushWest" parent="Geometry/Woods" instance=ExtResource("63_fg_bush")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.8, 0, 39)
 
-[node name="GapFernEast" parent="Geometry/Woods" instance=ExtResource("56_fg_fern")]
+[node name="GapFernEast" parent="Geometry/Woods" instance=ExtResource("64_fg_fern")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.4, 0, 39)
 
-[node name="Backdrop1" parent="Geometry/Backdrop" instance=ExtResource("57_pine_tall_b")]
+[node name="Backdrop1" parent="Geometry/Backdrop" instance=ExtResource("18_pine_tall_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 12.711)
 
-[node name="Backdrop2" parent="Geometry/Backdrop" instance=ExtResource("58_tree_old_pine")]
+[node name="Backdrop2" parent="Geometry/Backdrop" instance=ExtResource("19_tree_old_pine")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 19.966)
 flip_h = true
 
-[node name="Backdrop3" parent="Geometry/Backdrop" instance=ExtResource("59_tree_pine")]
+[node name="Backdrop3" parent="Geometry/Backdrop" instance=ExtResource("24_tree_pine")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 25.225)
 
-[node name="Backdrop4" parent="Geometry/Backdrop" instance=ExtResource("60_oak_a")]
+[node name="Backdrop4" parent="Geometry/Backdrop" instance=ExtResource("65_oak_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 32.042)
 flip_h = true
 
-[node name="Backdrop5" parent="Geometry/Backdrop" instance=ExtResource("61_beech_a")]
+[node name="Backdrop5" parent="Geometry/Backdrop" instance=ExtResource("23_beech_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 40.425)
 
-[node name="Backdrop6" parent="Geometry/Backdrop" instance=ExtResource("62_pine_dead")]
+[node name="Backdrop6" parent="Geometry/Backdrop" instance=ExtResource("66_pine_dead")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 12.652)
 flip_h = true
 
-[node name="Backdrop7" parent="Geometry/Backdrop" instance=ExtResource("63_tree_autumn_rust")]
+[node name="Backdrop7" parent="Geometry/Backdrop" instance=ExtResource("67_tree_autumn_rust")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 18.422)
 
-[node name="Backdrop8" parent="Geometry/Backdrop" instance=ExtResource("64_maple_a")]
+[node name="Backdrop8" parent="Geometry/Backdrop" instance=ExtResource("20_maple_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 24.529)
 flip_h = true
 
-[node name="Backdrop9" parent="Geometry/Backdrop" instance=ExtResource("65_oak_c")]
+[node name="Backdrop9" parent="Geometry/Backdrop" instance=ExtResource("68_oak_c")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 29.124)
 
-[node name="Backdrop10" parent="Geometry/Backdrop" instance=ExtResource("66_beech_b")]
+[node name="Backdrop10" parent="Geometry/Backdrop" instance=ExtResource("69_beech_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 35.047)
 flip_h = true
 
-[node name="Backdrop11" parent="Geometry/Backdrop" instance=ExtResource("67_oak_d")]
+[node name="Backdrop11" parent="Geometry/Backdrop" instance=ExtResource("70_oak_d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 41.064)
 
-[node name="Vide1" parent="Geometry/Sky" instance=ExtResource("68_distant_island_b")]
+[node name="Vide1" parent="Geometry/Sky" instance=ExtResource("71_distant_island_b")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 46, -45, -96)
 
-[node name="Vide2" parent="Geometry/Sky" instance=ExtResource("69_distant_island_a")]
+[node name="Vide2" parent="Geometry/Sky" instance=ExtResource("72_distant_island_a")]
 transform = Transform3D(0.55, 0, 0, 0, 0.55, 0, 0, 0, 0.55, -12, -52, -112)
 flip_h = true
 
-[node name="Vide3" parent="Geometry/Sky" instance=ExtResource("70_distant_island_e")]
+[node name="Vide3" parent="Geometry/Sky" instance=ExtResource("73_distant_island_e")]
 transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 31, -33, -72)
 
-[node name="Vide4" parent="Geometry/Sky" instance=ExtResource("71_distant_island_f")]
+[node name="Vide4" parent="Geometry/Sky" instance=ExtResource("74_distant_island_f")]
 transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 12, -58, -140)
 
-[node name="Vide5" parent="Geometry/Sky" instance=ExtResource("72_distant_island_c")]
+[node name="Vide5" parent="Geometry/Sky" instance=ExtResource("75_distant_island_c")]
 transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, 64, -58, -150)
 flip_h = true
 
-[node name="Vide6" parent="Geometry/Sky" instance=ExtResource("73_distant_island_d")]
+[node name="Vide6" parent="Geometry/Sky" instance=ExtResource("76_distant_island_d")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -36, -58, -175)
 
-[node name="Vide7" parent="Geometry/Sky" instance=ExtResource("74_horizon_islands")]
+[node name="Vide7" parent="Geometry/Sky" instance=ExtResource("77_horizon_islands")]
 transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 20, -58, -240)
 
-[node name="Vide8" parent="Geometry/Sky" instance=ExtResource("75_cloud_c")]
+[node name="Vide8" parent="Geometry/Sky" instance=ExtResource("78_cloud_c")]
 transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 14, -56, -128)
 flip_h = true
 
-[node name="Vide9" parent="Geometry/Sky" instance=ExtResource("76_cloud_a")]
+[node name="Vide9" parent="Geometry/Sky" instance=ExtResource("79_cloud_a")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 44, -56, -148)
 
-[node name="Vide10" parent="Geometry/Sky" instance=ExtResource("77_cloud_b")]
+[node name="Vide10" parent="Geometry/Sky" instance=ExtResource("80_cloud_b")]
 transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -12, -57, -166)
 
-[node name="Vide11" parent="Geometry/Sky" instance=ExtResource("75_cloud_c")]
+[node name="Vide11" parent="Geometry/Sky" instance=ExtResource("78_cloud_c")]
 transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 28, -57, -186)
 flip_h = true
 
-[node name="Vide12" parent="Geometry/Sky" instance=ExtResource("76_cloud_a")]
+[node name="Vide12" parent="Geometry/Sky" instance=ExtResource("79_cloud_a")]
 transform = Transform3D(2.7, 0, 0, 0, 2.7, 0, 0, 0, 2.7, 60, -58, -206)
 
-[node name="Vide13" parent="Geometry/Sky" instance=ExtResource("75_cloud_c")]
+[node name="Vide13" parent="Geometry/Sky" instance=ExtResource("78_cloud_c")]
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -4, -58, -226)
 
-[node name="Vide14" parent="Geometry/Sky" instance=ExtResource("76_cloud_a")]
+[node name="Vide14" parent="Geometry/Sky" instance=ExtResource("79_cloud_a")]
 transform = Transform3D(3.4, 0, 0, 0, 3.4, 0, 0, 0, 3.4, 22, -58, -252)
 flip_h = true
 
-[node name="Vide15" parent="Geometry/Sky" instance=ExtResource("78_mist_band")]
+[node name="Vide15" parent="Geometry/Sky" instance=ExtResource("81_mist_band")]
 transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, 18, -50, -110)
 
-[node name="Vide16" parent="Geometry/Sky" instance=ExtResource("78_mist_band")]
+[node name="Vide16" parent="Geometry/Sky" instance=ExtResource("81_mist_band")]
 transform = Transform3D(3.2, 0, 0, 0, 3.2, 0, 0, 0, 3.2, 44, -54, -150)
 
-[node name="Vide17" parent="Geometry/Sky" instance=ExtResource("78_mist_band")]
+[node name="Vide17" parent="Geometry/Sky" instance=ExtResource("81_mist_band")]
 transform = Transform3D(3.6, 0, 0, 0, 3.6, 0, 0, 0, 3.6, -6, -56, -190)
 flip_h = true
 
-[node name="Vide18" parent="Geometry/Sky" instance=ExtResource("79_floating_rock_b")]
+[node name="Vide18" parent="Geometry/Sky" instance=ExtResource("82_floating_rock_b")]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 5.5, -4.5, -12)
 
-[node name="Vide19" parent="Geometry/Sky" instance=ExtResource("80_floating_rock_c")]
+[node name="Vide19" parent="Geometry/Sky" instance=ExtResource("83_floating_rock_c")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.5, -6, -16)
 
-[node name="Vide20" parent="Geometry/Sky" instance=ExtResource("81_floating_rock")]
+[node name="Vide20" parent="Geometry/Sky" instance=ExtResource("84_floating_rock")]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -3, -9, -26)
 flip_h = true
 
-[node name="Vide21" parent="Geometry/Sky" instance=ExtResource("79_floating_rock_b")]
+[node name="Vide21" parent="Geometry/Sky" instance=ExtResource("82_floating_rock_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, -12, -30)
 
-[node name="Vide22" parent="Geometry/Sky" instance=ExtResource("80_floating_rock_c")]
+[node name="Vide22" parent="Geometry/Sky" instance=ExtResource("83_floating_rock_c")]
 transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 12, -17, -48)
 
-[node name="Vide23" parent="Geometry/Sky" instance=ExtResource("81_floating_rock")]
+[node name="Vide23" parent="Geometry/Sky" instance=ExtResource("84_floating_rock")]
 transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 29, -20, -58)
 flip_h = true
 
-[node name="Vide24" parent="Geometry/Sky" instance=ExtResource("80_floating_rock_c")]
+[node name="Vide24" parent="Geometry/Sky" instance=ExtResource("83_floating_rock_c")]
 transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -14, -22, -72)
 
-[node name="Vide25" parent="Geometry/Sky" instance=ExtResource("79_floating_rock_b")]
+[node name="Vide25" parent="Geometry/Sky" instance=ExtResource("82_floating_rock_b")]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 50, -24, -76)
+
+[node name="PremierPlan1" parent="Geometry/Foreground" instance=ExtResource("63_fg_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.55, 3.5, 19.5)
 
 [node name="Scatter" type="Node3D" parent="Geometry"]
 
-[node name="WestTrees" type="Node3D" parent="Geometry/Scatter"]
-script = ExtResource("4_prop_scatter")
-prop = ExtResource("57_pine_tall_b")
-points = PackedVector3Array(1, 0, 18, 1, 0, 34)
-yaw_degrees = PackedFloat32Array(0, 0)
-scale_range = Vector2(0.85, 1.15)
-random_seed = 21
-variants = Array[PackedScene]([ExtResource("58_tree_old_pine"), ExtResource("59_tree_pine"), ExtResource("63_tree_autumn_rust"), ExtResource("64_maple_a"), ExtResource("65_oak_c")])
-random_flip = true
-
-[node name="WestTreesFront" type="Node3D" parent="Geometry/Scatter"]
-script = ExtResource("4_prop_scatter")
-prop = ExtResource("82_pine_tall_b_forest")
-points = PackedVector3Array(1.2, 0, 13, 2.4, 0, 15.5, 2.6, 0, 22, 1.4, 0, 26, 2.2, 0, 30, 2, 0, 38)
-yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0)
-scale_range = Vector2(0.85, 1.15)
-random_seed = 521
-variants = Array[PackedScene]([ExtResource("83_tree_old_pine_forest"), ExtResource("84_tree_pine_forest"), ExtResource("85_tree_autumn_rust_forest"), ExtResource("86_maple_a_forest"), ExtResource("87_oak_c_forest")])
-random_flip = true
-
-[node name="EastTrees" type="Node3D" parent="Geometry/Scatter"]
-script = ExtResource("4_prop_scatter")
-prop = ExtResource("88_tree_autumn_yellow")
-points = PackedVector3Array(39, 0, 17.5, 38.6, 0, 28.5, 39, 0, 38.5)
-yaw_degrees = PackedFloat32Array(0, 0, 0)
-scale_range = Vector2(0.85, 1.15)
-random_seed = 22
-variants = Array[PackedScene]([ExtResource("61_beech_a"), ExtResource("89_maple_b"), ExtResource("57_pine_tall_b"), ExtResource("58_tree_old_pine"), ExtResource("59_tree_pine")])
-random_flip = true
-
-[node name="EastTreesFront" type="Node3D" parent="Geometry/Scatter"]
-script = ExtResource("4_prop_scatter")
-prop = ExtResource("90_tree_autumn_yellow_forest")
-points = PackedVector3Array(37.6, 0, 12, 37.8, 0, 23, 37.6, 0, 34)
-yaw_degrees = PackedFloat32Array(0, 0, 0)
-scale_range = Vector2(0.85, 1.15)
-random_seed = 522
-variants = Array[PackedScene]([ExtResource("91_beech_a_forest"), ExtResource("92_maple_b_forest"), ExtResource("82_pine_tall_b_forest"), ExtResource("83_tree_old_pine_forest"), ExtResource("84_tree_pine_forest")])
-random_flip = true
-
 [node name="EdgeBrush" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
-prop = ExtResource("35_bush")
+prop = ExtResource("43_bush")
 points = PackedVector3Array(3.461, 0, 13.623, 2.427, 0, 19.391, 2.449, 0, 25.066, 2.255, 0, 32.387, 39.244, 0, 10.339, 38.233, 0, 14.112, 38.935, 0, 22.395, 37.347, 0, 27.158, 37.331, 0, 31.53)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 23
-variants = Array[PackedScene]([ExtResource("31_bush_b"), ExtResource("23_bush_c"), ExtResource("28_bush_d"), ExtResource("93_bush_e"), ExtResource("30_bush_f"), ExtResource("27_fern_a"), ExtResource("29_fern_b"), ExtResource("94_fern_c"), ExtResource("44_fern_d"), ExtResource("10_heather")])
+variants = Array[PackedScene]([ExtResource("39_bush_b"), ExtResource("31_bush_c"), ExtResource("36_bush_d"), ExtResource("85_bush_e"), ExtResource("38_bush_f"), ExtResource("35_fern_a"), ExtResource("37_fern_b"), ExtResource("86_fern_c"), ExtResource("52_fern_d"), ExtResource("10_heather")])
 random_flip = true
 
 [node name="RimRocks" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
-prop = ExtResource("95_edge_rocks_a")
+prop = ExtResource("87_edge_rocks_a")
 points = PackedVector3Array(9.144, 0, 5.118, 11.449, 0, 4.291, 29.276, 0, 5.059, 31.916, 0, 6.489)
 yaw_degrees = PackedFloat32Array(0, 0, 0, 0)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 31
-variants = Array[PackedScene]([ExtResource("96_edge_rocks_b")])
+variants = Array[PackedScene]([ExtResource("88_edge_rocks_b")])
 random_flip = true
 
 [node name="RimPebbles" type="Node3D" parent="Geometry/Scatter"]
@@ -1043,7 +1049,7 @@ prop = ExtResource("9_rock_small_a")
 points = PackedVector3Array(15.578, 0, 5.521, 8.235, 0, 5.046, 12.187, 0, 5.28, 22.392, 0, 5.156, 10.138, 0, 5.666)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 33
-variants = Array[PackedScene]([ExtResource("43_rock_small_b"), ExtResource("36_rock_small_c"), ExtResource("97_rock_small_d")])
+variants = Array[PackedScene]([ExtResource("51_rock_small_b"), ExtResource("44_rock_small_c"), ExtResource("89_rock_small_d")])
 random_flip = true
 
 [node name="RimGrass" type="Node3D" parent="Geometry/Scatter"]
@@ -1052,7 +1058,7 @@ prop = ExtResource("11_tall_grass")
 points = PackedVector3Array(31.618, 0, 5.469, 29.071, 0, 5.342, 26.459, 0, 4.592, 18.016, 0, 5.764, 24.416, 0, 4.324)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 34
-variants = Array[PackedScene]([ExtResource("37_wind_grass_a"), ExtResource("39_wind_grass_b"), ExtResource("10_heather")])
+variants = Array[PackedScene]([ExtResource("45_wind_grass_a"), ExtResource("47_wind_grass_b"), ExtResource("10_heather")])
 random_flip = true
 
 [node name="PathGrass" type="Node3D" parent="Geometry/Scatter"]
@@ -1061,7 +1067,7 @@ prop = ExtResource("11_tall_grass")
 points = PackedVector3Array(17.369, 0, 33.628)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 67
-variants = Array[PackedScene]([ExtResource("37_wind_grass_a"), ExtResource("39_wind_grass_b"), ExtResource("40_grass_clump_a"), ExtResource("38_grass_clump_c")])
+variants = Array[PackedScene]([ExtResource("45_wind_grass_a"), ExtResource("47_wind_grass_b"), ExtResource("48_grass_clump_a"), ExtResource("46_grass_clump_c")])
 random_flip = true
 
 [node name="PathFlowers" type="Node3D" parent="Geometry/Scatter"]
@@ -1070,7 +1076,7 @@ prop = ExtResource("12_wildflowers_a")
 points = PackedVector3Array(13.434, 0, 27.066)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 68
-variants = Array[PackedScene]([ExtResource("41_wildflowers_b"), ExtResource("10_heather")])
+variants = Array[PackedScene]([ExtResource("49_wildflowers_b"), ExtResource("10_heather")])
 random_flip = true
 
 [node name="PathStones" type="Node3D" parent="Geometry/Scatter"]
@@ -1079,53 +1085,53 @@ prop = ExtResource("9_rock_small_a")
 points = PackedVector3Array(22.961, 0, 32.998)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 69
-variants = Array[PackedScene]([ExtResource("43_rock_small_b"), ExtResource("36_rock_small_c"), ExtResource("97_rock_small_d")])
+variants = Array[PackedScene]([ExtResource("51_rock_small_b"), ExtResource("44_rock_small_c"), ExtResource("89_rock_small_d")])
 random_flip = true
 
 [node name="FootTreesFront" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
-prop = ExtResource("98_sapling_a_forest")
+prop = ExtResource("90_sapling_a_forest")
 points = PackedVector3Array(6.4, 0, 35.4, 27.8, 0, 36.2, 32.8, 0, 35.2, 5.2, 0, 33.2, 34.6, 0, 33)
 yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 574
-variants = Array[PackedScene]([ExtResource("99_birch_a_forest"), ExtResource("100_birch_b_forest"), ExtResource("101_pine_small_a_forest"), ExtResource("102_pine_small_b_forest")])
+variants = Array[PackedScene]([ExtResource("91_birch_a_forest"), ExtResource("92_birch_b_forest"), ExtResource("93_pine_small_a_forest"), ExtResource("94_pine_small_b_forest")])
 random_flip = true
 
 [node name="FootLeaves" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
-prop = ExtResource("103_leaves_gold_a")
+prop = ExtResource("95_leaves_gold_a")
 points = PackedVector3Array(22.689, 0, 35.231, 7.922, 0, 33.978, 28.674, 0, 32.737, 31.018, 0, 37.661, 7.04, 0, 37.849, 35.349, 0, 33.71, 19.095, 0, 33.522)
 scale_range = Vector2(0.9, 1.15)
 random_seed = 75
-variants = Array[PackedScene]([ExtResource("48_leaves_rust_a"), ExtResource("104_leaves_gold_b"), ExtResource("105_leaves_rust_b"), ExtResource("106_leaves_scatter")])
+variants = Array[PackedScene]([ExtResource("56_leaves_rust_a"), ExtResource("96_leaves_gold_b"), ExtResource("97_leaves_rust_b"), ExtResource("98_leaves_scatter")])
 random_flip = true
 
 [node name="SouthTrunks" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
-prop = ExtResource("107_fg_trunk_a")
+prop = ExtResource("99_fg_trunk_a")
 points = PackedVector3Array(4.954, 0, 39.268, 33.162, 0, 39.182)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 76
-variants = Array[PackedScene]([ExtResource("108_fg_trunk_b")])
+variants = Array[PackedScene]([ExtResource("100_fg_trunk_b")])
 random_flip = true
 
 [node name="SouthBrush" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
-prop = ExtResource("55_fg_bush")
+prop = ExtResource("63_fg_bush")
 points = PackedVector3Array(7.648, 0, 38.796, 10.716, 0, 38.863, 24.035, 0, 38.489, 27.369, 0, 39.051, 33.162, 0, 39.182)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 77
-variants = Array[PackedScene]([ExtResource("56_fg_fern"), ExtResource("109_fg_grass")])
+variants = Array[PackedScene]([ExtResource("64_fg_fern"), ExtResource("101_fg_grass")])
 random_flip = true
 
 [node name="Shade" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
-prop = ExtResource("110_canopy_shadow_a")
+prop = ExtResource("102_canopy_shadow_a")
 points = PackedVector3Array(29.749, 0, 30.72, 12.478, 0, 33.206, 5.559, 0, 31.105, 24.695, 0, 35.791, 32.455, 0, 36.842)
 scale_range = Vector2(0.9, 1.1)
 random_seed = 79
-variants = Array[PackedScene]([ExtResource("111_canopy_shadow_b"), ExtResource("112_sun_dapple")])
+variants = Array[PackedScene]([ExtResource("103_canopy_shadow_b"), ExtResource("104_sun_dapple")])
 random_flip = true
 
 [node name="Markers" type="Node3D" parent="."]
@@ -1201,14 +1207,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.2, 3.5, 10.2)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 3.5, 12)
 metadata/area = Rect2(14, 6, 12, 12)
 
-[node name="Fauna" parent="Life" instance=ExtResource("113_fauna")]
+[node name="Fauna" parent="Life" instance=ExtResource("105_fauna")]
 
 [node name="Ambience" type="Node3D" parent="."]
 
 [node name="LeavesGold" type="Node3D" parent="Ambience"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 20)
 script = ExtResource("6_ambient_sprites")
-texture = ExtResource("114_falling_leaf_gold")
+texture = ExtResource("106_falling_leaf_gold")
 frames = 8
 fps = 10
 motion = 0
@@ -1223,7 +1229,7 @@ random_seed = 4
 [node name="LeavesRust" type="Node3D" parent="Ambience"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 20)
 script = ExtResource("6_ambient_sprites")
-texture = ExtResource("115_falling_leaf_rust")
+texture = ExtResource("107_falling_leaf_rust")
 frames = 8
 fps = 10
 motion = 0
