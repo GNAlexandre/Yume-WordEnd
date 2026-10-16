@@ -1725,7 +1725,8 @@ class_name StoryPacing    # FREE, SCENARIO, FLAG, FREE_FLAG, NAMES ; of_game, st
                           # allows_trigger, doors_by_day, replays_interrupted, starts_in_black,
                           # start_slot, shows_start_card ; Chain (la dernière scène finie et sa carte)
 class_name StoryOffers    # (L1) rebuild(carte), refresh(), talk(pnj) -> bool, scene_ended(id, finie)
-class_name StorySkip      # (L2) is_skippable, prompt_text, skip(runner), handle_input ; séquences vues
+class_name StorySkip      # (L2) is_skippable, prompt_text, skip(runner), handle_input, skip_flags(données),
+                          # SKIP_ACTION, FORWARD_ACTION ; séquences vues
 class_name StoryResolve   # (L4) can_sleep(règle), can_rest(règle), before_sleep(île, jour), resolve_scene
 class_name StoryFreeData  # vérifie les clés du libre (OFFER_KEYS, SKIP_KEYS, FREE_SCENE_KEYS, FREE_ACT_KEYS)
 ```
@@ -1741,8 +1742,8 @@ class_name StoryFreeData  # vérifie les clés du libre (OFFER_KEYS, SKIP_KEYS, 
   redevient disponible, sans retour forcé à sa carte ;
 - nouvelle partie : pas d'écran noir, un carton « Jour 1 » (`free.start_card`), le jour 1 au
   créneau `free.start_slot` (le soir), la main au joueur à `Spawn` ;
-- le reste (coucher, temps qui passe, indice, passer une séquence vue) est celui du scénarisé
-  tant que L1, L2 et L4 n'ont pas rempli leurs points d'entrée.
+- le reste (coucher, temps qui passe, indice) est celui du scénarisé tant que L1 et L4 n'ont pas
+  rempli leurs points d'entrée ; passer une scène : ci-dessous (X-L2).
 
 **Les données** (format strict, clé inconnue refusée) :
 - une scène peut porter `offer` (l'ancre de sa proposition : `{"npc": id}` ou
@@ -1766,11 +1767,47 @@ fichier, sans toucher aux autres) :
   libre (la règle du scénarisé en argument) ; `before_sleep(île, jour)` est appelé en libre au
   coucher, avant le jour suivant ; `resolve_scene(île, id)` règle une scène sans la jouer.
 
+**Passer une scène (X-L2)** (`StorySkip`, `StoryRunner`) :
+- **en libre**, un seul appui sur l'action `pause` (Échap, Start) passe **toute** scène, à toute
+  étape (dialogue, marche, attente, jeu, changement de carte) ; l'invite « Échap : passer »
+  (`ui/skip`) paraît dès le début de la scène ; l'appui est pris par `StoryDirector._input`, avant
+  le `_unhandled_input` du menu pause, qui ne s'ouvre pas (un second appui pendant le passage
+  est pris aussi) ;
+- **en scénarisé**, la règle d'E6 est inchangée : seule une séquence déjà vue se passe
+  (`is_skippable`) ;
+- **le passage** (`StoryRunner.skip`, mode rapide `fast`) : le reste de la scène se joue d'un coup,
+  sans rien perdre de ce qui change l'état ; le dialogue ouvert se ferme, les effets de ses nœuds
+  à venir s'appliquent ; les jeux du récit en cours s'arrêtent et quittent la carte
+  (`MiniGames.stop_all()` : duel, embuscade, entraînements au bâton et avec Seniorious ; le match
+  de ballon de la vie continue) ; une étape `wait_for` est remplie (`map` : `go_to` par le
+  marqueur où mène la sortie de la carte courante, sinon `Spawn` ; `reach` : le joueur posé au
+  point, à côté d'un personnage ; `talk`, `examine` : tenus pour faits ; jamais son
+  `timeout_flag`) ; une marche du joueur s'arrête au but (`StoryStage.walk_player(cible, allure,
+  stop_when)`) ; puis la fin de scène d'E6 (scène faite, nettoyée, caméra rendue, voile levé, main
+  rendue) et, en libre, la suite qui s'enchaîne (`j12_3_epilogue` après `j12_2_depart`) ;
+- **les choix sautés** (`StoryDialogue.apply_silently(chemin, nœud, choices, choice_effects,
+  entered) -> bool`) : le premier choix proposé est suivi ; un choix qui change l'état (l'un des
+  choix porte des effets) prend la clé `skip` de la scène (`StorySkip.skip_flags(données)`, ses
+  drapeaux posés une fois) si elle en a une, sinon les effets du premier choix. Clés `skip` :
+  `j8_3_duel` (`j8_duel_reprise`), `j8_8_colline` (`j8_talismans`), `j12_2_depart`
+  (`j12_voir_epilogue` : l'épilogue vient après un passage) ;
+- **l'accélération, dans les deux modes** : l'action `interact` (E, A) tenue plus de
+  `StoryRunner.FORWARD_HOLD` (0,3 s) accélère la scène sans la passer (`Engine.time_scale` à
+  `StoryRunner.FAST_FORWARD`, 3,5 : répliques tapées, attentes, marches, fondus, caméra) tant que
+  la scène tient le joueur ou qu'un de ses dialogues est ouvert, hors étape `game` et hors pause ;
+  la réplique entière passe seule après sa lecture (`FORWARD_READ_BASE` + `FORWARD_READ_PER_CHAR`
+  par caractère, en temps de jeu accéléré), jamais un choix ; relâchée, en pause ou en fin de
+  scène, le temps d'avant revient. Un appui bref (les tests du scénarisé) ne fait qu'avancer le
+  dialogue. `StoryRunner.is_forwarding()`.
+
 **Tests** : la base M1 (`tests/stubs/m1_game_test.gd`) donne `mode_for_test()` (scénarisé) : tous
 les tests d'avant le mode libre en restent là ; les démos `demo_e6`, `demo_s2`, `demo_s2_tard`
 posent le scénarisé. Le mode libre : `tests/integration/test_free_start.gd` (nouvelle partie,
 quinze secondes sans scène, anciens pièges, portes, sauvegarde et reprise, ancienne partie) ;
-règles et données : `tests/unit/test_story_data.gd`.
+`tests/integration/test_free_skip.gd` (X-L2 : les 55 scènes passées d'un appui après 1 s, en
+moins de 3 s chacune ; l'épilogue après le départ passé ; un jeu arrêté et la clé `skip` du duel ;
+le scénarisé inchangé ; l'épilogue deux fois plus court touche tenue) ; règles et données :
+`tests/unit/test_story_data.gd`.
 
 ### (U1) L'interface « Nuit douce » : thème, dialogue et signes
 
@@ -1840,6 +1877,8 @@ training.finished.connect(func(result: Dictionary) -> void: ...)   # la scène c
 #           phase_b: {success, counters, touched_willem, survived}, touches, duration, variant}
 # Signaux : phase_changed(&"intro"|&"a"|&"link"|&"b"|&"ended"), resolved(sorte, issue), touches_changed(n, limite),
 # window_closed (jour 10 : le rythme tremble : effet d'E9). MiniGames.staff_training() ; stop_staff_training().
+# (X-L2) MiniGames.stop_all() : arrête et retire de la carte les jeux du récit en cours (duel, embuscade,
+# entraînements au bâton et avec Seniorious ; une scène passée) ; le match de ballon de la vie continue.
 ```
 
 **(E8c) L'embuscade de Pannibal** (src/games/ambush.gd, class Ambush, un Node3D ajouté à `Life` ; ACTE1.md 3.1 ;
