@@ -596,10 +596,8 @@ func _update_hint() -> void:
 
 ## Indice hors scène : la première scène qui attend son déclencheur, sinon le coucher.
 func _waiting_hint() -> String:
-	if not GameState.story_running() or not _busy.is_empty():
-		return ""
-	if is_free():
-		return _resolve.waiting_hint()
+	if not GameState.story_running() or not _busy.is_empty() or is_free():
+		return _resolve.waiting_hint() if is_free() else ""  # (X-L4) libre : aucun indice
 	for scene_id: StringName in StoryData.scene_ids(_island):
 		if GameState.is_scene_done(scene_id):
 			continue
