@@ -195,7 +195,8 @@
     {
       "do": "bubble",
       "who": "willem",
-      "text": "haut"
+      "text": "haut",
+      "time": 1.1
     },
     {
       "do": "wait",

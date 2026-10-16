@@ -936,3 +936,10 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   non bouclée : `tools/hd2d_assets.py check` mesure aussi le saut de la dernière image à la première ; la remplaçante passe.
 - **Vue du voyage (X1)** : `src/world/travel_view.tscn` montre toujours le passeur ; quand un voyage partira du transport ou du
   Barocupot, `data/ships/<id>.json` pourra porter l'image du navire en vol.
+
+## S2 — les jours 7 et 8 de l'acte 1
+- **E9 (effets)** : la fièvre (l'image qui ondule et se réchauffe, 7.5), la chute dans les nuages (blanc qui envahit, givre, 8.6) ; les scènes les remplacent par des répliques et des cartons. La salle des armes « noir complet, la lanterne seule » (7.3) demande un préréglage `noir` et une lanterne portée.
+- **E4 / C3 (navigation de la colline)** : `LifeNav` trace un chemin du replat est (18,5 ; 23,5) droit vers le sommet (20,5 ; 5,5) à travers la falaise d'un mètre, hors de la troisième rampe (x 14 → 19) : un PNJ ou un joueur mené y bute. Les tests montent par la rampe (`climb_to_summit`).
+- **Planches** : une pose « sur un coude » (8.3) et une roulade dans le lit (8.1) n'existent pas (pose `degats`, déplacements) ; une planche de nuit de Chtholly en tenue de fièvre n'est pas nécessaire (pyjama livré). Aucune image nouvelle : `limeskin`, `chtholly_pajamas`, `nygglatho_labcoat`, `willem_carry`, `willem_piggyback` sont livrées (cahier n° 6, R2) ; les tenues `*_rain` des petites (livrées) ne sont pas encore inscrites aux fiches (`data/npcs/outfits/`) : les jours de pluie les attendent (jour 10).
+- **HUD** : le nom de la carte s'affiche à chaque arrivée, même pendant une séquence (les scènes attendent 2,8 s sur le noir) ; une option pour le taire pendant une scène serait plus propre.
+- **Moteur du récit (E6)** : une étape « bulle » de la doublure n'est pas posée au-dessus d'un personnage couché ; entre deux scènes enchaînées sur la même carte, le voile s'éclaircit un instant (0,1 s) avant le noir de la suivante.

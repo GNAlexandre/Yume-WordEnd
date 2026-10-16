@@ -41,8 +41,8 @@
       "who": "player",
       "to": "archives_bureau",
       "offset": [
-        0.8,
-        0.8
+        1.4,
+        0.7
       ],
       "facing": "west"
     },
