@@ -1,4 +1,4 @@
-extends "res://tests/stubs/s2_late_test.gd"
+extends "res://tests/stubs/s2_story_test.gd"
 ## (S2) Le jour 11 de l'acte 1 de bout en bout dans la vraie partie, avec de vrais appuis : la
 ## toilette à l'eau glacée et Collon rattrapée (11.1) ; « Ne pars pas ! » dans le couloir (11.2) ;
 ## la porte de la maison Limashenka, ouverte ce jour-là, et l'horloge (11.3) ; l'entraînement avec
@@ -71,5 +71,5 @@ func test_day_11_end_to_end_until_day_12() -> void:
 	assert_eq(player.weapon(), weapon_before, "l'arme d'avant revient hors de la scène")
 	assert_true(StoryDirector.can_sleep())
 	trace("dormir")
-	assert_true(await sleep_in_bed(), "jour 12")
+	assert_true(await sleep_by_prompt(), "jour 12")
 	assert_string_contains(StoryDirector.calendar_line(11), "Une horloge.")

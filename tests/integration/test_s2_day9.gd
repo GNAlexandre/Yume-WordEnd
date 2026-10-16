@@ -1,4 +1,4 @@
-extends "res://tests/stubs/s2_late_test.gd"
+extends "res://tests/stubs/s2_story_test.gd"
 ## (S2) Le jour 9 de l'acte 1 de bout en bout dans la vraie partie, avec de vrais appuis : la
 ## sauvegarde du réveil reprise par « Continuer » ; on frappe à la porte (9.1) ; les bâtons dans la
 ## clairière (9.2, l'entraînement d'E8 joué à la parade et au coup) ; le temps passe sur le banc du
@@ -53,7 +53,7 @@ func test_day_9_end_to_end_until_day_10() -> void:
 	# Le temps passe sur le banc du porche jusqu'à l'après-midi (9.3 est une scène clé).
 	trace("repos")
 	assert_true(await walk_to_point(&"porche_banc", 1.0, 60.0))
-	assert_true(await rest_until(&"apres_midi"), "l'après-midi, sur le banc")
+	assert_true(await rest_here_until(&"apres_midi"), "l'après-midi, sur le banc")
 	# 9.3 : l'argent de poche sous le porche, puis le café du village.
 	trace("9.3")
 	assert_true(
@@ -73,7 +73,7 @@ func test_day_9_end_to_end_until_day_10() -> void:
 	assert_true(await take_exit(&"entrepot", 80.0))
 	assert_true(await take_exit(&"entrepot_rdc", 60.0))
 	assert_true(await walk_to_point(&"lecture_banquette", 1.0, 60.0))
-	assert_true(await rest_until(&"soir"), "le soir")
+	assert_true(await rest_here_until(&"soir"), "le soir")
 	assert_eq(StoryDirector.hint(), "Le goûter du soir est servi au réfectoire.")
 	# Par la porte est du réfectoire, puis le bout de la table (le chemin de la navigation coupe
 	# entre les tables, que le joueur ne traverse pas).
@@ -96,7 +96,7 @@ func test_day_9_end_to_end_until_day_10() -> void:
 	assert_true(StoryDirector.can_sleep(), "on peut se coucher")
 	assert_eq(StoryDirector.hint(), "La veillée est finie. Au lit.")
 	trace("dormir")
-	assert_true(await sleep_in_bed(), "jour 10")
+	assert_true(await sleep_by_prompt(), "jour 10")
 	assert_eq(LifeSlots.current(), &"aube")
 	assert_string_contains(StoryDirector.calendar_line(9), "moutarde")
 	assert_eq(GameState.quests(), {}, "aucune quête à collecter")

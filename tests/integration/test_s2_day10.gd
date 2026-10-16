@@ -1,4 +1,4 @@
-extends "res://tests/stubs/s2_late_test.gd"
+extends "res://tests/stubs/s2_story_test.gd"
 ## (S2) Le jour 10 de l'acte 1 de bout en bout dans la vraie partie, avec de vrais appuis : tout
 ## rater à la clairière (10.1, la variante du jour 10 de l'entraînement au bâton), la course
 ## jusqu'au refuge de la forêt profonde et Ithea (10.2), le linge sur le toit avant l'averse (10.3),
@@ -54,7 +54,7 @@ func test_day_10_end_to_end_until_day_11() -> void:
 	# L'après-midi : le linge sur le toit (10.3, facultatif).
 	trace("10.3")
 	assert_true(await walk_to_point(&"porche_banc", 1.0, 80.0))
-	assert_true(await rest_until(&"apres_midi"))
+	assert_true(await rest_here_until(&"apres_midi"))
 	assert_eq(StoryDirector.hint(), "Le vent sent la pluie. Le linge est sur le toit.")
 	assert_true(await take_exit(&"entrepot_rdc", 30.0))
 	assert_true(await take_exit(&"entrepot_etage", 60.0))
@@ -82,7 +82,7 @@ func test_day_10_end_to_end_until_day_11() -> void:
 	# Le soir : la tour de fées, puis la séquence du toit.
 	trace("10.5")
 	# Le temps passe au lit (« Laisser passer le temps » dans la chambre), puis en bas.
-	assert_true(await rest_until(&"soir"), "le soir")
+	assert_true(await rest_here_until(&"soir"), "le soir")
 	assert_eq(StoryDirector.hint(), "On joue à la salle de jeux.")
 	assert_true(await take_exit(&"entrepot_rdc", 60.0))
 	await walk_to_point(&"jeux_tapis", 2.0, 60.0)
@@ -103,7 +103,7 @@ func test_day_10_end_to_end_until_day_11() -> void:
 	assert_true(await wait_control())
 	assert_true(StoryDirector.can_sleep())
 	trace("dormir")
-	assert_true(await sleep_in_bed(), "jour 11")
+	assert_true(await sleep_by_prompt(), "jour 11")
 	assert_string_contains(StoryDirector.calendar_line(10), "Je ne l'écrirai pas")
 
 
@@ -111,13 +111,13 @@ func test_day_10_resumes_in_the_afternoon() -> void:
 	var done: Array[StringName] = [&"j10_1_rater", &"j10_2_foret"]
 	assert_true(await begin_day(10, [], done, &"midi", &"entrepot", Vector3(44.2, 0.0, 30.0)))
 	assert_true(await wait_control())
-	assert_true(await rest_until(&"apres_midi"), "le temps passe sur le banc")
+	assert_true(await rest_here_until(&"apres_midi"), "le temps passe sur le banc")
 	var hint := StoryDirector.hint()
 	assert_eq(hint, "Le vent sent la pluie. Le linge est sur le toit.")
 	await walk_to(player.global_position + Vector3(1.5, 0.0, 2.0), 0.5, 5.0)
 	var left_at := player.global_position
 	SaveManager.save()
-	assert_true(await continue_from_menu(), "partie reprise")
+	assert_true(await continue_game(), "partie reprise")
 	assert_eq(WorldManager.current_map(), &"entrepot")
 	assert_lt(flat_distance(player.global_position, left_at), 0.3, "position restaurée")
 	assert_eq(GameState.day, 10)

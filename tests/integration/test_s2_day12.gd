@@ -1,4 +1,4 @@
-extends "res://tests/stubs/s2_late_test.gd"
+extends "res://tests/stubs/s2_story_test.gd"
 ## (S2) Le jour 12, la fin de l'acte 1, dans la vraie partie, avec de vrais appuis : la ligne
 ## « Départ au couchant. » au calendrier (12.1) ; la dernière embuscade de Pannibal à la sortie du
 ## porche ; un adieu (Willem, le matin) ; le temps passe jusqu'au couchant ; le départ (12.2) ;
@@ -32,7 +32,7 @@ func test_day_12_until_the_end_of_act_1() -> void:
 	# Le matin, un adieu : Willem répare le plafond qui fuit, à l'étage.
 	trace("adieux")
 	assert_true(await walk_to_point(&"porche_banc", 1.0, 60.0))
-	assert_true(await rest_until(&"matin"), "le matin")
+	assert_true(await rest_here_until(&"matin"), "le matin")
 	assert_true(await take_exit(&"entrepot_rdc", 60.0))
 	assert_true(await take_exit(&"entrepot_etage", 60.0))
 	assert_true(await walk_to_actor(&"willem", 1.6, 40.0), "Willem")
@@ -46,7 +46,7 @@ func test_day_12_until_the_end_of_act_1() -> void:
 	trace("repos")
 	assert_true(await take_exit(&"entrepot_rdc", 60.0))
 	assert_true(await walk_to_point(&"lecture_banquette", 1.0, 60.0))
-	assert_true(await rest_until(&"soir"), "le couchant")
+	assert_true(await rest_here_until(&"soir"), "le couchant")
 	assert_false(StoryDirector.can_rest(), "pas au-delà du départ")
 	assert_eq(StoryDirector.hint(), "La huitième cloche approche. Tous sont dans la cour.")
 	# 12.2 : le départ.
@@ -63,7 +63,7 @@ func test_day_12_until_the_end_of_act_1() -> void:
 	await _assert_act_over()
 	# Reprise de la partie finie : rien ne se rejoue.
 	SaveManager.save()
-	assert_true(await continue_from_menu(), "partie reprise")
+	assert_true(await continue_game(), "partie reprise")
 	await frames(30)
 	await _assert_act_over()
 	assert_true(await walk_to(player.global_position + Vector3(2.0, 0.0, 0.0), 0.5, 5.0))
