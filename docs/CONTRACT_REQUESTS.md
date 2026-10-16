@@ -952,7 +952,9 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   `Geometry/Horloge/Balancier`, hors du PropBatcher) que l'étape `show` montrera ; la scène le raconte en attendant.
 - **E9** : le couchant du départ « du cramoisi au vermillon » (12.2) n'a qu'un préréglage `couchant` ; un second (`couchant_vermillon`,
   ou un réglage de teinte du ciel posé par le récit) le montrerait au lieu de le raconter. L'envol des trois (12.2) : une lueur
-  qui monte (comme les ailes de 8.6) manque ; la scène fait un fondu au blanc.
+  qui monte (comme les ailes de 8.6) manque ; la scène fait un fondu au blanc. Caméra (CameraRig) : un tangage nul ou
+  négatif (`frame_story` ignore un pitch ≤ 0) permettrait de « lever les yeux » vers le ciel ; à 12°, la vue du nord montre la
+  lisière d'or, pas le ciel.
 - **Navigation (E4 / T2 / CF)** : le chemin de `LifeNav` coupe entre les tables du réfectoire (chaises et tables absentes de la
   grille) et à travers les arbres de la forêt profonde (de `course_entree` droit vers le refuge) : un joueur mené par ce chemin
   (tests au stick) y bute ; les tests passent par la porte est du réfectoire et par `fourche_refuge`.
