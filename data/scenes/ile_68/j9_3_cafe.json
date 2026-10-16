@@ -42,7 +42,7 @@
     {"do": "place", "who": "ramikeldi", "at": "cafe_terrasse", "offset": [0.7, 0.4], "facing": "west"},
     {"do": "camera", "to": "cafe_terrasse", "offset": [0.0, 0.4], "distance": 9, "time": 0},
     {"do": "fade", "to": "clear", "time": 0.6},
-    {"do": "wait", "time": 1.0},
+    {"do": "wait", "time": 2.4},
     {"do": "bubble", "who": "ramikeldi", "text": "chapeau", "time": 2.2},
     {"do": "wait", "time": 2.4},
     {"do": "anim", "who": "willem", "anim": "parle", "time": 1.4, "wait": true},
