@@ -1,0 +1,35 @@
+{
+  "id": "j1_1_port",
+  "_comment": "ACTE1.md 1.1 (s. 1), séquence sans choix ni effet : Willem seul au port, la nuit du grand vent ; il se moque de lui-même (personne ne l'attend, il n'a prévenu personne) et suppose qu'un message part tout seul à l'entrepôt (V1, sa supposition).",
+  "start": "quai",
+  "nodes": {
+    "quai": {
+      "speaker": "",
+      "text": "L'île n° 68, à la nuit tombée. Le vent hurle sur le quai désert.",
+      "next": "quai_2"
+    },
+    "quai_2": {
+      "speaker_id": "willem",
+      "text": "Personne. … Évidemment. Je n'ai prévenu personne.",
+      "next": "quai_3"
+    },
+    "quai_3": {
+      "speaker_id": "willem",
+      "text": "Il paraît qu'un message part tout seul à l'entrepôt quand quelqu'un débarque. Espérons que ce soit vrai."
+    },
+    "panneau": {
+      "speaker": "",
+      "text": "Sur le panneau usé par le vent, deux flèches rouges. À droite, la ville : 2 000 marmer. À gauche, l'entrepôt : 500.",
+      "next": "panneau_2"
+    },
+    "panneau_2": {
+      "speaker_id": "willem",
+      "text": "Cinq cents. Ça ira.",
+      "next": "panneau_3"
+    },
+    "panneau_3": {
+      "speaker": "",
+      "text": "Il remonte son col et prend le sentier."
+    }
+  }
+}

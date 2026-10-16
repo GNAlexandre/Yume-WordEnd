@@ -147,7 +147,7 @@
       "to": "refectoire_bout_ouest",
       "offset": [
         1.1,
-        0.0
+        0.9
       ],
       "facing": "west"
     },
@@ -247,8 +247,8 @@
       "who": "nygglatho",
       "to": "willem",
       "offset": [
-        0.6,
-        -0.8
+        -0.3,
+        -0.9
       ],
       "facing": "willem"
     },
@@ -256,7 +256,11 @@
       "do": "camera",
       "to": "willem",
       "distance": 12,
-      "time": 1.0
+      "time": 1.0,
+      "offset": [
+        -1.5,
+        0.0
+      ]
     },
     {
       "do": "dialogue",

@@ -1711,14 +1711,16 @@ le texte. Appliqué à chaque arrivée sur une carte et à chaque changement de 
 2. Écrire `data/scenes/ile_68/jN_k_nom.json` (déclencheur, conditions, présents, étapes), puis
    ses répliques dans `data/dialogues/ile_68/jN_k_nom.json` (paraphrasées, jamais recopiées ;
    `{player}`, jamais « Chtholly » en dur) et ses textes courts dans `data/texts/ile_68/story.json`
-   (section de la scène). Une carte qui n'existe pas encore : un fondu et des cartons (comme
-   `j1_1_port`, `j3_2_chemin`), jamais une carte inventée. Un combat : une étape `game` et son repli.
+   (section de la scène). Une carte qui n'existe pas encore : un fondu et des cartons (plus aucune
+   scène des jours 1 à 4 n'en a : lot S1b), jamais une carte inventée. Un combat : une étape `game` et son repli.
 3. Le jour : sa ligne du calendrier (`days/<n>/calendar`), `sleep_after` et `sleep_hint` dans
    `act.json`.
 4. Vérifier : `tools/test.sh tests/unit/test_story_data.gd` (format et monde de toutes les
    scènes) ; jouer la journée sur le modèle de `tests/integration/test_e6_days.gd` (poses et
    dialogues lus) ou de `test_e6_day1.gd` (vrais appuis, base `tests/stubs/e6_story_test.gd`) ;
    voir : `E6_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_e6.tscn sortie.png 60`.
+
+**(S1b) Les jours 1 à 4 sur les vraies cartes** : `j1_1_port` au port (Willem descend de la passerelle, la protagoniste posée hors du champ à `from_ville_marche`), `j3_2_chemin` du sentier à la ville haute (le passant `villager_cat_m`), `j3_3_snack` dans `ville_snack` ; l'indice se tait dès le début d'une scène et pendant une étape `game` ; `wait_for` prend `map` avec `reach` ; captures : vue `sequence` de `demo_e6` (`E6_FROM`, `E6_UNTIL`, une image toutes les 0,5 s) ; tests : `tests/integration/test_e6_scenes.gd`.
 
 **Pièges.** Une séquence (`sequence`) n'a ni choix, ni effet dans ses répliques, ni `control`, ni
 `wait_for` (elle se passe d'une touche). `ready` part sur la carte de la scène seulement. Une

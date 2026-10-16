@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 1.3 (s. 2). La chute dans le marais n'a pas d'animation (planche willem_marsh à livrer) : un carton sur le noir la raconte.",
+  "_comment": "ACTE1.md 1.3 (s. 2). Willem esquive deux fois par réflexe, glisse à la troisième et tombe dans l'eau basse (planche willem_marsh, tenue « marais » : effondre, puis assis) ; Pannibal s'assoit sur son dos (les deux personnages l'un sur l'autre, voulu : l'exception des piles de E6). Après la reconnaissance, elle descend, il se relève, trempé (tenue « manteau »).",
   "title": "L'intrus maîtrisé",
   "day": 1,
   "after": [
@@ -71,29 +71,76 @@
       "wait": true
     },
     {
-      "do": "fade",
-      "to": "black",
-      "time": 0.5
+      "do": "walk",
+      "who": "willem",
+      "to": "marais_chute",
+      "offset": [
+        0.9,
+        0.3
+      ],
+      "gait": "course",
+      "direct": true,
+      "facing": "west"
     },
     {
-      "do": "card",
-      "text": "chute",
-      "time": 3.4
+      "do": "anim",
+      "who": "pannibal",
+      "anim": "attaque",
+      "wait": true
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "marais_chute",
+      "offset": [
+        0.1,
+        -0.2
+      ],
+      "gait": "course",
+      "direct": true,
+      "facing": "west"
+    },
+    {
+      "do": "anim",
+      "who": "pannibal",
+      "anim": "attaque",
+      "wait": true
+    },
+    {
+      "do": "outfit",
+      "who": "willem",
+      "outfit": "marais"
+    },
+    {
+      "do": "anim",
+      "who": "willem",
+      "anim": "effondre",
+      "wait": true
+    },
+    {
+      "do": "bubble",
+      "who": "willem",
+      "text": "plouf",
+      "time": 1.4
+    },
+    {
+      "do": "wait",
+      "time": 0.6
     },
     {
       "do": "place",
       "who": "pannibal",
       "at": "willem",
       "offset": [
-        1.2,
-        -0.2
+        0.25,
+        0.05
       ],
-      "facing": "west"
+      "facing": "west",
+      "anim": "assis"
     },
     {
-      "do": "fade",
-      "to": "clear",
-      "time": 0.6
+      "do": "wait",
+      "time": 0.5
     },
     {
       "do": "dialogue",
@@ -124,7 +171,7 @@
       "who": "player",
       "to": "willem",
       "offset": [
-        -1.4,
+        -2.3,
         0.5
       ]
     },
@@ -153,6 +200,51 @@
     {
       "do": "dialogue",
       "node": "reconnaissance"
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "willem",
+      "offset": [
+        1.4,
+        0.7
+      ],
+      "gait": "course",
+      "facing": "west"
+    },
+    {
+      "do": "anim",
+      "who": "willem",
+      "anim": "assis"
+    },
+    {
+      "do": "wait",
+      "time": 1.0
+    },
+    {
+      "do": "outfit",
+      "who": "willem",
+      "outfit": "manteau"
+    },
+    {
+      "do": "anim",
+      "who": "willem",
+      "anim": "repos"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "player"
+    },
+    {
+      "do": "bubble",
+      "who": "willem",
+      "text": "trempe",
+      "time": 1.8
+    },
+    {
+      "do": "wait",
+      "time": 1.2
     },
     {
       "do": "camera_reset",

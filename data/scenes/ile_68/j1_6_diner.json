@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 1.6 (s. 4), séquence vue d'ailleurs : Willem dîne de restes au réfectoire.",
+  "_comment": "ACTE1.md 1.6 (s. 4), séquence vue d'ailleurs : Willem dîne de restes au réfectoire. {player}, absente de la séquence, est posée hors du champ dans la cuisine (cuisine_table) : la coupe des murs suit le joueur, depuis le couloir le mur sud du réfectoire cachait la table.",
   "title": "Le dîner de restes",
   "day": 1,
   "after": [
@@ -10,7 +10,7 @@
   "trigger": {
     "on": "reach",
     "point": "dortoir_b",
-    "radius": 2.5
+    "radius": 1.5
   },
   "sequence": true,
   "present": [
@@ -88,7 +88,7 @@
     {
       "do": "place",
       "who": "player",
-      "at": "couloir_est",
+      "at": "cuisine_table",
       "facing": "west"
     },
     {
