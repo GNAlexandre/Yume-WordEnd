@@ -207,3 +207,12 @@ Généré avec ChatGPT le 15 octobre 2026, cahier n° 5 (`docs/ASSETS_HD2D_ILE68
 Références : trois vues existantes de chaque personnage, `willem_coat` pour la toile et le cuir, pages officielles64,11 et47 des ZIP fournis par l’utilisateur. Alpha net, recalage au plus proche voisin et montage local autorisé pour les pieds immobiles, le dialogue fermé et la respiration ; dix générations originales conservées séparément, dont la vue arrière de Collon remplacée pour la course et le saut. Tenues à enregistrer et placer dans les scènes ; aucun ancien PNG/JSON ni dessin anime modifié.
 
 - 2026-10-15 — généré avec ChatGPT le 15 octobre 2026, cahier n° 5, lot R2 priorité 2 : tenues de pluie de Lakhesh (115 px), Nygglatho (corps 178 px ; parapluie inclus 234 px), Pannibal (120 px) et Tiat (106 px). Douze PNG et douze JSON, 201 poses ; trois vues par personnage. Références : sprites existants des quatre personnages et de Willem en pardessus ; planches officielles des ZIP fournis, pages 49, 51, 45 et 41. Origines et générations conservées hors dépôt ; recalage au plus proche voisin et montage localisé autorisés, sans lissage ni changement de palette.
+
+
+## Nygglatho — tenue de bonne officielle (16 octobre 2026)
+
+Généré avec ChatGPT / outil d’image : correction des vêtements verts en tissu noir de la tenue de bonne, référence officielle fournie par l’utilisateur (ZIP, page 51). Quinze PNG existants corrigés (portrait compris), plus trois planches de linge avec leurs JSON, soit six variantes, dix-huit vues et 237 poses. La vue arrière en blouse de laboratoire, sans vêtement vert, reste identique. Montage localisé autorisé : copie de pixels des tissus générés dans les seules zones de vêtement concernées, recalage au plus proche voisin ; alpha, cadrages, visages, cheveux et accessoires conservés. Repos du linge et de la vie quotidienne recopiés depuis la base corrigée ; sommeil commun recopié entre vues. JSON existants inchangés. Originaux et générations conservés séparément. La nouvelle variante linge reste à enregistrer et placer en jeu.
+
+## B.3 — signes d’interaction (16 octobre 2026)
+
+Quatre remplaçants générés avec ChatGPT / outil d’image selon le cahier n° 6, B.3 : parler, examiner, prendre, entrer. PNG transparents 64 × 64 à alpha doux, crème, or et prune ; réduction géométrique au plus proche voisin, sans changement des couleurs. Dessins centrés, marge basse de 4 px. Sources générées et anciens remplaçants conservés séparément.
