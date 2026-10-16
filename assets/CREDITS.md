@@ -106,6 +106,32 @@ Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAIS
 - `assets/hd2d/sky/sea_stack_b.png`
 - `assets/hd2d/sky/sea_stack_c.png`
 - `assets/hd2d/decals/path_flagstones_b.png`
+## Cahier n° 6 — C.5 et C.8 : chaumières et insectes
+
+Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
+
+- `assets/hd2d/buildings/materials/wall_wattle_daub.png`
+- `assets/hd2d/props/fence_wattle.png`
+- `assets/hd2d/buildings/cottage_thatch_a.png`
+- `assets/hd2d/buildings/cottage_thatch_b.png`
+- `assets/hd2d/buildings/cottage_thatch_c.png`
+- `assets/hd2d/buildings/village_barn.png`
+- `assets/hd2d/buildings/village_house_stone.png`
+- `assets/hd2d/buildings/village_shed.png`
+- `assets/hd2d/buildings/cottage_thatch_a_side.png`
+- `assets/hd2d/buildings/cottage_thatch_b_side.png`
+- `assets/hd2d/buildings/cottage_thatch_c_side.png`
+- `assets/hd2d/buildings/village_barn_side.png`
+- `assets/hd2d/buildings/village_house_stone_side.png`
+- `assets/hd2d/buildings/village_shed_side.png`
+- `assets/hd2d/buildings/cottage_thatch_a_night.png`
+- `assets/hd2d/buildings/cottage_thatch_b_night.png`
+- `assets/hd2d/buildings/cottage_thatch_c_night.png`
+- `assets/hd2d/buildings/village_house_stone_night.png`
+- `assets/hd2d/anim/butterfly_orange_b.png`
+- `assets/hd2d/anim/dragonfly_blue.png`
+- `assets/hd2d/anim/dragonfly_amber.png`
+
 ## Cahier n° 6 — C.6 et C.7 : café et salon Limashenka
 
 Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
