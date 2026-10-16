@@ -9,7 +9,11 @@
     "day": "Jour {day}",
     "departure": "Départ",
     "hint_label": "En ce moment",
-    "skip": "Échap : passer"
+    "skip": "Échap : passer",
+    "today": "Aujourd'hui : jour {day}",
+    "departure_in": "Départ dans {days} jours",
+    "departure_tomorrow": "Départ demain",
+    "departure_today": "C'est le jour du départ"
   },
   "days": {
     "1": {
