@@ -439,7 +439,9 @@ def pose(p):
     kits.middle_kit(p, [(Rect(2.0, 21.0, 21.0, 29.5), 3), (Rect(47.0, 21.0, 54.0, 29.5), 2),
                         (Rect(22.0, 26.2, 46.0, 29.6), 2)], kits.family("mid_port"), seed=1221, spacing=5.0)
     kits.foreground_views(p, "port", seed=1231,
-                        foliage=kits.family("fg_foliage", ["fg_grass", "cargo_cart_a_fg", "propeller_spare_fg"]))
+                        foliage=kits.family("fg_foliage", ["fg_grass", "cargo_cart_a_fg", "propeller_spare_fg"]),
+                        trees=[t + "_forest" for t in ("maple_a", "beech_c") if kits.exists(t + "_forest")],
+                        tree_keep=lambda x, z: z > 30.0 or x > 56.0)
 
 
 # Le ciel et le vide : (x, y, z, échelle, scène). La nappe de nuages est à y = −60 ; le quai est à y = 0.

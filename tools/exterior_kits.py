@@ -309,7 +309,7 @@ def passages(p, step=15.0, exit_margin=6.0):
 
 
 def foreground_kit(p, bounds, targets, seed, group="Foreground", base="PremierPlan", want=2, most=4,
-                   foliage=None, trunks=None, trees=None, keep=None, lateral=(3.4, 8.6), near=(3.0, 5.6),
+                   foliage=None, trunks=None, trees=None, keep=None, tree_keep=None, lateral=(2.8, 8.6), near=(2.6, 5.2),
                    far=(5.0, 12.5)):
     """Le premier plan (CARTE.md 0.5) : pour chaque cible (nom, x, z) (vues de la série QC, passages), deux à
     quatre feuillages ou troncs de premier plan (`_fg`, sans collision, qui s'effacent autour du joueur) au sud du
@@ -340,7 +340,10 @@ def foreground_kit(p, bounds, targets, seed, group="Foreground", base="PremierPl
             if p.walkable_here(x, z) or any(b.has(x, z, 0.5) for b in p.buildings):
                 return False
         elif kind == "tree":
-            # Un arbre qui bloque (son tronc) : loin de tout ce où l'on passe, de la vie, des places.
+            # Un arbre qui bloque (son tronc) : loin de tout ce où l'on passe, de la vie, des places ; tree_keep(x, z) :
+            # là où un arbre pousse (pas sur le gravier de l'aire du port).
+            if tree_keep is not None and not tree_keep(x, z):
+                return False
             if not _clear(p, x, z, (0.6, 0.6), margin=1.6, paths=1.6):
                 return False
         elif not _clear(p, x, z, half, margin=0.8, paths=0.6 if q.h >= 2.0 else 0.0):
@@ -377,8 +380,9 @@ def foreground_kit(p, bounds, targets, seed, group="Foreground", base="PremierPl
                     dz += 1.5
                 dx += 1.3
         rng.shuffle(cands)
-        # Les feuillages d'abord (le bas de l'écran), puis troncs et arbres (les côtés).
-        cands.sort(key=lambda c: 0 if c[0] == "fol" else 1)
+        # Les feuillages d'abord (le bas de l'écran), puis troncs et arbres ; les plus proches du milieu d'abord (par bandes
+        # de 2 m : dans le champ plutôt qu'au bord de l'écran).
+        cands.sort(key=lambda c: (0 if c[0] == "fol" else 1, round(abs(c[1] - fx) / 2.0)))
         for kind, x, z in cands:
             if have >= goal:
                 break
