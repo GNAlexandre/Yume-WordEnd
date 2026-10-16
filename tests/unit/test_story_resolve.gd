@@ -157,13 +157,28 @@ func test_the_departure_day_is_resolved_with_its_epilogue() -> void:
 	assert_eq(GameState.calendar().get(13, &"x"), StoryResolve.FREE_LINE, "jour libre")
 
 
+## Ce que le calendrier dit d'une scène : le texte de sa proposition (X-L1, clé offer.text), sinon
+## son titre.
+func _offer_or_title(scene_id: StringName) -> String:
+	var data := StoryData.scene(ISLAND, scene_id)
+	var title := str(data.get("title", scene_id))
+	var offer: Variant = data.get("offer")
+	if offer is Dictionary and (offer as Dictionary).has("text"):
+		return StoryData.text(ISLAND, str(offer["text"]), scene_id, title)
+	return title
+
+
 func test_today_lists_the_day_scenes_to_live() -> void:
 	_at(2, &"aube")
 	assert_eq(_resolve.today_scenes(ISLAND), [&"j2_1_matin"] as Array[StringName])
-	assert_eq(_resolve.scene_label(ISLAND, &"j2_1_matin"), "Le matin de l'aînée")
+	assert_eq(_resolve.scene_label(ISLAND, &"j2_1_matin"), _offer_or_title(&"j2_1_matin"))
 	GameState.mark_scene_done(&"j2_1_matin")
 	assert_eq(_resolve.today_scenes(ISLAND), [&"j2_2_fuite"] as Array[StringName])
-	assert_eq(_resolve.scene_label(ISLAND, &"j2_2_fuite"), "La fuite (le matin)", "plus tard")
+	assert_eq(
+		_resolve.scene_label(ISLAND, &"j2_2_fuite"),
+		"%s (le matin)" % _offer_or_title(&"j2_2_fuite"),
+		"plus tard"
+	)
 	_slot(&"soir")
 	assert_eq(_resolve.today_scenes(ISLAND), [] as Array[StringName], "son créneau est passé")
 
@@ -221,8 +236,8 @@ func test_the_free_calendar_lists_today_and_marks_passed_scenes() -> void:
 	assert_eq(passed.size(), 2, "les scènes passées des deux jours")
 	assert_true(passed[0].begins_with("Laissé passer : L'homme au port, "), passed[0])
 	var today: PackedStringArray = calendar.call(&"today_entries")
-	var title := _resolve.scene_title(ISLAND, &"j3_1_information")
-	assert_eq(today, PackedStringArray([title]), "à vivre : %s" % [today])
+	var label := _resolve.scene_label(ISLAND, &"j3_1_information")
+	assert_eq(today, PackedStringArray([label]), "à vivre : %s" % [today])
 	assert_true(str(calendar.call(&"free_today_text")).begins_with("À vivre aujourd'hui\n"))
 	var page: Rect2 = calendar.call(&"page_rect")
 	assert_lte(page.size.y, 640.5, "la page reste dans l'écran (%s)" % page)
