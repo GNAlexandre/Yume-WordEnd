@@ -11,11 +11,11 @@ extends CharacterBody3D
 ## les images « coup » reçues par Visual.frame_changed) → hurt (recul) → dead (animation mort,
 ## sortie du groupe, enemy_killed, drops, disparition après corpse_time). Coureur (data.rush) :
 ## rush en ligne droite dès la portée de son attaque sans dégâts (8 m), puis morsure. Stoic :
-## ni recul ni hurt, sauf sous une attaque qui traverse (onde). La poursuite cesse si le joueur
-## est mort, en conversation ou à plus de leash_m de origin : l'ennemi rentre chez lui. Portée d'une attaque : AttackData.range_m ×
-## data.scale devant le corps (capsule, Hurtbox et Hitbox sont aussi mises à l'échelle) ; la
-## distance de déclenchement du rush ne l'est pas. Un obstacle du décor heurté de face
-## (poteau, tronc) est longé au lieu de bloquer la poursuite.
+## ni recul ni hurt, sauf sous une attaque qui traverse (onde). La poursuite cesse si le joueur est
+## mort, en conversation ou à plus de leash_m de origin : l'ennemi rentre chez lui. Portée d'une
+## attaque : AttackData.range_m × data.scale devant le corps (capsule, Hurtbox et Hitbox sont aussi
+## mises à l'échelle) ; la distance de déclenchement du rush ne l'est pas. Un obstacle du décor
+## heurté de face (poteau, tronc) est longé au lieu de bloquer la poursuite.
 ##
 ## (H7, lisibilité en vue fixe) Avant chaque coup et chaque charge, état windup : le Timere se
 ## ramasse sur la première image de l'attaque, un éclat brille au-dessus de lui et la zone exacte

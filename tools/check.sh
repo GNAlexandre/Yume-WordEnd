@@ -4,7 +4,7 @@
 # racine du dépôt qui contient ce script).
 #
 # Étapes : import, lint, tests GUT, fumée, (bureau) préréglages de bureau, export Web, capture
-# de l'île. ROUGE (code 1) si :
+# de la carte d'essai. ROUGE (code 1) si :
 #   - l'import, la fumée ou l'export impriment une erreur (ERROR:, SCRIPT ERROR, SHADER ERROR,
 #     Parse Error…) ou un WARNING absent de tools/warnings_allow.txt ;
 #   - gdlint ou gdformat --check échouent ;
@@ -20,7 +20,7 @@
 #   - en CI (CI=true), des fichiers ont été générés ou modifiés (.uid, .import non commités).
 # CHECK_FAST=1 saute l'export et la capture (itérations rapides ; jamais avant une PR).
 # Journaux dans build/ : import.log, lint.log, tests.log (+ junit.xml), smoke.log, export.log,
-# capture.log ; capture : build/shots/island.png.
+# capture.log ; capture : build/shots/essai.png.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 G="$PWD/tools/godot"
@@ -139,12 +139,12 @@ else
   fi
 
   step "capture"
-  tools/screenshot.sh res://src/world/island.tscn build/shots/island.png > build/capture.log 2>&1
+  tools/screenshot.sh res://src/world/maps/essai/essai.tscn build/shots/essai.png > build/capture.log 2>&1
   code=$?
   case "$code" in
     0)
       scan_log build/capture.log capture strict
-      echo "build/shots/island.png"
+      echo "build/shots/essai.png"
       ;;
     2) echo "capture sautée (pas d'affichage virtuel : xvfb-run absent)" ;;
     *) echo "ATTENTION : capture impossible (code $code, build/capture.log) : environnement graphique ?" ;;

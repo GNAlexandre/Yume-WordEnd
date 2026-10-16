@@ -324,9 +324,7 @@ func _resolve(name: String, raw: Dictionary) -> Dictionary:
 		for key: String in (border as Dictionary).keys():
 			if not key in BORDER_KEYS:
 				problems.append("matière %s : bordure, clé inconnue « %s »" % [name, key])
-		var border_layer := GroundAtlas.GROUND_LAYERS.find(
-			StringName(str(border.get("layer", "")))
-		)
+		var border_layer := GroundAtlas.GROUND_LAYERS.find(StringName(str(border.get("layer", ""))))
 		if border_layer < 0:
 			problems.append("matière %s : tuile de bordure inconnue" % name)
 		spec["border_layer"] = border_layer

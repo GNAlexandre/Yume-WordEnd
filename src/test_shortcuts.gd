@@ -31,7 +31,7 @@ extends Node
 ## caméra derrière lui, vers un PNJ (son NpcData.id, « nygglatho ») ou un point de la carte (x, z),
 ## comme un joueur qui oriente la caméra à la souris (impossible dans un navigateur sans écran) ;
 ## la marche reste aux touches ; window.wordendPos donne la position du joueur à chaque image
-## ([x, z]). tools/web_m2.js s'en sert pour aller d'un PNJ à l'autre.
+## ([x, z]), pour un outil de navigateur qui va d'un PNJ à l'autre.
 ## Tant qu'il est actif, la console reçoit une ligne « [m1] … » par événement ((E1) carte et
 ## mesures de son chargement, île, invite, dialogue, objet, Timere tué, dégâts, mort,
 ## réapparition), une ligne au départ (position du joueur, jour, objets, carte) et, toutes les
@@ -368,7 +368,7 @@ func face_point(x: float, z: float) -> bool:
 	player.set_aim_direction(direction, true)
 	if OS.has_feature("web"):
 		# (HD-2D) La caméra fixe ne tourne pas : la page oriente la marche vers ce point
-		# (window.wordendAim, touches choisies par tools/web_m2.js).
+		# (window.wordendAim, touches choisies par l'outil de navigateur).
 		JavaScriptBridge.eval("window.wordendAim = [%.2f, %.2f];" % [x, z])
 	_log("visée (%.1f ; %.1f) depuis %s" % [x, z, _position_text(player)])
 	return true

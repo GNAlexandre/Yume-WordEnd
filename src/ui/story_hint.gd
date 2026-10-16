@@ -1,8 +1,8 @@
 extends Control
 ## (E6) L'indice discret (docs/REFONTE.md, 6.2 ; ACTE1.md, 0.1) : enfant StoryHint du HUD (groupe
-## GROUP), une ligne courte en bas de l'écran, sans marqueur sur la carte. Quand le récit attend quelque chose (StoryDirector.hint_changed), elle paraît
-## show_time s puis s'efface ; recall() la rappelle (fermeture du calendrier). Cachée pendant un
-## dialogue. Propriétaire : E6.
+## GROUP), une ligne courte en bas de l'écran, sans marqueur sur la carte. Quand le récit attend
+## quelque chose (StoryDirector.hint_changed), elle paraît show_time s puis s'efface ; recall() la
+## rappelle (fermeture du calendrier). Cachée pendant un dialogue. Propriétaire : E6.
 
 const GROUP := &"story_hint"
 ## Durée d'affichage (s) et des fondus (s).
