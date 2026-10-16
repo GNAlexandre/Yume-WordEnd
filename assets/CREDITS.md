@@ -90,19 +90,29 @@ Neuf PNG générés avec OpenAI Image Generation : traces et leur fin estompée,
 - `assets/hd2d/interior/props/desk_clean_brooch.png` — 106 × 101 px.
 - `assets/hd2d/interior/props/crystal_lamp_table.png` — 29 × 48 px.
 
-## Cahier n° 6 — C.2 : météo, pluie et flaques
+## Cahier n° 6 — C.6 et C.7 : café et salon Limashenka
 
 Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
 
-- `assets/hd2d/sky/cloud_rain_a.png`
-- `assets/hd2d/sky/cloud_rain_b.png`
-- `assets/hd2d/sky/cloud_sea_rain.png`
-- `assets/hd2d/sky/sky_overcast.png`
-- `assets/hd2d/anim/rain_curtain.png`
-- `assets/hd2d/anim/rain_drizzle.png`
-- `assets/hd2d/anim/eave_drip.png`
-- `assets/hd2d/anim/puddle_rain_a.png`
-- `assets/hd2d/anim/puddle_rain_b.png`
+- `assets/hd2d/interior/props/cafe_counter.png`
+- `assets/hd2d/interior/props/juice_glasses.png`
+- `assets/hd2d/interior/props/cafe_bottle_shelf.png`
+- `assets/hd2d/interior/props/cafe_cake_case.png`
+- `assets/hd2d/interior/door_backroom.png`
+- `assets/hd2d/interior/props/cafe_drinkers_table.png`
+- `assets/hd2d/interior/wallitem_menu_cafe.png`
+- `assets/hd2d/props/cafe_backyard_crates.png`
+- `assets/hd2d/interior/props/toolbox_gears.png`
+- `assets/hd2d/interior/props/side_table_salon.png`
+- `assets/hd2d/interior/wallitem_family_portrait.png`
+- `assets/hd2d/interior/wallitem_clock_limashenka.png`
+- `assets/hd2d/interior/floor_terracotta.png`
+- `assets/hd2d/interior/wall_panel_dark.png`
+- `assets/hd2d/interior/wall_wallpaper_floral.png`
+- `assets/hd2d/interior/window_shutters.png`
+- `assets/hd2d/decals/rug_salon.png`
+- `assets/hd2d/interior/wallitem_clock_limashenka_open.png`
+- `assets/hd2d/anim/clock_limashenka_swing.png`
 
 ## Cahier n° 5 — Île 68, R0 : premier lot de mobilier
 
