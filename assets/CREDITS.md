@@ -90,10 +90,22 @@ Neuf PNG générés avec OpenAI Image Generation : traces et leur fin estompée,
 - `assets/hd2d/interior/props/desk_clean_brooch.png` — 106 × 101 px.
 - `assets/hd2d/interior/props/crystal_lamp_table.png` — 29 × 48 px.
 
-## Île 68 — ville haute (cahier n° 6, A.4–A.5)
+## Cahier n° 6 — C.3 et C.4 : colline et fenêtres de nuit
 
-32 PNG générés avec ChatGPT / OpenAI Image Generation le 16 octobre 2026 : dix façades et dix flancs, pierre de taille, deux enseignes, jardinière, fontaine, marches, trappe, muret, garde-corps et trois lointains de toitures. Références : matériaux et bâtiments HD-2D existants. Recalage géométrique au plus proche voisin des murs et pignons ; aucune réduction de palette. Sources originales et étapes conservées hors dépôt. Univers inspiré de SukaSuka, droits des ayants droit réservés.
+Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
 
+- `assets/hd2d/sky/sea_stack_a.png`
+- `assets/hd2d/decals/path_flagstones_a.png`
+- `assets/hd2d/interior/window_bare_night.png`
+- `assets/hd2d/interior/window_curtains_open_night.png`
+- `assets/hd2d/props/window_lit_large.png`
+- `assets/hd2d/props/window_lit_small.png`
+- `assets/hd2d/decals/moon_window.png`
+- `assets/hd2d/props/window_lit_round.png`
+- `assets/hd2d/anim/talisman_float.png`
+- `assets/hd2d/sky/sea_stack_b.png`
+- `assets/hd2d/sky/sea_stack_c.png`
+- `assets/hd2d/decals/path_flagstones_b.png`
 ## Cahier n° 6 — C.6 et C.7 : café et salon Limashenka
 
 Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
