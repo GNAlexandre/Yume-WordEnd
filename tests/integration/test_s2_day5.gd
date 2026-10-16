@@ -235,9 +235,15 @@ func test_the_match_forms_by_itself_when_the_afternoon_comes() -> void:
 	var ball_match := MiniGames.ball_match()
 	assert_true(
 		await until(
-			func() -> bool: return ball_match != null and ball_match.members.size() >= 14, 60.0
+			func() -> bool:
+				return (
+					ball_match != null
+					and ball_match.members.size() >= 16
+					and ball_match.roles.has(&"willem")
+				),
+			90.0
 		),
-		"la quinzaine de petites et l'arbitre"
+		"les quinze petites et l'arbitre"
 	)
 	assert_eq(ball_match.roles.get(&"willem"), &"arbitre")
 
