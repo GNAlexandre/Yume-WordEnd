@@ -1,8 +1,8 @@
 // Lecture de l'atlas du sol (assets/hd2d/ground/atlas/ground_atlas.png, 27 tuiles de 4 m,
-// IslandTerrain.GROUND_LAYERS) pour le sol en relief des cartes (map_ground.gdshader) et ses faces
-// (map_ground_cliff.gdshader) : mêmes règles que le sol de l'île (terrain.gdshader) — de près,
+// GroundAtlas.GROUND_LAYERS) pour le sol en relief des cartes (map_ground.gdshader) et ses faces
+// (map_ground_cliff.gdshader) : de près,
 // pixels nets dont seule la frontière est lissée ; de loin, mipmaps (atlas recalculé en jeu par
-// IslandTerrain.mipmapped_atlas) lues au niveau tiré des dérivées continues, deux échantillons le
+// GroundAtlas.mipmapped_atlas) lues au niveau tiré des dérivées continues, deux échantillons le
 // long de l'axe étiré ; une tuile absente retombe sur sa tuile d'origine (FALLBACK). Compatible
 // Compatibility / WebGL 2.
 

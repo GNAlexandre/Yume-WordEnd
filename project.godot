@@ -91,6 +91,14 @@ enemies="Ennemis vivants (Enemy) ; un ennemi mort quitte le groupe."
 interactable="Nœuds qui implémentent get_prompt() -> String et interact(player: Node3D) -> void."
 zones="Racines des zones (Zone), nommées comme leur zone_id."
 
+[importer_defaults]
+
+texture={
+"compress/mode": 0,
+"detect_3d/compress_to": 0,
+"mipmaps/generate": false
+}
+
 [input]
 
 move_left={
@@ -217,9 +225,9 @@ common/physics_interpolation=true
 
 [rendering]
 
-textures/webp_compression/compression_method=6
-textures/webp_compression/lossless_compression_factor=100
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
+textures/webp_compression/compression_method=4
+textures/webp_compression/lossless_compression_factor=90.0

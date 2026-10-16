@@ -1,0 +1,378 @@
+{
+  "_comment": "ACTE1.md 8.8 (s. 21) : sous le porche, Ithea dit que Willem est monté sur la colline ; la marche de nuit ; au sommet, les quarante et un talismans (anim/talisman_float, étape props) en cercle de 3,5 m autour du cristal, et sa lueur (lumière de la scène, pas de la carte : C3) ; on lève les yeux. Le moment facultatif des talismans (choix « Toucher les talismans. » : quatre points du cercle, 9 s chacun au plus, sans échec). Dos à dos (dos_a_dos, chtholly_double assise), la promesse du gâteau au beurre. Fondu ; la ligne du calendrier ; réveil dans son lit, aube du jour 9.",
+  "title": "La colline aux étoiles",
+  "day": 8,
+  "after": [
+    "j8_7_barocupot"
+  ],
+  "map": "entrepot",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "ithea",
+    "willem",
+    "chtholly_double"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "porche_banc",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "porche_banc",
+      "offset": [
+        -1.3,
+        1.2
+      ],
+      "facing": "ithea"
+    },
+    {
+      "do": "camera",
+      "to": "porche_banc",
+      "offset": [
+        -0.6,
+        1.0
+      ],
+      "distance": 10,
+      "time": 1.0,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "porche"
+    },
+    {
+      "do": "slot",
+      "slot": "nuit",
+      "time": 2.0
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.0
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "hint",
+      "text": "hint"
+    },
+    {
+      "do": "wait_for",
+      "map": "colline"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "talismans_centre",
+      "facing": "south",
+      "outfit": "maison"
+    },
+    {
+      "do": "props",
+      "id": "talismans",
+      "image": "anim/talisman_float",
+      "at": "talismans_centre",
+      "count": 41,
+      "radius": 3.5,
+      "lift": 1.1,
+      "frames": 4,
+      "fps": 6,
+      "light": 1.6,
+      "color": "#cfe2ff"
+    },
+    {
+      "do": "wait_for",
+      "reach": "talismans_centre",
+      "radius": 6.2
+    },
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "hint"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "talismans_centre",
+      "offset": [
+        0.0,
+        4.4
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "camera",
+      "to": "talismans_centre",
+      "offset": [
+        0.0,
+        -4.0
+      ],
+      "distance": 13,
+      "pitch": 15,
+      "time": 2.0,
+      "wait": true
+    },
+    {
+      "do": "wait",
+      "time": 1.4
+    },
+    {
+      "do": "camera",
+      "to": "talismans_centre",
+      "offset": [
+        0.0,
+        1.2
+      ],
+      "distance": 11,
+      "time": 1.2,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "talismans"
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "hint",
+      "text": "hint_talismans"
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "control",
+      "on": true
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "wait_for",
+      "reach": "talisman_1",
+      "radius": 1.1,
+      "timeout": 9
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "bubble",
+      "who": "willem",
+      "text": "t_langue",
+      "time": 2.4
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "wait_for",
+      "reach": "talisman_2",
+      "radius": 1.1,
+      "timeout": 9
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "bubble",
+      "who": "willem",
+      "text": "t_nord",
+      "time": 2.4
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "wait_for",
+      "reach": "talisman_3",
+      "radius": 1.1,
+      "timeout": 9
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "bubble",
+      "who": "willem",
+      "text": "t_miaou",
+      "time": 2.4
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "wait_for",
+      "reach": "talisman_4",
+      "radius": 1.1,
+      "timeout": 9
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "bubble",
+      "who": "willem",
+      "text": "t_ongles",
+      "time": 2.4
+    },
+    {
+      "if": {
+        "flag": "j8_talismans"
+      },
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "hint"
+    },
+    {
+      "do": "dialogue",
+      "node": "ordre"
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.8
+    },
+    {
+      "do": "player",
+      "visible": false
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "dos_a_dos",
+      "offset": [
+        0.0,
+        0.6
+      ]
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "dos_a_dos",
+      "offset": [
+        -0.45,
+        0.0
+      ],
+      "facing": "west",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "chtholly_double",
+      "at": "dos_a_dos",
+      "offset": [
+        0.45,
+        0.0
+      ],
+      "facing": "east",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "camera",
+      "to": "dos_a_dos",
+      "offset": [
+        0.0,
+        0.4
+      ],
+      "distance": 8,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.2
+    },
+    {
+      "do": "dialogue",
+      "node": "promesse"
+    },
+    {
+      "do": "wait",
+      "time": 1.2
+    },
+    {
+      "do": "camera",
+      "to": "dos_a_dos",
+      "offset": [
+        0.0,
+        -3.0
+      ],
+      "distance": 12,
+      "pitch": 15,
+      "time": 2.4,
+      "wait": true
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.8
+    },
+    {
+      "do": "props",
+      "id": "talismans",
+      "clear": true
+    },
+    {
+      "do": "calendar"
+    },
+    {
+      "do": "next_day"
+    },
+    {
+      "do": "leave",
+      "who": "chtholly_double"
+    },
+    {
+      "do": "leave",
+      "who": "willem"
+    },
+    {
+      "do": "go_to",
+      "map": "entrepot_etage",
+      "marker": "Spawn"
+    },
+    {
+      "do": "player",
+      "visible": true
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "chtholly_lit",
+      "facing": "south"
+    },
+    {
+      "do": "camera_reset",
+      "time": 0
+    },
+    {
+      "do": "wait",
+      "time": 2.8
+    },
+    {
+      "do": "card",
+      "text": "days/8/calendar",
+      "time": 3.2
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.4
+    }
+  ]
+}

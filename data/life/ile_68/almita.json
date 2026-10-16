@@ -10,6 +10,7 @@
     {"slot": "soir", "day": 11, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
     {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire", "outfit": "vie"},
     {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "lecture_sieges", "activity": "lire", "outfit": "vie"},
+    {"slot": "apres_midi", "day": [5, 6], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "role": "blanc", "outfit": "vie"},
     {"slot": "aube", "map": "entrepot_etage", "place": "dortoir_b_lit_1_bas", "activity": "dormir", "outfit": "vie", "_note": "La journée de base : la plus petite, au lit au dortoir B, les livres d'images."},
     {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},

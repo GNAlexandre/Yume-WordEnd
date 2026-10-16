@@ -8,5 +8,3 @@ script = ExtResource("1_npc")
 id = &"cat_waiter"
 display_name = "Serveur"
 skin = ExtResource("2_visual")
-dialogue_path = "res://data/dialogues/cat_waiter.json"
-home_zone = &"beach"

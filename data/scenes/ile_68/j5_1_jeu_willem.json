@@ -1,0 +1,245 @@
+{
+  "_comment": "ACTE1.md 5.1 (V1, « Les filles de l'entrepôt ») : séquence sans contrôle au champ, à midi. Willem pose le ballon, fait deux équipes, la règle tient en une phrase. La séquence finit au créneau de l'après-midi : la partie (jeu d'E8, activité ballon des lignes de vie des jours 5 et 6) commence toute seule. Willem n'a pas de planche « frappe » : le premier coup de pied est celui de Collon.",
+  "title": "Le jeu de Willem",
+  "day": 5,
+  "slot": "midi",
+  "map": "entrepot",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "champ_centre",
+    "radius": 15
+  },
+  "sequence": true,
+  "present": [
+    "willem",
+    "collon",
+    "pannibal",
+    "fairy_01",
+    "fairy_03",
+    "fairy_05",
+    "fairy_07",
+    "fairy_09",
+    "tiat",
+    "lakhesh",
+    "almita",
+    "fairy_02",
+    "fairy_04",
+    "fairy_06",
+    "fairy_08"
+  ],
+  "steps": [
+    {
+      "do": "hint"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "champ_centre",
+      "offset": [
+        0.0,
+        -0.6
+      ],
+      "facing": "south",
+      "outfit": "maison",
+      "anim": "repos"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "champ_centre",
+      "offset": [
+        -1.0,
+        1.0
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "champ_centre",
+      "offset": [
+        -2.1,
+        1.6
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "fairy_01",
+      "at": "champ_centre",
+      "offset": [
+        -3.2,
+        1.0
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "fairy_03",
+      "at": "champ_centre",
+      "offset": [
+        -1.5,
+        2.5
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "fairy_05",
+      "at": "champ_centre",
+      "offset": [
+        -2.7,
+        3.0
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "fairy_07",
+      "at": "champ_centre",
+      "offset": [
+        -3.8,
+        2.4
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "fairy_09",
+      "at": "champ_centre",
+      "offset": [
+        -4.7,
+        1.7
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "champ_centre",
+      "offset": [
+        1.0,
+        1.0
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "champ_centre",
+      "offset": [
+        2.1,
+        1.6
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "almita",
+      "at": "champ_centre",
+      "offset": [
+        3.2,
+        1.0
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "fairy_02",
+      "at": "champ_centre",
+      "offset": [
+        1.5,
+        2.5
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "fairy_04",
+      "at": "champ_centre",
+      "offset": [
+        2.7,
+        3.0
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "fairy_06",
+      "at": "champ_centre",
+      "offset": [
+        3.8,
+        2.4
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "fairy_08",
+      "at": "champ_centre",
+      "offset": [
+        4.7,
+        1.7
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "camera",
+      "to": "champ_centre",
+      "offset": [
+        0.0,
+        0.8
+      ],
+      "distance": 16,
+      "time": 1.4,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "regle"
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "champ_centre",
+      "offset": [
+        -0.8,
+        0.1
+      ],
+      "gait": "course",
+      "wait": true,
+      "facing": "east"
+    },
+    {
+      "do": "anim",
+      "who": "collon",
+      "anim": "frappe",
+      "wait": true
+    },
+    {
+      "do": "bubble",
+      "who": "willem",
+      "text": "coup_envoi",
+      "time": 2.0
+    },
+    {
+      "do": "wait",
+      "time": 1.6
+    },
+    {
+      "do": "slot",
+      "slot": "apres_midi",
+      "time": 0
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.2
+    }
+  ]
+}

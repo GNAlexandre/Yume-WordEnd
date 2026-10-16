@@ -5,8 +5,9 @@ extends Node3D
 ## que la capture soit toujours la même :
 ##   tools/screenshot.sh res://tests/integration/demo_l6.tscn build/shots/l6.png 380
 ## Ensuite : E, Entrée ou clic pour continuer, flèches (ou ZS) et souris pour choisir ; une fois la
-## conversation finie, E la relance (ce qu'elle dit dépend de GameState : quête, pages). Le
-## nouveau responsable est déjà salué (met_willem) : Nephren propose le livre d'images.
+## conversation finie, E la relance (ce qu'elle dit dépend de GameState : drapeau, pages).
+## (F1) La quête du livre d'images est partie avec l'ancienne île : Nephren dit ici la
+## conversation de tests/data/dialogues/l6_nephren.json, où l'offre pose un drapeau.
 
 ## Images (process) où la présentation termine la 1re réplique, passe à la suivante, puis
 ## termine la question (≈ 2,5 s, 4,5 s et 5,8 s à 60 images/s).
@@ -23,7 +24,6 @@ var _frame: int = 0
 
 
 func _ready() -> void:
-	GameState.set_flag(&"met_willem")
 	_talk.call_deferred()
 
 

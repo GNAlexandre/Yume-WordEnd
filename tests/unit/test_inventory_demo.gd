@@ -36,10 +36,10 @@ func test_walking_onto_a_pickup_fills_the_inventory() -> void:
 	var flower := demo.get_node(^"Pickups/demo_flower_1") as Node3D
 	(demo.get_node(^"Player") as Node3D).global_position = flower.global_position
 	await wait_physics_frames(4)
-	assert_eq(GameState.count(&"flower_blue"), 4, "3 au départ, 1 ramassée")
+	assert_eq(GameState.count(&"test_flower"), 4, "3 au départ, 1 ramassée")
 	assert_true(not is_instance_valid(flower) or flower.is_queued_for_deletion())
 	var stacks: Array = inventory.call(&"displayed_stacks")
-	assert_has(stacks, {"item_id": &"flower_blue", "quantity": 4})
+	assert_has(stacks, {"item_id": &"test_flower", "quantity": 4})
 
 
 func test_freeing_the_demo_resumes_the_game() -> void:

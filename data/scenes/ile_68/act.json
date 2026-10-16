@@ -65,25 +65,56 @@
       "sleep_hint": "days/4/sleep_hint"
     },
     "5": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j5_1_jeu_willem",
+        "j5_2_fenetre"
+      ],
+      "sleep_hint": "days/5/sleep_hint"
     },
     "6": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j6_1_soif_de_sang",
+        "j6_2_livre_images",
+        "j6_3_ordre_mission",
+        "j6_4_souvenir"
+      ],
+      "sleep_hint": "days/6/sleep_hint"
     },
     "7": {
-      "weather": "pluie"
+      "weather": "clair",
+      "sleep_after": [
+        "j7_6_archives"
+      ]
     },
     "8": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j8_8_colline"
+      ]
     },
     "9": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j9_5_veillee"
+      ],
+      "sleep_hint": "days/9/sleep_hint"
     },
     "10": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j10_5_tour",
+        "j10_4_toit"
+      ],
+      "sleep_hint": "days/10/sleep_hint"
     },
     "11": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j11_4_seniorious"
+      ],
+      "sleep_hint": "days/11/sleep_hint"
     },
     "12": {
       "weather": "clair"

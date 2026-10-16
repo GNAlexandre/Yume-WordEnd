@@ -1,0 +1,100 @@
+{
+  "id": "j5_2_fenetre",
+  "start": "banquette",
+  "nodes": {
+    "banquette": {
+      "speaker": "",
+      "text": "Tu t'assois sur la banquette de la fenêtre. Au fond de la salle, Nephren lit, un papier roulé à la main.",
+      "next": "banquette_2"
+    },
+    "banquette_2": {
+      "speaker": "",
+      "text": "Dehors, au bout du champ, les petites courent après un ballon. Au milieu, Willem lève les bras."
+    },
+    "champ": {
+      "speaker": "",
+      "text": "Le ballon monte, très haut, dans le ciel d'automne. Quelqu'un l'a lancé à deux mains. Personne ne sait où il va retomber."
+    },
+    "ithea": {
+      "speaker": "",
+      "text": "Sans un bruit, Ithea s'est glissée derrière toi. Ses bras se referment sur tes épaules.",
+      "next": "ithea_2"
+    },
+    "ithea_2": {
+      "speaker_id": "ithea",
+      "text": "Nya-ha-ha ! Tu ne regardes pas le ballon, toi.",
+      "next": "ithea_3"
+    },
+    "ithea_3": {
+      "speaker": "{player}",
+      "text": "Je regarde le ballon.",
+      "next": "ithea_4"
+    },
+    "ithea_4": {
+      "speaker_id": "ithea",
+      "text": "Avec ces yeux-là ? On ne regarde pas un ballon comme on regarde quelqu'un."
+    },
+    "nephren": {
+      "speaker": "",
+      "text": "Un papier roulé claque sur vos deux têtes. Nephren vous regarde, immobile.",
+      "next": "nephren_2"
+    },
+    "nephren_2": {
+      "speaker_id": "nephren",
+      "text": "… Chut. C'est une salle de lecture.",
+      "next": "nephren_3"
+    },
+    "nephren_3": {
+      "speaker_id": "ithea",
+      "text": "Pardon, pardon. On chuchote."
+    },
+    "doigts": {
+      "speaker": "",
+      "text": "Tu plies un doigt, puis un autre, en silence. Tu ne dis pas le nombre. Le jour entouré sur ton calendrier est encore loin, et pourtant si près.",
+      "next": "doigts_2"
+    },
+    "doigts_2": {
+      "speaker": "",
+      "text": "Le sourire d'Ithea se fige une seconde. Puis il revient, tout entier.",
+      "next": "doigts_3"
+    },
+    "doigts_3": {
+      "speaker": "{player}",
+      "text": "Il n'en reste plus beaucoup. Et c'est long, quand même, quand on y pense.",
+      "next": "doigts_4"
+    },
+    "doigts_4": {
+      "speaker_id": "ithea",
+      "text": "… Oui. Je sais.",
+      "next": "doigts_5"
+    },
+    "doigts_5": {
+      "speaker": "",
+      "text": "Ta gorge est serrée. Rien de plus. On n'en dit pas plus, dans une salle de lecture.",
+      "next": "doigts_6"
+    },
+    "doigts_6": {
+      "speaker": "",
+      "text": "Tap, tap. On cogne à la vitre : une petite, dehors, te fait de grands signes. Il manque une joueuse chez les blancs.",
+      "choices": [
+        {
+          "text": "J'arrive.",
+          "set_flag": "j5_arrive",
+          "next": "arrive"
+        },
+        {
+          "text": "Une autre fois.",
+          "next": "autre"
+        }
+      ]
+    },
+    "arrive": {
+      "speaker": "",
+      "text": "Tu te lèves. Nephren lève un pouce sans quitter son papier des yeux, et Ithea te pousse vers la porte."
+    },
+    "autre": {
+      "speaker": "",
+      "text": "La petite hausse les épaules et repart en courant. La partie reste ouverte : il y aura de la place, plus tard."
+    }
+  }
+}

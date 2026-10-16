@@ -2,18 +2,22 @@ extends GutTest
 ## Inventaire (L7) : contenu relu dans GameState seulement sur EventBus.inventory_changed,
 ## cases et piles, détail de l'objet choisi, navigation, écran modal (pause) et fermeture.
 ## Pendant une pause, n'attendre que des images (wait_process_frames), jamais des secondes.
+## (F1) Objets de tests/data/items (ceux de l'ancienne île sont partis).
 
 const INVENTORY := preload("res://src/ui/inventory.tscn")
 const InventoryScript := preload("res://src/ui/inventory.gd")
+const TEST_ITEMS_DIR := "res://tests/data/items"
 
 
 func before_each() -> void:
 	GameState.reset()
 	get_tree().paused = false
+	ItemData.add_search_dir(TEST_ITEMS_DIR)
 
 
 func after_each() -> void:
 	get_tree().paused = false
+	ItemData.remove_search_dir(TEST_ITEMS_DIR)
 
 
 func after_all() -> void:
@@ -36,45 +40,43 @@ func _label(inventory: Control, unique_name: String) -> Label:
 
 
 func test_starts_closed_with_game_state_content() -> void:
-	GameState.add_item(&"page_fragment", 3)
+	GameState.add_item(&"test_page", 3)
 	var inventory := _make()
 	assert_false(inventory.visible, "fermé au départ")
 	assert_eq(inventory.process_mode, Node.PROCESS_MODE_ALWAYS)
-	assert_eq(inventory.call(&"displayed_stacks"), [{"item_id": &"page_fragment", "quantity": 3}])
+	assert_eq(inventory.call(&"displayed_stacks"), [{"item_id": &"test_page", "quantity": 3}])
 
 
 func test_updates_only_on_inventory_changed() -> void:
 	var inventory := _make()
 	EventBus.set_block_signals(true)
-	GameState.add_item(&"flower_blue", 2)
+	GameState.add_item(&"test_flower", 2)
 	EventBus.set_block_signals(false)
 	assert_eq(
 		inventory.call(&"displayed_stacks"), [], "GameState changé sans signal : rien ne bouge"
 	)
 	EventBus.inventory_changed.emit()
-	assert_eq(inventory.call(&"displayed_stacks"), [{"item_id": &"flower_blue", "quantity": 2}])
-	GameState.add_item(&"picture_book", 2)
-	assert_eq(inventory.call(&"displayed_stacks").size(), 3, "deux livres : deux cases")
+	assert_eq(inventory.call(&"displayed_stacks"), [{"item_id": &"test_flower", "quantity": 2}])
+	GameState.add_item(&"test_picture", 2)
+	assert_eq(inventory.call(&"displayed_stacks").size(), 3, "deux images : deux cases")
 
 
 func test_grid_shows_icons_counts_and_empty_slots() -> void:
-	GameState.add_item(&"page_fragment", 3)
-	GameState.add_item(&"picture_book")
+	GameState.add_item(&"test_page", 3)
+	GameState.add_item(&"test_picture")
 	var inventory := _make()
 	var grid := inventory.get_node(^"%Grid") as GridContainer
 	assert_eq(grid.get_child_count(), InventoryScript.MIN_SLOTS, "cases vides comprises")
 	var first := grid.get_child(0) as Button
-	assert_eq(
-		(first.get_node(^"Icon") as TextureRect).texture, ItemData.find(&"page_fragment").icon
-	)
+	assert_eq((first.get_node(^"Icon") as TextureRect).texture, ItemData.find(&"test_page").icon)
 	assert_eq((first.get_node(^"Count") as Label).text, "3")
 	var book := grid.get_child(1) as Button
-	assert_eq((book.get_node(^"Icon") as TextureRect).texture, ItemData.find(&"picture_book").icon)
+	assert_eq((book.get_node(^"Icon") as TextureRect).texture, ItemData.find(&"test_picture").icon)
 	assert_eq((book.get_node(^"Count") as Label).text, "", "un seul : pas de chiffre")
 	assert_true((grid.get_child(2) as Button).disabled, "case vide")
-	GameState.add_item(&"page_fragment", 400)
-	assert_eq(grid.get_child_count(), 8, "403 pages : 5 piles + 1 livre = 6 cases")
-	GameState.add_item(&"flower_blue", 300)
+	GameState.add_item(&"test_page", 400)
+	assert_eq(grid.get_child_count(), 8, "403 pages : 5 piles + 1 image = 6 cases")
+	GameState.add_item(&"test_flower", 300)
 	assert_eq(grid.get_child_count(), 12, "la grille s'allonge d'une rangée")
 
 
@@ -134,26 +136,26 @@ func test_freeing_an_open_inventory_resumes_the_game() -> void:
 
 
 func test_selection_details_and_navigation() -> void:
-	GameState.add_item(&"flower_blue", 2)
-	GameState.add_item(&"laundry_sheet")
+	GameState.add_item(&"test_flower", 2)
+	GameState.add_item(&"test_linen")
 	var inventory := _make()
 	inventory.call(&"open")
 	await wait_process_frames(2)
-	assert_eq(inventory.call(&"selected_item"), &"flower_blue", "première case à l'ouverture")
-	assert_eq(_label(inventory, "DetailName").text, "Myosotis")
+	assert_eq(inventory.call(&"selected_item"), &"test_flower", "première case à l'ouverture")
+	assert_eq(_label(inventory, "DetailName").text, "Fleur d’essai")
 	assert_eq(_label(inventory, "DetailQuantity").text, "Quantité : 2")
 	assert_eq(
-		_label(inventory, "DetailDescription").text, ItemData.find(&"flower_blue").description
+		_label(inventory, "DetailDescription").text, ItemData.find(&"test_flower").description
 	)
 	_press(&"ui_right")
 	await wait_process_frames(1)
-	assert_eq(inventory.call(&"selected_item"), &"laundry_sheet", "flèche droite : case suivante")
-	assert_eq(_label(inventory, "DetailName").text, "Drap envolé")
+	assert_eq(inventory.call(&"selected_item"), &"test_linen", "flèche droite : case suivante")
+	assert_eq(_label(inventory, "DetailName").text, "Linge d’essai")
 	var grid := inventory.get_node(^"%Grid") as GridContainer
 	(grid.get_child(0) as Button).mouse_entered.emit()
-	assert_eq(inventory.call(&"selected_item"), &"flower_blue", "survol de la souris")
+	assert_eq(inventory.call(&"selected_item"), &"test_flower", "survol de la souris")
 	(grid.get_child(5) as Button).mouse_entered.emit()
-	assert_eq(inventory.call(&"selected_item"), &"flower_blue", "une case vide ne se choisit pas")
+	assert_eq(inventory.call(&"selected_item"), &"test_flower", "une case vide ne se choisit pas")
 
 
 func test_empty_inventory_and_mouse_closing() -> void:

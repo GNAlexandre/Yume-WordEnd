@@ -107,7 +107,8 @@ func _free_all(instances: Array) -> void:
 
 
 func test_table_names_every_image() -> void:
-	assert_gt(_plan.size(), 250, "les images du cahier n° 2 qui se posent")
+	# (F1) Moins les images retirées avec l'ancienne île (stands, palissades, cloche…).
+	assert_gt(_plan.size(), 230, "les images du cahier n° 2 qui se posent")
 	var problems: Array[String] = []
 	var names := {}
 	for item: Array in _plan:
@@ -120,7 +121,7 @@ func test_table_names_every_image() -> void:
 				problems.append("%s : nom de scène déjà pris" % _key(item[0]))
 			names[label] = true
 	assert_true(problems.is_empty(), "; ".join(problems))
-	assert_gt(names.size(), 240, "scènes attendues")
+	assert_gt(names.size(), 220, "scènes attendues")
 
 
 func test_every_expected_scene_loads_and_points_on_its_image() -> void:
@@ -185,7 +186,7 @@ func test_panels_and_decals_have_the_format_of_the_manifest() -> void:
 		(item[2] as Node).free()
 	assert_true(problems.is_empty(), "; ".join(problems))
 	assert_gt(animated, 10, "bandes animées posées")
-	assert_gt(soft, 5, "décalques doux")
+	assert_gt(soft, 3, "décalques doux (F1 : moins ceux de l'ancienne île)")
 
 
 func _panel_problems(entry: Dictionary, category: Dictionary, panel: DecorPanel) -> Array[String]:
@@ -240,7 +241,7 @@ func test_collisions_follow_the_category() -> void:
 			problems.append_array(_shape_problems(entry, body))
 		node.free()
 	assert_true(problems.is_empty(), "; ".join(problems))
-	assert_gt(blocking, 100, "décors qui bloquent")
+	assert_gt(blocking, 90, "décors qui bloquent (F1 : moins ceux de l'ancienne île)")
 
 
 ## Les formes tiennent dans la largeur de l'image (ou l'emprise d'un bâtiment) et posent sur le
@@ -324,9 +325,10 @@ func test_every_side_is_the_flank_of_its_building_at_contract_size() -> void:
 	# six maisons du
 	# village (cahier n° 5, 5.3 ; scènes de tools/exterior_props.py).
 	# (CV) et les dix maisons et boutiques de la ville (cahier n° 5, 6.4 et 6.5).
+	# (F1) Moins les dix bâtiments de l'ancienne île.
 	assert_eq(
 		count,
-		38,
+		28,
 		(
 			"flancs des 9 bâtiments existants, des 10 nouveaux, de T1, du village (C2), de la ville (CV),"
 			+ " du port (CP)"
@@ -362,7 +364,8 @@ func test_new_buildings_follow_section_9_2() -> void:
 		assert_eq(b.wall_texture.resource_path, wall, "%s : matière des murs" % label)
 		assert_eq(b.roof_texture.resource_path, roof, "%s : matière du toit" % label)
 		b.free()
-	assert_eq(found, 10, "les dix maisons du bourg et du port")
+	# (F1) Les six du bourg de l'ancienne île sont parties avec elle.
+	assert_eq(found, 4, "les maisons du port de la section 9.2")
 
 
 func test_ship_propellers_sit_on_the_drawn_hubs() -> void:

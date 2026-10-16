@@ -1,13 +1,13 @@
 extends "res://tests/stubs/m2_game_test.gd"
 ## Intégration M2, parcours 1 dans le vrai src/main.tscn : « Cliquer pour jouer » → choix du skin
 ## → Nouvelle partie → écran de chargement dont la barre avance vraiment (plusieurs images, sans
-## fil d'exécution) → joueur au Spawn du village, cinq cœurs et le nom de la zone dans le HUD.
-## À la souris, puis à la manette seule (geste, croix, A) ; Continuer n'apparaît qu'avec une
-## sauvegarde. (Systèmes et textes) Sous les vignettes, « Ta fée prend la place de Chtholly dans
-## l'histoire. » ; un PNJ qui a le skin choisi n'est pas au village (la fée choisie est le
-## joueur). Noms des zones et skins lus dans le jeu, pas figés ici (le monde et le contenu de
-## l'acte 1 les changent). Le choix se fait dans un dossier de skins de test (Chtholly et une
-## fée faite du visuel de Nephren).
+## fil d'exécution) → joueur au Spawn de la carte de départ, cinq cœurs et le nom de la carte
+## annoncé. À la souris, puis à la manette seule (geste, croix, A) ; Continuer n'apparaît qu'avec
+## une sauvegarde. (Systèmes et textes) Sous les vignettes, « Ta fée prend la place de Chtholly
+## dans l'histoire. » ; le PNJ qui a le skin choisi est absent (la fée choisie est le joueur).
+## Noms des cartes et skins lus dans le jeu, pas figés ici. Le choix se fait dans un dossier de
+## skins de test (Chtholly et une fée faite du visuel de Nephren). (F1) La carte de départ des
+## tests est la carte d'essai : l'ancienne île et son village sont partis.
 
 const TEST_SKINS_DIR := "user://test_m2_menu_skins"
 const TEST_SKINS: Array[String] = [
@@ -43,28 +43,26 @@ func _last_skin() -> StringName:
 	return skins.back().id if not skins.is_empty() else &"chtholly"
 
 
-func _assert_started_at_the_village(skin_id: StringName) -> void:
+func _assert_started_at_the_spawn(skin_id: StringName) -> void:
 	assert_null(menu(), "menu libéré")
 	assert_null(main.call(&"loading_screen"), "écran de chargement libéré")
-	var spawn := zone(&"village").get_node(^"Spawn") as Node3D
-	assert_lt(distance_to(spawn), 1.0, "joueur au Spawn du village")
-	assert_eq(WorldManager.current_zone(), &"village")
-	assert_eq(
-		zone_banner(), WorldManager.zone_display_name(&"village"), "nom de la zone dans le HUD"
+	assert_eq(WorldManager.current_map(), start_map_for_test(), "carte de départ")
+	assert_lt(distance_to(current_map().spawn()), 1.0, "joueur au Spawn")
+	assert_true(
+		await until(func() -> bool: return map_banner() == current_map().display_name, 3.0),
+		"nom de la carte annoncé"
 	)
 	assert_eq(hearts_shown(), 5, "cinq cœurs")
 	assert_eq(hud.call(&"health"), Vector2i(5, 5), "cœurs pleins")
 	assert_eq(GameState.skin_id, skin_id, "skin choisi")
 	assert_eq(player.visual.skin.id, skin_id, "le personnage a le skin choisi")
 	assert_true(SaveManager.is_game_loaded(), "partie suivie par SaveManager")
-	for npc: Node in zone(&"village").get_node(^"NPCs").get_children():
-		if npc is Npc and (npc as Npc).data != null and (npc as Npc).data.skin != null:
-			var same_skin := (npc as Npc).data.skin.id == skin_id
-			assert_eq(
-				(npc as Npc).is_visible_in_tree(),
-				not same_skin,
-				"%s : présent sauf s'il a le skin choisi" % npc.name
-			)
+	for npc_id: StringName in [&"nephren", &"nygglatho"]:
+		var npc := DialogueRunner.find_npc(npc_id)
+		var same_skin := npc.skin != null and npc.skin.id == skin_id
+		assert_eq(
+			npc.is_present(), not same_skin, "%s : présent sauf s'il a le skin choisi" % npc_id
+		)
 
 
 func test_new_game_from_the_menu_with_the_mouse() -> void:
@@ -100,7 +98,7 @@ func test_new_game_from_the_menu_with_the_mouse() -> void:
 	var sorted := progress.duplicate()
 	sorted.sort()
 	assert_eq(progress, sorted, "sans jamais reculer")
-	_assert_started_at_the_village(chosen)
+	await _assert_started_at_the_spawn(chosen)
 
 
 func test_new_game_from_the_menu_with_a_gamepad_only() -> void:
@@ -137,7 +135,7 @@ func test_new_game_from_the_menu_with_a_gamepad_only() -> void:
 	assert_eq(_focus_owner(), menu_button("NewGameButton"), "croix : Nouvelle partie")
 	await tap_joy(JOY_BUTTON_A)
 	assert_true(await wait_for_game(), "A lance la partie")
-	_assert_started_at_the_village(skin_id)
+	await _assert_started_at_the_spawn(skin_id)
 	assert_false(
 		player.is_on_floor() and player.velocity.y > 0.1, "l'appui de A n'a pas fait sauter"
 	)
@@ -148,14 +146,14 @@ func test_trace_shortcut_only_logs() -> void:
 	assert_eq_deep(TestShortcuts.parse_query("?trace=1"), {"trace": "1"})
 	assert_eq_deep(TestShortcuts.parse_query("?trace"), {"trace": ""})
 	assert_true(await new_game_from_menu(), "nouvelle partie")
-	var spawn := zone(&"village").get_node(^"Spawn") as Node3D
+	var spawn := current_map().spawn()
 	var shortcuts := TestShortcuts.new()
 	shortcuts.parameters = {"trace": "1"}
 	game.add_child(shortcuts)
 	await wait_physics_frames(3)
 	assert_lt(distance_to(spawn), 1.0, "trace : le joueur reste où la partie l'a mis")
-	assert_eq(WorldManager.current_zone(), &"village")
-	assert_eq(get_tree().get_nodes_in_group(&"enemies").size(), 4, "pas de banc de Timeres")
+	assert_eq(WorldManager.current_map(), start_map_for_test())
+	assert_eq(get_tree().get_nodes_in_group(&"enemies").size(), 0, "pas de banc de Timeres")
 
 
 func test_continue_appears_once_a_game_is_saved() -> void:

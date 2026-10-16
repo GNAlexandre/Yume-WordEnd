@@ -1,0 +1,358 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/map_ground.gd" id="2_map_ground"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="3_prop_batcher"]
+[ext_resource type="Script" path="res://src/world/prop_scatter.gd" id="4_prop_scatter"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_map_exit"]
+[ext_resource type="Script" path="res://src/world/ambient_sprites.gd" id="6_ambient_sprites"]
+[ext_resource type="PackedScene" path="res://src/world/props/ships/garde_transport_deck.tscn" id="7_garde_transport_deck"]
+[ext_resource type="PackedScene" path="res://src/world/props/ships/garde_transport_hull.tscn" id="8_garde_transport_hull"]
+[ext_resource type="PackedScene" path="res://src/world/props/gangway_quay.tscn" id="9_gangway_quay"]
+[ext_resource type="PackedScene" path="res://src/world/props/deck_bridge.tscn" id="10_deck_bridge"]
+[ext_resource type="PackedScene" path="res://src/world/props/deck_crates_lashed.tscn" id="11_deck_crates_lashed"]
+[ext_resource type="PackedScene" path="res://src/world/props/deck_vent.tscn" id="12_deck_vent"]
+[ext_resource type="PackedScene" path="res://src/world/props/deck_hatch.tscn" id="13_deck_hatch"]
+[ext_resource type="PackedScene" path="res://src/world/props/ships/garde_transport_rotor.tscn" id="14_garde_transport_rotor"]
+[ext_resource type="PackedScene" path="res://src/world/props/deck_railing.tscn" id="15_deck_railing"]
+[ext_resource type="PackedScene" path="res://src/world/props/garde_crate.tscn" id="16_garde_crate"]
+[ext_resource type="PackedScene" path="res://src/world/props/rope_coil.tscn" id="17_rope_coil"]
+[ext_resource type="PackedScene" path="res://src/world/props/bollard.tscn" id="18_bollard"]
+[ext_resource type="PackedScene" path="res://src/world/props/chain_pile.tscn" id="19_chain_pile"]
+[ext_resource type="PackedScene" path="res://src/world/props/crate.tscn" id="20_crate"]
+[ext_resource type="PackedScene" path="res://src/world/props/fuel_barrels.tscn" id="21_fuel_barrels"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_a.tscn" id="22_distant_island_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_e.tscn" id="23_distant_island_e"]
+[ext_resource type="PackedScene" path="res://src/world/props/distant_island_c.tscn" id="24_distant_island_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/horizon_islands.tscn" id="25_horizon_islands"]
+[ext_resource type="PackedScene" path="res://src/world/props/cloud_c.tscn" id="26_cloud_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/cloud_a.tscn" id="27_cloud_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/cloud_b.tscn" id="28_cloud_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/mist_band.tscn" id="29_mist_band"]
+[ext_resource type="PackedScene" path="res://src/world/props/airship_far_a.tscn" id="30_airship_far_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/floating_rock_b.tscn" id="31_floating_rock_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/floating_rock_c.tscn" id="32_floating_rock_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/oil_stain.tscn" id="33_oil_stain"]
+[ext_resource type="PackedScene" path="res://src/world/props/rust_streak.tscn" id="34_rust_streak"]
+[ext_resource type="PackedScene" path="res://src/world/props/cracks_b.tscn" id="35_cracks_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/drain_grate.tscn" id="36_drain_grate"]
+[ext_resource type="PackedScene" path="res://src/world/props/puddle_b.tscn" id="37_puddle_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/pebbles_a.tscn" id="38_pebbles_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/leaves_rust_a.tscn" id="39_leaves_rust_a"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/birds_flock.png" id="40_birds_flock"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge1"]
+size = Vector3(20, 4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge2"]
+size = Vector3(9, 4, 2.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge3"]
+size = Vector3(9, 4, 2.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge4"]
+size = Vector3(2, 4, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge5"]
+size = Vector3(2, 4, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge6"]
+size = Vector3(16, 4, 0.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge7"]
+size = Vector3(7, 4, 0.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge8"]
+size = Vector3(7, 4, 0.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge9"]
+size = Vector3(1, 4, 2.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge10"]
+size = Vector3(1, 4, 2.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge11"]
+size = Vector3(20, 4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit_vers_port"]
+size = Vector3(2, 3, 0.8)
+
+[node name="transport_garde" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "Le transport de la Garde"
+region = &"port"
+size = Vector2(20, 11)
+camera_bounds = Rect2(9.5, 2, 1, 5)
+
+[node name="Ground" type="StaticBody3D" parent="."]
+script = ExtResource("2_map_ground")
+
+[node name="Edges" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Edge1" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 2, 0.5)
+shape = SubResource("BoxShape3D_edge1")
+
+[node name="Edge2" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 2, 7.25)
+shape = SubResource("BoxShape3D_edge2")
+
+[node name="Edge3" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.5, 2, 7.25)
+shape = SubResource("BoxShape3D_edge3")
+
+[node name="Edge4" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2, 3.5)
+shape = SubResource("BoxShape3D_edge4")
+
+[node name="Edge5" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 2, 3.5)
+shape = SubResource("BoxShape3D_edge5")
+
+[node name="Edge6" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 2, 1.2)
+shape = SubResource("BoxShape3D_edge6")
+
+[node name="Edge7" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 2, 5.8)
+shape = SubResource("BoxShape3D_edge7")
+
+[node name="Edge8" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 2, 5.8)
+shape = SubResource("BoxShape3D_edge8")
+
+[node name="Edge9" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 2, 9.75)
+shape = SubResource("BoxShape3D_edge9")
+
+[node name="Edge10" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 2, 9.75)
+shape = SubResource("BoxShape3D_edge10")
+
+[node name="Edge11" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 2, 11.5)
+shape = SubResource("BoxShape3D_edge11")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("3_prop_batcher")
+cell_size = 24.0
+
+[node name="Deck" type="Node3D" parent="Geometry"]
+
+[node name="Rail" type="Node3D" parent="Geometry"]
+
+[node name="Rotors" type="Node3D" parent="Geometry"]
+
+[node name="Gangway" type="Node3D" parent="Geometry"]
+
+[node name="Quay" type="Node3D" parent="Geometry"]
+
+[node name="Sky" type="Node3D" parent="Geometry"]
+
+[node name="PontNavire" parent="Geometry/Deck" instance=ExtResource("7_garde_transport_deck")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 3.5)
+
+[node name="Coque" parent="Geometry/Deck" instance=ExtResource("8_garde_transport_hull")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, -2.55, 3.95)
+
+[node name="Passerelle" parent="Geometry/Gangway" instance=ExtResource("9_gangway_quay")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, -0.17, 7.25)
+
+[node name="PasserelleCommandement" parent="Geometry/Deck" instance=ExtResource("10_deck_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 2.2)
+
+[node name="DeckCratesLashed" parent="Geometry/Deck" instance=ExtResource("11_deck_crates_lashed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 2.2)
+
+[node name="DeckVent" parent="Geometry/Deck" instance=ExtResource("12_deck_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 2)
+
+[node name="DeckHatch" parent="Geometry/Deck" instance=ExtResource("13_deck_hatch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 4.4)
+
+[node name="Rotor1" parent="Geometry/Rotors" instance=ExtResource("14_garde_transport_rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.2, 3.5)
+
+[node name="Rotor2" parent="Geometry/Rotors" instance=ExtResource("14_garde_transport_rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 0.2, 3.5)
+
+[node name="BastingageNord1" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 1.2)
+
+[node name="BastingageNord2" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 1.2)
+
+[node name="BastingageNord3" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 1.2)
+
+[node name="BastingageNord4" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 1.2)
+
+[node name="BastingageNord5" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 1.2)
+
+[node name="BastingageNord6" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 1.2)
+
+[node name="BastingageNord7" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 1.2)
+
+[node name="BastingageNord8" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 1.2)
+
+[node name="BastingageSud1" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 5.8)
+
+[node name="BastingageSud2" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 5.8)
+
+[node name="BastingageSud3" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 5.8)
+
+[node name="BastingageSud4" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 5.8)
+
+[node name="BastingageSud5" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 5.8)
+
+[node name="BastingageSud6" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 5.8)
+
+[node name="BastingageSud7" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 5.8)
+
+[node name="BastingageSud8" parent="Geometry/Rail" instance=ExtResource("15_deck_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 5.8)
+
+[node name="CaisseGarde" parent="Geometry/Deck" instance=ExtResource("16_garde_crate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.6, 0, 2.3)
+
+[node name="Cordage" parent="Geometry/Deck" instance=ExtResource("17_rope_coil")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0, 4.6)
+
+[node name="Quai1" parent="Geometry/Quay" instance=ExtResource("18_bollard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 9.1)
+
+[node name="Quai2" parent="Geometry/Quay" instance=ExtResource("18_bollard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 9.1)
+
+[node name="Quai3" parent="Geometry/Quay" instance=ExtResource("17_rope_coil")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 9.6)
+
+[node name="Quai4" parent="Geometry/Quay" instance=ExtResource("19_chain_pile")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.4, 0, 9.8)
+
+[node name="Quai5" parent="Geometry/Quay" instance=ExtResource("20_crate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, 10.2)
+
+[node name="Quai6" parent="Geometry/Quay" instance=ExtResource("21_fuel_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 10.2)
+
+[node name="Vide1" parent="Geometry/Sky" instance=ExtResource("22_distant_island_a")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -6, -50, -100)
+
+[node name="Vide2" parent="Geometry/Sky" instance=ExtResource("23_distant_island_e")]
+transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 26, -44, -90)
+flip_h = true
+
+[node name="Vide3" parent="Geometry/Sky" instance=ExtResource("24_distant_island_c")]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 8, -58, -150)
+
+[node name="Vide4" parent="Geometry/Sky" instance=ExtResource("25_horizon_islands")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 14, -58, -230)
+
+[node name="Vide5" parent="Geometry/Sky" instance=ExtResource("26_cloud_c")]
+transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 4, -56, -120)
+flip_h = true
+
+[node name="Vide6" parent="Geometry/Sky" instance=ExtResource("27_cloud_a")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 24, -56, -140)
+
+[node name="Vide7" parent="Geometry/Sky" instance=ExtResource("28_cloud_b")]
+transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -10, -57, -170)
+
+[node name="Vide8" parent="Geometry/Sky" instance=ExtResource("29_mist_band")]
+transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, 10, -50, -105)
+flip_h = true
+
+[node name="Vide9" parent="Geometry/Sky" instance=ExtResource("30_airship_far_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, -24, -66)
+
+[node name="Vide10" parent="Geometry/Sky" instance=ExtResource("31_floating_rock_b")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 2, -9, -18)
+
+[node name="Vide11" parent="Geometry/Sky" instance=ExtResource("32_floating_rock_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, -14, -30)
+flip_h = true
+
+[node name="Scatter" type="Node3D" parent="Geometry"]
+
+[node name="DeckStains" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("33_oil_stain")
+points = PackedVector3Array(3.836, 0, 2.421, 12.72, 0, 2.381, 16.648, 0, 4.84, 14.84, 0, 2.677, 9.858, 0, 5.27, 5.806, 0, 4.517, 10.643, 0, 2.887, 7.766, 0, 4.439, 14.207, 0, 4.927, 6.524, 0, 1.959, 16.385, 0, 2.013, 8.386, 0, 2.461, 11.739, 0, 5.045, 3.844, 0, 5.27, 2.801, 0, 3.908, 17.333, 0, 3.326)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 92
+variants = Array[PackedScene]([ExtResource("34_rust_streak"), ExtResource("35_cracks_b"), ExtResource("36_drain_grate")])
+random_flip = true
+
+[node name="QuayStains" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("33_oil_stain")
+points = PackedVector3Array(17.752, 0, 9.839, 11.237, 0, 9.571, 2.736, 0, 9.575, 15.091, 0, 10.132, 19.338, 0, 9.208, 6.164, 0, 9.456, 4.601, 0, 10.359, 0.879, 0, 9.981, 9.933, 0, 10.663, 12.775, 0, 10.148, 8.507, 0, 9.016, 7.478, 0, 10.744, 16.138, 0, 8.908, 13.911, 0, 8.948)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 94
+variants = Array[PackedScene]([ExtResource("34_rust_streak"), ExtResource("37_puddle_b"), ExtResource("38_pebbles_a"), ExtResource("39_leaves_rust_a")])
+random_flip = true
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.2, 3.4)
+
+[node name="from_port" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.2, 3.4)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="vers_port" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.5, 6)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_map_exit")
+target_map = &"port"
+target_marker = &"from_transport_garde"
+prompt = "Descendre à quai"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_port"]
+shape = SubResource("BoxShape3D_exit_vers_port")
+
+[node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="trappe" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 3.6)
+
+[node name="proue" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 0, 4.4)
+
+[node name="Areas" type="Node3D" parent="Life"]
+
+[node name="Ambience" type="Node3D" parent="."]
+
+[node name="Birds" type="Node3D" parent="Ambience"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 2)
+script = ExtResource("6_ambient_sprites")
+texture = ExtResource("40_birds_flock")
+frames = 6
+fps = 10
+motion = 1
+count = 3
+area = Vector3(24, 6, 10)
+lift = 5
+region_size = Vector2(0, 0)
+speed = 4
+sway = 0.8
+random_seed = 3

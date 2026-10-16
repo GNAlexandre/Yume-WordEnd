@@ -1,9 +1,10 @@
 extends "res://tests/stubs/l8_save_test.gd"
-## SaveManager, versions (L8, puis Lot Q, puis E1) : migration du format v0 (sans version, scores
-## à plat, dont le localStorage['yn.wordend'] de l'easter egg) vers v1 puis v2, migration v1 → v2
-## (avancement des quêtes en étapes), v2 → v3 (cartes de la refonte : une vraie sauvegarde
-## d'avant la refonte reprend dans la carte héritée, sans perte), refus propre d'une version
-## future.
+## SaveManager, versions (L8, Lot Q, E1, puis F1) : (F1) une partie de l'ancienne île (versions 0
+## à 2, dont le localStorage['yn.wordend'] de l'easter egg, ou v3 hors de l'acte en jours) ne se
+## reprend plus : copiée à côté (load_game), elle devient une nouvelle partie de l'acte 1 avec son
+## skin, et SaveManager.notice porte la ligne du menu (data/texts/story.json, save/migrated) ; une
+## partie v3 de l'acte passe en v4 sans perte (les champs de l'ancienne île sont retirés) ; refus
+## propre d'une version future ; aller-retour de la carte (v3 puis v4).
 
 ## Sauvegarde v0 : pas de version ni de best_scores, le score des dunes à plat.
 const V0_SAVE := """{
@@ -28,12 +29,11 @@ const FUTURE_SAVE := '{"version": 99, "saved_at": "2027-01-01T00:00:00Z", "skin"
 ## commit 50ec961 : quête principale à « to_the_woods », deux pages, un record d'arène, le joueur
 ## dans la rue du port.
 const V2_REAL_SAVE := "res://tests/data/saves/save_v2_avant_refonte.json"
-## Sauvegarde v1 (jalon M2) : une quête du jeu en cours (le livre d'images, qui a remplacé celle
-## des pages à l'acte 1), trois pages en poche, une quête active sans données et une terminée.
+## Sauvegarde v1 (jalon M2) de l'ancienne île.
 const V1_SAVE := """{
 	"version": 1,
 	"saved_at": "2026-10-06T10:00:00Z",
-	"skin": "chtholly",
+	"skin": "ithea",
 	"max_hp": 5,
 	"position": [-3.0, 0.2, 6.0],
 	"zone": "village",
@@ -43,75 +43,190 @@ const V1_SAVE := """{
 	"collected_pickups": ["forest_page_1"],
 	"best_scores": {"dunes": {"score": 120, "wave": 2, "games": 1}}
 }"""
+## (F1) Sauvegarde v3 de l'ancienne île (carte héritée, hors de l'acte en jours : day 0).
+const V3_LEGACY_SAVE := """{
+	"version": 3,
+	"skin": "chtholly",
+	"max_hp": 6,
+	"position": [0.0, 0.2, 9.0],
+	"map": "ile_ancienne",
+	"zone": "village",
+	"inventory": {"page_fragment": 5},
+	"flags": {"met_willem": true},
+	"quests": {"act1_main": "active"},
+	"quest_progress": {"act1_main": {"step": "to_the_woods", "count": 0}},
+	"tracked_quest": "act1_main",
+	"best_scores": {"dunes": {"score": 640, "wave": 6, "games": 4}},
+	"day": 0
+}"""
+## (F1) Sauvegarde v3 de l'acte en jours (île n° 68), avec les champs vides de l'ancienne île
+## qu'écrivait encore GameState.
+const V3_ACT_SAVE := """{
+	"version": 3,
+	"saved_at": "2026-10-15T20:00:00Z",
+	"skin": "nephren",
+	"max_hp": 5,
+	"position": [20.0, 0.2, 16.0],
+	"map": "essai",
+	"zone": "",
+	"inventory": {"test_page": 1},
+	"flags": {"j2_seen": true},
+	"collected_pickups": [],
+	"quests": {},
+	"quest_progress": {},
+	"tracked_quest": "",
+	"best_scores": {},
+	"island": "ile_68",
+	"known_islands": ["ile_68"],
+	"day": 3,
+	"slot": "matin",
+	"scenes_done": ["j1_1_port", "j2_1"]
+}"""
+const OLD_ISLAND_FIELDS: Array[String] = [
+	"zone", "quests", "quest_progress", "tracked_quest", "best_scores"
+]
 
 
-func test_v0_file_is_migrated_to_v1() -> void:
-	write_save_text(V0_SAVE)
-	watch_signals(EventBus)
-	assert_eq(SaveManager.load_game(), OK)
-	assert_signal_emitted(EventBus, "game_loaded")
+## Vérifie la nouvelle partie qui remplace une partie de l'ancienne île : rien de l'ancienne
+## partie sauf le skin, l'avis posé, game_loaded émis, la réécriture demandée.
+func _assert_restarted(skin_id: StringName, label: String) -> void:
+	assert_true(SaveManager.started_new, "%s : nouvelle partie" % label)
+	assert_eq(SaveManager.notice, DialogueRunner.story_text("save/migrated"), "%s : avis" % label)
+	assert_false(SaveManager.notice.is_empty(), "%s : l'avis a un texte" % label)
+	assert_eq(GameState.skin_id, skin_id, "%s : son skin" % label)
+	assert_true(GameState.items().is_empty(), "%s : rien de l'ancienne île" % label)
+	assert_eq(GameState.max_hp, GameState.DEFAULT_MAX_HP, "%s : PV de départ" % label)
+	assert_eq(GameState.map, &"", "%s : game.gd la pose au départ de l'acte" % label)
+	assert_lte(GameState.day, 1, "%s : au premier jour de l'acte" % label)
+	assert_eq(GameState.scenes_done().size(), 0, "%s : aucune scène jouée" % label)
+	assert_eq(WorldManager.starting_map(), WorldManager.START_MAP, "%s : l'entrepôt" % label)
+	assert_true(SaveManager.is_autosave_pending(), "%s : réécriture demandée" % label)
 	var data := GameState.to_dict()
-	assert_eq(data["best_scores"], {"dunes": {"score": 640, "wave": 6, "games": 4}})
-	assert_eq(GameState.skin_id, &"forgeron")
-	assert_eq(GameState.max_hp, 6)
-	assert_eq(GameState.position, Vector3(3.5, 0.5, -2.0))
-	assert_eq(GameState.zone, &"beach")
-	assert_eq(GameState.count(&"page_fragment"), 2)
-	assert_true(GameState.has_flag(&"quest_pages_accepted"))
-	assert_eq(GameState.quest_state(&"picture_book"), &"active")
-	assert_true(GameState.is_pickup_collected(&"beach_shell_2"))
-	assert_false(data.has("best") or data.has("games"), "plus de champ à plat")
+	for key: String in OLD_ISLAND_FIELDS:
+		assert_false(data.has(key), "%s : plus de %s" % [label, key])
 
 
-func test_migrated_save_is_rewritten_at_the_current_version() -> void:
-	write_save_text(V0_SAVE)
-	assert_eq(SaveManager.load_game(), OK)
-	assert_true(SaveManager.is_autosave_pending(), "réécriture demandée")
+# --- (F1) Parties de l'ancienne île : nouvelle partie de l'acte 1 ------------------------------
+
+
+func test_real_v2_save_restarts_the_first_act_and_is_kept_aside() -> void:
+	var text := FileAccess.get_file_as_string(V2_REAL_SAVE)
+	write_save_text(text)
+	watch_signals(EventBus)
+	assert_eq(SaveManager.load_game(), OK, "aucun plantage, aucune erreur")
+	assert_signal_emitted(EventBus, "game_loaded")
+	_assert_restarted(&"chtholly", "v2")
+	assert_true(FileAccess.file_exists(SaveManager.legacy_backup_path()), "copie gardée")
+	assert_eq(
+		FileAccess.get_file_as_string(SaveManager.legacy_backup_path()), text, "copie intacte"
+	)
 	assert_eq(SaveManager.flush(), OK)
 	var data := read_save()
-	assert_eq(data["version"], float(SaveManager.SAVE_VERSION), "v0 → v1 → v2")
-	assert_true(data.has("saved_at"))
-	assert_eq(data["best_scores"], {"dunes": {"score": 640.0, "wave": 6.0, "games": 4.0}})
-	assert_false(data.has("best") or data.has("wave") or data.has("games"))
-	assert_eq(SaveManager.load_game(), OK, "relue en v2")
-	assert_eq(GameState.best_score(&"dunes"), 640)
+	assert_eq(data["version"], float(SaveManager.SAVE_VERSION), "réécrite en v4")
+	for key: String in OLD_ISLAND_FIELDS:
+		assert_false(data.has(key), "fichier : plus de %s" % key)
+	assert_eq(SaveManager.load_game(), OK, "relue")
+	assert_eq(SaveManager.notice, "", "une partie v4 ne dit rien au chargement")
+	assert_false(SaveManager.started_new)
 
 
-func test_version_zero_is_the_v0_format() -> void:
-	assert_eq(SaveManager.import_json('{"version": 0, "best": 120, "games": 2}'), OK)
-	assert_eq(GameState.to_dict()["best_scores"], {"dunes": {"score": 120, "wave": 0, "games": 2}})
+func test_every_old_island_version_restarts_the_first_act() -> void:
+	var cases := {
+		"v0": [V0_SAVE, &"forgeron"],
+		"v1": [V1_SAVE, &"ithea"],
+		"v3 hors de l'acte": [V3_LEGACY_SAVE, &"chtholly"],
+		"v0 explicite": ['{"version": 0, "best": 120, "games": 2}', &""],
+		"easter egg": [EASTER_EGG, &""],
+		"v3 sans jour": ['{"version": 3, "map": "ile_ancienne"}', &""],
+	}
+	for label: String in cases:
+		GameState.reset()
+		GameState.add_item(&"test_page")
+		write_save_text(cases[label][0])
+		assert_eq(SaveManager.load_game(), OK, label)
+		_assert_restarted(cases[label][1], label)
+		SaveManager.close_game(false)
 
 
-func test_easter_egg_storage_imports_as_v0() -> void:
-	assert_eq(SaveManager.import_json(EASTER_EGG), OK)
-	assert_eq(GameState.best_score(&"dunes"), 410, "meilleur score de l'easter egg")
-	assert_eq(GameState.to_dict()["best_scores"]["dunes"]["games"], 12, "nombre de parties")
-	assert_eq(GameState.max_hp, GameState.DEFAULT_MAX_HP, "le reste : nouvelle partie")
-	assert_eq(GameState.zone, &"")
-	assert_true(GameState.items().is_empty())
+func test_import_of_an_old_island_save_restarts_too() -> void:
+	assert_eq(SaveManager.import_json(V1_SAVE), OK)
+	_assert_restarted(&"ithea", "import v1")
+	assert_false(FileAccess.file_exists(SaveManager.legacy_backup_path()), "l'import ne copie rien")
 
 
-func test_v0_without_score_has_no_best_scores() -> void:
-	assert_eq(SaveManager.import_json('{"skin": "enfant", "best": 0, "games": 0}'), OK)
-	assert_eq(GameState.skin_id, &"enfant")
-	assert_eq(GameState.to_dict()["best_scores"], {})
+func test_old_island_save_with_bad_fields_still_restarts() -> void:
+	# Elle ne se reprend pas : ses champs ne sont plus lus, rien ne plante.
+	assert_eq(SaveManager.import_json('{"best": 100, "inventory": "beaucoup"}'), OK)
+	_assert_restarted(&"", "v0 abîmée")
 
 
-func test_invalid_v0_is_refused() -> void:
-	GameState.add_item(&"page_fragment")
-	assert_eq(SaveManager.import_json('{"best": 100, "inventory": "beaucoup"}'), ERR_INVALID_DATA)
-	assert_eq(GameState.count(&"page_fragment"), 1, "GameState inchangé")
+# --- v3 de l'acte en jours → v4 ----------------------------------------------------------------
+
+
+func test_v3_act_save_becomes_v4_without_loss() -> void:
+	write_save_text(V3_ACT_SAVE)
+	assert_eq(SaveManager.load_game(), OK)
+	assert_false(SaveManager.started_new, "reprise, pas de nouvelle partie")
+	assert_eq(SaveManager.notice, "", "rien à dire")
+	assert_false(FileAccess.file_exists(SaveManager.legacy_backup_path()), "rien de côté")
+	assert_eq(GameState.skin_id, &"nephren")
+	assert_eq(GameState.map, &"essai")
+	assert_eq(GameState.position, Vector3(20.0, 0.2, 16.0))
+	assert_eq(GameState.count(&"test_page"), 1)
+	assert_true(GameState.has_flag(&"j2_seen"))
+	assert_eq(GameState.day, 3)
+	assert_true(GameState.is_scene_done(&"j2_1"))
+	assert_eq(WorldManager.starting_map(), &"essai")
+	assert_eq(SaveManager.flush(), OK)
+	var data := read_save()
+	assert_eq(data["version"], 4.0, "réécrite en v4")
+	for key: String in OLD_ISLAND_FIELDS:
+		assert_false(data.has(key), "plus de %s" % key)
+	assert_eq(data["day"], 3.0)
+
+
+func test_v4_round_trip_and_unknown_map() -> void:
+	GameState.map = &"essai"
+	GameState.position = Vector3(4.0, 0.0, 15.0)
+	GameState.day = 2
+	assert_eq(SaveManager.save(), OK)
+	assert_eq(read_save()["map"], "essai")
+	assert_eq(read_save()["version"], 4.0)
+	GameState.reset()
+	assert_eq(GameState.map, &"", "nouvelle partie : pas de carte")
+	assert_eq(SaveManager.load_game(), OK)
+	assert_eq(GameState.map, &"essai")
+	assert_eq(GameState.position, Vector3(4.0, 0.0, 15.0))
+	assert_eq(WorldManager.starting_map(), &"essai")
+	var story := '{"version": 4, "position": [1, 0, 1], "map": "x", "day": 2}'
+	assert_eq(SaveManager.import_json(story), OK)
+	assert_eq(GameState.map, &"x", "gardée telle quelle")
+	assert_eq(WorldManager.starting_map(), WorldManager.START_MAP, "carte inconnue : départ")
+
+
+func test_invalid_v4_fields_are_refused() -> void:
+	GameState.add_item(&"test_page")
+	for text: String in [
+		'{"version": 4, "map": 4}',
+		'{"version": 3, "day": 2, "map": ["essai"]}',
+		'{"version": 4, "inventory": "beaucoup"}',
+	]:
+		assert_eq(SaveManager.import_json(text), ERR_INVALID_DATA, text)
+	assert_eq(GameState.count(&"test_page"), 1, "GameState inchangé")
+
+
+# --- Version future ----------------------------------------------------------------------------
 
 
 func test_future_version_is_refused_by_load() -> void:
 	write_save_text(FUTURE_SAVE)
-	GameState.add_item(&"page_fragment")
+	GameState.add_item(&"test_page")
 	watch_signals(EventBus)
 	assert_eq(SaveManager.load_game(), ERR_INVALID_DATA)
 	assert_push_warning("version 99")
 	assert_string_contains(SaveManager.last_error, "plus récente")
 	assert_signal_not_emitted(EventBus, "game_loaded")
-	assert_eq(GameState.count(&"page_fragment"), 1, "GameState inchangé")
+	assert_eq(GameState.count(&"test_page"), 1, "GameState inchangé")
 	assert_eq(GameState.skin_id, &"")
 	assert_eq(FileAccess.get_file_as_string(SaveManager.save_path), FUTURE_SAVE, "fichier intact")
 	assert_false(FileAccess.file_exists(SaveManager.backup_path()), "pas mis de côté")
@@ -119,140 +234,9 @@ func test_future_version_is_refused_by_load() -> void:
 
 
 func test_future_version_is_refused_by_import() -> void:
-	GameState.add_item(&"page_fragment")
+	GameState.add_item(&"test_page")
 	watch_signals(EventBus)
 	assert_eq(SaveManager.import_json(FUTURE_SAVE), ERR_INVALID_DATA)
 	assert_signal_not_emitted(EventBus, "game_loaded")
-	assert_eq(GameState.count(&"page_fragment"), 1)
+	assert_eq(GameState.count(&"test_page"), 1)
 	assert_eq(GameState.skin_id, &"")
-
-
-# --- v1 → v2 (Lot Q : quêtes en étapes) --------------------------------------------------------
-
-
-func test_v1_file_is_migrated_to_v2() -> void:
-	write_save_text(V1_SAVE)
-	watch_signals(EventBus)
-	assert_eq(SaveManager.load_game(), OK)
-	assert_signal_emitted(EventBus, "game_loaded")
-	assert_eq(GameState.quest_state(&"picture_book"), &"active", "états v1 gardés")
-	assert_eq(GameState.quest_state(&"old"), &"done")
-	assert_eq(GameState.quest_step(&"picture_book"), &"pages", "quête active : sa 1re étape")
-	assert_eq(GameState.quest_step_count(&"picture_book"), 0)
-	assert_eq(GameState.quest_step(&"lost_quest"), &"", "quête sans données : pas d'étape")
-	assert_eq(GameState.quest_step(&"old"), &"", "quête terminée : pas d'étape")
-	assert_eq(GameState.tracked_quest, &"picture_book", "première quête active suivie")
-	assert_eq(GameState.count(&"page_fragment"), 3, "le reste est inchangé")
-	assert_eq(GameState.best_score(&"dunes"), 120)
-	assert_true(SaveManager.is_autosave_pending(), "réécriture demandée")
-	assert_eq(SaveManager.flush(), OK)
-	var data := read_save()
-	assert_eq(data["version"], float(SaveManager.SAVE_VERSION), "réécrite à la version courante")
-	assert_eq(data["map"], "ile_ancienne", "(E1) v2 → v3 : partie placée, carte héritée")
-	assert_eq(data["quest_progress"], {"picture_book": {"step": "pages", "count": 0.0}})
-	assert_eq(data["tracked_quest"], "picture_book")
-	assert_eq(data["quests"], {"picture_book": "active", "lost_quest": "active", "old": "done"})
-
-
-func test_v0_is_migrated_through_v1_to_v2() -> void:
-	write_save_text(V0_SAVE)
-	assert_eq(SaveManager.load_game(), OK)
-	assert_eq(GameState.quest_step(&"picture_book"), &"pages", "v0 → v1 → v2 : 1re étape")
-	assert_eq(GameState.tracked_quest, &"picture_book")
-	assert_eq(GameState.best_score(&"dunes"), 640, "migration v0 toujours faite")
-
-
-func test_v2_progress_round_trip() -> void:
-	GameState.set_quest_state(&"pages", &"active")
-	GameState.set_quest_step(&"pages", &"deliver", 4)
-	GameState.tracked_quest = &"pages"
-	assert_eq(SaveManager.save(), OK)
-	GameState.reset()
-	assert_eq(SaveManager.load_game(), OK)
-	assert_eq(GameState.quest_step(&"pages"), &"deliver")
-	assert_eq(GameState.quest_step_count(&"pages"), 4, "compteur gardé")
-	assert_eq(GameState.tracked_quest, &"pages")
-
-
-func test_invalid_v2_fields_are_refused() -> void:
-	GameState.add_item(&"page_fragment")
-	for text: String in [
-		'{"version": 2, "quest_progress": {"pages": "deliver"}}',
-		'{"version": 2, "quest_progress": {"pages": {"step": 3}}}',
-		'{"version": 2, "quest_progress": {"pages": {"step": "deliver", "count": -1}}}',
-		'{"version": 2, "tracked_quest": 3}',
-		'{"version": 1, "quests": {"pages": 1}}',
-	]:
-		assert_eq(SaveManager.import_json(text), ERR_INVALID_DATA, text)
-	assert_eq(GameState.count(&"page_fragment"), 1, "GameState inchangé")
-
-
-# --- v2 → v3 (E1 : cartes de la refonte) -------------------------------------------------------
-
-
-func test_real_v2_save_resumes_in_the_legacy_map_without_loss() -> void:
-	var text := FileAccess.get_file_as_string(V2_REAL_SAVE)
-	var before: Dictionary = JSON.parse_string(text)
-	assert_eq(before["version"], 2.0, "sauvegarde d'avant la refonte")
-	assert_false(before.has("map"), "v2 n'a pas de carte")
-	write_save_text(text)
-	assert_eq(SaveManager.load_game(), OK)
-	assert_eq(GameState.map, &"ile_ancienne", "carte héritée")
-	assert_eq(GameState.zone, &"beach")
-	var saved: Array = before["position"]
-	var at := Vector3(saved[0], saved[1], saved[2])
-	assert_almost_eq(GameState.position, at, Vector3.ONE * 0.0001, "même place")
-	var after := GameState.to_dict()
-	for key: String in before:
-		if key in ["version", "saved_at", "position"]:
-			continue
-		# Comparés comme dans le fichier (nombres JSON : des float).
-		var kept: Variant = JSON.parse_string(JSON.stringify(after[key]))
-		assert_eq(kept, before[key], "%s gardé" % key)
-	assert_eq(SaveManager.flush(), OK)
-	var data := read_save()
-	assert_eq(data["version"], 3.0, "réécrite en v3")
-	assert_eq(data["map"], "ile_ancienne")
-
-
-func test_v2_save_without_zone_starts_at_the_start_map() -> void:
-	var text := '{"version": 2, "position": [0.0, 0.0, 0.0], "zone": ""}'
-	assert_eq(SaveManager.import_json(text), OK)
-	assert_eq(GameState.map, &"", "pas encore placée : game.gd la pose au Spawn")
-	assert_eq(
-		WorldManager.starting_map(), WorldManager.start_map, "(E6) la carte d'une nouvelle partie"
-	)
-
-
-func test_v3_map_round_trip() -> void:
-	GameState.map = &"essai"
-	GameState.position = Vector3(4.0, 0.0, 15.0)
-	assert_eq(SaveManager.save(), OK)
-	assert_eq(read_save()["map"], "essai")
-	GameState.reset()
-	assert_eq(GameState.map, &"", "nouvelle partie : pas de carte")
-	assert_eq(SaveManager.load_game(), OK)
-	assert_eq(GameState.map, &"essai")
-	assert_eq(GameState.position, Vector3(4.0, 0.0, 15.0))
-	assert_eq(WorldManager.starting_map(), &"essai")
-
-
-func test_unknown_map_falls_back_to_the_start_map() -> void:
-	assert_eq(SaveManager.import_json('{"version": 3, "position": [1, 0, 1], "map": "x"}'), OK)
-	assert_eq(GameState.map, &"x", "gardée telle quelle")
-	# (E6) Une partie hors de l'acte en jours (d'avant la refonte) reprend sur l'ancienne île ; une
-	# partie de l'acte, à l'entrepôt (START_MAP).
-	assert_eq(
-		WorldManager.starting_map(), WorldManager.LEGACY_MAP, "carte inconnue : l'ancienne île"
-	)
-	WorldManager.start_map = WorldManager.START_MAP
-	var story := '{"version": 3, "position": [1, 0, 1], "map": "x", "day": 2}'
-	assert_eq(SaveManager.import_json(story), OK)
-	assert_eq(WorldManager.starting_map(), WorldManager.START_MAP, "carte inconnue, acte : départ")
-
-
-func test_invalid_v3_map_is_refused() -> void:
-	GameState.add_item(&"page_fragment")
-	assert_eq(SaveManager.import_json('{"version": 3, "map": 4}'), ERR_INVALID_DATA)
-	assert_eq(SaveManager.import_json('{"version": 2, "map": ["essai"]}'), ERR_INVALID_DATA)
-	assert_eq(GameState.count(&"page_fragment"), 1, "GameState inchangé")

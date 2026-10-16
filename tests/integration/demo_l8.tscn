@@ -87,12 +87,12 @@ text = "Pendant la partie :"
 [node name="PickupButton" type="Button" parent="Margin/Layout/Actions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Ramasser un fragment"
+text = "Ramasser une page"
 
-[node name="ScoreButton" type="Button" parent="Margin/Layout/Actions"]
+[node name="FlagButton" type="Button" parent="Margin/Layout/Actions"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Finir une série des dunes"
+text = "Poser un drapeau du récit"
 
 [node name="DamageButton" type="Button" parent="Margin/Layout/Actions"]
 unique_name_in_owner = true

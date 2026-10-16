@@ -2,8 +2,8 @@ extends GutTest
 ## (E1) Cartes (docs/REFONTE.md, section 7.1 ; src/world/map.gd, src/world/map_exit.gd) :
 ## chaque carte de src/world/maps/ suit le contrat (racine Map nommée comme sa carte, enfants
 ## figés, Spawn, sol sur la couche 1, Geometry fondu, sorties dont la carte cible et le marqueur
-## d'arrivée `from_<carte>` existent) ; identifiants ; bornes de caméra par défaut ; carte
-## héritée centrée sur l'origine, au Spawn du village ; sorties à pied et à invite.
+## d'arrivée `from_<carte>` existent) ; identifiants ; bornes de caméra par défaut ; sorties à
+## pied et à invite. (F1) La carte de l'ancienne île n'existe plus.
 
 const ESSAI := &"essai"
 
@@ -21,7 +21,7 @@ func _all_markers() -> Dictionary:
 
 func test_every_map_follows_the_contract() -> void:
 	var ids := Map.all_ids()
-	assert_true(ids.has(WorldManager.LEGACY_MAP), "carte héritée")
+	assert_false(ids.has(&"ile_ancienne"), "(F1) plus de carte de l'ancienne île")
 	assert_true(ids.has(ESSAI), "carte d'essai")
 	var markers := _all_markers()
 	for map_id: StringName in ids:
@@ -37,7 +37,7 @@ func test_every_map_follows_the_contract() -> void:
 
 
 func test_map_ids() -> void:
-	for good: StringName in [&"essai", &"entrepot_rdc", &"port2", &"ile_ancienne"]:
+	for good: StringName in [&"essai", &"entrepot_rdc", &"port2", &"ile_68"]:
 		assert_true(Map.is_valid_id(good), String(good))
 	for bad: StringName in [&"", &"Essai", &"entrepôt", &"2port", &"sentier-nord", &"a b"]:
 		assert_false(Map.is_valid_id(bad), String(bad))
@@ -86,31 +86,21 @@ func test_exit_problems_check_target_and_arrival_marker() -> void:
 	exits.add_child(to_nowhere)
 	var wrong_marker := MapExit.new()
 	wrong_marker.name = "to_island"
-	wrong_marker.target_map = WorldManager.LEGACY_MAP
+	wrong_marker.target_map = &"entrepot_rdc_essai"
 	wrong_marker.target_marker = &"from_ailleurs"
 	exits.add_child(wrong_marker)
-	var text := "; ".join(Map.exit_problems(map, {WorldManager.LEGACY_MAP: [&"Spawn"]}))
+	var text := "; ".join(Map.exit_problems(map, {&"entrepot_rdc_essai": [&"Spawn"]}))
 	assert_string_contains(text, "nulle_part")
 	assert_string_contains(text, "from_ailleurs absent")
 	assert_string_contains(text, "attendu from_essai")
 	map.free()
 
 
-func test_legacy_map_keeps_the_island_coordinates() -> void:
-	var map := (load(Map.scene_path(WorldManager.LEGACY_MAP)) as PackedScene).instantiate() as Map
-	add_child_autofree(map)
-	assert_eq(map.area(), Rect2(-80, -80, 160, 160), "île centrée sur l'origine")
-	assert_eq(map.bounds(), WorldManager.DEFAULT_CAMERA_BOUNDS, "bornes de la caméra de l'île")
-	assert_true(map.get_node(^"Ground") is IslandTerrain, "Ground : le sol de l'île")
-	var village_spawn := map.get_node(^"Zones/village/Spawn") as Node3D
-	assert_almost_eq(
-		map.spawn().global_position,
-		village_spawn.global_position,
-		Vector3.ONE * 0.01,
-		"une nouvelle partie commence au même endroit"
-	)
-	assert_eq(map.display_name, "", "l'ancienne île annonce ses zones, pas son nom")
-	assert_eq(get_tree().get_nodes_in_group(&"zones").size(), 5, "les cinq zones restent")
+func test_without_a_map_the_camera_keeps_its_default_bounds() -> void:
+	var map := WorldManager.current_map_node()
+	if map == null:
+		assert_eq(WorldManager.camera_bounds(), WorldManager.DEFAULT_CAMERA_BOUNDS, "sans carte")
+	assert_false(Map.exists(&"ile_ancienne"), "(F1) plus de carte de l'ancienne île")
 
 
 func test_prompt_exit_is_an_interactable() -> void:
@@ -151,5 +141,5 @@ func test_exit_does_nothing_during_a_transition_or_without_target() -> void:
 
 func test_display_name_is_read_without_loading_the_map() -> void:
 	assert_eq(WorldManager.map_display_name(ESSAI), "Clairière d'essai")
-	assert_eq(WorldManager.map_display_name(WorldManager.LEGACY_MAP), "")
+	assert_eq(WorldManager.map_display_name(&"ile_ancienne"), "", "(F1) carte partie")
 	assert_eq(WorldManager.map_display_name(&"nulle_part"), "")

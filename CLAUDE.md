@@ -2,7 +2,7 @@
 
 ## Le projet
 Jeu d'action-aventure en HD-2D dans Godot 4.7.2 (GDScript typé, export Web) : Chtholly et son
-épée contre des vagues de Timeres, un village, des PNJ et des quêtes. Direction artistique : HD-2D
+épée contre des vagues de Timeres, un village, des PNJ et leur histoire. Direction artistique : HD-2D
 à la manière d'*Octopath Traveler* : personnages en sprites (planches de l'easter egg), décor en
 relief fait uniquement d'images (sol en tuiles de pixel art, façades et décors en panneaux debout,
 ciel peint), caméra fixe inclinée, flou de profondeur, lueur, lumière chaude ; tout à 96 px par
@@ -23,10 +23,10 @@ change pas sans PR « contrats ».
   (un dossier), `tools/test.sh tests/unit/test_x.gd -gunit_test_name=morceau_du_nom` (un test).
 - Import après avoir créé, renommé ou supprimé un script, une scène ou un asset :
   `tools/import.sh` (liste les .uid / .import à commiter et les orphelins).
-- Capture d'une scène : `tools/screenshot.sh res://src/world/island.tscn build/shots/island.png`,
-  puis ouvre le PNG avec l'outil de lecture d'images. Vues HD-2D de la vraie partie (menu, cinq
-  zones, conversation, veille, (E1) sortie du quai, fondu, carte d'essai, retour ; draw calls
-  dans le journal) : `tools/hd2d_shots.sh [vue…]`. (E9) La même vue sous chaque préréglage de
+- Capture d'une scène : `tools/screenshot.sh res://src/world/maps/essai/essai.tscn
+  build/shots/essai.png`, puis ouvre le PNG avec l'outil de lecture d'images. Vues HD-2D de la
+  vraie partie (menu, cartes de l'île n° 68, conversation, combat à la surface, (E1) sortie
+  d'essai, fondu, arrivée, retour ; draw calls dans le journal) : `tools/hd2d_shots.sh [vue…]`. (E9) La même vue sous chaque préréglage de
   lumière (moment × temps, luminance et draw calls dans `build/shots/e9/e9.log`) :
   `tools/e9_shots.sh [lieu:moment:temps…]` ; dans le jeu, `?moment=nuit&temps=pluie`, F7 / F8.
 - Images du décor (docs/ASSETS_HD2D.md, liste dans `tools/hd2d_manifest.json`) :
@@ -42,16 +42,14 @@ change pas sans PR « contrats ».
 - Environnement neuf : `bash tools/setup.sh` (Godot, templates Web, Windows et Linux, gdtoolkit,
   Pillow, NSIS ; idempotent).
 - Navigateur (à la main, hors check.sh) : export, `python3 -m http.server 8347 --bind 127.0.0.1
-  --directory build/web`, puis `NODE_PATH=/opt/node-tools/node_modules node tools/web_m2.js
-  http://127.0.0.1:8347/index.html build/shots` (début de l'acte 1, reprise, images/s par zone ;
-  `tools/web_m1.js` : arène). Mode d'emploi et raccourcis `?zone=`, `?timeres=`, `?trace=1` :
-  docs/web.md.
+  --directory build/web`, puis `NODE_PATH=/opt/node-tools/node_modules node tools/web_maps.js
+  http://127.0.0.1:8347/index.html build/shots` (changements de carte). Mode d'emploi et
+  raccourcis `?map=`, `?timeres=`, `?trace=1` : docs/web.md.
 - Planches de remplacement : `python3 tools/gen_placeholders.py skin <id> --name "Nom" --tres`.
-- Quêtes : format, dialogues, déclencheurs et tests dans docs/QUETES.md ; vérifier le contenu par
-  `tools/test.sh tests/unit/test_quest_content.gd` ; tester un scénario sur le modèle de
-  `tests/unit/test_quest_example.gd` (base `tests/stubs/q_quest_test.gd`).
+- Dialogues : format, conditions, effets et tests dans docs/DIALOGUES.md ; vérifier le contenu
+  par `tools/test.sh tests/unit/test_dialogue_effects.gd`.
 - Textes : `{player}`, scènes à plusieurs voix (`speaker_id`), présence des PNJ
-  (`NpcData.visible_if`) et textes de l'histoire (`data/texts/story.json`) dans docs/QUETES.md ;
+  (`NpcData.visible_if`) et textes de l'histoire (`data/texts/story.json`) dans docs/DIALOGUES.md ;
   vérifier par `tools/test.sh tests/unit/test_sys_story_content.gd`.
 - Toujours passer par `tools/godot` (pas `godot`) : chaque worktree y a son propre `user://`.
 
@@ -68,12 +66,7 @@ change pas sans PR « contrats ».
 - **Chaque lot remplit les squelettes de ses dossiers ; on ne déplace ni ne renomme les nœuds
   nommés ni les fichiers figés** (liste : PLAN.md section 3, « Structure figée au Lot 0 »). On
   peut ajouter des nœuds et des fichiers dans ses propres dossiers.
-- Peupler une zone (PNJ, ennemis libres, objets) se fait dans son fichier d'emplacement
-  `src/npc|enemies|items/placements/<zone>.tscn`, jamais dans la scène de zone (L2). Les
-  déclencheurs de quête (`src/quests/quest_trigger.tscn`) vont dans `src/npc/placements/<zone>.tscn`.
-- Les quêtes sont des données : `data/quests/<id>.json` (étapes, prérequis, récompenses) et les
-  répliques qui les font avancer dans `data/dialogues/*.json` ; aucun script par quête.
-- Les textes que les systèmes affichent hors dialogues et quêtes (arène, chute, défaite) vivent
+- Les textes que les systèmes affichent hors dialogues (chute, défaite) vivent
   dans `data/texts/story.json` (`DialogueRunner.story_text`), jamais en dur ; jamais le nom du
   joueur en dur non plus : `{player}`.
 - Le décor est en images : un décor = une scène de `src/world/props/` dont la racine est un
@@ -166,7 +159,7 @@ change pas sans PR « contrats ».
   plus). Le sol lit `assets/hd2d/ground/atlas/ground_atlas.png` : après une tuile changée,
   `python3 tools/hd2d_assets.py atlas` (test_hd2d_assets.gd le vérifie).
 - (HD-2D) Le post-traitement (flou de profondeur, lueur, étalonnage) est le `CanvasLayer`
-  `CameraRig/PostFX` (couche −1, sous l'interface) : une capture sans joueur (island.tscn seule)
+  `CameraRig/PostFX` (couche −1, sous l'interface) : une capture sans joueur (une carte seule)
   ne l'a pas.
 - Godot 4.7 n'affiche jamais les avertissements GDScript en ligne de commande : ils sont réglés en
   erreurs dans project.godot et apparaissent comme `SCRIPT ERROR: Parse Error: … (Warning treated
@@ -202,7 +195,7 @@ change pas sans PR « contrats ».
   tools/warnings_allow.txt, les CREDITS) fusionnent par union : ajoute en bas, ne réordonne pas.
 - Tests dans la vraie partie : `tests/stubs/m2_game_test.gd` (main.tscn, appuis réels par
   `Input.parse_input_event`). Les attentes de GUT (`wait_*`) sont gelées quand l'arbre est en
-  pause (pause, inventaire, fin d'arène) : attendre `get_tree().physics_frame`. Un appui doit
+  pause (pause, inventaire) : attendre `get_tree().physics_frame`. Un appui doit
   durer au moins une image physique (sinon il est encore « just pressed » à la reprise). En
   headless, la fenêtre fait 64 × 64 px : un clic porte `root.get_final_transform() * position`,
   et la couche de GUT (`GutLayer`) prend les clics si elle n'est pas cachée.
@@ -217,22 +210,15 @@ change pas sans PR « contrats ».
   rétablit `GameState.reset()` ; un test qui habille une carte à la main (`Atmosphere.dress`)
   appelle `Atmosphere.dress(null)` dans `after_each` ; `Atmosphere.step(s)` avance une
   transition. La luminance se mesure sous Xvfb : `tools/e9_shots.sh`.
-- `zone_entered` n'est émis qu'au changement de zone (M2) : un test qui replace le joueur dans
-  la zone où il est déjà ne le reçoit pas (`Zone.LAST_ZONE_META` sur le corps du joueur).
-- Quêtes et dialogues JSON : une clé inconnue (faute de frappe) les rend invalides, sauf une clé
-  qui commence par `_` (commentaire). `QuestData` garde les fichiers lus en cache : un test qui
-  écrit ou retire des quêtes appelle `QuestData.clear_cache()` (ou `add_search_dir` /
-  `remove_search_dir`, comme `tests/stubs/q_quest_test.gd`). Un test qui démarre une quête sans
-  QuestTracker n'a pas d'étape enregistrée : `QuestData.current_step()` donne alors la première.
-- Un QuestTracker dans l'arbre réagit à `GameState.set_quest_state(id, &"done")` (fin forcée) :
-  sans les objets de ses étapes collect restantes, la quête revient à `&"active"`.
+- Dialogues JSON : une clé inconnue (faute de frappe) les rend invalides, sauf une clé qui
+  commence par `_` (commentaire).
 - Un PNJ absent (`NpcData.visible_if` fausse, ou skin du joueur) est caché, `process_mode`
   DISABLED : ni collision ni `InteractArea`. Sa présence est réévaluée en fin d'image (un test
   attend une image ou appelle `Npc.refresh_presence()`), jamais pendant sa conversation.
   `DialogueRunner.find_npc` (portraits, `speaker_id`) cherche `data/npcs` puis les dossiers
   d'`add_npc_dir` : un test qui en ajoute un le retire dans `after_each`.
-- (Cartes, E1) `game.tscn` n'a plus d'`Island` : la carte courante est l'unique enfant de `World`
-  (l'ancienne île : `World/ile_ancienne/Zones/<zone>`). Une seule carte à la fois
+- (Cartes, E1) `game.tscn` n'a plus d'`Island` : la carte courante est l'unique enfant de
+  `World`. Une seule carte à la fois
   (`WorldManager.go_to`, `enter_map`) ; un test qui change de carte pose
   `WorldManager.fade_time = 0.0` et le rétablit dans `after_each`. Créer une carte : mode
   d'emploi dans PLAN.md, section 3 ; `tools/test.sh tests/unit/test_maps.gd` la vérifie.

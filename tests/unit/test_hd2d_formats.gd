@@ -2,12 +2,14 @@ extends GutTest
 ## (H9) Formats du décor du cahier n° 2 (docs/ASSETS_HD2D_MONDE.md, sections 3 et 17), avec des
 ## images faites à l'exécution : bandes animées (DecorPanel.frames, une image de large, phase par
 ## exemplaire, fondues par image), retournement et décalage vers la caméra, premier plan qui
-## s'efface devant le joueur, décalques au sol (GroundDecal) couchés sur le relief sans
-## collision, flancs des bâtiments (Building.side_facade) retournés à l'ouest, variantes de
-## PropScatter sans voisin identique, sol à 27 tuiles et repli à 12, ciel qui dérive (SkyDrift),
-## petites vies (AmbientSprites), shaders compilés.
+## s'efface devant le joueur, décalques au sol (GroundDecal) sans collision (sur le relief d'une
+## carte : test_map_ground_build.gd ; (F1) sans sol en relief, à plat à y = 0), flancs des bâtiments
+## (Building.side_facade) retournés à l'ouest, variantes de PropScatter sans voisin identique, sol à
+## 27 tuiles et repli à 12, ciel qui dérive (SkyDrift), petites vies (AmbientSprites), shaders
+## compilés.
 
-const TERRAIN_SHADER := "res://src/world/shaders/terrain.gdshader"
+## (F1) Lecture de l'atlas du sol des cartes (le shader du sol de l'ancienne île est parti).
+const ATLAS_INCLUDE := "res://src/world/shaders/map_ground_atlas.gdshaderinc"
 const PLAYER_STUB := preload("res://tests/stubs/player_stub.tscn")
 const SHADERS: Array[String] = [
 	"res://src/world/shaders/panel.gdshader",
@@ -17,10 +19,10 @@ const SHADERS: Array[String] = [
 	"res://src/world/shaders/ground_decal_soft.gdshader",
 	"res://src/world/shaders/sky_drift.gdshader",
 	"res://src/world/shaders/ambient_sprites.gdshader",
-	"res://src/world/shaders/terrain.gdshader",
+	"res://src/world/shaders/map_ground.gdshader",
 ]
-## Sur le flanc ouest de la colline des étoiles : une pente.
-const SLOPE := Vector3(40.5, 0.0, -2.0)
+## (F1) Hors d'une carte (pas de MapGround) : le décalque se couche sur un sol plat à y = 0.
+const FLAT_SPOT := Vector3(40.5, 0.0, -2.0)
 
 var _interpolation: bool
 
@@ -223,25 +225,19 @@ func _decal(texture: Texture2D, at: Vector3, yaw_deg: float = 0.0) -> GroundDeca
 	return decal
 
 
-func test_decal_lies_on_a_slope_without_collision() -> void:
-	var decal := _decal(_strip(192, 144), SLOPE, 30.0)
+func test_decal_without_map_ground_lies_flat_without_collision() -> void:
+	var decal := _decal(_strip(192, 144), FLAT_SPOT, 30.0)
 	var mesh := (decal.get_child(0, true) as MeshInstance3D).mesh
 	assert_not_null(mesh, "mesh couché sur le sol")
 	var arrays := mesh.surface_get_arrays(0)
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
-	assert_gt(vertices.size(), 12, "découpé sur les triangles du sol")
-	var low := INF
-	var high := -INF
+	assert_gt(vertices.size(), 5, "découpé sur les triangles du sol")
 	for k in vertices.size():
 		var v := vertices[k]
-		assert_almost_eq(v.y, IslandTerrain.surface_height(v.x, v.z), 0.002, "sur le sol en %s" % v)
-		assert_almost_eq(v.y, IslandTerrain.height_at(v.x, v.z), 0.08, "relief en %s" % v)
+		assert_almost_eq(v.y, 0.0, 0.002, "sur le sol plat en %s" % v)
 		assert_between(uvs[k].x, -0.0001, 1.0001)
 		assert_between(uvs[k].y, -0.0001, 1.0001)
-		low = minf(low, v.y)
-		high = maxf(high, v.y)
-	assert_gt(high - low, 0.3, "une pente : %.2f m de dénivelé" % (high - low))
 	# Aire couverte (plan du sol) : exactement l'image, 2 × 1,5 m.
 	var area := 0.0
 	for n in range(0, vertices.size(), 3):
@@ -465,19 +461,19 @@ func test_pick_variants_on_clusters_and_pairs() -> void:
 
 
 func test_ground_atlas_layers_and_fallback_to_twelve_tiles() -> void:
-	assert_eq(IslandTerrain.GROUND_LAYERS.size(), 27, "27 tuiles")
-	assert_eq(IslandTerrain.atlas_tile_count(Vector2i(1536, 1152)), 12, "atlas actuel")
-	assert_eq(IslandTerrain.atlas_tile_count(Vector2i(1536, 2688)), 27, "atlas du cahier n° 2")
-	for layer: StringName in IslandTerrain.GROUND_LAYERS:
-		var index := IslandTerrain.GROUND_LAYERS.find(layer)
-		var twelve := IslandTerrain.ground_layer(layer, 12)
+	assert_eq(GroundAtlas.GROUND_LAYERS.size(), 27, "27 tuiles")
+	assert_eq(GroundAtlas.atlas_tile_count(Vector2i(1536, 1152)), 12, "atlas actuel")
+	assert_eq(GroundAtlas.atlas_tile_count(Vector2i(1536, 2688)), 27, "atlas du cahier n° 2")
+	for layer: StringName in GroundAtlas.GROUND_LAYERS:
+		var index := GroundAtlas.GROUND_LAYERS.find(layer)
+		var twelve := GroundAtlas.ground_layer(layer, 12)
 		if index < 12:
 			assert_eq(twelve, layer, "%s : dans l'atlas actuel" % layer)
 		else:
-			assert_true(IslandTerrain.GROUND_FALLBACK.has(layer), "%s : repli" % layer)
-			assert_eq(twelve, IslandTerrain.GROUND_FALLBACK[layer], "%s : tuile d'origine" % layer)
-			assert_lt(IslandTerrain.GROUND_LAYERS.find(twelve), 12, "%s : repli présent" % layer)
-		assert_eq(IslandTerrain.ground_layer(layer, 27), layer, "%s : 27 tuiles" % layer)
+			assert_true(GroundAtlas.GROUND_FALLBACK.has(layer), "%s : repli" % layer)
+			assert_eq(twelve, GroundAtlas.GROUND_FALLBACK[layer], "%s : tuile d'origine" % layer)
+			assert_lt(GroundAtlas.GROUND_LAYERS.find(twelve), 12, "%s : repli présent" % layer)
+		assert_eq(GroundAtlas.ground_layer(layer, 27), layer, "%s : 27 tuiles" % layer)
 	var expected := {
 		&"grass_b": &"grass",
 		&"leaf_litter": &"forest_floor",
@@ -489,26 +485,27 @@ func test_ground_atlas_layers_and_fallback_to_twelve_tiles() -> void:
 		&"stream_bed": &"water",
 	}
 	for layer: StringName in expected:
-		assert_eq(IslandTerrain.GROUND_FALLBACK[layer], expected[layer], "contrat : %s" % layer)
+		assert_eq(GroundAtlas.GROUND_FALLBACK[layer], expected[layer], "contrat : %s" % layer)
 
 
-func test_terrain_shader_follows_the_atlas_contract() -> void:
-	var code := (load(TERRAIN_SHADER) as Shader).code
-	# Indices des tuiles : ceux de GROUND_LAYERS.
-	for index in IslandTerrain.GROUND_LAYERS.size():
-		var constant := String(IslandTerrain.GROUND_LAYERS[index]).to_upper()
-		assert_string_contains(code, "const int %s = %d;" % [constant, index])
+func test_ground_shader_follows_the_atlas_contract() -> void:
+	var code := FileAccess.get_file_as_string(ATLAS_INCLUDE)
+	assert_string_contains(
+		code, "const int GROUND_LAYER_COUNT = %d;" % GroundAtlas.GROUND_LAYERS.size()
+	)
 	# Table de repli : celle de GROUND_FALLBACK.
-	var found := RegEx.create_from_string("FALLBACK\\[LAYER_COUNT\\] = int\\[\\]\\(([0-9, ]+)\\)")
+	var found := RegEx.create_from_string(
+		"GROUND_FALLBACK\\[GROUND_LAYER_COUNT\\] = int\\[\\]\\(([0-9, ]+)\\)"
+	)
 	var table := found.search(code)
-	assert_not_null(table, "table FALLBACK")
+	assert_not_null(table, "table GROUND_FALLBACK")
 	if table != null:
 		var values := table.get_string(1).split(",")
 		assert_eq(values.size(), 27)
 		for index in values.size():
-			var layer := IslandTerrain.GROUND_LAYERS[index]
-			var want := IslandTerrain.ground_layer(layer, 12)
-			assert_eq(int(values[index]), IslandTerrain.GROUND_LAYERS.find(want), String(layer))
+			var layer := GroundAtlas.GROUND_LAYERS[index]
+			var want := GroundAtlas.ground_layer(layer, 12)
+			assert_eq(int(values[index]), GroundAtlas.GROUND_LAYERS.find(want), String(layer))
 	assert_false(code.contains("ATLAS_ROWS"), "rangées lues dans la taille de l'atlas")
 	assert_string_contains(code, "textureSize(ground_atlas, 0)")
 
@@ -544,18 +541,6 @@ func test_sky_drift_moves_in_the_shader_one_mesh_per_image() -> void:
 	assert_almost_eq(SkyDrift.drift_x(0.0, 2.0, 260.0, 500.0), -230.0, 0.001, "boucle")
 	assert_gt(SkyDrift.drift_x(0.0, 2.0, 20.0, 500.0), SkyDrift.drift_x(0.0, 2.0, 10.0, 500.0))
 	batcher.free()
-
-
-func test_island_has_a_sky_drift_with_existing_images() -> void:
-	var island := (load("res://src/world/island.tscn") as PackedScene).instantiate()
-	var sky := island.get_node_or_null(^"Decor/SkyDrift") as SkyDrift
-	assert_not_null(sky, "ciel qui dérive dans Decor")
-	if sky != null:
-		assert_false(sky.textures.is_empty(), "images existantes en attendant les nuages")
-		for texture: Texture2D in sky.textures:
-			assert_true(ResourceLoader.exists(texture.resource_path), texture.resource_path)
-		assert_true(sky.pixels_per_meter in [24.0, 48.0], "densité du lointain")
-	island.free()
 
 
 func test_ambient_sprites_without_image_do_nothing() -> void:

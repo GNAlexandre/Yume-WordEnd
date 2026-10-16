@@ -29,6 +29,9 @@ const DOOR_OPEN_META := &"open_from_day"
 const DOOR_TEXT_META := &"closed_text_key"
 const CLOSED_DOOR := &"ClosedDoor"
 const TEXTS_DIR := "res://data/texts/"
+## (S2) Pose sans durée (jusqu'à la suivante) : une heure ; portée de la lueur au-delà du cercle.
+const POSE_HOLD := 3600.0
+const PROPS_LIGHT_REACH := 2.5
 
 ## Places de la carte courante (set_map).
 var places: LifePlaces = null
@@ -37,6 +40,10 @@ var scene_label: StringName = &""
 
 var _followers: Dictionary = {}
 var _idle_at: Dictionary = {}
+## (S2) Protagoniste cachée, pose tenue par la scène, images posées (id → nœud de la carte).
+var _player_hidden: bool = false
+var _posing: bool = false
+var _props: Dictionary = {}
 
 
 ## Nouvelle carte : ses places, ses portes fermées.
@@ -112,6 +119,100 @@ func clear() -> void:
 		remove_follower(npc_id)
 	_followers.clear()
 	_idle_at.clear()
+	if _player_hidden:
+		set_player_visible(true)
+	release_player_pose()
+	clear_props()
+
+
+## (S2) Cache (false) ou montre la protagoniste (son visuel et son ombre ; le corps reste).
+func set_player_visible(on: bool) -> void:
+	_player_hidden = not on
+	var body := player()
+	var visual := body.get_node_or_null(^"Visual") as Node3D if body != null else null
+	if visual != null:
+		visual.visible = on
+
+
+## (S2) Vrai si la scène a caché la protagoniste.
+func is_player_hidden() -> bool:
+	return _player_hidden
+
+
+## (S2) Tient une pose du joueur (Player.hold_pose) seconds s, ou jusqu'à la pose suivante, une
+## marche, le contrôle rendu ou la fin de la scène (0) ; « repos » la relâche.
+func hold_player_pose(anim: StringName, seconds: float) -> void:
+	var body := player()
+	if body == null:
+		return
+	if anim == StoryRunner.IDLE:
+		release_player_pose()
+		return
+	_posing = seconds <= 0.0
+	body.hold_pose(anim, seconds if seconds > 0.0 else POSE_HOLD)
+
+
+## (S2) Relâche la pose tenue par la scène.
+func release_player_pose() -> void:
+	var body := player()
+	if _posing and body != null:
+		body.hold_pose(StoryRunner.IDLE, 0.0)
+	_posing = false
+
+
+## (S2) Pose count images animées (texture : une bande de frames images à fps) sur un cercle de
+## radius m autour de at, à lift m du sol, et une lueur (OmniLight3D d'énergie light, color) au
+## centre ; sous la carte courante (parties avec elle), jusqu'à clear_props(id).
+func add_props(id: StringName, texture: Texture2D, at: Vector3, options: Dictionary) -> Node3D:
+	var map := WorldManager.current_map_node()
+	if map == null or texture == null:
+		return null
+	var holder := Node3D.new()
+	holder.name = "StoryProps_%s" % id
+	map.add_child(holder)
+	holder.global_position = at
+	var count := maxi(int(options.get("count", 1)), 1)
+	var radius := float(options.get("radius", 0.0))
+	var lift := float(options.get("lift", 0.0))
+	for index: int in count:
+		var panel := DecorPanel.new()
+		panel.name = "Prop_%d" % index
+		panel.texture = texture
+		panel.frames = maxi(int(options.get("frames", 1)), 1)
+		panel.fps = float(options.get("fps", 0.0))
+		panel.soft_alpha = true
+		panel.shadow_width = 0.0
+		var angle := TAU * float(index) / float(count)
+		panel.position = Vector3(cos(angle) * radius, lift, sin(angle) * radius)
+		holder.add_child(panel)
+	var energy := float(options.get("light", 0.0))
+	if energy > 0.0:
+		var glow := OmniLight3D.new()
+		glow.name = "Glow"
+		glow.light_color = options.get("color", Color.WHITE)
+		glow.light_energy = energy
+		glow.omni_range = radius + PROPS_LIGHT_REACH
+		glow.shadow_enabled = false
+		glow.position = Vector3(0.0, lift + 0.3, 0.0)
+		holder.add_child(glow)
+	_props[id] = holder
+	return holder
+
+
+## (S2) Retire les images posées sous id (vide : toutes).
+func clear_props(id: StringName = &"") -> void:
+	for key: StringName in _props.keys():
+		if id.is_empty() or key == id:
+			var holder: Node = _props[key]
+			if is_instance_valid(holder):
+				holder.queue_free()
+			_props.erase(key)
+
+
+## (S2) Nœud des images posées sous id (null : aucune).
+func props(id: StringName) -> Node3D:
+	var holder: Node3D = _props.get(id)
+	return holder if is_instance_valid(holder) else null
 
 
 ## Le joueur (null sans partie).
@@ -153,6 +254,8 @@ func wait_overlay(stop_when: Callable = Callable()) -> void:
 ## Rend (true) ou prend (false) le contrôle au joueur.
 func set_control(on: bool) -> void:
 	var body := player()
+	if on:
+		release_player_pose()
 	if body != null:
 		body.set_story_hold(not on)
 

@@ -11,6 +11,8 @@
     {"slot": "matin", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
     {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
     {"slot": "apres_midi", "if": {"flag": "apres_pluie"}, "map": "entrepot", "place": "champ_boue", "activity": "boue", "outfit": "vie"},
+    {"slot": "apres_midi", "day": [9, 12], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "outfit": "vie", "role": "blanc", "_note": "(S2) Le ballon de l'après-midi, jours 9 à 12 (ACTE1.md 4 et 12.1 ; E8)."},
+    {"slot": "apres_midi", "day": [5, 6], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "role": "blanc", "outfit": "vie"},
     {"slot": "aube", "map": "entrepot_rdc", "place": "eau_toilette", "activity": "toilette", "outfit": "pyjama", "_note": "La journée de base : la toilette en pyjama, le chat dans les hautes herbes, les cheveux à sécher le soir (elle essuie les autres)."},
     {"slot": "matin", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},
     {"slot": "midi", "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},

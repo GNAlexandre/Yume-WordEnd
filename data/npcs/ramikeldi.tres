@@ -8,5 +8,3 @@ script = ExtResource("1_npc")
 id = &"ramikeldi"
 display_name = "M. Rami"
 skin = ExtResource("2_visual")
-dialogue_path = "res://data/dialogues/ramikeldi.json"
-home_zone = &"beach"

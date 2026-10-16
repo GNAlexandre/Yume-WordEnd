@@ -9,7 +9,7 @@ extends Resource
 ##
 ## (E9) Les préréglages sont des données : data/lighting/<id>.tres (preset(id)).
 ## - Un par moment de la journée (GameState.MOMENTS) : aube, matin, apres_midi, couchant (le
-##   monde de toujours : les valeurs d'island.tscn et de post_fx.gdshader, testé) et nuit ;
+##   monde de toujours : les valeurs de post_fx.gdshader, testé) et nuit ;
 ## - interieur et interieur_nuit : la lumière chaude d'un intérieur de jour (lampes éteintes) et
 ##   de nuit (lampes, cheminées et cristaux), mêlées selon la part de nuit du moment du dehors,
 ##   qui donne aussi le jour des fenêtres (window_light, window_tint ; Atmosphere) ;

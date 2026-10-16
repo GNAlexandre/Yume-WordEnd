@@ -2,6 +2,9 @@
   "_comment": "Ce que dit Nephren quand on lui parle hors des scènes, sur l'île n° 68 (StoryDirector : jamais les dialogues des quêtes de l'ancienne île). Entrées par jour ; la dernière, start, vaut toujours.",
   "id": "talk_nephren",
   "start": "n0",
+  "entries": [
+    "n12"
+  ],
   "nodes": {
     "n0": {
       "speaker_id": "nephren",
@@ -11,6 +14,22 @@
     "n0_2": {
       "speaker_id": "nephren",
       "text": "Mm."
+    },
+    "n12_2": {
+      "speaker": "",
+      "text": "Elle tire doucement sur ta manche, une seconde, puis la lâche."
+    },
+    "n12": {
+      "speaker_id": "nephren",
+      "text": "Mm.",
+      "if": {
+        "day": [
+          12,
+          12
+        ],
+        "not_scene": "j12_2_depart"
+      },
+      "next": "n12_2"
     }
   }
 }
