@@ -93,6 +93,7 @@ func _chase(run: bool, stop_beyond: float = 0.0, meters: float = RUN_METERS) -> 
 	assert_true(await wait_control(), "la main est rendue")
 	for npc_id: StringName in KEEP:
 		assert_has(StoryDirector.stage().followers(), npc_id)
+	StoryDirector.stage().repose_lost = stop_beyond > 0.0
 	if stop_beyond > 0.0:
 		for npc_id: StringName in KEEP:
 			StoryDirector.stage().add_follower(npc_id, KEEP[npc_id], stop_beyond, &"course")
@@ -114,11 +115,15 @@ func _chase(run: bool, stop_beyond: float = 0.0, meters: float = RUN_METERS) -> 
 	var index := 0
 	var idle_frames := {}
 	var worst_idle := {}
+	var still_frames := {}
+	var worst_still := {}
 	var worst_distance := {}
 	var gaits := {}
 	for npc_id: StringName in KEEP:
 		idle_frames[npc_id] = 0
 		worst_idle[npc_id] = 0
+		still_frames[npc_id] = 0
+		worst_still[npc_id] = 0
 		worst_distance[npc_id] = 0.0
 		gaits[npc_id] = {}
 	var tick := 1.0 / float(Engine.physics_ticks_per_second)
@@ -153,6 +158,13 @@ func _chase(run: bool, stop_beyond: float = 0.0, meters: float = RUN_METERS) -> 
 						% [npc_id, _flat(previous[npc_id], player.global_position), away]
 					)
 				)
+			# Immobile (moins de 2 mm par image) alors qu'il devrait rejoindre le joueur.
+			var moved := _flat(actor.position(), previous[npc_id])
+			if away > float(KEEP[npc_id]) + 0.8 and moved < 0.002:
+				still_frames[npc_id] += 1
+				worst_still[npc_id] = maxi(worst_still[npc_id], still_frames[npc_id])
+			else:
+				still_frames[npc_id] = 0
 			previous[npc_id] = actor.position()
 			worst_distance[npc_id] = maxf(worst_distance[npc_id], away)
 			var anim := _anim_of(npc_id)
@@ -170,11 +182,19 @@ func _chase(run: bool, stop_beyond: float = 0.0, meters: float = RUN_METERS) -> 
 	for npc_id: StringName in KEEP:
 		print(
 			(
-				"[l3] %s, %s : écart max %.1f m, repos continu max %.2f s, allures (images) %s"
-				% [label, npc_id, worst_distance[npc_id], worst_idle[npc_id] * tick, gaits[npc_id]]
+				"[l3] %s, %s : écart max %.1f m, repos continu max %.2f s, immobile max %.2f s, allures %s"
+				% [
+					label,
+					npc_id,
+					worst_distance[npc_id],
+					worst_idle[npc_id] * tick,
+					worst_still[npc_id] * tick,
+					gaits[npc_id]
+				]
 			)
 		)
 		assert_lte(worst_idle[npc_id] * tick, IDLE_LIMIT, "%s ne s'arrête pas en route" % npc_id)
+		assert_lte(worst_still[npc_id] * tick, IDLE_LIMIT, "%s ne reste pas sur place" % npc_id)
 	# L'arrêt : 1,5 s plus tard, elles sont tout près.
 	await frames(int(CATCH_UP_TIME / tick))
 	for npc_id: StringName in KEEP:
@@ -182,4 +202,5 @@ func _chase(run: bool, stop_beyond: float = 0.0, meters: float = RUN_METERS) -> 
 		print("[l3] %s, %s à %.1f m, %.1f s après l'arrêt" % [label, npc_id, away, CATCH_UP_TIME])
 		assert_lt(away, CATCH_UP_LIMIT, "%s a rattrapé le joueur" % npc_id)
 	StoryDirector.stage().follower_reposed.disconnect(on_reposed)
+	StoryDirector.stage().repose_lost = false
 	return jumps.size()

@@ -14,8 +14,9 @@ extends Node
 ## - Les suiveurs (add_follower : un PNJ suit le joueur à distance, au pas du joueur : il marche
 ##   près de sa garde, court plus loin, poursuit à l'allure « rattrape » au-delà de 6 m, sans
 ##   jamais s'arrêter quand le but bouge ; perdu (trop loin, hors de la vue) il est reposé
-##   derrière le joueur hors de la caméra ; il reparaît derrière lui après un changement de
-##   carte : restage_followers) et les remises au repos différées (idle_later).
+##   derrière le joueur hors de la caméra (repose_lost, rythme libre) ou s'arrête (guidé) ; il
+##   reparaît derrière lui après un changement de carte : restage_followers) et les remises au
+##   repos différées (idle_later).
 ## - Les portes fermées jusqu'à un jour (apply_doors) : une sortie de carte (MapExit) qui porte
 ##   les métadonnées open_from_day (jour d'ouverture) et closed_text_key (« village/maison_close » :
 ##   le texte de data/texts/village.json, Examinable.lookup) ne mène nulle part avant ce jour ; à sa
@@ -61,6 +62,10 @@ const FOLLOW_ANIMS: Array[StringName] = [&"marche", &"course", &"porte"]
 var places: LifePlaces = null
 ## Scène en cours (pour les avertissements).
 var scene_label: StringName = &""
+## (L3) Un suiveur perdu est reposé derrière le joueur, hors de la vue (_repose_follower) au lieu
+## de s'arrêter au-delà de stop_beyond (récit guidé : il s'arrête, comme avant). Le rythme libre
+## (L0) l'allume.
+var repose_lost: bool = false
 
 var _followers: Dictionary = {}
 var _idle_at: Dictionary = {}
@@ -482,8 +487,8 @@ func ensure_nav() -> LifeNav:
 
 ## Un PNJ suit le joueur à distance m, sans le gêner (corps hors de la couche 1), à l'allure
 ## de gait près de lui et plus vive plus loin (_follow_gait) ; au-delà de stop_beyond m, une fois
-## hors de la vue (ou très loin), il est reposé derrière le joueur (_repose_follower) ; jusqu'à
-## unfollow ou la fin de la scène, d'une carte à l'autre.
+## hors de la vue (ou très loin), il est reposé derrière le joueur (_repose_follower) si
+## repose_lost, sinon il s'arrête ; jusqu'à unfollow ou la fin de la scène, d'une carte à l'autre.
 func add_follower(
 	npc_id: StringName, distance: float, stop_beyond: float, gait: StringName
 ) -> void:
@@ -539,11 +544,18 @@ func _tick_followers() -> void:
 		var offset := actor.position() - body.global_position
 		offset.y = 0.0
 		var distance := offset.length()
-		if _lost_follower(actor, settings, distance):
+		if repose_lost and _lost_follower(actor, settings, distance):
 			if _repose_follower(actor, body, rank, distance):
 				settings["level"] = 0
 				follower_reposed.emit(npc_id)
 				continue
+		if distance > float(settings["stop_beyond"]) and not repose_lost:
+			# Récit guidé : trop loin, il s'arrête (sans lumière, il ne voit rien).
+			if actor.is_moving():
+				actor.stop()
+				actor.play(&"repos")
+			actor.face(-offset)
+			continue
 		var wanted := _follow_gait(settings, distance, keep)
 		var goal := body.global_position + offset.normalized() * keep
 		var stale := actor.is_moving() and actor.goal().distance_to(goal) > FOLLOW_GOAL_SLACK
