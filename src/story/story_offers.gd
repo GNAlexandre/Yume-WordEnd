@@ -3,7 +3,7 @@ extends RefCounted
 ## (X-L0) Les propositions du rythme libre : une scène du livre que l'on déclenche en allant voir
 ## un personnage ou un lieu (PLAN.md, « (X) Exploration libre : le rythme »). Le socle (L0) ne
 ## pose que les points d'entrée, appelés par StoryDirector ; le lot L1 les remplit (ancres :
-## clé « offer » des scènes, StoryData.OFFER_KEYS ; signe du récit ; « Allons-y » / « Plus
+## clé « offer » des scènes, StoryFreeData.OFFER_KEYS ; signe du récit ; « Allons-y » / « Plus
 ## tard »). Rien ne s'y passe en scénarisé : chaque point d'entrée le vérifie (StoryDirector.mode).
 
 ## Le directeur (autoload StoryDirector), posé par lui.

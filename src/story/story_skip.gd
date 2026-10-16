@@ -3,7 +3,7 @@ extends RefCounted
 ## (X-L0) Passer une scène (PLAN.md, « (X) Exploration libre : le rythme ») : la règle d'E6 (une
 ## séquence déjà vue se passe par l'action « pause ») sortie du directeur, qui n'appelle que ces
 ## points d'entrée. Le lot L2 l'étend au libre (toute scène, à toute étape, clé « skip » des
-## scènes : StoryData.SKIP_KEYS). L0 : la règle d'E6, en libre comme en scénarisé.
+## scènes : StoryFreeData.SKIP_KEYS). L0 : la règle d'E6, en libre comme en scénarisé.
 
 ## Action qui passe une scène.
 const SKIP_ACTION := &"pause"
