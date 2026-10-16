@@ -90,6 +90,30 @@ Neuf PNG générés avec OpenAI Image Generation : traces et leur fin estompée,
 - `assets/hd2d/interior/props/desk_clean_brooch.png` — 106 × 101 px.
 - `assets/hd2d/interior/props/crystal_lamp_table.png` — 29 × 48 px.
 
+## Cahier n° 6 — C.6 et C.7 : café et salon Limashenka
+
+Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
+
+- `assets/hd2d/interior/props/cafe_counter.png`
+- `assets/hd2d/interior/props/juice_glasses.png`
+- `assets/hd2d/interior/props/cafe_bottle_shelf.png`
+- `assets/hd2d/interior/props/cafe_cake_case.png`
+- `assets/hd2d/interior/door_backroom.png`
+- `assets/hd2d/interior/props/cafe_drinkers_table.png`
+- `assets/hd2d/interior/wallitem_menu_cafe.png`
+- `assets/hd2d/props/cafe_backyard_crates.png`
+- `assets/hd2d/interior/props/toolbox_gears.png`
+- `assets/hd2d/interior/props/side_table_salon.png`
+- `assets/hd2d/interior/wallitem_family_portrait.png`
+- `assets/hd2d/interior/wallitem_clock_limashenka.png`
+- `assets/hd2d/interior/floor_terracotta.png`
+- `assets/hd2d/interior/wall_panel_dark.png`
+- `assets/hd2d/interior/wall_wallpaper_floral.png`
+- `assets/hd2d/interior/window_shutters.png`
+- `assets/hd2d/decals/rug_salon.png`
+- `assets/hd2d/interior/wallitem_clock_limashenka_open.png`
+- `assets/hd2d/anim/clock_limashenka_swing.png`
+
 ## Cahier n° 5 — Île 68, R0 : premier lot de mobilier
 
 27 PNG générés avec ChatGPT / image_gen le 14 octobre 2026 : neuf corrections de face, dix-sept vues de flanc et une vue de dos. Références : les PNG existants du même mobilier et les cotes du cahier fourni `ASSETS_HD2D_ILE68.md`, sections 1, 2.7 et R0. Sources générées et anciens PNG conservés hors dépôt. Recalage géométrique autorisé par l’utilisateur : cadrage, projection des plateaux et bandes de hauteur, échantillonnage au plus proche voisin, alpha binaire ; aucune nouvelle couleur RGB visible ni réduction de palette. Les profils montrent la face du meuble vers l’est ; le dos du canapé conserve la couverture du côté opposé à la vue de face. Les nouvelles vues sont livrées comme images importables : leur sélection et leur placement dans les pièces restent à intégrer par le moteur.
