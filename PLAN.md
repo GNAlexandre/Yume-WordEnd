@@ -38,7 +38,7 @@ Multijoueur, génération procédurale, application mobile native, monétisation
 | --- | --- | --- |
 | Moteur | Godot 4.7.2-stable (figé dans `project.godot` et `tools/setup.sh`) | Dernière maintenance de la branche 4.7 ([annonce 4.7.2](https://gamedev.net/news/5172-godot-engine-472-stable-released/)) ; gratuit, MIT, binaire Linux headless de \~60 Mo utilisable dans les VM Claude Code |
 | Langage | GDScript avec annotations de type (`var hp: int`, `-> void`) | L'export Web des projets C# reste expérimental en 2026 ([état 2026](https://gtstu.com/?p=4758)) ; GDScript s'exporte proprement et `gdlint`/`gdformat` (PyPI `gdtoolkit`) tournent sans éditeur |
-| Rendu | Compatibility (OpenGL 3 / WebGL 2) | Seul renderer disponible à l'export Web ; le flou de profondeur, la lueur et l'étalonnage HD-2D tiennent dans un shader d'écran (`src/player/post_fx.gdshader`) |
+| Rendu | Compatibility (OpenGL 3 / WebGL 2) | Seul renderer disponible à l'export Web ; la lueur et l'étalonnage HD-2D tiennent dans un shader d'écran (`src/player/post_fx.gdshader`), (RD) le flou de profondeur lit la profondeur dans le monde 3D (`src/player/post_fx_depth.gdshader`) |
 | Export Web | Thread Support **désactivé** | Évite les en-têtes COOP/COEP (SharedArrayBuffer) : le build se sert depuis GitHub Pages ou WordPress sans configuration serveur |
 | Scènes et ressources | Format texte (`.tscn`, `.tres`), jamais binaire | Diff lisibles, fusion Git possible, agents capables de créer une scène sans éditeur |
 | Tests | GUT (Godot Unit Test), vendoré dans `addons/gut/` | S'exécute en ligne de commande : `godot --headless -s addons/gut/gut_cmdln.gd` |
@@ -120,7 +120,7 @@ Yume-WordEnd/
 │   │                          # (E9) Atmosphere (lumière et temps)
 │   ├── desktop_check.gd       # (bureau) vérification du jeu exporté (--desktop-check), sans effet sinon
 │   ├── player/                # player.tscn, player.gd (déplacement), camera_rig.tscn (caméra fixe HD-2D),
-│   │                          # post_fx.gdshader (flou de profondeur, lueur, étalonnage)
+│   │                          # post_fx.gdshader (lueur, étalonnage), post_fx_depth.gdshader (flou de profondeur)
 │   ├── combat/                # health.gd, hitbox.tscn, hurtbox.tscn, attack_data.gd,
 │   │                          # player_combat.gd (épée, charge), charge_wave.tscn (onde)
 │   ├── enemies/               # enemy.tscn, enemy.gd (machine à états), enemy_data.gd, telegraph.gd ;
@@ -514,6 +514,12 @@ func has_animation(anim: StringName) -> bool      # (L0) ; current_animation() -
 # (R1) La planche, non éclairée, prend la teinte de la lumière : Sprite.modulate = couleur posée par d'autres
 # (EnemyData.tint) × HD2DLighting.active_sprite_tint() (Atmosphere : la nuit, plus sombre ; blanche au couchant et
 # sans carte), à chaque advance(), dehors comme dedans
+# (AN) match_stride: bool (joueur, PNJ) : la cadence de marche et course suit la vitesse au sol mesurée
+# (STRIDE_PX : 84 et 147 px de planche par cycle ; drawn_speed(anim), stride_rate(), ground_speed(),
+# set_ground_speed(m/s)) ; settle(anim) passe à anim (le repos) à la fin du pas (settling_to()) ;
+# is_stepping(), step_frames(anim) (0 et la moitié du cycle) ; avec match_stride, un changement de vue en
+# marche attend le début d'un pas. Le Sprite porte un ShaderMaterial « net mais lissé »
+# (src/visuals/character_sprite.gdshader, pixel_art.gdshaderinc) : uniform sheet = planche de l'image affichée
 signal frame_changed(anim: StringName, frame: int)   # permet à la Hitbox de s'activer sur les images "coup"
 signal animation_finished(anim: StringName)
 
@@ -572,9 +578,11 @@ class_name AirshipDock     # src/world/airship_dock.gd, Area3D sous « Docks » 
 class_name TravelView      # src/world/travel_view.tscn (CanvasLayer, couche LAYER = 90) : la vue du ciel d'un voyage,
                            # posée et libérée par WorldManager ; begin(île, fondu), close(durée) (coroutine), elapsed(),
                            # black_alpha(), caption, island_id ; signal closed
-class_name Player          # player.gd (L1)
+class_name Player          # player.gd (L1) ; (AN) walk_speed 3,1 et run_speed 5,8 m/s (cadence des planches à la
+                           # vitesse réelle), hold_input(bool) / is_input_held() (commandes seules figées :
+                           # changement de carte), IDLE_GRACE, FACE_SPEED (la vue suit la vitesse réelle)
 class_name Pickup          # @export item_id: StringName, quantity: int, persistent: bool ; func collect(), pickup_id()
-class_name Npc             # @export data: NpcData ; (Systèmes et textes) is_present(), refresh_presence() :
+class_name Npc             # @export data: NpcData ; (AN) plus de breath_amount / breath_period (respiration dessinée) ; (Systèmes et textes) is_present(), refresh_presence() :
                            # absent = caché, process_mode DISABLED (ni collision ni InteractArea), sans invite,
                            # dialogue ; réévalué en fin d'image sur flag_changed, inventory_changed,
                            # game_loaded, skin_changed (après le dialogue en cours) ; (F1) plus de marqueur de quête
@@ -640,6 +648,31 @@ class_name PropScatter     # (H9) @export variants: Array[PackedScene], random_f
                            # pick_variants(points, count, seed) (jamais la variante du plus proche voisin),
                            # nearest_neighbor(points, i) ; (T1) follow_ground : sur une carte de la refonte,
                            # le MapGround (enfant « Ground ») du premier ancêtre qui en a un, sinon l'île
+# (RD) Rendu de la profondeur (refonte image, 16 octobre 2026) : ajouts, l'existant ne change pas.
+class_name DecorGenre      # src/world/decor_genre.gd : genre d'un décor (TREE, LISIERE, BUSH, GRASS, REED, ROCK, FENCE,
+                           # WALL, POST, PROP, NONE) : of(chemin_image, catégorie) (metadata/hd2d_category de la scène,
+                           # sinon le nom de l'image) ; settings(genre) : ombre (tail, tail_width, core_alpha,
+                           # tail_alpha, long), vent (wind, wind_max, wind_from), variation (tone, scale, jitter, sink) ;
+                           # is_windy(genre), CATEGORY_GENRES, NAME_RULES, SETTINGS (données, réglées ici)
+class_name DecorPanel      # (RD) @export tone: Vector2 (luminosité ± 0,06, teinte ± 0,03 ; méta TONE_META du quad, lue
+                           # par le PropBatcher : partie entière de UV2.x), genre (vide : DecorGenre) ; current_genre(),
+                           # wind_pixels(genre, hauteur_px), tone_code(tone), tone_from_code(code) ; ombre peinte
+                           # (enfant « Shadow », panel_shadow.gdshader, un matériau pour toutes) : shadow_mesh_for(size,
+                           # genre), shadow_shape(largeur, profondeur, traîne, largeur_traîne, long, alphas),
+                           # set_shadow_sun(direction_xz, allongement, traîne, cœur), SHADOW_SHADER, SHADOW_* ;
+                           # material_for(…, wind_px, wind_from) (vent des végétaux, dans le shader)
+class_name PropScatter     # (RD) @export auto_variation (vrai) : teinte, échelle du genre (si scale_range = 1), recul
+                           # en z et enfoncement tirés de la position (variation_at(point, genre) → tone, scale,
+                           # offset) ; avoid_runs(points, picks, count) (jamais deux fois la même image de suite le
+                           # long de la rangée, règle du plus proche voisin gardée), row_order(points)
+class_name DepthFocus      # src/world/depth_focus.gd : mise au point partagée (depth_focus.gdshaderinc) ; apply(valeurs)
+                           # (la caméra, à chaque image), register(matériau mélangé qui se floute lui-même), current(),
+                           # radius_px(z, valeurs) (jumeau du shader), PARAMETERS, DEFAULTS
+class_name AtmosphereRig   # (RD) apply_shadow_sun(réglage, intérieur) : soleil des ombres peintes (appelé par apply)
+# CameraRig (RD) : enfant Camera3D/DepthBlur (rectangle plein écran, post_fx_depth.gdshader, flou selon la profondeur,
+# render_priority −128) ; focus_depth_of(point), depth_blur_material(), set_depth_blur_enabled(on),
+# is_depth_blur_enabled(), NEAR_BLUR_PER_BOTTOM_PX ; PostFX garde lueur
+# et étalonnage, ses uniformes top_blur_px et bottom_blur_px sont recopiés sur DepthBlur.
 class_name IslandTerrain   # (H9) GROUND_LAYERS (27 tuiles, ordre du contrat), GROUND_FALLBACK, ATLAS_COLUMNS,
                            # atlas_tile_count(size), ground_layer(layer, tile_count), triangles_in(rect),
                            # surface_height(x, z) ; terrain.gdshader : rangées lues dans la taille de l'atlas
@@ -720,6 +753,10 @@ var lock_target: Node3D, follow_velocity: Vector3   # posés par le joueur à ch
 func update_camera(delta, zoom_axis := 0.0), focus_goal(with_lead := true) -> Vector3, anchor() -> Vector3 (place
      affichée du joueur, interpolée), snap(), snap_behind(_dir) (= snap), recenter_behind(_dir) (sans effet),
      zoom(amount), zoom_distance(), focus(), yaw() (0), pitch() (toujours pitch_deg), forward() (le nord)
+# (AN) Sans dépassement : le point visé ne passe jamais, dans le sens de la marche, au-delà du point visé au repos
+# de plus que vitesse × lead_time, et pas du tout pendant un freinage ni à l'arrêt. @export edge_margin (0,12) et
+# player_height (1,6 m) : le joueur (pieds et tête) reste à edge_margin de chaque bord de l'écran, le point visé
+# sortant des limits juste ce qu'il faut (sauf cadrage du récit) ; keep_in_frame(focus, pieds) -> Vector3.
 # (recette du 8 octobre 2026) Cadrage constant : plus de cadrage automatique des bâtiments. Lissage physique
 # (project.godot physics/common/physics_interpolation) limité au monde 3D : src/game.tscn Game ON, UI OFF ;
 # src/main.tscn Main OFF. Un nœud 3D déplacé dans _process est en physics_interpolation_mode OFF et lit la place
@@ -746,7 +783,7 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/main.tscn` + `main.gd` | `Main` (Node) | menu, chargement et partie ajoutés à l'exécution | — | L0 |
 | `src/game.tscn` + `game.gd` | `Game` (Node3D) | (E1) `World` (Node3D, groupe `map_slot` : la carte courante, posée par game.gd, remplace `Island`), `Player`, `UI` (CanvasLayer) avec `UI/HUD`, `UI/DialogueBox`, `UI/Inventory`, `UI/TouchControls`, (E1) `UI/MapFade` (`src/ui/map_fade.tscn` : fondu et nom des cartes) ; (F1) `QuestTracker` et `UI/ArenaEnd` retirés | — | L0, E1, F1 |
 | `src/player/player.tscn` + `player.gd` | `Player` (CharacterBody3D, `Player`) | `CollisionShape3D`, `Visual`, `Combat` (`PlayerCombat`) et `Combat/SwordHitbox` (`Hitbox`), `Health` (5 PV, 1,2 s), `Hurtbox`, `CameraRig` ((HD-2D) aux pieds du joueur) | `player` ; couche 2, masque 1+3 | L1 (L4 : valeurs du nœud `Health`) |
-| `src/player/camera_rig.tscn` | `CameraRig` (Node3D) | (HD-2D) `Camera3D` (courante, `top_level`), `PostFX` (CanvasLayer, couche −1) et `PostFX/Screen` (ColorRect, `post_fx.gdshader`) ; plus de `SpringArm3D` | — | L1 |
+| `src/player/camera_rig.tscn` | `CameraRig` (Node3D) | (HD-2D) `Camera3D` (courante, `top_level`), (RD) `Camera3D/DepthBlur` (MeshInstance3D, `post_fx_depth.gdshader`), `PostFX` (CanvasLayer, couche −1) et `PostFX/Screen` (ColorRect, `post_fx.gdshader`) ; plus de `SpringArm3D` | — | L1 |
 | `src/combat/hitbox.tscn` + `hitbox.gd` | `Hitbox` (Area3D) | `CollisionShape3D` (forme locale à la scène) | couche 4, masque 5 | L4 |
 | `src/combat/hurtbox.tscn` + `hurtbox.gd` | `Hurtbox` (Area3D) | `CollisionShape3D` (forme locale à la scène) | couche 5 | L4 |
 | `src/combat/charge_wave.tscn` | `ChargeWave` (Node3D) | `Hitbox` (attaque `charge_wave`, équipe `player`), `Mesh` | — | L4 |
@@ -1210,6 +1247,20 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   (`exterior_pose.masked_places`). Une famille se tire sans masquer par
   `p.clear_of_places(scènes, points, échelle)` ; un décor que le plan veut là se déclare dans
   `SETTINGS["masks_allowed"] = {nœud: (places, pourquoi)}` (dit par `check`, sans erreur).
+- (RC) **Rangées, plans et répétition** (`tools/exterior_kits.py`, CARTE.md 0.5) : `row(polyligne, famille,
+  graine, step, spread, depth | depth_range, skip, accents, accent_every, scale, overlap, tone)` → éléments
+  `(scène, x, z, retourné, échelle, teinte)`, posés par `place_row(p, groupe, base, éléments)` (décors uniques,
+  `tone` écrit dans la scène) ; `pick_images` (jamais la même image deux fois de suite) ; `family(nom)` (les
+  scènes présentes de `FAMILIES` : une variante livrée plus tard y entre seule) ; `along_irregular` (bordures
+  d'herbe) ; `foreground_kit` / `foreground_views(p, carte, graine, with_passages, foliage, trees, tree_keep)`
+  (premier plan des vues QC puis des
+  passages) ; `middle_kit(p, [(Rect, nombre)], famille, graine)` (masses du plan moyen) ;
+  `second_rank(p, groupe, x0, x1, z, y, graine)` (second rang de lisière) ; `view_repeats`, `view_south` (les
+  mesures). `check` refuse une vue QC dont une image (panneau de 0,75 m ou plus) revient plus de
+  `REPEAT_LIMIT` = 8 fois dans le champ, ou qui a moins de `SOUTH_MIN` = 2 objets de 1,5 m ou plus au sud
+  du joueur, visibles au bas de l'écran ; exceptions dites : `SETTINGS["south_allowed"] = {vue: pourquoi}`,
+  `SETTINGS["repeat_allowed"] = {image: pourquoi}`. `python3 tools/exterior_maps.py views [carte…]` donne
+  les chiffres par vue. Une carte d'attente peut porter des décors en plus (`WAITING[id]["decor"]`).
 - **Une recette par carte** (`tools/exterior_recipes/<id>.py`) : `SETTINGS` (groupes de décors,
   sorties provisoires ; (C3) `camera_bounds`, `light_preset`, `no_lights`, `fauna` : bornes de caméra qui
   diffèrent de la règle, préréglage de lumière de la `Map`, plan à lumières que la carte ne porte pas, nœud
@@ -1405,7 +1456,7 @@ points où l'on erre, le terrain d'un jeu. Un siège se pose devant l'image d'un
 l'on part vers une carte (et d'où l'on en arrive), avant la `MapExit` vers cette carte ; une carte
 à venir (`away`) n'a que sa place `vers_`.
 
-**Activités** (`data/life/activities.json`) : `speeds` (allure → m/s), `fallbacks` (animation →
+**Activités** (`data/life/activities.json`) : `speeds` (allure → m/s ; `rattrape` : l'allure de poursuite des suiveurs, 5,5 m/s, animation de course), `anim_speeds` (allure → vitesse de l'animation, 1 par défaut ; `rattrape` 1,4), `fallbacks` (animation →
 remplaçantes, si la planche portée ne l'a pas), `activities.<id>` : `poses` (`[{anim, time}]`,
 enchaînées en boucle, ou au hasard avec `order: "random"` ; `time` en s ou `[min, max]`, sans
 `time` jusqu'au créneau suivant), `arrive` / `leave` (s'asseoir, se lever), `wander` (errer entre
@@ -1596,7 +1647,7 @@ l'ouvre ; `GameState.day` ≥ 1 tant qu'il dure (`GameState.story_running()`) ; 
 | --- | --- | --- |
 | `place` | who, at, offset, facing, outfit, anim, lift | fait paraître (ou pose) le personnage ; (S2) `lift` : à cette hauteur (m), sans collision (la pile de la tour de fées) |
 | `walk` | who, to, offset, gait (marche, course), wait (vrai), facing, direct | marche par la navigation (le joueur : vraie physique) et l'attend |
-| `follow` / `unfollow` | who, distance (2), stop_beyond (8), gait | le PNJ suit le joueur, d'une carte à l'autre, sans le gêner |
+| `follow` / `unfollow` | who, distance (2), stop_beyond (8), gait | le PNJ suit le joueur, d'une carte à l'autre, sans le gêner ; (L3) au pas du joueur : `gait` (marche par défaut) près de la garde, course au-delà de garde + 1,5 m, `rattrape` au-delà de 6 m (hystérésis), le but qui bouge ne l'arrête jamais (`LifeActor.follow_to`), perdu (au-delà de `stop_beyond`) il s'arrête, ou, si `StoryStage.repose_lost` (rythme libre), hors de la vue il est reposé derrière le joueur hors du champ de la caméra (`follower_reposed`) |
 | `face` | who, toward | le tourne |
 | `anim` | who, anim, time, wait | joue une animation (planche ou remplaçant d'activities.json) |
 | `outfit` | who, outfit | change sa tenue (`NpcData.outfits`) |
@@ -1697,6 +1748,270 @@ scène suivante. Les tests : `StoryData.use_root("res://tests/data/story")` (act
 
 **(S2) Jours 5 et 6** (`j5_1_jeu_willem` … `j6_4_souvenir`, ACTE1.md 5.1 à 6.4) : le ballon n'est pas une étape `game` mais la vie : la séquence de midi (5.1) finit au créneau de l'après-midi (`slot`), les lignes `ballon` des jours 5 et 6 (`data/life/ile_68/`, arbitre, rouge, blanc) lancent le match d'E8 ; entrer dans le champ suffit pour jouer. Démonstration : `S2_DAY=5|6 tools/godot … res://tests/integration/demo_s2.tscn` (une image toutes les 0,5 s) puis `python3 tools/s2_sheet.py <dossier>` (planches) ; tests : `tests/integration/test_s2_day5.gd` et `test_s2_day6.gd` (base `tests/stubs/s2_story_test.gd` : reprise au réveil d'un jour, `rest_until`, `sleep_by_prompt`).
 
+### (X) Exploration libre : le rythme
+
+Deux modes de jeu (refonte « exploration libre d'abord », 16 octobre 2026), pour ne rien perdre du
+travail fait : le **mode scénarisé** (`&"scenario"`, le récit en jours d'E6 et de S2, au bit près)
+et le **mode libre** (`&"libre"`, défaut du jeu : toute l'île ouverte, les scènes du livre deviennent
+des propositions que l'on peut passer). Le choix se fait à « Nouvelle partie » (lot L5). Socle :
+lot X-L0 ; décisions : docs/DECISIONS.md (« X-L0 »).
+
+**Persistance** : des drapeaux de partie, sans changer le schéma de la sauvegarde (SAVE_VERSION 4)
+ni les contrats (EventBus, GameState, project.godot). `mode_scenario` présent : scénarisé ;
+`mode_libre` : une partie commencée ou passée en libre ; aucun des deux : `default_mode` (libre
+dans le jeu). Une ancienne partie sans drapeau : libre, sauf si elle a déjà des scènes faites
+(`scenes_done` non vide) : scénarisée, pour ne pas changer une partie en cours
+(`StoryPacing.migrate`, au chargement, récit allumé).
+
+```gdscript
+# StoryDirector (ajouts X-L0)
+signal mode_changed(mode)                       # StoryPacing.FREE ou SCENARIO
+var default_mode := StoryPacing.FREE            # mode sans drapeau ; base M1 : mode_for_test() (scenario)
+var next_game_mode := &""                       # mode de la prochaine nouvelle partie, posé avant
+                                                # SaveManager.new_game (consommé au chargement suivant)
+func mode() -> StringName / is_free() -> bool / set_mode(mode) / mode_name(mode) -> String
+func offers() -> StoryOffers / skipper() -> StorySkip / resolver() -> StoryResolve
+# src/story/ — classes
+class_name StoryPacing    # FREE, SCENARIO, FLAG, FREE_FLAG, NAMES ; of_game, store, migrate, is_chained,
+                          # allows_trigger, doors_by_day, replays_interrupted, starts_in_black,
+                          # start_slot, shows_start_card ; Chain (la dernière scène finie et sa carte)
+class_name StoryOffers    # (L1) rebuild(carte), refresh(), talk(pnj) -> bool, scene_ended(id, finie) ;
+                          # active, offered_scenes, anchor(id), prompts, tagged, proposing,
+                          # propose(id, pnj), accept(id) ; statiques : conditions_met(données, jour,
+                          # créneau), slots_of(données), anchor_for(données, where)
+class_name StorySkip      # (L2) is_skippable, prompt_text, skip(runner), handle_input, skip_flags(données),
+                          # SKIP_ACTION, FORWARD_ACTION ; séquences vues
+class_name StoryResolve   # (L4) can_sleep(règle), can_rest(règle), before_sleep(île, jour), resolve_scene
+class_name StoryActivities  # (L6) talk(pnj), handle_input(event), busy, start(id), stop ; données
+                          # data/activities/<île>.json (all, available, options_of, problems_of)
+class_name StoryResolve   # (L4) can_sleep(règle), can_rest(règle), before_sleep(île, jour), resolve_scene,
+                          # due, passed_flag, is_passed, passed_on, lived_on, today_scenes,
+                          # scene_label, scene_title, waiting_hint ; PASSED_PREFIX, FREE_LINE
+class_name StoryFreeData  # vérifie les clés du libre (OFFER_KEYS, SKIP_KEYS, FREE_SCENE_KEYS, FREE_ACT_KEYS)
+```
+
+**Les règles du libre** (`StoryPacing`, seul endroit où elles s'écrivent) :
+- aucun déclencheur automatique (`ready`, `enter`, `reach`, `talk`) ne lance une scène, sauf une
+  **suite** (`ready` + `after`, ou `free.chain` vrai) juste après sa tête, tant que le joueur est
+  sur la carte où la tête a fini ; les déclencheurs volontaires (`prompt`, `examine`) restent
+  permis ; `talk` passe par `StoryOffers.talk`, puis la conversation libre ;
+- `StoryStage.apply_doors` ouvre toutes les portes (`doors_by_day` faux) ; repassées en
+  scénarisé, elles se referment avant leur jour ;
+- une partie reprise en pleine scène ne la rejoue pas : `GameState.story_scene` est vidé, la scène
+  redevient disponible, sans retour forcé à sa carte ;
+- nouvelle partie : pas d'écran noir, un carton « Jour 1 » (`free.start_card`), le jour 1 au
+  créneau `free.start_slot` (le soir), la main au joueur à `Spawn` ;
+- le coucher, le temps qui passe, l'indice et le calendrier : ci-dessous (X-L4) ; passer une
+  scène : ci-dessous (X-L2).
+
+**Les propositions** (lot X-L1, `src/story/story_offers.gd`, rien en scénarisé) :
+- **proposée** : toute scène pas encore jouée dont les conditions tiennent (jour, créneau,
+  `after`, `if` : `StoryOffers.conditions_met`) ; une tête (déclencheur autre que `ready`, ou sans
+  `after`) comme une suite qui ne s'est pas enchaînée (`j12_1_embuscade`, `j10_4_toit`…) ;
+- **l'ancre** (`StoryOffers.anchor_for(données, where)` → `{"npc", "map"}` ou `{"point", "map"}`,
+  `{}` sans ancre) : la clé `offer`, sinon talk → le PNJ ; reach, prompt → le point ; enter → le
+  marqueur ; ready → le premier présent sur la carte de la scène, sinon le premier présent
+  ailleurs. Un PNJ est sur la carte que donne `LifeDirector.where` ; nulle part (aucune carte),
+  l'ancre retombe sur le point de la scène (offer.point, sinon celui du déclencheur) ;
+- **ancre sur un PNJ** : il porte le ruban du récit (`InteractSign.STORY`) ; lui parler dit d'abord
+  la proposition (le texte `offer`, dit par lui ; sinon `ui/offer_default`, « Un moment de
+  l'histoire t'attend : « {title} ». », sans orateur), avec « Allons-y » (`ui/offer_go`) et « Plus
+  tard » (`ui/offer_later` : la conversation libre habituelle) ; chaque conversation la redit ;
+- **ancre sur un lieu** : une invite `StoryPrompt` (rôle `ROLE_SCENE`, nœud `StoryOffers` de la
+  carte, texte : le titre de la scène) au ruban ; l'utiliser dit la proposition (sans orateur),
+  mêmes choix (« Plus tard » ne fait rien de plus). Une scène `prompt` garde l'invite du directeur
+  (elle joue la scène tout de suite), qui prend le ruban ;
+- **accepter** (`accept`) : `StoryDirector.play(id)` ; une scène d'une autre carte (le PNJ est
+  ailleurs : Pannibal dans la salle de jeux pour l'embuscade dehors) y mène d'abord (fondu,
+  marqueur `from_<carte courante>` s'il existe, celui du déclencheur `enter`, sinon `Spawn`), le
+  joueur posé à 1,2 m au sud du point du déclencheur ;
+- **les données** : 33 scènes portent `offer` (`data/scenes/ile_68/`), leurs textes sous
+  `<scène>/offer` (`data/texts/ile_68/story.json`) ; les réveils (j2_1, j9_1, j11_1, j12_1) à la
+  porte de la chambre (`chtholly_porte`) ; `j1_1_port` est proposée par Nygglatho sous le porche
+  (une ligne de vie du jour 1, `if` : `mode_libre` et pas encore le port, `data/life/ile_68/
+  nygglatho.json`) ;
+- **tests** : `tests/unit/test_story_offers.gd` (chaque tête a une ancre à chaque créneau permis,
+  règles, conditions, signe), `tests/integration/test_free_offers.gd` (Willem à la clairière au
+  jour 9 : deux choix, « Plus tard » puis 20 s sans scène, « Allons-y » ; le ruban à moins de
+  3,5 m ; le port puis la lumière dans la nuit ; l'embuscade de Pannibal ; une invite de lieu) ;
+  démonstration : `tests/integration/demo_offers.tscn` (images `ruban`, `proposition`).
+
+**Les données** (format strict, clé inconnue refusée) :
+- une scène peut porter `offer` (l'ancre de sa proposition : `{"npc": id}` ou
+  `{"point": nom, "map": id}`, la carte de la scène par défaut ; `text` : sa clé de texte),
+  `skip` (`{"flags": [...]}` : posés quand on la passe) et `free` (`{"chain": bool}`) ;
+- `act.json` porte `free` (`start_slot`, `start_card`) ;
+- les textes `ui/mode_scenario` et `ui/mode_libre` (« Mode scénarisé », « Mode libre »).
+
+**Points d'entrée des lots suivants** (le directeur n'appelle qu'eux ; un lot remplit son
+fichier, sans toucher aux autres) :
+- **L1, propositions** (`story_offers.gd`) : `rebuild(map)` à chaque arrivée sur une carte (après
+  les invites du récit) et à chaque changement de mode ; `refresh()` avec les invites (toutes les
+  0,3 s hors scène) ; `talk(npc_id)` en libre, hors scène, avant la conversation libre (vrai :
+  la conversation est prise) ; `scene_ended(id, completed)` à la fin de chaque scène. Jouer une
+  scène proposée : `StoryDirector.play(id)` ;
+- **L2, passer** (`story_skip.gd`) : `handle_input` reçoit chaque appui pendant une scène (vrai :
+  pris) ; `is_skippable`, `prompt_text` (l'invite « Échap : passer »), `skip(runner)` ; le
+  fichier des séquences vues y vit (`has_seen`, `mark_seen`, `forget_seen`, chemin
+  `StoryDirector.seen_path`) ;
+- **L4, jours libres** (`story_resolve.gd`) : `can_sleep(règle)` et `can_rest(règle)` décident en
+  libre (la règle du scénarisé en argument) ; `before_sleep(île, jour)` est appelé en libre au
+  coucher, avant le jour suivant ; `resolve_scene(île, id)` règle une scène sans la jouer.
+
+**Passer une scène (X-L2)** (`StorySkip`, `StoryRunner`) :
+- **en libre**, un seul appui sur l'action `pause` (Échap, Start) passe **toute** scène, à toute
+  étape (dialogue, marche, attente, jeu, changement de carte) ; l'invite « Échap : passer »
+  (`ui/skip`) paraît dès le début de la scène ; l'appui est pris par `StoryDirector._input`, avant
+  le `_unhandled_input` du menu pause, qui ne s'ouvre pas (un second appui pendant le passage
+  est pris aussi) ;
+- **en scénarisé**, la règle d'E6 est inchangée : seule une séquence déjà vue se passe
+  (`is_skippable`) ;
+- **le passage** (`StoryRunner.skip`, mode rapide `fast`) : le reste de la scène se joue d'un coup,
+  sans rien perdre de ce qui change l'état ; le dialogue ouvert se ferme, les effets de ses nœuds
+  à venir s'appliquent ; les jeux du récit en cours s'arrêtent et quittent la carte
+  (`MiniGames.stop_all()` : duel, embuscade, entraînements au bâton et avec Seniorious ; le match
+  de ballon de la vie continue) ; une étape `wait_for` est remplie (`map` : `go_to` par le
+  marqueur où mène la sortie de la carte courante, sinon `Spawn` ; `reach` : le joueur posé au
+  point, à côté d'un personnage ; `talk`, `examine` : tenus pour faits ; jamais son
+  `timeout_flag`) ; une marche du joueur s'arrête au but (`StoryStage.walk_player(cible, allure,
+  stop_when)`) ; puis la fin de scène d'E6 (scène faite, nettoyée, caméra rendue, voile levé, main
+  rendue) et, en libre, la suite qui s'enchaîne (`j12_3_epilogue` après `j12_2_depart`) ;
+- **les choix sautés** (`StoryDialogue.apply_silently(chemin, nœud, choices, choice_effects,
+  entered) -> bool`) : le premier choix proposé est suivi ; un choix qui change l'état (l'un des
+  choix porte des effets) prend la clé `skip` de la scène (`StorySkip.skip_flags(données)`, ses
+  drapeaux posés une fois) si elle en a une, sinon les effets du premier choix. Clés `skip` :
+  `j8_3_duel` (`j8_duel_reprise`), `j8_8_colline` (`j8_talismans`), `j12_2_depart`
+  (`j12_voir_epilogue` : l'épilogue vient après un passage) ;
+- **l'accélération, dans les deux modes** : l'action `interact` (E, A) tenue plus de
+  `StoryRunner.FORWARD_HOLD` (0,3 s) accélère la scène sans la passer (`Engine.time_scale` à
+  `StoryRunner.FAST_FORWARD`, 3,5 : répliques tapées, attentes, marches, fondus, caméra) tant que
+  la scène tient le joueur ou qu'un de ses dialogues est ouvert, hors étape `game` et hors pause ;
+  la réplique entière passe seule après sa lecture (`FORWARD_READ_BASE` + `FORWARD_READ_PER_CHAR`
+  par caractère, en temps de jeu accéléré), jamais un choix ; relâchée, en pause ou en fin de
+  scène, le temps d'avant revient. Un appui bref (les tests du scénarisé) ne fait qu'avancer le
+  dialogue. `StoryRunner.is_forwarding()`.
+
+**Les jeux à la demande (X-L6)** (`src/story/story_activities.gd`, `data/activities/ile_68.json`,
+en libre seulement ; rien en scénarisé) : le joueur rejoue les jeux quand il veut, hors du récit,
+**sans changer un seul drapeau** (aucun `success_flag`, aucune scène, aucun résultat écrit dans
+`GameState` : les tests comparent `GameState.to_dict()` avant et après) :
+- **proposer** : un PNJ propose l'activité quand on lui parle (`StoryActivities.talk(npc)`, appelé
+  par `StoryDirector._on_talk` **après** `StoryOffers.talk` : une scène proposée par lui passe
+  d'abord) ; il dit `activities/<id>/offer` (son nom, son portrait) avec « Allons-y » (le jeu se
+  lance) et « Plus tard » (la conversation libre habituelle) ; pas de ruban (celui du récit reste
+  aux scènes) ;
+- **les activités** (`data/activities/<île>.json`, `{"activities": {id: …}}`, format strict, clé
+  inconnue refusée, `StoryActivities.problems_of`) : `game` (`baton`, `duel`, `seniorious`,
+  `ballon`, `embuscade`), `npc` et `map` (où il doit être), `place` (sa place d'emploi du temps),
+  `not_activity` (ce qui l'occupe déjà : le match de la vie), les conditions d'une scène (`day`,
+  `slot`, `after`, `if` : `StoryOffers.conditions_met`), `options` (celles de `MiniGames.start_*`)
+  et `variants` (`if` + `options`, la première qui tient). La carte, la place et l'occupation se
+  lisent dans la ligne d'emploi du temps du créneau (`LifeDirector.where`). Les cinq d'île n° 68 :
+  Willem à la clairière le matin (bâton), Willem dans la cour l'après-midi une fois le duel du
+  jour 8 vécu ou passé (revanche : `reprise`), Willem au marais (`marais_epee`) à midi une fois
+  le jour 11 vécu (Seniorious, étape 1, 2 si `j9_baton_reussi`, 3 si `j11_grues`), Pannibal
+  (embuscade, hors ballon), Tiat à l'après-midi (ballon, hors ballon de la vie) ;
+- **la vie de Willem en libre** (`data/life/ile_68/willem.json`, trois lignes à `if` : `mode_libre`,
+  hors pluie, placées après toutes les lignes à jour) : le matin à la clairière, à midi au marais
+  une fois `j11_4_seniorious` faite, l'après-midi dans la cour une fois `j8_3_duel` faite. Les
+  jours 1 à 3 et 8 à 12 gardent leurs lignes (sauf midi du jour 12 une fois le jour 11 vécu) ; le
+  scénarisé est inchangé (`tests/unit/test_story_activities.gd` le compare ligne à ligne). Le
+  ballon (Tiat joue avec le chat l'après-midi : `herbes_chat`) n'est proposé que si la vie ne joue
+  pas déjà : les jours 5, 6 et 9 à 12 son emploi du temps est au ballon (`not_activity`), le match
+  existe déjà et le joueur y entre en marchant sur le champ ; les autres jours (1 à 4, 7, 8, 13 et
+  suivants), hors pluie, Tiat le propose ;
+- **Échap arrête** (`StoryActivities.handle_input`, appelé par `StoryDirector._input`, avant le
+  menu pause) : `MiniGames.stop_all()` (ou `stop_ball_match()` pour le ballon) ; le jeu rend arme,
+  image et personnages (comme pour une scène passée) et la main est rendue ; le HUD affiche
+  `activities/<id>/result_<issue>` (`stopped`, `success`, `failure`, `victory`, `defeat`, `draw`,
+  `done` ; repli `activities/result_<issue>`) ; à la fin du jeu aussi, par son résultat. Un second
+  Échap ouvre le menu pause. Pendant un jeu à la demande, parler à un PNJ ne propose rien
+  (`busy()`) ;
+- **API** : `StoryDirector.activities()` ; `StoryActivities` : signaux `started(id)`,
+  `finished(id, issue)` ; `active()`, `busy()`, `running()`, `offered_by(npc) -> id`,
+  `propose(id, npc)`, `start(id) -> bool`, `stop()`, `handle_input(event)`, `seed_value` (>= 0 : un
+  tirage rejouable, pour les tests) ; statiques `all(île)`, `available(données, ligne, jour,
+  créneau)`, `options_of(données)`, `problems_of(brut)`, `text_key(id, nom)`, `path_of(île)`,
+  `clear_cache()` ;
+- **textes** : `data/texts/ile_68/story.json`, section `activities` (`<id>/offer`,
+  `<id>/result_<issue>`) et `ui/activity_stop` (« Échap : arrêter ») ;
+- **tests** : `tests/unit/test_story_activities.gd` (données valides, règles, lignes de Willem,
+  jours du récit inchangés, ballon jamais proposé quand la vie joue), `tests/integration/
+  test_free_activities.gd` (Willem à la clairière : proposition, « Allons-y », Échap, main
+  rendue, `GameState` identique ; « Plus tard » ; la scène passe d'abord ; scénarisé : rien ;
+  embuscade et ballon) ; démonstration : `tests/integration/demo_activities.tscn` (images
+  `docs/img/l6_proposition.png`, `docs/img/l6_jeu.png`).
+
+**Les jours libres (X-L4)** (`StoryResolve`, en libre seulement ; le scénarisé ne change pas) :
+- **le jour devient un chapitre** : `can_sleep` vaut le soir ou la nuit (`act.json`,
+  `sleep.slots`), hors scène, sans condition `sleep_after`, le jour du départ compris ; `can_rest`
+  vaut à tout créneau sauf la nuit (sans `_rest_cap`) ; après le jour 12, les jours libres 13 et
+  suivants continuent (au plus `GameState.MAX_DAY`), sans autre départ, avec les lignes de base
+  des emplois du temps de la vie ;
+- **au coucher** (`before_sleep(île, jour)`, appelé par `StoryDirector.sleep` sous le noir, avant
+  la ligne et le carton du jour), les scènes laissées passer sont **réglées sans être jouées** :
+  celles dont les jours sont finis (`due(île, jour)` : jours passés ou jour qui finit), dans l'ordre
+  de leurs `after` (on reprend tant qu'une scène se libère : `j10_4_toit` après `j10_5_tour`), leur
+  `if` vrai à leur tour (`j12_3_epilogue` suit `j12_2_depart` par la clé `skip`) ;
+  `resolve_scene(île, id) -> bool` n'applique que les étapes d'état, leurs `if` à leur tour :
+  `flag` ; `calendar` (au jour de la scène, ramené dans ses jours) ; `ship`
+  (`ShipControl.finish`) ; `game` : son `success_flag` mis à faux, ni son repli ni son drapeau
+  « joué » (un jeu pas joué n'est pas gagné) ; `dialogue` : `StoryDialogue.apply_silently` avec
+  les choix, la clé `skip` de la scène (une fois) si un choix change l'état, sinon le premier
+  choix ; tout le reste est ignoré (`next_day`, `slot`, `go_to`, `place`, `walk`, caméra,
+  fondus, cartons, bulles, `moment`…) ; puis `GameState.mark_scene_done(id)` et le drapeau
+  `passee_<id>` (`StoryResolve.passed_flag`, `is_passed`) ;
+- **la ligne du calendrier** : celle du jour si une de ses scènes a été vécue (faite sans
+  `passee_`), une ligne choisie par une scène réglée (`calendar` avec `line` : `depart`) sinon
+  gardée, et sinon le texte libre `calendar/libre` (`StoryResolve.FREE_LINE` : « Une journée à
+  moi, à marcher sur l'île. »), aussi pour les jours 13 et suivants ;
+- **l'indice** : plus d'indice impératif hors scène (`StoryDirector._waiting_hint` rend
+  `waiting_hint()`, vide) ; ceux des étapes `hint` d'une scène jouée restent ;
+- **le calendrier** (`src/ui/calendar.gd`, libre) : sous la ligne d'un jour, ses scènes laissées
+  passer en texte discret (« Laissé passer : … », `ui/calendar_passed`, `passed_lines()`), sans
+  les juger ; avant le filet d'or, « À vivre aujourd'hui » (`ui/today_title`, `%FreeToday`,
+  `today_entries()`, `free_today_text()`) : `today_scenes(île)` (pas faites, `after` faits, `if`
+  vrai, un créneau maintenant ou plus tard), dites par `scene_label` (le texte `offer.text` de la
+  proposition s'il existe, sinon le titre, suivi du créneau s'il est plus tard : `ui/today_later`,
+  `ui/slot_<créneau>`), sinon `ui/today_none` ; après le départ, la grille montre les douze
+  derniers jours (le jour courant en dernier) ; les lignes défilent plus tôt pour que la page
+  reste sous 640 px.
+
+**Tests** : la base M1 (`tests/stubs/m1_game_test.gd`) donne `mode_for_test()` (scénarisé) : tous
+les tests d'avant le mode libre en restent là ; les démos `demo_e6`, `demo_s2`, `demo_s2_tard`
+posent le scénarisé. Le mode libre : `tests/integration/test_free_start.gd` (nouvelle partie,
+quinze secondes sans scène, anciens pièges, portes, sauvegarde et reprise, ancienne partie) ;
+`tests/integration/test_free_days.gd` (X-L4 : nouvelle partie libre, onze nuits sans rien jouer
+par les invites jusqu'au jour 12, scènes des jours 1 à 11 réglées, onze lignes, « À vivre
+aujourd'hui », la vie repeuplée à chaque réveil, aucun indice, puis le jour 13) ;
+`tests/unit/test_story_resolve.gd` (X-L4 : règles du coucher et du repos dans les deux modes,
+étapes d'état, clé `skip`, jeux perdus, navire, ordre des `after`, lignes, calendrier) ; démo
+`tests/integration/demo_x_l4.tscn` (le calendrier libre ; `docs/img/l4_*.png`) ;
+`tests/integration/test_free_skip.gd` (X-L2 : les 55 scènes passées d'un appui après 1 s, en
+moins de 3 s chacune ; l'épilogue après le départ passé ; un jeu arrêté et la clé `skip` du duel ;
+le scénarisé inchangé ; l'épilogue deux fois plus court touche tenue) ; règles et données :
+`tests/unit/test_story_data.gd`.
+
+**Le choix dans l'interface (lot X-L5)** :
+- « Nouvelle partie » (menu principal, après la confirmation d'écrasement s'il y a une sauvegarde)
+  ouvre le choix du mode (`ModeOverlay`) : « Mode libre » (le défaut : il a le focus) et « Mode
+  scénarisé », chacun avec sa phrase, plus « Retour » (Échap, B) ; le clic, A ou Entrée lance
+  `MainMenu.start_new_game(mode)` (pose `StoryDirector.next_game_mode`, puis
+  `SaveManager.new_game`). API : `MainMenu.open_mode_choice()`, `is_mode_choice_open()`,
+  `mode_button(mode)`, `start_new_game(mode = libre)`.
+- Pause, Options : l'entrée « Mode libre · changer » montre le mode et, après une confirmation
+  courte (« Garder » a le focus, « Changer » appelle `StoryDirector.set_mode(l'autre)`), passe de
+  l'un à l'autre en cours de partie ; le mode est aussi écrit, discret, sous le jour du panneau
+  (`PauseMenu.mode_text()`, `request_mode_switch()`, `cancel_mode_switch()`,
+  `confirm_mode_switch()`). Visible si le récit est allumé (`StoryDirector.enabled`).
+- Les textes : `data/texts/<île>/story.json`, section `ui` (`mode_choice_title`, `mode_libre_blurb`,
+  `mode_scenario_blurb`, `mode_choice_hint`, `mode_choice_back`, `mode_option`, `mode_switch_*`,
+  `mode_switched`), lus par `ModeText` (`src/ui/mode_text.gd`) : le menu n'a pas encore d'île
+  pour `StoryDirector.ui_text`, `ModeText` lit celle de la carte de départ.
+- Tests : `tests/integration/test_l5_mode_choice.gd` ; la base M2 donne
+  `new_game_from_menu(skin, mode)` et `choose_mode(mode)` (à défaut de `mode`, `mode_for_test()` :
+  les tests d'avant le mode libre jouent donc le même mode qu'avant).
+
 ### (U1) L'interface « Nuit douce » : thème, dialogue et signes
 
 - **Thème unique** : `src/ui/wordend_theme.tres`, à la racine de chaque écran (`theme`). Tout Control ajouté
@@ -1724,6 +2039,11 @@ scène suivante. Les tests : `StoryData.use_root("res://tests/data/story")` (act
   cacher tous les signes : `InteractSign.suppress(&"raison", true)` ; réglage « toujours montrer la touche » :
   `InteractSign.always_show_key()` (Options de la pause). Tests : `full_target()`, `full_kind()`,
   `pale_targets()`, `is_key_hint_shown()`, `hovered_target()` du nœud (`HUD.interact_signs()`).
+  (X-L1) Genre `&"story"` (`InteractSign.STORY`) : un petit ruban or de signet
+  (`assets/hd2d/fx/sign_story.png`, dessiné à `STORY_SCALE` = 0,85 de la taille des autres), posé
+  par `InteractSign.set_story(cible, true)` (métadonnée `STORY_META`, à part de `META` :
+  `set_hidden` le cache toujours) sur ce qui porte une proposition du mode libre ; comme tout signe
+  pâle, il ne paraît qu'à moins de 3,5 m (aucun marqueur au-dessus des têtes à distance).
 
 ### (E8) Les jeux : le ballon, l'entraînement au bâton, l'arme de Chtholly
 
@@ -1765,6 +2085,8 @@ training.finished.connect(func(result: Dictionary) -> void: ...)   # la scène c
 #           phase_b: {success, counters, touched_willem, survived}, touches, duration, variant}
 # Signaux : phase_changed(&"intro"|&"a"|&"link"|&"b"|&"ended"), resolved(sorte, issue), touches_changed(n, limite),
 # window_closed (jour 10 : le rythme tremble : effet d'E9). MiniGames.staff_training() ; stop_staff_training().
+# (X-L2) MiniGames.stop_all() : arrête et retire de la carte les jeux du récit en cours (duel, embuscade,
+# entraînements au bâton et avec Seniorious ; une scène passée) ; le match de ballon de la vie continue.
 ```
 
 **(E8c) L'embuscade de Pannibal** (src/games/ambush.gd, class Ambush, un Node3D ajouté à `Life` ; ACTE1.md 3.1 ;
@@ -2047,7 +2369,7 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 
 | Élément | Scène | Comportement M2 |
 | --- | --- | --- |
-| Joueur | `src/player/player.tscn` (`CharacterBody3D`) | Déplacement relatif à l'écran ((HD-2D) haut = nord : la caméra fixe ne tourne pas), course (Maj), saut, gravité, pente jusqu'à 45°, marche 4 m/s, course 7 m/s ; ZQSD/WASD + flèches + manette ; déplacement bloqué pendant `Combat.is_busy()` ; détection d'`Interactable` devant le joueur, touche E / bouton A |
+| Joueur | `src/player/player.tscn` (`CharacterBody3D`) | Déplacement relatif à l'écran ((HD-2D) haut = nord : la caméra fixe ne tourne pas), course (Maj), saut, gravité, pente jusqu'à 45°, marche 3,1 m/s, course 5,8 m/s ((AN) cadence des planches à la vitesse réelle : pas de patinage) ; ZQSD/WASD + flèches + manette ; déplacement bloqué pendant `Combat.is_busy()` ; détection d'`Interactable` devant le joueur, touche E / bouton A |
 | Combat joueur | `src/combat/player_combat.gd` (enfant `Combat` du joueur) | Épée J/X ou bouton X ; charge K/C ou bouton B maintenu ; `Hitbox` de l'épée activée par `frame_changed` sur les images `coup` ; `Health` 5 PV ; recul ; mort et réapparition |
 | Caméra | `src/player/camera_rig.tscn` (`Camera3D` + `PostFX`) | (HD-2D) Fixe, à la manière d'*Octopath Traveler* : regarde le nord, inclinée de 32°, champ vertical de 30°, à 21 m du point visé (2,5 m au nord du joueur, qui se tient sous le milieu de l'écran) ; cadrage constant (ni tangage ni recul automatiques) ; suit la place affichée du joueur (lissage physique) avec un léger retard (et un peu en avant de sa marche, sans à-coup), bornée à l'île ; molette ou stick droit : léger zoom (14 à 25 m) ; **verrouillage de cible** (clic molette / R3) : le point visé avance vers la cible, le joueur lui fait face ; post-traitement sous l'interface : flou de profondeur, lueur, étalonnage chaud |
 | Visuel | `src/visuals/character_visual.tscn` | `AnimatedSprite3D` billboard axe Y (face à la caméra fixe), 7 animations de la planche (`repos`, `marche`, `course`, `attaque`, `charge`, `degats`, `mort`), (HD-2D) `parle` pour les PNJ en conversation, retournement gauche/droite selon la direction, ombre disque ; `frame_changed` et `animation_finished` |

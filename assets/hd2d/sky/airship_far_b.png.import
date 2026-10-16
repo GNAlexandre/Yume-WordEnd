@@ -17,7 +17,7 @@ dest_files=["res://.godot/imported/airship_far_b.png-2901ddb2c632a85167eab923e8b
 
 compress/mode=0
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.9
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1

@@ -92,6 +92,9 @@ func after_each() -> void:
 	if is_instance_valid(main):
 		main.free()
 	main = null
+	# (X-L5) Une partie libérée en pleine scène laissait ses PNJ réservés au récit dans LifeDirector
+	# (un autoload) : le test de la vie qui suit ne retrouvait plus Willem.
+	LifeDirector.release_all(false)
 	SaveManager.checkpoint_interval = _previous_checkpoint
 	get_tree().root.remove_meta(MenuScript.GESTURE_META)
 	if is_instance_valid(_gut_layer):
@@ -149,13 +152,23 @@ func bind_game(node: Node3D) -> void:
 
 
 ## Nouvelle partie depuis le menu, au clavier et à la souris : clic « Cliquer pour jouer », clic
-## sur la vignette du skin, clic sur « Nouvelle partie » ; attend la partie.
-func new_game_from_menu(skin_id: StringName = &"chtholly") -> bool:
+## sur la vignette du skin, clic sur « Nouvelle partie », clic sur le mode de jeu (X-L5 : mode, ou
+## à défaut mode_for_test(), le mode que le test joue) ; attend la partie.
+func new_game_from_menu(skin_id: StringName = &"chtholly", mode: StringName = &"") -> bool:
 	await open_main()
 	await click_center()
 	await click(menu().call(&"skin_card", skin_id) as Control)
 	await click(menu_button("NewGameButton"))
+	await choose_mode(mode)
 	return await wait_for_game()
+
+
+## (X-L5) Clic sur l'entrée du mode (StoryPacing.FREE ou SCENARIO ; à défaut mode_for_test()) dans
+## le choix que « Nouvelle partie » vient d'ouvrir.
+func choose_mode(mode: StringName = &"") -> void:
+	var wanted := mode if not mode.is_empty() else mode_for_test()
+	assert_true(menu().call(&"is_mode_choice_open"), "le choix du mode est ouvert")
+	await click(menu().call(&"mode_button", wanted) as Control)
 
 
 ## « Fermeture de l'onglet » simulée : la partie et main.tscn libérés (rien n'est écrit au

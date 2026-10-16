@@ -11,13 +11,19 @@ extends Node
 ##   physique (walk_player), contrôle pris ou rendu (set_control) ; sa caméra (camera_rig).
 ## - Le voile des scènes (overlay, fade_overlay, wait_overlay : attentes par sondage, jamais une
 ##   coroutine d'un nœud de l'interface, qui peut être libéré en pleine scène).
-## - Les suiveurs (add_follower : un PNJ suit le joueur à distance, s'arrête s'il est trop loin,
+## - Les suiveurs (add_follower : un PNJ suit le joueur à distance, au pas du joueur : il marche
+##   près de sa garde, court plus loin, poursuit à l'allure « rattrape » au-delà de 6 m, sans
+##   jamais s'arrêter quand le but bouge ; perdu (trop loin, hors de la vue) il est reposé
+##   derrière le joueur hors de la caméra (repose_lost, rythme libre) ou s'arrête (guidé) ; il
 ##   reparaît derrière lui après un changement de carte : restage_followers) et les remises au
 ##   repos différées (idle_later).
 ## - Les portes fermées jusqu'à un jour (apply_doors) : une sortie de carte (MapExit) qui porte
 ##   les métadonnées open_from_day (jour d'ouverture) et closed_text_key (« village/maison_close » :
 ##   le texte de data/texts/village.json, Examinable.lookup) ne mène nulle part avant ce jour ; à sa
 ##   place, une zone à examiner (enfant ClosedDoor, même invite) lit le texte de la porte close.
+
+## (L3) Un suiveur perdu vient d'être reposé derrière le joueur, hors de la vue.
+signal follower_reposed(npc_id: StringName)
 
 ## Joueur mené coincé : après STUCK_NUDGE s, des pas de côté ; après STUCK_HOP s, posé au
 ## point de passage.
@@ -33,10 +39,36 @@ const TEXTS_DIR := "res://data/texts/"
 const POSE_HOLD := 3600.0
 const PROPS_LIGHT_REACH := 2.5
 
+## (L3) Les suiveurs : seuils (m) de l'allure adaptative (_follow_gait), de l'arrêt sous la garde,
+## du but qu'on ne suit qu'au-delà d'un pas (FOLLOW_GOAL_STEP) ou d'un écart qui l'a rendu faux
+## (FOLLOW_GOAL_SLACK), et de la repose d'un suiveur perdu (_repose_follower : anneaux autour du
+## joueur, directions essayées).
+const FOLLOW_STOP_MARGIN := 0.8
+const FOLLOW_RUN_MARGIN := 1.5
+const FOLLOW_CATCH_UP := 6.0
+const FOLLOW_RELEASE := 0.8
+const FOLLOW_GOAL_STEP := 0.5
+const FOLLOW_GOAL_SLACK := 1.2
+const FOLLOW_LOST := 12.0
+const FOLLOW_REPOSE_RINGS: Array[float] = [7.0, 9.0, 11.0, 14.0, 18.0, 24.0]
+const FOLLOW_REPOSE_STEPS := 16
+## Gain minimal (m) d'une repose : il ne vaut pas la peine de se rapprocher de moins.
+const FOLLOW_REPOSE_GAIN := 3.0
+## Allure de la poursuite (activities.json, speeds) et animations d'une marche de suiveur.
+const FOLLOW_CATCH_UP_GAIT := &"rattrape"
+const FOLLOW_ANIMS: Array[StringName] = [&"marche", &"course", &"porte"]
+
 ## Places de la carte courante (set_map).
 var places: LifePlaces = null
 ## Scène en cours (pour les avertissements).
 var scene_label: StringName = &""
+## (X-L0) Portes fermées jusqu'à leur jour (mode scénarisé) ; faux : toutes ouvertes (libre,
+## StoryPacing.doors_by_day, posé par StoryDirector).
+var doors_by_day: bool = true
+## (L3) Un suiveur perdu est reposé derrière le joueur, hors de la vue (_repose_follower) au lieu
+## de s'arrêter au-delà de stop_beyond (récit guidé : il s'arrête, comme avant). Le mode libre
+## l'allume (StoryPacing.repose_lost, posé par StoryDirector).
+var repose_lost: bool = false
 
 var _followers: Dictionary = {}
 var _idle_at: Dictionary = {}
@@ -53,7 +85,8 @@ func set_map(map: Map) -> void:
 
 
 ## Ferme (avant leur jour, GameState.day) ou rouvre les sorties de map qui portent
-## open_from_day ; renvoie le nombre de portes fermées.
+## open_from_day ; renvoie le nombre de portes fermées. (X-L0) Sans doors_by_day, les rouvre
+## toutes.
 func apply_doors(map: Node) -> int:
 	var exits := map.get_node_or_null(^"Exits") if map != null else null
 	if exits == null:
@@ -63,7 +96,7 @@ func apply_doors(map: Node) -> int:
 		var door := child as MapExit
 		if door == null or not door.has_meta(DOOR_OPEN_META):
 			continue
-		var shut := GameState.day < int(door.get_meta(DOOR_OPEN_META))
+		var shut := doors_by_day and GameState.day < int(door.get_meta(DOOR_OPEN_META))
 		_set_door_closed(door, shut)
 		closed += 1 if shut else 0
 	return closed
@@ -316,7 +349,10 @@ func place_player(at: Vector3, facing: Vector3 = Vector3.ZERO) -> void:
 
 
 ## Mène le joueur à pied jusqu'à target (chemin de la navigation, vraie physique) ; coroutine.
-func walk_player(target: Vector3, gait: StringName = &"marche") -> void:
+## (X-L2) stop_when devient vrai (scène passée) : la marche cesse, le joueur est posé au but.
+func walk_player(
+	target: Vector3, gait: StringName = &"marche", stop_when: Callable = Callable()
+) -> void:
 	var body := player()
 	if body == null:
 		return
@@ -332,7 +368,10 @@ func walk_player(target: Vector3, gait: StringName = &"marche") -> void:
 	var stuck := 0.0
 	var index := 0
 	while (
-		index < waypoints.size() and waited < StoryRunner.WALK_TIMEOUT and is_instance_valid(body)
+		index < waypoints.size()
+		and waited < StoryRunner.WALK_TIMEOUT
+		and is_instance_valid(body)
+		and not (stop_when.is_valid() and bool(stop_when.call()))
 	):
 		var last := index == waypoints.size() - 1
 		var toward := waypoints[index] - body.global_position
@@ -456,9 +495,10 @@ func ensure_nav() -> LifeNav:
 	return LifeDirector.nav()
 
 
-## Un PNJ suit le joueur à distance m, sans le gêner (corps hors de la couche 1) ; il s'arrête
-## au-delà de stop_beyond m (sans lumière, il ne voit rien) ; jusqu'à unfollow ou la fin de la
-## scène, d'une carte à l'autre.
+## Un PNJ suit le joueur à distance m, sans le gêner (corps hors de la couche 1), à l'allure
+## de gait près de lui et plus vive plus loin (_follow_gait) ; au-delà de stop_beyond m, une fois
+## hors de la vue (ou très loin), il est reposé derrière le joueur (_repose_follower) si
+## repose_lost, sinon il s'arrête ; jusqu'à unfollow ou la fin de la scène, d'une carte à l'autre.
 func add_follower(
 	npc_id: StringName, distance: float, stop_beyond: float, gait: StringName
 ) -> void:
@@ -499,7 +539,9 @@ func _tick_followers() -> void:
 	var body := player()
 	if body == null or _followers.is_empty() or WorldManager.is_transitioning():
 		return
+	var rank := 0
 	for npc_id: StringName in _followers:
+		rank += 1
 		var actor := LifeDirector.actor(npc_id)
 		if actor == null or not is_instance_valid(actor.npc):
 			continue
@@ -512,17 +554,124 @@ func _tick_followers() -> void:
 		var offset := actor.position() - body.global_position
 		offset.y = 0.0
 		var distance := offset.length()
-		if distance > float(settings["stop_beyond"]):
+		if repose_lost and _lost_follower(actor, settings, distance):
+			if _repose_follower(actor, body, rank, distance):
+				settings["level"] = 0
+				follower_reposed.emit(npc_id)
+				continue
+		if distance > float(settings["stop_beyond"]) and not repose_lost:
+			# Récit guidé : trop loin, il s'arrête (sans lumière, il ne voit rien).
 			if actor.is_moving():
 				actor.stop()
 				actor.play(&"repos")
 			actor.face(-offset)
-		elif distance > keep + 0.8:
-			var goal := body.global_position + offset.normalized() * keep
-			if not actor.is_moving() or actor.goal().distance_to(goal) > 1.2:
-				actor.walk_to(goal, -offset, settings["gait"], Callable())
+			continue
+		var wanted := _follow_gait(settings, distance, keep)
+		var goal := body.global_position + offset.normalized() * keep
+		var stale := actor.is_moving() and actor.goal().distance_to(goal) > FOLLOW_GOAL_SLACK
+		if distance > keep + FOLLOW_STOP_MARGIN or stale:
+			# Le but bouge avec le joueur : on le suit sans s'arrêter (LifeActor.follow_to).
+			if (
+				not actor.is_moving()
+				or actor.current_gait() != wanted
+				or actor.goal().distance_to(goal) > FOLLOW_GOAL_STEP
+			):
+				actor.follow_to(goal, -offset, wanted)
 		elif not actor.is_moving():
 			actor.face(-offset)
+			# Arrivé, il ne marche pas sur place : debout.
+			if actor.npc.visual.current_animation() in FOLLOW_ANIMS:
+				actor.play(&"repos")
+
+
+## L'allure d'un suiveur à distance m du joueur (garde keep) : la sienne près de la garde (celle du
+## pas « follow », la marche par défaut), la course au-delà de garde + FOLLOW_RUN_MARGIN m, la
+## poursuite (« rattrape », plus vive que la marche du joueur) au-delà de FOLLOW_CATCH_UP m.
+## Hystérésis : on ne redescend d'une allure qu'à FOLLOW_RELEASE m en deçà de son seuil (settings
+## « level » : 0 sa propre allure, 1 course, 2 poursuite).
+func _follow_gait(settings: Dictionary, distance: float, keep: float) -> StringName:
+	var level: int = settings.get("level", 0)
+	var run_at := keep + FOLLOW_RUN_MARGIN
+	var catch_at := maxf(FOLLOW_CATCH_UP, run_at + FOLLOW_RELEASE * 2.0)
+	if distance > catch_at:
+		level = 2
+	elif distance > run_at and level < 1:
+		level = 1
+	if level == 2 and distance < catch_at - FOLLOW_RELEASE:
+		level = 1
+	if level == 1 and distance < run_at - FOLLOW_RELEASE:
+		level = 0
+	settings["level"] = level
+	var own: StringName = settings["gait"]
+	match level:
+		2:
+			return FOLLOW_CATCH_UP_GAIT
+		1:
+			return own if LifeData.speed(own) >= LifeData.speed(&"course") else &"course"
+	return own
+
+
+## Vrai si un suiveur est perdu : au-delà de stop_beyond m une fois hors de la vue (ou très loin
+## au-delà, vu), ou hors de la vue et à plus de FOLLOW_LOST m (la caméra ne le montre plus,
+## autant le rapprocher).
+func _lost_follower(actor: LifeActor, settings: Dictionary, distance: float) -> bool:
+	var beyond: float = settings["stop_beyond"]
+	if distance > beyond + FOLLOW_LOST:
+		return true
+	if distance <= minf(beyond, FOLLOW_LOST):
+		return false
+	return not _in_camera_view(actor.position())
+
+
+## Vrai si le point (au sol) est dans le champ de la caméra, marge comprise : le sprite entier
+## compte (trois hauteurs, trois écarts), sans caméra tout est « hors champ ».
+func _in_camera_view(point: Vector3) -> bool:
+	var camera := get_viewport().get_camera_3d() if get_viewport() != null else null
+	if camera == null:
+		return false
+	var side := camera.global_transform.basis.x
+	for height: float in [0.0, 1.0, 2.0]:
+		for lateral: float in [-0.8, 0.0, 0.8]:
+			if camera.is_position_in_frustum(point + Vector3.UP * height + side * lateral):
+				return true
+	return false
+
+
+## Repose un suiveur perdu derrière le joueur, hors de la vue de la caméra, sur le sol de la carte
+## (le plus près possible : un anneau de plus en plus large, en commençant derrière le joueur) ;
+## vrai si c'est fait (faux : rien de mieux que sa place, il continue sa poursuite). Il repart
+## aussitôt à l'allure de poursuite.
+func _repose_follower(actor: LifeActor, body: Player, rank: int, distance: float) -> bool:
+	var nav := ensure_nav()
+	var back := -body.aim_direction()
+	var velocity := Vector3(body.velocity.x, 0.0, body.velocity.z)
+	if velocity.length() > 1.0:
+		back = -velocity.normalized()
+	if back.length() < 0.1:
+		back = Vector3.BACK
+	for radius: float in FOLLOW_REPOSE_RINGS:
+		if radius + FOLLOW_REPOSE_GAIN > distance:
+			break
+		for step: int in FOLLOW_REPOSE_STEPS:
+			# Derrière d'abord, puis de plus en plus de côté, une fois à droite, une fois à gauche.
+			var turn := (
+				ceilf(step / 2.0) * TAU / FOLLOW_REPOSE_STEPS * (1.0 if step % 2 == 0 else -1.0)
+			)
+			var at := body.global_position + back.rotated(Vector3.UP, turn) * radius
+			at += back.rotated(Vector3.UP, turn + PI / 2.0) * float(rank - 1) * 0.9
+			if nav != null and nav.ready and not nav.is_walkable_point(at.x, at.z):
+				continue
+			if _in_camera_view(_grounded(at)):
+				continue
+			if nav != null and nav.ready and not nav.line_clear(at, body.global_position):
+				continue
+			at = _grounded(at)
+			actor.stop()
+			actor.set_position(at)
+			actor.face(body.global_position - at)
+			actor.play(&"repos")
+			return true
+	return false
 
 
 ## Après un changement de carte en pleine scène : les suiveurs reparaissent derrière le joueur.
@@ -534,6 +683,7 @@ func restage_followers() -> void:
 	var rank := 1
 	for npc_id: StringName in _followers:
 		var settings: Dictionary = _followers[npc_id]
+		settings["level"] = 0
 		var at := _grounded(body.global_position + back * float(settings["distance"]) * rank)
 		var actor := LifeDirector.stage(npc_id, at, -back)
 		var outfit := StringName(settings.get("outfit", &""))

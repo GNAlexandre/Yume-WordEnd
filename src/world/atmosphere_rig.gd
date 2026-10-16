@@ -13,6 +13,9 @@ extends Node3D
 ## - la pluie : Rain (RainFall : gouttes et éclaboussures dans le monde) et RainCurtain
 ##   (CanvasLayer 0, au-dessus du post-traitement et sous l'interface : le rideau de pluie à
 ##   l'écran, rain_curtain.gdshader).
+## - (RD) le soleil des ombres peintes des décors (DecorPanel.set_shadow_sun) : leur traîne part à
+##   l'opposé du soleil (ou de la lune), d'autant plus longue qu'il est bas ; plus pâle la nuit et
+##   sous la pluie, nulle dans un intérieur (le cœur au pied, l'occlusion, reste).
 ## Ses lumières et ses meshes sont dans le groupe HD2DLightTargets.IGNORE_GROUP : le relevé des
 ## lanternes et des matériaux de la carte les ignore.
 
@@ -36,6 +39,15 @@ const SUN_HEIGHT := 40.0
 const ORB_PIXEL_SIZE := 1.0 / 64.0
 ## Opacité du rideau à l'averse : il double les gouttes du monde, il ne les cache pas.
 const CURTAIN_OPACITY := 0.8
+## (RD) Hauteur du soleil (degrés) où la traîne des ombres a sa longueur de référence, et bornes de
+## son allongement ; part de la traîne et du cœur qui reste la nuit noire, sous l'averse.
+const SHADOW_REFERENCE_ELEVATION := 20.0
+const SHADOW_LENGTH_RANGE := Vector2(0.3, 1.8)
+const SHADOW_NIGHT_TAIL := 0.35
+const SHADOW_NIGHT_CORE := 0.75
+const SHADOW_RAIN_TAIL := 0.25
+## (RD) Part du cœur des ombres dedans (meubles sous la lumière douce des fenêtres et des lampes).
+const SHADOW_INTERIOR_CORE := 0.7
 
 ## Lumière du joueur : énergie et portée à pleine force, couleur (blanc bleuté de l'orbe),
 ## hauteur (m, la main levée) et écart de côté (m, vers où il regarde).
@@ -52,6 +64,8 @@ var curtain_layer: CanvasLayer
 var curtain: ColorRect
 
 var _curtain_material: ShaderMaterial
+## (RD) Carte intérieure : pas de traîne d'ombre (la lumière vient des fenêtres et des lampes).
+var _interior: bool = false
 var _light_amount: float = 0.0
 var _rain_amount: float = 0.0
 var _time: float = 0.0
@@ -71,6 +85,7 @@ static func dress(map: Node) -> AtmosphereRig:
 
 ## Crée les nœuds ; un environnement et un soleil seulement si la carte n'en a pas.
 func setup(map: Node) -> void:
+	_interior = map is Map and (map as Map).interior
 	if map.find_children("*", "WorldEnvironment", true, false).is_empty():
 		add_child(_make_environment(map is Map and (map as Map).interior))
 	if map.find_children("*", "DirectionalLight3D", true, false).is_empty():
@@ -143,6 +158,28 @@ func apply(lighting: HD2DLighting, light_part: float) -> void:
 	set_process(lit or curtain_layer.visible)
 	if lit:
 		_follow_player()
+	apply_shadow_sun(lighting, _interior)
+
+
+## (RD) Pose le soleil d'un réglage sur les ombres peintes des décors : direction opposée au soleil
+## dans le plan du sol, allongement (tan 20° / tan hauteur, borné), force de la traîne (plus pâle
+## la nuit et sous la pluie, nulle dedans) et du cœur.
+static func apply_shadow_sun(lighting: HD2DLighting, interior: bool = false) -> void:
+	var toward := lighting.toward_sun()
+	var elevation := deg_to_rad(clampf(lighting.sun_elevation_deg, 3.0, 85.0))
+	var length := clampf(
+		tan(deg_to_rad(SHADOW_REFERENCE_ELEVATION)) / tan(elevation),
+		SHADOW_LENGTH_RANGE.x,
+		SHADOW_LENGTH_RANGE.y
+	)
+	var tail := lerpf(1.0, SHADOW_NIGHT_TAIL, lighting.night_amount)
+	tail *= lerpf(1.0, SHADOW_RAIN_TAIL, lighting.rain)
+	if interior:
+		tail = 0.0
+	var core := lerpf(1.0, SHADOW_NIGHT_CORE, lighting.night_amount)
+	if interior:
+		core *= SHADOW_INTERIOR_CORE
+	DecorPanel.set_shadow_sun(Vector2(-toward.x, -toward.z), length, tail, core)
 
 
 ## Part de la lumière du joueur posée en dernier (0 : éteinte).

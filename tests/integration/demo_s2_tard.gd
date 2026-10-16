@@ -65,6 +65,8 @@ var _acting := false
 var _done := false
 var _tail := 0.0
 var _previous_seen := ""
+## (X-L0) Mode de jeu par défaut avant la démo (elle joue le mode scénarisé).
+var _previous_mode: StringName = &""
 var _stage := 0
 var _held: Dictionary = {}
 var _plan: Dictionary = {}
@@ -80,6 +82,9 @@ func _ready() -> void:
 	_variant = OS.get_environment("S2_CHOICE")
 	_read_time = LATE_READ_TIME if _late() else READ_TIME
 	_read_left = _read_time
+	# (X-L0) Le mode scénarisé d'E6 et de S2 (le jeu part en libre).
+	_previous_mode = StoryDirector.default_mode
+	StoryDirector.default_mode = StoryPacing.SCENARIO
 	_previous_seen = StoryDirector.seen_path
 	StoryDirector.seen_path = SEEN
 	StoryDirector.forget_seen()
@@ -99,6 +104,8 @@ func _exit_tree() -> void:
 	_held.clear()
 	StoryDirector.forget_seen()
 	StoryDirector.seen_path = _previous_seen
+	if not _previous_mode.is_empty():
+		StoryDirector.default_mode = _previous_mode
 	WorldManager.fade_time = WorldManager.DEFAULT_FADE_TIME
 	Input.action_release(&"move_forward")
 

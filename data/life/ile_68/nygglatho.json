@@ -1,6 +1,7 @@
 {
   "_comment": "Nygglatho (VIE.md, 2.2 et 3) : le linge à l'aube, le petit-déjeuner, le thé, la course du couloir, la lumière sous sa porte la nuit.",
   "lines": [
+    {"slot": ["aube", "matin", "midi", "apres_midi", "soir", "nuit"], "day": 1, "if": {"flag": "mode_libre", "not_scene": "j1_1_port"}, "map": "entrepot", "place": "porte_seuil", "activity": "attendre", "outfit": "vie", "_note": "(X-L1) Mode libre, jour 1 : elle attend sous le porche et propose la scène du port (j1_1_port, clé offer) tant qu'elle n'est pas jouée ; en scénarisé (pas de drapeau mode_libre), rien ne change."},
     {"slot": "soir", "day": 12, "map": "entrepot", "place": "porte_seuil", "activity": "attendre", "outfit": "vie", "_note": "Variations par jour (VIE.md, 3)."},
     {"slot": "matin", "day": 12, "map": "entrepot_rdc", "place": "refectoire_siege_nygglatho", "activity": "the", "outfit": "the"},
     {"slot": "nuit", "day": 9, "map": "entrepot_rdc", "place": "refectoire_veillee", "activity": "the", "outfit": "the"},

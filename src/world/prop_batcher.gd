@@ -12,6 +12,10 @@ extends Node3D
 ## panneaux, ordre des décalques au sol : données propres à chaque exemplaire) ; un mesh qui
 ## n'en a pas reçoit (0, 0). Les décors qui bougent seuls (SkyDrift, AmbientSprites) portent leur
 ## matériau dans le mesh, pas en material_override : ils ne sont pas fondus.
+## (RD) Variation de teinte d'un exemplaire (DecorPanel.tone) : le quad d'un panneau porte son code
+## dans la méta DecorPanel.TONE_META ; il est ajouté à la partie entière de UV2.x de ses sommets
+## (panel_core.gdshaderinc, panel_tone), pour les seuls matériaux des panneaux du décor (pas ceux
+## des intérieurs, dont UV2 porte la coupe) : un mesh par image, comme avant.
 ## (E1) Les triangles à plat de chaque mesh sont calculés une fois par batch() (un mesh partagé
 ## par cent panneaux, une fois), plus dans un cache statique : il gardait en vie, pour toute la
 ## partie, chaque mesh propre à un décor (murs d'un Building, décalque drapé) de chaque carte
@@ -60,7 +64,7 @@ func batch() -> int:
 			lot.cell = cell
 			lots[key] = lot
 			order.append(key)
-		_append(lot, instance.mesh, xform, soups)
+		_append(lot, instance.mesh, xform, soups, _tone_of(instance))
 		instance.mesh = null
 		instance.visible = false
 	var index := 0
@@ -84,8 +88,28 @@ func _collect(node: Node, out: Array[MeshInstance3D]) -> void:
 		_collect(child, out)
 
 
-## Ajoute au lot les triangles du mesh placés par xform (soups : triangles déjà calculés).
-static func _append(lot: _Lot, mesh: Mesh, xform: Transform3D, soups: Dictionary) -> void:
+## (RD) Code de la variation de teinte d'un quad de panneau du décor (0 : aucune).
+static func _tone_of(instance: MeshInstance3D) -> int:
+	if not instance.has_meta(DecorPanel.TONE_META):
+		return 0
+	var material := instance.material_override as ShaderMaterial
+	if material == null:
+		return 0
+	var shader := material.shader
+	if (
+		shader != DecorPanel.PANEL_SHADER
+		and shader != DecorPanel.FOREGROUND_SHADER
+		and shader != DecorPanel.SOFT_SHADER
+	):
+		return 0
+	return int(instance.get_meta(DecorPanel.TONE_META))
+
+
+## Ajoute au lot les triangles du mesh placés par xform (soups : triangles déjà calculés) ; (RD)
+## tone : code de la variation de teinte, ajouté à UV2.x.
+static func _append(
+	lot: _Lot, mesh: Mesh, xform: Transform3D, soups: Dictionary, tone: int = 0
+) -> void:
 	var soup := _soup(mesh, soups)
 	lot.vertices.append_array(xform * (soup[0] as PackedVector3Array))
 	var normal_basis := Transform3D(xform.basis.inverse().transposed(), Vector3.ZERO)
@@ -94,8 +118,15 @@ static func _append(lot: _Lot, mesh: Mesh, xform: Transform3D, soups: Dictionary
 		normals[n] = normals[n].normalized()
 	lot.normals.append_array(normals)
 	lot.uvs.append_array(soup[2])
-	lot.uv2s.append_array(soup[3])
-	lot.has_uv2 = lot.has_uv2 or soup[4]
+	if tone > 0:
+		var uv2s: PackedVector2Array = (soup[3] as PackedVector2Array).duplicate()
+		for n in uv2s.size():
+			uv2s[n].x += float(tone)
+		lot.uv2s.append_array(uv2s)
+		lot.has_uv2 = true
+	else:
+		lot.uv2s.append_array(soup[3])
+		lot.has_uv2 = lot.has_uv2 or soup[4]
 
 
 ## Triangles à plat du mesh (sans index) : sommets, normales, UV, UV2, et si le mesh a des UV2 ;

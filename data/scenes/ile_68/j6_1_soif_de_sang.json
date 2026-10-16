@@ -10,6 +10,7 @@
     "point": "couloir_centre",
     "radius": 4.5
   },
+  "offer": {"point": "couloir_centre", "text": "offer"},
   "present": [
     "willem",
     "collon",

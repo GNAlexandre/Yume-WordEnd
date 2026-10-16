@@ -13,6 +13,7 @@
     "point": "willem_porte",
     "radius": 2.2
   },
+  "offer": {"npc": "willem", "text": "offer"},
   "present": [
     "willem"
   ],

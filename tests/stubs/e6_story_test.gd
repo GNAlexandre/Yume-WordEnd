@@ -5,6 +5,8 @@ extends "res://tests/stubs/m2_game_test.gd"
 ## stick, lire les dialogues à la touche E (choix par les flèches), attendre une scène.
 
 const STORY_ISLAND := &"ile_68"
+## (AN) Fenêtre (images physiques) où un joueur qui tremble sans avancer compte comme immobile.
+const STILL_WINDOW := 30
 
 var _previous_fade: float
 var _previous_seen: String
@@ -139,6 +141,7 @@ func walk_to(target: Vector3, radius: float = 0.8, max_seconds: float = 40.0) ->
 	var start_map := WorldManager.current_map()
 	var last_check := player.global_position
 	var still_frames := 0
+	var recent: Array[Vector3] = []
 	var nudge := 0
 	while index < waypoints.size():
 		if Time.get_ticks_msec() >= deadline:
@@ -199,7 +202,17 @@ func walk_to(target: Vector3, radius: float = 0.8, max_seconds: float = 40.0) ->
 			. length()
 		)
 		last_check = player.global_position
-		still_frames = still_frames + 1 if moved < 0.01 else 0
+		# (AN) Coincé dans un angle, le joueur peut trembler d'un ou deux centimètres d'une image à
+		# l'autre sans avancer : on compte aussi comme immobile un chemin net de moins de 10 cm sur
+		# les STILL_WINDOW dernières images.
+		recent.append(player.global_position)
+		if recent.size() > STILL_WINDOW:
+			recent.remove_at(0)
+		var net := Vector2(
+			player.global_position.x - recent[0].x, player.global_position.z - recent[0].z
+		)
+		var jittering := recent.size() == STILL_WINDOW and net.length() < 0.1
+		still_frames = still_frames + 1 if moved < 0.01 or jittering else 0
 		if still_frames > 0 and still_frames % 20 == 0 and nudge == 0:
 			nudge = 14
 		if still_frames > 160 and not last:

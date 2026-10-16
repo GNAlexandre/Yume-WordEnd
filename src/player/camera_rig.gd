@@ -19,6 +19,12 @@ extends Node3D
 ## visé glisse en douceur vers le joueur (talk_ahead) pour qu'il reste au-dessus de la boîte de
 ## dialogue. L'avance dans le sens de la marche (lead_time) s'installe et s'éteint en douceur
 ## (lead_smoothing) : pas d'à-coup au départ ni à l'arrêt.
+## (AN) Sans dépassement : le point visé ne passe jamais, dans le sens de la marche, au-delà du
+## point visé au repos de plus que l'avance voulue à cet instant (vitesse × lead_time) ; à l'arrêt,
+## il ne dépasse donc pas le point où il se posera, et le joueur arrêté ne glisse plus à l'écran
+## (l'audit mesurait 0,6 m de dépassement, environ 70 px, après une course). (AN) Marge aux bords :
+## le joueur (pieds et tête) reste à au moins edge_margin de chaque bord de l'écran, quitte à
+## laisser le point visé sortir des bornes de la carte (limits) ; pas pendant un cadrage du récit.
 ##
 ## Lissage physique (project.godot : physics/common/physics_interpolation) : le joueur bouge
 ## aux images physiques (60 par seconde) ; la caméra suit sa position interpolée entre deux
@@ -26,9 +32,10 @@ extends Node3D
 ## dès que l'affichage ne tourne pas à 60 images/s (45, 120, 144…). La Camera3D, posée ici à
 ## chaque image, n'est pas interpolée elle-même.
 ##
-## Structure : Camera3D (caméra courante, top_level : elle ne suit pas les rotations du joueur) et
-## PostFX (CanvasLayer derrière l'interface : flou de profondeur, lueur, étalonnage chaud,
-## src/player/post_fx.gdshader ; la bande nette suit le joueur à l'écran).
+## Structure : Camera3D (caméra courante, top_level : elle ne suit pas les rotations du joueur),
+## son enfant DepthBlur ((RD) flou selon la vraie profondeur : rectangle plein écran du monde 3D,
+## src/player/post_fx_depth.gdshader ; la profondeur nette suit le joueur) et PostFX (CanvasLayer
+## derrière l'interface : lueur et étalonnage chaud de toute l'image, src/player/post_fx.gdshader).
 ## Verrouillage : lock_target est cadrée avec le joueur (le point visé avance vers elle, sans
 ## rotation). Le joueur (player.gd) pose lock_target et follow_velocity à chaque image physique.
 ## (E1) Cartes : à chaque EventBus.map_entered (et à son _ready s'il y a déjà une carte), limits
@@ -41,10 +48,13 @@ extends Node3D
 ## plan : 21 → 9 m) ou lever les yeux (tangage 32° → 15°), hors des bornes du zoom et de la carte ;
 ## release_story(durée) rend la caméra du jeu. Le joueur peut bouger pendant un cadrage.
 
-## (H5) Profondeur nette du flou de profondeur autour du joueur (m) : derrière lui (vers le
-## nord) et devant lui (vers la caméra).
-const BAND_AHEAD := 9.0
-const BAND_BEHIND := 4.5
+## (RD) Flou du premier plan (px à 720 px de haut) pour un flou du bas d'écran de 1 px dans le
+## réglage de lumière (HD2DLighting.bottom_blur_px, 2,5 dehors : 7 px) ; le flou du lointain est
+## HD2DLighting.top_blur_px. Le réglage est posé sur PostFX (apply_post) et recopié à chaque image
+## sur DepthBlur.
+const NEAR_BLUR_PER_BOTTOM_PX := 2.8
+## (AN) Baisse de vitesse d'une image à l'autre (m/s) au-delà de laquelle le joueur freine.
+const BRAKE_TOLERANCE := 0.01
 
 ## Inclinaison de la caméra vers le bas (degrés) et champ vertical (degrés).
 @export_range(20.0, 60.0) var pitch_deg: float = 32.0
@@ -79,6 +89,10 @@ const BAND_BEHIND := 4.5
 ## courante à chaque changement de carte ; valeur de la scène (un grand carré autour de
 ## l'origine, WorldManager.DEFAULT_CAMERA_BOUNDS) tant qu'aucune carte n'est posée.
 @export var limits: Rect2 = Rect2(-71.0, -70.0, 142.0, 136.0)
+## (AN) Part de la largeur et de la hauteur de l'écran gardée libre entre le joueur et chaque bord
+## (0 : sans marge). Hauteur du joueur prise en compte (m).
+@export_range(0.0, 0.4) var edge_margin: float = 0.12
+@export var player_height: float = 1.6
 
 @export_group("Verrouillage")
 ## Part de l'écart joueur → cible dont le point visé avance vers elle, et avancée maximale (m).
@@ -95,6 +109,9 @@ var _distance: float = 19.0
 var _target_distance: float = 19.0
 var _started: bool = false
 var _post: ShaderMaterial
+## (RD) Matériau du flou de profondeur (CameraRig/Camera3D/DepthBlur), propre à cette caméra.
+var _depth_blur: ShaderMaterial
+var _depth_blur_on: bool = true
 ## Avance lissée dans le sens de la marche (m) et écart au nord lissé (m).
 var _lead: Vector3 = Vector3.ZERO
 var _ahead: float = 2.5
@@ -108,6 +125,11 @@ var _story_distance: float = 21.0
 var _story_pitch: float = 32.0
 var _story_speed: float = 3.0
 var _shown_pitch: float = 32.0
+## (AN) Dernière direction de marche (plan du sol) : sens où le point visé ne doit pas dépasser.
+var _travel: Vector3 = Vector3.ZERO
+## (AN) Vitesse de la marche à l'image précédente (m/s) : elle baisse, le joueur freine.
+var _last_speed: float = 0.0
+var _braking: bool = false
 
 @onready var camera: Camera3D = $Camera3D
 
@@ -132,6 +154,10 @@ func _ready() -> void:
 		# (HD2DLighting.apply_post) ne touchent pas la ressource de la scène.
 		_post = screen.material.duplicate() as ShaderMaterial
 		screen.material = _post
+	var blur := get_node_or_null(^"Camera3D/DepthBlur") as MeshInstance3D
+	if blur != null and blur.material_override is ShaderMaterial:
+		_depth_blur = blur.material_override.duplicate() as ShaderMaterial
+		blur.material_override = _depth_blur
 	snap()
 	# Le joueur peut encore être déplacé avant la première image (game.gd : position de la
 	# sauvegarde ou téléportation au Spawn, après ce _ready) : la première update_camera() se
@@ -177,9 +203,79 @@ func update_camera(delta: float, zoom_axis: float = 0.0) -> void:
 		_shown_pitch = lerpf(_shown_pitch, _story_pitch, glide)
 	else:
 		_focus = _focus.lerp(focus_goal(), 1.0 - exp(-follow_speed * delta))
+		_focus = _without_overshoot(_focus, wanted_lead)
 		_distance = lerpf(_distance, _target_distance, 1.0 - exp(-zoom_smoothing * delta))
 		_shown_pitch = lerpf(_shown_pitch, pitch_deg, 1.0 - exp(-zoom_smoothing * delta))
+		_focus = keep_in_frame(_focus, anchor())
 	_apply()
+
+
+## (AN) Le point visé focus borné dans le sens de la marche : au plus wanted_lead.length() m
+## au-delà du point visé au repos (focus_goal sans avance), et pas au-delà du tout pendant que le
+## joueur freine (sa vitesse baisse) ou à l'arrêt : le point visé ne dépasse jamais celui où il se
+## posera, et le joueur arrêté ne glisse pas à l'écran. En marche régulière, l'avance compense
+## juste le retard du suivi (lead_time = 1 / follow_speed) : la borne ne mord pas.
+func _without_overshoot(focus_point: Vector3, wanted_lead: Vector3) -> Vector3:
+	var flat_velocity := Vector3(follow_velocity.x, 0.0, follow_velocity.z)
+	var speed := flat_velocity.length()
+	# Le freinage dure jusqu'à la prochaine accélération (plusieurs images d'affichage passent
+	# entre deux images physiques : une vitesse inchangée ne l'interrompt pas).
+	if speed < _last_speed - BRAKE_TOLERANCE:
+		_braking = true
+	elif speed > _last_speed + BRAKE_TOLERANCE:
+		_braking = false
+	_last_speed = speed
+	if speed > 0.1:
+		_travel = flat_velocity / speed
+	if _travel == Vector3.ZERO:
+		return focus_point
+	var rest := focus_goal(false)
+	var along := (focus_point - rest).dot(_travel)
+	var allowed := 0.0 if _braking or speed <= 0.1 else wanted_lead.length()
+	if along > allowed:
+		focus_point -= _travel * (along - allowed)
+	return focus_point
+
+
+## (AN) Point visé focus_point déplacé au plus court pour que le joueur (pieds en feet, tête
+## player_height m plus haut) reste à edge_margin des bords de l'écran, avec la distance et le
+## tangage affichés ; inchangé sans marge ou sans écran.
+func keep_in_frame(focus_point: Vector3, feet: Vector3) -> Vector3:
+	var size := get_viewport().get_visible_rect().size if is_inside_tree() else Vector2.ZERO
+	if edge_margin <= 0.0 or size.x <= 0.0 or size.y <= 0.0:
+		return focus_point
+	var limit := 1.0 - 2.0 * edge_margin
+	var tan_half := tan(deg_to_rad(fov_deg) * 0.5)
+	var aspect := size.x / size.y
+	var tilt := deg_to_rad(_shown_pitch)
+	var head := feet + Vector3.UP * player_height
+	# Vertical : le nord (−Z) monte à l'écran. Pieds au-dessus du bas, tête sous le haut.
+	for check: Array in [[feet, -limit], [head, limit]]:
+		var view := _to_view(check[0], focus_point, tilt)
+		var bound: float = check[1]
+		var ndc_y := view.y / (view.z * tan_half)
+		if (bound < 0.0 and ndc_y < bound) or (bound > 0.0 and ndc_y > bound):
+			# Point visé décalé de dz au sud : y gagne dz·sin, la profondeur dz·cos.
+			var denominator := sin(tilt) - bound * tan_half * cos(tilt)
+			if absf(denominator) > 0.001:
+				focus_point.z += (bound * tan_half * view.z - view.y) / denominator
+	# Horizontal : la largeur visible à la profondeur des pieds.
+	var feet_view := _to_view(feet, focus_point, tilt)
+	var half_width := feet_view.z * tan_half * aspect * limit
+	if feet_view.x > half_width:
+		focus_point.x += feet_view.x - half_width
+	elif feet_view.x < -half_width:
+		focus_point.x += feet_view.x + half_width
+	return focus_point
+
+
+## (AN) Point du monde dans le repère de la caméra posée sur focus_point (tangage tilt) : x à
+## droite, y en haut, z profondeur devant la caméra.
+func _to_view(point: Vector3, focus_point: Vector3, tilt: float) -> Vector3:
+	var relative := point - (focus_point + _back(rad_to_deg(tilt)) * _distance)
+	var up := Vector3(0.0, cos(tilt), -sin(tilt))
+	var toward := Vector3(0.0, -sin(tilt), -cos(tilt))
+	return Vector3(relative.x, relative.dot(up), maxf(relative.dot(toward), 0.01))
 
 
 ## (E6) Cadrage du récit : le point visé glisse vers point (repère du monde) en environ time s,
@@ -268,12 +364,16 @@ func snap() -> void:
 		body.reset_physics_interpolation()
 	reset_physics_interpolation()
 	_lead = Vector3.ZERO
+	_travel = Vector3.ZERO
+	_last_speed = 0.0
+	_braking = false
 	_ahead = talk_ahead if _talking else focus_ahead
 	# La place affichée n'est recalculée qu'une fois par image : juste après une téléportation,
 	# elle donne encore l'ancienne. La caméra se recale sur la vraie position.
 	_focus = _goal_from(global_position, false)
 	_distance = _target_distance
 	_shown_pitch = pitch_deg
+	_focus = keep_in_frame(_focus, global_position)
 	if _story_active:
 		_focus = _story_focus
 		_distance = _story_distance
@@ -326,7 +426,7 @@ func _apply() -> void:
 	camera.global_transform = Transform3D(
 		Basis(Vector3.RIGHT, -tilt), _focus + _back(_shown_pitch) * _distance
 	)
-	_update_focus_band()
+	_update_focus_depth()
 
 
 ## Direction du point visé vers la caméra pour un tangage (degrés).
@@ -335,24 +435,56 @@ static func _back(degrees: float) -> Vector3:
 	return Vector3(0.0, sin(tilt), cos(tilt))
 
 
-## (H5) La bande nette du flou de profondeur (post_fx.gdshader : focus_center, focus_half) suit
-## le joueur à l'écran : elle va de BAND_BEHIND m devant lui (vers la caméra) à BAND_AHEAD m
-## derrière lui, à mi-hauteur d'un personnage. Le joueur et ceux qui l'entourent ne sont jamais
-## flous, même décentrés par le retard du suivi, l'avance, le verrouillage ou les bornes de
-## l'île.
-func _update_focus_band() -> void:
-	if _post == null:
+## (RD) Le flou de profondeur (post_fx_depth.gdshader) est net autour du joueur : sa profondeur
+## (m le long de l'axe de la caméra, à mi-hauteur d'un personnage) est posée à chaque image, avec
+## les flous du lointain et du premier plan du réglage de lumière (posés sur PostFX), sur DepthBlur
+## et sur les matériaux qui se floutent eux-mêmes (DepthFocus).
+func _update_focus_depth() -> void:
+	if _depth_blur == null:
 		return
-	var height := get_viewport().get_visible_rect().size.y
-	var middle := anchor() + Vector3.UP * focus_height
-	var far := middle + Vector3.FORWARD * BAND_AHEAD
-	var near := middle + Vector3.BACK * BAND_BEHIND
-	if height <= 0.0 or camera.is_position_behind(far) or camera.is_position_behind(near):
-		return
-	var top := clampf(camera.unproject_position(far).y / height, 0.05, 0.85)
-	var bottom := clampf(camera.unproject_position(near).y / height, top + 0.05, 1.0)
-	_post.set_shader_parameter(&"focus_center", (top + bottom) / 2.0)
-	_post.set_shader_parameter(&"focus_half", (bottom - top) / 2.0)
+	_show_depth_blur()
+	var values := {&"focus_depth": focus_depth_of(anchor() + Vector3.UP * focus_height)}
+	if _post != null:
+		var far: Variant = _post.get_shader_parameter(&"top_blur_px")
+		var bottom: Variant = _post.get_shader_parameter(&"bottom_blur_px")
+		if far != null:
+			values[&"far_blur_px"] = float(far)
+		if bottom != null:
+			values[&"near_blur_px"] = float(bottom) * NEAR_BLUR_PER_BOTTOM_PX
+	for key: StringName in values:
+		_depth_blur.set_shader_parameter(key, values[key])
+	if camera.current:
+		DepthFocus.apply(values)
+
+
+## (RD) Profondeur d'un point du monde le long de l'axe de la caméra (m ; négative derrière elle).
+func focus_depth_of(point: Vector3) -> float:
+	return -(camera.global_transform.affine_inverse() * point).z
+
+
+## (RD) Matériau du flou de profondeur de cette caméra (null sans DepthBlur).
+func depth_blur_material() -> ShaderMaterial:
+	return _depth_blur
+
+
+## (RD) Allume ou éteint le flou de profondeur (qualité réduite : sans lui, ni copie de l'image
+## ni de la profondeur dans le monde 3D ; les matériaux mélangés gardent leur flou propre).
+func set_depth_blur_enabled(enabled: bool) -> void:
+	_depth_blur_on = enabled
+	_show_depth_blur()
+
+
+## (RD) Vrai si le flou de profondeur est allumé.
+func is_depth_blur_enabled() -> bool:
+	return _depth_blur_on
+
+
+## (RD) Le rectangle du flou couvre l'écran de toute caméra : il ne se montre que si celle du
+## joueur est la caméra courante (pas sous la caméra d'ensemble d'une carte ni d'une vue d'essai).
+func _show_depth_blur() -> void:
+	var blur := get_node_or_null(^"Camera3D/DepthBlur") as Node3D
+	if blur != null:
+		blur.visible = _depth_blur_on and camera.current
 
 
 func _valid_target() -> Node3D:

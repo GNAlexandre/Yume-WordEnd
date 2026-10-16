@@ -12,6 +12,7 @@
     "point": "premiere_embuscade",
     "radius": 7
   },
+  "offer": {"point": "premiere_embuscade", "text": "offer"},
   "present": [
     "pannibal"
   ],

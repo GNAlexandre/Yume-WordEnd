@@ -13,7 +13,12 @@ render_mode cull_disabled, depth_draw_opaque, specular_disabled;
 #include "res://src/world/shaders/pixel_art.gdshaderinc"
 #include "res://src/world/shaders/panel_core.gdshaderinc"
 
+varying vec2 panel_variation;
+varying vec2 panel_ground;
+
 void vertex() {
+	panel_variation = panel_tone(UV2);
+	panel_ground = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xz;
 	UV = panel_strip_uv(UV, UV2, TIME);
 	POSITION = panel_position(VERTEX, UV2.y, MODELVIEW_MATRIX, PROJECTION_MATRIX);
 }
@@ -22,7 +27,9 @@ void fragment() {
 	vec3 albedo;
 	float alpha;
 	vec3 emission;
-	panel_shade(UV, albedo, alpha, emission);
+	float flip_sign = dFdx(UV.x) < 0.0 ? -1.0 : 1.0;
+	panel_shade(panel_wind_uv(UV, panel_ground, TIME, flip_sign), albedo, alpha, emission);
+	albedo = panel_apply_tone(albedo, panel_variation);
 	ALBEDO = albedo;
 	ALPHA = alpha;
 	ALPHA_SCISSOR_THRESHOLD = alpha_cut;

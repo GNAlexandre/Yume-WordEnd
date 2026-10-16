@@ -13,7 +13,9 @@ extends GutTest
 ## Après chaque test : partie libérée, touches relâchées, pause levée, sauvegarde de test
 ## effacée, chemin de sauvegarde, délai de réapparition, carte de départ et récit rétablis.
 ## (F1) Une nouvelle partie se pose sur la carte d'essai (start_map_for_test), récit coupé
-## (story_for_test) : les tests du récit (tests/stubs/e6_story_test.gd) le rallument.
+## (story_for_test) : les tests du récit (tests/stubs/e6_story_test.gd) le rallument. (X-L0) Le
+## mode de jeu par défaut (StoryDirector.default_mode) est scénarisé (mode_for_test) :
+## les tests écrits avant le mode libre gardent le récit d'E6 et de S2, au bit près.
 
 const GAME_SCENE := preload("res://src/game.tscn")
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
@@ -47,6 +49,7 @@ var _previous_autosave: float
 var _previous_respawn: float
 var _previous_start: StringName
 var _previous_story: bool
+var _previous_mode: StringName
 
 
 func before_each() -> void:
@@ -60,6 +63,8 @@ func before_each() -> void:
 	WorldManager.start_map = start_map_for_test()
 	_previous_story = StoryDirector.enabled
 	StoryDirector.enabled = story_for_test()
+	_previous_mode = StoryDirector.default_mode
+	StoryDirector.default_mode = mode_for_test()
 	SaveManager.close_game(false)
 	SaveManager.save_path = save_file()
 	_delete_save_files()
@@ -91,6 +96,8 @@ func after_each() -> void:
 	WorldManager.respawn_delay = _previous_respawn
 	WorldManager.start_map = _previous_start
 	StoryDirector.enabled = _previous_story
+	StoryDirector.default_mode = _previous_mode
+	StoryDirector.next_game_mode = &""
 	SaveManager.close_game(false)
 	GameState.reset()
 
@@ -106,6 +113,12 @@ func start_map_for_test() -> StringName:
 ## l'acte ; les tests du récit le rallument.
 func story_for_test() -> bool:
 	return false
+
+
+## (X-L0) Mode de jeu par défaut pendant le test (StoryDirector.default_mode) : scénarisé ;
+## les tests du mode libre (tests/integration/test_free_start.gd) le redéfinissent.
+func mode_for_test() -> StringName:
+	return StoryPacing.SCENARIO
 
 
 ## Sauvegarde propre au script de test.

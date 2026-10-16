@@ -64,6 +64,13 @@ func _run() -> void:
 		return
 	var main := get_tree().current_scene
 	await _press_key(KEY_ENTER)
+	# (X-L5) « Nouvelle partie » demande le mode : Entrée garde le mode libre, qui a le focus.
+	if is_instance_valid(menu) and menu.has_method(&"is_mode_choice_open"):
+		for _frame: int in 10:
+			await get_tree().process_frame
+		if menu.call(&"is_mode_choice_open"):
+			_log("choix du mode : mode libre")
+			await _press_key(KEY_ENTER)
 	var player := await _wait_player(main, 120.0)
 	if not _check(player != null, "partie chargée, joueur présent"):
 		return

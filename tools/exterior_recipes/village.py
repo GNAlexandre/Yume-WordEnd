@@ -19,11 +19,12 @@ sont celles d'Atmosphere (E9) ; seule l'image `wall_lantern` est posée.
 import math
 
 import exterior_ground
+import exterior_kits as kits
 from exterior_pose import Rect, along, poisson
 
 SETTINGS = {
     "groups": ["Houses", "Facade", "Roof", "Street", "Garden", "Yard", "Hedge", "Edge", "River", "Woods", "Meadow",
-               "Backdrop", "Sky"],
+               "Backdrop", "Sky", "Middle", "Foreground"],
     "no_lights": True,
     "texts": "res://data/texts/village.json",
     # Objets à examiner du dehors (data/texts/village.json, section « village »).
@@ -89,6 +90,8 @@ BUSHES = ["bush", "bush_b", "bush_c", "bush_d", "bush_e", "bush_f", "berry_bush"
 FERNS = ["fern_a", "fern_b", "fern_c", "fern_d"]
 GRASSES = ["grass_clump_a", "grass_clump_b", "grass_clump_c", "grass_clump_d", "tall_grass"]
 FLOWERS = ["wildflowers_a", "wildflowers_b", "myosotis_b"]
+# (RC) La haie du bord sud : les fourrés de premier plan et ceux qui ne cachent rien (au bord de la carte).
+HEDGES = ["thicket_a_fg", "thicket_b_fg", "thicket_c", "bramble_hedge"]
 
 # Jardins clos derrière les chaumières du sud : (x0, z0, x1, z1).
 ENCLOSURES = [(3.2, 15.8, 13.8, 22.0), (43.2, 16.8, 49.2, 23.0), (49.2, 16.8, 55.3, 22.0)]
@@ -98,6 +101,28 @@ BUILDING_SCENES = {"cafe": "cafe_village"}
 
 def pascal(text):
     return "".join(part.capitalize() for part in text.split("_"))
+
+
+def fence_row(x0, x1, z, seed, overgrown=True, pool=None):
+    """(RC) Une clôture de plessis de x0 à x1 (bords des pièces de 2 m), en z : pas de 1,6 à 2 m (les pièces se
+    chevauchent : jamais de trou, la clôture ferme), recul de ± 0,12 m, retournée au hasard, hauteur ± 6 % ; un
+    buisson poussé devant elle tous les trois à six éléments (overgrown). Une seule image de plessis est livrée : une
+    variante (cahier n° 7, famille `wattle`) y entrera seule, jamais deux fois de suite."""
+    items = kits.row([(x0 + 1.0, z), (x1 - 1.0, z)], pool or kits.family("wattle"), seed=seed, spread=0.1, depth=0.12,
+                     skip=0.0, scale=(0.94, 1.06), overlap=0.9, tone=(0.035, 0.0))
+    if not overgrown or len(items) < 3:
+        return items
+    import random
+    rng = random.Random(seed + 7)
+    bushes = kits.family("wattle_accents")[1:]
+    k = rng.randint(1, 3)
+    while k < len(items) - 1:
+        _scene, x, zz, _f, _s, _t = items[k]
+        items.append((bushes[rng.randrange(len(bushes))], round(x + rng.uniform(-0.5, 0.5), 3),
+                      round(zz + rng.uniform(0.3, 0.5), 3), rng.random() < 0.5, round(rng.uniform(0.85, 1.05), 3),
+                      (round(rng.uniform(-0.05, 0.05), 3), round(rng.uniform(-0.02, 0.02), 3))))
+        k += rng.randint(4, 7)
+    return items
 
 
 def ground_plan(m):
@@ -182,10 +207,10 @@ def pose(p):
             place("Street", n, x, z, name="BancBelvedere", check=False)
         elif n == "fence_wattle":
             if d.block:
-                count = max(1, int(round(w / 2.0)))
-                for k in range(count):
-                    place("Garden", n, d.rect.x0 + (k + 0.5) * w / count, z, name="Cloture_%d_%d" % (round(z * 10), k),
-                          flip=k % 2 == 1)
+                # (RC) Une clôture irrégulière (exterior_kits.row) : pas et recul variés, retournée au hasard, un
+                # buisson ou une palissade basse par-ci par-là ; jamais de trou (elle ferme le jardin).
+                kits.place_row(p, "Garden", "Cloture_%d_" % round(z * 10), fence_row(d.rect.x0, d.rect.x1, z,
+                                                                                    seed=1100 + round(z * 10)))
             else:
                 place("Edge", "fence_wattle_libre", x, z, name="GardeFouBelvedere", check=False)
         elif n == "wall_lantern":
@@ -230,8 +255,10 @@ def pose(p):
     for k, x in enumerate((13.5, 23.0, 30.0, 40.0, 48.0, 55.0)):
         place("Edge", "edge_parapet", x, 3.25, name="Parapet%d" % (k + 1), flip=k % 2 == 1, check=False)
     # Le belvédère : le garde-fou de branches sur toute sa largeur, des roches et de l'herbe au bord du vide.
-    for k, x in enumerate((32.0, 34.0, 36.0, 38.0)):
-        place("Edge", "fence_wattle_libre", x, 3.9, name="GardeFou%d" % (k + 1), flip=k % 2 == 1, check=False)
+    # (RC) En rangée irrégulière (sans trou : le vide est derrière ; recul vers le belvédère seulement).
+    kits.place_row(p, "Edge", "GardeFou", kits.row([(32.0, 3.9), (38.0, 3.9)], ["fence_wattle_libre"], seed=1181,
+                                                   spread=0.1, depth_range=(-0.08, 0.0), skip=0.0, overlap=0.92,
+                                                   scale=(0.9, 1.0), tone=(0.035, 0.0)), check=False)
     place("Edge", "edge_rocks_b", 31.5, 3.55, name="RocheBelvedereOuest", check=False)
     place("Edge", "edge_rocks_a", 38.6, 3.6, name="RocheBelvedereEst", flip=True, check=False)
     for k, x in enumerate((4.5, 13.0, 23.0, 30.2, 40.0, 48.2, 55.0)):
@@ -288,10 +315,11 @@ def pose(p):
     borders = []
     for name, width, pts in PATHS:
         if name in ("rue", "chemin_bas"):
-            borders += along(pts, 3.6, width / 2.0 + 0.1, 0.1, seed=64 + len(borders), with_yaw=True)
+            borders += kits.along_irregular(pts, 3.3, width / 2.0 + 0.1, seed=64 + len(borders), spread=0.35, lateral=0.3,
+                                            skip=0.1, yaw_jitter=12.0)
     borders = [q for q in borders if in_map(q[0], q[1], 0.5) and outside_edges(q[0], q[1], 0.2)
                and not any(b.has(q[0], q[1], 0.2) for b in BUILDINGS)]
-    scatter("StreetEdges", ["grass_edge_a", "grass_edge_b"], borders, scale=(0.9, 1.1), seed=65, check=False)
+    scatter("StreetEdges", kits.family("grass_edges"), borders, scale=(0.8, 1.15), seed=65, check=False)
 
     # Le pied des façades du nord : herbe, fleurs et cailloux contre les murs (rien de bloquant : la place devant le café
     # reste nue).
@@ -315,22 +343,28 @@ def pose(p):
     place("Garden", "watering_can", 29.0, 24.0, name="Arrosoir", check=False)
     place("Garden", "sack_apples", 33.4, 21.4, name="SacPotager", check=False)
     # Clôtures du grand jardin : le plan clôt x 20 → 24 ; elles se prolongent jusqu'à x 34, côtés ouverts.
-    for k, x in enumerate((26.0, 28.0, 30.0, 32.0)):
-        place("Garden", "fence_wattle", x, 16.8, name="ClotureNord%d" % (k + 3), flip=k % 2 == 0)
-        place("Garden", "fence_wattle", x, 25.2, name="ClotureSud%d" % (k + 3), flip=k % 2 == 1)
+    # (RC) En rangées irrégulières (fence_row).
+    kits.place_row(p, "Garden", "ClotureNord", fence_row(25.0, 33.0, 16.8, seed=1121))
+    # Au sud, le prolongement est une palissade basse de piquets, plus neuve que le plessis du plan (vue sud : douze
+    # pièces de plessis dans le même champ).
+    kits.place_row(p, "Garden", "ClotureSud", fence_row(25.0, 33.0, 25.2, seed=1122, pool=["fence_low"]))
+    # (RC) Feuilles et cailloux au pied des clôtures du nord du jardin, côté rue (des images déjà posées : test_hd2d_decor
+    # borne le nombre d'images d'une carte).
+    for k, (x, z, scene) in enumerate(((21.2, 16.25, "leaves_gold_b"), (27.6, 16.2, "leaves_rust_b"),
+                                       (14.8, 15.5, "pebbles_b"))):
+        place("Garden", scene, x, z, name="FleursCloture%d" % (k + 1), flip=k % 2 == 1, check=False)
 
     # Les jardins clos des chaumières : clôture de branches au nord, haies de buissons aux côtés, derrière
     # lesquels rien ne se voit ni ne se marche ; lits et légumes de l'autre côté.
     for ei, (x0, z0, x1, z1) in enumerate(ENCLOSURES):
-        count = int(math.ceil((x1 - x0) / 2.0))
-        for k in range(count):
-            place("Hedge", "fence_wattle", x0 + (k + 0.5) * (x1 - x0) / count, z0 + 0.1,
-                  name="CloturePotager%d_%d" % (ei + 1, k + 1), flip=k % 2 == 1, check=False)
-        for zk in range(int((z1 - z0) / 1.7)):
-            z = z0 + 0.8 + zk * 1.7
-            place("Hedge", BUSHES[(zk + ei) % 3 + 2], x0 + 0.1, z, name="HaieOuest%d_%d" % (ei + 1, zk + 1), check=False)
-            place("Hedge", BUSHES[(zk + ei + 1) % 3 + 2], x1 - 0.1, z, name="HaieEst%d_%d" % (ei + 1, zk + 1),
-                  check=False, flip=True)
+        # (RC) Clôture et haies latérales en rangées irrégulières (exterior_kits.row) : pas ± 30 %, recul, six
+        # buissons qui ne se suivent jamais deux fois.
+        kits.place_row(p, "Hedge", "CloturePotager%d_" % (ei + 1), fence_row(x0, x1, z0 + 0.1, seed=1130 + ei),
+                       check=False)
+        for side, xs in (("Ouest", x0 + 0.1), ("Est", x1 - 0.1)):
+            kits.place_row(p, "Hedge", "Haie%s%d_" % (side, ei + 1),
+                           kits.row([(xs, z0 + 0.8), (xs, z1 - 0.6)], BUSHES[1:6], seed=1140 + ei * 2 + len(side),
+                                    step=1.8, depth=0.18, skip=0.0, scale=(0.85, 1.1)), check=False)
     place("Garden", "garden_bed", 9.6, 19.2, name="PlateBandeOuest")
     place("Garden", "vegetable_patch", 11.4, 17.2, name="LegumesOuest")
     place("Garden", "scarecrow_front", 7.6, 17.8, name="EpouvantailOuest")
@@ -352,7 +386,7 @@ def pose(p):
     # === 5. Le sud : ruisseau, lavoir, ruches, prés, haie (5.2, kits « sud ») =============================
 
     # Le ruisseau de l'ouest et du sud : roseaux, massettes, nénuphars, pierres de gué.
-    west = poisson(Rect(0.5, 6.8, 2.8, 36.4), 1.8, 16, free(), seed=31)
+    west = poisson(Rect(0.5, 6.8, 2.8, 36.4), 1.8, 13, free(), seed=31)
     place("River", "edge_rocks_b", 1.6, 5.4, y=-0.5, name="RochesCascade", check=False)
     place("River", "reeds", 2.4, 6.9, y=-0.5, name="RoseauxCascade", check=False)
     place("River", "cattails", 0.9, 7.2, y=-0.5, name="MassettesCascade", flip=True, check=False)
@@ -369,7 +403,7 @@ def pose(p):
     place("River", "mist_patch", 2.0, 14.0, name="BrumeRuisseau", check=False)
     # Les prés : herbe haute, fleurs sauvages, buissons ; pas de sol nu de plus de 6 × 6 m.
     meadow = []
-    for area, n, seed in ((Rect(0.6, 30.8, 55.4, 33.4), 36, 40), (Rect(3.5, 37.0, 55.4, 38.0), 12, 41),
+    for area, n, seed in ((Rect(0.6, 30.8, 55.4, 33.4), 20, 40), (Rect(3.5, 37.0, 55.4, 38.0), 10, 41),
                           (Rect(14.2, 15.8, 19.8, 28.0), 10, 42), (Rect(34.4, 15.8, 41.0, 28.0), 10, 43),
                           (Rect(0.6, 3.6, 3.5, 36.0), 0, 44), (Rect(55.0, 15.5, 55.8, 32.0), 0, 45)):
         if n:
@@ -389,13 +423,10 @@ def pose(p):
     place("Meadow", "stump_a", 40.1, 18.2, name="SoucheRuelle")
 
     # La haie du bord sud (premier plan), les arbres du coin sud-est (bord foret 50 → 56 ; 31 → 34).
-    hedge_x = 1.0
-    k = 0
-    while hedge_x < W - 1.0:
-        place("Edge", ["thicket_a_fg", "thicket_b_fg"][k % 2], hedge_x, 39.0 + (k % 3) * 0.15, name="HaieSud%d" % (k + 1),
-              flip=k % 2 == 1, check=False)
-        hedge_x += 2.4 if k % 2 == 0 else 2.0
-        k += 1
+    # (RC) Une haie irrégulière (exterior_kits.row) : quatre sortes de fourrés qui ne se suivent jamais deux fois,
+    # pas ± 30 %, recul de ± 0,4 m, quelques trouées (le bord de la carte, fermé par le sol, est derrière).
+    kits.place_row(p, "Edge", "HaieSud", kits.row([(0.8, 39.1), (W - 0.8, 39.1)], HEDGES, seed=1150, spread=0.3,
+                                                  depth=0.4, skip=0.12, scale=(0.9, 1.1), overlap=1.0))
     # (QC2) Au sud des ruches, un jeune arbre : un grand les couvrait (docs/QUALITE.md, QC-37).
     for k, (x, z, scene) in enumerate(((52.0, 32.6, "sapling_a_forest"), (55.0, 31.8, "maple_a_forest"))):
         place("Woods", scene, x, z, name="ArbreSudEst%d" % (k + 1), check=False)
@@ -434,6 +465,15 @@ def pose(p):
                                                  (50.0, -38.0, -170.0, 2.0, "distant_island_a"),
                                                  (-8.0, -34.0, -210.0, 2.4, "distant_island_c"))):
         place("Sky", scene, x, z, y=y, scale=scale, name="Lointain%d" % (k + 1), check=False)
+
+    # === 9. (RC) Les plans (CARTE.md 0.5) ===============================================================
+    # Plan moyen : de jeunes arbres, des fourrés, une meule sur les côtés ouverts du grand jardin et dans les prés du
+    # sud, loin des ruelles, du chemin du bas et des places de la vie. Premier plan : au bas de chaque vue.
+    walk_grid()
+    kits.middle_kit(p, [(Rect(17.4, 15.8, 19.9, 28.0), 2), (Rect(34.2, 15.8, 38.6, 28.0), 2),
+                        (Rect(1.0, 36.6, 55.0, 38.4), 2), (Rect(14.0, 30.6, 46.0, 33.2), 2)],
+                    [s for s in kits.family("mid_nature") if s != "boulder_b"], seed=1161)
+    kits.foreground_views(p, "village", seed=1171)
 
 
 def ambient(p):

@@ -14,6 +14,8 @@ extends RefCounted
 ## Format strict : une clé inconnue est une faute (clé « _… » : commentaire) ; une scène fautive
 ## n'est pas jouée (avertissement). scene_problems() et act_problems() disent tout ce qui ne va
 ## pas, monde compris (personnages, cartes, places, textes, animations, tenues, dialogues).
+## (X-L0) Rythme libre : clés facultatives d'une scène « offer », « skip » et « free », et de
+## l'acte « free », vérifiées par StoryFreeData.
 
 ## Fichier de l'acte, dans le dossier des scènes de l'île.
 const ACT_FILE := "act.json"
@@ -44,6 +46,9 @@ const SCENE_KEYS: Array[String] = [
 	"key",
 	"hint",
 	"steps",
+	"offer",
+	"skip",
+	"free",
 ]
 const TRIGGERS: Dictionary = {
 	"ready": [],
@@ -53,7 +58,9 @@ const TRIGGERS: Dictionary = {
 	"examine": ["key"],
 	"prompt": ["point", "prompt", "map", "size"],
 }
-const ACT_KEYS: Array[String] = ["start", "departure_day", "sleep", "rest", "calendar", "days"]
+const ACT_KEYS: Array[String] = [
+	"start", "departure_day", "sleep", "rest", "calendar", "days", "free"
+]
 const START_KEYS: Array[String] = ["map", "marker", "day", "slot", "weather"]
 const SLEEP_KEYS: Array[String] = ["map", "point", "prompt", "slots", "wake_slot"]
 const REST_KEYS: Array[String] = ["prompt", "points"]
@@ -361,6 +368,7 @@ static func act_problems(
 	else:
 		_unknown(calendar, CALENDAR_KEYS, "calendar", found)
 	_act_days(data.get("days"), island_id, check_world, found)
+	StoryFreeData.check_act(data.get("free"), found)
 	return found
 
 
@@ -416,6 +424,7 @@ static func scene_problems(
 		"sequence": data.get("sequence", false) == true,
 	}
 	_check_trigger(data.get("trigger"), context, found)
+	StoryFreeData.check_scene(data, context, found)
 	var steps: Variant = data.get("steps")
 	if not steps is Array or (steps as Array).is_empty():
 		found.append("« steps » : une liste d'étapes non vide")

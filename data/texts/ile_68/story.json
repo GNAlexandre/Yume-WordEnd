@@ -13,7 +13,73 @@
     "today": "Aujourd'hui : jour {day}",
     "departure_in": "Départ dans {days} jours",
     "departure_tomorrow": "Départ demain",
-    "departure_today": "C'est le jour du départ"
+    "departure_today": "C'est le jour du départ",
+    "mode_scenario": "Mode scénarisé",
+    "mode_libre": "Mode libre",
+    "offer_go": "Allons-y",
+    "offer_later": "Plus tard",
+    "offer_default": "Un moment de l'histoire t'attend : « {title} ».",
+    "mode_choice_title": "Comment veux-tu jouer ?",
+    "mode_libre_blurb": "L'île est à toi : explore à ta guise, les moments de l'histoire te sont proposés.",
+    "mode_scenario_blurb": "Vis l'histoire jour après jour, scène après scène, comme dans le livre.",
+    "mode_choice_hint": "Tu pourras en changer en cours de partie : Pause, puis Options.",
+    "mode_choice_back": "Retour",
+    "mode_option": "{mode} · changer",
+    "mode_switch_libre": "Passer en mode libre ?",
+    "mode_switch_scenario": "Passer en mode scénarisé ?",
+    "mode_switch_libre_note": "Les scènes ne partent plus seules : on te les propose, et tu peux les passer. Ta partie est gardée telle quelle.",
+    "mode_switch_scenario_note": "Les scènes repartent seules, jour après jour, comme dans l'histoire. Ta partie est gardée telle quelle.",
+    "mode_switch_yes": "Changer",
+    "mode_switch_no": "Garder",
+    "mode_switched": "C'est fait : {mode}.",
+    "activity_stop": "Échap : arrêter",
+    "today_title": "À vivre aujourd'hui",
+    "today_none": "Rien d'attendu aujourd'hui : l'île est à toi.",
+    "today_later": "{scene} ({slot})",
+    "calendar_passed": "Laissé passer : {scenes}",
+    "slot_aube": "à l'aube",
+    "slot_matin": "le matin",
+    "slot_midi": "à midi",
+    "slot_apres_midi": "l'après-midi",
+    "slot_soir": "le soir",
+    "slot_nuit": "la nuit"
+  },
+  "activities": {
+    "_comment": "(X-L6) Les activités à la demande du mode libre (data/activities/ile_68.json ; StoryActivities) : la proposition du PNJ (offer), puis ce qui s'affiche à la fin (result_<issue> : success, failure, victory, defeat, draw, done, stopped), propre à l'activité ou, à défaut, commun (activities/result_<issue>). Rien de tout cela n'est gardé par le récit.",
+    "result_stopped": "On arrête là.",
+    "result_success": "Réussi.",
+    "result_failure": "Pas cette fois.",
+    "baton": {
+      "offer": "Tu as les bras froids. Deux bâtons, un peu de souffle : on s'échauffe ?",
+      "result_success": "Beau travail. Tes parades sont propres.",
+      "result_failure": "Tu as lâché trop tôt. Une autre fois.",
+      "result_stopped": "D'accord, on arrête là."
+    },
+    "duel": {
+      "offer": "Tu veux ta revanche ? Je ne te ménagerai pas, tu sais.",
+      "result_done": "Encore au sol. Mais tu tiens plus longtemps.",
+      "result_stopped": "Comme tu voudras. La revanche attendra."
+    },
+    "seniorious": {
+      "offer": "L'épée t'attend près du marais. On reprend la respiration ?",
+      "result_success": "Les trois Grues. Elle t'écoute, maintenant.",
+      "result_failure": "Pas encore. Respire, et reviens.",
+      "result_stopped": "On range l'épée pour aujourd'hui."
+    },
+    "embuscade": {
+      "offer": "Chhhut ! Je t'ai vue ! Tu veux voir si tu me repères avant que je saute ?",
+      "result_success": "Tu m'as eue ! Pas juste !",
+      "result_failure": "Ha ! Touchée ! Encore, encore !",
+      "result_stopped": "Aaah, déjà ? Bon, une autre fois."
+    },
+    "ballon": {
+      "offer": "Il manque quelqu'un chez les blanches. Tu viens jouer au ballon ?",
+      "result_victory": "On a gagné ! Tu reviens demain ?",
+      "result_defeat": "Perdu ! On se rattrapera.",
+      "result_draw": "Égalité. On refait un match ?",
+      "result_done": "Fin du match !",
+      "result_stopped": "Pas grave, une autre fois !"
+    }
   },
   "days": {
     "1": {
@@ -75,14 +141,16 @@
     }
   },
   "calendar": {
-    "depart": "Départ au couchant."
+    "depart": "Départ au couchant.",
+    "libre": "Une journée à moi, à marcher sur l'île."
   },
   "j1_1_port": {
     "titre": "Cet acte suit le volume 1 de la traduction Yume Novel.",
     "passeur": "Bon vent, monsieur. On ne repasse pas avant longtemps.",
     "port_1": "L'île n° 68, à la nuit tombée. Le vent hurle sur le quai désert.",
     "port_2": "Un homme descend seul d'un petit bateau, qui repart aussitôt. Personne ne l'attend : il n'a prévenu personne.",
-    "port_3": "Sur le panneau, deux flèches rouges : la ville à 2 000 marmer, l'entrepôt à 500. Il remonte son col et prend le sentier."
+    "port_3": "Sur le panneau, deux flèches rouges : la ville à 2 000 marmer, l'entrepôt à 500. Il remonte son col et prend le sentier.",
+    "offer": "Tu as vu ce vent ? Un navire de la Garde accoste au port, ce soir : notre nouveau gardien doit en descendre. Tu viens voir à quoi il ressemble ?"
   },
   "j1_2_lumiere": {
     "hint": "Pannibal est sortie. Cherche-la sur le sentier."
@@ -90,7 +158,8 @@
   "j1_2_embuscade": {
     "hint": "Pannibal est sortie. Cherche-la sur le sentier.",
     "cri": "Haaa ! Halte-là, l'intrus !",
-    "hint_suivre": "Pannibal file vers l'est. Suis-la."
+    "hint_suivre": "Pannibal file vers l'est. Suis-la.",
+    "offer": "Des roseaux qui frémissent au bord du sentier… Pannibal n'est sûrement pas loin."
   },
   "j1_3_intrus": {
     "hint": "Pannibal file vers l'est. Suis-la.",
@@ -98,7 +167,8 @@
     "plouf": "Ouf… !",
     "trempe": "… Trempé jusqu'aux os.",
     "approche": "Approche-toi de l'intrus.",
-    "chute": "Il esquive une fois, deux fois… glisse à la troisième, et tombe de tout son long dans l'eau basse du marais. Pannibal s'assoit sur son dos, l'épée de bois levée."
+    "chute": "Il esquive une fois, deux fois… glisse à la troisième, et tombe de tout son long dans l'eau basse du marais. Pannibal s'assoit sur son dos, l'épée de bois levée.",
+    "offer": "Des éclaboussures, plus loin vers l'est. Pannibal a trouvé quelqu'un."
   },
   "j1_4_chemin": {
     "hint": "Ramène-le à l'entrepôt."
@@ -111,7 +181,8 @@
   "j1_6_diner": {
     "hint": "Couche Pannibal, au dortoir.",
     "bonne_nuit": "Mmh… j'ai gagné…",
-    "tetes": "… ?"
+    "tetes": "… ?",
+    "offer": "Pannibal dort debout. Il serait temps de la coucher, au dortoir."
   },
   "j1_7_chambre": {
     "hint": "Du bruit devant la chambre du nouveau.",
@@ -124,14 +195,17 @@
   "j2_1_matin": {
     "hint": "Les petites font leur toilette au point d'eau, en bas.",
     "brrr": "C'est glacé !",
-    "hint_cloche": "La cloche du petit-déjeuner. Au réfectoire !"
+    "hint_cloche": "La cloche du petit-déjeuner. Au réfectoire !",
+    "offer": "Le jour se lève. En bas, les petites font leur toilette au point d'eau."
   },
   "j2_3_fenetre": {
-    "hint": "Willem n'est pas sorti de sa chambre de l'après-midi."
+    "hint": "Willem n'est pas sorti de sa chambre de l'après-midi.",
+    "offer": "Hm ? Je regardais juste par la fenêtre. Tu voulais quelque chose ?"
   },
   "j3_1_information": {
     "hint": "Ithea et Nephren t'attendent sous le porche.",
-    "hint_ville": "Willem est parti en ville. Le chemin passe par le sentier."
+    "hint_ville": "Willem est parti en ville. Le chemin passe par le sentier.",
+    "offer": "Ithea et Nephren chuchotent sous le porche. Elles ont l'air de mijoter quelque chose."
   },
   "j3_2_chemin": {
     "hint": "Le snack-bar est sur la rue du café, en ville.",
@@ -146,36 +220,44 @@
     "ici": "C'est là. Ça sent le lard grillé jusqu'ici.",
     "oreilles": "… !",
     "snack": "Le snack-bar de la rue du café. Au comptoir, le nouveau responsable ; derrière, un jeune lycanthrope fait sauter sa poêle.",
-    "retour": "L'après-midi passe en ville. Au soir, les trois aînées reprennent le sentier."
+    "retour": "L'après-midi passe en ville. Au soir, les trois aînées reprennent le sentier.",
+    "offer": "Le snack-bar. Ça sent la friture… et la mauvaise idée."
   },
   "j4_1_cuisine": {
     "hint": "Il se passe quelque chose à la cuisine.",
     "chuchote": "Il est encore là-dedans…",
-    "caramel": "Ça sent le sucre brûlé !"
+    "caramel": "Ça sent le sucre brûlé !",
+    "offer": "Des bruits de casseroles dans la cuisine, et une odeur qu'on ne connaît pas."
   },
   "j4_2_diner": {
-    "hint": "Le dîner est servi."
+    "hint": "Le dîner est servi.",
+    "offer": "Le dîner est servi. Toute la maison est déjà à table."
   },
   "j5_1_jeu_willem": {
     "hint": "Willem rassemble les petites au champ.",
-    "coup_envoi": "Coup d'envoi !"
+    "coup_envoi": "Coup d'envoi !",
+    "offer": "Willem rassemble les petites au champ, un ballon sous le bras."
   },
   "j5_2_fenetre": {
     "hint": "La banquette de la salle de lecture est libre.",
     "prompt": "S'asseoir à la fenêtre"
   },
   "j5_3_premier_match": {
-    "hint": "Les petites cherchent une joueuse chez les blancs."
+    "hint": "Les petites cherchent une joueuse chez les blancs.",
+    "offer": "La partie bat son plein. Il manque une joueuse chez les blancs."
   },
   "j6_1_soif_de_sang": {
-    "hint": "Il y a du remue-ménage dans le couloir, en bas."
+    "hint": "Il y a du remue-ménage dans le couloir, en bas.",
+    "offer": "Du remue-ménage dans le couloir. On dirait que les petites préparent une embuscade."
   },
   "j6_2_livre_images": {
     "hint": "Les petites ont un livre à faire lire.",
-    "souvenir": "Une longue table, une lumière chaude, des voix d'enfants qui se chevauchent. Pas un visage. Pas un nom."
+    "souvenir": "Une longue table, une lumière chaude, des voix d'enfants qui se chevauchent. Pas un visage. Pas un nom.",
+    "offer": "Les petites ont un livre d'images à faire lire."
   },
   "j6_3_ordre_mission": {
-    "hint": "Le dîner est servi."
+    "hint": "Le dîner est servi.",
+    "offer": "Le dîner est servi. Nygglatho a l'air d'avoir quelque chose à annoncer."
   },
   "j6_4_souvenir": {
     "hint": "Tu n'arrives pas à dormir.",
@@ -185,7 +267,8 @@
   },
   "j7_1_depart": {
     "hint": "Nygglatho t'attend sous le porche, avec les épées.",
-    "hint_sentier": "Pars avec Ithea et Nephren par le chemin de l'est."
+    "hint_sentier": "Pars avec Ithea et Nephren par le chemin de l'est.",
+    "offer": "Sous le porche, Nygglatho attend avec les épées emmaillotées."
   },
   "j7_2_match": {
     "haut": "Bien haut !",
@@ -201,16 +284,19 @@
     "horloge": "L'horloge sonne. Puis encore. La lampe baisse, et les pages se tournent de plus en plus lentement."
   },
   "j8_1_reveil": {
-    "non": "Non non non non…"
+    "non": "Non non non non…",
+    "offer": "Le lit de l'infirmerie. La nuit de fièvre te revient par morceaux."
   },
   "j8_2_archives": {
-    "hint": "Où Willem a-t-il passé la nuit ?"
+    "hint": "Où Willem a-t-il passé la nuit ?",
+    "offer": "Où Willem a-t-il passé la nuit ? Les archives sont restées éclairées."
   },
   "j8_3_duel": {
     "hint": "Willem t'attend dans la cour.",
     "projetee": "Il ne pare pas. Il dévie la lame d'un geste, et elle s'envole, retombe sur le dos, six pas plus loin.",
     "cri_1": "Willem !",
-    "cri_2": "Nygglatho ! Vite !"
+    "cri_2": "Nygglatho ! Vite !",
+    "offer": "Willem attend dans la cour, une épée d'entraînement à la main."
   },
   "j8_4_cristal": {
     "irruption_1": "Willem va mourir !",
@@ -243,19 +329,22 @@
   "j9_1_porte": {
     "toc": "Toc, toc.",
     "ricane": "Nya-ha-ha… de bon matin !",
-    "habillee": "Cinq minutes plus tard, très exactement, la porte se rouvre. Habillée, coiffée, digne."
+    "habillee": "Cinq minutes plus tard, très exactement, la porte se rouvre. Habillée, coiffée, digne.",
+    "offer": "On frappe à la porte."
   },
   "j9_2_batons": {
     "hint": "Willem t'attend dans la clairière.",
     "repli_1": "Willem frappe en rythme, de quatre côtés. Bloquer, dévier, esquiver : tu tiens, puis tu lâches.",
     "repli_2": "Ithea et Nephren se lèvent du banc. À trois contre un, il pare tout, et contre comme un serpent.",
-    "grace": "Grâce… pitié… de l'eau…"
+    "grace": "Grâce… pitié… de l'eau…",
+    "offer": "Deux bâtons, un peu de souffle, et on voit ce que tu vaux. On s'entraîne ?"
   },
   "j9_3_cafe": {
     "hint": "Ithea et Nephren t'attendent sous le porche.",
     "hint_cafe": "Ithea et Nephren vont au café du village.",
     "chapeau": "Enchanté. Vraiment enchanté.",
-    "voix_basse": "… pas avant demain matin…"
+    "voix_basse": "… pas avant demain matin…",
+    "offer": "Ithea et Nephren t'attendent sous le porche. Il paraît qu'il y a de l'argent de poche à dépenser."
   },
   "j9_4_moutarde": {
     "hint": "Le goûter du soir est servi au réfectoire.",
@@ -265,14 +354,16 @@
     "soiree": "La soirée passe. Le goût de moutarde, lui, s'en va moins vite."
   },
   "j9_5_veillee": {
-    "hint": "Il y a de la lumière au réfectoire."
+    "hint": "Il y a de la lumière au réfectoire.",
+    "offer": "Tu ne dors pas non plus ? Viens, j'ai fait du thé. Et il reste du cheese-cake."
   },
   "j10_1_rater": {
     "hint": "Willem t'attend dans la clairière.",
     "repli": "Rien ne passe. Le bâton de Willem trouve toutes les ouvertures, et tes yeux, toujours, son visage.",
     "attends": "Hé ! Attends !",
     "hein": "… Hein ?",
-    "hint_course": "Cours. N'importe où. Vers le sud, vers le bois."
+    "hint_course": "Cours. N'importe où. Vers le sud, vers le bois.",
+    "offer": "On reprend les bâtons, ce matin ?"
   },
   "j10_2_foret": {
     "hint_refuge": "Plus loin. Le grand chêne, au fond du bois.",
@@ -284,7 +375,11 @@
     "un": "Un drap !",
     "deux": "Deux draps !",
     "trois": "Le dernier ! Merci !",
-    "hint_trappe": "Vite, à la trappe, avant d'être trempée !"
+    "hint_trappe": "Vite, à la trappe, avant d'être trempée !",
+    "offer": "Le vent sent la pluie. Le linge est encore sur le toit."
+  },
+  "j10_4_toit": {
+    "offer": "Nephren est encore sur le toit, à cette heure-ci. Je vais lui monter une écharpe."
   },
   "j10_5_tour": {
     "hint": "On joue à la salle de jeux.",
@@ -293,13 +388,15 @@
     "haut": "Plus haut !",
     "doigts": "Et maintenant… le dessert !",
     "rires": "Hi hi hi !",
-    "draps": "Et mes draps, trempés… Tant pis, ce soir, on rit."
+    "draps": "Et mes draps, trempés… Tant pis, ce soir, on rit.",
+    "offer": "Des rires dans la salle de jeux : on y joue à la tour de fées."
   },
   "j11_1_toilette": {
     "hint": "Les petites se lavent au point d'eau, en bas.",
     "glacee": "C'est glacé !",
     "non": "Jamais !",
-    "hint_collon": "Collon s'est sauvée de la toilette."
+    "hint_collon": "Collon s'est sauvée de la toilette.",
+    "offer": "Le jour se lève. Les petites se lavent au point d'eau, en bas."
   },
   "j11_2_ne_pars_pas": {
     "chapeau": "Mesdemoiselles.",
@@ -312,26 +409,31 @@
     "cloche": "Les heures passent sur la pointe des pieds. Au loin, la sixième cloche.",
     "voila": "Voilà.",
     "larmes": "Maman…",
-    "comptine": "Le balancier repart. Puis, au cœur du boîtier, une petite comptine se met à jouer, un peu fausse, très douce."
+    "comptine": "Le balancier repart. Puis, au cœur du boîtier, une petite comptine se met à jouer, un peu fausse, très douce.",
+    "offer": "Une vieille horloge, quelque part dans la maison. Willem est penché dessus."
   },
   "j11_4_seniorious": {
     "hint": "Willem t'attend dans la clairière, avec Seniorious.",
-    "repli": "Le souffle, les gestes, la Grue. À la troisième, Seniorious t'échappe et plonge dans le marais. Tu vas la chercher."
+    "repli": "Le souffle, les gestes, la Grue. À la troisième, Seniorious t'échappe et plonge dans le marais. Tu vas la chercher.",
+    "offer": "Prends Seniorious. Aujourd'hui, on s'entraîne avec elle."
   },
   "j12_1_derniere_journee": {
-    "calendrier": "Sur le calendrier, d'une main sèche : « Départ au couchant. » La case d'après restera blanche."
+    "calendrier": "Sur le calendrier, d'une main sèche : « Départ au couchant. » La case d'après restera blanche.",
+    "offer": "La dernière case du calendrier attend sa ligne."
   },
   "j12_1_embuscade": {
     "hint": "Dernière journée. Chacun a un mot pour toi.",
     "cri": "Une dernière fois, en garde !",
-    "repli": "Pannibal bondit des fourrés, épée de bois levée. Un pas de côté, une parade : elle roule dans l'herbe, ravie."
+    "repli": "Pannibal bondit des fourrés, épée de bois levée. Un pas de côté, une parade : elle roule dans l'herbe, ravie.",
+    "offer": "Psst ! Viens dehors, j'ai un truc à te montrer. Promis, c'est pas un piège."
   },
   "j12_2_depart": {
     "hint": "La huitième cloche approche. Tous sont dans la cour.",
     "cloche": "Au loin, l'horloge des archives sonne la huitième cloche.",
     "revenez": "Revenez ! Revenez vite !",
     "entieres": "Revenez-nous entières.",
-    "fin": "Fin de l'acte 1. L'acte 2 suit le volume 2."
+    "fin": "Fin de l'acte 1. L'acte 2 suit le volume 2.",
+    "offer": "La huitième cloche ne va plus tarder. Tout le monde est dans la cour."
   },
   "j12_3_epilogue": {
     "plus_tard_carton": "Plus tard. Un après-midi comme les autres.",
