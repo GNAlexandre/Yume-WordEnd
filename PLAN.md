@@ -38,7 +38,7 @@ Multijoueur, génération procédurale, application mobile native, monétisation
 | --- | --- | --- |
 | Moteur | Godot 4.7.2-stable (figé dans `project.godot` et `tools/setup.sh`) | Dernière maintenance de la branche 4.7 ([annonce 4.7.2](https://gamedev.net/news/5172-godot-engine-472-stable-released/)) ; gratuit, MIT, binaire Linux headless de \~60 Mo utilisable dans les VM Claude Code |
 | Langage | GDScript avec annotations de type (`var hp: int`, `-> void`) | L'export Web des projets C# reste expérimental en 2026 ([état 2026](https://gtstu.com/?p=4758)) ; GDScript s'exporte proprement et `gdlint`/`gdformat` (PyPI `gdtoolkit`) tournent sans éditeur |
-| Rendu | Compatibility (OpenGL 3 / WebGL 2) | Seul renderer disponible à l'export Web ; le flou de profondeur, la lueur et l'étalonnage HD-2D tiennent dans un shader d'écran (`src/player/post_fx.gdshader`) |
+| Rendu | Compatibility (OpenGL 3 / WebGL 2) | Seul renderer disponible à l'export Web ; la lueur et l'étalonnage HD-2D tiennent dans un shader d'écran (`src/player/post_fx.gdshader`), (RD) le flou de profondeur lit la profondeur dans le monde 3D (`src/player/post_fx_depth.gdshader`) |
 | Export Web | Thread Support **désactivé** | Évite les en-têtes COOP/COEP (SharedArrayBuffer) : le build se sert depuis GitHub Pages ou WordPress sans configuration serveur |
 | Scènes et ressources | Format texte (`.tscn`, `.tres`), jamais binaire | Diff lisibles, fusion Git possible, agents capables de créer une scène sans éditeur |
 | Tests | GUT (Godot Unit Test), vendoré dans `addons/gut/` | S'exécute en ligne de commande : `godot --headless -s addons/gut/gut_cmdln.gd` |
@@ -120,7 +120,7 @@ Yume-WordEnd/
 │   │                          # (E9) Atmosphere (lumière et temps)
 │   ├── desktop_check.gd       # (bureau) vérification du jeu exporté (--desktop-check), sans effet sinon
 │   ├── player/                # player.tscn, player.gd (déplacement), camera_rig.tscn (caméra fixe HD-2D),
-│   │                          # post_fx.gdshader (flou de profondeur, lueur, étalonnage)
+│   │                          # post_fx.gdshader (lueur, étalonnage), post_fx_depth.gdshader (flou de profondeur)
 │   ├── combat/                # health.gd, hitbox.tscn, hurtbox.tscn, attack_data.gd,
 │   │                          # player_combat.gd (épée, charge), charge_wave.tscn (onde)
 │   ├── enemies/               # enemy.tscn, enemy.gd (machine à états), enemy_data.gd, telegraph.gd ;
@@ -640,6 +640,31 @@ class_name PropScatter     # (H9) @export variants: Array[PackedScene], random_f
                            # pick_variants(points, count, seed) (jamais la variante du plus proche voisin),
                            # nearest_neighbor(points, i) ; (T1) follow_ground : sur une carte de la refonte,
                            # le MapGround (enfant « Ground ») du premier ancêtre qui en a un, sinon l'île
+# (RD) Rendu de la profondeur (refonte image, 16 octobre 2026) : ajouts, l'existant ne change pas.
+class_name DecorGenre      # src/world/decor_genre.gd : genre d'un décor (TREE, LISIERE, BUSH, GRASS, REED, ROCK, FENCE,
+                           # WALL, POST, PROP, NONE) : of(chemin_image, catégorie) (metadata/hd2d_category de la scène,
+                           # sinon le nom de l'image) ; settings(genre) : ombre (tail, tail_width, core_alpha,
+                           # tail_alpha, long), vent (wind, wind_max, wind_from), variation (tone, scale, jitter, sink) ;
+                           # is_windy(genre), CATEGORY_GENRES, NAME_RULES, SETTINGS (données, réglées ici)
+class_name DecorPanel      # (RD) @export tone: Vector2 (luminosité ± 0,06, teinte ± 0,03 ; méta TONE_META du quad, lue
+                           # par le PropBatcher : partie entière de UV2.x), genre (vide : DecorGenre) ; current_genre(),
+                           # wind_pixels(genre, hauteur_px), tone_code(tone), tone_from_code(code) ; ombre peinte
+                           # (enfant « Shadow », panel_shadow.gdshader, un matériau pour toutes) : shadow_mesh_for(size,
+                           # genre), shadow_shape(largeur, profondeur, traîne, largeur_traîne, long, alphas),
+                           # set_shadow_sun(direction_xz, allongement, traîne, cœur), SHADOW_SHADER, SHADOW_* ;
+                           # material_for(…, wind_px, wind_from) (vent des végétaux, dans le shader)
+class_name PropScatter     # (RD) @export auto_variation (vrai) : teinte, échelle du genre (si scale_range = 1), recul
+                           # en z et enfoncement tirés de la position (variation_at(point, genre) → tone, scale,
+                           # offset) ; avoid_runs(points, picks, count) (jamais deux fois la même image de suite le
+                           # long de la rangée, règle du plus proche voisin gardée), row_order(points)
+class_name DepthFocus      # src/world/depth_focus.gd : mise au point partagée (depth_focus.gdshaderinc) ; apply(valeurs)
+                           # (la caméra, à chaque image), register(matériau mélangé qui se floute lui-même), current(),
+                           # radius_px(z, valeurs) (jumeau du shader), PARAMETERS, DEFAULTS
+class_name AtmosphereRig   # (RD) apply_shadow_sun(réglage, intérieur) : soleil des ombres peintes (appelé par apply)
+# CameraRig (RD) : enfant Camera3D/DepthBlur (rectangle plein écran, post_fx_depth.gdshader, flou selon la profondeur,
+# render_priority −128) ; focus_depth_of(point), depth_blur_material(), set_depth_blur_enabled(on),
+# is_depth_blur_enabled(), NEAR_BLUR_PER_BOTTOM_PX ; PostFX garde lueur
+# et étalonnage, ses uniformes top_blur_px et bottom_blur_px sont recopiés sur DepthBlur.
 class_name IslandTerrain   # (H9) GROUND_LAYERS (27 tuiles, ordre du contrat), GROUND_FALLBACK, ATLAS_COLUMNS,
                            # atlas_tile_count(size), ground_layer(layer, tile_count), triangles_in(rect),
                            # surface_height(x, z) ; terrain.gdshader : rangées lues dans la taille de l'atlas
@@ -746,7 +771,7 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/main.tscn` + `main.gd` | `Main` (Node) | menu, chargement et partie ajoutés à l'exécution | — | L0 |
 | `src/game.tscn` + `game.gd` | `Game` (Node3D) | (E1) `World` (Node3D, groupe `map_slot` : la carte courante, posée par game.gd, remplace `Island`), `Player`, `UI` (CanvasLayer) avec `UI/HUD`, `UI/DialogueBox`, `UI/Inventory`, `UI/TouchControls`, (E1) `UI/MapFade` (`src/ui/map_fade.tscn` : fondu et nom des cartes) ; (F1) `QuestTracker` et `UI/ArenaEnd` retirés | — | L0, E1, F1 |
 | `src/player/player.tscn` + `player.gd` | `Player` (CharacterBody3D, `Player`) | `CollisionShape3D`, `Visual`, `Combat` (`PlayerCombat`) et `Combat/SwordHitbox` (`Hitbox`), `Health` (5 PV, 1,2 s), `Hurtbox`, `CameraRig` ((HD-2D) aux pieds du joueur) | `player` ; couche 2, masque 1+3 | L1 (L4 : valeurs du nœud `Health`) |
-| `src/player/camera_rig.tscn` | `CameraRig` (Node3D) | (HD-2D) `Camera3D` (courante, `top_level`), `PostFX` (CanvasLayer, couche −1) et `PostFX/Screen` (ColorRect, `post_fx.gdshader`) ; plus de `SpringArm3D` | — | L1 |
+| `src/player/camera_rig.tscn` | `CameraRig` (Node3D) | (HD-2D) `Camera3D` (courante, `top_level`), (RD) `Camera3D/DepthBlur` (MeshInstance3D, `post_fx_depth.gdshader`), `PostFX` (CanvasLayer, couche −1) et `PostFX/Screen` (ColorRect, `post_fx.gdshader`) ; plus de `SpringArm3D` | — | L1 |
 | `src/combat/hitbox.tscn` + `hitbox.gd` | `Hitbox` (Area3D) | `CollisionShape3D` (forme locale à la scène) | couche 4, masque 5 | L4 |
 | `src/combat/hurtbox.tscn` + `hurtbox.gd` | `Hurtbox` (Area3D) | `CollisionShape3D` (forme locale à la scène) | couche 5 | L4 |
 | `src/combat/charge_wave.tscn` | `ChargeWave` (Node3D) | `Hitbox` (attaque `charge_wave`, équipe `player`), `Mesh` | — | L4 |

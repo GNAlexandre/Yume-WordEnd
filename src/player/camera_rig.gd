@@ -26,9 +26,10 @@ extends Node3D
 ## dès que l'affichage ne tourne pas à 60 images/s (45, 120, 144…). La Camera3D, posée ici à
 ## chaque image, n'est pas interpolée elle-même.
 ##
-## Structure : Camera3D (caméra courante, top_level : elle ne suit pas les rotations du joueur) et
-## PostFX (CanvasLayer derrière l'interface : flou de profondeur, lueur, étalonnage chaud,
-## src/player/post_fx.gdshader ; la bande nette suit le joueur à l'écran).
+## Structure : Camera3D (caméra courante, top_level : elle ne suit pas les rotations du joueur),
+## son enfant DepthBlur ((RD) flou selon la vraie profondeur : rectangle plein écran du monde 3D,
+## src/player/post_fx_depth.gdshader ; la profondeur nette suit le joueur) et PostFX (CanvasLayer
+## derrière l'interface : lueur et étalonnage chaud de toute l'image, src/player/post_fx.gdshader).
 ## Verrouillage : lock_target est cadrée avec le joueur (le point visé avance vers elle, sans
 ## rotation). Le joueur (player.gd) pose lock_target et follow_velocity à chaque image physique.
 ## (E1) Cartes : à chaque EventBus.map_entered (et à son _ready s'il y a déjà une carte), limits
@@ -41,10 +42,11 @@ extends Node3D
 ## plan : 21 → 9 m) ou lever les yeux (tangage 32° → 15°), hors des bornes du zoom et de la carte ;
 ## release_story(durée) rend la caméra du jeu. Le joueur peut bouger pendant un cadrage.
 
-## (H5) Profondeur nette du flou de profondeur autour du joueur (m) : derrière lui (vers le
-## nord) et devant lui (vers la caméra).
-const BAND_AHEAD := 9.0
-const BAND_BEHIND := 4.5
+## (RD) Flou du premier plan (px à 720 px de haut) pour un flou du bas d'écran de 1 px dans le
+## réglage de lumière (HD2DLighting.bottom_blur_px, 2,5 dehors : 7 px) ; le flou du lointain est
+## HD2DLighting.top_blur_px. Le réglage est posé sur PostFX (apply_post) et recopié à chaque image
+## sur DepthBlur.
+const NEAR_BLUR_PER_BOTTOM_PX := 2.8
 
 ## Inclinaison de la caméra vers le bas (degrés) et champ vertical (degrés).
 @export_range(20.0, 60.0) var pitch_deg: float = 32.0
@@ -95,6 +97,9 @@ var _distance: float = 19.0
 var _target_distance: float = 19.0
 var _started: bool = false
 var _post: ShaderMaterial
+## (RD) Matériau du flou de profondeur (CameraRig/Camera3D/DepthBlur), propre à cette caméra.
+var _depth_blur: ShaderMaterial
+var _depth_blur_on: bool = true
 ## Avance lissée dans le sens de la marche (m) et écart au nord lissé (m).
 var _lead: Vector3 = Vector3.ZERO
 var _ahead: float = 2.5
@@ -132,6 +137,10 @@ func _ready() -> void:
 		# (HD2DLighting.apply_post) ne touchent pas la ressource de la scène.
 		_post = screen.material.duplicate() as ShaderMaterial
 		screen.material = _post
+	var blur := get_node_or_null(^"Camera3D/DepthBlur") as MeshInstance3D
+	if blur != null and blur.material_override is ShaderMaterial:
+		_depth_blur = blur.material_override.duplicate() as ShaderMaterial
+		blur.material_override = _depth_blur
 	snap()
 	# Le joueur peut encore être déplacé avant la première image (game.gd : position de la
 	# sauvegarde ou téléportation au Spawn, après ce _ready) : la première update_camera() se
@@ -326,7 +335,7 @@ func _apply() -> void:
 	camera.global_transform = Transform3D(
 		Basis(Vector3.RIGHT, -tilt), _focus + _back(_shown_pitch) * _distance
 	)
-	_update_focus_band()
+	_update_focus_depth()
 
 
 ## Direction du point visé vers la caméra pour un tangage (degrés).
@@ -335,24 +344,56 @@ static func _back(degrees: float) -> Vector3:
 	return Vector3(0.0, sin(tilt), cos(tilt))
 
 
-## (H5) La bande nette du flou de profondeur (post_fx.gdshader : focus_center, focus_half) suit
-## le joueur à l'écran : elle va de BAND_BEHIND m devant lui (vers la caméra) à BAND_AHEAD m
-## derrière lui, à mi-hauteur d'un personnage. Le joueur et ceux qui l'entourent ne sont jamais
-## flous, même décentrés par le retard du suivi, l'avance, le verrouillage ou les bornes de
-## l'île.
-func _update_focus_band() -> void:
-	if _post == null:
+## (RD) Le flou de profondeur (post_fx_depth.gdshader) est net autour du joueur : sa profondeur
+## (m le long de l'axe de la caméra, à mi-hauteur d'un personnage) est posée à chaque image, avec
+## les flous du lointain et du premier plan du réglage de lumière (posés sur PostFX), sur DepthBlur
+## et sur les matériaux qui se floutent eux-mêmes (DepthFocus).
+func _update_focus_depth() -> void:
+	if _depth_blur == null:
 		return
-	var height := get_viewport().get_visible_rect().size.y
-	var middle := anchor() + Vector3.UP * focus_height
-	var far := middle + Vector3.FORWARD * BAND_AHEAD
-	var near := middle + Vector3.BACK * BAND_BEHIND
-	if height <= 0.0 or camera.is_position_behind(far) or camera.is_position_behind(near):
-		return
-	var top := clampf(camera.unproject_position(far).y / height, 0.05, 0.85)
-	var bottom := clampf(camera.unproject_position(near).y / height, top + 0.05, 1.0)
-	_post.set_shader_parameter(&"focus_center", (top + bottom) / 2.0)
-	_post.set_shader_parameter(&"focus_half", (bottom - top) / 2.0)
+	_show_depth_blur()
+	var values := {&"focus_depth": focus_depth_of(anchor() + Vector3.UP * focus_height)}
+	if _post != null:
+		var far: Variant = _post.get_shader_parameter(&"top_blur_px")
+		var bottom: Variant = _post.get_shader_parameter(&"bottom_blur_px")
+		if far != null:
+			values[&"far_blur_px"] = float(far)
+		if bottom != null:
+			values[&"near_blur_px"] = float(bottom) * NEAR_BLUR_PER_BOTTOM_PX
+	for key: StringName in values:
+		_depth_blur.set_shader_parameter(key, values[key])
+	if camera.current:
+		DepthFocus.apply(values)
+
+
+## (RD) Profondeur d'un point du monde le long de l'axe de la caméra (m ; négative derrière elle).
+func focus_depth_of(point: Vector3) -> float:
+	return -(camera.global_transform.affine_inverse() * point).z
+
+
+## (RD) Matériau du flou de profondeur de cette caméra (null sans DepthBlur).
+func depth_blur_material() -> ShaderMaterial:
+	return _depth_blur
+
+
+## (RD) Allume ou éteint le flou de profondeur (qualité réduite : sans lui, ni copie de l'image
+## ni de la profondeur dans le monde 3D ; les matériaux mélangés gardent leur flou propre).
+func set_depth_blur_enabled(enabled: bool) -> void:
+	_depth_blur_on = enabled
+	_show_depth_blur()
+
+
+## (RD) Vrai si le flou de profondeur est allumé.
+func is_depth_blur_enabled() -> bool:
+	return _depth_blur_on
+
+
+## (RD) Le rectangle du flou couvre l'écran de toute caméra : il ne se montre que si celle du
+## joueur est la caméra courante (pas sous la caméra d'ensemble d'une carte ni d'une vue d'essai).
+func _show_depth_blur() -> void:
+	var blur := get_node_or_null(^"Camera3D/DepthBlur") as Node3D
+	if blur != null:
+		blur.visible = _depth_blur_on and camera.current
 
 
 func _valid_target() -> Node3D:
