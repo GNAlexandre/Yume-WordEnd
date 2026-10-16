@@ -37,6 +37,9 @@ const PROPS_LIGHT_REACH := 2.5
 var places: LifePlaces = null
 ## Scène en cours (pour les avertissements).
 var scene_label: StringName = &""
+## (X-L0) Portes fermées jusqu'à leur jour (mode scénarisé) ; faux : toutes ouvertes (libre,
+## StoryPacing.doors_by_day, posé par StoryDirector).
+var doors_by_day: bool = true
 
 var _followers: Dictionary = {}
 var _idle_at: Dictionary = {}
@@ -53,7 +56,8 @@ func set_map(map: Map) -> void:
 
 
 ## Ferme (avant leur jour, GameState.day) ou rouvre les sorties de map qui portent
-## open_from_day ; renvoie le nombre de portes fermées.
+## open_from_day ; renvoie le nombre de portes fermées. (X-L0) Sans doors_by_day, les rouvre
+## toutes.
 func apply_doors(map: Node) -> int:
 	var exits := map.get_node_or_null(^"Exits") if map != null else null
 	if exits == null:
@@ -63,7 +67,7 @@ func apply_doors(map: Node) -> int:
 		var door := child as MapExit
 		if door == null or not door.has_meta(DOOR_OPEN_META):
 			continue
-		var shut := GameState.day < int(door.get_meta(DOOR_OPEN_META))
+		var shut := doors_by_day and GameState.day < int(door.get_meta(DOOR_OPEN_META))
 		_set_door_closed(door, shut)
 		closed += 1 if shut else 0
 	return closed

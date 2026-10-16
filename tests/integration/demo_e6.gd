@@ -70,6 +70,8 @@ var _step := 3.0
 var _step_left := 1.0
 var _index := 0
 var _previous_seen := ""
+## (X-L0) Mode de jeu par défaut avant la démo (elle joue le mode scénarisé).
+var _previous_mode: StringName = &""
 var _hint_seen_at := -1.0
 var _elapsed := 0.0
 ## (E8c) Vue « embuscade » : le jeu a commencé, puis fini (temps de la démo).
@@ -95,6 +97,9 @@ func _ready() -> void:
 	if OS.get_environment("E6_STEP").is_valid_float():
 		_step = float(OS.get_environment("E6_STEP"))
 	_state = GameState.to_dict()
+	# (X-L0) Le mode scénarisé d'E6 et de S2 (le jeu part en libre).
+	_previous_mode = StoryDirector.default_mode
+	StoryDirector.default_mode = StoryPacing.SCENARIO
 	_previous_seen = StoryDirector.seen_path
 	StoryDirector.seen_path = SEEN
 	StoryDirector.forget_seen()
@@ -118,6 +123,8 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	StoryDirector.forget_seen()
 	StoryDirector.seen_path = _previous_seen
+	if not _previous_mode.is_empty():
+		StoryDirector.default_mode = _previous_mode
 	WorldManager.fade_time = WorldManager.DEFAULT_FADE_TIME
 
 

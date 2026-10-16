@@ -13,7 +13,9 @@
     "today": "Aujourd'hui : jour {day}",
     "departure_in": "Départ dans {days} jours",
     "departure_tomorrow": "Départ demain",
-    "departure_today": "C'est le jour du départ"
+    "departure_today": "C'est le jour du départ",
+    "mode_scenario": "Mode scénarisé",
+    "mode_libre": "Mode libre"
   },
   "days": {
     "1": {

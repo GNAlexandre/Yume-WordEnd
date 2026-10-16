@@ -52,6 +52,8 @@ var _elapsed := 0.0
 var _walk_time := 0.0
 var _last_scene := &""
 var _previous_seen := ""
+## (X-L0) Mode de jeu par défaut avant la démo (elle joue le mode scénarisé).
+var _previous_mode: StringName = &""
 var _index_lines: PackedStringArray = []
 var _duel_phase := &""
 var _duel_since := 0.0
@@ -77,6 +79,9 @@ func _ready() -> void:
 	_until = OS.get_environment("S2_UNTIL")
 	if not _start.is_empty():
 		_day = _start.get_slice("_", 0).trim_prefix("j").to_int()
+	# (X-L0) Le mode scénarisé d'E6 et de S2 (le jeu part en libre).
+	_previous_mode = StoryDirector.default_mode
+	StoryDirector.default_mode = StoryPacing.SCENARIO
 	_previous_seen = StoryDirector.seen_path
 	StoryDirector.seen_path = SEEN
 	StoryDirector.forget_seen()
@@ -100,6 +105,8 @@ func _exit_tree() -> void:
 	_release_moves()
 	StoryDirector.forget_seen()
 	StoryDirector.seen_path = _previous_seen
+	if not _previous_mode.is_empty():
+		StoryDirector.default_mode = _previous_mode
 	WorldManager.fade_time = WorldManager.DEFAULT_FADE_TIME
 
 

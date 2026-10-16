@@ -119,5 +119,10 @@
     "12": {
       "weather": "clair"
     }
+  },
+  "free": {
+    "_comment": "(X-L0) Le rythme libre (défaut du jeu ; PLAN.md, « (X) Exploration libre : le rythme ») : une nouvelle partie commence au jour 1 au créneau start_slot (le soir : la vie de l'île est dehors, la lumière chaude ; la nuit du guidé reste à start.slot), sans écran noir, avec le carton « Jour 1 » si start_card.",
+    "start_slot": "soir",
+    "start_card": true
   }
 }
