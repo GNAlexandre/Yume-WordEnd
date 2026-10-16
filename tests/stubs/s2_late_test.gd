@@ -135,6 +135,20 @@ func walk_straight(target: Vector3, radius: float = 0.4, max_seconds: float = 10
 	return reached
 
 
+## Utilise l'invite de scène jusqu'à ce que la scène scene_id commence (sous charge, un appui
+## peut tomber avant que la zone de l'invite n'ait vu le joueur) : false après tries essais.
+func use_scene_prompt(scene_id: StringName, tries: int = 4) -> bool:
+	for _try: int in tries:
+		if StoryDirector.current_scene() == scene_id:
+			return true
+		if not await use_prompt(StoryPrompt.ROLE_SCENE):
+			await frames(10)
+			continue
+		if await until(func() -> bool: return StoryDirector.current_scene() == scene_id, 2.0):
+			return true
+	return StoryDirector.current_scene() == scene_id
+
+
 ## Marche jusqu'à moins de radius m d'un PNJ de la carte (sa place suivie à chaque pas).
 func walk_to_actor(npc_id: StringName, radius: float = 1.2, max_seconds: float = 30.0) -> bool:
 	var deadline := Time.get_ticks_msec() + int(max_seconds * 1000.0)

@@ -82,7 +82,7 @@ func test_day_9_end_to_end_until_day_10() -> void:
 	assert_true(await walk_straight(door), "la porte est")
 	var table_end := StoryDirector.stage().resolve(&"refectoire_bout_est").origin
 	assert_true(await walk_straight(table_end + Vector3(0.4, 0.0, 0.0)), "le bout de la table")
-	assert_true(await use_prompt(StoryPrompt.ROLE_SCENE), "l'invite « S'asseoir »")
+	assert_true(await use_scene_prompt(&"j9_4_moutarde"), "l'invite « S'asseoir »")
 	assert_true(await play_until_done(&"j9_4_moutarde", 60.0), "9.4 jouée")
 	assert_eq(LifeSlots.current(), &"nuit", "la nuit tombe")
 	assert_true(await wait_control())
