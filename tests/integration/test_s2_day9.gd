@@ -29,6 +29,9 @@ func test_day_9_end_to_end_until_day_10() -> void:
 	assert_true(
 		await until(func() -> bool: return StoryDirector.current_scene() == &"j9_2_batons", 5.0)
 	)
+	assert_eq(StoryDirector.hint(), "", "l'indice s'efface dès que la scène commence")
+	var hint_line := hud.get_node("%StoryHint")
+	assert_eq(hint_line.call(&"shown_text"), "", "plus d'indice à l'écran")
 	assert_true(
 		await read_until(func() -> bool: return MiniGames.staff_training() != null, 40.0),
 		"l'entraînement au bâton commence"
