@@ -580,7 +580,9 @@ class_name Npc             # @export data: NpcData ; (Systèmes et textes) is_pr
                            # game_loaded, skin_changed (après le dialogue en cours) ; (F1) plus de marqueur de quête
                            # (E4) life: LifeActor (null : immobile) ; enter_life(acteur),
                            # set_outfit(skin) (à chaud), set_moving(bool) (couche 0 en marche), say(texte, s) /
-                           # hide_bubble() / bubble_text() (enfant Bubble, Label3D) ; sans dialogue : une bulle
+                           # hide_bubble() / bubble_text() (enfant Bubble, Label3D) ; (QC2) bubble_height(),
+                           # place_bubble() : la bulle monte au-dessus de la tête du joueur quand, vue de la
+                           # caméra, elle tomberait sur lui ; sans dialogue : une bulle
 class_name DialogueRunner  # start(npc: NpcData), stop(), is_running() ; un par PNJ
                            # (Systèmes et textes) statiques : current_speaker_id() (speaker_id du nœud ou PNJ
                            # du dialogue, fixé avant dialogue_line), find_npc(id), add_npc_dir / remove_npc_dir,
@@ -801,7 +803,9 @@ construite suit son plan à la lettre ; un écart se reporte dans le plan et rep
 1. **Fichier et racine.** `src/world/maps/<map_id>/<map_id>.tscn`, `map_id` en `snake_case`
    ASCII qui commence par une lettre (`entrepot_rdc`, `sentier`). Racine `Node3D` nommée
    `<map_id>`, script `res://src/world/map.gd` (`Map`), avec ses exports :
-   - `display_name` : annoncé à l'entrée par `UI/MapFade` (vide : rien) ;
+   - `display_name` : annoncé à l'entrée par `UI/MapFade` (vide : rien) ; (QC2) seulement en jeu
+     libre (`MapFade.is_free_play()` : ni scène, ni sommeil, ni jeu, ni conversation) : il attend la
+     fin de la scène, et s'efface si une scène commence pendant qu'il est affiché ;
    - `region` (lieu de la carte de l'île), `interior`, `light_preset` (E9) ;
    - `size` (largeur x, profondeur z, en m) ;
    - `camera_bounds` : bornes du **point visé** (2,5 m au nord du joueur), pas de l'image. La vue
@@ -1198,7 +1202,14 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   `poisson`, `along`, graines fixes. **Règle de caméra** (CARTE.md 0.3) : un décor qui se dresse
   au-dessus de la tête (1,4 m) devant une case où l'on marche prend sa variante de premier plan
   (`<décor>_forest` ou `<décor>_fg`, qui s'efface autour du joueur), faute de quoi il n'est pas posé
-  et l'outil le dit.
+  et l'outil le dit. (QC2) **Places masquées** : `check` refuse aussi un décor de 2 m ou plus qui, vu
+  de la caméra du jeu au cadrage par défaut, couvre la place d'un personnage debout (1 m de part et
+  d'autre, du pied à la tête) sur un chemin (un point par mètre), un point, une place ou un marqueur
+  du plan, une place de la vie (`PLACES_WHY`, `tools/life_zones.py`) ou une vue de
+  `tools/qc_views.json` ; les places à moins de 4,5 m d'une sortie ne comptent pas
+  (`exterior_pose.masked_places`). Une famille se tire sans masquer par
+  `p.clear_of_places(scènes, points, échelle)` ; un décor que le plan veut là se déclare dans
+  `SETTINGS["masks_allowed"] = {nœud: (places, pourquoi)}` (dit par `check`, sans erreur).
 - **Une recette par carte** (`tools/exterior_recipes/<id>.py`) : `SETTINGS` (groupes de décors,
   sorties provisoires ; (C3) `camera_bounds`, `light_preset`, `no_lights`, `fauna` : bornes de caméra qui
   diffèrent de la règle, préréglage de lumière de la `Map`, plan à lumières que la carte ne porte pas, nœud
@@ -1645,7 +1656,11 @@ de la chambre ; le voile des scènes (`HUD/StoryOverlay`) porte les fondus, les 
 « Échap : passer ». Pendant l'acte : ni encadré de quête, ni journal, ni « ! » / « ? ».
 Pendant une scène, les signes d'interaction (U1) sont cachés : `InteractSign.suppress(&"scene")`.
 Le calendrier prend le thème (type `Calendar` de `wordend_theme.tres` : case prune, encre crème,
-rayure et cercle or) ; « Calendrier » est au menu pause, au-dessus d'« Options ».
+rayure et cercle or) ; « Calendrier » est au menu pause, au-dessus d'« Options ». (QC2) Sous les
+lignes écrites, un filet d'or, « Aujourd'hui : jour N » et le compte jusqu'au départ (« Départ dans
+N jours », « Départ demain », « C'est le jour du départ » : clés `ui/today`, `ui/departure_in`,
+`ui/departure_tomorrow`, `ui/departure_today` des textes du récit, repli en dur), puis l'indice ; la
+page se resserre sur son contenu (au plus 640 px, lignes défilées au-delà de 220 px).
 
 **Les portes fermées jusqu'à un jour.** Une sortie (`MapExit`) qui porte les métadonnées
 `open_from_day` (jour d'ouverture) et `closed_text_key` (« village/maison_close » : la clé de
@@ -1871,6 +1886,8 @@ sur le cadre de LifeGame (activité `ballon` d'activities.json, `game: "ballon"`
   touche d'attaque (`LifeGame.on_player_attack` : le ballon part dans sa visée s'il est à 1,6 m devant, sans mal
   pour personne), pousse le ballon en courant contre lui, sort à `player/leave_margin` (4,5 m) ou par
   `leave_player()`. Un score sobre (`GameScore`, une ligne en haut de l'écran) s'affiche tant qu'il joue.
+  (QC2) `GameScore` ne couvre jamais le coin haut gauche du HUD (`HUD.top_left_rect()`, groupe `hud` :
+  cœurs et jauge de charge) : centré s'il y a la place, poussé à droite du coin, replié sinon.
 - *Événements* (`LifeGame.event`) : `match_started`, `kickoff`, `goal [équipe, marqueuse, score]`, `save`,
   `kick [qui, sorte]`, `fall`, `half_time`, `ball_lost`, `ball_found`, `player_kick`, `match_ended [résultat]`.
 
