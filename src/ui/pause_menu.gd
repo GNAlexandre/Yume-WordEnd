@@ -15,6 +15,9 @@ extends Control
 ##   seulement : DesktopApp.setup_menu_buttons.
 ## - (U1) Options : « Rappel de la touche d'action » (au besoin / toujours), le réglage
 ##   InteractSign.always_show_key des signes d'interaction du HUD.
+## - (X-L5) Options : « Mode de jeu » (libre ou scénarisé, texte de ModeText) montre le mode de la
+##   partie (StoryDirector.mode) et propose l'autre, après une courte confirmation
+##   (StoryDirector.set_mode) ; le mode s'affiche aussi, discret, sous le jour du panneau.
 ## - (U1) Panneau « Nuit douce » à droite (verre dépoli), entrée en fondu et léger glissement ; en
 ##   tête, le jour et le moment en italique doré (« Jour 2 · matin » : GameState.day,
 ##   GameState.slot, sinon le moment de la lumière), « Pause » hors des jours de l'acte.
@@ -68,6 +71,12 @@ var _pad := MenuInput.new()
 @onready var _resume_button: Button = %ResumeButton
 @onready var _status: Label = %Status
 @onready var _header: Label = %Header
+@onready var _mode_tag: Label = %ModeTag
+@onready var _mode_button: Button = %ModeButton
+@onready var _mode_note: Label = %ModeNote
+@onready var _mode_confirm: Control = %ModeConfirm
+@onready var _mode_confirm_no: Button = %ModeConfirmNo
+@onready var _mode_confirm_yes: Button = %ModeConfirmYes
 
 
 func _ready() -> void:
@@ -84,6 +93,12 @@ func _ready() -> void:
 	(%OptionsButton as Button).pressed.connect(show_options)
 	(%OptionsBack as Button).pressed.connect(hide_controls)
 	_key_hint_toggle.toggled.connect(_on_key_hint_toggled)
+	_mode_button.pressed.connect(request_mode_switch)
+	_mode_confirm_no.pressed.connect(cancel_mode_switch)
+	_mode_confirm_yes.pressed.connect(confirm_mode_switch)
+	_mode_confirm_no.text = ModeText.text("mode_switch_no")
+	_mode_confirm_yes.text = ModeText.text("mode_switch_yes")
+	StoryDirector.mode_changed.connect(_on_mode_changed)
 	DesktopApp.setup_menu_buttons(
 		%FullscreenButton as Button, %ExitGameButton as Button, "quit_game"
 	)
@@ -102,6 +117,8 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	if StoryDirector.mode_changed.is_connected(_on_mode_changed):
+		StoryDirector.mode_changed.disconnect(_on_mode_changed)
 	# Libéré ouvert (retour au menu, fin d'un test) : le jeu ne reste pas figé.
 	if _paused_by_me:
 		get_tree().paused = false
@@ -139,6 +156,7 @@ func open() -> void:
 	_set_status("")
 	_pad.reset()
 	hide_controls()
+	_refresh_mode()
 	UiStyle.appear(_main_panel, Vector2.RIGHT)
 	opened.emit()
 
@@ -190,6 +208,7 @@ func show_options() -> void:
 	_main_panel.hide()
 	_key_hint_toggle.set_pressed_no_signal(InteractSign.always_show_key())
 	_refresh_key_hint_text()
+	_refresh_mode()
 	_options_panel.show()
 	UiStyle.appear(_options_panel, Vector2.RIGHT)
 	_key_hint_toggle.grab_focus()
@@ -202,6 +221,7 @@ func is_options_shown() -> bool:
 ## Revient au panneau principal (depuis les commandes ou les options).
 func hide_controls() -> void:
 	var was_shown := _controls_panel.visible or _options_panel.visible
+	_mode_confirm.hide()
 	UiStyle.settle(_controls_panel)
 	UiStyle.settle(_options_panel)
 	_controls_panel.hide()
@@ -214,6 +234,63 @@ func hide_controls() -> void:
 
 func is_controls_shown() -> bool:
 	return _controls_panel.visible
+
+
+## (X-L5) Le mode de la partie : « Mode libre », « Mode scénarisé » ("" sans récit).
+func mode_text() -> String:
+	return ModeText.mode_name(StoryDirector.mode()) if StoryDirector.enabled else ""
+
+
+func is_mode_confirm_open() -> bool:
+	return _mode_confirm.visible
+
+
+## (X-L5) « Mode de jeu » choisi : la confirmation courte (garder ou changer) remplace l'entrée.
+func request_mode_switch() -> void:
+	if not _options_panel.visible or not _mode_button.visible:
+		return
+	var target := ModeText.other(StoryDirector.mode())
+	(%ModeConfirmTitle as Label).text = ModeText.text("mode_switch_" + String(target))
+	(%ModeConfirmNote as Label).text = ModeText.text("mode_switch_%s_note" % target)
+	_mode_button.hide()
+	_mode_note.hide()
+	_mode_confirm.show()
+	_mode_confirm_no.grab_focus()
+
+
+## (X-L5) Confirmation refusée : le mode ne change pas.
+func cancel_mode_switch() -> void:
+	_mode_confirm.hide()
+	_refresh_mode()
+	_mode_button.grab_focus()
+
+
+## (X-L5) Confirmation acceptée : StoryDirector.set_mode(l'autre mode).
+func confirm_mode_switch() -> void:
+	if not _mode_confirm.visible:
+		return
+	StoryDirector.set_mode(ModeText.other(StoryDirector.mode()))
+	_mode_confirm.hide()
+	_refresh_mode()
+	_set_status(ModeText.text("mode_switched", {"mode": mode_text()}))
+	_mode_button.grab_focus()
+
+
+## (X-L5) Montre le mode de la partie : sous le jour du panneau et dans les options.
+func _refresh_mode() -> void:
+	var shown := StoryDirector.enabled
+	var mode := StoryDirector.mode()
+	_mode_tag.text = mode_text()
+	_mode_tag.visible = shown
+	_mode_button.text = ModeText.text("mode_option", {"mode": mode_text()})
+	_mode_note.text = ModeText.blurb(mode)
+	_mode_button.visible = shown and not _mode_confirm.visible
+	_mode_note.visible = _mode_button.visible
+	(%ModeGap as Control).visible = shown
+
+
+func _on_mode_changed(_mode: StringName) -> void:
+	_refresh_mode()
 
 
 ## « Retour au menu » : partie écrite, auto-sauvegarde coupée, pause levée, main.tscn rechargée.
@@ -233,6 +310,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			if not can_open():
 				return
 			open()
+		elif _mode_confirm.visible:
+			cancel_mode_switch()
 		elif _controls_panel.visible or _options_panel.visible:
 			hide_controls()
 		else:
@@ -246,7 +325,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		MenuInput.Command.ACCEPT:
 			MenuInput.press_focused(self)
 		MenuInput.Command.BACK:
-			if _controls_panel.visible or _options_panel.visible:
+			if _mode_confirm.visible:
+				cancel_mode_switch()
+			elif _controls_panel.visible or _options_panel.visible:
 				hide_controls()
 			else:
 				close()

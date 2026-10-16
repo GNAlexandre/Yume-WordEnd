@@ -1869,6 +1869,26 @@ moins de 3 s chacune ; l'épilogue après le départ passé ; un jeu arrêté et
 le scénarisé inchangé ; l'épilogue deux fois plus court touche tenue) ; règles et données :
 `tests/unit/test_story_data.gd`.
 
+**Le choix dans l'interface (lot X-L5)** :
+- « Nouvelle partie » (menu principal, après la confirmation d'écrasement s'il y a une sauvegarde)
+  ouvre le choix du mode (`ModeOverlay`) : « Mode libre » (le défaut : il a le focus) et « Mode
+  scénarisé », chacun avec sa phrase, plus « Retour » (Échap, B) ; le clic, A ou Entrée lance
+  `MainMenu.start_new_game(mode)` (pose `StoryDirector.next_game_mode`, puis
+  `SaveManager.new_game`). API : `MainMenu.open_mode_choice()`, `is_mode_choice_open()`,
+  `mode_button(mode)`, `start_new_game(mode = libre)`.
+- Pause, Options : l'entrée « Mode libre · changer » montre le mode et, après une confirmation
+  courte (« Garder » a le focus, « Changer » appelle `StoryDirector.set_mode(l'autre)`), passe de
+  l'un à l'autre en cours de partie ; le mode est aussi écrit, discret, sous le jour du panneau
+  (`PauseMenu.mode_text()`, `request_mode_switch()`, `cancel_mode_switch()`,
+  `confirm_mode_switch()`). Visible si le récit est allumé (`StoryDirector.enabled`).
+- Les textes : `data/texts/<île>/story.json`, section `ui` (`mode_choice_title`, `mode_libre_blurb`,
+  `mode_scenario_blurb`, `mode_choice_hint`, `mode_choice_back`, `mode_option`, `mode_switch_*`,
+  `mode_switched`), lus par `ModeText` (`src/ui/mode_text.gd`) : le menu n'a pas encore d'île
+  pour `StoryDirector.ui_text`, `ModeText` lit celle de la carte de départ.
+- Tests : `tests/integration/test_l5_mode_choice.gd` ; la base M2 donne
+  `new_game_from_menu(skin, mode)` et `choose_mode(mode)` (à défaut de `mode`, `mode_for_test()` :
+  les tests d'avant le mode libre jouent donc le même mode qu'avant).
+
 ### (U1) L'interface « Nuit douce » : thème, dialogue et signes
 
 - **Thème unique** : `src/ui/wordend_theme.tres`, à la racine de chaque écran (`theme`). Tout Control ajouté

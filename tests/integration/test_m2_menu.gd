@@ -91,6 +91,7 @@ func test_new_game_from_the_menu_with_the_mouse() -> void:
 				screen.connect(&"progress_changed", record)
 	)
 	await click(menu_button("NewGameButton"))
+	await choose_mode()
 	assert_true(await wait_for_game(), "la partie se charge")
 	var steps := progress.filter(func(ratio: float) -> bool: return ratio > 0.0 and ratio < 1.0)
 	assert_gt(steps.size(), 10, "la barre avance par étapes (%d)" % steps.size())
@@ -134,7 +135,14 @@ func test_new_game_from_the_menu_with_a_gamepad_only() -> void:
 			await tap_joy(JOY_BUTTON_DPAD_UP)
 	assert_eq(_focus_owner(), menu_button("NewGameButton"), "croix : Nouvelle partie")
 	await tap_joy(JOY_BUTTON_A)
+	# (X-L5) Le choix du mode : le libre a le focus ; la croix en bas mène au scénarisé.
+	assert_true(title.call(&"is_mode_choice_open"), "A ouvre le choix du mode")
+	assert_eq(_focus_owner(), title.call(&"mode_button", StoryPacing.FREE), "le libre : le défaut")
+	await tap_joy(JOY_BUTTON_DPAD_DOWN)
+	assert_eq(_focus_owner(), title.call(&"mode_button", StoryPacing.SCENARIO), "croix en bas")
+	await tap_joy(JOY_BUTTON_A)
 	assert_true(await wait_for_game(), "A lance la partie")
+	assert_eq(StoryDirector.mode(), StoryPacing.SCENARIO, "dans le mode choisi à la manette")
 	await _assert_started_at_the_spawn(skin_id)
 	assert_false(
 		player.is_on_floor() and player.velocity.y > 0.1, "l'appui de A n'a pas fait sauter"
