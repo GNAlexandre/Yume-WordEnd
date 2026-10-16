@@ -125,7 +125,7 @@ func test_afternoon_ball_on_days_9_to_12() -> void:
 		for day: int in [9, 10, 11, 12]:
 			var line := LifeData.line_for(npc_id, &"apres_midi", day)
 			assert_eq(line.get("activity"), &"ballon", "%s, jour %d" % [npc_id, day])
-		assert_ne(LifeData.line_for(npc_id, &"apres_midi", 6).get("activity"), &"ballon")
+		assert_ne(LifeData.line_for(npc_id, &"apres_midi", 8).get("activity"), &"ballon")
 	assert_eq(LifeData.line_for(&"willem", &"apres_midi", 12).get("role"), &"arbitre")
 	GameState.set_flag(&"pluie_du_jour")
 	assert_ne(
