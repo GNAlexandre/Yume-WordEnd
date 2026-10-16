@@ -28,6 +28,18 @@ const CATCH_UP_LIMIT := 4.0
 const CATCH_UP_TIME := 1.5
 
 
+## La scène j3_2_chemin est laissée en cours : on la coupe et on rend Ithea et Nephren à la vie,
+## sinon leur réservation survit au test (test_life compte les PNJ de la carte).
+func after_each() -> void:
+	StoryDirector.stage().repose_lost = false
+	StoryDirector.runner().stop()
+	StoryDirector.stage().clear()
+	for npc_id: StringName in LifeDirector.reserved():
+		LifeDirector.release(npc_id, false)
+	await frames(3)
+	super()
+
+
 func _resume_at(day: int, slot: StringName, map_id: StringName, at: Vector3, done: Array) -> bool:
 	GameState.reset()
 	var state := GameState.to_dict()
