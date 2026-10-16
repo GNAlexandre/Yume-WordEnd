@@ -21,11 +21,11 @@ const PARAMETERS: Array[StringName] = [
 ## Valeurs par défaut des uniformes (celles de depth_focus.gdshaderinc).
 const DEFAULTS := {
 	&"focus_depth": 21.0,
-	&"focus_near": 1.8,
-	&"focus_far": 4.0,
+	&"focus_near": 1.2,
+	&"focus_far": 3.0,
 	&"near_full": 3.5,
 	&"near_blur_px": 7.0,
-	&"far_full": 16.0,
+	&"far_full": 12.0,
 	&"far_blur_px": 5.0,
 }
 ## Écart en deçà duquel une valeur n'est pas recopiée.

@@ -99,6 +99,7 @@ var _started: bool = false
 var _post: ShaderMaterial
 ## (RD) Matériau du flou de profondeur (CameraRig/Camera3D/DepthBlur), propre à cette caméra.
 var _depth_blur: ShaderMaterial
+var _depth_blur_on: bool = true
 ## Avance lissée dans le sens de la marche (m) et écart au nord lissé (m).
 var _lead: Vector3 = Vector3.ZERO
 var _ahead: float = 2.5
@@ -350,6 +351,7 @@ static func _back(degrees: float) -> Vector3:
 func _update_focus_depth() -> void:
 	if _depth_blur == null:
 		return
+	_show_depth_blur()
 	var values := {&"focus_depth": focus_depth_of(anchor() + Vector3.UP * focus_height)}
 	if _post != null:
 		var far: Variant = _post.get_shader_parameter(&"top_blur_px")
@@ -377,15 +379,21 @@ func depth_blur_material() -> ShaderMaterial:
 ## (RD) Allume ou éteint le flou de profondeur (qualité réduite : sans lui, ni copie de l'image
 ## ni de la profondeur dans le monde 3D ; les matériaux mélangés gardent leur flou propre).
 func set_depth_blur_enabled(enabled: bool) -> void:
-	var blur := get_node_or_null(^"Camera3D/DepthBlur") as Node3D
-	if blur != null:
-		blur.visible = enabled
+	_depth_blur_on = enabled
+	_show_depth_blur()
 
 
 ## (RD) Vrai si le flou de profondeur est allumé.
 func is_depth_blur_enabled() -> bool:
+	return _depth_blur_on
+
+
+## (RD) Le rectangle du flou couvre l'écran de toute caméra : il ne se montre que si celle du
+## joueur est la caméra courante (pas sous la caméra d'ensemble d'une carte ni d'une vue d'essai).
+func _show_depth_blur() -> void:
 	var blur := get_node_or_null(^"Camera3D/DepthBlur") as Node3D
-	return blur != null and blur.visible
+	if blur != null:
+		blur.visible = _depth_blur_on and camera.current
 
 
 func _valid_target() -> Node3D:

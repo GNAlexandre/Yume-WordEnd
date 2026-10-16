@@ -270,5 +270,5 @@ func test_blended_materials_blur_themselves() -> void:
 	DepthFocus.apply(before)
 	# La courbe : nette autour du joueur, floue devant, adoucie au loin.
 	assert_eq(DepthFocus.radius_px(21.0), 0.0)
-	assert_almost_eq(DepthFocus.radius_px(21.0 - 1.8 - 3.5), 7.0, 0.001, "premier plan")
-	assert_almost_eq(DepthFocus.radius_px(21.0 + 4.0 + 16.0), 5.0, 0.001, "lointain")
+	assert_almost_eq(DepthFocus.radius_px(21.0 - 1.2 - 3.5), 7.0, 0.001, "premier plan")
+	assert_almost_eq(DepthFocus.radius_px(21.0 + 3.0 + 12.0), 5.0, 0.001, "lointain")

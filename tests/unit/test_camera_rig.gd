@@ -207,6 +207,15 @@ func test_post_fx_shader_compiles() -> void:
 	rig.set_depth_blur_enabled(false)
 	assert_false(blur.visible, "qualité réduite : le flou s'éteint")
 	rig.set_depth_blur_enabled(true)
+	# Sous une autre caméra (vue d'ensemble), le rectangle ne se montre pas.
+	var other := Camera3D.new()
+	add_child_autofree(other)
+	other.make_current()
+	_update(rig, DT)
+	assert_false(blur.visible, "pas sous une autre caméra")
+	rig.camera.make_current()
+	_update(rig, DT)
+	assert_true(blur.visible)
 
 
 # --- (H5) Bande nette du flou, cadrage des bâtiments -----------------------------------------
@@ -253,7 +262,7 @@ func test_focus_depth_follows_the_player() -> void:
 		assert_eq(DepthFocus.radius_px(rig.focus_depth_of(player), values), 0.0, "joueur net")
 		for around: Vector3 in [Vector3.FORWARD * 3.0, Vector3.BACK * 1.5, Vector3.RIGHT * 6.0]:
 			var near := rig.focus_depth_of(player + around)
-			assert_eq(DepthFocus.radius_px(near, values), 0.0, "net à %s du joueur" % around)
+			assert_lt(DepthFocus.radius_px(near, values), 0.5, "net à %s du joueur" % around)
 		var far := rig.focus_depth_of(player + Vector3.FORWARD * 22.0)
 		assert_between(DepthFocus.radius_px(far, values), 2.0, 6.0, "le lointain s'adoucit")
 		var front := rig.focus_depth_of(player + Vector3.BACK * 6.0 + Vector3.UP * 3.0)

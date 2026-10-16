@@ -9,13 +9,13 @@
 
 // Profondeur du joueur (m), bande nette devant lui (vers la caméra) et derrière lui (m).
 uniform float focus_depth = 21.0;
-uniform float focus_near = 1.8;
-uniform float focus_far = 4.0;
+uniform float focus_near = 1.2;
+uniform float focus_far = 3.0;
 // Premier plan : écart (m, au-delà de la bande) où le flou est plein, et ce flou (px).
 uniform float near_full = 3.5;
 uniform float near_blur_px = 7.0;
 // Lointain : écart (m, au-delà de la bande) où le flou est plein, et ce flou (px).
-uniform float far_full = 16.0;
+uniform float far_full = 12.0;
 uniform float far_blur_px = 5.0;
 
 // Flou (px) du premier plan pour une profondeur.

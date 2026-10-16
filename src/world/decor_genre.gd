@@ -162,8 +162,8 @@ const SETTINGS := {
 	{
 		"tail": 0.35,
 		"tail_width": 1.0,
-		"core_alpha": 0.5,
-		"tail_alpha": 0.35,
+		"core_alpha": 0.3,
+		"tail_alpha": 0.22,
 		"long": true,
 		"wind": 0.005,
 		"wind_max": 3.0,
