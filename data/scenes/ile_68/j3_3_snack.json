@@ -12,6 +12,7 @@
     "point": "porte_snack",
     "radius": 2.0
   },
+  "offer": {"point": "porte_snack", "text": "offer"},
   "present": [
     "ithea",
     "nephren",

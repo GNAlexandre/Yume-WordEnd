@@ -10,6 +10,7 @@
     "point": "porte_seuil",
     "radius": 3.0
   },
+  "offer": {"point": "porte_seuil", "text": "offer"},
   "present": [
     "nygglatho",
     "ithea",

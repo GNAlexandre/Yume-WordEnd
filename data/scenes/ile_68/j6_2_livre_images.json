@@ -13,6 +13,7 @@
     "point": "jeux_tapis",
     "radius": 3.8
   },
+  "offer": {"point": "jeux_tapis", "text": "offer"},
   "present": [
     "willem",
     "collon",

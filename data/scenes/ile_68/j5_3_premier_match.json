@@ -13,6 +13,7 @@
     "point": "champ_centre",
     "radius": 12
   },
+  "offer": {"point": "champ_centre", "text": "offer"},
   "steps": [
     {
       "do": "dialogue",

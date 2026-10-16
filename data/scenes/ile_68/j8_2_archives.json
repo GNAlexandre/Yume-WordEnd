@@ -13,6 +13,7 @@
     "point": "archives_canape",
     "radius": 2.6
   },
+  "offer": {"point": "archives_canape", "text": "offer"},
   "present": [
     "willem",
     "nephren"

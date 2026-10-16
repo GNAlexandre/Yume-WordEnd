@@ -1749,7 +1749,10 @@ func offers() -> StoryOffers / skipper() -> StorySkip / resolver() -> StoryResol
 class_name StoryPacing    # FREE, SCENARIO, FLAG, FREE_FLAG, NAMES ; of_game, store, migrate, is_chained,
                           # allows_trigger, doors_by_day, replays_interrupted, starts_in_black,
                           # start_slot, shows_start_card ; Chain (la dernière scène finie et sa carte)
-class_name StoryOffers    # (L1) rebuild(carte), refresh(), talk(pnj) -> bool, scene_ended(id, finie)
+class_name StoryOffers    # (L1) rebuild(carte), refresh(), talk(pnj) -> bool, scene_ended(id, finie) ;
+                          # active, offered_scenes, anchor(id), prompts, tagged, proposing,
+                          # propose(id, pnj), accept(id) ; statiques : conditions_met(données, jour,
+                          # créneau), slots_of(données), anchor_for(données, where)
 class_name StorySkip      # (L2) is_skippable, prompt_text, skip(runner), handle_input, skip_flags(données),
                           # SKIP_ACTION, FORWARD_ACTION ; séquences vues
 class_name StoryResolve   # (L4) can_sleep(règle), can_rest(règle), before_sleep(île, jour), resolve_scene
@@ -1769,6 +1772,38 @@ class_name StoryFreeData  # vérifie les clés du libre (OFFER_KEYS, SKIP_KEYS, 
   créneau `free.start_slot` (le soir), la main au joueur à `Spawn` ;
 - le reste (coucher, temps qui passe, indice) est celui du scénarisé tant que L1 et L4 n'ont pas
   rempli leurs points d'entrée ; passer une scène : ci-dessous (X-L2).
+
+**Les propositions** (lot X-L1, `src/story/story_offers.gd`, rien en scénarisé) :
+- **proposée** : toute scène pas encore jouée dont les conditions tiennent (jour, créneau,
+  `after`, `if` : `StoryOffers.conditions_met`) ; une tête (déclencheur autre que `ready`, ou sans
+  `after`) comme une suite qui ne s'est pas enchaînée (`j12_1_embuscade`, `j10_4_toit`…) ;
+- **l'ancre** (`StoryOffers.anchor_for(données, where)` → `{"npc", "map"}` ou `{"point", "map"}`,
+  `{}` sans ancre) : la clé `offer`, sinon talk → le PNJ ; reach, prompt → le point ; enter → le
+  marqueur ; ready → le premier présent sur la carte de la scène, sinon le premier présent
+  ailleurs. Un PNJ est sur la carte que donne `LifeDirector.where` ; nulle part (aucune carte),
+  l'ancre retombe sur le point de la scène (offer.point, sinon celui du déclencheur) ;
+- **ancre sur un PNJ** : il porte le ruban du récit (`InteractSign.STORY`) ; lui parler dit d'abord
+  la proposition (le texte `offer`, dit par lui ; sinon `ui/offer_default`, « Un moment de
+  l'histoire t'attend : « {title} ». », sans orateur), avec « Allons-y » (`ui/offer_go`) et « Plus
+  tard » (`ui/offer_later` : la conversation libre habituelle) ; chaque conversation la redit ;
+- **ancre sur un lieu** : une invite `StoryPrompt` (rôle `ROLE_SCENE`, nœud `StoryOffers` de la
+  carte, texte : le titre de la scène) au ruban ; l'utiliser dit la proposition (sans orateur),
+  mêmes choix (« Plus tard » ne fait rien de plus). Une scène `prompt` garde l'invite du directeur
+  (elle joue la scène tout de suite), qui prend le ruban ;
+- **accepter** (`accept`) : `StoryDirector.play(id)` ; une scène d'une autre carte (le PNJ est
+  ailleurs : Pannibal dans la salle de jeux pour l'embuscade dehors) y mène d'abord (fondu,
+  marqueur `from_<carte courante>` s'il existe, celui du déclencheur `enter`, sinon `Spawn`), le
+  joueur posé à 1,2 m au sud du point du déclencheur ;
+- **les données** : 33 scènes portent `offer` (`data/scenes/ile_68/`), leurs textes sous
+  `<scène>/offer` (`data/texts/ile_68/story.json`) ; les réveils (j2_1, j9_1, j11_1, j12_1) à la
+  porte de la chambre (`chtholly_porte`) ; `j1_1_port` est proposée par Nygglatho sous le porche
+  (une ligne de vie du jour 1, `if` : `mode_libre` et pas encore le port, `data/life/ile_68/
+  nygglatho.json`) ;
+- **tests** : `tests/unit/test_story_offers.gd` (chaque tête a une ancre à chaque créneau permis,
+  règles, conditions, signe), `tests/integration/test_free_offers.gd` (Willem à la clairière au
+  jour 9 : deux choix, « Plus tard » puis 20 s sans scène, « Allons-y » ; le ruban à moins de
+  3,5 m ; le port puis la lumière dans la nuit ; l'embuscade de Pannibal ; une invite de lieu) ;
+  démonstration : `tests/integration/demo_offers.tscn` (images `ruban`, `proposition`).
 
 **Les données** (format strict, clé inconnue refusée) :
 - une scène peut porter `offer` (l'ancre de sa proposition : `{"npc": id}` ou
@@ -1861,6 +1896,11 @@ le scénarisé inchangé ; l'épilogue deux fois plus court touche tenue) ; règ
   cacher tous les signes : `InteractSign.suppress(&"raison", true)` ; réglage « toujours montrer la touche » :
   `InteractSign.always_show_key()` (Options de la pause). Tests : `full_target()`, `full_kind()`,
   `pale_targets()`, `is_key_hint_shown()`, `hovered_target()` du nœud (`HUD.interact_signs()`).
+  (X-L1) Genre `&"story"` (`InteractSign.STORY`) : un petit ruban or de signet
+  (`assets/hd2d/fx/sign_story.png`, dessiné à `STORY_SCALE` = 0,85 de la taille des autres), posé
+  par `InteractSign.set_story(cible, true)` (métadonnée `STORY_META`, à part de `META` :
+  `set_hidden` le cache toujours) sur ce qui porte une proposition du mode libre ; comme tout signe
+  pâle, il ne paraît qu'à moins de 3,5 m (aucun marqueur au-dessus des têtes à distance).
 
 ### (E8) Les jeux : le ballon, l'entraînement au bâton, l'arme de Chtholly
 

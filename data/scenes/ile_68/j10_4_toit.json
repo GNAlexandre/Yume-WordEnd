@@ -6,6 +6,7 @@
   "after": ["j10_5_tour"],
   "map": "entrepot_etage",
   "trigger": {"on": "ready"},
+  "offer": {"npc": "nygglatho", "text": "offer"},
   "sequence": true,
   "present": ["nephren", "nygglatho"],
   "steps": [

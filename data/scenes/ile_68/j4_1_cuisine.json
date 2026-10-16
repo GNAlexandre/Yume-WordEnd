@@ -10,6 +10,7 @@
     "point": "refectoire_porte_cuisine",
     "radius": 2.6
   },
+  "offer": {"point": "refectoire_porte_cuisine", "text": "offer"},
   "present": [
     "willem",
     "fairy_12",

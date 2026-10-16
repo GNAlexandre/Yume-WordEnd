@@ -582,7 +582,7 @@ RECIPES.update({
 #
 # Petits signes posés au-dessus d'une cible à portée (src/ui/interact_signs.gd), dessinés à taille
 # fixe à l'écran (20 à 28 px) : bulle « … » (parler), étincelle (examiner), main (prendre), porte
-# (entrer). Crème #F6EEE4, contour doré #E8C98A, glyphe prune #3A2A40, ombre douce ; dessinés à
+# (entrer), (X-L1) ruban or de signet (une scène proposée, mode libre). Crème #F6EEE4, contour doré #E8C98A, glyphe prune #3A2A40, ombre douce ; dessinés à
 # quatre fois leur taille puis réduits (remplaçants en attendant les images du cahier n° 5).
 
 SIGN_CREAM = (246, 238, 228, 255)
@@ -654,7 +654,33 @@ def _sign_enter(d, s):
                   (0.31, 0.47)], s), fill=SIGN_CREAM)
 
 
+SIGN_GOLD_DEEP = (214, 168, 86, 255)
+
+
+def _bookmark(k, s):
+    """Signet droit, un peu penché, la queue fendue en V (k : retrait du bord, 0..1)."""
+    top, bottom, notch = 0.08 + k * 0.8, 0.92 - k * 0.9, 0.74 + k * 0.4
+    lean = 0.05
+    left_x, right_x = 0.31 + k, 0.69 - k
+    points = [
+        (left_x + lean, top), (right_x + lean, top),
+        (right_x - lean, bottom), (0.5 - lean * 0.5, notch), (left_x - lean, bottom),
+    ]
+    return _u(points, s)
+
+
+def _sign_story(d, s):
+    """(X-L1) Ruban or : un signet de livre, la queue fendue en V (une scène du livre proposée)."""
+    d.polygon(_bookmark(0.0, s), fill=SIGN_INK)
+    d.polygon(_bookmark(0.045, s), fill=SIGN_GOLD_DEEP)
+    d.polygon(_bookmark(0.11, s), fill=SIGN_GOLD)
+    # Le pli du haut (le ruban sort d'entre les pages) et un reflet crème.
+    d.rectangle((s * 0.36, s * 0.12, s * 0.74, s * 0.2), fill=SIGN_GOLD_DEEP)
+    d.line(_u([(0.44, 0.27), (0.39, 0.7)], s), fill=SIGN_CREAM, width=max(1, round(s * 0.045)))
+
+
 RECIPES.update({
+    "fx/sign_story": lambda size, rnd: _sign(size, _sign_story),
     "fx/sign_talk": lambda size, rnd: _sign(size, _sign_talk),
     "fx/sign_examine": lambda size, rnd: _sign(size, _sign_examine),
     "fx/sign_take": lambda size, rnd: _sign(size, _sign_take),

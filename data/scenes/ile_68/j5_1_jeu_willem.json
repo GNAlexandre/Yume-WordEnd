@@ -10,6 +10,7 @@
     "point": "champ_centre",
     "radius": 15
   },
+  "offer": {"point": "champ_centre", "text": "offer"},
   "sequence": true,
   "present": [
     "willem",

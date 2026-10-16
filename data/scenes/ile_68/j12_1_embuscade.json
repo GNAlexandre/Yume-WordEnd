@@ -8,6 +8,7 @@
   "map": "entrepot",
   "hint": "hint",
   "trigger": {"on": "ready"},
+  "offer": {"npc": "pannibal", "text": "offer"},
   "present": ["pannibal"],
   "steps": [
     {"do": "control", "on": false},

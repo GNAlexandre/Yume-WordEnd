@@ -12,6 +12,7 @@
     "on": "enter",
     "marker": "from_entrepot_rdc"
   },
+  "offer": {"point": "from_entrepot_rdc", "text": "offer"},
   "present": [
     "ithea",
     "nephren"

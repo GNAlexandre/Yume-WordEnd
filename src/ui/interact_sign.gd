@@ -8,6 +8,9 @@ extends RefCounted
 ##   KINDS, ou NONE), sinon selon sa classe : Npc → TALK (bulle « … »), Pickup → TAKE (main),
 ##   MapExit et AirshipDock → ENTER (porte), le reste (Examinable, panneaux, écriteaux) → EXAMINE
 ##   (étincelle) ; une cible sans invite (get_prompt() vide) n'a pas de signe.
+## - (X-L1) Une proposition du récit (mode libre, StoryOffers) : InteractSign.set_story(cible,
+##   true) pose STORY_META ; la cible porte alors le signe STORY (un petit ruban or, discret),
+##   sauf si elle est cachée (set_hidden). Comme tout signe pâle, il ne paraît qu'à deux pas.
 ## - Cacher le signe d'une cible (les participants d'un jeu ou d'une scène : E6, E8) :
 ##   InteractSign.set_hidden(cible, true), qui pose META = NONE ; set_hidden(cible, false) le rend.
 ## - Cacher tous les signes (une scène du récit, un jeu) : InteractSign.suppress(&"raison", true),
@@ -21,8 +24,12 @@ const TALK := &"talk"
 const EXAMINE := &"examine"
 const TAKE := &"take"
 const ENTER := &"enter"
+## (X-L1) Une scène du livre proposée (mode libre).
+const STORY := &"story"
 const NONE := &"none"
-const KINDS: Array[StringName] = [TALK, EXAMINE, TAKE, ENTER]
+const KINDS: Array[StringName] = [TALK, EXAMINE, TAKE, ENTER, STORY]
+## (X-L1) Métadonnée d'une cible qui porte une proposition du récit (set_story).
+const STORY_META := &"interact_story"
 ## Métadonnée facultative : hauteur du signe au-dessus de l'origine de la cible (m).
 const HEIGHT_META := &"interact_sign_height"
 ## Réglages de l'interface (ConfigFile).
@@ -41,6 +48,8 @@ static func kind_of(target: Node) -> StringName:
 	# Aucun signe sans invite (un PNJ absent, un participant d'un jeu : E8).
 	if target.has_method(&"get_prompt") and str(target.call(&"get_prompt")).is_empty():
 		return &""
+	if target.has_meta(STORY_META) and not is_hidden(target):
+		return STORY
 	if target.has_meta(META):
 		var forced := StringName(str(target.get_meta(META)))
 		return forced if forced in KINDS else &""
@@ -59,6 +68,19 @@ static func set_hidden(target: Node, hidden: bool) -> void:
 		target.set_meta(META, NONE)
 	elif target.has_meta(META) and StringName(str(target.get_meta(META))) == NONE:
 		target.remove_meta(META)
+
+
+## (X-L1) Pose (on) ou retire le signe du récit de target (une proposition, StoryOffers).
+static func set_story(target: Node, on: bool) -> void:
+	if on:
+		target.set_meta(STORY_META, true)
+	elif target.has_meta(STORY_META):
+		target.remove_meta(STORY_META)
+
+
+## (X-L1) true si target porte une proposition du récit (set_story).
+static func is_story(target: Node) -> bool:
+	return is_instance_valid(target) and target.has_meta(STORY_META)
 
 
 ## true si le signe de target est caché par set_hidden.

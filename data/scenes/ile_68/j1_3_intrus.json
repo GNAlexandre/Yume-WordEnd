@@ -12,6 +12,7 @@
     "point": "chtholly_arrivee",
     "radius": 4
   },
+  "offer": {"point": "chtholly_arrivee", "text": "offer"},
   "present": [
     "willem",
     "pannibal"

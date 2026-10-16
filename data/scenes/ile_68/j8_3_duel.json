@@ -13,6 +13,7 @@
     "point": "cour_willem",
     "radius": 5.0
   },
+  "offer": {"point": "cour_willem", "text": "offer"},
   "present": [
     "willem",
     "nephren",
