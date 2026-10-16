@@ -113,7 +113,7 @@ func test_library_names_atlas_tiles_and_distinct_colors() -> void:
 	for material: String in materials.keys():
 		var spec: Dictionary = materials[material]
 		assert_true(
-			IslandTerrain.GROUND_LAYERS.has(StringName(String(spec.get("layer", "")))),
+			GroundAtlas.GROUND_LAYERS.has(StringName(String(spec.get("layer", "")))),
 			"%s : tuile de l'atlas" % material
 		)
 		var color := String(spec.get("color", ""))

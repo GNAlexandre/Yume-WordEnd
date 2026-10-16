@@ -4,7 +4,7 @@ extends "res://tests/stubs/m1_game_test.gd"
 ## conditions et les drapeaux décident des scènes, les déclencheurs partent, les présents sont
 ## réservés puis rendus à la vie, la séquence se passe, le temps passe (jamais au-delà de la
 ## scène suivante), on se couche et le jour avance ; le crochet des jeux (E8) ; la conversation
-## libre ; la reprise d'une scène commencée ; une partie de l'ancienne île n'a pas de récit.
+## libre ; la reprise d'une scène commencée ; une île sans acte (la surface) n'a pas de récit.
 
 const TEST_ROOT := "res://tests/data/story"
 const SEEN := "user://test_story_runner_seen.cfg"
@@ -15,6 +15,11 @@ var _game_params: Dictionary = {}
 
 func start_map_for_test() -> StringName:
 	return &"entrepot_rdc"
+
+
+## (F1) Le récit est allumé (la base M1 le coupe).
+func story_for_test() -> bool:
+	return true
 
 
 func before_each() -> void:
@@ -180,7 +185,7 @@ func test_steps_conditions_triggers_and_days() -> void:
 	assert_eq(LifeSlots.current(), &"aube")
 	assert_eq(GameState.weather, &"pluie")
 	assert_eq(StoryDirector.calendar_line(1), "Une ligne choisie par une scène.")
-	assert_eq(GameState.quests(), {}, "aucune quête pendant l'acte")
+	assert_false(GameState.to_dict().has("quests"), "(F1) plus de quêtes dans la partie")
 
 
 func test_free_talk_by_day() -> void:
@@ -248,13 +253,13 @@ func test_resume_restarts_scene_in_progress() -> void:
 	assert_eq(GameState.story_scene, &"")
 
 
-func test_legacy_island_has_no_story() -> void:
-	WorldManager.start_map = WorldManager.LEGACY_MAP
+func test_an_island_without_act_has_no_story() -> void:
+	WorldManager.start_map = &"surface_essai"
 	StoryData.use_root("")
 	await start_game()
-	assert_eq(WorldManager.current_map(), WorldManager.LEGACY_MAP)
-	assert_false(GameState.story_running(), "l'ancienne île garde ses quêtes")
-	assert_eq(GameState.quest_state(&"act1_main"), &"active", "la quête principale y démarre")
+	assert_eq(WorldManager.current_map(), &"surface_essai")
+	assert_false(GameState.story_running(), "la surface n'a pas d'acte en jours")
+	assert_eq(GameState.day, 0)
 	assert_eq(StoryDirector.hint(), "")
 
 

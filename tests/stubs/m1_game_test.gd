@@ -11,7 +11,9 @@ extends GutTest
 ## quelle que soit la charge. Le hasard global (IA des Timeres) est semé à chaque test.
 ##
 ## Après chaque test : partie libérée, touches relâchées, pause levée, sauvegarde de test
-## effacée, chemin de sauvegarde, délai de réapparition et zone de WorldManager rétablis.
+## effacée, chemin de sauvegarde, délai de réapparition, carte de départ et récit rétablis.
+## (F1) Une nouvelle partie se pose sur la carte d'essai (start_map_for_test), récit coupé
+## (story_for_test) : les tests du récit (tests/stubs/e6_story_test.gd) le rallument.
 
 const GAME_SCENE := preload("res://src/game.tscn")
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
@@ -35,9 +37,6 @@ var game: Node3D
 var player: Player
 var combat: PlayerCombat
 var health: Health
-var dunes: Zone
-var arena: Arena
-var director: WaveDirector
 
 ## Identifiants des CharacterVisual de la partie (instance_from_id : null une fois libérés).
 var _visuals: Array[int] = []
@@ -46,8 +45,8 @@ var _listeners: Array[Array] = []
 var _previous_path: String
 var _previous_autosave: float
 var _previous_respawn: float
-var _previous_zone: StringName
 var _previous_start: StringName
+var _previous_story: bool
 
 
 func before_each() -> void:
@@ -55,10 +54,12 @@ func before_each() -> void:
 	_previous_path = SaveManager.save_path
 	_previous_autosave = SaveManager.autosave_delay
 	_previous_respawn = WorldManager.respawn_delay
-	_previous_zone = WorldManager.current_zone()
-	# (E6) Une nouvelle partie ouvre l'acte 1 à l'entrepôt : ces tests jouent l'ancienne île.
+	# (E6) Une nouvelle partie ouvre l'acte 1 à l'entrepôt ; (F1) ces tests partent de la carte
+	# d'essai, sans le récit, sauf ceux qui le demandent.
 	_previous_start = WorldManager.start_map
 	WorldManager.start_map = start_map_for_test()
+	_previous_story = StoryDirector.enabled
+	StoryDirector.enabled = story_for_test()
 	SaveManager.close_game(false)
 	SaveManager.save_path = save_file()
 	_delete_save_files()
@@ -89,16 +90,22 @@ func after_each() -> void:
 	SaveManager.autosave_delay = _previous_autosave
 	WorldManager.respawn_delay = _previous_respawn
 	WorldManager.start_map = _previous_start
-	if WorldManager.current_zone() != _previous_zone:
-		EventBus.zone_entered.emit(_previous_zone)
+	StoryDirector.enabled = _previous_story
 	SaveManager.close_game(false)
 	GameState.reset()
 
 
-## (E6) Carte d'une nouvelle partie pendant le test : l'ancienne île (ses zones, ses quêtes) ;
-## les tests de l'acte en jours la redéfinissent (WorldManager.START_MAP).
+## (E6) Carte d'une nouvelle partie pendant le test : (F1) la carte d'essai (une prairie plate
+## de l'île n° 68, ses sorties et ses quais) ; les tests de l'acte en jours la redéfinissent
+## (WorldManager.START_MAP), ceux des Timeres prennent la surface (surface_essai).
 func start_map_for_test() -> StringName:
-	return WorldManager.LEGACY_MAP
+	return &"essai"
+
+
+## (F1) Récit (StoryDirector.enabled) pendant le test : coupé, une nouvelle partie n'ouvre pas
+## l'acte ; les tests du récit le rallument.
+func story_for_test() -> bool:
+	return false
 
 
 ## Sauvegarde propre au script de test.
@@ -106,22 +113,14 @@ func save_file() -> String:
 	return "user://test_m1_%s.json" % get_script().resource_path.get_file().get_basename()
 
 
-## Nouvelle partie avec Chtholly puis src/game.tscn : le joueur est au Spawn du village.
+## Nouvelle partie avec Chtholly puis src/game.tscn : le joueur est au Spawn de la carte de départ.
 func start_game() -> void:
 	SaveManager.new_game(&"chtholly")
 	game = GAME_SCENE.instantiate() as Node3D
 	add_child(game)
-	# Fin d'arène (L10) : le panneau fige le jeu jusqu'à « Continuer ». Ces tests enchaînent des
-	# séries sans interface : on le referme dès qu'il s'ouvre (ses propres tests le couvrent).
-	var arena_end := game.get_node_or_null(^"UI/ArenaEnd")
-	if arena_end != null and arena_end.has_signal(&"shown"):
-		arena_end.connect(&"shown", Callable(arena_end, &"close"))
 	player = game.get_node(^"Player") as Player
 	combat = player.combat
 	health = player.health
-	dunes = game.get_node_or_null(^"World/ile_ancienne/Zones/dunes") as Zone
-	arena = dunes.get_node(^"Arena") as Arena if dunes != null else null
-	director = arena.director() if arena != null else null
 	await wait_physics_frames(3)
 
 
@@ -132,23 +131,26 @@ func listen(bus_signal: Signal, callable: Callable) -> void:
 	_listeners.append([bus_signal, callable])
 
 
-## Zone de l'île par son identifiant.
-func zone(zone_id: StringName) -> Zone:
-	return game.get_node(NodePath("World/ile_ancienne/Zones/%s" % zone_id)) as Zone
+## Carte courante (WorldManager.current_map_node()).
+func current_map() -> Map:
+	return WorldManager.current_map_node()
 
 
-## Place le joueur au point local `local_position` de la zone (posé au sol), visée `aim`,
-## caméra derrière lui ; attend que la zone l'ait vu entrer.
-func place_player(zone_id: StringName, local_position: Vector3, aim: Vector3) -> void:
-	var target := zone(zone_id).to_global(local_position)
+## Place le joueur au point `at` de la carte courante (repère de la carte, posé au sol), visée
+## `aim`, caméra derrière lui.
+func place_player(at: Vector3, aim: Vector3) -> void:
+	var target := current_map().to_global(at)
 	player.global_position = WorldManager.ground_position(target, player)
 	player.velocity = Vector3.ZERO
+	player.reset_physics_interpolation()
 	player.set_aim_direction(aim, true)
 	await wait_physics_frames(3)
 
 
-## Timere libre (ni vague ni objet lâché) de type enemy_id au point global `at`, ajouté à la
-## partie ; frozen : IA arrêtée (cible immobile, sans attaque).
+## Timere libre (sans objet lâché) de type enemy_id au point global `at`, ajouté à la partie ;
+## frozen : IA arrêtée (cible immobile, sans attaque). Sur une île qui n'admet pas les Timeres
+## (l'île n° 68, la carte d'essai), il se retire aussitôt : les tests de combat partent de la
+## surface (start_map_for_test : surface_essai).
 func spawn_enemy(enemy_id: StringName, at: Vector3, frozen: bool = false) -> Enemy:
 	var enemy := ENEMY_SCENE.instantiate() as Enemy
 	enemy.data = load("res://data/enemies/%s.tres" % enemy_id) as EnemyData
@@ -213,25 +215,14 @@ func flat_distance(a: Vector3, b: Vector3) -> float:
 	return Vector2(a.x - b.x, a.z - b.z).length()
 
 
-## Copie de la configuration des vagues réelle (data/waves/dunes.json) avec des délais
-## raccourcis : apparitions groupées, pauses brèves (tests de série, pas de cadence).
-func fast_waves() -> Dictionary:
-	var config := director.config()
-	config["timing"] = {
-		"start_delay": 0.1,
-		"wave_pause": 0.1,
-		"first_spawn_delay": 0.05,
-		"spawn_interval": 0.05,
-		"spawn_interval_per_wave": 0.0,
-		"spawn_interval_min": 0.05,
-		"spawn_jitter": [1.0, 1.0],
-	}
-	return config
-
-
 func _delete_save_files() -> void:
 	var path := save_file()
-	for file: String in [path, path + SaveManager.BACKUP_SUFFIX, path + SaveManager.TEMP_SUFFIX]:
+	for file: String in [
+		path,
+		path + SaveManager.BACKUP_SUFFIX,
+		path + SaveManager.TEMP_SUFFIX,
+		path + SaveManager.LEGACY_SUFFIX,
+	]:
 		if FileAccess.file_exists(file):
 			DirAccess.remove_absolute(file)
 

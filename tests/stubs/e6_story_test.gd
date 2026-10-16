@@ -14,6 +14,11 @@ func start_map_for_test() -> StringName:
 	return WorldManager.START_MAP
 
 
+## (F1) Le récit est allumé (la base M1 le coupe).
+func story_for_test() -> bool:
+	return true
+
+
 func before_each() -> void:
 	super()
 	_previous_fade = WorldManager.fade_time

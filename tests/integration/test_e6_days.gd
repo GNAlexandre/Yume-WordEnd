@@ -24,6 +24,11 @@ func start_map_for_test() -> StringName:
 	return WorldManager.START_MAP
 
 
+## (F1) Le récit est allumé (la base M1 le coupe).
+func story_for_test() -> bool:
+	return true
+
+
 func before_each() -> void:
 	super()
 	_previous_seen = StoryDirector.seen_path
@@ -172,7 +177,7 @@ func test_days_2_to_4() -> void:
 	await _sleep()
 	assert_eq(GameState.day, 5, "le jour 5 (scènes du lot S2) commence")
 	assert_eq(GameState.calendar().size(), 4, "quatre lignes au calendrier")
-	assert_eq(GameState.quests(), {}, "aucune quête à collecter")
+	assert_false(GameState.to_dict().has("quests"), "(F1) plus de quêtes dans la partie")
 
 
 func _porch_done() -> bool:

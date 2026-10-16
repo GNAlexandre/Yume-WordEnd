@@ -118,6 +118,6 @@ func test_an_unknown_game_is_ignored() -> void:
 	assert_true(await new_game_from_menu(), "partie lancée depuis le menu")
 	_shortcut({"jeu": "echecs"})
 	await frames(30)
-	assert_eq(WorldManager.current_map(), WorldManager.LEGACY_MAP, "la partie reste où elle est")
+	assert_eq(WorldManager.current_map(), start_map_for_test(), "la partie reste où elle est")
 	assert_null(MiniGames.ball_match())
 	assert_null(MiniGames.staff_training())

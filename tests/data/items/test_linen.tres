@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://tests/data/items/test_linen.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"test_linen"
+display_name = "Linge d’essai"
+icon = ExtResource("2_icon")
+description = "(F1) Objet des tests : un linge qui s’empile (tests/data/items)."
+color = Color(0.925, 0.925, 0.894, 1)
