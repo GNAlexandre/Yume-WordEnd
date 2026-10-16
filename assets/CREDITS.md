@@ -80,6 +80,11 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/interior/props/desk_clean_brooch.png` — 106 × 101 px.
 - `assets/hd2d/interior/props/crystal_lamp_table.png` — 29 × 48 px.
 
+## Île 68 — ville haute (cahier n° 6, A.4–A.5)
+
+32 PNG générés avec ChatGPT / OpenAI Image Generation le 16 octobre 2026 : dix façades et dix flancs, pierre de taille, deux enseignes, jardinière, fontaine, marches, trappe, muret, garde-corps et trois lointains de toitures. Références : matériaux et bâtiments HD-2D existants. Recalage géométrique au plus proche voisin des murs et pignons ; aucune réduction de palette. Sources originales et étapes conservées hors dépôt. Univers inspiré de SukaSuka, droits des ayants droit réservés.
+
+
 ## Cahier n° 5 — Île 68, R0 : premier lot de mobilier
 
 27 PNG générés avec ChatGPT / image_gen le 14 octobre 2026 : neuf corrections de face, dix-sept vues de flanc et une vue de dos. Références : les PNG existants du même mobilier et les cotes du cahier fourni `ASSETS_HD2D_ILE68.md`, sections 1, 2.7 et R0. Sources générées et anciens PNG conservés hors dépôt. Recalage géométrique autorisé par l’utilisateur : cadrage, projection des plateaux et bandes de hauteur, échantillonnage au plus proche voisin, alpha binaire ; aucune nouvelle couleur RGB visible ni réduction de palette. Les profils montrent la face du meuble vers l’est ; le dos du canapé conserve la couverture du côté opposé à la vue de face. Les nouvelles vues sont livrées comme images importables : leur sélection et leur placement dans les pièces restent à intégrer par le moteur.
