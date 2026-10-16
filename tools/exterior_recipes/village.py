@@ -400,7 +400,7 @@ def pose(p):
     place("River", "mist_patch", 2.0, 14.0, name="BrumeRuisseau", check=False)
     # Les prés : herbe haute, fleurs sauvages, buissons ; pas de sol nu de plus de 6 × 6 m.
     meadow = []
-    for area, n, seed in ((Rect(0.6, 30.8, 55.4, 33.4), 25, 40), (Rect(3.5, 37.0, 55.4, 38.0), 10, 41),
+    for area, n, seed in ((Rect(0.6, 30.8, 55.4, 33.4), 20, 40), (Rect(3.5, 37.0, 55.4, 38.0), 10, 41),
                           (Rect(14.2, 15.8, 19.8, 28.0), 10, 42), (Rect(34.4, 15.8, 41.0, 28.0), 10, 43),
                           (Rect(0.6, 3.6, 3.5, 36.0), 0, 44), (Rect(55.0, 15.5, 55.8, 32.0), 0, 45)):
         if n:
@@ -470,7 +470,7 @@ def pose(p):
     kits.middle_kit(p, [(Rect(17.4, 15.8, 19.9, 28.0), 2), (Rect(34.2, 15.8, 38.6, 28.0), 2),
                         (Rect(1.0, 36.6, 55.0, 38.4), 2), (Rect(14.0, 30.6, 46.0, 33.2), 2)],
                     [s for s in kits.family("mid_nature") if s != "boulder_b"], seed=1161)
-    kits.foreground_kit(p, p.view_bounds, kits.qc_views("village") + kits.passages(p), seed=1171)
+    kits.foreground_views(p, "village", seed=1171)
 
 
 def ambient(p):

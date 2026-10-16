@@ -18,10 +18,11 @@ n'écrit pas.
 """
 
 import exterior_ground
+import exterior_kits as kits
 from exterior_pose import Rect, along, poisson
 
 SETTINGS = {
-    "groups": ["Houses", "Facade", "Roof", "Street", "Garden", "Edge", "Woods", "Backdrop", "Sky"],
+    "groups": ["Houses", "Facade", "Roof", "Street", "Garden", "Edge", "Woods", "Backdrop", "Sky", "Middle", "Foreground"],
     "no_lights": True,
     "texts": "res://data/texts/ville.json",
     # Objets à examiner du dehors (data/texts/ville.json, section « ville_haute »).
@@ -89,6 +90,21 @@ FLOWERS = ["wildflowers_a", "wildflowers_b", "myosotis_b"]
 
 def pascal(text):
     return "".join(part.capitalize() for part in text.split("_"))
+
+
+def terrace_row(x0, x1, z, seed, upper=True):
+    """(RC) Le bord d'une terrasse, de x0 à x1 (bords des pièces de 2 m), en z : en haut (upper), le garde-corps de fer
+    et ses pans de muret et de balustre ; au milieu, devant les boutiques, le muret et ses bacs de pierre, un pan de fer
+    de loin en loin. Pièces qui se chevauchent (jamais de trou : on tomberait d'un mètre), reculées vers le nord de 0 à
+    0,25 m, retournées au hasard, jamais la même image deux fois de suite quand la famille en a plusieurs."""
+    if upper:
+        pool, accents, every, depth = kits.family("town_rail"), ["town_wall_low", "edge_parapet"], (1, 3), (-0.25, 0.0)
+    else:
+        # Le carrefour (place du plan, z 30,5 → 34) reste libre jusqu'au bord : pas de recul, rien de plus épais que
+        # le muret.
+        pool, accents, every, depth = ["town_wall_low"], kits.family("town_rail"), (1, 2), (0.0, 0.04)
+    return kits.row([(x0 + 1.0, z), (x1 - 1.0, z)], pool, seed=seed, spread=0.06, depth_range=depth, skip=0.0,
+                    overlap=0.94, accents=accents, accent_every=every, scale=(0.97, 1.03), tone=(0.03, 0.0))
 
 
 def ground_plan(m):
@@ -187,8 +203,11 @@ def pose(p):
             p.warnings.append("décor du plan non posé : %s" % n)
 
     # Le muret qui ferme le haut de la grand-rue (la fontaine murale et la lanterne s'y adossent).
-    for k, x in enumerate((24.0, 26.0, 28.0, 30.0, 32.0, 34.0, 36.0)):
-        place("Edge", "town_wall_low", x, 9.4, name="MuretHaut%d" % (k + 1), flip=k % 2 == 1, check=False)
+    # (RC) Un muret aux pierres inégales : pas, recul et retournement variés, un bac de pierre au milieu.
+    kits.place_row(p, "Edge", "MuretHaut", kits.row([(24.0, 9.4), (36.0, 9.4)], ["town_wall_low"], seed=1321, spread=0.06,
+                                                    depth=0.08, skip=0.0, overlap=0.95, accents=["town_planter_stone"],
+                                                    accent_every=(3, 4), scale=(0.97, 1.03), tone=(0.03, 0.0)),
+                   check=False)
     walk_grid()
     # Derrière le muret, le jardin qu'il ferme (le bois en arrière-plan) : des arbres d'or, des buissons, des fleurs.
     for k, (x, z, scene) in enumerate(((25.5, 6.6, "tree_autumn_yellow"), (31.0, 5.6, "maple_b"), (35.2, 7.0, "tree_autumn_rust"),
@@ -224,8 +243,12 @@ def pose(p):
     while x < W - 1:
         row.append((x + rng.uniform(-0.6, 0.6), rng.uniform(1.4, 3.0)))
         x += rng.uniform(3.4, 5.0)
-    for k, (x, z) in enumerate(row):
-        place("Woods", (TREES_GOLD + TREES_RUST)[k % 12] + "_forest", x, z, y=2.0, name="ArbreLisiere%d" % (k + 1), check=False)
+    # (RC) La rangée tirée ci-dessus n'est plus posée (sa suite de tirages est gardée) : une rangée irrégulière des
+    # arbres d'or et de rouille (exterior_kits.row), et derrière les pans un second rang décalé (CARTE.md 0.5).
+    trees = [s + "_forest" for s in kits.family("trees_gold") + kits.family("trees_rust") if kits.exists(s + "_forest")]
+    kits.place_row(p, "Woods", "ArbreLisiere", kits.row([(1.5, 2.2), (W - 1.0, 2.2)], trees, seed=1351, step=4.2,
+                                                        depth=0.7, skip=0.1, scale=(0.9, 1.1)), y=2.0, check=False)
+    kits.second_rank(p, "Woods", -16.0, W + 8.0, -0.6, 2.4, seed=1352)
 
     # === 3. La rue haute (terrasse +2) ====================================================================
 
@@ -247,8 +270,11 @@ def pose(p):
     place("Facade", "drainpipe", 41.5, 9.7, y=height(41.5, 9.7), name="DescenteMaisonA", check=False)
     # Le garde-corps au bord de la terrasse haute (le plan en parle : « garde-corps `town_railing` au bord des
     # terrasses »), sauf devant les marches de la grand-rue.
-    for k, x in enumerate([5.0 + 2.0 * i for i in range(10)] + [35.0 + 2.0 * i for i in range(11) if i != 5]):
-        place("Edge", "town_railing", x, 15.55, name="GardeCorpsHaut%d" % (k + 1), flip=k % 2 == 1, check=False)
+    # (RC) En rangée irrégulière (exterior_kits.row) : le fer, avec ses pans de muret et de balustre tous les un à
+    # trois éléments ; pièces qui se chevauchent (jamais de trou au bord de la terrasse), reculées vers le nord seulement.
+    for k, (xa, xb) in enumerate(((4.0, 24.0), (34.0, 44.0), (46.0, 56.0))):
+        kits.place_row(p, "Edge", "GardeCorpsHaut%d_" % (k + 1), terrace_row(xa, xb, 15.55, 1301 + k, upper=True),
+                       check=False)
     # Le linge d'une fenêtre à l'autre, la guirlande de la rue haute.
     place("Roof", "bunting_wave", 14.0, 11.6, y=height(14.0, 11.6) + 3.0, name="GuirlandeHaute", check=False)
     place("Roof", "bunting_wave", 44.0, 11.6, y=height(44.0, 11.6) + 3.0, name="GuirlandeEst", flip=True, check=False)
@@ -278,8 +304,10 @@ def pose(p):
         place("Roof", scene, cx, cz, y=1.0 + ridge - 0.5, name="CheminéeCafé%d" % (k + 1), check=False)
         place("Roof", "chimney_smoke", cx, cz, y=1.0 + ridge + 1.3, name="FuméeCafé%d" % (k + 1), check=False)
     # Le bord de la terrasse du milieu, au sud : garde-corps de fer, sauf devant les marches.
-    for k, x in enumerate([5.0 + 2.0 * i for i in range(10)] + [35.0 + 2.0 * i for i in range(11)]):
-        place("Edge", "town_railing", x, 33.85, name="GardeCorpsCafé%d" % (k + 1), flip=k % 2 == 0, check=False)
+    # (RC) Devant les boutiques, le bord est surtout un muret, avec des bacs de pierre et des pans de fer.
+    for k, (xa, xb) in enumerate(((4.0, 24.0), (34.0, 56.0))):
+        kits.place_row(p, "Edge", "GardeCorpsCafé%d_" % (k + 1), terrace_row(xa, xb, 33.85, 1311 + k, upper=False),
+                       check=False)
 
     # === 5. La grand-rue, le bas de la ville et la rue basse =============================================
 
@@ -302,18 +330,25 @@ def pose(p):
         place("Roof", scene, cx, cz, y=ridge - 0.5, name="CheminéeBasse%d" % (k + 1), check=False)
         place("Roof", "chimney_smoke", cx, cz, y=ridge + 1.3, name="FuméeBasse%d" % (k + 1), check=False)
     # Le bord sud, au premier plan : un muret bas, sauf devant la sortie de la grand-rue.
-    for k, x in enumerate([5.0 + 2.0 * i for i in range(10)] + [37.0 + 2.0 * i for i in range(10)]):
-        place("Edge", "town_wall_low", x, 59.3, name="MuretSud%d" % (k + 1), flip=k % 2 == 1, check=False)
+    # (RC) En rangée irrégulière : le muret, des bacs de pierre et des pans de balustre, quelques brèches.
+    for k, (xa, xb) in enumerate(((4.0, 24.0), (36.0, 56.0))):
+        kits.place_row(p, "Edge", "MuretSud%d_" % (k + 1),
+                       kits.row([(xa + 1.0, 59.3), (xb - 1.0, 59.3)], ["town_wall_low"], seed=1331 + k, spread=0.15,
+                                depth=0.25, skip=0.1, overlap=0.95, accents=["town_planter_stone", "edge_parapet"],
+                                accent_every=(2, 4), scale=(0.96, 1.04), tone=(0.03, 0.0)), check=False)
 
     # === 6. Les jardins clos derrière les rangées (le plan : « jamais un endroit où l'on marche ») =========
 
     gardens = [(4.0, 16.0, 26.0, 24.0), (34.0, 16.0, 56.0, 25.0), (4.0, 34.0, 26.0, 44.0), (34.0, 34.0, 56.0, 46.0)]
     for gi, (x0, z0, x1, z1) in enumerate(gardens):
         place("Garden", "garden_bed", (x0 + x1) / 2.0 + rng.uniform(-3, 3), z0 + (z1 - z0) * 0.55, name="PlateBande%d" % (gi + 1), check=False)
-        count = int((x1 - x0) / 2.0)
-        for k in range(count):
-            place("Garden", "fence_wattle", x0 + 1.0 + k * 2.0, z1 - 0.4 if z0 > 30 else z1 - 0.3, name="Clôture%d_%d" % (gi + 1, k + 1),
-                  flip=k % 2 == 1, check=False)
+        # (RC) La clôture du jardin : un plessis irrégulier, des buissons poussés devant, une palissade de piquets de
+        # loin en loin (exterior_kits.row ; jamais de trou : le jardin est clos).
+        kits.place_row(p, "Garden", "Clôture%d_" % (gi + 1),
+                       kits.row([(x0 + 1.0, z1 - 0.4 if z0 > 30 else z1 - 0.3), (x1 - 1.0, z1 - 0.4 if z0 > 30 else z1 - 0.3)],
+                                kits.family("wattle"), seed=1341 + gi, spread=0.1, depth=0.12, skip=0.0, overlap=0.9,
+                                accents=["fence_low"], accent_every=(2, 4), scale=(0.94, 1.06), tone=(0.035, 0.0)),
+                       check=False)
         pts = poisson(Rect(x0 + 1.0, z0 + 0.8, x1 - 1.0, z1 - 1.6), 4.2, 7, lambda x, z: True, seed=60 + gi)
         # Des jeunes arbres : un grand arbre au sud de la rue haute ou de la rue du café couvrirait le bas de l'écran.
         scatter("Garden%dTrees" % (gi + 1), ["sapling_a", "sapling_b", "berry_bush", "berry_bush_b", "thicket_c"], pts,
@@ -323,9 +358,12 @@ def pose(p):
 
     # === 7. Les bords est et ouest (les `bord jardins` et `bord maisons` du plan) ==========================
 
-    for k, z in enumerate((17.5, 21.0, 24.5, 28.0, 31.0)):
-        place("Edge", "thicket_a_fg" if k % 2 else "thicket_b_fg", 1.6, z, name="HaieOuest%d" % (k + 1), check=False)
-        place("Edge", "thicket_b_fg" if k % 2 else "thicket_a_fg", 58.4, z, name="HaieEst%d" % (k + 1), check=False)
+    # (RC) Des haies irrégulières (exterior_kits.row), au lieu de deux fourrés alternés à pas fixe.
+    for k, (side, x) in enumerate((("Ouest", 1.6), ("Est", 58.4))):
+        kits.place_row(p, "Edge", "Haie%s" % side, kits.row([(x, 17.2), (x, 31.4)], ["thicket_a_fg", "thicket_b_fg", "bush_d",
+                                                                                     "berry_bush", "bush_f"],
+                                                            seed=1361 + k, step=3.2, depth=0.3, skip=0.0,
+                                                            scale=(0.9, 1.1)), check=False)
     for k, (x, z, scene) in enumerate(((2.0, 24.0, "tree_autumn_yellow_forest"), (58.0, 22.0, "maple_a_forest"),
                                        (58.0, 28.0, "beech_b_forest"), (1.6, 19.5, "oak_b_forest"))):
         place("Woods", scene, x, z, name="ArbreBord%d" % (k + 1), check=False)
@@ -380,6 +418,12 @@ def pose(p):
                   flip=(k + side) % 2 == 1, check=False)
     place("Street", "pigeons", 29.0, 32.6, name="Pigeons1", check=False)
     place("Street", "pigeons", 20.0, 54.6, name="Pigeons2", flip=True, check=False)
+
+    # === 9. (RC) Le premier plan (CARTE.md 0.5) : au bas de chaque vue et de chaque passage, des feuillages des jardins
+    # clos et des bords, un réverbère ou un panneau d'affichage au bord d'une rue, jamais devant une place.
+    walk_grid()
+    kits.foreground_views(p, "ville_haute", seed=1371,
+                        foliage=kits.family("fg_foliage", ["fg_grass"]))
 
 
 def ambient(p):

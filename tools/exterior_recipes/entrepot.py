@@ -390,7 +390,7 @@ def pose(p):
     # Prés (au sud de la clairière, autour du potager, à l'est de la cour) : touffes et fleurs, pas
     # de sol nu de plus de 6 × 6 m.
     meadow = []
-    for area, n, seed in ((Rect(6.5, 24.6, 18.5, 30.5), 22, 32), (Rect(2.5, 30.5, 16.0, 37.5), 22, 33),
+    for area, n, seed in ((Rect(6.5, 24.6, 18.5, 30.5), 19, 32), (Rect(2.5, 30.5, 16.0, 37.5), 19, 33),
                           (Rect(2.5, 42.6, 37.0, 44.6), 14, 34), (Rect(57.5, 30.5, 64.0, 36.0), 10, 35),
                           (Rect(57.5, 40.6, 86.0, 44.4), 22, 36), (Rect(46.0, 44.8, 57.0, 46.0), 6, 37),
                           (Rect(31.0, 26.6, 60.0, 28.3), 0, 38), (Rect(60.5, 12.5, 64.0, 16.0), 4, 39),
@@ -538,7 +538,7 @@ def pose(p):
                         (Rect(28.6, 30.0, 31.7, 45.0), 2), (Rect(56.3, 30.0, 59.6, 45.0), 2),
                         (Rect(6.5, 23.5, 15.5, 29.5), 2), (Rect(58.0, 40.5, 85.0, 44.6), 3)],
                     kits.family("mid_nature"), seed=931)
-    kits.foreground_kit(p, p.view_bounds, kits.qc_views("entrepot") + kits.passages(p), seed=941)
+    kits.foreground_views(p, "entrepot", seed=941)
 
 
 def ground_plan(M):

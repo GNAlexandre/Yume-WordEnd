@@ -351,7 +351,7 @@ def pose(p):
     # (RC) Le premier plan de chaque vue et de chaque passage (CARTE.md 0.5) : feuillages et troncs au bas de l'écran,
     # sur les côtés, jamais devant le sentier ni ses places.
     walk_grid()
-    kits.foreground_kit(p, p.view_bounds, kits.qc_views("sentier") + kits.passages(p), seed=1041)
+    kits.foreground_views(p, "sentier", seed=1041)
 
 
 def ambient(p):

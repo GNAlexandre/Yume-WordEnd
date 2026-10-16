@@ -300,7 +300,7 @@ def passages(p, step=15.0, exit_margin=6.0):
 
 def foreground_kit(p, bounds, targets, seed, group="Foreground", base="PremierPlan", want=2, most=4,
                    foliage=None, trunks=None, trees=None, keep=None, lateral=(3.4, 8.6), near=(3.0, 5.6),
-                   far=(8.0, 12.5)):
+                   far=(5.0, 12.5)):
     """Le premier plan (CARTE.md 0.5) : pour chaque cible (nom, x, z) (vues de la série QC, passages), deux à
     quatre feuillages ou troncs de premier plan (`_fg`, sans collision, qui s'effacent autour du joueur) au sud du
     joueur, sur les côtés de l'écran (lateral m de part et d'autre), près du bord sud de la vue : les feuillages de
@@ -335,21 +335,31 @@ def foreground_kit(p, bounds, targets, seed, group="Foreground", base="PremierPl
             return False
         return clear_of_places(p, [scene], [(x, z)], 1.05) != []
 
-    for tname, tx, tz in targets:
+    # Trois passes (grilles tirées à nouveau) : une cible voisine d'une autre déjà servie trouve sa place ensuite.
+    for tname, tx, tz in list(targets) * 3:
         fx, fz = focus_of(tx, tz, bounds)
         have = view_south(p, bounds, [(tname, tx, tz)])[0][1]
         goal = rng.randint(want, most)
         if have >= goal:
             continue
+        # Une grille de places tirée au hasard sur les côtés de l'écran (cases de 1,3 m sur 0,7 m pour les feuillages,
+        # de 1,3 m sur 1,5 m pour les troncs et les arbres).
         cands = []
         for side in (-1, 1):
-            for _k in range(7):
-                dx = rng.uniform(*lateral) * side
-                cands.append(("fol", fx + dx, tz + rng.uniform(*near)))
-                if trunks:
-                    cands.append(("trunk", fx + dx, tz + rng.uniform(*far)))
-                if trees:
-                    cands.append(("tree", fx + dx, tz + rng.uniform(*far)))
+            dx = lateral[0]
+            while dx <= lateral[1]:
+                dz = near[0]
+                while dz <= near[1]:
+                    cands.append(("fol", fx + (dx + rng.uniform(0.0, 1.3)) * side, tz + dz + rng.uniform(0.0, 0.7)))
+                    dz += 0.7
+                dz = far[0]
+                while dz <= far[1]:
+                    if trunks:
+                        cands.append(("trunk", fx + (dx + rng.uniform(0.0, 1.3)) * side, tz + dz + rng.uniform(0.0, 1.5)))
+                    if trees:
+                        cands.append(("tree", fx + (dx + rng.uniform(0.0, 1.3)) * side, tz + dz + rng.uniform(0.0, 1.5)))
+                    dz += 1.5
+                dx += 1.3
         rng.shuffle(cands)
         # Les feuillages d'abord (le bas de l'écran), puis troncs et arbres (les côtés).
         cands.sort(key=lambda c: 0 if c[0] == "fol" else 1)
@@ -357,11 +367,14 @@ def foreground_kit(p, bounds, targets, seed, group="Foreground", base="PremierPl
             if have >= goal:
                 break
             x, z = round(x, 2), round(z, 2)
-            if not p.in_map(x, z, 0.6) or not solid(p, x, z):
+            # Au-delà du bord sud de la carte (on n'y marche jamais, le sol s'y prolonge), un premier plan tant qu'il
+            # se voit.
+            beyond_map = p.D - 0.2 < z <= p.D + 4.5 and 0.6 <= x <= p.W - 0.6 and solid(p, x, p.D - 0.5)
+            if not beyond_map and (not p.in_map(x, z, 0.6) or not solid(p, x, z)):
                 continue
             if keep is not None and not keep(x, z):
                 continue
-            if any(abs(x - px) < 3.2 and abs(z - pz) < 2.4 for px, pz in placed):
+            if any(abs(x - px) < 2.4 and abs(z - pz) < 1.6 for px, pz in placed):
                 continue
             if _tall_near(p, x, z, 1.8):
                 continue
@@ -378,6 +391,15 @@ def foreground_kit(p, bounds, targets, seed, group="Foreground", base="PremierPl
             placed.append((x, z))
             have += 1.0
     return len(placed)
+
+
+def foreground_views(p, map_id, seed, **options):
+    """foreground_kit pour les vues de la série QC d'une carte d'abord, puis pour ses passages (les vues sont servies
+    en premier : ce sont elles que le contrôle compte). Rend le nombre de décors posés."""
+    options.setdefault("most", 3)
+    n = foreground_kit(p, p.view_bounds, qc_views(map_id), seed, **options)
+    options = dict(options, base=options.get("base", "PremierPlan") + "Passage", most=2)
+    return n + foreground_kit(p, p.view_bounds, passages(p), seed + 1, **options)
 
 
 # --- Plan moyen : des masses dans les places nues ----------------------------------------------------------------

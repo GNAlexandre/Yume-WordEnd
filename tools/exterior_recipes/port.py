@@ -25,16 +25,23 @@ la nuit par leur `glow`), la lumière est celle d'Atmosphere (E9).
 import math
 
 import exterior_ground
+import exterior_kits as kits
 from exterior_pose import Rect, along, poisson, prop
 
 SETTINGS = {
-    "groups": ["Ship", "Quay", "Houses", "Rail", "Street", "Yard", "Hill", "Edge", "Hedge", "Woods", "Backdrop", "Sky"],
+    "groups": ["Ship", "Quay", "Houses", "Rail", "Street", "Yard", "Hill", "Edge", "Hedge", "Woods", "Backdrop", "Sky",
+               "Middle", "Foreground"],
     # La caméra monte jusqu'au vide (z = 6) et descend jusqu'au bas de la route de la ville (z = 30 pour le point
     # visé, la vue va jusqu'à z = 37) : CARTE.md disait Rect2(10, 6, 50, 17).
     "camera_bounds": (10, 6, 50, 24),
     "no_lights": True,
     # (QC2) Le point `panneau` est le panneau lui-même (la cible de la caméra et de l'examen, récit du jour 1) : on
     # le lit du sud, à `panneau_sud` ; le panneau de premier plan peut le couvrir (docs/QUALITE.md, QC-37).
+    # (RC) Les vues du quai dont le bas de l'écran est la rue du port (on y passe : rien ne s'y dresse, CARTE.md 0.5).
+    "south_allowed": {
+        "quai_ouest": "le bas de l'écran est la rue du port, où l'on passe ; rien ne s'y dresse",
+        "hangar": "le bas de l'écran est la rue du port, où l'on passe ; rien ne s'y dresse",
+    },
     "masks_allowed": {"PanneauFlechesRouges": (("point panneau",),
                                                "le point est le panneau même ; on s'y tient au sud (panneau_sud)")},
     "texts": "res://data/texts/port.json",
@@ -263,8 +270,15 @@ def pose(p):
     # === 2. Le garde-fou, le bord du vide et la coque du navire =========================================
 
     # Garde-fou de fonte tout le long du quai, sauf au poste d'amarrage (x 23 → 37) ; des roches au bord de la colline.
-    for k, x in enumerate([1.0 + 2.0 * i for i in range(11)] + [39.0 + 2.0 * i for i in range(10)]):
-        place("Rail", "edge_railing", x, 5.2, name="GardeFou%d" % (k + 1), flip=k % 2 == 1, check=False)
+    # (RC) Le garde-fou en rangée irrégulière (exterior_kits.row) : pièces qui se chevauchent un peu (jamais de trou au
+    # bord du vide), reculées vers le quai seulement (0 à 0,25 m), retournées au hasard ; un pan rapiécé de cordage ou
+    # de rambarde de tôle tous les quatre à sept éléments (une fonte livrée plus tard, famille port_rail, y entre).
+    for k, (xa, xb) in enumerate(((0.0, 22.0), (38.0, 58.0))):
+        kits.place_row(p, "Rail", "GardeFou%d_" % (k + 1),
+                       kits.row([(xa + 1.0, 5.2), (xb - 1.0, 5.2)], kits.family("port_rail"), seed=1201 + k,
+                                spread=0.08, depth_range=(0.0, 0.25), skip=0.0, overlap=0.95,
+                                accents=kits.family("port_rail_accents"), accent_every=(2, 4), scale=(0.96, 1.04),
+                                tone=(0.03, 0.0)), check=False)
     for k, (x, z, scene) in enumerate(((59.5, 4.6, "edge_rocks_b"), (63.5, 4.8, "edge_rocks_a"), (67.5, 4.6, "edge_rocks_b"))):
         place("Edge", scene, x, z, name="RocheBord%d" % (k + 1), flip=k % 2 == 1, check=False)
     for k, x in enumerate((2.5, 9.0, 20.0, 41.0, 49.0, 56.5)):
@@ -368,7 +382,8 @@ def pose(p):
     # === 5. La colline ventée : herbes couchées, cailloux, bruyère (6.2, kits « colline ») ==================
 
     hill = poisson(Rect(56.5, 5.8, 69.6, 29.6), 1.3, 130, free(), seed=31)
-    scatter("HillGrass", GRASSES, hill[0::2], seed=32, check=False)
+    scatter("HillGrass", ["wind_grass_a", "wind_grass_b", "grass_tuft", "grass_clump_d", "grass_clump_b"], hill[0::2], seed=32,
+            check=False)
     scatter("HillRocks", ROCKS + ["heather", "thistle"], hill[1::4], seed=33, check=False)
     scatter("HillTufts", ["grass_tuft", "wind_grass_a", "wildflowers_b"], hill[3::4], seed=34, check=False)
     place("Hill", "stump_a", 61.0, 8.4, name="SoucheColline", check=False)
@@ -389,13 +404,11 @@ def pose(p):
     front = poisson(Rect(0.5, 34.4, 54.0, 39.2), 4.0, 14, lambda x, z: True, seed=70)
     scatter("SouthTrunks", ["fg_trunk_a", "fg_trunk_b"], front[0::5], seed=71, check=False)
     scatter("SouthBrush", ["fg_bush", "fg_fern", "fg_grass"], [q for k, q in enumerate(front) if k % 5], seed=72, check=False)
-    hedge_x = 1.0
-    k = 0
-    while hedge_x < 54.0:
-        place("Hedge", ["thicket_a_fg", "thicket_b_fg"][k % 2], hedge_x, 38.6 + (k % 3) * 0.15, name="HaieSud%d" % (k + 1),
-              flip=k % 2 == 1, check=False)
-        hedge_x += 2.4 if k % 2 == 0 else 2.0
-        k += 1
+    # (RC) Une haie irrégulière (exterior_kits.row) : quatre sortes de fourrés, jamais deux fois de suite la même.
+    kits.place_row(p, "Hedge", "HaieSud", kits.row([(0.8, 38.7), (53.6, 38.7)],
+                                                   ["thicket_a_fg", "thicket_b_fg", "thicket_c", "bramble_hedge"],
+                                                   seed=1210, spread=0.3, depth=0.4, skip=0.12, scale=(0.9, 1.1),
+                                                   overlap=1.0))
     # Les arbres au-delà du bord sud-est (bord foret 58 → 70 ; 34 → 40) et la forêt qui continue à l'ouest.
     # (QC2) Au bas de la route de la ville, un jeune pin : un grand arbre y couvrait le départ de la route
     # (docs/QUALITE.md, QC-37).
@@ -416,6 +429,15 @@ def pose(p):
 
     for k, (x, y, z, scale, scene) in enumerate(SKY):
         place("Sky", scene, x, z, y=y, scale=scale, name="Vide%d" % (k + 1), flip=k % 3 == 1, check=False)
+
+    # === 8. (RC) Les plans (CARTE.md 0.5) ================================================================
+    # Plan moyen : des piles de caisses, de sacs et une charrette sur l'aire-port, hors de sa place (on y décharge) et
+    # loin de la route ; premier plan : au bas de chaque vue (feuillages au sud, charrettes et hélice sur l'aire).
+    walk_grid()
+    kits.middle_kit(p, [(Rect(2.0, 21.0, 21.0, 29.5), 3), (Rect(47.0, 21.0, 54.0, 29.5), 2),
+                        (Rect(22.0, 26.2, 46.0, 29.6), 2)], kits.family("mid_port"), seed=1221, spacing=5.0)
+    kits.foreground_views(p, "port", seed=1231,
+                        foliage=kits.family("fg_foliage", ["fg_grass", "cargo_cart_a_fg", "propeller_spare_fg"]))
 
 
 # Le ciel et le vide : (x, y, z, échelle, scène). La nappe de nuages est à y = −60 ; le quai est à y = 0.
