@@ -39,6 +39,8 @@ const ASIDE_RETURN := 1.5
 const BLOCKED_REPATH := 0.8
 const STUCK_TIME := 7.0
 const PROGRESS := 0.4
+## (L3) Un suiveur (follow_to) ne demande un nouveau chemin que si son but a bougé de tant de m.
+const FOLLOW_REPATH := 1.2
 ## Animations assises ou couchées : on ne s'écarte pas (on n'est pas dans le passage).
 const SEATED: Array[StringName] = [&"assis", &"lit", &"dort"]
 
@@ -60,6 +62,9 @@ var talking: bool = false
 var rng := RandomNumberGenerator.new()
 ## Délai sans progrès au bout duquel on se replace d'un coup au but (s ; STUCK_TIME).
 var stuck_time: float = STUCK_TIME
+## (L3) Facteur des vitesses de marche (1 : celles de activities.json) ; le récit s'en sert pour
+## accorder une marche attendue au pas du joueur.
+var speed_factor: float = 1.0
 
 var _path := PackedVector3Array()
 var _path_index: int = 0
@@ -69,6 +74,11 @@ var _gait: StringName = &"marche"
 var _arrived: Callable = Callable()
 var _direct: bool = false
 var _path_pending: bool = false
+## (L3) Un chemin attendu ne met pas « repos » : on garde l'allure (suiveur).
+var _keep_gait: bool = false
+## (L3) But du dernier chemin demandé pour un suiveur (un nouveau n'est demandé qu'au-delà de
+## FOLLOW_REPATH m).
+var _path_goal: Vector3 = Vector3.INF
 var _delay: float = 0.0
 var _stuck: float = 0.0
 var _blocked: float = 0.0
@@ -172,8 +182,43 @@ func walk_to(
 	_avoid.clear()
 	_progress_at = position()
 	_path_pending = not direct
+	_path_goal = point
+	_keep_gait = false
 	if not direct:
 		LifeDirector.request_path(self)
+
+
+## (L3) Un trajet qui suit un but mobile (un suiveur) : sans trajet en cours, une marche vers
+## point (tout droit si la ligne est libre) ; sinon, le but change sans qu'on s'arrête : en ligne
+## libre on file droit vers lui, sinon on garde l'ancien chemin le temps que le nouveau soit
+## calculé (set_path le remplace) ; l'allure change à chaud. Jamais « repos » pendant le calcul.
+func follow_to(point: Vector3, facing: Vector3, gait: StringName) -> void:
+	var nav := LifeDirector.nav()
+	var clear := nav != null and nav.ready and nav.line_clear(position(), point)
+	if not is_moving():
+		walk_to(point, facing, gait, Callable(), clear)
+		_keep_gait = true
+		return
+	_goal = point
+	_goal_facing = facing
+	_gait = gait
+	_keep_gait = true
+	if clear:
+		_path = PackedVector3Array()
+		_path_index = 0
+		_path_pending = false
+		_direct = true
+		return
+	_direct = false
+	if _path_pending:
+		return
+	var exhausted := _path.is_empty() or _path_index >= _path.size()
+	if not exhausted and point.distance_to(_path_goal) < FOLLOW_REPATH:
+		return
+	_path_goal = point
+	if exhausted:
+		_path_pending = true
+	LifeDirector.request_path(self)
 
 
 ## Chemin trouvé par le directeur (vide : tout droit, en se fiant au délai de replacement).
@@ -186,6 +231,11 @@ func set_path(path: PackedVector3Array) -> void:
 ## Vrai pendant un trajet (chemin attendu compris).
 func is_moving() -> bool:
 	return _goal != Vector3.INF
+
+
+## Allure du trajet en cours.
+func current_gait() -> StringName:
+	return _gait
 
 
 ## But du trajet en cours (Vector3.INF sans trajet).
@@ -288,14 +338,14 @@ func _tick_move(delta: float) -> void:
 	if _outfit_dirty:
 		_wear_outfit()
 	if _path_pending:
-		play(&"repos")
+		play(_gait if _keep_gait else &"repos")
 		return
 	var pos := position()
 	var last_leg := _path_index >= _path.size()
 	var target := _goal if last_leg else _path[_path_index]
 	var flat := Vector3(target.x - pos.x, 0.0, target.z - pos.z)
 	var distance := flat.length()
-	var speed := LifeData.speed(_gait)
+	var speed := LifeData.speed(_gait) * speed_factor
 	if distance <= maxf(ARRIVE_DISTANCE, speed * delta * 0.5):
 		if not last_leg:
 			_path_index += 1
@@ -356,7 +406,15 @@ func _tick_move(delta: float) -> void:
 	_heading = (next - pos).normalized()
 	face(_heading)
 	play(_gait)
+	_speed_up_anim(delta)
 	_check_stuck(delta, next)
+
+
+## (L3) Une allure à l'animation plus vive (rattrape) : l'horloge de la planche avance en plus.
+func _speed_up_anim(delta: float) -> void:
+	var factor := LifeData.anim_speed(_gait)
+	if factor > 1.0 and is_instance_valid(npc):
+		npc.visual.advance(delta * (factor - 1.0))
 
 
 func _check_stuck(delta: float, pos: Vector3) -> void:
@@ -394,6 +452,7 @@ func _slide(pos: Vector3, step: Vector3, nav: LifeNav) -> Vector3:
 
 
 func _stop_moving() -> void:
+	_keep_gait = false
 	_goal = Vector3.INF
 	_path = PackedVector3Array()
 	_path_pending = false
