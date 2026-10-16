@@ -1756,6 +1756,8 @@ class_name StoryOffers    # (L1) rebuild(carte), refresh(), talk(pnj) -> bool, s
 class_name StorySkip      # (L2) is_skippable, prompt_text, skip(runner), handle_input, skip_flags(données),
                           # SKIP_ACTION, FORWARD_ACTION ; séquences vues
 class_name StoryResolve   # (L4) can_sleep(règle), can_rest(règle), before_sleep(île, jour), resolve_scene
+class_name StoryActivities  # (L6) talk(pnj), handle_input(event), busy, start(id), stop ; données
+                          # data/activities/<île>.json (all, available, options_of, problems_of)
 class_name StoryFreeData  # vérifie les clés du libre (OFFER_KEYS, SKIP_KEYS, FREE_SCENE_KEYS, FREE_ACT_KEYS)
 ```
 
@@ -1859,6 +1861,57 @@ fichier, sans toucher aux autres) :
   par caractère, en temps de jeu accéléré), jamais un choix ; relâchée, en pause ou en fin de
   scène, le temps d'avant revient. Un appui bref (les tests du scénarisé) ne fait qu'avancer le
   dialogue. `StoryRunner.is_forwarding()`.
+
+**Les jeux à la demande (X-L6)** (`src/story/story_activities.gd`, `data/activities/ile_68.json`,
+en libre seulement ; rien en scénarisé) : le joueur rejoue les jeux quand il veut, hors du récit,
+**sans changer un seul drapeau** (aucun `success_flag`, aucune scène, aucun résultat écrit dans
+`GameState` : les tests comparent `GameState.to_dict()` avant et après) :
+- **proposer** : un PNJ propose l'activité quand on lui parle (`StoryActivities.talk(npc)`, appelé
+  par `StoryDirector._on_talk` **après** `StoryOffers.talk` : une scène proposée par lui passe
+  d'abord) ; il dit `activities/<id>/offer` (son nom, son portrait) avec « Allons-y » (le jeu se
+  lance) et « Plus tard » (la conversation libre habituelle) ; pas de ruban (celui du récit reste
+  aux scènes) ;
+- **les activités** (`data/activities/<île>.json`, `{"activities": {id: …}}`, format strict, clé
+  inconnue refusée, `StoryActivities.problems_of`) : `game` (`baton`, `duel`, `seniorious`,
+  `ballon`, `embuscade`), `npc` et `map` (où il doit être), `place` (sa place d'emploi du temps),
+  `not_activity` (ce qui l'occupe déjà : le match de la vie), les conditions d'une scène (`day`,
+  `slot`, `after`, `if` : `StoryOffers.conditions_met`), `options` (celles de `MiniGames.start_*`)
+  et `variants` (`if` + `options`, la première qui tient). La carte, la place et l'occupation se
+  lisent dans la ligne d'emploi du temps du créneau (`LifeDirector.where`). Les cinq d'île n° 68 :
+  Willem à la clairière le matin (bâton), Willem dans la cour l'après-midi une fois le duel du
+  jour 8 vécu ou passé (revanche : `reprise`), Willem au marais (`marais_epee`) à midi une fois
+  le jour 11 vécu (Seniorious, étape 1, 2 si `j9_baton_reussi`, 3 si `j11_grues`), Pannibal
+  (embuscade, hors ballon), Tiat à l'après-midi (ballon, hors ballon de la vie) ;
+- **la vie de Willem en libre** (`data/life/ile_68/willem.json`, trois lignes à `if` : `mode_libre`,
+  hors pluie, placées après toutes les lignes à jour) : le matin à la clairière, à midi au marais
+  une fois `j11_4_seniorious` faite, l'après-midi dans la cour une fois `j8_3_duel` faite. Les
+  jours 1 à 3 et 8 à 12 gardent leurs lignes (sauf midi du jour 12 une fois le jour 11 vécu) ; le
+  scénarisé est inchangé (`tests/unit/test_story_activities.gd` le compare ligne à ligne). Le
+  ballon (Tiat joue avec le chat l'après-midi : `herbes_chat`) n'est proposé que si la vie ne joue
+  pas déjà : les jours 5, 6 et 9 à 12 son emploi du temps est au ballon (`not_activity`), le match
+  existe déjà et le joueur y entre en marchant sur le champ ; les autres jours (1 à 4, 7, 8, 13 et
+  suivants), hors pluie, Tiat le propose ;
+- **Échap arrête** (`StoryActivities.handle_input`, appelé par `StoryDirector._input`, avant le
+  menu pause) : `MiniGames.stop_all()` (ou `stop_ball_match()` pour le ballon) ; le jeu rend arme,
+  image et personnages (comme pour une scène passée) et la main est rendue ; le HUD affiche
+  `activities/<id>/result_<issue>` (`stopped`, `success`, `failure`, `victory`, `defeat`, `draw`,
+  `done` ; repli `activities/result_<issue>`) ; à la fin du jeu aussi, par son résultat. Un second
+  Échap ouvre le menu pause. Pendant un jeu à la demande, parler à un PNJ ne propose rien
+  (`busy()`) ;
+- **API** : `StoryDirector.activities()` ; `StoryActivities` : signaux `started(id)`,
+  `finished(id, issue)` ; `active()`, `busy()`, `running()`, `offered_by(npc) -> id`,
+  `propose(id, npc)`, `start(id) -> bool`, `stop()`, `handle_input(event)`, `seed_value` (>= 0 : un
+  tirage rejouable, pour les tests) ; statiques `all(île)`, `available(données, ligne, jour,
+  créneau)`, `options_of(données)`, `problems_of(brut)`, `text_key(id, nom)`, `path_of(île)`,
+  `clear_cache()` ;
+- **textes** : `data/texts/ile_68/story.json`, section `activities` (`<id>/offer`,
+  `<id>/result_<issue>`) et `ui/activity_stop` (« Échap : arrêter ») ;
+- **tests** : `tests/unit/test_story_activities.gd` (données valides, règles, lignes de Willem,
+  jours du récit inchangés, ballon jamais proposé quand la vie joue), `tests/integration/
+  test_free_activities.gd` (Willem à la clairière : proposition, « Allons-y », Échap, main
+  rendue, `GameState` identique ; « Plus tard » ; la scène passe d'abord ; scénarisé : rien ;
+  embuscade et ballon) ; démonstration : `tests/integration/demo_activities.tscn` (images
+  `docs/img/l6_proposition.png`, `docs/img/l6_jeu.png`).
 
 **Tests** : la base M1 (`tests/stubs/m1_game_test.gd`) donne `mode_for_test()` (scénarisé) : tous
 les tests d'avant le mode libre en restent là ; les démos `demo_e6`, `demo_s2`, `demo_s2_tard`
