@@ -263,7 +263,7 @@ func _change_map(map_id: StringName, marker: StringName, voyage_island: StringNa
 	if not is_instance_valid(slot) or not slot.is_inside_tree():
 		# La partie a été libérée pendant le fondu (retour au menu) : rien à installer.
 		_set_world_hidden(false)
-		_finish(player)
+		_finish(player if is_instance_valid(player) else null)
 		return
 	var loaded_at := Time.get_ticks_usec()
 	var installed := not (needs_load and scene == null) and _install(scene, map_id, marker, null)
@@ -275,7 +275,7 @@ func _change_map(map_id: StringName, marker: StringName, voyage_island: StringNa
 	_set_world_hidden(false)
 	await get_tree().process_frame
 	await _fade_to(0.0)
-	_finish(player)
+	_finish(player if is_instance_valid(player) else null)
 	if not installed:
 		return
 	_last_transition = {
@@ -598,6 +598,8 @@ func _fade_to(target: float) -> void:
 
 ## Fin d'un changement de carte : joueur rendu, fondu levé, sorties sourdes encore
 ## SETTLE_FRAMES images physiques.
+## player : le joueur figé au départ, ou null s'il a été libéré pendant le fondu (une valeur libérée
+## ne passe pas un paramètre typé).
 func _finish(player: Node3D) -> void:
 	_fade = 0.0
 	_traveling = &""
