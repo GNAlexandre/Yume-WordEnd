@@ -135,8 +135,8 @@
       25.0
      ]
     ],
-    "noise": 0.4,
-    "noise_scale": 3.4,
+    "noise": 0.75,
+    "noise_scale": 2.8,
     "seed": 21
    }
   },
@@ -162,8 +162,8 @@
       27.6
      ]
     ],
-    "noise": 0.4,
-    "noise_scale": 3.4,
+    "noise": 0.75,
+    "noise_scale": 2.8,
     "seed": 33
    }
   },
@@ -189,8 +189,8 @@
       29.8
      ]
     ],
-    "noise": 0.4,
-    "noise_scale": 3.4,
+    "noise": 0.75,
+    "noise_scale": 2.8,
     "seed": 43
    }
   },
@@ -264,8 +264,8 @@
       25.4
      ]
     ],
-    "noise": 0.4,
-    "noise_scale": 3.4,
+    "noise": 0.75,
+    "noise_scale": 2.8,
     "seed": 23
    }
   },
@@ -363,8 +363,8 @@
       9.0
      ]
     ],
-    "noise": 0.4,
-    "noise_scale": 3.4,
+    "noise": 0.65,
+    "noise_scale": 2.8,
     "seed": 24
    }
   },
@@ -395,7 +395,7 @@
      ]
     ],
     "noise": 0.5,
-    "noise_scale": 3.4,
+    "noise_scale": 2.8,
     "seed": 51
    }
   },
@@ -426,7 +426,7 @@
      ]
     ],
     "noise": 0.5,
-    "noise_scale": 3.4,
+    "noise_scale": 2.8,
     "seed": 52
    }
   },

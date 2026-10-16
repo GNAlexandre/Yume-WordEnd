@@ -23,12 +23,15 @@ sortie tant que la carte `ville_haute` n'existe pas (un écriteau « Plus loin, 
 import math
 
 import exterior_ground
+import exterior_kits as kits
 from exterior_pose import Rect, along, poisson
 
 SETTINGS = {
-    "groups": ["Lisiere", "Marsh", "Trail", "Bank", "Woods", "Fork", "Backdrop"],
+    "groups": ["Lisiere", "Marsh", "Trail", "Bank", "Woods", "Fork", "Backdrop", "Middle", "Foreground"],
     # Le chemin de la ville : sans sortie tant que ville_haute n'existe pas.
     "omit_if_missing": ("vers_ville",),
+    # (RC) Vue prise dans le marais (la place de l'embuscade) : au sud, l'eau basse et la levée, rien ne s'y dresse.
+    "south_allowed": {"marais": "le joueur est dans le marais (place embuscade) : au sud, l'eau et la levée du sentier"},
 }
 
 # Places de la vie que le plan ne nomme pas : (nom, x, z, regard en degrés, à quoi elles servent). Écrites
@@ -102,6 +105,20 @@ def ground_plan(m):
                                                 "seed": 91}},
         {"op": "level", "level": -1, "shape": {"rect": [62, 30, 8, 3]}},
         {"op": "level", "level": -1, "shape": {"rect": [63, 32, 8, 8]}},
+    ]
+    # (RC) Un relief moins rectangulaire (CARTE.md 0.5) : le talus de la lisière (z 5) et la berge du marais (z 18),
+    # deux droites de 40 m, deviennent des berges irrégulières (± 0,7 m environ) ; franches au pied des deux descentes
+    # de la levée (x 33 → 36 et 52 → 55 : la rampe relie deux cases plates) ; la levée du sentier (z ≥ 20) ne bouge pas.
+    for s in steps:
+        if s["op"] == "level" and s["shape"].get("rect") == [0.0, 0.0, 80.0, 5.0]:
+            s["shape"].update({"noise": 1.2, "noise_scale": 2.6, "seed": 95})
+        if s["op"] == "level" and s["shape"].get("rect") == [16.0, 5.0, 42.0, 13.0]:
+            s["shape"].update({"noise": 1.3, "noise_scale": 2.4, "seed": 96})
+    first = exterior_ground.step_index(steps, "face")
+    steps[first:first] = [
+        {"op": "level", "level": -1, "shape": {"rect": [32, 15, 5, 3]}},
+        {"op": "level", "level": -1, "shape": {"rect": [51, 15, 5, 3]}},
+        {"op": "level", "level": 0, "shape": {"rect": [16, 19.2, 42, 2]}},
     ]
     # Mousse et feuilles au bord du sentier (le sol du plan est un sous-bois uni).
     patches = [("mousse", 9, 21, 3.4, 1.2), ("mousse", 27, 27.5, 3.0, 1.1), ("mousse", 44, 20.4, 3.6, 1.2),
@@ -184,16 +201,25 @@ def pose(p):
     while x < W - 1:
         row.append((x + rng.uniform(-0.6, 0.6), rng.uniform(4.0, 4.6)))
         x += rng.uniform(3.2, 4.8)
-    scatter("LisiereGold", TREES_GOLD, [q for k, q in enumerate(row) if k % 3 == 0], seed=11)
-    scatter("LisiereRust", TREES_RUST, [q for k, q in enumerate(row) if k % 3 == 1], seed=12)
-    scatter("LisiereDark", TREES_DARK, [q for k, q in enumerate(row) if k % 3 == 2], seed=13)
+    # (RC) La rangée tirée ci-dessus n'est plus posée (sa suite de tirages est gardée : le reste de la carte ne
+    # bouge pas) : une rangée irrégulière (exterior_kits.row) des arbres d'or, de rouille et sombres mêlés, et
+    # derrière les pans un second rang de lisière décalé d'un demi-pan (CARTE.md 0.5).
+    trees = kits.family("trees_gold") + kits.family("trees_rust") + kits.family("trees_dark")
+    kits.place_row(p, "Lisiere", "LisiereArbre",
+                   kits.row([(1.2, 4.3), (W - 0.8, 4.3)], trees, seed=1011, step=4.0, depth_range=(-0.6, 0.5),
+                            skip=0.1, scale=(0.9, 1.1)))
+    kits.second_rank(p, "Lisiere", -16.0, W + 8.0, 0.9, 1.6, seed=1012)
 
     # Les forêts à l'ouest et à l'est du marais : un rang de grands arbres devant leur pan, des buissons au
-    # pied (le bord du plan : on n'y entre pas).
-    west = [(2.5, 17.4), (7.0, 16.8), (11.5, 17.6), (14.8, 15.4), (14.6, 11.0), (14.4, 7.2)]
-    scatter("WestTrees", TREES_DARK[:3] + TREES_RUST[:2], west, seed=21)
-    east = [(60.0, 16.2), (64.5, 16.8), (69.0, 16.0), (73.5, 16.6), (78.0, 16.4), (59.6, 11.0), (59.6, 7.4)]
-    scatter("EastTrees", TREES_GOLD[:3] + TREES_DARK[:2], east, seed=22)
+    # pied (le bord du plan : on n'y entre pas). (RC) Des rangées irrégulières le long du bord du marais.
+    kits.place_row(p, "Lisiere", "ArbreOuest",
+                   kits.row([(2.0, 17.2), (12.0, 17.2), (14.6, 15.0), (14.6, 6.8)],
+                            kits.family("trees_dark")[:4] + kits.family("trees_rust")[:3], seed=1013, step=4.3,
+                            depth=0.45, skip=0.05, scale=(0.9, 1.1)))
+    kits.place_row(p, "Lisiere", "ArbreEst",
+                   kits.row([(59.6, 6.8), (59.6, 12.0), (60.6, 16.3), (79.0, 16.3)],
+                            kits.family("trees_gold")[:4] + kits.family("trees_dark")[:3], seed=1014, step=4.4,
+                            depth=0.45, skip=0.05, scale=(0.9, 1.1)))
     foot = [(1.2 + k * 1.9 + rng.uniform(-0.3, 0.3), rng.uniform(18.6, 19.3)) for k in range(8)]
     foot += [(58.5 + k * 1.8 + rng.uniform(-0.3, 0.3), rng.uniform(17.6, 18.3)) for k in range(12)]
     scatter("WestEastFerns", FERNS + ["bush_e", "heather"], foot, seed=23, check=False)
@@ -203,14 +229,20 @@ def pose(p):
         place("Marsh", "marsh_reed_wall", x, 6.4 + rng.uniform(0.0, 0.5), name=named("ReedWallKit"),
               flip=int(x) % 8 < 4)
     reeds = poisson(Rect(16.8, 7.2, 57.2, 17.6), 1.7, 125, free(), seed=31)
-    scatter("MarshReeds", ["reeds", "reeds_b", "cattails", "reeds_sway"], reeds[::2], seed=32, check=False)
-    scatter("MarshHummocks", ["marsh_hummock_a", "marsh_hummock_b"], reeds[1::3], scale=(0.9, 1.15), seed=33,
-            check=False)
+    # (RC) Moins de touffes isolées, plus de sortes (audit du décor : quatre roseaux répétés 55 fois) : un point sur
+    # trois de roseaux, les autres en touradons, en mares et en eau libre ; le rideau du nord s'éclaircit.
+    scatter("MarshReeds", ["reeds", "reeds_b", "cattails", "reeds_sway", "fern_d"], reeds[::4], seed=32, check=False)
+    scatter("MarshHummocks", ["marsh_hummock_a", "marsh_hummock_b"], reeds[1::5], scale=(0.85, 1.15),
+            seed=33, check=False)
     north = poisson(Rect(16.8, 5.3, 57.2, 7.2), 1.15, 70, free(), seed=34)
-    scatter("MarshNorth", ["reeds", "reeds_b", "cattails", "reeds_sway", "marsh_hummock_b"], north, seed=35,
+    scatter("MarshNorth", ["reeds_sway", "reeds_b", "cattails", "reeds", "marsh_hummock_b"], north[::3], seed=35,
             check=False)
     mid = poisson(Rect(16.8, 7.4, 57.2, 12.4), 1.7, 40, free(), seed=36)
-    scatter("MarshMid", ["reeds_b", "cattails", "marsh_hummock_a", "reeds"], mid, seed=37, check=False)
+    scatter("MarshMid", ["cattails", "marsh_hummock_a", "reeds_sway", "reeds"], mid[::2], seed=37, check=False)
+    # (RC) Entre les touffes, l'eau du marais : nénuphars, mares, trous d'eau claire, mousse et brume au ras de l'eau
+    # (des décalques : la densité de CARTE.md 4.2 sans répéter les roseaux).
+    scatter("MarshFloat", ["lily_pads", "bog_pool_a", "hidden_pool_a", "moss_patch_b", "hidden_pool_b"],
+            reeds[2::4] + reeds[3::8] + mid[1::2] + north[1::3], scale=(0.8, 1.1), seed=38, check=False)
     for q in ((22.0, 15.0), (53.0, 12.5), (50.0, 15.5)):
         place("Marsh", "marsh_snag", q[0], q[1], name=named("Snag"), flip=int(q[0]) % 2 == 0, check=False)
     for q in ((21.0, 10.0), (51.5, 11.0), (25.0, 13.2)):
@@ -242,9 +274,11 @@ def pose(p):
     borders = []
     for name, width, pts in PATHS:
         if name in ("sentier", "vers_ville"):
-            borders += along(pts, 4.2, width / 2.0 + 0.1, 0.1, seed=42 + len(borders), with_yaw=True)
+            # (RC, QC-29) Bordures irrégulières : pas ± 35 %, écart au bord, trous, lacet à ± 12°.
+            borders += kits.along_irregular(pts, 4.2, width / 2.0 + 0.1, seed=42 + len(borders), spread=0.35,
+                                            lateral=0.3, skip=0.2, yaw_jitter=12.0)
     borders = [q for q in borders if in_map(q[0], q[1], 0.5)]
-    scatter("PathEdges", ["grass_edge_a", "grass_edge_b"], borders, scale=(0.9, 1.1), seed=43, check=False)
+    scatter("PathEdges", kits.family("grass_edges"), borders, scale=(0.8, 1.15), seed=43, check=False)
     verge = []
     for name, width, pts in PATHS:
         verge += along(pts, 2.1, width / 2.0 + 0.8, 0.5, seed=44 + len(verge))
@@ -327,6 +361,11 @@ def pose(p):
     for k, (x, z) in enumerate(backdrop):
         scene = (TREES_DARK + TREES_RUST)[k % 12]
         place("Backdrop", scene, x, z, y=0.0, name="Backdrop%d" % (k + 1), flip=k % 2 == 1, check=False)
+
+    # (RC) Le premier plan de chaque vue et de chaque passage (CARTE.md 0.5) : feuillages et troncs au bas de l'écran,
+    # sur les côtés, jamais devant le sentier ni ses places.
+    walk_grid()
+    kits.foreground_views(p, "sentier", seed=1041)
 
 
 def ambient(p):

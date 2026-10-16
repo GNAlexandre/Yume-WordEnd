@@ -1247,6 +1247,20 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   (`exterior_pose.masked_places`). Une famille se tire sans masquer par
   `p.clear_of_places(scènes, points, échelle)` ; un décor que le plan veut là se déclare dans
   `SETTINGS["masks_allowed"] = {nœud: (places, pourquoi)}` (dit par `check`, sans erreur).
+- (RC) **Rangées, plans et répétition** (`tools/exterior_kits.py`, CARTE.md 0.5) : `row(polyligne, famille,
+  graine, step, spread, depth | depth_range, skip, accents, accent_every, scale, overlap, tone)` → éléments
+  `(scène, x, z, retourné, échelle, teinte)`, posés par `place_row(p, groupe, base, éléments)` (décors uniques,
+  `tone` écrit dans la scène) ; `pick_images` (jamais la même image deux fois de suite) ; `family(nom)` (les
+  scènes présentes de `FAMILIES` : une variante livrée plus tard y entre seule) ; `along_irregular` (bordures
+  d'herbe) ; `foreground_kit` / `foreground_views(p, carte, graine, with_passages, foliage, trees, tree_keep)`
+  (premier plan des vues QC puis des
+  passages) ; `middle_kit(p, [(Rect, nombre)], famille, graine)` (masses du plan moyen) ;
+  `second_rank(p, groupe, x0, x1, z, y, graine)` (second rang de lisière) ; `view_repeats`, `view_south` (les
+  mesures). `check` refuse une vue QC dont une image (panneau de 0,75 m ou plus) revient plus de
+  `REPEAT_LIMIT` = 8 fois dans le champ, ou qui a moins de `SOUTH_MIN` = 2 objets de 1,5 m ou plus au sud
+  du joueur, visibles au bas de l'écran ; exceptions dites : `SETTINGS["south_allowed"] = {vue: pourquoi}`,
+  `SETTINGS["repeat_allowed"] = {image: pourquoi}`. `python3 tools/exterior_maps.py views [carte…]` donne
+  les chiffres par vue. Une carte d'attente peut porter des décors en plus (`WAITING[id]["decor"]`).
 - **Une recette par carte** (`tools/exterior_recipes/<id>.py`) : `SETTINGS` (groupes de décors,
   sorties provisoires ; (C3) `camera_bounds`, `light_preset`, `no_lights`, `fauna` : bornes de caméra qui
   diffèrent de la règle, préréglage de lumière de la `Map`, plan à lumières que la carte ne porte pas, nœud
