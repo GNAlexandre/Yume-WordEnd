@@ -121,77 +121,38 @@ def garde_transport_hatch(size, rnd, frames):
 
 # --- Le bras d'ancrage qui se referme ---------------------------------------------------------------------------
 
-# Le pivot du bras sur son pylône, et le pied du vérin (pixels de props/mooring_arm_open, 288 × 384).
-ARM_PIVOT = (80, 104)
-STRUT_FOOT = (96, 236)
-# Ce qui tourne avec le bras : le disque du pivot et tout ce qui est au-dessus du fût, puis le bras à droite du fût (le
-# pied et le fût du pylône restent).
-ARM_REGIONS = ((44, 0, 288, 128), (110, 128, 288, 214))
-
-
-def _strut_mask(img):
-    """Les pixels orangés du vérin (le cuivre du bras), à redessiner à chaque image."""
-    w, h = img.size
-    mask = Image.new("L", (w, h), 0)
-    px = img.load()
-    m = mask.load()
-    for y in range(110, 250):
-        for x in range(84, 230):
-            r, g, b, a = px[x, y]
-            if a > 128 and r > 150 and 80 < g < 170 and b < 110:
-                m[x, y] = 255
-    return mask.filter(ImageFilter.MaxFilter(5))
+# La chaîne et la pince sous le bout du bras livré (pixels de props/mooring_arm_open, 288 × 384) :
+# rien du bras au-dessus de y = 80 dans ces colonnes.
+CLAW_BOX = (195, 80, 288, 184)
 
 
 def mooring_arm_clamp(size, rnd, frames):
-    """Le bras d'ancrage déployé (props/mooring_arm_open, jointe) qui s'abaisse et referme sa pince sur un anneau non
-    dessiné : image 3 fermée ; le pied et le pylône immobiles au pixel près."""
+    """Le bras d'ancrage déployé (props/mooring_arm_open, jointe) dont la pince descend au bout de sa
+    chaîne (0, 2, 4 puis 6 px) ; le bras, le pylône et le pied immobiles au pixel près.
+
+    Le bras livré (cahier n° 6, PR n° 52) n'a plus la géométrie du premier remplaçant (pivot,
+    vérin) que ce dessin faisait tourner : seule la pince bouge, sans artefact, jusqu'à la
+    livraison de la bande elle-même (C.1, prio 1)."""
     w, h = size
     base = asset("props/mooring_arm_open")
     if base is None or base.size != (w, h):
         base = Image.new("RGBA", (w, h), (0, 0, 0, 0))
         ImageDraw.Draw(base).rectangle((w // 2 - 40, h - 120, w // 2 + 40, h - 1), fill=rgba(IRON))
-    strut = _strut_mask(base)
-    # Le bras seul (sans le vérin), et ce qui reste fixe (sans le bras ni le vérin).
-    arm_area = Image.new("L", (w, h), 0)
-    draw = ImageDraw.Draw(arm_area)
-    for box in ARM_REGIONS:
-        draw.rectangle(box, fill=255)
-    arm = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    arm.paste(base, (0, 0), arm_area)
-    arm.putalpha(Image.composite(Image.new("L", (w, h), 0), arm.getchannel("A"), strut))
-    fixed = base.copy()
-    fixed.paste((0, 0, 0, 0), (0, 0), arm_area)
-    fixed.putalpha(Image.composite(Image.new("L", (w, h), 0), fixed.getchannel("A"), strut))
-    # Le haut du vérin sur le bras (pixels), avant rotation.
-    head = (196, 126)
-    tones = ramp("#C88A3E", 5)
     out = []
     for f in range(frames):
-        angle = [0.0, 6.0, 11.0, 15.0][min(f, 3)]
-        if angle == 0.0:
+        drop = 2 * min(f, 3)
+        if drop == 0:
             # L'image 0 est le bras déployé lui-même, au pixel près.
             out.append(base.copy())
             continue
-        turned = arm.rotate(-angle, resample=Image.NEAREST, center=ARM_PIVOT)
-        frame = fixed.copy()
-        c = Canvas(w, h, rnd)
-        hx, hy = rotate_points([head], ARM_PIVOT[0], ARM_PIVOT[1], math.radians(angle))[0]
-        # Le vérin : un tube de cuivre du pied au bras, plus court quand le bras descend.
-        c.line([STRUT_FOOT, (hx, hy)], darker("#C88A3E", 0.45), 11)
-        c.line([STRUT_FOOT, (hx, hy)], tones[2], 7)
-        c.line([(STRUT_FOOT[0] + 1, STRUT_FOOT[1] - 2), (hx + 1, hy - 2)], tones[4], 2)
-        c.ellipse(STRUT_FOOT[0], STRUT_FOOT[1], 6, 6, IRON)
-        frame.alpha_composite(c.img)
-        frame.alpha_composite(turned)
-        if f >= 3:
-            # La pince refermée : les deux mâchoires se rejoignent sous le bout du bras.
-            tip = rotate_points([(262, 150), (236, 132), (284, 128)], ARM_PIVOT[0], ARM_PIVOT[1], math.radians(angle))
-            jaw = Canvas(w, h, rnd)
-            jaw.poly([tip[1], tip[2], tip[0]], darker(STEEL, 0.6))
-            jaw.poly([(tip[1][0] + 4, tip[1][1] + 2), (tip[2][0] - 4, tip[2][1] + 2), (tip[0][0], tip[0][1] - 5)], STEEL)
-            jaw.rect(tip[0][0] - 3, tip[0][1] - 3, tip[0][0] + 4, tip[0][1] + 4, BRASS)
-            frame.alpha_composite(jaw.img)
+        claw = base.crop(CLAW_BOX)
+        frame = base.copy()
+        frame.paste((0, 0, 0, 0), CLAW_BOX)
+        frame.alpha_composite(claw, (CLAW_BOX[0], CLAW_BOX[1] + drop))
+        # La chaîne s'allonge : sa première rangée répétée dans l'espace laissé en haut.
+        link = base.crop((CLAW_BOX[0], CLAW_BOX[1], CLAW_BOX[2], CLAW_BOX[1] + 1))
+        for dy in range(drop):
+            frame.alpha_composite(link, (CLAW_BOX[0], CLAW_BOX[1] + dy))
         out.append(frame)
     return out
 
