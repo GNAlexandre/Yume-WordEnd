@@ -205,11 +205,25 @@ Neuf PNG générés avec OpenAI Image Generation : traces et leur fin estompée,
 | `assets/hd2d/fx/sign_talk.png`, `sign_examine.png`, `sign_take.png`, `sign_enter.png` (signes d'interaction, remplaçants commandés au cahier n° 5, R0.13) | généré par `tools/hd2d_assets.py gen` (recettes `tools/hd2d_sky.py`) | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |
 | `assets/ui/heart_full.png`, `assets/ui/heart_empty.png` (cœurs « Nuit douce », redessinés) | généré par `tools/gen_ui_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |
 
+
+
+## Cahier n° 6 — village et nuit (16 octobre 2026)
+
+Généré avec ChatGPT le 16 octobre 2026, lot B : chaume, lavoir, meule de foin, charrette de foin, ruches, talus, traces de pas, café de nuit et maison Limashenka de nuit (neuf PNG). Références : images existantes des mêmes lieux, matériaux et accessoires. Réduction/recalage au plus proche voisin et montage localisé autorisés ; alpha des façades de jour conservé, vitrage crème assemblé depuis un échantillon généré, empreintes générées réassemblées à 43 px de pas. Originaux et générations conservés séparément. Deux chemins nocturnes déclarés au manifeste, alpha doux des empreintes aligné sur le cahier ; aucune logique moteur modifiée. Placement et validation en jeu restent à effectuer.
+
+
 ## Île 68 — R2 priorité 2 : tenues de pluie A (15 octobre 2026)
 
 Généré avec ChatGPT le 15 octobre 2026, cahier n° 5 (`docs/ASSETS_HD2D_ILE68.md`), lot R2, section 4.7 : `almita/almita_rain` (91 px), `chtholly/chtholly_rain` (144 px), `collon/collon_rain` (115 px), chacun en profil droit, face et dos, avec leurs JSON ; neuf PNG et159 poses. Repos, marche, dialogue et course ; saut à pieds joints dans une flaque non dessinée pour Almita et Collon. Capuche relevée pour Almita et Chtholly, rabattue pour Collon, bandeau rouge conservé ; aucun armement.
 
 Références : trois vues existantes de chaque personnage, `willem_coat` pour la toile et le cuir, pages officielles64,11 et47 des ZIP fournis par l’utilisateur. Alpha net, recalage au plus proche voisin et montage local autorisé pour les pieds immobiles, le dialogue fermé et la respiration ; dix générations originales conservées séparément, dont la vue arrière de Collon remplacée pour la course et le saut. Tenues à enregistrer et placer dans les scènes ; aucun ancien PNG/JSON ni dessin anime modifié.
+
+
+
+## Île 68 — reprise des gestes et fées (16 octobre 2026)
+
+Générations ChatGPT précédemment conservées, livrées sans régénération : Willem vie quotidienne et réparation, serveur et boulanger au travail (12 PNG/JSON, 126 poses) ; fées génériques 07–10 (12 PNG/JSON, 444 poses), portraits Kana et Giniette (256 × 256). Soit 26 PNG, 24 JSON et 570 poses. Références : sprites existants et cahiers n° 5/n° 6 ; sources et générations originales conservées séparément. Le linge de Nygglatho est exclu de cette reprise pour conserver la nouvelle version noire et blanche de la PR 49. Tenues et personnages à enregistrer et placer en jeu.
+
 
 - 2026-10-15 — généré avec ChatGPT le 15 octobre 2026, cahier n° 5, lot R2 priorité 2 : tenues de pluie de Lakhesh (115 px), Nygglatho (corps 178 px ; parapluie inclus 234 px), Pannibal (120 px) et Tiat (106 px). Douze PNG et douze JSON, 201 poses ; trois vues par personnage. Références : sprites existants des quatre personnages et de Willem en pardessus ; planches officielles des ZIP fournis, pages 49, 51, 45 et 41. Origines et générations conservées hors dépôt ; recalage au plus proche voisin et montage localisé autorisés, sans lissage ni changement de palette.
 
