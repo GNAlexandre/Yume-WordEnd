@@ -6,7 +6,11 @@
     "n0",
     "n1",
     "n2",
-    "n3"
+    "n3",
+    "n9",
+    "n10",
+    "n11",
+    "n12"
   ],
   "nodes": {
     "n0": {
@@ -50,6 +54,49 @@
     "n4": {
       "speaker_id": "willem",
       "text": "Tu as besoin de quelque chose, l'aînée ?"
+    },
+    "n9": {
+      "speaker_id": "willem",
+      "text": "Demain matin, même clairière, même heure. Je frapperai plus fort. À la porte, je veux dire.",
+      "if": {
+        "day": [
+          9,
+          9
+        ]
+      }
+    },
+    "n10": {
+      "speaker_id": "willem",
+      "text": "Tu es partie comme une flèche, ce matin. Si j'ai frappé trop fort, il faut me le dire.",
+      "if": {
+        "day": [
+          10,
+          10
+        ],
+        "scene": "j10_2_foret"
+      }
+    },
+    "n11": {
+      "speaker_id": "willem",
+      "text": "L'horloge du village chante à nouveau. Ça fait du bien, une chose réparée.",
+      "if": {
+        "day": [
+          11,
+          11
+        ],
+        "scene": "j11_3_horloge"
+      }
+    },
+    "n12": {
+      "speaker_id": "willem",
+      "text": "Le plafond tiendra jusqu'à votre retour. J'y veille. Il n'a pas le choix.",
+      "if": {
+        "day": [
+          12,
+          12
+        ],
+        "not_scene": "j12_2_depart"
+      }
     }
   }
 }

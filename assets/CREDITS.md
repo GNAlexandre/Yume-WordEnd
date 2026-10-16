@@ -34,6 +34,11 @@ egg n'a pas de licence établie (PLAN.md section 13) et n'est pas copié.
 
 | `assets/hd2d/ground/grass_b.png`, `assets/hd2d/ground/forest_floor_b.png`, `assets/hd2d/ground/path_dirt_b.png`, `assets/hd2d/ground/leaf_litter.png`, `assets/hd2d/ground/moss.png`, `assets/hd2d/ground/grass_dry_b.png`, `assets/hd2d/ground/flagstone_b.png`, `assets/hd2d/ground/cobble_b.png`, `assets/hd2d/ground/meadow_flowers.png`, `assets/hd2d/ground/gravel.png`, `assets/hd2d/ground/garden_soil.png`, `assets/hd2d/ground/sand_b.png`, `assets/hd2d/ground/rock_b.png`, `assets/hd2d/ground/planks.png`, `assets/hd2d/ground/stream_bed.png`, `assets/hd2d/decals/grass_edge_a.png`, `assets/hd2d/decals/grass_edge_b.png`, `assets/hd2d/decals/pebbles_a.png`, `assets/hd2d/decals/garden_bed.png`, `assets/hd2d/decals/clover_patch.png`, `assets/hd2d/decals/flowers_patch_a.png`, `assets/hd2d/decals/flowers_patch_b.png`, `assets/hd2d/decals/puddle_a.png`, `assets/hd2d/decals/puddle_b.png`, `assets/hd2d/decals/mud_patch.png`, `assets/hd2d/decals/cracks_a.png`, `assets/hd2d/decals/cracks_b.png`, `assets/hd2d/decals/pebbles_b.png`, `assets/hd2d/decals/stepping_stones.png`, `assets/hd2d/decals/lily_pads.png`, `assets/hd2d/decals/sand_drift_a.png`, `assets/hd2d/decals/sand_drift_b.png`, `assets/hd2d/decals/ring_stone_flat_a.png`, `assets/hd2d/decals/ring_stone_flat_b.png`, `assets/hd2d/decals/ring_stone_flat_c.png`, `assets/hd2d/decals/chalk_drawings.png`, `assets/hd2d/decals/chalk_hopscotch.png`, `assets/hd2d/decals/oil_stain.png`, `assets/hd2d/decals/rust_streak.png`, `assets/hd2d/decals/footprints.png`, `assets/hd2d/decals/cart_ruts.png`, `assets/hd2d/decals/drain_grate.png`, `assets/hd2d/decals/hay_scatter.png`, `assets/hd2d/decals/boardwalk.png`, `assets/hd2d/decals/mist_patch.png` | généré avec ChatGPT le 8 octobre 2026, lot B (outil image_gen) ; mise au format nearest-neighbor et adaptation technique des masques/raccords, sans quantification RGB | — | images générées pour le projet ; univers inspiré de SukaSuka, droits des ayants droit réservés | Monde B |
 
+### Île 68 — chemin du marais et port (cahier n° 6, A.1–A.2)
+
+Dix-sept PNG redessinés avec OpenAI Image Generation à partir des références du projet et des planches officielles de SukaSuka : eau de marais, pierres, végétation, racines, signalisation, bras d’amarrage ouvert, sifflet, cabestan, charrettes, palissade et maison du gardien avec son flanc. Formats natifs et transparence vérifiés ; recalage géométrique au plus proche voisin. Sources originales conservées hors dépôt. Les droits des personnages et références de SukaSuka restent à leurs ayants droit.
+
+
 ### Lot G — corrections des raccords et détourages
 
 Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `assets/hd2d/sky/sky_night.png`, `assets/hd2d/sky/horizon_islands.png`, `assets/hd2d/sky/mist_band.png`, `assets/hd2d/sky/distant_island_d.png`, `assets/hd2d/sky/distant_island_f.png`. Sources conservées hors du dépôt ; assemblage et détourage sans réduction de palette.
@@ -42,6 +47,11 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 
 91 PNG générés avec ChatGPT / image_gen le 9 octobre 2026, cahier n° 3, lot I. Références : les planches officielles de SukaSuka fournies par l’utilisateur (21 ZIP, 162 pages ; intérieurs p99–111), les descriptions paraphrasées des romans du cahier, et les assets HD-2D déjà livrés. Sources et aperçus conservés hors du dépôt. Mise au format au plus proche voisin, transparence découpée, raccords corrigés avec image_gen ; aucune réduction de palette ni compression avec perte.
 | Lot J priorité 1 : `tiat_life`, `collon_life`, `pannibal_life`, `lakhesh_life`, `almita_life`, `chtholly_home`, `ithea_home`, `nephren_home`, `willem_home`, `willem_cook`, `willem_coat`, `nygglatho_life`, `nygglatho_tea`, `fairy_01`, `fairy_02`, `fairy_03`, `fairy_04`, `fairy_05`, `fairy_06`, `tiat_pajamas`, `collon_pajamas`, `pannibal_pajamas`, `lakhesh_pajamas` (profil, face, dos, PNG et JSON ; 23 variantes, 69 planches) | ChatGPT/Codex (`image_gen`), 9 octobre 2026, cahier fourni `ASSETS_HD2D_SUKASUKA.md` ; pages officielles des 21 ZIP et planches existantes utilisées comme références, variantes domestiques et six fées secondaires originales ; couleurs visibles natives conservées sans réduction de palette ; masques/cadrage au plus proche voisin, repos des `_life` recopiés exactement. Provenance par planche dans `assets/characters/CREDITS.md` | — (images générées) | Images pour le projet ; personnages/univers inspirés de *SukaSuka*, droits des ayants droit réservés | SukaSuka J P1 |
+
+## Île 68 — ornières et snack-bar (cahier n° 6, A.3 et A.6)
+
+Neuf PNG générés avec OpenAI Image Generation : traces et leur fin estompée, sol et mur de pierre, comptoir, étagère, tabourets, table et repas. Références : matériaux et mobilier HD-2D du projet. Écartement des roues de 115 px, recalage géométrique du plateau au plus proche voisin et assemblage local des huit premières lignes du raccord. Sources et originaux conservés hors dépôt ; couleurs générées conservées. Univers inspiré de SukaSuka, droits des ayants droit réservés.
+
 
 ## Cahier n° 3 — Lot I, priorité 2 : maison, entretien, lecture et chambres
 
@@ -79,6 +89,30 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/interior/props/hat_blue.png` — 48 × 24 px.
 - `assets/hd2d/interior/props/desk_clean_brooch.png` — 106 × 101 px.
 - `assets/hd2d/interior/props/crystal_lamp_table.png` — 29 × 48 px.
+
+## Cahier n° 6 — C.6 et C.7 : café et salon Limashenka
+
+Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
+
+- `assets/hd2d/interior/props/cafe_counter.png`
+- `assets/hd2d/interior/props/juice_glasses.png`
+- `assets/hd2d/interior/props/cafe_bottle_shelf.png`
+- `assets/hd2d/interior/props/cafe_cake_case.png`
+- `assets/hd2d/interior/door_backroom.png`
+- `assets/hd2d/interior/props/cafe_drinkers_table.png`
+- `assets/hd2d/interior/wallitem_menu_cafe.png`
+- `assets/hd2d/props/cafe_backyard_crates.png`
+- `assets/hd2d/interior/props/toolbox_gears.png`
+- `assets/hd2d/interior/props/side_table_salon.png`
+- `assets/hd2d/interior/wallitem_family_portrait.png`
+- `assets/hd2d/interior/wallitem_clock_limashenka.png`
+- `assets/hd2d/interior/floor_terracotta.png`
+- `assets/hd2d/interior/wall_panel_dark.png`
+- `assets/hd2d/interior/wall_wallpaper_floral.png`
+- `assets/hd2d/interior/window_shutters.png`
+- `assets/hd2d/decals/rug_salon.png`
+- `assets/hd2d/interior/wallitem_clock_limashenka_open.png`
+- `assets/hd2d/anim/clock_limashenka_swing.png`
 
 ## Cahier n° 5 — Île 68, R0 : premier lot de mobilier
 
@@ -205,11 +239,25 @@ Six PNG générés avec ChatGPT / OpenAI Image Generation le 16 octobre 2026 : f
 | `assets/hd2d/fx/sign_talk.png`, `sign_examine.png`, `sign_take.png`, `sign_enter.png` (signes d'interaction, remplaçants commandés au cahier n° 5, R0.13) | généré par `tools/hd2d_assets.py gen` (recettes `tools/hd2d_sky.py`) | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |
 | `assets/ui/heart_full.png`, `assets/ui/heart_empty.png` (cœurs « Nuit douce », redessinés) | généré par `tools/gen_ui_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |
 
+
+
+## Cahier n° 6 — village et nuit (16 octobre 2026)
+
+Généré avec ChatGPT le 16 octobre 2026, lot B : chaume, lavoir, meule de foin, charrette de foin, ruches, talus, traces de pas, café de nuit et maison Limashenka de nuit (neuf PNG). Références : images existantes des mêmes lieux, matériaux et accessoires. Réduction/recalage au plus proche voisin et montage localisé autorisés ; alpha des façades de jour conservé, vitrage crème assemblé depuis un échantillon généré, empreintes générées réassemblées à 43 px de pas. Originaux et générations conservés séparément. Deux chemins nocturnes déclarés au manifeste, alpha doux des empreintes aligné sur le cahier ; aucune logique moteur modifiée. Placement et validation en jeu restent à effectuer.
+
+
 ## Île 68 — R2 priorité 2 : tenues de pluie A (15 octobre 2026)
 
 Généré avec ChatGPT le 15 octobre 2026, cahier n° 5 (`docs/ASSETS_HD2D_ILE68.md`), lot R2, section 4.7 : `almita/almita_rain` (91 px), `chtholly/chtholly_rain` (144 px), `collon/collon_rain` (115 px), chacun en profil droit, face et dos, avec leurs JSON ; neuf PNG et159 poses. Repos, marche, dialogue et course ; saut à pieds joints dans une flaque non dessinée pour Almita et Collon. Capuche relevée pour Almita et Chtholly, rabattue pour Collon, bandeau rouge conservé ; aucun armement.
 
 Références : trois vues existantes de chaque personnage, `willem_coat` pour la toile et le cuir, pages officielles64,11 et47 des ZIP fournis par l’utilisateur. Alpha net, recalage au plus proche voisin et montage local autorisé pour les pieds immobiles, le dialogue fermé et la respiration ; dix générations originales conservées séparément, dont la vue arrière de Collon remplacée pour la course et le saut. Tenues à enregistrer et placer dans les scènes ; aucun ancien PNG/JSON ni dessin anime modifié.
+
+
+
+## Île 68 — reprise des gestes et fées (16 octobre 2026)
+
+Générations ChatGPT précédemment conservées, livrées sans régénération : Willem vie quotidienne et réparation, serveur et boulanger au travail (12 PNG/JSON, 126 poses) ; fées génériques 07–10 (12 PNG/JSON, 444 poses), portraits Kana et Giniette (256 × 256). Soit 26 PNG, 24 JSON et 570 poses. Références : sprites existants et cahiers n° 5/n° 6 ; sources et générations originales conservées séparément. Le linge de Nygglatho est exclu de cette reprise pour conserver la nouvelle version noire et blanche de la PR 49. Tenues et personnages à enregistrer et placer en jeu.
+
 
 - 2026-10-15 — généré avec ChatGPT le 15 octobre 2026, cahier n° 5, lot R2 priorité 2 : tenues de pluie de Lakhesh (115 px), Nygglatho (corps 178 px ; parapluie inclus 234 px), Pannibal (120 px) et Tiat (106 px). Douze PNG et douze JSON, 201 poses ; trois vues par personnage. Références : sprites existants des quatre personnages et de Willem en pardessus ; planches officielles des ZIP fournis, pages 49, 51, 45 et 41. Origines et générations conservées hors dépôt ; recalage au plus proche voisin et montage localisé autorisés, sans lissage ni changement de palette.
 
@@ -221,3 +269,4 @@ Généré avec ChatGPT / outil d’image : correction des vêtements verts en ti
 ## B.3 — signes d’interaction (16 octobre 2026)
 
 Quatre remplaçants générés avec ChatGPT / outil d’image selon le cahier n° 6, B.3 : parler, examiner, prendre, entrer. PNG transparents 64 × 64 à alpha doux, crème, or et prune ; réduction géométrique au plus proche voisin, sans changement des couleurs. Dessins centrés, marge basse de 4 px. Sources générées et anciens remplaçants conservés séparément.
+- 2026-10-16 — (F1) retirés avec l'ancienne île (docs/DECISIONS.md, F1), gardés dans l'historique de git : 56 images du décor qu'elle seule posait (`anim/fountain_water.png`, `anim/grass_sway.png`, `anim/vigil_bell_ring.png`, `buildings/armory_door.png`, `buildings/boiler_workshop.png`, `buildings/boiler_workshop_side.png`, `buildings/butcher.png`, `buildings/butcher_side.png`, `buildings/clockmaker.png`, `buildings/clockmaker_side.png`, `buildings/house_stone_b.png`, `buildings/house_stone_b_side.png`, `buildings/house_timber_b.png`, `buildings/house_timber_b_side.png`, `buildings/inn.png`, `buildings/inn_side.png`, `buildings/materials/wall_brick.png`, `buildings/shop_bakery.png`, `buildings/shop_bakery_side.png`, `buildings/tool_shed.png`, `buildings/tool_shed_side.png`, `buildings/warehouse_main.png`, `buildings/warehouse_main_side.png`, `buildings/warehouse_wing.png`, `buildings/warehouse_wing_side.png`, `decals/cart_ruts.png`, `decals/ring_stone_flat_a.png`, `decals/ring_stone_flat_b.png`, `decals/ring_stone_flat_c.png`, `decals/sand_drift_a.png`, `decals/sand_drift_b.png`, `props/cafe_table.png`, `props/dormer_slate.png`, `props/dormer_tiles.png`, `props/hanging_sign_propeller.png`, `props/hunting_stand.png`, `props/kids_table.png`, `props/log_bridge.png`, `props/lookout.png`, `props/market_stall.png`, `props/market_stall_cloth.png`, `props/market_stall_fruit.png`, `props/market_stall_veg.png`, `props/myosotis_c.png`, `props/palisade.png`, `props/palisade_gate.png`, `props/signal_pillar.png`, `props/snack_stall.png`, `props/target_board.png`, `props/ticket_booth.png`, `props/training_dummy.png`, `props/tree_old_pine_clawed.png`, `props/vigil_bell.png`, `props/warehouse_roof_deck.png`, `props/well.png`, `props/workbench.png`) ; les 15 icônes d'objets de ses quêtes (`assets/items/` : `butter_cake_promise.png`, `cheesecake_slice.png`, `clock_comb.png`, `clock_gear.png`, `dessert_cup.png`, `eggs.png`, `flower_blue.png`, `fresh_cream.png`, `laundry_sheet.png`, `page_fragment.png`, `picture_book.png`, `pressed_forget_me_not.png`, `rami_card.png`, `tiat_drawing.png`, `wild_berries.png`) ; `assets/ui/quest.png`, `assets/ui/star.png`.

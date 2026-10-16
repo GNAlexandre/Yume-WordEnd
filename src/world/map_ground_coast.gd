@@ -2,12 +2,12 @@
 class_name MapGroundCoast
 extends RefCounted
 ## Côte du sol en relief d'une carte (MapGroundBuilder) : les segments du bord du vide enchaînés,
-## le rideau de roche qui pend dessous (la lèvre, puis la falaise qui se resserre en descendant,
-## comme la roche de l'île, IslandRock) et les barrières (mur invisible, deux faces) le long de la
+## le rideau de roche qui pend dessous (la lèvre, puis la falaise qui se resserre en descendant)
+## et les barrières (mur invisible, deux faces) le long de la
 ## côte et des bords « land » de la carte. Le rideau va dans le mesh des faces du builder (style
 ## roche), sans collision.
 
-## Lèvre sous la côte : avancée (m, plus un bruit) et hauteur (m, plus un bruit), comme IslandRock.
+## Lèvre sous la côte : avancée (m, plus un bruit) et hauteur (m, plus un bruit).
 const LIP_PUSH := Vector2(0.12, 0.3)
 const LIP_DEPTH := Vector2(0.9, 0.7)
 ## Bord de la lèvre un peu relevé : normales penchées vers le ciel en haut de la lèvre.
@@ -229,6 +229,8 @@ static func _barriers(builder: MapGroundBuilder, data: MapGroundData, levels: Ve
 	for n in range(0, rim.size(), 2):
 		var p := rim[n]
 		var q := rim[n + 1]
+		if _in_gap(data, (Vector2(p.x, p.z) + Vector2(q.x, q.z)) / 2.0):
+			continue
 		_wall(
 			builder, Vector2(p.x, p.z), Vector2(q.x, q.z), p.y - BARRIER_BELOW, p.y + BARRIER_ABOVE
 		)
@@ -244,6 +246,14 @@ static func _barriers(builder: MapGroundBuilder, data: MapGroundData, levels: Ve
 			_wall(builder, corners[side], corners[(side + 1) % 4], bottom, top)
 
 
+## (E7) Vrai si le point (x, z) est dans une ouverture de la barrière (MapGroundData.barrier_gaps).
+static func _in_gap(data: MapGroundData, at: Vector2) -> bool:
+	for gap: Rect2 in data.barrier_gaps:
+		if gap.has_point(at):
+			return true
+	return false
+
+
 static func _wall(
 	builder: MapGroundBuilder, a: Vector2, b: Vector2, bottom: float, top: float
 ) -> void:
@@ -254,7 +264,7 @@ static func _wall(
 	builder.barrier.append_array(PackedVector3Array([a0, b0, b1, a0, b1, a1]))
 
 
-## Bruit stable dans [0, 1[ (comme IslandRock._hash).
+## Bruit stable dans [0, 1[.
 static func _noise(a: float, b: float, seed_value: float) -> float:
 	var n := sin(a * 12.9898 + b * 78.233 + seed_value * 37.719) * 43758.5453
 	return n - floorf(n)

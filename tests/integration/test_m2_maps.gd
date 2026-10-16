@@ -1,15 +1,16 @@
 extends "res://tests/stubs/m2_game_test.gd"
-## (E1) Cartes dans la vraie partie (docs/REFONTE.md, section 7.1) : nouvelle partie dans la
-## carte héritée, sortie à invite du bout du quai (E), fondu, carte d'essai (ancienne carte
-## libérée, joueur sur son marqueur et tourné comme lui, caméra bornée), sortie à pied du
-## sentier ouest, retour sur le quai ; fondu qui cache l'échange ; pas d'aller-retour en
-## arrivant sur une sortie ; sauvegarde et reprise dans la carte d'essai ; vraie sauvegarde
-## d'avant la refonte reprise à la même place ; réapparition et rattrapage sur une carte sans
-## village ; une seule carte en mémoire.
+## (E1) Cartes dans la vraie partie (docs/REFONTE.md, section 7.1) : nouvelle partie sur la carte
+## d'essai, sortie à pied du sentier ouest vers le rez-de-chaussée d'essai (fondu, ancienne carte
+## libérée, joueur sur son marqueur et tourné comme lui, caméra bornée, nom annoncé), retour par la
+## porte d'entrée ; sortie à invite (E) vers le pré ; fondu qui cache l'échange ; pas
+## d'aller-retour en arrivant sur une sortie ; sauvegarde et reprise ; (F1) vraie sauvegarde
+## d'avant la refonte reprise à l'acte 1 (l'ancienne île est partie) ; réapparition et rattrapage ;
+## une seule carte en mémoire.
 
 const ESSAI := &"essai"
-const LEGACY := &"ile_ancienne"
-## Sauvegarde du jeu d'avant la refonte (commit 50ec961), rue du port.
+const RDC := &"entrepot_rdc_essai"
+const RELIEF := &"essai_relief"
+## Sauvegarde du jeu d'avant la refonte (commit 50ec961), rue du port de l'ancienne île.
 const V2_REAL_SAVE := "res://tests/data/saves/save_v2_avant_refonte.json"
 
 var _previous_fade: float
@@ -23,11 +24,6 @@ func before_each() -> void:
 func after_each() -> void:
 	WorldManager.fade_time = _previous_fade
 	super()
-
-
-## Carte courante (Map) de la partie.
-func current_map() -> Map:
-	return WorldManager.current_map_node()
 
 
 ## Attend la fin du changement de carte en cours (fondus et images d'arrivée compris).
@@ -47,57 +43,70 @@ func put_player(at: Vector3, aim: Vector3) -> void:
 	await frames(1)
 
 
-func test_quay_exit_to_essai_and_west_path_back() -> void:
+func test_west_path_to_the_interior_and_front_door_back() -> void:
 	assert_true(await new_game_from_menu(), "partie lancée depuis le menu")
-	assert_eq(WorldManager.current_map(), LEGACY, "nouvelle partie : l'ancienne île")
-	var island := current_map()
-	var island_ref: WeakRef = weakref(island)
-	var exit := island.get_node(^"Exits/to_essai") as MapExit
-	# Devant le panneau du bout du quai, tourné vers lui (au nord).
-	await put_player(exit.global_position + Vector3(0.0, -1.3, 1.9), Vector3.FORWARD)
-	assert_true(
-		await until(func() -> bool: return player.current_prompt() == exit.prompt, 3.0),
-		"invite « %s » au bout du quai" % exit.prompt
-	)
+	assert_eq(WorldManager.current_map(), ESSAI, "nouvelle partie : la carte d'essai")
+	var essai_ref: WeakRef = weakref(current_map())
 	watch_signals(EventBus)
-	await tap_key(KEY_E)
-	assert_true(WorldManager.is_transitioning(), "E : le changement commence")
+	# Le sentier ouest : on passe en marchant.
+	assert_true(
+		await walk_keys_until([KEY_A], func() -> bool: return WorldManager.is_transitioning(), 8.0),
+		"sortie à pied vers le rez-de-chaussée"
+	)
 	assert_eq(player.process_mode, Node.PROCESS_MODE_DISABLED, "joueur figé pendant le fondu")
 	assert_true(
-		await until(func() -> bool: return WorldManager.current_map() == ESSAI, 10.0),
-		"carte d'essai posée"
+		await until(func() -> bool: return WorldManager.current_map() == RDC, 10.0),
+		"rez-de-chaussée d'essai posé"
 	)
-	assert_null(island_ref.get_ref(), "ancienne carte libérée")
+	release_all_input()
+	assert_null(essai_ref.get_ref(), "ancienne carte libérée")
 	assert_eq(game.get_node(^"World").get_child_count(), 1, "une seule carte")
-	var essai := current_map()
-	var arrival := essai.marker(&"from_ile_ancienne")
-	assert_lt(distance_to(arrival), 0.05, "posé sur from_ile_ancienne")
-	assert_almost_eq(player.aim_direction(), Vector3.RIGHT, Vector3.ONE * 0.01, "tourné à l'est")
-	assert_signal_emitted_with_parameters(EventBus, "map_entered", [ESSAI])
-	assert_eq(GameState.map, ESSAI)
-	assert_eq(player.camera_rig.limits, essai.bounds(), "caméra bornée à la carte")
+	var rdc := current_map()
+	assert_lt(distance_to(rdc.marker(&"from_essai")), 0.05, "posé sur from_essai")
+	assert_almost_eq(player.aim_direction(), Vector3.FORWARD, Vector3.ONE * 0.01, "tourné au nord")
+	assert_signal_emitted_with_parameters(EventBus, "map_entered", [RDC])
+	assert_eq(GameState.map, RDC)
+	assert_eq(player.camera_rig.limits, rdc.bounds(), "caméra bornée à la carte")
 	assert_true(await wait_transition(), "fondu de retour")
 	assert_ne(player.process_mode, Node.PROCESS_MODE_DISABLED, "joueur rendu")
 	assert_eq(get_viewport().get_camera_3d(), player.camera_rig.camera, "caméra du joueur")
 	var fade := game.get_node(^"UI/MapFade")
-	assert_eq(fade.call(&"title_text"), "Clairière d'essai", "nom de la carte annoncé")
+	assert_eq(map_banner(), rdc.display_name, "nom de la carte annoncé")
 	assert_eq(fade.call(&"black_alpha"), 0.0, "plus de noir")
-	# Le sentier ouest : on passe en marchant.
+	# La porte d'entrée, au sud : retour sur la carte d'essai.
 	assert_true(
 		await walk_keys_until(
-			[KEY_A], func() -> bool: return WorldManager.current_map() == LEGACY, 8.0
+			[KEY_S], func() -> bool: return WorldManager.current_map() == ESSAI, 8.0
 		),
-		"sortie à pied vers l'ancienne île"
+		"sortie à pied par la porte d'entrée"
 	)
+	release_all_input()
 	assert_true(await wait_transition(), "arrivée")
 	var back := current_map()
-	assert_lt(distance_to(back.marker(&"from_essai")), 0.05, "sur le quai, à from_essai")
+	assert_lt(distance_to(back.marker(&"from_entrepot_rdc_essai")), 0.05, "sur le sentier ouest")
+	assert_almost_eq(player.aim_direction(), Vector3.RIGHT, Vector3.ONE * 0.01, "tourné à l'est")
+	assert_eq(map_banner(), "Clairière d'essai", "nom de la carte annoncé de nouveau")
+	assert_eq(player.camera_rig.limits, back.bounds(), "bornes de la carte d'essai")
+
+
+func test_prompt_exit_with_the_interact_key() -> void:
+	await start_game()
+	WorldManager.fade_time = 0.0
+	await WorldManager.go_to(RDC)
+	await wait_transition()
+	var exit := current_map().get_node(^"Exits/vers_essai_relief") as MapExit
+	# Devant la porte du pré, tournée vers elle (au nord).
+	await put_player(exit.global_position + Vector3(0.0, 0.0, 1.2), Vector3.FORWARD)
 	assert_true(
-		await until(func() -> bool: return GameState.zone == &"beach", 3.0),
-		"zone du port annoncée de nouveau"
+		await until(func() -> bool: return player.current_prompt() == exit.prompt, 3.0),
+		"invite « %s »" % exit.prompt
 	)
-	assert_eq(zone_banner(), "Le port et le bourg")
-	assert_eq(player.camera_rig.limits, WorldManager.DEFAULT_CAMERA_BOUNDS, "bornes de l'île")
+	await tap_key(KEY_E)
+	assert_true(
+		await until(func() -> bool: return WorldManager.current_map() == RELIEF, 10.0), "E : le pré"
+	)
+	assert_true(await wait_transition())
+	assert_lt(distance_to(current_map().marker(&"from_entrepot_rdc_essai")), 0.05)
 
 
 func test_fade_hides_the_swap() -> void:
@@ -113,7 +122,7 @@ func test_fade_hides_the_swap() -> void:
 	)
 	var seen: Array[float] = []
 	var fade := game.get_node(^"UI/MapFade")
-	WorldManager.go_to(ESSAI)
+	WorldManager.go_to(RDC)
 	while WorldManager.is_transitioning():
 		await get_tree().process_frame
 		seen.append(fade.call(&"black_alpha"))
@@ -124,16 +133,15 @@ func test_fade_hides_the_swap() -> void:
 	assert_eq(seen.max(), 1.0, "noir complet")
 	assert_eq(fade.call(&"black_alpha"), 0.0, "écran rendu")
 	var stats := WorldManager.last_transition()
-	assert_eq(stats["map"], ESSAI)
+	assert_eq(stats["map"], RDC)
 	assert_gt(stats["load_frames"], 0, "chargement mesuré")
-	gut.p("Carte d'essai : %s" % stats)
+	gut.p("Rez-de-chaussée d'essai : %s" % stats)
 
 
 func test_arriving_on_an_exit_does_not_leave_at_once() -> void:
 	await start_game()
 	WorldManager.fade_time = 0.0
-	await WorldManager.go_to(ESSAI)
-	var exit := current_map().get_node(^"Exits/to_ile_ancienne") as MapExit
+	var exit := current_map().get_node(^"Exits/vers_entrepot_rdc_essai") as MapExit
 	# Posé dans la sortie du sentier, comme une arrivée qui tomberait dessus.
 	WorldManager.enter_map(ESSAI, &"Spawn", exit.global_position + Vector3.DOWN * 1.4)
 	await frames(30)
@@ -145,7 +153,7 @@ func test_arriving_on_an_exit_does_not_leave_at_once() -> void:
 	await frames(3)
 	assert_eq(WorldManager.current_map(), ESSAI, "sorti de la sortie, toujours là")
 	hold_toward(Vector3.LEFT)
-	var left: bool = await until(func() -> bool: return WorldManager.current_map() == LEGACY, 5.0)
+	var left: bool = await until(func() -> bool: return WorldManager.current_map() == RDC, 5.0)
 	release_move()
 	assert_true(left, "y revenir fait partir")
 	await wait_transition()
@@ -154,21 +162,19 @@ func test_arriving_on_an_exit_does_not_leave_at_once() -> void:
 func test_nothing_starts_during_a_transition() -> void:
 	await start_game()
 	WorldManager.fade_time = 0.2
-	var exit := current_map().get_node(^"Exits/to_essai") as MapExit
-	WorldManager.go_to(ESSAI)
+	var exit := current_map().get_node(^"Exits/vers_entrepot_rdc_essai") as MapExit
+	WorldManager.go_to(RDC)
 	assert_false(exit.use(), "une sortie ne part pas pendant le fondu")
-	WorldManager.go_to(LEGACY)
+	WorldManager.go_to(ESSAI)
 	assert_push_warning("en cours")
 	assert_true(await wait_transition())
-	assert_eq(WorldManager.current_map(), ESSAI, "le second voyage a été ignoré")
+	assert_eq(WorldManager.current_map(), RDC, "le second voyage a été ignoré")
 
 
-func test_save_in_essai_and_resume_there() -> void:
+func test_save_and_resume_on_the_map() -> void:
 	await start_game()
 	WorldManager.fade_time = 0.0
-	await WorldManager.go_to(ESSAI)
-	await wait_transition()
-	await put_player(Vector3(27.0, 0.2, 21.0), Vector3.FORWARD)
+	await put_player(current_map().to_global(Vector3(27.0, 0.2, 21.0)), Vector3.FORWARD)
 	var saved_at := player.global_position
 	assert_eq(SaveManager.save(), OK)
 	SaveManager.close_game(false)
@@ -185,30 +191,29 @@ func test_save_in_essai_and_resume_there() -> void:
 	assert_eq(player.camera_rig.limits, current_map().bounds(), "caméra bornée")
 
 
-func test_real_v2_save_resumes_on_the_island() -> void:
+func test_real_v2_save_restarts_the_first_act() -> void:
 	var file := FileAccess.open(SaveManager.save_path, FileAccess.WRITE)
 	file.store_string(FileAccess.get_file_as_string(V2_REAL_SAVE))
 	file.close()
-	assert_eq(SaveManager.load_game(), OK)
+	assert_eq(SaveManager.load_game(), OK, "(F1) une partie de l'ancienne île se charge")
+	assert_true(SaveManager.started_new, "nouvelle partie")
+	assert_false(SaveManager.notice.is_empty(), "le joueur est prévenu")
+	assert_true(FileAccess.file_exists(SaveManager.legacy_backup_path()), "l'ancienne gardée")
+	assert_eq(GameState.map, &"", "plus de carte héritée")
+	assert_eq(GameState.count(&"page_fragment"), 0, "rien de l'ancienne île")
 	game = GAME_SCENE.instantiate() as Node3D
 	add_child(game)
 	player = game.get_node(^"Player") as Player
 	await frames(5)
-	assert_eq(WorldManager.current_map(), LEGACY, "carte héritée")
-	assert_lt(flat_distance(player.global_position, Vector3(12.0, 0.0, 57.0)), 0.1, "même place")
-	assert_true(await until(func() -> bool: return GameState.zone == &"beach", 3.0), "dans le port")
-	assert_eq(GameState.quest_step(&"act1_main"), &"to_the_woods", "quête au même point")
-	assert_eq(GameState.count(&"page_fragment"), 2)
-	assert_eq(GameState.best_score(&"dunes"), 420)
+	assert_eq(WorldManager.current_map(), start_map_for_test(), "carte de départ")
+	assert_lt(distance_to(current_map().spawn()), 0.1, "à son Spawn")
 
 
-func test_respawn_and_rescue_on_a_map_without_village() -> void:
+func test_respawn_and_rescue_on_a_map() -> void:
 	await start_game()
 	WorldManager.fade_time = 0.0
-	await WorldManager.go_to(ESSAI)
-	await wait_transition()
 	var arrival := current_map().marker(&"Spawn")
-	await put_player(Vector3(30.0, 0.2, 22.0), Vector3.LEFT)
+	await put_player(current_map().to_global(Vector3(30.0, 0.2, 22.0)), Vector3.LEFT)
 	var stood_at := player.global_position
 	watch_signals(WorldManager)
 	WorldManager.respawn()
@@ -227,15 +232,16 @@ func test_only_one_map_in_memory() -> void:
 	await start_game()
 	WorldManager.fade_time = 0.0
 	var counts: Array[int] = []
+	# (F1) Aller-retour entre deux cartes du dehors (avant : l'ancienne île et la carte d'essai).
 	for _round in 2:
-		await WorldManager.go_to(ESSAI)
-		await wait_transition()
-		await frames(3)
-		assert_false(ResourceLoader.has_cached(Map.scene_path(LEGACY)), "île libérée")
-		counts.append(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
-		await WorldManager.go_to(LEGACY)
+		await WorldManager.go_to(RELIEF)
 		await wait_transition()
 		await frames(3)
 		assert_false(ResourceLoader.has_cached(Map.scene_path(ESSAI)), "essai libérée")
+		counts.append(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
+		await WorldManager.go_to(ESSAI)
+		await wait_transition()
+		await frames(3)
+		assert_false(ResourceLoader.has_cached(Map.scene_path(RELIEF)), "relief libéré")
 		assert_eq(game.get_node(^"World").get_child_count(), 1)
 	assert_eq(counts[1], counts[0], "autant de nœuds à chaque visite : rien ne s'accumule")

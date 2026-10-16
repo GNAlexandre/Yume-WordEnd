@@ -156,7 +156,7 @@ func _lines(kind: String) -> Array[PackedStringArray]:
 func test_the_plan_is_read() -> void:
 	assert_eq(_lines("sortie").size(), 6, "six sorties")
 	assert_eq(_lines("marqueur").size(), 8, "huit marqueurs")
-	assert_eq(_lines("point").size(), 19, "dix-neuf points nommés")
+	assert_eq(_lines("point").size(), 20, "vingt points nommés (S2 : champ_entree)")
 	assert_eq(_lines("place").size(), 5, "cinq places réservées")
 
 

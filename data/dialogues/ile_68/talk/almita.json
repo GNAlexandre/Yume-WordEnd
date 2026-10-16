@@ -2,10 +2,24 @@
   "_comment": "Ce que dit Almita quand on lui parle hors des scènes, sur l'île n° 68 (StoryDirector : jamais les dialogues des quêtes de l'ancienne île). Entrées par jour ; la dernière, start, vaut toujours.",
   "id": "talk_almita",
   "start": "n0",
+  "entries": [
+    "n12"
+  ],
   "nodes": {
     "n0": {
       "speaker_id": "almita",
       "text": "Tu viens jouer ? On cherche une joueuse."
+    },
+    "n12": {
+      "speaker_id": "almita",
+      "text": "On prépare une surprise. C'est un secret ! Ne regarde pas dans la salle de jeux, hein ?",
+      "if": {
+        "day": [
+          12,
+          12
+        ],
+        "not_scene": "j12_2_depart"
+      }
     }
   }
 }

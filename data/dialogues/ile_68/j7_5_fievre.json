@@ -1,0 +1,77 @@
+{
+  "_comment": "ACTE1.md 7.5 (s. 14) : la fièvre fait parler {player} ; dans les deux choix, Willem comprend (Timere nommé une seule fois).",
+  "id": "j7_5_fievre",
+  "start": "venenum",
+  "nodes": {
+    "venenum": {
+      "speaker_id": "nygglatho",
+      "text": "Elle a trop allumé son venenum. La fièvre, c'est le contrecoup : il n'y a qu'à attendre.",
+      "next": "venenum_2"
+    },
+    "venenum_2": {
+      "speaker_id": "nygglatho",
+      "text": "Restez près d'elle, monsieur Willem. Je repasserai avant l'aube."
+    },
+    "fievre": {
+      "speaker": "",
+      "text": "La fièvre fait trembler sa voix. Elle parle sans bien savoir à qui.",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "Dans cinq jours, je dois ouvrir la porte.",
+          "next": "porte"
+        },
+        {
+          "text": "Rien. Laisse-moi dormir.",
+          "next": "rien"
+        }
+      ]
+    },
+    "porte": {
+      "speaker": "{player}",
+      "text": "Dans cinq jours… je dois ouvrir la porte. Un fragment de Timere vient sur l'île n° 15. Il faut bien que quelqu'un l'arrête.",
+      "next": "suite"
+    },
+    "rien": {
+      "speaker": "{player}",
+      "text": "Rien. Laisse-moi dormir.",
+      "next": "rien_2"
+    },
+    "rien_2": {
+      "speaker": "",
+      "text": "Mais la fièvre parle pour elle : cinq jours, une porte à ouvrir, un fragment de Timere qui menace l'île n° 15.",
+      "next": "suite"
+    },
+    "suite": {
+      "speaker": "{player}",
+      "text": "Je n'ai pas peur. C'est mon rôle. Alors ne fais pas cette tête-là.",
+      "next": "suite_2"
+    },
+    "suite_2": {
+      "speaker_id": "willem",
+      "text": "Je ne promets rien. Dors."
+    },
+    "baiser": {
+      "speaker": "",
+      "text": "À demi endormie, elle lui demande un baiser, comme on demande une dernière faveur.",
+      "next": "baiser_2"
+    },
+    "baiser_2": {
+      "speaker": "",
+      "text": "Il se penche et l'embrasse sur le front."
+    },
+    "noeuds": {
+      "speaker_id": "willem",
+      "text": "Le venenum s'est noué le long de ton dos. Dix points. Je vais les défaire un par un : dix minutes, pas plus.",
+      "next": "noeuds_2"
+    },
+    "noeuds_2": {
+      "speaker": "",
+      "text": "La pluie coule sur la vitre. L'horloge compte les minutes. Elle s'endort avant la fin."
+    }
+  }
+}

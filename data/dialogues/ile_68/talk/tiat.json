@@ -2,10 +2,24 @@
   "_comment": "Ce que dit Tiat quand on lui parle hors des scènes, sur l'île n° 68 (StoryDirector : jamais les dialogues des quêtes de l'ancienne île). Entrées par jour ; la dernière, start, vaut toujours.",
   "id": "talk_tiat",
   "start": "n0",
+  "entries": [
+    "n12"
+  ],
   "nodes": {
     "n0": {
       "speaker_id": "tiat",
       "text": "Un jour, j'aurai une épée aussi grande que la tienne. Tu verras."
+    },
+    "n12": {
+      "speaker_id": "tiat",
+      "text": "Quand tu reviens, je serai aussi grande que toi. Avec une épée aussi grande que la tienne. Plus, même !",
+      "if": {
+        "day": [
+          12,
+          12
+        ],
+        "not_scene": "j12_2_depart"
+      }
     }
   }
 }

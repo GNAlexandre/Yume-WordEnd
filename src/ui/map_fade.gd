@@ -7,8 +7,10 @@ extends Control
 ##   est en mouse_filter IGNORE), traité même en pause.
 ## - Nom de la carte (Map.display_name, WorldManager.map_display_name) annoncé à l'entrée
 ##   (EventBus.map_entered), une fois l'écran revenu : fondu d'apparition, title_time s, fondu
-##   de disparition, dans le style du nom de zone du HUD. Une carte sans nom n'annonce rien
-##   (l'ancienne île annonce ses zones par le HUD).
+##   de disparition. Une carte sans nom n'annonce rien.
+## - (QC2) Le nom ne s'affiche qu'en jeu libre (is_free_play) : arrivé pendant une scène du récit,
+##   le sommeil, un jeu ou une conversation, il attend leur fin ; affiché quand l'une d'elles
+##   commence, il s'efface aussitôt et ne revient pas (docs/QUALITE.md, QC-41).
 
 ## Durée d'affichage du nom de la carte (s), sans les fondus ; durée de chaque fondu (s).
 @export var title_time: float = 2.4
@@ -16,6 +18,7 @@ extends Control
 
 var _title_tween: Tween
 var _pending_title: String = ""
+var _in_dialogue: bool = false
 
 @onready var _black: ColorRect = %Black
 @onready var _title: Control = %Title
@@ -26,15 +29,36 @@ func _ready() -> void:
 	# (U1) Couleur du noir : jeton « black » du thème (UiStyle).
 	_black.color = UiStyle.color(&"black")
 	EventBus.map_entered.connect(_on_map_entered)
+	EventBus.dialogue_started.connect(_on_dialogue_started)
+	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	_apply(WorldManager.fade_alpha())
 
 
 func _process(_delta: float) -> void:
 	var alpha := WorldManager.fade_alpha()
 	_apply(alpha)
-	if not _pending_title.is_empty() and alpha <= 0.0:
+	var free := is_free_play()
+	if _title.visible and not free:
+		_skip_title()
+	if not _pending_title.is_empty() and alpha <= 0.0 and free and not get_tree().paused:
 		_show_title(_pending_title)
 		_pending_title = ""
+
+
+## (QC2) Vrai en jeu libre : ni scène du récit (ni sommeil, ni temps qui passe), ni jeu (les
+## signes d'interaction cachés : InteractSign.suppress), ni conversation, ni boîte en bandeau.
+func is_free_play() -> bool:
+	return not (
+		_in_dialogue
+		or StoryDirector.is_playing()
+		or InteractSign.is_suppressed()
+		or DialogueBox.presentation() == DialogueBox.PRESENTATION_BANDEAU
+	)
+
+
+## Nom en attente du jeu libre ("" : aucun).
+func pending_title() -> String:
+	return _pending_title
 
 
 ## Opacité du noir affichée (0..1).
@@ -63,6 +87,21 @@ func _show_title(text: String) -> void:
 	_title_tween.tween_interval(title_time)
 	_title_tween.tween_property(_title, ^"modulate:a", 0.0, title_fade_time)
 	_title_tween.tween_callback(_title.hide)
+
+
+func _skip_title() -> void:
+	if _title_tween != null:
+		_title_tween.kill()
+		_title_tween = null
+	_title.hide()
+
+
+func _on_dialogue_started(_id: StringName) -> void:
+	_in_dialogue = true
+
+
+func _on_dialogue_ended(_id: StringName) -> void:
+	_in_dialogue = false
 
 
 func _on_map_entered(map_id: StringName) -> void:

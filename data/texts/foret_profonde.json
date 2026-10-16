@@ -1,0 +1,14 @@
+{
+  "_comment": "Objets à examiner de la forêt profonde (lot CF ; docs/lore/CARTE.md, section 8), lus par Examinable (src/world/examinable.gd) au format des textes de l'histoire (DialogueRunner.load_story_texts). Une clé par carte, puis une par objet (text_key = « carte/objet ») ; une ligne vide sépare deux pages ; {player} est remplacé par le prénom de la joueuse. Paraphrases d'après les dossiers du canon (docs/lore/canon/v1_vex.md, « Taille, forêt, marais » ; v2_v3.md, « Rivière » ; v4_v5.md, l'eau cachée de la forêt), jamais de citation de l'œuvre ; ce qui est original (le refuge, les bêtes) le reste discrètement.",
+  "prompt": "Examiner",
+  "foret_profonde": {
+    "_comment": "La forêt profonde (CARTE.md 8).",
+    "refuge_creux": "Le creux du vieux chêne, juste à hauteur d'une fée assise. Le bois y est lisse, usé comme un banc ; des feuilles sèches tapissent le fond, tassées par quelqu'un qui est venu souvent s'y cacher.\n\nIl y fait sec. On n'y entend plus que le vent dans les branches, très haut, et son propre souffle qui se calme.",
+    "mare_cachee": "Une flaque noire, nichée dans un creux et couverte de feuilles mortes. À peine si l'on devine l'eau entre elles. La mousse du bord a l'air solide ; elle ne l'est pas.\n\nLes petites n'ont pas le droit de venir ici seules. Dans une forêt aussi dense, l'eau se cache bien.",
+    "gue": "Un tronc équarri jeté en travers de la rivière, une corde nouée à ses deux bouts pour la main. C'est par ici qu'on passe quand on va chercher l'eau du bain : les seaux cognent, la rivière est froide, et l'on revient toujours mouillée jusqu'aux genoux.\n\nLe courant est paresseux. On l'entend à peine, sauf là où il bute sur les pierres.",
+    "lisiere_riviere": "La berge est un tapis de galets ronds que le courant a polis. L'eau est claire, froide, et passe sans un bruit. Dans la vase, des empreintes fines : un renard est venu boire ici, il n'y a pas longtemps.",
+    "cerfs": "Des empreintes fendues dans l'herbe couchée, et de petites crottes rondes. Les cerfs viennent brouter ici à l'aube et à la tombée du soir ; en plein jour, la clairière est à qui la veut.\n\nAu bord, la falaise basse garde la chaleur du matin.",
+    "souille": "Une cuvette de boue molle, piétinée en tous sens. Les fougères alentour sont arrachées, la terre sent l'animal. Quelqu'un de gros a roulé là-dedans, et ne doit pas être loin.\n\nMieux vaut ne pas s'attarder.",
+    "loups": "Une clairière de feuilles sombres, au pied d'un tas de rochers moussus. Des empreintes larges, trop nombreuses pour une bête seule, se croisent dans la terre meuble. Le jour, rien ne bouge.\n\nOn raconte qu'à la nuit, tout change. Les petites n'y vont jamais."
+  }
+}

@@ -118,9 +118,17 @@ Généré avec ChatGPT le 15 octobre 2026, cahier n° 5 (`docs/ASSETS_HD2D_ILE68
 
 Références : trois vues existantes de chaque personnage, `willem_coat` pour la toile et le cuir, pages officielles64,11 et47 des ZIP fournis par l’utilisateur. Alpha net, recalage au plus proche voisin et montage local autorisé pour les pieds immobiles, le dialogue fermé et la respiration ; dix générations originales conservées séparément, dont la vue arrière de Collon remplacée pour la course et le saut. Tenues à enregistrer et placer dans les scènes ; aucun ancien PNG/JSON ni dessin anime modifié.
 
+
+
+## Île 68 — reprise des gestes et fées (16 octobre 2026)
+
+Générations ChatGPT précédemment conservées, livrées sans régénération : Willem vie quotidienne et réparation, serveur et boulanger au travail (12 PNG/JSON, 126 poses) ; fées génériques 07–10 (12 PNG/JSON, 444 poses), portraits Kana et Giniette (256 × 256). Soit 26 PNG, 24 JSON et 570 poses. Références : sprites existants et cahiers n° 5/n° 6 ; sources et générations originales conservées séparément. Le linge de Nygglatho est exclu de cette reprise pour conserver la nouvelle version noire et blanche de la PR 49. Tenues et personnages à enregistrer et placer en jeu.
+
+
 - 2026-10-15 — généré avec ChatGPT le 15 octobre 2026, cahier n° 5, lot R2 priorité 2 : tenues de pluie de Lakhesh (115 px), Nygglatho (corps 178 px ; parapluie inclus 234 px), Pannibal (120 px) et Tiat (106 px). Douze PNG et douze JSON, 201 poses ; trois vues par personnage. Références : sprites existants des quatre personnages et de Willem en pardessus ; planches officielles des ZIP fournis, pages 49, 51, 45 et 41. Origines et générations conservées hors dépôt ; recalage au plus proche voisin et montage localisé autorisés, sans lissage ni changement de palette.
 
 
 ## Nygglatho — tenue de bonne officielle (16 octobre 2026)
 
 Généré avec ChatGPT / outil d’image : correction des vêtements verts en tissu noir de la tenue de bonne, référence officielle fournie par l’utilisateur (ZIP, page 51). Quinze PNG existants corrigés (portrait compris), plus trois planches de linge avec leurs JSON, soit six variantes, dix-huit vues et 237 poses. La vue arrière en blouse de laboratoire, sans vêtement vert, reste identique. Montage localisé autorisé : copie de pixels des tissus générés dans les seules zones de vêtement concernées, recalage au plus proche voisin ; alpha, cadrages, visages, cheveux et accessoires conservés. Repos du linge et de la vie quotidienne recopiés depuis la base corrigée ; sommeil commun recopié entre vues. JSON existants inchangés. Originaux et générations conservés séparément. La nouvelle variante linge reste à enregistrer et placer en jeu.
+- 2026-10-16 — (F1) retirés avec l'ancienne île (docs/DECISIONS.md, F1), gardés dans l'historique de git : les planches de `baker`, `ferryman`, `egg_vendor` et `garde_lookout` (profil, face, dos, `.json`, portrait), PNJ qu'elle seule posait.

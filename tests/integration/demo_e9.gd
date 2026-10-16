@@ -1,13 +1,13 @@
 extends Node
 ## (E9) Démo de la lumière et du temps : la vraie partie (game.tscn), vue par la caméra du joueur,
-## sous chaque préréglage (moment × temps), dans le village de l'ancienne île et dans la carte
-## d'essai (et au bord ouest de l'île, devant la mer de nuages) ; une capture par préréglage,
+## sous chaque préréglage (moment × temps), dans le village de l'île n° 68 et dans la carte
+## d'essai ((F1) le village et la côte de l'ancienne île sont partis) ; une capture par préréglage,
 ## avec sa luminance moyenne et ses draw calls. F6 dans l'éditeur. Lancée sous Xvfb par
 ## tools/e9_shots.sh (le rendu sans écran est factice) :
 ##   E9_SHOTS=<dossier> : où écrire les captures (défaut build/shots/e9) ;
 ##   E9_VIEWS=<liste>   : vues « lieu:moment:temps » séparées par des virgules (défaut : toutes,
-##                        VIEWS) ; lieu = village (l'entrepôt de l'ancienne île), bord (la côte
-##                        ouest), essai, dedans (la carte d'essai prise pour un intérieur),
+##                        VIEWS) ; lieu = village (la carte du village, au Spawn), essai,
+##                        dedans (la carte d'essai prise pour un intérieur),
 ##                        (R1) refectoire et couloir (l'intérieur d'essai entrepot_rdc_essai : sa
 ##                        lumière, fenêtres et lampes), relief (essai_relief, au bord du vide au
 ##                        nord : sol en relief, mer de nuages), falaise (essai_relief, au pied de
@@ -40,8 +40,6 @@ const VIEWS: Array[String] = [
 	"dedans:apres_midi:clair",
 	"dedans:couchant:averse",
 	"dedans:nuit:clair",
-	"bord:couchant:clair",
-	"bord:nuit:clair",
 	"refectoire:matin:clair",
 	"refectoire:couchant:clair",
 	"refectoire:nuit:clair",
@@ -51,17 +49,12 @@ const VIEWS: Array[String] = [
 	"relief:matin:clair",
 	"relief:nuit:clair",
 ]
-## Où se tient le joueur dans le village (zone, position locale, direction) : la vue
-## « village » de tests/integration/demo_hd2d.gd ; « bord » : la côte ouest du Couchant, la mer
-## de nuages à gauche de l'écran.
-const SPOTS := {
-	"village": [&"village", Vector3(-5.0, 0.0, -2.5), Vector3(1.0, 0.0, 0.0)],
-	"bord": [&"dunes", Vector3(-19.0, 0.0, -4.0), Vector3(0.0, 0.0, -1.0)],
-}
-## (R1) Lieux d'autres cartes : carte, position sur la carte, direction (les vues « refectoire »
+## (R1) Lieux des cartes : carte, position sur la carte, direction ((F1) « village » : le Spawn
+## de la carte du village de l'île n° 68, regard au nord ; les vues « refectoire »
 ## et « couloir » de demo_interieur.gd, « belvedere » et « escalier » de demo_e2_relief.gd : la
 ## falaise, ses ombres portées selon le soleil du moment).
 const MAP_SPOTS := {
+	"village": [&"village", Vector3(50.0, 0.2, 12.5), Vector3(0.0, 0.0, -1.0)],
 	"refectoire": [&"entrepot_rdc_essai", Vector3(8.5, 0.0, 6.4), Vector3(0.0, 0.0, -1.0)],
 	"couloir": [&"entrepot_rdc_essai", Vector3(13.6, 0.0, 11.7), Vector3(1.0, 0.0, 0.0)],
 	"relief": [&"essai_relief", Vector3(45.0, 3.0, 6.0), Vector3(0.0, 0.0, -1.0)],
@@ -158,28 +151,17 @@ func _run() -> void:
 	get_tree().quit(1 if dark > 0 else 0)
 
 
-## Pose le joueur dans l'ancienne île (village, bord) ou au Spawn de la carte d'essai (dedans :
-## la même, devenue un intérieur, sous le préréglage « interieur »), ou (R1) à sa place sur une
-## autre carte (MAP_SPOTS).
+## Pose le joueur au Spawn de la carte d'essai (dedans : la même, devenue un intérieur, sous le
+## préréglage « interieur »), ou (R1) à sa place sur une autre carte (MAP_SPOTS ; un lieu inconnu :
+## le village).
 func _stage(place: String) -> void:
-	if MAP_SPOTS.has(place):
-		await _stage_map(MAP_SPOTS[place])
+	if place != "essai" and place != "dedans":
+		await _stage_map(MAP_SPOTS.get(place, MAP_SPOTS["village"]))
 		return
-	if place == "essai" or place == "dedans":
-		WorldManager.enter_map(&"essai")
-		var map := WorldManager.current_map_node()
-		map.interior = place == "dedans"
-		Atmosphere.dress(map)
-	else:
-		var spot: Array = SPOTS.get(place, SPOTS["village"])
-		if WorldManager.current_map() != WorldManager.LEGACY_MAP:
-			WorldManager.enter_map(WorldManager.LEGACY_MAP)
-		var zone := _game.get_node(NodePath("World/ile_ancienne/Zones/%s" % spot[0])) as Node3D
-		_player.global_position = WorldManager.ground_position(
-			zone.to_global(spot[1] as Vector3), _player
-		)
-		_player.velocity = Vector3.ZERO
-		_player.set_aim_direction(spot[2] as Vector3, true)
+	WorldManager.enter_map(&"essai")
+	var map := WorldManager.current_map_node()
+	map.interior = place == "dedans"
+	Atmosphere.dress(map)
 	for _wait in 6:
 		await get_tree().process_frame
 

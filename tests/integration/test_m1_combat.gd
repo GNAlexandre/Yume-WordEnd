@@ -2,10 +2,14 @@ extends "res://tests/stubs/m1_game_test.gd"
 ## Intégration M1, combat dans le vrai jeu (src/game.tscn, vrai joueur, vrais Timeres, appuis
 ## réels sur les actions) : enchaînement de l'épée, portées réelles de l'épée et des attaques
 ## des Timeres, images « coup », dégâts du joueur (1 PV, invincibilité, recul), Grand stoïque,
-## onde qui traverse, verrouillage d'un Timere de l'arène.
+## onde qui traverse, verrouillage d'un Timere. (F1) L'arène des dunes est partie avec l'ancienne
+## île : les combats ont lieu sur la carte d'essai, rangée pour ces tests dans une île de test qui
+## admet les Timeres comme la surface (tests/data/world/, WorldAtlas.set_data_dirs).
 
-## Coin plat et dégagé de l'arène des dunes, loin du panneau (local à la zone).
-const DUEL_SPOT := Vector3(-3.0, 0.0, 4.0)
+## Coin plat et dégagé de la carte d'essai (repère de la carte : aucun décor à moins de 9 m).
+const DUEL_SPOT := Vector3(14.0, 0.0, 18.0)
+const TEST_WORLDS := "res://tests/data/world/worlds"
+const TEST_ISLANDS := "res://tests/data/world/islands"
 
 var _hit_frames: Array[String] = []
 
@@ -20,6 +24,16 @@ func _watch_hits(enemy: Enemy) -> void:
 	)
 
 
+func before_each() -> void:
+	super()
+	WorldAtlas.set_data_dirs(TEST_WORLDS, TEST_ISLANDS)
+
+
+func after_each() -> void:
+	super()
+	WorldAtlas.set_data_dirs()
+
+
 ## Un coup d'épée complet : appui réel, puis attente du retour au repos (fenêtre
 ## d'enchaînement écoulée : le coup suivant repart de sword_1).
 func _swing() -> void:
@@ -30,7 +44,7 @@ func _swing() -> void:
 
 func test_mashing_attack_chains_the_three_swords() -> void:
 	await start_game()
-	await place_player(&"dunes", DUEL_SPOT, Vector3.FORWARD)
+	await place_player(DUEL_SPOT, Vector3.FORWARD)
 	var started: Array[StringName] = []
 	var idle_seen: Array[bool] = [false]
 	combat.attack_started.connect(func(data: AttackData) -> void: started.append(data.id))
@@ -54,7 +68,7 @@ func test_mashing_attack_chains_the_three_swords() -> void:
 
 func test_combo_lands_its_second_blow_on_a_normal() -> void:
 	await start_game()
-	await place_player(&"dunes", DUEL_SPOT, Vector3.FORWARD)
+	await place_player(DUEL_SPOT, Vector3.FORWARD)
 	health.max_hp = 99
 	health.reset()
 	# Un Normal (2 PV) vient au contact ; deux coups enchaînés doivent le tuer : le recul du
@@ -79,7 +93,7 @@ func test_combo_lands_its_second_blow_on_a_normal() -> void:
 
 func test_attack_presses_do_nothing_while_hurt_dead_or_talking() -> void:
 	await start_game()
-	await place_player(&"dunes", DUEL_SPOT, Vector3.FORWARD)
+	await place_player(DUEL_SPOT, Vector3.FORWARD)
 	var started: Array[StringName] = []
 	combat.attack_started.connect(func(data: AttackData) -> void: started.append(data.id))
 	health.take_damage(1, game)
@@ -106,7 +120,7 @@ func test_attack_presses_do_nothing_while_hurt_dead_or_talking() -> void:
 
 func test_sword_reaches_a_small_and_a_big_in_front_only() -> void:
 	await start_game()
-	await place_player(&"dunes", DUEL_SPOT, Vector3.FORWARD)
+	await place_player(DUEL_SPOT, Vector3.FORWARD)
 	watch_signals(EventBus)
 	# Petit à 1 m devant : tué d'un coup.
 	var small := spawn_enemy(&"timere_small", ahead(1.0), true)
@@ -148,7 +162,7 @@ func test_sword_reaches_a_small_and_a_big_in_front_only() -> void:
 
 func test_timere_at_contact_bites_once_with_invincibility_and_knockback() -> void:
 	await start_game()
-	await place_player(&"dunes", DUEL_SPOT, Vector3.FORWARD)
+	await place_player(DUEL_SPOT, Vector3.FORWARD)
 	var small := spawn_enemy(&"timere_small", ahead(3.0))
 	var attacking: bool = await wait_until(func() -> bool: return small.state() == &"attack", 4.0)
 	assert_true(attacking, "le Petit vient mordre")
@@ -172,7 +186,7 @@ func test_timere_at_contact_bites_once_with_invincibility_and_knockback() -> voi
 
 func test_bite_misses_a_player_out_of_reach() -> void:
 	await start_game()
-	await place_player(&"dunes", DUEL_SPOT, Vector3.FORWARD)
+	await place_player(DUEL_SPOT, Vector3.FORWARD)
 	var small := spawn_enemy(&"timere_small", ahead(3.0))
 	await wait_until(func() -> bool: return small.state() == &"attack", 4.0)
 	# Le joueur recule à 1,7 m avant l'image « coup » (0,125 s après le début de la morsure).
@@ -190,7 +204,7 @@ func test_bite_misses_a_player_out_of_reach() -> void:
 
 func test_charge_wave_pierces_aligned_timeres() -> void:
 	await start_game()
-	await place_player(&"dunes", DUEL_SPOT, Vector3.FORWARD)
+	await place_player(DUEL_SPOT, Vector3.FORWARD)
 	var small := spawn_enemy(&"timere_small", ahead(2.0), true)
 	var normal := spawn_enemy(&"timere_normal", ahead(3.5), true)
 	var big := spawn_enemy(&"timere_big", ahead(5.0), true)
@@ -219,15 +233,14 @@ func test_charge_wave_pierces_aligned_timeres() -> void:
 	)
 
 
-func test_lock_on_aims_combat_and_wave_at_an_arena_timere_until_it_dies() -> void:
+func test_lock_on_aims_combat_and_wave_at_a_timere_until_it_dies() -> void:
 	await start_game()
-	await place_player(&"dunes", Vector3.ZERO, Vector3.FORWARD)
-	director.set_config(fast_waves())
-	director.random_seed = 7
-	director.start()
-	await wait_until(func() -> bool: return director.alive_enemies().size() == 5, 3.0)
-	var enemies := director.alive_enemies()
-	# Un Timere de la vague, à 3 m à l'est (le joueur regarde au nord) ; les autres au loin.
+	await place_player(DUEL_SPOT, Vector3.FORWARD)
+	var enemies: Array[Enemy] = []
+	for i in 5:
+		enemies.append(spawn_enemy(&"timere_normal", ahead(6.0, 2.0 * i - 4.0)))
+	await wait_physics_frames(2)
+	# Un des cinq, à 3 m à l'est (le joueur regarde au nord) ; les autres au loin.
 	var target := enemies[0]
 	for enemy: Enemy in enemies:
 		enemy.set_physics_process(false)

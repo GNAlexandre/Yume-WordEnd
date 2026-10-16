@@ -1,23 +1,5 @@
 {
-  "_comment": "Textes de l’histoire hors dialogues (docs/lore/HISTOIRE.md, section 3.5 ; développement n° 4), lus par DialogueRunner.story_text() et arena_text() ; {player} et les variables des dialogues y sont remplacés. Format et clés : docs/QUETES.md, « Textes de l’histoire ». Une clé qui commence par « _ » est un commentaire.",
-  "arenas": {
-    "_comment": "Par arène (son arena_id), sinon « default » : prompt (invite du panneau), sign (texte écrit sur le panneau), end_title (titre de l’écran de fin de série), new_record (bandeau du nouveau record), games (légende du nombre de séries jouées, sous le meilleur score).",
-    "default": {
-      "prompt": "Affronter les Timeres",
-      "sign": "Affronter\nles Timeres",
-      "end_title": "Fin de la série",
-      "new_record": "Nouveau record !",
-      "games": "Séries jouées"
-    },
-    "dunes": {
-      "_comment": "La veille du Couchant (docs/lore/MONDE.md, section 2.4).",
-      "prompt": "Sonner la cloche de veille",
-      "sign": "Cloche\nde veille",
-      "end_title": "Fin de la veille",
-      "new_record": "Nouveau record de veille !",
-      "games": "Veilles tenues"
-    }
-  },
+  "_comment": "Textes de l’histoire hors dialogues, lus par DialogueRunner.story_text() ; {player} et les variables des dialogues y sont remplacés. Format et clés : docs/DIALOGUES.md, « Textes de l’histoire ». Une clé qui commence par « _ » est un commentaire.",
   "maps": {
     "_comment": "(T1, refonte) Cartes d’attente de la phase 2 (village, colline, sentier, forêt profonde : docs/DECISIONS.md, T1) : l’écriteau qu’on y lit (src/world/props/waiting_sign.gd) ; prompt : invite, speaker : nom affiché, text : ce qu’il dit.",
     "waiting": {
@@ -46,5 +28,9 @@
     "fullscreen_on": "Plein écran : oui (F11)",
     "quit": "Quitter",
     "quit_game": "Quitter le jeu"
+  },
+  "save": {
+    "_comment": "(F1) Reprise d’une sauvegarde d’avant la refonte (l’ancienne île, retirée) : SaveManager démarre une nouvelle partie de l’acte 1 et le menu affiche cette ligne au chargement (SaveManager.notice).",
+    "migrated": "Ta partie se passait sur l’ancienne île, qui n’existe plus : l’histoire reprend au premier jour."
   }
 }

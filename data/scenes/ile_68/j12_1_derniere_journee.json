@@ -1,0 +1,16 @@
+{
+  "_comment": "ACTE1.md 12.1 (original) : la dernière journée. Au réveil, {player} écrit au calendrier « Départ au couchant. » (la case suivante reste vide) ; puis la journée est libre : chacun a sa réplique d'adieu (data/dialogues/ile_68/talk, entrées du jour 12), Pannibal tente une dernière embuscade (j12_1_embuscade), le dernier ballon l'après-midi.",
+  "title": "La dernière journée",
+  "day": 12,
+  "slot": "aube",
+  "map": "entrepot_etage",
+  "trigger": {"on": "ready"},
+  "steps": [
+    {"do": "control", "on": false},
+    {"do": "walk", "who": "player", "to": "chtholly_calendrier", "offset": [0.0, 1.0], "facing": "north"},
+    {"do": "camera", "to": "chtholly_calendrier", "offset": [0.0, 0.6], "distance": 8, "time": 0.8},
+    {"do": "calendar", "line": "depart"},
+    {"do": "card", "text": "calendrier", "time": 3.2},
+    {"do": "camera_reset"}
+  ]
+}

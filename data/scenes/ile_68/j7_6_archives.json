@@ -1,0 +1,184 @@
+{
+  "_comment": "ACTE1.md 7.6 (s. 15), séquence : la nuit blanche aux archives ; Nephren apporte un café-sirop et un sandwich ; ils s'endorment sur le canapé. Fin du jour 7 : la ligne du calendrier (écrite « le lendemain »), puis le jour 8 à l'aube (ACTE1.md 0.1 : les jours 7 et 8 se ferment sur une scène).",
+  "title": "La nuit blanche aux archives",
+  "day": 7,
+  "after": [
+    "j7_5_fievre"
+  ],
+  "map": "entrepot_rdc",
+  "trigger": {
+    "on": "ready"
+  },
+  "sequence": true,
+  "present": [
+    "willem",
+    "nephren"
+  ],
+  "steps": [
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0
+    },
+    {
+      "do": "player",
+      "visible": false
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "archives_bureau",
+      "offset": [
+        1.5,
+        1.2
+      ]
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "archives_bureau",
+      "facing": "north",
+      "outfit": "maison",
+      "anim": "lit"
+    },
+    {
+      "do": "camera",
+      "to": "archives_bureau",
+      "offset": [
+        0.4,
+        1.2
+      ],
+      "distance": 8,
+      "time": 0
+    },
+    {
+      "do": "wait",
+      "time": 0.8
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.2
+    },
+    {
+      "do": "dialogue",
+      "node": "papiers"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "archives_bureau",
+      "offset": [
+        1.0,
+        2.6
+      ],
+      "facing": "north",
+      "outfit": "maison"
+    },
+    {
+      "do": "walk",
+      "who": "nephren",
+      "to": "archives_bureau",
+      "offset": [
+        1.4,
+        0.6
+      ],
+      "facing": "willem",
+      "direct": true
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "nephren"
+    },
+    {
+      "do": "dialogue",
+      "node": "cafe"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "archives_bureau",
+      "offset": [
+        1.2,
+        0.3
+      ],
+      "facing": "north",
+      "anim": "lit"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "north"
+    },
+    {
+      "do": "anim",
+      "who": "willem",
+      "anim": "lit"
+    },
+    {
+      "do": "card",
+      "text": "horloge",
+      "time": 3.0
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.0
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "archives_canape_assise",
+      "anim": "dort"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "archives_canape_assise",
+      "offset": [
+        0.75,
+        0.05
+      ],
+      "anim": "dort"
+    },
+    {
+      "do": "camera",
+      "to": "archives_canape",
+      "offset": [
+        0.3,
+        0.6
+      ],
+      "distance": 8,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.2
+    },
+    {
+      "do": "wait",
+      "time": 2.6
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.4
+    },
+    {
+      "do": "calendar"
+    },
+    {
+      "do": "next_day"
+    },
+    {
+      "do": "leave",
+      "who": "willem"
+    },
+    {
+      "do": "leave",
+      "who": "nephren"
+    }
+  ]
+}

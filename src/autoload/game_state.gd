@@ -2,40 +2,28 @@ extends Node
 ## GameState : état de la partie, sérialisable (PLAN.md sections 3 et 4). Propriétaire : L7.
 ##
 ## Inventaire (total par objet ; les piles sont déduites des ItemData, voir stacks()), drapeaux,
-## quêtes (état, étape courante et compteur, quête suivie), objets uniques ramassés, meilleurs
-## scores par arène, PV max et skin.
+## objets uniques ramassés, PV max et skin. (F1) Quêtes, quête suivie, zone et scores d'arène sont
+## partis avec l'ancienne île (schéma de sauvegarde v4).
 ## Signaux émis (via EventBus) :
 ## - inventory_changed à chaque add_item / remove_item réussi, from_dict et reset ;
-## - quest_updated dans set_quest_state (si l'état change ; jamais dans from_dict, sinon
-##   QuestTracker redonnerait la récompense d'une quête finie à chaque chargement) ;
-## - (Lot Q) flag_changed dans set_flag, quest_step_updated dans set_quest_step (si quelque
-##   chose change ; jamais dans from_dict ni reset), tracked_quest_changed quand tracked_quest
-##   change ;
+## - flag_changed dans set_flag (si la valeur change ; jamais dans from_dict ni reset) ;
 ## - skin_changed et max_hp_changed quand skin_id / max_hp changent.
 ## - (E9) atmosphere_changed quand moment ou weather changent (setters, from_dict et reset
 ##   compris) : Atmosphere pose alors la lumière.
 ## (E6) Le récit : day (jour de l'acte, 1 à 12 ; 0 hors de l'acte en jours), les scènes jouées
 ## (scenes_done), les lignes du calendrier de la protagoniste (calendar) et la scène en cours
 ## (story_scene, rejouée depuis son début à la reprise d'une partie) ; tenus par StoryDirector,
-## sauvegardés (champs facultatifs du schéma v3). story_running() : vrai pendant l'acte en jours
-## (les quêtes à collecter se taisent alors : ni HUD, ni journal, ni marqueur).
+## sauvegardés. story_running() : vrai pendant l'acte en jours.
 ## (X1) island (île courante) et les îles connues sont tenues par WorldManager à chaque arrivée
-## sur une île (EventBus.island_entered) ; sauvegardées (champs facultatifs du schéma v3).
+## sur une île (EventBus.island_entered) ; sauvegardées.
 ## Mises à jour attendues des autres lots : (E1) map par WorldManager à chaque changement de
-## carte, zone par WorldManager (L2) à chaque zone_entered,
-## position par le joueur (L1) quand il est au sol, étapes et quête suivie par le QuestTracker
-## (Lot Q). SaveManager (L8) ajoute version et saved_at.
+## carte, position par le joueur (L1) quand il est au sol. SaveManager (L8) ajoute version et
+## saved_at.
 
-## PV max d'une nouvelle partie (règle de l'easter egg ; la quête des pages le porte à 6).
+## PV max d'une nouvelle partie (règle de l'easter egg).
 const DEFAULT_MAX_HP := 5
-## États de quête du contrat.
-const QUEST_AVAILABLE := &"available"
-const QUEST_ACTIVE := &"active"
-const QUEST_DONE := &"done"
-## États reconnus par from_dict (les autres valeurs d'une sauvegarde sont ignorées).
-const QUEST_STATES: Array[StringName] = [QUEST_AVAILABLE, QUEST_ACTIVE, QUEST_DONE]
 ## Plafonds de sécurité (sauvegarde trafiquée, boucle de ramassage…) : total d'un objet, PV max,
-## coordonnée d'une position (m ; l'île fait 160 m de côté).
+## coordonnée d'une position (m).
 const MAX_QUANTITY := 999
 const MAX_HP_LIMIT := 20
 const MAX_COORDINATE := 1000.0
@@ -62,8 +50,7 @@ var skin_id: StringName = &"":
 		skin_id = value
 		EventBus.skin_changed.emit(value)
 
-## PV max du joueur (5, puis 6 avec la promesse de l'acte 1, 7 avec le registre des veilles),
-## entre 1 et MAX_HP_LIMIT.
+## PV max du joueur (5 au départ), entre 1 et MAX_HP_LIMIT.
 var max_hp: int = DEFAULT_MAX_HP:
 	set(value):
 		value = clampi(value, 1, MAX_HP_LIMIT)
@@ -78,8 +65,6 @@ var map: StringName = &""
 ## (X1) Île courante (data/world/islands/<id>.json, WorldAtlas.island_of(map)), tenue par
 ## WorldManager ; &"" : pas encore placée, ou carte hors de toute île.
 var island: StringName = &""
-## Zone courante dans la carte (zone_id, zones de l'ancienne île) ; &"" hors des zones.
-var zone: StringName = &""
 ## Dernière position au sol du joueur, dans le repère de la carte (sauvegardée, restaurée par
 ## game.gd).
 var position: Vector3 = Vector3.ZERO
@@ -125,23 +110,10 @@ var slot: StringName = &"":
 ## (E6) Scène du récit en cours (data/scenes/<île>/<id>.json), &"" hors scène : tenue par
 ## StoryDirector ; une partie reprise au milieu d'une scène la rejoue depuis son début.
 var story_scene: StringName = &""
-## (Lot Q) Quête suivie, affichée par le HUD ; &"" = aucune (le HUD montre alors la première
-## quête active). Tenue par le QuestTracker (une quête qui démarre devient la quête suivie) et
-## par le journal (choix du joueur) ; émet tracked_quest_changed.
-var tracked_quest: StringName = &"":
-	set(value):
-		if value == tracked_quest:
-			return
-		tracked_quest = value
-		EventBus.tracked_quest_changed.emit(value)
 
 var _inventory: Dictionary[StringName, int] = {}
 var _flags: Dictionary[StringName, bool] = {}
-var _quests: Dictionary[StringName, StringName] = {}
-## (Lot Q) Quêtes actives : quest_id → {"step": StringName, "count": int}.
-var _quest_progress: Dictionary[StringName, Dictionary] = {}
 var _collected_pickups: Dictionary[StringName, bool] = {}
-var _best_scores: Dictionary[StringName, Dictionary] = {}
 ## (X1) Îles où le joueur est déjà allé, dans l'ordre de découverte.
 var _known_islands: Array[StringName] = []
 ## (E6) Scènes du récit jouées jusqu'au bout, dans l'ordre.
@@ -156,20 +128,15 @@ func reset() -> void:
 	max_hp = DEFAULT_MAX_HP
 	map = &""
 	island = &""
-	zone = &""
 	position = Vector3.ZERO
 	moment = DEFAULT_MOMENT
 	weather = DEFAULT_WEATHER
 	day = 0
 	slot = &""
 	story_scene = &""
-	tracked_quest = &""
 	_inventory.clear()
 	_flags.clear()
-	_quests.clear()
-	_quest_progress.clear()
 	_collected_pickups.clear()
-	_best_scores.clear()
 	_known_islands.clear()
 	_scenes_done.clear()
 	_calendar.clear()
@@ -179,7 +146,7 @@ func reset() -> void:
 # --- Récit (E6) -------------------------------------------------------------------------------
 
 
-## Vrai pendant l'acte en jours (day ≥ 1) : le récit mène, les quêtes à collecter se taisent.
+## Vrai pendant l'acte en jours (day ≥ 1) : le récit mène.
 func story_running() -> bool:
 	return day > 0
 
@@ -299,7 +266,7 @@ func stacks() -> Array[Dictionary]:
 	return result
 
 
-# --- Drapeaux et quêtes -----------------------------------------------------------------------
+# --- Drapeaux ----------------------------------------------------------------------------------
 
 
 ## Pose (ou retire, value = false) un drapeau ; émet flag_changed si sa valeur change.
@@ -316,64 +283,6 @@ func has_flag(flag: StringName) -> bool:
 	return _flags.get(flag, false)
 
 
-## État d'une quête : &"available", &"active", &"done", ou &"" si inconnue.
-func quest_state(quest_id: StringName) -> StringName:
-	return _quests.get(quest_id, &"")
-
-
-## Change l'état d'une quête et émet quest_updated s'il change (&"" l'oublie).
-func set_quest_state(quest_id: StringName, state: StringName) -> void:
-	if quest_id.is_empty() or quest_state(quest_id) == state:
-		return
-	if state.is_empty():
-		_quests.erase(quest_id)
-	else:
-		_quests[quest_id] = state
-	EventBus.quest_updated.emit(quest_id, state)
-
-
-## Copie des états de quête (quest_id → état), ex. pour afficher les objectifs au chargement.
-## L'ordre est celui où chaque quête a reçu son premier état (journal).
-func quests() -> Dictionary:
-	return _quests.duplicate()
-
-
-## (Lot Q) Étape courante d'une quête (QuestStep.id), &"" si aucune n'est enregistrée.
-func quest_step(quest_id: StringName) -> StringName:
-	var entry: Dictionary = _quest_progress.get(quest_id, {})
-	return StringName(entry.get("step", &""))
-
-
-## (Lot Q) Compteur de l'étape courante (ennemis vaincus, vague ou score atteints), 0 sinon.
-func quest_step_count(quest_id: StringName) -> int:
-	var entry: Dictionary = _quest_progress.get(quest_id, {})
-	return int(entry.get("count", 0))
-
-
-## (Lot Q) Enregistre l'étape courante d'une quête et son compteur (step_id &"" efface) ; émet
-## quest_step_updated si quelque chose change. Appelé par le QuestTracker.
-func set_quest_step(quest_id: StringName, step_id: StringName, step_count: int = 0) -> void:
-	if quest_id.is_empty():
-		return
-	var known := _quest_progress.has(quest_id)
-	var value := maxi(step_count, 0)
-	if step_id.is_empty():
-		if not known:
-			return
-		_quest_progress.erase(quest_id)
-		value = 0
-	else:
-		if known and quest_step(quest_id) == step_id and quest_step_count(quest_id) == value:
-			return
-		_quest_progress[quest_id] = {"step": step_id, "count": value}
-	EventBus.quest_step_updated.emit(quest_id, step_id, value)
-
-
-## (Lot Q) Copie de l'avancement des quêtes : quest_id → {"step": StringName, "count": int}.
-func quest_progress() -> Dictionary:
-	return _quest_progress.duplicate(true)
-
-
 # --- Objets ramassés (pickups uniques du monde) -----------------------------------------------
 
 
@@ -386,50 +295,16 @@ func is_pickup_collected(pickup_id: StringName) -> bool:
 	return _collected_pickups.has(pickup_id)
 
 
-# --- Scores d'arène ---------------------------------------------------------------------------
-
-
-## Enregistre une partie de l'arène : une partie de plus ; si score bat strictement le meilleur
-## (comme jeu.js), il devient le record avec la vague atteinte pendant cette partie. true si record.
-func record_score(arena_id: StringName, score: int, wave: int) -> bool:
-	if arena_id.is_empty():
-		return false
-	var entry := arena_record(arena_id)
-	entry["games"] = int(entry["games"]) + 1
-	var best: bool = score > int(entry["score"])
-	if best:
-		entry["score"] = score
-		entry["wave"] = maxi(wave, 0)
-	_best_scores[arena_id] = entry
-	return best
-
-
-func best_score(arena_id: StringName) -> int:
-	return int(arena_record(arena_id)["score"])
-
-
-## Record de l'arène (copie) : {"score": meilleur score, "wave": vague de cette partie,
-## "games": nombre de parties} ; des zéros si l'arène n'a jamais été jouée.
-func arena_record(arena_id: StringName) -> Dictionary:
-	var entry: Dictionary = _best_scores.get(arena_id, {})
-	return {
-		"score": int(entry.get("score", 0)),
-		"wave": int(entry.get("wave", 0)),
-		"games": int(entry.get("games", 0)),
-	}
-
-
-# --- Sérialisation (schéma de sauvegarde v2, PLAN.md section 4) --------------------------------
+# --- Sérialisation (schéma de sauvegarde v4, PLAN.md section 4) --------------------------------
 
 
 ## Champs du schéma de sauvegarde, sauf version et saved_at (ajoutés par SaveManager).
 ## Types JSON uniquement (String, int, float, bool, Array, Dictionary). Les champs du schéma v1
-## d'abord (et, à côté de la position, la carte de la refonte : map, v3), puis ceux du Lot Q
-## (v2) : quest_progress et tracked_quest ; enfin (E9) moment et weather, facultatifs dans le
-## schéma v3 (absents d'une sauvegarde plus ancienne : le couchant sans pluie), (X1) island
-## et known_islands, facultatifs aussi (absents : WorldManager les déduit de la carte), et (E4)
-## day et slot, facultatifs aussi (absents : 0 et ""), et (E6) scenes_done, calendar et
-## story_scene, facultatifs aussi (absents : aucune scène, calendrier vierge, hors scène).
+## gardés d'abord (et, à côté de la position, la carte de la refonte : map) ; puis (E9) moment et
+## weather, (X1) island et known_islands, (E4) day et slot, (E6) scenes_done, calendar et
+## story_scene, tous facultatifs (absents : le couchant sans pluie, l'île déduite de la carte, pas
+## de jour, aucune scène, calendrier vierge, hors scène). (F1) v4 n'a plus zone, quests,
+## quest_progress, tracked_quest ni best_scores (l'ancienne île) : from_dict les ignore.
 func to_dict() -> Dictionary:
 	var inventory := {}
 	for item_id: StringName in _inventory:
@@ -437,16 +312,10 @@ func to_dict() -> Dictionary:
 	var flags := {}
 	for flag: StringName in _flags:
 		flags[String(flag)] = _flags[flag]
-	var quests_dict := {}
-	for quest_id: StringName in _quests:
-		quests_dict[String(quest_id)] = String(_quests[quest_id])
 	var pickups: Array[String] = []
 	for pickup_id: StringName in _collected_pickups:
 		pickups.append(String(pickup_id))
 	pickups.sort()
-	var scores := {}
-	for arena_id: StringName in _best_scores:
-		scores[String(arena_id)] = arena_record(arena_id)
 	var known: Array[String] = []
 	for island_id: StringName in _known_islands:
 		known.append(String(island_id))
@@ -456,24 +325,14 @@ func to_dict() -> Dictionary:
 	var calendar_lines := {}
 	for calendar_day: int in _calendar:
 		calendar_lines[str(calendar_day)] = String(_calendar[calendar_day])
-	var progress := {}
-	for quest_id: StringName in _quest_progress:
-		progress[String(quest_id)] = {
-			"step": String(quest_step(quest_id)), "count": quest_step_count(quest_id)
-		}
 	return {
 		"skin": String(skin_id),
 		"max_hp": max_hp,
 		"position": [position.x, position.y, position.z],
 		"map": String(map),
-		"zone": String(zone),
 		"inventory": inventory,
 		"flags": flags,
-		"quests": quests_dict,
 		"collected_pickups": pickups,
-		"best_scores": scores,
-		"quest_progress": progress,
-		"tracked_quest": String(tracked_quest),
 		"moment": String(moment),
 		"weather": String(weather),
 		"island": String(island),
@@ -488,11 +347,9 @@ func to_dict() -> Dictionary:
 
 ## Relit un dictionnaire produit par to_dict() (ou un JSON de sauvegarde). Un champ absent ou
 ## mal typé prend sa valeur par défaut, une entrée invalide est ignorée (quantité nulle ou non
-## numérique, état de quête inconnu, avancement d'une quête qui n'est pas active…) ; les nombres
-## JSON (float) redeviennent des int. Sans position valide, map et zone sont vidées : game.gd
-## replace alors le joueur au Spawn de la carte de départ (l'entrepôt de l'ancienne île). Aucun
-## signal de quête (quest_updated, quest_step_updated) : le QuestTracker relit tout sur
-## game_loaded.
+## numérique…), un champ inconnu aussi ; les nombres JSON (float) redeviennent des int. Sans
+## position valide, map est vidée : game.gd replace alors le joueur au Spawn de la carte de
+## départ.
 func from_dict(data: Dictionary) -> void:
 	skin_id = _read_name(data.get("skin"))
 	var hp: Variant = data.get("max_hp")
@@ -500,7 +357,6 @@ func from_dict(data: Dictionary) -> void:
 	var saved_position: Variant = _read_vector3(data.get("position"))
 	position = saved_position if saved_position is Vector3 else Vector3.ZERO
 	map = _read_name(data.get("map")) if saved_position is Vector3 else &""
-	zone = _read_name(data.get("zone")) if saved_position is Vector3 else &""
 	_inventory.clear()
 	var inventory := _as_dict(data.get("inventory"))
 	for key: Variant in inventory:
@@ -515,39 +371,11 @@ func from_dict(data: Dictionary) -> void:
 		var value: Variant = flags[key]
 		if not flag.is_empty() and (value is bool or _is_number(value)):
 			_flags[flag] = bool(value)
-	_quests.clear()
-	var quests_dict := _as_dict(data.get("quests"))
-	for key: Variant in quests_dict:
-		var quest_id := _read_name(key)
-		var state := _read_name(quests_dict[key])
-		if not quest_id.is_empty() and state in QUEST_STATES:
-			_quests[quest_id] = state
 	_collected_pickups.clear()
 	var pickups: Variant = data.get("collected_pickups")
 	if pickups is Array:
 		for pickup_id: Variant in pickups:
 			mark_pickup_collected(_read_name(pickup_id))
-	_best_scores.clear()
-	var scores := _as_dict(data.get("best_scores"))
-	for key: Variant in scores:
-		var arena_id := _read_name(key)
-		var entry := _as_dict(scores[key])
-		if not arena_id.is_empty():
-			_best_scores[arena_id] = {
-				"score": _read_count(entry.get("score")),
-				"wave": _read_count(entry.get("wave")),
-				"games": _read_count(entry.get("games")),
-			}
-	_quest_progress.clear()
-	var progress := _as_dict(data.get("quest_progress"))
-	for key: Variant in progress:
-		var quest_id := _read_name(key)
-		var entry := _as_dict(progress[key])
-		var step_id := _read_name(entry.get("step"))
-		if step_id.is_empty() or quest_state(quest_id) != QUEST_ACTIVE:
-			continue
-		_quest_progress[quest_id] = {"step": step_id, "count": _read_count(entry.get("count"))}
-	tracked_quest = _read_name(data.get("tracked_quest"))
 	# (E9) Absents (sauvegarde d'avant E9) ou inconnus : le couchant sans pluie.
 	var saved_moment := _read_name(data.get("moment"))
 	moment = saved_moment if saved_moment in MOMENTS else DEFAULT_MOMENT

@@ -195,7 +195,7 @@
         {"name": "bord_du_vide", "at": [17.5, 6.5], "look": "N", "moments": ["matin", "couchant", "nuit"]},
         {"name": "passerelle", "at": [32.5, 8.8], "look": "N", "moments": ["matin"]},
         {"name": "hangar", "at": [46, 12.5], "look": "N", "moments": ["matin", "nuit"]},
-        {"name": "panneau", "at": [6, 19.5], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "panneau", "at": [6, 22.8], "look": "N", "moments": ["matin", "nuit"]},
         {"name": "rue", "at": [30, 17], "look": "E", "moments": ["matin", "couchant", "nuit"]},
         {"name": "rue_est", "at": [50, 17], "look": "E", "moments": ["matin"]},
         {"name": "aire_port", "at": [30, 24], "look": "N", "moments": ["matin", "couchant"]},
@@ -204,10 +204,31 @@
         {"name": "sommet", "at": [65, 12.2], "look": "N", "moments": ["matin", "couchant", "nuit"]},
         {"name": "route_ville", "at": [62, 31.5], "look": "E", "moments": ["matin", "nuit"]},
         {"name": "sud", "at": [30, 31], "look": "N", "moments": ["matin"]},
+        {"name": "navire_a_quai", "at": [30, 11.5], "look": "N", "moments": ["couchant", "couchant:pluie", "nuit"], "ships": {"transport_garde": "deploy_gangway"}},
+        {"name": "navire_passerelle", "at": [32.5, 7.6], "look": "N", "moments": ["matin"], "ships": {"transport_garde": "deploy_gangway"}},
         {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}
       ]
     },
-    "foret_profonde": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "transport_garde": {
+      "kind": "dehors",
+      "views": [
+        {"name": "pont", "at": [10, 4.4], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "poupe", "at": [5.5, 4.6], "look": "O", "moments": ["matin"]},
+        {"name": "proue", "at": [16.5, 4.4], "look": "E", "moments": ["matin", "couchant"]},
+        {"name": "passerelle", "at": [10, 8.6], "look": "N", "moments": ["matin", "couchant:pluie"]},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "barocupot": {
+      "kind": "dedans",
+      "views": [
+        {"name": "coursive", "at": [4.5, 6.0], "look": "N"},
+        {"name": "conseil", "at": [2.6, 3.9], "look": "E", "moments": ["matin", "apres_midi", "nuit"]},
+        {"name": "sas", "at": [10.5, 3.5], "look": "N"},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "foret_profonde": {"kind": "dehors", "views": [{"name": "entree", "at": [40, 6], "look": "S", "moments": ["matin", "nuit"]}, {"name": "sentier_nord", "at": [41, 16], "look": "S", "moments": ["matin", "couchant"]}, {"name": "cerfs", "at": [62, 14], "look": "E", "moments": ["matin", "couchant"]}, {"name": "gue", "at": [44, 28.5], "look": "S", "moments": ["matin", "nuit", "nuit:pluie"]}, {"name": "lisiere_riviere", "at": [52, 31], "look": "E", "moments": ["matin", "couchant"]}, {"name": "riviere_nord", "at": [16, 14], "look": "E", "moments": ["matin"]}, {"name": "refuge", "at": [16, 41], "look": "N", "moments": ["matin", "couchant", "nuit"]}, {"name": "mare_cachee", "at": [29.5, 46], "look": "N", "moments": ["matin"]}, {"name": "souille", "at": [24, 51], "look": "N", "moments": ["matin", "couchant"]}, {"name": "sentier_est", "at": [70, 46.5], "look": "E", "moments": ["matin", "nuit"]}, {"name": "loups", "at": [68, 52.5], "look": "N", "moments": ["couchant", "nuit"]}, {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}]},
     "essai": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
     "essai_relief": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
     "entrepot_rdc_essai": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},

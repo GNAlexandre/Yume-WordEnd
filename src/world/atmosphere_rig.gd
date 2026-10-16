@@ -3,10 +3,10 @@ extends Node3D
 ## (E9) Ce que la lumière ajoute à la carte courante, posé par Atmosphere (src/autoload/
 ## atmosphere.gd) comme enfant « AtmosphereRig » de la carte (libéré avec elle) :
 ## - si la carte n'a pas les siens : un WorldEnvironment (ciel peint, ambiance, brouillard :
-##   les réglages de l'île ; (R1) dans une carte intérieure, fond uni InteriorRoom.VOID_COLOR) et
+##   (R1) dans une carte intérieure, fond uni InteriorRoom.VOID_COLOR) et
 ##   un soleil (« Sun », DirectionalLight3D sans ombre ; dedans, la lumière d'ensemble des
 ##   fenêtres). Les cartes ne portent plus leur lumière (anciens src/world/map_light.tscn et
-##   interior_light.tscn) ; l'ancienne île garde ceux d'island.tscn, que la lumière règle de même ;
+##   interior_light.tscn) ; une carte qui a les siens les garde, réglés de même ;
 ## - la lumière magique du joueur (V1, « L'Homme sans Marque » : les fées allument une petite
 ##   lumière dans la main) : PlayerLight (OmniLight3D douce) et Orb (l'orbe, bande animée
 ##   assets/hd2d/anim/fairy_light.png), à côté du joueur (groupe « player »), la nuit dehors ;
@@ -30,7 +30,7 @@ const DRIZZLE_FPS := 10.0
 const CURTAIN_FPS := 12.0
 ## Couche du rideau de pluie : au-dessus du post-traitement (−1), sous l'interface (1).
 const CURTAIN_LAYER := 0
-## Soleil d'une carte sans le sien (celui d'island.tscn) et hauteur d'où il éclaire (m).
+## Soleil d'une carte sans le sien : hauteur d'où il éclaire (m).
 const SUN_HEIGHT := 40.0
 ## Taille d'un pixel de l'orbe (m) : un peu plus grande que le décor, pour qu'elle se voie.
 const ORB_PIXEL_SIZE := 1.0 / 64.0
