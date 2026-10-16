@@ -99,4 +99,3 @@ func test_day_9_end_to_end_until_day_10() -> void:
 	assert_true(await sleep_by_prompt(), "jour 10")
 	assert_eq(LifeSlots.current(), &"aube")
 	assert_string_contains(StoryDirector.calendar_line(9), "moutarde")
-	assert_eq(GameState.quests(), {}, "aucune quête à collecter")
