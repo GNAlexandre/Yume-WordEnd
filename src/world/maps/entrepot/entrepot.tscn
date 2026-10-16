@@ -1269,8 +1269,8 @@ random_flip = true
 [node name="WoodsYoungFront" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
 prop = ExtResource("149_sapling_a_forest")
-points = PackedVector3Array(71.938, 0, 50.433, 32.835, 0, 54.903, 24.054, 0, 51.786, 55.053, 0, 53.002, 17.985, 0, 56.115, 84.746, 0, 54.157, 68.019, 0, 55.148, 81.58, 0, 48.008, 75.017, 0, 56.266, 49.06, 0, 54.143, 50.707, 0, 47.855, 64.437, 0, 48.357, 16.575, 0, 48.293, 60.762, 0, 54.909, 34.966, 0, 48.949, 28.165, 0, 47.56)
-yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+points = PackedVector3Array(71.938, 0, 50.433, 32.835, 0, 54.903, 24.054, 0, 51.786, 55.053, 0, 53.002, 17.985, 0, 56.115, 84.746, 0, 54.157, 68.019, 0, 55.148, 81.58, 0, 48.008, 75.017, 0, 56.266, 49.06, 0, 54.143, 64.437, 0, 48.357, 60.762, 0, 54.909, 34.966, 0, 48.949)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 578
 variants = Array[PackedScene]([ExtResource("150_birch_a_forest"), ExtResource("151_pine_small_a_forest"), ExtResource("152_birch_b_forest"), ExtResource("153_pine_small_b_forest")])

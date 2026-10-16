@@ -67,6 +67,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CARTE = os.path.join(ROOT, "docs", "lore", "CARTE.md")
 DATA = os.path.join(ROOT, "data", "maps")
 SCENES = os.path.join(ROOT, "src", "world", "maps")
+QC_VIEWS = os.path.join(ROOT, "tools", "qc_views.json")
 GROUND_FILES = ["plan.json", "map.json", "heights.png", "materials.png", "structures.png"]
 
 # Cartes construites : une recette par carte (tools/exterior_recipes/<id>.py).
@@ -475,6 +476,7 @@ class Built:
         self.warnings = []
         self.deviations = []
         self.seams = []
+        self.masks = []
         self.pose = None
         self.scene_text = ""
 
@@ -508,6 +510,9 @@ def build(map_id, all_plans, tmp):
             recipe.prepare(p)
         exterior_pose.forget_catalog()
         settings["extra_places"] = [(n, x, z, yaw) for n, x, z, yaw, _why in getattr(recipe, "PLACES_WHY", [])]
+        bounds = settings.get("camera_bounds") or (10, 9, p.W - 20, p.D - 17)
+        p.standing_extra = standing_extras(map_id, recipe)
+        p.view_bounds = bounds
         recipe.pose(p)
         ambient = recipe.ambient(p) if hasattr(recipe, "ambient") else []
         writer = Writer(p, recipe, settings)
@@ -516,16 +521,43 @@ def build(map_id, all_plans, tmp):
         result.deviations = list(getattr(recipe, "DEVIATIONS", []))
         result.deviations += plan_gaps(m, writer, p)
         # (QC-S) Les bouts de pans à raccord qui se voient (docs/QUALITE.md, QC-33) : la carte est fausse.
-        bounds = settings.get("camera_bounds") or (10, 9, p.W - 20, p.D - 17)
         for name, side, x_end, z, focus in exterior_pose.pose_seams(p, bounds):
             result.seams.append("bout %s de %s (x %.1f ; z %.1f) dans le champ (point visé %.0f ; %.0f) : bande "
                                 "à bord franc ; le joindre à un autre pan, le cacher derrière un décor ou le "
                                 "sortir du champ" % (side, name, x_end, z, focus[0], focus[1]))
+        # (QC2) Les places masquées par un grand décor posé devant (docs/QUALITE.md, QC-37) : la carte est fausse.
+        # SETTINGS["masks_allowed"] : {nœud du décor : (places qu'il peut cacher, pourquoi)}, pour un décor que le
+        # plan veut là (dit dans la sortie de check, sans erreur).
+        allowed = settings.get("masks_allowed", {})
+        for name, decor, x, z, labels in exterior_pose.masked_places(p, bounds, p.standing_extra):
+            if name in allowed:
+                rest = [label for label in labels if label not in allowed[name][0]]
+                result.deviations.append("%s (%s) cache %s : toléré, %s" % (
+                    name, decor, ", ".join(label for label in labels if label not in rest), allowed[name][1]))
+                labels = rest
+                if not labels:
+                    continue
+            result.masks.append("%s (%s, x %.1f ; z %.1f) cache %s ; l'écarter, le baisser ou le retirer"
+                                % (name, decor, x, z, ", ".join(labels[:4]) + (" (+%d)" % (len(labels) - 4)
+                                                                             if len(labels) > 4 else "")))
     result.scene_text = scene
     for name, content in ground.items():
         result.files["data/maps/%s/%s" % (map_id, name)] = content
     result.files["src/world/maps/%s/%s.tscn" % (map_id, map_id)] = scene.encode("utf-8")
     return result
+
+
+def standing_extras(map_id, recipe):
+    """(QC2) Les places où l'on se tient que le plan ne nomme pas : places de la vie de la recette
+    (PLACES_WHY) et de tools/life_zones.py, vues de la série QC (tools/qc_views.json)."""
+    out = [("vie %s" % n, x, z) for n, x, z, _yaw, _why in getattr(recipe, "PLACES_WHY", [])]
+    for entry in life_zones.zones_of(map_id):
+        pts = entry["pts"] or [entry["at"]]
+        out += [("vie %s" % entry["name"], q[0], q[1]) for q in pts]
+    with open(QC_VIEWS, encoding="utf-8") as handle:
+        views = json.load(handle)["maps"].get(map_id, {}).get("views", [])
+    out += [("vue %s" % v["name"], float(v["at"][0]), float(v["at"][1])) for v in views if "at" in v]
+    return out
 
 
 def plan_gaps(m, writer, p):
@@ -675,6 +707,9 @@ def main():
                 print("%s : écart au plan, %s" % (map_id, line))
             for line in built.seams:
                 print("%s : raccord visible, %s" % (map_id, line))
+                status = 1
+            for line in built.masks:
+                print("%s : place masquée, %s" % (map_id, line))
                 status = 1
             if args[0] == "check":
                 if rels:

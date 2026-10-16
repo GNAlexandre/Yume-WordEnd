@@ -327,7 +327,9 @@ def pose(p):
     col_w = [(4.6, 8.8), (4.0, 17.8), (4.8, 29.4), (4.2, 40.6), (3.6, 50.0), (6.0, 53.8)]
     col_e = [(77.8, 9.0), (77.4, 20.0), (77.8, 30.0), (77.2, 38.4), (77.8, 51.6)]
     scatter("BeltWestMid", TREES_RUST[:3] + TREES_DARK[:3], col_w, seed=32)
-    scatter("BeltEastMid", TREES_GOLD[:3] + TREES_DARK[:3], col_e, seed=33)
+    # (QC2) Sans l'arbre qui masquerait une place (l'arrivée de la montagne : docs/QUALITE.md, QC-37).
+    scatter("BeltEastMid", TREES_GOLD[:3] + TREES_DARK[:3],
+            p.clear_of_places(TREES_GOLD[:3] + TREES_DARK[:3], col_e), seed=33)
     p.walk_grid()
 
     # === 4. La futaie : des arbres isolés, plus serrés au nord et à l'ouest, plus clairs à l'est =====================
@@ -345,9 +347,11 @@ def pose(p):
             broad_rust.append((x, z))
         else:
             broad_gold.append((x, z))
-    scatter("TreesConifers", ["tree_pine", "pine_tall_b", "tree_pine", "tree_old_pine"], conifers, scale=(0.9, 1.1), seed=42)
-    scatter("TreesRust", TREES_RUST, broad_rust, scale=(0.9, 1.1), seed=43)
-    scatter("TreesGold", TREES_GOLD, broad_gold, scale=(0.9, 1.1), seed=44)
+    # (QC2) Aucun grand arbre posé où il masquerait un chemin ou une place (docs/QUALITE.md, QC-37).
+    conifer_scenes = ["tree_pine", "pine_tall_b", "tree_pine", "tree_old_pine"]
+    scatter("TreesConifers", conifer_scenes, p.clear_of_places(conifer_scenes, conifers, 1.1), scale=(0.9, 1.1), seed=42)
+    scatter("TreesRust", TREES_RUST, p.clear_of_places(TREES_RUST, broad_rust, 1.1), scale=(0.9, 1.1), seed=43)
+    scatter("TreesGold", TREES_GOLD, p.clear_of_places(TREES_GOLD, broad_gold, 1.1), scale=(0.9, 1.1), seed=44)
     # De jeunes arbres entre les grands.
     young = poisson(field, 6.0, 90, lambda x, z: usable(x, z, way=1.6, bank=1.4) and not shadows_a_player(x, z) and all(
         math.hypot(x - sx, z - sz) > 4.2 for sx, sz in spots), seed=45)

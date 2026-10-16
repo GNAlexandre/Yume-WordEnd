@@ -33,6 +33,10 @@ SETTINGS = {
     # visé, la vue va jusqu'à z = 37) : CARTE.md disait Rect2(10, 6, 50, 17).
     "camera_bounds": (10, 6, 50, 24),
     "no_lights": True,
+    # (QC2) Le point `panneau` est le panneau lui-même (la cible de la caméra et de l'examen, récit du jour 1) : on
+    # le lit du sud, à `panneau_sud` ; le panneau de premier plan peut le couvrir (docs/QUALITE.md, QC-37).
+    "masks_allowed": {"PanneauFlechesRouges": (("point panneau",),
+                                               "le point est le panneau même ; on s'y tient au sud (panneau_sud)")},
     "texts": "res://data/texts/port.json",
     # Objets à examiner (data/texts/port.json, section « port ») : (clé, x, z, taille de la zone).
     "examine": [
@@ -393,7 +397,9 @@ def pose(p):
         hedge_x += 2.4 if k % 2 == 0 else 2.0
         k += 1
     # Les arbres au-delà du bord sud-est (bord foret 58 → 70 ; 34 → 40) et la forêt qui continue à l'ouest.
-    for k, (x, z, scene) in enumerate(((60.0, 39.0, "tree_autumn_rust_forest"), (66.0, 39.4, "maple_a_forest"),
+    # (QC2) Au bas de la route de la ville, un jeune pin : un grand arbre y couvrait le départ de la route
+    # (docs/QUALITE.md, QC-37).
+    for k, (x, z, scene) in enumerate(((60.0, 39.0, "pine_small_a_forest"), (66.0, 39.4, "maple_a_forest"),
                                        (72.0, 36.4, "beech_c_forest"))):
         place("Woods", scene, x, z, name="ArbreSudEst%d" % (k + 1), check=False)
     backdrop = [(-3.0, z + rng.uniform(-1.0, 1.0)) for z in (8.0, 14.0, 20.0, 26.0, 32.0)]

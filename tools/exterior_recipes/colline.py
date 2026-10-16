@@ -470,7 +470,7 @@ def pose(p):
     young = [(6.4, 35.4), (12.5, 36.8), (27.8, 36.2), (32.8, 35.2), (5.2, 33.2), (34.6, 33.0), (9.6, 38.0)]
     scatter("FootTrees", ["sapling_a", "birch_a", "birch_b", "pine_small_a", "pine_small_b"],
             [q for q in young if usable(q[0], q[1], way=1.2)], seed=74)
-    place("Woods", "fallen_tree", 31.4, 37.2, name="TroncCouche", flip=True)
+    place("Woods", "fallen_tree", 33.4, 38.6, name="TroncCouche", flip=True)
     place("Woods", "stump_a", 8.6, 37.4, name="Souche", check=False)
     leaves = poisson(Rect(4.5, 32.6, 35.5, 38.0), 3.6, 7, lambda x, z: usable(x, z, way=1.4, standing=False), seed=73)
     scatter("FootLeaves", ["leaves_gold_a", "leaves_rust_a", "leaves_gold_b", "leaves_rust_b", "leaves_scatter"],
@@ -484,8 +484,10 @@ def pose(p):
         if not 16.0 < x < 24.0:
             south.append((x + rng.uniform(-0.4, 0.4), rng.uniform(38.4, 39.3)))
         x += rng.uniform(2.6, 3.8)
-    # Les grands troncs seulement aux deux bouts du bord : au milieu, ils cacheraient la montée.
-    trunks = [q for q in south if q[0] < 10.5 or q[0] > 29.5]
+    # Les grands troncs seulement aux deux bouts du bord : au milieu, ils cacheraient la montée. (QC2) Pas
+    # plus près que x 8,5 et 32 : à x 29,7, un tronc de 10 m fendait l'écran à côté du joueur au pied de la
+    # lisière est (docs/QUALITE.md, QC-38 ; tools/exterior_maps.py check : aucune place masquée).
+    trunks = [q for q in south if q[0] < 8.5 or q[0] > 32.0]
     scatter("SouthTrunks", ["fg_trunk_a", "fg_trunk_b"], trunks[::2], seed=76, check=False)
     scatter("SouthBrush", ["fg_bush", "fg_fern", "fg_grass"], [q for k, q in enumerate(south) if k % 3], seed=77,
             check=False)

@@ -100,20 +100,21 @@
 [ext_resource type="PackedScene" path="res://src/world/props/roots_b.tscn" id="98_roots_b"]
 [ext_resource type="PackedScene" path="res://src/world/props/canopy_shadow_a.tscn" id="99_canopy_shadow_a"]
 [ext_resource type="PackedScene" path="res://src/world/props/canopy_shadow_b.tscn" id="100_canopy_shadow_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/fg_trunk_a.tscn" id="101_fg_trunk_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/fg_trunk_b.tscn" id="102_fg_trunk_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/fg_bush.tscn" id="103_fg_bush"]
-[ext_resource type="PackedScene" path="res://src/world/props/fg_fern.tscn" id="104_fg_fern"]
-[ext_resource type="PackedScene" path="res://src/world/props/fg_grass.tscn" id="105_fg_grass"]
-[ext_resource type="PackedScene" path="res://src/world/props/birch_a_forest.tscn" id="106_birch_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/birch_b_forest.tscn" id="107_birch_b_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/pine_small_a_forest.tscn" id="108_pine_small_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/pine_small_b_forest.tscn" id="109_pine_small_b_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/sapling_a_forest.tscn" id="110_sapling_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/pine_dead_forest.tscn" id="111_pine_dead_forest"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/anim/birds_flock.png" id="112_birds_flock"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_gold.png" id="113_falling_leaf_gold"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_rust.png" id="114_falling_leaf_rust"]
+[ext_resource type="PackedScene" path="res://src/world/props/fg_bush.tscn" id="101_fg_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/fg_fern.tscn" id="102_fg_fern"]
+[ext_resource type="PackedScene" path="res://src/world/props/fg_grass.tscn" id="103_fg_grass"]
+[ext_resource type="PackedScene" path="res://src/world/props/birch_a_forest.tscn" id="104_birch_a_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/birch_b_forest.tscn" id="105_birch_b_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_small_a_forest.tscn" id="106_pine_small_a_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_small_b_forest.tscn" id="107_pine_small_b_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/sapling_a_forest.tscn" id="108_sapling_a_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_small_a.tscn" id="109_pine_small_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_small_b.tscn" id="110_pine_small_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/sapling_a.tscn" id="111_sapling_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_dead_forest.tscn" id="112_pine_dead_forest"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/birds_flock.png" id="113_birds_flock"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_gold.png" id="114_falling_leaf_gold"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_rust.png" id="115_falling_leaf_rust"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_edge1"]
 size = Vector3(80, 4, 5)
@@ -464,42 +465,42 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 20.6)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 0, 26)
 
 [node name="Backdrop1" parent="Geometry/Backdrop" instance=ExtResource("35_pine_tall_b")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 7.443)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 8.367)
 
 [node name="Backdrop2" parent="Geometry/Backdrop" instance=ExtResource("36_tree_old_pine")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 14.606)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 13.992)
 flip_h = true
 
 [node name="Backdrop3" parent="Geometry/Backdrop" instance=ExtResource("37_tree_pine")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 20.764)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 20.22)
 
 [node name="Backdrop4" parent="Geometry/Backdrop" instance=ExtResource("38_oak_a")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 27.904)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 27.052)
 flip_h = true
 
 [node name="Backdrop5" parent="Geometry/Backdrop" instance=ExtResource("39_beech_a")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 32.571)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 32.443)
 
 [node name="Backdrop6" parent="Geometry/Backdrop" instance=ExtResource("40_pine_dead")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 39.582)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 39.606)
 flip_h = true
 
 [node name="Backdrop7" parent="Geometry/Backdrop" instance=ExtResource("41_tree_autumn_rust")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 10.749)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 10.764)
 
 [node name="Backdrop8" parent="Geometry/Backdrop" instance=ExtResource("42_maple_a")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 15.199)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 16.904)
 flip_h = true
 
 [node name="Backdrop9" parent="Geometry/Backdrop" instance=ExtResource("43_oak_c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 22.245)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 21.571)
 
 [node name="Backdrop10" parent="Geometry/Backdrop" instance=ExtResource("44_beech_b")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 28.986)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 29.582)
 flip_h = true
 
 [node name="Backdrop11" parent="Geometry/Backdrop" instance=ExtResource("45_oak_d")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 34.69)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 35.749)
 
 [node name="Scatter" type="Node3D" parent="Geometry"]
 
@@ -754,32 +755,23 @@ random_seed = 67
 variants = Array[PackedScene]([ExtResource("98_roots_b"), ExtResource("99_canopy_shadow_a"), ExtResource("100_canopy_shadow_b")])
 random_flip = true
 
-[node name="SouthTrunks" type="Node3D" parent="Geometry/Scatter"]
-script = ExtResource("4_prop_scatter")
-prop = ExtResource("101_fg_trunk_a")
-points = PackedVector3Array(24.367, 0, 29.896, 50.22, 0, 29.926)
-scale_range = Vector2(0.85, 1.15)
-random_seed = 70
-variants = Array[PackedScene]([ExtResource("102_fg_trunk_b")])
-random_flip = true
-
 [node name="SouthBrush" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
-prop = ExtResource("103_fg_bush")
+prop = ExtResource("101_fg_bush")
 points = PackedVector3Array(18.468, 0, 29.344, 0.971, 0, 29.779, 46.13, 0, 29.799, 15.116, 0, 28.839, 3.538, 0, 28.833, 42.717, 0, 29.019, 9.757, 0, 29.017, 49.806, 0, 29.124, 53.006, 0, 29.776, 37.35, 0, 28.9, 27.912, 0, 29.279, 12.489, 0, 29.291, 23.136, 0, 29.145, 33.683, 0, 29.428, 6.19, 0, 29.242, 30.745, 0, 28.96, 55.91, 0, 28.784, 40.063, 0, 28.979)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 72
-variants = Array[PackedScene]([ExtResource("104_fg_fern"), ExtResource("105_fg_grass")])
+variants = Array[PackedScene]([ExtResource("102_fg_fern"), ExtResource("103_fg_grass")])
 random_flip = true
 
 [node name="SouthTreesFront" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
 prop = ExtResource("54_tree_pine_forest")
-points = PackedVector3Array(16.03, 0, 31.706, 31.81, 0, 31.599, 6.627, 0, 31.063, 43.78, 0, 30.466, 55.731, 0, 30.934)
-yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0)
+points = PackedVector3Array(16.03, 0, 36.26, 31.81, 0, 36.074, 6.627, 0, 35.148, 43.78, 0, 34.114, 49.584, 0, 38.279, 55.731, 0, 34.925, 23.406, 0, 34.004)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 574
-variants = Array[PackedScene]([ExtResource("106_birch_a_forest"), ExtResource("107_birch_b_forest"), ExtResource("108_pine_small_a_forest"), ExtResource("109_pine_small_b_forest"), ExtResource("56_maple_a_forest"), ExtResource("55_tree_autumn_rust_forest"), ExtResource("110_sapling_a_forest")])
+variants = Array[PackedScene]([ExtResource("104_birch_a_forest"), ExtResource("105_birch_b_forest"), ExtResource("106_pine_small_a_forest"), ExtResource("107_pine_small_b_forest"), ExtResource("56_maple_a_forest"), ExtResource("55_tree_autumn_rust_forest"), ExtResource("108_sapling_a_forest")])
 random_flip = true
 
 [node name="SouthUnder" type="Node3D" parent="Geometry/Scatter"]
@@ -791,14 +783,34 @@ random_seed = 77
 variants = Array[PackedScene]([ExtResource("79_bush_b"), ExtResource("80_bush_c"), ExtResource("81_bush_d"), ExtResource("64_bush_e"), ExtResource("82_bush_f"), ExtResource("60_fern_a"), ExtResource("61_fern_b"), ExtResource("62_fern_c"), ExtResource("63_fern_d")])
 random_flip = true
 
+[node name="ForkTreesWest" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("109_pine_small_a")
+points = PackedVector3Array(59.2, 0, 38.8)
+yaw_degrees = PackedFloat32Array(0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 80
+variants = Array[PackedScene]([ExtResource("110_pine_small_b"), ExtResource("111_sapling_a")])
+random_flip = true
+
+[node name="ForkTreesWestFront" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("106_pine_small_a_forest")
+points = PackedVector3Array(58.6, 0, 35.4)
+yaw_degrees = PackedFloat32Array(0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 580
+variants = Array[PackedScene]([ExtResource("107_pine_small_b_forest"), ExtResource("108_sapling_a_forest")])
+random_flip = true
+
 [node name="ForkTreesFront" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
 prop = ExtResource("52_pine_tall_b_forest")
-points = PackedVector3Array(58.2, 0, 34.6, 59, 0, 38.4, 75.2, 0, 36, 75.4, 0, 39, 78.4, 0, 33, 78.6, 0, 38)
-yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0)
+points = PackedVector3Array(75.2, 0, 36, 75.4, 0, 39, 78.4, 0, 33, 78.6, 0, 38)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 581
-variants = Array[PackedScene]([ExtResource("53_tree_old_pine_forest"), ExtResource("54_tree_pine_forest"), ExtResource("29_oak_a_forest"), ExtResource("58_beech_a_forest"), ExtResource("111_pine_dead_forest"), ExtResource("55_tree_autumn_rust_forest"), ExtResource("56_maple_a_forest")])
+variants = Array[PackedScene]([ExtResource("53_tree_old_pine_forest"), ExtResource("54_tree_pine_forest"), ExtResource("29_oak_a_forest"), ExtResource("58_beech_a_forest"), ExtResource("112_pine_dead_forest"), ExtResource("55_tree_autumn_rust_forest"), ExtResource("56_maple_a_forest")])
 random_flip = true
 
 [node name="ForkBrush" type="Node3D" parent="Geometry/Scatter"]
@@ -937,7 +949,7 @@ metadata/area = Rect2(30, 13, 14, 8.5)
 [node name="Birds" type="Node3D" parent="Ambience"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 20)
 script = ExtResource("6_ambient_sprites")
-texture = ExtResource("112_birds_flock")
+texture = ExtResource("113_birds_flock")
 frames = 6
 fps = 10
 motion = 1
@@ -952,7 +964,7 @@ random_seed = 3
 [node name="LeavesGold" type="Node3D" parent="Ambience"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 20)
 script = ExtResource("6_ambient_sprites")
-texture = ExtResource("113_falling_leaf_gold")
+texture = ExtResource("114_falling_leaf_gold")
 frames = 8
 fps = 10
 motion = 0
@@ -967,7 +979,7 @@ random_seed = 4
 [node name="LeavesRust" type="Node3D" parent="Ambience"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 20)
 script = ExtResource("6_ambient_sprites")
-texture = ExtResource("114_falling_leaf_rust")
+texture = ExtResource("115_falling_leaf_rust")
 frames = 8
 fps = 10
 motion = 0
