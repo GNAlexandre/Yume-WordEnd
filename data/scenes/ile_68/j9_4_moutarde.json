@@ -15,7 +15,7 @@
     {"do": "place", "who": "lakhesh", "at": "refectoire_chaise_b03", "outfit": "vie", "anim": "assis"},
     {"do": "place", "who": "almita", "at": "refectoire_chaise_b01", "outfit": "vie", "anim": "assis"},
     {"do": "place", "who": "ithea", "at": "refectoire_chaise_b06", "outfit": "maison", "anim": "assis"},
-    {"do": "walk", "who": "player", "to": "refectoire_chaise_c05", "offset": [0.5, -0.9], "facing": "south"},
+    {"do": "walk", "who": "player", "to": "refectoire_chaise_c05", "offset": [1.6, -0.9], "facing": "west"},
     {"do": "camera", "to": "refectoire_chaise_c04", "offset": [0.2, -0.8], "distance": 9, "time": 0.8},
     {"do": "dialogue", "node": "pots"},
     {"do": "anim", "who": "tiat", "anim": "saut", "wait": true},

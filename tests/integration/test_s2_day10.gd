@@ -81,11 +81,15 @@ func test_day_10_end_to_end_until_day_11() -> void:
 	assert_true(GameState.has_flag(&"j10_linge_rentre"))
 	# Le soir : la tour de fées, puis la séquence du toit.
 	trace("10.5")
-	assert_true(await take_exit(&"entrepot_rdc", 60.0))
-	assert_true(await walk_to_point(&"lecture_banquette", 1.0, 60.0))
-	assert_true(await rest_until(&"soir"))
+	# Le temps passe au lit (« Laisser passer le temps » dans la chambre), puis en bas.
+	assert_true(await rest_until(&"soir"), "le soir")
 	assert_eq(StoryDirector.hint(), "On joue à la salle de jeux.")
-	assert_true(await walk_to_point(&"jeux_tapis", 2.5, 60.0))
+	assert_true(await take_exit(&"entrepot_rdc", 60.0))
+	await walk_to_point(&"jeux_tapis", 2.0, 60.0)
+	assert_true(
+		await until(func() -> bool: return StoryDirector.current_scene() == &"j10_5_tour", 5.0),
+		"la salle de jeux"
+	)
 	assert_true(await read_until(_pile_is_up, 60.0), "la pile : Giniette tout en haut")
 	assert_true(await play_until_done(&"j10_5_tour", 90.0), "10.5 jouée")
 	assert_eq(GameState.weather, &"clair", "la nuit se dégage")

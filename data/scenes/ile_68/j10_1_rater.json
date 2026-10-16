@@ -13,7 +13,7 @@
     {"do": "place", "who": "ithea", "at": "clairiere_banc", "offset": [-0.5, 0.0], "facing": "south", "outfit": "maison", "anim": "assis"},
     {"do": "place", "who": "nephren", "at": "clairiere_banc", "offset": [0.5, 0.0], "facing": "south", "outfit": "maison", "anim": "assis"},
     {"do": "place", "who": "willem", "at": "clairiere_centre", "facing": "south", "outfit": "maison"},
-    {"do": "walk", "who": "player", "to": "clairiere_centre", "offset": [0.0, 2.2], "facing": "north"},
+    {"do": "walk", "who": "player", "to": "clairiere_centre", "offset": [1.2, 1.8], "facing": "north"},
     {"do": "dialogue", "node": "debut"},
     {"do": "camera", "to": "willem", "distance": 9, "time": 0.9, "wait": true},
     {"do": "wait", "time": 1.0},

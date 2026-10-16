@@ -117,6 +117,24 @@ func sleep_in_bed() -> bool:
 	return await until(func() -> bool: return GameState.day == day + 1, 15.0)
 
 
+## Marche tout droit au stick (sans la navigation) jusqu'à moins de radius m de target.
+func walk_straight(target: Vector3, radius: float = 0.4, max_seconds: float = 10.0) -> bool:
+	var reached: bool = await walk_stick_until(
+		0.0,
+		0.0,
+		func() -> bool:
+			var gap := target - player.global_position
+			gap.y = 0.0
+			if gap.length() <= radius:
+				return true
+			var toward := gap.normalized()
+			stick(toward.x, toward.z)
+			return false,
+		max_seconds
+	)
+	return reached
+
+
 ## Marche jusqu'à moins de radius m d'un PNJ de la carte (sa place suivie à chaque pas).
 func walk_to_actor(npc_id: StringName, radius: float = 1.2, max_seconds: float = 30.0) -> bool:
 	var deadline := Time.get_ticks_msec() + int(max_seconds * 1000.0)

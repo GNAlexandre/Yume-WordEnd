@@ -10,9 +10,9 @@
   "present": ["nygglatho"],
   "steps": [
     {"do": "control", "on": false},
-    {"do": "place", "who": "nygglatho", "at": "refectoire_veillee", "facing": "south", "outfit": "the", "anim": "travaille"},
-    {"do": "walk", "who": "player", "to": "refectoire_veillee", "offset": [0.0, 1.3], "facing": "north"},
-    {"do": "camera", "to": "refectoire_veillee", "offset": [0.0, 0.6], "distance": 9, "time": 1.0},
+    {"do": "place", "who": "nygglatho", "at": "refectoire_bout_ouest", "facing": "east", "outfit": "the", "anim": "travaille"},
+    {"do": "walk", "who": "player", "to": "refectoire_bout_ouest", "offset": [1.35, 0.0], "facing": "west"},
+    {"do": "camera", "to": "refectoire_bout_ouest", "offset": [0.7, 0.0], "distance": 9, "time": 1.0},
     {"do": "dialogue", "node": "the"},
     {"do": "anim", "who": "nygglatho", "anim": "parle"},
     {"do": "dialogue", "node": "noms"},

@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 12.1 : Pannibal tente une dernière embuscade (combat 3.1, le jeu d'E8c « embuscade_pannibal », jour 12 : les feintes), à la première sortie de {player} sous le porche. Facultatif (pas une scène clé) ; son indice est celui de la dernière journée.",
+  "_comment": "ACTE1.md 12.1 : Pannibal tente une dernière embuscade (combat 3.1, le jeu d'E8c « embuscade_pannibal », jour 12 : les feintes), dès que {player} sort (le porche ou la porte de service), à 3 m d'elle. Facultatif (pas une scène clé) ; son indice est celui de la dernière journée.",
   "title": "La dernière embuscade",
   "day": 12,
   "slot": ["aube", "matin", "midi", "apres_midi"],
@@ -7,11 +7,11 @@
   "key": false,
   "map": "entrepot",
   "hint": "hint",
-  "trigger": {"on": "enter", "marker": "from_entrepot_rdc"},
+  "trigger": {"on": "ready"},
   "present": ["pannibal"],
   "steps": [
     {"do": "control", "on": false},
-    {"do": "place", "who": "pannibal", "at": "porche_banc", "offset": [2.6, 2.4], "facing": "west", "outfit": "vie"},
+    {"do": "place", "who": "pannibal", "at": "player", "offset": [-3.0, 1.2], "facing": "east", "outfit": "vie"},
     {"do": "bubble", "who": "pannibal", "text": "cri"},
     {"do": "wait", "time": 0.8},
     {"do": "game", "game": "embuscade_pannibal", "params": {"day": 12, "success_flag": "j12_embuscade_gagnee"}, "fallback": [

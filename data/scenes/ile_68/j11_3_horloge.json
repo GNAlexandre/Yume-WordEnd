@@ -12,7 +12,7 @@
     {"do": "control", "on": false},
     {"do": "place", "who": "willem", "at": "salon_canape_assise", "facing": "south", "outfit": "maison", "anim": "assis"},
     {"do": "place", "who": "ramikeldi", "at": "rami", "facing": "west"},
-    {"do": "walk", "who": "player", "to": "canape", "offset": [1.4, 0.0], "facing": "north"},
+    {"do": "walk", "who": "player", "to": "canape", "offset": [-1.6, 0.2], "facing": "east"},
     {"do": "camera", "to": "salon_canape_assise", "offset": [0.8, 0.0], "distance": 9, "time": 1.0},
     {"do": "dialogue", "node": "salon"},
     {"do": "walk", "who": "willem", "to": "horloge", "facing": "north"},

@@ -425,7 +425,7 @@ func _save(file_name: String) -> void:
 	var dir := _shots if _shots.begins_with("/") else ProjectSettings.globalize_path(_shots)
 	DirAccess.make_dir_recursive_absolute(dir)
 	var image := get_viewport().get_texture().get_image()
-	image.resize(image.get_width() / 2, image.get_height() / 2, Image.INTERPOLATE_BILINEAR)
+	image.resize(image.get_width() >> 1, image.get_height() >> 1, Image.INTERPOLATE_BILINEAR)
 	image.save_png(dir.path_join(file_name + ".png"))
 	print(
 		(

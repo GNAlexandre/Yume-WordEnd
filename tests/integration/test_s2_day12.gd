@@ -14,12 +14,14 @@ func test_day_12_until_the_end_of_act_1() -> void:
 	assert_eq(StoryDirector.calendar_line(12), "Départ au couchant.")
 	assert_true(await wait_control())
 	assert_false(StoryDirector.can_sleep(), "le dernier jour : pas de lendemain")
-	# La dernière embuscade, à la sortie du porche.
+	# La dernière embuscade, dès la sortie.
 	trace("embuscade")
 	assert_true(await take_exit(&"entrepot_rdc", 60.0))
 	assert_true(await take_exit(&"entrepot", 60.0))
 	assert_true(await until(func() -> bool: return MiniGames.ambush() != null, 15.0), "elle bondit")
 	var ambush := MiniGames.ambush()
+	if ambush == null:
+		return
 	assert_eq(ambush.day, 12, "le jour 12 : les feintes")
 	var result := await play_ambush(ambush)
 	trace("embuscade fin : %s" % result)
