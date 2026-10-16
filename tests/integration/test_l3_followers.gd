@@ -85,13 +85,18 @@ func test_followers_keep_up_with_a_walking_player() -> void:
 ## Le joueur (run : il court, sinon il marche) fait RUN_METERS m sur le sentier, suivi d'Ithea et
 ## de Nephren ; mesures au journal, puis les deux attentes de l'en-tête.
 func test_a_lost_follower_is_set_down_behind_the_player_out_of_view() -> void:
-	var jumps := await _chase(true, 8.0, 50.0)
+	# (AN) La poursuite (6,6 m/s) va plus vite que la course du joueur (5,8) : les suiveuses,
+	# ralenties de moitié le temps de la course, se perdent comme un PNJ gêné en chemin.
+	var jumps := await _chase(true, 8.0, 50.0, 0.5)
 	assert_gt(jumps, 0, "un suiveur perdu est reposé derrière le joueur")
 
 
 ## Renvoie le nombre de repositions (follower_reposed). stop_beyond > 0 :
-## les deux suiveuses sont reprises avec cette distance d'arrêt.
-func _chase(run: bool, stop_beyond: float = 0.0, meters: float = RUN_METERS) -> int:
+## les deux suiveuses sont reprises avec cette distance d'arrêt ; slow : leur facteur de vitesse
+## pendant la course (rendu à 1 à l'arrêt).
+func _chase(
+	run: bool, stop_beyond: float = 0.0, meters: float = RUN_METERS, slow: float = 1.0
+) -> int:
 	var label := "course" if run else "marche"
 	if stop_beyond > 0.0:
 		label += " (stop_beyond %.0f)" % stop_beyond
@@ -147,6 +152,8 @@ func _chase(run: bool, stop_beyond: float = 0.0, meters: float = RUN_METERS) -> 
 	for npc_id: StringName in KEEP:
 		previous[npc_id] = LifeDirector.actor(npc_id).position()
 	await frames(1)
+	for npc_id: StringName in KEEP:
+		LifeDirector.actor(npc_id).speed_factor = slow
 	if run:
 		Input.action_press(&"run")
 	while walked < meters and index < route.size() and frame_count < 60 * 40:
@@ -189,6 +196,8 @@ func _chase(run: bool, stop_beyond: float = 0.0, meters: float = RUN_METERS) -> 
 				idle_frames[npc_id] = 0
 	release_move()
 	Input.action_release(&"run")
+	for npc_id: StringName in KEEP:
+		LifeDirector.actor(npc_id).speed_factor = 1.0
 	print("[l3] %s : %.1f m en %.1f s" % [label, walked, frame_count * tick])
 	assert_gt(walked, RUN_METERS - 2.0, "le joueur a couru ses 25 m")
 	for npc_id: StringName in KEEP:
