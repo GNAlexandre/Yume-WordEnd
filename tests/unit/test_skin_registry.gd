@@ -108,7 +108,7 @@ func test_npc_visuals_keep_the_player_density() -> void:
 		assert_not_null(skin.portrait, label + " : portrait (dialogue)")
 		if skin.portrait != null:
 			assert_eq(skin.portrait.get_width(), skin.portrait.get_height(), label + " : carré")
-	assert_eq(count, 14, "14 visuels de PNJ ((F1) moins les quatre de l'ancienne île ; S1b : le passant)")
+	assert_eq(count, 14, "14 visuels de PNJ (F1 : moins les quatre de l'ancienne île)")
 
 
 func test_reload_reads_skins_dir() -> void:
