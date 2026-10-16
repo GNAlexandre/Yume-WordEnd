@@ -114,7 +114,12 @@ func test_day_1_end_to_end_until_day_2() -> void:
 	await walk_to_point(&"nygglatho_tapis", 1.5)
 	trace("23")
 	assert_true(await play_until_done(&"j1_5_premiers_pas", 60.0, {"Ouvrir.": 1}))
-	assert_eq(StoryDirector.hint(), "Couche Pannibal, au dortoir.")
+	# (S2) Une scène qui commence efface l'indice qui l'annonçait : si 1.6 est déjà partie (le
+	# joueur est au dortoir), plus d'indice ; sinon, celui de 1.6.
+	if StoryDirector.current_scene() == &"j1_6_diner":
+		assert_eq(StoryDirector.hint(), "", "1.6 a commencé : l'indice s'efface")
+	else:
+		assert_eq(StoryDirector.hint(), "Couche Pannibal, au dortoir.")
 	# 1.6 (séquence) puis 1.7.
 	trace("24")
 	await walk_to_point(&"dortoir_b", 1.5)
