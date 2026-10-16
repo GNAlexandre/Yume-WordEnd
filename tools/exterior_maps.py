@@ -31,6 +31,8 @@ Usage (Python 3.9+, Pillow) :
     python3 tools/exterior_maps.py places [map_id ...]   # réécrit, dans CARTE.md, la liste des places de
                                                          # la vie de chaque carte (points, zones, extras)
     python3 tools/exterior_maps.py props                 # écrit les scènes de décor nouvelles (exterior_props.py)
+    python3 tools/exterior_maps.py views [map_id ...]    # (RC) par vue de la série QC : l'image la plus répétée
+                                                         # dans le champ, son compte, les objets hauts au sud
 
 Après gen : tools/hd2d_assets.py gen (images absentes), tools/import.sh (.uid, .import à commiter),
 puis tools/test.sh tests/unit/test_maps.gd, test_entrepot.gd, test_sentier.gd, test_world_atlas.gd.
@@ -58,6 +60,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import carte_plans  # noqa: E402
 import exterior_ground  # noqa: E402
+import exterior_kits  # noqa: E402
 import exterior_pose  # noqa: E402
 import life_zones  # noqa: E402
 import map_build  # noqa: E402
@@ -100,6 +103,13 @@ WAITING["ville_marche"] = {
     # (CP) La route du port arrive par l'ouest (CARTE.md 9.3 : sortie vers_port).
     "more": [{"back": "vers_port", "exit": (0, 10, 0.6, 14), "marker": (2.5, 12, "E")}],
 }
+
+# (RC) Contrôle de la refonte image (CARTE.md 0.5) : au plus REPEAT_LIMIT fois la même image (panneau de 0,75 m ou
+# plus) dans le champ d'une vue de la série QC ; au moins SOUTH_MIN objets de 1,5 m ou plus au sud du joueur, qui se
+# voient au bas de l'écran (exterior_kits.view_repeats, view_south ; SETTINGS["south_allowed"] : {vue : pourquoi},
+# les vues sans premier plan possible, dites dans la sortie).
+REPEAT_LIMIT = 8
+SOUTH_MIN = 2
 
 BASIS = {"N": "1, 0, 0, 0, 1, 0, 0, 0, 1", "S": "-1, 0, 0, 0, 1, 0, 0, 0, -1",
          "E": "0, 0, -1, 0, 1, 0, 1, 0, 0", "O": "0, 0, 1, 0, 1, 0, -1, 0, 0"}
@@ -293,6 +303,10 @@ class Writer:
                 f(scale), f(scale), f(scale), f(x), f(y), f(z))
             if flip and not prop(scene).building:
                 text += "flip_h = true\n"
+            # (RC) La teinte d'un élément de rangée (exterior_kits.row ; DecorPanel.tone, comme la variation d'un
+            # PropScatter).
+            if extra.get("tone"):
+                text += "tone = Vector2(%s, %s)\n" % (f(extra["tone"][0]), f(extra["tone"][1]))
             self.node(text)
         self.node('[node name="Scatter" type="Node3D" parent="Geometry"]\n')
         for fname, fam in p.families.items():
@@ -477,6 +491,9 @@ class Built:
         self.deviations = []
         self.seams = []
         self.masks = []
+        self.repeats = []
+        self.south = []
+        self.view_stats = []
         self.pose = None
         self.scene_text = ""
 
@@ -540,6 +557,24 @@ def build(map_id, all_plans, tmp):
             result.masks.append("%s (%s, x %.1f ; z %.1f) cache %s ; l'écarter, le baisser ou le retirer"
                                 % (name, decor, x, z, ", ".join(labels[:4]) + (" (+%d)" % (len(labels) - 4)
                                                                              if len(labels) > 4 else "")))
+        # (RC) Les deux mesures de la refonte image (CARTE.md 0.5) : la même image trop souvent dans le champ d'une
+        # vue de la série QC ; trop peu d'objets hauts au sud d'elle (pas de premier plan).
+        views = exterior_kits.qc_views(map_id)
+        repeats = exterior_kits.view_repeats(p, bounds, views)
+        south = exterior_kits.view_south(p, bounds, views)
+        south_allowed = settings.get("south_allowed", {})
+        for (name, image, count), (_n, tall) in zip(repeats, south):
+            result.view_stats.append((name, image, count, tall))
+            if count > REPEAT_LIMIT + 1e-6:
+                result.repeats.append("vue %s : %s %.1f fois dans le champ (au plus %d) ; varier la famille, "
+                                      "espacer ou retirer" % (name, image, count, REPEAT_LIMIT))
+            if tall < SOUTH_MIN - 1e-6:
+                if name in south_allowed:
+                    result.deviations.append("vue %s : %.1f objet(s) haut(s) au sud ; toléré, %s"
+                                             % (name, tall, south_allowed[name]))
+                else:
+                    result.south.append("vue %s : %.1f objet(s) haut(s) au sud (au moins %d) ; un premier plan "
+                                        "(exterior_kits.foreground_kit)" % (name, tall, SOUTH_MIN))
     result.scene_text = scene
     for name, content in ground.items():
         result.files["data/maps/%s/%s" % (map_id, name)] = content
@@ -676,7 +711,7 @@ def all_ids():
 
 def main():
     args = sys.argv[1:]
-    if not args or args[0] not in ("gen", "check", "places", "props"):
+    if not args or args[0] not in ("gen", "check", "places", "props", "views"):
         print(__doc__)
         return 2
     if args[0] == "props":
@@ -711,6 +746,16 @@ def main():
             for line in built.masks:
                 print("%s : place masquée, %s" % (map_id, line))
                 status = 1
+            for line in built.repeats:
+                print("%s : répétition, %s" % (map_id, line))
+                status = 1
+            for line in built.south:
+                print("%s : sans premier plan, %s" % (map_id, line))
+                status = 1
+            if args[0] == "views":
+                for name, image, count, tall in built.view_stats:
+                    print("%s\t%s\t%s\t%.1f\t%.1f" % (map_id, name, image, count, tall))
+                continue
             if args[0] == "check":
                 if rels:
                     print("%s : à réécrire (%s)" % (map_id, ", ".join(rels)))
