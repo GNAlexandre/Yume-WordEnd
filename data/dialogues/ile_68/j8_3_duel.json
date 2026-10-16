@@ -1,0 +1,68 @@
+{
+  "_comment": "ACTE1.md 8.3 (s. 17) : Willem ne dit rien de grand.",
+  "id": "j8_3_duel",
+  "start": "seniorious",
+  "nodes": {
+    "seniorious": {
+      "speaker_id": "nephren",
+      "text": "Tiens. Elle t'attendait.",
+      "next": "seniorious_2"
+    },
+    "seniorious_2": {
+      "speaker": "",
+      "text": "Nephren lui tend Seniorious. Au porche, aux fenêtres, les petites se bousculent pour voir.",
+      "next": "seniorious_3"
+    },
+    "seniorious_3": {
+      "speaker_id": "willem",
+      "text": "Quand tu veux. Ne te retiens pas, je ne bougerai pas beaucoup."
+    },
+    "encore": {
+      "speaker": "",
+      "text": "Elle est sur le dos, dans l'herbe. Elle n'a même pas vu le coup venir.",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "Encore une fois !",
+          "set_flag": "j8_duel_reprise",
+          "next": "encore_oui"
+        },
+        {
+          "text": "… D'accord.",
+          "next": "daccord"
+        }
+      ]
+    },
+    "encore_oui": {
+      "speaker_id": "willem",
+      "text": "Une dernière, alors. Relève-toi."
+    },
+    "daccord": {
+      "speaker": "{player}",
+      "text": "… D'accord."
+    },
+    "revenir": {
+      "speaker": "",
+      "text": "Elle se relève sur un coude.",
+      "next": "revenir_2"
+    },
+    "revenir_2": {
+      "speaker_id": "willem",
+      "text": "Tu te jettes dans chaque coup comme si c'était le dernier. C'est justement ce qu'il ne faut pas faire.",
+      "next": "revenir_3"
+    },
+    "revenir_3": {
+      "speaker_id": "willem",
+      "text": "Tu peux devenir bien plus forte, tu sais. Seulement, pour ça, il faut revenir.",
+      "next": "revenir_4"
+    },
+    "revenir_4": {
+      "speaker": "{player}",
+      "text": "…"
+    }
+  }
+}

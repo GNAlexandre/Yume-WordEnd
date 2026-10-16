@@ -102,6 +102,13 @@ ce qui se trouve au nord de lui sur environ **1,6 × (h − 0,5) m** (1 / tan 32
   dans le champ : bout contre bout avec un autre pan du même rang, prolongé au-delà du bord de la
   carte, ou caché par un grand arbre posé devant lui (un chêne `oak_a` : tronc et couronne pleins
   du pied à 6,4 m). `tools/exterior_maps.py check` le vérifie (docs/QUALITE.md, QC-33) ;
+- (QC2) **aucun grand décor ne masque une place où l'on se tient**, même en premier plan (il ne
+  s'efface qu'autour du joueur, en trame, et jamais autour d'un habitant) : rien de 2 m ou plus qui,
+  vu de la caméra, couvre un personnage debout (ou le frôle à moins d'un mètre, comme un tronc) sur
+  un chemin, un point, une place, un marqueur, une place de la vie ou une vue de la série QC. Au sud
+  d'un chemin, les grands arbres reculent à plus de 10 m (leur couronne seule paraît au bas de
+  l'écran) ; près d'une sortie, sous la lisière, on ne fait que passer. `tools/exterior_maps.py
+  check` le vérifie (docs/QUALITE.md, QC-37) ;
 - dedans, le mur sud de chaque pièce est coupé (`docs/REFONTE.md`, 7.1 et 8.1). Pour une carte à
   plusieurs pièces, ce document recommande à E3 : **tous les murs est-ouest coupés au ras du
   sol** (`wallcut_*`), sauf le mur nord du bâtiment, haut ; les murs nord-sud entiers. Ce qui doit
@@ -559,6 +566,8 @@ point marais_epee 3 12
 point champ_centre 75 18
 point champ_but_nord 75 9.2
 point champ_but_sud 75 26.6
+# (S2) où l'on arrive au champ quand on répond « J'arrive. » à la petite (ACTE1.md 5.2) : le bout du chemin, devant le bord ouest
+point champ_entree 65.4 18.5
 point fourre_ballon 83.3 10
 point riviere_puisage 9.5 48
 point lisiere_sud 44 50
@@ -567,7 +576,7 @@ lumiere fenetres_facade 45 26 3.0 fenetres
 ```
 
 <!-- places:entrepot -->
-**Places de la vie** (lot C1 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`porche_banc`, `porte_seuil`, `cour_willem`, `cour_chtholly`, `cour_centre`, `arbre_pied`, `arbre_vigie`, `potager`, `coin_soleil`, `clairiere_centre`, `clairiere_banc`, `clairiere_arbre`, `marais_epee`, `champ_centre`, `champ_but_nord`, `champ_but_sud`, `fourre_ballon`, `riviere_puisage`, `lisiere_sud`) ; les places réservées, en `Life/Areas` avec leur rectangle (`clairiere`, `champ`, `cour`, `duel`, `coin_soleil`).
+**Places de la vie** (lot C1 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`porche_banc`, `porte_seuil`, `cour_willem`, `cour_chtholly`, `cour_centre`, `arbre_pied`, `arbre_vigie`, `potager`, `coin_soleil`, `clairiere_centre`, `clairiere_banc`, `clairiere_arbre`, `marais_epee`, `champ_centre`, `champ_but_nord`, `champ_but_sud`, `champ_entree`, `fourre_ballon`, `riviere_puisage`, `lisiere_sud`) ; les places réservées, en `Life/Areas` avec leur rectangle (`clairiere`, `champ`, `cour`, `duel`, `coin_soleil`).
 
 **Zones et départs de la vie** (lot V1 ; un point enfant `p1`, `p2`… par case, regard au −Z, posé au sol ; `vers_<carte>` : par où l'on part vers une carte, et d'où l'on en arrive) :
 
@@ -1443,8 +1452,10 @@ Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_
   et débordent de la carte.
 - **Kits** : bord de chemin (`path_edge_ferns` hors de la bande libre, `fern_*`, `grass_clump_*`,
   `stepping_stones`) ; marais (roseaux, massettes `cattails`, brume `mist_patch`, libellules) ;
-  lisière (`forest_wall_*` au nord) ; sous-bois sud (`fg_trunk_a/b`, `fg_bush`, `fg_fern`, premier
-  plan).
+  lisière (`forest_wall_*` au nord) ; sous-bois sud (`fg_bush`, `fg_fern`, premier plan ; (QC2) ni
+  grand tronc ni grand arbre à moins de 10 m au sud du sentier : l'érable rouge de premier plan
+  couvrait Chtholly à la première embuscade, QC-37 ; les arbres du fond, z 34 → 38, ne montrent que
+  leur couronne ; au sud de la bifurcation, de jeunes pins).
 - **Place réservée** `embuscade` (30 → 44, 13 → 21,5) : le bord du marais où tombe Willem ;
   points `marais_chute` (35,5 ; 16,5), `lumiere_pannibal` (40 ; 12,5) (d'où part la lumière qui
   zigzague), `chtholly_arrivee` (30 ; 21,8), `premiere_embuscade` (16 ; 23 : Pannibal y bondit sur Chtholly, ACTE1.md 1.2), `bifurcation`, `vue_marais`.
@@ -1935,8 +1946,9 @@ Légende des lettres : `A` garde_transport_side ; `B` gangway ; `C` rope_coil ; 
 - **Écarts de la carte construite (lot CP, `tools/exterior_recipes/port.py`)** : bornes de caméra `Rect2(10, 6, 50, 24)` ;
   relief de la colline refait (les deux `rampe` du plan finissaient devant des terrasses sans route de 0 à +1 : trois rampes qui
   montent vers le nord, 0 → +1 en z 27 → 24, +1 → +2 en z 25 → 22, +2 → +3 en z 19 → 16 ; `bord falaise` réduit à x 63 → 70 ;
-  `montee_colline` repassée par les rampes) ; point `navire_quai` (32,5 ; 7,6) ajouté ; le navire est un panneau de coque
-  remplaçant (E7), la passerelle un plancher du quai à la coque ; aucune lumière écrite (`lampe_quai_*`, `bureau`,
+  `montee_colline` repassée par les rampes) ; point `navire_quai` (32,5 ; 7,6) ajouté ; (E7) le navire en volume, sa
+  passerelle et les bras d'ancrage sont dans le poste d'amarrage `Berth`, vide hors des scènes (PLAN.md, « (E7) Les
+  navires ») ; le bord du vide s'ouvre devant la passerelle posée (x 31,4 → 33,6) ; aucune lumière écrite (`lampe_quai_*`, `bureau`,
   `projecteur_navire` : Atmosphere, les lanternes de quai sont l'image `dock_lamp`) ; `passerelle` et `vers_ville` omises tant que
   `transport_garde` et `ville_marche` n'existent pas (écriteau sur la route de la ville) ; la manche à air est l'image animée
   `windsock_wave` ; les bords du quai, derrière les bras d'ancrage, le pylône, la grue et le sifflet, sont fermés (un décor de 6 m
@@ -2042,21 +2054,21 @@ transport_garde : 20 × 11 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-
           ===EE======DDDD=====CCCCCCCC====
           ===========DDDD=====CCCCCCCC====
           ================================
-          ================================
+          ================@===============
           =====FFFF=======================
-          =====FFFF=======@===============
+          =====FFFF=======================
           ================================
           HHHHHHHHHHHHHH====HHHHHHHHHHHHHH
+                          *
       
       
-      ========================================
-      ========================================
-      ========================================
+      
+      
       ========================================
       ========================================
       ========================================
    10 ========================================
-      ====================v===================
+      ========================================
 ```
 Légende des lettres : `A` gangway ; `B` garde_transport_rotor ; `C` deck_bridge ; `D` deck_crates_lashed ; `E` deck_vent ; `F` deck_hatch.
 <!-- /ascii:transport_garde -->
@@ -2067,6 +2079,12 @@ Légende des lettres : `A` gangway ; `B` garde_transport_rotor ; `C` deck_bridge
   manche à air `deck_vent` ; écoutille `deck_hatch` ; rotors en bout de bras. Pont étroit :
   passages de 1,2 m (instruction `passage 1.2`). **À l'acte 1, on n'y monte pas** (V1 : seuls les
   guerriers entrent là où se tiennent les guerriers) ; la carte sert aux actes suivants.
+- **Écarts de la carte construite (lot E7, `tools/exterior_recipes/transport_garde.py`)** : le vide entre le pont et le
+  quai fait 2,5 m (z 6 → 8,5) au lieu de 1 m (la côte du sol, lissée, refermait une bande de 1 m : le pont semblait
+  posé sur le quai) ; la passerelle de planches le franchit (2 × 2,5 m) ; la sortie « Descendre à quai » est au haut de
+  la passerelle, sur le pont (x 9 → 11, z 5,6 → 6,4), et l'on arrive (`Spawn`, `from_port`) à 2,6 m d'elle, au milieu
+  du pont (10 ; 3,4) ; le pont est le décalque du navire (`ships/garde_transport_deck`) sur la tôle du plan, sa coque
+  sous lui (`ships/garde_transport_hull`, le bas du flanc) ; la caméra ne bouge presque pas en x, bornes `Rect2(9.5, 2, 1, 5)`.
 
 <!-- ascii:barocupot -->
 ```text
@@ -2075,21 +2093,21 @@ barocupot : 14 × 8 m ; un caractère = 0.5 m (est-ouest) × 0.5 m (nord-sud) ; 
     0 
       
         +--o-------o--+---------+
-        |....BBBB..CCC|..DDsas..|
-    2   |.BB.AAAA.....|..DD.....|
+        |....BBBB..CCC|..DD..EEE|
+    2   |.BB.AAAA.....|..DDsas..|
         |.BB.AAAA.....|...*.....|
         |....AAAA.....|.........|
         |conseil......|.........|
     4   |.............|.........|
         |.............|.........|
         +------=------+----=----+
-        |coursive...............|
+        |coursive..FFFF.......GG|
     6   |......@................|
         |.......................|
         +-----------------------+
       
 ```
-Légende des lettres : `A` war_table ; `B` war_chair ; `C` map_cabinet ; `D` ship_ladder.
+Légende des lettres : `A` war_table ; `B` war_chair ; `C` map_cabinet ; `D` ship_ladder ; `E` ship_locker ; `F` ship_wall_bench ; `G` ship_water_can.
 <!-- /ascii:barocupot -->
 
 - **La salle du conseil de guerre** (6,75 × 3,75 m utiles) : la table aux cartes `war_table`, trois
@@ -2111,25 +2129,25 @@ region port
 passage 1.2
 echelle 0.5 0.5
 sol metal 2 1 18 6
-sol metal 0 7 20 11
+sol metal 0 8.5 20 11
 vide 0 0 20 1
-vide 0 6 9 7
-vide 11 6 20 7
+vide 0 6 9 8.5
+vide 11 6 20 8.5
 vide 0 1 2 6
 vide 18 1 20 6
 bord rambarde 2 1 18 1.4 1.1
 bord rambarde 2 5.6 9 6 1.1 pp
 bord rambarde 11 5.6 18 6 1.1 pp
-decor gangway 10 6.5 2 1 1.1 libre
+decor gangway 10 7.25 2 2.5 1.1 libre
 decor deck_bridge 14 2.2 4 1.4 3
 decor deck_crates_lashed 8.5 2.2 1.6 1.2 1.2
 decor deck_vent 4 2 0.6 0.6 1.4
 decor deck_hatch 5.5 4.4 1.2 0.6 0.4
 decor garde_transport_rotor 1.5 3.5 1 1 2 libre
 decor garde_transport_rotor 18.5 3.5 1 1 2 libre
-sortie vers_port 9 10.4 11 11 port from_transport_garde "Descendre à quai"
-marqueur Spawn 10 4.4 N
-marqueur from_port 10 4.4 N
+sortie vers_port 9 5.6 11 6.4 port from_transport_garde "Descendre à quai"
+marqueur Spawn 10 3.4 N
+marqueur from_port 10 3.4 N
 point trappe 5.5 3.6
 point proue 16.5 4.4
 ```
@@ -2148,7 +2166,7 @@ fenetre conseil N 2.5 window_porthole 0.6
 fenetre conseil N 6.5 window_porthole 0.6
 mural wallitem_garde_emblem conseil N 4.5 1.5 0.8
 mural wallitem_speaking_tube conseil O 3.0 1.4 0.3
-mural wallitem_ship_pipes sas N 12.0 1.6 1.6
+mural wallitem_ship_pipes sas N 11.8 1.6 1.6
 meuble war_table 4.5 2.7 2 1 0.8
 objet tea_set_tiny 4.5 2.7
 meuble war_chair 3.9 1.65 0.6 0.5 1.1
@@ -2156,6 +2174,9 @@ meuble war_chair 5.1 1.65 0.6 0.5 1.1
 meuble war_chair 2.6 2.7 0.6 0.5 1.1
 meuble map_cabinet 7.2 1.45 1.2 0.5 1.1
 meuble ship_ladder 10.0 1.65 1.0 1.0 3.0
+meuble ship_locker 12.3 1.5 0.8 0.5 1.9
+meuble ship_wall_bench 7.5 5.4 1.6 0.45 0.6
+meuble ship_water_can 12.4 5.45 0.5 0.4 0.6
 sortie echelle 9.5 2.1 10.5 2.6 entrepot from_barocupot "Remonter sur le pont"
 marqueur Spawn 4.5 6.0 N
 point conseil_chtholly 2.6 3.9
@@ -2290,12 +2311,16 @@ point talismans_centre 20 12
 point dos_a_dos 20 13.2
 point vue_nord 20 5.0
 point rocher 9.5 15.6
+point talisman_1 17 13.8
+point talisman_2 17 10.2
+point talisman_3 23 10.2
+point talisman_4 23 13.8
 lumiere cristal_reglage 20 12 0.5 cristal
 lumiere talismans 20 12 1.5 etoiles
 ```
 
 <!-- places:colline -->
-**Places de la vie** (lot C3 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher`) ; les places réservées, en `Life/Areas` avec leur rectangle (`cercle_talismans`) ; et, en plus du plan : `vers_entrepot` (20 ; 38.4 ; le pied du chemin, devant la sortie : par où l'on part vers l'entrepôt, et d'où l'on en arrive), `pied_de_colline` (20 ; 34 ; le bas du chemin, avant la première rampe : on s'y arrête avant de monter), `arbre_seul` (28.2 ; 10.8 ; au pied de l'arbre noueux solitaire, côté sommet (VIE.md, faune : la chouette y guette)), `merles` (11 ; 22 ; la bruyère de la terrasse haute, à l'ouest : les merles de l'aube (VIE.md, faune)), `papillons` (24.5 ; 22.5 ; l'herbe fleurie au-dessus de la dernière rampe : les papillons des jours doux (VIE.md, faune)), `chouette` (29.2 ; 10.2 ; la branche basse de l'arbre solitaire : la chouette de la nuit (VIE.md, faune)).
+**Places de la vie** (lot C3 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher`, `talisman_1`, `talisman_2`, `talisman_3`, `talisman_4`) ; les places réservées, en `Life/Areas` avec leur rectangle (`cercle_talismans`) ; et, en plus du plan : `vers_entrepot` (20 ; 38.4 ; le pied du chemin, devant la sortie : par où l'on part vers l'entrepôt, et d'où l'on en arrive), `pied_de_colline` (20 ; 34 ; le bas du chemin, avant la première rampe : on s'y arrête avant de monter), `arbre_seul` (28.2 ; 10.8 ; au pied de l'arbre noueux solitaire, côté sommet (VIE.md, faune : la chouette y guette)), `merles` (11 ; 22 ; la bruyère de la terrasse haute, à l'ouest : les merles de l'aube (VIE.md, faune)), `papillons` (24.5 ; 22.5 ; l'herbe fleurie au-dessus de la dernière rampe : les papillons des jours doux (VIE.md, faune)), `chouette` (29.2 ; 10.2 ; la branche basse de l'arbre solitaire : la chouette de la nuit (VIE.md, faune)).
 <!-- /places:colline -->
 
 ## 8. La forêt profonde (`foret_profonde`)
@@ -2448,6 +2473,37 @@ point souille 24 51
 point loups 68 52.5
 point lisiere_riviere 52 30.8
 ```
+
+<!-- places:foret_profonde -->
+**Places de la vie** (lot CF ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`refuge_creux`, `mare_cachee`, `gue`, `cerfs`, `souille`, `loups`, `lisiere_riviere`) ; les places réservées, en `Life/Areas` avec leur rectangle (`refuge`, `clairiere_cerfs`, `clairiere_loups`) ; et, en plus du plan : `vers_entrepot` (40 ; 2.6 ; le haut du sentier, devant la sortie : par où l'on part vers l'entrepôt, et d'où l'on en arrive), `course_entree` (40 ; 9 ; le sentier au sortir de l'entrepôt : le début de la course libre de Chtholly (ACTE1.md 10.2)), `fourche_refuge` (42.4 ; 21 ; la fourche du refuge, au nord du gué : on quitte le sentier de la montagne vers l'ouest), `gue_nord` (43.4 ; 22.8 ; la rive nord du gué : on y puise l'eau du bain (V3), les petites s'y mouillent les pieds), `gue_sud` (45.6 ; 31.2 ; la rive sud du gué, au pied du sentier de la montagne), `refuge_seuil` (16 ; 41.2 ; devant le creux du chêne, regard au nord : où Chtholly s'écroule et s'assied (ACTE1.md 10.2, `refuge_creux`)), `refuge_ithea` (18.8 ; 40.6 ; à côté du creux : où Ithea s'assoit sans rien demander (ACTE1.md 10.2)), `refuge_retour` (22.6 ; 41 ; la sortie du refuge vers le sentier : par où Ithea ramène Chtholly), `renard_berge` (50 ; 31.4 ; la berge sud où le renard s'arrête avant de traverser (VIE.md, faune)), `clairiere_cerfs_centre` (63 ; 13 ; le milieu de la clairière : les cerfs y broutent à l'aube et au soir (VIE.md, faune)).
+<!-- /places:foret_profonde -->
+
+**Écarts au plan (lot CF ; `tools/exterior_recipes/foret_profonde.py`, `DEVIATIONS`)** : le bloc `plan` ci-dessus n'est pas
+modifié ; la carte écrite s'en écarte ainsi.
+
+- **La rivière est peinte au ras du sol**, sans lit à −0,5 m : sur une rivière en diagonale, la grille d'un mètre en faisait une
+  scie de marches de 0,5 m (faces de terre à lèvre d'herbe tous les deux mètres), lue comme des terrasses en plaques
+  (`docs/QUALITE.md`). Le lit (`stream_bed`) et l'eau basse sont peints en méandres sur les centres des six rectangles du plan,
+  on y marche ; le gué garde le tronc `log_bridge_b` et des pierres plates. Les deux ressauts à +1 m gardent le relief de la carte.
+- **Les ressauts** (nord-est, sud-ouest) ont des contours irréguliers (tronçons de 3 à 6 m décalés d'un ou deux mètres) et des faces
+  en talus de terre (la roche en briques se lisait comme un mur de soutènement), habillées de fougères, de buissons et de rochers
+  moussus ; on ne les gravit pas.
+- **Les chemins** sont peints en terre de sous-bois sur leur bande de 1,8 m (dans la bande libre de 3 m), pas en rectangles de
+  `path_overgrown`, et jamais sur l'eau.
+- **La sortie `vers_montagne`** n'est pas posée tant que `montagne` n'existe pas ; un écriteau (en 77 ; 44,6) ferme le sentier de
+  l'est.
+- **Les lisières** (règle de pose, `docs/QUALITE.md`) : `bord foret` est posé en trois chaînes de pans de forêt qui se chevauchent
+  (nord : un rideau continu derrière à z −2 et un rang à la lisière ; ouest ; est) ; aucun bout de pan n'est à découvert : un pan
+  plus proche le recouvre, ou un grand tronc de premier plan (nord), ou un grand conifère et un feuillu (ouest et est) ; le sud est
+  du premier plan (conifères, buissons, fougères) comme le plan le dit.
+- **Les images** : `refuge_oak`, `forest_wall_deep`, `grove_dense`, `fallen_pine`, `rowan`, `hidden_pool_a` et `_b`,
+  `log_bridge_b`, `river_bank` et `anim/river_rapids` sont des remplaçants du lot R5 (`tools/hd2d_foret.py`, manifeste), dérivés des
+  images livrées quand c'est possible ; une image livrée les remplace sans toucher au code.
+- **La lumière** : aucune lumière dans la carte (pénombre verte et or d'Atmosphere, bleu sombre au couchant) ; les rais de lumière
+  (`light_shaft_a`, `light_shaft_b`) sont posés sur le refuge et sur la clairière des cerfs.
+- **Densité** : 53 à 93 éléments par écran (le plan dit 90 à 120, la leçon de qualité 40 à 70) ; le test impose 40 à 100.
+- **Objets à examiner** (`data/texts/foret_profonde.json`) : `refuge_creux`, `mare_cachee`, `gue`, `lisiere_riviere`, `cerfs`,
+  `souille`, `loups`.
 
 ## 9. Le centre-ville (`ville_haute`, `ville_marche` et six intérieurs)
 

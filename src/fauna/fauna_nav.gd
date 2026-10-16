@@ -2,7 +2,7 @@ class_name FaunaNav
 extends RefCounted
 ## Navigation de la faune (lot E5) : où un animal peut poser le pied, par la praticabilité du sol
 ## de la carte (MapGround.is_walkable, level_at), jamais par une grille à part. Une carte sans
-## MapGround (sol plat d'essai, ancienne île) laisse tout permis : seule la collision compte.
+## MapGround (sol plat d'essai) laisse tout permis : seule la collision compte.
 ##
 ## Un pas est permis si la case d'arrivée est praticable (ni vide, ni eau dormante, ni hors de la
 ## carte) et si le palier ne change pas de plus d'un cran (0,5 m : une pente, pas une falaise ;

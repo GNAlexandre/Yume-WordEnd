@@ -2,15 +2,15 @@ class_name WorldAtlas
 extends RefCounted
 ## L'atlas du monde (lot X1, PLAN.md section 3, « Ajouter une île ») : les mondes, leurs îles,
 ## les cartes de chaque île, ses lieux, ses ports et ses règles, lus dans les données. Classe
-## statique (comme QuestData) : rien n'y vit d'une partie à l'autre, aucun nœud ni autoload.
+## statique (comme StoryData) : rien n'y vit d'une partie à l'autre, aucun nœud ni autoload.
 ##
 ## - Un monde : data/world/worlds/<world_id>.json (« regule_aire », « surface ») : name, islands
 ##   (ses îles, dans l'ordre), rules (règles communes, facultatives).
 ## - Une île : data/world/islands/<island_id>.json : name, number (facultatif), maps (ses cartes),
 ##   arrival_map (carte d'arrivée par défaut), places (graphe des lieux : name, maps, links en
-##   marmer, start_known), ports (name, map, marker), rules (facultatives), legacy (facultatif :
-##   l'ancienne île, retirée en phase 5). Format détaillé : PLAN.md, « Ajouter une île ».
-## - Une clé inconnue rend le fichier invalide (sauf « _… », commentaire), comme pour les quêtes :
+##   marmer, start_known), ports (name, map, marker), rules (facultatives). Format détaillé :
+##   PLAN.md, « Ajouter une île ».
+## - Une clé inconnue rend le fichier invalide (sauf « _… », commentaire), comme pour les récits :
 ##   un fichier invalide est ignoré, avec un avertissement qui dit pourquoi. problems() vérifie
 ##   aussi les cartes (existantes), les marqueurs des ports (présents dans la scène) et les liens.
 ## - Les fichiers sont lus une fois et gardés en cache (clear_cache() : les tests).
@@ -44,7 +44,6 @@ const ISLAND_KEYS := {
 	"places": [TYPE_DICTIONARY, true],
 	"ports": [TYPE_DICTIONARY, true],
 	"rules": [TYPE_DICTIONARY, false],
-	"legacy": [TYPE_BOOL, false],
 }
 ## Clés d'un lieu (graphe de la carte de l'île).
 const PLACE_KEYS := {
@@ -125,11 +124,6 @@ static func island_name(island_id: StringName) -> String:
 ## Numéro de l'île (68) ; 0 si elle n'en a pas (la surface) ou si elle est inconnue.
 static func island_number(island_id: StringName) -> int:
 	return int(_island(island_id).get("number", 0))
-
-
-## Vrai pour l'ancienne île (« legacy » : retirée en phase 5 avec sa carte).
-static func is_legacy(island_id: StringName) -> bool:
-	return bool(_island(island_id).get("legacy", false))
 
 
 # --- Cartes, lieux, ports ---------------------------------------------------------------------
@@ -256,9 +250,9 @@ static func map_of_node(node: Node) -> Map:
 	return null
 
 
-## Vrai si un Timere peut apparaître à l'endroit de node (vagues, arène, Timeres libres, banc de
-## performance) : selon les règles de la carte qui le contient, ou, s'il n'est pas dans une carte
-## (ajouté à côté, sous Game), de la carte courante ; sans carte (tests), rien ne l'interdit.
+## Vrai si un Timere peut apparaître à l'endroit de node (rencontre, banc de performance) : selon
+## les règles de la carte qui le contient, ou, s'il n'est pas dans une carte (ajouté à côté, sous
+## Game), de la carte courante ; sans carte (tests), rien ne l'interdit.
 static func enemies_allowed_at(node: Node) -> bool:
 	var map := map_of_node(node)
 	if map == null and node != null and node.is_inside_tree():

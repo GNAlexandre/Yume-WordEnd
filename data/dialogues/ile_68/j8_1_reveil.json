@@ -1,0 +1,67 @@
+{
+  "_comment": "ACTE1.md 8.1 (s. 16) : deux éclats de la nuit ; Lakhesh polie, Collon et ses ragots.",
+  "id": "j8_1_reveil",
+  "start": "eclats",
+  "nodes": {
+    "eclats": {
+      "speaker": "",
+      "text": "{player} ouvre les yeux à l'infirmerie. Deux souvenirs de la nuit lui reviennent d'un coup : un front, et « cinq jours ».",
+      "next": "eclats_2"
+    },
+    "eclats_2": {
+      "speaker": "{player}",
+      "text": "… Non. Non, non, non."
+    },
+    "cache": {
+      "speaker": "",
+      "text": "Elle se cache sous la couverture et s'y roule en boule. Puis elle frappe l'oreiller, deux fois."
+    },
+    "visite": {
+      "speaker_id": "lakhesh",
+      "text": "Bonjour, {player}. Tu veux manger quelque chose ? Je peux aller chercher du pain.",
+      "next": "visite_2"
+    },
+    "visite_2": {
+      "speaker_id": "collon",
+      "text": "Willem n'a pas dormi dans sa chambre ! Pas du tout ! Je suis allée voir !",
+      "next": "visite_3"
+    },
+    "visite_3": {
+      "speaker_id": "collon",
+      "text": "Hé… T'es toute rouge !",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "C'est la fièvre.",
+          "next": "fievre"
+        },
+        {
+          "text": "Dehors !",
+          "next": "dehors"
+        }
+      ]
+    },
+    "fievre": {
+      "speaker": "{player}",
+      "text": "C'est la fièvre.",
+      "next": "fievre_2"
+    },
+    "fievre_2": {
+      "speaker_id": "lakhesh",
+      "text": "Alors il faut te reposer. Viens, Collon, on la laisse."
+    },
+    "dehors": {
+      "speaker": "{player}",
+      "text": "Dehors ! Toutes les deux !",
+      "next": "dehors_2"
+    },
+    "dehors_2": {
+      "speaker_id": "collon",
+      "text": "D'accord, d'accord ! Mais il n'a vraiment pas dormi dans sa chambre !"
+    }
+  }
+}

@@ -1,0 +1,442 @@
+{
+  "_comment": "ACTE1.md 8.5 (s. 19) : Nygglatho raconte Willem au réfectoire (séquence tenue) ; les petites courent à l'infirmerie et envahissent son lit (piles « tombe ») ; la main rendue, {player} arrive à la porte de l'infirmerie (adapté) : personne ne la voit ; elle recule. La fugue (8.6) l'attend sur la colline.",
+  "title": "La réunion, l'infirmerie envahie",
+  "day": 8,
+  "after": [
+    "j8_4_cristal"
+  ],
+  "map": "entrepot_rdc",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "nygglatho",
+    "willem",
+    "collon",
+    "lakhesh",
+    "tiat",
+    "pannibal",
+    "almita",
+    "fairy_01",
+    "fairy_02",
+    "fairy_03",
+    "fairy_04",
+    "fairy_05",
+    "fairy_12",
+    "ithea",
+    "nephren"
+  ],
+  "steps": [
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0
+    },
+    {
+      "do": "player",
+      "visible": false
+    },
+    {
+      "do": "slot",
+      "slot": "apres_midi",
+      "time": 0
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "refectoire_porte_cuisine"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "infirmerie_lit_3",
+      "outfit": "maison",
+      "anim": "dort"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "refectoire_chaise_b04",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "refectoire_chaise_b05",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "refectoire_chaise_c04",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "refectoire_chaise_c05",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "almita",
+      "at": "refectoire_chaise_b06",
+      "outfit": "vie",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_01",
+      "at": "refectoire_chaise_c06",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_02",
+      "at": "refectoire_chaise_b07",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_03",
+      "at": "refectoire_chaise_c07",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_04",
+      "at": "refectoire_chaise_b08",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_05",
+      "at": "refectoire_chaise_c08",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_12",
+      "at": "refectoire_chaise_b11",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "refectoire_chaise_c10",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "refectoire_chaise_b10",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "refectoire_bout_ouest",
+      "facing": "east",
+      "outfit": "vie"
+    },
+    {
+      "do": "camera",
+      "to": "refectoire_allee",
+      "offset": [
+        -1.0,
+        0.0
+      ],
+      "distance": 15,
+      "time": 0
+    },
+    {
+      "do": "wait",
+      "time": 0.8
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.2
+    },
+    {
+      "do": "dialogue",
+      "node": "recit"
+    },
+    {
+      "do": "anim",
+      "who": "collon",
+      "anim": "saut"
+    },
+    {
+      "do": "anim",
+      "who": "tiat",
+      "anim": "saut"
+    },
+    {
+      "do": "anim",
+      "who": "pannibal",
+      "anim": "saut",
+      "wait": true
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "refectoire_porte_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "lakhesh",
+      "to": "refectoire_porte_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "refectoire_porte_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "refectoire_porte_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "almita",
+      "to": "refectoire_porte_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_01",
+      "to": "refectoire_porte_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_02",
+      "to": "refectoire_porte_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_03",
+      "to": "refectoire_porte_est",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "wait",
+      "time": 1.6
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.8
+    },
+    {
+      "do": "leave",
+      "who": "nygglatho"
+    },
+    {
+      "do": "leave",
+      "who": "nephren"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_04"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_05"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_12"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "infirmerie_lit_3",
+      "offset": [
+        -0.35,
+        0.05
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "infirmerie_lit_3",
+      "offset": [
+        0.35,
+        -0.05
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "infirmerie_lit_3",
+      "offset": [
+        0.0,
+        -0.45
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "infirmerie_lit_3",
+      "offset": [
+        -1.4,
+        0.4
+      ],
+      "facing": "infirmerie_lit_3"
+    },
+    {
+      "do": "place",
+      "who": "almita",
+      "at": "infirmerie_lit_3",
+      "offset": [
+        1.3,
+        0.5
+      ],
+      "facing": "infirmerie_lit_3"
+    },
+    {
+      "do": "place",
+      "who": "fairy_01",
+      "at": "infirmerie_lit_3",
+      "offset": [
+        -1.1,
+        1.3
+      ],
+      "facing": "infirmerie_lit_3"
+    },
+    {
+      "do": "place",
+      "who": "fairy_02",
+      "at": "infirmerie_lit_3",
+      "offset": [
+        0.3,
+        1.6
+      ],
+      "facing": "infirmerie_lit_3"
+    },
+    {
+      "do": "place",
+      "who": "fairy_03",
+      "at": "infirmerie_lit_3",
+      "offset": [
+        1.4,
+        1.5
+      ],
+      "facing": "infirmerie_lit_3"
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "infirmerie_lit_3",
+      "offset": [
+        1.6,
+        0.9
+      ],
+      "facing": "west",
+      "anim": "assis"
+    },
+    {
+      "do": "player",
+      "visible": true
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "couloir_centre",
+      "facing": "east"
+    },
+    {
+      "do": "camera_reset",
+      "time": 0
+    },
+    {
+      "do": "wait",
+      "time": 0.8
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.8
+    },
+    {
+      "do": "hint",
+      "text": "hint_vacarme"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "reach": "epie_infirmerie",
+      "radius": 1.6
+    },
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "hint"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "epie_infirmerie",
+      "facing": "infirmerie_lit_3"
+    },
+    {
+      "do": "camera",
+      "to": "infirmerie_lit_3",
+      "offset": [
+        -0.6,
+        0.8
+      ],
+      "distance": 10,
+      "time": 1.0,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "lit"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "epie_infirmerie",
+      "offset": [
+        -1.6,
+        -0.3
+      ],
+      "facing": "east"
+    },
+    {
+      "do": "camera_reset",
+      "time": 0.8
+    }
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "_comment": "ACTE1.md 7.1 (original) : le départ dans la brume. Sous le porche, Nygglatho remet à chacune son épée emmaillotée ; marche avec Ithea et Nephren jusqu'au chemin de l'est (vers_sentier) ; vue de la fenêtre de Willem, les premières gouttes. Les aînées sont absentes du jour (V1) : la scène les réserve. Le temps passe ensuite sans {player} (séquences 7.2 et 7.3).",
+  "title": "Le départ dans la brume",
+  "day": 7,
+  "slot": "aube",
+  "map": "entrepot",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "porte_seuil",
+    "radius": 3.0
+  },
+  "present": [
+    "nygglatho",
+    "ithea",
+    "nephren",
+    "willem"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "porte_seuil",
+      "offset": [
+        0.6,
+        0.2
+      ],
+      "facing": "south",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "porte_seuil",
+      "offset": [
+        -1.5,
+        2.3
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "porte_seuil",
+      "offset": [
+        1.7,
+        2.5
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "porte_seuil",
+      "offset": [
+        0.0,
+        1.7
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "camera",
+      "to": "porte_seuil",
+      "offset": [
+        0.2,
+        1.8
+      ],
+      "distance": 11,
+      "time": 1.0,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "epees"
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.0
+    },
+    {
+      "do": "follow",
+      "who": "ithea",
+      "distance": 1.8,
+      "stop_beyond": 40,
+      "gait": "course"
+    },
+    {
+      "do": "follow",
+      "who": "nephren",
+      "distance": 2.8,
+      "stop_beyond": 40,
+      "gait": "course"
+    },
+    {
+      "do": "hint",
+      "text": "hint_sentier"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "reach": "vers_sentier",
+      "radius": 3.5
+    },
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.0
+    },
+    {
+      "do": "unfollow",
+      "who": "ithea"
+    },
+    {
+      "do": "unfollow",
+      "who": "nephren"
+    },
+    {
+      "do": "leave",
+      "who": "ithea"
+    },
+    {
+      "do": "leave",
+      "who": "nephren"
+    },
+    {
+      "do": "leave",
+      "who": "nygglatho"
+    },
+    {
+      "do": "player",
+      "visible": false
+    },
+    {
+      "do": "go_to",
+      "map": "entrepot_etage",
+      "marker": "Spawn"
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "willem_lit"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "willem_fenetre",
+      "facing": "north",
+      "outfit": "maison"
+    },
+    {
+      "do": "wait",
+      "time": 2.8
+    },
+    {
+      "do": "camera",
+      "to": "willem_fenetre",
+      "offset": [
+        0.4,
+        1.6
+      ],
+      "distance": 8,
+      "time": 0
+    },
+    {
+      "do": "moment",
+      "weather": "pluie",
+      "time": 4.0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.4
+    },
+    {
+      "do": "dialogue",
+      "node": "fenetre"
+    },
+    {
+      "do": "wait",
+      "time": 1.0
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.2
+    },
+    {
+      "do": "leave",
+      "who": "willem"
+    },
+    {
+      "do": "go_to",
+      "map": "entrepot",
+      "marker": "from_entrepot_rdc"
+    },
+    {
+      "do": "wait",
+      "time": 2.8
+    }
+  ]
+}

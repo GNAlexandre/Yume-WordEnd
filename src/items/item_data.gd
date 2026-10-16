@@ -1,7 +1,8 @@
 class_name ItemData
 extends Resource
-## Objet d'inventaire. Fichiers : data/items/<id>.tres (le nom du fichier est l'id).
-## Propriétaire : L7.
+## Objet d'inventaire. Fichiers : data/items/<id>.tres (le nom du fichier est l'id), puis les
+## dossiers d'add_search_dir (tests). Propriétaire : L7. (F1) Les objets à ramasser de l'ancienne
+## île sont partis avec elle : data/items/ attend ceux du récit.
 ##
 ## Piles : un objet empilable (stackable) occupe une case par tranche de max_stack ; un objet
 ## non empilable occupe une case par exemplaire. GameState garde le total par objet (schéma de
@@ -9,6 +10,9 @@ extends Resource
 
 ## Dossier des données d'objets.
 const DATA_DIR := "res://data/items"
+
+## Dossiers où find() cherche <id>.tres, dans l'ordre (les tests en ajoutent).
+static var _dirs: Array[String] = [DATA_DIR]
 
 ## Identifiant, ex. &"page_fragment" (clé de GameState.add_item / count).
 @export var id: StringName
@@ -26,14 +30,28 @@ const DATA_DIR := "res://data/items"
 @export var color: Color = Color(1.0, 0.86, 0.45)
 
 
-## Données de l'objet item_id (data/items/<id>.tres), null s'il est inconnu.
+## Données de l'objet item_id (<dossier>/<id>.tres : data/items, puis les dossiers
+## d'add_search_dir), null s'il est inconnu.
 static func find(item_id: StringName) -> ItemData:
 	if not String(item_id).is_valid_identifier():
 		return null
-	var path := "%s/%s.tres" % [DATA_DIR, item_id]
-	if not ResourceLoader.exists(path):
-		return null
-	return load(path) as ItemData
+	for dir: String in _dirs:
+		var path := "%s/%s.tres" % [dir, item_id]
+		if ResourceLoader.exists(path):
+			return load(path) as ItemData
+	return null
+
+
+## (F1) Ajoute un dossier où chercher les objets (tests : tests/data/items).
+static func add_search_dir(dir: String) -> void:
+	if not _dirs.has(dir):
+		_dirs.append(dir)
+
+
+## (F1) Retire un dossier ajouté par add_search_dir (data/items reste toujours).
+static func remove_search_dir(dir: String) -> void:
+	if dir != DATA_DIR:
+		_dirs.erase(dir)
 
 
 ## Nom affiché de item_id, ou son id s'il est inconnu.

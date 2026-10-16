@@ -1,7 +1,7 @@
 extends "res://tests/stubs/l8_save_test.gd"
-## SaveManager, fichier (L8) : aller-retour identique champ à champ, schéma courant (v2 depuis le
-## Lot Q), fichier absent, fichier corrompu → nouvelle partie + .bak, écriture sûre, export /
-## import JSON.
+## SaveManager, fichier (L8) : aller-retour identique champ à champ, schéma courant ((F1) v4,
+## sans l'ancienne île), fichier absent, fichier corrompu → nouvelle partie + .bak, écriture sûre,
+## export / import JSON. Les parties de l'ancienne île : test_save_migration.gd.
 
 const ISO_UTC := "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
 
@@ -11,25 +11,18 @@ func _fill_state() -> void:
 	GameState.skin_id = &"ithea"
 	GameState.max_hp = 6
 	GameState.position = Vector3(12.25, 1.5, -4.75)
-	GameState.zone = &"forest"
+	GameState.map = &"essai"
 	GameState.add_item(&"page_fragment", 3)
 	GameState.add_item(&"flower_blue")
 	GameState.set_flag(&"quest_pages_accepted")
 	GameState.set_flag(&"met_smith", false)
-	GameState.set_quest_state(&"pages", &"active")
-	GameState.set_quest_state(&"flowers", &"done")
 	GameState.mark_pickup_collected(&"forest_page_1")
 	GameState.mark_pickup_collected(&"beach_shell_2")
-	GameState.record_score(&"dunes", 640, 6)
-	GameState.record_score(&"dunes", 300, 4)
-	GameState.record_score(&"dunes", 120, 2)
-	GameState.record_score(&"dunes", 90, 1)
-	GameState.set_quest_step(&"pages", &"deliver", 2)
-	GameState.tracked_quest = &"pages"
 	GameState.moment = &"nuit"
 	GameState.weather = &"pluie"
 	GameState.day = 4
 	GameState.slot = &"nuit"
+	GameState.mark_scene_done(&"j1_1_port")
 
 
 func test_no_file_means_no_save() -> void:
@@ -59,8 +52,7 @@ func test_round_trip_is_identical_field_by_field() -> void:
 		assert_eq(after[key], before[key], "champ %s" % key)
 	assert_eq(GameState.position, Vector3(-51.37, 0.23, 9.81))
 	assert_eq(after["collected_pickups"], ["beach_shell_2", "forest_page_1"])
-	assert_eq(after["best_scores"], {"dunes": {"score": 640, "wave": 6, "games": 4}})
-	assert_eq(GameState.best_score(&"dunes"), 640)
+	assert_true(GameState.is_scene_done(&"j1_1_port"))
 	assert_true(GameState.is_pickup_collected(&"forest_page_1"))
 	assert_eq(GameState.skin_id, &"ithea")
 	assert_eq(GameState.max_hp, 6)
@@ -83,7 +75,7 @@ func test_file_follows_the_current_schema() -> void:
 	assert_between(age, -2.0, 60.0, "saved_at est l'heure UTC de l'écriture")
 	assert_eq(data["position"], [12.25, 1.5, -4.75])
 	assert_eq(data["inventory"], {"page_fragment": 3.0, "flower_blue": 1.0})
-	assert_eq(data["best_scores"], {"dunes": {"score": 640.0, "wave": 6.0, "games": 4.0}})
+	assert_eq(data["map"], "essai")
 
 
 func test_save_replaces_through_a_temporary_file() -> void:
@@ -122,7 +114,7 @@ func test_corrupted_file_starts_new_game_and_keeps_backup() -> void:
 	assert_push_error("Sauvegarde illisible")
 	assert_signal_emitted(EventBus, "game_loaded", "nouvelle partie lancée")
 	assert_eq(GameState.count(&"page_fragment"), 0, "partie remise à zéro")
-	assert_eq(GameState.best_score(&"dunes"), 0)
+	assert_eq(GameState.day, 0)
 	assert_eq(GameState.skin_id, &"enfant", "skin courant gardé")
 	var backup := SaveManager.backup_path()
 	assert_eq(backup, SaveManager.save_path + ".bak")
@@ -140,12 +132,13 @@ func test_every_kind_of_damage_is_recovered() -> void:
 		"[1, 2]",
 		'{"version": "1"}',
 		'{"version": -1}',
-		'{"version": 1, "inventory": [1]}',
-		'{"version": 1, "max_hp": 0}',
-		'{"version": 1, "position": [1, 2]}',
-		'{"version": 1, "flags": {"a": "oui"}}',
-		'{"version": 1, "best_scores": {"dunes": {"score": "beaucoup"}}}',
-		'{"version": 1, "skin": null}',
+		'{"version": 4, "inventory": [1]}',
+		'{"version": 4, "max_hp": 0}',
+		'{"version": 4, "position": [1, 2]}',
+		'{"version": 4, "flags": {"a": "oui"}}',
+		'{"version": 4, "scenes_done": "j1_1_port"}',
+		'{"version": 4, "skin": null}',
+		'{"version": 3, "day": 2, "inventory": [1]}',
 	]
 	for text: String in damaged:
 		write_save_text(text)
@@ -180,11 +173,11 @@ func test_invalid_import_is_refused_without_touching_state() -> void:
 		'"texte"': ERR_PARSE_ERROR,
 		'{"version": 99}': ERR_INVALID_DATA,
 		'{"version": 1.5}': ERR_INVALID_DATA,
-		'{"version": 1, "max_hp": "beaucoup"}': ERR_INVALID_DATA,
-		'{"version": 1, "inventory": {"page_fragment": -2}}': ERR_INVALID_DATA,
-		'{"version": 1, "collected_pickups": "forest_page_1"}': ERR_INVALID_DATA,
-		'{"version": 1, "quests": {"pages": true}}': ERR_INVALID_DATA,
-		'{"version": 1, "best_scores": {"dunes": 640}}': ERR_INVALID_DATA,
+		'{"version": 4, "max_hp": "beaucoup"}': ERR_INVALID_DATA,
+		'{"version": 4, "inventory": {"page_fragment": -2}}': ERR_INVALID_DATA,
+		'{"version": 4, "collected_pickups": "forest_page_1"}': ERR_INVALID_DATA,
+		'{"version": 4, "day": -1}': ERR_INVALID_DATA,
+		'{"version": 3, "day": 1, "calendar": {"1": 2}}': ERR_INVALID_DATA,
 	}
 	watch_signals(EventBus)
 	for text: String in refused:
@@ -198,9 +191,9 @@ func test_invalid_import_is_refused_without_touching_state() -> void:
 
 
 func test_unknown_fields_are_tolerated() -> void:
-	var text := '{"version": 1, "skin": "enfant", "day_phase": "night", "best_scores": '
+	var text := '{"version": 4, "skin": "enfant", "day_phase": "night", "best_scores": '
 	text += '{"dunes": {"score": 50, "wave": 2, "games": 1, "date": "2026-10-05"}}}'
 	assert_eq(SaveManager.import_json(text), OK, "champs ajoutés plus tard : ignorés")
 	assert_eq(GameState.skin_id, &"enfant")
-	assert_eq(GameState.best_score(&"dunes"), 50)
+	assert_false(GameState.to_dict().has("best_scores"), "(F1) champ de l'ancienne île : ignoré")
 	assert_eq(GameState.max_hp, GameState.DEFAULT_MAX_HP, "champ absent : valeur par défaut")

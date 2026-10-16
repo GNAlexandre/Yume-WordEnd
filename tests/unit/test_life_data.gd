@@ -129,24 +129,25 @@ func test_line_follows_slot_day_and_condition() -> void:
 func test_condition_lines_come_first() -> void:
 	var dir := "user://e4_life_test"
 	DirAccess.make_dir_recursive_absolute(dir)
-	# Le boulanger n'a pas d'emploi du temps : on lui en écrit un, la ligne de base d'abord, puis
+	# Le serveur du café ((F1) le boulanger est parti) n'a pas d'emploi du temps : on lui en écrit
+	# un, la ligne de base d'abord, puis
 	# sa variation (un drapeau) ; la variation l'emporte quand elle est vraie.
-	var file := FileAccess.open(dir.path_join("baker.json"), FileAccess.WRITE)
+	var file := FileAccess.open(dir.path_join("cat_waiter.json"), FileAccess.WRITE)
 	var base := _line({})
 	var flagged := _line({"place": "lecture_table", "if": {"flag": "e4_test"}})
 	file.store_string(JSON.stringify({"lines": [base, flagged]}))
 	file.close()
 	LifeData.add_dir(dir)
-	assert_has(LifeData.cast(), &"baker")
-	assert_eq(LifeData.schedule_problems(&"baker"), PackedStringArray())
-	assert_eq(LifeData.line_for(&"baker", &"matin", 0)["place"], &"refectoire_table_a")
+	assert_has(LifeData.cast(), &"cat_waiter")
+	assert_eq(LifeData.schedule_problems(&"cat_waiter"), PackedStringArray())
+	assert_eq(LifeData.line_for(&"cat_waiter", &"matin", 0)["place"], &"refectoire_table_a")
 	GameState.set_flag(&"e4_test")
-	assert_eq(LifeData.line_for(&"baker", &"matin", 0)["place"], &"lecture_table", "variation")
-	assert_eq(LifeData.line_for(&"baker", &"nuit", 0), {}, "nulle part la nuit")
+	assert_eq(LifeData.line_for(&"cat_waiter", &"matin", 0)["place"], &"lecture_table", "variation")
+	assert_eq(LifeData.line_for(&"cat_waiter", &"nuit", 0), {}, "nulle part la nuit")
 	LifeData.remove_dir(dir)
-	DirAccess.remove_absolute(dir.path_join("baker.json"))
+	DirAccess.remove_absolute(dir.path_join("cat_waiter.json"))
 	DirAccess.remove_absolute(dir)
-	assert_false(LifeData.cast().has(&"baker"))
+	assert_false(LifeData.cast().has(&"cat_waiter"))
 
 
 func test_slots_and_light() -> void:

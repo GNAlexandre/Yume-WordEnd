@@ -1,0 +1,24 @@
+{
+  "id": "j10_1_rater",
+  "start": "debut",
+  "nodes": {
+    "debut": {
+      "speaker_id": "willem",
+      "text": "Même chose qu'hier. Regarde le bâton, pas moi. Le bâton dit tout ce qu'il va faire.",
+      "next": "debut_2"
+    },
+    "debut_2": {
+      "speaker": "",
+      "text": "Le bâton. Pas lui. Tu le sais très bien. Alors pourquoi tes yeux remontent-ils toujours vers son visage ?"
+    },
+    "cri": {
+      "speaker": "",
+      "text": "Raté. Encore raté. Une troisième fois. Quelque chose déborde, d'un coup.",
+      "next": "cri_2"
+    },
+    "cri_2": {
+      "speaker": "{player}",
+      "text": "AAAAAAAAAAH !"
+    }
+  }
+}

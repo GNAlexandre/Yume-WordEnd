@@ -1,0 +1,34 @@
+{
+  "_comment": "ACTE1.md 8.4 (s. 18) : séquence, sans choix ; « dans trois jours » n'est pas chiffré (ACTE1.md 1.2).",
+  "id": "j8_4_cristal",
+  "start": "voix",
+  "nodes": {
+    "voix": {
+      "speaker": "",
+      "text": "Le cristal de communication luit d'une lumière bleue.",
+      "next": "voix_2"
+    },
+    "voix_2": {
+      "speaker": "Voix du cristal",
+      "text": "Ici la Garde ailée. Le départ est confirmé : le jour prévu, à la huitième cloche.",
+      "next": "voix_3"
+    },
+    "voix_3": {
+      "speaker_id": "nygglatho",
+      "text": "Bien reçu. Elles seront prêtes."
+    },
+    "pleure": {
+      "speaker": "",
+      "text": "La lueur s'éteint. Nygglatho reste de dos, sans bouger. Ses épaules tremblent."
+    },
+    "sourire": {
+      "speaker": "",
+      "text": "Elle s'essuie les yeux d'un revers de manche. Le sourire revient.",
+      "next": "sourire_2"
+    },
+    "sourire_2": {
+      "speaker_id": "nygglatho",
+      "text": "J'arrive. Et on ne court pas dans l'escalier !"
+    }
+  }
+}

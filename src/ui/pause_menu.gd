@@ -2,7 +2,7 @@ extends Control
 ## Menu pause (L10), enfant du HUD (game.tscn est figé). L'action pause (Échap, Start, bouton
 ## tactile Pause) est lue dans _unhandled_input : l'inventaire ouvert la consomme avant (L7), et
 ## le menu ne s'ouvre ni pendant un dialogue (dialogue_started → dialogue_ended) ni quand le jeu
-## est déjà en pause (inventaire, fin d'arène). Ouvert : get_tree().paused, et ce nœud reste
+## est déjà en pause (inventaire, calendrier). Ouvert : get_tree().paused, et ce nœud reste
 ## actif (PROCESS_MODE_ALWAYS).
 ## - Reprendre ; Sauvegarder : EventBus.save_requested, confirmé par SaveManager.saved ;
 ##   Commandes : rappel clavier et manette.
@@ -48,7 +48,7 @@ const CONTROLS := [
 	["Zoom", "Molette", "Stick droit (haut, bas)"],
 	["Verrouiller une cible", "Clic molette", "R3 (clic du stick)"],
 	["Sac", "I", "Y"],
-	["Journal de quêtes, calendrier", "Tab ou L", "Select"],
+	["Calendrier", "Tab ou L", "Select"],
 	["Pause", "Échap", "Start"],
 	["Performances", "F3", "—"],
 ]
@@ -113,7 +113,7 @@ func is_open() -> bool:
 
 
 ## (U1) « Jour n · moment » (GameState.day, GameState.slot, sinon GameState.moment) ; "" sans
-## jour (day = 0 : l'ancienne île, hors du calendrier de l'acte).
+## jour (day = 0 : hors de l'acte en jours, cartes d'essai).
 static func day_text() -> String:
 	if GameState.day <= 0:
 		return ""
@@ -122,7 +122,7 @@ static func day_text() -> String:
 	return "Jour %d" % GameState.day + (" · " + slot_name if not slot_name.is_empty() else "")
 
 
-## Hors dialogue et si rien d'autre n'a mis le jeu en pause (inventaire, fin d'arène).
+## Hors dialogue et si rien d'autre n'a mis le jeu en pause (inventaire, calendrier).
 func can_open() -> bool:
 	return not visible and not _in_dialogue and is_inside_tree() and not get_tree().paused
 

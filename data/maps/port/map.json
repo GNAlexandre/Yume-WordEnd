@@ -26,6 +26,9 @@
   },
   "skirt": 16,
   "barrier": true,
+  "barrier_gaps": [
+    [31.4, 3.0, 2.200000000000003, 3.0]
+  ],
   "materials": {
     "herbe_drue": {
       "label": "Herbe drue et molle (grass_b)",

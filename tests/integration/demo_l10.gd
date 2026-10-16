@@ -1,12 +1,13 @@
 extends Node3D
 ## Démo du Lot 10 (tests/integration/demo_l10.tscn, F6 dans l'éditeur) : le HUD au-dessus d'une
 ## petite scène au couchant, alimenté par ce script qui émet en boucle les signaux de l'EventBus
-## (zone, cœurs, invite, objectif, charge, vague, score, cible verrouillée, sauvegarde, fin de
-## série, mort). Échap ouvre le menu pause, F3 la surcouche de performance. `preview` fige un
-## état complet pour les captures (tests/stubs/l10_*_preview.tscn). GameState est rétabli quand
-## la démo quitte l'arbre.
+## (cœurs, invite, objets, charge, cible verrouillée, sauvegarde, mort). Échap ouvre le menu
+## pause, F3 la surcouche de performance. `preview` fige un état complet pour les captures
+## (tests/stubs/l10_*_preview.tscn). GameState est rétabli quand la démo quitte l'arbre. (F1) Les
+## zones, l'objectif de quête, les vagues, le score et la fin de série sont partis avec
+## l'ancienne île.
 
-enum Preview { NONE, HUD, PAUSE, ARENA_END }
+enum Preview { NONE, HUD, PAUSE }
 
 ## Durée d'un pas de la démo (s).
 const STEP_TIME := 1.8
@@ -29,23 +30,18 @@ func _ready() -> void:
 	($Camera3D as Camera3D).look_at_from_position(Vector3(0.0, 3.25, 5.56), Vector3(0.0, 1.0, 0.0))
 	_hud.set(&"lock_marker_height", 1.35)
 	_steps = [
-		func() -> void: _health(5, 5, &"village"),
+		func() -> void: EventBus.player_health_changed.emit(5, 5),
 		func() -> void: EventBus.interaction_available.emit("Parler"),
-		func() -> void: GameState.set_quest_state(&"pages", &"active"),
 		func() -> void: _items_and_prompt(1, ""),
 		func() -> void: EventBus.charge_progress.emit(0.5),
 		func() -> void: EventBus.charge_progress.emit(1.0),
 		func() -> void: _damage(),
-		func() -> void: _enter_arena(),
-		func() -> void: EventBus.wave_started.emit(&"dunes", 1, 5),
-		func() -> void: EventBus.arena_score_changed.emit(&"dunes", 35),
-		func() -> void: _clear_wave(),
+		func() -> void: _hero.set(&"target", _timere),
+		func() -> void: _release_target(),
 		func() -> void: SaveManager.saved.emit(SaveManager.save_path),
-		func() -> void: _finish_series(),
 		func() -> void: EventBus.player_died.emit(),
 		func() -> void: _items_and_prompt(4, ""),
-		func() -> void: GameState.set_quest_state(&"pages", &"done"),
-		func() -> void: _reset_quest(),
+		func() -> void: _reset_items(),
 	]
 	if preview != Preview.NONE:
 		$UI/Help.hide()
@@ -58,7 +54,7 @@ func _exit_tree() -> void:
 
 func _process(delta: float) -> void:
 	if preview != Preview.NONE:
-		# Pause ou fin de série une fois les fondus d'apparition du HUD finis (la pause les figerait).
+		# Pause une fois les fondus d'apparition du HUD finis (la pause les figerait).
 		_finale_left -= delta
 		if _finale_left <= 0.0 and _finale_left > -INF:
 			_finale_left = -INF
@@ -73,17 +69,12 @@ func _process(delta: float) -> void:
 
 ## État complet du HUD, figé pour une capture.
 func _show_everything() -> void:
-	for property: StringName in [&"banner_time", &"zone_time", &"saved_time"]:
-		_hud.set(property, 1000.0)
+	_hud.set(&"saved_time", 1000.0)
 	_hud.set(&"fade_time", 0.01)
-	GameState.set_quest_state(&"pages", &"active")
-	GameState.add_item(&"page_fragment", 3)
+	GameState.add_item(&"test_page", 3)
 	EventBus.player_health_changed.emit(4, 6)
 	EventBus.charge_progress.emit(1.0)
-	EventBus.zone_entered.emit(&"dunes")
-	EventBus.arena_score_changed.emit(&"dunes", 450)
-	EventBus.wave_started.emit(&"dunes", 3, 9)
-	EventBus.interaction_available.emit("Affronter les Timeres")
+	EventBus.interaction_available.emit("Parler")
 	SaveManager.saved.emit(SaveManager.save_path)
 	_hero.set(&"target", _timere)
 	if preview == Preview.HUD:
@@ -93,22 +84,12 @@ func _show_everything() -> void:
 
 
 func _finale() -> void:
-	match preview:
-		Preview.PAUSE:
-			_hud.get_node(^"%PauseMenu").call(&"open")
-		Preview.ARENA_END:
-			GameState.record_score(&"dunes", 520, 5)
-			var best := GameState.record_score(&"dunes", 640, 6)
-			EventBus.arena_finished.emit(&"dunes", 640, best)
-
-
-func _health(current: int, max_value: int, zone: StringName) -> void:
-	EventBus.player_health_changed.emit(current, max_value)
-	EventBus.zone_entered.emit(zone)
+	if preview == Preview.PAUSE:
+		_hud.get_node(^"%PauseMenu").call(&"open")
 
 
 func _items_and_prompt(fragments: int, prompt: String) -> void:
-	GameState.add_item(&"page_fragment", fragments)
+	GameState.add_item(&"test_page", fragments)
 	EventBus.interaction_available.emit(prompt)
 
 
@@ -118,24 +99,10 @@ func _damage() -> void:
 	EventBus.player_health_changed.emit(4, 5)
 
 
-func _enter_arena() -> void:
-	EventBus.zone_entered.emit(&"dunes")
-	EventBus.arena_score_changed.emit(&"dunes", 0)
-	_hero.set(&"target", _timere)
-
-
-func _clear_wave() -> void:
-	EventBus.wave_cleared.emit(&"dunes", 1, 50)
-	EventBus.arena_score_changed.emit(&"dunes", 85)
+func _release_target() -> void:
 	EventBus.player_health_changed.emit(5, 5)
 	_hero.set(&"target", null)
 
 
-## Fin de série comme le WaveDirector (record_score puis arena_finished) : panneau et pause.
-func _finish_series() -> void:
-	EventBus.arena_finished.emit(&"dunes", 85, GameState.record_score(&"dunes", 85, 1))
-
-
-func _reset_quest() -> void:
-	GameState.set_quest_state(&"pages", &"")
-	GameState.remove_item(&"page_fragment", GameState.count(&"page_fragment"))
+func _reset_items() -> void:
+	GameState.remove_item(&"test_page", GameState.count(&"test_page"))

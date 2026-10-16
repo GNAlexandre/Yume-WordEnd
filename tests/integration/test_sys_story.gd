@@ -1,19 +1,23 @@
 extends "res://tests/stubs/m2_game_test.gd"
 ## (Systèmes et textes) Les développements du lot dans la vraie partie (src/main.tscn, appuis
-## réels) : une chute hors de l'île (KillZone) ramène au Spawn de la zone avec un fondu au blanc
-## et « Tes ailes se sont ouvertes : te revoilà au bord. » ; un PNJ du village dont la condition
-## de présence devient fausse disparaît (plus d'invite, E ne lance rien, on le traverse), puis
-## revient quand elle redevient vraie.
+## réels) : une chute hors de la carte ramène au dernier point sûr avec un fondu au blanc et le
+## message de la chute (data/texts/story.json) ; un PNJ dont la condition de présence devient
+## fausse disparaît (plus d'invite, E ne lance rien, on le traverse), puis revient quand elle
+## redevient vraie. (F1) Sur la carte d'essai : l'ancienne île, sa KillZone et son village sont
+## partis.
 
 const FALL_MESSAGE := "Tes ailes se sont ouvertes : te revoilà au bord."
 
+const NPC_SCENE := preload("res://src/npc/npc.tscn")
 
-## Premier PNJ du village (quel que soit le contenu de l'acte), null s'il n'y en a pas.
-func _village_npc() -> Npc:
-	for node: Node in zone(&"village").get_node(^"NPCs").get_children():
-		if node is Npc and (node as Npc).data != null and (node as Npc).is_present():
-			return node as Npc
-	return null
+
+## Nygglatho posée sur la carte, à 3 m au nord du joueur (sa présence suit ses données).
+func _put_npc() -> Npc:
+	var npc := NPC_SCENE.instantiate() as Npc
+	npc.data = DialogueRunner.find_npc(&"nygglatho")
+	current_map().add_child(npc)
+	npc.global_position = player.global_position + Vector3(0.0, 0.0, -3.0)
+	return npc
 
 
 ## Ce qu'un rayon vertical (couche world) touche d'abord à la place du PNJ, depuis 2 m (sous un
@@ -28,18 +32,16 @@ func _first_hit_at(npc: Npc) -> Object:
 
 func test_falling_off_the_island_opens_wings_of_light() -> void:
 	assert_true(await new_game_from_menu(), "nouvelle partie")
-	WorldManager.teleport(&"dunes")
-	await wait_physics_frames(3)
-	assert_eq(WorldManager.current_zone(), &"dunes")
+	await wait_physics_frames(10)
+	var stood_at := player.global_position
 	assert_eq(hud.call(&"story_message"), "", "rien avant la chute")
 	watch_signals(WorldManager)
-	# Sous l'île, dans la KillZone : le rattrapage.
-	player.global_position = Vector3(-51.0, -12.0, 0.0)
+	# Bien sous la carte : le rattrapage.
+	player.global_position = stood_at + Vector3(0.0, WorldManager.FALL_LIMIT - 10.0, 0.0)
 	var rescued: bool = await until(func() -> bool: return player.global_position.y > -2.0, 2.0)
 	assert_true(rescued, "rattrapée")
-	assert_signal_emitted_with_parameters(WorldManager, "rescued", [&"dunes"])
-	var spawn := zone(&"dunes").get_node(^"Spawn") as Node3D
-	assert_lt(distance_to(spawn), 1.0, "au Spawn du bord du Couchant")
+	assert_signal_emitted_with_parameters(WorldManager, "rescued", [WorldManager.current_map()])
+	assert_lt(flat_distance(player.global_position, stood_at), 1.0, "au dernier point sûr")
 	assert_gt(hud.call(&"fall_flash_alpha"), 0.0, "fondu au blanc : les ailes de lumière")
 	assert_eq(hud.call(&"story_message"), FALL_MESSAGE, "message de la chute")
 	assert_eq(health.current, health.max_hp, "aucun PV perdu")
@@ -47,18 +49,16 @@ func test_falling_off_the_island_opens_wings_of_light() -> void:
 	assert_true(faded, "le message s'efface")
 
 
-func test_an_npc_whose_condition_turns_false_leaves_the_village() -> void:
+func test_an_npc_whose_condition_turns_false_leaves() -> void:
 	assert_true(await new_game_from_menu(), "nouvelle partie")
-	var npc := _village_npc()
-	assert_not_null(npc, "un PNJ au village")
-	if npc == null:
-		return
+	var npc := _put_npc()
+	await frames(3)
 	# Sa présence dépend maintenant d'un drapeau (copie de ses données, même id, même dialogue).
 	var data := npc.data.duplicate() as NpcData
 	data.visible_if = {"not_flag": "sys_away"}
 	npc.data = data
-	var front := zone(&"village").to_local(npc.global_position) + Vector3(0.0, 0.0, 1.4)
-	await place_player(&"village", front, Vector3.FORWARD)
+	var front := current_map().to_local(npc.global_position) + Vector3(0.0, 0.0, 1.4)
+	await place_player(front, Vector3.FORWARD)
 	var prompted: bool = await until(
 		func() -> bool: return player.current_prompt() == "Parler", 2.0
 	)

@@ -1,9 +1,8 @@
 extends Node3D
-## Démos du Lot 1, jouables dans l'éditeur (F6) et instanciées par la fumée :
-## - demo_l1.tscn : sol et obstacles CSG (couche 1), pentes de 40° (praticable) et 50° (trop
-##   raide), interactable factice (faux dialogue de 1,5 s) et deux ennemis factices ;
-## - demo_l1.beach.tscn : l'île (lecture seule), joueur au Spawn de la plage, caméra du joueur
-##   (capture build/shots/l1.png).
+## Démo du Lot 1 (demo_l1.tscn), jouable dans l'éditeur (F6) et instanciée par la fumée : sol et
+## obstacles CSG (couche 1), pentes de 40° (praticable) et 50° (trop raide), interactable factice
+## (faux dialogue de 1,5 s) et deux ennemis factices. (F1) La variante sur la plage de l'ancienne
+## île est partie avec elle.
 ## Affiche l'aide, l'invite d'interaction (EventBus.interaction_available) et la cible
 ## verrouillée (Player.locked_target()).
 
@@ -12,8 +11,6 @@ const HELP := (
 	+ "Clic : capturer la souris (Échap la libère) · molette : zoom · clic molette : verrouiller"
 )
 
-## Zone où placer le joueur au départ (WorldManager.teleport sur son Spawn) ; &"" : sur place.
-@export var spawn_zone: StringName = &""
 ## Direction de départ du joueur ; la caméra se place derrière lui.
 @export var facing: Vector3 = Vector3.FORWARD
 ## Affiche l'aide des commandes.
@@ -27,8 +24,6 @@ var _prompt: String = ""
 
 func _ready() -> void:
 	EventBus.interaction_available.connect(_on_interaction_available)
-	if not spawn_zone.is_empty():
-		WorldManager.teleport(spawn_zone, WorldManager.SPAWN_MARKER)
 	_player.set_aim_direction(facing, true)
 	_refresh_label()
 

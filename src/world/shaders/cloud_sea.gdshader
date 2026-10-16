@@ -1,4 +1,4 @@
-// Mer de nuages sous l'île (nœud « Water » d'island.tscn, plan très bas) : deux couches de la
+// Mer de nuages sous l'île (nœud « CloudSea » du sol en relief, MapGround) : deux couches de la
 // texture de pixel art assets/hd2d/sky/cloud_sea.png qui défilent lentement à des vitesses
 // différentes ; la plus proche n'apparaît que par pixels d'art tramés (pas de mélange flou), et
 // le côté du couchant (sun_direction) se réchauffe. Non éclairée. Compatible Compatibility /
@@ -17,7 +17,7 @@ uniform float clouds_mix : hint_range(0.0, 1.0) = 0.0;
 // Taille de la texture dans le monde (m) : grands bancs, vus de très haut.
 uniform float tile_meters = 96.0;
 uniform vec2 drift = vec2(0.6, 0.25);
-// Direction (plan du sol) d'où vient la lumière du couchant, posée par island.gd.
+// Direction (plan du sol) d'où vient la lumière du soleil, posée par MapGround.set_sun.
 uniform vec2 sun_direction = vec2(-1.0, 0.0);
 uniform vec4 warm : source_color = vec4(0.99, 0.78, 0.55, 1.0);
 uniform vec4 tint : source_color = vec4(1.0, 1.0, 1.0, 1.0);

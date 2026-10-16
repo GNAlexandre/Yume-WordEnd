@@ -50,7 +50,7 @@ var _restore_mode: DisplayServer.WindowMode = DisplayServer.WINDOW_MODE_WINDOWED
 
 
 func _ready() -> void:
-	# Le raccourci reste actif en pause (menu pause, sac, fin d'arène).
+	# Le raccourci reste actif en pause (menu pause, sac, calendrier).
 	process_mode = PROCESS_MODE_ALWAYS
 	if not is_desktop():
 		return

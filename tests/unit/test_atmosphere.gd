@@ -361,11 +361,41 @@ func test_night_images_lit_windows_glow_and_wetness() -> void:
 	holder.free()
 
 
-func test_legacy_island_is_driven_through_its_own_nodes() -> void:
-	# L'ancienne île garde son WorldEnvironment et son soleil (structure figée) : la lumière les
-	# règle, sans en ajouter, et la mer de nuages reçoit sa teinte et ses étoiles.
-	var scene := load("res://src/world/maps/ile_ancienne/ile_ancienne.tscn") as PackedScene
-	var island := scene.instantiate() as Map
+## (F1) Carte qui porte ses propres nœuds de lumière (comme l'ancienne île, retirée) : un
+## WorldEnvironment, un soleil, une lanterne et une mer de nuages.
+func _map_with_own_light() -> Node3D:
+	var holder := Node3D.new()
+	holder.name = "own_light"
+	var world := WorldEnvironment.new()
+	world.name = "WorldEnvironment"
+	world.environment = Environment.new()
+	var panorama := PanoramaSkyMaterial.new()
+	panorama.panorama = load("res://assets/hd2d/sky/sky.png") as Texture2D
+	world.environment.sky = Sky.new()
+	world.environment.sky.sky_material = panorama
+	world.environment.background_mode = Environment.BG_SKY
+	holder.add_child(world)
+	var sun := DirectionalLight3D.new()
+	sun.name = "Sun"
+	holder.add_child(sun)
+	var lamp := OmniLight3D.new()
+	lamp.name = "Lantern"
+	holder.add_child(lamp)
+	var water := MeshInstance3D.new()
+	water.name = "Water"
+	water.mesh = PlaneMesh.new()
+	var clouds := ShaderMaterial.new()
+	clouds.shader = HD2DLightTargets.CLOUD_SEA_SHADER
+	clouds.set_shader_parameter(&"clouds", load("res://assets/hd2d/sky/cloud_sea.png"))
+	water.material_override = clouds
+	holder.add_child(water)
+	return holder
+
+
+func test_a_map_with_its_own_light_is_driven_through_its_nodes() -> void:
+	# Une carte qui a son WorldEnvironment et son soleil : la lumière les règle, sans en ajouter,
+	# et la mer de nuages reçoit sa teinte et ses étoiles.
+	var island := _map_with_own_light()
 	add_child(island)
 	Atmosphere.set_moment(&"nuit", 0.0)
 	Atmosphere.dress(island)
@@ -380,7 +410,7 @@ func test_legacy_island_is_driven_through_its_own_nodes() -> void:
 	var clouds := water.material_override as ShaderMaterial
 	assert_eq(clouds.get_shader_parameter(&"tint"), night.clouds_tint, "nuages de nuit")
 	assert_eq(clouds.get_shader_parameter(&"stars"), 1.0, "étoiles")
-	assert_gt(Atmosphere.targets().counts()["lamps"], 0, "lanternes de l'île")
+	assert_gt(Atmosphere.targets().counts()["lamps"], 0, "lanterne de la carte")
 	Atmosphere.dress(_map)
 	island.free()
 

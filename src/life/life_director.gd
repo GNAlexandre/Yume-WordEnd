@@ -17,7 +17,7 @@ extends Node
 ## - Chemins demandés en file (paths_per_frame par image) ; évitement entre PNJ et autour du
 ##   joueur (avoidance) ; jeux de groupe (LifeGame) ; une salutation à la fois (may_greet).
 ## - Rien n'est fait pour une carte posée à la main (démonstration, test d'une carte seule) :
-##   attach(carte) la peuple ; l'ancienne île n'a pas d'emploi du temps, rien n'y change.
+##   attach(carte) la peuple ; une carte sans emploi du temps n'a pas de vie.
 ## - (E6) Le récit réserve des PNJ pour ses scènes (reserve, stage : état LifeActor.SCENE) : ils
 ##   ne suivent plus leur emploi du temps (ni posés à l'entrée d'une carte, ni déplacés au
 ##   changement de créneau) jusqu'à release, qui les rend à leur ligne (ils y marchent, ou partent
@@ -219,8 +219,7 @@ func attach(map: Map) -> void:
 			var placed := _spawn(npc_id)
 			if placed != null:
 				placed.place_now(line)
-	# La navigation ne se construit que pour une carte qui a de la vie (des places, des PNJ) :
-	# l'ancienne île (160 m, des milliers de décors) n'en a pas.
+	# La navigation ne se construit que pour une carte qui a de la vie (des places, des PNJ).
 	if not _places.names().is_empty() or not _actors.is_empty():
 		_ensure_nav()
 	populated.emit(map.map_id())

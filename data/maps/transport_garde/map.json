@@ -1,0 +1,46 @@
+{
+  "_comment": "Sol en relief de la carte transport_garde, écrit par tools/map_build.py gen d'après plan.json avec heights.png, materials.png et structures.png : modifier le plan et relancer gen (format : PLAN.md, « Format du sol des cartes extérieures »).",
+  "format": "map_ground",
+  "version": 1,
+  "size": [20, 11],
+  "heights_image": "heights.png",
+  "height_step_value": 16,
+  "materials_image": "materials.png",
+  "materials_scale": 2,
+  "palette": {
+    "#6070a0": "tole"
+  },
+  "edges": {
+    "north": "void",
+    "east": "void",
+    "south": "land",
+    "west": "void"
+  },
+  "skirt": 16,
+  "barrier": true,
+  "materials": {
+    "herbe_drue": {
+      "label": "Herbe drue et molle (grass_b)",
+      "layer": "grass_b",
+      "color": "#4f9a46",
+      "variant": false
+    },
+    "chemin": {
+      "label": "Chemin de terre (path_dirt_b)",
+      "layer": "path_dirt_b",
+      "color": "#d0a060",
+      "variant": false,
+      "path": true
+    },
+    "eau_basse": {
+      "label": "Eau basse du marais : on y marche (VEX)",
+      "layer": "water",
+      "color": "#3a70b0",
+      "walkable": true,
+      "ripple": true,
+      "tint": [0.78, 0.86, 0.8]
+    }
+  },
+  "structures_image": "structures.png",
+  "spawn": [10, 3]
+}

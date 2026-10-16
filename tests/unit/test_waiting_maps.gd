@@ -1,18 +1,15 @@
 extends GutTest
-## (T1, C1) Les cartes d'attente (foret_profonde ; le sentier, d'attente en T1, est construit depuis
-## C1 : tests/unit/test_sentier.gd ; le village depuis C2 : tests/unit/test_village.gd ; la colline
-## depuis C3 : tests/unit/test_colline.gd ; le port, d'attente en C1, depuis CP :
-## tests/unit/test_port.gd) : chacune suit le contrat des cartes, a son sol plat, sa lisière, son
-## écriteau « Plus loin, bientôt » qu'on lit (boîte de dialogue, sans portrait), la sortie de retour
-## vers la carte construite d'où l'on vient (l'entrepôt), au marqueur from_<carte> du plan de cette
-## carte, et le marqueur d'arrivée from_<cette carte> ; et le raccourci de développement ?map=
-## (src/test_shortcuts.gd).
+## (T1, C1) Les cartes d'attente : la forêt profonde, d'attente en T1 et en C1, est construite
+## depuis CF (tests/unit/test_foret_profonde.gd) ; le sentier l'est depuis C1 (test_sentier.gd), le
+## village depuis C2 (test_village.gd), la colline depuis C3 (test_colline.gd), le port depuis CP
+## (test_port.gd) ; la place du marché, d'attente jusqu'à son lot, a son test
+## (test_ville_attente.gd). Ce fichier garde :
+## - l'écriteau « Plus loin, bientôt » qu'on lit (boîte de dialogue, sans portrait) : celui qui
+##   ferme encore le sentier de l'est de la forêt profonde tant que la montagne n'existe pas
+##   (sortie vers_montagne omise) ;
+## - le raccourci de développement ?map= (src/test_shortcuts.gd).
 
 const TestShortcuts := preload("res://src/test_shortcuts.gd")
-## Carte d'attente → [carte d'où l'on vient, sa sortie de retour].
-const WAITING := {
-	&"foret_profonde": [&"entrepot", &"vers_entrepot"],
-}
 const SIGN_TEXT := "maps/waiting/text"
 
 var _lines: Array = []
@@ -26,49 +23,35 @@ func _on_line(speaker: String, text: String, choices: Array[String]) -> void:
 	_lines.append([speaker, text, choices])
 
 
-func test_waiting_maps_follow_the_contract_and_lead_back_to_the_built_map() -> void:
-	var back_markers := {}
-	for spec: Array in WAITING.values():
-		var origin := spec[0] as StringName
-		if not back_markers.has(origin):
-			var built := (load(Map.scene_path(origin)) as PackedScene).instantiate() as Map
-			back_markers[origin] = built.marker_names()
-			built.free()
-	for map_id: StringName in WAITING:
-		var origin := (WAITING[map_id] as Array)[0] as StringName
-		var exit_name := (WAITING[map_id] as Array)[1] as StringName
-		assert_true(Map.exists(map_id), "%s existe" % map_id)
-		var map := (load(Map.scene_path(map_id)) as PackedScene).instantiate() as Map
-		add_child(map)
-		await wait_physics_frames(1)
-		assert_eq(Map.problems(map), PackedStringArray(), "%s : contrat" % map_id)
-		assert_eq(
-			Map.exit_problems(map, back_markers),
-			PackedStringArray(),
-			"%s : sortie vers %s" % [map_id, origin]
-		)
-		var exit := map.get_node(NodePath("Exits/" + String(exit_name))) as MapExit
-		assert_eq(exit.target_map, origin)
-		assert_eq(exit.target_marker, StringName("from_" + String(map_id)), "%s : retour" % map_id)
-		assert_not_null(map.marker(StringName("from_" + String(origin))), "%s : arrivée" % map_id)
-		var ground := map.get_node(^"Ground") as MapGround
-		assert_not_null(ground, "%s : sol en relief" % map_id)
-		var spawn := map.spawn().global_position
-		assert_almost_eq(ground.height_at(spawn.x, spawn.z), 0.0, 0.001, "%s : sol plat" % map_id)
-		assert_false(map.display_name.is_empty(), "%s : nom affiché" % map_id)
-		var reader := map.get_node_or_null(^"Geometry/Sign/Reader") as Area3D
-		assert_not_null(reader, "%s : écriteau" % map_id)
-		if reader != null:
-			assert_true(reader.is_in_group(&"interactable"), "%s : on le lit" % map_id)
-			assert_eq(reader.collision_layer, 32, "%s : couche 6 (interactable)" % map_id)
-		map.free()
+func test_the_closed_path_has_a_sign_until_its_map_exists() -> void:
+	var map := (load(Map.scene_path(&"foret_profonde")) as PackedScene).instantiate() as Map
+	add_child_autofree(map)
+	await wait_physics_frames(1)
+	var sign_node := map.find_child("SignMontagne", true, false)
+	if Map.exists(&"montagne"):
+		assert_null(sign_node, "la montagne existe : plus d'écriteau, une sortie")
+		assert_not_null(map.get_node_or_null(^"Exits/vers_montagne"), "la sortie est posée")
+		return
+	assert_not_null(sign_node, "écriteau")
+	assert_null(
+		map.get_node_or_null(^"Exits/vers_montagne"), "pas de sortie vers une carte absente"
+	)
+	var reader := sign_node.get_node_or_null(^"Reader") as Area3D
+	assert_not_null(reader, "on le lit")
+	if reader != null:
+		assert_true(reader.is_in_group(&"interactable"), "interactable")
+		assert_eq(reader.collision_layer, 32, "couche 6 (interactable)")
 
 
 func test_reading_the_sign_shows_its_text_without_a_portrait() -> void:
 	var map := (load(Map.scene_path(&"foret_profonde")) as PackedScene).instantiate() as Map
 	add_child_autofree(map)
 	await wait_physics_frames(1)
-	var reader := map.get_node(^"Geometry/Sign/Reader")
+	var sign_node := map.find_child("SignMontagne", true, false)
+	if sign_node == null:
+		pending("la montagne existe : plus d'écriteau")
+		return
+	var reader := sign_node.get_node(^"Reader")
 	assert_eq(reader.call(&"get_prompt"), "Lire")
 	watch_signals(EventBus)
 	EventBus.dialogue_line.connect(_on_line)

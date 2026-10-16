@@ -1,10 +1,11 @@
-extends "res://tests/stubs/q_quest_test.gd"
+extends GutTest
 ## (Systèmes et textes) Présence des PNJ selon l'histoire (HISTOIRE.md, développement n° 1) :
 ## NpcData.visible_if, même grammaire et même évaluateur que les « if » de dialogue (drapeaux,
-## objets, état et étape de quête, listes d'étapes et négation, meilleur score) ; un PNJ absent est
-## caché, retiré de la physique (corps et zone d'interaction), sans invite, sans dialogue, sans
-## marqueur ; réévaluation en fin d'image sur les signaux ; un PNJ qui parle ne part qu'à la fin
-## de la conversation ; le PNJ au skin du joueur n'est jamais là ; l'exemple de docs/QUETES.md.
+## objets, (E6) jour, créneau et scènes jouées) ; un PNJ absent est caché, retiré de la physique
+## (corps et zone d'interaction), sans invite, sans dialogue ; réévaluation en fin d'image sur
+## les signaux ; un PNJ qui parle ne part qu'à la fin de la conversation ; le PNJ au skin du
+## joueur n'est jamais là ; la syntaxe .tres de docs/DIALOGUES.md. (F1) Les conditions de quête
+## et de meilleur score sont parties avec l'ancienne île.
 
 const NPC_SCENE := preload("res://src/npc/npc.tscn")
 const DIR := "user://test_npc_presence"
@@ -16,20 +17,11 @@ var _started: Array[StringName] = []
 
 
 func before_each() -> void:
-	super()
+	GameState.reset()
 	DirAccess.make_dir_recursive_absolute(SKINS_DIR)
 	_world = add_child_autofree(Node3D.new())
 	_started.clear()
 	EventBus.dialogue_started.connect(_on_dialogue_started)
-	# Une quête disponible donnée par le PNJ : « ! » au-dessus de lui quand il est là.
-	write_quest(
-		{
-			"id": "sys_presence",
-			"title": "Présence",
-			"giver": String(NPC_ID),
-			"steps": [{"id": "a", "type": "flag", "flag": "sys_done", "objective": "Attendre"}],
-		}
-	)
 
 
 func after_each() -> void:
@@ -40,7 +32,7 @@ func after_each() -> void:
 	for dir: String in [SKINS_DIR, DIR]:
 		for file_name: String in DirAccess.get_files_at(dir):
 			DirAccess.remove_absolute(dir.path_join(file_name))
-	super()
+	GameState.reset()
 
 
 func _on_dialogue_started(npc_id: StringName) -> void:
@@ -121,68 +113,40 @@ func test_visible_if_reads_the_dialogue_grammar() -> void:
 	assert_false(data.is_present(), "drapeau absent")
 	GameState.set_flag(&"sys_here")
 	assert_true(data.is_present(), "drapeau posé")
-	data.visible_if = {"not_flag": ["sys_gone"], "count": ["page_fragment", 2]}
-	GameState.add_item(&"page_fragment")
+	data.visible_if = {"not_flag": ["sys_gone"], "count": ["test_page", 2]}
+	GameState.add_item(&"test_page")
 	assert_false(data.is_present(), "une page sur deux")
-	GameState.add_item(&"page_fragment")
+	GameState.add_item(&"test_page")
 	assert_true(data.is_present(), "deux pages")
 	GameState.set_flag(&"sys_gone")
 	assert_false(data.is_present(), "not_flag")
-	data.visible_if = {"quest": ["sys_presence", "available"]}
-	assert_true(data.is_present(), "quête disponible")
-	start_quest(&"sys_presence")
-	assert_false(data.is_present(), "plus disponible : en cours")
-	data.visible_if = {"quest": ["sys_presence", "active"]}
-	assert_true(data.is_present())
-	data.visible_if = {"best_score": ["dunes", 300]}
-	assert_false(data.is_present(), "aucun record")
-	GameState.record_score(&"dunes", 320, 4)
-	assert_true(data.is_present(), "record de 320")
 
 
-## Exemple de docs/QUETES.md : Willem au terrain d'entraînement seulement pendant l'étape
-## training, et au village sauf pendant training et promise (listes d'étapes, négation).
-func test_quest_step_lists_and_negation() -> void:
-	var steps: Array = []
-	for step_id: String in ["morning", "training", "evening", "promise"]:
-		(
-			steps
-			. append(
-				{
-					"id": step_id,
-					"type": "flag",
-					"flag": "sys_%s_done" % step_id,
-					"objective": "Étape %s" % step_id,
-				}
-			)
-		)
-	write_quest({"id": "sys_story", "title": "Histoire", "main": true, "steps": steps})
-	var training := _data({"quest_step": ["sys_story", "training"]})
-	var village := _data({"not_quest_step": ["sys_story", ["training", "promise"]]})
-	var stars := _data({"quest_step": ["sys_story", ["promise"]]})
+## (E6) Le récit : jour de l'acte (un jour ou [premier, dernier]), scènes jouées ou non.
+func test_visible_if_follows_the_days_and_scenes() -> void:
+	var early := _data({"day": [1, 2]})
+	var third := _data({"day": 3})
+	var after := _data({"scene": "sys_arrival", "not_scene": ["sys_leave"]})
 	var expected := {
-		"": [false, true, false],
-		"morning": [false, true, false],
-		"training": [true, false, false],
-		"evening": [false, true, false],
-		"promise": [false, false, true],
-		"done": [false, true, false],
+		1: [true, false, false],
+		2: [true, false, true],
+		3: [false, true, true],
+		4: [false, false, false],
 	}
-	for stage: String in ["", "morning", "training", "evening", "promise", "done"]:
-		if stage == "morning":
-			start_quest(&"sys_story")
-		elif not stage.is_empty():
-			GameState.set_flag(StringName("sys_%s_done" % step_of(&"sys_story")))
-		var where := "étape %s" % (String(step_of(&"sys_story")) if not stage.is_empty() else "-")
+	for day: int in [1, 2, 3, 4]:
+		GameState.day = day
+		if day == 2:
+			GameState.mark_scene_done(&"sys_arrival")
+		elif day == 4:
+			GameState.mark_scene_done(&"sys_leave")
 		assert_eq(
-			[training.is_present(), village.is_present(), stars.is_present()],
-			expected[stage],
-			"%s : terrain, village, sommet" % where
+			[early.is_present(), third.is_present(), after.is_present()],
+			expected[day],
+			"jour %d : jours 1-2, jour 3, après l'arrivée" % day
 		)
-	assert_eq(GameState.quest_state(&"sys_story"), &"done")
 
 
-## La syntaxe .tres de docs/QUETES.md (« La présence des PNJ ») se charge telle quelle.
+## La syntaxe .tres de docs/DIALOGUES.md (« La présence des PNJ ») se charge telle quelle.
 func test_visible_if_written_in_a_tres_file() -> void:
 	var text := (
 		"\n"
@@ -197,7 +161,7 @@ func test_visible_if_written_in_a_tres_file() -> void:
 				'id = &"sys_willem_training"',
 				'display_name = "Willem"',
 				"visible_if = {",
-				'"quest_step": ["sys_act", "training"]',
+				'"day": [2, 3], "not_flag": "sys_away"',
 				"}",
 				"",
 			]
@@ -211,31 +175,33 @@ func test_visible_if_written_in_a_tres_file() -> void:
 	assert_not_null(npc, "NpcData lue")
 	if npc == null:
 		return
-	assert_eq_deep(npc.visible_if, {"quest_step": ["sys_act", "training"]})
+	assert_eq_deep(npc.visible_if, {"day": [2, 3], "not_flag": "sys_away"})
 	assert_eq(npc.visible_if_problem(), "", "condition valide")
-	assert_false(npc.is_present(), "quête pas commencée")
-	GameState.set_quest_state(&"sys_act", &"active")
-	GameState.set_quest_step(&"sys_act", &"training")
-	assert_true(npc.is_present(), "pendant l'étape training")
-	GameState.set_quest_step(&"sys_act", &"evening")
-	assert_false(npc.is_present(), "après")
+	GameState.day = 1
+	assert_false(npc.is_present(), "pas encore le jour 2")
+	GameState.day = 2
+	assert_true(npc.is_present(), "les jours 2 et 3")
+	GameState.set_flag(&"sys_away")
+	assert_false(npc.is_present(), "parti")
 
 
 func test_visible_if_is_validated_like_a_dialogue_condition() -> void:
 	for valid: Dictionary in [
 		{},
 		{"flag": "a", "not_flag": ["b", "c"]},
-		{"count": ["page_fragment", 2], "best_score": ["dunes", 300.0]},
-		{"quest": ["act1_main", "done"], "quest_step": ["act1_main", "training"]},
-		{"not_quest_step": [&"act1_main", [&"training", "promise"]]},
+		{"count": ["test_page", 2.0]},
+		{"day": [1, 3], "scene": "j1_1_port", "not_scene": [&"j2_1"]},
+		{"day": 4, "slot": ["matin", &"soir"]},
 	]:
 		assert_eq(_data(valid).visible_if_problem(), "", "valide : %s" % valid)
 	var cases := {
-		"condition inconnue « quest_stage »": {"quest_stage": ["q", "a"]},
-		"valeur mal formée pour « quest_step »": {"quest_step": ["q", 2]},
-		"valeur mal formée pour « not_quest_step »": {"not_quest_step": ["q", []]},
-		"valeur mal formée pour « count »": {"count": "page_fragment"},
+		"condition inconnue « quest »": {"quest": ["act1_main", "done"]},
+		"condition inconnue « quest_step »": {"quest_step": ["act1_main", "training"]},
+		"condition inconnue « best_score »": {"best_score": ["dunes", 300]},
+		"valeur mal formée pour « count »": {"count": "test_page"},
 		"valeur mal formée pour « flag »": {"flag": ""},
+		"valeur mal formée pour « day »": {"day": 0},
+		"valeur mal formée pour « slot »": {"slot": "minuit"},
 	}
 	for expected: String in cases:
 		assert_string_contains(_data(cases[expected]).visible_if_problem(), expected)
@@ -244,7 +210,7 @@ func test_visible_if_is_validated_like_a_dialogue_condition() -> void:
 # --- Le PNJ dans la scène ---------------------------------------------------------------------
 
 
-func test_absent_npc_is_hidden_without_collision_dialogue_or_marker() -> void:
+func test_absent_npc_is_hidden_without_collision_or_dialogue() -> void:
 	var npc := _npc(_data({"flag": "sys_here"}))
 	var detector := _detector(npc)
 	await wait_physics_frames(3)
@@ -253,8 +219,6 @@ func test_absent_npc_is_hidden_without_collision_dialogue_or_marker() -> void:
 	assert_false(_in_physics(npc), "ni corps ni zone d'interaction dans la physique")
 	assert_false(detector.get_overlapping_areas().has(npc.get_node(^"InteractArea")), "invisible")
 	assert_eq(npc.get_prompt(), "", "aucune invite")
-	assert_eq(QuestData.npc_marker(NPC_ID), QuestData.MARKER_AVAILABLE, "il a une quête…")
-	assert_false(npc.quest_marker.visible, "… mais pas de « ! » quand il n'est pas là")
 	npc.interact(null)
 	assert_eq(_started, [] as Array[StringName], "pas de dialogue")
 	# La condition devient vraie : il revient en fin d'image, tout entier.
@@ -266,7 +230,6 @@ func test_absent_npc_is_hidden_without_collision_dialogue_or_marker() -> void:
 	assert_true(_in_physics(npc), "dans la physique")
 	assert_true(detector.get_overlapping_areas().has(npc.get_node(^"InteractArea")), "détecté")
 	assert_eq(npc.get_prompt(), "Parler")
-	assert_true(npc.quest_marker.visible, "« ! »")
 	npc.interact(null)
 	assert_eq(_started, [NPC_ID] as Array[StringName], "le dialogue démarre")
 	npc.runner.stop()
@@ -274,29 +237,16 @@ func test_absent_npc_is_hidden_without_collision_dialogue_or_marker() -> void:
 
 func test_presence_follows_the_story_signals() -> void:
 	var by_flag := _npc(_data({"flag": "sys_here"}))
-	var by_item := _npc(_data({"count": ["page_fragment", 1]}))
-	var by_quest := _npc(_data({"quest": ["sys_presence", "active"]}))
-	var by_step := _npc(_data({"not_quest_step": ["sys_presence", "a"]}))
-	var by_score := _npc(_data({"best_score": ["dunes", 100]}))
+	var by_item := _npc(_data({"count": ["test_page", 1]}))
 	var by_load := _npc(_data({"flag": "sys_loaded"}))
 	await wait_process_frames(1)
-	var npcs: Array[Npc] = [by_flag, by_item, by_quest, by_step, by_score, by_load]
-	assert_eq(
-		npcs.map(func(n: Npc) -> bool: return n.is_present()),
-		[false, false, false, true, false, false]
-	)
+	var npcs: Array[Npc] = [by_flag, by_item, by_load]
+	assert_eq(npcs.map(func(n: Npc) -> bool: return n.is_present()), [false, false, false])
 	GameState.set_flag(&"sys_here")
-	GameState.add_item(&"page_fragment")
-	start_quest(&"sys_presence")
+	GameState.add_item(&"test_page")
 	await wait_process_frames(1)
 	assert_true(by_flag.is_present(), "flag_changed")
 	assert_true(by_item.is_present(), "inventory_changed")
-	assert_true(by_quest.is_present(), "quest_updated")
-	assert_false(by_step.is_present(), "quest_step_updated : à l'étape a, absent")
-	GameState.record_score(&"dunes", 120, 2)
-	EventBus.arena_finished.emit(&"dunes", 120, true)
-	await wait_process_frames(1)
-	assert_true(by_score.is_present(), "arena_finished : meilleur score")
 	var saved := GameState.to_dict()
 	saved["flags"] = {"sys_loaded": true}
 	GameState.from_dict(saved)

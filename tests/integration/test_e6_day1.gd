@@ -19,8 +19,7 @@ func test_day_1_end_to_end_until_day_2() -> void:
 	assert_eq(GameState.day, 1, "jour 1")
 	assert_eq(LifeSlots.current(), &"nuit", "la nuit du grand vent")
 	assert_true(GameState.story_running())
-	assert_eq(GameState.quest_state(&"act1_main"), &"", "plus de quête principale à collecter")
-	assert_false((hud.get_node("%Quests") as Control).visible, "pas d'encadré de quête")
+	assert_null(hud.get_node_or_null("%Quests"), "(F1) plus d'encadré de quête")
 	# 1.1 : séquence déjà vue, passée par Échap.
 	trace("2")
 	assert_true(
@@ -160,13 +159,13 @@ func test_day_1_end_to_end_until_day_2() -> void:
 	await tap_key(KEY_TAB)
 	var calendar := hud.get_node("%Calendar")
 	assert_true(calendar.call(&"is_open"), "Tab ouvre le calendrier")
-	assert_false((hud.get_node("%Journal") as Control).visible, "pas le journal de quêtes")
+	assert_null(hud.get_node_or_null("%Journal"), "(F1) plus de journal de quêtes")
 	var lines: PackedStringArray = calendar.call(&"shown_lines")
 	assert_eq(lines.size(), 1)
 	assert_string_contains(lines[0], "Tombé dans le marais")
 	await tap_key(KEY_TAB)
 	assert_false(calendar.call(&"is_open"))
-	assert_eq(GameState.quests(), {}, "aucune quête n'a démarré de toute la journée")
+	assert_false(GameState.to_dict().has("quests"), "(F1) plus de quêtes dans la partie")
 
 
 ## Joue l'embuscade avec de vrais appuis jusqu'à sa fin et renvoie son résultat : au bond annoncé,

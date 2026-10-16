@@ -221,7 +221,7 @@ horizontal_alignment = 1
 [node name="Text" type="Label" parent="ConfirmOverlay/ConfirmPanel/Box"]
 custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
-text = "Une partie est déjà sauvegardée sur cet appareil. Une nouvelle partie l'effacera (inventaire, quêtes et records)."
+text = "Une partie est déjà sauvegardée sur cet appareil. Une nouvelle partie l'effacera (jours, scènes et calendrier)."
 horizontal_alignment = 1
 autowrap_mode = 3
 
