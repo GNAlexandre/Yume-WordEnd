@@ -1,0 +1,47 @@
+{
+  "_comment": "(X-L6) Les activités à la demande du mode libre (StoryActivities ; PLAN.md, « (X) Exploration libre : le rythme », lot L6) : un PNJ propose de rejouer un jeu, hors du récit, sans changer un seul drapeau. Une scène proposée passe d'abord. npc : qui propose ; map, place : où il doit se trouver (sa ligne d'emploi du temps du créneau : LifeDirector.where) ; not_activity : activités qui l'occupent déjà (le match de la vie) ; day, slot, after, if : les conditions d'une scène ; game : baton, duel, seniorious, ballon ou embuscade ; options : celles de MiniGames.start_* ; variants : la première dont « if » tient fusionne ses options. Le texte de la proposition est activities/<id>/offer (data/texts/<île>/story.json), le résultat activities/<id>/result_<issue>.",
+  "activities": {
+    "baton": {
+      "game": "baton",
+      "npc": "willem",
+      "map": "entrepot",
+      "place": "clairiere_centre",
+      "slot": "matin",
+      "options": {"place_player": true, "variant": "default"}
+    },
+    "duel": {
+      "game": "duel",
+      "npc": "willem",
+      "map": "entrepot",
+      "place": "cour_willem",
+      "slot": "apres_midi",
+      "after": "j8_3_duel",
+      "options": {"place": true, "reprise": true}
+    },
+    "seniorious": {
+      "game": "seniorious",
+      "npc": "willem",
+      "map": "entrepot",
+      "place": "marais_epee",
+      "after": "j11_4_seniorious",
+      "options": {"place_player": true, "pickup": true, "start_stage": 1},
+      "variants": [
+        {"if": {"flag": "j11_grues"}, "options": {"start_stage": 3}},
+        {"if": {"flag": "j9_baton_reussi"}, "options": {"start_stage": 2}}
+      ]
+    },
+    "embuscade": {
+      "game": "embuscade",
+      "npc": "pannibal",
+      "map": "entrepot",
+      "not_activity": ["ballon"]
+    },
+    "ballon": {
+      "game": "ballon",
+      "npc": "tiat",
+      "map": "entrepot",
+      "slot": "apres_midi",
+      "not_activity": ["ballon"]
+    }
+  }
+}

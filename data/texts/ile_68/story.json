@@ -31,7 +31,45 @@
     "mode_switch_scenario_note": "Les scènes repartent seules, jour après jour, comme dans l'histoire. Ta partie est gardée telle quelle.",
     "mode_switch_yes": "Changer",
     "mode_switch_no": "Garder",
-    "mode_switched": "C'est fait : {mode}."
+    "mode_switched": "C'est fait : {mode}.",
+    "activity_stop": "Échap : arrêter"
+  },
+  "activities": {
+    "_comment": "(X-L6) Les activités à la demande du mode libre (data/activities/ile_68.json ; StoryActivities) : la proposition du PNJ (offer), puis ce qui s'affiche à la fin (result_<issue> : success, failure, victory, defeat, draw, done, stopped), propre à l'activité ou, à défaut, commun (activities/result_<issue>). Rien de tout cela n'est gardé par le récit.",
+    "result_stopped": "On arrête là.",
+    "result_success": "Réussi.",
+    "result_failure": "Pas cette fois.",
+    "baton": {
+      "offer": "Tu as les bras froids. Deux bâtons, un peu de souffle : on s'échauffe ?",
+      "result_success": "Beau travail. Tes parades sont propres.",
+      "result_failure": "Tu as lâché trop tôt. Une autre fois.",
+      "result_stopped": "D'accord, on arrête là."
+    },
+    "duel": {
+      "offer": "Tu veux ta revanche ? Je ne te ménagerai pas, tu sais.",
+      "result_done": "Encore au sol. Mais tu tiens plus longtemps.",
+      "result_stopped": "Comme tu voudras. La revanche attendra."
+    },
+    "seniorious": {
+      "offer": "L'épée t'attend près du marais. On reprend la respiration ?",
+      "result_success": "Les trois Grues. Elle t'écoute, maintenant.",
+      "result_failure": "Pas encore. Respire, et reviens.",
+      "result_stopped": "On range l'épée pour aujourd'hui."
+    },
+    "embuscade": {
+      "offer": "Chhhut ! Je t'ai vue ! Tu veux voir si tu me repères avant que je saute ?",
+      "result_success": "Tu m'as eue ! Pas juste !",
+      "result_failure": "Ha ! Touchée ! Encore, encore !",
+      "result_stopped": "Aaah, déjà ? Bon, une autre fois."
+    },
+    "ballon": {
+      "offer": "Il manque quelqu'un chez les blanches. Tu viens jouer au ballon ?",
+      "result_victory": "On a gagné ! Tu reviens demain ?",
+      "result_defeat": "Perdu ! On se rattrapera.",
+      "result_draw": "Égalité. On refait un match ?",
+      "result_done": "Fin du match !",
+      "result_stopped": "Pas grave, une autre fois !"
+    }
   },
   "days": {
     "1": {
