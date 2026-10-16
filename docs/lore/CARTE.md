@@ -102,6 +102,13 @@ ce qui se trouve au nord de lui sur environ **1,6 × (h − 0,5) m** (1 / tan 32
   dans le champ : bout contre bout avec un autre pan du même rang, prolongé au-delà du bord de la
   carte, ou caché par un grand arbre posé devant lui (un chêne `oak_a` : tronc et couronne pleins
   du pied à 6,4 m). `tools/exterior_maps.py check` le vérifie (docs/QUALITE.md, QC-33) ;
+- (QC2) **aucun grand décor ne masque une place où l'on se tient**, même en premier plan (il ne
+  s'efface qu'autour du joueur, en trame, et jamais autour d'un habitant) : rien de 2 m ou plus qui,
+  vu de la caméra, couvre un personnage debout (ou le frôle à moins d'un mètre, comme un tronc) sur
+  un chemin, un point, une place, un marqueur, une place de la vie ou une vue de la série QC. Au sud
+  d'un chemin, les grands arbres reculent à plus de 10 m (leur couronne seule paraît au bas de
+  l'écran) ; près d'une sortie, sous la lisière, on ne fait que passer. `tools/exterior_maps.py
+  check` le vérifie (docs/QUALITE.md, QC-37) ;
 - dedans, le mur sud de chaque pièce est coupé (`docs/REFONTE.md`, 7.1 et 8.1). Pour une carte à
   plusieurs pièces, ce document recommande à E3 : **tous les murs est-ouest coupés au ras du
   sol** (`wallcut_*`), sauf le mur nord du bâtiment, haut ; les murs nord-sud entiers. Ce qui doit
@@ -1445,8 +1452,10 @@ Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_
   et débordent de la carte.
 - **Kits** : bord de chemin (`path_edge_ferns` hors de la bande libre, `fern_*`, `grass_clump_*`,
   `stepping_stones`) ; marais (roseaux, massettes `cattails`, brume `mist_patch`, libellules) ;
-  lisière (`forest_wall_*` au nord) ; sous-bois sud (`fg_trunk_a/b`, `fg_bush`, `fg_fern`, premier
-  plan).
+  lisière (`forest_wall_*` au nord) ; sous-bois sud (`fg_bush`, `fg_fern`, premier plan ; (QC2) ni
+  grand tronc ni grand arbre à moins de 10 m au sud du sentier : l'érable rouge de premier plan
+  couvrait Chtholly à la première embuscade, QC-37 ; les arbres du fond, z 34 → 38, ne montrent que
+  leur couronne ; au sud de la bifurcation, de jeunes pins).
 - **Place réservée** `embuscade` (30 → 44, 13 → 21,5) : le bord du marais où tombe Willem ;
   points `marais_chute` (35,5 ; 16,5), `lumiere_pannibal` (40 ; 12,5) (d'où part la lumière qui
   zigzague), `chtholly_arrivee` (30 ; 21,8), `premiere_embuscade` (16 ; 23 : Pannibal y bondit sur Chtholly, ACTE1.md 1.2), `bifurcation`, `vue_marais`.

@@ -2336,8 +2336,8 @@ random_flip = true
 [node name="TreesGoldFront" type="Node3D" parent="Geometry/Scatter"]
 script = ExtResource("4_prop_scatter")
 prop = ExtResource("87_tree_autumn_yellow_forest")
-points = PackedVector3Array(53.342, 0, 54.03, 10.14, 0, 21.913, 14.559, 0, 54.88, 24.923, 0, 7.658, 44.279, 0, 51.755, 71.266, 0, 7.356, 70.473, 0, 28.107, 49.347, 0, 21.462)
-yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0)
+points = PackedVector3Array(53.342, 0, 54.03, 10.14, 0, 21.913, 14.559, 0, 54.88, 24.923, 0, 7.658, 71.266, 0, 7.356, 70.473, 0, 28.107)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0)
 scale_range = Vector2(0.9, 1.1)
 random_seed = 544
 variants = Array[PackedScene]([ExtResource("21_beech_a_forest"), ExtResource("88_maple_b_forest"), ExtResource("90_oak_b_forest"), ExtResource("91_beech_c_forest"), ExtResource("92_maple_c_forest"), ExtResource("93_birch_a_forest"), ExtResource("94_birch_b_forest")])

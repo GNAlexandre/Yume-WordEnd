@@ -994,3 +994,4 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   « Texture with GL ID … leaked 349524 bytes » (256 × 256 avec mipmaps : le ciel du `AtmosphereRig`),
   même scène libérée et `Atmosphere.dress(null)` appelé ; déjà à la base 8c9bd99, sans lien avec
   l'ancienne île. Tant que ce n'est pas corrigé (lot E9), `tools/check.sh` capture le menu.
+- **(QC2) Textes du calendrier** (lot E6, textes du récit `data/scenes/ile_68/`) : ajouter les clés `ui/today` (« Aujourd'hui : jour {day} »), `ui/departure_in` (« Départ dans {days} jours »), `ui/departure_tomorrow` (« Départ demain »), `ui/departure_today` (« C'est le jour du départ ») ; `src/ui/calendar.gd` les lit par `StoryDirector.ui_text` avec ce repli en dur en attendant.
