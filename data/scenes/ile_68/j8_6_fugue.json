@@ -1,0 +1,87 @@
+{
+  "_comment": "ACTE1.md 8.6 (s. 20) : la fugue. Course libre jusqu'au bord de la colline (vue_nord), invite « S'envoler » ; elle s'élance (cachée : les ailes ne se dessinent pas), la chute en cartons ; l'ombre du Barocupot passe dans les nuages (ShipControl.pass_shadow, étape ship « shadow ») avant le blanc total. La colline est de nuit quel que soit le moment (préréglage de la carte, C3). Le givre et le blanc qui envahit l'image (effets d'E9) attendent : docs/CONTRACT_REQUESTS.md.",
+  "title": "La fugue",
+  "day": 8,
+  "after": [
+    "j8_5_refectoire"
+  ],
+  "map": "colline",
+  "hint": "hint",
+  "trigger": {
+    "on": "prompt",
+    "point": "vue_nord",
+    "prompt": "envol",
+    "size": 2.4
+  },
+  "steps": [
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "vue_nord",
+      "facing": "north"
+    },
+    {
+      "do": "camera",
+      "to": "vue_nord",
+      "offset": [
+        0.0,
+        -6.0
+      ],
+      "distance": 16,
+      "pitch": 15,
+      "time": 1.8,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "elan"
+    },
+    {
+      "do": "player",
+      "visible": false
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "pied_de_colline"
+    },
+    {
+      "do": "card",
+      "text": "chute",
+      "time": 3.2
+    },
+    {
+      "do": "card",
+      "text": "pleure",
+      "time": 3.4
+    },
+    {
+      "do": "ship",
+      "ship": "barocupot",
+      "action": "shadow"
+    },
+    {
+      "do": "card",
+      "text": "ombre",
+      "time": 3.0
+    },
+    {
+      "do": "fade",
+      "to": "white",
+      "time": 1.6
+    },
+    {
+      "do": "wait",
+      "time": 0.6
+    },
+    {
+      "do": "go_to",
+      "map": "barocupot",
+      "marker": "Spawn"
+    },
+    {
+      "do": "wait",
+      "time": 2.8
+    }
+  ]
+}

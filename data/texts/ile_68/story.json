@@ -31,6 +31,14 @@
       "title": "Le dessert spécial",
       "calendar": "Il a fait un dessert. Les petites ne le fuient plus.",
       "sleep_hint": "La journée est finie. Ton lit t'attend."
+    },
+    "7": {
+      "title": "Le jour de pluie",
+      "calendar": "Pluie. Je ne me souviens pas de tout. Je crois que j'ai trop parlé."
+    },
+    "8": {
+      "title": "Le duel, la fugue et la colline",
+      "calendar": "Il m'a battue sans bouger. Il a dit que je devais revenir. Il a promis un gâteau."
     }
   },
   "j1_1_port": {
@@ -101,5 +109,62 @@
   },
   "j4_2_diner": {
     "hint": "Le dîner est servi."
+  },
+  "j7_1_depart": {
+    "hint": "Nygglatho t'attend sous le porche, avec les épées.",
+    "hint_sentier": "Pars avec Ithea et Nephren par le chemin de l'est."
+  },
+  "j7_2_match": {
+    "haut": "Bien haut !",
+    "vent": "Un coup de vent arrache le ballon et l'emporte dans le fourré de l'est.",
+    "plonge": "Je l'ai vu tomber, j'y vais !",
+    "craque": "Craaac !"
+  },
+  "j7_4_port": {
+    "descente": "Descends la passerelle.",
+    "oumpf": "Oumpf."
+  },
+  "j7_6_archives": {
+    "horloge": "L'horloge sonne. Puis encore. La lampe baisse, et les pages se tournent de plus en plus lentement."
+  },
+  "j8_1_reveil": {
+    "non": "Non non non non…"
+  },
+  "j8_2_archives": {
+    "hint": "Où Willem a-t-il passé la nuit ?"
+  },
+  "j8_3_duel": {
+    "hint": "Willem t'attend dans la cour.",
+    "projetee": "Il ne pare pas. Il dévie la lame d'un geste, et elle s'envole, retombe sur le dos, six pas plus loin.",
+    "cri_1": "Willem !",
+    "cri_2": "Nygglatho ! Vite !"
+  },
+  "j8_4_cristal": {
+    "irruption_1": "Willem va mourir !",
+    "irruption_2": "Il est tombé tout seul !",
+    "irruption_3": "Viens vite !"
+  },
+  "j8_5_refectoire": {
+    "hint_vacarme": "Du vacarme à l'infirmerie."
+  },
+  "j8_6_fugue": {
+    "hint": "Le bord de l'île, au-delà de la colline.",
+    "envol": "S'envoler",
+    "chute": "Elle monte vers le nord, longtemps. Puis elle cesse de battre des ailes, et tombe.",
+    "pleure": "Le vent hurle. Le blanc l'avale, le givre lui mord les joues. Elle pleure, minuscule dans le blanc.",
+    "ombre": "Une ombre passe dans les nuages. Une ellipse. Elle la connaît : le Barocupot."
+  },
+  "j8_7_barocupot": {
+    "hint_conseil": "La salle du conseil, au bout de la coursive.",
+    "hint_pont": "Remonte sur le pont, par l'échelle.",
+    "retour": "Elle vole vers l'île. Un navire de la Garde, qui croisait près de l'île n° 66, l'escorte un moment. Le soleil se couche quand elle se pose dans la cour."
+  },
+  "j8_8_colline": {
+    "hint": "Willem t'attend sur la colline, avec Seniorious.",
+    "hint_talismans": "Frôle les talismans, un par un.",
+    "t_langue": "Celui-là ? Ne pas se brûler la langue.",
+    "t_nord": "Trouver le nord. Toujours utile.",
+    "t_miaou": "Imiter un miaulement. Ne demande pas.",
+    "t_ongles": "Ne pas se couper les ongles trop court."
   }
 }

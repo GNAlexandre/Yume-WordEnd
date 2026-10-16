@@ -1,0 +1,396 @@
+{
+  "_comment": "ACTE1.md 7.4 (s. 13) : le port sous la pluie fine, au crépuscule. Le transport de la Garde descend, s'amarre, ouvre sa trappe et pose sa passerelle (E7, étape ship) ; Limeskin (limeskin_garde) paraît à la trappe, descend, rend les épées et remonte ; {player} descend la passerelle (cinq secondes de marche), le quai tangue, elle tombe à genoux ; Willem la prend sur son dos (planche willem_piggyback : tenue « dos », la protagoniste cachée). Le navire repart. Jamais d'embarquement à l'acte 1.",
+  "title": "Le port sous la pluie",
+  "day": 7,
+  "after": [
+    "j7_3_armes"
+  ],
+  "map": "port",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "willem",
+    "limeskin_garde",
+    "ithea",
+    "nephren"
+  ],
+  "steps": [
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0
+    },
+    {
+      "do": "player",
+      "visible": false
+    },
+    {
+      "do": "slot",
+      "slot": "soir",
+      "time": 0
+    },
+    {
+      "do": "moment",
+      "weather": "pluie",
+      "time": 0
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "quai_est"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "bord_du_vide",
+      "facing": "north",
+      "outfit": "manteau"
+    },
+    {
+      "do": "camera",
+      "to": "bord_du_vide",
+      "offset": [
+        0.0,
+        1.4
+      ],
+      "distance": 11,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.6
+    },
+    {
+      "do": "wait",
+      "time": 1.0
+    },
+    {
+      "do": "dialogue",
+      "node": "trouee"
+    },
+    {
+      "do": "camera",
+      "to": "accostage",
+      "offset": [
+        1.0,
+        0.0
+      ],
+      "distance": 21,
+      "time": 1.6
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "navire_quai",
+      "offset": [
+        -1.7,
+        0.7
+      ],
+      "wait": false
+    },
+    {
+      "do": "ship",
+      "ship": "transport_garde",
+      "action": "descend"
+    },
+    {
+      "do": "ship",
+      "ship": "transport_garde",
+      "action": "open_hatch"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "navire_quai"
+    },
+    {
+      "do": "place",
+      "who": "limeskin_garde",
+      "at": "navire_trappe",
+      "facing": "south"
+    },
+    {
+      "do": "ship",
+      "ship": "transport_garde",
+      "action": "deploy_gangway"
+    },
+    {
+      "do": "camera",
+      "to": "navire_quai",
+      "offset": [
+        -0.8,
+        -0.6
+      ],
+      "distance": 11,
+      "time": 1.2
+    },
+    {
+      "do": "walk",
+      "who": "limeskin_garde",
+      "to": "navire_quai",
+      "offset": [
+        0.3,
+        -0.2
+      ],
+      "facing": "willem"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "limeskin_garde"
+    },
+    {
+      "do": "dialogue",
+      "node": "limeskin"
+    },
+    {
+      "do": "bubble",
+      "who": "willem",
+      "text": "oumpf",
+      "time": 1.2
+    },
+    {
+      "do": "walk",
+      "who": "limeskin_garde",
+      "to": "navire_trappe"
+    },
+    {
+      "do": "leave",
+      "who": "limeskin_garde"
+    },
+    {
+      "do": "player",
+      "visible": true
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "navire_trappe",
+      "facing": "south"
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "navire_trappe",
+      "offset": [
+        -0.6,
+        -0.4
+      ],
+      "facing": "south"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "navire_trappe",
+      "offset": [
+        0.6,
+        -0.4
+      ],
+      "facing": "south"
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.0
+    },
+    {
+      "do": "hint",
+      "text": "descente"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "reach": "from_transport_garde",
+      "radius": 1.4,
+      "timeout": 12
+    },
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "hint"
+    },
+    {
+      "do": "camera",
+      "to": "player",
+      "offset": [
+        0.6,
+        0.0
+      ],
+      "distance": 10,
+      "time": 0.5,
+      "wait": true
+    },
+    {
+      "do": "camera",
+      "to": "player",
+      "offset": [
+        -0.6,
+        0.2
+      ],
+      "distance": 10,
+      "time": 0.5,
+      "wait": true
+    },
+    {
+      "do": "anim",
+      "who": "player",
+      "anim": "degats"
+    },
+    {
+      "do": "camera",
+      "to": "player",
+      "distance": 9,
+      "time": 0.6
+    },
+    {
+      "do": "dialogue",
+      "node": "genoux"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "player",
+      "offset": [
+        -1.2,
+        -0.3
+      ],
+      "gait": "course",
+      "facing": "player"
+    },
+    {
+      "do": "dialogue",
+      "node": "dos"
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.6
+    },
+    {
+      "do": "player",
+      "visible": false
+    },
+    {
+      "do": "outfit",
+      "who": "willem",
+      "outfit": "dos"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "player",
+      "facing": "west"
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "player",
+      "offset": [
+        1.5,
+        0.6
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "player",
+      "offset": [
+        2.8,
+        -0.2
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "ship",
+      "ship": "transport_garde",
+      "action": "depart",
+      "wait": false
+    },
+    {
+      "do": "camera",
+      "to": "player",
+      "offset": [
+        -3.5,
+        3.0
+      ],
+      "distance": 12,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.8
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "rue_centre",
+      "offset": [
+        -4.0,
+        -1.0
+      ],
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "ithea",
+      "to": "rue_centre",
+      "offset": [
+        -2.8,
+        0.2
+      ],
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "nephren",
+      "to": "rue_centre",
+      "offset": [
+        -1.6,
+        -1.2
+      ],
+      "wait": false
+    },
+    {
+      "do": "dialogue",
+      "node": "retour"
+    },
+    {
+      "do": "wait",
+      "time": 1.0
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.2
+    },
+    {
+      "do": "leave",
+      "who": "willem"
+    },
+    {
+      "do": "leave",
+      "who": "ithea"
+    },
+    {
+      "do": "leave",
+      "who": "nephren"
+    },
+    {
+      "do": "go_to",
+      "map": "entrepot_rdc",
+      "marker": "from_entrepot"
+    },
+    {
+      "do": "wait",
+      "time": 2.8
+    }
+  ]
+}

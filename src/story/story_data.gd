@@ -25,6 +25,8 @@ const TEXTS_KIND := "texts"
 const TEXTS_FILE := "story.json"
 const TALK_DIR := "talk"
 const DEFAULT_ROOT := "res://data"
+## (S2) Dossier des images du décor (étape « props »).
+const IMAGES_DIR := "res://assets/hd2d"
 ## Qui : le joueur, ou l'id d'un PNJ présent.
 const PLAYER := &"player"
 ## Clés d'une scène, de son déclencheur, de l'acte.
@@ -126,6 +128,24 @@ const STEPS: Dictionary = {
 	# (E7) Un navire (ShipControl) : descend, s'amarre, ouvre sa trappe, pose sa passerelle, repart ;
 	# l'ombre du Barocupot dans les nuages (action « shadow »).
 	"ship": {"ship": "ship!", "action": "ship_action!", "wait": "bool"},
+	# (S2) La protagoniste cachée le temps d'une séquence sans elle (rendue à la fin de la scène).
+	"player": {"visible": "bool!"},
+	# (S2) Des images animées posées en cercle autour d'un point, et leur lueur (les talismans de
+	# la colline, 8.8) ; retirées par « clear » ou à la fin de la scène.
+	"props":
+	{
+		"id": "name!",
+		"image": "image",
+		"at": "point",
+		"count": "number",
+		"radius": "number",
+		"lift": "number",
+		"frames": "number",
+		"fps": "number",
+		"light": "number",
+		"color": "color",
+		"clear": "bool",
+	},
 }
 ## Ce qu'attend wait_for : une seule de ces clés.
 const WAIT_FOR_KINDS: Array[String] = ["reach", "map", "examine", "talk"]
@@ -179,6 +199,11 @@ static func dialogue_path(island_id: StringName, file: String) -> String:
 static func talk_path(island_id: StringName, npc_id: StringName) -> String:
 	var found := dialogue_path(island_id, "%s/%s" % [TALK_DIR, npc_id])
 	return found if FileAccess.file_exists(found) else ""
+
+
+## (S2) Image d'une étape « props » : « anim/talisman_float » → son PNG sous IMAGES_DIR.
+static func image_path(image: String) -> String:
+	return "%s/%s.png" % [IMAGES_DIR, image]
 
 
 ## Oublie les fichiers lus.
@@ -574,6 +599,9 @@ static func _check_step(
 			context["map"] = StringName(str(step.get("map", "")))
 		"dialogue":
 			_check_dialogue(step, where, context, found)
+		"props":
+			if not step.get("clear", false) and not (step.has("image") and step.has("at")):
+				found.append("%s : « image » et « at » (ou « clear »)" % where)
 	if context["sequence"] and (kind == "wait_for" or kind == "control"):
 		found.append("%s : une séquence se passe d'une touche, ni %s ni contrôle" % [where, kind])
 
@@ -663,6 +691,12 @@ static func _check_value(
 		"ship_action":
 			if not ShipControl.ACTIONS.has(StringName(str(value))):
 				found.append("%s : %s" % [where, ", ".join(ShipControl.ACTIONS)])
+		"image":
+			if not _is_name(value) or not ResourceLoader.exists(image_path(str(value))):
+				found.append("%s : image inconnue %s (assets/hd2d/<nom>.png)" % [where, value])
+		"color":
+			if not _is_name(value) or not Color.html_is_valid(str(value)):
+				found.append("%s : couleur attendue (« #cfe4ff »)" % where)
 		_:
 			found.append("%s : type %s inconnu (moteur)" % [where, type])
 

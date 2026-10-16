@@ -1,0 +1,74 @@
+{
+  "_comment": "ACTE1.md 8.7 (s. 20) : {player} vouvoie Limeskin ; il ne ment pas et ne promet pas qu'elle reviendra.",
+  "id": "j8_7_barocupot",
+  "start": "reveil",
+  "nodes": {
+    "reveil": {
+      "speaker": "",
+      "text": "Elle reprend conscience dans une coursive qui sent l'huile chaude. Quelqu'un lui a posé une serviette sur les épaules."
+    },
+    "the": {
+      "speaker_id": "limeskin_garde",
+      "text": "Assseyez-vous, guerrière. Le thé est chaud, amer, et il pique. C'est le meilleur.",
+      "next": "the_2"
+    },
+    "the_2": {
+      "speaker": "",
+      "text": "Les tasses sont minuscules. Limeskin tient la sienne comme un jouet.",
+      "next": "the_3"
+    },
+    "the_3": {
+      "speaker_id": "limeskin_garde",
+      "text": "La résolution et la résignation sont deux lames qui se ressemblent. Elles ne tranchent pas de la même façon.",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "Ce n'est pas la même chose ?",
+          "next": "meme"
+        },
+        {
+          "text": "Merci pour le thé.",
+          "next": "merci"
+        }
+      ]
+    },
+    "meme": {
+      "speaker": "{player}",
+      "text": "Ce n'est pas la même chose ?",
+      "next": "meme_2"
+    },
+    "meme_2": {
+      "speaker_id": "limeskin_garde",
+      "text": "L'une coupe ce qui vous retient. L'autre, ce qui vous attend. À vous de sssavoir laquelle vous portez.",
+      "next": "suite"
+    },
+    "merci": {
+      "speaker": "{player}",
+      "text": "Merci pour le thé.",
+      "next": "merci_2"
+    },
+    "merci_2": {
+      "speaker_id": "limeskin_garde",
+      "text": "Un guerrier qui a un endroit où rentrer ne se bat pas de la même façon. Sssouvenez-vous-en.",
+      "next": "suite"
+    },
+    "suite": {
+      "speaker_id": "limeskin_garde",
+      "text": "Mon ermitage est toujours ouvert aux guerriers. Je ne vous promets rien d'autre.",
+      "next": "suite_2"
+    },
+    "suite_2": {
+      "speaker": "",
+      "text": "Il rit, d'un rire de cloche de céramique qu'on ferait tourner.",
+      "next": "suite_3"
+    },
+    "suite_3": {
+      "speaker": "{player}",
+      "text": "Merci, monsieur Limeskin."
+    }
+  }
+}

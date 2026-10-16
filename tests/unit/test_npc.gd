@@ -29,6 +29,12 @@ const NPCS := {
 	&"egg_vendor": ["Marchande d’œufs", &"egg_vendor", &"", &"beach"],
 	&"garde_lookout": ["Guetteur", &"garde_lookout", &"", &"dunes"],
 }
+## (S2) Fiches de scène de l'acte 1 (île n° 68) : sans dialogue de l'ancienne île ni quête, toujours
+## présentes ; nom affiché, id du visuel (une tenue ou un visuel de PNJ).
+const SCENE_NPCS := {
+	&"chtholly_double": ["Chtholly", &"chtholly_home"],
+	&"limeskin_garde": ["Limeskin", &"limeskin"],
+}
 ## Tailles (m) des visuels : HISTOIRE.md 5.1 et 5.2, BIBLE.md section 5.
 const HEIGHTS := {
 	&"nygglatho": 1.85,
@@ -223,9 +229,31 @@ func test_npc_data_files() -> void:
 		assert_true(FileAccess.file_exists(data.dialogue_path), "%s : dialogue" % npc_id)
 	for file_name: String in ResourceLoader.list_directory(NPCS_DIR):
 		if file_name.ends_with(".tres"):
-			assert_has(NPCS, StringName(file_name.get_basename()), "PNJ attendu : %s" % file_name)
+			var file_id := StringName(file_name.get_basename())
+			assert_true(
+				NPCS.has(file_id) or SCENE_NPCS.has(file_id), "PNJ attendu : %s" % file_name
+			)
 	for old_id: String in ["librarian", "blacksmith", "child"]:
 		assert_false(ResourceLoader.exists("%s/%s.tres" % [NPCS_DIR, old_id]), "%s retiré" % old_id)
+
+
+## (S2) La doublure couchée de la protagoniste et Limeskin de l'acte 1 : visuels non jouables,
+## sans dialogue de l'ancienne île, présents sur l'île n° 68 (aucune condition).
+func test_scene_npcs_of_the_act() -> void:
+	for npc_id: StringName in SCENE_NPCS:
+		var data := load("%s/%s.tres" % [NPCS_DIR, npc_id]) as NpcData
+		assert_not_null(data, "data/npcs/%s.tres" % npc_id)
+		if data == null:
+			continue
+		var fields: Array = SCENE_NPCS[npc_id]
+		assert_eq(data.id, npc_id, "id = nom du fichier")
+		assert_eq(data.display_name, fields[0])
+		assert_eq(data.skin.id, fields[1], "%s : visuel" % npc_id)
+		assert_null(SkinRegistry.get_skin(data.skin.id), "%s : pas jouable" % npc_id)
+		assert_eq(data.dialogue_path, "", "%s : pas de dialogue de l'ancienne île" % npc_id)
+		assert_eq(data.quest_id, &"")
+		assert_true(data.visible_if.is_empty(), "%s : toujours là" % npc_id)
+		assert_true(data.is_present(), "%s : présent" % npc_id)
 
 
 func test_npc_visuals_are_not_playable_skins() -> void:

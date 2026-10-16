@@ -1,0 +1,117 @@
+{
+  "_comment": "ACTE1.md 8.2 (s. 16) : les endormis des archives. Willem y dort assis le matin du jour 8 (V1) ; la scène y pose Nephren. Willem prend un Carillon de série (tenue « duel ») et part pour la cour. L'indice de 8.1 (« Où Willem a-t-il passé la nuit ? ») est celui de cette scène, qui l'attend.",
+  "title": "Les endormis des archives",
+  "day": 8,
+  "slot": "matin",
+  "after": [
+    "j8_1_reveil"
+  ],
+  "map": "entrepot_rdc",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "archives_canape",
+    "radius": 2.6
+  },
+  "present": [
+    "willem",
+    "nephren"
+  ],
+  "steps": [
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "archives_canape_assise",
+      "outfit": "maison",
+      "anim": "dort"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "archives_canape_assise",
+      "offset": [
+        0.75,
+        0.05
+      ],
+      "outfit": "maison",
+      "anim": "dort"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "archives_bureau",
+      "offset": [
+        0.8,
+        0.8
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "camera",
+      "to": "archives_canape",
+      "offset": [
+        0.6,
+        0.2
+      ],
+      "distance": 8,
+      "time": 1.0,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "canape"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "archives_canape",
+      "offset": [
+        -0.3,
+        0.4
+      ],
+      "facing": "player"
+    },
+    {
+      "do": "anim",
+      "who": "nephren",
+      "anim": "assis"
+    },
+    {
+      "do": "camera",
+      "to": "archives_canape",
+      "offset": [
+        0.4,
+        0.4
+      ],
+      "distance": 9,
+      "time": 0.8
+    },
+    {
+      "do": "dialogue",
+      "node": "exercice"
+    },
+    {
+      "do": "outfit",
+      "who": "willem",
+      "outfit": "duel"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "couloir_centre",
+      "wait": false
+    },
+    {
+      "do": "wait",
+      "time": 1.6
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.0
+    },
+    {
+      "do": "leave",
+      "who": "willem"
+    }
+  ]
+}

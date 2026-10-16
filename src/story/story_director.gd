@@ -486,7 +486,10 @@ func _add_prompt(
 
 
 func _update_hint() -> void:
-	var text := _scene_hint if _runner.is_running() else _waiting_hint()
+	# (S2) Dès qu'une scène commence (_current posé avant le runner), l'indice qui l'attendait
+	# s'efface : il ne traîne plus sur la scène qu'il annonçait.
+	var playing := _runner.is_running() or not _current.is_empty()
+	var text := _scene_hint if playing else _waiting_hint()
 	if text != _hint:
 		_hint = text
 		hint_changed.emit(text)

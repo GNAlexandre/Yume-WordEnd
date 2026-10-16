@@ -1,0 +1,69 @@
+{
+  "_comment": "ACTE1.md 7.1 : répliques originales (Nygglatho, Ithea, Nephren ; Willem à sa fenêtre).",
+  "id": "j7_1_depart",
+  "start": "epees",
+  "nodes": {
+    "epees": {
+      "speaker": "",
+      "text": "Sous le porche, Nygglatho tient trois longs paquets emmaillotés de tissu blanc. Elle en remet un à chacune.",
+      "next": "epees_2"
+    },
+    "epees_2": {
+      "speaker_id": "nygglatho",
+      "text": "Seniorious, pour toi. Rentrez avant que j'aie faim, d'accord ? Sinon, je ne réponds de rien.",
+      "next": "epees_3"
+    },
+    "epees_3": {
+      "speaker_id": "ithea",
+      "text": "Promis. Et je rapporterai une histoire à chaque petite. Une vraie, avec des méchants.",
+      "next": "epees_4"
+    },
+    "epees_4": {
+      "speaker_id": "nephren",
+      "text": "Mm.",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "On revient dans quelques jours.",
+          "next": "retour"
+        },
+        {
+          "text": "Garde-les bien.",
+          "next": "garde"
+        }
+      ]
+    },
+    "retour": {
+      "speaker": "{player}",
+      "text": "On revient dans quelques jours. Ne leur dis rien de plus.",
+      "next": "fin"
+    },
+    "garde": {
+      "speaker": "{player}",
+      "text": "Garde-les bien. Toutes.",
+      "next": "fin"
+    },
+    "fin": {
+      "speaker_id": "nygglatho",
+      "text": "Comme toujours. Allez, filez, la brume ne vous attendra pas."
+    },
+    "fenetre": {
+      "speaker": "",
+      "text": "À sa fenêtre, Willem regarde trois silhouettes s'enfoncer dans la brume du sentier, une épée blanche sur le dos.",
+      "next": "fenetre_2"
+    },
+    "fenetre_2": {
+      "speaker": "",
+      "text": "Elles s'effacent l'une après l'autre. Les premières gouttes viennent frapper la vitre.",
+      "next": "fenetre_3"
+    },
+    "fenetre_3": {
+      "speaker_id": "willem",
+      "text": "… Une mission, hein."
+    }
+  }
+}

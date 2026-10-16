@@ -71,10 +71,16 @@
       "weather": "clair"
     },
     "7": {
-      "weather": "pluie"
+      "weather": "clair",
+      "sleep_after": [
+        "j7_6_archives"
+      ]
     },
     "8": {
-      "weather": "clair"
+      "weather": "clair",
+      "sleep_after": [
+        "j8_8_colline"
+      ]
     },
     "9": {
       "weather": "clair"
