@@ -954,3 +954,10 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   `travaille`) ; `test_life_ile_68_nav` n'admet que les cartes de l'entrepôt et veut chaque place atteignable à pied, or la place
   `ville_snack:snack_vendor` est derrière le comptoir (0,35 m). Un emploi du temps (et une place « posée », hors navigation) le
   laisserait à sa poêle après `j3_3_snack`, qui le retire aujourd'hui pendant le fondu.
+
+## S2 — les jours 5 et 6 : ce qui manque aux autres lots
+
+- **E9 (lumière)** : un effet « souvenir » (sépia, ACTE1.md 0.2 et 6.4) ; en attendant, fondu au blanc et cartons (`j6_2_livre_images`, `j6_4_souvenir`).
+- **E8 (jeux)** : `StoryDirector.register_game(&"ballon", …)` (`play_story_ball_match`, avec `with_player` et `player_at`) permettrait à 5.3 de poser la joueuse dans le match au lieu de la mener au bord du champ ; en attendant, 5.2 la place à `entrepot:champ_entree` et la vie fait le reste.
+- **V1 (vie)** : l'embuscade de Collon à partir du jour 5 (VIE.md 5.5) et la ligne de ballon des jours 9 à 12 (`day: [9, 12]`, comme celle des jours 5 et 6 dans `data/life/ile_68/`) ; le ballon vit sur quinze petites, dont `fairy_07` à `fairy_10` qui portent encore la planche de `fairy_01` (cahier n° 6, lot D : planches `fairy_07` à `fairy_10`).
+- **Images** : aucune commande nouvelle. Au cahier n° 6 : `willem_life.frappe` (le premier coup de pied de 5.1 est celui de Collon en attendant), les planches `fairy_07` à `fairy_10`.

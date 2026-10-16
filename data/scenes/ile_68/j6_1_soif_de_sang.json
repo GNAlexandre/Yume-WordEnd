@@ -1,0 +1,354 @@
+{
+  "_comment": "ACTE1.md 6.1 (V1, « Les filles de l'entrepôt ») : le saut dans le dos de Willem, la clé de bras, la faveur demandée. Le couloir fait 2 m de large : tout le monde est aligné d'ouest en est. Indice : l'œuvre n'en donne pas ; une ligne (original) dit où est le remue-ménage, puisque la scène compte pour le coucher.",
+  "title": "« Soif de sang ! »",
+  "day": 6,
+  "slot": "matin",
+  "map": "entrepot_rdc",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "couloir_centre",
+    "radius": 4.5
+  },
+  "present": [
+    "willem",
+    "collon",
+    "pannibal",
+    "tiat",
+    "lakhesh",
+    "fairy_07",
+    "fairy_08"
+  ],
+  "steps": [
+    {
+      "do": "hint"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "couloir_centre",
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "facing": "east",
+      "outfit": "maison",
+      "anim": "repos"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "couloir_centre",
+      "offset": [
+        -3.6,
+        0.1
+      ],
+      "facing": "east",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "couloir_centre",
+      "offset": [
+        -4.7,
+        -0.1
+      ],
+      "facing": "east",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "couloir_centre",
+      "offset": [
+        -5.8,
+        0.1
+      ],
+      "facing": "east",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "couloir_centre",
+      "offset": [
+        -6.9,
+        -0.1
+      ],
+      "facing": "east",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "fairy_07",
+      "at": "couloir_centre",
+      "offset": [
+        -8.0,
+        0.1
+      ],
+      "facing": "east"
+    },
+    {
+      "do": "place",
+      "who": "fairy_08",
+      "at": "couloir_centre",
+      "offset": [
+        -9.1,
+        -0.1
+      ],
+      "facing": "east"
+    },
+    {
+      "do": "camera",
+      "to": "couloir_centre",
+      "offset": [
+        0.2,
+        0.0
+      ],
+      "distance": 11,
+      "time": 1.0,
+      "wait": true
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "couloir_centre",
+      "offset": [
+        -1.0,
+        0.0
+      ],
+      "gait": "course",
+      "wait": true,
+      "facing": "east"
+    },
+    {
+      "do": "anim",
+      "who": "collon",
+      "anim": "saut",
+      "wait": true
+    },
+    {
+      "do": "anim",
+      "who": "willem",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "couloir_centre",
+      "offset": [
+        -0.9,
+        0.25
+      ],
+      "facing": "east",
+      "outfit": "vie",
+      "anim": "tombe"
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "couloir_centre",
+      "offset": [
+        0.9,
+        0.2
+      ],
+      "gait": "course",
+      "wait": true,
+      "facing": "west"
+    },
+    {
+      "do": "anim",
+      "who": "pannibal",
+      "anim": "assis"
+    },
+    {
+      "do": "walk",
+      "who": "lakhesh",
+      "to": "couloir_centre",
+      "offset": [
+        -2.2,
+        0.1
+      ],
+      "gait": "course",
+      "wait": false,
+      "facing": "east"
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "couloir_centre",
+      "offset": [
+        -3.1,
+        -0.1
+      ],
+      "gait": "course",
+      "wait": false,
+      "facing": "east"
+    },
+    {
+      "do": "walk",
+      "who": "fairy_07",
+      "to": "couloir_centre",
+      "offset": [
+        -4.0,
+        0.1
+      ],
+      "gait": "course",
+      "wait": false,
+      "facing": "east"
+    },
+    {
+      "do": "walk",
+      "who": "fairy_08",
+      "to": "couloir_centre",
+      "offset": [
+        -5.0,
+        -0.1
+      ],
+      "gait": "course",
+      "wait": true,
+      "facing": "east"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "couloir_centre",
+      "offset": [
+        3.4,
+        0.0
+      ],
+      "wait": true,
+      "facing": "west"
+    },
+    {
+      "do": "dialogue",
+      "node": "lutte",
+      "presentation": "bandeau"
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "player",
+      "offset": [
+        -1.1,
+        0.0
+      ],
+      "gait": "marche",
+      "wait": true,
+      "facing": "east",
+      "if": {
+        "flag": "j6_cle"
+      }
+    },
+    {
+      "do": "anim",
+      "who": "pannibal",
+      "anim": "attaque",
+      "wait": true,
+      "if": {
+        "flag": "j6_cle"
+      }
+    },
+    {
+      "do": "anim",
+      "who": "pannibal",
+      "anim": "tombe",
+      "if": {
+        "flag": "j6_cle"
+      }
+    },
+    {
+      "do": "dialogue",
+      "node": "cle",
+      "presentation": "bandeau",
+      "if": {
+        "flag": "j6_cle"
+      }
+    },
+    {
+      "do": "dialogue",
+      "node": "faveur",
+      "presentation": "bandeau"
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "lakhesh",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_07",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "fairy_08",
+      "to": "couloir_ouest",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "anim",
+      "who": "willem",
+      "anim": "repos"
+    },
+    {
+      "do": "wait",
+      "time": 1.8
+    },
+    {
+      "do": "leave",
+      "who": "collon"
+    },
+    {
+      "do": "leave",
+      "who": "pannibal"
+    },
+    {
+      "do": "leave",
+      "who": "lakhesh"
+    },
+    {
+      "do": "leave",
+      "who": "tiat"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_07"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_08"
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.0
+    }
+  ]
+}
