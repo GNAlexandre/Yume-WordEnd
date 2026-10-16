@@ -90,6 +90,22 @@ Neuf PNG générés avec OpenAI Image Generation : traces et leur fin estompée,
 - `assets/hd2d/interior/props/desk_clean_brooch.png` — 106 × 101 px.
 - `assets/hd2d/interior/props/crystal_lamp_table.png` — 29 × 48 px.
 
+## Cahier n° 6 — C.3 et C.4 : colline et fenêtres de nuit
+
+Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
+
+- `assets/hd2d/sky/sea_stack_a.png`
+- `assets/hd2d/decals/path_flagstones_a.png`
+- `assets/hd2d/interior/window_bare_night.png`
+- `assets/hd2d/interior/window_curtains_open_night.png`
+- `assets/hd2d/props/window_lit_large.png`
+- `assets/hd2d/props/window_lit_small.png`
+- `assets/hd2d/decals/moon_window.png`
+- `assets/hd2d/props/window_lit_round.png`
+- `assets/hd2d/anim/talisman_float.png`
+- `assets/hd2d/sky/sea_stack_b.png`
+- `assets/hd2d/sky/sea_stack_c.png`
+- `assets/hd2d/decals/path_flagstones_b.png`
 ## Cahier n° 6 — C.6 et C.7 : café et salon Limashenka
 
 Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
