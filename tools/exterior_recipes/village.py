@@ -383,7 +383,7 @@ def pose(p):
     # === 5. Le sud : ruisseau, lavoir, ruches, prés, haie (5.2, kits « sud ») =============================
 
     # Le ruisseau de l'ouest et du sud : roseaux, massettes, nénuphars, pierres de gué.
-    west = poisson(Rect(0.5, 6.8, 2.8, 36.4), 1.8, 16, free(), seed=31)
+    west = poisson(Rect(0.5, 6.8, 2.8, 36.4), 1.8, 13, free(), seed=31)
     place("River", "edge_rocks_b", 1.6, 5.4, y=-0.5, name="RochesCascade", check=False)
     place("River", "reeds", 2.4, 6.9, y=-0.5, name="RoseauxCascade", check=False)
     place("River", "cattails", 0.9, 7.2, y=-0.5, name="MassettesCascade", flip=True, check=False)

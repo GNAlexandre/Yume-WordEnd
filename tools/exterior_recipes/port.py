@@ -41,6 +41,8 @@ SETTINGS = {
     "south_allowed": {
         "quai_ouest": "le bas de l'écran est la rue du port, où l'on passe ; rien ne s'y dresse",
         "hangar": "le bas de l'écran est la rue du port, où l'on passe ; rien ne s'y dresse",
+        "passerelle": "le bas de l'écran est le quai de l'accostage et la rue du port ; rien ne s'y dresse",
+        "navire_passerelle": "le bas de l'écran est le quai de l'accostage et la rue du port ; rien ne s'y dresse",
     },
     "masks_allowed": {"PanneauFlechesRouges": (("point panneau",),
                                                "le point est le panneau même ; on s'y tient au sud (panneau_sud)")},

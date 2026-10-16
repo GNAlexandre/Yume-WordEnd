@@ -60,9 +60,9 @@ def ground_plan(m):
         s["noise"] = 0.0
     steps = []
 
-    def level(poly, lv, seed, noise=0.4):
+    def level(poly, lv, seed, noise=0.75):
         steps.append({"op": "level", "level": lv, "shape": {"poly": [list(q) for q in poly], "noise": noise,
-                                                            "noise_scale": 3.4, "seed": seed}})
+                                                            "noise_scale": 2.8, "seed": seed}})
 
     def material(shape, name, seed, noise=0.9, scale=2.2, where=None):
         step = {"op": "material", "material": name, "shape": dict(shape, noise=noise, noise_scale=scale, seed=seed)}
@@ -76,7 +76,7 @@ def ground_plan(m):
     for poly, lv in STEPS_EAST:
         level(poly, lv, 40 + lv)
     level(MID_TERRACE, LEVEL_MID, 23)
-    level(SUMMIT, LEVEL_HIGH, 24, noise=0.4)
+    level(SUMMIT, LEVEL_HIGH, 24, noise=0.65)
     # Un replat de 0,5 m au pied, de chaque côté de l'entrée (le sol de la forêt n'est pas plat).
     level([(0, 29), (8.5, 32.6), (9.4, 37.4), (4.6, 39), (0, 37)], 1, 51, noise=0.5)
     level([(40, 30), (31.8, 33.6), (30.4, 38.2), (35.2, 39.4), (40, 37.6)], 1, 52, noise=0.5)

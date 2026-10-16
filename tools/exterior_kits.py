@@ -55,7 +55,7 @@ FAMILIES = {
     # Garde-corps de la ville haute : le fer, avec ses pans de muret et de balustre ; du port : la fonte, avec les
     # pans rapiécés de cordage et de rambarde de tôle ; clôtures du village : le plessis, la palissade basse.
     "town_rail": ["town_railing", "town_railing_b"],
-    "town_rail_accents": ["town_wall_low", "edge_parapet", "town_planter_stone"],
+    "town_rail_accents": ["edge_parapet", "planter_long"],
     "port_rail": ["edge_railing", "edge_railing_b"],
     "port_rail_accents": ["rope_fence", "deck_railing"],
     "wattle": ["fence_wattle", "fence_wattle_b"],
@@ -65,7 +65,7 @@ FAMILIES = {
     # Masses du plan moyen (1,5 à 3 m).
     "mid_nature": ["thicket_a", "thicket_b", "thicket_c", "sapling_a", "sapling_b", "boulder_b", "haystack"],
     "mid_port": ["crates_barrels", "cargo_cart_b", "pallet_sacks", "crate_stack", "sacks_pile"],
-    "mid_town": ["sapling_a", "sapling_b", "town_planter_stone", "barrel_group", "crate_stack"],
+    "mid_town": ["sapling_a", "sapling_b", "planter_long", "barrel_group", "crate_stack"],
 }
 
 
@@ -309,7 +309,9 @@ def foreground_kit(p, bounds, targets, seed, group="Foreground", base="PremierPl
     point ou une place de la vie ; keep(x, z) : le point est-il permis. Rend le nombre de décors posés."""
     rng = random.Random(seed)
     foliage = foliage if foliage is not None else family("fg_foliage", ["fg_grass"])
-    trunks = trunks if trunks is not None else family("fg_trunks")
+    # (Essai) Un tronc de 10 m près de la caméra penche de toute la hauteur de l'écran (la perspective de la caméra
+    # inclinée) : pas de tronc par défaut ; des arbres plus loin, dont seule la couronne paraît.
+    trunks = trunks if trunks is not None else []
     if trees is None:
         trees = [FOREGROUND[s] for s in family("trees_gold") + family("trees_rust") if s in FOREGROUND]
     placed = []

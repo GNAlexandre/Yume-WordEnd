@@ -106,6 +106,20 @@ def ground_plan(m):
         {"op": "level", "level": -1, "shape": {"rect": [62, 30, 8, 3]}},
         {"op": "level", "level": -1, "shape": {"rect": [63, 32, 8, 8]}},
     ]
+    # (RC) Un relief moins rectangulaire (CARTE.md 0.5) : le talus de la lisière (z 5) et la berge du marais (z 18),
+    # deux droites de 40 m, deviennent des berges irrégulières (± 0,7 m environ) ; franches au pied des deux descentes
+    # de la levée (x 33 → 36 et 52 → 55 : la rampe relie deux cases plates) ; la levée du sentier (z ≥ 20) ne bouge pas.
+    for s in steps:
+        if s["op"] == "level" and s["shape"].get("rect") == [0.0, 0.0, 80.0, 5.0]:
+            s["shape"].update({"noise": 1.2, "noise_scale": 2.6, "seed": 95})
+        if s["op"] == "level" and s["shape"].get("rect") == [16.0, 5.0, 42.0, 13.0]:
+            s["shape"].update({"noise": 1.3, "noise_scale": 2.4, "seed": 96})
+    first = exterior_ground.step_index(steps, "face")
+    steps[first:first] = [
+        {"op": "level", "level": -1, "shape": {"rect": [32, 15, 5, 3]}},
+        {"op": "level", "level": -1, "shape": {"rect": [51, 15, 5, 3]}},
+        {"op": "level", "level": 0, "shape": {"rect": [16, 19.2, 42, 2]}},
+    ]
     # Mousse et feuilles au bord du sentier (le sol du plan est un sous-bois uni).
     patches = [("mousse", 9, 21, 3.4, 1.2), ("mousse", 27, 27.5, 3.0, 1.1), ("mousse", 44, 20.4, 3.6, 1.2),
                ("mousse", 70, 27, 2.6, 1.3), ("feuilles", 18, 27.2, 3.4, 1.2), ("feuilles", 36, 26.8, 3.6, 1.1),

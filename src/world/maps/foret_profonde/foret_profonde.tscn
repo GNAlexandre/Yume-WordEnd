@@ -2285,76 +2285,77 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.12, 0, 43.853)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 77, 0, 44.6)
 
 [node name="PremierPlan1" parent="Geometry/Foreground" instance=ExtResource("84_fg_bush")]
-transform = Transform3D(1.01, 0, 0, 0, 1.01, 0, 0, 0, 1.01, 31.53, 0, 19.11)
+transform = Transform3D(0.97, 0, 0, 0, 0.97, 0, 0, 0, 0.97, 34.06, 0, 19.15)
 flip_h = true
 
 [node name="PremierPlan2" parent="Geometry/Foreground" instance=ExtResource("85_fg_fern")]
-transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 36.26, 0, 20.47)
+transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 50.31, 0, 20.59)
 flip_h = true
 
-[node name="PremierPlan3" parent="Geometry/Foreground" instance=ExtResource("84_fg_bush")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.45, 0, 19.47)
+[node name="PremierPlan3" parent="Geometry/Foreground" instance=ExtResource("86_fg_grass")]
+transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 52.29, 0, 18.36)
 
-[node name="PremierPlan4" parent="Geometry/Foreground" instance=ExtResource("85_fg_fern")]
-transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 52.15, 0, 18.17)
+[node name="PremierPlan4" parent="Geometry/Foreground" instance=ExtResource("84_fg_bush")]
+transform = Transform3D(0.97, 0, 0, 0, 0.97, 0, 0, 0, 0.97, 35.98, 0, 31.59)
+
+[node name="PremierPlan5" parent="Geometry/Foreground" instance=ExtResource("85_fg_fern")]
+transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 38.59, 0, 31.66)
 flip_h = true
-
-[node name="PremierPlan5" parent="Geometry/Foreground" instance=ExtResource("86_fg_grass")]
-transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 40.48, 0, 33.01)
 
 [node name="PremierPlan6" parent="Geometry/Foreground" instance=ExtResource("84_fg_bush")]
-transform = Transform3D(1.04, 0, 0, 0, 1.04, 0, 0, 0, 1.04, 36.44, 0, 31.78)
+transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 59.29, 0, 36.07)
+flip_h = true
 
 [node name="PremierPlan7" parent="Geometry/Foreground" instance=ExtResource("85_fg_fern")]
-transform = Transform3D(1.01, 0, 0, 0, 1.01, 0, 0, 0, 1.01, 42.65, 0, 34.64)
+transform = Transform3D(0.98, 0, 0, 0, 0.98, 0, 0, 0, 0.98, 57.48, 0, 34.26)
 
-[node name="PremierPlan8" parent="Geometry/Foreground" instance=ExtResource("86_fg_grass")]
-transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 36.92, 0, 49.09)
+[node name="PremierPlan8" parent="Geometry/Foreground" instance=ExtResource("84_fg_bush")]
+transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 35.61, 0, 51.46)
+flip_h = true
 
-[node name="PremierPlan9" parent="Geometry/Foreground" instance=ExtResource("84_fg_bush")]
-transform = Transform3D(1.04, 0, 0, 0, 1.04, 0, 0, 0, 1.04, 20.75, 0, 50.06)
+[node name="PremierPlan9" parent="Geometry/Foreground" instance=ExtResource("85_fg_fern")]
+transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 20.6, 0, 50.55)
+flip_h = true
 
-[node name="PremierPlan10" parent="Geometry/Foreground" instance=ExtResource("85_fg_fern")]
-transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 69, 0, 19.4)
+[node name="PremierPlan10" parent="Geometry/Foreground" instance=ExtResource("84_fg_bush")]
+transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 57.78, 0, 19.13)
+flip_h = true
 
-[node name="PremierPlan11" parent="Geometry/Foreground" instance=ExtResource("86_fg_grass")]
-transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 60.64, 0, 35.34)
+[node name="PremierPlan11" parent="Geometry/Foreground" instance=ExtResource("85_fg_fern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66.26, 0, 19.2)
 flip_h = true
 
 [node name="PremierPlanPassage1" parent="Geometry/Foreground" instance=ExtResource("84_fg_bush")]
-transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 51.65, 0, 26.27)
+transform = Transform3D(1.01, 0, 0, 0, 1.01, 0, 0, 0, 1.01, 49.59, 0, 26.17)
+flip_h = true
 
 [node name="PremierPlanPassage2" parent="Geometry/Foreground" instance=ExtResource("85_fg_fern")]
-transform = Transform3D(0.98, 0, 0, 0, 0.98, 0, 0, 0, 0.98, 49.77, 0, 27.97)
-flip_h = true
+transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 52.17, 0, 26.08)
 
 [node name="PremierPlanPassage3" parent="Geometry/Foreground" instance=ExtResource("86_fg_grass")]
-transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 39.86, 0, 40.15)
+transform = Transform3D(1.04, 0, 0, 0, 1.04, 0, 0, 0, 1.04, 39.57, 0, 40.3)
 flip_h = true
 
-[node name="PremierPlanPassage4" parent="Geometry/Foreground" instance=ExtResource("86_fg_grass")]
-transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 58.38, 0, 39.66)
+[node name="PremierPlanPassage4" parent="Geometry/Foreground" instance=ExtResource("87_beech_b_forest")]
+transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 53.84, 0, 48.08)
+flip_h = true
 
 [node name="PremierPlanPassage5" parent="Geometry/Foreground" instance=ExtResource("84_fg_bush")]
-transform = Transform3D(0.97, 0, 0, 0, 0.97, 0, 0, 0, 0.97, 40.8, 0, 30.04)
+transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 29.42, 0, 39.84)
+flip_h = true
 
 [node name="PremierPlanPassage6" parent="Geometry/Foreground" instance=ExtResource("85_fg_fern")]
-transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 33.35, 0, 40.29)
-flip_h = true
+transform = Transform3D(1.01, 0, 0, 0, 1.01, 0, 0, 0, 1.01, 48.57, 0, 45.19)
 
 [node name="PremierPlanPassage7" parent="Geometry/Foreground" instance=ExtResource("86_fg_grass")]
-transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 51.42, 0, 45.36)
-flip_h = true
+transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 51.77, 0, 45.14)
 
 [node name="PremierPlanPassage8" parent="Geometry/Foreground" instance=ExtResource("84_fg_bush")]
-transform = Transform3D(1.03, 0, 0, 0, 1.03, 0, 0, 0, 1.03, 48.36, 0, 46.4)
+transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 0.96, 34.66, 0, 54.04)
+
+[node name="PremierPlanPassage9" parent="Geometry/Foreground" instance=ExtResource("86_fg_grass")]
+transform = Transform3D(0.97, 0, 0, 0, 0.97, 0, 0, 0, 0.97, 59.05, 0, 39.89)
 flip_h = true
-
-[node name="PremierPlanPassage9" parent="Geometry/Foreground" instance=ExtResource("85_fg_fern")]
-transform = Transform3D(0.97, 0, 0, 0, 0.97, 0, 0, 0, 0.97, 35.2, 0, 53.04)
-
-[node name="PremierPlanPassage10" parent="Geometry/Foreground" instance=ExtResource("87_beech_b_forest")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.69, 0, 47.81)
 
 [node name="Scatter" type="Node3D" parent="Geometry"]
 

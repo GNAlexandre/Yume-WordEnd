@@ -97,12 +97,14 @@ def terrace_row(x0, x1, z, seed, upper=True):
     et ses pans de muret et de balustre ; au milieu, devant les boutiques, le muret et ses bacs de pierre, un pan de fer
     de loin en loin. Pièces qui se chevauchent (jamais de trou : on tomberait d'un mètre), reculées vers le nord de 0 à
     0,25 m, retournées au hasard, jamais la même image deux fois de suite quand la famille en a plusieurs."""
+    # (Essai : un pan clair sur deux faisait un damier ; les pans de pierre restent rares sur le fer, et le fer rare
+    # sur la pierre.)
     if upper:
-        pool, accents, every, depth = kits.family("town_rail"), ["town_wall_low", "edge_parapet"], (1, 3), (-0.25, 0.0)
+        pool, accents, every, depth = kits.family("town_rail"), ["edge_parapet"], (3, 5), (-0.25, 0.0)
     else:
         # Le carrefour (place du plan, z 30,5 → 34) reste libre jusqu'au bord : pas de recul, rien de plus épais que
-        # le muret.
-        pool, accents, every, depth = ["town_wall_low"], kits.family("town_rail"), (1, 2), (0.0, 0.04)
+        # le muret ; le muret et ses pans de balustre.
+        pool, accents, every, depth = ["town_wall_low"], ["edge_parapet"], (2, 4), (0.0, 0.04)
     return kits.row([(x0 + 1.0, z), (x1 - 1.0, z)], pool, seed=seed, spread=0.06, depth_range=depth, skip=0.0,
                     overlap=0.94, accents=accents, accent_every=every, scale=(0.97, 1.03), tone=(0.03, 0.0))
 
@@ -205,7 +207,7 @@ def pose(p):
     # Le muret qui ferme le haut de la grand-rue (la fontaine murale et la lanterne s'y adossent).
     # (RC) Un muret aux pierres inégales : pas, recul et retournement variés, un bac de pierre au milieu.
     kits.place_row(p, "Edge", "MuretHaut", kits.row([(24.0, 9.4), (36.0, 9.4)], ["town_wall_low"], seed=1321, spread=0.06,
-                                                    depth=0.08, skip=0.0, overlap=0.95, accents=["town_planter_stone"],
+                                                    depth=0.08, skip=0.0, overlap=0.95, accents=["planter_long"],
                                                     accent_every=(3, 4), scale=(0.97, 1.03), tone=(0.03, 0.0)),
                    check=False)
     walk_grid()
@@ -334,7 +336,7 @@ def pose(p):
     for k, (xa, xb) in enumerate(((4.0, 24.0), (36.0, 56.0))):
         kits.place_row(p, "Edge", "MuretSud%d_" % (k + 1),
                        kits.row([(xa + 1.0, 59.3), (xb - 1.0, 59.3)], ["town_wall_low"], seed=1331 + k, spread=0.15,
-                                depth=0.25, skip=0.1, overlap=0.95, accents=["town_planter_stone", "edge_parapet"],
+                                depth=0.25, skip=0.1, overlap=0.95, accents=["planter_long", "edge_parapet"],
                                 accent_every=(2, 4), scale=(0.96, 1.04), tone=(0.03, 0.0)), check=False)
 
     # === 6. Les jardins clos derrière les rangées (le plan : « jamais un endroit où l'on marche ») =========

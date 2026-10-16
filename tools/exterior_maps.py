@@ -102,6 +102,26 @@ WAITING["ville_marche"] = {
     "path_pts": [[16, 0], [16, 13]], "sign": (17.8, 13.6), "gap": (13, 19),
     # (CP) La route du port arrive par l'ouest (CARTE.md 9.3 : sortie vers_port).
     "more": [{"back": "vers_port", "exit": (0, 10, 0.6, 14), "marker": (2.5, 12, "E")}],
+    # (RC) En attendant son lot, la place n'est plus un pré de treize images (CARTE.md 0.5) : les toits de la ville qui
+    # monte derrière la lisière, deux réverbères au bas de la descente, des marchandises en attente (caisses,
+    # tonneaux, sacs, la charrette à bras), des bacs de pierre, deux jeunes arbres, un panneau d'affichage, des
+    # feuilles et des pigeons, un premier plan aux coins du bas. (scène, x, z, échelle, retournée, y ou None.)
+    "decor": [
+        ("town_roofs_a", 8.0, -3.0, 1.0, False, 3.0), ("town_roofs_b", 24.5, -3.6, 1.0, True, 3.4),
+        ("street_lamp_double", 13.4, 6.2, 1.0, False, None), ("street_lamp_double", 18.7, 9.2, 0.95, True, None),
+        ("crates_barrels", 6.2, 7.4, 1.0, False, None), ("crate_stack", 8.4, 6.9, 0.95, True, None),
+        ("barrel_group", 4.6, 8.9, 1.0, True, None), ("hand_cart", 24.6, 7.9, 1.0, True, None),
+        ("sack_apples", 26.5, 8.7, 1.0, False, None), ("sack_apples", 22.9, 9.1, 0.9, True, None),
+        ("planter_long", 21.2, 15.6, 1.0, False, None), ("barrel_group", 27.6, 15.9, 0.95, True, None),
+        ("planter_long", 10.4, 16.3, 1.0, False, None), ("bench_stone", 23.0, 13.3, 1.0, False, None),
+        ("sapling_a", 3.6, 16.6, 1.0, False, None), ("sapling_b", 29.2, 12.2, 1.05, True, None),
+        ("notice_board", 11.0, 4.7, 1.0, False, None), ("flower_pots", 12.1, 9.6, 1.0, True, None),
+        ("rain_barrel", 20.3, 5.3, 1.0, False, None), ("leaves_gold_a", 9.0, 13.2, 1.0, False, None),
+        ("leaves_rust_b", 22.2, 18.4, 1.0, True, None), ("hay_scatter", 25.2, 11.2, 1.0, False, None),
+        ("puddle_a", 7.2, 19.2, 1.0, False, None), ("pebbles_a", 13.0, 19.4, 1.0, True, None),
+        ("pigeons", 19.6, 16.6, 1.0, False, None), ("fg_fern", 9.0, 23.7, 1.0, True, None),
+        ("fg_grass", 22.4, 23.8, 1.0, False, None),
+    ],
 }
 
 # (RC) Contrôle de la refonte image (CARTE.md 0.5) : au plus REPEAT_LIMIT fois la même image (panneau de 0,75 m ou
@@ -178,6 +198,12 @@ def waiting_scene(map_id, spec, m):
            ("PackedScene", "res://src/world/props/bush_b.tscn", "8_bush"),
            ("PackedScene", "res://src/world/props/fern_b.tscn", "9_fern"),
            ("PackedScene", "res://src/world/props/fg_bush.tscn", "10_fg_bush")]
+    # (RC) Les décors en plus de la carte d'attente (spec « decor ») : une scène de src/world/props/ chacun.
+    decor_ids = {}
+    for scene, *_rest in spec.get("decor", []):
+        if scene not in decor_ids:
+            decor_ids[scene] = "%d_%s" % (len(ext) + 1, scene)
+            ext.append(("PackedScene", "res://src/world/props/%s.tscn" % scene, decor_ids[scene]))
     x0, z0, x1, z1 = spec["exit"]
     lines = ["[gd_scene format=3]", ""]
     lines += ['[ext_resource type="%s" path="%s" id="%s"]' % e for e in ext]
@@ -209,6 +235,11 @@ def waiting_scene(map_id, spec, m):
     sx, sz = spec["sign"]
     lines += ['[node name="Sign" parent="Geometry" instance=ExtResource("5_sign")]',
               "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, 0, %s)" % (f(sx), f(sz)), ""]
+    for k, (scene, x, z, scale, flip, y) in enumerate(spec.get("decor", [])):
+        lines += ['[node name="Decor%d" parent="Geometry" instance=ExtResource("%s")]' % (k + 1, decor_ids[scene]),
+                  "transform = Transform3D(%s, 0, 0, 0, %s, 0, 0, 0, %s, %s, %s, %s)"
+                  % (f(scale), f(scale), f(scale), f(x), f(y or 0.0), f(z))]
+        lines += ["flip_h = true", ""] if flip and not prop(scene).building else [""]
     px, pz, plook = spec["spawn"]
     # Les retours : la sortie du plan nommée `back`, puis celles de `more` (une carte d'attente que d'autres
     # cartes construites visent : chacune a son marqueur d'arrivée from_<cible> et sa sortie de retour).
