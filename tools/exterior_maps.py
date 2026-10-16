@@ -17,8 +17,8 @@ Pour une carte, l'outil écrit :
 
 Deux sortes de cartes :
 - les cartes construites, une recette par carte dans tools/exterior_recipes/<id>.py (entrepot,
-  sentier, village, colline, ville_haute, port) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
-- les cartes d'attente (WAITING plus bas : foret_profonde, ville_marche) : un sol plat de la
+  sentier, village, colline, ville_haute, port, foret_profonde) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
+- les cartes d'attente (WAITING plus bas : ville_marche) : un sol plat de la
   bonne matière, une lisière, l'écriteau « Plus loin, bientôt », la sortie de retour et le
   marqueur d'arrivée du plan. Provisoires : le lot de la carte les remplace par une recette
   (ajouter la carte à RECIPES, retirer l'attente).
@@ -70,23 +70,18 @@ SCENES = os.path.join(ROOT, "src", "world", "maps")
 GROUND_FILES = ["plan.json", "map.json", "heights.png", "materials.png", "structures.png"]
 
 # Cartes construites : une recette par carte (tools/exterior_recipes/<id>.py).
-RECIPES = ["entrepot", "sentier", "village", "colline", "port"]
+RECIPES = ["entrepot", "sentier", "village", "colline", "port", "foret_profonde"]
 
 # Lot qui a écrit la liste des places d'une carte (C1 par défaut : l'outil).
-PLACES_LOT = {"village": "C2", "colline": "C3", "port": "CP"}
+PLACES_LOT = {"village": "C2", "colline": "C3", "port": "CP", "foret_profonde": "CF"}
 
 # Cartes d'attente (lots de la phase 3 : elles les remplacent). Taille 32 × 24 m. ground : matière du
 # sol ; path : matière du chemin ; back : la sortie du plan (son nom, sa cible, le marqueur du retour)
 # qui ramène à une carte construite ; exit (x0, z0, x1, z1) : sa zone ; marker et spawn : (x, z, regard)
 # du marqueur d'arrivée (`from_<carte d'origine>`) et du Spawn ; path_pts : le chemin ; sign : l'écriteau ;
 # gap : (x0, x1) d'une trouée de la lisière au nord.
-WAITING = {
-    "foret_profonde": {
-        "ground": "sous_bois", "path": "chemin", "back": "vers_entrepot",
-        "exit": (14, 0, 18, 0.6), "marker": (16, 2.5, "S"), "spawn": (16, 4.0, "S"),
-        "path_pts": [[16, 0], [16, 13]], "sign": (17.8, 13.6), "gap": (13, 19),
-    },
-}
+# (CF) La forêt profonde est construite (tools/exterior_recipes/foret_profonde.py) : elle n'attend plus.
+WAITING = {}
 WAITING_SIZE = (32, 24)
 
 # (E7) Le pont du transport de la Garde (CARTE.md 6.3) : une carte du dehors construite.

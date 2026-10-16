@@ -1,14 +1,17 @@
 extends Node
-## (S2) Démo des jours 7 et 8 de l'acte 1 (lot S2) : la vraie partie (game.tscn) reprise au début
-## du jour, menée par un pilote (répliques lues, choix S2_CHOICE, ce qu'attend une scène fait à
-## pied par les actions de déplacement, ce qui déclenche la scène suivante) ; une image toutes les
-## S2_STEP s (0,5 par défaut) pendant les scènes, jusqu'au jour suivant.
+## (S2) Démo des jours 5 à 8 de l'acte 1 (lots S2a et S2b) : la vraie partie (game.tscn) reprise au
+## début du jour, menée par un pilote (répliques lues, choix S2_CHOICE ; jours 5 et 6 : les
+## déclencheurs atteints par une pose, le temps passé, le coucher ; jours 7 et 8 : ce qu'attend une
+## scène fait à pied par les actions de déplacement, ce qui déclenche la scène suivante) ; une image
+## toutes les S2_STEP s (0,5 par défaut) tant qu'une scène joue (et 2,5 s après), jusqu'au jour
+## suivant.
 ##
 ## Lancement (sous Xvfb ; la démo quitte d'elle-même) :
 ##   S2_DAY=7 S2_SHOTS=build/s2/shots/j7 xvfb-run -a -s "-screen 0 1280x720x24" \
 ##     tools/godot --rendering-driver opengl3 --resolution 1280x720 \
 ##     res://tests/integration/demo_s2.tscn
-## S2_CHOICE=1 : le second choix partout ; S2_ONLY=<scène> : n'enregistre que cette scène ;
+## S2_CHOICE=1 (ou « autre ») : le second choix partout (jour 5 : « Une autre fois. » ; jour 6 : la
+## clé de bras et rester à la porte) ; S2_ONLY=<scène> : n'enregistre que cette scène ;
 ## S2_START=<scène> : reprise juste avant elle ; S2_UNTIL=<scène> : fin quand elle est jouée.
 ## Index des images : <dossier>/index.tsv (fichier, scène, étape, draw calls). Le journal donne
 ## « S2 … » à chaque scène et à la fin.
@@ -53,6 +56,9 @@ var _index_lines: PackedStringArray = []
 var _duel_phase := &""
 var _duel_since := 0.0
 var _boot_frames := 0
+## Jours 5 et 6 : l'étape du pilote ; images après la fin d'une scène (s).
+var _stage := 0
+var _tail := 0.0
 
 
 func _ready() -> void:
@@ -64,6 +70,8 @@ func _ready() -> void:
 		_step = float(OS.get_environment("S2_STEP"))
 	if OS.get_environment("S2_CHOICE").is_valid_int():
 		_choice = int(OS.get_environment("S2_CHOICE"))
+	elif OS.get_environment("S2_CHOICE") == "autre":
+		_choice = 1
 	_only = OS.get_environment("S2_ONLY")
 	_start = OS.get_environment("S2_START")
 	_until = OS.get_environment("S2_UNTIL")
@@ -161,29 +169,43 @@ func _physics_process(delta: float) -> void:
 		print("S2 fin : temps écoulé (scène %s)" % scene)
 		_finish()
 		return
+	if StoryDirector.is_playing() or _box.is_open():
+		_tail = 2.5
+	elif _tail > 0.0:
+		_tail -= delta
 	_step_left -= delta
 	if _step_left <= 0.0:
 		_step_left = _step
 		if _recording():
 			_save()
-	if not _until.is_empty() and GameState.is_scene_done(StringName(_until)):
-		print("S2 fin : %s jouée, %d images" % [_until, _index])
-		_finish()
-		return
-	if GameState.day > _day and not StoryDirector.is_playing():
-		print("S2 fin : jour %d, %d images" % [GameState.day, _index])
+	if _ended():
 		_finish()
 		return
 	if get_tree().paused:
 		return
 	_pilot_dialogue(delta)
 	_pilot_duel()
-	if not _acting:
+	if _acting:
+		return
+	if _day <= 6:
+		_pilot_days_5_6()
+	else:
 		_pilot_story(delta)
 
 
+## Vrai quand la démo a fini : S2_UNTIL jouée, ou le jour suivant commencé.
+func _ended() -> bool:
+	if not _until.is_empty() and GameState.is_scene_done(StringName(_until)):
+		print("S2 fin : %s jouée, %d images" % [_until, _index])
+		return true
+	if GameState.day > _day and not StoryDirector.is_playing():
+		print("S2 fin : jour %d, %d images" % [GameState.day, _index])
+		return true
+	return false
+
+
 func _recording() -> bool:
-	if not StoryDirector.is_playing() and not _player.is_story_held():
+	if not StoryDirector.is_playing() and not _player.is_story_held() and _tail <= 0.0:
 		return false
 	return _only.is_empty() or String(StoryDirector.current_scene()) == _only
 
@@ -358,3 +380,119 @@ func _save() -> void:
 	get_viewport().get_texture().get_image().save_png(dir.path_join(file_name + ".png"))
 	var calls := int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
 	_index_lines.append("%s\t%s\t%s\t%d\t%.1f" % [file_name, scene, step, calls, _elapsed])
+
+
+# --- Jours 5 et 6 (S2a) ---------------------------------------------------------------------------
+
+
+func _pilot_days_5_6() -> void:
+	if WorldManager.is_transitioning() or _box.is_open() or StoryDirector.is_playing():
+		return
+	if _player.is_story_held():
+		return
+	_act(_day_5 if _day == 5 else _day_6)
+
+
+func _teleport(spec: Variant, back: float = 0.0, side: float = 0.0) -> void:
+	var at := StoryDirector.stage().resolve(spec).origin
+	StoryDirector.stage().place_player(at + Vector3(side, 0.0, back))
+	await get_tree().physics_frame
+
+
+func _pass_to(slot: StringName) -> void:
+	while LifeSlots.current() != slot and StoryDirector.can_rest():
+		await StoryDirector.pass_time()
+
+
+func _sleep() -> void:
+	if WorldManager.current_map() != &"entrepot_etage":
+		await _go(&"entrepot_etage", &"Spawn")
+	await _pass_to(&"nuit")
+	await _teleport(&"chtholly_porte")
+	await StoryDirector.sleep()
+
+
+func _day_5() -> void:
+	match _stage:
+		0:
+			# Jusqu'à midi, puis le champ : 14 m du centre.
+			await _pass_to(&"midi")
+			await _go(&"entrepot", &"from_entrepot_rdc")
+			await _teleport(&"champ_centre", 0.0, -14.0)
+			_stage = 1
+		1:
+			if GameState.is_scene_done(&"j5_1_jeu_willem"):
+				# La partie de ballon (vie) commence : quelques images.
+				_stage = 2
+				await get_tree().create_timer(9.0).timeout
+				_save()
+		2:
+			# La salle de lecture : la banquette (l'invite est remplacée par un lancement direct).
+			await _go(&"entrepot_rdc", &"from_entrepot")
+			await _teleport(&"lecture_banquette", 1.0)
+			_stage = 3
+			StoryDirector.play(&"j5_2_fenetre")
+		3:
+			if GameState.is_scene_done(&"j5_2_fenetre"):
+				_stage = 4
+		4:
+			# Le champ (le choix « J'arrive. » y a mené ; « Une autre fois. » : on y va).
+			if WorldManager.current_map() != &"entrepot":
+				await _go(&"entrepot", &"from_entrepot_rdc")
+				await _teleport(&"champ_entree")
+			_stage = 5
+			await get_tree().create_timer(8.0).timeout
+		5:
+			# Dans le champ : le joueur joue quelques secondes.
+			await _teleport(&"champ_centre", 0.0, -5.5)
+			_stage = 6
+			await get_tree().create_timer(8.0).timeout
+		6:
+			_save()
+			await _sleep()
+			_stage = 7
+		_:
+			_finish()
+
+
+func _day_6() -> void:
+	match _stage:
+		0:
+			await _pass_to(&"matin")
+			await _go(&"entrepot_rdc", &"from_entrepot_etage")
+			await _teleport(&"couloir_centre", 0.0, 4.2)
+			_stage = 1
+		1:
+			if GameState.is_scene_done(&"j6_1_soif_de_sang"):
+				_stage = 2
+		2:
+			await _pass_to(&"apres_midi")
+			await _go(&"entrepot_rdc", &"from_entrepot_etage")
+			await _teleport(&"jeux_tapis", -3.2)
+			_stage = 3
+		3:
+			if GameState.is_scene_done(&"j6_2_livre_images"):
+				_stage = 4
+		4:
+			await _pass_to(&"soir")
+			if WorldManager.current_map() != &"entrepot_rdc":
+				await _go(&"entrepot_rdc", &"from_entrepot_etage")
+			await _teleport(&"refectoire_allee")
+			_stage = 5
+		5:
+			if GameState.is_scene_done(&"j6_3_ordre_mission"):
+				_stage = 6
+		6:
+			if WorldManager.current_map() != &"entrepot_etage":
+				await _go(&"entrepot_etage", &"from_entrepot_rdc")
+			await _teleport(&"grande_soeur_bureau", 0.4)
+			_stage = 7
+			StoryDirector.play(&"j6_4_souvenir")
+		7:
+			if GameState.is_scene_done(&"j6_4_souvenir"):
+				_stage = 8
+		8:
+			await _sleep()
+			_stage = 9
+		_:
+			_finish()

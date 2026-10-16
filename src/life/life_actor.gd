@@ -23,6 +23,8 @@ extends RefCounted
 enum State { ACTIVITY, WALKING, LEAVING, GAME, ASIDE, GONE, SCENE }
 
 const ARRIVE_DISTANCE := 0.08
+## (S2) Distance d'arrivée d'une joueuse d'un jeu de groupe sur une place d'un seul point.
+const GAME_ARRIVE_DISTANCE := 1.4
 const LOOK_DISTANCE := 3.5
 const GREET_DISTANCE := 3.0
 const GREET_CHANCE := 0.45
@@ -298,6 +300,17 @@ func _tick_move(delta: float) -> void:
 		if not last_leg:
 			_path_index += 1
 			return
+		_arrive()
+		return
+	if (
+		last_leg
+		and distance <= GAME_ARRIVE_DISTANCE
+		and activity.has("game")
+		and _arrived.is_valid()
+	):
+		# (S2) Un jeu de groupe sur une place d'un seul point (le ballon : champ_centre) : toutes les
+		# joueuses visent le même point, la première l'occupe et les autres tourneraient autour
+		# sans jamais l'atteindre ; à GAME_ARRIVE_DISTANCE m, elles sont arrivées (le jeu les range).
 		_arrive()
 		return
 	npc.set_moving(true)

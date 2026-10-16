@@ -38,8 +38,8 @@ func test_every_outfit_is_a_complete_three_view_sheet() -> void:
 			assert_true(anims.has(anim), "%s : %s" % [skin.id, anim])
 	assert_eq(
 		count,
-		28,
-		"23 tenues du lot J, willem_duel (E8b), quatre de R2 (S2 : pyjama, blouse, bras, dos)"
+		30,
+		"23 tenues du lot J, willem_duel (E8b), S1b (willem_marsh, snack_vendor_work), S2 (4)"
 	)
 
 

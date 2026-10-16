@@ -589,7 +589,8 @@ static func _check_step(
 		"wait_for":
 			var kinds := 0
 			for wanted: String in WAIT_FOR_KINDS:
-				if step.has(wanted):
+				# « map » précise la carte de « reach » (StoryDirector.expected_met).
+				if step.has(wanted) and not (wanted == "map" and step.has("reach")):
 					kinds += 1
 			if kinds != 1:
 				found.append("%s : une seule de reach, map, examine, talk" % where)

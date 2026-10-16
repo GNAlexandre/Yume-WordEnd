@@ -11,6 +11,7 @@
     {"slot": "apres_midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "jeux_societe", "activity": "jouer", "outfit": "vie"},
     {"slot": "midi", "if": {"flag": "pluie_du_jour"}, "map": "entrepot_rdc", "place": "refectoire_rang_a", "activity": "manger", "outfit": "vie"},
     {"slot": "apres_midi", "if": {"flag": "apres_pluie"}, "map": "entrepot", "place": "champ_boue", "activity": "boue", "outfit": "vie"},
+    {"slot": "apres_midi", "day": [5, 6], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "role": "rouge", "outfit": "vie"},
     {"slot": "aube", "map": "entrepot_rdc", "place": "eau_toilette", "activity": "toilette", "outfit": "pyjama", "_note": "La journée de base : la toilette (elle refuse l'eau glacée), tout en haut du grand arbre interdit (même à l'heure du déjeuner), le chat, la première sur la pile."},
     {"slot": "matin", "map": "entrepot", "place": "arbre_branche_haute", "activity": "grimper", "outfit": "vie"},
     {"slot": "midi", "map": "entrepot", "place": "arbre_branche_haute", "activity": "grimper", "outfit": "vie"},

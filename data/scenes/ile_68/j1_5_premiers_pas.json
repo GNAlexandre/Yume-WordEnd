@@ -31,13 +31,29 @@
     },
     {
       "do": "walk",
+      "who": "player",
+      "to": "porte_seuil",
+      "offset": [
+        1.6,
+        1.8
+      ],
+      "wait": false
+    },
+    {
+      "do": "outfit",
+      "who": "willem",
+      "outfit": "manteau"
+    },
+    {
+      "do": "walk",
       "who": "willem",
       "to": "porte_seuil",
       "offset": [
         -0.6,
         1.6
       ],
-      "facing": "east"
+      "facing": "east",
+      "gait": "course"
     },
     {
       "do": "face",
@@ -283,8 +299,8 @@
       "who": "player",
       "to": "epie_nygglatho",
       "offset": [
-        0.2,
-        1.8
+        2.0,
+        0.3
       ],
       "facing": "north"
     },

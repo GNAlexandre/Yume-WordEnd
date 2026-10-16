@@ -1,32 +1,279 @@
 {
-  "_comment": "ACTE1.md 3.3 (s. 6) : le snack-bar, raconté sur le noir (cartes de la ville à venir) ; Willem et le serveur ne parlent que par leurs répliques.",
+  "_comment": "ACTE1.md 3.3 (s. 6) : le snack-bar, joué dans ville_snack. Elle part devant la porte (ville_haute:porte_snack) : les trois aînées entrent ; Willem au comptoir (snack_tabouret, en manteau), le lycanthrope à la poêle derrière (snack_vendor, tenue travail : travaille) ; ses oreilles tombent ; elles se tiennent à la table (snack_table_nord, snack_table_nord_est ; {player} à snack_table : la table n'a pas de chaise, personne ne s'assoit) ; Ithea commande, Willem paie. Le repas passe (après-midi) : Willem rentre, Ithea et Nephren vont à la librairie ; {player} a l'après-midi libre en ville ; le cuistot, qui n'a pas encore d'emploi du temps (sa place n'est pas atteignable à pied), quitte la scène pendant le fondu. Gros plan (10 m) : la caméra fixe de la pièce la montre petite au milieu du noir.",
   "title": "Le snack-bar",
   "day": 3,
   "after": [
     "j3_2_chemin"
   ],
-  "map": "sentier",
+  "map": "ville_haute",
+  "marker": "from_ville_snack",
   "trigger": {
-    "on": "ready"
+    "on": "reach",
+    "point": "porte_snack",
+    "radius": 2.0
   },
   "present": [
     "ithea",
-    "nephren"
+    "nephren",
+    "willem",
+    "snack_vendor"
   ],
   "steps": [
     {
-      "do": "card",
-      "text": "snack",
-      "time": 3.0
+      "do": "walk",
+      "who": "ithea",
+      "to": "porte_snack",
+      "offset": [
+        -1.3,
+        0.5
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "porte_snack",
+      "facing": "north"
+    },
+    {
+      "do": "walk",
+      "who": "nephren",
+      "to": "porte_snack",
+      "offset": [
+        1.3,
+        0.6
+      ],
+      "gait": "course"
+    },
+    {
+      "do": "face",
+      "who": "ithea",
+      "toward": "north"
+    },
+    {
+      "do": "face",
+      "who": "nephren",
+      "toward": "north"
+    },
+    {
+      "do": "bubble",
+      "who": "ithea",
+      "text": "ici",
+      "time": 1.8
+    },
+    {
+      "do": "wait",
+      "time": 1.6
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.6
+    },
+    {
+      "do": "go_to",
+      "map": "ville_snack",
+      "marker": "from_ville_haute"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "snack_tabouret",
+      "facing": "north",
+      "outfit": "manteau"
+    },
+    {
+      "do": "place",
+      "who": "snack_vendor",
+      "at": "snack_vendor",
+      "facing": "south",
+      "outfit": "travail",
+      "anim": "travaille"
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "from_ville_haute",
+      "offset": [
+        0.6,
+        -0.1
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "ithea",
+      "at": "from_ville_haute",
+      "offset": [
+        -0.3,
+        0.7
+      ],
+      "facing": "north",
+      "outfit": "maison"
+    },
+    {
+      "do": "place",
+      "who": "nephren",
+      "at": "from_ville_haute",
+      "offset": [
+        1.6,
+        0.5
+      ],
+      "facing": "north",
+      "outfit": "maison"
+    },
+    {
+      "do": "camera",
+      "to": [
+        4.2,
+        4.0
+      ],
+      "distance": 10,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.8
+    },
+    {
+      "do": "wait",
+      "time": 1.2
+    },
+    {
+      "do": "anim",
+      "who": "snack_vendor",
+      "anim": "repos"
+    },
+    {
+      "do": "bubble",
+      "who": "snack_vendor",
+      "text": "oreilles",
+      "time": 1.6
+    },
+    {
+      "do": "wait",
+      "time": 0.8
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "player"
     },
     {
       "do": "dialogue",
-      "node": "snack"
+      "node": "entree"
     },
     {
-      "do": "card",
-      "text": "retour",
-      "time": 2.6
+      "do": "walk",
+      "who": "ithea",
+      "to": "snack_table_nord",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "nephren",
+      "to": "snack_table_nord_est",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "snack_table",
+      "offset": [
+        0.3,
+        0.6
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "walk",
+      "who": "ithea",
+      "to": "snack_table_nord",
+      "facing": "south"
+    },
+    {
+      "do": "walk",
+      "who": "nephren",
+      "to": "snack_table_nord_est",
+      "facing": "south"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "player"
+    },
+    {
+      "do": "face",
+      "who": "player",
+      "toward": "ithea"
+    },
+    {
+      "do": "dialogue",
+      "node": "table"
+    },
+    {
+      "do": "anim",
+      "who": "snack_vendor",
+      "anim": "travaille"
+    },
+    {
+      "do": "dialogue",
+      "node": "commande"
+    },
+    {
+      "do": "wait",
+      "time": 1.0
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.8
+    },
+    {
+      "do": "slot",
+      "slot": "apres_midi",
+      "time": 0
+    },
+    {
+      "do": "leave",
+      "who": "snack_vendor"
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.8
+    },
+    {
+      "do": "dialogue",
+      "node": "apres"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "snack_entree"
+    },
+    {
+      "do": "leave",
+      "who": "willem"
+    },
+    {
+      "do": "dialogue",
+      "node": "apres_aines"
+    },
+    {
+      "do": "walk",
+      "who": "ithea",
+      "to": "snack_entree",
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "nephren",
+      "to": "snack_entree",
+      "gait": "course"
     },
     {
       "do": "leave",
@@ -37,19 +284,7 @@
       "who": "nephren"
     },
     {
-      "do": "slot",
-      "slot": "soir",
-      "time": 0
-    },
-    {
-      "do": "go_to",
-      "map": "entrepot",
-      "marker": "from_sentier"
-    },
-    {
-      "do": "fade",
-      "to": "clear",
-      "time": 1.0
+      "do": "camera_reset"
     }
   ]
 }

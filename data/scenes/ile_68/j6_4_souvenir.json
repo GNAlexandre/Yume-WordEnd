@@ -1,0 +1,71 @@
+{
+  "_comment": "ACTE1.md 6.4 (s. 10) : la chambre de la grande sœur, de nuit. Le souvenir : fondu au blanc, une voix, un carton (la grande sœur n'a pas de planche : ombre et voix). La broche posée sur le bureau n'est dessinée dans aucune image de la chambre : la voix la montre.",
+  "title": "Le souvenir",
+  "day": 6,
+  "slot": [
+    "soir",
+    "nuit"
+  ],
+  "after": [
+    "j6_3_ordre_mission"
+  ],
+  "map": "entrepot_etage",
+  "hint": "hint",
+  "trigger": {
+    "on": "prompt",
+    "point": "grande_soeur_bureau",
+    "prompt": "prompt",
+    "size": 1.6
+  },
+  "steps": [
+    {
+      "do": "hint"
+    },
+    {
+      "do": "camera",
+      "to": "grande_soeur_bureau",
+      "distance": 9,
+      "time": 1.2,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "bureau",
+      "presentation": "bandeau"
+    },
+    {
+      "do": "fade",
+      "to": "white",
+      "time": 1.0
+    },
+    {
+      "do": "card",
+      "text": "souvenir_1",
+      "time": 3.2
+    },
+    {
+      "do": "dialogue",
+      "node": "voix",
+      "presentation": "bandeau"
+    },
+    {
+      "do": "card",
+      "text": "souvenir_2",
+      "time": 3.6
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.0
+    },
+    {
+      "do": "dialogue",
+      "node": "retour",
+      "presentation": "bandeau"
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.0
+    }
+  ]
+}

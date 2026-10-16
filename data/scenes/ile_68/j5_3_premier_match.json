@@ -1,0 +1,23 @@
+{
+  "_comment": "ACTE1.md 5.3 (facultatif, jouable) : on entre dans le champ pendant la partie (ou on y arrive par « J'arrive. », 5.2). Le match est celui de la vie (E8, ligne « ballon » des jours 5 et 6) : la joueuse le rejoint en entrant dans le champ ; la scène n'est qu'un mot de Willem, sans bloquer le coucher.",
+  "title": "Le premier match",
+  "day": 5,
+  "slot": "apres_midi",
+  "after": [
+    "j5_2_fenetre"
+  ],
+  "map": "entrepot",
+  "hint": "hint",
+  "trigger": {
+    "on": "reach",
+    "point": "champ_centre",
+    "radius": 12
+  },
+  "steps": [
+    {
+      "do": "dialogue",
+      "node": "appel",
+      "presentation": "bandeau"
+    }
+  ]
+}

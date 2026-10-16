@@ -943,3 +943,28 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
 - **Planches** : une pose « sur un coude » (8.3) et une roulade dans le lit (8.1) n'existent pas (pose `degats`, déplacements) ; une planche de nuit de Chtholly en tenue de fièvre n'est pas nécessaire (pyjama livré). Aucune image nouvelle : `limeskin`, `chtholly_pajamas`, `nygglatho_labcoat`, `willem_carry`, `willem_piggyback` sont livrées (cahier n° 6, R2) ; les tenues `*_rain` des petites (livrées) ne sont pas encore inscrites aux fiches (`data/npcs/outfits/`) : les jours de pluie les attendent (jour 10).
 - **HUD** : le nom de la carte s'affiche à chaque arrivée, même pendant une séquence (les scènes attendent 2,8 s sur le noir) ; une option pour le taire pendant une scène serait plus propre.
 - **Moteur du récit (E6)** : une étape « bulle » de la doublure n'est pas posée au-dessus d'un personnage couché ; entre deux scènes enchaînées sur la même carte, le voile s'éclaircit un instant (0,1 s) avant le noir de la suivante.
+- **CF → moteur : la glissade dans les mares cachées** (VIE.md 6.4, `foret_profonde:mare_cachee`) : « qui s'approche à moins de 0,5 m de l'eau glisse et tombe dedans (`degats`) » n'existe pas dans le moteur. La carte pose `hidden_pool_a` (29,5 ; 43,2) et `hidden_pool_b` (58,2 ; 20,2) en décalques et leur eau en eau basse (le plan ne dit pas « profonde ») ; le point `mare_cachee` est à 2 m au sud de la première, un objet à examiner y dit le danger. Un mécanisme (zone `Area3D` au bord de l'eau, glissade, `degats`) est à écrire côté moteur, pas dans la carte.
+- **CF → récit (S2) : points de la scène 10.2** : `foret_profonde:course_entree` (40 ; 9) pour le départ de la course, `fourche_refuge` (42,4 ; 21), `refuge_creux` (16 ; 38,6, plan : le creux du chêne, où Chtholly s'assied), `refuge_seuil` (16 ; 41,2, regard nord), `refuge_ithea` (18,8 ; 40,6), `refuge_retour` (22,6 ; 41), la place `refuge` (10 → 22, 38 → 46, libre) ; la forêt a des rais de lumière (`RayRefuge1`, `RayRefuge2`) et des feuilles qui tombent (`Ambience`) pour le cadrage « feuilles qui tombent, rais de lumière ». Le chemin du refuge traverse la rivière (eau basse, au ras du sol) sans marche : les PNJ la passent sans sauter.
+- **S1b → vie (E4/V1) : Willem, Ithea et Nephren au jour 3** : leurs lignes du jour 3 à midi sont `away: ville_snack` (écrites quand la
+  carte n'existait pas) ; la scène `j3_3_snack` les réserve et les pose, rien ne casse, mais une ligne `map: ville_snack` (Willem à
+  `snack_tabouret`, `manger` ; les aînées à `snack_table_nord` / `snack_table_nord_est`) les y mettrait aussi hors scène. Le matin du
+  jour 3, Willem erre encore dans la cour (`cour_tour`) alors qu'il est parti en ville (ACTE1.md 3.0) : une ligne `away: ville_haute`
+  au matin du jour 3 l'accorderait au récit.
+- **S1b → joueur : cacher la protagoniste dans une séquence sans elle** : `j1_1_port` la pose hors du champ (`port:from_ville_marche`)
+  faute d'un moyen de la cacher ; une étape `hide` (ou `Player.set_story_hidden`) serait plus sûre (sa lumière de fée, la nuit, suit
+  le joueur).
+- **S1b → joueur : l'épée en ville** : la protagoniste porte Seniorious au snack-bar et dans la rue (la planche de combat, tenue de
+  l'entrepôt sans le combat) ; une tenue de ville sans arme, ou l'arme rangée hors combat, éviterait l'épée qui traverse les voisines.
+- **S1b → carte `ville_snack` : des chaises à la table** : la table des trois aînées (`cafe_table_heavy`) n'a pas de chaise ; elles se
+  tiennent debout. Deux chaises (ou un banc) au nord de la table permettraient `assis` à `snack_table_nord` / `_nord_est`.
+- **S1b → vie : le cuistot du snack-bar** : `snack_vendor` n'a pas d'emploi du temps (VIE.md 4.11 : `ville_snack`, du matin au soir,
+  `travaille`) ; `test_life_ile_68_nav` n'admet que les cartes de l'entrepôt et veut chaque place atteignable à pied, or la place
+  `ville_snack:snack_vendor` est derrière le comptoir (0,35 m). Un emploi du temps (et une place « posée », hors navigation) le
+  laisserait à sa poêle après `j3_3_snack`, qui le retire aujourd'hui pendant le fondu.
+
+## S2 — les jours 5 et 6 : ce qui manque aux autres lots
+
+- **E9 (lumière)** : un effet « souvenir » (sépia, ACTE1.md 0.2 et 6.4) ; en attendant, fondu au blanc et cartons (`j6_2_livre_images`, `j6_4_souvenir`).
+- **E8 (jeux)** : `StoryDirector.register_game(&"ballon", …)` (`play_story_ball_match`, avec `with_player` et `player_at`) permettrait à 5.3 de poser la joueuse dans le match au lieu de la mener au bord du champ ; en attendant, 5.2 la place à `entrepot:champ_entree` et la vie fait le reste.
+- **V1 (vie)** : l'embuscade de Collon à partir du jour 5 (VIE.md 5.5) et la ligne de ballon des jours 9 à 12 (`day: [9, 12]`, comme celle des jours 5 et 6 dans `data/life/ile_68/`) ; le ballon vit sur quinze petites, dont `fairy_07` à `fairy_10` qui portent encore la planche de `fairy_01` (cahier n° 6, lot D : planches `fairy_07` à `fairy_10`).
+- **Images** : aucune commande nouvelle. Au cahier n° 6 : `willem_life.frappe` (le premier coup de pied de 5.1 est celui de Collon en attendant), les planches `fairy_07` à `fairy_10`.

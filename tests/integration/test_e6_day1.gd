@@ -50,6 +50,9 @@ func test_day_1_end_to_end_until_day_2() -> void:
 	assert_eq(pannibal.npc.get_prompt(), "", "pas d'invite « Parler » sur Pannibal")
 	assert_eq(InteractSign.kind_of(pannibal.npc), &"", "ni de signe")
 	assert_true(ambush.help, "les lignes d'aide du jour 1")
+	# (S1b) L'indice « Cherche-la sur le sentier » se tait pendant le jeu.
+	assert_eq(StoryDirector.hint(), "", "pas d'indice pendant l'embuscade")
+	assert_eq(hud.get_node("StoryHint").call(&"shown_text"), "", "l'indice n'est pas affiché")
 	var outcome := await _play_ambush(ambush)
 	assert_true(outcome.get("success", false), "cinq réponses de suite : Pannibal tombe")
 	assert_eq(outcome.get("ended_by"), &"streak")
@@ -114,15 +117,16 @@ func test_day_1_end_to_end_until_day_2() -> void:
 	await walk_to_point(&"nygglatho_tapis", 1.5)
 	trace("23")
 	assert_true(await play_until_done(&"j1_5_premiers_pas", 60.0, {"Ouvrir.": 1}))
-	# (S2) La fin de 1.5 laisse {player} au dortoir : 1.6 part tout de suite, et l'indice qui
-	# l'attendait s'efface avec elle au lieu de rester sur la séquence.
-	if StoryDirector.current_scene() == &"j1_6_diner":
-		assert_eq(StoryDirector.hint(), "", "l'indice ne traîne pas sur la séquence")
-	else:
-		assert_eq(StoryDirector.hint(), "Couche Pannibal, au dortoir.")
+	assert_true(
+		await until(
+			func() -> bool: return StoryDirector.hint() == "Couche Pannibal, au dortoir.", 2.0
+		),
+		"indice : %s" % StoryDirector.hint()
+	)
+	assert_ne(StoryDirector.current_scene(), &"j1_6_diner", "le dîner attend le dortoir")
 	# 1.6 (séquence) puis 1.7.
 	trace("24")
-	await walk_to_point(&"dortoir_b", 1.5)
+	await walk_to_point(&"dortoir_b", 0.9)
 	trace("25")
 	assert_true(await play_until_done(&"j1_6_diner", 60.0))
 	trace("26")
