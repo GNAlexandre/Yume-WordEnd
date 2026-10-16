@@ -8,6 +8,5 @@ script = ExtResource("1_npc")
 id = &"almita"
 display_name = "Almita"
 skin = ExtResource("2_visual")
-dialogue_path = "res://data/dialogues/almita.json"
-home_zone = &"village"
+dialogue_path = "res://data/dialogues/ile_68/talk/almita.json"
 outfits = Dictionary[StringName, String]({ &"vie": "res://data/npcs/outfits/almita_life.tres" })

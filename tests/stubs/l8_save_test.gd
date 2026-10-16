@@ -2,19 +2,20 @@ extends GutTest
 ## Base des tests de sauvegarde du Lot 8 (tests/unit/test_save*.gd), dont ils héritent par
 ## chemin (pas de class_name, règle des stubs) : fichier de test propre à chaque script
 ## (user://test_l8_<script>.json), SaveManager rétabli (chemin, délai, partie fermée, rien en
-## attente), zone de WorldManager, pause levée et GameState remis à zéro après chaque test.
+## attente), pause levée, avis de migration effacé et GameState remis à zéro après chaque test.
+## (F1) Le récit est coupé (StoryDirector.enabled) : une nouvelle partie n'ouvre pas l'acte 1
+## (comme, avant, la carte de départ de l'ancienne île).
 
 var _previous_path: String
 var _previous_delay: float
-var _previous_zone: StringName
+var _previous_story: bool
 
 
 func before_each() -> void:
-	# (E6) Une nouvelle partie ouvre l'acte 1 à l'entrepôt : ce test joue l'ancienne île.
-	WorldManager.start_map = WorldManager.LEGACY_MAP
+	_previous_story = StoryDirector.enabled
+	StoryDirector.enabled = false
 	_previous_path = SaveManager.save_path
 	_previous_delay = SaveManager.autosave_delay
-	_previous_zone = WorldManager.current_zone()
 	SaveManager.close_game(false)
 	SaveManager.save_path = save_file()
 	delete_save_files(save_file())
@@ -22,15 +23,14 @@ func before_each() -> void:
 
 
 func after_each() -> void:
-	WorldManager.start_map = WorldManager.START_MAP
+	StoryDirector.enabled = _previous_story
 	get_tree().paused = false
-	if WorldManager.current_zone() != _previous_zone:
-		EventBus.zone_entered.emit(_previous_zone)
 	SaveManager.close_game(false)
 	delete_save_files(save_file())
 	SaveManager.save_path = _previous_path
 	SaveManager.autosave_delay = _previous_delay
 	SaveManager.last_error = ""
+	SaveManager.notice = ""
 	GameState.reset()
 
 
@@ -39,9 +39,15 @@ func save_file() -> String:
 	return "user://test_l8_%s.json" % get_script().resource_path.get_file().get_basename()
 
 
-## Supprime une sauvegarde, sa copie .bak et son fichier temporaire (ou dossier vide).
+## Supprime une sauvegarde, sa copie .bak, son fichier temporaire (ou dossier vide) et (F1) la
+## copie d'une partie de l'ancienne île.
 func delete_save_files(path: String) -> void:
-	for file: String in [path, path + SaveManager.BACKUP_SUFFIX, path + SaveManager.TEMP_SUFFIX]:
+	for file: String in [
+		path,
+		path + SaveManager.BACKUP_SUFFIX,
+		path + SaveManager.TEMP_SUFFIX,
+		path + SaveManager.LEGACY_SUFFIX,
+	]:
 		if FileAccess.file_exists(file) or DirAccess.dir_exists_absolute(file):
 			DirAccess.remove_absolute(file)
 

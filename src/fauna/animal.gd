@@ -332,7 +332,7 @@ func _can_hunt(keep: bool) -> bool:
 		return true
 	if pack == null or not pack.is_alert() or _target == null:
 		return false
-	if _player_down or _player_talking or _player_in_safe_zone():
+	if _player_down or _player_talking:
 		return false
 	var distance := _flat(_target.global_position - global_position).length()
 	return distance <= data.aggro_range_m * PACK_ALERT_FACTOR

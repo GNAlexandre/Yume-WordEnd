@@ -8,5 +8,4 @@ script = ExtResource("1_npc")
 id = &"chtholly_double"
 display_name = "Chtholly"
 skin = ExtResource("2_visual")
-home_zone = &""
 outfits = Dictionary[StringName, String]({ &"maison": "res://data/npcs/outfits/chtholly_home.tres", &"pyjama": "res://data/npcs/outfits/chtholly_pajamas.tres" })

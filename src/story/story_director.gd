@@ -5,7 +5,7 @@ extends Node
 ## - L'acte : une île qui a data/scenes/<île>/act.json a un récit. Une nouvelle partie posée sur
 ##   cette île (WorldManager.start_map) l'ouvre : jour, créneau et temps de « start », écran noir
 ##   jusqu'à ce que la première scène le lève. GameState.day ≥ 1 tant que l'acte dure
-##   (story_running) ; l'ancienne île, sans acte, garde ses quêtes.
+##   (story_running).
 ## - Les scènes (StoryData) : quand aucune ne se joue, la première (par id) dont les conditions
 ##   tiennent (jour, créneau, scènes jouées, « if ») et dont le déclencheur part est jouée par
 ##   StoryRunner : « ready » (tout de suite, sur la carte de la scène), « enter » (sur la
@@ -61,7 +61,7 @@ const SCENE_SIGNS := &"scene"
 const BUSY_SLEEP := &"_sommeil"
 const BUSY_REST := &"_repos"
 
-## Directeur actif (les tests de l'ancienne île n'en ont pas besoin, rien n'y change).
+## Directeur actif (un test qui joue sans le récit le coupe).
 var enabled: bool = true
 ## Fichier des séquences déjà vues (les tests en prennent un autre).
 var seen_path: String = SEEN_PATH
@@ -805,7 +805,7 @@ func _on_talk(npc_id: StringName) -> bool:
 
 
 ## Ce que dit un personnage hors des scènes : data/dialogues/<île>/talk/<pnj>.json, sinon une
-## bulle de salutation. Jamais les dialogues des quêtes de l'ancienne île.
+## bulle de salutation.
 func _free_talk(npc_id: StringName) -> bool:
 	if DialogueRunner.is_any_running():
 		return true

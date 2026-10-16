@@ -284,7 +284,7 @@ func test_triangles_for_ground_decals() -> void:
 func test_an_80_by_60_map_builds_in_under_50_ms() -> void:
 	# Caches statiques (atlas avec ses mipmaps, matériau des faces) : une fois par partie ; le
 	# matériau des faces est gardé ici (référence faible ailleurs) pour toute la mesure.
-	IslandTerrain.mipmapped_atlas(MapGround.ATLAS)
+	GroundAtlas.mipmapped_atlas(MapGround.ATLAS)
 	var keep := MapGround.cliff_material()
 	assert_not_null(keep, "matériau des faces")
 	var best := INF

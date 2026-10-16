@@ -119,7 +119,7 @@ func test_markers_stand_inside_and_exits_face_their_doors() -> void:
 		for exit: Node in _map.get_node(^"Exits").get_children():
 			var gap := Vector2(at.x, at.z).distance_to(_flat((exit as Node3D).global_position))
 			assert_gt(gap, 1.5, "%s à l'écart de la sortie %s" % [marker.name, exit.name])
-	var exit := _map.get_node(^"Exits/vers_entrepot") as MapExit
+	var exit := _map.get_node(^"Exits/vers_essai") as MapExit
 	assert_not_null(exit, "sortie par la porte d'entrée")
 	if exit != null:
 		assert_false(exit.needs_interaction(), "on la franchit en marchant")

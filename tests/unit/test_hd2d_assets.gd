@@ -276,7 +276,8 @@ func test_decals_fade_into_the_ground_away_from_their_edges() -> void:
 						filled += 1
 			if samples > 0 and filled > 0.95 * samples:
 				problems.append("%s : rectangle plein" % path)
-	assert_eq(count, 45, "45 décalques (cahier n° 2, section 5)")
+	# (F1) Moins les six de l'ancienne île (sable, cercle de veille…).
+	assert_eq(count, 39, "39 décalques (cahier n° 2, section 5, moins l'ancienne île)")
 	assert_true(problems.is_empty(), "; ".join(problems))
 
 
@@ -313,9 +314,10 @@ func test_building_sides_have_the_shape_of_their_roof() -> void:
 	# (C2) Plus les six flancs du village (cahier n° 5, 5.3 : chaumières, grange, maison de pierre,
 	# appentis).
 	# (CV) Plus les dix de la ville (cahier n° 5, 6.4 et 6.5 : six maisons, quatre boutiques).
+	# (F1) Moins les dix bâtiments de l'ancienne île (auberge, horloger, entrepôt…).
 	assert_eq(
 		count,
-		38,
+		28,
 		(
 			"19 flancs (cahier n° 2), 2 de l'entrepôt (T1), 6 du village (C2), 10 de la ville (CV),"
 			+ " 1 du port (CP)"

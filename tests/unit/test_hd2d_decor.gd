@@ -1,20 +1,21 @@
 extends GutTest
-## (HD-2D) Le décor de l'île en images : chaque décor de src/world/props/ est un panneau
+## (HD-2D) Le décor en images : chaque décor de src/world/props/ est un panneau
 ## (DecorPanel) ou un bâtiment (Building) dont l'image est à 96 px par mètre ; ce qui bloque garde
 ## sa collision (couche 1) ; les bâtiments ont une façade à la taille de leur mur et une collision
-## qui couvre leur emprise ; dans l'île, les décors sont fondus par image ; les shaders du monde et
-## du post-traitement compilent ; (H5) les images du monde sont filtrées (pixel art net de près,
-## sans moiré au loin) et le sol lit un atlas à mipmaps qui ne mélangent pas ses tuiles. Les places
-## de HISTOIRE.md 3.3 restent vérifiées par test_world_story_spots.gd. (H9) Un décor peut aussi être
+## qui couvre leur emprise ; dans les cartes, les décors sont fondus par image ; les shaders du
+## monde et du post-traitement compilent ; (H5) les images du monde sont filtrées (pixel art net de
+## près, sans moiré au loin) et le sol lit un atlas à mipmaps qui ne mélangent pas ses tuiles.
+## (F1) L'ancienne île est partie : le fondu se vérifie sur les cartes de l'île n° 68 et d'essai,
+## la lumière sur une carte faite ici qui porte ses propres nœuds. (H9) Un décor peut aussi être
 ## un décalque au sol (GroundDecal, sans collision) ou un panneau animé (une image de la bande) ;
 ## les formats eux-mêmes sont vérifiés par test_hd2d_formats.gd.
 
 const PROPS_DIR := "res://src/world/props"
-const FIXTURE := preload("res://tests/stubs/l2_island_fixture.gd")
-const TERRAIN_MATERIAL := "res://src/world/materials/terrain.tres"
+## (F1) Cartes en plein air dont le décor est fondu par image.
+const BATCHED_MAPS: Array[StringName] = [&"essai", &"port", &"village", &"colline", &"sentier"]
 const POST_SHADER := preload("res://src/player/post_fx.gdshader")
-## Décors qu'on traverse (fleurs, herbes, objets au sol, décor lointain, la cloche gérée par
-## arena.tscn) : sans collision, comme avant le passage au HD-2D.
+## Décors qu'on traverse (fleurs, herbes, objets au sol, décor lointain) : sans collision, comme
+## avant le passage au HD-2D.
 const NON_BLOCKING: Array[String] = [
 	"airship_barocupot",
 	"airship_ferry",
@@ -35,24 +36,22 @@ const NON_BLOCKING: Array[String] = [
 	"ring_stone",
 	"tall_grass",
 	"vegetable_patch",
-	"vigil_bell",
 ]
-## Images (matériaux) au plus par zone : un draw call par image et par case visible ; les vues
-## mesurées restent sous 75 draw calls (tests/integration/demo_hd2d.gd, budget : 200). (P0) 44 au
-## port avec les flancs des bâtiments et les hélices des navires. (Pose du cahier n° 2) Relevé :
-## la variété demandée (3 à 6 variantes par famille) dépasse 48 images par zone, mais une vue n'en
-## montre qu'une partie ; la vraie limite, ≤ 200 draw calls par vue, est mesurée par le test de
-## chaque zone sous plusieurs angles.
+## Images (matériaux) au plus par carte (autrefois par zone) : un draw call par image et par case
+## visible ; les vues mesurées restent sous 75 draw calls (tests/integration/demo_hd2d.gd, budget :
+## 200). (P0) 44 au port avec les flancs des bâtiments et les hélices des navires. (Pose du cahier
+## n° 2) Relevé : la variété demandée (3 à 6 variantes par famille) dépasse 48 images par zone, mais
+## une vue n'en montre qu'une partie ; la vraie limite, ≤ 200 draw calls par vue, est mesurée par le
+## test de chaque zone sous plusieurs angles.
 const MAX_IMAGES_PER_ZONE := 140
 ## (P0) Métadonnée des scènes du cahier n° 2 (tools/hd2d_scenes.py) : leur collision et leur
 ## densité suivent leur catégorie et le manifeste, vérifiées par test_hd2d_scenes.gd.
 const SCENES_META := &"hd2d_category"
 const SHADERS: Array[String] = [
 	"res://src/world/shaders/panel.gdshader",
-	"res://src/world/shaders/terrain.gdshader",
-	"res://src/world/shaders/rock.gdshader",
+	"res://src/world/shaders/map_ground.gdshader",
+	"res://src/world/shaders/map_ground_cliff.gdshader",
 	"res://src/world/shaders/cloud_sea.gdshader",
-	"res://src/world/shaders/waterfall.gdshader",
 	"res://src/player/post_fx.gdshader",
 	"res://src/world/shaders/panel_foreground.gdshader",
 	"res://src/world/shaders/ground_decal.gdshader",
@@ -189,29 +188,27 @@ func test_buildings_match_their_facade_and_collision() -> void:
 	assert_gte(found, 9, "les bâtiments de l'entrepôt et du port")
 
 
-func test_island_decor_is_batched_by_image() -> void:
-	var island := FIXTURE.island()
-	add_child(island)
-	await wait_process_frames(1)
-	for zone: Node in island.get_node(^"Zones").get_children():
-		var geometry := zone.get_node(^"Geometry")
+func test_map_decor_is_batched_by_image() -> void:
+	for map_id: StringName in BATCHED_MAPS:
+		var map := (load(Map.scene_path(map_id)) as PackedScene).instantiate() as Map
+		add_child(map)
+		await wait_process_frames(1)
+		var geometry := map.get_node(^"Geometry")
 		var batches := 0
 		var images := {}
 		for child: Node in geometry.get_children():
 			if child is MeshInstance3D and String(child.name).begins_with("Batch"):
 				batches += 1
 				images[(child as MeshInstance3D).material_override] = true
-		assert_gt(batches, 0, "%s : décor fondu" % zone.name)
-		assert_lte(
-			images.size(), MAX_IMAGES_PER_ZONE, "%s : %d images" % [zone.name, images.size()]
-		)
+		assert_gt(batches, 0, "%s : décor fondu" % map_id)
+		assert_lte(images.size(), MAX_IMAGES_PER_ZONE, "%s : %d images" % [map_id, images.size()])
 		var loose := 0
 		for mesh: Node in geometry.find_children("*", "MeshInstance3D", true, false):
 			var instance := mesh as MeshInstance3D
 			if instance.is_visible_in_tree() and not String(instance.name).begins_with("Batch"):
 				loose += 1
-		assert_eq(loose, 0, "%s : aucun panneau oublié par le PropBatcher" % zone.name)
-	island.free()
+		assert_eq(loose, 0, "%s : aucun panneau oublié par le PropBatcher" % map_id)
+		map.free()
 
 
 func test_world_and_post_shaders_compile() -> void:
@@ -221,11 +218,7 @@ func test_world_and_post_shaders_compile() -> void:
 		if shader != null:
 			# Un shader qui ne compile pas n'expose aucun uniforme (et écrit SHADER ERROR).
 			assert_gt(shader.get_shader_uniform_list().size(), 0, "%s compile" % path)
-	var terrain := load(TERRAIN_MATERIAL) as ShaderMaterial
-	assert_not_null(terrain.get_shader_parameter(&"ground_atlas"), "atlas du sol branché")
-	var rock := load("res://src/world/materials/rock.tres") as ShaderMaterial
-	for texture: StringName in [&"lip_texture", &"cliff_texture", &"underside_texture"]:
-		assert_not_null(rock.get_shader_parameter(texture), "roche : %s" % texture)
+	assert_not_null(MapGround.ATLAS, "atlas du sol des cartes")
 
 
 # --- (H5) Filtrage du pixel art : ni moiré ni scintillement -----------------------------------
@@ -234,25 +227,23 @@ func test_world_and_post_shaders_compile() -> void:
 func test_world_images_are_filtered_not_point_sampled() -> void:
 	# Au plus proche voisin et sans mipmaps, des images plus denses que l'écran (96 px par mètre)
 	# font du moiré au loin et scintillent quand la caméra glisse.
-	for path: String in [
-		"res://src/world/shaders/panel.gdshader",
-		"res://src/world/shaders/rock.gdshader",
-	]:
-		var code := (load(path) as Shader).code
-		assert_string_contains(code, "pixel_art.gdshaderinc", path)
-		assert_false(code.contains("filter_nearest"), "%s : images filtrées" % path)
-	var terrain := (load("res://src/world/shaders/terrain.gdshader") as Shader).code
+	var code := (load("res://src/world/shaders/panel.gdshader") as Shader).code
+	assert_string_contains(code, "pixel_art.gdshaderinc", "panneaux")
+	assert_false(code.contains("filter_nearest"), "panneaux : images filtrées")
+	var terrain := FileAccess.get_file_as_string(
+		"res://src/world/shaders/map_ground_atlas.gdshaderinc"
+	)
 	assert_string_contains(terrain, "filter_linear_mipmap", "sol : mipmaps")
 	assert_string_contains(terrain, "textureLod", "sol : niveau tiré des dérivées continues")
 
 
 func test_ground_atlas_mipmaps_keep_tiles_apart() -> void:
 	# Deux tuiles de 384 px (rouge, bleue) : aucune mipmap utile ne les mélange.
-	var tile := IslandTerrain.ATLAS_TILE
+	var tile := GroundAtlas.ATLAS_TILE
 	var source := Image.create(tile * 2, tile, false, Image.FORMAT_RGBA8)
 	source.fill_rect(Rect2i(0, 0, tile, tile), Color.RED)
 	source.fill_rect(Rect2i(tile, 0, tile, tile), Color.BLUE)
-	var image := IslandTerrain.mipmapped_image(source)
+	var image := GroundAtlas.mipmapped_image(source)
 	assert_true(image.has_mipmaps(), "mipmaps")
 	assert_false(source.has_mipmaps(), "l'image source n'est pas touchée")
 	var data := image.get_data()
@@ -261,8 +252,8 @@ func test_ground_atlas_mipmaps_keep_tiles_apart() -> void:
 		var height := tile >> level
 		var offset := image.get_mipmap_offset(level)
 		var mixed := 0
-		for y in height:
-			for x in width:
+		for y: int in height:
+			for x: int in width:
 				var at := offset + (y * width + x) * 4
 				var want := Color.RED if x < width / 2.0 else Color.BLUE
 				var got := Color8(data[at], data[at + 1], data[at + 2], data[at + 3])
@@ -271,11 +262,8 @@ func test_ground_atlas_mipmaps_keep_tiles_apart() -> void:
 		assert_eq(mixed, 0, "niveau %d : tuiles séparées" % level)
 
 
-func test_island_ground_reads_a_mipmapped_atlas() -> void:
-	var island := FIXTURE.island()
-	add_child(island)
-	var terrain := load(TERRAIN_MATERIAL) as ShaderMaterial
-	var atlas := terrain.get_shader_parameter(&"ground_atlas") as Texture2D
+func test_map_ground_reads_a_mipmapped_atlas() -> void:
+	var atlas := GroundAtlas.mipmapped_atlas(MapGround.ATLAS)
 	assert_not_null(atlas, "atlas du sol")
 	if atlas != null:
 		var image := atlas.get_image()
@@ -283,7 +271,6 @@ func test_island_ground_reads_a_mipmapped_atlas() -> void:
 		# (H9) 12 tuiles (cahier n° 1) ou 27 (cahier n° 2) : 4 colonnes de 384 px, 3 ou 7 rangées.
 		assert_eq(atlas.get_width(), 1536, "quatre colonnes")
 		assert_true(atlas.get_height() in [1152, 2688], "3 ou 7 rangées : %d" % atlas.get_height())
-	island.free()
 
 
 # --- (H5) Réglages de lumière ; (E9) préréglages de data/lighting/ (couchant par défaut) ---------
@@ -293,21 +280,40 @@ func _lighting(preset: String) -> HD2DLighting:
 	return HD2DLighting.preset(StringName(preset))
 
 
-func test_sunset_lighting_is_the_island_default() -> void:
-	# Le réglage du couchant reprend exactement island.tscn et post_fx.gdshader : un réglage de
-	# nuit puis celui du couchant rendent l'île de l'acte 1.
+## (F1) Carte faite ici qui porte ses propres nœuds de lumière (environnement, soleil, lanterne,
+## mer de nuages), comme l'ancienne île.
+func _own_light_map() -> Node3D:
+	var holder := Node3D.new()
+	holder.name = "own_light"
+	var world := WorldEnvironment.new()
+	world.name = "WorldEnvironment"
+	world.environment = Environment.new()
+	var panorama := PanoramaSkyMaterial.new()
+	panorama.panorama = load("res://assets/hd2d/sky/sky.png") as Texture2D
+	world.environment.sky = Sky.new()
+	world.environment.sky.sky_material = panorama
+	world.environment.background_mode = Environment.BG_SKY
+	holder.add_child(world)
+	var sun := DirectionalLight3D.new()
+	sun.name = "Sun"
+	holder.add_child(sun)
+	var lamp := OmniLight3D.new()
+	lamp.name = "Lantern"
+	holder.add_child(lamp)
+	var water := MeshInstance3D.new()
+	water.name = "Water"
+	water.mesh = PlaneMesh.new()
+	var clouds := ShaderMaterial.new()
+	clouds.shader = HD2DLightTargets.CLOUD_SEA_SHADER
+	clouds.set_shader_parameter(&"clouds", load("res://assets/hd2d/sky/cloud_sea.png"))
+	water.material_override = clouds
+	holder.add_child(water)
+	return holder
+
+
+func test_sunset_lighting_is_the_post_processing_default() -> void:
+	# Le réglage du couchant reprend les valeurs par défaut de post_fx.gdshader.
 	var sunset := _lighting("couchant")
-	var island := FIXTURE.island()
-	var sun := island.get_node(^"Sun") as DirectionalLight3D
-	var environment := (island.get_node(^"WorldEnvironment") as WorldEnvironment).environment
-	assert_almost_eq(sunset.sun_basis().z, sun.basis.z, Vector3.ONE * 0.002, "soleil au WSO")
-	assert_almost_eq(sunset.sun_basis().x, sun.basis.x, Vector3.ONE * 0.002, "soleil sans roulis")
-	assert_eq(sunset.sun_color, sun.light_color)
-	assert_almost_eq(sunset.sun_energy, sun.light_energy, 0.001)
-	assert_eq(sunset.ambient_color, environment.ambient_light_color)
-	assert_almost_eq(sunset.ambient_energy, environment.ambient_light_energy, 0.001)
-	assert_eq(sunset.fog_color, environment.fog_light_color)
-	assert_almost_eq(sunset.fog_density, environment.fog_density, 0.00001)
 	var defaults := _shader_defaults(POST_SHADER.code)
 	var values := sunset.post_parameters()
 	for key: StringName in values:
@@ -322,7 +328,6 @@ func test_sunset_lighting_is_the_island_default() -> void:
 		assert_eq(got.size(), numbers.size(), "post : %s" % key)
 		for n in mini(got.size(), numbers.size()):
 			assert_almost_eq(got[n], numbers[n], 0.0001, "post : %s" % key)
-	island.free()
 
 
 ## Valeurs par défaut des uniformes float et vec4 d'un shader, lues dans son code.
@@ -339,19 +344,21 @@ func _shader_defaults(code: String) -> Dictionary:
 	return defaults
 
 
-func test_night_lighting_changes_a_copy_of_the_island() -> void:
-	var island := FIXTURE.island()
+func test_night_lighting_changes_a_copy_of_the_map_environment() -> void:
+	var island := _own_light_map()
 	add_child(island)
 	var world := island.get_node(^"WorldEnvironment") as WorldEnvironment
 	var shared := world.environment
 	var shared_ambient := shared.ambient_light_color
 	var lamps := island.find_children("*", "OmniLight3D", true, false)
-	assert_gt(lamps.size(), 0, "lanternes de l'île")
+	assert_gt(lamps.size(), 0, "lanterne de la carte")
 	var lamp_energy := (lamps[0] as OmniLight3D).light_energy
 	var night := _lighting("nuit")
 	night.apply(island)
 	assert_ne(world.environment, shared, "environnement copié")
-	assert_eq(shared.ambient_light_color, shared_ambient, "island.tscn n'est pas touchée")
+	assert_eq(
+		shared.ambient_light_color, shared_ambient, "l'environnement d'origine n'est pas touché"
+	)
 	assert_eq(world.environment.ambient_light_color, night.ambient_color)
 	var sun := island.get_node(^"Sun") as DirectionalLight3D
 	assert_eq(sun.light_color, night.sun_color, "lune")
@@ -364,9 +371,12 @@ func test_night_lighting_changes_a_copy_of_the_island() -> void:
 	assert_not_null(clouds, "mer de nuages copiée")
 	assert_eq(clouds.get_shader_parameter(&"tint"), night.clouds_tint, "nuages de nuit")
 	# Retour au couchant : les lanternes reprennent leur énergie de départ.
-	_lighting("couchant").apply(island)
-	assert_almost_eq((lamps[0] as OmniLight3D).light_energy, lamp_energy, 0.001)
-	assert_eq(world.environment.ambient_light_color, shared_ambient)
+	var sunset := _lighting("couchant")
+	sunset.apply(island)
+	assert_almost_eq(
+		(lamps[0] as OmniLight3D).light_energy, lamp_energy * sunset.lamp_energy, 0.001
+	)
+	assert_eq(world.environment.ambient_light_color, sunset.ambient_color)
 	island.free()
 
 
@@ -390,11 +400,11 @@ func test_lighting_presets_set_the_post_processing() -> void:
 	assert_lt(night.saturation, sunset.saturation)
 
 
-func test_day_phase_sets_the_island_lighting() -> void:
-	# L'île reste au couchant tant que l'histoire n'annonce pas un autre moment ; (E9) l'ancienne
-	# phase de la journée donne son moment (Atmosphere), qui pose son réglage sur l'île ; les
-	# personnages, non éclairés, reçoivent la teinte du réglage.
-	var island := FIXTURE.island()
+func test_day_phase_sets_the_map_lighting() -> void:
+	# La carte reste au couchant tant que l'histoire n'annonce pas un autre moment ; (E9)
+	# l'ancienne phase de la journée donne son moment (Atmosphere), qui pose son réglage sur la
+	# carte ; les personnages, non éclairés, reçoivent la teinte du réglage.
+	var island := _own_light_map()
 	add_child(island)
 	GameState.reset()
 	Atmosphere.dress(island)

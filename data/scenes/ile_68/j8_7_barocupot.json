@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 8.7 (s. 20) : à bord du Barocupot (carte d'E7). {player} se réveille dans la coursive (Spawn), marche jusqu'à la salle du conseil ; le thé de Limeskin (limeskin_garde), deux lames qui se ressemblent (image originale) ; « Remonter sur le pont » (la sortie de la carte, vers entrepot:from_barocupot) ; le retour escorté en carton ; la cour au crépuscule.",
+  "_comment": "ACTE1.md 8.7 (s. 20) : à bord du Barocupot (carte d'E7). {player} se réveille dans la coursive (Spawn), marche jusqu'à la salle du conseil ; le thé de Limeskin (limeskin), deux lames qui se ressemblent (image originale) ; « Remonter sur le pont » (la sortie de la carte, vers entrepot:from_barocupot) ; le retour escorté en carton ; la cour au crépuscule.",
   "title": "Le Barocupot",
   "day": 8,
   "after": [
@@ -10,7 +10,7 @@
     "on": "ready"
   },
   "present": [
-    "limeskin_garde"
+    "limeskin"
   ],
   "steps": [
     {
@@ -26,7 +26,7 @@
     },
     {
       "do": "place",
-      "who": "limeskin_garde",
+      "who": "limeskin",
       "at": "conseil_limeskin",
       "facing": "west"
     },
@@ -67,11 +67,11 @@
       "do": "walk",
       "who": "player",
       "to": "conseil_chtholly",
-      "facing": "limeskin_garde"
+      "facing": "limeskin"
     },
     {
       "do": "face",
-      "who": "limeskin_garde",
+      "who": "limeskin",
       "toward": "player"
     },
     {

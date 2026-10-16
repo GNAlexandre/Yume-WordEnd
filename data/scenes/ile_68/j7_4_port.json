@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 7.4 (s. 13) : le port sous la pluie fine, au crépuscule. Le transport de la Garde descend, s'amarre, ouvre sa trappe et pose sa passerelle (E7, étape ship) ; Limeskin (limeskin_garde) paraît à la trappe, descend, rend les épées et remonte ; {player} descend la passerelle (cinq secondes de marche), le quai tangue, elle tombe à genoux ; Willem la prend sur son dos (planche willem_piggyback : tenue « dos », la protagoniste cachée). Le navire repart. Jamais d'embarquement à l'acte 1.",
+  "_comment": "ACTE1.md 7.4 (s. 13) : le port sous la pluie fine, au crépuscule. Le transport de la Garde descend, s'amarre, ouvre sa trappe et pose sa passerelle (E7, étape ship) ; Limeskin (limeskin) paraît à la trappe, descend, rend les épées et remonte ; {player} descend la passerelle (cinq secondes de marche), le quai tangue, elle tombe à genoux ; Willem la prend sur son dos (planche willem_piggyback : tenue « dos », la protagoniste cachée). Le navire repart. Jamais d'embarquement à l'acte 1.",
   "title": "Le port sous la pluie",
   "day": 7,
   "after": [
@@ -11,7 +11,7 @@
   },
   "present": [
     "willem",
-    "limeskin_garde",
+    "limeskin",
     "ithea",
     "nephren"
   ],
@@ -107,7 +107,7 @@
     },
     {
       "do": "place",
-      "who": "limeskin_garde",
+      "who": "limeskin",
       "at": "navire_trappe",
       "facing": "south"
     },
@@ -128,7 +128,7 @@
     },
     {
       "do": "walk",
-      "who": "limeskin_garde",
+      "who": "limeskin",
       "to": "navire_quai",
       "offset": [
         0.3,
@@ -139,7 +139,7 @@
     {
       "do": "face",
       "who": "willem",
-      "toward": "limeskin_garde"
+      "toward": "limeskin"
     },
     {
       "do": "dialogue",
@@ -153,12 +153,12 @@
     },
     {
       "do": "walk",
-      "who": "limeskin_garde",
+      "who": "limeskin",
       "to": "navire_trappe"
     },
     {
       "do": "leave",
-      "who": "limeskin_garde"
+      "who": "limeskin"
     },
     {
       "do": "player",

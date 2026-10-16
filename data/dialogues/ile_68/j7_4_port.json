@@ -8,7 +8,7 @@
       "text": "Willem attend seul au bord du vide. Par une trouée des nuages, on devine la surface, grise et immobile."
     },
     "limeskin": {
-      "speaker_id": "limeskin_garde",
+      "speaker_id": "limeskin",
       "text": "Ssseniorious, Insania, Valgulious. Je rends les armes à leur gardien.",
       "next": "limeskin_2"
     },
@@ -23,7 +23,7 @@
       "next": "limeskin_4"
     },
     "limeskin_4": {
-      "speaker_id": "limeskin_garde",
+      "speaker_id": "limeskin",
       "text": "Les guerrières ont combattu avec honneur. Ssssaluez-les pour moi. Le pont est aux sssoldats : je remonte."
     },
     "genoux": {

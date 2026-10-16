@@ -1,40 +1,40 @@
 extends GutTest
 ## Lot 6, puis acte 1 : PNJ (src/npc/npc.tscn), données data/npcs/*.tres (les PNJ de l'acte 1 et
-## leurs visuels non jouables data/npcs/visuals/), emplacements de HISTOIRE.md section 3.3.
+## leurs visuels non jouables data/npcs/visuals/). (F1) Les PNJ de l'ancienne île (boulanger,
+## passeur, marchande d'œufs, guetteur, Willem de la forêt et de la colline), ses emplacements et
+## ses déclencheurs de quête sont partis ; une conversation hors scène est celle de
+## data/dialogues/ile_68/talk/<id>.json.
 
 const NPC_SCENE := preload("res://src/npc/npc.tscn")
 const PLAYER_STUB := preload("res://tests/stubs/player_stub.tscn")
 const NYGGLATHO := preload("res://data/npcs/nygglatho.tres")
 const NPCS_DIR := "res://data/npcs"
 const VISUALS_DIR := "res://data/npcs/visuals"
-## PNJ de l'acte 1 : nom affiché, visuel, quête donnée, zone (HISTOIRE.md 3.3, 5.1 et 5.2).
+## PNJ de l'acte 1 : nom affiché, visuel, conversation hors scène (data/dialogues/ile_68/talk).
 const NPCS := {
-	&"nygglatho": ["Nygglatho", &"nygglatho", &"act1_main", &"village"],
-	&"willem": ["Willem", &"willem", &"special_dessert", &"village"],
-	&"willem_training": ["Willem", &"willem", &"", &"forest"],
-	&"willem_stars": ["Willem", &"willem", &"", &"hill"],
-	&"ithea": ["Ithea", &"ithea", &"old_clock", &"village"],
-	&"nephren": ["Nephren", &"nephren", &"picture_book", &"village"],
-	&"tiat": ["Tiat", &"tiat", &"vigil_register", &"village"],
-	&"pannibal": ["Pannibal", &"pannibal", &"", &"forest"],
-	&"collon": ["Collon", &"collon", &"", &"village"],
-	&"lakhesh": ["Lakhesh", &"lakhesh", &"", &"village"],
-	&"almita": ["Almita", &"almita", &"", &"village"],
-	&"limeskin": ["Limeskin", &"limeskin", &"", &"beach"],
-	&"cat_waiter": ["Serveur", &"cat_waiter", &"", &"beach"],
-	&"ramikeldi": ["M. Rami", &"ramikeldi", &"", &"beach"],
-	&"snack_vendor": ["Cuistot du snack", &"snack_vendor", &"", &"beach"],
-	&"baker": ["Boulanger", &"baker", &"", &"beach"],
-	&"ferryman": ["Passeur", &"ferryman", &"", &"beach"],
-	&"egg_vendor": ["Marchande d’œufs", &"egg_vendor", &"", &"beach"],
-	&"garde_lookout": ["Guetteur", &"garde_lookout", &"", &"dunes"],
+	&"nygglatho": ["Nygglatho", &"nygglatho", true],
+	&"willem": ["Willem", &"willem", true],
+	&"ithea": ["Ithea", &"ithea", true],
+	&"nephren": ["Nephren", &"nephren", true],
+	&"tiat": ["Tiat", &"tiat", true],
+	&"pannibal": ["Pannibal", &"pannibal", true],
+	&"collon": ["Collon", &"collon", true],
+	&"lakhesh": ["Lakhesh", &"lakhesh", true],
+	&"almita": ["Almita", &"almita", true],
+	&"limeskin": ["Limeskin", &"limeskin", false],
+	&"cat_waiter": ["Serveur", &"cat_waiter", false],
+	&"ramikeldi": ["M.\u00a0Rami", &"ramikeldi", false],
+	&"snack_vendor": ["Cuistot du snack", &"snack_vendor", false],
 }
-## (S2) Fiches de scène de l'acte 1 (île n° 68) : sans dialogue de l'ancienne île ni quête, toujours
+## (S2) Fiches de scène de l'acte 1 (île n° 68) : sans conversation hors scène, toujours
 ## présentes ; nom affiché, id du visuel (une tenue ou un visuel de PNJ).
 const SCENE_NPCS := {
 	&"chtholly_double": ["Chtholly", &"chtholly_home"],
-	&"limeskin_garde": ["Limeskin", &"limeskin"],
 }
+## PNJ et visuels de l'ancienne île, retirés.
+const REMOVED: Array[String] = [
+	"baker", "ferryman", "egg_vendor", "garde_lookout", "willem_training", "willem_stars"
+]
 ## Tailles (m) des visuels : HISTOIRE.md 5.1 et 5.2, BIBLE.md section 5.
 const HEIGHTS := {
 	&"nygglatho": 1.85,
@@ -50,52 +50,7 @@ const HEIGHTS := {
 	&"cat_waiter": 1.65,
 	&"ramikeldi": 1.7,
 	&"snack_vendor": 1.6,
-	&"baker": 2.0,
-	&"ferryman": 1.7,
-	&"egg_vendor": 1.55,
-	&"garde_lookout": 1.9,
 }
-## Emplacements (nœud, PNJ, position locale à la zone) de HISTOIRE.md 3.3, que le décor de l'île
-## n° 68 garantit (tests/unit/test_world_story_spots.gd).
-const PLACEMENTS := {
-	"village":
-	[
-		["Nygglatho", &"nygglatho", Vector3(-9, 0.2, -8.5)],
-		["Willem", &"willem", Vector3(-13.5, 0.2, 0)],
-		["Nephren", &"nephren", Vector3(-4, 0.2, -9.5)],
-		["Ithea", &"ithea", Vector3(3, 0.2, 2.5)],
-		["Tiat", &"tiat", Vector3(-3.5, 0.2, 5)],
-		["Collon", &"collon", Vector3(10, 0.2, -10)],
-		["Lakhesh", &"lakhesh", Vector3(-12, 0.2, -6)],
-		["Almita", &"almita", Vector3(11, 0.2, 7)],
-	],
-	"forest":
-	[
-		["Pannibal", &"pannibal", Vector3(-20, 0.2, -3)],
-		["WillemTraining", &"willem_training", Vector3(-9, 0.2, 10)],
-	],
-	"dunes": [["GardeLookout", &"garde_lookout", Vector3(-14, 0.2, -10)]],
-	"beach":
-	[
-		["Limeskin", &"limeskin", Vector3(-20, 0.2, 12)],
-		["CatWaiter", &"cat_waiter", Vector3(-14, 0.2, -6.5)],
-		["EggVendor", &"egg_vendor", Vector3(-24, 0.2, 2)],
-		["SnackVendor", &"snack_vendor", Vector3(-6, 0.2, 1)],
-		["Ramikeldi", &"ramikeldi", Vector3(26, 0.2, -6.5)],
-		["Ferryman", &"ferryman", Vector3(12, 0.2, 13)],
-		["Baker", &"baker", Vector3(-4, 0.2, -7)],
-	],
-	"hill": [["WillemStars", &"willem_stars", Vector3(3, 8.2, 0)]],
-}
-## Déclencheurs de la quête principale (HISTOIRE.md 3.3) : zone, id, position, rayon, hauteur.
-## Les deux cylindres sont posés au sol (y = 0 m au bord du Couchant, 8 m au sommet).
-const TRIGGERS: Array[Array] = [
-	["dunes", &"couchant_edge", Vector3(-21, 0, -12), 3.0, 3.0],
-	["hill", &"hill_summit", Vector3(1, 8, -3), 4.0, 3.0],
-]
-## Spawn du village (PLAN.md section 3, repères de l'île).
-const VILLAGE_SPAWN := Vector3(0.0, 0.2, 9.0)
-
 var _started: Array[StringName] = []
 
 
@@ -223,18 +178,22 @@ func test_npc_data_files() -> void:
 				"%s/%s.tres" % [VISUALS_DIR, fields[1]],
 				"visuel non jouable"
 			)
-		assert_eq(data.quest_id, fields[2], "%s : quête" % npc_id)
-		assert_eq(data.home_zone, fields[3], "%s : zone" % npc_id)
-		assert_eq(data.dialogue_path, "res://data/dialogues/%s.json" % npc_id)
-		assert_true(FileAccess.file_exists(data.dialogue_path), "%s : dialogue" % npc_id)
+		if fields[2]:
+			assert_eq(data.dialogue_path, "res://data/dialogues/ile_68/talk/%s.json" % npc_id)
+			assert_true(FileAccess.file_exists(data.dialogue_path), "%s : dialogue" % npc_id)
+		else:
+			assert_eq(data.dialogue_path, "", "%s : pas de conversation hors scène" % npc_id)
 	for file_name: String in ResourceLoader.list_directory(NPCS_DIR):
 		if file_name.ends_with(".tres"):
 			var file_id := StringName(file_name.get_basename())
 			assert_true(
 				NPCS.has(file_id) or SCENE_NPCS.has(file_id), "PNJ attendu : %s" % file_name
 			)
-	for old_id: String in ["librarian", "blacksmith", "child"]:
+	for old_id: String in ["librarian", "blacksmith", "child"] + REMOVED:
 		assert_false(ResourceLoader.exists("%s/%s.tres" % [NPCS_DIR, old_id]), "%s retiré" % old_id)
+		assert_false(
+			ResourceLoader.exists("%s/%s.tres" % [VISUALS_DIR, old_id]), "visuel %s retiré" % old_id
+		)
 
 
 ## (S2) La doublure couchée de la protagoniste et Limeskin de l'acte 1 : visuels non jouables,
@@ -250,8 +209,7 @@ func test_scene_npcs_of_the_act() -> void:
 		assert_eq(data.display_name, fields[0])
 		assert_eq(data.skin.id, fields[1], "%s : visuel" % npc_id)
 		assert_null(SkinRegistry.get_skin(data.skin.id), "%s : pas jouable" % npc_id)
-		assert_eq(data.dialogue_path, "", "%s : pas de dialogue de l'ancienne île" % npc_id)
-		assert_eq(data.quest_id, &"")
+		assert_eq(data.dialogue_path, "", "%s : pas de conversation" % npc_id)
 		assert_true(data.visible_if.is_empty(), "%s : toujours là" % npc_id)
 		assert_true(data.is_present(), "%s : présent" % npc_id)
 
@@ -283,47 +241,3 @@ func test_npc_visuals_are_not_playable_skins() -> void:
 	assert_eq(
 		sheet_skins.size(), SkinRegistry.all().size(), "(HD-2D) tous les skins sont des planches"
 	)
-
-
-func test_placements_follow_the_story() -> void:
-	for zone_id: String in PLACEMENTS:
-		var packed := load("res://src/npc/placements/%s.tscn" % zone_id) as PackedScene
-		var root := packed.instantiate() as Node3D
-		assert_eq(root.name, &"NPCs", "%s : racine NPCs" % zone_id)
-		add_child_autofree(root)
-		var expected: Array = PLACEMENTS[zone_id]
-		var positions: Array[Vector3] = []
-		for child: Node in root.get_children():
-			if child is QuestTrigger:
-				continue
-			assert_true(child is Npc, "%s/%s est un Npc" % [zone_id, child.name])
-			positions.append((child as Node3D).position)
-		assert_eq(positions.size(), expected.size(), "%s : nombre de PNJ" % zone_id)
-		for entry: Array in expected:
-			var npc := root.get_node_or_null(NodePath(String(entry[0]))) as Npc
-			assert_not_null(npc, "%s/%s" % [zone_id, entry[0]])
-			if npc == null:
-				continue
-			assert_eq(npc.data.id, entry[1], "%s : données" % entry[0])
-			assert_almost_eq(npc.position, entry[2] as Vector3, Vector3.ONE * 0.001, "position")
-		for i: int in positions.size():
-			for j: int in range(i + 1, positions.size()):
-				assert_gt(positions[i].distance_to(positions[j]), 2.5, "%s : PNJ espacés" % zone_id)
-		if zone_id == "village":
-			for spot: Vector3 in positions:
-				var from_spawn := Vector2(spot.x - VILLAGE_SPAWN.x, spot.z - VILLAGE_SPAWN.z)
-				assert_gt(from_spawn.length(), 3.0, "le Spawn reste libre")
-
-
-func test_triggers_of_the_main_quest() -> void:
-	for entry: Array in TRIGGERS:
-		var packed := load("res://src/npc/placements/%s.tscn" % entry[0]) as PackedScene
-		var root: Node3D = add_child_autofree(packed.instantiate())
-		var trigger := root.get_node_or_null(NodePath(String(entry[1]))) as QuestTrigger
-		assert_not_null(trigger, "%s/%s" % [entry[0], entry[1]])
-		if trigger == null:
-			continue
-		assert_eq(trigger.id(), entry[1])
-		assert_almost_eq(trigger.position, entry[2] as Vector3, Vector3.ONE * 0.001)
-		assert_eq(trigger.radius, float(entry[3]), "rayon")
-		assert_eq(trigger.height, float(entry[4]), "hauteur")

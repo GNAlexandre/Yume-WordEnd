@@ -3,7 +3,7 @@ extends SceneTree
 ## dans la vraie partie (src/game.tscn), sans écrire de sauvegarde.
 ##
 ##   tools/godot --headless --script tools/map_bench.gd [-- --bench-rounds=3
-##     --bench-maps=essai,ile_ancienne --bench-start=essai]
+##     --bench-maps=essai,entrepot_rdc_essai --bench-start=essai]
 ##   LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a -s "-screen 0 1280x720x24" tools/godot \
 ##     --rendering-driver opengl3 --resolution 1280x720 --script tools/map_bench.gd
 ##
@@ -19,8 +19,9 @@ extends SceneTree
 
 const GAME_SCENE := "res://src/game.tscn"
 ## Images propres à une carte : libérées avec elle (caches de matériaux en références faibles).
+## (F1) L'ancienne île, qui servait de carte lourde, est partie : l'aller-retour par défaut va de
+## la carte d'essai au rez-de-chaussée d'essai.
 const OWN_IMAGES := {
-	"ile_ancienne": "res://assets/hd2d/buildings/port_hangar.png",
 	"essai": "res://assets/hd2d/ground/path_dirt.png",
 }
 
@@ -40,7 +41,7 @@ func _run() -> void:
 	await process_frame
 	var options := _options()
 	var rounds := int(options.get("bench-rounds", "2"))
-	var maps := str(options.get("bench-maps", "essai,ile_ancienne")).split(",", false)
+	var maps := str(options.get("bench-maps", "essai,entrepot_rdc_essai")).split(",", false)
 	var world := root.get_node(^"WorldManager")
 	var game_state := root.get_node(^"GameState")
 	game_state.call(&"reset")

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Icônes de l'interface (menu, HUD, fin d'arène) : formes simples, contour prune, style rond.
+"""Icônes de l'interface (menu, HUD) : formes simples, contour prune, style rond.
 
 Chaque icône est dessinée à 4 fois sa taille (contours lissés), avec un contour foncé et un
 reflet clair, puis réduite. Résultat déterministe ; les PNG générés sont versionnés dans
-assets/ui/ et chargés par src/ui/hud.tscn, arena_end.tscn (Lot 10).
+assets/ui/ et chargés par src/ui/hud.tscn (Lot 10). (F1) La page de quête et l'étoile du record
+sont parties avec l'ancienne île.
 
 Usage (Python 3.9+, pip install Pillow) :
 
@@ -109,33 +110,11 @@ def saved(c):
     c.ellipse((0.38, 0.30, 0.50, 0.42), HEART_SHINE)
 
 
-def quest(c):
-    """Page de quête crème au coin corné, deux lignes de texte."""
-    page = [(0.2, 0.12), (0.64, 0.12), (0.82, 0.30), (0.82, 0.88), (0.2, 0.88)]
-    c.shape(page, (255, 247, 226, 255))
-    c.shape([(0.64, 0.12), (0.64, 0.30), (0.82, 0.30)], (236, 214, 178, 255), width=0.05)
-    for y, x1 in ((0.46, 0.68), (0.60, 0.68), (0.74, 0.52)):
-        c.shape([(0.32, y - 0.025), (x1, y - 0.025), (x1, y + 0.025), (0.32, y + 0.025)], (196, 120, 110, 255), outline=None)
-
-
-def star(c):
-    """Étoile dorée à cinq branches (nouveau record)."""
-    points = []
-    for i in range(10):
-        a = -math.pi / 2 + i * math.pi / 5
-        r = 0.44 if i % 2 == 0 else 0.2
-        points.append((0.5 + r * math.cos(a), 0.54 + r * math.sin(a)))
-    c.shape(points, GOLD)
-    c.ellipse((0.36, 0.34, 0.48, 0.46), GOLD_SHINE)
-
-
 ICONS = {
     "heart_full": (heart_full, 48),
     "heart_empty": (heart_empty, 48),
     "lock_marker": (lock_marker, 48),
     "saved": (saved, 32),
-    "quest": (quest, 32),
-    "star": (star, 40),
 }
 
 
