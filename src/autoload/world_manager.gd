@@ -243,6 +243,8 @@ func _change_map(map_id: StringName, marker: StringName, voyage_island: StringNa
 		travel_started.emit(voyage_island)
 	transition_started.emit(map_id)
 	await _fade_to(1.0)
+	# (AN) Écran noir : le joueur, qui a fini son pas, quitte la physique avant les cartes.
+	_apply_freeze(player if is_instance_valid(player) else null)
 	var faded := Time.get_ticks_usec()
 	# Écran noir : le monde 3D n'est plus dessiné pendant le chargement (une image ne coûte plus
 	# que l'interface : le chargement découpé avance bien plus vite, surtout sur le Web).
@@ -605,6 +607,8 @@ func _finish(player: Node3D) -> void:
 	_traveling = &""
 	if is_instance_valid(player):
 		player.process_mode = _frozen_mode
+		if player.has_method(&"hold_input"):
+			player.call(&"hold_input", false)
 	_settle_frames = SETTLE_FRAMES
 	_busy = false
 
@@ -619,10 +623,17 @@ func _set_world_hidden(hidden: bool) -> void:
 ## fin d'image : go_to() part souvent de son image physique (interaction) ou du signal d'une
 ## sortie pendant le pas de la physique ; le retirer de l'espace physique à ce moment-là lui
 ## ferait finir son image sans espace (« Parameter "space" is null »).
+## (AN) Un joueur qui sait figer ses seules commandes (Player.hold_input) n'est pas figé tout de
+## suite : pendant le fondu au noir, il s'arrête, finit son pas et passe au repos au lieu de
+## rester figé en pleine foulée ; _change_map le retire de la physique une fois l'écran noir
+## (_apply_freeze), avant de toucher aux cartes. _finish lui rend ses commandes.
 func _freeze(player: Node3D) -> void:
 	if player == null:
 		return
 	_frozen_mode = player.process_mode
+	if player.has_method(&"hold_input"):
+		player.call(&"hold_input", true)
+		return
 	_apply_freeze.call_deferred(player)
 
 

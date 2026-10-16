@@ -19,6 +19,12 @@ extends Node3D
 ## visé glisse en douceur vers le joueur (talk_ahead) pour qu'il reste au-dessus de la boîte de
 ## dialogue. L'avance dans le sens de la marche (lead_time) s'installe et s'éteint en douceur
 ## (lead_smoothing) : pas d'à-coup au départ ni à l'arrêt.
+## (AN) Sans dépassement : le point visé ne passe jamais, dans le sens de la marche, au-delà du
+## point visé au repos de plus que l'avance voulue à cet instant (vitesse × lead_time) ; à l'arrêt,
+## il ne dépasse donc pas le point où il se posera, et le joueur arrêté ne glisse plus à l'écran
+## (l'audit mesurait 0,6 m de dépassement, environ 70 px, après une course). (AN) Marge aux bords :
+## le joueur (pieds et tête) reste à au moins edge_margin de chaque bord de l'écran, quitte à
+## laisser le point visé sortir des bornes de la carte (limits) ; pas pendant un cadrage du récit.
 ##
 ## Lissage physique (project.godot : physics/common/physics_interpolation) : le joueur bouge
 ## aux images physiques (60 par seconde) ; la caméra suit sa position interpolée entre deux
@@ -45,6 +51,8 @@ extends Node3D
 ## nord) et devant lui (vers la caméra).
 const BAND_AHEAD := 9.0
 const BAND_BEHIND := 4.5
+## (AN) Baisse de vitesse d'une image à l'autre (m/s) au-delà de laquelle le joueur freine.
+const BRAKE_TOLERANCE := 0.01
 
 ## Inclinaison de la caméra vers le bas (degrés) et champ vertical (degrés).
 @export_range(20.0, 60.0) var pitch_deg: float = 32.0
@@ -79,6 +87,10 @@ const BAND_BEHIND := 4.5
 ## courante à chaque changement de carte ; valeur de la scène (un grand carré autour de
 ## l'origine, WorldManager.DEFAULT_CAMERA_BOUNDS) tant qu'aucune carte n'est posée.
 @export var limits: Rect2 = Rect2(-71.0, -70.0, 142.0, 136.0)
+## (AN) Part de la largeur et de la hauteur de l'écran gardée libre entre le joueur et chaque bord
+## (0 : sans marge). Hauteur du joueur prise en compte (m).
+@export_range(0.0, 0.4) var edge_margin: float = 0.12
+@export var player_height: float = 1.6
 
 @export_group("Verrouillage")
 ## Part de l'écart joueur → cible dont le point visé avance vers elle, et avancée maximale (m).
@@ -108,6 +120,11 @@ var _story_distance: float = 21.0
 var _story_pitch: float = 32.0
 var _story_speed: float = 3.0
 var _shown_pitch: float = 32.0
+## (AN) Dernière direction de marche (plan du sol) : sens où le point visé ne doit pas dépasser.
+var _travel: Vector3 = Vector3.ZERO
+## (AN) Vitesse de la marche à l'image précédente (m/s) : elle baisse, le joueur freine.
+var _last_speed: float = 0.0
+var _braking: bool = false
 
 @onready var camera: Camera3D = $Camera3D
 
@@ -177,9 +194,79 @@ func update_camera(delta: float, zoom_axis: float = 0.0) -> void:
 		_shown_pitch = lerpf(_shown_pitch, _story_pitch, glide)
 	else:
 		_focus = _focus.lerp(focus_goal(), 1.0 - exp(-follow_speed * delta))
+		_focus = _without_overshoot(_focus, wanted_lead)
 		_distance = lerpf(_distance, _target_distance, 1.0 - exp(-zoom_smoothing * delta))
 		_shown_pitch = lerpf(_shown_pitch, pitch_deg, 1.0 - exp(-zoom_smoothing * delta))
+		_focus = keep_in_frame(_focus, anchor())
 	_apply()
+
+
+## (AN) Le point visé focus borné dans le sens de la marche : au plus wanted_lead.length() m
+## au-delà du point visé au repos (focus_goal sans avance), et pas au-delà du tout pendant que le
+## joueur freine (sa vitesse baisse) ou à l'arrêt : le point visé ne dépasse jamais celui où il se
+## posera, et le joueur arrêté ne glisse pas à l'écran. En marche régulière, l'avance compense
+## juste le retard du suivi (lead_time = 1 / follow_speed) : la borne ne mord pas.
+func _without_overshoot(focus_point: Vector3, wanted_lead: Vector3) -> Vector3:
+	var flat_velocity := Vector3(follow_velocity.x, 0.0, follow_velocity.z)
+	var speed := flat_velocity.length()
+	# Le freinage dure jusqu'à la prochaine accélération (plusieurs images d'affichage passent
+	# entre deux images physiques : une vitesse inchangée ne l'interrompt pas).
+	if speed < _last_speed - BRAKE_TOLERANCE:
+		_braking = true
+	elif speed > _last_speed + BRAKE_TOLERANCE:
+		_braking = false
+	_last_speed = speed
+	if speed > 0.1:
+		_travel = flat_velocity / speed
+	if _travel == Vector3.ZERO:
+		return focus_point
+	var rest := focus_goal(false)
+	var along := (focus_point - rest).dot(_travel)
+	var allowed := 0.0 if _braking or speed <= 0.1 else wanted_lead.length()
+	if along > allowed:
+		focus_point -= _travel * (along - allowed)
+	return focus_point
+
+
+## (AN) Point visé focus_point déplacé au plus court pour que le joueur (pieds en feet, tête
+## player_height m plus haut) reste à edge_margin des bords de l'écran, avec la distance et le
+## tangage affichés ; inchangé sans marge ou sans écran.
+func keep_in_frame(focus_point: Vector3, feet: Vector3) -> Vector3:
+	var size := get_viewport().get_visible_rect().size if is_inside_tree() else Vector2.ZERO
+	if edge_margin <= 0.0 or size.x <= 0.0 or size.y <= 0.0:
+		return focus_point
+	var limit := 1.0 - 2.0 * edge_margin
+	var tan_half := tan(deg_to_rad(fov_deg) * 0.5)
+	var aspect := size.x / size.y
+	var tilt := deg_to_rad(_shown_pitch)
+	var head := feet + Vector3.UP * player_height
+	# Vertical : le nord (−Z) monte à l'écran. Pieds au-dessus du bas, tête sous le haut.
+	for check: Array in [[feet, -limit], [head, limit]]:
+		var view := _to_view(check[0], focus_point, tilt)
+		var bound: float = check[1]
+		var ndc_y := view.y / (view.z * tan_half)
+		if (bound < 0.0 and ndc_y < bound) or (bound > 0.0 and ndc_y > bound):
+			# Point visé décalé de dz au sud : y gagne dz·sin, la profondeur dz·cos.
+			var denominator := sin(tilt) - bound * tan_half * cos(tilt)
+			if absf(denominator) > 0.001:
+				focus_point.z += (bound * tan_half * view.z - view.y) / denominator
+	# Horizontal : la largeur visible à la profondeur des pieds.
+	var feet_view := _to_view(feet, focus_point, tilt)
+	var half_width := feet_view.z * tan_half * aspect * limit
+	if feet_view.x > half_width:
+		focus_point.x += feet_view.x - half_width
+	elif feet_view.x < -half_width:
+		focus_point.x += feet_view.x + half_width
+	return focus_point
+
+
+## (AN) Point du monde dans le repère de la caméra posée sur focus_point (tangage tilt) : x à
+## droite, y en haut, z profondeur devant la caméra.
+func _to_view(point: Vector3, focus_point: Vector3, tilt: float) -> Vector3:
+	var relative := point - (focus_point + _back(rad_to_deg(tilt)) * _distance)
+	var up := Vector3(0.0, cos(tilt), -sin(tilt))
+	var toward := Vector3(0.0, -sin(tilt), -cos(tilt))
+	return Vector3(relative.x, relative.dot(up), maxf(relative.dot(toward), 0.01))
 
 
 ## (E6) Cadrage du récit : le point visé glisse vers point (repère du monde) en environ time s,
@@ -268,12 +355,16 @@ func snap() -> void:
 		body.reset_physics_interpolation()
 	reset_physics_interpolation()
 	_lead = Vector3.ZERO
+	_travel = Vector3.ZERO
+	_last_speed = 0.0
+	_braking = false
 	_ahead = talk_ahead if _talking else focus_ahead
 	# La place affichée n'est recalculée qu'une fois par image : juste après une téléportation,
 	# elle donne encore l'ancienne. La caméra se recale sur la vraie position.
 	_focus = _goal_from(global_position, false)
 	_distance = _target_distance
 	_shown_pitch = pitch_deg
+	_focus = keep_in_frame(_focus, global_position)
 	if _story_active:
 		_focus = _story_focus
 		_distance = _story_distance
