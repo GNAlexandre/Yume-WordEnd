@@ -657,6 +657,9 @@ func _end_scene(scene_id: StringName, data: Dictionary, completed: bool) -> void
 	EventBus.save_requested.emit()
 	if _stage_ready() and not _check_triggers():
 		refresh()
+	elif _current.is_empty():
+		# (S2) Pas prêt (dialogue, changement de carte) : l'indice de ce qui suit, tout de suite.
+		_update_hint()
 
 
 func _start_resume() -> void:

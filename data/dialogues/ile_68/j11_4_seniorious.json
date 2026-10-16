@@ -1,0 +1,62 @@
+{
+  "id": "j11_4_seniorious",
+  "start": "epee",
+  "nodes": {
+    "epee": {
+      "speaker": "",
+      "text": "Contre l'arbre de la clairière, emmaillotée de toile : Seniorious. Willem défait les sangles et te la tend.",
+      "next": "epee_2"
+    },
+    "epee_2": {
+      "speaker_id": "willem",
+      "text": "Aujourd'hui, la vraie. Le souffle d'abord, les gestes ensuite, et à la fin, la Grue de Gossamer.",
+      "next": "epee_3"
+    },
+    "epee_3": {
+      "speaker_id": "willem",
+      "text": "On l'apprend d'abord à mains nues, d'habitude. Mais on n'a plus le temps des habitudes."
+    },
+    "fatigue": {
+      "speaker_id": "willem",
+      "text": "Assez. La Grue ne s'apprend pas en un après-midi. Tu as le geste dans les bras ; le reste viendra là-haut.",
+      "next": "fatigue_2"
+    },
+    "fatigue_2": {
+      "speaker": "",
+      "text": "Tu poses Seniorious contre l'arbre, à côté de lui, et tu t'assieds."
+    },
+    "arbre": {
+      "speaker": "",
+      "text": "Assis contre l'arbre, côte à côte. Les ombres s'allongent dans la clairière. La question sort toute seule.",
+      "choices": [
+        {
+          "text": "Et toi, après, tu iras où ?",
+          "next": "ou"
+        },
+        {
+          "text": "Tu seras encore là ?",
+          "next": "la"
+        }
+      ]
+    },
+    "ou": {
+      "speaker": "{player}",
+      "text": "Et toi, après… quand on sera parties. Tu iras où ?",
+      "next": "reponse"
+    },
+    "la": {
+      "speaker": "{player}",
+      "text": "Quand on reviendra… tu seras encore là ?",
+      "next": "reponse"
+    },
+    "reponse": {
+      "speaker_id": "willem",
+      "text": "Ici. Je vous attendrai ici. Un endroit où l'on attend quelqu'un, c'est un endroit où l'on reste.",
+      "next": "reponse_2"
+    },
+    "reponse_2": {
+      "speaker_id": "willem",
+      "text": "Et quand tu rentreras, je te gaverai de gâteau au beurre. Jusqu'à ce que tu demandes grâce."
+    }
+  }
+}

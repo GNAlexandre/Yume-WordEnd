@@ -2,6 +2,8 @@
   "_comment": "Willem (VIE.md, 2.1 et 3) : la toilette à l'aube, les archives le matin, le déjeuner, le champ l'après-midi (le ballon est du lot E8), la tour de fées sur lui le soir, les archives la nuit.",
   "lines": [
     {"slot": "matin", "day": 12, "map": "entrepot_etage", "place": "couloir_fuite", "activity": "reparer", "outfit": "maison", "_note": "Variations par jour (VIE.md, 3) : les lignes à « day » ou « if » passent d'abord, la première qui va l'emporte."},
+    {"slot": "apres_midi", "day": [12, 12], "map": "entrepot", "place": "champ_centre", "activity": "ballon", "outfit": "maison", "role": "arbitre", "_note": "(S2) Le dernier ballon : Willem arbitre (ACTE1.md 12.1) ; aussi le jour 10, avant l'averse."},
+    {"slot": "apres_midi", "day": 10, "map": "entrepot", "place": "champ_centre", "activity": "ballon", "outfit": "maison", "role": "arbitre"},
     {"slot": "apres_midi", "day": 12, "map": "entrepot", "place": "champ_centre", "activity": "attendre", "outfit": "maison"},
     {"slot": "soir", "day": 12, "map": "entrepot", "place": "cour_willem", "activity": "attendre", "outfit": "maison"},
     {"slot": ["matin", "midi"], "day": 11, "away": "maison_limashenka"},

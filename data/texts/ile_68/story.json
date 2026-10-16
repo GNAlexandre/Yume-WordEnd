@@ -49,7 +49,29 @@
     "8": {
       "title": "Le duel, la fugue et la colline",
       "calendar": "Il m'a battue sans bouger. Il a dit que je devais revenir. Il a promis un gâteau."
+    },
+    "9": {
+      "title": "Le premier matin",
+      "calendar": "Des bâtons à l'aube, devant tout le monde. Du thé à la moutarde. Plus jamais.",
+      "sleep_hint": "La veillée est finie. Au lit."
+    },
+    "10": {
+      "title": "Sous les nuages",
+      "calendar": "J'ai tout raté. J'ai couru jusqu'au bois. Je sais ce que c'est, maintenant. Je ne l'écrirai pas.",
+      "sleep_hint": "La journée est finie. Ton lit t'attend."
+    },
+    "11": {
+      "title": "L'homme-chat",
+      "calendar": "J'ai crié devant toute la maison. Il allait réparer une horloge. Une horloge.",
+      "sleep_hint": "Demain, le départ. Dors, si tu peux."
+    },
+    "12": {
+      "title": "Le départ",
+      "calendar": "Départ au couchant."
     }
+  },
+  "calendar": {
+    "depart": "Départ au couchant."
   },
   "j1_1_port": {
     "titre": "Cet acte suit le volume 1 de la traduction Yume Novel.",
@@ -213,5 +235,106 @@
     "t_nord": "Trouver le nord. Toujours utile.",
     "t_miaou": "Imiter un miaulement. Ne demande pas.",
     "t_ongles": "Ne pas se couper les ongles trop court."
+  },
+  "j9_1_porte": {
+    "toc": "Toc, toc.",
+    "ricane": "Nya-ha-ha… de bon matin !",
+    "habillee": "Cinq minutes plus tard, très exactement, la porte se rouvre. Habillée, coiffée, digne."
+  },
+  "j9_2_batons": {
+    "hint": "Willem t'attend dans la clairière.",
+    "repli_1": "Willem frappe en rythme, de quatre côtés. Bloquer, dévier, esquiver : tu tiens, puis tu lâches.",
+    "repli_2": "Ithea et Nephren se lèvent du banc. À trois contre un, il pare tout, et contre comme un serpent.",
+    "grace": "Grâce… pitié… de l'eau…"
+  },
+  "j9_3_cafe": {
+    "hint": "Ithea et Nephren t'attendent sous le porche.",
+    "hint_cafe": "Ithea et Nephren vont au café du village.",
+    "chapeau": "Enchanté. Vraiment enchanté.",
+    "voix_basse": "… pas avant demain matin…"
+  },
+  "j9_4_moutarde": {
+    "hint": "Le goûter du soir est servi au réfectoire.",
+    "asseoir": "S'asseoir",
+    "tiat_boit": "Hiii ! Ça pique ! J'adore !",
+    "rire": "Nya-ha-ha-ha !",
+    "soiree": "La soirée passe. Le goût de moutarde, lui, s'en va moins vite."
+  },
+  "j9_5_veillee": {
+    "hint": "Il y a de la lumière au réfectoire."
+  },
+  "j10_1_rater": {
+    "hint": "Willem t'attend dans la clairière.",
+    "repli": "Rien ne passe. Le bâton de Willem trouve toutes les ouvertures, et tes yeux, toujours, son visage.",
+    "attends": "Hé ! Attends !",
+    "hein": "… Hein ?",
+    "hint_course": "Cours. N'importe où. Vers le sud, vers le bois."
+  },
+  "j10_2_foret": {
+    "hint_refuge": "Plus loin. Le grand chêne, au fond du bois.",
+    "retour": "Ithea te ramène à l'entrepôt par le bon chemin, sans rien dire. C'est déjà midi."
+  },
+  "j10_3_linge": {
+    "hint": "Le vent sent la pluie. Le linge est sur le toit.",
+    "hint_draps": "Aide les petites à décrocher les draps.",
+    "un": "Un drap !",
+    "deux": "Deux draps !",
+    "trois": "Le dernier ! Merci !",
+    "hint_trappe": "Vite, à la trappe, avant d'être trempée !"
+  },
+  "j10_5_tour": {
+    "hint": "On joue à la salle de jeux.",
+    "doucement": "Hé, doucement…",
+    "assaut": "À l'assauuut !",
+    "haut": "Plus haut !",
+    "doigts": "Et maintenant… le dessert !",
+    "rires": "Hi hi hi !",
+    "draps": "Et mes draps, trempés… Tant pis, ce soir, on rit."
+  },
+  "j11_1_toilette": {
+    "hint": "Les petites se lavent au point d'eau, en bas.",
+    "glacee": "C'est glacé !",
+    "non": "Jamais !",
+    "hint_collon": "Collon s'est sauvée de la toilette."
+  },
+  "j11_2_ne_pars_pas": {
+    "chapeau": "Mesdemoiselles.",
+    "oooh": "Oooooh…",
+    "mariage": "C'était une demande en mariage ?",
+    "rire": "Pfff… hi hi… hiii…"
+  },
+  "j11_3_horloge": {
+    "hint": "Willem répare une horloge au village.",
+    "cloche": "Les heures passent sur la pointe des pieds. Au loin, la sixième cloche.",
+    "voila": "Voilà.",
+    "larmes": "Maman…",
+    "comptine": "Le balancier repart. Puis, au cœur du boîtier, une petite comptine se met à jouer, un peu fausse, très douce."
+  },
+  "j11_4_seniorious": {
+    "hint": "Willem t'attend dans la clairière, avec Seniorious.",
+    "repli": "Le souffle, les gestes, la Grue. À la troisième, Seniorious t'échappe et plonge dans le marais. Tu vas la chercher."
+  },
+  "j12_1_derniere_journee": {
+    "calendrier": "Sur le calendrier, d'une main sèche : « Départ au couchant. » La case d'après restera blanche."
+  },
+  "j12_1_embuscade": {
+    "hint": "Dernière journée. Chacun a un mot pour toi.",
+    "cri": "Une dernière fois, en garde !",
+    "repli": "Pannibal bondit des fourrés, épée de bois levée. Un pas de côté, une parade : elle roule dans l'herbe, ravie."
+  },
+  "j12_2_depart": {
+    "hint": "La huitième cloche approche. Tous sont dans la cour.",
+    "cloche": "Au loin, l'horloge des archives sonne la huitième cloche.",
+    "revenez": "Revenez ! Revenez vite !",
+    "entieres": "Revenez-nous entières.",
+    "fin": "Fin de l'acte 1. L'acte 2 suit le volume 2."
+  },
+  "j12_3_epilogue": {
+    "plus_tard_carton": "Plus tard. Un après-midi comme les autres.",
+    "viens": "Willeeem ! Viens jouer !",
+    "ballon": "Le ballon !",
+    "plus_tard": "Tout à l'heure ! J'ai les bras pleins !",
+    "sourire": "…",
+    "fin": "Fin de l'acte 1. L'acte 2 suit le volume 2."
   }
 }

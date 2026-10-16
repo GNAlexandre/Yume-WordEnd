@@ -3,7 +3,8 @@
   "id": "talk_pannibal",
   "start": "n1",
   "entries": [
-    "n0"
+    "n0",
+    "n12"
   ],
   "nodes": {
     "n0": {
@@ -19,6 +20,17 @@
     "n1": {
       "speaker_id": "pannibal",
       "text": "Garde-toi à gauche. Toujours à gauche."
+    },
+    "n12": {
+      "speaker_id": "pannibal",
+      "text": "Aujourd'hui, c'est le jour des adieux. Et les adieux, ça se fait l'épée à la main. Méfie-toi.",
+      "if": {
+        "day": [
+          12,
+          12
+        ],
+        "not_scene": "j12_2_depart"
+      }
     }
   }
 }

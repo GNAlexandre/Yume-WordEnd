@@ -1,0 +1,20 @@
+{
+  "id": "j12_1_embuscade",
+  "start": "adieu_gagne",
+  "nodes": {
+    "adieu_gagne": {
+      "speaker_id": "pannibal",
+      "text": "Pfff… battue. Encore. C'était ma dernière embuscade avant ton départ, tu aurais pu perdre, un peu.",
+      "next": "adieu_2"
+    },
+    "adieu_perdu": {
+      "speaker_id": "pannibal",
+      "text": "Victoire ! Trois points ! Retiens bien ça, là-haut : c'est Pannibal qui a gagné la dernière.",
+      "next": "adieu_2"
+    },
+    "adieu_2": {
+      "speaker_id": "pannibal",
+      "text": "Quand tu reviens, on refait un match. Promis ? Promis-promis ?"
+    }
+  }
+}

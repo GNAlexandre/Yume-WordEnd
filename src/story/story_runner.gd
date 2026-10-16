@@ -269,10 +269,15 @@ func _place(step: Dictionary) -> void:
 	if who == StoryData.PLAYER:
 		stage.place_player(at.origin, facing)
 		return
-	var actor := LifeDirector.stage(who, at.origin, facing)
+	# (S2) « lift » : posé au-dessus du sol (une pile de petites), sans collision ; sans lui, le
+	# PNJ reprend sa collision de personnage immobile.
+	var lift := float(step.get("lift", 0.0))
+	var actor := LifeDirector.stage(who, at.origin + Vector3.UP * lift, facing)
 	if actor == null:
 		push_warning("StoryRunner : %s ne peut pas paraître (%s)" % [who, scene_id])
 		return
+	if is_instance_valid(actor.npc):
+		actor.npc.set_moving(lift > 0.0)
 	if step.has("outfit"):
 		_outfit(who, StringName(str(step["outfit"])))
 	if step.has("anim"):

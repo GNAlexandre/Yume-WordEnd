@@ -3,7 +3,9 @@
   "id": "talk_collon",
   "start": "n1",
   "entries": [
-    "n0"
+    "n0",
+    "n11",
+    "n12"
   ],
   "nodes": {
     "n0": {
@@ -19,6 +21,28 @@
     "n1": {
       "speaker_id": "collon",
       "text": "Le responsable sait faire des flans ! Des vrais !"
+    },
+    "n11": {
+      "speaker_id": "collon",
+      "text": "L'eau de ce matin… je m'en souviendrai toute ma vie. Toute ma vie !",
+      "if": {
+        "day": [
+          11,
+          11
+        ],
+        "scene": "j11_1_toilette"
+      }
+    },
+    "n12": {
+      "speaker_id": "collon",
+      "text": "JE NE PLEURE PAAAS ! C'est le vent ! Il y a du vent dans mes yeux !",
+      "if": {
+        "day": [
+          12,
+          12
+        ],
+        "not_scene": "j12_2_depart"
+      }
     }
   }
 }

@@ -945,6 +945,27 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
 - **Moteur du récit (E6)** : une étape « bulle » de la doublure n'est pas posée au-dessus d'un personnage couché ; entre deux scènes enchaînées sur la même carte, le voile s'éclaircit un instant (0,1 s) avant le noir de la suivante.
 - **CF → moteur : la glissade dans les mares cachées** (VIE.md 6.4, `foret_profonde:mare_cachee`) : « qui s'approche à moins de 0,5 m de l'eau glisse et tombe dedans (`degats`) » n'existe pas dans le moteur. La carte pose `hidden_pool_a` (29,5 ; 43,2) et `hidden_pool_b` (58,2 ; 20,2) en décalques et leur eau en eau basse (le plan ne dit pas « profonde ») ; le point `mare_cachee` est à 2 m au sud de la première, un objet à examiner y dit le danger. Un mécanisme (zone `Area3D` au bord de l'eau, glissade, `degats`) est à écrire côté moteur, pas dans la carte.
 - **CF → récit (S2) : points de la scène 10.2** : `foret_profonde:course_entree` (40 ; 9) pour le départ de la course, `fourche_refuge` (42,4 ; 21), `refuge_creux` (16 ; 38,6, plan : le creux du chêne, où Chtholly s'assied), `refuge_seuil` (16 ; 41,2, regard nord), `refuge_ithea` (18,8 ; 40,6), `refuge_retour` (22,6 ; 41), la place `refuge` (10 → 22, 38 → 46, libre) ; la forêt a des rais de lumière (`RayRefuge1`, `RayRefuge2`) et des feuilles qui tombent (`Ambience`) pour le cadrage « feuilles qui tombent, rais de lumière ». Le chemin du refuge traverse la rivière (eau basse, au ras du sol) sans marche : les PNJ la passent sans sauter.
+## S2 — jours 9 à 12 (fin de l'acte 1)
+- **Fait hors périmètre (E8, petit et sûr)** : `MiniGames.play_story_staff` et son inscription « entrainement_baton » dans
+  `register_story_games` (src/games/mini_games.gd) : sans elle, les scènes 9.2 et 10.1 n'avaient que leur repli. À reprendre par
+  E8 s'il le souhaite (StaffTraining pourrait rendre la main au joueur lui-même, comme Ambush et SenioriousTraining).
+- **E8 — la variante du jour 10 se gagne** : douze déviations parfaites tiennent en 14 s, avant que la fenêtre se ferme (15 s) ;
+  la scène 10.1 l'interdit par ses données (`overrides`). Proposition : `variant_jour10/success: false` dans staff_training.json.
+- **E6 (moteur)** : ajouté l'étape `place` « lift » (hauteur, la pile de la tour de fées). Reste à demander : une tenue pour la
+  protagoniste (pyjama `chtholly_pajamas`, 9.1) et une pose assise dans sa planche de combat (le refuge 10.2, le goûter 9.4,
+  l'arbre de 11.4) : aujourd'hui `outfit` refuse le joueur et `chtholly` n'a pas `assis`.
+- **C2 (maison Limashenka)** : l'horloge du salon est un élément de mur fondu ; pour que 11.3 l'ouvre (`_open`) puis la fasse
+  battre (`clock_limashenka_swing`), poser deux nœuds cachés au point `horloge` (par ex. `Geometry/Horloge/Ouverte` et
+  `Geometry/Horloge/Balancier`, hors du PropBatcher) que l'étape `show` montrera ; la scène le raconte en attendant.
+- **E9** : le couchant du départ « du cramoisi au vermillon » (12.2) n'a qu'un préréglage `couchant` ; un second (`couchant_vermillon`,
+  ou un réglage de teinte du ciel posé par le récit) le montrerait au lieu de le raconter. L'envol des trois (12.2) : une lueur
+  qui monte (comme les ailes de 8.6) manque ; la scène fait un fondu au blanc. Caméra (CameraRig) : un tangage nul ou
+  négatif (`frame_story` ignore un pitch ≤ 0) permettrait de « lever les yeux » vers le ciel ; à 12°, la vue du nord montre la
+  lisière d'or, pas le ciel.
+- **Navigation (E4 / T2 / CF)** : le chemin de `LifeNav` coupe entre les tables du réfectoire (chaises et tables absentes de la
+  grille) et à travers les arbres de la forêt profonde (de `course_entree` droit vers le refuge) : un joueur mené par ce chemin
+  (tests au stick) y bute ; les tests passent par la porte est du réfectoire et par `fourche_refuge`.
+- **Images (cahier n° 6)** : `chtholly_pajamas`, `kana`, `giniette` (planches et portraits C.9) y sont ; rien à commander de plus.
 - **S1b → vie (E4/V1) : Willem, Ithea et Nephren au jour 3** : leurs lignes du jour 3 à midi sont `away: ville_snack` (écrites quand la
   carte n'existait pas) ; la scène `j3_3_snack` les réserve et les pose, rien ne casse, mais une ligne `map: ville_snack` (Willem à
   `snack_tabouret`, `manger` ; les aînées à `snack_table_nord` / `snack_table_nord_est`) les y mettrait aussi hors scène. Le matin du

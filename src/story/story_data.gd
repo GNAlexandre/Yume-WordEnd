@@ -73,6 +73,9 @@ const STEPS: Dictionary = {
 		"facing": "toward",
 		"outfit": "outfit",
 		"anim": "anim",
+		# (S2) Hauteur en m au-dessus du sol (la pile de la tour de fées, 10.5) : le PNJ n'y
+		# retombe pas tant qu'une autre étape ne le repose pas.
+		"lift": "number",
 	},
 	"walk":
 	{

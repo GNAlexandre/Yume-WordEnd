@@ -4,7 +4,9 @@
   "start": "n2",
   "entries": [
     "n0",
-    "n1"
+    "n1",
+    "n10",
+    "n12"
   ],
   "nodes": {
     "n0": {
@@ -30,6 +32,28 @@
     "n2": {
       "speaker_id": "ithea",
       "text": "Tu as la tête de quelqu'un qui pense à quelqu'un."
+    },
+    "n10": {
+      "speaker_id": "ithea",
+      "text": "Rien vu, rien entendu. Je suis une tombe. Une tombe qui sourit, mais une tombe.",
+      "if": {
+        "day": [
+          10,
+          10
+        ],
+        "scene": "j10_2_foret"
+      }
+    },
+    "n12": {
+      "speaker_id": "ithea",
+      "text": "Dis… on revient, hein ? Toutes les trois. … Nya-ha. Oublie. Je deviens sentimentale.",
+      "if": {
+        "day": [
+          12,
+          12
+        ],
+        "not_scene": "j12_2_depart"
+      }
     }
   }
 }

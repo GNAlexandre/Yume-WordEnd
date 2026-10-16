@@ -1,0 +1,30 @@
+{
+  "id": "j10_4_toit",
+  "start": "echarpe",
+  "nodes": {
+    "echarpe": {
+      "speaker_id": "nygglatho",
+      "text": "Tu vas attraper froid, à regarder les étoiles en chemise. Tiens.",
+      "next": "echarpe_2"
+    },
+    "echarpe_2": {
+      "speaker_id": "nephren",
+      "text": "Lui. Il est fissuré.",
+      "next": "echarpe_3"
+    },
+    "echarpe_3": {
+      "speaker_id": "nephren",
+      "text": "Comme moi.",
+      "next": "echarpe_4"
+    },
+    "echarpe_4": {
+      "speaker_id": "nygglatho",
+      "text": "Je sais. Alors reste près de lui, d'accord ? Tiens-le debout. Toi, il t'écoutera.",
+      "next": "echarpe_5"
+    },
+    "echarpe_5": {
+      "speaker_id": "nephren",
+      "text": "Mm."
+    }
+  }
+}

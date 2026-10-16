@@ -52,6 +52,8 @@ const STORY_DUEL := &"duel_willem"
 const STORY_SENIORIOUS := &"entrainement_seniorious"
 const DUEL_WILLEM_PLACE := &"cour_willem"
 const DUEL_PLAYER_PLACE := &"cour_chtholly"
+## (S2) L'entraînement au bâton au récit (scènes 9.2 et 10.1).
+const STORY_STAFF := &"entrainement_baton"
 ## Les jeux de `?jeu=` (dev_start).
 const DEV_GAMES: Array[String] = ["ballon", "baton", "duel", "seniorious"]
 
@@ -195,6 +197,35 @@ static func stop_staff_training() -> void:
 		training.stop()
 
 
+## (S2) Le jeu du récit « entrainement_baton » (étape « game » d'E6, scènes 9.2 et 10.1 ; params de
+## la scène : variant, place_player, seed, overrides, et success_flag : posé si l'exercice réussit,
+## retiré sinon). Le joueur a la main pendant l'exercice (la scène la reprend à la fin) ; attend la
+## fin et que Willem et les aînées soient rendus à la scène (end_time). Faux s'il n'a pas pu
+## démarrer (le récit joue alors le repli de l'étape).
+static func play_story_staff(params: Dictionary) -> bool:
+	var player := LifeDirector.player_node() as Player
+	var held := player != null and player.is_story_held()
+	if player != null:
+		player.set_story_hold(false)
+	var training := start_staff_training(params)
+	if training == null:
+		if held and is_instance_valid(player):
+			player.set_story_hold(true)
+		return false
+	var tree := training.get_tree()
+	var result := await _wait_finished(training)
+	var left := GameRules.number(&"staff_training", "end_time", 3.0)
+	while left > 0.0 and is_instance_valid(training) and tree != null:
+		await tree.physics_frame
+		left -= tree.root.get_physics_process_delta_time()
+	if held and is_instance_valid(player):
+		player.set_story_hold(true)
+	var flag := StringName(str(params.get("success_flag", "")))
+	if not flag.is_empty():
+		GameState.set_flag(flag, bool(result.get("success", false)))
+	return true
+
+
 # --- L'embuscade de Pannibal (E8c) --------------------------------------------------------------
 
 
@@ -284,6 +315,7 @@ static func register_story_games() -> void:
 	StoryDirector.register_game(STORY_AMBUSH, Callable(MiniGames, &"play_story_ambush"))
 	StoryDirector.register_game(STORY_DUEL, Callable(MiniGames, &"play_story_duel"))
 	StoryDirector.register_game(STORY_SENIORIOUS, Callable(MiniGames, &"play_story_seniorious"))
+	StoryDirector.register_game(STORY_STAFF, Callable(MiniGames, &"play_story_staff"))
 
 
 # --- Le duel ingagnable (E8b) -------------------------------------------------------------------

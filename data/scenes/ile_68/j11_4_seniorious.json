@@ -1,0 +1,39 @@
+{
+  "_comment": "ACTE1.md 11.4 (VEX, s. 31) et combat 3.4 : l'entraînement avec Seniorious, seuls. Le jeu d'E8b (« entrainement_seniorious ») : la respiration, les gestes, la Grue de Gossamer ; il commence à l'étape 2 si l'entraînement au bâton du jour 9 a réussi (j9_baton_reussi) ; la troisième Grue arrache l'épée, qui plonge dans le marais (marais_epee) : « Ramasser Seniorious ». Puis, contre l'arbre de la clairière (clairiere_arbre), la question : où ira-t-il, après ?",
+  "title": "L'entraînement avec Seniorious",
+  "day": 11,
+  "slot": ["apres_midi", "soir"],
+  "after": ["j11_3_horloge"],
+  "map": "entrepot",
+  "hint": "hint",
+  "trigger": {"on": "reach", "point": "clairiere_centre", "radius": 6.5},
+  "present": ["willem"],
+  "steps": [
+    {"do": "control", "on": false},
+    {"do": "place", "who": "willem", "at": "clairiere_arbre", "offset": [1.2, 1.0], "facing": "south", "outfit": "maison"},
+    {"do": "walk", "who": "player", "to": "clairiere_arbre", "offset": [0.0, 2.6], "facing": "north"},
+    {"do": "camera", "to": "clairiere_arbre", "offset": [0.4, 1.6], "distance": 10, "time": 0.8},
+    {"do": "dialogue", "node": "epee"},
+    {"do": "walk", "who": "willem", "to": "clairiere_centre", "facing": "west"},
+    {"do": "camera_reset"},
+    {"if": {"flag": "j9_baton_reussi"}, "do": "game", "game": "entrainement_seniorious", "params": {"start_stage": 2, "pickup": true, "place_player": true, "success_flag": "j11_grues"}, "fallback": [
+      {"do": "card", "text": "repli", "time": 3.4},
+      {"do": "flag", "set": "j11_grues"}
+    ]},
+    {"if": {"not_flag": "j9_baton_reussi"}, "do": "game", "game": "entrainement_seniorious", "params": {"start_stage": 1, "pickup": true, "place_player": true, "success_flag": "j11_grues"}, "fallback": [
+      {"do": "card", "text": "repli", "time": 3.4},
+      {"do": "flag", "set": "j11_grues"}
+    ]},
+    {"do": "control", "on": false},
+    {"if": {"not_flag": "j11_grues"}, "do": "dialogue", "node": "fatigue"},
+    {"do": "fade", "to": "black", "time": 0.8},
+    {"do": "place", "who": "willem", "at": "clairiere_arbre", "offset": [-0.6, 0.6], "facing": "south", "outfit": "maison", "anim": "assis"},
+    {"do": "place", "who": "player", "at": "clairiere_arbre", "offset": [0.8, 1.2], "facing": "west"},
+    {"do": "camera", "to": "clairiere_arbre", "offset": [0.1, 0.9], "distance": 9, "time": 0},
+    {"do": "slot", "slot": "soir", "time": 0},
+    {"do": "fade", "to": "clear", "time": 1.0},
+    {"do": "dialogue", "node": "arbre"},
+    {"do": "wait", "time": 1.2},
+    {"do": "camera_reset"}
+  ]
+}

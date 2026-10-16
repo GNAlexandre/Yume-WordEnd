@@ -9,4 +9,4 @@ id = &"nephren"
 display_name = "Nephren"
 skin = ExtResource("2_visual")
 dialogue_path = "res://data/dialogues/ile_68/talk/nephren.json"
-outfits = Dictionary[StringName, String]({ &"maison": "res://data/npcs/outfits/nephren_home.tres" })
+outfits = Dictionary[StringName, String]({ &"maison": "res://data/npcs/outfits/nephren_home.tres", &"uniforme": "res://data/npcs/visuals/nephren.tres" })
