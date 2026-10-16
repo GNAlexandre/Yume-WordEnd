@@ -876,7 +876,7 @@ transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 16.789, 3.5, 17.846)
 flip_h = true
 
 [node name="TroncCouche" parent="Geometry/Woods" instance=ExtResource("60_fallen_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.4, 0.5, 38.6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.6, 0, 39.2)
 flip_h = true
 
 [node name="Souche" parent="Geometry/Woods" instance=ExtResource("61_stump_a")]

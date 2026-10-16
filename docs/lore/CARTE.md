@@ -124,6 +124,48 @@ carte dehors. Les données de pose ne listent que l'ossature (bâtiments, grands
 chemins) ; le reste vient des **kits** de chaque carte, posés par bande avec les règles de leur
 tableau (écartement, densité au m², distance aux chemins).
 
+### 0.5 La profondeur et la variété (lot RC, refonte image)
+
+Les recettes (`tools/exterior_recipes/*.py`) posent leurs rangées et leurs plans par
+`tools/exterior_kits.py` ; `tools/exterior_maps.py check` vérifie le résultat.
+
+- **Rangées** (`row`) : clôtures, garde-corps, murets, haies et lisières ne sont jamais au cordeau.
+  Pas variable (± 30 % pour une haie ou une lisière ; les pièces d'une clôture se chevauchent, sans
+  trou, puisqu'elle ferme), recul en profondeur (± 0,6 m pour les arbres, ± 0,1 à 0,4 m pour une
+  clôture ou une haie, d'un seul côté au bord d'un vide ou d'une terrasse), retournement au hasard,
+  quelques éléments sautés là où rien ne ferme, une teinte par élément (`DecorPanel.tone`). Les images
+  sont tirées d'une **famille** (`FAMILIES` : au moins trois images quand elles existent), jamais la même
+  deux fois de suite ; une famille d'une seule image livrée (le plessis, la fonte du port, le fer de la
+  ville) se varie par des **accents** (pans de cordage ou de balustre, buissons poussés devant la
+  clôture) ; une variante livrée plus tard (cahier n° 7) entre seule dans sa famille. Les bordures
+  d'herbe des chemins (`along_irregular`, QC-29) ont un pas, un écart au bord et un lacet variés, et des
+  trous.
+- **Trois plans** :
+  - **premier plan** (`foreground_kit`, `foreground_views`) : pour chaque vue de la série QC
+    (`tools/qc_views.json`), puis pour chaque passage (un point tous les 15 m des chemins), deux à
+    quatre feuillages de premier plan (`fg_*`, sans collision, ils s'effacent autour du joueur) ou
+    arbres `_forest` au sud du joueur, sur les côtés de l'écran (3,4 à 8,6 m du point visé) : les
+    feuillages à 3 à 5,6 m au sud, les arbres plus loin (leur couronne seule au bas de l'écran) ; au-delà
+    du bord sud de la carte quand il le faut. Jamais devant une place où l'on se tient (règle QC2, 0.3),
+    jamais sur un chemin, une place, un point, une place de la vie. Pas de tronc `fg_trunk_*` : à quelques
+    mètres de la caméra inclinée, il penche de toute la hauteur de l'écran ;
+  - **plan moyen** (`middle_kit`) : des masses de 1,5 à 3 m (fourrés, jeunes arbres, meules, piles de
+    caisses et de sacs, charrettes au port) au bord des places nues (champ, cour, aire du port, jardins
+    du village), hors des places du plan (elles restent libres : on y joue) et loin des chemins et de la
+    vie ;
+  - **fond** (`second_rank`) : derrière le premier rang de pans de lisière, un second rang de pans à
+    raccord, décalé d'un demi-pan et posé hors de la carte (sa collision ne ferme rien), d'un bord à
+    l'autre (aucun bout libre, QC-S).
+- **Relief** : contours des paliers bruités (`noise` des opérations `level`), francs au pied des rampes
+  (la berge du marais et le talus de la lisière au sentier, les terrasses de la colline).
+- **Contrôle** (`tools/exterior_maps.py check`, `views` pour les chiffres) : dans le champ de chaque vue
+  de la série QC (9,5 m de part et d'autre du point visé, 14 m au nord, 6,5 m au sud), **au plus 8 fois
+  la même image** parmi les panneaux de 0,75 m ou plus (une famille de PropScatter compte pour sa part) ;
+  **au moins 2 objets de 1,5 m ou plus au sud du joueur** qui se voient au bas de l'écran. Exceptions
+  dites dans la recette (`SETTINGS["south_allowed"]`, `["repeat_allowed"]`) et dans la sortie : une vue
+  dont le bas est une place où l'on joue (le duel, la clairière, le champ, le marais de l'embuscade) ou
+  la rue du port, le pont du transport (le vide au sud, son bastingage d'une pièce).
+
 ## 1. La carte de l'île : le graphe
 
 ### 1.1 Ce que dit l'œuvre
