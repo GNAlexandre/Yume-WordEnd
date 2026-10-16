@@ -10,7 +10,7 @@ const DEMO_SKIN := &"chtholly"
 ## Période de relecture du fichier (s).
 const REFRESH_PERIOD := 0.2
 ## Ce que laisse une écriture coupée net, pour montrer la reprise sur fichier corrompu.
-const DAMAGED_TEXT := '{"version": 1, "skin": "chtholly", "inventory": {"page_fr'
+const DAMAGED_TEXT := '{"version": 4, "skin": "chtholly", "inventory": {"test_pa'
 
 var _previous_path: String
 var _refresh_left: float = 0.0
@@ -39,7 +39,7 @@ func _ready() -> void:
 		"ImportButton": _on_import_pressed,
 		"NewGameButton": _on_new_game_pressed,
 		"PickupButton": _on_pickup_pressed,
-		"ScoreButton": _on_score_pressed,
+		"FlagButton": _on_flag_pressed,
 		"DamageButton": _on_damage_pressed,
 	}
 	for button_name: String in actions:
@@ -83,16 +83,18 @@ func _on_new_game_pressed() -> void:
 
 
 func _on_pickup_pressed() -> void:
-	GameState.add_item(&"page_fragment")
-	EventBus.item_collected.emit(&"page_fragment", 1)
-	_report("Fragment ramassé (item_collected)", OK)
+	GameState.add_item(&"test_page")
+	EventBus.item_collected.emit(&"test_page", 1)
+	_report("Page ramassée (item_collected)", OK)
 
 
-func _on_score_pressed() -> void:
-	var score := 10 * randi_range(5, 80)
-	var best := GameState.record_score(&"dunes", score, randi_range(1, 9))
-	EventBus.arena_finished.emit(&"dunes", score, best)
-	_report("Série des dunes finie à %d points (arena_finished)" % score, OK)
+## (F1) Remplace la fin de série de l'arène, partie avec l'ancienne île : un drapeau du récit
+## posé, puis une demande d'écriture (save_requested).
+func _on_flag_pressed() -> void:
+	var flag := StringName("demo_l8_%d" % randi_range(1, 9))
+	GameState.set_flag(flag)
+	EventBus.save_requested.emit()
+	_report("Drapeau %s posé (save_requested)" % flag, OK)
 
 
 ## Simule un arrêt brutal pendant l'écriture : le jeu ne tourne plus (rien en attente) et le

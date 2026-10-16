@@ -5,8 +5,6 @@ extends "res://tests/stubs/m1_game_test.gd"
 ## InputEventJoypadButton, InputEventJoypadMotion, clics de souris) passés à
 ## Input.parse_input_event, comme ceux d'un clavier, d'une manette ou d'une souris : l'état des
 ## actions (lu par le joueur) et l'interface (menus, dialogue, inventaire) les reçoivent.
-## L'écran de fin d'arène n'est pas refermé automatiquement (il fige le jeu jusqu'à
-## « Continuer »).
 ##
 ## Hérite de la base M1 (tests/stubs/m1_game_test.gd) : sauvegarde propre au script, horloge
 ## déterministe des visuels, hasard semé, état rétabli après chaque test. En plus : geste
@@ -73,7 +71,6 @@ var hud: Control
 var dialogue_box: DialogueBox
 var inventory: Control
 var pause_menu: Control
-var arena_end: Control
 
 var _previous_checkpoint: float
 ## Couche d'affichage de GUT (au-dessus de tout) : cachée pendant le test, sinon elle prend les
@@ -143,14 +140,10 @@ func bind_game(node: Node3D) -> void:
 	player = game.get_node(^"Player") as Player
 	combat = player.combat
 	health = player.health
-	dunes = game.get_node_or_null(^"World/ile_ancienne/Zones/dunes") as Zone
-	arena = dunes.get_node(^"Arena") as Arena if dunes != null else null
-	director = arena.director() if arena != null else null
 	hud = game.get_node(^"UI/HUD") as Control
 	dialogue_box = game.get_node(^"UI/DialogueBox") as DialogueBox
 	inventory = game.get_node(^"UI/Inventory") as Control
 	pause_menu = game.get_node(^"UI/HUD/PauseMenu") as Control
-	arena_end = game.get_node(^"UI/ArenaEnd") as Control
 	# Sous GUT, la scène courante est celle de GUT : le retour au menu ne la recharge pas.
 	pause_menu.set(&"reload_on_quit", false)
 
@@ -182,7 +175,7 @@ func close_tab() -> void:
 
 
 ## Attend count images physiques, même quand l'arbre est en pause (les attentes de GUT y sont
-## gelées : fin d'arène, inventaire, menu pause ; le moteur, lui, continue de compter ses images
+## gelées : inventaire, menu pause, calendrier ; le moteur, lui, continue de compter ses images
 ## physiques). Un appui tenu au moins une image physique n'est plus « just pressed » quand il est
 ## relâché, comme l'appui d'un vrai joueur : sous GUT, les images de rendu sans limite peuvent
 ## être bien plus nombreuses que les images physiques.
@@ -402,7 +395,6 @@ func hearts_shown() -> int:
 	return (hud.get_node("%Hearts") as Control).get_child_count()
 
 
-## Nom de zone affiché par le HUD ("" si la bannière est cachée).
-func zone_banner() -> String:
-	var banner := hud.get_node("%ZoneBanner") as Control
-	return (hud.get_node("%ZoneLabel") as Label).text if banner.visible else ""
+## (F1) Nom de la carte annoncé par le fondu des cartes (UI/MapFade : « » s'il n'est pas affiché).
+func map_banner() -> String:
+	return str(game.get_node(^"UI/MapFade").call(&"title_text"))

@@ -2,8 +2,10 @@ extends CanvasLayer
 ## Avis du menu qui survit au passage au jeu (L10). main.gd libère le menu dès game_loaded ; or
 ## « Continuer » sur une sauvegarde illisible démarre quand même une nouvelle partie
 ## (SaveManager.load_game() → ERR_FILE_CORRUPT) : le menu ajoute cet avis à la racine de l'arbre
-## pour que SaveManager.last_error reste lisible pendant le chargement puis dans le jeu. Il
-## disparaît après `duration` secondes (pause comprise) ou au premier clic dessus.
+## pour que SaveManager.last_error reste lisible pendant le chargement puis dans le jeu. (F1) De
+## même pour SaveManager.notice (une partie de l'ancienne île reprise à l'acte 1), en texte
+## simple (variation vide) plutôt qu'en erreur. Il disparaît après `duration` secondes (pause
+## comprise) ou au premier clic dessus.
 
 const THEME := preload("res://src/ui/wordend_theme.tres")
 ## Nom du nœud sous la racine : un nouvel avis remplace le précédent.
@@ -11,6 +13,8 @@ const NODE_NAME := &"MenuNotice"
 
 ## Texte affiché.
 var text: String = ""
+## (F1) Variation du thème pour le texte : ErrorLabel (erreur), &"" (avis simple, Nuit douce).
+var variation: StringName = &"ErrorLabel"
 ## Durée d'affichage (s).
 var duration: float = 9.0
 
@@ -29,7 +33,7 @@ func _ready() -> void:
 	var label := Label.new()
 	label.name = "Text"
 	label.text = text
-	label.theme_type_variation = &"ErrorLabel"
+	label.theme_type_variation = variation
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.custom_minimum_size = Vector2(760, 0)
 	_panel.add_child(label)

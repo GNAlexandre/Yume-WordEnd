@@ -1,14 +1,14 @@
 extends Control
 ## (E6) Le calendrier de la protagoniste (docs/REFONTE.md, 6.2 ; ACTE1.md, 0.1) : enfant Calendar
-## du HUD (groupe GROUP), la page qui remplace le journal de quêtes pendant l'acte en jours.
+## du HUD (groupe GROUP), la page des jours de l'acte.
 ## Propriétaire : E6.
 ##
 ## - Les jours de l'acte (StoryDirector.day_count()), le jour courant mis en avant, les jours
 ##   passés rayés, le jour du départ entouré dès le premier jour ; sous la grille, les lignes
 ##   écrites au coucher (GameState.calendar(), textes StoryDirector.calendar_line) ; en bas,
 ##   l'indice du moment.
-## - S'ouvre par l'action « journal » (Tab, L, Select) pendant l'acte en jours (lue dans _input :
-##   le journal de quêtes ne la reçoit plus), par le bouton « Calendrier » du menu pause, et en
+## - S'ouvre par l'action « journal » (Tab, L, Select) pendant l'acte en jours (lue dans
+##   _input), par le bouton « Calendrier » du menu pause, et en
 ##   examinant le calendrier de la chambre (StoryDirector.calendar_requested). Ouvert, il met le
 ##   jeu en pause (PROCESS_MODE_ALWAYS) ; journal, Échap ou « Fermer » le referment, et l'indice
 ##   se rappelle (StoryHint.recall).

@@ -2,6 +2,8 @@ extends GutTest
 ## Contrats figés au Lot 0 (PLAN.md section 3 et « Structure figée au Lot 0 ») : signaux,
 ## signatures, champs des ressources, nœuds nommés, groupes, couches et actions.
 ## Un lot qui fait échouer ce test a cassé un contrat : il ouvre une PR « contrats ».
+## (F1) PR « contrats » du retrait de l'ancienne île : ses zones, son arène, ses vagues et ses
+## quêtes sont sorties des contrats ; test_old_island_contracts_are_gone vérifie leur absence.
 
 const OBJ := TYPE_OBJECT
 const SN := TYPE_STRING_NAME
@@ -24,10 +26,6 @@ const EVENT_BUS_SIGNALS := {
 	"enemy_spawned": [OBJ, SN],
 	"enemy_damaged": [OBJ, INT],
 	"enemy_killed": [SN, INT],
-	"wave_started": [SN, INT, INT],
-	"wave_cleared": [SN, INT, INT],
-	"arena_score_changed": [SN, INT],
-	"arena_finished": [SN, INT, BOOL],
 	"charge_progress": [FLT],
 	"item_collected": [SN, INT],
 	"inventory_changed": [],
@@ -36,20 +34,13 @@ const EVENT_BUS_SIGNALS := {
 	"dialogue_line": [STR, STR, ARR],
 	"dialogue_choice_made": [INT],
 	"dialogue_ended": [SN],
-	"quest_updated": [SN, SN],
-	"zone_entered": [SN],
 	"day_phase_changed": [SN],
 	"skin_changed": [SN],
 	"max_hp_changed": [INT],
 	"save_requested": [],
 	"game_loaded": [],
-	# Lot Q (quêtes en étapes)
+	# Lot Q (drapeaux ; les signaux des quêtes sont partis en F1)
 	"flag_changed": [SN, BOOL],
-	"quest_step_updated": [SN, SN, INT],
-	"quest_step_completed": [SN, SN],
-	"quest_advance_requested": [SN, SN],
-	"trigger_entered": [SN],
-	"tracked_quest_changed": [SN],
 	# E1 (cartes)
 	"map_entered": [SN],
 	# E9 (lumière et temps)
@@ -57,6 +48,46 @@ const EVENT_BUS_SIGNALS := {
 	# X1 (îles et surface)
 	"island_entered": [SN],
 }
+## (F1) Signaux, méthodes et classes de l'ancienne île, retirés.
+const REMOVED_SIGNALS: Array[String] = [
+	"wave_started",
+	"wave_cleared",
+	"arena_score_changed",
+	"arena_finished",
+	"quest_updated",
+	"zone_entered",
+	"quest_step_updated",
+	"quest_step_completed",
+	"quest_advance_requested",
+	"trigger_entered",
+	"tracked_quest_changed",
+]
+const REMOVED_GAME_STATE_METHODS: Array[String] = [
+	"quest_state",
+	"set_quest_state",
+	"record_score",
+	"best_score",
+	"quests",
+	"quest_step",
+	"quest_step_count",
+	"set_quest_step",
+	"quest_progress",
+]
+const REMOVED_WORLD_MANAGER_METHODS: Array[String] = [
+	"load_zone", "teleport", "current_zone", "zone_display_name", "is_zone_safe"
+]
+const REMOVED_CLASSES: Array[String] = [
+	"Arena",
+	"WaveDirector",
+	"QuestData",
+	"QuestStep",
+	"QuestTracker",
+	"QuestTrigger",
+	"IslandEdge",
+	"IslandRock",
+	"IslandTerrain",
+	"Zone",
+]
 
 ## Méthodes des autoloads : nom → [types des arguments, type de retour].
 const GAME_STATE_METHODS := {
@@ -66,21 +97,11 @@ const GAME_STATE_METHODS := {
 	"items": [[], DICT],
 	"set_flag": [[SN, BOOL], VOID],
 	"has_flag": [[SN], BOOL],
-	"quest_state": [[SN], SN],
-	"set_quest_state": [[SN, SN], VOID],
 	"mark_pickup_collected": [[SN], VOID],
 	"is_pickup_collected": [[SN], BOOL],
-	"record_score": [[SN, INT, INT], BOOL],
-	"best_score": [[SN], INT],
 	"to_dict": [[], DICT],
 	"from_dict": [[DICT], VOID],
 	"reset": [[], VOID],
-	# Lot Q
-	"quests": [[], DICT],
-	"quest_step": [[SN], SN],
-	"quest_step_count": [[SN], INT],
-	"set_quest_step": [[SN, SN, INT], VOID],
-	"quest_progress": [[], DICT],
 	# X1 (îles et surface)
 	"known_islands": [[], ARR],
 	"knows_island": [[SN], BOOL],
@@ -102,12 +123,7 @@ const SKIN_REGISTRY_METHODS := {
 	"default_skin": [[], OBJ],
 }
 const WORLD_MANAGER_METHODS := {
-	"load_zone": [[SN], VOID],
-	"teleport": [[SN, SN], VOID],
 	"respawn": [[], VOID],
-	"current_zone": [[], SN],
-	"zone_display_name": [[SN], STR],
-	"is_zone_safe": [[SN], BOOL],
 	# E1 (cartes)
 	"go_to": [[SN, SN], VOID],
 	"current_map": [[], SN],
@@ -226,53 +242,11 @@ const RESOURCE_FIELDS := {
 		"display_name": STR,
 		"skin": OBJ,
 		"dialogue_path": STR,
-		"quest_id": SN,
-		"home_zone": SN,
-	},
-	"QuestData":
-	{
-		"id": SN,
-		"title": STR,
-		"giver_npc": SN,
-		"required_items": DICT,
-		"required_flags": ARR,
-		"reward_items": DICT,
-		# L7 puis Lot Q
-		"objective": STR,
-		"reward_max_hp": INT,
-		"summary": STR,
-		"main": BOOL,
-		"auto_start": BOOL,
-		"prereq_quests": ARR,
-		"prereq_flags": ARR,
-		"prereq_not_flags": ARR,
-		"steps": ARR,
-		"reward_flags": ARR,
-	},
-	"QuestStep":
-	{
-		"id": SN,
-		"type": SN,
-		"objective": STR,
-		"hint": STR,
-		"npc": SN,
-		"zone": SN,
-		"trigger": SN,
-		"enemy": SN,
-		"item": SN,
-		"count": INT,
-		"consume": BOOL,
-		"arena": SN,
-		"wave": INT,
-		"score": INT,
-		"flag": SN,
-		"reward_items": DICT,
-		"reward_flags": ARR,
-		"reward_max_hp": INT,
+		"visible_if": DICT,
 	},
 }
-
-const ZONES: Array[String] = ["village", "dunes", "forest", "beach", "hill"]
+## (F1) Champs retirés des ressources : classe → propriétés.
+const REMOVED_FIELDS := {"NpcData": ["quest_id", "home_zone"]}
 
 # --- Outils -----------------------------------------------------------------------------------
 
@@ -399,9 +373,7 @@ func test_game_state_api() -> void:
 	assert_eq(_property_type(GameState, "skin_id"), SN, "GameState.skin_id")
 	assert_eq(_property_type(GameState, "max_hp"), INT, "GameState.max_hp")
 	assert_eq(_property_type(GameState, "map"), SN, "(E1) GameState.map")
-	assert_eq(_property_type(GameState, "zone"), SN, "GameState.zone")
 	assert_eq(_property_type(GameState, "position"), V3, "GameState.position")
-	assert_eq(_property_type(GameState, "tracked_quest"), SN, "(Lot Q) GameState.tracked_quest")
 	assert_eq(_property_type(GameState, "moment"), SN, "(E9) GameState.moment")
 	assert_eq(_property_type(GameState, "weather"), SN, "(E9) GameState.weather")
 	assert_eq(_property_type(GameState, "island"), SN, "(X1) GameState.island")
@@ -411,7 +383,8 @@ func test_save_manager_api() -> void:
 	_assert_methods(SaveManager, "SaveManager", SAVE_MANAGER_METHODS)
 	assert_eq(_property_type(SaveManager, "save_path"), STR, "SaveManager.save_path")
 	assert_eq(SaveManager.DEFAULT_SAVE_PATH, "user://save_v1.json")
-	assert_eq(SaveManager.SAVE_VERSION, 3, "(E1) schéma v3 (carte), même fichier")
+	assert_eq(SaveManager.SAVE_VERSION, 4, "(F1) schéma v4 (sans l'ancienne île), même fichier")
+	assert_eq(_property_type(SaveManager, "notice"), STR, "(F1) avis de la partie migrée")
 	assert_eq(_property_type(SaveManager, "checkpoint_interval"), FLT, "(M2) checkpoint_interval")
 
 
@@ -427,9 +400,7 @@ func test_skin_registry_api() -> void:
 
 func test_world_manager_api() -> void:
 	_assert_methods(WorldManager, "WorldManager", WORLD_MANAGER_METHODS)
-	assert_eq(WorldManager.VILLAGE, &"village")
 	assert_eq(WorldManager.SPAWN_MARKER, &"Spawn")
-	assert_eq(WorldManager.LEGACY_MAP, &"ile_ancienne", "(E1) carte héritée")
 	assert_eq(WorldManager.START_MAP, &"entrepot", "(E6) une nouvelle partie ouvre l'acte 1")
 	assert_eq(
 		WorldManager.START_MAP,
@@ -527,22 +498,6 @@ func test_character_visual_contract() -> void:
 	)
 
 
-func test_wave_director_contract() -> void:
-	var director: WaveDirector = autofree(WaveDirector.new())
-	_assert_methods(
-		director,
-		"WaveDirector",
-		{
-			"start": [[], VOID],
-			"stop": [[], VOID],
-			"current_wave": [[], INT],
-			"compose": [[INT], ARR]
-		}
-	)
-	assert_eq(director.load_config("res://data/waves/dunes.json"), OK)
-	assert_eq(director.compose(1).size(), 5, "vague 1 de dunes.json : 3 petits + 2 normaux")
-
-
 func test_interactables_implement_contract() -> void:
 	for path: String in ["res://src/npc/npc.tscn", "res://src/items/pickup.tscn"]:
 		var node := _instance(path)
@@ -619,7 +574,7 @@ func test_hitbox_hurtbox_layers() -> void:
 	assert_true(wave_hitbox.attack != null and wave_hitbox.attack.pierces, "l'onde traverse")
 
 
-func test_npc_pickup_arena_structure() -> void:
+func test_npc_pickup_structure() -> void:
 	var npc := _instance("res://src/npc/npc.tscn")
 	assert_true(npc is Npc)
 	_assert_nodes(
@@ -636,95 +591,49 @@ func test_npc_pickup_arena_structure() -> void:
 	var pickup := _instance("res://src/items/pickup.tscn")
 	assert_true(pickup is Pickup)
 	assert_eq((pickup as Area3D).collision_layer, 64, "couche pickup")
-	var arena := _instance("res://src/enemies/arena.tscn")
-	assert_true(arena is Arena)
-	_assert_nodes(arena, "arena.tscn", {"WaveDirector": "WaveDirector"})
 
 
-## (Lot Q) Déclencheur de lieu, marqueur des PNJ, journal enfant du HUD, QuestTracker.
-func test_quest_engine_structure() -> void:
-	var trigger := _instance("res://src/quests/quest_trigger.tscn")
-	assert_true(trigger is QuestTrigger and trigger is Area3D, "QuestTrigger (Area3D)")
-	_assert_nodes(trigger, "quest_trigger.tscn", {"CollisionShape3D": "CollisionShape3D"})
-	assert_eq((trigger as Area3D).collision_layer, 0, "déclencheur : aucune couche")
-	assert_eq((trigger as Area3D).collision_mask, 2, "déclencheur : masque player")
-	assert_eq(_property_type(trigger, "trigger_id"), SN)
-	assert_eq(_property_type(trigger, "set_flag"), SN)
+## (F1) L'ancienne île est partie : ses signaux, ses méthodes, ses classes, ses champs, ses
+## scènes et ses nœuds figés (zones, arène, quêtes, journal, marqueur des PNJ).
+func test_old_island_contracts_are_gone() -> void:
+	for signal_name: String in REMOVED_SIGNALS:
+		assert_false(EventBus.has_signal(signal_name), "EventBus.%s retiré" % signal_name)
+	for method_name: String in REMOVED_GAME_STATE_METHODS:
+		assert_false(GameState.has_method(method_name), "GameState.%s() retiré" % method_name)
+	for method_name: String in REMOVED_WORLD_MANAGER_METHODS:
+		assert_false(WorldManager.has_method(method_name), "WorldManager.%s() retiré" % method_name)
+	for property: String in ["zone", "tracked_quest"]:
+		assert_eq(_property_type(GameState, property), -1, "GameState.%s retiré" % property)
+	for cls_name: String in REMOVED_CLASSES:
+		assert_null(_global_class(cls_name), "class_name %s retiré" % cls_name)
+	for cls_name: String in REMOVED_FIELDS:
+		var resource: Resource = _global_class(cls_name).new()
+		for field: String in REMOVED_FIELDS[cls_name]:
+			assert_eq(_property_type(resource, field), -1, "%s.%s retiré" % [cls_name, field])
+	for path: String in [
+		"res://src/world/island.tscn",
+		"res://src/world/zones",
+		"res://src/enemies/arena.tscn",
+		"res://src/quests",
+		"res://src/ui/arena_end.tscn",
+		"res://src/ui/journal.tscn",
+		"res://data/quests",
+		"res://data/waves",
+		"res://src/world/maps/ile_ancienne",
+		"res://data/world/islands/ile_ancienne.json",
+	]:
+		assert_false(
+			ResourceLoader.exists(path) or DirAccess.dir_exists_absolute(path), "%s retiré" % path
+		)
 	var npc := _instance("res://src/npc/npc.tscn")
-	_assert_nodes(npc, "npc.tscn", {"QuestMarker": "Label3D"})
+	assert_null(npc.get_node_or_null(^"QuestMarker"), "plus de marqueur de quête")
 	var hud := _instance("res://src/ui/hud.tscn")
-	_assert_nodes(hud, "hud.tscn", {"PauseMenu": "Control", "Journal": "Control"})
-	assert_eq(hud.get_node(^"Journal").process_mode, Node.PROCESS_MODE_ALWAYS, "journal modal")
-	var tracker: QuestTracker = autofree(QuestTracker.new())
-	_assert_signal(tracker, "QuestTracker", "quest_completed", [SN])
-	_assert_signal(tracker, "QuestTracker", "completion_refused", [SN, DICT])
-	assert_eq(QuestTracker.GROUP, &"quest_tracker")
-	assert_eq(QuestData.DATA_DIR, "res://data/quests")
-	var types: Array[StringName] = [&"talk", &"reach", &"kill", &"collect", &"arena", &"flag"]
-	assert_eq(QuestStep.TYPES, types, "types d'étapes")
+	_assert_nodes(hud, "hud.tscn", {"PauseMenu": "Control"})
+	for gone: String in ["Journal", "ArenaPanel", "ZoneBanner", "Banner", "TopLeft/Quests"]:
+		assert_null(hud.get_node_or_null(NodePath(gone)), "HUD : %s retiré" % gone)
 
 
-func test_zone_structure() -> void:
-	for zone_id in ZONES:
-		var path := "res://src/world/zones/%s/%s.tscn" % [zone_id, zone_id]
-		var zone := _instance(path)
-		assert_true(zone is Zone, "%s est une Zone" % path)
-		assert_eq(String(zone.name), zone_id, "racine nommée comme la zone")
-		assert_true(zone.is_in_group(&"zones"))
-		_assert_nodes(
-			zone,
-			path,
-			{
-				"Spawn": "Marker3D",
-				"Bounds": "Area3D",
-				"NPCs": "Node3D",
-				"Enemies": "Node3D",
-				"Pickups": "Node3D",
-			}
-		)
-		assert_eq(
-			(zone.get_node(^"Bounds") as Area3D).collision_mask,
-			2,
-			"%s : Bounds détecte le joueur" % path
-		)
-		assert_eq((zone as Zone).safe, zone_id == "village", "%s : seul le village est sûr" % path)
-	var dunes := _instance("res://src/world/zones/dunes/dunes.tscn")
-	_assert_nodes(
-		dunes,
-		"dunes.tscn",
-		{
-			"SpawnN": "Marker3D",
-			"SpawnS": "Marker3D",
-			"SpawnE": "Marker3D",
-			"SpawnW": "Marker3D",
-			"Arena": "Arena",
-			"Arena/WaveDirector": "WaveDirector",
-		}
-	)
-	assert_eq((dunes.get_node(^"Arena") as Arena).arena_id, &"dunes")
-	var village := _instance("res://src/world/zones/village/village.tscn")
-	var barrier := village.get_node_or_null(^"EnemyBarrier") as CollisionObject3D
-	assert_not_null(barrier, "village : EnemyBarrier")
-	if barrier != null:
-		assert_eq(barrier.collision_layer, 128, "barrière sur la couche 8 enemy_barrier")
-
-
-func test_island_and_game_structure() -> void:
-	var island := _instance("res://src/world/island.tscn")
-	var island_nodes := {
-		"WorldEnvironment": "WorldEnvironment",
-		"Sun": "DirectionalLight3D",
-		"OverviewCamera": "Camera3D",
-		"Ground": "StaticBody3D",
-		"Water": "MeshInstance3D",
-		"Walls": "StaticBody3D",
-		"KillZone": "Area3D",
-		"Zones": "Node3D",
-	}
-	for zone_id in ZONES:
-		island_nodes["Zones/" + zone_id] = "Zone"
-	_assert_nodes(island, "island.tscn", island_nodes)
-	assert_true(island is Map, "(E1) l'île est une Map (carte héritée ile_ancienne)")
+func test_game_structure() -> void:
 	var game := _instance("res://src/game.tscn")
 	assert_true(game.get_node(^"World").is_in_group(&"map_slot"), "(E1) World porte la carte")
 	assert_eq(game.get_node(^"World").get_child_count(), 0, "(E1) carte posée par game.gd")
@@ -734,16 +643,16 @@ func test_island_and_game_structure() -> void:
 		{
 			"World": "Node3D",
 			"Player": "Player",
-			"QuestTracker": "QuestTracker",
 			"UI": "CanvasLayer",
 			"UI/HUD": "Control",
 			"UI/DialogueBox": "Control",
 			"UI/Inventory": "Control",
-			"UI/ArenaEnd": "Control",
 			"UI/TouchControls": "Control",
 			"UI/MapFade": "Control",
 		}
 	)
+	for gone: String in ["QuestTracker", "UI/ArenaEnd"]:
+		assert_null(game.get_node_or_null(NodePath(gone)), "(F1) %s retiré" % gone)
 	for ui: String in ["main_menu", "credits", "loading"]:
 		assert_true(_instance("res://src/ui/%s.tscn" % ui) is Control, "src/ui/%s.tscn" % ui)
 
@@ -765,7 +674,7 @@ func test_map_contract() -> void:
 		)
 	exit.free()
 	assert_eq(Map.scene_path(&"essai"), "res://src/world/maps/essai/essai.tscn")
-	assert_true(Map.all_ids().has(&"ile_ancienne"), "carte héritée")
+	assert_false(Map.all_ids().has(&"ile_ancienne"), "(F1) plus de carte de l'ancienne île")
 	for map_id: StringName in Map.all_ids():
 		var root := _instance(Map.scene_path(map_id))
 		assert_true(root is Map, "%s : racine Map" % map_id)

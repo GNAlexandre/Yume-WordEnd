@@ -1,7 +1,8 @@
 extends GutTest
 ## Lot 6 : conversation complète dans la démo (Nephren, joueur factice, boîte de dialogue),
 ## pilotée par de vrais événements d'entrée comme au clavier ou à la manette : « dialogue jouable
-## avec le joueur stub » (PLAN.md section 7). Acte 1 : Nephren propose le livre d'images.
+## avec le joueur stub » (PLAN.md section 7). Nephren propose le livre d'images ; (F1) son
+## offre pose un drapeau (tests/data/dialogues/l6_nephren.json), la quête est partie.
 
 const DEMO := preload("res://tests/integration/demo_l6.tscn")
 
@@ -57,9 +58,7 @@ func test_whole_conversation_with_keys() -> void:
 	assert_eq(_box.selected_choice(), 1)
 	_press(&"ui_up")
 	_press(&"interact")
-	assert_eq(
-		GameState.quest_state(&"picture_book"), &"active", "« Je les retrouve. » démarre la quête"
-	)
+	assert_true(GameState.has_flag(&"l6_pages"), "« Je les retrouve. » pose le drapeau")
 	assert_string_contains(_text(), "Salle de lecture")
 	_press(&"interact")
 	_press(&"interact")
@@ -69,7 +68,7 @@ func test_whole_conversation_with_keys() -> void:
 	await wait_seconds(0.4)
 	_press(&"interact")
 	assert_true(_box.is_open(), "E relance la conversation")
-	assert_eq(_text(), "Encore 5. Mm.", "réplique de quête en cours")
+	assert_eq(_text(), "Encore 5. Mm.", "réplique de la promesse en cours")
 
 
 func test_later_then_mouse_choice() -> void:
@@ -79,5 +78,5 @@ func test_later_then_mouse_choice() -> void:
 	var later := _box.get_node("%Choice1") as Button
 	later.mouse_entered.emit()
 	later.pressed.emit()
-	assert_eq(GameState.quest_state(&"picture_book"), &"", "« Plus tard. » ne démarre rien")
+	assert_false(GameState.has_flag(&"l6_pages"), "« Plus tard. » ne promet rien")
 	assert_eq(_text(), "Mm.")

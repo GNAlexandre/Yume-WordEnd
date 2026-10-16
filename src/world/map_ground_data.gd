@@ -298,7 +298,7 @@ func _resolve(name: String, raw: Dictionary) -> Dictionary:
 	for key: String in raw.keys():
 		if not key.begins_with("_") and not key in MATERIAL_KEYS:
 			problems.append("matière %s : clé inconnue « %s »" % [name, key])
-	var layer := IslandTerrain.GROUND_LAYERS.find(StringName(String(raw.get("layer", ""))))
+	var layer := GroundAtlas.GROUND_LAYERS.find(StringName(String(raw.get("layer", ""))))
 	if layer < 0:
 		problems.append(
 			"matière %s : tuile « %s » absente de l'atlas" % [name, raw.get("layer", "")]
@@ -324,9 +324,7 @@ func _resolve(name: String, raw: Dictionary) -> Dictionary:
 		for key: String in (border as Dictionary).keys():
 			if not key in BORDER_KEYS:
 				problems.append("matière %s : bordure, clé inconnue « %s »" % [name, key])
-		var border_layer := IslandTerrain.GROUND_LAYERS.find(
-			StringName(str(border.get("layer", "")))
-		)
+		var border_layer := GroundAtlas.GROUND_LAYERS.find(StringName(str(border.get("layer", ""))))
 		if border_layer < 0:
 			problems.append("matière %s : tuile de bordure inconnue" % name)
 		spec["border_layer"] = border_layer

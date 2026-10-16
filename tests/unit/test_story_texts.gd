@@ -1,12 +1,10 @@
 extends GutTest
-## (Systèmes et textes) Textes de l'arène, de la chute et de la défaite en données
-## (HISTOIRE.md, section 3.5 et développement n° 4) : data/texts/story.json, lu par
-## DialogueRunner.story_text / arena_text ; invite et panneau de l'arène, titre et record de fin de
-## série par arène (repli sur « default »), fondu et message de la défaite, fondu au blanc et
-## message du rattrapage de chute (WorldManager.rescued) ; fichiers invalides.
+## (Systèmes et textes) Textes de la chute et de la défaite en données (HISTOIRE.md, section
+## 3.5 et développement n° 4) : data/texts/story.json, lu par DialogueRunner.story_text ; fondu et
+## message de la défaite, fondu au blanc et message du rattrapage de chute (WorldManager.rescued),
+## (F1) avis d'une partie de l'ancienne île ; fichiers invalides. Les textes de l'arène sont partis
+## avec elle.
 
-const ARENA_SCENE := preload("res://src/enemies/arena.tscn")
-const ARENA_END := preload("res://src/ui/arena_end.tscn")
 const HUD := preload("res://src/ui/hud.tscn")
 const HudScript := preload("res://src/ui/hud.gd")
 const PLAYER_STUB := preload("res://tests/stubs/player_stub.tscn")
@@ -52,21 +50,16 @@ func test_story_file_is_valid_and_has_every_text() -> void:
 	assert_false(story.is_empty(), "data/texts/story.json lu")
 	assert_eq(DialogueRunner.story_problem(story), "", "forme valide")
 	var expected := {
-		"arenas/dunes/prompt": "Sonner la cloche de veille",
-		"arenas/dunes/sign": "Cloche\nde veille",
-		"arenas/dunes/end_title": "Fin de la veille",
-		"arenas/dunes/new_record": "Nouveau record de veille%s!" % NBSP,
-		"arenas/dunes/games": "Veilles tenues",
-		"arenas/default/prompt": "Affronter les Timeres",
-		"arenas/default/end_title": "Fin de la série",
-		"arenas/default/new_record": "Nouveau record%s!" % NBSP,
-		"arenas/default/games": "Séries jouées",
 		"fall/message": "Tes ailes se sont ouvertes%s: te revoilà au bord." % NBSP,
 		"defeat/fade": "Retour à l%sentrepôt…" % APOSTROPHE,
 		"defeat/message": "Les autres t%sont ramenée à l%sentrepôt." % [APOSTROPHE, APOSTROPHE],
 	}
 	for key_path: String in expected:
 		assert_eq(DialogueRunner.story_text(key_path), expected[key_path], key_path)
+	var migrated := DialogueRunner.story_text("save/migrated")
+	assert_string_contains(migrated, "ancienne île", "avis de la partie migrée")
+	assert_string_contains(migrated, "premier jour")
+	assert_eq(DialogueRunner.story_text("arenas/default/prompt"), "", "(F1) plus de textes d'arène")
 
 
 func test_lookups_fall_back() -> void:
@@ -75,12 +68,6 @@ func test_lookups_fall_back() -> void:
 		DialogueRunner.story_text("fall", "secours"), "secours", "un objet n'est pas un texte"
 	)
 	assert_eq(DialogueRunner.story_text("fall/message/plus"), "", "trop profond")
-	assert_eq(
-		DialogueRunner.arena_text(&"sys_ailleurs", "prompt"),
-		"Affronter les Timeres",
-		"arène sans textes : ceux de default"
-	)
-	assert_eq(DialogueRunner.arena_text(&"dunes", "absent", "secours"), "secours")
 
 
 func test_invalid_story_files_warn_and_give_nothing() -> void:
@@ -94,57 +81,6 @@ func test_invalid_story_files_warn_and_give_nothing() -> void:
 	assert_string_contains(DialogueRunner.story_problem([]), "objet attendu")
 	var commented := {"_comment": 1, "a": {"_b": [], "c": "texte"}}
 	assert_eq(DialogueRunner.story_problem(commented), "", "clés « _… » : commentaires")
-
-
-# --- L'arène ----------------------------------------------------------------------------------
-
-
-func _arena(arena_id: StringName) -> Arena:
-	var root: Node3D = add_child_autofree(Node3D.new())
-	var arena := ARENA_SCENE.instantiate() as Arena
-	arena.arena_id = arena_id
-	root.add_child(arena)
-	return arena
-
-
-func test_arena_panel_prompt_and_sign_come_from_the_story_texts() -> void:
-	var dunes := _arena(&"dunes")
-	var panel := dunes.get_node(^"Panel")
-	assert_eq(panel.call(&"get_prompt"), "Sonner la cloche de veille", "invite de la veille")
-	assert_eq(panel.call(&"prompt"), "Sonner la cloche de veille", "prompt() hors série")
-	assert_null(panel.get_node_or_null(^"Label"), "la cloche du monde remplace la planche")
-	var other := _arena(&"sys_ailleurs")
-	assert_eq(other.get_node(^"Panel").call(&"get_prompt"), "Affronter les Timeres", "default")
-	# Une planche facultative (Label3D « Label ») reçoit le texte « sign » de son arène.
-	assert_eq(_signed_arena(&"dunes").text, "Cloche\nde veille", "planche de la veille")
-	assert_eq(_signed_arena(&"sys_ailleurs").text, "Affronter\nles Timeres", "planche par défaut")
-
-
-func _signed_arena(arena_id: StringName) -> Label3D:
-	var arena := ARENA_SCENE.instantiate() as Arena
-	arena.arena_id = arena_id
-	var label := Label3D.new()
-	label.name = "Label"
-	arena.get_node(^"Panel").add_child(label)
-	var root: Node3D = add_child_autofree(Node3D.new())
-	root.add_child(arena)
-	return label
-
-
-func test_arena_end_title_and_record_come_from_the_story_texts() -> void:
-	var panel: Control = add_child_autofree(ARENA_END.instantiate())
-	panel.call(&"show_result", &"dunes", 640, true, 6)
-	assert_eq((panel.get_node(^"%Header") as Label).text, "Fin de la veille")
-	assert_eq((panel.get_node(^"%RecordLabel") as Label).text, "Nouveau record de veille%s!" % NBSP)
-	assert_true(panel.get_node(^"%RecordBadge").visible)
-	var games := panel.get_node(^"Panel/Box/Stats/GamesCaption") as Label
-	assert_eq(games.text, "Veilles tenues", "le registre des veilles")
-	panel.call(&"close")
-	panel.call(&"show_result", &"sys_ailleurs", 10, false, 1)
-	assert_eq((panel.get_node(^"%Header") as Label).text, "Fin de la série", "default")
-	assert_eq((panel.get_node(^"%RecordLabel") as Label).text, "Nouveau record%s!" % NBSP)
-	assert_eq(games.text, "Séries jouées", "default")
-	panel.call(&"close")
 
 
 # --- Défaite et chute -------------------------------------------------------------------------
@@ -173,6 +109,10 @@ func test_defeat_fade_then_message_at_the_warehouse() -> void:
 func test_rescue_shows_wings_of_light_and_the_fall_message() -> void:
 	var hud := _hud()
 	add_child_autofree(PLAYER_STUB.instantiate())
+	# (F1) Le rattrapage se fait sur une carte : une carte vide suffit.
+	var map := Map.new()
+	map.name = "essai"
+	add_child_autofree(map)
 	watch_signals(WorldManager)
 	WorldManager.rescue()
 	assert_signal_emitted(WorldManager, "rescued", "rattrapage annoncé")

@@ -139,18 +139,16 @@ func test_burst_plays_once_and_frees_itself() -> void:
 	assert_true(freed, "libéré à la fin de son animation")
 
 
-func test_effects_go_to_the_zone_not_to_the_enemies_container() -> void:
-	var zone := Zone.new()
-	_root.add_child(zone)
-	var enemies := Node3D.new()
-	enemies.name = "Enemies"
-	zone.add_child(enemies)
+func test_effects_go_next_to_their_target() -> void:
+	# (F1) Plus de zones : l'effet va au parent de sa cible (les conteneurs d'ennemis comptés par
+	# l'arène sont partis avec elle).
+	var holder := Node3D.new()
+	_root.add_child(holder)
 	var body := Node3D.new()
-	enemies.add_child(body)
-	assert_eq(CombatFx.host_for(body), zone, "jamais sous Enemies (on en compte les enfants)")
+	holder.add_child(body)
+	assert_eq(CombatFx.host_for(body), holder, "à côté de la cible")
 	var burst := CombatFx.spawn_burst(body, "dust", Vector3.ZERO, CombatFx.COLOR_DUST)
-	assert_eq(burst.get_parent(), zone)
-	assert_eq(enemies.get_child_count(), 1)
+	assert_eq(burst.get_parent(), holder)
 	assert_false(burst.no_depth_test, "la poussière reste au sol, derrière les corps")
 
 

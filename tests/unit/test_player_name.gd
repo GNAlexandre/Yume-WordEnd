@@ -1,27 +1,29 @@
-extends "res://tests/stubs/q_quest_test.gd"
+extends GutTest
 ## (Systèmes et textes) {player} (HISTOIRE.md, développement n° 2) : le nom affiché du skin
 ## choisi (GameState.skin_id, sinon le skin par défaut, Chtholly) remplace {player} dans les
-## répliques, les choix et le nom de l'orateur, et dans les textes de quête du HUD et du journal
-## (titres, résumé, objectifs, aides), sans casser {count:…}, {left:…} et {best:…}.
+## répliques, les choix et le nom de l'orateur, sans casser {count:…} et {left:…}. (F1) Les textes
+## de quête du HUD et du journal sont partis avec l'ancienne île.
 
-const HUD := preload("res://src/ui/hud.tscn")
-const HudScript := preload("res://src/ui/hud.gd")
 const DIR := "user://test_player_name"
 const SKINS_DIR := DIR + "/skins"
 
+var dialogue_runner: DialogueRunner
 var _lines: Array[Dictionary] = []
 
 
 func before_each() -> void:
-	super()
+	GameState.reset()
 	DirAccess.make_dir_recursive_absolute(SKINS_DIR)
 	_lines.clear()
 	EventBus.dialogue_line.connect(_on_line)
+	dialogue_runner = add_child_autofree(DialogueRunner.new())
 	get_tree().paused = false
 
 
 func after_each() -> void:
 	get_tree().paused = false
+	if is_instance_valid(dialogue_runner):
+		dialogue_runner.stop()
 	EventBus.dialogue_line.disconnect(_on_line)
 	if SkinRegistry.skins_dir != SkinRegistry.SKINS_DIR:
 		SkinRegistry.skins_dir = SkinRegistry.SKINS_DIR
@@ -29,7 +31,7 @@ func after_each() -> void:
 	for dir: String in [SKINS_DIR, DIR]:
 		for file_name: String in DirAccess.get_files_at(dir):
 			DirAccess.remove_absolute(dir.path_join(file_name))
-	super()
+	GameState.reset()
 
 
 func _on_line(speaker: String, text: String, choices: Array[String]) -> void:
@@ -61,34 +63,6 @@ func _npc(nodes: Dictionary) -> NpcData:
 	return npc
 
 
-## Quête dont tous les textes affichés citent {player} (étapes flag : aucun PNJ requis).
-func _player_quest() -> void:
-	write_quest(
-		{
-			"id": "sys_name",
-			"title": "La veille de {player}",
-			"summary": "Tiat inscrit les veilles de {player} dans son carnet.",
-			"steps":
-			[
-				{
-					"id": "first",
-					"type": "flag",
-					"flag": "sys_first",
-					"objective": "Montrer le carnet à {player}",
-				},
-				{
-					"id": "second",
-					"type": "collect",
-					"item": "page_fragment",
-					"count": 3,
-					"objective": "{player} : réunir {left:page_fragment:3} pages",
-					"hint": "Mademoiselle {player} en a {count:page_fragment}.",
-				},
-			],
-		}
-	)
-
-
 func test_player_name_is_the_chosen_skin_display_name() -> void:
 	GameState.skin_id = &""
 	assert_eq(DialogueRunner.player_name(), "Chtholly", "skin par défaut")
@@ -101,7 +75,7 @@ func test_player_name_is_the_chosen_skin_display_name() -> void:
 
 
 ## Les skins 3D s'appellent « Chtholly Nota Seniorious · 3D », « Ithea Myse Valgulious · 3D » :
-## {player} n'en garde que le prénom, sans la variante (docs/QUETES.md, « Le nom du joueur »).
+## {player} n'en garde que le prénom, sans la variante (docs/DIALOGUES.md, « Le nom du joueur »).
 func test_player_name_is_the_first_name_without_the_skin_variant() -> void:
 	assert_eq(DialogueRunner.first_name("Chtholly Nota Seniorious · 3D"), "Chtholly")
 	assert_eq(DialogueRunner.first_name("Ithea Myse Valgulious · 3D"), "Ithea")
@@ -154,13 +128,13 @@ func test_format_keeps_the_other_variables() -> void:
 	_with_lyra()
 	GameState.skin_id = &"sys_lyra"
 	GameState.add_item(&"page_fragment", 2)
-	GameState.record_score(&"dunes", 420, 4)
 	var text := (
 		"{player}, {count:page_fragment} pages, encore {left:page_fragment:5}, "
 		+ "record {best:dunes} ; bravo {player} !"
 	)
 	assert_eq(
-		DialogueRunner.format_text(text), "Lyra, 2 pages, encore 3, record 420 ; bravo Lyra !"
+		DialogueRunner.format_text(text),
+		"Lyra, 2 pages, encore 3, record {best:dunes} ; bravo Lyra !"
 	)
 	assert_eq(DialogueRunner.format_text("Sans variable."), "Sans variable.")
 	assert_eq(DialogueRunner.format_text("{joueur} reste tel quel"), "{joueur} reste tel quel")
@@ -191,56 +165,3 @@ func test_line_choices_and_speaker_use_the_player_name() -> void:
 	assert_eq(_lines[1]["speaker"], "Lyra", "la protagoniste parle : son nom")
 	assert_eq(_lines[1]["text"], "C'est moi, Lyra !")
 	dialogue_runner.stop()
-
-
-func test_hud_shows_quest_texts_with_the_player_name() -> void:
-	_with_lyra()
-	GameState.skin_id = &"sys_lyra"
-	_player_quest()
-	var hud: HudScript = add_child_autofree(HUD.instantiate())
-	start_quest(&"sys_name")
-	await wait_process_frames(2)
-	assert_eq(hud.quest_title(&"sys_name"), "La veille de Lyra", "titre")
-	assert_eq(hud.quest_objective(&"sys_name"), "Montrer le carnet à Lyra", "objectif")
-	GameState.set_flag(&"sys_first")
-	GameState.add_item(&"page_fragment")
-	await wait_process_frames(2)
-	assert_eq(hud.quest_objective(&"sys_name"), "Lyra : réunir 2 pages", "variables mêlées")
-	# Changer de skin met le texte à jour.
-	GameState.skin_id = &"chtholly"
-	await wait_process_frames(2)
-	assert_eq(hud.quest_title(&"sys_name"), "La veille de Chtholly", "skin_changed")
-	assert_eq(hud.quest_objective(&"sys_name"), "Chtholly : réunir 2 pages")
-
-
-func test_journal_shows_quest_texts_with_the_player_name() -> void:
-	_with_lyra()
-	GameState.skin_id = &"sys_lyra"
-	_player_quest()
-	var hud: HudScript = add_child_autofree(HUD.instantiate())
-	start_quest(&"sys_name")
-	GameState.set_flag(&"sys_first")
-	GameState.add_item(&"page_fragment")
-	await wait_process_frames(1)
-	var journal := hud.get_node(^"%Journal")
-	journal.call(&"open")
-	assert_true(journal.call(&"is_open"), "journal ouvert")
-	assert_eq((journal.get_node(^"%QuestTitle") as Label).text, "La veille de Lyra", "titre")
-	assert_eq(
-		(journal.get_node(^"%Summary") as Label).text,
-		"Tiat inscrit les veilles de Lyra dans son carnet.",
-		"résumé"
-	)
-	var list := journal.get_node(^"%List").find_child("Quest_sys_name", true, false) as Button
-	assert_eq(list.text, "La veille de Lyra", "titre dans la liste")
-	var steps: Array[Dictionary] = journal.call(&"shown_steps")
-	assert_eq(steps.size(), 2)
-	assert_eq(steps[0]["objective"], "Montrer le carnet à Lyra", "étape validée")
-	assert_eq(steps[1]["objective"], "Lyra : réunir 2 pages", "étape courante")
-	var texts: Array[String] = []
-	for label: Node in journal.get_node(^"%Steps").find_children("*", "Label", true, false):
-		texts.append((label as Label).text)
-	assert_has(texts, "Mademoiselle Lyra en a 1.", "aide de l'étape")
-	for text: String in texts:
-		assert_false(text.contains("{player}"), "plus de {player} : %s" % text)
-	journal.call(&"close")

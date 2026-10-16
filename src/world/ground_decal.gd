@@ -6,11 +6,11 @@ extends Node3D
 ## image vue de dessus à pixels_per_meter px par mètre, ancre au centre (origine du nœud), haut
 ## de l'image au nord. Racine possible d'une scène de décor de src/world/props/ ; sans collision.
 ##
-## - Couché sur le relief de l'île : le mesh reprend exactement les triangles du sol sous lui
-##   (IslandTerrain.triangles_in, découpés au bord du décalque), leurs normales comprises : il
-##   reçoit la lumière comme le sol ; follow_ground faux : à plat à la hauteur du nœud. (E2) Sur
-##   une carte extérieure, ce sont les triangles de son sol en relief (MapGround.triangles_in : le
-##   nœud « Ground » de la carte qui porte le décalque).
+## - Couché sur le relief : le mesh reprend exactement les triangles du sol sous lui, ceux du sol
+##   en relief de la carte (MapGround.triangles_in : le nœud « Ground » de la carte qui porte le
+##   décalque, découpés au bord du décalque), leurs normales comprises : il reçoit la lumière
+##   comme le sol ; sans sol en relief, à plat à y = 0 ; follow_ground faux : à plat à la hauteur
+##   du nœud.
 ## - Rotation libre autour de Y et échelle (x, z) du nœud, flip_h : la même image varie.
 ## - Jamais de scintillement : le shader tire le décalque vers la caméra (au-dessus du sol), plus
 ##   par couche (layer : les plus hautes dessus) et d'une part propre à l'exemplaire (UV2) ; les
@@ -147,7 +147,8 @@ func draped_mesh() -> ArrayMesh:
 
 
 ## (E2) Triangles du sol sous bounds (plan x, z du monde) : ceux du sol en relief (MapGround) de la
-## carte qui porte le décalque, sinon ceux de l'île (IslandTerrain) ; [sommets, normales].
+## carte qui porte le décalque, sinon (F1) un sol plat à y = 0, deux triangles qui couvrent bounds ;
+## [sommets, normales].
 func _ground_triangles(bounds: Rect2) -> Array[PackedVector3Array]:
 	var node := get_parent()
 	while node != null:
@@ -161,7 +162,24 @@ func _ground_triangles(bounds: Rect2) -> Array[PackedVector3Array]:
 				points[n] += offset
 			return [points, found[1]]
 		node = node.get_parent()
-	return IslandTerrain.triangles_in(bounds)
+	var x0 := bounds.position.x
+	var x1 := bounds.end.x
+	var z0 := bounds.position.y
+	var z1 := bounds.end.y
+	var flat := PackedVector3Array(
+		[
+			Vector3(x0, 0.0, z0),
+			Vector3(x1, 0.0, z0),
+			Vector3(x0, 0.0, z1),
+			Vector3(x1, 0.0, z0),
+			Vector3(x1, 0.0, z1),
+			Vector3(x0, 0.0, z1),
+		]
+	)
+	var up := PackedVector3Array()
+	up.resize(flat.size())
+	up.fill(Vector3.UP)
+	return [flat, up]
 
 
 ## Matériau partagé d'une image (ground_decal.gdshader ou, doux, ground_decal_soft.gdshader, à

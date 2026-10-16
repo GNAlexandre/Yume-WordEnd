@@ -7,8 +7,7 @@ extends Control
 ##   est en mouse_filter IGNORE), traité même en pause.
 ## - Nom de la carte (Map.display_name, WorldManager.map_display_name) annoncé à l'entrée
 ##   (EventBus.map_entered), une fois l'écran revenu : fondu d'apparition, title_time s, fondu
-##   de disparition, dans le style du nom de zone du HUD. Une carte sans nom n'annonce rien
-##   (l'ancienne île annonce ses zones par le HUD).
+##   de disparition. Une carte sans nom n'annonce rien.
 
 ## Durée d'affichage du nom de la carte (s), sans les fondus ; durée de chaque fondu (s).
 @export var title_time: float = 2.4

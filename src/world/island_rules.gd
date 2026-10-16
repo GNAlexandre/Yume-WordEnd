@@ -10,7 +10,7 @@ extends RefCounted
 ## règle : UNRULED, le comportement d'avant X1.
 ##
 ## Clés (format des fichiers) :
-## - enemies_allowed (bool) : les Timeres peuvent apparaître (vagues, arène, Timeres libres) ;
+## - enemies_allowed (bool) : les Timeres peuvent apparaître (la surface) ;
 ## - fauna (liste d'id de data/fauna/) : les animaux permis (E5) ;
 ## - void_below (« clouds » ou « ground ») : sous le bord du vide, la mer de nuages (Regule
 ##   Aire) ou le sol jusqu'à l'horizon (la surface) ; MapGround le lit ;
@@ -42,7 +42,7 @@ const UNRULED := {
 	"void_fall": "arrival",
 }
 
-## Timeres permis (vagues, arène, Timeres libres, banc de performance).
+## Timeres permis (rencontres, banc de performance).
 var enemies_allowed: bool = true
 ## Animaux permis (id de data/fauna/, E5).
 var fauna: Array[StringName] = []

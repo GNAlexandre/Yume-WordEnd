@@ -1,7 +1,7 @@
 extends Node
-## WorldManager : cartes, zones de l'ancienne île, points d'apparition, téléportation et
-## réapparition (PLAN.md section 3 ; docs/REFONTE.md, section 7.1). Propriétaires : L2, puis E1
-## (cartes).
+## WorldManager : cartes, points d'arrivée, réapparition, rattrapage des chutes et voyages
+## (PLAN.md section 3 ; docs/REFONTE.md, section 7.1). Propriétaires : L2, puis E1 (cartes), X1
+## (îles), F1 (zones de l'ancienne île retirées).
 ##
 ## Cartes (E1) :
 ## - une seule carte (Map, src/world/map.gd) est chargée à la fois, sous le nœud « World » de
@@ -15,29 +15,21 @@ extends Node
 ##   recale et prend les bornes de la carte), puis fondu de retour. Le joueur est figé
 ##   (process_mode DISABLED : ni mouvement, ni coup, ni interaction) du début du fondu à la fin
 ##   du retour ; is_transitioning() reste vrai SETTLE_FRAMES images physiques de plus, le temps
-##   que les zones voient le joueur : une sortie où l'on arrive ne repart pas aussitôt ;
+##   que les sorties voient le joueur : une sortie où l'on arrive ne repart pas aussitôt ;
 ## - enter_map(map_id, marker, at) : la même chose sans fondu ni chargement découpé (début de
 ##   partie : main.gd a déjà chargé la carte avec l'écran de chargement ; démonstrations) ;
 ## - GameState.map et GameState.position suivent la carte courante (sauvegarde) ; une carte
-##   inconnue au chargement d'une partie ramène à START_MAP.
+##   inconnue au chargement d'une partie ramène à start_map.
 ##
-## Zones (L2, carte héritée `ile_ancienne` seulement) :
-## - les zones sont les nœuds du groupe "zones" (racines Zone nommées comme leur zone_id) ;
-##   load_zone() ne fait rien si la zone est là ; une zone de l'ancienne île demandée ailleurs
-##   y ramène (enter_map(LEGACY_MAP), sans fondu) ;
-## - teleport() pose le joueur (groupe "player") sur un Marker3D de la zone, au ras du sol
-##   (rayon vers le bas sur la couche world, décor statique seulement) et annule sa vitesse ;
-## - respawn() le ramène au Spawn du village (sur une carte sans village : au marqueur par
-##   lequel il est arrivé), tourné comme le marqueur, et émet player_respawned (PlayerCombat
-##   remet les PV au maximum) ; déclenché respawn_delay secondes après EventBus.player_died, si
-##   le joueur mort est toujours dans l'arbre ;
-## - rescue() ramène le joueur au Spawn de la zone courante (sans zone : au marqueur d'arrivée
-##   de la carte) : appelé par la KillZone de l'île et, en filet de sécurité, quand le joueur
-##   passe sous FALL_LIMIT ; (Systèmes et textes) émet alors rescued(zone_id), sur lequel le
-##   HUD montre ses ailes (fondu au blanc) et le message de data/texts/story.json ;
-## - zone_entered met à jour current_zone() et GameState.zone ; un changement de carte les vide
-##   (et oublie la dernière zone annoncée sur le joueur) : la zone d'arrivée s'annonce de nouveau ;
-## - is_zone_safe() dit si une zone est sûre (Zone.safe), pour l'IA des Timeres.
+## Réapparition et rattrapage (L2, repris pour les cartes) :
+## - respawn() ramène le joueur (groupe "player") au marqueur par lequel il est arrivé dans la
+##   carte, au ras du sol (rayon vers le bas sur la couche world, décor statique seulement),
+##   tourné comme le marqueur, et émet player_respawned (PlayerCombat remet les PV au maximum) ;
+##   déclenché respawn_delay secondes après EventBus.player_died, si le joueur mort est toujours
+##   dans l'arbre ;
+## - rescue() ramène le joueur au dernier point sûr ou au marqueur d'arrivée (règle void_fall de
+##   l'île) quand il passe sous FALL_LIMIT ; (Systèmes et textes) émet alors rescued(map_id), sur
+##   lequel le HUD montre ses ailes (fondu au blanc) et le message de data/texts/story.json.
 ##
 ## Îles (X1, docs/REFONTE.md 11.1 ; PLAN.md, « Ajouter une île ») :
 ## - chaque carte posée donne l'île courante (WorldAtlas.island_of) : GameState.island et les îles
@@ -46,16 +38,15 @@ extends Node
 ## - travel(island_id, port) : le voyage en dirigeable ; fondu au noir, vue du ciel qui défile
 ##   (src/world/travel_view.tscn, au moins travel_time s, pendant que la carte d'arrivée se
 ##   charge en petites tranches), puis la carte d'arrivée au marqueur du port, fondu de retour ;
-## - une chute hors de l'île, sur une carte sans zone, ramène au dernier point sûr (règle
-##   void_fall de l'île : last_safe) ou au marqueur d'arrivée (arrival) ; le dernier point sûr
-##   est la dernière place au sol du joueur à au moins SAFE_MARGIN m du vide ;
+## - une chute hors de l'île ramène au dernier point sûr (règle void_fall de l'île : last_safe) ou
+##   au marqueur d'arrivée (arrival) ; le dernier point sûr est la dernière place au sol du joueur
+##   à au moins SAFE_MARGIN m du vide ;
 ## - raccourci de développement : F6 (version de débogage) part vers l'île suivante de l'atlas ;
 ##   ?island=<id>&port=<id> sur le Web (src/test_shortcuts.gd).
 
-## (Systèmes et textes) Le joueur vient d'être rattrapé après une chute (rescue), au Spawn de
-## zone_id (ou, sur une carte sans zone, à son marqueur d'arrivée : zone_id = map_id) :
-## message « Tes ailes se sont ouvertes… » du HUD.
-signal rescued(zone_id: StringName)
+## (Systèmes et textes) Le joueur vient d'être rattrapé après une chute (rescue) dans la carte
+## map_id : message « Tes ailes se sont ouvertes… » du HUD.
+signal rescued(map_id: StringName)
 ## (E1) Un changement de carte commence : fondu au noir pendant fade_time s vers map_id.
 signal transition_started(map_id: StringName)
 ## (E1) Le changement de carte est fini : fondu de retour terminé, joueur rendu.
@@ -65,24 +56,17 @@ signal travel_started(island_id: StringName)
 ## (X1) Le voyage est fini : carte d'arrivée posée, fondu de retour terminé.
 signal travel_finished(island_id: StringName)
 
-const VILLAGE := &"village"
 const SPAWN_MARKER := &"Spawn"
-const ZONES_GROUP := &"zones"
 const PLAYER_GROUP := &"player"
-## (E1) Carte héritée : l'île à cinq zones, jouable jusqu'à la phase 5 de la refonte.
-const LEGACY_MAP := &"ile_ancienne"
 ## (E1) Carte d'une nouvelle partie (et d'une sauvegarde dont la carte n'existe plus). (E6) La
 ## carte d'arrivée de l'île n° 68 (data/world/islands/ile_68.json, arrival_map) : une nouvelle
-## partie ouvre l'acte 1 en jours (StoryDirector) ; l'ancienne île n'est plus que celle des
-## sauvegardes d'avant la refonte (et des tests de l'ancienne île : start_map).
+## partie ouvre l'acte 1 en jours (StoryDirector).
 const START_MAP := &"entrepot"
-## (E1) Zones de la carte héritée : load_zone() et teleport() y ramènent.
-const LEGACY_ZONES: Array[StringName] = [&"village", &"dunes", &"forest", &"beach", &"hill"]
 ## (E1) Groupe du nœud qui porte la carte courante (« World » de game.tscn).
 const MAP_SLOT_GROUP := &"map_slot"
 ## Couche « world » (1) : sol et décor sur lesquels on pose le joueur.
 const WORLD_MASK := 1
-## Sous cette hauteur (m), le joueur est rattrapé (rescue) même sans KillZone.
+## Sous cette hauteur (m), le joueur est rattrapé (rescue).
 const FALL_LIMIT := -30.0
 ## Le rayon qui cherche le sol part GROUND_PROBE_UP m au-dessus du marqueur et descend de
 ## GROUND_PROBE_DOWN m ; le joueur est posé GROUND_CLEARANCE m au-dessus du point touché.
@@ -95,7 +79,8 @@ const SETTLE_FRAMES := 3
 ## noir, rien ne bouge à l'écran, une image tous les 100 ms suffit à garder la page vivante.
 const DEFAULT_FADE_TIME := 0.35
 const DEFAULT_LOAD_BUDGET_MS := 100.0
-## (E1) Bornes de la caméra sans carte : celles de l'ancienne île.
+## (E1) Bornes de la caméra sans carte (scène de test sans carte) : un grand carré autour de
+## l'origine, celui de CameraRig.limits.
 const DEFAULT_CAMERA_BOUNDS := Rect2(-71.0, -70.0, 142.0, 136.0)
 ## Ordre de chargement des dépendances (feuilles d'abord) : celui de l'écran de chargement.
 const LoadingScript := preload("res://src/ui/loading.gd")
@@ -126,11 +111,10 @@ var travel_time: float = DEFAULT_TRAVEL_TIME
 var travel_load_budget_ms: float = DEFAULT_TRAVEL_LOAD_BUDGET_MS
 ## (X1) Touche F6 active (voyage vers l'île suivante) : version de débogage.
 var debug_keys: bool = false
-## (E6) Carte d'une nouvelle partie (START_MAP) ; les tests de l'ancienne île y mettent LEGACY_MAP
-## (et la rétablissent après eux), comme respawn_delay.
+## (E6) Carte d'une nouvelle partie (START_MAP) ; un test peut en poser une autre (une carte
+## d'essai) et la rétablit après lui, comme respawn_delay.
 var start_map: StringName = START_MAP
 
-var _current_zone: StringName = &""
 ## Carte posée par WorldManager (voir current_map_node()).
 var _map: Map
 ## Marqueur par lequel le joueur est arrivé dans la carte courante (réapparition, rattrapage).
@@ -154,7 +138,6 @@ var _safe_countdown: int = 0
 
 
 func _ready() -> void:
-	EventBus.zone_entered.connect(_on_zone_entered)
 	EventBus.player_died.connect(_on_player_died)
 	EventBus.game_loaded.connect(_on_game_loaded)
 	debug_keys = OS.is_debug_build()
@@ -221,12 +204,12 @@ func travel_view() -> TravelView:
 	return _travel_view if is_instance_valid(_travel_view) else null
 
 
-## (X1) Île suivante de l'atlas (WorldAtlas.islands(), sans l'ancienne île), en boucle ; &"" s'il
-## n'y en a pas d'autre. Touche F6.
+## (X1) Île suivante de l'atlas (WorldAtlas.islands()), en boucle ; &"" s'il n'y en a pas
+## d'autre. Touche F6.
 func next_island() -> StringName:
 	var ids: Array[StringName] = []
 	for island_id: StringName in WorldAtlas.islands():
-		if not WorldAtlas.is_legacy(island_id) and not WorldAtlas.arrival(island_id).is_empty():
+		if not WorldAtlas.arrival(island_id).is_empty():
 			ids.append(island_id)
 	if ids.is_empty():
 		return &""
@@ -347,14 +330,12 @@ func current_map_node() -> Map:
 	return null
 
 
-## Carte où commence la partie : GameState.map si elle existe ; sinon, pour une partie placée
-## hors de l'acte en jours dont la carte n'existe plus (sauvegarde d'avant la refonte), l'ancienne
-## île ; sinon (nouvelle partie) start_map (START_MAP, l'entrepôt de l'île n° 68).
+## Carte où commence la partie : GameState.map si elle existe ; sinon (nouvelle partie, carte
+## disparue) start_map (START_MAP, l'entrepôt de l'île n° 68). (F1) Une partie de l'ancienne île
+## n'arrive plus ici : SaveManager la remplace par une nouvelle partie de l'acte 1.
 func starting_map() -> StringName:
 	if Map.exists(GameState.map):
 		return GameState.map
-	if not GameState.map.is_empty() and not GameState.story_running() and Map.exists(LEGACY_MAP):
-		return LEGACY_MAP
 	return start_map if Map.exists(start_map) else START_MAP
 
 
@@ -403,90 +384,30 @@ func last_transition() -> Dictionary:
 	return _last_transition.duplicate()
 
 
-# --- Zones de l'ancienne île (L2) -------------------------------------------------------------
+# --- Réapparition et rattrapage (L2) --------------------------------------------------------
 
 
-## S'assure que la zone est dans l'arbre : sans effet si elle y est ; une zone de l'ancienne île
-## (LEGACY_ZONES) demandée dans une autre carte y ramène, sans fondu (s'il y a un nœud World où
-## poser la carte ; sinon rien).
-func load_zone(zone_id: StringName) -> void:
-	if zone_id.is_empty() or _find_zone(zone_id) != null:
-		return
-	if zone_id in LEGACY_ZONES:
-		if current_map() != LEGACY_MAP and _map_slot() != null and Map.exists(LEGACY_MAP):
-			enter_map(LEGACY_MAP)
-		return
-	push_warning("WorldManager : zone inconnue %s" % zone_id)
-
-
-## Pose le joueur sur le Marker3D `marker` de la zone, au ras du sol, et annule sa vitesse.
-func teleport(zone_id: StringName, marker: StringName = SPAWN_MARKER) -> void:
-	load_zone(zone_id)
-	var zone := _find_zone(zone_id)
-	var player := _player()
-	if zone == null or player == null:
-		return
-	var target := zone.get_node_or_null(NodePath(String(marker))) as Node3D
-	if target == null:
-		target = zone.find_child(String(marker), true, false) as Node3D
-	if target == null:
-		return
-	player.global_position = ground_position(target.global_position, player)
-	# Lissage physique : pas de glissement de l'ancienne place à la nouvelle.
-	player.reset_physics_interpolation()
-	if player is CharacterBody3D:
-		(player as CharacterBody3D).velocity = Vector3.ZERO
-
-
-## Réapparition avec PV pleins (appliqués par PlayerCombat) : au Spawn du village sur l'ancienne
-## île, sinon au marqueur par lequel le joueur est arrivé dans la carte.
+## Réapparition avec PV pleins (appliqués par PlayerCombat) : au marqueur par lequel le joueur
+## est arrivé dans la carte (sans carte : rien ne bouge).
 func respawn() -> void:
 	var map := current_map_node()
-	if _find_zone(VILLAGE) != null or map == null:
-		teleport(VILLAGE, SPAWN_MARKER)
-		_face_marker(VILLAGE, SPAWN_MARKER)
-	else:
+	if map != null:
 		_place_at_marker(map, _arrival_marker)
 	EventBus.player_respawned.emit()
 
 
-## Rattrapage : ramène le joueur au Spawn de la zone courante (du village à défaut ; sur une
-## carte sans zone, (X1) au dernier point sûr si la règle void_fall de l'île le veut, sinon au
-## marqueur d'arrivée), puis émet rescued (message du HUD).
+## Rattrapage : ramène le joueur, (X1) au dernier point sûr si la règle void_fall de l'île le
+## veut, sinon au marqueur d'arrivée, puis émet rescued (message du HUD). Sans carte : rien.
 func rescue() -> void:
-	if _player() == null:
-		return
-	var zone := _current_zone if _find_zone(_current_zone) != null else VILLAGE
 	var map := current_map_node()
-	if _find_zone(zone) == null and map != null:
-		var rules := WorldAtlas.rules_for(map.map_id())
-		if rules.void_fall == IslandRules.FALL_LAST_SAFE and _has_safe:
-			_place_at(_last_safe)
-		else:
-			_place_at_marker(map, _arrival_marker)
-		rescued.emit(map.map_id())
+	if _player() == null or map == null:
 		return
-	teleport(zone, SPAWN_MARKER)
-	rescued.emit(zone)
-
-
-func current_zone() -> StringName:
-	return _current_zone
-
-
-## Vrai si la zone zone_id est sûre (Zone.safe, le village : aucun ennemi n'y poursuit le
-## joueur) ; faux pour une zone inconnue ou &"". Les Timeres l'appellent avec current_zone().
-func is_zone_safe(zone_id: StringName) -> bool:
-	var zone := _find_zone(zone_id)
-	return zone is Zone and (zone as Zone).safe
-
-
-## Nom affiché d'une zone (Zone.display_name), ou son identifiant à défaut.
-func zone_display_name(zone_id: StringName) -> String:
-	var zone := _find_zone(zone_id)
-	if zone is Zone and not (zone as Zone).display_name.is_empty():
-		return (zone as Zone).display_name
-	return String(zone_id)
+	var rules := WorldAtlas.rules_for(map.map_id())
+	if rules.void_fall == IslandRules.FALL_LAST_SAFE and _has_safe:
+		_place_at(_last_safe)
+	else:
+		_place_at_marker(map, _arrival_marker)
+	rescued.emit(map.map_id())
 
 
 ## Point au ras du décor statique (couche world) sous `point`, ou `point` s'il n'y a rien
@@ -529,13 +450,6 @@ func _install(scene: PackedScene, map_id: StringName, marker: StringName, at: Va
 			# L'ancienne carte part avant que la nouvelle n'entre : une seule en mémoire.
 			map.get_parent().remove_child(map)
 			map.free()
-			# Plus de zone : celle où l'on arrive s'annoncera (changement de zone). Au début
-			# d'une partie (aucune carte avant), la zone de la sauvegarde reste.
-			_current_zone = &""
-			GameState.zone = &""
-			var body := _player()
-			if body != null:
-				body.remove_meta(Zone.LAST_ZONE_META)
 		fresh.name = map_id
 		slot.add_child(fresh)
 		map = fresh
@@ -701,7 +615,7 @@ func _set_world_hidden(hidden: bool) -> void:
 
 ## Fige le joueur pendant le changement de carte (ni mouvement, ni coup, ni interaction), en
 ## fin d'image : go_to() part souvent de son image physique (interaction) ou du signal d'une
-## zone pendant le pas de la physique ; le retirer de l'espace physique à ce moment-là lui
+## sortie pendant le pas de la physique ; le retirer de l'espace physique à ce moment-là lui
 ## ferait finir son image sans espace (« Parameter "space" is null »).
 func _freeze(player: Node3D) -> void:
 	if player == null:
@@ -715,30 +629,8 @@ func _apply_freeze(player: Node3D) -> void:
 		player.process_mode = PROCESS_MODE_DISABLED
 
 
-## Tourne le joueur (Player.set_aim_direction, caméra derrière lui) dans le sens du marqueur
-## (−Z). Sans cela, la visée gardée de l'arène plaçait la caméra n'importe où autour du Spawn,
-## parfois dans le feuillage d'un arbre.
-func _face_marker(zone_id: StringName, marker: StringName) -> void:
-	var zone := _find_zone(zone_id)
-	var player := _player()
-	if zone == null or player == null or not player.has_method(&"set_aim_direction"):
-		return
-	var target := zone.get_node_or_null(NodePath(String(marker))) as Node3D
-	if target != null:
-		player.call(&"set_aim_direction", -target.global_basis.z, true)
-
-
 func _player() -> Node3D:
 	return get_tree().get_first_node_in_group(PLAYER_GROUP) as Node3D
-
-
-func _find_zone(zone_id: StringName) -> Node3D:
-	if zone_id.is_empty():
-		return null
-	for node: Node in get_tree().get_nodes_in_group(ZONES_GROUP):
-		if node.name == zone_id and node is Node3D:
-			return node as Node3D
-	return null
 
 
 ## Nœud qui porte la carte courante : « World » de game.tscn (groupe MAP_SLOT_GROUP), à défaut
@@ -755,11 +647,6 @@ func _on_game_loaded() -> void:
 	# Une partie commence : l'île de sa première carte s'annoncera (island_entered).
 	_island = &""
 	_has_safe = false
-
-
-func _on_zone_entered(zone_id: StringName) -> void:
-	_current_zone = zone_id
-	GameState.zone = zone_id
 
 
 func _on_player_died() -> void:

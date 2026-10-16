@@ -264,39 +264,36 @@ boutons sous le pouce, Safari iOS.
 
 ## Raccourcis de test et vérification M1 (intégration)
 
-Pour atteindre une zone sans parcourir l'île, `src/test_shortcuts.gd` lit des paramètres dans
+Pour atteindre une carte sans parcourir l'île, `src/test_shortcuts.gd` lit des paramètres dans
 l'adresse de la page (Web, par `JavaScriptBridge`) ou dans les arguments utilisateur
-(`tools/godot -- --zone=dunes`, ou « Main Run Args » de l'éditeur). Sans paramètre, le jeu ne
+(`tools/godot -- --map=essai`, ou « Main Run Args » de l'éditeur). Sans paramètre, le jeu ne
 change pas (testé) ; `src/game.gd` ne crée ce nœud que si l'un d'eux est présent.
 
 | Paramètre | Effet |
 | --- | --- |
-| `?zone=dunes` | Le joueur part du Spawn du bord du Couchant (`dunes`), tourné vers la cloche de veille : 15 m tout droit (Z/W), puis E lance la veille. Toute zone de l'île : `village` (l'entrepôt des fées), `forest` (les bois du marais), `beach` (le port et le bourg), `hill` (la colline des étoiles), tourné vers son centre ; un nom inconnu est ignoré. La partie (nouvelle ou reprise) garde son état : l'acte 1 en est où il en était. |
-| `&timeres=12` | Banc de performance : 12 Timeres (les quatre corps, 24 au plus) errent devant le joueur sans le poursuivre. |
+| `&timeres=12` | Banc de performance : 12 Timeres (les quatre corps, 24 au plus) errent devant le joueur sans le poursuivre, là où les règles de l'île les admettent (la surface : `?map=surface_essai&timeres=12`). (F1) `?zone=` est retiré avec les zones de l'ancienne île. |
 | `?trace=1` | (intégration M2) Le journal seul : la partie (nouvelle ou reprise) n'est pas touchée. |
 | `?moment=nuit&temps=pluie` | (E9) Lus par `Atmosphere` (pas par ce nœud : ajouter `trace` pour le journal), posés à chaque partie chargée, sans transition et sauvegardés : moments `aube`, `matin`, `apres_midi`, `couchant`, `nuit` ; temps `clair`, `pluie`, `averse` ; une valeur inconnue est ignorée. Avec l'un d'eux (ou dans l'éditeur), F7 passe au moment suivant et F8 au temps suivant (transition de 4 s ; Maj : tout de suite). `tools/web_atmosphere.js` s'en sert (section « Lumière et temps » plus bas). |
 | `?map=entrepot&marker=from_sentier` | (T1) La partie (nouvelle ou reprise) se pose sur cette carte, sans fondu (`WorldManager.enter_map`), à son `Spawn` ou au marqueur `marker` ; seule entrée vers les cartes de la refonte (`entrepot`, ses cartes d’attente `village`, `colline`, `sentier`, `foret_profonde`) tant que le début de partie n’y mène pas. En ligne de commande : `tools/godot -- --map=entrepot --marker=from_sentier`. Une carte ou un marqueur inconnus sont ignorés (une ligne « [m1] » au journal). |
-| `?island=ile_essai&port=quai` | (X1) Une fois la partie posée, voyage en dirigeable vers cette île (`WorldManager.travel` : fondu, vue du ciel, puis son port `port`, ou le premier) ; « [m1] île <id> (<nom>) » à l'arrivée, puis « [m1] voyage vers <id> terminé ». Îles : `ile_68` (port `essai`, sur la carte d'essai), `ile_essai` (`quai`), `surface_essai` (`campement`), `ile_ancienne` (sans port : sa carte d'arrivée). En ligne de commande : `tools/godot -- --island=surface_essai`. Une île ou un port inconnus sont ignorés (une ligne au journal). Dans une version de débogage, F6 part vers l'île suivante de l'atlas. |
+| `?island=ile_essai&port=quai` | (X1) Une fois la partie posée, voyage en dirigeable vers cette île (`WorldManager.travel` : fondu, vue du ciel, puis son port `port`, ou le premier) ; « [m1] île <id> (<nom>) » à l'arrivée, puis « [m1] voyage vers <id> terminé ». Îles : `ile_68` (port `essai`, sur la carte d'essai), `ile_essai` (`quai`), `surface_essai` (`campement`). En ligne de commande : `tools/godot -- --island=surface_essai`. Une île ou un port inconnus sont ignorés (une ligne au journal). Dans une version de débogage, F6 part vers l'île suivante de l'atlas. |
 | `?jeu=ballon` ou `?jeu=baton` | (E8) Pose la partie sur l'entrepôt au bon moment (après-midi pour le ballon, matin pour le bâton) et lance le jeu (`MiniGames.dev_start`) : le match de ballon au champ (le joueur est posé à l'ouest du terrain ; il y entre en marchant vers l'est, frappe avec la touche d'attaque), ou l'entraînement au bâton à la clairière (le bâton en main, face à Willem ; la parade est le clic droit tenu). « [m1] jeu lancé : ballon » au journal ; un jeu inconnu est ignoré. Fonctionne en ligne de commande : `tools/godot -- --jeu=baton`. `tools/web_jeux.js` en mesure les draw calls dans le Chromium sans écran. |
 | `?jeu=duel` ou `?jeu=seniorious` | (E8b) Le duel ingagnable dans la cour de l'entrepôt, le matin (Seniorious en main face à Willem et au Carillon Percival : il esquive les coups ; la charge tenue 2 s allume la vision accélérée, la relâcher lance l'élan, puis l'écran blanc et la projection ; la reprise « Encore une fois ! » suit une fois), ou l'entraînement avec Seniorious à la clairière, l'après-midi (le souffle à la touche de charge, les gestes annoncés, la Grue de Gossamer, l'épée à ramasser dans le marais). En ligne de commande : `tools/godot -- --jeu=duel`. Démonstration et captures : `tests/integration/demo_e8b.tscn` (`E8B_VIEW`). |
-| `?maps=essai,ile_ancienne` | (E1) Une fois la partie posée, voyage de carte en carte (`WorldManager.go_to`, Spawn de chaque carte) ; une ligne « [m1] carte <id> chargée : fondu … ms, chargement … ms en n images, installation … ms, total … ms » par changement, puis « [m1] voyage terminé ». `tools/web_maps.js` s'en sert (section « Cartes » plus bas). |
+| `?maps=essai,entrepot_rdc_essai` | (E1) Une fois la partie posée, voyage de carte en carte (`WorldManager.go_to`, Spawn de chaque carte) ; une ligne « [m1] carte <id> chargée : fondu … ms, chargement … ms en n images, installation … ms, total … ms » par changement, puis « [m1] voyage terminé ». `tools/web_maps.js` s'en sert (section « Cartes » plus bas). |
 
 Avec l'un d'eux, la page reçoit aussi deux aides (acte 1) : `window.wordendFace("nygglatho")`
 ou `window.wordendFace(x, z)` tourne le joueur vers un PNJ présent (son `NpcData.id`) ou un
 point de l'île ; `window.wordendPos` donne la position du joueur (`[x, z]`) à chaque image. La
 marche reste aux touches. (HD-2D) La caméra fixe ne tourne pas, les touches sont relatives à
 l'écran (le haut est le nord) : `wordendFace` pose aussi la cible dans `window.wordendAim`
-(`[x, z]`), et `tools/web_m2.js` en tire les touches à tenir (W, A, S, D physiques, soit Z, Q,
-S, D en AZERTY, seules ou deux à deux), choisies de nouveau toutes les 300 ms en marchant.
+(`[x, z]`), d'où un outil peut tirer les touches à tenir (W, A, S, D physiques, soit Z, Q,
+S, D en AZERTY, seules ou deux à deux ; (F1) `tools/web_m2.js`, qui le faisait, est retiré).
 
 Pendant ce temps, la console du navigateur reçoit `[m1] …` à chaque événement ((E1) carte et
-mesures de son chargement, zone, invite,
-dialogue, quête et étape de quête, objet, vague, Timere tué, fin de série, dégâts, mort,
-réapparition, perte du focus) et, toutes les 2 s, images/s, draw calls, primitives, position du
-joueur, état de la sauvegarde et distance du Timere le plus proche. `tools/web_m1.js`
-(Playwright, mode d'emploi en tête du fichier) s'en sert pour jouer une partie dans le Chromium
-sans écran : nouvelle partie → Couchant → cloche de veille → vague 1 → combat → mort →
-réapparition, puis le banc ; `tools/web_m2.js`, pour le début de l'acte 1 (plus bas).
+mesures de son chargement, invite, dialogue, objet, Timere tué, dégâts, mort, réapparition,
+perte du focus) et, toutes les 2 s, images/s, draw calls, primitives, position du joueur, état
+de la sauvegarde et distance du Timere le plus proche. (F1) `tools/web_m1.js` (l'arène) et
+`tools/web_m2.js` (l'acte 1 de l'ancienne île) sont retirés avec elle ; les mesures qui suivent
+sont celles de leur temps.
 
 Mesures du 6 octobre 2026 (build de l'intégration M1, Chromium 141 headless, SwiftShader, VM
 partagée) : aucun message d'erreur dans la console ; 1,7 à 2,4 images/s seulement (rendu
@@ -308,6 +305,9 @@ primitives ; pire vue mesurée : le village vu des dunes (96 draw calls, 156 000
 docs/DECISIONS.md, section « Intégration M1 »).
 
 ## Vérification de l'acte 1 (navigateur)
+
+(F1) Section historique : l'acte 1 de l'ancienne île et `tools/web_m2.js` sont retirés ; les
+mesures ci-dessous restent comme référence.
 
 `tools/web_m2.js` (Playwright, mode d'emploi en tête du fichier) joue le début de l'acte 1 dans
 le Chromium sans écran, puis mesure chaque zone ; dernier argument : `acte1`, `zones` ou `tout`
@@ -418,7 +418,8 @@ la nouvelle instanciée, en une image. Au lancement, `main.gd` charge la partie 
 carte sous la même barre.
 
 `tools/web_maps.js` (Playwright, mode d'emploi en tête du fichier) ouvre
-`index.html?maps=essai,ile_ancienne,essai,ile_ancienne` dans un profil neuf, lance une nouvelle
+`index.html?maps=essai,entrepot_rdc_essai,essai,entrepot_rdc_essai` dans un profil neuf ((F1) avant :
+l'ancienne île), lance une nouvelle
 partie et relève les lignes « [m1] carte <id> chargée : … » des raccourcis de test, avec une
 capture à chaque arrivée (`build/shots/maps_web_<n>_<carte>.png`).
 

@@ -961,3 +961,8 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
 - **E8 (jeux)** : `StoryDirector.register_game(&"ballon", …)` (`play_story_ball_match`, avec `with_player` et `player_at`) permettrait à 5.3 de poser la joueuse dans le match au lieu de la mener au bord du champ ; en attendant, 5.2 la place à `entrepot:champ_entree` et la vie fait le reste.
 - **V1 (vie)** : l'embuscade de Collon à partir du jour 5 (VIE.md 5.5) et la ligne de ballon des jours 9 à 12 (`day: [9, 12]`, comme celle des jours 5 et 6 dans `data/life/ile_68/`) ; le ballon vit sur quinze petites, dont `fairy_07` à `fairy_10` qui portent encore la planche de `fairy_01` (cahier n° 6, lot D : planches `fairy_07` à `fairy_10`).
 - **Images** : aucune commande nouvelle. Au cahier n° 6 : `willem_life.frappe` (le premier coup de pied de 5.1 est celui de Collon en attendant), les planches `fairy_07` à `fairy_10`.
+- **(F1) Fuite de textures du ciel à la sortie (Atmosphere, rendu Compatibility)** : une carte rendue
+  seule (`tools/screenshot.sh res://src/world/maps/essai/essai.tscn …`) laisse à la sortie deux
+  « Texture with GL ID … leaked 349524 bytes » (256 × 256 avec mipmaps : le ciel du `AtmosphereRig`),
+  même scène libérée et `Atmosphere.dress(null)` appelé ; déjà à la base 8c9bd99, sans lien avec
+  l'ancienne île. Tant que ce n'est pas corrigé (lot E9), `tools/check.sh` capture le menu.
