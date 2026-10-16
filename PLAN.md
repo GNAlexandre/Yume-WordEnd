@@ -1727,7 +1727,9 @@ class_name StoryPacing    # FREE, SCENARIO, FLAG, FREE_FLAG, NAMES ; of_game, st
 class_name StoryOffers    # (L1) rebuild(carte), refresh(), talk(pnj) -> bool, scene_ended(id, finie)
 class_name StorySkip      # (L2) is_skippable, prompt_text, skip(runner), handle_input, skip_flags(données),
                           # SKIP_ACTION, FORWARD_ACTION ; séquences vues
-class_name StoryResolve   # (L4) can_sleep(règle), can_rest(règle), before_sleep(île, jour), resolve_scene
+class_name StoryResolve   # (L4) can_sleep(règle), can_rest(règle), before_sleep(île, jour), resolve_scene,
+                          # due, passed_flag, is_passed, passed_on, lived_on, today_scenes,
+                          # scene_label, scene_title, waiting_hint ; PASSED_PREFIX, FREE_LINE
 class_name StoryFreeData  # vérifie les clés du libre (OFFER_KEYS, SKIP_KEYS, FREE_SCENE_KEYS, FREE_ACT_KEYS)
 ```
 
@@ -1742,8 +1744,8 @@ class_name StoryFreeData  # vérifie les clés du libre (OFFER_KEYS, SKIP_KEYS, 
   redevient disponible, sans retour forcé à sa carte ;
 - nouvelle partie : pas d'écran noir, un carton « Jour 1 » (`free.start_card`), le jour 1 au
   créneau `free.start_slot` (le soir), la main au joueur à `Spawn` ;
-- le reste (coucher, temps qui passe, indice) est celui du scénarisé tant que L1 et L4 n'ont pas
-  rempli leurs points d'entrée ; passer une scène : ci-dessous (X-L2).
+- le coucher, le temps qui passe, l'indice et le calendrier : ci-dessous (X-L4) ; passer une
+  scène : ci-dessous (X-L2).
 
 **Les données** (format strict, clé inconnue refusée) :
 - une scène peut porter `offer` (l'ancre de sa proposition : `{"npc": id}` ou
@@ -1800,10 +1802,51 @@ fichier, sans toucher aux autres) :
   scène, le temps d'avant revient. Un appui bref (les tests du scénarisé) ne fait qu'avancer le
   dialogue. `StoryRunner.is_forwarding()`.
 
+**Les jours libres (X-L4)** (`StoryResolve`, en libre seulement ; le scénarisé ne change pas) :
+- **le jour devient un chapitre** : `can_sleep` vaut le soir ou la nuit (`act.json`,
+  `sleep.slots`), hors scène, sans condition `sleep_after`, le jour du départ compris ; `can_rest`
+  vaut à tout créneau sauf la nuit (sans `_rest_cap`) ; après le jour 12, les jours libres 13 et
+  suivants continuent (au plus `GameState.MAX_DAY`), sans autre départ, avec les lignes de base
+  des emplois du temps de la vie ;
+- **au coucher** (`before_sleep(île, jour)`, appelé par `StoryDirector.sleep` sous le noir, avant
+  la ligne et le carton du jour), les scènes laissées passer sont **réglées sans être jouées** :
+  celles dont les jours sont finis (`due(île, jour)` : jours passés ou jour qui finit), dans l'ordre
+  de leurs `after` (on reprend tant qu'une scène se libère : `j10_4_toit` après `j10_5_tour`), leur
+  `if` vrai à leur tour (`j12_3_epilogue` suit `j12_2_depart` par la clé `skip`) ;
+  `resolve_scene(île, id) -> bool` n'applique que les étapes d'état, leurs `if` à leur tour :
+  `flag` ; `calendar` (au jour de la scène, ramené dans ses jours) ; `ship`
+  (`ShipControl.finish`) ; `game` : son `success_flag` mis à faux, ni son repli ni son drapeau
+  « joué » (un jeu pas joué n'est pas gagné) ; `dialogue` : `StoryDialogue.apply_silently` avec
+  les choix, la clé `skip` de la scène (une fois) si un choix change l'état, sinon le premier
+  choix ; tout le reste est ignoré (`next_day`, `slot`, `go_to`, `place`, `walk`, caméra,
+  fondus, cartons, bulles, `moment`…) ; puis `GameState.mark_scene_done(id)` et le drapeau
+  `passee_<id>` (`StoryResolve.passed_flag`, `is_passed`) ;
+- **la ligne du calendrier** : celle du jour si une de ses scènes a été vécue (faite sans
+  `passee_`), une ligne choisie par une scène réglée (`calendar` avec `line` : `depart`) sinon
+  gardée, et sinon le texte libre `calendar/libre` (`StoryResolve.FREE_LINE` : « Une journée à
+  moi, à marcher sur l'île. »), aussi pour les jours 13 et suivants ;
+- **l'indice** : plus d'indice impératif hors scène (`StoryDirector._waiting_hint` rend
+  `waiting_hint()`, vide) ; ceux des étapes `hint` d'une scène jouée restent ;
+- **le calendrier** (`src/ui/calendar.gd`, libre) : sous la ligne d'un jour, ses scènes laissées
+  passer en texte discret (« Laissé passer : … », `ui/calendar_passed`, `passed_lines()`), sans
+  les juger ; avant le filet d'or, « À vivre aujourd'hui » (`ui/today_title`, `%FreeToday`,
+  `today_entries()`, `free_today_text()`) : `today_scenes(île)` (pas faites, `after` faits, `if`
+  vrai, un créneau maintenant ou plus tard), dites par `scene_label` (le texte `offer.text` de la
+  proposition s'il existe, sinon le titre, suivi du créneau s'il est plus tard : `ui/today_later`,
+  `ui/slot_<créneau>`), sinon `ui/today_none` ; après le départ, la grille montre les douze
+  derniers jours (le jour courant en dernier) ; les lignes défilent plus tôt pour que la page
+  reste sous 640 px.
+
 **Tests** : la base M1 (`tests/stubs/m1_game_test.gd`) donne `mode_for_test()` (scénarisé) : tous
 les tests d'avant le mode libre en restent là ; les démos `demo_e6`, `demo_s2`, `demo_s2_tard`
 posent le scénarisé. Le mode libre : `tests/integration/test_free_start.gd` (nouvelle partie,
 quinze secondes sans scène, anciens pièges, portes, sauvegarde et reprise, ancienne partie) ;
+`tests/integration/test_free_days.gd` (X-L4 : nouvelle partie libre, onze nuits sans rien jouer
+par les invites jusqu'au jour 12, scènes des jours 1 à 11 réglées, onze lignes, « À vivre
+aujourd'hui », la vie repeuplée à chaque réveil, aucun indice, puis le jour 13) ;
+`tests/unit/test_story_resolve.gd` (X-L4 : règles du coucher et du repos dans les deux modes,
+étapes d'état, clé `skip`, jeux perdus, navire, ordre des `after`, lignes, calendrier) ; démo
+`tests/integration/demo_x_l4.tscn` (le calendrier libre ; `docs/img/l4_*.png`) ;
 `tests/integration/test_free_skip.gd` (X-L2 : les 55 scènes passées d'un appui après 1 s, en
 moins de 3 s chacune ; l'épilogue après le départ passé ; un jeu arrêté et la clé `skip` du duel ;
 le scénarisé inchangé ; l'épilogue deux fois plus court touche tenue) ; règles et données :
