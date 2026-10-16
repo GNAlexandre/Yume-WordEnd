@@ -46,6 +46,8 @@ const SHADOW_LENGTH_RANGE := Vector2(0.3, 1.8)
 const SHADOW_NIGHT_TAIL := 0.35
 const SHADOW_NIGHT_CORE := 0.75
 const SHADOW_RAIN_TAIL := 0.25
+## (RD) Part du cœur des ombres dedans (meubles sous la lumière douce des fenêtres et des lampes).
+const SHADOW_INTERIOR_CORE := 0.7
 
 ## Lumière du joueur : énergie et portée à pleine force, couleur (blanc bleuté de l'orbe),
 ## hauteur (m, la main levée) et écart de côté (m, vers où il regarde).
@@ -175,6 +177,8 @@ static func apply_shadow_sun(lighting: HD2DLighting, interior: bool = false) -> 
 	if interior:
 		tail = 0.0
 	var core := lerpf(1.0, SHADOW_NIGHT_CORE, lighting.night_amount)
+	if interior:
+		core *= SHADOW_INTERIOR_CORE
 	DecorPanel.set_shadow_sun(Vector2(-toward.x, -toward.z), length, tail, core)
 
 

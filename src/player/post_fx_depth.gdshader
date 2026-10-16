@@ -70,6 +70,24 @@ vec3 blurred(vec2 uv, vec2 pixel, float radius_px, vec2 fragcoord) {
 	return sum / 12.5;
 }
 
+// (RD) Le rendu Compatibility écrit ALBEDO d'un matériau non éclairé en le passant en linéaire par
+// une approximation polynomiale (c (c (0,305 c + 0,682) + 0,0125)), puis en sRGB par la formule
+// exacte : recopiée telle quelle, l'image s'assombrit dans les tons sombres (mesuré : 16 → 12,
+// 33 → 31 sur 255 ; une vue de nuit perdait 3 % de luminance). On écrit donc la valeur dont
+// l'aller et retour redonne l'image : sRGB → linéaire exact, puis l'inverse du polynôme (deux pas
+// de Newton). Mesuré : la copie rend l'image à 1/255 près.
+vec3 albedo_for_screen(vec3 srgb) {
+	vec3 c = clamp(srgb, 0.0, 1.0);
+	vec3 lin = mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));
+	vec3 x = c;
+	for (int i = 0; i < 3; i++) {
+		vec3 f = x * (x * (x * 0.305306011 + 0.682171111) + 0.012522878) - lin;
+		vec3 df = x * (x * 0.915918033 + 1.364342222) + 0.012522878;
+		x = clamp(x - f / df, 0.0, 1.0);
+	}
+	return x;
+}
+
 void fragment() {
 	vec2 uv = SCREEN_UV;
 	// Taille d'un pixel de l'écran, et le flou ramené à 720 px de haut.
@@ -95,6 +113,8 @@ void fragment() {
 		spread = max(spread, focus_near_radius(view_depth(uv + vec2(-d.x, d.y), inv)));
 		radius = max(radius, spread * scale * 0.85);
 	}
-	ALBEDO = blurred(uv, pixel, radius, FRAGCOORD.xy);
+	vec3 color = blurred(uv, pixel, radius, FRAGCOORD.xy);
+	color = albedo_for_screen(color);
+	ALBEDO = color;
 	ALPHA = 1.0;
 }

@@ -374,6 +374,20 @@ func depth_blur_material() -> ShaderMaterial:
 	return _depth_blur
 
 
+## (RD) Allume ou éteint le flou de profondeur (qualité réduite : sans lui, ni copie de l'image
+## ni de la profondeur dans le monde 3D ; les matériaux mélangés gardent leur flou propre).
+func set_depth_blur_enabled(enabled: bool) -> void:
+	var blur := get_node_or_null(^"Camera3D/DepthBlur") as Node3D
+	if blur != null:
+		blur.visible = enabled
+
+
+## (RD) Vrai si le flou de profondeur est allumé.
+func is_depth_blur_enabled() -> bool:
+	var blur := get_node_or_null(^"Camera3D/DepthBlur") as Node3D
+	return blur != null and blur.visible
+
+
 func _valid_target() -> Node3D:
 	if is_instance_valid(lock_target) and lock_target.is_inside_tree():
 		return lock_target

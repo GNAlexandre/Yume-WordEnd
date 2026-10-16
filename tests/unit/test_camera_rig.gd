@@ -203,6 +203,10 @@ func test_post_fx_shader_compiles() -> void:
 	assert_string_contains(DEPTH_SHADER.code, "hint_depth_texture", "lit la profondeur")
 	assert_gt(DEPTH_SHADER.get_shader_uniform_list().size(), 6, "le shader de profondeur compile")
 	assert_eq(blur.cast_shadow, GeometryInstance3D.SHADOW_CASTING_SETTING_OFF)
+	assert_true(rig.is_depth_blur_enabled())
+	rig.set_depth_blur_enabled(false)
+	assert_false(blur.visible, "qualité réduite : le flou s'éteint")
+	rig.set_depth_blur_enabled(true)
 
 
 # --- (H5) Bande nette du flou, cadrage des bâtiments -----------------------------------------
