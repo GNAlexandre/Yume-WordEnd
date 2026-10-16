@@ -105,6 +105,13 @@ static func repose_lost(mode: StringName) -> bool:
 	return mode == FREE
 
 
+## Pose sur la mise en scène les règles du mode : portes fermées jusqu'à leur jour, suiveur perdu
+## reposé derrière le joueur.
+static func apply_to_stage(stage: StoryStage, mode: StringName) -> void:
+	stage.doors_by_day = doors_by_day(mode)
+	stage.repose_lost = repose_lost(mode)
+
+
 ## Vrai si une partie reprise en pleine scène la rejoue (scénarisé).
 static func replays_interrupted(mode: StringName) -> bool:
 	return mode != FREE
