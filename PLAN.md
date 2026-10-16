@@ -1697,6 +1697,81 @@ scène suivante. Les tests : `StoryData.use_root("res://tests/data/story")` (act
 
 **(S2) Jours 5 et 6** (`j5_1_jeu_willem` … `j6_4_souvenir`, ACTE1.md 5.1 à 6.4) : le ballon n'est pas une étape `game` mais la vie : la séquence de midi (5.1) finit au créneau de l'après-midi (`slot`), les lignes `ballon` des jours 5 et 6 (`data/life/ile_68/`, arbitre, rouge, blanc) lancent le match d'E8 ; entrer dans le champ suffit pour jouer. Démonstration : `S2_DAY=5|6 tools/godot … res://tests/integration/demo_s2.tscn` (une image toutes les 0,5 s) puis `python3 tools/s2_sheet.py <dossier>` (planches) ; tests : `tests/integration/test_s2_day5.gd` et `test_s2_day6.gd` (base `tests/stubs/s2_story_test.gd` : reprise au réveil d'un jour, `rest_until`, `sleep_by_prompt`).
 
+### (X) Exploration libre : le rythme
+
+Deux modes de jeu (refonte « exploration libre d'abord », 16 octobre 2026), pour ne rien perdre du
+travail fait : le **mode scénarisé** (`&"scenario"`, le récit en jours d'E6 et de S2, au bit près)
+et le **mode libre** (`&"libre"`, défaut du jeu : toute l'île ouverte, les scènes du livre deviennent
+des propositions que l'on peut passer). Le choix se fait à « Nouvelle partie » (lot L5). Socle :
+lot X-L0 ; décisions : docs/DECISIONS.md (« X-L0 »).
+
+**Persistance** : des drapeaux de partie, sans changer le schéma de la sauvegarde (SAVE_VERSION 4)
+ni les contrats (EventBus, GameState, project.godot). `mode_scenario` présent : scénarisé ;
+`mode_libre` : une partie commencée ou passée en libre ; aucun des deux : `default_mode` (libre
+dans le jeu). Une ancienne partie sans drapeau : libre, sauf si elle a déjà des scènes faites
+(`scenes_done` non vide) : scénarisée, pour ne pas changer une partie en cours
+(`StoryPacing.migrate`, au chargement, récit allumé).
+
+```gdscript
+# StoryDirector (ajouts X-L0)
+signal mode_changed(mode)                       # StoryPacing.FREE ou SCENARIO
+var default_mode := StoryPacing.FREE            # mode sans drapeau ; base M1 : mode_for_test() (scenario)
+var next_game_mode := &""                       # mode de la prochaine nouvelle partie, posé avant
+                                                # SaveManager.new_game (consommé au chargement suivant)
+func mode() -> StringName / is_free() -> bool / set_mode(mode) / mode_name(mode) -> String
+func offers() -> StoryOffers / skipper() -> StorySkip / resolver() -> StoryResolve
+# src/story/ — classes
+class_name StoryPacing    # FREE, SCENARIO, FLAG, FREE_FLAG, NAMES ; of_game, store, migrate, is_chained,
+                          # allows_trigger, doors_by_day, replays_interrupted, starts_in_black,
+                          # start_slot, shows_start_card ; Chain (la dernière scène finie et sa carte)
+class_name StoryOffers    # (L1) rebuild(carte), refresh(), talk(pnj) -> bool, scene_ended(id, finie)
+class_name StorySkip      # (L2) is_skippable, prompt_text, skip(runner), handle_input ; séquences vues
+class_name StoryResolve   # (L4) can_sleep(règle), can_rest(règle), before_sleep(île, jour), resolve_scene
+class_name StoryFreeData  # vérifie les clés du libre (OFFER_KEYS, SKIP_KEYS, FREE_SCENE_KEYS, FREE_ACT_KEYS)
+```
+
+**Les règles du libre** (`StoryPacing`, seul endroit où elles s'écrivent) :
+- aucun déclencheur automatique (`ready`, `enter`, `reach`, `talk`) ne lance une scène, sauf une
+  **suite** (`ready` + `after`, ou `free.chain` vrai) juste après sa tête, tant que le joueur est
+  sur la carte où la tête a fini ; les déclencheurs volontaires (`prompt`, `examine`) restent
+  permis ; `talk` passe par `StoryOffers.talk`, puis la conversation libre ;
+- `StoryStage.apply_doors` ouvre toutes les portes (`doors_by_day` faux) ; repassées en
+  scénarisé, elles se referment avant leur jour ;
+- une partie reprise en pleine scène ne la rejoue pas : `GameState.story_scene` est vidé, la scène
+  redevient disponible, sans retour forcé à sa carte ;
+- nouvelle partie : pas d'écran noir, un carton « Jour 1 » (`free.start_card`), le jour 1 au
+  créneau `free.start_slot` (le soir), la main au joueur à `Spawn` ;
+- le reste (coucher, temps qui passe, indice, passer une séquence vue) est celui du scénarisé
+  tant que L1, L2 et L4 n'ont pas rempli leurs points d'entrée.
+
+**Les données** (format strict, clé inconnue refusée) :
+- une scène peut porter `offer` (l'ancre de sa proposition : `{"npc": id}` ou
+  `{"point": nom, "map": id}`, la carte de la scène par défaut ; `text` : sa clé de texte),
+  `skip` (`{"flags": [...]}` : posés quand on la passe) et `free` (`{"chain": bool}`) ;
+- `act.json` porte `free` (`start_slot`, `start_card`) ;
+- les textes `ui/mode_scenario` et `ui/mode_libre` (« Mode scénarisé », « Mode libre »).
+
+**Points d'entrée des lots suivants** (le directeur n'appelle qu'eux ; un lot remplit son
+fichier, sans toucher aux autres) :
+- **L1, propositions** (`story_offers.gd`) : `rebuild(map)` à chaque arrivée sur une carte (après
+  les invites du récit) et à chaque changement de mode ; `refresh()` avec les invites (toutes les
+  0,3 s hors scène) ; `talk(npc_id)` en libre, hors scène, avant la conversation libre (vrai :
+  la conversation est prise) ; `scene_ended(id, completed)` à la fin de chaque scène. Jouer une
+  scène proposée : `StoryDirector.play(id)` ;
+- **L2, passer** (`story_skip.gd`) : `handle_input` reçoit chaque appui pendant une scène (vrai :
+  pris) ; `is_skippable`, `prompt_text` (l'invite « Échap : passer »), `skip(runner)` ; le
+  fichier des séquences vues y vit (`has_seen`, `mark_seen`, `forget_seen`, chemin
+  `StoryDirector.seen_path`) ;
+- **L4, jours libres** (`story_resolve.gd`) : `can_sleep(règle)` et `can_rest(règle)` décident en
+  libre (la règle du scénarisé en argument) ; `before_sleep(île, jour)` est appelé en libre au
+  coucher, avant le jour suivant ; `resolve_scene(île, id)` règle une scène sans la jouer.
+
+**Tests** : la base M1 (`tests/stubs/m1_game_test.gd`) donne `mode_for_test()` (scénarisé) : tous
+les tests d'avant le mode libre en restent là ; les démos `demo_e6`, `demo_s2`, `demo_s2_tard`
+posent le scénarisé. Le mode libre : `tests/integration/test_free_start.gd` (nouvelle partie,
+quinze secondes sans scène, anciens pièges, portes, sauvegarde et reprise, ancienne partie) ;
+règles et données : `tests/unit/test_story_data.gd`.
+
 ### (U1) L'interface « Nuit douce » : thème, dialogue et signes
 
 - **Thème unique** : `src/ui/wordend_theme.tres`, à la racine de chaque écran (`theme`). Tout Control ajouté
