@@ -53,7 +53,16 @@ func test_west_path_to_the_interior_and_front_door_back() -> void:
 		await walk_keys_until([KEY_A], func() -> bool: return WorldManager.is_transitioning(), 8.0),
 		"sortie à pied vers le rez-de-chaussée"
 	)
-	assert_eq(player.process_mode, Node.PROCESS_MODE_DISABLED, "joueur figé pendant le fondu")
+	# (AN) Pendant le fondu au noir, seules les commandes sont figées : le joueur s'arrête, finit
+	# son pas et passe au repos ; il ne quitte la physique qu'une fois l'écran noir.
+	assert_true(player.is_input_held(), "commandes figées pendant le fondu")
+	assert_true(
+		await until(func() -> bool: return player.process_mode == Node.PROCESS_MODE_DISABLED, 5.0),
+		"joueur figé sous le noir"
+	)
+	assert_eq(WorldManager.fade_alpha(), 1.0, "figé une fois l'écran noir")
+	assert_eq(player.visual.current_animation(), &"repos", "au repos, pas figé en pleine foulée")
+	assert_almost_eq(player.velocity.length(), 0.0, 0.01, "arrêté")
 	assert_true(
 		await until(func() -> bool: return WorldManager.current_map() == RDC, 10.0),
 		"rez-de-chaussée d'essai posé"
@@ -69,6 +78,7 @@ func test_west_path_to_the_interior_and_front_door_back() -> void:
 	assert_eq(player.camera_rig.limits, rdc.bounds(), "caméra bornée à la carte")
 	assert_true(await wait_transition(), "fondu de retour")
 	assert_ne(player.process_mode, Node.PROCESS_MODE_DISABLED, "joueur rendu")
+	assert_false(player.is_input_held(), "commandes rendues")
 	assert_eq(get_viewport().get_camera_3d(), player.camera_rig.camera, "caméra du joueur")
 	var fade := game.get_node(^"UI/MapFade")
 	assert_eq(map_banner(), rdc.display_name, "nom de la carte annoncé")

@@ -120,9 +120,17 @@ func test_visual_uses_skin_and_idles() -> void:
 	var npc := _npc()
 	assert_eq(npc.visual.skin, NYGGLATHO.skin, "skin data.skin")
 	assert_eq(npc.visual.current_animation(), &"repos")
-	await wait_seconds(0.4)
-	assert_ne(npc.visual.scale.y, 1.0, "respiration au repos")
-	assert_almost_eq(npc.visual.scale.y, 1.0, npc.breath_amount + 0.001)
+	# (AN) La respiration est celle de la planche (deux images de repos) : plus d'étirement du
+	# visuel, qui faisait scintiller des lignes de pixels.
+	var first := npc.visual.current_frame()
+	var breathed := false
+	for _i in 8:
+		await wait_seconds(0.15)
+		assert_eq(npc.visual.scale, Vector3.ONE, "sans étirement")
+		breathed = breathed or npc.visual.current_frame() != first
+	assert_true(breathed, "respiration dessinée au repos")
+	assert_eq(npc.visual.current_animation(), &"repos")
+	assert_true(npc.visual.match_stride, "(AN) cadence de marche à la vitesse réelle")
 
 
 func test_data_can_be_set_after_ready() -> void:

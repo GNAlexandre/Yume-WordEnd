@@ -5,8 +5,9 @@ extends CharacterBody3D
 ## Structure figée de npc.tscn : racine CharacterBody3D (couche 1 world) du groupe
 ## "interactable", enfants CollisionShape3D, Visual (CharacterVisual), InteractArea (Area3D,
 ## couche 6 interactable : c'est elle que détecte le joueur) et DialogueRunner.
-## Comportement : visuel du skin data.skin, animation « repos » de la planche et légère
-## respiration ; se tourne vers le joueur (groupe "player") à moins de look_distance ;
+## Comportement : visuel du skin data.skin, animation « repos » de la planche (sa respiration est
+## dessinée : (AN) plus d'étirement du visuel, qui faisait apparaître et disparaître des lignes de
+## pixels) ; se tourne vers le joueur (groupe "player") à moins de look_distance ;
 ## interact() lance son DialogueRunner. Un PNJ sans data reste invisible et muet, sans erreur.
 ## Le PNJ ne marche pas : à l'apparition, il tombe au plus SETTLE_TIME s sur le sol sous lui
 ## (couche 1), puis ne bouge plus (son emplacement peut donc être un peu au-dessus du sol).
@@ -34,6 +35,8 @@ const DEFAULT_HEIGHT := 1.6
 ## Animations de la planche : au repos, et en conversation (facultative).
 const IDLE := &"repos"
 const TALK := &"parle"
+## (AN) Décalage maximal de l'horloge du repos à l'apparition (s).
+const IDLE_PHASE_SPREAD := 1.0
 ## (E4) Couche « world » du corps (structure figée de npc.tscn).
 const WORLD_LAYER := 1
 ## (E4) Hauteur de la bulle au-dessus de la tête (m) et durée par défaut (s).
@@ -57,11 +60,6 @@ const PLAYER_HEIGHT := 1.5
 			_apply_data()
 ## Distance (m, dans le plan du sol) en deçà de laquelle le PNJ regarde le joueur.
 @export var look_distance: float = 4.0
-## Amplitude de la respiration au repos (fraction de la hauteur du visuel ; Visual.scale.y oscille
-## autour de sa valeur de départ).
-@export var breath_amount: float = 0.02
-## Durée d'une respiration (s).
-@export var breath_period: float = 2.8
 ## Délai (s) pendant lequel interact() est ignoré après la fin de son dialogue : la touche qui
 ## ferme la dernière réplique ne doit pas relancer la conversation dans la même image.
 @export var talk_cooldown: float = 0.3
@@ -71,8 +69,6 @@ var life: LifeActor = null
 ## (E4) Tenue affichée à la place de data.skin (LifeActor, set_outfit) ; null : data.skin.
 var outfit_skin: SkinData = null
 
-var _breath_time: float = 0.0
-var _base_scale: Vector3 = Vector3.ONE
 var _ended_at_msec: int = -1
 var _settle_left: float = SETTLE_TIME
 var _head_height: float = DEFAULT_HEIGHT
@@ -89,8 +85,8 @@ var _bubble_left: float = 0.0
 
 
 func _ready() -> void:
-	_breath_time = randf() * breath_period
-	_base_scale = visual.scale
+	# (AN) La cadence de marche suit la vitesse réelle (LifeActor le déplace sans physique).
+	visual.match_stride = true
 	_present_process_mode = process_mode
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
@@ -101,12 +97,12 @@ func _ready() -> void:
 	if life != null:
 		set_physics_process(false)
 	_apply_data()
+	# (AN) Chacun respire à son rythme : l'horloge du repos part d'un instant tiré au hasard (des
+	# PNJ posés ensemble ne respirent plus à l'unisson).
+	visual.advance(randf() * IDLE_PHASE_SPREAD)
 
 
 func _process(delta: float) -> void:
-	_breath_time += delta
-	var breath := sin(_breath_time * TAU / maxf(breath_period, 0.1)) * breath_amount
-	visual.scale = _base_scale * Vector3(1.0, 1.0 + breath, 1.0)
 	if _bubble_left > 0.0:
 		_bubble_left -= delta
 		if _bubble_left <= 0.0:

@@ -410,10 +410,11 @@ func _tick_move(delta: float) -> void:
 	_check_stuck(delta, next)
 
 
-## (L3) Une allure à l'animation plus vive (rattrape) : l'horloge de la planche avance en plus.
+## (L3) Une allure à l'animation plus vive (rattrape) : l'horloge de la planche avance en plus ;
+## (AN) sauf si la planche suit déjà la vitesse au sol (match_stride), qui règle la cadence.
 func _speed_up_anim(delta: float) -> void:
 	var factor := LifeData.anim_speed(_gait)
-	if factor > 1.0 and is_instance_valid(npc):
+	if factor > 1.0 and is_instance_valid(npc) and not npc.visual.match_stride:
 		npc.visual.advance(delta * (factor - 1.0))
 
 

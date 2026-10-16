@@ -75,7 +75,13 @@ func test_travel_to_the_test_island_and_back() -> void:
 	await tap_key(KEY_E)
 	assert_true(WorldManager.is_traveling(), "E : le voyage commence")
 	assert_signal_emitted_with_parameters(WorldManager, "travel_started", [ILE_ESSAI])
-	assert_eq(player.process_mode, Node.PROCESS_MODE_DISABLED, "joueur figé")
+	# (AN) Commandes figées tout de suite ; le joueur ne quitte la physique qu'une fois l'écran noir.
+	assert_true(player.is_input_held(), "commandes figées")
+	assert_true(
+		await until(func() -> bool: return player.process_mode == Node.PROCESS_MODE_DISABLED, 5.0),
+		"joueur figé sous le noir"
+	)
+	assert_eq(WorldManager.fade_alpha(), 1.0, "figé une fois l'écran noir")
 	# La vue du ciel : posée sous le noir, elle le lève, défile, puis redescend au noir.
 	var opened: bool = await until(func() -> bool: return WorldManager.travel_view() != null, 5.0)
 	assert_true(opened, "vue du ciel ouverte")
@@ -99,6 +105,7 @@ func test_travel_to_the_test_island_and_back() -> void:
 	assert_true(GameState.knows_island(ILE_68) and GameState.knows_island(ILE_ESSAI))
 	assert_false(get_tree().root.disable_3d, "3D de nouveau dessinée")
 	assert_ne(player.process_mode, Node.PROCESS_MODE_DISABLED, "joueur rendu")
+	assert_false(player.is_input_held(), "commandes rendues")
 	assert_eq(WorldManager.last_transition()["island"], ILE_ESSAI, "mesures du voyage")
 	# Sauvegarde et reprise sur l'île d'essai.
 	await put_player(Vector3(16.0, 0.2, 15.0), Vector3.FORWARD)

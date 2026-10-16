@@ -92,6 +92,8 @@ func test_follows_the_player_with_a_slight_lag() -> void:
 
 func test_stays_within_the_island_limits() -> void:
 	var rig := _spawn_rig(Vector3(78, 0, -79))
+	# Les bornes seules (la marge aux bords de l'écran a son propre test).
+	rig.edge_margin = 0.0
 	_update(rig, 3.0)
 	assert_almost_eq(rig.focus().x, rig.limits.end.x, 0.01, "bornée à l'est")
 	assert_almost_eq(rig.focus().z, rig.limits.position.y, 0.01, "bornée au nord")
@@ -101,6 +103,9 @@ func test_limits_follow_the_current_map() -> void:
 	# (E1) À chaque carte (EventBus.map_entered) : ses bornes (Map.bounds(), la carte entière
 	# par défaut), la caméra courante, recalée sur le joueur.
 	var rig := _spawn_rig(Vector3(5, 0, 5))
+	# Les bornes seules : le joueur est posé loin hors de la carte (la marge aux bords de l'écran a
+	# son propre test).
+	rig.edge_margin = 0.0
 	var map := Map.new()
 	map.name = "carte_test"
 	map.size = Vector2(30, 20)
@@ -355,24 +360,90 @@ func test_conversation_keeps_the_player_above_the_dialogue_box() -> void:
 	assert_almost_eq(_screen_y(rig, rig.global_position), walking, 0.01, "puis le cadrage revient")
 
 
+## Fait marcher le porteur de la caméra à velocity (m/s, accélération et freinage du joueur :
+## 45 et 60 m/s²) pendant seconds s ; renvoie le plus grand écart, dans le sens de la marche, du
+## point visé au point visé au repos (sens : celui de velocity, sinon travel).
+func _walk(
+	rig: CameraRigScript, velocity: Vector3, seconds: float, travel: Vector3 = Vector3.RIGHT
+) -> float:
+	var holder := rig.get_parent() as Node3D
+	var worst := -INF
+	for _i in roundi(seconds / DT):
+		var rate := 45.0 if velocity != Vector3.ZERO else 60.0
+		rig.follow_velocity = rig.follow_velocity.move_toward(velocity, rate * DT)
+		holder.position += rig.follow_velocity * DT
+		rig.update_camera(DT)
+		var along := velocity.normalized() if velocity != Vector3.ZERO else travel
+		worst = maxf(worst, (rig.focus() - rig.focus_goal(false)).dot(along))
+	return worst
+
+
 func test_lead_eases_in_and_out() -> void:
-	# Le point visé avance dans le sens de la marche sans à-coup au départ ni à l'arrêt.
+	# Le point visé suit la marche sans à-coup au départ ni à l'arrêt, et ne traîne pas derrière.
 	var rig := _spawn_rig()
 	_update(rig, 1.0)
 	var rest := rig.focus()
-	rig.follow_velocity = Vector3(4, 0, 0)
-	_update(rig, DT)
-	assert_lt(rig.focus().x - rest.x, 0.02, "départ : l'avance ne saute pas")
-	_update(rig, 3.0)
+	_walk(rig, Vector3(5.8, 0, 0), DT)
+	assert_lt(rig.focus().x - rest.x, 0.02, "départ : le point visé ne saute pas")
+	_walk(rig, Vector3(5.8, 0, 0), 3.0)
 	assert_almost_eq(
-		rig.focus().x - rest.x, 4.0 * rig.lead_time, 0.05, "en marche : avance de lead_time s"
+		rig.focus().x, rig.focus_goal(false).x, 0.1, "en course : l'avance rattrape le retard"
 	)
 	var moving := rig.focus().x
-	rig.follow_velocity = Vector3.ZERO
-	_update(rig, DT)
+	_walk(rig, Vector3.ZERO, DT)
 	assert_gt(rig.focus().x, moving - 0.02, "arrêt : pas de recul brusque")
-	_update(rig, 4.0)
-	assert_almost_eq(rig.focus().x, rest.x, 0.05, "puis revient sur le joueur")
+	_walk(rig, Vector3.ZERO, 4.0)
+	assert_almost_eq(rig.focus().x, rig.focus_goal(false).x, 0.05, "puis se pose sur le joueur")
+
+
+func test_no_overshoot_when_stopping() -> void:
+	# (AN) À l'arrêt après une marche ou une course, le point visé ne dépasse jamais le point où il
+	# se pose : le joueur arrêté ne glisse plus à l'écran (l'audit mesurait 0,6 m après une course).
+	for speed: float in [3.1, 5.8]:
+		var rig := _spawn_rig()
+		_update(rig, 1.0)
+		_walk(rig, Vector3(speed, 0, 0), 2.0)
+		var overshoot := _walk(rig, Vector3.ZERO, 0.15)
+		var left := absf(rig.focus_goal(false).x - rig.focus().x)
+		overshoot = maxf(overshoot, _walk(rig, Vector3.ZERO, 3.0))
+		assert_lte(overshoot, 0.001, "à %.1f m/s : jamais au-delà du point visé au repos" % speed)
+		assert_lte(left, 0.15, "à %.1f m/s : arrêté, le joueur ne glisse presque plus" % speed)
+		# Demi-tour : pas de dépassement non plus dans le nouveau sens, une fois arrêté.
+		_walk(rig, Vector3(-speed, 0, 0), 1.0)
+		assert_lte(_walk(rig, Vector3.ZERO, 3.0, Vector3.LEFT), 0.001, "après un demi-tour")
+		(rig.get_parent() as Node3D).free()
+
+
+func test_edge_margin_keeps_the_player_off_the_screen_edges() -> void:
+	# (AN) Au bord d'une carte aux bornes serrées, le joueur ne touche jamais le bord de l'écran :
+	# le point visé sort des bornes juste ce qu'il faut (edge_margin de chaque côté).
+	var rig := _spawn_rig(Vector3(15, 0, 10))
+	rig.limits = Rect2(14, 8, 2, 2)
+	var size := rig.get_viewport().get_visible_rect().size
+	var lowest := 1.0 - rig.edge_margin
+	for spot: Vector3 in [
+		Vector3(40, 0, 10), Vector3(-10, 0, 10), Vector3(15, 0, 30), Vector3(15, 0, -15)
+	]:
+		(rig.get_parent() as Node3D).position = spot
+		_update(rig, 3.0)
+		var feet := rig.camera.unproject_position(spot) / size
+		var head := rig.camera.unproject_position(spot + Vector3.UP * rig.player_height) / size
+		var label := "joueur en %s" % spot
+		assert_between(
+			feet.x, rig.edge_margin - 0.01, lowest + 0.01, label + " : ni à gauche ni à droite"
+		)
+		assert_lte(feet.y, lowest + 0.01, label + " : pieds au-dessus du bas")
+		assert_gte(head.y, rig.edge_margin - 0.01, label + " : tête sous le haut")
+	# Près du centre des bornes, rien ne change : le point visé reste borné.
+	(rig.get_parent() as Node3D).position = Vector3(15, 0, 10)
+	_update(rig, 3.0)
+	assert_almost_eq(rig.focus().x, 15.0, 0.01, "dans les bornes")
+	assert_almost_eq(rig.focus().z, 8.0, 0.01, "bornée au nord")
+	# Recalage d'un coup (téléportation) : la marge aussi.
+	(rig.get_parent() as Node3D).position = Vector3(40, 0, 10)
+	rig.snap()
+	var after_snap := rig.camera.unproject_position(Vector3(40, 0, 10)) / size
+	assert_lte(after_snap.x, lowest + 0.01, "recalée avec la marge")
 
 
 func test_camera_is_placed_outside_physics_interpolation() -> void:

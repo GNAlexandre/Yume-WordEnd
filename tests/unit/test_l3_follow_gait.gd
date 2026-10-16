@@ -44,7 +44,9 @@ func test_scene_gait_is_the_floor() -> void:
 
 func test_catch_up_gait_is_in_the_life_data() -> void:
 	assert_true(LifeData.is_gait(&"rattrape"))
-	assert_gt(LifeData.speed(&"rattrape"), 4.0, "plus vif que la marche du joueur (4 m/s)")
+	var player := Player.new()
+	assert_gt(LifeData.speed(&"rattrape"), player.run_speed, "plus vif que la course du joueur")
+	player.free()
 	assert_gt(LifeData.speed(&"rattrape"), LifeData.speed(&"course"))
 	assert_gt(LifeData.anim_speed(&"rattrape"), 1.0, "une course accélérée")
 	assert_eq(LifeData.anim_speed(&"marche"), 1.0)
