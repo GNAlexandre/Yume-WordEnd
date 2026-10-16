@@ -92,6 +92,9 @@ func after_each() -> void:
 	if is_instance_valid(main):
 		main.free()
 	main = null
+	# (X-L5) Une partie libérée en pleine scène laissait ses PNJ réservés au récit dans LifeDirector
+	# (un autoload) : le test de la vie qui suit ne retrouvait plus Willem.
+	LifeDirector.release_all(false)
 	SaveManager.checkpoint_interval = _previous_checkpoint
 	get_tree().root.remove_meta(MenuScript.GESTURE_META)
 	if is_instance_valid(_gut_layer):
