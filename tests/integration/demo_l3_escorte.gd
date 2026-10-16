@@ -50,6 +50,9 @@ var _done := false
 
 
 func _ready() -> void:
+	# Le test de fumée (sans affichage) instancie la scène : rien à rejouer sans image.
+	if DisplayServer.get_name() == "headless":
+		return
 	_shots = OS.get_environment("L3_SHOTS")
 	if _shots.is_empty():
 		_shots = "res://build/l3/shots"
