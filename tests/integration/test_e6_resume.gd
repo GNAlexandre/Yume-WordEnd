@@ -96,6 +96,8 @@ func test_old_save_restarts_the_first_act() -> void:
 		"le début de l'acte"
 	)
 	await tap_key(KEY_ESCAPE)
+	# Passer la séquence du port ramène à l'entrepôt : attendre la fin du fondu avant de quitter.
+	await until(func() -> bool: return not WorldManager.is_transitioning(), 10.0)
 	var root_notice := get_tree().root.get_node_or_null(NodePath(String(MenuNotice.NODE_NAME)))
 	if root_notice != null:
 		root_notice.free()
