@@ -23,6 +23,9 @@ extends Control
 ##   discret) et Calendar (le calendrier de l'acte en jours, action « journal »). (F1) L'arène,
 ##   le nom des zones, la bannière et l'encadré de quête sont partis avec l'ancienne île.
 
+## (QC2) Groupe du HUD : le bandeau d'un jeu (GameScore) y lit top_left_rect() pour ne pas couvrir
+## les cœurs.
+const GROUP := &"hud"
 const HEART_FULL := preload("res://assets/ui/heart_full.png")
 const HEART_EMPTY := preload("res://assets/ui/heart_empty.png")
 const PLAYER_GROUP := &"player"
@@ -73,6 +76,7 @@ var _time: float = 0.0
 
 
 func _ready() -> void:
+	add_to_group(GROUP)
 	EventBus.player_health_changed.connect(set_health)
 	EventBus.player_damaged.connect(_on_player_damaged)
 	EventBus.player_died.connect(_on_player_died)
@@ -138,6 +142,24 @@ func set_health(current: int, max_value: int) -> void:
 		var heart := _hearts.get_child(_hp - 1) as Control
 		heart.scale = Vector2.ONE * 1.4
 		create_tween().tween_property(heart, ^"scale", Vector2.ONE, 0.3)
+
+
+## (QC2) Ce qu'occupe le coin haut gauche (cœurs, jauge de charge visible), en coordonnées de
+## l'écran ; vide si rien n'y est affiché.
+func top_left_rect() -> Rect2:
+	var rect := Rect2()
+	if _hearts.is_visible_in_tree() and _max_hp > 0:
+		rect = Rect2(_hearts.global_position, _hearts.get_combined_minimum_size())
+	if _charge_row.is_visible_in_tree():
+		var row := Rect2(
+			_charge_bar.global_position,
+			Vector2(
+				_charge_label.get_global_rect().end.x - _charge_bar.global_position.x,
+				_charge_bar.size.y
+			)
+		)
+		rect = row if rect.size == Vector2.ZERO else rect.merge(row)
+	return rect
 
 
 ## PV affichés : Vector2i(pleins, total).
