@@ -3,6 +3,8 @@
  "version": 2,
  "px_per_m": 96,
  "images": [
+  {"path": "assets/hd2d/props/cafe_backyard_crates.png", "size": [154, 96], "kind": "panel", "prio": 1, "lot": "N6C"},
+  {"path": "assets/hd2d/decals/cart_ruts_end.png", "size": [192, 192], "kind": "decal", "prio": 1, "lot": "N6A", "soft_alpha": true, "solid_edge": "top"},
   {"path": "assets/hd2d/ground/grass.png", "size": [384, 384], "kind": "tile", "prio": 1},
   {"path": "assets/hd2d/ground/path_dirt.png", "size": [384, 384], "kind": "tile", "prio": 1},
   {"path": "assets/hd2d/ground/flagstone.png", "size": [384, 384], "kind": "tile", "prio": 1},

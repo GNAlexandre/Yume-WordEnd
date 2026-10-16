@@ -276,9 +276,9 @@ func test_decals_fade_into_the_ground_away_from_their_edges() -> void:
 						filled += 1
 			if samples > 0 and filled > 0.95 * samples:
 				problems.append("%s : rectangle plein" % path)
-	# (F1) Moins les six de l'ancienne île (sable, cercle de veille…) ; plus les ornières et leur
-	# fin (cahier n° 6, R0.8).
-	assert_eq(count, 41, "41 décalques (cahier n° 2, section 5, moins l'ancienne île, R0.8)")
+	# (F1) Moins les six de l'ancienne île (sable, cercle de veille…) ; plus les ornières (cahier
+	# n° 6, R0.8), dont la fin est inscrite au lot N6A.
+	assert_eq(count, 40, "40 décalques (cahier n° 2, section 5, moins l'ancienne île, R0.8)")
 	assert_true(problems.is_empty(), "; ".join(problems))
 
 
