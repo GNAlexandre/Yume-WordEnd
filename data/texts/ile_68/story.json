@@ -32,7 +32,17 @@
     "mode_switch_yes": "Changer",
     "mode_switch_no": "Garder",
     "mode_switched": "C'est fait : {mode}.",
-    "activity_stop": "Échap : arrêter"
+    "activity_stop": "Échap : arrêter",
+    "today_title": "À vivre aujourd'hui",
+    "today_none": "Rien d'attendu aujourd'hui : l'île est à toi.",
+    "today_later": "{scene} ({slot})",
+    "calendar_passed": "Laissé passer : {scenes}",
+    "slot_aube": "à l'aube",
+    "slot_matin": "le matin",
+    "slot_midi": "à midi",
+    "slot_apres_midi": "l'après-midi",
+    "slot_soir": "le soir",
+    "slot_nuit": "la nuit"
   },
   "activities": {
     "_comment": "(X-L6) Les activités à la demande du mode libre (data/activities/ile_68.json ; StoryActivities) : la proposition du PNJ (offer), puis ce qui s'affiche à la fin (result_<issue> : success, failure, victory, defeat, draw, done, stopped), propre à l'activité ou, à défaut, commun (activities/result_<issue>). Rien de tout cela n'est gardé par le récit.",
@@ -131,7 +141,8 @@
     }
   },
   "calendar": {
-    "depart": "Départ au couchant."
+    "depart": "Départ au couchant.",
+    "libre": "Une journée à moi, à marcher sur l'île."
   },
   "j1_1_port": {
     "titre": "Cet acte suit le volume 1 de la traduction Yume Novel.",

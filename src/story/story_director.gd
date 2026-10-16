@@ -420,6 +420,9 @@ func sleep() -> void:
 	get_tree().call_group(&"story_hint", &"show_text", "")
 	await _stage.fade_overlay(StoryData.BLACK, 1.0, SLEEP_FADE)
 	var day := GameState.day
+	if is_free():
+		# (X-L4) Les scènes laissées passer sont réglées sans être jouées, la ligne du jour choisie.
+		_resolve.before_sleep(_island, day)
 	if not GameState.has_calendar_line(day):
 		GameState.write_calendar(day)
 	var title := ui_text("day", "Jour {day}").replace("{day}", str(day))
@@ -427,9 +430,6 @@ func sleep() -> void:
 	if overlay_node != null:
 		overlay_node.call(&"show_card", "%s\n%s" % [title, calendar_line(day)], CALENDAR_CARD_TIME)
 	await _stage.wait_overlay()
-	if is_free():
-		# (X-L0, L4) Les scènes du jour laissées passer sont réglées sans être jouées.
-		_resolve.before_sleep(_island, day)
 	advance_day()
 	EventBus.save_requested.emit()
 	await get_tree().physics_frame
@@ -608,8 +608,8 @@ func _update_hint() -> void:
 
 ## Indice hors scène : la première scène qui attend son déclencheur, sinon le coucher.
 func _waiting_hint() -> String:
-	if not GameState.story_running() or not _busy.is_empty():
-		return ""
+	if not GameState.story_running() or not _busy.is_empty() or is_free():
+		return _resolve.waiting_hint() if is_free() else ""  # (X-L4) libre : aucun indice
 	for scene_id: StringName in StoryData.scene_ids(_island):
 		if GameState.is_scene_done(scene_id):
 			continue
