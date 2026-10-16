@@ -31,6 +31,6 @@
   },
   "save": {
     "_comment": "(F1) Reprise d’une sauvegarde d’avant la refonte (l’ancienne île, retirée) : SaveManager démarre une nouvelle partie de l’acte 1 et le menu affiche cette ligne au chargement (SaveManager.notice).",
-    "migrated": "Ta partie se passait sur l’ancienne île, qui n’existe plus : l’histoire reprend au premier jour."
+    "migrated": "Ta partie se passait sur l’ancienne île, qui n’existe plus : l’histoire reprend au premier jour."
   }
 }

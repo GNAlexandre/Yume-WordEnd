@@ -12,8 +12,7 @@ extends CharacterBody3D
 ## sortie du groupe, enemy_killed, drops, disparition après corpse_time). Coureur (data.rush) :
 ## rush en ligne droite dès la portée de son attaque sans dégâts (8 m), puis morsure. Stoic :
 ## ni recul ni hurt, sauf sous une attaque qui traverse (onde). La poursuite cesse si le joueur
-## est mort, dans une zone sûre (WorldManager.is_zone_safe(current_zone())) ou à plus de
-## leash_m de origin : l'ennemi rentre chez lui. Portée d'une attaque : AttackData.range_m ×
+## est mort, en conversation ou à plus de leash_m de origin : l'ennemi rentre chez lui. Portée d'une attaque : AttackData.range_m ×
 ## data.scale devant le corps (capsule, Hurtbox et Hitbox sont aussi mises à l'échelle) ; la
 ## distance de déclenchement du rush ne l'est pas. Un obstacle du décor heurté de face
 ## (poteau, tronc) est longé au lieu de bloquer la poursuite.
@@ -29,7 +28,7 @@ extends CharacterBody3D
 ## au recul. Ombre nette au sol (GroundShadow), teinte du corps (EnemyData.tint), traînée du
 ## bondissant ; rien ne dépend du dessin de la planche.
 
-## Émis à la mort, avec EventBus.enemy_killed : le WaveDirector compte ainsi ses ennemis.
+## Émis à la mort, avec EventBus.enemy_killed (points : EnemyData.points).
 signal defeated(enemy: Enemy, points: int)
 
 enum State { IDLE, CHASE, RUSH, ATTACK, HURT, DEAD, WINDUP }
@@ -112,17 +111,17 @@ static var _next_flank_side: float = 1.0
 
 ## Type d'ennemi (data/enemies/*.tres).
 @export var data: EnemyData
-## Lâche data.drops à sa mort (faux pour les ennemis d'une arène).
+## Lâche data.drops à sa mort (faux : rien ne tombe, comme un animal ou un banc de test).
 @export var drops_enabled: bool = true
-## Poursuit le joueur où qu'il soit, sans laisse (ennemis d'une arène).
+## Poursuit le joueur où qu'il soit, sans laisse (une rencontre qui ne se fuit pas).
 @export var always_chase: bool = false
 ## Laisse : abandonne la poursuite si le joueur est à plus de leash_m de origin (0 = aucune).
 @export var leash_m: float = 20.0
 ## Rayon d'errance autour de origin (m).
 @export var wander_radius_m: float = 3.0
-## Bonus de vitesse de vague (WaveDirector.speed_multiplier).
+## Multiplicateur de vitesse (réglage d'une rencontre ; 1 : celle des données).
 @export var speed_multiplier: float = 1.0
-## PV ajoutés à data.max_hp (WaveDirector.hp_bonus : Normal dès la vague 6).
+## PV ajoutés à data.max_hp (réglage d'une rencontre).
 @export var bonus_hp: int = 0
 ## Délai entre la mort et la disparition (s).
 @export var corpse_time: float = 2.2
@@ -137,9 +136,6 @@ var _player_down: bool = false
 ## Le joueur est en conversation (EventBus.dialogue_started → dialogue_ended) : on ne le chasse
 ## pas. Sinon une mort en pleine réplique le faisait réapparaître figé, la boîte encore ouverte.
 var _player_talking: bool = false
-var _zone_checked: bool = false
-var _zone_seen: StringName = &""
-var _zone_safe: bool = false
 var _melee: Array[AttackData] = []
 var _rush_attack: AttackData
 var _attack: AttackData
@@ -400,7 +396,7 @@ func _rush(delta: float) -> Vector3:
 ## Le joueur peut-il être (encore, si keep) poursuivi ? Met _target à jour.
 func _can_hunt(keep: bool) -> bool:
 	_target = _find_target()
-	if _target == null or _player_down or _player_talking or _player_in_safe_zone():
+	if _target == null or _player_down or _player_talking:
 		return false
 	if always_chase:
 		return true
@@ -415,17 +411,6 @@ func _find_target() -> Node3D:
 	if is_instance_valid(_target) and _target.is_inside_tree():
 		return _target
 	return get_tree().get_first_node_in_group(PLAYER_GROUP) as Node3D
-
-
-## Zone sûre : celle où se trouve le joueur selon WorldManager (WorldManager.is_zone_safe),
-## relue seulement quand la zone courante change.
-func _player_in_safe_zone() -> bool:
-	var zone_id := WorldManager.current_zone()
-	if not _zone_checked or zone_id != _zone_seen:
-		_zone_checked = true
-		_zone_seen = zone_id
-		_zone_safe = WorldManager.is_zone_safe(zone_id)
-	return _zone_safe
 
 
 ## Attaque au contact possible à distance (jeu.js : le fouet quand la morsure ne porte pas,
@@ -492,7 +477,7 @@ func _windup() -> Vector3:
 	var rushing := _windup_attack == _rush_attack
 	if not rushing:
 		_target = _find_target()
-		if _target == null or _player_down or _player_in_safe_zone():
+		if _target == null or _player_down:
 			_cancel_windup()
 			_enter(State.IDLE)
 			return Vector3.ZERO

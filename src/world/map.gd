@@ -9,8 +9,7 @@ extends Node3D
 ##
 ## Repères : origine au coin nord-ouest, x vers l'est, z vers le sud, y vers le haut, 1 unité =
 ## 1 m ; la carte occupe [0, size.x] × [0, size.y] (area()) ; sol courant à y = 0, paliers par
-## pas de 0,5 m. Exception : la carte héritée `ile_ancienne` garde les coordonnées de l'île, centrée
-## sur l'origine (island.gd redéfinit area()).
+## pas de 0,5 m.
 ##
 ## Enfants figés (problems() les vérifie, tests/unit/test_maps.gd pour chaque carte) :
 ## - Ground : le sol et sa collision (couche 1 world) ; MapGround (E2) dehors, InteriorRoom (E3)
