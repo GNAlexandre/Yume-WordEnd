@@ -3,11 +3,14 @@ extends Node3D
 ## objets (capture : tools/screenshot.sh res://tests/integration/demo_l7.tscn
 ## build/shots/l7.png). Jouable dans l'éditeur (F6) : actions move_* pour marcher, ramassage
 ## au contact ou avec interact (E / A), inventory (I / Y) pour ouvrir et fermer l'inventaire.
-## Repart d'une partie neuve (GameState.reset()) remplie avec starting_items.
+## Repart d'une partie neuve (GameState.reset()) remplie avec starting_items. (F1) Les objets de
+## l'ancienne île sont partis : ceux de tests/data/items (ItemData.add_search_dir).
+
+const TEST_ITEMS_DIR := "res://tests/data/items"
 
 ## Objets donnés au lancement, pour que l'inventaire ne soit pas vide.
 @export var starting_items: Dictionary[StringName, int] = {
-	&"page_fragment": 2, &"shell": 1, &"flower_blue": 3, &"bookmark": 1
+	&"test_page": 2, &"test_linen": 1, &"test_flower": 3, &"test_picture": 1
 }
 ## Ouvre l'inventaire au lancement (capture).
 @export var open_inventory_on_start: bool = true
@@ -21,6 +24,14 @@ var _camera_offset: Vector3
 @onready var _camera: Camera3D = $Camera3D
 @onready var _inventory: Control = $UI/Inventory
 @onready var _prompt: Label = $UI/Prompt
+
+
+func _enter_tree() -> void:
+	ItemData.add_search_dir(TEST_ITEMS_DIR)
+
+
+func _exit_tree() -> void:
+	ItemData.remove_search_dir(TEST_ITEMS_DIR)
 
 
 func _ready() -> void:

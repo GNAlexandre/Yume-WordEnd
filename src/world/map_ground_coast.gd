@@ -2,12 +2,12 @@
 class_name MapGroundCoast
 extends RefCounted
 ## Côte du sol en relief d'une carte (MapGroundBuilder) : les segments du bord du vide enchaînés,
-## le rideau de roche qui pend dessous (la lèvre, puis la falaise qui se resserre en descendant,
-## comme la roche de l'île, IslandRock) et les barrières (mur invisible, deux faces) le long de la
+## le rideau de roche qui pend dessous (la lèvre, puis la falaise qui se resserre en descendant)
+## et les barrières (mur invisible, deux faces) le long de la
 ## côte et des bords « land » de la carte. Le rideau va dans le mesh des faces du builder (style
 ## roche), sans collision.
 
-## Lèvre sous la côte : avancée (m, plus un bruit) et hauteur (m, plus un bruit), comme IslandRock.
+## Lèvre sous la côte : avancée (m, plus un bruit) et hauteur (m, plus un bruit).
 const LIP_PUSH := Vector2(0.12, 0.3)
 const LIP_DEPTH := Vector2(0.9, 0.7)
 ## Bord de la lèvre un peu relevé : normales penchées vers le ciel en haut de la lèvre.
@@ -264,7 +264,7 @@ static func _wall(
 	builder.barrier.append_array(PackedVector3Array([a0, b0, b1, a0, b1, a1]))
 
 
-## Bruit stable dans [0, 1[ (comme IslandRock._hash).
+## Bruit stable dans [0, 1[.
 static func _noise(a: float, b: float, seed_value: float) -> float:
 	var n := sin(a * 12.9898 + b * 78.233 + seed_value * 37.719) * 43758.5453
 	return n - floorf(n)

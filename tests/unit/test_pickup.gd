@@ -2,12 +2,13 @@ extends GutTest
 ## Pickup (L7) : ramassage au contact du joueur ou par interact(), dans l'ordre
 ## GameState.add_item → mark_pickup_collected → EventBus.item_collected → queue_free ;
 ## objets persistants déjà pris absents (au _ready et sur game_loaded) ; objets lâchés par un
-## ennemi (persistent = false) jamais mémorisés.
+## ennemi (persistent = false) jamais mémorisés. (F1) Les fichiers d'emplacement de l'ancienne île
+## sont partis : trois pages posées par le test ; objets de tests/data/items.
 
 const PICKUP := preload("res://src/items/pickup.tscn")
 const PLAYER_STUB := preload("res://tests/stubs/player_stub.tscn")
 const DUMMY := preload("res://tests/stubs/dummy.tscn")
-const FOREST := preload("res://src/items/placements/forest.tscn")
+const TEST_ITEMS_DIR := "res://tests/data/items"
 
 var _events: Array[String] = []
 
@@ -15,9 +16,11 @@ var _events: Array[String] = []
 func before_each() -> void:
 	GameState.reset()
 	_events.clear()
+	ItemData.add_search_dir(TEST_ITEMS_DIR)
 
 
 func after_each() -> void:
+	ItemData.remove_search_dir(TEST_ITEMS_DIR)
 	if EventBus.inventory_changed.is_connected(_on_inventory_changed):
 		EventBus.inventory_changed.disconnect(_on_inventory_changed)
 	if EventBus.item_collected.is_connected(_on_item_collected):
@@ -34,6 +37,19 @@ func _pickup(pickup_name: String, item_id: StringName, persistent: bool = true) 
 	pickup.item_id = item_id
 	pickup.persistent = persistent
 	return add_child_autofree(pickup)
+
+
+## Trois pages persistantes forest_page_1 à 3 sous un même nœud (comme un fichier d'emplacement).
+func _three_pages() -> Node3D:
+	var holder := Node3D.new()
+	holder.name = "Pickups"
+	for n in 3:
+		var pickup := PICKUP.instantiate() as Pickup
+		pickup.name = "forest_page_%d" % (n + 1)
+		pickup.item_id = &"test_page"
+		pickup.position = Vector3(2.0 * n, 0.0, 0.0)
+		holder.add_child(pickup)
+	return add_child_autofree(holder)
 
 
 func _on_inventory_changed() -> void:
@@ -120,7 +136,7 @@ func test_dropped_pickup_is_not_remembered() -> void:
 
 func test_collected_persistent_pickup_does_not_come_back() -> void:
 	GameState.mark_pickup_collected(&"forest_page_2")
-	var forest: Node3D = add_child_autofree(FOREST.instantiate())
+	var forest := _three_pages()
 	await wait_process_frames(1)
 	assert_null(forest.get_node_or_null(^"forest_page_2"), "déjà pris : absent")
 	assert_not_null(forest.get_node_or_null(^"forest_page_1"))
@@ -128,7 +144,7 @@ func test_collected_persistent_pickup_does_not_come_back() -> void:
 
 
 func test_game_loaded_removes_collected_pickups() -> void:
-	var forest: Node3D = add_child_autofree(FOREST.instantiate())
+	var forest := _three_pages()
 	await wait_process_frames(1)
 	GameState.from_dict({"collected_pickups": ["forest_page_1", "forest_page_3"]})
 	EventBus.game_loaded.emit()
@@ -139,10 +155,11 @@ func test_game_loaded_removes_collected_pickups() -> void:
 
 
 func test_visual_uses_item_icon_and_floats() -> void:
-	var pickup := _pickup("beach_gear_9", &"clock_gear")
+	var pickup := _pickup("essai_page_9", &"test_page")
 	var icon := pickup.get_node(^"Mesh/Icon") as Sprite3D
 	var mesh := pickup.get_node(^"Mesh") as MeshInstance3D
-	assert_eq(icon.texture, ItemData.find(&"clock_gear").icon)
+	assert_eq(icon.texture, ItemData.find(&"test_page").icon)
+	assert_ne(icon.texture, Pickup.UNKNOWN_ICON, "l'icône de l'objet")
 	assert_eq(icon.billboard, BaseMaterial3D.BILLBOARD_ENABLED)
 	var heights: Array[float] = []
 	for i in 4:

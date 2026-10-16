@@ -10,30 +10,26 @@ extends CharacterBody3D
 ## interact() lance son DialogueRunner. Un PNJ sans data reste invisible et muet, sans erreur.
 ## Le PNJ ne marche pas : à l'apparition, il tombe au plus SETTLE_TIME s sur le sol sous lui
 ## (couche 1), puis ne bouge plus (son emplacement peut donc être un peu au-dessus du sol).
-## (Lot Q) Marqueur de quête QuestMarker (Label3D doré face à la caméra, au-dessus de la tête,
-## qui flotte doucement) : « ! » s'il propose une quête disponible, « ? » si l'étape courante
-## d'une quête active se valide en lui parlant (QuestData.npc_marker) ; caché pendant son
-## dialogue. Recalculé en fin d'image sur les signaux de quête, d'inventaire et de drapeaux.
 ## (Systèmes et textes) Présence selon l'histoire : data.is_present() (NpcData.visible_if, et
 ## jamais le PNJ dont le skin est celui du joueur). Absent, le PNJ est caché, retiré de la
-## physique (process_mode DISABLED : ni collision ni InteractArea), sans invite, sans dialogue
-## ni marqueur. Réévaluée en fin d'image avec le marqueur (quête, étape, drapeaux, inventaire,
-## partie chargée, skin, fin de série d'arène pour best_score) ; un PNJ qui parle ne disparaît
-## qu'à la fin de son dialogue.
+## physique (process_mode DISABLED : ni collision ni InteractArea), sans invite ni dialogue.
+## Réévaluée en fin d'image sur les signaux qui peuvent la changer (drapeaux, inventaire, partie
+## chargée, skin) ; un PNJ qui parle ne disparaît qu'à la fin de son dialogue. (F1) Le marqueur de
+## quête (« ! », « ? ») est parti avec les quêtes de l'ancienne île.
 ## (HD-2D) Pendant son dialogue, le PNJ joue l'animation TALK de sa planche (« parle » :
 ## docs/ASSETS_HD2D.md, section 3.2) si elle existe, puis revient à « repos ».
 ## (E4) La vie : un PNJ des emplois du temps (data/life/) est mené par LifeDirector, qui lui
 ## donne un LifeActor (life) : il marche (déplacé par le directeur, sans physique ; sa collision
 ## quitte la couche 1 pendant qu'il marche, pour ne jamais bloquer le joueur), change de tenue à
 ## chaud (set_outfit), regarde le joueur et le salue d'une bulle (say : enfant Bubble, Label3D) ;
-## son activité s'interrompt pendant sa conversation et reprend après. Sans life (l'ancienne île),
-## rien ne change. Un PNJ sans dialogue (fées génériques) répond d'une bulle (LifeTexts, talk/).
+## son activité s'interrompt pendant sa conversation et reprend après. Sans life (PNJ posé à la
+## main, cartes de test), rien ne change. Un PNJ sans dialogue (fées génériques) répond d'une
+## bulle (LifeTexts, talk/).
 
 const PLAYER_GROUP := &"player"
 ## Durée maximale de la chute d'apparition (s).
 const SETTLE_TIME := 1.0
-## Hauteur du marqueur au-dessus de la tête (m) et du visuel sans skin.
-const MARKER_GAP := 0.5
+## Hauteur de la tête du visuel sans skin (m).
 const DEFAULT_HEIGHT := 1.6
 ## Animations de la planche : au repos, et en conversation (facultative).
 const IDLE := &"repos"
@@ -61,7 +57,7 @@ const BUBBLE_TIME := 2.6
 ## ferme la dernière réplique ne doit pas relancer la conversation dans la même image.
 @export var talk_cooldown: float = 0.3
 
-## (E4) Le meneur de vie (LifeDirector) ; null : PNJ posé à la main, immobile (ancienne île).
+## (E4) Le meneur de vie (LifeDirector) ; null : PNJ posé à la main, immobile.
 var life: LifeActor = null
 ## (E4) Tenue affichée à la place de data.skin (LifeActor, set_outfit) ; null : data.skin.
 var outfit_skin: SkinData = null
@@ -70,9 +66,8 @@ var _breath_time: float = 0.0
 var _base_scale: Vector3 = Vector3.ONE
 var _ended_at_msec: int = -1
 var _settle_left: float = SETTLE_TIME
-var _marker_kind: StringName = &""
-var _marker_height: float = DEFAULT_HEIGHT + MARKER_GAP
-var _marker_pending: bool = false
+var _head_height: float = DEFAULT_HEIGHT
+var _presence_pending: bool = false
 var _talking: bool = false
 var _present: bool = true
 ## process_mode d'origine, rendu quand le PNJ redevient présent.
@@ -81,7 +76,6 @@ var _bubble_left: float = 0.0
 
 @onready var visual: CharacterVisual = $Visual
 @onready var runner: DialogueRunner = $DialogueRunner
-@onready var quest_marker: Label3D = $QuestMarker
 @onready var bubble: Label3D = $Bubble
 
 
@@ -91,13 +85,10 @@ func _ready() -> void:
 	_present_process_mode = process_mode
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
-	EventBus.quest_updated.connect(_schedule_marker.unbind(2))
-	EventBus.quest_step_updated.connect(_schedule_marker.unbind(3))
-	EventBus.inventory_changed.connect(_schedule_marker)
-	EventBus.flag_changed.connect(_schedule_marker.unbind(2))
-	EventBus.game_loaded.connect(_schedule_marker)
-	EventBus.skin_changed.connect(_schedule_marker.unbind(1))
-	EventBus.arena_finished.connect(_schedule_marker.unbind(3))
+	EventBus.inventory_changed.connect(_schedule_presence)
+	EventBus.flag_changed.connect(_schedule_presence.unbind(2))
+	EventBus.game_loaded.connect(_schedule_presence)
+	EventBus.skin_changed.connect(_schedule_presence.unbind(1))
 	if life != null:
 		set_physics_process(false)
 	_apply_data()
@@ -107,8 +98,6 @@ func _process(delta: float) -> void:
 	_breath_time += delta
 	var breath := sin(_breath_time * TAU / maxf(breath_period, 0.1)) * breath_amount
 	visual.scale = _base_scale * Vector3(1.0, 1.0 + breath, 1.0)
-	if quest_marker.visible:
-		quest_marker.position.y = _marker_height + sin(_breath_time * 2.6) * 0.06
 	if _bubble_left > 0.0:
 		_bubble_left -= delta
 		if _bubble_left <= 0.0:
@@ -161,7 +150,7 @@ func set_outfit(skin: SkinData) -> void:
 	var shown := skin if skin != null else (data.skin if data != null else null)
 	if shown != null and is_node_ready():
 		visual.set_skin(shown)
-		_marker_height = shown.height_m + MARKER_GAP
+		_head_height = shown.height_m
 		bubble.position.y = shown.height_m + BUBBLE_GAP
 
 
@@ -197,13 +186,19 @@ func is_present() -> bool:
 	return _present
 
 
-## Réévalue tout de suite la présence (data.is_present()), puis le marqueur. Un PNJ qui parle ne
-## disparaît pas : son absence attend la fin de la conversation (dialogue_ended).
+## Réévalue tout de suite la présence (data.is_present()). Un PNJ qui parle ne disparaît pas :
+## son absence attend la fin de la conversation (dialogue_ended).
 func refresh_presence() -> void:
+	_presence_pending = false
 	var present := data == null or data.is_present()
 	if present != _present and (present or not _talking):
 		_set_present(present)
-	refresh_quest_marker()
+
+
+## Hauteur de la tête au-dessus des pieds (m) : celle de la tenue affichée (SkinData.height_m),
+## DEFAULT_HEIGHT sans skin. Les signes d'interaction se posent au-dessus.
+func head_height() -> float:
+	return _head_height
 
 
 ## Tourne le visuel vers target s'il est à moins de look_distance ; true s'il s'est tourné.
@@ -216,26 +211,10 @@ func look_toward(target: Vector3) -> bool:
 	return true
 
 
-## Marqueur affiché : QuestData.MARKER_AVAILABLE (« ! »), MARKER_TURN_IN (« ? ») ou &"".
-func quest_marker_kind() -> StringName:
-	return _marker_kind
-
-
-## Recalcule le marqueur tout de suite (sinon : en fin d'image, après les signaux).
-func refresh_quest_marker() -> void:
-	_marker_pending = false
-	_marker_kind = &""
-	if data != null and _present and not _talking:
-		_marker_kind = QuestData.npc_marker(data.id)
-	quest_marker.visible = not _marker_kind.is_empty()
-	quest_marker.text = "?" if _marker_kind == QuestData.MARKER_TURN_IN else "!"
-	quest_marker.position.y = _marker_height
-
-
-## Présence et marqueur recalculés en fin d'image (plusieurs signaux de la même image regroupés).
-func _schedule_marker() -> void:
-	if not _marker_pending:
-		_marker_pending = true
+## Présence recalculée en fin d'image (plusieurs signaux de la même image regroupés).
+func _schedule_presence() -> void:
+	if not _presence_pending:
+		_presence_pending = true
 		refresh_presence.call_deferred()
 
 
@@ -250,7 +229,7 @@ func _apply_data() -> void:
 	set_process(data != null)
 	var shown := outfit_skin if outfit_skin != null else (data.skin if data != null else null)
 	if shown != null:
-		_marker_height = shown.height_m + MARKER_GAP
+		_head_height = shown.height_m
 		bubble.position.y = shown.height_m + BUBBLE_GAP
 	refresh_presence()
 	if data == null:
@@ -269,7 +248,6 @@ func _on_dialogue_started(npc_id: StringName) -> void:
 		_talking = true
 		if visual.has_animation(TALK):
 			visual.play(TALK)
-		refresh_quest_marker()
 
 
 func _on_dialogue_ended(npc_id: StringName) -> void:
@@ -278,4 +256,4 @@ func _on_dialogue_ended(npc_id: StringName) -> void:
 		_talking = false
 		if life == null:
 			visual.play(IDLE)
-		_schedule_marker()
+		_schedule_presence()

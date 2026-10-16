@@ -11,11 +11,11 @@ extends Resource
 @export var visual: SkinData
 ## Échelle du visuel et des portées (Petit 0,8 ; Grand 1,3).
 @export var scale: float = 1.0
-## PV au départ (sans le bonus de vague du WaveDirector).
+## PV au départ (sans Enemy.bonus_hp).
 @export var max_hp: int = 1
-## Vitesse de déplacement en m/s (sans le bonus de vague).
+## Vitesse de déplacement en m/s (sans Enemy.speed_multiplier).
 @export var speed: float = 2.0
-## Points gagnés à sa mort (score d'arène).
+## Points de sa mort (EventBus.enemy_killed).
 @export var points: int = 0
 ## Attaques disponibles (data/attacks/*.tres).
 @export var attacks: Array[AttackData] = []

@@ -148,7 +148,7 @@ trois vues. » puis la description.
 | --- | --- | --- | --- |
 | 1 | `chtholly/chtholly` (remplace l'actuelle, qui sert à l'acte 3) | 1,5 m = 144 px | Chtholly à l'acte 1, fée soldate de 15 ans, proportions des sprites d'*Octopath Traveler* (environ deux têtes et demie à trois têtes de haut), dans la continuité de la planche actuelle : longs cheveux céruléen clair (#6C89BB à #92B6DB) **sans aucune mèche rouge**, deux petites couettes hautes, yeux bleu océan ; uniforme de la Garde ailée (veste bleu marine à col droit et boutons argentés, jupe plissée sombre, bottines), broche d'argent à pierre bleue en goutte sur la poitrine ; Seniorious : grande épée presque aussi haute qu'elle, lame blanc argenté faite de plaques fissurées, garde sombre hérissée |
 | 2 | `willem/willem` | 1,75 m = 168 px | Willem Kmetsch, jeune homme maigre, cheveux noirs en bataille, yeux sombres, sourire fatigué ; uniforme militaire bleu nuit croisé à boutons dorés un peu trop étroit, ceinturon, bottes |
-| 2 | `nygglatho/nygglatho` | 1,85 m = 178 px | Nygglatho, troll à l'air de jeune femme, une tête de plus que tous ; longs cheveux rose saumon, yeux vert printanier, chemisier vert vif à volants, tablier blanc, coiffe blanche à volants ; sourire doux |
+| 2 | `nygglatho/nygglatho` | 1,85 m = 178 px | Nygglatho, troll à l'air de jeune femme, une tête de plus que tous ; longs cheveux rose saumon, yeux vert printanier, robe de bonne noire et blanche des planches officielles de l’anime, tablier blanc, coiffe blanche à volants (choix utilisateur du 16 octobre 2026, remplace le chemisier vert des anciennes consignes) ; sourire doux |
 | 2 | `ithea/ithea` (7 animations + `parle`) | 1,45 m = 139 px | Ithea, fée soldate de 14 ans : **apparence des planches officielles de l'anime, choisie par l'utilisateur le 8 octobre 2026**, en remplacement du portrait blond précédent ; cheveux orange ébouriffés, deux mèches pointues et petites nattes à perles bleues, regard félin ambré, écharpe orange, veste crème aux garnitures vertes sur robe brun-rouge ; Carillon Valgulious en plaques ivoire fissurées, lame droite élargie à l'extrémité arrondie ; au repos et en marche de profil, la lame pointe vers l'arrière |
 | 2 | `nephren/nephren` (7 animations + `parle`) | 1,3 m = 125 px | Nephren, fée soldate de 13 ans, toute petite : cheveux gris cendré à reflets lavande en deux couettes ondulées à rubans noirs, yeux gris anthracite, visage impassible, tunique violette à capuche et frise de triangles blancs, livre rouge |
 | 2 | `tiat/tiat` | 1,1 m = 106 px | Tiat, petite fée de moins de dix ans : cheveux et yeux vert feuille (#78B89E), blouse blanche, gilet vert sombre, air enthousiaste |
@@ -372,7 +372,7 @@ flottent juste sous l'île sont permis.
    une tuile de sol, `python3 tools/hd2d_assets.py atlas` (le jeu lit les 27 tuiles des deux
    cahiers réunies dans `assets/hd2d/ground/atlas/ground_atlas.png` ; `fit` et `gen` le refont
    d'eux-mêmes).
-3. `tools/screenshot.sh res://src/world/island.tscn build/shots/hd2d.png` pour voir le résultat,
+3. `tools/screenshot.sh res://src/world/maps/essai/essai.tscn build/shots/hd2d.png` pour voir le résultat,
    puis `tools/check.sh`.
 4. Note la provenance dans `assets/CREDITS.md` (« généré avec ChatGPT le … », licence accordée).
 

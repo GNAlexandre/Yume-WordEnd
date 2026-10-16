@@ -1,25 +1,25 @@
 extends Node3D
 ## Démo du lot H9 (formats du décor du cahier n° 2, docs/ASSETS_HD2D_MONDE.md sections 3 et 17) :
-## l'île seule (sol, roche, ciel, mer de nuages, ciel qui dérive du nœud Decor), sans ses zones,
-## et au bord nord des bois, vu par une caméra comme celle du jeu, chaque format avec des images
-## faites à l'exécution (aucun fichier du cahier n° 2 n'est lu) :
+## (F1) la carte d'essai en relief (sol MapGround, ciel et lumière d'Atmosphere ; l'ancienne île
+## qui servait de terrain est partie), vue par une caméra comme celle du jeu, chaque format avec
+## des images faites à l'exécution (aucun fichier du cahier n° 2 n'est lu) :
 ##   - sol : atlas de 27 tuiles fabriqué ici (les 12 livrées, puis des _b et des matières teintées
 ##     pour qu'on les voie) : alternance des _b, feuilles mortes, mousse, lit du ruisseau ;
-##   - bandes animées (fanions, phases différentes), décalques durs et doux superposés (l'un sur
-##     la pente d'une butte), flancs d'un bâtiment long (pignon) et d'un pignon (gouttereau),
+##   - bandes animées (fanions, phases différentes), décalques durs et doux superposés (couchés
+##     sur le relief), flancs d'un bâtiment long (pignon) et d'un pignon (gouttereau),
 ##     variantes et retournement (PropScatter), tronc de premier plan qui s'efface devant la fée,
 ##     nuages qui dérivent, feuilles qui tombent et oiseaux.
 ## F6 dans l'éditeur. Capture (H9_DEMO_VIEW=sky : caméra presque à l'horizontale) :
 ##   tools/screenshot.sh res://tests/integration/demo_formats.tscn \
 ##     build/shots/h9_demo_formats.png 60
 
-const ISLAND := preload("res://src/world/island.tscn")
+const MAP := preload("res://src/world/maps/essai_relief/essai_relief.tscn")
 const VISUAL := preload("res://src/visuals/character_visual.tscn")
 const ATLAS := preload("res://assets/hd2d/ground/atlas/ground_atlas.png")
 const WALL := preload("res://assets/hd2d/buildings/materials/wall_planks.png")
 const ROOF := preload("res://assets/hd2d/buildings/materials/roof_slate.png")
-## Où se tient la fée (au bord nord des bois, à l'est du ruisseau) ; la caméra du jeu la cadre.
-const FOCUS := Vector3(30.0, 0.0, -63.0)
+## Où se tient la fée (au milieu de la carte d'essai en relief) ; la caméra du jeu la cadre.
+const FOCUS := Vector3(30.0, 0.0, 24.0)
 const PITCH_DEG := 32.0
 const FOV_DEG := 30.0
 const DISTANCE := 21.0
@@ -34,14 +34,13 @@ const OVERLAYS := {
 	&"stream_bed": Color(0.6, 0.85, 0.85, 0.4),
 }
 
-var _island: Node3D
+var _island: Map
 
 
 func _ready() -> void:
-	_island = ISLAND.instantiate() as Node3D
-	for zone: Node in _island.get_node(^"Zones").get_children():
-		zone.free()
+	_island = MAP.instantiate() as Map
 	add_child(_island)
+	Atmosphere.dress(_island)
 	_ground()
 	_camera()
 	_fairy()
@@ -55,27 +54,28 @@ func _ready() -> void:
 
 
 func _at(x: float, z: float) -> Vector3:
-	return Vector3(FOCUS.x + x, IslandTerrain.height_at(FOCUS.x + x, FOCUS.z + z), FOCUS.z + z)
+	var ground := _island.get_node(^"Ground") as MapGround
+	return Vector3(FOCUS.x + x, ground.height_at(FOCUS.x + x, FOCUS.z + z), FOCUS.z + z)
 
 
 # --- Sol à 27 tuiles --------------------------------------------------------------------------
 
 
-## Le sol lit un atlas de 27 tuiles fait ici (matériau à part : terrain.tres n'est pas touché).
+## Le sol lit un atlas de 27 tuiles fait ici (posé sur les matériaux du sol de cette carte).
 func _ground() -> void:
-	var tile := IslandTerrain.ATLAS_TILE
+	var tile := GroundAtlas.ATLAS_TILE
 	var source := ATLAS.get_image()
 	if source.is_compressed():
 		source.decompress()
 	source.convert(Image.FORMAT_RGBA8)
-	var count := IslandTerrain.GROUND_LAYERS.size()
-	var rows := ceili(float(count) / IslandTerrain.ATLAS_COLUMNS)
+	var count := GroundAtlas.GROUND_LAYERS.size()
+	var rows := ceili(float(count) / GroundAtlas.ATLAS_COLUMNS)
 	var atlas := Image.create(
-		tile * IslandTerrain.ATLAS_COLUMNS, tile * rows, false, Image.FORMAT_RGBA8
+		tile * GroundAtlas.ATLAS_COLUMNS, tile * rows, false, Image.FORMAT_RGBA8
 	)
-	for index in count:
-		var layer := IslandTerrain.GROUND_LAYERS[index]
-		var origin := IslandTerrain.GROUND_LAYERS.find(IslandTerrain.ground_layer(layer, 12))
+	for index: int in count:
+		var layer := GroundAtlas.GROUND_LAYERS[index]
+		var origin := GroundAtlas.GROUND_LAYERS.find(GroundAtlas.ground_layer(layer, 12))
 		var cell := Image.create(tile, tile, false, Image.FORMAT_RGBA8)
 		cell.blit_rect(source, _cell_rect(origin), Vector2i.ZERO)
 		if index >= 12:
@@ -89,18 +89,29 @@ func _ground() -> void:
 				overlay.fill(OVERLAYS.get(layer, Color(1.0, 1.0, 1.0, 0.0)))
 				cell.blend_rect(overlay, Rect2i(0, 0, tile, tile), Vector2i.ZERO)
 		atlas.blit_rect(cell, Rect2i(0, 0, tile, tile), _cell_rect(index).position)
-	var material := IslandTerrain.MATERIAL.duplicate() as ShaderMaterial
-	var texture := ImageTexture.create_from_image(IslandTerrain.mipmapped_image(atlas))
-	material.set_shader_parameter(&"ground_atlas", texture)
-	for child: Node in _island.get_node(^"Ground").get_children(true):
-		if child.name == &"Mesh":
-			(child as MeshInstance3D).material_override = material
+	var texture := ImageTexture.create_from_image(GroundAtlas.mipmapped_image(atlas))
+	for mesh: MeshInstance3D in _meshes(_island.get_node(^"Ground")):
+		if mesh.mesh == null or mesh.mesh.get_surface_count() == 0:
+			continue
+		var material := mesh.get_active_material(0) as ShaderMaterial
+		if material != null and material.get_shader_parameter(&"ground_atlas") != null:
+			material.set_shader_parameter(&"ground_atlas", texture)
+
+
+## Maillages sous node, enfants internes compris (ceux que MapGround construit).
+func _meshes(node: Node) -> Array[MeshInstance3D]:
+	var found: Array[MeshInstance3D] = []
+	for child: Node in node.get_children(true):
+		if child is MeshInstance3D:
+			found.append(child as MeshInstance3D)
+		found.append_array(_meshes(child))
+	return found
 
 
 func _cell_rect(index: int) -> Rect2i:
-	var tile := IslandTerrain.ATLAS_TILE
-	var column := index % IslandTerrain.ATLAS_COLUMNS
-	var row := floori(float(index) / IslandTerrain.ATLAS_COLUMNS)
+	var tile := GroundAtlas.ATLAS_TILE
+	var column := index % GroundAtlas.ATLAS_COLUMNS
+	var row := floori(float(index) / GroundAtlas.ATLAS_COLUMNS)
 	return Rect2i(column * tile, row * tile, tile, tile)
 
 
@@ -209,7 +220,7 @@ func _decals() -> void:
 		pile.position = _at(spot.x, spot.z)
 		pile.rotation.y = spot.x
 		add_child(pile)
-	# Sur la pente de la butte (bosse de 1,2 m au nord-est), tournée et retournée.
+	# Couchée sur le relief, tournée et retournée.
 	var slope := GroundDecal.new()
 	slope.texture = _leaves(240, 240, 11)
 	slope.flip_h = true

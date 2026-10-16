@@ -5,7 +5,7 @@
 //   python3 -m http.server 8347 --bind 127.0.0.1 --directory build/web &
 //   NODE_PATH=/opt/node-tools/node_modules node tools/web_maps.js http://127.0.0.1:8347/index.html build/shots [aller-retours]
 //
-// index.html?maps=essai,ile_ancienne,… dans un profil neuf : menu, clic, Entrée (nouvelle partie,
+// index.html?maps=essai,entrepot_rdc_essai,… dans un profil neuf : menu, clic, Entrée (nouvelle partie,
 // la carte de départ chargée avec la partie par l'écran de chargement), puis les raccourcis de
 // test (src/test_shortcuts.gd) font le voyage de carte en carte (WorldManager.go_to) et
 // impriment une ligne de mesures par changement : « [m1] carte <id> chargée : fondu … ms,
@@ -45,7 +45,7 @@ async function waitLog(logs, pattern, timeoutMs, from = 0) {
 (async () => {
 	const maps = [];
 	for (let i = 0; i < ROUNDS; i++) {
-		maps.push('essai', 'ile_ancienne');
+		maps.push('essai', 'entrepot_rdc_essai');
 	}
 	const browser = await chromium.launch({
 		headless: true,
@@ -88,7 +88,7 @@ async function waitLog(logs, pattern, timeoutMs, from = 0) {
 	await page.keyboard.down('Enter');
 	await sleep(300);
 	await page.keyboard.up('Enter');
-	const started = await waitLog(logs, /\[m1\] partie : zone/, 240000);
+	const started = await waitLog(logs, /\[m1\] partie :/, 240000);
 	console.log(
 		'partie chargée (écran de chargement : partie et carte de départ) :',
 		started >= 0,

@@ -1,14 +1,12 @@
 extends GutTest
 ## Enemy (src/enemies/enemy.gd) : les 4 Timeres poursuivent et attaquent un mannequin (dégâts
 ## seulement sur les images « coup »), recul (le Grand ne recule que sous l'onde), mort, drops,
-## abandon de la poursuite (zone sûre, laisse, frontière réelle du village), données et Timeres
-## libres de la forêt.
+## abandon de la poursuite (conversation, laisse) et données. (F1) Les zones sûres, la frontière
+## du village et les Timeres libres de la forêt sont partis avec l'ancienne île.
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
 const PLAYER_STUB := preload("res://tests/stubs/player_stub.tscn")
 const VISUAL_STUB_SCRIPT := preload("res://tests/stubs/visual_stub.gd")
-const FOREST := preload("res://src/enemies/placements/forest.tscn")
-const ISLAND := preload("res://src/world/island.tscn")
 const SWORD := preload("res://data/attacks/sword_1.tres")
 const WAVE := preload("res://data/attacks/charge_wave.tres")
 const BITE := preload("res://data/attacks/bite.tres")
@@ -25,12 +23,10 @@ const PLAN_TABLE := {
 }
 
 var _world: Node3D
-var _zone_before: StringName
 
 
 func before_each() -> void:
 	GameState.reset()
-	_zone_before = WorldManager.current_zone()
 	_world = add_child_autofree(Node3D.new())
 	var ground := StaticBody3D.new()
 	var shape := CollisionShape3D.new()
@@ -43,8 +39,6 @@ func before_each() -> void:
 
 
 func after_each() -> void:
-	if WorldManager.current_zone() != _zone_before:
-		EventBus.zone_entered.emit(_zone_before)
 	GameState.reset()
 
 
@@ -186,7 +180,7 @@ func test_drops_only_when_enabled() -> void:
 	# Les corps de Timere ne lâchent rien (data/enemies, V3) : le mécanisme des drops se teste
 	# sur une copie de leurs données qui porte une page.
 	var carrying := (load("res://data/enemies/timere_small.tres") as EnemyData).duplicate()
-	var drops: Dictionary[StringName, float] = {&"page_fragment": 1.0}
+	var drops: Dictionary[StringName, float] = {&"test_page": 1.0}
 	(carrying as EnemyData).drops = drops
 	var dropper := _enemy(&"timere_small", Vector3(2.0, 0.0, 0.0))
 	var keeper := _enemy(&"timere_small", Vector3(-2.0, 0.0, 0.0))
@@ -203,30 +197,10 @@ func test_drops_only_when_enabled() -> void:
 	assert_eq(pickups.size(), 1, "seul l'ennemi drops_enabled lâche un objet")
 	if pickups.size() != 1:
 		return
-	assert_eq(pickups[0].item_id, &"page_fragment")
+	assert_eq(pickups[0].item_id, &"test_page")
 	assert_eq(pickups[0].quantity, 1)
 	assert_false(pickups[0].persistent, "objet lâché : non persistant")
 	assert_almost_eq(pickups[0].global_position.x, 2.0, 0.3, "à la position de l'ennemi")
-
-
-func test_stops_chasing_when_player_is_in_a_safe_zone() -> void:
-	var zone := Zone.new()
-	zone.name = "l5_safe_zone"
-	zone.safe = true
-	zone.add_to_group(&"zones")
-	_world.add_child(zone)
-	var player := _player(Vector3(6.0, 0.0, 0.0))
-	var enemy := _enemy(&"timere_normal", Vector3.ZERO)
-	var approached: bool = await wait_until(func() -> bool: return enemy.position.x > 1.0, 3.0)
-	assert_true(approached, "poursuite engagée")
-	assert_eq(enemy.state(), &"chase")
-	EventBus.zone_entered.emit(&"l5_safe_zone")
-	await wait_physics_frames(2)
-	assert_eq(enemy.state(), &"idle", "plus de poursuite : le joueur est en zone sûre")
-	var given_up_at := enemy.position.x
-	await wait_seconds(0.5)
-	assert_lt(enemy.position.x, given_up_at, "il rentre chez lui")
-	assert_lt(_flat_distance(enemy, player), 10.0)
 
 
 func test_stops_chasing_while_the_player_talks() -> void:
@@ -246,25 +220,6 @@ func test_stops_chasing_while_the_player_talks() -> void:
 	assert_true(resumed, "la conversation finie, la poursuite reprend")
 
 
-func test_gives_up_at_the_real_village_border() -> void:
-	var island: Node3D = add_child_autofree(ISLAND.instantiate())
-	var player := PLAYER_STUB.instantiate() as CharacterBody3D
-	player.position = Vector3(0.0, 0.2, -25.0)
-	island.add_child(player)
-	var enemy := ENEMY_SCENE.instantiate() as Enemy
-	enemy.data = load("res://data/enemies/timere_normal.tres") as EnemyData
-	enemy.position = Vector3(0.0, 0.2, -31.0)
-	island.add_child(enemy)
-	var chasing: bool = await wait_until(func() -> bool: return enemy.state() == &"chase", 2.0)
-	assert_true(chasing, "poursuite dans la forêt, près de la barrière (z = -22)")
-	player.position = Vector3(0.0, 0.2, -17.0)
-	var gave_up: bool = await wait_until(func() -> bool: return enemy.state() == &"idle", 2.0)
-	assert_true(gave_up, "le joueur entre au village : fin de la poursuite")
-	assert_eq(WorldManager.current_zone(), &"village")
-	await wait_seconds(0.5)
-	assert_lt(enemy.global_position.z, -22.0, "le Timere reste côté forêt")
-
-
 func test_leash_limits_the_chase() -> void:
 	var player := _player(Vector3(6.0, 0.0, 0.0))
 	var enemy := _enemy(&"timere_normal", Vector3.ZERO)
@@ -274,23 +229,6 @@ func test_leash_limits_the_chase() -> void:
 	player.position = Vector3(3.0, 0.0, 0.0)
 	await wait_physics_frames(3)
 	assert_ne(enemy.state(), &"idle", "joueur dans la laisse : poursuite")
-
-
-func test_forest_has_four_free_timeres_that_drop_nothing() -> void:
-	var placement: Node3D = autofree(FOREST.instantiate())
-	var counts := {}
-	for child: Node in placement.get_children():
-		var enemy := child as Enemy
-		assert_not_null(enemy, "%s est un Enemy" % child.name)
-		if enemy == null:
-			continue
-		counts[enemy.enemy_id()] = int(counts.get(enemy.enemy_id(), 0)) + 1
-		assert_false(enemy.always_chase, "%s est un ennemi libre" % child.name)
-		assert_true(
-			enemy.data.drops.is_empty(), "%s ne lâche rien (Timere ignore les objets)" % child.name
-		)
-		assert_lt(Vector2(enemy.position.x, enemy.position.z).length(), 6.0, "dans la clairière")
-	assert_eq_deep(counts, {&"timere_small": 2, &"timere_normal": 1, &"timere_runner": 1})
 
 
 # --- (H7) Lisibilité en vue fixe ---------------------------------------------------------------

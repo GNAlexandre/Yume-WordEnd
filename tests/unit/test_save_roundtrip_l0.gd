@@ -17,10 +17,10 @@ func test_save_then_load_restores_state() -> void:
 	assert_false(SaveManager.has_save())
 	SaveManager.new_game(&"chtholly")
 	GameState.add_item(&"page_fragment", 3)
-	GameState.set_quest_state(&"pages", &"active")
-	GameState.zone = &"village"
+	GameState.set_flag(&"met_willem")
+	GameState.map = &"essai"
 	GameState.position = Vector3(12.0, 1.0, -4.5)
-	GameState.record_score(&"dunes", 640, 6)
+	GameState.day = 2
 	var before := GameState.to_dict()
 	assert_eq(SaveManager.save(), OK)
 	assert_true(SaveManager.has_save())

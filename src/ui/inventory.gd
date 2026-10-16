@@ -10,7 +10,7 @@ extends Control
 ## n'associe aucun bouton à ui_accept ni à ui_cancel ; B ferme et A presse le bouton qui a le
 ## focus, au relâchement d'un appui reçu ici (B est aussi la charge du joueur).
 ## Ne s'ouvre ni pendant un dialogue (dialogue_started → dialogue_ended) ni si le jeu est déjà
-## en pause (menu pause, fin d'arène).
+## en pause (menu pause, calendrier).
 ## Contenu mis à jour uniquement sur EventBus.inventory_changed, en relisant GameState
 ## (items() pour les quantités, stacks() pour les cases).
 ## (U1) Style « Nuit douce » du thème (src/ui/wordend_theme.tres) : panneau de verre dépoli qui

@@ -1,0 +1,37 @@
+{
+  "_comment": "(F1) Conversation de la démo du Lot 6 (tests/integration/demo_l6.tscn, test_dialogue_flow.gd) : l'offre du livre d'images de l'ancienne île, sans quête. « Je les retrouve. » pose le drapeau l6_pages ; ensuite Nephren compte les pages d'essai qui restent.",
+  "id": "l6_nephren",
+  "start": "hello",
+  "entries": ["pages_progress", "book_offer_1"],
+  "nodes": {
+    "book_offer_1": {
+      "if": {"not_flag": "l6_pages"},
+      "text": "Livre. Vent. Pages.",
+      "next": "book_offer_2"
+    },
+    "book_offer_2": {
+      "text": "Le livre d’images des petites. Cinq pages, dans les bois.",
+      "choices": [
+        {"text": "Je les retrouve.", "set_flag": "l6_pages", "next": "book_go"},
+        {"text": "Plus tard.", "next": "book_later"}
+      ]
+    },
+    "book_go": {
+      "text": "Mm. En rentrant, pas de bruit. Salle de lecture.",
+      "next": null
+    },
+    "book_later": {
+      "text": "Mm.",
+      "next": null
+    },
+    "pages_progress": {
+      "if": {"flag": "l6_pages"},
+      "text": "Encore {left:test_page:5}. Mm.",
+      "next": null
+    },
+    "hello": {
+      "text": "Mm.",
+      "next": null
+    }
+  }
+}

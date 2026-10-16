@@ -1,7 +1,8 @@
 extends GutTest
 ## Lot 6 : DialogueRunner (PLAN.md section 4, « Format de dialogue ») — conditions, choix du
 ## nœud d'entrée, choix et effets, enchaînement "next", signaux dans l'ordre, fichiers invalides.
-## Les dialogues de test sont écrits dans user:// (aucun JSON invalide dans le dépôt).
+## Les dialogues de test sont écrits dans user:// (aucun JSON invalide dans le dépôt). (F1) Les
+## conditions et effets de quête et de score d'arène sont partis avec l'ancienne île : inconnus.
 
 const DIR := "user://test_dialogue_runner"
 
@@ -91,12 +92,7 @@ func _example() -> Dictionary:
 				"text": "Cinq pages, dans les bois. Pour la lecture du soir.",
 				"choices":
 				[
-					{
-						"text": "Je les trouve.",
-						"set_flag": "picture_book_asked",
-						"start_quest": "picture_book",
-						"next": null
-					},
+					{"text": "Je les trouve.", "set_flag": "picture_book_asked", "next": null},
 					{"text": "Plus tard.", "next": null},
 				],
 			},
@@ -105,7 +101,7 @@ func _example() -> Dictionary:
 				"if": {"count": ["page_fragment", 5]},
 				"speaker": "Nephren",
 				"text": "Cinq. Merci. Maintenant, un lecteur.",
-				"complete_quest": "picture_book",
+				"set_flag": "picture_book_read",
 				"next": null,
 			},
 		},
@@ -151,25 +147,13 @@ func test_count_condition() -> void:
 	assert_true(DialogueRunner.evaluate({"count": ["page_fragment", 6.0]}), "nombre JSON (float)")
 
 
-func test_quest_condition() -> void:
-	assert_false(DialogueRunner.evaluate({"quest": ["pages", "active"]}), "quête inconnue")
-	assert_true(DialogueRunner.evaluate({"quest": ["pages", ""]}), "état vide = inconnue")
-	GameState.set_quest_state(&"pages", &"active")
-	assert_true(DialogueRunner.evaluate({"quest": ["pages", "active"]}))
-	assert_false(DialogueRunner.evaluate({"quest": ["pages", "done"]}))
-	GameState.set_quest_state(&"pages", &"done")
-	assert_false(DialogueRunner.evaluate({"quest": ["pages", "active"]}))
-	assert_true(DialogueRunner.evaluate({"quest": ["pages", "done"]}))
-
-
-func test_best_score_condition() -> void:
-	var condition := {"best_score": ["dunes", 300]}
-	assert_false(DialogueRunner.evaluate(condition), "jamais joué")
-	GameState.record_score(&"dunes", 299, 4)
-	assert_false(DialogueRunner.evaluate(condition), "299")
-	GameState.record_score(&"dunes", 300, 5)
-	assert_true(DialogueRunner.evaluate(condition), "300")
-	assert_false(DialogueRunner.evaluate({"best_score": ["forest", 1]}), "autre arène")
+func test_quest_and_score_conditions_are_gone() -> void:
+	for key: String in ["quest", "quest_step", "not_quest_step", "best_score"]:
+		assert_false(DialogueRunner.evaluate({key: ["pages", "active"]}), key)
+		assert_push_warning("condition inconnue")
+		var problem := DialogueRunner.validate({"start": "a", "nodes": {"a": {"if": {key: []}}}})
+		assert_string_contains(problem, "condition inconnue « %s »" % key)
+		assert_string_contains(DialogueRunner.condition_problem({key: []}), "condition inconnue")
 
 
 func test_combined_conditions_must_all_hold() -> void:
@@ -177,14 +161,14 @@ func test_combined_conditions_must_all_hold() -> void:
 		"flag": "met",
 		"not_flag": "angry",
 		"count": ["page_fragment", 2],
-		"quest": ["pages", "active"],
-		"best_score": ["dunes", 10],
+		"day": [2, 4],
+		"scene": "j1_7_chambre",
 	}
 	GameState.set_flag(&"met")
 	GameState.add_item(&"page_fragment", 2)
-	GameState.set_quest_state(&"pages", &"active")
-	assert_false(DialogueRunner.evaluate(condition), "score manquant")
-	GameState.record_score(&"dunes", 10, 1)
+	GameState.day = 2
+	assert_false(DialogueRunner.evaluate(condition), "scène pas encore jouée")
+	GameState.mark_scene_done(&"j1_7_chambre")
 	assert_true(DialogueRunner.evaluate(condition), "toutes vraies")
 	GameState.set_flag(&"angry")
 	assert_false(DialogueRunner.evaluate(condition), "not_flag faux")
@@ -197,9 +181,9 @@ func test_malformed_conditions_are_false_with_warning() -> void:
 	assert_false(DialogueRunner.evaluate({"flg": "met"}))
 	assert_push_warning("condition inconnue")
 	assert_false(DialogueRunner.evaluate({"count": "page_fragment"}))
-	assert_push_warning("attend [identifiant, valeur]")
-	assert_false(DialogueRunner.evaluate({"best_score": ["dunes", "beaucoup"]}))
-	assert_push_warning("attend [identifiant, valeur]")
+	assert_push_warning("attend [objet, minimum]")
+	assert_false(DialogueRunner.evaluate({"count": ["page_fragment", "beaucoup"]}))
+	assert_push_warning("attend [objet, minimum]")
 	assert_false(DialogueRunner.evaluate({"flag": 3}))
 	assert_push_warning("drapeau invalide")
 	assert_false(DialogueRunner.evaluate("met"))
@@ -223,18 +207,21 @@ func test_entries_are_tried_in_order_between_done_and_start() -> void:
 		"nodes":
 		{
 			"hello": {"text": "Bonjour."},
-			"progress": {"if": {"quest": ["pages", "active"]}, "text": "En cours."},
-			"thanks": {"if": {"quest": ["pages", "done"]}, "text": "Merci."},
+			"progress": {"if": {"flag": "pages_started"}, "text": "En cours."},
+			"thanks": {"if": {"flag": "pages_done"}, "text": "Merci."},
 			"done":
-			{"if": {"quest": ["pages", "active"], "count": ["page", 5]}, "text": "Terminé."},
+			{
+				"if": {"flag": "pages_started", "not_flag": "pages_done", "count": ["page", 5]},
+				"text": "Terminé.",
+			},
 		},
 	}
 	assert_eq(DialogueRunner.pick_entry(dialogue), "hello")
-	GameState.set_quest_state(&"pages", &"active")
+	GameState.set_flag(&"pages_started")
 	assert_eq(DialogueRunner.pick_entry(dialogue), "progress")
 	GameState.add_item(&"page", 5)
 	assert_eq(DialogueRunner.pick_entry(dialogue), "done", "done passe avant entries")
-	GameState.set_quest_state(&"pages", &"done")
+	GameState.set_flag(&"pages_done")
 	assert_eq(DialogueRunner.pick_entry(dialogue), "thanks")
 
 
@@ -299,7 +286,6 @@ func test_choice_effects_and_next() -> void:
 	assert_false(GameState.has_flag(&"picture_book_asked"), "rien avant le choix")
 	EventBus.dialogue_choice_made.emit(0)
 	assert_true(GameState.has_flag(&"picture_book_asked"), "set_flag")
-	assert_eq(GameState.quest_state(&"picture_book"), &"active", "start_quest")
 	assert_eq(_log.back(), "line:Merci de ton aide.", "next du choix")
 	EventBus.dialogue_choice_made.emit(-1)
 	assert_eq(_log.back(), "ended:tester")
@@ -310,18 +296,16 @@ func test_other_choice_has_no_effect() -> void:
 	EventBus.dialogue_choice_made.emit(-1)
 	EventBus.dialogue_choice_made.emit(1)
 	assert_false(GameState.has_flag(&"picture_book_asked"))
-	assert_eq(GameState.quest_state(&"picture_book"), &"")
 	assert_eq(_log.back(), "ended:tester", "next null : fin")
 
 
 func test_node_effects_apply_when_shown() -> void:
 	watch_signals(EventBus)
-	GameState.set_quest_state(&"picture_book", &"active")
 	GameState.add_item(&"page_fragment", 5)
 	_start(_example())
 	assert_eq(_lines[0]["text"], "Cinq. Merci. Maintenant, un lecteur.")
-	assert_eq(GameState.quest_state(&"picture_book"), &"done", "complete_quest")
-	assert_signal_emitted_with_parameters(EventBus, "quest_updated", [&"picture_book", &"done"])
+	assert_true(GameState.has_flag(&"picture_book_read"), "set_flag du nœud affiché")
+	assert_signal_emitted_with_parameters(EventBus, "flag_changed", [&"picture_book_read", true])
 
 
 func test_set_flag_accepts_a_list() -> void:
@@ -394,8 +378,8 @@ func test_only_one_dialogue_at_a_time() -> void:
 
 
 func test_dialogue_stopped_by_an_effect_listener_ends_cleanly() -> void:
-	var stopper := func(_quest_id: StringName, _state: StringName) -> void: _runner.stop()
-	EventBus.quest_updated.connect(stopper)
+	var stopper := func(_flag: StringName, _value: bool) -> void: _runner.stop()
+	EventBus.flag_changed.connect(stopper)
 	var dialogue := _example()
 	dialogue["nodes"]["ask"]["choices"][0]["next"] = "hello"
 	_start(dialogue)
@@ -404,11 +388,10 @@ func test_dialogue_stopped_by_an_effect_listener_ends_cleanly() -> void:
 	assert_eq(_log.back(), "ended:tester", "arrêté pendant l'effet du choix")
 	assert_eq(_log.size(), 4, "pas de réplique après la fin")
 	_log.clear()
-	GameState.set_quest_state(&"pages", &"active")
 	GameState.add_item(&"page_fragment", 5)
 	_start(dialogue)
 	assert_eq(_log, ["started:tester", "ended:tester"], "arrêté pendant l'effet du nœud")
-	EventBus.quest_updated.disconnect(stopper)
+	EventBus.flag_changed.disconnect(stopper)
 
 
 func test_runner_leaving_tree_ends_dialogue() -> void:
@@ -420,10 +403,10 @@ func test_runner_leaving_tree_ends_dialogue() -> void:
 
 func test_text_placeholders() -> void:
 	GameState.add_item(&"page_fragment", 2)
-	GameState.record_score(&"dunes", 150, 3)
 	assert_eq(
 		DialogueRunner.format_text("{count:page_fragment}/{left:page_fragment:5}/{best:dunes}"),
-		"2/3/150"
+		"2/3/{best:dunes}",
+		"(F1) {best:…} n'est plus remplacé"
 	)
 	GameState.add_item(&"page_fragment", 9)
 	assert_eq(DialogueRunner.format_text("{left:page_fragment:5}"), "0", "jamais négatif")

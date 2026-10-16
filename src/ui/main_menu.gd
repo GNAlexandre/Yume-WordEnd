@@ -7,9 +7,10 @@ extends Control
 ##   la racine de l'arbre : un retour au menu (reload_current_scene) ne le redemande pas.
 ## - Skins en vignettes (SkinRegistry.all(), Chtholly d'abord) ; présélection du skin de la
 ##   sauvegarde (champ « skin » de SaveManager.save_path, lu sans charger la partie).
-## - Continuer (si SaveManager.has_save()) → load_game() : OK, le jeu démarre ;
-##   ERR_FILE_CORRUPT, la nouvelle partie de secours prend le skin choisi et last_error reste
-##   affiché (avis qui survit au passage au jeu) ; ERR_INVALID_DATA, on reste au menu.
+## - Continuer (si SaveManager.has_save()) → load_game() : OK, le jeu démarre ((F1) une partie de
+##   l'ancienne île reprend à l'acte 1 : SaveManager.notice est affiché, avis qui survit au
+##   passage au jeu) ; ERR_FILE_CORRUPT, la nouvelle partie de secours prend le skin choisi et
+##   last_error reste affiché (même avis) ; ERR_INVALID_DATA, on reste au menu.
 ## - Nouvelle partie → SaveManager.new_game(skin choisi), confirmée si une sauvegarde existe.
 ## - Sauvegarde : export (texte sélectionnable, presse-papiers) et import (import_json) ; en
 ##   navigation privée (not SaveManager.is_persistent()), avertissement et export mis en avant.
@@ -189,6 +190,8 @@ func continue_game() -> Error:
 		OK:
 			if _skin_chosen_by_user and not chosen.is_empty():
 				GameState.skin_id = chosen
+			if not SaveManager.notice.is_empty():
+				_show_notice(SaveManager.notice, &"")
 		ERR_FILE_CORRUPT:
 			# La partie démarre quand même (game_loaded est déjà émis) : on garde le skin choisi.
 			if not chosen.is_empty():
@@ -256,6 +259,8 @@ func import_save(text: String) -> Error:
 	var err := SaveManager.import_json(text)
 	if err != OK:
 		_set_save_status("Import impossible : %s" % SaveManager.last_error, true)
+	elif not SaveManager.notice.is_empty():
+		_show_notice(SaveManager.notice, &"")
 	return err
 
 
@@ -423,13 +428,16 @@ func _show_message(text: String, error: bool) -> void:
 	_message_panel.visible = not text.is_empty()
 
 
-func _show_notice(text: String) -> void:
+## Avis qui survit au passage au jeu (MenuNotice) ; variation : ErrorLabel (erreur) ou &""
+## ((F1) avis simple : une partie de l'ancienne île reprise à l'acte 1).
+func _show_notice(text: String, variation: StringName = &"ErrorLabel") -> void:
 	var previous := get_tree().root.get_node_or_null(NodePath(String(MenuNotice.NODE_NAME)))
 	if previous != null:
 		previous.name = "MenuNoticeOld"
 		previous.queue_free()
 	var notice := MenuNotice.new()
 	notice.text = text
+	notice.variation = variation
 	get_tree().root.add_child.call_deferred(notice)
 
 
