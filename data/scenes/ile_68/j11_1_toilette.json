@@ -1,15 +1,16 @@
 {
-  "_comment": "ACTE1.md 11.1 (VEX, s. 29) : la toilette du matin à l'eau glacée. Collon trempe un doigt, grimace, refuse, et file dans le couloir ; {player} la rattrape (poursuite douce, sans échec : au bout de 30 s, Collon revient d'elle-même), puis rappelle les règles.",
+  "_comment": "ACTE1.md 11.1 (VEX, s. 29) : la toilette du matin à l'eau glacée. Collon trempe un doigt, grimace, refuse, et file dans le couloir ; {player} la rattrape (poursuite douce, sans échec : au bout de 30 s, Collon revient d'elle-même), puis rappelle les règles. Willem, dont la toilette est à la même heure, est écarté (il descend en pardessus en 11.2).",
   "title": "La toilette du matin",
   "day": 11,
   "slot": "aube",
   "map": "entrepot_etage",
   "trigger": {"on": "ready"},
-  "present": ["collon", "tiat", "lakhesh"],
+  "present": ["collon", "tiat", "lakhesh", "willem"],
   "steps": [
     {"do": "hint", "text": "hint"},
     {"do": "control", "on": true},
     {"do": "wait_for", "map": "entrepot_rdc"},
+    {"do": "leave", "who": "willem"},
     {"do": "place", "who": "collon", "at": "point_eau", "offset": [-1.2, -0.2], "facing": "north", "outfit": "pyjama", "anim": "travaille"},
     {"do": "place", "who": "tiat", "at": "point_eau", "offset": [0.0, -0.4], "facing": "north", "outfit": "pyjama", "anim": "travaille"},
     {"do": "place", "who": "lakhesh", "at": "point_eau", "offset": [1.1, -0.1], "facing": "north", "outfit": "pyjama", "anim": "travaille"},

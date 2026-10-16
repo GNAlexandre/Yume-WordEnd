@@ -318,6 +318,12 @@ func _act(action: Callable) -> void:
 	if not action.is_valid():
 		return
 	_acting = true
+	print(
+		(
+			"S2 pilote : %s %s (carte %s)"
+			% [action.get_method(), action.get_bound_arguments(), WorldManager.current_map()]
+		)
+	)
 	await action.call()
 	await get_tree().create_timer(0.5).timeout
 	_acting = false
@@ -373,7 +379,7 @@ func _trigger(scene_id: StringName, data: Dictionary) -> void:
 	var map_id := StringName(str(data.get("map", "")))
 	var trigger: Dictionary = data.get("trigger", {})
 	if WorldManager.current_map() != map_id:
-		var marker := StringName(str(trigger.get("marker", "")))
+		var marker := StringName(str(trigger.get("marker", "Spawn")))
 		await _go(map_id, marker)
 		await get_tree().create_timer(0.4).timeout
 		if StoryDirector.is_playing():
@@ -384,24 +390,19 @@ func _trigger(scene_id: StringName, data: Dictionary) -> void:
 		"prompt":
 			StoryDirector.play(scene_id)
 		"enter":
-			await _go(&"entrepot_rdc" if map_id == &"entrepot" else &"village")
-			await _go(map_id, StringName(str(trigger.get("marker", ""))))
+			await _go(map_id, StringName(str(trigger.get("marker", "Spawn"))))
 
 
+## Va sur map_id, arrivé par marker (sinon par « from_<carte d'où l'on vient> »).
 func _go(map_id: StringName, marker: StringName = &"") -> void:
 	var from := WorldManager.current_map()
 	var arrival := marker if not marker.is_empty() else StringName("from_" + String(from))
-	if (
-		WorldManager.current_map_node() != null
-		and WorldManager.current_map_node().marker(arrival) == null
-	):
-		arrival = &"Spawn"
 	await WorldManager.go_to(map_id, arrival)
 
 
 func _teleport(spec: Variant, radius: float = 0.0) -> void:
 	var at := StoryDirector.stage().resolve(spec).origin
-	StoryDirector.stage().place_player(at + Vector3(0.0, 0.0, clampf(radius - 0.6, 0.0, 2.0)))
+	StoryDirector.stage().place_player(at + Vector3(0.0, 0.0, clampf(radius - 0.6, 0.0, 0.8)))
 	await get_tree().physics_frame
 
 
