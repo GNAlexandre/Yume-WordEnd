@@ -154,6 +154,7 @@
   {"path": "assets/hd2d/decals/rust_streak.png", "size": [192, 96], "kind": "decal", "prio": 2, "lot": "B"},
   {"path": "assets/hd2d/decals/footprints.png", "size": [96, 288], "kind": "decal", "prio": 2, "lot": "B", "soft_alpha": true},
   {"path": "assets/hd2d/decals/cart_ruts.png", "size": [192, 384], "kind": "decal", "prio": 3, "lot": "B", "wrap": "y", "soft_alpha": true},
+  {"path": "assets/hd2d/decals/cart_ruts_end.png", "size": [192, 192], "kind": "decal", "prio": 3, "lot": "B", "soft_alpha": true, "solid_edge": "top"},
   {"path": "assets/hd2d/decals/drain_grate.png", "size": [96, 96], "kind": "decal", "prio": 3, "lot": "B"},
   {"path": "assets/hd2d/decals/hay_scatter.png", "size": [144, 96], "kind": "decal", "prio": 3, "lot": "B"},
   {"path": "assets/hd2d/decals/boardwalk.png", "size": [96, 384], "kind": "decal", "prio": 3, "lot": "B", "wrap": "y"},
