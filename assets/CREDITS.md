@@ -34,6 +34,11 @@ egg n'a pas de licence établie (PLAN.md section 13) et n'est pas copié.
 
 | `assets/hd2d/ground/grass_b.png`, `assets/hd2d/ground/forest_floor_b.png`, `assets/hd2d/ground/path_dirt_b.png`, `assets/hd2d/ground/leaf_litter.png`, `assets/hd2d/ground/moss.png`, `assets/hd2d/ground/grass_dry_b.png`, `assets/hd2d/ground/flagstone_b.png`, `assets/hd2d/ground/cobble_b.png`, `assets/hd2d/ground/meadow_flowers.png`, `assets/hd2d/ground/gravel.png`, `assets/hd2d/ground/garden_soil.png`, `assets/hd2d/ground/sand_b.png`, `assets/hd2d/ground/rock_b.png`, `assets/hd2d/ground/planks.png`, `assets/hd2d/ground/stream_bed.png`, `assets/hd2d/decals/grass_edge_a.png`, `assets/hd2d/decals/grass_edge_b.png`, `assets/hd2d/decals/pebbles_a.png`, `assets/hd2d/decals/garden_bed.png`, `assets/hd2d/decals/clover_patch.png`, `assets/hd2d/decals/flowers_patch_a.png`, `assets/hd2d/decals/flowers_patch_b.png`, `assets/hd2d/decals/puddle_a.png`, `assets/hd2d/decals/puddle_b.png`, `assets/hd2d/decals/mud_patch.png`, `assets/hd2d/decals/cracks_a.png`, `assets/hd2d/decals/cracks_b.png`, `assets/hd2d/decals/pebbles_b.png`, `assets/hd2d/decals/stepping_stones.png`, `assets/hd2d/decals/lily_pads.png`, `assets/hd2d/decals/sand_drift_a.png`, `assets/hd2d/decals/sand_drift_b.png`, `assets/hd2d/decals/ring_stone_flat_a.png`, `assets/hd2d/decals/ring_stone_flat_b.png`, `assets/hd2d/decals/ring_stone_flat_c.png`, `assets/hd2d/decals/chalk_drawings.png`, `assets/hd2d/decals/chalk_hopscotch.png`, `assets/hd2d/decals/oil_stain.png`, `assets/hd2d/decals/rust_streak.png`, `assets/hd2d/decals/footprints.png`, `assets/hd2d/decals/cart_ruts.png`, `assets/hd2d/decals/drain_grate.png`, `assets/hd2d/decals/hay_scatter.png`, `assets/hd2d/decals/boardwalk.png`, `assets/hd2d/decals/mist_patch.png` | généré avec ChatGPT le 8 octobre 2026, lot B (outil image_gen) ; mise au format nearest-neighbor et adaptation technique des masques/raccords, sans quantification RGB | — | images générées pour le projet ; univers inspiré de SukaSuka, droits des ayants droit réservés | Monde B |
 
+### Île 68 — chemin du marais et port (cahier n° 6, A.1–A.2)
+
+Dix-sept PNG redessinés avec OpenAI Image Generation à partir des références du projet et des planches officielles de SukaSuka : eau de marais, pierres, végétation, racines, signalisation, bras d’amarrage ouvert, sifflet, cabestan, charrettes, palissade et maison du gardien avec son flanc. Formats natifs et transparence vérifiés ; recalage géométrique au plus proche voisin. Sources originales conservées hors dépôt. Les droits des personnages et références de SukaSuka restent à leurs ayants droit.
+
+
 ### Lot G — corrections des raccords et détourages
 
 Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `assets/hd2d/sky/sky_night.png`, `assets/hd2d/sky/horizon_islands.png`, `assets/hd2d/sky/mist_band.png`, `assets/hd2d/sky/distant_island_d.png`, `assets/hd2d/sky/distant_island_f.png`. Sources conservées hors du dépôt ; assemblage et détourage sans réduction de palette.
@@ -42,6 +47,11 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 
 91 PNG générés avec ChatGPT / image_gen le 9 octobre 2026, cahier n° 3, lot I. Références : les planches officielles de SukaSuka fournies par l’utilisateur (21 ZIP, 162 pages ; intérieurs p99–111), les descriptions paraphrasées des romans du cahier, et les assets HD-2D déjà livrés. Sources et aperçus conservés hors du dépôt. Mise au format au plus proche voisin, transparence découpée, raccords corrigés avec image_gen ; aucune réduction de palette ni compression avec perte.
 | Lot J priorité 1 : `tiat_life`, `collon_life`, `pannibal_life`, `lakhesh_life`, `almita_life`, `chtholly_home`, `ithea_home`, `nephren_home`, `willem_home`, `willem_cook`, `willem_coat`, `nygglatho_life`, `nygglatho_tea`, `fairy_01`, `fairy_02`, `fairy_03`, `fairy_04`, `fairy_05`, `fairy_06`, `tiat_pajamas`, `collon_pajamas`, `pannibal_pajamas`, `lakhesh_pajamas` (profil, face, dos, PNG et JSON ; 23 variantes, 69 planches) | ChatGPT/Codex (`image_gen`), 9 octobre 2026, cahier fourni `ASSETS_HD2D_SUKASUKA.md` ; pages officielles des 21 ZIP et planches existantes utilisées comme références, variantes domestiques et six fées secondaires originales ; couleurs visibles natives conservées sans réduction de palette ; masques/cadrage au plus proche voisin, repos des `_life` recopiés exactement. Provenance par planche dans `assets/characters/CREDITS.md` | — (images générées) | Images pour le projet ; personnages/univers inspirés de *SukaSuka*, droits des ayants droit réservés | SukaSuka J P1 |
+
+## Île 68 — ornières et snack-bar (cahier n° 6, A.3 et A.6)
+
+Neuf PNG générés avec OpenAI Image Generation : traces et leur fin estompée, sol et mur de pierre, comptoir, étagère, tabourets, table et repas. Références : matériaux et mobilier HD-2D du projet. Écartement des roues de 115 px, recalage géométrique du plateau au plus proche voisin et assemblage local des huit premières lignes du raccord. Sources et originaux conservés hors dépôt ; couleurs générées conservées. Univers inspiré de SukaSuka, droits des ayants droit réservés.
+
 
 ## Cahier n° 3 — Lot I, priorité 2 : maison, entretien, lecture et chambres
 
@@ -200,11 +210,25 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 | `assets/hd2d/fx/sign_talk.png`, `sign_examine.png`, `sign_take.png`, `sign_enter.png` (signes d'interaction, remplaçants commandés au cahier n° 5, R0.13) | généré par `tools/hd2d_assets.py gen` (recettes `tools/hd2d_sky.py`) | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |
 | `assets/ui/heart_full.png`, `assets/ui/heart_empty.png` (cœurs « Nuit douce », redessinés) | généré par `tools/gen_ui_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |
 
+
+
+## Cahier n° 6 — village et nuit (16 octobre 2026)
+
+Généré avec ChatGPT le 16 octobre 2026, lot B : chaume, lavoir, meule de foin, charrette de foin, ruches, talus, traces de pas, café de nuit et maison Limashenka de nuit (neuf PNG). Références : images existantes des mêmes lieux, matériaux et accessoires. Réduction/recalage au plus proche voisin et montage localisé autorisés ; alpha des façades de jour conservé, vitrage crème assemblé depuis un échantillon généré, empreintes générées réassemblées à 43 px de pas. Originaux et générations conservés séparément. Deux chemins nocturnes déclarés au manifeste, alpha doux des empreintes aligné sur le cahier ; aucune logique moteur modifiée. Placement et validation en jeu restent à effectuer.
+
+
 ## Île 68 — R2 priorité 2 : tenues de pluie A (15 octobre 2026)
 
 Généré avec ChatGPT le 15 octobre 2026, cahier n° 5 (`docs/ASSETS_HD2D_ILE68.md`), lot R2, section 4.7 : `almita/almita_rain` (91 px), `chtholly/chtholly_rain` (144 px), `collon/collon_rain` (115 px), chacun en profil droit, face et dos, avec leurs JSON ; neuf PNG et159 poses. Repos, marche, dialogue et course ; saut à pieds joints dans une flaque non dessinée pour Almita et Collon. Capuche relevée pour Almita et Chtholly, rabattue pour Collon, bandeau rouge conservé ; aucun armement.
 
 Références : trois vues existantes de chaque personnage, `willem_coat` pour la toile et le cuir, pages officielles64,11 et47 des ZIP fournis par l’utilisateur. Alpha net, recalage au plus proche voisin et montage local autorisé pour les pieds immobiles, le dialogue fermé et la respiration ; dix générations originales conservées séparément, dont la vue arrière de Collon remplacée pour la course et le saut. Tenues à enregistrer et placer dans les scènes ; aucun ancien PNG/JSON ni dessin anime modifié.
+
+
+
+## Île 68 — reprise des gestes et fées (16 octobre 2026)
+
+Générations ChatGPT précédemment conservées, livrées sans régénération : Willem vie quotidienne et réparation, serveur et boulanger au travail (12 PNG/JSON, 126 poses) ; fées génériques 07–10 (12 PNG/JSON, 444 poses), portraits Kana et Giniette (256 × 256). Soit 26 PNG, 24 JSON et 570 poses. Références : sprites existants et cahiers n° 5/n° 6 ; sources et générations originales conservées séparément. Le linge de Nygglatho est exclu de cette reprise pour conserver la nouvelle version noire et blanche de la PR 49. Tenues et personnages à enregistrer et placer en jeu.
+
 
 - 2026-10-15 — généré avec ChatGPT le 15 octobre 2026, cahier n° 5, lot R2 priorité 2 : tenues de pluie de Lakhesh (115 px), Nygglatho (corps 178 px ; parapluie inclus 234 px), Pannibal (120 px) et Tiat (106 px). Douze PNG et douze JSON, 201 poses ; trois vues par personnage. Références : sprites existants des quatre personnages et de Willem en pardessus ; planches officielles des ZIP fournis, pages 49, 51, 45 et 41. Origines et générations conservées hors dépôt ; recalage au plus proche voisin et montage localisé autorisés, sans lissage ni changement de palette.
 

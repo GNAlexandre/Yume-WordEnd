@@ -6,4 +6,5 @@
 [node name="Footprints" type="Node3D"]
 script = ExtResource("1_decal")
 texture = ExtResource("2_image")
+soft_alpha = true
 metadata/hd2d_category = "decal"
