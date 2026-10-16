@@ -28,7 +28,7 @@ fuit) sont **(original)** : l'œuvre n'en dit rien.
 | n° 4 | `docs/ASSETS_HD2D_COMPLEMENTS.md` | livré en entier |
 | compléments | `docs/ASSETS_HD2D_NAVIRES.md` | livré |
 | n° 5 | `docs/ASSETS_HD2D_ILE68.md` | R0, R1 et R2 livrés ; le reste a été repris au n° 6 |
-| n° 6 | `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md` | en cours de livraison ; **38 de ses lignes sont reprises ici** (section 0.2) |
+| n° 6 | `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md` | en cours de livraison ; **39 de ses lignes sont reprises ici** (section 0.2) |
 | **n° 7** | `docs/ASSETS_HD2D_ILE68_LIVRAISON7.md` | **ce document** |
 
 
@@ -53,12 +53,12 @@ densité et la vie du lieu ; 3 = le bonus.
 
 | Lot | Section | Contenu | Images | Planches | Fichiers PNG | Prio 1 | Prio 2 | Prio 3 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **A** | 4 | le décor : ville haute, village, variantes de nature, profondeur (premiers plans, second rang, talus, lumière) | 89 | 0 | 89 | 38 images | 40 images | 11 images |
+| **A** | 4 | le décor : ville haute, village, variantes de nature, profondeur (premiers plans, second rang, talus, lumière), pince du port | 90 | 0 | 90 | 39 images | 40 images | 11 images |
 | **B** | 5 | le mouvement : une planche de mouvement par personnage, trois vues (150 images dessinées par vue, 450 en tout) | 0 | 10 | 30 | 1 planche (81 images) | 4 planches (189 images) | 5 planches (180 images) |
-| **Total** | | | **89** | **10** (450 images dessinées) | **119** | | | |
+| **Total** | | | **90** | **10** (450 images dessinées) | **120** | | | |
 
 Une **planche de mouvement** compte pour trois PNG et trois JSON (profil, face, dos) ; ses **images** sont les cases de
-ses rangées (le détail est en 3.2). Les images comptées du lot A sont celles à **dessiner** : 37 sont encore des
+ses rangées (le détail est en 3.2). Les images comptées du lot A sont celles à **dessiner** : 38 sont encore des
 remplaçants dessinés par les outils du jeu (le fichier livré les remplace au même nom), 52 sont nouvelles (dont une
 image de nuit qui n'existe pas encore).
 
@@ -74,7 +74,8 @@ image de nuit qui n'existe pas encore).
 | A.6 | lisières de second rang | 4 | 2 | 2 | 0 | 0 |
 | A.7 | bords de talus : lèvres, angles, pieds | 9 | 2 | 3 | 4 | 0 |
 | A.8 | taches de lumière de sous-bois | 3 | 0 | 2 | 1 | 0 |
-| **Total** | | **89** | **38** | **40** | **11** | **38** |
+| A.9 | le port : la pince du bras d'amarrage | 1 | 1 | 0 | 0 | 1 |
+| **Total** | | **90** | **39** | **40** | **11** | **39** |
 
 **Ordre de commande conseillé.** (1) **A.1 et A.2 en priorité 1** : la ville haute est la carte où le joueur passe le plus de
 temps au jour 3 et celle qui répète le plus (`town_railing` posé 41 fois, `town_wall_low` 27, `fence_wattle` 44, `town_house_c`
@@ -96,14 +97,15 @@ même nom.
 | A.4 (maisons et boutiques de la ville haute) | `wall_stone_town`, `shop_snack` et `_side`, `cafe_town` et `_side`, `town_house_a` à `town_house_f` et leurs flancs (12), `shop_accessories` et `_side`, `shop_apothecary` et `_side` : **21 lignes** | A.1 |
 | A.5 (enseignes, murets, lointain) | `hanging_sign_pan`, `hanging_sign_cup`, `town_planter_stone`, `town_wall_fountain`, `town_doorsteps`, `town_cellar_hatch`, `town_wall_low`, `town_railing`, `town_roofs_a`, `town_roofs_b` : **10 lignes** | A.2 |
 | C.5 (village) | `fence_wattle`, `wall_wattle_daub`, `village_house_stone`, `_side` et `_night`, `village_shed` et `_side` : **7 lignes** | A.3 |
+| C.1 (navire de la Garde et quai) | `anim/mooring_arm_clamp` (la bande de la pince du bras d'amarrage) : **1 ligne** | A.9 |
 
-Au total **38 lignes** reprises, dont 37 remplaçants. Aucune image du n° 6 n'est donc commandée deux fois.
+Au total **39 lignes** reprises, dont 38 remplaçants. Aucune image du n° 6 n'est donc commandée deux fois.
 
 **Changement de priorité sans reprise** (les lignes restent celles du n° 6, inchangées) : `town_house_g` et `town_house_h` avec leurs
 flancs (n° 6, D.4, priorité 3) passent en **priorité 2** : le jeu n'a que six maisons de ville, et l'audit en compte huit identiques
 (`town_house_c`) dans une même rue.
 
-**Le reste des remplaçants** du dépôt (intérieurs du café et de la maison Limashenka, pluie, navire de la Garde, forêt profonde,
+**Le reste des remplaçants** du dépôt (intérieurs du café et de la maison Limashenka, pluie, navire de la Garde et son quai, forêt profonde,
 papillons, talisman) **reste au n° 6**, à sa priorité : ce cahier ne touche ni à ces images ni à leurs groupes.
 
 ### 0.3 Découper et joindre (règles de découpe)
@@ -507,7 +509,7 @@ aux mêmes images).
 
 ## 4. Lot A : le décor, de la profondeur et la fin du copié-collé
 
-**Total du lot A : 89 images** (37 sont encore des remplaçants, 52 sont nouvelles), dont 38 en priorité 1, 40 en priorité 2 et 11 en priorité 3.
+**Total du lot A : 90 images** (38 sont encore des remplaçants, 52 sont nouvelles), dont 39 en priorité 1, 40 en priorité 2 et 11 en priorité 3.
 
 **Pourquoi ce lot.** L'audit du 16 octobre 2026 a posé les 89 vues du jeu une à une (entrepôt, sentier, village, colline, port, ville haute)
 et compté ce que chacune montre. Les défauts qu'il mesure, et ce que ce lot y répond :
@@ -518,6 +520,7 @@ et compté ce que chacune montre. Les défauts qu'il mesure, et ce que ce lot y 
   2 m, retournés un sur deux) et 8 `town_house_c` identiques alignées aux bords. **Réponse** : trois variantes de garde-corps, de muret et de pierre de façade, deux
   clôtures de ville, les maisons dessinées d'abord (A.1, A.2).
 - **Le village** répète `fence_wattle` (12 fois dans une seule vue) et garde six remplaçants (A.3).
+- **Le port** : la bande `anim/mooring_arm_clamp` (la pince du bras d'amarrage) est un remplaçant à redessiner d'après le bras livré `props/mooring_arm_open.png` (A.9).
 - **Les mêmes images de nature, trop souvent** : quatre roseaux répétés 55 fois dans le champ du sentier, deux haies `thicket_a_fg` et `thicket_b_fg`
   posées tous les 2,2 m, **trois `oak_a` identiques côte à côte** à la lisière nord de l'entrepôt, `pebbles_a` et `pebbles_b` 14 fois chacun dans la cour,
   `leaves_rust_b` (8 fois) et `clover_patch` (6 fois) posés comme des tampons dans le champ. **Réponse** : A.4 (4 roseaux, 3 haies, 3 chênes autres que `oak_a`, 3 tas de feuilles, 2 cailloux).
@@ -692,6 +695,16 @@ Il n'existe qu'une tache de lumière (`sun_dapple.png`) : trois autres, de forme
 | 2 | `assets/hd2d/decals/sun_dapple_c.png` | 480 × 288 (5 × 3 m) | décalque de sol, vu de dessus, **alpha doux** ; ancre : centre | **traînée** de taches de lumière étirée dans un sens (le soleil entre deux troncs) : une dizaine de plages inégales, plus denses au centre | des bords nets ; du noir ou du gris sombre (c'est de la lumière : jaune pâle, jamais de l'ombre) ; des disques parfaits ; la même disposition que `sun_dapple.png` (jointe) ; un alpha supérieur à 70 % | n° 7 |
 | 3 | `assets/hd2d/decals/sun_dapple_d.png` | 192 × 192 (2 × 2 m) | décalque de sol, vu de dessus, **alpha doux** ; ancre : centre | **une seule tache** de lumière un peu ovale, avec deux éclats plus petits à côté, bords très doux | des bords nets ; du noir ou du gris sombre (c'est de la lumière : jaune pâle, jamais de l'ombre) ; des disques parfaits ; la même disposition que `sun_dapple.png` (jointe) ; un alpha supérieur à 70 % | n° 7 |
 
+### A.9 Le port : la pince du bras d'amarrage
+
+Une seule bande, reprise du n° 6 (C.1) et **à dessiner à partir du bras livré** `props/mooring_arm_open.png` (jointe) : la bande actuelle est un remplaçant que les outils du jeu ont refait pour qu'il suive le bras livré (le premier remplaçant faisait tourner un bras de l'ancienne géométrie, et laissait des artefacts blancs) ; elle est **en priorité 1** : le bras s'anime à chaque arrivée d'un navire. Le pied du bras reste immobile au pixel près ; seule la pince bouge.
+
+**Références à joindre** : `assets/hd2d/props/mooring_arm_open.png` (le bras livré, **la référence : la bande en est l'animation**), `assets/hd2d/props/mooring_arm.png`, `assets/hd2d/props/mooring_tower.png`, `assets/hd2d/props/gangway.png`.
+
+| Prio | Fichier (chemin exact) | Taille (px) | Genre et ancre | Consigne à coller | À ne pas faire | Réf. |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | `assets/hd2d/anim/mooring_arm_clamp.png` | 4 images de 288 × 384, 6 ips ; fichier : 1152 × 384 | bande animée ; ancre : milieu du bord bas de chaque image | `mooring_arm_open.png` (jointe) : le bras s'abaisse et la pince se referme sur un anneau non dessiné ; image 3 : fermé ; le pied immobile au pixel près | un pied qui bouge (il est immobile au pixel près) ; un anneau ou un navire dessiné | n° 6 C.1, reprise |
+
 ## 5. Lot B : le mouvement des personnages
 
 **Total du lot B : 10 planches de mouvement** (30 PNG et 30 JSON), soit **450 images dessinées** (150 par vue) : Chtholly **81** (priorité 1), Willem et les trois premières fées **189** (priorité 2), les cinq autres **180** (priorité 3).
@@ -816,7 +829,7 @@ Le reste de la distribution. **Jeu court** comme en B.3. Les planches de Panniba
    personnage, **ni changement des fichiers existants** (les planches `<id>.png` et leurs JSON restent intactes). **Une image livrée à son chemin exact remplace le
    remplaçant du même nom, sans changer le code.**
 3. Lance `python3 tools/hd2d_assets.py check` : pour chaque image **inscrite au manifeste** (`tools/hd2d_manifest.json`) il vérifie la taille exacte, l'opacité, l'alpha net,
-   l'ancrage, les décalques, les raccords. **Il voit les 37 remplaçants repris** (A.1 à A.3), pas les images nouvelles ni les planches : elles ne sont inscrites au manifeste
+   l'ancrage, les décalques, les raccords. **Il voit les 38 remplaçants repris** (A.1 à A.3), pas les images nouvelles ni les planches : elles ne sont inscrites au manifeste
    que par les lots du moteur qui les posent (clé `lot` proposée : `N7A` pour le décor, `N7B` pour les planches). **Contrôle donc à la main** les images nouvelles avec le script
    6.2, et les planches avec le script 6.3.
 4. Lance `python3 tools/hd2d_sheets.py strip <aperçu.png> <json>` sur chaque planche de mouvement : il trace la ligne du sol, l'axe de l'ancre et la hauteur debout ; **mesure le
@@ -1003,7 +1016,7 @@ Tout ce qui suit est **commandable tout de suite** : seul l'usage dans le jeu at
 | Lèvres, angles et pieds de talus `decals/bank_*` | 9 | RC et SOL | décalques ordinaires ; **`GroundDecal` doit pouvoir les tourner par quarts de tour** (les angles) et les enchaîner (les lèvres : `wrap x`) |
 | Haies `thicket_d` à `f` | 3 | RC | les versions `_fg` (premier plan) sont des **scènes du jeu** qui réutilisent la même image (`foreground = true`) : aucune image en plus |
 | Variantes de garde-corps, de muret et de clôtures (règle du poteau coupé en deux) | 11 | RC | `PropScatter` doit tirer **parmi les variantes** d'une famille ; sans ça, on retombe sur le copié-collé |
-| Les 38 images reprises du n° 6 | 38 | — | déjà inscrites au manifeste (37 remplaçants) ; l'image de nuit `village_house_stone_night.png` s'inscrit à la pose |
+| Les 39 images reprises du n° 6 | 39 | — | déjà inscrites au manifeste (37 remplaçants) ; l'image de nuit `village_house_stone_night.png` s'inscrit à la pose |
 
 ## 8. Écarts relevés, et ce que ce cahier tranche
 
@@ -1011,15 +1024,16 @@ Tout ce qui suit est **commandable tout de suite** : seul l'usage dans le jeu at
 | --- | --- |
 | Le pas actuel de Chtholly (environ 0,45 m) et une marche de 8 images à 3,0 à 3,2 m/s : le calcul de la 3.3 | **incohérent** (3.3) : 27,6 ips, 6,9 pas par seconde. On retient un pas de **0,70 m** (8 images, 18 ips, 3,15 m/s) ; le pas de 0,45 m n'est gardé que pour les personnages de la foule, qui marchent à 1,3 m/s |
 | Le tableau `life` de `hd2d_sheets.py` et les planches livrées donnent une course de **5 images** | **6 images** : un cycle de course a deux foulées symétriques, ce qu'un nombre impair ne permet pas ; le moteur adapte son tableau |
-| Le cahier n° 6 (8.1) dit que les images ne sont inscrites au manifeste que par les lots du moteur ; on pourrait les inscrire dès la commande | **ce n'est pas l'usage** : ce cahier n'ajoute **aucune** entrée au manifeste (un remplaçant exige une recette de dessin dans `tools/`, hors du périmètre d'un cahier). Les 37 remplaçants repris y sont déjà ; les 52 images nouvelles s'inscrivent à la pose, par le lot du moteur |
+| Le cahier n° 6 (8.1) dit que les images ne sont inscrites au manifeste que par les lots du moteur ; on pourrait les inscrire dès la commande | **ce n'est pas l'usage** : ce cahier n'ajoute **aucune** entrée au manifeste (un remplaçant exige une recette de dessin dans `tools/`, hors du périmètre d'un cahier). Les 38 remplaçants repris y sont déjà ; les 52 images nouvelles s'inscrivent à la pose, par le lot du moteur |
 | Les JSON des planches existantes portent des clés de suivi (`status`, `anchors_validated`, `anchor_method`…) | les planches de mouvement **n'en portent aucune** (règle du bloc de style) : le moteur lit uniquement `version`, `echelle`, `planche`, `direction`, `format`, `animations` |
 | Le n° 6 range `town_roofs_a` et `town_roofs_b` en priorité 3 et le lointain `town_roofs_far` avec eux | `town_roofs_a` et `_b` passent en priorité 2 (la ville haute a besoin d'un fond) ; `town_roofs_far` reste au n° 6 |
 | Le n° 6 (D.2) attend l'accord du moteur pour le premier plan **suspendu** (`fg_canopy_a`, `_b`) | non commandé ici : les premiers plans de A.5 **touchent tous le bord bas** et ne demandent aucun accord |
+| La bande `anim/mooring_arm_clamp` est au n° 6 (C.1) et le bras qu'elle anime a été livré depuis (`props/mooring_arm_open`) ; le remplaçant a dû être refait pour le suivre | reprise en **A.9**, priorité 1, à dessiner à partir du bras livré |
 | L'audit voit `fence_wattle` (clôture de branches du village) posée 44 fois dans la ville haute, et aucun cahier ne commande de clôture de ville | la ville a **sa** clôture (`town_fence_a` et `_b`) ; la clôture de branches reste celle du village |
 
 ## 9. Comptes du cahier
 
-- **Lot A** : 89 images dont 38 prio 1, 40 prio 2, 11 prio 3 ; 37 remplaçants repris du n° 6, 52 images nouvelles.
+- **Lot A** : 90 images dont 39 prio 1, 40 prio 2, 11 prio 3 ; 38 remplaçants repris du n° 6, 52 images nouvelles.
 - **Lot B** : 10 planches de mouvement (30 PNG, 30 JSON), 450 images dessinées en tout (150 par vue) ; Chtholly (prio 1) 81, prio 2 (4 planches) 189, prio 3 (5 planches) 180.
-- **Total** : 119 fichiers PNG.
+- **Total** : 120 fichiers PNG.
 
