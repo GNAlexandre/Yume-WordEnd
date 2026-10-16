@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 1.1 (s. 1), séquence. La carte du port n'existe pas encore (lot C-port) : la scène se résume en cartons sur le noir.",
+  "_comment": "ACTE1.md 1.1 (s. 1), séquence, sur la carte du port (lot CP) : le carton du titre (l'attribution, MONDE.md 1.5 : seul carton du jour 1), puis Willem descend de la passerelle du navire (le panneau ships/garde_transport_side ; le navire en volume viendra avec E7), le passeur le salue et remonte à bord ; Willem seul au quai, puis au panneau aux flèches rouges (panneau_sud : le panneau derrière lui), et il part vers le sentier. {player} n'y est pas : posée au bout de la route de la ville (from_ville_marche), hors du champ. Le bord du vide ferme z < 5 : Willem paraît sur la passerelle et en descend.",
   "title": "L'homme au port",
   "day": 1,
   "map": "entrepot",
@@ -7,6 +7,10 @@
     "on": "ready"
   },
   "sequence": true,
+  "present": [
+    "willem",
+    "ferryman"
+  ],
   "steps": [
     {
       "do": "fade",
@@ -19,19 +23,209 @@
       "time": 2.6
     },
     {
-      "do": "card",
-      "text": "port_1",
-      "time": 2.4
+      "do": "go_to",
+      "map": "port",
+      "marker": "from_ville_marche"
     },
     {
-      "do": "card",
-      "text": "port_2",
+      "do": "place",
+      "who": "player",
+      "at": "from_ville_marche",
+      "facing": "west"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "navire_quai",
+      "offset": [
+        0.0,
+        -2.0
+      ],
+      "facing": "south",
+      "outfit": "manteau"
+    },
+    {
+      "do": "place",
+      "who": "ferryman",
+      "at": "navire_quai",
+      "offset": [
+        0.7,
+        -1.2
+      ],
+      "facing": "south"
+    },
+    {
+      "do": "camera",
+      "to": "navire_quai",
+      "offset": [
+        -0.5,
+        -0.8
+      ],
+      "distance": 13,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.6
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "navire_quai",
+      "offset": [
+        0.0,
+        0.2
+      ],
+      "facing": "south"
+    },
+    {
+      "do": "bubble",
+      "who": "ferryman",
+      "text": "passeur",
+      "time": 2.2
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "accostage",
+      "facing": "west"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "ferryman"
+    },
+    {
+      "do": "walk",
+      "who": "ferryman",
+      "to": "navire_quai",
+      "offset": [
+        0.0,
+        -2.2
+      ],
+      "wait": false
+    },
+    {
+      "do": "wait",
+      "time": 1.2
+    },
+    {
+      "do": "leave",
+      "who": "ferryman"
+    },
+    {
+      "do": "face",
+      "who": "willem",
+      "toward": "south"
+    },
+    {
+      "do": "dialogue",
+      "node": "quai"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "quai_ouest",
+      "offset": [
+        4.0,
+        1.4
+      ],
+      "wait": false
+    },
+    {
+      "do": "camera",
+      "to": "quai_ouest",
+      "offset": [
+        3.0,
+        2.0
+      ],
+      "distance": 15,
+      "time": 4.0,
+      "wait": true
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.6
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "rue_ouest",
+      "offset": [
+        1.5,
+        1.0
+      ],
+      "facing": "west"
+    },
+    {
+      "do": "camera",
+      "to": "panneau_sud",
+      "offset": [
+        0.0,
+        -1.6
+      ],
+      "distance": 11,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 0.6
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "panneau_sud",
+      "offset": [
+        1.0,
+        0.2
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "camera",
+      "to": "panneau",
+      "offset": [
+        0.0,
+        1.4
+      ],
+      "distance": 8,
+      "time": 1.4,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "panneau"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "from_sentier",
+      "offset": [
+        -1.4,
+        0.0
+      ],
+      "wait": false
+    },
+    {
+      "do": "wait",
       "time": 3.0
     },
     {
-      "do": "card",
-      "text": "port_3",
-      "time": 3.2
+      "do": "fade",
+      "to": "black",
+      "time": 1.2
+    },
+    {
+      "do": "leave",
+      "who": "willem"
+    },
+    {
+      "do": "go_to",
+      "map": "entrepot",
+      "marker": "Spawn"
     }
   ]
 }

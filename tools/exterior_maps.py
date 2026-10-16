@@ -17,8 +17,8 @@ Pour une carte, l'outil écrit :
 
 Deux sortes de cartes :
 - les cartes construites, une recette par carte dans tools/exterior_recipes/<id>.py (entrepot,
-  sentier, village, colline) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
-- les cartes d'attente (WAITING plus bas : foret_profonde, port) : un sol plat de la
+  sentier, village, colline, ville_haute, port) : le sol, la pose, la vie ambiante, les places de la vie que le plan ne nomme pas ;
+- les cartes d'attente (WAITING plus bas : foret_profonde, ville_marche) : un sol plat de la
   bonne matière, une lisière, l'écriteau « Plus loin, bientôt », la sortie de retour et le
   marqueur d'arrivée du plan. Provisoires : le lot de la carte les remplace par une recette
   (ajouter la carte à RECIPES, retirer l'attente).
@@ -70,10 +70,10 @@ SCENES = os.path.join(ROOT, "src", "world", "maps")
 GROUND_FILES = ["plan.json", "map.json", "heights.png", "materials.png", "structures.png"]
 
 # Cartes construites : une recette par carte (tools/exterior_recipes/<id>.py).
-RECIPES = ["entrepot", "sentier", "village", "colline"]
+RECIPES = ["entrepot", "sentier", "village", "colline", "port"]
 
 # Lot qui a écrit la liste des places d'une carte (C1 par défaut : l'outil).
-PLACES_LOT = {"village": "C2", "colline": "C3"}
+PLACES_LOT = {"village": "C2", "colline": "C3", "port": "CP"}
 
 # Cartes d'attente (lots de la phase 3 : elles les remplacent). Taille 32 × 24 m. ground : matière du
 # sol ; path : matière du chemin ; back : la sortie du plan (son nom, sa cible, le marqueur du retour)
@@ -86,13 +86,20 @@ WAITING = {
         "exit": (14, 0, 18, 0.6), "marker": (16, 2.5, "S"), "spawn": (16, 4.0, "S"),
         "path_pts": [[16, 0], [16, 13]], "sign": (17.8, 13.6), "gap": (13, 19),
     },
-    "port": {
-        "ground": "sous_bois", "path": "chemin", "back": "vers_sentier",
-        "exit": (0, 10, 0.6, 14), "marker": (2.5, 12, "E"), "spawn": (5.0, 12, "E"),
-        "path_pts": [[0, 12], [19, 12]], "sign": (19.8, 10.6), "gap": None,
-    },
 }
 WAITING_SIZE = (32, 24)
+
+# (CV) La ville haute est construite ; la place du marché (ville_marche) attend son lot : sol de pavés, retour vers la
+# ville haute par le haut de la carte.
+RECIPES.append("ville_haute")
+PLACES_LOT["ville_haute"] = "CV"
+WAITING["ville_marche"] = {
+    "ground": "paves", "path": "chemin", "back": "vers_haute",
+    "exit": (14, 0, 18, 0.6), "marker": (16, 2.5, "S"), "spawn": (16, 4.0, "S"),
+    "path_pts": [[16, 0], [16, 13]], "sign": (17.8, 13.6), "gap": (13, 19),
+    # (CP) La route du port arrive par l'ouest (CARTE.md 9.3 : sortie vers_port).
+    "more": [{"back": "vers_port", "exit": (0, 10, 0.6, 14), "marker": (2.5, 12, "E")}],
+}
 
 BASIS = {"N": "1, 0, 0, 0, 1, 0, 0, 0, 1", "S": "-1, 0, 0, 0, 1, 0, 0, 0, -1",
          "E": "0, 0, -1, 0, 1, 0, 1, 0, 0", "O": "0, 0, 1, 0, 1, 0, -1, 0, 0"}
@@ -126,7 +133,8 @@ def is_waiting(map_id):
 
 def waiting_ground(map_id, spec, m):
     w, d = WAITING_SIZE
-    layer = {"herbe": "grass", "prairie": "meadow_flowers", "sous_bois": "forest_floor"}[spec["ground"]]
+    layer = {"herbe": "grass", "prairie": "meadow_flowers", "sous_bois": "forest_floor",
+             "paves": "cobble"}[spec["ground"]]
     plan = {
         "_comment": "Carte d'attente (lot T1, provisoire jusqu'à la phase 3 : docs/DECISIONS.md) : sol plat, un "
                     "chemin vers l'entrepôt. Lu par tools/map_build.py gen %s." % map_id,
@@ -150,8 +158,6 @@ def waiting_scene(map_id, spec, m):
     """La scène d'une carte d'attente."""
     w, d = WAITING_SIZE
     back = [e for e in m.exits if e.name == spec["back"]][0]
-    target, target_marker = back.extra["cible"], back.extra["marqueur"]
-    arrival = "from_" + target
     ext = [("Script", "res://src/world/map.gd", "1_map"), ("Script", "res://src/world/map_ground.gd", "2_ground"),
            ("Script", "res://src/world/prop_batcher.gd", "3_batcher"),
            ("Script", "res://src/world/map_exit.gd", "4_exit"),
@@ -192,21 +198,33 @@ def waiting_scene(map_id, spec, m):
     sx, sz = spec["sign"]
     lines += ['[node name="Sign" parent="Geometry" instance=ExtResource("5_sign")]',
               "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, 0, %s)" % (f(sx), f(sz)), ""]
-    mx, mz, look = spec["marker"]
     px, pz, plook = spec["spawn"]
+    # Les retours : la sortie du plan nommée `back`, puis celles de `more` (une carte d'attente que d'autres
+    # cartes construites visent : chacune a son marqueur d'arrivée from_<cible> et sa sortie de retour).
+    backs = [(back, spec["exit"], spec["marker"], "BoxShape3D_exit")]
+    for k, extra in enumerate(spec.get("more", [])):
+        other = [e for e in m.exits if e.name == extra["back"]][0]
+        backs.append((other, extra["exit"], extra["marker"], "BoxShape3D_exit_%d" % (k + 2)))
+        ex0, ez0, ex1, ez1 = extra["exit"]
+        lines.insert(lines.index('[sub_resource type="BoxShape3D" id="BoxShape3D_exit"]'),
+                     '[sub_resource type="BoxShape3D" id="BoxShape3D_exit_%d"]\nsize = Vector3(%s, 3, %s)\n'
+                     % (k + 2, f(max(ex1 - ex0, 0.6)), f(max(ez1 - ez0, 0.6))))
     lines += ['[node name="Markers" type="Node3D" parent="."]', "",
               '[node name="Spawn" type="Marker3D" parent="Markers"]',
-              "transform = Transform3D(%s, %s, 0.2, %s)" % (BASIS[plook], f(px), f(pz)), "",
-              '[node name="%s" type="Marker3D" parent="Markers"]' % arrival,
-              "transform = Transform3D(%s, %s, 0.2, %s)" % (BASIS[look], f(mx), f(mz)), "",
-              '[node name="Exits" type="Node3D" parent="."]', "",
-              '[node name="%s" type="Area3D" parent="Exits"]' % back.name,
-              "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, 1.5, %s)" % (f((x0 + x1) / 2), f((z0 + z1) / 2)),
-              "collision_layer = 0", "collision_mask = 2", 'script = ExtResource("4_exit")',
-              'target_map = &"%s"' % target, 'target_marker = &"%s"' % target_marker, "",
-              '[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/%s"]' % back.name,
-              'shape = SubResource("BoxShape3D_exit")', "",
-              '[node name="Life" type="Node3D" parent="."]', ""]
+              "transform = Transform3D(%s, %s, 0.2, %s)" % (BASIS[plook], f(px), f(pz)), ""]
+    for exit_, _box, (mx, mz, look), _shape in backs:
+        lines += ['[node name="from_%s" type="Marker3D" parent="Markers"]' % exit_.extra["cible"],
+                  "transform = Transform3D(%s, %s, 0.2, %s)" % (BASIS[look], f(mx), f(mz)), ""]
+    lines += ['[node name="Exits" type="Node3D" parent="."]', ""]
+    for exit_, (bx0, bz0, bx1, bz1), _marker, shape in backs:
+        lines += ['[node name="%s" type="Area3D" parent="Exits"]' % exit_.name,
+                  "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, %s, 1.5, %s)"
+                  % (f((bx0 + bx1) / 2), f((bz0 + bz1) / 2)),
+                  "collision_layer = 0", "collision_mask = 2", 'script = ExtResource("4_exit")',
+                  'target_map = &"%s"' % exit_.extra["cible"], 'target_marker = &"%s"' % exit_.extra["marqueur"], "",
+                  '[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/%s"]' % exit_.name,
+                  'shape = SubResource("%s")' % shape, ""]
+    lines += ['[node name="Life" type="Node3D" parent="."]', ""]
     return "\n".join(lines)
 
 
@@ -453,6 +471,7 @@ class Built:
         self.files = {}
         self.warnings = []
         self.deviations = []
+        self.seams = []
         self.pose = None
         self.scene_text = ""
 
@@ -493,6 +512,12 @@ def build(map_id, all_plans, tmp):
         result.warnings += p.warnings
         result.deviations = list(getattr(recipe, "DEVIATIONS", []))
         result.deviations += plan_gaps(m, writer, p)
+        # (QC-S) Les bouts de pans à raccord qui se voient (docs/QUALITE.md, QC-33) : la carte est fausse.
+        bounds = settings.get("camera_bounds") or (10, 9, p.W - 20, p.D - 17)
+        for name, side, x_end, z, focus in exterior_pose.pose_seams(p, bounds):
+            result.seams.append("bout %s de %s (x %.1f ; z %.1f) dans le champ (point visé %.0f ; %.0f) : bande "
+                                "à bord franc ; le joindre à un autre pan, le cacher derrière un décor ou le "
+                                "sortir du champ" % (side, name, x_end, z, focus[0], focus[1]))
     result.scene_text = scene
     for name, content in ground.items():
         result.files["data/maps/%s/%s" % (map_id, name)] = content
@@ -521,10 +546,12 @@ def plan_gaps(m, writer, p):
         if '[node name="%s" type="Marker3D" parent="Life/Areas"]' % pl.name not in joined:
             gaps.append("place %s absente" % pl.name)
     used = {path for (_kind, path) in writer.ext}
+    # SCENE_ALIASES (recette) : une scène posée à la place de l'image du plan (la manche à air animée du port).
+    aliases = getattr(writer.recipe, "SCENE_ALIASES", {})
     for item in m.decors + m.trees:
         if item.name in ("wall_lantern",):
             continue
-        scenes = [s for s in (item.name, item.name + "_fg", item.name + "_forest")
+        scenes = [s for s in (item.name, item.name + "_fg", item.name + "_forest", aliases.get(item.name, item.name))
                   if "res://src/world/props/%s.tscn" % s in used]
         if not scenes:
             gaps.append("%s %s (ligne %d) n'est posé par aucune scène" % (item.kind, item.name, item.line))
@@ -643,6 +670,9 @@ def main():
                 print("%s : avertissement, %s" % (map_id, line))
             for line in built.deviations:
                 print("%s : écart au plan, %s" % (map_id, line))
+            for line in built.seams:
+                print("%s : raccord visible, %s" % (map_id, line))
+                status = 1
             if args[0] == "check":
                 if rels:
                     print("%s : à réécrire (%s)" % (map_id, ", ".join(rels)))

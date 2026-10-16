@@ -137,6 +137,41 @@
         {"name": "ensemble", "overview": true}
       ]
     },
+    "ville_haute": {
+      "kind": "dehors",
+      "views": [
+        {"name": "arrivee", "at": [6, 13], "look": "E", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "rue_haute", "at": [20, 13], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "fontaine", "at": [30, 13], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "maisons_est", "at": [46, 13], "look": "N", "moments": ["matin", "couchant"]},
+        {"name": "marches", "at": [30, 19], "look": "S", "moments": ["matin", "couchant"]},
+        {"name": "grand_rue", "at": [30, 27], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "carrefour", "at": [30, 32], "look": "N", "moments": ["matin", "couchant", "nuit", "nuit:pluie"]},
+        {"name": "snack", "at": [38, 32], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "cafe", "at": [22, 32], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "librairie", "at": [14, 32], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "accessoires", "at": [47, 32], "look": "N", "moments": ["matin"]},
+        {"name": "rue_du_cafe_ouest", "at": [8, 32], "look": "E", "moments": ["matin"]},
+        {"name": "bas_de_ville", "at": [30, 55], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "projection", "at": [20, 55], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "apothicaire", "at": [12, 55], "look": "N", "moments": ["matin"]},
+        {"name": "rue_basse_est", "at": [47, 55], "look": "N", "moments": ["matin", "couchant"]},
+        {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}
+      ]
+    },
+    "ville_snack": {
+      "kind": "dedans",
+      "views": [
+        {"name": "entree", "at": [6, 5.2], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "comptoir", "at": [4.5, 4.4], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "table", "at": [3.4, 5.0], "look": "O", "moments": ["matin"]},
+        {"name": "ensemble", "overview": true}
+      ]
+    },
+    "ville_marche": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "ville_cafe": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "ville_librairie": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "ville_projection": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
     "maison_limashenka": {
       "kind": "dedans",
       "views": [
@@ -146,8 +181,32 @@
         {"name": "ensemble", "overview": true}
       ]
     },
-    "colline": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
-    "port": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
+    "colline": {"kind": "dehors", "views": [
+      {"name": "ensemble", "overview": true},
+      {"name": "sommet", "at": [20, 15.5], "look": "N", "moments": ["matin", "nuit"]},
+      {"name": "lisiere_ouest", "at": [9, 21], "look": "N", "moments": ["matin", "nuit"]},
+      {"name": "lisiere_est", "at": [31, 36], "look": "N", "moments": ["matin", "nuit"]}
+    ]},
+    "port": {
+      "kind": "dehors",
+      "views": [
+        {"name": "quai_ouest", "at": [12, 12.5], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "accostage", "at": [30, 11.5], "look": "N", "moments": ["matin", "couchant", "nuit", "couchant:pluie"]},
+        {"name": "bord_du_vide", "at": [17.5, 6.5], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "passerelle", "at": [32.5, 8.8], "look": "N", "moments": ["matin"]},
+        {"name": "hangar", "at": [46, 12.5], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "panneau", "at": [6, 19.5], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "rue", "at": [30, 17], "look": "E", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "rue_est", "at": [50, 17], "look": "E", "moments": ["matin"]},
+        {"name": "aire_port", "at": [30, 24], "look": "N", "moments": ["matin", "couchant"]},
+        {"name": "aire_ouest", "at": [12, 26], "look": "N", "moments": ["matin"]},
+        {"name": "colline", "at": [62, 22], "look": "N", "moments": ["matin"]},
+        {"name": "sommet", "at": [65, 12.2], "look": "N", "moments": ["matin", "couchant", "nuit"]},
+        {"name": "route_ville", "at": [62, 31.5], "look": "E", "moments": ["matin", "nuit"]},
+        {"name": "sud", "at": [30, 31], "look": "N", "moments": ["matin"]},
+        {"name": "ensemble", "overview": true, "moments": ["apres_midi", "nuit"]}
+      ]
+    },
     "foret_profonde": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
     "essai": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},
     "essai_relief": {"kind": "attente", "views": [{"name": "ensemble", "overview": true}]},

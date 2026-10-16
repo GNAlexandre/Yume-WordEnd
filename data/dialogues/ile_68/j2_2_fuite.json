@@ -13,7 +13,7 @@
     },
     "fuite": {
       "speaker": "",
-      "text": "En un instant, toutes les chaises se sont vidées. Willem mange seul, au bout de la table.",
+      "text": "En un instant, les chaises des petites se sont vidées. Willem mange seul, au bout de la table.",
       "next": "fuite_2"
     },
     "fuite_2": {

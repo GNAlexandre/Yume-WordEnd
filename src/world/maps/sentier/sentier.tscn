@@ -21,19 +21,19 @@
 [ext_resource type="PackedScene" path="res://src/world/props/path_edge_ferns.tscn" id="19_path_edge_ferns"]
 [ext_resource type="PackedScene" path="res://src/world/props/thicket_b.tscn" id="20_thicket_b"]
 [ext_resource type="PackedScene" path="res://src/world/props/alder_fg.tscn" id="21_alder_fg"]
-[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_c.tscn" id="22_forest_wall_c"]
-[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_a.tscn" id="23_forest_wall_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_b.tscn" id="24_forest_wall_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_b.tscn" id="22_forest_wall_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_c.tscn" id="23_forest_wall_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_a.tscn" id="24_forest_wall_a"]
 [ext_resource type="PackedScene" path="res://src/world/props/treeline_autumn_a_village.tscn" id="25_treeline_autumn_a_village"]
 [ext_resource type="PackedScene" path="res://src/world/props/treeline_autumn_b_village.tscn" id="26_treeline_autumn_b_village"]
 [ext_resource type="PackedScene" path="res://src/world/props/forest_wall_d.tscn" id="27_forest_wall_d"]
 [ext_resource type="PackedScene" path="res://src/world/props/mist_patch.tscn" id="28_mist_patch"]
-[ext_resource type="PackedScene" path="res://src/world/props/willow_forest.tscn" id="29_willow_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/log_hollow.tscn" id="30_log_hollow"]
-[ext_resource type="PackedScene" path="res://src/world/props/stump_a.tscn" id="31_stump_a"]
-[ext_resource type="PackedScene" path="res://src/world/props/stump_b.tscn" id="32_stump_b"]
-[ext_resource type="PackedScene" path="res://src/world/props/cairn.tscn" id="33_cairn"]
-[ext_resource type="PackedScene" path="res://src/world/props/waiting_sign_fg.tscn" id="34_waiting_sign_fg"]
+[ext_resource type="PackedScene" path="res://src/world/props/oak_a_forest.tscn" id="29_oak_a_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/willow_forest.tscn" id="30_willow_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/log_hollow.tscn" id="31_log_hollow"]
+[ext_resource type="PackedScene" path="res://src/world/props/stump_a.tscn" id="32_stump_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/stump_b.tscn" id="33_stump_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/cairn.tscn" id="34_cairn"]
 [ext_resource type="PackedScene" path="res://src/world/props/pine_tall_b.tscn" id="35_pine_tall_b"]
 [ext_resource type="PackedScene" path="res://src/world/props/tree_old_pine.tscn" id="36_tree_old_pine"]
 [ext_resource type="PackedScene" path="res://src/world/props/tree_pine.tscn" id="37_tree_pine"]
@@ -110,11 +110,10 @@
 [ext_resource type="PackedScene" path="res://src/world/props/pine_small_a_forest.tscn" id="108_pine_small_a_forest"]
 [ext_resource type="PackedScene" path="res://src/world/props/pine_small_b_forest.tscn" id="109_pine_small_b_forest"]
 [ext_resource type="PackedScene" path="res://src/world/props/sapling_a_forest.tscn" id="110_sapling_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/oak_a_forest.tscn" id="111_oak_a_forest"]
-[ext_resource type="PackedScene" path="res://src/world/props/pine_dead_forest.tscn" id="112_pine_dead_forest"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/anim/birds_flock.png" id="113_birds_flock"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_gold.png" id="114_falling_leaf_gold"]
-[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_rust.png" id="115_falling_leaf_rust"]
+[ext_resource type="PackedScene" path="res://src/world/props/pine_dead_forest.tscn" id="111_pine_dead_forest"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/birds_flock.png" id="112_birds_flock"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_gold.png" id="113_falling_leaf_gold"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_rust.png" id="114_falling_leaf_rust"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_edge1"]
 size = Vector3(80, 4, 5)
@@ -142,6 +141,9 @@ size = Vector3(0.6, 3, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_exit_vers_port"]
 size = Vector3(0.6, 3, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit_vers_ville"]
+size = Vector3(4, 3, 0.6)
 
 [node name="sentier" type="Node3D"]
 script = ExtResource("1_map")
@@ -286,37 +288,63 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, -0.5, 7.5)
 [node name="Alder_plan_2" parent="Geometry/Marsh" instance=ExtResource("21_alder_fg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, -0.5, 8)
 
-[node name="ForestWall1" parent="Geometry/Lisiere" instance=ExtResource("22_forest_wall_c")]
+[node name="ForestWall0" parent="Geometry/Lisiere" instance=ExtResource("22_forest_wall_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, 3.7)
+flip_h = true
+
+[node name="ForestWall1" parent="Geometry/Lisiere" instance=ExtResource("23_forest_wall_c")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 3.7)
 
-[node name="ForestWall2" parent="Geometry/Lisiere" instance=ExtResource("23_forest_wall_a")]
+[node name="ForestWall2" parent="Geometry/Lisiere" instance=ExtResource("24_forest_wall_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1, 3.7)
 flip_h = true
 
-[node name="ForestWall3" parent="Geometry/Lisiere" instance=ExtResource("24_forest_wall_b")]
+[node name="ForestWall3" parent="Geometry/Lisiere" instance=ExtResource("22_forest_wall_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 1, 3.7)
 
-[node name="ForestWall4" parent="Geometry/Lisiere" instance=ExtResource("22_forest_wall_c")]
+[node name="ForestWall4" parent="Geometry/Lisiere" instance=ExtResource("23_forest_wall_c")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 1, 3.7)
 flip_h = true
 
-[node name="ForestWall5" parent="Geometry/Lisiere" instance=ExtResource("23_forest_wall_a")]
+[node name="ForestWall5" parent="Geometry/Lisiere" instance=ExtResource("24_forest_wall_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 1, 3.7)
 
+[node name="ForestWall6" parent="Geometry/Lisiere" instance=ExtResource("22_forest_wall_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 1, 3.7)
+flip_h = true
+
 [node name="TreelineBeyond1" parent="Geometry/Lisiere" instance=ExtResource("25_treeline_autumn_a_village")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, -5)
 
 [node name="TreelineBeyond2" parent="Geometry/Lisiere" instance=ExtResource("26_treeline_autumn_b_village")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 1, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1, -5)
+flip_h = true
+
+[node name="TreelineBeyond3" parent="Geometry/Lisiere" instance=ExtResource("25_treeline_autumn_a_village")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1, -5)
+
+[node name="TreelineBeyond4" parent="Geometry/Lisiere" instance=ExtResource("26_treeline_autumn_b_village")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 1, -5)
+flip_h = true
+
+[node name="TreelineBeyond5" parent="Geometry/Lisiere" instance=ExtResource("25_treeline_autumn_a_village")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 1, -5)
+
+[node name="TreelineBeyond6" parent="Geometry/Lisiere" instance=ExtResource("26_treeline_autumn_b_village")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76, 1, -5)
+flip_h = true
+
+[node name="ForestWallWest0" parent="Geometry/Lisiere" instance=ExtResource("23_forest_wall_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 18.2)
 flip_h = true
 
 [node name="ForestWallWest" parent="Geometry/Lisiere" instance=ExtResource("27_forest_wall_d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 18.2)
 
-[node name="ForestWallEast1" parent="Geometry/Lisiere" instance=ExtResource("23_forest_wall_a")]
+[node name="ForestWallEast1" parent="Geometry/Lisiere" instance=ExtResource("24_forest_wall_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, 17)
 
-[node name="ForestWallEast2" parent="Geometry/Lisiere" instance=ExtResource("23_forest_wall_a")]
+[node name="ForestWallEast2" parent="Geometry/Lisiere" instance=ExtResource("24_forest_wall_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, 17)
 
 [node name="ReedWallKit_1" parent="Geometry/Marsh" instance=ExtResource("7_marsh_reed_wall_fg")]
@@ -393,11 +421,17 @@ flip_h = true
 [node name="Mist_3" parent="Geometry/Marsh" instance=ExtResource("28_mist_patch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, -0.5, 15.5)
 
-[node name="WillowWest" parent="Geometry/Marsh" instance=ExtResource("29_willow_forest")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.2, -0.5, 17)
+[node name="CornerOakWest" parent="Geometry/Marsh" instance=ExtResource("29_oak_a_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.7, 0, 18.7)
 
-[node name="WillowEast" parent="Geometry/Marsh" instance=ExtResource("29_willow_forest")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, -0.5, 16.4)
+[node name="CornerOakEast" parent="Geometry/Marsh" instance=ExtResource("29_oak_a_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57.7, -0.5, 17.6)
+
+[node name="WillowWest" parent="Geometry/Marsh" instance=ExtResource("30_willow_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.6, -0.5, 16.9)
+
+[node name="WillowEast" parent="Geometry/Marsh" instance=ExtResource("30_willow_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54.4, -0.5, 16.5)
 
 [node name="PathEdgeFerns_1" parent="Geometry/Trail" instance=ExtResource("19_path_edge_ferns")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 20.2)
@@ -417,20 +451,17 @@ flip_h = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0, 23.4)
 flip_h = true
 
-[node name="LogWest" parent="Geometry/Bank" instance=ExtResource("30_log_hollow")]
+[node name="LogWest" parent="Geometry/Bank" instance=ExtResource("31_log_hollow")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 20.4)
 
-[node name="StumpMid" parent="Geometry/Bank" instance=ExtResource("31_stump_a")]
+[node name="StumpMid" parent="Geometry/Bank" instance=ExtResource("32_stump_a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, 20.2)
 
-[node name="StumpEast" parent="Geometry/Bank" instance=ExtResource("32_stump_b")]
+[node name="StumpEast" parent="Geometry/Bank" instance=ExtResource("33_stump_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 20.6)
 
-[node name="Cairn" parent="Geometry/Fork" instance=ExtResource("33_cairn")]
+[node name="Cairn" parent="Geometry/Fork" instance=ExtResource("34_cairn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 0, 26)
-
-[node name="SignVille" parent="Geometry/Fork" instance=ExtResource("34_waiting_sign_fg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66.6, -0.5, 37.2)
 
 [node name="Backdrop1" parent="Geometry/Backdrop" instance=ExtResource("35_pine_tall_b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 7.443)
@@ -767,7 +798,7 @@ points = PackedVector3Array(58.2, 0, 34.6, 59, 0, 38.4, 75.2, 0, 36, 75.4, 0, 39
 yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0)
 scale_range = Vector2(0.85, 1.15)
 random_seed = 581
-variants = Array[PackedScene]([ExtResource("53_tree_old_pine_forest"), ExtResource("54_tree_pine_forest"), ExtResource("111_oak_a_forest"), ExtResource("58_beech_a_forest"), ExtResource("112_pine_dead_forest"), ExtResource("55_tree_autumn_rust_forest"), ExtResource("56_maple_a_forest")])
+variants = Array[PackedScene]([ExtResource("53_tree_old_pine_forest"), ExtResource("54_tree_pine_forest"), ExtResource("29_oak_a_forest"), ExtResource("58_beech_a_forest"), ExtResource("111_pine_dead_forest"), ExtResource("55_tree_autumn_rust_forest"), ExtResource("56_maple_a_forest")])
 random_flip = true
 
 [node name="ForkBrush" type="Node3D" parent="Geometry/Scatter"]
@@ -835,6 +866,17 @@ target_marker = &"from_sentier"
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_port"]
 shape = SubResource("BoxShape3D_exit_vers_port")
 
+[node name="vers_ville" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 69, 1, 39.7)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_map_exit")
+target_map = &"ville_haute"
+target_marker = &"from_sentier"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_ville"]
+shape = SubResource("BoxShape3D_exit_vers_ville")
+
 [node name="Life" type="Node3D" parent="."]
 
 [node name="Places" type="Node3D" parent="Life"]
@@ -895,7 +937,7 @@ metadata/area = Rect2(30, 13, 14, 8.5)
 [node name="Birds" type="Node3D" parent="Ambience"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 20)
 script = ExtResource("6_ambient_sprites")
-texture = ExtResource("113_birds_flock")
+texture = ExtResource("112_birds_flock")
 frames = 6
 fps = 10
 motion = 1
@@ -910,7 +952,7 @@ random_seed = 3
 [node name="LeavesGold" type="Node3D" parent="Ambience"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 20)
 script = ExtResource("6_ambient_sprites")
-texture = ExtResource("114_falling_leaf_gold")
+texture = ExtResource("113_falling_leaf_gold")
 frames = 8
 fps = 10
 motion = 0
@@ -925,7 +967,7 @@ random_seed = 4
 [node name="LeavesRust" type="Node3D" parent="Ambience"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 20)
 script = ExtResource("6_ambient_sprites")
-texture = ExtResource("115_falling_leaf_rust")
+texture = ExtResource("114_falling_leaf_rust")
 frames = 8
 fps = 10
 motion = 0

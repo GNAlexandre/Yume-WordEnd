@@ -1,0 +1,54 @@
+{
+  "_comment": "Les règles de l'embuscade de Pannibal (lot E8c ; src/games/ambush.gd ; docs/lore/ACTE1.md, 3.1 et scène 1.2) : durées en secondes, distances en mètres. Les chiffres viennent de ACTE1.md 3.1 ; l'épée de Pannibal est en bois et le bâton de Chtholly aussi : aucun vrai dégât, une jauge de points. Format : PLAN.md, « (E8) Les jeux ».",
+  "intro_time": 0.8,
+  "end_time": 1.6,
+  "max_time": 75,
+  "flee_distance": 10,
+  "touch_limit": 3,
+  "success_streak": 5,
+  "recoil": 0.5,
+  "leap": {
+    "_comment": "Le bond : annoncé warn s avant (la lumière qui zigzague, un froissement, le cercle au sol où elle va retomber), lancé de distance m ; elle est en l'air les flight dernières secondes. On l'esquive en sortant du cercle (radius m) : la parade n'y suffit pas. À partir du jour feint_from_day, un bond sur feint_every est une feinte : elle s'arrête au milieu.",
+    "distance": 4.0,
+    "warn": 0.8,
+    "flight": 0.35,
+    "height": 0.9,
+    "radius": 0.9,
+    "land_gap": 0.55,
+    "feint_from_day": 5,
+    "feint_every": 3
+  },
+  "slash": {
+    "_comment": "Les trois taillades rapides qui suivent le bond, à interval s d'écart (la première first_delay s après l'atterrissage), chacune annoncée warn s avant ; à chacune Pannibal s'avance d'au plus lunge m vers son poste, à stand_off m de Chtholly, de côté (à l'est ou à l'ouest : la caméra regarde le nord). Parée : la parade est tenue à l'impact ; esquivée : Chtholly est à plus de reach m de Pannibal. Une taillade reçue compte un point et finit la série.",
+    "count": 3,
+    "first_delay": 0.45,
+    "interval": 0.35,
+    "warn": 0.25,
+    "reach": 1.25,
+    "lunge": 1.2,
+    "stand_off": 0.9
+  },
+  "riposte": {
+    "_comment": "Après une esquive, Pannibal reste découverte window s : un coup de bâton (touch_delay s après le geste) qui la trouve à reach m, dans l'arc de arc_deg degrés devant Chtholly, la touche : réussite. Un coup qui la trouve couverte, elle l'esquive d'un saut de dodge_step m en arrière.",
+    "window": 0.8,
+    "reach": 1.7,
+    "arc_deg": 140,
+    "touch_delay": 0.12,
+    "dodge_step": 1.0
+  },
+  "rest_min": 0.7,
+  "rest_max": 1.3,
+  "help_time": 2.6,
+  "anims": {
+    "_comment": "Animations jouées, la première que la planche a (pannibal_life : saut, attaque, frappe, lance, tombe ; esquive et victoire n'existent pas encore, cahier n° 6).",
+    "ready": ["repos"],
+    "leap": ["saut", "course"],
+    "slash": ["attaque", "frappe"],
+    "dodge": ["esquive", "saut"],
+    "hop": ["saut", "course"],
+    "fall": ["tombe"],
+    "victory": ["victoire", "lance", "frappe"],
+    "player_hit": ["degats"]
+  },
+  "player_hit_time": 0.18
+}

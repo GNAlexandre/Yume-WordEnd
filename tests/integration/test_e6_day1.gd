@@ -1,8 +1,13 @@
 extends "res://tests/stubs/e6_story_test.gd"
 ## (E6) Le jour 1 de bout en bout dans la vraie partie, avec de vrais appuis : « Nouvelle partie »
 ## (menu, souris), l'acte 1 à l'entrepôt de l'île n° 68, sans quête ni HUD de quête ; la séquence
-## du port passée d'une touche (déjà vue), le porche, le sentier, l'intrus, le retour, l'entrepôt,
-## le dîner, la chambre nue ; « Dormir » ; le calendrier ; le jour 2 commence à l'aube.
+## du port passée d'une touche (déjà vue), le porche, le sentier, (E8c) l'embuscade de Pannibal
+## jouée au clavier et à la manette (pas de côté au stick, parade à la touche K), l'intrus, le
+## retour par la levée, l'entrepôt, le dîner, la chambre nue ; « Dormir » ; le calendrier ; le
+## jour 2 commence à l'aube.
+
+## Touche de la parade (action « charge », bâton en main).
+const GUARD_KEY := KEY_K
 
 
 func test_day_1_end_to_end_until_day_2() -> void:
@@ -31,11 +36,29 @@ func test_day_1_end_to_end_until_day_2() -> void:
 	trace("4")
 	assert_true(await wait_control())
 	assert_eq(StoryDirector.hint(), "Pannibal est sortie. Cherche-la sur le sentier.")
-	# Le sentier : l'embuscade (sans jeu inscrit : le repli) puis l'intrus.
+	# Le sentier : l'embuscade (le jeu d'E8, joué au clavier et au stick) puis l'intrus.
 	trace("5")
 	assert_true(await take_exit(&"sentier", 60.0), "le sentier")
 	trace("6")
+	assert_eq(player.weapon(), &"seniorious", "l'arme par défaut avant l'embuscade")
 	assert_true(await walk_to_point(&"premiere_embuscade", 1.0, 40.0))
+	assert_true(await until(func() -> bool: return MiniGames.ambush() != null, 15.0), "elle bondit")
+	var ambush := MiniGames.ambush()
+	var pannibal := LifeDirector.actor(&"pannibal")
+	assert_false(player.is_story_held(), "le joueur a la main le temps du combat")
+	assert_eq(player.weapon(), &"baton", "le bâton")
+	assert_eq(pannibal.npc.get_prompt(), "", "pas d'invite « Parler » sur Pannibal")
+	assert_eq(InteractSign.kind_of(pannibal.npc), &"", "ni de signe")
+	assert_true(ambush.help, "les lignes d'aide du jour 1")
+	# (S1b) L'indice « Cherche-la sur le sentier » se tait pendant le jeu.
+	assert_eq(StoryDirector.hint(), "", "pas d'indice pendant l'embuscade")
+	assert_eq(hud.get_node("StoryHint").call(&"shown_text"), "", "l'indice n'est pas affiché")
+	var outcome := await _play_ambush(ambush)
+	assert_true(outcome.get("success", false), "cinq réponses de suite : Pannibal tombe")
+	assert_eq(outcome.get("ended_by"), &"streak")
+	assert_eq(player.health.current, player.health.max_hp, "aucun vrai dégât")
+	assert_true(GameState.has_flag(&"j1_embuscade_gagnee"), "la réplique de plus")
+	assert_eq(player.weapon(), &"seniorious", "l'arme d'avant revient")
 	assert_true(await play_until_done(&"j1_2_embuscade", 30.0))
 	trace("7")
 	assert_true(await wait_control())
@@ -60,9 +83,8 @@ func test_day_1_end_to_end_until_day_2() -> void:
 	assert_true(await wait_control())
 	assert_has(StoryDirector.stage().followers(), &"willem", "Willem suit la lumière")
 	trace("14")
-	# Remonter du marais sur le sentier (la levée a une marche à l'ouest de marais_chute).
-	assert_true(await walk_to_point(&"chtholly_arrivee", 1.5, 20.0))
-	assert_true(await take_exit(&"entrepot", 40.0), "retour à l'entrepôt")
+	# Remonter du marais vers l'ouest par la levée (plus de marche à l'ouest de marais_chute).
+	assert_true(await take_exit(&"entrepot", 60.0), "retour à l'entrepôt")
 	trace("15")
 	assert_true(await read_until(func() -> bool: return not player.is_story_held(), 20.0))
 	assert_not_null(LifeDirector.actor(&"willem"), "Willem a suivi d'une carte à l'autre")
@@ -95,10 +117,16 @@ func test_day_1_end_to_end_until_day_2() -> void:
 	await walk_to_point(&"nygglatho_tapis", 1.5)
 	trace("23")
 	assert_true(await play_until_done(&"j1_5_premiers_pas", 60.0, {"Ouvrir.": 1}))
-	assert_eq(StoryDirector.hint(), "Couche Pannibal, au dortoir.")
+	assert_true(
+		await until(
+			func() -> bool: return StoryDirector.hint() == "Couche Pannibal, au dortoir.", 2.0
+		),
+		"indice : %s" % StoryDirector.hint()
+	)
+	assert_ne(StoryDirector.current_scene(), &"j1_6_diner", "le dîner attend le dortoir")
 	# 1.6 (séquence) puis 1.7.
 	trace("24")
-	await walk_to_point(&"dortoir_b", 1.5)
+	await walk_to_point(&"dortoir_b", 0.9)
 	trace("25")
 	assert_true(await play_until_done(&"j1_6_diner", 60.0))
 	trace("26")
@@ -139,3 +167,45 @@ func test_day_1_end_to_end_until_day_2() -> void:
 	await tap_key(KEY_TAB)
 	assert_false(calendar.call(&"is_open"))
 	assert_eq(GameState.quests(), {}, "aucune quête n'a démarré de toute la journée")
+
+
+## Joue l'embuscade avec de vrais appuis jusqu'à sa fin et renvoie son résultat : au bond annoncé,
+## un pas de côté au stick hors du cercle (vers le nord, le sud s'il est barré) ; aux
+## taillades, la parade tenue (touche K) ; entre deux, rien.
+func _play_ambush(ambush: Ambush) -> Dictionary:
+	var outcome := {}
+	ambush.finished.connect(func(found: Dictionary) -> void: outcome["result"] = found)
+	var deadline := Time.get_ticks_msec() + 60000
+	var guarding := false
+	var nav := LifeDirector.nav()
+	var leap_start := -1.0
+	var side := Vector3.FORWARD
+	while not outcome.has("result") and Time.get_ticks_msec() < deadline:
+		var attack: Dictionary = ambush.current_attack() if is_instance_valid(ambush) else {}
+		var kind: StringName = attack.get("kind", &"")
+		var want_guard := kind == &"slash"
+		if want_guard != guarding:
+			key(GUARD_KEY, want_guard)
+			guarding = want_guard
+		if kind == &"leap":
+			var target: Vector3 = attack["target"]
+			var away := player.global_position - target
+			away.y = 0.0
+			if not is_equal_approx(float(attack["start"]), leap_start):
+				# Une fois par bond : vers le nord (le marais), vers le sud s'il est barré.
+				leap_start = float(attack["start"])
+				side = Vector3.FORWARD
+				if nav != null and not nav.line_clear(target, target + side * 1.6):
+					side = -side
+			if away.length() < 1.4:
+				stick(side.x, side.z)
+			else:
+				stick(0.0, 0.0)
+		else:
+			stick(0.0, 0.0)
+		await frames(1)
+	stick(0.0, 0.0)
+	if guarding:
+		key(GUARD_KEY, false)
+	await frames(2)
+	return outcome.get("result", {})

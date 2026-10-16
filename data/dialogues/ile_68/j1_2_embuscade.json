@@ -1,8 +1,17 @@
 {
-  "_comment": "ACTE1.md 1.2, étape 4.",
+  "_comment": "ACTE1.md 1.2, étape 4 ; « vaincue » : la réplique de plus quand Chtholly a gagné l'embuscade (3.1 : Pannibal à plat ventre, vexée, et qui rit).",
   "id": "j1_2_embuscade",
   "start": "reconnue",
   "nodes": {
+    "vaincue": {
+      "speaker_id": "pannibal",
+      "text": "Pfff. Le nez dans l'herbe. Ça ne compte pas : il fait noir.",
+      "next": "vaincue_2"
+    },
+    "vaincue_2": {
+      "speaker": "{player}",
+      "text": "Ça compte. Relève-toi."
+    },
     "reconnue": {
       "speaker_id": "pannibal",
       "text": "… Hm ? Ça sent… l'aînée.",

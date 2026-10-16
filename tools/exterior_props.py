@@ -91,6 +91,24 @@ def building(node, facade, wall_texture, roof_texture, width, depth, wall, ridge
     return "\n".join(lines) + "\n"
 
 
+def deck(node, texture, width, length, thick, meta):
+    """Scène d'un plancher posé à plat (un Building sans façade : matière des murs et du toit, épaisseur thick), sa collision
+    sur toute son emprise ; origine au centre de l'emprise (le dessus est à thick au-dessus de l'origine)."""
+    return "\n".join([
+        "[gd_scene format=3]", "",
+        '[ext_resource type="Script" path="res://src/world/building.gd" id="1_building"]',
+        '[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/%s.png" id="2_planks"]' % texture, "",
+        '[sub_resource type="BoxShape3D" id="BoxShape3D_1"]', "size = Vector3(%g, %g, %g)" % (width, thick, length), "",
+        '[node name="%s" type="Node3D"]' % node, 'script = ExtResource("1_building")',
+        'wall_texture = ExtResource("2_planks")', 'roof_texture = ExtResource("2_planks")',
+        "footprint = Vector2(%g, %g)" % (width, length), "wall_height = %g" % thick, "ridge_height = %g" % thick,
+        "overhang = 0.0", 'metadata/hd2d_category = "%s"' % meta, "",
+        '[node name="Collision" type="StaticBody3D" parent="."]', "collision_mask = 0", "",
+        '[node name="Shape1" type="CollisionShape3D" parent="Collision"]',
+        "transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, %g, 0)" % (thick / 2.0), 'shape = SubResource("BoxShape3D_1")',
+    ]) + "\n"
+
+
 # Cahier n° 5, lot R3 (docs/ASSETS_HD2D_ILE68.md, 5.1) : le sentier et le marais. Remplaçants dans
 # tools/hd2d_sentier.py ; CARTE.md, section 4.
 PROPS = {
@@ -147,6 +165,80 @@ PROPS = {
 PROPS.update({
     "lone_tree_fg": inherited("lone_tree", "LoneTree", "foreground = true"),
     "boulder_a_fg": inherited("boulder_a", "BoulderA", "foreground = true"),
+})
+
+# (CP) Le port (CARTE.md, section 6) : les décors du quai et de la rue du port que le cahier n° 5 (5.6) n'a pas livrés,
+# la cabane du gardien, le panneau de coque du transport de la Garde (remplaçant : E7 le remplace par le navire en
+# volume, sans collision) et les variantes de premier plan (CARTE.md 0.3) de ce qui se dresse au sud d'un endroit où
+# l'on marche.
+PROPS.update({
+    "mooring_arm_open": panel("MooringArmOpen", "props/mooring_arm_open.png", "shadow_width = 0.9", "mast",
+                              [("BoxShape3D", ["size = Vector3(1.2, 4.0, 0.8)"], (-0.6, 2.0, 0))]),
+    "steam_whistle": panel("SteamWhistle", "props/steam_whistle.png", "shadow_width = 0.5", "object_small",
+                           [("BoxShape3D", ["size = Vector3(0.5, 2.0, 0.5)"], (0, 1.0, 0))]),
+    "capstan": panel("Capstan", "props/capstan.png", "shadow_width = 0.9", "object_small",
+                     [("CylinderShape3D", ["height = 0.9", "radius = 0.35"], (0, 0.45, 0))]),
+    "signpost_port": panel("SignpostPort", "props/signpost_port.png", "shadow_width = 0.6", "mast",
+                           [("CylinderShape3D", ["height = 3.0", "radius = 0.2"], (0, 1.5, 0))]),
+    "wind_fence": panel("WindFence", "props/wind_fence.png", "shadow_width = 0.6", "fence",
+                        [("BoxShape3D", ["size = Vector3(1.9, 1.4, 0.25)"], (0, 0.7, 0))]),
+    "cargo_cart_a": panel("CargoCartA", "props/cargo_cart_a.png", "", "object_large",
+                          [("BoxShape3D", ["size = Vector3(2.6, 1.0, 1.0)"], (0.1, 0.5, 0))]),
+    "cargo_cart_b": panel("CargoCartB", "props/cargo_cart_b.png", "", "object_large",
+                          [("BoxShape3D", ["size = Vector3(2.2, 1.0, 0.9)"], (0, 0.5, 0))]),
+    "port_house_b": building("PortHouseB", "port_house_b", "wall_planks_b", "roof_tin", 4, 5, 4.0, 6.5, True),
+    "garde_transport_side": panel("GardeTransportSide", "ships/garde_transport_side.png", "shadow_width = 0.0", "ship"),
+    # La passerelle : un plancher de 2 × 3,6 m qui va du quai à la coque (le plan : `gangway`, 2 × 1,6 m, sans collision ;
+    # l'image livrée est une rampe de flanc, la scène de T1 un plancher de 12 m pour la plage). E7 la remplace par la rampe.
+    "gangway_quay": deck("GangwayQuay", "wall_planks", 2.0, 3.6, 0.25, "object_large"),
+    "cargo_cart_a_fg": inherited("cargo_cart_a", "CargoCartA", "foreground = true"),
+    "dock_lamp_fg": inherited("dock_lamp", "DockLamp", "foreground = true"),
+    "signpost_port_fg": inherited("signpost_port", "SignpostPort", "foreground = true"),
+    "notice_board_fg": inherited("notice_board", "NoticeBoard", "foreground = true"),
+    "propeller_spare_fg": inherited("propeller_spare", "PropellerSpare", "foreground = true"),
+})
+
+
+# (CV) Le centre-ville (CARTE.md, section 9) : maisons et boutiques de pierre (cahier n° 5, 6.4 et 6.5 : type, mur /
+# faîte, profondeur), enseignes, bac, fontaine murale, marches, trappe, muret, garde-corps, lisières de toits, et la
+# variante de premier plan du réverbère (CARTE.md 0.3).
+PROPS.update({
+    "town_house_a": building("TownHouseA", "town_house_a", "wall_stone_town", "roof_slate_b", 5, 6, 6, 9,
+                                 True),
+    "town_house_b": building("TownHouseB", "town_house_b", "wall_stone_town", "roof_tiles_b", 8, 6, 6, 8.5,
+                                 False),
+    "town_house_c": building("TownHouseC", "town_house_c", "wall_stone_town", "roof_tiles", 4, 5, 4.5, 7.5,
+                                 True),
+    "town_house_d": building("TownHouseD", "town_house_d", "wall_stone_b", "roof_slate", 6, 5, 4.5, 7,
+                                 False),
+    "town_house_e": building("TownHouseE", "town_house_e", "wall_stone_town", "roof_slate_b", 6, 6, 7.5, 10,
+                                 True),
+    "town_house_f": building("TownHouseF", "town_house_f", "wall_plaster_b", "roof_tiles_b", 6, 5, 3.5, 6,
+                                 False),
+    "cafe_town": building("CafeTown", "cafe_town", "wall_stone_town", "roof_slate_b", 7, 6, 4, 6,
+                                 False),
+    "shop_snack": building("ShopSnack", "shop_snack", "wall_stone_town", "roof_tiles", 5, 5, 3.5, 6,
+                                 False),
+    "shop_accessories": building("ShopAccessories", "shop_accessories", "wall_plaster", "roof_tiles", 4, 5, 4, 6.5,
+                                 True),
+    "shop_apothecary": building("ShopApothecary", "shop_apothecary", "wall_stone_town", "roof_slate", 4, 5, 4, 6.5,
+                                True),
+    "hanging_sign_pan": panel("HangingSignPan", "props/hanging_sign_pan.png", "shadow_width = 0.0", "wall_detail"),
+    "hanging_sign_cup": panel("HangingSignCup", "props/hanging_sign_cup.png", "shadow_width = 0.0", "wall_detail"),
+    "town_planter_stone": panel("TownPlanterStone", "props/town_planter_stone.png", "", "object_small",
+                                [("BoxShape3D", ["size = Vector3(1.5, 0.7, 0.55)"], (0, 0.35, 0))]),
+    "town_wall_fountain": panel("TownWallFountain", "props/town_wall_fountain.png", "", "object_small",
+                                [("BoxShape3D", ["size = Vector3(1.1, 1.0, 0.5)"], (0, 0.5, 0))]),
+    "town_doorsteps": panel("TownDoorsteps", "props/town_doorsteps.png", "shadow_width = 0.0", "object_small"),
+    "town_cellar_hatch": panel("TownCellarHatch", "props/town_cellar_hatch.png", "shadow_width = 0.0",
+                               "object_small"),
+    "town_wall_low": panel("TownWallLow", "props/town_wall_low.png", "", "fence",
+                           [("BoxShape3D", ["size = Vector3(1.95, 0.8, 0.35)"], (0, 0.4, 0))]),
+    "town_railing": panel("TownRailing", "props/town_railing.png", "shadow_width = 0.4", "fence",
+                          [("BoxShape3D", ["size = Vector3(1.95, 1.0, 0.2)"], (0, 0.5, 0))]),
+    "town_roofs_a": panel("TownRoofsA", "props/town_roofs_a.png", "shadow_width = 0.0", "sky"),
+    "town_roofs_b": panel("TownRoofsB", "props/town_roofs_b.png", "shadow_width = 0.0", "sky"),
+    "street_lamp_double_fg": inherited("street_lamp_double", "StreetLampDouble", "foreground = true"),
 })
 
 

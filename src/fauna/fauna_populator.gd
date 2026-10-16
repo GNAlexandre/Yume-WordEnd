@@ -22,6 +22,10 @@ const AmbientScript := preload("res://src/world/ambient_sprites.gd")
 const SPAWN_DISTANCE := 14.0
 const CHECK_PERIOD := 1.0
 
+## Graine fixe du tirage des bêtes (0 : au hasard). Pour les démonstrations et les captures, qui
+## doivent rejouer la même scène sur toutes les machines (tools/e5_shots.sh).
+static var fixed_seed: int = 0
+
 ## Carte à peupler ; vide : celle qui contient ce nœud.
 @export var map_id: StringName = &""
 
@@ -31,7 +35,10 @@ var _rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
-	_rng.randomize()
+	if fixed_seed != 0:
+		_rng.seed = fixed_seed
+	else:
+		_rng.randomize()
 	if map_id.is_empty():
 		var map := WorldAtlas.map_of_node(self)
 		map_id = map.map_id() if map != null else &""

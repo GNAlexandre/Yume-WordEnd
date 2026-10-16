@@ -15,6 +15,12 @@
     "sentier",
     "port",
     "foret_profonde",
+    "ville_haute",
+    "ville_marche",
+    "ville_snack",
+    "ville_cafe",
+    "ville_librairie",
+    "ville_projection",
     "essai",
     "essai_relief",
     "entrepot_rdc_essai",
@@ -54,7 +60,7 @@
     },
     "ville": {
       "name": "Le centre-ville",
-      "maps": []
+      "maps": ["ville_haute", "ville_marche", "ville_snack", "ville_cafe", "ville_librairie", "ville_projection"]
     },
     "foret_profonde": {
       "name": "La forêt profonde",

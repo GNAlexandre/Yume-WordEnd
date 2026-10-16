@@ -6,7 +6,7 @@ La liste exacte des images (chemin, taille, genre) est tools/hd2d_manifest.json 
 sa recette dans tools/hd2d_ground.py (sol, falaises, matières), tools/hd2d_props.py (décors,
 façades du cahier n° 1), tools/hd2d_sky.py (ciel, horizon, effets), tools/hd2d_nature.py
 (arbres, lisières, plantes, rochers), tools/hd2d_town.py (flancs, maisons, détails, objets de la
-vie), tools/hd2d_ships.py (navires volants), tools/hd2d_decals.py (décalques au sol) ou
+vie), tools/hd2d_ships.py (navires volants), tools/hd2d_port.py (le port), tools/hd2d_decals.py (décalques au sol) ou
 tools/hd2d_anim.py (bandes animées). Une image livrée (ChatGPT…) remplace le remplaçant du même nom, sans toucher au code.
 Densité : 96 px par mètre (48 ou 24 pour le lointain, clé ppm du manifeste).
 
@@ -125,15 +125,18 @@ def recipes():
     import hd2d_ground
     import hd2d_interior
     import hd2d_nature
+    import hd2d_port
     import hd2d_props
     import hd2d_sentier
     import hd2d_ships
     import hd2d_sky
     import hd2d_town
+    import hd2d_ville
     import hd2d_village
     table = {}
     for module in (hd2d_ground, hd2d_props, hd2d_sky, hd2d_nature, hd2d_town, hd2d_ships, hd2d_decals, hd2d_anim,
-                   hd2d_interior, hd2d_sentier, hd2d_village, hd2d_colline):
+                   hd2d_interior, hd2d_sentier, hd2d_village, hd2d_colline, hd2d_ville,
+                   hd2d_port):
         table.update(module.RECIPES)
     return table
 

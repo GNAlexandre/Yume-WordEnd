@@ -1219,8 +1219,8 @@ static func lookup(path, key_path) -> String, forget_texts()
 L'équivalent de `tools/interior_maps.py` pour le dehors : il écrit une carte du dehors **d'après son
 plan** (bloc ```plan de `docs/lore/CARTE.md`, lu par `tools/carte_plans.py`). Cartes construites :
 `entrepot` (T1, reprise sans perte : `gen entrepot` redonne la scène du dépôt à l'octet),
-`sentier` (C1), `village` (C2) et `colline` (C3) ; cartes d'attente (provisoires, un lot de la phase 3
-les remplace) : `foret_profonde`, `port`.
+`sentier` (C1), `village` (C2), `colline` (C3) et `port` (CP) ; carte d'attente (provisoire, un lot de la
+phase 3 la remplace) : `foret_profonde`.
 
 ```text
 python3 tools/exterior_maps.py gen [map_id…]      # écrit les cartes (toutes sans argument)
@@ -1279,14 +1279,30 @@ python3 tools/exterior_maps.py props              # écrit les scènes de décor
   `arbre_seul`…). Toutes les images du plan sont livrées ; `lone_tree_fg` et `boulder_a_fg` (premier plan,
   `tools/exterior_props.py`) ; remplaçant du talisman de la scène : `anim/talisman_float` (`tools/hd2d_colline.py`,
   manifeste, lot R6 du cahier n° 5).
-- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_colline.gd` (28 : plan, relief, vide et mer de
+- **Le port** (`port`, CARTE.md section 6.2, 70 × 40 m, lot CP, `tools/exterior_recipes/port.py`, remplace la carte
+  d'attente) : le quai de tôle au bord du **vide** (garde-fou, poste d'amarrage ouvert, trois bras d'ancrage
+  `mooring_arm_open`), le transport de la Garde en **grand panneau de coque** `ships/garde_transport_side` (16 × 7 m,
+  `Geometry/Ship/TransportGarde`, sans collision ; remplaçant dérivé du flanc du Barocupot : E7 le remplace par le navire
+  en volume), la passerelle (`Geometry/Quay/Passerelle`, un plancher) et le point `navire_quai` à son pied, la rue du
+  port (pavés), le panneau aux flèches rouges (`signpost_port`, premier plan : `panneau_sud` pour le gros plan), l'aire-port
+  (gravier), la colline ventée (+1, +2, +3 m, trois rampes qui montent vers le nord), la route de la ville ; sortie à pied
+  `vers_sentier` (`from_port`) ; `vers_ville` (→ `ville_marche`) et `passerelle` (→ `transport_garde`) sont omises tant que
+  leur carte n'existe pas (écriteau sur la route de la ville) ; bornes de caméra `Rect2(10, 6, 50, 24)` ; **aucune
+  lumière** ; objets à examiner (`data/texts/port.json`) ; places de la vie en plus (`quai_ouest`, `sifflet_poste`,
+  `bitte_corbeau_1`, `banc_colline`…) ; remplaçants d'images (`tools/hd2d_port.py`, manifeste, lots R3 et R7).
+  **Après chaque `gen`, `tools/import.sh`** : le sol lit `materials.png` par l'import, un import périmé donne des
+  rectangles d'herbe sur les pavés.
+- **Tests** : `tests/unit/test_sentier.gd`, `tests/unit/test_port.gd` (28 : plan, vide, navire, passerelle, relief,
+  bâtiments, images, premier plan, vie, textes, lumière, marche, caméra, densité, draw calls),
+  `tests/integration/test_port_in_game.gd` (du sentier au port, le panneau, la montée de la colline, l'écriteau, le
+  retour), `tests/unit/test_colline.gd` (28 : plan, relief, vide et mer de
   nuages, sommet libre, lumière, faune, marche, caméra, densité, draw calls),
   `tests/integration/test_colline_in_game.gd` (de l'entrepôt à la colline de jour et de nuit, la montée par
   les trois rampes, le bord, le retour ; captures `tests/integration/demo_c3.tscn` : `C3_VIEW=<vue>
   [C3_MOMENT=couchant C3_FREE=1] tools/screenshot.sh res://tests/integration/demo_c3.tscn
   build/shots/c3_<vue>.png 60`), `tests/unit/test_exterior_maps.gd` (`check` de l'outil,
   cartes d'attente, `port` dans l'île), `tests/integration/test_sentier_in_game.gd` (de l'entrepôt au
-  sentier, au marais, à la rampe de la ville, au port d'attente, et retour) ; captures
+  sentier, au marais, à la rampe de la ville, au port, et retour) ; captures
   `C1_MAP=sentier C1_VIEW=<vue> [C1_MOMENT=nuit] [C1_LIGHT=off] tools/screenshot.sh
   res://tests/integration/demo_c1.tscn build/shots/c1_<vue>.png 60` (vues : `entree`, `ouest`,
   `milieu`, `marais`, `embuscade`, `berge`, `est`, `fourche`, `ville`, `large` ; draw calls dans le
@@ -1321,6 +1337,10 @@ remplace la carte d'attente), `cafe` et `maison_limashenka` (intérieurs, `tools
 - **Tests** : `tests/unit/test_village.gd`, `test_cafe.gd`, `test_maison_limashenka.gd`,
   `tests/integration/test_village_in_game.gd` (entrepôt, village, café, maison, retour) ; captures
   `build/c2/shots.sh <carte>:<lieu>:<moment>` sur `tests/integration/demo_c2.tscn` (voir DECISIONS.md, « C2 »).
+
+### (CV) La ville haute et le snack-bar
+
+`ville_haute` (dehors, 60 × 60 m, `tools/exterior_recipes/ville_haute.py`, CARTE.md 9.2 : trois terrasses, grand-rue et deux volées d'escalier, six sorties, portes « Entrer » du snack, du café, de la librairie et de la salle de projection, close avant le jour 5 par `open_from_day = 5` / `closed_text_key = "ville/projection_close"`), `ville_snack` (`tools/interior_maps.py`, 9.4, place `snack_vendor`) et les cartes d'attente `ville_marche`, `ville_cafe`, `ville_librairie`, `ville_projection` (`WAITING`, `WAITING_INTERIORS`) ; lieu `ville` de `ile_68.json` ; 38 remplaçants (lot R4, `tools/hd2d_ville.py`) ; tests `test_ville_haute.gd`, `test_ville_snack.gd`, `test_ville_attente.gd`, `tests/integration/test_ville_in_game.gd` ; textes `data/texts/ville.json` ; décisions : docs/DECISIONS.md (« CV »).
 
 ### (E9) Lumière et temps : mode d'emploi
 
@@ -1458,7 +1478,9 @@ class_name LifePlaces  # read(map) ; has, names, points, size, point(place, i), 
 class_name LifeNav     # for_map(map) ; build_step(budget_usec) -> bool, build_now(), ready, cell (1 m dehors, 0,5 m
                        # dedans), cell_of, center, is_open, is_walkable_point, height_at, line_clear, cells_clear,
                        # nearest_open, find_path(from, to, avoid) -> PackedVector3Array (lissé), open_count ;
-                       # AStar2D ; MAX_RISE (0,3 m d'un point au suivant), PROP_MARGIN (0,2 m)
+                       # AStar2D ; MAX_RISE (0,3 m d'un point au suivant), PROP_MARGIN (0,2 m) ; (E8c)
+                       # MAX_STEP (0,105 m : une marche franche plus haute arrête, une pente ou une
+                       # contremarche d'escalier de 0,1 m passe ; le bord d'une rampe taillée dans un palier)
 class_name LifeActor   # un PNJ vivant : place_now(ligne), walk_to_line(ligne, délai), leave_by(sortie, délai),
                        # arrive_from(entrée, ligne, délai), walk_to(point, regard, allure, à l'arrivée, direct),
                        # hold(anim, s), stop(), play(anim), face(dir), position(), is_moving(), on_interact(),
@@ -1622,7 +1644,7 @@ sans acte, garde son moteur de quêtes. Décisions : docs/DECISIONS.md (« E6 »
 | `flag` | set, clear | drapeaux |
 | `wait` / `wait_for` | time / reach (+ radius, map), map, examine, talk ; timeout, timeout_flag | attend un temps, ou le joueur (il garde la main) |
 | `control` | on | rend ou reprend le contrôle (la scène le prend au début, le rend à la fin) |
-| `game` | game, params, fallback | crochet d'E8 (`StoryDirector.register_game`) ; sans jeu inscrit, ses étapes de repli |
+| `game` | game, params, fallback | crochet d'E8 (`StoryDirector.register_game`) ; sans jeu inscrit, ou si l'appel rend `false` (le jeu n'a pas pu démarrer : carte d'essai, personnage absent), ses étapes de repli ; (E8c) « embuscade_pannibal » est inscrit au démarrage (`MiniGames.register_story_games`) |
 | `hint` / `calendar` | text (vide : rien) / line | l'indice de la scène ; une ligne du calendrier |
 | `show` | node (chemin dans la carte), visible | montre ou cache un nœud de la carte courante (le cristal qui sonne : `Geometry/Nygglatho/comm_crystal_call_1` d'`entrepot_etage`) |
 
@@ -1683,14 +1705,16 @@ le texte. Appliqué à chaque arrivée sur une carte et à chaque changement de 
 2. Écrire `data/scenes/ile_68/jN_k_nom.json` (déclencheur, conditions, présents, étapes), puis
    ses répliques dans `data/dialogues/ile_68/jN_k_nom.json` (paraphrasées, jamais recopiées ;
    `{player}`, jamais « Chtholly » en dur) et ses textes courts dans `data/texts/ile_68/story.json`
-   (section de la scène). Une carte qui n'existe pas encore : un fondu et des cartons (comme
-   `j1_1_port`, `j3_2_chemin`), jamais une carte inventée. Un combat : une étape `game` et son repli.
+   (section de la scène). Une carte qui n'existe pas encore : un fondu et des cartons (plus aucune
+   scène des jours 1 à 4 n'en a : lot S1b), jamais une carte inventée. Un combat : une étape `game` et son repli.
 3. Le jour : sa ligne du calendrier (`days/<n>/calendar`), `sleep_after` et `sleep_hint` dans
    `act.json`.
 4. Vérifier : `tools/test.sh tests/unit/test_story_data.gd` (format et monde de toutes les
    scènes) ; jouer la journée sur le modèle de `tests/integration/test_e6_days.gd` (poses et
    dialogues lus) ou de `test_e6_day1.gd` (vrais appuis, base `tests/stubs/e6_story_test.gd`) ;
    voir : `E6_VIEW=<vue> tools/screenshot.sh res://tests/integration/demo_e6.tscn sortie.png 60`.
+
+**(S1b) Les jours 1 à 4 sur les vraies cartes** : `j1_1_port` au port (Willem descend de la passerelle, la protagoniste posée hors du champ à `from_ville_marche`), `j3_2_chemin` du sentier à la ville haute (le passant `villager_cat_m`), `j3_3_snack` dans `ville_snack` ; l'indice se tait dès le début d'une scène et pendant une étape `game` ; `wait_for` prend `map` avec `reach` ; captures : vue `sequence` de `demo_e6` (`E6_FROM`, `E6_UNTIL`, une image toutes les 0,5 s) ; tests : `tests/integration/test_e6_scenes.gd`.
 
 **Pièges.** Une séquence (`sequence`) n'a ni choix, ni effet dans ses répliques, ni `control`, ni
 `wait_for` (elle se passe d'une touche). `ready` part sur la carte de la scène seulement. Une
@@ -1768,6 +1792,24 @@ training.finished.connect(func(result: Dictionary) -> void: ...)   # la scène c
 # Signaux : phase_changed(&"intro"|&"a"|&"link"|&"b"|&"ended"), resolved(sorte, issue), touches_changed(n, limite),
 # window_closed (jour 10 : le rythme tremble : effet d'E9). MiniGames.staff_training() ; stop_staff_training().
 ```
+
+**(E8c) L'embuscade de Pannibal** (src/games/ambush.gd, class Ambush, un Node3D ajouté à `Life` ; ACTE1.md 3.1 ;
+`data/games/embuscade.json`, textes `games/embuscade/…` de life.json) — `MiniGames.start_ambush({npc (pannibal),
+day (GameState.day), help, seed, overrides, outfit (vie), with_hud, restore_weapon}) -> Ambush` (null sans joueur,
+sans carte peuplée ou sans le PNJ) ; `ambush.finished(résultat)` après la pose de fin, tout rendu : {success,
+ended_by: &"streak"|&"riposte"|&"points"|&"time"|&"fled"|&"stopped", points, touch_limit, best_streak, parried,
+dodged, hits, leaps, feints, touched, duration, day} ; signaux `phase_changed(&"intro"|&"leap"|&"slash"|&"rest"|
+&"ended")`, `resolved(&"leap"|&"slash"|&"riposte", &"parried"|&"dodged"|&"hit"|&"feint"|&"touched"|&"evaded")`,
+`touches_changed(points, limite)`, `help_shown(&"dodge"|&"guard")` ; `MiniGames.ambush()`, `stop_ambush()`. Le bond
+(annoncé 0,8 s par la lumière qui zigzague et un cercle au sol, lancé de 4 m) s'esquive en sortant du cercle (la
+parade n'y suffit pas ; une feinte sur trois dès le jour 5) ; trois taillades à 0,35 s, parées (parade tenue à
+l'impact) ou esquivées (hors de portée) ; une touche reçue : un point, recul de 0,5 m, fin de la série ; après une
+esquive, une riposte au bâton la touche (0,8 s), couverte elle l'esquive. Réussite : cinq de suite ou la riposte
+(`tombe`) ; échec : trois points (`lance`). Pendant le jeu : le joueur a la main, bâton en main, Pannibal muette
+(Hush : `blocks_talk`, `InteractSign.set_hidden`), signes cachés (`InteractSign.suppress(&"embuscade")`),
+présentation « nuit » ; à la fin, l'arme, la main de la scène, la présentation et les signes reviennent. Au récit :
+`MiniGames.register_story_games()` (appelé par `StoryDirector._ready`) inscrit `play_story_ambush(params)` sous
+« embuscade_pannibal » (params de la scène : day, help, seed, overrides, success_flag : posé si Chtholly l'emporte).
 
 **L'arme** — `Player.set_weapon(&"baton" | &"seniorious")`, `Player.weapon()` (PlayerCombat : voir le contrat
 ci-dessus). Par défaut **Seniorious** (l'ancienne île et ses Timeres gardent l'épée et la charge) : c'est le

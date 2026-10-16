@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/props/propeller_spare.tscn" id="1_base"]
+
+[node name="PropellerSpare" instance=ExtResource("1_base")]
+foreground = true

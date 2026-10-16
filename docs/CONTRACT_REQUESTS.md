@@ -871,3 +871,57 @@ Hors du périmètre de D2 (documents seulement) ; à reprendre par qui tient le 
   `StoryDirector.register_game(&"embuscade_pannibal", appel)` (le joueur est tenu par la scène :
   l'appel lui rend la main le temps du combat). Les scènes du ballon (jour 5) et du bâton (jour 10)
   sont au lot S2. U1 : branché (présentation, signes, thème `Calendar`).
+
+## E8c — suite donnée aux demandes d'E6 et d'E8 (embuscade, levée, réfectoire)
+- **Fait : l'embuscade de Pannibal** (E6 → E8, « embuscade_pannibal ») : `MiniGames.start_ambush` /
+  `play_story_ambush`, inscrite au récit par `StoryDirector._ready` (`MiniGames.register_story_games`) ; la scène
+  `j1_2_embuscade` la joue (le repli reste pour une carte d'essai). PLAN.md, « (E8) Les jeux ».
+- **Fait : la levée du sentier** (E6 → C1) : corrigée par la navigation (`LifeNav.MAX_STEP`), sans toucher au plan
+  ni à `tools/exterior_recipes/sentier.py` (test : `tests/integration/test_sentier_levee.gd`).
+- **Fait : la place de Willem au réfectoire** (E6 → `entrepot_rdc`) : `refectoire_porte_est` (CARTE.md 3.1),
+  utilisée par `j2_2_fuite` (plus de point en dur).
+- **Planches (cahier n° 6)** : `pannibal_life` n'a ni `esquive` (le saut en arrière d'une riposte esquivée : `saut`
+  en attendant) ni `victoire` (l'épée levée après trois points : `lance`) ; Chtholly n'a pas de planche `_stick`
+  (le bâton garde l'animation d'épée, déjà noté pour E8). Les noms sont dans `data/games/embuscade.json`, `anims`.
+- **Reste (S2 ou E8)** : les embuscades de temps libre des jours 2 à 12 (VIE.md 5.5 : Pannibal, et Collon dès le
+  jour 5, cachées sur les chemins, une fois par moment au plus) ; le jeu les accepte déjà (`day`, feintes dès le
+  jour 5, PNJ posé s'il n'est pas sur la carte) mais rien ne les déclenche ; pas de raccourci `?jeu=embuscade`.
+## CP (le port de l'île n° 68)
+
+- **E7 (navires en volume) : ce que le lot remplace dans la carte `port`.** Le transport de la Garde est, à l'acte 1, un grand panneau
+  de décor `Geometry/Ship/TransportGarde` (`ships/garde_transport_side.png`, 16 × 7 m, lot R7, **remplaçant** dérivé du flanc du
+  Barocupot ; x 30, z 2,6, bas du panneau à y = −1,6 m, sans collision). E7 le remplace par le navire en volume (coque, pont, deux
+  rotors animés, trappe, passerelle et rampe) **au même endroit** : flanc face à la caméra, de x 22 à 38, quille sous le niveau du quai.
+  Ce que la carte garde : les trois bras d'ancrage `BrasAncrage1..3` (x 23,5 ; 29,5 ; 36,5, image `mooring_arm_open`, la bande animée
+  `anim/mooring_arm_clamp` du cahier se pose sur eux), le **point `navire_quai`** (32,5 ; 7,6 : le pied de la passerelle, où la scène
+  fait descendre Willem), la place `accostage` (24 → 37, 7 → 13, libre), le sifflet `SiffletVapeur` (x 40) et le marqueur
+  `from_transport_garde` (32,5 ; 9,5, regard sud). À remplacer ou retirer : la passerelle provisoire `Geometry/Quay/Passerelle` (un
+  plancher de 2 × 3,6 m, scène `gangway_quay`), à refaire en rampe du quai au pont (le plan : `gangway`, 2 × 1,6 m, 1,1 m de haut).
+  La sortie `passerelle` (→ `transport_garde`, « Monter à bord ») n'est écrite que lorsque la carte `transport_garde` existe ; lancer
+  `python3 tools/exterior_maps.py gen port` puis `tools/import.sh` alors. Les images du navire en volume du cahier (R7) remplacent
+  `ships/garde_transport_side.png` sans toucher au code (une image livrée n'est jamais retouchée).
+- **Moteur (`src/world/`, hors périmètre de CP) : le bord du vide ferme le quai.** Un `bord vide` du plan est une boîte invisible
+  (couche 1) : rien ne se marche au-delà du quai, donc sur la passerelle jusqu'à la coque. Si la scène de l'acte 1 veut un contrôle
+  rendu sur la passerelle (7.4, « Chtholly descend la passerelle »), elle la fait descendre sans la marcher, ou E7 ouvre la boîte
+  devant la passerelle.
+- **Sol (`tools/map_build.py`) : une marche entre deux matières `path`** (terre battue, gravier, pavés, tôle) refuse la carte dès qu'une
+  case de chemin touche un palier plus haut de plus de 0,5 m : le plan du port peint de la terre battue au pied de la colline (x 54 → 70,
+  z 20 → 34) ; la recette la limite au niveau 0 (`where level 0`).
+- **Un joueur de la carte du port peut lire le panneau de plus près** : si la scène 1.1 veut un plan fixe du panneau, la caméra du
+  récit (E6) le cadre depuis `panneau_sud` ; le panneau (premier plan) s'efface autour d'un joueur placé au nord.
+- **S1b → vie (E4/V1) : Willem, Ithea et Nephren au jour 3** : leurs lignes du jour 3 à midi sont `away: ville_snack` (écrites quand la
+  carte n'existait pas) ; la scène `j3_3_snack` les réserve et les pose, rien ne casse, mais une ligne `map: ville_snack` (Willem à
+  `snack_tabouret`, `manger` ; les aînées à `snack_table_nord` / `snack_table_nord_est`) les y mettrait aussi hors scène. Le matin du
+  jour 3, Willem erre encore dans la cour (`cour_tour`) alors qu'il est parti en ville (ACTE1.md 3.0) : une ligne `away: ville_haute`
+  au matin du jour 3 l'accorderait au récit.
+- **S1b → joueur : cacher la protagoniste dans une séquence sans elle** : `j1_1_port` la pose hors du champ (`port:from_ville_marche`)
+  faute d'un moyen de la cacher ; une étape `hide` (ou `Player.set_story_hidden`) serait plus sûre (sa lumière de fée, la nuit, suit
+  le joueur).
+- **S1b → joueur : l'épée en ville** : la protagoniste porte Seniorious au snack-bar et dans la rue (la planche de combat, tenue de
+  l'entrepôt sans le combat) ; une tenue de ville sans arme, ou l'arme rangée hors combat, éviterait l'épée qui traverse les voisines.
+- **S1b → carte `ville_snack` : des chaises à la table** : la table des trois aînées (`cafe_table_heavy`) n'a pas de chaise ; elles se
+  tiennent debout. Deux chaises (ou un banc) au nord de la table permettraient `assis` à `snack_table_nord` / `_nord_est`.
+- **S1b → vie : le cuistot du snack-bar** : `snack_vendor` n'a pas d'emploi du temps (VIE.md 4.11 : `ville_snack`, du matin au soir,
+  `travaille`) ; `test_life_ile_68_nav` n'admet que les cartes de l'entrepôt et veut chaque place atteignable à pied, or la place
+  `ville_snack:snack_vendor` est derrière le comptoir (0,35 m). Un emploi du temps (et une place « posée », hors navigation) le
+  laisserait à sa poêle après `j3_3_snack`, qui le retire aujourd'hui pendant le fondu.

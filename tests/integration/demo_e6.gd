@@ -10,7 +10,10 @@ extends Node
 ## Vues (capture quand la réplique ou l'état est à l'écran) : carton (1.1), porche (1.2),
 ## indice (après 1.2), gros_plan (1.3), miroir (1.5), avalanche (1.5), chambre (1.7), sommeil (la
 ## ligne du calendrier), calendrier (jour 2), fuite (2.2), cuisine (4.1), diner (4.2) ; jour1 :
-## une image toutes les E6_STEP s (3 par défaut) du début de la partie à l'aube du jour 2.
+## une image toutes les E6_STEP s (3 par défaut) du début de la partie à l'aube du jour 2 ;
+## (E8c) embuscade : l'embuscade de Pannibal (1.2) jouée par le pilote (pas de côté au bond, parade
+## aux taillades ; E6_AMBUSH=perdre : il ne fait rien), une image toutes les E6_STEP s (0,5 par
+## défaut) du bond de Pannibal à la première réplique de la suite.
 ## Le journal donne les draw calls de chaque capture (« E6 vue … »).
 
 const GAME_SCENE := preload("res://src/game.tscn")
@@ -69,6 +72,17 @@ var _index := 0
 var _previous_seen := ""
 var _hint_seen_at := -1.0
 var _elapsed := 0.0
+## (E8c) Vue « embuscade » : le jeu a commencé, puis fini (temps de la démo).
+var _ambush_seen := false
+var _ambush_over_at := -1.0
+var _ambush_leap_start := -1.0
+var _ambush_north := true
+## Vue « sequence » : scènes capturées, images par scène, étape en cours, embuscade menée.
+var _seq_from := &""
+var _seq_until := &""
+var _seq_index: Dictionary = {}
+var _seq_step_index := -1
+var _ambush_driven := false
 
 
 func _ready() -> void:
@@ -76,6 +90,8 @@ func _ready() -> void:
 	_shots = OS.get_environment("E6_SHOTS")
 	if _shots.is_empty():
 		_shots = "res://build/e6/shots"
+	if _view == "embuscade" or _view == "sequence":
+		_step = 0.5
 	if OS.get_environment("E6_STEP").is_valid_float():
 		_step = float(OS.get_environment("E6_STEP"))
 	_state = GameState.to_dict()
@@ -83,7 +99,9 @@ func _ready() -> void:
 	StoryDirector.seen_path = SEEN
 	StoryDirector.forget_seen()
 	WorldManager.fade_time = 0.2
-	if RESUMES.has(_view):
+	if _view == "sequence":
+		_setup_sequence()
+	elif RESUMES.has(_view):
 		_resume(RESUMES[_view])
 	else:
 		SaveManager.new_game(&"chtholly")
@@ -152,10 +170,83 @@ func _physics_process(delta: float) -> void:
 			_save("jour1_%03d" % _index)
 			_finish()
 			return
-	if _check_capture():
+	var quitting := false
+	if _view == "embuscade":
+		quitting = _pilot_ambush(delta)
+	elif _view == "sequence":
+		quitting = _sequence_tick(delta)
+	if quitting or _check_capture():
 		return
 	if not _acting:
 		_pilot_story()
+
+
+## (E8c) Vue « embuscade » : pendant le jeu, le pilote esquive le bond (un pas vers le nord) et
+## tient la parade aux taillades (vrais appuis : actions de déplacement et « charge ») ; une image
+## toutes les E6_STEP s du bond à la première réplique de la suite. Vrai quand la démo quitte.
+func _pilot_ambush(delta: float) -> bool:
+	var ambush := MiniGames.ambush()
+	if ambush != null and ambush.is_running():
+		if not _ambush_seen:
+			_ambush_seen = true
+			_step_left = 0.0
+			print("E6 embuscade : début (%s)" % ("perdre" if _losing() else "gagner"))
+		_drive_ambush(ambush)
+	elif _ambush_seen and _ambush_over_at < 0.0:
+		_ambush_over_at = _elapsed
+		_release_ambush_keys()
+		var result: Dictionary = ambush.result() if ambush != null else {}
+		print("E6 embuscade : fin, %s" % result)
+	if not _ambush_seen:
+		return false
+	_step_left -= delta
+	if _step_left <= 0.0:
+		_step_left = _step
+		_save("embuscade_%03d" % _index)
+		_index += 1
+	if _ambush_over_at >= 0.0 and ("Ça sent" in _shown_text() or _elapsed - _ambush_over_at > 12.0):
+		_save("embuscade_%03d" % _index)
+		_finish()
+		return true
+	return false
+
+
+func _losing() -> bool:
+	return OS.get_environment("E6_AMBUSH") == "perdre"
+
+
+func _drive_ambush(ambush: Ambush) -> void:
+	var attack := ambush.current_attack()
+	var kind: StringName = attack.get("kind", &"")
+	if _losing() or kind.is_empty():
+		_release_ambush_keys()
+		return
+	if kind == &"slash":
+		Input.action_press(&"charge")
+	else:
+		Input.action_release(&"charge")
+	var target: Vector3 = attack.get("target", _player.global_position)
+	var away := Vector2(_player.global_position.x - target.x, _player.global_position.z - target.z)
+	# Un pas vers le nord (vers le marais : le premier plan du sud cacherait la scène), vers le sud
+	# s'il est barré ; choisi une fois par bond.
+	if kind == &"leap" and not is_equal_approx(float(attack["start"]), _ambush_leap_start):
+		_ambush_leap_start = float(attack["start"])
+		_ambush_north = true
+		var nav := LifeDirector.nav()
+		var step := -1.6 if _ambush_north else 1.6
+		if nav != null and nav.ready and not nav.line_clear(target, target + Vector3(0, 0, step)):
+			_ambush_north = not _ambush_north
+	var wanted := &"move_forward" if _ambush_north else &"move_back"
+	for action: StringName in [&"move_forward", &"move_back"]:
+		if kind == &"leap" and away.length() < 1.4 and action == wanted:
+			Input.action_press(action)
+		else:
+			Input.action_release(action)
+
+
+func _release_ambush_keys() -> void:
+	for action: StringName in [&"charge", &"move_forward", &"move_back"]:
+		Input.action_release(action)
 
 
 ## Les répliques : lues READ_TIME s, puis la suite ou le premier choix (sauf la réplique visée).
@@ -248,6 +339,9 @@ func _pilot_story() -> void:
 	if WorldManager.is_transitioning() or _box.is_open():
 		return
 	var expected := StoryDirector.expected()
+	if expected.is_empty() and _view == "sequence":
+		# Une attente (« wait ») où le joueur a la main : il marche déjà vers la suite.
+		expected = _upcoming_wait_for()
 	if not expected.is_empty():
 		_act(_satisfy(expected))
 		return
@@ -266,6 +360,8 @@ func _act(action: Callable) -> void:
 
 
 func _satisfy(step: Dictionary) -> Callable:
+	if _view == "sequence" and (step.has("reach") or step.has("map")):
+		return _walk_for.bind(step)
 	if step.has("reach"):
 		if step.has("map") and StringName(str(step["map"])) != WorldManager.current_map():
 			return _go.bind(StringName(str(step["map"])))
@@ -356,3 +452,159 @@ func _dinner() -> void:
 	while LifeSlots.current() != &"soir" and StoryDirector.can_rest():
 		await StoryDirector.pass_time()
 	await _teleport(&"refectoire_allee")
+
+
+# --- Vue « sequence » : une image toutes les E6_STEP s pendant chaque scène ----------------------
+# E6_FROM=<scène> (la partie reprend à l'aube de son jour, ou nouvelle partie au jour 1),
+# E6_UNTIL=<scène> (la démo quitte quand elle est jouée), E6_SHOTS=<dossier> ; images
+# <scène>_<nnn>.png. Le pilote marche (vrais appuis : actions de déplacement, « interact » aux
+# portes) vers ce qu'attend la scène au lieu de se poser, et joue l'embuscade comme la vue
+# « embuscade ».
+
+
+func _setup_sequence() -> void:
+	_seq_from = StringName(OS.get_environment("E6_FROM"))
+	_seq_until = StringName(OS.get_environment("E6_UNTIL"))
+	if _seq_from.is_empty():
+		_seq_from = ORDER[0]
+	if _seq_until.is_empty():
+		_seq_until = _seq_from
+	var day := _day_of(_seq_from)
+	if day <= 1:
+		SaveManager.new_game(&"chtholly")
+		SaveManager.close_game(false)
+	else:
+		var before := 0
+		for scene_id: StringName in ORDER:
+			if _day_of(scene_id) < day:
+				before += 1
+		_resume([day, &"aube", &"entrepot_etage", Vector3(6.2, 0.0, 7.4), before])
+	StoryDirector.runner().step_started.connect(_on_step_started)
+
+
+func _day_of(scene_id: StringName) -> int:
+	var data := StoryData.scene(&"ile_68", scene_id)
+	return DialogueRunner.day_range(data.get("day", 1)).x
+
+
+func _on_step_started(index: int, _kind: String) -> void:
+	_seq_step_index = index
+
+
+func _in_range(scene_id: StringName) -> bool:
+	var at := ORDER.find(scene_id)
+	return at >= ORDER.find(_seq_from) and at <= ORDER.find(_seq_until)
+
+
+## Vrai quand la démo quitte.
+func _sequence_tick(delta: float) -> bool:
+	var ambush := MiniGames.ambush()
+	if ambush != null and ambush.is_running():
+		_drive_ambush(ambush)
+	elif _ambush_driven:
+		_release_ambush_keys()
+	_ambush_driven = ambush != null and ambush.is_running()
+	var current := StoryDirector.current_scene()
+	if not current.is_empty() and _in_range(current):
+		_step_left -= delta
+		if _step_left <= 0.0:
+			_step_left = _step
+			var count: int = _seq_index.get(current, 0)
+			_seq_index[current] = count + 1
+			_save("%s_%03d" % [current, count])
+	if GameState.is_scene_done(_seq_until) and current != _seq_until:
+		_finish()
+		return true
+	return false
+
+
+## Le prochain « wait_for » de la scène en cours, si le joueur a la main ({} sinon).
+func _upcoming_wait_for() -> Dictionary:
+	var current := StoryDirector.current_scene()
+	if current.is_empty() or _player.is_story_held() or _seq_step_index < 0:
+		return {}
+	var steps: Array = StoryData.scene(&"ile_68", current).get("steps", [])
+	for index: int in range(_seq_step_index, steps.size()):
+		var step: Dictionary = steps[index]
+		if step.get("do") == "wait_for":
+			return step
+		if step.get("do") == "control" and step.get("on") == false:
+			return {}
+	return {}
+
+
+## Marche jusqu'à ce qu'attend step (reach : le point ; map : la sortie vers la carte).
+func _walk_for(step: Dictionary) -> void:
+	var map_id := WorldManager.current_map()
+	var wanted := StringName(str(step.get("map", "")))
+	if step.has("reach") and (wanted.is_empty() or wanted == map_id):
+		var at := StoryDirector.stage().resolve(step["reach"]).origin
+		await _walk_to(at, maxf(float(step.get("radius", 1.0)) - 0.5, 0.4))
+		return
+	var map := WorldManager.current_map_node()
+	if map != null:
+		for exit: MapExit in map.exits():
+			if exit.target_map != wanted:
+				continue
+			var with_prompt := exit.needs_interaction()
+			await _walk_to(exit.global_position, 0.4)
+			if with_prompt and WorldManager.current_map() == map_id:
+				Input.action_press(&"interact")
+				await get_tree().physics_frame
+				await get_tree().physics_frame
+				Input.action_release(&"interact")
+			return
+	await _go(wanted)
+
+
+## Marche (actions de déplacement) par le chemin de la navigation ; s'arrête si la carte change,
+## si la scène reprend la main ou après 60 s (posé au but).
+func _walk_to(target: Vector3, radius: float) -> void:
+	var nav: LifeNav = StoryDirector.stage().ensure_nav()
+	var points := PackedVector3Array()
+	if nav != null and nav.ready:
+		points = StoryDirector.stage().route(
+			_player.global_position, nav.find_path(_player.global_position, target)
+		)
+	points.append(target)
+	var map_id := WorldManager.current_map()
+	var left := 60.0
+	var index := 0
+	var still := 0.0
+	while index < points.size() and left > 0.0:
+		if WorldManager.current_map() != map_id or _player.is_story_held():
+			break
+		var toward := points[index] - _player.global_position
+		toward.y = 0.0
+		var reach := radius if index == points.size() - 1 else 0.6
+		if toward.length() <= reach:
+			index += 1
+			continue
+		var direction := toward.normalized()
+		_press_move(direction if still < 0.6 else Vector3(-direction.z, 0.0, direction.x))
+		var before := _player.global_position
+		await get_tree().physics_frame
+		var step := get_physics_process_delta_time()
+		left -= step
+		still = still + step if _player.global_position.distance_to(before) < 0.01 else 0.0
+		if still > 1.2:
+			still = 0.0
+			index += 1
+	_press_move(Vector3.ZERO)
+	if left <= 0.0 and WorldManager.current_map() == map_id:
+		StoryDirector.stage().place_player(target)
+
+
+func _press_move(direction: Vector3) -> void:
+	var pairs := {
+		&"move_right": direction.x,
+		&"move_left": -direction.x,
+		&"move_back": direction.z,
+		&"move_forward": -direction.z,
+	}
+	for action: StringName in pairs:
+		var strength: float = pairs[action]
+		if strength > 0.05:
+			Input.action_press(action, strength)
+		else:
+			Input.action_release(action)

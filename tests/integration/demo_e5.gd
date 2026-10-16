@@ -20,6 +20,7 @@ extends Node
 const GAME_SCENE := preload("res://src/game.tscn")
 const ANIMAL_SCENE := preload("res://src/fauna/animal.tscn")
 const MAP := &"foret_essai"
+const DEMO_SEED := 68
 const OTHER_MAP := &"essai"
 ## Vue → moment, temps, place du joueur, direction, touche de marche (vide : il reste là), durée de
 ## la marche (images), état attendu d'un animal (espèce:état, vide : durée fixe), images ensuite.
@@ -104,6 +105,10 @@ var _player: Player
 
 
 func _ready() -> void:
+	# Le même tirage sur toutes les machines : la place des bêtes (FaunaPopulator) et leurs choix
+	# (randf) ; sans graine, la meute n'attaquait pas toujours avant la limite (CI, PR n° 48).
+	FaunaPopulator.fixed_seed = DEMO_SEED
+	seed(DEMO_SEED)
 	_state = GameState.to_dict()
 	GameState.reset()
 	_game = GAME_SCENE.instantiate() as Node3D
@@ -116,6 +121,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	FaunaPopulator.fixed_seed = 0
 	Atmosphere.transition_time = Atmosphere.DEFAULT_TRANSITION_TIME
 	GameState.from_dict.call_deferred(_state)
 

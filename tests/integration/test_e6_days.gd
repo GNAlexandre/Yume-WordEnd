@@ -144,17 +144,28 @@ func test_days_2_to_4() -> void:
 	assert_false(StoryDirector.can_sleep(), "pas avant le soir")
 	await StoryDirector.pass_time()
 	await _sleep()
-	# Jour 3 : le porche, le chemin, le snack-bar (sur le noir), le retour au soir.
+	# Jour 3 : le porche, le chemin (sentier, ville haute, le passant), le snack-bar, l'après-midi
+	# libre en ville (S1b : les vraies cartes ; test_e6_scenes.gd les joue avec de vrais appuis).
 	assert_true(await _free())
 	await _go(&"entrepot", &"from_entrepot_rdc")
 	assert_true(await _read_until(_porch_done))
 	assert_has(StoryDirector.stage().followers(), &"ithea", "Ithea suit")
 	await _go(&"sentier", &"from_entrepot")
 	assert_true(await _done(&"j3_1_information"))
-	assert_true(await _done(&"j3_3_snack"))
-	assert_eq(WorldManager.current_map(), &"entrepot")
-	assert_eq(LifeSlots.current(), &"soir")
+	assert_true(await _read_until(_waiting_for_town), "le bavardage du sentier")
+	assert_has(StoryDirector.stage().followers(), &"nephren", "Nephren suit")
+	await _go(&"ville_haute", &"from_sentier")
+	assert_true(await _read_until(_waiting_for_snack), "le passant")
+	await _place(&"porte_snack")
+	assert_true(await _done(&"j3_2_chemin"))
+	assert_true(
+		await _read_until(func() -> bool: return GameState.is_scene_done(&"j3_3_snack"), 120.0)
+	)
+	assert_eq(WorldManager.current_map(), &"ville_snack")
+	assert_eq(LifeSlots.current(), &"apres_midi")
 	assert_true(await _free())
+	await StoryDirector.pass_time()
+	assert_eq(LifeSlots.current(), &"soir")
 	await _sleep()
 	# Jour 4 : la cuisine l'après-midi, le dîner le soir.
 	assert_true(await _free())
@@ -173,6 +184,14 @@ func test_days_2_to_4() -> void:
 	assert_eq(GameState.day, 5, "le jour 5 (scènes du lot S2) commence")
 	assert_eq(GameState.calendar().size(), 4, "quatre lignes au calendrier")
 	assert_eq(GameState.quests(), {}, "aucune quête à collecter")
+
+
+func _waiting_for_town() -> bool:
+	return StoryDirector.expected().get("map", "") == "ville_haute" and not player.is_story_held()
+
+
+func _waiting_for_snack() -> bool:
+	return StoryDirector.expected().get("reach", "") == "porte_snack" and not player.is_story_held()
 
 
 func _porch_done() -> bool:

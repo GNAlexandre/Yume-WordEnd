@@ -323,10 +323,14 @@ func test_every_side_is_the_flank_of_its_building_at_contract_size() -> void:
 	# (T1) Plus les deux volumes de l'entrepôt de la refonte (docs/lore/CARTE.md, 12.1), (C2) et les
 	# six maisons du
 	# village (cahier n° 5, 5.3 ; scènes de tools/exterior_props.py).
+	# (CV) et les dix maisons et boutiques de la ville (cahier n° 5, 6.4 et 6.5).
 	assert_eq(
 		count,
-		27,
-		"flancs des 9 bâtiments existants, des 10 nouveaux, de l'entrepôt (T1) et du village (C2)"
+		38,
+		(
+			"flancs des 9 bâtiments existants, des 10 nouveaux, de T1, du village (C2), de la ville (CV),"
+			+ " du port (CP)"
+		)
 	)
 	assert_true(problems.is_empty(), "; ".join(problems))
 

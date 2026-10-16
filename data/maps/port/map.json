@@ -2,17 +2,24 @@
   "_comment": "Sol en relief de la carte port, écrit par tools/map_build.py gen d'après plan.json avec heights.png, materials.png et structures.png : modifier le plan et relancer gen (format : PLAN.md, « Format du sol des cartes extérieures »).",
   "format": "map_ground",
   "version": 1,
-  "size": [32, 24],
+  "size": [70, 40],
   "heights_image": "heights.png",
   "height_step_value": 16,
   "materials_image": "materials.png",
-  "materials_scale": 1,
+  "materials_scale": 2,
   "palette": {
-    "#7a8a6a": "sobre",
-    "#d0a060": "chemin"
+    "#6070a0": "tole",
+    "#a8b040": "herbe_haute",
+    "#808080": "paves",
+    "#d0a060": "chemin",
+    "#2e8a5a": "mousse",
+    "#c89a5a": "terre_battue",
+    "#c0b090": "gravier",
+    "#5aa83c": "herbe",
+    "#b0602a": "feuilles"
   },
   "edges": {
-    "north": "land",
+    "north": "void",
     "east": "land",
     "south": "land",
     "west": "land"
@@ -20,11 +27,11 @@
   "skirt": 16,
   "barrier": true,
   "materials": {
-    "sobre": {
-      "label": "Sol de la carte d'attente, assourdi",
-      "layer": "forest_floor",
-      "color": "#7a8a6a",
-      "tint": [0.78, 0.78, 0.8]
+    "herbe_drue": {
+      "label": "Herbe drue et molle (grass_b)",
+      "layer": "grass_b",
+      "color": "#4f9a46",
+      "variant": false
     },
     "chemin": {
       "label": "Chemin de terre (path_dirt_b)",
@@ -32,7 +39,16 @@
       "color": "#d0a060",
       "variant": false,
       "path": true
+    },
+    "eau_basse": {
+      "label": "Eau basse du marais : on y marche (VEX)",
+      "layer": "water",
+      "color": "#3a70b0",
+      "walkable": true,
+      "ripple": true,
+      "tint": [0.78, 0.86, 0.8]
     }
   },
-  "spawn": [5, 12]
+  "structures_image": "structures.png",
+  "spawn": [4, 17]
 }

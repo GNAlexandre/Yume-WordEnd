@@ -1,0 +1,1766 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/map.gd" id="1_map"]
+[ext_resource type="Script" path="res://src/world/map_ground.gd" id="2_map_ground"]
+[ext_resource type="Script" path="res://src/world/prop_batcher.gd" id="3_prop_batcher"]
+[ext_resource type="Script" path="res://src/world/prop_scatter.gd" id="4_prop_scatter"]
+[ext_resource type="Script" path="res://src/world/map_exit.gd" id="5_map_exit"]
+[ext_resource type="Script" path="res://src/world/ambient_sprites.gd" id="6_ambient_sprites"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_house_e.tscn" id="7_town_house_e"]
+[ext_resource type="PackedScene" path="res://src/world/props/house_narrow.tscn" id="8_house_narrow"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_house_a.tscn" id="9_town_house_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_house_b.tscn" id="10_town_house_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/shop_bookshop.tscn" id="11_shop_bookshop"]
+[ext_resource type="PackedScene" path="res://src/world/props/cafe_town.tscn" id="12_cafe_town"]
+[ext_resource type="PackedScene" path="res://src/world/props/shop_snack.tscn" id="13_shop_snack"]
+[ext_resource type="PackedScene" path="res://src/world/props/shop_accessories.tscn" id="14_shop_accessories"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_house_f.tscn" id="15_town_house_f"]
+[ext_resource type="PackedScene" path="res://src/world/props/shop_apothecary.tscn" id="16_shop_apothecary"]
+[ext_resource type="PackedScene" path="res://src/world/props/projection_hall.tscn" id="17_projection_hall"]
+[ext_resource type="PackedScene" path="res://src/world/props/house_timber_a.tscn" id="18_house_timber_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_house_c.tscn" id="19_town_house_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_house_d.tscn" id="20_town_house_d"]
+[ext_resource type="PackedScene" path="res://src/world/props/hanging_sign_pan.tscn" id="21_hanging_sign_pan"]
+[ext_resource type="PackedScene" path="res://src/world/props/hanging_sign_cup.tscn" id="22_hanging_sign_cup"]
+[ext_resource type="PackedScene" path="res://src/world/props/street_lamp_double_fg.tscn" id="23_street_lamp_double_fg"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_planter_stone.tscn" id="24_town_planter_stone"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_wall_fountain.tscn" id="25_town_wall_fountain"]
+[ext_resource type="PackedScene" path="res://src/world/props/bench_stone.tscn" id="26_bench_stone"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_doorsteps.tscn" id="27_town_doorsteps"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_cellar_hatch.tscn" id="28_town_cellar_hatch"]
+[ext_resource type="PackedScene" path="res://src/world/props/crate_apples.tscn" id="29_crate_apples"]
+[ext_resource type="PackedScene" path="res://src/world/props/wall_lantern.tscn" id="30_wall_lantern"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_wall_low.tscn" id="31_town_wall_low"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_yellow.tscn" id="32_tree_autumn_yellow"]
+[ext_resource type="PackedScene" path="res://src/world/props/maple_b.tscn" id="33_maple_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust.tscn" id="34_tree_autumn_rust"]
+[ext_resource type="PackedScene" path="res://src/world/props/sapling_a.tscn" id="35_sapling_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/sapling_b.tscn" id="36_sapling_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/bench.tscn" id="37_bench"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_c.tscn" id="38_forest_wall_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_a.tscn" id="39_forest_wall_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/forest_wall_b.tscn" id="40_forest_wall_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_roofs_a.tscn" id="41_town_roofs_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_roofs_b.tscn" id="42_town_roofs_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_yellow_forest.tscn" id="43_tree_autumn_yellow_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/beech_a_forest.tscn" id="44_beech_a_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/maple_b_forest.tscn" id="45_maple_b_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/oak_b_forest.tscn" id="46_oak_b_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/beech_c_forest.tscn" id="47_beech_c_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/maple_c_forest.tscn" id="48_maple_c_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust_forest.tscn" id="49_tree_autumn_rust_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/maple_a_forest.tscn" id="50_maple_a_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/oak_c_forest.tscn" id="51_oak_c_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/beech_b_forest.tscn" id="52_beech_b_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/oak_d_forest.tscn" id="53_oak_d_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_forest.tscn" id="54_tree_autumn_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/barrel_group.tscn" id="55_barrel_group"]
+[ext_resource type="PackedScene" path="res://src/world/props/crate_stack.tscn" id="56_crate_stack"]
+[ext_resource type="PackedScene" path="res://src/world/props/rain_barrel.tscn" id="57_rain_barrel"]
+[ext_resource type="PackedScene" path="res://src/world/props/flower_pots.tscn" id="58_flower_pots"]
+[ext_resource type="PackedScene" path="res://src/world/props/planter_long.tscn" id="59_planter_long"]
+[ext_resource type="PackedScene" path="res://src/world/props/bucket.tscn" id="60_bucket"]
+[ext_resource type="PackedScene" path="res://src/world/props/sack_apples.tscn" id="61_sack_apples"]
+[ext_resource type="PackedScene" path="res://src/world/props/hand_cart.tscn" id="62_hand_cart"]
+[ext_resource type="PackedScene" path="res://src/world/props/ivy_wall_a.tscn" id="63_ivy_wall_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/ivy_wall_b.tscn" id="64_ivy_wall_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/drainpipe.tscn" id="65_drainpipe"]
+[ext_resource type="PackedScene" path="res://src/world/props/town_railing.tscn" id="66_town_railing"]
+[ext_resource type="PackedScene" path="res://src/world/props/bunting_wave.tscn" id="67_bunting_wave"]
+[ext_resource type="PackedScene" path="res://src/world/props/chimney_stone.tscn" id="68_chimney_stone"]
+[ext_resource type="PackedScene" path="res://src/world/props/chimney_smoke.tscn" id="69_chimney_smoke"]
+[ext_resource type="PackedScene" path="res://src/world/props/chimney_brick.tscn" id="70_chimney_brick"]
+[ext_resource type="PackedScene" path="res://src/world/props/book_cart.tscn" id="71_book_cart"]
+[ext_resource type="PackedScene" path="res://src/world/props/menu_slate.tscn" id="72_menu_slate"]
+[ext_resource type="PackedScene" path="res://src/world/props/bread_rack.tscn" id="73_bread_rack"]
+[ext_resource type="PackedScene" path="res://src/world/props/awning_green.tscn" id="74_awning_green"]
+[ext_resource type="PackedScene" path="res://src/world/props/garden_bed.tscn" id="75_garden_bed"]
+[ext_resource type="PackedScene" path="res://src/world/props/fence_wattle.tscn" id="76_fence_wattle"]
+[ext_resource type="PackedScene" path="res://src/world/props/thicket_b_fg.tscn" id="77_thicket_b_fg"]
+[ext_resource type="PackedScene" path="res://src/world/props/thicket_a_fg.tscn" id="78_thicket_a_fg"]
+[ext_resource type="PackedScene" path="res://src/world/props/drain_grate.tscn" id="79_drain_grate"]
+[ext_resource type="PackedScene" path="res://src/world/props/puddle_a.tscn" id="80_puddle_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/puddle_b.tscn" id="81_puddle_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/leaves_rust_a.tscn" id="82_leaves_rust_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/leaves_gold_b.tscn" id="83_leaves_gold_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/leaves_gold_a.tscn" id="84_leaves_gold_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/leaves_rust_b.tscn" id="85_leaves_rust_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/flower_bed.tscn" id="86_flower_bed"]
+[ext_resource type="PackedScene" path="res://src/world/props/firewood_pile_front.tscn" id="87_firewood_pile_front"]
+[ext_resource type="PackedScene" path="res://src/world/props/wheelbarrow.tscn" id="88_wheelbarrow"]
+[ext_resource type="PackedScene" path="res://src/world/props/laundry_basket.tscn" id="89_laundry_basket"]
+[ext_resource type="PackedScene" path="res://src/world/props/pebbles_a.tscn" id="90_pebbles_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/footprints.tscn" id="91_footprints"]
+[ext_resource type="PackedScene" path="res://src/world/props/pebbles_b.tscn" id="92_pebbles_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/moss_patch_a.tscn" id="93_moss_patch_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/roots_a.tscn" id="94_roots_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/pigeons.tscn" id="95_pigeons"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush.tscn" id="96_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_b.tscn" id="97_bush_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_c.tscn" id="98_bush_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_d.tscn" id="99_bush_d"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_e.tscn" id="100_bush_e"]
+[ext_resource type="PackedScene" path="res://src/world/props/wildflowers_a.tscn" id="101_wildflowers_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/wildflowers_b.tscn" id="102_wildflowers_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/myosotis_b.tscn" id="103_myosotis_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/heather.tscn" id="104_heather"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_c.tscn" id="105_grass_clump_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/berry_bush.tscn" id="106_berry_bush"]
+[ext_resource type="PackedScene" path="res://src/world/props/berry_bush_b.tscn" id="107_berry_bush_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/thicket_c.tscn" id="108_thicket_c"]
+[ext_resource type="PackedScene" path="res://src/world/props/bush_f.tscn" id="109_bush_f"]
+[ext_resource type="PackedScene" path="res://src/world/props/vegetable_patch.tscn" id="110_vegetable_patch"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_a.tscn" id="111_grass_clump_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_d.tscn" id="112_grass_clump_d"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_clump_b.tscn" id="113_grass_clump_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_edge_a.tscn" id="114_grass_edge_a"]
+[ext_resource type="PackedScene" path="res://src/world/props/grass_edge_b.tscn" id="115_grass_edge_b"]
+[ext_resource type="PackedScene" path="res://src/world/props/hay_scatter.tscn" id="116_hay_scatter"]
+[ext_resource type="PackedScene" path="res://src/world/props/log_pile_forest.tscn" id="117_log_pile_forest"]
+[ext_resource type="Script" path="res://src/world/examinable.gd" id="118_examinable"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/birds_flock.png" id="119_birds_flock"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_gold.png" id="120_falling_leaf_gold"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/falling_leaf_rust.png" id="121_falling_leaf_rust"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge1"]
+size = Vector3(60, 4, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge2"]
+size = Vector3(22, 4, 8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge3"]
+size = Vector3(22, 4, 9)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge4"]
+size = Vector3(22, 4, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge5"]
+size = Vector3(22, 4, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge6"]
+size = Vector3(4, 4, 18)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge7"]
+size = Vector3(4, 4, 26)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge8"]
+size = Vector3(4, 4, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge9"]
+size = Vector3(4, 4, 18)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge10"]
+size = Vector3(4, 4, 26)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge11"]
+size = Vector3(4, 4, 6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge12"]
+size = Vector3(14, 4, 5.9)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge13"]
+size = Vector3(22, 4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge14"]
+size = Vector3(6.5, 4, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge15"]
+size = Vector3(6.5, 4, 0.95)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge16"]
+size = Vector3(4.5, 4, 4.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge17"]
+size = Vector3(4, 4, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_edge18"]
+size = Vector3(4, 4, 6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit_vers_sentier"]
+size = Vector3(0.6, 3, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit_vers_marche"]
+size = Vector3(8, 3, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit_porte_cafe"]
+size = Vector3(1.4, 3, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit_porte_snack"]
+size = Vector3(1.4, 3, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit_porte_librairie"]
+size = Vector3(1.4, 3, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit_porte_projection"]
+size = Vector3(1.4, 3, 0.6)
+
+[node name="ville_haute" type="Node3D"]
+script = ExtResource("1_map")
+display_name = "Le centre-ville"
+region = &"ville"
+size = Vector2(60, 60)
+camera_bounds = Rect2(10, 9, 40, 43)
+
+[node name="Ground" type="StaticBody3D" parent="."]
+script = ExtResource("2_map_ground")
+
+[node name="Edges" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Edge1" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 4, 2)
+shape = SubResource("BoxShape3D_edge1")
+
+[node name="Edge2" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 3, 20)
+shape = SubResource("BoxShape3D_edge2")
+
+[node name="Edge3" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 3, 20.5)
+shape = SubResource("BoxShape3D_edge3")
+
+[node name="Edge4" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 2, 39)
+shape = SubResource("BoxShape3D_edge4")
+
+[node name="Edge5" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 2, 40)
+shape = SubResource("BoxShape3D_edge5")
+
+[node name="Edge6" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3, 25)
+shape = SubResource("BoxShape3D_edge6")
+
+[node name="Edge7" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2, 47)
+shape = SubResource("BoxShape3D_edge7")
+
+[node name="Edge8" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 4, 10)
+shape = SubResource("BoxShape3D_edge8")
+
+[node name="Edge9" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 3, 25)
+shape = SubResource("BoxShape3D_edge9")
+
+[node name="Edge10" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 2, 47)
+shape = SubResource("BoxShape3D_edge10")
+
+[node name="Edge11" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 4, 7)
+shape = SubResource("BoxShape3D_edge11")
+
+[node name="Edge12" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 4, 6.95)
+shape = SubResource("BoxShape3D_edge12")
+
+[node name="Edge13" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 3, 24.5)
+shape = SubResource("BoxShape3D_edge13")
+
+[node name="Edge14" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.75, 2, 45)
+shape = SubResource("BoxShape3D_edge14")
+
+[node name="Edge15" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.75, 4, 4.475)
+shape = SubResource("BoxShape3D_edge15")
+
+[node name="Edge16" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54.25, 3, 27.25)
+shape = SubResource("BoxShape3D_edge16")
+
+[node name="Edge17" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54.5, 2, 48.5)
+shape = SubResource("BoxShape3D_edge17")
+
+[node name="Edge18" type="CollisionShape3D" parent="Edges"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54.5, 4, 7)
+shape = SubResource("BoxShape3D_edge18")
+
+[node name="Geometry" type="Node3D" parent="."]
+script = ExtResource("3_prop_batcher")
+cell_size = 24.0
+
+[node name="Houses" type="Node3D" parent="Geometry"]
+
+[node name="Facade" type="Node3D" parent="Geometry"]
+
+[node name="Roof" type="Node3D" parent="Geometry"]
+
+[node name="Street" type="Node3D" parent="Geometry"]
+
+[node name="Garden" type="Node3D" parent="Geometry"]
+
+[node name="Edge" type="Node3D" parent="Geometry"]
+
+[node name="Woods" type="Node3D" parent="Geometry"]
+
+[node name="Sky" type="Node3D" parent="Geometry"]
+
+[node name="MaisonHaute" parent="Geometry/Houses" instance=ExtResource("7_town_house_e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 2, 7)
+
+[node name="MaisonEtroite" parent="Geometry/Houses" instance=ExtResource("8_house_narrow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 2, 7.5)
+
+[node name="MaisonA" parent="Geometry/Houses" instance=ExtResource("9_town_house_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.5, 2, 7)
+
+[node name="MaisonB" parent="Geometry/Houses" instance=ExtResource("10_town_house_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 2, 7)
+
+[node name="Librairie" parent="Geometry/Houses" instance=ExtResource("11_shop_bookshop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 1, 27.5)
+
+[node name="CafeHabituel" parent="Geometry/Houses" instance=ExtResource("12_cafe_town")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 1, 27)
+
+[node name="Snack" parent="Geometry/Houses" instance=ExtResource("13_shop_snack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 1, 27.5)
+
+[node name="Accessoires" parent="Geometry/Houses" instance=ExtResource("14_shop_accessories")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 1, 27.5)
+
+[node name="MaisonF" parent="Geometry/Houses" instance=ExtResource("15_town_house_f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 1, 27.5)
+
+[node name="Apothicaire" parent="Geometry/Houses" instance=ExtResource("16_shop_apothecary")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 48.5)
+
+[node name="SalleProjection" parent="Geometry/Houses" instance=ExtResource("17_projection_hall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0, 47.5)
+
+[node name="Colombages" parent="Geometry/Houses" instance=ExtResource("18_house_timber_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.5, 0, 48.75)
+
+[node name="MaisonC" parent="Geometry/Houses" instance=ExtResource("19_town_house_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 48.5)
+
+[node name="MaisonD" parent="Geometry/Houses" instance=ExtResource("20_town_house_d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 48.5)
+
+[node name="HangingSignPan" parent="Geometry/Facade" instance=ExtResource("21_hanging_sign_pan")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.3, 2, 30.3)
+
+[node name="HangingSignCup" parent="Geometry/Facade" instance=ExtResource("22_hanging_sign_cup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.7, 2, 30.3)
+
+[node name="Reverbere" parent="Geometry/Street" instance=ExtResource("23_street_lamp_double_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4, 0, 34.6)
+
+[node name="TownPlanterStone" parent="Geometry/Street" instance=ExtResource("24_town_planter_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 2, 10.4)
+
+[node name="TownWallFountain" parent="Geometry/Street" instance=ExtResource("25_town_wall_fountain")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 2, 10.4)
+
+[node name="BancHaut" parent="Geometry/Street" instance=ExtResource("26_bench_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 2, 15.6)
+
+[node name="TownDoorsteps" parent="Geometry/Facade" instance=ExtResource("27_town_doorsteps")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 2, 10.4)
+
+[node name="TownCellarHatch" parent="Geometry/Facade" instance=ExtResource("28_town_cellar_hatch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0, 52.2)
+
+[node name="CaissesPommes" parent="Geometry/Street" instance=ExtResource("29_crate_apples")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 52)
+
+[node name="LanterneHaut" parent="Geometry/Facade" instance=ExtResource("30_wall_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 2.8, 9.7)
+
+[node name="MuretHaut1" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, 9.4)
+
+[node name="MuretHaut2" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 2, 9.4)
+flip_h = true
+
+[node name="MuretHaut3" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 2, 9.4)
+
+[node name="MuretHaut4" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2, 9.4)
+flip_h = true
+
+[node name="MuretHaut5" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 2, 9.4)
+
+[node name="MuretHaut6" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 2, 9.4)
+flip_h = true
+
+[node name="MuretHaut7" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 2, 9.4)
+
+[node name="ArbreJardinHaut1" parent="Geometry/Garden" instance=ExtResource("32_tree_autumn_yellow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5, 2, 6.6)
+
+[node name="ArbreJardinHaut2" parent="Geometry/Garden" instance=ExtResource("33_maple_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 2, 5.6)
+
+[node name="ArbreJardinHaut3" parent="Geometry/Garden" instance=ExtResource("34_tree_autumn_rust")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.2, 2, 7)
+
+[node name="ArbreJardinHaut4" parent="Geometry/Garden" instance=ExtResource("35_sapling_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4, 2, 8.2)
+
+[node name="ArbreJardinHaut5" parent="Geometry/Garden" instance=ExtResource("36_sapling_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 2, 8.4)
+
+[node name="BancJardinHaut" parent="Geometry/Garden" instance=ExtResource("37_bench")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2, 8.9)
+
+[node name="MaisonBord1" parent="Geometry/Houses" instance=ExtResource("19_town_house_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2, 7.5)
+
+[node name="MaisonBord2" parent="Geometry/Houses" instance=ExtResource("19_town_house_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 2, 7)
+
+[node name="MaisonBord3" parent="Geometry/Houses" instance=ExtResource("15_town_house_f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 2, 13.2)
+
+[node name="MaisonBord4" parent="Geometry/Houses" instance=ExtResource("19_town_house_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 38.5)
+
+[node name="MaisonBord5" parent="Geometry/Houses" instance=ExtResource("14_shop_accessories")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 44.5)
+
+[node name="MaisonBord6" parent="Geometry/Houses" instance=ExtResource("19_town_house_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 51)
+
+[node name="MaisonBord7" parent="Geometry/Houses" instance=ExtResource("19_town_house_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0, 38)
+
+[node name="MaisonBord8" parent="Geometry/Houses" instance=ExtResource("16_shop_apothecary")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0, 44)
+
+[node name="MaisonBord9" parent="Geometry/Houses" instance=ExtResource("19_town_house_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0, 50.5)
+
+[node name="MaisonBord10" parent="Geometry/Houses" instance=ExtResource("19_town_house_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 57)
+
+[node name="MaisonBord11" parent="Geometry/Houses" instance=ExtResource("14_shop_accessories")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0, 57)
+
+[node name="LisiereBois1" parent="Geometry/Woods" instance=ExtResource("38_forest_wall_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2, 2.4)
+
+[node name="LisiereBois2" parent="Geometry/Woods" instance=ExtResource("39_forest_wall_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, 2.4)
+flip_h = true
+
+[node name="LisiereBois3" parent="Geometry/Woods" instance=ExtResource("40_forest_wall_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 2, 2.4)
+
+[node name="LisiereBois4" parent="Geometry/Woods" instance=ExtResource("38_forest_wall_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 2, 2.4)
+flip_h = true
+
+[node name="LisiereBois0" parent="Geometry/Woods" instance=ExtResource("40_forest_wall_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 2, 2.4)
+flip_h = true
+
+[node name="LisiereBois5" parent="Geometry/Woods" instance=ExtResource("39_forest_wall_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 2, 2.4)
+
+[node name="ToitsLointains1" parent="Geometry/Sky" instance=ExtResource("41_town_roofs_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 5, -5.5)
+
+[node name="ToitsLointains2" parent="Geometry/Sky" instance=ExtResource("42_town_roofs_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 5, -5.5)
+flip_h = true
+
+[node name="ToitsLointains3" parent="Geometry/Sky" instance=ExtResource("41_town_roofs_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 5, -5.5)
+
+[node name="ToitsLointains4" parent="Geometry/Sky" instance=ExtResource("42_town_roofs_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 5, -5.5)
+flip_h = true
+
+[node name="ArbreLisiere1" parent="Geometry/Woods" instance=ExtResource("43_tree_autumn_yellow_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.29, 2, 2.905)
+
+[node name="ArbreLisiere2" parent="Geometry/Woods" instance=ExtResource("44_beech_a_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.086, 2, 1.578)
+
+[node name="ArbreLisiere3" parent="Geometry/Woods" instance=ExtResource("45_maple_b_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.842, 2, 1.825)
+
+[node name="ArbreLisiere4" parent="Geometry/Woods" instance=ExtResource("46_oak_b_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.495, 2, 2.958)
+
+[node name="ArbreLisiere5" parent="Geometry/Woods" instance=ExtResource("47_beech_c_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.742, 2, 2.639)
+
+[node name="ArbreLisiere6" parent="Geometry/Woods" instance=ExtResource("48_maple_c_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.779, 2, 2.574)
+
+[node name="ArbreLisiere7" parent="Geometry/Woods" instance=ExtResource("49_tree_autumn_rust_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.71, 2, 1.549)
+
+[node name="ArbreLisiere8" parent="Geometry/Woods" instance=ExtResource("50_maple_a_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.901, 2, 1.707)
+
+[node name="ArbreLisiere9" parent="Geometry/Woods" instance=ExtResource("51_oak_c_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.421, 2, 2.257)
+
+[node name="ArbreLisiere10" parent="Geometry/Woods" instance=ExtResource("52_beech_b_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.992, 2, 2.837)
+
+[node name="ArbreLisiere11" parent="Geometry/Woods" instance=ExtResource("53_oak_d_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.809, 2, 2.401)
+
+[node name="ArbreLisiere12" parent="Geometry/Woods" instance=ExtResource("54_tree_autumn_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.864, 2, 2.653)
+
+[node name="ArbreLisiere13" parent="Geometry/Woods" instance=ExtResource("43_tree_autumn_yellow_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54.174, 2, 2.164)
+
+[node name="ArbreLisiere14" parent="Geometry/Woods" instance=ExtResource("44_beech_a_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.481, 2, 1.528)
+
+[node name="TonneauxOuest" parent="Geometry/Street" instance=ExtResource("55_barrel_group")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 2, 10.3)
+
+[node name="CaissesOuest" parent="Geometry/Street" instance=ExtResource("56_crate_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.4, 2, 10.2)
+
+[node name="TonneauMaisonHaute" parent="Geometry/Street" instance=ExtResource("57_rain_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, 10.2)
+
+[node name="PotsMaisonHaute" parent="Geometry/Street" instance=ExtResource("58_flower_pots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4, 2, 10.4)
+
+[node name="PotsMaisonHaute2" parent="Geometry/Street" instance=ExtResource("58_flower_pots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 2, 10.4)
+flip_h = true
+
+[node name="BacEtroite" parent="Geometry/Street" instance=ExtResource("59_planter_long")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.6, 2, 10.4)
+
+[node name="SeauEtroite" parent="Geometry/Street" instance=ExtResource("60_bucket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.6, 2, 10.3)
+
+[node name="PotsMaisonA" parent="Geometry/Street" instance=ExtResource("58_flower_pots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.9, 2, 10.4)
+
+[node name="SacsMaisonA" parent="Geometry/Street" instance=ExtResource("61_sack_apples")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.2, 2, 10.3)
+
+[node name="TonneauxMaisonB" parent="Geometry/Street" instance=ExtResource("55_barrel_group")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.4, 2, 10.3)
+
+[node name="CharretteEst" parent="Geometry/Street" instance=ExtResource("62_hand_cart")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.2, 2, 10.5)
+
+[node name="PotsMaisonB" parent="Geometry/Street" instance=ExtResource("58_flower_pots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.6, 2, 10.4)
+flip_h = true
+
+[node name="LierreMaisonHaute" parent="Geometry/Facade" instance=ExtResource("63_ivy_wall_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 2, 9.55)
+
+[node name="LierreMaisonB" parent="Geometry/Facade" instance=ExtResource("64_ivy_wall_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.5, 2.3, 9.55)
+flip_h = true
+
+[node name="DescenteHaute" parent="Geometry/Facade" instance=ExtResource("65_drainpipe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.15, 2, 9.7)
+
+[node name="DescenteMaisonA" parent="Geometry/Facade" instance=ExtResource("65_drainpipe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.5, 2, 9.7)
+
+[node name="GardeCorpsHaut1" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2, 15.55)
+
+[node name="GardeCorpsHaut2" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 2, 15.55)
+flip_h = true
+
+[node name="GardeCorpsHaut3" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2, 15.55)
+
+[node name="GardeCorpsHaut4" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, 15.55)
+flip_h = true
+
+[node name="GardeCorpsHaut5" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 2, 15.55)
+
+[node name="GardeCorpsHaut6" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 2, 15.55)
+flip_h = true
+
+[node name="GardeCorpsHaut7" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 2, 15.55)
+
+[node name="GardeCorpsHaut8" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 2, 15.55)
+flip_h = true
+
+[node name="GardeCorpsHaut9" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 2, 15.55)
+
+[node name="GardeCorpsHaut10" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 2, 15.55)
+flip_h = true
+
+[node name="GardeCorpsHaut11" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 2, 15.55)
+
+[node name="GardeCorpsHaut12" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 2, 15.55)
+flip_h = true
+
+[node name="GardeCorpsHaut13" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 2, 15.55)
+
+[node name="GardeCorpsHaut14" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 2, 15.55)
+flip_h = true
+
+[node name="GardeCorpsHaut15" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 2, 15.55)
+
+[node name="GardeCorpsHaut16" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 2, 15.55)
+flip_h = true
+
+[node name="GardeCorpsHaut17" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 2, 15.55)
+
+[node name="GardeCorpsHaut18" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 2, 15.55)
+flip_h = true
+
+[node name="GardeCorpsHaut19" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 2, 15.55)
+
+[node name="GardeCorpsHaut20" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 2, 15.55)
+flip_h = true
+
+[node name="GuirlandeHaute" parent="Geometry/Roof" instance=ExtResource("67_bunting_wave")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 5, 11.6)
+
+[node name="GuirlandeEst" parent="Geometry/Roof" instance=ExtResource("67_bunting_wave")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 5, 11.6)
+flip_h = true
+
+[node name="CheminéeHaute1" parent="Geometry/Roof" instance=ExtResource("68_chimney_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 10.9, 7)
+
+[node name="FuméeHaute1" parent="Geometry/Roof" instance=ExtResource("69_chimney_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 12.7, 7)
+
+[node name="CheminéeHaute2" parent="Geometry/Roof" instance=ExtResource("68_chimney_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.5, 9.9, 7)
+
+[node name="FuméeHaute2" parent="Geometry/Roof" instance=ExtResource("69_chimney_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.5, 11.7, 7)
+
+[node name="CheminéeHaute3" parent="Geometry/Roof" instance=ExtResource("70_chimney_brick")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 9.4, 7.5)
+
+[node name="FuméeHaute3" parent="Geometry/Roof" instance=ExtResource("69_chimney_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 11.2, 7.5)
+
+[node name="ChariotLivres" parent="Geometry/Street" instance=ExtResource("71_book_cart")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.4, 1, 31)
+
+[node name="PotsLibrairie" parent="Geometry/Street" instance=ExtResource("58_flower_pots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.3, 1, 30.5)
+
+[node name="ArdoiseCafe" parent="Geometry/Street" instance=ExtResource("72_menu_slate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.4, 1, 30.6)
+
+[node name="PotsCafe" parent="Geometry/Street" instance=ExtResource("58_flower_pots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.4, 1, 30.5)
+flip_h = true
+
+[node name="BancCarrefour" parent="Geometry/Street" instance=ExtResource("26_bench_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.6, 1, 31)
+
+[node name="TonneauxSnack" parent="Geometry/Street" instance=ExtResource("55_barrel_group")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.8, 1, 30.45)
+
+[node name="ChevaletAccessoires" parent="Geometry/Street" instance=ExtResource("73_bread_rack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.7, 1, 30.55)
+
+[node name="PotsMaisonF" parent="Geometry/Street" instance=ExtResource("58_flower_pots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.6, 1, 30.5)
+
+[node name="TonneauMaisonF" parent="Geometry/Street" instance=ExtResource("57_rain_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 1, 30.6)
+
+[node name="CaissesOuest2" parent="Geometry/Street" instance=ExtResource("56_crate_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 1, 31)
+
+[node name="BacEst2" parent="Geometry/Street" instance=ExtResource("59_planter_long")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 1, 30.9)
+
+[node name="MarchesLibrairie" parent="Geometry/Facade" instance=ExtResource("27_town_doorsteps")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 1, 30.3)
+
+[node name="MarchesCafe" parent="Geometry/Facade" instance=ExtResource("27_town_doorsteps")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 1, 30.3)
+
+[node name="MarchesMaisonF" parent="Geometry/Facade" instance=ExtResource("27_town_doorsteps")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 1, 30.3)
+
+[node name="AuventAccessoires" parent="Geometry/Facade" instance=ExtResource("74_awning_green")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 3.6, 30.45)
+
+[node name="CheminéeCafé1" parent="Geometry/Roof" instance=ExtResource("68_chimney_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 6.5, 27)
+
+[node name="FuméeCafé1" parent="Geometry/Roof" instance=ExtResource("69_chimney_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 8.3, 27)
+
+[node name="CheminéeCafé2" parent="Geometry/Roof" instance=ExtResource("70_chimney_brick")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 6.1, 27.5)
+
+[node name="FuméeCafé2" parent="Geometry/Roof" instance=ExtResource("69_chimney_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 7.9, 27.5)
+
+[node name="GardeCorpsCafé1" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 33.85)
+flip_h = true
+
+[node name="GardeCorpsCafé2" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1, 33.85)
+
+[node name="GardeCorpsCafé3" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 1, 33.85)
+flip_h = true
+
+[node name="GardeCorpsCafé4" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1, 33.85)
+
+[node name="GardeCorpsCafé5" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 1, 33.85)
+flip_h = true
+
+[node name="GardeCorpsCafé6" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 1, 33.85)
+
+[node name="GardeCorpsCafé7" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 1, 33.85)
+flip_h = true
+
+[node name="GardeCorpsCafé8" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 1, 33.85)
+
+[node name="GardeCorpsCafé9" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 1, 33.85)
+flip_h = true
+
+[node name="GardeCorpsCafé10" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 1, 33.85)
+
+[node name="GardeCorpsCafé11" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 1, 33.85)
+flip_h = true
+
+[node name="GardeCorpsCafé12" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 1, 33.85)
+
+[node name="GardeCorpsCafé13" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 1, 33.85)
+flip_h = true
+
+[node name="GardeCorpsCafé14" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 1, 33.85)
+
+[node name="GardeCorpsCafé15" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 1, 33.85)
+flip_h = true
+
+[node name="GardeCorpsCafé16" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 1, 33.85)
+
+[node name="GardeCorpsCafé17" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 1, 33.85)
+flip_h = true
+
+[node name="GardeCorpsCafé18" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 1, 33.85)
+
+[node name="GardeCorpsCafé19" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 1, 33.85)
+flip_h = true
+
+[node name="GardeCorpsCafé20" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 1, 33.85)
+
+[node name="GardeCorpsCafé21" parent="Geometry/Edge" instance=ExtResource("66_town_railing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 1, 33.85)
+flip_h = true
+
+[node name="BancGrandRue" parent="Geometry/Street" instance=ExtResource("26_bench_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1, 23)
+
+[node name="BacGrandRue" parent="Geometry/Street" instance=ExtResource("59_planter_long")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.2, 1, 23)
+
+[node name="TonneauGrandRue" parent="Geometry/Street" instance=ExtResource("57_rain_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1, 29)
+
+[node name="BacBas" parent="Geometry/Street" instance=ExtResource("59_planter_long")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.2, 0, 54)
+
+[node name="PotsBas" parent="Geometry/Street" instance=ExtResource("58_flower_pots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 54)
+
+[node name="TonneauxBas" parent="Geometry/Street" instance=ExtResource("55_barrel_group")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, 54)
+
+[node name="CaissesBas" parent="Geometry/Street" instance=ExtResource("56_crate_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 0, 53.5)
+
+[node name="PotsApothicaire" parent="Geometry/Street" instance=ExtResource("58_flower_pots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.4, 0, 52.2)
+
+[node name="PotsMaisonD" parent="Geometry/Street" instance=ExtResource("58_flower_pots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.8, 0, 52)
+flip_h = true
+
+[node name="TonneauxProjection" parent="Geometry/Street" instance=ExtResource("55_barrel_group")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, 52.4)
+
+[node name="BancColombages" parent="Geometry/Street" instance=ExtResource("26_bench_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.5, 0, 52.2)
+
+[node name="MarchesProjection" parent="Geometry/Facade" instance=ExtResource("27_town_doorsteps")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0, 51.3)
+
+[node name="MarchesApothicaire" parent="Geometry/Facade" instance=ExtResource("27_town_doorsteps")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 51.3)
+
+[node name="MarchesMaisonC" parent="Geometry/Facade" instance=ExtResource("27_town_doorsteps")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 51.3)
+
+[node name="CheminéeBasse1" parent="Geometry/Roof" instance=ExtResource("68_chimney_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 7, 47.5)
+
+[node name="FuméeBasse1" parent="Geometry/Roof" instance=ExtResource("69_chimney_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 8.8, 47.5)
+
+[node name="CheminéeBasse2" parent="Geometry/Roof" instance=ExtResource("68_chimney_stone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 6.9, 48.5)
+
+[node name="FuméeBasse2" parent="Geometry/Roof" instance=ExtResource("69_chimney_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 8.7, 48.5)
+
+[node name="CheminéeBasse3" parent="Geometry/Roof" instance=ExtResource("70_chimney_brick")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 6.3, 48.5)
+
+[node name="FuméeBasse3" parent="Geometry/Roof" instance=ExtResource("69_chimney_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 8.1, 48.5)
+
+[node name="MuretSud1" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 59.3)
+
+[node name="MuretSud2" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 59.3)
+flip_h = true
+
+[node name="MuretSud3" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 59.3)
+
+[node name="MuretSud4" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 59.3)
+flip_h = true
+
+[node name="MuretSud5" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 59.3)
+
+[node name="MuretSud6" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 59.3)
+flip_h = true
+
+[node name="MuretSud7" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 59.3)
+
+[node name="MuretSud8" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 59.3)
+flip_h = true
+
+[node name="MuretSud9" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 59.3)
+
+[node name="MuretSud10" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, 59.3)
+flip_h = true
+
+[node name="MuretSud11" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 0, 59.3)
+
+[node name="MuretSud12" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 0, 59.3)
+flip_h = true
+
+[node name="MuretSud13" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0, 59.3)
+
+[node name="MuretSud14" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 0, 59.3)
+flip_h = true
+
+[node name="MuretSud15" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 59.3)
+
+[node name="MuretSud16" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, 59.3)
+flip_h = true
+
+[node name="MuretSud17" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 0, 59.3)
+
+[node name="MuretSud18" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 59.3)
+flip_h = true
+
+[node name="MuretSud19" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 0, 59.3)
+
+[node name="MuretSud20" parent="Geometry/Edge" instance=ExtResource("31_town_wall_low")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 0, 59.3)
+flip_h = true
+
+[node name="PlateBande1" parent="Geometry/Garden" instance=ExtResource("75_garden_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.302, 1, 20.4)
+
+[node name="Clôture1_1" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 23.7)
+
+[node name="Clôture1_2" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1, 23.7)
+flip_h = true
+
+[node name="Clôture1_3" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 1, 23.7)
+
+[node name="Clôture1_4" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1, 23.7)
+flip_h = true
+
+[node name="Clôture1_5" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 1, 23.7)
+
+[node name="Clôture1_6" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 1, 23.7)
+flip_h = true
+
+[node name="Clôture1_7" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 1, 23.7)
+
+[node name="Clôture1_8" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 1, 23.7)
+flip_h = true
+
+[node name="Clôture1_9" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 1, 23.7)
+
+[node name="Clôture1_10" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 1, 23.7)
+flip_h = true
+
+[node name="Clôture1_11" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1, 23.7)
+
+[node name="PlateBande2" parent="Geometry/Garden" instance=ExtResource("75_garden_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.734, 1, 20.95)
+
+[node name="Clôture2_1" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 1, 24.7)
+
+[node name="Clôture2_2" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 1, 24.7)
+flip_h = true
+
+[node name="Clôture2_3" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 1, 24.7)
+
+[node name="Clôture2_4" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 1, 24.7)
+flip_h = true
+
+[node name="Clôture2_5" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 1, 24.7)
+
+[node name="Clôture2_6" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 1, 24.7)
+flip_h = true
+
+[node name="Clôture2_7" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 1, 24.7)
+
+[node name="Clôture2_8" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 1, 24.7)
+flip_h = true
+
+[node name="Clôture2_9" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 1, 24.7)
+
+[node name="Clôture2_10" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 1, 24.7)
+flip_h = true
+
+[node name="Clôture2_11" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 1, 24.7)
+
+[node name="PlateBande3" parent="Geometry/Garden" instance=ExtResource("75_garden_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.444, 0, 39.5)
+
+[node name="Clôture3_1" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 43.6)
+
+[node name="Clôture3_2" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 43.6)
+flip_h = true
+
+[node name="Clôture3_3" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 43.6)
+
+[node name="Clôture3_4" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 43.6)
+flip_h = true
+
+[node name="Clôture3_5" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 43.6)
+
+[node name="Clôture3_6" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 43.6)
+flip_h = true
+
+[node name="Clôture3_7" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 43.6)
+
+[node name="Clôture3_8" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 43.6)
+flip_h = true
+
+[node name="Clôture3_9" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 43.6)
+
+[node name="Clôture3_10" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, 43.6)
+flip_h = true
+
+[node name="Clôture3_11" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 43.6)
+
+[node name="PlateBande4" parent="Geometry/Garden" instance=ExtResource("75_garden_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.502, 0, 40.6)
+
+[node name="Clôture4_1" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 45.6)
+
+[node name="Clôture4_2" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 0, 45.6)
+flip_h = true
+
+[node name="Clôture4_3" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 0, 45.6)
+
+[node name="Clôture4_4" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0, 45.6)
+flip_h = true
+
+[node name="Clôture4_5" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 0, 45.6)
+
+[node name="Clôture4_6" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 45.6)
+flip_h = true
+
+[node name="Clôture4_7" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, 45.6)
+
+[node name="Clôture4_8" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 0, 45.6)
+flip_h = true
+
+[node name="Clôture4_9" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 45.6)
+
+[node name="Clôture4_10" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 0, 45.6)
+flip_h = true
+
+[node name="Clôture4_11" parent="Geometry/Garden" instance=ExtResource("76_fence_wattle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 0, 45.6)
+
+[node name="HaieOuest1" parent="Geometry/Edge" instance=ExtResource("77_thicket_b_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, 17.5)
+
+[node name="HaieEst1" parent="Geometry/Edge" instance=ExtResource("78_thicket_a_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4, 1, 17.5)
+
+[node name="HaieOuest2" parent="Geometry/Edge" instance=ExtResource("78_thicket_a_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, 21)
+
+[node name="HaieEst2" parent="Geometry/Edge" instance=ExtResource("77_thicket_b_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4, 1, 21)
+
+[node name="HaieOuest3" parent="Geometry/Edge" instance=ExtResource("77_thicket_b_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, 24.5)
+
+[node name="HaieEst3" parent="Geometry/Edge" instance=ExtResource("78_thicket_a_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4, 1, 24.5)
+
+[node name="HaieOuest4" parent="Geometry/Edge" instance=ExtResource("78_thicket_a_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, 28)
+
+[node name="HaieEst4" parent="Geometry/Edge" instance=ExtResource("77_thicket_b_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4, 1, 28)
+
+[node name="HaieOuest5" parent="Geometry/Edge" instance=ExtResource("77_thicket_b_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, 31)
+
+[node name="HaieEst5" parent="Geometry/Edge" instance=ExtResource("78_thicket_a_fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4, 1, 31)
+
+[node name="ArbreBord1" parent="Geometry/Woods" instance=ExtResource("43_tree_autumn_yellow_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, 24)
+
+[node name="ArbreBord2" parent="Geometry/Woods" instance=ExtResource("50_maple_a_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 1, 22)
+
+[node name="ArbreBord3" parent="Geometry/Woods" instance=ExtResource("52_beech_b_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 1, 28)
+
+[node name="ArbreBord4" parent="Geometry/Woods" instance=ExtResource("46_oak_b_forest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, 19.5)
+
+[node name="RueDecal1" parent="Geometry/Street" instance=ExtResource("79_drain_grate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2, 12.2)
+
+[node name="RueDecal2" parent="Geometry/Street" instance=ExtResource("79_drain_grate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, 14.6)
+flip_h = true
+
+[node name="RueDecal3" parent="Geometry/Street" instance=ExtResource("79_drain_grate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 2, 13)
+
+[node name="RueDecal4" parent="Geometry/Street" instance=ExtResource("79_drain_grate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1, 29)
+flip_h = true
+
+[node name="RueDecal5" parent="Geometry/Street" instance=ExtResource("79_drain_grate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1, 32.6)
+
+[node name="RueDecal6" parent="Geometry/Street" instance=ExtResource("79_drain_grate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 1, 32)
+flip_h = true
+
+[node name="RueDecal7" parent="Geometry/Street" instance=ExtResource("79_drain_grate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 44)
+
+[node name="RueDecal8" parent="Geometry/Street" instance=ExtResource("79_drain_grate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 55)
+flip_h = true
+
+[node name="RueDecal9" parent="Geometry/Street" instance=ExtResource("80_puddle_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 55.5)
+
+[node name="RueDecal10" parent="Geometry/Street" instance=ExtResource("81_puddle_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 1, 33)
+flip_h = true
+
+[node name="RueDecal11" parent="Geometry/Street" instance=ExtResource("82_leaves_rust_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 2, 12.6)
+
+[node name="RueDecal12" parent="Geometry/Street" instance=ExtResource("83_leaves_gold_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 2, 14.4)
+flip_h = true
+
+[node name="RueDecal13" parent="Geometry/Street" instance=ExtResource("84_leaves_gold_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 32.4)
+
+[node name="RueDecal14" parent="Geometry/Street" instance=ExtResource("85_leaves_rust_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 54.6)
+flip_h = true
+
+[node name="RueDecal15" parent="Geometry/Street" instance=ExtResource("84_leaves_gold_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1, 20)
+
+[node name="RueDecal16" parent="Geometry/Street" instance=ExtResource("82_leaves_rust_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.5, 0, 38)
+flip_h = true
+
+[node name="RueDecal17" parent="Geometry/Street" instance=ExtResource("83_leaves_gold_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 55)
+
+[node name="RueDecal18" parent="Geometry/Street" instance=ExtResource("82_leaves_rust_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 0, 55.4)
+flip_h = true
+
+[node name="PlatebandeOuest" parent="Geometry/Street" instance=ExtResource("86_flower_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4, 2, 6.6)
+
+[node name="BuchesOuest" parent="Geometry/Street" instance=ExtResource("87_firewood_pile_front")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2, 2, 5.6)
+
+[node name="BrouetteOuest" parent="Geometry/Street" instance=ExtResource("88_wheelbarrow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, 2, 8.8)
+
+[node name="PanierLinge" parent="Geometry/Street" instance=ExtResource("89_laundry_basket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 2, 8.4)
+
+[node name="BasDecal1" parent="Geometry/Street" instance=ExtResource("90_pebbles_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 56.2)
+flip_h = true
+
+[node name="BasDecal2" parent="Geometry/Street" instance=ExtResource("84_leaves_gold_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, 54)
+
+[node name="BasDecal3" parent="Geometry/Street" instance=ExtResource("91_footprints")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 0, 53.4)
+flip_h = true
+
+[node name="BasDecal4" parent="Geometry/Street" instance=ExtResource("80_puddle_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 0, 57.2)
+
+[node name="BasDecal5" parent="Geometry/Street" instance=ExtResource("85_leaves_rust_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.5, 0, 56.6)
+flip_h = true
+
+[node name="BasDecal6" parent="Geometry/Street" instance=ExtResource("92_pebbles_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 57.4)
+
+[node name="GrandRueDecal1_0" parent="Geometry/Street" instance=ExtResource("84_leaves_gold_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 2, 13)
+
+[node name="GrandRueDecal1_1" parent="Geometry/Street" instance=ExtResource("90_pebbles_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 1.833, 15.5)
+flip_h = true
+
+[node name="GrandRueDecal2_0" parent="Geometry/Street" instance=ExtResource("90_pebbles_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 1, 18)
+flip_h = true
+
+[node name="GrandRueDecal2_1" parent="Geometry/Street" instance=ExtResource("82_leaves_rust_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 1, 20.5)
+
+[node name="GrandRueDecal3_0" parent="Geometry/Street" instance=ExtResource("82_leaves_rust_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 1, 23)
+
+[node name="GrandRueDecal3_1" parent="Geometry/Street" instance=ExtResource("93_moss_patch_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 1, 25.5)
+flip_h = true
+
+[node name="GrandRueDecal4_0" parent="Geometry/Street" instance=ExtResource("93_moss_patch_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 1, 28)
+flip_h = true
+
+[node name="GrandRueDecal4_1" parent="Geometry/Street" instance=ExtResource("92_pebbles_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 1, 30.5)
+
+[node name="GrandRueDecal5_0" parent="Geometry/Street" instance=ExtResource("92_pebbles_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 1, 33)
+
+[node name="GrandRueDecal5_1" parent="Geometry/Street" instance=ExtResource("83_leaves_gold_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 0.167, 35.5)
+flip_h = true
+
+[node name="GrandRueDecal6_0" parent="Geometry/Street" instance=ExtResource("83_leaves_gold_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 0, 38)
+flip_h = true
+
+[node name="GrandRueDecal6_1" parent="Geometry/Street" instance=ExtResource("94_roots_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 0, 40.5)
+
+[node name="GrandRueDecal7_0" parent="Geometry/Street" instance=ExtResource("94_roots_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 0, 43)
+
+[node name="GrandRueDecal7_1" parent="Geometry/Street" instance=ExtResource("84_leaves_gold_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 0, 45.5)
+flip_h = true
+
+[node name="GrandRueDecal8_0" parent="Geometry/Street" instance=ExtResource("84_leaves_gold_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 0, 48)
+flip_h = true
+
+[node name="GrandRueDecal8_1" parent="Geometry/Street" instance=ExtResource("90_pebbles_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 0, 50.5)
+
+[node name="GrandRueDecal9_0" parent="Geometry/Street" instance=ExtResource("90_pebbles_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 0, 53)
+
+[node name="GrandRueDecal9_1" parent="Geometry/Street" instance=ExtResource("82_leaves_rust_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 0, 55.5)
+flip_h = true
+
+[node name="GrandRueDecal10_0" parent="Geometry/Street" instance=ExtResource("82_leaves_rust_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 0, 58)
+flip_h = true
+
+[node name="GrandRueDecal10_1" parent="Geometry/Street" instance=ExtResource("93_moss_patch_a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, 0, 60.5)
+
+[node name="Pigeons1" parent="Geometry/Street" instance=ExtResource("95_pigeons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 1, 32.6)
+
+[node name="Pigeons2" parent="Geometry/Street" instance=ExtResource("95_pigeons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 54.6)
+flip_h = true
+
+[node name="Scatter" type="Node3D" parent="Geometry"]
+
+[node name="JardinHaut" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("96_bush")
+points = PackedVector3Array(28.395, 0, 8.54, 28.711, 0, 5.804, 33.941, 0, 7.959, 32.459, 0, 5.085, 26.963, 0, 6.322, 23.94, 0, 7.249, 35.965, 0, 6.885, 30.153, 0, 5.11, 34.047, 0, 6.453, 26.931, 0, 8.124, 31.841, 0, 7.517, 35.945, 0, 8.558, 35.975, 0, 5.012, 29.47, 0, 7.563, 25.626, 0, 5.927, 23.907, 0, 5.652, 30.958, 0, 6.411, 34.265, 0, 5.105, 32.721, 0, 8.608, 30.619, 0, 8.848, 25.451, 0, 8.316, 24.083, 0, 8.588)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 97
+variants = Array[PackedScene]([ExtResource("97_bush_b"), ExtResource("98_bush_c"), ExtResource("99_bush_d"), ExtResource("100_bush_e"), ExtResource("101_wildflowers_a"), ExtResource("102_wildflowers_b"), ExtResource("103_myosotis_b"), ExtResource("104_heather"), ExtResource("105_grass_clump_c")])
+random_flip = true
+
+[node name="Garden1Trees" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("35_sapling_a")
+points = PackedVector3Array(11.156, 0, 20.037, 22.935, 0, 21.238, 5.184, 0, 21.227, 17.574, 0, 20.58, 20.398, 0, 17.123, 7.29, 0, 17.147, 24.996, 0, 17.226)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 61
+variants = Array[PackedScene]([ExtResource("36_sapling_b"), ExtResource("106_berry_bush"), ExtResource("107_berry_bush_b"), ExtResource("108_thicket_c")])
+random_flip = true
+
+[node name="Garden1Low" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("96_bush")
+points = PackedVector3Array(23.523, 0, 18.541, 14.156, 0, 17.5, 25.297, 0, 17.621, 18.618, 0, 20.547, 12.506, 0, 19.239, 6.109, 0, 18.71, 10.337, 0, 21.753, 13.976, 0, 21.676, 7.117, 0, 21.903, 22.985, 0, 22.054, 21.176, 0, 20.053, 20.241, 0, 21.699, 24.627, 0, 20.705, 12.019, 0, 17.404, 19.758, 0, 19.202, 18.476, 0, 18.034, 20.189, 0, 16.954, 16.51, 0, 19.411, 8.521, 0, 18.694, 22.912, 0, 20.03, 15.404, 0, 22.58, 18.5, 0, 22.34, 15.125, 0, 20.528, 21.728, 0, 17.655, 12.189, 0, 22.234, 10.282, 0, 16.759)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 71
+variants = Array[PackedScene]([ExtResource("97_bush_b"), ExtResource("98_bush_c"), ExtResource("99_bush_d"), ExtResource("100_bush_e"), ExtResource("109_bush_f"), ExtResource("101_wildflowers_a"), ExtResource("102_wildflowers_b"), ExtResource("103_myosotis_b"), ExtResource("110_vegetable_patch"), ExtResource("111_grass_clump_a")])
+random_flip = true
+
+[node name="Garden2Trees" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("35_sapling_a")
+points = PackedVector3Array(44.89, 0, 20.474, 51.195, 0, 18.916, 38.352, 0, 20.97, 52.003, 0, 23.39, 41.923, 0, 17.221, 47.337, 0, 17.007, 36.357, 0, 17.184)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 62
+variants = Array[PackedScene]([ExtResource("36_sapling_b"), ExtResource("106_berry_bush"), ExtResource("107_berry_bush_b"), ExtResource("108_thicket_c")])
+random_flip = true
+
+[node name="Garden2Low" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("96_bush")
+points = PackedVector3Array(41.334, 0, 21.312, 34.776, 0, 24.07, 51.701, 0, 24.193, 40.078, 0, 18.116, 35.739, 0, 18.073, 35.103, 0, 21.857, 42.206, 0, 22.798, 50.422, 0, 19.255, 38.069, 0, 19.242, 53.079, 0, 19.921, 54.278, 0, 24.05, 48.41, 0, 18.498, 41.902, 0, 19.585, 44.873, 0, 20.899, 39.093, 0, 20.975, 44.506, 0, 19.04, 47.579, 0, 21.337, 49.221, 0, 23.097, 37.271, 0, 21.169, 44.7, 0, 23.191, 34.882, 0, 19.811, 53.525, 0, 21.756, 46.15, 0, 19.217, 39.855, 0, 24.066, 46.564, 0, 23.463, 51.819, 0, 17.069)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 72
+variants = Array[PackedScene]([ExtResource("97_bush_b"), ExtResource("98_bush_c"), ExtResource("99_bush_d"), ExtResource("100_bush_e"), ExtResource("109_bush_f"), ExtResource("101_wildflowers_a"), ExtResource("102_wildflowers_b"), ExtResource("103_myosotis_b"), ExtResource("110_vegetable_patch"), ExtResource("111_grass_clump_a")])
+random_flip = true
+
+[node name="Garden3Trees" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("35_sapling_a")
+points = PackedVector3Array(23.56, 0, 36.115, 14.295, 0, 41.623, 8.231, 0, 42.105, 8.207, 0, 36.416, 18.795, 0, 36.925, 23.112, 0, 42.316, 13.119, 0, 35.3)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 63
+variants = Array[PackedScene]([ExtResource("36_sapling_b"), ExtResource("106_berry_bush"), ExtResource("107_berry_bush_b"), ExtResource("108_thicket_c")])
+random_flip = true
+
+[node name="Garden3Low" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("96_bush")
+points = PackedVector3Array(6.127, 0, 39.712, 25.18, 0, 37.558, 15.915, 0, 37.819, 19.984, 0, 40.495, 17.054, 0, 42.994, 19.221, 0, 37.548, 12.503, 0, 40.049, 21.428, 0, 38.444, 20.666, 0, 35.383, 11.206, 0, 34.753, 13.272, 0, 36.785, 22.315, 0, 40.063, 8.443, 0, 42.704, 9.106, 0, 35.073, 22.284, 0, 35.86, 14.75, 0, 42.118, 24.369, 0, 35.283, 5.762, 0, 37.218, 11.041, 0, 37.712, 6.69, 0, 43.08, 8.838, 0, 39.576, 16.97, 0, 41.235, 24.699, 0, 40.623, 8.191, 0, 36.985, 13.105, 0, 41.619, 16.786, 0, 35.146)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 73
+variants = Array[PackedScene]([ExtResource("97_bush_b"), ExtResource("98_bush_c"), ExtResource("99_bush_d"), ExtResource("100_bush_e"), ExtResource("109_bush_f"), ExtResource("101_wildflowers_a"), ExtResource("102_wildflowers_b"), ExtResource("103_myosotis_b"), ExtResource("110_vegetable_patch"), ExtResource("111_grass_clump_a")])
+random_flip = true
+
+[node name="Garden4Trees" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("35_sapling_a")
+points = PackedVector3Array(43.903, 0, 37.623, 53.189, 0, 39.449, 36.741, 0, 42, 36.509, 0, 36.744, 54.455, 0, 43.563, 52.957, 0, 35.144, 46.557, 0, 43.852)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 64
+variants = Array[PackedScene]([ExtResource("36_sapling_b"), ExtResource("106_berry_bush"), ExtResource("107_berry_bush_b"), ExtResource("108_thicket_c")])
+random_flip = true
+
+[node name="Garden4Low" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("96_bush")
+points = PackedVector3Array(40.42, 0, 39.923, 46.334, 0, 39.486, 45.372, 0, 36.744, 36.896, 0, 37.304, 50.82, 0, 34.869, 41.925, 0, 39.077, 52.393, 0, 44.535, 44.256, 0, 43.058, 39.363, 0, 36.903, 51.297, 0, 37.472, 40.307, 0, 35.119, 38.138, 0, 41.102, 36.353, 0, 42.915, 36.304, 0, 44.903, 39.63, 0, 43.695, 38.82, 0, 38.947, 36.468, 0, 38.952, 51.503, 0, 40.411, 53.265, 0, 40.272, 48.743, 0, 40.857, 47.991, 0, 36.247, 55.299, 0, 36.779, 42.58, 0, 42.586, 44.91, 0, 38.458, 42.239, 0, 35.338, 45.394, 0, 41.237)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 74
+variants = Array[PackedScene]([ExtResource("97_bush_b"), ExtResource("98_bush_c"), ExtResource("99_bush_d"), ExtResource("100_bush_e"), ExtResource("109_bush_f"), ExtResource("101_wildflowers_a"), ExtResource("102_wildflowers_b"), ExtResource("103_myosotis_b"), ExtResource("110_vegetable_patch"), ExtResource("111_grass_clump_a")])
+random_flip = true
+
+[node name="FacadeFoot" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("112_grass_clump_d")
+points = PackedVector3Array(6.478, 0, 10.517, 8.626, 0, 10.475, 11.336, 0, 10.49, 12.994, 0, 10.584, 14.631, 0, 10.329, 16.973, 0, 10.29, 19.226, 0, 10.114, 20.854, 0, 10.529, 23.074, 0, 10.503, 24.866, 0, 10.537, 35.077, 0, 10.226, 37.021, 0, 10.472, 39.186, 0, 10.266, 41.321, 0, 10.309, 43.495, 0, 10.562, 45.308, 0, 10.58, 47.132, 0, 10.108, 48.606, 0, 10.267, 51.109, 0, 10.117, 53.596, 0, 10.405, 55.51, 0, 10.502, 6.271, 0, 30.343, 8.595, 0, 30.25, 10.551, 0, 30.372, 12.558, 0, 30.293, 5.931, 0, 51.214, 7.711, 0, 51.204, 10.301, 0, 51.158, 12.64, 0, 51.47, 13.956, 0, 51.485, 16.094, 0, 51.17, 17.971, 0, 51.428, 19.732, 0, 51.507, 21.454, 0, 51.145, 23.899, 0, 51.221, 26.166, 0, 51.106, 34.611, 0, 51.241, 36.819, 0, 51.374, 39.218, 0, 51.557, 41.125, 0, 51.462, 42.99, 0, 51.209, 45.146, 0, 51.327, 46.828, 0, 51.15, 48.269, 0, 51.378, 50.892, 0, 51.335, 52.425, 0, 51.417)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 18
+variants = Array[PackedScene]([ExtResource("102_wildflowers_b"), ExtResource("104_heather"), ExtResource("103_myosotis_b"), ExtResource("113_grass_clump_b")])
+random_flip = true
+
+[node name="StreetEdges" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("114_grass_edge_a")
+points = PackedVector3Array(2.619, 0, 10.874, 6.876, 0, 10.997, 10.692, 0, 10.839, 13.483, 0, 10.836, 16.164, 0, 10.828, 20.015, 0, 10.983, 22.406, 0, 10.987, 24.879, 0, 10.882, 27.661, 0, 10.837, 30.851, 0, 10.957, 34.352, 0, 10.928, 37.475, 0, 10.903, 39.858, 0, 10.907, 42.352, 0, 10.944, 46.424, 0, 10.994, 49.423, 0, 10.829, 52.412, 0, 10.872, 7.212, 0, 30.334, 9.712, 0, 30.405, 13.476, 0, 30.487, 16.255, 0, 30.493, 20.073, 0, 30.428, 24.067, 0, 30.499, 27.069, 0, 30.491, 31.218, 0, 30.403, 34.701, 0, 30.419, 38.74, 0, 30.446, 41.375, 0, 30.392, 44.592, 0, 30.479, 48.547, 0, 30.335, 52.965, 0, 30.401, 7.947, 0, 52.884, 11.643, 0, 52.906, 14.343, 0, 52.973, 16.903, 0, 52.865, 20.015, 0, 52.847, 23.246, 0, 52.84, 26.678, 0, 53, 29.674, 0, 52.965, 32.87, 0, 52.951, 35.76, 0, 52.919, 38.184, 0, 52.825, 41.869, 0, 52.969, 44.263, 0, 52.887, 48.523, 0, 52.982, 52.07, 0, 52.807)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+scale_range = Vector2(0.9, 1.1)
+random_seed = 65
+variants = Array[PackedScene]([ExtResource("115_grass_edge_b")])
+random_flip = true
+
+[node name="Yard1" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("56_crate_stack")
+points = PackedVector3Array(5.629, 0, 4.991, 9.276, 0, 7.606, 7.61, 0, 9.208, 10.543, 0, 5.903, 4.665, 0, 7.951, 11.878, 0, 9.654, 6.978, 0, 6.827)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 91
+variants = Array[PackedScene]([ExtResource("55_barrel_group"), ExtResource("57_rain_barrel"), ExtResource("36_sapling_b"), ExtResource("98_bush_c"), ExtResource("86_flower_bed"), ExtResource("116_hay_scatter"), ExtResource("117_log_pile_forest")])
+random_flip = true
+
+[node name="Yard2" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("56_crate_stack")
+points = PackedVector3Array(50.501, 0, 5.414, 54.103, 0, 5.355, 55.695, 0, 8.975, 52.943, 0, 9.609, 51.3, 0, 8.5, 55.956, 0, 6.877, 52.034, 0, 6.537)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 92
+variants = Array[PackedScene]([ExtResource("55_barrel_group"), ExtResource("57_rain_barrel"), ExtResource("36_sapling_b"), ExtResource("98_bush_c"), ExtResource("86_flower_bed"), ExtResource("116_hay_scatter"), ExtResource("117_log_pile_forest")])
+random_flip = true
+
+[node name="Yard3" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("56_crate_stack")
+points = PackedVector3Array(7.368, 0, 27.799, 10.406, 0, 29.648, 4.497, 0, 29.166, 8.848, 0, 25.921, 6.899, 0, 25.362, 6.297, 0, 29.793, 11.111, 0, 27.819)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 93
+variants = Array[PackedScene]([ExtResource("55_barrel_group"), ExtResource("57_rain_barrel"), ExtResource("36_sapling_b"), ExtResource("98_bush_c"), ExtResource("86_flower_bed"), ExtResource("116_hay_scatter"), ExtResource("117_log_pile_forest")])
+random_flip = true
+
+[node name="Yard4" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("56_crate_stack")
+points = PackedVector3Array(55.693, 0, 27.474, 52.898, 0, 26.835, 55.132, 0, 29.532, 53.245, 0, 28.733, 55.724, 0, 25.495)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 94
+variants = Array[PackedScene]([ExtResource("55_barrel_group"), ExtResource("57_rain_barrel"), ExtResource("36_sapling_b"), ExtResource("98_bush_c"), ExtResource("86_flower_bed"), ExtResource("116_hay_scatter"), ExtResource("117_log_pile_forest")])
+random_flip = true
+
+[node name="Yard5" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("56_crate_stack")
+points = PackedVector3Array(7.281, 0, 46.796, 5.681, 0, 48.267, 9.712, 0, 48.257, 9.004, 0, 50.808, 4.122, 0, 46.263, 6.616, 0, 50.808, 4.098, 0, 50.767)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 95
+variants = Array[PackedScene]([ExtResource("55_barrel_group"), ExtResource("57_rain_barrel"), ExtResource("36_sapling_b"), ExtResource("98_bush_c"), ExtResource("86_flower_bed"), ExtResource("116_hay_scatter"), ExtResource("117_log_pile_forest")])
+random_flip = true
+
+[node name="Yard6" type="Node3D" parent="Geometry/Scatter"]
+script = ExtResource("4_prop_scatter")
+prop = ExtResource("56_crate_stack")
+points = PackedVector3Array(55.4, 0, 48.666, 55.839, 0, 46.816, 53.532, 0, 46.607, 53.962, 0, 50.783, 55.875, 0, 50.512)
+yaw_degrees = PackedFloat32Array(0, 0, 0, 0, 0)
+scale_range = Vector2(0.85, 1.15)
+random_seed = 96
+variants = Array[PackedScene]([ExtResource("55_barrel_group"), ExtResource("57_rain_barrel"), ExtResource("36_sapling_b"), ExtResource("98_bush_c"), ExtResource("86_flower_bed"), ExtResource("116_hay_scatter"), ExtResource("117_log_pile_forest")])
+random_flip = true
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Spawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 4, 2.2, 13)
+
+[node name="from_sentier" type="Marker3D" parent="Markers"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 2.5, 2.2, 13)
+
+[node name="from_ville_marche" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0.2, 57.5)
+
+[node name="from_ville_cafe" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 21.5, 1.2, 32.2)
+
+[node name="from_ville_snack" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 37.5, 1.2, 32.2)
+
+[node name="from_ville_librairie" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 14.5, 1.2, 32.2)
+
+[node name="from_ville_projection" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 19.5, 0.2, 53)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="vers_sentier" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 3.5, 13)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_map_exit")
+target_map = &"sentier"
+target_marker = &"from_ville_haute"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_sentier"]
+shape = SubResource("BoxShape3D_exit_vers_sentier")
+
+[node name="vers_marche" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1.5, 59.7)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_map_exit")
+target_map = &"ville_marche"
+target_marker = &"from_ville_haute"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/vers_marche"]
+shape = SubResource("BoxShape3D_exit_vers_marche")
+
+[node name="porte_cafe" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 2.5, 30.3)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_map_exit")
+target_map = &"ville_cafe"
+target_marker = &"from_ville_haute"
+prompt = "Entrer"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/porte_cafe"]
+shape = SubResource("BoxShape3D_exit_porte_cafe")
+
+[node name="porte_snack" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 2.5, 30.3)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_map_exit")
+target_map = &"ville_snack"
+target_marker = &"from_ville_haute"
+prompt = "Entrer"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/porte_snack"]
+shape = SubResource("BoxShape3D_exit_porte_snack")
+
+[node name="porte_librairie" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 2.5, 30.3)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_map_exit")
+target_map = &"ville_librairie"
+target_marker = &"from_ville_haute"
+prompt = "Entrer"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/porte_librairie"]
+shape = SubResource("BoxShape3D_exit_porte_librairie")
+
+[node name="porte_projection" type="Area3D" parent="Exits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 1.5, 51.3)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_map_exit")
+target_map = &"ville_projection"
+target_marker = &"from_ville_haute"
+prompt = "Entrer"
+metadata/open_from_day = 5
+metadata/closed_text_key = "ville/projection_close"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exits/porte_projection"]
+shape = SubResource("BoxShape3D_exit_porte_projection")
+
+[node name="Life" type="Node3D" parent="."]
+
+[node name="Places" type="Node3D" parent="Life"]
+
+[node name="snack_comptoir" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 1, 31.6)
+
+[node name="cafe_porte" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 1, 31.6)
+
+[node name="librairie_porte" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 1, 31.6)
+
+[node name="projection_porte" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0, 52.8)
+
+[node name="haut_de_rue" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2, 13)
+
+[node name="fontaine" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 2, 11.8)
+
+[node name="rue_haute_ouest" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2, 13)
+
+[node name="rue_haute_est" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 2, 13)
+
+[node name="rue_haute_trottoir_nord" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2, 11.6)
+
+[node name="rue_haute_trottoir_sud" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2, 14.4)
+
+[node name="banc_haut" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 45, 2, 14.7)
+
+[node name="grand_rue_nord" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1, 20)
+
+[node name="grand_rue_milieu" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1, 27)
+
+[node name="carrefour_centre" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1, 32)
+
+[node name="carrefour_ouest" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 1, 32)
+
+[node name="carrefour_est" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 1, 32)
+
+[node name="snack_terrasse" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 38.8, 1, 32.2)
+
+[node name="porte_snack" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 1, 32.2)
+
+[node name="cafe_devant" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 23, 1, 32.2)
+
+[node name="bas_de_ville_centre" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 55)
+
+[node name="rue_basse_ouest" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 55)
+
+[node name="rue_basse_est" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, 55)
+
+[node name="vers_marche" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 30, 0, 58)
+
+[node name="depuis_sentier" type="Marker3D" parent="Life/Places"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 4, 2, 13)
+
+[node name="Areas" type="Node3D" parent="Life"]
+
+[node name="carrefour" type="Marker3D" parent="Life/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1, 32.25)
+metadata/area = Rect2(18, 30.5, 24, 3.5)
+
+[node name="bas_de_ville" type="Marker3D" parent="Life/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 55)
+metadata/area = Rect2(24, 52, 12, 6)
+
+[node name="Examine" type="Node3D" parent="."]
+
+[node name="fontaine" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 2, 11.6)
+script = ExtResource("118_examinable")
+text_key = "ville_haute/fontaine"
+size = Vector3(1.6, 2, 1)
+texts_path = "res://data/texts/ville.json"
+
+[node name="enseigne_poele" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.2, 1, 31.3)
+script = ExtResource("118_examinable")
+text_key = "ville_haute/enseigne_poele"
+size = Vector3(1.2, 2, 1.2)
+texts_path = "res://data/texts/ville.json"
+
+[node name="enseigne_tasse" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 1, 31.3)
+script = ExtResource("118_examinable")
+text_key = "ville_haute/enseigne_tasse"
+size = Vector3(1.2, 2, 1.2)
+texts_path = "res://data/texts/ville.json"
+
+[node name="porte_accessoires" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 1, 30.9)
+script = ExtResource("118_examinable")
+text_key = "ville_haute/porte_accessoires"
+size = Vector3(1.6, 2, 1)
+texts_path = "res://data/texts/ville.json"
+
+[node name="porte_apothicaire" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.5, 0, 51.8)
+script = ExtResource("118_examinable")
+text_key = "ville_haute/porte_apothicaire"
+size = Vector3(1.6, 2, 1)
+texts_path = "res://data/texts/ville.json"
+
+[node name="trappe_cave" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0, 53)
+script = ExtResource("118_examinable")
+text_key = "ville_haute/trappe_cave"
+size = Vector3(1.4, 2, 1)
+texts_path = "res://data/texts/ville.json"
+
+[node name="caisses_pommes" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 53.2)
+script = ExtResource("118_examinable")
+text_key = "ville_haute/caisses_pommes"
+size = Vector3(1.4, 2, 1.2)
+texts_path = "res://data/texts/ville.json"
+
+[node name="banc_haut" type="Area3D" parent="Examine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 2, 14.7)
+script = ExtResource("118_examinable")
+text_key = "ville_haute/banc_haut"
+size = Vector3(1.8, 2, 1)
+texts_path = "res://data/texts/ville.json"
+
+[node name="Ambience" type="Node3D" parent="."]
+
+[node name="Birds" type="Node3D" parent="Ambience"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 30)
+script = ExtResource("6_ambient_sprites")
+texture = ExtResource("119_birds_flock")
+frames = 6
+fps = 10
+motion = 1
+count = 3
+area = Vector3(40, 6, 24)
+lift = 6
+region_size = Vector2(0, 0)
+speed = 4
+sway = 0.8
+random_seed = 3
+
+[node name="LeavesGold" type="Node3D" parent="Ambience"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 30)
+script = ExtResource("6_ambient_sprites")
+texture = ExtResource("120_falling_leaf_gold")
+frames = 8
+fps = 10
+motion = 0
+count = 8
+area = Vector3(30, 9, 30)
+lift = 0
+region_size = Vector2(0, 0)
+speed = 0.9
+sway = 0.8
+random_seed = 4
+
+[node name="LeavesRust" type="Node3D" parent="Ambience"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 30)
+script = ExtResource("6_ambient_sprites")
+texture = ExtResource("121_falling_leaf_rust")
+frames = 8
+fps = 10
+motion = 0
+count = 8
+area = Vector3(30, 9, 30)
+lift = 0
+region_size = Vector2(0, 0)
+speed = 1.1
+sway = 0.8
+random_seed = 5
