@@ -112,6 +112,11 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 - `assets/hd2d/interior/props/sofa_beige_back.png` — 192 × 119 px.
 - `assets/hd2d/interior/props/infirmary_desk.png` — 125 × 96 px.
 
+## Île 68 — transport de la Garde (cahier n° 6, C.1)
+
+Six PNG générés avec ChatGPT / OpenAI Image Generation le 16 octobre 2026 : flanc du transport, trappe, rotor, bras d’amarrage animé, faisceau de lumière et rampe métallique. Références : planches officielles des ZIP (page 93), navires et amarrage HD-2D du projet. Rotor assemblé par rotations de 45° au plus proche voisin ; pied d’amarrage recopié au pixel près et première image identique au bras ouvert de A.2. Montage local du volant et du pourtour visible de trappe. Originaux et étapes conservés hors dépôt, sans réduction de palette. Univers inspiré de SukaSuka, droits des ayants droit réservés.
+
+
 ## Cahier n° 5 — Île 68, R0 : fin du mobilier et faces associées
 
 32 PNG générés avec ChatGPT / image_gen le 14 octobre 2026 : les 27 images restantes de R0 (quatre corrections, vingt-trois vues nouvelles) et cinq faces R3 nécessaires à leur cohérence. Références : PNG du mobilier déjà livré ; bloc de style v5, sections 2.7 et R0 du cahier Île 68. Recalage géométrique autorisé au plus proche voisin, alpha binaire, sans nouvelle couleur RGB visible. Originaux et anciens PNG conservés hors dépôt. Les hauteurs des profils du fauteuil sous drap (106 px), du canapé du salon (152 px), de la vitrine (213 px) et du comptoir de librairie (152 px) suivent la formule 2.7, avec accord de l’utilisateur. Le cristal et la manivelle du projecteur changent de côté dans la vue arrière. Les nouvelles images sont importables ; leur enregistrement au catalogue moteur, leur sélection et leur placement dans les cartes restent à intégrer. R0 totalise désormais 54 PNG livrés ; les cinq faces associées ne constituent pas le lot R3 complet.
