@@ -64,7 +64,7 @@ Le projet est découpé en **systèmes indépendants reliés par un bus de signa
 
 &#91;embedded content: architecture · 4 systèmes de jeu, EventBus, 4 autoloads et UI, fondations\]
 
-Les quatre systèmes de jeu émettent leurs signaux dans `EventBus` ; HUD, `GameState`, `SaveManager` et `WorldManager` les écoutent. Objets et quêtes appellent aussi l'API de `GameState` (`add_item`, `set_flag`), l'arène appelle `record_score`, et `SaveManager` sérialise `GameState` par `to_dict` / `from_dict`. Chaque boîte est un lot qu'une session cloud peut prendre seule.
+Les quatre systèmes de jeu émettent leurs signaux dans `EventBus` ; HUD, `GameState`, `SaveManager` et `WorldManager` les écoutent. Objets, dialogues et scènes appellent aussi l'API de `GameState` (`add_item`, `set_flag`), et `SaveManager` sérialise `GameState` par `to_dict` / `from_dict`. Chaque boîte est un lot qu'une session cloud peut prendre seule. (F1) L'ancienne île (ses zones, son arène et ses vagues, ses quêtes, ses PNJ et ses images) est retirée : docs/DECISIONS.md, section F1.
 
 ### Arborescence
 
@@ -98,8 +98,8 @@ Yume-WordEnd/
 │   ├── warnings_allow.txt     # avertissements Godot tolérés à l'import
 │   ├── screenshot.sh          # rend une scène en PNG sous Xvfb
 │   ├── screenshot.gd          # script Godot appelé par screenshot.sh
-│   ├── hd2d_shots.sh          # (HD-2D) captures de la vraie partie : menu, cinq zones, conversation, veille,
-│   │                          # (E1) quai, fondu, essai, retour (cartes)
+│   ├── hd2d_shots.sh          # (HD-2D) captures de la vraie partie : menu, cartes de l'île n° 68, conversation,
+│   │                          # combat à la surface, (E1) sortie d'essai, fondu, arrivée, retour (cartes)
 │   ├── map_bench.gd           # (E1) temps de chargement et mémoire des changements de carte
 │   ├── e9_shots.sh            # (E9) captures sous chaque préréglage de lumière (moment × temps), luminance
 │   ├── web_atmosphere.js      # (E9) images/s et draw calls de chaque préréglage dans le build Web
@@ -114,7 +114,7 @@ Yume-WordEnd/
 │   └── embed-test.html        # page de test de l'iframe (section 10)
 ├── src/
 │   ├── main.tscn              # racine : menu, chargement, puis game.tscn
-│   ├── game.tscn              # (L0) World + Player + QuestTracker + UI (HUD, dialogue, inventaire…) ;
+│   ├── game.tscn              # (L0) World + Player + UI (HUD, dialogue, inventaire…) ; (F1) sans QuestTracker ;
 │   │                          # (E1) World porte la carte courante (avant : Island, l'île entière)
 │   ├── autoload/              # EventBus, GameState, SaveManager, SkinRegistry, WorldManager, (bureau) DesktopApp,
 │   │                          # (E9) Atmosphere (lumière et temps)
@@ -123,15 +123,15 @@ Yume-WordEnd/
 │   │                          # post_fx.gdshader (flou de profondeur, lueur, étalonnage)
 │   ├── combat/                # health.gd, hitbox.tscn, hurtbox.tscn, attack_data.gd,
 │   │                          # player_combat.gd (épée, charge), charge_wave.tscn (onde)
-│   ├── enemies/               # enemy.tscn, enemy.gd (machine à états), enemy_data.gd,
-│   │                          # wave_director.gd, arena.tscn, arena.gd, placements/<zone>.tscn
+│   ├── enemies/               # enemy.tscn, enemy.gd (machine à états), enemy_data.gd, telegraph.gd ;
+│   │                          # (F1) l'arène, les vagues et les emplacements de l'ancienne île sont retirés
 │   ├── visuals/               # character_visual.tscn (billboard de la planche), sheet_loader.gd, skin_data.gd
-│   ├── world/                 # island.tscn, zone.gd, zones/<zone>/<zone>.tscn, terrain.gd (relief), island_rock.gd,
-│   │                          # (HD-2D) decor_panel.gd, building.gd, prop_batcher.gd, prop_scatter.gd,
+│   ├── world/                 # (F1) ground_atlas.gd (atlas du sol, GroundAtlas : l'île, ses zones et son relief
+│   │                          # sont retirés) ; (HD-2D) decor_panel.gd, building.gd, prop_batcher.gd, prop_scatter.gd,
 │   │                          # props/<nom>.tscn (un décor = un panneau ou un bâtiment), shaders/, materials/
 │   │                          # (H9) ground_decal.gd, sky_drift.gd, ambient_sprites.gd (formats du cahier n° 2)
 │   │                          # (E1) map.gd, map_exit.gd, maps/<map_id>/<map_id>.tscn (une
-│   │                          # carte par lieu ; maps/ile_ancienne : l'île héritée ; maps/essai : carte d'essai)
+│   │                          # carte par lieu ; maps/essai : carte d'essai)
 │   │                          # (E2) map_ground.gd (+ _data, _builder, _coast) : sol en relief des cartes
 │   │                          # extérieures ; maps/essai_relief : démonstration du relief
 │   │                          # (E9) atmosphere_rig.gd (lumière d'une carte, lumière du joueur, pluie),
@@ -142,7 +142,7 @@ Yume-WordEnd/
 │   │                          # d'essai), maps/surface_essai (la surface)
 │   ├── fauna/                 # (E5) animal.tscn + animal.gd (Animal, hérite d'Enemy), animal_data.gd, animal_pack.gd
 │   │                          # (meute), fauna_rules.gd, fauna_nav.gd, fauna_populator.gd + fauna.tscn (nœud Fauna)
-│   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd, placements/<zone>.tscn
+│   ├── npc/                   # npc.tscn, npc.gd, npc_data.gd, dialogue_runner.gd
 │   ├── story/                 # (E6) le récit : story_director.gd (autoload StoryDirector), story_data.gd (format,
 │   │                          # vérification), story_runner.gd (étapes), story_stage.gd (places, joueur, voile,
 │   │                          # suiveurs), story_dialogue.gd, story_prompt.gd (invites « Dormir »…)
@@ -153,32 +153,29 @@ Yume-WordEnd/
 │   │                          # (StaffTraining), mini_games.gd (MiniGames : lancer un jeu), game_rules.gd, game_score.gd ;
 │   │                          # (E8c) ambush.gd ; (E8b) duel.gd, game_vision.gd, seniorious_training.gd,
 │   │                          # seniorious_sword.gd, fx/seniorious.png
-│   ├── items/                 # item_data.gd (Resource), pickup.tscn, placements/<zone>.tscn
-│   ├── quests/                # quest_data.gd, quest_step.gd, quest_tracker.gd, quest_trigger.tscn (Lot Q)
+│   ├── items/                 # item_data.gd (Resource), pickup.tscn
 │   └── ui/                    # hud, dialogue_box, inventory, main_menu, loading, touch_controls,
-│                              # arena_end, credits, journal (Lot Q, enfant du HUD), (E1) map_fade
+│                              # credits, (E1) map_fade, (E6) calendar ; (F1) arena_end et journal retirés
 ├── data/
 │   ├── attacks/*.tres         # sword_1..3, charge_wave, bite, whip, rush ; (E8) stick_1..3, stick_guard (le bâton)
 │   ├── games/*.json           # (E8) les chiffres des jeux : ballon.json, staff_training.json (GameRules) ; embuscade.json, (E8b) duel.json, seniorious.json
 │   ├── enemies/*.tres         # timere_small, timere_normal, timere_runner, timere_big ; visuals/timere.tres
 │   ├── fauna/<île>/           # (E5) une espèce par fichier <id>.tres (AnimalData), attacks/, visuals/<id>.tres,
 │   │                          # peuplement.json (où, combien, quand) ; format : « (E5) Ajouter un animal »
-│   ├── waves/*.json           # composition des vagues par arène
-│   ├── items/*.tres
+│   ├── items/*.tres           # (F1) vide : les objets de l'ancienne île sont retirés
 │   ├── npcs/*.tres            # (E4) + outfits/<planche>.tres (tenues, SkinData), generic/<id>.tres (fées génériques)
 │   ├── life/*.json            # (E4) emplois du temps data/life/<npc_id>.json, activities.json
 │   ├── scenes/<île>/          # (E6) act.json (l'acte en jours) et une scène par fichier ; textes des scènes :
 │   │                          # dialogues/<île>/ (et talk/<pnj>.json), texts/<île>/story.json
-│   ├── quests/*.json          # (Lot Q) quêtes en étapes, format : docs/QUETES.md
 │   ├── skins/*.tres
-│   ├── dialogues/*.json
+│   ├── dialogues/<île>/       # conversations (format : docs/DIALOGUES.md) ; (F1) celles de l'ancienne île retirées
 │   ├── maps/<map_id>/         # (E2) sol en relief d'une carte : map.json, heights.png, materials.png,
 │   │                          # structures.png, plan.json ; maps/ground_materials.json (matières, structures)
 │   ├── world/                 # (X1) worlds/<world_id>.json (regule_aire, surface : îles, règles communes),
 │   │                          # islands/<island_id>.json (cartes, lieux, ports, règles) ; contenu propre à une
 │   │                          # île : data/<kind>/<island_id>/ (life, texts, fauna, scenes : WorldAtlas.data_path)
 │   ├── texts/story.json       # (Systèmes et textes) textes de l'histoire hors dialogues :
-│   │                          # arène, chute, défaite (DialogueRunner.story_text) ; (E4) texts/life.json (LifeTexts)
+│   │                          # chute, défaite, (F1) save/migrated (DialogueRunner.story_text) ; (E4) texts/life.json
 │   └── lighting/*.tres        # (E9) préréglages de lumière : aube, matin, apres_midi, couchant, nuit,
 │                              # interieur, interieur_nuit (HD2DLighting) ; pluie, averse (HD2DWeather)
 ├── assets/
@@ -203,10 +200,10 @@ Yume-WordEnd/
 | Autoload | Rôle | Propriétaire (lot) |
 | --- | --- | --- |
 | `EventBus` | Tous les signaux transverses ; aucune logique | L0 |
-| `GameState` | PV max, inventaire, drapeaux (`flags`), état des quêtes, (Lot Q) étape courante et compteur de chaque quête active, quête suivie, skin actif, meilleurs scores par arène ; (E1) carte et position ; (E9) moment et temps ; (X1) île courante et îles connues ; sérialisable en Dictionary | L7 |
-| `SaveManager` | Écrit/lit `user://save_v1.json` (nom historique ; schéma v2 depuis le Lot Q, (E1) v3 : la carte), versionne le schéma, migre | L8 |
+| `GameState` | PV max, inventaire, drapeaux (`flags`), skin actif ; (E1) carte et position ; (E9) moment et temps ; (X1) île courante et îles connues ; (E4, E6) jour, créneau, scènes jouées, calendrier ; sérialisable en Dictionary ; (F1) quêtes, scores et zone retirés | L7 |
+| `SaveManager` | Écrit/lit `user://save_v1.json` (nom historique ; (F1) schéma v4), versionne le schéma ; une partie de l'ancienne île devient une nouvelle partie de l'acte 1 | L8 |
 | `SkinRegistry` | Charge `data/skins/*.tres`, expose la liste et le skin par défaut (Chtholly) | L3 |
-| `WorldManager` | Charge/décharge les zones, gère les points d'apparition, la téléportation et la réapparition après la mort ; (E1) une carte à la fois : changement de carte (fondu, chargement découpé, marqueur d'arrivée), carte courante, bornes de la caméra ; (X1) île courante (`island_entered`), voyage entre îles (`travel` : vue du ciel, port d'arrivée), chute au dernier point sûr | L2, E1, X1 |
+| `WorldManager` | Points d'apparition et réapparition après la mort ; (E1) une carte à la fois : changement de carte (fondu, chargement découpé, marqueur d'arrivée), carte courante, bornes de la caméra ; (X1) île courante (`island_entered`), voyage entre îles (`travel` : vue du ciel, port d'arrivée), chute au dernier point sûr | L2, E1, X1 |
 | `DesktopApp` | (bureau) Application de bureau, sans effet sur le Web : fenêtre de départ, plein écran (F11, Alt+Entrée, bouton) mémorisé dans `user://settings.cfg`, boutons « Plein écran » et « Quitter » des menus, sauvegarde avant de quitter (docs/bureau.md) | bureau |
 | `LifeDirector` | (E4) La vie : emplois du temps (`data/life/`) appliqués à la carte courante (PNJ posés dans `Life`, trajets à chaque changement de créneau, sorties vers les autres cartes), navigation, jeux de groupe, réactions au joueur ; créneaux (`set_slot`, F6, `?creneau=`) ; mesures (`?vie=trace`) | E4 |
 | `StoryDirector` | (E6) Le récit : l'acte en jours et ses scènes (`data/scenes/<île>/`), jouées par `StoryRunner` ; le jour et le créneau (dormir, laisser passer le temps), l'indice discret, le calendrier, les séquences déjà vues, le crochet des jeux (E8). Mode d'emploi : « (E6) Le récit » | E6 |
@@ -222,14 +219,11 @@ signal player_health_changed(current: int, max_value: int)   # PlayerCombat ; 1r
 signal player_damaged(amount: int, source: Node3D)            # PlayerCombat
 signal player_died()                                          # PlayerCombat ; WorldManager appelle respawn() respawn_delay s plus tard
 signal player_respawned()                                     # WorldManager.respawn() ; PlayerCombat remet alors les PV au maximum
-signal player_heal_requested(amount: int)                     # (L0) WaveDirector → PlayerCombat (1 PV toutes les deux vagues)
+signal player_heal_requested(amount: int)                     # (L0) n'importe qui → PlayerCombat ((F1) émis par le WaveDirector, retiré)
 signal enemy_spawned(enemy: Node3D, enemy_id: StringName)     # Enemy, dans son _ready
 signal enemy_damaged(enemy: Node3D, amount: int)              # Enemy
-signal enemy_killed(enemy_id: StringName, points: int)        # Enemy ; le WaveDirector actif compte les points
-signal wave_started(arena_id: StringName, wave: int, enemy_count: int)   # WaveDirector
-signal wave_cleared(arena_id: StringName, wave: int, bonus: int)         # WaveDirector
-signal arena_score_changed(arena_id: StringName, score: int)  # (L0) WaveDirector → HUD (score courant)
-signal arena_finished(arena_id: StringName, score: int, best: bool)      # WaveDirector, après GameState.record_score
+signal enemy_killed(enemy_id: StringName, points: int)        # Enemy
+# (F1) wave_started, wave_cleared, arena_score_changed, arena_finished : retirés avec l'arène
 signal charge_progress(ratio: float)        # 0..1, jauge de la charge magique (PlayerCombat)
 # Monde et interaction
 signal item_collected(item_id: StringName, quantity: int)    # Pickup, après GameState.add_item
@@ -239,21 +233,17 @@ signal dialogue_started(npc_id: StringName)                   # DialogueRunner (
 signal dialogue_line(speaker: String, text: String, choices: Array[String])   # DialogueRunner
 signal dialogue_choice_made(index: int)       # (L0) DialogueBox → DialogueRunner actif ; -1 = « suite » sans choix
 signal dialogue_ended(npc_id: StringName)                     # DialogueRunner (le joueur repart)
-signal quest_updated(quest_id: StringName, state: StringName)  # available|active|done ; GameState.set_quest_state
-signal zone_entered(zone_id: StringName)                      # Zone (Area3D « Bounds ») ; (M2) au changement de zone seulement
+# (F1) quest_updated et zone_entered : retirés avec les quêtes et les zones de l'ancienne île
 signal day_phase_changed(phase: StringName)   # morning|day|evening|night (M3) ; (E9) ancien nom : Atmosphere le traduit
                                               # en moment (matin, apres_midi, couchant, nuit : HD2DLighting.PHASE_MOMENTS)
 signal skin_changed(skin_id: StringName)                      # GameState, quand skin_id change ; le joueur l'applique
 signal max_hp_changed(max_value: int)          # (L0) GameState, quand max_hp change → PlayerCombat
 signal save_requested()                                       # n'importe qui → SaveManager.save()
 signal game_loaded()                                          # SaveManager (new_game, load_game, import_json) → main.gd
-# (Lot Q) Quêtes en étapes — format et règles : docs/QUETES.md
+# (Lot Q) Drapeaux — format des dialogues : docs/DIALOGUES.md
 signal flag_changed(flag: StringName, value: bool)            # GameState.set_flag, si la valeur change
-signal quest_step_updated(quest_id: StringName, step_id: StringName, count: int)   # GameState.set_quest_step (QuestTracker) ; step_id &"" : plus d'étape
-signal quest_step_completed(quest_id: StringName, step_id: StringName)   # QuestTracker, étape validée (auto-sauvegarde)
-signal quest_advance_requested(quest_id: StringName, step_id: StringName)   # DialogueRunner (advance_quest) ou autre → QuestTracker ; &"" : l'étape courante
-signal trigger_entered(trigger_id: StringName)                # QuestTrigger, le joueur y entre → QuestTracker (étapes reach)
-signal tracked_quest_changed(quest_id: StringName)            # GameState, quand tracked_quest change → HUD
+# (F1) quest_step_updated, quest_step_completed, quest_advance_requested, trigger_entered,
+# tracked_quest_changed : retirés avec le moteur de quêtes
 # (E1) Cartes — docs/REFONTE.md, section 7.1
 signal map_entered(map_id: StringName)        # WorldManager (go_to, enter_map) : carte posée, joueur placé (sous le
                                               # noir pendant un go_to) → caméra (bornes, recalage), joueur (élan), SaveManager
@@ -315,7 +305,7 @@ class_name EnemyData : id, display_name, visual: SkinData, scale: float, max_hp:
                        aggro_range_m: float, drops: Dictionary[StringName, float]   # item_id → probabilité
 
 # (X1) Enemy._ready : un Timere que les règles de l'île de sa carte n'admettent pas (WorldAtlas.enemies_allowed_at :
-# l'île n° 68) se retire aussitôt, sans enemy_spawned ; FreeEnemies n'enregistre alors aucune population.
+# l'île n° 68) se retire aussitôt, sans enemy_spawned. (F1) FreeEnemies est retiré.
 # (E5) La faune — src/fauna/, data/fauna/<île>/ ; mode d'emploi : « (E5) Ajouter un animal »
 class_name AnimalData extends EnemyData   # une espèce : data/fauna/<île>/<id>.tres (+ attacks/, visuals/)
    behavior: StringName    # &"paisible" | &"fuyard" | &"dangereux" | &"ambiant" (AnimalData.BEHAVIORS)
@@ -354,13 +344,8 @@ class_name FaunaPopulator extends Node3D  # le nœud « Fauna » (src/fauna/faun
    func animals(group_id := &"") -> Array[Animal] ; group_ids() ; ambient_of(group_id) ; is_wanted(group_id)
    func refresh(fill_all := false) -> void  # EventBus.atmosphere_changed (moment, temps) l'appelle seul
 
-# src/enemies/wave_director.gd — un par arène (enfant "WaveDirector" de arena.tscn), lit data/waves/<arena_id>.json
-func start() -> void                       # (X1) sans effet là où les règles n'admettent pas de Timere
-func stop() -> void
-func current_wave() -> int
-func compose(wave: int) -> Array[StringName]   # ids d'ennemis de la vague (liste explicite ou generator)
-# (L0) class_name Arena (racine de arena.tscn) : @export var arena_id: StringName ;
-#      func spawn_point(marker_name: StringName) -> Marker3D   # Marker3D frère de l'Arena dans sa zone
+# (F1) src/enemies/wave_director.gd (WaveDirector) et arena.gd (Arena) : retirés avec l'ancienne île ; les
+# Timeres restent possibles là où les règles de l'île les admettent (la surface : enemies_allowed).
 
 # src/autoload/game_state.gd — API publique
 func add_item(item_id: StringName, quantity: int = 1) -> void
@@ -369,30 +354,21 @@ func count(item_id: StringName) -> int
 func items() -> Dictionary                                       # (L0) copie item_id → quantité, pour l'UI
 func set_flag(flag: StringName, value: bool = true) -> void
 func has_flag(flag: StringName) -> bool
-func quest_state(quest_id: StringName) -> StringName             # (L0) &"" si inconnue
-func set_quest_state(quest_id: StringName, state: StringName) -> void   # (L0) émet quest_updated si l'état change
 func mark_pickup_collected(pickup_id: StringName) -> void        # (L0)
 func is_pickup_collected(pickup_id: StringName) -> bool          # (L0)
-func record_score(arena_id: StringName, score: int, wave: int) -> bool   # true si meilleur score (strictement)
-func best_score(arena_id: StringName) -> int
 func reset() -> void                                             # (L0) nouvelle partie
 func to_dict() -> Dictionary                # (L0) exactement les champs du schéma de sauvegarde, sauf version et saved_at
-func from_dict(data: Dictionary) -> void     # (Lot Q) n'émet ni quest_updated ni quest_step_updated : QuestTracker relit tout sur game_loaded
-func quests() -> Dictionary                  # (L7) copie quest_id → état, dans l'ordre où chaque quête a reçu son premier état
-func quest_step(quest_id: StringName) -> StringName        # (Lot Q) étape courante enregistrée (QuestStep.id), &"" sinon
-func quest_step_count(quest_id: StringName) -> int         # (Lot Q) compteur de l'étape (ennemis vaincus, vague ou score atteints)
-func set_quest_step(quest_id: StringName, step_id: StringName, step_count: int = 0) -> void   # (Lot Q) émet quest_step_updated si quelque chose change ; &"" efface
-func quest_progress() -> Dictionary          # (Lot Q) copie quest_id → {"step", "count"}
-var tracked_quest: StringName                # (Lot Q) quête suivie par le HUD ; émet tracked_quest_changed ; &"" = la première quête active
+func from_dict(data: Dictionary) -> void     # n'émet pas flag_changed (inventory_changed, oui) ; ignore les champs inconnus
+# (F1) quest_state, set_quest_state, quests, quest_step, quest_step_count, set_quest_step, quest_progress,
+# record_score, best_score, arena_record, tracked_quest et zone : retirés avec l'ancienne île
 var skin_id: StringName      # (L0) &"" = skin par défaut ; émet skin_changed
 var max_hp: int              # (L0) 5, puis 6 (acte 1 : la promesse du gâteau au beurre), 7 (registre des veilles) ; émet max_hp_changed
 var map: StringName          # (E1) carte courante, tenue par WorldManager ; &"" = nouvelle partie pas encore placée
-var zone: StringName         # (L0) tenue par WorldManager (zone_entered) ; (E1) vidée à chaque changement de carte
 var position: Vector3        # (L0) tenue par le joueur quand il est au sol ; (E1) dans le repère de la carte
 var moment: StringName       # (E9) moment de la journée, un de MOMENTS (aube, matin, apres_midi, couchant, nuit ; défaut
                              # DEFAULT_MOMENT = couchant) ; une autre valeur est refusée (avertissement) ; émet atmosphere_changed
 var weather: StringName      # (E9) temps qu'il fait, un de WEATHERS (clair, pluie, averse ; défaut DEFAULT_WEATHER = clair)
-                             # ; émet atmosphere_changed ; moment et weather sont écrits par to_dict (après tracked_quest)
+                             # ; émet atmosphere_changed ; moment et weather sont écrits par to_dict (après collected_pickups)
 var island: StringName       # (X1) île courante (WorldAtlas.island_of(map)), tenue par WorldManager ; &"" : pas placée
 func known_islands() -> Array[StringName] / func knows_island(id) -> bool / func discover_island(id) -> bool
                              # (X1) îles où le joueur est allé (ordre de découverte) ; discover : vrai si nouvelle
@@ -401,12 +377,11 @@ var day: int                 # (E4) jour de l'acte (ACTE1.md : 1 à 12), tenu pa
                              # lignes d'emploi du temps à « day » ne s'appliquent pas ; sauvegardé (facultatif, absent : 0)
 var slot: StringName         # (E4) créneau de la vie (SLOTS : aube, matin, midi, apres_midi, soir, nuit) ; &"" : celui du
                              # moment (LifeSlots.default_for) ; posé par LifeDirector.set_slot ; sauvegardé (facultatif)
-func story_running() -> bool # (E6) day ≥ 1 : l'acte en jours (les quêtes à collecter se taisent : ni tracker, ni HUD,
-                             # ni journal, ni marqueur « ! » / « ? »)
+func story_running() -> bool # (E6) day ≥ 1 : l'acte en jours
 func is_scene_done(id) / mark_scene_done(id) / forget_scene(id) / scenes_done() -> Array[StringName]   # (E6)
 func write_calendar(day, line := &"") / has_calendar_line(day) / calendar() -> Dictionary[int, StringName]   # (E6)
 var story_scene: StringName  # (E6) scène en cours (rejouée depuis son début à la reprise) ; scenes_done, calendar et
-                             # story_scene : champs facultatifs du schéma v3 (absents : vides)
+                             # story_scene : champs facultatifs du schéma v4 (absents : vides)
 
 # src/autoload/save_manager.gd
 func has_save() -> bool
@@ -415,11 +390,15 @@ func load_game() -> Error                 # remplit GameState, émet game_loaded
 func new_game(skin_id: StringName) -> void   # (L0) GameState.reset() puis émet game_loaded
 func export_json() -> String / func import_json(text: String) -> Error   # menu, section 13 ; import émet game_loaded
 var save_path: String = "user://save_v1.json"   # (L0) les tests en utilisent un autre ; (Lot Q) le nom ne suit pas la version
-const SAVE_VERSION := 3                   # (Lot Q) v2 : quest_progress et tracked_quest ; v1 → v2 migrée (quête active : 1re étape)
-                                          # (E1) v3 : map ; v2 → v3 migrée (partie placée : map = ile_ancienne, même position)
-                                          # (E9) moment, weather : champs facultatifs du schéma v3 (absents : couchant, clair)
-                                          # (X1) island, known_islands : facultatifs aussi, sans migration (absents :
-                                          # vides ; l'île se déduit de la carte à l'arrivée)
+const SAVE_VERSION := 4                   # (F1) v4 : sans zone, quests, quest_progress, tracked_quest ni best_scores.
+                                          # Une partie de l'ancienne île (v0 à v2, ou v3 hors de l'acte : day absent ou 0)
+                                          # ne se reprend pas : load_game() la copie dans legacy_backup_path() (.ancienne),
+                                          # démarre une nouvelle partie de l'acte 1 avec son skin (started_new) et pose
+                                          # notice (story.json, save/migrated), que le menu affiche ; renvoie OK. Une v3 de
+                                          # l'acte passe en v4 sans perte (champs de l'ancienne île retirés).
+                                          # (E9) moment, weather ; (X1) island, known_islands : champs facultatifs
+var notice: String                        # (F1) avis du chargement ("" : rien à dire)
+func legacy_backup_path() -> String       # (F1) save_path + ".ancienne"
 func save_on_leave() -> Error             # (M2) focus perdu, fermeture, page masquée : écriture en attente, sinon état s'il a changé
 func has_unsaved_changes(tolerance: float = 0.05) -> bool   # (M2) GameState diffère de la dernière écriture (position : au-delà de tolerance m)
 var checkpoint_interval: float = 5.0      # (M2) position écrite toutes les 5 s de jeu si le joueur a bougé de checkpoint_distance (1 m)
@@ -430,16 +409,11 @@ func get_skin(skin_id: StringName) -> SkinData
 func default_skin() -> SkinData
 
 # src/autoload/world_manager.gd
-func load_zone(zone_id: StringName) -> void
-func teleport(zone_id: StringName, marker: StringName = &"Spawn") -> void
-func respawn() -> void                    # village, PV pleins, émet player_respawned
-func current_zone() -> StringName
-func zone_display_name(zone_id: StringName) -> String   # (L0) Zone.display_name, pour le HUD
-func is_zone_safe(zone_id: StringName) -> bool   # (M1) Zone.safe de la zone (faux si inconnue) ; IA des Timeres
+func respawn() -> void                    # au marqueur d'arrivée de la carte, PV pleins, émet player_respawned
 var respawn_delay: float = 2.2            # (L0) délai entre player_died et respawn()
-signal rescued(zone_id: StringName)       # (Systèmes et textes) rescue() a rattrapé le joueur au Spawn de
-                                          # zone_id → HUD : fondu au blanc et « Tes ailes se sont ouvertes… »
-                                          # (E1) sur une carte sans zone : au marqueur d'arrivée, zone_id = map_id
+signal rescued(map_id: StringName)        # (Systèmes et textes) rescue() a rattrapé le joueur (dernier point sûr ou
+                                          # marqueur d'arrivée) → HUD : fondu au blanc et « Tes ailes se sont ouvertes… »
+# (F1) load_zone, teleport, current_zone, zone_display_name, is_zone_safe, LEGACY_MAP : retirés avec les zones
 # (E1) Cartes (docs/REFONTE.md, section 7.1) : une seule carte chargée, enfant unique de game.tscn « World »
 func go_to(map_id: StringName, marker: StringName = &"Spawn") -> void   # coroutine : fondu au noir (fade_time), chargement
                                           # découpé (load_budget_ms par image), ancienne carte libérée, nouvelle ajoutée,
@@ -457,13 +431,10 @@ func fade_alpha() -> float                # opacité du noir (0..1), dessinée p
 func last_transition() -> Dictionary      # mesures du dernier go_to : fade_out_ms, load_ms, load_frames, install_ms, total_ms
 var fade_time: float = 0.35 / var load_budget_ms: float = 100.0   # sous le noir, le monde 3D n'est pas dessiné
 signal transition_started(map_id: StringName) / signal transition_finished(map_id: StringName)
-const LEGACY_MAP := &"ile_ancienne" / const START_MAP := &"entrepot"   # l'île héritée ; (E6) une nouvelle partie ouvre
-                                          # l'acte 1 à l'entrepôt de l'île n° 68 (arrival_map de ile_68.json)
-var start_map: StringName = START_MAP     # (E6) carte d'une nouvelle partie (les tests de l'ancienne île : LEGACY_MAP) ;
-                                          # starting_map() : GameState.map si elle existe, sinon l'ancienne île pour une
-                                          # partie placée hors de l'acte, sinon start_map
-# (E1) Zones : elles n'existent que dans ile_ancienne. load_zone/teleport d'une zone de l'île (LEGACY_ZONES) depuis une
-# autre carte y ramènent sans fondu ; respawn() ramène au Spawn du village sur l'île, au marqueur d'arrivée ailleurs.
+const START_MAP := &"entrepot"            # (E6) une nouvelle partie ouvre l'acte 1 à l'entrepôt de l'île n° 68
+                                          # (arrival_map de ile_68.json)
+var start_map: StringName = START_MAP     # (E6) carte d'une nouvelle partie (les tests en prennent une autre) ;
+                                          # starting_map() : GameState.map si elle existe, sinon start_map
 # (X1) Îles (data/world/, WorldAtlas) : chaque carte posée donne l'île courante (island_entered si elle change)
 func travel(island_id: StringName, port: StringName = &"") -> void   # coroutine : comme go_to, mais sous le noir la vue
                                           # du ciel (src/world/travel_view.tscn, au moins travel_time s ; la carte
@@ -472,9 +443,9 @@ func travel(island_id: StringName, port: StringName = &"") -> void   # coroutine
                                           # arrival_map au Spawn ; île ou port inconnus : erreur ; pendant un autre
                                           # changement : ignoré (avertissement)
 func current_island() -> StringName / func is_traveling() -> bool / func travel_view() -> TravelView
-func next_island() -> StringName          # île suivante de l'atlas (sans l'ancienne), touche F6 en version de débogage
+func next_island() -> StringName          # île suivante de l'atlas, touche F6 en version de débogage
 func last_safe_point() -> Vector3         # dernier point sûr (Vector3.INF sans) : au sol, à plus de SAFE_MARGIN (1,5 m)
-                                          # du vide ; rescue() y ramène sur une carte sans zone si la règle void_fall
+                                          # du vide ; rescue() y ramène si la règle void_fall
                                           # de l'île est last_safe (sinon : marqueur d'arrivée)
 var travel_time: float = 3.2 / var travel_load_budget_ms: float = 12.0 / var debug_keys: bool
 signal travel_started(island_id: StringName) / signal travel_finished(island_id: StringName)
@@ -551,24 +522,16 @@ class_name ItemData   : id, display_name, icon, stackable, max_stack, descriptio
 class_name SkinData   : id, display_name, sprite_sheet, frames_json: JSON, portrait, height_m   # (HD-2D) sans mesh_scene
                         # (E4) extra_sheet / extra_json (+ extra_front_*, extra_back_*) : planche complémentaire
                         # `<id>_life`, fusionnée par SheetLoader (ses animations absentes de la planche principale)
-class_name NpcData    : id, display_name, skin, dialogue_path, quest_id, home_zone
+class_name NpcData    : id, display_name, skin, dialogue_path   # (F1) quest_id et home_zone retirés
                         # (Systèmes et textes) visible_if: Dictionary (présence, même grammaire que les « if »
                         # de dialogue) ; is_present() (faux aussi si skin = celui du joueur), is_player_skin(),
                         # visible_if_problem()
                         # (E4) outfits: Dictionary[StringName, String] (tenue → chemin d'une SkinData de
                         # data/npcs/outfits/, chargée à la demande) ; outfit_path(), has_outfit(), load_outfit()
-class_name QuestData  : id, title, giver_npc, required_items: Dictionary[StringName, int], required_flags: Array[StringName],
-                        reward_items: Dictionary[StringName, int]
-                        # (L7) objective, reward_max_hp ; (Lot Q) lue dans data/quests/<id>.json : summary, main, auto_start,
-                        # prereq_quests, prereq_flags, prereq_not_flags, steps: Array[QuestStep], reward_flags ;
-                        # static find(id), all(), problem(data, file_id), state_of(id), npc_marker(npc_id), active_ids(),
-                        # done_ids(), shown_quest() ; status() (&"available" calculé, jamais écrit), current_step(),
-                        # current_objective(), current_progress() ; required_* : héritage L7 (quêtes construites en code)
-class_name QuestStep  : (Lot Q) id, type (talk|reach|kill|collect|arena|flag), objective, hint, npc, zone, trigger, enemy
-                        (&"any"), item, count, consume, arena, wave, score, flag, reward_items, reward_flags, reward_max_hp
+# (F1) QuestData et QuestStep : retirées avec le moteur de quêtes.
 
 # (L0) Autres classes partagées
-class_name Zone            # racine d'une zone : @export display_name: String, @export safe: bool ; func zone_id() -> StringName
+# (F1) Zone (racine d'une zone de l'ancienne île) : retirée.
 class_name Map             # (E1) src/world/map.gd, racine d'une carte (Node3D, groupe "maps") : @export display_name: String,
                            # region: StringName, interior: bool, size: Vector2, camera_bounds: Rect2 (Rect2() : la carte ;
                            # (QO) plat ou réduit à un point : une ligne, une caméra fixe),
@@ -613,23 +576,18 @@ class_name Player          # player.gd (L1)
 class_name Pickup          # @export item_id: StringName, quantity: int, persistent: bool ; func collect(), pickup_id()
 class_name Npc             # @export data: NpcData ; (Systèmes et textes) is_present(), refresh_presence() :
                            # absent = caché, process_mode DISABLED (ni collision ni InteractArea), sans invite,
-                           # dialogue ni marqueur ; réévalué en fin d'image sur les signaux de quête, drapeaux,
-                           # inventaire, game_loaded, skin_changed, arena_finished (après le dialogue en cours)
-                           # (E4) life: LifeActor (null : immobile, l'ancienne île) ; enter_life(acteur),
+                           # dialogue ; réévalué en fin d'image sur flag_changed, inventory_changed,
+                           # game_loaded, skin_changed (après le dialogue en cours) ; (F1) plus de marqueur de quête
+                           # (E4) life: LifeActor (null : immobile) ; enter_life(acteur),
                            # set_outfit(skin) (à chaud), set_moving(bool) (couche 0 en marche), say(texte, s) /
                            # hide_bubble() / bubble_text() (enfant Bubble, Label3D) ; sans dialogue : une bulle
 class_name DialogueRunner  # start(npc: NpcData), stop(), is_running() ; un par PNJ
                            # (Systèmes et textes) statiques : current_speaker_id() (speaker_id du nœud ou PNJ
                            # du dialogue, fixé avant dialogue_line), find_npc(id), add_npc_dir / remove_npc_dir,
-                           # format_text() ({player}, {count:…}, {left:…}, {best:…}), player_name(), player_skin(),
-                           # evaluate(), condition_problem(), story_text(chemin), arena_text(arène, clé),
+                           # format_text() ({player}, {count:…}, {left:…}), player_name(), player_skin(),
+                           # evaluate(), condition_problem(), story_text(chemin) ; (F1) arena_text retiré ;
                            # load_story_texts(), story_problem(), clear_story_cache()
-class_name QuestTracker    # Node unique de game.tscn (seul le 1er du groupe quest_tracker agit) ; (Lot Q) fait avancer les étapes
-                           # par l'EventBus, récompenses, enchaînement (prérequis, auto_start), quête suivie ; à &"done" posé
-                           # par un autre système (complete_quest) : étapes restantes validées si les objets des étapes collect
-                           # restantes sont là, sinon remise à &"active" (completion_refused) ; signal quest_completed(quest_id)
-class_name QuestTrigger    # (Lot Q) src/quests/quest_trigger.tscn, Area3D couche 0 / masque 2 : trigger_id (défaut : nom du
-                           # nœud), radius, height, set_flag ; émet trigger_entered ; à poser dans src/npc/placements/<zone>.tscn
+# (F1) QuestTracker et QuestTrigger : retirées avec le moteur de quêtes.
 class_name SheetLoader     # lecture des planches (read_sheet, build_frames, hit_frames, wave_frame, pixel_size)
                            # (E4) merge_sheets, add_frames, extra_view_texture/json, cached_count, EXTRA_KEY ;
                            # cache des SpriteFrames en références faibles (libérés avec la carte quittée)
@@ -641,7 +599,7 @@ class_name DecorPanel      # src/world/decor_panel.gd : racine d'un décor en pa
 class_name Building        # src/world/building.gd : volume (murs, toit long ou pignon) en matières sans raccord + façade sud
                            # en image ; @export facade, wall_texture, roof_texture, footprint, wall_height, ridge_height,
                            # gable_front, overhang, window_glow ; surface_material(texture, relief)
-class_name PropBatcher     # src/world/prop_batcher.gd, nœud « Geometry » des zones : fond les MeshInstance3D à
+class_name PropBatcher     # src/world/prop_batcher.gd, nœud « Geometry » des cartes : fond les MeshInstance3D à
                            # material_override en un mesh par image et par case (« Batch… ») ; @export cell_size
 # (H9) Formats du cahier n° 2 (docs/ASSETS_HD2D_MONDE.md, sections 3 et 17) : ajouts, l'existant ne change pas.
 # Données propres à chaque exemplaire dans UV2 des sommets (le PropBatcher les garde) : un draw call par image.
@@ -668,7 +626,7 @@ class_name GroundDecal     # (H9) src/world/ground_decal.gd, racine possible d'u
                            # size_m(), draped_mesh(), material_for(image, tint, soft, layer) ; HARD_SHADER,
                            # SOFT_SHADER (ground_decal*.gdshader), SOFT_PRIORITY (−9 + couche) ; (E2) follow_ground
                            # drape sur le `MapGround` (enfant `Ground`) du premier ancêtre qui en a un
-                           # (MapGround.triangles_in), sinon sur IslandTerrain (île ancienne)
+                           # (MapGround.triangles_in), sinon (F1) à plat à y = 0
 class_name Building        # (H9) @export side_facade (flanc est, retourné à l'ouest ; enfant interne « Sides ») ;
                            # side_size_m(), side_contract_size() (pignon : profondeur × faîtage ; gouttereau :
                            # profondeur × mur), side_material(texture, glow, glow_color, glow_tolerance) ; (QO)
@@ -773,8 +731,7 @@ func update_camera(delta, zoom_axis := 0.0), focus_goal(with_lead := true) -> Ve
 - Couches de collision fixées au Lot 0 : 1 `world`, 2 `player`, 3 `enemy`, 4 `hitbox`, 5 `hurtbox`, 6 `interactable`, 7 `pickup`. Le joueur et les ennemis ne se traversent pas ; les hitbox ne touchent que les hurtbox.
 - Les chiffres de combat vivent dans `data/attacks` et `data/enemies`, jamais en dur dans un script : l'équilibrage se fait sans toucher au code.
 - Le joueur est toujours le nœud unique du groupe `player` ; les ennemis vivants sont dans le groupe `enemies`.
-- Les zones sont des scènes racine `Node3D` nommées comme leur `zone_id`, avec un `Marker3D` nommé `Spawn` ; une arène est une zone qui contient un `WaveDirector`.
-- (E1) Le monde est une suite de cartes (`Map`, une par lieu, `src/world/maps/<map_id>/<map_id>.tscn`) : une seule chargée à la fois, sous `game.tscn` « World » ; les zones n'existent plus que dans la carte héritée `ile_ancienne`. Mode d'emploi pour créer une carte : plus bas, « (E1) Créer une carte ».
+- (E1) Le monde est une suite de cartes (`Map`, une par lieu, `src/world/maps/<map_id>/<map_id>.tscn`) : une seule chargée à la fois, sous `game.tscn` « World ». (F1) Les zones, l'arène et la carte héritée `ile_ancienne` sont retirées. Mode d'emploi pour créer une carte : plus bas, « (E1) Créer une carte ».
 - Toute scène doit s'ouvrir et se fermer sans erreur en headless : c'est le test de fumée minimal (section 9).
 - (HD-2D) Le décor est fait d'images à 96 px par mètre : un décor de `src/world/props/` a pour racine un `DecorPanel` ou un `Building` (ou un nœud qui en contient, comme la passerelle), sa collision dans un enfant `Collision` (StaticBody3D, couche 1). Aucun maillage modélisé ni forme calculée pour l'apparence. La caméra regarde toujours le nord : le haut de l'écran est le nord.
 
@@ -785,7 +742,7 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | Fichier | Racine (type, `class_name`) | Nœuds nommés | Groupe, couches | Lot |
 | --- | --- | --- | --- | --- |
 | `src/main.tscn` + `main.gd` | `Main` (Node) | menu, chargement et partie ajoutés à l'exécution | — | L0 |
-| `src/game.tscn` + `game.gd` | `Game` (Node3D) | (E1) `World` (Node3D, groupe `map_slot` : la carte courante, posée par game.gd, remplace `Island`), `Player`, `QuestTracker`, `UI` (CanvasLayer) avec `UI/HUD`, `UI/DialogueBox`, `UI/Inventory`, `UI/ArenaEnd`, `UI/TouchControls`, (E1) `UI/MapFade` (`src/ui/map_fade.tscn` : fondu et nom des cartes) | — | L0, E1 |
+| `src/game.tscn` + `game.gd` | `Game` (Node3D) | (E1) `World` (Node3D, groupe `map_slot` : la carte courante, posée par game.gd, remplace `Island`), `Player`, `UI` (CanvasLayer) avec `UI/HUD`, `UI/DialogueBox`, `UI/Inventory`, `UI/TouchControls`, (E1) `UI/MapFade` (`src/ui/map_fade.tscn` : fondu et nom des cartes) ; (F1) `QuestTracker` et `UI/ArenaEnd` retirés | — | L0, E1, F1 |
 | `src/player/player.tscn` + `player.gd` | `Player` (CharacterBody3D, `Player`) | `CollisionShape3D`, `Visual`, `Combat` (`PlayerCombat`) et `Combat/SwordHitbox` (`Hitbox`), `Health` (5 PV, 1,2 s), `Hurtbox`, `CameraRig` ((HD-2D) aux pieds du joueur) | `player` ; couche 2, masque 1+3 | L1 (L4 : valeurs du nœud `Health`) |
 | `src/player/camera_rig.tscn` | `CameraRig` (Node3D) | (HD-2D) `Camera3D` (courante, `top_level`), `PostFX` (CanvasLayer, couche −1) et `PostFX/Screen` (ColorRect, `post_fx.gdshader`) ; plus de `SpringArm3D` | — | L1 |
 | `src/combat/hitbox.tscn` + `hitbox.gd` | `Hitbox` (Area3D) | `CollisionShape3D` (forme locale à la scène) | couche 4, masque 5 | L4 |
@@ -795,28 +752,23 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | `src/visuals/character_visual.tscn` + `.gd` | `CharacterVisual` (Node3D) | `Sprite` (AnimatedSprite3D billboard) | — | L3 |
 | `src/visuals/skin_data.gd`, `sheet_loader.gd` | `SkinData`, `SheetLoader` | — | — | L3 |
 | `src/enemies/enemy.tscn` + `enemy.gd` | `Enemy` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `Health`, `Hurtbox`, `Hitbox` | `enemies` (vivants) ; couche 3, masque 1+2+8 | L5 |
-| `src/enemies/arena.tscn` + `arena.gd` | `Arena` (Node3D) | `WaveDirector` | — | L5 |
-| `src/enemies/enemy_data.gd`, `wave_director.gd` | `EnemyData`, `WaveDirector` | — | — | L5 |
+| `src/enemies/enemy_data.gd` | `EnemyData` ; (F1) `Arena` et `WaveDirector` retirés | — | — | L5 |
 | `src/items/pickup.tscn` + `pickup.gd` | `Pickup` (Area3D) | `CollisionShape3D`, `Mesh` | `interactable` ; couche 7, masque 2 | L7 |
-| `src/items/item_data.gd`, `src/quests/quest_data.gd`, `quest_tracker.gd` | `ItemData`, `QuestData`, `QuestTracker` | — | — | L7 |
-| (Lot Q) `src/quests/quest_step.gd`, `quest_trigger.tscn` + `quest_trigger.gd` | `QuestStep` (Resource), `QuestTrigger` (Area3D) | `CollisionShape3D` (cylindre propre à chaque déclencheur) | couche 0, masque 2 | Lot Q |
-| `src/npc/npc.tscn` + `npc.gd` | `Npc` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `InteractArea` (Area3D, couche 6), `DialogueRunner`, (Lot Q) `QuestMarker` (Label3D « ! » / « ? »), (E4) `Bubble` (Label3D, bulle de la vie) | `interactable` ; couche 1 | L6 |
+| `src/items/item_data.gd` | `ItemData` ; (F1) `src/quests/` (`QuestData`, `QuestStep`, `QuestTracker`, `QuestTrigger`) retiré | — | — | L7 |
+| `src/npc/npc.tscn` + `npc.gd` | `Npc` (CharacterBody3D) | `CollisionShape3D`, `Visual`, `InteractArea` (Area3D, couche 6), `DialogueRunner`, (E4) `Bubble` (Label3D, bulle de la vie) | `interactable` ; couche 1 | L6 |
 | `src/npc/npc_data.gd`, `dialogue_runner.gd` | `NpcData`, `DialogueRunner` | — | — | L6 |
-| `src/world/island.tscn` + `island.gd` | `Island` (Node3D ; (E1) `Map`, carte héritée par `maps/ile_ancienne`) | `WorldEnvironment` ((HD-2D) ciel panoramique `assets/hd2d/sky/sky.png`), `Sun`, `OverviewCamera`, `Ground` (relief, tuiles de l'atlas du sol), `Water` (mer de nuages texturée), `Walls`, `KillZone`, `Zones` et `Zones/<zone_id>` pour les 5 zones | — | L2 |
-| `src/world/zones/<zone_id>/<zone_id>.tscn` + `src/world/zone.gd` (`village`, `dunes`, `forest`, `beach`, `hill`) | `<zone_id>` (Node3D, `Zone`) | `Spawn` (Marker3D), `Bounds` (Area3D, masque 2), `Geometry` ((HD-2D) `PropBatcher` : décors `src/world/props/` en images), `NPCs`, `Enemies`, `Pickups` ; dunes : `SpawnN`, `SpawnS`, `SpawnE`, `SpawnW`, `Arena` (`arena_id = &"dunes"`) ; village : `EnemyBarrier` (couche 8), `safe = true` | `zones` | L2 |
-| (E1) `src/world/map.gd`, `map_exit.gd`, `maps/<map_id>/<map_id>.tscn` | `Map`, `MapExit` ; racine `<map_id>` (`Map`) | `Ground` (sol, couche 1), `Geometry` (`PropBatcher`), `Markers` (`Spawn` + `from_<carte>`), `Exits` (`MapExit`), `Life` ((E4) `Life/Places` : les places des emplois du temps ; les PNJ de la vie y sont ajoutés) ; `ile_ancienne` : scène héritée d'`island.tscn` (`World/ile_ancienne/Zones/<zone>`) | `maps` ; sorties : couche 0 (6 si invite), masque 2 | E1 |
+| (F1) `src/world/island.tscn`, `zones/`, `maps/ile_ancienne/` | retirés avec l'ancienne île (`Island`, `Zone`, `IslandTerrain` ; l'atlas du sol est dans `GroundAtlas`, `src/world/ground_atlas.gd`) | — | — | F1 |
+| (E1) `src/world/map.gd`, `map_exit.gd`, `maps/<map_id>/<map_id>.tscn` | `Map`, `MapExit` ; racine `<map_id>` (`Map`) | `Ground` (sol, couche 1), `Geometry` (`PropBatcher`), `Markers` (`Spawn` + `from_<carte>`), `Exits` (`MapExit`), `Life` ((E4) `Life/Places` : les places des emplois du temps ; les PNJ de la vie y sont ajoutés) | `maps` ; sorties : couche 0 (6 si invite), masque 2 | E1 |
 | (X1) `src/world/world_atlas.gd`, `island_rules.gd`, `airship_dock.gd`, `travel_view.tscn` + `.gd`, `data/world/worlds/`, `data/world/islands/` | `WorldAtlas`, `IslandRules`, `AirshipDock` (Area3D sous `Docks`), `TravelView` (CanvasLayer) | `TravelView` : `View`, `Caption`, `Black` | quais : couche 6, masque 2 | X1 |
 | (E5) `src/fauna/animal.tscn` + `animal.gd`, `animal_data.gd`, `animal_pack.gd`, `fauna_rules.gd`, `fauna_nav.gd`, `fauna_populator.gd` + `fauna.tscn` | `Animal` (CharacterBody3D, hérite d'`Enemy`), `AnimalData`, `AnimalPack`, `FaunaRules`, `FaunaNav`, `FaunaPopulator` (Node3D, nœud `Fauna` sous `Life`) | ceux d'`enemy.tscn` | comme `Enemy` (couche 4) ; groupes `fauna`, `enemies` (dangereux) | E5 |
-| `src/npc/placements/<zone_id>.tscn` | `NPCs` (Node3D), instancié dans chaque zone | PNJ de la zone et (Lot Q) déclencheurs de quête `QuestTrigger` (coordonnées locales à la zone) | — | L6 |
-| `src/enemies/placements/<zone_id>.tscn` | `Enemies` (Node3D ; (acte 1) script `src/enemies/free_enemies.gd`) | ennemis libres de la zone (forêt : 4 Timeres), qui reviennent pendant une étape « vaincre » qui les vise | — | L5 |
-| `src/items/placements/<zone_id>.tscn` | `Pickups` (Node3D) | objets uniques, nommés `<zone>_<objet>_<n>` (ex. `forest_page_1`) | — | L7 |
+| (F1) `src/npc|enemies|items/placements/<zone_id>.tscn` | retirés avec les zones (`FreeEnemies` aussi) | — | — | F1 |
 | `src/ui/main_menu.tscn` + `.gd` | `MainMenu` (Control) | `%NewGameButton` ; (bureau) `%FullscreenButton`, `%ExitGameButton` (cachés sur le Web) | — | L10 |
-| `src/ui/hud.tscn`, `arena_end.tscn`, `credits.tscn` | `HUD`, `ArenaEnd`, `Credits` (Control) | `HUD/PauseMenu` (L10 ; (bureau) `%FullscreenButton`, `%ExitGameButton`, cachés sur le Web), (Lot Q) `HUD/Journal` (`src/ui/journal.tscn`, PROCESS_MODE_ALWAYS ; (Systèmes et textes) script `src/ui/hud_journal.gd`, qui étend journal.gd : textes de quête avec `{player}`) | — | L10 |
+| `src/ui/hud.tscn`, `credits.tscn` | `HUD`, `Credits` (Control) | `HUD/PauseMenu` (L10 ; (bureau) `%FullscreenButton`, `%ExitGameButton`, cachés sur le Web) ; (F1) `ArenaEnd`, `HUD/Journal`, le panneau de l'arène, les bannières et l'encadré de quête retirés | — | L10 |
 | `src/ui/dialogue_box.tscn` | `DialogueBox` (Control) | — | — | L6 |
 | `src/ui/inventory.tscn` | `Inventory` (Control) | — | — | L7 |
 | `src/ui/loading.tscn`, `touch_controls.tscn` | `Loading`, `TouchControls` (Control) | `Loading` : `set_progress(ratio: float)` facultatif, appelé par main.gd ; (M2) `load_scene(path, budget_ms)` qui charge la partie en plusieurs images, utilisée par main.gd si présente | — | L9 |
 
-**Données présentes au Lot 0** : `data/attacks/{sword_1,sword_2,sword_3,charge_wave,bite,whip,rush}.tres` (L4) ; `data/enemies/timere_{small,normal,runner,big}.tres` et `data/enemies/visuals/timere.tres` (L5, visuel hors de `data/skins/` pour ne pas être jouable) ; `data/skins/chtholly.tres` et trois skins de PNJ de remplacement (L3 ; silhouettes de `tools/gen_placeholders.py`, retirés à l'acte 1 : les PNJ ont leurs visuels non jouables dans `data/npcs/visuals/`) ; `data/waves/dunes.json` (L5, sans `music` tant qu'il n'y a pas d'audio). `data/items/`, `data/quests/` (L7), `data/npcs/` et `data/dialogues/` (L6) sont à créer. Le nom de fichier d'une donnée est son `id`. (Lot Q) Les quêtes sont des JSON (`data/quests/<id>.json`, `pages.json` remplace `pages.tres`) ; les quêtes, PNJ, dialogues et emplacements d'exemple des tests vivent dans `tests/data/`.
+**Données présentes au Lot 0** : `data/attacks/{sword_1,sword_2,sword_3,charge_wave,bite,whip,rush}.tres` (L4) ; `data/enemies/timere_{small,normal,runner,big}.tres` et `data/enemies/visuals/timere.tres` (L5, visuel hors de `data/skins/` pour ne pas être jouable) ; `data/skins/chtholly.tres` et trois skins de PNJ de remplacement (L3 ; silhouettes de `tools/gen_placeholders.py`, retirés à l'acte 1 : les PNJ ont leurs visuels non jouables dans `data/npcs/visuals/`). `data/items/` (L7), `data/npcs/` et `data/dialogues/` (L6) sont à créer. Le nom de fichier d'une donnée est son `id`. (F1) `data/waves/`, `data/quests/`, les objets de `data/items/` et les dialogues de l'ancienne île sont retirés ; les PNJ, dialogues, objets et mondes d'exemple des tests vivent dans `tests/data/`.
 
 **Couches et masques** (valeur = 2^(couche − 1)) :
 
@@ -829,14 +781,13 @@ Les lots tournent en parallèle et référencent les scènes des autres par leur
 | Hurtbox | 5 `hurtbox` (16) | — |
 | Zone d'interaction (PNJ, panneau) | 6 `interactable` (32) | — |
 | Pickup | 7 `pickup` (64) | 2 (2) |
-| Barrière du village | 8 `enemy_barrier` (128) | — |
-| `Bounds` des zones, `KillZone` | — | 2 (2) |
+| Barrière (couche réservée ; (F1) la barrière du village de l'ancienne île est retirée) | 8 `enemy_barrier` (128) | — |
 
-**Actions d'entrée** : `move_left`, `move_right`, `move_forward`, `move_back`, `run`, `jump`, `attack`, `charge`, `interact`, `lock_target`, `inventory`, `journal` (Lot Q : Tab, L, bouton Select / Back), `pause`, `camera_left`, `camera_right`, `camera_up`, `camera_down` (stick droit ; la souris se lit dans le code). Les contrôles tactiles (L9) émettent ces actions.
+**Actions d'entrée** : `move_left`, `move_right`, `move_forward`, `move_back`, `run`, `jump`, `attack`, `charge`, `interact`, `lock_target`, `inventory`, `journal` (Tab, L, bouton Select / Back ; (F1) le journal de quêtes est retiré, (E6) l'action ouvre le calendrier), `pause`, `camera_left`, `camera_right`, `camera_up`, `camera_down` (stick droit ; la souris se lit dans le code). Les contrôles tactiles (L9) émettent ces actions.
 
-**Repères de l'île** : sol à y = 0, île de 160 × 160 m centrée sur l'origine, nord = −Z, ouest = −X. Village au centre (`Bounds` ±22 m, `Spawn` local (0, 0,2, 9)) ; dunes à x = −51 (`Spawn` côté village (24, 0,2, 0), arène de 12 m de rayon au centre, `SpawnN/S/E/W` à 13 m) ; forêt à z = −51 ; plage à z = +51 ; colline à x = +51. Les cinq zones pavent l'île : chaque pas sur l'île est dans une zone.
+**Repères** : (F1) l'ancienne île et ses repères sont retirés ; chaque carte a les siens (origine au coin nord-ouest, nord = −Z, ouest = −X : « (E1) Créer une carte »).
 
-**Tests** : (Lot Q) base des tests de quêtes `tests/stubs/q_quest_test.gd`, contenu des quêtes vérifié par `tests/unit/test_quest_content.gd` ; stubs dans `tests/stubs/` (`visual_stub.tscn` hérite de `character_visual.tscn` et émet `frame_changed` / `animation_finished` à la demande, `player_stub.tscn` du groupe `player` avec Health et Hurtbox, `dummy.tscn` mannequin du groupe `enemies`), sans `class_name`. `tests/unit/test_contracts.gd` vérifie tout ce qui précède : un lot qui le fait échouer a cassé un contrat. Propriété des tests du Lot 0 : `test_health.gd` passe à L4, `test_game_state.gd` à L7, `test_save_roundtrip_l0.gd` à L8 (ils peuvent les adapter à leur implémentation) ; `test_contracts.gd`, `test_stubs_l0.gd`, `tests/integration/test_game_flow_l0.gd` et les stubs existants ne changent que dans une PR « contrats ». Un lot qui a besoin d'un autre stub en crée un nouveau fichier (`tests/stubs/<lot>_<nom>.gd`/`.tscn`, sans `class_name`).
+**Tests** : (F1) les tests de quêtes et leur base sont retirés ; `tests/unit/test_no_dead_paths.gd` vérifie qu'aucun fichier de `src/`, `data/` ou `tools/` ne cite un chemin disparu ; stubs dans `tests/stubs/` (`visual_stub.tscn` hérite de `character_visual.tscn` et émet `frame_changed` / `animation_finished` à la demande, `player_stub.tscn` du groupe `player` avec Health et Hurtbox, `dummy.tscn` mannequin du groupe `enemies`), sans `class_name`. `tests/unit/test_contracts.gd` vérifie tout ce qui précède : un lot qui le fait échouer a cassé un contrat. Propriété des tests du Lot 0 : `test_health.gd` passe à L4, `test_game_state.gd` à L7, `test_save_roundtrip_l0.gd` à L8 (ils peuvent les adapter à leur implémentation) ; `test_contracts.gd`, `test_stubs_l0.gd`, `tests/integration/test_game_flow_l0.gd` et les stubs existants ne changent que dans une PR « contrats ». Un lot qui a besoin d'un autre stub en crée un nouveau fichier (`tests/stubs/<lot>_<nom>.gd`/`.tscn`, sans `class_name`).
 
 ### (E1) Créer une carte : mode d'emploi
 
@@ -870,7 +821,7 @@ construite suit son plan à la lettre ; un écart se reporte dans le plan et rep
    - `Geometry` : script `res://src/world/prop_batcher.gd` ; les décors de `src/world/props/`
      (instances), fondus en un draw call par image. Un `GroundDecal` (`follow_ground`) y suit
      le relief du `MapGround` de la carte (E2) ; sur une carte au sol plat provisoire, le
-     mettre à faux (sinon il suit le relief de l'ancienne île) ;
+     mettre à faux ((F1) sans `MapGround`, il se couche à plat à y = 0) ;
    - `Markers` : des `Marker3D`. `Spawn` obligatoire (nouvelle partie, réapparition par défaut) ;
      un marqueur `from_<carte d'origine>` par sortie qui mène ici (`from_<carte>_<suffixe>` si
      plusieurs). Le joueur est posé au sol sous le marqueur, tourné vers son −Z : un marqueur
@@ -912,8 +863,7 @@ construite suit son plan à la lettre ; un écart se reporte dans le plan et rep
    - Dans un test, `WorldManager.fade_time = 0.0` (rétabli dans `after_each`) ;
      `await WorldManager.go_to(…)` attend la fin du fondu de retour, `is_transitioning()` encore
      trois images physiques. Le joueur est figé (`process_mode` DISABLED) pendant le changement.
-   - Les zones (`Zone`, `zone_entered`) n'existent que dans `ile_ancienne` ; une nouvelle carte
-     n'en a pas besoin (son nom s'annonce par `display_name`).
+   - Une carte s'annonce par son `display_name` ((F1) les zones de l'ancienne île sont retirées).
    - Une démonstration n'ajoute jamais une carte à côté d'une autre : une seule carte à la fois,
      posée par WorldManager.
 
@@ -933,7 +883,7 @@ l'île n° 68 (carte `essai`). Une île est **des données** : rien dans le code
    - `ports` : `<port_id>` → `name`, `map` (une carte de l'île), `marker` (`from_dirigeable`, ou
      `from_dirigeable_<suffixe>` s'il y en a plusieurs sur la carte) ;
    - `rules` (facultatif) : ce qui change par rapport aux règles de son monde ;
-   - `legacy` (facultatif) : l'ancienne île seulement. Une clé inconnue rend le fichier invalide
+   - (F1) la clé `legacy` de l'ancienne île est retirée. Une clé inconnue rend le fichier invalide
      (ignoré, avec un avertissement) ; une clé `_…` est un commentaire.
 2. **La ranger dans un monde** : ajouter son id à `islands` de `data/world/worlds/regule_aire.json`
    (ou d'un autre monde). Les **règles** du monde valent pour ses îles (`IslandRules`) :
@@ -1424,7 +1374,7 @@ refusée, `_…` : commentaire) :
 
 - `slot` (obligatoire) : un créneau ou une liste ; `day` : un jour (`GameState.day`, tenu par E6 ;
   0 = aucun) ou `[premier, dernier]` ; `if` : une condition sur l'histoire, grammaire des « if »
-  de dialogue (drapeaux, objets, quêtes : docs/QUETES.md).
+  de dialogue (drapeaux, objets, jours, scènes : docs/DIALOGUES.md).
 - `map` + `place` : la carte et une place de son `Life/Places` ; ou `away` : hors des cartes
   construites (l'id de la carte à venir) ; sans ligne pour un créneau, le PNJ n'est nulle part.
 - `activity` (`activities.json`, défaut `attendre`), `outfit` (une tenue de `NpcData.outfits` ;
@@ -1586,8 +1536,8 @@ vide. `LifeData` garde ce qu'il a lu (`clear_cache()`, `add_dir` / `remove_dir`)
 L'acte 1 joué en jours et en scènes (docs/REFONTE.md, section 6 ; docs/lore/ACTE1.md, 0.1 et
 0.2) : une île qui a `data/scenes/<île>/act.json` a un récit, mené par l'autoload
 `StoryDirector`. Une nouvelle partie posée sur cette île (`WorldManager.start_map`, l'entrepôt)
-l'ouvre ; `GameState.day` ≥ 1 tant qu'il dure (`GameState.story_running()`) ; l'ancienne île,
-sans acte, garde son moteur de quêtes. Décisions : docs/DECISIONS.md (« E6 »).
+l'ouvre ; `GameState.day` ≥ 1 tant qu'il dure (`GameState.story_running()`) ; une île sans acte
+(la surface) n'a pas de récit. Décisions : docs/DECISIONS.md (« E6 »).
 
 **Les données d'une île** (convention X1) :
 - `data/scenes/<île>/act.json` : `start` (`map`, `marker`, `day`, `slot`, `weather` : la
@@ -1601,7 +1551,7 @@ sans acte, garde son moteur de quêtes. Décisions : docs/DECISIONS.md (« E6 »
 - `data/dialogues/<île>/<scène>.json` : les dialogues de la scène (format de DialogueRunner :
   `speaker_id` et portraits, `"speaker": "{player}"` pour la protagoniste, choix, effets) ;
   `data/dialogues/<île>/talk/<pnj>.json` : ce que dit un personnage hors des scènes (entrées par
-  jour) ; jamais les dialogues des quêtes de l'ancienne île sur l'île n° 68 ;
+  jour) ;
 - `data/texts/<île>/story.json` : indices, cartons, bulles, invites (`ui/…`), jours
   (`days/<n>/calendar` : la ligne écrite au coucher, `sleep_hint`) ; une clé sans « / » se lit
   sous l'id de la scène.
@@ -1724,8 +1674,8 @@ le texte. Appliqué à chaque arrivée sur une carte et à chaque changement de 
 `wait_for` (elle se passe d'une touche). `ready` part sur la carte de la scène seulement. Une
 étape `hint` en fin de scène s'efface avec elle : l'indice de ce qui suit est le `hint` de la
 scène suivante. Les tests : `StoryData.use_root("res://tests/data/story")` (acte d'essai),
-`StoryDirector.seen_path` propre au test, `WorldManager.start_map` rétabli ; les tests de
-l'ancienne île mettent `start_map` à `LEGACY_MAP` (bases m1/m2).
+`StoryDirector.seen_path` propre au test, `WorldManager.start_map` rétabli ; (F1) la base M1
+(`tests/stubs/m1_game_test.gd`) part de la carte d'essai, le récit coupé (`story_for_test()`).
 
 ### (U1) L'interface « Nuit douce » : thème, dialogue et signes
 
@@ -2046,6 +1996,8 @@ test_port.gd ; tests/integration/test_ships_in_game.gd (on monte la passerelle, 
 
 La tranche verticale **recrée l'easter egg dans un monde en relief** ((HD-2D) personnages en sprites, décor en images, caméra fixe) (Chtholly contre des vagues de Timeres sur les dunes au couchant, mêmes règles, même score) **et l'entoure d'un début de monde** : un village sûr avec trois PNJ, une quête, des objets, et une forêt où quelques Timeres rôdent librement. Elle est jouable dans le navigateur à la fin du jalon M2 et fixe la sensation de combat pour tout ce qui suit.
 
+(F1) Cette section décrit la tranche verticale telle qu'elle a été livrée sur l'ancienne île : l'île, ses zones, son arène et ses vagues, sa quête et ses objets sont retirés (docs/DECISIONS.md, F1). Restent valables les règles de combat, le joueur, la caméra, les visuels, les Timeres (permis là où les règles de l'île les admettent : la surface), le dialogue, l'inventaire et la sauvegarde ci-dessous (v4).
+
 ### Règles de combat reprises de l'easter egg
 
 Les valeurs viennent de `jeu.js` et de `docs/wordend.md` du dépôt Yume-WordPress. Deux conversions : les **distances** à l'échelle du personnage (Chtholly debout = 72 px logiques = 1,5 m), les **vitesses** rapportées à la marche (72 px/s en 2D = 4 m/s en 3D, pour garder les mêmes rapports entre Chtholly et les Timeres). Elles vivent dans `data/attacks` et `data/enemies`, donc réglables sans code.
@@ -2091,32 +2043,9 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 | Menu | `src/ui/main_menu.tscn` | Choix du skin (vignettes, « Ta fée prend la place de Chtholly dans l'histoire. »), Nouvelle partie / Continuer, crédits ; écran « Cliquer pour jouer » avant tout son |
 | Sauvegarde | `SaveManager` | Auto-sauvegarde à `arena_finished`, `item_collected`, `quest_updated`, `zone_entered` ; chargement au menu (pas de sauvegarde « à la fermeture » : le navigateur ne la garantit pas) ; (M2) position écrite toutes les 5 s de jeu si le joueur a bougé, et au départ (focus perdu, page masquée) quand l'état a changé |
 
-### Format des vagues (JSON, `data/waves/dunes.json`)
+### Format des vagues
 
-```json
-{
-  "arena": "dunes",
-  "music": "res://assets/audio/scarborough_fair.ogg",
-  "heal_every_waves": 2,
-  "bonus_per_wave": 50,
-  "spawn_points": ["SpawnN", "SpawnS", "SpawnE", "SpawnW"],
-  "waves": [
-    { "enemies": { "timere_small": 3, "timere_normal": 2 } },
-    { "enemies": { "timere_small": 3, "timere_normal": 2, "timere_runner": 2 } },
-    { "enemies": { "timere_small": 4, "timere_normal": 3, "timere_runner": 1, "timere_big": 1 } }
-  ],
-  "generator": {
-    "count": "3 + 2 * n",
-    "weights": { "timere_small": 4, "timere_normal": 3, "timere_runner": 2, "timere_big": 1 },
-    "max_simultaneous": { "timere_big": 1 },
-    "speed_bonus_per_wave": 0.04,
-    "speed_bonus_max": 0.5,
-    "hp_bonus": { "timere_normal": { "from_wave": 6, "amount": 1 } }
-  }
-}
-```
-
-Les vagues listées sont jouées telles quelles ; au-delà, `generator` produit la vague *n* en tirant `count` ennemis selon `weights`, avec `max_simultaneous` pour le Grand, une vitesse qui augmente de 4 % par vague jusqu'à +50 % et un PV de plus pour le Normal dès la vague 6 : exactement la montée en difficulté de `jeu.js`. `WaveDirector.compose(n)` renvoie cette liste, ce qui la rend testable sans scène.
+(F1) Retiré avec l'arène de l'ancienne île (`data/waves/`, `WaveDirector`).
 
 ### Format du sol des cartes extérieures (refonte, lot E2, `data/maps/<map_id>/`)
 
@@ -2202,7 +2131,7 @@ sud ; **un pixel = une case de 1 m** ; la case (i, j) couvre [i, i + 1] × [j, j
       "speaker": "Nephren",
       "text": "Cinq pages, dans les bois. Pour la lecture du soir.",
       "choices": [
-        { "text": "Je les trouve.", "set_flag": "picture_book_asked", "start_quest": "picture_book", "next": null },
+        { "text": "Je les trouve.", "set_flag": "picture_book_asked", "next": null },
         { "text": "Plus tard.", "next": null }
       ]
     },
@@ -2210,66 +2139,57 @@ sud ; **un pixel = une case de 1 m** ; la case (i, j) couvre [i, i + 1] × [j, j
       "if": { "count": ["page_fragment", 5] },
       "speaker": "Nephren",
       "text": "Cinq. Merci. Maintenant, un lecteur.",
-      "complete_quest": "picture_book",
+      "take_item": ["page_fragment", 5],
       "next": null
     }
   }
 }
 ```
 
-`DialogueRunner` choisit le premier nœud dont la condition `if` est vraie parmi `["done", start]`. Les conditions acceptées : `flag`, `not_flag`, `count` (objet, minimum), `quest` (id, état), `best_score` (arène, minimum). (Lot Q) En plus : condition `quest_step` (quête, étape), état `available` calculé par les prérequis, effets `advance_quest`, `give_item`, `take_item`, `clear_flag`, clés vérifiées à la lecture ; liste complète et ordre d'évaluation : docs/QUETES.md. (Systèmes et textes) Clé de nœud `speaker_id` (portrait et nom par défaut d'un autre PNJ : scènes à plusieurs voix), jeton `{player}` (prénom de la protagoniste : nom affiché du skin choisi sans sa variante « · 3D », premier mot) dans les répliques, les choix et `speaker`, conditions `quest_step` / `not_quest_step` avec une liste d'étapes ; la même grammaire décide de la présence des PNJ (`NpcData.visible_if`).
+`DialogueRunner` choisit le premier nœud dont la condition `if` est vraie parmi `["done", entries…, start]`. Les conditions acceptées : `flag`, `not_flag`, `count` (objet, minimum), (E6) `day`, `slot`, `scene`, `not_scene` ; les effets : `take_item`, `give_item`, `set_flag`, `clear_flag` ; clés vérifiées à la lecture ; liste complète et ordre d'évaluation : docs/DIALOGUES.md. (F1) Les conditions `quest`, `quest_step`, `not_quest_step`, `best_score` et les effets `start_quest`, `advance_quest`, `complete_quest` sont retirés avec le moteur de quêtes. (Systèmes et textes) Clé de nœud `speaker_id` (portrait et nom par défaut d'un autre PNJ : scènes à plusieurs voix), jeton `{player}` (prénom de la protagoniste : nom affiché du skin choisi sans sa variante « · 3D », premier mot) dans les répliques, les choix et `speaker` ; la même grammaire décide de la présence des PNJ (`NpcData.visible_if`).
 
 ### Sauvegarde (JSON, `user://save_v1.json`)
 
 ```json
 {
-  "version": 3,
-  "saved_at": "2026-10-05T10:00:00Z",
+  "version": 4,
+  "saved_at": "2026-10-16T10:00:00Z",
   "skin": "chtholly",
   "max_hp": 5,
-  "position": [12.0, 1.0, -4.5],
-  "map": "ile_ancienne",
-  "zone": "village",
-  "inventory": { "page_fragment": 3, "flower_blue": 1 },
-  "flags": { "quest_pages_accepted": true },
-  "quests": { "pages": "active" },
-  "collected_pickups": ["forest_page_1", "beach_shell_2"],
-  "best_scores": { "dunes": { "score": 640, "wave": 6, "games": 4 } },
-  "quest_progress": { "pages": { "step": "deliver", "count": 0 } },
-  "tracked_quest": "pages",
+  "position": [20.0, 0.2, 16.0],
+  "map": "entrepot",
+  "inventory": { "page_fragment": 3 },
+  "flags": { "met_willem": true },
+  "collected_pickups": ["entrepot_bougie_1"],
   "moment": "couchant",
   "weather": "clair",
-  "island": "ile_ancienne",
-  "known_islands": ["ile_ancienne"]
+  "island": "ile_68",
+  "known_islands": ["ile_68"],
+  "day": 2,
+  "slot": "matin",
+  "scenes_done": ["j1_1_port"],
+  "calendar": { "1": "" },
+  "story_scene": ""
 }
 ```
 
-(Lot Q) Schéma v2 : `quest_progress` (étape courante et compteur de chaque quête active) et
-`tracked_quest` (quête suivie par le HUD). Une sauvegarde v1 est migrée au chargement : chaque
-quête active reprend à sa première étape, la première quête active est suivie. Le nom du fichier
-ne change pas.
+(F1) Schéma v4 : sans `zone`, `quests`, `quest_progress`, `tracked_quest` ni `best_scores` (l'ancienne
+île, ses quêtes et son arène sont retirées). Le nom du fichier ne change pas.
 
-(E1) Schéma v3 : `map`, la carte courante (`position` est dans son repère). Une sauvegarde v2
-(d'avant la refonte) est migrée au chargement : une partie placée (zone connue) reprend dans la
-carte héritée `ile_ancienne`, à la même position, tout le reste inchangé (testé sur une vraie
-sauvegarde du jeu d'avant la refonte, `tests/data/saves/save_v2_avant_refonte.json`) ; une
-carte inconnue au chargement ramène au Spawn de `WorldManager.START_MAP`.
+- Une partie de l'ancienne île — versions 0 à 2 (dont le `localStorage['yn.wordend']` de l'easter
+  egg et la vraie sauvegarde d'avant la refonte, `tests/data/saves/save_v2_avant_refonte.json`), ou
+  v3 hors de l'acte en jours (`day` absent ou 0) — ne se reprend pas : `load_game()` la copie à côté
+  (`legacy_backup_path()`, `user://save_v1.json.ancienne`), démarre une nouvelle partie de l'acte 1
+  avec son skin et pose `SaveManager.notice` (« Ta partie se passait sur l'ancienne île, qui
+  n'existe plus : l'histoire reprend au premier jour. », `data/texts/story.json`, `save/migrated`),
+  que le menu affiche au chargement ; rien ne plante, `load_game()` renvoie OK.
+- Une partie v3 de l'acte en jours passe en v4 sans perte (les champs de l'ancienne île sont
+  retirés) ; une carte inconnue au chargement ramène au Spawn de `WorldManager.START_MAP`.
+- (E1) `map` : la carte courante (`position` est dans son repère). (E9) `moment`, `weather` ; (X1)
+  `island`, `known_islands` ; (E4) `day`, `slot` ; (E6) `scenes_done`, `calendar`, `story_scene` :
+  champs facultatifs (absents : valeurs par défaut). Mal typés : la sauvegarde est refusée.
 
-(E9) `moment` et `weather` : le moment de la journée et le temps qu'il fait
-(`GameState.MOMENTS`, `GameState.WEATHERS`), champs facultatifs du schéma v3 sans migration :
-absents (sauvegarde d'avant E9) ou inconnus, la partie reprend au couchant, sans pluie.
-
-(E6) `scenes_done` (scènes jouées), `calendar` (jour → ligne écrite, `""` : la ligne du jour) et
-`story_scene` (scène en cours, rejouée depuis son début à la reprise), avec (E4) `day` et `slot` :
-champs facultatifs du schéma v3, sans migration ; absents, la partie est hors de l'acte en jours
-(une sauvegarde d'avant la refonte reprend sur l'ancienne île).
-
-(X1) `island` (l'île courante, `data/world/islands/<id>.json`) et `known_islands` (les îles où le
-joueur est allé, dans l'ordre) : champs facultatifs du schéma v3, sans migration ; absents, ils
-sont vides et `WorldManager` les remplit à l'arrivée dans la carte (l'île se déduit de la carte).
-Mal typés : la sauvegarde est refusée, comme pour les autres champs.
-
-`collected_pickups` liste les `name` uniques des `pickup` déjà pris ; `best_scores` reprend ce que l'easter egg garde dans `localStorage['yn.wordend']` (meilleur score, nombre de parties), par arène.
+`collected_pickups` liste les `name` uniques des `pickup` déjà pris.
 
 ### Critères d'acceptation de la tranche verticale
 
@@ -2403,7 +2323,7 @@ Si `docker cp` échoue parce que les chemins de l'image ont changé, `docker run
 | `tools/godot --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit` | Tests unitaires et d'intégration | 10 à 30 s |
 | `tools/godot --headless --script tools/smoke.gd` | Instancie chaque scène de `src/` et la libère sans erreur | 10 s |
 | `tools/godot --headless --export-release Web build/web/index.html` | Export complet, taille du build | 30 à 90 s |
-| `tools/screenshot.sh res://src/world/island.tscn build/shots/island.png` | Rendu réel d'une scène (Xvfb + Mesa llvmpipe, 1280 × 720) ; l'agent ouvre ensuite le PNG avec son outil de lecture d'images | 5 à 15 s |
+| `tools/screenshot.sh res://src/world/maps/essai/essai.tscn build/shots/essai.png` | Rendu réel d'une scène (Xvfb + Mesa llvmpipe, 1280 × 720) ; l'agent ouvre ensuite le PNG avec son outil de lecture d'images | 5 à 15 s |
 | `tools/check.sh` | Enchaîne tout ce qui précède ; c'est la définition de « vert » | 2 à 4 min |
 
 `tools/screenshot.gd` étend `SceneTree` : il charge la scène passée en argument, l'ajoute à la racine, attend trois frames, écrit `get_root().get_viewport().get_texture().get_image().save_png(path)` et quitte. Lancé par `xvfb-run -a godot --rendering-driver opengl3 --resolution 1280x720 --script tools/screenshot.gd -- <scene> <png>` avec `LIBGL_ALWAYS_SOFTWARE=1`. Un agent qui touche au rendu joint la capture à sa PR.
@@ -2643,7 +2563,7 @@ couches de collision) font foi : on code contre eux, on ne les change pas sans P
 ## Commandes
 - Vérification complète (= « vert ») : `tools/check.sh`
 - Tests seuls : `tools/godot --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit`
-- Capture d'une scène : `tools/screenshot.sh res://src/world/island.tscn build/shots/island.png`, puis ouvre le PNG
+- Capture d'une scène : `tools/screenshot.sh res://src/world/maps/essai/essai.tscn build/shots/essai.png`, puis ouvre le PNG
 - Export Web : `tools/godot --headless --export-release Web build/web/index.html`
 - Lint : `gdlint src tests && gdformat --check src tests` (`gdformat src tests` pour corriger)
 
@@ -2853,7 +2773,7 @@ $G --headless --export-release Web build/web/index.html || fail "export Web"
 du -sh build/web
 
 echo "== capture"
-tools/screenshot.sh res://src/world/island.tscn build/shots/island.png || echo "capture indisponible (pas de Xvfb ou binaire docker)"
+tools/screenshot.sh res://src/world/maps/essai/essai.tscn build/shots/essai.png || echo "capture indisponible (pas de Xvfb ou binaire docker)"
 
 echo "VERT"
 ```
