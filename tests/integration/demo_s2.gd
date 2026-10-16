@@ -18,6 +18,8 @@ const SEEN := "user://demo_s2_seen.cfg"
 const READ_TIME := 1.1
 ## Temps donné à pied pour atteindre ce qu'attend une scène, avant de poser le joueur (s).
 const WALK_GIVE_UP := 9.0
+## Images avant de lancer la partie.
+const BOOT_FRAMES := 6
 ## Où reprendre sur la carte d'une scène (S2_START) : son arrivée.
 const START_POINTS := {
 	"entrepot": Vector3(42.0, 0.0, 33.0),
@@ -50,6 +52,7 @@ var _previous_seen := ""
 var _index_lines: PackedStringArray = []
 var _duel_phase := &""
 var _duel_since := 0.0
+var _boot_frames := 0
 
 
 func _ready() -> void:
@@ -70,8 +73,14 @@ func _ready() -> void:
 	StoryDirector.seen_path = SEEN
 	StoryDirector.forget_seen()
 	WorldManager.fade_time = 0.2
-	_resume()
 	process_mode = Node.PROCESS_MODE_ALWAYS
+
+
+## La partie démarre quelques images après l'arrivée de la démo : la fumée (tools/smoke.gd), qui
+## libère chaque scène au bout de deux images, ne la lance jamais (un changement de carte en
+## cours, libéré avec elle, laissait une erreur de WorldManager).
+func _start_game() -> void:
+	_resume()
 	_game = GAME_SCENE.instantiate() as Node3D
 	_game.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(_game)
@@ -136,6 +145,11 @@ func _start_at(state: Dictionary) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _game == null:
+		_boot_frames += 1
+		if _boot_frames == BOOT_FRAMES:
+			_start_game()
+		return
 	if _done or _player == null:
 		return
 	_elapsed += delta
