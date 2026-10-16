@@ -114,7 +114,12 @@ func test_day_1_end_to_end_until_day_2() -> void:
 	await walk_to_point(&"nygglatho_tapis", 1.5)
 	trace("23")
 	assert_true(await play_until_done(&"j1_5_premiers_pas", 60.0, {"Ouvrir.": 1}))
-	assert_eq(StoryDirector.hint(), "Couche Pannibal, au dortoir.")
+	# (S2) La fin de 1.5 laisse {player} au dortoir : 1.6 part tout de suite, et l'indice qui
+	# l'attendait s'efface avec elle au lieu de rester sur la séquence.
+	if StoryDirector.current_scene() == &"j1_6_diner":
+		assert_eq(StoryDirector.hint(), "", "l'indice ne traîne pas sur la séquence")
+	else:
+		assert_eq(StoryDirector.hint(), "Couche Pannibal, au dortoir.")
 	# 1.6 (séquence) puis 1.7.
 	trace("24")
 	await walk_to_point(&"dortoir_b", 1.5)
