@@ -22,6 +22,8 @@ extends RefCounted
 ##   clairière (le jour 11). Renvoie l'exercice (SenioriousTraining) : finished(résultat) ;
 ##   stop_seniorious_training(). Inscrit au récit sous STORY_SENIORIOUS
 ##   (« entrainement_seniorious ») : play_story_seniorious(params).
+## - stop_all() : (X-L2) arrête et retire les jeux du récit en cours (une scène passée) ; le match
+##   de ballon de la vie continue.
 ## - dev_start(jeu) : ce que fait `?jeu=ballon` / `baton` / `duel` / `seniorious` (voir
 ##   src/test_shortcuts.gd).
 ## Les PNJ qui ne sont pas encore sur la carte y sont posés (LifeDirector.spawn_actor) ; à la fin
@@ -460,6 +462,32 @@ static func play_story_seniorious(params: Dictionary) -> bool:
 	if not flag.is_empty():
 		GameState.set_flag(flag, bool(result.get("success", false)))
 	return true
+
+
+# --- Tout arrêter (X-L2) -------------------------------------------------------------------------
+
+
+## (X-L2) Arrête les jeux du récit en cours (le duel, l'embuscade, l'entraînement au bâton,
+## l'entraînement avec Seniorious : stop_*) et les retire tout de suite de la carte (le bâton n'y
+## attend pas sa pose de fin) : une scène passée (StoryRunner.skip). Chacun émet finished
+## (« stopped ») et rend arme, image et personnages. Le match de ballon, une activité de la vie,
+## continue (stop_ball_match).
+static func stop_all() -> void:
+	stop_duel()
+	stop_ambush()
+	stop_seniorious_training()
+	var training := staff_training()
+	if training == null:
+		return
+	if training.is_running():
+		training.stop()
+	# La pose de fin (end_time) passée d'un coup, par pas d'une demi-seconde (le nœud se retire au
+	# pas qui l'achève) : personnages rendus, nœud retiré.
+	var steps := ceili(training.rule("end_time", 3.0) / 0.5) + 1
+	for _step: int in steps:
+		if training.phase != &"ended" or training.is_queued_for_deletion():
+			break
+		training.advance(0.5)
 
 
 # --- Raccourci de développement ------------------------------------------------------------------

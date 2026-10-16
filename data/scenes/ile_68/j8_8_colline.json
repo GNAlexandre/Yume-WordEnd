@@ -14,6 +14,7 @@
     "willem",
     "chtholly_double"
   ],
+  "skip": {"flags": ["j8_talismans"]},
   "steps": [
     {
       "do": "place",

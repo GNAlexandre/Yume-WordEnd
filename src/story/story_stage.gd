@@ -320,7 +320,10 @@ func place_player(at: Vector3, facing: Vector3 = Vector3.ZERO) -> void:
 
 
 ## Mène le joueur à pied jusqu'à target (chemin de la navigation, vraie physique) ; coroutine.
-func walk_player(target: Vector3, gait: StringName = &"marche") -> void:
+## (X-L2) stop_when devient vrai (scène passée) : la marche cesse, le joueur est posé au but.
+func walk_player(
+	target: Vector3, gait: StringName = &"marche", stop_when: Callable = Callable()
+) -> void:
 	var body := player()
 	if body == null:
 		return
@@ -336,7 +339,10 @@ func walk_player(target: Vector3, gait: StringName = &"marche") -> void:
 	var stuck := 0.0
 	var index := 0
 	while (
-		index < waypoints.size() and waited < StoryRunner.WALK_TIMEOUT and is_instance_valid(body)
+		index < waypoints.size()
+		and waited < StoryRunner.WALK_TIMEOUT
+		and is_instance_valid(body)
+		and not (stop_when.is_valid() and bool(stop_when.call()))
 	):
 		var last := index == waypoints.size() - 1
 		var toward := waypoints[index] - body.global_position
