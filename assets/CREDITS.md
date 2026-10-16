@@ -90,7 +90,7 @@ Neuf PNG générés avec OpenAI Image Generation : traces et leur fin estompée,
 - `assets/hd2d/interior/props/desk_clean_brooch.png` — 106 × 101 px.
 - `assets/hd2d/interior/props/crystal_lamp_table.png` — 29 × 48 px.
 
-## Cahier n° 6 — C.5, C.8 et C.9 : chaumières, insectes et portraits
+## Cahier n° 6 — C.5 et C.8 : chaumières et insectes
 
 Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
 
@@ -116,8 +116,6 @@ Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAIS
 - `assets/hd2d/anim/dragonfly_blue.png`
 - `assets/hd2d/anim/dragonfly_amber.png`
 
-- `assets/characters/kana/kana_portrait.png` — portrait C.9, mêmes références que les sprites livrés.
-- `assets/characters/giniette/giniette_portrait.png` — portrait C.9, mêmes références que les sprites livrés.
 
 ## Cahier n° 5 — Île 68, R0 : premier lot de mobilier
 
