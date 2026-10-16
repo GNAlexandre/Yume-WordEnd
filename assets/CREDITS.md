@@ -200,6 +200,13 @@ Six PNG corrigés avec ChatGPT / image_gen : `assets/hd2d/sky/sky_dusk.png`, `as
 | `assets/hd2d/fx/sign_talk.png`, `sign_examine.png`, `sign_take.png`, `sign_enter.png` (signes d'interaction, remplaçants commandés au cahier n° 5, R0.13) | généré par `tools/hd2d_assets.py gen` (recettes `tools/hd2d_sky.py`) | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |
 | `assets/ui/heart_full.png`, `assets/ui/heart_empty.png` (cœurs « Nuit douce », redessinés) | généré par `tools/gen_ui_icons.py` | — | licence du code du projet (MIT proposée, PLAN.md section 13) | U1 |
 
+
+
+## Cahier n° 6 — village et nuit (16 octobre 2026)
+
+Généré avec ChatGPT le 16 octobre 2026, lot B : chaume, lavoir, meule de foin, charrette de foin, ruches, talus, traces de pas, café de nuit et maison Limashenka de nuit (neuf PNG). Références : images existantes des mêmes lieux, matériaux et accessoires. Réduction/recalage au plus proche voisin et montage localisé autorisés ; alpha des façades de jour conservé, vitrage crème assemblé depuis un échantillon généré, empreintes générées réassemblées à 43 px de pas. Originaux et générations conservés séparément. Deux chemins nocturnes déclarés au manifeste, alpha doux des empreintes aligné sur le cahier ; aucune logique moteur modifiée. Placement et validation en jeu restent à effectuer.
+
+
 ## Île 68 — R2 priorité 2 : tenues de pluie A (15 octobre 2026)
 
 Généré avec ChatGPT le 15 octobre 2026, cahier n° 5 (`docs/ASSETS_HD2D_ILE68.md`), lot R2, section 4.7 : `almita/almita_rain` (91 px), `chtholly/chtholly_rain` (144 px), `collon/collon_rain` (115 px), chacun en profil droit, face et dos, avec leurs JSON ; neuf PNG et159 poses. Repos, marche, dialogue et course ; saut à pieds joints dans une flaque non dessinée pour Almita et Collon. Capuche relevée pour Almita et Chtholly, rabattue pour Collon, bandeau rouge conservé ; aucun armement.
