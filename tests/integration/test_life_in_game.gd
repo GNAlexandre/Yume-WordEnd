@@ -1,6 +1,6 @@
 extends "res://tests/stubs/m2_game_test.gd"
-## (E4) La vie dans la vraie partie (main.tscn, menu, nouvelle partie) : l'ancienne île garde ses
-## PNJ immobiles, ses dialogues et ses quêtes (aucun emploi du temps n'y mène) ; dans le
+## (E4) La vie dans la vraie partie (main.tscn, menu, nouvelle partie) : une carte sans emploi du
+## temps (la carte d'essai) n'a ni PNJ ni vie ; dans le
 ## rez-de-chaussée d'essai, le moment changé par l'API d'E9 (Atmosphere.set_moment) change le
 ## créneau, et les PNJ marchent vers leurs nouvelles places ; on change de carte par les sorties
 ## d'essai et l'on retrouve ceux qui sont passés de l'autre côté.
@@ -25,25 +25,14 @@ func after_each() -> void:
 	LifeData.use_content(&"")
 
 
-func test_the_old_island_keeps_its_npcs() -> void:
+func test_a_map_without_schedule_has_no_life() -> void:
 	assert_true(await new_game_from_menu(), "partie lancée depuis le menu")
-	assert_eq(WorldManager.current_map(), WorldManager.LEGACY_MAP)
-	assert_eq(LifeDirector.actors().size(), 0, "aucun emploi du temps sur l'ancienne île")
+	assert_eq(WorldManager.current_map(), &"essai")
+	assert_eq(LifeDirector.actors().size(), 0, "aucun emploi du temps sur la carte d'essai")
 	var npcs := get_tree().get_nodes_in_group(&"interactable").filter(
 		func(node: Node) -> bool: return node is Npc
 	)
-	assert_gt(npcs.size(), 5, "les PNJ de l'île sont là")
-	for npc: Npc in npcs:
-		assert_null(npc.life, "%s : immobile, comme avant" % npc.name)
-	# Un dialogue de l'île marche toujours : on parle à Nygglatho.
-	var nygglatho: Npc = null
-	for npc: Npc in npcs:
-		if npc.data != null and npc.data.id == &"nygglatho" and npc.is_present():
-			nygglatho = npc
-	assert_not_null(nygglatho)
-	if nygglatho != null:
-		nygglatho.interact(player)
-		assert_true(DialogueRunner.is_any_running(), "dialogue de l'île lancé")
+	assert_eq(npcs.size(), 0, "aucun PNJ")
 
 
 func test_slot_change_by_the_light_api_makes_them_walk() -> void:

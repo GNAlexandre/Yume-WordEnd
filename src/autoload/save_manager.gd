@@ -1,35 +1,33 @@
 extends Node
-## SaveManager : sauvegarde JSON de GameState (schéma v3, PLAN.md section 4). Propriétaire : L8
-## (migration v1 → v2 : Lot Q, avancement des quêtes en étapes ; v2 → v3 : E1, cartes).
+## SaveManager : sauvegarde JSON de GameState (schéma v4, PLAN.md section 4). Propriétaire : L8
+## ((F1) v4 : l'ancienne île retirée, sans zone, quêtes ni scores d'arène).
 ##
-## Fichier save_path : {"version": 3, "saved_at": "AAAA-MM-JJTHH:MM:SSZ" (UTC), puis les champs
-## de GameState.to_dict() dans leur ordre}. (E9) moment et weather sont des champs facultatifs du
-## schéma v3, sans migration : absents, GameState prend le couchant sans pluie. (X1) island et
-## known_islands aussi : absents, l'île courante se déduit de la carte à l'arrivée. (E4) day et
-## slot, (E6) scenes_done, calendar et story_scene aussi : absents, hors de l'acte en jours, ou
-## jour, scènes et calendrier vierges (la nouvelle partie de l'acte est posée par StoryDirector à
-## son arrivée sur l'île de l'acte, WorldManager.start_map). new_game(),
-## load_game() et import_json() émettent EventBus.game_loaded en cas de succès : c'est le seul
-## signal que main.gd écoute pour passer du menu au jeu. Choix détaillés : docs/DECISIONS.md,
-## sections L8 et Lot Q. Le nom du fichier (save_v1.json) ne suit pas la version du schéma : il
-## ne change jamais (sauvegardes gardées).
+## Fichier save_path : {"version": 4, "saved_at": "AAAA-MM-JJTHH:MM:SSZ" (UTC), puis les champs
+## de GameState.to_dict() dans leur ordre}. (E9) moment et weather, (X1) island et known_islands,
+## (E4) day et slot, (E6) scenes_done, calendar et story_scene sont facultatifs : absents, le
+## couchant sans pluie, l'île déduite de la carte à l'arrivée, hors de l'acte en jours, scènes et
+## calendrier vierges (la nouvelle partie de l'acte est posée par StoryDirector à son arrivée sur
+## l'île de l'acte, WorldManager.start_map). new_game(), load_game() et import_json() émettent
+## EventBus.game_loaded en cas de succès : c'est le seul signal que main.gd écoute pour passer
+## du menu au jeu. Choix détaillés : docs/DECISIONS.md, sections L8, Lot Q et F1. Le nom du
+## fichier (save_v1.json) ne suit pas la version du schéma : il ne change jamais (sauvegardes
+## gardées).
 ##
 ## - Écriture sûre : <save_path>.tmp est écrit et fermé, puis renommé en save_path ; une
 ##   écriture interrompue laisse l'ancienne sauvegarde intacte.
 ## - Fichier corrompu ou illisible : load_game() le met de côté dans backup_path(), démarre une
 ##   nouvelle partie et renvoie ERR_FILE_CORRUPT ; last_error (et push_error) l'explique.
-## - Versions : version absente ou 0 = format v0 (voir _migrate_v0), migré en v1, puis v1 migré
-##   en v2 (_migrate_v1 : avancement des quêtes actives), puis v2 en v3 (_migrate_v2 : la
-##   partie d'avant la refonte reprend dans la carte héritée, ile_ancienne, à la même place) ;
-##   version plus récente que SAVE_VERSION : refus (ERR_INVALID_DATA), GameState et fichier
-##   intacts.
-## - Auto-sauvegarde sur arena_finished, item_collected, quest_updated, quest_step_completed,
-##   zone_entered, (E1) map_entered et save_requested, seulement entre game_loaded et
-##   close_game() : la première
-##   demande lance un
-##   minuteur de autosave_delay s (actif même en pause) ; les demandes suivantes s'y regroupent
-##   et une seule écriture a lieu, à la fin. L'état écrit est donc complet (zone mise à jour par
-##   WorldManager, récompense de quête donnée) et il y a au plus une écriture par délai.
+## - Versions : (F1) une partie de l'ancienne île (is_legacy : version 0 à 2, ou v3 hors de
+##   l'acte en jours, day = 0) ne se reprend plus : load_game() et import_json() en gardent une
+##   copie (load_game : legacy_backup_path()), démarrent une nouvelle partie de l'acte 1 avec son
+##   skin (started_new) et posent notice (data/texts/story.json, save/migrated), que le menu
+##   affiche au chargement ; une partie v3 de l'acte en jours passe en v4 sans perte (les champs
+##   de l'ancienne île sont retirés) ; version plus récente que SAVE_VERSION : refus
+##   (ERR_INVALID_DATA), GameState et fichier intacts.
+## - Auto-sauvegarde sur item_collected, (E1) map_entered et save_requested, seulement entre
+##   game_loaded et close_game() : la première demande lance un minuteur de autosave_delay s
+##   (actif même en pause) ; les demandes suivantes s'y regroupent et une seule écriture a lieu,
+##   à la fin. L'état écrit est donc complet et il y a au plus une écriture par délai.
 ## - Web : user:// vit dans IndexedDB, que Godot ne met à jour qu'après la fermeture d'un
 ##   fichier ouvert en écriture : le fichier temporaire est toujours fermé explicitement.
 ## - Position (intégration M2) : aucun des signaux d'auto-sauvegarde ne suit le joueur qui se
@@ -43,7 +41,15 @@ extends Node
 ## Une sauvegarde vient d'être écrite (save, auto-sauvegarde, flush) : pour un indicateur du HUD.
 signal saved(path: String)
 
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
+## (F1) Dernière version qui pouvait porter une partie de l'ancienne île (v3 hors de l'acte).
+const LEGACY_VERSION := 3
+## (F1) Champs de l'ancienne île, retirés en v4.
+const LEGACY_FIELDS: Array[String] = [
+	"zone", "quests", "quest_progress", "tracked_quest", "best_scores"
+]
+## (F1) Texte de l'avis d'une partie de l'ancienne île reprise à l'acte 1 (data/texts/story.json).
+const LEGACY_NOTICE_KEY := "save/migrated"
 ## Chemin historique, gardé quelle que soit la version du schéma (les parties y sont).
 const DEFAULT_SAVE_PATH := "user://save_v1.json"
 ## Regroupement des auto-sauvegardes : au plus une écriture par délai (secondes).
@@ -55,8 +61,8 @@ const DEFAULT_CHECKPOINT_DISTANCE := 1.0
 const POSITION_EPSILON := 0.05
 const TEMP_SUFFIX := ".tmp"
 const BACKUP_SUFFIX := ".bak"
-## Arène de l'easter egg : les scores à plat du format v0 y sont rangés.
-const V0_ARENA := "dunes"
+## (F1) Copie d'une partie de l'ancienne île, gardée quand load_game() la remplace.
+const LEGACY_SUFFIX := ".ancienne"
 ## Fermeture, perte du focus, arrière-plan : l'écriture en attente est faite sans attendre, sinon
 ## l'état est écrit s'il a changé depuis la dernière écriture (save_on_leave).
 const FLUSH_NOTIFICATIONS: Array[int] = [
@@ -79,10 +85,16 @@ var checkpoint_distance: float = DEFAULT_CHECKPOINT_DISTANCE
 var last_error: String = ""
 ## (E6) Vrai si la dernière partie chargée est une nouvelle partie (new_game, ou fichier illisible
 ## remplacé par une nouvelle partie) ; faux pour une partie lue (load_game, import_json).
-## StoryDirector n'ouvre l'acte qu'à une nouvelle partie.
+## StoryDirector n'ouvre l'acte qu'à une nouvelle partie. (F1) Vrai aussi pour une partie de
+## l'ancienne île reprise à l'acte 1.
 var started_new: bool = false
+## (F1) Avis à montrer au joueur après le dernier chargement ("" : aucun) : une partie de
+## l'ancienne île reprise à l'acte 1 (le menu l'affiche, MenuNotice).
+var notice: String = ""
 
 var _game_loaded: bool = false
+## (F1) La dernière sauvegarde lue par _decode est une partie de l'ancienne île.
+var _decoded_legacy: bool = false
 var _timer: Timer
 ## GameState.to_dict() de la dernière écriture de la partie suivie ({} : rien d'écrit encore).
 var _written: Dictionary = {}
@@ -101,11 +113,7 @@ func _ready() -> void:
 	_timer.timeout.connect(_on_autosave_timeout)
 	add_child(_timer)
 	EventBus.game_loaded.connect(_on_game_loaded)
-	EventBus.arena_finished.connect(_request_autosave.unbind(3))
 	EventBus.item_collected.connect(_request_autosave.unbind(2))
-	EventBus.quest_updated.connect(_request_autosave.unbind(2))
-	EventBus.quest_step_completed.connect(_request_autosave.unbind(2))
-	EventBus.zone_entered.connect(_request_autosave.unbind(1))
 	EventBus.map_entered.connect(_request_autosave.unbind(1))
 	EventBus.save_requested.connect(_request_autosave)
 	_watch_page_visibility()
@@ -138,6 +146,11 @@ func backup_path() -> String:
 	return save_path + BACKUP_SUFFIX
 
 
+## (F1) Où load_game() garde une partie de l'ancienne île avant de la remplacer.
+func legacy_backup_path() -> String:
+	return save_path + LEGACY_SUFFIX
+
+
 ## Faux si user:// n'est pas conservé (Web sans IndexedDB, navigation privée) : le menu peut
 ## prévenir le joueur et lui proposer l'export.
 func is_persistent() -> bool:
@@ -153,6 +166,8 @@ func save() -> Error:
 ## ERR_FILE_NOT_FOUND (pas de sauvegarde : rien ne change), ERR_INVALID_DATA (version plus
 ## récente que le jeu : refusée, GameState et fichier intacts) ou ERR_FILE_CORRUPT (fichier
 ## illisible ou invalide : mis dans backup_path(), nouvelle partie démarrée, game_loaded émis).
+## (F1) Une partie de l'ancienne île renvoie OK : copiée dans legacy_backup_path(), elle est
+## remplacée par une nouvelle partie de l'acte 1 avec son skin, et notice dit pourquoi.
 func load_game() -> Error:
 	if not has_save():
 		last_error = "Aucune sauvegarde dans %s." % save_path
@@ -170,6 +185,10 @@ func load_game() -> Error:
 	if err != OK:
 		return _recover(last_error)
 	last_error = ""
+	if _decoded_legacy:
+		DirAccess.copy_absolute(save_path, legacy_backup_path())
+		_start_from_legacy(data)
+		return OK
 	_apply(data)
 	return OK
 
@@ -178,7 +197,7 @@ func load_game() -> Error:
 ## la sauvegarde autosave_delay s plus tard.
 func new_game(skin_id: StringName) -> void:
 	last_error = ""
-	_start_new_game(skin_id)
+	_start_new_game(skin_id, "")
 
 
 ## Sauvegarde courante en texte JSON (menu « Exporter », section 13).
@@ -189,13 +208,17 @@ func export_json() -> String:
 ## Remplace GameState par une sauvegarde JSON de version gérée (menu « Importer ») et émet
 ## game_loaded ; elle remplace la sauvegarde autosave_delay s plus tard. ERR_PARSE_ERROR si le
 ## texte n'est pas un objet JSON, ERR_INVALID_DATA si la version est plus récente que le jeu ou
-## si un champ est invalide ; GameState n'est alors pas modifié et last_error explique.
+## si un champ est invalide ; GameState n'est alors pas modifié et last_error explique. (F1) Une
+## partie de l'ancienne île démarre une nouvelle partie de l'acte 1 avec son skin (notice).
 func import_json(text: String) -> Error:
 	var data := {}
 	var err := _decode(text, data)
 	if err != OK:
 		return ERR_INVALID_DATA if err == ERR_FILE_CORRUPT else err
 	last_error = ""
+	if _decoded_legacy:
+		_start_from_legacy(data)
+		return OK
 	_apply(data)
 	return OK
 
@@ -259,15 +282,25 @@ func close_game(flush_pending: bool = true) -> void:
 # --- Partie -----------------------------------------------------------------------------------
 
 
-func _start_new_game(skin_id: StringName) -> void:
+func _start_new_game(skin_id: StringName, notice_text: String) -> void:
 	started_new = true
+	notice = notice_text
 	GameState.reset()
 	GameState.skin_id = skin_id
 	_begin()
 
 
+## (F1) Partie de l'ancienne île : nouvelle partie de l'acte 1 avec le skin de la sauvegarde (un
+## skin inconnu est remplacé par le skin par défaut, comme ailleurs), et l'avis du menu.
+func _start_from_legacy(data: Dictionary) -> void:
+	var skin: Variant = data.get("skin")
+	var skin_id := StringName(skin) if skin is String else &""
+	_start_new_game(skin_id, DialogueRunner.story_text(LEGACY_NOTICE_KEY))
+
+
 func _apply(data: Dictionary) -> void:
 	started_new = false
+	notice = ""
 	data.erase("version")
 	data.erase("saved_at")
 	GameState.from_dict(data)
@@ -293,7 +326,7 @@ func _recover(reason: String) -> Error:
 		"Sauvegarde illisible (%s : %s). %s ; nouvelle partie." % [save_path, reason, backup]
 	)
 	push_error("SaveManager : " + last_error)
-	_start_new_game(GameState.skin_id)
+	_start_new_game(GameState.skin_id, "")
 	return ERR_FILE_CORRUPT
 
 
@@ -390,10 +423,12 @@ func _utc_now() -> String:
 # --- Lecture, migration, validation -----------------------------------------------------------
 
 
-## Analyse un texte de sauvegarde. OK : out reçoit les données migrées en v3 et vérifiées.
+## Analyse un texte de sauvegarde. OK : out reçoit les données migrées en v4 et vérifiées, ou
+## (F1) celles d'une partie de l'ancienne île (_decoded_legacy vrai : seul son skin sera repris).
 ## Sinon last_error explique : ERR_PARSE_ERROR (pas un objet JSON), ERR_INVALID_DATA (version
 ## plus récente que le jeu), ERR_FILE_CORRUPT (version ou champ invalide).
 func _decode(text: String, out: Dictionary) -> Error:
+	_decoded_legacy = false
 	var parsed: Variant = _parse_object(text)
 	if parsed == null:
 		return ERR_PARSE_ERROR
@@ -405,26 +440,30 @@ func _decode(text: String, out: Dictionary) -> Error:
 	if version < 0:
 		last_error = "champ « version » invalide"
 		return ERR_FILE_CORRUPT
-	# Une étape par version, dans l'ordre : v0 → v1 → v2 → v3.
-	if version == 0:
-		data = _migrate_v0(data)
-		version = 1
-	if version < SAVE_VERSION:
-		var old_field := _invalid_field(data)
-		if not old_field.is_empty():
-			last_error = "champ « %s » invalide" % old_field
-			return ERR_FILE_CORRUPT
-	if version == 1:
-		data = _migrate_v1(data)
-		version = 2
-	if version == 2:
-		data = _migrate_v2(data)
+	if _is_legacy(data, version):
+		_decoded_legacy = true
+		out.merge(data, true)
+		return OK
+	if version == LEGACY_VERSION:
+		data = _migrate_v3(data)
 	var field := _invalid_field(data)
 	if not field.is_empty():
 		last_error = "champ « %s » invalide" % field
 		return ERR_FILE_CORRUPT
 	out.merge(data, true)
 	return OK
+
+
+## (F1) Vrai pour une partie de l'ancienne île, qui ne se reprend plus : versions 0 à 2 (toutes
+## d'avant la refonte), ou v3 hors de l'acte en jours (day absent ou 0 : l'ancienne île, ou une
+## partie jamais posée dans l'acte).
+func _is_legacy(data: Dictionary, version: int) -> bool:
+	if version < LEGACY_VERSION:
+		return true
+	if version > LEGACY_VERSION:
+		return false
+	var day: Variant = data.get("day", 0)
+	return not (_is_number(day) and float(day) >= 1.0)
 
 
 ## Objet JSON du texte, ou null (last_error explique).
@@ -451,82 +490,16 @@ func _version_of(data: Dictionary) -> int:
 	return int(version)
 
 
-## Format v0 : sauvegarde d'avant le schéma versionné, sans version (ou version 0) ni
-## best_scores ; le score de l'unique arène de l'easter egg (les dunes) y est à plat : best,
-## wave, games, ou meilleur et parties, les noms de localStorage['yn.wordend'] dans jeu.js. Les
-## autres champs sont ceux de v1, tous facultatifs ; les clés inconnues (maj, volume, muet de
-## l'easter egg) sont ignorées. Le texte de localStorage['yn.wordend'] est donc une sauvegarde
-## v0 valide.
-func _migrate_v0(data: Dictionary) -> Dictionary:
-	var entry := {
-		"score": _take_count(data, ["best", "meilleur"]),
-		"wave": _take_count(data, ["wave"]),
-		"games": _take_count(data, ["games", "parties"]),
-	}
-	if not data.has("best_scores") and (entry["score"] > 0 or entry["games"] > 0):
-		data["best_scores"] = {V0_ARENA: entry}
-	data["version"] = 1
-	return data
-
-
-## Format v1 (jalon M2) → v2 (Lot Q) : v1 n'a que l'état de chaque quête. Chaque quête active
-## reprend à sa première étape (compteur à 0) dans quest_progress, et la première quête active
-## devient la quête suivie (tracked_quest). Une quête sans données (data/quests) n'a pas
-## d'avancement ; le QuestTracker vérifie tout au chargement (étape validée par l'état de la
-## partie : objets déjà en poche, drapeau déjà posé…). Quête des pages : son unique étape.
-func _migrate_v1(data: Dictionary) -> Dictionary:
-	var progress := {}
-	var first_active := ""
-	var quests: Variant = data.get("quests", {})
-	if quests is Dictionary:
-		for quest_id: Variant in quests:
-			if str(quests[quest_id]) != String(GameState.QUEST_ACTIVE):
-				continue
-			var quest := QuestData.find(StringName(str(quest_id)))
-			if quest == null:
-				continue
-			progress[str(quest_id)] = {"step": String(quest.steps[0].id), "count": 0}
-			if first_active.is_empty():
-				first_active = str(quest_id)
-	if not data.has("quest_progress"):
-		data["quest_progress"] = progress
-	if not data.has("tracked_quest"):
-		data["tracked_quest"] = first_active
-	data["version"] = 2
-	return data
-
-
-## Format v2 (Lot Q) → v3 (E1, cartes de la refonte) : v2 n'a qu'une île, à cinq zones, devenue
-## la carte héritée (WorldManager.LEGACY_MAP, mêmes coordonnées). Une partie déjà placée (zone
-## connue) y reprend à sa position, sans perte ; une partie encore sans zone (nouvelle partie
-## pas encore posée) garde une carte vide : game.gd la pose au Spawn de la carte de départ,
-## celui du village, comme avant.
-func _migrate_v2(data: Dictionary) -> Dictionary:
-	if not data.has("map"):
-		var zone: Variant = data.get("zone", "")
-		var placed := zone is String and not (zone as String).is_empty()
-		data["map"] = String(WorldManager.LEGACY_MAP) if placed else ""
+## (F1) Format v3 (une partie de l'acte en jours) → v4 : les champs de l'ancienne île (zone,
+## quêtes, avancement, quête suivie, scores d'arène) sont retirés ; le reste ne change pas.
+func _migrate_v3(data: Dictionary) -> Dictionary:
+	for key: String in LEGACY_FIELDS:
+		data.erase(key)
 	data["version"] = SAVE_VERSION
 	return data
 
 
-## Retire les clés keys de data et renvoie la valeur de la première présente, en entier positif
-## ou nul (nombre ou texte numérique, comme parseInt dans jeu.js) ; 0 si aucune.
-func _take_count(data: Dictionary, keys: Array[String]) -> int:
-	var count := -1
-	for key: String in keys:
-		if data.has(key):
-			if count < 0:
-				var value: Variant = data[key]
-				if _is_number(value):
-					count = int(value)
-				elif value is String:
-					count = (value as String).to_int()
-			data.erase(key)
-	return maxi(count, 0)
-
-
-## Premier champ dont la valeur ne suit pas le schéma v3, "" si tout va bien. Un champ absent est
+## Premier champ dont la valeur ne suit pas le schéma v4, "" si tout va bien. Un champ absent est
 ## permis : GameState.from_dict lui donne sa valeur par défaut.
 func _invalid_field(data: Dictionary) -> String:
 	var checks: Dictionary[String, Callable] = {
@@ -535,14 +508,9 @@ func _invalid_field(data: Dictionary) -> String:
 		"max_hp": _is_hp,
 		"position": _is_vector,
 		"map": _is_text,
-		"zone": _is_text,
 		"inventory": _is_map.bind(_is_count),
 		"flags": _is_map.bind(_is_bool),
-		"quests": _is_map.bind(_is_text),
 		"collected_pickups": _is_text_list,
-		"best_scores": _is_map.bind(_is_score),
-		"quest_progress": _is_map.bind(_is_progress),
-		"tracked_quest": _is_text,
 		"moment": _is_text,
 		"weather": _is_text,
 		"island": _is_text,
@@ -577,23 +545,6 @@ func _is_count(value: Variant) -> bool:
 
 func _is_hp(value: Variant) -> bool:
 	return _is_number(value) and value >= 1
-
-
-## Entrée de best_scores : score, wave et games entiers positifs (autres clés libres).
-func _is_score(value: Variant) -> bool:
-	if not value is Dictionary:
-		return false
-	for key: String in ["score", "wave", "games"]:
-		if (value as Dictionary).has(key) and not _is_count(value[key]):
-			return false
-	return true
-
-
-## Entrée de quest_progress (v2) : {"step": texte, "count": entier positif (facultatif)}.
-func _is_progress(value: Variant) -> bool:
-	if not value is Dictionary or not (value as Dictionary).get("step") is String:
-		return false
-	return not (value as Dictionary).has("count") or _is_count(value["count"])
 
 
 func _is_vector(value: Variant) -> bool:

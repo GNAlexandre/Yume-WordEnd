@@ -372,7 +372,7 @@ flottent juste sous l'île sont permis.
    une tuile de sol, `python3 tools/hd2d_assets.py atlas` (le jeu lit les 27 tuiles des deux
    cahiers réunies dans `assets/hd2d/ground/atlas/ground_atlas.png` ; `fit` et `gen` le refont
    d'eux-mêmes).
-3. `tools/screenshot.sh res://src/world/island.tscn build/shots/hd2d.png` pour voir le résultat,
+3. `tools/screenshot.sh res://src/world/maps/essai/essai.tscn build/shots/hd2d.png` pour voir le résultat,
    puis `tools/check.sh`.
 4. Note la provenance dans `assets/CREDITS.md` (« généré avec ChatGPT le … », licence accordée).
 

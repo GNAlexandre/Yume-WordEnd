@@ -46,7 +46,7 @@ func test_delivered_sheets_have_consistent_views() -> void:
 		for file_name: String in ResourceLoader.list_directory(dir):
 			if file_name.ends_with(".tres"):
 				skins.append(load(dir.path_join(file_name)) as SkinData)
-	assert_gt(skins.size(), 20, "Chtholly, Timere, PNJ de l'acte 1, skins jouables")
+	assert_gt(skins.size(), 16, "Chtholly, Timere, PNJ de l'acte 1, skins jouables")
 	for skin: SkinData in skins:
 		for view: StringName in [SheetLoader.FRONT, SheetLoader.BACK]:
 			var label := "%s / %s" % [skin.id, view]

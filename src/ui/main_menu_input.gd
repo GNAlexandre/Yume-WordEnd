@@ -1,5 +1,5 @@
 extends RefCounted
-## Manette et retour dans les écrans du Lot 10 (menu, crédits, pause, fin d'arène).
+## Manette et retour dans les écrans du Lot 10 (menu, crédits, pause).
 ##
 ## Dans Godot 4.7, ui_accept et ui_cancel n'ont aucun bouton de manette : A (bouton 0) presse le
 ## bouton qui a le focus, B (bouton 1) revient en arrière comme Échap (ui_cancel). A et B agissent

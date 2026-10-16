@@ -68,23 +68,23 @@ current = true
 
 [node name="demo_page_1" parent="Pickups" instance=ExtResource("4_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 0, 1.6)
-item_id = &"page_fragment"
+item_id = &"test_page"
 
 [node name="demo_shell_1" parent="Pickups" instance=ExtResource("4_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -1.2)
-item_id = &"shell"
+item_id = &"test_linen"
 
 [node name="demo_flower_1" parent="Pickups" instance=ExtResource("4_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0, 1.6)
-item_id = &"flower_blue"
+item_id = &"test_flower"
 
 [node name="demo_page_2" parent="Pickups" instance=ExtResource("4_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -1.2)
-item_id = &"page_fragment"
+item_id = &"test_page"
 
 [node name="demo_drop_1" parent="Pickups" instance=ExtResource("4_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -1.5)
-item_id = &"page_fragment"
+item_id = &"test_page"
 persistent = false
 
 [node name="UI" type="CanvasLayer" parent="."]

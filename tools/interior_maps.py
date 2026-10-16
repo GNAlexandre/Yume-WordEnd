@@ -224,6 +224,25 @@ EXAMINE = {
 TEXTS_PATH = {"cafe": "res://data/texts/village.json", "maison_limashenka": "res://data/texts/village.json",
               "ville_snack": "res://data/texts/ville.json", "ville_cafe": "res://data/texts/ville.json",
               "ville_librairie": "res://data/texts/ville.json", "ville_projection": "res://data/texts/ville.json"}
+
+# (E7) Le Barocupot (CARTE.md 6.3, scène 8.7) : la salle du conseil de guerre, le sas de l'échelle et la coursive,
+# avec les images de bord du lot L (docs/ASSETS_HD2D_NAVIRES.md). Hublots à 1,3 m (sous un plafond de bord), coupe
+# de la cloison double de tôle ; la pièce de 14 × 8 m tient à l'écran, la caméra ne suit qu'en x.
+INTERIOR_MAPS.append("barocupot")
+MAP_SETTINGS["barocupot"] = {"camera_bounds": (5.5, 3.5, 3.0, 0.0), "light_preset": "interieur"}
+ROOM_NAMES.update({"conseil": "Salle du conseil de guerre", "sas": "Sas de l'échelle", "coursive": "Coursive"})
+SILLS["window_porthole"] = 1.3
+WALLCUTS["wall_ship_plate"] = "wallcut_ship"
+# Objets à examiner du Barocupot (data/texts/barocupot.json) : la table aux cartes, le thé, un hublot, l'aile peinte,
+# l'échelle du sas.
+EXAMINE["barocupot"] = [
+    ("table", "meuble", ("war_table", 0), {}),
+    ("the", "point", (4.5, 3.4), {"w": 0.8, "d": 0.6}),
+    ("hublot", "fenetre", "window_porthole", {}),
+    ("aile", "mural", "wallitem_garde_emblem", {}),
+    ("echelle", "meuble", ("ship_ladder", 0), {}),
+]
+TEXTS_PATH["barocupot"] = "res://data/texts/barocupot.json"
 # Ce qui bloque sans image : la place sous le haut de l'escalier (on n'y entre pas : le palier de
 # l'étage est au-dessus). (nom, x0, z0, x1, z1, hauteur).
 BLOCKERS = {

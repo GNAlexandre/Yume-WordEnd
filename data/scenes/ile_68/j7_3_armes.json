@@ -1,0 +1,188 @@
+{
+  "_comment": "ACTE1.md 7.3 (s. 12), séquence : Nygglatho ouvre les cinq serrures de la porte des armes (entrepot_rdc:porte_armes) ; la crypte (salle_des_armes, préréglage de la carte) ; Willem pose la main sur une garde. Fin : le port, au crépuscule (7.4).",
+  "title": "La salle des armes",
+  "day": 7,
+  "after": [
+    "j7_2_match"
+  ],
+  "map": "entrepot_rdc",
+  "trigger": {
+    "on": "ready"
+  },
+  "sequence": true,
+  "present": [
+    "willem",
+    "nygglatho"
+  ],
+  "steps": [
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0
+    },
+    {
+      "do": "player",
+      "visible": false
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "porte_armes",
+      "offset": [
+        0.0,
+        4.0
+      ]
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "porte_armes",
+      "offset": [
+        -0.4,
+        0.9
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "porte_armes",
+      "offset": [
+        0.4,
+        2.9
+      ],
+      "facing": "north",
+      "outfit": "maison"
+    },
+    {
+      "do": "camera",
+      "to": "porte_armes",
+      "offset": [
+        0.2,
+        1.8
+      ],
+      "distance": 9,
+      "time": 0
+    },
+    {
+      "do": "wait",
+      "time": 0.8
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.0
+    },
+    {
+      "do": "dialogue",
+      "node": "serrures"
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0.8
+    },
+    {
+      "do": "go_to",
+      "map": "salle_des_armes",
+      "marker": "from_entrepot_rdc"
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "armes_centre",
+      "offset": [
+        -1.4,
+        0.8
+      ],
+      "facing": "east",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "armes_centre",
+      "offset": [
+        0.2,
+        0.6
+      ],
+      "facing": "north",
+      "outfit": "maison"
+    },
+    {
+      "do": "camera",
+      "to": "armes_centre",
+      "offset": [
+        0.4,
+        0.0
+      ],
+      "distance": 9,
+      "time": 0
+    },
+    {
+      "do": "wait",
+      "time": 2.8
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.6
+    },
+    {
+      "do": "dialogue",
+      "node": "crypte"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "armes_rateliers",
+      "offset": [
+        0.0,
+        1.0
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "camera",
+      "to": "armes_rateliers",
+      "offset": [
+        0.0,
+        1.0
+      ],
+      "distance": 7,
+      "time": 1.4,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "garde"
+    },
+    {
+      "do": "wait",
+      "time": 1.0
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.2
+    },
+    {
+      "do": "leave",
+      "who": "willem"
+    },
+    {
+      "do": "leave",
+      "who": "nygglatho"
+    },
+    {
+      "do": "go_to",
+      "map": "port",
+      "marker": "from_sentier"
+    },
+    {
+      "do": "wait",
+      "time": 2.8
+    }
+  ]
+}

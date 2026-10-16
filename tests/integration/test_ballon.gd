@@ -385,7 +385,7 @@ func test_mud_slows_the_ball() -> void:
 	assert_almost_eq(_match.ball.roll_friction, plain * 2.0, 0.001, "le ballon ralentit")
 
 
-func test_nobody_is_hurt_and_the_old_island_has_no_match() -> void:
+func test_nobody_is_hurt_and_the_match_disperses() -> void:
 	_start()
 	_simulate(40.0)
 	assert_eq(_player.health.current, _player.health.max_hp)

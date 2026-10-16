@@ -2,14 +2,22 @@
   "_comment": "Sol en relief de la carte foret_profonde, écrit par tools/map_build.py gen d'après plan.json avec heights.png, materials.png et structures.png : modifier le plan et relancer gen (format : PLAN.md, « Format du sol des cartes extérieures »).",
   "format": "map_ground",
   "version": 1,
-  "size": [32, 24],
+  "size": [80, 60],
   "heights_image": "heights.png",
   "height_step_value": 16,
   "materials_image": "materials.png",
-  "materials_scale": 1,
+  "materials_scale": 2,
   "palette": {
-    "#7a8a6a": "sobre",
-    "#d0a060": "chemin"
+    "#2f5a30": "sous_bois_sombre",
+    "#2e8a5a": "mousse",
+    "#60a0c0": "lit_ruisseau",
+    "#3a70b0": "eau_basse",
+    "#b48a56": "sentier_ombre",
+    "#b0602a": "feuilles",
+    "#5aa83c": "herbe",
+    "#c070c0": "prairie",
+    "#3aa86c": "mousse_claire",
+    "#6a4a2a": "boue"
   },
   "edges": {
     "north": "land",
@@ -19,12 +27,13 @@
   },
   "skirt": 16,
   "barrier": true,
+  "height_zero_value": 16,
   "materials": {
-    "sobre": {
-      "label": "Sol de la carte d'attente, assourdi",
-      "layer": "forest_floor",
-      "color": "#7a8a6a",
-      "tint": [0.78, 0.78, 0.8]
+    "herbe_drue": {
+      "label": "Herbe drue et molle (grass_b)",
+      "layer": "grass_b",
+      "color": "#4f9a46",
+      "variant": false
     },
     "chemin": {
       "label": "Chemin de terre (path_dirt_b)",
@@ -32,7 +41,36 @@
       "color": "#d0a060",
       "variant": false,
       "path": true
+    },
+    "eau_basse": {
+      "label": "Eau basse du marais : on y marche (VEX)",
+      "layer": "water",
+      "color": "#3a70b0",
+      "walkable": true,
+      "ripple": true,
+      "tint": [0.78, 0.86, 0.8]
+    },
+    "sous_bois_sombre": {
+      "label": "Sous-bois sombre (forest_floor)",
+      "layer": "forest_floor",
+      "color": "#2f5a30",
+      "tint": [1.12, 1.15, 1.12]
+    },
+    "mousse_claire": {
+      "label": "Mousse claire (moss)",
+      "layer": "moss",
+      "color": "#3aa86c",
+      "tint": [1.2, 1.2, 1.18]
+    },
+    "sentier_ombre": {
+      "label": "Sentier de sous-bois (path_dirt)",
+      "layer": "path_dirt",
+      "color": "#b48a56",
+      "variant": false,
+      "path": true,
+      "tint": [0.78, 0.76, 0.7]
     }
   },
-  "spawn": [16, 4]
+  "structures_image": "structures.png",
+  "spawn": [40, 3]
 }

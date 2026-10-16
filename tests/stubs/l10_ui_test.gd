@@ -1,22 +1,19 @@
 extends GutTest
-## Base des tests du Lot 10 (tests/unit/test_menu*, test_hud*, test_pause*, test_arena_end*,
-## test_credits*), dont ils héritent par chemin (pas de class_name, règle des stubs) : sauvegarde
-## propre au script (user://test_l10_<script>.json) ; SaveManager, GameState, zone de
-## WorldManager, pause, geste « Cliquer pour jouer », bus Master et avis du menu rétablis après
-## chaque test.
+## Base des tests du Lot 10 (tests/unit/test_menu*, test_hud*, test_pause*, test_credits*), dont
+## ils héritent par chemin (pas de class_name, règle des stubs) : sauvegarde propre au script
+## (user://test_l10_<script>.json) ; SaveManager, GameState, pause, geste « Cliquer pour jouer »,
+## bus Master et avis du menu rétablis après chaque test.
 
 const MenuScript := preload("res://src/ui/main_menu.gd")
 const MenuNotice := preload("res://src/ui/main_menu_notice.gd")
 
 var _previous_path: String
 var _previous_mute: bool
-var _previous_zone: StringName
 
 
 func before_each() -> void:
 	_previous_path = SaveManager.save_path
 	_previous_mute = AudioServer.is_bus_mute(MenuScript.MASTER_BUS)
-	_previous_zone = WorldManager.current_zone()
 	SaveManager.close_game(false)
 	SaveManager.save_path = save_file()
 	delete_save_files()
@@ -27,12 +24,11 @@ func before_each() -> void:
 
 func after_each() -> void:
 	get_tree().paused = false
-	if WorldManager.current_zone() != _previous_zone:
-		EventBus.zone_entered.emit(_previous_zone)
 	SaveManager.close_game(false)
 	delete_save_files()
 	SaveManager.save_path = _previous_path
 	SaveManager.last_error = ""
+	SaveManager.notice = ""
 	GameState.reset()
 	get_tree().root.remove_meta(MenuScript.GESTURE_META)
 	AudioServer.set_bus_mute(MenuScript.MASTER_BUS, _previous_mute)
@@ -46,10 +42,14 @@ func save_file() -> String:
 	return "user://test_l10_%s.json" % get_script().resource_path.get_file().get_basename()
 
 
-## Supprime la sauvegarde de test, sa copie .bak et son fichier temporaire.
+## Supprime la sauvegarde de test, sa copie .bak, son fichier temporaire et (F1) la copie d'une
+## partie de l'ancienne île.
 func delete_save_files() -> void:
 	var path := save_file()
-	for file: String in [path, path + SaveManager.BACKUP_SUFFIX, path + SaveManager.TEMP_SUFFIX]:
+	for suffix: String in [
+		"", SaveManager.BACKUP_SUFFIX, SaveManager.TEMP_SUFFIX, SaveManager.LEGACY_SUFFIX
+	]:
+		var file := path + suffix
 		if FileAccess.file_exists(file):
 			DirAccess.remove_absolute(file)
 

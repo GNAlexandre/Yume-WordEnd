@@ -27,6 +27,8 @@ Usage (Python 3.9+, pip install Pillow) :
     python3 tools/gen_placeholders.py portrait chtholly --color "#5b7fd0" --side 80 --forward 6
     # la faune (lot E5) : assets/fauna/<id>/<id>.png + .json et data/fauna/ile_68/visuals/<id>.tres
     python3 tools/gen_placeholders.py fauna [wolf deer ...]     # (tools/gen_fauna.py)
+    # (E8b) Willem et le Carillon Percival (willem_duel, trois vues) tirés de willem_home
+    python3 tools/gen_placeholders.py duel                      # (tools/gen_duel_sheet.py)
     # un ennemi : assets/enemies/<id>/<id>.png + .json (son SkinData va dans data/enemies/visuals/)
     python3 tools/gen_placeholders.py enemy <id> --color "#6f8f4f" --height 1.0
     # damier (essais ; le sol du jeu est en tuiles HD-2D : tools/hd2d_assets.py)
@@ -821,6 +823,7 @@ def main():
     enemy.add_argument("--out", help="dossier de sortie (défaut : assets/enemies/<id>)")
     fauna = sub.add_parser("fauna", help="les planches de remplacement de la faune (tools/gen_fauna.py)")
     fauna.add_argument("species", nargs="*", help="espèces (défaut : toutes)")
+    sub.add_parser("duel", help="(E8b) willem_duel : willem_home et le Carillon Percival (tools/gen_duel_sheet.py)")
     shot = sub.add_parser("portrait", help="portrait tiré d'une planche existante (Chtholly)")
     shot.add_argument("skin_id")
     shot.add_argument("--color", default="#5b7fd0", help="fond")
@@ -845,6 +848,10 @@ def main():
         import gen_fauna
 
         gen_fauna.make_all(args.species)
+    elif args.command == "duel":
+        import gen_duel_sheet
+
+        gen_duel_sheet.make_all()
     elif args.command == "enemy":
         make_enemy(args.enemy_id, hex_color(args.color), args.height, args.out)
     elif args.command == "portrait":

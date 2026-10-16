@@ -1,0 +1,63 @@
+{
+  "_comment": "ACTE1.md 8.2 (s. 16).",
+  "id": "j8_2_archives",
+  "start": "canape",
+  "nodes": {
+    "canape": {
+      "speaker": "",
+      "text": "Sur le canapé des archives, Willem dort assis. Nephren dort contre lui, la tête sur son genou.",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "Debout !",
+          "next": "debout"
+        },
+        {
+          "text": "Les couvrir d'une couverture.",
+          "next": "couverture"
+        }
+      ]
+    },
+    "debout": {
+      "speaker": "{player}",
+      "text": "Debout !",
+      "next": "debout_2"
+    },
+    "debout_2": {
+      "speaker_id": "nephren",
+      "text": "Mm.",
+      "next": "debout_3"
+    },
+    "debout_3": {
+      "speaker": "",
+      "text": "Nephren ouvre un œil, un seul, et le referme. Willem, lui, s'éveille en sursaut."
+    },
+    "couverture": {
+      "speaker": "",
+      "text": "Elle prend la couverture pliée sur l'accoudoir et la pose sur eux deux. Willem ouvre les yeux dessous."
+    },
+    "exercice": {
+      "speaker_id": "willem",
+      "text": "… Bonjour. Tu tiens debout, on dirait. Tant mieux.",
+      "next": "exercice_2"
+    },
+    "exercice_2": {
+      "speaker_id": "willem",
+      "text": "Alors viens faire un petit exercice dans la cour. Rien de méchant. Nephren t'apportera ton épée.",
+      "next": "exercice_3"
+    },
+    "exercice_3": {
+      "speaker": "{player}",
+      "text": "Un exercice ? Avec toi ?",
+      "next": "exercice_4"
+    },
+    "exercice_4": {
+      "speaker": "",
+      "text": "Il s'étire, attrape un Carillon de série au râtelier du couloir et le cale sur son épaule."
+    }
+  }
+}

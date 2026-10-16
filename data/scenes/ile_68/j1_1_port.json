@@ -1,5 +1,5 @@
 {
-  "_comment": "ACTE1.md 1.1 (s. 1), séquence, sur la carte du port (lot CP) : le carton du titre (l'attribution, MONDE.md 1.5 : seul carton du jour 1), puis Willem descend de la passerelle du navire (le panneau ships/garde_transport_side ; le navire en volume viendra avec E7), le passeur le salue et remonte à bord ; Willem seul au quai, puis au panneau aux flèches rouges (panneau_sud : le panneau derrière lui), et il part vers le sentier. {player} n'y est pas : posée au bout de la route de la ville (from_ville_marche), hors du champ. Le bord du vide ferme z < 5 : Willem paraît sur la passerelle et en descend.",
+  "_comment": "ACTE1.md 1.1 (s. 1), séquence, sur la carte du port (lot CP) : le carton du titre (l'attribution, MONDE.md 1.5 : seul carton du jour 1), puis Willem descend de la passerelle du navire (le panneau ships/garde_transport_side ; le navire en volume viendra avec E7), le passeur (un passant, villager_cat_m, depuis le retrait de ferryman par F1) le salue et remonte à bord ; Willem seul au quai, puis au panneau aux flèches rouges (panneau_sud : le panneau derrière lui), et il part vers le sentier. {player} n'y est pas : posée au bout de la route de la ville (from_ville_marche), hors du champ. Le bord du vide ferme z < 5 : Willem paraît sur la passerelle et en descend.",
   "title": "L'homme au port",
   "day": 1,
   "map": "entrepot",
@@ -9,7 +9,7 @@
   "sequence": true,
   "present": [
     "willem",
-    "ferryman"
+    "villager_cat_m"
   ],
   "steps": [
     {
@@ -46,7 +46,7 @@
     },
     {
       "do": "place",
-      "who": "ferryman",
+      "who": "villager_cat_m",
       "at": "navire_quai",
       "offset": [
         0.7,
@@ -81,7 +81,7 @@
     },
     {
       "do": "bubble",
-      "who": "ferryman",
+      "who": "villager_cat_m",
       "text": "passeur",
       "time": 2.2
     },
@@ -94,11 +94,11 @@
     {
       "do": "face",
       "who": "willem",
-      "toward": "ferryman"
+      "toward": "villager_cat_m"
     },
     {
       "do": "walk",
-      "who": "ferryman",
+      "who": "villager_cat_m",
       "to": "navire_quai",
       "offset": [
         0.0,
@@ -112,7 +112,7 @@
     },
     {
       "do": "leave",
-      "who": "ferryman"
+      "who": "villager_cat_m"
     },
     {
       "do": "face",

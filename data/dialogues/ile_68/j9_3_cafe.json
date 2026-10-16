@@ -1,0 +1,81 @@
+{
+  "id": "j9_3_cafe",
+  "start": "argent",
+  "nodes": {
+    "argent": {
+      "speaker_id": "nygglatho",
+      "text": "Psst. Les grandes. Pour le goûter. Et pas un mot aux petites, sinon j'aurai trente bouches à nourrir.",
+      "next": "argent_2"
+    },
+    "argent_2": {
+      "speaker": "",
+      "text": "Elle glisse quelques pièces dans ta main, et un clin d'œil par-dessus le marché.",
+      "next": "argent_3"
+    },
+    "argent_3": {
+      "speaker_id": "ithea",
+      "text": "Au café du village ! Mes jambes ne me portent plus, il me faut un jus de fruits, et vite.",
+      "next": "argent_4"
+    },
+    "argent_4": {
+      "speaker_id": "nephren",
+      "text": "Mm. Le café."
+    },
+    "serveur": {
+      "speaker_id": "cat_waiter",
+      "text": "Les demoiselles de l'entrepôt ! Trois jus, c'est la maison qui offre.",
+      "next": "serveur_2"
+    },
+    "serveur_2": {
+      "speaker_id": "cat_waiter",
+      "text": "À une condition : que la grande dame aux cornes n'en sache rien. Elle me trouverait trop généreux.",
+      "next": "serveur_3"
+    },
+    "serveur_3": {
+      "speaker_id": "ithea",
+      "text": "Promis. Muettes comme des tombes. Des tombes qui ont soif."
+    },
+    "fenetre": {
+      "speaker": "",
+      "text": "Par la fenêtre, sur la terrasse : Willem. Il parle avec un homme-chat très élégant, en chapeau et en gants."
+    },
+    "roman": {
+      "speaker_id": "ithea",
+      "text": "Un costume, un chapeau, des messes basses… Je connais ce genre d'histoire. On recrute notre responsable.",
+      "next": "roman_2"
+    },
+    "roman_2": {
+      "speaker_id": "ithea",
+      "text": "On lui propose mieux ailleurs, il fait sa valise, et un beau matin, pfuit. Nya-ha-ha. On le recrute, c'est sûr.",
+      "choices": [
+        {
+          "text": "Qu'il parte, s'il veut.",
+          "next": "parte"
+        },
+        {
+          "text": "Il ne partirait pas.",
+          "next": "partirait"
+        }
+      ]
+    },
+    "parte": {
+      "speaker": "{player}",
+      "text": "Qu'il parte, s'il veut. Ça m'est bien égal.",
+      "next": "boude"
+    },
+    "partirait": {
+      "speaker": "{player}",
+      "text": "Il ne partirait pas. Il… il a un contrat, non ?",
+      "next": "boude"
+    },
+    "boude": {
+      "speaker": "",
+      "text": "Ton jus a un goût de rien. Nephren, les yeux fermés, écoute la terrasse et ne dit pas un mot.",
+      "next": "boude_2"
+    },
+    "boude_2": {
+      "speaker_id": "ithea",
+      "text": "Nya-ha… ha. Bon. Je plaisantais. À moitié."
+    }
+  }
+}

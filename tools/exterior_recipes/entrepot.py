@@ -22,6 +22,9 @@ SETTINGS = {
     "groups": ["Building", "Roof", "Facade", "Porch", "Yard", "Garden", "Clearing", "Field", "Marsh", "Trees",
                "Lisiere", "Woods", "Meadow"],
     "provisional": {"entrepot_rdc": ("entrepot_rdc_essai", "Spawn")},
+    # (QC2) Le grand arbre d'escalade (V5, CARTE.md 2.3) se dresse exprès au milieu du passage vers le champ, en
+    # premier plan : le chemin passe sous sa couronne, qui s'efface autour du joueur (docs/QUALITE.md, QC-37).
+    "masks_allowed": {"ClimbingTree": (("chemin vers_champ",), "l'arbre d'escalade du plan, au milieu du passage")},
 }
 
 
@@ -423,7 +426,9 @@ def pose(p):
     scatter("WoodsLogs", ["log_hollow", "stump_b", "log_pile_forest", "stump_a"], logs, scale=(0.9, 1.05), seed=76)
     young = poisson(Rect(16, 47.5, 86, 56.5), 5.5, 16, lambda x, z: woods_ok(2.5)(x, z)
                     and free(blocking=True, half=(0.4, 0.4))(x, z), seed=77)
-    scatter("WoodsYoung", ["sapling_a", "birch_a", "pine_small_a", "birch_b", "pine_small_b"], young, seed=78)
+    # (QC2) Sans le bouleau qui masquerait le chemin du village ou la marelle (docs/QUALITE.md, QC-37).
+    young_scenes = ["sapling_a", "birch_a", "pine_small_a", "birch_b", "pine_small_b"]
+    scatter("WoodsYoung", young_scenes, p.clear_of_places(young_scenes, young), seed=78)
     leaves = poisson(Rect(15, 45, 87, 59), 4.0, 30, lambda x, z: in_map(x, z, 0.8) and path_distance(x, z) > -0.5,
                      seed=79)
     scatter("WoodsLeaves", ["leaves_gold_a", "leaves_rust_a", "leaves_gold_b", "leaves_rust_b", "leaves_scatter"],

@@ -1,6 +1,8 @@
 extends "res://tests/stubs/l10_ui_test.gd"
 ## HUD (L10) : chaque signal de l'EventBus met à jour ses nœuds, et rien d'autre ne le fait ;
-## marqueur de la cible verrouillée, surcouche F3, coins laissés aux contrôles tactiles.
+## marqueur de la cible verrouillée, surcouche F3, coins laissés aux contrôles tactiles. (F1) Le
+## panneau de l'arène, ses bannières, le nom de zone et l'objectif de quête sont partis avec
+## l'ancienne île.
 
 const HUD := preload("res://src/ui/hud.tscn")
 const HudScript := preload("res://src/ui/hud.gd")
@@ -12,8 +14,6 @@ const Board := preload("res://tests/stubs/l1_interactable_stub.gd")
 func _hud() -> HudScript:
 	var hud: HudScript = HUD.instantiate()
 	hud.fade_time = 0.02
-	hud.banner_time = 0.05
-	hud.zone_time = 0.05
 	hud.saved_time = 0.05
 	return add_child_autofree(hud)
 
@@ -47,11 +47,9 @@ func test_hud_reads_nothing_without_signals() -> void:
 	var hud := _hud()
 	EventBus.set_block_signals(true)
 	GameState.max_hp = 6
-	GameState.set_quest_state(&"pages", &"active")
 	EventBus.set_block_signals(false)
 	await wait_process_frames(2)
 	assert_eq(hud.health(), Vector2i(5, 5), "PV max changés sans signal : rien ne bouge")
-	assert_eq(hud.quest_objective(&"pages"), "", "quête changée sans signal : rien ne bouge")
 
 
 func test_damage_shakes_hearts_and_flashes_red() -> void:
@@ -80,51 +78,10 @@ func test_charge_gauge_follows_charge_progress() -> void:
 	assert_false(row.visible, "0 au relâcher : cachée")
 
 
-func test_arena_wave_score_banners_and_end() -> void:
+func test_old_island_panels_are_gone() -> void:
 	var hud := _hud()
-	var panel := _node(hud, "ArenaPanel")
-	assert_false(panel.visible, "hors arène : rien")
-	EventBus.arena_score_changed.emit(&"dunes", 0)
-	assert_true(panel.visible, "série lancée")
-	assert_eq((_node(hud, "ScoreLabel") as Label).text, "Score 0")
-	EventBus.wave_started.emit(&"dunes", 2, 7)
-	assert_eq((_node(hud, "WaveLabel") as Label).text, "Vague 2")
-	assert_true(_node(hud, "Banner").visible)
-	assert_eq((_node(hud, "BannerLabel") as Label).text, "Vague 2")
-	assert_eq((_node(hud, "BannerSub") as Label).text, "7 Timeres")
-	EventBus.arena_score_changed.emit(&"dunes", 45)
-	assert_eq((_node(hud, "ScoreLabel") as Label).text, "Score 45")
-	assert_eq((_node(hud, "RecordLabel") as Label).text, "Record 45", "record battu en direct")
-	EventBus.wave_cleared.emit(&"dunes", 2, 100)
-	assert_eq((_node(hud, "BannerLabel") as Label).text, "Vague 2 terminée")
-	assert_eq((_node(hud, "BannerSub") as Label).text, "+100")
-	EventBus.arena_finished.emit(&"dunes", 145, true)
-	assert_false(panel.visible, "masqué sur arena_finished")
-	assert_false(_node(hud, "Banner").visible)
-
-
-func test_wave_cleared_alone_sets_wave_number() -> void:
-	var hud := _hud()
-	EventBus.wave_cleared.emit(&"dunes", 4, 200)
-	assert_true(_node(hud, "ArenaPanel").visible, "HUD créé en pleine série")
-	assert_eq((_node(hud, "WaveLabel") as Label).text, "Vague 4")
-
-
-func test_banner_fades_out() -> void:
-	var hud := _hud()
-	EventBus.wave_started.emit(&"dunes", 1, 5)
-	await wait_seconds(0.4)
-	assert_false(_node(hud, "Banner").visible, "bannière effacée après son délai")
-
-
-func test_zone_name_on_entry() -> void:
-	var hud := _hud()
-	EventBus.zone_entered.emit(&"forest")
-	assert_true(_node(hud, "ZoneBanner").visible)
-	var shown := (_node(hud, "ZoneLabel") as Label).text
-	assert_eq(shown, WorldManager.zone_display_name(&"forest"))
-	await wait_seconds(0.4)
-	assert_false(_node(hud, "ZoneBanner").visible, "en fondu")
+	for gone: String in ["ArenaPanel", "Banner", "ZoneBanner", "Quests", "Journal"]:
+		assert_null(hud.get_node_or_null("%" + gone), "(F1) %s retiré" % gone)
 
 
 ## (U1) L'invite « E / A : Parler » est devenue un signe posé au-dessus de la cible du joueur.
@@ -268,26 +225,21 @@ func test_f3_toggles_performance_overlay() -> void:
 
 func test_layout_leaves_touch_corners_free_and_lets_mouse_through() -> void:
 	var hud := _hud()
-	GameState.set_quest_state(&"pages", &"active")
 	EventBus.player_health_changed.emit(6, 6)
 	EventBus.charge_progress.emit(1.0)
-	EventBus.arena_score_changed.emit(&"dunes", 1234)
-	EventBus.wave_started.emit(&"dunes", 12, 27)
-	EventBus.zone_entered.emit(&"dunes")
-	EventBus.interaction_available.emit("Affronter les Timeres")
+	EventBus.interaction_available.emit("Parler")
 	SaveManager.saved.emit("user://x.json")
 	hud.toggle_perf_overlay()
 	await wait_process_frames(2)
 	var area := hud.get_global_rect()
 	var top_right := Rect2(area.end.x - 200.0, area.position.y, 200.0, 100.0)
 	var bottom := Rect2(area.position.x, area.end.y - 200.0, area.size.x, 200.0)
-	# Écrans modaux enfants du HUD (menu pause, journal de quêtes du Lot Q, (E6) calendrier et
-	# voile des scènes, plein écran) : ils prennent la souris quand ils sont ouverts.
+	# Écrans modaux enfants du HUD (menu pause, (E6) calendrier et voile des scènes, plein
+	# écran) : ils prennent la souris quand ils sont ouverts.
 	var overlays: Array[Node] = [
 		_node(hud, "DamageFlash"),
 		_node(hud, "DeathFade"),
 		_node(hud, "PauseMenu"),
-		_node(hud, "Journal"),
 		_node(hud, "StoryOverlay"),
 		_node(hud, "Calendar"),
 		# (U1) Les signes d'interaction se dessinent au-dessus du monde, là où sont les cibles,

@@ -1,6 +1,7 @@
 extends "res://tests/stubs/l8_save_test.gd"
-## SaveManager, auto-sauvegarde (L8) : déclenchée par arena_finished, item_collected,
-## quest_updated, zone_entered et save_requested ; regroupée (au plus une écriture par délai) ;
+## SaveManager, auto-sauvegarde (L8) : déclenchée par item_collected et save_requested ((E1)
+## map_entered : test_m2_resume.gd ; (F1) arena_finished, quest_updated et zone_entered sont
+## partis avec l'ancienne île) ; regroupée (au plus une écriture par délai) ;
 ## minuteur actif en pause ; jamais avant game_loaded ; game_loaded émis par new_game,
 ## load_game et import_json.
 
@@ -15,10 +16,7 @@ var _longest_frame_ms: int = 0
 ## Un émetteur par signal qui déclenche l'auto-sauvegarde.
 func _triggers() -> Dictionary[String, Callable]:
 	return {
-		"arena_finished": func() -> void: EventBus.arena_finished.emit(&"dunes", 120, true),
 		"item_collected": func() -> void: EventBus.item_collected.emit(&"page_fragment", 1),
-		"quest_updated": func() -> void: EventBus.quest_updated.emit(&"pages", &"active"),
-		"zone_entered": func() -> void: EventBus.zone_entered.emit(&"beach"),
 		"save_requested": func() -> void: EventBus.save_requested.emit(),
 	}
 
@@ -67,15 +65,14 @@ func test_burst_of_signals_gives_one_write_with_final_state() -> void:
 	for _i in 10:
 		GameState.add_item(&"page_fragment")
 		EventBus.item_collected.emit(&"page_fragment", 1)
-	# Récompense donnée après quest_updated (QuestTracker) : elle doit être dans le fichier.
-	GameState.set_quest_state(&"pages", &"done")
+	# Effet d'une réplique posé après la demande (drapeau, objet) : il doit être dans le fichier.
+	GameState.set_flag(&"pages_done")
 	GameState.add_item(&"bookmark")
 	await wait_real(SHORT_DELAY * 4.0)
 	assert_signal_emit_count(SaveManager, "saved", 1, "une seule écriture pour la rafale")
 	var data := read_save()
 	assert_eq(data["inventory"], {"page_fragment": 10.0, "bookmark": 1.0}, "état final écrit")
-	assert_eq(data["quests"], {"pages": "done"})
-	assert_eq(data["zone"], "beach", "zone mise à jour par WorldManager après le signal")
+	assert_eq(data["flags"], {"pages_done": true})
 
 
 func test_at_most_one_write_per_delay() -> void:

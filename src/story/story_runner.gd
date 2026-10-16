@@ -190,9 +190,61 @@ func _step(step: Dictionary) -> void:
 			GameState.write_calendar(GameState.day, StringName(str(step.get("line", ""))))
 		"show":
 			_show(str(step["node"]), bool(step["visible"]))
+		"ship":
+			await _ship(step)
+		"player":
+			stage.set_player_visible(bool(step["visible"]))
+		"props":
+			_props(step)
 
 
 # --- Étapes -------------------------------------------------------------------------------------
+
+
+## (E7) Un navire : l'action de ShipControl, attendue (sauf « wait » : false) ; séquence passée :
+## son état final, d'un coup.
+func _ship(step: Dictionary) -> void:
+	var ship_id := StringName(str(step["ship"]))
+	var action := StringName(str(step["action"]))
+	if not fast:
+		await ShipControl.play(ship_id, action, false)
+		while (
+			bool(step.get("wait", true))
+			and ShipControl.is_playing(ship_id, action)
+			and not fast
+			and not _stopped
+			and is_inside_tree()
+		):
+			await get_tree().physics_frame
+	if fast:
+		ShipControl.finish(ship_id, action)
+
+
+## (S2) Pose (ou retire, « clear ») un cercle d'images animées et sa lueur (les talismans, 8.8).
+func _props(step: Dictionary) -> void:
+	var id := StringName(str(step["id"]))
+	stage.clear_props(id)
+	if step.get("clear", false):
+		return
+	var texture := load(StoryData.image_path(str(step["image"]))) as Texture2D
+	var color := Color.html(str(step.get("color", "#ffffff")))
+	(
+		stage
+		. add_props(
+			id,
+			texture,
+			stage.resolve(step["at"]).origin,
+			{
+				"count": int(step.get("count", 1)),
+				"radius": float(step.get("radius", 0.0)),
+				"lift": float(step.get("lift", 0.0)),
+				"frames": int(step.get("frames", 1)),
+				"fps": float(step.get("fps", 0.0)),
+				"light": float(step.get("light", 0.0)),
+				"color": color,
+			}
+		)
+	)
 
 
 ## Montre ou cache un nœud de la carte courante (le cristal qui sonne : Geometry/Nygglatho/
@@ -217,10 +269,15 @@ func _place(step: Dictionary) -> void:
 	if who == StoryData.PLAYER:
 		stage.place_player(at.origin, facing)
 		return
-	var actor := LifeDirector.stage(who, at.origin, facing)
+	# (S2) « lift » : posé au-dessus du sol (une pile de petites), sans collision ; sans lui, le
+	# PNJ reprend sa collision de personnage immobile.
+	var lift := float(step.get("lift", 0.0))
+	var actor := LifeDirector.stage(who, at.origin + Vector3.UP * lift, facing)
 	if actor == null:
 		push_warning("StoryRunner : %s ne peut pas paraître (%s)" % [who, scene_id])
 		return
+	if is_instance_valid(actor.npc):
+		actor.npc.set_moving(lift > 0.0)
 	if step.has("outfit"):
 		_outfit(who, StringName(str(step["outfit"])))
 	if step.has("anim"):
@@ -235,6 +292,7 @@ func _walk(step: Dictionary) -> void:
 	)
 	var gait := StringName(str(step.get("gait", "marche")))
 	if who == StoryData.PLAYER:
+		stage.release_player_pose()
 		if fast:
 			stage.place_player(target.origin, facing)
 		elif step.get("wait", true):
@@ -292,7 +350,8 @@ func _anim(step: Dictionary) -> void:
 		var player: Node3D = stage.player()
 		visual = player.get_node_or_null(^"Visual") as CharacterVisual if player != null else null
 		if visual != null and visual.has_animation(anim):
-			visual.play(anim, true)
+			# (S2) Une pose tenue : sinon le joueur rejoue « repos » dès l'image suivante.
+			stage.hold_player_pose(anim, 0.0 if fast else float(step.get("time", 0.0)))
 	else:
 		var actor := LifeDirector.actor(who)
 		if actor == null:

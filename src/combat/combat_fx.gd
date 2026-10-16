@@ -214,17 +214,11 @@ static func spawn_ghost(source: AnimatedSprite3D, color: Color, fade: float = 0.
 	return ghost
 
 
-## Parent où poser un effet qui ne suit pas near : la zone (Zone) qui contient near, sinon le
-## parent de near. Jamais le conteneur des ennemis (Enemies, Spawned) : d'autres systèmes et les
-## tests en parcourent les enfants.
+## Parent où poser un effet qui ne suit pas near : le parent de near ((F1) les zones de l'ancienne
+## île, qui l'accueillaient, sont parties).
 static func host_for(near: Node) -> Node:
 	if near == null or not near.is_inside_tree():
 		return null
-	var node := near.get_parent()
-	while node != null:
-		if node is Zone:
-			return node
-		node = node.get_parent()
 	return near.get_parent()
 
 

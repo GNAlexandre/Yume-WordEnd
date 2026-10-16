@@ -447,10 +447,8 @@ func _closeness(target: Node3D) -> float:
 func _height_of(target: Node3D) -> float:
 	if target.has_meta(InteractSign.HEIGHT_META):
 		return float(target.get_meta(InteractSign.HEIGHT_META))
-	var marker := target.get(&"quest_marker") as Node3D
-	if marker != null:
-		# Npc : son marqueur de quête est à la hauteur de sa tête + 0,5 m.
-		return marker.position.y - 0.5 + TOP_MARGIN
+	if target is Npc:
+		return (target as Npc).head_height() + TOP_MARGIN
 	var id := target.get_instance_id()
 	if not _heights.has(id):
 		_heights[id] = _shape_top(target) + TOP_MARGIN
@@ -469,11 +467,10 @@ func _shape_top(target: Node3D) -> float:
 	return top if top > -INF else DEFAULT_HEIGHT
 
 
-## Décalage à droite quand le PNJ a déjà un marqueur de quête ou une bulle au-dessus de la tête.
+## Décalage à droite quand le PNJ a déjà une bulle au-dessus de la tête.
 func _marker_shift(target: Node3D) -> float:
-	var marker := target.get(&"quest_marker") as Node3D
 	var bubble := target.get(&"bubble") as Node3D
-	if (marker != null and marker.visible) or (bubble != null and bubble.visible):
+	if bubble != null and bubble.visible:
 		return MARKER_SHIFT
 	return 0.0
 

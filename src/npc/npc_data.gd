@@ -3,10 +3,10 @@ extends Resource
 ## Personnage non joueur. Fichiers : data/npcs/<id>.tres. Propriétaire : L6.
 ##
 ## (Systèmes et textes) Présence selon l'histoire : visible_if, même grammaire et même évaluateur
-## que le « if » d'un nœud de dialogue (DialogueRunner.evaluate : drapeaux, objets, état et étape
-## de quête, meilleur score ; docs/QUETES.md). Un PNJ absent (is_present() faux) est caché par
-## Npc : ni visuel, ni collision, ni dialogue, ni marqueur. Le PNJ dont le skin est celui du
-## joueur est toujours absent : la fée choisie comme héroïne n'est pas aussi un PNJ.
+## que le « if » d'un nœud de dialogue (DialogueRunner.evaluate : drapeaux, objets, jour,
+## créneau, scènes jouées ; docs/DIALOGUES.md). Un PNJ absent (is_present() faux) est caché par
+## Npc : ni visuel, ni collision, ni dialogue. Le PNJ dont le skin est celui du joueur est
+## toujours absent : la fée choisie comme héroïne n'est pas aussi un PNJ.
 
 ## Identifiant, ex. &"nygglatho" (transmis par EventBus.dialogue_started / dialogue_ended).
 @export var id: StringName
@@ -14,15 +14,13 @@ extends Resource
 @export var display_name: String = ""
 ## Apparence (un skin de data/skins/, partagé avec les skins jouables).
 @export var skin: SkinData
-## Dialogue au format JSON de PLAN.md section 4 (data/dialogues/<id>.json).
+## Dialogue au format JSON de PLAN.md section 4, joué quand on lui parle hors du récit (Npc sans
+## LifeActor, ou récit qui ne prend pas la conversation) ; (F1) pour les personnages de l'île
+## n° 68, leur talk/ (data/dialogues/ile_68/talk/<id>.json). Vide : une bulle (LifeTexts).
 @export_file("*.json") var dialogue_path: String = ""
-## Quête donnée par ce PNJ (data/quests/<id>.tres), &"" si aucune.
-@export var quest_id: StringName
-## Zone où il vit (zone_id).
-@export var home_zone: StringName = &"village"
 ## (Systèmes et textes) Condition de présence, comme un « if » de dialogue ; {} : toujours là.
-## Ex. {"quest_step": ["act1_main", "training"]} : seulement pendant cette étape ;
-## {"not_quest_step": ["act1_main", ["training", "promise"]]} : sauf pendant ces étapes.
+## Ex. {"flag": "porte_ouverte"} : seulement une fois le drapeau posé ; {"day": [5, 12]} : du
+## jour 5 au jour 12 de l'acte.
 @export var visible_if: Dictionary = {}
 ## (E4) Tenues : nom de la tenue (« maison », « cuisine », « pyjama »… : la clé « outfit » d'une
 ## ligne d'emploi du temps, data/life/<id>.json) → chemin d'une SkinData complète à trois vues

@@ -1,0 +1,31 @@
+{
+  "_comment": "ACTE1.md 9.1 (VEX, s. 22) : on frappe à la porte de la chambre à l'aube ; Willem propose des exercices du matin, la porte claque, Ithea ricane dans le couloir ; fondu, {player} ressort habillée. Le pyjama (chtholly_pajamas) n'est pas une tenue du joueur : la porte qui claque est racontée.",
+  "title": "On frappe à la porte",
+  "day": 9,
+  "slot": "aube",
+  "map": "entrepot_etage",
+  "trigger": {"on": "ready"},
+  "present": ["willem", "ithea"],
+  "steps": [
+    {"do": "control", "on": false},
+    {"do": "place", "who": "willem", "at": "chtholly_porte", "offset": [1.1, 1.4], "facing": "west", "outfit": "maison"},
+    {"do": "camera", "to": "chtholly_porte", "offset": [0.0, -0.6], "distance": 11, "time": 0.8},
+    {"do": "bubble", "who": "willem", "text": "toc"},
+    {"do": "wait", "time": 1.2},
+    {"do": "walk", "who": "player", "to": "chtholly_porte", "offset": [-0.3, -0.2], "facing": "south"},
+    {"do": "dialogue", "node": "porte"},
+    {"do": "place", "who": "player", "at": "chtholly_porte", "offset": [0.0, -1.2], "facing": "south"},
+    {"do": "place", "who": "ithea", "at": "chtholly_porte", "offset": [4.0, 1.7], "facing": "west", "outfit": "maison"},
+    {"do": "walk", "who": "ithea", "to": "chtholly_porte", "offset": [2.6, 1.7], "facing": "west"},
+    {"do": "bubble", "who": "ithea", "text": "ricane"},
+    {"do": "dialogue", "node": "couloir"},
+    {"do": "fade", "to": "black", "time": 0.7},
+    {"do": "leave", "who": "ithea"},
+    {"do": "leave", "who": "willem"},
+    {"do": "slot", "slot": "matin", "time": 0},
+    {"do": "card", "text": "habillee", "time": 2.2},
+    {"do": "place", "who": "player", "at": "chtholly_porte", "offset": [0.0, 0.8], "facing": "south"},
+    {"do": "camera_reset", "time": 0},
+    {"do": "fade", "to": "clear", "time": 0.7}
+  ]
+}

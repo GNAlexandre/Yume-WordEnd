@@ -1,0 +1,37 @@
+{
+  "id": "j11_1_toilette",
+  "start": "toilette",
+  "nodes": {
+    "toilette": {
+      "speaker": "",
+      "text": "L'eau du point d'eau est glacée, ce matin. Les petites piaillent. Collon y trempe un doigt, et grimace.",
+      "next": "toilette_2"
+    },
+    "toilette_2": {
+      "speaker_id": "collon",
+      "text": "Non. Non non non. C'est de la glace liquide. Je refuse, je suis propre, je suis propre de l'intérieur !"
+    },
+    "rattrapee": {
+      "speaker": "",
+      "text": "Rattrapée, sans courir : on ne court pas dans les couloirs, même pour la bonne cause.",
+      "next": "rattrapee_2"
+    },
+    "rattrapee_2": {
+      "speaker_id": "collon",
+      "text": "Gnnn… D'accord. Mais seulement le bout du nez."
+    },
+    "revenue": {
+      "speaker_id": "collon",
+      "text": "… Bon. J'ai froid aux pieds, de toute façon. Je reviens. Mais je grimace."
+    },
+    "regles": {
+      "speaker": "{player}",
+      "text": "Le visage. Les dents. Les oreilles aussi, oui. Et on montre l'exemple aux plus petites, Collon.",
+      "next": "regles_2"
+    },
+    "regles_2": {
+      "speaker_id": "collon",
+      "text": "Brrrrr ! C'est l'exemple le plus froid du monde !"
+    }
+  }
+}

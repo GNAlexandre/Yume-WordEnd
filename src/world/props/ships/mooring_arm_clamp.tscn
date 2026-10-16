@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/ships/ship_strip.gd" id="1_strip"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/mooring_arm_clamp.png" id="2_image"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.2, 4.0, 0.8)
+
+[node name="MooringArmClamp" type="Node3D"]
+script = ExtResource("1_strip")
+texture = ExtResource("2_image")
+shadow_width = 0.9
+frames = 4
+metadata/hd2d_category = "mast"
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape1" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 2, 0)
+shape = SubResource("BoxShape3D_1")
