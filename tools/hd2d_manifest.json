@@ -1794,6 +1794,17 @@
      "height"
     ]
    }
-  }
+  },
+  {"path": "assets/hd2d/sky/sea_stack_a.png", "size": [288, 1152], "kind": "panel", "prio": 1, "lot": "N6C", "soft_alpha": true, "anchor": "free", "ppm": 48},
+  {"path": "assets/hd2d/decals/path_flagstones_a.png", "size": [192, 192], "kind": "decal", "prio": 1, "lot": "N6C", "soft_alpha": true},
+  {"path": "assets/hd2d/interior/window_bare_night.png", "size": [106, 134], "kind": "panel", "prio": 1, "lot": "N6C"},
+  {"path": "assets/hd2d/interior/window_curtains_open_night.png", "size": [115, 154], "kind": "panel", "prio": 1, "lot": "N6C"},
+  {"path": "assets/hd2d/props/window_lit_large.png", "size": [134, 134], "kind": "panel", "prio": 1, "lot": "N6C"},
+  {"path": "assets/hd2d/props/window_lit_small.png", "size": [77, 96], "kind": "panel", "prio": 1, "lot": "N6C"},
+  {"path": "assets/hd2d/decals/moon_window.png", "size": [192, 144], "kind": "decal", "prio": 1, "lot": "N6C", "soft_alpha": true},
+  {"path": "assets/hd2d/props/window_lit_round.png", "size": [58, 58], "kind": "panel", "prio": 1, "lot": "N6C"},
+  {"path": "assets/hd2d/sky/sea_stack_b.png", "size": [384, 1344], "kind": "panel", "prio": 1, "lot": "N6C", "soft_alpha": true, "anchor": "free", "ppm": 48},
+  {"path": "assets/hd2d/sky/sea_stack_c.png", "size": [192, 768], "kind": "panel", "prio": 1, "lot": "N6C", "soft_alpha": true, "anchor": "free", "ppm": 48},
+  {"path": "assets/hd2d/decals/path_flagstones_b.png", "size": [144, 144], "kind": "decal", "prio": 1, "lot": "N6C", "soft_alpha": true}
  ]
 }
