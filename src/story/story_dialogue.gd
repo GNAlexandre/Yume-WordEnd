@@ -9,6 +9,9 @@ extends DialogueRunner
 ## - Conversation libre (hors scène) : identifiant = id du PNJ (il s'arrête, joue « parle »),
 ##   entrée choisie comme d'ordinaire (pick_entry : « done », « entries », puis « start »).
 
+## (X-L2) Le nœud affiché (current_node).
+var _current_node: String = ""
+
 
 ## Ouvre le dialogue path au nœud node ; dialogue_id est l'identifiant des signaux ; npc (ou
 ## null) donne le nom et le portrait par défaut. Faux (rien d'émis) si un dialogue est en cours,
@@ -36,17 +39,59 @@ func play(path: String, node: String, dialogue_id: StringName, npc: NpcData = nu
 	return true
 
 
-## Une séquence passée d'une touche : les effets des nœuds suivis depuis node (sans choix, par
-## « next ») sont appliqués sans rien afficher.
-static func apply_silently(path: String, node: String) -> void:
+## Une séquence passée d'une touche : les effets des nœuds suivis depuis node (par « next ») sont
+## appliqués sans rien afficher. (X-L2) choices : un nœud à choix ne l'arrête plus, le premier choix
+## proposé est suivi ; ses effets s'appliquent si choice_effects (sinon la clé « skip » de la scène
+## les remplace : StorySkip). entered : node est déjà affiché (ses effets appliqués : un dialogue
+## passé en pleine réplique). Vrai si un choix qui change l'état (EFFECT_KEYS, l'un des choix
+## proposés) a été passé.
+static func apply_silently(
+	path: String,
+	node: String,
+	choices: bool = false,
+	choice_effects: bool = true,
+	entered: bool = false
+) -> bool:
 	var dialogue := load_dialogue(path)
 	if dialogue.is_empty():
-		return
+		return false
 	var nodes: Dictionary = dialogue["nodes"]
 	var seen := {}
 	var current: Variant = node
+	var crossed := false
 	while current is String and nodes.has(current) and not seen.has(current):
 		seen[current] = true
 		var entry: Dictionary = nodes[current]
-		apply_effects(entry)
+		if not (entered and current == node):
+			apply_effects(entry)
 		current = entry.get("next")
+		var shown: Array[Dictionary] = []
+		if choices:
+			shown = visible_choices(entry)
+		if shown.is_empty():
+			continue
+		for choice: Dictionary in shown:
+			crossed = crossed or _changes_state(choice)
+		if choice_effects:
+			apply_effects(shown[0])
+		current = shown[0].get("next")
+		if current is String and (current as String).is_empty():
+			current = null
+	return crossed
+
+
+## (X-L2) Le nœud affiché (« » hors dialogue) : un dialogue passé en pleine réplique reprend là.
+func current_node() -> String:
+	return _current_node if is_running() else ""
+
+
+func _enter(node_id: String) -> void:
+	_current_node = node_id
+	super(node_id)
+
+
+static func _changes_state(step: Dictionary) -> bool:
+	for key: String in EFFECT_KEYS:
+		if step.has(key):
+			return true
+	return false

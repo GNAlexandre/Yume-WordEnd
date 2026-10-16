@@ -27,6 +27,9 @@ extends Node
 ##   déjà vues (user://story_seen.cfg, hors sauvegarde) se passent par l'action « pause ».
 ## - Crochet des jeux (E8) : register_game(id, appel) ; sans jeu inscrit, l'étape « game » joue
 ##   son « fallback ».
+## - (X-L0) Deux modes de jeu (mode, set_mode) : « scénarisé », tout ce qui précède ; « libre »
+##   (défaut) : les règles de StoryPacing et les points d'entrée de StoryOffers (L1), StorySkip
+##   (L2) et StoryResolve (L4), seuls appelés ici.
 
 ## Une scène commence / finit.
 signal scene_started(scene_id: StringName)
@@ -39,20 +42,24 @@ signal day_started(day: int)
 signal game_requested(game_id: StringName, params: Dictionary)
 ## Le calendrier doit s'ouvrir (le joueur a lu celui de sa chambre).
 signal calendar_requested
+## (X-L0) Le mode de jeu de la partie a changé (StoryPacing.FREE ou SCENARIO).
+signal mode_changed(value: StringName)
 
 const SEEN_PATH := "user://story_seen.cfg"
-const SEEN_SECTION := "seen"
+const SEEN_SECTION := StorySkip.SEEN_SECTION
 ## Réévaluation des déclencheurs, des invites et de l'indice (s).
 const CHECK_TIME := 0.1
 const REFRESH_TIME := 0.3
 const DEFAULT_RADIUS := 2.5
 ## Action qui passe une séquence déjà vue.
-const SKIP_ACTION := &"pause"
+const SKIP_ACTION := StorySkip.SKIP_ACTION
 const PROMPTS_NODE := "StoryPrompts"
 const EXAMINE_PREFIX := "examine_"
 const SLEEP_FADE := 0.8
 const REST_FADE := 0.5
 const CALENDAR_CARD_TIME := 2.6
+## (X-L0) Carton « Jour 1 » d'une nouvelle partie en libre (s, sans les fondus).
+const START_CARD_TIME := 1.6
 ## Au plus ce temps (ms) d'attente de la fin d'une marche de scène avant de rendre un PNJ à la vie.
 const RELEASE_WAIT_MS := 12000
 ## Ce que fait le directeur entre deux scènes (_busy) : dormir, laisser passer le temps.
@@ -65,16 +72,28 @@ const BUSY_REST := &"_repos"
 var enabled: bool = true
 ## Fichier des séquences déjà vues (les tests en prennent un autre).
 var seen_path: String = SEEN_PATH
+## (X-L0) Mode d'une partie sans drapeau de mode, et d'une nouvelle partie sans next_game_mode :
+## libre dans le jeu ; les tests en prennent un autre (base M1 : mode_for_test, scénarisé).
+var default_mode: StringName = StoryPacing.FREE
+## (X-L0) Mode demandé pour la prochaine nouvelle partie (à poser avant SaveManager.new_game ; &"" :
+## default_mode) ; consommé au chargement de la partie suivante, quelle qu'elle soit.
+var next_game_mode: StringName = &""
 
 var _runner: StoryRunner
 var _stage: StoryStage
 var _talk: StoryDialogue
+var _offers: StoryOffers
+var _skip: StorySkip
+var _resolve: StoryResolve
 var _island: StringName = &""
 var _current: StringName = &""
 var _busy: StringName = &""
 var _resume: StringName = &""
 var _begin_pending: bool = false
 var _doors_day: int = -1
+var _doors_mode: StringName = &""
+## (X-L0) La dernière scène finie et sa carte : sa suite peut partir en libre.
+var _chain := StoryPacing.Chain.new()
 var _check_left: float = 0.0
 var _refresh_left: float = 0.0
 var _hint: String = ""
@@ -88,7 +107,6 @@ var _games: Dictionary = {}
 var _releases: Array[StringName] = []
 var _release_since: Dictionary = {}
 var _prompts: Array[StoryPrompt] = []
-var _seen: ConfigFile = null
 var _rng := RandomNumberGenerator.new()
 
 
@@ -105,6 +123,12 @@ func _ready() -> void:
 	_talk = StoryDialogue.new()
 	_talk.name = "TalkDialogue"
 	add_child(_talk)
+	_offers = StoryOffers.new()
+	_offers.director = self
+	_skip = StorySkip.new()
+	_skip.director = self
+	_resolve = StoryResolve.new()
+	_resolve.director = self
 	EventBus.game_loaded.connect(_on_game_loaded)
 	EventBus.map_entered.connect(_on_map_entered)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
@@ -117,9 +141,13 @@ func _physics_process(delta: float) -> void:
 	if _runner.is_running() and _stage.player() == null:
 		# Partie libérée en pleine scène (retour au menu) : la scène s'arrête, elle sera rejouée.
 		_runner.stop()
-	if GameState.day != _doors_day:
-		# Le jour a changé (sommeil, scène, chargement) : les portes fermées jusqu'à un jour.
+	var mode_now := mode()
+	if GameState.day != _doors_day or mode_now != _doors_mode:
+		# Le jour a changé (sommeil, scène, chargement) : les portes fermées jusqu'à un jour ;
+		# (X-L0) en libre, toutes ouvertes.
 		_doors_day = GameState.day
+		_doors_mode = mode_now
+		_stage.doors_by_day = StoryPacing.doors_by_day(mode_now)
 		_stage.apply_doors(WorldManager.current_map_node())
 	if not enabled or not GameState.story_running():
 		return
@@ -144,10 +172,9 @@ func _physics_process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not _runner.is_running() or not event.is_action_pressed(SKIP_ACTION):
+	if not _runner.is_running():
 		return
-	if is_skippable():
-		_runner.skip()
+	if _skip.handle_input(event, _runner, _current, StoryData.scene(_island, _current)):
 		get_viewport().set_input_as_handled()
 
 
@@ -179,18 +206,65 @@ func stage() -> StoryStage:
 	return _stage
 
 
-## Vrai si la scène en cours est une séquence déjà vue (elle se passe par SKIP_ACTION).
+## Vrai si la scène en cours se passe par SKIP_ACTION (StorySkip : une séquence déjà vue).
 func is_skippable() -> bool:
 	if not _runner.is_running() or _current.is_empty():
 		return false
-	var data := StoryData.scene(_island, _current)
-	return data.get("sequence", false) == true and has_seen(_current)
+	return _skip.is_skippable(_current, StoryData.scene(_island, _current))
 
 
-## Passe la séquence en cours (sans effet si elle ne se passe pas).
+## Passe la scène en cours (sans effet si elle ne se passe pas).
 func skip() -> void:
 	if is_skippable():
-		_runner.skip()
+		_skip.skip(_runner)
+
+
+## (X-L0) Mode de jeu de la partie : StoryPacing.SCENARIO (drapeau « mode_scenario ») ou
+## StoryPacing.FREE (« mode_libre ») ; sans drapeau, default_mode (StoryPacing.FREE dans le jeu).
+func mode() -> StringName:
+	return StoryPacing.of_game(default_mode)
+
+
+## Vrai en mode libre.
+func is_free() -> bool:
+	return mode() == StoryPacing.FREE
+
+
+## Nom affiché d'un mode : « Mode scénarisé », « Mode libre » (textes ui/mode_*).
+func mode_name(value: StringName) -> String:
+	return ui_text("mode_" + String(value), StoryPacing.NAMES.get(value, ""))
+
+
+## (X-L0) Change le mode de la partie (ses drapeaux, écrits avec elle) : portes, propositions et
+## invites suivent ; avant la première carte d'une nouvelle partie, son début aussi (noir ou
+## carton, créneau).
+func set_mode(value: StringName) -> void:
+	if not StoryPacing.is_mode(value):
+		push_warning("StoryDirector : mode inconnu %s" % value)
+		return
+	var before := mode()
+	StoryPacing.store(value)
+	var after := mode()
+	if after == before:
+		return
+	if _begin_pending and StoryData.has_act(_island):
+		_apply_day_state(StoryPacing.start_slot(StoryData.act(_island), after))
+	_offers.rebuild(WorldManager.current_map_node())
+	refresh()
+	mode_changed.emit(after)
+
+
+## (X-L0) Les points d'entrée des lots du libre (L1, L2, L4 ; tests).
+func offers() -> StoryOffers:
+	return _offers
+
+
+func skipper() -> StorySkip:
+	return _skip
+
+
+func resolver() -> StoryResolve:
+	return _resolve
 
 
 ## Indice courant ("" : rien n'attend le joueur).
@@ -227,16 +301,18 @@ func ui_text(key: String, fallback: String = "") -> String:
 	return StoryData.text(_island, "ui/" + key, &"", DialogueRunner.format_text(fallback))
 
 
-## Vrai si la séquence a déjà été vue (sur cette machine, toutes parties confondues).
+## Vrai si la séquence a déjà été vue (sur cette machine, toutes parties confondues : StorySkip).
 func has_seen(scene_id: StringName) -> bool:
-	return _seen_file().has_section_key(SEEN_SECTION, String(scene_id))
+	return _skip.has_seen(scene_id, seen_path)
 
 
 ## Oublie les séquences vues (tests).
 func forget_seen() -> void:
-	_seen = ConfigFile.new()
-	if FileAccess.file_exists(seen_path):
-		DirAccess.remove_absolute(seen_path)
+	_skip.forget_seen(seen_path)
+
+
+func mark_seen(scene_id: StringName) -> void:
+	_skip.mark_seen(scene_id, seen_path)
 
 
 # --- Jouer -------------------------------------------------------------------------------------
@@ -288,8 +364,13 @@ func announce_game(game_id: StringName, params: Dictionary) -> void:
 
 
 ## Vrai si le joueur peut se coucher : créneau du coucher, scènes du jour (sleep_after) faites,
-## aucune scène en cours.
+## aucune scène en cours ; (X-L0) en libre, StoryResolve.can_sleep en décide.
 func can_sleep() -> bool:
+	var rule := _can_sleep_by_day()
+	return _resolve.can_sleep(rule) if is_free() else rule
+
+
+func _can_sleep_by_day() -> bool:
 	if is_playing() or not GameState.story_running():
 		return false
 	var sleep_data: Dictionary = StoryData.act(_island).get("sleep", {})
@@ -303,8 +384,13 @@ func can_sleep() -> bool:
 
 
 ## Vrai si le joueur peut laisser passer le temps : pas la nuit, pas au-delà du créneau de la
-## prochaine scène clé du jour.
+## prochaine scène clé du jour ; (X-L0) en libre, StoryResolve.can_rest en décide.
 func can_rest() -> bool:
+	var rule := _can_rest_by_day()
+	return _resolve.can_rest(rule) if is_free() else rule
+
+
+func _can_rest_by_day() -> bool:
 	if is_playing() or not GameState.story_running():
 		return false
 	var slots := GameState.SLOTS
@@ -329,6 +415,9 @@ func sleep() -> void:
 	if overlay_node != null:
 		overlay_node.call(&"show_card", "%s\n%s" % [title, calendar_line(day)], CALENDAR_CARD_TIME)
 	await _stage.wait_overlay()
+	if is_free():
+		# (X-L0, L4) Les scènes du jour laissées passer sont réglées sans être jouées.
+		_resolve.before_sleep(_island, day)
 	advance_day()
 	EventBus.save_requested.emit()
 	await get_tree().physics_frame
@@ -411,6 +500,7 @@ func refresh() -> void:
 	for prompt: StoryPrompt in _prompts:
 		if is_instance_valid(prompt):
 			prompt.set_text(_prompt_text(prompt))
+	_offers.refresh()
 	_update_hint()
 
 
@@ -529,11 +619,15 @@ func _waiting_hint() -> String:
 ## Vrai si une scène a commencé.
 func _check_triggers() -> bool:
 	var map_id := WorldManager.current_map()
+	var mode_now := mode()
+	var head := _chain.head_on(map_id)
 	for scene_id: StringName in StoryData.scene_ids(_island):
 		if GameState.is_scene_done(scene_id):
 			continue
 		var data := StoryData.scene(_island, scene_id)
 		if data.is_empty() or not _conditions_met(data):
+			continue
+		if not StoryPacing.allows_trigger(mode_now, data, head):
 			continue
 		if _trigger_fires(data, map_id):
 			_examined.clear()
@@ -612,6 +706,7 @@ func _stage_ready() -> bool:
 
 func _run_scene(scene_id: StringName, data: Dictionary, resume: bool = false) -> void:
 	_current = scene_id
+	_chain.clear()
 	_stage.scene_label = scene_id
 	GameState.story_scene = scene_id
 	_scene_hint = ""
@@ -645,8 +740,11 @@ func _end_scene(scene_id: StringName, data: Dictionary, completed: bool) -> void
 	_scene_ui(false)
 	_scene_hint = ""
 	_current = &""
+	_offers.scene_ended(scene_id, completed)
 	if not completed:
 		return
+	# (X-L0) Sa suite peut partir en libre, sur la carte où elle finit.
+	_chain.finished(scene_id)
 	_stage.set_control(true)
 	for npc_id: String in _names(data.get("present", [])):
 		_releases.append(StringName(npc_id))
@@ -676,8 +774,7 @@ func _update_skip_prompt(scene_id: StringName, data: Dictionary) -> void:
 	var overlay_node := _stage.overlay()
 	if overlay_node == null:
 		return
-	var skippable: bool = data.get("sequence", false) == true and has_seen(scene_id)
-	overlay_node.call(&"set_skip_text", ui_text("skip", "Échap : passer") if skippable else "")
+	overlay_node.call(&"set_skip_text", _skip.prompt_text(scene_id, data))
 
 
 ## Pendant une scène (on) : signes d'interaction cachés (InteractSign.suppress) ; après : rendus,
@@ -733,21 +830,39 @@ func _on_game_loaded() -> void:
 	_current = &""
 	_busy = &""
 	_begin_pending = false
+	_chain.clear()
 	var start_island := WorldAtlas.island_of(WorldManager.starting_map())
 	_island = start_island
-	_resume = GameState.story_scene
 	var fresh := (
 		SaveManager.started_new
 		and GameState.map.is_empty()
 		and GameState.day == 0
 		and GameState.scenes_done().is_empty()
 	)
-	if enabled and fresh and StoryData.has_act(start_island):
+	var wanted := next_game_mode
+	next_game_mode = &""
+	var opens_act := enabled and fresh and StoryData.has_act(start_island)
+	if opens_act:
+		# (X-L0) Le mode de la nouvelle partie : demandé, sinon celui par défaut (écrit s'il est libre
+		# ou demandé ; les tests au mode par défaut scénarisé n'ont pas de drapeau de plus).
+		if StoryPacing.is_mode(wanted):
+			StoryPacing.store(wanted)
+		elif default_mode == StoryPacing.FREE:
+			StoryPacing.store(StoryPacing.FREE)
+	elif enabled and not fresh:
+		# (X-L0) Une ancienne partie sans drapeau de mode, des scènes faites : scénarisée.
+		StoryPacing.migrate()
+	_resume = GameState.story_scene
+	if not _resume.is_empty() and not StoryPacing.replays_interrupted(mode()):
+		# (X-L0) En libre, la scène interrompue n'est pas rejouée : elle redevient disponible.
+		_resume = &""
+		GameState.story_scene = &""
+	if opens_act:
 		var start: Dictionary = StoryData.act(start_island)["start"]
 		GameState.day = int(start["day"])
 		if start.has("weather"):
 			GameState.weather = StringName(str(start["weather"]))
-		_apply_day_state(StringName(str(start["slot"])))
+		_apply_day_state(StoryPacing.start_slot(StoryData.act(start_island), mode()))
 		_begin_pending = true
 		day_started.emit(GameState.day)
 	_update_hint()
@@ -756,14 +871,24 @@ func _on_game_loaded() -> void:
 func _on_map_entered(map_id: StringName) -> void:
 	_island = WorldAtlas.island_of(map_id)
 	var map := WorldManager.current_map_node()
+	var mode_now := mode()
+	_stage.doors_by_day = StoryPacing.doors_by_day(mode_now)
 	_stage.set_map(map)
 	_rebuild_prompts(map)
+	_offers.rebuild(map)
+	if not _runner.is_running():
+		_chain.entered(map_id)
 	if _begin_pending:
 		_begin_pending = false
-		var start: Dictionary = StoryData.act(_island).get("start", {})
+		var act := StoryData.act(_island)
+		var start: Dictionary = act.get("start", {})
 		var overlay_node := _stage.overlay()
-		if overlay_node != null:
+		if overlay_node != null and StoryPacing.starts_in_black(mode_now):
 			overlay_node.call(&"set_fade", StoryData.BLACK, 1.0)
+		elif overlay_node != null and StoryPacing.shows_start_card(act, mode_now):
+			# (X-L0) Libre : pas de noir, un carton « Jour 1 », la main au joueur.
+			var title := ui_text("day", "Jour {day}").replace("{day}", str(GameState.day))
+			overlay_node.call(&"show_card", title, START_CARD_TIME)
 		if start.has("marker") and str(start.get("map", "")) == String(map_id):
 			var marker := map.marker(StringName(str(start["marker"]))) if map != null else null
 			if marker != null:
@@ -794,6 +919,14 @@ func _on_talk(npc_id: StringName) -> bool:
 			_talked[npc_id] = true
 			return true
 		return _free_talk(npc_id)
+	if is_free():
+		# (X-L0) En libre, « talk » ne lance pas de scène : une proposition (L1) ou la conversation.
+		return _offers.talk(npc_id) or _free_talk(npc_id)
+	return _talk_scene(npc_id) or _free_talk(npc_id)
+
+
+## Joue la scène que lance la conversation avec ce PNJ (déclencheur « talk ») ; vrai si elle part.
+func _talk_scene(npc_id: StringName) -> bool:
 	var map_id := WorldManager.current_map()
 	for scene_id: StringName in StoryData.scene_ids(_island):
 		var data := StoryData.scene(_island, scene_id)
@@ -804,7 +937,7 @@ func _on_talk(npc_id: StringName) -> bool:
 		if on_map == map_id and not GameState.is_scene_done(scene_id) and _conditions_met(data):
 			_run_scene(scene_id, data)
 			return true
-	return _free_talk(npc_id)
+	return false
 
 
 ## Ce que dit un personnage hors des scènes : data/dialogues/<île>/talk/<pnj>.json, sinon une
@@ -837,22 +970,6 @@ func _on_prompt_used(prompt: StoryPrompt) -> void:
 
 
 # --- Outils ------------------------------------------------------------------------------------
-
-
-func _seen_file() -> ConfigFile:
-	if _seen == null:
-		_seen = ConfigFile.new()
-		if FileAccess.file_exists(seen_path):
-			_seen.load(seen_path)
-	return _seen
-
-
-func mark_seen(scene_id: StringName) -> void:
-	var file := _seen_file()
-	if file.has_section_key(SEEN_SECTION, String(scene_id)):
-		return
-	file.set_value(SEEN_SECTION, String(scene_id), true)
-	file.save(seen_path)
 
 
 static func _names(value: Variant) -> Array[String]:

@@ -153,5 +153,101 @@ func test_story_conditions_in_dialogue_grammar() -> void:
 	assert_eq(DialogueRunner.condition_problem({"day": [5, 2]}).is_empty(), false)
 
 
+## (X-L0) Les clés du mode libre : offer (ancre sur un PNJ ou un point), skip, free ; une clé
+## inconnue y reste une faute.
+func test_free_mode_keys_are_checked() -> void:
+	var data := _scene()
+	data["offer"] = {"npc": "willem", "text": "proposition"}
+	data["skip"] = {"flags": ["j1_passee"]}
+	data["free"] = {"chain": false}
+	assert_eq(StoryData.scene_problems(&"essai", data, ISLAND, false), PackedStringArray())
+	data["offer"] = {"point": "porche_banc", "map": "entrepot"}
+	assert_eq(StoryData.scene_problems(&"essai", data, ISLAND, false), PackedStringArray())
+	data["offer"] = {"point": [3.0, 4.0]}
+	assert_eq(StoryData.scene_problems(&"essai", data, ISLAND, false), PackedStringArray())
+	data = _scene()
+	data["offer"] = {"npc": "willem", "point": "porche_banc"}
+	assert_string_contains(_problems(data), "« npc » ou « point », un seul des deux")
+	data["offer"] = {"npc": "willem", "map": "entrepot"}
+	assert_string_contains(_problems(data), "offer.map : seulement avec « point »")
+	data["offer"] = {"pnj": "willem"}
+	assert_string_contains(_problems(data), "offer : clé inconnue « pnj »")
+	data["offer"] = "willem"
+	assert_string_contains(_problems(data), "« offer » : objet attendu")
+	data = _scene()
+	data["skip"] = {"flags": [], "choix": 1}
+	var text := _problems(data)
+	assert_string_contains(text, "skip.flags : un drapeau ou une liste")
+	assert_string_contains(text, "skip : clé inconnue « choix »")
+	data = _scene()
+	data["free"] = {"chain": "oui", "auto": true}
+	text = _problems(data)
+	assert_string_contains(text, "free.chain : vrai ou faux")
+	assert_string_contains(text, "free : clé inconnue « auto »")
+	# Le monde : le PNJ, la place et le texte de l'ancre existent.
+	data = _scene()
+	data["offer"] = {"npc": "inconnue", "text": "proposition_absente"}
+	text = "\n".join(StoryData.scene_problems(&"essai", data, ISLAND, true))
+	assert_string_contains(text, "offer.npc : PNJ inconnu inconnue")
+	assert_string_contains(text, "texte absent essai/proposition_absente")
+	data["offer"] = {"point": "nulle_part"}
+	text = "\n".join(StoryData.scene_problems(&"essai", data, ISLAND, true))
+	assert_string_contains(text, "nulle_part n'est ni une place ni un marqueur de entrepot")
+	# L'acte : sa section free (créneau du jour 1, carton).
+	var act := StoryData.act(ISLAND).duplicate(true)
+	assert_true(act.has("free"), "act.json a sa section free")
+	assert_eq(StoryData.act_problems(act, ISLAND, false), PackedStringArray())
+	act["free"] = {"start_slot": "goûter", "start_card": 1, "depart": true}
+	text = "\n".join(StoryData.act_problems(act, ISLAND, false))
+	assert_string_contains(text, "free.start_slot : créneau attendu")
+	assert_string_contains(text, "free.start_card : vrai ou faux")
+	assert_string_contains(text, "free : clé inconnue « depart »")
+
+
+## (X-L0) Les règles du mode libre (StoryPacing) : suites, déclencheurs volontaires, portes, début.
+func test_free_mode_rules() -> void:
+	var head := {"day": 1, "trigger": {"on": "reach", "point": "a"}}
+	var suite := {"day": 1, "after": ["j1_1_port"], "trigger": {"on": "ready"}}
+	var prompt := {"day": 1, "trigger": {"on": "prompt", "point": "a", "prompt": "p"}}
+	var libre := StoryPacing.FREE
+	var scenario := StoryPacing.SCENARIO
+	assert_true(StoryPacing.allows_trigger(scenario, head, &""), "scénarisé : tout part")
+	assert_false(StoryPacing.allows_trigger(libre, head, &""), "libre : pas de piège")
+	assert_false(StoryPacing.allows_trigger(libre, {"trigger": {"on": "ready"}}, &""))
+	assert_false(StoryPacing.allows_trigger(libre, suite, &""), "une suite sans sa tête")
+	assert_false(StoryPacing.allows_trigger(libre, suite, &"j1_2_lumiere"), "une autre tête")
+	assert_true(StoryPacing.allows_trigger(libre, suite, &"j1_1_port"), "juste après sa tête")
+	assert_true(StoryPacing.allows_trigger(libre, prompt, &""), "une invite volontaire")
+	var unchained := suite.duplicate(true)
+	unchained["free"] = {"chain": false}
+	assert_false(StoryPacing.allows_trigger(libre, unchained, &"j1_1_port"), "free.chain faux")
+	assert_false(StoryPacing.doors_by_day(libre))
+	assert_true(StoryPacing.doors_by_day(scenario))
+	var act := StoryData.act(ISLAND)
+	assert_eq(StoryPacing.start_slot(act, scenario), &"nuit", "la nuit du grand vent")
+	assert_eq(StoryPacing.start_slot(act, libre), &"soir", "le soir en libre")
+	assert_true(StoryPacing.shows_start_card(act, libre))
+	assert_false(StoryPacing.shows_start_card(act, scenario))
+	# Les drapeaux : présent, scénarisé ; libre marqué ; aucun, le mode par défaut.
+	assert_eq(StoryPacing.of_game(libre), libre)
+	assert_eq(StoryPacing.of_game(scenario), scenario)
+	StoryPacing.store(scenario)
+	assert_true(GameState.has_flag(&"mode_scenario"))
+	assert_eq(StoryPacing.of_game(libre), scenario)
+	StoryPacing.store(libre)
+	assert_false(GameState.has_flag(&"mode_scenario"))
+	assert_eq(StoryPacing.of_game(scenario), libre)
+	# Une ancienne partie : scénarisée seulement si elle a des scènes faites.
+	GameState.reset()
+	assert_false(StoryPacing.migrate(), "sans scène : rien")
+	GameState.mark_scene_done(&"j1_1_port")
+	assert_true(StoryPacing.migrate(), "des scènes faites")
+	assert_eq(StoryPacing.of_game(libre), scenario)
+	GameState.reset()
+	StoryPacing.store(libre)
+	GameState.mark_scene_done(&"j1_1_port")
+	assert_false(StoryPacing.migrate(), "une partie libre le reste")
+
+
 func _problems(data: Dictionary) -> String:
 	return "\n".join(StoryData.scene_problems(&"essai", data, ISLAND, false))

@@ -1697,6 +1697,118 @@ scène suivante. Les tests : `StoryData.use_root("res://tests/data/story")` (act
 
 **(S2) Jours 5 et 6** (`j5_1_jeu_willem` … `j6_4_souvenir`, ACTE1.md 5.1 à 6.4) : le ballon n'est pas une étape `game` mais la vie : la séquence de midi (5.1) finit au créneau de l'après-midi (`slot`), les lignes `ballon` des jours 5 et 6 (`data/life/ile_68/`, arbitre, rouge, blanc) lancent le match d'E8 ; entrer dans le champ suffit pour jouer. Démonstration : `S2_DAY=5|6 tools/godot … res://tests/integration/demo_s2.tscn` (une image toutes les 0,5 s) puis `python3 tools/s2_sheet.py <dossier>` (planches) ; tests : `tests/integration/test_s2_day5.gd` et `test_s2_day6.gd` (base `tests/stubs/s2_story_test.gd` : reprise au réveil d'un jour, `rest_until`, `sleep_by_prompt`).
 
+### (X) Exploration libre : le rythme
+
+Deux modes de jeu (refonte « exploration libre d'abord », 16 octobre 2026), pour ne rien perdre du
+travail fait : le **mode scénarisé** (`&"scenario"`, le récit en jours d'E6 et de S2, au bit près)
+et le **mode libre** (`&"libre"`, défaut du jeu : toute l'île ouverte, les scènes du livre deviennent
+des propositions que l'on peut passer). Le choix se fait à « Nouvelle partie » (lot L5). Socle :
+lot X-L0 ; décisions : docs/DECISIONS.md (« X-L0 »).
+
+**Persistance** : des drapeaux de partie, sans changer le schéma de la sauvegarde (SAVE_VERSION 4)
+ni les contrats (EventBus, GameState, project.godot). `mode_scenario` présent : scénarisé ;
+`mode_libre` : une partie commencée ou passée en libre ; aucun des deux : `default_mode` (libre
+dans le jeu). Une ancienne partie sans drapeau : libre, sauf si elle a déjà des scènes faites
+(`scenes_done` non vide) : scénarisée, pour ne pas changer une partie en cours
+(`StoryPacing.migrate`, au chargement, récit allumé).
+
+```gdscript
+# StoryDirector (ajouts X-L0)
+signal mode_changed(mode)                       # StoryPacing.FREE ou SCENARIO
+var default_mode := StoryPacing.FREE            # mode sans drapeau ; base M1 : mode_for_test() (scenario)
+var next_game_mode := &""                       # mode de la prochaine nouvelle partie, posé avant
+                                                # SaveManager.new_game (consommé au chargement suivant)
+func mode() -> StringName / is_free() -> bool / set_mode(mode) / mode_name(mode) -> String
+func offers() -> StoryOffers / skipper() -> StorySkip / resolver() -> StoryResolve
+# src/story/ — classes
+class_name StoryPacing    # FREE, SCENARIO, FLAG, FREE_FLAG, NAMES ; of_game, store, migrate, is_chained,
+                          # allows_trigger, doors_by_day, replays_interrupted, starts_in_black,
+                          # start_slot, shows_start_card ; Chain (la dernière scène finie et sa carte)
+class_name StoryOffers    # (L1) rebuild(carte), refresh(), talk(pnj) -> bool, scene_ended(id, finie)
+class_name StorySkip      # (L2) is_skippable, prompt_text, skip(runner), handle_input, skip_flags(données),
+                          # SKIP_ACTION, FORWARD_ACTION ; séquences vues
+class_name StoryResolve   # (L4) can_sleep(règle), can_rest(règle), before_sleep(île, jour), resolve_scene
+class_name StoryFreeData  # vérifie les clés du libre (OFFER_KEYS, SKIP_KEYS, FREE_SCENE_KEYS, FREE_ACT_KEYS)
+```
+
+**Les règles du libre** (`StoryPacing`, seul endroit où elles s'écrivent) :
+- aucun déclencheur automatique (`ready`, `enter`, `reach`, `talk`) ne lance une scène, sauf une
+  **suite** (`ready` + `after`, ou `free.chain` vrai) juste après sa tête, tant que le joueur est
+  sur la carte où la tête a fini ; les déclencheurs volontaires (`prompt`, `examine`) restent
+  permis ; `talk` passe par `StoryOffers.talk`, puis la conversation libre ;
+- `StoryStage.apply_doors` ouvre toutes les portes (`doors_by_day` faux) ; repassées en
+  scénarisé, elles se referment avant leur jour ;
+- une partie reprise en pleine scène ne la rejoue pas : `GameState.story_scene` est vidé, la scène
+  redevient disponible, sans retour forcé à sa carte ;
+- nouvelle partie : pas d'écran noir, un carton « Jour 1 » (`free.start_card`), le jour 1 au
+  créneau `free.start_slot` (le soir), la main au joueur à `Spawn` ;
+- le reste (coucher, temps qui passe, indice) est celui du scénarisé tant que L1 et L4 n'ont pas
+  rempli leurs points d'entrée ; passer une scène : ci-dessous (X-L2).
+
+**Les données** (format strict, clé inconnue refusée) :
+- une scène peut porter `offer` (l'ancre de sa proposition : `{"npc": id}` ou
+  `{"point": nom, "map": id}`, la carte de la scène par défaut ; `text` : sa clé de texte),
+  `skip` (`{"flags": [...]}` : posés quand on la passe) et `free` (`{"chain": bool}`) ;
+- `act.json` porte `free` (`start_slot`, `start_card`) ;
+- les textes `ui/mode_scenario` et `ui/mode_libre` (« Mode scénarisé », « Mode libre »).
+
+**Points d'entrée des lots suivants** (le directeur n'appelle qu'eux ; un lot remplit son
+fichier, sans toucher aux autres) :
+- **L1, propositions** (`story_offers.gd`) : `rebuild(map)` à chaque arrivée sur une carte (après
+  les invites du récit) et à chaque changement de mode ; `refresh()` avec les invites (toutes les
+  0,3 s hors scène) ; `talk(npc_id)` en libre, hors scène, avant la conversation libre (vrai :
+  la conversation est prise) ; `scene_ended(id, completed)` à la fin de chaque scène. Jouer une
+  scène proposée : `StoryDirector.play(id)` ;
+- **L2, passer** (`story_skip.gd`) : `handle_input` reçoit chaque appui pendant une scène (vrai :
+  pris) ; `is_skippable`, `prompt_text` (l'invite « Échap : passer »), `skip(runner)` ; le
+  fichier des séquences vues y vit (`has_seen`, `mark_seen`, `forget_seen`, chemin
+  `StoryDirector.seen_path`) ;
+- **L4, jours libres** (`story_resolve.gd`) : `can_sleep(règle)` et `can_rest(règle)` décident en
+  libre (la règle du scénarisé en argument) ; `before_sleep(île, jour)` est appelé en libre au
+  coucher, avant le jour suivant ; `resolve_scene(île, id)` règle une scène sans la jouer.
+
+**Passer une scène (X-L2)** (`StorySkip`, `StoryRunner`) :
+- **en libre**, un seul appui sur l'action `pause` (Échap, Start) passe **toute** scène, à toute
+  étape (dialogue, marche, attente, jeu, changement de carte) ; l'invite « Échap : passer »
+  (`ui/skip`) paraît dès le début de la scène ; l'appui est pris par `StoryDirector._input`, avant
+  le `_unhandled_input` du menu pause, qui ne s'ouvre pas (un second appui pendant le passage
+  est pris aussi) ;
+- **en scénarisé**, la règle d'E6 est inchangée : seule une séquence déjà vue se passe
+  (`is_skippable`) ;
+- **le passage** (`StoryRunner.skip`, mode rapide `fast`) : le reste de la scène se joue d'un coup,
+  sans rien perdre de ce qui change l'état ; le dialogue ouvert se ferme, les effets de ses nœuds
+  à venir s'appliquent ; les jeux du récit en cours s'arrêtent et quittent la carte
+  (`MiniGames.stop_all()` : duel, embuscade, entraînements au bâton et avec Seniorious ; le match
+  de ballon de la vie continue) ; une étape `wait_for` est remplie (`map` : `go_to` par le
+  marqueur où mène la sortie de la carte courante, sinon `Spawn` ; `reach` : le joueur posé au
+  point, à côté d'un personnage ; `talk`, `examine` : tenus pour faits ; jamais son
+  `timeout_flag`) ; une marche du joueur s'arrête au but (`StoryStage.walk_player(cible, allure,
+  stop_when)`) ; puis la fin de scène d'E6 (scène faite, nettoyée, caméra rendue, voile levé, main
+  rendue) et, en libre, la suite qui s'enchaîne (`j12_3_epilogue` après `j12_2_depart`) ;
+- **les choix sautés** (`StoryDialogue.apply_silently(chemin, nœud, choices, choice_effects,
+  entered) -> bool`) : le premier choix proposé est suivi ; un choix qui change l'état (l'un des
+  choix porte des effets) prend la clé `skip` de la scène (`StorySkip.skip_flags(données)`, ses
+  drapeaux posés une fois) si elle en a une, sinon les effets du premier choix. Clés `skip` :
+  `j8_3_duel` (`j8_duel_reprise`), `j8_8_colline` (`j8_talismans`), `j12_2_depart`
+  (`j12_voir_epilogue` : l'épilogue vient après un passage) ;
+- **l'accélération, dans les deux modes** : l'action `interact` (E, A) tenue plus de
+  `StoryRunner.FORWARD_HOLD` (0,3 s) accélère la scène sans la passer (`Engine.time_scale` à
+  `StoryRunner.FAST_FORWARD`, 3,5 : répliques tapées, attentes, marches, fondus, caméra) tant que
+  la scène tient le joueur ou qu'un de ses dialogues est ouvert, hors étape `game` et hors pause ;
+  la réplique entière passe seule après sa lecture (`FORWARD_READ_BASE` + `FORWARD_READ_PER_CHAR`
+  par caractère, en temps de jeu accéléré), jamais un choix ; relâchée, en pause ou en fin de
+  scène, le temps d'avant revient. Un appui bref (les tests du scénarisé) ne fait qu'avancer le
+  dialogue. `StoryRunner.is_forwarding()`.
+
+**Tests** : la base M1 (`tests/stubs/m1_game_test.gd`) donne `mode_for_test()` (scénarisé) : tous
+les tests d'avant le mode libre en restent là ; les démos `demo_e6`, `demo_s2`, `demo_s2_tard`
+posent le scénarisé. Le mode libre : `tests/integration/test_free_start.gd` (nouvelle partie,
+quinze secondes sans scène, anciens pièges, portes, sauvegarde et reprise, ancienne partie) ;
+`tests/integration/test_free_skip.gd` (X-L2 : les 55 scènes passées d'un appui après 1 s, en
+moins de 3 s chacune ; l'épilogue après le départ passé ; un jeu arrêté et la clé `skip` du duel ;
+le scénarisé inchangé ; l'épilogue deux fois plus court touche tenue) ; règles et données :
+`tests/unit/test_story_data.gd`.
+
 ### (U1) L'interface « Nuit douce » : thème, dialogue et signes
 
 - **Thème unique** : `src/ui/wordend_theme.tres`, à la racine de chaque écran (`theme`). Tout Control ajouté
@@ -1765,6 +1877,8 @@ training.finished.connect(func(result: Dictionary) -> void: ...)   # la scène c
 #           phase_b: {success, counters, touched_willem, survived}, touches, duration, variant}
 # Signaux : phase_changed(&"intro"|&"a"|&"link"|&"b"|&"ended"), resolved(sorte, issue), touches_changed(n, limite),
 # window_closed (jour 10 : le rythme tremble : effet d'E9). MiniGames.staff_training() ; stop_staff_training().
+# (X-L2) MiniGames.stop_all() : arrête et retire de la carte les jeux du récit en cours (duel, embuscade,
+# entraînements au bâton et avec Seniorious ; une scène passée) ; le match de ballon de la vie continue.
 ```
 
 **(E8c) L'embuscade de Pannibal** (src/games/ambush.gd, class Ambush, un Node3D ajouté à `Life` ; ACTE1.md 3.1 ;
