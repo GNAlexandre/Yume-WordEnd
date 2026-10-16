@@ -271,3 +271,5 @@ Quatre remplaçants générés avec ChatGPT / outil d’image selon le cahier n�
 - `assets/characters/chtholly/chtholly_stick{,_front,_back}.png` et JSON associés : générés avec ChatGPT le 16 octobre 2026, références officielles p. 11 et planches `chtholly_home`, tenue sans veste, cheveux attachés, bâton de bois brut. Réduction au plus proche voisin et montage contrôlé de poses corrigées ; originaux conservés hors dépôt.
 
 - `assets/characters/ithea/ithea_stick{,_front,_back}.png` et JSON associés : générés avec ChatGPT le 16 octobre 2026, cahier n° 6, lot C.10 ; référence des planches officielles de l’anime et des planches `ithea_home`, cheveux orange courts, écharpe serrée, bâton de bois brut. Ajustement géométrique au plus proche voisin ; originaux conservés hors dépôt.
+
+- `assets/characters/nephren/nephren_stick{,_front,_back}.png` et JSON associés : générés avec ChatGPT le 16 octobre 2026, cahier n° 6, lot C.10 ; références `nephren_home`, visage impassible, couettes attachées en arrière, bâton de bois brut sans livre. Poses d’orientation incorrecte écartées ; réduction au plus proche voisin et montage de poses corrigées, originaux conservés hors dépôt.
