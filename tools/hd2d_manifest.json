@@ -808,11 +808,11 @@
   {"path": "assets/hd2d/props/steam_whistle.png", "size": [77, 192], "kind": "panel", "prio": 2, "lot": "R3"},
   {"path": "assets/hd2d/props/capstan.png", "size": [96, 86], "kind": "panel", "prio": 3, "lot": "R3"},
   {"path": "assets/hd2d/props/signpost_port.png", "size": [154, 288], "kind": "panel", "prio": 1, "lot": "R3"},
-  {"path": "assets/hd2d/props/wind_fence.png", "size": [192, 134], "kind": "panel", "prio": 3, "lot": "R3"},
+  {"path": "assets/hd2d/props/wind_fence.png", "size": [192, 134], "kind": "panel", "prio": 3, "lot": "R3", "wrap": "x"},
   {"path": "assets/hd2d/props/cargo_cart_a.png", "size": [288, 173], "kind": "panel", "prio": 2, "lot": "R3"},
   {"path": "assets/hd2d/props/cargo_cart_b.png", "size": [240, 134], "kind": "panel", "prio": 3, "lot": "R3"},
   {"path": "assets/hd2d/buildings/port_house_b.png", "size": [384, 624], "kind": "facade", "prio": 3, "lot": "R3"},
-  {"path": "assets/hd2d/buildings/port_house_b_side.png", "size": [480, 384], "kind": "side", "prio": 3, "lot": "R3", "roof": "eaves"},
+  {"path": "assets/hd2d/buildings/port_house_b_side.png", "size": [480, 384], "kind": "side", "prio": 3, "lot": "R3", "roof": "eaves", "wall_m": 4},
   {"path": "assets/hd2d/ships/garde_transport_side.png", "size": [1536, 672], "kind": "panel", "prio": 1, "lot": "R7"}
  ],
  "sheets": [
