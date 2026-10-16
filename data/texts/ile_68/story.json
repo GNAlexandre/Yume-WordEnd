@@ -15,7 +15,20 @@
     "departure_tomorrow": "Départ demain",
     "departure_today": "C'est le jour du départ",
     "mode_scenario": "Mode scénarisé",
-    "mode_libre": "Mode libre"
+    "mode_libre": "Mode libre",
+    "mode_choice_title": "Comment veux-tu jouer ?",
+    "mode_libre_blurb": "L'île est à toi : explore à ta guise, les moments de l'histoire te sont proposés.",
+    "mode_scenario_blurb": "Vis l'histoire jour après jour, scène après scène, comme dans le livre.",
+    "mode_choice_hint": "Tu pourras en changer en cours de partie : Pause, puis Options.",
+    "mode_choice_back": "Retour",
+    "mode_option": "{mode} · changer",
+    "mode_switch_libre": "Passer en mode libre ?",
+    "mode_switch_scenario": "Passer en mode scénarisé ?",
+    "mode_switch_libre_note": "Les scènes ne partent plus seules : on te les propose, et tu peux les passer. Ta partie est gardée telle quelle.",
+    "mode_switch_scenario_note": "Les scènes repartent seules, jour après jour, comme dans l'histoire. Ta partie est gardée telle quelle.",
+    "mode_switch_yes": "Changer",
+    "mode_switch_no": "Garder",
+    "mode_switched": "C'est fait : {mode}."
   },
   "days": {
     "1": {
