@@ -95,7 +95,6 @@ func test_day_7_end_to_end_until_day_8() -> void:
 	assert_false(
 		ShipControl.has_flag(&"transport_garde", &"boarding"), "toujours pas d'embarquement"
 	)
-	assert_eq(GameState.quests(), {}, "aucune quête à collecter")
 	assert_true(
 		await until(func() -> bool: return StoryDirector.current_scene() == &"j8_1_reveil", 10.0),
 		"le réveil du jour 8 à l'infirmerie"

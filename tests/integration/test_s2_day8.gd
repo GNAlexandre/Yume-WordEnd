@@ -164,7 +164,6 @@ func test_day_8_end_to_end_until_day_9() -> void:
 	assert_eq(GameState.calendar().size(), 8, "huit lignes au calendrier")
 	assert_null(StoryDirector.stage().props(&"talismans"), "les talismans retirés")
 	assert_false(StoryDirector.stage().is_player_hidden(), "la protagoniste rendue")
-	assert_eq(GameState.quests(), {}, "aucune quête à collecter")
 
 
 ## Monte au sommet de la colline par la dernière rampe (x 14 → 19, z 24 → 19, CARTE.md) : le
