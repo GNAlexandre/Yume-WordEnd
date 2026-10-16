@@ -83,6 +83,7 @@ var _runner: StoryRunner
 var _stage: StoryStage
 var _talk: StoryDialogue
 var _offers: StoryOffers
+var _activities: StoryActivities
 var _skip: StorySkip
 var _resolve: StoryResolve
 var _island: StringName = &""
@@ -125,6 +126,8 @@ func _ready() -> void:
 	add_child(_talk)
 	_offers = StoryOffers.new()
 	_offers.director = self
+	_activities = StoryActivities.new()
+	_activities.director = self
 	_skip = StorySkip.new()
 	_skip.director = self
 	_resolve = StoryResolve.new()
@@ -172,6 +175,10 @@ func _physics_process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if _activities.handle_input(event):
+		# (X-L6) Échap arrête un jeu lancé à la demande, avant le menu pause.
+		get_viewport().set_input_as_handled()
+		return
 	if not _runner.is_running():
 		return
 	if _skip.handle_input(event, _runner, _current, StoryData.scene(_island, _current)):
@@ -261,6 +268,11 @@ func offers() -> StoryOffers:
 
 func skipper() -> StorySkip:
 	return _skip
+
+
+## (X-L6) Les jeux à la demande du mode libre (propositions des PNJ, Échap pour arrêter).
+func activities() -> StoryActivities:
+	return _activities
 
 
 func resolver() -> StoryResolve:
@@ -921,7 +933,13 @@ func _on_talk(npc_id: StringName) -> bool:
 		return _free_talk(npc_id)
 	if is_free():
 		# (X-L0) En libre, « talk » ne lance pas de scène : une proposition (L1) ou la conversation.
-		return _offers.talk(npc_id) or _free_talk(npc_id)
+		# (X-L6) Pendant un jeu à la demande on ne propose rien ; une scène passe avant une activité.
+		return (
+			_activities.busy()
+			or _offers.talk(npc_id)
+			or _activities.talk(npc_id)
+			or _free_talk(npc_id)
+		)
 	return _talk_scene(npc_id) or _free_talk(npc_id)
 
 
