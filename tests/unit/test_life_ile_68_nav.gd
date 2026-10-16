@@ -182,7 +182,8 @@ func test_no_place_is_overfull() -> void:
 					var activity: Dictionary = LifeData.activity(line["activity"])
 					if (
 						activity.get("wander", false)
-						or activity.get("game", "") in ["chat", "course"]
+						# Le ballon place lui-même ses joueurs sur le terrain (E8).
+						or activity.get("game", "") in ["chat", "course", "ballon"]
 					):
 						continue
 					var key := "%s/%s" % [line["map"], line["place"]]

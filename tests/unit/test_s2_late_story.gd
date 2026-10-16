@@ -17,10 +17,12 @@ const MAX_HINT := 60
 
 func before_each() -> void:
 	StoryData.use_root("")
+	LifeData.use_content(&"ile_68")
 	GameState.reset()
 
 
 func after_each() -> void:
+	LifeData.use_content(&"")
 	GameState.reset()
 
 
