@@ -493,7 +493,8 @@ func _add_prompt(
 
 
 func _update_hint() -> void:
-	# Pendant une scène (dès son début), seul l'indice de ses étapes « hint » ; rien pendant un jeu.
+	# Pendant une scène (dès son début : S1b, S2), seul l'indice de ses étapes « hint » ; l'indice
+	# qui l'annonçait ne traîne pas sur elle ; rien pendant un jeu.
 	var in_scene := _runner.is_running() or not _current.is_empty()
 	var text := _scene_hint if in_scene else _waiting_hint()
 	if _gaming:

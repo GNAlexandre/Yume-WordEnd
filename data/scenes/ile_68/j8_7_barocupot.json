@@ -1,0 +1,145 @@
+{
+  "_comment": "ACTE1.md 8.7 (s. 20) : à bord du Barocupot (carte d'E7). {player} se réveille dans la coursive (Spawn), marche jusqu'à la salle du conseil ; le thé de Limeskin (limeskin), deux lames qui se ressemblent (image originale) ; « Remonter sur le pont » (la sortie de la carte, vers entrepot:from_barocupot) ; le retour escorté en carton ; la cour au crépuscule.",
+  "title": "Le Barocupot",
+  "day": 8,
+  "after": [
+    "j8_6_fugue"
+  ],
+  "map": "barocupot",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "limeskin"
+  ],
+  "steps": [
+    {
+      "do": "fade",
+      "to": "white",
+      "time": 0
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "Spawn",
+      "facing": "east"
+    },
+    {
+      "do": "place",
+      "who": "limeskin",
+      "at": "conseil_limeskin",
+      "facing": "west"
+    },
+    {
+      "do": "camera_reset",
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.8
+    },
+    {
+      "do": "dialogue",
+      "node": "reveil"
+    },
+    {
+      "do": "hint",
+      "text": "hint_conseil"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "reach": "conseil_chtholly",
+      "radius": 1.3
+    },
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "hint"
+    },
+    {
+      "do": "walk",
+      "who": "player",
+      "to": "conseil_chtholly",
+      "facing": "limeskin"
+    },
+    {
+      "do": "face",
+      "who": "limeskin",
+      "toward": "player"
+    },
+    {
+      "do": "camera",
+      "to": "conseil_chtholly",
+      "offset": [
+        2.0,
+        0.4
+      ],
+      "distance": 8,
+      "time": 1.0,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "the"
+    },
+    {
+      "do": "camera_reset",
+      "time": 1.0
+    },
+    {
+      "do": "hint",
+      "text": "hint_pont"
+    },
+    {
+      "do": "control",
+      "on": true
+    },
+    {
+      "do": "wait_for",
+      "map": "entrepot"
+    },
+    {
+      "do": "control",
+      "on": false
+    },
+    {
+      "do": "hint"
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0
+    },
+    {
+      "do": "slot",
+      "slot": "soir",
+      "time": 0
+    },
+    {
+      "do": "moment",
+      "weather": "clair",
+      "time": 0
+    },
+    {
+      "do": "wait",
+      "time": 2.8
+    },
+    {
+      "do": "card",
+      "text": "retour",
+      "time": 3.6
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.2
+    }
+  ]
+}

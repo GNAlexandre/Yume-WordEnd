@@ -396,7 +396,8 @@ def pose(p):
               flip=k % 2 == 1, check=False)
         hedge_x += 2.4 if k % 2 == 0 else 2.0
         k += 1
-    for k, (x, z, scene) in enumerate(((52.0, 32.6, "tree_autumn_rust_forest"), (55.0, 31.8, "maple_a_forest"))):
+    # (QC2) Au sud des ruches, un jeune arbre : un grand les couvrait (docs/QUALITE.md, QC-37).
+    for k, (x, z, scene) in enumerate(((52.0, 32.6, "sapling_a_forest"), (55.0, 31.8, "maple_a_forest"))):
         place("Woods", scene, x, z, name="ArbreSudEst%d" % (k + 1), check=False)
     place("Woods", "bush_d", 53.6, 33.2, name="BuissonSudEst")
     for k, (x, z) in enumerate(((8.0, 38.6), (24.0, 38.8), (40.0, 38.6))):

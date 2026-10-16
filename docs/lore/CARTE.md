@@ -102,6 +102,13 @@ ce qui se trouve au nord de lui sur environ **1,6 × (h − 0,5) m** (1 / tan 32
   dans le champ : bout contre bout avec un autre pan du même rang, prolongé au-delà du bord de la
   carte, ou caché par un grand arbre posé devant lui (un chêne `oak_a` : tronc et couronne pleins
   du pied à 6,4 m). `tools/exterior_maps.py check` le vérifie (docs/QUALITE.md, QC-33) ;
+- (QC2) **aucun grand décor ne masque une place où l'on se tient**, même en premier plan (il ne
+  s'efface qu'autour du joueur, en trame, et jamais autour d'un habitant) : rien de 2 m ou plus qui,
+  vu de la caméra, couvre un personnage debout (ou le frôle à moins d'un mètre, comme un tronc) sur
+  un chemin, un point, une place, un marqueur, une place de la vie ou une vue de la série QC. Au sud
+  d'un chemin, les grands arbres reculent à plus de 10 m (leur couronne seule paraît au bas de
+  l'écran) ; près d'une sortie, sous la lisière, on ne fait que passer. `tools/exterior_maps.py
+  check` le vérifie (docs/QUALITE.md, QC-37) ;
 - dedans, le mur sud de chaque pièce est coupé (`docs/REFONTE.md`, 7.1 et 8.1). Pour une carte à
   plusieurs pièces, ce document recommande à E3 : **tous les murs est-ouest coupés au ras du
   sol** (`wallcut_*`), sauf le mur nord du bâtiment, haut ; les murs nord-sud entiers. Ce qui doit
@@ -1445,8 +1452,10 @@ Légende des lettres : `A` marsh_reed_wall ; `B` marsh_snag ; `C` marsh_hummock_
   et débordent de la carte.
 - **Kits** : bord de chemin (`path_edge_ferns` hors de la bande libre, `fern_*`, `grass_clump_*`,
   `stepping_stones`) ; marais (roseaux, massettes `cattails`, brume `mist_patch`, libellules) ;
-  lisière (`forest_wall_*` au nord) ; sous-bois sud (`fg_trunk_a/b`, `fg_bush`, `fg_fern`, premier
-  plan).
+  lisière (`forest_wall_*` au nord) ; sous-bois sud (`fg_bush`, `fg_fern`, premier plan ; (QC2) ni
+  grand tronc ni grand arbre à moins de 10 m au sud du sentier : l'érable rouge de premier plan
+  couvrait Chtholly à la première embuscade, QC-37 ; les arbres du fond, z 34 → 38, ne montrent que
+  leur couronne ; au sud de la bifurcation, de jeunes pins).
 - **Place réservée** `embuscade` (30 → 44, 13 → 21,5) : le bord du marais où tombe Willem ;
   points `marais_chute` (35,5 ; 16,5), `lumiere_pannibal` (40 ; 12,5) (d'où part la lumière qui
   zigzague), `chtholly_arrivee` (30 ; 21,8), `premiere_embuscade` (16 ; 23 : Pannibal y bondit sur Chtholly, ACTE1.md 1.2), `bifurcation`, `vue_marais`.
@@ -2302,12 +2311,16 @@ point talismans_centre 20 12
 point dos_a_dos 20 13.2
 point vue_nord 20 5.0
 point rocher 9.5 15.6
+point talisman_1 17 13.8
+point talisman_2 17 10.2
+point talisman_3 23 10.2
+point talisman_4 23 13.8
 lumiere cristal_reglage 20 12 0.5 cristal
 lumiere talismans 20 12 1.5 etoiles
 ```
 
 <!-- places:colline -->
-**Places de la vie** (lot C3 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher`) ; les places réservées, en `Life/Areas` avec leur rectangle (`cercle_talismans`) ; et, en plus du plan : `vers_entrepot` (20 ; 38.4 ; le pied du chemin, devant la sortie : par où l'on part vers l'entrepôt, et d'où l'on en arrive), `pied_de_colline` (20 ; 34 ; le bas du chemin, avant la première rampe : on s'y arrête avant de monter), `arbre_seul` (28.2 ; 10.8 ; au pied de l'arbre noueux solitaire, côté sommet (VIE.md, faune : la chouette y guette)), `merles` (11 ; 22 ; la bruyère de la terrasse haute, à l'ouest : les merles de l'aube (VIE.md, faune)), `papillons` (24.5 ; 22.5 ; l'herbe fleurie au-dessus de la dernière rampe : les papillons des jours doux (VIE.md, faune)), `chouette` (29.2 ; 10.2 ; la branche basse de l'arbre solitaire : la chouette de la nuit (VIE.md, faune)).
+**Places de la vie** (lot C3 ; `Marker3D` de `Life/Places` et `Life/Areas` dans la carte, pour E4, E5 et E6) : les points nommés ci-dessus, à leur nom (`talismans_centre`, `dos_a_dos`, `vue_nord`, `rocher`, `talisman_1`, `talisman_2`, `talisman_3`, `talisman_4`) ; les places réservées, en `Life/Areas` avec leur rectangle (`cercle_talismans`) ; et, en plus du plan : `vers_entrepot` (20 ; 38.4 ; le pied du chemin, devant la sortie : par où l'on part vers l'entrepôt, et d'où l'on en arrive), `pied_de_colline` (20 ; 34 ; le bas du chemin, avant la première rampe : on s'y arrête avant de monter), `arbre_seul` (28.2 ; 10.8 ; au pied de l'arbre noueux solitaire, côté sommet (VIE.md, faune : la chouette y guette)), `merles` (11 ; 22 ; la bruyère de la terrasse haute, à l'ouest : les merles de l'aube (VIE.md, faune)), `papillons` (24.5 ; 22.5 ; l'herbe fleurie au-dessus de la dernière rampe : les papillons des jours doux (VIE.md, faune)), `chouette` (29.2 ; 10.2 ; la branche basse de l'arbre solitaire : la chouette de la nuit (VIE.md, faune)).
 <!-- /places:colline -->
 
 ## 8. La forêt profonde (`foret_profonde`)

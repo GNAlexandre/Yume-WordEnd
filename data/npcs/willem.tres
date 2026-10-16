@@ -9,4 +9,4 @@ id = &"willem"
 display_name = "Willem"
 skin = ExtResource("2_visual")
 dialogue_path = "res://data/dialogues/ile_68/talk/willem.json"
-outfits = Dictionary[StringName, String]({ &"maison": "res://data/npcs/outfits/willem_home.tres", &"cuisine": "res://data/npcs/outfits/willem_cook.tres", &"manteau": "res://data/npcs/outfits/willem_coat.tres", &"duel": "res://data/npcs/outfits/willem_duel.tres", &"marais": "res://data/npcs/outfits/willem_marsh.tres" })
+outfits = Dictionary[StringName, String]({ &"maison": "res://data/npcs/outfits/willem_home.tres", &"cuisine": "res://data/npcs/outfits/willem_cook.tres", &"manteau": "res://data/npcs/outfits/willem_coat.tres", &"duel": "res://data/npcs/outfits/willem_duel.tres", &"marais": "res://data/npcs/outfits/willem_marsh.tres", &"bras": "res://data/npcs/outfits/willem_carry.tres", &"dos": "res://data/npcs/outfits/willem_piggyback.tres" })

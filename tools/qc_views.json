@@ -195,7 +195,7 @@
         {"name": "bord_du_vide", "at": [17.5, 6.5], "look": "N", "moments": ["matin", "couchant", "nuit"]},
         {"name": "passerelle", "at": [32.5, 8.8], "look": "N", "moments": ["matin"]},
         {"name": "hangar", "at": [46, 12.5], "look": "N", "moments": ["matin", "nuit"]},
-        {"name": "panneau", "at": [6, 19.5], "look": "N", "moments": ["matin", "nuit"]},
+        {"name": "panneau", "at": [6, 22.8], "look": "N", "moments": ["matin", "nuit"]},
         {"name": "rue", "at": [30, 17], "look": "E", "moments": ["matin", "couchant", "nuit"]},
         {"name": "rue_est", "at": [50, 17], "look": "E", "moments": ["matin"]},
         {"name": "aire_port", "at": [30, 24], "look": "N", "moments": ["matin", "couchant"]},

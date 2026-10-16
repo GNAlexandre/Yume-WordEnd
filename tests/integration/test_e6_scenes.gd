@@ -93,7 +93,7 @@ func test_j1_1_port_on_the_port_map() -> void:
 	var willem := LifeDirector.actor(&"willem")
 	var ship_foot := StoryDirector.stage().resolve(&"navire_quai").origin
 	assert_lt(_flat(willem.position(), ship_foot), 2.5, "Willem paraît sur la passerelle")
-	assert_not_null(LifeDirector.actor(&"ferryman"), "le passeur à côté de lui")
+	assert_not_null(LifeDirector.actor(&"villager_cat_m"), "le passeur à côté de lui")
 	var at_sign := StoryDirector.stage().resolve(&"panneau_sud").origin
 	var saw_sign := [false]
 	var watch := func() -> bool:

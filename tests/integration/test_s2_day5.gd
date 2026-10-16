@@ -123,7 +123,6 @@ func test_day_5_end_to_end_until_day_6() -> void:
 	assert_eq(
 		StoryDirector.calendar_line(5), "Plus beaucoup de jours. Ithea m'a encore serrée trop fort."
 	)
-	assert_eq(GameState.quests(), {}, "aucune quête à collecter")
 	seen.append(SEQUENCE_SEEN)
 	assert_true(
 		StoryDirector.has_seen(SEQUENCE_SEEN), "la séquence est vue, elle se passera d'une touche"

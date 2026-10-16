@@ -1,0 +1,501 @@
+{
+  "_comment": "ACTE1.md 7.2 (s. 11), séquence : le match après la pluie, le ballon dans le fourré de l'est, Tamsin (fairy_06) blessée, Willem qui l'emporte (planche willem_carry : tenue « bras »), le bandage à l'infirmerie. Le match est mis en scène (le ballon jouable d'E8 n'est pas un jeu du récit) ; le ballon emporté est un carton. {player} est en mission : cachée.",
+  "title": "Le match après la pluie",
+  "day": 7,
+  "after": [
+    "j7_1_depart"
+  ],
+  "map": "entrepot",
+  "trigger": {
+    "on": "ready"
+  },
+  "sequence": true,
+  "present": [
+    "willem",
+    "fairy_06",
+    "collon",
+    "tiat",
+    "pannibal",
+    "lakhesh",
+    "fairy_02",
+    "fairy_03",
+    "fairy_04",
+    "nygglatho"
+  ],
+  "steps": [
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0
+    },
+    {
+      "do": "player",
+      "visible": false
+    },
+    {
+      "do": "slot",
+      "slot": "apres_midi",
+      "time": 0
+    },
+    {
+      "do": "moment",
+      "weather": "clair",
+      "time": 0
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "champ_centre",
+      "offset": [
+        -1.5,
+        1.5
+      ],
+      "facing": "east",
+      "outfit": "maison"
+    },
+    {
+      "do": "place",
+      "who": "tiat",
+      "at": "champ_centre",
+      "offset": [
+        3.5,
+        -2.5
+      ],
+      "facing": "south",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "lakhesh",
+      "at": "champ_centre",
+      "offset": [
+        6.0,
+        -4.0
+      ],
+      "facing": "south",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "fairy_02",
+      "at": "champ_centre",
+      "offset": [
+        1.0,
+        -5.0
+      ],
+      "facing": "south"
+    },
+    {
+      "do": "place",
+      "who": "collon",
+      "at": "champ_centre",
+      "offset": [
+        4.5,
+        1.5
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "pannibal",
+      "at": "champ_centre",
+      "offset": [
+        1.5,
+        0.5
+      ],
+      "facing": "north",
+      "outfit": "vie"
+    },
+    {
+      "do": "place",
+      "who": "fairy_06",
+      "at": "champ_centre",
+      "offset": [
+        7.0,
+        0.0
+      ],
+      "facing": "north"
+    },
+    {
+      "do": "place",
+      "who": "fairy_03",
+      "at": "champ_centre",
+      "offset": [
+        -4.0,
+        3.5
+      ],
+      "facing": "east",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "fairy_04",
+      "at": "champ_centre",
+      "offset": [
+        -4.0,
+        5.0
+      ],
+      "facing": "east",
+      "anim": "assis"
+    },
+    {
+      "do": "camera",
+      "to": "champ_centre",
+      "offset": [
+        2.5,
+        -0.5
+      ],
+      "distance": 16,
+      "time": 0
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.2
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "champ_centre",
+      "offset": [
+        3.4,
+        -0.8
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "champ_centre",
+      "offset": [
+        4.2,
+        0.6
+      ],
+      "gait": "course",
+      "wait": false
+    },
+    {
+      "do": "walk",
+      "who": "pannibal",
+      "to": "champ_centre",
+      "offset": [
+        2.0,
+        -1.4
+      ],
+      "gait": "course"
+    },
+    {
+      "do": "anim",
+      "who": "tiat",
+      "anim": "lance",
+      "wait": true
+    },
+    {
+      "do": "bubble",
+      "who": "willem",
+      "text": "haut",
+      "time": 1.1
+    },
+    {
+      "do": "wait",
+      "time": 1.2
+    },
+    {
+      "do": "anim",
+      "who": "collon",
+      "anim": "saut"
+    },
+    {
+      "do": "anim",
+      "who": "fairy_06",
+      "anim": "saut",
+      "wait": true
+    },
+    {
+      "do": "card",
+      "text": "vent",
+      "time": 2.8
+    },
+    {
+      "do": "camera",
+      "to": "fourre_ballon",
+      "offset": [
+        -2.5,
+        3.5
+      ],
+      "distance": 12,
+      "time": 1.2
+    },
+    {
+      "do": "walk",
+      "who": "fairy_06",
+      "to": "fourre_ballon",
+      "offset": [
+        -1.2,
+        1.2
+      ],
+      "gait": "course",
+      "direct": true
+    },
+    {
+      "do": "bubble",
+      "who": "fairy_06",
+      "text": "plonge"
+    },
+    {
+      "do": "anim",
+      "who": "fairy_06",
+      "anim": "saut",
+      "wait": true
+    },
+    {
+      "do": "place",
+      "who": "fairy_06",
+      "at": "fourre_ballon",
+      "offset": [
+        -0.4,
+        0.4
+      ],
+      "anim": "tombe"
+    },
+    {
+      "do": "bubble",
+      "who": "fairy_06",
+      "text": "craque",
+      "time": 1.2
+    },
+    {
+      "do": "wait",
+      "time": 1.4
+    },
+    {
+      "do": "place",
+      "who": "fairy_06",
+      "at": "fourre_ballon",
+      "offset": [
+        -1.4,
+        1.8
+      ],
+      "facing": "south"
+    },
+    {
+      "do": "walk",
+      "who": "collon",
+      "to": "fourre_ballon",
+      "offset": [
+        -3.0,
+        3.0
+      ],
+      "gait": "course",
+      "direct": true
+    },
+    {
+      "do": "walk",
+      "who": "tiat",
+      "to": "fourre_ballon",
+      "offset": [
+        -0.2,
+        3.4
+      ],
+      "gait": "course",
+      "direct": true
+    },
+    {
+      "do": "face",
+      "who": "collon",
+      "toward": "fairy_06"
+    },
+    {
+      "do": "face",
+      "who": "tiat",
+      "toward": "fairy_06"
+    },
+    {
+      "do": "dialogue",
+      "node": "fourre"
+    },
+    {
+      "do": "camera",
+      "to": "willem",
+      "distance": 9,
+      "time": 1.0,
+      "wait": true
+    },
+    {
+      "do": "wait",
+      "time": 1.2
+    },
+    {
+      "do": "camera",
+      "to": "fourre_ballon",
+      "offset": [
+        -3.5,
+        3.0
+      ],
+      "distance": 12,
+      "time": 2.0
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "fairy_06",
+      "offset": [
+        -1.3,
+        0.3
+      ],
+      "gait": "course",
+      "facing": "fairy_06",
+      "direct": true
+    },
+    {
+      "do": "dialogue",
+      "node": "bras"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_06"
+    },
+    {
+      "do": "outfit",
+      "who": "willem",
+      "outfit": "bras"
+    },
+    {
+      "do": "walk",
+      "who": "willem",
+      "to": "champ_centre",
+      "offset": [
+        -4.0,
+        6.0
+      ],
+      "gait": "course",
+      "wait": false,
+      "direct": true
+    },
+    {
+      "do": "wait",
+      "time": 1.8
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.0
+    },
+    {
+      "do": "leave",
+      "who": "tiat"
+    },
+    {
+      "do": "leave",
+      "who": "collon"
+    },
+    {
+      "do": "leave",
+      "who": "lakhesh"
+    },
+    {
+      "do": "leave",
+      "who": "pannibal"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_02"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_03"
+    },
+    {
+      "do": "leave",
+      "who": "fairy_04"
+    },
+    {
+      "do": "go_to",
+      "map": "entrepot_rdc",
+      "marker": "from_entrepot"
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "infirmerie_fenetre",
+      "offset": [
+        0.0,
+        1.5
+      ]
+    },
+    {
+      "do": "place",
+      "who": "fairy_06",
+      "at": "infirmerie_lit_2",
+      "anim": "dort"
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "infirmerie_lit_2",
+      "offset": [
+        -1.6,
+        1.0
+      ],
+      "facing": "east",
+      "outfit": "blouse"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "infirmerie_lit_2",
+      "offset": [
+        -3.0,
+        1.2
+      ],
+      "facing": "east",
+      "outfit": "maison"
+    },
+    {
+      "do": "camera",
+      "to": "infirmerie_lit_2",
+      "offset": [
+        -1.5,
+        0.8
+      ],
+      "distance": 9,
+      "time": 0
+    },
+    {
+      "do": "wait",
+      "time": 2.8
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.2
+    },
+    {
+      "do": "dialogue",
+      "node": "infirmerie"
+    },
+    {
+      "do": "wait",
+      "time": 0.8
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.0
+    },
+    {
+      "do": "leave",
+      "who": "fairy_06"
+    },
+    {
+      "do": "leave",
+      "who": "nygglatho"
+    },
+    {
+      "do": "leave",
+      "who": "willem"
+    }
+  ]
+}

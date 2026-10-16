@@ -39,6 +39,15 @@ const WORLD_LAYER := 1
 ## (E4) Hauteur de la bulle au-dessus de la tête (m) et durée par défaut (s).
 const BUBBLE_GAP := 0.3
 const BUBBLE_TIME := 2.6
+## (QC2) Une bulle ne tombe jamais sur le joueur : vue de la caméra (inclinée de 32°, vers le
+## nord), si elle couvrirait sa silhouette (à moins de BUBBLE_REACH m de part et d'autre, la
+## demi-largeur de la bulle et celle du joueur), elle monte au-dessus de sa tête, à
+## BUBBLE_CLEARANCE m (Pannibal couchée à ses pieds pendant l'embuscade).
+const BUBBLE_REACH := 1.85
+const BUBBLE_CLEARANCE := 0.2
+const CAMERA_PITCH_DEG := 32.0
+## Hauteur de la tête du joueur sans skin (m).
+const PLAYER_HEIGHT := 1.5
 
 ## Données du PNJ (data/npcs/*.tres).
 @export var data: NpcData:
@@ -102,6 +111,8 @@ func _process(delta: float) -> void:
 		_bubble_left -= delta
 		if _bubble_left <= 0.0:
 			hide_bubble()
+		else:
+			place_bubble()
 	if life != null:
 		return
 	var player := get_tree().get_first_node_in_group(PLAYER_GROUP) as Node3D
@@ -167,6 +178,33 @@ func say(text: String, seconds: float = BUBBLE_TIME) -> void:
 	bubble.text = text
 	bubble.visible = true
 	_bubble_left = seconds
+	place_bubble()
+
+
+## (QC2) Hauteur de la bulle (m au-dessus des pieds) : au-dessus de la tête, ou au-dessus de celle
+## du joueur quand, vue de la caméra, elle tomberait sur lui (voir BUBBLE_REACH).
+func bubble_height() -> float:
+	var height := _head_height + BUBBLE_GAP
+	var player: Node3D = null
+	if is_inside_tree():
+		player = get_tree().get_first_node_in_group(PLAYER_GROUP) as Node3D
+	if player == null:
+		return height
+	var offset := player.global_position - global_position
+	if absf(offset.x) > BUBBLE_REACH or offset.z > 0.5:
+		return height
+	# Le bas de la bulle, vu de la caméra, passe au-dessus de la tête du joueur : un point au nord
+	# de dz m monte à l'écran de dz × tan 32° (en hauteur de bulle).
+	var skin := SkinRegistry.get_skin(GameState.skin_id)
+	var head := skin.height_m if skin != null else PLAYER_HEIGHT
+	var above := offset.y + head + BUBBLE_CLEARANCE - offset.z * tan(deg_to_rad(CAMERA_PITCH_DEG))
+	return maxf(height, above)
+
+
+## (QC2) Pose la bulle à bubble_height().
+func place_bubble() -> void:
+	if is_node_ready():
+		bubble.position.y = bubble_height()
 
 
 ## (E4) Cache la bulle.

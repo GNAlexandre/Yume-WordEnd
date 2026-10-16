@@ -290,22 +290,24 @@ def pose(p):
     scatter("RootDecals", ["roots_a", "roots_b", "canopy_shadow_a", "canopy_shadow_b"], decals[1::2],
             scale=(0.9, 1.1), seed=67, check=False)
 
-    # La forêt noire au sud : grands troncs, buissons et fougères de premier plan sur le bord, des arbres
-    # derrière qui s'effacent devant le joueur.
-    trunks = []
-    for x in (24.0, 50.0):
-        trunks.append((x + rng.uniform(-1.0, 1.0), rng.uniform(29.4, 30.4)))
-    scatter("SouthTrunks", ["fg_trunk_a", "fg_trunk_b"], trunks, seed=70, check=False)
+    # La forêt noire au sud : buissons et fougères de premier plan sur le bord, des arbres plus loin qui
+    # s'effacent devant le joueur. (QC2) Ni grand tronc ni grand arbre à moins de 10 m au sud du sentier :
+    # vus de la caméra, ils couvraient le sentier et ses places (l'érable rouge sur Chtholly à la première
+    # embuscade, docs/QUALITE.md, QC-37) ; les arbres du fond (z 34 → 38) ne montrent que leur couronne au
+    # bas de l'écran (tools/exterior_maps.py check : aucune place masquée).
     brush = poisson(Rect(0.5, 28.6, 56.0, 29.8), 2.6, 24, lambda x, z: in_map(x, z, 0.4), seed=71)
     scatter("SouthBrush", ["fg_bush", "fg_fern", "fg_grass"], brush, seed=72, check=False)
-    deep = poisson(Rect(0.5, 30.4, 56.0, 33.0), 8.0, 12, lambda x, z: True, seed=73)
+    deep = poisson(Rect(0.5, 34.0, 56.0, 38.5), 7.0, 12, lambda x, z: True, seed=73)
     scatter("SouthTrees", ["tree_pine", "birch_a", "birch_b", "pine_small_a", "pine_small_b", "maple_a",
                            "tree_autumn_rust", "sapling_a"], deep, seed=74)
     understory = poisson(Rect(0.5, 29.4, 56.0, 33.5), 1.7, 55, lambda x, z: True, seed=76)
     scatter("SouthUnder", BUSHES[:6] + FERNS, understory, seed=77, check=False)
 
     # La bifurcation et le chemin de la ville (x 56 → 76) : forêt des deux côtés, sol de mousse.
-    corridor_trees = [(58.2, 34.6), (59.0, 38.4), (75.2, 36.0), (75.4, 39.0), (78.4, 33.0), (78.6, 38.0)]
+    # (QC2) À l'ouest du chemin de la ville, au sud de la bifurcation, de jeunes pins : un grand arbre y
+    # couvrait la bifurcation et le départ du chemin (docs/QUALITE.md, QC-37).
+    scatter("ForkTreesWest", ["pine_small_a", "pine_small_b", "sapling_a"], [(58.6, 35.4), (59.2, 38.8)], seed=80)
+    corridor_trees = [(75.2, 36.0), (75.4, 39.0), (78.4, 33.0), (78.6, 38.0)]
     scatter("ForkTrees", TREES_DARK + TREES_RUST[:2], corridor_trees, seed=81)
     fork = poisson(Rect(56.5, 24.0, 79.0, 39.5), 2.5, 30,
                    lambda x, z: free()(x, z) and outside_edges(x, z, 0.1) and in_map(x, z, 0.4), seed=82)

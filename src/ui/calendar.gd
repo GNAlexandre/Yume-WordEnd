@@ -6,7 +6,9 @@ extends Control
 ## - Les jours de l'acte (StoryDirector.day_count()), le jour courant mis en avant, les jours
 ##   passés rayés, le jour du départ entouré dès le premier jour ; sous la grille, les lignes
 ##   écrites au coucher (GameState.calendar(), textes StoryDirector.calendar_line) ; en bas,
-##   l'indice du moment.
+##   (QC2) sous un filet d'or, le jour courant et le compte des jours jusqu'au départ, puis
+##   l'indice du moment. La page se resserre sur son contenu (au plus PANEL_MAX_HEIGHT px, les
+##   lignes défilent au-delà) : plus de bas de page vide (docs/QUALITE.md, QC-42).
 ## - S'ouvre par l'action « journal » (Tab, L, Select) pendant l'acte en jours (lue dans
 ##   _input), par le bouton « Calendrier » du menu pause, et en
 ##   examinant le calendrier de la chambre (StoryDirector.calendar_requested). Ouvert, il met le
@@ -23,6 +25,9 @@ signal closed
 
 const GROUP := &"story_calendar"
 const CELL_SIZE := Vector2(118, 96)
+## (QC2) Hauteur de la page au plus (px) ; des lignes écrites au plus (px), défilées au-delà.
+const PANEL_MAX_HEIGHT := 640.0
+const LINES_MAX_HEIGHT := 220.0
 ## Type du thème (wordend_theme.tres) qui porte les couleurs de la page.
 const THEME_TYPE := &"Calendar"
 
@@ -33,7 +38,10 @@ var _in_dialogue: bool = false
 @onready var _grid: GridContainer = %Days
 @onready var _lines: VBoxContainer = %Lines
 @onready var _hint: Label = %CalendarHint
+@onready var _today: Label = %TodayLabel
+@onready var _departure: Label = %DepartureLabel
 @onready var _panel: Control = $Panel
+@onready var _scroll: Control = $Panel/Layout/LinesScroll
 
 
 func _ready() -> void:
@@ -128,6 +136,54 @@ func refresh() -> void:
 		else ""
 	)
 	_hint.visible = not hint.is_empty()
+	_today.text = today_text()
+	_departure.text = departure_text()
+	_departure.visible = not _departure.text.is_empty()
+	_fit_page()
+
+
+## (QC2) Le jour courant : « Aujourd'hui : jour 2 ».
+func today_text() -> String:
+	return StoryDirector.ui_text("today", "Aujourd'hui : jour {day}").replace(
+		"{day}", str(GameState.day)
+	)
+
+
+## (QC2) Le compte des jours jusqu'au départ (StoryDirector.departure_day) ; "" sans départ ou
+## après lui.
+func departure_text() -> String:
+	var left := StoryDirector.departure_day() - GameState.day
+	if StoryDirector.departure_day() <= 0 or left < 0:
+		return ""
+	if left == 0:
+		return StoryDirector.ui_text("departure_today", "C'est le jour du départ")
+	if left == 1:
+		return StoryDirector.ui_text("departure_tomorrow", "Départ demain")
+	return StoryDirector.ui_text("departure_in", "Départ dans {days} jours").replace(
+		"{days}", str(left)
+	)
+
+
+## (QC2) Resserre la page sur son contenu : les lignes écrites prennent leur hauteur (au plus
+## LINES_MAX_HEIGHT, elles défilent au-delà), la page la sienne (au plus PANEL_MAX_HEIGHT), centrée.
+func _fit_page() -> void:
+	var lines_height := 0.0
+	var count := 0
+	for child: Node in _lines.get_children():
+		if child is Control and not child.is_queued_for_deletion():
+			lines_height += (child as Control).get_combined_minimum_size().y
+			count += 1
+	lines_height += maxf(count - 1, 0) * _lines.get_theme_constant(&"separation")
+	_scroll.custom_minimum_size.y = minf(lines_height, LINES_MAX_HEIGHT)
+	_panel.reset_size()
+	var height := minf(_panel.get_combined_minimum_size().y, PANEL_MAX_HEIGHT)
+	_panel.offset_top = -height * 0.5
+	_panel.offset_bottom = height * 0.5
+
+
+## (QC2) Le cadre de la page (tests).
+func page_rect() -> Rect2:
+	return _panel.get_global_rect()
 
 
 ## Couleur de la page (paper, ink, strike, ring, today) : celle du thème, type Calendar.
