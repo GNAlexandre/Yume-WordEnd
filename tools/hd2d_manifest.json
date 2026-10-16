@@ -175,7 +175,7 @@
   {"path": "assets/hd2d/decals/oil_stain.png", "size": [144, 96], "kind": "decal", "prio": 2, "lot": "B"},
   {"path": "assets/hd2d/decals/rust_streak.png", "size": [192, 96], "kind": "decal", "prio": 2, "lot": "B"},
   {"path": "assets/hd2d/decals/footprints.png", "size": [96, 288], "kind": "decal", "prio": 2, "lot": "B", "soft_alpha": true},
-  {"path": "assets/hd2d/decals/cart_ruts.png", "size": [192, 384], "kind": "decal", "prio": 3, "lot": "B", "wrap": "y"},
+  {"path": "assets/hd2d/decals/cart_ruts.png", "size": [192, 384], "kind": "decal", "prio": 3, "lot": "B", "wrap": "y", "soft_alpha": true},
   {"path": "assets/hd2d/decals/drain_grate.png", "size": [96, 96], "kind": "decal", "prio": 3, "lot": "B"},
   {"path": "assets/hd2d/decals/hay_scatter.png", "size": [144, 96], "kind": "decal", "prio": 3, "lot": "B"},
   {"path": "assets/hd2d/decals/boardwalk.png", "size": [96, 384], "kind": "decal", "prio": 3, "lot": "B", "wrap": "y"},
@@ -749,7 +749,7 @@
   {"path": "assets/hd2d/interior/props/crystal_pendant.png", "size": [77, 134], "kind": "panel", "prio": 2, "lot": "I", "anchor": "free"},
   {"path": "assets/hd2d/decals/rug_playroom.png", "size": [384, 288], "kind": "decal", "prio": 1, "lot": "I"},
   {"path": "assets/hd2d/decals/rug_brown.png", "size": [192, 115], "kind": "decal", "prio": 1, "lot": "I", "solid_edge": "bottom"},
-  {"path": "assets/hd2d/decals/rug_salon.png", "size": [288, 192], "kind": "decal", "prio": 3, "lot": "R3"},
+  {"path": "assets/hd2d/decals/rug_salon.png", "size": [288, 192], "kind": "decal", "prio": 3, "lot": "R3", "anchor": "center"},
   {"path": "assets/hd2d/decals/runner_rug.png", "size": [96, 384], "kind": "decal", "prio": 2, "lot": "I", "wrap": "y"},
   {"path": "assets/hd2d/decals/papers_floor.png", "size": [192, 144], "kind": "decal", "prio": 2, "lot": "I"},
   {"path": "assets/hd2d/decals/bath_puddles.png", "size": [192, 144], "kind": "decal", "prio": 2, "lot": "I", "soft_alpha": true},
@@ -759,7 +759,7 @@
   {"path": "assets/hd2d/anim/pot_steam.png", "size": [48, 96], "kind": "anim", "prio": 2, "lot": "I", "frames": 6, "fps": 8, "soft_alpha": true},
   {"path": "assets/hd2d/anim/leak_drip.png", "size": [24, 96], "kind": "anim", "prio": 2, "lot": "I", "frames": 4, "fps": 8, "anchor": "free"},
   {"path": "assets/hd2d/anim/drying_frame_wave.png", "size": [384, 211], "kind": "anim", "prio": 2, "lot": "I", "frames": 4, "fps": 4},
-  {"path": "assets/hd2d/anim/clock_limashenka_swing.png", "size": [77, 134], "kind": "anim", "prio": 3, "lot": "R3", "frames": 4, "fps": 2},
+  {"path": "assets/hd2d/anim/clock_limashenka_swing.png", "size": [77, 134], "kind": "anim", "prio": 3, "lot": "R3", "frames": 4, "fps": 2, "loop": true},
   {"path": "assets/hd2d/anim/bath_steam.png", "size": [192, 144], "kind": "anim", "prio": 2, "lot": "R1", "frames": 6, "fps": 6, "soft_alpha": true},
   {"path": "assets/hd2d/anim/comm_crystal_call.png", "size": [67, 134], "kind": "anim", "prio": 2, "lot": "R1", "frames": 4, "fps": 6},
   {"path": "assets/hd2d/anim/wall_clock_swing.png", "size": [48, 106], "kind": "anim", "prio": 3, "lot": "R1", "frames": 4, "fps": 2},
@@ -813,7 +813,9 @@
   {"path": "assets/hd2d/props/cargo_cart_b.png", "size": [240, 134], "kind": "panel", "prio": 3, "lot": "R3"},
   {"path": "assets/hd2d/buildings/port_house_b.png", "size": [384, 624], "kind": "facade", "prio": 3, "lot": "R3"},
   {"path": "assets/hd2d/buildings/port_house_b_side.png", "size": [480, 384], "kind": "side", "prio": 3, "lot": "R3", "roof": "eaves", "wall_m": 4},
-  {"path": "assets/hd2d/ships/garde_transport_side.png", "size": [1536, 672], "kind": "panel", "prio": 1, "lot": "R7"}
+  {"path": "assets/hd2d/ships/garde_transport_side.png", "size": [1536, 672], "kind": "panel", "prio": 1, "lot": "R7"},
+  {"path": "assets/hd2d/props/cafe_backyard_crates.png", "size": [154, 96], "kind": "panel", "prio": 1, "lot": "N6C"},
+  {"path": "assets/hd2d/decals/cart_ruts_end.png", "size": [192, 192], "kind": "decal", "prio": 1, "lot": "N6A", "soft_alpha": true, "solid_edge": "top"}
  ],
  "sheets": [
   {
