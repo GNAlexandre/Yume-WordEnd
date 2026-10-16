@@ -48,6 +48,15 @@
       "speaker": "",
       "text": "Sur la feuille : trois grandes, un Willem tout en jambes, et un gâteau plus haut que l'entrepôt."
     },
+    "envol": {
+      "speaker": "",
+      "text": "Trois lueurs montent dans le couchant. Les nuages soyeux passent du cramoisi au vermillon.",
+      "next": "envol_2"
+    },
+    "envol_2": {
+      "speaker": "",
+      "text": "Puis ce ne sont plus que trois points de lumière, très haut, qui s'en vont."
+    },
     "epilogue": {
       "speaker": "",
       "text": "Les trois lueurs ont disparu dans le soir. À l'entrepôt, la vie continue.",

@@ -13,7 +13,7 @@ extends Node
 
 const GAME_SCENE := preload("res://src/game.tscn")
 const SEEN := "user://demo_s2_late_seen.cfg"
-const READ_TIME := 1.1
+const READ_TIME := 1.4
 const BEDROOM := Vector3(6.2, 0.0, 6.4)
 ## Drapeaux posés au réveil (la réussite du jour 9 change le jour 11).
 const FLAGS := [&"j9_baton_reussi"]
@@ -136,8 +136,10 @@ func _pilot_dialogue(delta: float) -> void:
 	if not _box.is_open():
 		_read_left = READ_TIME
 		return
-	_box.complete_line()
 	_read_left -= delta
+	# La réplique s'écrit d'abord un peu (comme pour un joueur qui lit), puis paraît en entier.
+	if _read_left < READ_TIME - 0.6:
+		_box.complete_line()
 	if _read_left > 0.0:
 		return
 	_read_left = READ_TIME
