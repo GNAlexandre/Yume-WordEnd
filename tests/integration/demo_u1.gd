@@ -7,14 +7,14 @@ extends Node
 ##   sauvegarde   : le panneau de sauvegarde du menu ;
 ##   credits      : les crédits ;
 ##   pause        : le menu de pause, jour 2 au matin ;
-##   dialogue     : Nygglatho parle, sous le porche, en Nuit douce ;
+##   dialogue     : Nygglatho parle, au Spawn de l'entrepôt, en Nuit douce ;
 ##   nuit         : la même réplique la nuit ;
 ##   bandeau      : la même réplique en Bandeau (scène du récit) ;
 ##   choix        : une réplique et ses deux réponses ;
 ##   choix_bandeau: les mêmes réponses en Bandeau ;
-##   inventaire   : le sac ouvert ;
+##   inventaire   : le sac ouvert (objets de tests/data/items) ;
 ##   invite       : le signe « parler » au-dessus de Nygglatho, deux cœurs perdus ;
-##   arene        : l'écran de fin de veille ;
+##   ((F1) l'écran de fin de veille est parti avec l'arène de l'ancienne île)
 ##   (signes d'interaction : le joueur devant la cible la plus proche d'un lieu ; images à
 ##   attendre : 400)
 ##   cour         : la cour de l'entrepôt, un PNJ (signe plein) et ses voisins (signes pâles) ;
@@ -26,11 +26,13 @@ extends Node
 const GAME_SCENE := preload("res://src/game.tscn")
 const MAIN_SCENE := preload("res://src/main.tscn")
 const MenuScript := preload("res://src/ui/main_menu.gd")
+const TEST_ITEMS_DIR := "res://tests/data/items"
 const STAGE_FRAME := 6
 ## Image où s'ouvrent les écrans qui figent la partie (la caméra a rejoint le joueur).
 const LATE_FRAME := 40
 const MEASURE_FRAME := 60
-const SPOT := [Vector3(-7.2, 0.0, -6.2), Vector3(-1.0, 0.0, -1.0)]
+## Direction regardée au Spawn de la carte de départ (l'entrepôt).
+const FACING := Vector3(-1.0, 0.0, -1.0)
 const LINE := (
 	"Pannibal l'a « accueilli » au marais, d'un coup d'épée de bois. Il a dormi avec de la "
 	+ "vase jusqu'aux oreilles."
@@ -64,6 +66,7 @@ func _ready() -> void:
 		_view = "dialogue"
 	_state = GameState.to_dict()
 	GameState.reset()
+	ItemData.add_search_dir(TEST_ITEMS_DIR)
 	if _view in MENU_VIEWS:
 		get_tree().root.set_meta(MenuScript.GESTURE_META, true)
 		var main := MAIN_SCENE.instantiate()
@@ -79,6 +82,7 @@ func _exit_tree() -> void:
 		get_tree().paused = false
 	DialogueBox.set_presentation(DialogueBox.PRESENTATION_NUIT)
 	WorldManager.fade_time = WorldManager.DEFAULT_FADE_TIME
+	ItemData.remove_search_dir(TEST_ITEMS_DIR)
 	GameState.from_dict.call_deferred(_state)
 
 
@@ -125,12 +129,9 @@ func _stage() -> void:
 	if SIGN_VIEWS.has(_view):
 		_stage_sign_view.call_deferred()
 		return
-	var spot: Array = SPOT
-	var zone := _game.get_node(^"World/ile_ancienne/Zones/village") as Node3D
-	WorldManager.load_zone(&"village")
-	_player.global_position = WorldManager.ground_position(zone.to_global(spot[0]), _player)
+	# (F1) Au Spawn de la carte de départ, où game.tscn pose le joueur.
 	_player.velocity = Vector3.ZERO
-	_player.set_aim_direction(spot[1] as Vector3, true)
+	_player.set_aim_direction(FACING, true)
 	match _view:
 		"nuit":
 			Atmosphere.set_moment(&"nuit", 0.0)
@@ -147,8 +148,6 @@ func _stage() -> void:
 			pass
 		"invite":
 			EventBus.player_health_changed.emit(3, 5)
-		"arene":
-			EventBus.arena_finished.emit(&"dunes", 1240, true)
 		_:
 			_say.call_deferred(LINE, [])
 
@@ -239,8 +238,8 @@ func _stage_late() -> void:
 			GameState.slot = &"matin"
 			_hud().get_node(^"%PauseMenu").call(&"open")
 		"inventaire":
-			for item: StringName in [&"page_fragment", &"eggs", &"flower_blue", &"clock_gear"]:
-				GameState.add_item(item, 3 if item == &"page_fragment" else 1)
+			for item: StringName in [&"test_page", &"test_flower", &"test_linen", &"test_picture"]:
+				GameState.add_item(item, 3 if item == &"test_page" else 1)
 			_game.get_node(^"UI/Inventory").call(&"open")
 
 

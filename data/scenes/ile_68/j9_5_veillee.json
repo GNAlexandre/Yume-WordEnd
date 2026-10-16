@@ -1,0 +1,28 @@
+{
+  "_comment": "ACTE1.md 9.5 (VEX, s. 25) : la veillée. Nygglatho, seule au réfectoire éclairé, sert un thé qui n'empêche pas de dormir et une part de cheese-cake ; elle nomme les fées parties sans revenir ; quand le chagrin déborde, elle va chasser l'ours (clin d'œil). Douceur triste ; fondu. Ithea et Nephren, dont la veillée de base est au réfectoire, sont écartées : la scène est à deux.",
+  "title": "La veillée",
+  "day": 9,
+  "slot": "nuit",
+  "after": ["j9_4_moutarde"],
+  "map": "entrepot_rdc",
+  "hint": "hint",
+  "trigger": {"on": "reach", "point": "refectoire_veillee", "radius": 2.6},
+  "present": ["nygglatho", "ithea", "nephren"],
+  "steps": [
+    {"do": "control", "on": false},
+    {"do": "leave", "who": "ithea"},
+    {"do": "leave", "who": "nephren"},
+    {"do": "place", "who": "nygglatho", "at": "refectoire_bout_ouest", "facing": "east", "outfit": "the", "anim": "travaille"},
+    {"do": "walk", "who": "player", "to": "refectoire_bout_ouest", "offset": [1.35, 0.0], "facing": "west"},
+    {"do": "camera", "to": "refectoire_bout_ouest", "offset": [0.7, 0.0], "distance": 9, "time": 1.0},
+    {"do": "dialogue", "node": "the"},
+    {"do": "anim", "who": "nygglatho", "anim": "parle"},
+    {"do": "dialogue", "node": "noms"},
+    {"do": "anim", "who": "nygglatho", "anim": "repos"},
+    {"do": "wait", "time": 1.4},
+    {"do": "fade", "to": "black", "time": 1.4},
+    {"do": "camera_reset", "time": 0},
+    {"do": "place", "who": "player", "at": "refectoire_porte_est", "facing": "south"},
+    {"do": "fade", "to": "clear", "time": 1.0}
+  ]
+}

@@ -14,8 +14,9 @@ Comment régler :
   dans l'inspecteur du nœud concerné de la scène (`src/player/player.tscn` : nœuds `Player`,
   `Combat`, `CameraRig` ; `src/enemies/enemy.tscn`) ;
 - une constante (`const`) se change dans le script ;
-- après un changement, jouer `tests/integration/demo_m1.tscn` (F6, arène des dunes avec le vrai
-  joueur) puis lancer `tools/check.sh` : les tests `tests/integration/test_m1_*.gd` disent si une
+- après un changement, jouer `tests/integration/demo_l5.tscn` (F6, Timeres et vrai joueur ; (F1)
+  l'arène des dunes est retirée) puis lancer `tools/check.sh` : les tests
+  `tests/integration/test_m1_*.gd` (sur la carte d'essai) disent si une
   règle de l'easter egg ou une portée a cassé (voir la dernière colonne des tableaux de portées).
 
 Valeurs changées à l'intégration M1 : **recul des deux premiers coups d'épée** 5 → 2,5 m/s (le

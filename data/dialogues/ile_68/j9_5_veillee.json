@@ -1,0 +1,68 @@
+{
+  "id": "j9_5_veillee",
+  "start": "the",
+  "nodes": {
+    "the": {
+      "speaker_id": "nygglatho",
+      "text": "Tiens, une noctambule. Assieds-toi. Ce thé-là n'empêche pas de dormir, je te le promets.",
+      "next": "the_2"
+    },
+    "the_2": {
+      "speaker": "",
+      "text": "Elle verse le lait, tourne la cuillère, pose devant toi une part de cheese-cake qu'elle a cuit elle-même.",
+      "next": "the_3"
+    },
+    "the_3": {
+      "speaker_id": "nygglatho",
+      "text": "Du sucre ?",
+      "choices": [
+        {
+          "text": "Du sucre, s'il te plaît.",
+          "next": "sucre"
+        },
+        {
+          "text": "Sans sucre.",
+          "next": "sans"
+        }
+      ]
+    },
+    "sucre": {
+      "speaker_id": "nygglatho",
+      "text": "Deux morceaux. Personne ne regarde : le secret des grandes est bien gardé.",
+      "next": "moutarde"
+    },
+    "sans": {
+      "speaker_id": "nygglatho",
+      "text": "Comme une vraie grande. Ou comme quelqu'un qui a assez bu de moutarde pour la journée.",
+      "next": "moutarde"
+    },
+    "moutarde": {
+      "speaker": "{player}",
+      "text": "Il est meilleur que le thé à la moutarde.",
+      "next": "mange"
+    },
+    "mange": {
+      "speaker_id": "nygglatho",
+      "text": "Je mange quand je m'inquiète. Et ces jours-ci, je m'inquiète beaucoup. Ne le dis pas à mes hanches."
+    },
+    "noms": {
+      "speaker_id": "nygglatho",
+      "text": "Tu sais, je me souviens de chacune. Tuca, qui chantait faux. Orco, qui ne finissait jamais son assiette.",
+      "next": "noms_2"
+    },
+    "noms_2": {
+      "speaker_id": "nygglatho",
+      "text": "Clakia. Ayol. Katariella, qui voulait voir la mer d'en bas. Elles sont parties, et pas revenues. Aucune n'est oubliée.",
+      "next": "noms_3"
+    },
+    "noms_3": {
+      "speaker_id": "nygglatho",
+      "text": "Quand ça déborde, je monte chasser l'ours dans la montagne. Ça me défoule. Et ça fait un dîner.",
+      "next": "noms_4"
+    },
+    "noms_4": {
+      "speaker": "",
+      "text": "Elle sourit. Le thé refroidit doucement entre vos mains."
+    }
+  }
+}

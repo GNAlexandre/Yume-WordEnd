@@ -55,7 +55,7 @@ SIDES = ["north", "east", "south", "west"]
 DIRECTIONS = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 MAP_KEYS = ["format", "version", "size", "heights_image", "height_step_value", "height_zero_value",
             "materials_image", "materials_scale", "structures_image", "palette", "materials", "edges",
-            "skirt", "barrier", "spawn"]
+            "skirt", "barrier", "spawn", "barrier_gaps"]
 MATERIAL_KEYS = ["label", "layer", "color", "tint", "variant", "edge", "path", "walkable", "ripple", "border"]
 GROUND_LAYERS = ["grass", "grass_dry", "forest_floor", "path_dirt", "flagstone", "cobble", "sand",
                  "rock", "peat", "water", "mud", "metal",
@@ -723,6 +723,10 @@ def generate(map_id, plan_path=None):
     }
     if zero_value:
         spec["height_zero_value"] = zero_value
+    # (E7) Ouvertures de la barrière de la côte : [x, z, largeur, profondeur] (m) où le mur invisible du bord du vide
+    # n'est pas posé (la passerelle d'un navire ; ce qui la ferme est à la scène).
+    if plan.get("barrier_gaps"):
+        spec["barrier_gaps"] = plan["barrier_gaps"]
     if plan.get("materials"):
         spec["materials"] = plan["materials"]
     if any(entry is not None for entry in structures):

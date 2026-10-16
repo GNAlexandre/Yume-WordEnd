@@ -38,7 +38,7 @@ const UNDERSIDE_IMAGE := preload("res://assets/hd2d/cliff/underside.png")
 const BANK_IMAGE := preload("res://assets/hd2d/cliff/bank_earth.png")
 const WALL_IMAGE := preload("res://assets/hd2d/buildings/materials/wall_stone_b.png")
 const CLOUD_IMAGE := preload("res://assets/hd2d/sky/cloud_sea.png")
-## Mer de nuages : profondeur sous le sol (m) et côté (m), comme le nœud Water de l'île.
+## Mer de nuages : profondeur sous le sol (m) et côté (m).
 const CLOUD_SEA_DEPTH := -60.0
 const CLOUD_SEA_SIZE := 3000.0
 ## (X1) Sol jusqu'à l'horizon : côté (m) et hauteur sous le palier 0 (m), recouvrement sous la
@@ -46,7 +46,7 @@ const CLOUD_SEA_SIZE := 3000.0
 const FAR_GROUND_SIZE := 3000.0
 const FAR_GROUND_DROP := -0.04
 const FAR_GROUND_OVERLAP := 1.0
-## Soleil par défaut (vers lui) : celui de l'île (island.tscn, Sun).
+## Soleil par défaut (vers lui), avant la première pose de la lumière (set_sun).
 const DEFAULT_TOWARD_SUN := Vector3(-0.900073, 0.34202, 0.269984)
 
 ## Matériau partagé des faces (mêmes images pour toutes les cartes), en référence faible : une
@@ -233,7 +233,7 @@ func _make_ground_material() -> ShaderMaterial:
 	material.shader = GROUND_SHADER
 	var atlas: Texture2D = ATLAS
 	if not Engine.is_editor_hint():
-		atlas = IslandTerrain.mipmapped_atlas(ATLAS)
+		atlas = GroundAtlas.mipmapped_atlas(ATLAS)
 	material.set_shader_parameter(&"ground_atlas", atlas)
 	material.set_shader_parameter(&"material_map", ImageTexture.create_from_image(material_image()))
 	material.set_shader_parameter(&"material_table", ImageTexture.create_from_image(table_image()))
@@ -254,7 +254,7 @@ static func cliff_material() -> ShaderMaterial:
 		material.shader = CLIFF_SHADER
 		var atlas: Texture2D = ATLAS
 		if not Engine.is_editor_hint():
-			atlas = IslandTerrain.mipmapped_atlas(ATLAS)
+			atlas = GroundAtlas.mipmapped_atlas(ATLAS)
 		material.set_shader_parameter(&"ground_atlas", atlas)
 		material.set_shader_parameter(&"lip_texture", LIP_IMAGE)
 		material.set_shader_parameter(&"cliff_texture", CLIFF_IMAGE)
@@ -313,7 +313,7 @@ func height_image() -> Image:
 
 ## Direction du soleil (vers lui) : ombres portées des falaises, côté chaud des nuages. (R1)
 ## Atmosphere l'appelle à chaque pose de la lumière (arrivée sur la carte, chaque image d'une
-## transition : HD2DLightTargets) avec le soleil ou la lune du réglage ; avant, celui de l'île.
+## transition : HD2DLightTargets) avec le soleil ou la lune du réglage ; avant, DEFAULT_TOWARD_SUN.
 func set_sun(toward_sun: Vector3) -> void:
 	if _ground_material != null:
 		_ground_material.set_shader_parameter(&"toward_sun", toward_sun.normalized())
@@ -357,7 +357,7 @@ func map_size() -> Vector2i:
 
 
 ## Triangles du sol qui touchent le rectangle rect (plan x, z) : [sommets par triangles, face
-## avant vers le ciel ; normales], comme IslandTerrain.triangles_in (décalques au sol). Un décalque
+## avant vers le ciel ; normales] (décalques au sol, GroundDecal). Un décalque
 ## prêt avant le sol (posé avant lui dans l'arbre) le fait construire.
 func triangles_in(rect: Rect2) -> Array[PackedVector3Array]:
 	var points := PackedVector3Array()

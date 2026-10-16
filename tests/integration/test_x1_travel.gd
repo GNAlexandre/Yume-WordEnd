@@ -4,7 +4,7 @@ extends "res://tests/stubs/m2_game_test.gd"
 ## quai de l'île d'essai au marqueur du port ; island_entered, île courante et îles connues ;
 ## sauvegarde et reprise sur l'île d'essai ; retour par son quai. La surface : sol jusqu'à
 ## l'horizon, ciel de ses règles, Timeres permis ; de retour sur l'île n° 68, aucun Timere. Une
-## chute ramène au dernier point sûr. L'ancienne île garde son arène.
+## chute ramène au dernier point sûr. (F1) L'ancienne île n'est plus dans l'atlas.
 
 const ESSAI := &"essai"
 const QUAY := &"quai_essai"
@@ -12,7 +12,6 @@ const SURFACE_MAP := &"surface_essai"
 const ILE_68 := &"ile_68"
 const ILE_ESSAI := &"ile_essai"
 const SURFACE := &"surface_essai"
-const LEGACY_ISLAND := &"ile_ancienne"
 
 var _previous_fade: float
 var _previous_travel: float
@@ -64,16 +63,11 @@ func _on_island_entered(island_id: StringName) -> void:
 func test_travel_to_the_test_island_and_back() -> void:
 	assert_true(await new_game_from_menu(), "partie lancée depuis le menu")
 	listen(EventBus.island_entered, _on_island_entered)
-	assert_eq(GameState.island, LEGACY_ISLAND, "nouvelle partie : l'ancienne île")
-	assert_eq(WorldManager.current_island(), LEGACY_ISLAND)
+	assert_eq(WorldManager.current_map(), ESSAI, "nouvelle partie : la carte d'essai")
+	assert_eq(GameState.island, ILE_68, "sur l'île n° 68")
+	assert_eq(WorldManager.current_island(), ILE_68)
 	WorldManager.fade_time = 0.1
 	WorldManager.travel_time = 0.6
-	await WorldManager.go_to(ESSAI)
-	assert_true(await wait_transition())
-	assert_eq(
-		_islands, [ILE_68] as Array[StringName], "en passant à la carte d'essai : l'île n° 68"
-	)
-	assert_eq(GameState.island, ILE_68)
 	var dock := current_map().get_node(^"Docks/vers_ile_essai") as AirshipDock
 	assert_eq(dock.get_prompt(), "Embarquer pour L'île d'essai", "invite de data/texts/story.json")
 	assert_true(await face_dock(dock, Vector3.LEFT), "invite du quai")
@@ -99,7 +93,7 @@ func test_travel_to_the_test_island_and_back() -> void:
 	var arrival := current_map().marker(&"from_dirigeable")
 	assert_lt(distance_to(arrival), 0.05, "posé au marqueur du port")
 	assert_almost_eq(player.aim_direction(), Vector3.BACK, Vector3.ONE * 0.01, "tourné vers l'île")
-	assert_eq(_islands, [ILE_68, ILE_ESSAI] as Array[StringName], "island_entered")
+	assert_eq(_islands, [ILE_ESSAI] as Array[StringName], "island_entered")
 	assert_eq(GameState.island, ILE_ESSAI)
 	assert_eq(GameState.map, QUAY)
 	assert_true(GameState.knows_island(ILE_68) and GameState.knows_island(ILE_ESSAI))
@@ -125,7 +119,7 @@ func test_travel_to_the_test_island_and_back() -> void:
 	assert_eq(WorldManager.current_map(), QUAY, "reprise sur le quai")
 	assert_eq(WorldManager.current_island(), ILE_ESSAI, "sur l'île d'essai")
 	assert_lt(flat_distance(player.global_position, saved_at), 0.1, "à la même place")
-	assert_eq(GameState.known_islands().size(), 3, "îles connues relues")
+	assert_eq(GameState.known_islands().size(), 2, "îles connues relues")
 	# Retour par le quai de l'île d'essai.
 	var back := current_map().get_node(^"Docks/vers_ile_68") as AirshipDock
 	assert_true(await face_dock(back, Vector3.BACK), "invite du quai de retour")
@@ -182,7 +176,7 @@ func test_unknown_destinations_and_busy_travel_are_refused() -> void:
 	WorldManager.travel_time = 0.0
 	await WorldManager.travel(&"nulle_part")
 	assert_push_error("voyage impossible")
-	assert_eq(WorldManager.current_map(), WorldManager.LEGACY_MAP, "on reste là")
+	assert_eq(WorldManager.current_map(), start_map_for_test(), "on reste là")
 	WorldManager.travel(ILE_ESSAI)
 	WorldManager.travel(SURFACE)
 	assert_push_warning("en cours")
@@ -190,12 +184,13 @@ func test_unknown_destinations_and_busy_travel_are_refused() -> void:
 	assert_eq(WorldManager.current_island(), ILE_ESSAI, "le second voyage a été ignoré")
 
 
-func test_legacy_island_keeps_its_arena() -> void:
+func test_the_old_island_is_gone_from_the_atlas() -> void:
 	await start_game()
-	assert_eq(WorldManager.current_island(), LEGACY_ISLAND)
-	assert_true(WorldAtlas.rules_for(WorldManager.current_map()).enemies_allowed, "par les données")
-	director.start()
-	assert_true(director.is_running(), "la veille du Couchant démarre")
-	director.stop()
-	var forest_enemies := game.get_node(^"World/ile_ancienne/Zones/forest/Enemies")
-	assert_gt(forest_enemies.call(&"alive_count"), 0, "les rejetons des bois sont là")
+	assert_false(WorldAtlas.has_island(&"ile_ancienne"), "(F1) plus d'ancienne île")
+	assert_false(WorldAtlas.islands().has(&"ile_ancienne"))
+	assert_false(Map.exists(&"ile_ancienne"), "ni sa carte")
+	assert_false(
+		WorldAtlas.rules_for(WorldManager.current_map()).enemies_allowed,
+		"l'île n° 68 : aucun Timere, par les données"
+	)
+	assert_eq(WorldManager.next_island(), ILE_ESSAI, "F6 : l'île suivante de l'atlas")

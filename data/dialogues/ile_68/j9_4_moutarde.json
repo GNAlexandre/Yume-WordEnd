@@ -1,0 +1,48 @@
+{
+  "id": "j9_4_moutarde",
+  "start": "pots",
+  "nodes": {
+    "pots": {
+      "speaker": "",
+      "text": "Deux pots sur la table, étiquetés d'une écriture d'enfant toute penchée. Tu prends une cuillère du premier, sans regarder.",
+      "next": "pots_2"
+    },
+    "pots_2": {
+      "speaker": "",
+      "text": "Une gorgée. Ce n'était pas du sucre. C'était la moutarde. Toute la table te regarde.",
+      "choices": [
+        {
+          "text": "Boire d'un trait.",
+          "next": "trait"
+        },
+        {
+          "text": "Faire comme si de rien.",
+          "next": "rien"
+        }
+      ]
+    },
+    "trait": {
+      "speaker": "",
+      "text": "Tu vides la tasse d'un trait, sans ciller. Les larmes, elles, n'ont pas demandé ton avis.",
+      "next": "tiat"
+    },
+    "rien": {
+      "speaker": "",
+      "text": "Tu fais comme si de rien n'était… et, pour que ça se voie, tu vides la tasse d'un trait. Les yeux te piquent.",
+      "next": "tiat"
+    },
+    "tiat": {
+      "speaker_id": "tiat",
+      "text": "Wouaaah ! Elle l'a bue ! Moi aussi, moi aussi !"
+    },
+    "grande": {
+      "speaker_id": "tiat",
+      "text": "Ça brûle… c'est ça, être une grande ! À partir d'aujourd'hui, je bois mon thé à la moutarde !",
+      "next": "grande_2"
+    },
+    "grande_2": {
+      "speaker_id": "ithea",
+      "text": "Bravo, {player}. Tu viens de fonder une tradition."
+    }
+  }
+}

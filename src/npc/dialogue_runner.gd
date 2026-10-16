@@ -17,34 +17,28 @@ extends Node
 ##     proposé).
 ##   entrée : premier nœud dont le "if" est vrai parmi "done", "entries" (dans l'ordre) et start.
 ##   conditions ("if" : objet, toutes doivent être vraies) : "flag" et "not_flag" (un nom ou une
-##     liste), "count" [objet, minimum], "quest" [id, état] ("available" : pas commencée et
-##     prérequis remplis, QuestData.status() ; "" : jamais commencée ; "active", "done"),
-##     "quest_step" [id, étape] (quête active à cette étape, Lot Q ; Systèmes et textes : ou
-##     [id, [étapes]], à l'une d'elles), "not_quest_step" (mêmes formes : à aucune de ces étapes,
-##     vraie aussi si la quête n'est pas active), "best_score" [arène, minimum] ; (E6) le récit :
-##     "day" (jour de l'acte, GameState.day : un jour ou [premier, dernier]), "slot" (créneau
-##     courant, LifeSlots.current() : un nom ou une liste), "scene" et "not_scene" (scènes jouées,
-##     GameState.is_scene_done : un id ou une liste, toutes jouées / aucune). Même grammaire
-##     pour la présence des PNJ (NpcData.visible_if).
+##     liste), "count" [objet, minimum] ; (E6) le récit : "day" (jour de l'acte, GameState.day :
+##     un jour ou [premier, dernier]), "slot" (créneau courant, LifeSlots.current() : un nom ou
+##     une liste), "scene" et "not_scene" (scènes jouées, GameState.is_scene_done : un id ou une
+##     liste, toutes jouées / aucune). Même grammaire pour la présence des PNJ
+##     (NpcData.visible_if). (F1) Les conditions de quête et de score d'arène sont parties avec
+##     l'ancienne île : une clé « quest… » ou « best_score » est inconnue.
 ##   effets, appliqués dans cet ordre (EFFECT_KEYS) : "take_item" puis "give_item" (un objet,
 ##     [objet, quantité] ou {objet: quantité, …}), "set_flag" puis "clear_flag" (un nom ou une
-##     liste), "start_quest" (id : GameState.set_quest_state(id, &"active")), "advance_quest" (id,
-##     ou [id, étape] : EventBus.quest_advance_requested, le QuestTracker valide l'étape
-##     courante), "complete_quest" (id : &"done", le QuestTracker vérifie et récompense).
-##     Ceux d'un nœud s'appliquent quand il s'affiche (avant le calcul de son texte et de ses
-##     choix), ceux d'un choix quand il est choisi (avant de suivre son "next").
-##   textes (réplique, choix, "speaker") : {count:objet}, {left:objet:total} (total moins
-##     possédés, au moins 0) et {best:arène} sont remplacés par les valeurs de GameState,
-##     {player} par le prénom du skin choisi (player_name(), « Chtholly » par défaut).
+##     liste). Ceux d'un nœud s'appliquent quand il s'affiche (avant le calcul de son texte et de
+##     ses choix), ceux d'un choix quand il est choisi (avant de suivre son "next").
+##   textes (réplique, choix, "speaker") : {count:objet} et {left:objet:total} (total moins
+##     possédés, au moins 0) sont remplacés par les valeurs de GameState, {player} par le prénom
+##     du skin choisi (player_name(), « Chtholly » par défaut).
 ##   commentaires : toute clé qui commence par « _ » est ignorée.
 ## Un fichier invalide (JSON, structure, "next", clé, condition ou effet inconnus ou mal formés)
 ## donne un push_warning qui dit pourquoi, et aucun dialogue. Ordre complet d'évaluation et
-## mode d'emploi pour les quêtes : docs/QUETES.md.
+## mode d'emploi : docs/DIALOGUES.md.
 ##
-## (Systèmes et textes) Outils de texte partagés, sans scène : format_text() et player_name()
-## (HUD et journal les emploient pour les textes de quête), find_npc() (PNJ par id, portraits),
-## current_speaker_id() (orateur de la réplique en cours, lu par la boîte de dialogue), et les
-## textes de l'histoire hors dialogues, data/texts/story.json : story_text(), arena_text().
+## (Systèmes et textes) Outils de texte partagés, sans scène : format_text() et player_name(),
+## find_npc() (PNJ par id, portraits), current_speaker_id() (orateur de la réplique en cours, lu
+## par la boîte de dialogue), et les textes de l'histoire hors dialogues, data/texts/story.json :
+## story_text().
 
 ## Nœud d'entrée prioritaire (PLAN.md section 4) : nom réservé, toujours essayé en premier.
 const DONE_NODE := "done"
@@ -55,10 +49,6 @@ const CONDITION_KEYS: Array[String] = [
 	"flag",
 	"not_flag",
 	"count",
-	"quest",
-	"quest_step",
-	"not_quest_step",
-	"best_score",
 	"day",
 	"slot",
 	"scene",
@@ -70,16 +60,13 @@ const EFFECT_KEYS: Array[String] = [
 	"give_item",
 	"set_flag",
 	"clear_flag",
-	"start_quest",
-	"advance_quest",
-	"complete_quest",
 ]
 ## Autres clés d'un nœud, d'un choix.
 const NODE_KEYS: Array[String] = ["speaker", "speaker_id", "text", "if", "next", "choices"]
 const CHOICE_KEYS: Array[String] = ["text", "if", "next"]
 ## Dossier des PNJ (data/npcs/<id>.tres) : speaker_id, portraits (find_npc).
 const NPCS_DIR := "res://data/npcs"
-## Textes de l'histoire hors dialogues (story_text, arena_text).
+## Textes de l'histoire hors dialogues (story_text).
 const STORY_PATH := "res://data/texts/story.json"
 ## Jeton remplacé par le prénom du skin choisi (player_name), et ce prénom quand aucun skin
 ## n'est connu.
@@ -277,7 +264,7 @@ static func _validate_step(
 			if not CONDITION_KEYS.has(str(key)):
 				return "condition inconnue « %s » dans le %s" % [key, where]
 	var speaker_id: Variant = (step as Dictionary).get("speaker_id")
-	if speaker_id != null and not QuestStep.is_name(speaker_id):
+	if speaker_id != null and not _is_id(speaker_id):
 		return "« speaker_id » du %s doit être un id de PNJ" % where
 	var effect_problem := _validate_effects(step)
 	if not effect_problem.is_empty():
@@ -293,11 +280,6 @@ static func _validate_effects(step: Dictionary) -> String:
 	for key: String in ["set_flag", "clear_flag"]:
 		if step.has(key) and _names(step[key]).is_empty():
 			return "« %s » attend un nom ou une liste de noms" % key
-	for key: String in ["start_quest", "complete_quest"]:
-		if step.has(key) and not QuestStep.is_name(step[key]):
-			return "« %s » attend un id de quête" % key
-	if step.has("advance_quest") and _advance_target(step["advance_quest"]).is_empty():
-		return "« advance_quest » attend un id de quête ou [quête, étape]"
 	for key: String in ["give_item", "take_item"]:
 		if step.has(key) and _item_amounts(step[key]).is_empty():
 			return "« %s » attend un objet, [objet, quantité] ou {objet: quantité}" % key
@@ -341,8 +323,8 @@ static func condition_problem(condition: Variant) -> String:
 
 
 ## Applique les effets d'un nœud ou d'un choix, dans l'ordre de EFFECT_KEYS : take_item,
-## give_item, set_flag, clear_flag, start_quest, advance_quest, complete_quest. take_item sans
-## assez d'objets ne retire rien (push_warning) ; les autres effets s'appliquent quand même.
+## give_item, set_flag, clear_flag. take_item sans assez d'objets ne retire rien (push_warning) ;
+## les autres effets s'appliquent quand même.
 static func apply_effects(step: Dictionary) -> void:
 	if step.has("take_item"):
 		_take_items(_item_amounts(step["take_item"]))
@@ -358,16 +340,6 @@ static func apply_effects(step: Dictionary) -> void:
 			push_warning("DialogueRunner : « %s » attend un nom ou une liste de noms" % key)
 		for flag: String in flags:
 			GameState.set_flag(StringName(flag), key == "set_flag")
-	if step.has("start_quest"):
-		GameState.set_quest_state(StringName(str(step["start_quest"])), &"active")
-	if step.has("advance_quest"):
-		var target := _advance_target(step["advance_quest"])
-		if target.is_empty():
-			push_warning("DialogueRunner : « advance_quest » attend un id ou [quête, étape]")
-		else:
-			EventBus.quest_advance_requested.emit(target[0], target[1])
-	if step.has("complete_quest"):
-		GameState.set_quest_state(StringName(str(step["complete_quest"])), &"done")
 
 
 ## Retire tous les objets demandés, ou aucun s'il en manque un (push_warning).
@@ -392,28 +364,32 @@ static func _take_items(amounts: Dictionary[StringName, int]) -> void:
 ## est mal formée (quantités entières, au moins 1).
 static func _item_amounts(value: Variant) -> Dictionary[StringName, int]:
 	var result: Dictionary[StringName, int] = {}
-	if QuestStep.is_name(value):
+	if _is_id(value):
 		result[StringName(value)] = 1
-	elif value is Array and (value as Array).size() == 2 and QuestStep.is_name(value[0]):
-		if QuestStep.read_int(value[1]) >= 1:
-			result[StringName(value[0])] = QuestStep.read_int(value[1])
+	elif value is Array and (value as Array).size() == 2 and _is_id(value[0]):
+		if _read_int(value[1]) >= 1:
+			result[StringName(value[0])] = _read_int(value[1])
 	elif value is Dictionary:
-		result = QuestStep.read_items(value)
-		if result.size() != (value as Dictionary).size():
-			result.clear()
+		for key: Variant in value:
+			if not _is_id(key) or _read_int(value[key]) < 1:
+				result.clear()
+				break
+			result[StringName(key)] = _read_int(value[key])
 	return result
 
 
-## "quête" ou ["quête", "étape"] → [quest_id, step_id] (step_id &"" : étape courante, quelle
-## qu'elle soit) ; [] si la valeur est mal formée.
-static func _advance_target(value: Variant) -> Array[StringName]:
-	var target: Array[StringName] = []
-	if QuestStep.is_name(value):
-		target.assign([StringName(value), &""])
-	elif value is Array and (value as Array).size() == 2:
-		if QuestStep.is_name(value[0]) and QuestStep.is_name(value[1]):
-			target.assign([StringName(value[0]), StringName(value[1])])
-	return target
+## Identifiant d'un JSON : texte en caractères ASCII d'identifiant (objet, drapeau, PNJ).
+static func _is_id(value: Variant) -> bool:
+	return value is String and (value as String).is_valid_ascii_identifier()
+
+
+## Entier d'un JSON (les nombres y sont des float : 5.0 → 5) ; -1 si ce n'en est pas un.
+static func _read_int(value: Variant) -> int:
+	if value is int:
+		return value
+	if value is float and is_finite(value) and value == floorf(value):
+		return int(value)
+	return -1
 
 
 ## Choix proposés par un nœud : ceux dont le "if" est vrai, MAX_CHOICES au plus.
@@ -428,13 +404,13 @@ static func visible_choices(node: Dictionary) -> Array[Dictionary]:
 	return result
 
 
-## Remplace {count:objet}, {left:objet:total} et {best:arène} par les valeurs de GameState, et
-## {player} par le prénom du skin choisi (player_name()). Répliques, choix, orateurs, et
-## (Systèmes et textes) textes de quête du HUD et du journal, textes de l'histoire.
+## Remplace {count:objet} et {left:objet:total} par les valeurs de GameState, et {player} par le
+## prénom du skin choisi (player_name()). Répliques, choix, orateurs, (Systèmes et textes) textes
+## de l'histoire.
 static func format_text(text: String) -> String:
 	if not text.contains("{"):
 		return text
-	var pattern := RegEx.create_from_string("\\{(count|left|best):([^{}]+)\\}")
+	var pattern := RegEx.create_from_string("\\{(count|left):([^{}]+)\\}")
 	var result := ""
 	var cursor := 0
 	for found: RegExMatch in pattern.search_all(text):
@@ -503,7 +479,7 @@ static func remove_npc_dir(dir: String) -> void:
 # --- Textes de l'histoire (data/texts/story.json) ----------------------------------------------
 
 
-## Texte de l'histoire au chemin key_path (« fall/message », « arenas/dunes/prompt » : clés
+## Texte de l'histoire au chemin key_path (« fall/message », « maps/waiting/text » : clés
 ## imbriquées séparées par « / »), variables remplacées (format_text) ; fallback s'il manque.
 static func story_text(key_path: String, fallback: String = "") -> String:
 	if not _story_loaded:
@@ -513,13 +489,6 @@ static func story_text(key_path: String, fallback: String = "") -> String:
 	for key: String in key_path.split("/"):
 		value = (value as Dictionary).get(key) if value is Dictionary else null
 	return format_text(value) if value is String else fallback
-
-
-## Texte d'arène : arenas/<arena_id>/<key>, sinon arenas/default/<key>, sinon fallback. Clés :
-## prompt (invite du panneau), sign (texte du panneau), end_title et new_record (fin de série).
-static func arena_text(arena_id: StringName, key: String, fallback: String = "") -> String:
-	var text := story_text("arenas/%s/%s" % [arena_id, key])
-	return text if not text.is_empty() else story_text("arenas/default/" + key, fallback)
 
 
 ## Lit et vérifie un fichier de textes de l'histoire : un objet dont chaque valeur est un texte
@@ -578,8 +547,8 @@ static func _test(key: String, value: Variant) -> bool:
 			return _test_flags(value, true)
 		"not_flag":
 			return _test_flags(value, false)
-		"count", "best_score", "quest", "quest_step", "not_quest_step":
-			return _test_pair(key, value)
+		"count":
+			return _test_count(value)
 		"day", "slot", "scene", "not_scene":
 			return _test_story(key, value)
 	push_warning("DialogueRunner : condition inconnue « %s »" % key)
@@ -637,11 +606,6 @@ static func _is_condition_value(key: String, value: Variant) -> bool:
 	var pair: Array = value if value is Array else []
 	if pair.size() != 2 or not _is_text(pair[0]):
 		return false
-	match key:
-		"quest":
-			return true
-		"quest_step", "not_quest_step":
-			return not _step_ids(pair[1]).is_empty()
 	return pair[1] is int or pair[1] is float
 
 
@@ -657,56 +621,17 @@ static func _test_flags(value: Variant, expected: bool) -> bool:
 	return true
 
 
-## "count" [objet, minimum], "best_score" [arène, minimum], "quest" [id, état],
-## "quest_step" et "not_quest_step" [id, étape] ou [id, [étape, …]].
-static func _test_pair(key: String, value: Variant) -> bool:
-	if not _is_condition_value(key, value):
-		push_warning("DialogueRunner : « %s » attend [identifiant, valeur] : %s" % [key, value])
+## "count" [objet, minimum] : au moins minimum objets dans l'inventaire.
+static func _test_count(value: Variant) -> bool:
+	if not _is_condition_value("count", value):
+		push_warning("DialogueRunner : « count » attend [objet, minimum] : %s" % [value])
 		return false
-	var pair: Array = value
-	var target := StringName(pair[0])
-	if key == "quest":
-		var state := StringName(str(pair[1]))
-		# « available » : pas commencée et prérequis remplis (calculé, jamais enregistré).
-		if state == GameState.QUEST_AVAILABLE:
-			return QuestData.state_of(target) == state
-		return GameState.quest_state(target) == state
-	if key == "quest_step":
-		return _step_ids(pair[1]).has(_current_step_id(target))
-	if key == "not_quest_step":
-		return not _step_ids(pair[1]).has(_current_step_id(target))
-	var amount := GameState.count(target) if key == "count" else GameState.best_score(target)
-	return amount >= int(pair[1])
-
-
-## Étape ("" compris) ou liste non vide d'étapes → [étapes] ; [] si la valeur est mal formée.
-static func _step_ids(value: Variant) -> Array[StringName]:
-	var result: Array[StringName] = []
-	if _is_text(value):
-		result.append(StringName(value))
-		return result
-	if not value is Array:
-		return result
-	for entry: Variant in value:
-		if not _is_text(entry):
-			result.clear()
-			break
-		result.append(StringName(entry))
-	return result
+	return GameState.count(StringName(value[0])) >= int(value[1])
 
 
 ## Texte d'un JSON (String) ou d'un .tres (String ou StringName, ex. NpcData.visible_if).
 static func _is_text(value: Variant) -> bool:
 	return value is String or value is StringName
-
-
-## Étape courante de la quête active quest_id (&"" si elle n'est pas active).
-static func _current_step_id(quest_id: StringName) -> StringName:
-	if GameState.quest_state(quest_id) != GameState.QUEST_ACTIVE:
-		return &""
-	var quest := QuestData.find(quest_id)
-	var step := quest.current_step() if quest != null else null
-	return step.id if step != null else GameState.quest_step(quest_id)
 
 
 ## Un nom, ou une liste de noms ([] si la valeur est mal formée).
@@ -726,8 +651,6 @@ static func _placeholder(kind: String, arguments: String) -> String:
 	var item := StringName(parts[0])
 	if kind == "count":
 		return str(GameState.count(item))
-	if kind == "best":
-		return str(GameState.best_score(item))
 	if parts.size() != 2 or not parts[1].is_valid_int():
 		push_warning("DialogueRunner : {left:objet:total} attendu, reçu {left:%s}" % arguments)
 		return "{left:%s}" % arguments
@@ -738,7 +661,7 @@ static func _placeholder(kind: String, arguments: String) -> String:
 
 
 func _enter(node_id: String) -> void:
-	# Un auditeur (quest_updated, dialogue_started…) peut avoir arrêté le dialogue entre-temps.
+	# Un auditeur (flag_changed, dialogue_started…) peut avoir arrêté le dialogue entre-temps.
 	if not _running:
 		return
 	_node = _nodes[node_id]

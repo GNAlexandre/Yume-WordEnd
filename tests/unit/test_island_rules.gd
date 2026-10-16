@@ -1,13 +1,11 @@
 extends GutTest
 ## (X1) Les règles des îles appliquées par les données (data/world/, WorldAtlas.rules_for),
-## jamais par un nom de carte : aucun Timere sur l'île n° 68 (Timere libre, Timeres libres d'une
-## zone, série de l'arène), des Timeres sur la surface et sur l'ancienne île ; la mer de nuages
+## jamais par un nom de carte : aucun Timere sur l'île n° 68, des Timeres sur la surface ((F1)
+## l'ancienne île, ses Timeres libres et son arène sont partis) ; la mer de nuages
 ## sous le bord ou le sol jusqu'à l'horizon (MapGround) ; le ciel par défaut de l'île
 ## (Atmosphere) ; l'île courante et les îles connues de GameState, sauvegardées.
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
-const ARENA_SCENE := preload("res://src/enemies/arena.tscn")
-const FreeEnemiesScript := preload("res://src/enemies/free_enemies.gd")
 const AtmosphereScript := preload("res://src/autoload/atmosphere.gd")
 const TEMP_DIR := "user://test_island_rules"
 
@@ -60,8 +58,8 @@ func test_no_timere_appears_on_island_68() -> void:
 	assert_signal_not_emitted(EventBus, "enemy_spawned", "jamais annoncé")
 
 
-func test_timeres_appear_on_the_surface_and_the_legacy_island() -> void:
-	for map_id: StringName in [&"surface_essai", &"ile_ancienne"]:
+func test_timeres_appear_on_the_surface() -> void:
+	for map_id: StringName in [&"surface_essai"]:
 		watch_signals(EventBus)
 		var map := _map(map_id)
 		var enemy := _timere()
@@ -69,31 +67,6 @@ func test_timeres_appear_on_the_surface_and_the_legacy_island() -> void:
 		await wait_process_frames(2)
 		assert_true(is_instance_valid(enemy) and enemy.is_inside_tree(), "%s : il reste" % map_id)
 		assert_signal_emitted(EventBus, "enemy_spawned", "%s : annoncé" % map_id)
-		map.free()
-
-
-func test_free_enemies_stay_away_from_island_68() -> void:
-	var map := _map(&"entrepot")
-	var placement := Node3D.new()
-	placement.set_script(FreeEnemiesScript)
-	placement.add_child(_timere())
-	map.add_child(placement)
-	await wait_process_frames(2)
-	assert_eq(placement.call(&"alive_count"), 0, "aucun Timere libre")
-	assert_eq(placement.call(&"respawn_dead"), 0, "et aucun ne revient")
-
-
-func test_arena_series_refused_on_island_68_and_allowed_elsewhere() -> void:
-	for entry: Array in [[&"essai", false], [&"ile_ancienne", true], [&"surface_essai", true]]:
-		var map := _map(entry[0])
-		var arena := ARENA_SCENE.instantiate() as Arena
-		arena.arena_id = &"dunes"
-		map.add_child(arena)
-		var director := arena.director()
-		director.start()
-		assert_eq(director.is_running(), entry[1], "%s : série %s" % entry)
-		if director.is_running():
-			director.stop()
 		map.free()
 
 
@@ -200,9 +173,9 @@ func test_saves_without_islands_still_load() -> void:
 	GameState.from_dict(data)
 	assert_eq(GameState.island, &"", "champ facultatif : WorldManager le déduit de la carte")
 	assert_eq(GameState.known_islands(), [] as Array[StringName])
-	var bad := {"version": 3, "island": 68}
+	var bad := {"version": SaveManager.SAVE_VERSION, "day": 1, "island": 68}
 	assert_eq(SaveManager.import_json(JSON.stringify(bad)), ERR_INVALID_DATA, "île mal typée")
-	bad = {"version": 3, "known_islands": "ile_68"}
+	bad = {"version": SaveManager.SAVE_VERSION, "day": 1, "known_islands": "ile_68"}
 	assert_eq(SaveManager.import_json(JSON.stringify(bad)), ERR_INVALID_DATA, "liste attendue")
 
 

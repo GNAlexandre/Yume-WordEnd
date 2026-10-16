@@ -1,0 +1,152 @@
+{
+  "_comment": "ACTE1.md 7.5 (s. 14) : la nuit de fièvre à l'infirmerie. {player} est couchée (chtholly_double, pyjama : la planche du joueur n'a pas de pose couchée) ; Nygglatho en blouse (nygglatho_labcoat) sort, Willem reste sur la chaise. Le baiser sur le front, en plan large ; le venenum, voix seules sur la fenêtre. L'image qui ondule (effet d'E9) n'existe pas encore : docs/CONTRACT_REQUESTS.md.",
+  "title": "La nuit de fièvre",
+  "day": 7,
+  "after": [
+    "j7_4_port"
+  ],
+  "map": "entrepot_rdc",
+  "trigger": {
+    "on": "ready"
+  },
+  "present": [
+    "chtholly_double",
+    "willem",
+    "nygglatho"
+  ],
+  "steps": [
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 0
+    },
+    {
+      "do": "player",
+      "visible": false
+    },
+    {
+      "do": "slot",
+      "slot": "nuit",
+      "time": 0
+    },
+    {
+      "do": "moment",
+      "weather": "pluie",
+      "time": 0
+    },
+    {
+      "do": "place",
+      "who": "player",
+      "at": "infirmerie_fenetre",
+      "offset": [
+        0.0,
+        1.5
+      ]
+    },
+    {
+      "do": "place",
+      "who": "chtholly_double",
+      "at": "infirmerie_lit_1",
+      "outfit": "pyjama",
+      "anim": "dort"
+    },
+    {
+      "do": "place",
+      "who": "willem",
+      "at": "infirmerie_chevet",
+      "facing": "east",
+      "outfit": "maison",
+      "anim": "assis"
+    },
+    {
+      "do": "place",
+      "who": "nygglatho",
+      "at": "infirmerie_lit_1",
+      "offset": [
+        1.4,
+        1.5
+      ],
+      "facing": "west",
+      "outfit": "blouse"
+    },
+    {
+      "do": "camera",
+      "to": "infirmerie_lit_1",
+      "offset": [
+        0.4,
+        1.0
+      ],
+      "distance": 9,
+      "time": 0
+    },
+    {
+      "do": "wait",
+      "time": 0.8
+    },
+    {
+      "do": "fade",
+      "to": "clear",
+      "time": 1.4
+    },
+    {
+      "do": "dialogue",
+      "node": "venenum"
+    },
+    {
+      "do": "walk",
+      "who": "nygglatho",
+      "to": "epie_infirmerie",
+      "offset": [
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "do": "leave",
+      "who": "nygglatho"
+    },
+    {
+      "do": "dialogue",
+      "node": "fievre"
+    },
+    {
+      "do": "camera",
+      "to": "infirmerie_lit_1",
+      "offset": [
+        1.4,
+        0.6
+      ],
+      "distance": 13,
+      "time": 1.6,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "baiser"
+    },
+    {
+      "do": "camera",
+      "to": "infirmerie_fenetre",
+      "offset": [
+        0.0,
+        0.4
+      ],
+      "distance": 8,
+      "time": 1.6,
+      "wait": true
+    },
+    {
+      "do": "dialogue",
+      "node": "noeuds"
+    },
+    {
+      "do": "fade",
+      "to": "black",
+      "time": 1.4
+    },
+    {
+      "do": "leave",
+      "who": "chtholly_double"
+    }
+  ]
+}

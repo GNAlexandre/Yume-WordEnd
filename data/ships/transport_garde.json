@@ -1,0 +1,12 @@
+{
+  "_comment": "(E7) Le transport de la Garde (docs/lore/ACTE1.md, 7.4 ; CARTE.md 6.2 et 6.3) : petit navire militaire de flanc au nord du quai du port, scène src/world/props/ships/garde_transport.tscn (Ship), poste d'amarrage Berth de la carte port (ShipBerth). Lu par ShipControl.data et ShipBerth (s, m, degrés, images par seconde). descent : il descend de height m au-dessus du quai en time s, en ralentissant, avec un léger roulis (roll_degrees, roll_period) qui s'éteint ; searchlight : le projecteur aveugle (on ne voit pas sa forme) puis s'éteint entre ces deux parts de la descente ; mooring : les trois bras se referment de l'arrière vers l'avant, un toutes les interval s, à fps images par seconde ; rotor : vitesse de la bande des pales en vol (fps), arrêt après l'amarrage (spin_down), relance au départ (spin_up) ; hatch : la trappe s'ouvre sous la pression après delay s, à fps ; gangway : la passerelle sort puis se pose en time s ; departure : il remonte de height m en time s, en accélérant.",
+  "name": "Le transport de la Garde",
+  "scene": "res://src/world/props/ships/garde_transport.tscn",
+  "descent": {"height": 16.0, "time": 9.0, "roll_degrees": 1.6, "roll_period": 3.4},
+  "searchlight": {"fade_from": 0.35, "fade_to": 0.85},
+  "mooring": {"interval": 0.7, "fps": 6.0},
+  "rotor": {"fps": 12.0, "spin_down": 3.0, "spin_up": 1.5},
+  "hatch": {"delay": 0.4, "fps": 8.0},
+  "gangway": {"time": 1.6},
+  "departure": {"height": 22.0, "time": 8.0}
+}

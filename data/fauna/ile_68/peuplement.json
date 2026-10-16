@@ -7,6 +7,16 @@
       {"id": "papillons", "species": "butterfly", "count": 1, "at": "papillons", "radius": 7.0},
       {"id": "chouette", "species": "owl", "count": 1, "at": "chouette", "radius": 2.0}
     ],
+    "foret_profonde": [
+      {"id": "cerfs", "species": "deer", "count": 3, "at": "cerfs", "radius": 5.0, "moments": ["aube", "couchant"]},
+      {"id": "renard", "species": "fox", "count": 1, "at": "lisiere_riviere", "radius": 4.0},
+      {"id": "ecureuils", "species": "squirrel", "count": 3, "rect": [10.0, 10.0, 70.0, 50.0]},
+      {"id": "corbeaux", "species": "crow", "count": 2, "rect": [10.0, 10.0, 70.0, 50.0]},
+      {"id": "sanglier", "species": "boar", "count": 1, "at": "souille", "radius": 3.0, "respawn_s": 90.0},
+      {"id": "loups", "species": "wolf", "count": 4, "at": "loups", "radius": 4.0, "pack": true, "respawn_s": 90.0},
+      {"id": "grenouilles", "species": "frog", "count": 3, "at": "gue", "radius": 3.0},
+      {"id": "chouette", "species": "owl", "count": 1, "rect": [10.0, 10.0, 70.0, 50.0]}
+    ],
     "foret_essai": [
       {"id": "cerfs", "species": "deer", "count": 3, "at": "cerfs", "radius": 4.0},
       {"id": "loups", "species": "wolf", "count": 3, "at": "loups", "radius": 3.5, "pack": true, "respawn_s": 90.0},
@@ -30,16 +40,6 @@
       {"id": "libellules", "species": "dragonfly", "count": 1, "at": "marais", "radius": 5.0},
       {"id": "renard", "species": "fox", "count": 1, "at": "lisiere", "radius": 4.0, "moments": ["couchant"]},
       {"id": "chouette", "species": "owl", "count": 1, "at": "lisiere", "radius": 2.0}
-    ],
-    "foret_profonde": [
-      {"id": "cerfs", "species": "deer", "count": 3, "at": "cerfs", "radius": 5.0, "moments": ["aube", "couchant"]},
-      {"id": "renard", "species": "fox", "count": 1, "at": "lisiere_riviere", "radius": 4.0},
-      {"id": "ecureuils", "species": "squirrel", "count": 3, "rect": [10.0, 10.0, 70.0, 50.0]},
-      {"id": "corbeaux", "species": "crow", "count": 2, "rect": [10.0, 10.0, 70.0, 50.0]},
-      {"id": "sanglier", "species": "boar", "count": 1, "at": "souille", "radius": 3.0, "respawn_s": 90.0},
-      {"id": "loups", "species": "wolf", "count": 4, "at": "loups", "radius": 4.0, "pack": true, "respawn_s": 90.0},
-      {"id": "grenouilles", "species": "frog", "count": 3, "at": "gue", "radius": 3.0},
-      {"id": "chouette", "species": "owl", "count": 1, "rect": [10.0, 10.0, 70.0, 50.0]}
     ],
     "montagne": [
       {"id": "cerfs", "species": "deer", "count": 3, "at": "belvedere_haut", "radius": 5.0, "moments": ["aube", "couchant"]},

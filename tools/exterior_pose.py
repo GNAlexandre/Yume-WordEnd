@@ -193,6 +193,11 @@ class Pose:
         self.counts = {}
         self.warnings = []
         self._walk = {}
+        # (QC2) Les places où l'on se tient en plus du plan et les bornes du point visé (clear_of_places) ;
+        # exterior_maps.build les donne avant la pose.
+        self.standing_extra = []
+        self.view_bounds = None
+        self._stands = None
 
     # --- Sol --------------------------------------------------------------------------------
 
@@ -306,6 +311,10 @@ class Pose:
         return False
 
     # --- Pose -------------------------------------------------------------------------------------
+
+    def clear_of_places(self, scenes, points, scale=1.0):
+        """(QC2) Les points où aucune des scènes ne masque une place (clear_of_places, plus bas)."""
+        return clear_of_places(self, scenes, points, scale)
 
     def place(self, group, scene, x, z, y=None, scale=1.0, flip=False, name=None, extra=None, check=True):
         p = prop(scene)
@@ -522,3 +531,129 @@ def pose_seams(pose, bounds):
     panels = [seam_panel(name, scene, x, y, z, scale, flip)
               for _group, name, scene, x, y, z, scale, flip, _extra in pose.singles]
     return open_seams(panels, focus_points(bounds, (pose.W, pose.D), pose.walkable_here), pose.height, pose.W)
+
+
+# --- Les places masquées par un grand décor (QC2) ----------------------------------------------------
+#
+# (QC2) Un grand décor posé au sud d'une place où le joueur ou un habitant se tient (sur un chemin, un
+# point ou une place du plan, un marqueur d'arrivée, une place de la vie, une vue de la série QC) la
+# cache à la caméra : l'érable rouge de premier plan qui couvrait Chtholly au sentier, le grand tronc
+# qui fendait l'écran à côté d'elle à la colline (docs/QUALITE.md, QC-37 et QC-38). Sa variante de
+# premier plan ne suffit pas : elle ne s'efface qu'autour du joueur, en trame, et jamais autour d'un
+# habitant. Règle : aucun décor de 2 m ou plus ne couvre, de ses pixels opaques, la place d'un
+# personnage debout (1 m de part et d'autre de lui, du pied à la tête), vue de la caméra du jeu au
+# cadrage par défaut. Les décors d'une famille (PropScatter) comptent pour chacune de leurs variantes,
+# à leur plus grande taille : la variante se tire au lancement.
+
+MASK_MIN_HEIGHT = 2.0
+# La place d'un personnage : colonnes (m, de part et d'autre de lui) et hauteurs (m au-dessus du sol).
+MASK_BODY_X = (-1.0, -0.5, 0.0, 0.5, 1.0)
+MASK_BODY_Y = (0.25, 0.75, 1.25)
+# Points cachés à partir desquels la place est masquée : une colonne entière (un tronc qui frôle le
+# personnage) ou le tiers de sa silhouette.
+MASK_MIN_HIDDEN = 3
+# Le long des chemins, un point par mètre. Près d'une sortie (m : le marqueur d'arrivée est à 2 ou 3 m
+# d'elle), on ne fait que passer : on entre et on sort sous la lisière, sous la voûte des arbres qui
+# couvrent les bouts des pans à raccord (QC-34) ; ces places-là ne comptent pas.
+MASK_PATH_STEP = 1.0
+MASK_EXIT_MARGIN = 4.5
+
+
+def standing_places(pose, extra=()):
+    """Les places où quelqu'un se tient : [(nom, x, z)] : marqueurs, points et places (leur centre) du
+    plan, le milieu des chemins (un point par mètre), puis extra (places de la vie, vues de la série QC) ;
+    sauf près d'une sortie."""
+    out = [("marqueur %s" % n, x, z) for n, (x, z) in sorted(pose.markers.items())]
+    out += [("point %s" % n, x, z) for n, (x, z) in sorted(pose.points.items())]
+    out += [("place %s" % n, (r.x0 + r.x1) / 2.0, (r.z0 + r.z1) / 2.0) for n, r in sorted(pose.places.items())]
+    for name, _width, pts in pose.paths:
+        for k in range(len(pts) - 1):
+            (ax, az), (bx, bz) = pts[k], pts[k + 1]
+            n = max(1, int(math.hypot(bx - ax, bz - az) / MASK_PATH_STEP))
+            for i in range(n + (1 if k == len(pts) - 2 else 0)):
+                out.append(("chemin %s" % name, ax + (bx - ax) * i / n, az + (bz - az) * i / n))
+    out += list(extra)
+    return [q for q in out if pose.in_map(q[1], q[2], 0.3)
+            and not any(e.has(q[1], q[2], MASK_EXIT_MARGIN) for e in pose.exits)]
+
+
+def _mask_panels(pose):
+    """Les grands décors posés (panneaux de open_seams, avec leur scène) : uniques et familles."""
+    out = []
+    for _group, name, scene, x, y, z, scale, flip, _extra in pose.singles:
+        q = seam_panel(name, scene, x, y, z, scale, flip)
+        if q is not None and q[6] >= MASK_MIN_HEIGHT:
+            out.append((q, scene))
+    for family, spec in pose.families.items():
+        for point in spec["points"]:
+            x, z = point[0], point[1]
+            for scene in spec["scenes"]:
+                for flip in (False, True):
+                    q = seam_panel("%s (%.1f ; %.1f)" % (family, x, z), scene, x, pose.height(x, z), z,
+                                   spec["scale"][1], flip)
+                    if q is not None and q[6] >= MASK_MIN_HEIGHT:
+                        out.append((q, scene))
+    return out
+
+
+def _stand_cameras(pose, bounds, extra):
+    """[(place, x, y, z, caméra)] : chaque place où l'on se tient, avec la caméra du jeu quand le joueur y
+    est (point visé 2,5 m au nord, borné ; cadrage par défaut)."""
+    bx, bz, bw, bd = bounds
+    s, c = math.sin(math.radians(SEAM_PITCH)), math.cos(math.radians(SEAM_PITCH))
+    d = SEAM_DISTANCES[0]
+    out = []
+    for label, cx, cz in standing_places(pose, extra):
+        fx, fz = min(max(cx, bx), bx + bw), min(max(cz - 2.5, bz), bz + bd)
+        fy = pose.height(fx, fz) + SEAM_FOCUS_HEIGHT
+        out.append((label, cx, pose.height(cx, cz), cz, (fx, fy + d * s, fz + d * c)))
+    return out
+
+
+def _masks(panel, stand):
+    """Vrai si le panneau couvre la place d'un personnage debout là (voir plus haut)."""
+    _label, cx, cy, cz, cam = stand
+    if not cz + 0.05 < panel[4] < cam[2] or abs(panel[2] - cx) > panel[5] / 2.0 + MASK_BODY_X[-1]:
+        return False
+    hidden = 0
+    for dx in MASK_BODY_X:
+        for hy in MASK_BODY_Y:
+            if _hidden(cam, cx + dx, cy + hy, cz, [panel]):
+                hidden += 1
+                if hidden >= MASK_MIN_HIDDEN:
+                    return True
+    return False
+
+
+def clear_of_places(pose, scenes, points, scale=1.0):
+    """(QC2) Les points (x, z) où aucune des scènes (à l'échelle scale, dans les deux sens) ne masque une
+    place : pour tirer une famille de grands arbres sans en poser un devant un chemin. Les places sont
+    celles de la carte posée (pose.standing_extra, pose.view_bounds : écrits par exterior_maps.build)."""
+    if pose.view_bounds is None:
+        return list(points)
+    if pose._stands is None:
+        pose._stands = _stand_cameras(pose, pose.view_bounds, pose.standing_extra)
+    keep = []
+    for point in points:
+        x, z = point[0], point[1]
+        panels = [seam_panel("", scene, x, pose.height(x, z), z, scale, flip) for scene in scenes
+                  for flip in (False, True)]
+        panels = [q for q in panels if q is not None and q[6] >= MASK_MIN_HEIGHT]
+        if not any(_masks(q, stand) for q in panels for stand in pose._stands):
+            keep.append(point)
+    return keep
+
+
+def masked_places(pose, bounds, extra=()):
+    """Les grands décors qui masquent une place (voir plus haut) : [(décor, scène, x, z, [places])], d'après
+    la carte posée, les bornes du point visé (x, z, largeur, profondeur) et les places en plus."""
+    stands = _stand_cameras(pose, bounds, extra)
+    found = {}
+    for q, scene in _mask_panels(pose):
+        for stand in stands:
+            if _masks(q, stand):
+                key = (q[0], scene, round(q[2], 1), round(q[4], 1))
+                found.setdefault(key, [])
+                if stand[0] not in found[key]:
+                    found[key].append(stand[0])
+    return [(k[0], k[1], k[2], k[3], v) for k, v in sorted(found.items())]

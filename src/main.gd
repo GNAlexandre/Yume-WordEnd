@@ -47,7 +47,7 @@ func show_menu() -> void:
 		_menu = (load(MENU_SCENE) as PackedScene).instantiate()
 		add_child(_menu)
 		if OS.has_feature("web"):
-			# Repère du temps jusqu'au menu (ms depuis le début de la page), lu par tools/web_m2.js.
+			# Repère du temps jusqu'au menu (ms depuis le début de la page), pour les outils Web.
 			JavaScriptBridge.eval(
 				"window.wordendMenuMs = window.wordendMenuMs || performance.now();", true
 			)

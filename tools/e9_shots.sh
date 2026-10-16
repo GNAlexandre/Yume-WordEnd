@@ -1,6 +1,6 @@
 #!/bin/bash
 # (E9) Captures de la lumière et du temps (tests/integration/demo_e9.tscn) sous Xvfb : la même
-# vue sous chaque préréglage (moment × temps), dans le village de l'ancienne île et la carte
+# vue sous chaque préréglage (moment × temps), dans le village de l'île n° 68 et la carte
 # d'essai, avec la luminance moyenne et les draw calls de chacune.
 #   tools/e9_shots.sh                          # toutes les vues → build/shots/e9/e9_<vue>.png
 #   tools/e9_shots.sh village:nuit:clair essai:couchant:pluie   # seulement celles-ci

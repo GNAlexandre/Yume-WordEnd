@@ -74,7 +74,11 @@ func before_all() -> void:
 func test_the_plan_has_what_the_chapter_needs() -> void:
 	assert_eq(_lines("sortie").size(), 1, "vers l'entrepôt")
 	assert_eq(_lines("marqueur").size(), 2, "Spawn, from_entrepot")
-	assert_eq(_lines("point").size(), 4, "talismans_centre, dos_a_dos, vue_nord, rocher")
+	assert_eq(
+		_lines("point").size(),
+		8,
+		"talismans_centre, dos_a_dos, vue_nord, rocher, talisman_1..4 (S2)"
+	)
 	assert_eq(_lines("place").size(), 1, "cercle_talismans")
 	assert_eq(_lines("palier").size(), 3, "trois terrasses")
 	assert_eq(_lines("rampe").size(), 3, "trois rampes")
