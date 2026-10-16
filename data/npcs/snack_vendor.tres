@@ -8,5 +8,3 @@ script = ExtResource("1_npc")
 id = &"snack_vendor"
 display_name = "Cuistot du snack"
 skin = ExtResource("2_visual")
-dialogue_path = "res://data/dialogues/snack_vendor.json"
-home_zone = &"beach"

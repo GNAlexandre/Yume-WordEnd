@@ -8,4 +8,3 @@ script = ExtResource("1_npc")
 id = &"fairy_11"
 display_name = "Sabine"
 skin = ExtResource("2_visual")
-home_zone = &""
