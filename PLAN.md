@@ -514,6 +514,12 @@ func has_animation(anim: StringName) -> bool      # (L0) ; current_animation() -
 # (R1) La planche, non éclairée, prend la teinte de la lumière : Sprite.modulate = couleur posée par d'autres
 # (EnemyData.tint) × HD2DLighting.active_sprite_tint() (Atmosphere : la nuit, plus sombre ; blanche au couchant et
 # sans carte), à chaque advance(), dehors comme dedans
+# (AN) match_stride: bool (joueur, PNJ) : la cadence de marche et course suit la vitesse au sol mesurée
+# (STRIDE_PX : 84 et 147 px de planche par cycle ; drawn_speed(anim), stride_rate(), ground_speed(),
+# set_ground_speed(m/s)) ; settle(anim) passe à anim (le repos) à la fin du pas (settling_to()) ;
+# is_stepping(), step_frames(anim) (0 et la moitié du cycle) ; avec match_stride, un changement de vue en
+# marche attend le début d'un pas. Le Sprite porte un ShaderMaterial « net mais lissé »
+# (src/visuals/character_sprite.gdshader, pixel_art.gdshaderinc) : uniform sheet = planche de l'image affichée
 signal frame_changed(anim: StringName, frame: int)   # permet à la Hitbox de s'activer sur les images "coup"
 signal animation_finished(anim: StringName)
 
@@ -572,9 +578,11 @@ class_name AirshipDock     # src/world/airship_dock.gd, Area3D sous « Docks » 
 class_name TravelView      # src/world/travel_view.tscn (CanvasLayer, couche LAYER = 90) : la vue du ciel d'un voyage,
                            # posée et libérée par WorldManager ; begin(île, fondu), close(durée) (coroutine), elapsed(),
                            # black_alpha(), caption, island_id ; signal closed
-class_name Player          # player.gd (L1)
+class_name Player          # player.gd (L1) ; (AN) walk_speed 3,1 et run_speed 5,8 m/s (cadence des planches à la
+                           # vitesse réelle), hold_input(bool) / is_input_held() (commandes seules figées :
+                           # changement de carte), IDLE_GRACE, FACE_SPEED (la vue suit la vitesse réelle)
 class_name Pickup          # @export item_id: StringName, quantity: int, persistent: bool ; func collect(), pickup_id()
-class_name Npc             # @export data: NpcData ; (Systèmes et textes) is_present(), refresh_presence() :
+class_name Npc             # @export data: NpcData ; (AN) plus de breath_amount / breath_period (respiration dessinée) ; (Systèmes et textes) is_present(), refresh_presence() :
                            # absent = caché, process_mode DISABLED (ni collision ni InteractArea), sans invite,
                            # dialogue ; réévalué en fin d'image sur flag_changed, inventory_changed,
                            # game_loaded, skin_changed (après le dialogue en cours) ; (F1) plus de marqueur de quête
@@ -720,6 +728,10 @@ var lock_target: Node3D, follow_velocity: Vector3   # posés par le joueur à ch
 func update_camera(delta, zoom_axis := 0.0), focus_goal(with_lead := true) -> Vector3, anchor() -> Vector3 (place
      affichée du joueur, interpolée), snap(), snap_behind(_dir) (= snap), recenter_behind(_dir) (sans effet),
      zoom(amount), zoom_distance(), focus(), yaw() (0), pitch() (toujours pitch_deg), forward() (le nord)
+# (AN) Sans dépassement : le point visé ne passe jamais, dans le sens de la marche, au-delà du point visé au repos
+# de plus que vitesse × lead_time, et pas du tout pendant un freinage ni à l'arrêt. @export edge_margin (0,12) et
+# player_height (1,6 m) : le joueur (pieds et tête) reste à edge_margin de chaque bord de l'écran, le point visé
+# sortant des limits juste ce qu'il faut (sauf cadrage du récit) ; keep_in_frame(focus, pieds) -> Vector3.
 # (recette du 8 octobre 2026) Cadrage constant : plus de cadrage automatique des bâtiments. Lissage physique
 # (project.godot physics/common/physics_interpolation) limité au monde 3D : src/game.tscn Game ON, UI OFF ;
 # src/main.tscn Main OFF. Un nœud 3D déplacé dans _process est en physics_interpolation_mode OFF et lit la place
@@ -2047,7 +2059,7 @@ Les attaques ennemies ne touchent que sur leurs images `coup` (images 1 et 2 de 
 
 | Élément | Scène | Comportement M2 |
 | --- | --- | --- |
-| Joueur | `src/player/player.tscn` (`CharacterBody3D`) | Déplacement relatif à l'écran ((HD-2D) haut = nord : la caméra fixe ne tourne pas), course (Maj), saut, gravité, pente jusqu'à 45°, marche 4 m/s, course 7 m/s ; ZQSD/WASD + flèches + manette ; déplacement bloqué pendant `Combat.is_busy()` ; détection d'`Interactable` devant le joueur, touche E / bouton A |
+| Joueur | `src/player/player.tscn` (`CharacterBody3D`) | Déplacement relatif à l'écran ((HD-2D) haut = nord : la caméra fixe ne tourne pas), course (Maj), saut, gravité, pente jusqu'à 45°, marche 3,1 m/s, course 5,8 m/s ((AN) cadence des planches à la vitesse réelle : pas de patinage) ; ZQSD/WASD + flèches + manette ; déplacement bloqué pendant `Combat.is_busy()` ; détection d'`Interactable` devant le joueur, touche E / bouton A |
 | Combat joueur | `src/combat/player_combat.gd` (enfant `Combat` du joueur) | Épée J/X ou bouton X ; charge K/C ou bouton B maintenu ; `Hitbox` de l'épée activée par `frame_changed` sur les images `coup` ; `Health` 5 PV ; recul ; mort et réapparition |
 | Caméra | `src/player/camera_rig.tscn` (`Camera3D` + `PostFX`) | (HD-2D) Fixe, à la manière d'*Octopath Traveler* : regarde le nord, inclinée de 32°, champ vertical de 30°, à 21 m du point visé (2,5 m au nord du joueur, qui se tient sous le milieu de l'écran) ; cadrage constant (ni tangage ni recul automatiques) ; suit la place affichée du joueur (lissage physique) avec un léger retard (et un peu en avant de sa marche, sans à-coup), bornée à l'île ; molette ou stick droit : léger zoom (14 à 25 m) ; **verrouillage de cible** (clic molette / R3) : le point visé avance vers la cible, le joueur lui fait face ; post-traitement sous l'interface : flou de profondeur, lueur, étalonnage chaud |
 | Visuel | `src/visuals/character_visual.tscn` | `AnimatedSprite3D` billboard axe Y (face à la caméra fixe), 7 animations de la planche (`repos`, `marche`, `course`, `attaque`, `charge`, `degats`, `mort`), (HD-2D) `parle` pour les PNJ en conversation, retournement gauche/droite selon la direction, ombre disque ; `frame_changed` et `animation_finished` |

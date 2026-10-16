@@ -14,7 +14,8 @@ extends Node
 ##   lui (−Z), vitesse nulle, lissage physique remis à zéro ; EventBus.map_entered (la caméra se
 ##   recale et prend les bornes de la carte), puis fondu de retour. Le joueur est figé
 ##   (process_mode DISABLED : ni mouvement, ni coup, ni interaction) du début du fondu à la fin
-##   du retour ; is_transitioning() reste vrai SETTLE_FRAMES images physiques de plus, le temps
+##   du retour ; (AN) un Player n'a que ses commandes figées (hold_input) pendant le fondu au
+##   noir (il s'arrête, finit son pas, passe au repos), puis est figé une fois l'écran noir ; is_transitioning() reste vrai SETTLE_FRAMES images physiques de plus, le temps
 ##   que les sorties voient le joueur : une sortie où l'on arrive ne repart pas aussitôt ;
 ## - enter_map(map_id, marker, at) : la même chose sans fondu ni chargement découpé (début de
 ##   partie : main.gd a déjà chargé la carte avec l'écran de chargement ; démonstrations) ;
