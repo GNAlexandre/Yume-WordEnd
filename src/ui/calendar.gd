@@ -19,6 +19,11 @@ extends Control
 ## - Aucun style en dur : panneaux et textes prennent le thème du HUD ; les couleurs de la page
 ##   (papier, encre, trait, cercle, jour courant) se lisent dans le type de thème « Calendar »
 ##   (couleurs paper, ink, strike, ring, today : case prune, encre crème, rayure et cercle or).
+## - (X-L4) En mode libre : après le départ, la grille glisse jusqu'au jour courant (les jours
+##   libres continuent, sans autre départ entouré) ; sous la ligne d'un jour, ses scènes laissées
+##   passer (« Laissé passer : … », StoryResolve.passed_on), sans les juger ; avant le filet d'or,
+##   « À vivre aujourd'hui » : les scènes du jour (StoryResolve.today_scenes, le texte de leur
+##   proposition ou leur titre). En scénarisé, rien de cela.
 
 signal opened
 signal closed
@@ -28,8 +33,12 @@ const CELL_SIZE := Vector2(118, 96)
 ## (QC2) Hauteur de la page au plus (px) ; des lignes écrites au plus (px), défilées au-delà.
 const PANEL_MAX_HEIGHT := 640.0
 const LINES_MAX_HEIGHT := 220.0
+## (X-L4) Des lignes écrites au moins (px) quand la page manque de place.
+const LINES_MIN_HEIGHT := 90.0
 ## Type du thème (wordend_theme.tres) qui porte les couleurs de la page.
 const THEME_TYPE := &"Calendar"
+## (X-L4) Méta des lignes « Laissé passer » (hors shown_lines).
+const PASSED_META := &"passed"
 
 var _paused_by_me: bool = false
 var _in_dialogue: bool = false
@@ -40,6 +49,9 @@ var _in_dialogue: bool = false
 @onready var _hint: Label = %CalendarHint
 @onready var _today: Label = %TodayLabel
 @onready var _departure: Label = %DepartureLabel
+@onready var _free_today: Control = %FreeToday
+@onready var _free_today_title: Label = %FreeTodayTitle
+@onready var _free_today_list: Label = %FreeTodayList
 @onready var _panel: Control = $Panel
 @onready var _scroll: Control = $Panel/Layout/LinesScroll
 
@@ -107,9 +119,13 @@ func refresh() -> void:
 	_title.text = StoryDirector.ui_text("calendar_title", "Le calendrier de {player}")
 	for child: Node in _grid.get_children():
 		child.queue_free()
+	var free := StoryDirector.is_free()
 	var count := StoryDirector.day_count()
+	# (X-L4) En libre, après le départ, les jours libres continuent : la page montre les count
+	# derniers jours (le jour courant en dernier).
+	var first := maxi(GameState.day - count + 1, 1) if free else 1
 	_grid.columns = 6 if count > 6 else maxi(count, 1)
-	for day: int in range(1, count + 1):
+	for day: int in range(first, first + count):
 		_grid.add_child(_day_cell(day))
 	for child: Node in _lines.get_children():
 		child.queue_free()
@@ -124,6 +140,8 @@ func refresh() -> void:
 		row.custom_minimum_size = Vector2(780, 0)
 		row.add_theme_font_size_override(&"font_size", 22)
 		_lines.add_child(row)
+		if free:
+			_add_passed_row(day)
 	if days.is_empty():
 		var empty := Label.new()
 		empty.text = StoryDirector.ui_text("calendar_empty", "Rien d'écrit encore.")
@@ -136,6 +154,7 @@ func refresh() -> void:
 		else ""
 	)
 	_hint.visible = not hint.is_empty()
+	_fill_free_today(free)
 	_today.text = today_text()
 	_departure.text = departure_text()
 	_departure.visible = not _departure.text.is_empty()
@@ -176,6 +195,13 @@ func _fit_page() -> void:
 	lines_height += maxf(count - 1, 0) * _lines.get_theme_constant(&"separation")
 	_scroll.custom_minimum_size.y = minf(lines_height, LINES_MAX_HEIGHT)
 	_panel.reset_size()
+	# (X-L4) « À vivre aujourd'hui » ou des jours libres en plus : les lignes défilent plus tôt,
+	# la page reste dans PANEL_MAX_HEIGHT.
+	var excess := _panel.get_combined_minimum_size().y - PANEL_MAX_HEIGHT
+	if excess > 0.0:
+		var lines_min := minf(lines_height, LINES_MIN_HEIGHT)
+		_scroll.custom_minimum_size.y = maxf(_scroll.custom_minimum_size.y - excess, lines_min)
+		_panel.reset_size()
 	var height := minf(_panel.get_combined_minimum_size().y, PANEL_MAX_HEIGHT)
 	_panel.offset_top = -height * 0.5
 	_panel.offset_bottom = height * 0.5
@@ -191,13 +217,79 @@ func page_color(color_name: StringName) -> Color:
 	return get_theme_color(color_name, THEME_TYPE)
 
 
-## Lignes affichées (tests) : « Jour N — texte ».
+## Lignes affichées (tests) : « Jour N — texte » (sans les lignes « Laissé passer »).
 func shown_lines() -> PackedStringArray:
+	return _rows(false)
+
+
+## (X-L4) Lignes « Laissé passer : … » affichées (tests).
+func passed_lines() -> PackedStringArray:
+	return _rows(true)
+
+
+## (X-L4) « À vivre aujourd'hui » (tests) : les scènes listées, une par entrée ; vide si la section
+## est cachée ou ne liste rien.
+func today_entries() -> PackedStringArray:
+	var result := PackedStringArray()
+	if not _free_today.visible:
+		return result
+	for line: String in _free_today_list.text.split("\n", false):
+		if line.begins_with("· "):
+			result.append(line.trim_prefix("· "))
+	return result
+
+
+## (X-L4) Le titre et le texte de la section « À vivre aujourd'hui » ("" si cachée).
+func free_today_text() -> String:
+	if not _free_today.visible:
+		return ""
+	return "%s\n%s" % [_free_today_title.text, _free_today_list.text]
+
+
+func _rows(passed: bool) -> PackedStringArray:
 	var result := PackedStringArray()
 	for child: Node in _lines.get_children():
 		if child is Label and not child.is_queued_for_deletion():
-			result.append((child as Label).text)
+			if child.has_meta(PASSED_META) == passed:
+				result.append((child as Label).text)
 	return result
+
+
+## (X-L4) Sous la ligne d'un jour, ses scènes laissées passer (libre), en texte discret.
+func _add_passed_row(day: int) -> void:
+	var island := StoryDirector.island()
+	var titles := PackedStringArray()
+	for scene_id: StringName in StoryDirector.resolver().passed_on(island, day):
+		titles.append(StoryDirector.resolver().scene_title(island, scene_id))
+	if titles.is_empty():
+		return
+	var row := Label.new()
+	row.set_meta(PASSED_META, true)
+	row.text = StoryDirector.ui_text("calendar_passed", "Laissé passer : {scenes}").replace(
+		"{scenes}", ", ".join(titles)
+	)
+	row.theme_type_variation = &"MutedLabel"
+	row.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	row.custom_minimum_size = Vector2(760, 0)
+	row.add_theme_font_size_override(&"font_size", 18)
+	_lines.add_child(row)
+
+
+## (X-L4) « À vivre aujourd'hui » (libre seulement) : les scènes du jour, ou « rien d'attendu ».
+func _fill_free_today(free: bool) -> void:
+	_free_today.visible = free
+	if not free:
+		return
+	var island := StoryDirector.island()
+	_free_today_title.text = StoryDirector.ui_text("today_title", "À vivre aujourd'hui")
+	var entries := PackedStringArray()
+	for scene_id: StringName in StoryDirector.resolver().today_scenes(island):
+		entries.append("· " + StoryDirector.resolver().scene_label(island, scene_id))
+	if entries.is_empty():
+		entries.append(
+			StoryDirector.ui_text("today_none", "Rien d'attendu aujourd'hui : l'île est à toi.")
+		)
+	_free_today_list.text = "\n".join(entries)
 
 
 func _day_label(day: int) -> String:
