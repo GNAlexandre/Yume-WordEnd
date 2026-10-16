@@ -198,6 +198,16 @@ def row(points, pool, seed, step=None, spread=0.3, depth=0.6, depth_range=None, 
         if keep is not None and not keep(px, pz):
             continue
         out.append((scene, round(px, 3), round(pz, 3), flipped, s, tn))
+    # Un élément sauté rapproche deux images que rien ne séparait plus : la seconde en prend une autre de la
+    # famille, différente de ses deux voisines (même largeur ou presque, pour ne pas ouvrir de trou).
+    if len(pool) >= 2:
+        for k in range(1, len(out)):
+            if out[k][0] != out[k - 1][0] or out[k][0] not in pool:
+                continue
+            after = out[k + 1][0] if k + 1 < len(out) else None
+            others = [s for s in pool if s not in (out[k - 1][0], after) and abs(widths[s] - widths[out[k][0]]) < 0.6]
+            if others:
+                out[k] = (others[rng.randrange(len(others))],) + out[k][1:]
     return out
 
 
@@ -313,7 +323,11 @@ def foreground_kit(p, bounds, targets, seed, group="Foreground", base="PremierPl
     # inclinée) : pas de tronc par défaut ; des arbres plus loin, dont seule la couronne paraît.
     trunks = trunks if trunks is not None else []
     if trees is None:
-        trees = [FOREGROUND[s] for s in family("trees_gold") + family("trees_rust") if s in FOREGROUND]
+        # Les arbres de premier plan déjà posés sur la carte d'abord (une image de plus est un matériau, donc un draw
+        # call, de plus : test_hd2d_decor borne les images d'une carte) ; sinon trois arbres d'automne.
+        every = [FOREGROUND[s] for s in family("trees_gold") + family("trees_rust") if s in FOREGROUND]
+        used = {q[2] for q in p.singles} | {s for spec in p.families.values() for s in spec["scenes"]}
+        trees = [s for s in every if s in used] or every[:3]
     placed = []
     pools = {"fol": foliage, "trunk": trunks, "tree": trees}
     turn = {"fol": 0, "trunk": 0, "tree": 0}

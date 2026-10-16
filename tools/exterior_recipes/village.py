@@ -255,8 +255,10 @@ def pose(p):
     for k, x in enumerate((13.5, 23.0, 30.0, 40.0, 48.0, 55.0)):
         place("Edge", "edge_parapet", x, 3.25, name="Parapet%d" % (k + 1), flip=k % 2 == 1, check=False)
     # Le belvédère : le garde-fou de branches sur toute sa largeur, des roches et de l'herbe au bord du vide.
-    for k, x in enumerate((32.0, 34.0, 36.0, 38.0)):
-        place("Edge", "fence_wattle_libre", x, 3.9, name="GardeFou%d" % (k + 1), flip=k % 2 == 1, check=False)
+    # (RC) En rangée irrégulière (sans trou : le vide est derrière ; recul vers le belvédère seulement).
+    kits.place_row(p, "Edge", "GardeFou", kits.row([(32.0, 3.9), (38.0, 3.9)], ["fence_wattle_libre"], seed=1181,
+                                                   spread=0.1, depth_range=(-0.08, 0.0), skip=0.0, overlap=0.92,
+                                                   scale=(0.9, 1.0), tone=(0.035, 0.0)), check=False)
     place("Edge", "edge_rocks_b", 31.5, 3.55, name="RocheBelvedereOuest", check=False)
     place("Edge", "edge_rocks_a", 38.6, 3.6, name="RocheBelvedereEst", flip=True, check=False)
     for k, x in enumerate((4.5, 13.0, 23.0, 30.2, 40.0, 48.2, 55.0)):
@@ -346,9 +348,10 @@ def pose(p):
     # Au sud, le prolongement est une palissade basse de piquets, plus neuve que le plessis du plan (vue sud : douze
     # pièces de plessis dans le même champ).
     kits.place_row(p, "Garden", "ClotureSud", fence_row(25.0, 33.0, 25.2, seed=1122, pool=["fence_low"]))
-    # (RC) Fleurs au pied des clôtures du nord du jardin, côté rue.
-    for k, (x, z, scene) in enumerate(((21.2, 16.25, "flowers_patch_a"), (27.6, 16.2, "flowers_patch_b"),
-                                       (14.8, 15.5, "clover_patch"))):
+    # (RC) Feuilles et cailloux au pied des clôtures du nord du jardin, côté rue (des images déjà posées : test_hd2d_decor
+    # borne le nombre d'images d'une carte).
+    for k, (x, z, scene) in enumerate(((21.2, 16.25, "leaves_gold_b"), (27.6, 16.2, "leaves_rust_b"),
+                                       (14.8, 15.5, "pebbles_b"))):
         place("Garden", scene, x, z, name="FleursCloture%d" % (k + 1), flip=k % 2 == 1, check=False)
 
     # Les jardins clos des chaumières : clôture de branches au nord, haies de buissons aux côtés, derrière
@@ -360,7 +363,7 @@ def pose(p):
                        check=False)
         for side, xs in (("Ouest", x0 + 0.1), ("Est", x1 - 0.1)):
             kits.place_row(p, "Hedge", "Haie%s%d_" % (side, ei + 1),
-                           kits.row([(xs, z0 + 0.8), (xs, z1 - 0.6)], BUSHES[1:7], seed=1140 + ei * 2 + len(side),
+                           kits.row([(xs, z0 + 0.8), (xs, z1 - 0.6)], BUSHES[1:6], seed=1140 + ei * 2 + len(side),
                                     step=1.8, depth=0.18, skip=0.0, scale=(0.85, 1.1)), check=False)
     place("Garden", "garden_bed", 9.6, 19.2, name="PlateBandeOuest")
     place("Garden", "vegetable_patch", 11.4, 17.2, name="LegumesOuest")
