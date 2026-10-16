@@ -8,7 +8,9 @@ extends GutTest
 
 const ILE_68 := &"ile_68"
 const ILE_ESSAI := &"ile_essai"
-const LEGACY := &"ile_ancienne"
+## (F1) Monde de test sans port (tests/data/world) ; l'ancienne île n'est plus dans l'atlas.
+const TEST_WORLDS := "res://tests/data/world/worlds"
+const TEST_ISLANDS := "res://tests/data/world/islands"
 const SURFACE := &"surface_essai"
 ## Dossier de travail des fichiers d'essai (mondes et îles écrits par les tests).
 const TEMP_DIR := "user://test_world_atlas"
@@ -77,15 +79,14 @@ func test_world_data_is_valid() -> void:
 func test_worlds_and_their_islands() -> void:
 	assert_eq(WorldAtlas.worlds(), [&"regule_aire", &"surface"] as Array[StringName])
 	assert_eq(WorldAtlas.world_name(&"regule_aire"), "Regule Aire")
-	assert_eq(WorldAtlas.islands(&"regule_aire"), [ILE_68, ILE_ESSAI, LEGACY] as Array[StringName])
+	assert_eq(WorldAtlas.islands(&"regule_aire"), [ILE_68, ILE_ESSAI] as Array[StringName])
 	assert_eq(WorldAtlas.islands(&"surface"), [SURFACE] as Array[StringName])
 	assert_eq(WorldAtlas.world_of(ILE_68), &"regule_aire")
 	assert_eq(WorldAtlas.world_of(SURFACE), &"surface")
 	assert_eq(WorldAtlas.island_name(ILE_68), "L'île n° 68")
 	assert_eq(WorldAtlas.island_number(ILE_68), 68)
 	assert_eq(WorldAtlas.island_number(SURFACE), 0, "la surface n'a pas de numéro")
-	assert_true(WorldAtlas.is_legacy(LEGACY), "l'ancienne île, retirée en phase 5")
-	assert_false(WorldAtlas.is_legacy(ILE_68))
+	assert_false(WorldAtlas.has_island(&"ile_ancienne"), "(F1) l'ancienne île, retirée")
 	assert_eq(WorldAtlas.arrival_map(ILE_68), &"entrepot", "carte d'arrivée par défaut")
 
 
@@ -107,7 +108,7 @@ func test_every_map_belongs_to_a_declared_island() -> void:
 		&"essai",
 	]:
 		assert_eq(WorldAtlas.island_of(map_id), ILE_68, "%s sur l'île n° 68" % map_id)
-	assert_eq(WorldAtlas.island_of(&"ile_ancienne"), LEGACY, "l'ancienne île à part")
+	assert_eq(WorldAtlas.island_of(&"ile_ancienne"), &"", "(F1) carte retirée : aucune île")
 	assert_eq(WorldAtlas.island_of(&"nulle_part"), &"", "carte inconnue : aucune île")
 
 
@@ -145,11 +146,13 @@ func test_ports_and_arrivals() -> void:
 		"sans port : le premier"
 	)
 	assert_eq(WorldAtlas.arrival(SURFACE, &"campement")["map"], &"surface_essai")
+	WorldAtlas.set_data_dirs(TEST_WORLDS, TEST_ISLANDS)
 	assert_eq(
-		WorldAtlas.arrival(LEGACY),
-		{"map": &"ile_ancienne", "marker": &"Spawn", "port": &""},
+		WorldAtlas.arrival(&"ile_combat"),
+		{"map": &"essai", "marker": &"Spawn", "port": &""},
 		"sans port du tout : la carte d'arrivée"
 	)
+	WorldAtlas.set_data_dirs()
 	assert_eq(WorldAtlas.arrival(&"nulle_part"), {}, "île inconnue")
 	assert_eq(WorldAtlas.arrival(ILE_68, &"nulle_part"), {}, "port inconnu")
 
@@ -191,15 +194,12 @@ func test_no_timere_on_island_68() -> void:
 	assert_false(WorldAtlas.rules_of_island(ILE_ESSAI).enemies_allowed, "règle du monde")
 
 
-func test_timeres_allowed_on_the_surface_and_the_legacy_island() -> void:
+func test_timeres_allowed_on_the_surface() -> void:
 	var surface := WorldAtlas.rules_for(&"surface_essai")
 	assert_true(surface.enemies_allowed, "la surface : leurs nids")
 	assert_true(surface.ground_below(), "un sol jusqu'à l'horizon")
 	assert_false(surface.clouds_below(), "pas de mer de nuages")
 	assert_eq(surface.sky, &"apres_midi", "un désert gris sous un ciel bleu")
-	var legacy := WorldAtlas.rules_for(&"ile_ancienne")
-	assert_true(legacy.enemies_allowed, "l'ancienne île garde ses Timeres (phase 5)")
-	assert_eq(legacy.void_fall, IslandRules.FALL_ARRIVAL, "ses zones ramènent au Spawn")
 	var unruled := WorldAtlas.rules_for(&"carte_de_test")
 	assert_true(unruled.enemies_allowed, "hors de toute île : comme avant X1")
 	assert_true(unruled.clouds_below())

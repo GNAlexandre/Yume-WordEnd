@@ -33,10 +33,10 @@ func _screen_point(offset: Vector3) -> Vector2:
 	return camera.unproject_position(player.global_position + offset)
 
 
-## Le joueur au calme, tourné vers le nord, au Spawn de la cour.
+## Le joueur au calme, tourné vers le nord, dans un coin dégagé de la carte d'essai.
 func _start() -> void:
 	assert_true(await new_game_from_menu(), "nouvelle partie")
-	await place_player(&"village", Vector3(0.0, 0.0, -6.0), Vector3.FORWARD)
+	await place_player(Vector3(14.0, 0.0, 18.0), Vector3.FORWARD)
 	await wait_physics_frames(3)
 
 

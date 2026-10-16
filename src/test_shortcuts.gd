@@ -1,27 +1,26 @@
 extends Node
 ## Raccourcis de test (intégration M1), sans effet dans une partie normale. Paramètres lus dans
-## l'adresse de la page sur le Web (`index.html?zone=dunes&timeres=12`) ou dans les arguments
-## utilisateur ailleurs (`tools/godot -- --zone=dunes --timeres=12`) ; src/game.gd ne crée ce
-## nœud que si l'un d'eux est présent (docs/web.md, « Raccourcis de test ») :
-##   zone=<id>    place le joueur au Spawn de la zone, tourné vers le panneau de son arène s'il y
-##                en a une (dunes : 15 m tout droit jusqu'au panneau), sinon vers son centre ;
-##                une zone inconnue est ignorée ; (E1) une partie reprise dans une autre carte
-##                revient d'abord sur l'ancienne île ;
+## l'adresse de la page sur le Web (`index.html?map=surface_essai&timeres=12`) ou dans les
+## arguments utilisateur ailleurs (`tools/godot -- --map=surface_essai --timeres=12`) ;
+## src/game.gd ne crée ce nœud que si l'un d'eux est présent (docs/web.md, « Raccourcis de
+## test ») :
 ##   timeres=<n>  banc de performance : n Timeres (les quatre types, au plus MAX_BENCH) errent
-##                devant le joueur, dans le champ de la caméra, sans le poursuivre ;
+##                devant le joueur, dans le champ de la caméra, sans le poursuivre ; seulement
+##                sur une île qui les admet (la surface : map=surface_essai) ;
 ##   trace        (intégration M2) le journal seul : la partie est celle du menu, telle quelle
-##                (nouvelle partie ou reprise, position et zone non touchées) ;
+##                (nouvelle partie ou reprise, position non touchée) ;
 ##   maps=<a,b…>  (E1) voyage de carte en carte (WorldManager.go_to, Spawn de chaque carte)
 ##                une fois la partie posée, et une ligne de mesures par changement (fondu,
 ##                chargement découpé et ses images, installation, total) : tools/web_maps.js ;
 ##   map=<id>     (T1) la partie se pose sur cette carte (WorldManager.enter_map, sans fondu),
-##                à son Spawn ou au marqueur marker=<nom> (« from_sentier ») : seule entrée vers
-##                les cartes de la refonte (entrepot…) tant que le début de partie n'y mène pas ;
-##                une carte ou un marqueur inconnus sont ignorés (une ligne au journal) ;
+##                à son Spawn ou au marqueur marker=<nom> (« from_sentier ») ; une carte ou un
+##                marqueur inconnus sont ignorés (une ligne au journal) ;
 ##   jeu=<jeu>    (E8) lance un jeu des petites sur l'entrepôt (MiniGames.dev_start) : `ballon`
 ##                (le match au champ, l'après-midi, le joueur près du terrain) ou `baton`
-##                (l'entraînement à la clairière, le matin, face à Willem) ; un jeu inconnu est
-##                ignoré (une ligne au journal) ;
+##                (l'entraînement à la clairière, le matin, face à Willem), (E8b) `duel` (le
+##                duel ingagnable dans la cour, le matin, puis sa reprise) ou `seniorious`
+##                (l'entraînement avec Seniorious à la clairière, l'après-midi) ; un jeu inconnu
+##                est ignoré (une ligne au journal) ;
 ##   island=<id>  (X1) une fois la partie posée, voyage en dirigeable vers cette île
 ##                (WorldManager.travel : vue du ciel, puis son port), au port port=<id> s'il est
 ##                donné (sinon le premier) ; une île inconnue est ignorée (une ligne au journal).
@@ -29,22 +28,19 @@ extends Node
 ## (Acte 1) Sur le Web, la page reçoit aussi window.wordendFace(cible) : le joueur se tourne,
 ## ((HD-2D) la caméra fixe ne tourne plus : la cible est aussi posée dans window.wordendAim, et
 ## la page choisit les touches qui y mènent)
-## caméra derrière lui, vers un PNJ (son NpcData.id, « nygglatho ») ou un point de l'île (x, z),
+## caméra derrière lui, vers un PNJ (son NpcData.id, « nygglatho ») ou un point de la carte (x, z),
 ## comme un joueur qui oriente la caméra à la souris (impossible dans un navigateur sans écran) ;
 ## la marche reste aux touches ; window.wordendPos donne la position du joueur à chaque image
-## ([x, z]). tools/web_m2.js s'en sert pour aller d'un PNJ à l'autre.
+## ([x, z]), pour un outil de navigateur qui va d'un PNJ à l'autre.
 ## Tant qu'il est actif, la console reçoit une ligne « [m1] … » par événement ((E1) carte et
-## mesures de son chargement, zone, invite,
-## dialogue, quête, (acte 1) étape de quête, objet, vague, Timere tué, fin de série, dégâts,
-## mort, réapparition), une ligne au départ (zone, position du joueur, quêtes et étapes) et,
-## toutes les REPORT_PERIOD s, images/s, draw calls, primitives, position et distance du Timere
-## le plus proche : un navigateur sans écran (Playwright) suit ainsi la partie.
+## mesures de son chargement, île, invite, dialogue, objet, Timere tué, dégâts, mort,
+## réapparition), une ligne au départ (position du joueur, jour, objets, carte) et, toutes les
+## REPORT_PERIOD s, images/s, draw calls, primitives, position et distance du Timere le plus
+## proche : un navigateur sans écran (Playwright) suit ainsi la partie.
 
 const ENEMY_SCENE := preload("res://src/enemies/enemy.tscn")
 ## Paramètres reconnus (les autres sont ignorés).
-const KEYS: Array[String] = [
-	"zone", "timeres", "trace", "maps", "map", "marker", "island", "port", "jeu"
-]
+const KEYS: Array[String] = ["timeres", "trace", "maps", "map", "marker", "island", "port", "jeu"]
 ## Types du banc de performance, en rotation.
 const BENCH_TYPES: Array[StringName] = [
 	&"timere_small", &"timere_normal", &"timere_runner", &"timere_big"
@@ -73,7 +69,7 @@ static func read_parameters() -> Dictionary:
 	return parse_arguments(OS.get_cmdline_user_args())
 
 
-## Paramètres reconnus d'une chaîne de requête d'URL (« ?zone=dunes&timeres=12 »).
+## Paramètres reconnus d'une chaîne de requête d'URL (« ?map=surface_essai&timeres=12 »).
 static func parse_query(query: String) -> Dictionary:
 	var result := {}
 	for pair: String in query.trim_prefix("?").split("&", false):
@@ -81,7 +77,7 @@ static func parse_query(query: String) -> Dictionary:
 	return result
 
 
-## Paramètres reconnus d'arguments utilisateur (« --zone=dunes », « --timeres=12 »).
+## Paramètres reconnus d'arguments utilisateur (« --map=surface_essai », « --timeres=12 »).
 static func parse_arguments(arguments: PackedStringArray) -> Dictionary:
 	var result := {}
 	for argument: String in arguments:
@@ -122,18 +118,6 @@ static func _keep(result: Dictionary, pair: String) -> void:
 func _ready() -> void:
 	var player := get_tree().get_first_node_in_group(&"player") as Player
 	_enter_map(StringName(str(parameters.get("map", ""))), str(parameters.get("marker", "")))
-	var zone_id := StringName(str(parameters.get("zone", "")))
-	if zone_id in WorldManager.LEGACY_ZONES:
-		# (E1) Une partie reprise dans une autre carte revient d'abord sur l'ancienne île.
-		WorldManager.load_zone(zone_id)
-	var zone := _zone(zone_id)
-	if player != null and zone != null:
-		WorldManager.teleport(zone_id)
-		var panel := zone.get_node_or_null(^"Arena/Panel") as Node3D
-		var target := panel.global_position if panel != null else zone.global_position
-		player.set_aim_direction(target - player.global_position, true)
-	elif not zone_id.is_empty():
-		_log("zone inconnue : %s" % zone_id)
 	var count := clampi(int(str(parameters.get("timeres", "0"))), 0, MAX_BENCH)
 	var parent := get_parent() as Node3D
 	if count > 0 and not WorldAtlas.rules_for(WorldManager.current_map()).enemies_allowed:
@@ -145,19 +129,13 @@ func _ready() -> void:
 	EventBus.map_entered.connect(_on_map_entered)
 	EventBus.island_entered.connect(_on_island_entered)
 	WorldManager.transition_finished.connect(_on_transition_finished)
-	EventBus.zone_entered.connect(_on_zone_entered)
 	EventBus.interaction_available.connect(_on_interaction_available)
-	EventBus.wave_started.connect(_on_wave_started)
-	EventBus.wave_cleared.connect(_on_wave_cleared)
 	EventBus.enemy_killed.connect(_on_enemy_killed)
-	EventBus.arena_finished.connect(_on_arena_finished)
 	EventBus.player_damaged.connect(_on_player_damaged)
 	EventBus.player_died.connect(_on_player_died)
 	EventBus.player_respawned.connect(_on_player_respawned)
 	EventBus.dialogue_line.connect(_on_dialogue_line)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
-	EventBus.quest_updated.connect(_on_quest_updated)
-	EventBus.quest_step_updated.connect(_on_quest_step_updated)
 	EventBus.item_collected.connect(_on_item_collected)
 	if OS.has_feature("web"):
 		_face_callback = JavaScriptBridge.create_callback(_on_js_face)
@@ -166,12 +144,10 @@ func _ready() -> void:
 	_log("raccourcis de test %s ; %d Timeres de banc" % [parameters, count])
 	_log(
 		(
-			"partie : zone « %s », %s, quêtes %s, étapes %s, objets %s, carte « %s »"
+			"partie : %s, jour %d, objets %s, carte « %s »"
 			% [
-				GameState.zone,
 				_position_text(player),
-				GameState.quests(),
-				GameState.quest_progress(),
+				GameState.day,
 				GameState.items(),
 				WorldManager.current_map(),
 			]
@@ -245,13 +221,6 @@ func _nearest_enemy(enemies: Array[Node]) -> float:
 	return nearest
 
 
-func _zone(zone_id: StringName) -> Node3D:
-	for node: Node in get_tree().get_nodes_in_group(&"zones"):
-		if node.name == zone_id:
-			return node as Node3D
-	return null
-
-
 func _log(text: String) -> void:
 	print("[m1] ", text)
 
@@ -291,13 +260,14 @@ func _travel(map_ids: PackedStringArray) -> void:
 	_log("voyage terminé")
 
 
-## (E8) Paramètre jeu : lance le ballon ou l'entraînement au bâton, après quelques images.
+## (E8) Paramètre jeu : lance le ballon, l'entraînement au bâton, (E8b) le duel ou l'entraînement
+## avec Seniorious, après quelques images.
 func _start_game(game_name: String) -> void:
 	for _frame in 10:
 		await get_tree().process_frame
 	var started := MiniGames.dev_start(game_name)
 	if started == null:
-		_log("jeu inconnu : %s (ballon, baton)" % game_name)
+		_log("jeu inconnu : %s (%s)" % [game_name, ", ".join(MiniGames.DEV_GAMES)])
 	else:
 		_log("jeu lancé : %s" % game_name)
 
@@ -340,29 +310,13 @@ func _on_transition_finished(map_id: StringName) -> void:
 	)
 
 
-func _on_zone_entered(zone_id: StringName) -> void:
-	_log("zone %s" % zone_id)
-
-
 func _on_interaction_available(prompt: String) -> void:
 	if not prompt.is_empty():
 		_log("invite « %s »" % prompt)
 
 
-func _on_wave_started(arena_id: StringName, wave: int, enemy_count: int) -> void:
-	_log("vague %d (%s) : %d Timeres" % [wave, arena_id, enemy_count])
-
-
-func _on_wave_cleared(arena_id: StringName, wave: int, bonus: int) -> void:
-	_log("vague %d (%s) nettoyée, bonus %d" % [wave, arena_id, bonus])
-
-
 func _on_enemy_killed(enemy_id: StringName, points: int) -> void:
 	_log("%s tué (%d points)" % [enemy_id, points])
-
-
-func _on_arena_finished(arena_id: StringName, score: int, best: bool) -> void:
-	_log("fin de série %s : %d points%s" % [arena_id, score, " (record)" if best else ""])
 
 
 func _on_player_damaged(amount: int, _source: Node3D) -> void:
@@ -388,20 +342,12 @@ func _on_dialogue_ended(npc_id: StringName) -> void:
 	_log("fin du dialogue (%s)" % npc_id)
 
 
-func _on_quest_updated(quest_id: StringName, state: StringName) -> void:
-	_log("quête %s : %s" % [quest_id, state])
-
-
-func _on_quest_step_updated(quest_id: StringName, step_id: StringName, count: int) -> void:
-	_log("étape %s : %s (%d)" % [quest_id, step_id if not step_id.is_empty() else &"-", count])
-
-
 func _on_item_collected(item_id: StringName, quantity: int) -> void:
 	_log("objet %s ×%d (%d en tout)" % [item_id, quantity, GameState.count(item_id)])
 
 
 ## Tourne le joueur vers une cible (la caméra fixe se recale sur lui) : face(&"nygglatho"), ou
-## face_point(x, z) vers un point de l'île. Renvoie false si la cible est introuvable.
+## face_point(x, z) vers un point de la carte. Renvoie false si la cible est introuvable.
 func face(npc_id: StringName) -> bool:
 	for node: Node in get_tree().get_nodes_in_group(&"interactable"):
 		var npc := node as Npc
@@ -422,7 +368,7 @@ func face_point(x: float, z: float) -> bool:
 	player.set_aim_direction(direction, true)
 	if OS.has_feature("web"):
 		# (HD-2D) La caméra fixe ne tourne pas : la page oriente la marche vers ce point
-		# (window.wordendAim, touches choisies par tools/web_m2.js).
+		# (window.wordendAim, touches choisies par l'outil de navigateur).
 		JavaScriptBridge.eval("window.wordendAim = [%.2f, %.2f];" % [x, z])
 	_log("visée (%.1f ; %.1f) depuis %s" % [x, z, _position_text(player)])
 	return true

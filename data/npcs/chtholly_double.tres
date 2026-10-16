@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="NpcData" format=3]
+
+[ext_resource type="Script" path="res://src/npc/npc_data.gd" id="1_npc"]
+[ext_resource type="Resource" path="res://data/npcs/outfits/chtholly_home.tres" id="2_visual"]
+
+[resource]
+script = ExtResource("1_npc")
+id = &"chtholly_double"
+display_name = "Chtholly"
+skin = ExtResource("2_visual")
+outfits = Dictionary[StringName, String]({ &"maison": "res://data/npcs/outfits/chtholly_home.tres", &"pyjama": "res://data/npcs/outfits/chtholly_pajamas.tres" })

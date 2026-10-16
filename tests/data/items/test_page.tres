@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://tests/data/items/test_page.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"test_page"
+display_name = "Page d’essai"
+icon = ExtResource("2_icon")
+description = "(F1) Objet des tests : une page qui s’empile (tests/data/items)."
+color = Color(0.933, 0.886, 0.769, 1)

@@ -87,7 +87,7 @@ func test_walk_in_the_interior_and_out_by_the_front_door() -> void:
 	assert_true(
 		await until(func() -> bool: return not WorldManager.is_transitioning(), 10.0), "dehors"
 	)
-	assert_eq(WorldManager.current_map(), WorldManager.LEGACY_MAP, "de retour sur l'île")
+	assert_eq(WorldManager.current_map(), &"essai", "dehors, sur la carte d'essai")
 	await frames(2)
 	assert_null(map_ref.get_ref(), "l'intérieur est libéré")
 	# (R1) Dehors, la lumière du moment (celle de l'île au couchant), plus celle de l'intérieur.

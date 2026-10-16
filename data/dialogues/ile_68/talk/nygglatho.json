@@ -4,7 +4,9 @@
   "start": "n2",
   "entries": [
     "n0",
-    "n1"
+    "n1",
+    "n10",
+    "n12"
   ],
   "nodes": {
     "n0": {
@@ -32,6 +34,28 @@
     "n2": {
       "speaker_id": "nygglatho",
       "text": "Tu as bonne mine aujourd'hui. Appétissante, presque."
+    },
+    "n10": {
+      "speaker_id": "nygglatho",
+      "text": "Le ciel se couvre… Mon linge ! Si tu passes sur le toit, sois un amour.",
+      "if": {
+        "day": [
+          10,
+          10
+        ],
+        "not_scene": "j10_5_tour"
+      }
+    },
+    "n12": {
+      "speaker_id": "nygglatho",
+      "text": "Rapporte-moi cet uniforme propre, hein ? Je l'ai repassé trois fois. Et rapporte-toi avec, entière.",
+      "if": {
+        "day": [
+          12,
+          12
+        ],
+        "not_scene": "j12_2_depart"
+      }
     }
   }
 }

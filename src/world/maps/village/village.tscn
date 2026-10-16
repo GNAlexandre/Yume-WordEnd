@@ -73,7 +73,7 @@
 [ext_resource type="PackedScene" path="res://src/world/props/stump_a.tscn" id="71_stump_a"]
 [ext_resource type="PackedScene" path="res://src/world/props/thicket_a_fg.tscn" id="72_thicket_a_fg"]
 [ext_resource type="PackedScene" path="res://src/world/props/thicket_b_fg.tscn" id="73_thicket_b_fg"]
-[ext_resource type="PackedScene" path="res://src/world/props/tree_autumn_rust_forest.tscn" id="74_tree_autumn_rust_forest"]
+[ext_resource type="PackedScene" path="res://src/world/props/sapling_a_forest.tscn" id="74_sapling_a_forest"]
 [ext_resource type="PackedScene" path="res://src/world/props/maple_a_forest.tscn" id="75_maple_a_forest"]
 [ext_resource type="PackedScene" path="res://src/world/props/fg_bush.tscn" id="76_fg_bush"]
 [ext_resource type="PackedScene" path="res://src/world/props/maple_c_forest.tscn" id="77_maple_c_forest"]
@@ -968,7 +968,7 @@ flip_h = true
 [node name="HaieSud25" parent="Geometry/Edge" instance=ExtResource("72_thicket_a_fg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53.8, 0, 39)
 
-[node name="ArbreSudEst1" parent="Geometry/Woods" instance=ExtResource("74_tree_autumn_rust_forest")]
+[node name="ArbreSudEst1" parent="Geometry/Woods" instance=ExtResource("74_sapling_a_forest")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 0, 32.6)
 
 [node name="ArbreSudEst2" parent="Geometry/Woods" instance=ExtResource("75_maple_a_forest")]

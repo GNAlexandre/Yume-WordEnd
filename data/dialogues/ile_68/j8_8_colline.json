@@ -1,0 +1,121 @@
+{
+  "_comment": "ACTE1.md 8.8 (s. 21) : rien de plus grand que la promesse.",
+  "id": "j8_8_colline",
+  "start": "porche",
+  "nodes": {
+    "porche": {
+      "speaker_id": "ithea",
+      "text": "Te voilà. Willem est monté sur la colline, avec Seniorious. Il a demandé après toi.",
+      "next": "porche_2"
+    },
+    "porche_2": {
+      "speaker_id": "ithea",
+      "text": "Il marche encore lentement. Ne le fais pas trop courir, d'accord ?"
+    },
+    "talismans": {
+      "speaker": "",
+      "text": "Au sommet, quarante et un talismans flottent autour de Willem comme une poussière d'étoiles. Ils tintent doucement.",
+      "next": "talismans_2"
+    },
+    "talismans_2": {
+      "speaker_id": "willem",
+      "text": "Ah, te voilà. J'ai démonté Seniorious pour régler ses résistances. Ça ne prendra pas longtemps.",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "Toucher les talismans.",
+          "set_flag": "j8_talismans",
+          "next": "toucher"
+        },
+        {
+          "text": "Rejoindre Willem.",
+          "next": "rejoindre"
+        }
+      ]
+    },
+    "toucher": {
+      "speaker_id": "willem",
+      "text": "Vas-y, frôle-les. Chacun a son petit rôle à jouer."
+    },
+    "rejoindre": {
+      "speaker": "{player}",
+      "text": "Je peux rester là ?",
+      "next": "rejoindre_2"
+    },
+    "rejoindre_2": {
+      "speaker_id": "willem",
+      "text": "Reste. Tu ne gênes pas."
+    },
+    "ordre": {
+      "speaker": "",
+      "text": "Willem remet les résistances en ordre, une à une. Les talismans se taisent.",
+      "next": "ordre_2"
+    },
+    "ordre_2": {
+      "speaker_id": "willem",
+      "text": "Voilà. Assieds-toi, si tu veux."
+    },
+    "promesse": {
+      "speaker": "",
+      "text": "Ils s'assoient dos à dos dans l'herbe. Au-dessus d'eux, le ciel est plein d'étoiles.",
+      "next": "promesse_2"
+    },
+    "promesse_2": {
+      "speaker_id": "willem",
+      "text": "Écoute. Quand tout ça sera fini… reviens.",
+      "next": "choix_2"
+    },
+    "choix_2": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "Épouse-moi.",
+          "next": "epouse"
+        },
+        {
+          "text": "Tu sais faire un gâteau au beurre ?",
+          "next": "gateau"
+        }
+      ]
+    },
+    "epouse": {
+      "speaker": "{player}",
+      "text": "Alors épouse-moi.",
+      "next": "epouse_2"
+    },
+    "epouse_2": {
+      "speaker_id": "willem",
+      "text": "Pour moi, tu es encore une enfant. Mais j'ai quelque chose de mieux à te promettre.",
+      "next": "promis"
+    },
+    "gateau": {
+      "speaker": "{player}",
+      "text": "Tu sais faire un gâteau au beurre ?",
+      "next": "gateau_2"
+    },
+    "gateau_2": {
+      "speaker_id": "willem",
+      "text": "Mon maître m'a forcé à apprendre. Je le fais aux noix.",
+      "next": "promis"
+    },
+    "promis": {
+      "speaker_id": "willem",
+      "text": "Reviens, et je t'en ferai manger jusqu'à l'indigestion. C'est promis.",
+      "next": "promis_2"
+    },
+    "promis_2": {
+      "speaker": "{player}",
+      "text": "Alors laisse-moi faire. Je rentrerai le manger.",
+      "next": "promis_3"
+    },
+    "promis_3": {
+      "speaker": "",
+      "text": "Elle sourit."
+    }
+  }
+}

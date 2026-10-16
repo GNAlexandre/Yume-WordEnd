@@ -1,0 +1,34 @@
+{
+  "id": "j10_2_foret",
+  "start": "seule",
+  "nodes": {
+    "seule": {
+      "speaker": "{player}",
+      "text": "Je ne rate pas parce que je suis fatiguée. Ni parce qu'il est trop fort.",
+      "next": "seule_2"
+    },
+    "seule_2": {
+      "speaker": "{player}",
+      "text": "Je rate parce que je le regarde. Parce que je… Ah. C'est donc ça.",
+      "next": "seule_3"
+    },
+    "seule_3": {
+      "speaker": "{player}",
+      "text": "La pire chose à comprendre, deux jours avant de partir. Bravo, moi."
+    },
+    "ithea": {
+      "speaker": "",
+      "text": "Ithea s'assoit à côté de toi, sans un mot, sans une question. Les feuilles tombent. Longtemps.",
+      "next": "ithea_2"
+    },
+    "ithea_2": {
+      "speaker_id": "ithea",
+      "text": "Tu sais, tout le monde joue un rôle, ici. L'aînée sérieuse, la rigolote, la silencieuse.",
+      "next": "ithea_3"
+    },
+    "ithea_3": {
+      "speaker_id": "ithea",
+      "text": "Toi, ce matin, tu as très mal joué le tien. Ça arrive. On rentre ? Il y a du pain."
+    }
+  }
+}

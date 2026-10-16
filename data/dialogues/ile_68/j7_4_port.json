@@ -1,0 +1,90 @@
+{
+  "_comment": "ACTE1.md 7.4 (s. 13) : Limeskin parle en sifflantes ; Ithea et son roman ; Willem trouve {player} plus légère que les épées.",
+  "id": "j7_4_port",
+  "start": "trouee",
+  "nodes": {
+    "trouee": {
+      "speaker": "",
+      "text": "Willem attend seul au bord du vide. Par une trouée des nuages, on devine la surface, grise et immobile."
+    },
+    "limeskin": {
+      "speaker_id": "limeskin",
+      "text": "Ssseniorious, Insania, Valgulious. Je rends les armes à leur gardien.",
+      "next": "limeskin_2"
+    },
+    "limeskin_2": {
+      "speaker": "",
+      "text": "Il lui jette les trois paquets dans les bras. Ils pèsent bien plus lourd qu'ils n'en ont l'air.",
+      "next": "limeskin_3"
+    },
+    "limeskin_3": {
+      "speaker_id": "willem",
+      "text": "Doucement… Elles pèsent leur poids, vos épées.",
+      "next": "limeskin_4"
+    },
+    "limeskin_4": {
+      "speaker_id": "limeskin",
+      "text": "Les guerrières ont combattu avec honneur. Ssssaluez-les pour moi. Le pont est aux sssoldats : je remonte."
+    },
+    "genoux": {
+      "speaker": "",
+      "text": "Le quai tangue sous ses pieds. Le monde glisse de côté, et ses genoux cèdent.",
+      "next": "genoux_2"
+    },
+    "genoux_2": {
+      "speaker": "{player}",
+      "text": "Ce n'est rien. Juste… un peu de…"
+    },
+    "dos": {
+      "speaker_id": "willem",
+      "text": "Rien du tout, je vois. Allez, monte.",
+      "next": "choix"
+    },
+    "choix": {
+      "speaker": "{player}",
+      "text": "…",
+      "choices": [
+        {
+          "text": "Pose-moi. Je peux marcher.",
+          "next": "pose"
+        },
+        {
+          "text": "(Se taire, poser la tête.)",
+          "next": "tete"
+        }
+      ]
+    },
+    "pose": {
+      "speaker": "{player}",
+      "text": "Pose-moi. Je peux marcher.",
+      "next": "pose_2"
+    },
+    "pose_2": {
+      "speaker_id": "willem",
+      "text": "Tu dis ça à genoux. Monte."
+    },
+    "tete": {
+      "speaker": "",
+      "text": "Elle ne dit rien. Elle pose la tête contre son épaule."
+    },
+    "retour": {
+      "speaker_id": "ithea",
+      "text": "La bataille, franchement, ce n'était rien. Le troisième tome de ma série, voilà ce qui m'a épuisée.",
+      "next": "retour_2"
+    },
+    "retour_2": {
+      "speaker_id": "nephren",
+      "text": "Mm.",
+      "next": "retour_3"
+    },
+    "retour_3": {
+      "speaker_id": "willem",
+      "text": "Tu pèses moins lourd que les épées, tu sais.",
+      "next": "retour_4"
+    },
+    "retour_4": {
+      "speaker": "{player}",
+      "text": "… Tais-toi."
+    }
+  }
+}

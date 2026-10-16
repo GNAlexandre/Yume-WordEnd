@@ -106,6 +106,29 @@ Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAIS
 - `assets/hd2d/sky/sea_stack_b.png`
 - `assets/hd2d/sky/sea_stack_c.png`
 - `assets/hd2d/decals/path_flagstones_b.png`
+## Cahier n° 6 — C.6 et C.7 : café et salon Limashenka
+
+Généré avec ChatGPT le 16 octobre 2026, selon `docs/ASSETS_HD2D_ILE68_LIVRAISON6.md`. Pixel art HD-2D ; sources de génération et originaux conservés hors dépôt. Recalage au plus proche voisin et montage localisé autorisés, sans lissage des couleurs.
+
+- `assets/hd2d/interior/props/cafe_counter.png`
+- `assets/hd2d/interior/props/juice_glasses.png`
+- `assets/hd2d/interior/props/cafe_bottle_shelf.png`
+- `assets/hd2d/interior/props/cafe_cake_case.png`
+- `assets/hd2d/interior/door_backroom.png`
+- `assets/hd2d/interior/props/cafe_drinkers_table.png`
+- `assets/hd2d/interior/wallitem_menu_cafe.png`
+- `assets/hd2d/props/cafe_backyard_crates.png`
+- `assets/hd2d/interior/props/toolbox_gears.png`
+- `assets/hd2d/interior/props/side_table_salon.png`
+- `assets/hd2d/interior/wallitem_family_portrait.png`
+- `assets/hd2d/interior/wallitem_clock_limashenka.png`
+- `assets/hd2d/interior/floor_terracotta.png`
+- `assets/hd2d/interior/wall_panel_dark.png`
+- `assets/hd2d/interior/wall_wallpaper_floral.png`
+- `assets/hd2d/interior/window_shutters.png`
+- `assets/hd2d/decals/rug_salon.png`
+- `assets/hd2d/interior/wallitem_clock_limashenka_open.png`
+- `assets/hd2d/anim/clock_limashenka_swing.png`
 
 ## Cahier n° 5 — Île 68, R0 : premier lot de mobilier
 
@@ -257,3 +280,4 @@ Généré avec ChatGPT / outil d’image : correction des vêtements verts en ti
 ## B.3 — signes d’interaction (16 octobre 2026)
 
 Quatre remplaçants générés avec ChatGPT / outil d’image selon le cahier n° 6, B.3 : parler, examiner, prendre, entrer. PNG transparents 64 × 64 à alpha doux, crème, or et prune ; réduction géométrique au plus proche voisin, sans changement des couleurs. Dessins centrés, marge basse de 4 px. Sources générées et anciens remplaçants conservés séparément.
+- 2026-10-16 — (F1) retirés avec l'ancienne île (docs/DECISIONS.md, F1), gardés dans l'historique de git : 56 images du décor qu'elle seule posait (`anim/fountain_water.png`, `anim/grass_sway.png`, `anim/vigil_bell_ring.png`, `buildings/armory_door.png`, `buildings/boiler_workshop.png`, `buildings/boiler_workshop_side.png`, `buildings/butcher.png`, `buildings/butcher_side.png`, `buildings/clockmaker.png`, `buildings/clockmaker_side.png`, `buildings/house_stone_b.png`, `buildings/house_stone_b_side.png`, `buildings/house_timber_b.png`, `buildings/house_timber_b_side.png`, `buildings/inn.png`, `buildings/inn_side.png`, `buildings/materials/wall_brick.png`, `buildings/shop_bakery.png`, `buildings/shop_bakery_side.png`, `buildings/tool_shed.png`, `buildings/tool_shed_side.png`, `buildings/warehouse_main.png`, `buildings/warehouse_main_side.png`, `buildings/warehouse_wing.png`, `buildings/warehouse_wing_side.png`, `decals/cart_ruts.png`, `decals/ring_stone_flat_a.png`, `decals/ring_stone_flat_b.png`, `decals/ring_stone_flat_c.png`, `decals/sand_drift_a.png`, `decals/sand_drift_b.png`, `props/cafe_table.png`, `props/dormer_slate.png`, `props/dormer_tiles.png`, `props/hanging_sign_propeller.png`, `props/hunting_stand.png`, `props/kids_table.png`, `props/log_bridge.png`, `props/lookout.png`, `props/market_stall.png`, `props/market_stall_cloth.png`, `props/market_stall_fruit.png`, `props/market_stall_veg.png`, `props/myosotis_c.png`, `props/palisade.png`, `props/palisade_gate.png`, `props/signal_pillar.png`, `props/snack_stall.png`, `props/target_board.png`, `props/ticket_booth.png`, `props/training_dummy.png`, `props/tree_old_pine_clawed.png`, `props/vigil_bell.png`, `props/warehouse_roof_deck.png`, `props/well.png`, `props/workbench.png`) ; les 15 icônes d'objets de ses quêtes (`assets/items/` : `butter_cake_promise.png`, `cheesecake_slice.png`, `clock_comb.png`, `clock_gear.png`, `dessert_cup.png`, `eggs.png`, `flower_blue.png`, `fresh_cream.png`, `laundry_sheet.png`, `page_fragment.png`, `picture_book.png`, `pressed_forget_me_not.png`, `rami_card.png`, `tiat_drawing.png`, `wild_berries.png`) ; `assets/ui/quest.png`, `assets/ui/star.png`.

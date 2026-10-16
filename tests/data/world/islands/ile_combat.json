@@ -1,0 +1,14 @@
+{
+  "_comment": "(F1) Île de test des combats : la seule carte d'essai, sans port (tests/data/world/worlds/combat.json).",
+  "name": "L'île des combats",
+  "maps": ["essai"],
+  "arrival_map": "essai",
+  "places": {
+    "essai": {
+      "name": "La prairie d'essai",
+      "maps": ["essai"],
+      "start_known": true
+    }
+  },
+  "ports": {}
+}

@@ -1,0 +1,30 @@
+{
+  "_comment": "ACTE1.md 7.6 (s. 15) : séquence, sans choix. Ce qu'ils lisent n'est pas dit.",
+  "id": "j7_6_archives",
+  "start": "papiers",
+  "nodes": {
+    "papiers": {
+      "speaker": "",
+      "text": "Cette nuit-là, Willem ne dort pas. Au bureau des archives, sous l'horloge, il lit tout ce qu'il trouve sur les fées et sur les Carillons."
+    },
+    "cafe": {
+      "speaker_id": "nephren",
+      "text": "Café. Et un sandwich.",
+      "next": "cafe_2"
+    },
+    "cafe_2": {
+      "speaker_id": "willem",
+      "text": "Merci… Il y a combien de sucre, là-dedans ? Ça coule comme du sirop.",
+      "next": "cafe_3"
+    },
+    "cafe_3": {
+      "speaker_id": "nephren",
+      "text": "Pigeonneau. Salade un peu fatiguée. Moutarde. Mm.",
+      "next": "cafe_4"
+    },
+    "cafe_4": {
+      "speaker": "",
+      "text": "Elle s'assoit près de lui et lit les rapports avec lui."
+    }
+  }
+}

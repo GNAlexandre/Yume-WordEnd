@@ -1,0 +1,12 @@
+{
+  "_comment": "(F1) Monde de test des combats (tests/integration/test_m1_combat.gd, WorldAtlas.set_data_dirs) : la carte d'essai, plate et dégagée, où les Timeres sont permis comme à la surface. Il remplace l'arène des dunes de l'ancienne île, retirée.",
+  "name": "Le terrain de combat d'essai",
+  "islands": ["ile_combat"],
+  "rules": {
+    "enemies_allowed": true,
+    "fauna": [],
+    "void_below": "clouds",
+    "sky": "",
+    "void_fall": "last_safe"
+  }
+}

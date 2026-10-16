@@ -1,0 +1,12 @@
+{
+  "_comment": "Objets à examiner du Barocupot (lot E7 ; docs/lore/CARTE.md, section 6.3 ; ACTE1.md 8.7), lus par Examinable (src/world/examinable.gd) au format des textes de l'histoire (DialogueRunner.load_story_texts). Une clé par carte, puis une par objet (text_key = « carte/objet ») ; une ligne vide sépare deux pages ; {player} est remplacé par le prénom de l'héroïne. Le navire de Limeskin : une salle du conseil de guerre où l'on est à l'étroit avec un lézard deux fois plus grand qu'une fée, un thé chaud, amer et piquant, dans des tasses minuscules (V1, « La fille errante et le lézard volant »). Ce que disent les textes est original.",
+  "prompt": "Examiner",
+  "barocupot": {
+    "_comment": "Le Barocupot, à bord : la salle du conseil de guerre, le sas de l'échelle, la coursive.",
+    "table": "La grande carte de l'archipel, déroulée et tenue aux coins par des pions de laiton. Les îles y sont dessinées une à une, sans un seul nom : ceux qui la lisent les connaissent déjà.\n\nUn compas est resté ouvert entre deux îles, comme si quelqu'un avait mesuré une distance et l'avait trouvée trop longue.",
+    "the": "Une théière de fonte et des tasses si petites qu'elles tiendraient dans une main de fée. Dans celle du lézard, elles doivent ressembler à des dés à coudre.\n\nUne serviette pliée attend à côté, prête à être prêtée.",
+    "hublot": "Derrière le verre épais, rien que le blanc des nuages, qui défile sans bruit. On sent le grondement des fours monter du plancher, jusque dans les talons.",
+    "aile": "Une aile stylisée, peinte en rouge sur une plaque de tôle : l'emblème de la Garde ailée. La peinture est écaillée aux bords, mais on l'a repeinte au centre, souvent.",
+    "echelle": "Une échelle de fer, raide, vers une écoutille ouverte au plafond. Plus haut, le vent siffle sur le pont."
+  }
+}

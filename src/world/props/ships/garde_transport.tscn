@@ -1,0 +1,135 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/ships/ship.gd" id="1_ship"]
+[ext_resource type="Script" path="res://src/world/decor_panel.gd" id="2_panel"]
+[ext_resource type="Script" path="res://src/world/ships/ship_strip.gd" id="3_strip"]
+[ext_resource type="Script" path="res://src/world/building.gd" id="4_building"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/ships/garde_transport_side.png" id="5_side"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/ships/garde_transport_deck.png" id="6_deck"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/garde_transport_rotor.png" id="7_rotor"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/anim/garde_transport_hatch.png" id="8_hatch"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/sky/ship_searchlight.png" id="9_light"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/sky/ship_glare.png" id="12_glare"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/wall_tin.png" id="10_tin"]
+[ext_resource type="Texture2D" path="res://assets/hd2d/buildings/materials/roof_tin.png" id="11_tread"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hull"]
+size = Vector3(15, 2.5, 4.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bulwark"]
+size = Vector3(16, 1.6, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tread"]
+size = Vector3(2, 0.12, 3.61)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rail"]
+size = Vector3(0.1, 1, 3.61)
+
+[node name="GardeTransport" type="Node3D"]
+script = ExtResource("1_ship")
+ship_id = &"transport_garde"
+gangway_length = 3.45
+gangway_drop = 1.05
+
+[node name="Hull" type="Node3D" parent="."]
+script = ExtResource("2_panel")
+texture = ExtResource("5_side")
+shadow_width = 0.0
+
+[node name="Deck" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 2.5, 0.42)
+script = ExtResource("2_panel")
+texture = ExtResource("6_deck")
+shadow_width = 0.0
+keep_orientation = true
+
+[node name="Rotors" type="Node3D" parent="."]
+
+[node name="RotorAft" type="Node3D" parent="Rotors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.52, 0.57, 0)
+script = ExtResource("3_strip")
+texture = ExtResource("7_rotor")
+shadow_width = 0.0
+frames = 4
+depth_offset = 0.15
+
+[node name="RotorFore" type="Node3D" parent="Rotors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.19, 0.57, 0)
+script = ExtResource("3_strip")
+texture = ExtResource("7_rotor")
+shadow_width = 0.0
+frames = 4
+depth_offset = 0.15
+frame = 1
+
+[node name="Hatch" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2.42, 0)
+script = ExtResource("3_strip")
+texture = ExtResource("8_hatch")
+shadow_width = 0.0
+frames = 4
+depth_offset = 0.12
+
+[node name="Searchlight" type="Node3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 2.2, 0, 0, 0, 1, 0, -17.3, 0.6)
+script = ExtResource("3_strip")
+texture = ExtResource("9_light")
+shadow_width = 0.0
+glow = 2.5
+depth_offset = 0.6
+soft_alpha = true
+glow_color = Color(1, 1, 1, 1)
+glow_tolerance = 0.9
+
+[node name="Glare" type="Node3D" parent="."]
+transform = Transform3D(3.6, 0, 0, 0, 3.6, 0, 0, 0, 1, 0, -3.4, 0.8)
+script = ExtResource("3_strip")
+texture = ExtResource("12_glare")
+shadow_width = 0.0
+glow = 3.0
+depth_offset = 1.2
+soft_alpha = true
+glow_color = Color(1, 1, 1, 1)
+glow_tolerance = 0.9
+
+[node name="Gangway" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2.5, 0.15)
+
+[node name="Ramp" type="Node3D" parent="Gangway"]
+
+[node name="Tread" type="Node3D" parent="Gangway/Ramp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.12, 1.805)
+script = ExtResource("4_building")
+wall_texture = ExtResource("10_tin")
+roof_texture = ExtResource("11_tread")
+footprint = Vector2(2, 3.61)
+wall_height = 0.12
+ridge_height = 0.12
+overhang = 0.0
+
+[node name="Collision" type="StaticBody3D" parent="Gangway"]
+collision_layer = 0
+collision_mask = 0
+
+[node name="Tread" type="CollisionShape3D" parent="Gangway/Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 1.805)
+shape = SubResource("BoxShape3D_tread")
+
+[node name="RailWest" type="CollisionShape3D" parent="Gangway/Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.02, 0.5, 1.805)
+shape = SubResource("BoxShape3D_rail")
+
+[node name="RailEast" type="CollisionShape3D" parent="Gangway/Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.02, 0.5, 1.805)
+shape = SubResource("BoxShape3D_rail")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Hull" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -2.4)
+shape = SubResource("BoxShape3D_hull")
+
+[node name="Bulwark" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.3, -0.15)
+shape = SubResource("BoxShape3D_bulwark")
