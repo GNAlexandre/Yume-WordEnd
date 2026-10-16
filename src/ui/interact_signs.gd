@@ -39,7 +39,7 @@ const SIGN_PX := 28.0
 const PALE_PX := 20.0
 ## (X-L1) Le ruban d'une proposition du récit (InteractSign.STORY) est discret : plus petit que
 ## les autres signes (part de leur taille).
-const STORY_SCALE := 0.8
+const STORY_SCALE := 0.85
 ## Opacité d'un signe pâle ; nombre de signes pâles au plus.
 const PALE_ALPHA := 0.45
 const PALE_MAX := 3

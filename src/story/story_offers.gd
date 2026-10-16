@@ -67,6 +67,9 @@ var _rng := RandomNumberGenerator.new()
 
 ## Nouvelle carte (après les invites du récit) ou mode changé : pose les propositions de la carte.
 func rebuild(map: Map) -> void:
+	if not StoryDirector.scene_started.is_connected(_on_scene_started):
+		# Une scène commence : plus de ruban ni d'invite (refresh vide tout pendant une scène).
+		StoryDirector.scene_started.connect(_on_scene_started)
 	_clear()
 	_map = map
 	refresh()
@@ -447,6 +450,10 @@ func _free_talk(npc_id: StringName) -> void:
 	var actor := LifeDirector.actor(npc_id)
 	if actor != null:
 		actor.say(LifeTexts.greeting(npc_id, _rng))
+
+
+func _on_scene_started(_scene_id: StringName) -> void:
+	refresh()
 
 
 func _on_prompt_used(prompt: StoryPrompt) -> void:
