@@ -1,14 +1,19 @@
 {
-  "_comment": "Activités de la vie (lot E4 ; format et mode d'emploi : PLAN.md, « (E4) La vie »). speeds : allure → vitesse de marche (m/s). fallbacks : animation → remplaçantes, dans l'ordre, quand la planche portée ne l'a pas. activities : poses (enchaînées en boucle, ou au hasard avec order random ; time : durée en s, un nombre ou [min, max] ; sans time, jusqu'au créneau suivant), arrive (pose jouée à l'arrivée : s'asseoir), leave (pose jouée avant de partir : se lever), wander (errer entre les points de la place, pause [min, max] entre deux, gait), pair (à deux, face à face, à tour de rôle), look (regarder le joueur qui approche, vrai par défaut), step_aside (s'écarter s'il pousse, vrai par défaut ; jamais assis), greet (saluer d'une bulle, vrai par défaut), gait (allure du trajet vers la place), game (jeu de groupe : src/life/games/<jeu>.gd) et params (ses réglages).",
+  "_comment": "Activités de la vie (lot E4 ; format et mode d'emploi : PLAN.md, « (E4) La vie »). speeds : allure → vitesse de marche (m/s ; rattrape : l'allure des suiveurs du récit qui ont pris du retard, un peu plus vive que la marche du joueur, 4 m/s ; elle joue l'animation de course), anim_speeds : allure → vitesse de l'animation (1 par défaut ; rattrape 1,4 : une course plus vive). fallbacks : animation → remplaçantes, dans l'ordre, quand la planche portée ne l'a pas. activities : poses (enchaînées en boucle, ou au hasard avec order random ; time : durée en s, un nombre ou [min, max] ; sans time, jusqu'au créneau suivant), arrive (pose jouée à l'arrivée : s'asseoir), leave (pose jouée avant de partir : se lever), wander (errer entre les points de la place, pause [min, max] entre deux, gait), pair (à deux, face à face, à tour de rôle), look (regarder le joueur qui approche, vrai par défaut), step_aside (s'écarter s'il pousse, vrai par défaut ; jamais assis), greet (saluer d'une bulle, vrai par défaut), gait (allure du trajet vers la place), game (jeu de groupe : src/life/games/<jeu>.gd) et params (ses réglages).",
   "speeds": {
     "marche": 1.3,
     "course": 3.0,
-    "porte": 1.15
+    "porte": 1.15,
+    "rattrape": 5.5
+  },
+  "anim_speeds": {
+    "rattrape": 1.4
   },
   "fallbacks": {
     "marche": ["porte", "course"],
     "course": ["marche", "porte"],
     "porte": ["marche", "course"],
+    "rattrape": ["course", "marche", "porte"],
     "parle": ["repos"],
     "assis": ["lit", "repos"],
     "lit": ["assis", "repos"],

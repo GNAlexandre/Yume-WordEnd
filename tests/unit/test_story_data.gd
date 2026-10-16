@@ -223,6 +223,8 @@ func test_free_mode_rules() -> void:
 	assert_false(StoryPacing.allows_trigger(libre, unchained, &"j1_1_port"), "free.chain faux")
 	assert_false(StoryPacing.doors_by_day(libre))
 	assert_true(StoryPacing.doors_by_day(scenario))
+	assert_true(StoryPacing.repose_lost(libre), "(L3) suiveur perdu reposé en libre")
+	assert_false(StoryPacing.repose_lost(scenario), "(L3) il s'arrête en scénarisé")
 	var act := StoryData.act(ISLAND)
 	assert_eq(StoryPacing.start_slot(act, scenario), &"nuit", "la nuit du grand vent")
 	assert_eq(StoryPacing.start_slot(act, libre), &"soir", "le soir en libre")

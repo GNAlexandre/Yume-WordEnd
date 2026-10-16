@@ -1430,7 +1430,7 @@ points où l'on erre, le terrain d'un jeu. Un siège se pose devant l'image d'un
 l'on part vers une carte (et d'où l'on en arrive), avant la `MapExit` vers cette carte ; une carte
 à venir (`away`) n'a que sa place `vers_`.
 
-**Activités** (`data/life/activities.json`) : `speeds` (allure → m/s), `fallbacks` (animation →
+**Activités** (`data/life/activities.json`) : `speeds` (allure → m/s ; `rattrape` : l'allure de poursuite des suiveurs, 5,5 m/s, animation de course), `anim_speeds` (allure → vitesse de l'animation, 1 par défaut ; `rattrape` 1,4), `fallbacks` (animation →
 remplaçantes, si la planche portée ne l'a pas), `activities.<id>` : `poses` (`[{anim, time}]`,
 enchaînées en boucle, ou au hasard avec `order: "random"` ; `time` en s ou `[min, max]`, sans
 `time` jusqu'au créneau suivant), `arrive` / `leave` (s'asseoir, se lever), `wander` (errer entre
@@ -1621,7 +1621,7 @@ l'ouvre ; `GameState.day` ≥ 1 tant qu'il dure (`GameState.story_running()`) ; 
 | --- | --- | --- |
 | `place` | who, at, offset, facing, outfit, anim, lift | fait paraître (ou pose) le personnage ; (S2) `lift` : à cette hauteur (m), sans collision (la pile de la tour de fées) |
 | `walk` | who, to, offset, gait (marche, course), wait (vrai), facing, direct | marche par la navigation (le joueur : vraie physique) et l'attend |
-| `follow` / `unfollow` | who, distance (2), stop_beyond (8), gait | le PNJ suit le joueur, d'une carte à l'autre, sans le gêner |
+| `follow` / `unfollow` | who, distance (2), stop_beyond (8), gait | le PNJ suit le joueur, d'une carte à l'autre, sans le gêner ; (L3) au pas du joueur : `gait` (marche par défaut) près de la garde, course au-delà de garde + 1,5 m, `rattrape` au-delà de 6 m (hystérésis), le but qui bouge ne l'arrête jamais (`LifeActor.follow_to`), perdu (au-delà de `stop_beyond`) il s'arrête, ou, si `StoryStage.repose_lost` (rythme libre), hors de la vue il est reposé derrière le joueur hors du champ de la caméra (`follower_reposed`) |
 | `face` | who, toward | le tourne |
 | `anim` | who, anim, time, wait | joue une animation (planche ou remplaçant d'activities.json) |
 | `outfit` | who, outfit | change sa tenue (`NpcData.outfits`) |

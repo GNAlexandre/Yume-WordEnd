@@ -148,6 +148,7 @@ func _physics_process(delta: float) -> void:
 		_doors_day = GameState.day
 		_doors_mode = mode_now
 		_stage.doors_by_day = StoryPacing.doors_by_day(mode_now)
+		_stage.repose_lost = StoryPacing.repose_lost(mode_now)
 		_stage.apply_doors(WorldManager.current_map_node())
 	if not enabled or not GameState.story_running():
 		return
@@ -873,6 +874,7 @@ func _on_map_entered(map_id: StringName) -> void:
 	var map := WorldManager.current_map_node()
 	var mode_now := mode()
 	_stage.doors_by_day = StoryPacing.doors_by_day(mode_now)
+	_stage.repose_lost = StoryPacing.repose_lost(mode_now)
 	_stage.set_map(map)
 	_rebuild_prompts(map)
 	_offers.rebuild(map)

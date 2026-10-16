@@ -100,6 +100,11 @@ static func doors_by_day(mode: StringName) -> bool:
 	return mode != FREE
 
 
+## (L3) Vrai si un suiveur perdu est reposé derrière le joueur au lieu de s'arrêter (libre).
+static func repose_lost(mode: StringName) -> bool:
+	return mode == FREE
+
+
 ## Vrai si une partie reprise en pleine scène la rejoue (scénarisé).
 static func replays_interrupted(mode: StringName) -> bool:
 	return mode != FREE
