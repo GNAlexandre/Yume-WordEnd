@@ -132,3 +132,9 @@ Générations ChatGPT précédemment conservées, livrées sans régénération 
 
 Généré avec ChatGPT / outil d’image : correction des vêtements verts en tissu noir de la tenue de bonne, référence officielle fournie par l’utilisateur (ZIP, page 51). Quinze PNG existants corrigés (portrait compris), plus trois planches de linge avec leurs JSON, soit six variantes, dix-huit vues et 237 poses. La vue arrière en blouse de laboratoire, sans vêtement vert, reste identique. Montage localisé autorisé : copie de pixels des tissus générés dans les seules zones de vêtement concernées, recalage au plus proche voisin ; alpha, cadrages, visages, cheveux et accessoires conservés. Repos du linge et de la vie quotidienne recopiés depuis la base corrigée ; sommeil commun recopié entre vues. JSON existants inchangés. Originaux et générations conservés séparément. La nouvelle variante linge reste à enregistrer et placer en jeu.
 - 2026-10-16 — (F1) retirés avec l'ancienne île (docs/DECISIONS.md, F1), gardés dans l'historique de git : les planches de `baker`, `ferryman`, `egg_vendor` et `garde_lookout` (profil, face, dos, `.json`, portrait), PNJ qu'elle seule posait.
+
+## Cahier n° 6 — C.10, entraînement de Chtholly (16 octobre 2026)
+
+- `assets/characters/chtholly/chtholly_stick{,_front,_back}.png` et JSON associés : générés avec ChatGPT le 16 octobre 2026, références officielles p. 11 et planches `chtholly_home`, tenue sans veste, cheveux attachés, bâton de bois brut. Réduction au plus proche voisin et montage contrôlé de poses corrigées ; originaux conservés hors dépôt.
+
+- `assets/characters/ithea/ithea_stick{,_front,_back}.png` et JSON associés : générés avec ChatGPT le 16 octobre 2026, cahier n° 6, lot C.10 ; référence des planches officielles de l’anime et des planches `ithea_home`, cheveux orange courts, écharpe serrée, bâton de bois brut. Ajustement géométrique au plus proche voisin ; originaux conservés hors dépôt.

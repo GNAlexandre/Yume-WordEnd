@@ -225,8 +225,6 @@ common/physics_interpolation=true
 
 [rendering]
 
-textures/webp_compression/compression_method=6
-textures/webp_compression/lossless_compression_factor=100
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
