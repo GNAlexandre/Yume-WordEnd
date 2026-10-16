@@ -11,6 +11,7 @@ render_mode blend_mix, cull_disabled, depth_draw_never, specular_disabled;
 
 #include "res://src/world/shaders/hd2d_light.gdshaderinc"
 #include "res://src/world/shaders/pixel_art.gdshaderinc"
+#include "res://src/world/shaders/depth_focus.gdshaderinc"
 
 uniform sampler2D albedo_texture : source_color, filter_linear, repeat_disable;
 uniform vec4 tint : source_color = vec4(1.0);
@@ -26,7 +27,14 @@ void vertex() {
 }
 
 void fragment() {
-	vec4 c = pixel_art(albedo_texture, UV);
+	vec2 uv_dx = dFdx(UV);
+	vec2 uv_dy = dFdy(UV);
+	vec4 c = pixel_art_grad(albedo_texture, UV, uv_dx, uv_dy);
+	// (RD) Dessiné après le flou de profondeur de l'écran : il se floute lui-même (le lointain).
+	float blur = focus_radius(-VERTEX.z) * VIEWPORT_SIZE.y / 720.0;
+	if (blur >= 0.5) {
+		c = focus_sample(albedo_texture, UV, uv_dx, uv_dy, blur);
+	}
 	ALBEDO = c.rgb * tint.rgb;
 	ALPHA = c.a * tint.a * drift_fade;
 	ROUGHNESS = 1.0;

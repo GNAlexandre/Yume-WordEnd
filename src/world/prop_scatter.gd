@@ -13,6 +13,14 @@ extends Node3D
 ## (variant_indices) ; random_flip retourne au hasard l'image des exemplaires dont la racine est un
 ## DecorPanel (flip_h). Ces tirages ont leur propre suite de nombres : les lacets et les échelles
 ## d'un PropScatter sans variantes ne changent pas.
+## (RD) Variation automatique (auto_variation, vraie par défaut), tirée de la position de chaque
+## point (variation_at : stable, sans graine) selon le genre du décor (DecorGenre) : teinte du
+## panneau (± 6 % de luminosité, ± 3 % de teinte pour la végétation, moins pour les rochers, les
+## clôtures et les objets ; DecorPanel.tone), échelle du genre quand scale_range n'en donne pas,
+## léger recul (± z) et léger enfoncement ; rien pour un décor sans genre (ciel, détails de mur).
+## Dans une rangée (les points rangés le long de leur grand axe), deux voisins ne prennent jamais
+## la même image quand une autre est possible (avoid_runs), en plus de la règle du plus proche
+## voisin.
 
 ## Décor à poser (scène : meshes partagés + collision éventuelle).
 @export var prop: PackedScene:
@@ -55,6 +63,12 @@ extends Node3D
 		random_flip = value
 		_queue_rebuild()
 
+## (RD) Variation automatique tirée de la position (teinte, échelle du genre, recul, enfoncement).
+@export var auto_variation: bool = true:
+	set(value):
+		auto_variation = value
+		_queue_rebuild()
+
 var _instances: Array[Node3D] = []
 var _queued := false
 
@@ -86,6 +100,13 @@ func rebuild() -> void:
 		if follow_ground:
 			point.y += _ground_offset(point)
 		var node := scenes[picks[i]].instantiate() as Node3D
+		var panel := node as DecorPanel
+		if auto_variation and panel != null:
+			var vary := variation_at(points[i], panel.current_genre())
+			panel.tone = vary["tone"]
+			if scale_range.is_equal_approx(Vector2.ONE):
+				size = vary["scale"]
+			point += vary["offset"]
 		node.transform = Transform3D(Basis(Vector3.UP, yaw).scaled(Vector3.ONE * size), point)
 		var flip := flips.randf() < 0.5
 		if random_flip and node is DecorPanel:
@@ -104,9 +125,103 @@ func pool() -> Array[PackedScene]:
 
 
 ## (H9) Indice dans pool() de la scène de chaque point : tirage stable (graine) où chaque point
-## diffère de son plus proche voisin, dès que pool() a deux scènes.
+## diffère de son plus proche voisin, dès que pool() a deux scènes ; (RD) et, quand c'est
+## possible, de ses voisins de rangée (avoid_runs).
 func variant_indices() -> PackedInt32Array:
-	return pick_variants(points, pool().size(), hash([random_seed, &"variants"]))
+	var count := pool().size()
+	var picks := pick_variants(points, count, hash([random_seed, &"variants"]))
+	return avoid_runs(points, picks, count)
+
+
+## (RD) Variation d'un exemplaire posé en at (repère du PropScatter) pour un genre (DecorGenre) :
+## « tone » (DecorPanel.tone), « scale » (dans la plage du genre), « offset » (recul en z et
+## enfoncement en y, m). Tirée de la position seule (au centimètre près) : stable d'un lancement à
+## l'autre, différente d'un point à son voisin.
+static func variation_at(at: Vector3, kind: StringName) -> Dictionary:
+	var settings := DecorGenre.settings(kind)
+	var tone_range: Vector2 = settings["tone"]
+	var scales: Vector2 = settings["scale"]
+	var key := Vector3i((at * 100.0).round())
+	var tone := Vector2(
+		(_unit(key, 1) * 2.0 - 1.0) * tone_range.x, (_unit(key, 2) * 2.0 - 1.0) * tone_range.y
+	)
+	return {
+		"tone": tone,
+		"scale": lerpf(scales.x, scales.y, _unit(key, 3)),
+		"offset":
+		Vector3(
+			0.0,
+			-float(settings["sink"]) * _unit(key, 4),
+			(_unit(key, 5) * 2.0 - 1.0) * float(settings["jitter"])
+		),
+	}
+
+
+## (RD) Nombre stable dans [0, 1) tiré d'une position (cm) et d'un sel.
+static func _unit(key: Vector3i, salt: int) -> float:
+	return float(posmod(hash([key, salt]), 65536)) / 65536.0
+
+
+## (RD) Rangée : les points rangés le long de leur grand axe (plan x, z). Deux voisins de rangée
+## qui ont la même scène : le second en prend une autre, différente de celles de ses voisins de
+## rangée et de ses voisins les plus proches (pick_variants), s'il en reste une ; sinon il garde
+## la sienne (deux scènes seulement : la règle du plus proche voisin passe avant).
+static func avoid_runs(
+	at: PackedVector3Array, picks: PackedInt32Array, count: int
+) -> PackedInt32Array:
+	var result := picks.duplicate()
+	if count < 2 or at.size() < 2:
+		return result
+	var order := row_order(at)
+	var nearest := PackedInt32Array()
+	nearest.resize(at.size())
+	for i in at.size():
+		nearest[i] = nearest_neighbor(at, i)
+	for k in range(1, order.size()):
+		var i := order[k]
+		var before := order[k - 1]
+		if result[i] != result[before]:
+			continue
+		var taken := {result[before]: true}
+		if k + 1 < order.size():
+			taken[result[order[k + 1]]] = true
+		if nearest[i] >= 0:
+			taken[result[nearest[i]]] = true
+		for j in at.size():
+			if nearest[j] == i:
+				taken[result[j]] = true
+		for step in range(1, count):
+			var candidate := (result[i] + step) % count
+			if not taken.has(candidate):
+				result[i] = candidate
+				break
+	return result
+
+
+## (RD) Indices des points rangés le long de leur grand axe (axe principal des positions x, z).
+static func row_order(at: PackedVector3Array) -> PackedInt32Array:
+	var center := Vector2.ZERO
+	for p in at:
+		center += Vector2(p.x, p.z)
+	center /= maxf(at.size(), 1.0)
+	var cxx := 0.0
+	var czz := 0.0
+	var cxz := 0.0
+	for p in at:
+		var d := Vector2(p.x, p.z) - center
+		cxx += d.x * d.x
+		czz += d.y * d.y
+		cxz += d.x * d.y
+	var angle := 0.5 * atan2(2.0 * cxz, cxx - czz)
+	var axis := Vector2(cos(angle), sin(angle))
+	var keyed: Array[Vector2] = []
+	for i in at.size():
+		keyed.append(Vector2(axis.dot(Vector2(at[i].x, at[i].z)), i))
+	keyed.sort()
+	var order := PackedInt32Array()
+	for item in keyed:
+		order.append(int(item.y))
+	return order
 
 
 ## (H9) Tire count variantes pour des points (x, z) : graphe des plus proches voisins (une forêt),

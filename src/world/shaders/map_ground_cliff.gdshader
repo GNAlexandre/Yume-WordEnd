@@ -38,9 +38,10 @@ uniform float riser_shade = 0.7;
 uniform float underside_depth = 16.0;
 uniform vec4 depth_tint : source_color = vec4(0.51, 0.46, 0.61, 1.0);
 uniform float depth_fade = 48.0;
-// Ombre au pied d'une face (lumière restante, hauteur en m).
-uniform float foot_shadow = 0.78;
-uniform float foot_height = 0.35;
+// Ombre au pied d'une face (lumière restante, hauteur en m). (RD) Plus marquée et plus haute :
+// l'occlusion au pied des talus, des murets et des falaises (0,78 sur 0,35 m auparavant).
+uniform float foot_shadow = 0.62;
+uniform float foot_height = 0.6;
 
 float bayer(vec2 cell) {
 	vec2 c = mod(cell, 4.0);

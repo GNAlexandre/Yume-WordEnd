@@ -20,6 +20,10 @@ extends Node3D
 ## poser sur la surface (contre la façade ou le flanc, ou au pied de la cheminée sur le pan de
 ## toit sud) avec depth_offset 0,05 à 0,1 m et shadow_width 0 ; ils passent alors devant le mur
 ## ou le toit sans scintiller ni passer derrière (docs/DECISIONS.md, H9).
+## (RD) Ombre au pied (enfant interne « Shadow », l'ombre peinte des décors,
+## DecorPanel.shadow_shape) : une bande sombre le long de la façade sud (l'occlusion au pied du
+## mur) et l'ombre portée du volume, un parallélogramme de toute sa largeur qui part à l'opposé
+## du soleil ; seulement avec une façade (pas sous un plancher posé à plat).
 
 ## Taille d'une matière répétée (m) : 192 px à 96 px par mètre.
 const MATERIAL_SPAN := 2.0
@@ -30,6 +34,10 @@ const WALL_RELIEF := 0.6
 const ROOF_RELIEF := 1.0
 ## (H5) Groupe des bâtiments en jeu : la caméra du joueur (camera_rig.gd) cadre leur façade sud.
 const GROUP := &"hd2d_buildings"
+## (RD) Ombre au pied : opacité de la bande et de l'ombre portée, longueur de celle-ci (part de la
+## hauteur des murs).
+const SHADOW_ALPHAS := Vector2(0.6, 0.35)
+const SHADOW_TAIL := 0.6
 
 ## Matériaux partagés : clé (matière, relief) → WeakRef du ShaderMaterial ((E1) références
 ## faibles, comme DecorPanel : une carte quittée libère ses images).
@@ -103,6 +111,7 @@ var _walls: MeshInstance3D
 var _roof: MeshInstance3D
 var _facade: MeshInstance3D
 var _sides: MeshInstance3D
+var _shadow: MeshInstance3D
 var _queued: bool = false
 
 
@@ -120,6 +129,7 @@ func rebuild() -> void:
 		_roof = _internal_mesh(&"Roof")
 		_facade = _internal_mesh(&"Facade")
 		_sides = _internal_mesh(&"Sides")
+		_shadow = _internal_mesh(&"Shadow")
 	_walls.mesh = _walls_mesh()
 	_walls.material_override = surface_material(wall_texture, WALL_RELIEF)
 	_roof.mesh = _roof_mesh()
@@ -140,12 +150,31 @@ func rebuild() -> void:
 			window_glow_tolerance
 		)
 		_facade.position = Vector3(0.0, 0.0, footprint.y / 2.0 + FACADE_GAP)
+	_update_shadow()
 	_sides.visible = side_facade != null
 	if side_facade != null:
 		_sides.mesh = _sides_mesh()
 		_sides.material_override = side_material(
 			side_facade, window_glow, window_glow_color, window_glow_tolerance
 		)
+
+
+## (RD) Ombre au pied de la façade sud (voir l'en-tête), posée au sol devant le mur sud.
+func _update_shadow() -> void:
+	_shadow.material_override = DecorPanel.shadow_material()
+	if facade == null or not is_inside_tree():
+		_shadow.mesh = null
+		_shadow.visible = false
+		return
+	var width := footprint.x + overhang * 2.0
+	_shadow.mesh = DecorPanel.shadow_shape(
+		width, 0.0, wall_height * SHADOW_TAIL, width, true, SHADOW_ALPHAS
+	)
+	_shadow.visible = true
+	_shadow.global_transform = Transform3D(
+		Basis.IDENTITY,
+		to_global(Vector3(0.0, 0.0, footprint.y / 2.0)) + Vector3.UP * DecorPanel.SHADOW_LIFT
+	)
 
 
 ## (H9) Taille du flanc (m) : celle de l'image side_facade à 96 px par mètre.
