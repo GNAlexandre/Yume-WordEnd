@@ -654,7 +654,39 @@ def _sign_enter(d, s):
                   (0.31, 0.47)], s), fill=SIGN_CREAM)
 
 
+SIGN_GOLD_DEEP = (184, 138, 74, 255)
+
+
+def _ribbon_edges(k):
+    """Bords gauche et droit d'un ruban qui ondule (k : retrait du bord, coordonnées 0..1)."""
+    left, right = [], []
+    steps = 24
+    for i in range(steps + 1):
+        t = i / steps
+        y = 0.1 + t * 0.72
+        cx = 0.5 + 0.06 * math.sin(math.pi * (t * 1.6 - 0.3))
+        half = 0.15 - k
+        left.append((cx - half, y + (k * 0.6 if i == 0 else 0.0)))
+        right.append((cx + half, y + (k * 0.6 if i == 0 else 0.0)))
+    return left, right
+
+
+def _sign_story(d, s):
+    """(X-L1) Ruban or : un signet de livre qui ondule, la queue fendue en V (une scène du livre)."""
+    for k, color in ((0.0, SIGN_GOLD_DEEP), (0.03, SIGN_GOLD)):
+        left, right = _ribbon_edges(k)
+        bottom_l, bottom_r = left[-1], right[-1]
+        notch = ((bottom_l[0] + bottom_r[0]) / 2, bottom_l[1] - 0.12 + k * 0.5)
+        tail = [(bottom_r[0], bottom_r[1] + 0.08 - k * 0.6), notch, (bottom_l[0], bottom_l[1] + 0.08 - k * 0.6)]
+        d.polygon(_u(left + [tail[2], tail[1], tail[0]] + list(reversed(right)), s), fill=color)
+    # Reflet crème le long du ruban.
+    left, right = _ribbon_edges(0.075)
+    stripe = [(x + 0.012, y) for x, y in left[2:-3]]
+    d.line(_u(stripe, s), fill=SIGN_CREAM, width=max(1, round(s * 0.03)), joint="curve")
+
+
 RECIPES.update({
+    "fx/sign_story": lambda size, rnd: _sign(size, _sign_story),
     "fx/sign_talk": lambda size, rnd: _sign(size, _sign_talk),
     "fx/sign_examine": lambda size, rnd: _sign(size, _sign_examine),
     "fx/sign_take": lambda size, rnd: _sign(size, _sign_take),

@@ -94,6 +94,7 @@
   {"path": "assets/hd2d/fx/sign_examine.png", "size": [64, 64], "kind": "fx", "prio": 2, "lot": "R0"},
   {"path": "assets/hd2d/fx/sign_take.png", "size": [64, 64], "kind": "fx", "prio": 2, "lot": "R0"},
   {"path": "assets/hd2d/fx/sign_enter.png", "size": [64, 64], "kind": "fx", "prio": 2, "lot": "R0"},
+  {"path": "assets/hd2d/fx/sign_story.png", "size": [64, 64], "kind": "fx", "prio": 2, "lot": "X-L1"},
   {"path": "assets/hd2d/buildings/materials/roof_tiles_b.png", "size": [192, 192], "kind": "tile", "prio": 1, "lot": "D"},
   {"path": "assets/hd2d/buildings/materials/roof_slate_b.png", "size": [192, 192], "kind": "tile", "prio": 1, "lot": "D"},
   {"path": "assets/hd2d/buildings/materials/wall_plaster_b.png", "size": [192, 192], "kind": "tile", "prio": 1, "lot": "D"},

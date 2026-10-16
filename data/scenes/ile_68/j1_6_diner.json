@@ -12,6 +12,7 @@
     "point": "dortoir_b",
     "radius": 1.5
   },
+  "offer": {"point": "dortoir_b", "text": "offer"},
   "sequence": true,
   "present": [
     "pannibal",

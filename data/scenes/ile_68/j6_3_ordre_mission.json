@@ -13,6 +13,7 @@
     "point": "refectoire_allee",
     "radius": 2.2
   },
+  "offer": {"point": "refectoire_allee", "text": "offer"},
   "present": [
     "nygglatho",
     "willem",
