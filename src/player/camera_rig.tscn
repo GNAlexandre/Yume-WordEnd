@@ -2,9 +2,16 @@
 
 [ext_resource type="Script" path="res://src/player/camera_rig.gd" id="1_rig"]
 [ext_resource type="Shader" path="res://src/player/post_fx.gdshader" id="2_post"]
+[ext_resource type="Shader" path="res://src/player/post_fx_depth.gdshader" id="3_depth"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_post"]
 shader = ExtResource("2_post")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_depth"]
+render_priority = -128
+shader = ExtResource("3_depth")
+
+[sub_resource type="QuadMesh" id="QuadMesh_depth"]
 
 [node name="CameraRig" type="Node3D"]
 script = ExtResource("1_rig")
@@ -15,6 +22,13 @@ transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 
 current = true
 fov = 30.0
 far = 1500.0
+
+[node name="DepthBlur" type="MeshInstance3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+cast_shadow = 0
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_depth")
+material_override = SubResource("ShaderMaterial_depth")
 
 [node name="PostFX" type="CanvasLayer" parent="."]
 layer = -1

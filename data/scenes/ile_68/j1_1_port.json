@@ -6,6 +6,7 @@
   "trigger": {
     "on": "ready"
   },
+  "offer": {"npc": "nygglatho", "text": "offer"},
   "sequence": true,
   "present": [
     "willem",

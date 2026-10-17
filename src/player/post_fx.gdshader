@@ -1,11 +1,10 @@
 // Post-traitement HD-2D de la caméra du joueur (CameraRig/PostFX/Screen, rectangle plein écran
 // sous l'interface) : ce que le rendu Compatibility ne fait pas lui-même, en une passe.
-// - Flou de profondeur à la manière d'Octopath Traveler : net dans une bande autour du joueur
-//   (focus_center ± focus_half, posés à chaque image par la caméra : de quelques mètres devant
-//   le joueur à neuf mètres derrière lui, le joueur n'est jamais flou), de plus en plus flou
-//   jusqu'au haut de l'écran (le lointain) et un peu vers le bas (le premier plan), sans
-//   cassure. (H5) Le flou lit les mipmaps de l'image (copie floutée par le moteur) : rayon
-//   continu, quatre lectures en croix au lieu de douze, sans grain.
+// - (RD) Le flou de profondeur n'est plus ici : il suit la vraie profondeur, dans le monde 3D
+//   (post_fx_depth.gdshader, CameraRig/Camera3D/DepthBlur). top_blur_px et bottom_blur_px restent
+//   des uniformes de ce matériau, où les pose le réglage de lumière (HD2DLighting.apply_post) :
+//   la caméra (camera_rig.gd) les recopie à chaque image sur le flou de profondeur (lointain, et
+//   premier plan à NEAR_BLUR_PER_BOTTOM_PX fois bottom_blur_px).
 // - Lueur : ce qui reste clair dans deux niveaux de flou (cristaux, fenêtres, ciel) déborde en
 //   halo chaud, large et doux (bloom).
 // - Étalonnage de fin d'après-midi d'automne (MONDE.md 5.4 : l'île est toujours au couchant) :
@@ -22,10 +21,7 @@
 shader_type canvas_item;
 
 uniform sampler2D screen : hint_screen_texture, filter_linear_mipmap, repeat_disable;
-// Bande nette (fractions de la hauteur de l'écran, 0 en haut) et flou maximal (px) au haut et
-// au bas de l'écran.
-uniform float focus_center = 0.5;
-uniform float focus_half = 0.18;
+// (RD) Flou du lointain et du bas de l'écran (px), lus par la caméra pour le flou de profondeur.
 uniform float top_blur_px = 5.5;
 uniform float bottom_blur_px = 2.5;
 // Lueur : seuil de luminance (après flou), force, teinte.
@@ -56,31 +52,10 @@ float luminance(vec3 c) {
 	return dot(c, vec3(0.299, 0.587, 0.114));
 }
 
-// Image floutée d'un rayon d'environ radius_px : mipmap de ce rayon, lue en croix d'un
-// demi-pixel de ce niveau (adoucit les blocs du sur-échantillonnage bilinéaire).
-vec3 blurred(vec2 uv, vec2 pixel, float radius_px) {
-	if (radius_px < 0.3) {
-		return textureLod(screen, uv, 0.0).rgb;
-	}
-	float lod = log2(1.0 + radius_px);
-	vec2 o = pixel * exp2(lod) * 0.5;
-	return 0.25
-			* (textureLod(screen, uv + vec2(o.x, o.y), lod).rgb
-					+ textureLod(screen, uv + vec2(-o.x, o.y), lod).rgb
-					+ textureLod(screen, uv + vec2(o.x, -o.y), lod).rgb
-					+ textureLod(screen, uv + vec2(-o.x, -o.y), lod).rgb);
-}
-
 void fragment() {
 	vec2 uv = SCREEN_UV;
 	float y = uv.y;
-	// Flou de profondeur par bandes : nul dans la bande nette, croissant jusqu'aux bords.
-	float top_edge = focus_center - focus_half;
-	float bottom_edge = focus_center + focus_half;
-	float above = smoothstep(0.0, max(top_edge, 0.05), top_edge - y);
-	float below = smoothstep(0.0, max(1.0 - bottom_edge, 0.05), y - bottom_edge);
-	float radius = max(above * top_blur_px, below * bottom_blur_px);
-	vec3 c = blurred(uv, SCREEN_PIXEL_SIZE, radius);
+	vec3 c = textureLod(screen, uv, 0.0).rgb;
 	// Lueur : deux largeurs de halo.
 	vec3 near_glow = textureLod(screen, uv, 3.0).rgb;
 	vec3 wide_glow = textureLod(screen, uv, 5.0).rgb;

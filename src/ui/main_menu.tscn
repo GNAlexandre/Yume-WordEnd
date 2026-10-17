@@ -241,6 +241,133 @@ layout_mode = 2
 theme_type_variation = &"PrimaryButton"
 text = "Nouvelle partie"
 
+[node name="ModeOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="Panel" parent="ModeOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"DimStrong"
+
+[node name="ModePanel" type="PanelContainer" parent="ModeOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -215.0
+offset_right = 460.0
+offset_bottom = 215.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Box" type="VBoxContainer" parent="ModeOverlay/ModePanel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="ModeHeader" type="Label" parent="ModeOverlay/ModePanel/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 34
+horizontal_alignment = 1
+
+[node name="ModeFreeButton" type="Button" parent="ModeOverlay/ModePanel/Box"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(820, 112)
+layout_mode = 2
+theme_type_variation = &"SkinCard"
+
+[node name="Box" type="VBoxContainer" parent="ModeOverlay/ModePanel/Box/ModeFreeButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_left = 22.0
+offset_top = 10.0
+offset_right = -22.0
+offset_bottom = -10.0
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Name" type="Label" parent="ModeOverlay/ModePanel/Box/ModeFreeButton/Box"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 30
+mouse_filter = 2
+
+[node name="Blurb" type="Label" parent="ModeOverlay/ModePanel/Box/ModeFreeButton/Box"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 20
+mouse_filter = 2
+autowrap_mode = 3
+
+[node name="ModeScenarioButton" type="Button" parent="ModeOverlay/ModePanel/Box"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(820, 112)
+layout_mode = 2
+theme_type_variation = &"SkinCard"
+
+[node name="Box" type="VBoxContainer" parent="ModeOverlay/ModePanel/Box/ModeScenarioButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_left = 22.0
+offset_top = 10.0
+offset_right = -22.0
+offset_bottom = -10.0
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Name" type="Label" parent="ModeOverlay/ModePanel/Box/ModeScenarioButton/Box"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 30
+mouse_filter = 2
+
+[node name="Blurb" type="Label" parent="ModeOverlay/ModePanel/Box/ModeScenarioButton/Box"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 20
+mouse_filter = 2
+autowrap_mode = 3
+
+[node name="ModeHint" type="Label" parent="ModeOverlay/ModePanel/Box"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(820, 0)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ModeBack" type="Button" parent="ModeOverlay/ModePanel/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+
 [node name="SaveOverlay" type="Control" parent="."]
 unique_name_in_owner = true
 visible = false

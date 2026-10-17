@@ -10,6 +10,9 @@ const CombatStub := preload("res://tests/stubs/l1_combat_stub.gd")
 const DT := 1.0 / 60.0
 const EPS := Vector3(0.001, 0.001, 0.001)
 const FORWARD_INPUT := Vector2(0, -1)
+## (AN) Allures du joueur (player.tscn : walk_speed, run_speed), en m/s.
+const WALK := 3.1
+const RUN := 5.8
 
 
 func before_each() -> void:
@@ -127,16 +130,21 @@ func test_move_direction_stays_on_ground_plane_and_keeps_stick_strength() -> voi
 # --- Marche, course, accélération, saut ---------------------------------------------------------
 
 
-func test_walks_at_4_and_runs_at_7_relative_to_camera() -> void:
+func test_walks_at_3_1_and_runs_at_5_8_relative_to_camera() -> void:
+	# (AN) Allure ajustée à la cadence des planches : marche de 3,0 à 3,2 m/s, course de 5,5 à 6.
 	_add_floor()
 	var player := _spawn_player()
 	await _in_physics_frame()
+	assert_almost_eq(player.walk_speed, WALK, 0.001, "allure de marche de player.tscn")
+	assert_almost_eq(player.run_speed, RUN, 0.001, "allure de course de player.tscn")
+	assert_between(player.walk_speed, 3.0, 3.2, "marche de 3,0 à 3,2 m/s (décision AN)")
+	assert_between(player.run_speed, 5.5, 6.0, "course de 5,5 à 6 m/s (décision AN)")
 	_ticks(player, 60, FORWARD_INPUT)
-	assert_almost_eq(_horizontal_speed(player), 4.0, 0.01, "marche à 4 m/s")
-	assert_lt(player.position.z, -3.0, "avance vers l'avant de la caméra (−Z)")
+	assert_almost_eq(_horizontal_speed(player), WALK, 0.01, "marche à 3,1 m/s")
+	assert_lt(player.position.z, -2.5, "avance vers l'avant de la caméra (−Z)")
 	assert_false(player.is_running())
 	_ticks(player, 60, FORWARD_INPUT, true)
-	assert_almost_eq(_horizontal_speed(player), 7.0, 0.01, "course à 7 m/s")
+	assert_almost_eq(_horizontal_speed(player), RUN, 0.01, "course à 5,8 m/s")
 	assert_true(player.is_running())
 	# (HD-2D) Commandes relatives à l'écran : la caméra fixe regarde le nord, la droite est l'est.
 	_ticks(player, 30, Vector2(1, 0))
@@ -152,7 +160,7 @@ func test_acceleration_is_smooth_but_reactive() -> void:
 	var early := _horizontal_speed(player)
 	assert_between(early, 0.5, 3.0, "démarrage progressif")
 	_ticks(player, 10, FORWARD_INPUT, true)
-	assert_almost_eq(_horizontal_speed(player), 7.0, 0.01, "pleine vitesse en moins de 0,25 s")
+	assert_almost_eq(_horizontal_speed(player), RUN, 0.01, "pleine vitesse en moins de 0,25 s")
 	_ticks(player, 2)
 	assert_between(_horizontal_speed(player), 3.0, 6.5, "arrêt progressif")
 	_ticks(player, 8)
@@ -214,7 +222,7 @@ func test_joypad_run_button_latches_until_player_stops() -> void:
 	player._unhandled_input(button)
 	_ticks(player, 30, FORWARD_INPUT)
 	assert_true(player.is_running(), "L3 : course sans maintenir le bouton")
-	assert_almost_eq(_horizontal_speed(player), 7.0, 0.01)
+	assert_almost_eq(_horizontal_speed(player), RUN, 0.01)
 	_ticks(player, 2)
 	_ticks(player, 30, FORWARD_INPUT)
 	assert_false(player.is_running(), "la course s'arrête avec le joueur")
@@ -385,6 +393,77 @@ func test_animations_follow_movement_only_when_combat_is_free() -> void:
 	player.visual.play(&"attaque", true)
 	_ticks(player, 10)
 	assert_eq(player.visual.current_animation(), &"attaque", "Combat occupé : animation de L4")
+
+
+# --- (AN) Transitions sans saut -----------------------------------------------------------------
+
+
+func test_turnaround_keeps_the_stride_and_faces_the_real_velocity() -> void:
+	_add_floor()
+	var player := _spawn_player()
+	await _in_physics_frame()
+	assert_true(player.visual.match_stride, "cadence à la vitesse réelle")
+	var sprite := player.visual.get_node(^"Sprite") as AnimatedSprite3D
+	_ticks(player, 30, Vector2(1, 0))
+	player.visual.advance(0.12)
+	var frame := player.visual.current_frame()
+	assert_ne(frame, 0, "en plein pas")
+	assert_false(sprite.flip_h, "vers l'est")
+	_ticks(player, 1, Vector2(-1, 0))
+	assert_gt(player.velocity.x, 0.6, "encore lancé vers l'est")
+	assert_false(
+		sprite.flip_h, "la vue suit la vitesse, pas la commande : pas de glissade à rebours"
+	)
+	var idled := false
+	for _i in 20:
+		_ticks(player, 1, Vector2(-1, 0))
+		idled = idled or player.visual.current_animation() == &"repos"
+	assert_false(idled, "demi-tour : pas d'image de repos intercalée")
+	assert_eq(player.visual.current_animation(), &"marche")
+	assert_eq(player.visual.current_frame(), frame, "la foulée ne repart pas à l'image 0")
+	assert_true(sprite.flip_h, "lancé vers l'ouest : tourné vers l'ouest")
+	assert_lt(player.velocity.x, -3.0)
+
+
+func test_stopping_finishes_the_step_then_idles() -> void:
+	_add_floor()
+	var player := _spawn_player()
+	await _in_physics_frame()
+	_ticks(player, 30, Vector2(1, 0))
+	player.visual.advance(0.12)
+	assert_eq(player.visual.current_frame(), 1, "en plein pas")
+	_ticks(player, 10)
+	assert_almost_eq(_horizontal_speed(player), 0.0, 0.001, "arrêtée")
+	assert_eq(player.visual.current_animation(), &"marche", "le pas en cours se termine")
+	assert_eq(player.visual.settling_to(), &"repos")
+	player.visual.advance(0.25)
+	assert_eq(player.visual.current_animation(), &"repos", "pied posé : repos")
+
+
+func test_hold_input_stops_like_released_keys() -> void:
+	_add_floor()
+	var player := _spawn_player()
+	await _in_physics_frame()
+	_ticks(player, 30, Vector2(1, 0), true)
+	player.visual.advance(0.1)
+	assert_eq(player.visual.current_frame(), 1, "course, en plein pas")
+	player.hold_input(true)
+	assert_true(player.is_input_held())
+	_ticks(player, 1, Vector2(1, 0), true)
+	assert_between(
+		_horizontal_speed(player), 1.0, player.run_speed - 0.1, "elle freine, sans arrêt sec"
+	)
+	_ticks(player, 10, Vector2(1, 0), true)
+	assert_almost_eq(_horizontal_speed(player), 0.0, 0.001, "commandes figées")
+	assert_eq(player.visual.current_animation(), &"course", "l'animation continue : fin du pas")
+	var jump := _commands(Vector2(1, 0))
+	jump.jump = true
+	jump.jump_held = true
+	player.tick(DT, jump)
+	assert_almost_eq(player.velocity.y, 0.0, 0.01, "pas de saut")
+	player.hold_input(false)
+	_ticks(player, 30, Vector2(1, 0))
+	assert_almost_eq(_horizontal_speed(player), player.walk_speed, 0.01, "commandes rendues")
 
 
 # --- Recul et réapparition --------------------------------------------------------------------

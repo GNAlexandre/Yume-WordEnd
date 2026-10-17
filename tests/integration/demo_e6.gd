@@ -14,6 +14,7 @@ extends Node
 ## (E8c) embuscade : l'embuscade de Pannibal (1.2) jouée par le pilote (pas de côté au bond, parade
 ## aux taillades ; E6_AMBUSH=perdre : il ne fait rien), une image toutes les E6_STEP s (0,5 par
 ## défaut) du bond de Pannibal à la première réplique de la suite.
+## (X-L0) libre : une nouvelle partie en mode libre (pas de noir, le carton « Jour 1 », le soir).
 ## Le journal donne les draw calls de chaque capture (« E6 vue … »).
 
 const GAME_SCENE := preload("res://src/game.tscn")
@@ -70,6 +71,8 @@ var _step := 3.0
 var _step_left := 1.0
 var _index := 0
 var _previous_seen := ""
+## (X-L0) Mode de jeu par défaut avant la démo (elle joue le mode scénarisé).
+var _previous_mode: StringName = &""
 var _hint_seen_at := -1.0
 var _elapsed := 0.0
 ## (E8c) Vue « embuscade » : le jeu a commencé, puis fini (temps de la démo).
@@ -95,6 +98,11 @@ func _ready() -> void:
 	if OS.get_environment("E6_STEP").is_valid_float():
 		_step = float(OS.get_environment("E6_STEP"))
 	_state = GameState.to_dict()
+	# (X-L0) Le mode scénarisé d'E6 et de S2 (le jeu part en libre).
+	_previous_mode = StoryDirector.default_mode
+	StoryDirector.default_mode = StoryPacing.SCENARIO
+	if _view == "libre":
+		StoryDirector.default_mode = StoryPacing.FREE
 	_previous_seen = StoryDirector.seen_path
 	StoryDirector.seen_path = SEEN
 	StoryDirector.forget_seen()
@@ -118,6 +126,8 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	StoryDirector.forget_seen()
 	StoryDirector.seen_path = _previous_seen
+	if not _previous_mode.is_empty():
+		StoryDirector.default_mode = _previous_mode
 	WorldManager.fade_time = WorldManager.DEFAULT_FADE_TIME
 
 
@@ -177,7 +187,7 @@ func _physics_process(delta: float) -> void:
 		quitting = _sequence_tick(delta)
 	if quitting or _check_capture():
 		return
-	if not _acting:
+	if not _acting and _view != "libre":
 		_pilot_story()
 
 
@@ -274,6 +284,9 @@ func _shown_text() -> String:
 func _check_capture() -> bool:
 	var captured := false
 	match _view:
+		"libre":
+			var card := StoryDirector.stage().overlay()
+			captured = card != null and str(card.call(&"card_text")) == "Jour 1" and _elapsed > 1.2
 		"carton":
 			var overlay := StoryDirector.stage().overlay()
 			captured = (

@@ -2,7 +2,8 @@ extends GutTest
 ## (HD-2D) Caméra fixe du joueur (camera_rig.tscn) : réglages de la scène (inclinaison, champ
 ## étroit, regard vers le nord), suivi du joueur avec un léger retard, bornes de l'île, zoom borné
 ## (molette et stick droit), cadrage de la cible verrouillée sans rotation, post-traitement sous
-## l'interface et son shader qui compile ; (H5) bande nette du flou qui suit le joueur à l'écran,
+## l'interface et son shader qui compile ; (RD) flou selon la vraie profondeur, net autour du
+## joueur (DepthBlur, DepthFocus),
 ## bornes qui gardent le joueur près du centre au bord de l'île ; (recette du 8 octobre 2026)
 ## cadrage constant : ni tangage ni recul qui changent en marchant devant ou le long des
 ## bâtiments, joueur sous le milieu de l'écran, au-dessus de la boîte de dialogue en
@@ -13,6 +14,7 @@ extends GutTest
 const RIG := preload("res://src/player/camera_rig.tscn")
 const CameraRigScript := preload("res://src/player/camera_rig.gd")
 const POST_SHADER := preload("res://src/player/post_fx.gdshader")
+const DEPTH_SHADER := preload("res://src/player/post_fx_depth.gdshader")
 const DT := 1.0 / 60.0
 
 # --- Outils -----------------------------------------------------------------------------------
@@ -90,6 +92,8 @@ func test_follows_the_player_with_a_slight_lag() -> void:
 
 func test_stays_within_the_island_limits() -> void:
 	var rig := _spawn_rig(Vector3(78, 0, -79))
+	# Les bornes seules (la marge aux bords de l'écran a son propre test).
+	rig.edge_margin = 0.0
 	_update(rig, 3.0)
 	assert_almost_eq(rig.focus().x, rig.limits.end.x, 0.01, "bornée à l'est")
 	assert_almost_eq(rig.focus().z, rig.limits.position.y, 0.01, "bornée au nord")
@@ -99,6 +103,9 @@ func test_limits_follow_the_current_map() -> void:
 	# (E1) À chaque carte (EventBus.map_entered) : ses bornes (Map.bounds(), la carte entière
 	# par défaut), la caméra courante, recalée sur le joueur.
 	var rig := _spawn_rig(Vector3(5, 0, 5))
+	# Les bornes seules : le joueur est posé loin hors de la carte (la marge aux bords de l'écran a
+	# son propre test).
+	rig.edge_margin = 0.0
 	var map := Map.new()
 	map.name = "carte_test"
 	map.size = Vector2(30, 20)
@@ -189,10 +196,31 @@ func test_post_fx_shader_compiles() -> void:
 	assert_eq(screen.mouse_filter, Control.MOUSE_FILTER_IGNORE, "ne prend pas les clics")
 	var code := POST_SHADER.code
 	assert_string_contains(code, "hint_screen_texture")
-	assert_string_contains(code, "focus_center", "flou de profondeur")
+	assert_string_contains(code, "top_blur_px", "flous du réglage de lumière, lus par la caméra")
 	assert_string_contains(code, "glow_threshold", "lueur")
 	# Un shader qui ne compile pas n'a aucun uniforme exposé.
 	assert_gt(POST_SHADER.get_shader_uniform_list().size(), 8, "le shader compile")
+	# (RD) Le flou suit la vraie profondeur : rectangle plein écran du monde 3D.
+	var blur := rig.get_node(^"Camera3D/DepthBlur") as MeshInstance3D
+	var depth_material := blur.material_override as ShaderMaterial
+	assert_eq(depth_material.shader, DEPTH_SHADER)
+	assert_eq(depth_material.render_priority, -128, "premier des objets mélangés")
+	assert_string_contains(DEPTH_SHADER.code, "hint_depth_texture", "lit la profondeur")
+	assert_gt(DEPTH_SHADER.get_shader_uniform_list().size(), 6, "le shader de profondeur compile")
+	assert_eq(blur.cast_shadow, GeometryInstance3D.SHADOW_CASTING_SETTING_OFF)
+	assert_true(rig.is_depth_blur_enabled())
+	rig.set_depth_blur_enabled(false)
+	assert_false(blur.visible, "qualité réduite : le flou s'éteint")
+	rig.set_depth_blur_enabled(true)
+	# Sous une autre caméra (vue d'ensemble), le rectangle ne se montre pas.
+	var other := Camera3D.new()
+	add_child_autofree(other)
+	other.make_current()
+	_update(rig, DT)
+	assert_false(blur.visible, "pas sous une autre caméra")
+	rig.camera.make_current()
+	_update(rig, DT)
+	assert_true(blur.visible)
 
 
 # --- (H5) Bande nette du flou, cadrage des bâtiments -----------------------------------------
@@ -212,28 +240,68 @@ func _warehouse(at: Vector3) -> Building:
 	return building
 
 
-func test_focus_band_follows_the_player_on_screen() -> void:
+func test_focus_depth_follows_the_player() -> void:
+	# (RD) Le flou de profondeur est net autour du joueur, quelle que soit sa place à l'écran
+	# (retard du suivi), flou au premier plan (6 à 8 px) et adouci au loin.
 	var rig := _spawn_rig(Vector3(3, 0, -4))
 	var holder := rig.get_parent() as Node3D
 	_update(rig, 0.5)
+	var blur := rig.depth_blur_material()
+	var scene_rig := RIG.instantiate()
+	var shared := (scene_rig.get_node(^"Camera3D/DepthBlur") as MeshInstance3D).material_override
+	assert_ne(blur, shared, "matériau propre à la caméra : la scène n'est pas touchée")
+	scene_rig.free()
 	var post := (rig.get_node(^"PostFX/Screen") as ColorRect).material as ShaderMaterial
-	var scene_post := RIG.instantiate()
-	var shared := (scene_post.get_node(^"PostFX/Screen") as ColorRect).material
-	assert_ne(post, shared, "matériau propre à la caméra : la scène n'est pas touchée")
-	scene_post.free()
 	for offset: Vector3 in [Vector3.ZERO, Vector3(0, 0, -3), Vector3(0, 0, 3)]:
-		# Retard du suivi : le joueur se décale à l'écran, la bande le suit dans la même image.
 		holder.position = Vector3(3, 0, -4) + offset
 		_update(rig, DT)
-		var center: float = post.get_shader_parameter(&"focus_center")
-		var half: float = post.get_shader_parameter(&"focus_half")
+		var values := {}
+		for key: StringName in DepthFocus.PARAMETERS:
+			var value: Variant = blur.get_shader_parameter(key)
+			if value != null:
+				values[key] = value
 		var player := holder.global_position + Vector3.UP * rig.focus_height
-		var y := _screen_y(rig, player)
-		assert_between(y, center - half, center + half, "joueur dans la bande nette (%s)" % offset)
-		var behind := _screen_y(rig, player + Vector3.FORWARD * 6.0)
-		assert_gt(behind, center - half, "6 m derrière le joueur : encore net")
-		var far := _screen_y(rig, player + Vector3.FORWARD * 14.0)
-		assert_lt(far, center - half, "14 m derrière : dans le flou du lointain")
+		assert_almost_eq(
+			float(values[&"focus_depth"]), rig.focus_depth_of(player), 0.01, "profondeur du joueur"
+		)
+		assert_eq(DepthFocus.radius_px(rig.focus_depth_of(player), values), 0.0, "joueur net")
+		for around: Vector3 in [Vector3.FORWARD * 3.0, Vector3.BACK * 1.5, Vector3.RIGHT * 6.0]:
+			var near := rig.focus_depth_of(player + around)
+			assert_lt(DepthFocus.radius_px(near, values), 0.5, "net à %s du joueur" % around)
+		var far := rig.focus_depth_of(player + Vector3.FORWARD * 22.0)
+		assert_between(DepthFocus.radius_px(far, values), 2.0, 6.0, "le lointain s'adoucit")
+		var front := rig.focus_depth_of(player + Vector3.BACK * 6.0 + Vector3.UP * 3.0)
+		assert_between(DepthFocus.radius_px(front, values), 6.0, 8.0, "premier plan flou")
+	# Les flous du réglage de lumière (sur PostFX) passent au flou de profondeur.
+	post.set_shader_parameter(&"top_blur_px", 3.0)
+	post.set_shader_parameter(&"bottom_blur_px", 2.0)
+	_update(rig, DT)
+	assert_almost_eq(float(blur.get_shader_parameter(&"far_blur_px")), 3.0, 0.001)
+	assert_almost_eq(
+		float(blur.get_shader_parameter(&"near_blur_px")),
+		2.0 * CameraRigScript.NEAR_BLUR_PER_BOTTOM_PX,
+		0.001
+	)
+	# Les matériaux qui se floutent eux-mêmes (ombres des décors) reçoivent la mise au point.
+	var shadow := DecorPanel.shadow_material()
+	assert_true(DepthFocus.is_registered(shadow))
+	assert_almost_eq(
+		float(shadow.get_shader_parameter(&"focus_depth")),
+		float(blur.get_shader_parameter(&"focus_depth")),
+		0.01
+	)
+
+
+func test_depth_focus_defaults_match_the_shader() -> void:
+	# Le jumeau sur le processeur (DepthFocus.DEFAULTS) a les valeurs des uniformes du shader.
+	var code := FileAccess.get_file_as_string("res://src/world/shaders/depth_focus.gdshaderinc")
+	var pattern := RegEx.create_from_string("uniform float (\\w+) = ([0-9.]+);")
+	var found := {}
+	for result in pattern.search_all(code):
+		found[StringName(result.get_string(1))] = float(result.get_string(2))
+	for key: StringName in DepthFocus.PARAMETERS:
+		assert_true(found.has(key), "uniforme %s" % key)
+		assert_almost_eq(float(found.get(key, -1.0)), float(DepthFocus.DEFAULTS[key]), 0.001)
 
 
 func test_walking_past_buildings_never_tilts_nor_zooms() -> void:
@@ -292,24 +360,90 @@ func test_conversation_keeps_the_player_above_the_dialogue_box() -> void:
 	assert_almost_eq(_screen_y(rig, rig.global_position), walking, 0.01, "puis le cadrage revient")
 
 
+## Fait marcher le porteur de la caméra à velocity (m/s, accélération et freinage du joueur :
+## 45 et 60 m/s²) pendant seconds s ; renvoie le plus grand écart, dans le sens de la marche, du
+## point visé au point visé au repos (sens : celui de velocity, sinon travel).
+func _walk(
+	rig: CameraRigScript, velocity: Vector3, seconds: float, travel: Vector3 = Vector3.RIGHT
+) -> float:
+	var holder := rig.get_parent() as Node3D
+	var worst := -INF
+	for _i in roundi(seconds / DT):
+		var rate := 45.0 if velocity != Vector3.ZERO else 60.0
+		rig.follow_velocity = rig.follow_velocity.move_toward(velocity, rate * DT)
+		holder.position += rig.follow_velocity * DT
+		rig.update_camera(DT)
+		var along := velocity.normalized() if velocity != Vector3.ZERO else travel
+		worst = maxf(worst, (rig.focus() - rig.focus_goal(false)).dot(along))
+	return worst
+
+
 func test_lead_eases_in_and_out() -> void:
-	# Le point visé avance dans le sens de la marche sans à-coup au départ ni à l'arrêt.
+	# Le point visé suit la marche sans à-coup au départ ni à l'arrêt, et ne traîne pas derrière.
 	var rig := _spawn_rig()
 	_update(rig, 1.0)
 	var rest := rig.focus()
-	rig.follow_velocity = Vector3(4, 0, 0)
-	_update(rig, DT)
-	assert_lt(rig.focus().x - rest.x, 0.02, "départ : l'avance ne saute pas")
-	_update(rig, 3.0)
+	_walk(rig, Vector3(5.8, 0, 0), DT)
+	assert_lt(rig.focus().x - rest.x, 0.02, "départ : le point visé ne saute pas")
+	_walk(rig, Vector3(5.8, 0, 0), 3.0)
 	assert_almost_eq(
-		rig.focus().x - rest.x, 4.0 * rig.lead_time, 0.05, "en marche : avance de lead_time s"
+		rig.focus().x, rig.focus_goal(false).x, 0.1, "en course : l'avance rattrape le retard"
 	)
 	var moving := rig.focus().x
-	rig.follow_velocity = Vector3.ZERO
-	_update(rig, DT)
+	_walk(rig, Vector3.ZERO, DT)
 	assert_gt(rig.focus().x, moving - 0.02, "arrêt : pas de recul brusque")
-	_update(rig, 4.0)
-	assert_almost_eq(rig.focus().x, rest.x, 0.05, "puis revient sur le joueur")
+	_walk(rig, Vector3.ZERO, 4.0)
+	assert_almost_eq(rig.focus().x, rig.focus_goal(false).x, 0.05, "puis se pose sur le joueur")
+
+
+func test_no_overshoot_when_stopping() -> void:
+	# (AN) À l'arrêt après une marche ou une course, le point visé ne dépasse jamais le point où il
+	# se pose : le joueur arrêté ne glisse plus à l'écran (l'audit mesurait 0,6 m après une course).
+	for speed: float in [3.1, 5.8]:
+		var rig := _spawn_rig()
+		_update(rig, 1.0)
+		_walk(rig, Vector3(speed, 0, 0), 2.0)
+		var overshoot := _walk(rig, Vector3.ZERO, 0.15)
+		var left := absf(rig.focus_goal(false).x - rig.focus().x)
+		overshoot = maxf(overshoot, _walk(rig, Vector3.ZERO, 3.0))
+		assert_lte(overshoot, 0.001, "à %.1f m/s : jamais au-delà du point visé au repos" % speed)
+		assert_lte(left, 0.15, "à %.1f m/s : arrêté, le joueur ne glisse presque plus" % speed)
+		# Demi-tour : pas de dépassement non plus dans le nouveau sens, une fois arrêté.
+		_walk(rig, Vector3(-speed, 0, 0), 1.0)
+		assert_lte(_walk(rig, Vector3.ZERO, 3.0, Vector3.LEFT), 0.001, "après un demi-tour")
+		(rig.get_parent() as Node3D).free()
+
+
+func test_edge_margin_keeps_the_player_off_the_screen_edges() -> void:
+	# (AN) Au bord d'une carte aux bornes serrées, le joueur ne touche jamais le bord de l'écran :
+	# le point visé sort des bornes juste ce qu'il faut (edge_margin de chaque côté).
+	var rig := _spawn_rig(Vector3(15, 0, 10))
+	rig.limits = Rect2(14, 8, 2, 2)
+	var size := rig.get_viewport().get_visible_rect().size
+	var lowest := 1.0 - rig.edge_margin
+	for spot: Vector3 in [
+		Vector3(40, 0, 10), Vector3(-10, 0, 10), Vector3(15, 0, 30), Vector3(15, 0, -15)
+	]:
+		(rig.get_parent() as Node3D).position = spot
+		_update(rig, 3.0)
+		var feet := rig.camera.unproject_position(spot) / size
+		var head := rig.camera.unproject_position(spot + Vector3.UP * rig.player_height) / size
+		var label := "joueur en %s" % spot
+		assert_between(
+			feet.x, rig.edge_margin - 0.01, lowest + 0.01, label + " : ni à gauche ni à droite"
+		)
+		assert_lte(feet.y, lowest + 0.01, label + " : pieds au-dessus du bas")
+		assert_gte(head.y, rig.edge_margin - 0.01, label + " : tête sous le haut")
+	# Près du centre des bornes, rien ne change : le point visé reste borné.
+	(rig.get_parent() as Node3D).position = Vector3(15, 0, 10)
+	_update(rig, 3.0)
+	assert_almost_eq(rig.focus().x, 15.0, 0.01, "dans les bornes")
+	assert_almost_eq(rig.focus().z, 8.0, 0.01, "bornée au nord")
+	# Recalage d'un coup (téléportation) : la marge aussi.
+	(rig.get_parent() as Node3D).position = Vector3(40, 0, 10)
+	rig.snap()
+	var after_snap := rig.camera.unproject_position(Vector3(40, 0, 10)) / size
+	assert_lte(after_snap.x, lowest + 0.01, "recalée avec la marge")
 
 
 func test_camera_is_placed_outside_physics_interpolation() -> void:

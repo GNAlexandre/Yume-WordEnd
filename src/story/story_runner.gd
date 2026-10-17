@@ -6,9 +6,16 @@ extends Node
 ##
 ## - Chaque étape fait ce qu'elle dit et rend la main quand elle est finie (marche attendue,
 ##   dialogue lu, fondu fini…) ; une étape dont le « if » est faux est passée.
-## - stop() arrête la scène (partie libérée, autre partie chargée) ; skip() passe une séquence déjà
-##   vue : le reste se joue d'un coup (attentes, cartons et répliques sautés, marches posées,
-##   fondus immédiats), sans rien perdre de ce qui change l'état (drapeaux, créneau, carte).
+## - stop() arrête la scène (partie libérée, autre partie chargée) ; skip() la passe (StorySkip :
+##   une séquence déjà vue en scénarisé, toute scène en libre) : le reste se joue d'un coup
+##   (attentes, cartons et répliques sautés, marches posées, fondus immédiats, jeux arrêtés), sans
+##   rien perdre de ce qui change l'état (drapeaux, créneau, carte ; (X-L2) les effets des
+##   dialogues sautés, un choix pris par la clé « skip » de la scène ou le premier choix ; une
+##   attente remplie : carte atteinte, joueur posé au but).
+## - (X-L2) StorySkip.FORWARD_ACTION tenue (plus de FORWARD_HOLD s) accélère la scène
+##   (Engine.time_scale à FAST_FORWARD : répliques, attentes, marches, fondus) tant que la scène
+##   tient le joueur ou qu'un de ses dialogues est ouvert, hors jeux ; les répliques passent seules
+##   après leur temps de lecture.
 ## - Pendant un dialogue de la scène, le personnage qui parle (speaker_id) joue « parle » s'il
 ##   était au repos.
 
@@ -24,6 +31,17 @@ const ARRIVE_DISTANCE := 0.3
 const DEFAULT_FADE := 0.8
 const DEFAULT_CARD := 2.6
 const DEFAULT_CAMERA := 1.2
+## (X-L2) Accélération d'une scène quand StorySkip.FORWARD_ACTION est tenue (Engine.time_scale).
+const FAST_FORWARD := 3.5
+## (X-L2) Durée (s, non accélérées) au-delà de laquelle un appui compte comme tenu : un appui bref
+## fait seulement avancer le dialogue.
+const FORWARD_HOLD := 0.3
+## (X-L2) Temps de lecture d'une réplique entière quand la scène est accélérée (s de jeu, donc
+## accélérées) : base + par caractère ; la réplique passe ensuite seule (pas les choix).
+const FORWARD_READ_BASE := 0.8
+const FORWARD_READ_PER_CHAR := 0.04
+## (X-L2) Rayon par défaut d'une attente « reach » (StoryDirector.DEFAULT_RADIUS).
+const REACH_RADIUS := 2.5
 ## Préfixe de l'identifiant des dialogues d'une scène (aucun PNJ de ce nom).
 const DIALOGUE_PREFIX := "story_"
 const TALK := &"parle"
@@ -44,6 +62,16 @@ var _stopped: bool = false
 var _kind: String = ""
 var _dialogue: StoryDialogue
 var _talker: StringName = &""
+## (X-L2) La scène en cours, le fichier du dialogue ouvert, la clé « skip » déjà appliquée.
+var _data: Dictionary = {}
+var _dialogue_path: String = ""
+var _skip_flags_set: bool = false
+## (X-L2) Accélération : appui tenu depuis (s), accélérée, échelle de temps d'avant, réplique.
+var _forward_held: float = 0.0
+var _forwarding: bool = false
+var _scale_before: float = 1.0
+var _line_wait: float = 0.0
+var _line_length: int = 0
 
 
 func _ready() -> void:
@@ -61,11 +89,27 @@ func run(id: StringName, data: Dictionary, island_id: StringName) -> bool:
 	fast = false
 	_stopped = false
 	_running = true
+	_data = data
+	_skip_flags_set = false
 	var steps: Array = data.get("steps", [])
 	var completed: bool = await _run_steps(steps)
 	_running = false
 	_kind = ""
+	_set_forward(false)
 	return completed and not _stopped
+
+
+func _physics_process(delta: float) -> void:
+	var held := _running and not fast and Input.is_action_pressed(StorySkip.FORWARD_ACTION)
+	_forward_held = _forward_held + delta / maxf(Engine.time_scale, 0.01) if held else 0.0
+	_set_forward(held and _forward_held >= FORWARD_HOLD and _can_forward())
+	if _forwarding:
+		_read_line(delta)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PAUSED or what == NOTIFICATION_EXIT_TREE:
+		_set_forward(false)
 
 
 func is_running() -> bool:
@@ -80,20 +124,31 @@ func current_step() -> String:
 ## Arrête la scène (le dialogue en cours se ferme).
 func stop() -> void:
 	_stopped = true
+	_set_forward(false)
 	if _dialogue.is_running():
 		_dialogue.stop()
 
 
-## Passe le reste de la scène (séquence déjà vue).
+## Passe le reste de la scène (StorySkip) : mode rapide, dialogue ouvert fermé (ses effets à
+## venir appliqués), carton retiré, (X-L2) jeux arrêtés (MiniGames.stop_all).
 func skip() -> void:
 	if not _running or fast:
 		return
 	fast = true
+	_set_forward(false)
 	if _dialogue.is_running():
+		var node := _dialogue.current_node()
 		_dialogue.stop()
+		_skip_dialogue(_dialogue_path, node, true)
 	var overlay: Node = stage.overlay()
 	if overlay != null:
 		overlay.call(&"hide_card")
+	MiniGames.stop_all()
+
+
+## (X-L2) Vrai tant que la scène est accélérée (StorySkip.FORWARD_ACTION tenue).
+func is_forwarding() -> bool:
+	return _forwarding
 
 
 func _run_steps(steps: Array) -> bool:
@@ -296,11 +351,12 @@ func _walk(step: Dictionary) -> void:
 		if fast:
 			stage.place_player(target.origin, facing)
 		elif step.get("wait", true):
-			await stage.walk_player(target.origin, gait)
+			# (X-L2) Passée en route : la marche cesse, le joueur est posé au but.
+			await stage.walk_player(target.origin, gait, _interrupted)
 			if facing != Vector3.ZERO:
 				stage.place_player(Vector3.INF, facing)
 		else:
-			stage.walk_player(target.origin, gait)
+			stage.walk_player(target.origin, gait, _interrupted)
 		return
 	var actor := LifeDirector.actor(who)
 	if actor == null:
@@ -391,10 +447,12 @@ func _bubble(step: Dictionary) -> void:
 
 
 func _talk(step: Dictionary) -> void:
-	if fast:
-		return
 	var file := str(step.get("file", scene_id))
 	var path := StoryData.dialogue_path(island, file)
+	if fast:
+		_skip_dialogue(path, str(step["node"]), false)
+		return
+	_dialogue_path = path
 	var npc: NpcData = null
 	var dialogue_id := StringName(DIALOGUE_PREFIX + String(scene_id))
 	if step.has("npc"):
@@ -408,6 +466,20 @@ func _talk(step: Dictionary) -> void:
 	while _dialogue.is_running() and not _stopped:
 		await get_tree().process_frame
 	_present(PRESENT_FREE)
+
+
+## (X-L2) Les effets d'un dialogue sauté depuis node (entered : déjà affiché), sans rien montrer
+## (StoryDialogue.apply_silently) : ses nœuds, et à un choix le premier proposé ; un choix qui
+## change l'état cède à la clé « skip » de la scène si elle en a une (ses drapeaux, une fois).
+func _skip_dialogue(path: String, node: String, entered: bool) -> void:
+	if path.is_empty() or node.is_empty():
+		return
+	var flags := StorySkip.skip_flags(_data)
+	var crossed := StoryDialogue.apply_silently(path, node, true, flags.is_empty(), entered)
+	if crossed and not flags.is_empty() and not _skip_flags_set:
+		_skip_flags_set = true
+		for flag: StringName in flags:
+			GameState.set_flag(flag)
 
 
 ## Présentation du dialogue (interface « Nuit douce », lot U1) : « presentation » de l'étape, sinon
@@ -477,6 +549,10 @@ func _wait_for(step: Dictionary) -> void:
 	var waited := 0.0
 	director.call(&"expect", step)
 	while not _stopped and not bool(director.call(&"expected_met", step)):
+		if fast:
+			# (X-L2) Scène passée : ce qu'elle attendait arrive.
+			await _meet(step)
+			break
 		if timeout > 0.0 and waited >= timeout:
 			if step.has("timeout_flag"):
 				GameState.set_flag(StringName(str(step["timeout_flag"])))
@@ -485,6 +561,48 @@ func _wait_for(step: Dictionary) -> void:
 		if not get_tree().paused and not DialogueRunner.is_any_running():
 			waited += get_physics_process_delta_time()
 	director.call(&"expect", {})
+
+
+## (X-L2) Une attente passée : la carte attendue est rejointe (go_to, par le marqueur où mène la
+## sortie de la carte courante, sinon Spawn), le joueur posé au point à atteindre (à côté d'un
+## personnage) ; une conversation ou un objet à examiner attendus sont tenus pour faits.
+func _meet(step: Dictionary) -> void:
+	while WorldManager.is_transitioning() and not _stopped and is_inside_tree():
+		await get_tree().physics_frame
+	if _stopped or bool(director.call(&"expected_met", step)):
+		return
+	var map_id := StringName(str(step.get("map", "")))
+	if not map_id.is_empty() and WorldManager.current_map() != map_id:
+		await WorldManager.go_to(map_id, _arrival_marker(map_id))
+	if step.has("reach") and not _stopped and is_inside_tree():
+		var radius := float(step.get("radius", REACH_RADIUS))
+		stage.place_player(_reach_point(step["reach"], radius))
+
+
+## (X-L2) Le marqueur d'arrivée sur map_id depuis la carte courante (sa première sortie vers elle).
+func _arrival_marker(map_id: StringName) -> StringName:
+	var map := WorldManager.current_map_node()
+	if map != null:
+		for exit: MapExit in map.exits():
+			if exit.target_map == map_id:
+				return exit.target_marker
+	return WorldManager.SPAWN_MARKER
+
+
+## (X-L2) Où poser le joueur qui atteint spec : le point, ou à côté du personnage (vers le joueur).
+func _reach_point(spec: Variant, radius: float) -> Vector3:
+	var at: Vector3 = stage.resolve(spec).origin
+	if (
+		not (spec is String or spec is StringName)
+		or LifeDirector.actor(StringName(str(spec))) == null
+	):
+		return at
+	var body: Player = stage.player()
+	var away := body.global_position - at if body != null else Vector3.BACK
+	away.y = 0.0
+	if away.length_squared() < 0.0001:
+		away = Vector3.BACK
+	return at + away.normalized() * minf(radius * 0.5, 0.8)
 
 
 func _game(step: Dictionary) -> void:
@@ -513,6 +631,43 @@ func _text(key: String) -> String:
 	return StoryData.text(island, key, scene_id, key)
 
 
+# --- Accélération (X-L2) -------------------------------------------------------------------------
+
+
+## Vrai si la scène peut être accélérée : elle tient le joueur ou l'un de ses dialogues est ouvert,
+## hors jeu (étape « game ») et hors pause.
+func _can_forward() -> bool:
+	if _kind == "game" or not is_inside_tree() or get_tree().paused:
+		return false
+	var body: Player = stage.player()
+	return _dialogue.is_running() or (body != null and body.is_story_held())
+
+
+## Accélère (on) la scène ou lui rend son temps (Engine.time_scale d'avant).
+func _set_forward(on: bool) -> void:
+	if on == _forwarding:
+		return
+	_forwarding = on
+	_line_wait = 0.0
+	if on:
+		_scale_before = Engine.time_scale
+		Engine.time_scale = FAST_FORWARD
+	else:
+		Engine.time_scale = _scale_before
+
+
+## Scène accélérée : la réplique entière passe seule après son temps de lecture (delta : s de jeu).
+func _read_line(delta: float) -> void:
+	var box := get_tree().get_first_node_in_group(DialogueBox.GROUP) as DialogueBox
+	if box == null or not _dialogue.is_running() or not box.is_waiting():
+		_line_wait = 0.0
+		return
+	_line_wait += delta
+	if _line_wait >= FORWARD_READ_BASE + FORWARD_READ_PER_CHAR * _line_length:
+		_line_wait = 0.0
+		box.advance()
+
+
 static func _names(value: Variant) -> Array[String]:
 	var result: Array[String] = []
 	if value == null:
@@ -525,9 +680,11 @@ static func _names(value: Variant) -> Array[String]:
 # --- Qui parle -----------------------------------------------------------------------------------
 
 
-func _on_dialogue_line(_speaker: String, _line: String, _choices: Array) -> void:
+func _on_dialogue_line(_speaker: String, line: String, _choices: Array) -> void:
 	if not _dialogue.is_running():
 		return
+	_line_length = line.length()
+	_line_wait = 0.0
 	var speaker := DialogueRunner.current_speaker_id()
 	if speaker == _talker:
 		return

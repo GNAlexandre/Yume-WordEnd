@@ -7,6 +7,7 @@
   "map": "entrepot_rdc",
   "hint": "hint",
   "trigger": {"on": "reach", "point": "refectoire_veillee", "radius": 2.6},
+  "offer": {"npc": "nygglatho", "text": "offer"},
   "present": ["nygglatho", "ithea", "nephren"],
   "steps": [
     {"do": "control", "on": false},

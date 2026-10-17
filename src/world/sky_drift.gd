@@ -133,6 +133,8 @@ func rebuild() -> void:
 		material.set_shader_parameter(&"span", span)
 		material.set_shader_parameter(&"fade", fade)
 		material.set_shader_parameter(&"hd2d_relief", 0.0)
+		# (RD) Mélangé, dessiné après le flou de l'écran : il se floute lui-même (le lointain).
+		DepthFocus.register(material)
 		mesh.surface_set_material(0, material)
 		var node := MeshInstance3D.new()
 		node.name = "Drift%d" % k

@@ -37,11 +37,26 @@ extends CharacterBody3D
 ## (E6) Le récit peut tenir le joueur (set_story_hold) : ses commandes sont ignorées comme en
 ## dialogue, sans invite ; story_drive (m/s, plan du sol) le fait alors marcher ou courir avec la
 ## vraie physique (collisions, pentes, animations), là où la scène le mène.
+## (AN) Allure et transitions (docs/DECISIONS.md, lot AN) :
+## - marche à 3,1 m/s, course à 5,8 m/s ; la cadence des planches suit la vitesse réelle
+##   (CharacterVisual.match_stride) : pas de patinage ;
+## - le repos ne vient qu'après IDLE_GRACE s sous IDLE_SPEED tant qu'une direction est tenue (un
+##   demi-tour ou un mur effleuré n'intercale plus d'image de repos, et la marche ne repart pas à
+##   l'image 0) ; à l'arrêt, le pas en cours se termine (CharacterVisual.settle) ;
+## - la vue suit la vitesse réelle au-delà de FACE_SPEED, pas la commande (plus de glissade à
+##   rebours pendant le demi-tour) ; en deçà, elle garde son côté ; au repos, la visée ;
+## - hold_input (changement de carte, WorldManager) : seules les commandes sont figées, le joueur
+##   s'arrête comme si l'on lâchait les touches et finit son pas avant le repos.
 
 ## Script de la caméra, pour typer camera_rig sans ajouter de classe globale.
 const CameraRigScript := preload("res://src/player/camera_rig.gd")
 ## Vitesse horizontale sous laquelle le joueur est au repos (m/s).
 const IDLE_SPEED := 0.3
+## (AN) Durée sous IDLE_SPEED, une direction tenue, avant le repos (s) : un demi-tour passe sous
+## IDLE_SPEED pendant une image physique ou deux sans montrer le repos.
+const IDLE_GRACE := 0.15
+## (AN) Au-delà de cette vitesse (m/s), le visuel regarde dans le sens de la vitesse réelle.
+const FACE_SPEED := 0.6
 ## Un interactable plus proche que cette distance (m) compte même hors du cône frontal.
 const NEAR_RADIUS := 0.6
 ## Boutons de la souris et action qu'ils tiennent.
@@ -51,10 +66,12 @@ const MOUSE_ACTIONS: Dictionary[int, StringName] = {
 }
 
 @export_group("Déplacement")
-## Vitesse de marche (m/s, easter egg : 72 px/s).
-@export var walk_speed: float = 4.0
-## Vitesse de course (m/s), action run maintenue (Maj) ou lancée à la manette (L3).
-@export var run_speed: float = 7.0
+## Vitesse de marche (m/s). (AN) 3,1 m/s (4 auparavant : les pieds patinaient d'un facteur 2,7) ;
+## la cadence de la planche suit (CharacterVisual.match_stride).
+@export var walk_speed: float = 3.1
+## Vitesse de course (m/s), action run maintenue (Maj) ou lancée à la manette (L3). (AN) 5,8 m/s
+## (7 auparavant).
+@export var run_speed: float = 5.8
 ## Accélération au sol (m/s²).
 @export var acceleration: float = 45.0
 ## Décélération au sol, aussi pour les demi-tours (m/s²) : pas de glisse.
@@ -100,6 +117,10 @@ var _in_dialogue: bool = false
 var _wait_release: bool = false
 ## (E6) Tenu par le récit (scène sans contrôle).
 var _story_hold: bool = false
+## (AN) Commandes figées (changement de carte : hold_input).
+var _input_hold: bool = false
+## (AN) Temps passé sous IDLE_SPEED une direction tenue (s).
+var _slow_time: float = 0.0
 var _interactable: Node3D
 var _prompt: String = ""
 var _lock_target: Node3D
@@ -143,6 +164,7 @@ class Commands:
 
 
 func _ready() -> void:
+	visual.match_stride = true
 	visual.set_skin(_current_skin())
 	EventBus.skin_changed.connect(_on_skin_changed)
 	EventBus.dialogue_started.connect(_on_dialogue_started)
@@ -177,7 +199,7 @@ func handle_mouse_button(button: int, pressed: bool, at: Vector2) -> bool:
 	if action == &"":
 		return false
 	if pressed:
-		if _in_dialogue or _story_hold or health.is_dead():
+		if _in_dialogue or _story_hold or _input_hold or health.is_dead():
 			return false
 		_pointer_aim = pointer_direction(at)
 		_mouse_held[button] = true
@@ -340,8 +362,9 @@ func tick(delta: float, commands: Commands) -> void:
 	_pose_left = maxf(_pose_left - delta, 0.0)
 	var busy := combat.is_busy() or dead
 	var frozen := busy or _in_dialogue or _pose_left > 0.0
-	if _story_hold:
-		# (E6) Le récit mène : commandes ignorées, seule story_drive fait marcher.
+	if _story_hold or _input_hold:
+		# (E6) Le récit mène : commandes ignorées, seule story_drive fait marcher. (AN) De même
+		# pendant un changement de carte (hold_input) : le joueur s'arrête comme touches lâchées.
 		commands = Commands.new()
 	_filter_after_dialogue(commands)
 	_update_lock(commands.lock and not _in_dialogue, dead)
@@ -378,8 +401,10 @@ func tick(delta: float, commands: Commands) -> void:
 		GameState.position = global_position
 	_forward_combat(commands, busy)
 	if not combat.is_busy() and not health.is_dead():
-		_animate()
-	_refresh_interaction(not _in_dialogue and not _story_hold and not health.is_dead())
+		_animate(direction, delta)
+	_refresh_interaction(
+		not _in_dialogue and not _story_hold and not _input_hold and not health.is_dead()
+	)
 	camera_rig.lock_target = locked_target()
 	camera_rig.follow_velocity = _move_velocity
 	_was_busy = busy
@@ -480,6 +505,21 @@ func set_story_hold(held: bool) -> void:
 ## (E6) Vrai pendant une scène sans contrôle.
 func is_story_held() -> bool:
 	return _story_hold
+
+
+## (AN) Fige (true) ou rend (false) les commandes, sans rien d'autre : le joueur s'arrête comme si
+## l'on lâchait les touches (décélération, fin du pas, puis repos), sans invite, ni coup, ni saut.
+## WorldManager s'en sert pendant le fondu d'un changement de carte.
+func hold_input(held: bool) -> void:
+	_input_hold = held
+	if held:
+		_run_latched = false
+		_refresh_interaction(false)
+
+
+## (AN) Vrai pendant que les commandes sont figées (hold_input).
+func is_input_held() -> bool:
+	return _input_hold
 
 
 # Après un dialogue, l'appui qui l'a fermé (interact, ou A = jump à la manette) ne doit ni le
@@ -586,22 +626,40 @@ func _forward_combat(commands: Commands, busy: bool) -> void:
 		combat.charge_begin()
 
 
-func _animate() -> void:
+## direction : déplacement voulu de l'image (ZERO : aucune direction tenue).
+func _animate(direction: Vector3, delta: float) -> void:
 	if _pose_left > 0.0:
+		_slow_time = 0.0
 		visual.play(_pose_anim)
 		return
 	if combat.is_guarding():
+		_slow_time = 0.0
 		_animate_guard()
 		return
-	var speed := Vector2(_move_velocity.x, _move_velocity.z).length()
+	var flat := Vector2(_move_velocity.x, _move_velocity.z)
+	var speed := flat.length()
+	var held := direction.length_squared() > 0.0001
+	_slow_time = _slow_time + delta if speed < IDLE_SPEED else 0.0
 	if speed < IDLE_SPEED:
-		visual.play(&"repos")
+		# (AN) Arrêt : le pas en cours se termine. Direction tenue (demi-tour, mur) : le repos
+		# n'arrive qu'après IDLE_GRACE s, la foulée continue sans repartir à l'image 0.
+		if not held or _slow_time >= IDLE_GRACE or not visual.is_stepping():
+			visual.settle(&"repos")
+	elif not held and visual.is_stepping():
+		# (AN) Freinage, touches lâchées : la foulée en cours continue (pas de course qui repasse
+		# par une image de marche avant le repos).
+		pass
 	elif _running and speed > walk_speed + IDLE_SPEED:
 		# Course au stick à moitié incliné : pas plus vite qu'une marche, donc « marche ».
 		visual.play(&"course")
 	else:
 		visual.play(&"marche")
-	visual.set_facing(_aim)
+	# (AN) La vue suit la vitesse réelle (pas la commande) ; lente, elle garde son côté ; au
+	# repos ou face à une cible verrouillée, la visée.
+	if _lock_target != null or (not held and speed < FACE_SPEED):
+		visual.set_facing(_aim)
+	elif speed >= FACE_SPEED:
+		visual.set_facing(Vector3(flat.x, 0.0, flat.y))
 
 
 ## (E8) La parade levée : l'animation « pare » de la planche du bâton, sinon l'image 0 de la charge.
@@ -702,6 +760,9 @@ func _on_player_respawned() -> void:
 func _on_map_entered(_map_id: StringName) -> void:
 	_stop_motion()
 	_refresh_interaction(false)
+	# (AN) Arrivé posé : au repos (s'il n'est pas en plein geste).
+	if not combat.is_busy() and not health.is_dead() and _pose_left <= 0.0:
+		visual.play(&"repos")
 
 
 func _stop_motion() -> void:

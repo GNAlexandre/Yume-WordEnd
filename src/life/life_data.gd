@@ -34,7 +34,7 @@ const SCHEDULE_KEYS: Array[String] = ["gait", "lines"]
 const LINE_KEYS: Array[String] = [
 	"slot", "day", "if", "map", "place", "away", "activity", "outfit", "gait", "role"
 ]
-const ACTIVITIES_KEYS: Array[String] = ["speeds", "fallbacks", "activities"]
+const ACTIVITIES_KEYS: Array[String] = ["speeds", "anim_speeds", "fallbacks", "activities"]
 const ACTIVITY_KEYS: Array[String] = [
 	"poses",
 	"order",
@@ -73,6 +73,9 @@ const ANIMS: Array[StringName] = [
 	&"etreinte",
 	&"attaque",
 ]
+## (L3) Allures qui ne sont pas une animation : elles jouent leur premier remplaçant (« fallbacks »)
+## à leur vitesse (« anim_speeds »).
+const EXTRA_GAITS: Array[StringName] = [&"rattrape"]
 ## Jeux de groupe : un script par jeu, src/life/games/<jeu>.gd (extends LifeGame).
 const GAMES_DIR := "res://src/life/games"
 
@@ -236,6 +239,12 @@ static func speed(gait: StringName) -> float:
 	return float(speeds.get(String(gait), 1.3))
 
 
+## (L3) Vitesse de l'animation d'une allure (« anim_speeds » ; 1 par défaut).
+static func anim_speed(gait: StringName) -> float:
+	var speeds: Dictionary = activities_data().get("anim_speeds", {})
+	return maxf(float(speeds.get(String(gait), 1.0)), 0.1)
+
+
 ## Vrai si gait est une allure de « speeds ».
 static func is_gait(gait: Variant) -> bool:
 	if not (gait is String or gait is StringName):
@@ -260,6 +269,10 @@ static func pose_time(pose: Dictionary, rng: RandomNumberGenerator) -> float:
 	return INF
 
 
+static func _is_gait_name(word: String) -> bool:
+	return StringName(word) in ANIMS or StringName(word) in EXTRA_GAITS
+
+
 ## Problèmes d'activities.json (raw : le JSON lu, sinon le fichier).
 static func activities_problems(raw: Variant = null) -> PackedStringArray:
 	var found := PackedStringArray()
@@ -277,8 +290,17 @@ static func activities_problems(raw: Variant = null) -> PackedStringArray:
 		for gait: String in speeds:
 			if gait.begins_with("_"):
 				continue
-			if not StringName(gait) in ANIMS or not _is_number(speeds[gait]):
+			if not _is_gait_name(gait) or not _is_number(speeds[gait]):
 				found.append("activities.json : allure %s (animation connue, m/s)" % gait)
+	var anim_speeds: Variant = data.get("anim_speeds", {})
+	if not anim_speeds is Dictionary:
+		found.append("activities.json : « anim_speeds » doit être un objet")
+	else:
+		for gait: String in anim_speeds:
+			if gait.begins_with("_"):
+				continue
+			if not _is_gait_name(gait) or not _is_number(anim_speeds[gait]):
+				found.append("activities.json : anim_speeds.%s (allure connue, nombre)" % gait)
 	var table: Variant = data.get("fallbacks", {})
 	if not table is Dictionary:
 		found.append("activities.json : « fallbacks » doit être un objet")
@@ -286,7 +308,7 @@ static func activities_problems(raw: Variant = null) -> PackedStringArray:
 		for anim: String in table:
 			if anim.begins_with("_"):
 				continue
-			if not StringName(anim) in ANIMS or not _is_anim_list(table[anim]):
+			if not _is_gait_name(anim) or not _is_anim_list(table[anim]):
 				found.append("activities.json : fallbacks.%s (animations connues)" % anim)
 	var activities: Variant = data.get("activities")
 	if not activities is Dictionary or (activities as Dictionary).is_empty():

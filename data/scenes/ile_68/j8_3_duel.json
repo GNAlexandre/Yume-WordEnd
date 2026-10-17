@@ -13,6 +13,7 @@
     "point": "cour_willem",
     "radius": 5.0
   },
+  "offer": {"point": "cour_willem", "text": "offer"},
   "present": [
     "willem",
     "nephren",
@@ -26,6 +27,7 @@
     "fairy_01",
     "fairy_02"
   ],
+  "skip": {"flags": ["j8_duel_reprise"]},
   "steps": [
     {
       "do": "place",

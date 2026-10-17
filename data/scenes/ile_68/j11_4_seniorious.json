@@ -7,6 +7,7 @@
   "map": "entrepot",
   "hint": "hint",
   "trigger": {"on": "reach", "point": "clairiere_centre", "radius": 6.5},
+  "offer": {"npc": "willem", "text": "offer"},
   "present": ["willem"],
   "steps": [
     {"do": "control", "on": false},

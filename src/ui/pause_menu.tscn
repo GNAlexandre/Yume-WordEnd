@@ -50,6 +50,13 @@ layout_mode = 2
 theme_type_variation = &"DayLabel"
 text = "Pause"
 
+[node name="ModeTag" type="Label" parent="MainPanel/Box"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 17
+
 [node name="Gap" type="Control" parent="MainPanel/Box"]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
@@ -123,9 +130,9 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -560.0
-offset_top = -110.0
+offset_top = -190.0
 offset_right = -60.0
-offset_bottom = 110.0
+offset_bottom = 190.0
 grow_horizontal = 0
 grow_vertical = 2
 
@@ -152,6 +159,61 @@ theme_type_variation = &"MutedLabel"
 theme_override_font_sizes/font_size = 17
 text = "Au besoin : les premières minutes de jeu, ou après trois secondes d'arrêt devant ce qu'on peut faire."
 autowrap_mode = 3
+
+[node name="ModeGap" type="Control" parent="OptionsPanel/Box"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ModeButton" type="Button" parent="OptionsPanel/Box"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+alignment = 0
+
+[node name="ModeNote" type="Label" parent="OptionsPanel/Box"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 17
+autowrap_mode = 3
+
+[node name="ModeConfirm" type="VBoxContainer" parent="OptionsPanel/Box"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ModeConfirmTitle" type="Label" parent="OptionsPanel/Box/ModeConfirm"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DayLabel"
+
+[node name="ModeConfirmNote" type="Label" parent="OptionsPanel/Box/ModeConfirm"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 17
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="OptionsPanel/Box/ModeConfirm"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="ModeConfirmNo" type="Button" parent="OptionsPanel/Box/ModeConfirm/Buttons"]
+unique_name_in_owner = true
+focus_neighbor_right = NodePath("../ModeConfirmYes")
+layout_mode = 2
+
+[node name="ModeConfirmYes" type="Button" parent="OptionsPanel/Box/ModeConfirm/Buttons"]
+unique_name_in_owner = true
+focus_neighbor_left = NodePath("../ModeConfirmNo")
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
 
 [node name="OptionsBack" type="Button" parent="OptionsPanel/Box"]
 unique_name_in_owner = true

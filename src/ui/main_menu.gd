@@ -11,7 +11,9 @@ extends Control
 ##   l'ancienne île reprend à l'acte 1 : SaveManager.notice est affiché, avis qui survit au
 ##   passage au jeu) ; ERR_FILE_CORRUPT, la nouvelle partie de secours prend le skin choisi et
 ##   last_error reste affiché (même avis) ; ERR_INVALID_DATA, on reste au menu.
-## - Nouvelle partie → SaveManager.new_game(skin choisi), confirmée si une sauvegarde existe.
+## - Nouvelle partie → confirmée si une sauvegarde existe, puis (X-L5) le choix du mode de jeu
+##   (« Mode libre », le défaut qui a le focus, ou « Mode scénarisé », chacun avec sa phrase) :
+##   StoryDirector.next_game_mode puis SaveManager.new_game(skin choisi).
 ## - Sauvegarde : export (texte sélectionnable, presse-papiers) et import (import_json) ; en
 ##   navigation privée (not SaveManager.is_persistent()), avertissement et export mis en avant.
 ## - (bureau) « Plein écran » et « Quitter », hors Web seulement : DesktopApp.setup_menu_buttons.
@@ -70,6 +72,11 @@ var _pad := MenuInput.new()
 @onready var _save_status: Label = %SaveStatus
 @onready var _storage_label: Label = %StorageWarning
 @onready var _confirm_panel: Control = %ConfirmPanel
+@onready var _mode_overlay: Control = %ModeOverlay
+@onready var _mode_panel: Control = %ModePanel
+@onready var _mode_buttons: Dictionary[StringName, Button] = {
+	StoryPacing.FREE: %ModeFreeButton, StoryPacing.SCENARIO: %ModeScenarioButton
+}
 @onready var _save_panel: Control = %SavePanel
 
 
@@ -81,7 +88,8 @@ func _ready() -> void:
 	_save_button.pressed.connect(open_save_panel)
 	_credits_button.pressed.connect(open_credits)
 	_confirm_cancel.pressed.connect(close_overlay)
-	(%ConfirmOk as Button).pressed.connect(start_new_game)
+	(%ConfirmOk as Button).pressed.connect(open_mode_choice)
+	_setup_mode_choice()
 	_copy_button.pressed.connect(copy_export)
 	(%ImportButton as Button).pressed.connect(_on_import_pressed)
 	(%SaveBackButton as Button).pressed.connect(close_overlay)
@@ -89,7 +97,9 @@ func _ready() -> void:
 	refresh_continue()
 	show_storage_warning(SaveManager.is_persistent())
 	MenuInput.focus_on_hover(self)
-	for panel: Control in [%MenuPanel, %SkinPanel, %MessagePanel, _confirm_panel, _save_panel]:
+	for panel: Control in [
+		%MenuPanel, %SkinPanel, %MessagePanel, _confirm_panel, _save_panel, _mode_panel
+	]:
 		UiStyle.frost(panel)
 	if require_gesture and not gesture_done(get_tree()):
 		_set_muted(true)
@@ -204,21 +214,38 @@ func continue_game() -> Error:
 	return err
 
 
-## « Nouvelle partie » : confirmation si une sauvegarde existe, sinon la partie démarre.
+## « Nouvelle partie » : confirmation si une sauvegarde existe, puis le choix du mode de jeu.
 func request_new_game() -> void:
 	if SaveManager.has_save():
 		_open_overlay(_confirm_overlay, _confirm_cancel, _new_game_button)
 	else:
-		start_new_game()
+		open_mode_choice()
 
 
 func is_confirm_open() -> bool:
 	return _confirm_overlay.visible
 
 
-## Nouvelle partie avec le skin choisi (GameState.skin_id) ; main.gd passe au jeu.
-func start_new_game() -> void:
+## (X-L5) Le choix du mode de jeu : deux entrées, « Mode libre » (le défaut : elle a le focus) et
+## « Mode scénarisé » ; Échap ou B reviennent au menu.
+func open_mode_choice() -> void:
+	_open_overlay(_mode_overlay, _mode_buttons[StoryPacing.FREE], _new_game_button)
+
+
+func is_mode_choice_open() -> bool:
+	return _mode_overlay.visible
+
+
+## Bouton du mode (StoryPacing.FREE ou StoryPacing.SCENARIO) dans le choix.
+func mode_button(mode: StringName) -> Button:
+	return _mode_buttons.get(mode)
+
+
+## Nouvelle partie dans le mode donné (libre par défaut) avec le skin choisi (GameState.skin_id) ;
+## main.gd passe au jeu.
+func start_new_game(mode: StringName = StoryPacing.FREE) -> void:
 	close_overlay()
+	StoryDirector.next_game_mode = mode
 	SaveManager.new_game(_selected_skin)
 
 
@@ -305,11 +332,13 @@ func is_credits_open() -> bool:
 
 ## Ferme la confirmation ou le panneau de sauvegarde ; le focus revient au bouton d'origine.
 func close_overlay() -> void:
-	var was_open := _confirm_overlay.visible or _save_overlay.visible
+	var was_open := _confirm_overlay.visible or _save_overlay.visible or _mode_overlay.visible
 	UiStyle.settle(_confirm_panel)
 	UiStyle.settle(_save_panel)
+	UiStyle.settle(_mode_panel)
 	_confirm_overlay.hide()
 	_save_overlay.hide()
+	_mode_overlay.hide()
 	_content.focus_behavior_recursive = Control.FOCUS_BEHAVIOR_INHERITED
 	if was_open and _overlay_return != null:
 		_overlay_return.grab_focus()
@@ -413,10 +442,28 @@ func _build_skin_cards() -> void:
 func _open_overlay(overlay: Control, focus: Control, return_to: Control) -> void:
 	close_overlay()
 	overlay.show()
-	UiStyle.appear(_confirm_panel if overlay == _confirm_overlay else _save_panel, Vector2.DOWN)
+	var panel := _save_panel
+	if overlay == _confirm_overlay:
+		panel = _confirm_panel
+	elif overlay == _mode_overlay:
+		panel = _mode_panel
+	UiStyle.appear(panel, Vector2.DOWN)
 	_content.focus_behavior_recursive = Control.FOCUS_BEHAVIOR_DISABLED
 	_overlay_return = return_to
 	focus.grab_focus()
+
+
+## (X-L5) Textes du choix du mode (ModeText, data/texts) et boutons.
+func _setup_mode_choice() -> void:
+	(%ModeHeader as Label).text = ModeText.text("mode_choice_title")
+	(%ModeHint as Label).text = ModeText.text("mode_choice_hint")
+	(%ModeBack as Button).text = ModeText.text("mode_choice_back")
+	(%ModeBack as Button).pressed.connect(close_overlay)
+	for mode: StringName in ModeText.MODES:
+		var button := _mode_buttons[mode]
+		(button.get_node(^"Box/Name") as Label).text = ModeText.mode_name(mode)
+		(button.get_node(^"Box/Blurb") as Label).text = ModeText.blurb(mode)
+		button.pressed.connect(start_new_game.bind(mode))
 
 
 func _show_message(text: String, error: bool) -> void:

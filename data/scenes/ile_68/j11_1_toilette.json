@@ -5,6 +5,7 @@
   "slot": "aube",
   "map": "entrepot_etage",
   "trigger": {"on": "ready"},
+  "offer": {"point": "chtholly_porte", "text": "offer"},
   "present": ["collon", "tiat", "lakhesh", "willem"],
   "steps": [
     {"do": "hint", "text": "hint"},

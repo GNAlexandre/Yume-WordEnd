@@ -7,7 +7,9 @@
   "map": "entrepot",
   "hint": "hint",
   "trigger": {"on": "reach", "point": "cour_centre", "radius": 5.0},
+  "offer": {"npc": "willem", "text": "offer"},
   "present": ["willem", "nygglatho", "ithea", "nephren", "tiat", "almita"],
+  "skip": {"flags": ["j12_voir_epilogue"]},
   "steps": [
     {"do": "control", "on": false},
     {"do": "card", "text": "cloche", "time": 2.6},

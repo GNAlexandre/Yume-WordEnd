@@ -6,6 +6,7 @@
   "trigger": {
     "on": "ready"
   },
+  "offer": {"point": "infirmerie_lit_1", "text": "offer"},
   "present": [
     "chtholly_double",
     "collon",

@@ -4,6 +4,7 @@ extends Control
 ##
 ## - Au-dessus de la cible du joueur (Player.current_interactable()), un signe plein à taille
 ##   fixe à l'écran : bulle « … » (parler), étincelle (examiner), main (prendre), porte (entrer),
+##   (X-L1) ruban or (une scène proposée, en mode libre : plus petit que les autres),
 ##   images assets/hd2d/fx/sign_<genre>.png ; les autres cibles proches (à moins de
 ##   PALE_RANGE m du joueur) portent un signe pâle, PALE_MAX au plus. Un signe entre en fondu
 ##   en montant de RISE_PX, respire doucement, grossit un peu quand le joueur s'approche ; à
@@ -31,10 +32,14 @@ const TEXTURES := {
 	InteractSign.EXAMINE: preload("res://assets/hd2d/fx/sign_examine.png"),
 	InteractSign.TAKE: preload("res://assets/hd2d/fx/sign_take.png"),
 	InteractSign.ENTER: preload("res://assets/hd2d/fx/sign_enter.png"),
+	InteractSign.STORY: preload("res://assets/hd2d/fx/sign_story.png"),
 }
 ## Côté du signe plein et du signe pâle à l'écran (px de l'interface 1280 × 720).
 const SIGN_PX := 28.0
 const PALE_PX := 20.0
+## (X-L1) Le ruban d'une proposition du récit (InteractSign.STORY) est discret : plus petit que
+## les autres signes (part de leur taille).
+const STORY_SCALE := 0.85
 ## Opacité d'un signe pâle ; nombre de signes pâles au plus.
 const PALE_ALPHA := 0.45
 const PALE_MAX := 3
@@ -380,6 +385,8 @@ func _draw_sign(entry: Dictionary, camera: Camera3D) -> void:
 	var appear := clampf(float(entry["age"]) / RISE_TIME, 0.0, 1.0)
 	center.y -= RISE_PX * ease(appear, 0.4)
 	var side := lerpf(PALE_PX, SIGN_PX, full)
+	if entry.get("kind", &"") == InteractSign.STORY:
+		side *= STORY_SCALE
 	var breath_period := maxf(UiStyle.seconds(&"breath_ms"), 0.1)
 	var breath := 1.0 + 0.035 * sin(_time * TAU / breath_period)
 	var grow := breath * (1.0 + NEAR_GROW * full * _closeness(node))

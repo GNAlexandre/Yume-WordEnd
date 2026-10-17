@@ -635,6 +635,7 @@ dessinés par `tools/hd2d_sky.py` (formes simples à l'outil).
 | 2 | `assets/hd2d/fx/sign_examine.png` | 64 × 64 | idem | **examiner** : une étincelle à quatre branches fines (étoile de lumière), crème au cœur et dorée au bord, une seconde étincelle plus petite en haut à droite ; aucun œil ni loupe |
 | 2 | `assets/hd2d/fx/sign_take.png` | 64 × 64 | idem | **prendre** : une petite main ouverte, paume vers le spectateur, doigts serrés et pouce écarté, crème au contour doré, dessinée simplement (pas de jointures, pas d'ongles) |
 | 2 | `assets/hd2d/fx/sign_enter.png` | 64 × 64 | idem | **entrer, sortir, embarquer** : une porte cintrée vue de face, encadrement doré, intérieur prune #3A2A40, une flèche crème qui monte au milieu (on passe la porte) |
+| 2 | `assets/hd2d/fx/sign_story.png` | 64 × 64 | idem | (X-L1) **une scène du livre proposée** (mode libre) : un petit ruban or de signet, droit et un peu penché, la queue fendue en V, le pli du haut plus sombre ; or #E8C98A, bord or sombre et filet prune #3A2A40, un reflet crème le long ; plus étroit que les autres signes (le jeu le réduit encore : discret) |
 
 Les quatre se commandent dans la même conversation : même épaisseur de contour, même ombre, même
 poids visuel (chacune remplit environ 80 % du carré). Elles doivent rester lisibles **réduites à

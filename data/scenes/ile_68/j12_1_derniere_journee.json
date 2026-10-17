@@ -5,6 +5,7 @@
   "slot": "aube",
   "map": "entrepot_etage",
   "trigger": {"on": "ready"},
+  "offer": {"point": "chtholly_porte", "text": "offer"},
   "steps": [
     {"do": "control", "on": false},
     {"do": "walk", "who": "player", "to": "chtholly_calendrier", "offset": [0.0, 1.0], "facing": "north"},

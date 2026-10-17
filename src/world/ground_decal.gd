@@ -198,6 +198,8 @@ static func material_for(
 		material.set_shader_parameter(&"tint", color)
 		if soft:
 			material.render_priority = SOFT_PRIORITY + soft_layer
+			# (RD) Mélangé, dessiné après le flou de l'écran : il se floute lui-même.
+			DepthFocus.register(material)
 		_materials[key] = weakref(material)
 	return material
 

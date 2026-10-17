@@ -32,6 +32,20 @@ extends Node3D
 ##   sur un pan de toit passent devant lui sans scintiller ;
 ## - foreground : premier plan, qui s'efface en trame autour du joueur quand il passe devant lui
 ##   (panel_foreground.gdshader ; centre posé à chaque image par update_foreground).
+##
+## (RD) Rendu de la profondeur :
+## - genre (DecorGenre : arbre, lisière, buisson, herbe, roseau, rocher, clôture, mur, poteau,
+##   objet), tiré de la catégorie de la scène (metadata/hd2d_category) ou du nom de l'image ;
+##   current_genre() ;
+## - ombre peinte (enfant interne « Shadow », panel_shadow.gdshader, un matériau pour toutes) : un
+##   cœur sombre au pied, à la taille du panneau (shadow_width × shadow_depth : ovale, ou bande pour
+##   une clôture, un mur, une lisière), et une traîne à l'opposé du soleil, longue d'une part de la
+##   hauteur de l'image selon le genre (Atmosphere en règle la direction et la longueur) ;
+## - vent : la cime d'un arbre, d'une herbe, d'un roseau, d'une haie se balance (wind_px du
+##   matériau, d'après le genre et la hauteur de l'image) ; jamais un bâtiment ni un objet ;
+## - tone : variation de luminosité et de teinte de l'exemplaire (± part ; PropScatter la tire
+##   par position), portée par les sommets du mesh fondu (le PropBatcher la lit dans la méta
+##   TONE_META du quad) : un matériau par image, pas un de plus.
 
 ## Densité des images du monde (Chtholly : 1,5 m = 144 px).
 const PIXELS_PER_METER := 96.0
@@ -47,14 +61,27 @@ const SOFT_SHADER := preload("res://src/world/shaders/panel_soft.gdshader")
 const GLOW_LIFT := 1.0 / 2.2
 const GLOW_COLOR := Color(1.0, 0.7931, 0.3876)
 const GLOW_TOLERANCE := 0.12
-const SHADOW_TEXTURE := preload("res://assets/hd2d/fx/shadow.png")
+## (RD) Ombre peinte (cœur au pied et traîne à l'opposé du soleil), un matériau pour toutes.
+const SHADOW_SHADER := preload("res://src/world/shaders/panel_shadow.gdshader")
 ## Hauteur de l'ombre au-dessus du sol (m) : pas de scintillement avec le sol.
 const SHADOW_LIFT := 0.04
-## (H5) Ombre douce : opacité au cœur de la tache (fx/shadow.png y est presque opaque : des trous
-## noirs sous les garde-corps), et la tache poussée vers l'est d'une part de sa largeur, plus
-## large d'autant (le soleil couchant est à l'ouest : MONDE.md 5.4, ombres longues vers l'est).
-const SHADOW_OPACITY := 0.55
-const SHADOW_EAST := 0.12
+## (RD) Formes de l'ombre (panel_shadow.gdshader) : cœur ovale, cœur en bande, traîne ronde,
+## traîne d'un décor long (parallélogramme).
+const SHADOW_CORE := 0
+const SHADOW_STRIP := 1
+const SHADOW_TAIL := 2
+const SHADOW_TAIL_LONG := 3
+## (RD) Profondeur de la bande au pied d'un décor long (m) et longueur maximale d'une traîne (m).
+const SHADOW_STRIP_DEPTH := 0.9
+const SHADOW_TAIL_MAX := 6.0
+## (RD) Méta du quad : code de la variation de teinte (tone_code), lu par le PropBatcher.
+const TONE_META := &"hd2d_tone"
+## (RD) Niveaux de la variation codée (panel_core.gdshaderinc : TONE_LEVELS, TONE_BRIGHT,
+## TONE_HUE_LEVELS, TONE_HUE).
+const TONE_LEVELS := 25
+const TONE_BRIGHT := 0.06
+const TONE_HUE_LEVELS := 13
+const TONE_HUE := 0.03
 ## (H9) Pas de la phase des bandes animées (une phase sur PHASE_STEPS) : peu de meshes différents.
 const PHASE_STEPS := 32
 ## (H9) Hauteur du centre de l'effacement du premier plan au-dessus des pieds du joueur (m).
@@ -93,8 +120,9 @@ static var _foreground_panels: Array[Node] = []
 ## (I1) Chemin de la vue d'une image : clé « chemin|vue » → chemin de l'image de la vue, ou ""
 ## quand elle n'existe pas (des chaînes seulement : les textures restent à ResourceLoader).
 static var _view_paths: Dictionary = {}
-static var _shadow_material: StandardMaterial3D
-static var _shadow_mesh: QuadMesh
+static var _shadow_material: ShaderMaterial
+## (RD) Meshes d'ombre : clé (tailles, forme, opacités) → WeakRef de l'ArrayMesh.
+static var _shadow_meshes: Dictionary = {}
 
 ## Image du panneau (PNG à fond transparent, collée au bord bas).
 @export var texture: Texture2D:
@@ -170,6 +198,17 @@ static var _shadow_mesh: QuadMesh
 @export var foreground: bool = false:
 	set(value):
 		foreground = value
+		_queue_rebuild()
+## (RD) Variation de l'exemplaire : luminosité (x) et teinte (y, part du tour), de −0,06 à 0,06
+## et de −0,03 à 0,03 ; posée par PropScatter, portée par le mesh fondu (TONE_META).
+@export var tone: Vector2 = Vector2.ZERO:
+	set(value):
+		tone = value
+		_queue_rebuild()
+## (RD) Genre du décor (DecorGenre) ; vide : d'après la catégorie de la scène ou le nom de l'image.
+@export var genre: StringName = &"":
+	set(value):
+		genre = value
 		_queue_rebuild()
 ## Alpha doux : la transparence de l'image est mélangée (dégradés de la fumée, de la brume, des
 ## nuages, des rais de lumière) au lieu d'être découpée à 0,5 (panel_soft.gdshader). Sans effet
@@ -306,25 +345,186 @@ func rebuild() -> void:
 	if texture == null:
 		return
 	var phase := strip_phase() if frames > 1 else 0.0
+	var kind := current_genre()
 	_quad.mesh = panel_mesh(size, flip_h != view_flipped(), phase, depth_offset)
 	_quad.material_override = material_for(
-		displayed_texture(), tint, glow, frames, fps, foreground, soft_alpha
+		displayed_texture(),
+		tint,
+		glow,
+		frames,
+		fps,
+		foreground,
+		soft_alpha,
+		GLOW_COLOR,
+		GLOW_TOLERANCE,
+		wind_pixels(kind, size.y * pixels_per_meter),
+		float(DecorGenre.settings(kind)["wind_from"])
 	)
-	_shadow.mesh = shadow_mesh()
+	if tone.is_zero_approx():
+		_quad.remove_meta(TONE_META)
+	else:
+		_quad.set_meta(TONE_META, tone_code(tone))
 	_shadow.material_override = shadow_material()
-	var shadow_size := Vector2(size.x * shadow_width, size.x * shadow_width * shadow_depth)
-	shadow_size.x *= 1.0 + SHADOW_EAST
 	if not is_inside_tree():
+		_shadow.mesh = null
 		return
 	var scale_world := global_basis.get_scale()
 	_quad.global_basis = global_basis if keep_orientation else Basis.from_scale(scale_world)
 	_quad.global_position = global_position + image_offset * scale_world
-	var flat := Vector3(shadow_size.x * scale_world.x, 1.0, shadow_size.y * scale_world.z)
-	var east := Vector3.RIGHT * flat.x * SHADOW_EAST / 2.0
+	_shadow.mesh = shadow_mesh_for(size * Vector2(scale_world.x, scale_world.y), kind)
+	_shadow.visible = _shadow.mesh != null
 	_shadow.global_transform = Transform3D(
-		Basis.from_scale(flat) * Basis(Vector3.RIGHT, -PI / 2.0),
-		global_position + east + Vector3.UP * SHADOW_LIFT
+		Basis.IDENTITY, global_position + Vector3.UP * SHADOW_LIFT
 	)
+
+
+## (RD) Genre du décor : genre s'il est posé, sinon celui de sa catégorie de scène
+## (metadata/hd2d_category) ou du nom de son image (DecorGenre.of).
+func current_genre() -> StringName:
+	if genre != &"":
+		return genre
+	var category := StringName(str(get_meta(&"hd2d_category", "")))
+	return DecorGenre.of(texture.resource_path if texture != null else "", category)
+
+
+## (RD) Déplacement du haut de l'image au vent (px de l'image) pour un genre et une image de
+## height_px px de haut : 0 si le genre ne bouge pas.
+static func wind_pixels(kind: StringName, height_px: float) -> float:
+	if not DecorGenre.is_windy(kind):
+		return 0.0
+	var settings := DecorGenre.settings(kind)
+	return minf(float(settings["wind"]) * height_px, float(settings["wind_max"]))
+
+
+## (RD) Code d'une variation (luminosité, teinte) pour la partie entière de UV2.x
+## (panel_core.gdshaderinc, panel_tone) : 0 sans variation.
+static func tone_code(value: Vector2) -> int:
+	if value.is_zero_approx():
+		return 0
+	var bright := roundi((clampf(value.x / TONE_BRIGHT, -1.0, 1.0) * 0.5 + 0.5) * (TONE_LEVELS - 1))
+	var hue := roundi((clampf(value.y / TONE_HUE, -1.0, 1.0) * 0.5 + 0.5) * (TONE_HUE_LEVELS - 1))
+	return 1 + bright + hue * TONE_LEVELS
+
+
+## (RD) Variation décodée d'un code (tone_code ; jumeau de panel_tone du shader).
+static func tone_from_code(code: int) -> Vector2:
+	if code <= 0:
+		return Vector2.ZERO
+	var c := code - 1
+	var bright := float(c % TONE_LEVELS) / (TONE_LEVELS - 1) * 2.0 - 1.0
+	var hue := float(floori(float(c) / TONE_LEVELS)) / (TONE_HUE_LEVELS - 1) * 2.0 - 1.0
+	return Vector2(bright * TONE_BRIGHT, hue * TONE_HUE)
+
+
+## (RD) Mesh de l'ombre d'un panneau de taille size (m, échelle comprise) d'un genre : un cœur
+## au pied (shadow_width × shadow_depth de la largeur ; bande pour un décor long) et une traîne
+## d'une part de la hauteur (DecorGenre), vers l'est (le shader la tourne vers l'opposé du
+## soleil) ; null sans ombre.
+func shadow_mesh_for(size: Vector2, kind: StringName) -> ArrayMesh:
+	if shadow_width <= 0.0 or size.x <= 0.0:
+		return null
+	var settings := DecorGenre.settings(kind)
+	var width := size.x * shadow_width
+	var tail := minf(size.y * float(settings["tail"]), SHADOW_TAIL_MAX)
+	return shadow_shape(
+		width,
+		width * shadow_depth,
+		tail,
+		width * float(settings["tail_width"]),
+		bool(settings["long"]),
+		Vector2(float(settings["core_alpha"]), float(settings["tail_alpha"]))
+	)
+
+
+## (RD) Mesh d'ombre partagé : cœur de width × depth m (bande de SHADOW_STRIP_DEPTH m de profondeur
+## pour un décor long, dont la traîne est un parallélogramme de toute sa largeur) et traîne de
+## tail m de long et tail_width m de large ; alphas : opacités du cœur (x) et de la traîne (y).
+## Les sommets de la traîne portent dans UV2 leur écart à l'ancre (le long de la traîne, en
+## travers), et sont posés pour une traîne vers l'est.
+static func shadow_shape(
+	width: float, depth: float, tail: float, tail_width: float, long: bool, alphas: Vector2
+) -> ArrayMesh:
+	var key := (
+		"%.2f|%.2f|%.2f|%.2f|%d|%.2f|%.2f"
+		% [width, depth, tail, tail_width, int(long), alphas.x, alphas.y]
+	)
+	var cached := _shadow_meshes.get(key) as WeakRef
+	if cached != null and cached.get_ref() != null:
+		return cached.get_ref() as ArrayMesh
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	var vertices := PackedVector3Array()
+	var uvs := PackedVector2Array()
+	var uv2s := PackedVector2Array()
+	var half := width / 2.0
+	var core_level := roundi(clampf(alphas.x, 0.0, 1.0) * 20.0)
+	var tail_level := roundi(clampf(alphas.y, 0.0, 1.0) * 20.0)
+	var none: Array[Vector2] = [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO]
+	if long:
+		# Bande : du devant (sud, v = 0) à un tiers derrière le pied (nord, v = 1).
+		var front := SHADOW_STRIP_DEPTH
+		var back := -SHADOW_STRIP_DEPTH / 3.0
+		var strip: Array[Vector3] = [
+			Vector3(-half, 0, front),
+			Vector3(half, 0, front),
+			Vector3(half, 0, back),
+			Vector3(-half, 0, back)
+		]
+		_shadow_quad(vertices, uvs, uv2s, strip, SHADOW_STRIP, core_level, none)
+	else:
+		var d := depth / 2.0
+		var oval: Array[Vector3] = [
+			Vector3(-half, 0, d), Vector3(half, 0, d), Vector3(half, 0, -d), Vector3(-half, 0, -d)
+		]
+		_shadow_quad(vertices, uvs, uv2s, oval, SHADOW_CORE, core_level, none)
+	if tail > 0.05 and tail_level > 0:
+		var w := half if long else tail_width / 2.0
+		var offsets: Array[Vector2] = [
+			Vector2(0.0, -w), Vector2(tail, -w), Vector2(tail, w), Vector2(0.0, w)
+		]
+		var corners: Array[Vector3] = []
+		for o in offsets:
+			# Décor long : l'écart en travers reste le long de x (sa largeur) ; sinon il tourne
+			# avec la traîne (le sud quand elle va vers l'est).
+			corners.append(Vector3(o.x + o.y, 0.0, 0.0) if long else Vector3(o.x, 0.0, o.y))
+		_shadow_quad(
+			vertices,
+			uvs,
+			uv2s,
+			corners,
+			SHADOW_TAIL_LONG if long else SHADOW_TAIL,
+			tail_level,
+			offsets
+		)
+	var normals := PackedVector3Array()
+	normals.resize(vertices.size())
+	normals.fill(Vector3.UP)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_NORMAL] = normals
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	arrays[Mesh.ARRAY_TEX_UV2] = uv2s
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	_shadow_meshes[key] = weakref(mesh)
+	return mesh
+
+
+## (RD) Ajoute un quadrilatère d'ombre (coins dans l'ordre des UV (0,0), (1,0), (1,1), (0,1)) de
+## la forme shape et de l'opacité level (sur 20), avec les écarts à l'ancre de ses coins (UV2).
+static func _shadow_quad(
+	vertices: PackedVector3Array,
+	uvs: PackedVector2Array,
+	uv2s: PackedVector2Array,
+	corners: Array[Vector3],
+	shape: int,
+	level: int,
+	offsets: Array[Vector2]
+) -> void:
+	var corner_uvs: Array[Vector2] = [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)]
+	for k: int in [0, 1, 2, 0, 2, 3]:
+		vertices.append(corners[k])
+		uvs.append(corner_uvs[k] + Vector2(2.0 * shape, 2.0 * level))
+		uv2s.append(offsets[k])
 
 
 ## Mesh du panneau de taille size (m), ancre au milieu du bord bas, face vers +Z.
@@ -397,10 +597,14 @@ static func material_for(
 	in_foreground: bool = false,
 	soft: bool = false,
 	glow_color: Color = GLOW_COLOR,
-	glow_tolerance: float = GLOW_TOLERANCE
+	glow_tolerance: float = GLOW_TOLERANCE,
+	wind_px: float = 0.0,
+	wind_from: float = 1.0
 ) -> Material:
 	var blended := soft and not in_foreground
 	var key := "%s|%s|%.2f" % [image_key(image), color.to_html(), glow_amount]
+	if wind_px > 0.0:
+		key += "|w%.2f|%.2f" % [wind_px, wind_from]
 	if frame_count > 1 or in_foreground or blended:
 		key += "|%d|%.3f|%d|%d" % [frame_count, frame_rate, int(in_foreground), int(blended)]
 	var custom_glow := (
@@ -426,6 +630,12 @@ static func material_for(
 			material.set_shader_parameter(&"fps", frame_rate)
 		if in_foreground:
 			_foreground_materials.append(weakref(material))
+		if wind_px > 0.0:
+			material.set_shader_parameter(&"wind_px", wind_px)
+			material.set_shader_parameter(&"wind_from", wind_from)
+		if blended:
+			# (RD) Mélangé, dessiné après le flou de l'écran : il se floute lui-même.
+			DepthFocus.register(material)
 		_materials[key] = weakref(material)
 	return material
 
@@ -513,25 +723,27 @@ static func displayed_transform(node: Node3D) -> Transform3D:
 	return node.global_transform
 
 
-## Matériau de l'ombre douce au sol (fx/shadow.png, mélangée, non éclairée).
-static func shadow_material() -> StandardMaterial3D:
+## (RD) Matériau partagé des ombres peintes (panel_shadow.gdshader : mélangé, non éclairé, sous
+## les panneaux et les personnages) ; Atmosphere y pose le soleil (set_shadow_sun, par
+## AtmosphereRig.apply), la caméra la mise au point (DepthFocus).
+static func shadow_material() -> ShaderMaterial:
 	if _shadow_material == null:
-		_shadow_material = StandardMaterial3D.new()
-		_shadow_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		_shadow_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		_shadow_material.albedo_texture = SHADOW_TEXTURE
-		_shadow_material.albedo_color = Color(1.0, 1.0, 1.0, SHADOW_OPACITY)
-		_shadow_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_shadow_material = ShaderMaterial.new()
+		_shadow_material.shader = SHADOW_SHADER
 		_shadow_material.render_priority = -1
+		DepthFocus.register(_shadow_material)
 	return _shadow_material
 
 
-## Mesh unité de l'ombre (mis à l'échelle par le nœud).
-static func shadow_mesh() -> QuadMesh:
-	if _shadow_mesh == null:
-		_shadow_mesh = QuadMesh.new()
-		_shadow_mesh.size = Vector2.ONE
-	return _shadow_mesh
+## (RD) Pose le soleil sur les ombres peintes : direction (plan du sol x, z) où partent les ombres
+## (à l'opposé du soleil), allongement de la traîne, force de la traîne et du cœur (0..1).
+static func set_shadow_sun(away: Vector2, length: float, tail: float, core: float) -> void:
+	var material := shadow_material()
+	var direction := away.normalized() if away.length_squared() > 0.0001 else Vector2.RIGHT
+	material.set_shader_parameter(&"sun_away", direction)
+	material.set_shader_parameter(&"sun_length", length)
+	material.set_shader_parameter(&"tail_strength", tail)
+	material.set_shader_parameter(&"core_strength", core)
 
 
 func _process(_delta: float) -> void:

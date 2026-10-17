@@ -6,6 +6,9 @@ extends GutTest
 const MAP_SCENE := "res://src/world/maps/essai_relief/essai_relief.tscn"
 const PLAYER_SCENE := preload("res://src/player/player.tscn")
 const MOVES: Array[StringName] = [&"move_left", &"move_right", &"move_forward", &"move_back"]
+## (AN) Les durées de marche des tests sont comptées pour 4 m/s (l'ancienne allure) : _walk les
+## allonge à l'allure du joueur (3,1 m/s), pour parcourir le même chemin.
+const CALIBRATED_SPEED := 4.0
 
 var _map: Node3D
 var _ground: MapGround
@@ -42,7 +45,7 @@ func _walk(direction: Vector2, frames: int) -> void:
 	_hold(&"move_left", -flat.x)
 	_hold(&"move_back", flat.y)
 	_hold(&"move_forward", -flat.y)
-	await wait_physics_frames(frames)
+	await wait_physics_frames(ceili(frames * CALIBRATED_SPEED / _player.walk_speed))
 	for action: StringName in MOVES:
 		Input.action_release(action)
 	await wait_physics_frames(20)

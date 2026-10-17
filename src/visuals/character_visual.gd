@@ -20,6 +20,18 @@ extends Node3D
 ## (SheetLoader.has_view) ; sinon toujours le profil, comme une planche de l'easter egg. Une zone
 ## morte de VIEW_DEAD_ZONE_DEG autour des diagonales évite le clignotement. Changer de vue garde
 ## l'animation, l'image et l'horloge, sans émettre de signal : le combat ne voit rien.
+## (AN) Allure et pas :
+## - match_stride (joueur, PNJ) : la cadence de « marche » et de « course » suit la vitesse au sol
+##   réelle du nœud (mesurée d'image en image, lissée) : à la vitesse dessinée de la planche
+##   (STRIDE_PX : chemin d'un cycle, en pixels de planche, × pixel_size), elle vaut celle du JSON ;
+##   deux fois plus vite, deux fois plus de pas. Les pieds ne patinent plus. À l'arrêt, la dernière
+##   cadence est gardée (le pas en cours se termine au même rythme) ;
+## - avec match_stride, en marche ou en course, un changement de vue (profil, face, dos : l'épée
+##   change de côté à l'écran) attend une image de contact (step_frames : début de chaque pas),
+##   jamais en plein pas ; un demi-tour de profil se retourne tout de suite ;
+## - settle(anim) passe à anim (le repos) à la fin du pas en cours, au lieu de couper la foulée.
+## (AN) Le sprite est lu « net mais lissé » (character_sprite.gdshader, comme le décor) : plus de
+## scintillement quand la caméra glisse.
 
 ## Émis à chaque image affichée (y compris l'image 0 au lancement d'une animation).
 signal frame_changed(anim: StringName, frame: int)
@@ -40,6 +52,22 @@ const VIEW_ANGLE_DEG := 45.0
 const VIEW_DEAD_ZONE_DEG := 10.0
 ## Tolérance de floor(t × ips) (temps avancé par pas exacts de 1 / ips).
 const TIME_EPSILON := 0.0001
+## (AN) Animations de déplacement et chemin parcouru au sol par un cycle complet (deux pas), en
+## pixels de planche : mesuré sur la planche de Chtholly (pas d'environ 42 px ; foulée de course
+## d'environ 74 px, envol compris), commun aux planches du même cahier (6 images à 10 i/s, 5 à
+## 14 i/s). Chtholly : 0,88 m en 0,6 s (1,46 m/s) et 1,53 m en 0,36 s (4,3 m/s).
+const STRIDE_PX: Dictionary[StringName, float] = {&"marche": 84.0, &"course": 147.0}
+## (AN) Bornes du rapport de cadence (vitesse réelle / vitesse dessinée).
+const MIN_STRIDE_RATE := 0.35
+const MAX_STRIDE_RATE := 3.0
+## (AN) Sous cette vitesse (m/s), la cadence n'est plus mesurée : la dernière est gardée.
+const STRIDE_MIN_SPEED := 0.2
+## (AN) Lissage de la vitesse mesurée (s) ; un saut plus rapide que TELEPORT_SPEED m/s
+## (téléportation, changement de carte) est ignoré.
+const SPEED_SMOOTHING := 0.08
+const TELEPORT_SPEED := 30.0
+## (AN) Matériau du sprite : planche « nette mais lissée ».
+const SPRITE_SHADER := preload("res://src/visuals/character_sprite.gdshader")
 
 ## Skin affiché (peut être fixé dans une scène ; à l'exécution, utiliser set_skin()).
 @export var skin: SkinData:
@@ -49,6 +77,8 @@ const TIME_EPSILON := 0.0001
 		skin = value
 		if is_node_ready():
 			_apply_skin()
+## (AN) La cadence de marche et de course suit la vitesse au sol réelle (joueur, PNJ).
+@export var match_stride: bool = false
 
 var _sheet: Dictionary = {}
 var _clips: Dictionary = {}
@@ -68,16 +98,29 @@ var _side_flip: bool = false
 ## teinte de la lumière.
 var _base_modulate: Color = Color.WHITE
 var _lit_modulate: Color = Color.WHITE
+## (AN) Rapport de cadence des animations de déplacement, vitesse au sol mesurée (m/s), dernière
+## position mesurée, animation qui attend la fin du pas (settle), matériau du sprite et planche
+## qu'il lit.
+var _stride_rate: float = 1.0
+var _ground_speed: float = 0.0
+var _last_position: Vector3 = Vector3.INF
+var _settle_anim: StringName = &""
+var _material: ShaderMaterial
+var _material_sheet: Texture2D
 
 @onready var _sprite: AnimatedSprite3D = $Sprite
 @onready var _shadow: MeshInstance3D = $Shadow
 
 
 func _ready() -> void:
+	_material = ShaderMaterial.new()
+	_material.shader = SPRITE_SHADER
+	_sprite.material_override = _material
 	_apply_skin()
 
 
 func _process(delta: float) -> void:
+	_measure_speed(delta)
 	advance(delta)
 	_update_facing()
 
@@ -108,6 +151,7 @@ func set_skin(new_skin: SkinData) -> void:
 func play(anim: StringName, restart: bool = false) -> void:
 	if not has_animation(anim):
 		return
+	_settle_anim = &""
 	if anim == _anim and not restart and not _finished:
 		_playing = true
 		return
@@ -128,6 +172,7 @@ func show_frame(anim: StringName, frame: int) -> void:
 	var clip: Clip = _clips[anim]
 	var index := clampi(frame, 0, clip.count - 1)
 	var changed := anim != _anim or index != _frame
+	_settle_anim = &""
 	_generation += 1
 	_playing = false
 	_finished = false
@@ -136,6 +181,65 @@ func show_frame(anim: StringName, frame: int) -> void:
 	_show(anim, index)
 	if changed:
 		frame_changed.emit(anim, index)
+
+
+## (AN) Passe à anim (le repos) à la fin du pas en cours : tout de suite si l'animation courante
+## n'est pas une marche ou une course qui avance (is_stepping), ou si elle montre déjà une image de
+## contact (step_frames) ; sinon à la prochaine. Un play() ou un show_frame() entre-temps l'annule.
+func settle(anim: StringName = IDLE) -> void:
+	if not has_animation(anim):
+		return
+	if anim == _anim or not is_stepping() or _frame in step_frames(_anim):
+		play(anim)
+		return
+	_settle_anim = anim
+
+
+## (AN) Animation qui attend la fin du pas (settle), &"" si aucune.
+func settling_to() -> StringName:
+	return _settle_anim
+
+
+## (AN) Vrai pendant une marche ou une course qui avance (STRIDE_PX).
+func is_stepping() -> bool:
+	return _playing and STRIDE_PX.has(_anim) and _clips.has(_anim)
+
+
+## (AN) Images de contact d'une animation : le début de chacun de ses deux pas (0 et la moitié du
+## cycle arrondie au-dessus : 0 et 3 pour 6 ou 5 images).
+func step_frames(anim: StringName) -> Array[int]:
+	if not _clips.has(anim):
+		return [0]
+	var clip: Clip = _clips[anim]
+	if clip.count <= 2:
+		return [0]
+	return [0, ceili(clip.count / 2.0)]
+
+
+## (AN) Rapport de cadence des animations de déplacement (1 : celle du JSON).
+func stride_rate() -> float:
+	return _stride_rate
+
+
+## (AN) Vitesse au sol mesurée (m/s, lissée).
+func ground_speed() -> float:
+	return _ground_speed
+
+
+## (AN) Vitesse au sol (m/s) à laquelle anim garde la cadence du JSON (STRIDE_PX × pixel_size ×
+## cycles par seconde) ; 0 si anim n'est pas une animation de déplacement de la planche.
+func drawn_speed(anim: StringName) -> float:
+	if not STRIDE_PX.has(anim) or not _clips.has(anim):
+		return 0.0
+	var clip: Clip = _clips[anim]
+	return STRIDE_PX[anim] * _side_pixel_size() * clip.fps / clip.count
+
+
+## (AN) Pose la vitesse au sol (m/s) et la cadence qui en découle sans attendre la mesure (tests,
+## démonstrations) ; la mesure d'image en image reprend ensuite.
+func set_ground_speed(speed: float) -> void:
+	_ground_speed = maxf(speed, 0.0)
+	_update_stride_rate()
 
 
 ## Oriente le personnage vers direction (plan du sol) : les planches regardent vers la droite,
@@ -190,7 +294,7 @@ func advance(delta: float) -> void:
 	if not _playing or not _clips.has(_anim):
 		return
 	var clip: Clip = _clips[_anim]
-	_time += delta
+	_time += delta * (_stride_rate if match_stride and STRIDE_PX.has(_anim) else 1.0)
 	var target := floori(_time * clip.fps + TIME_EPSILON)
 	var last_step := target if clip.loops else mini(target, clip.count - 1)
 	if clip.loops:
@@ -201,6 +305,9 @@ func advance(delta: float) -> void:
 		_show(_anim, _step % clip.count)
 		frame_changed.emit(_anim, _frame)
 		if generation != _generation:
+			return
+		if _settle_anim != &"" and _frame in step_frames(_anim):
+			play(_settle_anim)
 			return
 	if not clip.loops and target >= clip.count:
 		_playing = false
@@ -267,6 +374,50 @@ func _show(anim: StringName, frame: int) -> void:
 			_sprite.animation = anim
 		_sprite.frame = frame
 		_sync_offset()
+		_sync_material()
+
+
+## (AN) Le matériau lit la planche de l'image affichée (une AtlasTexture de la planche principale
+## ou de la planche complémentaire ; une image simple se lit telle quelle).
+func _sync_material() -> void:
+	if _material == null or not _sprite.sprite_frames.has_animation(_anim):
+		return
+	var image := _sprite.sprite_frames.get_frame_texture(_anim, _frame)
+	var atlas := image as AtlasTexture
+	var sheet: Texture2D = atlas.atlas if atlas != null else image
+	if sheet != _material_sheet:
+		_material_sheet = sheet
+		_material.set_shader_parameter(&"sheet", sheet)
+
+
+## (AN) Mesure la vitesse au sol du nœud (déplacement horizontal depuis l'image précédente,
+## lissé) et en tire la cadence des animations de déplacement (match_stride).
+func _measure_speed(delta: float) -> void:
+	if not match_stride or delta <= 0.0 or not is_inside_tree():
+		return
+	var here := global_position
+	if _last_position != Vector3.INF:
+		var step := Vector2(here.x - _last_position.x, here.z - _last_position.z).length() / delta
+		if step <= TELEPORT_SPEED:
+			_ground_speed = lerpf(_ground_speed, step, 1.0 - exp(-delta / SPEED_SMOOTHING))
+	_last_position = here
+	_update_stride_rate()
+
+
+## (AN) Rapport de cadence de l'animation de déplacement courante (ou de la marche) pour la
+## vitesse au sol ; sous STRIDE_MIN_SPEED, le dernier est gardé (le pas en cours se termine).
+func _update_stride_rate() -> void:
+	if _ground_speed < STRIDE_MIN_SPEED:
+		return
+	var drawn := drawn_speed(_anim if STRIDE_PX.has(_anim) else &"marche")
+	if drawn > 0.0:
+		_stride_rate = clampf(_ground_speed / drawn, MIN_STRIDE_RATE, MAX_STRIDE_RATE)
+
+
+## (AN) Taille d'un pixel de planche du profil (celle de la planche qui donne STRIDE_PX).
+func _side_pixel_size() -> float:
+	var entry: Array = _views.get(SheetLoader.SIDE, [])
+	return float(entry[1]) if entry.size() > 1 else _sprite.pixel_size
 
 
 func _sync_offset() -> void:
@@ -291,7 +442,10 @@ func _update_facing() -> void:
 		_side_flip = side < 0.0
 	# Vers la caméra (le bas de l'écran) : droite × haut, quelle que soit l'inclinaison.
 	var view := _choose_view(_facing.dot(right.cross(Vector3.UP)))
-	if view != _view:
+	# (AN) En marche ou en course (match_stride), la vue, et le côté de l'épée avec elle, ne change
+	# qu'au début d'un pas.
+	var mid_step := match_stride and is_stepping() and not (_frame in step_frames(_anim))
+	if view != _view and not mid_step:
 		_set_view(view)
 	var flip := _side_flip if _view == SheetLoader.SIDE else false
 	if flip != _sprite.flip_h:

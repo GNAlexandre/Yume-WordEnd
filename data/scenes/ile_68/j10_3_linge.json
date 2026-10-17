@@ -8,6 +8,7 @@
   "map": "entrepot_toit",
   "hint": "hint",
   "trigger": {"on": "reach", "point": "toit_sechoir", "radius": 4.5},
+  "offer": {"point": "toit_sechoir", "text": "offer"},
   "present": ["nygglatho", "fairy_04", "fairy_05"],
   "steps": [
     {"do": "control", "on": false},

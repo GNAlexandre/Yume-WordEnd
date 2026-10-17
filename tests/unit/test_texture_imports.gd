@@ -18,6 +18,12 @@ const TEXTURE_PARAMS := {
 	"compress/mode": 0,
 	"mipmaps/generate": false,
 }
+## (F2) Les fonds peints et opaques du ciel (panoramas sky*, mers de nuages cloud_sea*) sont en
+## WebP avec perte, à cette qualité ; tout le reste reste sans perte : le pixel art, et les images
+## détourées (la perte grise leurs bords).
+const LOSSY_DIR := "res://assets/hd2d/sky/"
+const LOSSY_PREFIXES: Array[String] = ["sky", "cloud_sea"]
+const LOSSY_QUALITY := 0.9
 ## Effort minimal de l'encodeur WebP sans perte (project.godot, F0).
 const WEBP_METHOD_MIN := 4
 const WEBP_FACTOR_MIN := 90.0
@@ -104,6 +110,15 @@ func _excluded_files() -> Array[String]:
 	return excluded
 
 
+func _is_lossy(import_path: String) -> bool:
+	if not import_path.begins_with(LOSSY_DIR):
+		return false
+	for prefix: String in LOSSY_PREFIXES:
+		if import_path.get_file().begins_with(prefix):
+			return true
+	return false
+
+
 func test_every_texture_is_lossless_without_mipmaps() -> void:
 	var imports: Array[String] = []
 	_files("res://", ["import"] as Array[String], imports)
@@ -117,9 +132,13 @@ func test_every_texture_is_lossless_without_mipmaps() -> void:
 		if config.get_value("remap", "importer", "") != "texture":
 			continue
 		textures += 1
-		for key: String in TEXTURE_PARAMS:
+		var expected := TEXTURE_PARAMS.duplicate()
+		if _is_lossy(path):
+			expected["compress/mode"] = 1
+			expected["compress/lossy_quality"] = LOSSY_QUALITY
+		for key: String in expected:
 			var value: Variant = config.get_value("params", key, null)
-			if value != TEXTURE_PARAMS[key]:
+			if value != expected[key]:
 				wrong.append("%s : %s=%s" % [path.trim_prefix("res://"), key, value])
 	assert_gt(textures, 1000, "les images du jeu sont toutes vues (%d)" % textures)
 	assert_true(
@@ -140,6 +159,7 @@ func test_new_images_get_the_same_settings() -> void:
 	assert_string_contains(script, "normalize_textures")
 	assert_string_contains(script, "detect_3d/compress_to=0")
 	assert_string_contains(script, "compress/mode=0")
+	assert_string_contains(script, 'LOSSY_DIR="assets/hd2d/sky/"', "(F2) le ciel avec perte")
 	assert_string_contains(script, "mipmaps/generate=false")
 
 

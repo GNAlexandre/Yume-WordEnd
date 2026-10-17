@@ -16,15 +16,23 @@ Chaque recette de ce dossier donne à tools/exterior_maps.py :
 import json
 import math
 
+import exterior_kits as kits
 from exterior_pose import Rect, along, poisson, prop
 
 SETTINGS = {
     "groups": ["Building", "Roof", "Facade", "Porch", "Yard", "Garden", "Clearing", "Field", "Marsh", "Trees",
-               "Lisiere", "Woods", "Meadow"],
+               "Lisiere", "Woods", "Meadow", "Middle", "Foreground"],
     "provisional": {"entrepot_rdc": ("entrepot_rdc_essai", "Spawn")},
     # (QC2) Le grand arbre d'escalade (V5, CARTE.md 2.3) se dresse exprès au milieu du passage vers le champ, en
     # premier plan : le chemin passe sous sa couronne, qui s'efface autour du joueur (docs/QUALITE.md, QC-37).
     "masks_allowed": {"ClimbingTree": (("chemin vers_champ",), "l'arbre d'escalade du plan, au milieu du passage")},
+    # (RC) Les vues dont le sud est une place où l'on joue : rien ne s'y dresse, ni au premier plan (CARTE.md 0.5).
+    "south_allowed": {
+        "facade": "le sud de la vue est la cour et le duel (places : rien ne s'y dresse)",
+        "porche": "le sud de la vue est la cour et le duel (places : rien ne s'y dresse)",
+        "lisiere_nord": "le sud de la vue est la clairière d'entraînement (place : rien ne s'y dresse)",
+        "champ_est": "le sud de la vue est le champ de ballon (place : on y court)",
+    },
 }
 
 
@@ -142,8 +150,15 @@ def pose(p):
     # pan de plus au-delà du bord ouest ; aux deux bords de la trouée (x 12 et 16), un chêne devant le bout
     # du pan (son tronc le couvre, sa couronne fait voûte au-dessus du chemin de la colline).
     place("Lisiere", "forest_wall_b", -12.0, 3.7, y=lisiere_y, name="ForestWall0", flip=True, check=False)
-    place("Lisiere", "oak_a", 11.7, 4.3, y=lisiere_y, name="GateOakWest")
-    place("Lisiere", "oak_a", 16.3, 4.3, y=lisiere_y, name="GateOakEast", flip=True)
+    # (RC) Trois `oak_a` côte à côte (les deux chênes de la trouée et l'arbre de la clairière, x 20) faisaient un
+    # copié-collé : les chênes de la trouée sont deux autres chênes (tronc et couronne pleins devant le bout du pan :
+    # exterior_maps.py check le vérifie, QC-33) : le chêne à l'ouest, un hêtre à l'est (seuls oak_a, beech_a,
+    # beech_c et tree_old_pine ont une colonne pleine du pied à 6,6 m).
+    place("Lisiere", "oak_a", 11.7, 4.3, y=lisiere_y, name="GateOakWest", extra={"tone": (0.03, -0.01)})
+    place("Lisiere", "beech_a", 16.0, 4.5, y=lisiere_y, flip=True, name="GateOakEast", extra={"tone": (-0.04, 0.015)})
+    # (RC) Le fond en deux rangs (CARTE.md 0.5) : derrière les pans, un second rang décalé d'un demi-pan, hors de la
+    # carte (au nord de la sortie de la colline : sa collision ne ferme rien).
+    kits.second_rank(p, "Lisiere", -20.0, W + 4.0, -1.6, lisiere_y + 0.5, seed=901)
 
     walk_grid()
 
@@ -177,8 +192,14 @@ def pose(p):
         if not (10.0 < x < 18.0):
             row.append((x + rng.uniform(-0.6, 0.6), rng.uniform(4.2, 4.7)))
         x += rng.uniform(3.2, 4.8)
-    scatter("LisiereGold", TREES_GOLD, [p for k, p in enumerate(row) if k % 2 == 0], seed=11)
-    scatter("LisiereRust", TREES_RUST, [p for k, p in enumerate(row) if k % 2 == 1], seed=12)
+    # (RC) La rangée tirée ci-dessus n'est plus posée (sa suite de tirages est gardée : le reste de la carte ne
+    # bouge pas) : une rangée irrégulière (exterior_kits.row : pas ± 30 %, recul, sauts, jamais la même image deux
+    # fois de suite) des arbres d'or et de rouille, de part et d'autre de la trouée de la colline.
+    trees = kits.family("trees_gold") + kits.family("trees_rust")
+    for k, (xa, xb) in enumerate(((1.2, 9.4), (19.2, W - 0.8))):
+        kits.place_row(p, "Lisiere", "LisiereArbre%d_" % (k + 1),
+                       kits.row([(xa, 4.35), (xb, 4.35)], trees, seed=911 + k, step=4.0, depth_range=(-0.55, 0.45),
+                                skip=0.1, scale=(0.9, 1.1)), y=None)
     behind = poisson(Rect(27, 5.5, 63, 11.2), 4.2, 14, lambda x, z: not any(b.has(x, z, 0.6) for b in BUILDINGS)
                      and abs(x - 28) + abs(z - 12.8) > 2.5, seed=13)
     scatter("BehindTrees", ["pine_tall_b", "tree_old_pine", "beech_a", "oak_a", "maple_a"], behind, seed=14)
@@ -305,7 +326,10 @@ def pose(p):
     place("Field", "berry_bush", 85.4, 20.6, name="EastBush2")
     place("Field", "bush_f", 85.5, 27.4, name="EastBush3")
     grove = [(87.0 + rng.uniform(-0.3, 0.6), z) for z in (6.5, 10.2, 14.0, 18.2, 22.0, 26.0, 30.0, 33.6)]
-    scatter("Grove", ["oak_d", "beech_b", "pine_tall_b", "maple_c", "oak_a"], grove, seed=19)
+    # (RC) Le bosquet de l'est : une rangée irrégulière (le tirage ci-dessus est gardé pour la suite des tirages).
+    kits.place_row(p, "Trees", "Bosquet", kits.row([(87.0, 5.6), (87.0, 34.6)], ["oak_d", "beech_b", "pine_tall_b", "maple_c",
+                                                                               "tree_autumn_rust", "beech_a"],
+                                                   seed=921, step=3.9, depth=0.55, skip=0.1, scale=(0.9, 1.1)))
     south_field = poisson(Rect(64.5, 29.0, 86.0, 31.5), 1.6, 18, free(), seed=20)
     scatter("FieldSouthGrass", GRASSES + FLOWERS, south_field, seed=21, check=False)
     west_field = poisson(Rect(62.6, 6.0, 65.6, 29.0), 1.8, 12, free(), seed=22)
@@ -350,7 +374,10 @@ def pose(p):
 
     # Bord ouest (forêt du village, 2.12 : bord foret 0 30 2 38 et 0 42 2 44).
     west = [(1.0, 31.0), (1.2, 34.5), (0.8, 37.4), (1.1, 43.3)]
-    scatter("WestTrees", ["oak_b", "beech_c", "maple_a", "tree_autumn"], west, seed=28)
+    # (RC) Une rangée irrégulière plutôt que quatre points à la main.
+    kits.place_row(p, "Trees", "ArbreOuest", kits.row([(1.0, 30.9), (1.0, 37.5)], ["oak_b", "beech_c", "maple_a", "tree_autumn"],
+                                                      seed=922, step=3.3, depth=0.3, skip=0.0, scale=(0.9, 1.1)))
+    place("Trees", "maple_c", 1.1, 43.3, scale=0.95, name="ArbreOuestSud", extra={"tone": (0.03, 0.01)})
     scatter("WestBushes", BUSHES[2:], [(2.6, 32.6), (2.4, 36.2), (2.8, 43.6)], seed=29, check=False)
 
     # Coin d'herbe au soleil : un gros tronc et un seau à son bord (VEX, prologue, ill.).
@@ -363,7 +390,7 @@ def pose(p):
     # Prés (au sud de la clairière, autour du potager, à l'est de la cour) : touffes et fleurs, pas
     # de sol nu de plus de 6 × 6 m.
     meadow = []
-    for area, n, seed in ((Rect(6.5, 24.6, 18.5, 30.5), 22, 32), (Rect(2.5, 30.5, 16.0, 37.5), 22, 33),
+    for area, n, seed in ((Rect(6.5, 24.6, 18.5, 30.5), 19, 32), (Rect(2.5, 30.5, 16.0, 37.5), 19, 33),
                           (Rect(2.5, 42.6, 37.0, 44.6), 14, 34), (Rect(57.5, 30.5, 64.0, 36.0), 10, 35),
                           (Rect(57.5, 40.6, 86.0, 44.4), 22, 36), (Rect(46.0, 44.8, 57.0, 46.0), 6, 37),
                           (Rect(31.0, 26.6, 60.0, 28.3), 0, 38), (Rect(60.5, 12.5, 64.0, 16.0), 4, 39),
@@ -396,9 +423,11 @@ def pose(p):
     borders = []
     for name, width, pts in PATHS:
         if name in ("vers_village", "vers_sentier"):
-            borders += along(pts, 3.6, width / 2.0 + 0.2, 0.1, seed=64 + len(borders), with_yaw=True)
+            # (RC, QC-29) Bordures irrégulières : pas ± 35 %, écart au bord, trous, lacet à ± 12°.
+            borders += kits.along_irregular(pts, 3.6, width / 2.0 + 0.2, seed=64 + len(borders), spread=0.35,
+                                            lateral=0.3, skip=0.2, yaw_jitter=12.0)
     borders = [p for p in borders if not PLACES["cour"].has(p[0], p[1], 0.5) and in_map(p[0], p[1], 0.5)]
-    scatter("PathEdges", ["grass_edge_a", "grass_edge_b"], borders, scale=(0.9, 1.1), seed=65, check=False)
+    scatter("PathEdges", kits.family("grass_edges"), borders, scale=(0.8, 1.15), seed=65, check=False)
 
     # Bois du sud (z 44 → 60) : sous-bois bas, souches, champignons, feuilles ; jeunes arbres et
     # grands troncs en premier plan seulement ; rien de haut près des chemins.
@@ -500,6 +529,16 @@ def pose(p):
             p.warnings.append("bordure : %s en (%.1f ; %.1f) gêne le duel, la vie, un chemin ou un point"
                               % (scene, x, z))
         place(group, scene, x, z, name="Rim%s%d" % (group, k + 1), flip=k % 2 == 1)
+
+    # === (RC) Les plans (CARTE.md 0.5) ================================================================
+    # Plan moyen : des masses au bord du champ et de la cour (hors des places : on y joue, on s'y bat en duel ;
+    # loin des places de la vie). Premier plan : feuillages et troncs au bas de chaque vue et de chaque passage.
+    walk_grid()
+    kits.middle_kit(p, [(Rect(62.4, 6.6, 65.7, 29.6), 3), (Rect(66.0, 28.4, 84.0, 30.8), 2),
+                        (Rect(28.6, 30.0, 31.7, 45.0), 2), (Rect(56.3, 30.0, 59.6, 45.0), 2),
+                        (Rect(6.5, 23.5, 15.5, 29.5), 2), (Rect(58.0, 40.5, 85.0, 44.6), 3)],
+                    kits.family("mid_nature"), seed=931)
+    kits.foreground_views(p, "entrepot", seed=941)
 
 
 def ground_plan(M):

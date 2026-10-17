@@ -7,6 +7,7 @@
   "map": "entrepot_rdc",
   "hint": "hint",
   "trigger": {"on": "reach", "point": "jeux_tapis", "radius": 3.0},
+  "offer": {"point": "jeux_tapis", "text": "offer"},
   "present": ["willem", "nephren", "collon", "pannibal", "kana", "almita", "giniette", "nygglatho", "ithea"],
   "steps": [
     {"do": "control", "on": false},
