@@ -1,1 +1,61 @@
-{"version":1,"echelle":1,"planche":[655,852],"direction":"right","format":"images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels","status":"placeholder (E8b) : willem_home et une épée dessinée par tools/gen_duel_sheet.py ; la vraie planche est commandée au cahier n° 6, C.10","animations":{"repos":{"ips":2,"boucle":true,"images":[[2,2,119,168,35,168],[123,2,121,168,37,168]]},"marche":{"ips":10,"boucle":true,"images":[[2,172,107,168,23,168],[111,172,100,168,16,168],[213,172,110,168,26,168],[325,172,106,168,22,168],[433,172,111,168,27,168],[546,172,107,168,23,168]]},"parle":{"ips":6,"boucle":true,"images":[[2,342,125,168,41,168],[129,342,124,168,40,168]]},"attaque":{"ips":14,"boucle":false,"coup":[2],"images":[[2,512,101,168,35,168],[105,512,76,168,35,168],[183,512,153,168,121,168],[338,512,68,168,36,168]]},"pare":{"ips":2,"boucle":true,"images":[[2,682,123,168,45,168],[127,682,123,168,45,168]]}}}
+{
+  "version": 1,
+  "echelle": 1,
+  "planche": [
+    1290,
+    880
+  ],
+  "direction": "back",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [4, 4, 103, 168, 20, 168],
+        [219, 4, 108, 168, 24, 168]
+      ]
+    },
+    "marche": {
+      "ips": 10,
+      "boucle": true,
+      "images": [
+        [4, 180, 98, 168, 44, 168],
+        [219, 180, 101, 168, 47, 168],
+        [434, 180, 100, 168, 46, 168],
+        [649, 180, 98, 168, 44, 168],
+        [864, 180, 101, 168, 25, 168],
+        [1079, 180, 99, 168, 44, 168]
+      ]
+    },
+    "parle": {
+      "ips": 6,
+      "boucle": true,
+      "images": [
+        [4, 356, 140, 168, 54, 168],
+        [219, 356, 134, 168, 67, 168]
+      ]
+    },
+    "attaque": {
+      "ips": 14,
+      "boucle": false,
+      "images": [
+        [4, 532, 177, 168, 79, 168],
+        [219, 532, 115, 168, 98, 168],
+        [434, 532, 207, 168, 22, 168],
+        [649, 532, 131, 168, 76, 168]
+      ],
+      "coup": [
+        2
+      ]
+    },
+    "pare": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [4, 708, 150, 168, 20, 168],
+        [219, 708, 149, 168, 71, 168]
+      ]
+    }
+  }
+}
