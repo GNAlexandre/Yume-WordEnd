@@ -15,7 +15,7 @@
 #     l'installateur manquent (l'installateur lui-même, trop long ici, se construit par
 #     tools/build_desktop.sh et dans la tâche bureau de la CI : docs/bureau.md) ;
 #   - l'export Web échoue ou ne produit pas index.html / .js / .wasm / .pck, ou dépasse le budget
-#     de taille (tools/build_size.sh : 150 Mo compressés) ;
+#     de taille (tools/build_size.sh : 250 Mo compressés) ;
 #   - la capture a été rendue mais son journal contient une erreur ou un WARNING non toléré ;
 #   - en CI (CI=true), des fichiers ont été générés ou modifiés (.uid, .import non commités).
 # CHECK_FAST=1 saute l'export et la capture (itérations rapides ; jamais avant une PR).
