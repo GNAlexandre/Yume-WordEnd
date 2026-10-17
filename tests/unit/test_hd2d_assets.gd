@@ -20,6 +20,7 @@ const DOCS: Array[String] = [
 	"res://docs/ASSETS_HD2D_COMPLEMENTS.md",
 	"res://docs/ASSETS_HD2D_NAVIRES.md",
 	"res://docs/ASSETS_HD2D_ILE68.md",
+	"res://docs/ASSETS_HD2D_ILE68_LIVRAISON6.md",
 	"res://docs/REFONTE.md",
 	"res://docs/INTERIEURS.md",
 	# (T1) Noms proposés par les plans des lieux, à ajouter au cahier n° 3 (section 12.1).
@@ -316,9 +317,10 @@ func test_building_sides_have_the_shape_of_their_roof() -> void:
 	# appentis).
 	# (CV) Plus les dix de la ville (cahier n° 5, 6.4 et 6.5 : six maisons, quatre boutiques).
 	# (F1) Moins les dix bâtiments de l'ancienne île (auberge, horloger, entrepôt…).
+	# (N6D) Plus les trois flancs livrés : maison du port, maisons G et H (cahier n° 6, D.4).
 	assert_eq(
 		count,
-		28,
+		31,
 		(
 			"19 flancs (cahier n° 2), 2 de l'entrepôt (T1), 6 du village (C2), 10 de la ville (CV),"
 			+ " 1 du port (CP)"
