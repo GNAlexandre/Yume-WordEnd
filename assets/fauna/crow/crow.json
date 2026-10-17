@@ -1,1 +1,50 @@
-{"version":1,"echelle":2,"planche":[236,197],"format":"images : [x, y, largeur, hauteur, ancre x, ancre y] en px de la planche","animations":{"repos":{"ips":2,"boucle":true,"images":[[0,0,56,40,25,39],[58,0,56,40,25,39]]},"marche":{"ips":8,"boucle":true,"images":[[0,42,56,39,24,38],[58,42,56,41,24,40],[116,42,56,39,24,38],[174,42,56,39,24,38]]},"course":{"ips":14,"boucle":true,"images":[[0,85,57,38,22,37],[59,85,56,42,21,41],[117,85,57,38,22,37],[176,85,57,38,22,37]]},"fuite":{"ips":12,"boucle":true,"images":[[0,129,57,50,21,50],[59,129,57,66,21,66],[118,129,57,66,21,66],[177,129,57,59,21,59]]}},"direction":"right"}
+{
+  "version": 1,
+  "echelle": 2,
+  "planche": [
+    444,
+    236
+  ],
+  "direction": "right",
+  "format": "images: [x,y,width,height,anchor_x,anchor_y] in atlas pixels",
+  "animations": {
+    "repos": {
+      "ips": 2,
+      "boucle": true,
+      "images": [
+        [4, 17, 60, 38, 18, 38],
+        [78, 17, 48, 38, 18, 38]
+      ]
+    },
+    "marche": {
+      "ips": 8,
+      "boucle": true,
+      "images": [
+        [4, 76, 64, 38, 31, 38],
+        [78, 76, 66, 38, 32, 38],
+        [152, 76, 60, 38, 30, 38],
+        [226, 76, 62, 38, 30, 38]
+      ]
+    },
+    "course": {
+      "ips": 14,
+      "boucle": true,
+      "images": [
+        [4, 143, 66, 30, 24, 30],
+        [78, 143, 64, 30, 28, 30],
+        [152, 145, 64, 28, 32, 28],
+        [226, 144, 62, 29, 24, 29]
+      ]
+    },
+    "fuite": {
+      "ips": 12,
+      "boucle": true,
+      "images": [
+        [4, 183, 57, 49, 20, 49],
+        [78, 198, 62, 34, 24, 34],
+        [152, 200, 62, 32, 40, 32],
+        [226, 181, 60, 51, 24, 51]
+      ]
+    }
+  }
+}

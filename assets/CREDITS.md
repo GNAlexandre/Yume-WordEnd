@@ -325,3 +325,7 @@ Quatre remplaçants générés avec ChatGPT / outil d’image selon le cahier n�
 - `assets/characters/willem/willem_stick{,_front,_back}.png` et JSON associés : générés avec ChatGPT le 16 octobre 2026, cahier n° 6, lot C.10 ; référence `willem_home` pour l’identité, chemise de toile ample et pantalon serré aux chevilles pour l’exercice, bâton sous le bras au repos et pose assise se grattant la tête. Réduction au plus proche voisin, montage de poses corrigées ; originaux conservés hors dépôt.
 
 - `assets/characters/willem/willem_duel{,_front,_back}.png` et JSON associés : générés avec ChatGPT le 16 octobre 2026, cahier n° 6, lot C.10 ; tenue ample de toile, Carillon de série Percival en plaques d’acier et runes éteintes, gestes du duel selon la fiche propre du cahier. Réduction géométrique au plus proche voisin ; originaux et remplaçants conservés hors dépôt.
+
+Généré avec ChatGPT le 17 octobre 2026, cahier n° 6, lot D.3 : saule têtard, mare allongée, mer de nuages au matin et ciel aux deux comètes. Recalage au plus proche voisin ; ciel existant conservé au pixel près hors des comètes générées et superposées, raccords préservés ; sources conservées hors dépôt.
+
+Généré avec ChatGPT le 17 octobre 2026, cahier n° 6, lot D.8 : ours brun, sanglier, loup, cerf, renard, corbeau, grenouille et écureuil, profil seul (8 PNG et JSON, 143 poses). Sources générées avec OpenAI et conservées hors dépôt ; recalage au plus proche voisin, aucune blessure ni sang.

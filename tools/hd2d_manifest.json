@@ -3,6 +3,10 @@
  "version": 2,
  "px_per_m": 96,
  "images": [
+  {"path": "assets/hd2d/props/willow_pollard.png", "size": [288, 384], "kind": "panel", "prio": 3, "lot": "N6D"},
+  {"path": "assets/hd2d/decals/bog_pool_b.png", "size": [192, 144], "kind": "decal", "prio": 3, "lot": "N6D"},
+  {"path": "assets/hd2d/sky/cloud_sea_morning.png", "size": [1024, 1024], "kind": "tile", "prio": 3, "lot": "N6D"},
+  {"path": "assets/hd2d/sky/sky_night_comets.png", "size": [2048, 1024], "kind": "panorama", "prio": 3, "lot": "N6D"},
   {"path": "assets/hd2d/props/cafe_backyard_crates.png", "size": [154, 96], "kind": "panel", "prio": 1, "lot": "N6C"},
   {"path": "assets/hd2d/decals/cart_ruts_end.png", "size": [192, 192], "kind": "decal", "prio": 1, "lot": "N6A", "soft_alpha": true, "solid_edge": "top"},
   {"path": "assets/hd2d/decals/path_flagstones_b.png", "size": [144, 144], "kind": "decal", "prio": 1, "lot": "N6C", "soft_alpha": true},
