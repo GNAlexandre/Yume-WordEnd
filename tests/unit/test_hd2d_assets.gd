@@ -60,14 +60,14 @@ const GROUND_LAYERS: Array[String] = [
 ]
 const ATLAS_COLUMNS := 4
 const TILE := 384
-## Budget des images HD-2D (PNG sources, Mo) : l'export Web vise 150 Mo compressés en tout.
+## Budget des images HD-2D (PNG sources, Mo) : l'export Web vise 250 Mo compressés en tout.
 ## (H1) Images livrées (PR n° 2 à 4) : 15 Mo de PNG, que l'import réduit à 40 % environ (WebP
 ## sans perte : aucune perte de qualité) ; le cahier n° 2 (docs/ASSETS_HD2D_MONDE.md) en ajoute
 ## 40 à 45 Mo (H10 : 15 Mo de remplaçants). Toutes ses images livrées : 74,8 Mo de PNG, export
 ## Web de 73,5 Mo compressés. tools/check.sh mesure l'export lui-même (tools/build_size.sh).
 ## Cahier n° 3 (lots I et J de priorité 1) : export Web de 101,3 Mo compressés ; budget
-## relevé à 150.
-const IMAGES_BUDGET_MB := 150.0
+## relevé à 150, puis à 250 avec le cahier n° 7 (docs/DECISIONS.md, F3).
+const IMAGES_BUDGET_MB := 250.0
 ## Part d'un bord au-delà de laquelle une silhouette y est coupée net (tools/hd2d_assets.py,
 ## CUT_COVER).
 const CUT_COVER := 0.12
